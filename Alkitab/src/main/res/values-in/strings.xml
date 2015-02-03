@@ -164,6 +164,7 @@
   <string name="bl_send_backup">Transfer</string>
   <string name="bl_file_not_found_filename">File tidak ditemukan: %s</string>
   <string name="bl_send_backup_confirmation">Buat dan kirimkan cadangan semua marka? Misalnya, anda dapat mengirimkannya lewat imel ke perangkat yang baru, atau sekedar untuk dimasukkan ke dalam arsip.</string>
+  <string name="bl_sync_suggest">Simpan marka dengan sync</string>
   <string name="labels_titikdua">LABEL</string>
   <string name="tambah_titiktiga">Tambah&#8230;</string>
   <string name="nama_label_titikdua">Nama label:</string>
@@ -455,4 +456,13 @@
   <string name="about_version_name">versi %s</string>
   <string name="about_material_sources">Sumber Bahan</string>
   <string name="about_credits">Kredit / Terima Kasih</string>
+  <string name="marker_migrate_introduction">Terdeteksi file cadangan dari Alkitab (Quick Bible) v3 lama yang mengandung pembatas buku, catatan, sorotan, dan label.\n\nMaukah Anda mempergunakan isi file itu?</string>
+  <string name="marker_migrate_no_more">Jangan tanyakan lagi</string>
+  <string name="marker_migrate_later">Lain kali</string>
+  <string name="marker_migrate_title">Pindahkan marka lama</string>
+  <string name="marker_migrate_no_more_confirmation">Anda yakin tidak mau mempergunakan data lama?</string>
+  <string name="marker_migrate_error_opening_backup_file">Tidak dapat mengakses file cadangan.</string>
+  <string name="marker_migrate_import_from_newest">Ya, ambil dari yang terbaru (disarankan)</string>
+  <string name="marker_migrate_import_from_other">Cadangan lainnya</string>
+  <string name="marker_migrate_filename_dated">%1$s tertanggal %2$s</string>
 </resources>
