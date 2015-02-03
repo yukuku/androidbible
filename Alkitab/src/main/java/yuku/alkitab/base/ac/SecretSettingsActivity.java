@@ -67,6 +67,11 @@ public class SecretSettingsActivity extends BasePreferenceActivity {
 		return true;
 	};
 
+	Preference.OnPreferenceClickListener secret_old_v3_marker_import = preference -> {
+		startActivity(new Intent(App.context, YukuAlkitabImportOfferActivity.class));
+		return true;
+	};
+
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -77,5 +82,10 @@ public class SecretSettingsActivity extends BasePreferenceActivity {
 		findPreference("secret_progress_mark_history").setOnPreferenceClickListener(secret_progress_mark_history_click);
 		findPreference("secret_version_table").setOnPreferenceClickListener(secret_version_table_click);
 		findPreference("secret_sync_debug").setOnPreferenceClickListener(secret_sync_debug);
+		findPreference("secret_old_v3_marker_import").setOnPreferenceClickListener(secret_old_v3_marker_import);
+	}
+
+	public static Intent createIntent() {
+		return new Intent(App.context, SecretSettingsActivity.class);
 	}
 }
