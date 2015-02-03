@@ -1,9 +1,7 @@
 package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
@@ -372,16 +370,19 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 	@Override protected void onStart() {
 		super.onStart();
 
+		{ // apply background color, and clear window background to prevent overdraw
+			getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+			scrollContent.setBackgroundColor(S.applied.backgroundColor);
+		}
+
 		// text formats
 		lContent.setTextColor(S.applied.fontColor);
-		lContent.setBackgroundColor(S.applied.backgroundColor);
 		lContent.setTypeface(S.applied.fontFace, S.applied.fontBold);
 		lContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp);
 		lContent.setLineSpacing(0, S.applied.lineSpacingMult);
 
 		SettingsActivity.setPaddingBasedOnPreferences(lContent);
 
-		scrollContent.setBackgroundColor(S.applied.backgroundColor);
 
 		if (Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default))) {
 			lContent.setKeepScreenOn(true);

@@ -8,8 +8,6 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.widget.CursorAdapter;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -20,7 +18,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 import yuku.afw.V;
@@ -207,6 +207,14 @@ public class SearchActivity extends BaseActivity {
 			}
 		});
 
+		// stop opening suggestion dropdown
+		searchView.post(() -> {
+			final AutoCompleteTextView searchEditText = findAutoCompleteTextViewRecursive(searchView);
+			if (searchEditText != null) {
+				searchEditText.dismissDropDown();
+			}
+		});
+
 		{
 			SpannableStringBuilder sb = new SpannableStringBuilder(tSearchTips.getText());
 			while (true) {
@@ -257,6 +265,22 @@ public class SearchActivity extends BaseActivity {
 		}
 
 		displaySearchInVersion();
+	}
+
+	static AutoCompleteTextView findAutoCompleteTextViewRecursive(final ViewGroup group) {
+		for (int i = 0; i < group.getChildCount(); i++) {
+			final View child = group.getChildAt(i);
+			if (child instanceof AutoCompleteTextView) {
+				return (AutoCompleteTextView) child;
+			}
+			if (child instanceof ViewGroup) {
+				final AutoCompleteTextView res = findAutoCompleteTextViewRecursive((ViewGroup) child);
+				if (res != null) {
+					return res;
+				}
+			}
+		}
+		return null;
 	}
 
 	AutoCompleteTextView findAutoCompleteTextView(ViewGroup group) {
@@ -533,7 +557,7 @@ public class SearchActivity extends BaseActivity {
 				if (result == null) {
 					result = new IntArrayList(); // empty result
 				}
-				
+
 				lsSearchResults.setAdapter(adapter = new SearchAdapter(result, tokens));
 
 				final String resultCount = getString(R.string.size_hasil, result.size());

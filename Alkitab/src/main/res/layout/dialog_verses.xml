@@ -14,14 +14,12 @@
 		android:background="#30808080"
 		android:padding="@dimen/padding_small"
 		android:textAppearance="?android:attr/textAppearanceMedium"
-		tools:ignore="HardcodedText"
 		tools:text="Genesis 2:3-4" />
 
-	<ImageView
+	<View
 		android:layout_width="match_parent"
 		android:layout_height="1dp"
-		android:background="?android:attr/listDivider"
-		tools:ignore="ContentDescription" />
+		android:background="?android:listDivider" />
 
 	<yuku.alkitab.base.widget.VersesView
 		android:id="@+id/versesView"

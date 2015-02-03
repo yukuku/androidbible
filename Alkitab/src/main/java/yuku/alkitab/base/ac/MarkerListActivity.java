@@ -65,7 +65,7 @@ public class MarkerListActivity extends BaseActivity {
 	/** Action to broadcast when marker list needs to be reloaded due to some background changes */
 	public static final String ACTION_RELOAD = MarkerListActivity.class.getName() + ".action.RELOAD";
 
-	View panelList;
+	View root;
 	View empty;
 	TextView tEmpty;
 	View bClearFilter;
@@ -99,7 +99,7 @@ public class MarkerListActivity extends BaseActivity {
 
 		setContentView(R.layout.activity_marker_list);
 
-		panelList = V.get(this, R.id.panelList);
+		root = V.get(this, R.id.root);
 		empty = V.get(this, android.R.id.empty);
 		tEmpty = V.get(this, R.id.tEmpty);
 		bClearFilter = V.get(this, R.id.bClearFilter);
@@ -148,11 +148,6 @@ public class MarkerListActivity extends BaseActivity {
 			}
 		}
 
-		panelList.setBackgroundColor(S.applied.backgroundColor);
-		tEmpty.setTextColor(S.applied.fontColor);
-
-		hiliteColor = U.getHighlightColorByBrightness(S.applied.backgroundBrightness);
-
 		adapter = new MarkerListAdapter();
 		lv.setAdapter(adapter);
 		lv.setCacheColorHint(S.applied.backgroundColor);
@@ -183,6 +178,15 @@ public class MarkerListActivity extends BaseActivity {
 	@Override
 	protected void onStart() {
 		super.onStart();
+
+		{ // apply background color, and clear window background to prevent overdraw
+			getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+			root.setBackgroundColor(S.applied.backgroundColor);
+		}
+
+		tEmpty.setTextColor(S.applied.fontColor);
+
+		hiliteColor = U.getHighlightColorByBrightness(S.applied.backgroundBrightness);
 
 		loadAndFilter();
 	}
