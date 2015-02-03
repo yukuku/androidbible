@@ -1861,6 +1861,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				if (esvsb != null) esvsb.setVisible(true);
 			}
 
+			// show book name and chapter
+			final String reference = activeBook.reference(chapter_1);
+			mode.setTitle(reference);
+
 			return true;
 		}
 
@@ -1891,6 +1895,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 			final MenuItem menuVersions = menu.findItem(R.id.menuVersions);
 			menuVersions.setVisible(activeSplitVersion == null);
+
+			// show selected verses
+			if (single) {
+				mode.setSubtitle(R.string.verse_select_one_verse_selected);
+			} else {
+				mode.setSubtitle(getString(R.string.verse_select_multiple_verse_selected, selected.size()));
+			}
 
 			return true;
 		}

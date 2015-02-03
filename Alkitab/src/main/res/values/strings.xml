@@ -194,6 +194,8 @@
     <string name="text_appearance_bold">Bold</string>
     <string name="devotion_change_date">Change date</string>
     <string name="bookmark_search">Search</string>
+    <string name="verse_select_one_verse_selected">1 verse selected</string>
+    <string name="verse_select_multiple_verse_selected">%s verses selected</string>
 
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Dialer</string>
