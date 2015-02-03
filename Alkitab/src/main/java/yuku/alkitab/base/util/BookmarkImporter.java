@@ -122,7 +122,7 @@ public class BookmarkImporter {
 		}
 	}
 
-	public static void importBookmarks(final Activity activity, @NonNull final InputStream fis, final boolean finishActivityAfterwards, final Runnable onDone) {
+	public static void importBookmarks(final Activity activity, @NonNull final InputStream fis, final boolean finishActivityAfterwards) {
 		new AsyncTask<Boolean, Integer, Object>() {
 			ProgressDialog pd;
 			int count_bookmark = 0;
@@ -213,27 +213,25 @@ public class BookmarkImporter {
 			}
 
 			@Override
-			protected void onPostExecute(Object result) {
+			protected void onPostExecute(@NonNull Object result) {
 				pd.dismiss();
 
-				AlertDialog dialog;
 				if (result instanceof Exception) {
-					dialog = new AlertDialog.Builder(activity)
+					Log.e(TAG, "Error when importing markers", (Throwable) result);
+					new AlertDialog.Builder(activity)
 						.setMessage(activity.getString(R.string.terjadi_kesalahan_ketika_mengimpor_pesan, ((Exception) result).getMessage()))
 						.setPositiveButton(R.string.ok, null)
 						.show();
 				} else {
-					dialog = new AlertDialog.Builder(activity)
+					final AlertDialog dialog = new AlertDialog.Builder(activity)
 						.setMessage(activity.getString(R.string.impor_berhasil_angka_diproses, count_bookmark, count_label))
 						.setPositiveButton(R.string.ok, null)
 						.show();
-				}
 
-				if (finishActivityAfterwards) {
-					dialog.setOnDismissListener(dialog1 -> activity.finish());
+					if (finishActivityAfterwards) {
+						dialog.setOnDismissListener(dialog1 -> activity.finish());
+					}
 				}
-
-				if (onDone != null) onDone.run();
 			}
 		}.execute();
 	}
@@ -292,7 +290,7 @@ public class BookmarkImporter {
 									final Marker marker = S.getDb().getMarkerById(marker_id);
 									final Label label = S.getDb().getLabelById(label_id);
 									final Marker_Label marker_label = Marker_Label.createNewMarker_Label(marker.gid, label.gid);
-									InternalDb.insertMarker_Label(db, marker_label);
+									InternalDb.insertMarker_LabelIfNotExists(db, marker_label);
 								} else {
 									Log.w(TAG, "label_id is invalid!: " + label_id);
 								}

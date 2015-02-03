@@ -1,5 +1,6 @@
 package yuku.alkitab.base.ac;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -75,8 +76,14 @@ public class AboutActivity extends BaseActivity {
 	}
 
 	View.OnTouchListener root_touch = (v, event) -> {
-		if (event.getPointerCount() >= 4) {
+		if (event.getPointerCount() == 4) {
 			getWindow().setBackgroundDrawable(new GradientDrawable(GradientDrawable.Orientation.BR_TL, new int[] {0xffaaffaa, 0xffaaffff, 0xffaaaaff, 0xffffaaff, 0xffffaaaa, 0xffffffaa}));
+		} else if (event.getPointerCount() == 5) {
+			new AlertDialog.Builder(this)
+				.setMessage("Open secret settings?")
+				.setPositiveButton(R.string.ok, (dialog, which) -> startActivity(SecretSettingsActivity.createIntent()))
+				.setNegativeButton(R.string.cancel, null)
+				.show();
 		}
 
 		return false;

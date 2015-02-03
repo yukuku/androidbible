@@ -163,6 +163,7 @@
     <string name="bl_send_backup">Transfer</string>
     <string name="bl_file_not_found_filename">File not found: %s</string>
     <string name="bl_send_backup_confirmation">Create and send backup of bookmarks, notes, and highlights? You can, for example, send the attached file by email to a new device, or just for archiving purposes.</string>
+	<string name="bl_sync_suggest">Protect your markers with sync</string>
     <string name="labels_titikdua">LABELS</string>
     <string name="tambah_titiktiga">Add…</string>
     <string name="nama_label_titikdua">Label name:</string>
@@ -193,6 +194,8 @@
     <string name="text_appearance_bold">Bold</string>
     <string name="devotion_change_date">Change date</string>
     <string name="bookmark_search">Search</string>
+    <string name="verse_select_one_verse_selected">1 verse selected</string>
+    <string name="verse_select_multiple_verse_selected">%s verses selected</string>
 
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Dialer</string>

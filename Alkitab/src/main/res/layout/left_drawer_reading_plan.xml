@@ -7,6 +7,7 @@
 	android:layout_width="240dp"
 	android:layout_height="match_parent"
 	android:background="#262626"
+	android:elevation="4dp"
 	android:fitsSystemWindows="true"
 	tools:ignore="Overdraw">
 

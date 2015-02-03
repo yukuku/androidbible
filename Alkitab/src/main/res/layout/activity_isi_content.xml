@@ -93,14 +93,14 @@
 			android:textStyle="bold"
 			tools:text="VERSNM" />
 
-		<yuku.alkitab.base.widget.NavFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-			xmlns:tools="http://schemas.android.com/tools"
+		<yuku.alkitab.base.widget.NavFrameLayout
 			android:layout_width="match_parent"
 			android:layout_height="match_parent">
 
 			<yuku.alkitab.base.widget.GotoButton
 				android:id="@+id/bGoto"
 				style="?actionButtonStyle"
+				android:fontFamily="sans-serif-medium"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:layout_marginLeft="32dp"

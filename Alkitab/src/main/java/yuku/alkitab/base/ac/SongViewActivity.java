@@ -409,8 +409,10 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	protected void onStart() {
 		super.onStart();
 
-		// for colors of bg, text, etc
-		V.get(this, android.R.id.content).setBackgroundColor(S.applied.backgroundColor);
+		{ // apply background color, and clear window background to prevent overdraw
+			getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+			V.get(this, android.R.id.content).setBackgroundColor(S.applied.backgroundColor);
+		}
 
 		templateCustomVars = new Bundle();
 		templateCustomVars.putString("background_color", String.format("#%06x", S.applied.backgroundColor & 0xffffff));

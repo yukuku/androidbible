@@ -164,6 +164,7 @@
   <string name="bl_send_backup">Übertragen</string>
   <string name="bl_file_not_found_filename">Datei nicht gefunden: %s</string>
   <string name="bl_send_backup_confirmation">Soll eine Sicherung der Lesezeichen, Notizen und Hervorhebungen erstellt und gesendet werden? Sie können die Datei z. B. als Anhang einer E-Mail an ein neues Gerät senden. Oder die Datei erstellen, um sie anschließend zu archivieren.</string>
+  <string name="bl_sync_suggest">Sichern Sie Ihre Markierungen durch Synchronisation</string>
   <string name="labels_titikdua">STICHWÖRTER</string>
   <string name="tambah_titiktiga">Hinzufügen&#8230;</string>
   <string name="nama_label_titikdua">Stichwort-Name:</string>
@@ -455,4 +456,12 @@
   <string name="about_version_name">Version %s</string>
   <string name="about_material_sources">Material-Quellen</string>
   <string name="about_credits">Danksagungen</string>
+  <string name="marker_migrate_no_more">Nicht noch einmal fragen</string>
+  <string name="marker_migrate_later">Nicht jetzt</string>
+  <string name="marker_migrate_title">Alte Markierungen importieren</string>
+  <string name="marker_migrate_no_more_confirmation">Möchten Sie die alten Daten wirklich nicht importieren?</string>
+  <string name="marker_migrate_error_opening_backup_file">Kann nicht auf die Backupdatei zugreifen.</string>
+  <string name="marker_migrate_import_from_newest">Ja, importiere vom neusten (empfohlen)</string>
+  <string name="marker_migrate_import_from_other">Anderes Backup</string>
+  <string name="marker_migrate_filename_dated">%1$s vom %2$s</string>
 </resources>
