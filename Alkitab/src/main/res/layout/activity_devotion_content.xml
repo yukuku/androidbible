@@ -29,10 +29,9 @@
 					android:id="@+id/lContent"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:paddingBottom="@dimen/text_bottom_padding"
-					android:paddingLeft="@dimen/text_side_padding"
-					android:paddingRight="@dimen/text_side_padding"
-					android:paddingTop="@dimen/text_top_padding"
+                    android:paddingBottom="@dimen/text_bottom_padding"
+                    android:paddingLeft="@dimen/text_side_padding"
+                    android:paddingRight="@dimen/text_side_padding"
 					android:text="*Devotion content here."
 					android:textIsSelectable="true"
 					tools:ignore="HardcodedText" />
