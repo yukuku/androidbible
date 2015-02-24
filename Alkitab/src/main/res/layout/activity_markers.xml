@@ -15,22 +15,16 @@
         android:layout_height="64dp"
         android:background="#3a3a3a">
 
-        <TextView
+        <Button
+            android:id="@+id/bGotoSync"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/padding_medium"
+            android:background="?selectableItemBackgroundBorderless"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_centerVertical="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/bl_sync_suggest"
             android:textColor="#fff"
-            />
-
-        <ImageButton
-            android:id="@+id/bGotoSync"
-            android:background="?selectableItemBackgroundBorderless"
-            android:layout_width="48dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_nav_forward"
+            android:padding="16dp"
             android:layout_alignParentRight="true"
             />
     </RelativeLayout>
