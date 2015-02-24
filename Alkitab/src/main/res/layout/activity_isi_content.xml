@@ -99,8 +99,8 @@
 				android:fontFamily="sans-serif-medium"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
-				android:layout_marginLeft="32dp"
-				android:layout_marginRight="32dp"
+				android:layout_marginLeft="@dimen/nav_goto_side_margin"
+				android:layout_marginRight="@dimen/nav_goto_side_margin"
 				android:paddingLeft="0dp"
 				android:paddingRight="0dp"
 				android:textSize="16sp"
@@ -109,7 +109,7 @@
 			<ImageButton
 				android:id="@+id/bLeft"
 				style="?actionButtonStyle"
-				android:layout_width="48dp"
+				android:layout_width="@dimen/nav_prevnext_width"
 				android:layout_height="match_parent"
 				android:layout_gravity="start"
 				android:contentDescription="@string/desc_previous_chapter"
@@ -119,7 +119,7 @@
 			<ImageButton
 				android:id="@+id/bRight"
 				style="?actionButtonStyle"
-				android:layout_width="48dp"
+				android:layout_width="@dimen/nav_prevnext_width"
 				android:layout_height="match_parent"
 				android:layout_gravity="end"
 				android:contentDescription="@string/desc_next_chapter"
