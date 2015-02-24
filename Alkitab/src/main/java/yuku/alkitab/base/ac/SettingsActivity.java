@@ -148,9 +148,10 @@ public class SettingsActivity extends BasePreferenceActivity {
 	public static void setPaddingBasedOnPreferences(final View view) {
 		final Resources r = App.context.getResources();
 		if (Preferences.getBoolean(r.getString(R.string.pref_textPadding_key), r.getBoolean(R.bool.pref_textPadding_default))) {
-			final int tb = r.getDimensionPixelOffset(R.dimen.text_topbottom_padding);
-			final int lr = r.getDimensionPixelOffset(R.dimen.text_side_padding);
-			view.setPadding(lr, tb, lr, tb);
+			final int top = r.getDimensionPixelOffset(R.dimen.text_top_padding);
+			final int bottom = r.getDimensionPixelOffset(R.dimen.text_bottom_padding);
+			final int side = r.getDimensionPixelOffset(R.dimen.text_side_padding);
+			view.setPadding(side, top, side, bottom);
 		} else {
 			final int no = r.getDimensionPixelOffset(R.dimen.text_nopadding);
 			view.setPadding(no, no, no, no);
