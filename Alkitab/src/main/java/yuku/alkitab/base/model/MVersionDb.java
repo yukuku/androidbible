@@ -8,6 +8,8 @@ import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.model.Version;
 
 import java.io.File;
+import java.lang.ref.SoftReference;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Version that is defined in the database.
@@ -25,6 +27,12 @@ public class MVersionDb extends MVersion {
 	 * or added from pdb/yes files manually.
 	 */
 	public int modifyTime;
+
+	/**
+	 * VersionImpl instance cache, so we do not reinstantiate VersionImpl objects every time
+	 * we access versions. Especially when doing a version compare.
+	 */
+	static ConcurrentHashMap<String /* filename */, SoftReference<VersionImpl>> impl_cache = new ConcurrentHashMap<>();
 
 	/**
 	 * The version id for MVersionDb can be "preset/" followed by preset_name,
@@ -55,13 +63,31 @@ public class MVersionDb extends MVersion {
 	@Override
 	public Version getVersion() {
 		if (hasDataFile()) {
+			// check cache first
+			final SoftReference<VersionImpl> ref = impl_cache.get(filename);
+			if (ref != null) {
+				final VersionImpl res = ref.get();
+				if (res != null) {
+					return res;
+				}
+			}
+
 			final BibleReader reader = YesReaderFactory.createYesReader(filename);
 			if (reader == null) {
 				Log.e(VersionsActivity.TAG, "YesReaderFactory failed to open the yes file");
 				return null;
 			}
-			return new VersionImpl(reader);
+
+			final VersionImpl res = new VersionImpl(reader);
+
+			// put to cache
+			impl_cache.put(filename, new SoftReference<>(res));
+
+			return res;
 		} else {
+			// clear from cache if any
+			impl_cache.remove(filename);
+
 			return null;
 		}
 	}
