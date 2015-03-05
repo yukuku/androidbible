@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,6 +17,8 @@ import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.debug.R;
+
+import static yuku.alkitab.base.util.Literals.Array;
 
 public class AboutActivity extends BaseActivity {
 	public static final String TAG = AboutActivity.class.getSimpleName();
@@ -67,6 +70,19 @@ public class AboutActivity extends BaseActivity {
 		}
 		imgLogo.setImageDrawable(logoDrawable);
 
+		imgLogo.setOnTouchListener((v,event) -> {
+			if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+				final float x = event.getX();
+				final float y = event.getY();
+				if (x >= v.getWidth() / 2 - 4 && x <= v.getWidth() / 2 + 4) {
+					if (y >= v.getHeight() * 3 / 10 - 4 && y <= v.getHeight() * 3 / 10 + 4) {
+						showSecretDialog();
+					}
+				}
+			}
+			return false;
+		});
+
 		tAboutTextDesc.setMovementMethod(LinkMovementMethod.getInstance());
 
 		tVersion.setText(getString(R.string.about_version_name, App.getVersionName()));
@@ -78,16 +94,26 @@ public class AboutActivity extends BaseActivity {
 	View.OnTouchListener root_touch = (v, event) -> {
 		if (event.getPointerCount() == 4) {
 			getWindow().setBackgroundDrawable(new GradientDrawable(GradientDrawable.Orientation.BR_TL, new int[] {0xffaaffaa, 0xffaaffff, 0xffaaaaff, 0xffffaaff, 0xffffaaaa, 0xffffffaa}));
-		} else if (event.getPointerCount() == 5) {
-			new AlertDialog.Builder(this)
-				.setMessage("Open secret settings?")
-				.setPositiveButton(R.string.ok, (dialog, which) -> startActivity(SecretSettingsActivity.createIntent()))
-				.setNegativeButton(R.string.cancel, null)
-				.show();
+		} else if (event.getPointerCount() == 5 && event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN) {
+			showSecretDialog();
 		}
 
 		return false;
 	};
+
+	private void showSecretDialog() {
+		new AlertDialog.Builder(this)
+			.setItems(Array("Secret settings", "Crash me"), (dialog, which) -> {
+				switch (which) {
+					case 0:
+						startActivity(SecretSettingsActivity.createIntent());
+						return;
+					case 1:
+						throw new RuntimeException("Dummy exception from secret dialog.");
+				}
+			})
+			.show();
+	}
 
 	public static Intent createIntent() {
 		return new Intent(App.context, AboutActivity.class);
