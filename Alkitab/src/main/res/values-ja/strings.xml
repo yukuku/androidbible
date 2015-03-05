@@ -336,8 +336,6 @@
   <string name="menuSplitVersion">分割画面</string>
   <string name="menuBible">聖書</string>
   <string name="menuProgress">しおり</string>
-  <string name="switch_off">OFF</string>
-  <string name="switch_on">ON</string>
   <string name="sn_menu_copy">聖歌をコピー</string>
   <string name="menuPlay">再生</string>
   <string name="menuPause">一時停止</string>

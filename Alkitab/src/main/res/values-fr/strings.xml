@@ -341,8 +341,6 @@
   <string name="menuSplitVersion">Scinder</string>
   <string name="menuBible">Bible</string>
   <string name="menuProgress">Progrès</string>
-  <string name="switch_off">Eteindre</string>
-  <string name="switch_on">Allumer</string>
   <string name="sn_menu_copy">Copie d\'un Chant</string>
   <string name="menuPlay">Jouer</string>
   <string name="menuPause">Mettre en Pause</string>

@@ -342,8 +342,6 @@
   <string name="menuSplitVersion">Подвійний</string>
   <string name="menuBible">Біблія</string>
   <string name="menuProgress">Прогрес</string>
-  <string name="switch_off">ВИМКНУТИ</string>
-  <string name="switch_on">УВІМКНУТИ</string>
   <string name="sn_menu_copy">Скопіювати пісню</string>
   <string name="menuPlay">Грати</string>
   <string name="menuPause">Пауза</string>
