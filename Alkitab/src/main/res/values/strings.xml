@@ -364,8 +364,6 @@
     <string name="menuSplitVersion">Split</string>
     <string name="menuBible">Bible</string>
     <string name="menuProgress">Progress</string>
-    <string name="switch_off">OFF</string>
-    <string name="switch_on">ON</string>
     <string name="sn_menu_copy">Copy song</string>
     <string name="menuPlay">Play</string>
     <string name="menuPause">Pause</string>
@@ -485,7 +483,7 @@
 	<string name="dr_default_sound">Default sound</string>
 
 	<!-- about -->
-	<string name="about_text_desc" translatable="false">100% free Bible app, licensed under Apache License 2.0\n<a href="http://www.bibleforandroid.com/guide?utm_source=app&amp;utm_medium=button&amp;utm_campaign=about">www.bibleforandroid.com</a></string>
+	<string name="about_text_desc" translatable="false">100% free Bible app, licensed under Apache License 2.0</string>
 	<string name="about_translators">Translators</string>
 	<string name="about_user_guide">User\'s Guide</string>
 	<string name="about_beta_feedback">Beta Version Feedback</string>

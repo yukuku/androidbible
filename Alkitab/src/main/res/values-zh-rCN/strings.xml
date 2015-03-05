@@ -341,8 +341,6 @@
   <string name="menuSplitVersion">分隔</string>
   <string name="menuBible">圣经</string>
   <string name="menuProgress">进度</string>
-  <string name="switch_off">关闭</string>
-  <string name="switch_on">开启</string>
   <string name="sn_menu_copy">複製歌曲</string>
   <string name="menuPlay">播放</string>
   <string name="menuPause">暂停</string>

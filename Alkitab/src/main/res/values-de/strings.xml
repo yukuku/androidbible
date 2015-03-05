@@ -342,8 +342,6 @@
   <string name="menuSplitVersion">Geteilte Ansicht</string>
   <string name="menuBible">Bibel</string>
   <string name="menuProgress">Lesefortschritt</string>
-  <string name="switch_off">AUS</string>
-  <string name="switch_on">AN</string>
   <string name="sn_menu_copy">Lied kopieren</string>
   <string name="menuPlay">Abspielen</string>
   <string name="menuPause">Pause</string>

@@ -340,8 +340,6 @@
   <string name="menuSplitVersion">Разделить</string>
   <string name="menuBible">Библия</string>
   <string name="menuProgress">Продвижение</string>
-  <string name="switch_off">ВЫКЛ</string>
-  <string name="switch_on">ВКЛ</string>
   <string name="sn_menu_copy">Скопировать песню</string>
   <string name="menuPlay">Воспроизвести</string>
   <string name="menuPause">Пауза</string>

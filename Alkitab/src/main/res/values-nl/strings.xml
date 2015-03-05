@@ -321,8 +321,6 @@
   <string name="bookmark_delete_confirmation">Deze bladwijzer verwijderen?</string>
   <string name="menuBible">Bijbel</string>
   <string name="menuProgress">Voortgang</string>
-  <string name="switch_off">UIT</string>
-  <string name="switch_on">AAN</string>
   <string name="menuPlay">Afspelen</string>
   <string name="menuPause">Pauze</string>
   <string name="book_filter_old_testament">Oude Testament</string>
