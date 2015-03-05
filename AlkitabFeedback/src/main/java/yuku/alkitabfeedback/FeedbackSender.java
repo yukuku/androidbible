@@ -124,7 +124,7 @@ public class FeedbackSender {
 			}
 		}
 
-		editor.commit();
+		editor.apply();
 	}
 
 	public synchronized void trySend() {
@@ -223,7 +223,7 @@ public class FeedbackSender {
 		String installationId = pref_.getString("installationId", null); //$NON-NLS-1$
 		if (installationId == null) {
 			installationId = "u2:" + UUID.randomUUID().toString(); //$NON-NLS-1$
-			pref_.edit().putString("installationId", installationId).commit(); //$NON-NLS-1$
+			pref_.edit().putString("installationId", installationId).apply(); //$NON-NLS-1$
 		}
 		return installationId;
 	}
