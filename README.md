@@ -3,11 +3,11 @@ Bible for Android
 
 **100% Free, Open-Source, Quick and Friendly Bible App.**
 
+Get in on Google Play: <a href="https://play.google.com/store/apps/details?id=org.sabda.alkitab">Alkitab</a> (Indonesian) or <a href="https://play.google.com/store/apps/details?id=org.sabda.online">Quick Bible</a> (English)
+
 - <a href="http://www.bibleforandroid.com">Official Website</a>
 - <a href="http://blog.bibleforandroid.com">Development Blog</a>
-- <a href="http://groups.google.com/group/bibleforandroid">Discussion List and Beta Testers</a>
-
-As of 14 November 2014, the apps are no longer available on Google Play. Visit the <a href="http://www.bibleforandroid.com/">official website</a> for news and downloads.
+- <a href="http://groups.google.com/group/bibleforandroid">Discussion Group</a>
 
 Bible translations/versions
 ---------------------------
@@ -40,7 +40,7 @@ By the way, Alkitab is the Indonesian word for Bible.
 License
 --------
 
-    Copyright 2009-2014 The Alkitab Authors.
+    Copyright 2009-2015 The Alkitab Authors.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
