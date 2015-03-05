@@ -300,7 +300,7 @@ public class ShareActivity extends BaseActivity {
 				text2.setVisibility(View.GONE);
 			}
 			
-			// patch by yuku: load icon di bekgron supaya ga bikin hang
+			// patch by yuku: load icon in the background so app does not hang
 			icon.setTag(info);
 			if (info.displayIcon != null) {
 				icon.setImageDrawable(info.displayIcon);
@@ -330,7 +330,7 @@ public class ShareActivity extends BaseActivity {
 						}
 					}.execute();
 				} else {
-					// udah loading, tambah listener aja
+					// it's already loading, just add listener.
 					info.loadedListeners.add(icon);
 				}
 			}
