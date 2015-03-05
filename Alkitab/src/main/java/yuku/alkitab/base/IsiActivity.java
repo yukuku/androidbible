@@ -1954,7 +1954,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			} return true;
 			case R.id.menuCompare: {
 				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
-				VersesDialog.newCompareInstance(ari).show(getSupportFragmentManager(), "compare_dialog");
+				final VersesDialog dialog = VersesDialog.newCompareInstance(ari);
+				dialog.show(getSupportFragmentManager(), "compare_dialog");
+				dialog.setListener(new VersesDialog.VersesDialogListener() {
+					@Override
+					public void onComparedVerseSelected(final VersesDialog dialog, final int ari, final MVersion mversion) {
+						loadVersion(mversion, true);
+						dialog.dismiss();
+					}
+				});
 			} return true;
 			case R.id.menuVersions: {
 				openVersionsDialog();

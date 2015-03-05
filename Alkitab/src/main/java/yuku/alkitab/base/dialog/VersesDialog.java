@@ -24,15 +24,14 @@ import yuku.alkitab.util.IntArrayList;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
  * Dialog that shows a list of verses. There are two modes:
  * "normal mode" that is created via {@link #newInstance(yuku.alkitab.util.IntArrayList)} to show a list of verses from a single version.
- * -- field ariRanges is used and compareMode==false.
+ * -- field ariRanges is used, compareMode==false.
  * "compare mode" that is created via {@link #newCompareInstance(int)} to show a list of different version of a verse.
- * -- field ari is used compareMode==true.
+ * -- field ari is used, compareMode==true.
  */
 public class VersesDialog extends BaseDialog {
 	public static final String TAG = VersesDialog.class.getSimpleName();
@@ -104,7 +103,7 @@ public class VersesDialog extends BaseDialog {
 		ari = getArguments().getInt(EXTRA_ari);
 		compareMode = getArguments().getBoolean(EXTRA_compareMode);
 	}
-	
+
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View res = inflater.inflate(R.layout.dialog_verses, null);
 
@@ -142,8 +141,6 @@ public class VersesDialog extends BaseDialog {
 
 
 		if (!compareMode) {
-			versesView.setVerseSelectionMode(VerseSelectionMode.singleClick);
-
 			final IntArrayList displayedAris = new IntArrayList();
 			final List<String> displayedVerseTexts = new ArrayList<>();
 			final List<String> displayedVerseNumberTexts = new ArrayList<>();
@@ -183,8 +180,6 @@ public class VersesDialog extends BaseDialog {
 				versesView.setData(book, chapter_1, new Verses(), null, null, 0);
 			}
 		} else {
-			versesView.setVerseSelectionMode(VerseSelectionMode.none);
-
 			// read each version and display it. First version must be the sourceVersion.
 			final List<String> displayedVersionShortNames = new ArrayList<>();
 			final List<String> displayedVerseTexts = new ArrayList<>();
@@ -193,13 +188,10 @@ public class VersesDialog extends BaseDialog {
 			final List<MVersion> mversions = S.getAvailableVersions();
 
 			// sort such that sourceVersion is first
-			Collections.sort(mversions, new Comparator<MVersion>() {
-				@Override
-				public int compare(final MVersion lhs, final MVersion rhs) {
-					int a = U.equals(lhs.getVersionId(), sourceVersionId)? -1: 0;
-					int b = U.equals(rhs.getVersionId(), sourceVersionId)? -1: 0;
-					return a - b;
-				}
+			Collections.sort(mversions, (lhs, rhs) -> {
+				int a = U.equals(lhs.getVersionId(), sourceVersionId)? -1: 0;
+				int b = U.equals(rhs.getVersionId(), sourceVersionId)? -1: 0;
+				return a - b;
 			});
 
 			for (final MVersion mversion : mversions) {
@@ -215,6 +207,7 @@ public class VersesDialog extends BaseDialog {
 				}
 
 				String verseText = version.loadVerseText(ari);
+				final boolean verseIsAvailable = verseText != null;
 				if (verseText == null) {
 					verseText = getString(R.string.generic_verse_not_available_in_this_version);
 				}
@@ -222,7 +215,7 @@ public class VersesDialog extends BaseDialog {
 				// these need to be added in parallel
 				displayedVersionShortNames.add(shortName);
 				displayedVerseTexts.add(verseText);
-				customCallbackData.add(mversion);
+				customCallbackData.add(verseIsAvailable ? mversion : null);
 			}
 
 			class Verses extends SingleChapterVerses {
@@ -257,7 +250,11 @@ public class VersesDialog extends BaseDialog {
 				if (!compareMode) {
 					listener.onVerseSelected(VersesDialog.this, (Integer) customCallbackData.get(verse_1 - 1));
 				} else {
-					listener.onComparedVerseSelected(VersesDialog.this, ari, (MVersion) customCallbackData.get(verse_1 - 1));
+					final MVersion mversion = (MVersion) customCallbackData.get(verse_1 - 1);
+					if (mversion != null) {
+						// only if the verse is available in this version. See the add call to customCallbackData.
+						listener.onComparedVerseSelected(VersesDialog.this, ari, mversion);
+					}
 				}
 			}
 		}
@@ -269,10 +266,6 @@ public class VersesDialog extends BaseDialog {
 
 	public void setListener(final VersesDialogListener listener) {
 		this.listener = listener;
-	}
-
-	public DialogInterface.OnDismissListener getOnDismissListener() {
-		return onDismissListener;
 	}
 
 	public void setOnDismissListener(final DialogInterface.OnDismissListener onDismissListener) {
