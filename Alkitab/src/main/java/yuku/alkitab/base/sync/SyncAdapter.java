@@ -139,7 +139,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		final RequestBody requestBody = new FormEncodingBuilder()
 			.add("simpleToken", simpleToken)
 			.add("syncSetName", syncSetName)
-			.add("installation_id", Sync.getInstallationId())
+			.add("installation_id", U.getInstallationId())
 			.add("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 
@@ -249,7 +249,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		final RequestBody requestBody = new FormEncodingBuilder()
 			.add("simpleToken", simpleToken)
 			.add("syncSetName", syncSetName)
-			.add("installation_id", Sync.getInstallationId())
+			.add("installation_id", U.getInstallationId())
 			.add("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 

@@ -186,7 +186,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		final RequestBody requestBody = new FormEncodingBuilder()
 			.add("simpleToken", simpleToken)
 			.add("syncSetName", SyncShadow.SYNC_SET_MABEL)
-			.add("installation_id", Sync.getInstallationId())
+			.add("installation_id", U.getInstallationId())
 			.add("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 
