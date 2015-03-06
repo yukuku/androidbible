@@ -1,11 +1,15 @@
 package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
+import android.app.LoaderManager;
+import android.content.AsyncTaskLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
@@ -16,12 +20,17 @@ import android.widget.TextView;
 import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.debug.R;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static yuku.alkitab.base.util.Literals.Array;
 
 public class AboutActivity extends BaseActivity {
 	public static final String TAG = AboutActivity.class.getSimpleName();
+
+	public static final int LOADER_announce = 1;
 
 	View root;
 	TextView tVersion;
@@ -33,6 +42,63 @@ public class AboutActivity extends BaseActivity {
 	View bMaterialSources;
 	View bCredits;
 	View bBetaFeedback;
+	View bAnnouncements;
+	TextView tAnnouncements;
+	ContentLoadingProgressBar progressAnnouncements;
+
+	enum AnnouncementState {
+		init,
+		loading,
+		has_none,
+		has_few,
+		error,
+	}
+
+	AnnouncementState announcementState;
+	long[] announcementIds;
+	final AtomicBoolean manualAnnouncementReload = new AtomicBoolean();
+
+	final LoaderManager.LoaderCallbacks<long[]> announcementLoaderCallbacks = new LoaderManager.LoaderCallbacks<long[]>() {
+		@Override
+		public Loader<long[]> onCreateLoader(final int id, final Bundle args) {
+			setAnnouncementState(AnnouncementState.loading);
+
+			return new AsyncTaskLoader<long[]>(AboutActivity.this) {
+				@Override
+				public long[] loadInBackground() {
+					return Announce.getAnnouncementIds();
+				}
+			};
+		}
+
+		@Override
+		public void onLoadFinished(final Loader<long[]> loader, final long[] data) {
+			if (data == null) {
+				setAnnouncementState(AnnouncementState.error);
+
+				if (manualAnnouncementReload.get()) {
+					if (!isFinishing()) {
+						new AlertDialog.Builder(AboutActivity.this)
+							.setMessage(R.string.about_announcement_load_failed)
+							.setPositiveButton(R.string.ok, null)
+							.show();
+					}
+				}
+			} else {
+				announcementIds = data;
+				if (data.length == 0) {
+					setAnnouncementState(AnnouncementState.has_none);
+				} else {
+					setAnnouncementState(AnnouncementState.has_few);
+				}
+			}
+		}
+
+		@Override
+		public void onLoaderReset(final Loader<long[]> loader) {
+			setAnnouncementState(AnnouncementState.init);
+		}
+	};
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -62,6 +128,17 @@ public class AboutActivity extends BaseActivity {
 		bBetaFeedback = V.get(this, R.id.bBetaFeedback);
 		bBetaFeedback.setOnClickListener(v -> startActivity(new Intent(App.context, com.example.android.wizardpager.MainActivity.class)));
 
+		bAnnouncements = V.get(this, R.id.bAnnouncements);
+		bAnnouncements.setOnClickListener(v -> bAnnouncements_click());
+
+		tAnnouncements = V.get(this, R.id.tAnnouncements);
+		progressAnnouncements = V.get(this, R.id.progressAnnouncements);
+
+		setAnnouncementState(AnnouncementState.init);
+
+		manualAnnouncementReload.set(false);
+		getLoaderManager().initLoader(LOADER_announce, null, announcementLoaderCallbacks).forceLoad();
+
 		final Drawable logoDrawable;
 		if (Build.VERSION.SDK_INT >= 15) {
 			logoDrawable = getResources().getDrawableForDensity(R.drawable.ic_launcher, DisplayMetrics.DENSITY_XXXHIGH);
@@ -89,6 +166,49 @@ public class AboutActivity extends BaseActivity {
 		tBuild.setText(String.format("%s %s", App.getVersionCode(), getString(R.string.last_commit_hash)));
 
 		root.setOnTouchListener(root_touch);
+	}
+
+	void bAnnouncements_click() {
+		switch (announcementState) {
+			case loading:
+				// do nothing
+				break;
+			case has_none:
+			case has_few:
+				startActivity(HelpActivity.createViewAnnouncementIntent(announcementIds));
+				break;
+			case error:
+				manualAnnouncementReload.set(true);
+				getLoaderManager().getLoader(LOADER_announce).forceLoad();
+				break;
+		}
+	}
+
+	void setAnnouncementState(final AnnouncementState state) {
+		this.announcementState = state;
+
+		switch (state) {
+			case init:
+				tAnnouncements.setText(R.string.about_announcements);
+				progressAnnouncements.hide();
+				break;
+			case loading:
+				tAnnouncements.setText(R.string.about_announcements);
+				progressAnnouncements.show();
+				break;
+			case has_none:
+				tAnnouncements.setText(R.string.about_announcements_none);
+				progressAnnouncements.hide();
+				break;
+			case has_few:
+				tAnnouncements.setText(getString(R.string.about_announcements_number, announcementIds.length));
+				progressAnnouncements.hide();
+				break;
+			case error:
+				tAnnouncements.setText(R.string.about_announcements);
+				progressAnnouncements.hide();
+				break;
+		}
 	}
 
 	View.OnTouchListener root_touch = (v, event) -> {

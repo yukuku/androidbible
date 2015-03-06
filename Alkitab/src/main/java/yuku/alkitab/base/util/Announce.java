@@ -20,6 +20,7 @@ import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 public abstract class Announce {
@@ -57,19 +58,7 @@ public abstract class Announce {
 	}
 
 	private static void checkAnnouncements_worker() throws Exception {
-		final OkHttpClient client = App.getOkHttpClient();
-		final Call call = client.newCall(
-			new Request.Builder()
-				.url("https://alkitab-host.appspot.com/announce/check")
-				.post(
-					new FormEncodingBuilder()
-						.add("installation_info", U.getInstallationInfoJson())
-						.build()
-				)
-				.build()
-		);
-
-		final AnnounceCheckResult result = App.getDefaultGson().fromJson(call.execute().body().charStream(), AnnounceCheckResult.class);
+		final AnnounceCheckResult result = getAnnouncements();
 		if (!result.success) {
 			Log.d(TAG, "Announce check returns success=false: " + result.message);
 			if (result.message != null) {
@@ -121,5 +110,41 @@ public abstract class Announce {
 		}
 
 		Preferences.setInt(Prefkey.announce_last_check, Sqlitil.nowDateTime());
+	}
+
+	private static AnnounceCheckResult getAnnouncements() throws IOException {
+		final OkHttpClient client = App.getOkHttpClient();
+		final Call call = client.newCall(
+			new Request.Builder()
+				.url("https://alkitab-host.appspot.com/announce/check")
+				.post(
+					new FormEncodingBuilder()
+						.add("installation_info", U.getInstallationInfoJson())
+						.build()
+				)
+				.build()
+		);
+
+		return App.getDefaultGson().fromJson(call.execute().body().charStream(), AnnounceCheckResult.class);
+	}
+
+	public static long[] getAnnouncementIds() {
+		try {
+			final AnnounceCheckResult result = getAnnouncements();
+			if (result.announcements == null) {
+				Log.e(TAG, "@@getAnnouncementIds result.announcements == null");
+				return null;
+			}
+
+			final long[] res = new long[result.announcements.length];
+			for (int i = 0; i < result.announcements.length; i++) {
+				res[i] = result.announcements[i].id;
+			}
+
+			return res;
+		} catch (IOException e) {
+			Log.e(TAG, "@@getAnnouncementIds", e);
+			return null;
+		}
 	}
 }
