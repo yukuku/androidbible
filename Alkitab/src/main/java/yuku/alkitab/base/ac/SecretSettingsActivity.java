@@ -4,10 +4,15 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
+import android.widget.Toast;
+import gnu.trove.set.TLongSet;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BasePreferenceActivity;
 import yuku.alkitab.base.model.MVersionDb;
+import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.ProgressMark;
@@ -72,6 +77,14 @@ public class SecretSettingsActivity extends BasePreferenceActivity {
 		return true;
 	};
 
+	Preference.OnPreferenceClickListener secret_reset_read_announcements = preference -> {
+		final TLongSet read = Announce.getReadAnnouncementIds();
+		Preferences.remove(Prefkey.announce_read_ids);
+
+		Toast.makeText(this, "Cleared read announcement ids.\n\nPreviously has " + read.size() + " items:\n" + read, Toast.LENGTH_LONG).show();
+		return true;
+	};
+
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +96,7 @@ public class SecretSettingsActivity extends BasePreferenceActivity {
 		findPreference("secret_version_table").setOnPreferenceClickListener(secret_version_table_click);
 		findPreference("secret_sync_debug").setOnPreferenceClickListener(secret_sync_debug);
 		findPreference("secret_old_v3_marker_import").setOnPreferenceClickListener(secret_old_v3_marker_import);
+		findPreference("secret_reset_read_announcements").setOnPreferenceClickListener(secret_reset_read_announcements);
 	}
 
 	public static Intent createIntent() {
