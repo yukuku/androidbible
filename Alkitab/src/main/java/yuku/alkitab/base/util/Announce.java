@@ -12,6 +12,8 @@ import com.squareup.okhttp.Call;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import gnu.trove.set.TLongSet;
+import gnu.trove.set.hash.TLongHashSet;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
@@ -21,7 +23,10 @@ import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class Announce {
 	static final String TAG = Announce.class.getSimpleName();
@@ -58,47 +63,60 @@ public abstract class Announce {
 	}
 
 	private static void checkAnnouncements_worker() throws Exception {
-		final AnnounceCheckResult result = getAnnouncements();
-		if (!result.success) {
-			Log.d(TAG, "Announce check returns success=false: " + result.message);
-			if (result.message != null) {
-				Toast.makeText(App.context, "Announce: " + result.message, Toast.LENGTH_LONG).show();
+		final List<Announcement> unreadAnnouncements = new ArrayList<>();
+
+		{
+			final AnnounceCheckResult result = getAnnouncements();
+			if (!result.success) {
+				Log.d(TAG, "Announce check returns success=false: " + result.message);
+				if (result.message != null) {
+					Toast.makeText(App.context, "Announce: " + result.message, Toast.LENGTH_LONG).show();
+				}
+				return;
 			}
-			return;
+
+			if (result.announcements != null) {
+				final TLongSet read = getReadAnnouncementIds();
+				for (final Announcement announcement : result.announcements) {
+					if (!read.contains(announcement.id)) {
+						unreadAnnouncements.add(announcement);
+					}
+				}
+			}
 		}
 
-		if (result.announcements == null || result.announcements.length == 0) {
+		if (unreadAnnouncements.size() == 0) {
 			// success, but no new announcements
 		} else {
 			// sort announcements by createTime desc
-			Arrays.sort(result.announcements, (lhs, rhs) -> rhs.createTime - lhs.createTime);
+			Collections.sort(unreadAnnouncements, (lhs, rhs) -> rhs.createTime - lhs.createTime);
 
-			final long[] announcementIds = new long[result.announcements.length];
-			for (int i = 0; i < result.announcements.length; i++) {
-				announcementIds[i] = result.announcements[i].id;
+			final long[] announcementIds = new long[unreadAnnouncements.size()];
+			for (int i = 0; i < unreadAnnouncements.size(); i++) {
+				announcementIds[i] = unreadAnnouncements.get(i).id;
 			}
 
 			final NotificationCompat.Builder base = new NotificationCompat.Builder(App.context)
 				.setContentTitle(App.context.getString(R.string.announce_notif_title, App.context.getString(R.string.app_name)))
-				.setContentText(result.announcements.length == 1 ? result.announcements[0].title : App.context.getString(R.string.announce_notif_number_new_announcements, result.announcements.length))
+				.setContentText(unreadAnnouncements.size() == 1 ? unreadAnnouncements.get(0).title : App.context.getString(R.string.announce_notif_number_new_announcements, unreadAnnouncements.size()))
 				.setSmallIcon(R.drawable.ic_stat_announce)
 				.setColor(App.context.getResources().getColor(R.color.accent))
 				.setContentIntent(PendingIntent.getActivity(App.context, Arrays.hashCode(announcementIds), HelpActivity.createViewAnnouncementIntent(announcementIds), PendingIntent.FLAG_UPDATE_CURRENT))
 				.setAutoCancel(true);
 
 			final Notification n;
-			if (result.announcements.length == 1) {
+			if (unreadAnnouncements.size() == 1) {
 				final NotificationCompat.BigTextStyle builder = new NotificationCompat.BigTextStyle(base)
 					.setBigContentTitle(App.context.getString(R.string.announce_notif_title, App.context.getString(R.string.app_name)))
-					.bigText(result.announcements[0].title);
+					.bigText(unreadAnnouncements.get(0).title);
 
 				n = builder.build();
 			} else {
 				final NotificationCompat.InboxStyle builder = new NotificationCompat.InboxStyle(base)
 					.setBigContentTitle(App.context.getString(R.string.announce_notif_title, App.context.getString(R.string.app_name)))
-					.setSummaryText(App.context.getString(R.string.announce_notif_number_new_announcements, result.announcements.length));
+					.setSummaryText(App.context.getString(R.string.announce_notif_number_new_announcements, unreadAnnouncements.size()));
 
-				for (final Announcement announcement : result.announcements) {
+				for (final Announcement announcement : unreadAnnouncements) {
 					builder.addLine(announcement.title);
 				}
 
@@ -146,5 +164,26 @@ public abstract class Announce {
 			Log.e(TAG, "@@getAnnouncementIds", e);
 			return null;
 		}
+	}
+
+	public static TLongSet getReadAnnouncementIds() {
+		final TLongSet res = new TLongHashSet();
+		final String s = Preferences.getString(Prefkey.announce_read_ids);
+		if (s != null) {
+			final long[] ids = App.getDefaultGson().fromJson(s, long[].class);
+			for (final long id : ids) {
+				res.add(id);
+			}
+		}
+		return res;
+	}
+
+	public static void markAsRead(final long[] announcementIds) {
+		if (announcementIds == null || announcementIds.length == 0) return;
+		final TLongSet read = getReadAnnouncementIds();
+		for (final long id : announcementIds) {
+			read.add(id);
+		}
+		Preferences.setString(Prefkey.announce_read_ids, App.getDefaultGson().toJson(announcementIds));
 	}
 }

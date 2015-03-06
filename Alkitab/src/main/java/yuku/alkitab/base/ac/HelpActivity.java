@@ -14,6 +14,7 @@ import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.VersesDialog;
+import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.util.IntArrayList;
@@ -136,6 +137,10 @@ public class HelpActivity extends BaseActivity {
 				super.onPageFinished(view, url);
 
 				setTitle(view.getTitle());
+
+				if (announcementIds != null) {
+					Announce.markAsRead(announcementIds);
+				}
 			}
 		});
 	}

@@ -119,4 +119,7 @@ public enum Prefkey {
 
 	/** Announce: last annoucement check (auto only). Unix time. */
 	announce_last_check,
+
+	/** Announce: read announcement ids. long[] in json. */
+	announce_read_ids,
 }
