@@ -69,6 +69,7 @@ import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Sync;
+import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.Jumper;
@@ -494,6 +495,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		if (!U.equals(getPackageName(), "yuku.alkitab") /* prevent self-import */ && Preferences.getInt(Prefkey.stop_import_yuku_alkitab_backups, 0) == 0 && thereIsYukuAlkitabBackupFiles()) {
 			startActivity(YukuAlkitabImportOfferActivity.createIntent());
 		}
+
+		Announce.checkAnnouncements();
 	}
 
 	private boolean thereIsYukuAlkitabBackupFiles() {

@@ -49,6 +49,6 @@ public class DevotionReminderReceiver extends BroadcastReceiver {
 		Notification n = b.build();
 
 		NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		nm.notify(0, n);
+		nm.notify(R.id.NOTIF_reminder, n);
 	}
 }
