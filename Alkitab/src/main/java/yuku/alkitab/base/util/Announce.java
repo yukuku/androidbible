@@ -2,6 +2,7 @@ package yuku.alkitab.base.util;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
@@ -14,6 +15,7 @@ import com.squareup.okhttp.Request;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
+import yuku.alkitab.base.ac.HelpActivity;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
@@ -82,11 +84,17 @@ public abstract class Announce {
 			// sort announcements by createTime desc
 			Arrays.sort(result.announcements, (lhs, rhs) -> rhs.createTime - lhs.createTime);
 
+			final long[] announcementIds = new long[result.announcements.length];
+			for (int i = 0; i < result.announcements.length; i++) {
+				announcementIds[i] = result.announcements[i].id;
+			}
+
 			final NotificationCompat.Builder base = new NotificationCompat.Builder(App.context)
 				.setContentTitle(App.context.getString(R.string.announce_notif_title, App.context.getString(R.string.app_name)))
-				.setContentText(result.announcements.length == 1? result.announcements[0].title: App.context.getString(R.string.announce_notif_number_new_announcements, result.announcements.length))
+				.setContentText(result.announcements.length == 1 ? result.announcements[0].title : App.context.getString(R.string.announce_notif_number_new_announcements, result.announcements.length))
 				.setSmallIcon(R.drawable.ic_stat_announce)
 				.setColor(App.context.getResources().getColor(R.color.accent))
+				.setContentIntent(PendingIntent.getActivity(App.context, Arrays.hashCode(announcementIds), HelpActivity.createViewAnnouncementIntent(announcementIds), PendingIntent.FLAG_UPDATE_CURRENT))
 				.setAutoCancel(true);
 
 			final Notification n;

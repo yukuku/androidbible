@@ -19,16 +19,20 @@ import yuku.alkitab.debug.R;
 import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabintegration.display.Launcher;
 
+import java.util.Locale;
+
 public class HelpActivity extends BaseActivity {
 	private static final String EXTRA_page = "customPage";
 	private static final String EXTRA_showMessagePanel = "showMessagePanel";
 	private static final String EXTRA_message = "message";
 	private static final String EXTRA_okIntent = "okIntent";
+	private static final String EXTRA_announcementIds = "announcementIds";
 
 	WebView webview;
 	View bOk;
 	View bCancel;
 	Intent okIntent;
+	long[] announcementIds;
 
 	public static Intent createIntent(String page, boolean showMessagePanel, String message, Intent okIntent) {
 		Intent res = new Intent(App.context, HelpActivity.class);
@@ -37,6 +41,11 @@ public class HelpActivity extends BaseActivity {
 		res.putExtra(EXTRA_message, message);
 		res.putExtra(EXTRA_okIntent, okIntent);
 		return res;
+	}
+
+	public static Intent createViewAnnouncementIntent(final long[] announcementIds) {
+		return new Intent(App.context, HelpActivity.class)
+			.putExtra(EXTRA_announcementIds, announcementIds);
 	}
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
@@ -50,19 +59,19 @@ public class HelpActivity extends BaseActivity {
 		TextView tMessage = V.get(this, R.id.tMessage);
 
 		WebSettings webSettings = webview.getSettings();
+		//noinspection deprecation
 		webSettings.setSavePassword(false);
 		webSettings.setSaveFormData(false);
 		webSettings.setJavaScriptEnabled(false);
-		webSettings.setSupportZoom(true);
-		webSettings.setBuiltInZoomControls(true);
 
 		bOk.setOnClickListener(bOk_click);
 		bCancel.setOnClickListener(bCancel_click);
 
 		final String page = getIntent().getStringExtra(EXTRA_page);
 		okIntent = getIntent().getParcelableExtra(EXTRA_okIntent);
+		announcementIds = getIntent().getLongArrayExtra(EXTRA_announcementIds);
 
-		String message = getIntent().getStringExtra(EXTRA_message);
+		final String message = getIntent().getStringExtra(EXTRA_message);
 		tMessage.setText(message);
 
 		final boolean showMessagePanel = getIntent().getBooleanExtra(EXTRA_showMessagePanel, false);
@@ -72,6 +81,9 @@ public class HelpActivity extends BaseActivity {
 
 		if (page != null) {
 			webview.loadUrl("file:///android_asset/" + page);
+		} else if (announcementIds != null) {
+			final Locale locale = getResources().getConfiguration().locale;
+			webview.loadUrl("https://alkitab-host.appspot.com/announce/view?ids=" + App.getDefaultGson().toJson(announcementIds) + (locale == null ? "" : ("&locale=" + locale.toString())));
 		}
 
 		webview.setWebViewClient(new WebViewClient() {

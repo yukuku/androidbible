@@ -503,7 +503,7 @@
 	<string name="marker_migrate_filename_dated">%1$s dated %2$s</string>
 
 	<!-- Announcements -->
-	<string name="announce_notif_title">%s Announcement</string>
+	<string name="announce_notif_title">%s Announcements</string>
 	<string name="announce_notif_number_new_announcements">%s new announcements</string>
 
 </resources>
