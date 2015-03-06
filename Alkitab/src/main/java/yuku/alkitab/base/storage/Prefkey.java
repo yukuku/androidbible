@@ -116,4 +116,7 @@ public enum Prefkey {
 	 * 2: imported already
 	 */
 	stop_import_yuku_alkitab_backups,
+
+	/** Announce: last annoucement check (auto only). Unix time. */
+	announce_last_check,
 }

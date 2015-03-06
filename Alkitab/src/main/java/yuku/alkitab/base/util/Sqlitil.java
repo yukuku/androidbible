@@ -21,7 +21,7 @@ public class Sqlitil {
 	};
 
 	public static int nowDateTime() {
-		return (int) (new Date().getTime() / 1000);
+		return (int) (System.currentTimeMillis() / 1000);
 	}
 
 	/** Convert Date to unix time */
@@ -37,13 +37,4 @@ public class Sqlitil {
 	public static String toLocaleDateMedium(Date date) {
 		return mediumDateFormat.get().format(date);
 	}
-	
-	public static String toLocaleDateMedium(int date) {
-		 return toLocaleDateMedium(new Date((long)date * 1000));
-	}
-
-	public static String toLocalDateTimeSimple(Date date) {
-		return mediumDateFormat.get().format(date) + ", " + timeFormat.get().format(date);
-	}
-
 }
