@@ -22,12 +22,6 @@
 		android:title="@string/menu_compare" />
 
 	<item
-		android:id="@+id/menuVersions"
-		android:icon="@drawable/ic_menu_versions"
-		app:showAsAction="always"
-		android:title="@string/versi" />
-
-	<item
 		android:id="@+id/menuAddSomething"
 		android:icon="@drawable/ic_menu_add_light"
 		app:showAsAction="always"

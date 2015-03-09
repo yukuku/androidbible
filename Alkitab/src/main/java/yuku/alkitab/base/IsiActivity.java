@@ -1892,9 +1892,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			menuAddNote.setVisible(contiguous);
 			menuCompare.setVisible(single);
 
-			final MenuItem menuVersions = menu.findItem(R.id.menuVersions);
-			menuVersions.setVisible(activeSplitVersion == null);
-
 			// show selected verses
 			if (single) {
 				mode.setSubtitle(R.string.verse_select_one_verse_selected);
@@ -1962,9 +1959,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 						dialog.dismiss();
 					}
 				});
-			} return true;
-			case R.id.menuVersions: {
-				openVersionsDialog();
 			} return true;
 			case R.id.menuAddBookmark: {
 				// contract: this menu only appears when contiguous verses are selected
