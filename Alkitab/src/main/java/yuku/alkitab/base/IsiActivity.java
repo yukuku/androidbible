@@ -963,8 +963,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		history.save();
-
-		lsText.setKeepScreenOn(false);
 	}
 	
 	@Override protected void onStart() {
@@ -972,9 +970,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		applyPreferences();
 
-		if (Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default))) {
-			lsText.setKeepScreenOn(true);
-		}
+		getWindow().getDecorView().setKeepScreenOn(Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default)));
 	}
 	
 	@Override public void onBackPressed() {

@@ -441,6 +441,8 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				displaySong(bookName, S.getSongDb().getSong(bookName, code), true);
 			}
 		}
+
+		getWindow().getDecorView().setKeepScreenOn(Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default)));
 	}
 
 	@Override
