@@ -34,6 +34,7 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 	ButtonPressListener buttonPressListener;
 	int primaryColor;
 	int accentColor;
+	Paint accentColorPaint = new Paint();
 
 	public enum Button {
 		start,
@@ -65,6 +66,8 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 
 		primaryColor = getResources().getColor(R.color.primary);
 		accentColor = getResources().getColor(R.color.accent);
+		accentColorPaint.setColor(accentColor);
+		accentColorPaint.setAntiAlias(true);
 
 		rotatelength = getResources().getDimensionPixelSize(R.dimen.split_handle_thickness);
 	}
@@ -77,7 +80,7 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 		this.label1 = label1;
 		invalidate();
 	}
-	
+
 	public void setLabel2(String label2) {
 		this.label2 = label2;
 		invalidate();
@@ -162,37 +165,42 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 			thickness = getWidth();
 		}
 
-		if (label1down || label2down || rotatedown) {
-			canvas.save();
-
-			if (rotatedown) {
-				final float fr1 = (length - rotatelength) * 0.5f;
-				final float to1 = (length + rotatelength) * 0.5f;
-				if (orientation == Orientation.vertical) canvas.clipRect(fr1, 0, to1, thickness);
-				else canvas.clipRect(0, fr1, thickness, to1);
-			} else if (label1down) {
-				if (orientation == Orientation.vertical) canvas.clipRect(0, 0, label1length, thickness);
-				else canvas.clipRect(0, 0, thickness, label1length);
-			} else if (label2down) {
-				final float fr1 = length - label2length;
-				if (orientation == Orientation.vertical) canvas.clipRect(fr1, 0, length, thickness);
-				else canvas.clipRect(0, fr1, thickness, length);
-			}
-
-			canvas.drawColor(accentColor);
-			canvas.restore();
-		} else {
-			if (isPressed()) { // not label1 nor label2
-				canvas.drawColor(accentColor);
-			}
-		}
-
 		final float bezelThickness = 1.5f * density;
 
 		// draw bezel only when vertical
 		if (orientation == Orientation.vertical) {
 			bezelPaint.setColor(0xff111111);
 			canvas.drawRect(0, thickness - (int) (bezelThickness + 0.5f), length, thickness, bezelPaint);
+		}
+
+		if (label1down || label2down || rotatedown) {
+
+			if (rotatedown) {
+				final float cl = length * 0.5f;
+				final float ct = thickness * 0.5f;
+				final float r = rotatelength * 0.75f;
+
+				if (orientation == Orientation.vertical) canvas.drawCircle(cl, ct, r, accentColorPaint);
+				else canvas.drawCircle(ct, cl, r, accentColorPaint);
+			} else {
+				canvas.save();
+
+				if (label1down) {
+					if (orientation == Orientation.vertical) canvas.clipRect(0, 0, label1length, thickness);
+					else canvas.clipRect(0, 0, thickness, label1length);
+				} else if (label2down) {
+					final float fr1 = length - label2length;
+					if (orientation == Orientation.vertical) canvas.clipRect(fr1, 0, length, thickness);
+					else canvas.clipRect(0, fr1, thickness, length);
+				}
+
+				canvas.drawColor(accentColor);
+				canvas.restore();
+			}
+		} else {
+			if (isPressed()) { // not label1 nor label2
+				canvas.drawColor(accentColor);
+			}
 		}
 
 		final float pad = 8.f * density;
@@ -214,7 +222,7 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 
 			label1length = 16 * density + labelPaint.measureText(label1);
 		}
-		
+
 		if (label2 != null) {
 			if (orientation == Orientation.horizontal) {
 				canvas.save();
