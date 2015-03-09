@@ -273,7 +273,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	Boolean hasEsvsbAsal;
 	Version activeSplitVersion;
 	String activeSplitVersionId;
-	LabeledSplitHandleButton.Orientation splitOrientation;
 
 	CallbackSpan.OnClickListener<Object> parallelListener = new CallbackSpan.OnClickListener<Object>() {
 		@Override public void onClick(View widget, Object data) {
@@ -397,7 +396,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		// for splitting
 		splitHandleButton.setListener(splitHandleButton_listener);
-		splitHandleButton.setOnLabelPressed(splitHandleButton_labelPressed);
+		splitHandleButton.setButtonPressListener(splitHandleButton_labelPressed);
 
 		// migrate old history?
 		History.migrateOldHistoryWhenNeeded();
@@ -461,9 +460,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (lastSplitVersionId != null) {
 				final String splitOrientation = Preferences.getString(Prefkey.lastSplitOrientation);
 				if (LabeledSplitHandleButton.Orientation.horizontal.name().equals(splitOrientation)) {
-					this.splitOrientation = LabeledSplitHandleButton.Orientation.horizontal;
+					splitHandleButton.setOrientation(LabeledSplitHandleButton.Orientation.horizontal);
 				} else {
-					this.splitOrientation = LabeledSplitHandleButton.Orientation.vertical;
+					splitHandleButton.setOrientation(LabeledSplitHandleButton.Orientation.vertical);
 				}
 
 				final MVersion splitMv = getVersionFromVersionId(lastSplitVersionId);
@@ -968,9 +967,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				Preferences.remove(Prefkey.lastSplitVersionId);
 			} else {
 				Preferences.setString(Prefkey.lastSplitVersionId, activeSplitVersionId);
-				if (splitOrientation != null) {
-					Preferences.setString(Prefkey.lastSplitOrientation, splitOrientation.name());
-				}
+				Preferences.setString(Prefkey.lastSplitOrientation, splitHandleButton.getOrientation().name());
 			}
 		} finally {
 			Preferences.unhold();
@@ -1242,7 +1239,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			splitHandleButton.setVisibility(View.VISIBLE);
 
 			final int splitHandleThickness = getResources().getDimensionPixelSize(R.dimen.split_handle_thickness);
-			if (splitOrientation == LabeledSplitHandleButton.Orientation.vertical) {
+			if (splitHandleButton.getOrientation() == LabeledSplitHandleButton.Orientation.vertical) {
 				splitRoot.setOrientation(LinearLayout.VERTICAL);
 
 				final int totalHeight = splitRoot.getHeight();
@@ -2104,34 +2101,53 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	}
 
-	SplitHandleButton.SplitHandleButtonListener splitHandleButton_listener = new SplitHandleButton.SplitHandleButtonListener() {
-		int aboveH;
-		int handleH;
-		int rootH;
+	final SplitHandleButton.SplitHandleButtonListener splitHandleButton_listener = new SplitHandleButton.SplitHandleButtonListener() {
+		int first;
+		int handle;
+		int root;
 		
 		@Override public void onHandleDragStart() {
-			aboveH = lsSplit0.getHeight();
-			handleH = splitHandleButton.getHeight();
-			rootH = splitRoot.getHeight();
+			splitRoot.setOnefingerEnabled(false);
+
+			if (splitHandleButton.getOrientation() == SplitHandleButton.Orientation.vertical) {
+				first = lsSplit0.getHeight();
+				handle = splitHandleButton.getHeight();
+				root = splitRoot.getHeight();
+			} else {
+				first = lsSplit0.getWidth();
+				handle = splitHandleButton.getWidth();
+				root = splitRoot.getWidth();
+			}
 		}
-		
-		@Override public void onHandleDragMove(float dySinceLast, float dySinceStart) {
-			int newH = (int) (aboveH + dySinceStart);
-			int maxH = rootH - handleH;
-			ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
+
+		@Override
+		public void onHandleDragMoveX(final float dxSinceLast, final float dxSinceStart) {
+			final int newW = (int) (first + dxSinceStart);
+			final int maxW = root - handle;
+			final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
+			lp.width = newW < 0? 0: newW > maxW? maxW: newW;
+			lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
+			lsSplit0.setLayoutParams(lp);
+		}
+
+		@Override public void onHandleDragMoveY(float dySinceLast, float dySinceStart) {
+			final int newH = (int) (first + dySinceStart);
+			final int maxH = root - handle;
+			final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
+			lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
 			lp.height = newH < 0? 0: newH > maxH? maxH: newH;
 			lsSplit0.setLayoutParams(lp);
 		}
 		
 		@Override public void onHandleDragStop() {
+			splitRoot.setOnefingerEnabled(true);
 		}
 	};
 
-	LabeledSplitHandleButton.OnLabelPressed splitHandleButton_labelPressed = which -> {
+	LabeledSplitHandleButton.ButtonPressListener splitHandleButton_labelPressed = which -> {
 		switch (which) {
 			case rotate:
 				closeSplitDisplay();
-				splitOrientation = splitOrientation == LabeledSplitHandleButton.Orientation.vertical ? LabeledSplitHandleButton.Orientation.horizontal : LabeledSplitHandleButton.Orientation.vertical;
 				openSplitDisplay();
 				break;
 			case start:

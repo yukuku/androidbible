@@ -30,7 +30,7 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 	boolean rotatedown = false;
 	float density;
 
-	OnLabelPressed onLabelPressed;
+	ButtonPressListener buttonPressListener;
 	int primaryColor;
 	int accentColor;
 
@@ -40,12 +40,7 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 		rotate,
 	}
 
-	public enum Orientation {
-		vertical, // top bottom
-		horizontal, // left right
-	}
-
-	public interface OnLabelPressed {
+	public interface ButtonPressListener {
 		void onLabelPressed(Button button);
 	}
 
@@ -69,8 +64,8 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 		rotatewidth = getResources().getDimensionPixelSize(R.dimen.split_handle_thickness);
 	}
 
-	public void setOnLabelPressed(final OnLabelPressed onLabelPressed) {
-		this.onLabelPressed = onLabelPressed;
+	public void setButtonPressListener(final ButtonPressListener buttonPressListener) {
+		this.buttonPressListener = buttonPressListener;
 	}
 
 	public void setLabel1(String label1) {
@@ -99,17 +94,18 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 				rotatedown = x >= (getWidth() - rotatewidth) * 0.5f && x <= (getWidth() + rotatewidth) * 0.5f;
 			}
 
-			if (action == MotionEvent.ACTION_UP && onLabelPressed != null) {
+			if (action == MotionEvent.ACTION_UP && buttonPressListener != null) {
 				label1pressed = label1down && x < maxLabel1w;
 				label2pressed = label2down && x > getWidth() - maxLabel2w;
 				rotatepressed = rotatedown && x >= (getWidth() - rotatewidth) * 0.5f && x <= (getWidth() + rotatewidth) * 0.5f;
 
 				if (rotatepressed) {
-					post(() -> onLabelPressed.onLabelPressed(Button.rotate));
+					orientation = orientation == Orientation.horizontal ? Orientation.vertical : Orientation.horizontal;
+					post(() -> buttonPressListener.onLabelPressed(Button.rotate));
 				} else if (label1pressed) {
-					post(() -> onLabelPressed.onLabelPressed(Button.start));
+					post(() -> buttonPressListener.onLabelPressed(Button.start));
 				} else if (label2pressed) {
-					post(() -> onLabelPressed.onLabelPressed(Button.end));
+					post(() -> buttonPressListener.onLabelPressed(Button.end));
 				}
 
 				if (rotatepressed || label1pressed || label2pressed) {
@@ -120,14 +116,14 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 				}
 			}
 
-			if (action == MotionEvent.ACTION_CANCEL) {
+			if ((action == MotionEvent.ACTION_UP && !label1pressed && !label2pressed && !rotatepressed) || action == MotionEvent.ACTION_CANCEL) {
 				label1down = label1pressed = false;
 				label2down = label2pressed = false;
 				rotatedown = rotatepressed = false;
 			}
 		}
 
-		boolean res = super.onTouchEvent(event);
+		final boolean res = super.onTouchEvent(event);
 		postInvalidate();
 		return res;
 	}
