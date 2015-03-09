@@ -251,7 +251,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	VersesView lsSplit1;
 	TextView tSplitEmpty;
 	TwofingerLinearLayout splitRoot;
-	View splitHandle;
 	LabeledSplitHandleButton splitHandleButton;
 	GotoButton bGoto;
 	ImageButton bLeft;
@@ -347,7 +346,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		lsSplit1 = V.get(this, R.id.lsSplit1);
 		tSplitEmpty = V.get(this, R.id.tSplitEmpty);
 		splitRoot = V.get(this, R.id.splitRoot);
-		splitHandle = V.get(this, R.id.splitHandle);
 		splitHandleButton = V.get(this, R.id.splitHandleButton);
 		floater = V.get(this, R.id.floater);
 
@@ -1218,14 +1216,14 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	void openSplitDisplay() {
-		if (splitHandle.getVisibility() == View.VISIBLE) {
+		if (splitHandleButton.getVisibility() == View.VISIBLE) {
 			return; // it's already split, no need to do anything
 		}
 
 		// do it on after the layout pass
 		overlayContainer.requestLayout();
 		overlayContainer.post(() -> {
-			splitHandle.setVisibility(View.VISIBLE);
+			splitHandleButton.setVisibility(View.VISIBLE);
 			int splitHandleHeight = getResources().getDimensionPixelSize(R.dimen.split_handle_height);
 			int totalHeight = splitRoot.getHeight();
 			int masterHeight = totalHeight / 2 - splitHandleHeight / 2;
@@ -1246,11 +1244,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	void closeSplitDisplay() {
-		if (splitHandle.getVisibility() == View.GONE) {
+		if (splitHandleButton.getVisibility() == View.GONE) {
 			return; // it's already not split, no need to do anything
 		}
 
-		splitHandle.setVisibility(View.GONE);
+		splitHandleButton.setVisibility(View.GONE);
 		lsSplit1.setVisibility(View.GONE);
 		ViewGroup.LayoutParams lp = lsText.getLayoutParams();
 		lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -2058,7 +2056,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		
 		@Override public void onHandleDragStart() {
 			aboveH = lsText.getHeight();
-			handleH = splitHandle.getHeight();
+			handleH = splitHandleButton.getHeight();
 			rootH = splitRoot.getHeight();
 		}
 		
