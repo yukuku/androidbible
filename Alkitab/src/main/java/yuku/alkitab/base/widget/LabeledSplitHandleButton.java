@@ -19,20 +19,34 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 	Paint labelPaint = new Paint();
 	Paint bezelPaint = new Paint();
 	float textSize = 14f;
-	float label1width = 0;
-	float label2width = 0;
+	float label1width;
+	float label2width;
+	float rotatewidth;
 	boolean label1pressed = false;
 	boolean label2pressed = false;
+	boolean rotatepressed = false;
 	boolean label1down = false;
 	boolean label2down = false;
+	boolean rotatedown = false;
 	float density;
 
 	OnLabelPressed onLabelPressed;
 	int primaryColor;
 	int accentColor;
 
+	public enum Button {
+		start,
+		end,
+		rotate,
+	}
+
+	public enum Orientation {
+		vertical, // top bottom
+		horizontal, // left right
+	}
+
 	public interface OnLabelPressed {
-		void onLabelPressed(int which);
+		void onLabelPressed(Button button);
 	}
 
 	public LabeledSplitHandleButton(Context context, AttributeSet attrs) {
@@ -51,6 +65,8 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 
 		primaryColor = getResources().getColor(R.color.primary);
 		accentColor = getResources().getColor(R.color.accent);
+
+		rotatewidth = getResources().getDimensionPixelSize(R.dimen.split_handle_thickness);
 	}
 
 	public void setOnLabelPressed(final OnLabelPressed onLabelPressed) {
@@ -69,7 +85,7 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 
 	@Override
 	public boolean onTouchEvent(final MotionEvent event) {
-		// check if touch is at label1, label2 or neither
+		// check if touch is at label1, label2, rotate button, or neither
 		int maxLabel1w = (int) Math.min(140 * density, label1width);
 		int maxLabel2w = (int) Math.min(140 * density, label2width);
 
@@ -80,31 +96,34 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 			if (action == MotionEvent.ACTION_DOWN) {
 				label1down = x < maxLabel1w;
 				label2down = x > getWidth() - maxLabel2w;
+				rotatedown = x >= (getWidth() - rotatewidth) * 0.5f && x <= (getWidth() + rotatewidth) * 0.5f;
 			}
 
 			if (action == MotionEvent.ACTION_UP && onLabelPressed != null) {
 				label1pressed = label1down && x < maxLabel1w;
 				label2pressed = label2down && x > getWidth() - maxLabel2w;
+				rotatepressed = rotatedown && x >= (getWidth() - rotatewidth) * 0.5f && x <= (getWidth() + rotatewidth) * 0.5f;
 
-				if (label1pressed) {
-					post(new Runnable() {
-						@Override
-						public void run() {
-							onLabelPressed.onLabelPressed(1);
-							label1down = false;
-							postInvalidate();
-						}
-					});
+				if (rotatepressed) {
+					post(() -> onLabelPressed.onLabelPressed(Button.rotate));
+				} else if (label1pressed) {
+					post(() -> onLabelPressed.onLabelPressed(Button.start));
 				} else if (label2pressed) {
-					post(new Runnable() {
-						@Override
-						public void run() {
-							onLabelPressed.onLabelPressed(2);
-							label2down = false;
-							postInvalidate();
-						}
+					post(() -> onLabelPressed.onLabelPressed(Button.end));
+				}
+
+				if (rotatepressed || label1pressed || label2pressed) {
+					post(() -> {
+						rotatedown = label1down = label2down = false;
+						postInvalidate();
 					});
 				}
+			}
+
+			if (action == MotionEvent.ACTION_CANCEL) {
+				label1down = label1pressed = false;
+				label2down = label2pressed = false;
+				rotatedown = rotatepressed = false;
 			}
 		}
 
@@ -119,9 +138,11 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 		// always draw unpressed bg color first
 		canvas.drawColor(primaryColor);
 
-		if (label1down || label2down) {
+		if (label1down || label2down || rotatedown) {
 			canvas.save();
-			if (label1down) {
+			if (rotatedown) {
+				canvas.clipRect((getWidth() - rotatewidth) * 0.5f, 0, (getWidth() + rotatewidth) * 0.5f, getHeight());
+			} else if (label1down) {
 				canvas.clipRect(0, 0, label1width, getHeight());
 			} else if (label2down) {
 				canvas.clipRect(getWidth() - label2width, 0, getWidth(), getHeight());

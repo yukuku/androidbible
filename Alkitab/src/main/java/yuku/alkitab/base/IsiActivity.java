@@ -37,6 +37,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -272,6 +273,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	Boolean hasEsvsbAsal;
 	Version activeSplitVersion;
 	String activeSplitVersionId;
+	LabeledSplitHandleButton.Orientation splitOrientation;
 
 	CallbackSpan.OnClickListener<Object> parallelListener = new CallbackSpan.OnClickListener<Object>() {
 		@Override public void onClick(View widget, Object data) {
@@ -457,8 +459,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		{ // load last split version. This must be after load book, chapter, and verse.
 			final String lastSplitVersionId = Preferences.getString(Prefkey.lastSplitVersionId, null);
 			if (lastSplitVersionId != null) {
+				final String splitOrientation = Preferences.getString(Prefkey.lastSplitOrientation);
+				if (LabeledSplitHandleButton.Orientation.horizontal.name().equals(splitOrientation)) {
+					this.splitOrientation = LabeledSplitHandleButton.Orientation.horizontal;
+				} else {
+					this.splitOrientation = LabeledSplitHandleButton.Orientation.vertical;
+				}
+
 				final MVersion splitMv = getVersionFromVersionId(lastSplitVersionId);
-				final MVersion splitMvActual = splitMv == null? S.getMVersionInternal(): splitMv;
+				final MVersion splitMvActual = splitMv == null ? S.getMVersionInternal() : splitMv;
 
 				if (loadSplitVersion(splitMvActual)) {
 					openSplitDisplay();
@@ -955,7 +964,14 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			Preferences.setInt(Prefkey.lastChapter, chapter_1);
 			Preferences.setInt(Prefkey.lastVerse, lsSplit0.getVerseBasedOnScroll());
 			Preferences.setString(Prefkey.lastVersionId, S.activeVersionId);
-			Preferences.setString(Prefkey.lastSplitVersionId, activeSplitVersion == null ? null : activeSplitVersionId);
+			if (activeSplitVersion == null) {
+				Preferences.remove(Prefkey.lastSplitVersionId);
+			} else {
+				Preferences.setString(Prefkey.lastSplitVersionId, activeSplitVersionId);
+				if (splitOrientation != null) {
+					Preferences.setString(Prefkey.lastSplitOrientation, splitOrientation.name());
+				}
+			}
 		} finally {
 			Preferences.unhold();
 		}
@@ -1224,18 +1240,53 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		overlayContainer.requestLayout();
 		overlayContainer.post(() -> {
 			splitHandleButton.setVisibility(View.VISIBLE);
-			int splitHandleHeight = getResources().getDimensionPixelSize(R.dimen.split_handle_height);
-			int totalHeight = splitRoot.getHeight();
-			int masterHeight = totalHeight / 2 - splitHandleHeight / 2;
 
-			// divide by 2 the screen space
-			ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
-			lp.height = masterHeight;
-			lsSplit0.setLayoutParams(lp);
+			final int splitHandleThickness = getResources().getDimensionPixelSize(R.dimen.split_handle_thickness);
+			if (splitOrientation == LabeledSplitHandleButton.Orientation.vertical) {
+				splitRoot.setOrientation(LinearLayout.VERTICAL);
 
-			// no need to set height, because it has been set to match_parent, so it takes
-			// the remaining space.
-			lsSplit1.setVisibility(View.VISIBLE);
+				final int totalHeight = splitRoot.getHeight();
+				final int masterHeight = totalHeight / 2 - splitHandleThickness / 2;
+
+				{ // divide by 2 the screen space
+					final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
+					lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+					lp.height = masterHeight;
+					lsSplit0.setLayoutParams(lp);
+				}
+
+				// no need to set height, because it has been set to match_parent, so it takes the remaining space.
+				lsSplit1.setVisibility(View.VISIBLE);
+
+				{
+					final ViewGroup.LayoutParams lp = splitHandleButton.getLayoutParams();
+					lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+					lp.height = splitHandleThickness;
+					splitHandleButton.setLayoutParams(lp);
+				}
+			} else {
+				splitRoot.setOrientation(LinearLayout.HORIZONTAL);
+
+				final int totalWidth = splitRoot.getWidth();
+				final int masterWidth = totalWidth / 2 - splitHandleThickness / 2;
+
+				{ // divide by 2 the screen space
+					final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
+					lp.width = masterWidth;
+					lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
+					lsSplit0.setLayoutParams(lp);
+				}
+
+				// no need to set width, because it has been set to match_parent, so it takes the remaining space.
+				lsSplit1.setVisibility(View.VISIBLE);
+
+				{
+					final ViewGroup.LayoutParams lp = splitHandleButton.getLayoutParams();
+					lp.width = splitHandleThickness;
+					lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
+					splitHandleButton.setLayoutParams(lp);
+				}
+			}
 		});
 
 		bVersion.setVisibility(View.GONE);
@@ -1250,9 +1301,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		splitHandleButton.setVisibility(View.GONE);
 		lsSplit1.setVisibility(View.GONE);
-		ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
-		lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
-		lsSplit0.setLayoutParams(lp);
+
+		{
+			final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
+			lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+			lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
+			lsSplit0.setLayoutParams(lp);
+		}
 
 		bVersion.setVisibility(View.VISIBLE);
 		if (actionMode != null) actionMode.invalidate();
@@ -2073,10 +2128,18 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	};
 
 	LabeledSplitHandleButton.OnLabelPressed splitHandleButton_labelPressed = which -> {
-		if (which == 1) { // left
-			openVersionsDialog();
-		} else if (which == 2) { // right
-			openSplitVersionsDialog();
+		switch (which) {
+			case rotate:
+				closeSplitDisplay();
+				splitOrientation = splitOrientation == LabeledSplitHandleButton.Orientation.vertical ? LabeledSplitHandleButton.Orientation.horizontal : LabeledSplitHandleButton.Orientation.vertical;
+				openSplitDisplay();
+				break;
+			case start:
+				openVersionsDialog();
+				break;
+			case end:
+				openSplitVersionsDialog();
+				break;
 		}
 	};
 

@@ -103,6 +103,7 @@ public enum Prefkey {
 	lastVerse,
 	lastVersionId,
 	lastSplitVersionId,
+	lastSplitOrientation, // string "horizontal" or "vertical"
 
 	/**
 	 * The whole history (with many entries)

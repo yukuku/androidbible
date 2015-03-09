@@ -34,7 +34,7 @@
 			<yuku.alkitab.base.widget.LabeledSplitHandleButton
 				android:id="@+id/splitHandleButton"
 				android:layout_width="match_parent"
-				android:layout_height="@dimen/split_handle_height"
+				android:layout_height="@dimen/split_handle_thickness"
 				android:visibility="gone" />
 
 			<FrameLayout
