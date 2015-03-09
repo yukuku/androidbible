@@ -247,7 +247,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	FrameLayout overlayContainer;
 	View root;
-	VersesView lsText;
+	VersesView lsSplit0;
 	VersesView lsSplit1;
 	TextView tSplitEmpty;
 	TwofingerLinearLayout splitRoot;
@@ -342,14 +342,14 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		overlayContainer = V.get(this, R.id.overlayContainer);
 		root = V.get(this, R.id.root);
-		lsText = V.get(this, R.id.lsSplit0);
+		lsSplit0 = V.get(this, R.id.lsSplit0);
 		lsSplit1 = V.get(this, R.id.lsSplit1);
 		tSplitEmpty = V.get(this, R.id.tSplitEmpty);
 		splitRoot = V.get(this, R.id.splitRoot);
 		splitHandleButton = V.get(this, R.id.splitHandleButton);
 		floater = V.get(this, R.id.floater);
 
-		lsText.setName("lsText");
+		lsSplit0.setName("lsSplit0");
 		lsSplit1.setName("lsSplit1");
 
 		splitRoot.setListener(splitRoot_listener);
@@ -367,7 +367,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		floater.setListener(floater_listener);
 
-		lsText.setOnKeyListener((v, keyCode, event) -> {
+		lsSplit0.setOnKeyListener((v, keyCode, event) -> {
 			int action = event.getAction();
 			if (action == KeyEvent.ACTION_DOWN) {
 				return press(keyCode);
@@ -378,11 +378,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		});
 
 		// listeners
-		lsText.setParallelListener(parallelListener);
-		lsText.setAttributeListener(attributeListener);
-		lsText.setInlineLinkSpanFactory(new VerseInlineLinkSpanFactory(lsText));
-		lsText.setSelectedVersesListener(lsText_selectedVerses);
-		lsText.setOnVerseScrollListener(lsText_verseScroll);
+		lsSplit0.setParallelListener(parallelListener);
+		lsSplit0.setAttributeListener(attributeListener);
+		lsSplit0.setInlineLinkSpanFactory(new VerseInlineLinkSpanFactory(lsSplit0));
+		lsSplit0.setSelectedVersesListener(lsText_selectedVerses);
+		lsSplit0.setOnVerseScrollListener(lsText_verseScroll);
 
 		// additional setup for split1
 		lsSplit1.setVerseSelectionMode(VersesView.VerseSelectionMode.multiple);
@@ -470,7 +470,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		if (selectVerse) {
 			for (int i = 0; i < selectVerseCount; i++) {
 				final int verse_1 = Ari.toVerse(openingAri) + i;
-				lsText.setVerseSelected(verse_1, true);
+				lsSplit0.setVerseSelected(verse_1, true);
 			}
 
 			if (!U.equals(getPackageName(), "yuku.alkitab") /* prevent self-import */
@@ -617,7 +617,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			nfcAdapter.setNdefPushMessageCallback(event -> {
 				JSONObject obj = new JSONObject();
 				try {
-					obj.put("ari", Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, lsText.getVerseBasedOnScroll())); //$NON-NLS-1$
+					obj.put("ari", Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, lsSplit0.getVerseBasedOnScroll())); //$NON-NLS-1$
 				} catch (JSONException e) { // won't happen
 				}
 				byte[] payload = obj.toString().getBytes();
@@ -727,7 +727,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			splitHandleButton.setLabel1("\u25b2 " + getSplitHandleVersionName(mv, version));
 
 			if (display) {
-				display(chapter_1, lsText.getVerseBasedOnScroll(), false);
+				display(chapter_1, lsSplit0.getVerseBasedOnScroll(), false);
 			}
 
 			return true;
@@ -791,7 +791,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			return true;
 		}
 		
-		VersesView.PressResult pressResult = lsText.press(keyCode);
+		VersesView.PressResult pressResult = lsSplit0.press(keyCode);
 		switch (pressResult.kind) {
 		case left:
 			bLeft_click();
@@ -875,7 +875,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		if (selectVerse) {
 			// select the verse only if the displayed verse is equal to the requested verse
 			if (ari == Ari.encode(this.activeBook.bookId, ari_cv)) {
-				lsText.setVerseSelected(Ari.toVerse(ari), true);
+				lsSplit0.setVerseSelected(Ari.toVerse(ari), true);
 			}
 		}
 	}
@@ -906,7 +906,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				if (isSplitVersion) {
 					res.append(U.removeSpecialCodes(lsSplit1.getVerse(verse_1)));
 				} else {
-					res.append(U.removeSpecialCodes(lsText.getVerse(verse_1)));
+					res.append(U.removeSpecialCodes(lsSplit0.getVerse(verse_1)));
 				}
 				res.append('\n');
 			}
@@ -920,7 +920,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				if (isSplitVersion) {
 					res.append(U.removeSpecialCodes(lsSplit1.getVerse(verse_1)));
 				} else {
-					res.append(U.removeSpecialCodes(lsText.getVerse(verse_1)));
+					res.append(U.removeSpecialCodes(lsSplit0.getVerse(verse_1)));
 				}
 			}
 		}
@@ -934,15 +934,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		{ // apply background color, and clear window background to prevent overdraw
 			getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 			root.setBackgroundColor(S.applied.backgroundColor);
-			lsText.setCacheColorHint(S.applied.backgroundColor);
+			lsSplit0.setCacheColorHint(S.applied.backgroundColor);
 			lsSplit1.setCacheColorHint(S.applied.backgroundColor);
 		}
 		
 		// necessary
-		lsText.invalidateViews();
+		lsSplit0.invalidateViews();
 		lsSplit1.invalidateViews();
 
-		SettingsActivity.setPaddingBasedOnPreferences(lsText);
+		SettingsActivity.setPaddingBasedOnPreferences(lsSplit0);
 		SettingsActivity.setPaddingBasedOnPreferences(lsSplit1);
 	}
 	
@@ -953,7 +953,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		try {
 			Preferences.setInt(Prefkey.lastBookId, this.activeBook.bookId);
 			Preferences.setInt(Prefkey.lastChapter, chapter_1);
-			Preferences.setInt(Prefkey.lastVerse, lsText.getVerseBasedOnScroll());
+			Preferences.setInt(Prefkey.lastVerse, lsSplit0.getVerseBasedOnScroll());
 			Preferences.setString(Prefkey.lastVersionId, S.activeVersionId);
 			Preferences.setString(Prefkey.lastSplitVersionId, activeSplitVersion == null ? null : activeSplitVersionId);
 		} finally {
@@ -984,7 +984,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 	
 	void bGoto_click() {
-		startActivityForResult(GotoActivity.createIntent(this.activeBook.bookId, this.chapter_1, lsText.getVerseBasedOnScroll()), REQCODE_goto);
+		startActivityForResult(GotoActivity.createIntent(this.activeBook.bookId, this.chapter_1, lsSplit0.getVerseBasedOnScroll()), REQCODE_goto);
 	}
 	
 	void bGoto_longClick() {
@@ -1229,9 +1229,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			int masterHeight = totalHeight / 2 - splitHandleHeight / 2;
 
 			// divide by 2 the screen space
-			ViewGroup.LayoutParams lp = lsText.getLayoutParams();
+			ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
 			lp.height = masterHeight;
-			lsText.setLayoutParams(lp);
+			lsSplit0.setLayoutParams(lp);
 
 			// no need to set height, because it has been set to match_parent, so it takes
 			// the remaining space.
@@ -1250,9 +1250,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		splitHandleButton.setVisibility(View.GONE);
 		lsSplit1.setVisibility(View.GONE);
-		ViewGroup.LayoutParams lp = lsText.getLayoutParams();
+		ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
 		lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
-		lsText.setLayoutParams(lp);
+		lsSplit0.setLayoutParams(lp);
 
 		bVersion.setVisibility(View.VISIBLE);
 		if (actionMode != null) actionMode.invalidate();
@@ -1275,7 +1275,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 					// select the verse only if the displayed verse is equal to the requested verse
 					if (Ari.encode(0, result.chapter_1, result.verse_1) == ari_cv) {
-						lsText.setVerseSelected(result.verse_1, true);
+						lsSplit0.setVerseSelected(result.verse_1, true);
 					}
 				} else {
 					// change book
@@ -1290,7 +1290,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 					// select the verse only if the displayed verse is equal to the requested verse
 					if (Ari.encode(result.bookId, result.chapter_1, result.verse_1) == Ari.encode(this.activeBook.bookId, ari_cv)) {
-						lsText.setVerseSelected(result.verse_1, true);
+						lsSplit0.setVerseSelected(result.verse_1, true);
 					}
 				}
 
@@ -1324,7 +1324,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		} else if (requestCode == REQCODE_edit_note_1 && resultCode == RESULT_OK) {
 			reloadBothAttributeMaps();
 		} else if (requestCode == REQCODE_edit_note_2 && resultCode == RESULT_OK) {
-			lsText.uncheckAllVerses(true);
+			lsSplit0.uncheckAllVerses(true);
 			reloadBothAttributeMaps();
 		}
 
@@ -1356,7 +1356,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		{ // main
 			this.uncheckVersesWhenActionModeDestroyed = false;
 			try {
-				boolean ok = loadChapterToVersesView(lsText, S.activeVersion, this.activeBook, chapter_1, current_chapter_1, uncheckAllVerses);
+				boolean ok = loadChapterToVersesView(lsSplit0, S.activeVersion, this.activeBook, chapter_1, current_chapter_1, uncheckAllVerses);
 				if (!ok) return 0;
 			} finally {
 				this.uncheckVersesWhenActionModeDestroyed = true;
@@ -1365,7 +1365,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			// tell activity
 			this.chapter_1 = chapter_1;
 
-			lsText.scrollToVerse(verse_1);
+			lsSplit0.scrollToVerse(verse_1);
 		}
 		
 		displaySplitFollowingMaster(verse_1);
@@ -1397,7 +1397,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	void displaySplitFollowingMaster() {
-		displaySplitFollowingMaster(lsText.getVerseBasedOnScroll());
+		displaySplitFollowingMaster(lsSplit0.getVerseBasedOnScroll());
 	}
 
 	private void displaySplitFollowingMaster(int verse_1) {
@@ -1565,7 +1565,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			final TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExisting(IsiActivity.this, _id);
 			dialog.setListener(new TypeBookmarkDialog.Listener() {
 				@Override public void onModifiedOrDeleted() {
-					lsText.reloadAttributeMap();
+					lsSplit0.reloadAttributeMap();
 
 					if (activeSplitVersion != null) {
 						lsSplit1.reloadAttributeMap();
@@ -1696,12 +1696,12 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			ProgressMarkRenameDialog.show(IsiActivity.this, progressMark, new ProgressMarkRenameDialog.Listener() {
 				@Override
 				public void onOked() {
-					lsText.uncheckAllVerses(true);
+					lsSplit0.uncheckAllVerses(true);
 				}
 
 				@Override
 				public void onDeleted() {
-					lsText.uncheckAllVerses(true);
+					lsSplit0.uncheckAllVerses(true);
 				}
 			});
 		}
@@ -1723,7 +1723,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 						final XrefDialog dialog = XrefDialog.newInstance(arif);
 
 						// TODO setSourceVersion here is not restored when dialog is restored
-						if (source == lsText) { // use activeVersion
+						if (source == lsSplit0) { // use activeVersion
 							dialog.setSourceVersion(S.activeVersion);
 						} else if (source == lsSplit1) { // use activeSplitVersion
 							dialog.setSourceVersion(activeSplitVersion);
@@ -1733,7 +1733,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 						dialog.show(fm, XrefDialog.class.getSimpleName());
 					} else if (type == Type.footnote) {
 						FootnoteEntry fe = null;
-						if (source == lsText) { // use activeVersion
+						if (source == lsSplit0) { // use activeVersion
 							fe = S.activeVersion.getFootnoteEntry(arif);
 						} else if (source == lsSplit1) { // use activeSplitVersion
 							fe = activeSplitVersion.getFootnoteEntry(arif);
@@ -1801,11 +1801,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		@Override public void onSomeVersesSelected(VersesView v) {
 			// synchronize the selection with the main view
 			IntArrayList selectedVerses = v.getSelectedVerses_1();
-			lsText.checkVerses(selectedVerses, true);
+			lsSplit0.checkVerses(selectedVerses, true);
 		}
 
 		@Override public void onNoVersesSelected(VersesView v) {
-			lsText.uncheckAllVerses(true);
+			lsSplit0.uncheckAllVerses(true);
 		}
 
 		@Override public void onVerseSingleClick(VersesView v, int verse_1) {}
@@ -1829,12 +1829,12 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	VersesView.OnVerseScrollListener lsSplit1_verseScroll = new VersesView.OnVerseScrollListener() {
 		@Override public void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop) {
 			if (!isPericope) {
-				lsText.scrollToVerse(verse_1, prop);
+				lsSplit0.scrollToVerse(verse_1, prop);
 			}
 		}
 
 		@Override public void onScrollToTop(VersesView v) {
-			lsText.scrollToTop();
+			lsSplit0.scrollToTop();
 		}
 	};
 	
@@ -1870,7 +1870,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			MenuItem menuAddNote = menu.findItem(R.id.menuAddNote);
 			MenuItem menuCompare = menu.findItem(R.id.menuCompare);
 
-			final IntArrayList selected = lsText.getSelectedVerses_1();
+			final IntArrayList selected = lsSplit0.getSelectedVerses_1();
 			final boolean single = selected.size() == 1;
 
 			boolean contiguous = true;
@@ -1901,7 +1901,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		@Override public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-			final IntArrayList selected = lsText.getSelectedVerses_1();
+			final IntArrayList selected = lsSplit0.getSelectedVerses_1();
 
 			if (selected.size() == 0) return true;
 
@@ -1915,7 +1915,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				}
 				
 				U.copyToClipboard(textToCopy);
-				lsText.uncheckAllVerses(true);
+				lsSplit0.uncheckAllVerses(true);
 				
 				Toast.makeText(App.context, getString(R.string.alamat_sudah_disalin, reference), Toast.LENGTH_SHORT).show();
 				mode.finish();
@@ -1943,7 +1943,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				intent.putExtra(EXTRA_verseUrl, verseUrl);
 				startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, reference)), REQCODE_share);
 
-				lsText.uncheckAllVerses(true);
+				lsSplit0.uncheckAllVerses(true);
 				mode.finish();
 			} return true;
 			case R.id.menuCompare: {
@@ -1971,7 +1971,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				TypeBookmarkDialog dialog = TypeBookmarkDialog.NewBookmark(IsiActivity.this, ari, verseCount);
 				dialog.setListener(new TypeBookmarkDialog.Listener() {
 					@Override public void onModifiedOrDeleted() {
-						lsText.uncheckAllVerses(true);
+						lsSplit0.uncheckAllVerses(true);
 						reloadBothAttributeMaps();
 					}
 				});
@@ -1998,7 +1998,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 				new TypeHighlightDialog(IsiActivity.this, ariKp, selected, new TypeHighlightDialog.Listener() {
 					@Override public void onOk(int colorRgb) {
-						lsText.uncheckAllVerses(true);
+						lsSplit0.uncheckAllVerses(true);
 						reloadBothAttributeMaps();
 					}
 				}, colorRgb, reference).show();
@@ -2036,13 +2036,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			// FIXME even with this guard, verses are still unchecked when switching version while both Fullscreen and Split is active.
 			// This guard only fixes unchecking of verses when in fullscreen mode.
 			if (uncheckVersesWhenActionModeDestroyed) {
-				lsText.uncheckAllVerses(true);
+				lsSplit0.uncheckAllVerses(true);
 			}
 		}
 	};
 
 	void reloadBothAttributeMaps() {
-		lsText.reloadAttributeMap();
+		lsSplit0.reloadAttributeMap();
 
 		if (activeSplitVersion != null) {
 			lsSplit1.reloadAttributeMap();
@@ -2055,7 +2055,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		int rootH;
 		
 		@Override public void onHandleDragStart() {
-			aboveH = lsText.getHeight();
+			aboveH = lsSplit0.getHeight();
 			handleH = splitHandleButton.getHeight();
 			rootH = splitRoot.getHeight();
 		}
@@ -2063,9 +2063,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		@Override public void onHandleDragMove(float dySinceLast, float dySinceStart) {
 			int newH = (int) (aboveH + dySinceStart);
 			int maxH = rootH - handleH;
-			ViewGroup.LayoutParams lp = lsText.getLayoutParams();
+			ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
 			lp.height = newH < 0? 0: newH > maxH? maxH: newH;
-			lsText.setLayoutParams(lp);
+			lsSplit0.setLayoutParams(lp);
 		}
 		
 		@Override public void onHandleDragStop() {
