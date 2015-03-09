@@ -1,6 +1,8 @@
 package yuku.alkitab.base.widget;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
@@ -35,6 +37,9 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 	int primaryColor;
 	int accentColor;
 	Paint accentColorPaint = new Paint();
+
+	Bitmap splitVerticalBitmap;
+	Bitmap splitHorizontalBitmap;
 
 	public enum Button {
 		start,
@@ -239,5 +244,28 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 
 			label2length = 16.f * density + labelPaint.measureText(label2);
 		}
+
+		{
+			final Bitmap splitBitmap = orientation == Orientation.vertical ? getSplitHorizontalBitmap() : getSplitVerticalBitmap();
+			final float cl = length * 0.5f;
+			final float ct = thickness * 0.5f;
+
+			if (orientation == Orientation.vertical) canvas.drawBitmap(splitBitmap, cl - splitBitmap.getWidth() * 0.5f, ct - splitBitmap.getHeight() * 0.5f, null);
+			else canvas.drawBitmap(splitBitmap, ct - splitBitmap.getWidth() * 0.5f, cl - splitBitmap.getHeight() * 0.5f, null);
+		}
+	}
+
+	private Bitmap getSplitVerticalBitmap() {
+		if (splitVerticalBitmap == null) {
+			splitVerticalBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_split_vertical);
+		}
+		return splitVerticalBitmap;
+	}
+
+	private Bitmap getSplitHorizontalBitmap() {
+		if (splitHorizontalBitmap == null) {
+			splitHorizontalBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_split_horizontal);
+		}
+		return splitHorizontalBitmap;
 	}
 }
