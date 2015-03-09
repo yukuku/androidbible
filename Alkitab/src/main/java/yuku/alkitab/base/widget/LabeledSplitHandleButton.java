@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
@@ -19,9 +20,9 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 	Paint labelPaint = new Paint();
 	Paint bezelPaint = new Paint();
 	float textSize = 14f;
-	float label1width;
-	float label2width;
-	float rotatewidth;
+	float label1length;
+	float label2length;
+	float rotatelength;
 	boolean label1pressed = false;
 	boolean label2pressed = false;
 	boolean rotatepressed = false;
@@ -54,14 +55,18 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 		labelPaint.setColor(0xffffffff);
 		labelPaint.setShadowLayer(2.f * density, 0, 0, 0xff000000);
 		labelPaint.setTextSize(textSize * density);
-		labelPaint.setTypeface(Typeface.DEFAULT_BOLD);
+		if (Build.VERSION.SDK_INT >= 21) {
+			labelPaint.setTypeface(Typeface.create("sans-serif-medium", 0));
+		} else {
+			labelPaint.setTypeface(Typeface.DEFAULT_BOLD);
+		}
 		labelPaint.setAntiAlias(true);
 		bezelPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
 		primaryColor = getResources().getColor(R.color.primary);
 		accentColor = getResources().getColor(R.color.accent);
 
-		rotatewidth = getResources().getDimensionPixelSize(R.dimen.split_handle_thickness);
+		rotatelength = getResources().getDimensionPixelSize(R.dimen.split_handle_thickness);
 	}
 
 	public void setButtonPressListener(final ButtonPressListener buttonPressListener) {
@@ -81,23 +86,35 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 	@Override
 	public boolean onTouchEvent(final MotionEvent event) {
 		// check if touch is at label1, label2, rotate button, or neither
-		int maxLabel1w = (int) Math.min(140 * density, label1width);
-		int maxLabel2w = (int) Math.min(140 * density, label2width);
+		final int maxLabel1sz = (int) Math.min(140 * density, label1length);
+		final int maxLabel2sz = (int) Math.min(140 * density, label2length);
 
 		final int action = MotionEventCompat.getActionMasked(event);
 		if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
-			float x = event.getX();
+			// pos is the x (when orientation is vertical) or y (otherwise)
+			final float pos;
+
+			// length is the width or the height
+			final int length;
+
+			if (orientation == Orientation.vertical) {
+				pos = event.getX();
+				length = getWidth();
+			} else {
+				pos = event.getY();
+				length = getHeight();
+			}
 
 			if (action == MotionEvent.ACTION_DOWN) {
-				label1down = x < maxLabel1w;
-				label2down = x > getWidth() - maxLabel2w;
-				rotatedown = x >= (getWidth() - rotatewidth) * 0.5f && x <= (getWidth() + rotatewidth) * 0.5f;
+				label1down = pos < maxLabel1sz;
+				label2down = pos > length - maxLabel2sz;
+				rotatedown = pos >= (length - rotatelength) * 0.5f && pos <= (length + rotatelength) * 0.5f;
 			}
 
 			if (action == MotionEvent.ACTION_UP && buttonPressListener != null) {
-				label1pressed = label1down && x < maxLabel1w;
-				label2pressed = label2down && x > getWidth() - maxLabel2w;
-				rotatepressed = rotatedown && x >= (getWidth() - rotatewidth) * 0.5f && x <= (getWidth() + rotatewidth) * 0.5f;
+				label1pressed = label1down && pos < maxLabel1sz;
+				label2pressed = label2down && pos > length - maxLabel2sz;
+				rotatepressed = rotatedown && pos >= (length - rotatelength) * 0.5f && pos <= (length + rotatelength) * 0.5f;
 
 				if (rotatepressed) {
 					orientation = orientation == Orientation.horizontal ? Orientation.vertical : Orientation.horizontal;
@@ -134,15 +151,34 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 		// always draw unpressed bg color first
 		canvas.drawColor(primaryColor);
 
+		// meaning changes according to orientation
+		final int length;
+		final int thickness;
+		if (orientation == Orientation.vertical) {
+			length = getWidth();
+			thickness = getHeight();
+		} else {
+			length = getHeight();
+			thickness = getWidth();
+		}
+
 		if (label1down || label2down || rotatedown) {
 			canvas.save();
+
 			if (rotatedown) {
-				canvas.clipRect((getWidth() - rotatewidth) * 0.5f, 0, (getWidth() + rotatewidth) * 0.5f, getHeight());
+				final float fr1 = (length - rotatelength) * 0.5f;
+				final float to1 = (length + rotatelength) * 0.5f;
+				if (orientation == Orientation.vertical) canvas.clipRect(fr1, 0, to1, thickness);
+				else canvas.clipRect(0, fr1, thickness, to1);
 			} else if (label1down) {
-				canvas.clipRect(0, 0, label1width, getHeight());
+				if (orientation == Orientation.vertical) canvas.clipRect(0, 0, label1length, thickness);
+				else canvas.clipRect(0, 0, thickness, label1length);
 			} else if (label2down) {
-				canvas.clipRect(getWidth() - label2width, 0, getWidth(), getHeight());
+				final float fr1 = length - label2length;
+				if (orientation == Orientation.vertical) canvas.clipRect(fr1, 0, length, thickness);
+				else canvas.clipRect(0, fr1, thickness, length);
 			}
+
 			canvas.drawColor(accentColor);
 			canvas.restore();
 		} else {
@@ -151,20 +187,49 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 			}
 		}
 
-		bezelPaint.setColor(0xff111111);
-		final int bezelHeight = (int) (1.5f * density + 0.5);
-		canvas.drawRect(0, getHeight() - bezelHeight, getWidth(), getHeight(), bezelPaint);
-		
+		final float bezelThickness = 1.5f * density;
+
+		// draw bezel only when vertical
+		if (orientation == Orientation.vertical) {
+			bezelPaint.setColor(0xff111111);
+			canvas.drawRect(0, thickness - (int) (bezelThickness + 0.5f), length, thickness, bezelPaint);
+		}
+
+		final float pad = 8.f * density;
+		final float base = thickness * 0.5f + textSize * density * 0.3f;
+
 		if (label1 != null) {
-			labelPaint.setTextAlign(Paint.Align.LEFT);
-			label1width = 16.f * density + labelPaint.measureText(label1);
-			canvas.drawText(label1, 8.f * density, getHeight() * 0.5f + textSize * density * 0.3f, labelPaint);
+			if (orientation == Orientation.horizontal) {
+				canvas.save();
+				canvas.rotate(-90);
+
+				labelPaint.setTextAlign(Paint.Align.RIGHT);
+				canvas.drawText(label1, -pad, base + bezelThickness * 0.5f, labelPaint);
+
+				canvas.restore();
+			} else {
+				labelPaint.setTextAlign(Paint.Align.LEFT);
+				canvas.drawText(label1, pad, base, labelPaint);
+			}
+
+			label1length = 16 * density + labelPaint.measureText(label1);
 		}
 		
 		if (label2 != null) {
-			labelPaint.setTextAlign(Paint.Align.RIGHT);
-			label2width = 16.f * density + labelPaint.measureText(label2);
-			canvas.drawText(label2, getWidth() - 8.f * density, getHeight() * 0.5f + textSize * density * 0.3f, labelPaint);
+			if (orientation == Orientation.horizontal) {
+				canvas.save();
+				canvas.rotate(-90);
+
+				labelPaint.setTextAlign(Paint.Align.LEFT);
+				canvas.drawText(label2, -length + pad, base + bezelThickness * 0.5f, labelPaint);
+
+				canvas.restore();
+			} else {
+				labelPaint.setTextAlign(Paint.Align.RIGHT);
+				canvas.drawText(label2, length - pad, base, labelPaint);
+			}
+
+			label2length = 16.f * density + labelPaint.measureText(label2);
 		}
 	}
 }

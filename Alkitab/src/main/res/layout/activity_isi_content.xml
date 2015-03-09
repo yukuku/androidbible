@@ -35,6 +35,7 @@
 				android:id="@+id/splitHandleButton"
 				android:layout_width="match_parent"
 				android:layout_height="@dimen/split_handle_thickness"
+				android:background="@null"
 				android:visibility="gone" />
 
 			<FrameLayout
