@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -10,11 +9,9 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CheckedTextView;
-import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -23,14 +20,14 @@ import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.br.DailyVerseAppWidgetReceiver;
 import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.debug.R;
 
 import java.util.List;
 
-public class DailyVerseAppWidgetConfigurationActivity extends Activity {
-	private static final String TAG = DailyVerseAppWidgetConfigurationActivity.class.getSimpleName();
+public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 	private VersionAdapter adapter;
 
 	int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
@@ -69,7 +66,7 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 		Bundle extras = intent.getExtras();
 		if (extras != null) {
 			mAppWidgetId = extras.getInt(
-			AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+				AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 		}
 
 		// If they gave us an intent without the widget id, just bail.
@@ -84,20 +81,22 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 		adapter = new VersionAdapter();
 		adapter.reload();
 		lsVersionsAppWidget.setAdapter(adapter);
-		lsVersionsAppWidget.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-				selectedVersionPosition = position;
-				bOk.setEnabled(true);
-				adapter.notifyDataSetChanged();
-			}
+		lsVersionsAppWidget.setOnItemClickListener((parent, view, position, id) -> {
+			selectedVersionPosition = position;
+			bOk.setEnabled(true);
+			adapter.notifyDataSetChanged();
 		});
 
 		bOk.setEnabled(false);
 		bOk.setOnClickListener(bOk_click);
-		bCancel.setOnClickListener(bCancel_click);
+		bCancel.setOnClickListener(v -> finish());
 
-		cTransparentBackground.setOnCheckedChangeListener(cTransparentBackground_checkedChange);
+		cTransparentBackground.setOnCheckedChangeListener((buttonView, isChecked) -> {
+			cDarkText.setEnabled(isChecked);
+			if (!isChecked) {
+				cDarkText.setChecked(false);
+			}
+		});
 
 		sbTextSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 			@Override
@@ -106,10 +105,12 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 			}
 
 			@Override
-			public void onStartTrackingTouch(final SeekBar seekBar) {}
+			public void onStartTrackingTouch(final SeekBar seekBar) {
+			}
 
 			@Override
-			public void onStopTrackingTouch(final SeekBar seekBar) {}
+			public void onStopTrackingTouch(final SeekBar seekBar) {
+			}
 		});
 		sbTextSize_progressChanged(sbTextSize.getProgress());
 
@@ -159,23 +160,6 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 			resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
 			setResult(RESULT_OK, resultValue);
 			finish();
-		}
-	};
-
-	private View.OnClickListener bCancel_click = new View.OnClickListener() {
-		@Override
-		public void onClick(final View v) {
-			finish();
-		}
-	};
-
-	private CompoundButton.OnCheckedChangeListener cTransparentBackground_checkedChange = new CompoundButton.OnCheckedChangeListener() {
-		@Override
-		public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-			cDarkText.setEnabled(isChecked);
-			if (!isChecked) {
-				cDarkText.setChecked(false);
-			}
 		}
 	};
 
