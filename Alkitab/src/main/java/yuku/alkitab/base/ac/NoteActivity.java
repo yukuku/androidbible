@@ -11,6 +11,9 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
+
+import java.util.Date;
+
 import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -24,8 +27,6 @@ import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabconverter.util.DesktopVerseFinder;
 import yuku.alkitabconverter.util.DesktopVerseParser;
 import yuku.alkitabintegration.display.Launcher;
-
-import java.util.Date;
 
 public class NoteActivity extends BaseActivity {
 	//region static constructors
@@ -63,6 +64,7 @@ public class NoteActivity extends BaseActivity {
 	int verseCountForNewNote;
 
 	boolean editingMode;
+	boolean justClickedLink;
 
 	ViewFlipper viewFlipper;
 	TextView tCaptionReadOnly;
@@ -116,6 +118,8 @@ public class NoteActivity extends BaseActivity {
 	}
 
 	final CallbackSpan.OnClickListener<String> verseClickListener = (widget, verse) -> {
+		justClickedLink = true;
+
 		final IntArrayList verseRanges = DesktopVerseParser.verseStringToAri(verse);
 		if (verseRanges == null || verseRanges.size() == 0) {
 			new AlertDialog.Builder(widget.getContext())
@@ -158,6 +162,14 @@ public class NoteActivity extends BaseActivity {
 			});
 			tCaptionReadOnly.setText(text);
 			tCaptionReadOnly.setMovementMethod(LinkMovementMethod.getInstance());
+
+			tCaptionReadOnly.setOnClickListener(v -> {
+				if (!justClickedLink) {
+					setEditingMode(true);
+				} else {
+					justClickedLink = false;
+				}
+			});
 		}
 
 		this.editingMode = editingMode;
