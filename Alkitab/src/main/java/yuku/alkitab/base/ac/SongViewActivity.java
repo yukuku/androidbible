@@ -1,8 +1,6 @@
 package yuku.alkitab.base.ac;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
@@ -29,6 +27,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -615,9 +614,13 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	}
 
     protected void deleteAllSongs() {
-        final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.please_wait_titik3), true, false);
+		final MaterialDialog pd = new MaterialDialog.Builder(this)
+			.content(R.string.please_wait_titik3)
+			.cancelable(false)
+			.progress(true, 0)
+			.show();
 
-        new Thread() {
+		new Thread() {
             @Override public void run() {
                 final int count = S.getSongDb().deleteAllSongs();
 

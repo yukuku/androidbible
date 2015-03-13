@@ -2,7 +2,6 @@ package yuku.alkitab.base.util;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -13,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Xml;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.map.hash.TIntLongHashMap;
@@ -124,19 +124,15 @@ public class BookmarkImporter {
 	}
 
 	public static void importBookmarks(final Activity activity, @NonNull final InputStream fis, final boolean finishActivityAfterwards) {
+		final MaterialDialog pd = new MaterialDialog.Builder(activity)
+			.content(R.string.mengimpor_titiktiga)
+			.cancelable(false)
+			.progress(true, 0)
+			.show();
+
 		new AsyncTask<Boolean, Integer, Object>() {
-			ProgressDialog pd;
 			int count_bookmark = 0;
 			int count_label = 0;
-
-			@Override
-			protected void onPreExecute() {
-				pd = new ProgressDialog(activity);
-				pd.setMessage(activity.getString(R.string.mengimpor_titiktiga));
-				pd.setIndeterminate(true);
-				pd.setCancelable(false);
-				pd.show();
-			}
 
 			@Override
 			protected Object doInBackground(Boolean... params) {

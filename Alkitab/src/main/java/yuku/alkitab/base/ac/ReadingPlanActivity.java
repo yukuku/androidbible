@@ -2,7 +2,6 @@ package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -30,6 +29,7 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.gson.GsonBuilder;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -469,8 +469,12 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 	private void downloadReadingPlanList() {
 		final AtomicBoolean cancelled = new AtomicBoolean(false);
-		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.rp_download_reading_plan_list_progress), true, true);
-		pd.setOnDismissListener(dialog -> cancelled.set(true));
+
+		final MaterialDialog pd = new MaterialDialog.Builder(this)
+			.content(R.string.rp_download_reading_plan_list_progress)
+			.progress(true, 0)
+			.dismissListener(dialog -> cancelled.set(true))
+			.show();
 
 		new Thread() {
 			@Override
@@ -569,8 +573,12 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 	void downloadReadingPlanFromServer(final ReadingPlanServerEntry entry) {
 		final AtomicBoolean cancelled = new AtomicBoolean(false);
-		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.rp_download_reading_plan_progress), true, true);
-		pd.setOnDismissListener(dialog -> cancelled.set(true));
+
+		final MaterialDialog pd = new MaterialDialog.Builder(this)
+			.content(R.string.rp_download_reading_plan_progress)
+			.progress(true, 0)
+			.dismissListener(dialog -> cancelled.set(true))
+			.show();
 
 		new Thread() {
 			@Override

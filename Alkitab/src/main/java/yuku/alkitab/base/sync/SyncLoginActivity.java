@@ -1,6 +1,5 @@
 package yuku.alkitab.base.sync;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
@@ -249,30 +248,28 @@ public class SyncLoginActivity extends BaseActivity {
 				tPasswordNew.setError(null);
 			}
 
-			confirmPassword(passwordNew, () -> {
-				startThreadWithProgressDialog(getString(R.string.sync_progress_processing), () -> {
-					try {
-						Log.d(TAG, "Sending form to server for changing password...");
+			confirmPassword(passwordNew, () -> startThreadWithProgressDialog(getString(R.string.sync_progress_processing), () -> {
+				try {
+					Log.d(TAG, "Sending form to server for changing password...");
 
-						Sync.changePassword(email, password, passwordNew);
+					Sync.changePassword(email, password, passwordNew);
 
-						runOnUiThread(() -> new AlertDialogWrapper.Builder(this)
-								.setMessage(R.string.sync_login_form_change_password_success)
-								.setPositiveButton(R.string.ok, null)
-								.show()
-								.setOnDismissListener(dialog -> finish())
-						);
-					} catch (Sync.NotOkException e) {
-						Log.d(TAG, "Change password failed: " + e.getMessage());
-
-						runOnUiThread(() -> new AlertDialogWrapper.Builder(this)
-							.setMessage(e.getMessage())
+					runOnUiThread(() -> new AlertDialogWrapper.Builder(this)
+							.setMessage(R.string.sync_login_form_change_password_success)
 							.setPositiveButton(R.string.ok, null)
 							.show()
-						);
-					}
-				});
-			});
+							.setOnDismissListener(dialog -> finish())
+					);
+				} catch (Sync.NotOkException e) {
+					Log.d(TAG, "Change password failed: " + e.getMessage());
+
+					runOnUiThread(() -> new AlertDialogWrapper.Builder(this)
+						.setMessage(e.getMessage())
+						.setPositiveButton(R.string.ok, null)
+						.show()
+					);
+				}
+			}));
 
 		});
 
@@ -281,7 +278,11 @@ public class SyncLoginActivity extends BaseActivity {
 	}
 
 	void startThreadWithProgressDialog(final String message, final Runnable task) {
-		final ProgressDialog pd = ProgressDialog.show(this, null, message, true, false);
+		final MaterialDialog pd = new MaterialDialog.Builder(this)
+			.content(message)
+			.cancelable(false)
+			.progress(true, 0)
+			.show();
 
 		new Thread(() -> {
 			try {

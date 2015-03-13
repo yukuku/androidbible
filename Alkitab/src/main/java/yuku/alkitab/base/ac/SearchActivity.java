@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -23,6 +22,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
@@ -533,13 +533,13 @@ public class SearchActivity extends BaseActivity {
 		}
 		
 		final String[] tokens = QueryTokenizer.tokenize(query_string);
-		
-		final ProgressDialog pd = new ProgressDialog(this);
-		pd.setMessage(getString(R.string.search_searching_tokens, Arrays.toString(tokens)));
-		pd.setCancelable(false);
-		pd.setIndeterminate(true);
-		pd.show();
-		
+
+		final MaterialDialog pd = new MaterialDialog.Builder(this)
+			.content(getString(R.string.search_searching_tokens, Arrays.toString(tokens)))
+			.cancelable(false)
+			.progress(true, 0)
+			.show();
+
 		new AsyncTask<Void, Void, IntArrayList>() {
 			@Override protected IntArrayList doInBackground(Void... params) {
 				searchHistoryAdapter.setData(addSearchHistoryEntry(query_string));

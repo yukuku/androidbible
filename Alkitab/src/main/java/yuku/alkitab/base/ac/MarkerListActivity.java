@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,6 +20,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
@@ -209,7 +209,11 @@ public class MarkerListActivity extends BaseActivity {
 	}
 
 	void filterUsingCurrentlyUsedFilter() {
-		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.bl_filtering_titiktiga), true, false);
+		final MaterialDialog pd = new MaterialDialog.Builder(this)
+			.content(R.string.bl_filtering_titiktiga)
+			.cancelable(false)
+			.progress(true, 0)
+			.show();
 		adapter.filterAsync(currentlyUsedFilter, pd::dismiss);
 	}
 

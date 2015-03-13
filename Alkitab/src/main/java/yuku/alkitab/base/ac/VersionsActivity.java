@@ -3,7 +3,6 @@ package yuku.alkitab.base.ac;
 import android.app.DownloadManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -502,7 +501,12 @@ public class VersionsActivity extends BaseActivity {
 
 			@Override public void onOkYes2(final ConvertPdbToYes2.ConvertParams params) {
 				final String yesFilename = AddonManager.getVersionPath(yesName);
-				final ProgressDialog pd = ProgressDialog.show(VersionsActivity.this, null, getString(R.string.ed_reading_pdb_file), true, false);
+
+				final MaterialDialog pd = new MaterialDialog.Builder(VersionsActivity.this)
+					.content(R.string.ed_reading_pdb_file)
+					.cancelable(false)
+					.progress(true, 0)
+					.show();
 
 				new AsyncTask<String, Object, ConvertPdbToYes2.ConvertResult>() {
 					@Override protected ConvertPdbToYes2.ConvertResult doInBackground(String... _unused_) {
@@ -689,7 +693,12 @@ public class VersionsActivity extends BaseActivity {
 				if (maybeDecompressed.exists() && !maybeDecompressed.isDirectory() && maybeDecompressed.canRead()) {
 					handleFileOpenYes(maybeDecompressed.getAbsolutePath());
 				} else {
-					final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.sedang_mendekompres_harap_tunggu), true, false);
+					final MaterialDialog pd = new MaterialDialog.Builder(this)
+						.content(R.string.sedang_mendekompres_harap_tunggu)
+						.cancelable(false)
+						.progress(true, 0)
+						.show();
+
 					new AsyncTask<Void, Void, File>() {
 						@Override protected File doInBackground(Void... params) {
 							String tmpfile3 = filename + "-" + (int)(Math.random() * 100000) + ".tmp3"; //$NON-NLS-1$ //$NON-NLS-2$
