@@ -115,6 +115,10 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	private OnVerseScrollStateChangeListener onVerseScrollStateChangeListener;
 	private AbsListView.OnScrollListener userOnScrollListener;
 	private int scrollState = 0;
+	/**
+	 * Used as a cache, storing views to be fed to convertView parameter
+	 * when measuring items manually at {@link #getMeasuredItemHeight(int)}.
+ 	 */
 	private View[] scrollToVerseConvertViews;
 	private String name;
 	private boolean firstTimeScroll = true;
@@ -214,7 +218,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	public int getVerseBasedOnScroll() {
 		return adapter.getVerseFromPosition(getPositionBasedOnScroll());
 	}
-	
+
 	public int getPositionBasedOnScroll() {
 		int pos = getFirstVisiblePosition();
 
@@ -355,6 +359,22 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		} else if (U.equals(volumeButtonsForNavigation, "ayat" /* verse */)) { 
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_DOWN;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) keyCode = KeyEvent.KEYCODE_DPAD_UP;
+		} else if (U.equals(volumeButtonsForNavigation, "page")) {
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+				final int oldPos = getFirstVisiblePosition();
+				int newPos = getLastVisiblePosition();
+
+				if (oldPos == newPos && oldPos < adapter.getCount() - 1) { // in case of very long item
+					newPos = oldPos + 1;
+				}
+				smoothScrollToPositionFromTop(newPos, 0, 200); // default smooth scroll duration (Issue 78030)
+
+				return new PressResult(PressKind.consumed, adapter.getVerseFromPosition(newPos));
+			}
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+				final int oldVerse_1 = getVerseBasedOnScroll();
+				return new PressResult(PressKind.consumed, oldVerse_1);
+			}
 		}
 
 		if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
@@ -485,21 +505,27 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 				return;
 			}
 
-			// child needed is not on screen, we need to measure
-			if (scrollToVerseConvertViews == null) {
-				// initialize scrollToVerseConvertViews if needed
-				scrollToVerseConvertViews = new View[adapter.getViewTypeCount()];
-			}
-			int itemType = adapter.getItemViewType(position);
-			View convertView = scrollToVerseConvertViews[itemType];
-			View child = adapter.getView(position, convertView, VersesView.this);
-			child.measure(MeasureSpec.makeMeasureSpec(VersesView.this.getWidth() - VersesView.this.getPaddingLeft() - VersesView.this.getPaddingRight(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-			scrollToVerseConvertViews[itemType] = child;
+			final int measuredHeight = getMeasuredItemHeight(position);
+
 			stopFling();
-			setSelectionFromTop(position, -(int) (prop * child.getMeasuredHeight()) + paddingNegator);
+			setSelectionFromTop(position, -(int) (prop * measuredHeight) + paddingNegator);
 		});
 	}
-	
+
+	private int getMeasuredItemHeight(final int position) {
+		// child needed is not on screen, we need to measure
+		if (scrollToVerseConvertViews == null) {
+			// initialize scrollToVerseConvertViews if needed
+			scrollToVerseConvertViews = new View[adapter.getViewTypeCount()];
+		}
+		final int itemType = adapter.getItemViewType(position);
+		final View convertView = scrollToVerseConvertViews[itemType];
+		final View child = adapter.getView(position, convertView, this);
+		child.measure(MeasureSpec.makeMeasureSpec(this.getWidth() - this.getPaddingLeft() - this.getPaddingRight(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+		scrollToVerseConvertViews[itemType] = child;
+		return child.getMeasuredHeight();
+	}
+
 	public void scrollToTop() {
 		post(() -> setSelectionFromTop(0, 0));
 	}

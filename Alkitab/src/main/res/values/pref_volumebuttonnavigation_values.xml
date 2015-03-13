@@ -5,6 +5,7 @@
         <item>default</item>
         <item>ayat</item>
         <item>pasal</item>
+        <item>page</item>
     </string-array>
 
 </resources>
