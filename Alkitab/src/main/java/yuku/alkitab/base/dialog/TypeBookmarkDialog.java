@@ -2,8 +2,6 @@ package yuku.alkitab.base.dialog;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -12,12 +10,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
@@ -87,11 +86,32 @@ public class TypeBookmarkDialog {
 		bAddLabel.setOnClickListener(v -> {
 			adapter = new LabelAdapter();
 
-			final AlertDialog dialog = new AlertDialogWrapper.Builder(context)
-				.setTitle(R.string.add_label_title)
-				.setAdapter(adapter)
-				.setNegativeButton(R.string.cancel, null)
-				.create();
+			final MaterialDialog dialog = new MaterialDialog.Builder(context)
+				.title(R.string.add_label_title)
+				.adapter(adapter)
+				.negativeText(R.string.cancel)
+				.build();
+
+			final ListView listView = dialog.getListView();
+			if (listView == null) {
+				throw new RuntimeException("ListView must not be null");
+			}
+			listView.setOnItemClickListener((parent, view, position, id) -> {
+				if (position == adapter.getCount() - 1) { // new label
+					LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), title -> {
+						final Label newLabel = S.getDb().insertLabel(title, null);
+						if (newLabel != null) {
+							labels.add(newLabel);
+							setLabelsText();
+						}
+					});
+				} else {
+					final Label label = adapter.getItem(position);
+					labels.add(label);
+					setLabelsText();
+				}
+				dialog.dismiss();
+			});
 
 			adapter.setDialogContext(dialog.getContext());
 
@@ -113,7 +133,7 @@ public class TypeBookmarkDialog {
 			.setIcon(R.drawable.ic_attr_bookmark)
 			.setPositiveButton(R.string.ok, (dialog, which) -> bOk_click())
 			.setNegativeButton(R.string.delete, (dialog, which) -> bDelete_click(marker))
-			.create();
+			.show();
 	}
 
 	void bOk_click() {
@@ -145,26 +165,6 @@ public class TypeBookmarkDialog {
 	public void setListener(Listener listener) {
 		this.listener = listener;
 	}
-	
-	OnClickListener bAddLabel_dialog_itemSelected = new OnClickListener() {
-		@Override public void onClick(DialogInterface _unused_, int which) {
-			if (which == adapter.getCount() - 1) { // new label
-				LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), new OkListener() { //$NON-NLS-1$
-					@Override public void onOk(String title) {
-						final Label newLabel = S.getDb().insertLabel(title, null);
-						if (newLabel != null) {
-							labels.add(newLabel);
-							setLabelsText();
-						}
-					}
-				});
-			} else {
-				final Label label = adapter.getItem(which);
-				labels.add(label);
-				setLabelsText();
-			}
-		}
-	};
 	
 	private View.OnClickListener label_click = new View.OnClickListener() {
 		@Override public void onClick(View v) {
