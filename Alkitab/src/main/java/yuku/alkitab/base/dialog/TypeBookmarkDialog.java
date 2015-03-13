@@ -7,7 +7,6 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -15,6 +14,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
+import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.debug.R;
@@ -97,7 +97,7 @@ public class TypeBookmarkDialog {
 				throw new RuntimeException("ListView must not be null");
 			}
 			listView.setOnItemClickListener((parent, view, position, id) -> {
-				if (position == adapter.getCount() - 1) { // new label
+				if (position == 0) { // new label
 					LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), title -> {
 						final Label newLabel = S.getDb().insertLabel(title, null);
 						if (newLabel != null) {
@@ -226,7 +226,7 @@ public class TypeBookmarkDialog {
         return res;
     }
 
-	class LabelAdapter extends BaseAdapter {
+	class LabelAdapter extends EasyAdapter {
 		private List<Label> labels;
 		private Context dialogContext;
 
@@ -240,40 +240,41 @@ public class TypeBookmarkDialog {
 		}
 		
 		@Override public int getCount() {
-			return labels.size() + 1;
+			return 1 + labels.size();
 		}
 
 		@Override public Label getItem(int position) {
-			return (position < 0 || position >= labels.size())? null: labels.get(position);
+			return position == 0 ? null : labels.get(position - 1);
 		}
 
-		@Override public long getItemId(int position) {
-			return position;
+		@Override
+		public View newView(final int position, final ViewGroup parent) {
+			final int type = getItemViewType(position);
+
+			return LayoutInflater.from(dialogContext).inflate(type == 0? R.layout.item_label_chooser: android.R.layout.simple_list_item_1, null);
 		}
 
-		@Override public View getView(int position, View convertView, ViewGroup parent) {
-			int type = getItemViewType(position);
-			View res = convertView != null? convertView: LayoutInflater.from(dialogContext).inflate(type == 0? R.layout.item_label_chooser: android.R.layout.simple_list_item_1, null);
+		@Override
+		public void bindView(final View view, final int position, final ViewGroup parent) {
+			final int type = getItemViewType(position);
 
 			if (type == 0) {
-				TextView text1 = V.get(res, android.R.id.text1);
-				Label label = getItem(position);
+				final TextView text1 = V.get(view, android.R.id.text1);
+				final Label label = getItem(position);
 				text1.setText(label.title);
 				U.applyLabelColor(label, text1);
 			} else {
-				TextView text1 = V.get(res, android.R.id.text1);
+				final TextView text1 = V.get(view, android.R.id.text1);
 				text1.setText(context.getString(R.string.create_label_titik3));
 			}
-			
-			return res;
 		}
-		
+
 		@Override public int getViewTypeCount() {
 			return 2;
 		}
 		
 		@Override public int getItemViewType(int position) {
-			if (position == getCount() - 1) return 1;
+			if (position == 0) return 1;
 			return 0;
 		}
 	}
