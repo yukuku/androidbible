@@ -87,14 +87,15 @@ public class TypeBookmarkDialog {
 		bAddLabel.setOnClickListener(v -> {
 			adapter = new LabelAdapter();
 
-			AlertDialog.Builder b = new AlertDialog.Builder(context)
-			.setTitle(R.string.add_label_title)
-			.setAdapter(adapter, bAddLabel_dialog_itemSelected)
-			.setNegativeButton(R.string.cancel, null);
+			final AlertDialog dialog = new AlertDialogWrapper.Builder(context)
+				.setTitle(R.string.add_label_title)
+				.setAdapter(adapter)
+				.setNegativeButton(R.string.cancel, null)
+				.create();
 
-			adapter.setDialogContext(b.getContext());
+			adapter.setDialogContext(dialog.getContext());
 
-			b.show();
+			dialog.show();
 		});
 
 		if (marker != null) {
@@ -233,7 +234,7 @@ public class TypeBookmarkDialog {
 			labels = S.getDb().listAllLabels();
 			dialogContext = context;
 		}
-		
+
 		public void setDialogContext(Context dialogContext) {
 			this.dialogContext = dialogContext;
 		}

@@ -500,7 +500,7 @@ public class MarkerListActivity extends BaseActivity {
 					loadAndFilter();
 					if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
 					App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
-				}, colorRgb, reference).show();
+				}, colorRgb, reference);
 			}
 
 			return true;

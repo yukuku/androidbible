@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -45,6 +44,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
@@ -612,59 +612,59 @@ public class VersionsActivity extends BaseActivity {
 	}
 
 	void openUrlInputDialog() {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		final Context contextForLayout = builder.getContext();
+		new MaterialDialog.Builder(this)
+			.customView(R.layout.dialog_version_add_from_url, false)
+			.positiveText(R.string.ok)
+			.callback(new MaterialDialog.ButtonCallback() {
+				@Override
+				public void onPositive(final MaterialDialog dialog) {
+					final EditText tUrl = V.get(dialog.getCustomView(), R.id.tUrl);
 
-		final View dialogView = View.inflate(contextForLayout, R.layout.dialog_version_add_from_url, null);
-		final EditText tUrl = V.get(dialogView, R.id.tUrl);
-
-		builder
-			.setView(dialogView)
-			.setPositiveButton(R.string.ok, (dialog, which) -> {
-				final String url = tUrl.getText().toString().trim();
-				if (url.length() == 0) {
-					return;
-				}
-
-				final Uri uri = Uri.parse(url);
-				final String scheme = uri.getScheme();
-				if (!U.equals(scheme, "http") && !U.equals(scheme, "https")) {
-					new AlertDialogWrapper.Builder(VersionsActivity.this)
-						.setMessage(R.string.version_download_invalid_url)
-						.setPositiveButton(R.string.ok, null)
-						.show();
-					return;
-				}
-
-				// guess destination filename
-				String last = uri.getLastPathSegment();
-				if (TextUtils.isEmpty(last) || !last.toLowerCase(Locale.US).endsWith(".yes")) {
-					new AlertDialogWrapper.Builder(VersionsActivity.this)
-						.setMessage(R.string.version_download_not_yes)
-						.setPositiveButton(R.string.ok, null)
-						.show();
-					return;
-				}
-
-				{
-					final String downloadKey = "version:url:" + url;
-
-					final int status = DownloadMapper.instance.getStatus(downloadKey);
-					if (status == DownloadManager.STATUS_PENDING || status == DownloadManager.STATUS_RUNNING) {
-						// it's downloading!
+					final String url = tUrl.getText().toString().trim();
+					if (url.length() == 0) {
 						return;
 					}
 
-					final DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url))
-						.setTitle(last)
-						.setVisibleInDownloadsUi(false)
-						.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
+					final Uri uri = Uri.parse(url);
+					final String scheme = uri.getScheme();
+					if (!U.equals(scheme, "http") && !U.equals(scheme, "https")) {
+						new AlertDialogWrapper.Builder(VersionsActivity.this)
+							.setMessage(R.string.version_download_invalid_url)
+							.setPositiveButton(R.string.ok, null)
+							.show();
+						return;
+					}
 
-					final Map<String, String> attrs = new LinkedHashMap<>();
-					attrs.put("download_type", "url");
-					attrs.put("filename_last_segment", last);
+					// guess destination filename
+					String last = uri.getLastPathSegment();
+					if (TextUtils.isEmpty(last) || !last.toLowerCase(Locale.US).endsWith(".yes")) {
+						new AlertDialogWrapper.Builder(VersionsActivity.this)
+							.setMessage(R.string.version_download_not_yes)
+							.setPositiveButton(R.string.ok, null)
+							.show();
+						return;
+					}
 
-					DownloadMapper.instance.enqueue(downloadKey, req, attrs);
+					{
+						final String downloadKey = "version:url:" + url;
+
+						final int status = DownloadMapper.instance.getStatus(downloadKey);
+						if (status == DownloadManager.STATUS_PENDING || status == DownloadManager.STATUS_RUNNING) {
+							// it's downloading!
+							return;
+						}
+
+						final DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url))
+							.setTitle(last)
+							.setVisibleInDownloadsUi(false)
+							.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
+
+						final Map<String, String> attrs = new LinkedHashMap<>();
+						attrs.put("download_type", "url");
+						attrs.put("filename_last_segment", last);
+
+						DownloadMapper.instance.enqueue(downloadKey, req, attrs);
+					}
 				}
 			})
 			.show();
@@ -933,7 +933,7 @@ public class VersionsActivity extends BaseActivity {
 
 			if (mv.description != null) details.append('\n').append(mv.description).append('\n');
 
-			final AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
+			final AlertDialogWrapper.Builder b = new AlertDialogWrapper.Builder(getActivity());
 
 			int button_count = 0;
 

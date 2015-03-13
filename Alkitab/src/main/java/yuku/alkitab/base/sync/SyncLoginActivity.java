@@ -1,6 +1,5 @@
 package yuku.alkitab.base.sync;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +15,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
@@ -293,24 +293,26 @@ public class SyncLoginActivity extends BaseActivity {
 	}
 
 	void confirmPassword(final String correctPassword, final Runnable whenCorrect) {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		final View dialogView = View.inflate(builder.getContext(), R.layout.dialog_sync_confirm_password, null);
-		final EditText tPassword2 = V.get(dialogView, R.id.tPassword2);
-		builder
-			.setView(dialogView)
-			.setPositiveButton(R.string.ok, (dialog, which) -> {
+		new MaterialDialog.Builder(this)
+			.customView(R.layout.dialog_sync_confirm_password, false)
+			.positiveText(R.string.ok)
+			.callback(new MaterialDialog.ButtonCallback() {
+				@Override
+				public void onPositive(final MaterialDialog dialog) {
+					final EditText tPassword2 = V.get(dialog.getCustomView(), R.id.tPassword2);
 
-				final String password2 = tPassword2.getText().toString();
+					final String password2 = tPassword2.getText().toString();
 
-				if (!U.equals(correctPassword, password2)) {
-					new AlertDialogWrapper.Builder(this)
-						.setMessage(R.string.sync_login_form_passwords_do_not_match)
-						.setPositiveButton(R.string.ok, null)
-						.show();
-					return;
+					if (!U.equals(correctPassword, password2)) {
+						new AlertDialogWrapper.Builder(dialog.getContext())
+							.setMessage(R.string.sync_login_form_passwords_do_not_match)
+							.setPositiveButton(R.string.ok, null)
+							.show();
+						return;
+					}
+
+					whenCorrect.run();
 				}
-
-				whenCorrect.run();
 			})
 			.show();
 	}

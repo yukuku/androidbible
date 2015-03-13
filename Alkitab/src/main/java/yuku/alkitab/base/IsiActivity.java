@@ -1654,7 +1654,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 				final ListView listView = dialog.getListView();
 				listView.setDrawSelectorOnTop(true);
-				listView.setOnItemClickListener((parent, view, position, id) -> openBookmarkDialog(markers.get(position)._id));
+				listView.setOnItemClickListener((parent, view, position, id) -> {
+					openBookmarkDialog(markers.get(position)._id);
+					dialog.dismiss();
+				});
 			}
         }
 
@@ -1670,12 +1673,18 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (markers.size() == 1) {
 				openNoteDialog(markers.get(0)._id);
 			} else {
-                AlertDialog dialog = new AlertDialog.Builder(IsiActivity.this)
+                AlertDialog dialog = new AlertDialogWrapper.Builder(IsiActivity.this)
                     .setTitle(R.string.edit_note)
-                    .setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.note), (_dialog_, which) -> openNoteDialog(markers.get(which)._id))
+                    .setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.note))
                     .show();
-                dialog.getListView().setDrawSelectorOnTop(true);
-            }
+
+				final ListView listView = dialog.getListView();
+				listView.setDrawSelectorOnTop(true);
+				listView.setOnItemClickListener((parent, view, position, id) -> {
+					openNoteDialog(markers.get(position)._id);
+					dialog.dismiss();
+				});
+			}
         }
 
 		class MultipleMarkerSelectAdapter extends EasyAdapter {
@@ -2068,7 +2077,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 						lsSplit0.uncheckAllVerses(true);
 						reloadBothAttributeMaps();
 					}
-				}, colorRgb, reference).show();
+				}, colorRgb, reference);
 				mode.finish();
 			} return true;
 			case R.id.menuEsvsb: {
