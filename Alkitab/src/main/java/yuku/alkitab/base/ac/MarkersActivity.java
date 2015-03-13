@@ -50,7 +50,7 @@ public class MarkersActivity extends BaseActivity {
 	DragSortListView lv;
     View bGotoSync;
 	
-	BookmarkFilterAdapter adapter;
+	MarkerFilterAdapter adapter;
 
 	public static Intent createIntent() {
 		return new Intent(App.context, MarkersActivity.class);
@@ -62,7 +62,7 @@ public class MarkersActivity extends BaseActivity {
 		setContentView(R.layout.activity_markers);
 		setTitle(R.string.activity_title_markers);
 		
-		adapter = new BookmarkFilterAdapter();
+		adapter = new MarkerFilterAdapter();
 		adapter.reload();
 
 		lv = V.get(this, android.R.id.list);
@@ -70,7 +70,7 @@ public class MarkersActivity extends BaseActivity {
 		lv.setOnItemClickListener(lv_click);
 		lv.setAdapter(adapter);
 
-        BookmarkFilterController c = new BookmarkFilterController(lv, adapter);
+        MarkerFilterController c = new MarkerFilterController(lv, adapter);
         lv.setFloatViewManager(c);
         lv.setOnTouchListener(c);
 
@@ -207,12 +207,12 @@ public class MarkersActivity extends BaseActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	private class BookmarkFilterController extends DragSortController {
+	private class MarkerFilterController extends DragSortController {
 		int mDivPos;
 		int mDraggedPos;
 		final DragSortListView lv;
 
-		public BookmarkFilterController(DragSortListView lv, BookmarkFilterAdapter adapter) {
+		public MarkerFilterController(DragSortListView lv, MarkerFilterAdapter adapter) {
 			super(lv, R.id.drag_handle, DragSortController.ON_DOWN, 0);
 
 			this.lv = lv;
@@ -262,12 +262,12 @@ public class MarkersActivity extends BaseActivity {
 		}
 	}
 
-	private class BookmarkFilterAdapter extends BaseAdapter implements DragSortListView.DropListener {
+	private class MarkerFilterAdapter extends BaseAdapter implements DragSortListView.DropListener {
 		// 0. [icon] All bookmarks
 		// 1. [icon] Notes
 		// 2. [icon] Highlights
 		// 3. Unlabeled bookmarks
-		// 4. dst label2
+		// 4 and so on. labels
 
 		List<Label> labels;
 		
