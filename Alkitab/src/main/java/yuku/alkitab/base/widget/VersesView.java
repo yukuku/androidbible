@@ -23,6 +23,7 @@ import yuku.alkitab.util.IntArrayList;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class VersesView extends ListView implements AbsListView.OnScrollListener {
 	public static final String TAG = VersesView.class.getSimpleName();
@@ -122,6 +123,11 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	private View[] scrollToVerseConvertViews;
 	private String name;
 	private boolean firstTimeScroll = true;
+	/**
+	 * Updated every time {@link #setData(yuku.alkitab.model.Book, int, yuku.alkitab.model.SingleChapterVerses, int[], yuku.alkitab.model.PericopeBlock[], int)}
+	 * or {@link #setDataEmpty()} is called. Used to track data changes, so delayed scroll, etc can be prevented from happening if the data has changed.
+	 */
+	private AtomicInteger dataVersionNumber = new AtomicInteger();
 
 	public VersesView(Context context) {
 		super(context);
@@ -207,11 +213,6 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		return adapter.getVerse(verse_1);
 	}
 
-	public void scrollToShowVerse(int mainVerse_1) {
-		int position = adapter.getPositionOfPericopeBeginningFromVerse(mainVerse_1);
-		smoothScrollToPosition(position);
-	}
-	
 	/**
 	 * @return 1-based verse
 	 */
@@ -241,6 +242,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	}
 
 	public void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
+		dataVersionNumber.incrementAndGet();
 		adapter.setData(book, chapter_1, verses, pericopeAris, pericopeBlocks, nblock);
 		stopFling();
 	}
@@ -367,13 +369,51 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 				if (oldPos == newPos && oldPos < adapter.getCount() - 1) { // in case of very long item
 					newPos = oldPos + 1;
 				}
-				smoothScrollToPositionFromTop(newPos, 0, 200); // default smooth scroll duration (Issue 78030)
+
+				// negate padding offset, unless this is the first item
+				final int paddingNegator = newPos == 0? 0 : -this.getPaddingTop();
+				smoothScrollFixed(newPos, paddingNegator);
 
 				return new PressResult(PressKind.consumed, adapter.getVerseFromPosition(newPos));
 			}
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-				final int oldVerse_1 = getVerseBasedOnScroll();
-				return new PressResult(PressKind.consumed, oldVerse_1);
+				final int oldPos = getFirstVisiblePosition();
+				final int targetHeight = Math.max(0, getHeight() - getPaddingTop() - getPaddingBottom());
+
+				int totalHeight = 0;
+
+				// consider how long the first child has been scrolled up
+				final View firstChild = getChildAt(0);
+				if (firstChild != null) {
+					totalHeight += -firstChild.getTop();
+				}
+
+				int curPos = oldPos;
+				// try until totalHeight exceeds targetHeight
+				while (true) {
+					curPos--;
+					if (curPos < 0) {
+						break;
+					}
+
+					totalHeight += getMeasuredItemHeight(curPos);
+
+					if (totalHeight > targetHeight) {
+						break;
+					}
+				}
+
+				int newPos = curPos + 1;
+
+				if (oldPos == newPos && oldPos > 0) { // move at least one
+					newPos = oldPos - 1;
+				}
+
+				// negate padding offset, unless this is the first item
+				final int paddingNegator = newPos == 0? 0 : -this.getPaddingTop();
+				smoothScrollFixed(newPos, paddingNegator);
+
+				return new PressResult(PressKind.consumed, adapter.getVerseFromPosition(newPos));
 			}
 		}
 
@@ -404,6 +444,20 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		}
 
 		return PressResult.NOP;
+	}
+
+	/**
+	 * Fixed version of smoothScrollToPositionFromTop.
+	 */
+	private void smoothScrollFixed(final int newPos, final int offset) {
+		final int vn = dataVersionNumber.get();
+		final int smoothScrollDuration = 200;  // default value (Issue 78030)
+		smoothScrollToPositionFromTop(newPos, offset, smoothScrollDuration);
+		postDelayed(() -> {
+			// possible that data has changed
+			if (vn != dataVersionNumber.get()) return;
+			setSelectionFromTop(newPos, offset);
+		}, smoothScrollDuration + 17);
 	}
 
 	public void setDataWithRetainSelectedVerses(boolean retainSelectedVerses, Book book, int chapter_1, int[] pericope_aris, PericopeBlock[] pericope_blocks, int nblock, SingleChapterVerses verses) {
@@ -460,10 +514,11 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 			Log.w(TAG, "could not find verse_1=" + verse_1 + ", weird!");
 		} else {
 			final int delay = firstTimeScroll? 34: 0;
+			final int vn = dataVersionNumber.get();
 
 			postDelayed(() -> {
-				// this may happen async from above, so check first if pos is still valid
-				if (position >= getCount()) return;
+				// this may happen async from above, so check data version first
+				if (vn != dataVersionNumber.get()) return;
 
 				// negate padding offset, unless this is the first verse
 				final int paddingNegator = position == 0? 0 : -this.getPaddingTop();
@@ -587,6 +642,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	}
 
 	public void setDataEmpty() {
+		dataVersionNumber.incrementAndGet();
 		adapter.setDataEmpty();
 	}
 	
