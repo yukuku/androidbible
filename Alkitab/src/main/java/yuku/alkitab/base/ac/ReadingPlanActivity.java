@@ -817,11 +817,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 					CheckBox checkBox = (CheckBox) layout.findViewWithTag(i);
 					if (checkBox == null) {
-						checkBox = new CheckBox(ReadingPlanActivity.this);
-						checkBox.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) (48 * density)));
+						checkBox = (CheckBox) getLayoutInflater().inflate(R.layout.item_reading_plan_one_day_checkbox, layout, false);
 						checkBox.setTag(i);
-						checkBox.setFocusable(false);
-						checkBox.setTextSize(16.f);
 						layout.addView(checkBox);
 					}
 
