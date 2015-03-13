@@ -1,11 +1,1 @@
-include ':Alkitab', ':AlkitabModel', ':AlkitabFeedback', ':AlkitabIntegration', ':AlkitabIo', ':AlkitabYes2', ':BiblePlus', ':DragSortListView', ':KpriModel', ':KpriViewerLib', ':BintexWriter', ':Snappy', ':BintexReader', ':Afw', ':FlowLayout', ':AmbilWarna', ':FileChooser', ':ATree'
-include ':ImportedDesktopVerseUtil'
-
-project(':Afw').projectDir = new File(settingsDir, '../yuku-android-util/Afw')
-project(':AmbilWarna').projectDir = new File(settingsDir, '../yuku-android-util/AmbilWarna')
-project(':ATree').projectDir = new File(settingsDir, '../yuku-android-util/ATree')
-project(':BintexReader').projectDir = new File(settingsDir, '../yuku-android-util/BintexReader')
-project(':BintexWriter').projectDir = new File(settingsDir, '../yuku-android-util/BintexWriter')
-project(':FileChooser').projectDir = new File(settingsDir, '../yuku-android-util/FileChooser')
-project(':FlowLayout').projectDir = new File(settingsDir, '../yuku-android-util/FlowLayout')
-project(':Snappy').projectDir = new File(settingsDir, '../yuku-android-util/Snappy')
+include ':Alkitab', ':AlkitabModel', ':AlkitabFeedback', ':AlkitabIntegration', ':AlkitabIo', ':AlkitabYes2', ':BiblePlus', ':DragSortListView', ':KpriModel', ':KpriViewerLib', ':BintexWriter', ':Snappy', ':BintexReader', ':Afw', ':FlowLayout', ':AmbilWarna', ':FileChooser', ':ATree', ':ImportedDesktopVerseUtil'

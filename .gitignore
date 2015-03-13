@@ -1,7 +1,3 @@
-# Legacy Android
-bin/
-gen/
-
 # Android Studio
 .gradle
 /local.properties
