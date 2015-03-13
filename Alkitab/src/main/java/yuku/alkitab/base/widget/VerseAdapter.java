@@ -59,7 +59,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 		inflater_ = LayoutInflater.from(context_);
 	}
 
-	public synchronized void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
+	/* non-public */ synchronized void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
 		book_ = book;
 		chapter_1_ = chapter_1;
 		verses_ = verses;
@@ -69,7 +69,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 
-	public synchronized void setDataEmpty() {
+	/* non-public */ synchronized void setDataEmpty() {
 		book_ = null;
 		chapter_1_ = 0;
 		verses_ = null;
