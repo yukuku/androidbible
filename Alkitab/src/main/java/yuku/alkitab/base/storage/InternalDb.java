@@ -41,6 +41,7 @@ import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -886,6 +887,32 @@ public class InternalDb {
 	public int deleteDevotionsWithLessThanInTitle() {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		return db.delete(Db.TABLE_Devotion, Db.Devotion.title + " like '%<%'", null);
+	}
+
+	public void sortLabelsAlphabetically() {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+		db.beginTransaction();
+		try {
+			final List<Label> labels = listAllLabels();
+			Collections.sort(labels, (lhs, rhs) -> {
+				if (lhs.title == null || rhs.title == null) {
+					return 0;
+				}
+
+				return lhs.title.compareToIgnoreCase(rhs.title);
+			});
+
+			for (int i = 0; i < labels.size(); i++) {
+				final Label label = labels.get(i);
+				label.ordering = i + 1;
+				db.update(Db.TABLE_Label, labelToContentValues(label), "_id=?", ToStringArray(label._id));
+			}
+
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
 	}
 
 	public void reorderLabels(Label from, Label to) {

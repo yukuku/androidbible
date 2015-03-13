@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,6 +82,34 @@ public class MarkersActivity extends BaseActivity {
         bGotoSync.setOnClickListener(v -> startActivity(SyncSettingsActivity.createIntent()));
 
 		App.getLbm().registerReceiver(br, new IntentFilter(ACTION_RELOAD));
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		getMenuInflater().inflate(R.menu.activity_markers, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(final Menu menu) {
+		final MenuItem menuLabelSort = menu.findItem(R.id.menuLabelSort);
+
+		final int labelCount = adapter.getLabelCount();
+		menuLabelSort.setVisible(labelCount > 1);
+
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.menuLabelSort:
+				S.getDb().sortLabelsAlphabetically();
+				adapter.reload();
+				return true;
+		}
+
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
@@ -362,6 +392,11 @@ public class MarkersActivity extends BaseActivity {
 			}
 			
 			notifyDataSetChanged();
+			supportInvalidateOptionsMenu();
+		}
+
+		public int getLabelCount() {
+			return labels.size();
 		}
 	}
 }
