@@ -27,23 +27,16 @@
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:clipToPadding="false"
-				android:paddingBottom="@dimen/text_bottom_padding"
 				android:paddingLeft="@dimen/text_side_padding"
 				android:paddingRight="@dimen/text_side_padding"
-				android:paddingTop="@dimen/text_top_padding"
 				android:scrollbarStyle="outsideOverlay" />
 
-			<FrameLayout
-				android:id="@+id/splitHandle"
+			<yuku.alkitab.base.widget.LabeledSplitHandleButton
+				android:id="@+id/splitHandleButton"
 				android:layout_width="match_parent"
-				android:layout_height="@dimen/split_handle_height"
-				android:visibility="gone">
-
-				<yuku.alkitab.base.widget.LabeledSplitHandleButton
-					android:id="@+id/splitHandleButton"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent" />
-			</FrameLayout>
+				android:layout_height="@dimen/split_handle_thickness"
+				android:background="@null"
+				android:visibility="gone" />
 
 			<FrameLayout
 				android:layout_width="match_parent"
@@ -54,10 +47,8 @@
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
 					android:clipToPadding="false"
-					android:paddingBottom="@dimen/text_bottom_padding"
 					android:paddingLeft="@dimen/text_side_padding"
 					android:paddingRight="@dimen/text_side_padding"
-					android:paddingTop="@dimen/text_top_padding"
 					android:scrollbarStyle="outsideOverlay" />
 
 				<TextView
@@ -100,11 +91,11 @@
 			<yuku.alkitab.base.widget.GotoButton
 				android:id="@+id/bGoto"
 				style="?actionButtonStyle"
-				android:fontFamily="sans-serif-medium"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
-				android:layout_marginLeft="32dp"
-				android:layout_marginRight="32dp"
+				android:layout_marginLeft="@dimen/nav_goto_side_margin"
+				android:layout_marginRight="@dimen/nav_goto_side_margin"
+				android:fontFamily="sans-serif-medium"
 				android:paddingLeft="0dp"
 				android:paddingRight="0dp"
 				android:textSize="16sp"
@@ -113,7 +104,7 @@
 			<ImageButton
 				android:id="@+id/bLeft"
 				style="?actionButtonStyle"
-				android:layout_width="48dp"
+				android:layout_width="@dimen/nav_prevnext_width"
 				android:layout_height="match_parent"
 				android:layout_gravity="start"
 				android:contentDescription="@string/desc_previous_chapter"
@@ -123,7 +114,7 @@
 			<ImageButton
 				android:id="@+id/bRight"
 				style="?actionButtonStyle"
-				android:layout_width="48dp"
+				android:layout_width="@dimen/nav_prevnext_width"
 				android:layout_height="match_parent"
 				android:layout_gravity="end"
 				android:contentDescription="@string/desc_next_chapter"

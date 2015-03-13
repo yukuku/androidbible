@@ -21,7 +21,6 @@
   <string name="ekspor_ke_sd_card">Sandaran</string>
   <string name="menuBantuan">Bantuan</string>
   <string name="beri_saran_title">Cadangkan</string>
-  <string name="versi">Versi</string>
   <string name="menuDevotion">Pengabdian</string>
   <string name="search">Carian</string>
   <string name="activity_title_markers">Petanda</string>
@@ -341,8 +340,6 @@
   <string name="menuSplitVersion">Split</string>
   <string name="menuBible">Alkitab</string>
   <string name="menuProgress">Kemajuan</string>
-  <string name="switch_off">TUTUP</string>
-  <string name="switch_on">BUKA</string>
   <string name="sn_menu_copy">Salin lagu</string>
   <string name="menuPlay">Main</string>
   <string name="menuPause">Jeda</string>

@@ -106,10 +106,6 @@ echo -n 'Last commit hash: '
 LAST_COMMIT_HASH=`git log -1 --format='format:%h'`
 echo $LAST_COMMIT_HASH
 
-echo 'Copying yuku-android-util...'
-mkdir $BUILD_DIR/yuku-android-util
-rsync -a --exclude ".git/" ../yuku-android-util/ $BUILD_DIR/yuku-android-util/
-
 echo "Copying $SUPER_PROJECT_NAME..."
 mkdir $BUILD_DIR/$SUPER_PROJECT_NAME
 rsync -a --exclude ".git/" ./ $BUILD_DIR/$SUPER_PROJECT_NAME/

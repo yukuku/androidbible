@@ -21,7 +21,6 @@
   <string name="ekspor_ke_sd_card">Exportieren</string>
   <string name="menuBantuan">Hilfe</string>
   <string name="beri_saran_title">Feedback</string>
-  <string name="versi">Übersetzung</string>
   <string name="menuDevotion">Andacht</string>
   <string name="search">Suchen</string>
   <string name="activity_title_markers">Markierungen</string>
@@ -342,8 +341,6 @@
   <string name="menuSplitVersion">Geteilte Ansicht</string>
   <string name="menuBible">Bibel</string>
   <string name="menuProgress">Lesefortschritt</string>
-  <string name="switch_off">AUS</string>
-  <string name="switch_on">AN</string>
   <string name="sn_menu_copy">Lied kopieren</string>
   <string name="menuPlay">Abspielen</string>
   <string name="menuPause">Pause</string>

@@ -345,14 +345,14 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	
 	public PressResult press(int keyCode) {
 		String volumeButtonsForNavigation = Preferences.getString(getContext().getString(R.string.pref_volumeButtonNavigation_key), getContext().getString(R.string.pref_volumeButtonNavigation_default));
-		if (U.equals(volumeButtonsForNavigation, "pasal" /* chapter */)) { //$NON-NLS-1$
+		if (U.equals(volumeButtonsForNavigation, "pasal" /* chapter */)) { 
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
 				return PressResult.LEFT;
 			}
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
 				return PressResult.RIGHT;
 			}
-		} else if (U.equals(volumeButtonsForNavigation, "ayat" /* verse */)) { //$NON-NLS-1$
+		} else if (U.equals(volumeButtonsForNavigation, "ayat" /* verse */)) { 
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_DOWN;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) keyCode = KeyEvent.KEYCODE_DPAD_UP;
 		}

@@ -19,6 +19,7 @@ import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.reminder.util.DevotionReminder;
 import yuku.alkitabfeedback.FeedbackSender;
+import yuku.kirimfidbek.CrashReporter;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -77,7 +78,11 @@ public class App extends yuku.afw.App {
 		if (initted) return;
 		initted = true;
 
-		FeedbackSender fs = FeedbackSender.getInstance(context);
+		final CrashReporter cr = new CrashReporter();
+		cr.activateDefaultUncaughtExceptionHandler();
+		cr.trySend();
+
+		final FeedbackSender fs = FeedbackSender.getInstance(context);
 		fs.trySend();
 
 		PreferenceManager.setDefaultValues(context, R.xml.settings_display, false);

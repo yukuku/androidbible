@@ -21,7 +21,6 @@
   <string name="ekspor_ke_sd_card">Rezerve</string>
   <string name="menuBantuan">Ajutor</string>
   <string name="beri_saran_title">Sugestie</string>
-  <string name="versi">Versiune</string>
   <string name="menuDevotion">Devoţional</string>
   <string name="search">Caută</string>
   <string name="activity_title_markers">Marcaje</string>
@@ -341,8 +340,6 @@
   <string name="menuSplitVersion">Împarte</string>
   <string name="menuBible">Biblia</string>
   <string name="menuProgress">Progres</string>
-  <string name="switch_off">Oprit</string>
-  <string name="switch_on">Pornit</string>
   <string name="sn_menu_copy">Copiază cântec</string>
   <string name="menuPlay">Redă</string>
   <string name="menuPause">Pauză</string>

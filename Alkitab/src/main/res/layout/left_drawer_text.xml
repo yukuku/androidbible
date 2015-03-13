@@ -137,9 +137,7 @@
 			android:paddingRight="4dp"
             android:textSize="16sp"
             android:fontFamily="sans-serif-regular"
-            android:text="@string/menuFullScreen"
-			android:textOff="@string/switch_off"
-			android:textOn="@string/switch_on" />
+            android:text="@string/menuFullScreen" />
 
 		<Switch
 			android:id="@+id/cNightMode"
@@ -151,9 +149,7 @@
 			android:paddingRight="4dp"
             android:textSize="16sp"
             android:fontFamily="sans-serif-regular"
-            android:text="@string/menuNightMode"
-			android:textOff="@string/switch_off"
-			android:textOn="@string/switch_on" />
+            android:text="@string/menuNightMode" />
 
 		<Switch
 			android:id="@+id/cSplitVersion"
@@ -165,9 +161,7 @@
 			android:paddingRight="4dp"
             android:textSize="16sp"
             android:fontFamily="sans-serif-regular"
-            android:text="@string/menuSplitVersion"
-			android:textOff="@string/switch_off"
-			android:textOn="@string/switch_on" />
+            android:text="@string/menuSplitVersion" />
 
 
 		<include

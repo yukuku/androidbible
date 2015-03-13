@@ -21,7 +21,6 @@
   <string name="ekspor_ke_sd_card">Rugsteun</string>
   <string name="menuBantuan">Help</string>
   <string name="beri_saran_title">Voorstel</string>
-  <string name="versi">Weergawe</string>
   <string name="menuDevotion">Toewyding</string>
   <string name="search">Soek</string>
   <string name="activity_title_markers">Merkers</string>
@@ -342,8 +341,6 @@
   <string name="menuSplitVersion">Verdeel</string>
   <string name="menuBible">Bybel</string>
   <string name="menuProgress">Vordering</string>
-  <string name="switch_off">Af</string>
-  <string name="switch_on">Aan</string>
   <string name="sn_menu_copy">Kopieer lied/musiek</string>
   <string name="menuPlay">Speel</string>
   <string name="menuPause">Wag</string>

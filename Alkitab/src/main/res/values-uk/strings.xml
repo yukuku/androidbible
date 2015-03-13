@@ -21,7 +21,6 @@
   <string name="ekspor_ke_sd_card">Резервна копія</string>
   <string name="menuBantuan">Допомога</string>
   <string name="beri_saran_title">Запропонувати</string>
-  <string name="versi">Версія</string>
   <string name="menuDevotion">Вивчення Біблії</string>
   <string name="search">Пошук</string>
   <string name="activity_title_markers">Позначки</string>
@@ -342,8 +341,6 @@
   <string name="menuSplitVersion">Подвійний</string>
   <string name="menuBible">Біблія</string>
   <string name="menuProgress">Прогрес</string>
-  <string name="switch_off">ВИМКНУТИ</string>
-  <string name="switch_on">УВІМКНУТИ</string>
   <string name="sn_menu_copy">Скопіювати пісню</string>
   <string name="menuPlay">Грати</string>
   <string name="menuPause">Пауза</string>

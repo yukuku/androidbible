@@ -103,6 +103,7 @@ public enum Prefkey {
 	lastVerse,
 	lastVersionId,
 	lastSplitVersionId,
+	lastSplitOrientation, // string "horizontal" or "vertical"
 
 	/**
 	 * The whole history (with many entries)
@@ -116,4 +117,10 @@ public enum Prefkey {
 	 * 2: imported already
 	 */
 	stop_import_yuku_alkitab_backups,
+
+	/** Announce: last annoucement check (auto only). Unix time. */
+	announce_last_check,
+
+	/** Announce: read announcement ids. long[] in json. */
+	announce_read_ids,
 }

@@ -383,10 +383,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 
 		SettingsActivity.setPaddingBasedOnPreferences(lContent);
 
-
-		if (Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default))) {
-			lContent.setKeepScreenOn(true);
-		}
+		getWindow().getDecorView().setKeepScreenOn(Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default)));
 	}
 
 	@Override

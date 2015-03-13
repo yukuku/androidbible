@@ -21,7 +21,6 @@
   <string name="ekspor_ke_sd_card">Reservekopie</string>
   <string name="menuBantuan">Help</string>
   <string name="beri_saran_title">Suggesties</string>
-  <string name="versi">Versie</string>
   <string name="menuDevotion">Devotie</string>
   <string name="search">Zoeken</string>
   <string name="activity_title_markers">Markeringen</string>
@@ -321,8 +320,6 @@
   <string name="bookmark_delete_confirmation">Deze bladwijzer verwijderen?</string>
   <string name="menuBible">Bijbel</string>
   <string name="menuProgress">Voortgang</string>
-  <string name="switch_off">UIT</string>
-  <string name="switch_on">AAN</string>
   <string name="menuPlay">Afspelen</string>
   <string name="menuPause">Pauze</string>
   <string name="book_filter_old_testament">Oude Testament</string>

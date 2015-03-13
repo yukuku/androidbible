@@ -21,7 +21,6 @@
   <string name="ekspor_ke_sd_card">Сделать резервную копию</string>
   <string name="menuBantuan">Помощь</string>
   <string name="beri_saran_title">Предложение по улучшению</string>
-  <string name="versi">Версия</string>
   <string name="menuDevotion">Посвящение</string>
   <string name="search">Поиск</string>
   <string name="activity_title_markers">Маркеры</string>
@@ -340,8 +339,6 @@
   <string name="menuSplitVersion">Разделить</string>
   <string name="menuBible">Библия</string>
   <string name="menuProgress">Продвижение</string>
-  <string name="switch_off">ВЫКЛ</string>
-  <string name="switch_on">ВКЛ</string>
   <string name="sn_menu_copy">Скопировать песню</string>
   <string name="menuPlay">Воспроизвести</string>
   <string name="menuPause">Пауза</string>

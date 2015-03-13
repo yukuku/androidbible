@@ -20,7 +20,6 @@
     <string name="ekspor_ke_sd_card">Backup</string>
     <string name="menuBantuan">Help</string>
     <string name="beri_saran_title">Suggest</string>
-    <string name="versi">Version</string>
     <string name="menuDevotion">Devotion</string>
     <string name="search">Search</string>
     <string name="activity_title_markers">Markers</string>
@@ -364,8 +363,6 @@
     <string name="menuSplitVersion">Split</string>
     <string name="menuBible">Bible</string>
     <string name="menuProgress">Progress</string>
-    <string name="switch_off">OFF</string>
-    <string name="switch_on">ON</string>
     <string name="sn_menu_copy">Copy song</string>
     <string name="menuPlay">Play</string>
     <string name="menuPause">Pause</string>
@@ -485,13 +482,17 @@
 	<string name="dr_default_sound">Default sound</string>
 
 	<!-- about -->
-	<string name="about_text_desc" translatable="false">100% free Bible app, licensed under Apache License 2.0\n<a href="http://www.bibleforandroid.com/guide?utm_source=app&amp;utm_medium=button&amp;utm_campaign=about">www.bibleforandroid.com</a></string>
+	<string name="about_text_desc" translatable="false">100% free Bible app, licensed under Apache License 2.0</string>
 	<string name="about_translators">Translators</string>
 	<string name="about_user_guide">User\'s Guide</string>
 	<string name="about_beta_feedback">Beta Version Feedback</string>
 	<string name="about_version_name">version %s</string>
 	<string name="about_material_sources">Material Sources</string>
 	<string name="about_credits">Credits</string>
+	<string name="about_announcements">Announcements</string>
+	<string name="about_announcements_none">Announcements (0)</string>
+	<string name="about_announcements_number">Announcements (%s)</string>
+	<string name="about_announcement_load_failed">Failed to load announcements.</string>
 
 	<!-- marker and label migration -->
 	<string name="marker_migrate_introduction">We detected a backup file from the old v3 Yuku Quick Bible that contains bookmarks, notes, highlights, and labels.\n\nDo you want to import them, so you can access them from this app?</string>
@@ -503,5 +504,9 @@
 	<string name="marker_migrate_import_from_newest">Yes, import from the newest (recommended)</string>
 	<string name="marker_migrate_import_from_other">Other backup</string>
 	<string name="marker_migrate_filename_dated">%1$s dated %2$s</string>
+
+	<!-- Announcements -->
+	<string name="announce_notif_title">%s Announcements</string>
+	<string name="announce_notif_number_new_announcements">%s new announcements</string>
 
 </resources>
