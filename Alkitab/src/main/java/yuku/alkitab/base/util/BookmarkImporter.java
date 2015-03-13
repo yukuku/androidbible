@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Xml;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.map.hash.TIntLongHashMap;
@@ -218,12 +219,12 @@ public class BookmarkImporter {
 
 				if (result instanceof Exception) {
 					Log.e(TAG, "Error when importing markers", (Throwable) result);
-					new AlertDialog.Builder(activity)
+					new AlertDialogWrapper.Builder(activity)
 						.setMessage(activity.getString(R.string.terjadi_kesalahan_ketika_mengimpor_pesan, ((Exception) result).getMessage()))
 						.setPositiveButton(R.string.ok, null)
 						.show();
 				} else {
-					final AlertDialog dialog = new AlertDialog.Builder(activity)
+					final AlertDialog dialog = new AlertDialogWrapper.Builder(activity)
 						.setMessage(activity.getString(R.string.impor_berhasil_angka_diproses, count_bookmark, count_label))
 						.setPositiveButton(R.string.ok, null)
 						.show();

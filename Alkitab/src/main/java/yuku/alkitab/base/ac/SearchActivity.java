@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +22,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
@@ -460,7 +460,7 @@ public class SearchActivity extends BaseActivity {
 					final Version selectedVersion = mv.getVersion();
 
 					if (selectedVersion == null) {
-						new AlertDialog.Builder(SearchActivity.this)
+						new AlertDialogWrapper.Builder(SearchActivity.this)
 							.setMessage(getString(R.string.version_error_opening, mv.longName))
 							.setPositiveButton(R.string.ok, null)
 							.show();
@@ -524,10 +524,10 @@ public class SearchActivity extends BaseActivity {
 		{ // check if there is anything chosen
 			int firstSelected = selectedBookIds.indexOfValue(true);
 			if (firstSelected < 0) {
-				new AlertDialog.Builder(this)
-				.setMessage(R.string.pilih_setidaknya_satu_kitab)
-				.setPositiveButton(R.string.ok, null)
-				.show();
+				new AlertDialogWrapper.Builder(this)
+					.setMessage(R.string.pilih_setidaknya_satu_kitab)
+					.setPositiveButton(R.string.ok, null)
+					.show();
 				return;
 			}
 		}

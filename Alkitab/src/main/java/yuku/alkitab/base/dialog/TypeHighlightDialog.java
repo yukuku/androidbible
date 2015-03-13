@@ -2,7 +2,6 @@ package yuku.alkitab.base.dialog;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,16 +69,11 @@ public class TypeHighlightDialog {
 		this.dialogView = LayoutInflater.from(contextForLayout).inflate(R.layout.dialog_edit_highlight, null);
 
 		this.alert = builder
-		.setView(dialogView)
-		.setIcon(R.drawable.ic_attr_highlight)
-		.setPositiveButton(R.string.ok, null) // this does not actually do anything except closing the dialog.
-		.setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(final DialogInterface dialog, final int which) {
-				select(-1);
-			}
-		})
-		.create();
+			.setView(dialogView)
+			.setIcon(R.drawable.ic_attr_highlight)
+			.setPositiveButton(R.string.ok, null) // this does not actually do anything except closing the dialog.
+			.setNegativeButton(R.string.delete, (dialog, which) -> select(-1))
+			.create();
 		
 		dialogView.setBackgroundColor(S.applied.backgroundColor);
 		
@@ -96,20 +90,15 @@ public class TypeHighlightDialog {
 		}
 		
 		final Button bOtherColors = V.get(dialogView, R.id.bOtherColors);
-		bOtherColors.setOnClickListener(new View.OnClickListener() {
+		bOtherColors.setOnClickListener(v -> new AmbilWarnaDialog(context, colorRgb == -1? 0xff000000: colorRgb, new AmbilWarnaDialog.OnAmbilWarnaListener() {
 			@Override
-			public void onClick(final View v) {
-				new AmbilWarnaDialog(context, colorRgb == -1? 0xff000000: colorRgb, new AmbilWarnaDialog.OnAmbilWarnaListener() {
-					@Override
-					public void onCancel(final AmbilWarnaDialog dialog) {}
+			public void onCancel(final AmbilWarnaDialog dialog) {}
 
-					@Override
-					public void onOk(final AmbilWarnaDialog dialog, final int color) {
-						select(0x00ffffff & color);
-					}
-				}).show();
+			@Override
+			public void onOk(final AmbilWarnaDialog dialog, final int color) {
+				select(0x00ffffff & color);
 			}
-		});
+		}).show());
 	}
 
 	View.OnClickListener cb_click = new View.OnClickListener() {

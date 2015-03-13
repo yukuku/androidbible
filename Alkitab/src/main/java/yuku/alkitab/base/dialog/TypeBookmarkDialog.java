@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -14,6 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -84,20 +84,17 @@ public class TypeBookmarkDialog {
 		tCaption = V.get(dialogView, R.id.tCaption);
 		final Button bAddLabel = V.get(dialogView, R.id.bAddLabel);
 
-		bAddLabel.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				adapter = new LabelAdapter();
+		bAddLabel.setOnClickListener(v -> {
+			adapter = new LabelAdapter();
 
-				AlertDialog.Builder b = new AlertDialog.Builder(context)
-				.setTitle(R.string.add_label_title)
-				.setAdapter(adapter, bAddLabel_dialog_itemSelected)
-				.setNegativeButton(R.string.cancel, null);
+			AlertDialog.Builder b = new AlertDialog.Builder(context)
+			.setTitle(R.string.add_label_title)
+			.setAdapter(adapter, bAddLabel_dialog_itemSelected)
+			.setNegativeButton(R.string.cancel, null);
 
-				adapter.setDialogContext(b.getContext());
+			adapter.setDialogContext(b.getContext());
 
-				b.show();
-			}
+			b.show();
 		});
 
 		if (marker != null) {
@@ -109,22 +106,12 @@ public class TypeBookmarkDialog {
 
 		tCaption.setText(marker != null? marker.caption: reference);
 
-		this.dialog = new AlertDialog.Builder(context)
+		this.dialog = new AlertDialogWrapper.Builder(context)
 			.setView(dialogView)
 			.setTitle(reference)
 			.setIcon(R.drawable.ic_attr_bookmark)
-			.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					bOk_click();
-				}
-			})
-			.setNegativeButton(R.string.delete, new OnClickListener() {
-				@Override
-				public void onClick(final DialogInterface dialog, final int which) {
-					bDelete_click(marker);
-				}
-			})
+			.setPositiveButton(R.string.ok, (dialog, which) -> bOk_click())
+			.setNegativeButton(R.string.delete, (dialog, which) -> bDelete_click(marker))
 			.create();
 	}
 
@@ -182,17 +169,15 @@ public class TypeBookmarkDialog {
 		@Override public void onClick(View v) {
 			final Label label = (Label) v.getTag(R.id.TAG_label);
 			if (label == null) return;
-			
-			new AlertDialog.Builder(context)
-			.setMessage(context.getString(R.string.do_you_want_to_remove_the_label_label_from_this_bookmark, label.title))
-			.setPositiveButton(R.string.ok, new OnClickListener() {
-				@Override public void onClick(DialogInterface dialog, int which) {
+
+			new AlertDialogWrapper.Builder(context)
+				.setMessage(context.getString(R.string.do_you_want_to_remove_the_label_label_from_this_bookmark, label.title))
+				.setPositiveButton(R.string.ok, (dialog, which) -> {
 					labels.remove(label);
 					setLabelsText();
-				}
-			})
-			.setNegativeButton(R.string.cancel, null)
-			.show();
+				})
+				.setNegativeButton(R.string.cancel, null)
+				.show();
 		}
 	};
 
@@ -201,18 +186,15 @@ public class TypeBookmarkDialog {
 			return; // bookmark not saved, so no need to confirm
 		}
 
-		new AlertDialog.Builder(context)
-		.setMessage(R.string.bookmark_delete_confirmation)
-		.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
+		new AlertDialogWrapper.Builder(context)
+			.setMessage(R.string.bookmark_delete_confirmation)
+			.setPositiveButton(R.string.yes, (dialog, which) -> {
 				S.getDb().deleteMarkerById(marker._id);
 
 				if (listener != null) listener.onModifiedOrDeleted();
-			}
-		})
-		.setNegativeButton(R.string.no, null)
-		.show();
+			})
+			.setNegativeButton(R.string.no, null)
+			.show();
 	}
 
 	void setLabelsText() {

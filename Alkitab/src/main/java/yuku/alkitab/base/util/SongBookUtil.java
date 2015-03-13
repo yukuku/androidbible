@@ -14,6 +14,7 @@ import android.text.style.RelativeSizeSpan;
 import android.view.Menu;
 import android.view.View;
 import android.widget.PopupMenu;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.squareup.okhttp.Call;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -123,7 +124,7 @@ public class SongBookUtil {
 			sb.setSpan(new ForegroundColorSpan(0xffa0a0a0), sb_len, sb.length(), 0);
 			items[i] = sb;
 		}
-		return new AlertDialog.Builder(context)
+		return new AlertDialogWrapper.Builder(context)
 			.setItems(items, listener)
 			.create();
 	}

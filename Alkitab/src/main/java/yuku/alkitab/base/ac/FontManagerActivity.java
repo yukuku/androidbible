@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import yuku.afw.V;
@@ -279,27 +279,28 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 		private OnClickListener bDelete_click = new OnClickListener() {
 			@Override public void onClick(View v) {
 				final FontItem item = (FontItem) v.getTag(R.id.TAG_fontItem);
-				
-				new AlertDialog.Builder(FontManagerActivity.this)
-				.setMessage(getString(R.string.fm_do_you_want_to_delete, item.name))
-				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-					@Override public void onClick(DialogInterface dialog, int which) {
-						File fontDir = FontManager.getFontDir(item.name);
-						File[] listFiles = fontDir.listFiles();
-						if (listFiles != null) {
-							for (File file: listFiles) {
-								file.delete();
+
+				new AlertDialogWrapper.Builder(FontManagerActivity.this)
+					.setMessage(getString(R.string.fm_do_you_want_to_delete, item.name))
+					.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							File fontDir = FontManager.getFontDir(item.name);
+							File[] listFiles = fontDir.listFiles();
+							if (listFiles != null) {
+								for (File file : listFiles) {
+									file.delete();
+								}
 							}
+							fontDir.delete();
+
+							dls.removeEntry(getFontDownloadKey(item.name));
+
+							notifyDataSetChanged();
 						}
-						fontDir.delete();
-						
-						dls.removeEntry(getFontDownloadKey(item.name));
-						
-						notifyDataSetChanged();
-					}
-				})
-				.setNegativeButton(R.string.no, null)
-				.show();
+					})
+					.setNegativeButton(R.string.no, null)
+					.show();
 			}
 		};
 	}
@@ -344,10 +345,10 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 				
 				new File(downloadedZip).delete();
 			} catch (Exception e) {
-				new AlertDialog.Builder(FontManagerActivity.this)
-				.setMessage(getString(R.string.fm_error_when_extracting_font, fontName, e.getClass().getSimpleName() + ' ' + e.getMessage()))
-				.setPositiveButton(R.string.ok, null)
-				.show();
+				new AlertDialogWrapper.Builder(FontManagerActivity.this)
+					.setMessage(getString(R.string.fm_error_when_extracting_font, fontName, e.getClass().getSimpleName() + ' ' + e.getMessage()))
+					.setPositiveButton(R.string.ok, null)
+					.show();
 			}
 		}
 	}

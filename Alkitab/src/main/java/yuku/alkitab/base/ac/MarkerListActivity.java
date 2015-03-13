@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -21,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
@@ -386,9 +386,10 @@ public class MarkerListActivity extends BaseActivity {
 			}
 		}
 
-		new AlertDialog.Builder(this)
+		new AlertDialogWrapper.Builder(this)
 			.setSingleChoiceItems(labels.toArray(new String[labels.size()]), selected, new DialogInterface.OnClickListener() {
-				@Override public void onClick(DialogInterface dialog, int which) {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
 					if (which == -1) return;
 					int value = values.get(which);
 					switch (value) {

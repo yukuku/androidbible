@@ -12,6 +12,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.debug.R;
@@ -30,19 +31,20 @@ public class LabelEditorDialog {
 		View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_label, null);
 		final EditText tCaption = V.get(dialogView, R.id.tCaption);
 		tCaption.setText(initialText);
-		
-		final AlertDialog dialog = new AlertDialog.Builder(context)
-		.setView(dialogView)
-		.setTitle(title)
-		.setPositiveButton(R.string.ok, new OnClickListener() {
-			@Override public void onClick(DialogInterface dialog, int which) {
-				if (okListener != null) {
-					okListener.onOk(tCaption.getText().toString().trim());
+
+		final AlertDialog dialog = new AlertDialogWrapper.Builder(context)
+			.setView(dialogView)
+			.setTitle(title)
+			.setPositiveButton(R.string.ok, new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					if (okListener != null) {
+						okListener.onOk(tCaption.getText().toString().trim());
+					}
 				}
-			}
-		})
-		.setNegativeButton(R.string.cancel, null)
-		.create();
+			})
+			.setNegativeButton(R.string.cancel, null)
+			.create();
 		
 		dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);

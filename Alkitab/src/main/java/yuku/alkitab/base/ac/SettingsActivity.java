@@ -10,6 +10,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.view.View;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BasePreferenceActivity;
@@ -102,7 +103,7 @@ public class SettingsActivity extends BasePreferenceActivity {
 				final boolean value = (boolean) newValue;
 
 				if (value) {
-					new AlertDialog.Builder(getActivity())
+					new AlertDialogWrapper.Builder(getActivity())
 						.setMessage(R.string.show_hidden_version_warning)
 						.setNegativeButton(R.string.cancel, null)
 						.setPositiveButton(R.string.ok, (dialog, which) -> pref_showHiddenVersion.setChecked(true))

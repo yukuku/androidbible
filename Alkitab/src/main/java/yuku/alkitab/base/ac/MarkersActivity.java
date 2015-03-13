@@ -1,7 +1,6 @@
 
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +19,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import yuku.afw.D;
@@ -159,14 +159,14 @@ public class MarkersActivity extends BaseActivity {
 				S.getDb().deleteLabelById(label._id);
 				adapter.reload();
 			} else {
-				new AlertDialog.Builder(this)
-				.setMessage(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, marker_count))
-				.setNegativeButton(R.string.cancel, null)
-				.setPositiveButton(R.string.delete, (dialog, which) -> {
-					S.getDb().deleteLabelById(label._id);
-					adapter.reload();
-				})
-				.show();
+				new AlertDialogWrapper.Builder(this)
+					.setMessage(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, marker_count))
+					.setNegativeButton(R.string.cancel, null)
+					.setPositiveButton(R.string.delete, (dialog, which) -> {
+						S.getDb().deleteLabelById(label._id);
+						adapter.reload();
+					})
+					.show();
 			}
 			
 			return true;

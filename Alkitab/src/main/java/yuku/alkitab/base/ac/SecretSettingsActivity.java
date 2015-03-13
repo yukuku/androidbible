@@ -1,10 +1,10 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.widget.Toast;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import gnu.trove.set.TLongSet;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -33,7 +33,7 @@ public class SecretSettingsActivity extends BasePreferenceActivity {
 			labels[i] = progressMark.caption + " (preset_id " + progressMark.preset_id + ")";
 		}
 
-		new AlertDialog.Builder(SecretSettingsActivity.this)
+		new AlertDialogWrapper.Builder(SecretSettingsActivity.this)
 			.setItems(labels, (dialog, which) -> {
 				final List<ProgressMarkHistory> pmhs = S.getDb().listProgressMarkHistoryByPresetId(progressMarks.get(which).preset_id);
 				final String[] items = new String[pmhs.size()];
@@ -41,7 +41,7 @@ public class SecretSettingsActivity extends BasePreferenceActivity {
 					final ProgressMarkHistory pmh = pmhs.get(i);
 					items[i] = "'" + pmh.progress_mark_caption + "' " + Sqlitil.toLocaleDateMedium(pmh.createTime) + ": " + S.activeVersion.reference(pmh.ari);
 				}
-				new AlertDialog.Builder(SecretSettingsActivity.this)
+				new AlertDialogWrapper.Builder(SecretSettingsActivity.this)
 					.setItems(items, null)
 					.show();
 			})
@@ -60,7 +60,7 @@ public class SecretSettingsActivity extends BasePreferenceActivity {
 			);
 		}
 
-		new AlertDialog.Builder(SecretSettingsActivity.this)
+		new AlertDialogWrapper.Builder(SecretSettingsActivity.this)
 			.setItems(items.toArray(new String[items.size()]), null)
 			.show();
 

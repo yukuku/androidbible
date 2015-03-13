@@ -44,6 +44,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
@@ -228,7 +229,7 @@ public class VersionsActivity extends BaseActivity {
 
 		try {
 			if (isYesFile == null) { // can't be determined
-				new AlertDialog.Builder(this)
+				new AlertDialogWrapper.Builder(this)
 					.setMessage(R.string.open_file_unknown_file_format)
 					.setPositiveButton(R.string.ok, null)
 					.show();
@@ -254,7 +255,7 @@ public class VersionsActivity extends BaseActivity {
 			// opening a nonlocal yes file
 			boolean mkdirOk = AddonManager.mkYesDir();
 			if (!mkdirOk) {
-				new AlertDialog.Builder(this)
+				new AlertDialogWrapper.Builder(this)
 					.setMessage(getString(R.string.tidak_bisa_membuat_folder, AddonManager.getYesPath()))
 					.setPositiveButton(R.string.ok, null)
 					.show();
@@ -263,7 +264,7 @@ public class VersionsActivity extends BaseActivity {
 
 			File localFile = new File(AddonManager.getYesPath(), filelastname);
 			if (localFile.exists()) {
-				new AlertDialog.Builder(this)
+				new AlertDialogWrapper.Builder(this)
 					.setMessage(getString(R.string.open_yes_file_name_conflict, filelastname, AddonManager.getYesPath()))
 					.setPositiveButton(R.string.ok, null)
 					.show();
@@ -277,7 +278,7 @@ public class VersionsActivity extends BaseActivity {
 			handleFileOpenYes(localFile.getAbsolutePath());
 
 		} catch (Exception e) {
-			new AlertDialog.Builder(this)
+			new AlertDialogWrapper.Builder(this)
 				.setMessage(R.string.open_file_cant_read_source)
 				.setPositiveButton(R.string.ok, null)
 				.show();
@@ -402,7 +403,7 @@ public class VersionsActivity extends BaseActivity {
 
 			startActivityForResult(FileChooserActivity.createIntent(App.context, config), REQCODE_openFile);
 		} else {
-			new AlertDialog.Builder(this)
+			new AlertDialogWrapper.Builder(this)
 				.setMessage(R.string.ed_no_external_storage)
 				.setPositiveButton(R.string.ok, null)
 				.show();
@@ -446,7 +447,7 @@ public class VersionsActivity extends BaseActivity {
 
 		// check if it exists previously
 		if (S.getDb().hasVersionWithFilename(AddonManager.getVersionPath(yesName))) {
-			new AlertDialog.Builder(this)
+			new AlertDialogWrapper.Builder(this)
 				.setMessage(R.string.ed_this_file_is_already_on_the_list)
 				.setPositiveButton(R.string.ok, null)
 				.show();
@@ -454,7 +455,7 @@ public class VersionsActivity extends BaseActivity {
 		}
 
 		if (!AddonManager.mkYesDir()) {
-			new AlertDialog.Builder(this)
+			new AlertDialogWrapper.Builder(this)
 				.setMessage(getString(R.string.tidak_bisa_membuat_folder, AddonManager.getYesPath()))
 				.setPositiveButton(R.string.ok, null)
 				.show();
@@ -467,7 +468,7 @@ public class VersionsActivity extends BaseActivity {
 				sw.append('(').append(exception.getClass().getName()).append("): ").append(exception.getMessage()).append('\n'); //$NON-NLS-1$
 				exception.printStackTrace(new PrintWriter(sw));
 
-				new AlertDialog.Builder(VersionsActivity.this)
+				new AlertDialogWrapper.Builder(VersionsActivity.this)
 					.setTitle(R.string.ed_error_reading_pdb_file)
 					.setMessage(exception instanceof ConvertOptionsDialog.PdbKnownErrorException? exception.getMessage(): (getString(R.string.ed_details) + sw.toString()))
 					.setPositiveButton(R.string.ok, null)
@@ -487,7 +488,7 @@ public class VersionsActivity extends BaseActivity {
 							msg.append("- ").append(s).append('\n'); //$NON-NLS-1$
 						}
 
-						new AlertDialog.Builder(VersionsActivity.this)
+						new AlertDialogWrapper.Builder(VersionsActivity.this)
 							.setMessage(msg)
 							.setPositiveButton(R.string.ok, null)
 							.show();
@@ -546,7 +547,7 @@ public class VersionsActivity extends BaseActivity {
 	void handleFileOpenYes(String filename) {
 		{ // look for duplicates
 			if (S.getDb().hasVersionWithFilename(filename)) {
-				new AlertDialog.Builder(this)
+				new AlertDialogWrapper.Builder(this)
 					.setMessage(getString(R.string.ed_file_file_sudah_ada_dalam_daftar_versi, filename))
 					.setPositiveButton(R.string.ok, null)
 					.show();
@@ -584,7 +585,7 @@ public class VersionsActivity extends BaseActivity {
 
 			App.getLbm().sendBroadcast(new Intent(VersionListFragment.ACTION_RELOAD));
 		} catch (Exception e) {
-			new AlertDialog.Builder(this)
+			new AlertDialogWrapper.Builder(this)
 				.setTitle(R.string.ed_error_encountered)
 				.setMessage(e.getClass().getSimpleName() + ": " + e.getMessage()) //$NON-NLS-1$
 				.setPositiveButton(R.string.ok, null)
@@ -628,7 +629,7 @@ public class VersionsActivity extends BaseActivity {
 				final Uri uri = Uri.parse(url);
 				final String scheme = uri.getScheme();
 				if (!U.equals(scheme, "http") && !U.equals(scheme, "https")) {
-					new AlertDialog.Builder(VersionsActivity.this)
+					new AlertDialogWrapper.Builder(VersionsActivity.this)
 						.setMessage(R.string.version_download_invalid_url)
 						.setPositiveButton(R.string.ok, null)
 						.show();
@@ -638,7 +639,7 @@ public class VersionsActivity extends BaseActivity {
 				// guess destination filename
 				String last = uri.getLastPathSegment();
 				if (TextUtils.isEmpty(last) || !last.toLowerCase(Locale.US).endsWith(".yes")) {
-					new AlertDialog.Builder(VersionsActivity.this)
+					new AlertDialogWrapper.Builder(VersionsActivity.this)
 						.setMessage(R.string.version_download_not_yes)
 						.setPositiveButton(R.string.ok, null)
 						.show();
@@ -969,7 +970,7 @@ public class VersionsActivity extends BaseActivity {
 				button_count++;
 				b.setNegativeButton(R.string.buang_dari_daftar, (dialog, which) -> {
 					final MVersionDb mvDb = (MVersionDb) mv;
-					new AlertDialog.Builder(getActivity())
+					new AlertDialogWrapper.Builder(getActivity())
 						.setMessage(getString(R.string.juga_hapus_file_datanya_file, mvDb.filename))
 						.setPositiveButton(R.string.yes, (dialog1, which1) -> {
 							S.getDb().deleteVersion(mvDb);
@@ -1040,7 +1041,7 @@ public class VersionsActivity extends BaseActivity {
 				if (mv.hasDataFile()) {
 					mv.setActive(true);
 				} else {
-					new AlertDialog.Builder(getActivity())
+					new AlertDialogWrapper.Builder(getActivity())
 						.setMessage(getString(R.string.the_file_for_this_version_is_no_longer_available_file, mv.filename))
 						.setPositiveButton(R.string.yes, (dialog, which) -> {
 							S.getDb().deleteVersion(mv);

@@ -1,7 +1,6 @@
 package yuku.alkitab.base.fr;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -11,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.fr.base.BaseGotoFragment;
@@ -127,10 +127,10 @@ public class GotoDirectFragment extends BaseGotoFragment {
 
 			final Jumper jumper = new Jumper(reference);
 			if (! jumper.getParseSucceeded()) {
-				new AlertDialog.Builder(getActivity())
-				.setMessage(getString(R.string.alamat_tidak_sah_alamat, reference))
-				.setPositiveButton(R.string.ok, null)
-				.show();
+				new AlertDialogWrapper.Builder(getActivity())
+					.setMessage(getString(R.string.alamat_tidak_sah_alamat, reference))
+					.setPositiveButton(R.string.ok, null)
+					.show();
 				return;
 			}
 			

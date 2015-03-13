@@ -1,11 +1,10 @@
 package yuku.alkitab.base;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.config.AppConfig;
@@ -207,19 +206,13 @@ public class S {
 			options[i] = version == null ? activity.getString(R.string.split_version_none) : version.longName;
 		}
 
-		new AlertDialog.Builder(activity)
-			.setSingleChoiceItems(options, selected, new DialogInterface.OnClickListener() {
-				@Override public void onClick(DialogInterface dialog, int which) {
-					final MVersion mv = versions.get(which);
-					listener.onVersionSelected(mv);
-					dialog.dismiss();
-				}
+		new AlertDialogWrapper.Builder(activity)
+			.setSingleChoiceItems(options, selected, (dialog, which) -> {
+				final MVersion mv = versions.get(which);
+				listener.onVersionSelected(mv);
+				dialog.dismiss();
 			})
-			.setPositiveButton(R.string.versi_lainnya, new DialogInterface.OnClickListener() {
-				@Override public void onClick(DialogInterface dialog, int which) {
-					activity.startActivity(VersionsActivity.createIntent());
-				}
-			})
+			.setPositiveButton(R.string.versi_lainnya, (dialog, which) -> activity.startActivity(VersionsActivity.createIntent()))
 			.setNegativeButton(R.string.cancel, null)
 			.show();
 	}

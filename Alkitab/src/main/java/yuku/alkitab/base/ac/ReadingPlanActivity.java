@@ -29,6 +29,7 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.google.gson.GsonBuilder;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -379,22 +380,22 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	}
 
 	private void resetReadingPlan() {
-		new AlertDialog.Builder(this)
-		.setMessage(getString(R.string.rp_reset))
-		.setPositiveButton(R.string.ok, (dialog, which) -> {
-			int firstUnreadDay = findFirstUnreadDay();
-			Calendar calendar = GregorianCalendar.getInstance();
-			calendar.add(Calendar.DATE, -firstUnreadDay);
-			S.getDb().updateStartDate(readingPlan.info.id, calendar.getTime().getTime());
-			loadReadingPlan(readingPlan.info.id);
-			loadDayNumber();
-			readingPlanAdapter.load();
-			readingPlanAdapter.notifyDataSetChanged();
+		new AlertDialogWrapper.Builder(this)
+			.setMessage(getString(R.string.rp_reset))
+			.setPositiveButton(R.string.ok, (dialog, which) -> {
+				int firstUnreadDay = findFirstUnreadDay();
+				Calendar calendar = GregorianCalendar.getInstance();
+				calendar.add(Calendar.DATE, -firstUnreadDay);
+				S.getDb().updateStartDate(readingPlan.info.id, calendar.getTime().getTime());
+				loadReadingPlan(readingPlan.info.id);
+				loadDayNumber();
+				readingPlanAdapter.load();
+				readingPlanAdapter.notifyDataSetChanged();
 
-			updateButtonStatus();
-		})
-		.setNegativeButton(R.string.cancel, null)
-		.show();
+				updateButtonStatus();
+			})
+			.setNegativeButton(R.string.cancel, null)
+			.show();
 	}
 
 	private int findFirstUnreadDay() {
@@ -412,21 +413,21 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	}
 
 	private void deleteReadingPlan() {
-		new AlertDialog.Builder(this)
-		.setMessage(getString(R.string.rp_deletePlan, readingPlan.info.title))
-		.setPositiveButton(R.string.delete, (dialog, which) -> {
-			S.getDb().deleteReadingPlanById(readingPlan.info.id);
-			readingPlan = null;
-			Preferences.remove(Prefkey.active_reading_plan_id);
-			loadReadingPlan(0);
-			loadReadingPlanProgress();
-			loadDayNumber();
-			prepareDropDownNavigation();
-			prepareDisplay();
-			supportInvalidateOptionsMenu();
-		})
-		.setNegativeButton(R.string.cancel, null)
-		.show();
+		new AlertDialogWrapper.Builder(this)
+			.setMessage(getString(R.string.rp_deletePlan, readingPlan.info.title))
+			.setPositiveButton(R.string.delete, (dialog, which) -> {
+				S.getDb().deleteReadingPlanById(readingPlan.info.id);
+				readingPlan = null;
+				Preferences.remove(Prefkey.active_reading_plan_id);
+				loadReadingPlan(0);
+				loadReadingPlanProgress();
+				loadDayNumber();
+				prepareDropDownNavigation();
+				prepareDisplay();
+				supportInvalidateOptionsMenu();
+			})
+			.setNegativeButton(R.string.cancel, null)
+			.show();
 	}
 
 	private void changeDay(int day) {
@@ -478,10 +479,11 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 					download();
 				} catch (Exception e) {
 					Log.e(TAG, "downloading reading plan list", e);
-					runOnUiThread(() -> new AlertDialog.Builder(ReadingPlanActivity.this)
-					.setMessage(getString(R.string.rp_download_reading_plan_list_failed))
-					.setPositiveButton(R.string.ok, null)
-					.show());
+					runOnUiThread(() -> new AlertDialogWrapper.Builder(ReadingPlanActivity.this)
+						.setMessage(getString(R.string.rp_download_reading_plan_list_failed))
+						.setPositiveButton(R.string.ok, null)
+						.show()
+					);
 				} finally {
 					pd.dismiss();
 				}
@@ -508,42 +510,54 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				}
 
 				if (readingPlanDownloadableEntries.size() == 0) {
-					new AlertDialog.Builder(ReadingPlanActivity.this)
-					.setMessage(getString(R.string.rp_noReadingPlanAvailable))
-					.setPositiveButton(R.string.ok, null)
-					.show();
+					new AlertDialogWrapper.Builder(ReadingPlanActivity.this)
+						.setMessage(getString(R.string.rp_noReadingPlanAvailable))
+						.setPositiveButton(R.string.ok, null)
+						.show();
 					return;
 				}
 
-				final AlertDialog.Builder builder = new AlertDialog.Builder(ReadingPlanActivity.this);
-				builder.setAdapter(new EasyAdapter() {
-					@Override
-					public View newView(final int position, final ViewGroup parent) {
-						return getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
-					}
+				final AlertDialogWrapper.Builder builder = new AlertDialogWrapper.Builder(ReadingPlanActivity.this);
+				builder.setAdapter(
+					new EasyAdapter() {
+						@Override
+						public View newView(final int position, final ViewGroup parent) {
+							return getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
+						}
 
-					@Override
-					public void bindView(final View view, final int position, final ViewGroup parent) {
-						final TextView textView = (TextView) view;
-						final ReadingPlanServerEntry entry = readingPlanDownloadableEntries.get(position);
-						final SpannableStringBuilder sb = new SpannableStringBuilder();
-						sb.append(entry.title);
-						final int sb_len = sb.length();
-						sb.append(" ");
-						sb.append(getString(R.string.rp_download_day_count_days, entry.day_count));
-						sb.append("\n");
-						sb.append(entry.description);
-						sb.setSpan(new RelativeSizeSpan(0.6f), sb_len, sb.length(), 0);
-						textView.setText(sb);
-					}
+						@Override
+						public void bindView(final View view, final int position, final ViewGroup parent) {
+							final TextView textView = (TextView) view;
+							final ReadingPlanServerEntry entry = readingPlanDownloadableEntries.get(position);
+							final SpannableStringBuilder sb = new SpannableStringBuilder();
+							sb.append(entry.title);
+							final int sb_len = sb.length();
+							sb.append(" ");
+							sb.append(getString(R.string.rp_download_day_count_days, entry.day_count));
+							sb.append("\n");
+							sb.append(entry.description);
+							sb.setSpan(new RelativeSizeSpan(0.6f), sb_len, sb.length(), 0);
+							textView.setText(sb);
+						}
 
-					@Override
-					public int getCount() {
-						return readingPlanDownloadableEntries.size();
-					}
-				}, (dialog, which) -> onReadingPlanSelected(readingPlanDownloadableEntries.get(which)))
-				.setNegativeButton(R.string.cancel, null)
-				.show();
+						@Override
+						public int getCount() {
+							return readingPlanDownloadableEntries.size();
+						}
+					})
+					.setNegativeButton(R.string.cancel, null);
+
+				final AlertDialog dialog = builder.show();
+				final ListView listView = dialog.getListView();
+
+				if (listView == null) {
+					throw new RuntimeException("ListView should not be null");
+				}
+
+				listView.setOnItemClickListener((parent, view, position, id) -> {
+					onReadingPlanSelected(readingPlanDownloadableEntries.get(position));
+					dialog.dismiss();
+				});
 			}
 
 			/** run on ui thread */
@@ -565,10 +579,10 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 					download();
 				} catch (Exception e) {
 					Log.e(TAG, "downloading reading plan data", e);
-					new AlertDialog.Builder(ReadingPlanActivity.this)
-					.setMessage(getString(R.string.rp_download_reading_plan_failed))
-					.setPositiveButton(R.string.ok, null)
-					.show();
+					new AlertDialogWrapper.Builder(ReadingPlanActivity.this)
+						.setMessage(getString(R.string.rp_download_reading_plan_failed))
+						.setPositiveButton(R.string.ok, null)
+						.show();
 				} finally {
 					pd.dismiss();
 				}
@@ -587,10 +601,10 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				final long id = ReadingPlanManager.insertReadingPlanToDb(data);
 
 				if (id == 0) {
-					new AlertDialog.Builder(ReadingPlanActivity.this)
-					.setMessage(getString(R.string.rp_download_reading_plan_data_corrupted))
-					.setPositiveButton(R.string.ok, null)
-					.show();
+					new AlertDialogWrapper.Builder(ReadingPlanActivity.this)
+						.setMessage(getString(R.string.rp_download_reading_plan_data_corrupted))
+						.setPositiveButton(R.string.ok, null)
+						.show();
 					return;
 				}
 

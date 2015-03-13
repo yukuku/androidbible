@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
 import android.content.Intent;
@@ -17,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -78,7 +78,7 @@ public class AboutActivity extends BaseActivity {
 
 				if (manualAnnouncementReload.get()) {
 					if (!isFinishing()) {
-						new AlertDialog.Builder(AboutActivity.this)
+						new AlertDialogWrapper.Builder(AboutActivity.this)
 							.setMessage(R.string.about_announcement_load_failed)
 							.setPositiveButton(R.string.ok, null)
 							.show();
@@ -222,7 +222,7 @@ public class AboutActivity extends BaseActivity {
 	};
 
 	private void showSecretDialog() {
-		new AlertDialog.Builder(this)
+		new AlertDialogWrapper.Builder(this)
 			.setItems(Array("Secret settings", "Crash me"), (dialog, which) -> {
 				switch (which) {
 					case 0:
