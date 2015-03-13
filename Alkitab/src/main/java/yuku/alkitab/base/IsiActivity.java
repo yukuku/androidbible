@@ -21,6 +21,7 @@ import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.format.DateFormat;
@@ -40,7 +41,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
@@ -2204,7 +2204,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	@Override
-	public void cSplitVersion_checkedChange(final Switch cSplitVersion, final boolean isChecked) {
+	public void cSplitVersion_checkedChange(final SwitchCompat cSplitVersion, final boolean isChecked) {
 		if (isChecked) {
 			cSplitVersion.setChecked(false); // do it later, at the version chooser dialog
 			openSplitVersionsDialog();

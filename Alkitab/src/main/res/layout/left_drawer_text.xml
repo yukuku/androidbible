@@ -127,7 +127,7 @@
             android:gravity="left|center_vertical"
             android:text="@string/menuDisplay" />
 
-		<Switch
+		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/cFullScreen"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
@@ -139,7 +139,7 @@
             android:fontFamily="sans-serif-regular"
             android:text="@string/menuFullScreen" />
 
-		<Switch
+		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/cNightMode"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
@@ -151,7 +151,7 @@
             android:fontFamily="sans-serif-regular"
             android:text="@string/menuNightMode" />
 
-		<Switch
+		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/cSplitVersion"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
