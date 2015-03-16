@@ -1206,24 +1206,88 @@ public class InternalDb {
 	}
 
 	@Nullable public SyncShadow getSyncShadowBySyncSetName(final String syncSetName) {
+		// Getting a sync shadow that has a size bigger than 2 MB will cause crash,
+		// because of system CursorWindow implementation that sets the max memory allocated
+		// to be 2 MB, as defined in system resource:
+		// <integer name="config_cursorWindowSize">2048</integer>
+		// So we will get the size first, and then allocate memory,
+		// and get the data in chunks.
 		final SQLiteDatabase db = helper.getReadableDatabase();
-		final Cursor c = db.query(Table.SyncShadow.tableName(), Array(
-			Table.SyncShadow.syncSetName.name(),
-			Table.SyncShadow.revno.name(),
-			Table.SyncShadow.data.name()
-		), Table.SyncShadow.syncSetName + "=?", Array(syncSetName), null, null, null);
+		db.beginTransaction();
 		try {
-			if (c.moveToNext()) {
-				final SyncShadow res = new SyncShadow();
-				res.syncSetName = c.getString(0);
-				res.revno = c.getInt(1);
-				res.data = c.getBlob(2);
-				return res;
+			final int data_len;
+			final long _id;
+			final int revno;
+
+			{ // get blob len
+				final Cursor c = db.rawQuery(
+					"select "
+						+ Table.SyncShadow.revno.name() + ", " // col 0
+						+ "length(" + Table.SyncShadow.data.name() + "), " // col 1
+						+ "_id " // col 2
+						+ " from " + Table.SyncShadow.tableName()
+						+ " where " + Table.SyncShadow.syncSetName + "=?",
+					Array(syncSetName)
+				);
+				try {
+					if (c.moveToNext()) {
+						revno = c.getInt(0);
+						data_len = c.getInt(1);
+						_id = c.getLong(2);
+					} else {
+						return null;
+					}
+				} finally {
+					c.close();
+				}
 			}
+
+			final byte[] data = new byte[data_len];
+
+			{ // fill in blob
+				final int chunkSize = 1000_000;
+				for (int i = 0; i < data_len; i += chunkSize) {
+					final Cursor c = db.rawQuery(
+						// sqlite substr func is 1-indexed
+						"select "
+							+ "substr(" + Table.SyncShadow.data.name() + ", " + (i + 1) + ", " + chunkSize + ")" // col 0
+							+ " from " + Table.SyncShadow.tableName()
+							+ " where _id=?",
+						ToStringArray(_id)
+					);
+
+					try {
+						if (c.moveToNext()) {
+							final byte[] chunk = c.getBlob(0);
+							if (i + chunk.length != data_len) {
+								// not the last one
+								if (chunk.length != chunkSize) {
+									throw new RuntimeException("Not the requested size of chunk retrieved. data_len=" + data_len + " i=" + i + " chunk.len=" + chunk.length);
+								}
+								System.arraycopy(chunk, 0, data, i, chunkSize);
+							} else {
+								// the last one
+								System.arraycopy(chunk, 0, data, i, chunk.length);
+							}
+						} else {
+							throw new RuntimeException("Cursor moveToNext returns false, does not make sense, since previous query has indicated that this cursor has rows.");
+						}
+					} finally {
+						c.close();
+					}
+				}
+			}
+
+			db.setTransactionSuccessful();
+
+			final SyncShadow res = new SyncShadow();
+			res.syncSetName = syncSetName;
+			res.revno = revno;
+			res.data = data;
+			return res;
 		} finally {
-			c.close();
+			db.endTransaction();
 		}
-		return null;
 	}
 
 	@Nullable public int getRevnoFromSyncShadowBySyncSetName(final String syncSetName) {
