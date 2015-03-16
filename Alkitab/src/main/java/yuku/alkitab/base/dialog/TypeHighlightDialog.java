@@ -65,10 +65,10 @@ public class TypeHighlightDialog {
 			.customView(R.layout.dialog_edit_highlight, false)
 			.iconRes(R.drawable.ic_attr_highlight)
 			.positiveText(R.string.ok) // this does not actually do anything except closing the dialog.
-			.negativeText(R.string.delete)
+			.neutralText(R.string.delete)
 			.callback(new MaterialDialog.ButtonCallback() {
 				@Override
-				public void onNegative(final MaterialDialog dialog) {
+				public void onNeutral(final MaterialDialog dialog) {
 					select(-1);
 				}
 			});

@@ -36,7 +36,7 @@ public class ProgressMarkRenameDialog extends DialogFragment {
 		final MaterialDialog dialog = new MaterialDialog.Builder(activity)
 			.customView(R.layout.dialog_progress_mark_edit, false)
 			.positiveText(R.string.ok)
-			.negativeText(R.string.delete)
+			.neutralText(R.string.delete)
 			.callback(new MaterialDialog.ButtonCallback() {
 				@Override
 				public void onPositive(final MaterialDialog dialog) {
@@ -61,7 +61,7 @@ public class ProgressMarkRenameDialog extends DialogFragment {
 				}
 
 				@Override
-				public void onNegative(final MaterialDialog dialog) {
+				public void onNeutral(final MaterialDialog dialog) {
 					final String caption = progressMark.caption != null ? progressMark.caption : activity.getString(AttributeView.getDefaultProgressMarkStringResource(progressMark.preset_id));
 					new AlertDialogWrapper.Builder(activity)
 						.setMessage(TextUtils.expandTemplate(activity.getText(R.string.pm_delete_progress_confirm), caption))

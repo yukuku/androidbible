@@ -131,7 +131,7 @@ public class TypeBookmarkDialog {
 			.setTitle(reference)
 			.setIcon(R.drawable.ic_attr_bookmark)
 			.setPositiveButton(R.string.ok, (dialog, which) -> bOk_click())
-			.setNegativeButton(R.string.delete, (dialog, which) -> bDelete_click(marker))
+			.setNeutralButton(R.string.delete, (dialog, which) -> bDelete_click(marker))
 			.show();
 	}
 

@@ -962,7 +962,7 @@ public class VersionsActivity extends BaseActivity {
 			// can we share?
 			if (mv instanceof MVersionDb && mv.hasDataFile()) {
 				button_count++;
-				b.setNeutralButton(R.string.version_menu_share, (dialog, which) -> {
+				b.setNegativeButton(R.string.version_menu_share, (dialog, which) -> {
 					final MVersionDb mvDb = (MVersionDb) mv;
 
 					final Intent intent = ShareCompat.IntentBuilder.from(getActivity())
@@ -977,7 +977,7 @@ public class VersionsActivity extends BaseActivity {
 			// can we delete?
 			if (mv instanceof MVersionDb) {
 				button_count++;
-				b.setNegativeButton(R.string.buang_dari_daftar, (dialog, which) -> {
+				b.setNeutralButton(R.string.buang_dari_daftar, (dialog, which) -> {
 					final MVersionDb mvDb = (MVersionDb) mv;
 					new AlertDialogWrapper.Builder(getActivity())
 						.setMessage(getString(R.string.juga_hapus_file_datanya_file, mvDb.filename))
