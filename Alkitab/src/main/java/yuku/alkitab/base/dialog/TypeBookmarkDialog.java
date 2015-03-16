@@ -89,7 +89,6 @@ public class TypeBookmarkDialog {
 			final MaterialDialog dialog = new MaterialDialog.Builder(context)
 				.title(R.string.add_label_title)
 				.adapter(adapter)
-				.negativeText(R.string.cancel)
 				.build();
 
 			final ListView listView = dialog.getListView();
@@ -189,12 +188,12 @@ public class TypeBookmarkDialog {
 
 		new AlertDialogWrapper.Builder(context)
 			.setMessage(R.string.bookmark_delete_confirmation)
-			.setPositiveButton(R.string.yes, (dialog, which) -> {
+			.setPositiveButton(R.string.delete, (dialog, which) -> {
 				S.getDb().deleteMarkerById(marker._id);
 
 				if (listener != null) listener.onModifiedOrDeleted();
 			})
-			.setNegativeButton(R.string.no, null)
+			.setNegativeButton(R.string.cancel, null)
 			.show();
 	}
 

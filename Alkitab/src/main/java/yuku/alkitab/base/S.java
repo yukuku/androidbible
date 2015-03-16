@@ -209,7 +209,6 @@ public class S {
 			})
 			.alwaysCallSingleChoiceCallback()
 			.positiveText(R.string.versi_lainnya)
-			.negativeText(R.string.cancel)
 			.callback(new MaterialDialog.ButtonCallback() {
 				@Override
 				public void onPositive(final MaterialDialog dialog) {

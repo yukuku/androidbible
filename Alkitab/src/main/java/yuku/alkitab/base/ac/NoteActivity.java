@@ -218,7 +218,7 @@ public class NoteActivity extends BaseActivity {
 							setResult(RESULT_OK);
 							realFinish();
 						})
-						.setNegativeButton(R.string.no, null)
+						.setNegativeButton(R.string.cancel, null)
 						.show();
 				}
 

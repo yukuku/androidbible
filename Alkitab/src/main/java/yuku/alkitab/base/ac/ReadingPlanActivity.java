@@ -381,7 +381,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 	private void resetReadingPlan() {
 		new AlertDialogWrapper.Builder(this)
-			.setMessage(getString(R.string.rp_reset))
+			.setMessage(R.string.rp_reset)
 			.setPositiveButton(R.string.ok, (dialog, which) -> {
 				int firstUnreadDay = findFirstUnreadDay();
 				Calendar calendar = GregorianCalendar.getInstance();
@@ -548,8 +548,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 						public int getCount() {
 							return readingPlanDownloadableEntries.size();
 						}
-					})
-					.setNegativeButton(R.string.cancel, null);
+					});
 
 				final AlertDialog dialog = builder.show();
 				final ListView listView = dialog.getListView();

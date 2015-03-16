@@ -981,7 +981,7 @@ public class VersionsActivity extends BaseActivity {
 					final MVersionDb mvDb = (MVersionDb) mv;
 					new AlertDialogWrapper.Builder(getActivity())
 						.setMessage(getString(R.string.juga_hapus_file_datanya_file, mvDb.filename))
-						.setPositiveButton(R.string.yes, (dialog1, which1) -> {
+						.setPositiveButton(R.string.delete, (dialog1, which1) -> {
 							S.getDb().deleteVersion(mvDb);
 							App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
 							new File(mvDb.filename).delete();
@@ -1052,7 +1052,7 @@ public class VersionsActivity extends BaseActivity {
 				} else {
 					new AlertDialogWrapper.Builder(getActivity())
 						.setMessage(getString(R.string.the_file_for_this_version_is_no_longer_available_file, mv.filename))
-						.setPositiveButton(R.string.yes, (dialog, which) -> {
+						.setPositiveButton(R.string.delete, (dialog, which) -> {
 							S.getDb().deleteVersion(mv);
 							App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
 						})

@@ -1,7 +1,6 @@
 package yuku.alkitab.base.ac;
 
 import android.content.ComponentName;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.AsyncTask;
@@ -276,32 +275,27 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 			}
 		};
 		
-		private OnClickListener bDelete_click = new OnClickListener() {
-			@Override public void onClick(View v) {
-				final FontItem item = (FontItem) v.getTag(R.id.TAG_fontItem);
+		private OnClickListener bDelete_click = v -> {
+			final FontItem item = (FontItem) v.getTag(R.id.TAG_fontItem);
 
-				new AlertDialogWrapper.Builder(FontManagerActivity.this)
-					.setMessage(getString(R.string.fm_do_you_want_to_delete, item.name))
-					.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							File fontDir = FontManager.getFontDir(item.name);
-							File[] listFiles = fontDir.listFiles();
-							if (listFiles != null) {
-								for (File file : listFiles) {
-									file.delete();
-								}
-							}
-							fontDir.delete();
-
-							dls.removeEntry(getFontDownloadKey(item.name));
-
-							notifyDataSetChanged();
+			new AlertDialogWrapper.Builder(FontManagerActivity.this)
+				.setMessage(getString(R.string.fm_do_you_want_to_delete, item.name))
+				.setPositiveButton(R.string.delete, (dialog, which) -> {
+					File fontDir = FontManager.getFontDir(item.name);
+					File[] listFiles = fontDir.listFiles();
+					if (listFiles != null) {
+						for (File file : listFiles) {
+							file.delete();
 						}
-					})
-					.setNegativeButton(R.string.no, null)
-					.show();
-			}
+					}
+					fontDir.delete();
+
+					dls.removeEntry(getFontDownloadKey(item.name));
+
+					notifyDataSetChanged();
+				})
+				.setNegativeButton(R.string.cancel, null)
+				.show();
 		};
 	}
 

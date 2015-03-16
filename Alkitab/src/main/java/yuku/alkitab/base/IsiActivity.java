@@ -1008,7 +1008,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			final MaterialDialog dialog = new MaterialDialog.Builder(this)
 				.adapter(historyAdapter)
 				.autoDismiss(true)
-				.negativeText(R.string.cancel)
 				.show();
 
 			final ListView listView = dialog.getListView();
