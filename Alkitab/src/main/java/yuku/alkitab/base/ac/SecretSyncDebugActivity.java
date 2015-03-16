@@ -84,6 +84,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 		V.get(this, R.id.bMabelClientState).setOnClickListener(bMabelClientState_click);
 		V.get(this, R.id.bGenerateDummies).setOnClickListener(bGenerateDummies_click);
+		V.get(this, R.id.bGenerateDummies2).setOnClickListener(bGenerateDummies2_click);
 		V.get(this, R.id.bLogout).setOnClickListener(bLogout_click);
 		V.get(this, R.id.bSync).setOnClickListener(bSync_click);
 
@@ -96,7 +97,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		final Sync_Mabel.ClientState clientState = pair.first;
 
 		sb.append("Base revno: ").append(clientState.base_revno).append('\n');
-		sb.append("Delta operations: \n");
+		sb.append("Delta operations (size " + clientState.delta.operations.size() + "):\n");
 
 		for (final Sync.Operation<Sync_Mabel.Content> operation : clientState.delta.operations) {
 			sb.append("\u2022 ").append(operation).append('\n');
@@ -130,6 +131,30 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 		new AlertDialogWrapper.Builder(this)
 			.setMessage("10 markers, 2 labels generated.")
+			.setPositiveButton(R.string.ok, null)
+			.show();
+	};
+
+	View.OnClickListener bGenerateDummies2_click = v -> {
+		final Label label1 = S.getDb().insertLabel(randomString("LL1_", 1, 3, 8), U.encodeLabelBackgroundColor(rand(0xffffff)));
+		final Label label2 = S.getDb().insertLabel(randomString("LL2_", 1, 3, 8), U.encodeLabelBackgroundColor(rand(0xffffff)));
+
+		for (int i = 0; i < 1000; i++) {
+			final Marker.Kind kind = Marker.Kind.values()[rand(3)];
+			final Date now = new Date();
+			final Marker marker = S.getDb().insertMarker(0x000101 + rand(30), kind, kind == Marker.Kind.highlight? U.encodeHighlight(rand(0xffffff)): randomString("MM" + i + "_", rand(10) < 5? rand(81): rand(400) + 4, 5, 15), rand(2) + 1, now, now);
+			final Set<Label> labelSet = new HashSet<>();
+			if (rand(10) < 1) {
+				labelSet.add(label1);
+			}
+			if (rand(10) < 4) {
+				labelSet.add(label2);
+			}
+			S.getDb().updateLabels(marker, labelSet);
+		}
+
+		new AlertDialogWrapper.Builder(this)
+			.setMessage("1000 markers, 2 labels generated.")
 			.setPositiveButton(R.string.ok, null)
 			.show();
 	};
