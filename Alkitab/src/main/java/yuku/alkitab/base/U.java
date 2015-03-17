@@ -35,32 +35,54 @@ public class U {
 	 * If verse doesn't start with @: don't do anything, except when force is set to true.
 	 * Otherwise, remove all @'s and one character after that and also text between @&lt; and @&gt;.
 	 */
-	public static String removeSpecialCodes(String text, boolean force) {
+	public static String removeSpecialCodes(final String text, final boolean force) {
 		if (text == null) return null;
 		if (text.length() == 0) return text;
 		if (!force && text.charAt(0) != '@') return text;
 
-		StringBuilder sb = new StringBuilder(text.length());
+		final StringBuilder sb = new StringBuilder(text.length());
 		int pos = 0;
 
 		while (true) {
-			int p = text.indexOf('@', pos);
+			final int p = text.indexOf('@', pos);
 			if (p == -1) {
 				break;
 			}
 
 			sb.append(text, pos, p);
 			pos = p + 2;
-			
-			// did we skip "@<"?
-			if (p + 1 < text.length() && text.charAt(p + 1) == '<') {
-				// look for matching "@>"
-				int q = text.indexOf("@>", pos);
-				if (q != -1) {
-					pos = q + 2;
+
+			if (p + 1 < text.length()) {
+				final char skipped = text.charAt(p + 1);
+				switch (skipped) {
+					// did we skip "@<"?
+					case '<': {
+						// look for matching "@>"
+						int q = text.indexOf("@>", pos);
+						if (q != -1) {
+							pos = q + 2;
+						}
+					}
+					break;
+					// did we skip a paragraph marker, new paragraph, or newline?
+					// if so, add a space if needed
+					case '0':
+					case '1':
+					case '2':
+					case '3':
+					case '4':
+					case '^':
+					case '8': {
+						// only add if the last character output is not already a whitespace
+						if (sb.length() == 0 || Character.isWhitespace(sb.charAt(sb.length() - 1))) {
+							// we do not need to put extra space
+						} else {
+							sb.append(' ');
+						}
+					}
+					break;
 				}
 			}
-			
 		}
 
 		sb.append(text, pos, text.length());
