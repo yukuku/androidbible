@@ -73,4 +73,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:multidex:1.0.0'
     compile 'com.afollestad:material-dialogs:0.6.3.5'
+    testCompile 'junit:junit:4.12'
 }
