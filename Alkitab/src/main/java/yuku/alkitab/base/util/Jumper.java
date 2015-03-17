@@ -14,6 +14,13 @@ import java.util.regex.Pattern;
 
 public class Jumper {
 	public static final String TAG = Jumper.class.getSimpleName();
+
+	public interface Logger {
+		void d(String msg);
+	}
+
+	// default logger
+	private Logger logger = msg -> Log.d(TAG, msg);
 	
 	private String p_book;
 	private int p_chapter;
@@ -37,11 +44,26 @@ public class Jumper {
 	}
 	
 	private static WeakHashMap<Book[], List<BookRef>> condensedCache = new WeakHashMap<>();
-	
+
+	/**
+	 * Parse with default logger.
+	 */
 	public Jumper(String referenceToParse) {
 		parseSucceeded = parse(referenceToParse);
 	}
-	
+
+	/**
+	 * Override default logger and parse, e.g. for unit testing, to prevent calling android.util.Log methods.
+	 */
+	public void setLogger(final Logger logger) {
+		this.logger = logger;
+	}
+
+	public Jumper(String referenceToParse, Logger logger) {
+		this.logger = logger;
+		parseSucceeded = parse(referenceToParse);
+	}
+
 	/**
 	 * Can't be parsed as a pure number. "4-5": true. "Hello": true. "123": false. "12b": false.
 	 * This is not the opposite of isNumber.
@@ -120,20 +142,20 @@ public class Jumper {
 			return false;
 		}
 
-		if (BuildConfig.DEBUG) Log.d(TAG, "jumper stage 0: " + reference); //$NON-NLS-1$
+		if (BuildConfig.DEBUG) logger.d("jumper stage 0: " + reference);
 		
 		//# STAGE 4: replace en-dash and em-dash to normal dash
 		if (reference.contains("\u2013") || reference.contains("\u2014")) {
 			reference = reference.replaceAll("[\u2013\u2014]", "-");
 
-			if (BuildConfig.DEBUG) Log.d(TAG, "jumper stage 4: " + reference); //$NON-NLS-1$
+			if (BuildConfig.DEBUG) logger.d("jumper stage 4: " + reference);
 		}
 		
 		//# STAGE 5: Remove spaces on the left and right of "-"
 		if (reference.indexOf('-') >= 0) {
 			reference = reference.replaceAll("\\s+-\\s+|\\s+-|-\\s+", "-"); //$NON-NLS-1$ //$NON-NLS-2$
 
-			if (BuildConfig.DEBUG) Log.d(TAG, "jumper stage 5: " + reference); //$NON-NLS-1$
+			if (BuildConfig.DEBUG) logger.d("jumper stage 5: " + reference);
 		}
 		
 		//# STAGE 7: Check whether this is in strict osis ID format.
@@ -159,7 +181,7 @@ public class Jumper {
 			Pattern p = OsisBookNames.getBookNameWithChapterAndOptionalVersePattern();
 			Matcher m = p.matcher(osisId);
 			if (m.matches()) {
-				if (BuildConfig.DEBUG) Log.d(TAG, "jumper stage 7: ref matching osis pattern found: " + osisId); //$NON-NLS-1$
+				if (BuildConfig.DEBUG) logger.d("jumper stage 7: ref matching osis pattern found: " + osisId);
 				String osisBookName = m.group(1);
 				String chapter_s = m.group(2);
 				String verse_s = m.group(3);
@@ -169,10 +191,10 @@ public class Jumper {
 					p_chapter = Integer.parseInt(chapter_s);
 					p_verse = (verse_s == null || verse_s.length() == 0)? 0: Integer.parseInt(verse_s);
 				} catch (Exception e) {
-					Log.e(TAG, "Should not happen. In jumper stage 7", e); //$NON-NLS-1$
+					throw new RuntimeException("Should not happen. In jumper stage 7", e);
 				}
 
-				if (BuildConfig.DEBUG) Log.d(TAG, "jumper stage 7: successfully parsed osis id: " + p_bookIdFromOsis + ' ' + p_chapter + ' ' + p_verse); //$NON-NLS-1$
+				if (BuildConfig.DEBUG) logger.d("jumper stage 7: successfully parsed osis id: " + p_bookIdFromOsis + ' ' + p_chapter + ' ' + p_verse);
 				return true;
 			}
 		}
@@ -181,7 +203,7 @@ public class Jumper {
 		//# Sample of wrong output: [Kisah, rasul34, 6-7, 8]
 		//# Sample of right output: [Kisah, rasul34, 6, -, 7, 8]
 		String[] parts = reference.split("((\\s|:|\\.)+|(?=[0-9])(?<=-)|(?=-)(?<=[0-9][a-z]?))"); //$NON-NLS-1$
-		if (BuildConfig.DEBUG) Log.d(TAG, "jumper stage 10: " + Arrays.toString(parts)); //$NON-NLS-1$
+		if (BuildConfig.DEBUG) logger.d("jumper stage 10: " + Arrays.toString(parts));
 
 		//# STAGE 12: Remove string from empty parts
 		{
@@ -203,7 +225,7 @@ public class Jumper {
 				parts = partsWithoutEmpties;
 			}
 		}
-		if (BuildConfig.DEBUG) Log.d(TAG, "jumper stage 12: " + Arrays.toString(parts)); //$NON-NLS-1$
+		if (BuildConfig.DEBUG) logger.d("jumper stage 12: " + Arrays.toString(parts));
 		
 		if (parts.length == 0) {
 			return false;
@@ -213,7 +235,7 @@ public class Jumper {
 		//# Sample output: [Kisah, rasul, 34, 6, -, 7, 8]
 		{
 			ArrayList<String> bel = new ArrayList<>();
-			
+
 			for (String b: parts) {
 				if (isWord(b)) {
 					String number = ""; //$NON-NLS-1$
@@ -240,7 +262,7 @@ public class Jumper {
 			
 			parts = bel.toArray(parts);
 		}
-		if (BuildConfig.DEBUG) Log.d(TAG, "jumper stage 20: " + Arrays.toString(parts)); //$NON-NLS-1$
+		if (BuildConfig.DEBUG) logger.d("jumper stage 20: " + Arrays.toString(parts));
 		
 
 		//# STAGE 25: Look for part that is "-", then remove from it to the end.
@@ -263,7 +285,7 @@ public class Jumper {
 
 				p_hasRange = true;
 
-				if (BuildConfig.DEBUG) Log.d(TAG, "jumper stage 25: " + Arrays.toString(parts)); //$NON-NLS-1$
+				if (BuildConfig.DEBUG) logger.d("jumper stage 25: " + Arrays.toString(parts));
 			}
 		}
 		
@@ -292,7 +314,7 @@ public class Jumper {
 					}
 
 					if (BuildConfig.DEBUG) {
-						Log.d(TAG, "jumper stage 30: too much, how come there are more than 2 numbers: returning false");
+						logger.d("jumper stage 30: too much, how come there are more than 2 numbers: returning false");
 					}
 					return false;
 				}
@@ -310,7 +332,7 @@ public class Jumper {
 
 			parts = bel.toArray(new String[bel.size()]);
 		}
-		if (BuildConfig.DEBUG) Log.d(TAG, "jumper stage 30: " + Arrays.toString(parts)); //$NON-NLS-1$
+		if (BuildConfig.DEBUG) logger.d("jumper stage 30: " + Arrays.toString(parts));
 		
 		if (parts.length == 1) { // 1 part only
 			// It means it can be CHAPTER or BOOK only
@@ -355,7 +377,7 @@ public class Jumper {
 		boolean res = parse0(alamat);
 
 		if (BuildConfig.DEBUG) {
-			Log.d(TAG, "jumper after parse0: p_book=" + p_book + " p_chapter=" + p_chapter + " p_verse=" + p_verse); //$NON-NLS-1$
+			logger.d("jumper after parse0: p_book=" + p_book + " p_chapter=" + p_chapter + " p_verse=" + p_verse);
 		}
 
 		return res;
@@ -399,12 +421,12 @@ public class Jumper {
 		
 		// 0. clean up p_book
 		p_book = p_book.replaceAll("(\\s|-|_)", "").toLowerCase(Locale.getDefault()); //$NON-NLS-1$ //$NON-NLS-2$
-		if (BuildConfig.DEBUG) Log.d(TAG, "guessBook phase 0: p_book = " + p_book); //$NON-NLS-1$
+		if (BuildConfig.DEBUG) logger.d("guessBook phase 0: p_book = " + p_book);
 		
 		// 1. try to match wholly (e.g.: "genesis", "john")
 		for (BookRef ref: refs) {
 			if (ref.condensed.equals(p_book)) {
-				if (BuildConfig.DEBUG) Log.d(TAG, "guessBook phase 1 success: " + p_book); //$NON-NLS-1$
+				if (BuildConfig.DEBUG) logger.d("guessBook phase 1 success: " + p_book);
 				return ref.pos;
 			}
 		}
@@ -421,10 +443,10 @@ public class Jumper {
 			}
 			
 			if (passed == 1) {
-				if (BuildConfig.DEBUG) Log.d(TAG, "guessBook phase 2 success: " + pos_forLater + " for " + p_book); //$NON-NLS-1$ //$NON-NLS-2$
+				if (BuildConfig.DEBUG) logger.d("guessBook phase 2 success: " + pos_forLater + " for " + p_book);
 				return pos_forLater;
 			} else {
-				if (BuildConfig.DEBUG) Log.d(TAG, "guessBook phase 2: passed=" + passed); //$NON-NLS-1$
+				if (BuildConfig.DEBUG) logger.d("guessBook phase 2: passed=" + passed);
 			}
 		}
 		
@@ -440,7 +462,7 @@ public class Jumper {
 				}
 
 				if (BuildConfig.DEBUG) {
-					Log.d(TAG, "guessBook phase 3: with " + ref + ", score " + score); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					logger.d("guessBook phase 3: with " + ref + ", score " + score);
 				}
 
 				if (score < minScore) {
@@ -450,14 +472,14 @@ public class Jumper {
 			}
 			
 			if (pos != -1) {
-				if (BuildConfig.DEBUG) Log.d(TAG, "guessBook phase 3 success: " + pos + " with score " + minScore);  //$NON-NLS-1$//$NON-NLS-2$
+				if (BuildConfig.DEBUG) logger.d("guessBook phase 3 success: " + pos + " with score " + minScore);
 				return pos;
 			}
 		}
 		
 		// 7. Return the earlier match if there is more than one that passed phase 2.
 		if (pos_forLater != -1) {
-			if (BuildConfig.DEBUG) Log.d(TAG, "guessBook phase 7 success: " + pos_forLater + " for " + p_book); //$NON-NLS-1$ //$NON-NLS-2$
+			if (BuildConfig.DEBUG) logger.d("guessBook phase 7 success: " + pos_forLater + " for " + p_book);
 			return pos_forLater;
 		}
 		
@@ -490,7 +512,7 @@ public class Jumper {
 			
 			refs = createBookCandidates(bookNames, bookIds);
 			condensedCache.put(books, refs);
-			if (BuildConfig.DEBUG) Log.d(TAG, "New condensedCache entry: " + refs); //$NON-NLS-1$
+			if (BuildConfig.DEBUG) logger.d("New condensedCache entry: " + refs);
 		}
 		
 		return guessBook(refs);

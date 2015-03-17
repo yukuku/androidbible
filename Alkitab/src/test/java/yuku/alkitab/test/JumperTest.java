@@ -1,11 +1,10 @@
 package yuku.alkitab.test;
 
-import android.test.AndroidTestCase;
-import android.util.Log;
+import junit.framework.TestCase;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.model.Book;
 
-public class JumperTest extends AndroidTestCase {
+public class JumperTest extends TestCase {
 	public static final String TAG = JumperTest.class.getSimpleName();
 	static Book[] books;
 
@@ -91,8 +90,16 @@ public class JumperTest extends AndroidTestCase {
 	void testParse(String reference, boolean expectOk, int expectBookId, int expectChapter_1, int expectVerse_1, final boolean expectHasRange) {
 		long startTime = System.currentTimeMillis();
 
+		//noinspection Convert2Lambda,Anonymous2MethodRef
+		final Jumper.Logger logger = new Jumper.Logger() {
+			@Override
+			public void d(final String msg) {
+				System.out.println(msg);
+			}
+		};
+
 		try {
-			final Jumper jumper = new Jumper(reference);
+			final Jumper jumper = new Jumper(reference, logger);
 			
 			boolean ok = jumper.getParseSucceeded();
 			if (ok) {
@@ -108,14 +115,14 @@ public class JumperTest extends AndroidTestCase {
 				boolean hasRange = jumper.getHasRange();
 				assertEquals(expectHasRange, hasRange);
 
-				Log.d(TAG, reference + " -> " + expectBookId + " " + expectChapter_1 + " " + expectVerse_1);
+				logger.d(reference + " -> " + expectBookId + " " + expectChapter_1 + " " + expectVerse_1);
 			} else {
 				assertEquals(expectOk, ok);
 
-				Log.d(TAG, reference + " -> false");
+				logger.d(reference + " -> false");
 			}
 		} finally {
-			Log.d(TAG, "need " + (System.currentTimeMillis() - startTime) + " ms");
+			logger.d("need " + (System.currentTimeMillis() - startTime) + " ms");
 		}
 	}
 
