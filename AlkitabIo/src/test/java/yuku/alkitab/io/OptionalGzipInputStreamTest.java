@@ -1,15 +1,14 @@
 package yuku.alkitab.io;
 
-import org.junit.Test;
+import junit.framework.TestCase;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 
-public class OptionalGzipInputStreamTest {
+public class OptionalGzipInputStreamTest extends TestCase {
 	byte[] zero;
 	byte[] one;
 	byte[] onefakegzip;
@@ -165,7 +164,6 @@ public class OptionalGzipInputStreamTest {
 		ogis.close();
 	}
 
-	@Test
 	public void testAll() throws Exception {
 		init();
 		final byte[][] bytes1 = new byte[][] {zero, one, onefakegzip, twonon, twogzip, realgzip};

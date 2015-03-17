@@ -25,4 +25,5 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':AlkitabModel')
     compile project(':BintexReader')
+    testCompile 'junit:junit:4.12'
 }
