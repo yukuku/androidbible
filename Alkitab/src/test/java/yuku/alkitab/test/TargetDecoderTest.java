@@ -1,10 +1,10 @@
 package yuku.alkitab.test;
 
-import android.test.AndroidTestCase;
+import junit.framework.TestCase;
 import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.util.IntArrayList;
 
-public class TargetDecoderTest extends AndroidTestCase {
+public class TargetDecoderTest extends TestCase {
 	void testDecode(String encoded, IntArrayList ariRanges) {
 		assertEquals(ariRanges, TargetDecoder.decode(encoded));
 	}

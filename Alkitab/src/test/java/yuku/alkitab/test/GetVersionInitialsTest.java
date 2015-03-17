@@ -1,6 +1,6 @@
 package yuku.alkitab.test;
 
-import android.test.AndroidTestCase;
+import junit.framework.TestCase;
 import yuku.alkitab.base.S;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
@@ -12,7 +12,7 @@ import yuku.alkitab.util.IntArrayList;
 
 import java.util.List;
 
-public class GetVersionInitialsTest extends AndroidTestCase {
+public class GetVersionInitialsTest extends TestCase {
 
 	Version fakeVersion(final String longName) {
 		return new Version() {
@@ -93,6 +93,11 @@ public class GetVersionInitialsTest extends AndroidTestCase {
 
 			@Override
 			public String reference(final int ari) {
+				return null;
+			}
+
+			@Override
+			public String referenceWithVerseCount(final int ari, final int verseCount) {
 				return null;
 			}
 
