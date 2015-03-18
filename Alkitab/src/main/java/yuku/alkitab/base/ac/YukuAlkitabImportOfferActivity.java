@@ -148,6 +148,6 @@ public class YukuAlkitabImportOfferActivity extends BaseActivity {
 	}
 
 	public static Matcher getBackupFilenameMatcher() {
-		return Pattern.compile("yuku.alkitab(\\.kjv)-(backup|autobackup-[0-9-]+)\\.xml").matcher("");
+		return Pattern.compile("yuku.alkitab(\\.kjv)?-(backup|autobackup-[0-9-]+)\\.xml").matcher("");
 	}
 }

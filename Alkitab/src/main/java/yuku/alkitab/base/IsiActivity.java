@@ -483,13 +483,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				final int verse_1 = Ari.toVerse(openingAri) + i;
 				lsSplit0.setVerseSelected(verse_1, true);
 			}
-
-			if (!U.equals(getPackageName(), "yuku.alkitab") /* prevent self-import */
-				&& !U.equals(getPackageName(), "yuku.alkitab.kjv") /* prevent self-import */
-				&& Preferences.getInt(Prefkey.stop_import_yuku_alkitab_backups, 0) == 0
-				&& thereIsYukuAlkitabBackupFiles()) {
-				startActivity(YukuAlkitabImportOfferActivity.createIntent());
-			}
 		}
 
 		App.getLbm().registerReceiver(reloadAttributeMapReceiver, new IntentFilter(ACTION_ATTRIBUTE_MAP_CHANGED));
@@ -501,7 +494,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			}
 		}
 
-		if (!U.equals(getPackageName(), "yuku.alkitab") /* prevent self-import */ && Preferences.getInt(Prefkey.stop_import_yuku_alkitab_backups, 0) == 0 && thereIsYukuAlkitabBackupFiles()) {
+		if (!U.equals(getPackageName(), "yuku.alkitab") /* prevent self-import */
+			&& !U.equals(getPackageName(), "yuku.alkitab.kjv") /* prevent self-import */
+			&& Preferences.getInt(Prefkey.stop_import_yuku_alkitab_backups, 0) == 0
+			&& thereIsYukuAlkitabBackupFiles()) {
 			startActivity(YukuAlkitabImportOfferActivity.createIntent());
 		}
 
