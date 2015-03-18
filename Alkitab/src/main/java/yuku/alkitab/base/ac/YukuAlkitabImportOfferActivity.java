@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -10,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
@@ -61,7 +61,7 @@ public class YukuAlkitabImportOfferActivity extends BaseActivity {
 				BookmarkImporter.importBookmarks(YukuAlkitabImportOfferActivity.this, fis, true);
 				Preferences.setInt(Prefkey.stop_import_yuku_alkitab_backups, 2);
 			} catch (FileNotFoundException e) {
-				new AlertDialog.Builder(YukuAlkitabImportOfferActivity.this)
+				new AlertDialogWrapper.Builder(YukuAlkitabImportOfferActivity.this)
 					.setMessage(R.string.marker_migrate_error_opening_backup_file)
 					.setPositiveButton(R.string.ok, null)
 					.show();
@@ -70,7 +70,7 @@ public class YukuAlkitabImportOfferActivity extends BaseActivity {
 
 		bCancel.setOnClickListener(v -> finish());
 
-		bNoMore.setOnClickListener(v -> new AlertDialog.Builder(this)
+		bNoMore.setOnClickListener(v -> new AlertDialogWrapper.Builder(this)
 			.setMessage(R.string.marker_migrate_no_more_confirmation)
 			.setPositiveButton(R.string.ok, (dialog, which) -> {
 				Preferences.setInt(Prefkey.stop_import_yuku_alkitab_backups, 1);
@@ -148,6 +148,6 @@ public class YukuAlkitabImportOfferActivity extends BaseActivity {
 	}
 
 	public static Matcher getBackupFilenameMatcher() {
-		return Pattern.compile("yuku.alkitab(\\.kjv)-(backup|autobackup-[0-9-]+)\\.xml").matcher("");
+		return Pattern.compile("yuku.alkitab(\\.kjv)?-(backup|autobackup-[0-9-]+)\\.xml").matcher("");
 	}
 }

@@ -21,6 +21,7 @@ import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.format.DateFormat;
@@ -39,9 +40,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
-import android.widget.Switch;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import org.json.JSONException;
 import org.json.JSONObject;
 import yuku.afw.V;
@@ -480,13 +483,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				final int verse_1 = Ari.toVerse(openingAri) + i;
 				lsSplit0.setVerseSelected(verse_1, true);
 			}
-
-			if (!U.equals(getPackageName(), "yuku.alkitab") /* prevent self-import */
-				&& !U.equals(getPackageName(), "yuku.alkitab.kjv") /* prevent self-import */
-				&& Preferences.getInt(Prefkey.stop_import_yuku_alkitab_backups, 0) == 0
-				&& thereIsYukuAlkitabBackupFiles()) {
-				startActivity(YukuAlkitabImportOfferActivity.createIntent());
-			}
 		}
 
 		App.getLbm().registerReceiver(reloadAttributeMapReceiver, new IntentFilter(ACTION_ATTRIBUTE_MAP_CHANGED));
@@ -498,7 +494,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			}
 		}
 
-		if (!U.equals(getPackageName(), "yuku.alkitab") /* prevent self-import */ && Preferences.getInt(Prefkey.stop_import_yuku_alkitab_backups, 0) == 0 && thereIsYukuAlkitabBackupFiles()) {
+		if (!U.equals(getPackageName(), "yuku.alkitab") /* prevent self-import */
+			&& !U.equals(getPackageName(), "yuku.alkitab.kjv") /* prevent self-import */
+			&& Preferences.getInt(Prefkey.stop_import_yuku_alkitab_backups, 0) == 0
+			&& thereIsYukuAlkitabBackupFiles()) {
 			startActivity(YukuAlkitabImportOfferActivity.createIntent());
 		}
 
@@ -591,10 +590,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				res.selectVerseCount = selectVerseCount;
 				return res;
 			} else {
-				new AlertDialog.Builder(this)
-				.setMessage("Invalid ari: " + ari)
-				.setPositiveButton(R.string.ok, null)
-				.show();
+				new AlertDialogWrapper.Builder(this)
+					.setMessage("Invalid ari: " + ari)
+					.setPositiveButton(R.string.ok, null)
+					.show();
 				return null;
 			}
 		} else if (intent.hasExtra("lid")) {
@@ -608,10 +607,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				res.selectVerseCount = selectVerseCount;
 				return res;
 			} else {
-				new AlertDialog.Builder(this)
-				.setMessage("Invalid lid: " + lid)
-				.setPositiveButton(R.string.ok, null)
-				.show();
+				new AlertDialogWrapper.Builder(this)
+					.setMessage("Invalid lid: " + lid)
+					.setPositiveButton(R.string.ok, null)
+					.show();
 				return null;
 			}
 		} else {
@@ -742,7 +741,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		} catch (Throwable e) { // so we don't crash on the beginning of the app
 			Log.e(TAG, "Error opening main version", e);
 
-			new AlertDialog.Builder(IsiActivity.this)
+			new AlertDialogWrapper.Builder(IsiActivity.this)
 				.setMessage(getString(R.string.version_error_opening, mv.longName))
 				.setPositiveButton(R.string.ok, null)
 				.show();
@@ -767,7 +766,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		} catch (Throwable e) { // so we don't crash on the beginning of the app
 			Log.e(TAG, "Error opening split version", e);
 
-			new AlertDialog.Builder(IsiActivity.this)
+			new AlertDialogWrapper.Builder(IsiActivity.this)
 				.setMessage(getString(R.string.version_error_opening, mv.longName))
 				.setPositiveButton(R.string.ok, null)
 				.show();
@@ -1002,15 +1001,23 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	
 	void bGoto_longClick() {
 		if (history.getSize() > 0) {
-			new AlertDialog.Builder(this)
-			.setAdapter(historyAdapter, (dialog, which) -> {
-				int ari = history.getAri(which);
+			final MaterialDialog dialog = new MaterialDialog.Builder(this)
+				.adapter(historyAdapter)
+				.autoDismiss(true)
+				.show();
+
+			final ListView listView = dialog.getListView();
+			if (listView == null) {
+				throw new RuntimeException("ListView should not be null");
+			}
+
+			listView.setOnItemClickListener((parent, view, position, id) -> {
+				dialog.dismiss();
+				int ari = history.getAri(position);
 				jumpToAri(ari, true);
 				history.add(ari);
 				Preferences.setBoolean(Prefkey.history_button_understood, true);
-			})
-			.setNegativeButton(R.string.cancel, null)
-			.show();
+			});
 		} else {
 			Toast.makeText(this, R.string.recentverses_not_available, Toast.LENGTH_SHORT).show();
 		}
@@ -1635,12 +1642,18 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (markers.size() == 1) {
 				openBookmarkDialog(markers.get(0)._id);
 			} else {
-                AlertDialog dialog = new AlertDialog.Builder(IsiActivity.this)
+                AlertDialog dialog = new AlertDialogWrapper.Builder(IsiActivity.this)
                     .setTitle(R.string.edit_bookmark)
-                    .setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.bookmark), (_dialog_, which) -> openBookmarkDialog(markers.get(which)._id))
+                    .setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.bookmark))
                     .show();
-                dialog.getListView().setDrawSelectorOnTop(true);
-            }
+
+				final ListView listView = dialog.getListView();
+				listView.setDrawSelectorOnTop(true);
+				listView.setOnItemClickListener((parent, view, position, id) -> {
+					openBookmarkDialog(markers.get(position)._id);
+					dialog.dismiss();
+				});
+			}
         }
 
 		void openNoteDialog(final long _id) {
@@ -1655,12 +1668,18 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (markers.size() == 1) {
 				openNoteDialog(markers.get(0)._id);
 			} else {
-                AlertDialog dialog = new AlertDialog.Builder(IsiActivity.this)
+                AlertDialog dialog = new AlertDialogWrapper.Builder(IsiActivity.this)
                     .setTitle(R.string.edit_note)
-                    .setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.note), (_dialog_, which) -> openNoteDialog(markers.get(which)._id))
+                    .setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.note))
                     .show();
-                dialog.getListView().setDrawSelectorOnTop(true);
-            }
+
+				final ListView listView = dialog.getListView();
+				listView.setDrawSelectorOnTop(true);
+				listView.setOnItemClickListener((parent, view, position, id) -> {
+					openNoteDialog(markers.get(position)._id);
+					dialog.dismiss();
+				});
+			}
         }
 
 		class MultipleMarkerSelectAdapter extends EasyAdapter {
@@ -1796,21 +1815,21 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 							VerseRenderer.appendSuperscriptNumber(footnoteText, arif & 0xff);
 							footnoteText.append(" ");
 
-							new AlertDialog.Builder(IsiActivity.this)
-							.setMessage(FormattedTextRenderer.render(fe.content, footnoteText))
-							.setPositiveButton("OK", null)
-							.show();
+							new AlertDialogWrapper.Builder(IsiActivity.this)
+								.setMessage(FormattedTextRenderer.render(fe.content, footnoteText))
+								.setPositiveButton(R.string.ok, null)
+								.show();
 						} else {
-							new AlertDialog.Builder(IsiActivity.this)
-							.setMessage(String.format(Locale.US, "Error: footnote arif 0x%08x couldn't be loaded", arif))
-							.setPositiveButton("OK", null)
-							.show();
+							new AlertDialogWrapper.Builder(IsiActivity.this)
+								.setMessage(String.format(Locale.US, "Error: footnote arif 0x%08x couldn't be loaded", arif))
+								.setPositiveButton(R.string.ok, null)
+								.show();
 						}
 					} else {
-						new AlertDialog.Builder(IsiActivity.this)
-						.setMessage("Error: Unknown inline link type: " + type)
-						.setPositiveButton("OK", null)
-						.show();
+						new AlertDialogWrapper.Builder(IsiActivity.this)
+							.setMessage("Error: Unknown inline link type: " + type)
+							.setPositiveButton("OK", null)
+							.show();
 					}
 				}
 			};
@@ -2053,7 +2072,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 						lsSplit0.uncheckAllVerses(true);
 						reloadBothAttributeMaps();
 					}
-				}, colorRgb, reference).show();
+				}, colorRgb, reference);
 				mode.finish();
 			} return true;
 			case R.id.menuEsvsb: {
@@ -2180,7 +2199,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	@Override
-	public void cSplitVersion_checkedChange(final Switch cSplitVersion, final boolean isChecked) {
+	public void cSplitVersion_checkedChange(final SwitchCompat cSplitVersion, final boolean isChecked) {
 		if (isChecked) {
 			cSplitVersion.setChecked(false); // do it later, at the version chooser dialog
 			openSplitVersionsDialog();
@@ -2197,7 +2216,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			final ProgressMarkListDialog dialog = new ProgressMarkListDialog();
 			dialog.show(getSupportFragmentManager(), "dialog_progress_mark_list");
 		} else {
-			new AlertDialog.Builder(this)
+			new AlertDialogWrapper.Builder(this)
 				.setMessage(R.string.pm_activate_tutorial)
 				.setPositiveButton(R.string.ok, null)
 				.show();
@@ -2217,7 +2236,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			jumpToAri(ari, false);
 			history.add(ari);
 		} else {
-			new AlertDialog.Builder(this)
+			new AlertDialogWrapper.Builder(this)
 				.setMessage(R.string.pm_activate_tutorial)
 				.setPositiveButton(R.string.ok, null)
 				.show();

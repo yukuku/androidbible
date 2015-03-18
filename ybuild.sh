@@ -108,7 +108,7 @@ echo $LAST_COMMIT_HASH
 
 echo "Copying $SUPER_PROJECT_NAME..."
 mkdir $BUILD_DIR/$SUPER_PROJECT_NAME
-rsync -a --exclude ".git/" ./ $BUILD_DIR/$SUPER_PROJECT_NAME/
+rsync -a --exclude ".git/" --exclude "*/build/" ./ $BUILD_DIR/$SUPER_PROJECT_NAME/
 
 echo 'Going to' $BUILD_DIR/$SUPER_PROJECT_NAME
 pushd $BUILD_DIR/$SUPER_PROJECT_NAME

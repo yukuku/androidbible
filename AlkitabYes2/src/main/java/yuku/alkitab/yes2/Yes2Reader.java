@@ -1,13 +1,13 @@
 package yuku.alkitab.yes2;
 
 import android.util.Log;
-import yuku.alkitab.util.Ari;
+import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.model.XrefEntry;
-import yuku.alkitab.io.BibleReader;
+import yuku.alkitab.util.Ari;
 import yuku.alkitab.yes2.compress.SnappyInputStream;
 import yuku.alkitab.yes2.io.RandomAccessFileRandomInputStream;
 import yuku.alkitab.yes2.io.RandomInputStream;
@@ -245,7 +245,7 @@ public class Yes2Reader implements BibleReader {
 			
 			return textSectionReader_.loadVerseText(yes2Book, chapter_1, dontSeparateVerses, lowercase);
 		} catch (Exception e) {
-			Log.e(TAG, "loadVerseText error", e); //$NON-NLS-1$
+			Log.e(TAG, "@@loadVerseText error book=" + book + " chapter_1=" + chapter_1 + " dontSeparateVerses=" + dontSeparateVerses + " lowercase=" + lowercase, e);
 			return null;
 		}
 	}

@@ -8,6 +8,7 @@
         <item name="android:textColorLink">@color/accent</item>
         <item name="android:windowBackground">@color/windowBackground</item>
 		<item name="actionModeStyle">@style/SmallerTitleActionModeStyle</item>
+		<item name="md_dark_theme">true</item>
 	</style>
 
 	<!-- for non-appcompat activities like settings -->

@@ -2,17 +2,15 @@ package yuku.ambilwarna;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 public class AmbilWarnaDialog {
 	public interface OnAmbilWarnaListener {
@@ -21,7 +19,7 @@ public class AmbilWarnaDialog {
 		void onOk(AmbilWarnaDialog dialog, int color);
 	}
 
-	final AlertDialog dialog;
+	final MaterialDialog dialog;
 	private final boolean supportsAlpha;
 	final OnAmbilWarnaListener listener;
 	final View viewHue;
@@ -67,7 +65,34 @@ public class AmbilWarnaDialog {
 		Color.colorToHSV(color, currentColorHsv);
 		alpha = Color.alpha(color);
 
-		final View view = LayoutInflater.from(context).inflate(R.layout.ambilwarna_dialog, null);
+		dialog = new MaterialDialog.Builder(context)
+			.customView(R.layout.ambilwarna_dialog, false)
+			.positiveText(android.R.string.ok)
+			.negativeText(android.R.string.cancel)
+			.callback(new MaterialDialog.ButtonCallback() {
+				@Override
+				public void onPositive(final MaterialDialog dialog) {
+					if (AmbilWarnaDialog.this.listener != null) {
+						AmbilWarnaDialog.this.listener.onOk(AmbilWarnaDialog.this, getColor());
+					}
+				}
+
+				@Override
+				public void onNegative(final MaterialDialog dialog) {
+					if (AmbilWarnaDialog.this.listener != null) {
+						AmbilWarnaDialog.this.listener.onCancel(AmbilWarnaDialog.this);
+					}
+				}
+			})
+			.dismissListener(dialog -> {
+				if (AmbilWarnaDialog.this.listener != null) {
+					AmbilWarnaDialog.this.listener.onCancel(AmbilWarnaDialog.this);
+				}
+			})
+			.build();
+
+		final View view = dialog.getCustomView();
+
 		viewHue = view.findViewById(R.id.ambilwarna_viewHue);
 		viewSatVal = (AmbilWarnaSquare) view.findViewById(R.id.ambilwarna_viewSatBri);
 		viewCursor = (ImageView) view.findViewById(R.id.ambilwarna_cursor);
@@ -89,118 +114,78 @@ public class AmbilWarnaDialog {
 		viewOldColor.setBackgroundColor(color);
 		viewNewColor.setBackgroundColor(color);
 
-		viewHue.setOnTouchListener(new View.OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_MOVE
+		viewHue.setOnTouchListener((v, event) -> {
+			if (event.getAction() == MotionEvent.ACTION_MOVE
 				|| event.getAction() == MotionEvent.ACTION_DOWN
 				|| event.getAction() == MotionEvent.ACTION_UP) {
 
-					float y = event.getY();
-					if (y < 0.f) y = 0.f;
-					if (y > viewHue.getMeasuredHeight()) {
-						y = viewHue.getMeasuredHeight() - 0.001f; // to avoid jumping the cursor from bottom to top.
-					}
-					float hue = 360.f - 360.f / viewHue.getMeasuredHeight() * y;
-					if (hue == 360.f) hue = 0.f;
-					setHue(hue);
-
-					// update view
-					viewSatVal.setHue(getHue());
-					moveCursor();
-					viewNewColor.setBackgroundColor(getColor());
-					updateAlphaView();
-					return true;
+				float y = event.getY();
+				if (y < 0.f) y = 0.f;
+				if (y > viewHue.getMeasuredHeight()) {
+					y = viewHue.getMeasuredHeight() - 0.001f; // to avoid jumping the cursor from bottom to top.
 				}
-				return false;
+				float hue = 360.f - 360.f / viewHue.getMeasuredHeight() * y;
+				if (hue == 360.f) hue = 0.f;
+				setHue(hue);
+
+				// update view
+				viewSatVal.setHue(getHue());
+				moveCursor();
+				viewNewColor.setBackgroundColor(getColor());
+				updateAlphaView();
+				return true;
 			}
+			return false;
 		});
 
-		if (supportsAlpha) viewAlphaCheckered.setOnTouchListener(new View.OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if ((event.getAction() == MotionEvent.ACTION_MOVE)
+		if (supportsAlpha) viewAlphaCheckered.setOnTouchListener((v, event) -> {
+			if ((event.getAction() == MotionEvent.ACTION_MOVE)
 				|| (event.getAction() == MotionEvent.ACTION_DOWN)
 				|| (event.getAction() == MotionEvent.ACTION_UP)) {
 
-					float y = event.getY();
-					if (y < 0.f) {
-						y = 0.f;
-					}
-					if (y > viewAlphaCheckered.getMeasuredHeight()) {
-						y = viewAlphaCheckered.getMeasuredHeight() - 0.001f; // to avoid jumping the cursor from bottom to top.
-					}
-					final int a = Math.round(255.f - ((255.f / viewAlphaCheckered.getMeasuredHeight()) * y));
-					AmbilWarnaDialog.this.setAlpha(a);
-
-					// update view
-					moveAlphaCursor();
-					int col = AmbilWarnaDialog.this.getColor();
-					int c = a << 24 | col & 0x00ffffff;
-					viewNewColor.setBackgroundColor(c);
-					return true;
+				float y = event.getY();
+				if (y < 0.f) {
+					y = 0.f;
 				}
-				return false;
+				if (y > viewAlphaCheckered.getMeasuredHeight()) {
+					y = viewAlphaCheckered.getMeasuredHeight() - 0.001f; // to avoid jumping the cursor from bottom to top.
+				}
+				final int a = Math.round(255.f - ((255.f / viewAlphaCheckered.getMeasuredHeight()) * y));
+				AmbilWarnaDialog.this.setAlpha(a);
+
+				// update view
+				moveAlphaCursor();
+				int col = AmbilWarnaDialog.this.getColor();
+				int c = a << 24 | col & 0x00ffffff;
+				viewNewColor.setBackgroundColor(c);
+				return true;
 			}
+			return false;
 		});
-		viewSatVal.setOnTouchListener(new View.OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_MOVE
+		viewSatVal.setOnTouchListener((v, event) -> {
+			if (event.getAction() == MotionEvent.ACTION_MOVE
 				|| event.getAction() == MotionEvent.ACTION_DOWN
 				|| event.getAction() == MotionEvent.ACTION_UP) {
 
-					float x = event.getX(); // touch event are in dp units.
-					float y = event.getY();
+				float x = event.getX(); // touch event are in dp units.
+				float y = event.getY();
 
-					if (x < 0.f) x = 0.f;
-					if (x > viewSatVal.getMeasuredWidth()) x = viewSatVal.getMeasuredWidth();
-					if (y < 0.f) y = 0.f;
-					if (y > viewSatVal.getMeasuredHeight()) y = viewSatVal.getMeasuredHeight();
+				if (x < 0.f) x = 0.f;
+				if (x > viewSatVal.getMeasuredWidth()) x = viewSatVal.getMeasuredWidth();
+				if (y < 0.f) y = 0.f;
+				if (y > viewSatVal.getMeasuredHeight()) y = viewSatVal.getMeasuredHeight();
 
-					setSat(1.f / viewSatVal.getMeasuredWidth() * x);
-					setVal(1.f - (1.f / viewSatVal.getMeasuredHeight() * y));
+				setSat(1.f / viewSatVal.getMeasuredWidth() * x);
+				setVal(1.f - (1.f / viewSatVal.getMeasuredHeight() * y));
 
-					// update view
-					moveTarget();
-					viewNewColor.setBackgroundColor(getColor());
+				// update view
+				moveTarget();
+				viewNewColor.setBackgroundColor(getColor());
 
-					return true;
-				}
-				return false;
+				return true;
 			}
+			return false;
 		});
-
-		dialog = new AlertDialog.Builder(context)
-		.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				if (AmbilWarnaDialog.this.listener != null) {
-					AmbilWarnaDialog.this.listener.onOk(AmbilWarnaDialog.this, getColor());
-				}
-			}
-		})
-		.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				if (AmbilWarnaDialog.this.listener != null) {
-					AmbilWarnaDialog.this.listener.onCancel(AmbilWarnaDialog.this);
-				}
-			}
-		})
-		.setOnCancelListener(new OnCancelListener() {
-			// if back button is used, call back our listener.
-			@Override
-			public void onCancel(DialogInterface paramDialogInterface) {
-				if (AmbilWarnaDialog.this.listener != null) {
-					AmbilWarnaDialog.this.listener.onCancel(AmbilWarnaDialog.this);
-				}
-
-			}
-		})
-		.create();
-		// kill all padding from the dialog window
-		dialog.setView(view, 0, 0, 0, 0);
 
 		// move cursor & target on first draw
 		ViewTreeObserver vto = view.getViewTreeObserver();
@@ -290,8 +275,8 @@ public class AmbilWarnaDialog {
 	}
 
 	private void updateAlphaView() {
-		final GradientDrawable gd = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[] {
-		Color.HSVToColor(currentColorHsv), 0x0
+		final GradientDrawable gd = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{
+			Color.HSVToColor(currentColorHsv), 0x0
 		});
 		viewAlphaOverlay.setBackgroundDrawable(gd);
 	}

@@ -104,9 +104,18 @@ public class Book implements Parcelable {
 		// drain the remainings
 		if (beginVerse_1 != 0) {
 			sb.append(origLen == sb.length()? "": ", ").append(beginVerse_1).append('-').append(lastVerse_1);  //$NON-NLS-1$//$NON-NLS-2$
+			//noinspection UnusedAssignment
 			beginVerse_1 = 0; // no need, only to make it consitent with above
 		} else {
 			sb.append(origLen == sb.length()? "": ", ").append(lastVerse_1); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "Book{" +
+			"bookId=" + bookId +
+			", shortName='" + shortName + '\'' +
+			'}';
 	}
 }

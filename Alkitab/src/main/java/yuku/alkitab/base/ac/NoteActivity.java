@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +10,7 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -63,6 +63,7 @@ public class NoteActivity extends BaseActivity {
 	int verseCountForNewNote;
 
 	boolean editingMode;
+	boolean justClickedLink;
 
 	ViewFlipper viewFlipper;
 	TextView tCaptionReadOnly;
@@ -116,9 +117,11 @@ public class NoteActivity extends BaseActivity {
 	}
 
 	final CallbackSpan.OnClickListener<String> verseClickListener = (widget, verse) -> {
+		justClickedLink = true;
+
 		final IntArrayList verseRanges = DesktopVerseParser.verseStringToAri(verse);
 		if (verseRanges == null || verseRanges.size() == 0) {
-			new AlertDialog.Builder(widget.getContext())
+			new AlertDialogWrapper.Builder(widget.getContext())
 				.setMessage(R.string.note_activity_cannot_parse_verse)
 				.setPositiveButton(R.string.ok, null)
 				.show();
@@ -158,6 +161,14 @@ public class NoteActivity extends BaseActivity {
 			});
 			tCaptionReadOnly.setText(text);
 			tCaptionReadOnly.setMovementMethod(LinkMovementMethod.getInstance());
+
+			tCaptionReadOnly.setOnClickListener(v -> {
+				if (!justClickedLink) {
+					setEditingMode(true);
+				} else {
+					justClickedLink = false;
+				}
+			});
 		}
 
 		this.editingMode = editingMode;
@@ -194,7 +205,7 @@ public class NoteActivity extends BaseActivity {
 			case R.id.menuDelete: {
 				// if it's indeed not exist, check if we have some text, if we do, prompt first
 				if (marker != null || tCaption.length() > 0) {
-					new AlertDialog.Builder(this)
+					new AlertDialogWrapper.Builder(this)
 						.setMessage(R.string.anda_yakin_mau_menghapus_catatan_ini)
 						.setPositiveButton(R.string.delete, (dialog, which) -> {
 							if (marker != null) {
@@ -207,7 +218,7 @@ public class NoteActivity extends BaseActivity {
 							setResult(RESULT_OK);
 							realFinish();
 						})
-						.setNegativeButton(R.string.no, null)
+						.setNegativeButton(R.string.cancel, null)
 						.show();
 				}
 

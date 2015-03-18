@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +9,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -112,10 +112,10 @@ public class HelpActivity extends BaseActivity {
 					final String ssp = uri.getSchemeSpecificPart();
 					final IntArrayList ariRanges = TargetDecoder.decode("o:" + ssp);
 					if (ariRanges == null || ariRanges.size() == 0) {
-						new AlertDialog.Builder(HelpActivity.this)
-						.setMessage(getString(R.string.alamat_tidak_sah_alamat, url))
-						.setPositiveButton(R.string.ok, null)
-						.show();
+						new AlertDialogWrapper.Builder(HelpActivity.this)
+							.setMessage(getString(R.string.alamat_tidak_sah_alamat, url))
+							.setPositiveButton(R.string.ok, null)
+							.show();
 					} else {
 						final VersesDialog dialog = VersesDialog.newInstance(ariRanges);
 						dialog.show(getSupportFragmentManager(), VersesDialog.class.getSimpleName());

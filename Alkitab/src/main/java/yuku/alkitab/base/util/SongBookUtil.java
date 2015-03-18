@@ -3,7 +3,6 @@ package yuku.alkitab.base.util;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
@@ -14,6 +13,8 @@ import android.text.style.RelativeSizeSpan;
 import android.view.Menu;
 import android.view.View;
 import android.widget.PopupMenu;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.okhttp.Call;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -123,7 +124,7 @@ public class SongBookUtil {
 			sb.setSpan(new ForegroundColorSpan(0xffa0a0a0), sb_len, sb.length(), 0);
 			items[i] = sb;
 		}
-		return new AlertDialog.Builder(context)
+		return new AlertDialogWrapper.Builder(context)
 			.setItems(items, listener)
 			.create();
 	}
@@ -155,12 +156,15 @@ public class SongBookUtil {
 
 	public static void downloadSongBook(final Activity activity, final SongBookInfo songBookInfo, final OnDownloadSongBookListener listener) {
 		new AsyncTask<Void, Void, List<Song>>() {
-			ProgressDialog pd;
+			MaterialDialog pd;
 			Exception ex;
 			
 			@Override protected void onPreExecute() {
-				pd = ProgressDialog.show(activity, null, activity.getString(R.string.sn_downloading_ellipsis), true, true);
-				pd.setOnDismissListener(dialog -> cancel(false));
+				pd = new MaterialDialog.Builder(activity)
+					.content(R.string.sn_downloading_ellipsis)
+					.progress(true, 0)
+					.dismissListener(dialog -> cancel(false))
+					.show();
 			}
 			
 			@SuppressWarnings("unchecked") @Override protected List<Song> doInBackground(Void... params) {

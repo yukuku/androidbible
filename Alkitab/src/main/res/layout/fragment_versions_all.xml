@@ -7,8 +7,6 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:paddingBottom="0dp"
-	android:paddingLeft="@dimen/padding_medium"
-	android:paddingRight="@dimen/padding_medium"
 	android:paddingTop="0dp"
 	tools:context="yuku.alkitab.base.ac.VersionsActivity$VersionListFragment">
 
@@ -17,6 +15,8 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:fastScrollEnabled="true"
+		android:paddingLeft="@dimen/padding_medium"
+		android:paddingRight="@dimen/padding_medium"
 		android:scrollbarStyle="outsideOverlay"
 		tools:listitem="@layout/item_version" />
 </android.support.v4.widget.SwipeRefreshLayout>

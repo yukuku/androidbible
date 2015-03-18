@@ -1,7 +1,5 @@
 package yuku.alkitab.base.sync;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
@@ -15,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
@@ -134,7 +134,7 @@ public class SyncLoginActivity extends BaseActivity {
 						Log.d(TAG, "Register failed: " + e.getMessage());
 						SyncRecorder.log(SyncRecorder.EventKind.register_failed, null, "email", email, "message", e.getMessage());
 
-						runOnUiThread(() -> new AlertDialog.Builder(this)
+						runOnUiThread(() -> new AlertDialogWrapper.Builder(this)
 								.setMessage(getString(R.string.sync_register_failed_with_reason, e.getMessage()))
 								.setPositiveButton(R.string.ok, null)
 								.show()
@@ -178,7 +178,7 @@ public class SyncLoginActivity extends BaseActivity {
 					Log.d(TAG, "Login failed: " + e.getMessage());
 					SyncRecorder.log(SyncRecorder.EventKind.login_failed, null, "email", email, "message", e.getMessage());
 
-					runOnUiThread(() -> new AlertDialog.Builder(this)
+					runOnUiThread(() -> new AlertDialogWrapper.Builder(this)
 							.setMessage(getString(R.string.sync_login_failed_with_reason, e.getMessage()))
 							.setPositiveButton(R.string.ok, null)
 							.show()
@@ -205,7 +205,7 @@ public class SyncLoginActivity extends BaseActivity {
 
 					Sync.forgotPassword(email);
 
-					runOnUiThread(() -> new AlertDialog.Builder(this)
+					runOnUiThread(() -> new AlertDialogWrapper.Builder(this)
 							.setMessage(R.string.sync_login_form_forgot_password_success)
 							.setPositiveButton(R.string.ok, null)
 							.show()
@@ -213,7 +213,7 @@ public class SyncLoginActivity extends BaseActivity {
 				} catch (Sync.NotOkException e) {
 					Log.d(TAG, "Forgot password failed: " + e.getMessage());
 
-					runOnUiThread(() -> new AlertDialog.Builder(this)
+					runOnUiThread(() -> new AlertDialogWrapper.Builder(this)
 							.setMessage(e.getMessage())
 							.setPositiveButton(R.string.ok, null)
 							.show()
@@ -248,30 +248,28 @@ public class SyncLoginActivity extends BaseActivity {
 				tPasswordNew.setError(null);
 			}
 
-			confirmPassword(passwordNew, () -> {
-				startThreadWithProgressDialog(getString(R.string.sync_progress_processing), () -> {
-					try {
-						Log.d(TAG, "Sending form to server for changing password...");
+			confirmPassword(passwordNew, () -> startThreadWithProgressDialog(getString(R.string.sync_progress_processing), () -> {
+				try {
+					Log.d(TAG, "Sending form to server for changing password...");
 
-						Sync.changePassword(email, password, passwordNew);
+					Sync.changePassword(email, password, passwordNew);
 
-						runOnUiThread(() -> new AlertDialog.Builder(this)
-								.setMessage(R.string.sync_login_form_change_password_success)
-								.setPositiveButton(R.string.ok, null)
-								.show()
-								.setOnDismissListener(dialog -> finish())
-						);
-					} catch (Sync.NotOkException e) {
-						Log.d(TAG, "Change password failed: " + e.getMessage());
-
-						runOnUiThread(() -> new AlertDialog.Builder(this)
-							.setMessage(e.getMessage())
+					runOnUiThread(() -> new AlertDialogWrapper.Builder(this)
+							.setMessage(R.string.sync_login_form_change_password_success)
 							.setPositiveButton(R.string.ok, null)
 							.show()
-						);
-					}
-				});
-			});
+							.setOnDismissListener(dialog -> finish())
+					);
+				} catch (Sync.NotOkException e) {
+					Log.d(TAG, "Change password failed: " + e.getMessage());
+
+					runOnUiThread(() -> new AlertDialogWrapper.Builder(this)
+						.setMessage(e.getMessage())
+						.setPositiveButton(R.string.ok, null)
+						.show()
+					);
+				}
+			}));
 
 		});
 
@@ -280,7 +278,11 @@ public class SyncLoginActivity extends BaseActivity {
 	}
 
 	void startThreadWithProgressDialog(final String message, final Runnable task) {
-		final ProgressDialog pd = ProgressDialog.show(this, null, message, true, false);
+		final MaterialDialog pd = new MaterialDialog.Builder(this)
+			.content(message)
+			.cancelable(false)
+			.progress(true, 0)
+			.show();
 
 		new Thread(() -> {
 			try {
@@ -292,24 +294,26 @@ public class SyncLoginActivity extends BaseActivity {
 	}
 
 	void confirmPassword(final String correctPassword, final Runnable whenCorrect) {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		final View dialogView = View.inflate(builder.getContext(), R.layout.dialog_sync_confirm_password, null);
-		final EditText tPassword2 = V.get(dialogView, R.id.tPassword2);
-		builder
-			.setView(dialogView)
-			.setPositiveButton(R.string.ok, (dialog, which) -> {
+		new MaterialDialog.Builder(this)
+			.customView(R.layout.dialog_sync_confirm_password, false)
+			.positiveText(R.string.ok)
+			.callback(new MaterialDialog.ButtonCallback() {
+				@Override
+				public void onPositive(final MaterialDialog dialog) {
+					final EditText tPassword2 = V.get(dialog.getCustomView(), R.id.tPassword2);
 
-				final String password2 = tPassword2.getText().toString();
+					final String password2 = tPassword2.getText().toString();
 
-				if (!U.equals(correctPassword, password2)) {
-					new AlertDialog.Builder(this)
-						.setMessage(R.string.sync_login_form_passwords_do_not_match)
-						.setPositiveButton(R.string.ok, null)
-						.show();
-					return;
+					if (!U.equals(correctPassword, password2)) {
+						new AlertDialogWrapper.Builder(dialog.getContext())
+							.setMessage(R.string.sync_login_form_passwords_do_not_match)
+							.setPositiveButton(R.string.ok, null)
+							.show();
+						return;
+					}
+
+					whenCorrect.run();
 				}
-
-				whenCorrect.run();
 			})
 			.show();
 	}
@@ -354,12 +358,12 @@ public class SyncLoginActivity extends BaseActivity {
 				SyncRecorder.log(SyncRecorder.EventKind.login_gcm_sending_failed, null, "accountName", accountName);
 
 				if (isRegister) {
-					runOnUiThread(() -> new AlertDialog.Builder(this)
+					runOnUiThread(() -> new AlertDialogWrapper.Builder(this)
 						.setMessage(R.string.sync_registered_but_no_gcm)
 						.setPositiveButton(R.string.ok, null)
 						.show());
 				} else {
-					runOnUiThread(() -> new AlertDialog.Builder(this)
+					runOnUiThread(() -> new AlertDialogWrapper.Builder(this)
 						.setMessage(getString(R.string.sync_login_failed_with_reason, "Could not send GCM registration id. Please try again."))
 						.setPositiveButton(R.string.ok, null)
 						.show());

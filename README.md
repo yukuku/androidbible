@@ -9,6 +9,8 @@ Get in on Google Play: <a href="https://play.google.com/store/apps/details?id=or
 - <a href="http://blog.bibleforandroid.com">Development Blog</a>
 - <a href="http://groups.google.com/group/bibleforandroid">Discussion Group</a>
 
+By the way, Alkitab is the Indonesian word for Bible.
+
 Bible translations/versions
 ---------------------------
 
@@ -29,13 +31,9 @@ If you need help integrating it, please contact me.
 Building
 --------
 
-You'll need `http://code.google.com/p/yuku-android-util/` cloned to a directory in the same level
-as this repo's cloned directory. So you will have `yuku-android-util` and `androidbible` side-by-side.
-
 The `v3` branch is the currently stable version, version 3.x.x. `develop` branch contains the latest updates.
-Note: please use the `studio` branch for `yuku-android-util`.
-
-By the way, Alkitab is the Indonesian word for Bible.
+You need gradle or Android Studio to build it. In Android Studio, you can just open the root directory
+of this repository and it will instantly be recognized as a project.
 
 License
 --------

@@ -20,6 +20,7 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
@@ -222,7 +223,7 @@ public class SongListActivity extends BaseActivity {
 					SongBookUtil.downloadSongBook(SongListActivity.this, songBookInfo, new SongBookUtil.OnDownloadSongBookListener() {
 						@Override public void onFailedOrCancelled(SongBookUtil.SongBookInfo songBookInfo, Exception e) {
 							if (e != null) {
-								new AlertDialog.Builder(SongListActivity.this)
+								new AlertDialogWrapper.Builder(SongListActivity.this)
 								.setMessage(e.getClass().getSimpleName() + ' ' + e.getMessage())
 								.setPositiveButton(R.string.ok, null)
 								.show();

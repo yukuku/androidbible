@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.google.android.gms.analytics.HitBuilders;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -515,7 +516,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 				} else { // we need to parse it manually by text
 					final Jumper jumper = new Jumper(reference);
 					if (!jumper.getParseSucceeded()) {
-						new AlertDialog.Builder(DevotionActivity.this)
+						new AlertDialogWrapper.Builder(DevotionActivity.this)
 							.setMessage(getString(R.string.alamat_tidak_sah_alamat, reference))
 							.setPositiveButton(R.string.ok, null)
 							.show();

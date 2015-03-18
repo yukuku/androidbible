@@ -1,8 +1,6 @@
 package yuku.alkitab.base.ac;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
@@ -28,6 +26,8 @@ import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -311,7 +311,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 						final Activity activity = activityRef.get();
 						if (activity != null) {
 							if (!activity.isFinishing()) {
-								new AlertDialog.Builder(activity)
+								new AlertDialogWrapper.Builder(activity)
 									.setMessage(activity.getString(R.string.song_player_error_description, what, extra))
 									.setPositiveButton(R.string.ok, null)
 									.show();
@@ -566,7 +566,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		} return true;
 
         case R.id.menuUpdateBook: {
-			new AlertDialog.Builder(this)
+			new AlertDialogWrapper.Builder(this)
 				.setMessage(TextUtils.expandTemplate(getString(R.string.sn_update_book_explanation), currentBookName))
 				.setPositiveButton(R.string.sn_update_book_confirm_button, (dialog, which) -> updateSongBook())
 				.setNegativeButton(R.string.cancel, null)
@@ -574,7 +574,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		} return true;
 
 		case R.id.menuDeleteAll: {
-			new AlertDialog.Builder(this)
+			new AlertDialogWrapper.Builder(this)
 				.setMessage(R.string.sn_delete_all_songs_explanation)
 				.setPositiveButton(R.string.delete, (dialog, which) -> deleteAllSongs())
 				.setNegativeButton(R.string.cancel, null)
@@ -597,7 +597,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			@Override
 			public void onFailedOrCancelled(SongBookUtil.SongBookInfo songBookInfo, Exception e) {
 				if (e != null) {
-					new AlertDialog.Builder(SongViewActivity.this)
+					new AlertDialogWrapper.Builder(SongViewActivity.this)
 						.setMessage(e.getClass().getSimpleName() + ' ' + e.getMessage())
 						.setPositiveButton(R.string.ok, null)
 						.show();
@@ -614,16 +614,20 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	}
 
     protected void deleteAllSongs() {
-        final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.please_wait_titik3), true, false);
+		final MaterialDialog pd = new MaterialDialog.Builder(this)
+			.content(R.string.please_wait_titik3)
+			.cancelable(false)
+			.progress(true, 0)
+			.show();
 
-        new Thread() {
+		new Thread() {
             @Override public void run() {
                 final int count = S.getSongDb().deleteAllSongs();
 
                 runOnUiThread(() -> {
                     pd.dismiss();
 
-					new AlertDialog.Builder(SongViewActivity.this)
+					new AlertDialogWrapper.Builder(SongViewActivity.this)
 						.setMessage(getString(R.string.sn_delete_all_songs_result, count))
 						.setPositiveButton(R.string.ok, null)
 						.show()
@@ -1001,7 +1005,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			SongBookUtil.downloadSongBook(SongViewActivity.this, songBookInfo, new SongBookUtil.OnDownloadSongBookListener() {
 				@Override public void onFailedOrCancelled(SongBookUtil.SongBookInfo songBookInfo, Exception e) {
 					if (e != null) {
-						new AlertDialog.Builder(SongViewActivity.this)
+						new AlertDialogWrapper.Builder(SongViewActivity.this)
 							.setMessage(e.getClass().getSimpleName() + ' ' + e.getMessage())
 							.setPositiveButton(R.string.ok, null)
 							.show();

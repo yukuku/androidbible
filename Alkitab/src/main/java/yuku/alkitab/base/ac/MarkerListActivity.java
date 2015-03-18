@@ -1,7 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,6 +19,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
@@ -209,7 +209,11 @@ public class MarkerListActivity extends BaseActivity {
 	}
 
 	void filterUsingCurrentlyUsedFilter() {
-		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.bl_filtering_titiktiga), true, false);
+		final MaterialDialog pd = new MaterialDialog.Builder(this)
+			.content(R.string.bl_filtering_titiktiga)
+			.cancelable(false)
+			.progress(true, 0)
+			.show();
 		adapter.filterAsync(currentlyUsedFilter, pd::dismiss);
 	}
 
@@ -386,9 +390,10 @@ public class MarkerListActivity extends BaseActivity {
 			}
 		}
 
-		new AlertDialog.Builder(this)
+		new AlertDialogWrapper.Builder(this)
 			.setSingleChoiceItems(labels.toArray(new String[labels.size()]), selected, new DialogInterface.OnClickListener() {
-				@Override public void onClick(DialogInterface dialog, int which) {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
 					if (which == -1) return;
 					int value = values.get(which);
 					switch (value) {
@@ -499,7 +504,7 @@ public class MarkerListActivity extends BaseActivity {
 					loadAndFilter();
 					if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
 					App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
-				}, colorRgb, reference).show();
+				}, colorRgb, reference);
 			}
 
 			return true;

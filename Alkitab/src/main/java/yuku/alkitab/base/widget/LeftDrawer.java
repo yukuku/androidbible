@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.SwitchCompat;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
@@ -20,7 +21,6 @@ import android.widget.CompoundButton;
 import android.widget.PopupMenu;
 import android.widget.ScrollView;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -213,7 +213,7 @@ public abstract class LeftDrawer extends ScrollView {
 			void bDisplay_click();
 			void cFullScreen_checkedChange(boolean isChecked);
 			void cNightMode_checkedChange(boolean isChecked);
-			void cSplitVersion_checkedChange(final Switch cSplitVersion, boolean isChecked);
+			void cSplitVersion_checkedChange(final SwitchCompat cSplitVersion, boolean isChecked);
 			void bProgressMarkList_click();
 			void bProgress_click(int preset_id);
 		}
@@ -225,9 +225,9 @@ public abstract class LeftDrawer extends ScrollView {
 
 		View bMarkers;
 		View bDisplay;
-		Switch cFullScreen;
-		Switch cNightMode;
-		Switch cSplitVersion;
+		SwitchCompat cFullScreen;
+		SwitchCompat cNightMode;
+		SwitchCompat cSplitVersion;
 
 		View bProgressMarkList;
 		View bProgress1;
