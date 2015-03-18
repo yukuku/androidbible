@@ -16,13 +16,13 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import yuku.afw.V;
-import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.br.DailyVerseAppWidgetReceiver;
 import yuku.alkitab.base.model.MVersion;
+import yuku.alkitab.base.util.DailyVerseData;
 import yuku.alkitab.debug.R;
 
 import java.util.List;
@@ -74,9 +74,6 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 			finish();
 			return;
 		}
-
-		String key = "app_widget_" + mAppWidgetId + "_click";
-		Preferences.setInt(key, 0);
 
 		adapter = new VersionAdapter();
 		adapter.reload();
@@ -140,17 +137,15 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 			AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 			String versionId = adapter.versions.get(selectedVersionPosition).getVersionId();
 
-			Preferences.hold();
-			try {
-				Preferences.setString("app_widget_" + mAppWidgetId + "_version", versionId);
-				Preferences.setBoolean("app_widget_" + mAppWidgetId + "_option_transparent_background", cTransparentBackground.isChecked());
-				Preferences.setBoolean("app_widget_" + mAppWidgetId + "_option_dark_text", cDarkText.isChecked());
-				Preferences.setFloat("app_widget_" + mAppWidgetId + "_option_text_size", progressToActualTextSize(sbTextSize.getProgress()));
-			} finally {
-				Preferences.unhold();
-			}
+			final DailyVerseData.SavedState savedState = new DailyVerseData.SavedState();
+			savedState.versionId = versionId;
+			savedState.transparentBackground = cTransparentBackground.isChecked();
+			savedState.darkText = cDarkText.isChecked();
+			savedState.textSize = progressToActualTextSize(sbTextSize.getProgress());
+			savedState.click = 0;
+			DailyVerseData.saveSavedState(mAppWidgetId, savedState);
 
-			DailyVerseAppWidgetReceiver.buildUpdate(context, appWidgetManager, mAppWidgetId);
+			DailyVerseAppWidgetReceiver.buildUpdate(context, appWidgetManager, mAppWidgetId, 1);
 
 			ComponentName provider = new ComponentName(context, DailyVerseAppWidgetReceiver.class);
 			int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(provider);
