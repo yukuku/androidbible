@@ -33,7 +33,9 @@ public abstract class DailyVerseData {
 		public String versionId;
 		public boolean darkText;
 		public float textSize;
+		/** Legacy */
 		public boolean transparentBackground;
+		public int backgroundAlpha; // 0 to 255
 		public int click;
 	}
 
@@ -161,6 +163,7 @@ public abstract class DailyVerseData {
 		res.transparentBackground = Preferences.getBoolean("app_widget_" + appWidgetId + "_option_transparent_background", false);
 		res.versionId = Preferences.getString("app_widget_" + appWidgetId + "_version");
 		res.click = Preferences.getInt("app_widget_" + appWidgetId + "_click", 0);
+		res.backgroundAlpha = Preferences.getInt("app_widget_" + appWidgetId + "_option_backgroundAlpha", 255);
 		return res;
 	}
 
@@ -176,12 +179,14 @@ public abstract class DailyVerseData {
 				Preferences.remove("app_widget_" + appWidgetId + "_option_transparent_background");
 				Preferences.remove("app_widget_" + appWidgetId + "_version");
 				Preferences.remove("app_widget_" + appWidgetId + "_click");
+				Preferences.remove("app_widget_" + appWidgetId + "_option_backgroundAlpha");
 			} else {
 				Preferences.setBoolean("app_widget_" + appWidgetId + "_option_dark_text", savedState.darkText);
 				Preferences.setFloat("app_widget_" + appWidgetId + "_option_text_size", savedState.textSize);
 				Preferences.setBoolean("app_widget_" + appWidgetId + "_option_transparent_background", savedState.transparentBackground);
 				Preferences.setString("app_widget_" + appWidgetId + "_version", savedState.versionId);
 				Preferences.setInt("app_widget_" + appWidgetId + "_click", savedState.click);
+				Preferences.setInt("app_widget_" + appWidgetId + "_option_backgroundAlpha", savedState.backgroundAlpha);
 			}
 		} finally {
 			Preferences.unhold();

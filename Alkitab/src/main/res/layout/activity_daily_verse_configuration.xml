@@ -1,63 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_height="match_parent"
-              android:layout_width="match_parent"
-              android:orientation="vertical">
-    <ListView
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:id="@+id/lsVersionsAppWidget"
-            android:layout_weight="1"/>
-    <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-        <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/dv_option_transparent_background"
-                android:id="@+id/cTransparentBackground"
-                android:checked="false"/>
-        <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/dv_option_dark_text"
-                android:id="@+id/cDarkText"
-                android:checked="false"
-                android:enabled="false"/>
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="@string/dv_option_text_size"
-                android:layout_marginLeft="8dp"/>
-        <LinearLayout android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:orientation="horizontal"
-                      android:padding="8dp">
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
 
-            <SeekBar
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/sbTextSize"
-                    android:progress="8"
-                    android:max="20"
-                    android:indeterminate="false"
-                    android:layout_weight="1"/>
-            <TextView android:id="@+id/tTextSize"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:minWidth="64dp"
-                      android:textAppearance="?android:textAppearanceMedium"
-                      android:text="*10"
-                      android:gravity="right"
-                      tools:ignore="HardcodedText"/>
-        </LinearLayout>
-        <include android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 layout="@layout/buttonbar_cancelok"/>
-    </LinearLayout>
+	<ListView
+		android:id="@+id/lsVersionsAppWidget"
+		android:layout_width="fill_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:fastScrollEnabled="true"
+		android:paddingLeft="@dimen/padding_medium"
+		android:paddingRight="@dimen/padding_medium"
+		android:scrollbarStyle="outsideOverlay" />
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:animateLayoutChanges="true"
+		android:orientation="vertical"
+		android:paddingLeft="@dimen/padding_medium"
+		android:paddingRight="@dimen/padding_medium">
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="8dp"
+			android:layout_marginTop="8dp"
+			android:text="@string/dv_option_text_size"
+			android:textAppearance="?android:attr/textAppearanceSmall" />
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:baselineAligned="false"
+			android:gravity="center_vertical"
+			android:orientation="horizontal">
+
+			<SeekBar
+				android:id="@+id/sbTextSize"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:indeterminate="false"
+				android:max="20"
+				android:progress="8" />
+
+			<TextView
+				android:id="@+id/tTextSize"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="right"
+				android:minWidth="64dp"
+				android:textAppearance="?android:textAppearanceMedium"
+				tools:text="16" />
+		</LinearLayout>
+
+		<CheckBox
+			android:id="@+id/cTransparentBackground"
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:checked="false"
+			android:text="@string/dv_option_transparent_background" />
+
+		<LinearLayout
+			android:id="@+id/panelTransparent"
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:baselineAligned="false"
+			android:gravity="center_vertical"
+			android:orientation="horizontal"
+			android:visibility="gone">
+
+			<SeekBar
+				android:id="@+id/sbTransparent"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:indeterminate="false"
+				android:max="20"
+				android:progress="20" />
+
+			<TextView
+				android:id="@+id/tTransparent"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="right"
+				android:minWidth="64dp"
+				android:textAppearance="?android:textAppearanceMedium"
+				tools:text="60%" />
+		</LinearLayout>
+
+		<CheckBox
+			android:id="@+id/cDarkText"
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:checked="false"
+			android:enabled="false"
+			android:text="@string/dv_option_dark_text" />
+
+	</LinearLayout>
+
+	<include
+		layout="@layout/buttonbar_cancelok"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="0" />
 
 </LinearLayout>

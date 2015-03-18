@@ -35,6 +35,9 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 	CheckBox cDarkText;
 	SeekBar sbTextSize;
 	TextView tTextSize;
+	View panelTransparent;
+	SeekBar sbTransparent;
+	TextView tTransparent;
 	private CheckBox cTransparentBackground;
 
 	final BroadcastReceiver br = new BroadcastReceiver() {
@@ -60,13 +63,15 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 		cDarkText = V.get(this, R.id.cDarkText);
 		sbTextSize = V.get(this, R.id.sbTextSize);
 		tTextSize = V.get(this, R.id.tTextSize);
+		panelTransparent = V.get(this, R.id.panelTransparent);
+		sbTransparent = V.get(this, R.id.sbTransparent);
+		tTransparent = V.get(this, R.id.tTransparent);
 
 		// Find the widget id from the intent.
-		Intent intent = getIntent();
-		Bundle extras = intent.getExtras();
+		final Intent intent = getIntent();
+		final Bundle extras = intent.getExtras();
 		if (extras != null) {
-			mAppWidgetId = extras.getInt(
-				AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+			mAppWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 		}
 
 		// If they gave us an intent without the widget id, just bail.
@@ -89,6 +94,7 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 		bCancel.setOnClickListener(v -> finish());
 
 		cTransparentBackground.setOnCheckedChangeListener((buttonView, isChecked) -> {
+			panelTransparent.setVisibility(isChecked ? View.VISIBLE : View.GONE);
 			cDarkText.setEnabled(isChecked);
 			if (!isChecked) {
 				cDarkText.setChecked(false);
@@ -111,6 +117,22 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 		});
 		sbTextSize_progressChanged(sbTextSize.getProgress());
 
+		sbTransparent.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+			@Override
+			public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
+				sbTransparent_progressChanged(progress);
+			}
+
+			@Override
+			public void onStartTrackingTouch(final SeekBar seekBar) {
+			}
+
+			@Override
+			public void onStopTrackingTouch(final SeekBar seekBar) {
+			}
+		});
+		sbTransparent_progressChanged(sbTransparent.getProgress());
+
 		App.getLbm().registerReceiver(br, new IntentFilter(VersionsActivity.VersionListFragment.ACTION_RELOAD));
 	}
 
@@ -124,6 +146,19 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 	void sbTextSize_progressChanged(final int progress) {
 		final float textSize = progressToActualTextSize(progress);
 		tTextSize.setText("" + (int) textSize);
+	}
+
+	void sbTransparent_progressChanged(final int progress) {
+		final int percent = progressToActualTransparentPercent(progress);
+		tTransparent.setText(percent + "%");
+	}
+
+	int progressToActualTransparentPercent(final int progress) {
+		return progress * 5;
+	}
+
+	int progressToActualAlpha(final int progress) {
+		return (int) (255.f * ((100 - progressToActualTransparentPercent(progress)) / 100.f));
 	}
 
 	float progressToActualTextSize(final int progress) {
@@ -140,6 +175,7 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 			final DailyVerseData.SavedState savedState = new DailyVerseData.SavedState();
 			savedState.versionId = versionId;
 			savedState.transparentBackground = cTransparentBackground.isChecked();
+			savedState.backgroundAlpha = cTransparentBackground.isChecked() ? progressToActualAlpha(sbTransparent.getProgress()) : 255;
 			savedState.darkText = cDarkText.isChecked();
 			savedState.textSize = progressToActualTextSize(sbTextSize.getProgress());
 			savedState.click = 0;

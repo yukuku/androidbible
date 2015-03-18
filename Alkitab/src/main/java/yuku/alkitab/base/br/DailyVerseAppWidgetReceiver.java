@@ -49,7 +49,7 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 		final RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.daily_verse_app_widget);
 
 		if (savedState.transparentBackground) {
-			rv.setInt(R.id.root, "setBackgroundResource", android.R.color.transparent);
+			rv.setInt(R.id.background, "setAlpha", savedState.backgroundAlpha);
 		}
 
 		if (savedState.darkText) {
