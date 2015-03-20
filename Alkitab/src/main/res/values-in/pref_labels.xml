@@ -11,7 +11,7 @@
   <string name="pref_kitab_menurut_abjad">Kitab menurut abjad</string>
   <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Layar tidak akan padam ketika membaca Alkitab</string>
   <string name="pref_biarkan_layar_menyala">Layar selalu menyala</string>
-  <string name="pref_penampilan_layar">Penampilan Layar</string>
+  <string name="pref_penampilan_layar">Tampilan</string>
   <string name="pref_volumeButtonNavigation_title">Pindah dengan volume</string>
   <string name="pref_copyWithVerseNumbers_title">Bubuhi nomor ayat</string>
   <string name="pref_copyWithVerseNumbers_summary">Awali tiap ayat dengan nomornya saat menyalin dan membagikan</string>

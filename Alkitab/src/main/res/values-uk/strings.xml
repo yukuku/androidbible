@@ -163,6 +163,7 @@
   <string name="bl_send_backup">Перехід</string>
   <string name="bl_file_not_found_filename">Файл не знайдено: %s</string>
   <string name="bl_send_backup_confirmation">Створити та надіслати резервну копію закладок, нотаток та виділень, підкреслень? Ви можете, наприклад надіслати прикріплений файл по електронній пошті на інший пристрій, або заархівувати його.</string>
+  <string name="bl_sync_suggest">Захистіть свої позначки синхронізувавши їх</string>
   <string name="labels_titikdua">ПОЗНАЧКИ</string>
   <string name="tambah_titiktiga">Додати...</string>
   <string name="nama_label_titikdua">Назва позначки:</string>
@@ -194,6 +195,8 @@
   <string name="text_appearance_bold">Потовщений</string>
   <string name="devotion_change_date">Зміна дати</string>
   <string name="bookmark_search">Пошук</string>
+  <string name="verse_select_one_verse_selected">1 вірш обрано</string>
+  <string name="verse_select_multiple_verse_selected">%s віршів вибрано</string>
   <string name="goto_tab_dialer_label">Номеронабирач</string>
   <string name="goto_tab_direct_label">Прямолінійний</string>
   <string name="goto_tab_grid_label">Сітка</string>
@@ -360,11 +363,29 @@
   <string name="search_version_select_label">Шукати в:</string>
   <string name="version_config_updater_error_download_modify_time">Помилка при перевірці списку версії.</string>
   <string name="version_config_updater_error_modify_time_failed">Список версій недоступний: %s</string>
+  <string name="version_config_updater_no_newer_available">Немає версій для оновлення.</string>
+  <string name="version_config_updater_error_download_list">Помилка при завантаженні списку версій.</string>
+  <string name="version_config_updater_error_parsing_list">Список завантажених версій пошкоджений.</string>
+  <string name="version_config_updater_updated">Список версій оновлено!</string>
   <string name="version_config_cannot_write_updated_list">Не вдалося зберегти оновлений список.</string>
+  <string name="version_config_updater_error_modify_time_cannot_parse">Помилка при визначенні списку версій для перевірки оновлення.</string>
+  <string name="version_download_add_from_local">З локального сховища</string>
+  <string name="version_download_add_from_url">З інтернет адреси</string>
+  <string name="patch_text_error_no_edits">Будь ласка зробіть декілька виправлень перед відправкою.</string>
+  <string name="patch_text_menu_reference">Посилання</string>
   <string name="patch_text_menu_send">Надіслати</string>
   <string name="note_actionbar_edit">Редагувати</string>
   <string name="note_actionbar_delete">Видалити</string>
   <string name="note_actionbar_ok">Зроблено</string>
+  <string name="note_activity_cannot_parse_verse">Вибачте, це посилання на вірш не розпізнано.</string>
+  <string name="sync_login_form_city">Місто</string>
+  <string name="dr_off">Вимкнути</string>
+  <string name="dr_vibrate">Вібрація</string>
   <string name="about_translators">Перекладачі</string>
+  <string name="about_user_guide">Керівництво користувача</string>
   <string name="about_version_name">Версія складання %s</string>
+  <string name="marker_migrate_no_more">Не питати знову</string>
+  <string name="marker_migrate_later">Не тепер</string>
+  <string name="marker_migrate_title">Імпортувати старі позначки</string>
+  <string name="marker_migrate_error_opening_backup_file">Не вдалося отримати доступ до цієї резервної копії.</string>
 </resources>

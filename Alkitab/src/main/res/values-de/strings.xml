@@ -194,6 +194,8 @@
   <string name="text_appearance_bold">Fett</string>
   <string name="devotion_change_date">Datum ändern</string>
   <string name="bookmark_search">Suchen</string>
+  <string name="verse_select_one_verse_selected">1 Vers ausgewählt</string>
+  <string name="verse_select_multiple_verse_selected">%s Verse ausgewählt</string>
   <string name="goto_tab_dialer_label">Wähler</string>
   <string name="goto_tab_direct_label">Direkt</string>
   <string name="goto_tab_grid_label">Tabelle</string>
@@ -453,12 +455,13 @@
   <string name="about_version_name">Version %s</string>
   <string name="about_material_sources">Material-Quellen</string>
   <string name="about_credits">Danksagungen</string>
+  <string name="marker_migrate_introduction">Es wurde eine Backupdatei der alten Quick Bible 3 App von Yuku mit Lesezeichen, Notizen, Hervorhebungen und Stichwörter erkannt.\n\nMöchten Sie diese importieren, sodass sie in dieser App verfügbar sind?</string>
   <string name="marker_migrate_no_more">Nicht noch einmal fragen</string>
   <string name="marker_migrate_later">Nicht jetzt</string>
   <string name="marker_migrate_title">Alte Markierungen importieren</string>
   <string name="marker_migrate_no_more_confirmation">Möchten Sie die alten Daten wirklich nicht importieren?</string>
   <string name="marker_migrate_error_opening_backup_file">Kann nicht auf die Backupdatei zugreifen.</string>
-  <string name="marker_migrate_import_from_newest">Ja, importiere vom neusten (empfohlen)</string>
+  <string name="marker_migrate_import_from_newest">Ja, neuste Datei importieren (empfohlen)</string>
   <string name="marker_migrate_import_from_other">Anderes Backup</string>
   <string name="marker_migrate_filename_dated">%1$s vom %2$s</string>
 </resources>
