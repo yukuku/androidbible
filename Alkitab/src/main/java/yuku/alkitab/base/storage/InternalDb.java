@@ -461,8 +461,6 @@ public class InternalDb {
 	public DevotionArticle tryGetDevotion(String name, String date) {
 		Cursor c = helper.getReadableDatabase().query(Db.TABLE_Devotion, null, Db.Devotion.name + "=? and " + Db.Devotion.date + "=?", new String[]{name, date}, null, null, null);
 		try {
-			int col_title = c.getColumnIndexOrThrow(Db.Devotion.title);
-			int col_header = c.getColumnIndexOrThrow(Db.Devotion.header);
 			int col_body = c.getColumnIndexOrThrow(Db.Devotion.body);
 			int col_readyToUse = c.getColumnIndexOrThrow(Db.Devotion.readyToUse);
 
@@ -473,22 +471,10 @@ public class InternalDb {
 			final DevotionActivity.DevotionKind kind = DevotionActivity.DevotionKind.getByName(name);
 			switch (kind) {
 				case RH: {
-					return new ArticleRenunganHarian(
-					date,
-					c.getString(col_title),
-					c.getString(col_header),
-					c.getString(col_body),
-					c.getInt(col_readyToUse) > 0
-					);
+					return new ArticleRenunganHarian(date, c.getString(col_body), c.getInt(col_readyToUse) > 0);
 				}
 				case SH: {
-					return new ArticleSantapanHarian(
-					date,
-					c.getString(col_title),
-					c.getString(col_header),
-					c.getString(col_body),
-					c.getInt(col_readyToUse) > 0
-					);
+					return new ArticleSantapanHarian(date, c.getString(col_body), c.getInt(col_readyToUse) > 0);
 				}
 				case ME_EN: {
 					return new ArticleMorningEveningEnglish(date, c.getString(col_body), true);
