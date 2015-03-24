@@ -267,14 +267,14 @@ public class YetFileInput {
 			}
 
 			for (final int arif : footnoteArifs.toArray()) {
-				if (!res.footnoteEntries.containsKey(arif)) {
+				if (res.footnoteEntries == null || !res.footnoteEntries.containsKey(arif)) {
 					final int ari = arif >>> 8;
 					errors.add(String.format("footnote referenced in verse text not found: arif 0x%08x (book_1=%d, chapter_1=%d, verse_1=%d, field=%d)", arif, Ari.toBook(ari) + 1, Ari.toChapter(ari), Ari.toVerse(ari), arif & 0xff));
 				}
 			}
 
 			for (final int arif : xrefArifs.toArray()) {
-				if (!res.xrefEntries.containsKey(arif)) {
+				if (res.xrefEntries == null || !res.xrefEntries.containsKey(arif)) {
 					final int ari = arif >>> 8;
 					errors.add(String.format("xref referenced in verse text not found: arif 0x%08x (book_1=%d, chapter_1=%d, verse_1=%d, field=%d)", arif, Ari.toBook(ari) + 1, Ari.toChapter(ari), Ari.toVerse(ari), arif & 0xff));
 				}
