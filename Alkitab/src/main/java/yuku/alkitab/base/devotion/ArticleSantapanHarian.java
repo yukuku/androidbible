@@ -21,10 +21,8 @@ public class ArticleSantapanHarian extends ArticleFromSabda {
 
 	@Override public CharSequence getContent(CallbackSpan.OnClickListener<String> verseClickListener) {
 		final String template = "" +
-			"%s\n" + // tanggal
-			"<p>" +
-			"%s\n" + // judul
-			"<p>" +
+			"<b>" + "<big>" + "%s\n" + "</big>" + "</b>" + // judul
+			"<br>" +
 			"%s\n" + // ayat
 			"<p>" +
 			"%s\n" + // isi
@@ -34,7 +32,6 @@ public class ArticleSantapanHarian extends ArticleFromSabda {
 			final BodyJson bodyJson = App.getDefaultGson().fromJson(body, BodyJson.class);
 
 			final String html = String.format(template,
-				bodyJson.tanggal,
 				bodyJson.judul,
 				bodyJson.ayat,
 				bodyJson.isi

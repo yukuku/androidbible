@@ -22,31 +22,26 @@ public class ArticleRenunganHarian extends ArticleFromSabda {
 	@Override
 	public CharSequence getContent(CallbackSpan.OnClickListener<String> verseClickListener) {
 		final String template = "" +
-			"%s\n" + // tanggal
-			"<p>" +
 			"Bacaan Setahun: %s\n" + // bacaan setahun
 			"<p>" +
-			"%s (%s)" + // nats_isi, nats_ayat
+            "<b>" + "<big>" + "%s" + // judul
+            "<br>" +
+            "</big>" + "</b>" + "<small>" + "%s (%s)" + // nats_isi, nats_ayat
+            "<p>" +
+            "<p>" +
+			"</small>" + "%s\n" + // isi
 			"<p>" +
-			"%s" + // judul
-			"<p>" +
-			"Bacaan: %s\n" + // ayat
-			"<p>" +
-			"%s\n" + // isi
-			"<p>" +
-			"%s\n" + // catatan_kaki
-			"";
+			"<small>" + "%s\n" + // catatan_kaki
+            "</small>" + "";
 
 		try {
 			final BodyJson bodyJson = App.getDefaultGson().fromJson(body, BodyJson.class);
 
 			final String html = String.format(template,
-				bodyJson.tanggal,
 				bodyJson.ayat_setahun,
-				bodyJson.nats == null? null: bodyJson.nats.nats_isi,
+                bodyJson.judul,
+                bodyJson.nats == null? null: bodyJson.nats.nats_isi,
 				bodyJson.nats == null? null: bodyJson.nats.nats_ayat,
-				bodyJson.judul,
-				bodyJson.ayat,
 				bodyJson.isi,
 				bodyJson.catatan_kaki
 			);
