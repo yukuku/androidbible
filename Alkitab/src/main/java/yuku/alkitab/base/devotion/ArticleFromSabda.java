@@ -1,5 +1,7 @@
 package yuku.alkitab.base.devotion;
 
+import android.support.annotation.NonNull;
+
 public abstract class ArticleFromSabda extends DevotionArticle {
 	// json model class for structure from server
 	protected static class BodyJson {
@@ -64,7 +66,8 @@ public abstract class ArticleFromSabda extends DevotionArticle {
 	}
 
 	@Override
-	public String[] getHeaderTitleBody() {
-		return new String[]{null, null, body};
+	@NonNull
+	public String getBody() {
+		return body;
 	}
 }

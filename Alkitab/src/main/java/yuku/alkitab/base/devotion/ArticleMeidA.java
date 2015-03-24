@@ -1,6 +1,7 @@
 package yuku.alkitab.base.devotion;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import yuku.alkitab.base.ac.DevotionActivity;
@@ -54,7 +55,8 @@ public class ArticleMeidA extends DevotionArticle {
 	}
 
 	@Override
-	public String[] getHeaderTitleBody() {
-		return new String[]{null, null, bodyHtml};
+	@NonNull
+	public String getBody() {
+		return bodyHtml;
 	}
 }

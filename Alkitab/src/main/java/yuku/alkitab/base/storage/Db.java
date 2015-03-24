@@ -12,17 +12,6 @@ public class Db {
 		public static final String modifyTime = "modifyTime";
 	}
 
-	public static final String TABLE_Devotion = "Renungan";
-	public static final class Devotion {
-		public static final String name = "nama";
-		public static final String date = "tgl";
-		public static final String header = "header";
-		public static final String title = "judul";
-		public static final String body = "isi";
-		public static final String readyToUse = "siapPakai";
-		public static final String touchTime = "waktuSentuh";
-	}
-	
 	public static final String TABLE_Version = "Version";
 	public static final class Version {
 		public static final String locale = "locale";

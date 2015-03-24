@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -337,14 +336,6 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 		currentKind = storedKind == null? DEFAULT_DEVOTION_KIND: storedKind;
 		currentDate = new Date();
 
-		// Workaround for crashes due to html tags in the title
-		// We remove all rows that contain '<' in the title
-		if (!Preferences.getBoolean(Prefkey.patch_devotionSlippedHtmlTags, false)) {
-			int deleted = S.getDb().deleteDevotionsWithLessThanInTitle();
-			Log.d(TAG, "patch_devotionSlippedHtmlTags: deleted " + deleted);
-			Preferences.setBoolean(Prefkey.patch_devotionSlippedHtmlTags, true);
-		}
-		
 		new Prefetcher(currentKind).start();
 		
 		{ // fix  ui update

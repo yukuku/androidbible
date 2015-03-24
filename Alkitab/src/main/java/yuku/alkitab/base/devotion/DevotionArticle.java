@@ -1,5 +1,6 @@
 package yuku.alkitab.base.devotion;
 
+import android.support.annotation.NonNull;
 import android.text.SpannableStringBuilder;
 import android.text.style.URLSpan;
 import yuku.alkitab.base.ac.DevotionActivity;
@@ -33,10 +34,5 @@ public abstract class DevotionArticle {
 		}
 	}
 
-	/**
-	 * Must return a 3-element array: header, title, body.
-	 * This is so because it's needed for compatibility with database table.
-	 * Header and title can be null. Body should not be null.
-	 */
-	public abstract String[] getHeaderTitleBody();
+	@NonNull public abstract String getBody();
 }
