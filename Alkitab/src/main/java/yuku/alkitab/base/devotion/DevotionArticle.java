@@ -9,6 +9,10 @@ import yuku.alkitab.base.widget.CallbackSpan;
 
 public abstract class DevotionArticle {
 	public abstract CharSequence getContent(CallbackSpan.OnClickListener<String> listener);
+
+	/**
+	 * @return Date of this devotion in yyyymmdd format.
+	 */
 	public abstract String getDate();
 	public abstract boolean getReadyToUse();
 	
