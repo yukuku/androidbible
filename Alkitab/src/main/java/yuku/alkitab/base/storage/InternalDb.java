@@ -431,6 +431,7 @@ public class InternalDb {
 		}
 
 		values.put(Table.Devotion.touchTime.name(), Sqlitil.nowDateTime());
+		values.put(Table.Devotion.dataFormatVersion.name(), 1);
 
 		db.beginTransaction();
 		try {
@@ -453,7 +454,7 @@ public class InternalDb {
 	 * Try to get article from local db. Non ready-to-use article will be returned too.
 	 */
 	public DevotionArticle tryGetDevotion(String name, String date) {
-		final Cursor c = helper.getReadableDatabase().query(Table.Devotion.tableName(), null, Table.Devotion.name + "=? and " + Table.Devotion.date + "=?", Array(name, date), null, null, null);
+		final Cursor c = helper.getReadableDatabase().query(Table.Devotion.tableName(), null, Table.Devotion.name + "=? and " + Table.Devotion.date + "=? and " + Table.Devotion.dataFormatVersion + "=?", ToStringArray(name, date, 1), null, null, null);
 		try {
 			final int col_body = c.getColumnIndexOrThrow(Table.Devotion.body.name());
 			final int col_readyToUse = c.getColumnIndexOrThrow(Table.Devotion.readyToUse.name());

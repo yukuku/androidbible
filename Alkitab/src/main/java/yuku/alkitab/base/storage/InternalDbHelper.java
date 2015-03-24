@@ -202,10 +202,8 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	}
 
 	private void createIndexDevotion(SQLiteDatabase db) {
-		db.execSQL("create index if not exists index_Devotion_01 on " + Table.Devotion.tableName() + " (" + Table.Devotion.name + ")");
-		db.execSQL("create index if not exists index_Devotion_02 on " + Table.Devotion.tableName() + " (" + Table.Devotion.name + ", " + Table.Devotion.date + ")");
-		db.execSQL("create index if not exists index_Devotion_03 on " + Table.Devotion.tableName() + " (" + Table.Devotion.date + ")");
-		db.execSQL("create index if not exists index_Devotion_04 on " + Table.Devotion.tableName() + " (" + Table.Devotion.touchTime + ")");
+		db.execSQL("create index if not exists index_Devotion_01 on " + Table.Devotion.tableName() + " (" + Table.Devotion.name + ", " + Table.Devotion.date + ", " + Table.Devotion.dataFormatVersion + ")");
+		db.execSQL("create index if not exists index_Devotion_02 on " + Table.Devotion.tableName() + " (" + Table.Devotion.touchTime + ")");
 	}
 
 	private void createTableEdisi(SQLiteDatabase db) {

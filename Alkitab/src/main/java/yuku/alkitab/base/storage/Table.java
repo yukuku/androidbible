@@ -94,6 +94,7 @@ public class Table {
 		body(text),
 		readyToUse(integer),
 		touchTime(integer),
+		dataFormatVersion(integer),
 		;
 
 		public final Type type;
