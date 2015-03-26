@@ -13,6 +13,7 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.MultipartBuilder;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import yuku.afw.storage.Preferences;
@@ -136,11 +137,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 		final String serverPrefix = Sync.getEffectiveServerPrefix();
 		Log.d(TAG, "@@syncMabel step 20: building http request. Server prefix: " + serverPrefix);
-		final RequestBody requestBody = new FormEncodingBuilder()
-			.add("simpleToken", simpleToken)
-			.add("syncSetName", syncSetName)
-			.add("installation_id", U.getInstallationId())
-			.add("clientState", App.getDefaultGson().toJson(clientState))
+		final RequestBody requestBody = new MultipartBuilder()
+			.type(MultipartBuilder.FORM)
+			.addFormDataPart("simpleToken", simpleToken)
+			.addFormDataPart("syncSetName", syncSetName)
+			.addFormDataPart("installation_id", U.getInstallationId())
+			.addFormDataPart("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 
 		final Call call = App.getOkHttpClient().newCall(
