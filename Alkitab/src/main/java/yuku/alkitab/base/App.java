@@ -2,10 +2,12 @@ package yuku.alkitab.base;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.multidex.MultiDex;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.ViewConfiguration;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
@@ -22,6 +24,7 @@ import yuku.alkitabfeedback.FeedbackSender;
 import yuku.kirimfidbek.CrashReporter;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Locale;
 
 public class App extends yuku.afw.App {
@@ -108,6 +111,31 @@ public class App extends yuku.afw.App {
 		}
 
 		DevotionReminder.scheduleAlarm(context);
+
+		forceOverflowMenu();
+	}
+
+	private static void forceOverflowMenu() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			return; // no need to do anything, it is already forced on KitKat
+		}
+
+		final ViewConfiguration config = ViewConfiguration.get(context);
+		try {
+			final Field sHasPermanentMenuKey = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+			sHasPermanentMenuKey.setAccessible(true);
+			sHasPermanentMenuKey.setBoolean(config, false);
+		} catch (Exception e) {
+			Log.w(TAG, "ViewConfiguration has no sHasPermanentMenuKey field", e);
+		}
+
+		try {
+			final Field sHasPermanentMenuKeySet = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKeySet");
+			sHasPermanentMenuKeySet.setAccessible(true);
+			sHasPermanentMenuKeySet.setBoolean(config, true);
+		} catch (Exception e) {
+			Log.w(TAG, "ViewConfiguration has no sHasPermanentMenuKeySet field", e);
+		}
 	}
 
 	private static Locale getLocaleFromPreferences() {
