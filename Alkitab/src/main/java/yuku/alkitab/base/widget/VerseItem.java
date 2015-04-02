@@ -9,6 +9,8 @@ import android.util.AttributeSet;
 import android.view.DragEvent;
 import android.widget.Checkable;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
@@ -27,11 +29,24 @@ public class VerseItem extends LinearLayout implements Checkable {
 	private boolean dragHover;
 	private Drawable dragHoverBg;
 
+	public VerseTextView lText;
+	public TextView lVerseNumber;
+	public AttributeView attributeView;
+
 	/** the ari of the verse represented by this view. If this is 0, this is a pericope or something else. */
 	private int ari;
 
 	public VerseItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
+	}
+
+	@Override
+	protected void onFinishInflate() {
+		super.onFinishInflate();
+
+		lText = V.get(this, R.id.lText);
+		lVerseNumber = V.get(this, R.id.lVerseNumber);
+		attributeView = V.get(this, R.id.attributeView);
 	}
 
 	@Override
