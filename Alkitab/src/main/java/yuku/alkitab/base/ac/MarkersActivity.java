@@ -26,6 +26,7 @@ import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import yuku.afw.D;
 import yuku.afw.V;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -86,10 +87,19 @@ public class MarkersActivity extends BaseActivity {
 
 		registerForContextMenu(lv);
 
-        bGotoSync = V.get(this, R.id.bGotoSync);
+		bGotoSync = V.get(this, R.id.bGotoSync);
         bGotoSync.setOnClickListener(v -> startActivity(SyncSettingsActivity.createIntent()));
 
 		App.getLbm().registerReceiver(br, new IntentFilter(ACTION_RELOAD));
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+		// hide sync button if we are already syncing
+		final String syncAccountName = Preferences.getString(getString(R.string.pref_syncAccountName_key));
+		V.get(this, R.id.panelGotoSync).setVisibility(syncAccountName != null ? View.GONE : View.VISIBLE);
 	}
 
 	@Override
