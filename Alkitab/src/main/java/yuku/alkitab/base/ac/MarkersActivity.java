@@ -32,12 +32,19 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.LabelEditorDialog;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
+import yuku.alkitab.base.util.BookmarkImporter;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.ambilwarna.AmbilWarnaDialog;
 import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
+import yuku.filechooser.FileChooserActivity;
+import yuku.filechooser.FileChooserConfig;
+import yuku.filechooser.FileChooserResult;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
 public class MarkersActivity extends BaseActivity {
@@ -45,6 +52,7 @@ public class MarkersActivity extends BaseActivity {
 	
 	private static final int REQCODE_markerList = 1;
 	private static final int REQCODE_share = 2;
+	private static final int REQCODE_migrateFromV3 = 3;
 
 	/** Action to broadcast when label list needs to be reloaded due to some background changes */
 	public static final String ACTION_RELOAD = MarkersActivity.class.getName() + ".action.RELOAD";
@@ -103,6 +111,14 @@ public class MarkersActivity extends BaseActivity {
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
+			case R.id.menuMigrateFromV3: {
+				final FileChooserConfig config = new FileChooserConfig();
+				config.mode = FileChooserConfig.Mode.Open;
+				config.pattern = YukuAlkitabImportOfferActivity.getBackupFilenameMatcher().pattern().toString();
+				config.title = getString(R.string.marker_migrate_file_chooser_title);
+				final Intent intent = FileChooserActivity.createIntent(this, config);
+				startActivityForResult(intent, REQCODE_migrateFromV3);
+			} return true;
 			case R.id.menuLabelSort:
 				S.getDb().sortLabelsAlphabetically();
 				adapter.reload();
@@ -229,9 +245,27 @@ public class MarkersActivity extends BaseActivity {
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQCODE_markerList) {
 			adapter.reload();
+			return;
 		} else if (requestCode == REQCODE_share && resultCode == RESULT_OK) {
 			final ShareActivity.Result result = ShareActivity.obtainResult(data);
 			startActivity(result.chosenIntent);
+			return;
+		} else if (requestCode == REQCODE_migrateFromV3 && resultCode == RESULT_OK) {
+			final FileChooserResult result = FileChooserActivity.obtainResult(data);
+			if (result != null) {
+				final File file = new File(result.firstFilename);
+				try {
+					final FileInputStream fis = new FileInputStream(file);
+					BookmarkImporter.importBookmarks(this, fis, false);
+					adapter.reload();
+				} catch (IOException e) {
+					new AlertDialogWrapper.Builder(this)
+						.setMessage(R.string.marker_migrate_error_opening_backup_file)
+						.setPositiveButton(R.string.ok, null)
+						.show();
+				}
+			}
+			return;
 		}
 
 		super.onActivityResult(requestCode, resultCode, data);

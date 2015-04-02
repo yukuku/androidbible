@@ -151,6 +151,7 @@
     <string name="bmcat_notes">Notes</string>
     <string name="bmcat_highlights">Highlights</string>
     <string name="bmcat_unlabeled_bookmarks">Unlabeled bookmarks</string>
+	<string name="menuLabelSort">Sort labels alphabetically</string>
     <string name="bl_no_notes_written_yet">No notes written yet.\nTap on a verse to begin writing a note.</string>
     <string name="bl_no_highlighted_verses">No highlighted verses.\nTap on verses to start highlighting them.</string>
     <string name="bl_there_are_no_bookmarks_without_any_labels">There are no bookmarks without any labels.</string>
@@ -499,6 +500,7 @@
 	<string name="marker_migrate_no_more">Don\'t ask again</string>
 	<string name="marker_migrate_later">Not now</string>
 	<string name="marker_migrate_title">Import old markers</string>
+	<string name="marker_migrate_file_chooser_title">Select v3 backup file</string>
 	<string name="marker_migrate_no_more_confirmation">Are you sure you don\'t need to import the old data?</string>
 	<string name="marker_migrate_error_opening_backup_file">Could not access that backup file.</string>
 	<string name="marker_migrate_import_from_newest">Yes, import from the newest (recommended)</string>
