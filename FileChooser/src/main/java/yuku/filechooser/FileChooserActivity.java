@@ -1,10 +1,12 @@
 package yuku.filechooser;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -20,7 +22,7 @@ import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FileChooserActivity extends Activity {
+public class FileChooserActivity extends ActionBarActivity {
 	static final String EXTRA_config = "config"; //$NON-NLS-1$
 	static final String EXTRA_result = "result"; //$NON-NLS-1$
 
@@ -45,6 +47,12 @@ public class FileChooserActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+		final ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setDisplayHomeAsUpEnabled(true);
+		}
+
         config = getIntent().getParcelableExtra(EXTRA_config);
         
 		Utils.configureTitles(this, config.title, config.subtitle);
@@ -80,7 +88,16 @@ public class FileChooserActivity extends Activity {
 			}
 		}
 	};
-	
+
+	@Override public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == android.R.id.home) {
+			finish();
+			return true;
+		}
+
+		return super.onOptionsItemSelected(item);
+	}
+
 	private void init() {
 		if (config.initialDir != null) {
 			cd = new File(config.initialDir);
