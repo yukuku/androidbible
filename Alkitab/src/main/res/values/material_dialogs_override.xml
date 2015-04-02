@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- the default from the library is 18sp, we want it to be smaller -->
+	<dimen name="md_content_textsize">16sp</dimen>
+</resources>
