@@ -4,5 +4,6 @@
 
 	<style name="Theme.Holo.WithDarkMD" parent="android:Theme.Holo">
 		<item name="md_dark_theme">true</item>
+		<item name="android:windowBackground">@color/primary</item>
 	</style>
 </resources>
