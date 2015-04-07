@@ -61,12 +61,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="yuku.alkitab.base.ac.GotoActivity"
-            android:configChanges="locale|layoutDirection"
-            android:label="@string/tuju_v"
-            android:windowSoftInputMode="adjustNothing" />
-        <activity
+		<activity
+			android:name="yuku.alkitab.base.ac.GotoActivity"
+			android:configChanges="locale|layoutDirection"
+			android:label="@string/tuju_v"
+			android:theme="@style/Theme.Alkitab.Goto"
+			android:windowSoftInputMode="adjustNothing" />
+		<activity
             android:name="yuku.alkitab.base.ac.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
 			android:theme="@style/Theme.MaterialOrHolo"
