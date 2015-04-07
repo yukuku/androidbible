@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.DragEvent;
 import android.widget.Checkable;
@@ -52,8 +54,28 @@ public class VerseItem extends LinearLayout implements Checkable {
 	@Override
 	protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
 		if (collapsed) {
 			setMeasuredDimension(getMeasuredWidth(), 0);
+			return;
+		}
+
+		if (Build.VERSION.SDK_INT >= 21) {
+			// Fix bug on Lollipop where the last line of the text does not calculate line spacing mult/add.
+			// https://code.google.com/p/android/issues/detail?id=77941
+
+			final VerseTextView lText = this.lText;
+			if (lText != null) {
+				final Layout layout = lText.getLayout();
+
+				if (layout != null) {
+					final int lastLine = layout.getLineCount() - 1;
+					final int spacing = lText.getIncludeFontPadding() ? (layout.getLineBottom(lastLine) - layout.getLineTop(lastLine)) : (layout.getLineDescent(lastLine) - layout.getLineAscent(lastLine));
+					final int extra = (int) (spacing * (layout.getSpacingMultiplier() - 1) + layout.getSpacingAdd() + 0.5f);
+
+					setMeasuredDimension(getMeasuredWidth(), getMeasuredHeight() + extra);
+				}
+			}
 		}
 	}
 
