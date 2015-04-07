@@ -41,19 +41,21 @@ public class MultiColorView extends TextView {
 
 	@Override protected void onDraw(Canvas canvas) {
 		// not calling super.onDraw(canvas)
-		
-		int w = getWidth();
-		int h = getHeight();
-		
-		float l = density * 8;
-		float t = density * 8;
-		float r = w - density * 8;
-		float b = h - density * 8;
-		
+
+		final int w = getWidth();
+		final int h = getHeight();
+
+		final float density = this.density;
+
+		final float l = getTotalPaddingLeft() + density * 8;
+		final float t = density * 8;
+		final float r = w - getTotalPaddingRight() - density * 8;
+		final float b = h - density * 8;
+
 		// bg
 		p.setColor(bgColor);
 		canvas.drawRect(l, t, r, b, p);
-		
+
 		if (colors != null) {
 			float l_inner = l + 2 * density;
 			float t_inner = t + 2 * density;

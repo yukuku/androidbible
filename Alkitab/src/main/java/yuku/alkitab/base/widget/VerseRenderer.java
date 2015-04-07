@@ -35,7 +35,7 @@ public class VerseRenderer {
 		}
 	}
 
-	static class VerseNumberSpan extends MetricAffectingSpan {
+	public static class VerseNumberSpan extends MetricAffectingSpan {
 		private final boolean applyColor;
 	
 		public VerseNumberSpan(boolean applyColor) {
