@@ -4,14 +4,12 @@
     <!-- text color, bg color, verse number color, red text color -->
     <string-array name="pref_colorTheme_values" translatable="false">
 
-        <!-- dark material -->
-        <item>ffeeeeee ff303030 ff757575 ff03a9f4</item>
-        <!-- paper -->
-        <item>ff000000 ffeeeeee ff6666ff ffd11712</item>
+        <!-- clean paper -->
+        <item>ff303030 fff0f0f0 ff828282 ffD32F2F</item>
         <!--lollipop-->
-        <item>fff23d4c fff5f5f5 fff48fb1 ff673ab7</item>
+        <item>fff23d4c fff5f5f5 ffFFA000 ff673ab7</item>
         <!--bubblegum-->
-        <item>ff03a9f4 fff7fcff ff0277bd fff50057</item>
+        <item>ff03a9f4 fff7fcff ff880E4F fff50057</item>
         <!--sakura-->
         <item>fff06292 fffafafa ff8bc34a ff3e2723</item>
         <!-- forest -->
@@ -34,6 +32,8 @@
         <item>ffe1e6fa ff122641 ffd08e11 fffeaeae</item>
         <!-- starry night -->
         <item>ffffe985 ff0b1829 ffe3f5ff ffffffff</item>
+        <!-- dark material -->
+        <item>ffeeeeee ff303030 ff757575 ff03a9f4</item>
         <!-- blackboard -->
         <item>fff0f0f0 ff000000 ff9090ff ffff9090</item>
         <!-- dark -->
