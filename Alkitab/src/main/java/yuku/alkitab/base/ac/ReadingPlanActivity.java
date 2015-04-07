@@ -119,11 +119,17 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
 
-		long id = Preferences.getLong(Prefkey.active_reading_plan_id, 0);
+		final long id = Preferences.getLong(Prefkey.active_reading_plan_id, 0);
 		loadReadingPlan(id);
-		loadReadingPlanProgress();
 		prepareDropDownNavigation();
 		loadDayNumber();
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+		loadReadingPlanProgress();
 		prepareDisplay();
 	}
 
