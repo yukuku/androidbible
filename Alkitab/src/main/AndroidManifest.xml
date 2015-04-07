@@ -364,9 +364,12 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/daily_verse_app_widget_provider" />
         </receiver>
-        <receiver android:name="yuku.alkitab.base.br.DailyVerseAppWidgetReceiver$ClickReceiver" />
+		<receiver android:name="yuku.alkitab.base.br.DailyVerseAppWidgetReceiver$ClickReceiver" />
+		<service
+			android:name="yuku.alkitab.base.br.DailyVerseAppWidgetReceiver$UpdateService"
+			android:exported="false" />
 
-        <receiver
+		<receiver
             android:name="yuku.alkitab.base.br.VersionDownloadCompleteReceiver"
             android:enabled="true"
             android:exported="true" >

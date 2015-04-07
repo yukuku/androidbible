@@ -181,7 +181,7 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 			savedState.click = 0;
 			DailyVerseData.saveSavedState(mAppWidgetId, savedState);
 
-			DailyVerseAppWidgetReceiver.buildUpdate(context, appWidgetManager, mAppWidgetId, 1);
+			DailyVerseAppWidgetReceiver.buildUpdate(context, mAppWidgetId, 1);
 
 			ComponentName provider = new ComponentName(context, DailyVerseAppWidgetReceiver.class);
 			int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(provider);
