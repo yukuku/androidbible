@@ -2,7 +2,6 @@
 <resources>
     <!-- Names of the color themes -->
 	<string-array name="pref_colorTheme_labels">
-        <item>Dark Material</item>
         <item>Clean Paper</item>
         <item>Lollipop</item>
         <item>Bubble Gum</item>
@@ -17,6 +16,7 @@
 		<item>Wet Guava</item>
 		<item>Clear Night</item>
 		<item>Starry Night</item>
+        <item>Dark Material</item>
         <item>Blackboard</item>
         <item>Soft Light</item>
 	</string-array>
