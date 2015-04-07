@@ -356,7 +356,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			}
 
 			private void showCalendar() {
-				Calendar calendar = Calendar.getInstance();
+				Calendar calendar = GregorianCalendar.getInstance();
 				calendar.setTimeInMillis(readingPlan.info.startTime);
 				calendar.add(Calendar.DATE, dayNumber);
 
@@ -662,7 +662,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	}
 
 	public String getReadingDateHeader(final int dayNumber) {
-		Calendar calendar = Calendar.getInstance();
+		Calendar calendar = GregorianCalendar.getInstance();
 		calendar.setTimeInMillis(readingPlan.info.startTime);
 		calendar.add(Calendar.DATE, dayNumber);
 
