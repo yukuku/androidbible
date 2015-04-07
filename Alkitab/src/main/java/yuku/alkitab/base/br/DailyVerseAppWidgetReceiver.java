@@ -94,6 +94,11 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 		final int[] aris = DailyVerseData.getAris(appWidgetId, savedState, version, direction);
 		if (aris != null) {
 			rv.setTextViewText(R.id.tReference, version.referenceWithVerseCount(aris[0], aris.length));
+
+			final Intent viewVerseIntent = new Intent("yuku.alkitab.action.VIEW");
+			viewVerseIntent.setPackage(context.getPackageName());
+			viewVerseIntent.putExtra("ari", aris[0]);
+			rv.setOnClickPendingIntent(R.id.tReference, PendingIntent.getActivity(context, appWidgetId + 10000, viewVerseIntent, PendingIntent.FLAG_UPDATE_CURRENT));
 		} else {
 			rv.setTextViewText(R.id.tReference, App.context.getString(R.string.generic_verse_not_available_in_this_version));
 		}

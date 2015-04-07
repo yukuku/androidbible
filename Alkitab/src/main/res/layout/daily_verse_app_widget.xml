@@ -25,7 +25,8 @@
 			android:layout_width="32dp"
 			android:layout_height="32dp"
 			android:layout_marginLeft="6dp"
-			android:background="@drawable/ic_launcher"
+			android:src="@drawable/ic_launcher"
+			android:background="?android:selectableItemBackground"
 			tools:ignore="ContentDescription" />
 
 		<TextView
@@ -35,7 +36,11 @@
 			android:layout_centerVertical="true"
 			android:layout_marginLeft="4dp"
 			android:layout_toRightOf="@+id/imgLogo"
-			android:textAppearance="?android:attr/textAppearanceSmall" />
+			android:background="?android:selectableItemBackground"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:minHeight="32dp"
+			android:gravity="center_vertical"
+			android:layout_alignParentRight="true" />
 
 		<ImageButton
 			android:id="@+id/bPrev"
@@ -43,9 +48,10 @@
 			android:layout_height="32dp"
 			android:layout_alignParentTop="true"
 			android:layout_toLeftOf="@+id/bNext"
-			android:background="?android:actionBarItemBackground"
+			android:background="?android:selectableItemBackground"
 			android:contentDescription="@string/desc_previous_day"
-			android:src="@drawable/ic_nav_left_light" />
+			android:src="@drawable/ic_nav_left_light"
+			android:layout_centerVertical="true" />
 
 		<ImageButton
 			android:id="@+id/bNext"
@@ -53,11 +59,11 @@
 			android:layout_height="32dp"
 			android:layout_alignParentRight="true"
 			android:layout_alignParentTop="true"
-			android:layout_marginLeft="8dp"
 			android:layout_marginRight="6dp"
-			android:background="?android:actionBarItemBackground"
+			android:background="?android:selectableItemBackground"
 			android:contentDescription="@string/desc_next_day"
-			android:src="@drawable/ic_nav_right_light" />
+			android:src="@drawable/ic_nav_right_light"
+			android:layout_centerVertical="true" />
 	</RelativeLayout>
 
 	<ListView
