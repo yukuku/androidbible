@@ -92,8 +92,7 @@
         <include
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            layout="@layout/keypad" >
-        </include>
+            layout="@layout/keypad" />
 
         <include
             android:layout_width="match_parent"

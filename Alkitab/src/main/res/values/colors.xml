@@ -2,7 +2,5 @@
 <resources>
     <color name="about_linebutton_bg_default">#2a2a2a</color>
     <color name="about_linebutton_bg_pressed">#404040</color>
-    <color name="goto_dialer_active">#424242</color>
-    <color name="keypad_bg">#303030</color>
     <color name="keypad_text_color">#ffffff</color>
 </resources>
