@@ -13,8 +13,8 @@
 	<RelativeLayout
 		android:id="@+id/panelGotoSync"
 		android:layout_width="match_parent"
-		android:layout_height="64dp"
-		android:background="#3a3a3a">
+		android:layout_height="52dp"
+		android:background="#262626">
 
 		<Button
 			android:id="@+id/bGotoSync"

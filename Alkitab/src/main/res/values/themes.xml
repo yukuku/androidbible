@@ -6,7 +6,7 @@
 		<item name="colorAccent">@color/accent</item>
 		<item name="windowActionModeOverlay">true</item>
         <item name="android:textColorLink">@color/accent</item>
-        <item name="android:windowBackground">@color/primary</item>
+        <item name="android:windowBackground">@color/window</item>
 		<item name="actionModeStyle">@style/SmallerTitleActionModeStyle</item>
 		<!-- TODO remove when upgrading to release 0.7 -->
 		<item name="md_dark_theme">true</item>

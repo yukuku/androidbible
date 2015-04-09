@@ -32,7 +32,7 @@
 			android:paddingTop="4dp"
 			android:text="*label"
 			android:textColor="#fff"
-			android:textSize="16sp"
+			android:textSize="14sp"
 			tools:ignore="HardcodedText" />
 
 		<TextView

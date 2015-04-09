@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Gray 800 -->
+    <color name="window">#303030</color>
 	<!-- Blue Gray 800 -->
-	<color name="primary">#37474F</color>
+	<color name="primary">#455A64</color>
 	<!-- Blue Gray 900 -->
 	<color name="primary_dark">#263238</color>
-	<!-- Light blue primary -->
-	<color name="accent">#03a9f4</color>
+	<!-- Light blue accent -->
+	<color name="accent">#0091EA</color>
 
 </resources>

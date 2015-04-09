@@ -6,9 +6,9 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="240dp"
 	android:layout_height="match_parent"
-	android:background="@color/primary_dark"
-	android:elevation="4dp"
 	android:fitsSystemWindows="true"
+    android:background="#263238"
+    android:elevation="4dp"
 	tools:context="yuku.alkitab.base.ac.SongViewActivity"
 	tools:ignore="Overdraw">
 
