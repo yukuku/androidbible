@@ -5,7 +5,7 @@
     <string-array name="pref_colorTheme_values" translatable="false">
 
         <!-- clean paper -->
-        <item>ff212121 fff0f0f0 ff828282 ffD32F2F</item>
+        <item>ff212121 fff0f0f0 ff828282 ffB71C1C</item>
         <!--lollipop-->
         <item>fff23d4c fff5f5f5 ffFFA000 ff673ab7</item>
         <!--bubblegum-->
