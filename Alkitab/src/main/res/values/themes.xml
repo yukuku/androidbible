@@ -12,17 +12,13 @@
 		<item name="md_dark_theme">true</item>
 	</style>
 
-	<style name="Theme.Alkitab.Goto.LargeOrNot" parent="Theme.Alkitab.Goto.Base">
-		<!-- The following is not applied for -large, because -large uses dialog default background -->
-		<item name="android:windowBackground">@color/primary</item>
-	</style>
-
 	<style name="Theme.Alkitab.Goto.Base" parent="Theme.AppCompat.DialogWhenLarge">
 		<item name="windowActionBar">false</item>
 		<item name="android:windowNoTitle">true</item>
 		<item name="colorPrimary">@color/primary</item>
 		<item name="colorPrimaryDark">@color/primary_dark</item>
 		<item name="colorAccent">@color/accent</item>
+        <item name="android:windowBackground">@color/window</item>
 		<!-- TODO remove when upgrading to release 0.7 -->
 		<item name="md_dark_theme">true</item>
 	</style>
