@@ -5,6 +5,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -105,12 +106,16 @@ public class GotoDialerFragment extends BaseGotoFragment {
 
 		// if the scrolled content height is not more than the available space, remove the gravity
 		final View scrollRoot = V.get(res, R.id.scrollRoot);
-		scrollRoot.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-			final ScrollView.LayoutParams lp = (ScrollView.LayoutParams) scrollRoot.getLayoutParams();
-			final int contentHeight = scrollRoot.getMeasuredHeight();
-			final int containerHeight = res.getMeasuredHeight();
-			lp.gravity = contentHeight <= containerHeight ? Gravity.CENTER_VERTICAL : Gravity.NO_GRAVITY;
-			scrollRoot.setLayoutParams(lp);
+		scrollRoot.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+			@Override
+			public void onGlobalLayout() {
+				final ScrollView.LayoutParams lp = (ScrollView.LayoutParams) scrollRoot.getLayoutParams();
+				final int contentHeight = scrollRoot.getMeasuredHeight();
+				final int containerHeight = res.getMeasuredHeight();
+				lp.gravity = contentHeight <= containerHeight ? Gravity.CENTER_VERTICAL : Gravity.NO_GRAVITY;
+				scrollRoot.setLayoutParams(lp);
+				scrollRoot.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+			}
 		});
 
 		return res;
