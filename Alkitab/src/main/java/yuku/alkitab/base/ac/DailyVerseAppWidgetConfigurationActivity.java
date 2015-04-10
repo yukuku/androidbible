@@ -169,8 +169,7 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 		@Override
 		public void onClick(final View v) {
 			final Context context = DailyVerseAppWidgetConfigurationActivity.this;
-			AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-			String versionId = adapter.versions.get(selectedVersionPosition).getVersionId();
+			final String versionId = adapter.versions.get(selectedVersionPosition).getVersionId();
 
 			final DailyVerseData.SavedState savedState = new DailyVerseData.SavedState();
 			savedState.versionId = versionId;
