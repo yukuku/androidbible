@@ -1,5 +1,6 @@
 package yuku.alkitab.base.fr;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -114,7 +115,14 @@ public class GotoDialerFragment extends BaseGotoFragment {
 				final int containerHeight = res.getMeasuredHeight();
 				lp.gravity = contentHeight <= containerHeight ? Gravity.CENTER_VERTICAL : Gravity.NO_GRAVITY;
 				scrollRoot.setLayoutParams(lp);
-				scrollRoot.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+				if (Build.VERSION.SDK_INT >= 16) {
+					scrollRoot.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+				} else {
+					// what!? Deprecated because of typo!?
+					//noinspection deprecation
+					scrollRoot.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+				}
 			}
 		});
 
