@@ -189,7 +189,7 @@
 			</FrameLayout>
 
 			<FrameLayout
-				android:id="@+id/bBetaFeedback"
+				android:id="@+id/bFeedback"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:foreground="?selectableItemBackground"
@@ -207,7 +207,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="48dp"
 					android:gravity="center_vertical"
-					android:text="@string/about_beta_feedback"
+					android:text="@string/beri_saran_title"
 					android:textAppearance="?android:textAppearanceMedium"
 					android:textColor="#fff" />
 

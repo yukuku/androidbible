@@ -41,7 +41,7 @@ public class AboutActivity extends BaseActivity {
 	View bHelp;
 	View bMaterialSources;
 	View bCredits;
-	View bBetaFeedback;
+	View bFeedback;
 	View bAnnouncements;
 	TextView tAnnouncements;
 	ContentLoadingProgressBar progressAnnouncements;
@@ -125,8 +125,8 @@ public class AboutActivity extends BaseActivity {
 		bCredits = V.get(this, R.id.bCredits);
 		bCredits.setOnClickListener(v -> startActivity(HelpActivity.createIntent("help/credits.html", false, null, null)));
 
-		bBetaFeedback = V.get(this, R.id.bBetaFeedback);
-		bBetaFeedback.setOnClickListener(v -> startActivity(new Intent(App.context, com.example.android.wizardpager.MainActivity.class)));
+		bFeedback = V.get(this, R.id.bFeedback);
+		bFeedback.setOnClickListener(v -> startActivity(new Intent(App.context, com.example.android.wizardpager.MainActivity.class)));
 
 		bAnnouncements = V.get(this, R.id.bAnnouncements);
 		bAnnouncements.setOnClickListener(v -> bAnnouncements_click());
