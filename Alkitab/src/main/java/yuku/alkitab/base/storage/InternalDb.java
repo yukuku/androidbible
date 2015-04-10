@@ -417,32 +417,27 @@ public class InternalDb {
 	}
 
 	public void storeArticleToDevotions(DevotionArticle article) {
-		SQLiteDatabase db = helper.getWritableDatabase();
+		final SQLiteDatabase db = helper.getWritableDatabase();
+
+		final ContentValues values = new ContentValues();
+		values.put(Table.Devotion.name.name(), article.getKind().name);
+		values.put(Table.Devotion.date.name(), article.getDate());
+		values.put(Table.Devotion.readyToUse.name(), article.getReadyToUse() ? 1 : 0);
+
+		if (article.getReadyToUse()) {
+			values.put(Table.Devotion.body.name(), article.getBody());
+		} else {
+			values.putNull(Table.Devotion.body.name());
+		}
+
+		values.put(Table.Devotion.touchTime.name(), Sqlitil.nowDateTime());
+		values.put(Table.Devotion.dataFormatVersion.name(), 1);
 
 		db.beginTransaction();
 		try {
 			// first delete the existing
-			db.delete(Db.TABLE_Devotion, Db.Devotion.name + "=? and " + Db.Devotion.date + "=?", new String[] {article.getKind().name, article.getDate()});
-
-			ContentValues values = new ContentValues();
-			values.put(Db.Devotion.name, article.getKind().name);
-			values.put(Db.Devotion.date, article.getDate());
-			values.put(Db.Devotion.readyToUse, article.getReadyToUse()? 1: 0);
-
-			if (article.getReadyToUse()) {
-				String[] headerTitleBody = article.getHeaderTitleBody();
-				values.put(Db.Devotion.header, headerTitleBody[0]);
-				values.put(Db.Devotion.title, headerTitleBody[1]);
-				values.put(Db.Devotion.body, headerTitleBody[2]);
-			} else {
-				values.putNull(Db.Devotion.header);
-				values.putNull(Db.Devotion.title);
-				values.putNull(Db.Devotion.body);
-			}
-
-			values.put(Db.Devotion.touchTime, Sqlitil.nowDateTime());
-
-			db.insert(Db.TABLE_Devotion, null, values);
+			db.delete(Table.Devotion.tableName(), Table.Devotion.name + "=? and " + Table.Devotion.date + "=?", new String[]{article.getKind().name, article.getDate()});
+			db.insert(Table.Devotion.tableName(), null, values);
 
 			db.setTransactionSuccessful();
 		} finally {
@@ -451,20 +446,18 @@ public class InternalDb {
 	}
 
 	public int deleteDevotionsWithTouchTimeBefore(Date date) {
-		SQLiteDatabase db = helper.getWritableDatabase();
-		return db.delete(Db.TABLE_Devotion, Db.Devotion.touchTime + "<?", new String[] {String.valueOf(Sqlitil.toInt(date))});
+		final SQLiteDatabase db = helper.getWritableDatabase();
+		return db.delete(Table.Devotion.tableName(), Table.Devotion.touchTime + "<?", ToStringArray(Sqlitil.toInt(date)));
 	}
 
 	/**
 	 * Try to get article from local db. Non ready-to-use article will be returned too.
 	 */
 	public DevotionArticle tryGetDevotion(String name, String date) {
-		Cursor c = helper.getReadableDatabase().query(Db.TABLE_Devotion, null, Db.Devotion.name + "=? and " + Db.Devotion.date + "=?", new String[]{name, date}, null, null, null);
+		final Cursor c = helper.getReadableDatabase().query(Table.Devotion.tableName(), null, Table.Devotion.name + "=? and " + Table.Devotion.date + "=? and " + Table.Devotion.dataFormatVersion + "=?", ToStringArray(name, date, 1), null, null, null);
 		try {
-			int col_title = c.getColumnIndexOrThrow(Db.Devotion.title);
-			int col_header = c.getColumnIndexOrThrow(Db.Devotion.header);
-			int col_body = c.getColumnIndexOrThrow(Db.Devotion.body);
-			int col_readyToUse = c.getColumnIndexOrThrow(Db.Devotion.readyToUse);
+			final int col_body = c.getColumnIndexOrThrow(Table.Devotion.body.name());
+			final int col_readyToUse = c.getColumnIndexOrThrow(Table.Devotion.readyToUse.name());
 
 			if (!c.moveToNext()) {
 				return null;
@@ -473,22 +466,10 @@ public class InternalDb {
 			final DevotionActivity.DevotionKind kind = DevotionActivity.DevotionKind.getByName(name);
 			switch (kind) {
 				case RH: {
-					return new ArticleRenunganHarian(
-					date,
-					c.getString(col_title),
-					c.getString(col_header),
-					c.getString(col_body),
-					c.getInt(col_readyToUse) > 0
-					);
+					return new ArticleRenunganHarian(date, c.getString(col_body), c.getInt(col_readyToUse) > 0);
 				}
 				case SH: {
-					return new ArticleSantapanHarian(
-					date,
-					c.getString(col_title),
-					c.getString(col_header),
-					c.getString(col_body),
-					c.getInt(col_readyToUse) > 0
-					);
+					return new ArticleSantapanHarian(date, c.getString(col_body), c.getInt(col_readyToUse) > 0);
 				}
 				case ME_EN: {
 					return new ArticleMorningEveningEnglish(date, c.getString(col_body), true);
@@ -882,11 +863,6 @@ public class InternalDb {
 	public int countMarkersWithLabel(Label label) {
 		final SQLiteDatabase db = helper.getReadableDatabase();
 		return (int) DatabaseUtils.longForQuery(db, "select count(*) from " + Db.TABLE_Marker_Label + " where " + Db.Marker_Label.label_gid + "=?", new String[]{label.gid});
-	}
-
-	public int deleteDevotionsWithLessThanInTitle() {
-		SQLiteDatabase db = helper.getWritableDatabase();
-		return db.delete(Db.TABLE_Devotion, Db.Devotion.title + " like '%<%'", null);
 	}
 
 	public void sortLabelsAlphabetically() {

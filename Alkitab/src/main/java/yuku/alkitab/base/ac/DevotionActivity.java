@@ -1,14 +1,15 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -54,10 +55,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class DevotionActivity extends BaseLeftDrawerActivity implements DevotionDownloader.DownloadStatusListener, LeftDrawer.Devotion.Listener {
+public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDrawer.Devotion.Listener {
 	public static final String TAG = DevotionActivity.class.getSimpleName();
 
 	private static final int REQCODE_share = 1;
+	public static final DevotionDownloader devotionDownloader = new DevotionDownloader();
 
 	static final ThreadLocal<SimpleDateFormat> yyyymmdd = new ThreadLocal<SimpleDateFormat>() {
 		@Override protected SimpleDateFormat initialValue() {
@@ -194,41 +196,10 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 	TextView lStatus;
 	
 	boolean renderSucceeded = false;
-	long lastTryToDisplay = 0;
 
 	// currently shown
 	DevotionKind currentKind;
 	Date currentDate;
-
-	static class DisplayRepeater extends Handler {
-		final WeakReference<DevotionActivity> ac;
-		
-		public DisplayRepeater(DevotionActivity activity) {
-			ac = new WeakReference<>(activity);
-		}
-		
-		@Override public void handleMessage(Message msg) {
-			DevotionActivity activity = ac.get();
-			if (activity == null) return;
-			
-			{
-				long now = SystemClock.currentThreadTimeMillis();
-				if (now - activity.lastTryToDisplay < 500) {
-					return; // ANEH. Terlalu cepat.
-				}
-				
-				activity.lastTryToDisplay = now;
-			}
-			
-			activity.goTo();
-			
-			if (!activity.renderSucceeded) {
-				activity.displayRepeater.sendEmptyMessageDelayed(0, 12000);
-			}
-		}
-	}
-
-	final Handler displayRepeater = new DisplayRepeater(this);
 
 	static class LongReadChecker extends Handler {
 		DevotionKind startKind;
@@ -273,37 +244,36 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 
 	final LongReadChecker longReadChecker = new LongReadChecker(this);
 
-	static class DownloadStatusDisplayer extends Handler {
-		private WeakReference<DevotionActivity> ac;
-		static int MSG_SHOW = 1;
-		static int MSG_HIDE = 2;
+	final BroadcastReceiver br = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			final String action = intent.getAction();
+			if (DevotionDownloader.ACTION_DOWNLOAD_STATUS.equals(action)) {
+				final String message = intent.getStringExtra("message");
+				if (message != null) {
+					lStatus.setText(message);
+					lStatus.setVisibility(View.VISIBLE);
 
-		public DownloadStatusDisplayer(DevotionActivity ac) {
-			this.ac = new WeakReference<>(ac);
-		}
-		
-		@Override public void handleMessage(Message msg) {
-			final DevotionActivity ac = this.ac.get();
-			if (ac == null) return;
-
-			if (msg.what == MSG_SHOW) {
-				final String s = (String) msg.obj;
-				if (s != null) {
-					ac.lStatus.setText(s);
-					ac.lStatus.setVisibility(View.VISIBLE);
-
-					removeMessages(MSG_HIDE);
-					sendEmptyMessageDelayed(MSG_HIDE, 2000);
+					final double nonce = Math.random();
+					lStatus.setTag(R.id.TAG_hideStatus, nonce);
+					lStatus.postDelayed(() -> {
+						if (lStatus.getTag(R.id.TAG_hideStatus).equals(nonce)) {
+							lStatus.setVisibility(View.GONE);
+						}
+					}, 2000);
 				}
-			} else if (msg.what == MSG_HIDE) {
-				ac.lStatus.setVisibility(View.GONE);
+			} else if (DevotionDownloader.ACTION_DOWNLOADED.equals(action)) {
+				// is it for us?
+				final String name = intent.getStringExtra("name");
+				final String date = intent.getStringExtra("date");
+
+				if (yyyymmdd.get().format(currentDate).equals(date) && currentKind.name.equals(name)) {
+					display();
+				}
 			}
 		}
-	}
-	
-	Handler downloadStatusDisplayer = new DownloadStatusDisplayer(this);
+	};
 
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -337,22 +307,8 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 		currentKind = storedKind == null? DEFAULT_DEVOTION_KIND: storedKind;
 		currentDate = new Date();
 
-		// Workaround for crashes due to html tags in the title
-		// We remove all rows that contain '<' in the title
-		if (!Preferences.getBoolean(Prefkey.patch_devotionSlippedHtmlTags, false)) {
-			int deleted = S.getDb().deleteDevotionsWithLessThanInTitle();
-			Log.d(TAG, "patch_devotionSlippedHtmlTags: deleted " + deleted);
-			Preferences.setBoolean(Prefkey.patch_devotionSlippedHtmlTags, true);
-		}
-		
 		new Prefetcher(currentKind).start();
-		
-		{ // fix  ui update
-			if (devotionDownloader != null) {
-				devotionDownloader.setListener(this);
-			}
-		}
-		
+
 		display();
 	}
 
@@ -385,6 +341,16 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 		SettingsActivity.setPaddingBasedOnPreferences(lContent);
 
 		getWindow().getDecorView().setKeepScreenOn(Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default)));
+
+		App.getLbm().registerReceiver(br, new IntentFilter(DevotionDownloader.ACTION_DOWNLOAD_STATUS));
+		App.getLbm().registerReceiver(br, new IntentFilter(DevotionDownloader.ACTION_DOWNLOADED));
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+
+		App.getLbm().unregisterReceiver(br);
 	}
 
 	@Override
@@ -423,20 +389,10 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 	}
 
 	void display() {
-		displayRepeater.removeMessages(0);
-		
-		goTo();
-	}
-
-	void goTo() {
-		String date = yyyymmdd.get().format(currentDate);
-		DevotionArticle article = S.getDb().tryGetDevotion(currentKind.name, date);
+		final String date = yyyymmdd.get().format(currentDate);
+		final DevotionArticle article = S.getDb().tryGetDevotion(currentKind.name, date);
 		if (article == null || !article.getReadyToUse()) {
 			willNeed(currentKind, date, true);
-			displayRepeater.sendEmptyMessageDelayed(0, 3000);
-		} else {
-			Log.d(TAG, "sudah siap tampil, kita syuh yang tersisa dari pengulang tampil"); //$NON-NLS-1$
-			displayRepeater.removeMessages(0);
 		}
 
 		if (article == null) {
@@ -452,7 +408,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 			lContent.setLinksClickable(true);
 			lContent.setMovementMethod(LinkMovementMethod.getInstance());
 		} else {
-			renderSucceeded  = false;
+			renderSucceeded = false;
 
 			if (article == null) {
 				lContent.setText(R.string.belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada);
@@ -553,15 +509,9 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 		return getString(WEEKDAY_NAMES_RESIDS[day]);
 	}
 
-	synchronized void willNeed(DevotionKind kind, String date, boolean prioritize) {
-		if (devotionDownloader == null) {
-			devotionDownloader = new DevotionDownloader(this, this);
-			devotionDownloader.start();
-		}
-
+	synchronized void willNeed(final DevotionKind kind, final String date, final boolean prioritize) {
 		final DevotionArticle article = kind.getArticle(date);
-		boolean added = devotionDownloader.add(article, prioritize);
-		if (added) devotionDownloader.interruptWhenIdle();
+		devotionDownloader.add(article, prioritize);
 	}
 	
 	static boolean prefetcherRunning = false;
@@ -575,16 +525,15 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 
 		@Override public void run() {
 			if (prefetcherRunning) {
-				Log.d(TAG, "prefetcher is now running"); //$NON-NLS-1$
+				Log.d(TAG, "prefetcher is already running");
 			}
-			
-			// diem dulu 6 detik
-			SystemClock.sleep(6000);
-			
-			Date today = new Date();
+
+			Thread.yield();
+
+			final Date today = new Date();
 			
 			// hapus yang sudah lebih lama dari 6 bulan (180 hari)!
-			int deleted = S.getDb().deleteDevotionsWithTouchTimeBefore(new Date(today.getTime() - 180 * 86400000L));
+			final int deleted = S.getDb().deleteDevotionsWithTouchTimeBefore(new Date(today.getTime() - 180 * 86400000L));
 			if (deleted > 0) {
 				Log.d(TAG, "old devotions deleted: " + deleted); //$NON-NLS-1$
 			}
@@ -601,10 +550,8 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 					if (S.getDb().tryGetDevotion(prefetchKind.name, date) == null) {
 						Log.d(TAG, "Prefetcher need to get " + date); //$NON-NLS-1$
 						willNeed(prefetchKind, date, false);
-						
-						SystemClock.sleep(1000);
 					} else {
-						SystemClock.sleep(100); // biar ga berbeban aja
+						Thread.yield();
 					}
 					
 					// maju ke besoknya
@@ -616,14 +563,6 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 		}
 	}
 
-	public static DevotionDownloader devotionDownloader;
-
-	@Override public void onDownloadStatus(final String s) {
-		final Message msg = Message.obtain(downloadStatusDisplayer, DownloadStatusDisplayer.MSG_SHOW);
-		msg.obj = s;
-		msg.sendToTarget();
-	}
-	
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQCODE_share) {
 			if (resultCode == RESULT_OK) {
