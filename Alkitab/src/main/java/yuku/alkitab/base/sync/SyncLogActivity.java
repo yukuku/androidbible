@@ -22,6 +22,7 @@ import yuku.alkitab.debug.R;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class SyncLogActivity extends BaseActivity {
@@ -31,7 +32,7 @@ public class SyncLogActivity extends BaseActivity {
 	static final ThreadLocal<SimpleDateFormat> dateFormat = new ThreadLocal<SimpleDateFormat>() {
 		@Override
 		protected SimpleDateFormat initialValue() {
-			return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 		}
 	};
 

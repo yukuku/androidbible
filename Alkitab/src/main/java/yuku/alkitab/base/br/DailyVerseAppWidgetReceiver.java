@@ -44,7 +44,7 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 				buildUpdate(this, appWidgetId, 1);
 			}
 
-			final AppWidgetManager mgr = (AppWidgetManager) getSystemService(Context.APPWIDGET_SERVICE);
+			final AppWidgetManager mgr = AppWidgetManager.getInstance(this);
 			final ComponentName componentName = new ComponentName(this, DailyVerseAppWidgetReceiver.class);
 			final int[] allWidgetIds = mgr.getAppWidgetIds(componentName);
 			setAlarm(this, allWidgetIds);
@@ -146,7 +146,7 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 		rv.setPendingIntentTemplate(R.id.lsVerse, PendingIntent.getActivity(context, appWidgetId, viewVerseIntent, PendingIntent.FLAG_CANCEL_CURRENT));
 
 		// Lastly, update and notify listview as well
-		final AppWidgetManager mgr = (AppWidgetManager) context.getSystemService(Context.APPWIDGET_SERVICE);
+		final AppWidgetManager mgr = AppWidgetManager.getInstance(context);
 		mgr.updateAppWidget(appWidgetId, rv);
 		mgr.notifyAppWidgetViewDataChanged(appWidgetId, R.id.lsVerse);
 	}

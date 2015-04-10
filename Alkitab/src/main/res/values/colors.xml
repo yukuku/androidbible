@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="about_linebutton_bg_default">#2a2a2a</color>
-    <color name="about_linebutton_bg_pressed">#404040</color>
     <color name="keypad_text_color">#ffffff</color>
 </resources>
