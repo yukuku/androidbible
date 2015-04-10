@@ -1,25 +1,27 @@
 package yuku.alkitab.base.fr;
 
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckedTextView;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.fr.base.BaseGotoFragment;
-import yuku.alkitab.model.Book;
 import yuku.alkitab.base.util.BookNameSorter;
+import yuku.alkitab.debug.R;
+import yuku.alkitab.model.Book;
 
 public class GotoDialerFragment extends BaseGotoFragment {
 	public static final String TAG = GotoDialerFragment.class.getSimpleName();
@@ -101,6 +103,20 @@ public class GotoDialerFragment extends BaseGotoFragment {
 		V.get(res, R.id.bDigit9).setOnClickListener(button_click);
 		V.get(res, R.id.bDigitC).setOnClickListener(button_click);
 		V.get(res, R.id.bDigitSwitch).setOnClickListener(button_click);
+
+		// if the scrolled content height is not more than the available space, remove the gravity
+		final View scrollRoot = V.get(res, R.id.scrollRoot);
+		scrollRoot.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+			@Override
+			public void onGlobalLayout() {
+				final ScrollView.LayoutParams lp = (ScrollView.LayoutParams) scrollRoot.getLayoutParams();
+				final int contentHeight = scrollRoot.getMeasuredHeight();
+				final int containerHeight = res.getMeasuredHeight();
+				lp.gravity = contentHeight <= containerHeight ? Gravity.CENTER_VERTICAL : Gravity.NO_GRAVITY;
+				scrollRoot.setLayoutParams(lp);
+				scrollRoot.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+			}
+		});
 
 		return res;
 	}
@@ -297,7 +313,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 	}
 
 	private void colorize() {
-		if (active != null) active.setBackgroundResource(R.color.goto_dialer_active);
+		if (active != null) active.setBackgroundResource(R.drawable.goto_dialer_active);
 		if (passive != null) passive.setBackgroundColor(0x0);
 	}
 

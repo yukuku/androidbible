@@ -61,12 +61,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="yuku.alkitab.base.ac.GotoActivity"
-            android:configChanges="locale|layoutDirection"
-            android:label="@string/tuju_v"
-            android:windowSoftInputMode="adjustNothing" />
-        <activity
+		<activity
+			android:name="yuku.alkitab.base.ac.GotoActivity"
+			android:configChanges="locale|layoutDirection"
+			android:label="@string/tuju_v"
+			android:theme="@style/Theme.Alkitab.Goto"
+			android:windowSoftInputMode="adjustNothing" />
+		<activity
             android:name="yuku.alkitab.base.ac.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
 			android:theme="@style/Theme.MaterialOrHolo"
@@ -280,6 +281,7 @@
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"/>
         <activity
             android:name="yuku.filechooser.FileChooserActivity"
+			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
         <activity
             android:name="com.example.android.wizardpager.MainActivity"
@@ -362,9 +364,12 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/daily_verse_app_widget_provider" />
         </receiver>
-        <receiver android:name="yuku.alkitab.base.br.DailyVerseAppWidgetReceiver$ClickReceiver" />
+		<receiver android:name="yuku.alkitab.base.br.DailyVerseAppWidgetReceiver$ClickReceiver" />
+		<service
+			android:name="yuku.alkitab.base.br.DailyVerseAppWidgetReceiver$UpdateService"
+			android:exported="false" />
 
-        <receiver
+		<receiver
             android:name="yuku.alkitab.base.br.VersionDownloadCompleteReceiver"
             android:enabled="true"
             android:exported="true" >

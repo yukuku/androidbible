@@ -6,6 +6,7 @@
 
 	<com.google.samples.apps.iosched.ui.widget.SlidingTabLayout
 		android:id="@+id/sliding_tabs"
+		android:background="?colorPrimary"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content" />
 

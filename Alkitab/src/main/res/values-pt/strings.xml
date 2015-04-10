@@ -163,6 +163,7 @@
   <string name="bl_send_backup">Tranferir</string>
   <string name="bl_file_not_found_filename">Arquivo não encontrado: %s</string>
   <string name="bl_send_backup_confirmation">Criar e enviar cópia de segurança dos marcadores, notas, e realces? Você pode, por exemplo, enviar o arquivo anexo por e-mail para um outro dispositivo, ou apenas para arquivá-los.</string>
+  <string name="bl_sync_suggest">Proteja seus marcadores com sincronização</string>
   <string name="labels_titikdua">ETIQUETAS</string>
   <string name="tambah_titiktiga">Adicionar&#8230;</string>
   <string name="nama_label_titikdua">Nome da etiqueta:</string>
@@ -193,6 +194,8 @@
   <string name="text_appearance_bold">Negrito</string>
   <string name="devotion_change_date">Alterar data</string>
   <string name="bookmark_search">Pesquisar</string>
+  <string name="verse_select_one_verse_selected">1 versículo selecionado</string>
+  <string name="verse_select_multiple_verse_selected">%s versículos selecionados</string>
   <string name="goto_tab_dialer_label">Teclado</string>
   <string name="goto_tab_direct_label">Por extenso</string>
   <string name="goto_tab_grid_label">Em grade</string>
@@ -325,6 +328,8 @@
   <string name="highlight_custom_color">Outras cores</string>
   <string name="menu_compare">Comparar</string>
   <string name="song_player_error_description">Ocorreu um erro ao reproduzir esta canção: %1$d, %2$d.</string>
+  <string name="search_in_version_short_name_placeholder">Buscar em %s</string>
+  <string name="search_syntax_tips"><i>Dicas de pesquisa:</i>\n\n<b>+palavra</b> para exatamente essa palavra\n<b>[q]senhor deus[q]</b> para exatamente essa frase</string>
   <string name="search_no_result">Nenhum versículo encontrado para <b>^1</b>.</string>
   <string name="search_no_result_fallback">Pressione aqui para ir para <u>^1</u>.</string>
   <string name="marker_transfer_to_device_title">Transferir para outro dispositivo</string>
@@ -353,6 +358,7 @@
   <string name="book_filter_new_general_epistles">Cartas Gerais</string>
   <string name="book_filter_new_apocalypse">Apocalipse</string>
   <string name="search_filter_multiple_books_selected">%s livros selecionados</string>
+  <string name="search_version_select_label">Buscar em:</string>
   <string name="version_config_updater_error_download_modify_time">Falha ao verificar a lista de versões.</string>
   <string name="version_config_updater_error_modify_time_failed">Lista de versões não disponível: %s</string>
   <string name="version_config_updater_no_newer_available">Atualizações de versão não encontradas.</string>

@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
-import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.util.Appearances;
@@ -45,23 +44,21 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				res = (VerseItem) convertView;
 			}
 
-			final VerseTextView lText = V.get(res, R.id.lText);
-			final TextView lVerseNumber = V.get(res, R.id.lVerseNumber);
-
 			final int ari = Ari.encode(book_.bookId, chapter_1_, verse_1);
 			final String text = verses_.getVerse(id);
 			final String verseNumberText = verses_.getVerseNumberText(id);
 			final boolean dontPutSpacingBefore = (position > 0 && itemPointer_[position - 1] < 0) || position == 0;
 			final int highlightColor = (highlightColorMap_ != null && highlightColorMap_[id] != -1) ? U.alphaMixHighlight(highlightColorMap_[id]) : -1;
 
-			VerseRenderer.render(lText, lVerseNumber, ari, text, verseNumberText, highlightColor, checked, dontPutSpacingBefore, inlineLinkSpanFactory_, owner_);
+			final VerseTextView lText = res.lText;
+			VerseRenderer.render(lText, res.lVerseNumber, ari, text, verseNumberText, highlightColor, checked, dontPutSpacingBefore, inlineLinkSpanFactory_, owner_);
 
 			Appearances.applyTextAppearance(lText);
 			if (checked) {
 				lText.setTextColor(0xff000000); // override with black!
 			}
 
-			final AttributeView attributeView = (AttributeView) res.findViewById(R.id.view_attributes);
+			final AttributeView attributeView = res.attributeView;
 			attributeView.setBookmarkCount(bookmarkCountMap_ == null ? 0 : bookmarkCountMap_[id]);
 			attributeView.setNoteCount(noteCountMap_ == null ? 0 : noteCountMap_[id]);
 			attributeView.setProgressMarkBits(progressMarkBitsMap_ == null ? 0 : progressMarkBitsMap_[id]);

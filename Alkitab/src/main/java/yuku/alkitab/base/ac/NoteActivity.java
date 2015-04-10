@@ -1,10 +1,12 @@
 package yuku.alkitab.base.ac;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import yuku.afw.V;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -108,6 +111,26 @@ public class NoteActivity extends BaseActivity {
 			// a new note
 			setEditingMode(true);
 		}
+	}
+
+	@Override protected void onStart() {
+		super.onStart();
+
+		{ // apply background color, by overriding window background
+			getWindow().setBackgroundDrawable(new ColorDrawable(S.applied.backgroundColor));
+		}
+
+		// text formats
+		for (final TextView tv: new TextView[]{tCaption, tCaptionReadOnly}) {
+			tv.setTextColor(S.applied.fontColor);
+			tv.setTypeface(S.applied.fontFace, S.applied.fontBold);
+			tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp);
+			tv.setLineSpacing(0, S.applied.lineSpacingMult);
+
+			SettingsActivity.setPaddingBasedOnPreferences(tv);
+		}
+
+		getWindow().getDecorView().setKeepScreenOn(Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default)));
 	}
 
 	static class VerseSpan extends CallbackSpan<String> {

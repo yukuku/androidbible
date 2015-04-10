@@ -527,11 +527,11 @@ public class VersionsActivity extends BaseActivity {
 
 					@Override protected void onProgressUpdate(Object... values) {
 						if (values[0] == null) {
-							pd.setMessage(getString(R.string.ed_finished));
+							pd.setContent(getString(R.string.ed_finished));
 						} else {
 							int at = (Integer) values[0];
 							String message = (String) values[1];
-							pd.setMessage("(" + at + ") " + message + "...");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							pd.setContent("(" + at + ") " + message + "...");
 						}
 					}
 

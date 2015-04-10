@@ -455,6 +455,10 @@
   <string name="about_version_name">versi %s</string>
   <string name="about_material_sources">Sumber Bahan</string>
   <string name="about_credits">Kredit / Terima Kasih</string>
+  <string name="about_announcements">Pengumuman</string>
+  <string name="about_announcements_none">Pengumuman (0)</string>
+  <string name="about_announcements_number">Pengumuman (%s)</string>
+  <string name="about_announcement_load_failed">Gagal memuat pengumuman.</string>
   <string name="marker_migrate_introduction">Terdeteksi file cadangan dari Alkitab (Quick Bible) v3 lama yang mengandung pembatas buku, catatan, sorotan, dan label.\n\nMaukah Anda mempergunakan isi file itu?</string>
   <string name="marker_migrate_no_more">Jangan tanyakan lagi</string>
   <string name="marker_migrate_later">Lain kali</string>
@@ -464,4 +468,6 @@
   <string name="marker_migrate_import_from_newest">Ya, ambil dari yang terbaru (disarankan)</string>
   <string name="marker_migrate_import_from_other">Cadangan lainnya</string>
   <string name="marker_migrate_filename_dated">%1$s tertanggal %2$s</string>
+  <string name="announce_notif_title">Pengumuman %s</string>
+  <string name="announce_notif_number_new_announcements">%s pengumuman baru</string>
 </resources>

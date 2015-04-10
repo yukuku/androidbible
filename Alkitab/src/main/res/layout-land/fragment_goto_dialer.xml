@@ -1,73 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:fillViewport="false" >
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:fillViewport="false">
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:gravity="center_horizontal"
-        android:orientation="vertical" >
+	<LinearLayout
+		android:id="@+id/scrollRoot"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center_horizontal"
+		android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="6dp"
-            android:gravity="center_vertical|center_horizontal"
-            android:orientation="horizontal" >
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_margin="6dp"
+			android:gravity="center_vertical|center_horizontal"
+			android:orientation="horizontal">
 
-            <Spinner
-                android:id="@+id/cbBook"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="8dp"
-                android:minWidth="200sp" tools:listitem="@android:layout/simple_spinner_dropdown_item"/>
+			<Spinner
+				android:id="@+id/cbBook"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginRight="8dp"
+				android:minWidth="200sp"
+				tools:listitem="@android:layout/simple_spinner_dropdown_item" />
 
-            <TextView
-                android:id="@+id/tChapter"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:focusable="true"
-                android:gravity="center_vertical|center_horizontal"
-                android:minWidth="48sp"
-                android:text="1"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                tools:ignore="HardcodedText"
-                android:fontFamily="sans-serif-light"/>
+			<TextView
+				android:id="@+id/tChapter"
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent"
+				android:focusable="true"
+				android:fontFamily="sans-serif-light"
+				android:gravity="center_vertical|center_horizontal"
+				android:minWidth="48sp"
+				android:text="1"
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				tools:ignore="HardcodedText" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:text=" : "
-                tools:ignore="HardcodedText" />
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_margin="8dp"
+				android:text=" : "
+				tools:ignore="HardcodedText" />
 
-            <TextView
-                android:id="@+id/tVerse"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:focusable="true"
-                android:gravity="center_vertical|center_horizontal"
-                android:minWidth="48sp"
-                android:text="1"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                tools:ignore="HardcodedText"
-                android:fontFamily="sans-serif-light"/>
-        </LinearLayout>
+			<TextView
+				android:id="@+id/tVerse"
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent"
+				android:focusable="true"
+				android:fontFamily="sans-serif-light"
+				android:gravity="center_vertical|center_horizontal"
+				android:minWidth="48sp"
+				android:text="1"
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				tools:ignore="HardcodedText" />
+		</LinearLayout>
 
-        <include
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            layout="@layout/keypad" />
+		<include
+			layout="@layout/keypad"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" />
 
-        <include
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            layout="@layout/buttonbar_ok" />
-        
-    </LinearLayout>
+		<include
+			layout="@layout/buttonbar_ok"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" />
+
+	</LinearLayout>
 
 </ScrollView>

@@ -2,7 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto">
 	<item
+		android:id="@+id/menuMigrateFromV3"
+		android:title="@string/marker_migrate_title"
+		app:showAsAction="never"/>
+	<item
 		android:id="@+id/menuLabelSort"
-		android:title="Sort labels alphabetically"
+		android:title="@string/menuLabelSort"
 		app:showAsAction="never"/>
 </menu>

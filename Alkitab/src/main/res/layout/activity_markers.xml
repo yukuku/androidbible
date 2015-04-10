@@ -1,34 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
 
-    <com.mobeta.android.dslv.DragSortListView
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:id="@android:id/list"
-        android:layout_weight="1" />
+	<com.mobeta.android.dslv.DragSortListView
+		android:id="@android:id/list"
+		android:layout_width="fill_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:background="#3a3a3a">
+	<RelativeLayout
+		android:id="@+id/panelGotoSync"
+		android:layout_width="match_parent"
+		android:layout_height="52dp"
+		android:background="#262626">
 
-        <Button
-            android:id="@+id/bGotoSync"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackgroundBorderless"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_centerVertical="true"
-            android:text="@string/bl_sync_suggest"
-            android:textColor="#fff"
-            android:padding="16dp"
-            android:layout_alignParentRight="true"
-            />
-    </RelativeLayout>
-
+		<Button
+			android:id="@+id/bGotoSync"
+			style="?android:attr/buttonBarButtonStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:layout_centerVertical="true"
+			android:background="?selectableItemBackgroundBorderless"
+			android:padding="16dp"
+			android:text="@string/bl_sync_suggest"
+			android:textColor="#fff" />
+	</RelativeLayout>
 
 
 </LinearLayout>

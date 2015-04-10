@@ -15,4 +15,5 @@
   <string name="pref_volumeButtonNavigation_title">Навігація клавішею гучності</string>
   <string name="pref_copyWithVerseNumbers_title">Включити номери віршів</string>
   <string name="pref_copyWithVerseNumbers_summary">Вставляти номери на кожен вірш при копіюванні або обміні віршами</string>
+  <string name="pref_showHiddenVersion_title">Дозволити версії розповсюдження яких можливо обмежено</string>
 </resources>

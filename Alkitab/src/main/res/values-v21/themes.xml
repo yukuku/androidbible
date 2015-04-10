@@ -7,4 +7,12 @@
 		<item name="android:windowDrawsSystemBarBackgrounds">true</item>
 		<item name="android:statusBarColor">@android:color/transparent</item>
 	</style>
+
+	<style name="Theme.Alkitab.Goto" parent="Theme.Alkitab.Goto.Base">
+		<item name="android:colorPrimary">@color/primary</item>
+		<item name="android:colorPrimaryDark">@color/primary_dark</item>
+		<item name="android:colorAccent">@color/accent</item>
+		<item name="android:windowDrawsSystemBarBackgrounds">true</item>
+		<item name="android:statusBarColor">@android:color/transparent</item>
+	</style>
 </resources>

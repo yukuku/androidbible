@@ -119,11 +119,17 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
 
-		long id = Preferences.getLong(Prefkey.active_reading_plan_id, 0);
+		final long id = Preferences.getLong(Prefkey.active_reading_plan_id, 0);
 		loadReadingPlan(id);
-		loadReadingPlanProgress();
 		prepareDropDownNavigation();
 		loadDayNumber();
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+		loadReadingPlanProgress();
 		prepareDisplay();
 	}
 
@@ -350,7 +356,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			}
 
 			private void showCalendar() {
-				Calendar calendar = Calendar.getInstance();
+				Calendar calendar = GregorianCalendar.getInstance();
 				calendar.setTimeInMillis(readingPlan.info.startTime);
 				calendar.add(Calendar.DATE, dayNumber);
 
@@ -656,7 +662,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	}
 
 	public String getReadingDateHeader(final int dayNumber) {
-		Calendar calendar = Calendar.getInstance();
+		Calendar calendar = GregorianCalendar.getInstance();
 		calendar.setTimeInMillis(readingPlan.info.startTime);
 		calendar.add(Calendar.DATE, dayNumber);
 

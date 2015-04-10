@@ -163,6 +163,7 @@
   <string name="bl_send_backup">传送</string>
   <string name="bl_file_not_found_filename">找不到文件: %s</string>
   <string name="bl_send_backup_confirmation">新增并传送书签、笔记与标记的备份？举例，你可以电子邮件的方式传送附件到新的设备，或作保存资料用途。</string>
+  <string name="bl_sync_suggest">使用同步功能以保护你的标记</string>
   <string name="labels_titikdua">标籤</string>
   <string name="tambah_titiktiga">新增&#8230;</string>
   <string name="nama_label_titikdua">标签名称：</string>
@@ -193,6 +194,8 @@
   <string name="text_appearance_bold">粗体</string>
   <string name="devotion_change_date">更改日期</string>
   <string name="bookmark_search">搜寻</string>
+  <string name="verse_select_one_verse_selected">选取了1节经文</string>
+  <string name="verse_select_multiple_verse_selected">选取了%s经文</string>
   <string name="goto_tab_dialer_label">拨号按键</string>
   <string name="goto_tab_direct_label">直接输入</string>
   <string name="goto_tab_grid_label">格状排列</string>
@@ -452,4 +455,13 @@
   <string name="about_version_name">版本 %s</string>
   <string name="about_material_sources">资料来源</string>
   <string name="about_credits">工作人员</string>
+  <string name="marker_migrate_introduction">我们侦测到一个含有书签、笔记、标记和标签的v3 Yuku神速圣经旧版本的备份档桉。\n\n你想汇入它们，让你在这个程式存取它们吗？</string>
+  <string name="marker_migrate_no_more">不再询问</string>
+  <string name="marker_migrate_later">现在别问我</string>
+  <string name="marker_migrate_title">汇入旧标记</string>
+  <string name="marker_migrate_no_more_confirmation">你确定你不需要汇入旧资料？</string>
+  <string name="marker_migrate_error_opening_backup_file">不能存取备份档桉。</string>
+  <string name="marker_migrate_import_from_newest">是，汇入最新的（建议选项）</string>
+  <string name="marker_migrate_import_from_other">其他备份</string>
+  <string name="marker_migrate_filename_dated">%1$s日期%2$s</string>
 </resources>

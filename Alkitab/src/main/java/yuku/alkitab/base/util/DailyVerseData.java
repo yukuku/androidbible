@@ -9,6 +9,7 @@ import yuku.alkitab.base.br.DailyVerseAppWidgetReceiver;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.model.VersionImpl;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.util.IntArrayList;
@@ -104,7 +105,8 @@ public abstract class DailyVerseData {
 		final Calendar calendar = GregorianCalendar.getInstance();
 		final long year = calendar.get(Calendar.YEAR);
 		final long day = calendar.get(Calendar.DAY_OF_YEAR);
-		final long randomDay = ((year - 1900) << 9) | day;
+		final long fifteensecs = BuildConfig.DEBUG ? (calendar.get(Calendar.HOUR_OF_DAY) * 240 + calendar.get(Calendar.MINUTE) * 4 + calendar.get(Calendar.SECOND) / 15) : 0;
+		final long randomDay = (((year - 1900) << 9) | day) + fifteensecs;
 		final long seed = (appWidgetId << 20) | (randomDay + click);
 		final Random r = new Random(seed);
 		return r.nextInt(size);

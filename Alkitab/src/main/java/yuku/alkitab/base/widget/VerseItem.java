@@ -5,10 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.DragEvent;
 import android.widget.Checkable;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
@@ -27,6 +31,10 @@ public class VerseItem extends LinearLayout implements Checkable {
 	private boolean dragHover;
 	private Drawable dragHoverBg;
 
+	public VerseTextView lText;
+	public TextView lVerseNumber;
+	public AttributeView attributeView;
+
 	/** the ari of the verse represented by this view. If this is 0, this is a pericope or something else. */
 	private int ari;
 
@@ -35,10 +43,39 @@ public class VerseItem extends LinearLayout implements Checkable {
 	}
 
 	@Override
+	protected void onFinishInflate() {
+		super.onFinishInflate();
+
+		lText = V.get(this, R.id.lText);
+		lVerseNumber = V.get(this, R.id.lVerseNumber);
+		attributeView = V.get(this, R.id.attributeView);
+	}
+
+	@Override
 	protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
 		if (collapsed) {
 			setMeasuredDimension(getMeasuredWidth(), 0);
+			return;
+		}
+
+		if (Build.VERSION.SDK_INT >= 21) {
+			// Fix bug on Lollipop where the last line of the text does not calculate line spacing mult/add.
+			// https://code.google.com/p/android/issues/detail?id=77941
+
+			final VerseTextView lText = this.lText;
+			if (lText != null) {
+				final Layout layout = lText.getLayout();
+
+				if (layout != null) {
+					final int lastLine = layout.getLineCount() - 1;
+					final int spacing = lText.getIncludeFontPadding() ? (layout.getLineBottom(lastLine) - layout.getLineTop(lastLine)) : (layout.getLineDescent(lastLine) - layout.getLineAscent(lastLine));
+					final int extra = (int) (spacing * (layout.getSpacingMultiplier() - 1) + layout.getSpacingAdd() + 0.5f);
+
+					setMeasuredDimension(getMeasuredWidth(), getMeasuredHeight() + extra);
+				}
+			}
 		}
 	}
 

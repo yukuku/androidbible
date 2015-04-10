@@ -163,6 +163,7 @@
   <string name="bl_send_backup">傳送</string>
   <string name="bl_file_not_found_filename">找不到檔案: %s</string>
   <string name="bl_send_backup_confirmation">新增並傳送書籤、筆記與標記的備份？舉例，你可以電子郵件的方式傳送附件到新的設備，或作保存資料用途。</string>
+  <string name="bl_sync_suggest">使用同步功能以保護你的標記</string>
   <string name="labels_titikdua">標籤</string>
   <string name="tambah_titiktiga">新增&#8230;</string>
   <string name="nama_label_titikdua">標籤名稱：</string>
@@ -193,6 +194,8 @@
   <string name="text_appearance_bold">粗體</string>
   <string name="devotion_change_date">更改日期</string>
   <string name="bookmark_search">搜尋</string>
+  <string name="verse_select_one_verse_selected">選取了1節經文</string>
+  <string name="verse_select_multiple_verse_selected">選取了%s經文</string>
   <string name="goto_tab_dialer_label">撥號按鍵</string>
   <string name="goto_tab_direct_label">直接輸入</string>
   <string name="goto_tab_grid_label">格狀排列</string>
@@ -453,4 +456,13 @@
   <string name="about_version_name">版本 %s</string>
   <string name="about_material_sources">資料來源</string>
   <string name="about_credits">工作人員</string>
+  <string name="marker_migrate_introduction">我們偵測到一個含有書簽、筆記、標記和標簽的v3 Yuku神速聖經舊版本的備份檔案。\n\n你想匯入它們，讓你在這個程式存取它們嗎？</string>
+  <string name="marker_migrate_no_more">不再詢問</string>
+  <string name="marker_migrate_later">現在別問我</string>
+  <string name="marker_migrate_title">匯入舊標記</string>
+  <string name="marker_migrate_no_more_confirmation">你確定你不需要匯入舊資料？</string>
+  <string name="marker_migrate_error_opening_backup_file">不能存取備份檔案。</string>
+  <string name="marker_migrate_import_from_newest">是，匯入最新的（建議選項）</string>
+  <string name="marker_migrate_import_from_other">其他備份</string>
+  <string name="marker_migrate_filename_dated">%1$s日期%2$s</string>
 </resources>

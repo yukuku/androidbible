@@ -20,6 +20,7 @@
             android:layout_alignParentTop="true"
 			android:gravity="top|right"
             android:textSize="12sp"
+            android:alpha="0.6"
             android:text="2099-12-32"
             tools:ignore="HardcodedText" />
 
@@ -31,7 +32,6 @@
             android:layout_alignParentTop="true"
             android:layout_toLeftOf="@+id/lDate"
             android:text="*Caption or verse reference, etc."
-            android:textColor="#fff"
             android:textSize="16sp"
             tools:ignore="HardcodedText"
 			android:layout_marginRight="8dp" />

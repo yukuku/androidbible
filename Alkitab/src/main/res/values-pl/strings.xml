@@ -194,6 +194,8 @@
   <string name="text_appearance_bold">Pogrubienie</string>
   <string name="devotion_change_date">Zmień datę</string>
   <string name="bookmark_search">Szukaj</string>
+  <string name="verse_select_one_verse_selected">Zaznaczono 1 wers</string>
+  <string name="verse_select_multiple_verse_selected">Zaznaczono %s wersów</string>
   <string name="goto_tab_dialer_label">Dialer</string>
   <string name="goto_tab_direct_label">Bezpośrednio</string>
   <string name="goto_tab_grid_label">Siatka</string>

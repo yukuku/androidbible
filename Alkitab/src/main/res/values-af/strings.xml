@@ -194,6 +194,8 @@
   <string name="text_appearance_bold">Vetdruk</string>
   <string name="devotion_change_date">Verander datum</string>
   <string name="bookmark_search">Soek</string>
+  <string name="verse_select_one_verse_selected">1 vers gekies</string>
+  <string name="verse_select_multiple_verse_selected">%s verse gekies</string>
   <string name="goto_tab_dialer_label">Skakelaar</string>
   <string name="goto_tab_direct_label">Direk</string>
   <string name="goto_tab_grid_label">Ruit</string>
