@@ -25,7 +25,7 @@
 			android:layout_alignParentLeft="true"
 			android:layout_below="@+id/lTitle"
 			android:imeOptions="actionGo"
-			android:inputType="textCapSentences"
+			android:inputType="textUri"
 			android:selectAllOnFocus="true"
 			android:singleLine="true" />
 
