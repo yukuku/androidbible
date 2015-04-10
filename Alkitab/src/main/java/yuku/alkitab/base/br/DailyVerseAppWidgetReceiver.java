@@ -44,7 +44,7 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 				buildUpdate(this, appWidgetId, 1);
 			}
 
-			final AppWidgetManager mgr = (AppWidgetManager) getSystemService(Context.APPWIDGET_SERVICE);
+			final AppWidgetManager mgr = AppWidgetManager.getInstance(this);
 			final ComponentName componentName = new ComponentName(this, DailyVerseAppWidgetReceiver.class);
 			final int[] allWidgetIds = mgr.getAppWidgetIds(componentName);
 			setAlarm(this, allWidgetIds);
