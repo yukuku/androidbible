@@ -605,7 +605,7 @@ public abstract class LeftDrawer extends ScrollView {
 
 		PopupMenu popupChangeBook;
 
-		Button bChangeBook;
+		TextView bChangeBook;
 		TextView bChangeCode;
 
 		Button bOk;
