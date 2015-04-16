@@ -196,6 +196,7 @@
     <string name="bookmark_search">Search</string>
     <string name="verse_select_one_verse_selected">1 verse selected</string>
     <string name="verse_select_multiple_verse_selected">%s verses selected</string>
+    <string name="google_play_store_not_installed">Google Play Store is not installed.</string>
 
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Dialer</string>
@@ -510,5 +511,12 @@
 	<!-- Announcements -->
 	<string name="announce_notif_title">%s Announcements</string>
 	<string name="announce_notif_number_new_announcements">%s new announcements</string>
+
+	<!-- Dictionary -->
+	<string name="menuDictionary">Dictionary</string>
+	<string name="dict_open_full">Open Dictionary</string>
+	<string name="dict_no_results">No definition found for the selected word.</string>
+	<string name="dict_download_prompt">Download \"Bible Dictionary\" to learn more about the words in the Bible!</string>
+	<string name="dict_download_button">Download</string>
 
 </resources>

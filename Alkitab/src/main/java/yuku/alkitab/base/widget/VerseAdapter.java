@@ -17,14 +17,7 @@ import java.util.Arrays;
 public abstract class VerseAdapter extends BaseAdapter {
 	public static final String TAG = VerseAdapter.class.getSimpleName();
 
-	public static class Factory {
-		public VerseAdapter create(Context context) {
-			return new SingleViewVerseAdapter(context);
-		}
-	}
-
 	// # field ctor
-	final Context context_;
 	CallbackSpan.OnClickListener<Object> parallelListener_;
 	VersesView.AttributeListener attributeListener_;
 	VerseInlineLinkSpan.Factory inlineLinkSpanFactory_;
@@ -54,9 +47,8 @@ public abstract class VerseAdapter extends BaseAdapter {
 	VersesView owner_;
 	
 	public VerseAdapter(Context context) {
-		context_ = context;
 		density_ = context.getResources().getDisplayMetrics().density;
-		inflater_ = LayoutInflater.from(context_);
+		inflater_ = LayoutInflater.from(context);
 	}
 
 	/* non-public */ synchronized void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {

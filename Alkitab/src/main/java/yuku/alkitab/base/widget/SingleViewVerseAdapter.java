@@ -1,7 +1,11 @@
 package yuku.alkitab.base.widget;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.text.SpannableStringBuilder;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -19,7 +23,20 @@ import yuku.alkitab.util.IntArrayList;
 
 public class SingleViewVerseAdapter extends VerseAdapter {
 	public static final String TAG = SingleViewVerseAdapter.class.getSimpleName();
-	
+	private SparseBooleanArray dictionaryModeAris;
+
+	public static class DictionaryLinkInfo {
+		public String orig_text;
+		public String key;
+
+		public DictionaryLinkInfo(final String orig_text, final String key) {
+			this.orig_text = orig_text;
+			this.key = key;
+		}
+	}
+
+	CallbackSpan.OnClickListener<DictionaryLinkInfo> dictionaryListener_;
+
 	public SingleViewVerseAdapter(Context context) {
 		super(context);
 	}
@@ -30,7 +47,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 
 		if (id >= 0) {
 			// VERSE. not pericope
-			int verse_1 = id + 1;
+			final int verse_1 = id + 1;
 
 			boolean checked = false;
 			if (parent instanceof ListView) {
@@ -67,6 +84,37 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			res.setCollapsed(text.length() == 0 && !attributeView.isShowingSomething());
 
 			res.setAri(ari);
+
+			// handle dictionary mode
+			if (dictionaryModeAris != null && dictionaryModeAris.get(ari)) {
+				final ContentResolver cr = res.getContext().getContentResolver();
+
+				final CharSequence renderedText = lText.getText();
+				final SpannableStringBuilder verseText = renderedText instanceof SpannableStringBuilder ? (SpannableStringBuilder) renderedText : new SpannableStringBuilder(renderedText);
+				final String analyzeString = verseText.toString();
+
+				final Uri uri = Uri.parse("content://org.sabda.kamus.provider/analyze").buildUpon().appendQueryParameter("text", analyzeString).build();
+				final Cursor c = cr.query(uri, null, null, null, null);
+				if (c != null) {
+					try {
+						final int col_offset = c.getColumnIndexOrThrow("offset");
+						final int col_len = c.getColumnIndexOrThrow("len");
+						final int col_key = c.getColumnIndexOrThrow("key");
+
+						while (c.moveToNext()) {
+							final int offset = c.getInt(col_offset);
+							final int len = c.getInt(col_len);
+							final String key = c.getString(col_key);
+
+							verseText.setSpan(new CallbackSpan<>(new DictionaryLinkInfo(analyzeString.substring(offset, offset + len), key), dictionaryListener_), offset, offset + len, 0);
+						}
+					} finally {
+						c.close();
+					}
+
+					lText.setText(verseText);
+				}
+			}
 
 //			{ // DUMP
 //				Log.d(TAG, "==== DUMP verse " + (id + 1));
@@ -172,4 +220,14 @@ public class SingleViewVerseAdapter extends VerseAdapter {
         sb.append(parallel);
         sb.setSpan(new CallbackSpan<>(parallel, parallelListener_), sb_len, sb.length(), 0);
     }
+
+	public void setDictionaryModeAris(final SparseBooleanArray aris) {
+		this.dictionaryModeAris = aris;
+		notifyDataSetChanged();
+	}
+
+	public void setDictionaryListener(final CallbackSpan.OnClickListener<DictionaryLinkInfo> listener) {
+		this.dictionaryListener_ = listener;
+		notifyDataSetChanged();
+	}
 }

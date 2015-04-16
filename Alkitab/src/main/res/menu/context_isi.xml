@@ -50,4 +50,10 @@
 		android:visible="false"
 		tools:ignore="HardcodedText" />
 
+	<item
+		android:id="@+id/menuDictionary"
+		android:icon="@android:drawable/ic_menu_mylocation"
+		app:showAsAction="ifRoom"
+		android:title="@string/menuDictionary" />
+
 </menu>
