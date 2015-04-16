@@ -318,7 +318,7 @@
 
         <provider
             android:name="yuku.alkitab.base.cp.Provider"
-            android:authorities="yuku.alkitab.provider.debug"
+            android:authorities="yuku.alkitab.debug.provider"
             android:exported="true"
             tools:ignore="ExportedContentProvider" />
 
