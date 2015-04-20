@@ -32,7 +32,7 @@
 			<TextView
 				android:id="@+id/bChangeBook"
 				style="@style/Widget.AppCompat.Spinner"
-				android:layout_width="96dp"
+				android:layout_width="@dimen/song_keypad_button_one_and_half_width"
 				android:layout_height="match_parent"
 				android:gravity="center"
 				android:text="––––"
@@ -41,7 +41,7 @@
 
 			<TextView
 				android:id="@+id/bChangeCode"
-				android:layout_width="96dp"
+				android:layout_width="@dimen/song_keypad_button_one_and_half_width"
 				android:layout_height="match_parent"
 				android:gravity="center"
 				android:text="––––"
@@ -49,6 +49,11 @@
 				android:textSize="18sp"
 				tools:ignore="HardcodedText" />
 
+			<ImageButton
+				android:id="@+id/bBackspace"
+				style="@style/SongCodeKeypadButton"
+				android:src="@drawable/ic_song_keypad_backspace"
+				android:scaleType="center" />
 		</LinearLayout>
 
 

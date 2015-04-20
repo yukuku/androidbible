@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 	<dimen name="song_keypad_button_width">60dp</dimen>
+	<dimen name="song_keypad_button_one_and_half_width">90dp</dimen>
 	<dimen name="song_keypad_button_double_width">120dp</dimen>
 
 	<style name="SongCodeKeypadButton" parent="@android:style/Widget.Holo.Button.Borderless">

@@ -655,6 +655,7 @@ public abstract class LeftDrawer extends ScrollView {
 				R.id.bDigitB,
 				R.id.bDigitC,
 				R.id.bOk,
+				R.id.bBackspace,
 			}) {
 				V.get(this, buttonId).setOnClickListener(button_click);
 			}
