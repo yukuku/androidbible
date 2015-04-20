@@ -82,8 +82,10 @@ public abstract class LeftDrawer extends ScrollView {
 		if (this instanceof Songs) bSongs.setTextColor(selectedTextColor);
 
 		// hide and show according to app config
-		bSongs.setVisibility(AppConfig.get().menuSongs? VISIBLE: GONE);
-		bDevotion.setVisibility(AppConfig.get().menuDevotion? VISIBLE: GONE);
+		if (!isInEditMode()) {
+			bSongs.setVisibility(AppConfig.get().menuSongs? VISIBLE: GONE);
+			bDevotion.setVisibility(AppConfig.get().menuDevotion? VISIBLE: GONE);
+		}
 
 		bBible.setOnClickListener(v -> {
 			bBible_click();
