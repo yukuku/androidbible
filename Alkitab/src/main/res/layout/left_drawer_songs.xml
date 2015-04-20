@@ -147,8 +147,9 @@
 
 				<Button
 					android:id="@+id/bDigit0"
-					style="@style/SongCodeKeypadButton.DoubleWidth"
-					android:text="0" />
+					style="@style/SongCodeKeypadButton"
+					android:text="0"
+					android:layout_marginLeft="@dimen/song_keypad_button_width" />
 
 				<Button
 					android:id="@+id/bOk"
