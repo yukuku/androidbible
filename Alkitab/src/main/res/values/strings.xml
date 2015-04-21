@@ -519,4 +519,9 @@
 	<string name="dict_download_prompt">Download \"Bible Dictionary\" to learn more about the words in the Bible!</string>
 	<string name="dict_download_button">Download</string>
 
+	<!-- Guide -->
+	<string name="menuGuide">Guide</string>
+
+	<!-- Commentary -->
+	<string name="menuCommentary">Commentary</string>
 </resources>

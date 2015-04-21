@@ -337,7 +337,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 							public void onPositive(final MaterialDialog dialog) {
 								final Intent intent = new Intent("org.sabda.kamus.action.VIEW");
 								intent.putExtra("key", data.key);
-								intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+								intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
 								try {
 									startActivity(intent);
@@ -2154,6 +2155,36 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					Log.e(TAG, "ESVSB starting", e); //$NON-NLS-1$
 				}
 			} return true;
+			case R.id.menuGuide: {
+				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
+
+				try {
+					getPackageManager().getPackageInfo("org.sabda.pedia", 0);
+
+					final Intent intent = new Intent("org.sabda.pedia.action.VIEW");
+					intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					intent.putExtra("ari", ari);
+					startActivity(intent);
+				} catch (PackageManager.NameNotFoundException e) {
+					openMarket("org.sabda.pedia");
+				}
+			} return true;
+			case R.id.menuCommentary: {
+				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
+
+				try {
+					getPackageManager().getPackageInfo("org.sabda.tafsiran", 0);
+
+					final Intent intent = new Intent("org.sabda.tafsiran.action.VIEW");
+					intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					intent.putExtra("ari", ari);
+					startActivity(intent);
+				} catch (PackageManager.NameNotFoundException e) {
+					openMarket("org.sabda.tafsiran");
+				}
+			} return true;
 			case R.id.menuDictionary: {
 				final int ariBc = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
 				final SparseBooleanArray aris = new SparseBooleanArray();
@@ -2287,18 +2318,22 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			.callback(new MaterialDialog.ButtonCallback() {
 				@Override
 				public void onPositive(final MaterialDialog dialog) {
-					try {
-						final Uri uri = Uri.parse("market://details?id=org.sabda.kamus&referrer=utm_source%3Dother_app%26utm_medium%3D" + getPackageName());
-						startActivity(new Intent(Intent.ACTION_VIEW, uri));
-					} catch (ActivityNotFoundException e) {
-						new MaterialDialog.Builder(IsiActivity.this)
-							.content(R.string.google_play_store_not_installed)
-							.positiveText(R.string.ok)
-							.show();
-					}
+					openMarket("org.sabda.kamus");
 				}
 			})
 			.show();
+	}
+
+	protected void openMarket(final String packageName) {
+		try {
+			final Uri uri = Uri.parse("market://details?id=" + packageName + "&referrer=utm_source%3Dother_app%26utm_medium%3D" + getPackageName());
+			startActivity(new Intent(Intent.ACTION_VIEW, uri));
+		} catch (ActivityNotFoundException e) {
+			new MaterialDialog.Builder(this)
+				.content(R.string.google_play_store_not_installed)
+				.positiveText(R.string.ok)
+				.show();
+		}
 	}
 
 	@Override
