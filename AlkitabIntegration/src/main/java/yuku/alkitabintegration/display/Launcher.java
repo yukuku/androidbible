@@ -2,33 +2,19 @@ package yuku.alkitabintegration.display;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 
 public class Launcher {
 	public static final String TAG = Launcher.class.getSimpleName();
-	
-	public enum Product {
-		ALKITAB("Alkitab", "yuku.alkitab"),
-		QUICK_BIBLE("Quick Bible", "yuku.alkitab.kjv"),
-		;
-		
-		private final String displayName;
-		private final String packageName;
+	private static String appPackageName;
 
-		private Product(String displayName, String packageName) {
-			this.displayName = displayName;
-			this.packageName = packageName;
-		}
-		
-		public String getDisplayName() {
-			return displayName;
-		}
-
-		public String getPackageName() {
-			return packageName;
-		}
+	/**
+	 * Should be used only if you know the package name of the
+	 * target application. Do not use this if you do not.
+	 */
+	public static void setAppPackageName(final String packageName) {
+		appPackageName = packageName;
 	}
-	
+
 	/**
 	 * Returns an intent that can be used to open the app at the specific book, chapter, and verse. 
 	 * Call {@link Context#startActivity(Intent)} with the returned intent from your activity to open it.
@@ -49,6 +35,9 @@ public class Launcher {
 		Intent res = new Intent("yuku.alkitab.action.VIEW");
 		res.putExtra("ari", ari);
 		res.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+		if (appPackageName != null) {
+			res.setPackage(appPackageName);
+		}
 		return res;
 	}
 
@@ -64,6 +53,9 @@ public class Launcher {
 	public static Intent openVersesDialogByTarget(String target) {
 		Intent res = new Intent("yuku.alkitab.action.SHOW_VERSES_DIALOG");
 		res.putExtra("target", target);
+		if (appPackageName != null) {
+			res.setPackage(appPackageName);
+		}
 		return res;
 	}
 
@@ -77,6 +69,9 @@ public class Launcher {
 		res.putExtra("ari", ari);
 		res.putExtra("selectVerse", true);
 		res.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+		if (appPackageName != null) {
+			res.setPackage(appPackageName);
+		}
 		return res;
 	}
 
@@ -91,23 +86,9 @@ public class Launcher {
 		res.putExtra("selectVerse", true);
 		res.putExtra("selectVerseCount", verseCount);
 		res.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-		return res;
-	}
-
-	/**
-	 * Returns an intent that can be used to open the Google Play app on the page for the user to download the app. 
-	 * Call {@link Context#startActivity(Intent)} with the returned intent from your activity to open it.
-	 * @param context any context of your app
-	 * @param product one of the product to open
-	 */
-	public static Intent openGooglePlayDownloadPage(Context context, Product product) {
-		Uri uri = Uri.parse("market://details?id=" 
-		+ product.getPackageName()
-		+ "&referrer=utm_source%3Dintegration%26utm_medium%3D"
-		+ context.getPackageName());
-		Intent res = new Intent(Intent.ACTION_VIEW);
-		res.setData(uri);
-		res.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+		if (appPackageName != null) {
+			res.setPackage(appPackageName);
+		}
 		return res;
 	}
 }
