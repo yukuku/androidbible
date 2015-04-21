@@ -492,7 +492,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 					ari = Ari.encode(bookId, chapter_1, verse_1);
 
 					final boolean hasRange = jumper.getHasRange();
-					if (hasRange) {
+					if (hasRange || verse_1 == 0) {
 						startActivity(Launcher.openAppAtBibleLocation(ari));
 					} else {
 						startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
