@@ -17,6 +17,7 @@ public class TargetDecoderTest extends TestCase {
 		ariRanges.add(888888);
 		ariRanges.add(888888);
 		testDecode("a:0x123-777,888888", ariRanges);
+		testDecode("ari:0x123-777,888888", ariRanges);
 
 		ariRanges.clear();
 		ariRanges.add(0x000101);
