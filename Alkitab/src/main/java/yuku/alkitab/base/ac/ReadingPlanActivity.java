@@ -14,6 +14,7 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -187,14 +188,14 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			return;
 		}
 
-		byte[] binaryReadingPlan = S.getDb().getBinaryReadingPlanById(id);
+		Pair<String, byte[]> nameAndData = S.getDb().getReadingPlanNameAndData(id);
 
 		long startTime = 0;
-		if (id == 0 || binaryReadingPlan == null) {
+		if (id == 0 || nameAndData == null) {
 			id = downloadedReadingPlanInfos.get(0).id;
 			startTime = downloadedReadingPlanInfos.get(0).startTime;
 
-			binaryReadingPlan = S.getDb().getBinaryReadingPlanById(id);
+			nameAndData = S.getDb().getReadingPlanNameAndData(id);
 		} else {
 			for (ReadingPlan.ReadingPlanInfo info : downloadedReadingPlanInfos) {
 				if (id == info.id) {
@@ -203,8 +204,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			}
 		}
 
-		final InputStream inputStream = new ByteArrayInputStream(binaryReadingPlan);
-		final ReadingPlan res = ReadingPlanManager.readVersion1(inputStream);
+		final InputStream inputStream = new ByteArrayInputStream(nameAndData.second);
+		final ReadingPlan res = ReadingPlanManager.readVersion1(inputStream, nameAndData.first);
 		res.info.id = id;
 		res.info.startTime = startTime;
 		readingPlan = res;
@@ -611,7 +612,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 			/** run on ui thread */
 			void onReadingPlanDownloadFinished(final byte[] data) {
-				final long id = ReadingPlanManager.insertReadingPlanToDb(data);
+				final long id = ReadingPlanManager.insertReadingPlanToDb(data, entry.name);
 
 				if (id == 0) {
 					new AlertDialogWrapper.Builder(ReadingPlanActivity.this)
