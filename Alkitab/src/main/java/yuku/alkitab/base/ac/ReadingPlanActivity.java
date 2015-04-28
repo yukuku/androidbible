@@ -1,18 +1,16 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
@@ -31,7 +29,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.gson.GsonBuilder;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
@@ -60,6 +57,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftDrawer.ReadingPlan.Listener {
 	public static final String TAG = ReadingPlanActivity.class.getSimpleName();
+
+	private static final int REQCODE_openList = 1;
 
 	DrawerLayout drawerLayout;
 	ActionBarDrawerToggle drawerToggle;
@@ -475,109 +474,45 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	}
 
 	private void downloadReadingPlanList() {
-		final AtomicBoolean cancelled = new AtomicBoolean(false);
-
-		final MaterialDialog pd = new MaterialDialog.Builder(this)
-			.content(R.string.rp_download_reading_plan_list_progress)
-			.progress(true, 0)
-			.dismissListener(dialog -> cancelled.set(true))
-			.show();
-
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					download();
-				} catch (Exception e) {
-					Log.e(TAG, "downloading reading plan list", e);
-					runOnUiThread(() -> new AlertDialogWrapper.Builder(ReadingPlanActivity.this)
-						.setMessage(getString(R.string.rp_download_reading_plan_list_failed))
-						.setPositiveButton(R.string.ok, null)
-						.show()
-					);
-				} finally {
-					pd.dismiss();
-				}
-			}
-
-			/** run on bg thread */
-			void download() throws Exception {
-				final String json = App.downloadString("https://alkitab-host.appspot.com/rp/list");
-				final ReadingPlanServerEntry[] entries = new GsonBuilder().create().fromJson(json, ReadingPlanServerEntry[].class);
-
-				if (entries == null) return;
-				if (cancelled.get()) return;
-				runOnUiThread(() -> onReadingPlanListDownloadFinished(entries));
-			}
-
-			/** run on ui thread */
-			void onReadingPlanListDownloadFinished(final ReadingPlanServerEntry[] entries) {
-				final List<ReadingPlanServerEntry> readingPlanDownloadableEntries = new ArrayList<>();
-				final List<String> downloadedNames = S.getDb().listReadingPlanNames();
-				for (final ReadingPlanServerEntry entry : entries) {
-					if (!downloadedNames.contains(entry.name)) {
-						readingPlanDownloadableEntries.add(entry);
-					}
-				}
-
-				if (readingPlanDownloadableEntries.size() == 0) {
-					new AlertDialogWrapper.Builder(ReadingPlanActivity.this)
-						.setMessage(getString(R.string.rp_noReadingPlanAvailable))
-						.setPositiveButton(R.string.ok, null)
-						.show();
-					return;
-				}
-
-				final AlertDialogWrapper.Builder builder = new AlertDialogWrapper.Builder(ReadingPlanActivity.this);
-				builder.setAdapter(
-					new EasyAdapter() {
-						@Override
-						public View newView(final int position, final ViewGroup parent) {
-							return getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
-						}
-
-						@Override
-						public void bindView(final View view, final int position, final ViewGroup parent) {
-							final TextView textView = (TextView) view;
-							final ReadingPlanServerEntry entry = readingPlanDownloadableEntries.get(position);
-							final SpannableStringBuilder sb = new SpannableStringBuilder();
-							sb.append(entry.title);
-							final int sb_len = sb.length();
-							sb.append(" ");
-							sb.append(getString(R.string.rp_download_day_count_days, entry.day_count));
-							sb.append("\n");
-							sb.append(entry.description);
-							sb.setSpan(new RelativeSizeSpan(0.6f), sb_len, sb.length(), 0);
-							textView.setText(sb);
-						}
-
-						@Override
-						public int getCount() {
-							return readingPlanDownloadableEntries.size();
-						}
-					});
-
-				final AlertDialog dialog = builder.show();
-				final ListView listView = dialog.getListView();
-
-				if (listView == null) {
-					throw new RuntimeException("ListView should not be null");
-				}
-
-				listView.setOnItemClickListener((parent, view, position, id) -> {
-					onReadingPlanSelected(readingPlanDownloadableEntries.get(position));
-					dialog.dismiss();
-				});
-			}
-
-			/** run on ui thread */
-			void onReadingPlanSelected(final ReadingPlanServerEntry entry) {
-				downloadReadingPlanFromServer(entry);
-			}
-		}.start();
+		startActivityForResult(
+			HelpActivity.createIntent(
+				"https://alkitab-host.appspot.com/rp/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName()),
+				false,
+				null,
+				null
+			), REQCODE_openList
+		);
 	}
 
-	void downloadReadingPlanFromServer(final ReadingPlanServerEntry entry) {
+
+	@Override
+	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		if (requestCode == REQCODE_openList && resultCode == RESULT_OK) {
+			final Uri uri = data.getData();
+			if (uri != null) {
+				downloadByAlkitabUri(uri);
+			}
+			return;
+		}
+
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	private void downloadByAlkitabUri(final Uri uri) {
+		if (!"alkitab".equals(uri.getScheme()) || !"/addon/download".equals(uri.getPath()) || !"readingplan".equals(uri.getQueryParameter("kind")) || !"rpb".equals(uri.getQueryParameter("type")) || uri.getQueryParameter("name") == null) {
+			new MaterialDialog.Builder(this)
+				.content("Invalid uri:\n\n" + uri)
+				.positiveText(R.string.ok)
+				.show();
+			return;
+		}
+
+		final String name = uri.getQueryParameter("name");
+
+		downloadReadingPlanFromServer(name);
+	}
+
+	void downloadReadingPlanFromServer(final String name) {
 		final AtomicBoolean cancelled = new AtomicBoolean(false);
 
 		final MaterialDialog pd = new MaterialDialog.Builder(this)
@@ -604,7 +539,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 			/** run on bg thread */
 			void download() throws Exception {
-				final byte[] bytes = App.downloadBytes("https://alkitab-host.appspot.com/rp/get_rp?name=" + entry.name);
+				final byte[] bytes = App.downloadBytes("https://alkitab-host.appspot.com/rp/get_rp?name=" + name);
 
 				if (cancelled.get()) return;
 				runOnUiThread(() -> onReadingPlanDownloadFinished(bytes));
@@ -612,7 +547,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 			/** run on ui thread */
 			void onReadingPlanDownloadFinished(final byte[] data) {
-				final long id = ReadingPlanManager.insertReadingPlanToDb(data, entry.name);
+				final long id = ReadingPlanManager.insertReadingPlanToDb(data, name);
 
 				if (id == 0) {
 					new AlertDialogWrapper.Builder(ReadingPlanActivity.this)
