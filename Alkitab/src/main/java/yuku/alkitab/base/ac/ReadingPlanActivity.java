@@ -212,7 +212,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 		leftDrawer.getHandle().setDescription(
 			TextUtils.expandTemplate(
-				getText(R.string.rp_description_rendering),
+				getText(R.string.rp_description_with_id),
 				readingPlan.info.title,
 				String.valueOf(readingPlan.info.duration),
 				readingPlan.info.name,
