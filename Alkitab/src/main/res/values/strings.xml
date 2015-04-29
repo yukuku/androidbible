@@ -307,6 +307,7 @@
     <string name="dv_option_dark_text">Dark text</string>
     <string name="dv_option_text_size">Text size</string>
 
+	<!-- Reading plan -->
     <string name="rp_menuReadingPlan">Reading plan</string>
     <string name="rp_commentActual">Finished: %s%%</string>
     <string name="rp_commentTarget">Target: %s%%</string>
@@ -341,8 +342,9 @@
     <string name="rp_download_reading_plan_progress">Downloading reading plan…</string>
     <string name="rp_download_reading_plan_failed">Failed to download the selected reading plan. Please try again with a working Internet connection.</string>
     <string name="rp_download_reading_plan_data_corrupted">Downloaded reading plan data is corrupted. Please try again later with a working Internet connection.</string>
+	<string name="rp_download_already_have">You already have this reading plan.</string>
 
-    <string name="version_download_need_fonts">"The version downloaded might need to be displayed with certain fonts. Go to the 'Text appearance' menu and select a font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
+	<string name="version_download_need_fonts">"The version downloaded might need to be displayed with certain fonts. Go to the 'Text appearance' menu and select a font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
     <string name="version_download_corrupted_file">Downloaded file seems to be corrupt.</string>
     <string name="menuNightMode">Night mode</string>
     <string name="highlight_custom_color">Other colors</string>

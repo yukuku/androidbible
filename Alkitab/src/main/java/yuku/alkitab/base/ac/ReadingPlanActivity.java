@@ -513,6 +513,15 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	}
 
 	void downloadReadingPlanFromServer(final String name) {
+		if (S.getDb().listReadingPlanNames().contains(name)) {
+			new MaterialDialog.Builder(this)
+				.content(R.string.rp_download_already_have)
+				.positiveText(R.string.ok)
+				.show();
+
+			return;
+		}
+
 		final AtomicBoolean cancelled = new AtomicBoolean(false);
 
 		final MaterialDialog pd = new MaterialDialog.Builder(this)
@@ -537,7 +546,9 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				}
 			}
 
-			/** run on bg thread */
+			/**
+			 * run on bg thread
+			 */
 			void download() throws Exception {
 				final byte[] bytes = App.downloadBytes("https://alkitab-host.appspot.com/rp/get_rp?name=" + name);
 
@@ -545,7 +556,9 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				runOnUiThread(() -> onReadingPlanDownloadFinished(bytes));
 			}
 
-			/** run on ui thread */
+			/**
+			 * run on ui thread
+			 */
 			void onReadingPlanDownloadFinished(final byte[] data) {
 				final long id = ReadingPlanManager.insertReadingPlanToDb(data, name);
 
