@@ -544,11 +544,13 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				try {
 					download();
 				} catch (Exception e) {
-					Log.e(TAG, "downloading reading plan data", e);
-					new AlertDialogWrapper.Builder(ReadingPlanActivity.this)
-						.setMessage(getString(R.string.rp_download_reading_plan_failed))
-						.setPositiveButton(R.string.ok, null)
-						.show();
+					if (cancelled.get()) {
+						Log.e(TAG, "downloading reading plan data", e);
+						new AlertDialogWrapper.Builder(ReadingPlanActivity.this)
+							.setMessage(getString(R.string.rp_download_reading_plan_failed))
+							.setPositiveButton(R.string.ok, null)
+							.show();
+					}
 				} finally {
 					pd.dismiss();
 				}
@@ -568,6 +570,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			 * run on ui thread
 			 */
 			void onReadingPlanDownloadFinished(final byte[] data) {
+				if (cancelled.get()) return;
+
 				final long id = ReadingPlanManager.insertReadingPlanToDb(data, name);
 
 				if (id == 0) {
