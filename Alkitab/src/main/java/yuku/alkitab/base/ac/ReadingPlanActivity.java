@@ -210,7 +210,15 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		readingPlan = res;
 		Preferences.setLong(Prefkey.active_reading_plan_id, id);
 
-		leftDrawer.getHandle().setDescription(TextUtils.expandTemplate(getText(R.string.rp_description_rendering), readingPlan.info.title, String.valueOf(readingPlan.info.duration), readingPlan.info.description));
+		leftDrawer.getHandle().setDescription(
+			TextUtils.expandTemplate(
+				getText(R.string.rp_description_rendering),
+				readingPlan.info.title,
+				String.valueOf(readingPlan.info.duration),
+				readingPlan.info.name,
+				readingPlan.info.description
+			)
+		);
 	}
 
 	private void loadReadingPlanProgress() {
