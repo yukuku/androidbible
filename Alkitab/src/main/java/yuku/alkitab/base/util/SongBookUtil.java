@@ -1,7 +1,6 @@
 package yuku.alkitab.base.util;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -113,7 +112,7 @@ public class SongBookUtil {
 		return res;
 	}
 
-	public static AlertDialog getSongBookDialog(Context context, final DialogInterface.OnClickListener listener) {
+	public static Dialog getSongBookDialog(Context context, final DialogInterface.OnClickListener listener) {
 		final CharSequence[] items = new CharSequence[knownSongBooks.size()];
 		for (int i = 0; i < knownSongBooks.size(); i++) {
 			final SongBookInfo bookInfo = knownSongBooks.get(i);

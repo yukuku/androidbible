@@ -11,12 +11,12 @@ android {
             storePassword System.getenv("SIGN_PASSWORD")
         }
     }
-    compileSdkVersion 21
+    compileSdkVersion 22
     buildToolsVersion '21.1.2'
     defaultConfig {
         applicationId 'yuku.alkitab.debug'
         minSdkVersion 14
-        targetSdkVersion 21
+        targetSdkVersion 22
         versionCode 14000200
         versionName '4.1.0-beta0'
         multiDexEnabled true
@@ -62,17 +62,17 @@ dependencies {
     compile project(':AmbilWarna')
     compile project(':FileChooser')
     compile project(':ImportedDesktopVerseUtil')
-    compile 'com.android.support:support-v4:21.0.3'
+    compile 'com.android.support:support-v4:22.1.1'
     compile 'com.squareup.picasso:picasso:2.4.0'
     compile 'com.squareup.okhttp:okhttp:2.1.0'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.1.0'
     compile 'net.sf.trove4j:trove4j:3.0.3'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.android.support:support-v13:20.0.0'
-    compile 'com.google.android.gms:play-services-analytics:7.0.0'
-    compile 'com.google.android.gms:play-services-gcm:7.0.0'
-    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.google.android.gms:play-services-analytics:7.3.0'
+    compile 'com.google.android.gms:play-services-gcm:7.3.0'
+    compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'com.android.support:multidex:1.0.0'
-    compile 'com.afollestad:material-dialogs:0.6.3.5'
+    compile 'com.afollestad:material-dialogs:0.7.3.0'
     testCompile 'junit:junit:4.12'
 }

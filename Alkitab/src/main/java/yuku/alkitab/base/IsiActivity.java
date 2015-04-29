@@ -1,7 +1,6 @@
 package yuku.alkitab.base;
 
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -1066,23 +1065,16 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	
 	void bGoto_longClick() {
 		if (history.getSize() > 0) {
-			final MaterialDialog dialog = new MaterialDialog.Builder(this)
-				.adapter(historyAdapter)
+			new MaterialDialog.Builder(this)
+				.adapter(historyAdapter, (materialDialog, view, position, charSequence) -> {
+					materialDialog.dismiss();
+					int ari = history.getAri(position);
+					jumpToAri(ari, true);
+					history.add(ari);
+					Preferences.setBoolean(Prefkey.history_button_understood, true);
+				})
 				.autoDismiss(true)
 				.show();
-
-			final ListView listView = dialog.getListView();
-			if (listView == null) {
-				throw new RuntimeException("ListView should not be null");
-			}
-
-			listView.setOnItemClickListener((parent, view, position, id) -> {
-				dialog.dismiss();
-				int ari = history.getAri(position);
-				jumpToAri(ari, true);
-				history.add(ari);
-				Preferences.setBoolean(Prefkey.history_button_understood, true);
-			});
 		} else {
 			Toast.makeText(this, R.string.recentverses_not_available, Toast.LENGTH_SHORT).show();
 		}
@@ -1711,19 +1703,19 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (markers.size() == 1) {
 				openBookmarkDialog(markers.get(0)._id);
 			} else {
-                AlertDialog dialog = new AlertDialogWrapper.Builder(IsiActivity.this)
-                    .setTitle(R.string.edit_bookmark)
-                    .setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.bookmark))
-                    .show();
+				final MaterialDialog dialog = new MaterialDialog.Builder(IsiActivity.this)
+					.title(R.string.edit_bookmark)
+					.adapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.bookmark), (materialDialog, view, which, text) -> {
+						openBookmarkDialog(markers.get(which)._id);
+						materialDialog.dismiss();
+					})
+					.show();
 
 				final ListView listView = dialog.getListView();
+				assert listView != null;
 				listView.setDrawSelectorOnTop(true);
-				listView.setOnItemClickListener((parent, view, position, id) -> {
-					openBookmarkDialog(markers.get(position)._id);
-					dialog.dismiss();
-				});
 			}
-        }
+		}
 
 		void openNoteDialog(final long _id) {
 			startActivityForResult(NoteActivity.createEditExistingIntent(_id), REQCODE_edit_note_1);
@@ -1737,17 +1729,17 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (markers.size() == 1) {
 				openNoteDialog(markers.get(0)._id);
 			} else {
-                AlertDialog dialog = new AlertDialogWrapper.Builder(IsiActivity.this)
-                    .setTitle(R.string.edit_note)
-                    .setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.note))
+                final MaterialDialog dialog = new MaterialDialog.Builder(IsiActivity.this)
+                    .title(R.string.edit_note)
+                    .adapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.note), (materialDialog, view, which, text) -> {
+						openNoteDialog(markers.get(which)._id);
+						materialDialog.dismiss();
+					})
                     .show();
 
 				final ListView listView = dialog.getListView();
+				assert listView != null;
 				listView.setDrawSelectorOnTop(true);
-				listView.setOnItemClickListener((parent, view, position, id) -> {
-					openNoteDialog(markers.get(position)._id);
-					dialog.dismiss();
-				});
 			}
         }
 

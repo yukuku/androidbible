@@ -1,6 +1,6 @@
 package yuku.alkitab.base.dialog;
 
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -34,7 +33,7 @@ public class TypeBookmarkDialog {
 	}
 
 	final Context context;
-	final AlertDialog dialog;
+	final Dialog dialog;
 	FlowLayout panelLabels;
 	LabelAdapter adapter;
 	EditText tCaption;
@@ -88,29 +87,23 @@ public class TypeBookmarkDialog {
 
 			final MaterialDialog dialog = new MaterialDialog.Builder(context)
 				.title(R.string.add_label_title)
-				.adapter(adapter)
+				.adapter(adapter, (materialDialog, view, which, text) -> {
+					if (which == 0) { // new label
+						LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), title -> {
+							final Label newLabel = S.getDb().insertLabel(title, null);
+							if (newLabel != null) {
+								labels.add(newLabel);
+								setLabelsText();
+							}
+						});
+					} else {
+						final Label label = adapter.getItem(which);
+						labels.add(label);
+						setLabelsText();
+					}
+					materialDialog.dismiss();
+				})
 				.build();
-
-			final ListView listView = dialog.getListView();
-			if (listView == null) {
-				throw new RuntimeException("ListView must not be null");
-			}
-			listView.setOnItemClickListener((parent, view, position, id) -> {
-				if (position == 0) { // new label
-					LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), title -> {
-						final Label newLabel = S.getDb().insertLabel(title, null);
-						if (newLabel != null) {
-							labels.add(newLabel);
-							setLabelsText();
-						}
-					});
-				} else {
-					final Label label = adapter.getItem(position);
-					labels.add(label);
-					setLabelsText();
-				}
-				dialog.dismiss();
-			});
 
 			adapter.setDialogContext(dialog.getContext());
 

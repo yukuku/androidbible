@@ -1,18 +1,15 @@
 package yuku.alkitab.base.dialog;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.debug.R;
@@ -32,25 +29,26 @@ public class LabelEditorDialog {
 		final EditText tCaption = V.get(dialogView, R.id.tCaption);
 		tCaption.setText(initialText);
 
-		final AlertDialog dialog = new AlertDialogWrapper.Builder(context)
-			.setView(dialogView)
-			.setTitle(title)
-			.setPositiveButton(R.string.ok, new OnClickListener() {
+		final MaterialDialog dialog = new MaterialDialog.Builder(context)
+			.customView(dialogView, false)
+			.title(title)
+			.positiveText(R.string.ok)
+			.negativeText(R.string.cancel)
+			.callback(new MaterialDialog.ButtonCallback() {
 				@Override
-				public void onClick(DialogInterface dialog, int which) {
+				public void onPositive(final MaterialDialog dialog) {
 					if (okListener != null) {
 						okListener.onOk(tCaption.getText().toString().trim());
 					}
 				}
 			})
-			.setNegativeButton(R.string.cancel, null)
-			.create();
-		
+			.build();
+
 		dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 		dialog.show();
 		
-		final Button bOk = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+		final View bOk = dialog.getActionButton(DialogAction.POSITIVE);
 		bOk.setEnabled(false);
 		
 		final List<Label> allLabels = S.getDb().listAllLabels();
