@@ -9,6 +9,7 @@ import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.util.Pair;
 import com.google.gson.reflect.TypeToken;
 import yuku.afw.D;
 import yuku.afw.storage.Preferences;
@@ -1137,14 +1138,16 @@ public class InternalDb {
 		return infos;
 	}
 
-	public byte[] getBinaryReadingPlanById(long id) {
-		byte[] buffer = null;
-		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan, new String[] {Db.ReadingPlan.data}, "_id=?", new String[] {String.valueOf(id)}, null, null, null);
-		while (c.moveToNext()) {
-			buffer = c.getBlob(0);
+	public Pair<String, byte[]> getReadingPlanNameAndData(long _id) {
+		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan, Array(Db.ReadingPlan.name, Db.ReadingPlan.data), "_id=?", ToStringArray(_id), null, null, null);
+		try {
+			if (c.moveToNext()) {
+				return Pair.create(c.getString(0), c.getBlob(1));
+			}
+			return null;
+		} finally {
+			c.close();
 		}
-		c.close();
-		return buffer;
 	}
 
 	public IntArrayList getAllReadingCodesByReadingPlanId(long id) {
