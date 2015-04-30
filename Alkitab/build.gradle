@@ -17,8 +17,8 @@ android {
         applicationId 'yuku.alkitab.debug'
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 14000200
-        versionName '4.1.0-beta0'
+        versionCode 14000201
+        versionName '4.1.0-beta1'
         multiDexEnabled true
     }
     buildTypes {
