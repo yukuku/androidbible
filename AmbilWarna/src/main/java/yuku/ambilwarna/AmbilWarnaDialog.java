@@ -1,6 +1,6 @@
 package yuku.ambilwarna;
 
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -270,7 +270,7 @@ public class AmbilWarnaDialog {
 		dialog.show();
 	}
 
-	public AlertDialog getDialog() {
+	public Dialog getDialog() {
 		return dialog;
 	}
 
