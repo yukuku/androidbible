@@ -18,6 +18,7 @@ package com.example.android.wizardpager;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -102,10 +103,13 @@ public class MainActivity extends FragmentActivity implements
 
 	    mPager.setAdapter(mPagerAdapter);
         mStepPagerStrip = (StepPagerStrip) findViewById(R.id.strip);
-        mStepPagerStrip.setOnPageSelectedListener(position -> {
-			position = Math.min(mPagerAdapter.getCount() - 1, position);
-			if (mPager.getCurrentItem() != position) {
-				mPager.setCurrentItem(position);
+        mStepPagerStrip.setOnPageSelectedListener(new StepPagerStrip.OnPageSelectedListener() {
+			@Override
+			public void onPageStripSelected(int position) {
+				position = Math.min(mPagerAdapter.getCount() - 1, position);
+				if (mPager.getCurrentItem() != position) {
+					mPager.setCurrentItem(position);
+				}
 			}
 		});
 
@@ -127,53 +131,65 @@ public class MainActivity extends FragmentActivity implements
             }
         });
 
-        mNextButton.setOnClickListener(view -> {
-			if (mPager.getCurrentItem() == mCurrentPageSequence.size()) {
-				DialogFragment dg = new DialogFragment() {
-					@Override public Dialog onCreateDialog(Bundle savedInstanceState) {
-						return new AlertDialogWrapper.Builder(getActivity())
-							.setMessage(R.string.alkitabfeedback_submit_confirm_message)
-							.setPositiveButton(R.string.alkitabfeedback_submit_confirm_button, (dialog, which) -> {
-								String feedback_from_name = null;
-								String feedback_from_email = null;
-								String feedback_body = null;
+        mNextButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				if (mPager.getCurrentItem() == mCurrentPageSequence.size()) {
+					DialogFragment dg = new DialogFragment() {
+						@Override public Dialog onCreateDialog(Bundle savedInstanceState) {
+							return new AlertDialogWrapper.Builder(getActivity())
+								.setMessage(R.string.alkitabfeedback_submit_confirm_message)
+								.setPositiveButton(R.string.alkitabfeedback_submit_confirm_button, new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(final DialogInterface dialog, final int which) {
+										String feedback_from_name = null;
+										String feedback_from_email = null;
+										String feedback_body = null;
 
-								Bundle saved = mWizardModel.save();
-								Bundle contact = saved.getBundle("contact");
-								if (contact != null) {
-									feedback_from_name = contact.getString(CustomerInfoPage.NAME_DATA_KEY);
-									feedback_from_email = contact.getString(CustomerInfoPage.EMAIL_DATA_KEY);
-								}
-								Bundle message = saved.getBundle("message");
-								if (message != null) {
-									feedback_body = message.getString(TextareaPage.SIMPLE_DATA_KEY);
-								}
+										Bundle saved = mWizardModel.save();
+										Bundle contact = saved.getBundle("contact");
+										if (contact != null) {
+											feedback_from_name = contact.getString(CustomerInfoPage.NAME_DATA_KEY);
+											feedback_from_email = contact.getString(CustomerInfoPage.EMAIL_DATA_KEY);
+										}
+										Bundle message = saved.getBundle("message");
+										if (message != null) {
+											feedback_body = message.getString(TextareaPage.SIMPLE_DATA_KEY);
+										}
 
-								if (feedback_from_name != null && feedback_from_email != null && feedback_body != null) {
-									FeedbackSender sender = FeedbackSender.getInstance(getApplicationContext());
-									sender.addEntry(feedback_from_name, feedback_from_email, feedback_body);
-									sender.trySend();
-								}
+										if (feedback_from_name != null && feedback_from_email != null && feedback_body != null) {
+											FeedbackSender sender = FeedbackSender.getInstance(getApplicationContext());
+											sender.addEntry(feedback_from_name, feedback_from_email, feedback_body);
+											sender.trySend();
+										}
 
-								Toast.makeText(MainActivity.this, R.string.alkitabfeedback_submit_thanks, Toast.LENGTH_LONG).show();
-								setResult(RESULT_OK);
-								finish();
-							})
-							.setNegativeButton(android.R.string.cancel, null)
-							.create();
-					}
-				};
-				dg.show(getSupportFragmentManager(), "place_order_dialog");
-			} else {
-				if (mEditingAfterReview) {
-					mPager.setCurrentItem(mPagerAdapter.getCount() - 1);
+										Toast.makeText(MainActivity.this, R.string.alkitabfeedback_submit_thanks, Toast.LENGTH_LONG).show();
+										setResult(RESULT_OK);
+										finish();
+									}
+								})
+								.setNegativeButton(android.R.string.cancel, null)
+								.create();
+						}
+					};
+					dg.show(getSupportFragmentManager(), "place_order_dialog");
 				} else {
-					mPager.setCurrentItem(mPager.getCurrentItem() + 1);
+					if (mEditingAfterReview) {
+						mPager.setCurrentItem(mPagerAdapter.getCount() - 1);
+					} else {
+						mPager.setCurrentItem(mPager.getCurrentItem() + 1);
+					}
 				}
+
 			}
 		});
 
-        mPrevButton.setOnClickListener(view -> mPager.setCurrentItem(mPager.getCurrentItem() - 1));
+        mPrevButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				mPager.setCurrentItem(mPager.getCurrentItem() - 1);
+			}
+		});
 
         onPageTreeChanged();
         updateBottomBar();
