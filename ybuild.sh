@@ -197,7 +197,8 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 
 	chmod +x ./gradlew
 	echo 'Running gradlew from' `pwd`
-	./gradlew --offline clean assemblePlainRelease
+	./gradlew --no-daemon assemblePlainRelease --info || echo GAGAAAAAALLLLL
+	./gradlew --no-daemon assemblePlainRelease --info 
 
 	FINAL_APK="$BUILD_MAIN_PROJECT_DIR/build/outputs/apk/$MAIN_PROJECT_NAME-plain-release.apk"
 
