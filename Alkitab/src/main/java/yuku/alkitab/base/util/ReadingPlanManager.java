@@ -17,13 +17,13 @@ public class ReadingPlanManager {
 
 	private static final byte[] RPB_HEADER = {0x52, (byte) 0x8a, 0x61, 0x34, 0x00, (byte) 0xe0, (byte) 0xea};
 
-	public static long insertReadingPlanToDb(final byte[] data) {
+	public static long insertReadingPlanToDb(final byte[] data, final String name) {
 		final ReadingPlan.ReadingPlanInfo info = new ReadingPlan.ReadingPlanInfo();
 
 		try {
 			// check the file has correct header and infos
 			final BintexReader reader = new BintexReader(new ByteArrayInputStream(data));
-			final boolean ok = readInfo(info, reader);
+			final boolean ok = readInfo(info, name, reader);
 			reader.close();
 
 			if (!ok) {
@@ -54,12 +54,12 @@ public class ReadingPlanManager {
 		}
 	}
 
-	public static ReadingPlan readVersion1(InputStream inputStream) {
+	public static ReadingPlan readVersion1(InputStream inputStream, String name) {
 		ReadingPlan readingPlan = new ReadingPlan();
 		try {
 			final BintexReader reader = new BintexReader(inputStream);
 			try {
-				if (!readInfo(readingPlan.info, reader)) return null;
+				if (!readInfo(readingPlan.info, name, reader)) return null;
 				if (readingPlan.info.version != 1) return null;
 
 				int[][] dailyVerses = new int[readingPlan.info.duration][];
@@ -100,7 +100,7 @@ public class ReadingPlanManager {
 	/**
 	 * @return false if reading plan data is not in a valid format.
 	 */
-	public static boolean readInfo(final ReadingPlan.ReadingPlanInfo readingPlanInfo, final BintexReader reader) throws IOException {
+	public static boolean readInfo(final ReadingPlan.ReadingPlanInfo info, final String name, final BintexReader reader) throws IOException {
 		byte[] headers = new byte[8];
 		reader.readRaw(headers);
 		for (int i = 0; i < 7; i++) {
@@ -108,13 +108,13 @@ public class ReadingPlanManager {
 				return false;
 			}
 		}
-		readingPlanInfo.version = headers[7];
+		info.version = headers[7];
+		info.name = name;
 
-		ValueMap map = reader.readValueSimpleMap();
-		readingPlanInfo.name = map.getString("name");
-		readingPlanInfo.title = map.getString("title");
-		readingPlanInfo.description = map.getString("description");
-		readingPlanInfo.duration = map.getInt("duration");
+		final ValueMap map = reader.readValueSimpleMap();
+		info.title = map.getString("title");
+		info.description = map.getString("description");
+		info.duration = map.getInt("duration");
 
 		return true;
 	}

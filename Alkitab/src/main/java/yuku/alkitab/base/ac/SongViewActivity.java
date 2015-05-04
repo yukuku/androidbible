@@ -952,23 +952,30 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		final int id = v.getId();
 		int num = -1;
 		for (int i = 0; i < numIds.length; i++) if (id == numIds[i]) num = i;
-		for (int i = 0; i < alphaIds.length; i++) if (id == alphaIds[i]) num = 10 + i;
+		for (int i = 0; i < alphaIds.length; i++) if (id == alphaIds[i]) num = 10 + i; // special code for alpha
+		if (id == R.id.bBackspace) num = 20; // special code for backspace
 
 		final LeftDrawer.Songs.Handle handle = leftDrawer.getHandle();
 
-		if (num >= 0) { // digits or letters
-			if (state_tempCode.length() >= 4) state_tempCode = ""; // can't be more than 4 digits
-
-			if (num <= 9) { // digits
-				//noinspection StatementWithEmptyBody
-				if (state_tempCode.length() == 0 && num == 0) { // nothing has been pressed and 0 is now pressed
-				} else {
-					state_tempCode += num;
+		if (num >= 0) { // digits or letters or backspace
+			if (num == 20) { // backspace
+				if (state_tempCode.length() > 0) {
+					state_tempCode = state_tempCode.substring(0, state_tempCode.length() - 1);
 				}
-			} else { // letters
-				final char letter = (char) ('A' + num - 10);
-				if (state_tempCode.length() != 0) {
-					state_tempCode += letter;
+			} else {
+				if (state_tempCode.length() >= 4) state_tempCode = ""; // can't be more than 4 digits
+
+				if (num <= 9) { // digits
+					if (state_tempCode.length() == 0 && num == 0) {
+						// nothing has been pressed and 0 is now pressed
+					} else {
+						state_tempCode += num;
+					}
+				} else if (num <= 19) { // letters
+					final char letter = (char) ('A' + num - 10);
+					if (state_tempCode.length() != 0) {
+						state_tempCode += letter;
+					}
 				}
 			}
 

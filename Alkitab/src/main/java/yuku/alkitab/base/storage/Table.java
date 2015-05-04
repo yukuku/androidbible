@@ -87,4 +87,30 @@ public class Table {
 			return SyncLog.class.getSimpleName();
 		}
 	}
+
+	public enum Devotion {
+		name(text),
+		date(text),
+		body(text),
+		readyToUse(integer),
+		touchTime(integer),
+		dataFormatVersion(integer),
+		;
+
+		public final Type type;
+		public final String suffix;
+
+		private Devotion(Type type) {
+			this(type, null);
+		}
+
+		private Devotion(Type type, String suffix) {
+			this.type = type;
+			this.suffix = suffix;
+		}
+
+		public static String tableName() {
+			return Devotion.class.getSimpleName();
+		}
+	}
 }

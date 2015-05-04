@@ -206,6 +206,7 @@ public class S {
 				final MVersion mv = versions.get(which);
 				listener.onVersionSelected(mv);
 				dialog.dismiss();
+				return true;
 			})
 			.alwaysCallSingleChoiceCallback()
 			.positiveText(R.string.versi_lainnya)

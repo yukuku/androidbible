@@ -133,8 +133,8 @@
 			android:layout_height="48dp"
             android:textColor="#ffffff"
             android:gravity="left|center_vertical"
-            android:paddingLeft="16dp"
-			android:paddingRight="4dp"
+            android:layout_marginLeft="16dp"
+			android:layout_marginRight="16dp"
             android:textSize="16sp"
             android:fontFamily="sans-serif-regular"
             android:text="@string/menuFullScreen" />
@@ -145,8 +145,8 @@
 			android:layout_height="48dp"
             android:textColor="#ffffff"
             android:gravity="left|center_vertical"
-            android:paddingLeft="16dp"
-			android:paddingRight="4dp"
+			android:layout_marginLeft="16dp"
+			android:layout_marginRight="16dp"
             android:textSize="16sp"
             android:fontFamily="sans-serif-regular"
             android:text="@string/menuNightMode" />
@@ -157,12 +157,11 @@
 			android:layout_height="48dp"
             android:textColor="#ffffff"
             android:gravity="left|center_vertical"
-            android:paddingLeft="16dp"
-			android:paddingRight="4dp"
+			android:layout_marginLeft="16dp"
+			android:layout_marginRight="16dp"
             android:textSize="16sp"
             android:fontFamily="sans-serif-regular"
             android:text="@string/menuSplitVersion" />
-
 
 		<include
 			layout="@layout/left_drawer_footer"

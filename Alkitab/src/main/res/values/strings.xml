@@ -196,6 +196,7 @@
     <string name="bookmark_search">Search</string>
     <string name="verse_select_one_verse_selected">1 verse selected</string>
     <string name="verse_select_multiple_verse_selected">%s verses selected</string>
+    <string name="google_play_store_not_installed">Google Play Store is not installed.</string>
 
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Dialer</string>
@@ -306,6 +307,7 @@
     <string name="dv_option_dark_text">Dark text</string>
     <string name="dv_option_text_size">Text size</string>
 
+	<!-- Reading plan -->
     <string name="rp_menuReadingPlan">Reading plan</string>
     <string name="rp_commentActual">Finished: %s%%</string>
     <string name="rp_commentTarget">Target: %s%%</string>
@@ -333,15 +335,16 @@
     <string name="rp_showDetails">Show details</string>
     <string name="rp_hideDetails">Hide details</string>
     <string name="rp_aboutPlan">About plan</string>
-    <string name="rp_description_rendering"><b>^1</b> (^2 days)\n^3</string>
+    <string name="rp_description_with_id"><b>^1</b> (^2 days)\n<small>ID: ^3</small>\n\n^4</string>
     <string name="rp_download_day_count_days">%s days</string>
     <string name="rp_download_reading_plan_list_progress">Downloading list of reading plans…</string>
     <string name="rp_download_reading_plan_list_failed">Failed to download reading plan list. Please try again with a working Internet connection.</string>
     <string name="rp_download_reading_plan_progress">Downloading reading plan…</string>
     <string name="rp_download_reading_plan_failed">Failed to download the selected reading plan. Please try again with a working Internet connection.</string>
     <string name="rp_download_reading_plan_data_corrupted">Downloaded reading plan data is corrupted. Please try again later with a working Internet connection.</string>
+	<string name="rp_download_already_have">You already have this reading plan.</string>
 
-    <string name="version_download_need_fonts">"The version downloaded might need to be displayed with certain fonts. Go to the 'Text appearance' menu and select a font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
+	<string name="version_download_need_fonts">"The version downloaded might need to be displayed with certain fonts. Go to the 'Text appearance' menu and select a font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
     <string name="version_download_corrupted_file">Downloaded file seems to be corrupt.</string>
     <string name="menuNightMode">Night mode</string>
     <string name="highlight_custom_color">Other colors</string>
@@ -511,4 +514,16 @@
 	<string name="announce_notif_title">%s Announcements</string>
 	<string name="announce_notif_number_new_announcements">%s new announcements</string>
 
+	<!-- Dictionary -->
+	<string name="menuDictionary">Dictionary</string>
+	<string name="dict_open_full">Open Dictionary</string>
+	<string name="dict_no_results">No definition found for the selected word.</string>
+	<string name="dict_download_prompt">Download \"Bible Dictionary\" to learn more about the words in the Bible!</string>
+	<string name="dict_download_button">Download</string>
+
+	<!-- Guide -->
+	<string name="menuGuide">Guide</string>
+
+	<!-- Commentary -->
+	<string name="menuCommentary">Commentary</string>
 </resources>

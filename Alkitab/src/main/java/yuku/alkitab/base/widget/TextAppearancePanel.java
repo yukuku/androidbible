@@ -159,7 +159,20 @@ public class TextAppearancePanel {
 			final ColorThemeAdapter adapter = new ColorThemeAdapter();
 
 			final MaterialDialog dialog = new MaterialDialog.Builder(activity)
-				.adapter(adapter)
+				.adapter(adapter, (materialDialog, view, which, text) -> {
+					materialDialog.dismiss();
+
+					if (which == adapter.getPositionOfCustomColors()) {
+						activity.startActivityForResult(ColorSettingsActivity.createIntent(Preferences.getBoolean(Prefkey.is_night_mode, false)), reqcodeCustomColors);
+						return;
+					}
+
+					final int[] colors = adapter.getColorsAtPosition(which);
+					ColorThemes.setCurrentColors(colors, Preferences.getBoolean(Prefkey.is_night_mode, false));
+					listener.onValueChanged();
+					adapter.notifyDataSetChanged();
+					displayValues();
+				})
 				.show();
 
 			final ListView listView = dialog.getListView();
@@ -172,21 +185,6 @@ public class TextAppearancePanel {
 				final int position = adapter.getPositionByColors(currentColors);
 				listView.setSelection(position != -1 ? position : adapter.getPositionOfCustomColors());
 			}
-
-			listView.setOnItemClickListener((parent, view, position, id) -> {
-				dialog.dismiss();
-
-				if (position == adapter.getPositionOfCustomColors()) {
-					activity.startActivityForResult(ColorSettingsActivity.createIntent(Preferences.getBoolean(Prefkey.is_night_mode, false)), reqcodeCustomColors);
-					return;
-				}
-
-				final int[] colors = adapter.getColorsAtPosition(position);
-				ColorThemes.setCurrentColors(colors, Preferences.getBoolean(Prefkey.is_night_mode, false));
-				listener.onValueChanged();
-				adapter.notifyDataSetChanged();
-				displayValues();
-			});
 		}
 	};
 

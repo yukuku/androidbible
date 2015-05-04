@@ -1,14 +1,18 @@
 package yuku.alkitab.base;
 
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.database.Cursor;
+import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -23,11 +27,15 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.format.DateFormat;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
+import android.text.style.URLSpan;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -86,6 +94,7 @@ import yuku.alkitab.base.widget.FormattedTextRenderer;
 import yuku.alkitab.base.widget.GotoButton;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.LeftDrawer;
+import yuku.alkitab.base.widget.SingleViewVerseAdapter;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
 import yuku.alkitab.base.widget.TwofingerLinearLayout;
@@ -270,6 +279,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	History history;
 	NfcAdapter nfcAdapter;
 	ActionMode actionMode;
+	boolean dictionaryMode;
 	TextAppearancePanel textAppearancePanel;
 
 	// temporary states
@@ -277,18 +287,70 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	Version activeSplitVersion;
 	String activeSplitVersionId;
 
-	CallbackSpan.OnClickListener<Object> parallelListener = new CallbackSpan.OnClickListener<Object>() {
-		@Override public void onClick(View widget, Object data) {
-            if (data instanceof String) {
-                final int ari = jumpTo((String) data);
-                if (ari != 0) {
-                    history.add(ari);
-                }
-            } else if (data instanceof Integer) {
-	            final int ari = (Integer) data;
-	            jumpToAri(ari, false);
-	            history.add(ari);
-            }
+	final CallbackSpan.OnClickListener<Object> parallelListener = (widget, data) -> {
+		if (data instanceof String) {
+			final int ari = jumpTo((String) data);
+			if (ari != 0) {
+				history.add(ari);
+			}
+		} else if (data instanceof Integer) {
+			final int ari = (Integer) data;
+			jumpToAri(ari, false);
+			history.add(ari);
+		}
+	};
+
+	final CallbackSpan.OnClickListener<SingleViewVerseAdapter.DictionaryLinkInfo> dictionaryListener = (widget, data) -> {
+		final ContentResolver cr = getContentResolver();
+		final Uri uri = Uri.parse("content://org.sabda.kamus.provider/define").buildUpon()
+			.appendQueryParameter("key", data.key)
+			.appendQueryParameter("mode", "snippet")
+			.build();
+
+		final Cursor c = cr.query(uri, null, null, null, null);
+		if (c == null) {
+			askToInstallDictionary();
+		} else {
+			try {
+				if (c.getCount() == 0) {
+					new MaterialDialog.Builder(this)
+						.content(R.string.dict_no_results)
+						.positiveText(R.string.ok)
+						.show();
+				} else {
+					c.moveToNext();
+					final Spanned rendered = Html.fromHtml(c.getString(c.getColumnIndexOrThrow("definition")));
+					final SpannableStringBuilder sb = rendered instanceof SpannableStringBuilder ? (SpannableStringBuilder) rendered : new SpannableStringBuilder(rendered);
+
+					// remove links
+					for (final URLSpan span : sb.getSpans(0, sb.length(), URLSpan.class)) {
+						sb.removeSpan(span);
+					}
+
+					new MaterialDialog.Builder(this)
+						.title(data.orig_text)
+						.content(sb)
+						.positiveText(R.string.dict_open_full)
+						.callback(new MaterialDialog.ButtonCallback() {
+							@Override
+							public void onPositive(final MaterialDialog dialog) {
+								final Intent intent = new Intent("org.sabda.kamus.action.VIEW");
+								intent.putExtra("key", data.key);
+								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+								intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+								try {
+									startActivity(intent);
+								} catch (ActivityNotFoundException e) {
+									askToInstallDictionary();
+								}
+							}
+						})
+						.show();
+				}
+			} finally {
+				c.close();
+			}
 		}
 	};
 
@@ -385,8 +447,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		lsSplit0.setParallelListener(parallelListener);
 		lsSplit0.setAttributeListener(attributeListener);
 		lsSplit0.setInlineLinkSpanFactory(new VerseInlineLinkSpanFactory(lsSplit0));
-		lsSplit0.setSelectedVersesListener(lsText_selectedVerses);
-		lsSplit0.setOnVerseScrollListener(lsText_verseScroll);
+		lsSplit0.setSelectedVersesListener(lsSplit0_selectedVerses);
+		lsSplit0.setOnVerseScrollListener(lsSplit0_verseScroll);
+		lsSplit0.setDictionaryListener(dictionaryListener);
 
 		// additional setup for split1
 		lsSplit1.setVerseSelectionMode(VersesView.VerseSelectionMode.multiple);
@@ -396,6 +459,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		lsSplit1.setInlineLinkSpanFactory(new VerseInlineLinkSpanFactory(lsSplit1));
 		lsSplit1.setSelectedVersesListener(lsSplit1_selectedVerses);
 		lsSplit1.setOnVerseScrollListener(lsSplit1_verseScroll);
+		lsSplit1.setDictionaryListener(dictionaryListener);
 
 		// for splitting
 		splitHandleButton.setListener(splitHandleButton_listener);
@@ -1001,23 +1065,16 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	
 	void bGoto_longClick() {
 		if (history.getSize() > 0) {
-			final MaterialDialog dialog = new MaterialDialog.Builder(this)
-				.adapter(historyAdapter)
+			new MaterialDialog.Builder(this)
+				.adapter(historyAdapter, (materialDialog, view, position, charSequence) -> {
+					materialDialog.dismiss();
+					int ari = history.getAri(position);
+					jumpToAri(ari, true);
+					history.add(ari);
+					Preferences.setBoolean(Prefkey.history_button_understood, true);
+				})
 				.autoDismiss(true)
 				.show();
-
-			final ListView listView = dialog.getListView();
-			if (listView == null) {
-				throw new RuntimeException("ListView should not be null");
-			}
-
-			listView.setOnItemClickListener((parent, view, position, id) -> {
-				dialog.dismiss();
-				int ari = history.getAri(position);
-				jumpToAri(ari, true);
-				history.add(ari);
-				Preferences.setBoolean(Prefkey.history_button_understood, true);
-			});
 		} else {
 			Toast.makeText(this, R.string.recentverses_not_available, Toast.LENGTH_SHORT).show();
 		}
@@ -1441,6 +1498,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		if (fullScreen) {
 			showFullScreenToast(reference);
 		}
+
+		if (dictionaryMode) {
+			finishDictionaryMode();
+		}
 		
 		return Ari.encode(0, chapter_1, verse_1);
 	}
@@ -1642,19 +1703,19 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (markers.size() == 1) {
 				openBookmarkDialog(markers.get(0)._id);
 			} else {
-                AlertDialog dialog = new AlertDialogWrapper.Builder(IsiActivity.this)
-                    .setTitle(R.string.edit_bookmark)
-                    .setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.bookmark))
-                    .show();
+				final MaterialDialog dialog = new MaterialDialog.Builder(IsiActivity.this)
+					.title(R.string.edit_bookmark)
+					.adapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.bookmark), (materialDialog, view, which, text) -> {
+						openBookmarkDialog(markers.get(which)._id);
+						materialDialog.dismiss();
+					})
+					.show();
 
 				final ListView listView = dialog.getListView();
+				assert listView != null;
 				listView.setDrawSelectorOnTop(true);
-				listView.setOnItemClickListener((parent, view, position, id) -> {
-					openBookmarkDialog(markers.get(position)._id);
-					dialog.dismiss();
-				});
 			}
-        }
+		}
 
 		void openNoteDialog(final long _id) {
 			startActivityForResult(NoteActivity.createEditExistingIntent(_id), REQCODE_edit_note_1);
@@ -1668,17 +1729,17 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (markers.size() == 1) {
 				openNoteDialog(markers.get(0)._id);
 			} else {
-                AlertDialog dialog = new AlertDialogWrapper.Builder(IsiActivity.this)
-                    .setTitle(R.string.edit_note)
-                    .setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.note))
+                final MaterialDialog dialog = new MaterialDialog.Builder(IsiActivity.this)
+                    .title(R.string.edit_note)
+                    .adapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.note), (materialDialog, view, which, text) -> {
+						openNoteDialog(markers.get(which)._id);
+						materialDialog.dismiss();
+					})
                     .show();
 
 				final ListView listView = dialog.getListView();
+				assert listView != null;
 				listView.setDrawSelectorOnTop(true);
-				listView.setOnItemClickListener((parent, view, position, id) -> {
-					openNoteDialog(markers.get(position)._id);
-					dialog.dismiss();
-				});
 			}
         }
 
@@ -1836,7 +1897,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	}
 
-	VersesView.SelectedVersesListener lsText_selectedVerses = new VersesView.SelectedVersesListener() {
+	VersesView.SelectedVersesListener lsSplit0_selectedVerses = new VersesView.SelectedVersesListener() {
 		@Override public void onSomeVersesSelected(VersesView v) {
 			if (activeSplitVersion != null) {
 				// synchronize the selection with the split view
@@ -1882,7 +1943,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		@Override public void onVerseSingleClick(VersesView v, int verse_1) {}
 	};
 
-	VersesView.OnVerseScrollListener lsText_verseScroll = new VersesView.OnVerseScrollListener() {
+	VersesView.OnVerseScrollListener lsSplit0_verseScroll = new VersesView.OnVerseScrollListener() {
 		@Override public void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop) {
 
 			if (!isPericope && activeSplitVersion != null) {
@@ -1937,9 +1998,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		@Override public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-			MenuItem menuAddBookmark = menu.findItem(R.id.menuAddBookmark);
-			MenuItem menuAddNote = menu.findItem(R.id.menuAddNote);
-			MenuItem menuCompare = menu.findItem(R.id.menuCompare);
+			final MenuItem menuAddBookmark = menu.findItem(R.id.menuAddBookmark);
+			final MenuItem menuAddNote = menu.findItem(R.id.menuAddNote);
+			final MenuItem menuCompare = menu.findItem(R.id.menuCompare);
 
 			final IntArrayList selected = lsSplit0.getSelectedVerses_1();
 			final boolean single = selected.size() == 1;
@@ -2064,10 +2125,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				mode.finish();
 			} return true;
 			case R.id.menuAddHighlight: {
-				final int ariKp = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
-				int colorRgb = S.getDb().getHighlightColorRgb(ariKp, selected);
+				final int ariBc = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
+				int colorRgb = S.getDb().getHighlightColorRgb(ariBc, selected);
 
-				new TypeHighlightDialog(IsiActivity.this, ariKp, selected, new TypeHighlightDialog.Listener() {
+				new TypeHighlightDialog(IsiActivity.this, ariBc, selected, new TypeHighlightDialog.Listener() {
 					@Override public void onOk(int colorRgb) {
 						lsSplit0.uncheckAllVerses(true);
 						reloadBothAttributeMaps();
@@ -2085,6 +2146,47 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				} catch (Exception e) {
 					Log.e(TAG, "ESVSB starting", e); //$NON-NLS-1$
 				}
+			} return true;
+			case R.id.menuGuide: {
+				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
+
+				try {
+					getPackageManager().getPackageInfo("org.sabda.pedia", 0);
+
+					final Intent intent = new Intent("org.sabda.pedia.action.VIEW");
+					intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					intent.putExtra("ari", ari);
+					startActivity(intent);
+				} catch (PackageManager.NameNotFoundException e) {
+					openMarket("org.sabda.pedia");
+				}
+			} return true;
+			case R.id.menuCommentary: {
+				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
+
+				try {
+					getPackageManager().getPackageInfo("org.sabda.tafsiran", 0);
+
+					final Intent intent = new Intent("org.sabda.tafsiran.action.VIEW");
+					intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					intent.putExtra("ari", ari);
+					startActivity(intent);
+				} catch (PackageManager.NameNotFoundException e) {
+					openMarket("org.sabda.tafsiran");
+				}
+			} return true;
+			case R.id.menuDictionary: {
+				final int ariBc = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
+				final SparseBooleanArray aris = new SparseBooleanArray();
+				for (int i = 0, len = selected.size(); i < len; i++) {
+					final int verse_1 = selected.get(i);
+					final int ari = Ari.encodeWithBc(ariBc, verse_1);
+					aris.put(ari, true);
+				}
+
+				startDictionaryMode(aris);
 			} return true;
 
 			}
@@ -2177,6 +2279,54 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				break;
 		}
 	};
+
+	void startDictionaryMode(final SparseBooleanArray aris) {
+		try {
+			final PackageInfo info = getPackageManager().getPackageInfo("org.sabda.kamus", 0);
+			if (info.versionCode < 4) {
+				askToInstallDictionary();
+				return;
+			}
+		} catch (PackageManager.NameNotFoundException e) {
+			askToInstallDictionary();
+			return;
+		}
+
+		dictionaryMode = true;
+		lsSplit0.setDictionaryModeAris(aris);
+		lsSplit1.setDictionaryModeAris(aris);
+	}
+
+	void finishDictionaryMode() {
+		dictionaryMode = false;
+		lsSplit0.setDictionaryModeAris(null);
+		lsSplit1.setDictionaryModeAris(null);
+	}
+
+	void askToInstallDictionary() {
+		new MaterialDialog.Builder(this)
+			.content(R.string.dict_download_prompt)
+			.positiveText(R.string.dict_download_button)
+			.callback(new MaterialDialog.ButtonCallback() {
+				@Override
+				public void onPositive(final MaterialDialog dialog) {
+					openMarket("org.sabda.kamus");
+				}
+			})
+			.show();
+	}
+
+	protected void openMarket(final String packageName) {
+		try {
+			final Uri uri = Uri.parse("market://details?id=" + packageName + "&referrer=utm_source%3Dother_app%26utm_medium%3D" + getPackageName());
+			startActivity(new Intent(Intent.ACTION_VIEW, uri));
+		} catch (ActivityNotFoundException e) {
+			new MaterialDialog.Builder(this)
+				.content(R.string.google_play_store_not_installed)
+				.positiveText(R.string.ok)
+				.show();
+		}
+	}
 
 	@Override
 	public void bMarkers_click() {

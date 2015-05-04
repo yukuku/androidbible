@@ -1,9 +1,7 @@
 package yuku.alkitab.base.pdbconvert;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -11,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.compactbyte.android.bible.PDBFileStream;
 import com.compactbyte.bibleplus.reader.BiblePlusPDB;
 import com.compactbyte.bibleplus.reader.BookInfo;
@@ -30,7 +28,7 @@ public class ConvertOptionsDialog {
 	public static final String TAG = ConvertOptionsDialog.class.getSimpleName();
 	
 	Context context;
-	AlertDialog alert;
+	MaterialDialog alert;
 	ConvertOptionsCallback callback;
 	
 	Spinner cbEncoding;
@@ -89,14 +87,20 @@ public class ConvertOptionsDialog {
 			return;
 		}
 
-		View dialogLayout = LayoutInflater.from(context).inflate(R.layout.dialog_pdbconvert_options, null);
+		this.alert = new MaterialDialog.Builder(context)
+			.customView(R.layout.dialog_pdbconvert_options, false)
+			.title(R.string.pdb_file_options)
+			.positiveText(R.string.ok)
+			.negativeText(R.string.cancel)
+			.callback(new MaterialDialog.ButtonCallback() {
+				@Override
+				public void onPositive(final MaterialDialog dialog) {
+					bOk_click();
+				}
+			})
+			.build();
 
-		this.alert = new AlertDialogWrapper.Builder(context)
-			.setView(dialogLayout)
-			.setTitle(R.string.pdb_file_options)
-			.setPositiveButton(R.string.ok, (dialog, which) -> bOk_click())
-			.setNegativeButton(R.string.cancel, null)
-			.create();
+		final View dialogLayout = this.alert.getCustomView();
 
 		cbEncoding = V.get(dialogLayout, R.id.cbEncoding);
 		lSample = V.get(dialogLayout, R.id.lSample);

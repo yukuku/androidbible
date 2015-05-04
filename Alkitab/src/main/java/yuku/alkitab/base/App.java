@@ -21,6 +21,7 @@ import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.reminder.util.DevotionReminder;
 import yuku.alkitabfeedback.FeedbackSender;
+import yuku.alkitabintegration.display.Launcher;
 import yuku.kirimfidbek.CrashReporter;
 
 import java.io.IOException;
@@ -113,6 +114,9 @@ public class App extends yuku.afw.App {
 		DevotionReminder.scheduleAlarm(context);
 
 		forceOverflowMenu();
+
+		// make sure launcher do not open other variants of the app
+		Launcher.setAppPackageName(context.getPackageName());
 	}
 
 	private static void forceOverflowMenu() {

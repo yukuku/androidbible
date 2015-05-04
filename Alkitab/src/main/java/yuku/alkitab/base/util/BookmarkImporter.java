@@ -1,7 +1,7 @@
 package yuku.alkitab.base.util;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -220,7 +220,7 @@ public class BookmarkImporter {
 						.setPositiveButton(R.string.ok, null)
 						.show();
 				} else {
-					final AlertDialog dialog = new AlertDialogWrapper.Builder(activity)
+					final Dialog dialog = new AlertDialogWrapper.Builder(activity)
 						.setMessage(activity.getString(R.string.impor_berhasil_angka_diproses, count_bookmark, count_label))
 						.setPositiveButton(R.string.ok, null)
 						.show();

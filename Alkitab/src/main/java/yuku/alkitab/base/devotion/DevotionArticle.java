@@ -1,28 +1,42 @@
 package yuku.alkitab.base.devotion;
 
+import android.support.annotation.NonNull;
+import android.text.SpannableStringBuilder;
+import android.text.style.URLSpan;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.widget.CallbackSpan;
 
 
-public interface DevotionArticle {
-	CharSequence getContent(CallbackSpan.OnClickListener<String> listener);
-	String getDate();
-	boolean getReadyToUse();
+public abstract class DevotionArticle {
+	public abstract CharSequence getContent(CallbackSpan.OnClickListener<String> listener);
+
+	/**
+	 * @return Date of this devotion in yyyymmdd format.
+	 */
+	public abstract String getDate();
+	public abstract boolean getReadyToUse();
 	
 	//# used by external
-	DevotionActivity.DevotionKind getKind();
-	String getRawEncoding();
-	
+	public abstract DevotionActivity.DevotionKind getKind();
+
 	/**
 	 * From raw, implementations must fill in other data like header, title, and body.
 	 * Also must set their own "readyToUse" property.
 	 */
-	void fillIn(String raw);
-	
+	public abstract void fillIn(String raw);
+
 	/**
-	 * Must return a 3-element array: header, title, body.
-	 * This is so because it's needed for compatibility with database table.
-	 * Header and title can be null. Body should not be null.
-	 */
-	String[] getHeaderTitleBody();
+	 * Replace URLSpans with CallbackSpans for verse links
+ 	 */
+	protected void convertLinks(final SpannableStringBuilder sb, final CallbackSpan.OnClickListener<String> verseClickListener) {
+		URLSpan[] spans = sb.getSpans(0, sb.length(), URLSpan.class);
+		for (URLSpan oldSpan: spans) {
+			String url = oldSpan.getURL();
+			CallbackSpan<String> newSpan = new CallbackSpan<>(url, verseClickListener);
+			sb.setSpan(newSpan, sb.getSpanStart(oldSpan), sb.getSpanEnd(oldSpan), 0);
+			sb.removeSpan(oldSpan);
+		}
+	}
+
+	@NonNull public abstract String getBody();
 }

@@ -14,7 +14,6 @@
 	<!-- sync permissions -->
 	<uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
 	<uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
-	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
 	<uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
 
 	<!-- gcm -->
@@ -319,7 +318,7 @@
 
         <provider
             android:name="yuku.alkitab.base.cp.Provider"
-            android:authorities="yuku.alkitab.provider.debug"
+            android:authorities="yuku.alkitab.debug.provider"
             android:exported="true"
             tools:ignore="ExportedContentProvider" />
 

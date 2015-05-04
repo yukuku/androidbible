@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -27,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class VersesView extends ListView implements AbsListView.OnScrollListener {
 	public static final String TAG = VersesView.class.getSimpleName();
-	
+
 	// http://stackoverflow.com/questions/6369491/stop-listview-scroll-animation
 	static class StopListFling {
 
@@ -108,7 +109,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		}
 	}
 
-	private VerseAdapter adapter;
+	private SingleViewVerseAdapter adapter;
 	private SelectedVersesListener listener;
 	private VerseSelectionMode verseSelectionMode;
 	private Drawable originalSelector;
@@ -153,8 +154,8 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		
 		setDivider(null);
 		setFocusable(false);
-		
-		setAdapter(adapter = new VerseAdapter.Factory().create(getContext()));
+
+		setAdapter(adapter = new SingleViewVerseAdapter(getContext()));
 		setOnItemClickListener(itemClick);
 		setVerseSelectionMode(VerseSelectionMode.multiple);
 		
@@ -180,7 +181,11 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	public void setInlineLinkSpanFactory(final VerseInlineLinkSpan.Factory inlineLinkSpanFactory) {
 		adapter.setInlineLinkSpanFactory(inlineLinkSpanFactory, this);
 	}
-	
+
+	public void setDictionaryListener(CallbackSpan.OnClickListener<SingleViewVerseAdapter.DictionaryLinkInfo> listener) {
+		adapter.setDictionaryListener(listener);
+	}
+
 	public void setVerseSelectionMode(VerseSelectionMode mode) {
 		this.verseSelectionMode = mode;
 		
@@ -653,5 +658,9 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	@Override
 	public String toString() {
 		return name != null? ("VersesView{name=" + name + "}"): "VersesView";
+	}
+
+	public void setDictionaryModeAris(@Nullable final SparseBooleanArray aris) {
+		adapter.setDictionaryModeAris(aris);
 	}
 }

@@ -81,7 +81,11 @@ public class HelpActivity extends BaseActivity {
 		}
 
 		if (page != null) {
-			webview.loadUrl("file:///android_asset/" + page);
+			if (page.startsWith("http:") || page.startsWith("https:")) {
+				webview.loadUrl(page);
+			} else {
+				webview.loadUrl("file:///android_asset/" + page);
+			}
 		} else if (announcementIds != null) {
 			final Locale locale = getResources().getConfiguration().locale;
 			webview.loadUrl("https://alkitab-host.appspot.com/announce/view?ids=" + App.getDefaultGson().toJson(announcementIds) + (locale == null ? "" : ("&locale=" + locale.toString())));
@@ -93,41 +97,51 @@ public class HelpActivity extends BaseActivity {
 				final Uri uri = Uri.parse(url);
 				final String scheme = uri.getScheme();
 
-				if ("http".equals(scheme) || "https".equals(scheme)) {
-					// open in external browser
-					final Intent intent = new Intent(Intent.ACTION_VIEW);
-					intent.setData(uri);
-					startActivity(intent);
-					return true;
+				if (scheme == null) {
+					return false;
 				}
 
-				if ("suggest".equals(scheme)) {
-					startActivity(com.example.android.wizardpager.MainActivity.createIntent(App.context));
-					finish();
-					return true;
-				}
-
-				if ("bible".equals(scheme)) {
-					// try to decode using OSIS format
-					final String ssp = uri.getSchemeSpecificPart();
-					final IntArrayList ariRanges = TargetDecoder.decode("o:" + ssp);
-					if (ariRanges == null || ariRanges.size() == 0) {
-						new AlertDialogWrapper.Builder(HelpActivity.this)
-							.setMessage(getString(R.string.alamat_tidak_sah_alamat, url))
-							.setPositiveButton(R.string.ok, null)
-							.show();
-					} else {
-						final VersesDialog dialog = VersesDialog.newInstance(ariRanges);
-						dialog.show(getSupportFragmentManager(), VersesDialog.class.getSimpleName());
-						dialog.setListener(new VersesDialog.VersesDialogListener() {
-							@Override
-							public void onVerseSelected(final VersesDialog dialog, final int ari) {
-								Log.d(TAG, "Verse link clicked from page");
-								startActivity(Launcher.openAppAtBibleLocation(ari));
-							}
-						});
-					}
-					return true;
+				switch (scheme) {
+					case "http":
+					case "https":
+					case "market": {
+						// open in external browser
+						final Intent intent = new Intent(Intent.ACTION_VIEW);
+						intent.setData(uri);
+						startActivity(intent);
+					} return true;
+					case "alkitab": {
+						// send back to caller
+						final Intent intent = new Intent();
+						intent.setData(uri);
+						setResult(RESULT_OK, intent);
+						finish();
+					} return true;
+					case "suggest":
+						startActivity(com.example.android.wizardpager.MainActivity.createIntent(App.context));
+						finish();
+						return true;
+					case "bible":
+						// try to decode using OSIS format
+						final String ssp = uri.getSchemeSpecificPart();
+						final IntArrayList ariRanges = TargetDecoder.decode("o:" + ssp);
+						if (ariRanges == null || ariRanges.size() == 0) {
+							new AlertDialogWrapper.Builder(HelpActivity.this)
+								.setMessage(getString(R.string.alamat_tidak_sah_alamat, url))
+								.setPositiveButton(R.string.ok, null)
+								.show();
+						} else {
+							final VersesDialog dialog = VersesDialog.newInstance(ariRanges);
+							dialog.show(getSupportFragmentManager(), VersesDialog.class.getSimpleName());
+							dialog.setListener(new VersesDialog.VersesDialogListener() {
+								@Override
+								public void onVerseSelected(final VersesDialog dialog, final int ari) {
+									Log.d(TAG, "Verse link clicked from page");
+									startActivity(Launcher.openAppAtBibleLocation(ari));
+								}
+							});
+						}
+						return true;
 				}
 				return false;
 			}
