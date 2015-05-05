@@ -12,12 +12,12 @@
     <item>Naranja Dulce</item>
     <item>Desierto Seco</item>
     <item>Madera</item>
-    <item>Chocolate</item>
+    <item>Madera</item>
     <item>Guayaba Húmeda</item>
     <item>Noche Clara</item>
     <item>Noche Estrellada</item>
-      <item>Material Oscuro</item>
-      <item>Pizarra</item>
+    <item>Material Oscuro</item>
+    <item>Pizarra</item>
     <item>Luz Tenue</item>
   </string-array>
 </resources>
