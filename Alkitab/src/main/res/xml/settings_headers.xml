@@ -13,4 +13,8 @@
 		android:fragment="yuku.alkitab.base.ac.SettingsActivity$UsageFragment"
 		android:title="@string/pref_penggunaan" />
 
+	<header
+		android:fragment="yuku.alkitab.base.ac.SettingsActivity$CopyShareFragment"
+		android:title="@string/pref_copy_share" />
+
 </preference-headers>

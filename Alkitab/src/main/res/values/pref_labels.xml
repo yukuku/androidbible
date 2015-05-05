@@ -6,13 +6,16 @@
     <string name="pref_warna_nomor_ayat">Verse numbers</string>
     <string name="pref_redTextColor_title">Words of Jesus</string>
     <string name="pref_penggunaan">Usage</string>
+    <string name="pref_copy_share">Copying and sharing</string>
     <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">List books in alphabetical order (a-z) instead of the original</string>
     <string name="pref_kitab_menurut_abjad">Sort books alphabetically</string>
     <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Device screen will not turn off when reading the Bible</string>
     <string name="pref_biarkan_layar_menyala">Keep screen on</string>
     <string name="pref_penampilan_layar">Display</string>
     <string name="pref_volumeButtonNavigation_title">Volume button navigation</string>
-    <string name="pref_copyWithVerseNumbers_title">Include verse numbers</string>
-    <string name="pref_copyWithVerseNumbers_summary">Put verse numbers on every verse when copying/sharing</string>
+    <string name="pref_copyWithVerseNumbers_title">Verse numbers</string>
+    <string name="pref_copyWithVerseNumbers_summary">Begin each verse with its number</string>
+    <string name="pref_copyWithVersionName_title">Version abbreviations</string>
+    <string name="pref_copyWithVersionName_summary">Mention the Bible version initials</string>
     <string name="pref_showHiddenVersion_title">Enable possibly restricted versions</string>
 </resources>

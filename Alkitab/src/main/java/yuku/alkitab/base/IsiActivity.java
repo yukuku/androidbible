@@ -970,10 +970,12 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		final StringBuilder res = new StringBuilder();
 		res.append(reference);
 
-		final Version version = isSplitVersion ? activeSplitVersion : S.activeVersion;
-		final String versionShortName = version.getShortName();
-		if (versionShortName != null) {
-			res.append(" (").append(versionShortName).append(")");
+		if (Preferences.getBoolean(getString(R.string.pref_copyWithVersionName_key), getResources().getBoolean(R.bool.pref_copyWithVersionName_default))) {
+			final Version version = isSplitVersion ? activeSplitVersion : S.activeVersion;
+			final String versionShortName = version.getShortName();
+			if (versionShortName != null) {
+				res.append(" (").append(versionShortName).append(")");
+			}
 		}
 
 		if (Preferences.getBoolean(getString(R.string.pref_copyWithVerseNumbers_key), false) && selectedVerses_1.size() > 1) {

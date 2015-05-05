@@ -5,11 +5,6 @@
 		android:key="@string/pref_alphabeticBookSort_key"
 		android:summary="@string/pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya"
 		android:title="@string/pref_kitab_menurut_abjad" />
-	<CheckBoxPreference
-		android:defaultValue="false"
-		android:key="@string/pref_copyWithVerseNumbers_key"
-		android:summary="@string/pref_copyWithVerseNumbers_summary"
-		android:title="@string/pref_copyWithVerseNumbers_title" />
 
 	<com.afollestad.materialdialogs.prefs.MaterialListPreference
 		android:defaultValue="@string/pref_volumeButtonNavigation_default"
