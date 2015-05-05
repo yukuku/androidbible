@@ -1,5 +1,6 @@
 package yuku.alkitab.base.ac;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -53,7 +54,9 @@ public class HelpActivity extends BaseActivity {
 			.putExtra(EXTRA_announcementIds, announcementIds);
 	}
 
-	@Override protected void onCreate(Bundle savedInstanceState) {
+	@SuppressLint("SetJavaScriptEnabled")
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreateWithNonToolbarUpButton(savedInstanceState);
 		setContentView(R.layout.activity_help);
 
@@ -67,7 +70,7 @@ public class HelpActivity extends BaseActivity {
 		//noinspection deprecation
 		webSettings.setSavePassword(false);
 		webSettings.setSaveFormData(false);
-		webSettings.setJavaScriptEnabled(false);
+		webSettings.setJavaScriptEnabled(true);
 
 		bOk.setOnClickListener(bOk_click);
 		bCancel.setOnClickListener(bCancel_click);
