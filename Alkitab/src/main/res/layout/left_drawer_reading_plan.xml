@@ -5,9 +5,9 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="240dp"
-    android:background="#263238"
-    android:elevation="4dp"
 	android:layout_height="match_parent"
+	android:background="#263238"
+	android:elevation="4dp"
 	android:fitsSystemWindows="true"
 	tools:ignore="Overdraw">
 
@@ -25,17 +25,15 @@
 		<ScrollView
 			android:id="@+id/scrollDescription"
 			android:layout_width="match_parent"
-			android:layout_height="128dp"
-			android:clipToPadding="false"
-			android:padding="8dp">
+			android:layout_height="128dp">
 
 			<TextView
 				android:id="@+id/tDescription"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:text="*Info Bla bla bla, bla bla, bla bla, bla bla, bla bla, blablabla, blablablabla."
+				android:padding="8dp"
 				android:textAppearance="?android:textAppearanceSmall"
-				tools:ignore="HardcodedText" />
+				tools:text="*Info Bla bla bla, bla bla, bla bla, bla bla, bla bla, blablabla, blablablabla." />
 
 		</ScrollView>
 
