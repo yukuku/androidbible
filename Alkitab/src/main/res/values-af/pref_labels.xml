@@ -14,7 +14,5 @@
   <string name="pref_biarkan_layar_menyala">Hou skerm aan</string>
   <string name="pref_penampilan_layar">Vertoon</string>
   <string name="pref_volumeButtonNavigation_title">Volume knoppie navigasie</string>
-  <string name="pref_copyWithVerseNumbers_title">Sluit vers nommers in</string>
-  <string name="pref_copyWithVerseNumbers_summary">Vertoon vers nommers by elke vers indien gekopieër/gedeel</string>
   <string name="pref_showHiddenVersion_title">Aktiveer moontlik beperkte/geslote weergawes</string>
 </resources>

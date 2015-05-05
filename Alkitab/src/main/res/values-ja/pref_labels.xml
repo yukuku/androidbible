@@ -14,6 +14,4 @@
   <string name="pref_biarkan_layar_menyala">スクリーンをOFFしない</string>
   <string name="pref_penampilan_layar">表示</string>
   <string name="pref_volumeButtonNavigation_title">ボリュームボタン操作</string>
-  <string name="pref_copyWithVerseNumbers_title">節番号を追加する</string>
-  <string name="pref_copyWithVerseNumbers_summary">節をコピー/共有する時に、それぞれの節に節番号を付ける</string>
 </resources>

@@ -12,6 +12,4 @@
   <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Obrazovka se během čtení nebude vypínat</string>
   <string name="pref_biarkan_layar_menyala">Ponechat obrazovku zapnutou</string>
   <string name="pref_penampilan_layar">Displej</string>
-  <string name="pref_copyWithVerseNumbers_title">Vložit čísla veršů</string>
-  <string name="pref_copyWithVerseNumbers_summary">Při kopírování/sdílení vloží ke každému verši číslo</string>
 </resources>
