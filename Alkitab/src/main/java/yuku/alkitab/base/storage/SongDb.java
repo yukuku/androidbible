@@ -1,25 +1,32 @@
 package yuku.alkitab.base.storage;
 
+import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
-import android.util.TimingLogger;
+import android.support.annotation.Nullable;
+import yuku.alkitab.base.util.SongBookUtil;
 import yuku.alkitab.base.util.SongFilter;
 import yuku.alkitab.base.util.SongFilter.CompiledFilter;
+import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.model.SongInfo;
 import yuku.kpri.model.Song;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static yuku.alkitab.base.util.Literals.Array;
 import static yuku.alkitab.base.util.Literals.ToStringArray;
 
-public class SongDb extends yuku.afw.storage.InternalDb {
+public class SongDb {
 	public static final String TAG = SongDb.class.getSimpleName();
 
+	private SongDbHelper helper;
+
 	public SongDb(SongDbHelper helper) {
-		super(helper);
+		this.helper = helper;
 	}
 	
 	private static byte[] marshallSong(Song song, int dataFormatVersion) {
@@ -43,7 +50,6 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 	 * Store to db songs in a book. Before the songs are stored, all songs of the specified book are deleted.
 	 */
 	public void storeSongs(String bookName, List<Song> songs, int dataFormatVersion) {
-		TimingLogger tl = new TimingLogger(TAG, "storeSongs");
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
 		try {
@@ -52,12 +58,11 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 				Table.SongInfo.bookName + "=? and " + Table.SongInfo.dataFormatVersion + "=?",
 				ToStringArray(bookName, dataFormatVersion)
 			);
-			tl.addSplit("finished deleting existings (if any)");
-			
+
 			int ordering = 1; // ordering of the songs for display
 			
 			// insert new ones
-			InsertHelper ih = new InsertHelper(db, Table.SongInfo.tableName());
+			@SuppressWarnings("deprecation") final InsertHelper ih = new InsertHelper(db, Table.SongInfo.tableName());
 			
 			int col_bookName = ih.getColumnIndex(Table.SongInfo.bookName.name());
 			int col_code = ih.getColumnIndex(Table.SongInfo.code.name());
@@ -66,9 +71,8 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 			int col_ordering = ih.getColumnIndex(Table.SongInfo.ordering.name());
 			int col_dataFormatVersion = ih.getColumnIndex(Table.SongInfo.dataFormatVersion.name());
 			int col_data = ih.getColumnIndex(Table.SongInfo.data.name());
-			
-			tl.addSplit("The real insertion of " + songs.size());
-			
+			int col_updateTime = ih.getColumnIndex(Table.SongInfo.updateTime.name());
+
 			for (Song song: songs) {
 				ih.prepareForInsert();
 				ih.bind(col_bookName, bookName);
@@ -78,15 +82,13 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 				ih.bind(col_ordering, ordering++);
 				ih.bind(col_dataFormatVersion, dataFormatVersion);
 				ih.bind(col_data, marshallSong(song, dataFormatVersion));
+				ih.bind(col_updateTime, Sqlitil.nowDateTime());
 				ih.execute();
 			}
-			
-			tl.addSplit("Real insertion finished");
 			
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
-			tl.dumpToLog();
 		}
 	}
 	
@@ -98,11 +100,11 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 		Table.SongInfo.dataFormatVersion.name(), // 1
 		};
 		
-		Cursor c = db.query(Table.SongInfo.tableName(), 
-		columns, 
-		Table.SongInfo.bookName + "=? and " + Table.SongInfo.code + "=?",  //$NON-NLS-1$ //$NON-NLS-2$
-		new String[] {bookName, code}, 
-		null, null, null);
+		Cursor c = db.query(Table.SongInfo.tableName(),
+			columns,
+			Table.SongInfo.bookName + "=? and " + Table.SongInfo.code + "=?",  //$NON-NLS-1$ //$NON-NLS-2$
+			new String[]{bookName, code},
+			null, null, null);
 		
 		try {
 			if (c.moveToNext()) {
@@ -121,8 +123,8 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		
 		Cursor c = db.rawQuery("select count(*) from " + Table.SongInfo.tableName() + " where "  //$NON-NLS-1$ //$NON-NLS-2$
-		+ Table.SongInfo.bookName + "=? and " + Table.SongInfo.code + "=?",  //$NON-NLS-1$ //$NON-NLS-2$ 
-		new String[] {bookName, code}); 
+				+ Table.SongInfo.bookName + "=? and " + Table.SongInfo.code + "=?",  //$NON-NLS-1$ //$NON-NLS-2$
+			new String[]{bookName, code});
 
 		try {
 			if (c.moveToNext()) {
@@ -143,11 +145,11 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 		Table.SongInfo.dataFormatVersion.name(), // 1
 		};
 		
-		Cursor c = db.query(Table.SongInfo.tableName(), 
-		columns, 
-		Table.SongInfo.bookName + "=?",  //$NON-NLS-1$ 
-		new String[] {bookName}, 
-		null, null, Table.SongInfo.ordering + " asc", "1"); //$NON-NLS-1$ //$NON-NLS-2$
+		Cursor c = db.query(Table.SongInfo.tableName(),
+			columns,
+			Table.SongInfo.bookName + "=?",  //$NON-NLS-1$
+			new String[]{bookName},
+			null, null, Table.SongInfo.ordering + " asc", "1"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			if (c.moveToNext()) {
@@ -250,5 +252,91 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 		int count = db.delete(Table.SongInfo.tableName(), "1", null); //$NON-NLS-1$
 		db.execSQL("vacuum"); //$NON-NLS-1$
 		return count;
+	}
+
+	@Nullable
+	public SongBookUtil.SongBookInfo getSongBookInfo(final String name) {
+		final SQLiteDatabase db = helper.getReadableDatabase();
+		return getSongBookInfo(db, name);
+	}
+
+	/**
+	 * For migration
+	 */
+	public static SongBookUtil.SongBookInfo getSongBookInfo(final SQLiteDatabase db, final String name) {
+		final Cursor c = db.query(Table.SongBookInfo.tableName(), null, Table.SongBookInfo.name + "=?", Array(name), null, null, null);
+		try {
+			if (c.moveToNext()) {
+				final SongBookUtil.SongBookInfo res = new SongBookUtil.SongBookInfo();
+				res.name = name;
+				res.title = c.getString(c.getColumnIndexOrThrow(Table.SongBookInfo.title.name()));
+				res.copyright = c.getString(c.getColumnIndexOrThrow(Table.SongBookInfo.copyright.name()));
+				return res;
+			}
+			return null;
+		} finally {
+			c.close();
+		}
+	}
+
+	public List<SongBookUtil.SongBookInfo> listSongBookInfos() {
+		final SQLiteDatabase db = helper.getReadableDatabase();
+		final Cursor c = db.query(Table.SongBookInfo.tableName(), null, null, null, null, null, Table.SongBookInfo.name + " asc");
+		try {
+			final int col_name = c.getColumnIndexOrThrow(Table.SongBookInfo.name.name());
+			final int col_title = c.getColumnIndexOrThrow(Table.SongBookInfo.title.name());
+			final int col_copyright = c.getColumnIndexOrThrow(Table.SongBookInfo.copyright.name());
+
+			final List<SongBookUtil.SongBookInfo> res = new ArrayList<>();
+			while (c.moveToNext()) {
+				final SongBookUtil.SongBookInfo info = new SongBookUtil.SongBookInfo();
+				info.name = c.getString(col_name);
+				info.title = c.getString(col_title);
+				info.copyright = c.getString(col_copyright);
+				res.add(info);
+			}
+
+			return res;
+		} finally {
+			c.close();
+		}
+	}
+
+	/**
+	 * Insert a songbook info row. An existing songbook with the same name, if exists, will be deleted.
+	 */
+	public void insertSongBookInfo(final SongBookUtil.SongBookInfo info) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+		insertSongBookInfo(db, info);
+	}
+
+	/**
+	 * For migration
+	 */
+	static void insertSongBookInfo(final SQLiteDatabase db, final SongBookUtil.SongBookInfo info) {
+		db.beginTransaction();
+		try {
+			db.delete(Table.SongBookInfo.tableName(), Table.SongBookInfo.name + "=?", Array(info.name));
+
+			final ContentValues cv = new ContentValues();
+			cv.put(Table.SongBookInfo.name.name(), info.name);
+			cv.put(Table.SongBookInfo.title.name(), info.title);
+			cv.put(Table.SongBookInfo.copyright.name(), info.copyright);
+			db.insert(Table.SongBookInfo.tableName(), null, cv);
+
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+	}
+
+	public int getDataFormatVersionForSongs(final String bookName) {
+		final SQLiteDatabase db = helper.getReadableDatabase();
+		return (int) DatabaseUtils.longForQuery(db, "select " + Table.SongInfo.dataFormatVersion + " from " + Table.SongInfo.tableName() + " where " + Table.SongInfo.bookName + "=? limit 1", Array(bookName));
+	}
+
+	public int getSongUpdateTime(final String bookName, final String code) {
+		final SQLiteDatabase db = helper.getReadableDatabase();
+		return (int) DatabaseUtils.longForQuery(db, "select " + Table.SongInfo.updateTime + " from " + Table.SongInfo.tableName() + " where " + Table.SongInfo.bookName + "=? and " + Table.SongInfo.code + "=?", Array(bookName, code));
 	}
 }

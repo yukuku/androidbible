@@ -17,8 +17,7 @@
 		android:paddingRight="16dp"
 		android:text="@string/patch_text_menu_reference"
 		android:textAllCaps="true"
-		android:textSize="14sp"
-		android:textStyle="bold" />
+		android:textSize="14sp" />
 
 	<Button
 		android:id="@+id/bSend"
@@ -29,7 +28,6 @@
 		android:paddingRight="16dp"
 		android:text="@string/patch_text_menu_send"
 		android:textAllCaps="true"
-		android:textSize="14sp"
-		android:textStyle="bold" />
+		android:textSize="14sp" />
 
 </LinearLayout>

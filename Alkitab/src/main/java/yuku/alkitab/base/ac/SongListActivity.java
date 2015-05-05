@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
 import android.content.Intent;
@@ -20,7 +19,6 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
@@ -153,7 +151,7 @@ public class SongListActivity extends BaseActivity {
 		lsSong.setAdapter(adapter = new SongAdapter());
 		lsSong.setOnItemClickListener(lsSong_itemClick);
 		
-		popupChangeBook = SongBookUtil.getSongBookPopupMenu(this, true, searchView);
+		popupChangeBook = SongBookUtil.getSongBookPopupMenu(this, true, false, searchView);
 		popupChangeBook.setOnMenuItemClickListener(SongBookUtil.getSongBookOnMenuItemClickListener(songBookSelected));
 		
 		bChangeBook.setOnClickListener(v -> popupChangeBook.show());
@@ -213,36 +211,20 @@ public class SongListActivity extends BaseActivity {
 		startSearch();
 	}
 
-	SongBookUtil.OnSongBookSelectedListener songBookSelected = new SongBookUtil.OnSongBookSelectedListener() {
-		@Override public void onSongBookSelected(boolean all, SongBookUtil.SongBookInfo songBookInfo) {
-			if (all) {
-				bChangeBook.setText(R.string.sn_bookselector_all);
-				startSearchSettingBookName(null);
-			} else if (songBookInfo != null) {
-				if (S.getSongDb().getFirstSongFromBook(songBookInfo.bookName) == null) {
-					SongBookUtil.downloadSongBook(SongListActivity.this, songBookInfo, new SongBookUtil.OnDownloadSongBookListener() {
-						@Override public void onFailedOrCancelled(SongBookUtil.SongBookInfo songBookInfo, Exception e) {
-							if (e != null) {
-								new AlertDialogWrapper.Builder(SongListActivity.this)
-								.setMessage(e.getClass().getSimpleName() + ' ' + e.getMessage())
-								.setPositiveButton(R.string.ok, null)
-								.show();
-							}
-						}
-						
-						@Override public void onDownloadedAndInserted(SongBookUtil.SongBookInfo songBookInfo) {
-							bChangeBook.setText(songBookInfo.bookName);
-							startSearchSettingBookName(songBookInfo.bookName);
-						}
-					});
-				} else { // already have, just display
-					bChangeBook.setText(songBookInfo.bookName);
-					startSearchSettingBookName(songBookInfo.bookName);
-				}
-			}
+	final SongBookUtil.OnSongBookSelectedListener songBookSelected = new SongBookUtil.DefaultOnSongBookSelectedListener() {
+		@Override
+		public void onAllSelected() {
+			bChangeBook.setText(R.string.sn_bookselector_all);
+			startSearchSettingBookName(null);
+		}
+
+		@Override
+		public void onSongBookSelected(final String name) {
+			bChangeBook.setText(name);
+			startSearchSettingBookName(name);
 		}
 	};
-	
+
 	private AdapterView.OnItemClickListener lsSong_itemClick = new AdapterView.OnItemClickListener() {
 		@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 			SongInfo songInfo = adapter.getItem(position);
