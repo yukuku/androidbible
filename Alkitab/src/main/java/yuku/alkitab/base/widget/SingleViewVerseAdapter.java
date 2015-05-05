@@ -69,7 +69,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			final int highlightColor = (highlightColorMap_ != null && highlightColorMap_[id] != -1) ? U.alphaMixHighlight(highlightColorMap_[id]) : -1;
 
 			final VerseTextView lText = res.lText;
-			VerseRenderer.render(lText, res.lVerseNumber, ari, text, verseNumberText, highlightColor, checked, dontPutSpacingBefore, inlineLinkSpanFactory_, owner_);
+			final int startVerseTextPos = VerseRenderer.render(lText, res.lVerseNumber, ari, text, verseNumberText, highlightColor, checked, dontPutSpacingBefore, inlineLinkSpanFactory_, owner_);
 
 			Appearances.applyTextAppearance(lText);
 			if (checked) {
@@ -98,7 +98,9 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 
 				final CharSequence renderedText = lText.getText();
 				final SpannableStringBuilder verseText = renderedText instanceof SpannableStringBuilder ? (SpannableStringBuilder) renderedText : new SpannableStringBuilder(renderedText);
-				final String analyzeString = verseText.toString();
+
+				// we have to exclude the verse numbers from analyze text
+				final String analyzeString = verseText.toString().substring(startVerseTextPos);
 
 				final Uri uri = Uri.parse("content://org.sabda.kamus.provider/analyze").buildUpon().appendQueryParameter("text", analyzeString).build();
 				final Cursor c = cr.query(uri, null, null, null, null);
@@ -113,7 +115,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 							final int len = c.getInt(col_len);
 							final String key = c.getString(col_key);
 
-							verseText.setSpan(new CallbackSpan<>(new DictionaryLinkInfo(analyzeString.substring(offset, offset + len), key), dictionaryListener_), offset, offset + len, 0);
+							verseText.setSpan(new CallbackSpan<>(new DictionaryLinkInfo(analyzeString.substring(offset, offset + len), key), dictionaryListener_), startVerseTextPos + offset, startVerseTextPos + offset + len, 0);
 						}
 					} finally {
 						c.close();
