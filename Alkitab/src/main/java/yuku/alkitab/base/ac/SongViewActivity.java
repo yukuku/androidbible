@@ -37,6 +37,7 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.storage.SongDb;
 import yuku.alkitab.base.util.AlphanumComparator;
 import yuku.alkitab.base.util.FontManager;
 import yuku.alkitab.base.util.OsisBookNames;
@@ -444,7 +445,8 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			if (bookName == null || code == null) {
 				displaySong(null, null, true);
 			} else {
-				displaySong(bookName, S.getSongDb().getSong(bookName, code), true);
+				final SongDb db = S.getSongDb();
+				displaySong(bookName, db.getSong(bookName, code), true);
 			}
 		}
 

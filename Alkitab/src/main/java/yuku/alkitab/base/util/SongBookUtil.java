@@ -2,6 +2,7 @@ package yuku.alkitab.base.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Html;
@@ -15,6 +16,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.okhttp.Call;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.storage.SongDb;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.OptionalGzipInputStream;
 import yuku.kpri.model.Song;
@@ -63,40 +65,55 @@ public class SongBookUtil {
 		return dataFormatVersion == 3;
 	}
 
+	/**
+	 * For migration
+	 */
+	@Nullable
+	public static SongBookInfo getSongBookInfo(@NonNull SQLiteDatabase db, @NonNull final String bookName) {
+		final SongBookInfo info = SongDb.getSongBookInfo(db, bookName);
+
+		return fallbackSongBookInfo(bookName, info);
+	}
+
 	@Nullable
 	public static SongBookInfo getSongBookInfo(@NonNull final String bookName) {
-		final SongBookInfo res = S.getSongDb().getSongBookInfo(bookName);
+		final SongBookInfo info = S.getSongDb().getSongBookInfo(bookName);
 
-		if (res == null) {
-			// downloaded from pre-4.1
-			final String title;
-			switch (bookName) {
-				case "BE": title = "Buku Ende"; break;
-				case "KJ": title = "Kidung Jemaat"; break;
-				case "KPKA": title = "Kidung Pasamuan Kristen Anyar"; break;
-				case "KPKL": title = "Kidung Pasamuan Kristen Lawas"; break;
-				case "KPPK": title = "Kidung Puji-Pujian Kristen"; break;
-				case "KPRI": title = "Kidung Persekutuan Reformed Injili"; break;
-				case "NKB": title = "Nyanyikanlah Kidung Baru"; break;
-				case "NKI": title = "Nyanyian Kemenangan Iman"; break;
-				case "NP": title = "Nyanyian Pujian"; break;
-				case "NR": title = "Nafiri Rohani"; break;
-				case "PKJ": title = "Pelengkap Kidung Jemaat"; break;
-				case "PPK": title = "Puji-pujian Kristen"; break;
-				default: title = null;
-			}
-			if (title == null) {
-				return null;
-			} else {
-				final SongBookInfo fallback = new SongBookInfo();
-				fallback.name = bookName;
-				fallback.title = title;
-				fallback.copyright = null;
-				return fallback;
-			}
+		return fallbackSongBookInfo(bookName, info);
+	}
+
+	@Nullable
+	static SongBookInfo fallbackSongBookInfo(final @NonNull String bookName, final SongBookInfo info) {
+		if (info != null) {
+			return info;
 		}
-		
-		return res;
+
+		final String title;
+		switch (bookName) {
+			case "BE": title = "Buku Ende"; break;
+			case "KJ": title = "Kidung Jemaat"; break;
+			case "KPKA": title = "Kidung Pasamuan Kristen Anyar"; break;
+			case "KPKL": title = "Kidung Pasamuan Kristen Lawas"; break;
+			case "KPPK": title = "Kidung Puji-Pujian Kristen"; break;
+			case "KPRI": title = "Kidung Persekutuan Reformed Injili"; break;
+			case "NKB": title = "Nyanyikanlah Kidung Baru"; break;
+			case "NKI": title = "Nyanyian Kemenangan Iman"; break;
+			case "NP": title = "Nyanyian Pujian"; break;
+			case "NR": title = "Nafiri Rohani"; break;
+			case "PKJ": title = "Pelengkap Kidung Jemaat"; break;
+			case "PPK": title = "Puji-pujian Kristen"; break;
+			default: title = null;
+		}
+
+		if (title == null) {
+			return null;
+		} else {
+			final SongBookInfo fallback = new SongBookInfo();
+			fallback.name = bookName;
+			fallback.title = title;
+			fallback.copyright = null;
+			return fallback;
+		}
 	}
 
 	public static PopupMenu getSongBookPopupMenu(Context context, boolean withAll, boolean withMore, View anchor) {

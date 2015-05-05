@@ -6,6 +6,7 @@ import android.database.DatabaseUtils;
 import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
+import android.support.annotation.Nullable;
 import yuku.alkitab.base.util.SongBookUtil;
 import yuku.alkitab.base.util.SongFilter;
 import yuku.alkitab.base.util.SongFilter.CompiledFilter;
@@ -250,8 +251,16 @@ public class SongDb {
 		return count;
 	}
 
+	@Nullable
 	public SongBookUtil.SongBookInfo getSongBookInfo(final String name) {
 		final SQLiteDatabase db = helper.getReadableDatabase();
+		return getSongBookInfo(db, name);
+	}
+
+	/**
+	 * For migration
+	 */
+	public static SongBookUtil.SongBookInfo getSongBookInfo(final SQLiteDatabase db, final String name) {
 		final Cursor c = db.query(Table.SongBookInfo.tableName(), null, Table.SongBookInfo.name + "=?", Array(name), null, null, null);
 		try {
 			if (c.moveToNext()) {

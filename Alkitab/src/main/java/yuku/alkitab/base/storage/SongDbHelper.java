@@ -22,8 +22,8 @@ public class SongDbHelper extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
 		if (oldVersion < 14000202 /* 4.1-beta2 */) {
-			insertSongBookInfosFromSongInfos(db);
 			setupTableSongBookInfo(db);
+			insertSongBookInfosFromSongInfos(db);
 		}
 	}
 
@@ -36,7 +36,7 @@ public class SongDbHelper extends SQLiteOpenHelper {
 		try {
 			while (c.moveToNext()) {
 				final String bookName = c.getString(0);
-				final SongBookUtil.SongBookInfo info = SongBookUtil.getSongBookInfo(bookName);
+				final SongBookUtil.SongBookInfo info = SongBookUtil.getSongBookInfo(db, bookName);
 				SongDb.insertSongBookInfo(db, info);
 			}
 		} finally {
