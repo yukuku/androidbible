@@ -72,7 +72,6 @@ public class App extends yuku.afw.App {
 			final GoogleAnalytics analytics = GoogleAnalytics.getInstance(context);
 			final Tracker t = analytics.newTracker(context.getString(R.string.ga_trackingId));
 			t.enableAutoActivityTracking(true);
-			t.enableExceptionReporting(true);
 			t.enableAdvertisingIdCollection(true);
 			APP_TRACKER = t;
 			analytics.enableAutoActivityReports(this);
