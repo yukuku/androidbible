@@ -3,10 +3,12 @@ package yuku.alkitab.base.ac;
 import android.app.DownloadManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -14,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
@@ -1020,6 +1023,37 @@ public class VersionsActivity extends BaseActivity {
 		}
 
 		void startDownload(final MVersionPreset mv) {
+			{
+				int enabled = -1;
+				try {
+					enabled = App.context.getPackageManager().getApplicationEnabledSetting("com.android.providers.downloads");
+				} catch (Exception e) {
+					Log.d(TAG, "getting app enabled setting", e);
+				}
+
+				if (enabled == -1
+					|| enabled == PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+					|| enabled == PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER) {
+					new MaterialDialog.Builder(getActivity())
+						.content(R.string.ed_download_manager_not_enabled_prompt)
+						.positiveText(R.string.ok)
+						.negativeText(R.string.cancel)
+						.callback(new MaterialDialog.ButtonCallback() {
+							@Override
+							public void onPositive(final MaterialDialog dialog) {
+								try {
+									startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:com.android.providers.downloads")));
+								} catch (ActivityNotFoundException e) {
+									Log.e(TAG, "opening apps setting", e);
+								}
+							}
+						})
+						.show();
+
+					return;
+				}
+			}
+
 			final String downloadKey = "version:preset_name:" + mv.preset_name;
 
 			final int status = DownloadMapper.instance.getStatus(downloadKey);
