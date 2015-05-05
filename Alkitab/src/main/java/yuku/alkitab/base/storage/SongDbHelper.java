@@ -1,8 +1,10 @@
 package yuku.alkitab.base.storage;
 
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import yuku.afw.App;
+import yuku.alkitab.base.util.SongBookUtil;
 
 public class SongDbHelper extends SQLiteOpenHelper {
 	public static final String TAG = SongDbHelper.class.getSimpleName();
@@ -20,7 +22,25 @@ public class SongDbHelper extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
 		if (oldVersion < 14000202 /* 4.1-beta2 */) {
+			insertSongBookInfosFromSongInfos(db);
 			setupTableSongBookInfo(db);
+		}
+	}
+
+	/**
+	 * Pre-4.1, song books are hardcoded. So for 4.1 onwards, we need to populate SongBookInfo
+	 * table with the songs users already have.
+	 */
+	private void insertSongBookInfosFromSongInfos(final SQLiteDatabase db) {
+		final Cursor c = db.rawQuery("select distinct " + Table.SongInfo.bookName + " from " + Table.SongInfo.tableName(), null);
+		try {
+			while (c.moveToNext()) {
+				final String bookName = c.getString(0);
+				final SongBookUtil.SongBookInfo info = SongBookUtil.getSongBookInfo(bookName);
+				SongDb.insertSongBookInfo(db, info);
+			}
+		} finally {
+			c.close();
 		}
 	}
 

@@ -295,6 +295,13 @@ public class SongDb {
 	 */
 	public void insertSongBookInfo(final SongBookUtil.SongBookInfo info) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
+		insertSongBookInfo(db, info);
+	}
+
+	/**
+	 * For migration
+	 */
+	static void insertSongBookInfo(final SQLiteDatabase db, final SongBookUtil.SongBookInfo info) {
 		db.beginTransaction();
 		try {
 			db.delete(Table.SongBookInfo.tableName(), Table.SongBookInfo.name + "=?", Array(info.name));
