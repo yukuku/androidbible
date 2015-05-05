@@ -962,9 +962,19 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	}
 
+	/**
+	 * Construct text for copying or sharing (in plain text).
+	 * @param isSplitVersion whether take the verse text from the main or from the split version.
+	 */
 	String prepareTextForCopyShare(IntArrayList selectedVerses_1, CharSequence reference, boolean isSplitVersion) {
-		StringBuilder res = new StringBuilder();
+		final StringBuilder res = new StringBuilder();
 		res.append(reference);
+
+		final Version version = isSplitVersion ? activeSplitVersion : S.activeVersion;
+		final String versionShortName = version.getShortName();
+		if (versionShortName != null) {
+			res.append(" (").append(versionShortName).append(")");
+		}
 
 		if (Preferences.getBoolean(getString(R.string.pref_copyWithVerseNumbers_key), false) && selectedVerses_1.size() > 1) {
 			res.append('\n');
@@ -974,25 +984,19 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				int verse_1 = selectedVerses_1.get(i);
 				res.append(verse_1);
 				res.append(' ');
-				if (isSplitVersion) {
-					res.append(U.removeSpecialCodes(lsSplit1.getVerse(verse_1)));
-				} else {
-					res.append(U.removeSpecialCodes(lsSplit0.getVerse(verse_1)));
-				}
+				final String verseText = isSplitVersion ? lsSplit1.getVerse(verse_1) : lsSplit0.getVerse(verse_1);
+				res.append(U.removeSpecialCodes(verseText));
 				res.append('\n');
 			}
 		} else {
-			res.append("  "); //$NON-NLS-1$
+			res.append("  ");
 
 			// append each selected verse without verse number prepended
 			for (int i = 0; i < selectedVerses_1.size(); i++) {
 				int verse_1 = selectedVerses_1.get(i);
 				if (i != 0) res.append('\n');
-				if (isSplitVersion) {
-					res.append(U.removeSpecialCodes(lsSplit1.getVerse(verse_1)));
-				} else {
-					res.append(U.removeSpecialCodes(lsSplit0.getVerse(verse_1)));
-				}
+				final String verseText = isSplitVersion ? lsSplit1.getVerse(verse_1) : lsSplit0.getVerse(verse_1);
+				res.append(U.removeSpecialCodes(verseText));
 			}
 		}
 		return res.toString();
