@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -74,6 +75,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	private static final String BIBLE_PROTOCOL = "bible";
 	private static final int REQCODE_songList = 1;
 	private static final int REQCODE_share = 2;
+	private static final int REQCODE_downloadSongBook = 3;
 
 	DrawerLayout drawerLayout;
 	ActionBarDrawerToggle drawerToggle;
@@ -390,7 +392,11 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
 
-		bDownload.setOnClickListener(v -> SongBookUtil.getSongBookDialog(this, SongBookUtil.getSongBookOnDialogClickListener(this::songBookSelected)).show());
+		bDownload.setOnClickListener(v -> openDownloadSongBookPage());
+	}
+
+	void openDownloadSongBookPage() {
+		startActivityForResult(HelpActivity.createIntent("https://alkitab-host.appspot.com/songs/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName())), REQCODE_downloadSongBook);
 	}
 
 	@Override
@@ -592,8 +598,9 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		}
 
 		final String currentSongCode = currentSong.code;
+		final int dataFormatVersion = S.getSongDb().getDataFormatVersionForSongs(currentBookName);
 
-		SongBookUtil.downloadSongBook(SongViewActivity.this, songBookInfo, new SongBookUtil.OnDownloadSongBookListener() {
+		SongBookUtil.downloadSongBook(SongViewActivity.this, songBookInfo, dataFormatVersion, new SongBookUtil.OnDownloadSongBookListener() {
 			@Override
 			public void onFailedOrCancelled(SongBookUtil.SongBookInfo songBookInfo, Exception e) {
 				if (e != null) {
@@ -606,9 +613,9 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 			@Override
 			public void onDownloadedAndInserted(SongBookUtil.SongBookInfo songBookInfo) {
-				final Song song = S.getSongDb().getSong(songBookInfo.bookName, currentSongCode);
-				cache_codes.remove(songBookInfo.bookName);
-				displaySong(songBookInfo.bookName, song);
+				final Song song = S.getSongDb().getSong(songBookInfo.name, currentSongCode);
+				cache_codes.remove(songBookInfo.name);
+				displaySong(songBookInfo.name, song);
 			}
 		});
 	}
@@ -812,11 +819,11 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		return res;
 	}
 
-	void displaySong(String bookName, Song song) {
+	void displaySong(String bookName, @Nullable Song song) {
 		displaySong(bookName, song, false);
 	}
 
-	void displaySong(String bookName, Song song, boolean onCreate) {
+	void displaySong(String bookName, @Nullable Song song, boolean onCreate) {
 		song_container.setVisibility(song != null? View.VISIBLE: View.GONE);
 		no_song_data_container.setVisibility(song != null? View.GONE: View.VISIBLE);
 
@@ -835,7 +842,8 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		// construct rendition of scripture references
 		String scripture_references = renderScriptureReferences(BIBLE_PROTOCOL, song.scriptureReferences);
 		templateCustomVars.putString("scripture_references", scripture_references);
-		templateCustomVars.putString("copyright", SongBookUtil.getCopyright(bookName));
+		final String copyright = SongBookUtil.getCopyright(bookName);
+		templateCustomVars.putString("copyright", copyright != null? copyright: "");
 
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.replace(R.id.song_container, SongFragment.create(song, "templates/song.html", templateCustomVars));
@@ -868,24 +876,94 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		state_tempCode = "";
 	}
 
-	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == REQCODE_songList) {
-			if (resultCode == RESULT_OK) {
-				SongListActivity.Result result = SongListActivity.obtainResult(data);
-				if (result != null) {
-					displaySong(result.bookName, S.getSongDb().getSong(result.bookName, result.code));
-					// store this for next search
-					last_searchState = result.last_searchState;
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+			case REQCODE_songList: {
+				if (resultCode == RESULT_OK) {
+					SongListActivity.Result result = SongListActivity.obtainResult(data);
+					if (result != null) {
+						displaySong(result.bookName, S.getSongDb().getSong(result.bookName, result.code));
+						// store this for next search
+						last_searchState = result.last_searchState;
+					}
 				}
-			}
-		} else if (requestCode == REQCODE_share) {
-			if (resultCode == RESULT_OK) {
-				ShareActivity.Result result = ShareActivity.obtainResult(data);
-				if (result != null && result.chosenIntent != null) {
-					startActivity(result.chosenIntent);
+			} return;
+			case REQCODE_share: {
+				if (resultCode == RESULT_OK) {
+					ShareActivity.Result result = ShareActivity.obtainResult(data);
+					if (result != null && result.chosenIntent != null) {
+						startActivity(result.chosenIntent);
+					}
 				}
-			}
+			} return;
+			case REQCODE_downloadSongBook: {
+				if (resultCode == RESULT_OK) {
+					final Uri uri = data.getData();
+					if (uri != null) {
+						downloadByAlkitabUri(uri);
+					}
+					return;
+				}
+			} return;
 		}
+
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+
+	private void downloadByAlkitabUri(final Uri uri) {
+		if (!"alkitab".equals(uri.getScheme()) || !"/addon/download".equals(uri.getPath()) || !"songbook".equals(uri.getQueryParameter("kind")) || !"ser".equals(uri.getQueryParameter("type")) || uri.getQueryParameter("name") == null) {
+			new MaterialDialog.Builder(this)
+				.content("Invalid uri:\n\n" + uri)
+				.positiveText(R.string.ok)
+				.show();
+			return;
+		}
+
+		final String dataFormatVersion_s = uri.getQueryParameter("dataFormatVersion");
+		final int dataFormatVersion;
+		try {
+			dataFormatVersion = Integer.parseInt(dataFormatVersion_s);
+		} catch (NumberFormatException|NullPointerException e) {
+			new MaterialDialog.Builder(this)
+				.content("Invalid uri:\n\n" + uri)
+				.positiveText(R.string.ok)
+				.show();
+			return;
+		}
+
+		if (!SongBookUtil.isSupportedDataFormatVersion(dataFormatVersion)) {
+			new MaterialDialog.Builder(this)
+				.content("Unsupported data format version: " + dataFormatVersion)
+				.positiveText(R.string.ok)
+				.show();
+			return;
+		}
+
+		final SongBookUtil.SongBookInfo info = new SongBookUtil.SongBookInfo();
+		info.name = uri.getQueryParameter("name");
+		info.title = uri.getQueryParameter("title");
+		info.copyright = uri.getQueryParameter("copyright");
+
+		SongBookUtil.downloadSongBook(this, info, dataFormatVersion, new SongBookUtil.OnDownloadSongBookListener() {
+			@Override
+			public void onDownloadedAndInserted(final SongBookUtil.SongBookInfo songBookInfo) {
+				final String name = songBookInfo.name;
+				final Song song = S.getSongDb().getFirstSongFromBook(name);
+				displaySong(name, song);
+			}
+
+			@Override
+			public void onFailedOrCancelled(final SongBookUtil.SongBookInfo songBookInfo, final Exception e) {
+				if (e != null) {
+					new AlertDialogWrapper.Builder(SongViewActivity.this)
+						.setMessage(e.getClass().getSimpleName() + ' ' + e.getMessage())
+						.setPositiveButton(R.string.ok, null)
+						.show();
+				}
+			}
+		});
 	}
 
 	static class PatchTextExtraInfoJson {
@@ -1001,36 +1079,23 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	}
 
 	@Override
-	public void songBookSelected(final boolean all, final SongBookUtil.SongBookInfo songBookInfo) {
-		if (all) return; // should not happen
-
-		final Song song = S.getSongDb().getFirstSongFromBook(songBookInfo.bookName);
+	public void songBookSelected(final String name) {
+		final Song song = S.getSongDb().getFirstSongFromBook(name);
 
 		if (song != null) {
-			displaySong(songBookInfo.bookName, song);
-		} else {
-			SongBookUtil.downloadSongBook(SongViewActivity.this, songBookInfo, new SongBookUtil.OnDownloadSongBookListener() {
-				@Override public void onFailedOrCancelled(SongBookUtil.SongBookInfo songBookInfo, Exception e) {
-					if (e != null) {
-						new AlertDialogWrapper.Builder(SongViewActivity.this)
-							.setMessage(e.getClass().getSimpleName() + ' ' + e.getMessage())
-							.setPositiveButton(R.string.ok, null)
-							.show();
-					}
-				}
-
-				@Override public void onDownloadedAndInserted(SongBookUtil.SongBookInfo songBookInfo) {
-					Song song = S.getSongDb().getFirstSongFromBook(songBookInfo.bookName);
-					displaySong(songBookInfo.bookName, song);
-				}
-			});
+			displaySong(name, song);
 		}
 
 		state_tempCode = "";
 	}
 
+	@Override
+	public void moreSelected() {
+		openDownloadSongBookPage();
+	}
+
 	void setCustomProgressBarIndeterminateVisible(final boolean visible) {
-		circular_progress.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+		circular_progress.setVisibility(visible ? View.VISIBLE : View.GONE);
 	}
 }
 

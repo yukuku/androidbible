@@ -216,6 +216,7 @@
     <string name="sn_deep_search_enabled">Lyrics, etc. too</string>
     <string name="sn_songs_activity_title">Songs</string>
     <string name="sn_bookselector_all">ALL</string>
+    <string name="sn_bookselector_more">Download more…</string>
     <string name="sn_bookselector_all_desc">Search all books that are installed.</string>
     <string name="sn_downloading_ellipsis">Downloading…</string>
     <string name="sn_download_song_books">Download song books</string>
