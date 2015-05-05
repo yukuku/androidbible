@@ -474,13 +474,6 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		return leftDrawer;
 	}
 
-	static class ReadingPlanServerEntry {
-		public String name;
-		public String title;
-		public String description;
-		public int day_count;
-	}
-
 	private void downloadReadingPlanList() {
 		startActivityForResult(
 			HelpActivity.createIntent(
