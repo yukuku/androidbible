@@ -127,6 +127,7 @@
   <string name="ed_download_button">Pobierz</string>
   <string name="ed_update_button">Aktualizuj</string>
   <string name="ed_details_update_available">Dostępna aktualizacja</string>
+  <string name="ed_download_manager_not_enabled_prompt">Menadżer pobierania nie jest aktywny lub nie jest dostępny.\n\nAktywuj go, aby pobrać przekłady Biblii.</string>
   <string name="info_terperinci">Szczegóły</string>
   <string name="buang_dari_daftar">Usuń</string>
   <string name="edit_bookmark">Edycja zakładek</string>
@@ -225,6 +226,7 @@
   <string name="sn_update_book_explanation">Aktualizuj śpiewnik ^1 do najnowszej wersji.</string>
   <string name="sn_update_book_confirm_button">Aktualizcja</string>
   <string name="sn_update_book">Aktualizuj śpiewnik</string>
+  <string name="sn_update_book_because_too_old">Przed kontynuowaniem, proszę zaktualizować ^1 do najnowszej wersji. Po aktualizacji, jeżeli to konieczne, prześlij swoje edycje.</string>
   <string name="desc_previous_day">Poprzedni dzień</string>
   <string name="desc_next_day">Następny dzień</string>
   <string name="desc_open_bookmark">Otwórz zakładkę</string>
