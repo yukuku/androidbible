@@ -52,19 +52,19 @@
 
 	<item
 		android:id="@+id/menuGuide"
-		android:icon="@android:drawable/ic_menu_mylocation"
+		android:icon="@drawable/ic_menu_pedia"
 		app:showAsAction="ifRoom"
 		android:title="@string/menuGuide" />
 
 	<item
 		android:id="@+id/menuCommentary"
-		android:icon="@android:drawable/ic_menu_mylocation"
+		android:icon="@drawable/ic_menu_commentary"
 		app:showAsAction="ifRoom"
 		android:title="@string/menuCommentary" />
 
 	<item
 		android:id="@+id/menuDictionary"
-		android:icon="@android:drawable/ic_menu_mylocation"
+		android:icon="@drawable/ic_menu_dictionary"
 		app:showAsAction="ifRoom"
 		android:title="@string/menuDictionary" />
 
