@@ -35,6 +35,10 @@ public class HelpActivity extends BaseActivity {
 	Intent okIntent;
 	long[] announcementIds;
 
+	public static Intent createIntent(String page) {
+		return createIntent(page, false, null, null);
+	}
+
 	public static Intent createIntent(String page, boolean showMessagePanel, String message, Intent okIntent) {
 		Intent res = new Intent(App.context, HelpActivity.class);
 		res.putExtra(EXTRA_page, page);
