@@ -3,7 +3,7 @@ package yuku.alkitab.base.storage;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import yuku.afw.App;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.util.SongBookUtil;
 
 public class SongDbHelper extends SQLiteOpenHelper {
