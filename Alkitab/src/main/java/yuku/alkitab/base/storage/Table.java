@@ -17,11 +17,12 @@ public class Table {
 	public enum SongInfo {
 		bookName(text),
 		code(text),
-		title(text, "collate nocase"), //$NON-NLS-1$
-		title_original(text, "collate nocase"), //$NON-NLS-1$
+		title(text, "collate nocase"),
+		title_original(text, "collate nocase"),
 		ordering(integer),
 		dataFormatVersion(integer), 
 		data(blob),
+		updateTime(integer),
 		;
 		
 		public final Type type;

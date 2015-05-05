@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import yuku.alkitab.base.util.SongBookUtil;
 import yuku.alkitab.base.util.SongFilter;
 import yuku.alkitab.base.util.SongFilter.CompiledFilter;
+import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.model.SongInfo;
 import yuku.kpri.model.Song;
 
@@ -61,7 +62,7 @@ public class SongDb {
 			int ordering = 1; // ordering of the songs for display
 			
 			// insert new ones
-			InsertHelper ih = new InsertHelper(db, Table.SongInfo.tableName());
+			@SuppressWarnings("deprecation") final InsertHelper ih = new InsertHelper(db, Table.SongInfo.tableName());
 			
 			int col_bookName = ih.getColumnIndex(Table.SongInfo.bookName.name());
 			int col_code = ih.getColumnIndex(Table.SongInfo.code.name());
@@ -70,7 +71,8 @@ public class SongDb {
 			int col_ordering = ih.getColumnIndex(Table.SongInfo.ordering.name());
 			int col_dataFormatVersion = ih.getColumnIndex(Table.SongInfo.dataFormatVersion.name());
 			int col_data = ih.getColumnIndex(Table.SongInfo.data.name());
-			
+			int col_updateTime = ih.getColumnIndex(Table.SongInfo.updateTime.name());
+
 			for (Song song: songs) {
 				ih.prepareForInsert();
 				ih.bind(col_bookName, bookName);
@@ -80,6 +82,7 @@ public class SongDb {
 				ih.bind(col_ordering, ordering++);
 				ih.bind(col_dataFormatVersion, dataFormatVersion);
 				ih.bind(col_data, marshallSong(song, dataFormatVersion));
+				ih.bind(col_updateTime, Sqlitil.nowDateTime());
 				ih.execute();
 			}
 			
@@ -330,5 +333,10 @@ public class SongDb {
 	public int getDataFormatVersionForSongs(final String bookName) {
 		final SQLiteDatabase db = helper.getReadableDatabase();
 		return (int) DatabaseUtils.longForQuery(db, "select " + Table.SongInfo.dataFormatVersion + " from " + Table.SongInfo.tableName() + " where " + Table.SongInfo.bookName + "=? limit 1", Array(bookName));
+	}
+
+	public int getSongUpdateTime(final String bookName, final String code) {
+		final SQLiteDatabase db = helper.getReadableDatabase();
+		return (int) DatabaseUtils.longForQuery(db, "select " + Table.SongInfo.updateTime + " from " + Table.SongInfo.tableName() + " where " + Table.SongInfo.bookName + "=? and " + Table.SongInfo.code + "=?", Array(bookName, code));
 	}
 }

@@ -230,6 +230,7 @@
     <string name="sn_update_book_explanation">Update the book ^1 to the latest version?</string>
     <string name="sn_update_book_confirm_button">Update</string>
     <string name="sn_update_book">Update song book</string>
+    <string name="sn_update_book_because_too_old">Please update ^1 to the latest version before continuing. After updating, send your edits if needed.</string>
 
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Previous day</string>

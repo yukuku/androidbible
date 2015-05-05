@@ -22,6 +22,7 @@ public class SongDbHelper extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
 		if (oldVersion < 14000202 /* 4.1-beta2 */) {
+			addColumnSongInfo(db);
 			setupTableSongBookInfo(db);
 			insertSongBookInfosFromSongInfos(db);
 		}
@@ -42,6 +43,10 @@ public class SongDbHelper extends SQLiteOpenHelper {
 		} finally {
 			c.close();
 		}
+	}
+
+	private void addColumnSongInfo(final SQLiteDatabase db) {
+		db.execSQL("alter table " + Table.SongInfo.tableName() + " add column " + Table.SongInfo.updateTime + " " + Table.SongInfo.updateTime.type);
 	}
 
 	private void setupTableSongInfo(final SQLiteDatabase db) {

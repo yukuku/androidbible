@@ -42,6 +42,7 @@ import yuku.alkitab.base.util.AlphanumComparator;
 import yuku.alkitab.base.util.FontManager;
 import yuku.alkitab.base.util.OsisBookNames;
 import yuku.alkitab.base.util.SongBookUtil;
+import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.base.widget.LeftDrawer;
 import yuku.alkitab.base.widget.TwofingerLinearLayout;
@@ -990,15 +991,31 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		if ("patchtext".equals(scheme)) {
 			final Song song = currentSong;
 
-			final PatchTextExtraInfoJson extraInfo = new PatchTextExtraInfoJson();
-			extraInfo.type = "song";
-			extraInfo.bookName = currentBookName;
-			extraInfo.code = song.code;
+			// do not proceed if the song is too old
+			final int updateTime = S.getSongDb().getSongUpdateTime(currentBookName, song.code);
+			if (updateTime == 0 || Sqlitil.nowDateTime() - updateTime > 21 * 86400) {
+				new MaterialDialog.Builder(this)
+					.content(R.string.sn_update_book_because_too_old)
+					.positiveText(R.string.sn_update_book_confirm_button)
+					.negativeText(R.string.cancel)
+					.callback(new MaterialDialog.ButtonCallback() {
+						@Override
+						public void onPositive(final MaterialDialog dialog) {
+							updateSongBook();
+						}
+					})
+					.show();
+			} else {
+				final PatchTextExtraInfoJson extraInfo = new PatchTextExtraInfoJson();
+				extraInfo.type = "song";
+				extraInfo.bookName = currentBookName;
+				extraInfo.code = song.code;
 
-			final String songHeader = song.code + " " + song.title + nonullbr(song.title_original) + nonullbr(song.tune) + nonullbr(song.keySignature) + nonullbr(song.timeSignature) + nonullbr(song.authors_lyric) + nonullbr(song.authors_music);
-			final String songHtml = SongFragment.songToHtml(song, true);
-			final Spanned baseBody = Html.fromHtml(songHeader + "\n\n" + songHtml);
-			startActivity(PatchTextActivity.createIntent(baseBody, App.getDefaultGson().toJson(extraInfo), null));
+				final String songHeader = song.code + " " + song.title + nonullbr(song.title_original) + nonullbr(song.tune) + nonullbr(song.keySignature) + nonullbr(song.timeSignature) + nonullbr(song.authors_lyric) + nonullbr(song.authors_music);
+				final String songHtml = SongFragment.songToHtml(song, true);
+				final Spanned baseBody = Html.fromHtml(songHeader + "\n\n" + songHtml);
+				startActivity(PatchTextActivity.createIntent(baseBody, App.getDefaultGson().toJson(extraInfo), null));
+			}
 			return true;
 		} else if (BIBLE_PROTOCOL.equals(scheme)) {
 			final IntArrayList ariRanges = TargetDecoder.decode("o:" + uri.getSchemeSpecificPart());
