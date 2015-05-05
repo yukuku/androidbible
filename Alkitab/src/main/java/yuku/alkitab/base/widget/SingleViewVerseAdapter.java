@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.util.Appearances;
@@ -85,8 +86,14 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 
 			res.setAri(ari);
 
-			// handle dictionary mode
-			if (dictionaryModeAris != null && dictionaryModeAris.get(ari)) {
+			/*
+			 * Dictionary mode is activated on either of these conditions:
+			 * 1. user manually activate dictionary mode after selecting verses
+			 * 2. automatic lookup is on and this verse is selected (checked)
+ 			 */
+			if ((dictionaryModeAris != null && dictionaryModeAris.get(ari))
+				|| (checked && Preferences.getBoolean(res.getContext().getString(R.string.pref_autoDictionaryAnalyze_key), res.getContext().getResources().getBoolean(R.bool.pref_autoDictionaryAnalyze_default)))
+				) {
 				final ContentResolver cr = res.getContext().getContentResolver();
 
 				final CharSequence renderedText = lText.getText();

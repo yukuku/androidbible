@@ -2041,6 +2041,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			menu.findItem(R.id.menuCommentary).setShowAsActionFlags(showAsAction);
 			menu.findItem(R.id.menuDictionary).setShowAsActionFlags(showAsAction);
 
+			// do not show dictionary item if not needed
+			final boolean autoDictionaryAnalyze = Preferences.getBoolean(getString(R.string.pref_autoDictionaryAnalyze_key), getResources().getBoolean(R.bool.pref_autoDictionaryAnalyze_default));
+			menu.findItem(R.id.menuDictionary).setVisible(!autoDictionaryAnalyze);
+
 			return true;
 		}
 

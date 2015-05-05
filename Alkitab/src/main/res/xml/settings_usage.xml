@@ -16,6 +16,12 @@
 		android:title="@string/pref_volumeButtonNavigation_title" />
 
 	<CheckBoxPreference
+		android:defaultValue="@bool/pref_autoDictionaryAnalyze_default"
+		android:key="@string/pref_autoDictionaryAnalyze_key"
+		android:summary="@string/pref_autoDictionaryAnalyze_summary"
+		android:title="@string/pref_autoDictionaryAnalyze_title" />
+
+	<CheckBoxPreference
 		android:defaultValue="false"
 		android:key="@string/pref_showHiddenVersion_key"
 		android:title="@string/pref_showHiddenVersion_title" />
