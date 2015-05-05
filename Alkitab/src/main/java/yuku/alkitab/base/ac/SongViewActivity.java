@@ -995,7 +995,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			final int updateTime = S.getSongDb().getSongUpdateTime(currentBookName, song.code);
 			if (updateTime == 0 || Sqlitil.nowDateTime() - updateTime > 21 * 86400) {
 				new MaterialDialog.Builder(this)
-					.content(R.string.sn_update_book_because_too_old)
+					.content(TextUtils.expandTemplate(getString(R.string.sn_update_book_because_too_old), currentBookName))
 					.positiveText(R.string.sn_update_book_confirm_button)
 					.negativeText(R.string.cancel)
 					.callback(new MaterialDialog.ButtonCallback() {
