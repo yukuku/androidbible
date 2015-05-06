@@ -117,13 +117,13 @@ public class AboutActivity extends BaseActivity {
 		tAboutTextDesc = V.get(this, R.id.tAboutTextDesc);
 
 		bHelp = V.get(this, R.id.bHelp);
-		bHelp.setOnClickListener(v -> startActivity(HelpActivity.createIntent("help/guide.html", false, null, null)));
+		bHelp.setOnClickListener(v -> startActivity(HelpActivity.createIntent("help/guide.html")));
 
 		bMaterialSources = V.get(this, R.id.bMaterialSources);
-		bMaterialSources.setOnClickListener(v -> startActivity(HelpActivity.createIntent("help/material_sources.html", false, null, null)));
+		bMaterialSources.setOnClickListener(v -> startActivity(HelpActivity.createIntent("help/material_sources.html")));
 
 		bCredits = V.get(this, R.id.bCredits);
-		bCredits.setOnClickListener(v -> startActivity(HelpActivity.createIntent("help/credits.html", false, null, null)));
+		bCredits.setOnClickListener(v -> startActivity(HelpActivity.createIntent("help/credits.html")));
 
 		bFeedback = V.get(this, R.id.bFeedback);
 		bFeedback.setOnClickListener(v -> startActivity(new Intent(App.context, com.example.android.wizardpager.MainActivity.class)));

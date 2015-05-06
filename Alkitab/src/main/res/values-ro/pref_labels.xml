@@ -13,7 +13,5 @@
   <string name="pref_biarkan_layar_menyala">Păstreaza ecranul activ</string>
   <string name="pref_penampilan_layar">Afişare</string>
   <string name="pref_volumeButtonNavigation_title">Navigare cu butonul de volum</string>
-  <string name="pref_copyWithVerseNumbers_title">Include număr verset</string>
-  <string name="pref_copyWithVerseNumbers_summary">Afișează numărul fiecărui verset atunci când se copiază/partajează</string>
   <string name="pref_showHiddenVersion_title">Activați eventuale versiuni cu acces restricționat</string>
 </resources>

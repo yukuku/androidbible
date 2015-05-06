@@ -13,7 +13,5 @@
   <string name="pref_biarkan_layar_menyala">Mantener la pantalla encendida</string>
   <string name="pref_penampilan_layar">Mostrar</string>
   <string name="pref_volumeButtonNavigation_title">Navegación con botones de volumen</string>
-  <string name="pref_copyWithVerseNumbers_title">Incluir números de versículo</string>
-  <string name="pref_copyWithVerseNumbers_summary">Poner los números de versículo en cada versículo cuando copia/comparte</string>
   <string name="pref_showHiddenVersion_title">Habilitar versiones posiblemente restringidas</string>
 </resources>

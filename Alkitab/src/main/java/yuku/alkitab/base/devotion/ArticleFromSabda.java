@@ -3,22 +3,6 @@ package yuku.alkitab.base.devotion;
 import android.support.annotation.NonNull;
 
 public abstract class ArticleFromSabda extends DevotionArticle {
-	// json model class for structure from server
-	protected static class BodyJson {
-		public String tanggal;
-		public String ayat;
-		public String ayat_setahun;
-		public Nats nats;
-		public String judul;
-		public String isi;
-		public String catatan_kaki;
-
-		static class Nats {
-			public String nats_isi;
-			public String nats_ayat;
-		}
-	}
-
 	String body;
 	boolean readyToUse;
 	String date;

@@ -98,6 +98,8 @@
     <string name="cp_writing_translated_file">Writing translated file</string>
     <string name="cp_reading_book_info">Reading book info: %s</string>
     <string name="cp_writing_text_of_book_chapters">Writing text of book %1$s (%2$s chapters)</string>
+
+    <!-- Versions -->
     <string name="ed_type_key">Type</string>
     <string name="ed_type_internal">Built-in</string>
     <string name="ed_type_preset">Downloadable</string>
@@ -126,6 +128,8 @@
 	<string name="ed_download_button">Download</string>
 	<string name="ed_update_button">Update</string>
 	<string name="ed_details_update_available">Update available</string>
+    <string name="ed_download_manager_not_enabled_prompt">The Download Manager app is not enabled or not available.\n\nEnable it to download Bible versions.</string>
+
     <string name="info_terperinci">Details</string>
     <string name="buang_dari_daftar">Remove</string>
     <string name="edit_bookmark">Edit bookmark</string>
@@ -216,6 +220,7 @@
     <string name="sn_deep_search_enabled">Lyrics, etc. too</string>
     <string name="sn_songs_activity_title">Songs</string>
     <string name="sn_bookselector_all">ALL</string>
+    <string name="sn_bookselector_more">Download more…</string>
     <string name="sn_bookselector_all_desc">Search all books that are installed.</string>
     <string name="sn_downloading_ellipsis">Downloading…</string>
     <string name="sn_download_song_books">Download song books</string>
@@ -229,6 +234,7 @@
     <string name="sn_update_book_explanation">Update the book ^1 to the latest version?</string>
     <string name="sn_update_book_confirm_button">Update</string>
     <string name="sn_update_book">Update song book</string>
+    <string name="sn_update_book_because_too_old">Please update ^1 to the latest version before continuing. After updating, send your edits if needed.</string>
 
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Previous day</string>

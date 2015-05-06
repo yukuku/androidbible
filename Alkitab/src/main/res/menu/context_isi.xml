@@ -44,28 +44,25 @@
 
 	<item
 		android:id="@+id/menuEsvsb"
-		android:icon="@android:drawable/ic_menu_call"
-		app:showAsAction="ifRoom"
+		app:showAsAction="never"
 		android:title="ESV Study Bible"
 		android:visible="false"
 		tools:ignore="HardcodedText" />
 
+	<!-- For the following 3 items, the showAsAction value is set in code -->
 	<item
 		android:id="@+id/menuGuide"
-		android:icon="@android:drawable/ic_menu_mylocation"
-		app:showAsAction="ifRoom"
+		android:icon="@drawable/ic_menu_pedia"
 		android:title="@string/menuGuide" />
 
 	<item
 		android:id="@+id/menuCommentary"
-		android:icon="@android:drawable/ic_menu_mylocation"
-		app:showAsAction="ifRoom"
+		android:icon="@drawable/ic_menu_commentary"
 		android:title="@string/menuCommentary" />
 
 	<item
 		android:id="@+id/menuDictionary"
-		android:icon="@android:drawable/ic_menu_mylocation"
-		app:showAsAction="ifRoom"
+		android:icon="@drawable/ic_menu_dictionary"
 		android:title="@string/menuDictionary" />
 
 </menu>

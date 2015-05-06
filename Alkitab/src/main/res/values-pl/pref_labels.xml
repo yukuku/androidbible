@@ -7,13 +7,18 @@
   <string name="pref_warna_nomor_ayat">Numeracja wersetu</string>
   <string name="pref_redTextColor_title">Słowa Jezusa</string>
   <string name="pref_penggunaan">Użycie</string>
+  <string name="pref_copy_share">Kopiowanie i dzielenie się</string>
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Pokaż listę ksiąg w kolejności alfabetycznej (a-z) zamiast oryginalnej</string>
   <string name="pref_kitab_menurut_abjad">Sortuj księgi alfabetycznie</string>
   <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Ekran urządzenia nie wyłączy się podczas czytania Biblii</string>
   <string name="pref_biarkan_layar_menyala">Utrzymuj ekran włączony</string>
   <string name="pref_penampilan_layar">Wyświetlacz</string>
   <string name="pref_volumeButtonNavigation_title">Nawigacja przyciskami głośności</string>
-  <string name="pref_copyWithVerseNumbers_title">Dołącz numer wersu</string>
-  <string name="pref_copyWithVerseNumbers_summary">Umieszaj numer każdego wersu przy kopiowaniu/dzieleniu się</string>
+  <string name="pref_copyWithVerseNumbers_title">Numery wersów</string>
+  <string name="pref_copyWithVerseNumbers_summary">Rozpoczynaj każdy wers od numeru</string>
+  <string name="pref_copyWithVersionName_title">Skróty przekładu</string>
+  <string name="pref_copyWithVersionName_summary">Podawaj nazwę przekładu</string>
+  <string name="pref_autoDictionaryAnalyze_title">Automatyczne zaglądanie do słownika</string>
+  <string name="pref_autoDictionaryAnalyze_summary">Zaglądaj do słownika po słowa z zaznaczanego wersu</string>
   <string name="pref_showHiddenVersion_title">Uaktywnia wersje, z możliwymi ograniczeniami</string>
 </resources>

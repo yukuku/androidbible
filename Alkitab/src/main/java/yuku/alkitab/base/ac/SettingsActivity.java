@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -24,7 +23,8 @@ import static yuku.alkitab.base.util.Literals.List;
 public class SettingsActivity extends BasePreferenceActivity {
 	public List<String> VALID_FRAGMENT_NAMES = List(
 		DisplayFragment.class.getName(),
-		UsageFragment.class.getName()
+		UsageFragment.class.getName(),
+		CopyShareFragment.class.getName()
 	);
 	Header firstHeaderWithFragment;
 
@@ -116,6 +116,15 @@ public class SettingsActivity extends BasePreferenceActivity {
 		}
 	}
 
+	public static class CopyShareFragment extends PreferenceFragment {
+		@Override
+		public void onCreate(final Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+
+			addPreferencesFromResource(R.xml.settings_copy_share);
+		}
+	}
+
 	static void autoDisplayListPreference(final ListPreference pref) {
 		final CharSequence label = pref.getEntry();
 		if (label != null) {
@@ -123,26 +132,23 @@ public class SettingsActivity extends BasePreferenceActivity {
 		}
 
 		final Preference.OnPreferenceChangeListener originalChangeListener = pref.getOnPreferenceChangeListener();
-		pref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-			@Override
-			public boolean onPreferenceChange(final Preference preference, final Object newValue) {
-				final boolean changed;
+		pref.setOnPreferenceChangeListener((preference, newValue) -> {
+			final boolean changed;
 
-				if (originalChangeListener != null) {
-					changed = originalChangeListener.onPreferenceChange(preference, newValue);
-				} else {
-					changed = true;
-				}
-
-				if (changed) {
-					final int index = pref.findIndexOfValue((String) newValue);
-					if (index >= 0) {
-						pref.setSummary(pref.getEntries()[index]);
-					}
-				}
-
-				return changed;
+			if (originalChangeListener != null) {
+				changed = originalChangeListener.onPreferenceChange(preference, newValue);
+			} else {
+				changed = true;
 			}
+
+			if (changed) {
+				final int index = pref.findIndexOfValue((String) newValue);
+				if (index >= 0) {
+					pref.setSummary(pref.getEntries()[index]);
+				}
+			}
+
+			return changed;
 		});
 	}
 

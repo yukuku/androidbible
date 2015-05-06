@@ -627,7 +627,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				Log.d(TAG, "    " + key + " = " + extras.get(key));
 			}
 		}
-		
+
 		if (Build.VERSION.SDK_INT >= 14) {
 			final IntentResult result = tryGetIntentResultFromBeam(intent);
 			if (result != null) return result;
@@ -638,7 +638,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		return null;
 	}
-	
+
 	/** did we get here from VIEW intent? */
 	private IntentResult tryGetIntentResultFromView(Intent intent) {
 		if (!U.equals(intent.getAction(), "yuku.alkitab.action.VIEW")) return null;
@@ -709,7 +709,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	private void disableNfcForegroundDispatchIfAvailable() {
 		if (nfcAdapter != null) nfcAdapter.disableForegroundDispatch(this);
 	}
-	
+
 	@Override protected void onResume() {
 		super.onResume();
 		enableNfcForegroundDispatchIfAvailable();
@@ -813,7 +813,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			return false;
 		}
 	}
-	
+
 	boolean loadSplitVersion(final MVersion mv) {
 		try {
 			final Version version = mv.getVersion();
@@ -838,7 +838,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			return false;
 		}
 	}
-	
+
 	String getSplitHandleVersionName(MVersion mv, Version version) {
 		String shortName = version.getShortName();
 		if (shortName != null) {
@@ -848,11 +848,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (mv.shortName != null) {
 				return mv.shortName;
 			}
-			
+
 			return version.getLongName(); // this will not be null
 		}
 	}
-	
+
 	boolean press(int keyCode) {
 		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
 			bLeft_click();
@@ -861,7 +861,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			bRight_click();
 			return true;
 		}
-		
+
 		VersesView.PressResult pressResult = lsSplit0.press(keyCode);
 		switch (pressResult.kind) {
 		case left:
@@ -879,7 +879,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Jump to a given verse reference in string format.
 	 * @return ari of the parsed reference
@@ -888,15 +888,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		if (reference.trim().length() == 0) {
 			return 0;
 		}
-		
+
 		Log.d(TAG, "going to jump to " + reference); //$NON-NLS-1$
-		
+
 		Jumper jumper = new Jumper(reference);
 		if (! jumper.getParseSucceeded()) {
 			Toast.makeText(this, getString(R.string.alamat_tidak_sah_alamat, reference), Toast.LENGTH_SHORT).show();
 			return 0;
 		}
-		
+
 		int bookId = jumper.getBookId(S.activeVersion.getConsecutiveBooks());
 		Book selected;
 		if (bookId != -1) {
@@ -910,10 +910,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		} else {
 			selected = this.activeBook;
 		}
-		
+
 		// set book
 		this.activeBook = selected;
-		
+
 		int chapter = jumper.getChapter();
 		int verse = jumper.getVerse();
 		int ari_cv;
@@ -922,16 +922,16 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		} else {
 			ari_cv = display(chapter, verse);
 		}
-		
+
 		return Ari.encode(selected.bookId, ari_cv);
 	}
-	
+
 	/**
 	 * Jump to a given ari
 	 */
 	void jumpToAri(final int ari, final boolean selectVerse) {
 		if (ari == 0) return;
-		
+
 		final int bookId = Ari.toBook(ari);
 		final Book book = S.activeVersion.getBook(bookId);
 
@@ -950,7 +950,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			}
 		}
 	}
-	
+
 	private CharSequence referenceFromSelectedVerses(IntArrayList selectedVerses, Book book) {
 		if (selectedVerses.size() == 0) {
 			// should not be possible. So we don't do anything.
@@ -961,11 +961,23 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			return book.reference(this.chapter_1, selectedVerses);
 		}
 	}
-	
+
+	/**
+	 * Construct text for copying or sharing (in plain text).
+	 * @param isSplitVersion whether take the verse text from the main or from the split version.
+	 */
 	String prepareTextForCopyShare(IntArrayList selectedVerses_1, CharSequence reference, boolean isSplitVersion) {
-		StringBuilder res = new StringBuilder();
+		final StringBuilder res = new StringBuilder();
 		res.append(reference);
-		
+
+		if (Preferences.getBoolean(getString(R.string.pref_copyWithVersionName_key), getResources().getBoolean(R.bool.pref_copyWithVersionName_default))) {
+			final Version version = isSplitVersion ? activeSplitVersion : S.activeVersion;
+			final String versionShortName = version.getShortName();
+			if (versionShortName != null) {
+				res.append(" (").append(versionShortName).append(")");
+			}
+		}
+
 		if (Preferences.getBoolean(getString(R.string.pref_copyWithVerseNumbers_key), false) && selectedVerses_1.size() > 1) {
 			res.append('\n');
 
@@ -974,25 +986,19 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				int verse_1 = selectedVerses_1.get(i);
 				res.append(verse_1);
 				res.append(' ');
-				if (isSplitVersion) {
-					res.append(U.removeSpecialCodes(lsSplit1.getVerse(verse_1)));
-				} else {
-					res.append(U.removeSpecialCodes(lsSplit0.getVerse(verse_1)));
-				}
+				final String verseText = isSplitVersion ? lsSplit1.getVerse(verse_1) : lsSplit0.getVerse(verse_1);
+				res.append(U.removeSpecialCodes(verseText));
 				res.append('\n');
 			}
 		} else {
-			res.append("  "); //$NON-NLS-1$
-			
+			res.append("  ");
+
 			// append each selected verse without verse number prepended
 			for (int i = 0; i < selectedVerses_1.size(); i++) {
 				int verse_1 = selectedVerses_1.get(i);
 				if (i != 0) res.append('\n');
-				if (isSplitVersion) {
-					res.append(U.removeSpecialCodes(lsSplit1.getVerse(verse_1)));
-				} else {
-					res.append(U.removeSpecialCodes(lsSplit0.getVerse(verse_1)));
-				}
+				final String verseText = isSplitVersion ? lsSplit1.getVerse(verse_1) : lsSplit0.getVerse(verse_1);
+				res.append(U.removeSpecialCodes(verseText));
 			}
 		}
 		return res.toString();
@@ -1008,7 +1014,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			lsSplit0.setCacheColorHint(S.applied.backgroundColor);
 			lsSplit1.setCacheColorHint(S.applied.backgroundColor);
 		}
-		
+
 		// necessary
 		lsSplit0.invalidateViews();
 		lsSplit1.invalidateViews();
@@ -1016,7 +1022,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		SettingsActivity.setPaddingBasedOnPreferences(lsSplit0);
 		SettingsActivity.setPaddingBasedOnPreferences(lsSplit1);
 	}
-	
+
 	@Override protected void onStop() {
 		super.onStop();
 
@@ -1038,7 +1044,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		history.save();
 	}
-	
+
 	@Override protected void onStart() {
 		super.onStart();
 
@@ -1046,7 +1052,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		getWindow().getDecorView().setKeepScreenOn(Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default)));
 	}
-	
+
 	@Override public void onBackPressed() {
 		if (textAppearancePanel != null) {
 			textAppearancePanel.hide();
@@ -1058,11 +1064,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			super.onBackPressed();
 		}
 	}
-	
+
 	void bGoto_click() {
 		startActivityForResult(GotoActivity.createIntent(this.activeBook.bookId, this.chapter_1, lsSplit0.getVerseBasedOnScroll()), REQCODE_goto);
 	}
-	
+
 	void bGoto_longClick() {
 		if (history.getSize() > 0) {
 			new MaterialDialog.Builder(this)
@@ -1143,20 +1149,20 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		menu.clear();
 		getMenuInflater().inflate(R.menu.activity_isi, menu);
 	}
-	
+
 	@Override public boolean onCreateOptionsMenu(Menu menu) {
 		buildMenu(menu);
 		return true;
 	}
-	
+
 	@Override public boolean onPrepareOptionsMenu(Menu menu) {
 		if (menu != null) {
 			buildMenu(menu);
 		}
-		
+
 		return true;
 	}
-	
+
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		// Pass the event to ActionBarDrawerToggle, if it returns true, then it has handled the app icon touch event
 		if (drawerToggle.onOptionsItemSelected(item)) {
@@ -1168,7 +1174,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			menuSearch_click();
 			return true;
 		}
-		
+
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -1378,7 +1384,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	private void menuSearch_click() {
 		startActivity(SearchActivity.createIntent(this.activeBook.bookId));
 	}
-	
+
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQCODE_goto && resultCode == RESULT_OK) {
 			GotoActivity.Result result = GotoActivity.obtainResult(data);
@@ -1462,13 +1468,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	 */
 	int display(int chapter_1, int verse_1, boolean uncheckAllVerses) {
 		int current_chapter_1 = this.chapter_1;
-		
+
 		if (chapter_1 < 1) chapter_1 = 1;
 		if (chapter_1 > this.activeBook.chapter_count) chapter_1 = this.activeBook.chapter_count;
-		
+
 		if (verse_1 < 1) verse_1 = 1;
 		if (verse_1 > this.activeBook.verse_counts[chapter_1 - 1]) verse_1 = this.activeBook.verse_counts[chapter_1 - 1];
-		
+
 		{ // main
 			this.uncheckVersesWhenActionModeDestroyed = false;
 			try {
@@ -1483,9 +1489,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 			lsSplit0.scrollToVerse(verse_1);
 		}
-		
+
 		displaySplitFollowingMaster(verse_1);
-		
+
 		// set goto button text
 		final String reference = this.activeBook.reference(chapter_1);
 		if (Preferences.getBoolean(Prefkey.history_button_understood, false) || history.getSize() == 0) {
@@ -1502,7 +1508,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		if (dictionaryMode) {
 			finishDictionaryMode();
 		}
-		
+
 		return Ari.encode(0, chapter_1, verse_1);
 	}
 
@@ -1544,13 +1550,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		if (verses == null) {
 			return false;
 		}
-		
+
 		//# max is set to 30 (one chapter has max of 30 blocks. Already almost impossible)
 		int max = 30;
 		int[] pericope_aris = new int[max];
 		PericopeBlock[] pericope_blocks = new PericopeBlock[max];
 		int nblock = version.loadPericope(book.bookId, chapter_1, pericope_aris, pericope_blocks, max);
-		
+
 		boolean retainSelectedVerses = (!uncheckAllVerses && chapter_1 == current_chapter_1);
 		versesView.setDataWithRetainSelectedVerses(retainSelectedVerses, book, chapter_1, pericope_aris, pericope_blocks, nblock, verses);
 
@@ -1561,12 +1567,12 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		if (press(keyCode)) return true;
 		return super.onKeyDown(keyCode, event);
 	}
-	
+
 	@Override public boolean onKeyMultiple(int keyCode, int repeatCount, KeyEvent event) {
 		if (press(keyCode)) return true;
 		return super.onKeyMultiple(keyCode, repeatCount, event);
 	}
-	
+
 	@Override public boolean onKeyUp(int keyCode, KeyEvent event) {
 		final String volumeButtonsForNavigation = Preferences.getString(getString(R.string.pref_volumeButtonNavigation_key), getString(R.string.pref_volumeButtonNavigation_default));
 		if (! U.equals(volumeButtonsForNavigation, "default")) { // consume here
@@ -1904,16 +1910,16 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				IntArrayList selectedVerses = v.getSelectedVerses_1();
 				lsSplit1.checkVerses(selectedVerses, false);
 			}
-			
+
 			if (actionMode == null) {
 				actionMode = startSupportActionMode(actionMode_callback);
 			}
-			
+
 			if (actionMode != null) {
 				actionMode.invalidate();
 			}
 		}
-		
+
 		@Override public void onNoVersesSelected(VersesView v) {
 			if (activeSplitVersion != null) {
 				// synchronize the selection with the split view
@@ -1925,10 +1931,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				actionMode = null;
 			}
 		}
-		
+
 		@Override public void onVerseSingleClick(VersesView v, int verse_1) {}
 	};
-	
+
 	VersesView.SelectedVersesListener lsSplit1_selectedVerses = new VersesView.SelectedVersesListener() {
 		@Override public void onSomeVersesSelected(VersesView v) {
 			// synchronize the selection with the main view
@@ -1957,7 +1963,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			}
 		}
 	};
-	
+
 	VersesView.OnVerseScrollListener lsSplit1_verseScroll = new VersesView.OnVerseScrollListener() {
 		@Override public void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop) {
 			if (!isPericope) {
@@ -1969,7 +1975,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			lsSplit0.scrollToTop();
 		}
 	};
-	
+
 	ActionMode.Callback actionMode_callback = new ActionMode.Callback() {
 		@Override public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 			getMenuInflater().inflate(R.menu.context_isi, menu);
@@ -1984,7 +1990,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					hasEsvsbAsal = false;
 				}
 			}
-			
+
 			if (hasEsvsbAsal) {
 				MenuItem esvsb = menu.findItem(R.id.menuEsvsb);
 				if (esvsb != null) esvsb.setVisible(true);
@@ -2029,6 +2035,16 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				mode.setSubtitle(getString(R.string.verse_select_multiple_verse_selected, selected.size()));
 			}
 
+			// force-show these items on sw600dp
+			final int showAsAction = getResources().getConfiguration().screenWidthDp >= 600 ? MenuItem.SHOW_AS_ACTION_ALWAYS : MenuItem.SHOW_AS_ACTION_IF_ROOM;
+			menu.findItem(R.id.menuGuide).setShowAsActionFlags(showAsAction);
+			menu.findItem(R.id.menuCommentary).setShowAsActionFlags(showAsAction);
+			menu.findItem(R.id.menuDictionary).setShowAsActionFlags(showAsAction);
+
+			// do not show dictionary item if not needed
+			final boolean autoDictionaryAnalyze = Preferences.getBoolean(getString(R.string.pref_autoDictionaryAnalyze_key), getResources().getBoolean(R.bool.pref_autoDictionaryAnalyze_default));
+			menu.findItem(R.id.menuDictionary).setVisible(!autoDictionaryAnalyze);
+
 			return true;
 		}
 
@@ -2045,10 +2061,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				if (activeSplitVersion != null) {
 					textToCopy = appendSplitTextForCopyShare(textToCopy);
 				}
-				
+
 				U.copyToClipboard(textToCopy);
 				lsSplit0.uncheckAllVerses(true);
-				
+
 				Toast.makeText(App.context, getString(R.string.alamat_sudah_disalin, reference), Toast.LENGTH_SHORT).show();
 				mode.finish();
 			} return true;
@@ -2066,7 +2082,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					Book.writeVerseRange(selected, sb);
 					verseUrl = createVerseUrl(S.activeVersion, S.activeVersionId, IsiActivity.this.activeBook, IsiActivity.this.chapter_1, sb.toString()); // use verse range
 				}
-				
+
 				final Intent intent = ShareCompat.IntentBuilder.from(IsiActivity.this)
 				.setType("text/plain") //$NON-NLS-1$
 				.setSubject(reference.toString())
@@ -2226,7 +2242,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		int first;
 		int handle;
 		int root;
-		
+
 		@Override public void onHandleDragStart() {
 			splitRoot.setOnefingerEnabled(false);
 
@@ -2259,7 +2275,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			lp.height = newH < 0? 0: newH > maxH? maxH: newH;
 			lsSplit0.setLayoutParams(lp);
 		}
-		
+
 		@Override public void onHandleDragStop() {
 			splitRoot.setOnefingerEnabled(true);
 		}

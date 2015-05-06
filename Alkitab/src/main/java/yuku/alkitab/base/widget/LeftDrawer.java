@@ -555,7 +555,8 @@ public abstract class LeftDrawer extends ScrollView {
 	public static class Songs extends LeftDrawer {
 		public interface Listener {
 			void songKeypadButton_click(View v);
-			void songBookSelected(boolean all, SongBookUtil.SongBookInfo songBookInfo);
+			void songBookSelected(String name);
+			void moreSelected();
 		}
 
 		public interface Handle {
@@ -605,8 +606,6 @@ public abstract class LeftDrawer extends ScrollView {
 			super(context, attrs);
 		}
 
-		PopupMenu popupChangeBook;
-
 		TextView bChangeBook;
 		TextView bChangeCode;
 
@@ -631,13 +630,22 @@ public abstract class LeftDrawer extends ScrollView {
 			bDigitB = V.get(this, R.id.bDigitB);
 			bDigitC = V.get(this, R.id.bDigitC);
 
-			bChangeBook.setOnClickListener(v -> popupChangeBook.show());
+			bChangeBook.setOnClickListener(v -> {
+				final PopupMenu popupChangeBook = SongBookUtil.getSongBookPopupMenu(activity, false, true, bChangeBook);
+				popupChangeBook.setOnMenuItemClickListener(SongBookUtil.getSongBookOnMenuItemClickListener(new SongBookUtil.DefaultOnSongBookSelectedListener() {
+					@Override
+					public void onSongBookSelected(final String name) {
+						listener.songBookSelected(name);
+					}
 
-			if (!isInEditMode()) {
-				popupChangeBook = SongBookUtil.getSongBookPopupMenu(activity, false, bChangeBook);
-				//noinspection Convert2MethodRef
-				popupChangeBook.setOnMenuItemClickListener(SongBookUtil.getSongBookOnMenuItemClickListener((all, songBookInfo) -> listener.songBookSelected(all, songBookInfo)));
-			}
+					@Override
+					public void onMoreSelected() {
+						listener.moreSelected();
+					}
+				}));
+
+				popupChangeBook.show();
+			});
 
 			// all buttons
 			for (int buttonId: new int[] {

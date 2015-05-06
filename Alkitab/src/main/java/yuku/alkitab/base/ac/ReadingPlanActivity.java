@@ -474,24 +474,9 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		return leftDrawer;
 	}
 
-	static class ReadingPlanServerEntry {
-		public String name;
-		public String title;
-		public String description;
-		public int day_count;
-	}
-
 	private void downloadReadingPlanList() {
-		startActivityForResult(
-			HelpActivity.createIntent(
-				"https://alkitab-host.appspot.com/rp/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName()),
-				false,
-				null,
-				null
-			), REQCODE_openList
-		);
+		startActivityForResult(HelpActivity.createIntent("https://alkitab-host.appspot.com/rp/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName())), REQCODE_openList);
 	}
-
 
 	@Override
 	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
