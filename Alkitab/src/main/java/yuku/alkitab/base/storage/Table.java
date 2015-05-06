@@ -17,27 +17,51 @@ public class Table {
 	public enum SongInfo {
 		bookName(text),
 		code(text),
-		title(text, "collate nocase"), //$NON-NLS-1$
-		title_original(text, "collate nocase"), //$NON-NLS-1$
+		title(text, "collate nocase"),
+		title_original(text, "collate nocase"),
 		ordering(integer),
 		dataFormatVersion(integer), 
 		data(blob),
+		updateTime(integer),
 		;
 		
 		public final Type type;
 		public final String suffix;
 		
-		private SongInfo(Type type) {
+		SongInfo(Type type) {
 			this(type, null);
 		}
 		
-		private SongInfo(Type type, String suffix) {
+		SongInfo(Type type, String suffix) {
 			this.type = type;
 			this.suffix = suffix;
 		}
 		
 		public static String tableName() {
 			return SongInfo.class.getSimpleName();
+		}
+	}
+
+	public enum SongBookInfo {
+		name(text),
+		title(text),
+		copyright(text),
+		;
+
+		public final Type type;
+		public final String suffix;
+
+		SongBookInfo(Type type) {
+			this(type, null);
+		}
+
+		SongBookInfo(Type type, String suffix) {
+			this.type = type;
+			this.suffix = suffix;
+		}
+
+		public static String tableName() {
+			return SongBookInfo.class.getSimpleName();
 		}
 	}
 
@@ -50,11 +74,11 @@ public class Table {
 		public final Type type;
 		public final String suffix;
 
-		private SyncShadow(Type type) {
+		SyncShadow(Type type) {
 			this(type, null);
 		}
 
-		private SyncShadow(Type type, String suffix) {
+		SyncShadow(Type type, String suffix) {
 			this.type = type;
 			this.suffix = suffix;
 		}
@@ -74,11 +98,11 @@ public class Table {
 		public final Type type;
 		public final String suffix;
 
-		private SyncLog(Type type) {
+		SyncLog(Type type) {
 			this(type, null);
 		}
 
-		private SyncLog(Type type, String suffix) {
+		SyncLog(Type type, String suffix) {
 			this.type = type;
 			this.suffix = suffix;
 		}
@@ -100,11 +124,11 @@ public class Table {
 		public final Type type;
 		public final String suffix;
 
-		private Devotion(Type type) {
+		Devotion(Type type) {
 			this(type, null);
 		}
 
-		private Devotion(Type type, String suffix) {
+		Devotion(Type type, String suffix) {
 			this.type = type;
 			this.suffix = suffix;
 		}
