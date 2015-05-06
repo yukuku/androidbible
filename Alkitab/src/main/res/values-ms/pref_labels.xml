@@ -15,7 +15,5 @@ Latar belakang
   <string name="pref_biarkan_layar_menyala">Pastikan skrin terbuka</string>
   <string name="pref_penampilan_layar">Paparan</string>
   <string name="pref_volumeButtonNavigation_title">Navigasi butang kelantangan</string>
-  <string name="pref_copyWithVerseNumbers_title">Termasuk nombor nombor ayat</string>
-  <string name="pref_copyWithVerseNumbers_summary">Letakkan nombor nombor ayat pada setiap ayat apabila menyalin / perkongsian</string>
   <string name="pref_showHiddenVersion_title">Dayakan versi yang mungkin terhad</string>
 </resources>

@@ -13,7 +13,5 @@
   <string name="pref_biarkan_layar_menyala">保持螢幕開啟</string>
   <string name="pref_penampilan_layar">顯示</string>
   <string name="pref_volumeButtonNavigation_title">音量鍵瀏覽</string>
-  <string name="pref_copyWithVerseNumbers_title">包含節數</string>
-  <string name="pref_copyWithVerseNumbers_summary">在複製/分享時在每節加入節數</string>
   <string name="pref_showHiddenVersion_title">啟動可能受限的版本</string>
 </resources>

@@ -7,6 +7,7 @@
   <string name="pref_warna_nomor_ayat">Vers nommers</string>
   <string name="pref_redTextColor_title">Woorde van Jesus</string>
   <string name="pref_penggunaan">Gebruik</string>
+  <string name="pref_copy_share">Kopieer en deel </string>
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Vertoon boek-lys alfabeties (a-z) in pleks van oorspronklik
  </string>
   <string name="pref_kitab_menurut_abjad">Sorteer boeke alfabeties</string>
@@ -14,7 +15,11 @@
   <string name="pref_biarkan_layar_menyala">Hou skerm aan</string>
   <string name="pref_penampilan_layar">Vertoon</string>
   <string name="pref_volumeButtonNavigation_title">Volume knoppie navigasie</string>
-  <string name="pref_copyWithVerseNumbers_title">Sluit vers nommers in</string>
-  <string name="pref_copyWithVerseNumbers_summary">Vertoon vers nommers by elke vers indien gekopieër/gedeel</string>
+  <string name="pref_copyWithVerseNumbers_title">Vers nommers</string>
+  <string name="pref_copyWithVerseNumbers_summary">Begin elke vers met sy nommer</string>
+  <string name="pref_copyWithVersionName_title">Weergawe afkortings</string>
+  <string name="pref_copyWithVersionName_summary">Noem die Bybel weergawe </string>
+  <string name="pref_autoDictionaryAnalyze_title">Outomatiese woordeboek opsoek </string>
+  <string name="pref_autoDictionaryAnalyze_summary">Soek vir woordeboek woorde in gekose verse</string>
   <string name="pref_showHiddenVersion_title">Aktiveer moontlik beperkte/geslote weergawes</string>
 </resources>

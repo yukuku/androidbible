@@ -7,13 +7,18 @@
   <string name="pref_warna_nomor_ayat">Nomor ayat</string>
   <string name="pref_redTextColor_title">Perkataan Yesus</string>
   <string name="pref_penggunaan">Penggunaan</string>
+  <string name="pref_copy_share">Salin dan bagikan</string>
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Tampilkan kitab dalam urutan abjad, bukan urutan aslinya</string>
   <string name="pref_kitab_menurut_abjad">Kitab menurut abjad</string>
   <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Layar tidak akan padam ketika membaca Alkitab</string>
   <string name="pref_biarkan_layar_menyala">Layar selalu menyala</string>
   <string name="pref_penampilan_layar">Tampilan</string>
   <string name="pref_volumeButtonNavigation_title">Pindah dengan volume</string>
-  <string name="pref_copyWithVerseNumbers_title">Bubuhi nomor ayat</string>
-  <string name="pref_copyWithVerseNumbers_summary">Awali tiap ayat dengan nomornya saat menyalin dan membagikan</string>
+  <string name="pref_copyWithVerseNumbers_title">Nomor ayat</string>
+  <string name="pref_copyWithVerseNumbers_summary">Awali tiap ayat dengan nomornya</string>
+  <string name="pref_copyWithVersionName_title">Nama versi</string>
+  <string name="pref_copyWithVersionName_summary">Sebutkan singkatan dari nama versi Alkitab</string>
+  <string name="pref_autoDictionaryAnalyze_title">Otomatis cek kamus</string>
+  <string name="pref_autoDictionaryAnalyze_summary">Cari kata-kata yang ada di kamus pada ayat yang dipilih</string>
   <string name="pref_showHiddenVersion_title">Versi yang mungkin terbatas</string>
 </resources>
