@@ -127,6 +127,7 @@
   <string name="ed_download_button">Herunterladen</string>
   <string name="ed_update_button">Update</string>
   <string name="ed_details_update_available">Update verfügbar</string>
+  <string name="ed_download_manager_not_enabled_prompt">Die App \'Download-Manager\' ist nicht aktiviert oder nicht verfügbar.\n\nAktivieren Sie die App, um Bibelübersetzungen herunterzuladen.</string>
   <string name="info_terperinci">Details</string>
   <string name="buang_dari_daftar">Entfernen</string>
   <string name="edit_bookmark">Lesezeichen bearbeiten</string>
@@ -152,6 +153,7 @@
   <string name="bmcat_notes">Notizen</string>
   <string name="bmcat_highlights">Hervorhebungen</string>
   <string name="bmcat_unlabeled_bookmarks">Lesezeichen ohne Stichwort</string>
+  <string name="menuLabelSort">Stichwörter alphabetisch sortieren</string>
   <string name="bl_no_notes_written_yet">Keine Notizen vorhanden.\nTippe auf einen Vers, um ein Notiz hinzufügen.</string>
   <string name="bl_no_highlighted_verses">Keine hervorgehobenen Verse vorhanden.\nTippe auf eine Vers, um eine Hervorhebung hinzufügen.</string>
   <string name="bl_there_are_no_bookmarks_without_any_labels">Es gibt keine Lesezeichen ohne Stichwörter.</string>
@@ -179,7 +181,7 @@
   <string name="no_bookmarks_for_backup">Sie haben keine Lesezeichen, Notizen oder Hervorhebungen.</string>
   <string name="pdb_error_not_palmbible">Diese PDB-Datei ist nicht im PalmBible+-Format. Diese PDB ist vom Typ \'%1$s\', erstellt von \'%2$s\'. Das Format wird von dieser App nicht unterstützt.</string>
   <string name="pdb_error_corrupted">Die PDB-Datei ist beschädigt.</string>
-  <string name="pdb_error_not_pdb_file">DIe ausgewählte Datei ist keine PDB-Datei.</string>
+  <string name="pdb_error_not_pdb_file">Die ausgewählte Datei ist keine PDB-Datei.</string>
   <string name="menu_split_version">Geteilte Ansicht</string>
   <string name="split_version_none">Nichts</string>
   <string name="split_version_cant_display_verse">%1$s ist in der %2$s nicht vorhanden.</string>
@@ -196,6 +198,7 @@
   <string name="bookmark_search">Suchen</string>
   <string name="verse_select_one_verse_selected">1 Vers ausgewählt</string>
   <string name="verse_select_multiple_verse_selected">%s Verse ausgewählt</string>
+  <string name="google_play_store_not_installed">Der Google Play Store ist nicht installiert.</string>
   <string name="goto_tab_dialer_label">Wähler</string>
   <string name="goto_tab_direct_label">Direkt</string>
   <string name="goto_tab_grid_label">Tabelle</string>
@@ -209,6 +212,7 @@
   <string name="sn_deep_search_enabled">Auch Texte, usw. durchsuchen</string>
   <string name="sn_songs_activity_title">Lieder</string>
   <string name="sn_bookselector_all">ALLE</string>
+  <string name="sn_bookselector_more">Weitere herunterladen&#8230;</string>
   <string name="sn_bookselector_all_desc">Alle installierten Bücher durchsuchen</string>
   <string name="sn_downloading_ellipsis">Lade herunter&#8230;</string>
   <string name="sn_download_song_books">Liederbücher herunterladen</string>
@@ -222,6 +226,7 @@
   <string name="sn_update_book_explanation">Aktualisiert das Liederbuch ^1 auf die neuste Version.</string>
   <string name="sn_update_book_confirm_button">Aktualisieren</string>
   <string name="sn_update_book">Liederbuch aktualisieren</string>
+  <string name="sn_update_book_because_too_old">Vor dem Fortsetzen installieren Sie bitte die neuste Version von ^1. Senden Sie nach dem Update Ihre Bearbeitungen erneut.</string>
   <string name="desc_previous_day">Voriger Tag</string>
   <string name="desc_next_day">Nächster Tag</string>
   <string name="desc_open_bookmark">Lesezeichen öffnen</string>
@@ -316,12 +321,14 @@
   <string name="rp_showDetails">Details anzeigen</string>
   <string name="rp_hideDetails">Details verbergen</string>
   <string name="rp_aboutPlan">Über den Plan</string>
+  <string name="rp_description_with_id"><b>^1</b> (^2 Tage)\n<small>ID: ^3</small>\n\n^4</string>
   <string name="rp_download_day_count_days">%s Tage</string>
   <string name="rp_download_reading_plan_list_progress">Lade die Liste der Lesepläne herunter&#8230;</string>
   <string name="rp_download_reading_plan_list_failed">Herunterladen der Liste der Lesepläne fehlgeschlagen. Versuchen Sie es mit einer funktionierenden Internetverbindung erneut.</string>
   <string name="rp_download_reading_plan_progress">Lade Leseplan herunter&#8230;</string>
   <string name="rp_download_reading_plan_failed">Herunterladen des ausgewählten Leseplans fehlgeschlagen. Versuchen Sie es mit einer funktionierenden Internetverbindung erneut.</string>
   <string name="rp_download_reading_plan_data_corrupted">Der heruntergeladene Leseplan ist beschädigt. Versuchen Sie es mit einer funktionierenden Internetverbindung erneut.</string>
+  <string name="rp_download_already_have">Diesen Leseplan haben Sie bereits heruntergeladen.</string>
   <string name="version_download_need_fonts">"Die Übersetzung, die Sie heruntergeladen haben, kann nur mit speziellen Schriftarten angezeigt werden. Gehen Sie zum Menü \'Textdarstellung\' und wählen Sie eine passende Schriftart. Burmese benötigt Parabaik, ParabaikSans oder Myanmar3. Tamil benötigt Akshar. Telugu benötigt Suranna."</string>
   <string name="version_download_corrupted_file">Die heruntergeladene Datei scheint fehlerhaft zu sein.</string>
   <string name="menuNightMode">Nachtmodus</string>
@@ -462,6 +469,7 @@
   <string name="marker_migrate_no_more">Nicht noch einmal fragen</string>
   <string name="marker_migrate_later">Nicht jetzt</string>
   <string name="marker_migrate_title">Alte Markierungen importieren</string>
+  <string name="marker_migrate_file_chooser_title">Backupdatei der Version 3 auswählen</string>
   <string name="marker_migrate_no_more_confirmation">Möchten Sie die alten Daten wirklich nicht importieren?</string>
   <string name="marker_migrate_error_opening_backup_file">Kann nicht auf die Backupdatei zugreifen.</string>
   <string name="marker_migrate_import_from_newest">Ja, neuste Datei importieren (empfohlen)</string>
@@ -469,4 +477,11 @@
   <string name="marker_migrate_filename_dated">%1$s vom %2$s</string>
   <string name="announce_notif_title">%s Meldungen</string>
   <string name="announce_notif_number_new_announcements">%s neue Meldungen</string>
+  <string name="menuDictionary">Wörterbuch</string>
+  <string name="dict_open_full">Wörterbuch öffnen</string>
+  <string name="dict_no_results">Keine Defintion für das ausgewählte Wort gefunden.</string>
+  <string name="dict_download_prompt">Laden Sie \"Bible Dictionary\" herunter, um mehr über die Worte in der Bibel zu erfahren!</string>
+  <string name="dict_download_button">Herunterladen</string>
+  <string name="menuGuide">Leitfaden</string>
+  <string name="menuCommentary">Kommentar</string>
 </resources>
