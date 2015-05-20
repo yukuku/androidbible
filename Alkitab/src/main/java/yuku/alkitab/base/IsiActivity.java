@@ -2035,8 +2035,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				mode.setSubtitle(getString(R.string.verse_select_multiple_verse_selected, selected.size()));
 			}
 
-			// force-show these items on sw600dp
-			final int showAsAction = getResources().getConfiguration().screenWidthDp >= 600 ? MenuItem.SHOW_AS_ACTION_ALWAYS : MenuItem.SHOW_AS_ACTION_IF_ROOM;
+			// force-show these items on sw600dp, otherwise never show
+			final int showAsAction = getResources().getConfiguration().screenWidthDp >= 600 ? MenuItem.SHOW_AS_ACTION_ALWAYS : MenuItem.SHOW_AS_ACTION_NEVER;
 			menu.findItem(R.id.menuGuide).setShowAsActionFlags(showAsAction);
 			menu.findItem(R.id.menuCommentary).setShowAsActionFlags(showAsAction);
 			menu.findItem(R.id.menuDictionary).setShowAsActionFlags(showAsAction);
