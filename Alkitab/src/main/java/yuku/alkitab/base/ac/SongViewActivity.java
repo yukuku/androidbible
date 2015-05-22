@@ -365,7 +365,6 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 		circular_progress = V.get(this, R.id.progress_circular);
 
-		setSupportProgressBarIndeterminate(true);
 		setCustomProgressBarIndeterminateVisible(false);
 
 		setTitle(R.string.sn_songs_activity_title);
