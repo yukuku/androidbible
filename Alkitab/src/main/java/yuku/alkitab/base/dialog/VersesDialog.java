@@ -126,10 +126,12 @@ public class VersesDialog extends BaseDialog {
 					sb.append("; ");
 				}
 
-				sb.append(sourceVersion.reference(ari_start));
-				if (ari_start != ari_end) {
-					sb.append("–");
-					sb.append(sourceVersion.reference(ari_end));
+				if (Ari.toBookChapter(ari_start) == Ari.toBookChapter(ari_end)) { // same book, same chapter
+					sb.append(S.activeVersion.referenceWithVerseCount(ari_start, ari_end - ari_start + 1));
+				} else if (Ari.toBook(ari_start) == Ari.toBook(ari_end)) { // same book, different chapter
+					sb.append(S.activeVersion.reference(ari_start)).append("\u2014").append(Ari.toChapter(ari_end)).append(":").append(Ari.toVerse(ari_end));
+				} else { // different book, different chapter
+					sb.append(S.activeVersion.reference(ari_start)).append("\u2014").append(S.activeVersion.reference(ari_end));
 				}
 			}
 		} else {

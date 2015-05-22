@@ -348,7 +348,7 @@ public class VersionImpl implements Version {
 		if (verse_1 == 0 || verseCount == 1) { // verseCount does not matter
 			return reference(bookId, chapter_1, verse_1);
 		} else {
-			return reference(bookId, chapter_1, verse_1) + "-" + (verse_1 + verseCount - 1);
+			return reference(bookId, chapter_1, verse_1) + "\u2013" /* endash */ + (verse_1 + verseCount - 1);
 		}
 	}
 
