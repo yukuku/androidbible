@@ -55,7 +55,7 @@ public class VersesDialog extends BaseDialog {
 	IntArrayList ariRanges;
 
 	// data that will be passed when one verse is clicked
-	List<Object> customCallbackData;
+	Object[] customCallbackData;
 
 	Version sourceVersion = S.activeVersion;
 	String sourceVersionId = S.activeVersionId;
@@ -105,7 +105,7 @@ public class VersesDialog extends BaseDialog {
 	}
 
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View res = inflater.inflate(R.layout.dialog_verses, null);
+		View res = inflater.inflate(R.layout.dialog_verses, container, false);
 
 		tReference = V.get(res, R.id.tReference);
 		versesView = V.get(res, R.id.versesView);
@@ -146,16 +146,16 @@ public class VersesDialog extends BaseDialog {
 			final IntArrayList displayedAris = new IntArrayList();
 			final List<String> displayedVerseTexts = new ArrayList<>();
 			final List<String> displayedVerseNumberTexts = new ArrayList<>();
-			customCallbackData = new ArrayList<>();
 
 			final int verse_count = sourceVersion.loadVersesByAriRanges(ariRanges, displayedAris, displayedVerseTexts);
+			customCallbackData = new Object[verse_count];
 			if (verse_count > 0) {
 				// set up verse number texts
 
 				for (int i = 0; i < verse_count; i++) {
 					final int ari = displayedAris.get(i);
 					displayedVerseNumberTexts.add(Ari.toChapter(ari) + ":" + Ari.toVerse(ari));
-					customCallbackData.add(ari);
+					customCallbackData[i] = ari;
 				}
 
 				class Verses extends SingleChapterVerses {
@@ -183,10 +183,6 @@ public class VersesDialog extends BaseDialog {
 			}
 		} else {
 			// read each version and display it. First version must be the sourceVersion.
-			final List<String> displayedVersionShortNames = new ArrayList<>();
-			final List<String> displayedVerseTexts = new ArrayList<>();
-			customCallbackData = new ArrayList<>();
-
 			final List<MVersion> mversions = S.getAvailableVersions();
 
 			// sort such that sourceVersion is first
@@ -196,44 +192,71 @@ public class VersesDialog extends BaseDialog {
 				return a - b;
 			});
 
-			for (final MVersion mversion : mversions) {
-				final Version version = mversion.getVersion();
-				if (version == null) continue;
-
-				String shortName = version.getShortName();
-				if (shortName == null) {
-					shortName = mversion.shortName;
-				}
-				if (shortName == null) { // still null???
-					shortName = version.getLongName(); // this one may not be null.
-				}
-
-				String verseText = version.loadVerseText(ari);
-				final boolean verseIsAvailable = verseText != null;
-				if (verseText == null) {
-					verseText = getString(R.string.generic_verse_not_available_in_this_version);
-				}
-
-				// these need to be added in parallel
-				displayedVersionShortNames.add(shortName);
-				displayedVerseTexts.add(verseText);
-				customCallbackData.add(verseIsAvailable ? mversion : null);
+			final Version[] displayedVersion = new Version[mversions.size()];
+			customCallbackData = new Object[mversions.size()];
+			for (int i = 0; i < customCallbackData.length; i++) {
+				customCallbackData[i] = mversions.get(i);
 			}
 
 			class Verses extends SingleChapterVerses {
 				@Override
 				public String getVerse(int verse_0) {
-					return displayedVerseTexts.get(verse_0);
+					// load version or take from existing if already loaded
+					final MVersion mversion = mversions.get(verse_0);
+					final Version loaded = displayedVersion[verse_0];
+
+					final Version version;
+					if (loaded == null) {
+						version = mversion.getVersion();
+						displayedVersion[verse_0] = version;
+					} else {
+						version = loaded;
+					}
+
+					if (version == null) {
+						return getString(R.string.version_error_opening, mversion.getVersionId());
+					}
+
+					final String res = version.loadVerseText(ari);
+					if (res == null) {
+						return getString(R.string.generic_verse_not_available_in_this_version);
+					}
+
+					return res;
 				}
 
 				@Override
 				public int getVerseCount() {
-					return displayedVerseTexts.size();
+					return mversions.size();
 				}
 
 				@Override
 				public String getVerseNumberText(int verse_0) {
-					return displayedVersionShortNames.get(verse_0);
+					// load version or take from existing if already loaded
+					final MVersion mversion = mversions.get(verse_0);
+					final Version loaded = displayedVersion[verse_0];
+
+					final Version version;
+					if (loaded == null) {
+						version = mversion.getVersion();
+						displayedVersion[verse_0] = version;
+					} else {
+						version = loaded;
+					}
+
+					if (version == null) {
+						return "ERROR"; // could not load version
+					}
+
+					String res = version.getShortName();
+					if (res == null) {
+						res = mversion.shortName;
+					}
+					if (res == null) { // still null???
+						res = version.getLongName(); // this one may not be null.
+					}
+
+					return res;
 				}
 			}
 
@@ -250,9 +273,9 @@ public class VersesDialog extends BaseDialog {
 		@Override public void onVerseSingleClick(VersesView v, int verse_1 /* this is actually position+1, not necessaryly verse_1 */) {
 			if (listener != null) {
 				if (!compareMode) {
-					listener.onVerseSelected(VersesDialog.this, (Integer) customCallbackData.get(verse_1 - 1));
+					listener.onVerseSelected(VersesDialog.this, (Integer) customCallbackData[verse_1 - 1]);
 				} else {
-					final MVersion mversion = (MVersion) customCallbackData.get(verse_1 - 1);
+					final MVersion mversion = (MVersion) customCallbackData[verse_1 - 1];
 					if (mversion != null) {
 						// only if the verse is available in this version. See the add call to customCallbackData.
 						listener.onComparedVerseSelected(VersesDialog.this, ari, mversion);
