@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
-	<menu 
+	<menu
 		devotion="true"
-		versions="true"
-		help="true"
-		donation="true"
-		songs="true" />
+		songs="true"
+		dictionary="true"
+		guide="true"
+		commentary="true"
+	/>
 
 	<devotions>
 		<devotion name="sh" />

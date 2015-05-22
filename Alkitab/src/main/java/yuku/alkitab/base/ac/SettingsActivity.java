@@ -13,6 +13,7 @@ import com.afollestad.materialdialogs.AlertDialogWrapper;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BasePreferenceActivity;
+import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
 import yuku.alkitab.debug.R;
 
@@ -113,6 +114,11 @@ public class SettingsActivity extends BasePreferenceActivity {
 
 				return true;
 			});
+
+			// only show dictionary auto-lookup when enabled in app_config
+			if (!AppConfig.get().menuDictionary) {
+				getPreferenceScreen().removePreference(findPreference(getString(R.string.pref_autoDictionaryAnalyze_key)));
+			}
 		}
 	}
 

@@ -2,10 +2,11 @@
 <config>
 	<menu
 		devotion="true"
-		versions="true"
-		help="true"
-		donation="true"
-		songs="false" />
+		songs="true"
+		dictionary="false"
+		guide="false"
+		commentary="false"
+	/>
 
 	<devotions>
 		<devotion name="me-en" />
