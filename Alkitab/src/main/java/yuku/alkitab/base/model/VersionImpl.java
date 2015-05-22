@@ -27,7 +27,6 @@ public class VersionImpl implements Version {
 	private Book[] cache_consecutiveBooks;
 
 	private static Version internalVersion;
-	private String fallbackShortName;
 
 	public VersionImpl(BibleReader bibleReader) {
 		super();
@@ -47,16 +46,11 @@ public class VersionImpl implements Version {
 	}
 
 	/**
-	 * Get the short name (abbreviation) of this version. If unavailable from the BibleReader,
-	 * it will take from fallbackShortName.
+	 * Get the short name (abbreviation) of this version.
 	 */
 	@Override
 	public String getShortName() {
-		final String res = bibleReader.getShortName();
-		if (res == null && fallbackShortName != null) {
-			return fallbackShortName;
-		}
-		return res;
+		return bibleReader.getShortName();
 	}
 
 	@Override
@@ -393,13 +387,4 @@ public class VersionImpl implements Version {
 			return reference(ari_start) + '\u2014' + reference(ari_end);
 		}
 	}
-
-	/**
-	 * Set the short name to be used as fallback when the BibleReader
-	 * does not provide a short name.
-	 */
-	public void setFallbackShortName(final String fallbackShortName) {
-		this.fallbackShortName = fallbackShortName;
-	}
-
 }
