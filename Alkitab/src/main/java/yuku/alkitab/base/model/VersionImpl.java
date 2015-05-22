@@ -383,6 +383,17 @@ public class VersionImpl implements Version {
 		}
 	}
 
+	@Override
+	public String referenceRange(final int ari_start, final int ari_end) {
+		if (Ari.toBookChapter(ari_start) == Ari.toBookChapter(ari_end)) { // same book, same chapter
+			return referenceWithVerseCount(ari_start, ari_end - ari_start + 1);
+		} else if (Ari.toBook(ari_start) == Ari.toBook(ari_end)) { // same book, different chapter
+			return reference(ari_start) + '\u2014' + Ari.toChapter(ari_end) + ':' + Ari.toVerse(ari_end);
+		} else { // different book, different chapter
+			return reference(ari_start) + '\u2014' + reference(ari_end);
+		}
+	}
+
 	/**
 	 * Set the short name to be used as fallback when the BibleReader
 	 * does not provide a short name.

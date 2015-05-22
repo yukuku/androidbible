@@ -84,4 +84,6 @@ public interface Version {
 	String referenceWithVerseCount(int ari, int verseCount);
 
 	String reference(int bookId, int chapter_1, int verse_1);
+
+	String referenceRange(int ari_start, int ari_end);
 }

@@ -41,8 +41,6 @@ import yuku.alkitab.base.util.ReadingPlanManager;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.LeftDrawer;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.model.Version;
-import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabintegration.display.Launcher;
 
@@ -615,35 +613,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		return getString(R.string.rp_dayHeader, (dayNumber + 1), Sqlitil.toLocaleDateMedium(calendar.getTime()));
 	}
 
-	public static StringBuilder getReference(final Version version, final int ari_start, final int ari_end) {
-		final StringBuilder sb = new StringBuilder();
-		sb.append(version.reference(ari_start));
-		int startChapter = Ari.toChapter(ari_start);
-		int startVerse = Ari.toVerse(ari_start);
-		int lastVerse = Ari.toVerse(ari_end);
-		int lastChapter = Ari.toChapter(ari_end);
-
-		if (startVerse == 0) {
-			if (lastVerse == 0) {
-				if (startChapter != lastChapter) {
-					sb.append("-").append(lastChapter);
-				}
-			} else {
-				sb.append("-").append(lastChapter).append(":").append(lastVerse);
-			}
-		} else {
-			if (startChapter == lastChapter) {
-				sb.append("-").append(lastVerse);
-			} else {
-				sb.append("-").append(lastChapter).append(":").append(lastVerse);
-			}
-		}
-
-		return sb;
-	}
-
 	class ReadingPlanAdapter extends EasyAdapter {
-
 		private int[] todayReadings;
 
 		public void load() {
@@ -682,7 +652,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				final boolean[] readMarks = new boolean[todayReadings.length / 2];
 				ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, dayNumber);
 
-				bReference.setText(getReference(S.activeVersion, todayReadings[position * 2], todayReadings[position * 2 + 1]));
+				bReference.setText(S.activeVersion.referenceRange(todayReadings[position * 2], todayReadings[position * 2 + 1]));
+
 				bReference.setOnClickListener(v -> {
 					final int todayReadingsSize = readingPlan.dailyVerses[dayNumber].length / 2;
 					if (position < todayReadingsSize) {
@@ -775,7 +746,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 					checkBox.setOnCheckedChangeListener(null);
 					checkBox.setChecked(readMarks[sequence]);
-					checkBox.setText(getReference(S.activeVersion, ariRanges[sequence * 2], ariRanges[sequence * 2 + 1]));
+					checkBox.setText(S.activeVersion.referenceRange(ariRanges[sequence * 2], ariRanges[sequence * 2 + 1]));
 					checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
 						ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, currentViewTypePosition, sequence, isChecked);
 						loadReadingPlanProgress();
