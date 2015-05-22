@@ -647,7 +647,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 		new Thread() {
             @Override public void run() {
-				final int count = S.getSongDb().deleteSongsFromSongBook(bookName);
+				final int count = S.getSongDb().deleteSongBook(bookName);
 
 				runOnUiThread(() -> {
 					pd.dismiss();

@@ -266,11 +266,27 @@ public class SongDb {
 		return c;
 	}
 
-	public int deleteSongsFromSongBook(final String songBookName) {
+	/**
+	 * Delete song book together with its songs.
+	 * @return number of songs deleted
+	 */
+	public int deleteSongBook(final String songBookName) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
-		final int count = db.delete(Table.SongInfo.tableName(), Table.SongInfo.bookName + "=?", Array(songBookName));
-		db.execSQL("vacuum");
-		return count;
+		db.beginTransaction();
+		try {
+			// delete song book
+			db.delete(Table.SongBookInfo.tableName(), Table.SongBookInfo.name + "=?", Array(songBookName));
+
+			// delete songs
+			final int count = db.delete(Table.SongInfo.tableName(), Table.SongInfo.bookName + "=?", Array(songBookName));
+
+			db.setTransactionSuccessful();
+
+			return count;
+		} finally {
+			db.endTransaction();
+			db.execSQL("vacuum");
+		}
 	}
 
 	@Nullable
