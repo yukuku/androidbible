@@ -19,11 +19,14 @@
     <!-- Empty parent idiom -->
     <style name="NoParent" />
 
-    <style name="AlkitabFeedback.Theme" parent="android:Theme.Holo.Light.DarkActionBar">
+    <style name="AlkitabFeedback.Theme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorAccent">@color/alkitabfeedback_accent</item>
     </style>
 
     <style name="alkitabfeedback_TextAppearanceFinish" parent="android:TextAppearance.Holo.Medium">
         <item name="android:textColor">#fff</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">true</item>
     </style>
 
     <style name="alkitabfeedback_WizardPageContainer">
@@ -37,22 +40,20 @@
     <style name="alkitabfeedback_WizardPageTitle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">8dp</item>
-        <item name="android:paddingLeft">6dp</item>
-        <item name="android:textSize">36sp</item>
-        <item name="android:textColor">#ff0099cc</item>
-        <item name="android:fontFamily">sans-serif-thin</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:textSize">45sp</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textColor">#ff009688</item>
     </style>
 
     <style name="alkitabfeedback_WizardFormLabel">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginBottom">0dp</item>
-        <item name="android:textAppearance">?android:textAppearanceSmall</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/alkitabfeedback_text_light</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingLeft">4dp</item>
         <item name="android:paddingRight">12dp</item>
     </style>
 </resources>

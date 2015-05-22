@@ -28,11 +28,11 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
+
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.example.android.wizardpager.wizard.model.AbstractWizardModel;
 import com.example.android.wizardpager.wizard.model.CustomerInfoPage;
@@ -42,11 +42,12 @@ import com.example.android.wizardpager.wizard.model.TextareaPage;
 import com.example.android.wizardpager.wizard.ui.PageFragmentCallbacks;
 import com.example.android.wizardpager.wizard.ui.ReviewFragment;
 import com.example.android.wizardpager.wizard.ui.StepPagerStrip;
+
+import java.util.List;
+
 import yuku.alkitabfeedback.AlkitabFeedbackModel;
 import yuku.alkitabfeedback.FeedbackSender;
 import yuku.alkitabfeedback.R;
-
-import java.util.List;
 
 public class MainActivity extends FragmentActivity implements
         PageFragmentCallbacks,
@@ -217,10 +218,8 @@ public class MainActivity extends FragmentActivity implements
                     : R.string.alkitabfeedback_next);
             
             if (Build.VERSION.SDK_INT >= 11) {
-	            mNextButton.setBackgroundResource(R.drawable.alkitabfeedback_selectable_item_background);
-	            TypedValue v = new TypedValue();
-	            getTheme().resolveAttribute(android.R.attr.textAppearanceMedium, v, true);
-	            mNextButton.setTextAppearance(this, v.resourceId);
+                mNextButton.setTextColor(getResources().getColor(R.color.alkitabfeedback_accent));
+                mNextButton.setBackgroundResource(R.drawable.alkitabfeedback_selectable_item_background);
             }
             
             mNextButton.setEnabled(position != mPagerAdapter.getCutOffPage());

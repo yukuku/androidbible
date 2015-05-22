@@ -127,6 +127,7 @@
   <string name="ed_download_button">Загруженные</string>
   <string name="ed_update_button">Обновить</string>
   <string name="ed_details_update_available">Доступно обновление</string>
+  <string name="ed_download_manager_not_enabled_prompt">Приложение диспетчера загрузки отключено или отсутствует.\n\nВключите его для загрузки переводов Библии.</string>
   <string name="info_terperinci">Подробности</string>
   <string name="buang_dari_daftar">Удалить</string>
   <string name="edit_bookmark">Редактировать закладку</string>
@@ -152,6 +153,7 @@
   <string name="bmcat_notes">Примечания</string>
   <string name="bmcat_highlights">Выделение</string>
   <string name="bmcat_unlabeled_bookmarks">Закладки без метки</string>
+  <string name="menuLabelSort">Сортировать метки по алфавиту</string>
   <string name="bl_no_notes_written_yet">Примечаний пока нет.\nЧтобы начать писать примечание, нажмите на стих.</string>
   <string name="bl_no_highlighted_verses">Выделенных стихов пока нет.\nЧтобы выделить стихи, нажмите на них.</string>
   <string name="bl_there_are_no_bookmarks_without_any_labels">Закладок без меток нет.</string>
@@ -196,6 +198,7 @@
   <string name="bookmark_search">Поиск</string>
   <string name="verse_select_one_verse_selected">Выбран 1 стих</string>
   <string name="verse_select_multiple_verse_selected">Выбрано %s стихов</string>
+  <string name="google_play_store_not_installed">Не установлено приложение Google Play Store.</string>
   <string name="goto_tab_dialer_label">Набор номера</string>
   <string name="goto_tab_direct_label">Выбор</string>
   <string name="goto_tab_grid_label">Сетка</string>
@@ -209,6 +212,7 @@
   <string name="sn_deep_search_enabled">А также стихи и пр.</string>
   <string name="sn_songs_activity_title">Песни</string>
   <string name="sn_bookselector_all">ВСЕ</string>
+  <string name="sn_bookselector_more">Загрузить еще&#8230;</string>
   <string name="sn_bookselector_all_desc">Искать во всех загруженных книгах.</string>
   <string name="sn_downloading_ellipsis">Загрузка&#8230;</string>
   <string name="sn_download_song_books">Загрузить книгу песен</string>
@@ -222,6 +226,7 @@
   <string name="sn_update_book_explanation">Обновить книгу ^1 до последней версии.</string>
   <string name="sn_update_book_confirm_button">Обновить</string>
   <string name="sn_update_book">Обновить песенник</string>
+  <string name="sn_update_book_because_too_old">Чтобы продолжить, обновите ^1 до последней версии. Отошлите ваши изменения после обновления.</string>
   <string name="desc_previous_day">Предыдущий день</string>
   <string name="desc_next_day">Следующий день</string>
   <string name="desc_open_bookmark">Открыть закладку</string>
@@ -316,12 +321,14 @@
   <string name="rp_showDetails">Показать детали</string>
   <string name="rp_hideDetails">Скрыть детали</string>
   <string name="rp_aboutPlan">О плане чтения</string>
+  <string name="rp_description_with_id"><b>^1</b> (^2 дня)\n<small>ID: ^3</small>\n\n^4</string>
   <string name="rp_download_day_count_days">%s дней</string>
   <string name="rp_download_reading_plan_list_progress">Загрузка списка планов чтения&#8230;</string>
   <string name="rp_download_reading_plan_list_failed">Не удалось загрузить список планов чтения. Пожалуйста, повторите попытку при работающем соединении с Интернетом.</string>
   <string name="rp_download_reading_plan_progress">Загрузка плана чтения&#8230;</string>
   <string name="rp_download_reading_plan_failed">Не удалось загрузить выбранный план чтения. Пожалуйста, повторите попытку при работающем соединении с Интернетом.</string>
   <string name="rp_download_reading_plan_data_corrupted">Загруженный план чтения поврежден. Пожалуйста, повторите попытку при работающем соединении с Интернетом.</string>
+  <string name="rp_download_already_have">У Вас уже есть этот план чтения.</string>
   <string name="version_download_need_fonts">Загруженная вами версия может потребовать особых шрифтов. Перейдите в меню \'Вид текста\' и выберите шрифт.</string>
   <string name="version_download_corrupted_file">Загруженный файл выглядит поврежденным.</string>
   <string name="menuNightMode">Ночной режим</string>
@@ -462,6 +469,7 @@
   <string name="marker_migrate_no_more">Больше не спрашивать</string>
   <string name="marker_migrate_later">Не сейчас</string>
   <string name="marker_migrate_title">Импортировать старые маркеры</string>
+  <string name="marker_migrate_file_chooser_title">Выбрать файл резервной копии v3</string>
   <string name="marker_migrate_no_more_confirmation">Вы уверены, что не нужно импортировать старые данные?</string>
   <string name="marker_migrate_error_opening_backup_file">Ошибка доступа к файлу резервной копии.</string>
   <string name="marker_migrate_import_from_newest">Да, импортировать из самого последнего (рекомендуется)</string>
@@ -469,4 +477,11 @@
   <string name="marker_migrate_filename_dated">%1$s датированный %2$s</string>
   <string name="announce_notif_title">%s объявлений</string>
   <string name="announce_notif_number_new_announcements">%s новых объявлений</string>
+  <string name="menuDictionary">Словарь</string>
+  <string name="dict_open_full">Открыть словарь</string>
+  <string name="dict_no_results">Не найдена статья для выбранного слова.</string>
+  <string name="dict_download_prompt">Загрузить \"Библейский словарь\", чтобы узнать больше о словах, использованных в Библии!</string>
+  <string name="dict_download_button">Загрузить</string>
+  <string name="menuGuide">Руководство</string>
+  <string name="menuCommentary">Комментарии</string>
 </resources>

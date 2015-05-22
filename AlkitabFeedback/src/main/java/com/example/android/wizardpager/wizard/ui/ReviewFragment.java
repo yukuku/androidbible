@@ -28,17 +28,17 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.android.wizardpager.wizard.model.AbstractWizardModel;
+import com.example.android.wizardpager.wizard.model.ModelCallbacks;
+import com.example.android.wizardpager.wizard.model.Page;
+import com.example.android.wizardpager.wizard.model.ReviewItem;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import yuku.alkitabfeedback.R;
-
-import com.example.android.wizardpager.wizard.model.AbstractWizardModel;
-import com.example.android.wizardpager.wizard.model.ModelCallbacks;
-import com.example.android.wizardpager.wizard.model.Page;
-import com.example.android.wizardpager.wizard.model.ReviewItem;
 
 public class ReviewFragment extends ListFragment implements ModelCallbacks {
     private Callbacks mCallbacks;
@@ -63,7 +63,7 @@ public class ReviewFragment extends ListFragment implements ModelCallbacks {
 
         TextView titleView = (TextView) rootView.findViewById(android.R.id.title);
         titleView.setText(R.string.alkitabfeedback_review);
-        titleView.setTextColor(getResources().getColor(R.color.alkitabfeedback_review_green));
+        titleView.setTextColor(getResources().getColor(R.color.alkitabfeedback_review_blue));
 
         ListView listView = (ListView) rootView.findViewById(android.R.id.list);
         setListAdapter(mReviewAdapter);

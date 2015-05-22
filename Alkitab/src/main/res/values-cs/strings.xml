@@ -4,6 +4,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
   <string name="highlight_stabilo">Zvýraznit</string>
   <string name="menuDonasi">Darování</string>
+  <string name="menuSupport">Podpora</string>
   <string name="mengimpor_titiktiga">Obnovování...</string>
   <string name="mengekspor_titiktiga">Vytvářím zálohu...</string>
   <string name="bagikan_renungan">Sdílet co mne oslovilo</string>

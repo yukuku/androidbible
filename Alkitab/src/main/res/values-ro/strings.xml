@@ -469,4 +469,8 @@
   <string name="marker_migrate_filename_dated">%1$s datat %2$s</string>
   <string name="announce_notif_title">%s Anunțuri</string>
   <string name="announce_notif_number_new_announcements">%s anunțuri noi</string>
+  <string name="menuDictionary">Dicționar</string>
+  <string name="dict_download_button">Descarcă</string>
+  <string name="menuGuide">Ghid</string>
+  <string name="menuCommentary">Comentariu</string>
 </resources>

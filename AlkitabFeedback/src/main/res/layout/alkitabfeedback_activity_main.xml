@@ -27,8 +27,7 @@
         android:layout_marginRight="16dp"
         android:paddingTop="16dp"
         android:paddingBottom="8dp"
-        android:paddingLeft="?android:listPreferredItemPaddingLeft"
-        android:paddingRight="?android:listPreferredItemPaddingRight"
+        android:paddingLeft="4dp"
         android:gravity="left" />
 
     <android.support.v4.view.ViewPager
@@ -49,7 +48,7 @@
         android:orientation="horizontal">
 
         <Button
-            style="?android:buttonBarButtonStyle"
+            style="?buttonBarButtonStyle"
             android:background="@drawable/alkitabfeedback_selectable_item_background"
             android:id="@+id/prev_button"
             android:layout_width="0dp"
@@ -58,7 +57,7 @@
             android:text="@string/alkitabfeedback_prev" />
 
         <Button
-            style="?android:buttonBarButtonStyle"
+            style="?buttonBarButtonStyle"
             android:background="@drawable/alkitabfeedback_selectable_item_background"
             android:id="@+id/next_button"
             android:layout_width="0dp"

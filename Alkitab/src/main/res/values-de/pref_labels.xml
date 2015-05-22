@@ -7,11 +7,18 @@
   <string name="pref_warna_nomor_ayat">Versnummern</string>
   <string name="pref_redTextColor_title">Worte von Jesus</string>
   <string name="pref_penggunaan">Nutzung</string>
+  <string name="pref_copy_share">Kopieren und teilen</string>
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Liste der Bücher in alphabetischer Reihenfolge (a-z) anstatt in Originalreihenfolge anzeigen</string>
   <string name="pref_kitab_menurut_abjad">Bücher alphabetisch sortieren</string>
   <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Bildschirm wird beim Lesen der Bibel nicht ausgeschaltet</string>
   <string name="pref_biarkan_layar_menyala">Display angeschaltet lassen</string>
   <string name="pref_penampilan_layar">Display</string>
   <string name="pref_volumeButtonNavigation_title">Navigation mit Lautstärkewippe</string>
+  <string name="pref_copyWithVerseNumbers_title">Versnummern</string>
+  <string name="pref_copyWithVerseNumbers_summary">Setze vor jeden Vers die Versnummer</string>
+  <string name="pref_copyWithVersionName_title">Kürzel der Bibelübersetzung</string>
+  <string name="pref_copyWithVersionName_summary">Kürzel der Bibelübersetzung hinzufügen</string>
+  <string name="pref_autoDictionaryAnalyze_title">Automatisch im Wörterbuch nachschlagen</string>
+  <string name="pref_autoDictionaryAnalyze_summary">Bei selektierten Versen automatisch Wörter im Wörterbuch suchen</string>
   <string name="pref_showHiddenVersion_title">Bibelübersetzungen mit Copyright aktivieren</string>
 </resources>
