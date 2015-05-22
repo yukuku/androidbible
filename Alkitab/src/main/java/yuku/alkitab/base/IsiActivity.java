@@ -2035,15 +2035,25 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				mode.setSubtitle(getString(R.string.verse_select_multiple_verse_selected, selected.size()));
 			}
 
-			// force-show these items on sw600dp
-			final int showAsAction = getResources().getConfiguration().screenWidthDp >= 600 ? MenuItem.SHOW_AS_ACTION_ALWAYS : MenuItem.SHOW_AS_ACTION_IF_ROOM;
-			menu.findItem(R.id.menuGuide).setShowAsActionFlags(showAsAction);
-			menu.findItem(R.id.menuCommentary).setShowAsActionFlags(showAsAction);
-			menu.findItem(R.id.menuDictionary).setShowAsActionFlags(showAsAction);
+			final MenuItem menuGuide = menu.findItem(R.id.menuGuide);
+			final MenuItem menuCommentary = menu.findItem(R.id.menuCommentary);
+			final MenuItem menuDictionary = menu.findItem(R.id.menuDictionary);
 
-			// do not show dictionary item if not needed
-			final boolean autoDictionaryAnalyze = Preferences.getBoolean(getString(R.string.pref_autoDictionaryAnalyze_key), getResources().getBoolean(R.bool.pref_autoDictionaryAnalyze_default));
-			menu.findItem(R.id.menuDictionary).setVisible(!autoDictionaryAnalyze);
+			// force-show these items on sw600dp, otherwise never show
+			final int showAsAction = getResources().getConfiguration().screenWidthDp >= 600 ? MenuItem.SHOW_AS_ACTION_ALWAYS : MenuItem.SHOW_AS_ACTION_NEVER;
+			menuGuide.setShowAsActionFlags(showAsAction);
+			menuCommentary.setShowAsActionFlags(showAsAction);
+			menuDictionary.setShowAsActionFlags(showAsAction);
+
+			// set visibility according to appconfig
+			final AppConfig c = AppConfig.get();
+			menuGuide.setVisible(c.menuGuide);
+			menuCommentary.setVisible(c.menuCommentary);
+
+			// do not show dictionary item if not needed because of auto-lookup from
+			menuDictionary.setVisible(c.menuDictionary
+					&& !Preferences.getBoolean(getString(R.string.pref_autoDictionaryAnalyze_key), getResources().getBoolean(R.bool.pref_autoDictionaryAnalyze_default))
+			);
 
 			return true;
 		}

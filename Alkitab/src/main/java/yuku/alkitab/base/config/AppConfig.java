@@ -12,9 +12,10 @@ public class AppConfig {
 	public static final String TAG = AppConfig.class.getSimpleName();
 
 	public boolean menuDevotion;
-	public boolean menuHelp;
-	public boolean menuDonation;
 	public boolean menuSongs;
+	public boolean menuDictionary;
+	public boolean menuGuide;
+	public boolean menuCommentary;
 	public String shareUrlFormat;
 
 	public String internalPrefix;
@@ -60,10 +61,11 @@ public class AppConfig {
 						res.internalPresetName = parser.getAttributeValue(null, "preset_name");
 						break;
 					case "menu":
-						res.menuHelp = parser.getAttributeBooleanValue(null, "help", false);
-						res.menuDonation = parser.getAttributeBooleanValue(null, "donation", false);
 						res.menuDevotion = parser.getAttributeBooleanValue(null, "devotion", false);
 						res.menuSongs = parser.getAttributeBooleanValue(null, "songs", false);
+						res.menuDictionary = parser.getAttributeBooleanValue(null, "dictionary", false);
+						res.menuGuide = parser.getAttributeBooleanValue(null, "guide", false);
+						res.menuCommentary = parser.getAttributeBooleanValue(null, "commentary", false);
 						break;
 					case "url":
 						res.shareUrlFormat = parser.getAttributeValue(null, "format");

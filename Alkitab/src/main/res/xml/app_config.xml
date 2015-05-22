@@ -2,9 +2,11 @@
 <config>
     <menu
         devotion="true"
-        help="true"
-        donation="true"
-        songs="true" />
+        songs="true"
+		dictionary="false"
+		guide="true"
+		commentary="true"
+	/>
 
 	<devotions>
 		<devotion name="sh" />
