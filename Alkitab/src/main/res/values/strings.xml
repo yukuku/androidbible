@@ -228,9 +228,9 @@
     <string name="sn_share_title">Share song</string>
     <string name="sn_lyric_version_version">Version %s</string>
     <string name="sn_lyric_refrain_marker">Ref.</string>
-    <string name="sn_delete_all_songs">Delete all songs</string>
-    <string name="sn_delete_all_songs_explanation">Delete all songs from local storage? This may save some space.</string>
-    <string name="sn_delete_all_songs_result">Deletion completed. Songs deleted: %s</string>
+    <string name="sn_delete_song_book">Delete song book</string>
+    <string name="sn_delete_song_book_explanation">Delete all songs from the song book ^1?</string>
+    <string name="sn_delete_song_book_result">^1 songs were deleted from the song book ^2.</string>
     <string name="sn_update_book_explanation">Update the book ^1 to the latest version?</string>
     <string name="sn_update_book_confirm_button">Update</string>
     <string name="sn_update_book">Update song book</string>

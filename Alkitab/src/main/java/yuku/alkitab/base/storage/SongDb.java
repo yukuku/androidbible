@@ -7,6 +7,7 @@ import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.support.annotation.Nullable;
+import android.util.Pair;
 import yuku.alkitab.base.util.SongBookUtil;
 import yuku.alkitab.base.util.SongFilter;
 import yuku.alkitab.base.util.SongFilter.CompiledFilter;
@@ -164,6 +165,24 @@ public class SongDb {
 		}
 	}
 
+	/**
+	 * @return null if there is no song at all
+	 */
+	@Nullable public Pair<String /* bookName */, Song> getAnySong() {
+		final SQLiteDatabase db = helper.getReadableDatabase();
+		try (Cursor c = db.query(Table.SongInfo.tableName(), ToStringArray(Table.SongInfo.bookName, Table.SongInfo.data, Table.SongInfo.dataFormatVersion), null, null, null, null, Table.SongInfo.bookName + " asc, " + Table.SongInfo.ordering + " asc", "1")) {
+			if (c.moveToNext()) {
+				final String bookName = c.getString(0);
+				final byte[] data = c.getBlob(1);
+				final int dataFormatVersion = c.getInt(2);
+				final Song song = unmarshallSong(data, dataFormatVersion);
+				return Pair.create(bookName, song);
+			} else {
+				return null;
+			}
+		}
+	}
+
 	public List<SongInfo> listSongInfosByBookName(String bookName) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		List<SongInfo> res = new ArrayList<>();
@@ -247,10 +266,10 @@ public class SongDb {
 		return c;
 	}
 
-	public int deleteAllSongs() {
-		SQLiteDatabase db = helper.getWritableDatabase();
-		int count = db.delete(Table.SongInfo.tableName(), "1", null); //$NON-NLS-1$
-		db.execSQL("vacuum"); //$NON-NLS-1$
+	public int deleteSongsFromSongBook(final String songBookName) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+		final int count = db.delete(Table.SongInfo.tableName(), Table.SongInfo.bookName + "=?", Array(songBookName));
+		db.execSQL("vacuum");
 		return count;
 	}
 
