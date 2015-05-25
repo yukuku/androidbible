@@ -67,7 +67,6 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		if (oldVersion <= 50) {
 			// new table Version
 			createTableEdisi(db);
-			createIndexVersion(db);
 		}
 
 		if (oldVersion <= 69) { // 70: 2.0.0
