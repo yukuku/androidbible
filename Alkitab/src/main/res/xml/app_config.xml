@@ -3,7 +3,7 @@
     <menu
         devotion="true"
         songs="true"
-		dictionary="false"
+		dictionary="true"
 		guide="true"
 		commentary="true"
 	/>
