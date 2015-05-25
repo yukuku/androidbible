@@ -1050,6 +1050,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	@Override
 	public void songKeypadButton_click(final View v) {
 		if (currentBookName == null) return;
+		if (state_tempCode == null) return; // only possible if the user is so fast that he presses the buttons before drawer opens for the first time
 
 		final int[] numIds = {
 			R.id.bDigit0, R.id.bDigit1, R.id.bDigit2, R.id.bDigit3, R.id.bDigit4,

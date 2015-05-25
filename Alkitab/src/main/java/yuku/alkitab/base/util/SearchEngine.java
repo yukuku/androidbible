@@ -218,7 +218,7 @@ public class SearchEngine {
 				for (int chapter_1 = 1; chapter_1 <= chapter_count; chapter_1++) {
 					// try to find it wholly in a chapter
 					String oneChapter = version.loadChapterTextLowercasedWithoutSplit(book, chapter_1);
-					if (oneChapter.contains(word)) {
+					if (oneChapter != null && oneChapter.contains(word)) {
 						// only do the following when inside a chapter, word is found
 						searchByGrepInChapter(oneChapter, word, res, Ari.encode(book.bookId, chapter_1, 0), hasPlus);
 					}
