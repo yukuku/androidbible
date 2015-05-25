@@ -7,6 +7,7 @@ import android.content.Loader;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -110,7 +111,7 @@ public class SongListActivity extends BaseActivity {
 	    };
 	}
 	
-	public static Intent createIntent(SearchState searchState_optional) {
+	public static Intent createIntent(@Nullable SearchState searchState_optional) {
 		Intent res = new Intent(App.context, SongListActivity.class);
 		if (searchState_optional != null) res.putExtra(EXTRA_searchState, searchState_optional);
 		return res;
@@ -231,7 +232,13 @@ public class SongListActivity extends BaseActivity {
 			Intent data = new Intent();
 			data.putExtra(EXTRA_bookName, songInfo.bookName);
 			data.putExtra(EXTRA_code, songInfo.code);
-			data.putExtra(EXTRA_searchState, new SearchState(searchView.getQuery().toString(), adapter.getData(), position, loader.getSelectedBookName(), cDeepSearch.isChecked()));
+
+			// do not pass to Binder more than 1000 songs, because it might exceed Binder data limit
+			final List<SongInfo> adapterData = adapter.getData();
+			if (adapterData.size() <= 1000) {
+				data.putExtra(EXTRA_searchState, new SearchState(searchView.getQuery().toString(), adapterData, position, loader.getSelectedBookName(), cDeepSearch.isChecked()));
+			}
+
 			setResult(RESULT_OK, data);
 			finish();
 		}
