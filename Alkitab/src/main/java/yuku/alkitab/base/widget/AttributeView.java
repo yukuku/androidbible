@@ -67,16 +67,28 @@ public class AttributeView extends View {
         attributeCountPaintNote.setShadowLayer(density*4, 0, 0, 0xffffffff);
 	}
 
+	public int getBookmarkCount() {
+		return bookmark_count;
+	}
+
 	public void setBookmarkCount(final int bookmark_count) {
 		this.bookmark_count = bookmark_count;
 		requestLayout();
 		invalidate();
 	}
 
+	public int getNoteCount() {
+		return note_count;
+	}
+
 	public void setNoteCount(final int note_count) {
 		this.note_count = note_count;
 		requestLayout();
 		invalidate();
+	}
+
+	public int getProgressMarkBits() {
+		return progress_mark_bits;
 	}
 
 	public void setProgressMarkBits(final int progress_mark_bits) {
