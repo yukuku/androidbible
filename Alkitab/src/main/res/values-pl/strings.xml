@@ -80,7 +80,6 @@
   <string name="kelola_versi">Zarządzaj przekładami</string>
   <string name="tambah">Dodaj</string>
   <string name="versi_lainnya">Inne przekłady</string>
-  <string name="ada_kegagalan_membuka_edisiid">Błąd otwarcia %s</string>
   <string name="version_error_opening">Błąd przy otwieraniu %s.</string>
   <string name="pdb_file_options">Opcje pliku PDB</string>
   <string name="greek_charset">Greckie znaki</string>
@@ -220,9 +219,9 @@
   <string name="sn_share_title">Podziel się pieśnią</string>
   <string name="sn_lyric_version_version">Wersja %s</string>
   <string name="sn_lyric_refrain_marker">Ref.</string>
-  <string name="sn_delete_all_songs">Usuń wszystkie pieśni</string>
-  <string name="sn_delete_all_songs_explanation">Czy usunąć wszystkie pieśni z lokalnego dysku? Może to uwolnić trochę miejsca na dysku.</string>
-  <string name="sn_delete_all_songs_result">Usuwanie zakończone. Usunięto pieśń o numerze: %s</string>
+  <string name="sn_delete_song_book">Skasuj śpiewnik</string>
+  <string name="sn_delete_song_book_explanation">Skasować wszystkie pieśni ze śpiewnika ^1?</string>
+  <string name="sn_delete_song_book_result">^1 pieśni zostało skasowane ze śpiewnika ^2.</string>
   <string name="sn_update_book_explanation">Aktualizuj śpiewnik ^1 do najnowszej wersji.</string>
   <string name="sn_update_book_confirm_button">Aktualizcja</string>
   <string name="sn_update_book">Aktualizuj śpiewnik</string>
@@ -245,6 +244,10 @@
   <string name="desc_progress_3">Trzeci postęp</string>
   <string name="desc_progress_4">Czwarty postęp</string>
   <string name="desc_progress_5">Piąty postęp</string>
+  <string name="desc_verse_attribute_one_bookmark">Do tego wersu dołączona jest zakładka.</string>
+  <string name="desc_verse_attribute_multiple_bookmarks">%s zakładek jest dołączonych do tego wersu.</string>
+  <string name="desc_verse_attribute_one_note">Do tego wersu dołączona jest notatka.</string>
+  <string name="desc_verse_attribute_multiple_notes">%s notatek jest dołączonych do tego wersu.</string>
   <string name="intent_filter_open_yes_file">Otwórz plik YES</string>
   <string name="intent_filter_open_pdb_file">Otwórz plik PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Otwórz plik PDB/YES</string>

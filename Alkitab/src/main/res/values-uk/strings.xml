@@ -80,7 +80,6 @@
   <string name="kelola_versi">Змінити версії</string>
   <string name="tambah">Додати</string>
   <string name="versi_lainnya">Інші версії</string>
-  <string name="ada_kegagalan_membuka_edisiid">Помилка відкриття %s</string>
   <string name="version_error_opening">Помилка відкриття %s.</string>
   <string name="pdb_file_options">Опції PDB файлу</string>
   <string name="greek_charset">Грецький алфавіт</string>
@@ -217,9 +216,6 @@
   <string name="sn_share_title">Поділитися піснею</string>
   <string name="sn_lyric_version_version">Версія %s</string>
   <string name="sn_lyric_refrain_marker">Присп.</string>
-  <string name="sn_delete_all_songs">Видалити всі пісні</string>
-  <string name="sn_delete_all_songs_explanation">Видалити всі пісні з внутрішньої пам\'яті? Це може звільнити місце на диску.</string>
-  <string name="sn_delete_all_songs_result">Видалення завершене. Видалені пісні: %s</string>
   <string name="sn_update_book_explanation">Оновіть книгу  ^1 до останньої версії.</string>
   <string name="sn_update_book_confirm_button">Оновлення</string>
   <string name="sn_update_book">Оновлення книги псалмів</string>

@@ -80,7 +80,6 @@
   <string name="kelola_versi">版本管理</string>
   <string name="tambah">新增</string>
   <string name="versi_lainnya">其他版本</string>
-  <string name="ada_kegagalan_membuka_edisiid">%s 開啟錯誤</string>
   <string name="version_error_opening">%s 開啟錯誤</string>
   <string name="pdb_file_options">PDB 檔案選項</string>
   <string name="greek_charset">希臘文編碼</string>
@@ -127,6 +126,7 @@
   <string name="ed_download_button">下載</string>
   <string name="ed_update_button">更新</string>
   <string name="ed_details_update_available">可供安裝的更新</string>
+  <string name="ed_download_manager_not_enabled_prompt">下載管理員程式尚未啟動或不存在。\n\n請啟動程式以下載聖經版本。</string>
   <string name="info_terperinci">細節</string>
   <string name="buang_dari_daftar">移除</string>
   <string name="edit_bookmark">編輯書籤</string>
@@ -152,6 +152,7 @@
   <string name="bmcat_notes">筆記</string>
   <string name="bmcat_highlights">標記</string>
   <string name="bmcat_unlabeled_bookmarks">未被標記的書籤</string>
+  <string name="menuLabelSort">以文字排序標簽</string>
   <string name="bl_no_notes_written_yet">尚未書寫任何筆記。\n選按一節經文以開始書寫筆記。</string>
   <string name="bl_no_highlighted_verses">沒有任何被標記的經節。\n選按經節以開始標記它們。</string>
   <string name="bl_there_are_no_bookmarks_without_any_labels">沒有任何未被標記的書籤。</string>
@@ -196,6 +197,7 @@
   <string name="bookmark_search">搜尋</string>
   <string name="verse_select_one_verse_selected">選取了1節經文</string>
   <string name="verse_select_multiple_verse_selected">選取了%s經文</string>
+  <string name="google_play_store_not_installed">尚未安裝谷歌商店。</string>
   <string name="goto_tab_dialer_label">撥號按鍵</string>
   <string name="goto_tab_direct_label">直接輸入</string>
   <string name="goto_tab_grid_label">格狀排列</string>
@@ -209,6 +211,7 @@
   <string name="sn_deep_search_enabled">歌詞, 等等.</string>
   <string name="sn_songs_activity_title">歌</string>
   <string name="sn_bookselector_all">全部</string>
+  <string name="sn_bookselector_more">下載更多&#8230;</string>
   <string name="sn_bookselector_all_desc">搜尋所列的所有書卷</string>
   <string name="sn_downloading_ellipsis">下載中...</string>
   <string name="sn_download_song_books">下載詩歌本</string>
@@ -216,12 +219,10 @@
   <string name="sn_share_title">分享詩歌</string>
   <string name="sn_lyric_version_version">版本 %s</string>
   <string name="sn_lyric_refrain_marker">參考書目</string>
-  <string name="sn_delete_all_songs">刪除所有詩歌</string>
-  <string name="sn_delete_all_songs_explanation">從本地媒體刪去所有詩歌? 這能節省空間</string>
-  <string name="sn_delete_all_songs_result">完成刪除以下詩歌: %s</string>
   <string name="sn_update_book_explanation">更新書目^1到最新版本。</string>
   <string name="sn_update_book_confirm_button">更新</string>
   <string name="sn_update_book">更新歌書。</string>
+  <string name="sn_update_book_because_too_old">繼續之前請更新^1到最新的版本。更新後，如有需要請傳送你的編輯。</string>
   <string name="desc_previous_day">前一天</string>
   <string name="desc_next_day">後一天</string>
   <string name="desc_open_bookmark">開啟書籤</string>
@@ -317,12 +318,14 @@
   <string name="rp_showDetails">顯示詳細資料</string>
   <string name="rp_hideDetails">隱藏詳細資料</string>
   <string name="rp_aboutPlan">關於計劃</string>
+  <string name="rp_description_with_id"><b>^1</b> (^2天)\n<small>ID: ^3</small>\n\n^4</string>
   <string name="rp_download_day_count_days">%s天</string>
   <string name="rp_download_reading_plan_list_progress">閱讀計劃清單下載中&#8230;</string>
   <string name="rp_download_reading_plan_list_failed">閱讀計劃清單下載失敗，請以有效的網路連線再次嘗試。</string>
   <string name="rp_download_reading_plan_progress">閱讀計劃下載中&#8230;</string>
   <string name="rp_download_reading_plan_failed">已選的閱讀計劃下載失敗，請以有效的互聯網連線再次嘗試。</string>
   <string name="rp_download_reading_plan_data_corrupted">已下載的閱讀計劃資料損毀，請以有效的互聯網連線再次嘗試。</string>
+  <string name="rp_download_already_have">你已經擁有此閱讀計劃。</string>
   <string name="version_download_need_fonts">"您下載的版本需要某種字體以正確顯示。請到「文字外觀」目錄，並選擇某種字體。希臘語需要 Ubuntu 字體。緬甸語需要Parabaik，ParabaikSans 或 Myanmar3。泰米爾語需要 Akshar。泰盧固語需要 Suranna。"</string>
   <string name="version_download_corrupted_file">已下載的檔案似是無效的。</string>
   <string name="menuNightMode">夜間模式</string>
@@ -463,6 +466,7 @@
   <string name="marker_migrate_no_more">不再詢問</string>
   <string name="marker_migrate_later">現在別問我</string>
   <string name="marker_migrate_title">匯入舊標記</string>
+  <string name="marker_migrate_file_chooser_title">選取v3備份檔案</string>
   <string name="marker_migrate_no_more_confirmation">你確定你不需要匯入舊資料？</string>
   <string name="marker_migrate_error_opening_backup_file">不能存取備份檔案。</string>
   <string name="marker_migrate_import_from_newest">是，匯入最新的（建議選項）</string>
@@ -470,4 +474,11 @@
   <string name="marker_migrate_filename_dated">%1$s日期%2$s</string>
   <string name="announce_notif_title">%s 公告</string>
   <string name="announce_notif_number_new_announcements">%s 新的公告</string>
+  <string name="menuDictionary">字典</string>
+  <string name="dict_open_full">開啟字典</string>
+  <string name="dict_no_results">找不到所選字詞的解釋。</string>
+  <string name="dict_download_prompt">下載「聖經字典」以學習聖經中更多的字詞！</string>
+  <string name="dict_download_button">下載</string>
+  <string name="menuGuide">指引</string>
+  <string name="menuCommentary">注釋</string>
 </resources>

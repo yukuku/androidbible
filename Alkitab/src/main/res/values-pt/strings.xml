@@ -80,7 +80,6 @@
   <string name="kelola_versi">Gerenciar Versões</string>
   <string name="tambah">Adicionar</string>
   <string name="versi_lainnya">Outras versões</string>
-  <string name="ada_kegagalan_membuka_edisiid">Erro ao abrir %s</string>
   <string name="version_error_opening">Erro ao abrir %s.</string>
   <string name="pdb_file_options">Opções de arquivo PDB</string>
   <string name="greek_charset">Caracteres gregos</string>
@@ -216,9 +215,6 @@
   <string name="sn_share_title">Compartilhar canção</string>
   <string name="sn_lyric_version_version">Versão %s</string>
   <string name="sn_lyric_refrain_marker">Ref.</string>
-  <string name="sn_delete_all_songs">Remover todas as canções</string>
-  <string name="sn_delete_all_songs_explanation">Remover todas as canções do armazenamento local? Isto poderá liberar algum espaço.</string>
-  <string name="sn_delete_all_songs_result">Remoção concluída. Canções removidas: %s</string>
   <string name="sn_update_book_explanation">Atualizar o livro ^1 para a última versão?</string>
   <string name="sn_update_book_confirm_button">Atualizar</string>
   <string name="sn_update_book">Atualize hinário</string>

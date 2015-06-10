@@ -80,7 +80,6 @@
   <string name="kelola_versi">Übersetzungen verwalten</string>
   <string name="tambah">Hinfügen</string>
   <string name="versi_lainnya">Weitere Übersetzungen</string>
-  <string name="ada_kegagalan_membuka_edisiid">Fehler beim Öffnen von %s</string>
   <string name="version_error_opening">Fehler beim Öffnen von %s.</string>
   <string name="pdb_file_options">PDB-Datei-Optionen</string>
   <string name="greek_charset">Griechischer Zeichensatz</string>
@@ -220,9 +219,6 @@
   <string name="sn_share_title">Lied mitteilen</string>
   <string name="sn_lyric_version_version">Version %s</string>
   <string name="sn_lyric_refrain_marker">Ref.</string>
-  <string name="sn_delete_all_songs">Alle Lieder löschen</string>
-  <string name="sn_delete_all_songs_explanation">Sollen alle Lieder vom internen Speicher gelöscht werden? Das würde etwas Platz schaffen.</string>
-  <string name="sn_delete_all_songs_result">Löschen abgeschlossen. Anzahl der gelöschten Lieder: %s</string>
   <string name="sn_update_book_explanation">Aktualisiert das Liederbuch ^1 auf die neuste Version.</string>
   <string name="sn_update_book_confirm_button">Aktualisieren</string>
   <string name="sn_update_book">Liederbuch aktualisieren</string>

@@ -83,7 +83,6 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="kelola_versi">Pārvaldīt versijas</string>
   <string name="tambah">Pievienot</string>
   <string name="versi_lainnya">Citas versijas</string>
-  <string name="ada_kegagalan_membuka_edisiid">Kļūda atverot %s</string>
   <string name="version_error_opening">Kļūda atverot %s.</string>
   <string name="pdb_file_options">PDB faila iespējas</string>
   <string name="greek_charset">Grieķu kodējums</string>
@@ -219,9 +218,6 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="sn_share_title">Koplietot dziesmu</string>
   <string name="sn_lyric_version_version">Versija %s</string>
   <string name="sn_lyric_refrain_marker">Ref.</string>
-  <string name="sn_delete_all_songs">Dzēst visas dziesmas</string>
-  <string name="sn_delete_all_songs_explanation">Vai dzēst visas dziesmas no iekšējās atmiņas? Tas palīdzēs ietaupīt mazliet vietu.</string>
-  <string name="sn_delete_all_songs_result">Dzēšana ir pabeigta. Ir izdzēstas dziesmas: %s</string>
   <string name="sn_update_book_explanation">Vai atjaunot  ^1 grāmatu uz pēdējo versiju?</string>
   <string name="sn_update_book_confirm_button">Atjaunot</string>
   <string name="sn_update_book">Atjaunot dziesmu grāmatu</string>

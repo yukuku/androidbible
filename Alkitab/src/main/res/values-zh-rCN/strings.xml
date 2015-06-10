@@ -80,7 +80,6 @@
   <string name="kelola_versi">管理版本</string>
   <string name="tambah">新增</string>
   <string name="versi_lainnya">其他版本</string>
-  <string name="ada_kegagalan_membuka_edisiid">出错打开文件 %s</string>
   <string name="version_error_opening">开启%s错误。</string>
   <string name="pdb_file_options">PDB 文件选项</string>
   <string name="greek_charset">希腊字符集</string>
@@ -127,6 +126,7 @@
   <string name="ed_download_button">下载</string>
   <string name="ed_update_button">更新</string>
   <string name="ed_details_update_available">可供安装的更新</string>
+  <string name="ed_download_manager_not_enabled_prompt">下载管理员程式尚未启动或不存在。\n\n请启动程式以下载圣经版本。</string>
   <string name="info_terperinci">详细说明</string>
   <string name="buang_dari_daftar">移除</string>
   <string name="edit_bookmark">编辑书籤</string>
@@ -152,6 +152,7 @@
   <string name="bmcat_notes">笔记</string>
   <string name="bmcat_highlights">标记</string>
   <string name="bmcat_unlabeled_bookmarks">未被标记的书签</string>
+  <string name="menuLabelSort">以文字排序标签</string>
   <string name="bl_no_notes_written_yet">尚未书写任何笔记。\n选按一节经文以开始书写笔记。</string>
   <string name="bl_no_highlighted_verses">没有任何被标记的经节。\n选按经节以开始标记它们。</string>
   <string name="bl_there_are_no_bookmarks_without_any_labels">没有任何未被标记的书签。</string>
@@ -196,6 +197,7 @@
   <string name="bookmark_search">搜寻</string>
   <string name="verse_select_one_verse_selected">选取了1节经文</string>
   <string name="verse_select_multiple_verse_selected">选取了%s经文</string>
+  <string name="google_play_store_not_installed">尚未安装谷歌商店。</string>
   <string name="goto_tab_dialer_label">拨号按键</string>
   <string name="goto_tab_direct_label">直接输入</string>
   <string name="goto_tab_grid_label">格状排列</string>
@@ -209,6 +211,7 @@
   <string name="sn_deep_search_enabled">歌词，等等</string>
   <string name="sn_songs_activity_title">歌曲</string>
   <string name="sn_bookselector_all">所有</string>
+  <string name="sn_bookselector_more">下载更多&#8230;</string>
   <string name="sn_bookselector_all_desc">搜索所有已安装的书籍。</string>
   <string name="sn_downloading_ellipsis">正在下载&#8230;</string>
   <string name="sn_download_song_books">下载歌曲的书籍</string>
@@ -216,12 +219,10 @@
   <string name="sn_share_title">分享歌曲</string>
   <string name="sn_lyric_version_version">版本 %s</string>
   <string name="sn_lyric_refrain_marker">副歌</string>
-  <string name="sn_delete_all_songs">删除所有歌曲</string>
-  <string name="sn_delete_all_songs_explanation">删除本地存储的所有歌曲？这可以节省一些空间</string>
-  <string name="sn_delete_all_songs_result">删除完成。删除的歌曲数目：%s</string>
   <string name="sn_update_book_explanation">更新书目^1到最新版本。</string>
   <string name="sn_update_book_confirm_button">更新</string>
   <string name="sn_update_book">更新歌书。</string>
+  <string name="sn_update_book_because_too_old">继续之前请更新^1到最新的版本。更新后，如有需要请传送你的编辑。</string>
   <string name="desc_previous_day">前天</string>
   <string name="desc_next_day">后天</string>
   <string name="desc_open_bookmark">开启书签</string>
@@ -316,12 +317,14 @@
   <string name="rp_showDetails">显示详细资料</string>
   <string name="rp_hideDetails">隐藏详细资料</string>
   <string name="rp_aboutPlan">关于计划</string>
+  <string name="rp_description_with_id"><b>^1</b> (^2天)\n<small>ID: ^3</small>\n\n^4</string>
   <string name="rp_download_day_count_days">%s天</string>
   <string name="rp_download_reading_plan_list_progress">阅读计划清单下载中&#8230;</string>
   <string name="rp_download_reading_plan_list_failed">阅读计划清单下载失败，请以有效的互联网连线再次尝试。</string>
   <string name="rp_download_reading_plan_progress">阅读计划下载中&#8230;</string>
   <string name="rp_download_reading_plan_failed">已选取的阅读计划下载失败，请以有效的互联网连线再次尝试。</string>
   <string name="rp_download_reading_plan_data_corrupted">已下载的阅读计划资料损毁，请以有效的互联网连线再次尝试。</string>
+  <string name="rp_download_already_have">你已经拥有此阅读计划。</string>
   <string name="version_download_need_fonts">"您下载的版本需要某种字体以正确显示。请到「文字外观」目录，并选择某种字体。希腊语需要 Ubuntu 字体。缅甸语需要Parabaik，ParabaikSans 或 Myanmar3。泰米尔语需要 Akshar。泰卢固语需要 Suranna。"</string>
   <string name="version_download_corrupted_file">已下载的档桉似是无效的。</string>
   <string name="menuNightMode">夜间模式</string>
@@ -462,6 +465,7 @@
   <string name="marker_migrate_no_more">不再询问</string>
   <string name="marker_migrate_later">现在别问我</string>
   <string name="marker_migrate_title">汇入旧标记</string>
+  <string name="marker_migrate_file_chooser_title">选取v3备份档桉</string>
   <string name="marker_migrate_no_more_confirmation">你确定你不需要汇入旧资料？</string>
   <string name="marker_migrate_error_opening_backup_file">不能存取备份档桉。</string>
   <string name="marker_migrate_import_from_newest">是，汇入最新的（建议选项）</string>
@@ -469,4 +473,11 @@
   <string name="marker_migrate_filename_dated">%1$s日期%2$s</string>
   <string name="announce_notif_title">%s 公告</string>
   <string name="announce_notif_number_new_announcements">%s 新的公告</string>
+  <string name="menuDictionary">字典</string>
+  <string name="dict_open_full">开启字典</string>
+  <string name="dict_no_results">找不到所选字词的解释。</string>
+  <string name="dict_download_prompt">下载「圣经字典」以学习圣经中更多的字词！</string>
+  <string name="dict_download_button">下载</string>
+  <string name="menuGuide">指引</string>
+  <string name="menuCommentary">注释</string>
 </resources>
