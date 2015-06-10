@@ -126,6 +126,7 @@
   <string name="ed_download_button">Baixar</string>
   <string name="ed_update_button">Atualizar</string>
   <string name="ed_details_update_available">Atualização disponível</string>
+  <string name="ed_download_manager_not_enabled_prompt">O app Gerenciador de Downloads está desabilitado ou indisponível.\n\nHabilite-o para baixar versões da Bíblia.</string>
   <string name="info_terperinci">Detalhes</string>
   <string name="buang_dari_daftar">Remover</string>
   <string name="edit_bookmark">Editar favorito</string>
@@ -151,6 +152,7 @@
   <string name="bmcat_notes">Anotações</string>
   <string name="bmcat_highlights">Realces</string>
   <string name="bmcat_unlabeled_bookmarks">Marcadores sem etiqueta</string>
+  <string name="menuLabelSort">Ordenar etiquetas alfabeticamente</string>
   <string name="bl_no_notes_written_yet">Sem anotaçoes até então.\nPressione um versículo para escrever uma anotação.</string>
   <string name="bl_no_highlighted_verses">Nenhum versículo realçado.\nToque nos versículos para realçá-los.</string>
   <string name="bl_there_are_no_bookmarks_without_any_labels">Não existem marcadores sem etiquetas.</string>
@@ -195,6 +197,7 @@
   <string name="bookmark_search">Pesquisar</string>
   <string name="verse_select_one_verse_selected">1 versículo selecionado</string>
   <string name="verse_select_multiple_verse_selected">%s versículos selecionados</string>
+  <string name="google_play_store_not_installed">Google Play Store não está instalado.</string>
   <string name="goto_tab_dialer_label">Teclado</string>
   <string name="goto_tab_direct_label">Por extenso</string>
   <string name="goto_tab_grid_label">Em grade</string>
@@ -208,6 +211,7 @@
   <string name="sn_deep_search_enabled">Também letras, e outros</string>
   <string name="sn_songs_activity_title">Canções</string>
   <string name="sn_bookselector_all">TODOS</string>
+  <string name="sn_bookselector_more">Baixar mais&#8230;</string>
   <string name="sn_bookselector_all_desc">Pesquisar em todos os livros instalados.</string>
   <string name="sn_downloading_ellipsis">Baixando&#8230;</string>
   <string name="sn_download_song_books">Baixar livros de canções</string>
@@ -215,9 +219,13 @@
   <string name="sn_share_title">Compartilhar canção</string>
   <string name="sn_lyric_version_version">Versão %s</string>
   <string name="sn_lyric_refrain_marker">Ref.</string>
+  <string name="sn_delete_song_book">Apagar hinário</string>
+  <string name="sn_delete_song_book_explanation">Apagar todas as canções do hinário ^1?</string>
+  <string name="sn_delete_song_book_result">^1 música foi deletada do hinário ^2.</string>
   <string name="sn_update_book_explanation">Atualizar o livro ^1 para a última versão?</string>
   <string name="sn_update_book_confirm_button">Atualizar</string>
   <string name="sn_update_book">Atualize hinário</string>
+  <string name="sn_update_book_because_too_old">Por favor atualize ^1 para a versão mais recente antes de continuar. Depois de atualizar, envie suas edições se necessário.</string>
   <string name="desc_previous_day">Dia anterior</string>
   <string name="desc_next_day">Dia seguinte</string>
   <string name="desc_open_bookmark">Abrir marcador</string>
@@ -236,6 +244,11 @@
   <string name="desc_progress_3">Terceiro progresso</string>
   <string name="desc_progress_4">Quarto progresso</string>
   <string name="desc_progress_5">Quinto progresso</string>
+  <string name="desc_verse_attribute_one_bookmark">Um marcador foi adicionado ao versículo.</string>
+  <string name="desc_verse_attribute_multiple_bookmarks">%s marcadores no versículo.</string>
+  <string name="desc_verse_attribute_one_note">O versículo possui uma anotação.</string>
+  <string name="desc_verse_attribute_multiple_notes">%s anotações no versículo.</string>
+  <string name="desc_verse_attribute_progress_mark">%s está aqui.</string>
   <string name="intent_filter_open_yes_file">Abrir arquivo YES</string>
   <string name="intent_filter_open_pdb_file">Abrir arquivo PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Abrir arquivo PDB/YES</string>
@@ -312,12 +325,14 @@
   <string name="rp_showDetails">Exibir detalhes</string>
   <string name="rp_hideDetails">Ocultar detalhes</string>
   <string name="rp_aboutPlan">Sobre o plano</string>
+  <string name="rp_description_with_id"><b>^1</b> (^2 dias)\n<small>ID: ^3</small>\n\n^4</string>
   <string name="rp_download_day_count_days">%s dias</string>
   <string name="rp_download_reading_plan_list_progress">Baixando lista de planos de leitura&#8230;</string>
   <string name="rp_download_reading_plan_list_failed">Falha ao baixar lista de planos de leitura. Tente novamente com uma conexão de Internet ativa.</string>
   <string name="rp_download_reading_plan_progress">Baixando plano de leitura&#8230;</string>
   <string name="rp_download_reading_plan_failed">Falha ao baixar o plano de leitura selecionado. Tente novamente com uma conexão de Internet ativa.</string>
   <string name="rp_download_reading_plan_data_corrupted">O arquivo do plano de leitura que foi baixado está corrompido. Tente novamente mais tarde com uma conexão de Internet ativa.</string>
+  <string name="rp_download_already_have">Você já possui o plano de leitura.</string>
   <string name="version_download_need_fonts">"A versão que você baixou talvez necessite ser exibida com certas fontes. Vá até o menu \'Aparência do texto\' e selecione a fonte correta. Grego necessita a fonte Ubuntu. Birmanês necessita Parabaik, ParabaikSans, ou Myanmar3. Tâmil necessita Akshar. Telugu necessita Suranna."</string>
   <string name="version_download_corrupted_file">Arquivo baixado parece estar corrompido.</string>
   <string name="menuNightMode">Modo noturno</string>
@@ -458,6 +473,7 @@
   <string name="marker_migrate_no_more">Não pergunte novamente</string>
   <string name="marker_migrate_later">Não agora</string>
   <string name="marker_migrate_title">Importe marcadores anteriores</string>
+  <string name="marker_migrate_file_chooser_title">Selecione o arquivo de backup v3</string>
   <string name="marker_migrate_no_more_confirmation">Você tem certeza que não precisa importar os dados anteriores?</string>
   <string name="marker_migrate_error_opening_backup_file">Não foi possível acessar o arquivo de backup fornecido.</string>
   <string name="marker_migrate_import_from_newest">Sim, importe do mais recente (recomendado)</string>
@@ -465,4 +481,11 @@
   <string name="marker_migrate_filename_dated">%1$s datado %2$s</string>
   <string name="announce_notif_title">%s Avisos</string>
   <string name="announce_notif_number_new_announcements">%s novos avisos</string>
+  <string name="menuDictionary">Dicionário</string>
+  <string name="dict_open_full">Abrir Dicionário</string>
+  <string name="dict_no_results">Nenhuma definição encontrada para a palavra selecionada.</string>
+  <string name="dict_download_prompt">Baixe \"Dicionário Bíblico\" par aprender mais sobre as palavras da Bíblia!</string>
+  <string name="dict_download_button">Baixar</string>
+  <string name="menuGuide">Guia</string>
+  <string name="menuCommentary">Comentário</string>
 </resources>

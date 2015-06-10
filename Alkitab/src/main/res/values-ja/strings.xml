@@ -219,9 +219,12 @@
   <string name="sn_share_title">成果の共有</string>
   <string name="sn_lyric_version_version">バージョン %s</string>
   <string name="sn_lyric_refrain_marker">参照.</string>
-  <string name="sn_update_book_explanation">^1の本をを最新版にアップデートしますか？</string>
+  <string name="sn_delete_song_book">聖歌集を削除する</string>
+  <string name="sn_delete_song_book_explanation">^1内の聖歌を全て削除しますか？</string>
+  <string name="sn_delete_song_book_result">^2の聖歌集から^1 曲削除されました。</string>
+  <string name="sn_update_book_explanation">^1の聖歌集をを最新版にアップデートしますか？</string>
   <string name="sn_update_book_confirm_button">アップデート</string>
-  <string name="sn_update_book">歌の本をアップデートする</string>
+  <string name="sn_update_book">聖歌集をアップデートする</string>
   <string name="sn_update_book_because_too_old">最初に^1を最新版にアップデートしてください。アップデート後、編集内容を送ってください。</string>
   <string name="desc_previous_day">昨日</string>
   <string name="desc_next_day">翌日</string>
@@ -241,6 +244,11 @@
   <string name="desc_progress_3">しおり3</string>
   <string name="desc_progress_4">しおり4</string>
   <string name="desc_progress_5">しおり5</string>
+  <string name="desc_verse_attribute_one_bookmark">この箇所には栞が付いています。</string>
+  <string name="desc_verse_attribute_multiple_bookmarks">この箇所には%s本の栞が付いています。</string>
+  <string name="desc_verse_attribute_one_note">この箇所にはメモが付いています。</string>
+  <string name="desc_verse_attribute_multiple_notes">この箇所には%s個のメモが付いています。</string>
+  <string name="desc_verse_attribute_progress_mark">%sまで来ました。</string>
   <string name="intent_filter_open_yes_file">YESファイルを開く</string>
   <string name="intent_filter_open_pdb_file">PDBファイルを開く</string>
   <string name="intent_filter_open_pdb_or_yes_file">PDB/YESファイルを開く</string>
@@ -363,7 +371,7 @@
   <string name="book_filter_new_apocalypse">黙示録</string>
   <string name="search_filter_multiple_books_selected">%s 書を選択中</string>
   <string name="search_version_select_label">検索範囲:</string>
-  <string name="show_hidden_version_warning">この昨日をイネーブルすると地区制限や金銭的制限がかかっている聖書版までダウンロードできるようになります。ダウンロードする許可があることを確認してください。制限されている聖書版のダウンロードは個人の責任ですのでアプリ開発者は責任を負いかねます。御了承頂いた上にOKをタップしてください。</string>
+  <string name="show_hidden_version_warning">この機能をイネーブルすると地区制限や金銭的制限がかかっている聖書版までダウンロードできるようになります。ダウンロードする許可があることを確認してください。制限されている聖書版のダウンロードは個人の責任ですのでアプリ開発者は責任を負いかねます。御了承頂いた上にOKをタップしてください。</string>
   <string name="version_config_updater_error_download_modify_time">バージョンリストの確認に失敗しました。</string>
   <string name="version_config_updater_error_modify_time_failed">バージョンリストは利用できません: %s</string>
   <string name="version_config_updater_no_newer_available">版のアップデートはありません。</string>
@@ -462,6 +470,7 @@
   <string name="about_announcements_number">新着情報(%s件)</string>
   <string name="about_announcement_load_failed">新着情報を表示できませんでした。</string>
   <string name="marker_migrate_introduction">古いバージョン(Yuku Quick Bible v3)のバックアップファイルが見つかりました。栞、ノート、ラベルやマーカーなどの情報が保存されています。\n\nこのアプリにインポートしますか？</string>
+  <string name="marker_migrate_later">後で</string>
   <string name="marker_migrate_title">栞をインポートする</string>
   <string name="marker_migrate_file_chooser_title">ｖ３のバックアップファイルを選ぶ</string>
   <string name="marker_migrate_no_more_confirmation">古いバージョンのデータをインポートしません。よろしいですね？</string>
