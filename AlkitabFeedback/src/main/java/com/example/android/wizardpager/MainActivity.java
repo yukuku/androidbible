@@ -218,7 +218,7 @@ public class MainActivity extends FragmentActivity implements
                     : R.string.alkitabfeedback_next);
             
             if (Build.VERSION.SDK_INT >= 11) {
-                mNextButton.setTextColor(getResources().getColor(R.color.alkitabfeedback_accent));
+                mNextButton.setTextColor(getResources().getColorStateList(R.color.alkitabfeedback_button_textcolor));
                 mNextButton.setBackgroundResource(R.drawable.alkitabfeedback_selectable_item_background);
             }
             

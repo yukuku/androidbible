@@ -7,6 +7,7 @@
   <string name="pref_warna_nomor_ayat">節番号</string>
   <string name="pref_redTextColor_title">イエスのみことば</string>
   <string name="pref_penggunaan">使用方法</string>
+  <string name="pref_copy_share">コピーとシェア</string>
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">書の一覧を、原典どおりではなく、アルファベット順(a-z)に表示する</string>
   <string name="pref_kitab_menurut_abjad">書をアルファベット順にソートする</string>
   <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">聖書表示中はデバイスの画面をスリープしない。
@@ -14,4 +15,11 @@
   <string name="pref_biarkan_layar_menyala">スクリーンをOFFしない</string>
   <string name="pref_penampilan_layar">表示</string>
   <string name="pref_volumeButtonNavigation_title">ボリュームボタン操作</string>
+  <string name="pref_copyWithVerseNumbers_title">節番号</string>
+  <string name="pref_copyWithVerseNumbers_summary">節番号を振る</string>
+  <string name="pref_copyWithVersionName_title">聖書版名省略</string>
+  <string name="pref_copyWithVersionName_summary">聖書版のイニシャルを表示する</string>
+  <string name="pref_autoDictionaryAnalyze_title">自動辞書検索</string>
+  <string name="pref_autoDictionaryAnalyze_summary">ハイライトした節を辞書検索する</string>
+  <string name="pref_showHiddenVersion_title">制限された聖書版も使用可能にする</string>
 </resources>

@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
@@ -71,6 +73,8 @@ public class NoteActivity extends BaseActivity {
 	ViewFlipper viewFlipper;
 	TextView tCaptionReadOnly;
 	EditText tCaption;
+
+	int clickedTextOffset = -1;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -166,6 +170,10 @@ public class NoteActivity extends BaseActivity {
 		if (editingMode) {
 			viewFlipper.setDisplayedChild(1);
 
+			if (clickedTextOffset != -1) {
+				tCaption.setSelection(clickedTextOffset);
+			}
+
 		} else {
 			viewFlipper.setDisplayedChild(0);
 
@@ -184,7 +192,18 @@ public class NoteActivity extends BaseActivity {
 			});
 			tCaptionReadOnly.setText(text);
 			tCaptionReadOnly.setMovementMethod(LinkMovementMethod.getInstance());
-
+			tCaptionReadOnly.setOnTouchListener((v, event) -> {
+				// needed to calculate where the click is on the text layout
+				if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+					clickedTextOffset = -1;
+					final Layout layout = tCaptionReadOnly.getLayout();
+					if (layout != null) {
+						final int line = layout.getLineForVertical((int) event.getY() - tCaptionReadOnly.getTotalPaddingTop());
+						clickedTextOffset = layout.getOffsetForHorizontal(line, (int) event.getX() - tCaptionReadOnly.getTotalPaddingLeft());
+					}
+				}
+				return false;
+			});
 			tCaptionReadOnly.setOnClickListener(v -> {
 				if (!justClickedLink) {
 					setEditingMode(true);

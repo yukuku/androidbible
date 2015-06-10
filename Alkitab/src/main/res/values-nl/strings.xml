@@ -80,7 +80,6 @@
   <string name="kelola_versi">Beheer versies</string>
   <string name="tambah">Toevoegen</string>
   <string name="versi_lainnya">Andere versies</string>
-  <string name="ada_kegagalan_membuka_edisiid">Fout bij openen %s</string>
   <string name="version_error_opening">Fout bij openen %s.</string>
   <string name="pdb_file_options">PDB bestandsopties</string>
   <string name="greek_charset">Griekse karakterset</string>
@@ -216,9 +215,6 @@
   <string name="sn_share_title">Deel lied</string>
   <string name="sn_lyric_version_version">Versie %s</string>
   <string name="sn_lyric_refrain_marker">Refr.</string>
-  <string name="sn_delete_all_songs">Verwijder alle liederen</string>
-  <string name="sn_delete_all_songs_explanation">Verwijder alle liederen van lokaal geheugen? Dit kan wat vrije geheugenruimte opleveren.</string>
-  <string name="sn_delete_all_songs_result">Verwijderen voltooid. %s nummers verwijderd.</string>
   <string name="sn_update_book_explanation">Het boek ^1 bijwerken naar de laatste versie?</string>
   <string name="sn_update_book_confirm_button">Bijwerken</string>
   <string name="sn_update_book">Liedboek bijwerken</string>

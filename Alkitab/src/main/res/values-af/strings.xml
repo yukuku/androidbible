@@ -80,7 +80,6 @@
   <string name="kelola_versi">Bestuur weergawes</string>
   <string name="tambah">Voeg by</string>
   <string name="versi_lainnya">Ander weergawes</string>
-  <string name="ada_kegagalan_membuka_edisiid">Fout met oopmaak%s</string>
   <string name="version_error_opening">Fout met oopmaak%s.</string>
   <string name="pdb_file_options">VOB lêer opsies</string>
   <string name="greek_charset">Griekse karakterstel</string>
@@ -220,9 +219,9 @@
   <string name="sn_share_title">Deel musiek</string>
   <string name="sn_lyric_version_version">Weergawe %s</string>
   <string name="sn_lyric_refrain_marker">Ver.</string>
-  <string name="sn_delete_all_songs">Vee musiek uit</string>
-  <string name="sn_delete_all_songs_explanation">Vee alle liedere uit van lokale stoor?Mag plek bespaar.</string>
-  <string name="sn_delete_all_songs_result">Uitvee klaar.Liedere uitgevee: %s</string>
+  <string name="sn_delete_song_book">Vee Liedere boek uit</string>
+  <string name="sn_delete_song_book_explanation">Vee alle liedere van Liedere Boek uit ^1?</string>
+  <string name="sn_delete_song_book_result">^1 liedere uitgevee van liedere boek ^2.</string>
   <string name="sn_update_book_explanation">Dateer die boek ^1 op tot die nuutste weergawe.</string>
   <string name="sn_update_book_confirm_button">Dateer op</string>
   <string name="sn_update_book">Dateer gesange boek op</string>
@@ -245,6 +244,11 @@
   <string name="desc_progress_3">Derde vordering</string>
   <string name="desc_progress_4">Vierde vordering</string>
   <string name="desc_progress_5">Vyfde vordering</string>
+  <string name="desc_verse_attribute_one_bookmark">Hierdie vers het \'n boekmerk.</string>
+  <string name="desc_verse_attribute_multiple_bookmarks">%s hierdie verse het boekmerke.</string>
+  <string name="desc_verse_attribute_one_note">Hierdie vers het \'n nota by.</string>
+  <string name="desc_verse_attribute_multiple_notes">%s hierdie verse het notas by.</string>
+  <string name="desc_verse_attribute_progress_mark">%s is huidiglik hier.</string>
   <string name="intent_filter_open_yes_file">Maak Yes leêr oop</string>
   <string name="intent_filter_open_pdb_file">Maak PDB leêr oop</string>
   <string name="intent_filter_open_pdb_or_yes_file">Maak PDB/YES leêr oop</string>

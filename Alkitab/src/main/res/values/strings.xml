@@ -79,7 +79,6 @@
     <string name="kelola_versi">Manage Versions</string>
     <string name="tambah">Add</string>
     <string name="versi_lainnya">Other versions</string>
-    <string name="ada_kegagalan_membuka_edisiid">Error opening %s</string>
     <string name="version_error_opening">Error opening %s.</string>
     <string name="pdb_file_options">PDB file options</string>
     <string name="greek_charset">Greek charset</string>
@@ -228,9 +227,9 @@
     <string name="sn_share_title">Share song</string>
     <string name="sn_lyric_version_version">Version %s</string>
     <string name="sn_lyric_refrain_marker">Ref.</string>
-    <string name="sn_delete_all_songs">Delete all songs</string>
-    <string name="sn_delete_all_songs_explanation">Delete all songs from local storage? This may save some space.</string>
-    <string name="sn_delete_all_songs_result">Deletion completed. Songs deleted: %s</string>
+    <string name="sn_delete_song_book">Delete song book</string>
+    <string name="sn_delete_song_book_explanation">Delete all songs from the song book ^1?</string>
+    <string name="sn_delete_song_book_result">^1 songs were deleted from the song book ^2.</string>
     <string name="sn_update_book_explanation">Update the book ^1 to the latest version?</string>
     <string name="sn_update_book_confirm_button">Update</string>
     <string name="sn_update_book">Update song book</string>
@@ -255,6 +254,11 @@
     <string name="desc_progress_3">Third progress</string>
     <string name="desc_progress_4">Fourth progress</string>
     <string name="desc_progress_5">Fifth progress</string>
+    <string name="desc_verse_attribute_one_bookmark">A bookmark is attached to this verse.</string>
+    <string name="desc_verse_attribute_multiple_bookmarks">%s bookmarks are attached to this verse.</string>
+    <string name="desc_verse_attribute_one_note">A note is attached to this verse.</string>
+    <string name="desc_verse_attribute_multiple_notes">%s notes are attached to this verse.</string>
+    <string name="desc_verse_attribute_progress_mark">%s is currently here.</string>
 
     <string name="intent_filter_open_yes_file">Open YES file</string>
     <string name="intent_filter_open_pdb_file">Open PDB file</string>

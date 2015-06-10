@@ -27,7 +27,6 @@ public class VersionImpl implements Version {
 	private Book[] cache_consecutiveBooks;
 
 	private static Version internalVersion;
-	private String fallbackShortName;
 
 	public VersionImpl(BibleReader bibleReader) {
 		super();
@@ -47,16 +46,11 @@ public class VersionImpl implements Version {
 	}
 
 	/**
-	 * Get the short name (abbreviation) of this version. If unavailable from the BibleReader,
-	 * it will take from fallbackShortName.
+	 * Get the short name (abbreviation) of this version.
 	 */
 	@Override
 	public String getShortName() {
-		final String res = bibleReader.getShortName();
-		if (res == null && fallbackShortName != null) {
-			return fallbackShortName;
-		}
-		return res;
+		return bibleReader.getShortName();
 	}
 
 	@Override
@@ -348,7 +342,7 @@ public class VersionImpl implements Version {
 		if (verse_1 == 0 || verseCount == 1) { // verseCount does not matter
 			return reference(bookId, chapter_1, verse_1);
 		} else {
-			return reference(bookId, chapter_1, verse_1) + "-" + (verse_1 + verseCount - 1);
+			return reference(bookId, chapter_1, verse_1) + "\u2013" /* endash */ + (verse_1 + verseCount - 1);
 		}
 	}
 
@@ -383,12 +377,14 @@ public class VersionImpl implements Version {
 		}
 	}
 
-	/**
-	 * Set the short name to be used as fallback when the BibleReader
-	 * does not provide a short name.
-	 */
-	public void setFallbackShortName(final String fallbackShortName) {
-		this.fallbackShortName = fallbackShortName;
+	@Override
+	public String referenceRange(final int ari_start, final int ari_end) {
+		if (Ari.toBookChapter(ari_start) == Ari.toBookChapter(ari_end)) { // same book, same chapter
+			return referenceWithVerseCount(ari_start, ari_end - ari_start + 1);
+		} else if (Ari.toBook(ari_start) == Ari.toBook(ari_end)) { // same book, different chapter
+			return reference(ari_start) + '\u2014' + Ari.toChapter(ari_end) + ':' + Ari.toVerse(ari_end);
+		} else { // different book, different chapter
+			return reference(ari_start) + '\u2014' + reference(ari_end);
+		}
 	}
-
 }

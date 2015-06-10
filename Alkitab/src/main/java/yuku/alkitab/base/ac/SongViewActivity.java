@@ -19,6 +19,7 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -70,6 +71,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import static yuku.alkitab.base.util.Literals.ToStringArray;
 
 public class SongViewActivity extends BaseLeftDrawerActivity implements SongFragment.ShouldOverrideUrlLoadingHandler, LeftDrawer.Songs.Listener, MediaStateListener {
 	public static final String TAG = SongViewActivity.class.getSimpleName();
@@ -362,7 +365,6 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 		circular_progress = V.get(this, R.id.progress_circular);
 
-		setSupportProgressBarIndeterminate(true);
 		setCustomProgressBarIndeterminateVisible(false);
 
 		setTitle(R.string.sn_songs_activity_title);
@@ -454,6 +456,17 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		getWindow().getDecorView().setKeepScreenOn(Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default)));
 	}
 
+	/** Used after deleting a song, and the current song is no longer available */
+	void displayAnySongOrFinish() {
+		final SongDb db = S.getSongDb();
+		final Pair<String, Song> pair = db.getAnySong();
+		if (pair == null) {
+			finish();
+		} else {
+			displaySong(pair.first, pair.second);
+		}
+	}
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -533,8 +546,8 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		menuShare.setVisible(songShown);
 		final MenuItem menuUpdateBook = menu.findItem(R.id.menuUpdateBook);
 		menuUpdateBook.setVisible(songShown);
-		final MenuItem menuDeleteAll = menu.findItem(R.id.menuDeleteAll);
-		menuDeleteAll.setVisible(songShown);
+		final MenuItem menuDeleteSongBook = menu.findItem(R.id.menuDeleteSongBook);
+		menuDeleteSongBook.setVisible(songShown);
 
 		return true;
 	}
@@ -582,10 +595,10 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				.show();
 		} return true;
 
-		case R.id.menuDeleteAll: {
+		case R.id.menuDeleteSongBook: {
 			new AlertDialogWrapper.Builder(this)
-				.setMessage(R.string.sn_delete_all_songs_explanation)
-				.setPositiveButton(R.string.delete, (dialog, which) -> deleteAllSongs())
+				.setMessage(TextUtils.expandTemplate(getString(R.string.sn_delete_song_book_explanation), currentBookName))
+				.setPositiveButton(R.string.delete, (dialog, which) -> deleteSongBook())
 				.setNegativeButton(R.string.cancel, null)
 				.show();
 		} return true;
@@ -623,28 +636,30 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		});
 	}
 
-    protected void deleteAllSongs() {
+    protected void deleteSongBook() {
 		final MaterialDialog pd = new MaterialDialog.Builder(this)
 			.content(R.string.please_wait_titik3)
 			.cancelable(false)
 			.progress(true, 0)
 			.show();
 
+		final String bookName = currentBookName;
+
 		new Thread() {
             @Override public void run() {
-                final int count = S.getSongDb().deleteAllSongs();
+				final int count = S.getSongDb().deleteSongBook(bookName);
 
-                runOnUiThread(() -> {
-                    pd.dismiss();
+				runOnUiThread(() -> {
+					pd.dismiss();
 
 					new AlertDialogWrapper.Builder(SongViewActivity.this)
-						.setMessage(getString(R.string.sn_delete_all_songs_result, count))
+						.setMessage(TextUtils.expandTemplate(getString(R.string.sn_delete_song_book_result), ToStringArray(count, bookName)))
 						.setPositiveButton(R.string.ok, null)
 						.show()
-						.setOnDismissListener(dialog -> finish());
+						.setOnDismissListener(dialog -> displayAnySongOrFinish());
 				});
-            }
-        }.start();
+			}
+		}.start();
     }
 
 	private StringBuilder convertSongToText(Song song) {

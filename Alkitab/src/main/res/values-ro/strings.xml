@@ -80,7 +80,6 @@
   <string name="kelola_versi">Administrează versiuni</string>
   <string name="tambah">Adaugă</string>
   <string name="versi_lainnya">Alte versiuni</string>
-  <string name="ada_kegagalan_membuka_edisiid">Eroare la deschiderea %s</string>
   <string name="version_error_opening">Eroare la deschiderea %s.</string>
   <string name="pdb_file_options">Opţiuni fişier PDB</string>
   <string name="greek_charset">Caractere greceşti</string>
@@ -216,9 +215,6 @@
   <string name="sn_share_title">Partajează cântec</string>
   <string name="sn_lyric_version_version">Versiunea %s </string>
   <string name="sn_lyric_refrain_marker">Ref.</string>
-  <string name="sn_delete_all_songs">Şterge toate cântecele</string>
-  <string name="sn_delete_all_songs_explanation">Ștergeți toate melodiile din unitatea locală? Acest lucru poate elibera spaţiu.</string>
-  <string name="sn_delete_all_songs_result">Ştergere completă. Cântece şterse: %s</string>
   <string name="sn_update_book_explanation">Actualizează cartea ^1 la ultima versiune.</string>
   <string name="sn_update_book_confirm_button">Actualizează</string>
   <string name="sn_update_book">Actualizare cântece</string>

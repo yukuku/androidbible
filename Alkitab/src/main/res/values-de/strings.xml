@@ -80,7 +80,6 @@
   <string name="kelola_versi">Übersetzungen verwalten</string>
   <string name="tambah">Hinfügen</string>
   <string name="versi_lainnya">Weitere Übersetzungen</string>
-  <string name="ada_kegagalan_membuka_edisiid">Fehler beim Öffnen von %s</string>
   <string name="version_error_opening">Fehler beim Öffnen von %s.</string>
   <string name="pdb_file_options">PDB-Datei-Optionen</string>
   <string name="greek_charset">Griechischer Zeichensatz</string>
@@ -220,9 +219,9 @@
   <string name="sn_share_title">Lied mitteilen</string>
   <string name="sn_lyric_version_version">Version %s</string>
   <string name="sn_lyric_refrain_marker">Ref.</string>
-  <string name="sn_delete_all_songs">Alle Lieder löschen</string>
-  <string name="sn_delete_all_songs_explanation">Sollen alle Lieder vom internen Speicher gelöscht werden? Das würde etwas Platz schaffen.</string>
-  <string name="sn_delete_all_songs_result">Löschen abgeschlossen. Anzahl der gelöschten Lieder: %s</string>
+  <string name="sn_delete_song_book">Liederbuch löschen</string>
+  <string name="sn_delete_song_book_explanation">Alle Lieder aus dem Liederbuch ^1 löschen?</string>
+  <string name="sn_delete_song_book_result">^1 Lieder wurden aus dem Liederbuch ^2 gelöscht.</string>
   <string name="sn_update_book_explanation">Aktualisiert das Liederbuch ^1 auf die neuste Version.</string>
   <string name="sn_update_book_confirm_button">Aktualisieren</string>
   <string name="sn_update_book">Liederbuch aktualisieren</string>
@@ -245,6 +244,11 @@
   <string name="desc_progress_3">Fortschritt 3</string>
   <string name="desc_progress_4">Fortschritt 4</string>
   <string name="desc_progress_5">Fortschritt 5</string>
+  <string name="desc_verse_attribute_one_bookmark">Zu diesem Vers gibt es ein Lesezeichen.</string>
+  <string name="desc_verse_attribute_multiple_bookmarks">Zu diesem Vers gibt es %s Lesezeichen.</string>
+  <string name="desc_verse_attribute_one_note">Zu diesem Vers gibt es eine Notiz.</string>
+  <string name="desc_verse_attribute_multiple_notes">Zu diesem Vers gibt es %s Notizen.</string>
+  <string name="desc_verse_attribute_progress_mark">%s befindet sich zurzeit hier.</string>
   <string name="intent_filter_open_yes_file">YES-Datei öffnen</string>
   <string name="intent_filter_open_pdb_file">PDB-Datei öffnen</string>
   <string name="intent_filter_open_pdb_or_yes_file">PDB-/YES-Datei öffnen</string>

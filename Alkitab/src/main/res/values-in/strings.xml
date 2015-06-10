@@ -80,7 +80,6 @@
   <string name="kelola_versi">Kelola Versi</string>
   <string name="tambah">Tambah</string>
   <string name="versi_lainnya">Versi lainnya</string>
-  <string name="ada_kegagalan_membuka_edisiid">Ada kegagalan membuka %s</string>
   <string name="version_error_opening">Gagal membuka %s.</string>
   <string name="pdb_file_options">Pilihan membaca file PDB</string>
   <string name="greek_charset">Charset Yunani</string>
@@ -220,9 +219,9 @@
   <string name="sn_share_title">Bagikan lagu</string>
   <string name="sn_lyric_version_version">Versi %s</string>
   <string name="sn_lyric_refrain_marker">Ref.</string>
-  <string name="sn_delete_all_songs">Hapus semua lagu</string>
-  <string name="sn_delete_all_songs_explanation">Hapus semua lagu dari penyimpanan lokal? Hal ini akan menghemat pemakaian penyimpanan.</string>
-  <string name="sn_delete_all_songs_result">Penghapusan selesai. Lagu yang dihapus: %s</string>
+  <string name="sn_delete_song_book">Hapus buku lagu</string>
+  <string name="sn_delete_song_book_explanation">Hapus semua lagu dari buku ^1?</string>
+  <string name="sn_delete_song_book_result">^1 lagu dari buku ^2 sudah dihapus.</string>
   <string name="sn_update_book_explanation">Perbarui buku ^1 ke versi terakhir.</string>
   <string name="sn_update_book_confirm_button">Perbarui</string>
   <string name="sn_update_book">Perbarui buku lagu</string>
@@ -245,6 +244,11 @@
   <string name="desc_progress_3">Jejak ketiga</string>
   <string name="desc_progress_4">Jejak keempat</string>
   <string name="desc_progress_5">Jejak kelima</string>
+  <string name="desc_verse_attribute_one_bookmark">Sebuah pembatas buku terpasang pada ayat ini.</string>
+  <string name="desc_verse_attribute_multiple_bookmarks">%s pembatas buku terpasang pada ayat ini.</string>
+  <string name="desc_verse_attribute_one_note">Sebuah catatan terpasang pada ayat ini.</string>
+  <string name="desc_verse_attribute_multiple_notes">%s catatan terpasang pada ayat ini.</string>
+  <string name="desc_verse_attribute_progress_mark">%s sedang di sini.</string>
   <string name="intent_filter_open_yes_file">Buka file YES</string>
   <string name="intent_filter_open_pdb_file">Buka file PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Buka file PDB/YES</string>

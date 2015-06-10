@@ -7,8 +7,10 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.Layout;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.DragEvent;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.Checkable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -185,5 +187,62 @@ public class VerseItem extends LinearLayout implements Checkable {
 				return true;
 		}
 		return false;
+	}
+
+	/**
+	 * This is called AND used when explore-by-touch is off.
+	 * Force TallkBack to use the content description and not explore the children of this view.
+	 */
+	@Override
+	public boolean dispatchPopulateAccessibilityEvent(final AccessibilityEvent event) {
+		event.getText().add(getContentDescription());
+
+		return true;
+	}
+
+	/**
+	 * Make sure TalkBack reads the verse correctly by setting content description.
+	 */
+	@Override
+	public CharSequence getContentDescription() {
+		final StringBuilder res = new StringBuilder();
+
+		if (lVerseNumber.length() > 0) {
+			res.append(lVerseNumber.getText()).append(' ');
+		}
+
+		res.append(lText.getText());
+
+		final int bookmark_count = attributeView.getBookmarkCount();
+		if (bookmark_count == 1) {
+			res.append(' ').append(getContext().getString(R.string.desc_verse_attribute_one_bookmark));
+		} else if (bookmark_count > 1) {
+			res.append(' ').append(getContext().getString(R.string.desc_verse_attribute_multiple_bookmarks, bookmark_count));
+		}
+
+		final int note_count = attributeView.getNoteCount();
+		if (note_count == 1) {
+			res.append(' ').append(getContext().getString(R.string.desc_verse_attribute_one_note));
+		} else if (note_count > 1) {
+			res.append(' ').append(getContext().getString(R.string.desc_verse_attribute_multiple_notes, note_count));
+		}
+
+		final int progress_mark_bits = attributeView.getProgressMarkBits();
+		for (int preset_id = 0; preset_id < AttributeView.PROGRESS_MARK_TOTAL_COUNT; preset_id++) {
+			if ((progress_mark_bits & 1 << AttributeView.PROGRESS_MARK_BITS_START + preset_id) != 0) {
+				final ProgressMark progressMark = S.getDb().getProgressMarkByPresetId(preset_id);
+
+				final String caption;
+				if (TextUtils.isEmpty(progressMark.caption)) {
+					caption = getContext().getString(AttributeView.getDefaultProgressMarkStringResource(preset_id));
+				} else {
+					caption = progressMark.caption;
+				}
+
+				res.append(' ').append(getContext().getString(R.string.desc_verse_attribute_progress_mark, caption));
+			}
+		}
+
+		return res;
 	}
 }

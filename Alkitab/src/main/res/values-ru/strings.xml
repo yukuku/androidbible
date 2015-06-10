@@ -80,7 +80,6 @@
   <string name="kelola_versi">Управление версиями</string>
   <string name="tambah">Добавить</string>
   <string name="versi_lainnya">Другие версии</string>
-  <string name="ada_kegagalan_membuka_edisiid">Ошибка при открытии %s</string>
   <string name="version_error_opening">Ошибка при открытии %s.</string>
   <string name="pdb_file_options">Настройки PDB-файлов</string>
   <string name="greek_charset">Набор символов на греческом</string>
@@ -220,9 +219,9 @@
   <string name="sn_share_title">Поделиться песней</string>
   <string name="sn_lyric_version_version">Версия %s</string>
   <string name="sn_lyric_refrain_marker">Ссылка</string>
-  <string name="sn_delete_all_songs">Удалить все песни</string>
-  <string name="sn_delete_all_songs_explanation">Удалить все песни из локального хранилища? Это освободит место.</string>
-  <string name="sn_delete_all_songs_result">Удаление завершено. Удалено песней: %s</string>
+  <string name="sn_delete_song_book">Удалить книгу гимнов</string>
+  <string name="sn_delete_song_book_explanation">Удалить все гимны из книги ^1?</string>
+  <string name="sn_delete_song_book_result">Из книги ^2 было удалено ^1 гимнов.</string>
   <string name="sn_update_book_explanation">Обновить книгу ^1 до последней версии.</string>
   <string name="sn_update_book_confirm_button">Обновить</string>
   <string name="sn_update_book">Обновить песенник</string>
@@ -245,6 +244,11 @@
   <string name="desc_progress_3">Продвижение 3</string>
   <string name="desc_progress_4">Продвижение 4</string>
   <string name="desc_progress_5">Продвижение 5</string>
+  <string name="desc_verse_attribute_one_bookmark">К этому стиху присоединена закладка.</string>
+  <string name="desc_verse_attribute_multiple_bookmarks">К этому стиху присоединено %s закладок.</string>
+  <string name="desc_verse_attribute_one_note">К этому стиху присоединена заметка.</string>
+  <string name="desc_verse_attribute_multiple_notes">К этому стиху присоединено %s заметок.</string>
+  <string name="desc_verse_attribute_progress_mark">В настоящее время здесь %s.</string>
   <string name="intent_filter_open_yes_file">Открыть YES-файл</string>
   <string name="intent_filter_open_pdb_file">Открыть PDB-файл</string>
   <string name="intent_filter_open_pdb_or_yes_file">Открыть PDB/YES-файл</string>

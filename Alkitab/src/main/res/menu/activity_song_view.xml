@@ -32,8 +32,8 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menuDeleteAll"
-        android:title="@string/sn_delete_all_songs"
+        android:id="@+id/menuDeleteSongBook"
+        android:title="@string/sn_delete_song_book"
         app:showAsAction="never" />
 
 </menu>
