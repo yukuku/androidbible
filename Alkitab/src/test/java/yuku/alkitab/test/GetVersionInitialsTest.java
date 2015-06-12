@@ -90,21 +90,6 @@ public class GetVersionInitialsTest extends TestCase {
 			public FootnoteEntry getFootnoteEntry(final int arif) {
 				return null;
 			}
-
-			@Override
-			public String reference(final int ari) {
-				return null;
-			}
-
-			@Override
-			public String referenceWithVerseCount(final int ari, final int verseCount) {
-				return null;
-			}
-
-			@Override
-			public String reference(final int bookId, final int chapter_1, final int verse_1) {
-				return null;
-			}
 		};
 	}
 

@@ -1,11 +1,9 @@
 package yuku.alkitab.base.model;
 
 import android.util.Log;
-import yuku.alkitab.base.App;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.storage.InternalReader;
 import yuku.alkitab.base.storage.OldVerseTextDecoder;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
@@ -18,7 +16,7 @@ import yuku.alkitab.util.IntArrayList;
 
 import java.util.List;
 
-public class VersionImpl implements Version {
+public class VersionImpl extends Version {
 	public static final String TAG = VersionImpl.class.getSimpleName();
 
 	private BibleReader bibleReader;
@@ -39,10 +37,6 @@ public class VersionImpl implements Version {
 			internalVersion = new VersionImpl(new InternalReader(c.internalPrefix, c.internalLocale, c.internalShortName, c.internalLongName, new OldVerseTextDecoder.Utf8()));
 		}
 		return internalVersion;
-	}
-
-	private static class UnavailableBookNames {
-		static String[] names = App.context.getResources().getStringArray(R.array.standard_book_names_unavailable);
 	}
 
 	/**
@@ -322,69 +316,5 @@ public class VersionImpl implements Version {
 	@Override
 	public synchronized FootnoteEntry getFootnoteEntry(final int arif) {
 		return bibleReader.getFootnoteEntry(arif);
-	}
-
-	@Override
-	public String reference(int ari) {
-		int bookId = Ari.toBook(ari);
-		int chapter_1 = Ari.toChapter(ari);
-		int verse_1 = Ari.toVerse(ari);
-
-		return reference(bookId, chapter_1, verse_1);
-	}
-
-	@Override
-	public String referenceWithVerseCount(final int ari, final int verseCount) {
-		int bookId = Ari.toBook(ari);
-		int chapter_1 = Ari.toChapter(ari);
-		int verse_1 = Ari.toVerse(ari);
-
-		if (verse_1 == 0 || verseCount == 1) { // verseCount does not matter
-			return reference(bookId, chapter_1, verse_1);
-		} else {
-			return reference(bookId, chapter_1, verse_1) + "\u2013" /* endash */ + (verse_1 + verseCount - 1);
-		}
-	}
-
-	@Override
-	public String reference(int bookId, int chapter_1, int verse_1) {
-		final Book book = getBook(bookId);
-		if (book == null) {
-			if (bookId >= 0 && bookId < UnavailableBookNames.names.length) {
-				final String placeholderBookName = "[[" + UnavailableBookNames.names[bookId] + "]]";
-				if (verse_1 == 0) {
-					if (chapter_1 == 0) {
-						return placeholderBookName;
-					} else {
-						return Book.reference(placeholderBookName, chapter_1);
-					}
-				} else {
-					return Book.reference(placeholderBookName, chapter_1, verse_1);
-				}
-			} else {
-				return "[?]";
-			}
-		}
-
-		if (verse_1 == 0) {
-			if (chapter_1 == 0) {
-				return book.shortName;
-			} else {
-				return book.reference(chapter_1);
-			}
-		} else {
-			return book.reference(chapter_1, verse_1);
-		}
-	}
-
-	@Override
-	public String referenceRange(final int ari_start, final int ari_end) {
-		if (Ari.toBookChapter(ari_start) == Ari.toBookChapter(ari_end)) { // same book, same chapter
-			return referenceWithVerseCount(ari_start, ari_end - ari_start + 1);
-		} else if (Ari.toBook(ari_start) == Ari.toBook(ari_end)) { // same book, different chapter
-			return reference(ari_start) + '\u2014' + Ari.toChapter(ari_end) + ':' + Ari.toVerse(ari_end);
-		} else { // different book, different chapter
-			return reference(ari_start) + '\u2014' + reference(ari_end);
-		}
 	}
 }
