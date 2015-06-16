@@ -37,6 +37,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.CurrentReading;
 import yuku.alkitab.base.util.ReadingPlanManager;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.LeftDrawer;
@@ -228,9 +229,12 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 	public void goToIsiActivity(final int dayNumber, final int sequence) {
 		final int[] selectedVerses = readingPlan.dailyVerses[dayNumber];
-		final int ari = selectedVerses[sequence * 2];
+		final int ari_start = selectedVerses[sequence * 2];
+		final int ari_end = selectedVerses[sequence * 2 + 1];
 
-		startActivity(Launcher.openAppAtBibleLocation(ari));
+		CurrentReading.set(ari_start, ari_end);
+
+		startActivity(Launcher.openAppAtBibleLocation(ari_start));
 	}
 
 	private void loadDayNumber() {

@@ -83,6 +83,7 @@ import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.base.util.CurrentReading;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.LidToAri;
@@ -2402,6 +2403,25 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	@Override
 	public void bProgress_click(final int preset_id) {
 		gotoProgressMark(preset_id);
+	}
+
+	@Override
+	public void bCurrentReadingClose_click() {
+		CurrentReading.clear();
+	}
+
+	@Override
+	public void bCurrentReadingReference_click() {
+		final int[] aris = CurrentReading.get();
+		if (aris == null) {
+			return;
+		}
+
+		final int ari_start = aris[0];
+		jumpToAri(ari_start, false);
+		history.add(ari_start);
+
+		leftDrawer.closeDrawer();
 	}
 
 	private void gotoProgressMark(final int preset_id) {
