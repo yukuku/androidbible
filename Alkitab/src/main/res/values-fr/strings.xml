@@ -215,7 +215,7 @@
   <string name="sn_share_title">Partage du chant</string>
   <string name="sn_lyric_version_version">Version %s</string>
   <string name="sn_lyric_refrain_marker">Réf.</string>
-  <string name="sn_update_book_explanation">Mise à jour le livre ^ 1 vers la version la plus récente ?</string>
+  <string name="sn_update_book_explanation">Mise à jour le livre ^1 vers la version la plus récente ?</string>
   <string name="sn_update_book_confirm_button">Mise à jour</string>
   <string name="sn_update_book">Mettre à jour du recueil de chants</string>
   <string name="desc_previous_day">Jour précédent</string>
@@ -325,7 +325,7 @@
   <string name="menu_compare">Comparer</string>
   <string name="song_player_error_description">Erreur lors de l\'écoute de ce chant : %1$d, %2$d.</string>
   <string name="search_in_version_short_name_placeholder">Retrouver dans %s</string>
-  <string name="search_syntax_tips"><i>Conseils d\'utilisation :</i>\n<b>+mot\n</b> pour ce mot exact\n<b>[q]ville de David[q]</b> pour cette phrase exacte</string>
+  <string name="search_syntax_tips"><i>Conseils d\'utilisation :</i>\n\n<b>+mot</b> pour ce mot exact\n<b>[q]ville de David[q]</b> pour cette phrase exacte</string>
   <string name="search_no_result">Aucun verset trouvé pour <b>^1</b>.</string>
   <string name="search_no_result_fallback">Cliquer ici pour aller à  <u>^1</u>.</string>
   <string name="marker_transfer_to_device_title">Transfert sur un autre support</string>
@@ -369,7 +369,7 @@
   <string name="version_download_add_from_url_prompt_yes_only">URL du fichier .yes</string>
   <string name="version_download_invalid_url">URL invalide.</string>
   <string name="version_download_not_yes">L\'URL Internet doit avoir la terminaison .yes.</string>
-  <string name="patch_text_intro">S\'il vous plaît modifiez les parties du texte que vous pensez pouvoir corriger ou améliorer.\n\n Ne modifiez pas les autres parties.\n\nTAP <b> <small > Envoyer </small> </b> lorsque vous avez terminé .</string>
+  <string name="patch_text_intro">S\'il vous plaît modifiez les parties du texte que vous pensez pouvoir corriger ou améliorer.\n\nNe modifiez pas les autres parties.\n\nTap <b><small>Envoyer </small></b> lorsque vous avez terminé .</string>
   <string name="patch_text_error_no_edits">S\'il vous plaît, faites quelques modifications avant de l\'envoyer.</string>
   <string name="patch_text_menu_reference">Référence</string>
   <string name="patch_text_menu_send">Envoyer</string>
@@ -383,8 +383,8 @@
   <string name="sync_progress_register">Création d\'un nouveau compte&#8230;</string>
   <string name="sync_progress_login">Connexion à&#8230;</string>
   <string name="sync_progress_processing">Traitement en cours&#8230;</string>
-  <string name="sync_login_failed_with_reason">Impossible d\'ouvrir une session. S\'il vous plaît ré-essayez un peu plus tard.\\n\\nReason : %s</string>
-  <string name="sync_register_failed_with_reason">Impossible de créer un nouveau compte. S\'il vous plaît ré-essayez.\\n\\nReason : %s</string>
+  <string name="sync_login_failed_with_reason">Impossible d\'ouvrir une session. S\'il vous plaît ré-essayez un peu plus tard.\n\nReason : %s</string>
+  <string name="sync_register_failed_with_reason">Impossible de créer un nouveau compte. S\'il vous plaît ré-essayez.\n\nReason : %s</string>
   <string name="sync_registered_but_no_gcm">Votre compte a été créé, mais nous n\'avons pas pu envoyer le code d\'enregistrement GCM. S\'il vous plaît essayez de vous connecter (ne vous inscrivez pas à nouveau).</string>
   <string name="pref_sync_title">Synchronisation</string>
   <string name="pref_screen_sync_settings_title">Paramètres de synchronisation</string>
@@ -454,7 +454,7 @@
   <string name="about_announcements_none">Annonces (0)</string>
   <string name="about_announcements_number">Annonces (%s)</string>
   <string name="about_announcement_load_failed">Echec lors du chargement des annonces.</string>
-  <string name="marker_migrate_introduction">Nous avons détecté une sauvegarde de la version 3 de Yuku Quick Bible qui contient des marque-pages, des notes , des surlignés et des étiquettes . \n\nVoulez-vous les importer, pour pouvoir y accéder depuis cette application ?</string>
+  <string name="marker_migrate_introduction">Nous avons détecté une sauvegarde de la version 3 de Yuku Quick Bible qui contient des marque-pages, des notes, des surlignés et des étiquettes.\n\nVoulez-vous les importer, pour pouvoir y accéder depuis cette application?</string>
   <string name="marker_migrate_no_more">Ne plus demander</string>
   <string name="marker_migrate_later">Pas maintenant</string>
   <string name="marker_migrate_title">Importation d\'anciens marque-pages</string>
