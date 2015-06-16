@@ -47,7 +47,7 @@
 				android:layout_height="wrap_content"
 				android:layout_gravity="center_vertical"
 				android:layout_marginLeft="16dp"
-				android:text="Current reading"
+				android:text="@string/left_drawer_current_reading_title"
 				android:textColor="#bebebe"
 				android:textSize="12sp" />
 
@@ -57,6 +57,7 @@
 				android:layout_height="match_parent"
 				android:layout_gravity="right"
 				android:background="?selectableItemBackgroundBorderless"
+				android:contentDescription="@string/desc_close"
 				android:gravity="center"
 				android:minWidth="48dp"
 				android:src="@drawable/ic_action_remove" />
@@ -94,6 +95,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="match_parent"
 				android:layout_gravity="right"
+				android:contentDescription="@string/desc_progress_mark_list"
 				android:background="?selectableItemBackgroundBorderless"
 				android:gravity="center"
 				android:minWidth="48dp"
