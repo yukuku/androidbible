@@ -330,7 +330,7 @@ public class U {
 	}
 
 	public static int getTextColorForSelectedVerse(final int selectedVerseBgColor) {
-		if (ColorUtils.calculateLuminance(selectedVerseBgColor) > 0.5) {
+		if (ColorUtils.calculateLuminance(selectedVerseBgColor) > 0.4) {
 			return 0xff000000;
 		} else {
 			return 0xffffffff;
