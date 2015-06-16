@@ -338,20 +338,14 @@ public abstract class LeftDrawer extends ScrollView {
 			bCurrentReadingReference.setOnClickListener(v -> listener.bCurrentReadingReference_click());
 
 			displayCurrentReading();
-		}
 
-		final BroadcastReceiver currentReadingChangeReceiver = new BroadcastReceiver() {
-			@Override
-			public void onReceive(final Context context, final Intent intent) {
-				displayCurrentReading();
-			}
-		};
-
-		@Override
-		protected void onAttachedToWindow() {
-			super.onAttachedToWindow();
-
-			App.getLbm().registerReceiver(currentReadingChangeReceiver, new IntentFilter(CurrentReading.ACTION_CURRENT_READING_CHANGED));
+			// The following is not in onAttachedFromWindow, because we need to listen to
+			// ACTION_ACTIVE_VERSION_CHANGED as early as possible, so we do not end up with
+			// a verse reference from a version that was not actually selected during app startup.
+			final IntentFilter filter = new IntentFilter();
+			filter.addAction(CurrentReading.ACTION_CURRENT_READING_CHANGED);
+			filter.addAction(IsiActivity.ACTION_ACTIVE_VERSION_CHANGED);
+			App.getLbm().registerReceiver(currentReadingChangeReceiver, filter);
 		}
 
 		@Override
@@ -360,6 +354,13 @@ public abstract class LeftDrawer extends ScrollView {
 
 			App.getLbm().unregisterReceiver(currentReadingChangeReceiver);
 		}
+
+		final BroadcastReceiver currentReadingChangeReceiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(final Context context, final Intent intent) {
+				displayCurrentReading();
+			}
+		};
 
 		void displayCurrentReading() {
 			if (isInEditMode()) return;
