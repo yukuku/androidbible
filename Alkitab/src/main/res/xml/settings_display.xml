@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 	<com.afollestad.materialdialogs.prefs.MaterialListPreference
 		android:defaultValue="@string/pref_language_default"
 		android:entries="@array/pref_language_labels"
@@ -20,4 +21,10 @@
 		android:key="@string/pref_textPadding_key"
 		android:summary="@string/pref_textPadding_summary"
 		android:title="@string/pref_textPadding_title" />
+
+	<yuku.ambilwarna.widget.AmbilWarnaPreference
+		android:defaultValue="@integer/pref_selectedVerseBgColor_default"
+		android:key="@string/pref_selectedVerseBgColor_key"
+		android:title="@string/pref_selectedVerseBgColor_title"
+		app:supportsAlpha="true" />
 </PreferenceScreen>

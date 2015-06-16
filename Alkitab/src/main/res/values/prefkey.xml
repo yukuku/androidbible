@@ -27,4 +27,6 @@
 	<string name="pref_syncAccountName_key">syncAccountName</string>
 	<string name="pref_sync_key">sync</string>
 	<string name="pref_syncLogout_key">syncLogout</string>
+
+	<string name="pref_selectedVerseBgColor_key">selectedVerseBgColor</string>
 </resources>
