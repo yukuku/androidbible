@@ -22,4 +22,6 @@
     <integer name="pref_verseNumberColor_night_default">0xff6c6cb3</integer>
     <integer name="pref_redTextColor_night_default">0xffa25c5c</integer>
 
+    <integer name="pref_selectedVerseBgColor_default">0xa0cfe9f3</integer>
+
 </resources>

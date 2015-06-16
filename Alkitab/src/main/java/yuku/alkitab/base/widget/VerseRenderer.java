@@ -11,8 +11,12 @@ import android.text.style.LineHeightSpan;
 import android.text.style.MetricAffectingSpan;
 import android.text.style.StyleSpan;
 import android.widget.TextView;
+import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.debug.R;
 
 public class VerseRenderer {
 	public static final String TAG = VerseRenderer.class.getSimpleName();
@@ -273,7 +277,7 @@ public class VerseRenderer {
 			lVerseNumber.setText(verseNumberText);
 			Appearances.applyVerseNumberAppearance(lVerseNumber);
 			if (checked) {
-				lVerseNumber.setTextColor(0xff000000); // override with black!
+				lVerseNumber.setTextColor(U.getTextColorForSelectedVerse(Preferences.getInt(App.context.getString(R.string.pref_selectedVerseBgColor_key), 0))); // override with black or white!
 			}
 		}
 
