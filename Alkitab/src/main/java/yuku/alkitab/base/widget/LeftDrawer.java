@@ -1,9 +1,11 @@
 package yuku.alkitab.base.widget;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.SwitchCompat;
 import android.text.SpannableStringBuilder;
@@ -25,7 +27,9 @@ import android.widget.TextView;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
+import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
@@ -33,6 +37,7 @@ import yuku.alkitab.base.ac.SettingsActivity;
 import yuku.alkitab.base.ac.SongViewActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.CurrentReading;
 import yuku.alkitab.base.util.SongBookUtil;
 import yuku.alkitab.debug.R;
 
@@ -218,6 +223,8 @@ public abstract class LeftDrawer extends ScrollView {
 			void cSplitVersion_checkedChange(final SwitchCompat cSplitVersion, boolean isChecked);
 			void bProgressMarkList_click();
 			void bProgress_click(int preset_id);
+			void bCurrentReadingClose_click();
+			void bCurrentReadingReference_click();
 		}
 
 		public interface Handle {
@@ -237,6 +244,10 @@ public abstract class LeftDrawer extends ScrollView {
 		View bProgress3;
 		View bProgress4;
 		View bProgress5;
+
+		View panelCurrentReadingHeader;
+		View bCurrentReadingClose;
+		TextView bCurrentReadingReference;
 
 		Listener listener;
 		Handle handle = new Handle() {
@@ -280,6 +291,10 @@ public abstract class LeftDrawer extends ScrollView {
 			bProgress4 = V.get(this, R.id.bProgress4);
 			bProgress5 = V.get(this, R.id.bProgress5);
 
+			panelCurrentReadingHeader = V.get(this, R.id.panelCurrentReadingHeader);
+			bCurrentReadingClose = V.get(this, R.id.bCurrentReadingClose);
+			bCurrentReadingReference = V.get(this, R.id.bCurrentReadingReference);
+
 			cNightMode.setChecked(!isInEditMode() && Preferences.getBoolean(Prefkey.is_night_mode, false));
 
 			bProgressMarkList.setOnClickListener(v -> listener.bProgressMarkList_click());
@@ -318,8 +333,49 @@ public abstract class LeftDrawer extends ScrollView {
 			cNightMode.setOnCheckedChangeListener(cNightMode_checkedChange);
 
 			cSplitVersion.setOnCheckedChangeListener(cSplitVersion_checkedChange);
+
+			bCurrentReadingClose.setOnClickListener(v -> listener.bCurrentReadingClose_click());
+			bCurrentReadingReference.setOnClickListener(v -> listener.bCurrentReadingReference_click());
+
+			displayCurrentReading();
+
+			// The following is not in onAttachedFromWindow, because we need to listen to
+			// ACTION_ACTIVE_VERSION_CHANGED as early as possible, so we do not end up with
+			// a verse reference from a version that was not actually selected during app startup.
+			final IntentFilter filter = new IntentFilter();
+			filter.addAction(CurrentReading.ACTION_CURRENT_READING_CHANGED);
+			filter.addAction(IsiActivity.ACTION_ACTIVE_VERSION_CHANGED);
+			App.getLbm().registerReceiver(currentReadingChangeReceiver, filter);
 		}
 
+		@Override
+		protected void onDetachedFromWindow() {
+			super.onDetachedFromWindow();
+
+			App.getLbm().unregisterReceiver(currentReadingChangeReceiver);
+		}
+
+		final BroadcastReceiver currentReadingChangeReceiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(final Context context, final Intent intent) {
+				displayCurrentReading();
+			}
+		};
+
+		void displayCurrentReading() {
+			if (isInEditMode()) return;
+
+			final int[] aris = CurrentReading.get();
+			if (aris == null) {
+				panelCurrentReadingHeader.setVisibility(GONE);
+				bCurrentReadingReference.setVisibility(GONE);
+			} else {
+				panelCurrentReadingHeader.setVisibility(VISIBLE);
+				bCurrentReadingReference.setVisibility(VISIBLE);
+
+				bCurrentReadingReference.setText(S.activeVersion.referenceRange(aris[0], aris[1]));
+			}
+		}
 
 		CompoundButton.OnCheckedChangeListener cFullScreen_checkedChange = new CompoundButton.OnCheckedChangeListener() {
 			@Override

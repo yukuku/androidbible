@@ -83,6 +83,7 @@ import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.base.util.CurrentReading;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.LidToAri;
@@ -127,6 +128,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	public static final String TAG = IsiActivity.class.getSimpleName();
 
 	public static final String ACTION_ATTRIBUTE_MAP_CHANGED = "yuku.alkitab.action.ATTRIBUTE_MAP_CHANGED";
+	public static final String ACTION_ACTIVE_VERSION_CHANGED = IsiActivity.class.getName() + ".action.ACTIVE_VERSION_CHANGED";
+
 	public static final String EXTRA_CLOSE_DRAWER = "close_drawer";
 
 	private static final int REQCODE_goto = 1;
@@ -800,6 +803,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (display) {
 				display(chapter_1, lsSplit0.getVerseBasedOnScroll(), false);
 			}
+
+			App.getLbm().sendBroadcast(new Intent(ACTION_ACTIVE_VERSION_CHANGED));
 
 			return true;
 		} catch (Throwable e) { // so we don't crash on the beginning of the app
@@ -2402,6 +2407,25 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	@Override
 	public void bProgress_click(final int preset_id) {
 		gotoProgressMark(preset_id);
+	}
+
+	@Override
+	public void bCurrentReadingClose_click() {
+		CurrentReading.clear();
+	}
+
+	@Override
+	public void bCurrentReadingReference_click() {
+		final int[] aris = CurrentReading.get();
+		if (aris == null) {
+			return;
+		}
+
+		final int ari_start = aris[0];
+		jumpToAri(ari_start, false);
+		history.add(ari_start);
+
+		leftDrawer.closeDrawer();
 	}
 
 	private void gotoProgressMark(final int preset_id) {

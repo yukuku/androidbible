@@ -121,4 +121,8 @@ public enum Prefkey {
 
 	/** Announce: read announcement ids. long[] in json. */
 	announce_read_ids,
+
+	/** Current reading vars */
+	current_reading_ari_start,
+	current_reading_ari_end,
 }
