@@ -1679,41 +1679,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		history.add(ari_target);
 	}
 
-	/**
-	 * If verse_1_ranges is null, verses will be ignored.
-	 */
-	public static String createVerseUrl(final Version version, final String versionId, final Book book, final int chapter_1, final String verse_1_ranges) {
-		final AppConfig c = AppConfig.get();
-		String format = c.shareUrlFormat;
-
-		String osisBookName = OsisBookNames.getBookName(book.bookId);
-		if (osisBookName == null) {
-			osisBookName = book.shortName; // fall back
-		}
-		format = format.replace("{book.osis}", osisBookName);
-		format = format.replace("{chapter}", String.valueOf(chapter_1));
-		format = format.replace("{verses}", verse_1_ranges == null? "": verse_1_ranges);
-
-		// Try internal first. Then preset_name if possible. If not, short name. If not, long name.
-		final String versionString;
-		if (U.equals(MVersionInternal.getVersionInternalId(), versionId)) {
-			versionString = AppConfig.get().internalPresetName;
-		} else {
-			final String presetName = MVersionDb.presetNameFromVersionId(versionId);
-			if (presetName != null) {
-				versionString = presetName;
-			} else if (version.getShortName() != null) {
-				versionString = version.getShortName();
-			} else {
-				versionString = version.getLongName();
-			}
-		}
-
-		format = format.replace("{version}", versionString);
-
-		return format;
-	}
-
 	VersesView.AttributeListener attributeListener = new VersesView.AttributeListener() {
 		void openBookmarkDialog(final long _id) {
 			final TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExisting(IsiActivity.this, _id);
