@@ -88,6 +88,7 @@ import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.base.util.OsisBookNames;
+import yuku.alkitab.base.util.ShareUrl;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.Floater;
@@ -123,6 +124,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
+
+import static yuku.alkitab.base.util.Literals.Array;
 
 public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.XrefDialogListener, LeftDrawer.Text.Listener, ProgressMarkListDialog.Listener {
 	public static final String TAG = IsiActivity.class.getSimpleName();
@@ -970,43 +973,63 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	/**
 	 * Construct text for copying or sharing (in plain text).
 	 * @param isSplitVersion whether take the verse text from the main or from the split version.
+	 * @return [0] text for copy/share, [1] text for share url
 	 */
-	String prepareTextForCopyShare(IntArrayList selectedVerses_1, CharSequence reference, boolean isSplitVersion) {
-		final StringBuilder res = new StringBuilder();
-		res.append(reference);
+	String[] prepareTextForCopyShare(IntArrayList selectedVerses_1, CharSequence reference, boolean isSplitVersion) {
+		final StringBuilder res0 = new StringBuilder();
+		final StringBuilder res1 = new StringBuilder();
+
+		res0.append(reference);
 
 		if (Preferences.getBoolean(getString(R.string.pref_copyWithVersionName_key), getResources().getBoolean(R.bool.pref_copyWithVersionName_default))) {
 			final Version version = isSplitVersion ? activeSplitVersion : S.activeVersion;
 			final String versionShortName = version.getShortName();
 			if (versionShortName != null) {
-				res.append(" (").append(versionShortName).append(")");
+				res0.append(" (").append(versionShortName).append(")");
 			}
 		}
 
 		if (Preferences.getBoolean(getString(R.string.pref_copyWithVerseNumbers_key), false) && selectedVerses_1.size() > 1) {
-			res.append('\n');
+			res0.append('\n');
 
 			// append each selected verse with verse number prepended
-			for (int i = 0; i < selectedVerses_1.size(); i++) {
+			for (int i = 0, len = selectedVerses_1.size(); i < len; i++) {
 				int verse_1 = selectedVerses_1.get(i);
-				res.append(verse_1);
-				res.append(' ');
+				res0.append(verse_1);
+				res1.append(verse_1);
+				res0.append(' ');
+				res1.append(' ');
+
 				final String verseText = isSplitVersion ? lsSplit1.getVerse(verse_1) : lsSplit0.getVerse(verse_1);
-				res.append(U.removeSpecialCodes(verseText));
-				res.append('\n');
+				final String verseTextPlain = U.removeSpecialCodes(verseText);
+
+				res0.append(verseTextPlain);
+				res1.append(verseTextPlain);
+
+				if (i != len - 1) {
+					res0.append('\n');
+					res1.append('\n');
+				}
 			}
 		} else {
-			res.append("  ");
+			res0.append("  ");
 
 			// append each selected verse without verse number prepended
 			for (int i = 0; i < selectedVerses_1.size(); i++) {
 				int verse_1 = selectedVerses_1.get(i);
-				if (i != 0) res.append('\n');
+				if (i != 0) {
+					res0.append('\n');
+					res1.append('\n');
+				}
 				final String verseText = isSplitVersion ? lsSplit1.getVerse(verse_1) : lsSplit0.getVerse(verse_1);
-				res.append(U.removeSpecialCodes(verseText));
+				final String verseTextPlain = U.removeSpecialCodes(verseText);
+
+				res0.append(verseTextPlain);
+				res1.append(verseTextPlain);
 			}
 		}
-		return res.toString();
+
+		return Array(res0.toString(), res1.toString());
 	}
 
 	private void applyPreferences() {
@@ -1656,41 +1679,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		history.add(ari_target);
 	}
 
-	/**
-	 * If verse_1_ranges is null, verses will be ignored.
-	 */
-	public static String createVerseUrl(final Version version, final String versionId, final Book book, final int chapter_1, final String verse_1_ranges) {
-		final AppConfig c = AppConfig.get();
-		String format = c.shareUrlFormat;
-
-		String osisBookName = OsisBookNames.getBookName(book.bookId);
-		if (osisBookName == null) {
-			osisBookName = book.shortName; // fall back
-		}
-		format = format.replace("{book.osis}", osisBookName);
-		format = format.replace("{chapter}", String.valueOf(chapter_1));
-		format = format.replace("{verses}", verse_1_ranges == null? "": verse_1_ranges);
-
-		// Try internal first. Then preset_name if possible. If not, short name. If not, long name.
-		final String versionString;
-		if (U.equals(MVersionInternal.getVersionInternalId(), versionId)) {
-			versionString = AppConfig.get().internalPresetName;
-		} else {
-			final String presetName = MVersionDb.presetNameFromVersionId(versionId);
-			if (presetName != null) {
-				versionString = presetName;
-			} else if (version.getShortName() != null) {
-				versionString = version.getShortName();
-			} else {
-				versionString = version.getLongName();
-			}
-		}
-
-		format = format.replace("{version}", versionString);
-
-		return format;
-	}
-
 	VersesView.AttributeListener attributeListener = new VersesView.AttributeListener() {
 		void openBookmarkDialog(final long _id) {
 			final TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExisting(IsiActivity.this, _id);
@@ -2072,42 +2060,76 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 			switch (item.getItemId()) {
 			case R.id.menuCopy: { // copy, can be multiple
-				String textToCopy = prepareTextForCopyShare(selected, reference, false);
+				String[] t = prepareTextForCopyShare(selected, reference, false);
 				if (activeSplitVersion != null) {
-					textToCopy = appendSplitTextForCopyShare(textToCopy);
+					appendSplitTextForCopyShare(t);
 				}
+				final String textToCopy = t[0];
+				final String textToSubmit = t[1];
 
-				U.copyToClipboard(textToCopy);
-				lsSplit0.uncheckAllVerses(true);
+				ShareUrl.make(IsiActivity.this, !Preferences.getBoolean(getString(R.string.pref_copyWithShareUrl_key), getResources().getBoolean(R.bool.pref_copyWithShareUrl_default)), textToSubmit, Ari.encode(activeBook.bookId, chapter_1, 0), selected, reference.toString(), S.activeVersion, MVersionDb.presetNameFromVersionId(S.activeVersionId), new ShareUrl.Callback() {
+					@Override
+					public void onSuccess(final String shareUrl) {
+						U.copyToClipboard(textToCopy + "\n\n" + shareUrl);
+					}
 
-				Toast.makeText(App.context, getString(R.string.alamat_sudah_disalin, reference), Toast.LENGTH_SHORT).show();
-				mode.finish();
+					@Override
+					public void onUserCancel() {
+						U.copyToClipboard(textToCopy);
+					}
+
+					@Override
+					public void onError(final Exception e) {
+						U.copyToClipboard(textToCopy);
+					}
+
+					@Override
+					public void onFinally() {
+						lsSplit0.uncheckAllVerses(true);
+
+						Toast.makeText(App.context, getString(R.string.alamat_sudah_disalin, reference), Toast.LENGTH_SHORT).show();
+						mode.finish();
+					}
+				});
 			} return true;
 			case R.id.menuShare: {
-				String textToShare = prepareTextForCopyShare(selected, reference, false);
+				String[] t = prepareTextForCopyShare(selected, reference, false);
 				if (activeSplitVersion != null) {
-					textToShare = appendSplitTextForCopyShare(textToShare);
+					appendSplitTextForCopyShare(t);
 				}
-
-				String verseUrl;
-				if (selected.size() == 1) {
-					verseUrl = createVerseUrl(S.activeVersion, S.activeVersionId, IsiActivity.this.activeBook, IsiActivity.this.chapter_1, String.valueOf(selected.get(0)));
-				} else {
-					StringBuilder sb = new StringBuilder();
-					Book.writeVerseRange(selected, sb);
-					verseUrl = createVerseUrl(S.activeVersion, S.activeVersionId, IsiActivity.this.activeBook, IsiActivity.this.chapter_1, sb.toString()); // use verse range
-				}
+				final String textToShare = t[0];
+				final String textToSubmit = t[1];
 
 				final Intent intent = ShareCompat.IntentBuilder.from(IsiActivity.this)
-				.setType("text/plain") //$NON-NLS-1$
-				.setSubject(reference.toString())
-				.setText(textToShare)
-				.getIntent();
-				intent.putExtra(EXTRA_verseUrl, verseUrl);
-				startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, reference)), REQCODE_share);
+					.setType("text/plain")
+					.setSubject(reference.toString())
+					.getIntent();
 
-				lsSplit0.uncheckAllVerses(true);
-				mode.finish();
+				ShareUrl.make(IsiActivity.this, !Preferences.getBoolean(getString(R.string.pref_copyWithShareUrl_key), getResources().getBoolean(R.bool.pref_copyWithShareUrl_default)), textToSubmit, Ari.encode(activeBook.bookId, chapter_1, 0), selected, reference.toString(), S.activeVersion, MVersionDb.presetNameFromVersionId(S.activeVersionId), new ShareUrl.Callback() {
+					@Override
+					public void onSuccess(final String shareUrl) {
+						intent.putExtra(Intent.EXTRA_TEXT, textToShare + "\n\n" + shareUrl);
+						intent.putExtra(EXTRA_verseUrl, shareUrl);
+					}
+
+					@Override
+					public void onUserCancel() {
+						intent.putExtra(Intent.EXTRA_TEXT, textToShare);
+					}
+
+					@Override
+					public void onError(final Exception e) {
+						intent.putExtra(Intent.EXTRA_TEXT, textToShare);
+					}
+
+					@Override
+					public void onFinally() {
+						startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, reference)), REQCODE_share);
+
+						lsSplit0.uncheckAllVerses(true);
+						mode.finish();
+					}
+				});
 			} return true;
 			case R.id.menuCompare: {
 				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
@@ -2224,14 +2246,18 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			return false;
 		}
 
-		String appendSplitTextForCopyShare(String textToCopy) {
+		/**
+		 * @param t [0] is text to copy, [1] is text to submit
+		 */
+		void appendSplitTextForCopyShare(final String[] t) {
 			final Book splitBook = activeSplitVersion.getBook(activeBook.bookId);
 			if (splitBook != null) {
 				IntArrayList selectedSplit = lsSplit1.getSelectedVerses_1();
 				CharSequence referenceSplit = referenceFromSelectedVerses(selectedSplit, splitBook);
-				textToCopy += "\n\n" + prepareTextForCopyShare(selectedSplit, referenceSplit, true);
+				final String[] a = prepareTextForCopyShare(selectedSplit, referenceSplit, true);
+				t[0] += "\n\n" + a[0];
+				t[1] += "\n\n" + a[1];
 			}
-			return textToCopy;
 		}
 
 		@Override public void onDestroyActionMode(ActionMode mode) {
