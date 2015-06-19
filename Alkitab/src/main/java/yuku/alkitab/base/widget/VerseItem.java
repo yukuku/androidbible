@@ -96,7 +96,7 @@ public class VerseItem extends LinearLayout implements Checkable {
 			if (solid == null) {
 				//noinspection deprecation
 				checkedPaintSolid = solid = new Paint();
-				solid.setColor(Preferences.getInt(getContext().getString(R.string.pref_selectedVerseBgColor_key), 0));
+				solid.setColor(Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default));
 				solid.setStyle(Paint.Style.FILL);
 			}
 
@@ -108,7 +108,7 @@ public class VerseItem extends LinearLayout implements Checkable {
 				checkedPaintStroke = stroke = new Paint();
 
 				// calculate stroke color based on solid color
-				final int solidColor = Preferences.getInt(getContext().getString(R.string.pref_selectedVerseBgColor_key), 0);
+				final int solidColor = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default);
 				final double lum = ColorUtils.calculateLuminance(solidColor);
 				final float[] hsl = VerseItem.tmp_float3;
 				ColorUtils.colorToHSL(solidColor, hsl);
