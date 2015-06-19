@@ -63,7 +63,7 @@ public class ShareUrl {
 
 		final Call call = App.getOkHttpClient().newCall(
 			new Request.Builder()
-				.url("http://alkitab-host.appspot.com/v/create")
+				.url("https://alkitab-host.appspot.com/v/create")
 				.post(form.build())
 				.build()
 		);
