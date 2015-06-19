@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -901,7 +902,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		Jumper jumper = new Jumper(reference);
 		if (! jumper.getParseSucceeded()) {
-			Toast.makeText(this, getString(R.string.alamat_tidak_sah_alamat, reference), Toast.LENGTH_SHORT).show();
+			new MaterialDialog.Builder(this)
+				.content(R.string.alamat_tidak_sah_alamat, reference)
+				.positiveText(R.string.ok)
+				.show();
 			return 0;
 		}
 
@@ -1533,7 +1537,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		if (fullScreen) {
-			showFullScreenToast(reference);
+			if (fullScreenToast == null) {
+				fullScreenToast = Toast.makeText(this, reference, Toast.LENGTH_SHORT);
+				fullScreenToast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 0);
+			} else {
+				fullScreenToast.setText(reference);
+			}
+			fullScreenToast.show();
 		}
 
 		if (dictionaryMode) {
@@ -1541,16 +1551,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		return Ari.encode(0, chapter_1, verse_1);
-	}
-
-	void showFullScreenToast(final CharSequence s) {
-		if (fullScreenToast == null) {
-			fullScreenToast = Toast.makeText(this, s, Toast.LENGTH_SHORT);
-			fullScreenToast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 0);
-		} else {
-			fullScreenToast.setText(s);
-		}
-		fullScreenToast.show();
 	}
 
 	void displaySplitFollowingMaster() {
@@ -2090,7 +2090,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					public void onFinally() {
 						lsSplit0.uncheckAllVerses(true);
 
-						Toast.makeText(App.context, getString(R.string.alamat_sudah_disalin, reference), Toast.LENGTH_SHORT).show();
+						Snackbar.make(root, getString(R.string.alamat_sudah_disalin, reference), Snackbar.LENGTH_SHORT).show();
 						mode.finish();
 					}
 				});
