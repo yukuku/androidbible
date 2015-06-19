@@ -2,10 +2,12 @@ package yuku.afw.storage;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.annotation.IntegerRes;
+import android.support.annotation.StringRes;
 import android.util.Log;
 import yuku.afw.App;
 import yuku.afw.BuildConfig;
@@ -20,7 +22,7 @@ public class Preferences {
 	
 	private static SharedPreferences cache;
 	private static boolean dirty = true;
-	private static Editor currentEditor;
+	private static SharedPreferences.Editor currentEditor;
 	private static int held = 0;
 	private static WeakHashMap<SharedPreferences.OnSharedPreferenceChangeListener, Void> observers = new WeakHashMap<>();
 	
@@ -28,7 +30,7 @@ public class Preferences {
 		dirty = true;
 	}
 	
-	private static Editor getEditor(SharedPreferences pref) {
+	private static SharedPreferences.Editor getEditor(SharedPreferences pref) {
 		if (currentEditor == null) {
 			currentEditor = pref.edit();
 		}
@@ -103,7 +105,7 @@ public class Preferences {
 	}
 
 	public static Set<String> getAllKeys() {
-		return new HashSet<String>(getAll().keySet());
+		return new HashSet<>(getAll().keySet());
 	}
 	
 	public static void setInt(Enum<?> key, int val) {
@@ -180,6 +182,17 @@ public class Preferences {
 		getEditor(pref).remove(key);
 		commitIfNotHeld();
 		if (BuildConfig.DEBUG) Log.d(TAG, key + " removed");
+	}
+
+	public static int getInt(@StringRes final int keyStringResId, @IntegerRes final int defaultIntResId) {
+		final Resources r = App.context.getResources();
+		final String key = r.getString(keyStringResId);
+		final Object value = get(key);
+		if (value == null) {
+			return r.getInteger(defaultIntResId);
+		} else {
+			return (int) value;
+		}
 	}
 	
 	@TargetApi(9) private synchronized static void commitIfNotHeld() {
