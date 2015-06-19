@@ -87,7 +87,6 @@ import yuku.alkitab.base.util.CurrentReading;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.LidToAri;
-import yuku.alkitab.base.util.OsisBookNames;
 import yuku.alkitab.base.util.ShareUrl;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.CallbackSpan;
@@ -132,6 +131,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	public static final String ACTION_ATTRIBUTE_MAP_CHANGED = "yuku.alkitab.action.ATTRIBUTE_MAP_CHANGED";
 	public static final String ACTION_ACTIVE_VERSION_CHANGED = IsiActivity.class.getName() + ".action.ACTIVE_VERSION_CHANGED";
+	public static final String ACTION_NIGHT_MODE_CHANGED = IsiActivity.class.getName() + ".action.NIGHT_MODE_CHANGED";
 
 	public static final String EXTRA_CLOSE_DRAWER = "close_drawer";
 
@@ -1296,10 +1296,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		Preferences.setBoolean(Prefkey.is_night_mode, yes);
 
 		applyPreferences();
+		applyActionBarAndStatusBarColors();
 
 		if (textAppearancePanel != null) {
 			textAppearancePanel.displayValues();
 		}
+
+		App.getLbm().sendBroadcast(new Intent(ACTION_NIGHT_MODE_CHANGED));
 	}
 
 	void openVersionsDialog() {
