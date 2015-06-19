@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	<style name="Theme.MaterialOrHolo" parent="Theme.Holo.WithDarkMD" />
-
-	<style name="Theme.Holo.WithDarkMD" parent="android:Theme.Holo">
-		<item name="md_dark_theme">true</item>
-		<item name="android:windowBackground">@color/window</item>
-	</style>
-</resources>
