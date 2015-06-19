@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
+import android.support.v4.graphics.ColorUtils;
 import android.util.Log;
 import android.widget.TextView;
 import yuku.afw.storage.Preferences;
@@ -326,6 +327,14 @@ public class U {
 			Preferences.setString(Prefkey.installation_id, res);
 		}
 		return res;
+	}
+
+	public static int getTextColorForSelectedVerse(final int selectedVerseBgColor) {
+		if (ColorUtils.calculateLuminance(selectedVerseBgColor) > 0.4) {
+			return 0xff000000;
+		} else {
+			return 0xffffffff;
+		}
 	}
 
 	static class InstallationInfoJson {

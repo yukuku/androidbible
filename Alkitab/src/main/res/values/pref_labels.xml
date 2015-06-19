@@ -17,7 +17,10 @@
     <string name="pref_copyWithVerseNumbers_summary">Begin each verse with its number</string>
     <string name="pref_copyWithVersionName_title">Version abbreviations</string>
     <string name="pref_copyWithVersionName_summary">Mention the Bible version initials</string>
+    <string name="pref_copyWithShareUrl_title">Share URL</string>
+    <string name="pref_copyWithShareUrl_summary">Append sharing page link at the end of copied or shared text</string>
     <string name="pref_autoDictionaryAnalyze_title">Automatic dictionary lookup</string>
     <string name="pref_autoDictionaryAnalyze_summary">Look for dictionary words on selected verses</string>
     <string name="pref_showHiddenVersion_title">Enable possibly restricted versions</string>
+    <string name="pref_selectedVerseBgColor_title">Selected verse background</string>
 </resources>

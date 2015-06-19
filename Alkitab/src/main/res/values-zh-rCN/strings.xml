@@ -219,6 +219,9 @@
   <string name="sn_share_title">分享歌曲</string>
   <string name="sn_lyric_version_version">版本 %s</string>
   <string name="sn_lyric_refrain_marker">副歌</string>
+  <string name="sn_delete_song_book">删除歌书</string>
+  <string name="sn_delete_song_book_explanation">删除歌书中的所有歌曲^1？</string>
+  <string name="sn_delete_song_book_result">从歌书^2中删除了^1首歌。</string>
   <string name="sn_update_book_explanation">更新书目^1到最新版本。</string>
   <string name="sn_update_book_confirm_button">更新</string>
   <string name="sn_update_book">更新歌书。</string>
@@ -241,6 +244,11 @@
   <string name="desc_progress_3">进度三</string>
   <string name="desc_progress_4">进度四</string>
   <string name="desc_progress_5">进度五</string>
+  <string name="desc_verse_attribute_one_bookmark">这经节附有书签的。</string>
+  <string name="desc_verse_attribute_multiple_bookmarks">这经节附有%s个书签。</string>
+  <string name="desc_verse_attribute_one_note">这经节附有笔记。</string>
+  <string name="desc_verse_attribute_multiple_notes">这经节附有%s个笔记。</string>
+  <string name="desc_verse_attribute_progress_mark">这里有%s。</string>
   <string name="intent_filter_open_yes_file">打开YES档案</string>
   <string name="intent_filter_open_pdb_file">打开PDB档案</string>
   <string name="intent_filter_open_pdb_or_yes_file">打开PDB/YES档案</string>

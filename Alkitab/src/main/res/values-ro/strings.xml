@@ -126,6 +126,7 @@
   <string name="ed_download_button">Descarcă</string>
   <string name="ed_update_button">Actualizează</string>
   <string name="ed_details_update_available">Actualizare disponibilă</string>
+  <string name="ed_download_manager_not_enabled_prompt">Aplicația Download Manager nu este activată sau nu este disponibil. \n\nActivează pentru a descărca versiuni ale Bibliei.</string>
   <string name="info_terperinci">Detalii</string>
   <string name="buang_dari_daftar">Șterge</string>
   <string name="edit_bookmark">Editează favorite</string>
@@ -151,6 +152,7 @@
   <string name="bmcat_notes">Note</string>
   <string name="bmcat_highlights">Marcaje</string>
   <string name="bmcat_unlabeled_bookmarks">Favorite neetichetate</string>
+  <string name="menuLabelSort">Sortare etichete alfabetic</string>
   <string name="bl_no_notes_written_yet">Nu sunt note scrise.\nApăsaţi pe un verset pentru a scrie o notă.</string>
   <string name="bl_no_highlighted_verses">Nu sunt versete marcate.\nApăsati pe un verset pentru a fi marcat.</string>
   <string name="bl_there_are_no_bookmarks_without_any_labels">Nu sunt versete favorite fără etichetă.</string>
@@ -195,6 +197,7 @@
   <string name="bookmark_search">Caută</string>
   <string name="verse_select_one_verse_selected">1 verset selectat</string>
   <string name="verse_select_multiple_verse_selected">%s versete selectate</string>
+  <string name="google_play_store_not_installed">Magazin Google Play nu este instalat.</string>
   <string name="goto_tab_dialer_label">Numeric</string>
   <string name="goto_tab_direct_label">Direct</string>
   <string name="goto_tab_grid_label">Grilă</string>
@@ -208,6 +211,7 @@
   <string name="sn_deep_search_enabled">Texte, etc</string>
   <string name="sn_songs_activity_title">Cântece</string>
   <string name="sn_bookselector_all">Tot</string>
+  <string name="sn_bookselector_more">Descarca altele...</string>
   <string name="sn_bookselector_all_desc">Caută toate cărţile care sunt instalate.</string>
   <string name="sn_downloading_ellipsis">Descărcare în curs&#8230;</string>
   <string name="sn_download_song_books">Descarcă cântece</string>
@@ -215,9 +219,13 @@
   <string name="sn_share_title">Partajează cântec</string>
   <string name="sn_lyric_version_version">Versiunea %s </string>
   <string name="sn_lyric_refrain_marker">Ref.</string>
+  <string name="sn_delete_song_book">Ștergeți cartea de cântece</string>
+  <string name="sn_delete_song_book_explanation">Ștergeți toate melodiile din cartea de cântece ^1?</string>
+  <string name="sn_delete_song_book_result">^1 melodii au fost șterse din cartea de cântece ^2.</string>
   <string name="sn_update_book_explanation">Actualizează cartea ^1 la ultima versiune.</string>
   <string name="sn_update_book_confirm_button">Actualizează</string>
   <string name="sn_update_book">Actualizare cântece</string>
+  <string name="sn_update_book_because_too_old">Vă rugăm să actualizați ^1 la cea mai recentă versiune înainte de a continua. După actualizare, trimite modificările dvs., dacă este necesar.</string>
   <string name="desc_previous_day">Ziua precedentă</string>
   <string name="desc_next_day">Ziua următoare</string>
   <string name="desc_open_bookmark">Deschide favorite</string>
@@ -236,6 +244,11 @@
   <string name="desc_progress_3">Progres 3</string>
   <string name="desc_progress_4">Progres 4</string>
   <string name="desc_progress_5">Progres 5</string>
+  <string name="desc_verse_attribute_one_bookmark">Un marcaj este atașat la acest verset.</string>
+  <string name="desc_verse_attribute_multiple_bookmarks">%s marcaje sunt atașate la acest verset.</string>
+  <string name="desc_verse_attribute_one_note">O notă este atașată la acest verset.</string>
+  <string name="desc_verse_attribute_multiple_notes">%s note sunt atașate la acest verset.</string>
+  <string name="desc_verse_attribute_progress_mark">%s este în prezent aici.</string>
   <string name="intent_filter_open_yes_file">Deschide fişier YES</string>
   <string name="intent_filter_open_pdb_file">Deschide fișierul PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Deschide fișierul PDB/YES</string>
@@ -312,12 +325,14 @@
   <string name="rp_showDetails">Arată detalii</string>
   <string name="rp_hideDetails">Ascunde detalii</string>
   <string name="rp_aboutPlan">Despre planificare</string>
+  <string name="rp_description_with_id"><b>^1</b> (^2 zile)\n<small>ID: ^3</small>\n\n^4</string>
   <string name="rp_download_day_count_days">%s zile</string>
   <string name="rp_download_reading_plan_list_progress">Descarcă lista cu planul de citire...</string>
   <string name="rp_download_reading_plan_list_failed">Eroare la descărcarea planului de citire. Încearcă încă o dată având o conexiune la internet.</string>
   <string name="rp_download_reading_plan_progress">Descarcă planul de citire...</string>
   <string name="rp_download_reading_plan_failed">Eroare la descărcarea planului selectat de citire. Încearcă încă o dată având o conexiune la internet.</string>
   <string name="rp_download_reading_plan_data_corrupted">Planul de citire descărcat este corupt. Încearcă încă o dată având o conexiune la internet.</string>
+  <string name="rp_download_already_have">Aveți deja acest plan de citire.</string>
   <string name="version_download_need_fonts">"Versiunea ce s-a descărcat, ar putea avea nevoie de anumite fonturi. Mergi la meniul \"aspect Text \" și selectați un font. Grec are nevoie de fontul Ubuntu. Pentru limba birmaneză Parabaik, ParabaikSans sau Myanmar3. Tamil are nevoie de Akshar. Telugu are nevoie de Suranna."</string>
   <string name="version_download_corrupted_file">Fișierul descărcat pare a fi corupt.</string>
   <string name="menuNightMode">Mod nocturn</string>
@@ -458,6 +473,7 @@
   <string name="marker_migrate_no_more">Nu mai întreba</string>
   <string name="marker_migrate_later">Nu acum</string>
   <string name="marker_migrate_title">Importă marcajele vechi</string>
+  <string name="marker_migrate_file_chooser_title">Selectați fișierul de backup v3</string>
   <string name="marker_migrate_no_more_confirmation">Sunteți sigur că nu este necesar importul datelor vechi?</string>
   <string name="marker_migrate_error_opening_backup_file">Nu poate fi accesat fișierul de rezervă.</string>
   <string name="marker_migrate_import_from_newest">Da, import din cel mai nou (recomandat)</string>
@@ -466,6 +482,9 @@
   <string name="announce_notif_title">%s Anunțuri</string>
   <string name="announce_notif_number_new_announcements">%s anunțuri noi</string>
   <string name="menuDictionary">Dicționar</string>
+  <string name="dict_open_full">Deschide dicționarul</string>
+  <string name="dict_no_results">Nu s-a găsit o definiție pentru cuvântul selectat.</string>
+  <string name="dict_download_prompt">Descarcă \"Biblia Dicționar\" pentru a afla mai multe despre cuvintele din Biblie!</string>
   <string name="dict_download_button">Descarcă</string>
   <string name="menuGuide">Ghid</string>
   <string name="menuCommentary">Comentariu</string>

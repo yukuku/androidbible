@@ -6,14 +6,15 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="240dp"
 	android:layout_height="match_parent"
-    android:background="#263238"
-    android:elevation="4dp"
+	android:background="#263238"
+	android:elevation="4dp"
 	android:fitsSystemWindows="true"
 	tools:ignore="Overdraw">
 
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:animateLayoutChanges="true"
 		android:orientation="vertical"
 		android:showDividers="middle">
 
@@ -22,19 +23,59 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content" />
 
-        <Button
-            android:id="@+id/bMarkers"
-            style="?android:buttonBarButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_drawer_markers"
-            android:drawablePadding="16dp"
-            android:textColor="#ffffff"
-            android:textAllCaps="false"
-            android:textSize="16sp"
-            android:fontFamily="sans-serif-regular"
-            android:gravity="left|center_vertical"
-            android:text="@string/menu_markers"/>
+		<Button
+			android:id="@+id/bMarkers"
+			style="?android:buttonBarButtonStyle"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:drawableLeft="@drawable/ic_drawer_markers"
+			android:drawablePadding="16dp"
+			android:fontFamily="sans-serif-regular"
+			android:gravity="left|center_vertical"
+			android:text="@string/menu_markers"
+			android:textAllCaps="false"
+			android:textColor="#ffffff"
+			android:textSize="16sp" />
+
+		<FrameLayout
+			android:id="@+id/panelCurrentReadingHeader"
+			android:layout_width="match_parent"
+			android:layout_height="32dp">
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical"
+				android:layout_marginLeft="16dp"
+				android:text="@string/left_drawer_current_reading_title"
+				android:textColor="#bebebe"
+				android:textSize="12sp" />
+
+			<ImageButton
+				android:id="@+id/bCurrentReadingClose"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:layout_gravity="right"
+				android:background="?selectableItemBackgroundBorderless"
+				android:contentDescription="@string/desc_close"
+				android:gravity="center"
+				android:minWidth="48dp"
+				android:src="@drawable/ic_action_remove" />
+
+		</FrameLayout>
+
+		<Button
+			android:id="@+id/bCurrentReadingReference"
+			style="?android:buttonBarButtonStyle"
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:fontFamily="sans-serif-regular"
+			android:gravity="center_vertical"
+			android:paddingLeft="16dp"
+			android:textAllCaps="false"
+			android:textColor="#ffffff"
+			android:textSize="16sp"
+			tools:text="Genesis 1–3" />
 
 		<FrameLayout
 			android:layout_width="match_parent"
@@ -51,10 +92,11 @@
 
 			<ImageButton
 				android:id="@+id/bProgressMarkList"
-				android:background="?selectableItemBackgroundBorderless"
 				android:layout_width="wrap_content"
 				android:layout_height="match_parent"
 				android:layout_gravity="right"
+				android:contentDescription="@string/desc_progress_mark_list"
+				android:background="?selectableItemBackgroundBorderless"
 				android:gravity="center"
 				android:minWidth="48dp"
 				android:src="@drawable/ic_progress_mark_list" />
@@ -68,100 +110,100 @@
 
 			<ImageButton
 				android:id="@+id/bProgress1"
-				android:background="?selectableItemBackgroundBorderless"
 				android:layout_width="wrap_content"
 				android:layout_height="48dp"
 				android:layout_weight="1"
+				android:background="?selectableItemBackgroundBorderless"
 				android:contentDescription="@string/desc_progress_1"
 				android:src="@drawable/ic_attr_progress_mark_1" />
 
 			<ImageButton
 				android:id="@+id/bProgress2"
-                android:background="?selectableItemBackgroundBorderless"
-                android:layout_width="wrap_content"
+				android:layout_width="wrap_content"
 				android:layout_height="48dp"
 				android:layout_weight="1"
+				android:background="?selectableItemBackgroundBorderless"
 				android:contentDescription="@string/desc_progress_2"
 				android:src="@drawable/ic_attr_progress_mark_2" />
 
 			<ImageButton
 				android:id="@+id/bProgress3"
-                android:background="?selectableItemBackgroundBorderless"
-                android:layout_width="wrap_content"
+				android:layout_width="wrap_content"
 				android:layout_height="48dp"
 				android:layout_weight="1"
+				android:background="?selectableItemBackgroundBorderless"
 				android:contentDescription="@string/desc_progress_3"
 				android:src="@drawable/ic_attr_progress_mark_3" />
 
 			<ImageButton
 				android:id="@+id/bProgress4"
-                android:background="?selectableItemBackgroundBorderless"
-                android:layout_width="wrap_content"
+				android:layout_width="wrap_content"
 				android:layout_height="48dp"
 				android:layout_weight="1"
+				android:background="?selectableItemBackgroundBorderless"
 				android:contentDescription="@string/desc_progress_4"
 				android:src="@drawable/ic_attr_progress_mark_4" />
 
 			<ImageButton
 				android:id="@+id/bProgress5"
-                android:background="?selectableItemBackgroundBorderless"
-                android:layout_width="wrap_content"
+				android:layout_width="wrap_content"
 				android:layout_height="48dp"
 				android:layout_weight="1"
+				android:background="?selectableItemBackgroundBorderless"
 				android:contentDescription="@string/desc_progress_5"
 				android:src="@drawable/ic_attr_progress_mark_5" />
 
 		</LinearLayout>
 
-        <Button
-            android:id="@+id/bDisplay"
-            style="?android:buttonBarButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_drawer_display"
-            android:drawablePadding="16dp"
-            android:textColor="#ffffff"
-            android:textAllCaps="false"
-            android:textSize="16sp"
-            android:fontFamily="sans-serif-regular"
-            android:gravity="left|center_vertical"
-            android:text="@string/menuDisplay" />
+		<Button
+			android:id="@+id/bDisplay"
+			style="?android:buttonBarButtonStyle"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:drawableLeft="@drawable/ic_drawer_display"
+			android:drawablePadding="16dp"
+			android:fontFamily="sans-serif-regular"
+			android:gravity="left|center_vertical"
+			android:text="@string/menuDisplay"
+			android:textAllCaps="false"
+			android:textColor="#ffffff"
+			android:textSize="16sp" />
 
 		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/cFullScreen"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
-            android:textColor="#ffffff"
-            android:gravity="left|center_vertical"
-            android:layout_marginLeft="16dp"
+			android:layout_marginLeft="16dp"
 			android:layout_marginRight="16dp"
-            android:textSize="16sp"
-            android:fontFamily="sans-serif-regular"
-            android:text="@string/menuFullScreen" />
+			android:fontFamily="sans-serif-regular"
+			android:gravity="left|center_vertical"
+			android:text="@string/menuFullScreen"
+			android:textColor="#ffffff"
+			android:textSize="16sp" />
 
 		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/cNightMode"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
-            android:textColor="#ffffff"
-            android:gravity="left|center_vertical"
 			android:layout_marginLeft="16dp"
 			android:layout_marginRight="16dp"
-            android:textSize="16sp"
-            android:fontFamily="sans-serif-regular"
-            android:text="@string/menuNightMode" />
+			android:fontFamily="sans-serif-regular"
+			android:gravity="left|center_vertical"
+			android:text="@string/menuNightMode"
+			android:textColor="#ffffff"
+			android:textSize="16sp" />
 
 		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/cSplitVersion"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
-            android:textColor="#ffffff"
-            android:gravity="left|center_vertical"
 			android:layout_marginLeft="16dp"
 			android:layout_marginRight="16dp"
-            android:textSize="16sp"
-            android:fontFamily="sans-serif-regular"
-            android:text="@string/menuSplitVersion" />
+			android:fontFamily="sans-serif-regular"
+			android:gravity="left|center_vertical"
+			android:text="@string/menuSplitVersion"
+			android:textColor="#ffffff"
+			android:textSize="16sp" />
 
 		<include
 			layout="@layout/left_drawer_footer"

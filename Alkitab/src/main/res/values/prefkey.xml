@@ -22,9 +22,12 @@
 
 	<string name="pref_copyWithVerseNumbers_key">copyWithVerseNumbers</string>
 	<string name="pref_copyWithVersionName_key">copyWithVersionName</string>
+	<string name="pref_copyWithShareUrl_key">copyWithShareUrl</string>
 	<string name="pref_autoDictionaryAnalyze_key">autoDictionaryAnalyze</string>
 	<string name="pref_showHiddenVersion_key">showHiddenVersion</string>
 	<string name="pref_syncAccountName_key">syncAccountName</string>
 	<string name="pref_sync_key">sync</string>
 	<string name="pref_syncLogout_key">syncLogout</string>
+
+	<string name="pref_selectedVerseBgColor_key">selectedVerseBgColor</string>
 </resources>

@@ -15,6 +15,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BasePreferenceActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
+import yuku.alkitab.base.widget.VerseItem;
 import yuku.alkitab.debug.R;
 
 import java.util.List;
@@ -80,6 +81,12 @@ public class SettingsActivity extends BasePreferenceActivity {
 				return true;
 			});
 			autoDisplayListPreference(pref_language);
+
+			final Preference pref_selectedVerseBgColor = findPreference(getString(R.string.pref_selectedVerseBgColor_key));
+			pref_selectedVerseBgColor.setOnPreferenceChangeListener((preference, newValue) -> {
+				VerseItem.invalidateSelectedVersePaints();
+				return true;
+			});
 
 			// show textPadding preference only when there is nonzero side padding on this configuration
 			if (getResources().getDimensionPixelOffset(R.dimen.text_side_padding) == 0) {

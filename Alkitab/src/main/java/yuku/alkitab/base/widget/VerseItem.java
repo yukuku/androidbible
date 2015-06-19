@@ -4,8 +4,10 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.v4.graphics.ColorUtils;
 import android.text.Layout;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -15,6 +17,7 @@ import android.widget.Checkable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import yuku.afw.V;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
@@ -28,10 +31,12 @@ public class VerseItem extends LinearLayout implements Checkable {
 	public static final String PROGRESS_MARK_DRAG_MIME_TYPE = "application/vnd.yuku.alkitab.progress_mark.drag";
 
 	private boolean checked;
-	private Drawable checkedBg;
+	private static Paint checkedPaintSolid;
+	private static Paint checkedPaintStroke;
 	private boolean collapsed;
 	private boolean dragHover;
 	private Drawable dragHoverBg;
+	private static final float[] tmp_float3 = new float[3];
 
 	public VerseTextView lText;
 	public TextView lVerseNumber;
@@ -83,25 +88,62 @@ public class VerseItem extends LinearLayout implements Checkable {
 
 	@Override
 	protected void onDraw(Canvas canvas) {
+		final int w = getWidth();
+		final int h = getHeight();
+
 		if (checked) {
-			if (checkedBg == null) {
-				checkedBg = getResources().getDrawable(R.drawable.item_verse_bg_checked);
+			Paint solid = VerseItem.checkedPaintSolid;
+			if (solid == null) {
+				//noinspection deprecation
+				checkedPaintSolid = solid = new Paint();
+				solid.setColor(Preferences.getInt(getContext().getString(R.string.pref_selectedVerseBgColor_key), 0));
+				solid.setStyle(Paint.Style.FILL);
 			}
 
-			checkedBg.setBounds(0, 0, getWidth(), getHeight());
-			checkedBg.draw(canvas);
+			canvas.drawRect(0, 0, w, h, solid);
+
+			Paint stroke = VerseItem.checkedPaintStroke;
+			if (stroke == null) {
+				//noinspection deprecation
+				checkedPaintStroke = stroke = new Paint();
+
+				// calculate stroke color based on solid color
+				final int solidColor = Preferences.getInt(getContext().getString(R.string.pref_selectedVerseBgColor_key), 0);
+				final double lum = ColorUtils.calculateLuminance(solidColor);
+				final float[] hsl = VerseItem.tmp_float3;
+				ColorUtils.colorToHSL(solidColor, hsl);
+				if (lum > 0.5) {
+					hsl[2] -= 0.3f;
+				} else {
+					hsl[2] += 0.3f;
+				}
+				final int strokeColor = ColorUtils.HSLToColor(hsl); // automatically set alpha to 0xff
+
+				stroke.setColor(strokeColor);
+				stroke.setStyle(Paint.Style.STROKE);
+				stroke.setStrokeWidth(getResources().getDisplayMetrics().density * 1);
+			}
+
+			canvas.drawRect(0, 0, w, h, stroke);
 		}
 
 		if (dragHover) {
 			if (dragHoverBg == null) {
+				//noinspection deprecation
 				dragHoverBg = getResources().getDrawable(R.drawable.item_verse_bg_draghovered);
 			}
 
-			dragHoverBg.setBounds(0, 0, getWidth(), getHeight());
+			//noinspection ConstantConditions
+			dragHoverBg.setBounds(0, 0, w, h);
 			dragHoverBg.draw(canvas);
 		}
 
 		super.onDraw(canvas);
+	}
+
+	public static void invalidateSelectedVersePaints() {
+		checkedPaintSolid = null;
+		checkedPaintStroke = null;
 	}
 
 	@Override

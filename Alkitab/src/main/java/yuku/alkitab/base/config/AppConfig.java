@@ -16,7 +16,6 @@ public class AppConfig {
 	public boolean menuDictionary;
 	public boolean menuGuide;
 	public boolean menuCommentary;
-	public String shareUrlFormat;
 
 	public String internalPrefix;
 	public String internalLocale;
@@ -66,9 +65,6 @@ public class AppConfig {
 						res.menuDictionary = parser.getAttributeBooleanValue(null, "dictionary", false);
 						res.menuGuide = parser.getAttributeBooleanValue(null, "guide", false);
 						res.menuCommentary = parser.getAttributeBooleanValue(null, "commentary", false);
-						break;
-					case "url":
-						res.shareUrlFormat = parser.getAttributeValue(null, "format");
 						break;
 					case "devotion":
 						res.devotionNames.add(parser.getAttributeValue(null, "name"));

@@ -1,8 +1,6 @@
 package yuku.alkitab.base.ac;
 
 import android.app.DownloadManager;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,7 +15,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -105,19 +105,8 @@ public class VersionsActivity extends BaseActivity {
 
 	private static final int REQCODE_openFile = 1;
 
-	/**
-	 * The {@link android.support.v4.view.PagerAdapter} that will provide
-	 * fragments for each of the sections. We use a
-	 * {@link android.support.v13.app.FragmentPagerAdapter} derivative, which will keep every
-	 * loaded fragment in memory. If this becomes too memory intensive, it
-	 * may be best to switch to a
-	 * {@link android.support.v13.app.FragmentStatePagerAdapter}.
-	 */
 	SectionsPagerAdapter mSectionsPagerAdapter;
 
-	/**
-	 * The {@link android.support.v4.view.ViewPager} that will host the section contents.
-	 */
 	ViewPager mViewPager;
 	SlidingTabLayout slidingTabs;
 	String query_text;
@@ -140,7 +129,7 @@ public class VersionsActivity extends BaseActivity {
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the activity.
-		mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+		mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = V.get(this, R.id.viewPager);
@@ -360,7 +349,7 @@ public class VersionsActivity extends BaseActivity {
 	private void startSearch() {
 		// broadcast to all fragments that we have a new query_text
 		for (final String tag : new String[]{makeFragmentName(R.id.viewPager, 0), makeFragmentName(R.id.viewPager, 1)}) {
-			final Fragment f = getFragmentManager().findFragmentByTag(tag);
+			final Fragment f = getSupportFragmentManager().findFragmentByTag(tag);
 			if (f instanceof QueryTextReceiver) {
 				((QueryTextReceiver) f).setQueryText(query_text);
 			}
@@ -412,10 +401,6 @@ public class VersionsActivity extends BaseActivity {
 		}
 	}
 
-	/**
-	 * A {@link android.support.v13.app.FragmentPagerAdapter} that returns a fragment corresponding to
-	 * one of the sections/tabs/pages.
-	 */
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
 		public SectionsPagerAdapter(FragmentManager fm) {

@@ -12,4 +12,10 @@
 		android:summary="@string/pref_copyWithVersionName_summary"
 		android:title="@string/pref_copyWithVersionName_title" />
 
+	<CheckBoxPreference
+		android:defaultValue="@bool/pref_copyWithShareUrl_default"
+		android:key="@string/pref_copyWithShareUrl_key"
+		android:summary="@string/pref_copyWithShareUrl_summary"
+		android:title="@string/pref_copyWithShareUrl_title" />
+
 </PreferenceScreen>

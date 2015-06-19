@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.util.Appearances;
@@ -73,7 +74,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 
 			Appearances.applyTextAppearance(lText);
 			if (checked) {
-				lText.setTextColor(0xff000000); // override with black!
+				lText.setTextColor(U.getTextColorForSelectedVerse(Preferences.getInt(App.context.getString(R.string.pref_selectedVerseBgColor_key), 0))); // override with black or white!
 			}
 
 			final AttributeView attributeView = res.attributeView;
