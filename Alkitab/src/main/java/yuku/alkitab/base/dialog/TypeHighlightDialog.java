@@ -1,9 +1,12 @@
 package yuku.alkitab.base.dialog;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
+import android.text.InputFilter;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
@@ -41,8 +44,8 @@ public class TypeHighlightDialog {
 	 * Open dialog for a single verse
 	 * @param defaultColorRgb -1 if not selected. #rrggbb without alpha.
 	 */
-	public TypeHighlightDialog(Context context, int ari, Listener listener, int defaultColorRgb, CharSequence title) {
-		this(context, Ari.toBookChapter(ari), onlyOne(Ari.toVerse(ari)), listener, defaultColorRgb, title);
+	public TypeHighlightDialog(Context context, int ari, Listener listener, int defaultColorRgb, CharSequence title, @Nullable final CharSequence verseText) {
+		this(context, Ari.toBookChapter(ari), onlyOne(Ari.toVerse(ari)), listener, defaultColorRgb, title, verseText);
 	}
 
 	private static IntArrayList onlyOne(int verse_1) {
@@ -56,7 +59,7 @@ public class TypeHighlightDialog {
 	 * @param defaultColorRgb -1 if not selected. #rrggbb without alpha.
 	 * @param selectedVerses selected verses.
 	 */
-	public TypeHighlightDialog(final Context context, int ari_bookchapter, IntArrayList selectedVerses, Listener listener, final int defaultColorRgb, CharSequence title) {
+	public TypeHighlightDialog(final Context context, int ari_bookchapter, IntArrayList selectedVerses, Listener listener, final int defaultColorRgb, CharSequence title, @Nullable final CharSequence verseText) {
 		this.ari_bookchapter = ari_bookchapter;
 		this.selectedVerses = selectedVerses;
 		this.listener = listener;
@@ -100,6 +103,23 @@ public class TypeHighlightDialog {
 				select(0x00ffffff & color);
 			}
 		}).show());
+
+		final EditText tVerseText = V.get(dialogView, R.id.tVerseText);
+
+		if (selectedVerses.size() > 1 || verseText == null) {
+			tVerseText.setVisibility(View.GONE);
+		} else {
+			tVerseText.setVisibility(View.VISIBLE);
+			tVerseText.setText(verseText);
+			tVerseText.setSelection(0, tVerseText.length());
+
+			// prevent typing
+			final InputFilter[] originalFilters = tVerseText.getFilters();
+			final InputFilter[] filters = new InputFilter[originalFilters.length + 1];
+			System.arraycopy(originalFilters, 0, filters, 0, originalFilters.length);
+			filters[originalFilters.length] = (source, start, end, dest, dstart, dend) -> dest.subSequence(dstart, dend);
+			tVerseText.setFilters(filters);
+		}
 	}
 
 	View.OnClickListener cb_click = new View.OnClickListener() {

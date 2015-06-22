@@ -2184,12 +2184,23 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				final int ariBc = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
 				int colorRgb = S.getDb().getHighlightColorRgb(ariBc, selected);
 
-				new TypeHighlightDialog(IsiActivity.this, ariBc, selected, new TypeHighlightDialog.Listener() {
-					@Override public void onOk(int colorRgb) {
+				final TypeHighlightDialog.Listener listener = new TypeHighlightDialog.Listener() {
+					@Override
+					public void onOk(int colorRgb) {
 						lsSplit0.uncheckAllVerses(true);
 						reloadBothAttributeMaps();
 					}
-				}, colorRgb, reference);
+				};
+
+				if (selected.size() == 1) {
+					final VerseRenderer.FormattedTextResult ftr = new VerseRenderer.FormattedTextResult();
+					final int ari = Ari.encodeWithBc(ariBc, selected.get(0));
+					final String rawVerseText = S.activeVersion.loadVerseText(ari);
+					VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), -1, false, false, null, ftr);
+					new TypeHighlightDialog(IsiActivity.this, ariBc, selected, listener, colorRgb, reference, ftr.result);
+				} else {
+					new TypeHighlightDialog(IsiActivity.this, ariBc, selected, listener, colorRgb, reference, null);
+				}
 				mode.finish();
 			} return true;
 			case R.id.menuEsvsb: {

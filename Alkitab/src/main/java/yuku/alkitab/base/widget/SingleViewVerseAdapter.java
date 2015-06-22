@@ -70,7 +70,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			final int highlightColor = (highlightInfoMap_ != null && highlightInfoMap_[id] != null) ? Highlights.alphaMix(highlightInfoMap_[id].colorRgb) : -1;
 
 			final VerseTextView lText = res.lText;
-			final int startVerseTextPos = VerseRenderer.render(lText, res.lVerseNumber, ari, text, verseNumberText, highlightColor, checked, dontPutSpacingBefore, inlineLinkSpanFactory_, owner_);
+			final int startVerseTextPos = VerseRenderer.render(lText, res.lVerseNumber, ari, text, verseNumberText, highlightColor, checked, dontPutSpacingBefore, inlineLinkSpanFactory_, null);
 
 			Appearances.applyTextAppearance(lText);
 			if (checked) {

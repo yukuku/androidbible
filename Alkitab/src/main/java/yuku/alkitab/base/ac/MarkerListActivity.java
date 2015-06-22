@@ -38,8 +38,8 @@ import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.SearchEngine;
 import yuku.alkitab.base.util.Sqlitil;
+import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.model.Book;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.alkitab.util.Ari;
@@ -472,7 +472,8 @@ public class MarkerListActivity extends BaseActivity {
 	}
 
 	@Override public boolean onContextItemSelected(MenuItem item) {
-		final Marker marker = adapter.getItem(((AdapterView.AdapterContextMenuInfo) item.getMenuInfo()).position);
+		final int position = ((AdapterView.AdapterContextMenuInfo) item.getMenuInfo()).position;
+		final Marker marker = adapter.getItem(position);
 		final int itemId = item.getItemId();
 
 		if (itemId == R.id.menuDeleteMarker) {
@@ -499,13 +500,16 @@ public class MarkerListActivity extends BaseActivity {
 			} else if (filter_kind == Marker.Kind.highlight) {
 				final int ari = marker.ari;
 				final Highlights.Info info = Highlights.decode(marker.caption);
-				String reference = S.activeVersion.referenceWithVerseCount(ari, marker.verseCount);
+				final String reference = S.activeVersion.referenceWithVerseCount(ari, marker.verseCount);
+				final String rawVerseText = S.activeVersion.loadVerseText(ari);
+				final VerseRenderer.FormattedTextResult ftr = new VerseRenderer.FormattedTextResult();
+				VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), -1, false, false, null, ftr);
 
 				new TypeHighlightDialog(this, ari, newColorRgb -> {
 					loadAndFilter();
 					if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
 					App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
-				}, info.colorRgb, reference);
+				}, info.colorRgb, reference, ftr.result);
 			}
 
 			return true;
@@ -610,11 +614,10 @@ public class MarkerListActivity extends BaseActivity {
 			}
 
 			final int ari = marker.ari;
-			final Book book = S.activeVersion.getBook(Ari.toBook(ari));
 			final String reference = S.activeVersion.referenceWithVerseCount(ari, marker.verseCount);
 			final String caption = marker.caption;
 
-			String verseText = S.activeVersion.loadVerseText(book, Ari.toChapter(ari), Ari.toVerse(ari));
+			String verseText = S.activeVersion.loadVerseText(ari);
 			if (verseText == null) {
 				verseText = getString(R.string.generic_verse_not_available_in_this_version);
 			} else {
