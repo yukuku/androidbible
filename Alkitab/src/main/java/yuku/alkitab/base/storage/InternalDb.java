@@ -264,7 +264,7 @@ public class InternalDb {
 	/**
 	 * Put attributes (bookmark count, note count, and highlight color) for each verse.
 	 */
-	public void putAttributes(final int ari_bookchapter, final int[] bookmarkCountMap, final int[] noteCountMap, final int[] highlightColorMap) {
+	public void putAttributes(final int ari_bookchapter, final int[] bookmarkCountMap, final int[] noteCountMap, final Highlights.Info[] highlightColorMap) {
 		final int ariMin = ari_bookchapter & 0x00ffff00;
 		final int ariMax = ari_bookchapter | 0x000000ff;
 
@@ -304,9 +304,9 @@ public class InternalDb {
 						if (mapOffset2 >= highlightColorMap.length) break; // do not go past number of verses in this chapter
 
 						final String caption = cursor.getString(col_caption);
-						final int colorRgb = Highlights.decode(caption);
+						final Highlights.Info info = Highlights.decode(caption);
 
-						highlightColorMap[mapOffset2] = colorRgb;
+						highlightColorMap[mapOffset2] = info;
 					}
 				}
 			}
@@ -396,8 +396,8 @@ public class InternalDb {
 			while (c.moveToNext()) {
 				int ari = c.getInt(col_ari);
 				int index = ari & 0xff;
-				int color = Highlights.decode(c.getString(col_caption));
-				colors[index] = color;
+				final Highlights.Info info = Highlights.decode(c.getString(col_caption));
+				colors[index] = info.colorRgb;
 			}
 
 			// determine default color. If all has color x, then it's x. If one of them is not x, then it's -1.

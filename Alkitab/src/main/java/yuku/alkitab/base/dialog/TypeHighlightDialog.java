@@ -39,10 +39,10 @@ public class TypeHighlightDialog {
 	
 	/**
 	 * Open dialog for a single verse
-	 * @param colorRgb -1 if not selected. #rrggbb without alpha.
+	 * @param defaultColorRgb -1 if not selected. #rrggbb without alpha.
 	 */
-	public TypeHighlightDialog(Context context, int ari, Listener listener, int colorRgb, CharSequence title) {
-		this(context, Ari.toBookChapter(ari), onlyOne(Ari.toVerse(ari)), listener, colorRgb, title);
+	public TypeHighlightDialog(Context context, int ari, Listener listener, int defaultColorRgb, CharSequence title) {
+		this(context, Ari.toBookChapter(ari), onlyOne(Ari.toVerse(ari)), listener, defaultColorRgb, title);
 	}
 
 	private static IntArrayList onlyOne(int verse_1) {
@@ -53,10 +53,10 @@ public class TypeHighlightDialog {
 
 	/**
 	 * Open dialog for more than one verse (or one verse only).
-	 * @param colorRgb -1 if not selected. #rrggbb without alpha.
+	 * @param defaultColorRgb -1 if not selected. #rrggbb without alpha.
 	 * @param selectedVerses selected verses.
 	 */
-	public TypeHighlightDialog(final Context context, int ari_bookchapter, IntArrayList selectedVerses, Listener listener, final int colorRgb, CharSequence title) {
+	public TypeHighlightDialog(final Context context, int ari_bookchapter, IntArrayList selectedVerses, Listener listener, final int defaultColorRgb, CharSequence title) {
 		this.ari_bookchapter = ari_bookchapter;
 		this.selectedVerses = selectedVerses;
 		this.listener = listener;
@@ -83,16 +83,17 @@ public class TypeHighlightDialog {
 
 		for (int i = 0; i < ids.length; i++) {
 			CheckBox cb = V.get(dialogView, ids[i]);
-			if (colorRgb == rgbs[i]) {
+			if (defaultColorRgb == rgbs[i]) {
 				cb.setChecked(true);
 			}
 			cb.setOnClickListener(cb_click);
 		}
 		
 		final Button bOtherColors = V.get(dialogView, R.id.bOtherColors);
-		bOtherColors.setOnClickListener(v -> new AmbilWarnaDialog(context, colorRgb == -1? 0xff000000: colorRgb, new AmbilWarnaDialog.OnAmbilWarnaListener() {
+		bOtherColors.setOnClickListener(v -> new AmbilWarnaDialog(context, defaultColorRgb == -1 ? 0xff000000 : defaultColorRgb, new AmbilWarnaDialog.OnAmbilWarnaListener() {
 			@Override
-			public void onCancel(final AmbilWarnaDialog dialog) {}
+			public void onCancel(final AmbilWarnaDialog dialog) {
+			}
 
 			@Override
 			public void onOk(final AmbilWarnaDialog dialog, final int color) {

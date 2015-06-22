@@ -498,14 +498,14 @@ public class MarkerListActivity extends BaseActivity {
 
 			} else if (filter_kind == Marker.Kind.highlight) {
 				final int ari = marker.ari;
-				int colorRgb = Highlights.decode(marker.caption);
+				final Highlights.Info info = Highlights.decode(marker.caption);
 				String reference = S.activeVersion.referenceWithVerseCount(ari, marker.verseCount);
 
 				new TypeHighlightDialog(this, ari, newColorRgb -> {
 					loadAndFilter();
 					if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
 					App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
-				}, colorRgb, reference);
+				}, info.colorRgb, reference);
 			}
 
 			return true;
@@ -565,18 +565,15 @@ public class MarkerListActivity extends BaseActivity {
 			final List<Marker> allMarkers = MarkerListActivity.this.allMarkers;
 			final Marker.Kind filter_kind = MarkerListActivity.this.filter_kind;
 
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					setupTokens(query);
+			new Thread(() -> {
+				setupTokens(query);
 
-					filteredMarkers = filterEngine(allMarkers, filter_kind, tokens);
+				filteredMarkers = filterEngine(allMarkers, filter_kind, tokens);
 
-					runOnUiThread(() -> {
-						notifyDataSetChanged();
-						callback.run();
-					});
-				}
+				runOnUiThread(() -> {
+					notifyDataSetChanged();
+					callback.run();
+				});
 			}).start();
 		}
 
@@ -652,10 +649,15 @@ public class MarkerListActivity extends BaseActivity {
 				lCaption.setText(reference);
 				Appearances.applyMarkerTitleTextAppearance(lCaption);
 
-				SpannableStringBuilder snippet = currentlyUsedFilter != null? SearchEngine.hilite(verseText, tokens, hiliteColor): new SpannableStringBuilder(verseText);
-				int highlightColor = Highlights.decode(caption);
-				if (highlightColor != -1) {
-					snippet.setSpan(new BackgroundColorSpan(Highlights.alphaMix(highlightColor)), 0, snippet.length(), 0);
+				final SpannableStringBuilder snippet = currentlyUsedFilter != null? SearchEngine.hilite(verseText, tokens, hiliteColor): new SpannableStringBuilder(verseText);
+				final Highlights.Info info = Highlights.decode(caption);
+				if (info != null) {
+					final BackgroundColorSpan span = new BackgroundColorSpan(Highlights.alphaMix(info.colorRgb));
+					if (info.partial == null || info.partial.hashCode == Highlights.hashCode(verseText) || info.partial.startOffset >= snippet.length() || info.partial.endOffset >= snippet.length()) {
+						snippet.setSpan(span, 0, snippet.length(), 0);
+					} else {
+						snippet.setSpan(span, info.partial.startOffset, info.partial.endOffset, 0);
+					}
 				}
 				lSnippet.setText(snippet);
 				Appearances.applyTextAppearance(lSnippet);
