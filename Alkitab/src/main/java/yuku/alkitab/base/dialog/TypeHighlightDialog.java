@@ -116,7 +116,9 @@ public class TypeHighlightDialog {
 		} else {
 			tVerseText.setVisibility(View.VISIBLE);
 			tVerseText.setText(verseText);
+			tVerseText.setTextColor(S.applied.fontColor);
 			tVerseText.setSelection(0, tVerseText.length());
+			tVerseText.postDelayed(() -> tVerseText.scrollTo(0, 0), 100);
 
 			// prevent typing
 			final InputFilter[] originalFilters = tVerseText.getFilters();
