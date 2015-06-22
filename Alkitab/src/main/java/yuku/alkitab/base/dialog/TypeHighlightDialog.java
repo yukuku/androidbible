@@ -10,6 +10,7 @@ import android.widget.EditText;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
@@ -48,8 +49,8 @@ public class TypeHighlightDialog {
 	 * Open dialog for a single verse
 	 * @param defaultColorRgb -1 if not selected. #rrggbb without alpha.
 	 */
-	public TypeHighlightDialog(Context context, int ari, Listener listener, int defaultColorRgb, CharSequence title, @Nullable final CharSequence verseText) {
-		this(context, Ari.toBookChapter(ari), onlyOne(Ari.toVerse(ari)), listener, defaultColorRgb, title, verseText);
+	public TypeHighlightDialog(Context context, int ari, Listener listener, int defaultColorRgb, @Nullable Highlights.Info info, CharSequence title, @Nullable final CharSequence verseText) {
+		this(context, Ari.toBookChapter(ari), onlyOne(Ari.toVerse(ari)), listener, defaultColorRgb, info, title, verseText);
 	}
 
 	private static IntArrayList onlyOne(int verse_1) {
@@ -59,11 +60,15 @@ public class TypeHighlightDialog {
 	}
 
 	/**
-	 * Open dialog for more than one verse (or one verse only).
+	 * Open dialog for more than one verse (no partial highlight support)
 	 * @param defaultColorRgb -1 if not selected. #rrggbb without alpha.
 	 * @param selectedVerses selected verses.
 	 */
-	public TypeHighlightDialog(final Context context, int ari_bookchapter, IntArrayList selectedVerses, Listener listener, final int defaultColorRgb, CharSequence title, @Nullable final CharSequence verseText) {
+	public TypeHighlightDialog(final Context context, int ari_bookchapter, IntArrayList selectedVerses, Listener listener, final int defaultColorRgb, CharSequence title) {
+		this(context, ari_bookchapter, selectedVerses, listener, defaultColorRgb, null, title, null);
+	}
+
+	private TypeHighlightDialog(final Context context, int ari_bookchapter, IntArrayList selectedVerses, Listener listener, final int defaultColorRgb, @Nullable final Highlights.Info info, CharSequence title, @Nullable final CharSequence verseText) {
 		this.ari_bookchapter = ari_bookchapter;
 		this.selectedVerses = selectedVerses;
 		this.listener = listener;
@@ -117,7 +122,13 @@ public class TypeHighlightDialog {
 			tVerseText.setVisibility(View.VISIBLE);
 			tVerseText.setText(verseText);
 			tVerseText.setTextColor(S.applied.fontColor);
-			tVerseText.setSelection(0, tVerseText.length());
+
+			if (info == null || !info.shouldRenderAsPartialForVerseText(verseText)) {
+				tVerseText.setSelection(0, tVerseText.length());
+			} else {
+				tVerseText.setSelection(info.partial.startOffset, info.partial.endOffset);
+			}
+
 			tVerseText.postDelayed(() -> tVerseText.scrollTo(0, 0), 100);
 
 			// prevent typing

@@ -460,6 +460,28 @@ public class InternalDb {
 		}
 	}
 
+	/**
+	 * Get the highlight info for a single verse
+	 */
+	public Highlights.Info getHighlightColorRgb(final int ari) {
+		try (Cursor c = helper.getReadableDatabase().query(
+			Db.TABLE_Marker, null, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?",
+			ToStringArray(ari, Marker.Kind.highlight.code),
+			null,
+			null,
+			Db.Marker.modifyTime + " desc"
+		)) {
+			final int col_caption = c.getColumnIndexOrThrow(Db.Marker.caption);
+
+			// put to array first
+			if (c.moveToNext()) {
+				return Highlights.decode(c.getString(col_caption));
+			} else {
+				return null;
+			}
+		}
+	}
+
 	public void storeArticleToDevotions(DevotionArticle article) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
 
