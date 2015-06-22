@@ -89,10 +89,9 @@ public class VerseRenderer {
 
 	/**
 	 * @param dontPutSpacingBefore this verse is right after a pericope title or on the 0th position
-	 * @param optionalVersesView must be not-null if xrefListener is not-null
 	 * @return how many characters was used before the real start of verse text. This will be > 0 if the verse number is embedded inside lText.
 	 */
-	public static int render(final TextView lText, final TextView lVerseNumber, final int ari, final String text, final String verseNumberText, final int highlightColor, final boolean checked, final boolean dontPutSpacingBefore, final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, VersesView optionalVersesView) {
+	public static int render(final TextView lText, final TextView lVerseNumber, final int ari, final String text, final String verseNumberText, final int highlightColor, final boolean checked, final boolean dontPutSpacingBefore, final VerseInlineLinkSpan.Factory inlineLinkSpanFactory) {
 		// @@ = start a verse containing paragraphs or formatting
 		// @0 = start with indent 0 [paragraph]
 		// @1 = start with indent 1 [paragraph]
@@ -114,7 +113,7 @@ public class VerseRenderer {
 		// Formatted verses start with "@@".
 		// Second character must be '@' too, if not it's wrong, we will fallback to simple render.
 		if (text_len < 2 || text.charAt(0) != '@' || text.charAt(1) != '@') {
-			return simpleRender(lText, lVerseNumber, ari, text, verseNumberText, highlightColor, checked, optionalVersesView);
+			return simpleRender(lText, lVerseNumber, text, verseNumberText, highlightColor, checked);
 		}
 
 		// optimization, to prevent repeated calls to charAt()
@@ -365,10 +364,9 @@ public class VerseRenderer {
 	}
 
 	/**
-	 * @param optionalVersesView must be not-null if xrefListener is not-null
 	 * @return how many characters was used before the real start of verse text. This will be > 0 if the verse number is embedded inside lText.
 	 */
-	public static int simpleRender(TextView lText, TextView lVerseNumber, int ari, String text, String verseNumberText, int highlightColor, boolean checked, VersesView optionalVersesView) {
+	public static int simpleRender(TextView lText, TextView lVerseNumber, String text, String verseNumberText, int highlightColor, boolean checked) {
 		// initialize lVerseNumber to have no padding first
 		lVerseNumber.setPadding(0, 0, 0, 0);
 		
