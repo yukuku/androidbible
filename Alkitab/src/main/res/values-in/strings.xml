@@ -249,6 +249,7 @@
   <string name="desc_verse_attribute_one_note">Sebuah catatan terpasang pada ayat ini.</string>
   <string name="desc_verse_attribute_multiple_notes">%s catatan terpasang pada ayat ini.</string>
   <string name="desc_verse_attribute_progress_mark">%s sedang di sini.</string>
+  <string name="desc_progress_mark_list">Daftar jejak</string>
   <string name="intent_filter_open_yes_file">Buka file YES</string>
   <string name="intent_filter_open_pdb_file">Buka file PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Buka file PDB/YES</string>
@@ -356,6 +357,7 @@
   <string name="sn_menu_copy">Salin lagu</string>
   <string name="menuPlay">Putar</string>
   <string name="menuPause">Istirahat</string>
+  <string name="left_drawer_current_reading_title">Bacaan saat ini</string>
   <string name="book_filter_old_testament">Perjanjian Lama</string>
   <string name="book_filter_old_pentateuch">Pentateukh</string>
   <string name="book_filter_old_history">Sejarah</string>
