@@ -82,7 +82,7 @@ public class TypeHighlightDialog {
 			.callback(new MaterialDialog.ButtonCallback() {
 				@Override
 				public void onNeutral(final MaterialDialog dialog) {
-					select(-1);
+					select(-1, getSelectionOffsets());
 				}
 			});
 
@@ -103,16 +103,21 @@ public class TypeHighlightDialog {
 		}
 		
 		final Button bOtherColors = V.get(dialogView, R.id.bOtherColors);
-		bOtherColors.setOnClickListener(v -> new AmbilWarnaDialog(context, defaultColorRgb == -1 ? 0xff000000 : defaultColorRgb, new AmbilWarnaDialog.OnAmbilWarnaListener() {
-			@Override
-			public void onCancel(final AmbilWarnaDialog dialog) {
-			}
+		bOtherColors.setOnClickListener(v -> {
+			// save the selection first
+			final int[] offsets = getSelectionOffsets();
 
-			@Override
-			public void onOk(final AmbilWarnaDialog dialog, final int color) {
-				select(0x00ffffff & color);
-			}
-		}).show());
+			new AmbilWarnaDialog(context, defaultColorRgb == -1 ? 0xff000000 : defaultColorRgb, new AmbilWarnaDialog.OnAmbilWarnaListener() {
+				@Override
+				public void onCancel(final AmbilWarnaDialog dialog) {
+				}
+
+				@Override
+				public void onOk(final AmbilWarnaDialog dialog, final int color) {
+					select(0x00ffffff & color, offsets);
+				}
+			}).show();
+		});
 
 		tVerseText = V.get(dialogView, R.id.tVerseText);
 
@@ -140,13 +145,21 @@ public class TypeHighlightDialog {
 		}
 	}
 
+	private int[] getSelectionOffsets() {
+		if (verseText == null) {
+			return null;
+		} else {
+			return new int[]{tVerseText.getSelectionStart(), tVerseText.getSelectionEnd()};
+		}
+	}
+
 	View.OnClickListener cb_click = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			final int id = v.getId();
 			for (int i = 0; i < ids.length; i++) {
 				if (id == ids[i]) {
-					select(rgbs[i]);
+					select(rgbs[i], getSelectionOffsets());
 				} else {
 					V.<CheckBox>get(dialogView, ids[i]).setChecked(false);
 				}
@@ -154,9 +167,9 @@ public class TypeHighlightDialog {
 		}
 	};
 
-	void select(int colorRgb) {
-		if (selectedVerses.size() == 1 && verseText != null && colorRgb != -1 && (tVerseText.getSelectionStart() != 0 || tVerseText.getSelectionEnd() != verseText.length())) {
-			S.getDb().updateOrInsertPartialHighlight(Ari.encodeWithBc(ari_bookchapter, selectedVerses.get(0)), colorRgb, verseText, tVerseText.getSelectionStart(), tVerseText.getSelectionEnd());
+	void select(final int colorRgb, final int[] offsets) {
+		if (selectedVerses.size() == 1 && verseText != null && colorRgb != -1 && offsets != null && (offsets[0] != 0 || offsets[1] != verseText.length()) && offsets[0] != offsets[1]) {
+			S.getDb().updateOrInsertPartialHighlight(Ari.encodeWithBc(ari_bookchapter, selectedVerses.get(0)), colorRgb, verseText, offsets[0], offsets[1]);
 		} else { // not partial, or deleting
 			S.getDb().updateOrInsertHighlights(ari_bookchapter, selectedVerses, colorRgb);
 		}
