@@ -315,6 +315,48 @@ public class InternalDb {
 		}
 	}
 
+	/**
+	 * @param colorRgb may NOT be -1. Use {@link #updateOrInsertHighlights(int, IntArrayList, int)} to delete highlight.
+	 */
+	public void updateOrInsertPartialHighlight(final int ari, final int colorRgb, final CharSequence verseText, final int startOffset, final int endOffset) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+
+		db.beginTransaction();
+		try {
+			// order by modifyTime desc so we modify the latest one and remove earlier ones if they exist.
+			final Cursor c = db.query(Db.TABLE_Marker, null, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?", ToStringArray(ari, Marker.Kind.highlight.code), null, null, Db.Marker.modifyTime + " desc");
+			try {
+				final int hashCode = Highlights.hashCode(verseText.toString());
+				final Date now = new Date();
+
+				if (c.moveToNext()) { // check if marker exists
+					{ // modify the latest one
+						final Marker marker = markerFromCursor(c);
+						marker.modifyTime = now;
+						marker.caption = Highlights.encode(colorRgb, hashCode, startOffset, endOffset);
+						db.update(Db.TABLE_Marker, markerToContentValues(marker), "_id=?", ToStringArray(marker._id));
+					}
+
+					// remove earlier ones if they exist (caused by sync)
+					while (c.moveToNext()) {
+						final long _id = c.getLong(c.getColumnIndexOrThrow("_id"));
+						db.delete(Db.TABLE_Marker, "_id=?", ToStringArray(_id));
+					}
+				} else { // insert
+					final Marker marker = Marker.createNewMarker(ari, Marker.Kind.highlight, Highlights.encode(colorRgb, hashCode, startOffset, endOffset), 1, now, now);
+					db.insert(Db.TABLE_Marker, null, markerToContentValues(marker));
+				}
+			} finally {
+				c.close();
+			}
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
+	}
+
 	public void updateOrInsertHighlights(int ari_bookchapter, IntArrayList selectedVerses_1, int colorRgb) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
 

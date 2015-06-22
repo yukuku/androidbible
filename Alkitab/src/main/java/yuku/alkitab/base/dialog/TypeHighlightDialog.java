@@ -18,18 +18,22 @@ import yuku.ambilwarna.AmbilWarnaDialog;
 public class TypeHighlightDialog {
 	final MaterialDialog dialog;
 	final Listener listener;
-	
+
+	@Nullable
+	private final CharSequence verseText;
+
 	View dialogView;
-	
+	EditText tVerseText;
+
 	static final int[] ids = {
 		R.id.c01, R.id.c02, R.id.c03, R.id.c04, R.id.c05, R.id.c06,
 		R.id.c07, R.id.c08, R.id.c09, R.id.c10, R.id.c11, R.id.c12,
 	};
 	static final int[] rgbs = {
-		0xff0000, 0xff8000, 0xffff00, 0x80ff00, 0x00ff00, 0x00ff80, 
+		0xff0000, 0xff8000, 0xffff00, 0x80ff00, 0x00ff00, 0x00ff80,
 		0x00ffff, 0x0080ff, 0x0000ff, 0x8000ff, 0xff00ff, 0xff0080,
 	};
-	
+
 	final int ari_bookchapter;
 	final IntArrayList selectedVerses;
 
@@ -63,6 +67,7 @@ public class TypeHighlightDialog {
 		this.ari_bookchapter = ari_bookchapter;
 		this.selectedVerses = selectedVerses;
 		this.listener = listener;
+		this.verseText = verseText;
 
 		final MaterialDialog.Builder builder = new MaterialDialog.Builder(context)
 			.customView(R.layout.dialog_edit_highlight, false)
@@ -104,7 +109,7 @@ public class TypeHighlightDialog {
 			}
 		}).show());
 
-		final EditText tVerseText = V.get(dialogView, R.id.tVerseText);
+		tVerseText = V.get(dialogView, R.id.tVerseText);
 
 		if (selectedVerses.size() > 1 || verseText == null) {
 			tVerseText.setVisibility(View.GONE);
@@ -137,7 +142,12 @@ public class TypeHighlightDialog {
 	};
 
 	void select(int colorRgb) {
-		S.getDb().updateOrInsertHighlights(ari_bookchapter, selectedVerses, colorRgb);
+		if (selectedVerses.size() == 1 && verseText != null && colorRgb != -1 && (tVerseText.getSelectionStart() != 0 || tVerseText.getSelectionEnd() != verseText.length())) {
+			S.getDb().updateOrInsertPartialHighlight(Ari.encodeWithBc(ari_bookchapter, selectedVerses.get(0)), colorRgb, verseText, tVerseText.getSelectionStart(), tVerseText.getSelectionEnd());
+		} else { // not partial, or deleting
+			S.getDb().updateOrInsertHighlights(ari_bookchapter, selectedVerses, colorRgb);
+		}
+
 		if (listener != null) listener.onOk(colorRgb);
 		dialog.dismiss();
 	}
