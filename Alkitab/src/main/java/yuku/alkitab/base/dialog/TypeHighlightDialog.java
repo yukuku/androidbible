@@ -81,8 +81,26 @@ public class TypeHighlightDialog {
 			.neutralText(R.string.delete)
 			.callback(new MaterialDialog.ButtonCallback() {
 				@Override
+				public void onPositive(final MaterialDialog dialog) {
+					// only relevant when we edit partial highlight
+					if (verseText == null || info == null) {
+						return;
+					}
+
+					final int[] offsets = getSelectionOffsets();
+					assert offsets != null;
+
+					// check for changes
+					if ((info.partial == null && (offsets[0] != 0 || offsets[1] != verseText.length()))
+						||
+						(info.partial != null && (info.partial.startOffset != offsets[0] || info.partial.endOffset != offsets[1]))) {
+						select(defaultColorRgb, offsets);
+					}
+				}
+
+				@Override
 				public void onNeutral(final MaterialDialog dialog) {
-					select(-1, getSelectionOffsets());
+					select(-1, null);
 				}
 			});
 
