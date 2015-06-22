@@ -32,7 +32,12 @@ public class Highlights {
 			public int startOffset;
 			public int endOffset;
 		}
+
+		public boolean shouldRenderAsPartialForVerseText(final CharSequence verseText) {
+			return partial != null && partial.hashCode == Highlights.hashCode(verseText.toString()) && partial.startOffset < verseText.length() && partial.endOffset < verseText.length();
+		}
 	}
+
 
 	/** Encode a full-verse highlight */
 	public static String encode(final int colorRgb) {

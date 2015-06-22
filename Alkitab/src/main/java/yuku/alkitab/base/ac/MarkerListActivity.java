@@ -503,7 +503,7 @@ public class MarkerListActivity extends BaseActivity {
 				final String reference = S.activeVersion.referenceWithVerseCount(ari, marker.verseCount);
 				final String rawVerseText = S.activeVersion.loadVerseText(ari);
 				final VerseRenderer.FormattedTextResult ftr = new VerseRenderer.FormattedTextResult();
-				VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), -1, false, false, null, ftr);
+				VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, false, null, ftr);
 
 				new TypeHighlightDialog(this, ari, newColorRgb -> {
 					loadAndFilter();

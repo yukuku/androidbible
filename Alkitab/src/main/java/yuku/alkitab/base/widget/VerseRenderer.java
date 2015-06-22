@@ -16,6 +16,7 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.debug.R;
 
 public class VerseRenderer {
@@ -99,7 +100,7 @@ public class VerseRenderer {
 	 * @param ftr optional container for result that contains the verse text with span formattings, without the verse numbers
 	 * @return how many characters was used before the real start of verse text. This will be > 0 if the verse number is embedded inside lText.
 	 */
-	public static int render(@Nullable final TextView lText, @Nullable final TextView lVerseNumber, final int ari, final String text, final String verseNumberText, final int highlightColor, final boolean checked, final boolean dontPutSpacingBefore, @Nullable final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, @Nullable final FormattedTextResult ftr) {
+	public static int render(@Nullable final TextView lText, @Nullable final TextView lVerseNumber, final int ari, final String text, final String verseNumberText, @Nullable final Highlights.Info highlightInfo, final boolean checked, final boolean dontPutSpacingBefore, @Nullable final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, @Nullable final FormattedTextResult ftr) {
 		// @@ = start a verse containing paragraphs or formatting
 		// @0 = start with indent 0 [paragraph]
 		// @1 = start with indent 1 [paragraph]
@@ -124,7 +125,7 @@ public class VerseRenderer {
 			if (ftr != null) {
 				ftr.result = text;
 			}
-			return simpleRender(lText, lVerseNumber, text, verseNumberText, highlightColor, checked);
+			return simpleRender(lText, lVerseNumber, text, verseNumberText, highlightInfo, checked);
 		}
 
 		// optimization, to prevent repeated calls to charAt()
@@ -273,9 +274,14 @@ public class VerseRenderer {
 		
 		// apply unapplied
 		applyParaStyle(sb, paraType, startPara, verseNumberText, startPosAfterVerseNumber > 0, dontPutSpacingBefore && startPara <= startPosAfterVerseNumber, startPara <= startPosAfterVerseNumber, lVerseNumber);
-	
-		if (highlightColor != -1) {
-			sb.setSpan(new BackgroundColorSpan(highlightColor), startPosAfterVerseNumber == 0? 0: verseNumberText.length() + 1, sb.length(), 0);
+
+		if (highlightInfo != null) {
+			final BackgroundColorSpan span = new BackgroundColorSpan(Highlights.alphaMix(highlightInfo.colorRgb));
+			if (highlightInfo.shouldRenderAsPartialForVerseText(sb.subSequence(startPosAfterVerseNumber, sb.length()))) {
+				sb.setSpan(span, startPosAfterVerseNumber + highlightInfo.partial.startOffset, startPosAfterVerseNumber + highlightInfo.partial.endOffset, 0);
+			} else {
+				sb.setSpan(span, startPosAfterVerseNumber, sb.length(), 0);
+			}
 		}
 
 		if (lText != null) {
@@ -390,21 +396,25 @@ public class VerseRenderer {
 	/**
 	 * @return how many characters was used before the real start of verse text. This will be > 0 if the verse number is embedded inside lText.
 	 */
-	public static int simpleRender(@Nullable TextView lText, @Nullable TextView lVerseNumber, String text, String verseNumberText, int highlightColor, boolean checked) {
+	public static int simpleRender(@Nullable TextView lText, @Nullable TextView lVerseNumber, String text, String verseNumberText, @Nullable final Highlights.Info highlightInfo, boolean checked) {
 		final SpannableStringBuilder sb = new SpannableStringBuilder();
 
 		// verse number
 		sb.append(verseNumberText).append("  ");
+		sb.setSpan(new VerseRenderer.VerseNumberSpan(!checked), 0, verseNumberText.length(), 0);
 		final int startPosAfterVerseNumber = sb.length();
 
-		sb.append(text);
-		sb.setSpan(new VerseRenderer.VerseNumberSpan(!checked), 0, verseNumberText.length(), 0);
-
 		// verse text
+		sb.append(text);
 		sb.setSpan(createLeadingMarginSpan(0, S.applied.indentParagraphRest), 0, sb.length(), 0);
 
-		if (highlightColor != -1) {
-			sb.setSpan(new BackgroundColorSpan(highlightColor), verseNumberText.length() + 1, sb.length(), 0);
+		if (highlightInfo != null) {
+			final BackgroundColorSpan span = new BackgroundColorSpan(Highlights.alphaMix(highlightInfo.colorRgb));
+			if (highlightInfo.shouldRenderAsPartialForVerseText(text)) {
+				sb.setSpan(span, startPosAfterVerseNumber + highlightInfo.partial.startOffset, startPosAfterVerseNumber + highlightInfo.partial.endOffset, 0);
+			} else {
+				sb.setSpan(span, startPosAfterVerseNumber, sb.length(), 0);
+			}
 		}
 
 		if (lText != null) {
