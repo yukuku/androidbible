@@ -57,24 +57,6 @@ public class QueryTokenizer {
 		return processed.toArray(new String[processed.size()]);
 	}
 
-	/**
-	 * Implementation of toLowerCase for Latin A-Z only.
-	 * This is done because the Bible text is also lowercased using this method for searching
-	 * instead of using the more sophisticated {@link String#toLowerCase()} method.
-	 */
-	static String toLowerCase(final String s) {
-		final char[] newString = new char[s.length()];
-		for (int i = 0, len = s.length(); i < len; i++) {
-			final char c = s.charAt(i);
-			if (c >= 'A' && c <= 'Z') {
-				newString[i] = (char) (c | 0x20);
-			} else {
-				newString[i] = c;
-			}
-		}
-		return new String(newString);
-	}
-
 	public static boolean isPlussedToken(String token) {
 		return (token.startsWith("+")); //$NON-NLS-1$
 	}

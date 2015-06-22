@@ -34,11 +34,12 @@ import yuku.alkitab.base.dialog.TypeHighlightDialog;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.SearchEngine;
 import yuku.alkitab.base.util.Sqlitil;
+import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.model.Book;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.alkitab.util.Ari;
@@ -186,7 +187,7 @@ public class MarkerListActivity extends BaseActivity {
 
 		tEmpty.setTextColor(S.applied.fontColor);
 
-		hiliteColor = U.getHighlightColorByBrightness(S.applied.backgroundBrightness);
+		hiliteColor = U.getSearchKeywordTextColorByBrightness(S.applied.backgroundBrightness);
 
 		loadAndFilter();
 	}
@@ -471,7 +472,8 @@ public class MarkerListActivity extends BaseActivity {
 	}
 
 	@Override public boolean onContextItemSelected(MenuItem item) {
-		final Marker marker = adapter.getItem(((AdapterView.AdapterContextMenuInfo) item.getMenuInfo()).position);
+		final int position = ((AdapterView.AdapterContextMenuInfo) item.getMenuInfo()).position;
+		final Marker marker = adapter.getItem(position);
 		final int itemId = item.getItemId();
 
 		if (itemId == R.id.menuDeleteMarker) {
@@ -497,14 +499,17 @@ public class MarkerListActivity extends BaseActivity {
 
 			} else if (filter_kind == Marker.Kind.highlight) {
 				final int ari = marker.ari;
-				int colorRgb = U.decodeHighlight(marker.caption);
-				String reference = S.activeVersion.referenceWithVerseCount(ari, marker.verseCount);
+				final Highlights.Info info = Highlights.decode(marker.caption);
+				final String reference = S.activeVersion.referenceWithVerseCount(ari, marker.verseCount);
+				final String rawVerseText = S.activeVersion.loadVerseText(ari);
+				final VerseRenderer.FormattedTextResult ftr = new VerseRenderer.FormattedTextResult();
+				VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, false, null, ftr);
 
 				new TypeHighlightDialog(this, ari, newColorRgb -> {
 					loadAndFilter();
 					if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
 					App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
-				}, colorRgb, reference);
+				}, info.colorRgb, info, reference, ftr.result);
 			}
 
 			return true;
@@ -564,18 +569,15 @@ public class MarkerListActivity extends BaseActivity {
 			final List<Marker> allMarkers = MarkerListActivity.this.allMarkers;
 			final Marker.Kind filter_kind = MarkerListActivity.this.filter_kind;
 
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					setupTokens(query);
+			new Thread(() -> {
+				setupTokens(query);
 
-					filteredMarkers = filterEngine(allMarkers, filter_kind, tokens);
+				filteredMarkers = filterEngine(allMarkers, filter_kind, tokens);
 
-					runOnUiThread(() -> {
-						notifyDataSetChanged();
-						callback.run();
-					});
-				}
+				runOnUiThread(() -> {
+					notifyDataSetChanged();
+					callback.run();
+				});
 			}).start();
 		}
 
@@ -612,15 +614,17 @@ public class MarkerListActivity extends BaseActivity {
 			}
 
 			final int ari = marker.ari;
-			final Book book = S.activeVersion.getBook(Ari.toBook(ari));
 			final String reference = S.activeVersion.referenceWithVerseCount(ari, marker.verseCount);
 			final String caption = marker.caption;
 
-			String verseText = S.activeVersion.loadVerseText(book, Ari.toChapter(ari), Ari.toVerse(ari));
-			if (verseText == null) {
+			final String rawVerseText = S.activeVersion.loadVerseText(ari);
+			final CharSequence verseText;
+			if (rawVerseText == null) {
 				verseText = getString(R.string.generic_verse_not_available_in_this_version);
 			} else {
-				verseText = U.removeSpecialCodes(verseText);
+				final VerseRenderer.FormattedTextResult ftr = new VerseRenderer.FormattedTextResult();
+				VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, false, null, ftr);
+				verseText = ftr.result;
 			}
 
 			if (filter_kind == Marker.Kind.bookmark) {
@@ -651,10 +655,15 @@ public class MarkerListActivity extends BaseActivity {
 				lCaption.setText(reference);
 				Appearances.applyMarkerTitleTextAppearance(lCaption);
 
-				SpannableStringBuilder snippet = currentlyUsedFilter != null? SearchEngine.hilite(verseText, tokens, hiliteColor): new SpannableStringBuilder(verseText);
-				int highlightColor = U.decodeHighlight(caption);
-				if (highlightColor != -1) {
-					snippet.setSpan(new BackgroundColorSpan(U.alphaMixHighlight(highlightColor)), 0, snippet.length(), 0);
+				final SpannableStringBuilder snippet = currentlyUsedFilter != null? SearchEngine.hilite(verseText, tokens, hiliteColor): new SpannableStringBuilder(verseText);
+				final Highlights.Info info = Highlights.decode(caption);
+				if (info != null) {
+					final BackgroundColorSpan span = new BackgroundColorSpan(Highlights.alphaMix(info.colorRgb));
+					if (info.shouldRenderAsPartialForVerseText(verseText)) {
+						snippet.setSpan(span, info.partial.startOffset, info.partial.endOffset, 0);
+					} else {
+						snippet.setSpan(span, 0, snippet.length(), 0);
+					}
 				}
 				lSnippet.setText(snippet);
 				Appearances.applyTextAppearance(lSnippet);

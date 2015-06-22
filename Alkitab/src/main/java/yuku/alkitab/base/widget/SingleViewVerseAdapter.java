@@ -15,6 +15,7 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.PericopeBlock;
@@ -66,10 +67,10 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			final String text = verses_.getVerse(id);
 			final String verseNumberText = verses_.getVerseNumberText(id);
 			final boolean dontPutSpacingBefore = (position > 0 && itemPointer_[position - 1] < 0) || position == 0;
-			final int highlightColor = (highlightColorMap_ != null && highlightColorMap_[id] != -1) ? U.alphaMixHighlight(highlightColorMap_[id]) : -1;
+			final Highlights.Info highlightInfo = highlightInfoMap_ == null ? null : highlightInfoMap_[id];
 
 			final VerseTextView lText = res.lText;
-			final int startVerseTextPos = VerseRenderer.render(lText, res.lVerseNumber, ari, text, verseNumberText, highlightColor, checked, dontPutSpacingBefore, inlineLinkSpanFactory_, owner_);
+			final int startVerseTextPos = VerseRenderer.render(lText, res.lVerseNumber, ari, text, verseNumberText, highlightInfo, checked, dontPutSpacingBefore, inlineLinkSpanFactory_, null);
 
 			Appearances.applyTextAppearance(lText);
 			if (checked) {

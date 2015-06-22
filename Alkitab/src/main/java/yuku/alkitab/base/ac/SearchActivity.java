@@ -230,7 +230,7 @@ public class SearchActivity extends BaseActivity {
 		lsSearchResults.setEmptyView(empty);
 		Appearances.applyTextAppearance(tSearchTips);
 		
-		hiliteColor = U.getHighlightColorByBrightness(S.applied.backgroundBrightness);
+		hiliteColor = U.getSearchKeywordTextColorByBrightness(S.applied.backgroundBrightness);
 
 		lsSearchResults.setOnItemClickListener((parent, view, position, id) -> {
 			int ari = adapter.getSearchResults().get(position);

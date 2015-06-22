@@ -665,8 +665,8 @@ public class SearchEngine {
 		}
 	}
 
-	public static SpannableStringBuilder hilite(String s, String[] words, int hiliteColor) {
-		SpannableStringBuilder res = new SpannableStringBuilder(s);
+	public static SpannableStringBuilder hilite(final CharSequence s, String[] words, int hiliteColor) {
+		final SpannableStringBuilder res = new SpannableStringBuilder(s);
 		
 		if (words == null) {
 			return res;
@@ -686,7 +686,17 @@ public class SearchEngine {
 			words = words2;
 		}
 
-		s = QueryTokenizer.toLowerCase(s);
+		// produce a plain text lowercased
+		final char[] newString = new char[s.length()];
+		for (int i = 0, len = s.length(); i < len; i++) {
+			final char c = s.charAt(i);
+			if (c >= 'A' && c <= 'Z') {
+				newString[i] = (char) (c | 0x20);
+			} else {
+				newString[i] = c;
+			}
+		}
+		final String plainText = new String(newString);
 		
 		int pos = 0;
 		int[] attempt = new int[word_count];
@@ -694,9 +704,9 @@ public class SearchEngine {
 		while (true) {
 			for (int i = 0; i < word_count; i++) {
 				if (hasPlusses[i]) {
-					attempt[i] = indexOfWholeWord(s, words[i], pos);
+					attempt[i] = indexOfWholeWord(plainText, words[i], pos);
 				} else {
-					attempt[i] = s.indexOf(words[i], pos);
+					attempt[i] = plainText.indexOf(words[i], pos);
 				}
 			}
 			

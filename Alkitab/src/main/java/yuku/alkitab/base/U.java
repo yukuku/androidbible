@@ -6,7 +6,6 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
 import android.support.v4.graphics.ColorUtils;
-import android.util.Log;
 import android.widget.TextView;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.storage.Prefkey;
@@ -90,35 +89,6 @@ public class U {
 		return sb.toString();
 	}
 
-	public static String encodeHighlight(int colorRgb) {
-		StringBuilder sb = new StringBuilder(10);
-		sb.append('c');
-		String h = Integer.toHexString(colorRgb);
-		for (int x = h.length(); x < 6; x++) {
-			sb.append('0');
-		}
-		sb.append(h);
-		return sb.toString();
-	}
-
-	/**
-	 * Decodes color code for highlight. It starts with the string "c" then 6 hex digits rrggbb.
-	 * @return colorRgb (without alpha) or -1 if can't decode. If the 6 hex digits can't be decoded, this will return 0.
-	 */
-	public static int decodeHighlight(String text) {
-		if (text == null) return -1;
-		if (text.length() >= 7 && text.charAt(0) == 'c') {
-			try {
-				return Integer.parseInt(text.substring(1, 7), 16);
-			} catch (NumberFormatException e) {
-				Log.e(TAG, "@@decodeHighlight", e);
-				return 0;
-			}
-		} else {
-			return -1;
-		}
-	}
-	
 	public static String encodeLabelBackgroundColor(int colorRgb_background) {
 		StringBuilder sb = new StringBuilder(10);
 		sb.append('b'); // 'b': background color
@@ -239,11 +209,7 @@ public class U {
 		}
 	}
 
-	public static int alphaMixHighlight(int colorRgb) {
-		return 0xa0000000 | colorRgb;
-	}
-
-	public static int getHighlightColorByBrightness(float brightness) {
+	public static int getSearchKeywordTextColorByBrightness(float brightness) {
 		if (brightness < 0.5f) {
 			return 0xff_69f0ae; // Green A200
 		} else {
