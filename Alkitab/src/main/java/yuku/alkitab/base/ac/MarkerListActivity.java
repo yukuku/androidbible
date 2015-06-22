@@ -601,13 +601,21 @@ public class MarkerListActivity extends BaseActivity {
 			final Marker marker = getItem(position);
 
 			{
-				final Date addTime = marker.createTime;
+				final Date createTime = marker.createTime;
 				final Date modifyTime = marker.modifyTime;
 
-				if (addTime.equals(modifyTime)) {
-					lDate.setText(Sqlitil.toLocaleDateMedium(addTime));
+				final String createTimeDisplay = Sqlitil.toLocaleDateMedium(createTime);
+
+				if (createTime.equals(modifyTime)) {
+					lDate.setText(createTimeDisplay);
 				} else {
-					lDate.setText(getString(R.string.create_edited_modified_time, Sqlitil.toLocaleDateMedium(addTime), Sqlitil.toLocaleDateMedium(modifyTime)));
+					final String modifyTimeDisplay = Sqlitil.toLocaleDateMedium(modifyTime);
+					if (U.equals(createTimeDisplay, modifyTimeDisplay)) {
+						// show time for modifyTime when createTime and modifyTime is on the same day
+						lDate.setText(getString(R.string.create_edited_modified_time, createTimeDisplay, Sqlitil.toLocaleTime(modifyTime)));
+					} else {
+						lDate.setText(getString(R.string.create_edited_modified_time, createTimeDisplay, modifyTimeDisplay));
+					}
 				}
 
 				Appearances.applyMarkerDateTextAppearance(lDate);
