@@ -617,11 +617,14 @@ public class MarkerListActivity extends BaseActivity {
 			final String reference = S.activeVersion.referenceWithVerseCount(ari, marker.verseCount);
 			final String caption = marker.caption;
 
-			String verseText = S.activeVersion.loadVerseText(ari);
-			if (verseText == null) {
+			final String rawVerseText = S.activeVersion.loadVerseText(ari);
+			final CharSequence verseText;
+			if (rawVerseText == null) {
 				verseText = getString(R.string.generic_verse_not_available_in_this_version);
 			} else {
-				verseText = U.removeSpecialCodes(verseText);
+				final VerseRenderer.FormattedTextResult ftr = new VerseRenderer.FormattedTextResult();
+				VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, false, null, ftr);
+				verseText = ftr.result;
 			}
 
 			if (filter_kind == Marker.Kind.bookmark) {
@@ -656,10 +659,10 @@ public class MarkerListActivity extends BaseActivity {
 				final Highlights.Info info = Highlights.decode(caption);
 				if (info != null) {
 					final BackgroundColorSpan span = new BackgroundColorSpan(Highlights.alphaMix(info.colorRgb));
-					if (info.partial == null || info.partial.hashCode == Highlights.hashCode(verseText) || info.partial.startOffset >= snippet.length() || info.partial.endOffset >= snippet.length()) {
-						snippet.setSpan(span, 0, snippet.length(), 0);
-					} else {
+					if (info.shouldRenderAsPartialForVerseText(verseText)) {
 						snippet.setSpan(span, info.partial.startOffset, info.partial.endOffset, 0);
+					} else {
+						snippet.setSpan(span, 0, snippet.length(), 0);
 					}
 				}
 				lSnippet.setText(snippet);
