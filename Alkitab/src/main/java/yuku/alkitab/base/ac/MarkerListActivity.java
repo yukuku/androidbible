@@ -34,6 +34,7 @@ import yuku.alkitab.base.dialog.TypeHighlightDialog;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.SearchEngine;
 import yuku.alkitab.base.util.Sqlitil;
@@ -186,7 +187,7 @@ public class MarkerListActivity extends BaseActivity {
 
 		tEmpty.setTextColor(S.applied.fontColor);
 
-		hiliteColor = U.getHighlightColorByBrightness(S.applied.backgroundBrightness);
+		hiliteColor = U.getSearchKeywordTextColorByBrightness(S.applied.backgroundBrightness);
 
 		loadAndFilter();
 	}
@@ -497,7 +498,7 @@ public class MarkerListActivity extends BaseActivity {
 
 			} else if (filter_kind == Marker.Kind.highlight) {
 				final int ari = marker.ari;
-				int colorRgb = U.decodeHighlight(marker.caption);
+				int colorRgb = Highlights.decode(marker.caption);
 				String reference = S.activeVersion.referenceWithVerseCount(ari, marker.verseCount);
 
 				new TypeHighlightDialog(this, ari, newColorRgb -> {
@@ -652,9 +653,9 @@ public class MarkerListActivity extends BaseActivity {
 				Appearances.applyMarkerTitleTextAppearance(lCaption);
 
 				SpannableStringBuilder snippet = currentlyUsedFilter != null? SearchEngine.hilite(verseText, tokens, hiliteColor): new SpannableStringBuilder(verseText);
-				int highlightColor = U.decodeHighlight(caption);
+				int highlightColor = Highlights.decode(caption);
 				if (highlightColor != -1) {
-					snippet.setSpan(new BackgroundColorSpan(U.alphaMixHighlight(highlightColor)), 0, snippet.length(), 0);
+					snippet.setSpan(new BackgroundColorSpan(Highlights.alphaMix(highlightColor)), 0, snippet.length(), 0);
 				}
 				lSnippet.setText(snippet);
 				Appearances.applyTextAppearance(lSnippet);

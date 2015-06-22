@@ -31,6 +31,7 @@ import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.sync.SyncRecorder;
 import yuku.alkitab.base.sync.Sync_Mabel;
+import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.model.Label;
@@ -303,7 +304,7 @@ public class InternalDb {
 						if (mapOffset2 >= highlightColorMap.length) break; // do not go past number of verses in this chapter
 
 						final String caption = cursor.getString(col_caption);
-						final int colorRgb = U.decodeHighlight(caption);
+						final int colorRgb = Highlights.decode(caption);
 
 						highlightColorMap[mapOffset2] = colorRgb;
 					}
@@ -334,7 +335,7 @@ public class InternalDb {
 							final Marker marker = markerFromCursor(c);
 							marker.modifyTime = new Date();
 							if (colorRgb != -1) {
-								marker.caption = U.encodeHighlight(colorRgb);
+								marker.caption = Highlights.encode(colorRgb);
 								db.update(Db.TABLE_Marker, markerToContentValues(marker), "_id=?", ToStringArray(marker._id));
 							} else {
 								// delete entry
@@ -352,7 +353,7 @@ public class InternalDb {
 							// no need to do, from no color to no color
 						} else {
 							final Date now = new Date();
-							final Marker marker = Marker.createNewMarker(ari, Marker.Kind.highlight, U.encodeHighlight(colorRgb), 1, now, now);
+							final Marker marker = Marker.createNewMarker(ari, Marker.Kind.highlight, Highlights.encode(colorRgb), 1, now, now);
 							db.insert(Db.TABLE_Marker, null, markerToContentValues(marker));
 						}
 					}
@@ -395,7 +396,7 @@ public class InternalDb {
 			while (c.moveToNext()) {
 				int ari = c.getInt(col_ari);
 				int index = ari & 0xff;
-				int color = U.decodeHighlight(c.getString(col_caption));
+				int color = Highlights.decode(c.getString(col_caption));
 				colors[index] = color;
 			}
 
