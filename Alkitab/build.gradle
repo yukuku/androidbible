@@ -44,6 +44,12 @@ android {
     }
 }
 
+repositories {
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':AlkitabFeedback')
@@ -64,7 +70,7 @@ dependencies {
     compile project(':ImportedDesktopVerseUtil')
     compile 'com.android.support:support-v4:22.2.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.squareup.okhttp:okhttp:2.4.0'
+    compile 'com.squareup.okhttp:okhttp:2.5.0-SNAPSHOT'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.4.0'
     compile 'net.sf.trove4j:trove4j:3.0.3'
     compile 'com.google.code.gson:gson:2.3.1'
