@@ -6,13 +6,11 @@
 
     <string name="alkitabfeedback_label_your_name">Name</string>
     <string name="alkitabfeedback_label_your_email">Email</string>
-    <string name="alkitabfeedback_hint_your_name">Required (e.g. Larry)</string>
-    <string name="alkitabfeedback_hint_your_email">Required</string>
     <string name="alkitabfeedback_label_message">Message</string>
-    <string name="alkitabfeedback_hint_message">Anything you want to say to the creators. Suggestions, complaints, ideas, bug reports, information, etc.</string>
+    <string name="alkitabfeedback_hint_message">Anything you want to say to the developer. Suggestions, complaints, ideas, bug reports, information, etc.</string>
     <string name="alkitabfeedback_title_about_you">Your info</string>
 
-    <string name="alkitabfeedback_submit_confirm_message">Send your message to the creators?</string>
+    <string name="alkitabfeedback_submit_confirm_message">Send your message to the developer?</string>
     <string name="alkitabfeedback_submit_confirm_button">Send</string>
     <string name="alkitabfeedback_submit_thanks">Thanks for your message!</string>
 </resources>

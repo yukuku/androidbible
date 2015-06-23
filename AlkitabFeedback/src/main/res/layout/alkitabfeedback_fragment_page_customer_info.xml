@@ -35,7 +35,6 @@
                 android:layout_height="wrap_content"
                 android:saveEnabled="false"
                 android:inputType="textCapWords"
-                android:hint="@string/alkitabfeedback_hint_your_name"
                 android:layout_marginBottom="16dp" />
 
             <TextView style="@style/alkitabfeedback_WizardFormLabel"
@@ -45,8 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:saveEnabled="false"
-                android:inputType="textEmailAddress"
-                android:hint="@string/alkitabfeedback_hint_your_email" />
+                android:inputType="textEmailAddress" />
 
         </LinearLayout>
     </ScrollView>
