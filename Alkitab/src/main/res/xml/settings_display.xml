@@ -25,6 +25,5 @@
 	<yuku.ambilwarna.widget.AmbilWarnaPreference
 		android:defaultValue="@integer/pref_selectedVerseBgColor_default"
 		android:key="@string/pref_selectedVerseBgColor_key"
-		android:title="@string/pref_selectedVerseBgColor_title"
-		app:supportsAlpha="true" />
+		android:title="@string/pref_selectedVerseBgColor_title" />
 </PreferenceScreen>
