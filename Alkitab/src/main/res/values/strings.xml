@@ -509,6 +509,8 @@
 	<string name="about_announcements_none">Announcements (0)</string>
 	<string name="about_announcements_number">Announcements (%s)</string>
 	<string name="about_announcement_load_failed">Failed to load announcements.</string>
+    <string name="about_official_website">Official Website</string>
+    <string name="about_project_page">Project Page</string>
 
 	<!-- marker and label migration -->
 	<string name="marker_migrate_introduction">We detected a backup file from the old v3 Yuku Quick Bible that contains bookmarks, notes, highlights, and labels.\n\nDo you want to import them, so you can access them from this app?</string>
