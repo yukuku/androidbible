@@ -60,7 +60,6 @@ dependencies {
     compile project(':BiblePlus')
     compile project(':DragSortListView')
     compile project(':KpriModel')
-    compile project(':KpriViewerLib')
     compile project(':BintexReader')
     compile project(':BintexWriter')
     compile project(':Afw')

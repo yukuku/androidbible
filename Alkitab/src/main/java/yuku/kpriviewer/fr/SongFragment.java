@@ -124,6 +124,7 @@ public class SongFragment extends BaseFragment {
 			template = templateDivReplace(template, "timeSignature", song.timeSignature);
 			template = templateDivReplace(template, "authors_lyric", song.authors_lyric);
 			template = templateDivReplace(template, "authors_music", song.authors_music);
+			template = templateDivReplace(template, "patchtext_open_link", getString(R.string.patchtext_open_link));
 
 			template = templateDivReplace(template, "lyrics", songToHtml(song, false));
 

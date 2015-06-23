@@ -19,7 +19,6 @@
       <module fileurl="file://$PROJECT_DIR$/FlowLayout/FlowLayout.iml" filepath="$PROJECT_DIR$/FlowLayout/FlowLayout.iml" />
       <module fileurl="file://$PROJECT_DIR$/ImportedDesktopVerseUtil/ImportedDesktopVerseUtil.iml" filepath="$PROJECT_DIR$/ImportedDesktopVerseUtil/ImportedDesktopVerseUtil.iml" />
       <module fileurl="file://$PROJECT_DIR$/KpriModel/KpriModel.iml" filepath="$PROJECT_DIR$/KpriModel/KpriModel.iml" />
-      <module fileurl="file://$PROJECT_DIR$/KpriViewerLib/KpriViewerLib.iml" filepath="$PROJECT_DIR$/KpriViewerLib/KpriViewerLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/Snappy/Snappy.iml" filepath="$PROJECT_DIR$/Snappy/Snappy.iml" />
       <module fileurl="file://$PROJECT_DIR$/androidbible.iml" filepath="$PROJECT_DIR$/androidbible.iml" />
     </modules>
