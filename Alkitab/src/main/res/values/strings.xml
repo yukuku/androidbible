@@ -498,7 +498,7 @@
 	<string name="dr_default_sound">Default sound</string>
 
 	<!-- about -->
-	<string name="about_text_desc" translatable="false" tools:ignore="AndroidLintStringFormatInvalid">100% free Bible app, licensed under Apache License 2.0</string>
+	<string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% free Bible app, licensed under Apache License 2.0</string>
 	<string name="about_translators">Translators</string>
 	<string name="about_user_guide">User\'s Guide</string>
 	<string name="about_beta_feedback">Beta Version Feedback</string>

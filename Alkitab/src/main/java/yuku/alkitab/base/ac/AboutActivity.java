@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.ContentLoadingProgressBar;
@@ -117,13 +118,13 @@ public class AboutActivity extends BaseActivity {
 		tAboutTextDesc = V.get(this, R.id.tAboutTextDesc);
 
 		bHelp = V.get(this, R.id.bHelp);
-		bHelp.setOnClickListener(v -> startActivity(HelpActivity.createIntent("help/guide.html")));
+		bHelp.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.bibleforandroid.com/guide?utm_source=app&utm_medium=button&utm_campaign=help"))));
 
 		bMaterialSources = V.get(this, R.id.bMaterialSources);
-		bMaterialSources.setOnClickListener(v -> startActivity(HelpActivity.createIntent("help/material_sources.html")));
+		bMaterialSources.setOnClickListener(v -> startActivity(HelpActivity.createIntent("help/material_sources.html", getString(R.string.about_material_sources))));
 
 		bCredits = V.get(this, R.id.bCredits);
-		bCredits.setOnClickListener(v -> startActivity(HelpActivity.createIntent("help/credits.html")));
+		bCredits.setOnClickListener(v -> startActivity(HelpActivity.createIntent("help/credits.html", getString(R.string.about_credits))));
 
 		bFeedback = V.get(this, R.id.bFeedback);
 		bFeedback.setOnClickListener(v -> startActivity(new Intent(App.context, com.example.android.wizardpager.MainActivity.class)));
