@@ -11,12 +11,12 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import yuku.afw.V;
+import yuku.alkitab.base.fr.base.BaseFragment;
+import yuku.alkitab.debug.R;
 import yuku.kpri.model.Lyric;
 import yuku.kpri.model.Song;
 import yuku.kpri.model.Verse;
 import yuku.kpri.model.VerseKind;
-import yuku.kpriviewer.R;
-import yuku.kpriviewer.fr.base.BaseFragment;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -124,7 +124,7 @@ public class SongFragment extends BaseFragment {
 			template = templateDivReplace(template, "timeSignature", song.timeSignature);
 			template = templateDivReplace(template, "authors_lyric", song.authors_lyric);
 			template = templateDivReplace(template, "authors_music", song.authors_music);
-			template = templateDivReplace(template, "patchtext_open_link", getString(R.string.patchtext_open_link));
+			template = templateDivReplace(template, "patch_text_open_link", getString(R.string.patch_text_open_link));
 
 			template = templateDivReplace(template, "lyrics", songToHtml(song, false));
 

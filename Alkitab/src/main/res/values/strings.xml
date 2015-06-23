@@ -420,8 +420,9 @@
 	<string name="patch_text_error_no_edits">Please make some edits before sending.</string>
 	<string name="patch_text_menu_reference">Reference</string>
 	<string name="patch_text_menu_send">Send</string>
+    <string name="patch_text_open_link">Send corrections</string>
 
-	<string name="note_actionbar_edit">Edit</string>
+    <string name="note_actionbar_edit">Edit</string>
 	<string name="note_actionbar_delete">Delete</string>
 	<string name="note_actionbar_ok">Done</string>
 	<string name="note_activity_cannot_parse_verse">Sorry, we do not understand this verse link.</string>
