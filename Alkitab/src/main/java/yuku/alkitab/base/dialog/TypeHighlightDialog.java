@@ -3,10 +3,11 @@ package yuku.alkitab.base.dialog;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.text.InputFilter;
+import android.text.Selection;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
+import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
@@ -24,7 +25,7 @@ public class TypeHighlightDialog {
 	private final CharSequence verseText;
 
 	View dialogView;
-	EditText tVerseText;
+	TextView tVerseText;
 
 	static final int[] ids = {
 		R.id.c01, R.id.c02, R.id.c03, R.id.c04, R.id.c05, R.id.c06,
@@ -143,13 +144,13 @@ public class TypeHighlightDialog {
 			tVerseText.setVisibility(View.GONE);
 		} else {
 			tVerseText.setVisibility(View.VISIBLE);
-			tVerseText.setText(verseText);
+			tVerseText.setText(verseText, TextView.BufferType.EDITABLE);
 			tVerseText.setTextColor(S.applied.fontColor);
 
 			if (info == null || !info.shouldRenderAsPartialForVerseText(verseText)) {
-				tVerseText.setSelection(0, tVerseText.length());
+				Selection.setSelection(tVerseText.getEditableText(), 0, tVerseText.length());
 			} else {
-				tVerseText.setSelection(info.partial.startOffset, info.partial.endOffset);
+				Selection.setSelection(tVerseText.getEditableText(), info.partial.startOffset, info.partial.endOffset);
 			}
 
 			tVerseText.postDelayed(() -> tVerseText.scrollTo(0, 0), 100);
