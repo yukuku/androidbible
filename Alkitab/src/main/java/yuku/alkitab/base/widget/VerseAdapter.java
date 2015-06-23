@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.storage.InternalDb;
+import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.ProgressMark;
@@ -40,7 +41,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 
 	int[] bookmarkCountMap_;
 	int[] noteCountMap_;
-	int[] highlightColorMap_;
+	Highlights.Info[] highlightInfoMap_;
 	int[] progressMarkBitsMap_;
 
 	LayoutInflater inflater_;
@@ -78,20 +79,20 @@ public abstract class VerseAdapter extends BaseAdapter {
 		// 1/2: Attributes
 		final int[] bookmarkCountMap;
 		final int[] noteCountMap;
-		final int[] highlightColorMap;
+		final Highlights.Info[] highlightColorMap;
 
 		final int verseCount = verses_.getVerseCount();
 		final int ariBc = Ari.encode(book_.bookId, chapter_1_, 0x00);
 		if (S.getDb().countMarkersForBookChapter(ariBc) > 0) {
 			bookmarkCountMap = new int[verseCount];
 			noteCountMap = new int[verseCount];
-			highlightColorMap = new int[verseCount];
-			// The default value of highlightColorMap is -1, indicating no highlight color set. It is not 0, because 0 means black #000000.
-			Arrays.fill(highlightColorMap, -1);
+			highlightColorMap = new Highlights.Info[verseCount];
 
 			S.getDb().putAttributes(ariBc, bookmarkCountMap, noteCountMap, highlightColorMap);
 		} else {
-			bookmarkCountMap = noteCountMap = highlightColorMap = null;
+			bookmarkCountMap = null;
+			noteCountMap = null;
+			highlightColorMap = null;
 		}
 
 		final int ariMin = ariBc & 0x00ffff00;
@@ -120,7 +121,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 		// Finish calculating
 		bookmarkCountMap_ = bookmarkCountMap;
 		noteCountMap_ = noteCountMap;
-		highlightColorMap_ = highlightColorMap;
+		highlightInfoMap_ = highlightColorMap;
 		progressMarkBitsMap_ = progressMarkBitsMap;
 
 		notifyDataSetChanged();

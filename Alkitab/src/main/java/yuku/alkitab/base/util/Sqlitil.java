@@ -37,4 +37,8 @@ public class Sqlitil {
 	public static String toLocaleDateMedium(Date date) {
 		return mediumDateFormat.get().format(date);
 	}
+
+	public static String toLocaleTime(Date date) {
+		return timeFormat.get().format(date);
+	}
 }

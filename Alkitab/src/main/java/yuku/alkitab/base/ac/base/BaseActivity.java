@@ -1,13 +1,17 @@
 package yuku.alkitab.base.ac.base;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.TypedValue;
 import android.view.MenuItem;
+import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.debug.R;
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -16,12 +20,34 @@ public abstract class BaseActivity extends AppCompatActivity {
 	private boolean withNonToolbarUpButton;
 
 	@Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT >= 21) {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.primary_dark));
-        }
-    }
+	protected void onStart() {
+		super.onStart();
+
+		applyActionBarAndStatusBarColors();
+	}
+
+	protected void applyActionBarAndStatusBarColors() {
+		// action bar color and status bar color are set based on night mode
+		final ActionBar actionBar = getSupportActionBar();
+
+		if (actionBar != null) {
+			if (Preferences.getBoolean(Prefkey.is_night_mode, false)) {
+				actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primary_night_mode)));
+
+				if (Build.VERSION.SDK_INT >= 21) {
+					getWindow().setStatusBarColor(0xff000000);
+				}
+			} else {
+				final TypedValue tv = new TypedValue();
+				getTheme().resolveAttribute(R.attr.colorPrimary, tv, true);
+				actionBar.setBackgroundDrawable(new ColorDrawable(tv.data));
+
+				if (Build.VERSION.SDK_INT >= 21) {
+					getWindow().setStatusBarColor(getResources().getColor(R.color.primary_dark));
+				}
+			}
+		}
+	}
 
 	protected void onCreateWithNonToolbarUpButton(Bundle savedInstanceState) {
 		this.withNonToolbarUpButton = true;

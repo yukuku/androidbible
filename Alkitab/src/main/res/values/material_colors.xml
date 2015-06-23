@@ -9,4 +9,6 @@
 	<!-- Light blue accent -->
 	<color name="accent">#0091EA</color>
 
+	<!-- action bar and split handle in the night mode -->
+	<color name="primary_night_mode">#f111</color>
 </resources>

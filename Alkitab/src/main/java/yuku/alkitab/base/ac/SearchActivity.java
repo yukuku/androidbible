@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -20,7 +21,6 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
@@ -73,7 +73,6 @@ public class SearchActivity extends BaseActivity {
 	int openedBookId;
 	int filterUserAction = 0; // when it's not user action, set to nonzero
 	SearchAdapter adapter;
-	Toast resultCountToast;
 	Version searchInVersion;
 	String searchInVersionId;
 	SearchHistoryAdapter searchHistoryAdapter;
@@ -231,7 +230,7 @@ public class SearchActivity extends BaseActivity {
 		lsSearchResults.setEmptyView(empty);
 		Appearances.applyTextAppearance(tSearchTips);
 		
-		hiliteColor = U.getHighlightColorByBrightness(S.applied.backgroundBrightness);
+		hiliteColor = U.getSearchKeywordTextColorByBrightness(S.applied.backgroundBrightness);
 
 		lsSearchResults.setOnItemClickListener((parent, view, position, id) -> {
 			int ari = adapter.getSearchResults().get(position);
@@ -560,15 +559,9 @@ public class SearchActivity extends BaseActivity {
 
 				lsSearchResults.setAdapter(adapter = new SearchAdapter(result, tokens));
 
-				final String resultCount = getString(R.string.size_hasil, result.size());
-				if (resultCountToast == null) {
-					resultCountToast = Toast.makeText(SearchActivity.this, resultCount, Toast.LENGTH_SHORT);
-				} else {
-					resultCountToast.setText(resultCount);
-				}
-				resultCountToast.show();
-				
 				if (result.size() > 0) {
+					Snackbar.make(lsSearchResults, getString(R.string.size_hasil, result.size()), Snackbar.LENGTH_LONG).show();
+
 					//# close soft keyboard
 					InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 					inputManager.hideSoftInputFromWindow(searchView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);

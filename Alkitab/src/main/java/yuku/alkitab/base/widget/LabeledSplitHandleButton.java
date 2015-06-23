@@ -1,6 +1,9 @@
 package yuku.alkitab.base.widget;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -11,6 +14,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.App;
+import yuku.alkitab.base.IsiActivity;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.debug.R;
 
 
@@ -69,7 +76,7 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 		labelPaint.setAntiAlias(true);
 		bezelPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
-		primaryColor = getResources().getColor(R.color.primary);
+		initializePrimaryColor();
 		accentColor = getResources().getColor(R.color.accent);
 		accentColorPaint.setColor(accentColor);
 		accentColorPaint.setAntiAlias(true);
@@ -267,5 +274,33 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 			splitHorizontalBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_split_horizontal);
 		}
 		return splitHorizontalBitmap;
+	}
+
+	@Override
+	protected void onAttachedToWindow() {
+		super.onAttachedToWindow();
+		App.getLbm().registerReceiver(nightModeChangedListener, new IntentFilter(IsiActivity.ACTION_NIGHT_MODE_CHANGED));
+	}
+
+	@Override
+	protected void onDetachedFromWindow() {
+		super.onDetachedFromWindow();
+
+	}
+
+	final BroadcastReceiver nightModeChangedListener = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			initializePrimaryColor();
+			invalidate();
+		}
+	};
+
+	private void initializePrimaryColor() {
+		if (Preferences.getBoolean(Prefkey.is_night_mode, false)) {
+			primaryColor = getResources().getColor(R.color.primary_night_mode);
+		} else {
+			primaryColor = getResources().getColor(R.color.primary);
+		}
 	}
 }

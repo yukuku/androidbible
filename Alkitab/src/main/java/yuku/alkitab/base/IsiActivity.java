@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -84,10 +85,10 @@ import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.CurrentReading;
+import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.LidToAri;
-import yuku.alkitab.base.util.OsisBookNames;
 import yuku.alkitab.base.util.ShareUrl;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.CallbackSpan;
@@ -132,6 +133,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	public static final String ACTION_ATTRIBUTE_MAP_CHANGED = "yuku.alkitab.action.ATTRIBUTE_MAP_CHANGED";
 	public static final String ACTION_ACTIVE_VERSION_CHANGED = IsiActivity.class.getName() + ".action.ACTIVE_VERSION_CHANGED";
+	public static final String ACTION_NIGHT_MODE_CHANGED = IsiActivity.class.getName() + ".action.NIGHT_MODE_CHANGED";
 
 	public static final String EXTRA_CLOSE_DRAWER = "close_drawer";
 
@@ -901,7 +903,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		Jumper jumper = new Jumper(reference);
 		if (! jumper.getParseSucceeded()) {
-			Toast.makeText(this, getString(R.string.alamat_tidak_sah_alamat, reference), Toast.LENGTH_SHORT).show();
+			new MaterialDialog.Builder(this)
+				.content(R.string.alamat_tidak_sah_alamat, reference)
+				.positiveText(R.string.ok)
+				.show();
 			return 0;
 		}
 
@@ -1296,10 +1301,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		Preferences.setBoolean(Prefkey.is_night_mode, yes);
 
 		applyPreferences();
+		applyActionBarAndStatusBarColors();
 
 		if (textAppearancePanel != null) {
 			textAppearancePanel.displayValues();
 		}
+
+		App.getLbm().sendBroadcast(new Intent(ACTION_NIGHT_MODE_CHANGED));
 	}
 
 	void openVersionsDialog() {
@@ -1530,7 +1538,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		if (fullScreen) {
-			showFullScreenToast(reference);
+			if (fullScreenToast == null) {
+				fullScreenToast = Toast.makeText(this, reference, Toast.LENGTH_SHORT);
+				fullScreenToast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 0);
+			} else {
+				fullScreenToast.setText(reference);
+			}
+			fullScreenToast.show();
 		}
 
 		if (dictionaryMode) {
@@ -1538,16 +1552,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		return Ari.encode(0, chapter_1, verse_1);
-	}
-
-	void showFullScreenToast(final CharSequence s) {
-		if (fullScreenToast == null) {
-			fullScreenToast = Toast.makeText(this, s, Toast.LENGTH_SHORT);
-			fullScreenToast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 0);
-		} else {
-			fullScreenToast.setText(s);
-		}
-		fullScreenToast.show();
 	}
 
 	void displaySplitFollowingMaster() {
@@ -2087,7 +2091,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					public void onFinally() {
 						lsSplit0.uncheckAllVerses(true);
 
-						Toast.makeText(App.context, getString(R.string.alamat_sudah_disalin, reference), Toast.LENGTH_SHORT).show();
+						Snackbar.make(root, getString(R.string.alamat_sudah_disalin, reference), Snackbar.LENGTH_SHORT).show();
 						mode.finish();
 					}
 				});
@@ -2181,12 +2185,25 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				final int ariBc = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
 				int colorRgb = S.getDb().getHighlightColorRgb(ariBc, selected);
 
-				new TypeHighlightDialog(IsiActivity.this, ariBc, selected, new TypeHighlightDialog.Listener() {
-					@Override public void onOk(int colorRgb) {
+				final TypeHighlightDialog.Listener listener = new TypeHighlightDialog.Listener() {
+					@Override
+					public void onOk(int colorRgb) {
 						lsSplit0.uncheckAllVerses(true);
 						reloadBothAttributeMaps();
 					}
-				}, colorRgb, reference);
+				};
+
+				if (selected.size() == 1) {
+					final VerseRenderer.FormattedTextResult ftr = new VerseRenderer.FormattedTextResult();
+					final int ari = Ari.encodeWithBc(ariBc, selected.get(0));
+					final String rawVerseText = S.activeVersion.loadVerseText(ari);
+					final Highlights.Info info = S.getDb().getHighlightColorRgb(ari);
+
+					VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, false, null, ftr);
+					new TypeHighlightDialog(IsiActivity.this, ari, listener, colorRgb, info, reference, ftr.result);
+				} else {
+					new TypeHighlightDialog(IsiActivity.this, ariBc, selected, listener, colorRgb, reference);
+				}
 				mode.finish();
 			} return true;
 			case R.id.menuEsvsb: {

@@ -2,6 +2,7 @@ package yuku.alkitab.base.widget;
 
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Typeface;
+import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.text.style.BackgroundColorSpan;
@@ -12,10 +13,10 @@ import android.text.style.MetricAffectingSpan;
 import android.text.style.StyleSpan;
 import android.widget.TextView;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.debug.R;
 
 public class VerseRenderer {
@@ -60,6 +61,10 @@ public class VerseRenderer {
 		}
 	}
 
+	public static class FormattedTextResult {
+		public CharSequence result;
+	}
+
 	/** Creates a leading margin span based on version:
 	 * - API 7 or 11 and above: LeadingMarginSpan.Standard
 	 * - API 8..10: LeadingMarginSpanFixed, which is based on LeadingMarginSpan.LeadingMarginSpan2
@@ -89,11 +94,13 @@ public class VerseRenderer {
 	};
 
 	/**
+	 * @param lText TextView for verse text, but can be null if rendering is for non-display
+	 * @param lVerseNumber TextView for verse number, but can be null if rendering is for non-display
 	 * @param dontPutSpacingBefore this verse is right after a pericope title or on the 0th position
-	 * @param optionalVersesView must be not-null if xrefListener is not-null
+	 * @param ftr optional container for result that contains the verse text with span formattings, without the verse numbers
 	 * @return how many characters was used before the real start of verse text. This will be > 0 if the verse number is embedded inside lText.
 	 */
-	public static int render(final TextView lText, final TextView lVerseNumber, final int ari, final String text, final String verseNumberText, final int highlightColor, final boolean checked, final boolean dontPutSpacingBefore, final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, VersesView optionalVersesView) {
+	public static int render(@Nullable final TextView lText, @Nullable final TextView lVerseNumber, final int ari, final String text, final String verseNumberText, @Nullable final Highlights.Info highlightInfo, final boolean checked, final boolean dontPutSpacingBefore, @Nullable final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, @Nullable final FormattedTextResult ftr) {
 		// @@ = start a verse containing paragraphs or formatting
 		// @0 = start with indent 0 [paragraph]
 		// @1 = start with indent 1 [paragraph]
@@ -109,13 +116,16 @@ public class VerseRenderer {
 		// @< to @> = special tags (not visible for unsupported tags) [can be considered formatting]
 		// @/ = end of special tags (closing tag) (As of 2013-10-04, all special tags must be closed) [can be considered formatting]
 		
-		int text_len = text.length();
+		final int text_len = text.length();
 		
 		// Determine if this verse text is a simple verse or formatted verse. 
 		// Formatted verses start with "@@".
 		// Second character must be '@' too, if not it's wrong, we will fallback to simple render.
 		if (text_len < 2 || text.charAt(0) != '@' || text.charAt(1) != '@') {
-			return simpleRender(lText, lVerseNumber, ari, text, verseNumberText, highlightColor, checked, optionalVersesView);
+			if (ftr != null) {
+				ftr.result = text;
+			}
+			return simpleRender(lText, lVerseNumber, text, verseNumberText, highlightInfo, checked);
 		}
 
 		// optimization, to prevent repeated calls to charAt()
@@ -172,9 +182,10 @@ public class VerseRenderer {
 			startPosAfterVerseNumber = sb.length();
 		}
 
-
 		// initialize lVerseNumber to have no padding first
-		lVerseNumber.setPadding(0, 0, 0, 0);
+		if (lVerseNumber != null) {
+			lVerseNumber.setPadding(0, 0, 0, 0);
+		}
 
 		while (true) {
 			if (pos >= text_len) {
@@ -263,28 +274,45 @@ public class VerseRenderer {
 		
 		// apply unapplied
 		applyParaStyle(sb, paraType, startPara, verseNumberText, startPosAfterVerseNumber > 0, dontPutSpacingBefore && startPara <= startPosAfterVerseNumber, startPara <= startPosAfterVerseNumber, lVerseNumber);
-	
-		if (highlightColor != -1) {
-			sb.setSpan(new BackgroundColorSpan(highlightColor), startPosAfterVerseNumber == 0? 0: verseNumberText.length() + 1, sb.length(), 0);
+
+		if (highlightInfo != null) {
+			final BackgroundColorSpan span = new BackgroundColorSpan(Highlights.alphaMix(highlightInfo.colorRgb));
+			if (highlightInfo.shouldRenderAsPartialForVerseText(sb.subSequence(startPosAfterVerseNumber, sb.length()))) {
+				sb.setSpan(span, startPosAfterVerseNumber + highlightInfo.partial.startOffset, startPosAfterVerseNumber + highlightInfo.partial.endOffset, 0);
+			} else {
+				sb.setSpan(span, startPosAfterVerseNumber, sb.length(), 0);
+			}
 		}
 
-		lText.setText(sb);
+		if (lText != null) {
+			lText.setText(sb);
+		}
 		
 		// show verse on lVerseNumber if not shown in lText yet
-		if (startPosAfterVerseNumber > 0) {
-			lVerseNumber.setText("");
-		} else {
-			lVerseNumber.setText(verseNumberText);
-			Appearances.applyVerseNumberAppearance(lVerseNumber);
-			if (checked) {
-				lVerseNumber.setTextColor(U.getTextColorForSelectedVerse(Preferences.getInt(App.context.getString(R.string.pref_selectedVerseBgColor_key), 0))); // override with black or white!
+		if (lVerseNumber != null) {
+			if (startPosAfterVerseNumber > 0) {
+				lVerseNumber.setText("");
+			} else {
+				lVerseNumber.setText(verseNumberText);
+				Appearances.applyVerseNumberAppearance(lVerseNumber);
+				if (checked) {
+					lVerseNumber.setTextColor(U.getTextColorForSelectedVerse(Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default))); // override with black or white!
+				}
+			}
+		}
+
+		if (ftr != null) {
+			if (startPosAfterVerseNumber == 0) {
+				ftr.result = sb;
+			} else {
+				ftr.result = sb.subSequence(startPosAfterVerseNumber, sb.length());
 			}
 		}
 
 		return startPosAfterVerseNumber;
 	}
 
-	static void processSpecialTag(final SpannableStringBuilder sb, final StringBuilder tag, final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, final int ari) {
+	static void processSpecialTag(final SpannableStringBuilder sb, final StringBuilder tag, @Nullable final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, final int ari) {
 		final int sb_len = sb.length();
 		if (tag.length() >= 2) {
 			// Footnote
@@ -323,7 +351,7 @@ public class VerseRenderer {
 	 * This only applies if the paraType is 0.
 	 * @param dontPutSpacingBefore if this paragraph is just after pericope title or on the 0th position, in this case we don't apply paragraph spacing before.
 	 */
-	static void applyParaStyle(SpannableStringBuilder sb, int paraType, int startPara, String verseNumberText, boolean firstLineWithVerseNumber, boolean dontPutSpacingBefore, boolean firstParagraph, TextView lVerseNumber) {
+	static void applyParaStyle(SpannableStringBuilder sb, int paraType, int startPara, String verseNumberText, boolean firstLineWithVerseNumber, boolean dontPutSpacingBefore, boolean firstParagraph, @Nullable TextView lVerseNumber) {
 		int len = sb.length();
 		
 		if (startPara == len) return;
@@ -356,7 +384,7 @@ public class VerseRenderer {
 		case '^':
 			if (!dontPutSpacingBefore) {
 				sb.setSpan(new VerseRenderer.ParagraphSpacingBefore(S.applied.paragraphSpacingBefore), startPara, len, 0);
-				if (firstParagraph) {
+				if (firstParagraph && lVerseNumber != null) {
 					lVerseNumber.setPadding(0, S.applied.paragraphSpacingBefore, 0, 0);
 				}
 			}
@@ -366,31 +394,38 @@ public class VerseRenderer {
 	}
 
 	/**
-	 * @param optionalVersesView must be not-null if xrefListener is not-null
 	 * @return how many characters was used before the real start of verse text. This will be > 0 if the verse number is embedded inside lText.
 	 */
-	public static int simpleRender(TextView lText, TextView lVerseNumber, int ari, String text, String verseNumberText, int highlightColor, boolean checked, VersesView optionalVersesView) {
-		// initialize lVerseNumber to have no padding first
-		lVerseNumber.setPadding(0, 0, 0, 0);
-		
-		SpannableStringBuilder sb = new SpannableStringBuilder();
-	
+	public static int simpleRender(@Nullable TextView lText, @Nullable TextView lVerseNumber, String text, String verseNumberText, @Nullable final Highlights.Info highlightInfo, boolean checked) {
+		final SpannableStringBuilder sb = new SpannableStringBuilder();
+
 		// verse number
 		sb.append(verseNumberText).append("  ");
+		sb.setSpan(new VerseRenderer.VerseNumberSpan(!checked), 0, verseNumberText.length(), 0);
 		final int startPosAfterVerseNumber = sb.length();
 
-		sb.append(text);
-		sb.setSpan(new VerseRenderer.VerseNumberSpan(!checked), 0, verseNumberText.length(), 0);
-	
 		// verse text
+		sb.append(text);
 		sb.setSpan(createLeadingMarginSpan(0, S.applied.indentParagraphRest), 0, sb.length(), 0);
-	
-		if (highlightColor != -1) {
-			sb.setSpan(new BackgroundColorSpan(highlightColor), verseNumberText.length() + 1, sb.length(), 0);
+
+		if (highlightInfo != null) {
+			final BackgroundColorSpan span = new BackgroundColorSpan(Highlights.alphaMix(highlightInfo.colorRgb));
+			if (highlightInfo.shouldRenderAsPartialForVerseText(text)) {
+				sb.setSpan(span, startPosAfterVerseNumber + highlightInfo.partial.startOffset, startPosAfterVerseNumber + highlightInfo.partial.endOffset, 0);
+			} else {
+				sb.setSpan(span, startPosAfterVerseNumber, sb.length(), 0);
+			}
 		}
-		
-		lText.setText(sb);
-		lVerseNumber.setText("");
+
+		if (lText != null) {
+			lText.setText(sb);
+		}
+
+		// initialize lVerseNumber to have no padding first
+		if (lVerseNumber != null) {
+			lVerseNumber.setPadding(0, 0, 0, 0);
+			lVerseNumber.setText("");
+		}
 
 		return startPosAfterVerseNumber;
 	}
