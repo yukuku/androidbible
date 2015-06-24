@@ -49,7 +49,7 @@ public class ProgressMarkRenameDialog extends DialogFragment {
 						progressMark.caption = name;
 					}
 					progressMark.modifyTime = new Date();
-					S.getDb().updateProgressMark(progressMark);
+					S.getDb().insertOrUpdateProgressMark(progressMark);
 
 					// Since updating database is the responsibility here,
 					// announcing it will also be here.
@@ -69,7 +69,7 @@ public class ProgressMarkRenameDialog extends DialogFragment {
 							progressMark.ari = 0;
 							progressMark.caption = null;
 							progressMark.modifyTime = new Date();
-							S.getDb().updateProgressMark(progressMark);
+							S.getDb().insertOrUpdateProgressMark(progressMark);
 
 							// Since updating database is the responsibility here,
 							// announcing it will also be here.
