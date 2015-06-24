@@ -46,6 +46,8 @@ public class Sync {
 		dirty_entities,
 		/** Sync user account has changed during sync request */
 		dirty_sync_account,
+		/** Unsupported operation encountered */
+		unsupported_operation,
 	}
 
 	public static class Operation<C> {
@@ -66,7 +68,7 @@ public class Sync {
 		public String toString() {
 			return "{" + opkind +
 				" " + kind +
-				" " + gid.substring(0, 10) +
+				" " + (gid.length() <= 10? gid: gid.substring(0, 10)) +
 				" " + content +
 				'}';
 		}
@@ -92,6 +94,7 @@ public class Sync {
 		public static final String KIND_LABEL = "Label";
 		public static final String KIND_MARKER_LABEL = "Marker_Label";
 		public static final String KIND_HISTORY_ENTRY = "HistoryEntry";
+		public static final String KIND_PINS = "Pins"; // with plural to indicate not only 1 pin but all pins considered as one entity
 
 		/**
 		 * Kind of this entity. One of the <code>KIND_</code> constants on {@link yuku.alkitab.base.sync.Sync.Entity}.
