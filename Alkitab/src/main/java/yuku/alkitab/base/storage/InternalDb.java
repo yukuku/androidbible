@@ -31,6 +31,7 @@ import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.sync.SyncRecorder;
 import yuku.alkitab.base.sync.Sync_Mabel;
+import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.model.Label;
@@ -263,7 +264,7 @@ public class InternalDb {
 	/**
 	 * Put attributes (bookmark count, note count, and highlight color) for each verse.
 	 */
-	public void putAttributes(final int ari_bookchapter, final int[] bookmarkCountMap, final int[] noteCountMap, final int[] highlightColorMap) {
+	public void putAttributes(final int ari_bookchapter, final int[] bookmarkCountMap, final int[] noteCountMap, final Highlights.Info[] highlightColorMap) {
 		final int ariMin = ari_bookchapter & 0x00ffff00;
 		final int ariMax = ari_bookchapter | 0x000000ff;
 
@@ -303,15 +304,57 @@ public class InternalDb {
 						if (mapOffset2 >= highlightColorMap.length) break; // do not go past number of verses in this chapter
 
 						final String caption = cursor.getString(col_caption);
-						final int colorRgb = U.decodeHighlight(caption);
+						final Highlights.Info info = Highlights.decode(caption);
 
-						highlightColorMap[mapOffset2] = colorRgb;
+						highlightColorMap[mapOffset2] = info;
 					}
 				}
 			}
 		} finally {
 			cursor.close();
 		}
+	}
+
+	/**
+	 * @param colorRgb may NOT be -1. Use {@link #updateOrInsertHighlights(int, IntArrayList, int)} to delete highlight.
+	 */
+	public void updateOrInsertPartialHighlight(final int ari, final int colorRgb, final CharSequence verseText, final int startOffset, final int endOffset) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+
+		db.beginTransaction();
+		try {
+			// order by modifyTime desc so we modify the latest one and remove earlier ones if they exist.
+			final Cursor c = db.query(Db.TABLE_Marker, null, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?", ToStringArray(ari, Marker.Kind.highlight.code), null, null, Db.Marker.modifyTime + " desc");
+			try {
+				final int hashCode = Highlights.hashCode(verseText.toString());
+				final Date now = new Date();
+
+				if (c.moveToNext()) { // check if marker exists
+					{ // modify the latest one
+						final Marker marker = markerFromCursor(c);
+						marker.modifyTime = now;
+						marker.caption = Highlights.encode(colorRgb, hashCode, startOffset, endOffset);
+						db.update(Db.TABLE_Marker, markerToContentValues(marker), "_id=?", ToStringArray(marker._id));
+					}
+
+					// remove earlier ones if they exist (caused by sync)
+					while (c.moveToNext()) {
+						final long _id = c.getLong(c.getColumnIndexOrThrow("_id"));
+						db.delete(Db.TABLE_Marker, "_id=?", ToStringArray(_id));
+					}
+				} else { // insert
+					final Marker marker = Marker.createNewMarker(ari, Marker.Kind.highlight, Highlights.encode(colorRgb, hashCode, startOffset, endOffset), 1, now, now);
+					db.insert(Db.TABLE_Marker, null, markerToContentValues(marker));
+				}
+			} finally {
+				c.close();
+			}
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
 	}
 
 	public void updateOrInsertHighlights(int ari_bookchapter, IntArrayList selectedVerses_1, int colorRgb) {
@@ -334,7 +377,7 @@ public class InternalDb {
 							final Marker marker = markerFromCursor(c);
 							marker.modifyTime = new Date();
 							if (colorRgb != -1) {
-								marker.caption = U.encodeHighlight(colorRgb);
+								marker.caption = Highlights.encode(colorRgb);
 								db.update(Db.TABLE_Marker, markerToContentValues(marker), "_id=?", ToStringArray(marker._id));
 							} else {
 								// delete entry
@@ -352,7 +395,7 @@ public class InternalDb {
 							// no need to do, from no color to no color
 						} else {
 							final Date now = new Date();
-							final Marker marker = Marker.createNewMarker(ari, Marker.Kind.highlight, U.encodeHighlight(colorRgb), 1, now, now);
+							final Marker marker = Marker.createNewMarker(ari, Marker.Kind.highlight, Highlights.encode(colorRgb), 1, now, now);
 							db.insert(Db.TABLE_Marker, null, markerToContentValues(marker));
 						}
 					}
@@ -395,8 +438,8 @@ public class InternalDb {
 			while (c.moveToNext()) {
 				int ari = c.getInt(col_ari);
 				int index = ari & 0xff;
-				int color = U.decodeHighlight(c.getString(col_caption));
-				colors[index] = color;
+				final Highlights.Info info = Highlights.decode(c.getString(col_caption));
+				colors[index] = info.colorRgb;
 			}
 
 			// determine default color. If all has color x, then it's x. If one of them is not x, then it's -1.
@@ -414,6 +457,28 @@ public class InternalDb {
 			return res;
 		} finally {
 			c.close();
+		}
+	}
+
+	/**
+	 * Get the highlight info for a single verse
+	 */
+	public Highlights.Info getHighlightColorRgb(final int ari) {
+		try (Cursor c = helper.getReadableDatabase().query(
+			Db.TABLE_Marker, null, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?",
+			ToStringArray(ari, Marker.Kind.highlight.code),
+			null,
+			null,
+			Db.Marker.modifyTime + " desc"
+		)) {
+			final int col_caption = c.getColumnIndexOrThrow(Db.Marker.caption);
+
+			// put to array first
+			if (c.moveToNext()) {
+				return Highlights.decode(c.getString(col_caption));
+			} else {
+				return null;
+			}
 		}
 	}
 

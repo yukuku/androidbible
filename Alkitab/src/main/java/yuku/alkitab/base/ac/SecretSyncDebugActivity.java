@@ -25,6 +25,7 @@ import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.sync.Sync_Mabel;
+import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
@@ -142,7 +143,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		for (int i = 0; i < 1000; i++) {
 			final Marker.Kind kind = Marker.Kind.values()[rand(3)];
 			final Date now = new Date();
-			final Marker marker = S.getDb().insertMarker(0x000101 + rand(30), kind, kind == Marker.Kind.highlight? U.encodeHighlight(rand(0xffffff)): randomString("MM" + i + "_", rand(10) < 5? rand(81): rand(400) + 4, 5, 15), rand(2) + 1, now, now);
+			final Marker marker = S.getDb().insertMarker(0x000101 + rand(30), kind, kind == Marker.Kind.highlight? Highlights.encode(rand(0xffffff)): randomString("MM" + i + "_", rand(10) < 5? rand(81): rand(400) + 4, 5, 15), rand(2) + 1, now, now);
 			final Set<Label> labelSet = new HashSet<>();
 			if (rand(10) < 1) {
 				labelSet.add(label1);
