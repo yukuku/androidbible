@@ -1353,7 +1353,7 @@ public class InternalDb {
 		}
 	}
 
-	@Nullable public int getRevnoFromSyncShadowBySyncSetName(final String syncSetName) {
+	public int getRevnoFromSyncShadowBySyncSetName(final String syncSetName) {
 		final SQLiteDatabase db = helper.getReadableDatabase();
 		final Cursor c = db.query(Table.SyncShadow.tableName(), Array(
 			Table.SyncShadow.revno.name()
