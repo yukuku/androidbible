@@ -161,10 +161,10 @@ public class Sync_Pins {
 		}
 
 		public static class Pin {
-			public Integer preset_id;
+			public int preset_id;
 			public String caption;
-			public Integer ari;
-			public Integer modifyTime;
+			public int ari;
+			public int modifyTime;
 
 			//region boilerplate equals and hashCode methods
 
@@ -175,20 +175,20 @@ public class Sync_Pins {
 
 				final Pin pin = (Pin) o;
 
-				if (preset_id != null ? !preset_id.equals(pin.preset_id) : pin.preset_id != null) return false;
+				if (preset_id != pin.preset_id) return false;
+				if (ari != pin.ari) return false;
+				if (modifyTime != pin.modifyTime) return false;
 				if (caption != null ? !caption.equals(pin.caption) : pin.caption != null) return false;
-				if (ari != null ? !ari.equals(pin.ari) : pin.ari != null) return false;
-				if (modifyTime != null ? !modifyTime.equals(pin.modifyTime) : pin.modifyTime != null) return false;
 
 				return true;
 			}
 
 			@Override
 			public int hashCode() {
-				int result = preset_id != null ? preset_id.hashCode() : 0;
+				int result = preset_id;
 				result = 31 * result + (caption != null ? caption.hashCode() : 0);
-				result = 31 * result + (ari != null ? ari.hashCode() : 0);
-				result = 31 * result + (modifyTime != null ? modifyTime.hashCode() : 0);
+				result = 31 * result + ari;
+				result = 31 * result + modifyTime;
 				return result;
 			}
 

@@ -1517,8 +1517,7 @@ public class InternalDb {
 								final List<Sync_Pins.Content.Pin> pins = content.pins;
 
 								for (final Sync_Pins.Content.Pin pin : pins) {
-									final Integer preset_id = pin.preset_id;
-									if (preset_id == null) continue; // does not make sense
+									final int preset_id = pin.preset_id;
 
 									ProgressMark pm = getProgressMarkByPresetId(preset_id);
 									if (pm == null) {
