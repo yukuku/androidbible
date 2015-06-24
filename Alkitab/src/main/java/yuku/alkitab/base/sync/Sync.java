@@ -68,7 +68,7 @@ public class Sync {
 		public String toString() {
 			return "{" + opkind +
 				" " + kind +
-				" " + gid.substring(0, 10) +
+				" " + (gid.length() <= 10? gid: gid.substring(0, 10)) +
 				" " + content +
 				'}';
 		}
