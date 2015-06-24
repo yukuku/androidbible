@@ -312,6 +312,7 @@ public abstract class LeftDrawer extends ScrollView {
 					b.setPressed(false);
 					final DragShadowBuilder dragShadowBuilder = new DragShadowBuilder(b);
 					performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+					closeDrawer();
 					v.startDrag(dragData, dragShadowBuilder, null, 0);
 
 					return true;
