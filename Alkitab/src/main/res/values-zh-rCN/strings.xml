@@ -356,6 +356,7 @@
   <string name="sn_menu_copy">複製歌曲</string>
   <string name="menuPlay">播放</string>
   <string name="menuPause">暂停</string>
+  <string name="left_drawer_current_reading_title">现正阅读</string>
   <string name="book_filter_old_testament">旧约</string>
   <string name="book_filter_old_pentateuch">摩西五经</string>
   <string name="book_filter_old_history">历史书</string>

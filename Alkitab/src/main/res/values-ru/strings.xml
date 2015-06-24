@@ -198,6 +198,7 @@
   <string name="verse_select_one_verse_selected">Выбран 1 стих</string>
   <string name="verse_select_multiple_verse_selected">Выбрано %s стихов</string>
   <string name="google_play_store_not_installed">Не установлено приложение Google Play Store.</string>
+  <string name="pref_language_label_default">По умолчанию</string>
   <string name="goto_tab_dialer_label">Набор номера</string>
   <string name="goto_tab_direct_label">Выбор</string>
   <string name="goto_tab_grid_label">Сетка</string>
@@ -356,6 +357,7 @@
   <string name="sn_menu_copy">Скопировать песню</string>
   <string name="menuPlay">Воспроизвести</string>
   <string name="menuPause">Пауза</string>
+  <string name="left_drawer_current_reading_title">Текущее чтение</string>
   <string name="book_filter_old_testament">Ветхий Завет</string>
   <string name="book_filter_old_pentateuch">Пятикнижие</string>
   <string name="book_filter_old_history">История</string>
@@ -388,6 +390,7 @@
   <string name="patch_text_error_no_edits">Для отправки нужно внести изменения.</string>
   <string name="patch_text_menu_reference">Ссылка</string>
   <string name="patch_text_menu_send">Отправить</string>
+  <string name="patch_text_open_link">Отправить исправления</string>
   <string name="note_actionbar_edit">Изменить</string>
   <string name="note_actionbar_delete">Удалить</string>
   <string name="note_actionbar_ok">Готово</string>
@@ -469,6 +472,8 @@
   <string name="about_announcements_none">Объявления (0)</string>
   <string name="about_announcements_number">Объявления (%s)</string>
   <string name="about_announcement_load_failed">Не удалось загрузить объявления.</string>
+  <string name="about_official_website">Официальный сайт</string>
+  <string name="about_project_page">Страница проекта</string>
   <string name="marker_migrate_introduction">Обнаружен файл резервной копии, содержащий закладки, заметки, подкраску и метки, от старой версии Quick Bible v3.\n\nИмпортировать даные из этого файла, чтобы они стали доступны из данного приложения?</string>
   <string name="marker_migrate_no_more">Больше не спрашивать</string>
   <string name="marker_migrate_later">Не сейчас</string>

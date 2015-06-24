@@ -42,7 +42,7 @@
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Błąd pobierania %1$s z dnia %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">Udane pobieranie %1$s z dnia %2$s</string>
   <string name="mengunduh_namaumum_tgl_tgl">Pobieranie %1$s z dnia %2$s&#8230;</string>
-  <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Nie dostępne. Prawdopodobnie materiały z żądanej daty nie są jeszcze gotowe lub są jakieś błędy w odczytaniu danych z podanej daty. Proszę spróbować jeszcze raz.</string>
+  <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Niedostępne. Prawdopodobnie materiały z żądanej daty nie są jeszcze gotowe lub są jakieś błędy w odczytaniu danych z podanej daty. Proszę spróbować jeszcze raz.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Rozważanie nie jest jeszcze dostępne. Pobieranie z internetu.&#8230;\n\n(Upewnij się, że istnieje połączenie internetowe, aby pobrać materiały.)</string>
   <string name="hari_sabtu">Sobota</string>
   <string name="hari_jumat">Piątek</string>
@@ -198,6 +198,7 @@
   <string name="verse_select_one_verse_selected">Zaznaczono 1 wers</string>
   <string name="verse_select_multiple_verse_selected">Zaznaczono %s wersów</string>
   <string name="google_play_store_not_installed">Sklep Google Play nie jest zainstalowany.</string>
+  <string name="pref_language_label_default">Domyślny</string>
   <string name="goto_tab_dialer_label">Dialer</string>
   <string name="goto_tab_direct_label">Bezpośrednio</string>
   <string name="goto_tab_grid_label">Siatka</string>
@@ -248,6 +249,7 @@
   <string name="desc_verse_attribute_multiple_bookmarks">%s zakładek jest dołączonych do tego wersu.</string>
   <string name="desc_verse_attribute_one_note">Do tego wersu dołączona jest notatka.</string>
   <string name="desc_verse_attribute_multiple_notes">%s notatek jest dołączonych do tego wersu.</string>
+  <string name="desc_verse_attribute_progress_mark">%s jest w tym miejscu.</string>
   <string name="intent_filter_open_yes_file">Otwórz plik YES</string>
   <string name="intent_filter_open_pdb_file">Otwórz plik PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Otwórz plik PDB/YES</string>
@@ -387,6 +389,7 @@
   <string name="patch_text_error_no_edits">Proszę o dokonanie edycji, zanim wyślesz.</string>
   <string name="patch_text_menu_reference">Odnośnik</string>
   <string name="patch_text_menu_send">Wyślij</string>
+  <string name="patch_text_open_link">Wyślij poprawki</string>
   <string name="note_actionbar_edit">Edytuj</string>
   <string name="note_actionbar_delete">Usuń</string>
   <string name="note_actionbar_ok">Gotowe</string>
@@ -461,13 +464,15 @@
   <string name="about_translators">Tłumacze</string>
   <string name="about_user_guide">Przewodnik użytkownika</string>
   <string name="about_beta_feedback">Wiadomość zwrotna dla wersji beta</string>
-  <string name="about_version_name">przekład %s</string>
+  <string name="about_version_name">wersja %s</string>
   <string name="about_material_sources">Źródła materiału</string>
   <string name="about_credits">Podziękowania</string>
   <string name="about_announcements">Ogłoszenia</string>
   <string name="about_announcements_none">Ogłoszenia (0)</string>
   <string name="about_announcements_number">Ogłoszenia (%s)</string>
   <string name="about_announcement_load_failed">Problem z załadowaniem ogłoszeń.</string>
+  <string name="about_official_website">Oficjalna strona</string>
+  <string name="about_project_page">Strona projektu</string>
   <string name="marker_migrate_introduction">Wykryliśmy plik kopii ze starej wersji Yuku QuickBible v3, która zawiera zakładki, notatki, podkreślenia i etykiety.\n\nCzy chcesz je zaimportować, aby mieć do nich dostęp z tej aplikacji?</string>
   <string name="marker_migrate_no_more">Nie pytaj ponownie</string>
   <string name="marker_migrate_later">Nie teraz</string>

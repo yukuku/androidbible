@@ -7,11 +7,18 @@
   <string name="pref_warna_nomor_ayat">N° de verset</string>
   <string name="pref_redTextColor_title">Paroles de Jésus</string>
   <string name="pref_penggunaan">Usage</string>
+  <string name="pref_copy_share">Copier et partager</string>
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Liste des livres par ordre alphabétique (a-z) au lieu de l\'ordre original</string>
   <string name="pref_kitab_menurut_abjad">Tri des livres par ordre alphabétique</string>
   <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">L\'écran reste allumé pendant la lecture de la Bible</string>
   <string name="pref_biarkan_layar_menyala">L\'écran reste allumé</string>
   <string name="pref_penampilan_layar">Écran</string>
   <string name="pref_volumeButtonNavigation_title">Navigation avec les boutons du volume</string>
+  <string name="pref_copyWithVerseNumbers_summary">Commencez chaque verset avec son numéro</string>
+  <string name="pref_copyWithShareUrl_title">Partager le lien</string>
+  <string name="pref_copyWithShareUrl_summary">Ajouter le lien de la page partagée à la fin du texte copié ou partagé</string>
+  <string name="pref_autoDictionaryAnalyze_title">Recherche automatique dans le dictionnaire</string>
+  <string name="pref_autoDictionaryAnalyze_summary">Chercher les mots sélectionnés dans le dictionnaire</string>
   <string name="pref_showHiddenVersion_title">Autoriser des versions éventuellement limitées</string>
+  <string name="pref_selectedVerseBgColor_title">L\'arriere plan pour le verset sélectionné</string>
 </resources>

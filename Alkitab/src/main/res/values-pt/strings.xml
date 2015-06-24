@@ -356,6 +356,7 @@
   <string name="sn_menu_copy">Copiar música</string>
   <string name="menuPlay">Reproduzir</string>
   <string name="menuPause">Pausar</string>
+  <string name="left_drawer_current_reading_title">Leitura atual</string>
   <string name="book_filter_old_testament">Antigo Testamento</string>
   <string name="book_filter_old_pentateuch">Pentateuco</string>
   <string name="book_filter_old_history">Históricos</string>

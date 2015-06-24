@@ -18,7 +18,10 @@
   <string name="pref_copyWithVerseNumbers_summary">Începe fiecare vers cu numărul său</string>
   <string name="pref_copyWithVersionName_title">Abreviere versiune</string>
   <string name="pref_copyWithVersionName_summary">Menționează inițialele versiunii de Biblie</string>
+  <string name="pref_copyWithShareUrl_title">Partajează URL</string>
+  <string name="pref_copyWithShareUrl_summary">Adăugați pagina de partajare link la sfârșitul textului copiat sau partajat</string>
   <string name="pref_autoDictionaryAnalyze_title">Căutare dicționar automată</string>
   <string name="pref_autoDictionaryAnalyze_summary">Caută în dicționar cuvintele versetelor selectate</string>
   <string name="pref_showHiddenVersion_title">Activați eventuale versiuni cu acces restricționat</string>
+  <string name="pref_selectedVerseBgColor_title">Selectează fundal verset</string>
 </resources>

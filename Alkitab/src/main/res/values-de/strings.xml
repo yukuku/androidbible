@@ -198,6 +198,7 @@
   <string name="verse_select_one_verse_selected">1 Vers ausgewählt</string>
   <string name="verse_select_multiple_verse_selected">%s Verse ausgewählt</string>
   <string name="google_play_store_not_installed">Der Google Play Store ist nicht installiert.</string>
+  <string name="pref_language_label_default">Systemvorgabe</string>
   <string name="goto_tab_dialer_label">Wähler</string>
   <string name="goto_tab_direct_label">Direkt</string>
   <string name="goto_tab_grid_label">Tabelle</string>
@@ -356,6 +357,7 @@
   <string name="sn_menu_copy">Lied kopieren</string>
   <string name="menuPlay">Abspielen</string>
   <string name="menuPause">Pause</string>
+  <string name="left_drawer_current_reading_title">Aktueller Bibelabschnitt</string>
   <string name="book_filter_old_testament">Altes Testament</string>
   <string name="book_filter_old_pentateuch">Pentateuch</string>
   <string name="book_filter_old_history">Geschichtsbücher</string>
@@ -388,6 +390,7 @@
   <string name="patch_text_error_no_edits">Bitte führen Sie Bearbeitungen durch, bevor sie den Text versenden.</string>
   <string name="patch_text_menu_reference">Hinweise</string>
   <string name="patch_text_menu_send">Senden</string>
+  <string name="patch_text_open_link">Korrekturen einsenden</string>
   <string name="note_actionbar_edit">Bearbeiten</string>
   <string name="note_actionbar_delete">Löschen</string>
   <string name="note_actionbar_ok">Fertig</string>
@@ -469,6 +472,8 @@
   <string name="about_announcements_none">Meldungen (0)</string>
   <string name="about_announcements_number">Meldungen (%s)</string>
   <string name="about_announcement_load_failed">Laden der Meldungen fehlgeschlagen.</string>
+  <string name="about_official_website">Offizielle Website</string>
+  <string name="about_project_page">Projektseite</string>
   <string name="marker_migrate_introduction">Es wurde eine Backupdatei der alten Quick Bible 3 App von Yuku mit Lesezeichen, Notizen, Hervorhebungen und Stichwörter erkannt.\n\nMöchten Sie diese importieren, sodass sie in dieser App verfügbar sind?</string>
   <string name="marker_migrate_no_more">Nicht noch einmal fragen</string>
   <string name="marker_migrate_later">Nicht jetzt</string>

@@ -18,7 +18,10 @@
   <string name="pref_copyWithVerseNumbers_summary">Awali tiap ayat dengan nomornya</string>
   <string name="pref_copyWithVersionName_title">Nama versi</string>
   <string name="pref_copyWithVersionName_summary">Sebutkan singkatan dari nama versi Alkitab</string>
+  <string name="pref_copyWithShareUrl_title">URL Bagi Ayat</string>
+  <string name="pref_copyWithShareUrl_summary">Bubuhkan link ke halaman bagi ayat</string>
   <string name="pref_autoDictionaryAnalyze_title">Otomatis cek kamus</string>
   <string name="pref_autoDictionaryAnalyze_summary">Cari kata-kata yang ada di kamus pada ayat yang dipilih</string>
   <string name="pref_showHiddenVersion_title">Versi yang mungkin terbatas</string>
+  <string name="pref_selectedVerseBgColor_title">Warna latar ayat terpilih</string>
 </resources>
