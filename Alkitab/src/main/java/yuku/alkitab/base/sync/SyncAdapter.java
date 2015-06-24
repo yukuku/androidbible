@@ -429,6 +429,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			// success! Tell our world.
 			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", sr.stats.numInserts, "update_count", sr.stats.numUpdates, "delete_count", sr.stats.numDeletes);
 
+			App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
+
 			Log.d(TAG, "Final revno: " + final_revno + " Apply result: " + applyResult + " Append delta: " + append_delta);
 			SyncRecorder.saveLastSuccessTime(syncSetName, Sqlitil.nowDateTime());
 			App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
