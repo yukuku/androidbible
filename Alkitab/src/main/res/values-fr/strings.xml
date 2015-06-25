@@ -126,6 +126,7 @@
   <string name="ed_download_button">Téléchargement</string>
   <string name="ed_update_button">Mise à jour</string>
   <string name="ed_details_update_available">Mise à jour disponible</string>
+  <string name="ed_download_manager_not_enabled_prompt">Le gestionnaire de téléchargement de l\'application n\'est pas activé ou disponible.\n\nActivez-le pour télécharger des versions de la Bible.</string>
   <string name="info_terperinci">Détails</string>
   <string name="buang_dari_daftar">Effacement</string>
   <string name="edit_bookmark">Editer le signet</string>
@@ -151,6 +152,7 @@
   <string name="bmcat_notes">Notes</string>
   <string name="bmcat_highlights">Surlignés</string>
   <string name="bmcat_unlabeled_bookmarks">Marque-pages sans étiquette</string>
+  <string name="menuLabelSort">Trier les étiquettes alphabétiquement</string>
   <string name="bl_no_notes_written_yet">Aucune note écrite.\nAppuyer sur un verset pour écrire une note.</string>
   <string name="bl_no_highlighted_verses">Aucun verset surligné.\nAppuyer sur des versets pour les surligner.</string>
   <string name="bl_there_are_no_bookmarks_without_any_labels">Aucun marque-page sans étiquette.</string>
@@ -195,6 +197,7 @@
   <string name="bookmark_search">Rechercher</string>
   <string name="verse_select_one_verse_selected">1 verset sélectionné</string>
   <string name="verse_select_multiple_verse_selected">%s versets sélectionnés</string>
+  <string name="google_play_store_not_installed">Google Play Store n\'est pas installé.</string>
   <string name="goto_tab_dialer_label">Appeler</string>
   <string name="goto_tab_direct_label">Direct</string>
   <string name="goto_tab_grid_label">Réseau</string>
@@ -208,6 +211,7 @@
   <string name="sn_deep_search_enabled">Partitions, etc...</string>
   <string name="sn_songs_activity_title">Chants</string>
   <string name="sn_bookselector_all">TOUT</string>
+  <string name="sn_bookselector_more">Télécharger plus&#8230;</string>
   <string name="sn_bookselector_all_desc">Rechercher tous les livres installés.</string>
   <string name="sn_downloading_ellipsis">En cours de téléchargement&#8230;</string>
   <string name="sn_download_song_books">Téléchargement de livres de chants</string>
@@ -215,9 +219,13 @@
   <string name="sn_share_title">Partage du chant</string>
   <string name="sn_lyric_version_version">Version %s</string>
   <string name="sn_lyric_refrain_marker">Réf.</string>
+  <string name="sn_delete_song_book">Supprimer le recueil de chants</string>
+  <string name="sn_delete_song_book_explanation">Supprimer toutes les chants du recueil de chants ^1?</string>
+  <string name="sn_delete_song_book_result">^1 chants ont été supprimés à du recueil de chants ^2.</string>
   <string name="sn_update_book_explanation">Mise à jour le livre ^1 vers la version la plus récente ?</string>
   <string name="sn_update_book_confirm_button">Mise à jour</string>
   <string name="sn_update_book">Mettre à jour du recueil de chants</string>
+  <string name="sn_update_book_because_too_old">S\'il vous plaît mettez à jour ^1 vers la dernière version avant de poursuivre. Après la mise à jour, envoyez vos modifications si nécessaire.</string>
   <string name="desc_previous_day">Jour précédent</string>
   <string name="desc_next_day">Jour suivant</string>
   <string name="desc_open_bookmark">Ouvrir le signet</string>
@@ -236,6 +244,11 @@
   <string name="desc_progress_3">3ème Suivi</string>
   <string name="desc_progress_4">Quatrième Suivi</string>
   <string name="desc_progress_5">Cinquième Suivi</string>
+  <string name="desc_verse_attribute_one_bookmark">Un signet est attaché à ce verset.</string>
+  <string name="desc_verse_attribute_multiple_bookmarks">%s  signets sont attachés à ce verset.</string>
+  <string name="desc_verse_attribute_one_note">Une note est attachée à ce verset.</string>
+  <string name="desc_verse_attribute_multiple_notes">%s notes sont attachées à ce verset.</string>
+  <string name="desc_verse_attribute_progress_mark">%s est actuellement ici.</string>
   <string name="intent_filter_open_yes_file">Ouvrir un fichier YES</string>
   <string name="intent_filter_open_pdb_file">Ouvrir un fichier PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Ouvrir un fichier PDB/YES</string>
@@ -312,12 +325,14 @@
   <string name="rp_showDetails">Afficher les détails</string>
   <string name="rp_hideDetails">Masquer les détails</string>
   <string name="rp_aboutPlan">Au sujet du plan</string>
+  <string name="rp_description_with_id"><b>^1</b> (^2 jours)\n<small>ID: ^3</small>\n\n^4</string>
   <string name="rp_download_day_count_days">%s jours</string>
   <string name="rp_download_reading_plan_list_progress">Téléchargement de la liste des plans de lecture&#8230;</string>
   <string name="rp_download_reading_plan_list_failed">Echec lors du téléchargement de la liste des plans de lecture. Merci de relancer le téléchargement avec une connexion internet active.</string>
   <string name="rp_download_reading_plan_progress">Téléchargement de la liste des plans de lecture&#8230;</string>
   <string name="rp_download_reading_plan_failed">Echec lors du téléchargement de la liste des plans de lecture. Merci de relancer le téléchargement avec une connexion internet active.</string>
   <string name="rp_download_reading_plan_data_corrupted">Le plan de lecture téléchergé est corrompu. Merci de relancer le téléchargement avec une connexion internet active.</string>
+  <string name="rp_download_already_have">Vous avez déjà ce plan de lecture.</string>
   <string name="version_download_need_fonts">"La version que vous avez téléchargée exige certaines polices de caractères pour être affichée. Allez au menu \'apparence du texte\' et sélectionnez une police de caractère. Le Grec exige les polices de caractère de Ubuntu. Burmese exige Parabaik, ParabaikSans, or Myanmar3. Tamil exige Akshar. Telugu exige Suranna."</string>
   <string name="version_download_corrupted_file">Le fichier chargé semble défectueux.</string>
   <string name="menuNightMode">Mode nuit</string>
@@ -341,6 +356,7 @@
   <string name="sn_menu_copy">Copie d\'un Chant</string>
   <string name="menuPlay">Jouer</string>
   <string name="menuPause">Mettre en Pause</string>
+  <string name="left_drawer_current_reading_title">Lecture en cours</string>
   <string name="book_filter_old_testament">Ancien Testament</string>
   <string name="book_filter_old_pentateuch">Pentateuque</string>
   <string name="book_filter_old_history">Historique</string>
@@ -458,6 +474,7 @@
   <string name="marker_migrate_no_more">Ne plus demander</string>
   <string name="marker_migrate_later">Pas maintenant</string>
   <string name="marker_migrate_title">Importation d\'anciens marque-pages</string>
+  <string name="marker_migrate_file_chooser_title">Sélectionnez le fichier de sauvegarde v3</string>
   <string name="marker_migrate_no_more_confirmation">Etes-vous sûr de ne pas avoir besoin d\'importer les anciennes données ?</string>
   <string name="marker_migrate_error_opening_backup_file">Impossible d\'accéder à ce fichier de sauvegarde.</string>
   <string name="marker_migrate_import_from_newest">Oui, importation depuis la plus récente (recommandé)</string>
@@ -465,4 +482,11 @@
   <string name="marker_migrate_filename_dated">%1$s daté %2$s</string>
   <string name="announce_notif_title">%s Annonces</string>
   <string name="announce_notif_number_new_announcements">%s nouvelles annonces</string>
+  <string name="menuDictionary">Dictionnaire</string>
+  <string name="dict_open_full">Ouvrir le dictionnaire</string>
+  <string name="dict_no_results">Aucune définition trouvé pour le mot sélectionné.</string>
+  <string name="dict_download_prompt">Télécharger le \'Dictionnaire de la Bible» pour en savoir plus sur les termes de la Bible !</string>
+  <string name="dict_download_button">Télécharger</string>
+  <string name="menuGuide">Guide</string>
+  <string name="menuCommentary">Commentaire</string>
 </resources>

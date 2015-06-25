@@ -19,7 +19,10 @@
   <string name="pref_copyWithVerseNumbers_summary">Begin elke vers met sy nommer</string>
   <string name="pref_copyWithVersionName_title">Weergawe afkortings</string>
   <string name="pref_copyWithVersionName_summary">Noem die Bybel weergawe </string>
+  <string name="pref_copyWithShareUrl_title">Kort URL</string>
+  <string name="pref_copyWithShareUrl_summary">Voeg gedeelde bladsy skakel by aan dei einde van gedeelde teks </string>
   <string name="pref_autoDictionaryAnalyze_title">Outomatiese woordeboek opsoek </string>
   <string name="pref_autoDictionaryAnalyze_summary">Soek vir woordeboek woorde in gekose verse</string>
   <string name="pref_showHiddenVersion_title">Aktiveer moontlik beperkte/geslote weergawes</string>
+  <string name="pref_selectedVerseBgColor_title">Gekose vers agtergrond</string>
 </resources>

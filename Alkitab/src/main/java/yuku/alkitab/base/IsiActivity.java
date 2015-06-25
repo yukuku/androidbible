@@ -135,8 +135,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	public static final String ACTION_ACTIVE_VERSION_CHANGED = IsiActivity.class.getName() + ".action.ACTIVE_VERSION_CHANGED";
 	public static final String ACTION_NIGHT_MODE_CHANGED = IsiActivity.class.getName() + ".action.NIGHT_MODE_CHANGED";
 
-	public static final String EXTRA_CLOSE_DRAWER = "close_drawer";
-
 	private static final int REQCODE_goto = 1;
 	private static final int REQCODE_share = 7;
 	private static final int REQCODE_textAppearanceGetFonts = 9;
@@ -387,10 +385,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
 			reloadBothAttributeMaps();
-
-			if (intent.getBooleanExtra(EXTRA_CLOSE_DRAWER, false)) {
-				leftDrawer.closeDrawer();
-			}
 		}
 	};
 

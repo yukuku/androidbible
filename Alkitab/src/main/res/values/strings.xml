@@ -200,6 +200,7 @@
     <string name="verse_select_one_verse_selected">1 verse selected</string>
     <string name="verse_select_multiple_verse_selected">%s verses selected</string>
     <string name="google_play_store_not_installed">Google Play Store is not installed.</string>
+    <string name="pref_language_label_default">Default</string>
 
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Dialer</string>
@@ -259,7 +260,7 @@
     <string name="desc_verse_attribute_one_note">A note is attached to this verse.</string>
     <string name="desc_verse_attribute_multiple_notes">%s notes are attached to this verse.</string>
     <string name="desc_verse_attribute_progress_mark">%s is currently here.</string>
-    <string name="desc_progress_mark_list">List of progress markers</string>
+    <string name="desc_progress_mark_list">List of progress marks</string>
 
     <string name="intent_filter_open_yes_file">Open YES file</string>
     <string name="intent_filter_open_pdb_file">Open PDB file</string>
@@ -419,8 +420,9 @@
 	<string name="patch_text_error_no_edits">Please make some edits before sending.</string>
 	<string name="patch_text_menu_reference">Reference</string>
 	<string name="patch_text_menu_send">Send</string>
+    <string name="patch_text_open_link">Send corrections</string>
 
-	<string name="note_actionbar_edit">Edit</string>
+    <string name="note_actionbar_edit">Edit</string>
 	<string name="note_actionbar_delete">Delete</string>
 	<string name="note_actionbar_ok">Done</string>
 	<string name="note_activity_cannot_parse_verse">Sorry, we do not understand this verse link.</string>
@@ -439,6 +441,7 @@
 	<string name="sync_category_title_data_types">Data types</string>
 	<string name="pref_syncSet_mabel_enabled_title">Markers and labels</string>
 	<string name="pref_syncSet_history_enabled_title">Recent verses</string>
+	<string name="pref_syncSet_pins_enabled_title">Progress marks</string>
 	<string name="sync_menu_item_sync_now">Sync now</string>
 	<string name="sync_menu_item_sync_log">View log</string>
 	<string name="sync_sync_set_pref_summary_last_synced">Last synced %1$s, %2$s (r%3$s)</string>
@@ -498,7 +501,7 @@
 	<string name="dr_default_sound">Default sound</string>
 
 	<!-- about -->
-	<string name="about_text_desc" translatable="false" tools:ignore="AndroidLintStringFormatInvalid">100% free Bible app, licensed under Apache License 2.0</string>
+	<string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% free Bible app, licensed under Apache License 2.0</string>
 	<string name="about_translators">Translators</string>
 	<string name="about_user_guide">User\'s Guide</string>
 	<string name="about_beta_feedback">Beta Version Feedback</string>
@@ -509,6 +512,8 @@
 	<string name="about_announcements_none">Announcements (0)</string>
 	<string name="about_announcements_number">Announcements (%s)</string>
 	<string name="about_announcement_load_failed">Failed to load announcements.</string>
+    <string name="about_official_website">Official Website</string>
+    <string name="about_project_page">Project Page</string>
 
 	<!-- marker and label migration -->
 	<string name="marker_migrate_introduction">We detected a backup file from the old v3 Yuku Quick Bible that contains bookmarks, notes, highlights, and labels.\n\nDo you want to import them, so you can access them from this app?</string>

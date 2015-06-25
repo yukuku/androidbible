@@ -198,6 +198,7 @@
   <string name="verse_select_one_verse_selected">1 vers gekies</string>
   <string name="verse_select_multiple_verse_selected">%s verse gekies</string>
   <string name="google_play_store_not_installed">Google Play Store is nie geïnstalleer nie.</string>
+  <string name="pref_language_label_default">Verstek</string>
   <string name="goto_tab_dialer_label">Skakelaar</string>
   <string name="goto_tab_direct_label">Direk</string>
   <string name="goto_tab_grid_label">Ruit</string>
@@ -356,6 +357,7 @@
   <string name="sn_menu_copy">Kopieer lied/musiek</string>
   <string name="menuPlay">Speel</string>
   <string name="menuPause">Wag</string>
+  <string name="left_drawer_current_reading_title">Huidige leesstuk</string>
   <string name="book_filter_old_testament">Ou Testament</string>
   <string name="book_filter_old_pentateuch">Pentateug</string>
   <string name="book_filter_old_history">Geskiedenis</string>
@@ -388,6 +390,7 @@
   <string name="patch_text_error_no_edits">Redigeer asseblief voordat jy dit aanstuur.</string>
   <string name="patch_text_menu_reference">Verwysing</string>
   <string name="patch_text_menu_send">Stuur</string>
+  <string name="patch_text_open_link">Stuur korreksies</string>
   <string name="note_actionbar_edit">Redigeer</string>
   <string name="note_actionbar_delete">Vee uit</string>
   <string name="note_actionbar_ok">Klaar</string>
@@ -469,6 +472,8 @@
   <string name="about_announcements_none">Aankondigings (0)</string>
   <string name="about_announcements_number">Aankondigings (%s)</string>
   <string name="about_announcement_load_failed">Gefaal om aankondigings te laai.</string>
+  <string name="about_official_website">Offisiële Webwerf </string>
+  <string name="about_project_page">Projek Bladsy</string>
   <string name="marker_migrate_introduction">Ons bemerk \'n rugsteun lêer van die ou v3 Yuku Quick Bible wat boekmerke, notas, ens bevat.\n\nWil jy dit graag invoer dat jy dit kan gebruik in die nuwe weergawe?</string>
   <string name="marker_migrate_no_more">Moet nie weer vra nie</string>
   <string name="marker_migrate_later">Nie nou nie</string>

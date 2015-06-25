@@ -31,6 +31,7 @@ import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.sync.SyncRecorder;
 import yuku.alkitab.base.sync.Sync_Mabel;
+import yuku.alkitab.base.sync.Sync_Pins;
 import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.BuildConfig;
@@ -1070,7 +1071,7 @@ public class InternalDb {
 		return (int) DatabaseUtils.queryNumEntries(helper.getReadableDatabase(), Db.TABLE_ProgressMark, Db.ProgressMark.ari + " != 0");
 	}
 
-	public ProgressMark getProgressMarkByPresetId(final int preset_id) {
+	@Nullable public ProgressMark getProgressMarkByPresetId(final int preset_id) {
 		Cursor cursor = helper.getReadableDatabase().query(
 			Db.TABLE_ProgressMark,
 			null,
@@ -1088,22 +1089,40 @@ public class InternalDb {
 		}
 	}
 
-	public int updateProgressMark(ProgressMark progressMark) {
-		insertProgressMarkHistory(progressMark);
-		return helper.getWritableDatabase().update(Db.TABLE_ProgressMark, progressMarkToContentValues(progressMark), Db.ProgressMark.preset_id + "=?", new String[] {String.valueOf(progressMark.preset_id)});
-	}
+	/**
+	 * Insert a new progress mark (if preset_id is not found), or update an existing progress mark.
+	 */
+	public void insertOrUpdateProgressMark(@NonNull final ProgressMark progressMark) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
 
-	public void insertProgressMarkHistory(ProgressMark progressMark) {
-		ContentValues cv = new ContentValues();
+		final ContentValues cv = new ContentValues();
 		cv.put(Db.ProgressMarkHistory.progress_mark_preset_id, progressMark.preset_id);
 		cv.put(Db.ProgressMarkHistory.progress_mark_caption, progressMark.caption);
 		cv.put(Db.ProgressMarkHistory.ari, progressMark.ari);
 		cv.put(Db.ProgressMarkHistory.createTime, Sqlitil.toInt(progressMark.modifyTime));
-		helper.getWritableDatabase().insert(Db.TABLE_ProgressMarkHistory, null, cv);
+
+		db.beginTransaction();
+		try {
+			// the progress mark history first
+			db.insert(Db.TABLE_ProgressMarkHistory, null, cv);
+
+			final long count = DatabaseUtils.queryNumEntries(db, Db.TABLE_ProgressMark, Db.ProgressMark.preset_id + "=?", ToStringArray(progressMark.preset_id));
+			if (count > 0) {
+				db.update(Db.TABLE_ProgressMark, progressMarkToContentValues(progressMark), Db.ProgressMark.preset_id + "=?", ToStringArray(progressMark.preset_id));
+			} else {
+				db.insert(Db.TABLE_ProgressMark, null, progressMarkToContentValues(progressMark));
+			}
+
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_PINS);
 	}
 
 	public List<ProgressMarkHistory> listProgressMarkHistoryByPresetId(final int preset_id) {
-		final Cursor c = helper.getReadableDatabase().rawQuery("select * from " + Db.TABLE_ProgressMarkHistory + " where " + Db.ProgressMarkHistory.progress_mark_preset_id + "=? order by " + Db.ProgressMarkHistory.createTime + " asc", new String[] {String.valueOf(preset_id)});
+		final Cursor c = helper.getReadableDatabase().rawQuery("select * from " + Db.TABLE_ProgressMarkHistory + " where " + Db.ProgressMarkHistory.progress_mark_preset_id + "=? order by " + Db.ProgressMarkHistory.createTime + " asc", new String[]{String.valueOf(preset_id)});
 		try {
 			final List<ProgressMarkHistory> res = new ArrayList<>();
 			while (c.moveToNext()) {
@@ -1334,7 +1353,7 @@ public class InternalDb {
 		}
 	}
 
-	@Nullable public int getRevnoFromSyncShadowBySyncSetName(final String syncSetName) {
+	public int getRevnoFromSyncShadowBySyncSetName(final String syncSetName) {
 		final SQLiteDatabase db = helper.getReadableDatabase();
 		final Cursor c = db.query(Table.SyncShadow.tableName(), Array(
 			Table.SyncShadow.revno.name()
@@ -1457,6 +1476,76 @@ public class InternalDb {
 			return Sync.ApplyAppendDeltaResult.ok;
 		} finally {
 			Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_MABEL, false);
+			db.endTransaction();
+		}
+	}
+
+	/**
+	 * Makes the current database updated with patches (append delta) from server.
+	 * Also updates the shadow (both data and the revno).
+	 * @return {@link yuku.alkitab.base.sync.Sync.ApplyAppendDeltaResult#ok} if database and sync shadow are updated. Otherwise else.
+	 */
+	@NonNull public Sync.ApplyAppendDeltaResult applyPinsAppendDelta(final int final_revno, @NonNull final Sync.Delta<Sync_Pins.Content> append_delta, @NonNull final List<Sync.Entity<Sync_Pins.Content>> entitiesBeforeSync, @NonNull final String simpleTokenBeforeSync) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+		db.beginTransaction();
+		Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_PINS, true);
+		try {
+			{ // if the current entities are not the same as the ones had when contacting server, reject this append delta.
+				final List<Sync.Entity<Sync_Pins.Content>> currentEntities = Sync_Pins.getEntitiesFromCurrent();
+				if (!Sync.entitiesEqual(currentEntities, entitiesBeforeSync)) {
+					return Sync.ApplyAppendDeltaResult.dirty_entities;
+				}
+			}
+
+			{ // if the current simpleToken has changed (sync user logged off or changed), reject this append delta
+				final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
+				if (!U.equals(simpleToken, simpleTokenBeforeSync)) {
+					return Sync.ApplyAppendDeltaResult.dirty_sync_account;
+				}
+			}
+
+			for (final Sync.Operation<Sync_Pins.Content> o : append_delta.operations) {
+				switch (o.opkind) {
+					case del:
+					case add:
+						return Sync.ApplyAppendDeltaResult.unsupported_operation;
+					case mod:
+						switch (o.kind) {
+							case Sync.Entity.KIND_PINS: {
+								// the whole logic to update all pins with the ones received from server (all pins in one entity)
+								final Sync_Pins.Content content = o.content;
+								final List<Sync_Pins.Content.Pin> pins = content.pins;
+
+								for (final Sync_Pins.Content.Pin pin : pins) {
+									final int preset_id = pin.preset_id;
+
+									ProgressMark pm = getProgressMarkByPresetId(preset_id);
+									if (pm == null) {
+										pm = new ProgressMark();
+										pm.preset_id = pin.preset_id;
+									}
+									pm.ari = pin.ari;
+									pm.caption = pin.caption;
+									pm.modifyTime = Sqlitil.toDate(pin.modifyTime);
+									insertOrUpdateProgressMark(pm);
+								}
+							} break;
+							default:
+								return Sync.ApplyAppendDeltaResult.unknown_kind;
+						}
+						break;
+				}
+			}
+
+			// if we reach here, the local database has been updated with the append delta.
+			final SyncShadow ss = Sync_Pins.shadowFromEntities(Sync_Pins.getEntitiesFromCurrent(), final_revno);
+			insertOrUpdateSyncShadowBySyncSetName(ss);
+
+			db.setTransactionSuccessful();
+
+			return Sync.ApplyAppendDeltaResult.ok;
+		} finally {
+			Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_PINS, false);
 			db.endTransaction();
 		}
 	}

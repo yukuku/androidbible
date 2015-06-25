@@ -2,7 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <string-array name="pref_language_labels" tools:ignore="MissingTranslation">
-        <item>Default</item>
+        <item>@string/pref_language_label_default</item>
         <item>Afrikaans</item>
         <item>Bahasa Indonesia</item>
         <item>Čeština</item>
@@ -41,5 +41,4 @@
         <item>zh-CN</item>
         <item>zh-TW</item>
     </string-array>
-
 </resources>

@@ -18,7 +18,10 @@
   <string name="pref_copyWithVerseNumbers_summary">Rozpoczynaj każdy wers od numeru</string>
   <string name="pref_copyWithVersionName_title">Skróty przekładu</string>
   <string name="pref_copyWithVersionName_summary">Podawaj nazwę przekładu</string>
+  <string name="pref_copyWithShareUrl_title">Podziel się linkiem</string>
+  <string name="pref_copyWithShareUrl_summary">Dodaj link do strony na końcu kopiowanego tekstu lub tekstu, którym się dzielisz</string>
   <string name="pref_autoDictionaryAnalyze_title">Automatyczne zaglądanie do słownika</string>
   <string name="pref_autoDictionaryAnalyze_summary">Zaglądaj do słownika po słowa z zaznaczanego wersu</string>
   <string name="pref_showHiddenVersion_title">Uaktywnia wersje, z możliwymi ograniczeniami</string>
+  <string name="pref_selectedVerseBgColor_title">Tło dla zaznaczonego tekstu</string>
 </resources>

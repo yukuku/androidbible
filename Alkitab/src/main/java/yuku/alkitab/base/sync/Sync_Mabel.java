@@ -255,8 +255,8 @@ public class Sync_Mabel {
 			if (title != null) sb.append(q(title)).append(' ');
 			if (ordering != null) sb.append(ordering).append(' ');
 			if (backgroundColor != null) sb.append(backgroundColor).append(' ');
-			if (marker_gid != null) sb.append(marker_gid.substring(0, 10)).append(' ');
-			if (label_gid != null) sb.append(label_gid.substring(0, 10)).append(' ');
+			if (marker_gid != null) sb.append(marker_gid.length() <= 10? marker_gid: marker_gid.substring(0, 10)).append(' ');
+			if (label_gid != null) sb.append(label_gid.length() <= 10? label_gid: label_gid.substring(0, 10)).append(' ');
 
 			sb.setLength(sb.length() - 1);
 			sb.append('}');

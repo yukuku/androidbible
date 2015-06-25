@@ -17,8 +17,8 @@ android {
         applicationId 'yuku.alkitab.debug'
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 14000223
-        versionName '4.2.0-beta3'
+        versionCode 14000224
+        versionName '4.2.0-beta4'
         multiDexEnabled true
     }
     buildTypes {
@@ -44,6 +44,12 @@ android {
     }
 }
 
+repositories {
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':AlkitabFeedback')
@@ -54,7 +60,6 @@ dependencies {
     compile project(':BiblePlus')
     compile project(':DragSortListView')
     compile project(':KpriModel')
-    compile project(':KpriViewerLib')
     compile project(':BintexReader')
     compile project(':BintexWriter')
     compile project(':Afw')
@@ -64,8 +69,8 @@ dependencies {
     compile project(':ImportedDesktopVerseUtil')
     compile 'com.android.support:support-v4:22.2.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.squareup.okhttp:okhttp:2.4.0'
-    compile 'com.squareup.okhttp:okhttp-urlconnection:2.4.0'
+    compile 'com.squareup.okhttp:okhttp:2.5.0-SNAPSHOT'
+    compile 'com.squareup.okhttp:okhttp-urlconnection:2.5.0-SNAPSHOT'
     compile 'net.sf.trove4j:trove4j:3.0.3'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.google.android.gms:play-services-analytics:7.5.0'

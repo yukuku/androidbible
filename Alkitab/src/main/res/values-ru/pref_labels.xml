@@ -18,7 +18,10 @@
   <string name="pref_copyWithVerseNumbers_summary">Начинать каждый стих с его номера</string>
   <string name="pref_copyWithVersionName_title">Аббревиатуры переводов</string>
   <string name="pref_copyWithVersionName_summary">Указывать аббревиатуру перевода Библии</string>
+  <string name="pref_copyWithShareUrl_title">Поделиться ссылкой</string>
+  <string name="pref_copyWithShareUrl_summary">Добавить ссылку на страницу в конце скопированного или отсылаемого текста</string>
   <string name="pref_autoDictionaryAnalyze_title">Автоматический поиск в словаре</string>
   <string name="pref_autoDictionaryAnalyze_summary">Искать в словаре слова из выбранных стихов</string>
   <string name="pref_showHiddenVersion_title">Разрешить версии, распространение которых может быть ограничено</string>
+  <string name="pref_selectedVerseBgColor_title">Выберите фон для стиха</string>
 </resources>

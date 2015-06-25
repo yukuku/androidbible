@@ -32,11 +32,9 @@ public class VerseItem extends LinearLayout implements Checkable {
 
 	private boolean checked;
 	private static Paint checkedPaintSolid;
-	private static Paint checkedPaintStroke;
 	private boolean collapsed;
 	private boolean dragHover;
 	private Drawable dragHoverBg;
-	private static final float[] tmp_float3 = new float[3];
 
 	public VerseTextView lText;
 	public TextView lVerseNumber;
@@ -96,35 +94,13 @@ public class VerseItem extends LinearLayout implements Checkable {
 			if (solid == null) {
 				//noinspection deprecation
 				checkedPaintSolid = solid = new Paint();
-				solid.setColor(Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default));
+				final int colorRgb = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default);
+				final int color = ColorUtils.setAlphaComponent(colorRgb, 0xa0);
+				solid.setColor(color);
 				solid.setStyle(Paint.Style.FILL);
 			}
 
 			canvas.drawRect(0, 0, w, h, solid);
-
-			Paint stroke = VerseItem.checkedPaintStroke;
-			if (stroke == null) {
-				//noinspection deprecation
-				checkedPaintStroke = stroke = new Paint();
-
-				// calculate stroke color based on solid color
-				final int solidColor = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default);
-				final double lum = ColorUtils.calculateLuminance(solidColor);
-				final float[] hsl = VerseItem.tmp_float3;
-				ColorUtils.colorToHSL(solidColor, hsl);
-				if (lum > 0.5) {
-					hsl[2] -= 0.3f;
-				} else {
-					hsl[2] += 0.3f;
-				}
-				final int strokeColor = ColorUtils.HSLToColor(hsl); // automatically set alpha to 0xff
-
-				stroke.setColor(strokeColor);
-				stroke.setStyle(Paint.Style.STROKE);
-				stroke.setStrokeWidth(getResources().getDisplayMetrics().density * 1);
-			}
-
-			canvas.drawRect(0, 0, w, h, stroke);
 		}
 
 		if (dragHover) {
@@ -143,7 +119,6 @@ public class VerseItem extends LinearLayout implements Checkable {
 
 	public static void invalidateSelectedVersePaints() {
 		checkedPaintSolid = null;
-		checkedPaintStroke = null;
 	}
 
 	@Override
@@ -220,11 +195,9 @@ public class VerseItem extends LinearLayout implements Checkable {
 				final ProgressMark progressMark = S.getDb().getProgressMarkByPresetId(preset_id);
 				progressMark.ari = this.ari;
 				progressMark.modifyTime = new Date();
-				S.getDb().updateProgressMark(progressMark);
+				S.getDb().insertOrUpdateProgressMark(progressMark);
 
-				final Intent intent = new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED);
-				intent.putExtra(IsiActivity.EXTRA_CLOSE_DRAWER, true);
-				App.getLbm().sendBroadcast(intent);
+				App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
 
 				return true;
 		}

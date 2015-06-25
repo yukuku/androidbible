@@ -198,6 +198,7 @@
   <string name="verse_select_one_verse_selected">1 ayat dipilih</string>
   <string name="verse_select_multiple_verse_selected">%s ayat dipilih</string>
   <string name="google_play_store_not_installed">Google Play Store tidak terpasang.</string>
+  <string name="pref_language_label_default">Semula</string>
   <string name="goto_tab_dialer_label">Telusuri</string>
   <string name="goto_tab_direct_label">Ketik</string>
   <string name="goto_tab_grid_label">Pilih</string>
@@ -390,6 +391,7 @@
   <string name="patch_text_error_no_edits">Lakukanlah beberapa perubahan sebelum mengirim.</string>
   <string name="patch_text_menu_reference">Referensi</string>
   <string name="patch_text_menu_send">Kirim</string>
+  <string name="patch_text_open_link">Kirim perbaikan</string>
   <string name="note_actionbar_edit">Edit</string>
   <string name="note_actionbar_delete">Hapus</string>
   <string name="note_actionbar_ok">Simpan</string>
@@ -471,6 +473,8 @@
   <string name="about_announcements_none">Pengumuman (0)</string>
   <string name="about_announcements_number">Pengumuman (%s)</string>
   <string name="about_announcement_load_failed">Gagal memuat pengumuman.</string>
+  <string name="about_official_website">Situs Resmi</string>
+  <string name="about_project_page">Halaman Proyek</string>
   <string name="marker_migrate_introduction">Terdeteksi file cadangan dari Alkitab (Quick Bible) v3 lama yang mengandung pembatas buku, catatan, sorotan, dan label.\n\nMaukah Anda mempergunakan isi file itu?</string>
   <string name="marker_migrate_no_more">Jangan tanyakan lagi</string>
   <string name="marker_migrate_later">Lain kali</string>

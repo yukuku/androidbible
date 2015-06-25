@@ -5,11 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.TextView;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import yuku.afw.V;
 import yuku.alkitab.base.App;
@@ -24,29 +22,21 @@ import yuku.alkitabintegration.display.Launcher;
 import java.util.Locale;
 
 public class HelpActivity extends BaseActivity {
-	private static final String EXTRA_page = "customPage";
-	private static final String EXTRA_showMessagePanel = "showMessagePanel";
-	private static final String EXTRA_message = "message";
-	private static final String EXTRA_okIntent = "okIntent";
+	private static final String EXTRA_page = "page";
+	private static final String EXTRA_overrideTitle = "overrideTitle";
 	private static final String EXTRA_announcementIds = "announcementIds";
 
 	WebView webview;
-	View bOk;
-	View bCancel;
-	Intent okIntent;
 	long[] announcementIds;
 
-	public static Intent createIntent(String page) {
-		return createIntent(page, false, null, null);
+	public static Intent createIntent(final String page) {
+		return createIntent(page, null);
 	}
 
-	public static Intent createIntent(String page, boolean showMessagePanel, String message, Intent okIntent) {
-		Intent res = new Intent(App.context, HelpActivity.class);
-		res.putExtra(EXTRA_page, page);
-		res.putExtra(EXTRA_showMessagePanel, showMessagePanel);
-		res.putExtra(EXTRA_message, message);
-		res.putExtra(EXTRA_okIntent, okIntent);
-		return res;
+	public static Intent createIntent(final String page, final String overrideTitle) {
+		return new Intent(App.context, HelpActivity.class)
+			.putExtra(EXTRA_page, page)
+			.putExtra(EXTRA_overrideTitle, overrideTitle);
 	}
 
 	public static Intent createViewAnnouncementIntent(final long[] announcementIds) {
@@ -61,30 +51,18 @@ public class HelpActivity extends BaseActivity {
 		setContentView(R.layout.activity_help);
 
 		webview = V.get(this, R.id.webView);
-		bOk = V.get(this, R.id.bOk);
-		bCancel = V.get(this, R.id.bCancel);
-		View panelFaqOnly = V.get(this, R.id.panelFaqOnly);
-		TextView tMessage = V.get(this, R.id.tMessage);
 
-		WebSettings webSettings = webview.getSettings();
+		final WebSettings webSettings = webview.getSettings();
 		//noinspection deprecation
 		webSettings.setSavePassword(false);
 		webSettings.setSaveFormData(false);
 		webSettings.setJavaScriptEnabled(true);
 
-		bOk.setOnClickListener(bOk_click);
-		bCancel.setOnClickListener(bCancel_click);
-
 		final String page = getIntent().getStringExtra(EXTRA_page);
-		okIntent = getIntent().getParcelableExtra(EXTRA_okIntent);
-		announcementIds = getIntent().getLongArrayExtra(EXTRA_announcementIds);
+		final String overrideTitle = getIntent().getStringExtra(EXTRA_overrideTitle);
 
-		final String message = getIntent().getStringExtra(EXTRA_message);
-		tMessage.setText(message);
-
-		final boolean showMessagePanel = getIntent().getBooleanExtra(EXTRA_showMessagePanel, false);
-		if (!showMessagePanel) {
-			panelFaqOnly.setVisibility(View.GONE);
+		if (overrideTitle != null) {
+			setTitle(overrideTitle);
 		}
 
 		if (page != null) {
@@ -157,7 +135,9 @@ public class HelpActivity extends BaseActivity {
 			public void onPageFinished(final WebView view, final String url) {
 				super.onPageFinished(view, url);
 
-				setTitle(view.getTitle());
+				if (overrideTitle == null) {
+					setTitle(view.getTitle());
+				}
 
 				if (announcementIds != null) {
 					Announce.markAsRead(announcementIds);
@@ -165,15 +145,4 @@ public class HelpActivity extends BaseActivity {
 			}
 		});
 	}
-	
-	View.OnClickListener bOk_click = new View.OnClickListener() {
-		@Override public void onClick(View v) {
-			if (okIntent != null) {
-				startActivity(okIntent);
-			}
-			finish();
-		}
-	};
-
-	View.OnClickListener bCancel_click = v -> finish();
 }
