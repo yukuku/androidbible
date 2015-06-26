@@ -57,6 +57,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftDrawer.ReadingPlan.Listener {
 	public static final String TAG = ReadingPlanActivity.class.getSimpleName();
 
+	public static final String ACTION_READING_PLAN_PROGRESS_CHANGED = ReadingPlanActivity.class.getName() + ".action.READING_PLAN_PROGRESS_CHANGED";
+
 	private static final int REQCODE_openList = 1;
 
 	DrawerLayout drawerLayout;

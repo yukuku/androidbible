@@ -15,6 +15,11 @@
 
 		<CheckBoxPreference
 			android:defaultValue="true"
+			android:key="syncSet_rp_enabled"
+			android:title="@string/pref_syncSet_rp_enabled_title" />
+
+		<CheckBoxPreference
+			android:defaultValue="true"
 			android:key="syncSet_history_enabled"
 			android:title="@string/pref_syncSet_history_enabled_title" />
 

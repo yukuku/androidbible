@@ -23,6 +23,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.MarkerListActivity;
 import yuku.alkitab.base.ac.MarkersActivity;
+import yuku.alkitab.base.ac.ReadingPlanActivity;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.History;
@@ -98,6 +99,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 				case SyncShadow.SYNC_SET_PINS:
 					syncPins(syncResult);
 					break;
+				case SyncShadow.SYNC_SET_RP:
+					syncRp(syncResult);
+					break;
 			}
 		} finally {
 			Log.d(TAG, "Sync result: " + syncResult);
@@ -119,6 +123,23 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			res.addAll(syncSetsRunning);
 		}
 		return res;
+	}
+
+	/** Based on operations in append_delta, fill in SyncStats */
+	static <C> void fillInStatsFromAppendDelta(final Sync.Delta<C> append_delta, final SyncResult sr) {
+		for (final Sync.Operation<C> o : append_delta.operations) {
+			switch (o.opkind) {
+				case add:
+					sr.stats.numInserts++;
+					break;
+				case mod:
+					sr.stats.numUpdates++;
+					break;
+				case del:
+					sr.stats.numDeletes++;
+					break;
+			}
+		}
 	}
 
 	void syncMabel(final SyncResult sr) {
@@ -158,8 +179,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 		Log.d(TAG, "@@syncMabel step 30: doing actual http request in this thread (" + Thread.currentThread().getId() + ":" + Thread.currentThread().toString() + ")");
 		try {
-			// arbritrary amount of time may pass on the next line. It is possible that marker/labels be modified during this operation.
-			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName);
+			// arbritrary amount of time may pass on the next line. It is possible for the current data to be modified during this operation.
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "serverPrefix", Sync.getEffectiveServerPrefix());
 			final long startTime = System.currentTimeMillis();
 			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
 			Log.d(TAG, "@@syncMabel server response string: " + response_s);
@@ -195,20 +216,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 				return;
 			}
 
-			// Based on operations in append_delta, fill in SyncStats
-			for (final Sync.Operation<Sync_Mabel.Content> o : append_delta.operations) {
-				switch (o.opkind) {
-					case add:
-						sr.stats.numInserts++;
-						break;
-					case mod:
-						sr.stats.numUpdates++;
-						break;
-					case del:
-						sr.stats.numDeletes++;
-						break;
-				}
-			}
+			fillInStatsFromAppendDelta(append_delta, sr);
 
 			// success! Tell our world.
 			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", sr.stats.numInserts, "update_count", sr.stats.numUpdates, "delete_count", sr.stats.numDeletes);
@@ -268,8 +276,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 		Log.d(TAG, "@@syncHistory step 30: doing actual http request in this thread (" + Thread.currentThread().getId() + ":" + Thread.currentThread().toString() + ")");
 		try {
-			// arbritrary amount of time may pass on the next line. It is possible that marker/labels be modified during this operation.
-			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName);
+			// arbritrary amount of time may pass on the next line. It is possible for the current data to be modified during this operation.
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "serverPrefix", Sync.getEffectiveServerPrefix());
 			final long startTime = System.currentTimeMillis();
 			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
 			Log.d(TAG, "@@syncHistory server response string: " + response_s);
@@ -305,20 +313,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 				return;
 			}
 
-			// Based on operations in append_delta, fill in SyncStats
-			for (final Sync.Operation<Sync_History.Content> o : append_delta.operations) {
-				switch (o.opkind) {
-					case add:
-						sr.stats.numInserts++;
-						break;
-					case mod:
-						sr.stats.numUpdates++;
-						break;
-					case del:
-						sr.stats.numDeletes++;
-						break;
-				}
-			}
+			fillInStatsFromAppendDelta(append_delta, sr);
 
 			// success! Tell our world.
 			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", sr.stats.numInserts, "update_count", sr.stats.numUpdates, "delete_count", sr.stats.numDeletes);
@@ -374,8 +369,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 		Log.d(TAG, "@@syncPins step 30: doing actual http request in this thread (" + Thread.currentThread().getId() + ":" + Thread.currentThread().toString() + ")");
 		try {
-			// arbritrary amount of time may pass on the next line. It is possible that marker/labels be modified during this operation.
-			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName);
+			// arbritrary amount of time may pass on the next line. It is possible for the current data to be modified during this operation.
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "serverPrefix", Sync.getEffectiveServerPrefix());
 			final long startTime = System.currentTimeMillis();
 			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
 			Log.d(TAG, "@@syncPins server response string: " + response_s);
@@ -411,20 +406,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 				return;
 			}
 
-			// Based on operations in append_delta, fill in SyncStats
-			for (final Sync.Operation<Sync_Pins.Content> o : append_delta.operations) {
-				switch (o.opkind) {
-					case add:
-						sr.stats.numInserts++;
-						break;
-					case mod:
-						sr.stats.numUpdates++;
-						break;
-					case del:
-						sr.stats.numDeletes++;
-						break;
-				}
-			}
+			fillInStatsFromAppendDelta(append_delta, sr);
 
 			// success! Tell our world.
 			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", sr.stats.numInserts, "update_count", sr.stats.numUpdates, "delete_count", sr.stats.numDeletes);
@@ -441,6 +423,101 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 		} catch (JsonIOException | IOException e) {
 			Log.w(TAG, "@@syncPins exception when executing http call", e);
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_io, syncSetName);
+			sr.stats.numIoExceptions++;
+		}
+	}
+	
+	void syncRp(final SyncResult sr) {
+		final String syncSetName = SyncShadow.SYNC_SET_RP;
+
+		final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
+		if (simpleToken == null) {
+			sr.stats.numAuthExceptions++;
+			SyncRecorder.log(SyncRecorder.EventKind.error_no_simple_token, syncSetName);
+			return;
+		}
+
+		Log.d(TAG, "@@syncRp step 10: gathering client state");
+		final Pair<Sync_Rp.ClientState, List<Sync.Entity<Sync_Rp.Content>>> pair = Sync_Rp.getClientStateAndCurrentEntities();
+		final Sync_Rp.ClientState clientState = pair.first;
+		final List<Sync.Entity<Sync_Rp.Content>> entitiesBeforeSync = pair.second;
+
+		SyncRecorder.log(SyncRecorder.EventKind.current_entities_gathered, syncSetName, "base_revno", clientState.base_revno, "client_delta_operations_size", clientState.delta.operations.size(), "client_entities_size", entitiesBeforeSync.size());
+
+		final String serverPrefix = Sync.getEffectiveServerPrefix();
+		Log.d(TAG, "@@syncRp step 20: building http request. Server prefix: " + serverPrefix);
+		final RequestBody requestBody = new FormEncodingBuilder()
+			.add("simpleToken", simpleToken)
+			.add("syncSetName", syncSetName)
+			.add("installation_id", U.getInstallationId())
+			.add("clientState", App.getDefaultGson().toJson(clientState))
+			.build();
+
+		final Call call = App.getOkHttpClient().newCall(
+			new Request.Builder()
+				.url(serverPrefix + "/sync/api/sync")
+				.post(requestBody)
+				.build()
+		);
+
+
+		Log.d(TAG, "@@syncRp step 30: doing actual http request in this thread (" + Thread.currentThread().getId() + ":" + Thread.currentThread().toString() + ")");
+		try {
+			// arbritrary amount of time may pass on the next line. It is possible for the current data to be modified during this operation.
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "serverPrefix", Sync.getEffectiveServerPrefix());
+			final long startTime = System.currentTimeMillis();
+			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
+			Log.d(TAG, "@@syncRp server response string: " + response_s);
+			final Sync_Rp.SyncResponseJson response = App.getDefaultGson().fromJson(response_s, Sync_Rp.SyncResponseJson.class);
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, syncSetName, "duration_ms", System.currentTimeMillis() - startTime);
+
+			if (!response.success) {
+				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_not_success, syncSetName, "message", response.message);
+				Log.d(TAG, "@@syncRp server response is not success. Message: " + response.message);
+				sr.stats.numIoExceptions++;
+				return;
+			}
+
+			final int final_revno = response.final_revno;
+			final Sync.Delta<Sync_Rp.Content> append_delta = response.append_delta;
+
+			if (append_delta == null) {
+				Log.w(TAG, "@@syncRp append delta is null. This should not happen.");
+				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_error_append_delta_null, syncSetName);
+				sr.stats.numIoExceptions++;
+				return;
+			}
+
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_got_success_data, syncSetName, "final_revno", final_revno, "append_delta_operations_size", append_delta.operations.size());
+
+			final Sync.ApplyAppendDeltaResult applyResult = S.getDb().applyRpAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
+
+			SyncRecorder.log(SyncRecorder.EventKind.apply_result, syncSetName, "apply_result", applyResult.name());
+
+			if (applyResult != Sync.ApplyAppendDeltaResult.ok) {
+				Log.w(TAG, "@@syncRp append delta result is not ok, but " + applyResult);
+				sr.stats.numIoExceptions++;
+				return;
+			}
+
+			fillInStatsFromAppendDelta(append_delta, sr);
+
+			// success! Tell our world.
+			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", sr.stats.numInserts, "update_count", sr.stats.numUpdates, "delete_count", sr.stats.numDeletes);
+
+			App.getLbm().sendBroadcast(new Intent(ReadingPlanActivity.ACTION_READING_PLAN_PROGRESS_CHANGED));
+
+			Log.d(TAG, "Final revno: " + final_revno + " Apply result: " + applyResult + " Append delta: " + append_delta);
+			SyncRecorder.saveLastSuccessTime(syncSetName, Sqlitil.nowDateTime());
+			App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
+		} catch (JsonSyntaxException e) {
+			Log.w(TAG, "@@syncRp exception when parsing json from server", e);
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, syncSetName);
+			sr.stats.numParseExceptions++;
+
+		} catch (JsonIOException | IOException e) {
+			Log.w(TAG, "@@syncRp exception when executing http call", e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_io, syncSetName);
 			sr.stats.numIoExceptions++;
 		}

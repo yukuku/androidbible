@@ -7,11 +7,14 @@ public class SyncShadow {
 	public static final String SYNC_SET_HISTORY = "history";
 	/** Pins (progress marks) */
 	public static final String SYNC_SET_PINS = "pins";
+	/** Reading plan progress */
+	public static final String SYNC_SET_RP = "rp";
 
 	public static final String[] ALL_SYNC_SET_NAMES = {
 		SYNC_SET_MABEL,
 		SYNC_SET_HISTORY,
 		SYNC_SET_PINS,
+		SYNC_SET_RP,
 	};
 
 	public String syncSetName;
