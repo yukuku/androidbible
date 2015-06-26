@@ -268,7 +268,7 @@ public class Sync {
 			.build();
 
 		try {
-			final Call call = App.getOkHttpClient().newCall(
+			final Call call = App.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
 					.url(getEffectiveServerPrefix() + "/sync/api/register_gcm_client")
 					.post(requestBody)
@@ -340,7 +340,7 @@ public class Sync {
 			.build();
 
 		try {
-			final Call call = App.getOkHttpClient().newCall(
+			final Call call = App.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
 					.url(getEffectiveServerPrefix() + "/sync/api/create_own_user")
 					.post(requestBody)
@@ -374,7 +374,7 @@ public class Sync {
 			.build();
 
 		try {
-			final Call call = App.getOkHttpClient().newCall(
+			final Call call = App.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
 					.url(getEffectiveServerPrefix() + "/sync/api/login_own_user")
 					.post(requestBody)
@@ -406,7 +406,7 @@ public class Sync {
 			.build();
 
 		try {
-			final Call call = App.getOkHttpClient().newCall(
+			final Call call = App.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
 					.url(getEffectiveServerPrefix() + "/sync/api/forgot_password")
 					.post(requestBody)
@@ -438,7 +438,7 @@ public class Sync {
 			.build();
 
 		try {
-			final Call call = App.getOkHttpClient().newCall(
+			final Call call = App.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
 					.url(getEffectiveServerPrefix() + "/sync/api/change_password")
 					.post(requestBody)

@@ -216,7 +216,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 			.add("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 
-		final Call call = App.getOkHttpClient().newCall(
+		final Call call = App.getLongTimeoutOkHttpClient().newCall(
 			new Request.Builder()
 				.url(Sync.getEffectiveServerPrefix() + "/sync/api/sync")
 				.post(requestBody)

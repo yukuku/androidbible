@@ -169,7 +169,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			.addFormDataPart("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 
-		final Call call = App.getOkHttpClient().newCall(
+		final Call call = App.getLongTimeoutOkHttpClient().newCall(
 			new Request.Builder()
 				.url(serverPrefix + "/sync/api/sync")
 				.post(requestBody)
@@ -266,7 +266,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			.add("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 
-		final Call call = App.getOkHttpClient().newCall(
+		final Call call = App.getLongTimeoutOkHttpClient().newCall(
 			new Request.Builder()
 				.url(serverPrefix + "/sync/api/sync")
 				.post(requestBody)
@@ -359,7 +359,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			.add("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 
-		final Call call = App.getOkHttpClient().newCall(
+		final Call call = App.getLongTimeoutOkHttpClient().newCall(
 			new Request.Builder()
 				.url(serverPrefix + "/sync/api/sync")
 				.post(requestBody)
@@ -454,7 +454,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			.add("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 
-		final Call call = App.getOkHttpClient().newCall(
+		final Call call = App.getLongTimeoutOkHttpClient().newCall(
 			new Request.Builder()
 				.url(serverPrefix + "/sync/api/sync")
 				.post(requestBody)
