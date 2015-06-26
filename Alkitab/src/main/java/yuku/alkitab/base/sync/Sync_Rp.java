@@ -98,7 +98,7 @@ public class Sync_Rp {
 			content.name = info.name;
 			final Set<Integer> done = content.done = new LinkedHashSet<>();
 
-			final IntArrayList readingCodes = S.getDb().getAllReadingCodesByReadingPlanId(info.id);
+			final IntArrayList readingCodes = S.getDb().getAllReadingCodesByReadingPlanName(info.name);
 			for (int i = 0, len = readingCodes.size(); i < len; i++) {
 				done.add(readingCodes.get(i));
 			}

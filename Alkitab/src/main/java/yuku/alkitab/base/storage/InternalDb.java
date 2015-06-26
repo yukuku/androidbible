@@ -1179,9 +1179,9 @@ public class InternalDb {
 		return helper.getWritableDatabase().insert(Db.TABLE_ReadingPlan, null, cv);
 	}
 
-	public void insertReadingPlanProgress(final long readingPlanId, final int readingCode, final long checkTime) {
+	public void insertReadingPlanProgress(final String readingPlanName, final int readingCode, final long checkTime) {
 		final ContentValues cv = new ContentValues();
-		cv.put(Db.ReadingPlanProgress.reading_plan_id, readingPlanId);
+		cv.put(Db.ReadingPlanProgress.reading_plan_name, readingPlanName);
 		cv.put(Db.ReadingPlanProgress.reading_code, readingCode);
 		cv.put(Db.ReadingPlanProgress.checkTime, checkTime);
 		helper.getWritableDatabase().insert(Db.TABLE_ReadingPlanProgress, null, cv);
@@ -1189,20 +1189,23 @@ public class InternalDb {
 		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
 	}
 
-	public void deleteReadingPlanProgress(final long readingPlanId, final int readingCode) {
-		helper.getWritableDatabase().delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_id + "=? AND " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(readingPlanId, readingCode));
+	public void deleteReadingPlanProgress(final String readingPlanName, final int readingCode) {
+		helper.getWritableDatabase().delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_name + "=? AND " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(readingPlanName, readingCode));
 
 		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
 	}
 
-	public IntArrayList getReadingPlanProgressId(final long readingPlanId, final int readingCode) {
-		IntArrayList res = new IntArrayList();
-		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlanProgress, new String[] {"_id"}, Db.ReadingPlanProgress.reading_plan_id + "=? AND " + Db.ReadingPlanProgress.reading_code + "=?", new String[] {String.valueOf(readingPlanId), String.valueOf(readingCode)}, null, null, null);
-		while (c.moveToNext()) {
-			res.add(c.getInt(0));
+	/**
+	 * @return 0 if not found
+	 */
+	public int getReadingPlanProgressId(final String readingPlanName, final int readingCode) {
+		try (Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlanProgress, Array("_id"), Db.ReadingPlanProgress.reading_plan_name + "=? AND " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(readingPlanName, readingCode), null, null, null)) {
+			if (c.moveToNext()) {
+				return c.getInt(0);
+			} else {
+				return 0;
+			}
 		}
-		c.close();
-		return res;
 	}
 
 	public List<ReadingPlan.ReadingPlanInfo> listAllReadingPlanInfo() {
@@ -1237,17 +1240,17 @@ public class InternalDb {
 		}
 	}
 
-	public IntArrayList getAllReadingCodesByReadingPlanId(long id) {
+	public IntArrayList getAllReadingCodesByReadingPlanName(final String readingPlanName) {
 		IntArrayList res = new IntArrayList();
 		try (Cursor c = helper.getReadableDatabase().query(
 			Db.TABLE_ReadingPlanProgress,
 			Array(Db.ReadingPlanProgress.reading_code),
-			Db.ReadingPlanProgress.reading_plan_id + "=?",
-			ToStringArray(id),
+			Db.ReadingPlanProgress.reading_plan_name + "=?",
+			Array(readingPlanName),
 			null,
 			null,
-			Db.ReadingPlanProgress.reading_plan_id + " asc")
-		) {
+			Db.ReadingPlanProgress.reading_code + " asc"
+		)) {
 			while (c.moveToNext()) {
 				res.add(c.getInt(0));
 			}
@@ -1596,15 +1599,14 @@ public class InternalDb {
 				switch (o.opkind) {
 					case del: {
 						final Sync_Rp.Content content = o.content;
-						final long id = DatabaseUtils.longForQuery(db, "select _id from " + Db.TABLE_ReadingPlan + " where " + Db.ReadingPlan.name + "=?", Array(content.name));
-						db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_id + "=?", ToStringArray(id));
+						db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_name + "=?", Array(content.name));
 					} break;
 					case add:
 					case mod: {
 						// the whole logic to update all pins with the ones received from server (all pins in one entity)
 						final Sync_Rp.Content content = o.content;
-						final long id = DatabaseUtils.longForQuery(db, "select _id from " + Db.TABLE_ReadingPlan + " where " + Db.ReadingPlan.name + "=?", Array(content.name));
-						final IntArrayList readingCodes = getAllReadingCodesByReadingPlanId(id);
+						final String name = content.name;
+						final IntArrayList readingCodes = getAllReadingCodesByReadingPlanName(name);
 						final TIntHashSet src = new TIntHashSet(readingCodes.size()); // our source (the current 'done' list)
 						for (int i = 0, len = readingCodes.size(); i < len; i++) {
 							src.add(readingCodes.get(i));
@@ -1615,7 +1617,7 @@ public class InternalDb {
 							final TIntHashSet to_del = new TIntHashSet(src);
 							to_del.removeAll(dst);
 							to_del.forEach(value -> {
-								db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_id + "=? and " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(value));
+								db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_name + "=? and " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(name, value));
 								return true;
 							});
 						}
@@ -1626,7 +1628,7 @@ public class InternalDb {
 
 							// unchanging properties
 							final ContentValues cv = new ContentValues();
-							cv.put(Db.ReadingPlanProgress.reading_plan_id, id);
+							cv.put(Db.ReadingPlanProgress.reading_plan_name, name);
 							cv.put(Db.ReadingPlanProgress.checkTime, System.currentTimeMillis());
 
 							to_add.forEach(value -> {

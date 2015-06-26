@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import yuku.afw.App;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.config.VersionConfig;
@@ -157,6 +158,13 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			db.execSQL("drop table if exists Renungan");
 			createTableDevotion(db);
 			createIndexDevotion(db);
+		}
+
+		if (oldVersion > 142 && oldVersion < 14000225) { // 14000225: v4.2-beta5
+			// for syncing reading plan progress,
+			// ReadingPlanProgress table must be keyed by name, not by ReadingPlan._id.
+			// So we alter table and migrate old to new
+			migrateReadingPlanProgressTable(db);
 		}
 	}
 
@@ -362,14 +370,57 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 
 	private void createTableReadingPlanProgress(final SQLiteDatabase db) {
 		db.execSQL("create table if not exists " + Db.TABLE_ReadingPlanProgress + " (" +
-		"_id integer primary key autoincrement, " +
-		Db.ReadingPlanProgress.reading_plan_id + " integer, " +
-		Db.ReadingPlanProgress.reading_code + " integer, " +
-		Db.ReadingPlanProgress.checkTime + " integer)");
+				"_id integer primary key autoincrement, " +
+				Db.ReadingPlanProgress.reading_plan_name + " text, " +
+				Db.ReadingPlanProgress.reading_code + " integer, " +
+				Db.ReadingPlanProgress.checkTime + " integer)"
+		);
 	}
 
 	private void createIndexReadingPlanProgress(SQLiteDatabase db) {
-		db.execSQL("create unique index if not exists index_901 on " + Db.TABLE_ReadingPlanProgress + " (" + Db.ReadingPlanProgress.reading_plan_id + ", " + Db.ReadingPlanProgress.reading_code + ")");
+		db.execSQL("create unique index if not exists index_902 on " + Db.TABLE_ReadingPlanProgress + " (" + Db.ReadingPlanProgress.reading_plan_name + ", " + Db.ReadingPlanProgress.reading_code + ")");
+	}
+
+	private void migrateReadingPlanProgressTable(SQLiteDatabase db) {
+		db.beginTransaction();
+		try {
+			// create mapping from id to name first
+			final TIntObjectHashMap<String> map = new TIntObjectHashMap<>();
+			try (Cursor c = db.rawQuery("select _id, " + Db.ReadingPlan.name + " from " + Db.TABLE_ReadingPlan, null)) {
+				while (c.moveToNext()) {
+					map.put(c.getInt(0), c.getString(1));
+				}
+			}
+
+			// https://www.sqlite.org/faq.html#q11
+			db.execSQL("CREATE TEMPORARY TABLE t1_backup(reading_plan_id, reading_code, checkTime)");
+			db.execSQL("INSERT INTO t1_backup SELECT reading_plan_id, reading_code, checkTime FROM " + Db.TABLE_ReadingPlanProgress);
+			db.execSQL("DROP TABLE " + Db.TABLE_ReadingPlanProgress); // also drops indexes
+			createTableReadingPlanProgress(db);
+			createIndexReadingPlanProgress(db);
+
+			try (Cursor c = db.rawQuery("select reading_plan_id, reading_code, checkTime from t1_backup", null)) {
+				final ContentValues cv = new ContentValues();
+
+				while (c.moveToNext()) {
+					final int _id = c.getInt(0);
+					final String name = map.get(_id);
+					if (name != null) {
+						cv.put(Db.ReadingPlanProgress.reading_plan_name, name);
+						cv.put(Db.ReadingPlanProgress.reading_code, c.getInt(1));
+						cv.put(Db.ReadingPlanProgress.checkTime, c.getLong(2));
+						db.insert(Db.TABLE_ReadingPlanProgress, null, cv);
+					}
+				}
+			}
+
+			// INSERT INTO t1 SELECT a,b FROM t1_backup;
+			db.execSQL("DROP TABLE t1_backup");
+
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
 	}
 
 	// This needs to be kept, for upgrading from version 51-102 to 14000165

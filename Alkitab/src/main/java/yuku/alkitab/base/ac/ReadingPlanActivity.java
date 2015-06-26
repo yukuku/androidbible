@@ -1,7 +1,10 @@
 package yuku.alkitab.base.ac;
 
 import android.app.DatePickerDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
@@ -124,12 +127,32 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		loadReadingPlan(id);
 		prepareDropDownNavigation();
 		loadDayNumber();
+
+		App.getLbm().registerReceiver(reload, new IntentFilter(ACTION_READING_PLAN_PROGRESS_CHANGED));
 	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		App.getLbm().unregisterReceiver(reload);
+	}
+
+	final BroadcastReceiver reload = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			reload();
+		}
+	};
 
 	@Override
 	protected void onStart() {
 		super.onStart();
 
+		reload();
+	}
+
+	void reload() {
 		loadReadingPlanProgress();
 		prepareDisplay();
 	}
@@ -226,7 +249,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		if (readingPlan == null) {
 			return;
 		}
-		readingCodes = S.getDb().getAllReadingCodesByReadingPlanId(readingPlan.info.id);
+		readingCodes = S.getDb().getAllReadingCodesByReadingPlanName(readingPlan.info.name);
 	}
 
 	public void goToIsiActivity(final int dayNumber, final int sequence) {
@@ -672,7 +695,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				checkbox.setChecked(readMarks[position]);
 
 				checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-					ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, dayNumber, position, isChecked);
+					ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.name, dayNumber, position, isChecked);
 					loadReadingPlanProgress();
 					load();
 					notifyDataSetChanged();
@@ -754,7 +777,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 					checkBox.setChecked(readMarks[sequence]);
 					checkBox.setText(S.activeVersion.referenceRange(ariRanges[sequence * 2], ariRanges[sequence * 2 + 1]));
 					checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-						ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, currentViewTypePosition, sequence, isChecked);
+						ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.name, currentViewTypePosition, sequence, isChecked);
 						loadReadingPlanProgress();
 						load();
 						notifyDataSetChanged();

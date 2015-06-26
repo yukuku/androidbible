@@ -69,7 +69,7 @@ public class Db {
 
 	public static final String TABLE_ReadingPlanProgress = "ReadingPlanProgress";
 	public static final class ReadingPlanProgress {
-		public static final String reading_plan_id = "reading_plan_id";
+		public static final String reading_plan_name = "reading_plan_name";
 		public static final String reading_code = "reading_code";
 		public static final String checkTime = "checkTime";
 	}
