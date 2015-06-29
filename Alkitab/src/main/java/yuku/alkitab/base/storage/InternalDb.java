@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Pair;
 import com.google.gson.reflect.TypeToken;
+import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 import yuku.afw.D;
 import yuku.afw.storage.Preferences;
@@ -48,6 +49,7 @@ import yuku.alkitab.util.IntArrayList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1179,33 +1181,51 @@ public class InternalDb {
 		return helper.getWritableDatabase().insert(Db.TABLE_ReadingPlan, null, cv);
 	}
 
-	public void insertReadingPlanProgress(final String readingPlanName, final int readingCode, final long checkTime) {
-		final ContentValues cv = new ContentValues();
-		cv.put(Db.ReadingPlanProgress.reading_plan_name, readingPlanName);
-		cv.put(Db.ReadingPlanProgress.reading_code, readingCode);
-		cv.put(Db.ReadingPlanProgress.checkTime, checkTime);
-		helper.getWritableDatabase().insert(Db.TABLE_ReadingPlanProgress, null, cv);
+	public void insertOrUpdateReadingPlanProgress(final String gid, final int readingCode, final long checkTime) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+		db.beginTransaction();
+		try {
+			db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=? and " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(gid, readingCode));
+
+			final ContentValues cv = new ContentValues();
+			cv.put(Db.ReadingPlanProgress.reading_plan_progress_gid, gid);
+			cv.put(Db.ReadingPlanProgress.reading_code, readingCode);
+			cv.put(Db.ReadingPlanProgress.checkTime, checkTime);
+			db.insert(Db.TABLE_ReadingPlanProgress, null, cv);
+
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
 
 		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
 	}
 
-	public void deleteReadingPlanProgress(final String readingPlanName, final int readingCode) {
-		helper.getWritableDatabase().delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_name + "=? AND " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(readingPlanName, readingCode));
+	public void deleteReadingPlanProgress(final String gid, final int readingCode) {
+		helper.getWritableDatabase().delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=? and " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(gid, readingCode));
 
 		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
 	}
 
-	/**
-	 * @return 0 if not found
-	 */
-	public int getReadingPlanProgressId(final String readingPlanName, final int readingCode) {
-		try (Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlanProgress, Array("_id"), Db.ReadingPlanProgress.reading_plan_name + "=? AND " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(readingPlanName, readingCode), null, null, null)) {
-			if (c.moveToNext()) {
-				return c.getInt(0);
-			} else {
-				return 0;
+	public Map<String, TIntSet> getReadingPlanProgressSummaryForSync() {
+		final SQLiteDatabase db = helper.getReadableDatabase();
+		final Map<String, TIntSet> res = new HashMap<>();
+		try (Cursor c = db.query(Db.TABLE_ReadingPlanProgress, Array(Db.ReadingPlanProgress.reading_plan_progress_gid, Db.ReadingPlanProgress.reading_code), null, null, null, null, null)) {
+			while (c.moveToNext()) {
+				final String gid = c.getString(0);
+				final int readingCode = c.getInt(1);
+
+				TIntSet set = res.get(gid);
+				if (set == null) {
+					set = new TIntHashSet();
+					res.put(gid, set);
+				}
+
+				set.add(readingCode);
 			}
 		}
+
+		return res;
 	}
 
 	public List<ReadingPlan.ReadingPlanInfo> listAllReadingPlanInfo() {
@@ -1240,13 +1260,13 @@ public class InternalDb {
 		}
 	}
 
-	public IntArrayList getAllReadingCodesByReadingPlanName(final String readingPlanName) {
+	public IntArrayList getAllReadingCodesByReadingPlanProgressGid(final String gid) {
 		IntArrayList res = new IntArrayList();
 		try (Cursor c = helper.getReadableDatabase().query(
 			Db.TABLE_ReadingPlanProgress,
 			Array(Db.ReadingPlanProgress.reading_code),
-			Db.ReadingPlanProgress.reading_plan_name + "=?",
-			Array(readingPlanName),
+			Db.ReadingPlanProgress.reading_plan_progress_gid + "=?",
+			Array(gid),
 			null,
 			null,
 			Db.ReadingPlanProgress.reading_code + " asc"
@@ -1598,15 +1618,13 @@ public class InternalDb {
 
 				switch (o.opkind) {
 					case del: {
-						final Sync_Rp.Content content = o.content;
-						db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_name + "=?", Array(content.name));
+						db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=?", Array(o.gid));
 					} break;
 					case add:
 					case mod: {
 						// the whole logic to update all pins with the ones received from server (all pins in one entity)
 						final Sync_Rp.Content content = o.content;
-						final String name = content.name;
-						final IntArrayList readingCodes = getAllReadingCodesByReadingPlanName(name);
+						final IntArrayList readingCodes = getAllReadingCodesByReadingPlanProgressGid(o.gid);
 						final TIntHashSet src = new TIntHashSet(readingCodes.size()); // our source (the current 'done' list)
 						for (int i = 0, len = readingCodes.size(); i < len; i++) {
 							src.add(readingCodes.get(i));
@@ -1617,7 +1635,7 @@ public class InternalDb {
 							final TIntHashSet to_del = new TIntHashSet(src);
 							to_del.removeAll(dst);
 							to_del.forEach(value -> {
-								db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_name + "=? and " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(name, value));
+								db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=? and " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(o.gid, value));
 								return true;
 							});
 						}
@@ -1628,7 +1646,7 @@ public class InternalDb {
 
 							// unchanging properties
 							final ContentValues cv = new ContentValues();
-							cv.put(Db.ReadingPlanProgress.reading_plan_name, name);
+							cv.put(Db.ReadingPlanProgress.reading_plan_progress_gid, o.gid);
 							cv.put(Db.ReadingPlanProgress.checkTime, System.currentTimeMillis());
 
 							to_add.forEach(value -> {

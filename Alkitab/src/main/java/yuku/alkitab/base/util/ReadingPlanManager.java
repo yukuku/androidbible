@@ -41,16 +41,14 @@ public class ReadingPlanManager {
 	}
 
 	public static void updateReadingPlanProgress(final String readingPlanName, final int dayNumber, final int readingSequence, final boolean checked) {
-		int readingCode = toReadingCode(dayNumber, readingSequence);
+		final int readingCode = toReadingCode(dayNumber, readingSequence);
+
+		final String gid = ReadingPlan.gidFromName(readingPlanName);
 
 		if (checked) {
-			final int id = S.getDb().getReadingPlanProgressId(readingPlanName, readingCode);
-			if (id != 0) {
-				S.getDb().deleteReadingPlanProgress(readingPlanName, readingCode);
-			}
-			S.getDb().insertReadingPlanProgress(readingPlanName, readingCode, new Date().getTime());
+			S.getDb().insertOrUpdateReadingPlanProgress(gid, readingCode, System.currentTimeMillis());
 		} else {
-			S.getDb().deleteReadingPlanProgress(readingPlanName, readingCode);
+			S.getDb().deleteReadingPlanProgress(gid, readingCode);
 		}
 	}
 

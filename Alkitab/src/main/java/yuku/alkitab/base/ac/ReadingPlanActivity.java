@@ -249,7 +249,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		if (readingPlan == null) {
 			return;
 		}
-		readingCodes = S.getDb().getAllReadingCodesByReadingPlanName(readingPlan.info.name);
+		readingCodes = S.getDb().getAllReadingCodesByReadingPlanProgressGid(ReadingPlan.gidFromName(readingPlan.info.name));
 	}
 
 	public void goToIsiActivity(final int dayNumber, final int sequence) {

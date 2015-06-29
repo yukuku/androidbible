@@ -2,17 +2,19 @@ package yuku.alkitab.base.sync;
 
 import android.support.annotation.NonNull;
 import android.util.Pair;
+import gnu.trove.map.hash.TObjectLongHashMap;
+import gnu.trove.set.TIntSet;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.util.Literals;
-import yuku.alkitab.util.IntArrayList;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -89,20 +91,29 @@ public class Sync_Rp {
 	@NonNull public static List<Sync.Entity<Content>> getEntitiesFromCurrent() {
 		final List<Sync.Entity<Content>> res = new ArrayList<>();
 
+		// lookup map for startTime
 		final List<ReadingPlan.ReadingPlanInfo> infos = S.getDb().listAllReadingPlanInfo();
+		final TObjectLongHashMap<String /* gid */> /* long startTime */ startTimes = new TObjectLongHashMap<>(infos.size());
 		for (final ReadingPlan.ReadingPlanInfo info : infos) {
+			startTimes.put(ReadingPlan.gidFromName(info.name), info.startTime);
+		}
+
+		final Map<String, TIntSet> map = S.getDb().getReadingPlanProgressSummaryForSync();
+		for (final Map.Entry<String, TIntSet> e : map.entrySet()) {
+			final String gid = e.getKey();
+
 			final Sync.Entity<Content> entity = new Sync.Entity<>();
 			entity.kind = Sync.Entity.KIND_RP_PROGRESS;
-			entity.gid = "g2:rp_progress:" + info.name;
+			entity.gid = gid;
+
 			final Content content = entity.content = new Content();
-			content.name = info.name;
-			final Set<Integer> done = content.done = new LinkedHashSet<>();
-
-			final IntArrayList readingCodes = S.getDb().getAllReadingCodesByReadingPlanName(info.name);
-			for (int i = 0, len = readingCodes.size(); i < len; i++) {
-				done.add(readingCodes.get(i));
-			}
-
+			content.startTime = startTimes.containsKey(gid)? startTimes.get(gid): null;
+			final TIntSet set = e.getValue();
+			final Set<Integer> done = content.done = new LinkedHashSet<>(set.size());
+			set.forEach(value -> {
+				done.add(value);
+				return true;
+			});
 			res.add(entity);
 		}
 
@@ -110,7 +121,7 @@ public class Sync_Rp {
 	}
 
 	public static class Content {
-		public String name; // name (user display: ID) of the reading plan. See ReadingPlan#name
+		public Long startTime; // time in millis when the reading plan has started. Can be null, if no such data is found. Server should always prioritize entities with non-null startTime.
 		public Set<Integer> done; // reading codes that are checked
 
 		//region boilerplate equals and hashCode methods
@@ -122,7 +133,7 @@ public class Sync_Rp {
 
 			final Content content = (Content) o;
 
-			if (name != null ? !name.equals(content.name) : content.name != null) return false;
+			if (startTime != null ? !startTime.equals(content.startTime) : content.startTime != null) return false;
 			if (done != null ? !done.equals(content.done) : content.done != null) return false;
 
 			return true;
@@ -130,7 +141,7 @@ public class Sync_Rp {
 
 		@Override
 		public int hashCode() {
-			int result = name != null ? name.hashCode() : 0;
+			int result = startTime != null ? startTime.hashCode() : 0;
 			result = 31 * result + (done != null ? done.hashCode() : 0);
 			return result;
 		}
@@ -140,7 +151,7 @@ public class Sync_Rp {
 		@Override
 		public String toString() {
 			return "Content{" +
-				"name='" + name + '\'' +
+				"startTime=" + startTime +
 				", done=" + done +
 				'}';
 		}

@@ -13,6 +13,7 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.model.MVersionPreset;
+import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.util.AddonManager;
 import yuku.alkitab.model.util.Gid;
 
@@ -162,7 +163,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 
 		if (oldVersion > 142 && oldVersion < 14000225) { // 14000225: v4.2-beta5
 			// for syncing reading plan progress,
-			// ReadingPlanProgress table must be keyed by name, not by ReadingPlan._id.
+			// ReadingPlanProgress table must be keyed by name (stored as gid), not by ReadingPlan._id.
 			// So we alter table and migrate old to new
 			migrateReadingPlanProgressTable(db);
 		}
@@ -371,14 +372,14 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	private void createTableReadingPlanProgress(final SQLiteDatabase db) {
 		db.execSQL("create table if not exists " + Db.TABLE_ReadingPlanProgress + " (" +
 				"_id integer primary key autoincrement, " +
-				Db.ReadingPlanProgress.reading_plan_name + " text, " +
+				Db.ReadingPlanProgress.reading_plan_progress_gid + " text, " +
 				Db.ReadingPlanProgress.reading_code + " integer, " +
 				Db.ReadingPlanProgress.checkTime + " integer)"
 		);
 	}
 
 	private void createIndexReadingPlanProgress(SQLiteDatabase db) {
-		db.execSQL("create unique index if not exists index_902 on " + Db.TABLE_ReadingPlanProgress + " (" + Db.ReadingPlanProgress.reading_plan_name + ", " + Db.ReadingPlanProgress.reading_code + ")");
+		db.execSQL("create unique index if not exists index_902 on " + Db.TABLE_ReadingPlanProgress + " (" + Db.ReadingPlanProgress.reading_plan_progress_gid + ", " + Db.ReadingPlanProgress.reading_code + ")");
 	}
 
 	private void migrateReadingPlanProgressTable(SQLiteDatabase db) {
@@ -406,7 +407,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 					final int _id = c.getInt(0);
 					final String name = map.get(_id);
 					if (name != null) {
-						cv.put(Db.ReadingPlanProgress.reading_plan_name, name);
+						cv.put(Db.ReadingPlanProgress.reading_plan_progress_gid, ReadingPlan.gidFromName(name));
 						cv.put(Db.ReadingPlanProgress.reading_code, c.getInt(1));
 						cv.put(Db.ReadingPlanProgress.checkTime, c.getLong(2));
 						db.insert(Db.TABLE_ReadingPlanProgress, null, cv);
