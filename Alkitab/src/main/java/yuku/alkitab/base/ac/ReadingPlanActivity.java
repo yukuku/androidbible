@@ -427,7 +427,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				int firstUnreadDay = findFirstUnreadDay();
 				Calendar calendar = GregorianCalendar.getInstance();
 				calendar.add(Calendar.DATE, -firstUnreadDay);
-				S.getDb().updateStartDate(readingPlan.info.id, calendar.getTime().getTime());
+				S.getDb().updateReadingPlanStartDate(readingPlan.info.id, calendar.getTime().getTime());
 				loadReadingPlan(readingPlan.info.id);
 				loadDayNumber();
 				readingPlanAdapter.load();

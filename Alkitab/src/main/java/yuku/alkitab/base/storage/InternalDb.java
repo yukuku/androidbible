@@ -16,6 +16,7 @@ import gnu.trove.set.hash.TIntHashSet;
 import yuku.afw.D;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.MarkerListActivity;
@@ -1286,10 +1287,12 @@ public class InternalDb {
 		helper.getWritableDatabase().delete(Db.TABLE_ReadingPlan, "_id=?", ToStringArray(id));
 	}
 
-	public int updateStartDate(long id, long startDate) {
-		ContentValues cv = new ContentValues();
+	public void updateReadingPlanStartDate(long id, long startDate) {
+		final ContentValues cv = new ContentValues();
 		cv.put(Db.ReadingPlan.startTime, startDate);
-		return helper.getWritableDatabase().update(Db.TABLE_ReadingPlan, cv, "_id=?", new String[] {String.valueOf(id)});
+		helper.getWritableDatabase().update(Db.TABLE_ReadingPlan, cv, "_id=?", ToStringArray(id));
+
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
 	}
 
 	public List<String> listReadingPlanNames() {
@@ -1654,6 +1657,20 @@ public class InternalDb {
 								helper.getWritableDatabase().insert(Db.TABLE_ReadingPlanProgress, null, cv);
 								return true;
 							});
+						}
+
+						// update startTime
+						if (content.startTime != null) {
+							for (final ReadingPlan.ReadingPlanInfo info : S.getDb().listAllReadingPlanInfo()) {
+								if (U.equals(ReadingPlan.gidFromName(info.name), o.gid)) {
+									if (info.startTime != content.startTime) {
+										final ContentValues cv = new ContentValues();
+										cv.put(Db.ReadingPlan.startTime, content.startTime);
+										db.update(Db.TABLE_ReadingPlan, cv, "_id=?", ToStringArray(info.id));
+									}
+									break;
+								}
+							}
 						}
 					} break;
 				}
