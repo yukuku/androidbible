@@ -3,11 +3,11 @@ Bible for Android
 
 **100% Free, Open-Source, Quick and Friendly Bible App.**
 
-Get in on Google Play: <a href="https://play.google.com/store/apps/details?id=org.sabda.alkitab">Alkitab</a> (Indonesian) or <a href="https://play.google.com/store/apps/details?id=org.sabda.online">Quick Bible</a> (English)
+Get in on Google Play: <a href="https://play.google.com/store/apps/details?id=yuku.alkitab">Alkitab</a> (Indonesian version) or <a href="https://play.google.com/store/apps/details?id=yuku.alkitab.kjv">Quick Bible</a> (non-Indonesian version)
 
 - <a href="http://www.bibleforandroid.com">Official Website</a>
-- <a href="http://blog.bibleforandroid.com">Development Blog</a>
-- <a href="http://groups.google.com/group/bibleforandroid">Discussion Group</a>
+- <a href="http://www.bibleforandroid.com/changelog">Changelog</a> and <a href="http://blog.bibleforandroid.com">Development Blog</a>
+- <a href="http://groups.google.com/group/bibleforandroid">Discussion Group and Beta Testers</a>
 
 By the way, Alkitab is the Indonesian word for Bible.
 
@@ -19,21 +19,12 @@ This app natively uses *.yes* files for the Bible text. You can create a *.yes* 
 You can also convert PalmBible+ PDB files using the built-in converter in the app or use the <a href="http://pdb2yes.alkitab-host.appspot.com/">pdb2yes online converter</a> 
 that produces compressed YES files.
 
-Integration with other apps
+Customizing and Integrating
 ---------------------------
 
-If you build an app that refers to the Bible, you can let the user read the Bible either in this app or in your app.
-An Android library project `AlkitabIntegration` is available that you can include in your project. Your app can easily 
-open this Bible app at a specified verse or get verses from this Bible app and display them in your app.
+Bible for Android is not only open-source, but also designed in a flexible manner. Not only you can read, learn and meditate with the app, but you can extend it to include your own resources, as well as getting and displaying verses from your own apps.
 
-If you need help integrating it, please contact me.
-
-Building
---------
-
-The `v3` branch is the currently stable version, version 3.x.x. `develop` branch contains the latest updates.
-You need gradle or Android Studio to build it. In Android Studio, you can just open the root directory
-of this repository and it will instantly be recognized as a project.
+See the <a href="http://www.bibleforandroid.com/developer">Developer page</a> for more information.
 
 License
 --------
