@@ -12,9 +12,9 @@ public class SyncShadow {
 
 	public static final String[] ALL_SYNC_SET_NAMES = {
 		SYNC_SET_MABEL,
+		SYNC_SET_RP,
 		SYNC_SET_HISTORY,
 		SYNC_SET_PINS,
-		SYNC_SET_RP,
 	};
 
 	public String syncSetName;
