@@ -1178,7 +1178,12 @@ public class InternalDb {
 		cv.put(Db.ReadingPlan.duration, info.duration);
 		cv.put(Db.ReadingPlan.startTime, info.startTime);
 		cv.put(Db.ReadingPlan.data, data);
-		return helper.getWritableDatabase().insert(Db.TABLE_ReadingPlan, null, cv);
+		final long res = helper.getWritableDatabase().insert(Db.TABLE_ReadingPlan, null, cv);
+
+		// this adds the 'startTime' attribute to the sync entity (when any of the rp progress has been checked)
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
+
+		return res;
 	}
 
 	public void insertOrUpdateReadingPlanProgress(final String gid, final int readingCode, final long checkTime) {
@@ -1284,6 +1289,9 @@ public class InternalDb {
 	 */
 	public void deleteReadingPlanById(long id) {
 		helper.getWritableDatabase().delete(Db.TABLE_ReadingPlan, "_id=?", ToStringArray(id));
+
+		// this removes the 'startTime' attribute from the sync entity
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
 	}
 
 	public void updateReadingPlanStartDate(long id, long startDate) {
