@@ -16,7 +16,6 @@ import gnu.trove.set.hash.TIntHashSet;
 import yuku.afw.D;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.MarkerListActivity;
@@ -1661,7 +1660,7 @@ public class InternalDb {
 
 						// update startTime
 						if (content.startTime != null) {
-							for (final ReadingPlan.ReadingPlanInfo info : S.getDb().listAllReadingPlanInfo()) {
+							for (final ReadingPlan.ReadingPlanInfo info : listAllReadingPlanInfo()) {
 								if (U.equals(ReadingPlan.gidFromName(info.name), o.gid)) {
 									if (info.startTime != content.startTime) {
 										final ContentValues cv = new ContentValues();
