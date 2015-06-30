@@ -336,19 +336,28 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			@Override
 			public void onClick(final View v) {
 				final PopupMenu popupMenu = new PopupMenu(ReadingPlanActivity.this, v);
-				popupMenu.getMenu().add(Menu.NONE, 1, 1, getString(R.string.rp_showCalendar));
-				popupMenu.getMenu().add(Menu.NONE, 2, 2, getString(R.string.rp_gotoFirstUnread));
-				popupMenu.getMenu().add(Menu.NONE, 3, 3, getString(R.string.rp_gotoToday));
+				final Menu menu = popupMenu.getMenu();
+				menu.add(0, 1, 0, getString(R.string.rp_showCalendar));
+				menu.add(0, 3, 0, getString(R.string.rp_gotoToday));
+				menu.add(0, 2, 0, getString(R.string.rp_gotoFirstUnread));
+				menu.add(0, 4, 0, getString(R.string.rp_setStartDate));
 
 				popupMenu.setOnMenuItemClickListener(menuItem -> {
 					popupMenu.dismiss();
 					int itemId = menuItem.getItemId();
-					if (itemId == 1) {
-						showCalendar();
-					} else if (itemId == 2) {
-						gotoFirstUnread();
-					} else if (itemId == 3) {
-						gotoToday();
+					switch (itemId) {
+						case 1:
+							showCalendar();
+							break;
+						case 2:
+							gotoFirstUnread();
+							break;
+						case 3:
+							gotoToday();
+							break;
+						case 4:
+							showSetStartDateDialog();
+							break;
 					}
 					return true;
 				});
@@ -387,6 +396,27 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 				DatePickerDialog datePickerDialog = new DatePickerDialog(ReadingPlanActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 				datePickerDialog.show();
+			}
+
+			private void showSetStartDateDialog() {
+				final Calendar today = GregorianCalendar.getInstance();
+				today.setTimeInMillis(readingPlan.info.startTime);
+				today.add(Calendar.DATE, dayNumber);
+
+				DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
+					final Calendar newDate = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+					if (readingPlan == null) {
+						return;
+					}
+
+					final long startTime = newDate.getTimeInMillis();
+					readingPlan.info.startTime = startTime;
+					S.getDb().updateStartDate(readingPlan.info.id, startTime);
+					dayNumber = 0; // show the first one
+					changeDay(0);
+				};
+
+				new DatePickerDialog(ReadingPlanActivity.this, dateSetListener, today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH)).show();
 			}
 		});
 
