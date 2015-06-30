@@ -113,9 +113,102 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		flNoData = V.get(this, R.id.flNoDataContainer);
 
 		lsReadingPlan = V.get(this, R.id.lsTodayReadings);
+
 		bToday = V.get(this, R.id.bToday);
+		bToday.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				final PopupMenu popupMenu = new PopupMenu(ReadingPlanActivity.this, v);
+				final Menu menu = popupMenu.getMenu();
+				menu.add(0, 1, 0, getString(R.string.rp_showCalendar));
+				menu.add(0, 3, 0, getString(R.string.rp_gotoToday));
+				menu.add(0, 2, 0, getString(R.string.rp_gotoFirstUnread));
+				menu.add(0, 4, 0, getString(R.string.rp_setStartDate));
+
+				popupMenu.setOnMenuItemClickListener(menuItem -> {
+					popupMenu.dismiss();
+					int itemId = menuItem.getItemId();
+					switch (itemId) {
+						case 1:
+							showCalendar();
+							break;
+						case 2:
+							gotoFirstUnread();
+							break;
+						case 3:
+							gotoToday();
+							break;
+						case 4:
+							showSetStartDateDialog();
+							break;
+					}
+					return true;
+				});
+				popupMenu.show();
+			}
+
+			private void gotoToday() {
+				loadDayNumber();
+				changeDay(0);
+			}
+
+			private void gotoFirstUnread() {
+				dayNumber = findFirstUnreadDay();
+				changeDay(0);
+			}
+
+			private void showCalendar() {
+				Calendar calendar = GregorianCalendar.getInstance();
+				calendar.setTimeInMillis(readingPlan.info.startTime);
+				calendar.add(Calendar.DATE, dayNumber);
+
+				DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
+					Calendar newCalendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+					Calendar startCalendar = GregorianCalendar.getInstance();
+					startCalendar.setTimeInMillis(readingPlan.info.startTime);
+
+					int newDay = calculateDaysDiff(startCalendar, newCalendar);
+					if (newDay < 0) {
+						newDay = 0;
+					} else if (newDay >= readingPlan.info.duration) {
+						newDay = readingPlan.info.duration - 1;
+					}
+					dayNumber = newDay;
+					changeDay(0);
+				};
+
+				DatePickerDialog datePickerDialog = new DatePickerDialog(ReadingPlanActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+				datePickerDialog.show();
+			}
+
+			private void showSetStartDateDialog() {
+				final Calendar today = GregorianCalendar.getInstance();
+				today.setTimeInMillis(readingPlan.info.startTime);
+				today.add(Calendar.DATE, dayNumber);
+
+				DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
+					final Calendar newDate = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+					if (readingPlan == null) {
+						return;
+					}
+
+					final long startTime = newDate.getTimeInMillis();
+					readingPlan.info.startTime = startTime;
+					S.getDb().updateReadingPlanStartDate(readingPlan.info.id, startTime);
+					dayNumber = 0; // show the first one
+					changeDay(0);
+				};
+
+				new DatePickerDialog(ReadingPlanActivity.this, dateSetListener, today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH)).show();
+			}
+		});
+
 		bLeft = V.get(this, R.id.bLeft);
+		bLeft.setOnClickListener(v -> changeDay(-1));
+
 		bRight = V.get(this, R.id.bRight);
+		bRight.setOnClickListener(v -> changeDay(+1));
+
 		bDownload = V.get(this, R.id.bDownload);
 
 		actionBar = getSupportActionBar();
@@ -356,98 +449,6 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 		//buttons
 		updateButtonStatus();
-
-		bToday.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				final PopupMenu popupMenu = new PopupMenu(ReadingPlanActivity.this, v);
-				final Menu menu = popupMenu.getMenu();
-				menu.add(0, 1, 0, getString(R.string.rp_showCalendar));
-				menu.add(0, 3, 0, getString(R.string.rp_gotoToday));
-				menu.add(0, 2, 0, getString(R.string.rp_gotoFirstUnread));
-				menu.add(0, 4, 0, getString(R.string.rp_setStartDate));
-
-				popupMenu.setOnMenuItemClickListener(menuItem -> {
-					popupMenu.dismiss();
-					int itemId = menuItem.getItemId();
-					switch (itemId) {
-						case 1:
-							showCalendar();
-							break;
-						case 2:
-							gotoFirstUnread();
-							break;
-						case 3:
-							gotoToday();
-							break;
-						case 4:
-							showSetStartDateDialog();
-							break;
-					}
-					return true;
-				});
-				popupMenu.show();
-			}
-
-			private void gotoToday() {
-				loadDayNumber();
-				changeDay(0);
-			}
-
-			private void gotoFirstUnread() {
-				dayNumber = findFirstUnreadDay();
-				changeDay(0);
-			}
-
-			private void showCalendar() {
-				Calendar calendar = GregorianCalendar.getInstance();
-				calendar.setTimeInMillis(readingPlan.info.startTime);
-				calendar.add(Calendar.DATE, dayNumber);
-
-				DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
-					Calendar newCalendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
-					Calendar startCalendar = GregorianCalendar.getInstance();
-					startCalendar.setTimeInMillis(readingPlan.info.startTime);
-
-					int newDay = calculateDaysDiff(startCalendar, newCalendar);
-					if (newDay < 0) {
-						newDay = 0;
-					} else if (newDay >= readingPlan.info.duration) {
-						newDay = readingPlan.info.duration - 1;
-					}
-					dayNumber = newDay;
-					changeDay(0);
-				};
-
-				DatePickerDialog datePickerDialog = new DatePickerDialog(ReadingPlanActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-				datePickerDialog.show();
-			}
-
-			private void showSetStartDateDialog() {
-				final Calendar today = GregorianCalendar.getInstance();
-				today.setTimeInMillis(readingPlan.info.startTime);
-				today.add(Calendar.DATE, dayNumber);
-
-				DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
-					final Calendar newDate = new GregorianCalendar(year, monthOfYear, dayOfMonth);
-					if (readingPlan == null) {
-						return;
-					}
-
-					final long startTime = newDate.getTimeInMillis();
-					readingPlan.info.startTime = startTime;
-					S.getDb().updateReadingPlanStartDate(readingPlan.info.id, startTime);
-					dayNumber = 0; // show the first one
-					changeDay(0);
-				};
-
-				new DatePickerDialog(ReadingPlanActivity.this, dateSetListener, today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH)).show();
-			}
-		});
-
-		bLeft.setOnClickListener(v -> changeDay(-1));
-
-		bRight.setOnClickListener(v -> changeDay(+1));
 	}
 
 	private int findFirstUnreadDay() {
