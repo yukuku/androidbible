@@ -247,6 +247,10 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	}
 
 	void reload() {
+		if (readingPlan != null) {
+			loadReadingPlan(readingPlan.info.id); // so startTime can change
+		}
+
 		loadReadingPlanProgress();
 		prepareDisplay();
 	}
