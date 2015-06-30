@@ -519,6 +519,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			})
 			.setNegativeButton(R.string.cancel, null)
 			.show();
+
+		leftDrawer.closeDrawer();
 	}
 
 	@Override
@@ -538,6 +540,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			})
 			.setNegativeButton(R.string.cancel, null)
 			.show();
+
+		leftDrawer.closeDrawer();
 	}
 
 	@Override
