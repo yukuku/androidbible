@@ -41,7 +41,7 @@ public class ReadingPlanManager {
 	}
 
 	public static void updateReadingPlanProgress(final String readingPlanName, final int dayNumber, final int readingSequence, final boolean checked) {
-		final int readingCode = toReadingCode(dayNumber, readingSequence);
+		final int readingCode = dayNumber << 8 | readingSequence;
 
 		final String gid = ReadingPlan.gidFromName(readingPlanName);
 
@@ -117,14 +117,6 @@ public class ReadingPlanManager {
 		return true;
 	}
 
-	public static int toReadingCode(int dayNumber, int readingSequence) {
-		return dayNumber << 8 | readingSequence;
-	}
-
-	public static int toSequence(int readingCode) {
-		return (readingCode & 0x000000ff);
-	}
-
 	public static IntArrayList filterReadingCodesByDayStartEnd(IntArrayList readingCodes, int dayStart, int dayEnd) {
 		IntArrayList res = new IntArrayList();
 		int start = dayStart << 8;
@@ -142,7 +134,7 @@ public class ReadingPlanManager {
 		readingCodes = filterReadingCodesByDayStartEnd(readingCodes, dayNumber, dayNumber);
 		for (int i = 0; i < readingCodes.size(); i++) {
 			final int readingCode = readingCodes.get(i);
-			final int sequence = toSequence(readingCode);
+			final int sequence = (readingCode & 0x000000ff);
 			readMarks[sequence] = true;
 		}
 	}
