@@ -106,6 +106,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 						needDrop = true;
 					}
 				}
+				c.close();
 			}
 			if (needDrop) {
 				Log.d(TAG, "table need to be dropped: " + Db.TABLE_ReadingPlanProgress);
@@ -475,6 +476,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 					cv.put(Db.Marker_Label.label_gid, label_gid);
 					db.insert(Db.TABLE_Marker_Label, null, cv);
 				}
+				c.close();
 			}
 
 			db.setTransactionSuccessful();
