@@ -68,8 +68,12 @@ public class Db {
 	}
 
 	public static final String TABLE_ReadingPlanProgress = "ReadingPlanProgress";
+
+	/**
+	 * Unique in (reading_plan_progress_gid, reading_code)
+	 */
 	public static final class ReadingPlanProgress {
-		public static final String reading_plan_id = "reading_plan_id";
+		public static final String reading_plan_progress_gid = "reading_plan_progress_gid";
 		public static final String reading_code = "reading_code";
 		public static final String checkTime = "checkTime";
 	}

@@ -40,17 +40,15 @@ public class ReadingPlanManager {
 		}
 	}
 
-	public static void updateReadingPlanProgress(final long readingPlanId, final int dayNumber, final int readingSequence, final boolean checked) {
-		int readingCode = toReadingCode(dayNumber, readingSequence);
+	public static void updateReadingPlanProgress(final String readingPlanName, final int dayNumber, final int readingSequence, final boolean checked) {
+		final int readingCode = toReadingCode(dayNumber, readingSequence);
+
+		final String gid = ReadingPlan.gidFromName(readingPlanName);
 
 		if (checked) {
-			IntArrayList ids = S.getDb().getReadingPlanProgressId(readingPlanId, readingCode);
-			if (ids.size() > 0) {
-				S.getDb().deleteReadingPlanProgress(readingPlanId, readingCode);
-			}
-			S.getDb().insertReadingPlanProgress(readingPlanId, readingCode, new Date().getTime());
+			S.getDb().insertOrUpdateReadingPlanProgress(gid, readingCode, System.currentTimeMillis());
 		} else {
-			S.getDb().deleteReadingPlanProgress(readingPlanId, readingCode);
+			S.getDb().deleteReadingPlanProgress(gid, readingCode);
 		}
 	}
 

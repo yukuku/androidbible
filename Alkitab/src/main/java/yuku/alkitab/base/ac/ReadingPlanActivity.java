@@ -1,7 +1,10 @@
 package yuku.alkitab.base.ac;
 
 import android.app.DatePickerDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
@@ -56,6 +59,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftDrawer.ReadingPlan.Listener {
 	public static final String TAG = ReadingPlanActivity.class.getSimpleName();
+
+	public static final String ACTION_READING_PLAN_PROGRESS_CHANGED = ReadingPlanActivity.class.getName() + ".action.READING_PLAN_PROGRESS_CHANGED";
 
 	private static final int REQCODE_openList = 1;
 
@@ -122,12 +127,32 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		loadReadingPlan(id);
 		prepareDropDownNavigation();
 		loadDayNumber();
+
+		App.getLbm().registerReceiver(reload, new IntentFilter(ACTION_READING_PLAN_PROGRESS_CHANGED));
 	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		App.getLbm().unregisterReceiver(reload);
+	}
+
+	final BroadcastReceiver reload = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			reload();
+		}
+	};
 
 	@Override
 	protected void onStart() {
 		super.onStart();
 
+		reload();
+	}
+
+	void reload() {
 		loadReadingPlanProgress();
 		prepareDisplay();
 	}
@@ -224,7 +249,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		if (readingPlan == null) {
 			return;
 		}
-		readingCodes = S.getDb().getAllReadingCodesByReadingPlanId(readingPlan.info.id);
+		readingCodes = S.getDb().getAllReadingCodesByReadingPlanProgressGid(ReadingPlan.gidFromName(readingPlan.info.name));
 	}
 
 	public void goToIsiActivity(final int dayNumber, final int sequence) {
@@ -411,7 +436,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 					final long startTime = newDate.getTimeInMillis();
 					readingPlan.info.startTime = startTime;
-					S.getDb().updateStartDate(readingPlan.info.id, startTime);
+					S.getDb().updateReadingPlanStartDate(readingPlan.info.id, startTime);
 					dayNumber = 0; // show the first one
 					changeDay(0);
 				};
@@ -426,7 +451,6 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	}
 
 	private int findFirstUnreadDay() {
-
 		for (int i = 0; i < readingPlan.info.duration - 1; i++) {
 			boolean[] readMarks = new boolean[readingPlan.dailyVerses[i].length / 2];
 			ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, i);
@@ -485,7 +509,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				int firstUnreadDay = findFirstUnreadDay();
 				Calendar calendar = GregorianCalendar.getInstance();
 				calendar.add(Calendar.DATE, -firstUnreadDay);
-				S.getDb().updateStartDate(readingPlan.info.id, calendar.getTime().getTime());
+				S.getDb().updateReadingPlanStartDate(readingPlan.info.id, calendar.getTime().getTime());
 				loadReadingPlan(readingPlan.info.id);
 				loadDayNumber();
 				readingPlanAdapter.load();
@@ -701,7 +725,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				checkbox.setChecked(readMarks[position]);
 
 				checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-					ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, dayNumber, position, isChecked);
+					ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.name, dayNumber, position, isChecked);
 					loadReadingPlanProgress();
 					load();
 					notifyDataSetChanged();
@@ -783,7 +807,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 					checkBox.setChecked(readMarks[sequence]);
 					checkBox.setText(S.activeVersion.referenceRange(ariRanges[sequence * 2], ariRanges[sequence * 2 + 1]));
 					checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-						ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, currentViewTypePosition, sequence, isChecked);
+						ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.name, currentViewTypePosition, sequence, isChecked);
 						loadReadingPlanProgress();
 						load();
 						notifyDataSetChanged();
