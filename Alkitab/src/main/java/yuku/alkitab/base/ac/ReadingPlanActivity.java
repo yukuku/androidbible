@@ -522,8 +522,22 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	}
 
 	@Override
-	public void bReset_click() {
+	public void bRestart_click() {
+		new AlertDialogWrapper.Builder(this)
+			.setMessage(R.string.rp_restart_desc)
+			.setPositiveButton(R.string.ok, (dialog, which) -> {
+				S.getDb().deleteAllReadingPlanProgressForGid(ReadingPlan.gidFromName(readingPlan.info.name));
+				S.getDb().updateReadingPlanStartDate(readingPlan.info.id, System.currentTimeMillis());
+				loadReadingPlan(readingPlan.info.id);
+				loadDayNumber();
+				readingPlanAdapter.load();
+				readingPlanAdapter.notifyDataSetChanged();
+				reload();
 
+				updateButtonStatus();
+			})
+			.setNegativeButton(R.string.cancel, null)
+			.show();
 	}
 
 	@Override

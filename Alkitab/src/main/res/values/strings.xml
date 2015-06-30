@@ -328,7 +328,7 @@
     <string name="rp_noReadingPlanAvailable">No more reading plans available.</string>
     <string name="rp_deletePlan">"Delete '%s'?"</string>
     <string name="rp_reset">Change the starting date so that the first unread reading will be today?</string>
-    <string name="rp_reset_from_beginning">Start this reading plan from the beginning by marking all as unread?</string>
+    <string name="rp_restart_desc">Start this reading plan from the beginning by marking all as unread?</string>
     <string name="rp_showCalendar">Choose date</string>
     <string name="rp_gotoFirstUnread">Go to first unread</string>
     <string name="rp_dayHeader">Day %1$s: %2$s</string>
@@ -342,6 +342,7 @@
     <string name="rp_navigationNextDay">Next day</string>
     <string name="rp_menuDownload">Download</string>
     <string name="rp_menuCatchMeUp">Resync dates</string>
+    <string name="rp_menuRestart">Restart</string>
     <string name="rp_menuDelete">Delete</string>
     <string name="rp_headingProgress">Progress</string>
     <string name="rp_gotoToday">Go to today</string>

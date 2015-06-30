@@ -1212,6 +1212,12 @@ public class InternalDb {
 		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
 	}
 
+	public void deleteAllReadingPlanProgressForGid(final String gid) {
+		helper.getWritableDatabase().delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=?", Array(gid));
+
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
+	}
+
 	public Map<String, TIntSet> getReadingPlanProgressSummaryForSync() {
 		final SQLiteDatabase db = helper.getReadableDatabase();
 		final Map<String, TIntSet> res = new HashMap<>();
