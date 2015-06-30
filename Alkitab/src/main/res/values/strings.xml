@@ -328,7 +328,7 @@
     <string name="rp_noReadingPlanAvailable">No more reading plans available.</string>
     <string name="rp_deletePlan">"Delete '%s'?"</string>
     <string name="rp_reset">This action will shift your last fully read to yesterday.</string>
-    <string name="rp_showCalendar">Show calendar</string>
+    <string name="rp_showCalendar">Choose date</string>
     <string name="rp_gotoFirstUnread">Go to first unread</string>
     <string name="rp_dayHeader">Day %1$s: %2$s</string>
     <string name="rp_floatPreviousReading">Previous reading</string>
@@ -340,10 +340,11 @@
     <string name="rp_navigationGoToDate">Go to date</string>
     <string name="rp_navigationNextDay">Next day</string>
     <string name="rp_menuDownload">Download</string>
-    <string name="rp_menuCatchMeUp">Catch me up</string>
+    <string name="rp_menuCatchMeUp">Resync dates</string>
     <string name="rp_menuDelete">Delete</string>
     <string name="rp_headingProgress">Progress</string>
-    <string name="rp_gotoToday">Today</string>
+    <string name="rp_gotoToday">Go to today</string>
+    <string name="rp_setStartDate">Set starting date</string>
     <string name="rp_showDetails">Show details</string>
     <string name="rp_hideDetails">Hide details</string>
     <string name="rp_aboutPlan">About plan</string>
