@@ -425,25 +425,6 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		bRight.setOnClickListener(v -> changeDay(+1));
 	}
 
-	private void resetReadingPlan() {
-		new AlertDialogWrapper.Builder(this)
-			.setMessage(R.string.rp_reset)
-			.setPositiveButton(R.string.ok, (dialog, which) -> {
-				int firstUnreadDay = findFirstUnreadDay();
-				Calendar calendar = GregorianCalendar.getInstance();
-				calendar.add(Calendar.DATE, -firstUnreadDay);
-				S.getDb().updateStartDate(readingPlan.info.id, calendar.getTime().getTime());
-				loadReadingPlan(readingPlan.info.id);
-				loadDayNumber();
-				readingPlanAdapter.load();
-				readingPlanAdapter.notifyDataSetChanged();
-
-				updateButtonStatus();
-			})
-			.setNegativeButton(R.string.cancel, null)
-			.show();
-	}
-
 	private int findFirstUnreadDay() {
 
 		for (int i = 0; i < readingPlan.info.duration - 1; i++) {
@@ -498,7 +479,27 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 	@Override
 	public void bCatchMeUp_click() {
-		resetReadingPlan();
+		new AlertDialogWrapper.Builder(this)
+			.setMessage(R.string.rp_reset)
+			.setPositiveButton(R.string.ok, (dialog, which) -> {
+				int firstUnreadDay = findFirstUnreadDay();
+				Calendar calendar = GregorianCalendar.getInstance();
+				calendar.add(Calendar.DATE, -firstUnreadDay);
+				S.getDb().updateStartDate(readingPlan.info.id, calendar.getTime().getTime());
+				loadReadingPlan(readingPlan.info.id);
+				loadDayNumber();
+				readingPlanAdapter.load();
+				readingPlanAdapter.notifyDataSetChanged();
+
+				updateButtonStatus();
+			})
+			.setNegativeButton(R.string.cancel, null)
+			.show();
+	}
+
+	@Override
+	public void bReset_click() {
+
 	}
 
 	@Override

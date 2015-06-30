@@ -553,6 +553,7 @@ public abstract class LeftDrawer extends ScrollView {
 	public static class ReadingPlan extends LeftDrawer {
 		public interface Listener {
 			void bCatchMeUp_click();
+			void bReset_click();
 		}
 
 		public interface Handle {
@@ -562,6 +563,7 @@ public abstract class LeftDrawer extends ScrollView {
 		ScrollView scrollDescription;
 		TextView tDescription;
 		View bCatchMeUp;
+		View bReset;
 
 		Listener listener;
 		Handle handle = new Handle() {
@@ -594,8 +596,10 @@ public abstract class LeftDrawer extends ScrollView {
 			scrollDescription = V.get(this, R.id.scrollDescription);
 			tDescription = V.get(this, R.id.tDescription);
 			bCatchMeUp = V.get(this, R.id.bCatchMeUp);
+			bReset = V.get(this, R.id.bReset);
 
 			bCatchMeUp.setOnClickListener(v -> listener.bCatchMeUp_click());
+			bReset.setOnClickListener(v -> listener.bReset_click());
 		}
 
 		@Override

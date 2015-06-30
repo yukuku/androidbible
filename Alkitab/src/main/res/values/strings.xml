@@ -327,7 +327,8 @@
     <string name="rp_commentBehindSchedule">Behind the schedule: %s%%</string>
     <string name="rp_noReadingPlanAvailable">No more reading plans available.</string>
     <string name="rp_deletePlan">"Delete '%s'?"</string>
-    <string name="rp_reset">This action will shift your last fully read to yesterday.</string>
+    <string name="rp_reset">Change the starting date so that the first unread reading will be today?</string>
+    <string name="rp_reset_from_beginning">Start this reading plan from the beginning by marking all as unread?</string>
     <string name="rp_showCalendar">Choose date</string>
     <string name="rp_gotoFirstUnread">Go to first unread</string>
     <string name="rp_dayHeader">Day %1$s: %2$s</string>
