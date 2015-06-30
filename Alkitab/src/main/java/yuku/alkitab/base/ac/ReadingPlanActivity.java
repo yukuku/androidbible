@@ -113,6 +113,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		flNoData = V.get(this, R.id.flNoDataContainer);
 
 		lsReadingPlan = V.get(this, R.id.lsTodayReadings);
+		lsReadingPlan.setAdapter(readingPlanAdapter = new ReadingPlanAdapter());
 
 		bToday = V.get(this, R.id.bToday);
 		bToday.setOnClickListener(new View.OnClickListener() {
@@ -418,9 +419,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		actionBar.setListNavigationCallbacks(navigationAdapter, (i, l) -> {
 			if (newDropDownItems) {
 				loadReadingPlan(downloadedReadingPlanInfos.get(i).id);
-				loadReadingPlanProgress();
 				loadDayNumber();
-				prepareDisplay();
+				reload();
 			}
 			newDropDownItems = true;
 			return true;
@@ -436,18 +436,14 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			flNoData.setVisibility(View.VISIBLE);
 
 			bDownload.setOnClickListener(v -> downloadReadingPlanList());
-			return;
+		} else {
+			llNavigations.setVisibility(View.VISIBLE);
+			lsReadingPlan.setVisibility(View.VISIBLE);
+			flNoData.setVisibility(View.GONE);
 		}
-		llNavigations.setVisibility(View.VISIBLE);
-		lsReadingPlan.setVisibility(View.VISIBLE);
-		flNoData.setVisibility(View.GONE);
 
-		//Listviews
-		readingPlanAdapter = new ReadingPlanAdapter();
 		readingPlanAdapter.load();
-		lsReadingPlan.setAdapter(readingPlanAdapter);
 
-		//buttons
 		updateButtonStatus();
 	}
 
@@ -489,17 +485,18 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		}
 		dayNumber = newDay;
 		readingPlanAdapter.load();
-		readingPlanAdapter.notifyDataSetChanged();
 
 		updateButtonStatus();
 	}
 
 	private void updateButtonStatus() {            //TODO look disabled
+		if (readingPlan == null) {
+			return;
+		}
+
 		bLeft.setEnabled(dayNumber != 0);
 		bRight.setEnabled(dayNumber != readingPlan.info.duration - 1);
-
 		bToday.setText(getReadingDateHeader(dayNumber));
-
 	}
 
 	@Override
@@ -514,7 +511,6 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				loadReadingPlan(readingPlan.info.id);
 				loadDayNumber();
 				readingPlanAdapter.load();
-				readingPlanAdapter.notifyDataSetChanged();
 
 				updateButtonStatus();
 			})
@@ -534,7 +530,6 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				loadReadingPlan(readingPlan.info.id);
 				loadDayNumber();
 				readingPlanAdapter.load();
-				readingPlanAdapter.notifyDataSetChanged();
 				reload();
 
 				updateButtonStatus();
@@ -695,15 +690,22 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		private int[] todayReadings;
 
 		public void load() {
-			todayReadings = readingPlan.dailyVerses[dayNumber];
+			if (readingPlan == null) {
+				todayReadings = null;
+			} else {
+				todayReadings = readingPlan.dailyVerses[dayNumber];
+			}
+			notifyDataSetChanged();
 		}
 
 		@Override
 		public int getCount() {
+			if (todayReadings == null) return 0;
+
 			if (showDetails) {
 				return (todayReadings.length / 2) + readingPlan.info.duration + 1;
 			} else {
-				return (todayReadings.length / 2) +  1;
+				return (todayReadings.length / 2) + 1;
 			}
 		}
 
@@ -747,7 +749,6 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 					ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.name, dayNumber, position, isChecked);
 					loadReadingPlanProgress();
 					load();
-					notifyDataSetChanged();
 				});
 			} else if (itemViewType == 1) {
 				final ProgressBar pbReadingProgress = V.get(res, R.id.pbReadingProgress);
@@ -829,7 +830,6 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 						ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.name, currentViewTypePosition, sequence, isChecked);
 						loadReadingPlanProgress();
 						load();
-						notifyDataSetChanged();
 					});
 				}
 			}
