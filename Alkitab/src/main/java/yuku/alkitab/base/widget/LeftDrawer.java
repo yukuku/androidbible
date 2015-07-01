@@ -6,13 +6,13 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.SwitchCompat;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
 import android.view.DragEvent;
-import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -134,15 +134,15 @@ public abstract class LeftDrawer extends ScrollView {
 	}
 
 	public void toggleDrawer() {
-		if (drawerLayout.isDrawerOpen(Gravity.START)) {
-			drawerLayout.closeDrawer(Gravity.START);
+		if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+			drawerLayout.closeDrawer(GravityCompat.START);
 		} else {
-			drawerLayout.openDrawer(Gravity.START);
+			drawerLayout.openDrawer(GravityCompat.START);
 		}
 	}
 
 	public void closeDrawer() {
-		drawerLayout.closeDrawer(Gravity.START);
+		drawerLayout.closeDrawer(GravityCompat.START);
 	}
 
 	void bHelp_click() {
