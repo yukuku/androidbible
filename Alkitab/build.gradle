@@ -18,7 +18,6 @@ android {
         minSdkVersion 14
         targetSdkVersion 22
         versionCode 14000225
-        multiDexEnabled true
         versionName '4.2.0-beta5'
     }
     buildTypes {
@@ -38,6 +37,7 @@ android {
     productFlavors {
         emulator_v21 {
             minSdkVersion 21
+            multiDexEnabled true
         }
         plain {
         }
