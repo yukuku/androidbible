@@ -34,7 +34,7 @@ public class Highlights {
 		}
 
 		public boolean shouldRenderAsPartialForVerseText(final CharSequence verseText) {
-			return partial != null && partial.hashCode == Highlights.hashCode(verseText.toString()) && partial.startOffset < verseText.length() && partial.endOffset < verseText.length();
+			return partial != null && partial.hashCode == Highlights.hashCode(verseText.toString()) && partial.startOffset <= verseText.length() && partial.endOffset <= verseText.length();
 		}
 	}
 
