@@ -552,7 +552,6 @@ public abstract class LeftDrawer extends ScrollView {
 
 	public static class ReadingPlan extends LeftDrawer {
 		public interface Listener {
-			void bCatchMeUp_click();
 			void bRestart_click();
 		}
 
@@ -562,7 +561,6 @@ public abstract class LeftDrawer extends ScrollView {
 
 		ScrollView scrollDescription;
 		TextView tDescription;
-		View bCatchMeUp;
 		View bRestart;
 
 		Listener listener;
@@ -570,11 +568,11 @@ public abstract class LeftDrawer extends ScrollView {
 			@Override
 			public void setDescription(final CharSequence description) {
 				if (description == null) {
-					bCatchMeUp.setVisibility(GONE);
+					bRestart.setVisibility(GONE);
 					scrollDescription.setVisibility(GONE);
 					tDescription.setText("");
 				} else {
-					bCatchMeUp.setVisibility(VISIBLE);
+					bRestart.setVisibility(VISIBLE);
 					scrollDescription.setVisibility(VISIBLE);
 					tDescription.setText(description);
 				}
@@ -595,10 +593,8 @@ public abstract class LeftDrawer extends ScrollView {
 
 			scrollDescription = V.get(this, R.id.scrollDescription);
 			tDescription = V.get(this, R.id.tDescription);
-			bCatchMeUp = V.get(this, R.id.bCatchMeUp);
 			bRestart = V.get(this, R.id.bRestart);
 
-			bCatchMeUp.setOnClickListener(v -> listener.bCatchMeUp_click());
 			bRestart.setOnClickListener(v -> listener.bRestart_click());
 		}
 

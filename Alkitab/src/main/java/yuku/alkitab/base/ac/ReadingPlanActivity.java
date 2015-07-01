@@ -124,6 +124,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				menu.add(0, 1, 0, getString(R.string.rp_showCalendar));
 				menu.add(0, 3, 0, getString(R.string.rp_gotoToday));
 				menu.add(0, 2, 0, getString(R.string.rp_gotoFirstUnread));
+				menu.add(0, 5, 0, getString(R.string.rp_menuCatchMeUp));
 				menu.add(0, 4, 0, getString(R.string.rp_setStartDate));
 
 				popupMenu.setOnMenuItemClickListener(menuItem -> {
@@ -141,6 +142,9 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 							break;
 						case 4:
 							showSetStartDateDialog();
+							break;
+						case 5:
+							catchMeUp();
 							break;
 					}
 					return true;
@@ -201,6 +205,24 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				};
 
 				new DatePickerDialog(ReadingPlanActivity.this, dateSetListener, today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH)).show();
+			}
+
+			private void catchMeUp() {
+				new AlertDialogWrapper.Builder(ReadingPlanActivity.this)
+					.setMessage(R.string.rp_reset)
+					.setPositiveButton(R.string.ok, (dialog, which) -> {
+						int firstUnreadDay = findFirstUnreadDay();
+						Calendar calendar = GregorianCalendar.getInstance();
+						calendar.add(Calendar.DATE, -firstUnreadDay);
+						S.getDb().updateReadingPlanStartDate(readingPlan.info.id, calendar.getTime().getTime());
+						loadReadingPlan(readingPlan.info.id);
+						loadDayNumber();
+						readingPlanAdapter.load();
+
+						updateButtonStatus();
+					})
+					.setNegativeButton(R.string.cancel, null)
+					.show();
 			}
 		});
 
@@ -501,27 +523,6 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		bLeft.setEnabled(dayNumber != 0);
 		bRight.setEnabled(dayNumber != readingPlan.info.duration - 1);
 		bToday.setText(getReadingDateHeader(dayNumber));
-	}
-
-	@Override
-	public void bCatchMeUp_click() {
-		new AlertDialogWrapper.Builder(this)
-			.setMessage(R.string.rp_reset)
-			.setPositiveButton(R.string.ok, (dialog, which) -> {
-				int firstUnreadDay = findFirstUnreadDay();
-				Calendar calendar = GregorianCalendar.getInstance();
-				calendar.add(Calendar.DATE, -firstUnreadDay);
-				S.getDb().updateReadingPlanStartDate(readingPlan.info.id, calendar.getTime().getTime());
-				loadReadingPlan(readingPlan.info.id);
-				loadDayNumber();
-				readingPlanAdapter.load();
-
-				updateButtonStatus();
-			})
-			.setNegativeButton(R.string.cancel, null)
-			.show();
-
-		leftDrawer.closeDrawer();
 	}
 
 	@Override
