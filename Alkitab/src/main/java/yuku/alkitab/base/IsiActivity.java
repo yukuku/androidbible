@@ -2467,6 +2467,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	private void gotoProgressMark(final int preset_id) {
 		final ProgressMark progressMark = S.getDb().getProgressMarkByPresetId(preset_id);
+		if (progressMark == null) {
+			return;
+		}
+
 		final int ari = progressMark.ari;
 
 		if (ari != 0) {
@@ -2485,8 +2489,4 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		gotoProgressMark(preset_id);
 	}
 
-	@Override
-	public void onProgressMarkDeleted() {
-		App.getLbm().sendBroadcast(new Intent(ACTION_ATTRIBUTE_MAP_CHANGED));
-	}
 }

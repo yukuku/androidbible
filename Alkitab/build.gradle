@@ -77,7 +77,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-gcm:7.5.0'
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.afollestad:material-dialogs:0.7.3.0'
+    compile 'com.afollestad:material-dialogs:0.7.6.0'
     compile 'com.android.support:design:22.2.0'
     testCompile 'junit:junit:4.12'
 }
