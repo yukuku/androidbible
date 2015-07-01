@@ -12,6 +12,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -23,6 +24,7 @@ import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.ActionMode;
@@ -97,6 +99,7 @@ import yuku.alkitab.base.widget.FormattedTextRenderer;
 import yuku.alkitab.base.widget.GotoButton;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.LeftDrawer;
+import yuku.alkitab.base.widget.ScrollbarSetter;
 import yuku.alkitab.base.widget.SingleViewVerseAdapter;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
@@ -1037,9 +1040,22 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		{ // apply background color, and clear window background to prevent overdraw
 			getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-			root.setBackgroundColor(S.applied.backgroundColor);
-			lsSplit0.setCacheColorHint(S.applied.backgroundColor);
-			lsSplit1.setCacheColorHint(S.applied.backgroundColor);
+			final int backgroundColor = S.applied.backgroundColor;
+			root.setBackgroundColor(backgroundColor);
+			lsSplit0.setCacheColorHint(backgroundColor);
+			lsSplit1.setCacheColorHint(backgroundColor);
+
+			// ensure scrollbar is visible on Material devices
+			if (Build.VERSION.SDK_INT >= 21) {
+				final Drawable thumb;
+				if (ColorUtils.calculateLuminance(backgroundColor) > 0.5) {
+					thumb = getResources().getDrawable(R.drawable.scrollbar_handle_material_for_light);
+				} else {
+					thumb = getResources().getDrawable(R.drawable.scrollbar_handle_material_for_dark);
+				}
+				ScrollbarSetter.setVerticalThumb(lsSplit0, thumb);
+				ScrollbarSetter.setVerticalThumb(lsSplit1, thumb);
+			}
 		}
 
 		// necessary
