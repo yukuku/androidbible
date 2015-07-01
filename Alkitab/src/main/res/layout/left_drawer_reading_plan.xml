@@ -38,14 +38,14 @@
 		</ScrollView>
 
 		<Button
-			android:id="@+id/bCatchMeUp"
+			android:id="@+id/bRestart"
 			style="?android:buttonBarButtonStyle"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:drawableLeft="@drawable/ic_av_skip_previous"
 			android:drawablePadding="16dp"
 			android:gravity="left|center_vertical"
-			android:text="@string/rp_menuCatchMeUp"
+			android:text="@string/rp_menuRestart"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textColor="?android:textColorPrimary"
 			android:textSize="16sp" />

@@ -11,6 +11,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Pair;
 import com.google.gson.reflect.TypeToken;
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.hash.TIntHashSet;
 import yuku.afw.D;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -32,6 +34,7 @@ import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.sync.SyncRecorder;
 import yuku.alkitab.base.sync.Sync_Mabel;
 import yuku.alkitab.base.sync.Sync_Pins;
+import yuku.alkitab.base.sync.Sync_Rp;
 import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.BuildConfig;
@@ -46,6 +49,7 @@ import yuku.alkitab.util.IntArrayList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1174,31 +1178,64 @@ public class InternalDb {
 		cv.put(Db.ReadingPlan.duration, info.duration);
 		cv.put(Db.ReadingPlan.startTime, info.startTime);
 		cv.put(Db.ReadingPlan.data, data);
-		return helper.getWritableDatabase().insert(Db.TABLE_ReadingPlan, null, cv);
+		final long res = helper.getWritableDatabase().insert(Db.TABLE_ReadingPlan, null, cv);
+
+		// this adds the 'startTime' attribute to the sync entity (when any of the rp progress has been checked)
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
+
+		return res;
 	}
 
-	public long insertReadingPlanProgress(final long readingPlanId, final int readingCode, final long checkTime) {
-		ContentValues cv = new ContentValues();
-		cv.put(Db.ReadingPlanProgress.reading_plan_id, readingPlanId);
-		cv.put(Db.ReadingPlanProgress.reading_code, readingCode);
-		cv.put(Db.ReadingPlanProgress.checkTime, checkTime);
-		return helper.getWritableDatabase().insert(Db.TABLE_ReadingPlanProgress, null, cv);
-	}
+	public void insertOrUpdateReadingPlanProgress(final String gid, final int readingCode, final long checkTime) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+		db.beginTransaction();
+		try {
+			db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=? and " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(gid, readingCode));
 
-	public int deleteReadingPlanProgress(final long readingPlanId, final int readingCode) {
-		ContentValues cv = new ContentValues();
-		cv.put(Db.ReadingPlanProgress.reading_plan_id, readingPlanId);
-		cv.put(Db.ReadingPlanProgress.reading_code, readingCode);
-		return helper.getWritableDatabase().delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_id + "=? AND " + Db.ReadingPlanProgress.reading_code + "=?", new String[]{String.valueOf(readingPlanId), String.valueOf(readingCode)});
-	}
+			final ContentValues cv = new ContentValues();
+			cv.put(Db.ReadingPlanProgress.reading_plan_progress_gid, gid);
+			cv.put(Db.ReadingPlanProgress.reading_code, readingCode);
+			cv.put(Db.ReadingPlanProgress.checkTime, checkTime);
+			db.insert(Db.TABLE_ReadingPlanProgress, null, cv);
 
-	public IntArrayList getReadingPlanProgressId(final long readingPlanId, final int readingCode) {
-		IntArrayList res = new IntArrayList();
-		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlanProgress, new String[] {"_id"}, Db.ReadingPlanProgress.reading_plan_id + "=? AND " + Db.ReadingPlanProgress.reading_code + "=?", new String[] {String.valueOf(readingPlanId), String.valueOf(readingCode)}, null, null, null);
-		while (c.moveToNext()) {
-			res.add(c.getInt(0));
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
 		}
-		c.close();
+
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
+	}
+
+	public void deleteReadingPlanProgress(final String gid, final int readingCode) {
+		helper.getWritableDatabase().delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=? and " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(gid, readingCode));
+
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
+	}
+
+	public void deleteAllReadingPlanProgressForGid(final String gid) {
+		helper.getWritableDatabase().delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=?", Array(gid));
+
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
+	}
+
+	public Map<String, TIntSet> getReadingPlanProgressSummaryForSync() {
+		final SQLiteDatabase db = helper.getReadableDatabase();
+		final Map<String, TIntSet> res = new HashMap<>();
+		try (Cursor c = db.query(Db.TABLE_ReadingPlanProgress, Array(Db.ReadingPlanProgress.reading_plan_progress_gid, Db.ReadingPlanProgress.reading_code), null, null, null, null, null)) {
+			while (c.moveToNext()) {
+				final String gid = c.getString(0);
+				final int readingCode = c.getInt(1);
+
+				TIntSet set = res.get(gid);
+				if (set == null) {
+					set = new TIntHashSet();
+					res.put(gid, set);
+				}
+
+				set.add(readingCode);
+			}
+		}
+
 		return res;
 	}
 
@@ -1234,25 +1271,41 @@ public class InternalDb {
 		}
 	}
 
-	public IntArrayList getAllReadingCodesByReadingPlanId(long id) {
+	public IntArrayList getAllReadingCodesByReadingPlanProgressGid(final String gid) {
 		IntArrayList res = new IntArrayList();
-		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlanProgress, new String[] {Db.ReadingPlanProgress.reading_code}, Db.ReadingPlanProgress.reading_plan_id + "=?", new String[] {String.valueOf(id)}, null, null, null);
-		while (c.moveToNext()) {
-			res.add(c.getInt(0));
+		try (Cursor c = helper.getReadableDatabase().query(
+			Db.TABLE_ReadingPlanProgress,
+			Array(Db.ReadingPlanProgress.reading_code),
+			Db.ReadingPlanProgress.reading_plan_progress_gid + "=?",
+			Array(gid),
+			null,
+			null,
+			Db.ReadingPlanProgress.reading_code + " asc"
+		)) {
+			while (c.moveToNext()) {
+				res.add(c.getInt(0));
+			}
 		}
-		c.close();
 		return res;
 	}
 
+	/**
+	 * Deletes the reading plan, but not the progress.
+	 * The progress will be kept, so it is not considered as deleted during sync.
+	 */
 	public void deleteReadingPlanById(long id) {
-		helper.getWritableDatabase().delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_id + "=?", new String[] {String.valueOf(id)});
-		helper.getWritableDatabase().delete(Db.TABLE_ReadingPlan, "_id=?", new String[]{String.valueOf(id)});
+		helper.getWritableDatabase().delete(Db.TABLE_ReadingPlan, "_id=?", ToStringArray(id));
+
+		// this removes the 'startTime' attribute from the sync entity
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
 	}
 
-	public int updateStartDate(long id, long startDate) {
-		ContentValues cv = new ContentValues();
+	public void updateReadingPlanStartDate(long id, long startDate) {
+		final ContentValues cv = new ContentValues();
 		cv.put(Db.ReadingPlan.startTime, startDate);
-		return helper.getWritableDatabase().update(Db.TABLE_ReadingPlan, cv, "_id=?", new String[] {String.valueOf(id)});
+		helper.getWritableDatabase().update(Db.TABLE_ReadingPlan, cv, "_id=?", ToStringArray(id));
+
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
 	}
 
 	public List<String> listReadingPlanNames() {
@@ -1546,6 +1599,105 @@ public class InternalDb {
 			return Sync.ApplyAppendDeltaResult.ok;
 		} finally {
 			Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_PINS, false);
+			db.endTransaction();
+		}
+	}
+
+	/**
+	 * Makes the current database updated with patches (append delta) from server.
+	 * Also updates the shadow (both data and the revno).
+	 * @return {@link yuku.alkitab.base.sync.Sync.ApplyAppendDeltaResult#ok} if database and sync shadow are updated. Otherwise else.
+	 */
+	@NonNull public Sync.ApplyAppendDeltaResult applyRpAppendDelta(final int final_revno, @NonNull final Sync.Delta<Sync_Rp.Content> append_delta, @NonNull final List<Sync.Entity<Sync_Rp.Content>> entitiesBeforeSync, @NonNull final String simpleTokenBeforeSync) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+		db.beginTransaction();
+		Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_RP, true);
+		try {
+			{ // if the current entities are not the same as the ones had when contacting server, reject this append delta.
+				final List<Sync.Entity<Sync_Rp.Content>> currentEntities = Sync_Rp.getEntitiesFromCurrent();
+				if (!Sync.entitiesEqual(currentEntities, entitiesBeforeSync)) {
+					return Sync.ApplyAppendDeltaResult.dirty_entities;
+				}
+			}
+
+			{ // if the current simpleToken has changed (sync user logged off or changed), reject this append delta
+				final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
+				if (!U.equals(simpleToken, simpleTokenBeforeSync)) {
+					return Sync.ApplyAppendDeltaResult.dirty_sync_account;
+				}
+			}
+
+			for (final Sync.Operation<Sync_Rp.Content> o : append_delta.operations) {
+				if (!U.equals(o.kind, Sync.Entity.KIND_RP_PROGRESS)) {
+					return Sync.ApplyAppendDeltaResult.unknown_kind;
+				}
+
+				switch (o.opkind) {
+					case del: {
+						db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=?", Array(o.gid));
+					} break;
+					case add:
+					case mod: {
+						// the whole logic to update all pins with the ones received from server (all pins in one entity)
+						final Sync_Rp.Content content = o.content;
+						final IntArrayList readingCodes = getAllReadingCodesByReadingPlanProgressGid(o.gid);
+						final TIntHashSet src = new TIntHashSet(readingCodes.size()); // our source (the current 'done' list)
+						for (int i = 0, len = readingCodes.size(); i < len; i++) {
+							src.add(readingCodes.get(i));
+						}
+						final TIntHashSet dst = new TIntHashSet(content.done); // our destination (want to be like this)
+
+						{ // deletions
+							final TIntHashSet to_del = new TIntHashSet(src);
+							to_del.removeAll(dst);
+							to_del.forEach(value -> {
+								db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=? and " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(o.gid, value));
+								return true;
+							});
+						}
+
+						{ // additions
+							final TIntHashSet to_add = new TIntHashSet(dst);
+							to_add.removeAll(src);
+
+							// unchanging properties
+							final ContentValues cv = new ContentValues();
+							cv.put(Db.ReadingPlanProgress.reading_plan_progress_gid, o.gid);
+							cv.put(Db.ReadingPlanProgress.checkTime, System.currentTimeMillis());
+
+							to_add.forEach(value -> {
+								cv.put(Db.ReadingPlanProgress.reading_code, value);
+								helper.getWritableDatabase().insert(Db.TABLE_ReadingPlanProgress, null, cv);
+								return true;
+							});
+						}
+
+						// update startTime
+						if (content.startTime != null) {
+							for (final ReadingPlan.ReadingPlanInfo info : listAllReadingPlanInfo()) {
+								if (U.equals(ReadingPlan.gidFromName(info.name), o.gid)) {
+									if (info.startTime != content.startTime) {
+										final ContentValues cv = new ContentValues();
+										cv.put(Db.ReadingPlan.startTime, content.startTime);
+										db.update(Db.TABLE_ReadingPlan, cv, "_id=?", ToStringArray(info.id));
+									}
+									break;
+								}
+							}
+						}
+					} break;
+				}
+			}
+
+			// if we reach here, the local database has been updated with the append delta.
+			final SyncShadow ss = Sync_Rp.shadowFromEntities(Sync_Rp.getEntitiesFromCurrent(), final_revno);
+			insertOrUpdateSyncShadowBySyncSetName(ss);
+
+			db.setTransactionSuccessful();
+
+			return Sync.ApplyAppendDeltaResult.ok;
+		} finally {
+			Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_RP, false);
 			db.endTransaction();
 		}
 	}

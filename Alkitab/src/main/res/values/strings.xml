@@ -327,8 +327,9 @@
     <string name="rp_commentBehindSchedule">Behind the schedule: %s%%</string>
     <string name="rp_noReadingPlanAvailable">No more reading plans available.</string>
     <string name="rp_deletePlan">"Delete '%s'?"</string>
-    <string name="rp_reset">This action will shift your last fully read to yesterday.</string>
-    <string name="rp_showCalendar">Show calendar</string>
+    <string name="rp_reset">Change the starting date so that the first unread reading will be today?</string>
+    <string name="rp_restart_desc">Start this reading plan from the beginning by marking all as unread?</string>
+    <string name="rp_showCalendar">Choose date</string>
     <string name="rp_gotoFirstUnread">Go to first unread</string>
     <string name="rp_dayHeader">Day %1$s: %2$s</string>
     <string name="rp_floatPreviousReading">Previous reading</string>
@@ -340,10 +341,12 @@
     <string name="rp_navigationGoToDate">Go to date</string>
     <string name="rp_navigationNextDay">Next day</string>
     <string name="rp_menuDownload">Download</string>
-    <string name="rp_menuCatchMeUp">Catch me up</string>
+    <string name="rp_menuCatchMeUp">Resync dates</string>
+    <string name="rp_menuRestart">Restart</string>
     <string name="rp_menuDelete">Delete</string>
     <string name="rp_headingProgress">Progress</string>
-    <string name="rp_gotoToday">Today</string>
+    <string name="rp_gotoToday">Go to today</string>
+    <string name="rp_setStartDate">Set starting date</string>
     <string name="rp_showDetails">Show details</string>
     <string name="rp_hideDetails">Hide details</string>
     <string name="rp_aboutPlan">About plan</string>
@@ -440,6 +443,7 @@
 	<string name="pref_screen_sync_settings_title">Sync settings</string>
 	<string name="sync_category_title_data_types">Data types</string>
 	<string name="pref_syncSet_mabel_enabled_title">Markers and labels</string>
+	<string name="pref_syncSet_rp_enabled_title">Reading plan progress</string>
 	<string name="pref_syncSet_history_enabled_title">Recent verses</string>
 	<string name="pref_syncSet_pins_enabled_title">Progress marks</string>
 	<string name="sync_menu_item_sync_now">Sync now</string>

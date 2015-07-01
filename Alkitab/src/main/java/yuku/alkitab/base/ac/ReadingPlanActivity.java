@@ -1,7 +1,10 @@
 package yuku.alkitab.base.ac;
 
 import android.app.DatePickerDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
@@ -57,6 +60,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftDrawer.ReadingPlan.Listener {
 	public static final String TAG = ReadingPlanActivity.class.getSimpleName();
 
+	public static final String ACTION_READING_PLAN_PROGRESS_CHANGED = ReadingPlanActivity.class.getName() + ".action.READING_PLAN_PROGRESS_CHANGED";
+
 	private static final int REQCODE_openList = 1;
 
 	DrawerLayout drawerLayout;
@@ -108,9 +113,125 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		flNoData = V.get(this, R.id.flNoDataContainer);
 
 		lsReadingPlan = V.get(this, R.id.lsTodayReadings);
+		lsReadingPlan.setAdapter(readingPlanAdapter = new ReadingPlanAdapter());
+
 		bToday = V.get(this, R.id.bToday);
+		bToday.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				final PopupMenu popupMenu = new PopupMenu(ReadingPlanActivity.this, v);
+				final Menu menu = popupMenu.getMenu();
+				menu.add(0, 1, 0, getString(R.string.rp_showCalendar));
+				menu.add(0, 3, 0, getString(R.string.rp_gotoToday));
+				menu.add(0, 2, 0, getString(R.string.rp_gotoFirstUnread));
+				menu.add(0, 5, 0, getString(R.string.rp_menuCatchMeUp));
+				menu.add(0, 4, 0, getString(R.string.rp_setStartDate));
+
+				popupMenu.setOnMenuItemClickListener(menuItem -> {
+					popupMenu.dismiss();
+					int itemId = menuItem.getItemId();
+					switch (itemId) {
+						case 1:
+							showCalendar();
+							break;
+						case 2:
+							gotoFirstUnread();
+							break;
+						case 3:
+							gotoToday();
+							break;
+						case 4:
+							showSetStartDateDialog();
+							break;
+						case 5:
+							catchMeUp();
+							break;
+					}
+					return true;
+				});
+				popupMenu.show();
+			}
+
+			private void gotoToday() {
+				loadDayNumber();
+				changeDay(0);
+			}
+
+			private void gotoFirstUnread() {
+				dayNumber = findFirstUnreadDay();
+				changeDay(0);
+			}
+
+			private void showCalendar() {
+				Calendar calendar = GregorianCalendar.getInstance();
+				calendar.setTimeInMillis(readingPlan.info.startTime);
+				calendar.add(Calendar.DATE, dayNumber);
+
+				DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
+					Calendar newCalendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+					Calendar startCalendar = GregorianCalendar.getInstance();
+					startCalendar.setTimeInMillis(readingPlan.info.startTime);
+
+					int newDay = calculateDaysDiff(startCalendar, newCalendar);
+					if (newDay < 0) {
+						newDay = 0;
+					} else if (newDay >= readingPlan.info.duration) {
+						newDay = readingPlan.info.duration - 1;
+					}
+					dayNumber = newDay;
+					changeDay(0);
+				};
+
+				DatePickerDialog datePickerDialog = new DatePickerDialog(ReadingPlanActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+				datePickerDialog.show();
+			}
+
+			private void showSetStartDateDialog() {
+				final Calendar today = GregorianCalendar.getInstance();
+				today.setTimeInMillis(readingPlan.info.startTime);
+				today.add(Calendar.DATE, dayNumber);
+
+				DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
+					final Calendar newDate = new GregorianCalendar(year, monthOfYear, dayOfMonth, 2, 0, 0); // plus 2 hours to prevent DST-related problems
+					if (readingPlan == null) {
+						return;
+					}
+
+					final long startTime = newDate.getTimeInMillis();
+					readingPlan.info.startTime = startTime;
+					S.getDb().updateReadingPlanStartDate(readingPlan.info.id, startTime);
+					dayNumber = 0; // show the first one
+					changeDay(0);
+				};
+
+				new DatePickerDialog(ReadingPlanActivity.this, dateSetListener, today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH)).show();
+			}
+
+			private void catchMeUp() {
+				new AlertDialogWrapper.Builder(ReadingPlanActivity.this)
+					.setMessage(R.string.rp_reset)
+					.setPositiveButton(R.string.ok, (dialog, which) -> {
+						int firstUnreadDay = findFirstUnreadDay();
+						Calendar calendar = GregorianCalendar.getInstance();
+						calendar.add(Calendar.DATE, -firstUnreadDay);
+						S.getDb().updateReadingPlanStartDate(readingPlan.info.id, calendar.getTime().getTime());
+						loadReadingPlan(readingPlan.info.id);
+						loadDayNumber();
+						readingPlanAdapter.load();
+
+						updateButtonStatus();
+					})
+					.setNegativeButton(R.string.cancel, null)
+					.show();
+			}
+		});
+
 		bLeft = V.get(this, R.id.bLeft);
+		bLeft.setOnClickListener(v -> changeDay(-1));
+
 		bRight = V.get(this, R.id.bRight);
+		bRight.setOnClickListener(v -> changeDay(+1));
+
 		bDownload = V.get(this, R.id.bDownload);
 
 		actionBar = getSupportActionBar();
@@ -122,11 +243,35 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		loadReadingPlan(id);
 		prepareDropDownNavigation();
 		loadDayNumber();
+
+		App.getLbm().registerReceiver(reload, new IntentFilter(ACTION_READING_PLAN_PROGRESS_CHANGED));
 	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		App.getLbm().unregisterReceiver(reload);
+	}
+
+	final BroadcastReceiver reload = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			reload();
+		}
+	};
 
 	@Override
 	protected void onStart() {
 		super.onStart();
+
+		reload();
+	}
+
+	void reload() {
+		if (readingPlan != null) {
+			loadReadingPlan(readingPlan.info.id); // so startTime can change
+		}
 
 		loadReadingPlanProgress();
 		prepareDisplay();
@@ -224,7 +369,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		if (readingPlan == null) {
 			return;
 		}
-		readingCodes = S.getDb().getAllReadingCodesByReadingPlanId(readingPlan.info.id);
+		readingCodes = S.getDb().getAllReadingCodesByReadingPlanProgressGid(ReadingPlan.gidFromName(readingPlan.info.name));
 	}
 
 	public void goToIsiActivity(final int dayNumber, final int sequence) {
@@ -300,9 +445,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		actionBar.setListNavigationCallbacks(navigationAdapter, (i, l) -> {
 			if (newDropDownItems) {
 				loadReadingPlan(downloadedReadingPlanInfos.get(i).id);
-				loadReadingPlanProgress();
 				loadDayNumber();
-				prepareDisplay();
+				reload();
 			}
 			newDropDownItems = true;
 			return true;
@@ -318,104 +462,18 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			flNoData.setVisibility(View.VISIBLE);
 
 			bDownload.setOnClickListener(v -> downloadReadingPlanList());
-			return;
+		} else {
+			llNavigations.setVisibility(View.VISIBLE);
+			lsReadingPlan.setVisibility(View.VISIBLE);
+			flNoData.setVisibility(View.GONE);
 		}
-		llNavigations.setVisibility(View.VISIBLE);
-		lsReadingPlan.setVisibility(View.VISIBLE);
-		flNoData.setVisibility(View.GONE);
 
-		//Listviews
-		readingPlanAdapter = new ReadingPlanAdapter();
 		readingPlanAdapter.load();
-		lsReadingPlan.setAdapter(readingPlanAdapter);
 
-		//buttons
 		updateButtonStatus();
-
-		bToday.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				final PopupMenu popupMenu = new PopupMenu(ReadingPlanActivity.this, v);
-				popupMenu.getMenu().add(Menu.NONE, 1, 1, getString(R.string.rp_showCalendar));
-				popupMenu.getMenu().add(Menu.NONE, 2, 2, getString(R.string.rp_gotoFirstUnread));
-				popupMenu.getMenu().add(Menu.NONE, 3, 3, getString(R.string.rp_gotoToday));
-
-				popupMenu.setOnMenuItemClickListener(menuItem -> {
-					popupMenu.dismiss();
-					int itemId = menuItem.getItemId();
-					if (itemId == 1) {
-						showCalendar();
-					} else if (itemId == 2) {
-						gotoFirstUnread();
-					} else if (itemId == 3) {
-						gotoToday();
-					}
-					return true;
-				});
-				popupMenu.show();
-			}
-
-			private void gotoToday() {
-				loadDayNumber();
-				changeDay(0);
-			}
-
-			private void gotoFirstUnread() {
-				dayNumber = findFirstUnreadDay();
-				changeDay(0);
-			}
-
-			private void showCalendar() {
-				Calendar calendar = GregorianCalendar.getInstance();
-				calendar.setTimeInMillis(readingPlan.info.startTime);
-				calendar.add(Calendar.DATE, dayNumber);
-
-				DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
-					Calendar newCalendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
-					Calendar startCalendar = GregorianCalendar.getInstance();
-					startCalendar.setTimeInMillis(readingPlan.info.startTime);
-
-					int newDay = calculateDaysDiff(startCalendar, newCalendar);
-					if (newDay < 0) {
-						newDay = 0;
-					} else if (newDay >= readingPlan.info.duration) {
-						newDay = readingPlan.info.duration - 1;
-					}
-					dayNumber = newDay;
-					changeDay(0);
-				};
-
-				DatePickerDialog datePickerDialog = new DatePickerDialog(ReadingPlanActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-				datePickerDialog.show();
-			}
-		});
-
-		bLeft.setOnClickListener(v -> changeDay(-1));
-
-		bRight.setOnClickListener(v -> changeDay(+1));
-	}
-
-	private void resetReadingPlan() {
-		new AlertDialogWrapper.Builder(this)
-			.setMessage(R.string.rp_reset)
-			.setPositiveButton(R.string.ok, (dialog, which) -> {
-				int firstUnreadDay = findFirstUnreadDay();
-				Calendar calendar = GregorianCalendar.getInstance();
-				calendar.add(Calendar.DATE, -firstUnreadDay);
-				S.getDb().updateStartDate(readingPlan.info.id, calendar.getTime().getTime());
-				loadReadingPlan(readingPlan.info.id);
-				loadDayNumber();
-				readingPlanAdapter.load();
-				readingPlanAdapter.notifyDataSetChanged();
-
-				updateButtonStatus();
-			})
-			.setNegativeButton(R.string.cancel, null)
-			.show();
 	}
 
 	private int findFirstUnreadDay() {
-
 		for (int i = 0; i < readingPlan.info.duration - 1; i++) {
 			boolean[] readMarks = new boolean[readingPlan.dailyVerses[i].length / 2];
 			ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, i);
@@ -453,22 +511,38 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		}
 		dayNumber = newDay;
 		readingPlanAdapter.load();
-		readingPlanAdapter.notifyDataSetChanged();
 
 		updateButtonStatus();
 	}
 
 	private void updateButtonStatus() {            //TODO look disabled
+		if (readingPlan == null) {
+			return;
+		}
+
 		bLeft.setEnabled(dayNumber != 0);
 		bRight.setEnabled(dayNumber != readingPlan.info.duration - 1);
-
 		bToday.setText(getReadingDateHeader(dayNumber));
-
 	}
 
 	@Override
-	public void bCatchMeUp_click() {
-		resetReadingPlan();
+	public void bRestart_click() {
+		new AlertDialogWrapper.Builder(this)
+			.setMessage(R.string.rp_restart_desc)
+			.setPositiveButton(R.string.ok, (dialog, which) -> {
+				S.getDb().deleteAllReadingPlanProgressForGid(ReadingPlan.gidFromName(readingPlan.info.name));
+				S.getDb().updateReadingPlanStartDate(readingPlan.info.id, System.currentTimeMillis());
+				loadReadingPlan(readingPlan.info.id);
+				loadDayNumber();
+				readingPlanAdapter.load();
+				reload();
+
+				updateButtonStatus();
+			})
+			.setNegativeButton(R.string.cancel, null)
+			.show();
+
+		leftDrawer.closeDrawer();
 	}
 
 	@Override
@@ -621,15 +695,22 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		private int[] todayReadings;
 
 		public void load() {
-			todayReadings = readingPlan.dailyVerses[dayNumber];
+			if (readingPlan == null) {
+				todayReadings = null;
+			} else {
+				todayReadings = readingPlan.dailyVerses[dayNumber];
+			}
+			notifyDataSetChanged();
 		}
 
 		@Override
 		public int getCount() {
+			if (todayReadings == null) return 0;
+
 			if (showDetails) {
 				return (todayReadings.length / 2) + readingPlan.info.duration + 1;
 			} else {
-				return (todayReadings.length / 2) +  1;
+				return (todayReadings.length / 2) + 1;
 			}
 		}
 
@@ -670,10 +751,9 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				checkbox.setChecked(readMarks[position]);
 
 				checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-					ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, dayNumber, position, isChecked);
+					ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.name, dayNumber, position, isChecked);
 					loadReadingPlanProgress();
 					load();
-					notifyDataSetChanged();
 				});
 			} else if (itemViewType == 1) {
 				final ProgressBar pbReadingProgress = V.get(res, R.id.pbReadingProgress);
@@ -752,10 +832,9 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 					checkBox.setChecked(readMarks[sequence]);
 					checkBox.setText(S.activeVersion.referenceRange(ariRanges[sequence * 2], ariRanges[sequence * 2 + 1]));
 					checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-						ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, currentViewTypePosition, sequence, isChecked);
+						ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.name, currentViewTypePosition, sequence, isChecked);
 						loadReadingPlanProgress();
 						load();
-						notifyDataSetChanged();
 					});
 				}
 			}
