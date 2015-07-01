@@ -250,17 +250,17 @@
     <string name="desc_drag_to_reorder_versions">Drag to reorder versions</string>
     <string name="desc_close">Close</string>
     <string name="desc_play">Play</string>
-    <string name="desc_progress_1">First progress</string>
-    <string name="desc_progress_2">Second progress</string>
-    <string name="desc_progress_3">Third progress</string>
-    <string name="desc_progress_4">Fourth progress</string>
-    <string name="desc_progress_5">Fifth progress</string>
+    <string name="desc_progress_1">First pin</string>
+    <string name="desc_progress_2">Second pin</string>
+    <string name="desc_progress_3">Third pin</string>
+    <string name="desc_progress_4">Fourth pin</string>
+    <string name="desc_progress_5">Fifth pin</string>
     <string name="desc_verse_attribute_one_bookmark">A bookmark is attached to this verse.</string>
     <string name="desc_verse_attribute_multiple_bookmarks">%s bookmarks are attached to this verse.</string>
     <string name="desc_verse_attribute_one_note">A note is attached to this verse.</string>
     <string name="desc_verse_attribute_multiple_notes">%s notes are attached to this verse.</string>
     <string name="desc_verse_attribute_progress_mark">%s is currently here.</string>
-    <string name="desc_progress_mark_list">List of progress marks</string>
+    <string name="desc_progress_mark_list">List of pins</string>
 
     <string name="intent_filter_open_yes_file">Open YES file</string>
     <string name="intent_filter_open_pdb_file">Open PDB file</string>
@@ -285,17 +285,13 @@
     <string name="me_no_labels">No labels</string>
     <string name="me_edited_modify_date">(edited %s)</string>
 
-    <string name="pm_progress_1">Progress 1</string>
-    <string name="pm_progress_2">Progress 2</string>
-    <string name="pm_progress_3">Progress 3</string>
-    <string name="pm_progress_4">Progress 4</string>
-    <string name="pm_progress_5">Progress 5</string>
-    <string name="pm_menu_save_progress">Save %s</string>
-    <string name="pm_menu_view_progress">View progress</string>
-    <string name="pm_progress_name">Progress name</string>
-    <string name="pm_edit_name">Edit name</string>
-    <string name="pm_delete_progress">Delete progress</string>
-    <string name="pm_activate_tutorial">Long-press and drag to place a progress on a verse.</string>
+    <string name="pm_progress_1">Pin 1</string>
+    <string name="pm_progress_2">Pin 2</string>
+    <string name="pm_progress_3">Pin 3</string>
+    <string name="pm_progress_4">Pin 4</string>
+    <string name="pm_progress_5">Pin 5</string>
+    <string name="pm_progress_name">Pin name</string>
+    <string name="pm_activate_tutorial">Long-press and drag to place a pin on a verse.</string>
     <string name="pm_delete_progress_confirm">Remove <b>^1</b>?</string>
 
     <string name="copy_share">Copy or share</string>
@@ -381,7 +377,7 @@
     <string name="drawer_close">Close drawer</string>
     <string name="menuSplitVersion">Split</string>
     <string name="menuBible">Bible</string>
-    <string name="menuProgress">Progress</string>
+    <string name="menuProgress">Pins</string>
     <string name="sn_menu_copy">Copy song</string>
     <string name="menuPlay">Play</string>
     <string name="menuPause">Pause</string>
@@ -445,7 +441,7 @@
 	<string name="pref_syncSet_mabel_enabled_title">Markers and labels</string>
 	<string name="pref_syncSet_rp_enabled_title">Reading plan progress</string>
 	<string name="pref_syncSet_history_enabled_title">Recent verses</string>
-	<string name="pref_syncSet_pins_enabled_title">Progress marks</string>
+	<string name="pref_syncSet_pins_enabled_title">Pins</string>
 	<string name="sync_menu_item_sync_now">Sync now</string>
 	<string name="sync_menu_item_sync_log">View log</string>
 	<string name="sync_sync_set_pref_summary_last_synced">Last synced %1$s, %2$s (r%3$s)</string>
