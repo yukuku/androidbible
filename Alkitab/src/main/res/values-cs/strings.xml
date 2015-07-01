@@ -275,11 +275,7 @@
   <string name="pm_progress_3">Záložka 3</string>
   <string name="pm_progress_4">Záložka 4</string>
   <string name="pm_progress_5">Záložka 5</string>
-  <string name="pm_menu_save_progress">Uložit %s</string>
-  <string name="pm_menu_view_progress">Zobrazit záložky</string>
   <string name="pm_progress_name">Název záložky</string>
-  <string name="pm_edit_name">Upravit název</string>
-  <string name="pm_delete_progress">Odstranit záložku</string>
   <string name="pm_activate_tutorial">Podržte a táhněte na místo záložky na verš.</string>
   <string name="pm_delete_progress_confirm">Odstranit <b>^1</b>?</string>
   <string name="copy_share">Kopírovat nebo sdílet</string>
@@ -305,8 +301,6 @@
   <string name="rp_commentBehindSchedule">Zpoždění: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Více plánů čtení není k dispozici.</string>
   <string name="rp_deletePlan">"Smazat \'%s\'?"</string>
-  <string name="rp_reset">Tato akce posune plán tak, aby se odstranilo zpoždění.</string>
-  <string name="rp_showCalendar">Zobrazit kalendář</string>
   <string name="rp_gotoFirstUnread">Jít na první nepřečtený</string>
   <string name="rp_dayHeader">Den %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Předchozí čtení</string>
@@ -318,10 +312,8 @@
   <string name="rp_navigationGoToDate">Jít na datum</string>
   <string name="rp_navigationNextDay">Další den</string>
   <string name="rp_menuDownload">Stáhnout</string>
-  <string name="rp_menuCatchMeUp">Odstranit zpoždění</string>
   <string name="rp_menuDelete">Smazat</string>
   <string name="rp_headingProgress">Přehled</string>
-  <string name="rp_gotoToday">Dnes</string>
   <string name="rp_showDetails">Zobrazit podrobnosti</string>
   <string name="rp_hideDetails">Skrýt podrobnosti</string>
   <string name="rp_aboutPlan">Více o plánu</string>

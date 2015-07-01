@@ -275,11 +275,7 @@
   <string name="pm_progress_3">Progression 3</string>
   <string name="pm_progress_4">Progression 4</string>
   <string name="pm_progress_5">Progression 5</string>
-  <string name="pm_menu_save_progress">Sauvegarder %s</string>
-  <string name="pm_menu_view_progress">Progression de la visualisation</string>
   <string name="pm_progress_name">Nom de la Progression</string>
-  <string name="pm_edit_name">Nom de l\'édition</string>
-  <string name="pm_delete_progress">Progression de la suppression</string>
   <string name="pm_activate_tutorial">Appui-Long et Tiré pour mettre un témoin de progression sur un verset.</string>
   <string name="pm_delete_progress_confirm">Effacer <b>^1</b> ?</string>
   <string name="copy_share">Copier ou partager</string>
@@ -305,8 +301,6 @@
   <string name="rp_commentBehindSchedule">En retard sur le planning : %s%%</string>
   <string name="rp_noReadingPlanAvailable">Plus aucun plan de lecture valide.</string>
   <string name="rp_deletePlan">"Supprimer \'%s\' ?"</string>
-  <string name="rp_reset">Cette action va déplacer votre dernière lecture à hier.</string>
-  <string name="rp_showCalendar">Afficher le calendrier</string>
   <string name="rp_gotoFirstUnread">Aller au premier \'non lu\'</string>
   <string name="rp_dayHeader">Jour %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Précédente lecture</string>
@@ -318,10 +312,8 @@
   <string name="rp_navigationGoToDate">Aller à une date</string>
   <string name="rp_navigationNextDay">Prochain jour</string>
   <string name="rp_menuDownload">Télécharger</string>
-  <string name="rp_menuCatchMeUp">Rattrapage</string>
   <string name="rp_menuDelete">Suppression</string>
   <string name="rp_headingProgress">Progression</string>
-  <string name="rp_gotoToday">Aujourd\'hui</string>
   <string name="rp_showDetails">Afficher les détails</string>
   <string name="rp_hideDetails">Masquer les détails</string>
   <string name="rp_aboutPlan">Au sujet du plan</string>

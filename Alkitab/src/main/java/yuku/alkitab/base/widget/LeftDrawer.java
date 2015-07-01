@@ -6,13 +6,13 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.SwitchCompat;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
 import android.view.DragEvent;
-import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -134,15 +134,15 @@ public abstract class LeftDrawer extends ScrollView {
 	}
 
 	public void toggleDrawer() {
-		if (drawerLayout.isDrawerOpen(Gravity.START)) {
-			drawerLayout.closeDrawer(Gravity.START);
+		if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+			drawerLayout.closeDrawer(GravityCompat.START);
 		} else {
-			drawerLayout.openDrawer(Gravity.START);
+			drawerLayout.openDrawer(GravityCompat.START);
 		}
 	}
 
 	public void closeDrawer() {
-		drawerLayout.closeDrawer(Gravity.START);
+		drawerLayout.closeDrawer(GravityCompat.START);
 	}
 
 	void bHelp_click() {
@@ -552,7 +552,7 @@ public abstract class LeftDrawer extends ScrollView {
 
 	public static class ReadingPlan extends LeftDrawer {
 		public interface Listener {
-			void bCatchMeUp_click();
+			void bRestart_click();
 		}
 
 		public interface Handle {
@@ -561,18 +561,18 @@ public abstract class LeftDrawer extends ScrollView {
 
 		ScrollView scrollDescription;
 		TextView tDescription;
-		View bCatchMeUp;
+		View bRestart;
 
 		Listener listener;
 		Handle handle = new Handle() {
 			@Override
 			public void setDescription(final CharSequence description) {
 				if (description == null) {
-					bCatchMeUp.setVisibility(GONE);
+					bRestart.setVisibility(GONE);
 					scrollDescription.setVisibility(GONE);
 					tDescription.setText("");
 				} else {
-					bCatchMeUp.setVisibility(VISIBLE);
+					bRestart.setVisibility(VISIBLE);
 					scrollDescription.setVisibility(VISIBLE);
 					tDescription.setText(description);
 				}
@@ -593,9 +593,9 @@ public abstract class LeftDrawer extends ScrollView {
 
 			scrollDescription = V.get(this, R.id.scrollDescription);
 			tDescription = V.get(this, R.id.tDescription);
-			bCatchMeUp = V.get(this, R.id.bCatchMeUp);
+			bRestart = V.get(this, R.id.bRestart);
 
-			bCatchMeUp.setOnClickListener(v -> listener.bCatchMeUp_click());
+			bRestart.setOnClickListener(v -> listener.bRestart_click());
 		}
 
 		@Override

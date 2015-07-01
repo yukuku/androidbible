@@ -198,6 +198,7 @@
   <string name="verse_select_one_verse_selected">1 versículo selecionado</string>
   <string name="verse_select_multiple_verse_selected">%s versículos selecionados</string>
   <string name="google_play_store_not_installed">Google Play Store não está instalado.</string>
+  <string name="pref_language_label_default">Padrão</string>
   <string name="goto_tab_dialer_label">Teclado</string>
   <string name="goto_tab_direct_label">Por extenso</string>
   <string name="goto_tab_grid_label">Em grade</string>
@@ -249,6 +250,7 @@
   <string name="desc_verse_attribute_one_note">O versículo possui uma anotação.</string>
   <string name="desc_verse_attribute_multiple_notes">%s anotações no versículo.</string>
   <string name="desc_verse_attribute_progress_mark">%s está aqui.</string>
+  <string name="desc_progress_mark_list">Lista de marcadores de progresso</string>
   <string name="intent_filter_open_yes_file">Abrir arquivo YES</string>
   <string name="intent_filter_open_pdb_file">Abrir arquivo PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Abrir arquivo PDB/YES</string>
@@ -275,11 +277,7 @@
   <string name="pm_progress_3">Progresso 3</string>
   <string name="pm_progress_4">Progresso 4</string>
   <string name="pm_progress_5">Progresso 5</string>
-  <string name="pm_menu_save_progress">Salvo %s</string>
-  <string name="pm_menu_view_progress">Ver progresso</string>
   <string name="pm_progress_name">Nome da marcação de progresso</string>
-  <string name="pm_edit_name">Editar nome</string>
-  <string name="pm_delete_progress">Remover progresso</string>
   <string name="pm_activate_tutorial">Pressione e arraste para colocar um progresso em um versículo.</string>
   <string name="pm_delete_progress_confirm">Remover <b>^1</b>?</string>
   <string name="copy_share">Copiar ou compartilhar</string>
@@ -305,8 +303,6 @@
   <string name="rp_commentBehindSchedule">Atrasado ao cronograma: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Nenhum plano de leitura disponível.</string>
   <string name="rp_deletePlan">"Remover \'%s\'?"</string>
-  <string name="rp_reset">Esta ação ira mover sua última leitura completa para ontem.</string>
-  <string name="rp_showCalendar">Exibir calendário</string>
   <string name="rp_gotoFirstUnread">Ir para o primeiro não lido</string>
   <string name="rp_dayHeader">Dia %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Leitura anterior</string>
@@ -318,10 +314,8 @@
   <string name="rp_navigationGoToDate">Ir para a data</string>
   <string name="rp_navigationNextDay">Dia seguinte</string>
   <string name="rp_menuDownload">Baixar</string>
-  <string name="rp_menuCatchMeUp">Recuperando o atraso</string>
   <string name="rp_menuDelete">Remover</string>
   <string name="rp_headingProgress">Progresso</string>
-  <string name="rp_gotoToday">Hoje</string>
   <string name="rp_showDetails">Exibir detalhes</string>
   <string name="rp_hideDetails">Ocultar detalhes</string>
   <string name="rp_aboutPlan">Sobre o plano</string>

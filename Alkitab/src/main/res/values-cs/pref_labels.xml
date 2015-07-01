@@ -18,7 +18,10 @@
   <string name="pref_copyWithVerseNumbers_summary">Začít každý verš jeho číslem</string>
   <string name="pref_copyWithVersionName_title">Zkratka verze</string>
   <string name="pref_copyWithVersionName_summary">Přidat info o verzi Bible</string>
+  <string name="pref_copyWithShareUrl_title">Sdílet URL</string>
+  <string name="pref_copyWithShareUrl_summary">Přidat odkaz na sdílení stránky na konec kopírovaného a sdíleného textu</string>
   <string name="pref_autoDictionaryAnalyze_title">Vyhledat automaticky ve slovníku</string>
   <string name="pref_autoDictionaryAnalyze_summary">Vyhledat slovníková slova ve vybraných verších</string>
   <string name="pref_showHiddenVersion_title">Povolit omezené verze</string>
+  <string name="pref_selectedVerseBgColor_title">Vyberte pozadí veršů</string>
 </resources>

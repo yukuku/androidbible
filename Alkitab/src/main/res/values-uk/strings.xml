@@ -263,11 +263,7 @@
   <string name="pm_progress_3">Прогрес 3</string>
   <string name="pm_progress_4">Прогрес 4</string>
   <string name="pm_progress_5">Прогрес 5</string>
-  <string name="pm_menu_save_progress">Збережено %s</string>
-  <string name="pm_menu_view_progress">Перегляд прогресу</string>
   <string name="pm_progress_name">Назва прогресу</string>
-  <string name="pm_edit_name">Редагувати назву</string>
-  <string name="pm_delete_progress">Видалити прогрес</string>
   <string name="pm_activate_tutorial">Довше притримайте та перетягніть щоб розмістити прогрес у вірші.</string>
   <string name="pm_delete_progress_confirm">Видалити <b>^1</b>?</string>
   <string name="copy_share">Копіювати або поділитись</string>
@@ -293,8 +289,6 @@
   <string name="rp_commentBehindSchedule">Відставання від графіка: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Немає доступних планів читання.</string>
   <string name="rp_deletePlan">"Видалити \'%s\'?"</string>
-  <string name="rp_reset">Ця дія перемістить до вашого попереднього читання.</string>
-  <string name="rp_showCalendar">Показати календар</string>
   <string name="rp_gotoFirstUnread">Перейти до непрочитаного</string>
   <string name="rp_dayHeader">День %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Попереднє читання</string>
@@ -306,10 +300,8 @@
   <string name="rp_navigationGoToDate">Перейти до дати</string>
   <string name="rp_navigationNextDay">Наступний день</string>
   <string name="rp_menuDownload">Завантажити</string>
-  <string name="rp_menuCatchMeUp">Перейти до непрочитаного</string>
   <string name="rp_menuDelete">Видалити</string>
   <string name="rp_headingProgress">Прогрес</string>
-  <string name="rp_gotoToday">Сьогодні</string>
   <string name="rp_showDetails">Показати подробиці</string>
   <string name="rp_hideDetails">Приховати подробиці</string>
   <string name="rp_aboutPlan">Про план</string>

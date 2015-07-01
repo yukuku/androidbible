@@ -40,17 +40,15 @@ public class ReadingPlanManager {
 		}
 	}
 
-	public static void updateReadingPlanProgress(final long readingPlanId, final int dayNumber, final int readingSequence, final boolean checked) {
-		int readingCode = toReadingCode(dayNumber, readingSequence);
+	public static void updateReadingPlanProgress(final String readingPlanName, final int dayNumber, final int readingSequence, final boolean checked) {
+		final int readingCode = dayNumber << 8 | readingSequence;
+
+		final String gid = ReadingPlan.gidFromName(readingPlanName);
 
 		if (checked) {
-			IntArrayList ids = S.getDb().getReadingPlanProgressId(readingPlanId, readingCode);
-			if (ids.size() > 0) {
-				S.getDb().deleteReadingPlanProgress(readingPlanId, readingCode);
-			}
-			S.getDb().insertReadingPlanProgress(readingPlanId, readingCode, new Date().getTime());
+			S.getDb().insertOrUpdateReadingPlanProgress(gid, readingCode, System.currentTimeMillis());
 		} else {
-			S.getDb().deleteReadingPlanProgress(readingPlanId, readingCode);
+			S.getDb().deleteReadingPlanProgress(gid, readingCode);
 		}
 	}
 
@@ -119,14 +117,6 @@ public class ReadingPlanManager {
 		return true;
 	}
 
-	public static int toReadingCode(int dayNumber, int readingSequence) {
-		return dayNumber << 8 | readingSequence;
-	}
-
-	public static int toSequence(int readingCode) {
-		return (readingCode & 0x000000ff);
-	}
-
 	public static IntArrayList filterReadingCodesByDayStartEnd(IntArrayList readingCodes, int dayStart, int dayEnd) {
 		IntArrayList res = new IntArrayList();
 		int start = dayStart << 8;
@@ -144,7 +134,7 @@ public class ReadingPlanManager {
 		readingCodes = filterReadingCodesByDayStartEnd(readingCodes, dayNumber, dayNumber);
 		for (int i = 0; i < readingCodes.size(); i++) {
 			final int readingCode = readingCodes.get(i);
-			final int sequence = toSequence(readingCode);
+			final int sequence = (readingCode & 0x000000ff);
 			readMarks[sequence] = true;
 		}
 	}

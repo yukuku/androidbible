@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -32,8 +31,6 @@ public class ProgressMarkListDialog extends DialogFragment {
 
 	public interface Listener {
 		void onProgressMarkSelected(int preset_id);
-
-		void onProgressMarkDeleted();
 	}
 
 	Listener progressMarkListener;
@@ -54,37 +51,31 @@ public class ProgressMarkListDialog extends DialogFragment {
 		final ProgressMarkAdapter adapter = new ProgressMarkAdapter();
 		lsProgressMark.setAdapter(adapter);
 		lsProgressMark.setBackgroundColor(S.applied.backgroundColor);
-		lsProgressMark.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-				final ProgressMark progressMark = adapter.progressMarks.get(position);
-				progressMarkListener.onProgressMarkSelected(progressMark.preset_id);
-				getDialog().dismiss();
-			}
+		lsProgressMark.setOnItemClickListener((parent, view1, position, id) -> {
+			final ProgressMark progressMark = adapter.progressMarks.get(position);
+			progressMarkListener.onProgressMarkSelected(progressMark.preset_id);
+			getDialog().dismiss();
 		});
-		lsProgressMark.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-			@Override
-			public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-				final ProgressMark progressMark = adapter.progressMarks.get(position);
-				ProgressMarkRenameDialog.show(getActivity(), progressMark, new ProgressMarkRenameDialog.Listener() {
-					@Override
-					public void onOked() {
-						adapter.reload();
+		lsProgressMark.setOnItemLongClickListener((parent, view1, position, id) -> {
+			final ProgressMark progressMark = adapter.progressMarks.get(position);
+			ProgressMarkRenameDialog.show(getActivity(), progressMark, new ProgressMarkRenameDialog.Listener() {
+				@Override
+				public void onOked() {
+					adapter.reload();
+				}
+
+				@Override
+				public void onDeleted() {
+					adapter.reload();
+
+					if (adapter.progressMarks.size() == 0) {
+						// no more to show, dismiss this dialog.
+						getDialog().dismiss();
 					}
+				}
+			});
 
-					@Override
-					public void onDeleted() {
-						adapter.reload();
-
-						if (adapter.progressMarks.size() == 0) {
-							// no more to show, dismiss this dialog.
-							getDialog().dismiss();
-						}
-					}
-				});
-
-				return true;
-			}
+			return true;
 		});
 
 		return view;

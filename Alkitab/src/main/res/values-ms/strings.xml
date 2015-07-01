@@ -259,11 +259,7 @@
   <string name="pm_progress_3">Kemajuan 3</string>
   <string name="pm_progress_4">Kemajuan 4</string>
   <string name="pm_progress_5">Kemajuan 5</string>
-  <string name="pm_menu_save_progress">Simpan %s</string>
-  <string name="pm_menu_view_progress">Lihat kemajuan</string>
   <string name="pm_progress_name">Nama Kemajuan</string>
-  <string name="pm_edit_name">Edit nama</string>
-  <string name="pm_delete_progress">Padam kemajuan</string>
   <string name="pm_activate_tutorial">Tekan lama dan seret untuk meletakkan kemajuan ayat.</string>
   <string name="pm_delete_progress_confirm">Buang <b>^1</b>?</string>
   <string name="copy_share">Salin atau kongsi</string>
@@ -289,8 +285,6 @@
   <string name="rp_commentBehindSchedule">Di sebalik jadual: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Tiada lagi rancangan membaca tersedia.</string>
   <string name="rp_deletePlan">"Padam \'%s\'?"</string>
-  <string name="rp_reset">Tindakan ini akan beralih terakhir anda membaca sepenuhnya semalam.</string>
-  <string name="rp_showCalendar">Tunjuk kalendar</string>
   <string name="rp_gotoFirstUnread">Pergi ke belum dibaca dahulu</string>
   <string name="rp_dayHeader">Hari %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Bacaan sebelumnya</string>
@@ -302,10 +296,8 @@
   <string name="rp_navigationGoToDate">Pergi ke tarikh</string>
   <string name="rp_navigationNextDay">Hari seterusnya</string>
   <string name="rp_menuDownload">Muat turun</string>
-  <string name="rp_menuCatchMeUp">Tangkap aku</string>
   <string name="rp_menuDelete">Padam</string>
   <string name="rp_headingProgress">Kemajuan</string>
-  <string name="rp_gotoToday">Hari ini</string>
   <string name="rp_showDetails">Tunjuk butiran</string>
   <string name="rp_hideDetails">Sembunyikan butiran</string>
   <string name="rp_aboutPlan">Mengenai pelan</string>

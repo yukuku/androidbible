@@ -262,11 +262,7 @@
   <string name="pm_progress_3">Progreso 3</string>
   <string name="pm_progress_4">Progreso 4</string>
   <string name="pm_progress_5">Progreso 5</string>
-  <string name="pm_menu_save_progress">Guardar %s</string>
-  <string name="pm_menu_view_progress">Ver progreso</string>
   <string name="pm_progress_name">Nombre del progreso</string>
-  <string name="pm_edit_name">Editar nombre</string>
-  <string name="pm_delete_progress">Eliminar progreso</string>
   <string name="pm_activate_tutorial">Mantenga presionado y arrastre para colocar el progreso en un versículo.</string>
   <string name="pm_delete_progress_confirm">¿Remover <b>^1</b>?</string>
   <string name="copy_share">Copiar o compartir</string>
@@ -292,8 +288,6 @@
   <string name="rp_commentBehindSchedule">Retrasado: %s%%</string>
   <string name="rp_noReadingPlanAvailable">No hay más planes de lectura disponibles.</string>
   <string name="rp_deletePlan">"¿Eliminar \'%s\'?"</string>
-  <string name="rp_reset">Esta acción transferirá su última lectura completa a ayer.</string>
-  <string name="rp_showCalendar">Mostrar calendario</string>
   <string name="rp_gotoFirstUnread">Ir al primero sin leer</string>
   <string name="rp_dayHeader">Día %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Lectura previa</string>
@@ -305,10 +299,8 @@
   <string name="rp_navigationGoToDate">Ir a día</string>
   <string name="rp_navigationNextDay">Día siguiente</string>
   <string name="rp_menuDownload">Descargar</string>
-  <string name="rp_menuCatchMeUp">Ponerme al día</string>
   <string name="rp_menuDelete">Eliminar</string>
   <string name="rp_headingProgress">Progreso</string>
-  <string name="rp_gotoToday">Hoy</string>
   <string name="rp_showDetails">Mostrar detalles</string>
   <string name="rp_hideDetails">Ocultar detalles</string>
   <string name="rp_aboutPlan">Acerca del plan</string>

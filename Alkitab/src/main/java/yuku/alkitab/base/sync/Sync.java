@@ -95,6 +95,7 @@ public class Sync {
 		public static final String KIND_MARKER_LABEL = "Marker_Label";
 		public static final String KIND_HISTORY_ENTRY = "HistoryEntry";
 		public static final String KIND_PINS = "Pins"; // with plural to indicate not only 1 pin but all pins considered as one entity
+		public static final String KIND_RP_PROGRESS = "RpProgress";
 
 		/**
 		 * Kind of this entity. One of the <code>KIND_</code> constants on {@link yuku.alkitab.base.sync.Sync.Entity}.
@@ -267,7 +268,7 @@ public class Sync {
 			.build();
 
 		try {
-			final Call call = App.getOkHttpClient().newCall(
+			final Call call = App.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
 					.url(getEffectiveServerPrefix() + "/sync/api/register_gcm_client")
 					.post(requestBody)
@@ -339,7 +340,7 @@ public class Sync {
 			.build();
 
 		try {
-			final Call call = App.getOkHttpClient().newCall(
+			final Call call = App.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
 					.url(getEffectiveServerPrefix() + "/sync/api/create_own_user")
 					.post(requestBody)
@@ -373,7 +374,7 @@ public class Sync {
 			.build();
 
 		try {
-			final Call call = App.getOkHttpClient().newCall(
+			final Call call = App.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
 					.url(getEffectiveServerPrefix() + "/sync/api/login_own_user")
 					.post(requestBody)
@@ -405,7 +406,7 @@ public class Sync {
 			.build();
 
 		try {
-			final Call call = App.getOkHttpClient().newCall(
+			final Call call = App.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
 					.url(getEffectiveServerPrefix() + "/sync/api/forgot_password")
 					.post(requestBody)
@@ -437,7 +438,7 @@ public class Sync {
 			.build();
 
 		try {
-			final Call call = App.getOkHttpClient().newCall(
+			final Call call = App.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
 					.url(getEffectiveServerPrefix() + "/sync/api/change_password")
 					.post(requestBody)

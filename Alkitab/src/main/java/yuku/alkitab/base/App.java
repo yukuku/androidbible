@@ -27,6 +27,7 @@ import yuku.kirimfidbek.CrashReporter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class App extends yuku.afw.App {
 	public static final String TAG = App.class.getSimpleName();
@@ -37,7 +38,14 @@ public class App extends yuku.afw.App {
 	enum OkHttpClientWrapper {
 		INSTANCE;
 
-		OkHttpClient httpClient = new OkHttpClient();
+		OkHttpClient defaultClient = new OkHttpClient();
+		OkHttpClient longTimeoutClient = new OkHttpClient();
+
+		{
+			longTimeoutClient.setConnectTimeout(300, TimeUnit.SECONDS);
+			longTimeoutClient.setReadTimeout(300, TimeUnit.SECONDS);
+			longTimeoutClient.setWriteTimeout(600, TimeUnit.SECONDS);
+		}
 	}
 
 	enum GsonWrapper {
@@ -47,19 +55,23 @@ public class App extends yuku.afw.App {
 	}
 
 	public static String downloadString(String url) throws IOException {
-		return OkHttpClientWrapper.INSTANCE.httpClient.newCall(new Request.Builder().url(url).build()).execute().body().string();
+		return OkHttpClientWrapper.INSTANCE.defaultClient.newCall(new Request.Builder().url(url).build()).execute().body().string();
 	}
 
 	public static byte[] downloadBytes(String url) throws IOException {
-		return OkHttpClientWrapper.INSTANCE.httpClient.newCall(new Request.Builder().url(url).build()).execute().body().bytes();
+		return OkHttpClientWrapper.INSTANCE.defaultClient.newCall(new Request.Builder().url(url).build()).execute().body().bytes();
 	}
 
 	public static Call downloadCall(String url) {
-		return OkHttpClientWrapper.INSTANCE.httpClient.newCall(new Request.Builder().url(url).build());
+		return OkHttpClientWrapper.INSTANCE.defaultClient.newCall(new Request.Builder().url(url).build());
 	}
 
 	public static OkHttpClient getOkHttpClient() {
-		return OkHttpClientWrapper.INSTANCE.httpClient;
+		return OkHttpClientWrapper.INSTANCE.defaultClient;
+	}
+
+	public static OkHttpClient getLongTimeoutOkHttpClient() {
+		return OkHttpClientWrapper.INSTANCE.longTimeoutClient;
 	}
 
 	@Override public void onCreate() {

@@ -198,6 +198,7 @@
   <string name="verse_select_one_verse_selected">选取了1节经文</string>
   <string name="verse_select_multiple_verse_selected">选取了%s经文</string>
   <string name="google_play_store_not_installed">尚未安装谷歌商店。</string>
+  <string name="pref_language_label_default">预设</string>
   <string name="goto_tab_dialer_label">拨号按键</string>
   <string name="goto_tab_direct_label">直接输入</string>
   <string name="goto_tab_grid_label">格状排列</string>
@@ -249,6 +250,7 @@
   <string name="desc_verse_attribute_one_note">这经节附有笔记。</string>
   <string name="desc_verse_attribute_multiple_notes">这经节附有%s个笔记。</string>
   <string name="desc_verse_attribute_progress_mark">这里有%s。</string>
+  <string name="desc_progress_mark_list">进度标记清单</string>
   <string name="intent_filter_open_yes_file">打开YES档案</string>
   <string name="intent_filter_open_pdb_file">打开PDB档案</string>
   <string name="intent_filter_open_pdb_or_yes_file">打开PDB/YES档案</string>
@@ -275,11 +277,7 @@
   <string name="pm_progress_3">进度三</string>
   <string name="pm_progress_4">进度四</string>
   <string name="pm_progress_5">进度五</string>
-  <string name="pm_menu_save_progress">储存%s</string>
-  <string name="pm_menu_view_progress">检视进度</string>
   <string name="pm_progress_name">进度名称</string>
-  <string name="pm_edit_name">编辑名称</string>
-  <string name="pm_delete_progress">删除进度</string>
   <string name="pm_activate_tutorial">长按并拖曳以在经节上设置进度。</string>
   <string name="pm_delete_progress_confirm">移除<b>^1</b>？</string>
   <string name="copy_share">复制或分享</string>
@@ -305,8 +303,6 @@
   <string name="rp_commentBehindSchedule">落后于计划：%s%%</string>
   <string name="rp_noReadingPlanAvailable">没有可供选择的阅读计划。</string>
   <string name="rp_deletePlan">"删除\'%s\'？"</string>
-  <string name="rp_reset">此动作将会把你最后完成的阅读日定为昨天。</string>
-  <string name="rp_showCalendar">显示日历</string>
   <string name="rp_gotoFirstUnread">到第一个未阅读的读物</string>
   <string name="rp_dayHeader">第%1$s日：%2$s</string>
   <string name="rp_floatPreviousReading">上一个读物</string>
@@ -318,10 +314,8 @@
   <string name="rp_navigationGoToDate">到某日期</string>
   <string name="rp_navigationNextDay">下一天</string>
   <string name="rp_menuDownload">下载</string>
-  <string name="rp_menuCatchMeUp">使我赶上</string>
   <string name="rp_menuDelete">删除</string>
   <string name="rp_headingProgress">进度</string>
-  <string name="rp_gotoToday">今天</string>
   <string name="rp_showDetails">显示详细资料</string>
   <string name="rp_hideDetails">隐藏详细资料</string>
   <string name="rp_aboutPlan">关于计划</string>
@@ -389,6 +383,7 @@
   <string name="patch_text_error_no_edits">请在传送之前作一些编辑。</string>
   <string name="patch_text_menu_reference">参考</string>
   <string name="patch_text_menu_send">传送</string>
+  <string name="patch_text_open_link">传送更正</string>
   <string name="note_actionbar_edit">编辑</string>
   <string name="note_actionbar_delete">删除</string>
   <string name="note_actionbar_ok">完成</string>
@@ -470,6 +465,8 @@
   <string name="about_announcements_none">公告 (0)</string>
   <string name="about_announcements_number">公告 (%s)</string>
   <string name="about_announcement_load_failed">读取公告失败。</string>
+  <string name="about_official_website">官方网站</string>
+  <string name="about_project_page">计划页面</string>
   <string name="marker_migrate_introduction">我们侦测到一个含有书签、笔记、标记和标签的v3 Yuku神速圣经旧版本的备份档桉。\n\n你想汇入它们，让你在这个程式存取它们吗？</string>
   <string name="marker_migrate_no_more">不再询问</string>
   <string name="marker_migrate_later">现在别问我</string>

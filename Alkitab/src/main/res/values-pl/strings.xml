@@ -250,6 +250,7 @@
   <string name="desc_verse_attribute_one_note">Do tego wersu dołączona jest notatka.</string>
   <string name="desc_verse_attribute_multiple_notes">%s notatek jest dołączonych do tego wersu.</string>
   <string name="desc_verse_attribute_progress_mark">%s jest w tym miejscu.</string>
+  <string name="desc_progress_mark_list">Lista wskaźników postępów</string>
   <string name="intent_filter_open_yes_file">Otwórz plik YES</string>
   <string name="intent_filter_open_pdb_file">Otwórz plik PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Otwórz plik PDB/YES</string>
@@ -276,11 +277,7 @@
   <string name="pm_progress_3">Postęp 3</string>
   <string name="pm_progress_4">Postęp 4</string>
   <string name="pm_progress_5">Postęp 5</string>
-  <string name="pm_menu_save_progress">Zapisano %s</string>
-  <string name="pm_menu_view_progress">Zobacz postęp</string>
   <string name="pm_progress_name">Nazwa dla postępu</string>
-  <string name="pm_edit_name">Edytuj nazwę</string>
-  <string name="pm_delete_progress">Usuń postęp</string>
   <string name="pm_activate_tutorial">Przytrzymaj i przeciągnij na wers, aby wskazać postęp.</string>
   <string name="pm_delete_progress_confirm">Usunąć <b>^1</b>?</string>
   <string name="copy_share">Skopiuj lub podziel się</string>
@@ -306,8 +303,9 @@
   <string name="rp_commentBehindSchedule">Opóźnienie względem planu: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Nie ma więcej planów czytań.</string>
   <string name="rp_deletePlan">"Usunąć \'%s\'?"</string>
-  <string name="rp_reset">Ta akcja podmieni twoje ostatnie pełne czytanie na wczoraj.</string>
-  <string name="rp_showCalendar">Pokaż kalendarz</string>
+  <string name="rp_reset">Zmienić datę rozpoczęcia tak, aby pierwszy nieprzeczytany fragment wskazywał na dzisiaj?</string>
+  <string name="rp_restart_desc">Czy rozpocząć plan czytania od początku, oznaczając wszystkie fragmenty jako nieprzeczytane?</string>
+  <string name="rp_showCalendar">Wybierz datę</string>
   <string name="rp_gotoFirstUnread">Idź do pierwszego nieprzeczytanego</string>
   <string name="rp_dayHeader">Dzień %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Poprzednie czytanie</string>
@@ -319,10 +317,12 @@
   <string name="rp_navigationGoToDate">Idź do dnia</string>
   <string name="rp_navigationNextDay">Następny dzień</string>
   <string name="rp_menuDownload">Pobierz</string>
-  <string name="rp_menuCatchMeUp">Dogoń mnie</string>
+  <string name="rp_menuCatchMeUp">Synchronizuje czasy</string>
+  <string name="rp_menuRestart">Zresetuj</string>
   <string name="rp_menuDelete">Usuń</string>
   <string name="rp_headingProgress">Postęp</string>
-  <string name="rp_gotoToday">Dziś</string>
+  <string name="rp_gotoToday">Idź do dzisiaj</string>
+  <string name="rp_setStartDate">Ustaw początkową datę</string>
   <string name="rp_showDetails">Pokaż szczegóły</string>
   <string name="rp_hideDetails">Ukryj szczegóły</string>
   <string name="rp_aboutPlan">O planie</string>
@@ -357,6 +357,7 @@
   <string name="sn_menu_copy">Kopiuj pieśń</string>
   <string name="menuPlay">Odtwarzaj</string>
   <string name="menuPause">Pauza</string>
+  <string name="left_drawer_current_reading_title">Obecnie czytasz</string>
   <string name="book_filter_old_testament">Stary Testament</string>
   <string name="book_filter_old_pentateuch">Pięcioksiąg</string>
   <string name="book_filter_old_history">Historyczne</string>
@@ -407,7 +408,9 @@
   <string name="pref_screen_sync_settings_title">Ustawienia synchronizacji</string>
   <string name="sync_category_title_data_types">Typy danych</string>
   <string name="pref_syncSet_mabel_enabled_title">Znaczniki i etykiety</string>
+  <string name="pref_syncSet_rp_enabled_title">Postęp planu czytań</string>
   <string name="pref_syncSet_history_enabled_title">Ostatnie wersy</string>
+  <string name="pref_syncSet_pins_enabled_title">Znaczniki postępu</string>
   <string name="sync_menu_item_sync_now">Synchronizuj teraz</string>
   <string name="sync_menu_item_sync_log">Podgląd logu</string>
   <string name="sync_sync_set_pref_summary_last_synced">Ostatnia synchronizacja %1$s, %2$s (r%3$s)</string>
