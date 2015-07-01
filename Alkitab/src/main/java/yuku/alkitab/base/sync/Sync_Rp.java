@@ -98,7 +98,10 @@ public class Sync_Rp {
 			startTimes.put(ReadingPlan.gidFromName(info.name), info.startTime);
 		}
 
-		final Map<String, TIntSet> map = S.getDb().getReadingPlanProgressSummaryForSync();
+		// The only source of data is from ReadingPlanProgress table,
+		// but since reading plans with no done is not listed in ReadingPlanProgress,
+		// we need to consult ReadingPlan table to know what they are.
+		final Map<String /* gid */, TIntSet /* done reading codes */> map = S.getDb().getReadingPlanProgressSummaryForSync();
 		for (final Map.Entry<String, TIntSet> e : map.entrySet()) {
 			final String gid = e.getKey();
 
@@ -116,6 +119,21 @@ public class Sync_Rp {
 			});
 			res.add(entity);
 		}
+
+		// add remaining reading plans without any done
+		startTimes.forEachEntry((gid, startTime) -> {
+			if (!map.containsKey(gid)) {
+				final Sync.Entity<Content> entity = new Sync.Entity<>();
+				entity.kind = Sync.Entity.KIND_RP_PROGRESS;
+				entity.gid = gid;
+
+				final Content content = entity.content = new Content();
+				content.startTime = startTime;
+				content.done = new LinkedHashSet<>();
+				res.add(entity);
+			}
+			return true;
+		});
 
 		return res;
 	}

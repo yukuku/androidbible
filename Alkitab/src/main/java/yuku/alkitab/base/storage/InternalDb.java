@@ -1218,7 +1218,12 @@ public class InternalDb {
 		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
 	}
 
-	public Map<String, TIntSet> getReadingPlanProgressSummaryForSync() {
+	/**
+	 * Get the list of reading plan gid with their done reading codes.
+	 * The only source of data is from ReadingPlanProgress table, but since reading plans with no done is not listed in ReadingPlanProgress,
+	 * please take care of it.
+	 */
+	public Map<String /* gid */, TIntSet /* done reading codes */> getReadingPlanProgressSummaryForSync() {
 		final SQLiteDatabase db = helper.getReadableDatabase();
 		final Map<String, TIntSet> res = new HashMap<>();
 		try (Cursor c = db.query(Db.TABLE_ReadingPlanProgress, Array(Db.ReadingPlanProgress.reading_plan_progress_gid, Db.ReadingPlanProgress.reading_code), null, null, null, null, null)) {
