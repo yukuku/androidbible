@@ -18,8 +18,8 @@ android {
         minSdkVersion 14
         targetSdkVersion 22
         versionCode 14000225
-        versionName '4.2.0-beta4'
         multiDexEnabled true
+        versionName '4.2.0-beta5'
     }
     buildTypes {
         release {
