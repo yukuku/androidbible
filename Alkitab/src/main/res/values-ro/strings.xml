@@ -198,6 +198,7 @@
   <string name="verse_select_one_verse_selected">1 verset selectat</string>
   <string name="verse_select_multiple_verse_selected">%s versete selectate</string>
   <string name="google_play_store_not_installed">Magazin Google Play nu este instalat.</string>
+  <string name="pref_language_label_default">Implicit</string>
   <string name="goto_tab_dialer_label">Numeric</string>
   <string name="goto_tab_direct_label">Direct</string>
   <string name="goto_tab_grid_label">Grilă</string>
@@ -249,6 +250,7 @@
   <string name="desc_verse_attribute_one_note">O notă este atașată la acest verset.</string>
   <string name="desc_verse_attribute_multiple_notes">%s note sunt atașate la acest verset.</string>
   <string name="desc_verse_attribute_progress_mark">%s este în prezent aici.</string>
+  <string name="desc_progress_mark_list">Lista însemne progres</string>
   <string name="intent_filter_open_yes_file">Deschide fişier YES</string>
   <string name="intent_filter_open_pdb_file">Deschide fișierul PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Deschide fișierul PDB/YES</string>
@@ -275,11 +277,7 @@
   <string name="pm_progress_3">Progres 3</string>
   <string name="pm_progress_4">Progres 4</string>
   <string name="pm_progress_5">Progres 5</string>
-  <string name="pm_menu_save_progress">Salvează %s</string>
-  <string name="pm_menu_view_progress">Vizualizare progres</string>
   <string name="pm_progress_name">Nume progres</string>
-  <string name="pm_edit_name">Editează nume</string>
-  <string name="pm_delete_progress">Șterge progres</string>
   <string name="pm_activate_tutorial">Apăsați lung și trageți pentru a plasa un progres pe un verset.</string>
   <string name="pm_delete_progress_confirm">Îndepărtează <b>^1</b>?</string>
   <string name="copy_share">Copiază sau partajează</string>
@@ -305,8 +303,6 @@
   <string name="rp_commentBehindSchedule">Înaintea planificării: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Nu sunt planuri de citire disponibile.</string>
   <string name="rp_deletePlan">"Ștergeți \'%s\'?"</string>
-  <string name="rp_reset">Această acțiune va deschide la ultimul capitol citit complet ieri.</string>
-  <string name="rp_showCalendar">Arată calendarul</string>
   <string name="rp_gotoFirstUnread">Arată primul necitit</string>
   <string name="rp_dayHeader">Ziua %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Citit</string>
@@ -318,10 +314,8 @@
   <string name="rp_navigationGoToDate">Mergi la data</string>
   <string name="rp_navigationNextDay">Ziua următoare</string>
   <string name="rp_menuDownload">Descarcă</string>
-  <string name="rp_menuCatchMeUp">Recuperează</string>
   <string name="rp_menuDelete">Șterge</string>
   <string name="rp_headingProgress">Progres</string>
-  <string name="rp_gotoToday">Azi</string>
   <string name="rp_showDetails">Arată detalii</string>
   <string name="rp_hideDetails">Ascunde detalii</string>
   <string name="rp_aboutPlan">Despre planificare</string>
@@ -356,6 +350,7 @@
   <string name="sn_menu_copy">Copiază cântec</string>
   <string name="menuPlay">Redă</string>
   <string name="menuPause">Pauză</string>
+  <string name="left_drawer_current_reading_title">Lectura curentă</string>
   <string name="book_filter_old_testament">Vechiul Testament</string>
   <string name="book_filter_old_pentateuch">Pentateuh</string>
   <string name="book_filter_old_history">Istoric</string>
@@ -388,6 +383,7 @@
   <string name="patch_text_error_no_edits">Vă rog să faceți unele editări înainte de trimitere.</string>
   <string name="patch_text_menu_reference">Referință</string>
   <string name="patch_text_menu_send">Trimite</string>
+  <string name="patch_text_open_link">Trimite corecții</string>
   <string name="note_actionbar_edit">Editare</string>
   <string name="note_actionbar_delete">Şterge</string>
   <string name="note_actionbar_ok">Realizat</string>
@@ -469,6 +465,8 @@
   <string name="about_announcements_none">Anunțuri (0)</string>
   <string name="about_announcements_number">Anunțuri (%s)</string>
   <string name="about_announcement_load_failed">Eșec la încărcare anunțuri.</string>
+  <string name="about_official_website">Site oficial</string>
+  <string name="about_project_page">Pagina proiect</string>
   <string name="marker_migrate_introduction">Am detectat un fișier de backup de la vechiul v3 Yuku Quick Bible care conține marcaje, note, evidențieri și etichete.\n\nDoriți să le importați, astfel încât să le puteți accesa din această aplicație?</string>
   <string name="marker_migrate_no_more">Nu mai întreba</string>
   <string name="marker_migrate_later">Nu acum</string>

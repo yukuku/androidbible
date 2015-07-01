@@ -262,11 +262,7 @@
   <string name="pm_progress_3">Voortgang 3</string>
   <string name="pm_progress_4">Voortgang 4</string>
   <string name="pm_progress_5">Voortgang 5</string>
-  <string name="pm_menu_save_progress">Opslaan %s</string>
-  <string name="pm_menu_view_progress">Voortgang</string>
   <string name="pm_progress_name">Naam voortgang</string>
-  <string name="pm_edit_name">Wijzig naam</string>
-  <string name="pm_delete_progress">Verwijder voortgang</string>
   <string name="pm_activate_tutorial">Ingedrukt houden en slepen om een voortgangsindicator op een vers te plaatsen.</string>
   <string name="pm_delete_progress_confirm"><b>^1</b> verwijderen?</string>
   <string name="copy_share">Kopiëer of deel</string>
@@ -292,8 +288,6 @@
   <string name="rp_commentBehindSchedule">Achter op planning: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Er zijn geen leesplannen meer beschikbaar.</string>
   <string name="rp_deletePlan">"Verwijder \'%s\'?"</string>
-  <string name="rp_reset">Deze actie verschuift het laatst compleet gelezen gedeelte naar gisteren.</string>
-  <string name="rp_showCalendar">Kalender weergeven</string>
   <string name="rp_gotoFirstUnread">Ga naar het eerste ongelezen gedeelte</string>
   <string name="rp_dayHeader">Dag %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Vorig leesgedeelte</string>
@@ -305,10 +299,8 @@
   <string name="rp_navigationGoToDate">Ga naar datum</string>
   <string name="rp_navigationNextDay">Volgende dag</string>
   <string name="rp_menuDownload">Download</string>
-  <string name="rp_menuCatchMeUp">Haal me in</string>
   <string name="rp_menuDelete">Verwijderen</string>
   <string name="rp_headingProgress">Voortgang</string>
-  <string name="rp_gotoToday">Vandaag</string>
   <string name="rp_showDetails">Details weergeven</string>
   <string name="rp_hideDetails">Verberg details</string>
   <string name="rp_aboutPlan">Over leesplan</string>

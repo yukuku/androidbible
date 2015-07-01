@@ -265,11 +265,7 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="pm_progress_3">Progress 3</string>
   <string name="pm_progress_4">Progress 4</string>
   <string name="pm_progress_5">Progress 5</string>
-  <string name="pm_menu_save_progress">Saglabāt %s</string>
-  <string name="pm_menu_view_progress">Skatīt progresu</string>
   <string name="pm_progress_name">Progresa nosaukums</string>
-  <string name="pm_edit_name">Labot vārdu</string>
-  <string name="pm_delete_progress">Dzēst progresu</string>
   <string name="pm_activate_tutorial">\"Progresu\" ilgi nospied un uzvelc uz panta.</string>
   <string name="pm_delete_progress_confirm">Vai izdzēst <b>^1</b>?</string>
   <string name="copy_share">Kopēt vai koplietot</string>
@@ -295,8 +291,6 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="rp_commentBehindSchedule">Ārpus grafika: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Lasīšanas plāni vairāk nav pieejami.</string>
   <string name="rp_deletePlan">"Vai dzēst \'%s\'?"</string>
-  <string name="rp_reset">Šī darbība jūsu pēdējo pilnībā izlasīto pārvietos uz vakardienu.</string>
-  <string name="rp_showCalendar">Parādīt kalendāru</string>
   <string name="rp_gotoFirstUnread">Atvērt pirmo nelasīto</string>
   <string name="rp_dayHeader">Diena %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Iepriekšējais lasījums</string>
@@ -308,10 +302,8 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="rp_navigationGoToDate">Iet uz datumu</string>
   <string name="rp_navigationNextDay">Nākošajā dienā</string>
   <string name="rp_menuDownload">Lejuplādēt</string>
-  <string name="rp_menuCatchMeUp">Noķer mani</string>
   <string name="rp_menuDelete">Dzēst</string>
   <string name="rp_headingProgress">Progress</string>
-  <string name="rp_gotoToday">Šodien</string>
   <string name="rp_showDetails">Rādīt detaļas</string>
   <string name="rp_hideDetails">Paslēpt detaļas</string>
   <string name="rp_aboutPlan">Par plānu</string>

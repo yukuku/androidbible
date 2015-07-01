@@ -250,6 +250,7 @@
   <string name="desc_verse_attribute_one_note">Zu diesem Vers gibt es eine Notiz.</string>
   <string name="desc_verse_attribute_multiple_notes">Zu diesem Vers gibt es %s Notizen.</string>
   <string name="desc_verse_attribute_progress_mark">%s befindet sich zurzeit hier.</string>
+  <string name="desc_progress_mark_list">Lesefortschritts-Liste</string>
   <string name="intent_filter_open_yes_file">YES-Datei öffnen</string>
   <string name="intent_filter_open_pdb_file">PDB-Datei öffnen</string>
   <string name="intent_filter_open_pdb_or_yes_file">PDB-/YES-Datei öffnen</string>
@@ -276,11 +277,7 @@
   <string name="pm_progress_3">Lesefortschritt 3</string>
   <string name="pm_progress_4">Lesefortschritt 4</string>
   <string name="pm_progress_5">Lesefortschritt 5</string>
-  <string name="pm_menu_save_progress">Speichere %s</string>
-  <string name="pm_menu_view_progress">Lesefortschritt anzeigen</string>
   <string name="pm_progress_name">Lesefortschritt-Name</string>
-  <string name="pm_edit_name">Name bearbeiten</string>
-  <string name="pm_delete_progress">Lesefortschritt löschen</string>
   <string name="pm_activate_tutorial">Lang drücken und ziehen, um Lesefortschritt auf ein Vers zu ziehen.</string>
   <string name="pm_delete_progress_confirm"><b>^1</b> entfernen?</string>
   <string name="copy_share">Kopieren oder teilen</string>
@@ -306,8 +303,6 @@
   <string name="rp_commentBehindSchedule">Hinter dem Zeitplan: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Keine weiteren Lesepläne vorhanden.</string>
   <string name="rp_deletePlan">"\'%s\' löschen?"</string>
-  <string name="rp_reset">Diese Aktion wird Ihren letzten vollständig gelesenen Tagesplan auf Gestern verschieben.</string>
-  <string name="rp_showCalendar">Kalender anzeigen</string>
   <string name="rp_gotoFirstUnread">Zur ersten ungelesenen</string>
   <string name="rp_dayHeader">Tag %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Voriger Abschnitt</string>
@@ -319,10 +314,8 @@
   <string name="rp_navigationGoToDate">Gehe zu Tag</string>
   <string name="rp_navigationNextDay">Nächster Tag</string>
   <string name="rp_menuDownload">Herunterladen</string>
-  <string name="rp_menuCatchMeUp">Nachholen</string>
   <string name="rp_menuDelete">Löschen</string>
   <string name="rp_headingProgress">Fortschritt</string>
-  <string name="rp_gotoToday">Heute</string>
   <string name="rp_showDetails">Details anzeigen</string>
   <string name="rp_hideDetails">Details verbergen</string>
   <string name="rp_aboutPlan">Über den Plan</string>

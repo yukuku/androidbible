@@ -250,6 +250,7 @@
   <string name="desc_verse_attribute_one_note">К этому стиху присоединена заметка.</string>
   <string name="desc_verse_attribute_multiple_notes">К этому стиху присоединено %s заметок.</string>
   <string name="desc_verse_attribute_progress_mark">В настоящее время здесь %s.</string>
+  <string name="desc_progress_mark_list">Список маркеров продвижения</string>
   <string name="intent_filter_open_yes_file">Открыть YES-файл</string>
   <string name="intent_filter_open_pdb_file">Открыть PDB-файл</string>
   <string name="intent_filter_open_pdb_or_yes_file">Открыть PDB/YES-файл</string>
@@ -276,11 +277,7 @@
   <string name="pm_progress_3">Местоположение 3</string>
   <string name="pm_progress_4">Местоположение 4</string>
   <string name="pm_progress_5">Местоположение 5</string>
-  <string name="pm_menu_save_progress">Сохранить %s</string>
-  <string name="pm_menu_view_progress">Отобразить местоположение</string>
   <string name="pm_progress_name">Название местоположения</string>
-  <string name="pm_edit_name">Изменить название</string>
-  <string name="pm_delete_progress">Удалить местоположение</string>
   <string name="pm_activate_tutorial">Для указания прогресса нажмите долго и протащите.</string>
   <string name="pm_delete_progress_confirm">Удалить <b>^1</b>?</string>
   <string name="copy_share">Копировать или поделиться</string>
@@ -306,8 +303,9 @@
   <string name="rp_commentBehindSchedule">Отставание от плана: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Других планов чтения нет.</string>
   <string name="rp_deletePlan">Удалить \'%s\'?</string>
-  <string name="rp_reset">Вчерашний день будет отмечен как последний день с прочитанным дневным планом.</string>
-  <string name="rp_showCalendar">Показать календарь</string>
+  <string name="rp_reset">Изменить дату начала, чтобы первое еще не прочитанное чтение было назначено на сегодня?</string>
+  <string name="rp_restart_desc">Начать этот план чтения сначала путем отметки всего как непрочитанного?</string>
+  <string name="rp_showCalendar">Выбрать дату</string>
   <string name="rp_gotoFirstUnread">Перейти к первому непрочитанному</string>
   <string name="rp_dayHeader">День %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Предыдущее чтение</string>
@@ -319,10 +317,12 @@
   <string name="rp_navigationGoToDate">Перейти к дате</string>
   <string name="rp_navigationNextDay">Следующий день</string>
   <string name="rp_menuDownload">Загрузить</string>
-  <string name="rp_menuCatchMeUp">Хочу догнать</string>
+  <string name="rp_menuCatchMeUp">Заново синхронизовать даты</string>
+  <string name="rp_menuRestart">Начать заново</string>
   <string name="rp_menuDelete">Удалить</string>
   <string name="rp_headingProgress">Прогресс</string>
-  <string name="rp_gotoToday">Сегодня</string>
+  <string name="rp_gotoToday">Перейти к сегодняшнему</string>
+  <string name="rp_setStartDate">Установить дату начала</string>
   <string name="rp_showDetails">Показать детали</string>
   <string name="rp_hideDetails">Скрыть детали</string>
   <string name="rp_aboutPlan">О плане чтения</string>
@@ -408,7 +408,9 @@
   <string name="pref_screen_sync_settings_title">Синхронизовать настройки</string>
   <string name="sync_category_title_data_types">Типы данных</string>
   <string name="pref_syncSet_mabel_enabled_title">Маркеры и метки</string>
+  <string name="pref_syncSet_rp_enabled_title">Продвижение по плану чтения</string>
   <string name="pref_syncSet_history_enabled_title">Недавние стихи</string>
+  <string name="pref_syncSet_pins_enabled_title">Отметки продвижения</string>
   <string name="sync_menu_item_sync_now">Синхронизовать сейчас</string>
   <string name="sync_menu_item_sync_log">Просмотр журнала</string>
   <string name="sync_sync_set_pref_summary_last_synced">Последняя синхронизация %1$s, %2$s (r%3$s)</string>

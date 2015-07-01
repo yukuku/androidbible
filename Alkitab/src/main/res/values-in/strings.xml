@@ -277,11 +277,7 @@
   <string name="pm_progress_3">Jejak 3</string>
   <string name="pm_progress_4">Jejak 4</string>
   <string name="pm_progress_5">Jejak 5</string>
-  <string name="pm_menu_save_progress">Pasang %s</string>
-  <string name="pm_menu_view_progress">Lihat jejak</string>
   <string name="pm_progress_name">Nama jejak</string>
-  <string name="pm_edit_name">Edit nama</string>
-  <string name="pm_delete_progress">Hapus jejak</string>
   <string name="pm_activate_tutorial">Tekan lama dan geser untuk memasang jejak pada suatu ayat.</string>
   <string name="pm_delete_progress_confirm">Hapus <b>^1</b>?</string>
   <string name="copy_share">Salin atau bagikan</string>
@@ -307,8 +303,9 @@
   <string name="rp_commentBehindSchedule">Ketinggalan: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Tidak tersedia rencana baca lainnya.</string>
   <string name="rp_deletePlan">"Hapus \'%s\'?"</string>
-  <string name="rp_reset">Tindakan ini akan membuat hari kemarin menjadi hari yang semua bacaannya selesai dibaca.</string>
-  <string name="rp_showCalendar">Tampilkan kalender</string>
+  <string name="rp_reset">Ganti tanggal mulainya sehingga hari dengan bacaan pertama yang belum dibaca adalah hari ini? Gunakan jika Anda ketinggalan.</string>
+  <string name="rp_restart_desc">Mulai lagi rencana baca ini dari awal dengan menandai semuanya belum dibaca?</string>
+  <string name="rp_showCalendar">Pilih tanggal</string>
   <string name="rp_gotoFirstUnread">Ke yang belum dibaca</string>
   <string name="rp_dayHeader">Hari %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Bacaan sebelumnya</string>
@@ -321,9 +318,11 @@
   <string name="rp_navigationNextDay">Hari selanjutnya</string>
   <string name="rp_menuDownload">Unduh</string>
   <string name="rp_menuCatchMeUp">Ketinggalan nih</string>
+  <string name="rp_menuRestart">Ulang dari awal</string>
   <string name="rp_menuDelete">Hapus</string>
   <string name="rp_headingProgress">Kemajuan</string>
-  <string name="rp_gotoToday">Hari ini</string>
+  <string name="rp_gotoToday">Ke hari ini</string>
+  <string name="rp_setStartDate">Atur tanggal mulai</string>
   <string name="rp_showDetails">Tampilkan daftar baca</string>
   <string name="rp_hideDetails">Sembunyikan daftar baca</string>
   <string name="rp_aboutPlan">Tentang rencana baca</string>
@@ -409,7 +408,9 @@
   <string name="pref_screen_sync_settings_title">Pengaturan sync</string>
   <string name="sync_category_title_data_types">Tipe data</string>
   <string name="pref_syncSet_mabel_enabled_title">Marka dan label</string>
+  <string name="pref_syncSet_rp_enabled_title">Kemajuan rencana baca</string>
   <string name="pref_syncSet_history_enabled_title">Riwayat ayat</string>
+  <string name="pref_syncSet_pins_enabled_title">Jejak</string>
   <string name="sync_menu_item_sync_now">Sync sekarang juga</string>
   <string name="sync_menu_item_sync_log">Lihat log</string>
   <string name="sync_sync_set_pref_summary_last_synced">Terakhir sync %1$s, %2$s (r%3$s)</string>

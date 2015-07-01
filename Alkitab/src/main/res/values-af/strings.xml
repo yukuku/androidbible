@@ -250,6 +250,7 @@
   <string name="desc_verse_attribute_one_note">Hierdie vers het \'n nota by.</string>
   <string name="desc_verse_attribute_multiple_notes">%s hierdie verse het notas by.</string>
   <string name="desc_verse_attribute_progress_mark">%s is huidiglik hier.</string>
+  <string name="desc_progress_mark_list">Lys van vorderings merkers</string>
   <string name="intent_filter_open_yes_file">Maak Yes leêr oop</string>
   <string name="intent_filter_open_pdb_file">Maak PDB leêr oop</string>
   <string name="intent_filter_open_pdb_or_yes_file">Maak PDB/YES leêr oop</string>
@@ -276,11 +277,7 @@
   <string name="pm_progress_3">Vordering 3</string>
   <string name="pm_progress_4">Vordering 4</string>
   <string name="pm_progress_5">Vordering 5</string>
-  <string name="pm_menu_save_progress">Stoor %s</string>
-  <string name="pm_menu_view_progress">Vertoon vordering</string>
   <string name="pm_progress_name">Vordering naam</string>
-  <string name="pm_edit_name">Redigeer naam</string>
-  <string name="pm_delete_progress">Vee vordering uit</string>
   <string name="pm_activate_tutorial">Lang druk en trek om vordering op vers te plaas.</string>
   <string name="pm_delete_progress_confirm">Verwyder <b>^1</b>?</string>
   <string name="copy_share">Kopieer of deel</string>
@@ -306,8 +303,9 @@
   <string name="rp_commentBehindSchedule">Agter die skedule: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Geen verdere lees planne planne beskikbaar nie.</string>
   <string name="rp_deletePlan">"Uitvee \'%s\'?"</string>
-  <string name="rp_reset">Hierdie aksie sal jou laaste ten volle gelese gedeelte na gister verskuif.</string>
-  <string name="rp_showCalendar">Vertoon kalender</string>
+  <string name="rp_reset">Verander die begin datum sodat die eerste nie gelese stuk vandag is?</string>
+  <string name="rp_restart_desc">Begin hierdie leesplan van die begin af deur alles as ongelees te merk?</string>
+  <string name="rp_showCalendar">Kies datum</string>
   <string name="rp_gotoFirstUnread">Gaan na eerste ongelese </string>
   <string name="rp_dayHeader">Dag %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Vorige gelese gedeelte</string>
@@ -319,10 +317,12 @@
   <string name="rp_navigationGoToDate">Gaan na datum</string>
   <string name="rp_navigationNextDay">Volgende dag</string>
   <string name="rp_menuDownload">Laai af</string>
-  <string name="rp_menuCatchMeUp">Vang op</string>
+  <string name="rp_menuCatchMeUp">Hersinchroniseer datums</string>
+  <string name="rp_menuRestart">Begin weer</string>
   <string name="rp_menuDelete">Vee uit</string>
   <string name="rp_headingProgress">Vordering</string>
-  <string name="rp_gotoToday">Vandag</string>
+  <string name="rp_gotoToday">Gaan na vandag</string>
+  <string name="rp_setStartDate">Stel begin datum</string>
   <string name="rp_showDetails">Vertoon details</string>
   <string name="rp_hideDetails">Versteek details</string>
   <string name="rp_aboutPlan">Omtrent plan</string>
@@ -408,7 +408,9 @@
   <string name="pref_screen_sync_settings_title">Synch instellings</string>
   <string name="sync_category_title_data_types">Data tipes</string>
   <string name="pref_syncSet_mabel_enabled_title">Merkers en etikette</string>
+  <string name="pref_syncSet_rp_enabled_title">Leesplan vordering</string>
   <string name="pref_syncSet_history_enabled_title">Onlangse verse</string>
+  <string name="pref_syncSet_pins_enabled_title">Vorderings merke</string>
   <string name="sync_menu_item_sync_now">Synch nou</string>
   <string name="sync_menu_item_sync_log">Sien log</string>
   <string name="sync_sync_set_pref_summary_last_synced">Laas gesinchroniseer %1$s, %2$s (r%3$s) </string>
