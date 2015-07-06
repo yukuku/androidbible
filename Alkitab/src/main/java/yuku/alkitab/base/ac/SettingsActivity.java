@@ -1,5 +1,6 @@
 package yuku.alkitab.base.ac;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -81,6 +82,11 @@ public class SettingsActivity extends BasePreferenceActivity {
 				handler.post(() -> {
 					App.updateConfigurationWithPreferencesLocale();
 					ChangeLanguageHelper.notifyLocaleChanged();
+
+					// restart this activity
+					final Activity ac = getActivity();
+					ac.finish();
+					startActivity(ac.getIntent());
 				});
 				return true;
 			});
