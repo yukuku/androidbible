@@ -15,6 +15,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BasePreferenceActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
+import yuku.alkitab.base.util.ChangeLanguageHelper;
 import yuku.alkitab.base.widget.VerseItem;
 import yuku.alkitab.debug.R;
 
@@ -77,7 +78,10 @@ public class SettingsActivity extends BasePreferenceActivity {
 				final Handler handler = new Handler();
 
 				// do this after this method returns true
-				handler.post(App::updateConfigurationWithPreferencesLocale);
+				handler.post(() -> {
+					App.updateConfigurationWithPreferencesLocale();
+					ChangeLanguageHelper.notifyLocaleChanged();
+				});
 				return true;
 			});
 			autoDisplayListPreference(pref_language);

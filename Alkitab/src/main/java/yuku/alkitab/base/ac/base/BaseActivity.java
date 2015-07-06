@@ -8,10 +8,12 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.ChangeLanguageHelper;
 import yuku.alkitab.debug.R;
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -19,11 +21,23 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 	private boolean withNonToolbarUpButton;
 
+	private int lastKnownLocaleSerialNumber;
+
 	@Override
 	protected void onStart() {
 		super.onStart();
 
 		applyActionBarAndStatusBarColors();
+
+		final int currentLocaleSerialNumber = ChangeLanguageHelper.getLocaleSerialCounter();
+		if (lastKnownLocaleSerialNumber != currentLocaleSerialNumber) {
+			Log.d(TAG, "Restarting activity " + getClass().getName() + " because of locale change " + lastKnownLocaleSerialNumber + " -> " + currentLocaleSerialNumber);
+			lastKnownLocaleSerialNumber = currentLocaleSerialNumber;
+			// restart activity
+			final Intent originalIntent = getIntent();
+			finish();
+			startActivity(originalIntent);
+		}
 	}
 
 	protected void applyActionBarAndStatusBarColors() {
@@ -49,10 +63,17 @@ public abstract class BaseActivity extends AppCompatActivity {
 		}
 	}
 
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		lastKnownLocaleSerialNumber = ChangeLanguageHelper.getLocaleSerialCounter();
+	}
+
 	protected void onCreateWithNonToolbarUpButton(Bundle savedInstanceState) {
 		this.withNonToolbarUpButton = true;
 
-		super.onCreate(savedInstanceState);
+		onCreate(savedInstanceState);
 
 		final ActionBar actionBar = getSupportActionBar();
 		if (actionBar != null) {
