@@ -79,36 +79,7 @@
             android:name="yuku.alkitab.base.ac.MarkersActivity"
 			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-            android:label="@string/activity_title_markers" >
-            <intent-filter android:label="@string/intent_filter_import_from_backup" >
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="file" />
-                <data android:scheme="content" />
-                <data android:mimeType="text/xml" />
-                <data android:host="*" />
-            </intent-filter>
-            <intent-filter android:label="@string/intent_filter_import_from_backup" >
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="file" />
-                <data android:scheme="content" />
-                <data android:mimeType="*/*" />
-                <data android:host="*" />
-                <data android:pathPattern=".*\\.xml" />
-                <data android:pathPattern=".*\\..*\\.xml" />
-                <data android:pathPattern=".*\\..*\\..*\\.xml" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\.xml" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.xml" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.xml" />
-            </intent-filter>
-        </activity>
+            android:label="@string/activity_title_markers" />
         <activity
             android:name="yuku.alkitab.base.ac.MarkerListActivity"
 			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
@@ -123,6 +94,24 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="yuku.alkitab.base.IsiActivity" />
 
+            <!-- no type, lowercase .yes -->
+            <intent-filter android:label="@string/intent_filter_open_yes_file" >
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:host="*" />
+                <data android:pathPattern="/.*\\.yes" />
+                <data android:pathPattern="/.*\\..*\\.yes" />
+                <data android:pathPattern="/.*\\..*\\..*\\.yes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\.yes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\.yes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\.yes" />
+            </intent-filter>
+            <!-- any type, lowercase .yes -->
             <intent-filter android:label="@string/intent_filter_open_yes_file" >
                 <action android:name="android.intent.action.VIEW" />
 
@@ -133,13 +122,31 @@
                 <data android:scheme="content" />
                 <data android:mimeType="*/*" />
                 <data android:host="*" />
-                <data android:pathPattern=".*\\.yes" />
-                <data android:pathPattern=".*\\..*\\.yes" />
-                <data android:pathPattern=".*\\..*\\..*\\.yes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\.yes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.yes" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.yes" />
+                <data android:pathPattern="/.*\\.yes" />
+                <data android:pathPattern="/.*\\..*\\.yes" />
+                <data android:pathPattern="/.*\\..*\\..*\\.yes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\.yes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\.yes" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\.yes" />
             </intent-filter>
+            <!-- no type, uppercase .yes -->
+            <intent-filter android:label="@string/intent_filter_open_yes_file" >
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:host="*" />
+                <data android:pathPattern="/.*\\.YES" />
+                <data android:pathPattern="/.*\\..*\\.YES" />
+                <data android:pathPattern="/.*\\..*\\..*\\.YES" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\.YES" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\.YES" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\.YES" />
+            </intent-filter>
+            <!-- any type, uppercase .yes -->
             <intent-filter android:label="@string/intent_filter_open_yes_file" >
                 <action android:name="android.intent.action.VIEW" />
 
@@ -150,13 +157,31 @@
                 <data android:scheme="content" />
                 <data android:mimeType="*/*" />
                 <data android:host="*" />
-                <data android:pathPattern=".*\\.YES" />
-                <data android:pathPattern=".*\\..*\\.YES" />
-                <data android:pathPattern=".*\\..*\\..*\\.YES" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\.YES" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.YES" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.YES" />
+                <data android:pathPattern="/.*\\.YES" />
+                <data android:pathPattern="/.*\\..*\\.YES" />
+                <data android:pathPattern="/.*\\..*\\..*\\.YES" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\.YES" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\.YES" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\.YES" />
             </intent-filter>
+            <!-- no type, lowercase .pdb -->
+            <intent-filter android:label="@string/intent_filter_open_pdb_file" >
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:host="*" />
+                <data android:pathPattern="/.*\\.pdb" />
+                <data android:pathPattern="/.*\\..*\\.pdb" />
+                <data android:pathPattern="/.*\\..*\\..*\\.pdb" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\.pdb" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\.pdb" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\.pdb" />
+            </intent-filter>
+            <!-- any type, lowercase .pdb -->
             <intent-filter android:label="@string/intent_filter_open_pdb_file" >
                 <action android:name="android.intent.action.VIEW" />
 
@@ -167,13 +192,31 @@
                 <data android:scheme="content" />
                 <data android:mimeType="*/*" />
                 <data android:host="*" />
-                <data android:pathPattern=".*\\.pdb" />
-                <data android:pathPattern=".*\\..*\\.pdb" />
-                <data android:pathPattern=".*\\..*\\..*\\.pdb" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\.pdb" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.pdb" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.pdb" />
+                <data android:pathPattern="/.*\\.pdb" />
+                <data android:pathPattern="/.*\\..*\\.pdb" />
+                <data android:pathPattern="/.*\\..*\\..*\\.pdb" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\.pdb" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\.pdb" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\.pdb" />
             </intent-filter>
+            <!-- no type, uppercase .pdb -->
+            <intent-filter android:label="@string/intent_filter_open_pdb_file" >
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:host="*" />
+                <data android:pathPattern="/.*\\.PDB" />
+                <data android:pathPattern="/.*\\..*\\.PDB" />
+                <data android:pathPattern="/.*\\..*\\..*\\.PDB" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\.PDB" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\.PDB" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\.PDB" />
+            </intent-filter>
+            <!-- any type, uppercase .pdb -->
             <intent-filter android:label="@string/intent_filter_open_pdb_file" >
                 <action android:name="android.intent.action.VIEW" />
 
@@ -184,13 +227,14 @@
                 <data android:scheme="content" />
                 <data android:mimeType="*/*" />
                 <data android:host="*" />
-                <data android:pathPattern=".*\\.PDB" />
-                <data android:pathPattern=".*\\..*\\.PDB" />
-                <data android:pathPattern=".*\\..*\\..*\\.PDB" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\.PDB" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.PDB" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.PDB" />
+                <data android:pathPattern="/.*\\.PDB" />
+                <data android:pathPattern="/.*\\..*\\.PDB" />
+                <data android:pathPattern="/.*\\..*\\..*\\.PDB" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\.PDB" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\.PDB" />
+                <data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\.PDB" />
             </intent-filter>
+            <!-- last: any file with application/octet-stream type -->
             <intent-filter android:label="@string/intent_filter_open_pdb_or_yes_file" >
                 <action android:name="android.intent.action.VIEW" />
 
