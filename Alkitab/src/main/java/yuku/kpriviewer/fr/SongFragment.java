@@ -109,13 +109,13 @@ public class SongFragment extends BaseFragment {
 				baos.write(buf, 0, read);
 			}
 			String template = new String(baos.toByteArray(), "utf-8");
-			
+
 			if (customVars != null) {
 				for (String key: customVars.keySet()) {
 					template = templateVarReplace(template, key, customVars.get(key));
 				}
 			}
-			
+
 			template = templateDivReplace(template, "code", song.code);
 			template = templateDivReplace(template, "title", song.title);
 			template = templateDivReplace(template, "title_original", song.title_original);
@@ -124,7 +124,6 @@ public class SongFragment extends BaseFragment {
 			template = templateDivReplace(template, "timeSignature", song.timeSignature);
 			template = templateDivReplace(template, "authors_lyric", song.authors_lyric);
 			template = templateDivReplace(template, "authors_music", song.authors_music);
-			template = templateDivReplace(template, "patch_text_open_link", getString(R.string.patch_text_open_link));
 
 			template = templateDivReplace(template, "lyrics", songToHtml(song, false));
 

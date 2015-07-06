@@ -862,6 +862,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		templateCustomVars.putString("scripture_references", scripture_references);
 		final String copyright = SongBookUtil.getCopyright(bookName);
 		templateCustomVars.putString("copyright", copyright != null? copyright: "");
+		templateCustomVars.putString("patch_text_open_link", getString(R.string.patch_text_open_link));
 
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.replace(R.id.song_container, SongFragment.create(song, "templates/song.html", templateCustomVars));
