@@ -17,6 +17,7 @@ import yuku.alkitab.base.ac.base.BasePreferenceActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
 import yuku.alkitab.base.util.ChangeLanguageHelper;
+import yuku.alkitab.base.util.OtherAppIntegration;
 import yuku.alkitab.base.widget.VerseItem;
 import yuku.alkitab.debug.R;
 
@@ -129,6 +130,17 @@ public class SettingsActivity extends BasePreferenceActivity {
 					return false;
 				}
 
+				return true;
+			});
+
+			final CheckBoxPreference pref_autoDictionaryAnalyze = (CheckBoxPreference) findPreference(getString(R.string.pref_autoDictionaryAnalyze_key));
+			pref_autoDictionaryAnalyze.setOnPreferenceChangeListener((preference, newValue) -> {
+				if (((boolean) newValue)) {
+					if (!OtherAppIntegration.hasIntegratedDictionaryApp()) {
+						OtherAppIntegration.askToInstallDictionary(getActivity());
+						return false;
+					}
+				}
 				return true;
 			});
 
