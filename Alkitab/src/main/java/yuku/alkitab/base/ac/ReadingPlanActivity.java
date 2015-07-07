@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -27,7 +28,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
@@ -77,7 +77,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 	private ImageButton bLeft;
 	private ImageButton bRight;
-	private Button bToday;
+	private TextView bToday;
 	private ListView lsReadingPlan;
 	private ReadingPlanAdapter readingPlanAdapter;
 	private ActionBar actionBar;

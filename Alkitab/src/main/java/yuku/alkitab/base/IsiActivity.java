@@ -8,7 +8,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -91,6 +90,7 @@ import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.LidToAri;
+import yuku.alkitab.base.util.OtherAppIntegration;
 import yuku.alkitab.base.util.ShareUrl;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.CallbackSpan;
@@ -318,7 +318,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		final Cursor c = cr.query(uri, null, null, null, null);
 		if (c == null) {
-			askToInstallDictionary();
+			OtherAppIntegration.askToInstallDictionary(this);
 		} else {
 			try {
 				if (c.getCount() == 0) {
@@ -351,7 +351,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 								try {
 									startActivity(intent);
 								} catch (ActivityNotFoundException e) {
-									askToInstallDictionary();
+									OtherAppIntegration.askToInstallDictionary(IsiActivity.this);
 								}
 							}
 						})
@@ -1049,9 +1049,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (Build.VERSION.SDK_INT >= 21) {
 				final Drawable thumb;
 				if (ColorUtils.calculateLuminance(backgroundColor) > 0.5) {
-					thumb = getResources().getDrawable(R.drawable.scrollbar_handle_material_for_light);
+					thumb = getResources().getDrawable(R.drawable.scrollbar_handle_material_for_light, null);
 				} else {
-					thumb = getResources().getDrawable(R.drawable.scrollbar_handle_material_for_dark);
+					thumb = getResources().getDrawable(R.drawable.scrollbar_handle_material_for_dark, null);
 				}
 				ScrollbarSetter.setVerticalThumb(lsSplit0, thumb);
 				ScrollbarSetter.setVerticalThumb(lsSplit1, thumb);
@@ -2239,7 +2239,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					intent.putExtra("ari", ari);
 					startActivity(intent);
 				} catch (PackageManager.NameNotFoundException e) {
-					openMarket("org.sabda.pedia");
+					OtherAppIntegration.openMarket(IsiActivity.this, "org.sabda.pedia");
 				}
 			} return true;
 			case R.id.menuCommentary: {
@@ -2254,7 +2254,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					intent.putExtra("ari", ari);
 					startActivity(intent);
 				} catch (PackageManager.NameNotFoundException e) {
-					openMarket("org.sabda.tafsiran");
+					OtherAppIntegration.openMarket(IsiActivity.this, "org.sabda.tafsiran");
 				}
 			} return true;
 			case R.id.menuDictionary: {
@@ -2365,14 +2365,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	};
 
 	void startDictionaryMode(final SparseBooleanArray aris) {
-		try {
-			final PackageInfo info = getPackageManager().getPackageInfo("org.sabda.kamus", 0);
-			if (info.versionCode < 4) {
-				askToInstallDictionary();
-				return;
-			}
-		} catch (PackageManager.NameNotFoundException e) {
-			askToInstallDictionary();
+		if (!OtherAppIntegration.hasIntegratedDictionaryApp()) {
+			OtherAppIntegration.askToInstallDictionary(this);
 			return;
 		}
 
@@ -2385,31 +2379,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		dictionaryMode = false;
 		lsSplit0.setDictionaryModeAris(null);
 		lsSplit1.setDictionaryModeAris(null);
-	}
-
-	void askToInstallDictionary() {
-		new MaterialDialog.Builder(this)
-			.content(R.string.dict_download_prompt)
-			.positiveText(R.string.dict_download_button)
-			.callback(new MaterialDialog.ButtonCallback() {
-				@Override
-				public void onPositive(final MaterialDialog dialog) {
-					openMarket("org.sabda.kamus");
-				}
-			})
-			.show();
-	}
-
-	protected void openMarket(final String packageName) {
-		try {
-			final Uri uri = Uri.parse("market://details?id=" + packageName + "&referrer=utm_source%3Dother_app%26utm_medium%3D" + getPackageName());
-			startActivity(new Intent(Intent.ACTION_VIEW, uri));
-		} catch (ActivityNotFoundException e) {
-			new MaterialDialog.Builder(this)
-				.content(R.string.google_play_store_not_installed)
-				.positiveText(R.string.ok)
-				.show();
-		}
 	}
 
 	@Override

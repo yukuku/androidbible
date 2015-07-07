@@ -303,6 +303,9 @@
   <string name="rp_commentBehindSchedule">Hinter dem Zeitplan: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Keine weiteren Lesepläne vorhanden.</string>
   <string name="rp_deletePlan">"\'%s\' löschen?"</string>
+  <string name="rp_reset">Startdatum ändern, sodass der erste ungelesene Abschnitt heute liegt?</string>
+  <string name="rp_restart_desc">Den Leseplan von vorne beginnen (durch Setzen aller Abschnitte auf ungelesen)?</string>
+  <string name="rp_showCalendar">Datum wählen</string>
   <string name="rp_gotoFirstUnread">Zur ersten ungelesenen</string>
   <string name="rp_dayHeader">Tag %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Voriger Abschnitt</string>
@@ -314,8 +317,12 @@
   <string name="rp_navigationGoToDate">Gehe zu Tag</string>
   <string name="rp_navigationNextDay">Nächster Tag</string>
   <string name="rp_menuDownload">Herunterladen</string>
+  <string name="rp_menuCatchMeUp">Lesedaten neu festlegen</string>
+  <string name="rp_menuRestart">Neu beginnen</string>
   <string name="rp_menuDelete">Löschen</string>
   <string name="rp_headingProgress">Fortschritt</string>
+  <string name="rp_gotoToday">Zu heute springen</string>
+  <string name="rp_setStartDate">Startdatum festlegen</string>
   <string name="rp_showDetails">Details anzeigen</string>
   <string name="rp_hideDetails">Details verbergen</string>
   <string name="rp_aboutPlan">Über den Plan</string>
@@ -401,7 +408,9 @@
   <string name="pref_screen_sync_settings_title">Synchronisationseinstellungen</string>
   <string name="sync_category_title_data_types">Art von Daten</string>
   <string name="pref_syncSet_mabel_enabled_title">Markierungen und Stichwörter</string>
+  <string name="pref_syncSet_rp_enabled_title">Leseplan-Fortschritt</string>
   <string name="pref_syncSet_history_enabled_title">Aufgerufene Bibelstellen</string>
+  <string name="pref_syncSet_pins_enabled_title">Lesefortschritte</string>
   <string name="sync_menu_item_sync_now">Jetzt synchronisieren</string>
   <string name="sync_menu_item_sync_log">Protokoll anschauen</string>
   <string name="sync_sync_set_pref_summary_last_synced">Zuletzt synchronisiert am %1$s um %2$s (r%3$s)</string>

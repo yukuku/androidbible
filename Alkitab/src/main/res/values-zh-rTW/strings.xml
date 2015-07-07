@@ -304,6 +304,9 @@
   <string name="rp_noReadingPlanAvailable">沒有更多可選的閱讀計劃。</string>
   <string name="rp_deletePlan">
 \"刪除\'%s\'？\"</string>
+  <string name="rp_reset">改變開始日期，使到第一個未閱讀的日期為今日？</string>
+  <string name="rp_restart_desc">標記所有為未閱讀來重新開始這個閱讀計劃？</string>
+  <string name="rp_showCalendar">選取日期</string>
   <string name="rp_gotoFirstUnread">去到第一個未閱讀的讀物</string>
   <string name="rp_dayHeader">第%1$s日：%2$s</string>
   <string name="rp_floatPreviousReading">上一個讀物</string>
@@ -315,8 +318,12 @@
   <string name="rp_navigationGoToDate">到某日期</string>
   <string name="rp_navigationNextDay">下一天</string>
   <string name="rp_menuDownload">下載</string>
+  <string name="rp_menuCatchMeUp">再次同步日期</string>
+  <string name="rp_menuRestart">從新開始</string>
   <string name="rp_menuDelete">刪除</string>
   <string name="rp_headingProgress">進度</string>
+  <string name="rp_gotoToday">到今日</string>
+  <string name="rp_setStartDate">設定開始日期</string>
   <string name="rp_showDetails">顯示詳細資料</string>
   <string name="rp_hideDetails">隱藏詳細資料</string>
   <string name="rp_aboutPlan">關於計劃</string>
@@ -402,7 +409,9 @@
   <string name="pref_screen_sync_settings_title">同步設定</string>
   <string name="sync_category_title_data_types">資料類型</string>
   <string name="pref_syncSet_mabel_enabled_title">標記和標簽</string>
+  <string name="pref_syncSet_rp_enabled_title">閱讀計劃進度</string>
   <string name="pref_syncSet_history_enabled_title">最近的經節</string>
+  <string name="pref_syncSet_pins_enabled_title">釘選</string>
   <string name="sync_menu_item_sync_now">現在同步</string>
   <string name="sync_menu_item_sync_log">檢視紀錄</string>
   <string name="sync_sync_set_pref_summary_last_synced">最後同步於%1$s, %2$s (r%3$s)</string>
