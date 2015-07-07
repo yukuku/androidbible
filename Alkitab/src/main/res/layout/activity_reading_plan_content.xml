@@ -41,13 +41,17 @@
 					android:scaleType="center"
 					android:src="@drawable/ic_nav_left_light" />
 
-				<Button
+				<TextView
 					android:id="@+id/bToday"
+					style="@style/Widget.AppCompat.Spinner"
 					android:layout_width="0dp"
 					android:layout_height="match_parent"
 					android:layout_weight="1"
-					android:background="?selectableItemBackground"
 					android:contentDescription="@string/rp_navigationGoToDate"
+					android:gravity="center"
+					android:textAllCaps="true"
+					android:textSize="14sp"
+					android:textStyle="bold"
 					tools:text="Dayname, 13 February 2015" />
 
 				<ImageButton
