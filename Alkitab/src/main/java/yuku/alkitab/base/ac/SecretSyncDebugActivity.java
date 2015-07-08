@@ -94,8 +94,8 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 	View.OnClickListener bMabelClientState_click = v -> {
 		final StringBuilder sb = new StringBuilder();
-		final Pair<Sync_Mabel.ClientState, List<Sync.Entity<Sync_Mabel.Content>>> pair = Sync_Mabel.getClientStateAndCurrentEntities();
-		final Sync_Mabel.ClientState clientState = pair.first;
+		final Pair<Sync.ClientState<Sync_Mabel.Content>, List<Sync.Entity<Sync_Mabel.Content>>> pair = Sync_Mabel.getClientStateAndCurrentEntities();
+		final Sync.ClientState<Sync_Mabel.Content> clientState = pair.first;
 
 		sb.append("Base revno: ").append(clientState.base_revno).append('\n');
 		sb.append("Delta operations (size " + clientState.delta.operations.size() + "):\n");
@@ -205,8 +205,8 @@ public class SecretSyncDebugActivity extends BaseActivity {
 			return;
 		}
 
-		final Pair<Sync_Mabel.ClientState, List<Sync.Entity<Sync_Mabel.Content>>> pair = Sync_Mabel.getClientStateAndCurrentEntities();
-		final Sync_Mabel.ClientState clientState = pair.first;
+		final Pair<Sync.ClientState<Sync_Mabel.Content>, List<Sync.Entity<Sync_Mabel.Content>>> pair = Sync_Mabel.getClientStateAndCurrentEntities();
+		final Sync.ClientState<Sync_Mabel.Content> clientState = pair.first;
 		final List<Sync.Entity<Sync_Mabel.Content>> entitiesBeforeSync = pair.second;
 
 		final RequestBody requestBody = new FormEncodingBuilder()

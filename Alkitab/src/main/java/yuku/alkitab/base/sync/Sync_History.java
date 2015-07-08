@@ -16,7 +16,7 @@ public class Sync_History {
 	/**
 	 * @return base revno, delta of shadow -> current.
 	 */
-	public static Pair<ClientState, List<Sync.Entity<Content>>> getClientStateAndCurrentEntities() {
+	public static Pair<Sync.ClientState<Content>, List<Sync.Entity<Content>>> getClientStateAndCurrentEntities() {
 		final SyncShadow ss = S.getDb().getSyncShadowBySyncSetName(SyncShadow.SYNC_SET_HISTORY);
 
 		final List<Sync.Entity<Content>> srcs = ss == null? Literals.List(): entitiesFromShadow(ss);
@@ -45,7 +45,7 @@ public class Sync_History {
 			}
 		}
 
-		return Pair.create(new ClientState(ss == null ? 0 : ss.revno, delta), dsts);
+		return Pair.create(new Sync.ClientState<>(ss == null ? 0 : ss.revno, delta), dsts);
 	}
 
 	private static boolean isSameContent(final Sync.Entity<Content> a, final Sync.Entity<Content> b) {
@@ -136,16 +136,6 @@ public class Sync_History {
 
 	public static class SyncShadowDataJson {
 		public List<Sync.Entity<Content>> entities;
-	}
-
-	public static class ClientState {
-		public final int base_revno;
-		@NonNull public final Sync.Delta<Content> delta;
-
-		public ClientState(final int base_revno, @NonNull final Sync.Delta<Content> delta) {
-			this.base_revno = base_revno;
-			this.delta = delta;
-		}
 	}
 
 	public static class SyncResponseJson extends Sync.ResponseJson {

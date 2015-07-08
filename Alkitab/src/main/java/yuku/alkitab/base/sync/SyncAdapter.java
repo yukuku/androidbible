@@ -153,8 +153,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		}
 
 		Log.d(TAG, "@@syncMabel step 10: gathering client state");
-		final Pair<Sync_Mabel.ClientState, List<Sync.Entity<Sync_Mabel.Content>>> pair = Sync_Mabel.getClientStateAndCurrentEntities();
-		final Sync_Mabel.ClientState clientState = pair.first;
+		final Pair<Sync.ClientState<Sync_Mabel.Content>, List<Sync.Entity<Sync_Mabel.Content>>> pair = Sync_Mabel.getClientStateAndCurrentEntities();
+		final Sync.ClientState<Sync_Mabel.Content> clientState = pair.first;
 		final List<Sync.Entity<Sync_Mabel.Content>> entitiesBeforeSync = pair.second;
 
 		SyncRecorder.log(SyncRecorder.EventKind.current_entities_gathered, syncSetName, "base_revno", clientState.base_revno, "client_delta_operations_size", clientState.delta.operations.size(), "client_entities_size", entitiesBeforeSync.size());
@@ -251,8 +251,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		}
 
 		Log.d(TAG, "@@syncHistory step 10: gathering client state");
-		final Pair<Sync_History.ClientState, List<Sync.Entity<Sync_History.Content>>> pair = Sync_History.getClientStateAndCurrentEntities();
-		final Sync_History.ClientState clientState = pair.first;
+		final Pair<Sync.ClientState<Sync_History.Content>, List<Sync.Entity<Sync_History.Content>>> pair = Sync_History.getClientStateAndCurrentEntities();
+		final Sync.ClientState<Sync_History.Content> clientState = pair.first;
 		final List<Sync.Entity<Sync_History.Content>> entitiesBeforeSync = pair.second;
 
 		SyncRecorder.log(SyncRecorder.EventKind.current_entities_gathered, syncSetName, "base_revno", clientState.base_revno, "client_delta_operations_size", clientState.delta.operations.size(), "client_entities_size", entitiesBeforeSync.size());
@@ -344,8 +344,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		}
 
 		Log.d(TAG, "@@syncPins step 10: gathering client state");
-		final Pair<Sync_Pins.ClientState, List<Sync.Entity<Sync_Pins.Content>>> pair = Sync_Pins.getClientStateAndCurrentEntities();
-		final Sync_Pins.ClientState clientState = pair.first;
+		final Pair<Sync.ClientState<Sync_Pins.Content>, List<Sync.Entity<Sync_Pins.Content>>> pair = Sync_Pins.getClientStateAndCurrentEntities();
+		final Sync.ClientState<Sync_Pins.Content> clientState = pair.first;
 		final List<Sync.Entity<Sync_Pins.Content>> entitiesBeforeSync = pair.second;
 
 		SyncRecorder.log(SyncRecorder.EventKind.current_entities_gathered, syncSetName, "base_revno", clientState.base_revno, "client_delta_operations_size", clientState.delta.operations.size(), "client_entities_size", entitiesBeforeSync.size());
@@ -439,8 +439,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		}
 
 		Log.d(TAG, "@@syncRp step 10: gathering client state");
-		final Pair<Sync_Rp.ClientState, List<Sync.Entity<Sync_Rp.Content>>> pair = Sync_Rp.getClientStateAndCurrentEntities();
-		final Sync_Rp.ClientState clientState = pair.first;
+		final Pair<Sync.ClientState<Sync_Rp.Content>, List<Sync.Entity<Sync_Rp.Content>>> pair = Sync_Rp.getClientStateAndCurrentEntities();
+		final Sync.ClientState<Sync_Rp.Content> clientState = pair.first;
 		final List<Sync.Entity<Sync_Rp.Content>> entitiesBeforeSync = pair.second;
 
 		SyncRecorder.log(SyncRecorder.EventKind.current_entities_gathered, syncSetName, "base_revno", clientState.base_revno, "client_delta_operations_size", clientState.delta.operations.size(), "client_entities_size", entitiesBeforeSync.size());

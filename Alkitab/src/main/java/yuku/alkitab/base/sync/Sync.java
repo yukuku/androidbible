@@ -129,6 +129,16 @@ public class Sync {
 		//endregion
 	}
 
+	public static class ClientState<C> {
+		public final int base_revno;
+		@NonNull public final Sync.Delta<C> delta;
+
+		public ClientState(final int base_revno, @NonNull final Sync.Delta<C> delta) {
+			this.base_revno = base_revno;
+			this.delta = delta;
+		}
+	}
+
 	/**
 	 * Ignoring order, check if all the entities are the same.
 	 */
