@@ -74,15 +74,29 @@ public class CrashReporter {
 
 		Preferences.hold();
 		try {
-			Preferences.setInt("crash_report/size", entries.size());
+			final int sz = entries.size();
+			Preferences.setInt("crash_report/size", sz);
 
-			for (int i = 0; i < entries.size(); i++) {
+			for (int i = 0; i < sz; i++) {
 				final Entry entry = entries.get(i);
 				Preferences.setString("crash_report/" + i + "/body", entry.body);
 				Preferences.setInt("crash_report/" + i + "/versionCode", entry.versionCode);
 				Preferences.setInt("crash_report/" + i + "/timestamp", entry.timestamp);
 				Preferences.setInt("crash_report/" + i + "/versionSdk", entry.versionSdk);
 				Preferences.setString("crash_report/" + i + "/capjempol", entry.capjempol);
+			}
+
+			// remove old entries (save space and xml processing time)
+			for (int i = sz; ; i++) {
+				if (Preferences.contains("crash_report/" + i + "/body")) {
+					Preferences.remove("crash_report/" + i + "/body");
+					Preferences.remove("crash_report/" + i + "/versionCode");
+					Preferences.remove("crash_report/" + i + "/timestamp");
+					Preferences.remove("crash_report/" + i + "/versionSdk");
+					Preferences.remove("crash_report/" + i + "/capjempol");
+				} else {
+					break;
+				}
 			}
 		} finally {
 			Preferences.unhold();
