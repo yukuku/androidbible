@@ -11,6 +11,7 @@ import android.util.Log;
 import android.util.Pair;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.MultipartBuilder;
@@ -184,7 +185,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			final long startTime = System.currentTimeMillis();
 			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
 			Log.d(TAG, "@@syncMabel server response string: " + response_s);
-			final Sync_Mabel.SyncResponseJson response = App.getDefaultGson().fromJson(response_s, Sync_Mabel.SyncResponseJson.class);
+			final Sync.SyncResponseJson<Sync_Mabel.Content> response = App.getDefaultGson().fromJson(response_s, new TypeToken<Sync.SyncResponseJson<Sync_Mabel.Content>>() {}.getType());
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, syncSetName, "duration_ms", System.currentTimeMillis() - startTime);
 
 			if (!response.success) {
@@ -281,7 +282,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			final long startTime = System.currentTimeMillis();
 			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
 			Log.d(TAG, "@@syncHistory server response string: " + response_s);
-			final Sync_History.SyncResponseJson response = App.getDefaultGson().fromJson(response_s, Sync_History.SyncResponseJson.class);
+			final Sync.SyncResponseJson<Sync_History.Content> response = App.getDefaultGson().fromJson(response_s, new TypeToken<Sync.SyncResponseJson<Sync_History.Content>>() {}.getType());
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, syncSetName, "duration_ms", System.currentTimeMillis() - startTime);
 
 			if (!response.success) {
@@ -374,7 +375,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			final long startTime = System.currentTimeMillis();
 			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
 			Log.d(TAG, "@@syncPins server response string: " + response_s);
-			final Sync_Pins.SyncResponseJson response = App.getDefaultGson().fromJson(response_s, Sync_Pins.SyncResponseJson.class);
+			final Sync.SyncResponseJson<Sync_Pins.Content> response = App.getDefaultGson().fromJson(response_s, new TypeToken<Sync.SyncResponseJson<Sync_Pins.Content>>() {}.getType());
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, syncSetName, "duration_ms", System.currentTimeMillis() - startTime);
 
 			if (!response.success) {
@@ -469,7 +470,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			final long startTime = System.currentTimeMillis();
 			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
 			Log.d(TAG, "@@syncRp server response string: " + response_s);
-			final Sync_Rp.SyncResponseJson response = App.getDefaultGson().fromJson(response_s, Sync_Rp.SyncResponseJson.class);
+			final Sync.SyncResponseJson<Sync_Rp.Content> response = App.getDefaultGson().fromJson(response_s, new TypeToken<Sync.SyncResponseJson<Sync_Rp.Content>>() {}.getType());
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, syncSetName, "duration_ms", System.currentTimeMillis() - startTime);
 
 			if (!response.success) {

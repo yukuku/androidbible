@@ -8,6 +8,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
@@ -257,7 +258,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 			@Override
 			public void onResponse(final Response response) throws IOException {
-				final Sync_Mabel.SyncResponseJson debugSyncResponse = App.getDefaultGson().fromJson(response.body().charStream(), Sync_Mabel.SyncResponseJson.class);
+				final Sync.SyncResponseJson<Sync_Mabel.Content> debugSyncResponse = App.getDefaultGson().fromJson(response.body().charStream(), new TypeToken<Sync.SyncResponseJson<Sync_Mabel.Content>>() {}.getType());
 				runOnUiThread(() -> {
 					if (debugSyncResponse.success) {
 						final int final_revno = debugSyncResponse.final_revno;

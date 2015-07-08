@@ -2,6 +2,7 @@ package yuku.alkitab.base.sync;
 
 import android.support.annotation.NonNull;
 import android.util.Pair;
+import com.google.gson.reflect.TypeToken;
 import gnu.trove.map.hash.TObjectLongHashMap;
 import gnu.trove.set.TIntSet;
 import yuku.alkitab.base.App;
@@ -73,14 +74,14 @@ public class Sync_Rp {
 	}
 
 	private static List<Sync.Entity<Content>> entitiesFromShadow(@NonNull final SyncShadow ss) {
-		final SyncShadowDataJson data = App.getDefaultGson().fromJson(U.utf8BytesToString(ss.data), SyncShadowDataJson.class);
+		final Sync.SyncShadowDataJson<Content> data = App.getDefaultGson().fromJson(U.utf8BytesToString(ss.data), new TypeToken<Sync.SyncShadowDataJson<Content>>() {}.getType());
 		return data.entities;
 	}
 
 	@NonNull public static SyncShadow shadowFromEntities(@NonNull final List<Sync.Entity<Content>> entities, final int revno) {
-		final SyncShadowDataJson data = new SyncShadowDataJson();
+		final Sync.SyncShadowDataJson<Content> data = new Sync.SyncShadowDataJson<>();
 		data.entities = entities;
-		final String s = App.getDefaultGson().toJson(data);
+		final String s = App.getDefaultGson().toJson(data, new TypeToken<Sync.SyncShadowDataJson<Content>>() {}.getType());
 		final SyncShadow res = new SyncShadow();
 		res.data = U.stringToUtf8Bytes(s);
 		res.syncSetName = SyncShadow.SYNC_SET_RP;
@@ -173,14 +174,5 @@ public class Sync_Rp {
 				", done=" + done +
 				'}';
 		}
-	}
-
-	public static class SyncShadowDataJson {
-		public List<Sync.Entity<Content>> entities;
-	}
-
-	public static class SyncResponseJson extends Sync.ResponseJson {
-		public int final_revno;
-		public Sync.Delta<Content> append_delta;
 	}
 }

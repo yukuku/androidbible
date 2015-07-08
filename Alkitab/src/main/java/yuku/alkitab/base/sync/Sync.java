@@ -131,12 +131,21 @@ public class Sync {
 
 	public static class ClientState<C> {
 		public final int base_revno;
-		@NonNull public final Sync.Delta<C> delta;
+		@NonNull public final Delta<C> delta;
 
-		public ClientState(final int base_revno, @NonNull final Sync.Delta<C> delta) {
+		public ClientState(final int base_revno, @NonNull final Delta<C> delta) {
 			this.base_revno = base_revno;
 			this.delta = delta;
 		}
+	}
+
+	public static class SyncShadowDataJson<C> {
+		public List<Entity<C>> entities;
+	}
+
+	public static class SyncResponseJson<C> extends ResponseJson {
+		public int final_revno;
+		public Delta<C> append_delta;
 	}
 
 	/**
