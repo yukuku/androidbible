@@ -138,6 +138,9 @@ public class CrashReporter {
 				ArrayList<NameValuePair> params = new ArrayList<>();
 
 				for (Entry entry : entries) {
+					if (entry.body.length() > 100000) {
+						entry.body = entry.body.substring(0, 100000);
+					}
 					params.add(new BasicNameValuePair("uniqueId[]", getUniqueId()));
 					params.add(new BasicNameValuePair("package_name[]", App.context.getPackageName()));
 					params.add(new BasicNameValuePair("fidbek_isi[]", entry.body));
