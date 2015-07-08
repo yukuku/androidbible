@@ -73,12 +73,14 @@ public abstract class BaseActivity extends AppCompatActivity {
 	protected void onCreateWithNonToolbarUpButton(Bundle savedInstanceState) {
 		this.withNonToolbarUpButton = true;
 
-		onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);
 
 		final ActionBar actionBar = getSupportActionBar();
 		if (actionBar != null) {
 			actionBar.setDisplayHomeAsUpEnabled(true);
 		}
+
+		lastKnownLocaleSerialNumber = ChangeLanguageHelper.getLocaleSerialCounter();
 	}
 
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
