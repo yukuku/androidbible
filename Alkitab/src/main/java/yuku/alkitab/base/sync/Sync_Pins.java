@@ -93,10 +93,7 @@ public class Sync_Pins {
 	@NonNull public static List<Sync.Entity<Content>> getEntitiesFromCurrent() {
 		final List<Sync.Entity<Content>> res = new ArrayList<>();
 
-		final Sync.Entity<Content> entity = new Sync.Entity<>();
-		entity.kind = Sync.Entity.KIND_PINS;
-		entity.gid = GID_SPECIAL_PINS;
-		final Content content = entity.content = new Content();
+		final Content content = new Content();
 		final List<Content.Pin> pins = content.pins = new ArrayList<>();
 
 		for (int preset_id = 0; preset_id < AttributeView.PROGRESS_MARK_TOTAL_COUNT; preset_id++) {
@@ -111,6 +108,7 @@ public class Sync_Pins {
 			pins.add(pin);
 		}
 
+		final Sync.Entity<Content> entity = new Sync.Entity<>(Sync.Entity.KIND_PINS, GID_SPECIAL_PINS, content);
 		res.add(entity);
 
 		return res;

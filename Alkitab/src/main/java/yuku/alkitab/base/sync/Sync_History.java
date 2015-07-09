@@ -85,12 +85,11 @@ public class Sync_History {
 		final List<Sync.Entity<Content>> res = new ArrayList<>();
 
 		for (final History.HistoryEntry entry: History.getInstance().listAllEntries()) {
-			final Sync.Entity<Content> entity = new Sync.Entity<>();
-			entity.kind = Sync.Entity.KIND_HISTORY_ENTRY;
-			entity.gid = entry.gid;
-			final Content content = entity.content = new Content();
+			final Content content = new Content();
 			content.ari = entry.ari;
 			content.timestamp = entry.timestamp;
+
+			final Sync.Entity<Content> entity = new Sync.Entity<>(Sync.Entity.KIND_HISTORY_ENTRY, entry.gid, content);
 			res.add(entity);
 		}
 

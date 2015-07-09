@@ -100,9 +100,15 @@ public class Sync {
 		/**
 		 * Kind of this entity. One of the <code>KIND_</code> constants on {@link yuku.alkitab.base.sync.Sync.Entity}.
 		 */
-		public String kind;
-		public String gid;
-		public C content;
+		public final String kind;
+		public final String gid;
+		public final C content;
+
+		public Entity(final String kind, final String gid, final C content) {
+			this.kind = kind;
+			this.gid = gid;
+			this.content = content;
+		}
 
 		//region Boilerplate equals and hashCode
 		@Override

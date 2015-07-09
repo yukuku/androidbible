@@ -90,41 +90,38 @@ public class Sync_Mabel {
 
 		{ // markers
 			for (final Marker marker : S.getDb().listAllMarkers()) {
-				final Sync.Entity<Content> entity = new Sync.Entity<>();
-				entity.kind = Sync.Entity.KIND_MARKER;
-				entity.gid = marker.gid;
-				final Content content = entity.content = new Content();
+				final Content content = new Content();
 				content.ari = marker.ari;
 				content.caption = marker.caption;
 				content.kind = marker.kind.code;
 				content.verseCount = marker.verseCount;
 				content.createTime = Sqlitil.toInt(marker.createTime);
 				content.modifyTime = Sqlitil.toInt(marker.modifyTime);
+
+				final Sync.Entity<Content> entity = new Sync.Entity<>(Sync.Entity.KIND_MARKER, marker.gid, content);
 				res.add(entity);
 			}
 		}
 
 		{ // labels
 			for (final Label label : S.getDb().listAllLabels()) {
-				final Sync.Entity<Content> entity = new Sync.Entity<>();
-				entity.kind = Sync.Entity.KIND_LABEL;
-				entity.gid = label.gid;
-				final Content content = entity.content = new Content();
+				final Content content = new Content();
 				content.title = label.title;
 				content.backgroundColor = label.backgroundColor;
 				content.ordering = label.ordering;
+
+				final Sync.Entity<Content> entity = new Sync.Entity<>(Sync.Entity.KIND_LABEL, label.gid, content);
 				res.add(entity);
 			}
 		}
 
 		{ // marker_labels
 			for (final Marker_Label marker_label : S.getDb().listAllMarker_Labels()) {
-				final Sync.Entity<Content> entity = new Sync.Entity<>();
-				entity.kind = Sync.Entity.KIND_MARKER_LABEL;
-				entity.gid = marker_label.gid;
-				final Content content = entity.content = new Content();
+				final Content content = new Content();
 				content.marker_gid = marker_label.marker_gid;
 				content.label_gid = marker_label.label_gid;
+
+				final Sync.Entity<Content> entity = new Sync.Entity<>(Sync.Entity.KIND_MARKER_LABEL, marker_label.gid, content);
 				res.add(entity);
 			}
 		}

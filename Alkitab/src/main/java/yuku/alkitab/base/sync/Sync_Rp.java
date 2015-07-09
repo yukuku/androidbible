@@ -106,31 +106,28 @@ public class Sync_Rp {
 		for (final Map.Entry<String, TIntSet> e : map.entrySet()) {
 			final String gid = e.getKey();
 
-			final Sync.Entity<Content> entity = new Sync.Entity<>();
-			entity.kind = Sync.Entity.KIND_RP_PROGRESS;
-			entity.gid = gid;
-
-			final Content content = entity.content = new Content();
+			final Content content = new Content();
 			content.startTime = startTimes.containsKey(gid)? startTimes.get(gid): null;
+
 			final TIntSet set = e.getValue();
 			final Set<Integer> done = content.done = new LinkedHashSet<>(set.size());
 			set.forEach(value -> {
 				done.add(value);
 				return true;
 			});
+
+			final Sync.Entity<Content> entity = new Sync.Entity<>(Sync.Entity.KIND_RP_PROGRESS, gid, content);
 			res.add(entity);
 		}
 
 		// add remaining reading plans without any done
 		startTimes.forEachEntry((gid, startTime) -> {
 			if (!map.containsKey(gid)) {
-				final Sync.Entity<Content> entity = new Sync.Entity<>();
-				entity.kind = Sync.Entity.KIND_RP_PROGRESS;
-				entity.gid = gid;
-
-				final Content content = entity.content = new Content();
+				final Content content = new Content();
 				content.startTime = startTime;
 				content.done = new LinkedHashSet<>();
+
+				final Sync.Entity<Content> entity = new Sync.Entity<>(Sync.Entity.KIND_RP_PROGRESS, gid, content);
 				res.add(entity);
 			}
 			return true;
