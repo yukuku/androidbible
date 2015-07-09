@@ -2,7 +2,6 @@ package yuku.alkitab.base.ac;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Pair;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -95,8 +94,8 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 	View.OnClickListener bMabelClientState_click = v -> {
 		final StringBuilder sb = new StringBuilder();
-		final Pair<Sync.ClientState<Sync_Mabel.Content>, List<Sync.Entity<Sync_Mabel.Content>>> pair = Sync_Mabel.getClientStateAndCurrentEntities();
-		final Sync.ClientState<Sync_Mabel.Content> clientState = pair.first;
+		final Sync.GetClientStateResult<Sync_Mabel.Content> pair = Sync_Mabel.getClientStateAndCurrentEntities();
+		final Sync.ClientState<Sync_Mabel.Content> clientState = pair.clientState;
 
 		sb.append("Base revno: ").append(clientState.base_revno).append('\n');
 		sb.append("Delta operations (size " + clientState.delta.operations.size() + "):\n");
@@ -206,9 +205,9 @@ public class SecretSyncDebugActivity extends BaseActivity {
 			return;
 		}
 
-		final Pair<Sync.ClientState<Sync_Mabel.Content>, List<Sync.Entity<Sync_Mabel.Content>>> pair = Sync_Mabel.getClientStateAndCurrentEntities();
-		final Sync.ClientState<Sync_Mabel.Content> clientState = pair.first;
-		final List<Sync.Entity<Sync_Mabel.Content>> entitiesBeforeSync = pair.second;
+		final Sync.GetClientStateResult<Sync_Mabel.Content> pair = Sync_Mabel.getClientStateAndCurrentEntities();
+		final Sync.ClientState<Sync_Mabel.Content> clientState = pair.clientState;
+		final List<Sync.Entity<Sync_Mabel.Content>> entitiesBeforeSync = pair.currentEntities;
 
 		final RequestBody requestBody = new FormEncodingBuilder()
 			.add("simpleToken", simpleToken)
@@ -264,7 +263,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 						final int final_revno = debugSyncResponse.final_revno;
 						final Sync.Delta<Sync_Mabel.Content> append_delta = debugSyncResponse.append_delta;
 
-						final Sync.ApplyAppendDeltaResult applyResult = S.getDb().applyMabelAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
+						final Sync.ApplyAppendDeltaResult applyResult = S.getDb().applyMabelAppendDelta(final_revno, pair.shadowEntities, clientState, append_delta, entitiesBeforeSync, simpleToken);
 						new AlertDialogWrapper.Builder(SecretSyncDebugActivity.this)
 							.setMessage("Final revno: " + final_revno + "\nApply result: " + applyResult + "\nAppend delta: " + append_delta)
 							.setPositiveButton(R.string.ok, null)

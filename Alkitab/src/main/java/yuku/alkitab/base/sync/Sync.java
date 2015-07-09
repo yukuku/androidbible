@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
 import android.util.Log;
+import android.util.Pair;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.squareup.okhttp.Call;
@@ -25,7 +26,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -152,6 +155,18 @@ public class Sync {
 	public static class SyncResponseJson<C> extends ResponseJson {
 		public int final_revno;
 		public Delta<C> append_delta;
+	}
+
+	public static class GetClientStateResult<C> {
+		public final ClientState<C> clientState;
+		public final List<Entity<C>> shadowEntities;
+		public final List<Entity<C>> currentEntities;
+
+		public GetClientStateResult(final ClientState<C> clientState, final List<Entity<C>> shadowEntities, final List<Entity<C>> currentEntities) {
+			this.clientState = clientState;
+			this.shadowEntities = shadowEntities;
+			this.currentEntities = currentEntities;
+		}
 	}
 
 	/**

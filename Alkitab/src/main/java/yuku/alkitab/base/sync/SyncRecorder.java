@@ -40,6 +40,7 @@ public class SyncRecorder {
 		sync_needed_notified(81, INFO),
 		sync_adapter_on_perform(82, INFO),
 		sync_adapter_set_not_enabled(83, INFO),
+		partial_sync_info(84, INFO),
 		error_no_simple_token(100, ERROR),
 		current_entities_gathered(101, INFO),
 		sync_to_server_pre(102, INFO),

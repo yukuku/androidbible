@@ -2,7 +2,6 @@ package yuku.alkitab.base.sync;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Pair;
 import com.google.gson.reflect.TypeToken;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -18,10 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Sync_Mabel {
-	/**
-	 * @return base revno, delta of shadow -> current.
-	 */
-	public static Pair<Sync.ClientState<Content>, List<Sync.Entity<Content>>> getClientStateAndCurrentEntities() {
+	public static Sync.GetClientStateResult<Content> getClientStateAndCurrentEntities() {
 		final SyncShadow ss = S.getDb().getSyncShadowBySyncSetName(SyncShadow.SYNC_SET_MABEL);
 
 		final List<Sync.Entity<Content>> srcs = ss == null? Literals.List(): entitiesFromShadow(ss);
@@ -50,7 +46,7 @@ public class Sync_Mabel {
 			}
 		}
 
-		return Pair.create(new Sync.ClientState<>(ss == null ? 0 : ss.revno, delta), dsts);
+		return new Sync.GetClientStateResult<>(new Sync.ClientState<>(ss == null ? 0 : ss.revno, delta), srcs, dsts);
 	}
 
 	private static boolean isSameContent(final Sync.Entity<Content> a, final Sync.Entity<Content> b) {
