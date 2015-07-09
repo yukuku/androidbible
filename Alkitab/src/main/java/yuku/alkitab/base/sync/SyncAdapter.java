@@ -45,7 +45,7 @@ import java.util.Stack;
  */
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	static final String TAG = SyncAdapter.class.getSimpleName();
-	public static final String EXTRA_SYNC_SET_NAME = "syncSetName";
+	public static final String EXTRA_SYNC_SET_NAMES = "syncSetNames";
 	private static final int PARTIAL_SYNC_THRESHOLD = 100;
 
 	final static Stack<String> syncSetsRunning = new Stack<>(); // need guard when accessing this
@@ -123,11 +123,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	@Override
 	public void onPerformSync(final Account account, final Bundle extras, final String authority, final ContentProviderClient provider, final SyncResult syncResult) {
 		Log.d(TAG, "@@onPerformSync account:" + account + " extras:" + extras + " authority:" + authority);
-		final String syncSetName = extras.getString(EXTRA_SYNC_SET_NAME);
-		if (syncSetName == null) {
+
+		final String[] syncSetNames = App.getDefaultGson().fromJson(extras.getString(EXTRA_SYNC_SET_NAMES), String[].class);
+		if (syncSetNames == null || syncSetNames.length == 0) {
 			return;
 		}
 
+		for (final String syncSetName : syncSetNames) {
 		synchronized (syncSetsRunning) {
 			syncSetsRunning.add(syncSetName);
 		}
@@ -158,8 +160,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 					break;
 			}
 		} finally {
-			Log.d(TAG, "Sync result: " + syncResult);
-
 			synchronized (syncSetsRunning) {
 				final String popped = syncSetsRunning.pop();
 				if (!popped.equals(syncSetName)) {
@@ -169,6 +169,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 			App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
 		}
+	}
+
+		Log.d(TAG, "Sync result: " + syncResult + " hasSoftError=" + syncResult.hasSoftError() + " hasHardError=" + syncResult.hasHardError() + " ioex=" + syncResult.stats.numIoExceptions);
 	}
 
 	public static Set<String> getRunningSyncs() {

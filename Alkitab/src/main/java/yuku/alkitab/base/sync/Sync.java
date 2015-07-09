@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
 import android.util.Log;
-import android.util.Pair;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.squareup.okhttp.Call;
@@ -26,9 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -191,45 +188,52 @@ public class Sync {
 
 	/**
 	 * Notify that we need to sync with server.
-	 * @param syncSetName The name of the sync set that needs sync with server. Should be {@link yuku.alkitab.base.model.SyncShadow#SYNC_SET_MABEL} or others.
+	 * @param syncSetNames The names of the sync set that needs sync with server. Should be list of {@link yuku.alkitab.base.model.SyncShadow#SYNC_SET_MABEL} or others.
 	 */
-	public static synchronized void notifySyncNeeded(final String syncSetName) {
-		AtomicInteger counter = syncUpdatesOngoingCounters.get(syncSetName);
-		if (counter != null && counter.get() != 0) {
-			Log.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: ongoing counter != 0");
-			return;
-		}
-
+	public static synchronized void notifySyncNeeded(final String... syncSetNames) {
 		// if not logged in, do nothing
 		if (Preferences.getString(Prefkey.sync_simpleToken) == null) {
 			return;
 		}
 
-		{ // check if preferences prevent syncing
-			if (!Preferences.getBoolean(prefkeyForSyncSetEnabled(syncSetName), true)) {
+		for (final String syncSetName : syncSetNames) {
+			final AtomicInteger counter = syncUpdatesOngoingCounters.get(syncSetName);
+			if (counter != null && counter.get() != 0) {
+				Log.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: ongoing counter != 0");
 				return;
 			}
-		}
 
-		SyncRecorder.log(SyncRecorder.EventKind.sync_needed_notified, syncSetName);
-
-		// check if we can omit queueing sync request for this sync set name.
-		synchronized (syncSetNameQueue) {
-			if (syncSetNameQueue.contains(syncSetName)) {
-				Log.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: sync queue already contains it");
-				return;
+			{ // check if preferences prevent syncing
+				if (!Preferences.getBoolean(prefkeyForSyncSetEnabled(syncSetName), true)) {
+					continue;
+				}
 			}
-			syncSetNameQueue.add(syncSetName);
+
+			SyncRecorder.log(SyncRecorder.EventKind.sync_needed_notified, syncSetName);
+
+			// check if we can omit queueing sync request for this sync set name.
+			synchronized (syncSetNameQueue) {
+				if (syncSetNameQueue.contains(syncSetName)) {
+					Log.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: sync queue already contains it");
+					continue;
+				}
+				syncSetNameQueue.add(syncSetName);
+			}
 		}
 
 		syncExecutor.schedule(() -> {
 			while (true) {
-				final String extraSyncSetName;
+				final List<String> extraSyncSetNames = new ArrayList<>();
 				synchronized (syncSetNameQueue) {
-					extraSyncSetName = syncSetNameQueue.poll();
+					final String extraSyncSetName = syncSetNameQueue.poll();
 					if (extraSyncSetName == null) {
-						return;
+						break;
 					}
+					extraSyncSetNames.add(extraSyncSetName);
+				}
+
+				if (extraSyncSetNames.size() == 0) {
+					return;
 				}
 
 				final Account account = SyncUtils.getOrCreateSyncAccount();
@@ -243,7 +247,7 @@ public class Sync {
 
 				// request sync.
 				final Bundle extras = new Bundle();
-				extras.putString(SyncAdapter.EXTRA_SYNC_SET_NAME, extraSyncSetName);
+				extras.putString(SyncAdapter.EXTRA_SYNC_SET_NAMES, App.getDefaultGson().toJson(extraSyncSetNames));
 				ContentResolver.requestSync(account, authority, extras);
 			}
 		}, 5, TimeUnit.SECONDS);
@@ -251,7 +255,7 @@ public class Sync {
 
 	/**
 	 * Call this method(true) when updating local storage because of sync. Call this method(false) when finished.
-	 * Calls to {@link #notifySyncNeeded(String)} will be a no-op when sync updates are ongoing (marked by this method being called).
+	 * Calls to {@link #notifySyncNeeded(String...)} will be a no-op when sync updates are ongoing (marked by this method being called).
 	 * @param isRunning true to start, false to stop.
 	 */
 	public static synchronized void notifySyncUpdatesOngoing(final String syncSetName, final boolean isRunning) {
@@ -519,12 +523,13 @@ public class Sync {
 		}
 
 		// request sync.
-		for (final String syncSetName : SyncShadow.ALL_SYNC_SET_NAMES) {
-			final Bundle extras = new Bundle();
-			extras.putString(SyncAdapter.EXTRA_SYNC_SET_NAME, syncSetName);
-			extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-			extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-			ContentResolver.requestSync(account, authority, extras);
-		}
+		final List<String> syncSetNames = new ArrayList<>();
+		Collections.addAll(syncSetNames, SyncShadow.ALL_SYNC_SET_NAMES);
+
+		final Bundle extras = new Bundle();
+		extras.putString(SyncAdapter.EXTRA_SYNC_SET_NAMES, App.getDefaultGson().toJson(syncSetNames));
+		extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+		extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+		ContentResolver.requestSync(account, authority, extras);
 	}
 }
