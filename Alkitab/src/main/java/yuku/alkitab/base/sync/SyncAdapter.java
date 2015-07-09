@@ -130,46 +130,46 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		}
 
 		for (final String syncSetName : syncSetNames) {
-		synchronized (syncSetsRunning) {
-			syncSetsRunning.add(syncSetName);
-		}
-
-		try {
-			App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
-
-			SyncRecorder.log(SyncRecorder.EventKind.sync_adapter_on_perform, syncSetName);
-
-			if (!Preferences.getBoolean(Sync.prefkeyForSyncSetEnabled(syncSetName), true)) {
-				SyncRecorder.log(SyncRecorder.EventKind.sync_adapter_set_not_enabled, syncSetName);
-
-				return;
-			}
-
-			switch (syncSetName) {
-				case SyncShadow.SYNC_SET_MABEL:
-					syncMabel(syncResult);
-					break;
-				case SyncShadow.SYNC_SET_HISTORY:
-					syncHistory(syncResult);
-					break;
-				case SyncShadow.SYNC_SET_PINS:
-					syncPins(syncResult);
-					break;
-				case SyncShadow.SYNC_SET_RP:
-					syncRp(syncResult);
-					break;
-			}
-		} finally {
 			synchronized (syncSetsRunning) {
-				final String popped = syncSetsRunning.pop();
-				if (!popped.equals(syncSetName)) {
-					throw new RuntimeException("syncSetsRunning not balanced: popped=" + popped + " actual=" + syncSetName);
-				}
+				syncSetsRunning.add(syncSetName);
 			}
 
-			App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
+			try {
+				App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
+
+				SyncRecorder.log(SyncRecorder.EventKind.sync_adapter_on_perform, syncSetName);
+
+				if (!Preferences.getBoolean(Sync.prefkeyForSyncSetEnabled(syncSetName), true)) {
+					SyncRecorder.log(SyncRecorder.EventKind.sync_adapter_set_not_enabled, syncSetName);
+
+					return;
+				}
+
+				switch (syncSetName) {
+					case SyncShadow.SYNC_SET_MABEL:
+						syncMabel(syncResult);
+						break;
+					case SyncShadow.SYNC_SET_HISTORY:
+						syncHistory(syncResult);
+						break;
+					case SyncShadow.SYNC_SET_PINS:
+						syncPins(syncResult);
+						break;
+					case SyncShadow.SYNC_SET_RP:
+						syncRp(syncResult);
+						break;
+				}
+			} finally {
+				synchronized (syncSetsRunning) {
+					final String popped = syncSetsRunning.pop();
+					if (!popped.equals(syncSetName)) {
+						throw new RuntimeException("syncSetsRunning not balanced: popped=" + popped + " actual=" + syncSetName);
+					}
+				}
+
+				App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
+			}
 		}
-	}
 
 		Log.d(TAG, "Sync result: " + syncResult + " hasSoftError=" + syncResult.hasSoftError() + " hasHardError=" + syncResult.hasHardError() + " ioex=" + syncResult.stats.numIoExceptions);
 	}
@@ -214,13 +214,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	 * Also, the current state must be updated using the append delta from the server.
 	 *
 	 * @param clientState will be modified
+	 * @return true iff chopped
 	 */
-	static <C> void chopClientState(final Sync.ClientState<C> clientState, final String syncSetName) {
+	static <C> boolean chopClientState(final Sync.ClientState<C> clientState, final String syncSetName) {
 		final List<Sync.Operation<C>> src = clientState.delta.operations;
 
 		// fast path if the operation count is below threshold
 		if (src.size() <= PARTIAL_SYNC_THRESHOLD) {
-			return;
+			return false;
 		}
 
 		final List<Sync.Operation<C>> dst = new ArrayList<>();
@@ -245,8 +246,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 		SyncRecorder.log(SyncRecorder.EventKind.partial_sync_info, syncSetName, "client_delta_operations_size_original", src.size(), "client_delta_operations_size_chopped", dst.size());
 
+		final boolean res = dst.size() < src.size();
+
 		src.clear();
 		src.addAll(dst);
+
+		return res;
 	}
 
 	void syncMabel(final SyncResult sr) {
@@ -267,7 +272,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 		SyncRecorder.log(SyncRecorder.EventKind.current_entities_gathered, syncSetName, "base_revno", clientState.base_revno, "client_delta_operations_size", clientState.delta.operations.size(), "client_entities_size", entitiesBeforeSync.size());
 
-		chopClientState(clientState, syncSetName);
+		final boolean isPartial = chopClientState(clientState, syncSetName);
 
 		final String serverPrefix = Sync.getEffectiveServerPrefix();
 		Log.d(TAG, "@@syncMabel step 20: building http request. Server prefix: " + serverPrefix);
@@ -327,6 +332,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			}
 
 			fillInStatsFromAppendDelta(append_delta, sr);
+
+			if (isPartial) {
+				Sync.notifySyncNeeded(syncSetName);
+			}
 
 			// success! Tell our world.
 			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", sr.stats.numInserts, "update_count", sr.stats.numUpdates, "delete_count", sr.stats.numDeletes);
