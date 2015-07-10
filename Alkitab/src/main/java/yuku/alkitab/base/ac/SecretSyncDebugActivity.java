@@ -3,10 +3,12 @@ package yuku.alkitab.base.ac;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Spinner;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
@@ -24,7 +26,10 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Sync;
+import yuku.alkitab.base.sync.Sync_History;
 import yuku.alkitab.base.sync.Sync_Mabel;
+import yuku.alkitab.base.sync.Sync_Pins;
+import yuku.alkitab.base.sync.Sync_Rp;
 import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
@@ -32,20 +37,23 @@ import yuku.alkitab.model.Marker;
 import yuku.alkitab.model.Marker_Label;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 public class SecretSyncDebugActivity extends BaseActivity {
 	public static final String TAG = SecretSyncDebugActivity.class.getSimpleName();
 
 	EditText tServer;
-	TextView tUser;
 	EditText tUserEmail;
 	CheckBox cMakeDirtyMarker;
 	CheckBox cMakeDirtyLabel;
 	CheckBox cMakeDirtyMarker_Label;
+	Spinner cbSyncSetName;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +61,6 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		setContentView(R.layout.activity_secret_sync_debug);
 
 		tServer = V.get(this, R.id.tServer);
-		tUser = V.get(this, R.id.tUser);
 		tUserEmail = V.get(this, R.id.tUserEmail);
 		cMakeDirtyMarker = V.get(this, R.id.cMakeDirtyMarker);
 		cMakeDirtyLabel = V.get(this, R.id.cMakeDirtyLabel);
@@ -89,7 +96,10 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		V.get(this, R.id.bLogout).setOnClickListener(bLogout_click);
 		V.get(this, R.id.bSync).setOnClickListener(bSync_click);
 
-		displayUser();
+		cbSyncSetName = V.get(this, R.id.cbSyncSetName);
+		cbSyncSetName.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, SyncShadow.ALL_SYNC_SET_NAMES));
+
+		V.get(this, R.id.bCheckHash).setOnClickListener(bCheckHash_click);
 	}
 
 	View.OnClickListener bMabelClientState_click = v -> {
@@ -177,10 +187,6 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		return sb.toString();
 	}
 
-	void displayUser() {
-		tUser.setText(Preferences.getString(getString(R.string.pref_syncAccountName_key), "not logged in") + ": " + Preferences.getString(Prefkey.sync_simpleToken));
-	}
-
 	View.OnClickListener bLogout_click = v -> {
 		Preferences.hold();
 		Preferences.remove(getString(R.string.pref_syncAccountName_key));
@@ -191,8 +197,6 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		for (final String syncSetName : SyncShadow.ALL_SYNC_SET_NAMES) {
 			S.getDb().deleteSyncShadowBySyncSetName(syncSetName);
 		}
-
-		displayUser();
 	};
 
 	View.OnClickListener bSync_click = v -> {
@@ -283,5 +287,55 @@ public class SecretSyncDebugActivity extends BaseActivity {
 				});
 			}
 		});
+	};
+
+	View.OnClickListener bCheckHash_click = v -> {
+		final String syncSetName = (String) cbSyncSetName.getSelectedItem();
+		final List<Sync.Entity<?>> entities = new ArrayList<>();
+
+		final MaterialDialog pd = new MaterialDialog.Builder(this)
+			.progress(true, 0)
+			.content("getting entities…")
+			.show();
+
+		new Thread(() -> {
+			switch (syncSetName) {
+				case SyncShadow.SYNC_SET_MABEL:
+					entities.addAll(Sync_Mabel.getEntitiesFromCurrent());
+					break;
+				case SyncShadow.SYNC_SET_RP:
+					entities.addAll(Sync_Rp.getEntitiesFromCurrent());
+					break;
+				case SyncShadow.SYNC_SET_PINS:
+					entities.addAll(Sync_Pins.getEntitiesFromCurrent());
+					break;
+				case SyncShadow.SYNC_SET_HISTORY:
+					entities.addAll(Sync_History.getEntitiesFromCurrent());
+					break;
+			}
+
+			Collections.sort(entities, (lhs, rhs) -> lhs.gid.compareTo(rhs.gid));
+
+			int hashCode = 1;
+			for (final Sync.Entity<?> entity : entities) {
+				int elementHashCode;
+
+				if (entity == null) {
+					elementHashCode = 0;
+				} else {
+					elementHashCode = (entity).hashCode();
+				}
+				hashCode = 31 * hashCode + elementHashCode;
+			}
+
+			pd.dismiss();
+
+			final int finalHashCode = hashCode;
+
+			runOnUiThread(() -> new MaterialDialog.Builder(this)
+				.content("entities.size=" + entities.size() + " hash=" + String.format(Locale.US, "0x%08x", finalHashCode))
+				.positiveText("OK")
+				.show());
+		}).start();
 	};
 }
