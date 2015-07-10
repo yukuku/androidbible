@@ -866,7 +866,8 @@ public class InternalDb {
 		}
 	}
 
-	public void deleteLabelById(long _id) {
+	/** This is so special: delete label and the associated marker_labels */
+	public void deleteLabelAndMarker_LabelsByLabelId(long _id) {
 		final Label label = getLabelById(_id);
 		final SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
