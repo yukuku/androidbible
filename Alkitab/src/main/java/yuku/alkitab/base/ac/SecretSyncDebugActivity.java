@@ -1,12 +1,16 @@
 package yuku.alkitab.base.ac;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.gson.reflect.TypeToken;
@@ -31,6 +35,7 @@ import yuku.alkitab.base.sync.Sync_Mabel;
 import yuku.alkitab.base.sync.Sync_Pins;
 import yuku.alkitab.base.sync.Sync_Rp;
 import yuku.alkitab.base.util.Highlights;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
@@ -44,6 +49,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SecretSyncDebugActivity extends BaseActivity {
 	public static final String TAG = SecretSyncDebugActivity.class.getSimpleName();
@@ -93,6 +99,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		V.get(this, R.id.bMabelClientState).setOnClickListener(bMabelClientState_click);
 		V.get(this, R.id.bGenerateDummies).setOnClickListener(bGenerateDummies_click);
 		V.get(this, R.id.bGenerateDummies2).setOnClickListener(bGenerateDummies2_click);
+		V.get(this, R.id.bMabelMonkey).setOnClickListener(bMabelMonkey_click);
 		V.get(this, R.id.bLogout).setOnClickListener(bLogout_click);
 		V.get(this, R.id.bSync).setOnClickListener(bSync_click);
 
@@ -167,6 +174,131 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		new AlertDialogWrapper.Builder(this)
 			.setMessage("1000 markers, 2 labels generated.")
 			.setPositiveButton(R.string.ok, null)
+			.show();
+	};
+
+	static MonkeyThread monkey;
+	Handler toastHandler = new Handler();
+
+	class MonkeyThread extends Thread {
+		final AtomicBoolean stopRequested = new AtomicBoolean();
+
+		final Toast toast;
+
+		@SuppressLint("ShowToast")
+		MonkeyThread() {
+			toast = Toast.makeText(SecretSyncDebugActivity.this, "none", Toast.LENGTH_SHORT);
+		}
+
+		void toast(String msg) {
+			toastHandler.post(() -> {
+				toast.setText(msg);
+				toast.show();
+			});
+		}
+
+		@Override
+		public void run() {
+			while (!stopRequested.get()) {
+				toast("preparing");
+				SystemClock.sleep(5000);
+
+				{
+					int nlabel = rand(5);
+					toast("creating " + nlabel + " labels");
+					for (int i = 0; i < nlabel; i++) {
+						S.getDb().insertLabel(randomString("monkey L " + i + " ", 1, 3, 8), U.encodeLabelBackgroundColor(rand(0xffffff)));
+					}
+				}
+
+				if (stopRequested.get()) return;
+				toast("waiting for 10 secs");
+				SystemClock.sleep(10000);
+
+				final List<Label> labels = S.getDb().listAllLabels();
+
+				{
+					int nmarker = rand(500);
+					toast("creating " + nmarker + " markers");
+					for (int i = 0; i < nmarker; i++) {
+						final Marker.Kind kind = Marker.Kind.values()[rand(3)];
+						final Date now = new Date();
+						final Marker marker = S.getDb().insertMarker(0x000101 + rand(30), kind, kind == Marker.Kind.highlight ? Highlights.encode(rand(0xffffff)) : randomString("monkey M " + i + " ", rand(8) + 2, 3, 5), rand(2) + 1, now, now);
+						if (rand(10) < 1 && labels.size() > 0) {
+							final Set<Label> labelSet = new HashSet<>();
+							labelSet.add(labels.get(rand(labels.size())));
+							S.getDb().updateLabels(marker, labelSet);
+						}
+					}
+				}
+
+				if (stopRequested.get()) return;
+				toast("waiting for 10 secs");
+				SystemClock.sleep(10000);
+
+				final List<Marker> markers = S.getDb().listAllMarkers();
+				if (markers.size() > 10) {
+					int nmarker = rand(markers.size() / 10);
+					toast("deleting up to 10% of markers: " + nmarker + " markers");
+					for (int i = 0; i < nmarker; i++) {
+						final Marker marker = markers.get(rand(markers.size()));
+						markers.remove(marker);
+						final List<Marker_Label> mls = S.getDb().listMarker_LabelsByMarker(marker);
+						for (final Marker_Label ml : mls) {
+							S.getDb().deleteMarker_LabelByGid(ml.gid);
+						}
+						S.getDb().deleteMarkerByGid(marker.gid);
+					}
+				}
+
+				if (stopRequested.get()) return;
+				toast("waiting for 10 secs");
+				SystemClock.sleep(10000);
+
+				if (labels.size() > 10) {
+					int nlabel = rand(labels.size() / 10);
+					toast("deleting up to 10% of label: " + nlabel + " labels");
+					for (int i = 0; i < nlabel; i++) {
+						final Label label = labels.get(rand(labels.size()));
+						labels.remove(label);
+						S.getDb().deleteLabelAndMarker_LabelsByLabelId(label._id);
+					}
+				}
+
+				if (stopRequested.get()) return;
+				toast("waiting for 40 secs");
+				SystemClock.sleep(40000);
+			}
+		}
+
+		void requestStop() {
+			stopRequested.set(true);
+		}
+	}
+
+	final View.OnClickListener bMabelMonkey_click = v -> {
+		if (!BuildConfig.DEBUG) return;
+
+		if (monkey != null) {
+			monkey.requestStop();
+			monkey = null;
+			new MaterialDialog.Builder(this)
+				.content("monkey stopped")
+				.show();
+			return;
+		}
+
+		new MaterialDialog.Builder(this)
+			.content("This will MESS UP YOUR MARKERS. JANGAN TEKAN TOMBOL INI karena segala datamu akan rusak.")
+			.positiveText("DO NOT PRESS")
+			.negativeText("OK")
+			.callback(new MaterialDialog.ButtonCallback() {
+				@Override
+				public void onPositive(final MaterialDialog dialog) {
+					monkey = new MonkeyThread();
+					monkey.start();
+				}
+			})
 			.show();
 	};
 
