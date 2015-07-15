@@ -266,6 +266,20 @@ public class SecretSyncDebugActivity extends BaseActivity {
 				}
 
 				if (stopRequested.get()) return;
+				toast("waiting for 10 secs");
+				SystemClock.sleep(10000);
+
+				{
+					int nmarker = rand(markers.size() / 5);
+					toast("editing up to 20% of markers: " + nmarker + " markers");
+					for (int i = 0; i < nmarker; i++) {
+						final Marker marker = markers.get(rand(markers.size()));
+						marker.caption = randomString("monkey edit M " + i + " ", rand(8) + 2, 3, 5);
+						S.getDb().insertOrUpdateMarker(marker);
+					}
+				}
+
+				if (stopRequested.get()) return;
 				toast("waiting for 40 secs");
 				SystemClock.sleep(40000);
 			}
