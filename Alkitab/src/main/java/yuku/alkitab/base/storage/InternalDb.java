@@ -191,7 +191,7 @@ public class InternalDb {
 		final Marker marker = getMarkerById(_id);
 
 		final SQLiteDatabase db = helper.getWritableDatabase();
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		try {
 			db.delete(Db.TABLE_Marker_Label, Db.Marker_Label.marker_gid + "=?", new String[]{marker.gid});
 			db.delete(Db.TABLE_Marker, "_id=?", new String[]{String.valueOf(_id)});
@@ -327,7 +327,7 @@ public class InternalDb {
 	public void updateOrInsertPartialHighlight(final int ari, final int colorRgb, final CharSequence verseText, final int startOffset, final int endOffset) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
 
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		try {
 			// order by modifyTime desc so we modify the latest one and remove earlier ones if they exist.
 			final Cursor c = db.query(Db.TABLE_Marker, null, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?", ToStringArray(ari, Marker.Kind.highlight.code), null, null, Db.Marker.modifyTime + " desc");
@@ -366,7 +366,7 @@ public class InternalDb {
 	public void updateOrInsertHighlights(int ari_bookchapter, IntArrayList selectedVerses_1, int colorRgb) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
 
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		try {
 			final String[] params = ToStringArray(null /* for the ari */, Marker.Kind.highlight.code);
 
@@ -505,7 +505,7 @@ public class InternalDb {
 		values.put(Table.Devotion.touchTime.name(), Sqlitil.nowDateTime());
 		values.put(Table.Devotion.dataFormatVersion.name(), 1);
 
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		try {
 			// first delete the existing
 			db.delete(Table.Devotion.tableName(), Table.Devotion.name + "=? and " + Table.Devotion.date + "=?", new String[]{article.getKind().name, article.getDate()});
@@ -620,7 +620,7 @@ public class InternalDb {
 		cv.put(Db.Version.active, active); // special
 		cv.put(Db.Version.ordering, mv.ordering);
 
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		try { // prevent insert for the same filename (absolute path), update instead
 			final long count = DatabaseUtils.queryNumEntries(db, Db.TABLE_Version, Db.Version.filename + "=?", new String[]{mv.filename});
 			if (count == 0) {
@@ -767,7 +767,7 @@ public class InternalDb {
 	public void updateLabels(final Marker marker, final Set<Label> newLabels) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
 
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		try {
 			final List<Marker_Label> oldMls = listMarker_LabelsByMarker(marker);
 
@@ -870,7 +870,7 @@ public class InternalDb {
 	public void deleteLabelAndMarker_LabelsByLabelId(long _id) {
 		final Label label = getLabelById(_id);
 		final SQLiteDatabase db = helper.getWritableDatabase();
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		try {
 			db.delete(Db.TABLE_Marker_Label, Db.Marker_Label.label_gid + "=?", new String[]{label.gid});
 			db.delete(Db.TABLE_Label, "_id=?", new String[]{String.valueOf(_id)});
@@ -911,7 +911,7 @@ public class InternalDb {
 
 	/** Used in migration from v3 */
 	public static long insertMarker_LabelIfNotExists(final SQLiteDatabase db, final Marker_Label marker_label) {
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		try {
 			final Cursor cursor = db.rawQuery("select _id from " + Db.TABLE_Marker_Label + " where " + Db.Marker_Label.marker_gid + "=? and " + Db.Marker_Label.label_gid + "=?", Array(marker_label.marker_gid, marker_label.label_gid));
 			try {
@@ -940,7 +940,7 @@ public class InternalDb {
 
 	public void sortLabelsAlphabetically() {
 		final SQLiteDatabase db = helper.getWritableDatabase();
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		try {
 			final List<Label> labels = listAllLabels();
 			Collections.sort(labels, (lhs, rhs) -> {
@@ -984,7 +984,7 @@ public class InternalDb {
 		}
 
 		SQLiteDatabase db = helper.getWritableDatabase();
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		try {
 			if (from.ordering > to.ordering) { // move up
 				db.execSQL("update " + Db.TABLE_Label + " set " + Db.Label.ordering + "=(" + Db.Label.ordering + "+1) where ?<=" + Db.Label.ordering + " and " + Db.Label.ordering + "<?", new Object[] {to.ordering, from.ordering});
@@ -1021,7 +1021,7 @@ public class InternalDb {
 		}
 
 		SQLiteDatabase db = helper.getWritableDatabase();
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		try {
 			{
 				final int internal_ordering = Preferences.getInt(Prefkey.internal_version_ordering, MVersionInternal.DEFAULT_ORDERING);
@@ -1107,7 +1107,7 @@ public class InternalDb {
 		cv.put(Db.ProgressMarkHistory.ari, progressMark.ari);
 		cv.put(Db.ProgressMarkHistory.createTime, Sqlitil.toInt(progressMark.modifyTime));
 
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		try {
 			// the progress mark history first
 			db.insert(Db.TABLE_ProgressMarkHistory, null, cv);
@@ -1190,7 +1190,7 @@ public class InternalDb {
 
 	public void insertOrUpdateReadingPlanProgress(final String gid, final int readingCode, final long checkTime) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		try {
 			db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=? and " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(gid, readingCode));
 
@@ -1336,7 +1336,7 @@ public class InternalDb {
 		// So we will get the size first, and then allocate memory,
 		// and get the data in chunks.
 		final SQLiteDatabase db = helper.getReadableDatabase();
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		try {
 			final int data_len;
 			final long _id;
@@ -1442,7 +1442,7 @@ public class InternalDb {
 	 */
 	public void insertOrUpdateSyncShadowBySyncSetName(@NonNull final SyncShadow ss) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		try {
 			final long count = DatabaseUtils.queryNumEntries(db, Table.SyncShadow.tableName(), Table.SyncShadow.syncSetName + "=?", Array(ss.syncSetName));
 			if (count > 0) {
@@ -1468,7 +1468,7 @@ public class InternalDb {
 	 */
 	@NonNull public Sync.ApplyAppendDeltaResult applyMabelAppendDelta(final int final_revno, final List<Sync.Entity<Sync_Mabel.Content>> shadowEntities, final Sync.ClientState<Sync_Mabel.Content> clientState, @NonNull final Sync.Delta<Sync_Mabel.Content> append_delta, @NonNull final List<Sync.Entity<Sync_Mabel.Content>> entitiesBeforeSync, @NonNull final String simpleTokenBeforeSync) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_MABEL, true);
 		try {
 			{ // if the current entities are not the same as the ones had when contacting server, reject this append delta.
@@ -1553,7 +1553,7 @@ public class InternalDb {
 	 */
 	@NonNull public Sync.ApplyAppendDeltaResult applyPinsAppendDelta(final int final_revno, @NonNull final Sync.Delta<Sync_Pins.Content> append_delta, @NonNull final List<Sync.Entity<Sync_Pins.Content>> entitiesBeforeSync, @NonNull final String simpleTokenBeforeSync) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_PINS, true);
 		try {
 			{ // if the current entities are not the same as the ones had when contacting server, reject this append delta.
@@ -1623,7 +1623,7 @@ public class InternalDb {
 	 */
 	@NonNull public Sync.ApplyAppendDeltaResult applyRpAppendDelta(final int final_revno, @NonNull final Sync.Delta<Sync_Rp.Content> append_delta, @NonNull final List<Sync.Entity<Sync_Rp.Content>> entitiesBeforeSync, @NonNull final String simpleTokenBeforeSync) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_RP, true);
 		try {
 			{ // if the current entities are not the same as the ones had when contacting server, reject this append delta.
