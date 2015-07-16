@@ -691,6 +691,21 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		return getString(R.string.rp_dayHeader, (dayNumber + 1), Sqlitil.toLocaleDateMedium(calendar.getTime()));
 	}
 
+	void one_reading_longClick(final int day, final int sequence) {
+		new MaterialDialog.Builder(this)
+			.content(R.string.rp_mark_as_read_up_to)
+			.positiveText(R.string.ok)
+			.negativeText(R.string.cancel)
+			.callback(new MaterialDialog.ButtonCallback() {
+				@Override
+				public void onPositive(final MaterialDialog dialog) {
+					ReadingPlanManager.markAsReadUpTo(readingPlan.info.name, readingPlan.dailyVerses, day, sequence);
+					reload();
+				}
+			})
+			.show();
+	}
+
 	class ReadingPlanAdapter extends EasyAdapter {
 		private int[] todayReadings;
 
@@ -795,14 +810,14 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			} else if (itemViewType == 2) {
 				final LinearLayout layout = V.get(res, R.id.llOneDayReadingPlan);
 
-				final int currentViewTypePosition = position - todayReadings.length / 2 - 1;
+				final int day = position - todayReadings.length / 2 - 1;
 
 				//Text title
 				TextView tTitle = V.get(res, android.R.id.text1);
-				tTitle.setText(getReadingDateHeader(currentViewTypePosition));
+				tTitle.setText(getReadingDateHeader(day));
 
 				//Text reading
-				int[] ariRanges = readingPlan.dailyVerses[currentViewTypePosition];
+				int[] ariRanges = readingPlan.dailyVerses[day];
 				final int checkbox_count = ariRanges.length / 2;
 
 				{ // remove extra checkboxes
@@ -816,14 +831,14 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				}
 
 				final boolean[] readMarks = new boolean[checkbox_count];
-				ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, currentViewTypePosition);
+				ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, day);
 
 				for (int i = 0; i < checkbox_count; i++) {
 					final int sequence = i;
 
 					CheckBox checkBox = (CheckBox) layout.findViewWithTag(i);
 					if (checkBox == null) {
-						checkBox = (CheckBox) getLayoutInflater().inflate(R.layout.item_reading_plan_one_day_checkbox, layout, false);
+						checkBox = (CheckBox) getLayoutInflater().inflate(R.layout.item_reading_plan_one_reading_checkbox, layout, false);
 						checkBox.setTag(i);
 						layout.addView(checkBox);
 					}
@@ -832,9 +847,13 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 					checkBox.setChecked(readMarks[sequence]);
 					checkBox.setText(S.activeVersion.referenceRange(ariRanges[sequence * 2], ariRanges[sequence * 2 + 1]));
 					checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-						ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.name, currentViewTypePosition, sequence, isChecked);
+						ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.name, day, sequence, isChecked);
 						loadReadingPlanProgress();
 						load();
+					});
+					checkBox.setOnLongClickListener(v -> {
+						one_reading_longClick(day, sequence);
+						return true;
 					});
 				}
 			}

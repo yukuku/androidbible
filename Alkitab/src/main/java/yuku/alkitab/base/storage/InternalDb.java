@@ -1208,6 +1208,33 @@ public class InternalDb {
 		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
 	}
 
+	public void insertOrUpdateMultipleReadingPlanProgresses(final String gid, final IntArrayList readingCodes, final long checkTime) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+		db.beginTransactionNonExclusive();
+		try {
+			final ContentValues cv = new ContentValues();
+			cv.put(Db.ReadingPlanProgress.reading_plan_progress_gid, gid);
+			cv.put(Db.ReadingPlanProgress.checkTime, checkTime);
+
+			for (int i = 0, len = readingCodes.size(); i < len; i++) {
+				final int readingCode = readingCodes.get(i);
+
+				db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=? and " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(gid, readingCode));
+
+				// specific update
+				cv.put(Db.ReadingPlanProgress.reading_code, readingCode);
+
+				db.insert(Db.TABLE_ReadingPlanProgress, null, cv);
+			}
+
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
+	}
+
 	public void deleteReadingPlanProgress(final String gid, final int readingCode) {
 		helper.getWritableDatabase().delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=? and " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(gid, readingCode));
 
