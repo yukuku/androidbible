@@ -303,6 +303,9 @@
   <string name="rp_commentBehindSchedule">Înaintea planificării: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Nu sunt planuri de citire disponibile.</string>
   <string name="rp_deletePlan">"Ștergeți \'%s\'?"</string>
+  <string name="rp_reset">Modificați data de începere, astfel încât prima lectură necitită va fi azi?</string>
+  <string name="rp_restart_desc">Începe acest plan de citire de la început, prin a marca toate ca necitite?</string>
+  <string name="rp_showCalendar">Alege data</string>
   <string name="rp_gotoFirstUnread">Arată primul necitit</string>
   <string name="rp_dayHeader">Ziua %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Citit</string>
@@ -314,8 +317,12 @@
   <string name="rp_navigationGoToDate">Mergi la data</string>
   <string name="rp_navigationNextDay">Ziua următoare</string>
   <string name="rp_menuDownload">Descarcă</string>
+  <string name="rp_menuCatchMeUp">Resincronizare date</string>
+  <string name="rp_menuRestart">Restart</string>
   <string name="rp_menuDelete">Șterge</string>
   <string name="rp_headingProgress">Progres</string>
+  <string name="rp_gotoToday">Du-te la ziua de azi</string>
+  <string name="rp_setStartDate">Setare data de pornire</string>
   <string name="rp_showDetails">Arată detalii</string>
   <string name="rp_hideDetails">Ascunde detalii</string>
   <string name="rp_aboutPlan">Despre planificare</string>
@@ -401,7 +408,9 @@
   <string name="pref_screen_sync_settings_title">Setări sincronizare</string>
   <string name="sync_category_title_data_types">Tip date</string>
   <string name="pref_syncSet_mabel_enabled_title">Marcaje și etichete</string>
+  <string name="pref_syncSet_rp_enabled_title">Progres plan de citire</string>
   <string name="pref_syncSet_history_enabled_title">Versete recente</string>
+  <string name="pref_syncSet_pins_enabled_title">Însemne</string>
   <string name="sync_menu_item_sync_now">Sincronizare acum</string>
   <string name="sync_menu_item_sync_log">Vizualizare log</string>
   <string name="sync_sync_set_pref_summary_last_synced">Ultima sincronizare %1$s, %2$s (r%3$s)</string>
