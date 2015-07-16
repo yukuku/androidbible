@@ -15,7 +15,9 @@ import com.squareup.okhttp.Call;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.model.VersionImpl;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Gcm;
 import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.debug.R;
@@ -128,6 +130,11 @@ public class App extends yuku.afw.App {
 
 		// make sure launcher do not open other variants of the app
 		Launcher.setAppPackageName(context.getPackageName());
+
+		// sync on app start, if we are logged in
+		if (Preferences.contains(Prefkey.sync_simpleToken)) {
+			Sync.notifySyncNeeded(SyncShadow.ALL_SYNC_SET_NAMES);
+		}
 	}
 
 	private static void forceOverflowMenu() {

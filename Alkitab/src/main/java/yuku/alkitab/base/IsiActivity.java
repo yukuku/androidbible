@@ -556,11 +556,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		App.getLbm().registerReceiver(reloadAttributeMapReceiver, new IntentFilter(ACTION_ATTRIBUTE_MAP_CHANGED));
 
-		// sync on app start, if we are logged in
-		if (Preferences.contains(Prefkey.sync_simpleToken)) {
-			Sync.notifySyncNeeded(SyncShadow.ALL_SYNC_SET_NAMES);
-		}
-
 		if (!U.equals(getPackageName(), "yuku.alkitab") /* prevent self-import */
 			&& !U.equals(getPackageName(), "yuku.alkitab.kjv") /* prevent self-import */
 			&& Preferences.getInt(Prefkey.stop_import_yuku_alkitab_backups, 0) == 0
