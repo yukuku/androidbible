@@ -205,6 +205,10 @@ public class NoteActivity extends BaseActivity {
 				return false;
 			});
 			tCaptionReadOnly.setOnClickListener(v -> {
+				if (!Preferences.getBoolean(R.string.pref_tapToEditNote_key, R.bool.pref_tapToEditNote_default)) {
+					return;
+				}
+
 				if (!justClickedLink) {
 					setEditingMode(true);
 				} else {
