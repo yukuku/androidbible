@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -24,11 +25,16 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 
 	public InternalDbHelper(Context context) {
 		super(context, "AlkitabDb", null, App.getVersionCode());
+		if (Build.VERSION.SDK_INT >= 16) {
+			setWriteAheadLoggingEnabled(true);
+		}
 	}
 	
 	@Override
 	public void onOpen(SQLiteDatabase db) {
-		// db.execSQL("PRAGMA synchronous=OFF");
+		if (Build.VERSION.SDK_INT < 16) {
+			db.enableWriteAheadLogging();
+		}
 	}
 
 	@Override public void onCreate(SQLiteDatabase db) {

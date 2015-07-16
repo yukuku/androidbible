@@ -2,6 +2,7 @@ package yuku.alkitab.base.sync;
 
 import android.support.annotation.NonNull;
 import android.util.Pair;
+import com.google.gson.reflect.TypeToken;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -25,7 +26,7 @@ public class Sync_Pins {
 	/**
 	 * @return base revno, delta of shadow -> current.
 	 */
-	public static Pair<ClientState, List<Sync.Entity<Content>>> getClientStateAndCurrentEntities() {
+	public static Pair<Sync.ClientState<Content>, List<Sync.Entity<Content>>> getClientStateAndCurrentEntities() {
 		final SyncShadow ss = S.getDb().getSyncShadowBySyncSetName(SyncShadow.SYNC_SET_PINS);
 
 		final List<Sync.Entity<Content>> srcs = ss == null? Literals.List(): entitiesFromShadow(ss);
@@ -54,7 +55,7 @@ public class Sync_Pins {
 			}
 		}
 
-		return Pair.create(new ClientState(ss == null ? 0 : ss.revno, delta), dsts);
+		return Pair.create(new Sync.ClientState<>(ss == null ? 0 : ss.revno, delta), dsts);
 	}
 
 	private static boolean isSameContent(final Sync.Entity<Content> a, final Sync.Entity<Content> b) {
@@ -74,14 +75,14 @@ public class Sync_Pins {
 	}
 
 	private static List<Sync.Entity<Content>> entitiesFromShadow(@NonNull final SyncShadow ss) {
-		final SyncShadowDataJson data = App.getDefaultGson().fromJson(U.utf8BytesToString(ss.data), SyncShadowDataJson.class);
+		final Sync.SyncShadowDataJson<Content> data = App.getDefaultGson().fromJson(U.utf8BytesToString(ss.data), new TypeToken<Sync.SyncShadowDataJson<Content>>() {}.getType());
 		return data.entities;
 	}
 
 	@NonNull public static SyncShadow shadowFromEntities(@NonNull final List<Sync.Entity<Content>> entities, final int revno) {
-		final SyncShadowDataJson data = new SyncShadowDataJson();
+		final Sync.SyncShadowDataJson<Content> data = new Sync.SyncShadowDataJson<>();
 		data.entities = entities;
-		final String s = App.getDefaultGson().toJson(data);
+		final String s = App.getDefaultGson().toJson(data, new TypeToken<Sync.SyncShadowDataJson<Content>>() {}.getType());
 		final SyncShadow res = new SyncShadow();
 		res.data = U.stringToUtf8Bytes(s);
 		res.syncSetName = SyncShadow.SYNC_SET_PINS;
@@ -92,10 +93,7 @@ public class Sync_Pins {
 	@NonNull public static List<Sync.Entity<Content>> getEntitiesFromCurrent() {
 		final List<Sync.Entity<Content>> res = new ArrayList<>();
 
-		final Sync.Entity<Content> entity = new Sync.Entity<>();
-		entity.kind = Sync.Entity.KIND_PINS;
-		entity.gid = GID_SPECIAL_PINS;
-		final Content content = entity.content = new Content();
+		final Content content = new Content();
 		final List<Content.Pin> pins = content.pins = new ArrayList<>();
 
 		for (int preset_id = 0; preset_id < AttributeView.PROGRESS_MARK_TOTAL_COUNT; preset_id++) {
@@ -110,6 +108,7 @@ public class Sync_Pins {
 			pins.add(pin);
 		}
 
+		final Sync.Entity<Content> entity = new Sync.Entity<>(Sync.Entity.KIND_PINS, GID_SPECIAL_PINS, content);
 		res.add(entity);
 
 		return res;
@@ -204,24 +203,5 @@ public class Sync_Pins {
 					'}';
 			}
 		}
-	}
-
-	public static class SyncShadowDataJson {
-		public List<Sync.Entity<Content>> entities;
-	}
-
-	public static class ClientState {
-		public final int base_revno;
-		@NonNull public final Sync.Delta<Content> delta;
-
-		public ClientState(final int base_revno, @NonNull final Sync.Delta<Content> delta) {
-			this.base_revno = base_revno;
-			this.delta = delta;
-		}
-	}
-
-	public static class SyncResponseJson extends Sync.ResponseJson {
-		public int final_revno;
-		public Sync.Delta<Content> append_delta;
 	}
 }

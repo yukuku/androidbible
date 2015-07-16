@@ -52,6 +52,24 @@ public class ReadingPlanManager {
 		}
 	}
 
+	public static void markAsReadUpTo(final String readingPlanName, final int[][] dailyVerses, final int upToDayNumber, final int upToReadingSequence) {
+		final String gid = ReadingPlan.gidFromName(readingPlanName);
+
+		final IntArrayList readingCodes = new IntArrayList();
+
+		for (int day = 0; day < dailyVerses.length; day++) {
+			if (day > upToDayNumber) break;
+
+			for (int sequence = 0, readingsADay = dailyVerses[day].length / 2; sequence < readingsADay; sequence++) {
+				if (day == upToDayNumber && sequence > upToReadingSequence) break;
+
+				readingCodes.add(day << 8 | sequence);
+			}
+		}
+
+		S.getDb().insertOrUpdateMultipleReadingPlanProgresses(gid, readingCodes, System.currentTimeMillis());
+	}
+
 	public static ReadingPlan readVersion1(InputStream inputStream, String name) {
 		ReadingPlan readingPlan = new ReadingPlan();
 		try {

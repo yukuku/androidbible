@@ -2,6 +2,7 @@ package yuku.alkitab.base.sync;
 
 import android.support.annotation.NonNull;
 import android.util.Pair;
+import com.google.gson.reflect.TypeToken;
 import gnu.trove.map.hash.TObjectLongHashMap;
 import gnu.trove.set.TIntSet;
 import yuku.alkitab.base.App;
@@ -24,7 +25,7 @@ public class Sync_Rp {
 	/**
 	 * @return base revno, delta of shadow -> current.
 	 */
-	public static Pair<ClientState, List<Sync.Entity<Content>>> getClientStateAndCurrentEntities() {
+	public static Pair<Sync.ClientState<Content>, List<Sync.Entity<Content>>> getClientStateAndCurrentEntities() {
 		final SyncShadow ss = S.getDb().getSyncShadowBySyncSetName(SyncShadow.SYNC_SET_RP);
 
 		final List<Sync.Entity<Content>> srcs = ss == null? Literals.List(): entitiesFromShadow(ss);
@@ -53,7 +54,7 @@ public class Sync_Rp {
 			}
 		}
 
-		return Pair.create(new ClientState(ss == null ? 0 : ss.revno, delta), dsts);
+		return Pair.create(new Sync.ClientState<>(ss == null ? 0 : ss.revno, delta), dsts);
 	}
 
 	private static boolean isSameContent(final Sync.Entity<Content> a, final Sync.Entity<Content> b) {
@@ -73,14 +74,14 @@ public class Sync_Rp {
 	}
 
 	private static List<Sync.Entity<Content>> entitiesFromShadow(@NonNull final SyncShadow ss) {
-		final SyncShadowDataJson data = App.getDefaultGson().fromJson(U.utf8BytesToString(ss.data), SyncShadowDataJson.class);
+		final Sync.SyncShadowDataJson<Content> data = App.getDefaultGson().fromJson(U.utf8BytesToString(ss.data), new TypeToken<Sync.SyncShadowDataJson<Content>>() {}.getType());
 		return data.entities;
 	}
 
 	@NonNull public static SyncShadow shadowFromEntities(@NonNull final List<Sync.Entity<Content>> entities, final int revno) {
-		final SyncShadowDataJson data = new SyncShadowDataJson();
+		final Sync.SyncShadowDataJson<Content> data = new Sync.SyncShadowDataJson<>();
 		data.entities = entities;
-		final String s = App.getDefaultGson().toJson(data);
+		final String s = App.getDefaultGson().toJson(data, new TypeToken<Sync.SyncShadowDataJson<Content>>() {}.getType());
 		final SyncShadow res = new SyncShadow();
 		res.data = U.stringToUtf8Bytes(s);
 		res.syncSetName = SyncShadow.SYNC_SET_RP;
@@ -105,31 +106,28 @@ public class Sync_Rp {
 		for (final Map.Entry<String, TIntSet> e : map.entrySet()) {
 			final String gid = e.getKey();
 
-			final Sync.Entity<Content> entity = new Sync.Entity<>();
-			entity.kind = Sync.Entity.KIND_RP_PROGRESS;
-			entity.gid = gid;
-
-			final Content content = entity.content = new Content();
+			final Content content = new Content();
 			content.startTime = startTimes.containsKey(gid)? startTimes.get(gid): null;
+
 			final TIntSet set = e.getValue();
 			final Set<Integer> done = content.done = new LinkedHashSet<>(set.size());
 			set.forEach(value -> {
 				done.add(value);
 				return true;
 			});
+
+			final Sync.Entity<Content> entity = new Sync.Entity<>(Sync.Entity.KIND_RP_PROGRESS, gid, content);
 			res.add(entity);
 		}
 
 		// add remaining reading plans without any done
 		startTimes.forEachEntry((gid, startTime) -> {
 			if (!map.containsKey(gid)) {
-				final Sync.Entity<Content> entity = new Sync.Entity<>();
-				entity.kind = Sync.Entity.KIND_RP_PROGRESS;
-				entity.gid = gid;
-
-				final Content content = entity.content = new Content();
+				final Content content = new Content();
 				content.startTime = startTime;
 				content.done = new LinkedHashSet<>();
+
+				final Sync.Entity<Content> entity = new Sync.Entity<>(Sync.Entity.KIND_RP_PROGRESS, gid, content);
 				res.add(entity);
 			}
 			return true;
@@ -173,24 +171,5 @@ public class Sync_Rp {
 				", done=" + done +
 				'}';
 		}
-	}
-
-	public static class SyncShadowDataJson {
-		public List<Sync.Entity<Content>> entities;
-	}
-
-	public static class ClientState {
-		public final int base_revno;
-		@NonNull public final Sync.Delta<Content> delta;
-
-		public ClientState(final int base_revno, @NonNull final Sync.Delta<Content> delta) {
-			this.base_revno = base_revno;
-			this.delta = delta;
-		}
-	}
-
-	public static class SyncResponseJson extends Sync.ResponseJson {
-		public int final_revno;
-		public Sync.Delta<Content> append_delta;
 	}
 }

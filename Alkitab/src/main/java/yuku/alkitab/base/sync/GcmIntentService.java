@@ -58,9 +58,7 @@ public class GcmIntentService extends IntentService {
 						final GcmMessageEncodedDataJson data = App.getDefaultGson().fromJson(encoded_data, GcmMessageEncodedDataJson.class);
 						if ("sync".equals(data.kind)) {
 							if (data.syncSetNames != null) {
-								for (final String syncSetName : data.syncSetNames) {
-									Sync.notifySyncNeeded(syncSetName);
-								}
+								Sync.notifySyncNeeded(data.syncSetNames.toArray(new String[data.syncSetNames.size()]));
 							}
 						}
 					}

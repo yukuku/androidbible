@@ -212,14 +212,14 @@ public class MarkersActivity extends BaseActivity {
 
 			if (marker_count == 0) {
 				// no markers, just delete straight away
-				S.getDb().deleteLabelById(label._id);
+				S.getDb().deleteLabelAndMarker_LabelsByLabelId(label._id);
 				adapter.reload();
 			} else {
 				new AlertDialogWrapper.Builder(this)
 					.setMessage(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, marker_count))
 					.setNegativeButton(R.string.cancel, null)
 					.setPositiveButton(R.string.delete, (dialog, which) -> {
-						S.getDb().deleteLabelById(label._id);
+						S.getDb().deleteLabelAndMarker_LabelsByLabelId(label._id);
 						adapter.reload();
 					})
 					.show();

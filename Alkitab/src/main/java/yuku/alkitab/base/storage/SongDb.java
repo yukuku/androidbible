@@ -52,7 +52,7 @@ public class SongDb {
 	 */
 	public void storeSongs(String bookName, List<Song> songs, int dataFormatVersion) {
 		SQLiteDatabase db = helper.getWritableDatabase();
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		try {
 			// remove existing songs from the same book if any
 			db.delete(Table.SongInfo.tableName(),
@@ -272,7 +272,7 @@ public class SongDb {
 	 */
 	public int deleteSongBook(final String songBookName) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		try {
 			// delete song book
 			db.delete(Table.SongBookInfo.tableName(), Table.SongBookInfo.name + "=?", Array(songBookName));
@@ -349,7 +349,7 @@ public class SongDb {
 	 * For migration
 	 */
 	static void insertSongBookInfo(final SQLiteDatabase db, final SongBookUtil.SongBookInfo info) {
-		db.beginTransaction();
+		db.beginTransactionNonExclusive();
 		try {
 			db.delete(Table.SongBookInfo.tableName(), Table.SongBookInfo.name + "=?", Array(info.name));
 

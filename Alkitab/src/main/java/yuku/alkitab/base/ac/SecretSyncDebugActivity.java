@@ -1,13 +1,19 @@
 package yuku.alkitab.base.ac;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Pair;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Spinner;
+import android.widget.Toast;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
@@ -24,28 +30,36 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Sync;
+import yuku.alkitab.base.sync.Sync_History;
 import yuku.alkitab.base.sync.Sync_Mabel;
+import yuku.alkitab.base.sync.Sync_Pins;
+import yuku.alkitab.base.sync.Sync_Rp;
 import yuku.alkitab.base.util.Highlights;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.alkitab.model.Marker_Label;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SecretSyncDebugActivity extends BaseActivity {
 	public static final String TAG = SecretSyncDebugActivity.class.getSimpleName();
 
 	EditText tServer;
-	TextView tUser;
 	EditText tUserEmail;
 	CheckBox cMakeDirtyMarker;
 	CheckBox cMakeDirtyLabel;
 	CheckBox cMakeDirtyMarker_Label;
+	Spinner cbSyncSetName;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +67,6 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		setContentView(R.layout.activity_secret_sync_debug);
 
 		tServer = V.get(this, R.id.tServer);
-		tUser = V.get(this, R.id.tUser);
 		tUserEmail = V.get(this, R.id.tUserEmail);
 		cMakeDirtyMarker = V.get(this, R.id.cMakeDirtyMarker);
 		cMakeDirtyLabel = V.get(this, R.id.cMakeDirtyLabel);
@@ -86,16 +99,20 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		V.get(this, R.id.bMabelClientState).setOnClickListener(bMabelClientState_click);
 		V.get(this, R.id.bGenerateDummies).setOnClickListener(bGenerateDummies_click);
 		V.get(this, R.id.bGenerateDummies2).setOnClickListener(bGenerateDummies2_click);
+		V.get(this, R.id.bMabelMonkey).setOnClickListener(bMabelMonkey_click);
 		V.get(this, R.id.bLogout).setOnClickListener(bLogout_click);
 		V.get(this, R.id.bSync).setOnClickListener(bSync_click);
 
-		displayUser();
+		cbSyncSetName = V.get(this, R.id.cbSyncSetName);
+		cbSyncSetName.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, SyncShadow.ALL_SYNC_SET_NAMES));
+
+		V.get(this, R.id.bCheckHash).setOnClickListener(bCheckHash_click);
 	}
 
 	View.OnClickListener bMabelClientState_click = v -> {
 		final StringBuilder sb = new StringBuilder();
-		final Pair<Sync_Mabel.ClientState, List<Sync.Entity<Sync_Mabel.Content>>> pair = Sync_Mabel.getClientStateAndCurrentEntities();
-		final Sync_Mabel.ClientState clientState = pair.first;
+		final Sync.GetClientStateResult<Sync_Mabel.Content> pair = Sync_Mabel.getClientStateAndCurrentEntities();
+		final Sync.ClientState<Sync_Mabel.Content> clientState = pair.clientState;
 
 		sb.append("Base revno: ").append(clientState.base_revno).append('\n');
 		sb.append("Delta operations (size " + clientState.delta.operations.size() + "):\n");
@@ -160,6 +177,145 @@ public class SecretSyncDebugActivity extends BaseActivity {
 			.show();
 	};
 
+	static MonkeyThread monkey;
+	Handler toastHandler = new Handler();
+
+	class MonkeyThread extends Thread {
+		final AtomicBoolean stopRequested = new AtomicBoolean();
+
+		final Toast toast;
+
+		@SuppressLint("ShowToast")
+		MonkeyThread() {
+			toast = Toast.makeText(SecretSyncDebugActivity.this, "none", Toast.LENGTH_SHORT);
+		}
+
+		void toast(String msg) {
+			toastHandler.post(() -> {
+				toast.setText(msg);
+				toast.show();
+			});
+		}
+
+		@Override
+		public void run() {
+			while (!stopRequested.get()) {
+				toast("preparing");
+				SystemClock.sleep(5000);
+
+				{
+					int nlabel = rand(5);
+					toast("creating " + nlabel + " labels");
+					for (int i = 0; i < nlabel; i++) {
+						S.getDb().insertLabel(randomString("monkey L " + i + " ", 1, 3, 8), U.encodeLabelBackgroundColor(rand(0xffffff)));
+					}
+				}
+
+				if (stopRequested.get()) return;
+				toast("waiting for 10 secs");
+				SystemClock.sleep(10000);
+
+				final List<Label> labels = S.getDb().listAllLabels();
+
+				{
+					int nmarker = rand(500);
+					toast("creating " + nmarker + " markers");
+					for (int i = 0; i < nmarker; i++) {
+						final Marker.Kind kind = Marker.Kind.values()[rand(3)];
+						final Date now = new Date();
+						final Marker marker = S.getDb().insertMarker(0x000101 + rand(30), kind, kind == Marker.Kind.highlight ? Highlights.encode(rand(0xffffff)) : randomString("monkey M " + i + " ", rand(8) + 2, 3, 5), rand(2) + 1, now, now);
+						if (rand(10) < 1 && labels.size() > 0) {
+							final Set<Label> labelSet = new HashSet<>();
+							labelSet.add(labels.get(rand(labels.size())));
+							S.getDb().updateLabels(marker, labelSet);
+						}
+					}
+				}
+
+				if (stopRequested.get()) return;
+				toast("waiting for 10 secs");
+				SystemClock.sleep(10000);
+
+				final List<Marker> markers = S.getDb().listAllMarkers();
+				if (markers.size() > 10) {
+					int nmarker = rand(markers.size() / 10);
+					toast("deleting up to 10% of markers: " + nmarker + " markers");
+					for (int i = 0; i < nmarker; i++) {
+						final Marker marker = markers.get(rand(markers.size()));
+						markers.remove(marker);
+						final List<Marker_Label> mls = S.getDb().listMarker_LabelsByMarker(marker);
+						for (final Marker_Label ml : mls) {
+							S.getDb().deleteMarker_LabelByGid(ml.gid);
+						}
+						S.getDb().deleteMarkerByGid(marker.gid);
+					}
+				}
+
+				if (stopRequested.get()) return;
+				toast("waiting for 10 secs");
+				SystemClock.sleep(10000);
+
+				if (labels.size() > 10) {
+					int nlabel = rand(labels.size() / 10);
+					toast("deleting up to 10% of label: " + nlabel + " labels");
+					for (int i = 0; i < nlabel; i++) {
+						final Label label = labels.get(rand(labels.size()));
+						labels.remove(label);
+						S.getDb().deleteLabelAndMarker_LabelsByLabelId(label._id);
+					}
+				}
+
+				if (stopRequested.get()) return;
+				toast("waiting for 10 secs");
+				SystemClock.sleep(10000);
+
+				{
+					int nmarker = rand(markers.size() / 5);
+					toast("editing up to 20% of markers: " + nmarker + " markers");
+					for (int i = 0; i < nmarker; i++) {
+						final Marker marker = markers.get(rand(markers.size()));
+						marker.caption = randomString("monkey edit M " + i + " ", rand(8) + 2, 3, 5);
+						S.getDb().insertOrUpdateMarker(marker);
+					}
+				}
+
+				if (stopRequested.get()) return;
+				toast("waiting for 40 secs");
+				SystemClock.sleep(40000);
+			}
+		}
+
+		void requestStop() {
+			stopRequested.set(true);
+		}
+	}
+
+	final View.OnClickListener bMabelMonkey_click = v -> {
+		if (!BuildConfig.DEBUG) return;
+
+		if (monkey != null) {
+			monkey.requestStop();
+			monkey = null;
+			new MaterialDialog.Builder(this)
+				.content("monkey stopped")
+				.show();
+			return;
+		}
+
+		new MaterialDialog.Builder(this)
+			.content("This will MESS UP YOUR MARKERS. JANGAN TEKAN TOMBOL INI karena segala datamu akan rusak.")
+			.positiveText("DO NOT PRESS")
+			.negativeText("OK")
+			.callback(new MaterialDialog.ButtonCallback() {
+				@Override
+				public void onPositive(final MaterialDialog dialog) {
+					monkey = new MonkeyThread();
+					monkey.start();
+				}
+			})
+			.show();
+	};
+
 	private String randomString(final String prefix, final int word_count, final int minwordlen, final int maxwordlen) {
 		final StringBuilder sb = new StringBuilder(prefix);
 		for (int i = 0; i < word_count; i++) {
@@ -177,10 +333,6 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		return sb.toString();
 	}
 
-	void displayUser() {
-		tUser.setText(Preferences.getString(getString(R.string.pref_syncAccountName_key), "not logged in") + ": " + Preferences.getString(Prefkey.sync_simpleToken));
-	}
-
 	View.OnClickListener bLogout_click = v -> {
 		Preferences.hold();
 		Preferences.remove(getString(R.string.pref_syncAccountName_key));
@@ -191,8 +343,6 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		for (final String syncSetName : SyncShadow.ALL_SYNC_SET_NAMES) {
 			S.getDb().deleteSyncShadowBySyncSetName(syncSetName);
 		}
-
-		displayUser();
 	};
 
 	View.OnClickListener bSync_click = v -> {
@@ -205,9 +355,9 @@ public class SecretSyncDebugActivity extends BaseActivity {
 			return;
 		}
 
-		final Pair<Sync_Mabel.ClientState, List<Sync.Entity<Sync_Mabel.Content>>> pair = Sync_Mabel.getClientStateAndCurrentEntities();
-		final Sync_Mabel.ClientState clientState = pair.first;
-		final List<Sync.Entity<Sync_Mabel.Content>> entitiesBeforeSync = pair.second;
+		final Sync.GetClientStateResult<Sync_Mabel.Content> pair = Sync_Mabel.getClientStateAndCurrentEntities();
+		final Sync.ClientState<Sync_Mabel.Content> clientState = pair.clientState;
+		final List<Sync.Entity<Sync_Mabel.Content>> entitiesBeforeSync = pair.currentEntities;
 
 		final RequestBody requestBody = new FormEncodingBuilder()
 			.add("simpleToken", simpleToken)
@@ -257,13 +407,13 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 			@Override
 			public void onResponse(final Response response) throws IOException {
-				final Sync_Mabel.SyncResponseJson debugSyncResponse = App.getDefaultGson().fromJson(response.body().charStream(), Sync_Mabel.SyncResponseJson.class);
+				final Sync.SyncResponseJson<Sync_Mabel.Content> debugSyncResponse = App.getDefaultGson().fromJson(response.body().charStream(), new TypeToken<Sync.SyncResponseJson<Sync_Mabel.Content>>() {}.getType());
 				runOnUiThread(() -> {
 					if (debugSyncResponse.success) {
 						final int final_revno = debugSyncResponse.final_revno;
 						final Sync.Delta<Sync_Mabel.Content> append_delta = debugSyncResponse.append_delta;
 
-						final Sync.ApplyAppendDeltaResult applyResult = S.getDb().applyMabelAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
+						final Sync.ApplyAppendDeltaResult applyResult = S.getDb().applyMabelAppendDelta(final_revno, pair.shadowEntities, clientState, append_delta, entitiesBeforeSync, simpleToken);
 						new AlertDialogWrapper.Builder(SecretSyncDebugActivity.this)
 							.setMessage("Final revno: " + final_revno + "\nApply result: " + applyResult + "\nAppend delta: " + append_delta)
 							.setPositiveButton(R.string.ok, null)
@@ -283,5 +433,55 @@ public class SecretSyncDebugActivity extends BaseActivity {
 				});
 			}
 		});
+	};
+
+	View.OnClickListener bCheckHash_click = v -> {
+		final String syncSetName = (String) cbSyncSetName.getSelectedItem();
+		final List<Sync.Entity<?>> entities = new ArrayList<>();
+
+		final MaterialDialog pd = new MaterialDialog.Builder(this)
+			.progress(true, 0)
+			.content("getting entities…")
+			.show();
+
+		new Thread(() -> {
+			switch (syncSetName) {
+				case SyncShadow.SYNC_SET_MABEL:
+					entities.addAll(Sync_Mabel.getEntitiesFromCurrent());
+					break;
+				case SyncShadow.SYNC_SET_RP:
+					entities.addAll(Sync_Rp.getEntitiesFromCurrent());
+					break;
+				case SyncShadow.SYNC_SET_PINS:
+					entities.addAll(Sync_Pins.getEntitiesFromCurrent());
+					break;
+				case SyncShadow.SYNC_SET_HISTORY:
+					entities.addAll(Sync_History.getEntitiesFromCurrent());
+					break;
+			}
+
+			Collections.sort(entities, (lhs, rhs) -> lhs.gid.compareTo(rhs.gid));
+
+			int hashCode = 1;
+			for (final Sync.Entity<?> entity : entities) {
+				int elementHashCode;
+
+				if (entity == null) {
+					elementHashCode = 0;
+				} else {
+					elementHashCode = (entity).hashCode();
+				}
+				hashCode = 31 * hashCode + elementHashCode;
+			}
+
+			pd.dismiss();
+
+			final int finalHashCode = hashCode;
+
+			runOnUiThread(() -> new MaterialDialog.Builder(this)
+				.content("entities.size=" + entities.size() + " hash=" + String.format(Locale.US, "0x%08x", finalHashCode))
+				.positiveText("OK")
+				.show());
+		}).start();
 	};
 }

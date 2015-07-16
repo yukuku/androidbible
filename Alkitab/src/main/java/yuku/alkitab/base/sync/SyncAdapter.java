@@ -11,6 +11,7 @@ import android.util.Log;
 import android.util.Pair;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.MultipartBuilder;
@@ -30,8 +31,11 @@ import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.Sqlitil;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
@@ -41,7 +45,8 @@ import java.util.Stack;
  */
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	static final String TAG = SyncAdapter.class.getSimpleName();
-	public static final String EXTRA_SYNC_SET_NAME = "syncSetName";
+	public static final String EXTRA_SYNC_SET_NAMES = "syncSetNames";
+	private static final int PARTIAL_SYNC_THRESHOLD = 100;
 
 	final static Stack<String> syncSetsRunning = new Stack<>(); // need guard when accessing this
 
@@ -61,6 +66,55 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		super(context, autoInitialize, allowParallelSyncs);
 	}
 
+	/**
+	 * Patches entities with operations, returning new set of entities.
+	 * Add and mod overwrites without merge, del deletes immediately
+	 * @param entities before patch
+	 * @param operations patch in temporal order (old first then new)
+	 * @param <C> type of content
+	 * @return after patch
+	 */
+	public static <C> List<Sync.Entity<C>> patchNoConflict(final List<Sync.Entity<C>> entities, final List<Sync.Operation<C>> operations) {
+		/*
+		Ported from server code:
+
+		def patchNoConflict(entities, operations):
+			# convert to map for faster lookup
+			entities_map = {
+				(e.gid, e.kind): e
+				for e in entities
+			}
+
+			for o in operations:
+				if o.opkind == 'del':
+					del entities_map[(o.gid, o.kind)]
+				else: # add and mod are treated the same: just overwrite!
+					entities_map[(o.gid, o.kind)] = Entity(o.kind, o.gid, content=o.content, creator_id=o.creator_id)
+
+			return entities_map.values()
+
+		 */
+
+		final Map<Pair<String, String>, Sync.Entity<C>> entities_map = new HashMap<>();
+		for (final Sync.Entity<C> entity : entities) {
+			entities_map.put(Pair.create(entity.gid, entity.kind), entity);
+		}
+
+		for (final Sync.Operation<C> o : operations) {
+			switch (o.opkind) {
+				case del:
+					entities_map.remove(Pair.create(o.gid, o.kind));
+					break;
+				case add:
+				case mod:
+					entities_map.put(Pair.create(o.gid, o.kind), new Sync.Entity<C>(o.kind, o.gid, o.content));
+					break;
+			}
+		}
+
+		return new ArrayList<>(entities_map.values());
+	}
+
 	/*
 	 * Specify the code you want to run in the sync adapter. The entire
 	 * sync adapter runs in a background thread, so you don't have to set
@@ -69,52 +123,55 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	@Override
 	public void onPerformSync(final Account account, final Bundle extras, final String authority, final ContentProviderClient provider, final SyncResult syncResult) {
 		Log.d(TAG, "@@onPerformSync account:" + account + " extras:" + extras + " authority:" + authority);
-		final String syncSetName = extras.getString(EXTRA_SYNC_SET_NAME);
-		if (syncSetName == null) {
+
+		final String[] syncSetNames = App.getDefaultGson().fromJson(extras.getString(EXTRA_SYNC_SET_NAMES), String[].class);
+		if (syncSetNames == null || syncSetNames.length == 0) {
 			return;
 		}
 
-		synchronized (syncSetsRunning) {
-			syncSetsRunning.add(syncSetName);
-		}
-
-		try {
-			App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
-
-			SyncRecorder.log(SyncRecorder.EventKind.sync_adapter_on_perform, syncSetName);
-
-			if (!Preferences.getBoolean(Sync.prefkeyForSyncSetEnabled(syncSetName), true)) {
-				SyncRecorder.log(SyncRecorder.EventKind.sync_adapter_set_not_enabled, syncSetName);
-
-				return;
-			}
-
-			switch (syncSetName) {
-				case SyncShadow.SYNC_SET_MABEL:
-					syncMabel(syncResult);
-					break;
-				case SyncShadow.SYNC_SET_HISTORY:
-					syncHistory(syncResult);
-					break;
-				case SyncShadow.SYNC_SET_PINS:
-					syncPins(syncResult);
-					break;
-				case SyncShadow.SYNC_SET_RP:
-					syncRp(syncResult);
-					break;
-			}
-		} finally {
-			Log.d(TAG, "Sync result: " + syncResult);
-
+		for (final String syncSetName : syncSetNames) {
 			synchronized (syncSetsRunning) {
-				final String popped = syncSetsRunning.pop();
-				if (!popped.equals(syncSetName)) {
-					throw new RuntimeException("syncSetsRunning not balanced: popped=" + popped + " actual=" + syncSetName);
-				}
+				syncSetsRunning.add(syncSetName);
 			}
 
-			App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
+			try {
+				App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
+
+				SyncRecorder.log(SyncRecorder.EventKind.sync_adapter_on_perform, syncSetName);
+
+				if (!Preferences.getBoolean(Sync.prefkeyForSyncSetEnabled(syncSetName), true)) {
+					SyncRecorder.log(SyncRecorder.EventKind.sync_adapter_set_not_enabled, syncSetName);
+
+					return;
+				}
+
+				switch (syncSetName) {
+					case SyncShadow.SYNC_SET_MABEL:
+						syncMabel(syncResult);
+						break;
+					case SyncShadow.SYNC_SET_HISTORY:
+						syncHistory(syncResult);
+						break;
+					case SyncShadow.SYNC_SET_PINS:
+						syncPins(syncResult);
+						break;
+					case SyncShadow.SYNC_SET_RP:
+						syncRp(syncResult);
+						break;
+				}
+			} finally {
+				synchronized (syncSetsRunning) {
+					final String popped = syncSetsRunning.pop();
+					if (!popped.equals(syncSetName)) {
+						throw new RuntimeException("syncSetsRunning not balanced: popped=" + popped + " actual=" + syncSetName);
+					}
+				}
+
+				App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
+			}
 		}
+
+		Log.d(TAG, "Sync result: " + syncResult + " hasSoftError=" + syncResult.hasSoftError() + " hasHardError=" + syncResult.hasHardError() + " ioex=" + syncResult.stats.numIoExceptions);
 	}
 
 	public static Set<String> getRunningSyncs() {
@@ -142,6 +199,61 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		}
 	}
 
+	/**
+	 * If the client state's delta is too big, we remove some of the changes, so only some changes are transmitted to the server,
+	 * and the server will not time out anymore.
+	 *
+	 * The selection of the changes follow these rules:
+	 * - all operations with opkind {@link yuku.alkitab.base.sync.Sync.Opkind#mod} and {@link yuku.alkitab.base.sync.Sync.Opkind#del}
+	 *   must be included in the selection
+	 * - if the number of operations are still less than a certain threshold, operations with opkind
+	 *   {@link yuku.alkitab.base.sync.Sync.Opkind#add} are also included until the certain threshold is reached.
+	 *
+	 * WARNING: If you are using partial sync by this method, do not create sync shadow from the current state, but you must
+	 * create it from an existing sync shadow by applying the client delta AND the append delta (given from the server).
+	 * Also, the current state must be updated using the append delta from the server.
+	 *
+	 * @param clientState will be modified
+	 * @return true iff chopped
+	 */
+	static <C> boolean chopClientState(final Sync.ClientState<C> clientState, final String syncSetName) {
+		final List<Sync.Operation<C>> src = clientState.delta.operations;
+
+		// fast path if the operation count is below threshold
+		if (src.size() <= PARTIAL_SYNC_THRESHOLD) {
+			return false;
+		}
+
+		final List<Sync.Operation<C>> dst = new ArrayList<>();
+
+		// insert all mod and del operations
+		for (final Sync.Operation<C> o : src) {
+			if (o.opkind == Sync.Opkind.mod || o.opkind == Sync.Opkind.del) {
+				dst.add(o);
+			}
+		}
+
+		// if we are still ok, add operations too
+		for (final Sync.Operation<C> o : src) {
+			if (dst.size() >= PARTIAL_SYNC_THRESHOLD) {
+				break;
+			}
+
+			if (o.opkind == Sync.Opkind.add) {
+				dst.add(o);
+			}
+		}
+
+		SyncRecorder.log(SyncRecorder.EventKind.partial_sync_info, syncSetName, "client_delta_operations_size_original", src.size(), "client_delta_operations_size_chopped", dst.size());
+
+		final boolean res = dst.size() < src.size();
+
+		src.clear();
+		src.addAll(dst);
+
+		return res;
+	}
+
 	void syncMabel(final SyncResult sr) {
 		final String syncSetName = SyncShadow.SYNC_SET_MABEL;
 
@@ -153,11 +265,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		}
 
 		Log.d(TAG, "@@syncMabel step 10: gathering client state");
-		final Pair<Sync_Mabel.ClientState, List<Sync.Entity<Sync_Mabel.Content>>> pair = Sync_Mabel.getClientStateAndCurrentEntities();
-		final Sync_Mabel.ClientState clientState = pair.first;
-		final List<Sync.Entity<Sync_Mabel.Content>> entitiesBeforeSync = pair.second;
+		final Sync.GetClientStateResult<Sync_Mabel.Content> pair = Sync_Mabel.getClientStateAndCurrentEntities();
+		final Sync.ClientState<Sync_Mabel.Content> clientState = pair.clientState;
+		final List<Sync.Entity<Sync_Mabel.Content>> shadowEntities = pair.shadowEntities;
+		final List<Sync.Entity<Sync_Mabel.Content>> entitiesBeforeSync = pair.currentEntities;
 
 		SyncRecorder.log(SyncRecorder.EventKind.current_entities_gathered, syncSetName, "base_revno", clientState.base_revno, "client_delta_operations_size", clientState.delta.operations.size(), "client_entities_size", entitiesBeforeSync.size());
+
+		final boolean isPartial = chopClientState(clientState, syncSetName);
 
 		final String serverPrefix = Sync.getEffectiveServerPrefix();
 		Log.d(TAG, "@@syncMabel step 20: building http request. Server prefix: " + serverPrefix);
@@ -184,7 +299,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			final long startTime = System.currentTimeMillis();
 			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
 			Log.d(TAG, "@@syncMabel server response string: " + response_s);
-			final Sync_Mabel.SyncResponseJson response = App.getDefaultGson().fromJson(response_s, Sync_Mabel.SyncResponseJson.class);
+			final Sync.SyncResponseJson<Sync_Mabel.Content> response = App.getDefaultGson().fromJson(response_s, new TypeToken<Sync.SyncResponseJson<Sync_Mabel.Content>>() {}.getType());
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, syncSetName, "duration_ms", System.currentTimeMillis() - startTime);
 
 			if (!response.success) {
@@ -206,7 +321,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_got_success_data, syncSetName, "final_revno", final_revno, "append_delta_operations_size", append_delta.operations.size());
 
-			final Sync.ApplyAppendDeltaResult applyResult = S.getDb().applyMabelAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
+			final Sync.ApplyAppendDeltaResult applyResult = S.getDb().applyMabelAppendDelta(final_revno, shadowEntities, clientState, append_delta, entitiesBeforeSync, simpleToken);
 
 			SyncRecorder.log(SyncRecorder.EventKind.apply_result, syncSetName, "apply_result", applyResult.name());
 
@@ -217,6 +332,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			}
 
 			fillInStatsFromAppendDelta(append_delta, sr);
+
+			if (isPartial) {
+				Sync.notifySyncNeeded(syncSetName);
+			}
 
 			// success! Tell our world.
 			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", sr.stats.numInserts, "update_count", sr.stats.numUpdates, "delete_count", sr.stats.numDeletes);
@@ -251,8 +370,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		}
 
 		Log.d(TAG, "@@syncHistory step 10: gathering client state");
-		final Pair<Sync_History.ClientState, List<Sync.Entity<Sync_History.Content>>> pair = Sync_History.getClientStateAndCurrentEntities();
-		final Sync_History.ClientState clientState = pair.first;
+		final Pair<Sync.ClientState<Sync_History.Content>, List<Sync.Entity<Sync_History.Content>>> pair = Sync_History.getClientStateAndCurrentEntities();
+		final Sync.ClientState<Sync_History.Content> clientState = pair.first;
 		final List<Sync.Entity<Sync_History.Content>> entitiesBeforeSync = pair.second;
 
 		SyncRecorder.log(SyncRecorder.EventKind.current_entities_gathered, syncSetName, "base_revno", clientState.base_revno, "client_delta_operations_size", clientState.delta.operations.size(), "client_entities_size", entitiesBeforeSync.size());
@@ -281,7 +400,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			final long startTime = System.currentTimeMillis();
 			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
 			Log.d(TAG, "@@syncHistory server response string: " + response_s);
-			final Sync_History.SyncResponseJson response = App.getDefaultGson().fromJson(response_s, Sync_History.SyncResponseJson.class);
+			final Sync.SyncResponseJson<Sync_History.Content> response = App.getDefaultGson().fromJson(response_s, new TypeToken<Sync.SyncResponseJson<Sync_History.Content>>() {}.getType());
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, syncSetName, "duration_ms", System.currentTimeMillis() - startTime);
 
 			if (!response.success) {
@@ -344,8 +463,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		}
 
 		Log.d(TAG, "@@syncPins step 10: gathering client state");
-		final Pair<Sync_Pins.ClientState, List<Sync.Entity<Sync_Pins.Content>>> pair = Sync_Pins.getClientStateAndCurrentEntities();
-		final Sync_Pins.ClientState clientState = pair.first;
+		final Pair<Sync.ClientState<Sync_Pins.Content>, List<Sync.Entity<Sync_Pins.Content>>> pair = Sync_Pins.getClientStateAndCurrentEntities();
+		final Sync.ClientState<Sync_Pins.Content> clientState = pair.first;
 		final List<Sync.Entity<Sync_Pins.Content>> entitiesBeforeSync = pair.second;
 
 		SyncRecorder.log(SyncRecorder.EventKind.current_entities_gathered, syncSetName, "base_revno", clientState.base_revno, "client_delta_operations_size", clientState.delta.operations.size(), "client_entities_size", entitiesBeforeSync.size());
@@ -374,7 +493,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			final long startTime = System.currentTimeMillis();
 			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
 			Log.d(TAG, "@@syncPins server response string: " + response_s);
-			final Sync_Pins.SyncResponseJson response = App.getDefaultGson().fromJson(response_s, Sync_Pins.SyncResponseJson.class);
+			final Sync.SyncResponseJson<Sync_Pins.Content> response = App.getDefaultGson().fromJson(response_s, new TypeToken<Sync.SyncResponseJson<Sync_Pins.Content>>() {}.getType());
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, syncSetName, "duration_ms", System.currentTimeMillis() - startTime);
 
 			if (!response.success) {
@@ -439,8 +558,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		}
 
 		Log.d(TAG, "@@syncRp step 10: gathering client state");
-		final Pair<Sync_Rp.ClientState, List<Sync.Entity<Sync_Rp.Content>>> pair = Sync_Rp.getClientStateAndCurrentEntities();
-		final Sync_Rp.ClientState clientState = pair.first;
+		final Pair<Sync.ClientState<Sync_Rp.Content>, List<Sync.Entity<Sync_Rp.Content>>> pair = Sync_Rp.getClientStateAndCurrentEntities();
+		final Sync.ClientState<Sync_Rp.Content> clientState = pair.first;
 		final List<Sync.Entity<Sync_Rp.Content>> entitiesBeforeSync = pair.second;
 
 		SyncRecorder.log(SyncRecorder.EventKind.current_entities_gathered, syncSetName, "base_revno", clientState.base_revno, "client_delta_operations_size", clientState.delta.operations.size(), "client_entities_size", entitiesBeforeSync.size());
@@ -469,7 +588,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			final long startTime = System.currentTimeMillis();
 			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
 			Log.d(TAG, "@@syncRp server response string: " + response_s);
-			final Sync_Rp.SyncResponseJson response = App.getDefaultGson().fromJson(response_s, Sync_Rp.SyncResponseJson.class);
+			final Sync.SyncResponseJson<Sync_Rp.Content> response = App.getDefaultGson().fromJson(response_s, new TypeToken<Sync.SyncResponseJson<Sync_Rp.Content>>() {}.getType());
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, syncSetName, "duration_ms", System.currentTimeMillis() - startTime);
 
 			if (!response.success) {
