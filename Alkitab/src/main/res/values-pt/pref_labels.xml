@@ -18,7 +18,10 @@
   <string name="pref_copyWithVerseNumbers_summary">Começar cada versículo com seu número</string>
   <string name="pref_copyWithVersionName_title">Abreviações de versão</string>
   <string name="pref_copyWithVersionName_summary">Mencionar as iniciais da versão da Bíblia</string>
+  <string name="pref_copyWithShareUrl_title">Compartilhar URL</string>
+  <string name="pref_copyWithShareUrl_summary">Adicionar link de página de compartilhamento ao final do texto copiado ou compartilhado</string>
   <string name="pref_autoDictionaryAnalyze_title">Analisar dicionário automaticamente</string>
   <string name="pref_autoDictionaryAnalyze_summary">Procurar no dicionário as palavras nos versículo selecionado</string>
   <string name="pref_showHiddenVersion_title">Habilitar versões possivelmente restritas</string>
+  <string name="pref_selectedVerseBgColor_title">Selecione o fundo do versículo</string>
 </resources>

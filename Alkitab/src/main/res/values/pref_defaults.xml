@@ -12,6 +12,7 @@
     <bool name="pref_copyWithVersionName_default">true</bool>
     <bool name="pref_copyWithShareUrl_default">true</bool>
     <bool name="pref_autoDictionaryAnalyze_default">false</bool>
+    <bool name="pref_tapToEditNote_default">true</bool>
 
     <integer name="pref_textColor_default">0xff212121</integer>
     <integer name="pref_backgroundColor_default">0xfff0f0f0</integer>

@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.annotation.BoolRes;
 import android.support.annotation.IntegerRes;
 import android.support.annotation.StringRes;
 import android.util.Log;
@@ -194,7 +195,18 @@ public class Preferences {
 			return (int) value;
 		}
 	}
-	
+
+	public static boolean getBoolean(@StringRes final int keyStringResId, @BoolRes final int defaultIntResId) {
+		final Resources r = App.context.getResources();
+		final String key = r.getString(keyStringResId);
+		final Object value = get(key);
+		if (value == null) {
+			return r.getBoolean(defaultIntResId);
+		} else {
+			return (boolean) value;
+		}
+	}
+
 	@TargetApi(9) private synchronized static void commitIfNotHeld() {
 		if (held > 0) {
 			// don't do anything now

@@ -1,20 +1,40 @@
-A one-stop Bible application, feature-packed with reading plans, bookmarks, notes, highlights, progress markers, and many more. Read the Scriptures without Internet connection, without any purchases, and without ads. With Quick Bible you can access the Bible anytime, anywhere, as quick as reaching your pocket.
+A one-stop Bible app, feature-packed with reading plans, bookmarks, notes, highlights, progress markers, and many more. Read the Scriptures without Internet connection, without any purchases, and without ads!
 
-Features:
-– Read more than 90 Bible versions offline
-– Fully customizable colors and fonts
-– Compare two versions at a time with Split Version
-– Bookmarks, notes, and highlights
-– Search words or phrases in a flash
-– Various choices of reading plans
-– Progress markers to track your daily Bible reading
-– Verse widgets for quick access
-– Super-easy navigation between verses
+<b>Versions and translations.</b> We have more than 300 Bible versions in multiple languages available. Just download them once, and it will all be available for offline reading.
 
-More:
-– Open source project http://github.com/yukuku/androidbible
-– Blog http://androidbible.blogspot.com
-– Beta testing (get the latest version before released) http://goo.gl/JjYTK1
-– Donation to developers http://j.mp/bibledonate
+<b>Search.</b> Find words and phrases quickly with advanced search features. 
 
-Glory to God alone – Soli Deo Gloria
+<b>Compare.</b> Read two versions on a side-by-side split screen. Show different translations of a verse in one screen for detailed study.
+
+<b>Cross References.</b> Find related verses like quotations, parallels, and similar texts (for some Bible versions).
+
+<b>Notes.</b> Write your personal notes for any verse that you select. Reference other verses in your notes and you'll be able to tap on them to access those verses.
+
+<b>History of Recent Verses.</b> Contains the list of verses opened recently. Touch and hold on the verse reference button to access it.
+
+<b>Bookmarks, Labels, Pins, and Highlights.</b> Mark the verses that you have read with colorful markers. Continue reading from your last read verse without getting lost. Make your own topical system using labels and bookmaks.
+
+<b>Sync.</b> Make sure your bookmarks, personal notes, highlights, and labels are safe by activating Sync. With Sync, if you have multiple devices, your data will be accessible and kept updated on all devices.
+
+<b>Copy and Share Verses.</b> You can copy selected verses to the clipboard, or share them to any app that is installed on your device.
+
+<b>Daily Devotions.</b> Read the daily devotions and deepen your knowledge of God. 
+
+<b>Reading Plan.</b> Choose from one of the many reading plans, and read the Bible in a year, or 2 years, or several months. You can even create one yourself.
+
+<b>Song Books.</b> Lyrics from various song books or hymnals are available for download. Press "Play" to start listening to the music when online.*
+
+<b>Display Settings.</b> Appearance of the Bible text can be customized to your liking. Font, text size, color, background, line spacing, and more. Night mode and full screen mode are also available.
+
+<b>Widget.</b> Get refreshments from choice verses every day by putting widgets on the home screen.
+
+<b>About Bible for Android</b>
+– Official website http://github.com/yukuku/androidbible
+– Open-source project http://github.com/yukuku/androidbible
+– Blog http://blog.bibleforandroid.com
+– Beta testing http://goo.gl/JjYTK1
+– Donation to developers http://goo.gl/DnVqLV
+
+<b>Glory to God alone – Soli Deo Gloria!</b>
+
+* available for certain song books only

@@ -123,7 +123,6 @@ public class History {
 	/**
 	 * Makes the current history updated with patches (append delta) from server.
 	 * Also updates the shadow (both data and the revno).
-	 * TODO merge with {@link yuku.alkitab.base.storage.InternalDb#applyMabelAppendDelta(int, yuku.alkitab.base.sync.Sync.Delta, java.util.List, String)}
 	 * @return {@link yuku.alkitab.base.sync.Sync.ApplyAppendDeltaResult#ok} if history and sync shadow are updated. Otherwise else.
 	 */
 	@NonNull public Sync.ApplyAppendDeltaResult applyHistoryAppendDelta(final int final_revno, @NonNull final Sync.Delta<Sync_History.Content> append_delta, @NonNull final List<Sync.Entity<Sync_History.Content>> entitiesBeforeSync, @NonNull final String simpleTokenBeforeSync) {

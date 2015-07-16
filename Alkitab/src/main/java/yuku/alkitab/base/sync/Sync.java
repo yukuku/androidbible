@@ -100,9 +100,15 @@ public class Sync {
 		/**
 		 * Kind of this entity. One of the <code>KIND_</code> constants on {@link yuku.alkitab.base.sync.Sync.Entity}.
 		 */
-		public String kind;
-		public String gid;
-		public C content;
+		public final String kind;
+		public final String gid;
+		public final C content;
+
+		public Entity(final String kind, final String gid, final C content) {
+			this.kind = kind;
+			this.gid = gid;
+			this.content = content;
+		}
 
 		//region Boilerplate equals and hashCode
 		@Override
@@ -129,6 +135,37 @@ public class Sync {
 		//endregion
 	}
 
+	public static class ClientState<C> {
+		public final int base_revno;
+		@NonNull public final Delta<C> delta;
+
+		public ClientState(final int base_revno, @NonNull final Delta<C> delta) {
+			this.base_revno = base_revno;
+			this.delta = delta;
+		}
+	}
+
+	public static class SyncShadowDataJson<C> {
+		public List<Entity<C>> entities;
+	}
+
+	public static class SyncResponseJson<C> extends ResponseJson {
+		public int final_revno;
+		public Delta<C> append_delta;
+	}
+
+	public static class GetClientStateResult<C> {
+		public final ClientState<C> clientState;
+		public final List<Entity<C>> shadowEntities;
+		public final List<Entity<C>> currentEntities;
+
+		public GetClientStateResult(final ClientState<C> clientState, final List<Entity<C>> shadowEntities, final List<Entity<C>> currentEntities) {
+			this.clientState = clientState;
+			this.shadowEntities = shadowEntities;
+			this.currentEntities = currentEntities;
+		}
+	}
+
 	/**
 	 * Ignoring order, check if all the entities are the same.
 	 */
@@ -151,45 +188,52 @@ public class Sync {
 
 	/**
 	 * Notify that we need to sync with server.
-	 * @param syncSetName The name of the sync set that needs sync with server. Should be {@link yuku.alkitab.base.model.SyncShadow#SYNC_SET_MABEL} or others.
+	 * @param syncSetNames The names of the sync set that needs sync with server. Should be list of {@link yuku.alkitab.base.model.SyncShadow#SYNC_SET_MABEL} or others.
 	 */
-	public static synchronized void notifySyncNeeded(final String syncSetName) {
-		AtomicInteger counter = syncUpdatesOngoingCounters.get(syncSetName);
-		if (counter != null && counter.get() != 0) {
-			Log.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: ongoing counter != 0");
-			return;
-		}
-
+	public static synchronized void notifySyncNeeded(final String... syncSetNames) {
 		// if not logged in, do nothing
 		if (Preferences.getString(Prefkey.sync_simpleToken) == null) {
 			return;
 		}
 
-		{ // check if preferences prevent syncing
-			if (!Preferences.getBoolean(prefkeyForSyncSetEnabled(syncSetName), true)) {
+		for (final String syncSetName : syncSetNames) {
+			final AtomicInteger counter = syncUpdatesOngoingCounters.get(syncSetName);
+			if (counter != null && counter.get() != 0) {
+				Log.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: ongoing counter != 0");
 				return;
 			}
-		}
 
-		SyncRecorder.log(SyncRecorder.EventKind.sync_needed_notified, syncSetName);
-
-		// check if we can omit queueing sync request for this sync set name.
-		synchronized (syncSetNameQueue) {
-			if (syncSetNameQueue.contains(syncSetName)) {
-				Log.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: sync queue already contains it");
-				return;
+			{ // check if preferences prevent syncing
+				if (!Preferences.getBoolean(prefkeyForSyncSetEnabled(syncSetName), true)) {
+					continue;
+				}
 			}
-			syncSetNameQueue.add(syncSetName);
+
+			SyncRecorder.log(SyncRecorder.EventKind.sync_needed_notified, syncSetName);
+
+			// check if we can omit queueing sync request for this sync set name.
+			synchronized (syncSetNameQueue) {
+				if (syncSetNameQueue.contains(syncSetName)) {
+					Log.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: sync queue already contains it");
+					continue;
+				}
+				syncSetNameQueue.add(syncSetName);
+			}
 		}
 
 		syncExecutor.schedule(() -> {
 			while (true) {
-				final String extraSyncSetName;
+				final List<String> extraSyncSetNames = new ArrayList<>();
 				synchronized (syncSetNameQueue) {
-					extraSyncSetName = syncSetNameQueue.poll();
+					final String extraSyncSetName = syncSetNameQueue.poll();
 					if (extraSyncSetName == null) {
-						return;
+						break;
 					}
+					extraSyncSetNames.add(extraSyncSetName);
+				}
+
+				if (extraSyncSetNames.size() == 0) {
+					return;
 				}
 
 				final Account account = SyncUtils.getOrCreateSyncAccount();
@@ -203,7 +247,7 @@ public class Sync {
 
 				// request sync.
 				final Bundle extras = new Bundle();
-				extras.putString(SyncAdapter.EXTRA_SYNC_SET_NAME, extraSyncSetName);
+				extras.putString(SyncAdapter.EXTRA_SYNC_SET_NAMES, App.getDefaultGson().toJson(extraSyncSetNames));
 				ContentResolver.requestSync(account, authority, extras);
 			}
 		}, 5, TimeUnit.SECONDS);
@@ -211,7 +255,7 @@ public class Sync {
 
 	/**
 	 * Call this method(true) when updating local storage because of sync. Call this method(false) when finished.
-	 * Calls to {@link #notifySyncNeeded(String)} will be a no-op when sync updates are ongoing (marked by this method being called).
+	 * Calls to {@link #notifySyncNeeded(String...)} will be a no-op when sync updates are ongoing (marked by this method being called).
 	 * @param isRunning true to start, false to stop.
 	 */
 	public static synchronized void notifySyncUpdatesOngoing(final String syncSetName, final boolean isRunning) {
@@ -479,12 +523,13 @@ public class Sync {
 		}
 
 		// request sync.
-		for (final String syncSetName : SyncShadow.ALL_SYNC_SET_NAMES) {
-			final Bundle extras = new Bundle();
-			extras.putString(SyncAdapter.EXTRA_SYNC_SET_NAME, syncSetName);
-			extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-			extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-			ContentResolver.requestSync(account, authority, extras);
-		}
+		final List<String> syncSetNames = new ArrayList<>();
+		Collections.addAll(syncSetNames, SyncShadow.ALL_SYNC_SET_NAMES);
+
+		final Bundle extras = new Bundle();
+		extras.putString(SyncAdapter.EXTRA_SYNC_SET_NAMES, App.getDefaultGson().toJson(syncSetNames));
+		extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+		extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+		ContentResolver.requestSync(account, authority, extras);
 	}
 }
