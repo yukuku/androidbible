@@ -2,6 +2,8 @@ package yuku.alkitab.base.widget;
 
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Typeface;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
@@ -12,7 +14,9 @@ import android.text.style.LineHeightSpan;
 import android.text.style.MetricAffectingSpan;
 import android.text.style.StyleSpan;
 import android.widget.TextView;
+import android.widget.Toast;
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.util.Appearances;
@@ -317,19 +321,40 @@ public class VerseRenderer {
 		if (tag.length() >= 2) {
 			// Footnote
 			if (tag.charAt(0) == 'f') {
-				final int field = Integer.parseInt(tag.substring(1));
-				appendSuperscriptNumber(sb, field);
-				if (inlineLinkSpanFactory != null) {
-					sb.setSpan(inlineLinkSpanFactory.create(VerseInlineLinkSpan.Type.footnote, ari << 8 | field), sb_len, sb.length(), 0);
+				try {
+					final int field = Integer.parseInt(tag.substring(1));
+					appendSuperscriptNumber(sb, field);
+					if (inlineLinkSpanFactory != null) {
+						sb.setSpan(inlineLinkSpanFactory.create(VerseInlineLinkSpan.Type.footnote, ari << 8 | field), sb_len, sb.length(), 0);
+					}
+				} catch (NumberFormatException e) {
+					reportInvalidSpecialTag("Invalid footnote tag at ari 0x" + Integer.toHexString(ari) + ": " + tag);
 				}
 			} else if (tag.charAt(0) == 'x') {
-				sb.append(XREF_MARK); // star mark
-				final int field = Integer.parseInt(tag.substring(1));
-				if (inlineLinkSpanFactory != null) {
-					sb.setSpan(inlineLinkSpanFactory.create(VerseInlineLinkSpan.Type.xref, ari << 8 | field), sb_len, sb.length(), 0);
+				try {
+					final int field = Integer.parseInt(tag.substring(1));
+					sb.append(XREF_MARK); // star mark
+					if (inlineLinkSpanFactory != null) {
+						sb.setSpan(inlineLinkSpanFactory.create(VerseInlineLinkSpan.Type.xref, ari << 8 | field), sb_len, sb.length(), 0);
+					}
+				} catch (NumberFormatException e) {
+					reportInvalidSpecialTag("Invalid xref tag at ari 0x" + Integer.toHexString(ari) + ": " + tag);
 				}
 			}
 		}
+	}
+
+	static Toast invalidSpecialTagToast;
+
+	static void reportInvalidSpecialTag(final String msg) {
+		new Handler(Looper.getMainLooper()).post(() -> {
+			if (invalidSpecialTagToast == null) {
+				invalidSpecialTagToast = Toast.makeText(App.context, msg, Toast.LENGTH_SHORT);
+			} else {
+				invalidSpecialTagToast.setText(msg);
+			}
+			invalidSpecialTagToast.show();
+		});
 	}
 
 	public static void appendSuperscriptNumber(final SpannableStringBuilder sb, final int field) {
