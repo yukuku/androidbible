@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.D;
 import yuku.afw.V;
 import yuku.alkitab.debug.R;
@@ -32,11 +33,12 @@ import yuku.alkitab.base.widget.VersesView.VerseSelectionMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class XrefDialog extends BaseDialog {
 	public static final String TAG = XrefDialog.class.getSimpleName();
 
-	private static final String EXTRA_arif = "arif"; //$NON-NLS-1$
+	private static final String EXTRA_arif = "arif";
 
 	public interface XrefDialogListener {
 		void onVerseSelected(XrefDialog dialog, int arif_source, int ari_target);
@@ -87,7 +89,7 @@ public class XrefDialog extends BaseDialog {
 	}
 	
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View res = inflater.inflate(R.layout.dialog_xref, null);
+		View res = inflater.inflate(R.layout.dialog_xref, container, false);
 
 		tXrefText = V.get(res, R.id.tXrefText);
 		versesView = V.get(res, R.id.versesView);
@@ -97,11 +99,28 @@ public class XrefDialog extends BaseDialog {
 		versesView.setVerseSelectionMode(VerseSelectionMode.singleClick);
 		versesView.setSelectedVersesListener(versesView_selectedVerses);
 		tXrefText.setMovementMethod(LinkMovementMethod.getInstance());
-		renderXrefText();
-		
+
+		if (xrefEntry != null) {
+			renderXrefText();
+		} else {
+			new MaterialDialog.Builder(getActivity())
+				.content(String.format(Locale.US, "Error: xref at arif 0x%08x couldn't be loaded", arif_source))
+				.positiveText(R.string.ok)
+				.show();
+		}
+
 		return res;
 	}
-	
+
+	@Override
+	public void onActivityCreated(final Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+
+		if (xrefEntry == null) {
+			dismiss();
+		}
+	}
+
 	void renderXrefText() {
 		final SpannableStringBuilder sb = new SpannableStringBuilder();
 		sb.append(VerseRenderer.XREF_MARK);
