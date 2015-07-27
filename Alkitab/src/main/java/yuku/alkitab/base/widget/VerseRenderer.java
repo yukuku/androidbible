@@ -323,6 +323,9 @@ public class VerseRenderer {
 			if (tag.charAt(0) == 'f') {
 				try {
 					final int field = Integer.parseInt(tag.substring(1));
+					if (field < 1 || field > 255) {
+						throw new NumberFormatException();
+					}
 					appendSuperscriptNumber(sb, field);
 					if (inlineLinkSpanFactory != null) {
 						sb.setSpan(inlineLinkSpanFactory.create(VerseInlineLinkSpan.Type.footnote, ari << 8 | field), sb_len, sb.length(), 0);
@@ -333,6 +336,9 @@ public class VerseRenderer {
 			} else if (tag.charAt(0) == 'x') {
 				try {
 					final int field = Integer.parseInt(tag.substring(1));
+					if (field < 1 || field > 255) {
+						throw new NumberFormatException();
+					}
 					sb.append(XREF_MARK); // star mark
 					if (inlineLinkSpanFactory != null) {
 						sb.setSpan(inlineLinkSpanFactory.create(VerseInlineLinkSpan.Type.xref, ari << 8 | field), sb_len, sb.length(), 0);
