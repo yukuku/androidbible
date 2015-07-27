@@ -169,7 +169,12 @@ public class XrefDialog extends BaseDialog {
 		
 			class Verses extends SingleChapterVerses {
 				@Override public String getVerse(int verse_0) {
-					return displayedVerseTexts.get(verse_0);
+					final String res = displayedVerseTexts.get(verse_0);
+					// prevent crash if the target xref is not available
+					if (res == null) {
+						return getString(R.string.generic_verse_not_available_in_this_version);
+					}
+					return res;
 				}
 				
 				@Override public int getVerseCount() {
