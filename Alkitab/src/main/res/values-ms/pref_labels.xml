@@ -9,11 +9,21 @@ Latar belakang
   <string name="pref_warna_nomor_ayat">Nombor nombor ayat</string>
   <string name="pref_redTextColor_title">Perkataan Yesus</string>
   <string name="pref_penggunaan">Penggunaan</string>
+  <string name="pref_copy_share">Menyalin dan berkongsi</string>
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Tunjukkan senarai buku mengikut susunan abjad (a-z) dan bukannya asal</string>
   <string name="pref_kitab_menurut_abjad">Buku mengikut jenis abjad</string>
   <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Skrin peranti tidak akan mematikan apabila membaca Alkitab</string>
   <string name="pref_biarkan_layar_menyala">Pastikan skrin terbuka</string>
   <string name="pref_penampilan_layar">Paparan</string>
   <string name="pref_volumeButtonNavigation_title">Navigasi butang kelantangan</string>
+  <string name="pref_copyWithVerseNumbers_title">Nombor ayat</string>
+  <string name="pref_copyWithVerseNumbers_summary">Mulakan setiap ayat dengan nombornya</string>
+  <string name="pref_copyWithVersionName_title">Kependekan versi</string>
+  <string name="pref_copyWithVersionName_summary">Sebutkan singkatan versi Bible</string>
+  <string name="pref_copyWithShareUrl_title">Perkongsian URL</string>
+  <string name="pref_copyWithShareUrl_summary">Tambahkan pautan laman perkongsian di akhir teks yang disalin atau dikongsi</string>
+  <string name="pref_autoDictionaryAnalyze_title">Carian kamus automatik</string>
+  <string name="pref_autoDictionaryAnalyze_summary">Mencari perkataan daripada kamus untuk ayat yang dipilih</string>
   <string name="pref_showHiddenVersion_title">Dayakan versi yang mungkin terhad</string>
+  <string name="pref_selectedVerseBgColor_title">Latar belakang ayat terpilih</string>
 </resources>
