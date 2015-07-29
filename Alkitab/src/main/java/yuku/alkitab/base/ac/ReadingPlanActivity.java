@@ -200,8 +200,9 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 					final long startTime = newDate.getTimeInMillis();
 					readingPlan.info.startTime = startTime;
 					S.getDb().updateReadingPlanStartDate(readingPlan.info.id, startTime);
-					dayNumber = 0; // show the first one
 					changeDay(0);
+					loadDayNumber();
+					updateButtonStatus();
 				};
 
 				new DatePickerDialog(ReadingPlanActivity.this, dateSetListener, today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH)).show();
@@ -390,14 +391,14 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		Calendar startCalendar = GregorianCalendar.getInstance();
 		startCalendar.setTimeInMillis(readingPlan.info.startTime);
 
-		todayNumber = calculateDaysDiff(startCalendar, GregorianCalendar.getInstance());
-		if (todayNumber >= readingPlan.info.duration) {
-			todayNumber = readingPlan.info.duration - 1;
-		} else if (todayNumber < 0) {
-			todayNumber = 0;
+		int tn = calculateDaysDiff(startCalendar, GregorianCalendar.getInstance());
+		if (tn >= readingPlan.info.duration) {
+			tn = readingPlan.info.duration - 1;
+		} else if (tn < 0) {
+			tn = 0;
 		}
 
-		dayNumber = todayNumber;
+		dayNumber = todayNumber = tn;
 	}
 
 	private int calculateDaysDiff(Calendar startCalendar, Calendar endCalendar) {
