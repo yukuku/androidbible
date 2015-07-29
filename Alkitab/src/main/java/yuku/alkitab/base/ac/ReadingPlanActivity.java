@@ -189,9 +189,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			private void showSetStartDateDialog() {
 				final Calendar today = GregorianCalendar.getInstance();
 				today.setTimeInMillis(readingPlan.info.startTime);
-				today.add(Calendar.DATE, dayNumber);
 
-				DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
+				final DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
 					final Calendar newDate = new GregorianCalendar(year, monthOfYear, dayOfMonth, 2, 0, 0); // plus 2 hours to prevent DST-related problems
 					if (readingPlan == null) {
 						return;
