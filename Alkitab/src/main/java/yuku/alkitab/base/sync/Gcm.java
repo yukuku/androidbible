@@ -1,9 +1,10 @@
 package yuku.alkitab.base.sync;
 
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -30,15 +31,33 @@ public class Gcm {
 	private static final ConcurrentLinkedQueue<Listener> listeners = new ConcurrentLinkedQueue<>();
 
 	private static boolean checkPlayServices() {
-		final int statusCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(App.context);
+		final GoogleApiAvailability gaa = GoogleApiAvailability.getInstance();
+
+		final int statusCode = gaa.isGooglePlayServicesAvailable(App.context);
 		if (statusCode != ConnectionResult.SUCCESS) {
-			if (GooglePlayServicesUtil.isUserRecoverableError(statusCode)) {
-				GooglePlayServicesUtil.showErrorNotification(statusCode, App.context);
+			if (gaa.isUserResolvableError(statusCode) && thisIsPlayDevice()) {
+				gaa.showErrorNotification(App.context, statusCode);
 			} else {
 				Log.i(TAG, "This device is not supported.");
 			}
 			return false;
 		}
+		return true;
+	}
+
+	private static boolean thisIsPlayDevice() {
+		if ("Amazon".equals(Build.MANUFACTURER) && Build.MODEL != null && (Build.MODEL.startsWith("KF") || Build.MODEL.startsWith("Kindle"))) {
+			return false;
+		}
+
+		if ("qnx".equals(System.getProperty("os.name"))) {
+			return false;
+		}
+
+		if ("Genymotion".equals(Build.MANUFACTURER)) {
+			return false;
+		}
+
 		return true;
 	}
 
