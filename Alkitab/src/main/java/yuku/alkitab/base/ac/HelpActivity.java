@@ -3,6 +3,7 @@ package yuku.alkitab.base.ac;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebSettings;
@@ -15,6 +16,7 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.base.util.TargetDecoder;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabintegration.display.Launcher;
@@ -27,7 +29,6 @@ public class HelpActivity extends BaseActivity {
 	private static final String EXTRA_announcementIds = "announcementIds";
 
 	WebView webview;
-	long[] announcementIds;
 
 	public static Intent createIntent(final String page) {
 		return createIntent(page, null);
@@ -52,6 +53,12 @@ public class HelpActivity extends BaseActivity {
 
 		webview = V.get(this, R.id.webView);
 
+		if (BuildConfig.DEBUG) {
+			if (Build.VERSION.SDK_INT >= 19) {
+				WebView.setWebContentsDebuggingEnabled(true);
+			}
+		}
+
 		final WebSettings webSettings = webview.getSettings();
 		//noinspection deprecation
 		webSettings.setSavePassword(false);
@@ -60,6 +67,7 @@ public class HelpActivity extends BaseActivity {
 
 		final String page = getIntent().getStringExtra(EXTRA_page);
 		final String overrideTitle = getIntent().getStringExtra(EXTRA_overrideTitle);
+		final long[] announcementIds = getIntent().getLongArrayExtra(EXTRA_announcementIds);
 
 		if (overrideTitle != null) {
 			setTitle(overrideTitle);
@@ -73,7 +81,11 @@ public class HelpActivity extends BaseActivity {
 			}
 		} else if (announcementIds != null) {
 			final Locale locale = getResources().getConfiguration().locale;
-			webview.loadUrl("https://alkitab-host.appspot.com/announce/view?ids=" + App.getDefaultGson().toJson(announcementIds) + (locale == null ? "" : ("&locale=" + locale.toString())));
+			final String url = "https://alkitab-host.appspot.com/announce/view?ids=" + App.getDefaultGson().toJson(announcementIds) + (locale == null ? "" : ("&locale=" + locale.toString()));
+			if (BuildConfig.DEBUG) {
+				Log.d(TAG, "loading announce view url: " + url);
+			}
+			webview.loadUrl(url);
 		}
 
 		webview.setWebViewClient(new WebViewClient() {

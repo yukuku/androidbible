@@ -3,20 +3,20 @@
 <resources>
   <string-array name="pref_colorTheme_labels">
     <item>Kertas Bersih</item>
-    <item>Lollipop</item>
-    <item>Bubble Gum</item>
+    <item>Lolipop</item>
+    <item>Gula Getah</item>
     <item>Sakura</item>
-    <item>Tropic Subur</item>
-    <item>Tasik Moss</item>
-    <item>Abu Panas</item>
+    <item>Tropika Subur</item>
+    <item>Tasik Lumut</item>
+    <item>Abu Hangat</item>
     <item>Oren Manis</item>
-    <item>Padang Pasir kering</item>
-    <item>Wood</item>
+    <item>Gurun Kering</item>
+    <item>Kayu</item>
     <item>Coklat</item>
-    <item>Jambu Batu basah</item>
+    <item>Jambu Batu Basah</item>
     <item>Malam Jelas</item>
-    <item>Malam Berbintang</item>
-    <item>Dark Material</item>
+    <item>Malam Penuh Bintang</item>
+    <item>Material Gelap</item>
     <item>Papan Hitam</item>
     <item>Cahaya Lembut</item>
   </string-array>
