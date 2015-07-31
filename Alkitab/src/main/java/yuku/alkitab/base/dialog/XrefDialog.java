@@ -16,20 +16,19 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.D;
 import yuku.afw.V;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.dialog.base.BaseDialog;
-import yuku.alkitab.util.Ari;
-import yuku.alkitab.model.Book;
-import yuku.alkitab.model.SingleChapterVerses;
-import yuku.alkitab.model.Version;
-import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.base.util.Appearances;
-import yuku.alkitab.util.IntArrayList;
 import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.base.widget.VersesView.VerseSelectionMode;
+import yuku.alkitab.debug.R;
+import yuku.alkitab.model.SingleChapterVerses;
+import yuku.alkitab.model.Version;
+import yuku.alkitab.model.XrefEntry;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.util.IntArrayList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -206,10 +205,8 @@ public class XrefDialog extends BaseDialog {
 			}
 	
 			int firstAri = displayedRealAris.get(0);
-			Book book = sourceVersion.getBook(Ari.toBook(firstAri));
-			int chapter_1 = Ari.toChapter(firstAri);
-			
-			versesView.setData(book, chapter_1, new Verses(), null, null, 0);
+
+			versesView.setData(Ari.toBookChapter(firstAri), new Verses(), null, null, 0);
 		}
 		
 		renderXrefText();

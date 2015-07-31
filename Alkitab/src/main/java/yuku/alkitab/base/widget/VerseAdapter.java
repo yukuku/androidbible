@@ -7,7 +7,6 @@ import android.widget.BaseAdapter;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.util.Highlights;
-import yuku.alkitab.model.Book;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.model.SingleChapterVerses;
@@ -25,8 +24,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	final float density_;
 
 	// # field setData
-	Book book_;
-	int chapter_1_;
+	int ari_bc_;
 	SingleChapterVerses verses_;
 	PericopeBlock[] pericopeBlocks_;
 
@@ -52,9 +50,8 @@ public abstract class VerseAdapter extends BaseAdapter {
 		inflater_ = LayoutInflater.from(context);
 	}
 
-	/* non-public */ synchronized void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
-		book_ = book;
-		chapter_1_ = chapter_1;
+	/* non-public */ synchronized void setData(int ariBc, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
+		ari_bc_ = ariBc;
 		verses_ = verses;
 		pericopeBlocks_ = pericopeBlocks;
 		itemPointer_ = makeItemPointer(verses_.getVerseCount(), pericopeAris, pericopeBlocks, nblock);
@@ -63,8 +60,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	}
 
 	/* non-public */ synchronized void setDataEmpty() {
-		book_ = null;
-		chapter_1_ = 0;
+		ari_bc_ = 0;
 		verses_ = null;
 		pericopeBlocks_ = null;
 		itemPointer_ = null;
@@ -74,7 +70,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 
 	public synchronized void reloadAttributeMap() {
 		// book_ can be empty when the selected (book, chapter) is not available in this version
-		if (book_ == null) return;
+		if (ari_bc_ == 0) return;
 
 		// 1/2: Attributes
 		final int[] bookmarkCountMap;
@@ -82,7 +78,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 		final Highlights.Info[] highlightColorMap;
 
 		final int verseCount = verses_.getVerseCount();
-		final int ariBc = Ari.encode(book_.bookId, chapter_1_, 0x00);
+		final int ariBc = ari_bc_;
 		if (S.getDb().countMarkersForBookChapter(ariBc) > 0) {
 			bookmarkCountMap = new int[verseCount];
 			noteCountMap = new int[verseCount];

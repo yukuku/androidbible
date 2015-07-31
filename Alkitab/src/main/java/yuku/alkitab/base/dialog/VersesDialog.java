@@ -16,7 +16,6 @@ import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.base.widget.VersesView.VerseSelectionMode;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.model.Book;
 import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
@@ -170,10 +169,8 @@ public class VersesDialog extends BaseDialog {
 				}
 
 				final int firstAri = ariRanges.get(0);
-				final Book book = sourceVersion.getBook(Ari.toBook(firstAri));
-				final int chapter_1 = Ari.toChapter(firstAri);
 
-				versesView.setData(book, chapter_1, new Verses(), null, null, 0);
+				versesView.setData(Ari.toBookChapter(firstAri), new Verses(), null, null, 0);
 			}
 		} else {
 			// read each version and display it. First version must be the sourceVersion.
@@ -254,10 +251,7 @@ public class VersesDialog extends BaseDialog {
 				}
 			}
 
-			final Book book = sourceVersion.getBook(Ari.toBook(ari));
-			final int chapter_1 = Ari.toChapter(ari);
-
-			versesView.setData(book, chapter_1, new Verses(), null, null, 0);
+			versesView.setData(Ari.toBookChapter(ari), new Verses(), null, null, 0);
 		}
 
 		return res;
