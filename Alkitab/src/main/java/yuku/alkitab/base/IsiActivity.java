@@ -79,10 +79,8 @@ import yuku.alkitab.base.dialog.XrefDialog;
 import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.model.MVersionInternal;
-import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.storage.Prefkey;
-import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.CurrentReading;
@@ -1593,7 +1591,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		int nblock = version.loadPericope(book.bookId, chapter_1, pericope_aris, pericope_blocks, max);
 
 		boolean retainSelectedVerses = (!uncheckAllVerses && chapter_1 == current_chapter_1);
-		versesView.setDataWithRetainSelectedVerses(retainSelectedVerses, book, chapter_1, pericope_aris, pericope_blocks, nblock, verses);
+		versesView.setDataWithRetainSelectedVerses(retainSelectedVerses, Ari.encode(book.bookId, chapter_1, 0), pericope_aris, pericope_blocks, nblock, verses);
 
 		return true;
 	}
@@ -1702,9 +1700,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		@Override
-		public void onBookmarkAttributeClick(final Book book, final int chapter_1, final int verse_1) {
-			final int ari = Ari.encode(book.bookId, chapter_1, verse_1);
-
+		public void onBookmarkAttributeClick(final int ari) {
 			final List<Marker> markers = S.getDb().listMarkersForAriKind(ari, Marker.Kind.bookmark);
 			if (markers.size() == 1) {
 				openBookmarkDialog(markers.get(0)._id);
@@ -1727,10 +1723,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			startActivityForResult(NoteActivity.createEditExistingIntent(_id), REQCODE_edit_note_1);
 		}
 
-		@Override
-		public void onNoteAttributeClick(final Book book, final int chapter_1, final int verse_1) {
-			final int ari = Ari.encode(book.bookId, chapter_1, verse_1);
 
+		@Override
+		public void onNoteAttributeClick(final int ari) {
 			final List<Marker> markers = S.getDb().listMarkersForAriKind(ari, Marker.Kind.note);
 			if (markers.size() == 1) {
 				openNoteDialog(markers.get(0)._id);
@@ -1842,6 +1837,20 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					lsSplit0.uncheckAllVerses(true);
 				}
 			});
+		}
+
+		@Override
+		public void onHasMapsAttributeClick(final int ari) {
+			try {
+				startActivity(new Intent("palki.maps.action.SHOW_MAPS_DIALOG")
+						.putExtra("ari", ari)
+				);
+			} catch (ActivityNotFoundException e) {
+				new MaterialDialog.Builder(IsiActivity.this)
+					.content(R.string.maps_could_not_open)
+					.positiveText(R.string.ok)
+					.show();
+			}
 		}
 	};
 
