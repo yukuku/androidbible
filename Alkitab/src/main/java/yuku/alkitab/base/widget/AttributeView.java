@@ -270,7 +270,7 @@ public class AttributeView extends View {
 				final Bitmap hasMapsBitmap = getHasMapsBitmap();
 				totalHeight += hasMapsBitmap.getHeight();
 				if (totalHeight > y) {
-					attributeListener.onNoteAttributeClick(ari);
+					attributeListener.onHasMapsAttributeClick(ari);
 					return true;
 				}
 			}

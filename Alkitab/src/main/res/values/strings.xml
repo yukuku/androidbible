@@ -544,4 +544,8 @@
 
 	<!-- Commentary -->
 	<string name="menuCommentary">Commentary</string>
+
+    <!-- Maps -->
+    <string name="maps_could_not_open">Could not open the Bible Maps app.</string>
+
 </resources>

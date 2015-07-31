@@ -1841,7 +1841,16 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		@Override
 		public void onHasMapsAttributeClick(final int ari) {
-			// TODO
+			try {
+				startActivity(new Intent("palki.maps.action.SHOW_MAPS_DIALOG")
+						.putExtra("ari", ari)
+				);
+			} catch (ActivityNotFoundException e) {
+				new MaterialDialog.Builder(IsiActivity.this)
+					.content(R.string.maps_could_not_open)
+					.positiveText(R.string.ok)
+					.show();
+			}
 		}
 	};
 

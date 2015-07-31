@@ -1,11 +1,14 @@
 package yuku.alkitab.base.widget;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.ProgressMark;
@@ -41,6 +44,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	int[] noteCountMap_;
 	Highlights.Info[] highlightInfoMap_;
 	int[] progressMarkBitsMap_;
+	boolean[] hasMapsMap_;
 
 	LayoutInflater inflater_;
 	VersesView owner_;
@@ -72,7 +76,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 		// book_ can be empty when the selected (book, chapter) is not available in this version
 		if (ari_bc_ == 0) return;
 
-		// 1/2: Attributes
+		// 1/3: Bookmarks/Notes/Highlights
 		final int[] bookmarkCountMap;
 		final int[] noteCountMap;
 		final Highlights.Info[] highlightColorMap;
@@ -94,7 +98,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 		final int ariMin = ariBc & 0x00ffff00;
 		final int ariMax = ariBc | 0x000000ff;
 
-		// 2/2: Progress marks
+		// 2/3: Progress marks
 		int[] progressMarkBitsMap = null;
 		for (final ProgressMark progressMark: S.getDb().listAllProgressMarks()) {
 			final int ari = progressMark.ari;
@@ -108,9 +112,41 @@ public abstract class VerseAdapter extends BaseAdapter {
 
 			int mapOffset = Ari.toVerse(ari) - 1;
 			if (mapOffset >= progressMarkBitsMap.length) {
-				Log.e(InternalDb.TAG, "mapOffset out of bounds: " + mapOffset + " happened on ari 0x" + Integer.toHexString(ari));
+				Log.e(TAG, "(for progressMarkBitsMap:) mapOffset out of bounds: " + mapOffset + " happened on ari 0x" + Integer.toHexString(ari));
 			} else {
 				progressMarkBitsMap[mapOffset] |= 1 << (progressMark.preset_id + AttributeView.PROGRESS_MARK_BITS_START);
+			}
+		}
+
+		// 3/3: Location indicators
+		// Look up for maps locations.
+		// If the app is installed, query its content provider to see which verses has locations on the map.
+		boolean[] hasMapsMap = null;
+		{
+			final ContentResolver cr = App.context.getContentResolver();
+			final Uri uri = Uri.parse("content://palki.maps/exists?ari=" + ariBc);
+			try (Cursor c = cr.query(uri, null, null, null, null)) {
+				if (c != null) {
+					final int col_aris = c.getColumnIndexOrThrow("aris");
+
+					if (c.moveToNext()) {
+						final String aris_json = c.getString(col_aris);
+						final int[] aris = App.getDefaultGson().fromJson(aris_json, int[].class);
+
+						if (aris != null) {
+							hasMapsMap = new boolean[verseCount];
+
+							for (final int ari : aris) {
+								int mapOffset = Ari.toVerse(ari) - 1;
+								if (mapOffset >= hasMapsMap.length) {
+									Log.e(TAG, "(for hasMapsMap:) mapOffset out of bounds: " + mapOffset + " happened on ari 0x" + Integer.toHexString(ari));
+								} else {
+									hasMapsMap[mapOffset] = true;
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -119,6 +155,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 		noteCountMap_ = noteCountMap;
 		highlightInfoMap_ = highlightColorMap;
 		progressMarkBitsMap_ = progressMarkBitsMap;
+		hasMapsMap_ = hasMapsMap;
 
 		notifyDataSetChanged();
 	}
