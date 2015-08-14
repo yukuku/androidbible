@@ -22,6 +22,12 @@
 		android:summary="@string/pref_textPadding_summary"
 		android:title="@string/pref_textPadding_title" />
 
+	<CheckBoxPreference
+		android:defaultValue="@bool/pref_bottomToolbarOnText_default"
+		android:key="@string/pref_bottomToolbarOnText_key"
+		android:summary="@string/pref_bottomToolbarOnText_summary"
+		android:title="@string/pref_bottomToolbarOnText_title" />
+
 	<yuku.ambilwarna.widget.AmbilWarnaPreference
 		android:defaultValue="@integer/pref_selectedVerseBgColor_default"
 		android:key="@string/pref_selectedVerseBgColor_key"

@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -135,6 +136,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	public static final String ACTION_ATTRIBUTE_MAP_CHANGED = "yuku.alkitab.action.ATTRIBUTE_MAP_CHANGED";
 	public static final String ACTION_ACTIVE_VERSION_CHANGED = IsiActivity.class.getName() + ".action.ACTIVE_VERSION_CHANGED";
 	public static final String ACTION_NIGHT_MODE_CHANGED = IsiActivity.class.getName() + ".action.NIGHT_MODE_CHANGED";
+	public static final String ACTION_NEEDS_RESTART = IsiActivity.class.getName() + ".action.NEEDS_RESTART";
 
 	private static final int REQCODE_goto = 1;
 	private static final int REQCODE_share = 7;
@@ -145,6 +147,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	private static final String EXTRA_verseUrl = "verseUrl";
 	private boolean uncheckVersesWhenActionModeDestroyed = true;
+
+	private boolean needsRestart; // whether this activity needs to be restarted
 
 	private GotoButton.FloaterDragListener bGoto_floaterDrag = new GotoButton.FloaterDragListener() {
 		final int[] floaterLocationOnScreen = {0, 0};
@@ -418,6 +422,23 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		splitHandleButton = V.get(this, R.id.splitHandleButton);
 		floater = V.get(this, R.id.floater);
 
+		if (Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default)) {
+			// swap toolbar and root
+			{
+				final FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) toolbar.getLayoutParams();
+				lp.gravity = Gravity.BOTTOM;
+				toolbar.setLayoutParams(lp);
+			}
+			{
+				final FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) root.getLayoutParams();
+				lp.topMargin = 0;
+				final TypedArray ta = obtainStyledAttributes(new int[]{R.attr.actionBarSize});
+				lp.bottomMargin = ta.getDimensionPixelOffset(0, 0);
+				ta.recycle();
+				root.setLayoutParams(lp);
+			}
+		}
+
 		lsSplit0.setName("lsSplit0");
 		lsSplit1.setName("lsSplit1");
 
@@ -562,7 +583,16 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		Announce.checkAnnouncements();
+
+		App.getLbm().registerReceiver(needsRestartReceiver, new IntentFilter(ACTION_NEEDS_RESTART));
 	}
+
+	final BroadcastReceiver needsRestartReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			needsRestart = true;
+		}
+	};
 
 	private boolean thereIsYukuAlkitabBackupFiles() {
 		final File dir = new File(Environment.getExternalStorageDirectory(), "bible");
@@ -604,6 +634,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		super.onDestroy();
 
 		App.getLbm().unregisterReceiver(reloadAttributeMapReceiver);
+
+		App.getLbm().unregisterReceiver(needsRestartReceiver);
 	}
 
 	/**
@@ -1085,6 +1117,14 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		applyPreferences();
 
 		getWindow().getDecorView().setKeepScreenOn(Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default)));
+
+		if (needsRestart) {
+			needsRestart = false;
+
+			final Intent originalIntent = getIntent();
+			finish();
+			startActivity(originalIntent);
+		}
 	}
 
 	@Override public void onBackPressed() {

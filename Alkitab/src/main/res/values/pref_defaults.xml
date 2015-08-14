@@ -5,6 +5,7 @@
 
     <bool name="pref_keepScreenOn_default">true</bool>
     <bool name="pref_textPadding_default">true</bool>
+    <bool name="pref_bottomToolbarOnText_default">false</bool>
 
     <string name="pref_volumeButtonNavigation_default" translatable="false">default</string>
 

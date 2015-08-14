@@ -2,6 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 	<string name="pref_keepScreenOn_key">nyalakanTerusLayar</string>
 	<string name="pref_textPadding_key">textPadding</string>
+	<string name="pref_bottomToolbarOnText_key">bottomToolbarOnText</string>
 
 	<string name="pref_volumeButtonNavigation_key">tombolVolumeBuatPindah</string>
 	
