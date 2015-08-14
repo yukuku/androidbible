@@ -13,6 +13,7 @@ import android.view.View;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.ac.base.BasePreferenceActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
@@ -92,6 +93,16 @@ public class SettingsActivity extends BasePreferenceActivity {
 				return true;
 			});
 			autoDisplayListPreference(pref_language);
+
+
+			final CheckBoxPreference pref_bottomToolbarOnText = (CheckBoxPreference) findPreference(getString(R.string.pref_bottomToolbarOnText_key));
+			pref_bottomToolbarOnText.setOnPreferenceChangeListener((preference, newValue) -> {
+				final Handler handler = new Handler();
+
+				// do this after this method returns true
+				handler.post(() -> App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_NEEDS_RESTART)));
+				return true;
+			});
 
 			final Preference pref_selectedVerseBgColor = findPreference(getString(R.string.pref_selectedVerseBgColor_key));
 			pref_selectedVerseBgColor.setOnPreferenceChangeListener((preference, newValue) -> {

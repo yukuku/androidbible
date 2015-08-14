@@ -135,6 +135,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	public static final String ACTION_ATTRIBUTE_MAP_CHANGED = "yuku.alkitab.action.ATTRIBUTE_MAP_CHANGED";
 	public static final String ACTION_ACTIVE_VERSION_CHANGED = IsiActivity.class.getName() + ".action.ACTIVE_VERSION_CHANGED";
 	public static final String ACTION_NIGHT_MODE_CHANGED = IsiActivity.class.getName() + ".action.NIGHT_MODE_CHANGED";
+	public static final String ACTION_NEEDS_RESTART = IsiActivity.class.getName() + ".action.NEEDS_RESTART";
 
 	private static final int REQCODE_goto = 1;
 	private static final int REQCODE_share = 7;
@@ -145,6 +146,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	private static final String EXTRA_verseUrl = "verseUrl";
 	private boolean uncheckVersesWhenActionModeDestroyed = true;
+
+	private boolean needsRestart; // whether this activity needs to be restarted
 
 	private GotoButton.FloaterDragListener bGoto_floaterDrag = new GotoButton.FloaterDragListener() {
 		final int[] floaterLocationOnScreen = {0, 0};
@@ -267,6 +270,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	FrameLayout overlayContainer;
 	View root;
+	Toolbar toolbar;
 	VersesView lsSplit0;
 	VersesView lsSplit1;
 	TextView tSplitEmpty;
@@ -397,7 +401,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		leftDrawer = V.get(this, R.id.left_drawer);
 		leftDrawer.configure(this, drawerLayout);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		toolbar = V.get(this, R.id.toolbar);
 		setSupportActionBar(toolbar);
 		setTitle("");
 
@@ -417,6 +421,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		splitRoot = V.get(this, R.id.splitRoot);
 		splitHandleButton = V.get(this, R.id.splitHandleButton);
 		floater = V.get(this, R.id.floater);
+
+		updateToolbarLocation();
 
 		lsSplit0.setName("lsSplit0");
 		lsSplit1.setName("lsSplit1");
@@ -562,7 +568,16 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		Announce.checkAnnouncements();
+
+		App.getLbm().registerReceiver(needsRestartReceiver, new IntentFilter(ACTION_NEEDS_RESTART));
 	}
+
+	final BroadcastReceiver needsRestartReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			needsRestart = true;
+		}
+	};
 
 	private boolean thereIsYukuAlkitabBackupFiles() {
 		final File dir = new File(Environment.getExternalStorageDirectory(), "bible");
@@ -604,6 +619,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		super.onDestroy();
 
 		App.getLbm().unregisterReceiver(reloadAttributeMapReceiver);
+
+		App.getLbm().unregisterReceiver(needsRestartReceiver);
 	}
 
 	/**
@@ -1085,6 +1102,14 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		applyPreferences();
 
 		getWindow().getDecorView().setKeepScreenOn(Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default)));
+
+		if (needsRestart) {
+			needsRestart = false;
+
+			final Intent originalIntent = getIntent();
+			finish();
+			startActivity(originalIntent);
+		}
 	}
 
 	@Override public void onBackPressed() {
@@ -1222,34 +1247,57 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			getSupportActionBar().hide();
 
-			final ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) root.getLayoutParams();
-			lp.topMargin = 0;
-			root.setLayoutParams(lp);
-
 			if (Build.VERSION.SDK_INT >= 19) {
 				decorView.setSystemUiVisibility(
 					View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
 						| View.SYSTEM_UI_FLAG_IMMERSIVE
 				);
 			}
-
-			fullScreen = true;
 		} else {
 			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			getSupportActionBar().show();
 
-			final ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) root.getLayoutParams();
-			final TypedValue tv = new TypedValue();
-			getTheme().resolveAttribute(R.attr.actionBarSize, tv, true);
-			lp.topMargin = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
-			root.setLayoutParams(lp);
-
 			if (Build.VERSION.SDK_INT >= 19) {
 				decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
 			}
-
-			fullScreen = false;
 		}
+
+		fullScreen = yes;
+
+		updateToolbarLocation();
+	}
+
+	void updateToolbarLocation() {
+		// 3 kinds of possible layout:
+		// - fullscreen
+		// - not fullscreen, toolbar at bottom
+		// - not fullscreen, toolbar at top
+
+		final FrameLayout.LayoutParams lp_root = (FrameLayout.LayoutParams) root.getLayoutParams();
+
+		if (fullScreen) {
+			lp_root.topMargin = 0;
+			lp_root.bottomMargin = 0;
+		} else {
+			final TypedValue tv = new TypedValue();
+			getTheme().resolveAttribute(R.attr.actionBarSize, tv, true);
+			final int actionBarSize = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+			final FrameLayout.LayoutParams lp_toolbar = (FrameLayout.LayoutParams) toolbar.getLayoutParams();
+
+			if (Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default)) {
+				lp_toolbar.gravity = Gravity.BOTTOM;
+				lp_root.topMargin = 0;
+				lp_root.bottomMargin = actionBarSize;
+			} else {
+				lp_toolbar.gravity = Gravity.NO_GRAVITY;
+				lp_root.topMargin = actionBarSize;
+				lp_root.bottomMargin = 0;
+			}
+
+			toolbar.setLayoutParams(lp_toolbar);
+		}
+
+		root.setLayoutParams(lp_root);
 	}
 
 	@Override
