@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -271,6 +270,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	FrameLayout overlayContainer;
 	View root;
+	Toolbar toolbar;
 	VersesView lsSplit0;
 	VersesView lsSplit1;
 	TextView tSplitEmpty;
@@ -401,7 +401,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		leftDrawer = V.get(this, R.id.left_drawer);
 		leftDrawer.configure(this, drawerLayout);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		toolbar = V.get(this, R.id.toolbar);
 		setSupportActionBar(toolbar);
 		setTitle("");
 
@@ -422,22 +422,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		splitHandleButton = V.get(this, R.id.splitHandleButton);
 		floater = V.get(this, R.id.floater);
 
-		if (Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default)) {
-			// swap toolbar and root
-			{
-				final FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) toolbar.getLayoutParams();
-				lp.gravity = Gravity.BOTTOM;
-				toolbar.setLayoutParams(lp);
-			}
-			{
-				final FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) root.getLayoutParams();
-				lp.topMargin = 0;
-				final TypedArray ta = obtainStyledAttributes(new int[]{R.attr.actionBarSize});
-				lp.bottomMargin = ta.getDimensionPixelOffset(0, 0);
-				ta.recycle();
-				root.setLayoutParams(lp);
-			}
-		}
+		updateToolbarLocation();
 
 		lsSplit0.setName("lsSplit0");
 		lsSplit1.setName("lsSplit1");
@@ -1262,34 +1247,57 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			getSupportActionBar().hide();
 
-			final ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) root.getLayoutParams();
-			lp.topMargin = 0;
-			root.setLayoutParams(lp);
-
 			if (Build.VERSION.SDK_INT >= 19) {
 				decorView.setSystemUiVisibility(
 					View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
 						| View.SYSTEM_UI_FLAG_IMMERSIVE
 				);
 			}
-
-			fullScreen = true;
 		} else {
 			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			getSupportActionBar().show();
 
-			final ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) root.getLayoutParams();
-			final TypedValue tv = new TypedValue();
-			getTheme().resolveAttribute(R.attr.actionBarSize, tv, true);
-			lp.topMargin = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
-			root.setLayoutParams(lp);
-
 			if (Build.VERSION.SDK_INT >= 19) {
 				decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
 			}
-
-			fullScreen = false;
 		}
+
+		fullScreen = yes;
+
+		updateToolbarLocation();
+	}
+
+	void updateToolbarLocation() {
+		// 3 kinds of possible layout:
+		// - fullscreen
+		// - not fullscreen, toolbar at bottom
+		// - not fullscreen, toolbar at top
+
+		final FrameLayout.LayoutParams lp_root = (FrameLayout.LayoutParams) root.getLayoutParams();
+
+		if (fullScreen) {
+			lp_root.topMargin = 0;
+			lp_root.bottomMargin = 0;
+		} else {
+			final TypedValue tv = new TypedValue();
+			getTheme().resolveAttribute(R.attr.actionBarSize, tv, true);
+			final int actionBarSize = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+			final FrameLayout.LayoutParams lp_toolbar = (FrameLayout.LayoutParams) toolbar.getLayoutParams();
+
+			if (Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default)) {
+				lp_toolbar.gravity = Gravity.BOTTOM;
+				lp_root.topMargin = 0;
+				lp_root.bottomMargin = actionBarSize;
+			} else {
+				lp_toolbar.gravity = Gravity.NO_GRAVITY;
+				lp_root.topMargin = actionBarSize;
+				lp_root.bottomMargin = 0;
+			}
+
+			toolbar.setLayoutParams(lp_toolbar);
+		}
+
+		root.setLayoutParams(lp_root);
 	}
 
 	@Override
