@@ -24,6 +24,8 @@ Latar belakang
   <string name="pref_copyWithShareUrl_summary">Tambahkan pautan laman perkongsian di akhir teks yang disalin atau dikongsi</string>
   <string name="pref_autoDictionaryAnalyze_title">Carian kamus automatik</string>
   <string name="pref_autoDictionaryAnalyze_summary">Mencari perkataan daripada kamus untuk ayat yang dipilih</string>
+  <string name="pref_tapToEditNote_title">Ketik untuk menyunting nota</string>
+  <string name="pref_tapToEditNote_summary">Nyahsemak untuk mencegah penyuntingan yang disengajakan apabila melihat nota yang telah dibuat</string>
   <string name="pref_showHiddenVersion_title">Dayakan versi yang mungkin terhad</string>
   <string name="pref_selectedVerseBgColor_title">Latar belakang ayat terpilih</string>
 </resources>

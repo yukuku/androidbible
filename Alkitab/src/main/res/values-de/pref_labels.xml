@@ -22,6 +22,8 @@
   <string name="pref_copyWithShareUrl_summary">Den Link zur Seite mit dem geteilten Inhalt an das Ende des kopierten oder geteilten Textes anhängen</string>
   <string name="pref_autoDictionaryAnalyze_title">Automatisch im Wörterbuch nachschlagen</string>
   <string name="pref_autoDictionaryAnalyze_summary">Bei selektierten Versen automatisch Wörter im Wörterbuch suchen</string>
+  <string name="pref_tapToEditNote_title">Notiz durch Antippen bearbeiten</string>
+  <string name="pref_tapToEditNote_summary">Option deaktivieren, um beim Anschauen von bestehenden Notizen unabsichtliches Bearbeiten zu verhindern</string>
   <string name="pref_showHiddenVersion_title">Bibelübersetzungen mit Copyright aktivieren</string>
   <string name="pref_selectedVerseBgColor_title">Vershintergrund-Farbe festlegen</string>
 </resources>
