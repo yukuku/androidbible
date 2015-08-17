@@ -983,7 +983,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	/**
 	 * Construct text for copying or sharing (in plain text).
 	 * @param isSplitVersion whether take the verse text from the main or from the split version.
-	 * @return [0] text for copy/share, [1] text for share url
+	 * @return [0] text for copy/share, [1] text to be submitted to the share url service
 	 */
 	String[] prepareTextForCopyShare(IntArrayList selectedVerses_1, CharSequence reference, boolean isSplitVersion) {
 		final StringBuilder res0 = new StringBuilder();
@@ -1014,7 +1014,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				final String verseTextPlain = U.removeSpecialCodes(verseText);
 
 				res0.append(verseTextPlain);
-				res1.append(verseTextPlain);
+				res1.append(verseText);
 
 				if (i != len - 1) {
 					res0.append('\n');
@@ -1035,7 +1035,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				final String verseTextPlain = U.removeSpecialCodes(verseText);
 
 				res0.append(verseTextPlain);
-				res1.append(verseTextPlain);
+				res1.append(verseText);
 			}
 		}
 
