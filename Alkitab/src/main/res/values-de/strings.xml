@@ -334,6 +334,7 @@
   <string name="rp_download_reading_plan_failed">Herunterladen des ausgewählten Leseplans fehlgeschlagen. Versuchen Sie es mit einer funktionierenden Internetverbindung erneut.</string>
   <string name="rp_download_reading_plan_data_corrupted">Der heruntergeladene Leseplan ist beschädigt. Versuchen Sie es mit einer funktionierenden Internetverbindung erneut.</string>
   <string name="rp_download_already_have">Diesen Leseplan haben Sie bereits heruntergeladen.</string>
+  <string name="rp_mark_as_read_up_to">Bis hierhin als gelesen markieren?</string>
   <string name="version_download_need_fonts">"Die Übersetzung, die Sie heruntergeladen haben, kann nur mit speziellen Schriftarten angezeigt werden. Gehen Sie zum Menü \'Textdarstellung\' und wählen Sie eine passende Schriftart. Burmese benötigt Parabaik, ParabaikSans oder Myanmar3. Tamil benötigt Akshar. Telugu benötigt Suranna."</string>
   <string name="version_download_corrupted_file">Die heruntergeladene Datei scheint fehlerhaft zu sein.</string>
   <string name="menuNightMode">Nachtmodus</string>

@@ -65,8 +65,6 @@
 
 	</LinearLayout>
 
-	<!-- We use a Toolbar so that our drawer can be displayed
-	 in front of the action bar -->
 	<android.support.v7.widget.Toolbar
 		android:id="@+id/toolbar"
 		android:layout_width="match_parent"
@@ -77,7 +75,7 @@
 			android:id="@+id/bVersion"
 			style="@style/Widget.AppCompat.Spinner"
 			android:layout_width="72dp"
-			android:layout_height="24dp"
+			android:layout_height="match_parent"
 			android:layout_gravity="end"
 			android:gravity="center"
 			android:textSize="14sp"

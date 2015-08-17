@@ -456,6 +456,8 @@
   <string name="sync_login_form_change_password_success">Password sudah diganti.</string>
   <string name="pref_textPadding_title">Beri jarak sekitar teks</string>
   <string name="pref_textPadding_summary">Lebih sedikit teks per barisnya agar mudah dibaca</string>
+  <string name="pref_bottomToolbarOnText_title">Navigasi ayat di bawah</string>
+  <string name="pref_bottomToolbarOnText_summary">Letakkan navigasi ayat di bagian bawah layar Alkitab</string>
   <string name="dr_app_name">Pengingat</string>
   <string name="dr_notification_title">Renungan harian</string>
   <string name="dr_notification_text">Baca renungan hari ini.</string>
@@ -496,4 +498,5 @@
   <string name="dict_download_button">Unduh</string>
   <string name="menuGuide">Panduan</string>
   <string name="menuCommentary">Tafsiran</string>
+  <string name="maps_could_not_open">Tidak bisa membuka aplikasi Peta Alkitab.</string>
 </resources>

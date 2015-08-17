@@ -490,6 +490,9 @@
 	<string name="pref_textPadding_title">Margins around text</string>
 	<string name="pref_textPadding_summary">Make text in a line narrower to ease reading</string>
 
+	<string name="pref_bottomToolbarOnText_title">Bottom verse navigation</string>
+	<string name="pref_bottomToolbarOnText_summary">Put verse navigation toolbar at the bottom on the Bible screen</string>
+
 	<!-- devotion reminder -->
 	<string name="dr_app_name">Reminder</string>
 	<string name="dr_notification_title">Daily devotion</string>
@@ -544,4 +547,8 @@
 
 	<!-- Commentary -->
 	<string name="menuCommentary">Commentary</string>
+
+    <!-- Maps -->
+    <string name="maps_could_not_open">Could not open the Bible Maps app.</string>
+
 </resources>

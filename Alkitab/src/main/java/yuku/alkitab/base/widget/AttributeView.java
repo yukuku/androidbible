@@ -13,7 +13,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import yuku.alkitab.base.App;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.model.Book;
 
 public class AttributeView extends View {
 
@@ -24,6 +23,7 @@ public class AttributeView extends View {
 	static Bitmap bookmarkBitmap = null;
 	static Bitmap noteBitmap = null;
 	static Bitmap[] progressMarkBitmap = new Bitmap[PROGRESS_MARK_TOTAL_COUNT];
+	static Bitmap hasMapsBitmap = null;
 	static Paint alphaPaint = new Paint();
 	static Paint attributeCountPaintBookmark = new Paint();
     static Paint attributeCountPaintNote;
@@ -41,11 +41,10 @@ public class AttributeView extends View {
 	int bookmark_count;
 	int note_count;
 	int progress_mark_bits;
+	boolean has_maps;
 
 	private VersesView.AttributeListener attributeListener;
-	private Book book;
-	private int chapter_1;
-	private int verse_1;
+	private int ari;
 
 	private static SparseArray<Long> progressMarkAnimationStartTimes = new SparseArray<>();
 	private int drawOffsetLeft;
@@ -64,7 +63,7 @@ public class AttributeView extends View {
         float density = getResources().getDisplayMetrics().density;
 
 		drawOffsetLeft = Math.round(1 * density);
-        attributeCountPaintNote.setShadowLayer(density*4, 0, 0, 0xffffffff);
+        attributeCountPaintNote.setShadowLayer(density * 4, 0, 0, 0xffffffff);
 	}
 
 	public int getBookmarkCount() {
@@ -97,6 +96,16 @@ public class AttributeView extends View {
 		invalidate();
 	}
 
+	public boolean getHasMaps() {
+		return has_maps;
+	}
+
+	public void setHasMaps(final boolean has_maps) {
+		this.has_maps = has_maps;
+		requestLayout();
+		invalidate();
+	}
+
 	public boolean isShowingSomething() {
 		return bookmark_count > 0 || note_count > 0 || ((progress_mark_bits & PROGRESS_MARK_BIT_MASK) != 0);
 	}
@@ -120,6 +129,13 @@ public class AttributeView extends View {
 			progressMarkBitmap[preset_id] = BitmapFactory.decodeResource(getResources(), getProgressMarkIconResource(preset_id));
 		}
 		return progressMarkBitmap[preset_id];
+	}
+
+	Bitmap getHasMapsBitmap() {
+		if (hasMapsBitmap == null) {
+			hasMapsBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_attr_has_maps);
+		}
+		return hasMapsBitmap;
 	}
 
 	@Override
@@ -149,6 +165,13 @@ public class AttributeView extends View {
 						totalWidth = progressMarkBitmapById.getWidth();
 					}
 				}
+			}
+		}
+		if (has_maps) {
+			final Bitmap hasMapsBitmap = getHasMapsBitmap();
+			totalHeight += hasMapsBitmap.getHeight();
+			if (totalWidth < hasMapsBitmap.getWidth()) {
+				totalWidth = hasMapsBitmap.getWidth();
 			}
 		}
 
@@ -202,6 +225,12 @@ public class AttributeView extends View {
 				}
 			}
 		}
+		if (has_maps) {
+			final Bitmap hasMapsBitmap = getHasMapsBitmap();
+			canvas.drawBitmap(hasMapsBitmap, drawOffsetLeft, totalHeight, null);
+			//noinspection UnusedAssignment
+			totalHeight += hasMapsBitmap.getHeight();
+		}
 	}
 
 	@Override
@@ -213,7 +242,7 @@ public class AttributeView extends View {
 				final Bitmap bookmarkBitmap = getBookmarkBitmap();
 				totalHeight += bookmarkBitmap.getHeight();
 				if (totalHeight > y) {
-					attributeListener.onBookmarkAttributeClick(book, chapter_1, verse_1);
+					attributeListener.onBookmarkAttributeClick(ari);
 					return true;
 				}
 			}
@@ -221,7 +250,7 @@ public class AttributeView extends View {
 				final Bitmap noteBitmap = getNoteBitmap();
 				totalHeight += noteBitmap.getHeight();
 				if (totalHeight > y) {
-					attributeListener.onNoteAttributeClick(book, chapter_1, verse_1);
+					attributeListener.onNoteAttributeClick(ari);
 					return true;
 				}
 			}
@@ -237,17 +266,23 @@ public class AttributeView extends View {
 					}
 				}
 			}
+			if (has_maps) {
+				final Bitmap hasMapsBitmap = getHasMapsBitmap();
+				totalHeight += hasMapsBitmap.getHeight();
+				if (totalHeight > y) {
+					attributeListener.onHasMapsAttributeClick(ari);
+					return true;
+				}
+			}
 		} else if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
 			return true;
 		}
 		return false;
 	}
 
-	public void setAttributeListener(VersesView.AttributeListener attributeListener, Book book, int chapter_1, int verse_1) {
+	public void setAttributeListener(VersesView.AttributeListener attributeListener, int ari) {
 		this.attributeListener = attributeListener;
-		this.book = book;
-		this.chapter_1 = chapter_1;
-		this.verse_1 = verse_1;
+		this.ari = ari;
 	}
 
 	public static void startAnimationForProgressMark(final int preset_id) {

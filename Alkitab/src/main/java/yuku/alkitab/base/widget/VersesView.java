@@ -17,7 +17,6 @@ import android.widget.ListView;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.U;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.model.Book;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.util.IntArrayList;
@@ -69,9 +68,10 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	}
 
 	public interface AttributeListener {
-		void onBookmarkAttributeClick(Book book, int chapter_1, int verse_1);
-		void onNoteAttributeClick(Book book, int chapter_1, int verse_1);
+		void onBookmarkAttributeClick(int ari);
+		void onNoteAttributeClick(int ari);
 		void onProgressMarkAttributeClick(int preset_id);
+		void onHasMapsAttributeClick(int ari);
 	}
 
 	public interface OnVerseScrollListener {
@@ -125,7 +125,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	private String name;
 	private boolean firstTimeScroll = true;
 	/**
-	 * Updated every time {@link #setData(yuku.alkitab.model.Book, int, yuku.alkitab.model.SingleChapterVerses, int[], yuku.alkitab.model.PericopeBlock[], int)}
+	 * Updated every time {@link #setData(int, SingleChapterVerses, int[], PericopeBlock[], int)}
 	 * or {@link #setDataEmpty()} is called. Used to track data changes, so delayed scroll, etc can be prevented from happening if the data has changed.
 	 */
 	private AtomicInteger dataVersionNumber = new AtomicInteger();
@@ -246,9 +246,9 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		return pos;
 	}
 
-	public void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
+	public void setData(int ariBc, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
 		dataVersionNumber.incrementAndGet();
-		adapter.setData(book, chapter_1, verses, pericopeAris, pericopeBlocks, nblock);
+		adapter.setData(ariBc, verses, pericopeAris, pericopeBlocks, nblock);
 		stopFling();
 	}
 
@@ -465,7 +465,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		}, smoothScrollDuration + 17);
 	}
 
-	public void setDataWithRetainSelectedVerses(boolean retainSelectedVerses, Book book, int chapter_1, int[] pericope_aris, PericopeBlock[] pericope_blocks, int nblock, SingleChapterVerses verses) {
+	public void setDataWithRetainSelectedVerses(boolean retainSelectedVerses, int ariBc, int[] pericope_aris, PericopeBlock[] pericope_blocks, int nblock, SingleChapterVerses verses) {
 		IntArrayList selectedVerses_1 = null;
 		if (retainSelectedVerses) {
 			selectedVerses_1 = getSelectedVerses_1();
@@ -473,7 +473,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		
 		//# fill adapter with new data. make sure all checked states are reset
 		uncheckAllVerses(true);
-		setData(book, chapter_1, verses, pericope_aris, pericope_blocks, nblock);
+		setData(ariBc, verses, pericope_aris, pericope_blocks, nblock);
 		reloadAttributeMap();
 		
 		boolean anySelected = false;

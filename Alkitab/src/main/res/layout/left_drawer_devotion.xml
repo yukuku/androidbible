@@ -8,7 +8,6 @@
     android:background="#263238"
     android:elevation="4dp"
 	android:layout_height="match_parent"
-	android:fitsSystemWindows="true"
 	tools:ignore="Overdraw">
 
 	<LinearLayout

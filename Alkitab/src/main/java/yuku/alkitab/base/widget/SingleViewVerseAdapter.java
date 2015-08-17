@@ -63,7 +63,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				res = (VerseItem) convertView;
 			}
 
-			final int ari = Ari.encode(book_.bookId, chapter_1_, verse_1);
+			final int ari = Ari.encodeWithBc(ari_bc_, verse_1);
 			final String text = verses_.getVerse(id);
 			final String verseNumberText = verses_.getVerseNumberText(id);
 			final boolean dontPutSpacingBefore = (position > 0 && itemPointer_[position - 1] < 0) || position == 0;
@@ -81,7 +81,8 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			attributeView.setBookmarkCount(bookmarkCountMap_ == null ? 0 : bookmarkCountMap_[id]);
 			attributeView.setNoteCount(noteCountMap_ == null ? 0 : noteCountMap_[id]);
 			attributeView.setProgressMarkBits(progressMarkBitsMap_ == null ? 0 : progressMarkBitsMap_[id]);
-			attributeView.setAttributeListener(attributeListener_, book_, chapter_1_, verse_1);
+			attributeView.setHasMaps(hasMapsMap_ != null && hasMapsMap_[id]);
+			attributeView.setAttributeListener(attributeListener_, ari);
 
 			res.setCollapsed(text.length() == 0 && !attributeView.isShowingSomething());
 

@@ -13,30 +13,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.D;
 import yuku.afw.V;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.dialog.base.BaseDialog;
-import yuku.alkitab.util.Ari;
-import yuku.alkitab.model.Book;
-import yuku.alkitab.model.SingleChapterVerses;
-import yuku.alkitab.model.Version;
-import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.base.util.Appearances;
-import yuku.alkitab.util.IntArrayList;
 import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.base.widget.VersesView.VerseSelectionMode;
+import yuku.alkitab.debug.R;
+import yuku.alkitab.model.SingleChapterVerses;
+import yuku.alkitab.model.Version;
+import yuku.alkitab.model.XrefEntry;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.util.IntArrayList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class XrefDialog extends BaseDialog {
 	public static final String TAG = XrefDialog.class.getSimpleName();
 
-	private static final String EXTRA_arif = "arif"; //$NON-NLS-1$
+	private static final String EXTRA_arif = "arif";
 
 	public interface XrefDialogListener {
 		void onVerseSelected(XrefDialog dialog, int arif_source, int ari_target);
@@ -87,7 +88,7 @@ public class XrefDialog extends BaseDialog {
 	}
 	
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View res = inflater.inflate(R.layout.dialog_xref, null);
+		View res = inflater.inflate(R.layout.dialog_xref, container, false);
 
 		tXrefText = V.get(res, R.id.tXrefText);
 		versesView = V.get(res, R.id.versesView);
@@ -97,11 +98,28 @@ public class XrefDialog extends BaseDialog {
 		versesView.setVerseSelectionMode(VerseSelectionMode.singleClick);
 		versesView.setSelectedVersesListener(versesView_selectedVerses);
 		tXrefText.setMovementMethod(LinkMovementMethod.getInstance());
-		renderXrefText();
-		
+
+		if (xrefEntry != null) {
+			renderXrefText();
+		} else {
+			new MaterialDialog.Builder(getActivity())
+				.content(String.format(Locale.US, "Error: xref at arif 0x%08x couldn't be loaded", arif_source))
+				.positiveText(R.string.ok)
+				.show();
+		}
+
 		return res;
 	}
-	
+
+	@Override
+	public void onActivityCreated(final Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+
+		if (xrefEntry == null) {
+			dismiss();
+		}
+	}
+
 	void renderXrefText() {
 		final SpannableStringBuilder sb = new SpannableStringBuilder();
 		sb.append(VerseRenderer.XREF_MARK);
@@ -169,7 +187,12 @@ public class XrefDialog extends BaseDialog {
 		
 			class Verses extends SingleChapterVerses {
 				@Override public String getVerse(int verse_0) {
-					return displayedVerseTexts.get(verse_0);
+					final String res = displayedVerseTexts.get(verse_0);
+					// prevent crash if the target xref is not available
+					if (res == null) {
+						return getString(R.string.generic_verse_not_available_in_this_version);
+					}
+					return res;
 				}
 				
 				@Override public int getVerseCount() {
@@ -182,10 +205,8 @@ public class XrefDialog extends BaseDialog {
 			}
 	
 			int firstAri = displayedRealAris.get(0);
-			Book book = sourceVersion.getBook(Ari.toBook(firstAri));
-			int chapter_1 = Ari.toChapter(firstAri);
-			
-			versesView.setData(book, chapter_1, new Verses(), null, null, 0);
+
+			versesView.setData(Ari.toBookChapter(firstAri), new Verses(), null, null, 0);
 		}
 		
 		renderXrefText();
