@@ -49,12 +49,14 @@ public class GotoButton extends Button {
 		float x = event.getX();
 		float y = event.getY();
 
-		if (untouchableSideWidth == Integer.MIN_VALUE) {
-			untouchableSideWidth = getResources().getDimensionPixelSize(R.dimen.nav_prevnext_width) - getResources().getDimensionPixelSize(R.dimen.nav_goto_side_margin);
-		}
+		if (action == MotionEvent.ACTION_DOWN) {
+			if (untouchableSideWidth == Integer.MIN_VALUE) {
+				untouchableSideWidth = getResources().getDimensionPixelSize(R.dimen.nav_prevnext_width) - getResources().getDimensionPixelSize(R.dimen.nav_goto_side_margin);
+			}
 
-		if (x >= 0 && x < untouchableSideWidth || x < getWidth() && x >= getWidth() - untouchableSideWidth) {
-			return false;
+			if (x >= 0 && x < untouchableSideWidth || x < getWidth() && x >= getWidth() - untouchableSideWidth) {
+				return false;
+			}
 		}
 
 		getLocationOnScreen(screenLocation);
