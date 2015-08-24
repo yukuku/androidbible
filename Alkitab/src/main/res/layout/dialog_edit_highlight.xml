@@ -10,9 +10,10 @@
         android:id="@+id/tVerseText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="none"
-        android:maxLines="4"
         android:layout_marginBottom="@dimen/padding_small"
+        android:inputType="none"
+        android:maxLines="6"
+        android:textAppearance="?android:textAppearanceMedium"
         android:textIsSelectable="true" />
 
     <LinearLayout android:orientation="horizontal" android:gravity="center_horizontal" android:layout_height="wrap_content" android:layout_width="wrap_content">
