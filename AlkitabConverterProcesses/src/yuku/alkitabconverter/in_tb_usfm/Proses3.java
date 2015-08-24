@@ -16,6 +16,11 @@ public class Proses3 {
 	static String OUTPUT_INTERNAL = "../../../bahan-alkitab/in-tb/raw/";
 
 	public static void main(String[] args) throws Exception {
+		if (args.length >= 2) {
+			INPUT_YET = args[0];
+			OUTPUT_INTERNAL = args[1];
+		}
+
 		new Proses3().u();
 	}
 
