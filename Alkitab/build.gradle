@@ -11,12 +11,12 @@ android {
             storePassword System.getenv("SIGN_PASSWORD")
         }
     }
-    compileSdkVersion 22
-    buildToolsVersion '22.0.1'
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
         applicationId 'yuku.alkitab.debug'
-        minSdkVersion 14
-        targetSdkVersion 22
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 14000242
         versionName '4.3-beta2'
     }
