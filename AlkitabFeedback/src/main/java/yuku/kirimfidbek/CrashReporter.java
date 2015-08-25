@@ -3,14 +3,10 @@ package yuku.kirimfidbek;
 import android.os.Build;
 import android.os.SystemClock;
 import android.util.Log;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 import yuku.afw.App;
 import yuku.afw.storage.Preferences;
 
@@ -147,30 +143,34 @@ public class CrashReporter {
 			Log.d(TAG, "tred pengirim dimulai. thread id = " + getId());
 
 			try {
-				HttpClient client = new DefaultHttpClient();
-				HttpPost post = new HttpPost("http://www.kejut.com/prog/android/fidbek/kirim3.php");
-				ArrayList<NameValuePair> params = new ArrayList<>();
+				final OkHttpClient client = new OkHttpClient();
 
+				final Request.Builder request = new Request.Builder();
+				request.url("http://www.kejut.com/prog/android/fidbek/kirim3.php");
+
+				final FormEncodingBuilder form = new FormEncodingBuilder();
 				for (Entry entry : entries) {
 					if (entry.body.length() > 100000) {
 						entry.body = entry.body.substring(0, 100000);
 					}
-					params.add(new BasicNameValuePair("uniqueId[]", getUniqueId()));
-					params.add(new BasicNameValuePair("package_name[]", App.context.getPackageName()));
-					params.add(new BasicNameValuePair("fidbek_isi[]", entry.body));
-					params.add(new BasicNameValuePair("package_versionCode[]", String.valueOf(entry.versionCode)));
-					params.add(new BasicNameValuePair("timestamp[]", String.valueOf(entry.timestamp)));
-					params.add(new BasicNameValuePair("build_product[]", Build.PRODUCT));
-					params.add(new BasicNameValuePair("build_device[]", Build.DEVICE));
-					params.add(new BasicNameValuePair("version_sdk[]", String.valueOf(entry.versionSdk)));
-					params.add(new BasicNameValuePair("capjempol[]", entry.capjempol));
+
+					form
+						.add("uniqueId[]", getUniqueId())
+						.add("package_name[]", App.context.getPackageName())
+						.add("fidbek_isi[]", entry.body)
+						.add("package_versionCode[]", String.valueOf(entry.versionCode))
+						.add("timestamp[]", String.valueOf(entry.timestamp))
+						.add("build_product[]", Build.PRODUCT)
+						.add("build_device[]", Build.DEVICE)
+						.add("version_sdk[]", String.valueOf(entry.versionSdk))
+						.add("capjempol[]", entry.capjempol);
 				}
 
-				post.setEntity(new UrlEncodedFormEntity(params, "utf-8"));
-				HttpResponse response = client.execute(post);
+				request.post(form.build());
 
-				HttpEntity entity = response.getEntity();
-				InputStream content = entity.getContent();
+				final Response response = client.newCall(request.build()).execute();
+
+				InputStream content = response.body().byteStream();
 				ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
 
 				while (true) {
