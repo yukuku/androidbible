@@ -19,6 +19,7 @@ import java.io.IOException;
 public class ShareVerseActivity extends AppCompatActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_share_verse);
 
 		// get the selected verse and its text
 		Intent intent = getIntent();
@@ -53,7 +54,7 @@ public class ShareVerseActivity extends AppCompatActivity {
 		p.setColor(0xff0000ff); // blue
 
 		c.drawText(reference, 40, 200, p);
-		c.drawText(verseTexts[0], 40, 400, p);
+		c.drawText(verseTexts[0], 40, 240, p);
 
 		// save as image and share
 		try {
@@ -62,6 +63,7 @@ public class ShareVerseActivity extends AppCompatActivity {
 			f.close();
 
 			ShareCompat.IntentBuilder.from(this)
+				.setType("image/png")
 				.addStream(Uri.fromFile(new File("/sdcard/tmp.png")))
 				.startChooser();
 		} catch (IOException e) {
