@@ -285,7 +285,7 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 	@Override
 	protected void onDetachedFromWindow() {
 		super.onDetachedFromWindow();
-
+		App.getLbm().unregisterReceiver(nightModeChangedListener);
 	}
 
 	final BroadcastReceiver nightModeChangedListener = new BroadcastReceiver() {
