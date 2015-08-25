@@ -157,13 +157,13 @@ public class CrashReporter {
 					form
 						.add("uniqueId[]", getUniqueId())
 						.add("package_name[]", App.context.getPackageName())
-						.add("fidbek_isi[]", entry.body)
+						.add("fidbek_isi[]", "" + entry.body)
 						.add("package_versionCode[]", String.valueOf(entry.versionCode))
 						.add("timestamp[]", String.valueOf(entry.timestamp))
-						.add("build_product[]", Build.PRODUCT)
-						.add("build_device[]", Build.DEVICE)
+						.add("build_product[]", "" + Build.PRODUCT)
+						.add("build_device[]", "" + Build.DEVICE)
 						.add("version_sdk[]", String.valueOf(entry.versionSdk))
-						.add("capjempol[]", entry.capjempol);
+						.add("capjempol[]", "" + entry.capjempol);
 				}
 
 				request.post(form.build());
