@@ -11,18 +11,19 @@ android {
             storePassword System.getenv("SIGN_PASSWORD")
         }
     }
-    compileSdkVersion 22
-    buildToolsVersion '22.0.1'
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
         applicationId 'yuku.alkitab.debug'
-        minSdkVersion 14
-        targetSdkVersion 22
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 14000242
         versionName '4.3-beta2'
     }
     buildTypes {
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
@@ -67,7 +68,7 @@ dependencies {
     compile project(':AmbilWarna')
     compile project(':FileChooser')
     compile project(':ImportedDesktopVerseUtil')
-    compile 'com.android.support:support-v4:22.2.1'
+    compile 'com.android.support:support-v4:23.0.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.squareup.okhttp:okhttp:2.5.0-SNAPSHOT'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.5.0-SNAPSHOT'
@@ -75,9 +76,9 @@ dependencies {
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.google.android.gms:play-services-analytics:7.8.0'
     compile 'com.google.android.gms:play-services-gcm:7.8.0'
-    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.android.support:appcompat-v7:23.0.0'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.afollestad:material-dialogs:0.7.6.0'
-    compile 'com.android.support:design:22.2.1'
+    compile 'com.android.support:design:23.0.0'
     testCompile 'junit:junit:4.12'
 }

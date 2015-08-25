@@ -54,3 +54,7 @@
 
 # retrolambda
 -dontwarn java.lang.invoke.**
+
+
+# gms analytics still referencing apache http
+-dontwarn com.google.android.gms.**

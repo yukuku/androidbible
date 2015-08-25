@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -84,6 +85,7 @@ import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.CurrentReading;
+import yuku.alkitab.base.util.ExtensionManager;
 import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.Jumper;
@@ -2034,8 +2036,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	};
 
 	ActionMode.Callback actionMode_callback = new ActionMode.Callback() {
+		private static final int MENU_GROUP_EXTENSIONS = Menu.FIRST + 1;
+		private static final int MENU_EXTENSIONS_FIRST_ID = 0x1000;
+
+		List<ExtensionManager.Info> extensions;
+
 		@Override public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 			getMenuInflater().inflate(R.menu.context_isi, menu);
+
+			Log.d(TAG, "@@onCreateActionMode");
 			
 			/* The following "esvsbasal" thing is a personal thing by yuku that doesn't matter to anyone else.
 			 * Please ignore it and leave it intact. */
@@ -2112,6 +2121,19 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					&& !Preferences.getBoolean(getString(R.string.pref_autoDictionaryAnalyze_key), getResources().getBoolean(R.bool.pref_autoDictionaryAnalyze_default))
 			);
 
+			{ // extensions
+				extensions = ExtensionManager.getExtensions();
+
+				menu.removeGroup(MENU_GROUP_EXTENSIONS);
+
+				for (int i = 0; i < extensions.size(); i++) {
+					final ExtensionManager.Info extension = extensions.get(i);
+					if (single || (/* not single */ extension.supportsMultipleVerses)) {
+						menu.add(MENU_GROUP_EXTENSIONS, MENU_EXTENSIONS_FIRST_ID + i, 0, extension.label);
+					}
+				}
+			}
+
 			return true;
 		}
 
@@ -2122,7 +2144,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 			final CharSequence reference = referenceFromSelectedVerses(selected, activeBook);
 
-			switch (item.getItemId()) {
+			final int itemId = item.getItemId();
+
+			switch (itemId) {
 			case R.id.menuCopy: { // copy, can be multiple
 				String[] t = prepareTextForCopyShare(selected, reference, false);
 				if (activeSplitVersion != null) {
@@ -2318,7 +2342,44 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 				startDictionaryMode(aris);
 			} return true;
+			default: if (itemId >= MENU_EXTENSIONS_FIRST_ID && itemId < MENU_EXTENSIONS_FIRST_ID + extensions.size()) {
+				final ExtensionManager.Info extension = extensions.get(itemId - MENU_EXTENSIONS_FIRST_ID);
 
+				final Intent intent = new Intent(ExtensionManager.ACTION_SHOW_VERSE_INFO);
+				intent.setComponent(new ComponentName(extension.activityInfo.packageName, extension.activityInfo.name));
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+				// prepare extra "aris"
+				final int[] aris = new int[selected.size()];
+				final int ariBc = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
+				for (int i = 0, len = selected.size(); i < len; i++) {
+					final int verse_1 = selected.get(i);
+					final int ari = Ari.encodeWithBc(ariBc, verse_1);
+					aris[i] = ari;
+				}
+				intent.putExtra("aris", aris);
+
+				if (extension.includeVerseText) {
+					// prepare extra "verseTexts"
+					final String[] verseTexts = new String[selected.size()];
+					for (int i = 0, len = selected.size(); i < len; i++) {
+						final int verse_1 = selected.get(i);
+
+						final String verseText = lsSplit0.getVerse(verse_1);
+						if (extension.includeVerseTextFormatting) {
+							verseTexts[i] = verseText;
+						} else {
+							verseTexts[i] = U.removeSpecialCodes(verseText);
+						}
+					}
+					intent.putExtra("verseTexts", verseTexts);
+				}
+
+				startActivity(intent);
+
+				return true;
+			}
 			}
 			return false;
 		}
