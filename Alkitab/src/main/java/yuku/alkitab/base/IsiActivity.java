@@ -2128,7 +2128,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 				for (int i = 0; i < extensions.size(); i++) {
 					final ExtensionManager.Info extension = extensions.get(i);
-					if (single || (/* not single */ extension.supportMultipleVerses)) {
+					if (single || (/* not single */ extension.supportsMultipleVerses)) {
 						menu.add(MENU_GROUP_EXTENSIONS, MENU_EXTENSIONS_FIRST_ID + i, 0, extension.label);
 					}
 				}

@@ -27,14 +27,14 @@ public class ExtensionManager {
 	public static class Info {
 		public final ActivityInfo activityInfo;
 		public final CharSequence label;
-		public final boolean supportMultipleVerses;
+		public final boolean supportsMultipleVerses;
 		public final boolean includeVerseText;
 		public final boolean includeVerseTextFormatting;
 
-		public Info(final ActivityInfo activityInfo, final CharSequence label, final boolean supportMultipleVerses, final boolean includeVerseText, final boolean includeVerseTextFormatting) {
+		public Info(final ActivityInfo activityInfo, final CharSequence label, final boolean supportsMultipleVerses, final boolean includeVerseText, final boolean includeVerseTextFormatting) {
 			this.activityInfo = activityInfo;
 			this.label = label;
-			this.supportMultipleVerses = supportMultipleVerses;
+			this.supportsMultipleVerses = supportsMultipleVerses;
 			this.includeVerseText = includeVerseText;
 			this.includeVerseTextFormatting = includeVerseTextFormatting;
 		}
@@ -58,11 +58,11 @@ public class ExtensionManager {
 				try {
 					final ActivityInfo ai = pm.getActivityInfo(new ComponentName(ri.activityInfo.packageName, ri.activityInfo.name), PackageManager.GET_META_DATA);
 					final CharSequence label = ai.loadLabel(pm);
-					final boolean supportMultipleVerses = getBooleanFromMetadata(ai.metaData, "supportMultipleVerses", false);
+					final boolean supportsMultipleVerses = getBooleanFromMetadata(ai.metaData, "supportsMultipleVerses", false);
 					final boolean includeVerseText = getBooleanFromMetadata(ai.metaData, "includeVerseText", false);
 					final boolean includeVerseTextFormatting = getBooleanFromMetadata(ai.metaData, "includeVerseTextFormatting", false);
 
-					final Info info = new Info(ai, label, supportMultipleVerses, includeVerseText, includeVerseTextFormatting);
+					final Info info = new Info(ai, label, supportsMultipleVerses, includeVerseText, includeVerseTextFormatting);
 					extensions.add(info);
 				} catch (PackageManager.NameNotFoundException e) {
 					Log.e(TAG, "PackageManager should not emit this", e);
