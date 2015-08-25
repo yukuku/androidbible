@@ -2393,7 +2393,14 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					intent.putExtra("verseTexts", verseTexts);
 				}
 
-				startActivity(intent);
+				try {
+					startActivity(intent);
+				} catch (ActivityNotFoundException e) {
+					new MaterialDialog.Builder(IsiActivity.this)
+						.content("Error ANFE starting extension\n\n" + extension.activityInfo.packageName + "/" + extension.activityInfo.name)
+						.positiveText(R.string.ok)
+						.show();
+				}
 
 				return true;
 			}
