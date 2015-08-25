@@ -26,7 +26,6 @@
 			android:label="Share as Image">
 			<intent-filter>
 				<action android:name="yuku.alkitab.extensions.action.SHOW_VERSE_INFO" />
-				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 
 			<meta-data

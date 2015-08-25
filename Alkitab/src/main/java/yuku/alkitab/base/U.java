@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.v4.graphics.ColorUtils;
 import android.widget.TextView;
 import yuku.afw.storage.Preferences;
@@ -24,18 +25,20 @@ public class U {
 	static final String TAG = U.class.getSimpleName();
 
 	/**
+	 * If text is null, this returns null.
 	 * If verse doesn't start with @: don't do anything.
 	 * Otherwise, remove all @'s and one character after that and also text between @&lt; and @&gt;.
 	 */
-	public static String removeSpecialCodes(String text) {
+	@Nullable public static String removeSpecialCodes(@Nullable final String text) {
 		return removeSpecialCodes(text, false);
 	}
 	
 	/**
+	 * If text is null, this returns null.
 	 * If verse doesn't start with @: don't do anything, except when force is set to true.
 	 * Otherwise, remove all @'s and one character after that and also text between @&lt; and @&gt;.
 	 */
-	public static String removeSpecialCodes(final String text, final boolean force) {
+	@Nullable public static String removeSpecialCodes(@Nullable final String text, final boolean force) {
 		if (text == null) return null;
 		if (text.length() == 0) return text;
 		if (!force && text.charAt(0) != '@') return text;
