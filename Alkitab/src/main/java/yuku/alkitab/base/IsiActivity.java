@@ -1006,21 +1006,24 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 			// append each selected verse with verse number prepended
 			for (int i = 0, len = selectedVerses_1.size(); i < len; i++) {
-				int verse_1 = selectedVerses_1.get(i);
-				res0.append(verse_1);
-				res1.append(verse_1);
-				res0.append(' ');
-				res1.append(' ');
+				final int verse_1 = selectedVerses_1.get(i);
+				final String verseText = isSplitVersion ? lsSplit1.getVerseText(verse_1) : lsSplit0.getVerseText(verse_1);
 
-				final String verseText = isSplitVersion ? lsSplit1.getVerse(verse_1) : lsSplit0.getVerse(verse_1);
-				final String verseTextPlain = U.removeSpecialCodes(verseText);
+				if (verseText != null) {
+					final String verseTextPlain = U.removeSpecialCodes(verseText);
 
-				res0.append(verseTextPlain);
-				res1.append(verseText);
+					res0.append(verse_1);
+					res1.append(verse_1);
+					res0.append(' ');
+					res1.append(' ');
 
-				if (i != len - 1) {
-					res0.append('\n');
-					res1.append('\n');
+					res0.append(verseTextPlain);
+					res1.append(verseText);
+
+					if (i != len - 1) {
+						res0.append('\n');
+						res1.append('\n');
+					}
 				}
 			}
 		} else {
@@ -1028,16 +1031,19 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 			// append each selected verse without verse number prepended
 			for (int i = 0; i < selectedVerses_1.size(); i++) {
-				int verse_1 = selectedVerses_1.get(i);
-				if (i != 0) {
-					res0.append('\n');
-					res1.append('\n');
-				}
-				final String verseText = isSplitVersion ? lsSplit1.getVerse(verse_1) : lsSplit0.getVerse(verse_1);
-				final String verseTextPlain = U.removeSpecialCodes(verseText);
+				final int verse_1 = selectedVerses_1.get(i);
+				final String verseText = isSplitVersion ? lsSplit1.getVerseText(verse_1) : lsSplit0.getVerseText(verse_1);
 
-				res0.append(verseTextPlain);
-				res1.append(verseText);
+				if (verseText != null) {
+					final String verseTextPlain = U.removeSpecialCodes(verseText);
+
+					if (i != 0) {
+						res0.append('\n');
+						res1.append('\n');
+					}
+					res0.append(verseTextPlain);
+					res1.append(verseText);
+				}
 			}
 		}
 
@@ -2366,7 +2372,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					for (int i = 0, len = selected.size(); i < len; i++) {
 						final int verse_1 = selected.get(i);
 
-						final String verseText = lsSplit0.getVerse(verse_1);
+						final String verseText = lsSplit0.getVerseText(verse_1);
 						if (extension.includeVerseTextFormatting) {
 							verseTexts[i] = verseText;
 						} else {

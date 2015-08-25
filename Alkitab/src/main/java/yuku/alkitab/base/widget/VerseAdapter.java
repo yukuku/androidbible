@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
@@ -292,9 +293,9 @@ public abstract class VerseAdapter extends BaseAdapter {
 		}
 	}
 
-	public String getVerse(int verse_1) {
-		if (verses_ == null) return "[?]"; //$NON-NLS-1$
-		if (verse_1 < 1 || verse_1 > verses_.getVerseCount()) return "[?]"; //$NON-NLS-1$
+	@Nullable public String getVerseText(int verse_1) {
+		if (verses_ == null) return null;
+		if (verse_1 < 1 || verse_1 > verses_.getVerseCount()) return null;
 		return verses_.getVerse(verse_1 - 1);
 	}
 

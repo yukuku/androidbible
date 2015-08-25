@@ -214,8 +214,8 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		adapter.reloadAttributeMap();
 	}
 	
-	public String getVerse(int verse_1) {
-		return adapter.getVerse(verse_1);
+	@Nullable public String getVerseText(int verse_1) {
+		return adapter.getVerseText(verse_1);
 	}
 
 	/**
