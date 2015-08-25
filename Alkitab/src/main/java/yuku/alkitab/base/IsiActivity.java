@@ -456,7 +456,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		// listeners
 		lsSplit0.setParallelListener(parallelListener);
-		lsSplit0.setAttributeListener(attributeListener);
+		lsSplit0.setAttributeListener(new AttributeListener()); // have to be distinct from lsSplit1
 		lsSplit0.setInlineLinkSpanFactory(new VerseInlineLinkSpanFactory(lsSplit0));
 		lsSplit0.setSelectedVersesListener(lsSplit0_selectedVerses);
 		lsSplit0.setOnVerseScrollListener(lsSplit0_verseScroll);
@@ -466,7 +466,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		lsSplit1.setVerseSelectionMode(VersesView.VerseSelectionMode.multiple);
 		lsSplit1.setEmptyView(tSplitEmpty);
 		lsSplit1.setParallelListener(parallelListener);
-		lsSplit1.setAttributeListener(attributeListener);
+		lsSplit1.setAttributeListener(new AttributeListener()); // have to be distinct from lsSplit0
 		lsSplit1.setInlineLinkSpanFactory(new VerseInlineLinkSpanFactory(lsSplit1));
 		lsSplit1.setSelectedVersesListener(lsSplit1_selectedVerses);
 		lsSplit1.setOnVerseScrollListener(lsSplit1_verseScroll);
@@ -1740,16 +1740,14 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		history.add(ari_target);
 	}
 
-	VersesView.AttributeListener attributeListener = new VersesView.AttributeListener() {
+	class AttributeListener implements VersesView.AttributeListener {
 		void openBookmarkDialog(final long _id) {
 			final TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExisting(IsiActivity.this, _id);
-			dialog.setListener(new TypeBookmarkDialog.Listener() {
-				@Override public void onModifiedOrDeleted() {
-					lsSplit0.reloadAttributeMap();
+			dialog.setListener(() -> {
+				lsSplit0.reloadAttributeMap();
 
-					if (activeSplitVersion != null) {
-						lsSplit1.reloadAttributeMap();
-					}
+				if (activeSplitVersion != null) {
+					lsSplit1.reloadAttributeMap();
 				}
 			});
 			dialog.show();
@@ -1897,10 +1895,23 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		@Override
 		public void onHasMapsAttributeClick(final int ari) {
+			String locale = null;
+
+			if (this == lsSplit0.getAttributeListener()) {
+				locale = S.activeVersion.getLocale();
+			} else if (this == lsSplit1.getAttributeListener()) {
+				locale = activeSplitVersion.getLocale();
+			}
+
 			try {
-				startActivity(new Intent("palki.maps.action.SHOW_MAPS_DIALOG")
-						.putExtra("ari", ari)
-				);
+				final Intent intent = new Intent("palki.maps.action.SHOW_MAPS_DIALOG");
+				intent.putExtra("ari", ari);
+
+				if (locale != null) {
+					intent.putExtra("locale", locale);
+				}
+
+				startActivity(intent);
 			} catch (ActivityNotFoundException e) {
 				new MaterialDialog.Builder(IsiActivity.this)
 					.content(R.string.maps_could_not_open)

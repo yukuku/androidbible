@@ -48,8 +48,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	boolean[] hasMapsMap_;
 
 	LayoutInflater inflater_;
-	VersesView owner_;
-	
+
 	public VerseAdapter(Context context) {
 		density_ = context.getResources().getDisplayMetrics().density;
 		inflater_ = LayoutInflater.from(context);
@@ -185,15 +184,18 @@ public abstract class VerseAdapter extends BaseAdapter {
 		parallelListener_ = parallelListener;
 		notifyDataSetChanged();
 	}
+
+	public VersesView.AttributeListener getAttributeListener() {
+		return attributeListener_;
+	}
 	
 	public void setAttributeListener(VersesView.AttributeListener attributeListener) {
 		attributeListener_ = attributeListener;
 		notifyDataSetChanged();
 	}
 
-	public void setInlineLinkSpanFactory(final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, VersesView owner) {
+	public void setInlineLinkSpanFactory(final VerseInlineLinkSpan.Factory inlineLinkSpanFactory) {
 		inlineLinkSpanFactory_ = inlineLinkSpanFactory;
-		owner_ = owner;
 		notifyDataSetChanged();
 	}
 
