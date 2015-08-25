@@ -11,6 +11,7 @@ import android.view.ViewConfiguration;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
+import com.squareup.leakcanary.LeakCanary;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -89,6 +90,10 @@ public class App extends yuku.afw.App {
 			t.enableAdvertisingIdCollection(true);
 			APP_TRACKER = t;
 			analytics.enableAutoActivityReports(this);
+		}
+
+		{ // LeakCanary, also we need the Application instance.
+			LeakCanary.install(this);
 		}
 	}
 

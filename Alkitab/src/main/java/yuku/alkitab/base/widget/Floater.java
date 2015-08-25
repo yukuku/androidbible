@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.FloatMath;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
 import yuku.alkitab.debug.R;
@@ -134,7 +133,7 @@ public class Floater extends View {
 				grid_rows = 33;
 			} else {
 				grid_columns = 3;
-				grid_rows = (int) FloatMath.ceil((float) book_count / grid_columns);
+				grid_rows = (int) Math.ceil((float) book_count / grid_columns);
 			}
 
 			initFontSizes(h);
@@ -185,7 +184,7 @@ public class Floater extends View {
 				grid_rows = 33;
 			} else {
 				grid_columns = 4;
-				grid_rows = (int) FloatMath.ceil((float) chapter_count / grid_columns);
+				grid_rows = (int) Math.ceil((float) chapter_count / grid_columns);
 			}
 
 			initFontSizes(h);
@@ -229,7 +228,7 @@ public class Floater extends View {
 				grid_rows = 33;
 			} else {
 				grid_columns = 4;
-				grid_rows = (int) FloatMath.ceil((float) verse_count / grid_columns);
+				grid_rows = (int) Math.ceil((float) verse_count / grid_columns);
 			}
 
 			initFontSizes(h);

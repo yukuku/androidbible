@@ -174,12 +174,16 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		adapter.setParallelListener(parallelListener);
 	}
 
-	public void setAttributeListener(VersesView.AttributeListener attributeListener) {
+	public AttributeListener getAttributeListener() {
+		return adapter.getAttributeListener();
+	}
+
+	public void setAttributeListener(final AttributeListener attributeListener) {
 		adapter.setAttributeListener(attributeListener);
 	}
 
 	public void setInlineLinkSpanFactory(final VerseInlineLinkSpan.Factory inlineLinkSpanFactory) {
-		adapter.setInlineLinkSpanFactory(inlineLinkSpanFactory, this);
+		adapter.setInlineLinkSpanFactory(inlineLinkSpanFactory);
 	}
 
 	public void setDictionaryListener(CallbackSpan.OnClickListener<SingleViewVerseAdapter.DictionaryLinkInfo> listener) {
@@ -214,8 +218,8 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		adapter.reloadAttributeMap();
 	}
 	
-	public String getVerse(int verse_1) {
-		return adapter.getVerse(verse_1);
+	@Nullable public String getVerseText(int verse_1) {
+		return adapter.getVerseText(verse_1);
 	}
 
 	/**

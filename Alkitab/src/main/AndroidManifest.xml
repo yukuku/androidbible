@@ -498,6 +498,17 @@
 			</intent-filter>
 		</receiver>
 
+        <!-- remove extensions cache when other apps are installed/updated/removed -->
+        <receiver android:name="yuku.alkitab.base.util.ExtensionManager$InvalidateExtensionsReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_CHANGED" />
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+
 	</application>
 
 </manifest>

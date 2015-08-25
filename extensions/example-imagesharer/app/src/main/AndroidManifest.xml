@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest package="yuku.alkitab.imagesharer"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+	<application
+		android:allowBackup="true"
+		android:fullBackupContent="true"
+		android:icon="@mipmap/ic_launcher"
+		android:label="@string/app_name"
+		android:theme="@style/AppTheme">
+		<activity
+			android:name="yuku.alkitab.imagesharer.MainActivity"
+			android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name="yuku.alkitab.imagesharer.ShareVerseActivity"
+			android:enabled="true"
+			android:exported="true"
+			android:label="Share as Image">
+			<intent-filter>
+				<action android:name="yuku.alkitab.extensions.action.SHOW_VERSE_INFO" />
+			</intent-filter>
+
+			<meta-data
+				android:name="supportsMultipleVerses"
+				android:value="false" />
+			<meta-data
+				android:name="includeVerseText"
+				android:value="true" />
+			<meta-data
+				android:name="includeVerseTextFormatting"
+				android:value="false" />
+		</activity>
+
+	</application>
+
+</manifest>

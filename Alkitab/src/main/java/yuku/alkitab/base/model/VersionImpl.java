@@ -52,6 +52,11 @@ public class VersionImpl extends Version {
 		return bibleReader.getLongName();
 	}
 
+	@Override
+	public String getLocale() {
+		return bibleReader.getLocale();
+	}
+
 	/**
 	 * Some books can be null. Using this method, the return value indexed will have the same value as the {@link Book#bookId}.
 	 * i.e. return_value[bookId].bookId == bookId.

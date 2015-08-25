@@ -60,7 +60,7 @@ public class ShareActivity extends BaseActivity {
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreateWithNonToolbarUpButton(savedInstanceState);
 		setContentView(R.layout.activity_share);
-		
+
 		String title = getIntent().getStringExtra(Intent.EXTRA_TITLE);
 		setTitle(title);
 		
@@ -69,8 +69,22 @@ public class ShareActivity extends BaseActivity {
 		final List<ResolveInfo> rList = null;
 		
 		lsIntent = V.get(this, R.id.lsIntent);
-		
-		mPm = getPackageManager();
+
+		// fix for memory leak:
+		// https://github.com/square/leakcanary/blob/master/leakcanary-android/src/main/java/com/squareup/leakcanary/AndroidExcludedRefs.java
+		//
+		// UserManager has a static sInstance field that creates an instance and caches it the first
+		// time UserManager.get() is called. This instance is created with the outer context (which
+		// is an activity base context).
+		// Tracked here: https://code.google.com/p/android/issues/detail?id=173789
+		// Introduced by: https://github.com/android/platform_frameworks_base/commit
+		// /27db46850b708070452c0ce49daf5f79503fbde6
+		// Fix: trigger a call to UserManager.get() in Application.onCreate(), so that the
+		// UserManager instance gets cached with a reference to the application context.
+		//
+		// This fix: instead of calling this.getPackageManager(), call getPackageManager
+		// using the app context.
+		mPm = getApplicationContext().getPackageManager();
 		intent.setComponent(null);
 
 		// show progress dialog so that it does not appear to be hang

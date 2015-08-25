@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
@@ -47,8 +48,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	boolean[] hasMapsMap_;
 
 	LayoutInflater inflater_;
-	VersesView owner_;
-	
+
 	public VerseAdapter(Context context) {
 		density_ = context.getResources().getDisplayMetrics().density;
 		inflater_ = LayoutInflater.from(context);
@@ -184,15 +184,18 @@ public abstract class VerseAdapter extends BaseAdapter {
 		parallelListener_ = parallelListener;
 		notifyDataSetChanged();
 	}
+
+	public VersesView.AttributeListener getAttributeListener() {
+		return attributeListener_;
+	}
 	
 	public void setAttributeListener(VersesView.AttributeListener attributeListener) {
 		attributeListener_ = attributeListener;
 		notifyDataSetChanged();
 	}
 
-	public void setInlineLinkSpanFactory(final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, VersesView owner) {
+	public void setInlineLinkSpanFactory(final VerseInlineLinkSpan.Factory inlineLinkSpanFactory) {
 		inlineLinkSpanFactory_ = inlineLinkSpanFactory;
-		owner_ = owner;
 		notifyDataSetChanged();
 	}
 
@@ -292,9 +295,9 @@ public abstract class VerseAdapter extends BaseAdapter {
 		}
 	}
 
-	public String getVerse(int verse_1) {
-		if (verses_ == null) return "[?]"; //$NON-NLS-1$
-		if (verse_1 < 1 || verse_1 > verses_.getVerseCount()) return "[?]"; //$NON-NLS-1$
+	@Nullable public String getVerseText(int verse_1) {
+		if (verses_ == null) return null;
+		if (verse_1 < 1 || verse_1 > verses_.getVerseCount()) return null;
 		return verses_.getVerse(verse_1 - 1);
 	}
 
