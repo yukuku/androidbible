@@ -1146,14 +1146,20 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		private final java.text.DateFormat timeFormat = DateFormat.getTimeFormat(App.context);
 		private final java.text.DateFormat mediumDateFormat = DateFormat.getMediumDateFormat(App.context);
 
+		final String thisCreatorId = U.getInstallationId();
+		int defaultTextColor;
+
 		@Override
 		public View newView(final int position, final ViewGroup parent) {
-			return getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
+			final View res = getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
+			final TextView textView = (TextView) res;
+			defaultTextColor = textView.getCurrentTextColor();
+			return res;
 		}
 
 		@Override
 		public void bindView(final View view, final int position, final ViewGroup parent) {
-			TextView textView = (TextView) view;
+			final TextView textView = (TextView) view;
 
 			int ari = history.getAri(position);
 			SpannableStringBuilder sb = new SpannableStringBuilder();
@@ -1161,10 +1167,16 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			sb.append("  ");
 			int sb_len = sb.length();
 			sb.append(formatTimestamp(history.getTimestamp(position)));
-			sb.setSpan(new ForegroundColorSpan(0xff666666), sb_len, sb.length(), 0);
+			sb.setSpan(new ForegroundColorSpan(0xffaaaaaa), sb_len, sb.length(), 0);
 			sb.setSpan(new RelativeSizeSpan(0.7f), sb_len, sb.length(), 0);
 
 			textView.setText(sb);
+
+			if (thisCreatorId.equals(history.getCreatorId(position))) {
+				textView.setTextColor(defaultTextColor);
+			} else {
+				textView.setTextColor(0xff4db6ac);
+			}
 		}
 
 		private CharSequence formatTimestamp(final long timestamp) {
