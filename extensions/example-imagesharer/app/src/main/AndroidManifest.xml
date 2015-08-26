@@ -23,7 +23,7 @@
 			android:name="yuku.alkitab.imagesharer.ShareVerseActivity"
 			android:enabled="true"
 			android:exported="true"
-			android:label="Share as Image">
+			android:label="(example) Share as Image">
 			<intent-filter>
 				<action android:name="yuku.alkitab.extensions.action.SHOW_VERSE_INFO" />
 			</intent-filter>
@@ -39,6 +39,47 @@
 				android:value="false" />
 		</activity>
 
+		<!-- Here is another example activity that accepts multiple verses, without text formatting -->
+		<activity
+			android:name=".MultipleVersesPlainActivity"
+			android:enabled="true"
+			android:exported="true"
+			android:label="(example) Multiple verses: Plain">
+			<intent-filter>
+				<action android:name="yuku.alkitab.extensions.action.SHOW_VERSE_INFO" />
+			</intent-filter>
+
+			<meta-data
+				android:name="supportsMultipleVerses"
+				android:value="true" />
+			<meta-data
+				android:name="includeVerseText"
+				android:value="true" />
+			<meta-data
+				android:name="includeVerseTextFormatting"
+				android:value="false" />
+		</activity>
+
+		<!-- Here is another example activity that accepts multiple verses, including text formatting -->
+		<activity
+			android:name=".MultipleVersesFormattedActivity"
+			android:enabled="true"
+			android:exported="true"
+			android:label="(example) Multiple verses: Formatted">
+			<intent-filter>
+				<action android:name="yuku.alkitab.extensions.action.SHOW_VERSE_INFO" />
+			</intent-filter>
+
+			<meta-data
+				android:name="supportsMultipleVerses"
+				android:value="true" />
+			<meta-data
+				android:name="includeVerseText"
+				android:value="true" />
+			<meta-data
+				android:name="includeVerseTextFormatting"
+				android:value="true" />
+		</activity>
 	</application>
 
 </manifest>
