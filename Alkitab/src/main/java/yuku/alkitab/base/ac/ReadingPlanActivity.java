@@ -5,13 +5,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Configuration;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -65,7 +62,6 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	private static final int REQCODE_openList = 1;
 
 	DrawerLayout drawerLayout;
-	ActionBarDrawerToggle drawerToggle;
 	LeftDrawer.ReadingPlan leftDrawer;
 
 	private ReadingPlan readingPlan;
@@ -106,8 +102,10 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		final Toolbar toolbar = V.get(this, R.id.toolbar);
 		setSupportActionBar(toolbar);
 
-		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
-		drawerLayout.setDrawerListener(drawerToggle);
+		actionBar = getSupportActionBar();
+		assert actionBar != null;
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
 
 		llNavigations = V.get(this, R.id.llNavigations);
 		flNoData = V.get(this, R.id.flNoDataContainer);
@@ -234,11 +232,6 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 		bDownload = V.get(this, R.id.bDownload);
 
-		actionBar = getSupportActionBar();
-		actionBar.setDisplayShowHomeEnabled(Build.VERSION.SDK_INT < 18);
-		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setHomeButtonEnabled(true);
-
 		final long id = Preferences.getLong(Prefkey.active_reading_plan_id, 0);
 		loadReadingPlan(id);
 		prepareDropDownNavigation();
@@ -278,18 +271,6 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	}
 
 	@Override
-	protected void onPostCreate(final Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		drawerToggle.syncState();
-	}
-
-	@Override
-	public void onConfigurationChanged(final Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		drawerToggle.onConfigurationChanged(newConfig);
-	}
-
-	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_reading_plan, menu);
 		return true;
@@ -309,12 +290,11 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		if (drawerToggle.onOptionsItemSelected(item)) {
-			return true;
-		}
-
 		final int itemId = item.getItemId();
-		if (itemId == R.id.menuDownload) {
+		if (itemId == android.R.id.home) {
+			leftDrawer.toggleDrawer();
+
+		} else if (itemId == R.id.menuDownload) {
 			downloadReadingPlanList();
 			return true;
 		} else if (itemId == R.id.menuDelete) {

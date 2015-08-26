@@ -4,16 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Configuration;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
@@ -187,7 +184,6 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 	public static final DevotionKind DEFAULT_DEVOTION_KIND = DevotionKind.SH;
 
 	DrawerLayout drawerLayout;
-	ActionBarDrawerToggle drawerToggle;
 	LeftDrawer.Devotion leftDrawer;
 
 	TwofingerLinearLayout devotion_root;
@@ -286,13 +282,10 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		final Toolbar toolbar = V.get(this, R.id.toolbar);
 		setSupportActionBar(toolbar);
 
-		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
-		drawerLayout.setDrawerListener(drawerToggle);
-
 		final ActionBar actionBar = getSupportActionBar();
-		actionBar.setDisplayShowHomeEnabled(Build.VERSION.SDK_INT < 18);
+		assert actionBar != null;
 		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setHomeButtonEnabled(true);
+		actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
 
 		devotion_root = V.get(this, R.id.devotion_root);
 		lContent = V.get(this, R.id.lContent);
@@ -310,18 +303,6 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		new Prefetcher(currentKind).start();
 
 		display();
-	}
-
-	@Override
-	protected void onPostCreate(final Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		drawerToggle.syncState();
-	}
-
-	@Override
-	public void onConfigurationChanged(final Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		drawerToggle.onConfigurationChanged(newConfig);
 	}
 
 	@Override protected void onStart() {
@@ -361,12 +342,11 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (drawerToggle.onOptionsItemSelected(item)) {
-			return true;
-		}
-
 		final int itemId = item.getItemId();
-		if (itemId == R.id.menuCopy) {
+		if (itemId == android.R.id.home) {
+			leftDrawer.toggleDrawer();
+
+		} else if (itemId == R.id.menuCopy) {
 			U.copyToClipboard(currentKind.title + "\n" + lContent.getText());
 			
 			Toast.makeText(this, R.string.renungan_sudah_disalin, Toast.LENGTH_SHORT).show();
