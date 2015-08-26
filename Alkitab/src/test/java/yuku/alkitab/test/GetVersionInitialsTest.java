@@ -27,6 +27,11 @@ public class GetVersionInitialsTest extends TestCase {
 			}
 
 			@Override
+			public String getLocale() {
+				return null;
+			}
+
+			@Override
 			public int getMaxBookIdPlusOne() {
 				return 0;
 			}
