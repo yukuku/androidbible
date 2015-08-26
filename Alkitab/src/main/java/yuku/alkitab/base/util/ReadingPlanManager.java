@@ -1,5 +1,6 @@
 package yuku.alkitab.base.util;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.ReadingPlan;
@@ -70,13 +71,19 @@ public class ReadingPlanManager {
 		S.getDb().insertOrUpdateMultipleReadingPlanProgresses(gid, readingCodes, System.currentTimeMillis());
 	}
 
-	public static ReadingPlan readVersion1(InputStream inputStream, String name) {
-		ReadingPlan readingPlan = new ReadingPlan();
+	@NonNull public static ReadingPlan readVersion1(InputStream inputStream, String name) {
 		try {
+			ReadingPlan readingPlan = new ReadingPlan();
+
 			final BintexReader reader = new BintexReader(inputStream);
 			try {
-				if (!readInfo(readingPlan.info, name, reader)) return null;
-				if (readingPlan.info.version != 1) return null;
+				if (!readInfo(readingPlan.info, name, reader)) {
+					throw new RuntimeException("Cannot read info");
+				}
+
+				if (readingPlan.info.version != 1) {
+					throw new RuntimeException("Reading plan version is not 1");
+				}
 
 				int[][] dailyVerses = new int[readingPlan.info.duration][];
 				int counter = 0;
@@ -84,8 +91,7 @@ public class ReadingPlanManager {
 				while (counter < readingPlan.info.duration) {
 					int count = reader.readUint8();
 					if (count == -1) {
-						Log.d(TAG, "Error reading.");
-						return null;
+						throw new RuntimeException("Error reading.");
 					}
 
 					int[] aris = new int[count];
@@ -102,15 +108,13 @@ public class ReadingPlanManager {
 			}
 
 			if (reader.readUint8() != 0) {
-				Log.d(TAG, "No footer.");
-				return null;
+				throw new RuntimeException("No footer.");
 			}
 
+			return readingPlan;
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
-
-		return readingPlan;
 	}
 
 	/**
