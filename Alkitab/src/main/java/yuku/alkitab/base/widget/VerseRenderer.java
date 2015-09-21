@@ -35,7 +35,7 @@ public class VerseRenderer {
 		}
 	}
 
-	static class VerseNumberSpan extends MetricAffectingSpan {
+	public static class VerseNumberSpan extends MetricAffectingSpan {
 		private final boolean applyColor;
 	
 		public VerseNumberSpan(boolean applyColor) {
@@ -86,9 +86,10 @@ public class VerseRenderer {
 
 	/**
 	 * @param dontPutSpacingBefore this verse is right after a pericope title or on the 0th position
-	 * @param optionalVersesView must be not-null if xrefListener is not-null 
+	 * @param optionalVersesView must be not-null if xrefListener is not-null
+	 * @return how many characters was used before the real start of verse text. This will be > 0 if the verse number is embedded inside lText.
 	 */
-	public static void render(final TextView lText, final TextView lVerseNumber, final int ari, final String text, final String verseNumberText, final int highlightColor, final boolean checked, final boolean dontPutSpacingBefore, final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, VersesView optionalVersesView) {
+	public static int render(final TextView lText, final TextView lVerseNumber, final int ari, final String text, final String verseNumberText, final int highlightColor, final boolean checked, final boolean dontPutSpacingBefore, final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, VersesView optionalVersesView) {
 		// @@ = start a verse containing paragraphs or formatting
 		// @0 = start with indent 0 [paragraph]
 		// @1 = start with indent 1 [paragraph]
@@ -110,8 +111,7 @@ public class VerseRenderer {
 		// Formatted verses start with "@@".
 		// Second character must be '@' too, if not it's wrong, we will fallback to simple render.
 		if (text_len < 2 || text.charAt(0) != '@' || text.charAt(1) != '@') {
-			simpleRender(lText, lVerseNumber, ari, text, verseNumberText, highlightColor, checked, optionalVersesView);
-			return;
+			return simpleRender(lText, lVerseNumber, ari, text, verseNumberText, highlightColor, checked, optionalVersesView);
 		}
 
 		// optimization, to prevent repeated calls to charAt()
@@ -153,13 +153,14 @@ public class VerseRenderer {
 		// this has two uses
 		// - to check whether a verse number has been written
 		// - to check whether we need to put a new line when encountering a new para
-		int startPosAfterVerseNumber = 0;
+		final int startPosAfterVerseNumber;
 
 		int pos = 2; // we start after "@@"
 
 		// write verse number inline only when no @[1234^] on the beginning of text
 		if (text_len >= 4 && text_c[pos] == '@' && (text_c[pos+1] == '^' || (text_c[pos+1] >= '1' && text_c[pos+1] <= '4'))) {
 			// don't write verse number now
+			startPosAfterVerseNumber = 0;
 		} else {
 			sb.append(verseNumberText);
 			sb.setSpan(new VerseRenderer.VerseNumberSpan(!checked), 0, sb.length(), 0);
@@ -267,7 +268,7 @@ public class VerseRenderer {
 		
 		// show verse on lVerseNumber if not shown in lText yet
 		if (startPosAfterVerseNumber > 0) {
-			lVerseNumber.setText(""); //$NON-NLS-1$
+			lVerseNumber.setText("");
 		} else {
 			lVerseNumber.setText(verseNumberText);
 			Appearances.applyVerseNumberAppearance(lVerseNumber);
@@ -275,6 +276,8 @@ public class VerseRenderer {
 				lVerseNumber.setTextColor(0xff000000); // override with black!
 			}
 		}
+
+		return startPosAfterVerseNumber;
 	}
 
 	static void processSpecialTag(final SpannableStringBuilder sb, final StringBuilder tag, final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, final int ari) {
@@ -360,15 +363,19 @@ public class VerseRenderer {
 
 	/**
 	 * @param optionalVersesView must be not-null if xrefListener is not-null
+	 * @return how many characters was used before the real start of verse text. This will be > 0 if the verse number is embedded inside lText.
 	 */
-	public static void simpleRender(TextView lText, TextView lVerseNumber, int ari, String text, String verseNumberText, int highlightColor, boolean checked, VersesView optionalVersesView) {
+	public static int simpleRender(TextView lText, TextView lVerseNumber, int ari, String text, String verseNumberText, int highlightColor, boolean checked, VersesView optionalVersesView) {
 		// initialize lVerseNumber to have no padding first
 		lVerseNumber.setPadding(0, 0, 0, 0);
 		
 		SpannableStringBuilder sb = new SpannableStringBuilder();
 	
 		// verse number
-		sb.append(verseNumberText).append("  ").append(text);
+		sb.append(verseNumberText).append("  ");
+		final int startPosAfterVerseNumber = sb.length();
+
+		sb.append(text);
 		sb.setSpan(new VerseRenderer.VerseNumberSpan(!checked), 0, verseNumberText.length(), 0);
 	
 		// verse text
@@ -380,5 +387,7 @@ public class VerseRenderer {
 		
 		lText.setText(sb);
 		lVerseNumber.setText("");
+
+		return startPosAfterVerseNumber;
 	}
 }

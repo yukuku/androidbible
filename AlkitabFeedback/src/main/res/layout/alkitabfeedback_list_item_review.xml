@@ -28,8 +28,6 @@
     <TextView android:id="@android:id/text1"
         style="?android:textAppearanceSmall"
         android:textColor="@color/alkitabfeedback_text_light"
-        android:textAllCaps="true"
-        android:textStyle="bold"
         android:ellipsize="end"
         android:layout_width="100sp"
         android:layout_height="wrap_content"
@@ -39,6 +37,7 @@
         style="?android:textAppearanceMedium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:textColor="#303030"
         android:layout_weight="1" />
 
 </LinearLayout>

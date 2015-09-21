@@ -68,7 +68,7 @@
 					android:id="@+id/tAboutTextDesc"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_marginBottom="32dp"
+					android:layout_marginBottom="24dp"
 					android:layout_marginTop="16dp"
 					android:autoLink="all"
 					android:gravity="center_horizontal"
@@ -81,13 +81,48 @@
 			</LinearLayout>
 
 
-			<LinearLayout
+			<FrameLayout
+				android:id="@+id/bAnnouncements"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:foreground="?selectableItemBackground"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="#2a2a2a"
+                android:elevation="4dp"
+				android:gravity="center_horizontal"
+				android:orientation="vertical">
+
+				<TextView
+					android:id="@+id/tAnnouncements"
+					android:layout_width="match_parent"
+					android:layout_height="48dp"
+					android:gravity="center_vertical"
+					android:text="@string/about_announcements"
+					android:textAppearance="?android:textAppearanceMedium"
+					android:textColor="#fff"
+					android:layout_marginLeft="24dp"
+					android:layout_marginRight="24dp" />
+
+				<android.support.v4.widget.ContentLoadingProgressBar
+					android:id="@+id/progressAnnouncements"
+					style="?android:progressBarStyleHorizontal"
+					android:layout_width="match_parent"
+					android:layout_height="6dp"
+					android:indeterminate="true" />
+
+			</FrameLayout>
+
+			<FrameLayout
 				android:id="@+id/bHelp"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginLeft="16dp"
-				android:layout_marginRight="16dp"
-				android:background="#262626"
+				android:foreground="?selectableItemBackground"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:background="#2a2a2a"
+                android:elevation="4dp"
 				android:gravity="center_horizontal"
 				android:orientation="vertical"
 				android:paddingLeft="24dp"
@@ -101,16 +136,18 @@
 					android:textAppearance="?android:textAppearanceMedium"
 					android:textColor="#fff" />
 
-			</LinearLayout>
+			</FrameLayout>
 
-			<LinearLayout
+			<FrameLayout
 				android:id="@+id/bMaterialSources"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginLeft="16dp"
-				android:layout_marginRight="16dp"
-				android:layout_marginTop="16dp"
-				android:background="#262626"
+				android:foreground="?selectableItemBackground"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:background="#2a2a2a"
+                android:elevation="4dp"
 				android:gravity="center_horizontal"
 				android:orientation="vertical"
 				android:paddingLeft="24dp"
@@ -124,16 +161,18 @@
 					android:textAppearance="?android:textAppearanceMedium"
 					android:textColor="#fff" />
 
-			</LinearLayout>
+			</FrameLayout>
 
-			<LinearLayout
+			<FrameLayout
 				android:id="@+id/bCredits"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginLeft="16dp"
-				android:layout_marginRight="16dp"
-				android:layout_marginTop="16dp"
-				android:background="#262626"
+				android:foreground="?selectableItemBackground"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:background="#2a2a2a"
+                android:elevation="4dp"
 				android:gravity="center_horizontal"
 				android:orientation="vertical"
 				android:paddingLeft="24dp"
@@ -147,16 +186,18 @@
 					android:textAppearance="?android:textAppearanceMedium"
 					android:textColor="#fff" />
 
-			</LinearLayout>
+			</FrameLayout>
 
-			<LinearLayout
-				android:id="@+id/bBetaFeedback"
+			<FrameLayout
+				android:id="@+id/bFeedback"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginLeft="16dp"
-				android:layout_marginRight="16dp"
-				android:layout_marginTop="16dp"
-				android:background="#262626"
+				android:foreground="?selectableItemBackground"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:background="#2a2a2a"
+                android:elevation="4dp"
 				android:gravity="center_horizontal"
 				android:orientation="vertical"
 				android:paddingLeft="24dp"
@@ -166,16 +207,16 @@
 					android:layout_width="match_parent"
 					android:layout_height="48dp"
 					android:gravity="center_vertical"
-					android:text="@string/about_beta_feedback"
+					android:text="@string/beri_saran_title"
 					android:textAppearance="?android:textAppearanceMedium"
 					android:textColor="#fff" />
 
-			</LinearLayout>
+			</FrameLayout>
 
 			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginBottom="32dp"
+				android:layout_marginBottom="24dp"
 				android:layout_marginLeft="16dp"
 				android:layout_marginRight="16dp"
 				android:gravity="center_horizontal"

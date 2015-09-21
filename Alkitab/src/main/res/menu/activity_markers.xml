@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
+	<item
+		android:id="@+id/menuMigrateFromV3"
+		android:title="@string/marker_migrate_title"
+		app:showAsAction="never"/>
+	<item
+		android:id="@+id/menuLabelSort"
+		android:title="@string/menuLabelSort"
+		app:showAsAction="never"/>
+</menu>

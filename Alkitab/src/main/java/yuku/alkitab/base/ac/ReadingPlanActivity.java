@@ -1,20 +1,18 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.RelativeSizeSpan;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,7 +27,8 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import com.google.gson.GsonBuilder;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
@@ -58,6 +57,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftDrawer.ReadingPlan.Listener {
 	public static final String TAG = ReadingPlanActivity.class.getSimpleName();
+
+	private static final int REQCODE_openList = 1;
 
 	DrawerLayout drawerLayout;
 	ActionBarDrawerToggle drawerToggle;
@@ -118,11 +119,17 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
 
-		long id = Preferences.getLong(Prefkey.active_reading_plan_id, 0);
+		final long id = Preferences.getLong(Prefkey.active_reading_plan_id, 0);
 		loadReadingPlan(id);
-		loadReadingPlanProgress();
 		prepareDropDownNavigation();
 		loadDayNumber();
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+		loadReadingPlanProgress();
 		prepareDisplay();
 	}
 
@@ -180,14 +187,14 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			return;
 		}
 
-		byte[] binaryReadingPlan = S.getDb().getBinaryReadingPlanById(id);
+		Pair<String, byte[]> nameAndData = S.getDb().getReadingPlanNameAndData(id);
 
 		long startTime = 0;
-		if (id == 0 || binaryReadingPlan == null) {
+		if (id == 0 || nameAndData == null) {
 			id = downloadedReadingPlanInfos.get(0).id;
 			startTime = downloadedReadingPlanInfos.get(0).startTime;
 
-			binaryReadingPlan = S.getDb().getBinaryReadingPlanById(id);
+			nameAndData = S.getDb().getReadingPlanNameAndData(id);
 		} else {
 			for (ReadingPlan.ReadingPlanInfo info : downloadedReadingPlanInfos) {
 				if (id == info.id) {
@@ -196,14 +203,22 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			}
 		}
 
-		final InputStream inputStream = new ByteArrayInputStream(binaryReadingPlan);
-		final ReadingPlan res = ReadingPlanManager.readVersion1(inputStream);
+		final InputStream inputStream = new ByteArrayInputStream(nameAndData.second);
+		final ReadingPlan res = ReadingPlanManager.readVersion1(inputStream, nameAndData.first);
 		res.info.id = id;
 		res.info.startTime = startTime;
 		readingPlan = res;
 		Preferences.setLong(Prefkey.active_reading_plan_id, id);
 
-		leftDrawer.getHandle().setDescription(TextUtils.expandTemplate(getText(R.string.rp_description_rendering), readingPlan.info.title, String.valueOf(readingPlan.info.duration), readingPlan.info.description));
+		leftDrawer.getHandle().setDescription(
+			TextUtils.expandTemplate(
+				getText(R.string.rp_description_with_id),
+				readingPlan.info.title,
+				String.valueOf(readingPlan.info.duration),
+				readingPlan.info.name,
+				readingPlan.info.description
+			)
+		);
 	}
 
 	private void loadReadingPlanProgress() {
@@ -349,7 +364,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			}
 
 			private void showCalendar() {
-				Calendar calendar = Calendar.getInstance();
+				Calendar calendar = GregorianCalendar.getInstance();
 				calendar.setTimeInMillis(readingPlan.info.startTime);
 				calendar.add(Calendar.DATE, dayNumber);
 
@@ -379,22 +394,22 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	}
 
 	private void resetReadingPlan() {
-		new AlertDialog.Builder(this)
-		.setMessage(getString(R.string.rp_reset))
-		.setPositiveButton(R.string.ok, (dialog, which) -> {
-			int firstUnreadDay = findFirstUnreadDay();
-			Calendar calendar = GregorianCalendar.getInstance();
-			calendar.add(Calendar.DATE, -firstUnreadDay);
-			S.getDb().updateStartDate(readingPlan.info.id, calendar.getTime().getTime());
-			loadReadingPlan(readingPlan.info.id);
-			loadDayNumber();
-			readingPlanAdapter.load();
-			readingPlanAdapter.notifyDataSetChanged();
+		new AlertDialogWrapper.Builder(this)
+			.setMessage(R.string.rp_reset)
+			.setPositiveButton(R.string.ok, (dialog, which) -> {
+				int firstUnreadDay = findFirstUnreadDay();
+				Calendar calendar = GregorianCalendar.getInstance();
+				calendar.add(Calendar.DATE, -firstUnreadDay);
+				S.getDb().updateStartDate(readingPlan.info.id, calendar.getTime().getTime());
+				loadReadingPlan(readingPlan.info.id);
+				loadDayNumber();
+				readingPlanAdapter.load();
+				readingPlanAdapter.notifyDataSetChanged();
 
-			updateButtonStatus();
-		})
-		.setNegativeButton(R.string.cancel, null)
-		.show();
+				updateButtonStatus();
+			})
+			.setNegativeButton(R.string.cancel, null)
+			.show();
 	}
 
 	private int findFirstUnreadDay() {
@@ -412,21 +427,21 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	}
 
 	private void deleteReadingPlan() {
-		new AlertDialog.Builder(this)
-		.setMessage(getString(R.string.rp_deletePlan, readingPlan.info.title))
-		.setPositiveButton(R.string.delete, (dialog, which) -> {
-			S.getDb().deleteReadingPlanById(readingPlan.info.id);
-			readingPlan = null;
-			Preferences.remove(Prefkey.active_reading_plan_id);
-			loadReadingPlan(0);
-			loadReadingPlanProgress();
-			loadDayNumber();
-			prepareDropDownNavigation();
-			prepareDisplay();
-			supportInvalidateOptionsMenu();
-		})
-		.setNegativeButton(R.string.cancel, null)
-		.show();
+		new AlertDialogWrapper.Builder(this)
+			.setMessage(getString(R.string.rp_deletePlan, readingPlan.info.title))
+			.setPositiveButton(R.string.delete, (dialog, which) -> {
+				S.getDb().deleteReadingPlanById(readingPlan.info.id);
+				readingPlan = null;
+				Preferences.remove(Prefkey.active_reading_plan_id);
+				loadReadingPlan(0);
+				loadReadingPlanProgress();
+				loadDayNumber();
+				prepareDropDownNavigation();
+				prepareDisplay();
+				supportInvalidateOptionsMenu();
+			})
+			.setNegativeButton(R.string.cancel, null)
+			.show();
 	}
 
 	private void changeDay(int day) {
@@ -459,104 +474,54 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		return leftDrawer;
 	}
 
-	static class ReadingPlanServerEntry {
-		public String name;
-		public String title;
-		public String description;
-		public int day_count;
-	}
-
 	private void downloadReadingPlanList() {
-		final AtomicBoolean cancelled = new AtomicBoolean(false);
-		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.rp_download_reading_plan_list_progress), true, true);
-		pd.setOnDismissListener(dialog -> cancelled.set(true));
-
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					download();
-				} catch (Exception e) {
-					Log.e(TAG, "downloading reading plan list", e);
-					runOnUiThread(() -> new AlertDialog.Builder(ReadingPlanActivity.this)
-					.setMessage(getString(R.string.rp_download_reading_plan_list_failed))
-					.setPositiveButton(R.string.ok, null)
-					.show());
-				} finally {
-					pd.dismiss();
-				}
-			}
-
-			/** run on bg thread */
-			void download() throws Exception {
-				final String json = App.downloadString("https://alkitab-host.appspot.com/rp/list");
-				final ReadingPlanServerEntry[] entries = new GsonBuilder().create().fromJson(json, ReadingPlanServerEntry[].class);
-
-				if (entries == null) return;
-				if (cancelled.get()) return;
-				runOnUiThread(() -> onReadingPlanListDownloadFinished(entries));
-			}
-
-			/** run on ui thread */
-			void onReadingPlanListDownloadFinished(final ReadingPlanServerEntry[] entries) {
-				final List<ReadingPlanServerEntry> readingPlanDownloadableEntries = new ArrayList<>();
-				final List<String> downloadedNames = S.getDb().listReadingPlanNames();
-				for (final ReadingPlanServerEntry entry : entries) {
-					if (!downloadedNames.contains(entry.name)) {
-						readingPlanDownloadableEntries.add(entry);
-					}
-				}
-
-				if (readingPlanDownloadableEntries.size() == 0) {
-					new AlertDialog.Builder(ReadingPlanActivity.this)
-					.setMessage(getString(R.string.rp_noReadingPlanAvailable))
-					.setPositiveButton(R.string.ok, null)
-					.show();
-					return;
-				}
-
-				final AlertDialog.Builder builder = new AlertDialog.Builder(ReadingPlanActivity.this);
-				builder.setAdapter(new EasyAdapter() {
-					@Override
-					public View newView(final int position, final ViewGroup parent) {
-						return getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
-					}
-
-					@Override
-					public void bindView(final View view, final int position, final ViewGroup parent) {
-						final TextView textView = (TextView) view;
-						final ReadingPlanServerEntry entry = readingPlanDownloadableEntries.get(position);
-						final SpannableStringBuilder sb = new SpannableStringBuilder();
-						sb.append(entry.title);
-						final int sb_len = sb.length();
-						sb.append(" ");
-						sb.append(getString(R.string.rp_download_day_count_days, entry.day_count));
-						sb.append("\n");
-						sb.append(entry.description);
-						sb.setSpan(new RelativeSizeSpan(0.6f), sb_len, sb.length(), 0);
-						textView.setText(sb);
-					}
-
-					@Override
-					public int getCount() {
-						return readingPlanDownloadableEntries.size();
-					}
-				}, (dialog, which) -> onReadingPlanSelected(readingPlanDownloadableEntries.get(which)))
-				.setNegativeButton(R.string.cancel, null)
-				.show();
-			}
-
-			/** run on ui thread */
-			void onReadingPlanSelected(final ReadingPlanServerEntry entry) {
-				downloadReadingPlanFromServer(entry);
-			}
-		}.start();
+		startActivityForResult(HelpActivity.createIntent("https://alkitab-host.appspot.com/rp/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName())), REQCODE_openList);
 	}
 
-	void downloadReadingPlanFromServer(final ReadingPlanServerEntry entry) {
+	@Override
+	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		if (requestCode == REQCODE_openList && resultCode == RESULT_OK) {
+			final Uri uri = data.getData();
+			if (uri != null) {
+				downloadByAlkitabUri(uri);
+			}
+			return;
+		}
+
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	private void downloadByAlkitabUri(final Uri uri) {
+		if (!"alkitab".equals(uri.getScheme()) || !"/addon/download".equals(uri.getPath()) || !"readingplan".equals(uri.getQueryParameter("kind")) || !"rpb".equals(uri.getQueryParameter("type")) || uri.getQueryParameter("name") == null) {
+			new MaterialDialog.Builder(this)
+				.content("Invalid uri:\n\n" + uri)
+				.positiveText(R.string.ok)
+				.show();
+			return;
+		}
+
+		final String name = uri.getQueryParameter("name");
+
+		downloadReadingPlanFromServer(name);
+	}
+
+	void downloadReadingPlanFromServer(final String name) {
+		if (S.getDb().listReadingPlanNames().contains(name)) {
+			new MaterialDialog.Builder(this)
+				.content(R.string.rp_download_already_have)
+				.positiveText(R.string.ok)
+				.show();
+
+			return;
+		}
+
 		final AtomicBoolean cancelled = new AtomicBoolean(false);
-		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.rp_download_reading_plan_progress), true, true);
-		pd.setOnDismissListener(dialog -> cancelled.set(true));
+
+		final MaterialDialog pd = new MaterialDialog.Builder(this)
+			.content(R.string.rp_download_reading_plan_progress)
+			.progress(true, 0)
+			.dismissListener(dialog -> cancelled.set(true))
+			.show();
 
 		new Thread() {
 			@Override
@@ -564,33 +529,41 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				try {
 					download();
 				} catch (Exception e) {
-					Log.e(TAG, "downloading reading plan data", e);
-					new AlertDialog.Builder(ReadingPlanActivity.this)
-					.setMessage(getString(R.string.rp_download_reading_plan_failed))
-					.setPositiveButton(R.string.ok, null)
-					.show();
+					if (cancelled.get()) {
+						Log.e(TAG, "downloading reading plan data", e);
+						new AlertDialogWrapper.Builder(ReadingPlanActivity.this)
+							.setMessage(getString(R.string.rp_download_reading_plan_failed))
+							.setPositiveButton(R.string.ok, null)
+							.show();
+					}
 				} finally {
 					pd.dismiss();
 				}
 			}
 
-			/** run on bg thread */
+			/**
+			 * run on bg thread
+			 */
 			void download() throws Exception {
-				final byte[] bytes = App.downloadBytes("https://alkitab-host.appspot.com/rp/get_rp?name=" + entry.name);
+				final byte[] bytes = App.downloadBytes("https://alkitab-host.appspot.com/rp/get_rp?name=" + name);
 
 				if (cancelled.get()) return;
 				runOnUiThread(() -> onReadingPlanDownloadFinished(bytes));
 			}
 
-			/** run on ui thread */
+			/**
+			 * run on ui thread
+			 */
 			void onReadingPlanDownloadFinished(final byte[] data) {
-				final long id = ReadingPlanManager.insertReadingPlanToDb(data);
+				if (cancelled.get()) return;
+
+				final long id = ReadingPlanManager.insertReadingPlanToDb(data, name);
 
 				if (id == 0) {
-					new AlertDialog.Builder(ReadingPlanActivity.this)
-					.setMessage(getString(R.string.rp_download_reading_plan_data_corrupted))
-					.setPositiveButton(R.string.ok, null)
-					.show();
+					new AlertDialogWrapper.Builder(ReadingPlanActivity.this)
+						.setMessage(getString(R.string.rp_download_reading_plan_data_corrupted))
+						.setPositiveButton(R.string.ok, null)
+						.show();
 					return;
 				}
 
@@ -635,7 +608,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	}
 
 	public String getReadingDateHeader(final int dayNumber) {
-		Calendar calendar = Calendar.getInstance();
+		Calendar calendar = GregorianCalendar.getInstance();
 		calendar.setTimeInMillis(readingPlan.info.startTime);
 		calendar.add(Calendar.DATE, dayNumber);
 
@@ -795,11 +768,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 					CheckBox checkBox = (CheckBox) layout.findViewWithTag(i);
 					if (checkBox == null) {
-						checkBox = new CheckBox(ReadingPlanActivity.this);
-						checkBox.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) (48 * density)));
+						checkBox = (CheckBox) getLayoutInflater().inflate(R.layout.item_reading_plan_one_day_checkbox, layout, false);
 						checkBox.setTag(i);
-						checkBox.setFocusable(false);
-						checkBox.setTextSize(16.f);
 						layout.addView(checkBox);
 					}
 

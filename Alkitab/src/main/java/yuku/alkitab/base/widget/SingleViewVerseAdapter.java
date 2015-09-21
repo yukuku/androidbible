@@ -1,13 +1,17 @@
 package yuku.alkitab.base.widget;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.text.SpannableStringBuilder;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
-import yuku.afw.V;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.util.Appearances;
@@ -20,7 +24,20 @@ import yuku.alkitab.util.IntArrayList;
 
 public class SingleViewVerseAdapter extends VerseAdapter {
 	public static final String TAG = SingleViewVerseAdapter.class.getSimpleName();
-	
+	private SparseBooleanArray dictionaryModeAris;
+
+	public static class DictionaryLinkInfo {
+		public String orig_text;
+		public String key;
+
+		public DictionaryLinkInfo(final String orig_text, final String key) {
+			this.orig_text = orig_text;
+			this.key = key;
+		}
+	}
+
+	CallbackSpan.OnClickListener<DictionaryLinkInfo> dictionaryListener_;
+
 	public SingleViewVerseAdapter(Context context) {
 		super(context);
 	}
@@ -31,7 +48,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 
 		if (id >= 0) {
 			// VERSE. not pericope
-			int verse_1 = id + 1;
+			final int verse_1 = id + 1;
 
 			boolean checked = false;
 			if (parent instanceof ListView) {
@@ -45,23 +62,21 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				res = (VerseItem) convertView;
 			}
 
-			final VerseTextView lText = V.get(res, R.id.lText);
-			final TextView lVerseNumber = V.get(res, R.id.lVerseNumber);
-
 			final int ari = Ari.encode(book_.bookId, chapter_1_, verse_1);
 			final String text = verses_.getVerse(id);
 			final String verseNumberText = verses_.getVerseNumberText(id);
 			final boolean dontPutSpacingBefore = (position > 0 && itemPointer_[position - 1] < 0) || position == 0;
 			final int highlightColor = (highlightColorMap_ != null && highlightColorMap_[id] != -1) ? U.alphaMixHighlight(highlightColorMap_[id]) : -1;
 
-			VerseRenderer.render(lText, lVerseNumber, ari, text, verseNumberText, highlightColor, checked, dontPutSpacingBefore, inlineLinkSpanFactory_, owner_);
+			final VerseTextView lText = res.lText;
+			final int startVerseTextPos = VerseRenderer.render(lText, res.lVerseNumber, ari, text, verseNumberText, highlightColor, checked, dontPutSpacingBefore, inlineLinkSpanFactory_, owner_);
 
 			Appearances.applyTextAppearance(lText);
 			if (checked) {
 				lText.setTextColor(0xff000000); // override with black!
 			}
 
-			final AttributeView attributeView = (AttributeView) res.findViewById(R.id.view_attributes);
+			final AttributeView attributeView = res.attributeView;
 			attributeView.setBookmarkCount(bookmarkCountMap_ == null ? 0 : bookmarkCountMap_[id]);
 			attributeView.setNoteCount(noteCountMap_ == null ? 0 : noteCountMap_[id]);
 			attributeView.setProgressMarkBits(progressMarkBitsMap_ == null ? 0 : progressMarkBitsMap_[id]);
@@ -70,6 +85,45 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			res.setCollapsed(text.length() == 0 && !attributeView.isShowingSomething());
 
 			res.setAri(ari);
+
+			/*
+			 * Dictionary mode is activated on either of these conditions:
+			 * 1. user manually activate dictionary mode after selecting verses
+			 * 2. automatic lookup is on and this verse is selected (checked)
+ 			 */
+			if ((dictionaryModeAris != null && dictionaryModeAris.get(ari))
+				|| (checked && Preferences.getBoolean(res.getContext().getString(R.string.pref_autoDictionaryAnalyze_key), res.getContext().getResources().getBoolean(R.bool.pref_autoDictionaryAnalyze_default)))
+				) {
+				final ContentResolver cr = res.getContext().getContentResolver();
+
+				final CharSequence renderedText = lText.getText();
+				final SpannableStringBuilder verseText = renderedText instanceof SpannableStringBuilder ? (SpannableStringBuilder) renderedText : new SpannableStringBuilder(renderedText);
+
+				// we have to exclude the verse numbers from analyze text
+				final String analyzeString = verseText.toString().substring(startVerseTextPos);
+
+				final Uri uri = Uri.parse("content://org.sabda.kamus.provider/analyze").buildUpon().appendQueryParameter("text", analyzeString).build();
+				final Cursor c = cr.query(uri, null, null, null, null);
+				if (c != null) {
+					try {
+						final int col_offset = c.getColumnIndexOrThrow("offset");
+						final int col_len = c.getColumnIndexOrThrow("len");
+						final int col_key = c.getColumnIndexOrThrow("key");
+
+						while (c.moveToNext()) {
+							final int offset = c.getInt(col_offset);
+							final int len = c.getInt(col_len);
+							final String key = c.getString(col_key);
+
+							verseText.setSpan(new CallbackSpan<>(new DictionaryLinkInfo(analyzeString.substring(offset, offset + len), key), dictionaryListener_), startVerseTextPos + offset, startVerseTextPos + offset + len, 0);
+						}
+					} finally {
+						c.close();
+					}
+
+					lText.setText(verseText);
+				}
+			}
 
 //			{ // DUMP
 //				Log.d(TAG, "==== DUMP verse " + (id + 1));
@@ -175,4 +229,14 @@ public class SingleViewVerseAdapter extends VerseAdapter {
         sb.append(parallel);
         sb.setSpan(new CallbackSpan<>(parallel, parallelListener_), sb_len, sb.length(), 0);
     }
+
+	public void setDictionaryModeAris(final SparseBooleanArray aris) {
+		this.dictionaryModeAris = aris;
+		notifyDataSetChanged();
+	}
+
+	public void setDictionaryListener(final CallbackSpan.OnClickListener<DictionaryLinkInfo> listener) {
+		this.dictionaryListener_ = listener;
+		notifyDataSetChanged();
+	}
 }

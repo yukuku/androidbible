@@ -1,12 +1,10 @@
 package yuku.alkitab.base.util;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.os.AsyncTask;
+import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
@@ -14,10 +12,11 @@ import android.text.style.RelativeSizeSpan;
 import android.view.Menu;
 import android.view.View;
 import android.widget.PopupMenu;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.okhttp.Call;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.U;
+import yuku.alkitab.base.storage.SongDb;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.OptionalGzipInputStream;
 import yuku.kpri.model.Song;
@@ -25,14 +24,30 @@ import yuku.kpri.model.Song;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SongBookUtil {
 	public static final String TAG = SongBookUtil.class.getSimpleName();
 
+	private static final int POPUP_ID_ALL = -1;
+	private static final int POPUP_ID_MORE = -2;
+
 	public interface OnSongBookSelectedListener {
-		void onSongBookSelected(boolean all, SongBookInfo songBookInfo);
+		void onAllSelected();
+		void onSongBookSelected(String name);
+		void onMoreSelected();
+	}
+
+	public static abstract class DefaultOnSongBookSelectedListener implements OnSongBookSelectedListener {
+		@Override
+		public void onAllSelected() {}
+
+		@Override
+		public void onSongBookSelected(final String name) {}
+
+		@Override
+		public void onMoreSelected() {}
 	}
 
 	public interface OnDownloadSongBookListener {
@@ -41,166 +56,156 @@ public class SongBookUtil {
 	}
 
 	public static class SongBookInfo {
-		public String bookName;
-		public int dataFormatVersion;
-		public String downloadUrl;
-		public String description;
+		public String name;
+		public String title;
 		public String copyright;
 	}
 
-	static List<SongBookInfo> knownSongBooks;
+	public static boolean isSupportedDataFormatVersion(final int dataFormatVersion) {
+		return dataFormatVersion == 3;
+	}
 
-	static {
-		knownSongBooks = new ArrayList<>();
+	/**
+	 * For migration
+	 */
+	@Nullable
+	public static SongBookInfo getSongBookInfo(@NonNull SQLiteDatabase db, @NonNull final String bookName) {
+		final SongBookInfo info = SongDb.getSongBookInfo(db, bookName);
 
-		for (String k: new String[] {
-			// bookName :: dataFormatVersion :: downloadUrl :: description :: copyright
-			"BE   :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/be-4.ser.gz   :: Buku Ende                             :: (c) Huria Kristen Batak Protestan",
-			"KJ   :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/kj-4.ser.gz   :: Kidung Jemaat                         :: (c) Yayasan Musik Gereja di Indonesia (YAMUGER)",
-			"KPKA :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/kpka-4.ser.gz :: Kidung Pasamuan Kristen Anyar         :: (c) Badan Musyawarah Gereja-gereja Jawa (BMGJ)",
-			"KPKL :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/kpkl-4.ser.gz :: Kidung Pasamuan Kristen Lawas         :: (c) Taman Pustaka Kristen Jogjakarta",
-			"KPPK :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/kppk-4.ser.gz :: Kidung Puji-Pujian Kristen            :: (c) Seminari Alkitab Asia Tenggara (SAAT)",
-			"KPRI :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/kpri-4.ser.gz :: Kidung Persekutuan Reformed Injili    :: (c) Sinode Gereja Reformed Injili Indonesia (GRII)",
-			"NKB  :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/nkb-4.ser.gz  :: Nyanyikanlah Kidung Baru              :: (c) Badan Pengerja Majelis Sinode Gereja Kristen Indonesia (GKI)",
-			"NKI  :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/nki-4.ser.gz  :: Nyanyian Kemenangan Iman              :: (c) Kalam Hidup",
-			"NP   :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/np-4.ser.gz   :: Nyanyian Pujian                       :: (c) Lembaga Literatur Baptis",
-			"NR   :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/nr-4.ser.gz   :: Nafiri Rohani                         :: (c) Sinode Gereja Kristus",
-			"PKJ  :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/pkj-4.ser.gz  :: Pelengkap Kidung Jemaat               :: (c) Yayasan Musik Gereja di Indonesia (YAMUGER)",
-			"PPK  :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/ppk-4.ser.gz  :: Puji-pujian Kristen                   :: (c) Seminari Alkitab Asia Tenggara (SAAT)",
-		}) {
-			String[] ss = k.split("::"); //$NON-NLS-1$
-			SongBookInfo bookInfo = new SongBookInfo();
-			bookInfo.bookName = ss[0].trim();
-			bookInfo.dataFormatVersion = Integer.parseInt(ss[1].trim());
-			bookInfo.downloadUrl = ss[2].trim();
-			bookInfo.description = ss[3].trim();
-			bookInfo.copyright = ss[4].trim();
-			knownSongBooks.add(bookInfo);
+		return fallbackSongBookInfo(bookName, info);
+	}
+
+	@Nullable
+	public static SongBookInfo getSongBookInfo(@NonNull final String bookName) {
+		final SongBookInfo info = S.getSongDb().getSongBookInfo(bookName);
+
+		return fallbackSongBookInfo(bookName, info);
+	}
+
+	@Nullable
+	static SongBookInfo fallbackSongBookInfo(final @NonNull String bookName, final SongBookInfo info) {
+		if (info != null) {
+			return info;
+		}
+
+		final String title;
+		switch (bookName) {
+			case "BE": title = "Buku Ende"; break;
+			case "KJ": title = "Kidung Jemaat"; break;
+			case "KPKA": title = "Kidung Pasamuan Kristen Anyar"; break;
+			case "KPKL": title = "Kidung Pasamuan Kristen Lawas"; break;
+			case "KPPK": title = "Kidung Puji-Pujian Kristen"; break;
+			case "KPRI": title = "Kidung Persekutuan Reformed Injili"; break;
+			case "NKB": title = "Nyanyikanlah Kidung Baru"; break;
+			case "NKI": title = "Nyanyian Kemenangan Iman"; break;
+			case "NP": title = "Nyanyian Pujian"; break;
+			case "NR": title = "Nafiri Rohani"; break;
+			case "PKJ": title = "Pelengkap Kidung Jemaat"; break;
+			case "PPK": title = "Puji-pujian Kristen"; break;
+			default: title = null;
+		}
+
+		if (title == null) {
+			return null;
+		} else {
+			final SongBookInfo fallback = new SongBookInfo();
+			fallback.name = bookName;
+			fallback.title = title;
+			fallback.copyright = null;
+			return fallback;
 		}
 	}
 
-	public static SongBookInfo getSongBookInfo(final String bookName) {
-		for (final SongBookInfo songBookInfo : knownSongBooks) {
-			if (U.equals(songBookInfo.bookName, bookName)) {
-				return songBookInfo;
-			}
-		}
-		return null;
-	}
-
-	public static PopupMenu getSongBookPopupMenu(Context context, boolean withAll, View anchor) {
+	public static PopupMenu getSongBookPopupMenu(Context context, boolean withAll, boolean withMore, View anchor) {
 		final PopupMenu res = new PopupMenu(context, anchor);
 		final Menu menu = res.getMenu();
 
 		if (withAll) {
-			SpannableStringBuilder sb = new SpannableStringBuilder(context.getString(R.string.sn_bookselector_all) + '\n');
+			final SpannableStringBuilder sb = new SpannableStringBuilder(context.getString(R.string.sn_bookselector_all) + '\n');
 			int sb_len = sb.length();
 			sb.append(context.getString(R.string.sn_bookselector_all_desc));
 			sb.setSpan(new RelativeSizeSpan(0.7f), sb_len, sb.length(), 0);
 			sb.setSpan(new ForegroundColorSpan(0xffa0a0a0), sb_len, sb.length(), 0);
-			menu.add(0, 0, 0, sb);
+			menu.add(0, POPUP_ID_ALL, 0, sb);
 		}
-		int n = 1;
-		for (SongBookInfo bookInfo : knownSongBooks) {
-			SpannableStringBuilder sb = new SpannableStringBuilder(bookInfo.bookName + '\n');
+
+		final List<SongBookInfo> infos = S.getSongDb().listSongBookInfos();
+		for (int i = 0; i < infos.size(); i++) {
+			final SongBookInfo info = infos.get(i);
+			final SpannableStringBuilder sb = new SpannableStringBuilder(info.name + '\n');
 			int sb_len = sb.length();
-			sb.append(Html.fromHtml(bookInfo.description));
+			sb.append(Html.fromHtml(info.title));
 			sb.setSpan(new RelativeSizeSpan(0.7f), sb_len, sb.length(), 0);
 			sb.setSpan(new ForegroundColorSpan(0xffa0a0a0), sb_len, sb.length(), 0);
-			menu.add(0, n++, 0, sb);
+			menu.add(0, i + 1, 0, sb);
 		}
+
+		if (withMore) {
+			menu.add(0, POPUP_ID_MORE, 0, R.string.sn_bookselector_more);
+		}
+
 		return res;
 	}
 
-	public static AlertDialog getSongBookDialog(Context context, final DialogInterface.OnClickListener listener) {
-		final CharSequence[] items = new CharSequence[knownSongBooks.size()];
-		for (int i = 0; i < knownSongBooks.size(); i++) {
-			final SongBookInfo bookInfo = knownSongBooks.get(i);
-			SpannableStringBuilder sb = new SpannableStringBuilder(bookInfo.bookName + '\n');
-			int sb_len = sb.length();
-			sb.append(Html.fromHtml(bookInfo.description));
-			sb.setSpan(new RelativeSizeSpan(0.7f), sb_len, sb.length(), 0);
-			sb.setSpan(new ForegroundColorSpan(0xffa0a0a0), sb_len, sb.length(), 0);
-			items[i] = sb;
-		}
-		return new AlertDialog.Builder(context)
-			.setItems(items, listener)
-			.create();
-	}
-
 	public static String getCopyright(final String bookName) {
-		for (final SongBookInfo knownSongBook : knownSongBooks) {
-			if (U.equals(bookName, knownSongBook.bookName)) {
-				return knownSongBook.description + " " + knownSongBook.copyright;
-			}
-		}
-		return "";
+		final SongBookInfo info = getSongBookInfo(bookName);
+		if (info == null) return null;
+		return info.copyright;
 	}
 
 	public static PopupMenu.OnMenuItemClickListener getSongBookOnMenuItemClickListener(final OnSongBookSelectedListener listener) {
 		return item -> {
 			final int itemId = item.getItemId();
-			if (itemId == 0) {
-				listener.onSongBookSelected(true, null);
-			} else {
-				listener.onSongBookSelected(false, knownSongBooks.get(itemId - 1));
+			switch (itemId) {
+				case POPUP_ID_ALL:
+					listener.onAllSelected();
+					break;
+				case POPUP_ID_MORE:
+					listener.onMoreSelected();
+					break;
+				default:
+					listener.onSongBookSelected(S.getSongDb().listSongBookInfos().get(itemId - 1).name);
+					break;
 			}
 			return true;
 		};
 	}
 
-	public static Dialog.OnClickListener getSongBookOnDialogClickListener(final OnSongBookSelectedListener listener) {
-		return (dialog, which) -> listener.onSongBookSelected(false, knownSongBooks.get(which));
-	}
+	public static void downloadSongBook(final Activity activity, final SongBookInfo songBookInfo, final int dataFormatVersion, final OnDownloadSongBookListener listener) {
+		final AtomicBoolean cancelled = new AtomicBoolean();
 
-	public static void downloadSongBook(final Activity activity, final SongBookInfo songBookInfo, final OnDownloadSongBookListener listener) {
-		new AsyncTask<Void, Void, List<Song>>() {
-			ProgressDialog pd;
-			Exception ex;
-			
-			@Override protected void onPreExecute() {
-				pd = ProgressDialog.show(activity, null, activity.getString(R.string.sn_downloading_ellipsis), true, true);
-				pd.setOnDismissListener(dialog -> cancel(false));
-			}
-			
-			@SuppressWarnings("unchecked") @Override protected List<Song> doInBackground(Void... params) {
-				List<Song> songs;
+		MaterialDialog pd = new MaterialDialog.Builder(activity)
+			.content(R.string.sn_downloading_ellipsis)
+			.progress(true, 0)
+			.dismissListener(dialog -> cancelled.set(true))
+			.show();
 
-				try {
-					final Call call = App.downloadCall(songBookInfo.downloadUrl);
+		new Thread(() -> {
+			try {
+				final Call call = App.downloadCall("https://alkitab-host.appspot.com/addon/songs/get_songs?name=" + songBookInfo.name + "&dataFormatVersion=" + dataFormatVersion);
 
-					final InputStream ogis = new OptionalGzipInputStream(call.execute().body().byteStream());
-					final ObjectInputStream ois = new ObjectInputStream(ogis);
-					songs = (List<Song>) ois.readObject();
-					ois.close();
-				} catch (IOException|ClassNotFoundException e) {
-					this.ex = e;
-					return null;
+				final InputStream ogis = new OptionalGzipInputStream(call.execute().body().byteStream());
+				final ObjectInputStream ois = new ObjectInputStream(ogis);
+				@SuppressWarnings("unchecked") final List<Song> songs = (List<Song>) ois.readObject();
+				ois.close();
+
+				if (cancelled.get()) {
+					listener.onFailedOrCancelled(songBookInfo, null);
+					return;
 				}
 
-				if (isCancelled()) {
-					return null;
-				} else {
-					// insert songs to db
-					S.getSongDb().storeSongs(songBookInfo.bookName, songs, songBookInfo.dataFormatVersion);
-					
-					return songs;
-				}
-			}
-			
-			@Override protected void onPostExecute(List<Song> result) {
+				// insert songs to db
+				S.getSongDb().insertSongBookInfo(songBookInfo);
+				S.getSongDb().storeSongs(songBookInfo.name, songs, dataFormatVersion);
+
+				activity.runOnUiThread(() -> listener.onDownloadedAndInserted(songBookInfo));
+
+			} catch (IOException | ClassNotFoundException e) {
+				activity.runOnUiThread(() -> listener.onFailedOrCancelled(songBookInfo, e));
+
+			} finally {
 				pd.dismiss();
-				if (result == null) {
-					listener.onFailedOrCancelled(songBookInfo, ex);
-				} else {
-					listener.onDownloadedAndInserted(songBookInfo);
-				}
 			}
-			
-			@Override protected void onCancelled() {
-				pd.dismiss();
-				listener.onFailedOrCancelled(songBookInfo, null);
-			}
-		}.execute();
+		}).start();
 	}
 }

@@ -94,7 +94,7 @@ public class History {
 		entry.gid = Gid.newGid();
 		entry.ari = ari;
 		entry.timestamp = timestamp;
-		entry.creator_id = Sync.getInstallationId();
+		entry.creator_id = U.getInstallationId();
 		entries.add(0, entry);
 
 		// and remove if overflow

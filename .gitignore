@@ -1,7 +1,3 @@
-# Legacy Android
-bin/
-gen/
-
 # Android Studio
 .gradle
 /local.properties
@@ -13,6 +9,9 @@ gen/
 # according to https://intellij-support.jetbrains.com/entries/23393067
 /.idea/libraries/*.xml
 /.idea/gradle.xml
+
+# according to https://code.google.com/p/android/issues/detail?id=156708
+*.iml
 
 # Mac
 .DS_Store

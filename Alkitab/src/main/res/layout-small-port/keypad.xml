@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@color/keypad_bg"
-    tools:ignore="HardcodedText,SpUsage" >
+    tools:ignore="HardcodedText,SpUsage">
 
     <TableRow
         android:layout_width="wrap_content"
@@ -15,31 +14,31 @@
             android:id="@+id/bDigit1"
             android:layout_width="64dp"
             android:layout_height="48dp"
-            android:text="1"
             android:background="?selectableItemBackgroundBorderless"
+            android:fontFamily="sans-serif-light"
+            android:text="1"
             android:textColor="@color/keypad_text_color"
-            android:textSize="25dp"
-            android:fontFamily="sans-serif-light"/>
+            android:textSize="25dp"/>
 
         <Button
             android:id="@+id/bDigit2"
             android:layout_width="64dp"
             android:layout_height="48dp"
-            android:text="2"
             android:background="?selectableItemBackgroundBorderless"
+            android:fontFamily="sans-serif-light"
+            android:text="2"
             android:textColor="@color/keypad_text_color"
-            android:textSize="25dp"
-            android:fontFamily="sans-serif-light"/>
+            android:textSize="25dp"/>
 
         <Button
             android:id="@+id/bDigit3"
             android:layout_width="64dp"
             android:layout_height="48dp"
-            android:text="3"
             android:background="?selectableItemBackgroundBorderless"
+            android:fontFamily="sans-serif-light"
+            android:text="3"
             android:textColor="@color/keypad_text_color"
-            android:textSize="25dp"
-            android:fontFamily="sans-serif-light"/>
+            android:textSize="25dp"/>
     </TableRow>
 
     <TableRow
@@ -50,31 +49,31 @@
             android:id="@+id/bDigit4"
             android:layout_width="64dp"
             android:layout_height="48dp"
-            android:text="4"
             android:background="?selectableItemBackgroundBorderless"
+            android:fontFamily="sans-serif-light"
+            android:text="4"
             android:textColor="@color/keypad_text_color"
-            android:textSize="25dp"
-            android:fontFamily="sans-serif-light"/>
+            android:textSize="25dp"/>
 
         <Button
             android:id="@+id/bDigit5"
             android:layout_width="64dp"
             android:layout_height="48dp"
-            android:text="5"
             android:background="?selectableItemBackgroundBorderless"
+            android:fontFamily="sans-serif-light"
+            android:text="5"
             android:textColor="@color/keypad_text_color"
-            android:textSize="25dp"
-            android:fontFamily="sans-serif-light"/>
+            android:textSize="25dp"/>
 
         <Button
             android:id="@+id/bDigit6"
             android:layout_width="64dp"
             android:layout_height="48dp"
-            android:text="6"
             android:background="?selectableItemBackgroundBorderless"
+            android:fontFamily="sans-serif-light"
+            android:text="6"
             android:textColor="@color/keypad_text_color"
-            android:textSize="25dp"
-            android:fontFamily="sans-serif-light"/>
+            android:textSize="25dp"/>
     </TableRow>
 
     <TableRow
@@ -86,31 +85,31 @@
             android:id="@+id/bDigit7"
             android:layout_width="64dp"
             android:layout_height="48dp"
-            android:text="7"
             android:background="?selectableItemBackgroundBorderless"
+            android:fontFamily="sans-serif-light"
+            android:text="7"
             android:textColor="@color/keypad_text_color"
-            android:textSize="25dp"
-            android:fontFamily="sans-serif-light"/>
+            android:textSize="25dp"/>
 
         <Button
             android:id="@+id/bDigit8"
             android:layout_width="64dp"
             android:layout_height="48dp"
-            android:text="8"
             android:background="?selectableItemBackgroundBorderless"
+            android:fontFamily="sans-serif-light"
+            android:text="8"
             android:textColor="@color/keypad_text_color"
-            android:textSize="25dp"
-            android:fontFamily="sans-serif-light"/>
+            android:textSize="25dp"/>
 
         <Button
             android:id="@+id/bDigit9"
             android:layout_width="64dp"
             android:layout_height="48dp"
-            android:text="9"
             android:background="?selectableItemBackgroundBorderless"
+            android:fontFamily="sans-serif-light"
+            android:text="9"
             android:textColor="@color/keypad_text_color"
-            android:textSize="25dp"
-            android:fontFamily="sans-serif-light"/>
+            android:textSize="25dp"/>
     </TableRow>
 
     <TableRow
@@ -122,33 +121,33 @@
             android:id="@+id/bDigitC"
             android:layout_width="64dp"
             android:layout_height="48dp"
-            android:text="C"
             android:background="?selectableItemBackgroundBorderless"
+            android:fontFamily="sans-serif-light"
+            android:text="C"
             android:textColor="@color/keypad_text_color"
             android:textSize="25dp"
-            android:textStyle="bold"
-            android:fontFamily="sans-serif-light"/>
+            android:textStyle="bold"/>
 
         <Button
             android:id="@+id/bDigit0"
             android:layout_width="64dp"
             android:layout_height="48dp"
-            android:text="0"
             android:background="?selectableItemBackgroundBorderless"
+            android:fontFamily="sans-serif-light"
+            android:text="0"
             android:textColor="@color/keypad_text_color"
-            android:textSize="25dp"
-            android:fontFamily="sans-serif-light"/>
+            android:textSize="25dp"/>
 
         <Button
             android:id="@+id/bDigitSwitch"
             android:layout_width="64dp"
             android:layout_height="48dp"
-            android:text=":"
             android:background="?selectableItemBackgroundBorderless"
+            android:fontFamily="sans-serif-light"
+            android:text=":"
             android:textColor="@color/keypad_text_color"
             android:textSize="25dp"
-            android:textStyle="bold"
-            android:fontFamily="sans-serif-light"/>
+            android:textStyle="bold"/>
     </TableRow>
 
 </TableLayout>

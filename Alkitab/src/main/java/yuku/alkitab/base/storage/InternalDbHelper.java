@@ -82,10 +82,6 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			createIndexMarker(db);
 		}
 
-		if (oldVersion <= 71) { // 72: 2.0.0 too
-			createIndexDevotion(db);
-		}
-
 		if (oldVersion > 50 && oldVersion <= 102) { // 103: 2.7.1
 			addShortNameColumnAndIndexToEdisi(db);
 		}
@@ -155,6 +151,14 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		if (oldVersion >= 14000163 && oldVersion < 14000172) {
 			db.execSQL("drop index if exists index_Marker_Label_03");
 		}
+
+		if (oldVersion < 14000200) { // 14000200: v4.1
+			// change Devotion table to new format
+			// ignore old data, no need to migrate
+			db.execSQL("drop table if exists Renungan");
+			createTableDevotion(db);
+			createIndexDevotion(db);
+		}
 	}
 
 	private void createTableMarker(SQLiteDatabase db) {
@@ -182,22 +186,24 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	}
 
 	private void createTableDevotion(SQLiteDatabase db) {
-		db.execSQL("create table if not exists " + Db.TABLE_Devotion + " (" +
-		"_id integer primary key autoincrement, " +
-		Db.Devotion.name + " text, " +
-		Db.Devotion.date + " text, " +
-		Db.Devotion.header + " text, " +
-		Db.Devotion.title + " text, " +
-		Db.Devotion.body + " text, " +
-		Db.Devotion.readyToUse + " integer," +
-		Db.Devotion.touchTime + " integer)");
+		final StringBuilder sb = new StringBuilder("create table if not exists " + Table.Devotion.tableName() + " ( _id integer primary key ");
+		for (Table.Devotion field: Table.Devotion.values()) {
+			sb.append(',');
+			sb.append(field.name());
+			sb.append(' ');
+			sb.append(field.type.name());
+			if (field.suffix != null) {
+				sb.append(' ');
+				sb.append(field.suffix);
+			}
+		}
+		sb.append(")");
+		db.execSQL(sb.toString());
 	}
 
 	private void createIndexDevotion(SQLiteDatabase db) {
-		db.execSQL("create index if not exists index_101 on " + Db.TABLE_Devotion + " (" + Db.Devotion.name + ")");
-		db.execSQL("create index if not exists index_102 on " + Db.TABLE_Devotion + " (" + Db.Devotion.name + ", " + Db.Devotion.date + ")");
-		db.execSQL("create index if not exists index_103 on " + Db.TABLE_Devotion + " (" + Db.Devotion.date + ")");
-		db.execSQL("create index if not exists index_104 on " + Db.TABLE_Devotion + " (" + Db.Devotion.touchTime + ")");
+		db.execSQL("create index if not exists index_Devotion_01 on " + Table.Devotion.tableName() + " (" + Table.Devotion.name + ", " + Table.Devotion.date + ", " + Table.Devotion.dataFormatVersion + ")");
+		db.execSQL("create index if not exists index_Devotion_02 on " + Table.Devotion.tableName() + " (" + Table.Devotion.touchTime + ")");
 	}
 
 	private void createTableEdisi(SQLiteDatabase db) {

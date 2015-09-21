@@ -15,7 +15,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="1"
-            android:background="#303030"
+			android:background="?selectableItemBackgroundBorderless"
             android:textSize="28dp"
 			android:fontFamily="sans-serif-light" />
 
@@ -24,7 +24,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="2"
-            android:background="#303030"
+			android:background="?selectableItemBackgroundBorderless"
             android:textSize="28dp"
 			android:fontFamily="sans-serif-light" />
 
@@ -33,7 +33,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="3"
-            android:background="#303030"
+			android:background="?selectableItemBackgroundBorderless"
             android:textSize="28dp"
 			android:fontFamily="sans-serif-light" />
 
@@ -42,7 +42,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="4"
-            android:background="#303030"
+			android:background="?selectableItemBackgroundBorderless"
             android:textSize="28dp"
 			android:fontFamily="sans-serif-light" />
 
@@ -51,7 +51,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="5"
-            android:background="#303030"
+            android:background="?selectableItemBackgroundBorderless"
             android:textSize="28dp"
 			android:fontFamily="sans-serif-light" />
 
@@ -60,7 +60,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="C"
-            android:background="#303030"
+            android:background="?selectableItemBackgroundBorderless"
             android:textSize="28dp"
             android:textStyle="bold"
 			android:fontFamily="sans-serif-light" />
@@ -75,7 +75,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="6"
-            android:background="#303030"
+            android:background="?selectableItemBackgroundBorderless"
             android:textSize="28dp"
 			android:fontFamily="sans-serif-light" />
 
@@ -84,7 +84,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="7"
-            android:background="#303030"
+            android:background="?selectableItemBackgroundBorderless"
             android:textSize="28dp"
 			android:fontFamily="sans-serif-light" />
 
@@ -93,7 +93,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="8"
-            android:background="#303030"
+            android:background="?selectableItemBackgroundBorderless"
             android:textSize="28dp"
 			android:fontFamily="sans-serif-light" />
 
@@ -102,7 +102,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="9"
-            android:background="#303030"
+            android:background="?selectableItemBackgroundBorderless"
             android:textSize="28dp"
 			android:fontFamily="sans-serif-light" />
 
@@ -111,7 +111,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="0"
-            android:background="#303030"
+            android:background="?selectableItemBackgroundBorderless"
             android:textSize="28dp"
 			android:fontFamily="sans-serif-light" />
 
@@ -120,7 +120,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text=":"
-            android:background="#303030"
+            android:background="?selectableItemBackgroundBorderless"
             android:textSize="28dp"
             android:textStyle="bold"
 			android:fontFamily="sans-serif-light" />

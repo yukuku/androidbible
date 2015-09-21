@@ -6,8 +6,8 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="240dp"
 	android:layout_height="match_parent"
-	android:background="#262626"
-	android:elevation="4dp"
+    android:background="#263238"
+    android:elevation="4dp"
 	android:fitsSystemWindows="true"
 	tools:ignore="Overdraw">
 
@@ -127,42 +127,41 @@
             android:gravity="left|center_vertical"
             android:text="@string/menuDisplay" />
 
-		<Switch
+		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/cFullScreen"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
             android:textColor="#ffffff"
             android:gravity="left|center_vertical"
-            android:paddingLeft="16dp"
-			android:paddingRight="4dp"
+            android:layout_marginLeft="16dp"
+			android:layout_marginRight="16dp"
             android:textSize="16sp"
             android:fontFamily="sans-serif-regular"
             android:text="@string/menuFullScreen" />
 
-		<Switch
+		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/cNightMode"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
             android:textColor="#ffffff"
             android:gravity="left|center_vertical"
-            android:paddingLeft="16dp"
-			android:paddingRight="4dp"
+			android:layout_marginLeft="16dp"
+			android:layout_marginRight="16dp"
             android:textSize="16sp"
             android:fontFamily="sans-serif-regular"
             android:text="@string/menuNightMode" />
 
-		<Switch
+		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/cSplitVersion"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
             android:textColor="#ffffff"
             android:gravity="left|center_vertical"
-            android:paddingLeft="16dp"
-			android:paddingRight="4dp"
+			android:layout_marginLeft="16dp"
+			android:layout_marginRight="16dp"
             android:textSize="16sp"
             android:fontFamily="sans-serif-regular"
             android:text="@string/menuSplitVersion" />
-
 
 		<include
 			layout="@layout/left_drawer_footer"

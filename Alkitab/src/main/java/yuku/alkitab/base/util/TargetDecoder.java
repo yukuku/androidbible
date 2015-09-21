@@ -15,6 +15,7 @@ public class TargetDecoder {
 	/**
 	 * Returns ari ranges for encoded target. Targets can be encoded using any of the following (using examples):
 	 * a:[ari start]-[ari end],[ari single verse]
+	 * ari:[ari start]-[ari end],[ari single verse] (alternative format)
 	 * o:[osis start]-[osis end],[osis single verse]
 	 * lid:[lid start]-[lid end],[lid single verse]
 	 *
@@ -29,6 +30,9 @@ public class TargetDecoder {
 		} else if (encoded.startsWith("a:")) { // ari ref
 			type = 2;
 			rangesJoined = encoded.substring(2);
+		} else if (encoded.startsWith("ari:")) { // ari ref
+			type = 2;
+			rangesJoined = encoded.substring(4);
 		} else if (encoded.startsWith("lid:")) { // lid ref
 			type = 3;
 			rangesJoined = encoded.substring(4);

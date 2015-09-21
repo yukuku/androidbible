@@ -106,13 +106,9 @@ echo -n 'Last commit hash: '
 LAST_COMMIT_HASH=`git log -1 --format='format:%h'`
 echo $LAST_COMMIT_HASH
 
-echo 'Copying yuku-android-util...'
-mkdir $BUILD_DIR/yuku-android-util
-rsync -a --exclude ".git/" ../yuku-android-util/ $BUILD_DIR/yuku-android-util/
-
 echo "Copying $SUPER_PROJECT_NAME..."
 mkdir $BUILD_DIR/$SUPER_PROJECT_NAME
-rsync -a --exclude ".git/" ./ $BUILD_DIR/$SUPER_PROJECT_NAME/
+rsync -a --exclude ".git/" --exclude "*/build/" ./ $BUILD_DIR/$SUPER_PROJECT_NAME/
 
 echo 'Going to' $BUILD_DIR/$SUPER_PROJECT_NAME
 pushd $BUILD_DIR/$SUPER_PROJECT_NAME
@@ -136,7 +132,7 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 		sed -i '' "s/applicationId .*/applicationId '$BUILD_PACKAGE_NAME'/" ../../build.gradle
 
 		echo "Replacing verse provider name following package name: '$BUILD_PACKAGE_NAME.provider'"
-		sed -i '' 's/android:authorities="yuku.alkitab.provider.debug"/android:authorities="'$BUILD_PACKAGE_NAME.provider'"/' AndroidManifest.xml
+		sed -i '' 's/android:authorities="yuku.alkitab.debug.provider"/android:authorities="'$BUILD_PACKAGE_NAME.provider'"/' AndroidManifest.xml
 
 		echo 'Replacing GCM component names to this app package name:' $BUILD_PACKAGE_NAME
 		sed -i '' 's/<category android:name="yuku.alkitab.debug"/<category android:name="'$BUILD_PACKAGE_NAME'"/' AndroidManifest.xml
@@ -144,10 +140,10 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 
 		if [ ! -f res/values/file_providers.xml ] ; then echo 'file_providers.xml does not exist!' ; exit 1 ; fi
 		echo "Replacing file provider name following package name: '$BUILD_PACKAGE_NAME.file_provider'"
-		sed -i '' 's/yuku.alkitab.file_provider.debug/'$BUILD_PACKAGE_NAME'.file_provider/' res/values/file_providers.xml
+		sed -i '' 's/yuku.alkitab.debug.file_provider/'$BUILD_PACKAGE_NAME'.file_provider/' res/values/file_providers.xml
 
 		echo "Replacing sync provider name following package name: '$BUILD_PACKAGE_NAME.sync_provider'"
-		sed -i '' 's/yuku.alkitab.sync_provider.debug/'$BUILD_PACKAGE_NAME'.sync_provider/' res/values/sync_providers.xml
+		sed -i '' 's/yuku.alkitab.debug.sync_provider/'$BUILD_PACKAGE_NAME'.sync_provider/' res/values/sync_providers.xml
 
 		echo "Replacing account type / authority name following package name: '$BUILD_PACKAGE_NAME'"
 		sed -i '' 's/yuku.alkitab.debug/'$BUILD_PACKAGE_NAME'/' res/values/account_type.xml
@@ -174,6 +170,7 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 		overlay 'drawable-xhdpi/ic_launcher.png' 'res/drawable-xhdpi/ic_launcher.png'
 		overlay 'drawable-xxhdpi/ic_launcher.png' 'res/drawable-xxhdpi/ic_launcher.png'
 		overlay 'drawable-xxxhdpi/ic_launcher.png' 'res/drawable-xxxhdpi/ic_launcher.png'
+		overlay 'drawable-nodpi/daily_verse_app_widget_preview.png' 'res/drawable-nodpi/daily_verse_app_widget_preview.png'
 
 		# END BUILD-SPECIFIC
 
@@ -200,7 +197,8 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 
 	chmod +x ./gradlew
 	echo 'Running gradlew from' `pwd`
-	./gradlew --offline clean assemblePlainRelease
+	./gradlew --no-daemon assemblePlainRelease --info || echo GAGAAAAAALLLLL
+	./gradlew --no-daemon assemblePlainRelease --info 
 
 	FINAL_APK="$BUILD_MAIN_PROJECT_DIR/build/outputs/apk/$MAIN_PROJECT_NAME-plain-release.apk"
 

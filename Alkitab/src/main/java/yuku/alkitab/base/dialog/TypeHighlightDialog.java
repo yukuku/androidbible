@@ -1,13 +1,10 @@
 package yuku.alkitab.base.dialog;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.os.Build;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.debug.R;
@@ -16,7 +13,7 @@ import yuku.alkitab.util.IntArrayList;
 import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class TypeHighlightDialog {
-	final AlertDialog alert;
+	final MaterialDialog dialog;
 	final Listener listener;
 	
 	View dialogView;
@@ -64,29 +61,26 @@ public class TypeHighlightDialog {
 		this.selectedVerses = selectedVerses;
 		this.listener = listener;
 
-		final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-		final Context contextForLayout = Build.VERSION.SDK_INT >= 11? builder.getContext(): context;
+		final MaterialDialog.Builder builder = new MaterialDialog.Builder(context)
+			.customView(R.layout.dialog_edit_highlight, false)
+			.iconRes(R.drawable.ic_attr_highlight)
+			.positiveText(R.string.ok) // this does not actually do anything except closing the dialog.
+			.neutralText(R.string.delete)
+			.callback(new MaterialDialog.ButtonCallback() {
+				@Override
+				public void onNeutral(final MaterialDialog dialog) {
+					select(-1);
+				}
+			});
 
-		this.dialogView = LayoutInflater.from(contextForLayout).inflate(R.layout.dialog_edit_highlight, null);
-
-		this.alert = builder
-		.setView(dialogView)
-		.setIcon(R.drawable.ic_attr_highlight)
-		.setPositiveButton(R.string.ok, null) // this does not actually do anything except closing the dialog.
-		.setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(final DialogInterface dialog, final int which) {
-				select(-1);
-			}
-		})
-		.create();
-		
-		dialogView.setBackgroundColor(S.applied.backgroundColor);
-		
 		if (title != null) {
-			this.alert.setTitle(title);
+			builder.title(title);
 		}
-		
+
+		dialog = builder.show();
+		dialogView = dialog.getCustomView();
+		dialogView.setBackgroundColor(S.applied.backgroundColor);
+
 		for (int i = 0; i < ids.length; i++) {
 			CheckBox cb = V.get(dialogView, ids[i]);
 			if (colorRgb == rgbs[i]) {
@@ -96,20 +90,15 @@ public class TypeHighlightDialog {
 		}
 		
 		final Button bOtherColors = V.get(dialogView, R.id.bOtherColors);
-		bOtherColors.setOnClickListener(new View.OnClickListener() {
+		bOtherColors.setOnClickListener(v -> new AmbilWarnaDialog(context, colorRgb == -1? 0xff000000: colorRgb, new AmbilWarnaDialog.OnAmbilWarnaListener() {
 			@Override
-			public void onClick(final View v) {
-				new AmbilWarnaDialog(context, colorRgb == -1? 0xff000000: colorRgb, new AmbilWarnaDialog.OnAmbilWarnaListener() {
-					@Override
-					public void onCancel(final AmbilWarnaDialog dialog) {}
+			public void onCancel(final AmbilWarnaDialog dialog) {}
 
-					@Override
-					public void onOk(final AmbilWarnaDialog dialog, final int color) {
-						select(0x00ffffff & color);
-					}
-				}).show();
+			@Override
+			public void onOk(final AmbilWarnaDialog dialog, final int color) {
+				select(0x00ffffff & color);
 			}
-		});
+		}).show());
 	}
 
 	View.OnClickListener cb_click = new View.OnClickListener() {
@@ -129,10 +118,6 @@ public class TypeHighlightDialog {
 	void select(int colorRgb) {
 		S.getDb().updateOrInsertHighlights(ari_bookchapter, selectedVerses, colorRgb);
 		if (listener != null) listener.onOk(colorRgb);
-		alert.dismiss();
-	}
-
-	public void show() {
-		alert.show();
+		dialog.dismiss();
 	}
 }

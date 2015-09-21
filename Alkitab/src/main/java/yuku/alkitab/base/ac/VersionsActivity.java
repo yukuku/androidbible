@@ -1,14 +1,14 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
@@ -44,6 +45,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
@@ -228,7 +231,7 @@ public class VersionsActivity extends BaseActivity {
 
 		try {
 			if (isYesFile == null) { // can't be determined
-				new AlertDialog.Builder(this)
+				new AlertDialogWrapper.Builder(this)
 					.setMessage(R.string.open_file_unknown_file_format)
 					.setPositiveButton(R.string.ok, null)
 					.show();
@@ -254,7 +257,7 @@ public class VersionsActivity extends BaseActivity {
 			// opening a nonlocal yes file
 			boolean mkdirOk = AddonManager.mkYesDir();
 			if (!mkdirOk) {
-				new AlertDialog.Builder(this)
+				new AlertDialogWrapper.Builder(this)
 					.setMessage(getString(R.string.tidak_bisa_membuat_folder, AddonManager.getYesPath()))
 					.setPositiveButton(R.string.ok, null)
 					.show();
@@ -263,7 +266,7 @@ public class VersionsActivity extends BaseActivity {
 
 			File localFile = new File(AddonManager.getYesPath(), filelastname);
 			if (localFile.exists()) {
-				new AlertDialog.Builder(this)
+				new AlertDialogWrapper.Builder(this)
 					.setMessage(getString(R.string.open_yes_file_name_conflict, filelastname, AddonManager.getYesPath()))
 					.setPositiveButton(R.string.ok, null)
 					.show();
@@ -277,7 +280,7 @@ public class VersionsActivity extends BaseActivity {
 			handleFileOpenYes(localFile.getAbsolutePath());
 
 		} catch (Exception e) {
-			new AlertDialog.Builder(this)
+			new AlertDialogWrapper.Builder(this)
 				.setMessage(R.string.open_file_cant_read_source)
 				.setPositiveButton(R.string.ok, null)
 				.show();
@@ -402,7 +405,7 @@ public class VersionsActivity extends BaseActivity {
 
 			startActivityForResult(FileChooserActivity.createIntent(App.context, config), REQCODE_openFile);
 		} else {
-			new AlertDialog.Builder(this)
+			new AlertDialogWrapper.Builder(this)
 				.setMessage(R.string.ed_no_external_storage)
 				.setPositiveButton(R.string.ok, null)
 				.show();
@@ -446,7 +449,7 @@ public class VersionsActivity extends BaseActivity {
 
 		// check if it exists previously
 		if (S.getDb().hasVersionWithFilename(AddonManager.getVersionPath(yesName))) {
-			new AlertDialog.Builder(this)
+			new AlertDialogWrapper.Builder(this)
 				.setMessage(R.string.ed_this_file_is_already_on_the_list)
 				.setPositiveButton(R.string.ok, null)
 				.show();
@@ -454,7 +457,7 @@ public class VersionsActivity extends BaseActivity {
 		}
 
 		if (!AddonManager.mkYesDir()) {
-			new AlertDialog.Builder(this)
+			new AlertDialogWrapper.Builder(this)
 				.setMessage(getString(R.string.tidak_bisa_membuat_folder, AddonManager.getYesPath()))
 				.setPositiveButton(R.string.ok, null)
 				.show();
@@ -467,7 +470,7 @@ public class VersionsActivity extends BaseActivity {
 				sw.append('(').append(exception.getClass().getName()).append("): ").append(exception.getMessage()).append('\n'); //$NON-NLS-1$
 				exception.printStackTrace(new PrintWriter(sw));
 
-				new AlertDialog.Builder(VersionsActivity.this)
+				new AlertDialogWrapper.Builder(VersionsActivity.this)
 					.setTitle(R.string.ed_error_reading_pdb_file)
 					.setMessage(exception instanceof ConvertOptionsDialog.PdbKnownErrorException? exception.getMessage(): (getString(R.string.ed_details) + sw.toString()))
 					.setPositiveButton(R.string.ok, null)
@@ -487,7 +490,7 @@ public class VersionsActivity extends BaseActivity {
 							msg.append("- ").append(s).append('\n'); //$NON-NLS-1$
 						}
 
-						new AlertDialog.Builder(VersionsActivity.this)
+						new AlertDialogWrapper.Builder(VersionsActivity.this)
 							.setMessage(msg)
 							.setPositiveButton(R.string.ok, null)
 							.show();
@@ -501,7 +504,12 @@ public class VersionsActivity extends BaseActivity {
 
 			@Override public void onOkYes2(final ConvertPdbToYes2.ConvertParams params) {
 				final String yesFilename = AddonManager.getVersionPath(yesName);
-				final ProgressDialog pd = ProgressDialog.show(VersionsActivity.this, null, getString(R.string.ed_reading_pdb_file), true, false);
+
+				final MaterialDialog pd = new MaterialDialog.Builder(VersionsActivity.this)
+					.content(R.string.ed_reading_pdb_file)
+					.cancelable(false)
+					.progress(true, 0)
+					.show();
 
 				new AsyncTask<String, Object, ConvertPdbToYes2.ConvertResult>() {
 					@Override protected ConvertPdbToYes2.ConvertResult doInBackground(String... _unused_) {
@@ -522,11 +530,11 @@ public class VersionsActivity extends BaseActivity {
 
 					@Override protected void onProgressUpdate(Object... values) {
 						if (values[0] == null) {
-							pd.setMessage(getString(R.string.ed_finished));
+							pd.setContent(getString(R.string.ed_finished));
 						} else {
 							int at = (Integer) values[0];
 							String message = (String) values[1];
-							pd.setMessage("(" + at + ") " + message + "...");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							pd.setContent("(" + at + ") " + message + "...");
 						}
 					}
 
@@ -546,7 +554,7 @@ public class VersionsActivity extends BaseActivity {
 	void handleFileOpenYes(String filename) {
 		{ // look for duplicates
 			if (S.getDb().hasVersionWithFilename(filename)) {
-				new AlertDialog.Builder(this)
+				new AlertDialogWrapper.Builder(this)
 					.setMessage(getString(R.string.ed_file_file_sudah_ada_dalam_daftar_versi, filename))
 					.setPositiveButton(R.string.ok, null)
 					.show();
@@ -584,7 +592,7 @@ public class VersionsActivity extends BaseActivity {
 
 			App.getLbm().sendBroadcast(new Intent(VersionListFragment.ACTION_RELOAD));
 		} catch (Exception e) {
-			new AlertDialog.Builder(this)
+			new AlertDialogWrapper.Builder(this)
 				.setTitle(R.string.ed_error_encountered)
 				.setMessage(e.getClass().getSimpleName() + ": " + e.getMessage()) //$NON-NLS-1$
 				.setPositiveButton(R.string.ok, null)
@@ -611,59 +619,59 @@ public class VersionsActivity extends BaseActivity {
 	}
 
 	void openUrlInputDialog() {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		final Context contextForLayout = builder.getContext();
+		new MaterialDialog.Builder(this)
+			.customView(R.layout.dialog_version_add_from_url, false)
+			.positiveText(R.string.ok)
+			.callback(new MaterialDialog.ButtonCallback() {
+				@Override
+				public void onPositive(final MaterialDialog dialog) {
+					final EditText tUrl = V.get(dialog.getCustomView(), R.id.tUrl);
 
-		final View dialogView = View.inflate(contextForLayout, R.layout.dialog_version_add_from_url, null);
-		final EditText tUrl = V.get(dialogView, R.id.tUrl);
-
-		builder
-			.setView(dialogView)
-			.setPositiveButton(R.string.ok, (dialog, which) -> {
-				final String url = tUrl.getText().toString().trim();
-				if (url.length() == 0) {
-					return;
-				}
-
-				final Uri uri = Uri.parse(url);
-				final String scheme = uri.getScheme();
-				if (!U.equals(scheme, "http") && !U.equals(scheme, "https")) {
-					new AlertDialog.Builder(VersionsActivity.this)
-						.setMessage(R.string.version_download_invalid_url)
-						.setPositiveButton(R.string.ok, null)
-						.show();
-					return;
-				}
-
-				// guess destination filename
-				String last = uri.getLastPathSegment();
-				if (TextUtils.isEmpty(last) || !last.toLowerCase(Locale.US).endsWith(".yes")) {
-					new AlertDialog.Builder(VersionsActivity.this)
-						.setMessage(R.string.version_download_not_yes)
-						.setPositiveButton(R.string.ok, null)
-						.show();
-					return;
-				}
-
-				{
-					final String downloadKey = "version:url:" + url;
-
-					final int status = DownloadMapper.instance.getStatus(downloadKey);
-					if (status == DownloadManager.STATUS_PENDING || status == DownloadManager.STATUS_RUNNING) {
-						// it's downloading!
+					final String url = tUrl.getText().toString().trim();
+					if (url.length() == 0) {
 						return;
 					}
 
-					final DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url))
-						.setTitle(last)
-						.setVisibleInDownloadsUi(false)
-						.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
+					final Uri uri = Uri.parse(url);
+					final String scheme = uri.getScheme();
+					if (!U.equals(scheme, "http") && !U.equals(scheme, "https")) {
+						new AlertDialogWrapper.Builder(VersionsActivity.this)
+							.setMessage(R.string.version_download_invalid_url)
+							.setPositiveButton(R.string.ok, null)
+							.show();
+						return;
+					}
 
-					final Map<String, String> attrs = new LinkedHashMap<>();
-					attrs.put("download_type", "url");
-					attrs.put("filename_last_segment", last);
+					// guess destination filename
+					String last = uri.getLastPathSegment();
+					if (TextUtils.isEmpty(last) || !last.toLowerCase(Locale.US).endsWith(".yes")) {
+						new AlertDialogWrapper.Builder(VersionsActivity.this)
+							.setMessage(R.string.version_download_not_yes)
+							.setPositiveButton(R.string.ok, null)
+							.show();
+						return;
+					}
 
-					DownloadMapper.instance.enqueue(downloadKey, req, attrs);
+					{
+						final String downloadKey = "version:url:" + url;
+
+						final int status = DownloadMapper.instance.getStatus(downloadKey);
+						if (status == DownloadManager.STATUS_PENDING || status == DownloadManager.STATUS_RUNNING) {
+							// it's downloading!
+							return;
+						}
+
+						final DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url))
+							.setTitle(last)
+							.setVisibleInDownloadsUi(false)
+							.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
+
+						final Map<String, String> attrs = new LinkedHashMap<>();
+						attrs.put("download_type", "url");
+						attrs.put("filename_last_segment", last);
+
+						DownloadMapper.instance.enqueue(downloadKey, req, attrs);
+					}
 				}
 			})
 			.show();
@@ -688,7 +696,12 @@ public class VersionsActivity extends BaseActivity {
 				if (maybeDecompressed.exists() && !maybeDecompressed.isDirectory() && maybeDecompressed.canRead()) {
 					handleFileOpenYes(maybeDecompressed.getAbsolutePath());
 				} else {
-					final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.sedang_mendekompres_harap_tunggu), true, false);
+					final MaterialDialog pd = new MaterialDialog.Builder(this)
+						.content(R.string.sedang_mendekompres_harap_tunggu)
+						.cancelable(false)
+						.progress(true, 0)
+						.show();
+
 					new AsyncTask<Void, Void, File>() {
 						@Override protected File doInBackground(Void... params) {
 							String tmpfile3 = filename + "-" + (int)(Math.random() * 100000) + ".tmp3"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -932,7 +945,7 @@ public class VersionsActivity extends BaseActivity {
 
 			if (mv.description != null) details.append('\n').append(mv.description).append('\n');
 
-			final AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
+			final AlertDialogWrapper.Builder b = new AlertDialogWrapper.Builder(getActivity());
 
 			int button_count = 0;
 
@@ -952,7 +965,7 @@ public class VersionsActivity extends BaseActivity {
 			// can we share?
 			if (mv instanceof MVersionDb && mv.hasDataFile()) {
 				button_count++;
-				b.setNeutralButton(R.string.version_menu_share, (dialog, which) -> {
+				b.setNegativeButton(R.string.version_menu_share, (dialog, which) -> {
 					final MVersionDb mvDb = (MVersionDb) mv;
 
 					final Intent intent = ShareCompat.IntentBuilder.from(getActivity())
@@ -967,11 +980,11 @@ public class VersionsActivity extends BaseActivity {
 			// can we delete?
 			if (mv instanceof MVersionDb) {
 				button_count++;
-				b.setNegativeButton(R.string.buang_dari_daftar, (dialog, which) -> {
+				b.setNeutralButton(R.string.buang_dari_daftar, (dialog, which) -> {
 					final MVersionDb mvDb = (MVersionDb) mv;
-					new AlertDialog.Builder(getActivity())
+					new AlertDialogWrapper.Builder(getActivity())
 						.setMessage(getString(R.string.juga_hapus_file_datanya_file, mvDb.filename))
-						.setPositiveButton(R.string.yes, (dialog1, which1) -> {
+						.setPositiveButton(R.string.delete, (dialog1, which1) -> {
 							S.getDb().deleteVersion(mvDb);
 							App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
 							new File(mvDb.filename).delete();
@@ -1010,6 +1023,37 @@ public class VersionsActivity extends BaseActivity {
 		}
 
 		void startDownload(final MVersionPreset mv) {
+			{
+				int enabled = -1;
+				try {
+					enabled = App.context.getPackageManager().getApplicationEnabledSetting("com.android.providers.downloads");
+				} catch (Exception e) {
+					Log.d(TAG, "getting app enabled setting", e);
+				}
+
+				if (enabled == -1
+					|| enabled == PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+					|| enabled == PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER) {
+					new MaterialDialog.Builder(getActivity())
+						.content(R.string.ed_download_manager_not_enabled_prompt)
+						.positiveText(R.string.ok)
+						.negativeText(R.string.cancel)
+						.callback(new MaterialDialog.ButtonCallback() {
+							@Override
+							public void onPositive(final MaterialDialog dialog) {
+								try {
+									startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:com.android.providers.downloads")));
+								} catch (ActivityNotFoundException e) {
+									Log.e(TAG, "opening apps setting", e);
+								}
+							}
+						})
+						.show();
+
+					return;
+				}
+			}
+
 			final String downloadKey = "version:preset_name:" + mv.preset_name;
 
 			final int status = DownloadMapper.instance.getStatus(downloadKey);
@@ -1040,9 +1084,9 @@ public class VersionsActivity extends BaseActivity {
 				if (mv.hasDataFile()) {
 					mv.setActive(true);
 				} else {
-					new AlertDialog.Builder(getActivity())
+					new AlertDialogWrapper.Builder(getActivity())
 						.setMessage(getString(R.string.the_file_for_this_version_is_no_longer_available_file, mv.filename))
-						.setPositiveButton(R.string.yes, (dialog, which) -> {
+						.setPositiveButton(R.string.delete, (dialog, which) -> {
 							S.getDb().deleteVersion(mv);
 							App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
 						})

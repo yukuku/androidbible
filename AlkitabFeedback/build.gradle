@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '21.1.2'
+    compileSdkVersion 22
+    buildToolsVersion '22.0.1'
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 21
+        targetSdkVersion 22
     }
 
     compileOptions {
@@ -23,7 +23,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:21.0.2'
+    compile 'com.android.support:support-v4:22.1.1'
     compile 'com.squareup.okhttp:okhttp:2.1.0'
+    compile 'com.afollestad:material-dialogs:0.7.3.0'
     compile project(':Afw')
 }

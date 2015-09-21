@@ -1,23 +1,21 @@
 package yuku.alkitab.base.dialog;
 
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
+import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
@@ -35,7 +33,7 @@ public class TypeBookmarkDialog {
 	}
 
 	final Context context;
-	final AlertDialog dialog;
+	final Dialog dialog;
 	FlowLayout panelLabels;
 	LabelAdapter adapter;
 	EditText tCaption;
@@ -84,20 +82,32 @@ public class TypeBookmarkDialog {
 		tCaption = V.get(dialogView, R.id.tCaption);
 		final Button bAddLabel = V.get(dialogView, R.id.bAddLabel);
 
-		bAddLabel.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				adapter = new LabelAdapter();
+		bAddLabel.setOnClickListener(v -> {
+			adapter = new LabelAdapter();
 
-				AlertDialog.Builder b = new AlertDialog.Builder(context)
-				.setTitle(R.string.add_label_title)
-				.setAdapter(adapter, bAddLabel_dialog_itemSelected)
-				.setNegativeButton(R.string.cancel, null);
+			final MaterialDialog dialog = new MaterialDialog.Builder(context)
+				.title(R.string.add_label_title)
+				.adapter(adapter, (materialDialog, view, which, text) -> {
+					if (which == 0) { // new label
+						LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), title -> {
+							final Label newLabel = S.getDb().insertLabel(title, null);
+							if (newLabel != null) {
+								labels.add(newLabel);
+								setLabelsText();
+							}
+						});
+					} else {
+						final Label label = adapter.getItem(which);
+						labels.add(label);
+						setLabelsText();
+					}
+					materialDialog.dismiss();
+				})
+				.build();
 
-				adapter.setDialogContext(b.getContext());
+			adapter.setDialogContext(dialog.getContext());
 
-				b.show();
-			}
+			dialog.show();
 		});
 
 		if (marker != null) {
@@ -109,23 +119,13 @@ public class TypeBookmarkDialog {
 
 		tCaption.setText(marker != null? marker.caption: reference);
 
-		this.dialog = new AlertDialog.Builder(context)
+		this.dialog = new AlertDialogWrapper.Builder(context)
 			.setView(dialogView)
 			.setTitle(reference)
 			.setIcon(R.drawable.ic_attr_bookmark)
-			.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					bOk_click();
-				}
-			})
-			.setNegativeButton(R.string.delete, new OnClickListener() {
-				@Override
-				public void onClick(final DialogInterface dialog, final int which) {
-					bDelete_click(marker);
-				}
-			})
-			.create();
+			.setPositiveButton(R.string.ok, (dialog, which) -> bOk_click())
+			.setNeutralButton(R.string.delete, (dialog, which) -> bDelete_click(marker))
+			.show();
 	}
 
 	void bOk_click() {
@@ -158,41 +158,19 @@ public class TypeBookmarkDialog {
 		this.listener = listener;
 	}
 	
-	OnClickListener bAddLabel_dialog_itemSelected = new OnClickListener() {
-		@Override public void onClick(DialogInterface _unused_, int which) {
-			if (which == adapter.getCount() - 1) { // new label
-				LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), new OkListener() { //$NON-NLS-1$
-					@Override public void onOk(String title) {
-						final Label newLabel = S.getDb().insertLabel(title, null);
-						if (newLabel != null) {
-							labels.add(newLabel);
-							setLabelsText();
-						}
-					}
-				});
-			} else {
-				final Label label = adapter.getItem(which);
-				labels.add(label);
-				setLabelsText();
-			}
-		}
-	};
-	
 	private View.OnClickListener label_click = new View.OnClickListener() {
 		@Override public void onClick(View v) {
 			final Label label = (Label) v.getTag(R.id.TAG_label);
 			if (label == null) return;
-			
-			new AlertDialog.Builder(context)
-			.setMessage(context.getString(R.string.do_you_want_to_remove_the_label_label_from_this_bookmark, label.title))
-			.setPositiveButton(R.string.ok, new OnClickListener() {
-				@Override public void onClick(DialogInterface dialog, int which) {
+
+			new AlertDialogWrapper.Builder(context)
+				.setMessage(context.getString(R.string.do_you_want_to_remove_the_label_label_from_this_bookmark, label.title))
+				.setPositiveButton(R.string.ok, (dialog, which) -> {
 					labels.remove(label);
 					setLabelsText();
-				}
-			})
-			.setNegativeButton(R.string.cancel, null)
-			.show();
+				})
+				.setNegativeButton(R.string.cancel, null)
+				.show();
 		}
 	};
 
@@ -201,18 +179,15 @@ public class TypeBookmarkDialog {
 			return; // bookmark not saved, so no need to confirm
 		}
 
-		new AlertDialog.Builder(context)
-		.setMessage(R.string.bookmark_delete_confirmation)
-		.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
+		new AlertDialogWrapper.Builder(context)
+			.setMessage(R.string.bookmark_delete_confirmation)
+			.setPositiveButton(R.string.delete, (dialog, which) -> {
 				S.getDb().deleteMarkerById(marker._id);
 
 				if (listener != null) listener.onModifiedOrDeleted();
-			}
-		})
-		.setNegativeButton(R.string.no, null)
-		.show();
+			})
+			.setNegativeButton(R.string.cancel, null)
+			.show();
 	}
 
 	void setLabelsText() {
@@ -243,7 +218,7 @@ public class TypeBookmarkDialog {
         return res;
     }
 
-	class LabelAdapter extends BaseAdapter {
+	class LabelAdapter extends EasyAdapter {
 		private List<Label> labels;
 		private Context dialogContext;
 
@@ -251,46 +226,47 @@ public class TypeBookmarkDialog {
 			labels = S.getDb().listAllLabels();
 			dialogContext = context;
 		}
-		
+
 		public void setDialogContext(Context dialogContext) {
 			this.dialogContext = dialogContext;
 		}
 		
 		@Override public int getCount() {
-			return labels.size() + 1;
+			return 1 + labels.size();
 		}
 
 		@Override public Label getItem(int position) {
-			return (position < 0 || position >= labels.size())? null: labels.get(position);
+			return position == 0 ? null : labels.get(position - 1);
 		}
 
-		@Override public long getItemId(int position) {
-			return position;
+		@Override
+		public View newView(final int position, final ViewGroup parent) {
+			final int type = getItemViewType(position);
+
+			return LayoutInflater.from(dialogContext).inflate(type == 0? R.layout.item_label_chooser: android.R.layout.simple_list_item_1, null);
 		}
 
-		@Override public View getView(int position, View convertView, ViewGroup parent) {
-			int type = getItemViewType(position);
-			View res = convertView != null? convertView: LayoutInflater.from(dialogContext).inflate(type == 0? R.layout.item_label_chooser: android.R.layout.simple_list_item_1, null);
+		@Override
+		public void bindView(final View view, final int position, final ViewGroup parent) {
+			final int type = getItemViewType(position);
 
 			if (type == 0) {
-				TextView text1 = V.get(res, android.R.id.text1);
-				Label label = getItem(position);
+				final TextView text1 = V.get(view, android.R.id.text1);
+				final Label label = getItem(position);
 				text1.setText(label.title);
 				U.applyLabelColor(label, text1);
 			} else {
-				TextView text1 = V.get(res, android.R.id.text1);
+				final TextView text1 = V.get(view, android.R.id.text1);
 				text1.setText(context.getString(R.string.create_label_titik3));
 			}
-			
-			return res;
 		}
-		
+
 		@Override public int getViewTypeCount() {
 			return 2;
 		}
 		
 		@Override public int getItemViewType(int position) {
-			if (position == getCount() - 1) return 1;
+			if (position == 0) return 1;
 			return 0;
 		}
 	}

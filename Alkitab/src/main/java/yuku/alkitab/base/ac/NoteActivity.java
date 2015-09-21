@@ -1,17 +1,20 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import yuku.afw.V;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -63,6 +66,7 @@ public class NoteActivity extends BaseActivity {
 	int verseCountForNewNote;
 
 	boolean editingMode;
+	boolean justClickedLink;
 
 	ViewFlipper viewFlipper;
 	TextView tCaptionReadOnly;
@@ -109,6 +113,26 @@ public class NoteActivity extends BaseActivity {
 		}
 	}
 
+	@Override protected void onStart() {
+		super.onStart();
+
+		{ // apply background color, by overriding window background
+			getWindow().setBackgroundDrawable(new ColorDrawable(S.applied.backgroundColor));
+		}
+
+		// text formats
+		for (final TextView tv: new TextView[]{tCaption, tCaptionReadOnly}) {
+			tv.setTextColor(S.applied.fontColor);
+			tv.setTypeface(S.applied.fontFace, S.applied.fontBold);
+			tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp);
+			tv.setLineSpacing(0, S.applied.lineSpacingMult);
+
+			SettingsActivity.setPaddingBasedOnPreferences(tv);
+		}
+
+		getWindow().getDecorView().setKeepScreenOn(Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default)));
+	}
+
 	static class VerseSpan extends CallbackSpan<String> {
 		VerseSpan(final String verse, final OnClickListener<String> verseClickListener) {
 			super(verse, verseClickListener);
@@ -116,9 +140,11 @@ public class NoteActivity extends BaseActivity {
 	}
 
 	final CallbackSpan.OnClickListener<String> verseClickListener = (widget, verse) -> {
+		justClickedLink = true;
+
 		final IntArrayList verseRanges = DesktopVerseParser.verseStringToAri(verse);
 		if (verseRanges == null || verseRanges.size() == 0) {
-			new AlertDialog.Builder(widget.getContext())
+			new AlertDialogWrapper.Builder(widget.getContext())
 				.setMessage(R.string.note_activity_cannot_parse_verse)
 				.setPositiveButton(R.string.ok, null)
 				.show();
@@ -158,6 +184,14 @@ public class NoteActivity extends BaseActivity {
 			});
 			tCaptionReadOnly.setText(text);
 			tCaptionReadOnly.setMovementMethod(LinkMovementMethod.getInstance());
+
+			tCaptionReadOnly.setOnClickListener(v -> {
+				if (!justClickedLink) {
+					setEditingMode(true);
+				} else {
+					justClickedLink = false;
+				}
+			});
 		}
 
 		this.editingMode = editingMode;
@@ -194,7 +228,7 @@ public class NoteActivity extends BaseActivity {
 			case R.id.menuDelete: {
 				// if it's indeed not exist, check if we have some text, if we do, prompt first
 				if (marker != null || tCaption.length() > 0) {
-					new AlertDialog.Builder(this)
+					new AlertDialogWrapper.Builder(this)
 						.setMessage(R.string.anda_yakin_mau_menghapus_catatan_ini)
 						.setPositiveButton(R.string.delete, (dialog, which) -> {
 							if (marker != null) {
@@ -207,7 +241,7 @@ public class NoteActivity extends BaseActivity {
 							setResult(RESULT_OK);
 							realFinish();
 						})
-						.setNegativeButton(R.string.no, null)
+						.setNegativeButton(R.string.cancel, null)
 						.show();
 				}
 

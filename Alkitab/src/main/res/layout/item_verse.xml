@@ -3,9 +3,7 @@
 	android:id="@+id/itemVerse"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
-	android:orientation="horizontal"
-	android:paddingLeft="2dp"
-	android:paddingRight="2dp">
+	android:orientation="horizontal">
 
 	<FrameLayout
 		android:layout_width="fill_parent"
@@ -25,7 +23,7 @@
 	</FrameLayout>
 
 	<yuku.alkitab.base.widget.AttributeView
-		android:id="@+id/view_attributes"
+		android:id="@+id/attributeView"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content" />
 </yuku.alkitab.base.widget.VerseItem>

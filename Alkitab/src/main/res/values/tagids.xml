@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	<item name="TAG_label" type="id" />
-	<item name="TAG_fontItem" type="id" />
-	<item name="TAG_fontName" type="id" />
-</resources>

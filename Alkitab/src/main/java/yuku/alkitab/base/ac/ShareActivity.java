@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +20,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -58,7 +58,7 @@ public class ShareActivity extends BaseActivity {
 	}
 	
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		super.onCreateWithNonToolbarUpButton(savedInstanceState);
 		setContentView(R.layout.activity_share);
 		
 		String title = getIntent().getStringExtra(Intent.EXTRA_TITLE);
@@ -73,9 +73,13 @@ public class ShareActivity extends BaseActivity {
 		mPm = getPackageManager();
 		intent.setComponent(null);
 
-		// kasih puter2 biar ga kaya hang
-		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.please_wait_titik3), true, false);
-		
+		// show progress dialog so that it does not appear to be hang
+		final MaterialDialog pd = new MaterialDialog.Builder(this)
+			.content(R.string.please_wait_titik3)
+			.cancelable(false)
+			.progress(true, 0)
+			.show();
+
 		new AsyncTask<Void, Void, Void>() {
 			@Override public Void doInBackground(Void... params) {
 				mAdapter = new ResolveListAdapter(ShareActivity.this, intent, initialIntents, rList);

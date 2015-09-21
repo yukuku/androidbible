@@ -1,7 +1,6 @@
 
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +10,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,22 +21,31 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import yuku.afw.D;
 import yuku.afw.V;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.LabelEditorDialog;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
+import yuku.alkitab.base.util.BookmarkImporter;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.ambilwarna.AmbilWarnaDialog;
 import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
+import yuku.filechooser.FileChooserActivity;
+import yuku.filechooser.FileChooserConfig;
+import yuku.filechooser.FileChooserResult;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
 public class MarkersActivity extends BaseActivity {
@@ -43,6 +53,7 @@ public class MarkersActivity extends BaseActivity {
 	
 	private static final int REQCODE_markerList = 1;
 	private static final int REQCODE_share = 2;
+	private static final int REQCODE_migrateFromV3 = 3;
 
 	/** Action to broadcast when label list needs to be reloaded due to some background changes */
 	public static final String ACTION_RELOAD = MarkersActivity.class.getName() + ".action.RELOAD";
@@ -50,7 +61,7 @@ public class MarkersActivity extends BaseActivity {
 	DragSortListView lv;
     View bGotoSync;
 	
-	BookmarkFilterAdapter adapter;
+	MarkerFilterAdapter adapter;
 
 	public static Intent createIntent() {
 		return new Intent(App.context, MarkersActivity.class);
@@ -62,7 +73,7 @@ public class MarkersActivity extends BaseActivity {
 		setContentView(R.layout.activity_markers);
 		setTitle(R.string.activity_title_markers);
 		
-		adapter = new BookmarkFilterAdapter();
+		adapter = new MarkerFilterAdapter();
 		adapter.reload();
 
 		lv = V.get(this, android.R.id.list);
@@ -70,16 +81,61 @@ public class MarkersActivity extends BaseActivity {
 		lv.setOnItemClickListener(lv_click);
 		lv.setAdapter(adapter);
 
-        BookmarkFilterController c = new BookmarkFilterController(lv, adapter);
+        MarkerFilterController c = new MarkerFilterController(lv, adapter);
         lv.setFloatViewManager(c);
         lv.setOnTouchListener(c);
 
 		registerForContextMenu(lv);
 
-        bGotoSync = V.get(this, R.id.bGotoSync);
+		bGotoSync = V.get(this, R.id.bGotoSync);
         bGotoSync.setOnClickListener(v -> startActivity(SyncSettingsActivity.createIntent()));
 
 		App.getLbm().registerReceiver(br, new IntentFilter(ACTION_RELOAD));
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+		// hide sync button if we are already syncing
+		final String syncAccountName = Preferences.getString(getString(R.string.pref_syncAccountName_key));
+		V.get(this, R.id.panelGotoSync).setVisibility(syncAccountName != null ? View.GONE : View.VISIBLE);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		getMenuInflater().inflate(R.menu.activity_markers, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(final Menu menu) {
+		final MenuItem menuLabelSort = menu.findItem(R.id.menuLabelSort);
+
+		final int labelCount = adapter.getLabelCount();
+		menuLabelSort.setVisible(labelCount > 1);
+
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.menuMigrateFromV3: {
+				final FileChooserConfig config = new FileChooserConfig();
+				config.mode = FileChooserConfig.Mode.Open;
+				config.pattern = YukuAlkitabImportOfferActivity.getBackupFilenameMatcher().pattern().toString();
+				config.title = getString(R.string.marker_migrate_file_chooser_title);
+				final Intent intent = FileChooserActivity.createIntent(this, config);
+				startActivityForResult(intent, REQCODE_migrateFromV3);
+			} return true;
+			case R.id.menuLabelSort:
+				S.getDb().sortLabelsAlphabetically();
+				adapter.reload();
+				return true;
+		}
+
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
@@ -159,14 +215,14 @@ public class MarkersActivity extends BaseActivity {
 				S.getDb().deleteLabelById(label._id);
 				adapter.reload();
 			} else {
-				new AlertDialog.Builder(this)
-				.setMessage(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, marker_count))
-				.setNegativeButton(R.string.cancel, null)
-				.setPositiveButton(R.string.delete, (dialog, which) -> {
-					S.getDb().deleteLabelById(label._id);
-					adapter.reload();
-				})
-				.show();
+				new AlertDialogWrapper.Builder(this)
+					.setMessage(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, marker_count))
+					.setNegativeButton(R.string.cancel, null)
+					.setPositiveButton(R.string.delete, (dialog, which) -> {
+						S.getDb().deleteLabelById(label._id);
+						adapter.reload();
+					})
+					.show();
 			}
 			
 			return true;
@@ -199,20 +255,38 @@ public class MarkersActivity extends BaseActivity {
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQCODE_markerList) {
 			adapter.reload();
+			return;
 		} else if (requestCode == REQCODE_share && resultCode == RESULT_OK) {
 			final ShareActivity.Result result = ShareActivity.obtainResult(data);
 			startActivity(result.chosenIntent);
+			return;
+		} else if (requestCode == REQCODE_migrateFromV3 && resultCode == RESULT_OK) {
+			final FileChooserResult result = FileChooserActivity.obtainResult(data);
+			if (result != null) {
+				final File file = new File(result.firstFilename);
+				try {
+					final FileInputStream fis = new FileInputStream(file);
+					BookmarkImporter.importBookmarks(this, fis, false);
+					adapter.reload();
+				} catch (IOException e) {
+					new AlertDialogWrapper.Builder(this)
+						.setMessage(R.string.marker_migrate_error_opening_backup_file)
+						.setPositiveButton(R.string.ok, null)
+						.show();
+				}
+			}
+			return;
 		}
 
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	private class BookmarkFilterController extends DragSortController {
+	private class MarkerFilterController extends DragSortController {
 		int mDivPos;
 		int mDraggedPos;
 		final DragSortListView lv;
 
-		public BookmarkFilterController(DragSortListView lv, BookmarkFilterAdapter adapter) {
+		public MarkerFilterController(DragSortListView lv, MarkerFilterAdapter adapter) {
 			super(lv, R.id.drag_handle, DragSortController.ON_DOWN, 0);
 
 			this.lv = lv;
@@ -262,12 +336,12 @@ public class MarkersActivity extends BaseActivity {
 		}
 	}
 
-	private class BookmarkFilterAdapter extends BaseAdapter implements DragSortListView.DropListener {
+	private class MarkerFilterAdapter extends BaseAdapter implements DragSortListView.DropListener {
 		// 0. [icon] All bookmarks
 		// 1. [icon] Notes
 		// 2. [icon] Highlights
 		// 3. Unlabeled bookmarks
-		// 4. dst label2
+		// 4 and so on. labels
 
 		List<Label> labels;
 		
@@ -362,6 +436,11 @@ public class MarkersActivity extends BaseActivity {
 			}
 			
 			notifyDataSetChanged();
+			supportInvalidateOptionsMenu();
+		}
+
+		public int getLabelCount() {
+			return labels.size();
 		}
 	}
 }

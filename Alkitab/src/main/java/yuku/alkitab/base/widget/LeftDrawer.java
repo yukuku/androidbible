@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.SwitchCompat;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
@@ -20,7 +21,6 @@ import android.widget.CompoundButton;
 import android.widget.PopupMenu;
 import android.widget.ScrollView;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -82,8 +82,10 @@ public abstract class LeftDrawer extends ScrollView {
 		if (this instanceof Songs) bSongs.setTextColor(selectedTextColor);
 
 		// hide and show according to app config
-		bSongs.setVisibility(AppConfig.get().menuSongs? VISIBLE: GONE);
-		bDevotion.setVisibility(AppConfig.get().menuDevotion? VISIBLE: GONE);
+		if (!isInEditMode()) {
+			bSongs.setVisibility(AppConfig.get().menuSongs? VISIBLE: GONE);
+			bDevotion.setVisibility(AppConfig.get().menuDevotion? VISIBLE: GONE);
+		}
 
 		bBible.setOnClickListener(v -> {
 			bBible_click();
@@ -213,7 +215,7 @@ public abstract class LeftDrawer extends ScrollView {
 			void bDisplay_click();
 			void cFullScreen_checkedChange(boolean isChecked);
 			void cNightMode_checkedChange(boolean isChecked);
-			void cSplitVersion_checkedChange(final Switch cSplitVersion, boolean isChecked);
+			void cSplitVersion_checkedChange(final SwitchCompat cSplitVersion, boolean isChecked);
 			void bProgressMarkList_click();
 			void bProgress_click(int preset_id);
 		}
@@ -225,9 +227,9 @@ public abstract class LeftDrawer extends ScrollView {
 
 		View bMarkers;
 		View bDisplay;
-		Switch cFullScreen;
-		Switch cNightMode;
-		Switch cSplitVersion;
+		SwitchCompat cFullScreen;
+		SwitchCompat cNightMode;
+		SwitchCompat cSplitVersion;
 
 		View bProgressMarkList;
 		View bProgress1;
@@ -553,7 +555,8 @@ public abstract class LeftDrawer extends ScrollView {
 	public static class Songs extends LeftDrawer {
 		public interface Listener {
 			void songKeypadButton_click(View v);
-			void songBookSelected(boolean all, SongBookUtil.SongBookInfo songBookInfo);
+			void songBookSelected(String name);
+			void moreSelected();
 		}
 
 		public interface Handle {
@@ -603,9 +606,7 @@ public abstract class LeftDrawer extends ScrollView {
 			super(context, attrs);
 		}
 
-		PopupMenu popupChangeBook;
-
-		Button bChangeBook;
+		TextView bChangeBook;
 		TextView bChangeCode;
 
 		Button bOk;
@@ -629,13 +630,22 @@ public abstract class LeftDrawer extends ScrollView {
 			bDigitB = V.get(this, R.id.bDigitB);
 			bDigitC = V.get(this, R.id.bDigitC);
 
-			bChangeBook.setOnClickListener(v -> popupChangeBook.show());
+			bChangeBook.setOnClickListener(v -> {
+				final PopupMenu popupChangeBook = SongBookUtil.getSongBookPopupMenu(activity, false, true, bChangeBook);
+				popupChangeBook.setOnMenuItemClickListener(SongBookUtil.getSongBookOnMenuItemClickListener(new SongBookUtil.DefaultOnSongBookSelectedListener() {
+					@Override
+					public void onSongBookSelected(final String name) {
+						listener.songBookSelected(name);
+					}
 
-			if (!isInEditMode()) {
-				popupChangeBook = SongBookUtil.getSongBookPopupMenu(activity, false, bChangeBook);
-				//noinspection Convert2MethodRef
-				popupChangeBook.setOnMenuItemClickListener(SongBookUtil.getSongBookOnMenuItemClickListener((all, songBookInfo) -> listener.songBookSelected(all, songBookInfo)));
-			}
+					@Override
+					public void onMoreSelected() {
+						listener.moreSelected();
+					}
+				}));
+
+				popupChangeBook.show();
+			});
 
 			// all buttons
 			for (int buttonId: new int[] {
@@ -653,6 +663,7 @@ public abstract class LeftDrawer extends ScrollView {
 				R.id.bDigitB,
 				R.id.bDigitC,
 				R.id.bOk,
+				R.id.bBackspace,
 			}) {
 				V.get(this, buttonId).setOnClickListener(button_click);
 			}

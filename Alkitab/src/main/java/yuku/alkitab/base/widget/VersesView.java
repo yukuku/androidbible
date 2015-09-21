@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -23,10 +24,11 @@ import yuku.alkitab.util.IntArrayList;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class VersesView extends ListView implements AbsListView.OnScrollListener {
 	public static final String TAG = VersesView.class.getSimpleName();
-	
+
 	// http://stackoverflow.com/questions/6369491/stop-listview-scroll-animation
 	static class StopListFling {
 
@@ -107,7 +109,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		}
 	}
 
-	private VerseAdapter adapter;
+	private SingleViewVerseAdapter adapter;
 	private SelectedVersesListener listener;
 	private VerseSelectionMode verseSelectionMode;
 	private Drawable originalSelector;
@@ -115,9 +117,18 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	private OnVerseScrollStateChangeListener onVerseScrollStateChangeListener;
 	private AbsListView.OnScrollListener userOnScrollListener;
 	private int scrollState = 0;
+	/**
+	 * Used as a cache, storing views to be fed to convertView parameter
+	 * when measuring items manually at {@link #getMeasuredItemHeight(int)}.
+ 	 */
 	private View[] scrollToVerseConvertViews;
 	private String name;
 	private boolean firstTimeScroll = true;
+	/**
+	 * Updated every time {@link #setData(yuku.alkitab.model.Book, int, yuku.alkitab.model.SingleChapterVerses, int[], yuku.alkitab.model.PericopeBlock[], int)}
+	 * or {@link #setDataEmpty()} is called. Used to track data changes, so delayed scroll, etc can be prevented from happening if the data has changed.
+	 */
+	private AtomicInteger dataVersionNumber = new AtomicInteger();
 
 	public VersesView(Context context) {
 		super(context);
@@ -143,8 +154,8 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		
 		setDivider(null);
 		setFocusable(false);
-		
-		setAdapter(adapter = new VerseAdapter.Factory().create(getContext()));
+
+		setAdapter(adapter = new SingleViewVerseAdapter(getContext()));
 		setOnItemClickListener(itemClick);
 		setVerseSelectionMode(VerseSelectionMode.multiple);
 		
@@ -170,7 +181,11 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	public void setInlineLinkSpanFactory(final VerseInlineLinkSpan.Factory inlineLinkSpanFactory) {
 		adapter.setInlineLinkSpanFactory(inlineLinkSpanFactory, this);
 	}
-	
+
+	public void setDictionaryListener(CallbackSpan.OnClickListener<SingleViewVerseAdapter.DictionaryLinkInfo> listener) {
+		adapter.setDictionaryListener(listener);
+	}
+
 	public void setVerseSelectionMode(VerseSelectionMode mode) {
 		this.verseSelectionMode = mode;
 		
@@ -203,18 +218,13 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		return adapter.getVerse(verse_1);
 	}
 
-	public void scrollToShowVerse(int mainVerse_1) {
-		int position = adapter.getPositionOfPericopeBeginningFromVerse(mainVerse_1);
-		smoothScrollToPosition(position);
-	}
-	
 	/**
 	 * @return 1-based verse
 	 */
 	public int getVerseBasedOnScroll() {
 		return adapter.getVerseFromPosition(getPositionBasedOnScroll());
 	}
-	
+
 	public int getPositionBasedOnScroll() {
 		int pos = getFirstVisiblePosition();
 
@@ -237,6 +247,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	}
 
 	public void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
+		dataVersionNumber.incrementAndGet();
 		adapter.setData(book, chapter_1, verses, pericopeAris, pericopeBlocks, nblock);
 		stopFling();
 	}
@@ -345,16 +356,70 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	
 	public PressResult press(int keyCode) {
 		String volumeButtonsForNavigation = Preferences.getString(getContext().getString(R.string.pref_volumeButtonNavigation_key), getContext().getString(R.string.pref_volumeButtonNavigation_default));
-		if (U.equals(volumeButtonsForNavigation, "pasal" /* chapter */)) { //$NON-NLS-1$
+		if (U.equals(volumeButtonsForNavigation, "pasal" /* chapter */)) { 
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
 				return PressResult.LEFT;
 			}
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
 				return PressResult.RIGHT;
 			}
-		} else if (U.equals(volumeButtonsForNavigation, "ayat" /* verse */)) { //$NON-NLS-1$
+		} else if (U.equals(volumeButtonsForNavigation, "ayat" /* verse */)) { 
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_DOWN;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) keyCode = KeyEvent.KEYCODE_DPAD_UP;
+		} else if (U.equals(volumeButtonsForNavigation, "page")) {
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+				final int oldPos = getFirstVisiblePosition();
+				int newPos = getLastVisiblePosition();
+
+				if (oldPos == newPos && oldPos < adapter.getCount() - 1) { // in case of very long item
+					newPos = oldPos + 1;
+				}
+
+				// negate padding offset, unless this is the first item
+				final int paddingNegator = newPos == 0? 0 : -this.getPaddingTop();
+				smoothScrollFixed(newPos, paddingNegator);
+
+				return new PressResult(PressKind.consumed, adapter.getVerseFromPosition(newPos));
+			}
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+				final int oldPos = getFirstVisiblePosition();
+				final int targetHeight = Math.max(0, getHeight() - getPaddingTop() - getPaddingBottom());
+
+				int totalHeight = 0;
+
+				// consider how long the first child has been scrolled up
+				final View firstChild = getChildAt(0);
+				if (firstChild != null) {
+					totalHeight += -firstChild.getTop();
+				}
+
+				int curPos = oldPos;
+				// try until totalHeight exceeds targetHeight
+				while (true) {
+					curPos--;
+					if (curPos < 0) {
+						break;
+					}
+
+					totalHeight += getMeasuredItemHeight(curPos);
+
+					if (totalHeight > targetHeight) {
+						break;
+					}
+				}
+
+				int newPos = curPos + 1;
+
+				if (oldPos == newPos && oldPos > 0) { // move at least one
+					newPos = oldPos - 1;
+				}
+
+				// negate padding offset, unless this is the first item
+				final int paddingNegator = newPos == 0? 0 : -this.getPaddingTop();
+				smoothScrollFixed(newPos, paddingNegator);
+
+				return new PressResult(PressKind.consumed, adapter.getVerseFromPosition(newPos));
+			}
 		}
 
 		if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
@@ -384,6 +449,20 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		}
 
 		return PressResult.NOP;
+	}
+
+	/**
+	 * Fixed version of smoothScrollToPositionFromTop.
+	 */
+	private void smoothScrollFixed(final int newPos, final int offset) {
+		final int vn = dataVersionNumber.get();
+		final int smoothScrollDuration = 200;  // default value (Issue 78030)
+		smoothScrollToPositionFromTop(newPos, offset, smoothScrollDuration);
+		postDelayed(() -> {
+			// possible that data has changed
+			if (vn != dataVersionNumber.get()) return;
+			setSelectionFromTop(newPos, offset);
+		}, smoothScrollDuration + 17);
 	}
 
 	public void setDataWithRetainSelectedVerses(boolean retainSelectedVerses, Book book, int chapter_1, int[] pericope_aris, PericopeBlock[] pericope_blocks, int nblock, SingleChapterVerses verses) {
@@ -440,10 +519,11 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 			Log.w(TAG, "could not find verse_1=" + verse_1 + ", weird!");
 		} else {
 			final int delay = firstTimeScroll? 34: 0;
+			final int vn = dataVersionNumber.get();
 
 			postDelayed(() -> {
-				// this may happen async from above, so check first if pos is still valid
-				if (position >= getCount()) return;
+				// this may happen async from above, so check data version first
+				if (vn != dataVersionNumber.get()) return;
 
 				// negate padding offset, unless this is the first verse
 				final int paddingNegator = position == 0? 0 : -this.getPaddingTop();
@@ -485,21 +565,27 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 				return;
 			}
 
-			// child needed is not on screen, we need to measure
-			if (scrollToVerseConvertViews == null) {
-				// initialize scrollToVerseConvertViews if needed
-				scrollToVerseConvertViews = new View[adapter.getViewTypeCount()];
-			}
-			int itemType = adapter.getItemViewType(position);
-			View convertView = scrollToVerseConvertViews[itemType];
-			View child = adapter.getView(position, convertView, VersesView.this);
-			child.measure(MeasureSpec.makeMeasureSpec(VersesView.this.getWidth() - VersesView.this.getPaddingLeft() - VersesView.this.getPaddingRight(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-			scrollToVerseConvertViews[itemType] = child;
+			final int measuredHeight = getMeasuredItemHeight(position);
+
 			stopFling();
-			setSelectionFromTop(position, -(int) (prop * child.getMeasuredHeight()) + paddingNegator);
+			setSelectionFromTop(position, -(int) (prop * measuredHeight) + paddingNegator);
 		});
 	}
-	
+
+	private int getMeasuredItemHeight(final int position) {
+		// child needed is not on screen, we need to measure
+		if (scrollToVerseConvertViews == null) {
+			// initialize scrollToVerseConvertViews if needed
+			scrollToVerseConvertViews = new View[adapter.getViewTypeCount()];
+		}
+		final int itemType = adapter.getItemViewType(position);
+		final View convertView = scrollToVerseConvertViews[itemType];
+		final View child = adapter.getView(position, convertView, this);
+		child.measure(MeasureSpec.makeMeasureSpec(this.getWidth() - this.getPaddingLeft() - this.getPaddingRight(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+		scrollToVerseConvertViews[itemType] = child;
+		return child.getMeasuredHeight();
+	}
+
 	public void scrollToTop() {
 		post(() -> setSelectionFromTop(0, 0));
 	}
@@ -561,6 +647,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	}
 
 	public void setDataEmpty() {
+		dataVersionNumber.incrementAndGet();
 		adapter.setDataEmpty();
 	}
 	
@@ -571,5 +658,9 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	@Override
 	public String toString() {
 		return name != null? ("VersesView{name=" + name + "}"): "VersesView";
+	}
+
+	public void setDictionaryModeAris(@Nullable final SparseBooleanArray aris) {
+		adapter.setDictionaryModeAris(aris);
 	}
 }

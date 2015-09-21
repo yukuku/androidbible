@@ -4,14 +4,21 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
+import android.os.Build;
 import android.util.Log;
 import android.widget.TextView;
+import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.debug.BuildConfig;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Locale;
+import java.util.UUID;
 
 public class U {
 	static final String TAG = U.class.getSimpleName();
@@ -28,32 +35,54 @@ public class U {
 	 * If verse doesn't start with @: don't do anything, except when force is set to true.
 	 * Otherwise, remove all @'s and one character after that and also text between @&lt; and @&gt;.
 	 */
-	public static String removeSpecialCodes(String text, boolean force) {
+	public static String removeSpecialCodes(final String text, final boolean force) {
 		if (text == null) return null;
 		if (text.length() == 0) return text;
 		if (!force && text.charAt(0) != '@') return text;
 
-		StringBuilder sb = new StringBuilder(text.length());
+		final StringBuilder sb = new StringBuilder(text.length());
 		int pos = 0;
 
 		while (true) {
-			int p = text.indexOf('@', pos);
+			final int p = text.indexOf('@', pos);
 			if (p == -1) {
 				break;
 			}
 
 			sb.append(text, pos, p);
 			pos = p + 2;
-			
-			// did we skip "@<"?
-			if (p + 1 < text.length() && text.charAt(p + 1) == '<') {
-				// look for matching "@>"
-				int q = text.indexOf("@>", pos);
-				if (q != -1) {
-					pos = q + 2;
+
+			if (p + 1 < text.length()) {
+				final char skipped = text.charAt(p + 1);
+				switch (skipped) {
+					// did we skip "@<"?
+					case '<': {
+						// look for matching "@>"
+						int q = text.indexOf("@>", pos);
+						if (q != -1) {
+							pos = q + 2;
+						}
+					}
+					break;
+					// did we skip a paragraph marker, new paragraph, or newline?
+					// if so, add a space if needed
+					case '0':
+					case '1':
+					case '2':
+					case '3':
+					case '4':
+					case '^':
+					case '8': {
+						// only add if the last character output is not already a whitespace
+						if (sb.length() == 0 || Character.isWhitespace(sb.charAt(sb.length() - 1))) {
+							// we do not need to put extra space
+						} else {
+							sb.append(' ');
+						}
+					}
+					break;
 				}
 			}
-			
 		}
 
 		sb.append(text, pos, text.length());
@@ -283,5 +312,55 @@ public class U {
 			baos.write(buf, 0, read);
 		}
 		return new String(baos.toByteArray(), encoding);
+	}
+
+	/**
+	 * The reason we use an installation id instead of just the simpleToken for sync
+	 * to identify originating device, is so that the GCM messages does not contain
+	 * simpleToken, which is sensitive.
+	 */
+	public synchronized static String getInstallationId() {
+		String res = Preferences.getString(Prefkey.installation_id, null);
+		if (res == null) {
+			res = "i1:" + UUID.randomUUID().toString();
+			Preferences.setString(Prefkey.installation_id, res);
+		}
+		return res;
+	}
+
+	static class InstallationInfoJson {
+		public String installation_id;
+		public String app_packageName;
+		public int app_versionCode;
+		public boolean app_debug;
+		public String build_manufacturer;
+		public String build_model;
+		public String build_device;
+		public String build_product;
+		public int os_sdk_int;
+		public String os_release;
+		public String locale;
+		public String last_commit_hash;
+	}
+
+	/**
+	 * Return a JSON string that contains information about the app installation on this particular device.
+	 */
+	public static String getInstallationInfoJson() {
+		final InstallationInfoJson obj = new InstallationInfoJson();
+		obj.installation_id = getInstallationId();
+		obj.app_packageName = App.context.getPackageName();
+		obj.app_versionCode = App.getVersionCode();
+		obj.app_debug = BuildConfig.DEBUG;
+		obj.build_manufacturer = Build.MANUFACTURER;
+		obj.build_model = Build.MODEL;
+		obj.build_device = Build.DEVICE;
+		obj.build_product = Build.PRODUCT;
+		obj.os_sdk_int = Build.VERSION.SDK_INT;
+		obj.os_release = Build.VERSION.RELEASE;
+		final Locale locale = App.context.getResources().getConfiguration().locale;
+		obj.locale = locale == null ? null : locale.toString();
+		obj.last_commit_hash = App.context.getString(R.string.last_commit_hash);
+		return App.getDefaultGson().toJson(obj);
 	}
 }

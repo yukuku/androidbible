@@ -3,7 +3,6 @@ package yuku.alkitab.base.sync;
 
 import android.accounts.Account;
 import android.content.ContentResolver;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
@@ -16,6 +15,7 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.debug.BuildConfig;
@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -35,20 +34,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Sync {
 	static final String TAG = Sync.class.getSimpleName();
-
-	/**
-	 * The reason we use an installation id instead of just the simpleToken
-	 * to identify originating device, is so that the GCM messages does not
-	 * contain simpleToken, which is sensitive.
-	 */
-	public synchronized static String getInstallationId() {
-		String res = Preferences.getString(Prefkey.installation_id, null);
-		if (res == null) {
-			res = "i1:" + UUID.randomUUID().toString();
-			Preferences.setString(Prefkey.installation_id, res);
-		}
-		return res;
-	}
 
 	public enum Opkind {
 		add, mod, del, // do not change the enum value names here. This will be un/serialized by gson.
@@ -312,35 +297,6 @@ public class Sync {
 		}
 	}
 
-	static class InstallationInfoJson {
-		public String installation_id;
-		public String app_packageName;
-		public int app_versionCode;
-		public boolean app_debug;
-		public String build_model;
-		public String build_device;
-		public String build_product;
-		public int os_sdk_int;
-		public String os_release;
-	}
-
-	/**
-	 * Return a JSON string that contains information about the app installation on this particular device.
-	 */
-	public static String getInstallationInfoJson() {
-		final InstallationInfoJson obj = new InstallationInfoJson();
-		obj.installation_id = getInstallationId();
-		obj.app_packageName = App.context.getPackageName();
-		obj.app_versionCode = App.getVersionCode();
-		obj.app_debug = BuildConfig.DEBUG;
-		obj.build_model = Build.MODEL;
-		obj.build_device = Build.DEVICE;
-		obj.build_product = Build.PRODUCT;
-		obj.os_sdk_int = Build.VERSION.SDK_INT;
-		obj.os_release = Build.VERSION.RELEASE;
-		return App.getDefaultGson().toJson(obj);
-	}
-
 	public static class ResponseJson {
 		public boolean success;
 		public String message;
@@ -376,7 +332,7 @@ public class Sync {
 		final RequestBody requestBody = b
 			.add("email", form.email)
 			.add("password", form.password)
-			.add("installation_info", getInstallationInfoJson())
+			.add("installation_info", U.getInstallationInfoJson())
 			.build();
 
 		try {
@@ -410,7 +366,7 @@ public class Sync {
 		final RequestBody requestBody = new FormEncodingBuilder()
 			.add("email", email)
 			.add("password", password)
-			.add("installation_info", getInstallationInfoJson())
+			.add("installation_info", U.getInstallationInfoJson())
 			.build();
 
 		try {

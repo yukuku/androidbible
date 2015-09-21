@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="filechooser_ok">OK</string>
+    <string name="filechooser_cancel">Cancel</string>
+    <string name="filechooser_parent_folder">[Parent folder]</string>
+</resources>

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.gson.Gson;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
 
@@ -52,7 +51,7 @@ public class GcmIntentService extends IntentService {
 				// It's a regular GCM message, do some work.
 				try {
 					final String source_installation_id = intent.getStringExtra(Gcm.GCM_MESSAGE_KEY_source_installation_id);
-					if (U.equals(source_installation_id, Sync.getInstallationId())) {
+					if (U.equals(source_installation_id, U.getInstallationId())) {
 						Log.d(TAG, "Gcm message sourced from self is ignored");
 					} else {
 						final String encoded_data = intent.getStringExtra(Gcm.GCM_MESSAGE_KEY_encoded_data);

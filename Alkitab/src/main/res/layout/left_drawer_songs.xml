@@ -6,9 +6,9 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="240dp"
 	android:layout_height="match_parent"
-	android:background="#262626"
-	android:elevation="4dp"
 	android:fitsSystemWindows="true"
+    android:background="#263238"
+    android:elevation="4dp"
 	tools:context="yuku.alkitab.base.ac.SongViewActivity"
 	tools:ignore="Overdraw">
 
@@ -25,24 +25,23 @@
 
 		<LinearLayout
 			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
+			android:layout_height="48dp"
 			android:gravity="center_vertical"
 			android:orientation="horizontal">
 
-			<Button
+			<TextView
 				android:id="@+id/bChangeBook"
-				style="?android:spinnerStyle"
-				android:layout_width="96dp"
+				style="@style/Widget.AppCompat.Spinner"
+				android:layout_width="@dimen/song_keypad_button_one_and_half_width"
 				android:layout_height="match_parent"
 				android:gravity="center"
-				android:padding="0dp"
 				android:text="––––"
 				android:textSize="18sp"
 				tools:ignore="HardcodedText" />
 
 			<TextView
 				android:id="@+id/bChangeCode"
-				android:layout_width="96dp"
+				android:layout_width="@dimen/song_keypad_button_one_and_half_width"
 				android:layout_height="match_parent"
 				android:gravity="center"
 				android:text="––––"
@@ -50,6 +49,11 @@
 				android:textSize="18sp"
 				tools:ignore="HardcodedText" />
 
+			<ImageButton
+				android:id="@+id/bBackspace"
+				style="@style/SongCodeKeypadButton"
+				android:src="@drawable/ic_song_keypad_backspace"
+				android:scaleType="center" />
 		</LinearLayout>
 
 
@@ -148,8 +152,9 @@
 
 				<Button
 					android:id="@+id/bDigit0"
-					style="@style/SongCodeKeypadButton.DoubleWidth"
-					android:text="0" />
+					style="@style/SongCodeKeypadButton"
+					android:text="0"
+					android:layout_marginLeft="@dimen/song_keypad_button_width" />
 
 				<Button
 					android:id="@+id/bOk"

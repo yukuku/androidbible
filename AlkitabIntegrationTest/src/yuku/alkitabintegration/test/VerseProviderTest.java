@@ -14,7 +14,7 @@ public class VerseProviderTest extends AndroidTestCase {
 
 	@Override
 	public void setUp() throws Exception {
-		AlkitabIntegrationUtil.setOverridenProviderAuthority("yuku.alkitab.provider.debug");
+		AlkitabIntegrationUtil.setOverridenProviderAuthority("yuku.alkitab.debug.provider");
 	}
 
 	public void testAvailable() throws Exception {

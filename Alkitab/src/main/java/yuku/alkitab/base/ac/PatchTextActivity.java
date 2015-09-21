@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +8,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.example.android.wizardpager.MainActivity;
 import name.fraser.neil.plaintext.diff_match_patch;
 import yuku.afw.V;
@@ -76,7 +76,7 @@ public class PatchTextActivity extends BaseActivity {
 
 		bSend.setOnClickListener(v -> bSend_click());
 
-		new AlertDialog.Builder(this)
+		new AlertDialogWrapper.Builder(this)
 			.setMessage(R.string.patch_text_intro)
 			.setPositiveButton(R.string.ok, null)
 			.show();
@@ -111,7 +111,7 @@ public class PatchTextActivity extends BaseActivity {
 		}
 
 		if (!hasEdits) {
-			new AlertDialog.Builder(this)
+			new AlertDialogWrapper.Builder(this)
 				.setMessage(R.string.patch_text_error_no_edits)
 				.setPositiveButton(R.string.ok, null)
 				.show();

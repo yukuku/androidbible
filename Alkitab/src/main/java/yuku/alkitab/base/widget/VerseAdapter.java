@@ -17,14 +17,7 @@ import java.util.Arrays;
 public abstract class VerseAdapter extends BaseAdapter {
 	public static final String TAG = VerseAdapter.class.getSimpleName();
 
-	public static class Factory {
-		public VerseAdapter create(Context context) {
-			return new SingleViewVerseAdapter(context);
-		}
-	}
-
 	// # field ctor
-	final Context context_;
 	CallbackSpan.OnClickListener<Object> parallelListener_;
 	VersesView.AttributeListener attributeListener_;
 	VerseInlineLinkSpan.Factory inlineLinkSpanFactory_;
@@ -54,12 +47,11 @@ public abstract class VerseAdapter extends BaseAdapter {
 	VersesView owner_;
 	
 	public VerseAdapter(Context context) {
-		context_ = context;
 		density_ = context.getResources().getDisplayMetrics().density;
-		inflater_ = LayoutInflater.from(context_);
+		inflater_ = LayoutInflater.from(context);
 	}
 
-	public synchronized void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
+	/* non-public */ synchronized void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
 		book_ = book;
 		chapter_1_ = chapter_1;
 		verses_ = verses;
@@ -69,7 +61,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 
-	public synchronized void setDataEmpty() {
+	/* non-public */ synchronized void setDataEmpty() {
 		book_ = null;
 		chapter_1_ = 0;
 		verses_ = null;
@@ -171,10 +163,10 @@ public abstract class VerseAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Kalau pos 0: perikop; pos 1: verse_1 1;
-	 * maka fungsi ini (verse_1: 1) akan return 0.
+	 * For example, when pos=0 is a pericope and pos=1 is the first verse,
+	 * this method returns 0.
 	 * 
-	 * @return position di adapter ini atau -1 kalo ga ketemu
+	 * @return position on this adapter, or -1 if not found
 	 */
 	public int getPositionOfPericopeBeginningFromVerse(int verse_1) {
 		if (itemPointer_ == null) return -1;
@@ -183,13 +175,13 @@ public abstract class VerseAdapter extends BaseAdapter {
 
 		for (int i = 0, len = itemPointer_.length; i < len; i++) {
 			if (itemPointer_[i] == verse_0) {
-				// ketemu, tapi kalo ada judul perikop, akan lebih baik. Coba cek mundur dari sini
+				// we've found it, but if we can move back to pericopes, it is better.
 				for (int j = i - 1; j >= 0; j--) {
 					if (itemPointer_[j] < 0) {
-						// masih perikop, yey, kita lanjutkan
+						// it's still pericope, so let's continue
 						i = j;
 					} else {
-						// uda bukan perikop. (Berarti uda ayat sebelumnya)
+						// no longer a pericope (means, we are on the previous verse)
 						break;
 					}
 				}
@@ -234,7 +226,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 			return id + 1;
 		}
 		
-		// perikop nih. Susuri sampe abis
+		// it's a pericope. Let's move forward until we get a verse
 		for (int i = position + 1; i < itemPointer_.length; i++) {
 			id = itemPointer_[i];
 			
@@ -285,7 +277,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 		return getItemId(position) >= 0;
 	}
 	
-	public static int[] makeItemPointer(int nverse, int[] perikop_xari, PericopeBlock[] perikop_xblok, int nblock) {
+	private static int[] makeItemPointer(int nverse, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
 		int[] res = new int[nverse + nblock];
 
 		int pos_block = 0;
@@ -293,31 +285,29 @@ public abstract class VerseAdapter extends BaseAdapter {
 		int pos_itemPointer = 0;
 
 		while (true) {
-			// cek apakah judul perikop, DAN perikop masih ada
+			// check if we still have pericopes remaining
 			if (pos_block < nblock) {
-				// masih memungkinkan
-				if (Ari.toVerse(perikop_xari[pos_block]) - 1 == pos_verse) {
-					// ADA PERIKOP.
+				// still possible
+				if (Ari.toVerse(pericopeAris[pos_block]) - 1 == pos_verse) {
+					// We have a pericope.
 					res[pos_itemPointer++] = -pos_block - 1;
 					pos_block++;
 					continue;
 				}
 			}
 
-			// cek apakah ga ada ayat lagi
+			// check if there is no verses remaining
 			if (pos_verse >= nverse) {
 				break;
 			}
 
-			// uda ga ada perikop, ATAU belom saatnya perikop. Maka masukin ayat.
+			// there is no more pericopes, OR not the time yet for pericopes. So we insert a verse.
 			res[pos_itemPointer++] = pos_verse;
 			pos_verse++;
 		}
 
 		if (res.length != pos_itemPointer) {
-			// ada yang ngaco! di algo di atas
-			throw new RuntimeException("Algorithm to insert pericopes error!! pos_itemPointer=" + pos_itemPointer + " pos_verse=" + pos_verse + " pos_block=" + pos_block + " nverse=" + nverse + " nblock=" + nblock //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					+ " xari:" + Arrays.toString(perikop_xari) + " xblok:" + Arrays.toString(perikop_xblok));  //$NON-NLS-1$//$NON-NLS-2$
+			throw new RuntimeException("Algorithm to insert pericopes error!! pos_itemPointer=" + pos_itemPointer + " pos_verse=" + pos_verse + " pos_block=" + pos_block + " nverse=" + nverse + " nblock=" + nblock + " pericopeAris:" + Arrays.toString(pericopeAris) + " pericopeBlocks:" + Arrays.toString(pericopeBlocks));
 		}
 
 		return res;

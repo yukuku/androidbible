@@ -6,8 +6,6 @@ public enum Prefkey {
 
 	goto_last_tab,
 
-	patch_devotionSlippedHtmlTags,
-
 	/**
 	 * When this is true, the user has understood that the middle button can be used
 	 * to open history. So let us remove the hint.
@@ -103,6 +101,7 @@ public enum Prefkey {
 	lastVerse,
 	lastVersionId,
 	lastSplitVersionId,
+	lastSplitOrientation, // string "horizontal" or "vertical"
 
 	/**
 	 * The whole history (with many entries)
@@ -116,4 +115,10 @@ public enum Prefkey {
 	 * 2: imported already
 	 */
 	stop_import_yuku_alkitab_backups,
+
+	/** Announce: last annoucement check (auto only). Unix time. */
+	announce_last_check,
+
+	/** Announce: read announcement ids. long[] in json. */
+	announce_read_ids,
 }

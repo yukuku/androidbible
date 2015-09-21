@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.view.Menu;
 import android.view.MenuItem;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -106,7 +107,7 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 			startActivityForResult(SyncLoginActivity.createIntent(), REQCODE_login);
 
 		} else { // show logout instead
-			new AlertDialog.Builder(this)
+			new AlertDialogWrapper.Builder(this)
 				.setMessage(R.string.sync_logout_warning)
 				.setPositiveButton(R.string.ok, (d, w) -> {
 					SyncRecorder.log(SyncRecorder.EventKind.logout_pre, null, "accountName", syncAccountName);

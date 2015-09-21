@@ -27,7 +27,7 @@ public class TwofingerLinearLayout extends LinearLayout {
 	PointF startAvg = new PointF();
 
 	// minimum distance to be considered swipe
-	float threshold_twofinger_swipe;
+	float threshold_swipe;
 
 	// minimum distance to be considered drag
 	float threshold_twofinger_drag;
@@ -35,7 +35,11 @@ public class TwofingerLinearLayout extends LinearLayout {
 	// minimum distance change to be considered scale
 	float threshold_twofinger_scale;
 
-	// if not enabled, two finger gestures are not captured
+	// if not enabled, one finger gestures, i.e. swipe, will not be captured.
+	// by default it's true
+	boolean onefingerEnabled = true;
+
+	// if not enabled, two finger gestures will not be captured.
 	// by default it's true
 	boolean twofingerEnabled = true;
 
@@ -51,13 +55,13 @@ public class TwofingerLinearLayout extends LinearLayout {
 
 	private void init() {
 		final float density = getResources().getDisplayMetrics().density;
-		threshold_twofinger_swipe = 48.f * density;
+		threshold_swipe = 48.f * density;
 		threshold_twofinger_drag = 48.f * density;
 		threshold_twofinger_scale = 72.f * density;
 	}
 
-	public boolean isTwofingerEnabled() {
-		return twofingerEnabled;
+	public void setOnefingerEnabled(final boolean onefingerEnabled) {
+		this.onefingerEnabled = onefingerEnabled;
 	}
 
 	public void setTwofingerEnabled(final boolean twofingerEnabled) {
@@ -198,15 +202,15 @@ public class TwofingerLinearLayout extends LinearLayout {
 				float dy = event.getY() - onefingerStart.y;
 				float ady = Math.abs(dy);
 
-				if (dx > threshold_twofinger_swipe && ady < 0.5f * threshold_twofinger_swipe) {
+				if (onefingerEnabled && dx > threshold_swipe && ady < 0.5f * threshold_swipe) {
 					// swipe to right
 					state = State.onefinger_right;
 					return true;
-				} else if (dx < -threshold_twofinger_swipe && ady < 0.5f * threshold_twofinger_swipe) {
+				} else if (onefingerEnabled && dx < -threshold_swipe && ady < 0.5f * threshold_swipe) {
 					// swipe to left
 					state = State.onefinger_left;
 					return true;
-				} else if (ady > threshold_twofinger_swipe) {
+				} else if (ady > threshold_swipe) {
 					// invalidate
 					onefingerStart.x = Float.MIN_VALUE;
 				}

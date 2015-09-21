@@ -1,11 +1,10 @@
 package yuku.alkitab.base;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.config.AppConfig;
@@ -23,7 +22,6 @@ import yuku.alkitab.model.Version;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 
@@ -152,12 +150,7 @@ public class S {
 		}
 
 		// sort based on ordering
-		Collections.sort(res, new Comparator<MVersion>() {
-			@Override
-			public int compare(final MVersion lhs, final MVersion rhs) {
-				return lhs.ordering - rhs.ordering;
-			}
-		});
+		Collections.sort(res, (lhs, rhs) -> lhs.ordering - rhs.ordering);
 
 		return res;
 	}
@@ -207,20 +200,22 @@ public class S {
 			options[i] = version == null ? activity.getString(R.string.split_version_none) : version.longName;
 		}
 
-		new AlertDialog.Builder(activity)
-			.setSingleChoiceItems(options, selected, new DialogInterface.OnClickListener() {
-				@Override public void onClick(DialogInterface dialog, int which) {
-					final MVersion mv = versions.get(which);
-					listener.onVersionSelected(mv);
-					dialog.dismiss();
-				}
+		new MaterialDialog.Builder(activity)
+			.items(options)
+			.itemsCallbackSingleChoice(selected, (dialog, view, which, text) -> {
+				final MVersion mv = versions.get(which);
+				listener.onVersionSelected(mv);
+				dialog.dismiss();
+				return true;
 			})
-			.setPositiveButton(R.string.versi_lainnya, new DialogInterface.OnClickListener() {
-				@Override public void onClick(DialogInterface dialog, int which) {
+			.alwaysCallSingleChoiceCallback()
+			.positiveText(R.string.versi_lainnya)
+			.callback(new MaterialDialog.ButtonCallback() {
+				@Override
+				public void onPositive(final MaterialDialog dialog) {
 					activity.startActivity(VersionsActivity.createIntent());
 				}
 			})
-			.setNegativeButton(R.string.cancel, null)
 			.show();
 	}
 

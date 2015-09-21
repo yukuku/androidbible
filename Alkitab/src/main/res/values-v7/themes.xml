@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<style name="Theme.Alkitab" parent="Theme.Alkitab.Base" />
+
+	<style name="Theme.Alkitab.Goto" parent="Theme.Alkitab.Goto.Base" />
+
+	<style name="Theme.Alkitab.Transparent" parent="Theme.Alkitab.Transparent.Base" />
 </resources>

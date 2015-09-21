@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Pair;
@@ -8,6 +7,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
@@ -58,7 +58,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		cMakeDirtyLabel = V.get(this, R.id.cMakeDirtyLabel);
 		cMakeDirtyMarker_Label = V.get(this, R.id.cMakeDirtyMarker_Label);
 
-		V.get(this, R.id.bServerSave).setOnClickListener(v -> new AlertDialog.Builder(this)
+		V.get(this, R.id.bServerSave).setOnClickListener(v -> new AlertDialogWrapper.Builder(this)
 			.setMessage("This will reset your synced shadow to revision 0.")
 			.setPositiveButton(R.string.ok, (d, w) -> {
 				Preferences.setString(Prefkey.sync_server_prefix, tServer.getText().toString().trim());
@@ -69,7 +69,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 			.setNegativeButton(R.string.cancel, null)
 			.show());
 
-		V.get(this, R.id.bServerReset).setOnClickListener(v -> new AlertDialog.Builder(this)
+		V.get(this, R.id.bServerReset).setOnClickListener(v -> new AlertDialogWrapper.Builder(this)
 			.setMessage("This will reset your synced shadow to revision 0.")
 			.setPositiveButton(R.string.ok, (d, w) -> {
 				Preferences.remove(Prefkey.sync_server_prefix);
@@ -84,6 +84,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 		V.get(this, R.id.bMabelClientState).setOnClickListener(bMabelClientState_click);
 		V.get(this, R.id.bGenerateDummies).setOnClickListener(bGenerateDummies_click);
+		V.get(this, R.id.bGenerateDummies2).setOnClickListener(bGenerateDummies2_click);
 		V.get(this, R.id.bLogout).setOnClickListener(bLogout_click);
 		V.get(this, R.id.bSync).setOnClickListener(bSync_click);
 
@@ -96,13 +97,13 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		final Sync_Mabel.ClientState clientState = pair.first;
 
 		sb.append("Base revno: ").append(clientState.base_revno).append('\n');
-		sb.append("Delta operations: \n");
+		sb.append("Delta operations (size " + clientState.delta.operations.size() + "):\n");
 
 		for (final Sync.Operation<Sync_Mabel.Content> operation : clientState.delta.operations) {
 			sb.append("\u2022 ").append(operation).append('\n');
 		}
 
-		new AlertDialog.Builder(this)
+		new AlertDialogWrapper.Builder(this)
 			.setMessage(sb)
 			.setPositiveButton(R.string.ok, null)
 			.show();
@@ -128,8 +129,32 @@ public class SecretSyncDebugActivity extends BaseActivity {
 			S.getDb().updateLabels(marker, labelSet);
 		}
 
-		new AlertDialog.Builder(this)
+		new AlertDialogWrapper.Builder(this)
 			.setMessage("10 markers, 2 labels generated.")
+			.setPositiveButton(R.string.ok, null)
+			.show();
+	};
+
+	View.OnClickListener bGenerateDummies2_click = v -> {
+		final Label label1 = S.getDb().insertLabel(randomString("LL1_", 1, 3, 8), U.encodeLabelBackgroundColor(rand(0xffffff)));
+		final Label label2 = S.getDb().insertLabel(randomString("LL2_", 1, 3, 8), U.encodeLabelBackgroundColor(rand(0xffffff)));
+
+		for (int i = 0; i < 1000; i++) {
+			final Marker.Kind kind = Marker.Kind.values()[rand(3)];
+			final Date now = new Date();
+			final Marker marker = S.getDb().insertMarker(0x000101 + rand(30), kind, kind == Marker.Kind.highlight? U.encodeHighlight(rand(0xffffff)): randomString("MM" + i + "_", rand(10) < 5? rand(81): rand(400) + 4, 5, 15), rand(2) + 1, now, now);
+			final Set<Label> labelSet = new HashSet<>();
+			if (rand(10) < 1) {
+				labelSet.add(label1);
+			}
+			if (rand(10) < 4) {
+				labelSet.add(label2);
+			}
+			S.getDb().updateLabels(marker, labelSet);
+		}
+
+		new AlertDialogWrapper.Builder(this)
+			.setMessage("1000 markers, 2 labels generated.")
 			.setPositiveButton(R.string.ok, null)
 			.show();
 	};
@@ -172,7 +197,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 	View.OnClickListener bSync_click = v -> {
 		final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
 		if (simpleToken == null) {
-			new AlertDialog.Builder(this)
+			new AlertDialogWrapper.Builder(this)
 				.setMessage("not logged in")
 				.setPositiveButton(R.string.ok, null)
 				.show();
@@ -186,7 +211,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		final RequestBody requestBody = new FormEncodingBuilder()
 			.add("simpleToken", simpleToken)
 			.add("syncSetName", SyncShadow.SYNC_SET_MABEL)
-			.add("installation_id", Sync.getInstallationId())
+			.add("installation_id", U.getInstallationId())
 			.add("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 
@@ -212,7 +237,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 				final Marker_Label marker_label = Marker_Label.createNewMarker_Label(markers.get(0).gid, labels.get(0).gid);
 				S.getDb().insertOrUpdateMarker_Label(marker_label);
 			} else {
-				new AlertDialog.Builder(this)
+				new AlertDialogWrapper.Builder(this)
 					.setMessage("not enough markers and labels to create marker_label")
 					.setPositiveButton(R.string.ok, null)
 					.show();
@@ -223,7 +248,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		call.enqueue(new Callback() {
 			@Override
 			public void onFailure(final Request request, final IOException e) {
-				runOnUiThread(() -> new AlertDialog.Builder(SecretSyncDebugActivity.this)
+				runOnUiThread(() -> new AlertDialogWrapper.Builder(SecretSyncDebugActivity.this)
 					.setMessage("Error: " + e.getMessage())
 					.setPositiveButton(R.string.ok, null)
 					.show());
@@ -238,7 +263,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 						final Sync.Delta<Sync_Mabel.Content> append_delta = debugSyncResponse.append_delta;
 
 						final Sync.ApplyAppendDeltaResult applyResult = S.getDb().applyMabelAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
-						new AlertDialog.Builder(SecretSyncDebugActivity.this)
+						new AlertDialogWrapper.Builder(SecretSyncDebugActivity.this)
 							.setMessage("Final revno: " + final_revno + "\nApply result: " + applyResult + "\nAppend delta: " + append_delta)
 							.setPositiveButton(R.string.ok, null)
 							.show();
@@ -249,7 +274,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 							App.getLbm().sendBroadcast(new Intent(MarkerListActivity.ACTION_RELOAD));
 						}
 					} else {
-						new AlertDialog.Builder(SecretSyncDebugActivity.this)
+						new AlertDialogWrapper.Builder(SecretSyncDebugActivity.this)
 							.setMessage(debugSyncResponse.message)
 							.setPositiveButton(R.string.ok, null)
 							.show();
