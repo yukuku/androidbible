@@ -456,6 +456,8 @@
   <string name="sync_login_form_change_password_success">Ihr Passwort wurde erfolgreich geändert.</string>
   <string name="pref_textPadding_title">Ränder um den Text</string>
   <string name="pref_textPadding_summary">Text in einer Zeile schmaler machen für eine bessere Lesbarkeit</string>
+  <string name="pref_bottomToolbarOnText_title">Versnavigation unten</string>
+  <string name="pref_bottomToolbarOnText_summary">Toolbar für die Versnavigation am unteren Rand der Bibelanzeige anzeigen</string>
   <string name="dr_app_name">Erinnerung</string>
   <string name="dr_notification_title">Tägliche Andacht</string>
   <string name="dr_notification_text">Lesen Sie jetzt die heutige Andacht.</string>
@@ -496,4 +498,5 @@
   <string name="dict_download_button">Herunterladen</string>
   <string name="menuGuide">Leitfaden</string>
   <string name="menuCommentary">Kommentar</string>
+  <string name="maps_could_not_open">Die Bible Map App konnte nicht geöffnet werden.</string>
 </resources>

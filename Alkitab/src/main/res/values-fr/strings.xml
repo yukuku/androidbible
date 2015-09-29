@@ -198,6 +198,7 @@
   <string name="verse_select_one_verse_selected">1 verset sélectionné</string>
   <string name="verse_select_multiple_verse_selected">%s versets sélectionnés</string>
   <string name="google_play_store_not_installed">Google Play Store n\'est pas installé.</string>
+  <string name="pref_language_label_default">Défaut</string>
   <string name="goto_tab_dialer_label">Appeler</string>
   <string name="goto_tab_direct_label">Direct</string>
   <string name="goto_tab_grid_label">Réseau</string>
@@ -301,6 +302,9 @@
   <string name="rp_commentBehindSchedule">En retard sur le planning : %s%%</string>
   <string name="rp_noReadingPlanAvailable">Plus aucun plan de lecture valide.</string>
   <string name="rp_deletePlan">"Supprimer \'%s\' ?"</string>
+  <string name="rp_reset">Changer la date de début pour que la première lecture non-lue soit aujourd\'hui?</string>
+  <string name="rp_restart_desc">Commencez ce plan de lecture du début en marquant tout comme lu?</string>
+  <string name="rp_showCalendar">Choisir date</string>
   <string name="rp_gotoFirstUnread">Aller au premier \'non lu\'</string>
   <string name="rp_dayHeader">Jour %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Précédente lecture</string>
@@ -312,8 +316,11 @@
   <string name="rp_navigationGoToDate">Aller à une date</string>
   <string name="rp_navigationNextDay">Prochain jour</string>
   <string name="rp_menuDownload">Télécharger</string>
+  <string name="rp_menuCatchMeUp">Resynchronisez les dates</string>
+  <string name="rp_menuRestart">Recommencer</string>
   <string name="rp_menuDelete">Suppression</string>
   <string name="rp_headingProgress">Progression</string>
+  <string name="rp_gotoToday">Aller à aujourd\'hui</string>
   <string name="rp_showDetails">Afficher les détails</string>
   <string name="rp_hideDetails">Masquer les détails</string>
   <string name="rp_aboutPlan">Au sujet du plan</string>
@@ -325,6 +332,7 @@
   <string name="rp_download_reading_plan_failed">Echec lors du téléchargement de la liste des plans de lecture. Merci de relancer le téléchargement avec une connexion internet active.</string>
   <string name="rp_download_reading_plan_data_corrupted">Le plan de lecture téléchergé est corrompu. Merci de relancer le téléchargement avec une connexion internet active.</string>
   <string name="rp_download_already_have">Vous avez déjà ce plan de lecture.</string>
+  <string name="rp_mark_as_read_up_to">Marquer comme lue jusqu\'ici?</string>
   <string name="version_download_need_fonts">"La version que vous avez téléchargée exige certaines polices de caractères pour être affichée. Allez au menu \'apparence du texte\' et sélectionnez une police de caractère. Le Grec exige les polices de caractère de Ubuntu. Burmese exige Parabaik, ParabaikSans, or Myanmar3. Tamil exige Akshar. Telugu exige Suranna."</string>
   <string name="version_download_corrupted_file">Le fichier chargé semble défectueux.</string>
   <string name="menuNightMode">Mode nuit</string>
@@ -381,6 +389,7 @@
   <string name="patch_text_error_no_edits">S\'il vous plaît, faites quelques modifications avant de l\'envoyer.</string>
   <string name="patch_text_menu_reference">Référence</string>
   <string name="patch_text_menu_send">Envoyer</string>
+  <string name="patch_text_open_link">Envoyer corrections</string>
   <string name="note_actionbar_edit">éditer</string>
   <string name="note_actionbar_delete">Supprimer</string>
   <string name="note_actionbar_ok">Terminé</string>
@@ -398,6 +407,7 @@
   <string name="pref_screen_sync_settings_title">Paramètres de synchronisation</string>
   <string name="sync_category_title_data_types">Types de données</string>
   <string name="pref_syncSet_mabel_enabled_title">Marque-pages et étiquettes</string>
+  <string name="pref_syncSet_rp_enabled_title">Progrès du plan de lecture</string>
   <string name="pref_syncSet_history_enabled_title">Versets récents</string>
   <string name="sync_menu_item_sync_now">Synchroniser maintenant</string>
   <string name="sync_menu_item_sync_log">Afficher le journal</string>
@@ -443,6 +453,8 @@
   <string name="sync_login_form_change_password_success">Votre mot de passe a été modifié.</string>
   <string name="pref_textPadding_title">Marges autour du texte</string>
   <string name="pref_textPadding_summary">Réduire le texte pour en faciliter la lecture</string>
+  <string name="pref_bottomToolbarOnText_title">Navigation de verset en bas</string>
+  <string name="pref_bottomToolbarOnText_summary">Mettre barre d\'outil de navigation de verset en bas sur l\'écran de la Bible</string>
   <string name="dr_app_name">Rappel</string>
   <string name="dr_notification_title">Méditation quotidienne</string>
   <string name="dr_notification_text">Lire la méditation quotidienne.</string>
@@ -462,6 +474,8 @@
   <string name="about_announcements_none">Annonces (0)</string>
   <string name="about_announcements_number">Annonces (%s)</string>
   <string name="about_announcement_load_failed">Echec lors du chargement des annonces.</string>
+  <string name="about_official_website">Site officiel</string>
+  <string name="about_project_page">Page de projet</string>
   <string name="marker_migrate_introduction">Nous avons détecté une sauvegarde de la version 3 de Yuku Quick Bible qui contient des marque-pages, des notes, des surlignés et des étiquettes.\n\nVoulez-vous les importer, pour pouvoir y accéder depuis cette application?</string>
   <string name="marker_migrate_no_more">Ne plus demander</string>
   <string name="marker_migrate_later">Pas maintenant</string>
@@ -481,4 +495,5 @@
   <string name="dict_download_button">Télécharger</string>
   <string name="menuGuide">Guide</string>
   <string name="menuCommentary">Commentaire</string>
+  <string name="maps_could_not_open">N\'a pas pu ouvrir l\'application Bible Maps.</string>
 </resources>
