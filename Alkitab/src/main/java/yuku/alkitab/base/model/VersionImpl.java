@@ -204,9 +204,13 @@ public class VersionImpl extends Version {
 				int ari = ari_start;
 				Book book = getBook(Ari.toBook(ari));
 				if (book != null) {
-					result_aris.add(ari);
-					result_verses.add(loadVerseText(ari));
-					res++;
+					final String verseText = loadVerseText(ari);
+
+					if (verseText != null) {
+						result_aris.add(ari);
+						result_verses.add(verseText);
+						res++;
+					}
 				}
 			} else {
 				int ari_start_bc = Ari.toBookChapter(ari_start);
@@ -251,10 +255,13 @@ public class VersionImpl extends Version {
 		for (int v_1 = v_1_start; v_1 <= v_1_end; v_1++) {
 			int v_0 = v_1 - 1;
 			if (v_0 < verses.getVerseCount()) {
-				int ari = ari_bc | v_1;
-				result_aris.add(ari);
-				result_verses.add(verses.getVerse(v_0));
-				count++;
+				final int ari = ari_bc | v_1;
+				final String verseText = verses.getVerse(v_0);
+				if (verseText != null) {
+					result_aris.add(ari);
+					result_verses.add(verseText);
+					count++;
+				}
 			} else {
 				// we're done with this chapter, no need to loop again
 				break;
