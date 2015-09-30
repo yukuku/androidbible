@@ -18,9 +18,7 @@ import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -54,7 +52,6 @@ import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -367,20 +364,6 @@ public class VersionsActivity extends BaseActivity {
 				return true;
 			case R.id.menuAddFromUrl:
 				openUrlInputDialog();
-				return true;
-			case android.R.id.home:
-				Intent upIntent = new Intent(this, IsiActivity.class);
-				if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-					// This activity is not part of the application's task, so create a new task
-					// with a synthesized back stack.
-					TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
-					finish();
-				} else {
-					// This activity is part of the application's task, so simply
-					// navigate up to the hierarchical parent activity.
-					// sample code uses this: NavUtils.navigateUpTo(this, upIntent);
-					finish();
-				}
 				return true;
 		}
 
