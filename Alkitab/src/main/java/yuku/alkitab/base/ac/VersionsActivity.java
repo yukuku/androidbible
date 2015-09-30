@@ -595,11 +595,11 @@ public class VersionsActivity extends BaseActivity {
 	 * Previously it was like "pdb-1234abcd-1.yes".
 	 */
 	private String yesNameForPdb(String filenamepdb) {
-		String base = filenamepdb.toLowerCase(Locale.US);
+		String base = new File(filenamepdb).getName().toLowerCase(Locale.US);
 		if (base.endsWith(".pdb")) {
 			base = base.substring(0, base.length() - 4);
 		}
-		base = base.replaceAll("[^0-9A-Z_\\.-]", "");
+		base = base.replaceAll("[^0-9a-z_\\.-]", "");
 		return "pdb-" + base + ".yes";
 	}
 
