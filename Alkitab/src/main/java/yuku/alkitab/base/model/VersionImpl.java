@@ -1,5 +1,6 @@
 package yuku.alkitab.base.model;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.storage.InternalReader;
@@ -144,12 +145,12 @@ public class VersionImpl extends Version {
 	}
 
 	@Override
-	public synchronized String loadVerseText(int ari) {
+	@Nullable public synchronized String loadVerseText(int ari) {
 		return loadVerseText(getBook(Ari.toBook(ari)), Ari.toChapter(ari), Ari.toVerse(ari));
 	}
 
 	@Override
-	public synchronized String loadVerseText(Book book, int chapter_1, int verse_1) {
+	@Nullable public synchronized String loadVerseText(Book book, int chapter_1, int verse_1) {
 		if (book == null) {
 			return null;
 		}

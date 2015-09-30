@@ -1977,7 +1977,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	}
 
-	VersesView.SelectedVersesListener lsSplit0_selectedVerses = new VersesView.SelectedVersesListener() {
+	VersesView.SelectedVersesListener lsSplit0_selectedVerses = new VersesView.DefaultSelectedVersesListener() {
 		@Override public void onSomeVersesSelected(VersesView v) {
 			if (activeSplitVersion != null) {
 				// synchronize the selection with the split view
@@ -2005,11 +2005,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				actionMode = null;
 			}
 		}
-
-		@Override public void onVerseSingleClick(VersesView v, int verse_1) {}
 	};
 
-	VersesView.SelectedVersesListener lsSplit1_selectedVerses = new VersesView.SelectedVersesListener() {
+	VersesView.SelectedVersesListener lsSplit1_selectedVerses = new VersesView.DefaultSelectedVersesListener() {
 		@Override public void onSomeVersesSelected(VersesView v) {
 			// synchronize the selection with the main view
 			IntArrayList selectedVerses = v.getSelectedVerses_1();
@@ -2019,8 +2017,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		@Override public void onNoVersesSelected(VersesView v) {
 			lsSplit0.uncheckAllVerses(true);
 		}
-
-		@Override public void onVerseSingleClick(VersesView v, int verse_1) {}
 	};
 
 	VersesView.OnVerseScrollListener lsSplit0_verseScroll = new VersesView.OnVerseScrollListener() {

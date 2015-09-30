@@ -67,6 +67,12 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		void onVerseSingleClick(VersesView v, int verse_1);
 	}
 
+	public static abstract class DefaultSelectedVersesListener implements SelectedVersesListener {
+		@Override public void onSomeVersesSelected(final VersesView v) {}
+		@Override public void onNoVersesSelected(final VersesView v) {}
+		@Override public void onVerseSingleClick(final VersesView v, final int verse_1) {}
+	}
+
 	public interface AttributeListener {
 		void onBookmarkAttributeClick(int ari);
 		void onNoteAttributeClick(int ari);
