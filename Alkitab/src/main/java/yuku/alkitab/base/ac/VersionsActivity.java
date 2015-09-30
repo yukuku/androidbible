@@ -228,13 +228,17 @@ public class VersionsActivity extends BaseActivity {
 			}
 
 			if (!isYesFile) { // pdb file
-				// copy the file to cache first
-				File cacheFile = new File(getCacheDir(), "datafile");
-				InputStream input = getContentResolver().openInputStream(uri);
-				copyStreamToFile(input, cacheFile);
-				input.close();
+				if (isLocalFile) {
+					handleFileOpenPdb(uri.getPath());
+				} else {
+					// copy the file to cache first
+					File cacheFile = new File(getCacheDir(), "datafile");
+					InputStream input = getContentResolver().openInputStream(uri);
+					copyStreamToFile(input, cacheFile);
+					input.close();
 
-				handleFileOpenPdb(cacheFile.getAbsolutePath());
+					handleFileOpenPdb(cacheFile.getAbsolutePath());
+				}
 				return;
 			}
 
