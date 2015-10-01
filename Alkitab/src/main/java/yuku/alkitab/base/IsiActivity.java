@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -26,7 +25,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
@@ -267,7 +266,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	};
 
 	DrawerLayout drawerLayout;
-	ActionBarDrawerToggle drawerToggle;
 	LeftDrawer.Text leftDrawer;
 
 	FrameLayout overlayContainer;
@@ -407,8 +405,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		setSupportActionBar(toolbar);
 		setTitle("");
 
-		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
-		drawerLayout.setDrawerListener(drawerToggle);
+		final ActionBar actionBar = getSupportActionBar();
+		assert actionBar != null;
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
 
 		bGoto = V.get(this, R.id.bGoto);
 		bLeft = V.get(this, R.id.bLeft);
@@ -596,18 +596,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		});
 
 		return files != null && files.length != 0;
-	}
-
-	@Override
-	protected void onPostCreate(final Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		drawerToggle.syncState();
-	}
-
-	@Override
-	public void onConfigurationChanged(final Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		drawerToggle.onConfigurationChanged(newConfig);
 	}
 
 	@Override protected void onNewIntent(Intent intent) {
@@ -1158,14 +1146,20 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		private final java.text.DateFormat timeFormat = DateFormat.getTimeFormat(App.context);
 		private final java.text.DateFormat mediumDateFormat = DateFormat.getMediumDateFormat(App.context);
 
+		final String thisCreatorId = U.getInstallationId();
+		int defaultTextColor;
+
 		@Override
 		public View newView(final int position, final ViewGroup parent) {
-			return getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
+			final View res = getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
+			final TextView textView = (TextView) res;
+			defaultTextColor = textView.getCurrentTextColor();
+			return res;
 		}
 
 		@Override
 		public void bindView(final View view, final int position, final ViewGroup parent) {
-			TextView textView = (TextView) view;
+			final TextView textView = (TextView) view;
 
 			int ari = history.getAri(position);
 			SpannableStringBuilder sb = new SpannableStringBuilder();
@@ -1173,10 +1167,16 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			sb.append("  ");
 			int sb_len = sb.length();
 			sb.append(formatTimestamp(history.getTimestamp(position)));
-			sb.setSpan(new ForegroundColorSpan(0xff666666), sb_len, sb.length(), 0);
+			sb.setSpan(new ForegroundColorSpan(0xffaaaaaa), sb_len, sb.length(), 0);
 			sb.setSpan(new RelativeSizeSpan(0.7f), sb_len, sb.length(), 0);
 
 			textView.setText(sb);
+
+			if (thisCreatorId.equals(history.getCreatorId(position))) {
+				textView.setTextColor(defaultTextColor);
+			} else {
+				textView.setTextColor(0xff4db6ac);
+			}
 		}
 
 		private CharSequence formatTimestamp(final long timestamp) {
@@ -1231,12 +1231,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
-		// Pass the event to ActionBarDrawerToggle, if it returns true, then it has handled the app icon touch event
-		if (drawerToggle.onOptionsItemSelected(item)) {
-			return true;
-		}
-
 		switch (item.getItemId()) {
+		case android.R.id.home:
+			leftDrawer.toggleDrawer();
+			return true;
 		case R.id.menuSearch:
 			menuSearch_click();
 			return true;
@@ -1979,7 +1977,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	}
 
-	VersesView.SelectedVersesListener lsSplit0_selectedVerses = new VersesView.SelectedVersesListener() {
+	VersesView.SelectedVersesListener lsSplit0_selectedVerses = new VersesView.DefaultSelectedVersesListener() {
 		@Override public void onSomeVersesSelected(VersesView v) {
 			if (activeSplitVersion != null) {
 				// synchronize the selection with the split view
@@ -2007,11 +2005,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				actionMode = null;
 			}
 		}
-
-		@Override public void onVerseSingleClick(VersesView v, int verse_1) {}
 	};
 
-	VersesView.SelectedVersesListener lsSplit1_selectedVerses = new VersesView.SelectedVersesListener() {
+	VersesView.SelectedVersesListener lsSplit1_selectedVerses = new VersesView.DefaultSelectedVersesListener() {
 		@Override public void onSomeVersesSelected(VersesView v) {
 			// synchronize the selection with the main view
 			IntArrayList selectedVerses = v.getSelectedVerses_1();
@@ -2021,8 +2017,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		@Override public void onNoVersesSelected(VersesView v) {
 			lsSplit0.uncheckAllVerses(true);
 		}
-
-		@Override public void onVerseSingleClick(VersesView v, int verse_1) {}
 	};
 
 	VersesView.OnVerseScrollListener lsSplit0_verseScroll = new VersesView.OnVerseScrollListener() {

@@ -115,6 +115,10 @@ public class History {
 		return entries.get(position).timestamp;
 	}
 
+	public synchronized String getCreatorId(final int position) {
+		return entries.get(position).creator_id;
+	}
+
 	public List<HistoryEntry> listAllEntries() {
 		return new ArrayList<>(entries);
 	}

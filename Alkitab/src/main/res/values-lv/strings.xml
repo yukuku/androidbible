@@ -129,6 +129,7 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="ed_download_button">Lejupielādēt</string>
   <string name="ed_update_button">Atjaunināt</string>
   <string name="ed_details_update_available">ir pieejama jauna versija</string>
+  <string name="ed_download_manager_not_enabled_prompt">Lejupielādes Menedžera aplikācija nav ieslēgta vai nav pieejama.\n\nLai lejupielādētu Bībeles tulkojumus, ieslēdz to.</string>
   <string name="info_terperinci">Detaļas</string>
   <string name="buang_dari_daftar">Izdzēst</string>
   <string name="edit_bookmark">Labot grāmatzīmi</string>
@@ -154,6 +155,7 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="bmcat_notes">Piezīmes</string>
   <string name="bmcat_highlights">Izceltās vietas</string>
   <string name="bmcat_unlabeled_bookmarks">Neiezīmētas grāmatzīmes</string>
+  <string name="menuLabelSort">Kārto iezīmes alfabētiskā secībā</string>
   <string name="bl_no_notes_written_yet">Piezīmes vēl nav uzrakstītas s.\nLai rakstītu piezīmi, uzsit uz panta.</string>
   <string name="bl_no_highlighted_verses">Nav izceltu pantu.\nLai tos izceltu, uzsit uz tiem.</string>
   <string name="bl_there_are_no_bookmarks_without_any_labels">Nav nevienas grāmatzīmes ar iezīmēm.</string>
@@ -198,6 +200,8 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="bookmark_search">Meklēt</string>
   <string name="verse_select_one_verse_selected">ir atzīmēts 1 pants</string>
   <string name="verse_select_multiple_verse_selected">ir atzīmēti %s panti</string>
+  <string name="google_play_store_not_installed">Google Play Veikals nav instalēts.</string>
+  <string name="pref_language_label_default">Pēc noklusējuma</string>
   <string name="goto_tab_dialer_label">Zvanītājprogramma</string>
   <string name="goto_tab_direct_label">Pa tiešo</string>
   <string name="goto_tab_grid_label">Režģis</string>
@@ -211,6 +215,7 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="sn_deep_search_enabled">Arī lirika (dziesmu vārdi) utt.</string>
   <string name="sn_songs_activity_title">Dziesmas</string>
   <string name="sn_bookselector_all">VISI</string>
+  <string name="sn_bookselector_more">Lejupielādēt vairāk&#8230;</string>
   <string name="sn_bookselector_all_desc">Meklēt visas instalētās grāmatas.</string>
   <string name="sn_downloading_ellipsis">Lejuplādēšana&#8230;</string>
   <string name="sn_download_song_books">Lejupielādēt dziesmu grāmatas</string>
@@ -218,9 +223,13 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="sn_share_title">Koplietot dziesmu</string>
   <string name="sn_lyric_version_version">Versija %s</string>
   <string name="sn_lyric_refrain_marker">Ref.</string>
+  <string name="sn_delete_song_book">Dzēst dziesmu grāmatu</string>
+  <string name="sn_delete_song_book_explanation">Vai dzēst visas dziesmas no dziesmu grāmatas ^1?</string>
+  <string name="sn_delete_song_book_result">^1 dziesmas ir izdzēstas no dziesmu grāmatas ^2.</string>
   <string name="sn_update_book_explanation">Vai atjaunot  ^1 grāmatu uz pēdējo versiju?</string>
   <string name="sn_update_book_confirm_button">Atjaunot</string>
   <string name="sn_update_book">Atjaunot dziesmu grāmatu</string>
+  <string name="sn_update_book_because_too_old">Lai turpinātu, lūdzu atjauno ^1 uz pēdējo versiju. Ja ir nepieciešams, tad pēc atjaunošanas sūti savus labojumus.</string>
   <string name="desc_previous_day">Iepriekšējā diena</string>
   <string name="desc_next_day">Nākošā diena</string>
   <string name="desc_open_bookmark">Atvērt grāmatzīmi</string>
@@ -239,6 +248,12 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="desc_progress_3">Trešais progress</string>
   <string name="desc_progress_4">Ceturtais progress</string>
   <string name="desc_progress_5">Piektais progress</string>
+  <string name="desc_verse_attribute_one_bookmark">Šim pantam ir pievienota grāmatzīme.</string>
+  <string name="desc_verse_attribute_multiple_bookmarks">%s grāmatzīmes ir pievienotas šim pantam.</string>
+  <string name="desc_verse_attribute_one_note">Šim pantam ir pievienota piezīme.</string>
+  <string name="desc_verse_attribute_multiple_notes">%s piezīmes ir pievienotas šim pantam.</string>
+  <string name="desc_verse_attribute_progress_mark">%s ir pašlaik šeit.</string>
+  <string name="desc_progress_mark_list">Lasīšanas gaitas marķieru saraksts</string>
   <string name="intent_filter_open_yes_file">Atvērt YES failu</string>
   <string name="intent_filter_open_pdb_file">Atvērt PDB failu</string>
   <string name="intent_filter_open_pdb_or_yes_file">Atvērt PDB/YES failu</string>
@@ -291,6 +306,9 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="rp_commentBehindSchedule">Ārpus grafika: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Lasīšanas plāni vairāk nav pieejami.</string>
   <string name="rp_deletePlan">"Vai dzēst \'%s\'?"</string>
+  <string name="rp_reset">Izmaini sākuma datumu tā, ka pirmā nelasītā grāmata būs šodien?</string>
+  <string name="rp_restart_desc">Vai sākt šo lasīšanas plānu no sākuma atzīmējot visu kā vēl nelasītu?</string>
+  <string name="rp_showCalendar">Izvēlies datumu</string>
   <string name="rp_gotoFirstUnread">Atvērt pirmo nelasīto</string>
   <string name="rp_dayHeader">Diena %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Iepriekšējais lasījums</string>
@@ -302,17 +320,24 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="rp_navigationGoToDate">Iet uz datumu</string>
   <string name="rp_navigationNextDay">Nākošajā dienā</string>
   <string name="rp_menuDownload">Lejuplādēt</string>
+  <string name="rp_menuCatchMeUp">Resinhronizē datumus</string>
+  <string name="rp_menuRestart">Sākt no jauna</string>
   <string name="rp_menuDelete">Dzēst</string>
   <string name="rp_headingProgress">Progress</string>
+  <string name="rp_gotoToday">Iet uz šodienu</string>
+  <string name="rp_setStartDate">Iestatīt sākuma datumu</string>
   <string name="rp_showDetails">Rādīt detaļas</string>
   <string name="rp_hideDetails">Paslēpt detaļas</string>
   <string name="rp_aboutPlan">Par plānu</string>
+  <string name="rp_description_with_id"><b>^1</b> (^2 dienas)\n<small>ID: ^3</small>\n\n^4</string>
   <string name="rp_download_day_count_days">%s dienas</string>
   <string name="rp_download_reading_plan_list_progress">Lasīšanas plānu saraksta lejupielāde&#8230;</string>
   <string name="rp_download_reading_plan_list_failed">Lasīšanas plāna sarakstu neizdevās lejupielādēt. Lūdzu mēģiniet vēlreiz ar darbojošos Interneta pieslēgumu.</string>
   <string name="rp_download_reading_plan_progress">Lasīšanas plāna lejupielāde&#8230;</string>
   <string name="rp_download_reading_plan_failed">Izvēlēto lasīšanas plānu neizdevās lejupielādēt. Lūdzu mēģiniet vēlreiz, kad darbosies Interneta pieslēgums.</string>
   <string name="rp_download_reading_plan_data_corrupted">Lejupielādētā lasīšanas plāna dati ir bojāti. Lūdzu mēģiniet vēlāk vēlreiz, kad būs ejošs Interneta pieslēgums.</string>
+  <string name="rp_download_already_have">Tev jau ir šis lasīšanas plāns.</string>
+  <string name="rp_mark_as_read_up_to">Atzīmēt kā lasītu līdz šejienei?</string>
   <string name="version_download_need_fonts">"Lejupielādētā versija var neattēlot noteiktus fontus. Ejiet uz izvēlni \'Teksta izskats\' un izvēlieties fontu. Grieķu valodai ir nepieciešams Ubuntu fonts. Birmas valodai ir nepieciešams Parabaik, ParabaikSans, Myanmar3. Tamil valodai nepieciešams Akshar, Telugu valodai nepieciešams Suranna."</string>
   <string name="version_download_corrupted_file">Izskatās, ka lejupielādētais fails ir bojāts.</string>
   <string name="menuNightMode">Nakts režīms</string>
@@ -336,6 +361,7 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="sn_menu_copy">Kopēt dziesmu</string>
   <string name="menuPlay">Palaist</string>
   <string name="menuPause">Pauze</string>
+  <string name="left_drawer_current_reading_title">Tekošā lasīšana</string>
   <string name="book_filter_old_testament">Vecā Derība</string>
   <string name="book_filter_old_pentateuch">5 Mozus grāmatas</string>
   <string name="book_filter_old_history">Vēsture</string>
@@ -368,6 +394,7 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="patch_text_error_no_edits">Pirms sūtīšanas lūdzu veiciet labojumus.</string>
   <string name="patch_text_menu_reference">Atsauce</string>
   <string name="patch_text_menu_send">Sūtīt</string>
+  <string name="patch_text_open_link">Sūtīt korekcijas</string>
   <string name="note_actionbar_edit">Labot</string>
   <string name="note_actionbar_delete">Dzēst</string>
   <string name="note_actionbar_ok">Gatavs</string>
@@ -385,7 +412,9 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="pref_screen_sync_settings_title">Sinhronizēt uzstādījumus</string>
   <string name="sync_category_title_data_types">Datu tipi</string>
   <string name="pref_syncSet_mabel_enabled_title">Iezīmes un virsraksti</string>
+  <string name="pref_syncSet_rp_enabled_title">Lasīšanas plāna progress</string>
   <string name="pref_syncSet_history_enabled_title">Pēdējie lietotie panti</string>
+  <string name="pref_syncSet_pins_enabled_title">Lasīšanas progresa atzīmes</string>
   <string name="sync_menu_item_sync_now">Sinhronizēt tagad</string>
   <string name="sync_menu_item_sync_log">Skatīt žurnālu</string>
   <string name="sync_sync_set_pref_summary_last_synced">Pagaišreizs sinhronizēts %1$s, %2$s (r%3$s)</string>
@@ -430,6 +459,8 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="sync_login_form_change_password_success">Jūsu parole ir nomainīta.</string>
   <string name="pref_textPadding_title">Atstarpes apkārt tekstam</string>
   <string name="pref_textPadding_summary">Padara rindstarpas šaurākā lai atvieglotu lasīšanu</string>
+  <string name="pref_bottomToolbarOnText_title">Pārvietošanās pa pantiem apakšā</string>
+  <string name="pref_bottomToolbarOnText_summary">Ieliec pantu pārvietošanās rīkjoslu Bībeles ekrāna apakšā</string>
   <string name="dr_app_name">Atgādinājums</string>
   <string name="dr_notification_title">Ikdienas lūgšana</string>
   <string name="dr_notification_text">Tagad lasi šodienas lūgšanu.</string>
@@ -449,10 +480,13 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="about_announcements_none">Paziņojumi (0)</string>
   <string name="about_announcements_number">Paziņojumi (%s)</string>
   <string name="about_announcement_load_failed">Neizdevās ielādēt paziņojumus.</string>
+  <string name="about_official_website">Oficiālā mājaslapa</string>
+  <string name="about_project_page">Projekta mājas lapa</string>
   <string name="marker_migrate_introduction">Ir atrasts rezerves kopijas fails uz vecajā v3 Yku Quick Bible aplikācijā, kurš satur grāmatzīmes, piezīmes, pasvītrojumus un iezīmes.\n\nVai tu vēlies tās tagad ieimportēt, tad tu varēsi tām pieklūt no šīs aplikācijas?</string>
   <string name="marker_migrate_no_more">Vairāk neprasi</string>
   <string name="marker_migrate_later">Ne tagad</string>
   <string name="marker_migrate_title">Importēt vecos marķierus</string>
+  <string name="marker_migrate_file_chooser_title">Izvēlies v3 rezerves kopiju failu</string>
   <string name="marker_migrate_no_more_confirmation">Vai tu patiešām nevēlies importēt vecos datus?</string>
   <string name="marker_migrate_error_opening_backup_file">Nevar piekļūt rezerves kopijas failam.</string>
   <string name="marker_migrate_import_from_newest">Jā, importēt no jaunākā (ieteicams)</string>
@@ -460,4 +494,12 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="marker_migrate_filename_dated">%1$s datēts %2$s</string>
   <string name="announce_notif_title">%s Paziņojumi</string>
   <string name="announce_notif_number_new_announcements">%s jauni paziņojumi</string>
+  <string name="menuDictionary">Vārdnīca</string>
+  <string name="dict_open_full">Atvērt Vārdnīcu</string>
+  <string name="dict_no_results">Atzīmētajam vārdam nav atrasta definīcija.</string>
+  <string name="dict_download_prompt">Lai iemācītos vairāk vārdus no Bībeles, lejupielādē \"Bībeles Vārdnīcu\"!</string>
+  <string name="dict_download_button">Lejupielādē</string>
+  <string name="menuGuide">Ceļvedis</string>
+  <string name="menuCommentary">Komentāri</string>
+  <string name="maps_could_not_open">Nevar atvērt Bībeles Kartes aplikāciju.</string>
 </resources>

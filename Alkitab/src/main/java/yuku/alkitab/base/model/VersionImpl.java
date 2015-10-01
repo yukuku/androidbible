@@ -1,5 +1,6 @@
 package yuku.alkitab.base.model;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.storage.InternalReader;
@@ -144,12 +145,12 @@ public class VersionImpl extends Version {
 	}
 
 	@Override
-	public synchronized String loadVerseText(int ari) {
+	@Nullable public synchronized String loadVerseText(int ari) {
 		return loadVerseText(getBook(Ari.toBook(ari)), Ari.toChapter(ari), Ari.toVerse(ari));
 	}
 
 	@Override
-	public synchronized String loadVerseText(Book book, int chapter_1, int verse_1) {
+	@Nullable public synchronized String loadVerseText(Book book, int chapter_1, int verse_1) {
 		if (book == null) {
 			return null;
 		}
@@ -203,9 +204,13 @@ public class VersionImpl extends Version {
 				int ari = ari_start;
 				Book book = getBook(Ari.toBook(ari));
 				if (book != null) {
-					result_aris.add(ari);
-					result_verses.add(loadVerseText(ari));
-					res++;
+					final String verseText = loadVerseText(ari);
+
+					if (verseText != null) {
+						result_aris.add(ari);
+						result_verses.add(verseText);
+						res++;
+					}
 				}
 			} else {
 				int ari_start_bc = Ari.toBookChapter(ari_start);
@@ -250,10 +255,13 @@ public class VersionImpl extends Version {
 		for (int v_1 = v_1_start; v_1 <= v_1_end; v_1++) {
 			int v_0 = v_1 - 1;
 			if (v_0 < verses.getVerseCount()) {
-				int ari = ari_bc | v_1;
-				result_aris.add(ari);
-				result_verses.add(verses.getVerse(v_0));
-				count++;
+				final int ari = ari_bc | v_1;
+				final String verseText = verses.getVerse(v_0);
+				if (verseText != null) {
+					result_aris.add(ari);
+					result_verses.add(verseText);
+					count++;
+				}
 			} else {
 				// we're done with this chapter, no need to loop again
 				break;

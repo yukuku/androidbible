@@ -23,6 +23,8 @@
   <string name="pref_copyWithShareUrl_summary">Voeg gedeelde bladsy skakel by aan dei einde van gedeelde teks </string>
   <string name="pref_autoDictionaryAnalyze_title">Outomatiese woordeboek opsoek </string>
   <string name="pref_autoDictionaryAnalyze_summary">Soek vir woordeboek woorde in gekose verse</string>
+  <string name="pref_tapToEditNote_title">Tik om nota te redigeer</string>
+  <string name="pref_tapToEditNote_summary">Verwyder merker om te verhoed dat notas per ongeluk geredigeer word indien huidige notas nagegaan word</string>
   <string name="pref_showHiddenVersion_title">Aktiveer moontlik beperkte/geslote weergawes</string>
   <string name="pref_selectedVerseBgColor_title">Gekose vers agtergrond</string>
 </resources>

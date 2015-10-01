@@ -509,6 +509,8 @@
 	<string name="about_translators">Translators</string>
 	<string name="about_user_guide">User\'s Guide</string>
 	<string name="about_beta_feedback">Beta Version Feedback</string>
+	<string name="about_enable_beta">Try Beta Version</string>
+	<string name="about_enable_beta_confirmation">Sign in to Google and tap the BECOME A TESTER button to try the Beta version with newer features and enhancements!</string>
 	<string name="about_version_name">version %s</string>
 	<string name="about_material_sources">Material Sources</string>
 	<string name="about_credits">Credits</string>

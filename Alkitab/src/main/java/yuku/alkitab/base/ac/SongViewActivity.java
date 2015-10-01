@@ -2,7 +2,6 @@ package yuku.alkitab.base.ac;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -13,7 +12,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spanned;
@@ -83,15 +81,12 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	private static final int REQCODE_downloadSongBook = 3;
 
 	DrawerLayout drawerLayout;
-	ActionBarDrawerToggle drawerToggle;
 	LeftDrawer.Songs leftDrawer;
 
 	TwofingerLinearLayout song_container;
 	ViewGroup no_song_data_container;
 	View bDownload;
 	View circular_progress;
-
-	ActionBar actionBar;
 
 	Bundle templateCustomVars;
 	String currentBookName;
@@ -376,13 +371,17 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		final Toolbar toolbar = V.get(this, R.id.toolbar);
 		setSupportActionBar(toolbar);
 
-		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
+		final ActionBar actionBar = getSupportActionBar();
+		assert actionBar != null;
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
+
+		drawerLayout.setDrawerListener(new DrawerLayout.SimpleDrawerListener() {
 			@Override
 			public void onDrawerOpened(final View drawerView) {
 				drawer_opened();
 			}
-		};
-		drawerLayout.setDrawerListener(drawerToggle);
+		});
 
 		song_container = V.get(this, R.id.song_container);
 		no_song_data_container = V.get(this, R.id.no_song_data_container);
@@ -391,28 +390,11 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		song_container.setTwofingerEnabled(false);
 		song_container.setListener(song_container_listener);
 
-		actionBar = getSupportActionBar();
-		actionBar.setDisplayShowHomeEnabled(Build.VERSION.SDK_INT < 18);
-		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setHomeButtonEnabled(true);
-
 		bDownload.setOnClickListener(v -> openDownloadSongBookPage());
 	}
 
 	void openDownloadSongBookPage() {
 		startActivityForResult(HelpActivity.createIntent("https://alkitab-host.appspot.com/songs/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName())), REQCODE_downloadSongBook);
-	}
-
-	@Override
-	protected void onPostCreate(final Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		drawerToggle.syncState();
-	}
-
-	@Override
-	public void onConfigurationChanged(final Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		drawerToggle.onConfigurationChanged(newConfig);
 	}
 
 	@Override
@@ -553,11 +535,11 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	}
 	
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
-		if (drawerToggle.onOptionsItemSelected(item)) {
-			return true;
-		}
-
 		switch (item.getItemId()) {
+		case android.R.id.home: {
+			leftDrawer.toggleDrawer();
+		} return true;
+
 		case R.id.menuCopy: {
 			if (currentSong != null) {
 				U.copyToClipboard(convertSongToText(currentSong));

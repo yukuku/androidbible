@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -43,6 +44,7 @@ public class AboutActivity extends BaseActivity {
 	View bMaterialSources;
 	View bCredits;
 	View bFeedback;
+	View bEnableBeta;
 	View bAnnouncements;
 	TextView tAnnouncements;
 	ContentLoadingProgressBar progressAnnouncements;
@@ -128,6 +130,30 @@ public class AboutActivity extends BaseActivity {
 
 		bFeedback = V.get(this, R.id.bFeedback);
 		bFeedback.setOnClickListener(v -> startActivity(new Intent(App.context, com.example.android.wizardpager.MainActivity.class)));
+
+		bEnableBeta = V.get(this, R.id.bEnableBeta);
+		bEnableBeta.setOnClickListener(v ->
+				new MaterialDialog.Builder(this)
+					.content(R.string.about_enable_beta_confirmation)
+					.positiveText(R.string.ok)
+					.negativeText(R.string.cancel)
+					.callback(new MaterialDialog.ButtonCallback() {
+						@Override
+						public void onPositive(final MaterialDialog dialog) {
+							try {
+								startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/apps/testing/" + getPackageName())));
+							} catch (Exception ignored) {
+								// just ignore, this is not important if fails.
+							}
+						}
+					})
+					.show()
+		);
+
+		// already in beta?
+		if (App.getVersionName().contains("beta")) {
+			bEnableBeta.setVisibility(View.GONE);
+		}
 
 		bAnnouncements = V.get(this, R.id.bAnnouncements);
 		bAnnouncements.setOnClickListener(v -> bAnnouncements_click());

@@ -18,9 +18,7 @@ import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -54,7 +52,6 @@ import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -228,13 +225,17 @@ public class VersionsActivity extends BaseActivity {
 			}
 
 			if (!isYesFile) { // pdb file
-				// copy the file to cache first
-				File cacheFile = new File(getCacheDir(), "datafile");
-				InputStream input = getContentResolver().openInputStream(uri);
-				copyStreamToFile(input, cacheFile);
-				input.close();
+				if (isLocalFile) {
+					handleFileOpenPdb(uri.getPath());
+				} else {
+					// copy the file to cache first
+					File cacheFile = new File(getCacheDir(), "datafile");
+					InputStream input = getContentResolver().openInputStream(uri);
+					copyStreamToFile(input, cacheFile);
+					input.close();
 
-				handleFileOpenPdb(cacheFile.getAbsolutePath());
+					handleFileOpenPdb(cacheFile.getAbsolutePath());
+				}
 				return;
 			}
 
@@ -363,20 +364,6 @@ public class VersionsActivity extends BaseActivity {
 				return true;
 			case R.id.menuAddFromUrl:
 				openUrlInputDialog();
-				return true;
-			case android.R.id.home:
-				Intent upIntent = new Intent(this, IsiActivity.class);
-				if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-					// This activity is not part of the application's task, so create a new task
-					// with a synthesized back stack.
-					TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
-					finish();
-				} else {
-					// This activity is part of the application's task, so simply
-					// navigate up to the hierarchical parent activity.
-					// sample code uses this: NavUtils.navigateUpTo(this, upIntent);
-					finish();
-				}
 				return true;
 		}
 
@@ -595,11 +582,11 @@ public class VersionsActivity extends BaseActivity {
 	 * Previously it was like "pdb-1234abcd-1.yes".
 	 */
 	private String yesNameForPdb(String filenamepdb) {
-		String base = filenamepdb.toLowerCase(Locale.US);
+		String base = new File(filenamepdb).getName().toLowerCase(Locale.US);
 		if (base.endsWith(".pdb")) {
 			base = base.substring(0, base.length() - 4);
 		}
-		base = base.replaceAll("[^0-9A-Z_\\.-]", "");
+		base = base.replaceAll("[^0-9a-z_\\.-]", "");
 		return "pdb-" + base + ".yes";
 	}
 
