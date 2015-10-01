@@ -4,6 +4,7 @@ import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
@@ -104,7 +105,7 @@ public class VerseRenderer {
 	 * @param ftr optional container for result that contains the verse text with span formattings, without the verse numbers
 	 * @return how many characters was used before the real start of verse text. This will be > 0 if the verse number is embedded inside lText.
 	 */
-	public static int render(@Nullable final TextView lText, @Nullable final TextView lVerseNumber, final int ari, final String text, final String verseNumberText, @Nullable final Highlights.Info highlightInfo, final boolean checked, final boolean dontPutSpacingBefore, @Nullable final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, @Nullable final FormattedTextResult ftr) {
+	public static int render(@Nullable final TextView lText, @Nullable final TextView lVerseNumber, final int ari, @NonNull final String text, final String verseNumberText, @Nullable final Highlights.Info highlightInfo, final boolean checked, final boolean dontPutSpacingBefore, @Nullable final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, @Nullable final FormattedTextResult ftr) {
 		// @@ = start a verse containing paragraphs or formatting
 		// @0 = start with indent 0 [paragraph]
 		// @1 = start with indent 1 [paragraph]

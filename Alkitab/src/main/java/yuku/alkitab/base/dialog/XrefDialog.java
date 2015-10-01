@@ -216,14 +216,10 @@ public class XrefDialog extends BaseDialog {
 		return TargetDecoder.decode(encodedTarget);
 	}
 
-	VersesView.SelectedVersesListener versesView_selectedVerses = new VersesView.SelectedVersesListener() {
+	VersesView.SelectedVersesListener versesView_selectedVerses = new VersesView.DefaultSelectedVersesListener() {
 		@Override public void onVerseSingleClick(VersesView v, int verse_1) {
 			listener.onVerseSelected(XrefDialog.this, arif_source, displayedRealAris.get(verse_1 - 1));
 		}
-		
-		@Override public void onSomeVersesSelected(VersesView v) {}
-		
-		@Override public void onNoVersesSelected(VersesView v) {}
 	};
 
 	interface FindTagsListener {

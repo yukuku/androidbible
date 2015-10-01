@@ -345,7 +345,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		final int itemId = item.getItemId();
 		if (itemId == android.R.id.home) {
 			leftDrawer.toggleDrawer();
-
+			return true;
 		} else if (itemId == R.id.menuCopy) {
 			U.copyToClipboard(currentKind.title + "\n" + lContent.getText());
 			

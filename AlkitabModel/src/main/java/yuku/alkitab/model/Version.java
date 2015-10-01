@@ -1,5 +1,6 @@
 package yuku.alkitab.model;
 
+import android.support.annotation.Nullable;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 
@@ -37,13 +38,13 @@ public abstract class Version {
 	 * Load a single verse from this version.
 	 * @return null if the verse is not available.
 	 */
-	public abstract String loadVerseText(int ari);
+	@Nullable public abstract String loadVerseText(int ari);
 
 	/**
 	 * Load a single verse from this version.
 	 * @return null if the verse is not available.
 	 */
-	public abstract String loadVerseText(Book book, int chapter_1, int verse_1);
+	@Nullable public abstract String loadVerseText(Book book, int chapter_1, int verse_1);
 
 	/**
 	 * @param ariRanges list of aris where even-indexed elements are start and odd-indexed elements are end (inclusive) aris

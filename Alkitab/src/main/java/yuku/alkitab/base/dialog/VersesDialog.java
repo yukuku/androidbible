@@ -257,24 +257,21 @@ public class VersesDialog extends BaseDialog {
 		return res;
 	}
 
-	VersesView.SelectedVersesListener versesView_selectedVerses = new VersesView.SelectedVersesListener() {
+	VersesView.SelectedVersesListener versesView_selectedVerses = new VersesView.DefaultSelectedVersesListener() {
 		@Override public void onVerseSingleClick(VersesView v, int verse_1 /* this is actually position+1, not necessaryly verse_1 */) {
 			if (listener != null) {
 				if (!compareMode) {
 					listener.onVerseSelected(VersesDialog.this, (Integer) customCallbackData[verse_1 - 1]);
 				} else {
+					// only if the verse is available in this version.
 					final MVersion mversion = (MVersion) customCallbackData[verse_1 - 1];
-					if (mversion != null) {
-						// only if the verse is available in this version. See the add call to customCallbackData.
+					final Version version = mversion.getVersion();
+					if (version != null && version.loadVerseText(ari) != null) {
 						listener.onComparedVerseSelected(VersesDialog.this, ari, mversion);
 					}
 				}
 			}
 		}
-		
-		@Override public void onSomeVersesSelected(VersesView v) {}
-		
-		@Override public void onNoVersesSelected(VersesView v) {}
 	};
 
 	public void setListener(final VersesDialogListener listener) {

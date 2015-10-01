@@ -266,6 +266,8 @@ public class NoteActivity extends BaseActivity {
 						})
 						.setNegativeButton(R.string.cancel, null)
 						.show();
+				} else { // no existing marker and buffer is empty
+					realFinish(); // no need to setResult(RESULT_OK), because nothing is to be reloaded
 				}
 
 			}

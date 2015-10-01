@@ -1,5 +1,6 @@
 package yuku.alkitab.test;
 
+import android.support.annotation.Nullable;
 import junit.framework.TestCase;
 import yuku.alkitab.base.S;
 import yuku.alkitab.model.Book;
@@ -51,11 +52,13 @@ public class GetVersionInitialsTest extends TestCase {
 				return null;
 			}
 
+			@Nullable
 			@Override
 			public String loadVerseText(final int ari) {
 				return null;
 			}
 
+			@Nullable
 			@Override
 			public String loadVerseText(final Book book, final int chapter_1, final int verse_1) {
 				return null;

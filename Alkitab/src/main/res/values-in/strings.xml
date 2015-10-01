@@ -470,6 +470,8 @@
   <string name="about_translators">Penerjemah</string>
   <string name="about_user_guide">Petunjuk Pemakaian</string>
   <string name="about_beta_feedback">Kotak Saran Versi Beta</string>
+  <string name="about_enable_beta">Coba Versi Beta</string>
+  <string name="about_enable_beta_confirmation">Login ke Google dan klik tombol JADI PENGUJI untuk mencoba versi Beta dengan fitur lebih lengkap dan canggih!</string>
   <string name="about_version_name">versi %s</string>
   <string name="about_material_sources">Sumber Bahan</string>
   <string name="about_credits">Kredit / Terima Kasih</string>
