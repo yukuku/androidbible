@@ -26,6 +26,7 @@ import yuku.alkitab.reminder.util.DevotionReminder;
 import yuku.alkitabfeedback.FeedbackSender;
 import yuku.alkitabintegration.display.Launcher;
 import yuku.kirimfidbek.CrashReporter;
+import yuku.stethoshim.StethoShim;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -44,10 +45,15 @@ public class App extends yuku.afw.App {
 		OkHttpClient defaultClient = new OkHttpClient();
 		OkHttpClient longTimeoutClient = new OkHttpClient();
 
-		{
+		{ // init longTimeoutClient
 			longTimeoutClient.setConnectTimeout(300, TimeUnit.SECONDS);
 			longTimeoutClient.setReadTimeout(300, TimeUnit.SECONDS);
 			longTimeoutClient.setWriteTimeout(600, TimeUnit.SECONDS);
+		}
+
+		{ // init stetho interceptor
+			StethoShim.addNetworkInterceptor(defaultClient);
+			StethoShim.addNetworkInterceptor(longTimeoutClient);
 		}
 	}
 
@@ -94,6 +100,10 @@ public class App extends yuku.afw.App {
 
 		{ // LeakCanary, also we need the Application instance.
 			LeakCanary.install(this);
+		}
+
+		{ // Stetho call through proxy
+			StethoShim.initializeWithDefaults(this);
 		}
 	}
 
