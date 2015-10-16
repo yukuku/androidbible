@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -45,7 +46,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import yuku.afw.V;
@@ -102,10 +102,10 @@ public class VersionsActivity extends BaseActivity {
 
 	private static final int REQCODE_openFile = 1;
 
-	SectionsPagerAdapter mSectionsPagerAdapter;
+	SectionsPagerAdapter sectionsPagerAdapter;
 
-	ViewPager mViewPager;
-	SlidingTabLayout slidingTabs;
+	ViewPager viewPager;
+	TabLayout tablayout;
 	String query_text;
 
 	public static Intent createIntent() {
@@ -126,15 +126,17 @@ public class VersionsActivity extends BaseActivity {
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the activity.
-		mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+		sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
 		// Set up the ViewPager with the sections adapter.
-		mViewPager = V.get(this, R.id.viewPager);
-		mViewPager.setAdapter(mSectionsPagerAdapter);
+		viewPager = V.get(this, R.id.viewPager);
+		viewPager.setAdapter(sectionsPagerAdapter);
 
-		slidingTabs = V.get(this, R.id.sliding_tabs);
-		slidingTabs.setCustomTabColorizer(position -> getResources().getColor(R.color.accent));
-		slidingTabs.setViewPager(mViewPager);
+		tablayout = V.get(this, R.id.tablayout);
+		tablayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+		tablayout.setTabsFromPagerAdapter(sectionsPagerAdapter);
+		tablayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
+		viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tablayout));
 
 		processIntent(getIntent(), "onCreate");
 
@@ -164,7 +166,7 @@ public class VersionsActivity extends BaseActivity {
 		if (!U.equals(intent.getAction(), Intent.ACTION_VIEW)) return;
 
 		// we are trying to open a file, so let's go to the DOWNLOADED tab, as it is more relevant.
-		mViewPager.setCurrentItem(1);
+		viewPager.setCurrentItem(1);
 
 		Uri uri = intent.getData();
 
@@ -658,7 +660,7 @@ public class VersionsActivity extends BaseActivity {
 			}
 
 			// we are trying to open a file, so let's go to the DOWNLOADED tab, as it is more relevant.
-			mViewPager.setCurrentItem(1);
+			viewPager.setCurrentItem(1);
 
 			final String filename = result.firstFilename;
 

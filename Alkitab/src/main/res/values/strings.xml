@@ -206,6 +206,7 @@
     <string name="goto_tab_dialer_label">Dialer</string>
     <string name="goto_tab_direct_label">Direct</string>
     <string name="goto_tab_grid_label">Grid</string>
+    <string name="menuAskForVerse">Ask for verse number</string>
 
     <!-- Font Manager -->
     <string name="fm_activity_title">Font Manager</string>

@@ -125,4 +125,10 @@ public enum Prefkey {
 	/** Current reading vars */
 	current_reading_ari_start,
 	current_reading_ari_end,
+
+	/** Option to ask for verse number in goto screen */
+	gotoAskForVerse,
+	;
+
+	public static final boolean GOTO_ASK_FOR_VERSE_DEFAULT = true;
 }

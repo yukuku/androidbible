@@ -10,8 +10,8 @@
 		android:layout_height="?attr/actionBarSize"
 		android:background="?attr/colorPrimary" />
 
-	<com.google.samples.apps.iosched.ui.widget.SlidingTabLayout
-		android:id="@+id/sliding_tabs"
+	<android.support.design.widget.TabLayout
+		android:id="@+id/tablayout"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content" />
 
