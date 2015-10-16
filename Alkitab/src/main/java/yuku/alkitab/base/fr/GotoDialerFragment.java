@@ -1,17 +1,13 @@
 package yuku.alkitab.base.fr;
 
-import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckedTextView;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import yuku.afw.App;
@@ -27,9 +23,9 @@ import yuku.alkitab.model.Book;
 public class GotoDialerFragment extends BaseGotoFragment {
 	public static final String TAG = GotoDialerFragment.class.getSimpleName();
 	
-	private static final String EXTRA_verse = "verse"; //$NON-NLS-1$
-	private static final String EXTRA_chapter = "chapter"; //$NON-NLS-1$
-	private static final String EXTRA_bookId = "bookId"; //$NON-NLS-1$
+	private static final String EXTRA_verse = "verse";
+	private static final String EXTRA_chapter = "chapter";
+	private static final String EXTRA_bookId = "bookId";
 
 	TextView active;
 	TextView passive;
@@ -102,29 +98,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 		V.get(res, R.id.bDigit7).setOnClickListener(button_click);
 		V.get(res, R.id.bDigit8).setOnClickListener(button_click);
 		V.get(res, R.id.bDigit9).setOnClickListener(button_click);
-		V.get(res, R.id.bDigitC).setOnClickListener(button_click);
-		V.get(res, R.id.bDigitSwitch).setOnClickListener(button_click);
-
-		// if the scrolled content height is not more than the available space, remove the gravity
-		final View scrollRoot = V.get(res, R.id.scrollRoot);
-		scrollRoot.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-			@Override
-			public void onGlobalLayout() {
-				final ScrollView.LayoutParams lp = (ScrollView.LayoutParams) scrollRoot.getLayoutParams();
-				final int contentHeight = scrollRoot.getMeasuredHeight();
-				final int containerHeight = res.getMeasuredHeight();
-				lp.gravity = contentHeight <= containerHeight ? Gravity.CENTER_VERTICAL : Gravity.NO_GRAVITY;
-				scrollRoot.setLayoutParams(lp);
-
-				if (Build.VERSION.SDK_INT >= 16) {
-					scrollRoot.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-				} else {
-					// what!? Deprecated because of typo!?
-					//noinspection deprecation
-					scrollRoot.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-				}
-			}
-		});
+		V.get(res, R.id.bDigitBackspace).setOnClickListener(button_click);
 
 		return res;
 	}
@@ -152,22 +126,20 @@ public class GotoDialerFragment extends BaseGotoFragment {
 			}
 		});
 
-		bOk.setOnClickListener(new View.OnClickListener() {
-			@Override public void onClick(View v) {
-				int chapter = 0;
-				int verse = 0;
+		bOk.setOnClickListener(v -> {
+			int chapter = 0;
+			int verse = 0;
 
-				try {
-					chapter = Integer.parseInt(tChapter.getText().toString());
-					verse = Integer.parseInt(tVerse.getText().toString());
-				} catch (NumberFormatException e) {
-					// let it still be 0
-				}
-
-				int bookId = adapter.getItem(cbBook.getSelectedItemPosition()).bookId;
-
-				((GotoFinishListener) getActivity()).onGotoFinished(GotoFinishListener.GOTO_TAB_dialer, bookId, chapter, verse);
+			try {
+				chapter = Integer.parseInt(tChapter.getText().toString());
+				verse = Integer.parseInt(tVerse.getText().toString());
+			} catch (NumberFormatException e) {
+				// let it still be 0
 			}
+
+			int bookId1 = adapter.getItem(cbBook.getSelectedItemPosition()).bookId;
+
+			((GotoFinishListener) getActivity()).onGotoFinished(GotoFinishListener.GOTO_TAB_dialer, bookId1, chapter, verse);
 		});
 
 		active = tChapter;
@@ -197,42 +169,24 @@ public class GotoDialerFragment extends BaseGotoFragment {
 		}
 	};
 
-	View.OnClickListener button_click = new View.OnClickListener() {
-		@Override public void onClick(View v) {
-			int id = v.getId();
-			if (id == R.id.bDigit0) press("0"); //$NON-NLS-1$
-			if (id == R.id.bDigit1) press("1"); //$NON-NLS-1$
-			if (id == R.id.bDigit2) press("2"); //$NON-NLS-1$
-			if (id == R.id.bDigit3) press("3"); //$NON-NLS-1$
-			if (id == R.id.bDigit4) press("4"); //$NON-NLS-1$
-			if (id == R.id.bDigit5) press("5"); //$NON-NLS-1$
-			if (id == R.id.bDigit6) press("6"); //$NON-NLS-1$
-			if (id == R.id.bDigit7) press("7"); //$NON-NLS-1$
-			if (id == R.id.bDigit8) press("8"); //$NON-NLS-1$
-			if (id == R.id.bDigit9) press("9"); //$NON-NLS-1$
-			if (id == R.id.bDigitC) press("C"); //$NON-NLS-1$
-			if (id == R.id.bDigitSwitch) press(":"); //$NON-NLS-1$
-		}
+	View.OnClickListener button_click = v -> {
+		int id = v.getId();
+		if (id == R.id.bDigit0) press("0");
+		if (id == R.id.bDigit1) press("1");
+		if (id == R.id.bDigit2) press("2");
+		if (id == R.id.bDigit3) press("3");
+		if (id == R.id.bDigit4) press("4");
+		if (id == R.id.bDigit5) press("5");
+		if (id == R.id.bDigit6) press("6");
+		if (id == R.id.bDigit7) press("7");
+		if (id == R.id.bDigit8) press("8");
+		if (id == R.id.bDigit9) press("9");
+		if (id == R.id.bDigitBackspace) press("backspace");
 	};
-	
-//	TODO (move to activity to support keyboard) @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
-//		if (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) {
-//			pencet(String.valueOf((char) ('0' + keyCode - KeyEvent.KEYCODE_0)));
-//			return true;
-//		} else if (keyCode == KeyEvent.KEYCODE_STAR) {
-//			pencet("C"); //$NON-NLS-1$
-//			return true;
-//		} else if (keyCode == KeyEvent.KEYCODE_POUND) {
-//			pencet(":"); //$NON-NLS-1$
-//			return true;
-//		}
-//
-//		return super.onKeyDown(keyCode, event);
-//	}
 
 	int tryReadChapter() {
 		try {
-			return Integer.parseInt("0" + tChapter.getText().toString()); //$NON-NLS-1$
+			return Integer.parseInt("0" + tChapter.getText().toString());
 		} catch (NumberFormatException e) {
 			return 0;
 		}
@@ -240,7 +194,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 
 	int tryReadVerse() {
 		try {
-			return Integer.parseInt("0" + tVerse.getText().toString()); //$NON-NLS-1$
+			return Integer.parseInt("0" + tVerse.getText().toString());
 		} catch (NumberFormatException e) {
 			return 0;
 		}
@@ -272,13 +226,8 @@ public class GotoDialerFragment extends BaseGotoFragment {
 
 	void press(String s) {
 		if (active != null) {
-			if (s.equals("C")) { //$NON-NLS-1$
-				active.setText(""); //$NON-NLS-1$
-				return;
-			} else if (s.equals(":")) { //$NON-NLS-1$
-				if (passive != null) {
-					activate(passive, active);
-				}
+			if (s.equals("backspace")) {
+				active.setText(""); // TODO make it backspace
 				return;
 			}
 

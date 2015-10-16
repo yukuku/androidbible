@@ -51,7 +51,7 @@
 			<ImageButton
 				android:id="@+id/bBackspace"
 				style="@style/SongCodeKeypadButton"
-				android:src="@drawable/ic_song_keypad_backspace"
+				android:src="@drawable/ic_keypad_backspace"
 				android:scaleType="center" />
 		</LinearLayout>
 
