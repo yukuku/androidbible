@@ -13,8 +13,10 @@ import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.okhttp.Call;
+import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.internal.Version;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.model.VersionImpl;
@@ -44,6 +46,20 @@ public class App extends yuku.afw.App {
 
 		OkHttpClient defaultClient = new OkHttpClient();
 		OkHttpClient longTimeoutClient = new OkHttpClient();
+
+		{
+			final Interceptor userAgent = chain -> {
+				final Request originalRequest = chain.request();
+				final Request requestWithUserAgent = originalRequest.newBuilder()
+					.removeHeader("User-Agent")
+					.addHeader("User-Agent", Version.userAgent() + " " + App.context.getPackageName() + "/" + App.getVersionName())
+					.build();
+				return chain.proceed(requestWithUserAgent);
+			};
+
+			defaultClient.networkInterceptors().add(userAgent);
+			longTimeoutClient.networkInterceptors().add(userAgent);
+		}
 
 		{ // init longTimeoutClient
 			longTimeoutClient.setConnectTimeout(300, TimeUnit.SECONDS);
