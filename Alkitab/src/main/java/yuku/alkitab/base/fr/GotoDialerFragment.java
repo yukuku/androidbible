@@ -1,5 +1,6 @@
 package yuku.alkitab.base.fr;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.fr.base.BaseGotoFragment;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.BookNameSorter;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
@@ -79,14 +81,10 @@ public class GotoDialerFragment extends BaseGotoFragment {
 		cbBook.setAdapter(adapter = new BookAdapter());
 
 		tChapter.setOnClickListener(tChapter_click);
-		if (tChapterLabel != null) { // not always present in layout
-			tChapterLabel.setOnClickListener(tChapter_click);
-		}
+		tChapterLabel.setOnClickListener(tChapter_click);
 
 		tVerse.setOnClickListener(tVerse_click);
-		if (tVerseLabel != null) { // not always present in layout
-			tVerseLabel.setOnClickListener(tVerse_click);
-		}
+		tVerseLabel.setOnClickListener(tVerse_click);
 
 		V.get(res, R.id.bDigit0).setOnClickListener(button_click);
 		V.get(res, R.id.bDigit1).setOnClickListener(button_click);
@@ -100,7 +98,36 @@ public class GotoDialerFragment extends BaseGotoFragment {
 		V.get(res, R.id.bDigit9).setOnClickListener(button_click);
 		V.get(res, R.id.bDigitBackspace).setOnClickListener(button_click);
 
+		showOrHideVerse();
+		Preferences.registerObserver(preferenceChangeListener);
+
 		return res;
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		Preferences.unregisterObserver(preferenceChangeListener);
+	}
+
+	final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = (sharedPreferences, key) -> {
+		if (key.equals(Prefkey.gotoAskForVerse.name())) {
+			showOrHideVerse();
+		}
+	};
+
+	void showOrHideVerse() {
+		if (Preferences.getBoolean(Prefkey.gotoAskForVerse, Prefkey.GOTO_ASK_FOR_VERSE_DEFAULT)) {
+			tVerse.setVisibility(View.VISIBLE);
+			tVerseLabel.setVisibility(View.VISIBLE);
+		} else {
+			if (active == tVerse) {
+				activate(tChapter, tVerse);
+			}
+			tVerse.setVisibility(View.GONE);
+			tVerseLabel.setVisibility(View.GONE);
+		}
 	}
 
 	@Override public void onActivityCreated(Bundle savedInstanceState) {
@@ -127,19 +154,24 @@ public class GotoDialerFragment extends BaseGotoFragment {
 		});
 
 		bOk.setOnClickListener(v -> {
-			int chapter = 0;
-			int verse = 0;
+			int selectedChapter_1 = 0;
+			int selectedVerse_1 = 0;
 
 			try {
-				chapter = Integer.parseInt(tChapter.getText().toString());
-				verse = Integer.parseInt(tVerse.getText().toString());
+				selectedChapter_1 = Integer.parseInt(tChapter.getText().toString());
+
+				if (Preferences.getBoolean(Prefkey.gotoAskForVerse, Prefkey.GOTO_ASK_FOR_VERSE_DEFAULT)) {
+					selectedVerse_1 = Integer.parseInt(tVerse.getText().toString());
+				} else {
+					selectedVerse_1 = 0;
+				}
 			} catch (NumberFormatException e) {
 				// let it still be 0
 			}
 
-			int bookId1 = adapter.getItem(cbBook.getSelectedItemPosition()).bookId;
+			final int selectedBookId = adapter.getItem(cbBook.getSelectedItemPosition()).bookId;
 
-			((GotoFinishListener) getActivity()).onGotoFinished(GotoFinishListener.GOTO_TAB_dialer, bookId1, chapter, verse);
+			((GotoFinishListener) getActivity()).onGotoFinished(GotoFinishListener.GOTO_TAB_dialer, selectedBookId, selectedChapter_1, selectedVerse_1);
 		});
 
 		active = tChapter;
@@ -170,18 +202,18 @@ public class GotoDialerFragment extends BaseGotoFragment {
 	};
 
 	View.OnClickListener button_click = v -> {
-		int id = v.getId();
+		final int id = v.getId();
 		if (id == R.id.bDigit0) press("0");
-		if (id == R.id.bDigit1) press("1");
-		if (id == R.id.bDigit2) press("2");
-		if (id == R.id.bDigit3) press("3");
-		if (id == R.id.bDigit4) press("4");
-		if (id == R.id.bDigit5) press("5");
-		if (id == R.id.bDigit6) press("6");
-		if (id == R.id.bDigit7) press("7");
-		if (id == R.id.bDigit8) press("8");
-		if (id == R.id.bDigit9) press("9");
-		if (id == R.id.bDigitBackspace) press("backspace");
+		else if (id == R.id.bDigit1) press("1");
+		else if (id == R.id.bDigit2) press("2");
+		else if (id == R.id.bDigit3) press("3");
+		else if (id == R.id.bDigit4) press("4");
+		else if (id == R.id.bDigit5) press("5");
+		else if (id == R.id.bDigit6) press("6");
+		else if (id == R.id.bDigit7) press("7");
+		else if (id == R.id.bDigit8) press("8");
+		else if (id == R.id.bDigit9) press("9");
+		else if (id == R.id.bDigitBackspace) press("backspace");
 	};
 
 	int tryReadChapter() {

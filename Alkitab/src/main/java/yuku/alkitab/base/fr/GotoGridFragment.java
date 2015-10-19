@@ -17,6 +17,7 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.fr.base.BaseGotoFragment;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.BookNameSorter;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
@@ -311,7 +312,12 @@ public class GotoGridFragment extends BaseGotoFragment {
 
 			holder.itemView.setOnClickListener(v -> {
 				selectedChapter = position + 1;
-				transitionChapterToVerse();
+
+				if (Preferences.getBoolean(Prefkey.gotoAskForVerse, Prefkey.GOTO_ASK_FOR_VERSE_DEFAULT)) {
+					transitionChapterToVerse();
+				} else {
+					((GotoFinishListener) getActivity()).onGotoFinished(GotoFinishListener.GOTO_TAB_grid, selectedBook.bookId, selectedChapter, 0);
+				}
 			});
 		}
 
