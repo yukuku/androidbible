@@ -85,10 +85,6 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			createIndexMarker_Label(db);
 		}
 
-		if (oldVersion <= 70) { // 71: 2.0.0 too
-			createIndexMarker(db);
-		}
-
 		if (oldVersion > 50 && oldVersion <= 102) { // 103: 2.7.1
 			addShortNameColumnAndIndexToEdisi(db);
 		}
