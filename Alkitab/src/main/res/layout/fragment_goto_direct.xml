@@ -1,31 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_centerHorizontal="true"
-    android:orientation="vertical"
-    android:paddingTop="16dp">
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	android:paddingTop="16dp">
 
-    <TextView
-        android:id="@+id/lDirectSample"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:text="@string/jump_to_prompt" />
+	<TextView
+		android:id="@+id/lDirectSample"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/jump_to_prompt"
+		android:layout_marginLeft="16dp" />
 
-    <EditText
-        android:id="@+id/tDirectReference"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="18dp"
-        android:layout_marginRight="18dp"
-        android:imeOptions="actionGo|flagNoExtractUi"
-        android:inputType="textCapSentences" >
-    </EditText>
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:layout_marginTop="16dp">
 
-    <include
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/buttonbar_ok" />
+	<EditText
+		android:id="@+id/tDirectReference"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:imeOptions="actionGo|flagNoExtractUi"
+		android:inputType="textCapSentences"
+		android:layout_weight="1"
+		android:layout_marginLeft="16dp" />
+
+	<Button
+		android:id="@+id/bOk"
+		style="?buttonBarButtonStyle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/ok"
+		android:layout_weight="0"
+		android:layout_marginRight="16dp" />
+		</LinearLayout>
 
 </LinearLayout>
