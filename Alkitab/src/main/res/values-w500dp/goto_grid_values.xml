@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="goto_grid_cell_width_book">83dp</dimen>
-    <dimen name="goto_grid_cell_width_numeric">50dp</dimen>
 	<integer name="goto_grid_numeric_num_columns">10</integer>
     <dimen name="goto_grid_cell_height">46dp</dimen>
 

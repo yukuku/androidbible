@@ -5,20 +5,19 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.GridView;
 import android.widget.TextView;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
-import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.util.BookNameSorter;
@@ -32,7 +31,7 @@ public class SearchBookFilterActivity extends BaseActivity {
 	SparseBooleanArray selectedBookIds;
 	BookAdapter adapter;
 
-	int[][] bookCategoryMappings = {
+	static final int[][] bookCategoryMappings = {
 		{R.id.cOldTestament, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38},
 		{R.id.cOldPentateuch, 0, 1, 2, 3, 4},
 		{R.id.cOldHistory, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16},
@@ -130,9 +129,9 @@ public class SearchBookFilterActivity extends BaseActivity {
 		//noinspection SuspiciousSystemArraycopy
 		System.arraycopy(booksParcelable, 0, books, 0, booksParcelable.length);
 
-		GridView gridBook = V.get(this, R.id.gridBook);
+		final RecyclerView gridBook = V.get(this, R.id.gridBook);
+		gridBook.setLayoutManager(new GridLayoutManager(getApplication(), 6));
 		gridBook.setAdapter(adapter = new BookAdapter(books));
-		gridBook.setOnItemClickListener(gridBook_itemClick);
 
 		for (int[] bookCategoryMapping : bookCategoryMappings) {
 			V.<CheckBox>get(this, bookCategoryMapping[0]).setOnCheckedChangeListener(category_checkedChange);
@@ -165,17 +164,6 @@ public class SearchBookFilterActivity extends BaseActivity {
 		adapter.notifyDataSetChanged();
 	}
 
-	AdapterView.OnItemClickListener gridBook_itemClick = new AdapterView.OnItemClickListener() {
-		@Override
-		public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-			final Book book = adapter.getItem(position);
-			final boolean oldstate = selectedBookIds.get(book.bookId);
-			final boolean newstate = !oldstate;
-			selectedBookIds.put(book.bookId, newstate);
-			display();
-		}
-	};
-
 	View.OnClickListener bOk_click = new View.OnClickListener() {
 		@Override
 		public void onClick(final View v) {
@@ -186,14 +174,15 @@ public class SearchBookFilterActivity extends BaseActivity {
 		}
 	};
 
-	View.OnClickListener bCancel_click = new View.OnClickListener() {
-		@Override
-		public void onClick(final View v) {
-			finish();
-		}
-	};
+	View.OnClickListener bCancel_click = v -> finish();
 
-	class BookAdapter extends EasyAdapter {
+	static class VH extends RecyclerView.ViewHolder {
+		public VH(final View itemView) {
+			super(itemView);
+		}
+	}
+
+	class BookAdapter extends RecyclerView.Adapter<VH> {
 		final Book[] books_grid;
 
 		public BookAdapter(Book[] books) {
@@ -206,17 +195,17 @@ public class SearchBookFilterActivity extends BaseActivity {
 		}
 
 		@Override
-		public View newView(int position, ViewGroup parent) {
-			TextView res = new TextView(SearchBookFilterActivity.this);
-			res.setLayoutParams(new GridView.LayoutParams(getResources().getDimensionPixelSize(R.dimen.goto_grid_cell_width_book), getResources().getDimensionPixelSize(R.dimen.goto_grid_cell_height)));
+		public VH onCreateViewHolder(final ViewGroup parent, final int viewType) {
+			final TextView res = new TextView(SearchBookFilterActivity.this);
+			res.setLayoutParams(new GridLayoutManager.LayoutParams(0 /* will be ignored */, getResources().getDimensionPixelSize(R.dimen.goto_grid_cell_height)));
 			res.setGravity(Gravity.CENTER);
 			res.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-			return res;
+			return new VH(res);
 		}
 
 		@Override
-		public void bindView(View view, int position, ViewGroup parent) {
-			final TextView lName = (TextView) view;
+		public void onBindViewHolder(final VH holder, final int position) {
+			final TextView lName = (TextView) holder.itemView;
 
 			final Book book = getItem(position);
 
@@ -226,22 +215,28 @@ public class SearchBookFilterActivity extends BaseActivity {
 				lName.setTextColor(0xffffffff);
 				final ColorDrawable color = new ColorDrawable(U.getBackgroundColorByBookId(book.bookId));
 				final InsetDrawable bg = new InsetDrawable(color, getResources().getDimensionPixelOffset(R.dimen.goto_grid_cell_inset));
+				//noinspection deprecation
 				lName.setBackgroundDrawable(bg);
 			} else {
 				lName.setTextColor(U.getForegroundColorOnDarkBackgroundByBookId(book.bookId));
 				lName.setBackgroundColor(0x0);
 			}
+
+			lName.setOnClickListener(v -> {
+				final boolean oldstate = selectedBookIds.get(book.bookId);
+				final boolean newstate = !oldstate;
+				selectedBookIds.put(book.bookId, newstate);
+				display();
+			});
 		}
 
 		@Override
-		public int getCount() {
+		public int getItemCount() {
 			return books_grid.length;
 		}
 
-		@Override
 		public Book getItem(int position) {
 			return books_grid[position];
 		}
-
 	}
 }

@@ -123,14 +123,11 @@
 
 	</GridLayout>
 
-	<GridView
+	<android.support.v7.widget.RecyclerView
 		android:id="@+id/gridBook"
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
-		android:layout_weight="1"
-		android:listSelector="@drawable/goto_grid_selector"
-		android:numColumns="6"
-		tools:listitem="@android:layout/simple_list_item_1" />
+		android:layout_weight="1" />
 
 	<LinearLayout
 		style="?android:buttonBarStyle"

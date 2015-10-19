@@ -4,14 +4,10 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content">
 
-	<GridView
+	<android.support.v7.widget.RecyclerView
 		android:id="@+id/gridBook"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:listSelector="@drawable/goto_grid_selector"
-		android:stretchMode="columnWidth"
-		android:gravity="center"
-		android:numColumns="6" />
+		android:layout_height="wrap_content" />
 
 	<LinearLayout
 		android:id="@+id/panelChapterVerse"
@@ -29,9 +25,8 @@
 				android:layout_width="wrap_content"
 				android:layout_height="48dp"
 				android:gravity="center"
-				android:text="*Selected book"
 				android:textAppearance="?android:attr/textAppearanceMedium"
-				tools:ignore="HardcodedText" />
+				tools:text="*Selected book" />
 
 			<TextView
 				android:id="@+id/lSelectedChapter"
@@ -39,34 +34,23 @@
 				android:layout_width="wrap_content"
 				android:layout_height="48dp"
 				android:gravity="center"
-				android:text="*chap"
 				android:textAppearance="?android:attr/textAppearanceMedium"
-				tools:ignore="HardcodedText" />
+				tools:text="*chap" />
 		</LinearLayout>
 
 		<FrameLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content">
 
-			<GridView
+			<android.support.v7.widget.RecyclerView
 				android:id="@+id/gridChapter"
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:columnWidth="@dimen/goto_grid_cell_width_numeric"
-				android:listSelector="@drawable/goto_grid_selector"
-				android:stretchMode="spacingWidthUniform"
-				android:gravity="center"
-				android:numColumns="@integer/goto_grid_numeric_num_columns" />
+				android:layout_height="wrap_content" />
 
-			<GridView
+			<android.support.v7.widget.RecyclerView
 				android:id="@+id/gridVerse"
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:columnWidth="@dimen/goto_grid_cell_width_numeric"
-				android:listSelector="@drawable/goto_grid_selector"
-				android:stretchMode="spacingWidthUniform"
-				android:gravity="center"
-				android:numColumns="@integer/goto_grid_numeric_num_columns" />
+				android:layout_height="wrap_content" />
 		</FrameLayout>
 	</LinearLayout>
 
