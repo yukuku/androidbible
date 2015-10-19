@@ -2,7 +2,7 @@
 <resources>
 	<style name="Theme.Alkitab" parent="Theme.Alkitab.Base" />
 
-	<style name="Theme.Alkitab.Goto" parent="Theme.Alkitab.Goto.Base" />
+	<style name="Theme.Alkitab.DialogWhenLarge" parent="Theme.Alkitab.DialogWhenLarge.Base" />
 
 	<style name="Theme.Alkitab.Transparent" parent="Theme.Alkitab.Transparent.Base" />
 </resources>

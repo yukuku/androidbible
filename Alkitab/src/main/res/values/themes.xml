@@ -10,7 +10,7 @@
 		<item name="actionModeStyle">@style/SmallerTitleActionModeStyle</item>
 	</style>
 
-	<style name="Theme.Alkitab.Goto.Base" parent="Theme.AppCompat.DialogWhenLarge">
+	<style name="Theme.Alkitab.DialogWhenLarge.Base" parent="Theme.AppCompat.DialogWhenLarge">
 		<item name="windowActionBar">false</item>
 		<item name="windowNoTitle">true</item>
 		<item name="android:windowNoTitle">true</item>
