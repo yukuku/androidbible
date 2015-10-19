@@ -41,17 +41,16 @@
 		android:layout_marginLeft="32dp"
 		android:gravity="center_vertical"
 		android:maxLines="2"
-		android:text="@string/search_filter_multiple_books_selected"
-		android:textAppearance="?android:textAppearanceMedium"
 		android:textColor="?android:attr/textColorPrimaryDisableOnly"
-		tools:ignore="HardcodedText" />
+		android:textSize="14sp"
+		tools:text="@string/search_filter_multiple_books_selected" />
 
 	<CheckBox
+		tools:visibility="gone"
 		android:id="@+id/cFilterSingleBook"
 		android:layout_width="wrap_content"
 		android:layout_height="32dp"
 		android:layout_below="@+id/cFilterOlds"
-		android:text="*(book name) only"
-		tools:ignore="HardcodedText" />
+		tools:text="*(book name) only" />
 
 </RelativeLayout>
