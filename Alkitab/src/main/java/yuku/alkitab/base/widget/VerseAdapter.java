@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.hash.TIntHashSet;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.util.Highlights;
@@ -49,6 +51,12 @@ public abstract class VerseAdapter extends BaseAdapter {
 
 	LayoutInflater inflater_;
 
+	// For calling attention. All attentioned verses have the same start time.
+	// The last call to callAttentionForVerse() decides as when the animation starts.
+	// Calling setData* methods clears the attentioned verses.
+	long attentionStart_;
+	TIntSet attentionPositions_;
+
 	public VerseAdapter(Context context) {
 		density_ = context.getResources().getDisplayMetrics().density;
 		inflater_ = LayoutInflater.from(context);
@@ -59,6 +67,10 @@ public abstract class VerseAdapter extends BaseAdapter {
 		verses_ = verses;
 		pericopeBlocks_ = pericopeBlocks;
 		itemPointer_ = makeItemPointer(verses_.getVerseCount(), pericopeAris, pericopeBlocks, nblock);
+		attentionStart_ = 0;
+		if (attentionPositions_ != null) {
+			attentionPositions_.clear();
+		}
 
 		notifyDataSetChanged();
 	}
@@ -68,6 +80,10 @@ public abstract class VerseAdapter extends BaseAdapter {
 		verses_ = null;
 		pericopeBlocks_ = null;
 		itemPointer_ = null;
+		attentionStart_ = 0;
+		if (attentionPositions_ != null) {
+			attentionPositions_.clear();
+		}
 
 		notifyDataSetChanged();
 	}
@@ -275,7 +291,21 @@ public abstract class VerseAdapter extends BaseAdapter {
 		Log.w(TAG, "pericope title at the last position? does not make sense.");
 		return 0;
 	}
-	
+
+	void callAttentionForVerse(final int verse_1) {
+		final int pos = getPositionIgnoringPericopeFromVerse(verse_1);
+		if (pos != -1) {
+			TIntSet ap = attentionPositions_;
+			if (ap == null) {
+				attentionPositions_ = ap = new TIntHashSet();
+			}
+			ap.add(pos);
+			attentionStart_ = System.currentTimeMillis();
+
+			notifyDataSetChanged();
+		}
+	}
+
 	/**
 	 * Similar to {@link #getVerseFromPosition(int)}, but returns 0 if the specified position is a pericope or doesn't make sense.
 	 */

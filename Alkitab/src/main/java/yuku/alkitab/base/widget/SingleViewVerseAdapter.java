@@ -138,6 +138,13 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 //				}
 //			}
 
+			// Do we need to call attention?
+			if (attentionStart_ != 0 && attentionPositions_ != null && attentionPositions_.contains(position)) {
+				res.callAttention(attentionStart_);
+			} else {
+				res.callAttention(0);
+			}
+
 			return res;
 		} else {
 			// PERICOPE. not verse.

@@ -502,19 +502,8 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		}
 	}
 
-	public void setVerseSelected(final int verse_1, final boolean selected) {
-		int pos = adapter.getPositionIgnoringPericopeFromVerse(verse_1);
-		if (pos != -1) {
-			setItemChecked(pos, selected);
-			if (listener != null) {
-				final IntArrayList selectedVerses_1 = getSelectedVerses_1();
-				if (selectedVerses_1.size() > 0) {
-					listener.onSomeVersesSelected(this);
-				} else {
-					listener.onNoVersesSelected(this);
-				}
-			}
-		}
+	public void callAttentionForVerse(final int verse_1) {
+		adapter.callAttentionForVerse(verse_1);
 	}
 
 	/**

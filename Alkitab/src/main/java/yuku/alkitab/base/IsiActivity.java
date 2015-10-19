@@ -175,7 +175,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	final Floater.Listener floater_listener = new Floater.Listener() {
 		@Override
 		public void onSelectComplete(final int ari) {
-			jumpToAri(ari, false);
+			jumpToAri(ari);
 			history.add(ari);
 		}
 	};
@@ -306,7 +306,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			}
 		} else if (data instanceof Integer) {
 			final int ari = (Integer) data;
-			jumpToAri(ari, false);
+			jumpToAri(ari);
 			history.add(ari);
 		}
 	};
@@ -556,7 +556,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		if (selectVerse) {
 			for (int i = 0; i < selectVerseCount; i++) {
 				final int verse_1 = Ari.toVerse(openingAri) + i;
-				lsSplit0.setVerseSelected(verse_1, true);
+				lsSplit0.callAttentionForVerse(verse_1);
 			}
 		}
 
@@ -669,7 +669,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			int lid = intent.getIntExtra("lid", 0);
 			int ari = LidToAri.lidToAri(lid);
 			if (ari != 0) {
-				jumpToAri(ari, true);
+				jumpToAri(ari);
 				history.add(ari);
 				final IntentResult res = new IntentResult(ari);
 				res.selectVerse = selectVerse;
@@ -939,7 +939,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	/**
 	 * Jump to a given ari
 	 */
-	void jumpToAri(final int ari, final boolean selectVerse) {
+	void jumpToAri(final int ari) {
 		if (ari == 0) return;
 
 		final int bookId = Ari.toBook(ari);
@@ -953,11 +953,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		this.activeBook = book;
 		final int ari_cv = display(Ari.toChapter(ari), Ari.toVerse(ari));
 
-		if (selectVerse) {
-			// select the verse only if the displayed verse is equal to the requested verse
-			if (ari == Ari.encode(this.activeBook.bookId, ari_cv)) {
-				lsSplit0.setVerseSelected(Ari.toVerse(ari), true);
-			}
+		// call attention to the verse only if the displayed verse is equal to the requested verse
+		if (ari == Ari.encode(this.activeBook.bookId, ari_cv)) {
+			lsSplit0.callAttentionForVerse(Ari.toVerse(ari));
 		}
 	}
 
@@ -1131,8 +1129,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			new MaterialDialog.Builder(this)
 				.adapter(historyAdapter, (materialDialog, view, position, charSequence) -> {
 					materialDialog.dismiss();
-					int ari = history.getAri(position);
-					jumpToAri(ari, true);
+					final int ari = history.getAri(position);
+					jumpToAri(ari);
 					history.add(ari);
 					Preferences.setBoolean(Prefkey.history_button_understood, true);
 				})
@@ -1488,9 +1486,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					// stay on the same book
 					ari_cv = display(result.chapter_1, result.verse_1);
 
-					// select the verse only if the displayed verse is equal to the requested verse
+					// call attention to the verse only if the displayed verse is equal to the requested verse
 					if (Ari.encode(0, result.chapter_1, result.verse_1) == ari_cv) {
-						lsSplit0.setVerseSelected(result.verse_1, true);
+						lsSplit0.callAttentionForVerse(result.verse_1);
 					}
 				} else {
 					// change book
@@ -1505,7 +1503,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 					// select the verse only if the displayed verse is equal to the requested verse
 					if (Ari.encode(result.bookId, result.chapter_1, result.verse_1) == Ari.encode(this.activeBook.bookId, ari_cv)) {
-						lsSplit0.setVerseSelected(result.verse_1, true);
+						lsSplit0.callAttentionForVerse(result.verse_1);
 					}
 				}
 
@@ -1733,7 +1731,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		final int ari_source = arif_source >>> 8;
 
 		dialog.dismiss();
-		jumpToAri(ari_target, true);
+		jumpToAri(ari_target);
 
 		// add both xref source and target, so user can go back to source easily
 		history.add(ari_source);
@@ -2575,7 +2573,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		final int ari_start = aris[0];
-		jumpToAri(ari_start, false);
+		jumpToAri(ari_start);
 		history.add(ari_start);
 
 		leftDrawer.closeDrawer();
@@ -2590,7 +2588,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		final int ari = progressMark.ari;
 
 		if (ari != 0) {
-			jumpToAri(ari, false);
+			jumpToAri(ari);
 			history.add(ari);
 		} else {
 			new AlertDialogWrapper.Builder(this)

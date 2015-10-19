@@ -27,8 +27,9 @@ import yuku.alkitab.model.ProgressMark;
 import java.util.Date;
 
 public class VerseItem extends LinearLayout implements Checkable {
-	public static final String TAG = VerseItem.class.getSimpleName();
 	public static final String PROGRESS_MARK_DRAG_MIME_TYPE = "application/vnd.yuku.alkitab.progress_mark.drag";
+
+	private static final float ATTENTION_DURATION = 2000L;
 
 	private boolean checked;
 	private static Paint checkedPaintSolid;
@@ -42,6 +43,13 @@ public class VerseItem extends LinearLayout implements Checkable {
 
 	/** the ari of the verse represented by this view. If this is 0, this is a pericope or something else. */
 	private int ari;
+
+	/**
+	 * Whether we briefly "color" this verse resulting from navigation from other parts of the app (e.g. verse navigation, search results).
+	 * If the value is 0, it means do not color. If nonzero, it is the starting time when the animation starts.
+	 */
+	private long attentionStart;
+	private static Paint attentionPaint;
 
 	public VerseItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -90,9 +98,8 @@ public class VerseItem extends LinearLayout implements Checkable {
 		final int h = getHeight();
 
 		if (checked) {
-			Paint solid = VerseItem.checkedPaintSolid;
+			Paint solid = checkedPaintSolid;
 			if (solid == null) {
-				//noinspection deprecation
 				checkedPaintSolid = solid = new Paint();
 				final int colorRgb = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default);
 				final int color = ColorUtils.setAlphaComponent(colorRgb, 0xa0);
@@ -114,11 +121,45 @@ public class VerseItem extends LinearLayout implements Checkable {
 			dragHoverBg.draw(canvas);
 		}
 
+		if (attentionStart != 0) {
+			final long now = System.currentTimeMillis();
+			final long elapsed = now - attentionStart;
+			if (elapsed >= ATTENTION_DURATION) {
+				attentionStart = 0;
+			} else {
+				final float opacity = 0.4f * (1.f - ((float) elapsed / ATTENTION_DURATION));
+				Paint p = attentionPaint;
+				if (p == null) {
+					attentionPaint = p = new Paint();
+					final int colorRgb = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default);
+					p.setColor(colorRgb);
+					p.setStyle(Paint.Style.FILL);
+				}
+
+				p.setColor(ColorUtils.setAlphaComponent(p.getColor(), (int) (opacity * 255)));
+				canvas.drawRect(0, 0, w, h, p);
+
+				invalidate(); // animate
+			}
+		}
+
 		super.onDraw(canvas);
+	}
+
+	void callAttention(final long attentionStartTime) {
+		if (this.attentionStart != attentionStartTime) {
+			this.attentionStart = attentionStartTime;
+
+			if (attentionStartTime != 0) {
+				setWillNotDraw(false);
+			}
+			invalidate();
+		}
 	}
 
 	public static void invalidateSelectedVersePaints() {
 		checkedPaintSolid = null;
+		attentionPaint = null;
 	}
 
 	@Override
