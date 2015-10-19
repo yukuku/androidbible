@@ -20,7 +20,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -32,7 +31,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.example.android.wizardpager.wizard.model.AbstractWizardModel;
 import com.example.android.wizardpager.wizard.model.CustomerInfoPage;
@@ -42,12 +40,11 @@ import com.example.android.wizardpager.wizard.model.TextareaPage;
 import com.example.android.wizardpager.wizard.ui.PageFragmentCallbacks;
 import com.example.android.wizardpager.wizard.ui.ReviewFragment;
 import com.example.android.wizardpager.wizard.ui.StepPagerStrip;
-
-import java.util.List;
-
 import yuku.alkitabfeedback.AlkitabFeedbackModel;
 import yuku.alkitabfeedback.FeedbackSender;
 import yuku.alkitabfeedback.R;
+
+import java.util.List;
 
 public class MainActivity extends FragmentActivity implements
         PageFragmentCallbacks,
@@ -216,12 +213,10 @@ public class MainActivity extends FragmentActivity implements
             mNextButton.setText(mEditingAfterReview
                     ? R.string.alkitabfeedback_review
                     : R.string.alkitabfeedback_next);
-            
-            if (Build.VERSION.SDK_INT >= 11) {
-                mNextButton.setTextColor(getResources().getColorStateList(R.color.alkitabfeedback_button_textcolor));
-                mNextButton.setBackgroundResource(R.drawable.alkitabfeedback_selectable_item_background);
-            }
-            
+
+            mNextButton.setTextColor(getResources().getColorStateList(R.color.alkitabfeedback_button_textcolor));
+            mNextButton.setBackgroundResource(R.drawable.alkitabfeedback_selectable_item_background);
+
             mNextButton.setEnabled(position != mPagerAdapter.getCutOffPage());
         }
 

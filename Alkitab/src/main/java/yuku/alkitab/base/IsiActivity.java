@@ -631,13 +631,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			}
 		}
 
-		if (Build.VERSION.SDK_INT >= 14) {
+		{
 			final IntentResult result = tryGetIntentResultFromBeam(intent);
 			if (result != null) return result;
 		}
 
-		final IntentResult result = tryGetIntentResultFromView(intent);
-		if (result != null) return result;
+		{
+			final IntentResult result = tryGetIntentResultFromView(intent);
+			if (result != null) return result;
+		}
 
 		return null;
 	}

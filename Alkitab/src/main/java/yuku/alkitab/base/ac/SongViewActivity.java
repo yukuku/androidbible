@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -476,12 +475,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 					if (U.equals(currentBookName, checkedBookName) && currentSong != null && U.equals(currentSong.code, checkedCode)) {
 						runOnUiThread(() -> {
 							if (mediaPlayerController.canHaveNewUrl()) {
-								final String baseUrl;
-								if (Build.VERSION.SDK_INT >= 14) {
-									baseUrl = "https://alkitab-host.appspot.com/addon/audio/";
-								} else {
-									baseUrl = "http://alkitab-host.appspot.com/addon/audio/"; // no streaming https support in old Android
-								}
+								final String baseUrl = "https://alkitab-host.appspot.com/addon/audio/";
 								final String url = baseUrl + getAudioFilename(currentBookName, currentSong.code);
 								if (response.contains("extension=mp3")) {
 									mediaPlayerController.mediaKnownToExist(url, false);
