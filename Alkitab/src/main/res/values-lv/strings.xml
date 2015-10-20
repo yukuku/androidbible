@@ -473,6 +473,8 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="about_translators">Tulkotāji</string>
   <string name="about_user_guide">Lietotāja rokasgrāmata</string>
   <string name="about_beta_feedback">Beta versijas atgriezeniskā saite</string>
+  <string name="about_enable_beta">Izmēģini Beta versiju</string>
+  <string name="about_enable_beta_confirmation">Pievienojies Google and nospied pogu \"KĻŪT PAR TESTĒTĀJU\" un izmēģini Beta versiju ar jaunām funkcijām un uzlabojumiem!</string>
   <string name="about_version_name">versija %s</string>
   <string name="about_material_sources">Materiālu avoti</string>
   <string name="about_credits">Kredīti</string>
