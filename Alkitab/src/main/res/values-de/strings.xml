@@ -470,6 +470,8 @@
   <string name="about_translators">Übersetzer</string>
   <string name="about_user_guide">Handbuch</string>
   <string name="about_beta_feedback">Feedback zur Betaversion</string>
+  <string name="about_enable_beta">Beta-Version ausprobieren</string>
+  <string name="about_enable_beta_confirmation">Melden Sie sich bei Google an und tippen Sie auf den Button BECOME A TESTER, um die Beta-Version mit neuen Features und Erweiterungen auszuprobieren!</string>
   <string name="about_version_name">Version %s</string>
   <string name="about_material_sources">Material-Quellen</string>
   <string name="about_credits">Danksagungen</string>
