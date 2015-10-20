@@ -3,10 +3,10 @@ package yuku.alkitab.base.ac;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
 import android.text.style.BackgroundColorSpan;
@@ -19,7 +19,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -44,7 +43,6 @@ import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.alkitab.util.Ari;
-import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabintegration.display.Launcher;
 import yuku.devoxx.flowlayout.FlowLayout;
 
@@ -82,7 +80,7 @@ public class MarkerListActivity extends BaseActivity {
 
 	String sort_column;
 	boolean sort_ascending;
-	int sort_columnId;
+	@IdRes int sort_columnId;
 	String currentlyUsedFilter;
 
 	List<Marker> allMarkers;
@@ -124,7 +122,7 @@ public class MarkerListActivity extends BaseActivity {
 		// default sort ...
 		sort_column = Db.Marker.createTime;
 		sort_ascending = false;
-		sort_columnId = R.string.menuSortCreateTime;
+		sort_columnId = R.id.menuSortCreateTime;
 
 		{ // .. but probably there is a stored preferences about the last sort used
 			String pref_sort_column = Preferences.getString(Prefkey.marker_list_sort_column);
@@ -134,21 +132,21 @@ public class MarkerListActivity extends BaseActivity {
 					case "waktuTambah": // add time (for compat when upgrading from prev ver)
 					case Db.Marker.createTime:
 						sort_column = Db.Marker.createTime;
-						sort_columnId = R.string.menuSortCreateTime;
+						sort_columnId = R.id.menuSortCreateTime;
 						break;
 					case "waktuUbah": // modify time (for compat when upgrading from prev ver)
 					case Db.Marker.modifyTime:
 						sort_column = Db.Marker.modifyTime;
-						sort_columnId = R.string.menuSortModifyTime;
+						sort_columnId = R.id.menuSortModifyTime;
 						break;
 					case Db.Marker.ari:
 						sort_column = Db.Marker.ari;
-						sort_columnId = R.string.menuSortAri;
+						sort_columnId = R.id.menuSortAri;
 						break;
 					case "tulisan": // caption (for compat when upgrading from prev ver)
 					case Db.Marker.caption:
 						sort_column = Db.Marker.caption;
-						sort_columnId = R.string.menuSortCaption;
+						sort_columnId = R.id.menuSortCaption;
 						break;
 					default:
 						// do nothing!
@@ -324,57 +322,28 @@ public class MarkerListActivity extends BaseActivity {
 		return res;
 	}
 
-	private void buildMenu(Menu menu) {
-		menu.clear();
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_marker_list, menu);
 
 		final MenuItem menuSearch = menu.findItem(R.id.menuSearch);
-		if (menuSearch != null) {
-			searchView = (SearchView) menuSearch.getActionView();
-			searchView.setQueryHint(getString(R.string.bl_filter_by_some_keywords));
-			searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-				@Override
-				public boolean onQueryTextChange(String newText) {
-					filter.submit(newText);
-					return true;
-				}
-
-				@Override
-				public boolean onQueryTextSubmit(String query) {
-					filter.submit(query);
-					return true;
-				}
-			});
-		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		buildMenu(menu);
-
-		return true;
-	}
-
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		if (menu != null) {
-			buildMenu(menu);
-		}
-
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		int itemId = item.getItemId();
-
-		switch (itemId) {
-			case R.id.menuSort:
-				openSortDialog();
+		searchView = (SearchView) menuSearch.getActionView();
+		searchView.setQueryHint(getString(R.string.bl_filter_by_some_keywords));
+		searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				filter.submit(newText);
 				return true;
-		}
+			}
 
-		return super.onOptionsItemSelected(item);
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				filter.submit(query);
+				return true;
+			}
+		});
+
+		return true;
 	}
 
 	@Override
@@ -387,76 +356,71 @@ public class MarkerListActivity extends BaseActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	private void openSortDialog() {
-		final List<String> labels = new ArrayList<>();
-		final IntArrayList values = new IntArrayList();
-
-		labels.add(getString(R.string.menuSortAri));
-		values.add(R.string.menuSortAri);
-
+	@Override
+	public boolean onPrepareOptionsMenu(final Menu menu) {
+		final MenuItem menuSortCaption = menu.findItem(R.id.menuSortCaption);
 		if (filter_kind == Marker.Kind.bookmark) {
-			labels.add(getString(R.string.menuSortCaption));
-			values.add(R.string.menuSortCaption);
+			menuSortCaption.setVisible(true);
+			menuSortCaption.setTitle(R.string.menuSortCaption);
+		} else if (filter_kind == Marker.Kind.highlight) {
+			menuSortCaption.setVisible(true);
+			menuSortCaption.setTitle(R.string.menuSortCaption_color);
+		} else {
+			menuSortCaption.setVisible(false);
 		}
 
-		if (filter_kind == Marker.Kind.highlight) {
-			labels.add(getString(R.string.menuSortCaption_color));
-			values.add(R.string.menuSortCaption);
-		}
+		checkSortMenuItem(menu, sort_columnId, R.id.menuSortAri);
+		checkSortMenuItem(menu, sort_columnId, R.id.menuSortCaption);
+		checkSortMenuItem(menu, sort_columnId, R.id.menuSortCreateTime);
+		checkSortMenuItem(menu, sort_columnId, R.id.menuSortModifyTime);
 
-		labels.add(getString(R.string.menuSortCreateTime));
-		values.add(R.string.menuSortCreateTime);
+		return true;
+	}
 
-		labels.add(getString(R.string.menuSortModifyTime));
-		values.add(R.string.menuSortModifyTime);
-
-		int selected = -1;
-		for (int i = 0, len = values.size(); i < len; i++) {
-			if (sort_columnId == values.get(i)) {
-				selected = i;
-				break;
+	private void checkSortMenuItem(final Menu menu, final int checkThis, final int whenThis) {
+		if (checkThis == whenThis) {
+			final MenuItem item = menu.findItem(whenThis);
+			if (item != null) {
+				item.setChecked(true);
 			}
 		}
+	}
 
-		new AlertDialogWrapper.Builder(this)
-			.setSingleChoiceItems(labels.toArray(new String[labels.size()]), selected, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					if (which == -1) return;
-					int value = values.get(which);
-					switch (value) {
-						case R.string.menuSortAri:
-							sort(Db.Marker.ari, true, value);
-							break;
-						case R.string.menuSortCaption:
-							sort(Db.Marker.caption, true, value);
-							break;
-						case R.string.menuSortCreateTime:
-							sort(Db.Marker.createTime, false, value);
-							break;
-						case R.string.menuSortModifyTime:
-							sort(Db.Marker.modifyTime, false, value);
-							break;
-					}
-					dialog.dismiss();
-				}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		final int itemId = item.getItemId();
+		switch (itemId) {
+			case R.id.menuSortAri:
+				sort(Db.Marker.ari, true, itemId);
+				return true;
+			case R.id.menuSortCaption:
+				sort(Db.Marker.caption, true, itemId);
+				return true;
+			case R.id.menuSortCreateTime:
+				sort(Db.Marker.createTime, false, itemId);
+				return true;
+			case R.id.menuSortModifyTime:
+				sort(Db.Marker.modifyTime, false, itemId);
+				return true;
+		}
 
-				private void sort(String column, boolean ascending, int columnId) {
-					// store for next time use
-					Preferences.setString(Prefkey.marker_list_sort_column, column);
-					Preferences.setBoolean(Prefkey.marker_list_sort_ascending, ascending);
+		return super.onOptionsItemSelected(item);
+	}
 
-					searchView.setQuery("", true);
-					currentlyUsedFilter = null;
-					setTitleAndNothingText();
-					sort_column = column;
-					sort_ascending = ascending;
-					sort_columnId = columnId;
-					loadAndFilter();
-				}
-			})
-			.setTitle(R.string.menuSort)
-			.show();
+	void sort(String column, boolean ascending, int columnId) {
+		// store for next time use
+		Preferences.setString(Prefkey.marker_list_sort_column, column);
+		Preferences.setBoolean(Prefkey.marker_list_sort_ascending, ascending);
+
+		searchView.setQuery("", true);
+		currentlyUsedFilter = null;
+		setTitleAndNothingText();
+		sort_column = column;
+		sort_ascending = ascending;
+		sort_columnId = columnId;
+		loadAndFilter();
+
+		supportInvalidateOptionsMenu();
 	}
 
 	final AdapterView.OnItemClickListener lv_itemClick = (parent, view, position, id) -> {
