@@ -1,25 +1,24 @@
 package yuku.alkitab.base.ac;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
+import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
 import android.text.style.BackgroundColorSpan;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -34,6 +33,7 @@ import yuku.alkitab.base.dialog.TypeHighlightDialog;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.base.util.Debouncer;
 import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.SearchEngine;
@@ -43,7 +43,6 @@ import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.alkitab.util.Ari;
-import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabintegration.display.Launcher;
 import yuku.devoxx.flowlayout.FlowLayout;
 
@@ -63,13 +62,16 @@ public class MarkerListActivity extends BaseActivity {
 
 	public static final int LABELID_noLabel = -1;
 
-	/** Action to broadcast when marker list needs to be reloaded due to some background changes */
+	/**
+	 * Action to broadcast when marker list needs to be reloaded due to some background changes
+	 */
 	public static final String ACTION_RELOAD = MarkerListActivity.class.getName() + ".action.RELOAD";
 
 	View root;
 	View empty;
 	TextView tEmpty;
 	View bClearFilter;
+	View progress;
 	SearchView searchView;
 	ListView lv;
 	View emptyView;
@@ -78,7 +80,7 @@ public class MarkerListActivity extends BaseActivity {
 
 	String sort_column;
 	boolean sort_ascending;
-	int sort_columnId;
+	@IdRes int sort_columnId;
 	String currentlyUsedFilter;
 
 	List<Marker> allMarkers;
@@ -95,7 +97,9 @@ public class MarkerListActivity extends BaseActivity {
 		return res;
 	}
 
-	@Override protected void onCreate(Bundle savedInstanceState) {
+	@SuppressLint("MissingSuperCall")
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreateWithNonToolbarUpButton(savedInstanceState);
 
 		setContentView(R.layout.activity_marker_list);
@@ -104,20 +108,21 @@ public class MarkerListActivity extends BaseActivity {
 		empty = V.get(this, android.R.id.empty);
 		tEmpty = V.get(this, R.id.tEmpty);
 		bClearFilter = V.get(this, R.id.bClearFilter);
+		progress = V.get(this, R.id.progress);
 		lv = V.get(this, android.R.id.list);
 		emptyView = V.get(this, android.R.id.empty);
 
 		filter_kind = Marker.Kind.fromCode(getIntent().getIntExtra(EXTRA_filter_kind, 0));
 		filter_labelId = getIntent().getLongExtra(EXTRA_filter_labelId, 0);
 
-		bClearFilter.setOnClickListener(bClearFilter_click);
+		bClearFilter.setOnClickListener(v -> searchView.setQuery("", true));
 
 		setTitleAndNothingText();
 
 		// default sort ...
 		sort_column = Db.Marker.createTime;
 		sort_ascending = false;
-		sort_columnId = R.string.menuSortCreateTime;
+		sort_columnId = R.id.menuSortCreateTime;
 
 		{ // .. but probably there is a stored preferences about the last sort used
 			String pref_sort_column = Preferences.getString(Prefkey.marker_list_sort_column);
@@ -127,21 +132,21 @@ public class MarkerListActivity extends BaseActivity {
 					case "waktuTambah": // add time (for compat when upgrading from prev ver)
 					case Db.Marker.createTime:
 						sort_column = Db.Marker.createTime;
-						sort_columnId = R.string.menuSortCreateTime;
+						sort_columnId = R.id.menuSortCreateTime;
 						break;
 					case "waktuUbah": // modify time (for compat when upgrading from prev ver)
 					case Db.Marker.modifyTime:
 						sort_column = Db.Marker.modifyTime;
-						sort_columnId = R.string.menuSortModifyTime;
+						sort_columnId = R.id.menuSortModifyTime;
 						break;
 					case Db.Marker.ari:
 						sort_column = Db.Marker.ari;
-						sort_columnId = R.string.menuSortAri;
+						sort_columnId = R.id.menuSortAri;
 						break;
 					case "tulisan": // caption (for compat when upgrading from prev ver)
 					case Db.Marker.caption:
 						sort_column = Db.Marker.caption;
-						sort_columnId = R.string.menuSortCaption;
+						sort_columnId = R.id.menuSortCaption;
 						break;
 					default:
 						// do nothing!
@@ -152,10 +157,9 @@ public class MarkerListActivity extends BaseActivity {
 		adapter = new MarkerListAdapter();
 		lv.setAdapter(adapter);
 		lv.setCacheColorHint(S.applied.backgroundColor);
-		lv.setOnItemClickListener(lv_click);
+		lv.setOnItemClickListener(lv_itemClick);
+		lv.setOnItemLongClickListener(lv_itemLongClick);
 		lv.setEmptyView(emptyView);
-
-		registerForContextMenu(lv);
 
 		App.getLbm().registerReceiver(br, new IntentFilter(ACTION_RELOAD));
 	}
@@ -192,30 +196,18 @@ public class MarkerListActivity extends BaseActivity {
 		loadAndFilter();
 	}
 
-	private void loadAndFilter() {
+	void loadAndFilter() {
+		loadAndFilter(false);
+	}
+
+	void loadAndFilter(final boolean immediate) {
 		allMarkers = S.getDb().listMarkers(filter_kind, filter_labelId, sort_column, sort_ascending);
-		filterUsingCurrentlyUsedFilter();
-	}
 
-	protected void removeFilter() {
-		currentlyUsedFilter = null;
-		filterUsingCurrentlyUsedFilter();
-		setTitleAndNothingText();
-	}
-
-	protected void applyFilter(String query) {
-		currentlyUsedFilter = query;
-		filterUsingCurrentlyUsedFilter();
-		setTitleAndNothingText();
-	}
-
-	void filterUsingCurrentlyUsedFilter() {
-		final MaterialDialog pd = new MaterialDialog.Builder(this)
-			.content(R.string.bl_filtering_titiktiga)
-			.cancelable(false)
-			.progress(true, 0)
-			.show();
-		adapter.filterAsync(currentlyUsedFilter, pd::dismiss);
+		if (immediate) {
+			filter.submit(currentlyUsedFilter, 0);
+		} else {
+			filter.submit(currentlyUsedFilter);
+		}
 	}
 
 	void setTitleAndNothingText() {
@@ -253,7 +245,7 @@ public class MarkerListActivity extends BaseActivity {
 			bClearFilter.setVisibility(View.GONE);
 		}
 
-		if (title != null && nothingText != null) {
+		if (title != null) {
 			setTitle(title);
 			tEmpty.setText(nothingText);
 		} else {
@@ -261,27 +253,60 @@ public class MarkerListActivity extends BaseActivity {
 		}
 	}
 
-	boolean searchView_search(String query) {
-		query = query.trim();
-		if (query.length() == 0) {
-			removeFilter();
-			return true;
-		}
-
-		String[] tokens = QueryTokenizer.tokenize(query);
-		if (tokens.length == 0) {
-			removeFilter();
-			return true;
-		}
-
-		applyFilter(query);
-		return true;
+	static class FilterResult {
+		String query;
+		boolean needFilter;
+		List<Marker> filteredMarkers;
+		String[] tokens;
 	}
 
-	OnClickListener bClearFilter_click = new OnClickListener() {
-		@Override public void onClick(View v) {
-			searchView.setQuery("", false); //$NON-NLS-1$
-			removeFilter();
+	final Debouncer<String, FilterResult> filter = new Debouncer<String, FilterResult>(200) {
+		@Override
+		public FilterResult process(@Nullable final String payload) {
+			final boolean needFilter;
+
+			final String query = payload == null? "": payload.trim();
+			if (query.length() == 0) {
+				needFilter = false;
+			} else {
+				final String[] tokens = QueryTokenizer.tokenize(query);
+				if (tokens.length == 0) {
+					needFilter = false;
+				} else {
+					needFilter = true;
+				}
+			}
+
+			final String[] tokens;
+			if (query.length() == 0) {
+				tokens = null;
+			} else {
+				tokens = QueryTokenizer.tokenize(query);
+				for (int i = 0; i < tokens.length; i++) {
+					tokens[i] = tokens[i].toLowerCase(Locale.getDefault());
+				}
+			}
+
+			final List<Marker> filteredMarkers = filterEngine(allMarkers, filter_kind, tokens);
+
+			final FilterResult res = new FilterResult();
+			res.query = query;
+			res.needFilter = needFilter;
+			res.filteredMarkers = filteredMarkers;
+			res.tokens = tokens;
+			return res;
+		}
+
+		@Override
+		public void onResult(final FilterResult result) {
+			if (result.needFilter) {
+				currentlyUsedFilter = result.query;
+			} else {
+				currentlyUsedFilter = null;
+			}
+
+			setTitleAndNothingText();
+			adapter.setData(result.filteredMarkers, result.tokens);
 		}
 	};
 
@@ -297,228 +322,190 @@ public class MarkerListActivity extends BaseActivity {
 		return res;
 	}
 
-	private void buildMenu(Menu menu) {
-		menu.clear();
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_marker_list, menu);
 
 		final MenuItem menuSearch = menu.findItem(R.id.menuSearch);
-		if (menuSearch != null) {
-			searchView = (SearchView) menuSearch.getActionView();
-			searchView.setQueryHint(getString(R.string.bl_filter_by_some_keywords));
-			searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-				@Override
-				public boolean onQueryTextChange(String newText) {
-					if (newText.length() == 0) {
-						return searchView_search(newText);
-					}
-					return false;
-				}
-
-				@Override
-				public boolean onQueryTextSubmit(String query) {
-					return searchView_search(query);
-				}
-			});
-		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		buildMenu(menu);
-
-		return true;
-	}
-
-	@Override public boolean onPrepareOptionsMenu(Menu menu) {
-		if (menu != null) {
-			buildMenu(menu);
-		}
-
-		return true;
-	}
-
-	@Override public boolean onOptionsItemSelected(MenuItem item) {
-		int itemId = item.getItemId();
-
-		switch (itemId) {
-			case R.id.menuSort:
-				openSortDialog();
+		searchView = (SearchView) menuSearch.getActionView();
+		searchView.setQueryHint(getString(R.string.bl_filter_by_some_keywords));
+		searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				filter.submit(newText);
 				return true;
-		}
+			}
 
-		return super.onOptionsItemSelected(item);
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				filter.submit(query);
+				return true;
+			}
+		});
+
+		return true;
 	}
 
 	@Override
 	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		if (requestCode == REQCODE_edit_note && resultCode == RESULT_OK) {
 			loadAndFilter();
-			if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
 			App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
 		}
 
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	private void openSortDialog() {
-		final List<String> labels = new ArrayList<>();
-		final IntArrayList values = new IntArrayList();
-
-		labels.add(getString(R.string.menuSortAri));
-		values.add(R.string.menuSortAri);
-
+	@Override
+	public boolean onPrepareOptionsMenu(final Menu menu) {
+		final MenuItem menuSortCaption = menu.findItem(R.id.menuSortCaption);
 		if (filter_kind == Marker.Kind.bookmark) {
-			labels.add(getString(R.string.menuSortCaption));
-			values.add(R.string.menuSortCaption);
+			menuSortCaption.setVisible(true);
+			menuSortCaption.setTitle(R.string.menuSortCaption);
+		} else if (filter_kind == Marker.Kind.highlight) {
+			menuSortCaption.setVisible(true);
+			menuSortCaption.setTitle(R.string.menuSortCaption_color);
+		} else {
+			menuSortCaption.setVisible(false);
 		}
 
-		if (filter_kind == Marker.Kind.highlight) {
-			labels.add(getString(R.string.menuSortCaption_color));
-			values.add(R.string.menuSortCaption);
-		}
+		checkSortMenuItem(menu, sort_columnId, R.id.menuSortAri);
+		checkSortMenuItem(menu, sort_columnId, R.id.menuSortCaption);
+		checkSortMenuItem(menu, sort_columnId, R.id.menuSortCreateTime);
+		checkSortMenuItem(menu, sort_columnId, R.id.menuSortModifyTime);
 
-		labels.add(getString(R.string.menuSortCreateTime));
-		values.add(R.string.menuSortCreateTime);
-
-		labels.add(getString(R.string.menuSortModifyTime));
-		values.add(R.string.menuSortModifyTime);
-
-		int selected = -1;
-		for (int i = 0, len = values.size(); i < len; i++) {
-			if (sort_columnId == values.get(i)) {
-				selected = i;
-				break;
-			}
-		}
-
-		new AlertDialogWrapper.Builder(this)
-			.setSingleChoiceItems(labels.toArray(new String[labels.size()]), selected, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					if (which == -1) return;
-					int value = values.get(which);
-					switch (value) {
-						case R.string.menuSortAri:
-							sort(Db.Marker.ari, true, value);
-							break;
-						case R.string.menuSortCaption:
-							sort(Db.Marker.caption, true, value);
-							break;
-						case R.string.menuSortCreateTime:
-							sort(Db.Marker.createTime, false, value);
-							break;
-						case R.string.menuSortModifyTime:
-							sort(Db.Marker.modifyTime, false, value);
-							break;
-					}
-					dialog.dismiss();
-				}
-
-				private void sort(String column, boolean ascending, int columnId) {
-					// store for next time use
-					Preferences.setString(Prefkey.marker_list_sort_column, column);
-					Preferences.setBoolean(Prefkey.marker_list_sort_ascending, ascending);
-
-					searchView.setQuery("", false); //$NON-NLS-1$
-					currentlyUsedFilter = null;
-					setTitleAndNothingText();
-					sort_column = column;
-					sort_ascending = ascending;
-					sort_columnId = columnId;
-					loadAndFilter();
-				}
-			})
-			.setTitle(R.string.menuSort)
-			.show();
+		return true;
 	}
 
-	private AdapterView.OnItemClickListener lv_click = new AdapterView.OnItemClickListener() {
-		@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-			Marker marker = adapter.getItem(position);
-
-			startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(marker.ari, marker.verseCount));
+	private void checkSortMenuItem(final Menu menu, final int checkThis, final int whenThis) {
+		if (checkThis == whenThis) {
+			final MenuItem item = menu.findItem(whenThis);
+			if (item != null) {
+				item.setChecked(true);
+			}
 		}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		final int itemId = item.getItemId();
+		switch (itemId) {
+			case R.id.menuSortAri:
+				sort(Db.Marker.ari, true, itemId);
+				return true;
+			case R.id.menuSortCaption:
+				sort(Db.Marker.caption, true, itemId);
+				return true;
+			case R.id.menuSortCreateTime:
+				sort(Db.Marker.createTime, false, itemId);
+				return true;
+			case R.id.menuSortModifyTime:
+				sort(Db.Marker.modifyTime, false, itemId);
+				return true;
+		}
+
+		return super.onOptionsItemSelected(item);
+	}
+
+	void sort(String column, boolean ascending, int columnId) {
+		// store for next time use
+		Preferences.setString(Prefkey.marker_list_sort_column, column);
+		Preferences.setBoolean(Prefkey.marker_list_sort_ascending, ascending);
+
+		searchView.setQuery("", true);
+		currentlyUsedFilter = null;
+		setTitleAndNothingText();
+		sort_column = column;
+		sort_ascending = ascending;
+		sort_columnId = columnId;
+		loadAndFilter();
+
+		supportInvalidateOptionsMenu();
+	}
+
+	final AdapterView.OnItemClickListener lv_itemClick = (parent, view, position, id) -> {
+		Marker marker = adapter.getItem(position);
+
+		startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(marker.ari, marker.verseCount));
 	};
 
-	@Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-		getMenuInflater().inflate(R.menu.context_marker_list, menu);
+	final AdapterView.OnItemLongClickListener lv_itemLongClick = (parent, view, position, id) -> {
 
 		// set menu item titles based on the kind of marker
-		final MenuItem menuDeleteMarker = menu.findItem(R.id.menuDeleteMarker);
+		String deleteMarker;
+		String editMarker;
+
 		switch (filter_kind) {
 			case bookmark:
-				menuDeleteMarker.setTitle(R.string.hapus_pembatas_buku);
+				deleteMarker = getString(R.string.hapus_pembatas_buku);
+				editMarker = getString(R.string.edit_bookmark);
 				break;
 			case note:
-				menuDeleteMarker.setTitle(R.string.hapus_catatan);
+				deleteMarker = getString(R.string.hapus_catatan);
+				editMarker = getString(R.string.edit_note);
 				break;
 			case highlight:
-				menuDeleteMarker.setTitle(R.string.hapus_stabilo);
+				deleteMarker = getString(R.string.hapus_stabilo);
+				editMarker = getString(R.string.edit_highlight);
 				break;
+			default:
+				throw new RuntimeException("Unknown kind: " + filter_kind);
 		}
 
-		final MenuItem menuEditMarker = menu.findItem(R.id.menuEditMarker);
-		switch (filter_kind) {
-			case bookmark:
-				menuEditMarker.setTitle(R.string.edit_bookmark);
-				break;
-			case note:
-				menuEditMarker.setTitle(R.string.edit_note);
-				break;
-			case highlight:
-				menuEditMarker.setTitle(R.string.edit_highlight);
-				break;
-		}
-	}
+		new MaterialDialog.Builder(this)
+			.items(new String[] {
+				deleteMarker,
+				editMarker,
+			})
+			.itemsCallback((dialog, itemView, which, text) -> {
+				final Marker marker = adapter.getItem(position);
 
-	@Override public boolean onContextItemSelected(MenuItem item) {
-		final int position = ((AdapterView.AdapterContextMenuInfo) item.getMenuInfo()).position;
-		final Marker marker = adapter.getItem(position);
-		final int itemId = item.getItemId();
-
-		if (itemId == R.id.menuDeleteMarker) {
-			// whatever the kind is, the way to delete is the same
-			S.getDb().deleteMarkerById(marker._id);
-			loadAndFilter();
-			if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
-			App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
-
-			return true;
-		} else if (itemId == R.id.menuEditMarker) {
-			if (filter_kind == Marker.Kind.bookmark) {
-				TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExisting(this, marker._id);
-				dialog.setListener(() -> {
+				if (which == 0) {
+					// whatever the kind is, the way to delete is the same
+					S.getDb().deleteMarkerById(marker._id);
 					loadAndFilter();
-					if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
 					App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
-				});
-				dialog.show();
 
-			} else if (filter_kind == Marker.Kind.note) {
-				startActivityForResult(NoteActivity.createEditExistingIntent(marker._id), REQCODE_edit_note);
+				} else if (which == 1) {
+					if (filter_kind == Marker.Kind.bookmark) {
+						TypeBookmarkDialog dialog1 = TypeBookmarkDialog.EditExisting(this, marker._id);
+						dialog1.setListener(() -> {
+							loadAndFilter();
+							App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
+						});
+						dialog1.show();
 
-			} else if (filter_kind == Marker.Kind.highlight) {
-				final int ari = marker.ari;
-				final Highlights.Info info = Highlights.decode(marker.caption);
-				final String reference = S.activeVersion.referenceWithVerseCount(ari, marker.verseCount);
-				final String rawVerseText = S.activeVersion.loadVerseText(ari);
-				final VerseRenderer.FormattedTextResult ftr = new VerseRenderer.FormattedTextResult();
-				VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, false, null, ftr);
+					} else if (filter_kind == Marker.Kind.note) {
+						startActivityForResult(NoteActivity.createEditExistingIntent(marker._id), REQCODE_edit_note);
 
-				new TypeHighlightDialog(this, ari, newColorRgb -> {
-					loadAndFilter();
-					if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
-					App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
-				}, info.colorRgb, info, reference, ftr.result);
-			}
+					} else if (filter_kind == Marker.Kind.highlight) {
+						final int ari = marker.ari;
+						final Highlights.Info info = Highlights.decode(marker.caption);
+						final String reference = S.activeVersion.referenceWithVerseCount(ari, marker.verseCount);
+						final String rawVerseText = S.activeVersion.loadVerseText(ari);
+						final VerseRenderer.FormattedTextResult ftr = new VerseRenderer.FormattedTextResult();
 
-			return true;
-		}
+						if (rawVerseText != null) {
+							VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, false, null, ftr);
+						} else {
+							ftr.result = ""; // verse not available
+						}
 
-		return false;
-	}
+						new TypeHighlightDialog(this, ari, newColorRgb -> {
+							loadAndFilter();
+							App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
+						}, info.colorRgb, info, reference, ftr.result);
+					}
+				}
+			})
+			.show();
 
-	/** The real work of filtering happens here */
+		return true;
+	};
+
+	/**
+	 * The real work of filtering happens here
+	 */
 	public static List<Marker> filterEngine(List<Marker> allMarkers, Marker.Kind filter_kind, String[] tokens) {
 		List<Marker> res = new ArrayList<>();
 
@@ -553,33 +540,6 @@ public class MarkerListActivity extends BaseActivity {
 	class MarkerListAdapter extends EasyAdapter {
 		List<Marker> filteredMarkers = new ArrayList<>();
 		String[] tokens;
-
-		void setupTokens(final String query) {
-			if (query == null || query.length() == 0) {
-				this.tokens = null;
-			} else {
-				this.tokens = QueryTokenizer.tokenize(query);
-				for (int i = 0; i < tokens.length; i++) {
-					tokens[i] = tokens[i].toLowerCase(Locale.getDefault());
-				}
-			}
-		}
-
-		public void filterAsync(final String query, final Runnable callback) {
-			final List<Marker> allMarkers = MarkerListActivity.this.allMarkers;
-			final Marker.Kind filter_kind = MarkerListActivity.this.filter_kind;
-
-			new Thread(() -> {
-				setupTokens(query);
-
-				filteredMarkers = filterEngine(allMarkers, filter_kind, tokens);
-
-				runOnUiThread(() -> {
-					notifyDataSetChanged();
-					callback.run();
-				});
-			}).start();
-		}
 
 		@Override
 		public Marker getItem(final int position) {
@@ -636,9 +596,9 @@ public class MarkerListActivity extends BaseActivity {
 			}
 
 			if (filter_kind == Marker.Kind.bookmark) {
-				lCaption.setText(currentlyUsedFilter != null? SearchEngine.hilite(caption, tokens, hiliteColor): caption);
+				lCaption.setText(currentlyUsedFilter != null ? SearchEngine.hilite(caption, tokens, hiliteColor) : caption);
 				Appearances.applyMarkerTitleTextAppearance(lCaption);
-				CharSequence snippet = currentlyUsedFilter != null? SearchEngine.hilite(verseText, tokens, hiliteColor): verseText;
+				CharSequence snippet = currentlyUsedFilter != null ? SearchEngine.hilite(verseText, tokens, hiliteColor) : verseText;
 
 				Appearances.applyMarkerSnippetContentAndAppearance(lSnippet, reference, snippet);
 
@@ -656,14 +616,14 @@ public class MarkerListActivity extends BaseActivity {
 			} else if (filter_kind == Marker.Kind.note) {
 				lCaption.setText(reference);
 				Appearances.applyMarkerTitleTextAppearance(lCaption);
-				lSnippet.setText(currentlyUsedFilter != null? SearchEngine.hilite(caption, tokens, hiliteColor): caption);
+				lSnippet.setText(currentlyUsedFilter != null ? SearchEngine.hilite(caption, tokens, hiliteColor) : caption);
 				Appearances.applyTextAppearance(lSnippet);
 
 			} else if (filter_kind == Marker.Kind.highlight) {
 				lCaption.setText(reference);
 				Appearances.applyMarkerTitleTextAppearance(lCaption);
 
-				final SpannableStringBuilder snippet = currentlyUsedFilter != null? SearchEngine.hilite(verseText, tokens, hiliteColor): new SpannableStringBuilder(verseText);
+				final SpannableStringBuilder snippet = currentlyUsedFilter != null ? SearchEngine.hilite(verseText, tokens, hiliteColor) : new SpannableStringBuilder(verseText);
 				final Highlights.Info info = Highlights.decode(caption);
 				if (info != null) {
 					final BackgroundColorSpan span = new BackgroundColorSpan(Highlights.alphaMix(info.colorRgb));
@@ -681,6 +641,17 @@ public class MarkerListActivity extends BaseActivity {
 		@Override
 		public int getCount() {
 			return filteredMarkers.size();
+		}
+
+		public void setData(List<Marker> filteredMarkers, String[] tokens) {
+			this.filteredMarkers = filteredMarkers;
+			this.tokens = tokens;
+
+			// set up empty view to make sure it does not show loading progress again
+			tEmpty.setVisibility(View.VISIBLE);
+			progress.setVisibility(View.GONE);
+
+			notifyDataSetChanged();
 		}
 	}
 

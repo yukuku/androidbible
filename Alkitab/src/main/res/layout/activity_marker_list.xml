@@ -2,6 +2,7 @@
 <FrameLayout
 	android:id="@+id/root"
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 
@@ -9,14 +10,16 @@
 		android:id="@android:id/list"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
-		android:fastScrollEnabled="true" />
+		android:fastScrollEnabled="true"
+		tools:visibility="gone" />
 
 	<LinearLayout
 		android:id="@android:id/empty"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:gravity="center"
-		android:orientation="vertical">
+		android:orientation="vertical"
+		tools:visibility="visible">
 
 		<TextView
 			android:id="@+id/tEmpty"
@@ -26,13 +29,25 @@
 			android:paddingLeft="12dp"
 			android:paddingRight="12dp"
 			android:text="@string/belum_ada_pembatas_buku"
-			android:textSize="16sp" />
+			android:textSize="16sp"
+			android:visibility="gone"
+			tools:visibility="visible" />
 
 		<Button
 			android:id="@+id/bClearFilter"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="@string/bl_clear_filter" />
+			android:layout_marginTop="8dp"
+			android:text="@string/bl_clear_filter"
+			android:visibility="gone"
+			tools:visibility="visible" />
+
+		<ProgressBar
+			android:id="@+id/progress"
+			style="?android:attr/progressBarStyleLarge"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal" />
 	</LinearLayout>
 
 </FrameLayout>

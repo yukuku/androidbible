@@ -334,6 +334,7 @@
   <string name="rp_download_reading_plan_failed">Nie udało się pobrać wybranego planu czytań. Proszę spróbować później, gdy będzie dostępne połączenie internetowe.</string>
   <string name="rp_download_reading_plan_data_corrupted">Pobrany plik plan czytań jest uszkodzony. Proszę spróbować później, gdy będzie dostępne połączenie internetowe.</string>
   <string name="rp_download_already_have">Posiadasz już ten plan czytania.</string>
+  <string name="rp_mark_as_read_up_to">Czy zaznaczyć, że przeczytano aż dotąd?</string>
   <string name="version_download_need_fonts">"Przekład, który pobrałeś, może wymagać konkretnej czcionki do wyświetlania. Udaj się do menu \'Wygląd tekstu\' i wybierz czcionkę. Grecki wymaga czcionki Ubuntu. Burmański wymaga Parabaik, ParabaikSans, lub Myanmar3. Tamil wymaga Akshar. Telugu wymaga Suranna."</string>
   <string name="version_download_corrupted_file">Pobrany plik wydaje się uszkodzony.</string>
   <string name="menuNightMode">Tryb nocny</string>
@@ -455,6 +456,8 @@
   <string name="sync_login_form_change_password_success">Twoje hasło zostało zmienione.</string>
   <string name="pref_textPadding_title">Marginesy wokół tekstu</string>
   <string name="pref_textPadding_summary">Uczyń tekst w lini węższym, aby ułatwić czytanie</string>
+  <string name="pref_bottomToolbarOnText_title">Nawigacja na dole ekranu</string>
+  <string name="pref_bottomToolbarOnText_summary">Umieść pasek nawigacji na dole ekranu Biblii</string>
   <string name="dr_app_name">Przypomnienie</string>
   <string name="dr_notification_title">Codzienne rozważanie</string>
   <string name="dr_notification_text">Przeczytaj teraz dzisiejsze rozważania.</string>
@@ -467,6 +470,8 @@
   <string name="about_translators">Tłumacze</string>
   <string name="about_user_guide">Przewodnik użytkownika</string>
   <string name="about_beta_feedback">Wiadomość zwrotna dla wersji beta</string>
+  <string name="about_enable_beta">Wypróbuj wersję Beta</string>
+  <string name="about_enable_beta_confirmation">Zaloguj się do konta Google i naciśnij przycisk BECOME A TESTER, aby wypróbować wersję Beta z nowymi funkcjami i udogodnieniami!</string>
   <string name="about_version_name">wersja %s</string>
   <string name="about_material_sources">Źródła materiału</string>
   <string name="about_credits">Podziękowania</string>
@@ -495,4 +500,5 @@
   <string name="dict_download_button">Pobierz</string>
   <string name="menuGuide">Przewodnik</string>
   <string name="menuCommentary">Komentarz</string>
+  <string name="maps_could_not_open">Nie można było otworzyć aplikacji Bible Maps.</string>
 </resources>

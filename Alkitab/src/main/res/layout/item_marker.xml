@@ -34,7 +34,9 @@
             android:text="*Caption or verse reference, etc."
             android:textSize="16sp"
             tools:ignore="HardcodedText"
-			android:layout_marginRight="8dp" />
+			android:layout_marginRight="8dp"
+            android:maxLines="3"
+            android:ellipsize="end" />
 
     </RelativeLayout>
 

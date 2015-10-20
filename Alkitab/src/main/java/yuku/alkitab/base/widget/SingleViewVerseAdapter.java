@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.text.SpannableStringBuilder;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -124,7 +125,13 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				final String analyzeString = verseText.toString().substring(startVerseTextPos);
 
 				final Uri uri = Uri.parse("content://org.sabda.kamus.provider/analyze").buildUpon().appendQueryParameter("text", analyzeString).build();
-				final Cursor c = cr.query(uri, null, null, null, null);
+				Cursor c = null;
+				try {
+					c = cr.query(uri, null, null, null, null);
+				} catch (Exception e) {
+					Log.e(TAG, "Error when querying dictionary content provider", e);
+				}
+
 				if (c != null) {
 					try {
 						final int col_offset = c.getColumnIndexOrThrow("offset");
