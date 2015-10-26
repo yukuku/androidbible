@@ -20,6 +20,8 @@ import yuku.alkitab.model.util.Gid;
 
 import java.io.File;
 
+import static yuku.alkitab.base.util.Literals.Array;
+
 public class InternalDbHelper extends SQLiteOpenHelper {
 	public static final String TAG = InternalDbHelper.class.getSimpleName();
 
@@ -78,11 +80,9 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		}
 
 		if (oldVersion <= 69) { // 70: 2.0.0
-			// new tables Label and Marker_Label
+			// new table Label
 			createTableLabel(db);
 			createIndexLabel(db);
-			createTableMarker_Label(db);
-			createIndexMarker_Label(db);
 		}
 
 		if (oldVersion > 50 && oldVersion <= 102) { // 103: 2.7.1
@@ -126,7 +126,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		}
 
 		if (oldVersion < 14000163) { // last version that doesn't use Marker table
-			addGidColumnToLabel(db);
+			addGidColumnToLabelIfNeeded(db);
 
 			createTableMarker(db);
 			createIndexMarker(db);
@@ -432,8 +432,18 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL("alter table Edisi add column shortName text");
 	}
 
-	private void addGidColumnToLabel(SQLiteDatabase db) {
-		db.execSQL("alter table " + Db.TABLE_Label + " add column " + Db.Label.gid + " text");
+	private void addGidColumnToLabelIfNeeded(SQLiteDatabase db) {
+		boolean gidColumnExists = false;
+		try (Cursor c = db.rawQuery("pragma table_info(" + Db.TABLE_Label + ")", null)) {
+			while (c.moveToNext()) {
+				if ("gid".equals(c.getString(1 /* "name" column */))) {
+					gidColumnExists = true;
+				}
+			}
+		}
+		if (!gidColumnExists) {
+			db.execSQL("alter table " + Db.TABLE_Label + " add column " + Db.Label.gid + " text");
+		}
 
 		// make sure this one matches the one in createIndexLabel()
 		db.execSQL("create index if not exists index_402 on " + Db.TABLE_Label + " (" + Db.Label.gid + ")");
@@ -510,7 +520,17 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 				c.close();
 			}
 
-			{ // Bookmark2_Label -> Marker_Label
+			// Only if the upgrade old version is >= 2.0.0, where we have Bukmak2_Label table.
+			// In case that Bukmak2_Label table is not available, it means the onUpgrade old version is < 2.0.0,
+			// so we don't need to care about migrating labels.
+			boolean hasBookmark2_Label = false;
+			try (Cursor c = db.rawQuery("select tbl_name from sqlite_master where tbl_name=?", Array(TABLE_Bookmark2_Label))) {
+				if (c.moveToNext() && TABLE_Bookmark2_Label.equals(c.getString(0))) {
+					hasBookmark2_Label = true;
+				}
+			}
+
+			if (hasBookmark2_Label) { // Bookmark2_Label -> Marker_Label
 				final Cursor c = db.query(TABLE_Bookmark2_Label,
 					new String[] {"_id", Bookmark2_Label.bookmark2_id, Bookmark2_Label.label_id},
 					null, null, null, null, "_id asc"

@@ -39,16 +39,20 @@ public class FlowLayout extends ViewGroup {
 		boolean breakLine = false;
 		
 		final int count = getChildCount();
-		
-		Log.d(TAG, "child count = " + count);
-		
+
+		if (BuildConfig.DEBUG) {
+			Log.d(TAG, "child count = " + count);
+		}
+
 		for (int i = 0; i < count; i++) {
 			View child = getChildAt(i);
 			LayoutParams lp = (LayoutParams) child.getLayoutParams();
 			measureChild(child, widthMeasureSpec, heightMeasureSpec);
-			
-			Log.d(TAG, "child " + i + " mw=" + child.getMeasuredWidth() + " mh=" + child.getMeasuredHeight());
-			
+
+			if (BuildConfig.DEBUG) {
+				Log.d(TAG, "child " + i + " mw=" + child.getMeasuredWidth() + " mh=" + child.getMeasuredHeight());
+			}
+
 			if (breakLine || currentWidth + child.getMeasuredWidth() > widthSize) {
 				height += currentHeight + mVerticalSpacing;
 				currentHeight = 0;
@@ -63,9 +67,11 @@ public class FlowLayout extends ViewGroup {
 			
 			lp.x = currentWidth;
 			lp.y = height;
-			
-			Log.d(TAG, "child " + i + " x=" + lp.x + " y=" + lp.y);
-			
+
+			if (BuildConfig.DEBUG) {
+				Log.d(TAG, "child " + i + " x=" + lp.x + " y=" + lp.y);
+			}
+
 			currentWidth += child.getMeasuredWidth() + spacing;
 			int childHeight = child.getMeasuredHeight();
 			if (childHeight > currentHeight) currentHeight = childHeight;
@@ -81,9 +87,11 @@ public class FlowLayout extends ViewGroup {
 		
 		width += getPaddingRight();
 		height += getPaddingBottom();
-		
-		Log.d(TAG, "onMeasure w=" + width + " h=" + height + " widthMeasureSpec=" + Integer.toHexString(widthMeasureSpec) + " heightMeasureSpec=" + Integer.toHexString(heightMeasureSpec));
-		
+
+		if (BuildConfig.DEBUG) {
+			Log.d(TAG, "onMeasure w=" + width + " h=" + height + " widthMeasureSpec=" + Integer.toHexString(widthMeasureSpec) + " heightMeasureSpec=" + Integer.toHexString(heightMeasureSpec));
+		}
+
 		// don't resolve height (patched by yuku)
 		setMeasuredDimension(resolveSize(width, widthMeasureSpec), resolveSize(height, heightMeasureSpec));
 	}

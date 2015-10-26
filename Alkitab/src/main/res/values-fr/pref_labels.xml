@@ -14,11 +14,16 @@
   <string name="pref_biarkan_layar_menyala">L\'écran reste allumé</string>
   <string name="pref_penampilan_layar">Écran</string>
   <string name="pref_volumeButtonNavigation_title">Navigation avec les boutons du volume</string>
+  <string name="pref_copyWithVerseNumbers_title">Numéros des versets</string>
   <string name="pref_copyWithVerseNumbers_summary">Commencez chaque verset avec son numéro</string>
+  <string name="pref_copyWithVersionName_title">Abréviations de la version</string>
+  <string name="pref_copyWithVersionName_summary">Mentionnez les versions initiales de la Bible</string>
   <string name="pref_copyWithShareUrl_title">Partager le lien</string>
   <string name="pref_copyWithShareUrl_summary">Ajouter le lien de la page partagée à la fin du texte copié ou partagé</string>
   <string name="pref_autoDictionaryAnalyze_title">Recherche automatique dans le dictionnaire</string>
   <string name="pref_autoDictionaryAnalyze_summary">Chercher les mots sélectionnés dans le dictionnaire</string>
+  <string name="pref_tapToEditNote_title">Appuyez pour modifier la note</string>
+  <string name="pref_tapToEditNote_summary">Décochez cette case pour éviter toute modification accidentelle lors de l\'affichage des notes existantes</string>
   <string name="pref_showHiddenVersion_title">Autoriser des versions éventuellement limitées</string>
   <string name="pref_selectedVerseBgColor_title">L\'arriere plan pour le verset sélectionné</string>
 </resources>

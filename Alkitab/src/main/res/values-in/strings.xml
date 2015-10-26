@@ -199,9 +199,11 @@
   <string name="verse_select_multiple_verse_selected">%s ayat dipilih</string>
   <string name="google_play_store_not_installed">Google Play Store tidak terpasang.</string>
   <string name="pref_language_label_default">Semula</string>
+  <string name="market_short_desc">Aplikasi Alkitab yang cepat, terpercaya, dan banyak fiturnya.</string>
   <string name="goto_tab_dialer_label">Telusuri</string>
   <string name="goto_tab_direct_label">Ketik</string>
   <string name="goto_tab_grid_label">Pilih</string>
+  <string name="menuAskForVerse">Tanyakan nomor ayat</string>
   <string name="fm_activity_title">Jenis Huruf</string>
   <string name="fm_need_to_log_in_to_wifi">Anda perlu log-in ke jaringan (Wi-Fi) dahulu.</string>
   <string name="fm_do_you_want_to_delete">Hapus jenis huruf %s?</string>
