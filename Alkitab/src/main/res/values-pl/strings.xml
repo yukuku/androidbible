@@ -199,9 +199,11 @@
   <string name="verse_select_multiple_verse_selected">Zaznaczono %s wersów</string>
   <string name="google_play_store_not_installed">Sklep Google Play nie jest zainstalowany.</string>
   <string name="pref_language_label_default">Domyślny</string>
+  <string name="market_short_desc">Szybki, niezawodny i bogaty w funkcje program Biblijny.</string>
   <string name="goto_tab_dialer_label">Dialer</string>
   <string name="goto_tab_direct_label">Bezpośrednio</string>
   <string name="goto_tab_grid_label">Siatka</string>
+  <string name="menuAskForVerse">Pytaj o numer wersu</string>
   <string name="fm_activity_title">Zarządca czcionek</string>
   <string name="fm_need_to_log_in_to_wifi">Musisz zalogować się do swojej sieci (Wi-Fi).</string>
   <string name="fm_do_you_want_to_delete">Czy skasować czcionkę %s?</string>

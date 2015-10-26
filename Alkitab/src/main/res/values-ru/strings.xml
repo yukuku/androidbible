@@ -199,9 +199,11 @@
   <string name="verse_select_multiple_verse_selected">Выбрано %s стихов</string>
   <string name="google_play_store_not_installed">Не установлено приложение Google Play Store.</string>
   <string name="pref_language_label_default">По умолчанию</string>
+  <string name="market_short_desc">Быстрая и надежная Библия с широкой функциональностью, работающая без подключения к Интернету.</string>
   <string name="goto_tab_dialer_label">Набор номера</string>
   <string name="goto_tab_direct_label">Выбор</string>
   <string name="goto_tab_grid_label">Сетка</string>
+  <string name="menuAskForVerse">Запрашивать номер стиха</string>
   <string name="fm_activity_title">Мереджер шрифтов</string>
   <string name="fm_need_to_log_in_to_wifi">Пожалуйста, сначала войдите в свою Wi-Fi сеть.</string>
   <string name="fm_do_you_want_to_delete">Удалить шрифт %s?</string>
@@ -334,6 +336,7 @@
   <string name="rp_download_reading_plan_failed">Не удалось загрузить выбранный план чтения. Пожалуйста, повторите попытку при работающем соединении с Интернетом.</string>
   <string name="rp_download_reading_plan_data_corrupted">Загруженный план чтения поврежден. Пожалуйста, повторите попытку при работающем соединении с Интернетом.</string>
   <string name="rp_download_already_have">У Вас уже есть этот план чтения.</string>
+  <string name="rp_mark_as_read_up_to">Отметить, как прочитанное досюда?</string>
   <string name="version_download_need_fonts">Загруженная вами версия может потребовать особых шрифтов. Перейдите в меню \'Вид текста\' и выберите шрифт.</string>
   <string name="version_download_corrupted_file">Загруженный файл выглядит поврежденным.</string>
   <string name="menuNightMode">Ночной режим</string>
@@ -455,6 +458,8 @@
   <string name="sync_login_form_change_password_success">Ваш пароль был изменен.</string>
   <string name="pref_textPadding_title">Границы вокруг текста</string>
   <string name="pref_textPadding_summary">Сделать текст в строке уже для более удобного чтения</string>
+  <string name="pref_bottomToolbarOnText_title">Навигация на нижней панели</string>
+  <string name="pref_bottomToolbarOnText_summary">Разместить панель навигации внизу окна Библии</string>
   <string name="dr_app_name">Напоминание</string>
   <string name="dr_notification_title">Ежедневое чтение</string>
   <string name="dr_notification_text">Читать сегодняшнее чтение сейчас.</string>
@@ -467,6 +472,8 @@
   <string name="about_translators">Переводчики</string>
   <string name="about_user_guide">Руководство пользователя</string>
   <string name="about_beta_feedback">Отзывы о бета-версии</string>
+  <string name="about_enable_beta">Попробовать бета-версию</string>
+  <string name="about_enable_beta_confirmation">Войдите в свой Google-аккаунт и нажмите кнопку \"Стать тестировщиком\", чтобы получить доступ к бета-версии с новыми функциями и усовершенствованиями!</string>
   <string name="about_version_name">версия %s</string>
   <string name="about_material_sources">Источники материалов</string>
   <string name="about_credits">Благодарности</string>
@@ -495,4 +502,5 @@
   <string name="dict_download_button">Загрузить</string>
   <string name="menuGuide">Руководство</string>
   <string name="menuCommentary">Комментарии</string>
+  <string name="maps_could_not_open">Не удалось открыть приложение Bible Maps.</string>
 </resources>

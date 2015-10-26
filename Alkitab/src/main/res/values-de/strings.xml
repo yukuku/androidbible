@@ -199,9 +199,11 @@
   <string name="verse_select_multiple_verse_selected">%s Verse ausgewählt</string>
   <string name="google_play_store_not_installed">Der Google Play Store ist nicht installiert.</string>
   <string name="pref_language_label_default">Systemvorgabe</string>
+  <string name="market_short_desc">Schnelle, zuverlässige und leistungsfähige Offline-Bibel.</string>
   <string name="goto_tab_dialer_label">Wähler</string>
   <string name="goto_tab_direct_label">Direkt</string>
   <string name="goto_tab_grid_label">Tabelle</string>
+  <string name="menuAskForVerse">Nach Versnummer fragen</string>
   <string name="fm_activity_title">Schriftart-Manager</string>
   <string name="fm_need_to_log_in_to_wifi">Sie müssen sich zuerst mit Ihrem (WLAN-)Netzwerk verbinden.</string>
   <string name="fm_do_you_want_to_delete">Schriftart %s löschen?</string>

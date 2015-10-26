@@ -199,9 +199,11 @@
   <string name="verse_select_multiple_verse_selected">选取了%s经文</string>
   <string name="google_play_store_not_installed">尚未安装谷歌商店。</string>
   <string name="pref_language_label_default">预设</string>
+  <string name="market_short_desc">快速、可靠与多功能的离线圣经。</string>
   <string name="goto_tab_dialer_label">拨号按键</string>
   <string name="goto_tab_direct_label">直接输入</string>
   <string name="goto_tab_grid_label">格状排列</string>
+  <string name="menuAskForVerse">需要节数</string>
   <string name="fm_activity_title">字体管理</string>
   <string name="fm_need_to_log_in_to_wifi">您需要先登录到您的无线网络。</string>
   <string name="fm_do_you_want_to_delete">删除字体%s？</string>
@@ -334,6 +336,7 @@
   <string name="rp_download_reading_plan_failed">已选取的阅读计划下载失败，请以有效的互联网连线再次尝试。</string>
   <string name="rp_download_reading_plan_data_corrupted">已下载的阅读计划资料损毁，请以有效的互联网连线再次尝试。</string>
   <string name="rp_download_already_have">你已经拥有此阅读计划。</string>
+  <string name="rp_mark_as_read_up_to">至到这裡标示为己阅读？</string>
   <string name="version_download_need_fonts">"您下载的版本需要某种字体以正确显示。请到「文字外观」目录，并选择某种字体。希腊语需要 Ubuntu 字体。缅甸语需要Parabaik，ParabaikSans 或 Myanmar3。泰米尔语需要 Akshar。泰卢固语需要 Suranna。"</string>
   <string name="version_download_corrupted_file">已下载的档桉似是无效的。</string>
   <string name="menuNightMode">夜间模式</string>
@@ -455,6 +458,8 @@
   <string name="sync_login_form_change_password_success">你已成功更改密码。</string>
   <string name="pref_textPadding_title">文字四周的边缘</string>
   <string name="pref_textPadding_summary">缩窄同一行的文字距离以方便阅读</string>
+  <string name="pref_bottomToolbarOnText_title">底部经文导览</string>
+  <string name="pref_bottomToolbarOnText_summary">把经节导览列放置到圣经显示底部</string>
   <string name="dr_app_name">提醒</string>
   <string name="dr_notification_title">每日灵修</string>
   <string name="dr_notification_text">现在阅读今日灵修。</string>
@@ -467,6 +472,8 @@
   <string name="about_translators">译者</string>
   <string name="about_user_guide">使用者指引</string>
   <string name="about_beta_feedback">测试版本回馈</string>
+  <string name="about_enable_beta">使用试用版本</string>
+  <string name="about_enable_beta_confirmation">登入谷歌并按下「成为测试员」按钮，以使用有更新的功能和更完善的试用版本！</string>
   <string name="about_version_name">版本 %s</string>
   <string name="about_material_sources">资料来源</string>
   <string name="about_credits">工作人员</string>
@@ -495,4 +502,5 @@
   <string name="dict_download_button">下载</string>
   <string name="menuGuide">指引</string>
   <string name="menuCommentary">注释</string>
+  <string name="maps_could_not_open">未能开启圣经地图程式。</string>
 </resources>
