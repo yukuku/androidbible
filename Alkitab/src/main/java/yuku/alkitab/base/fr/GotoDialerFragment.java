@@ -2,6 +2,7 @@ package yuku.alkitab.base.fr;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -259,7 +260,10 @@ public class GotoDialerFragment extends BaseGotoFragment {
 	void press(String s) {
 		if (active != null) {
 			if (s.equals("backspace")) {
-				active.setText(""); // TODO make it backspace
+				if (active.length() > 0) {
+					final CharSequence txt = active.getText();
+					active.setText(TextUtils.substring(txt, 0, txt.length() - 1));
+				}
 				return;
 			}
 
