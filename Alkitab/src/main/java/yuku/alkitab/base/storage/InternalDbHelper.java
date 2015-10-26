@@ -126,7 +126,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		}
 
 		if (oldVersion < 14000163) { // last version that doesn't use Marker table
-			addGidColumnToLabel(db);
+			addGidColumnToLabelIfNeeded(db);
 
 			createTableMarker(db);
 			createIndexMarker(db);
@@ -432,8 +432,18 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL("alter table Edisi add column shortName text");
 	}
 
-	private void addGidColumnToLabel(SQLiteDatabase db) {
-		db.execSQL("alter table " + Db.TABLE_Label + " add column " + Db.Label.gid + " text");
+	private void addGidColumnToLabelIfNeeded(SQLiteDatabase db) {
+		boolean gidColumnExists = false;
+		try (Cursor c = db.rawQuery("pragma table_info(" + Db.TABLE_Label + ")", null)) {
+			while (c.moveToNext()) {
+				if ("gid".equals(c.getString(1 /* "name" column */))) {
+					gidColumnExists = true;
+				}
+			}
+		}
+		if (!gidColumnExists) {
+			db.execSQL("alter table " + Db.TABLE_Label + " add column " + Db.Label.gid + " text");
+		}
 
 		// make sure this one matches the one in createIndexLabel()
 		db.execSQL("create index if not exists index_402 on " + Db.TABLE_Label + " (" + Db.Label.gid + ")");
