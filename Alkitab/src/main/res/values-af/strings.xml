@@ -199,9 +199,11 @@
   <string name="verse_select_multiple_verse_selected">%s verse gekies</string>
   <string name="google_play_store_not_installed">Google Play Store is nie geïnstalleer nie.</string>
   <string name="pref_language_label_default">Verstek</string>
+  <string name="market_short_desc">Vinnig, betroubaar en eienskap ryk aflyn Bybel.</string>
   <string name="goto_tab_dialer_label">Skakelaar</string>
   <string name="goto_tab_direct_label">Direk</string>
   <string name="goto_tab_grid_label">Ruit</string>
+  <string name="menuAskForVerse">Vra vir vers nommer</string>
   <string name="fm_activity_title">Skrif Bestuurder</string>
   <string name="fm_need_to_log_in_to_wifi">U moet eers op U netwerk (Wi-Fi) inskakel.</string>
   <string name="fm_do_you_want_to_delete">Vee lettertipe uit %s?</string>
@@ -470,6 +472,8 @@
   <string name="about_translators">Vertalers</string>
   <string name="about_user_guide">Gebruikers Gids</string>
   <string name="about_beta_feedback">Beta Weergawe Terugvoer</string>
+  <string name="about_enable_beta">Probeer Beta Weergawe</string>
+  <string name="about_enable_beta_confirmation">Teken aan by Google en klik op die \"BECOME A TESTER\" knoppie, om die Beta weergawe met die nuutste funksies en verbeteringe te toets!</string>
   <string name="about_version_name">weergawe %s</string>
   <string name="about_material_sources">Materiaal Bronne</string>
   <string name="about_credits">Krediete</string>

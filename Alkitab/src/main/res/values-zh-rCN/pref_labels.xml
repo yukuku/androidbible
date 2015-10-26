@@ -22,6 +22,8 @@
   <string name="pref_copyWithShareUrl_summary">在複製或分享的文字附上分享网址</string>
   <string name="pref_autoDictionaryAnalyze_title">自动查阅字典</string>
   <string name="pref_autoDictionaryAnalyze_summary">在选取的经节寻找字典生词</string>
+  <string name="pref_tapToEditNote_title">按下以编辑笔记</string>
+  <string name="pref_tapToEditNote_summary">取消选取，以避免于检视现有笔记时不慎修改了</string>
   <string name="pref_showHiddenVersion_title">容许或许受限制的版本</string>
   <string name="pref_selectedVerseBgColor_title">已选取的经节背景</string>
 </resources>

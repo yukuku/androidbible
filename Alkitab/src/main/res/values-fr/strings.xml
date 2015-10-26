@@ -199,9 +199,11 @@
   <string name="verse_select_multiple_verse_selected">%s versets sélectionnés</string>
   <string name="google_play_store_not_installed">Google Play Store n\'est pas installé.</string>
   <string name="pref_language_label_default">Défaut</string>
+  <string name="market_short_desc">Une Bible rapide, fiable et riche en fonctionnalités, qui fonctionne sans connexion Internet.</string>
   <string name="goto_tab_dialer_label">Appeler</string>
   <string name="goto_tab_direct_label">Direct</string>
   <string name="goto_tab_grid_label">Réseau</string>
+  <string name="menuAskForVerse">Demandez le numéro du verset</string>
   <string name="fm_activity_title">Gestion des Fontes</string>
   <string name="fm_need_to_log_in_to_wifi">Vous devez d\'abord vous connecter à votre réseau WiFi.</string>
   <string name="fm_do_you_want_to_delete">Supprimer la font %s ?</string>
@@ -321,6 +323,7 @@
   <string name="rp_menuDelete">Suppression</string>
   <string name="rp_headingProgress">Progression</string>
   <string name="rp_gotoToday">Aller à aujourd\'hui</string>
+  <string name="rp_setStartDate">Définir la date de début</string>
   <string name="rp_showDetails">Afficher les détails</string>
   <string name="rp_hideDetails">Masquer les détails</string>
   <string name="rp_aboutPlan">Au sujet du plan</string>
@@ -467,6 +470,8 @@
   <string name="about_translators">Traducteurs</string>
   <string name="about_user_guide">Guide de l\'utilisateur</string>
   <string name="about_beta_feedback">Commentaires de la Version beta</string>
+  <string name="about_enable_beta">Essayer la version Beta</string>
+  <string name="about_enable_beta_confirmation">Connectez-vous sur votre compte Google et appuyez sur le bouton DEVENIR TESTEUR pour essayer la version bêta avec les nouvelles fonctionnalités et améliorations!</string>
   <string name="about_version_name">version %s</string>
   <string name="about_material_sources">Sources matérielles</string>
   <string name="about_credits">Remerciements</string>
