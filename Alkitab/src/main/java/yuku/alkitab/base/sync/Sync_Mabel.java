@@ -13,6 +13,10 @@ import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.alkitab.model.Marker_Label;
 
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,9 +77,12 @@ public class Sync_Mabel {
 	@NonNull public static SyncShadow shadowFromEntities(@NonNull final List<Sync.Entity<Content>> entities, final int revno) {
 		final Sync.SyncShadowDataJson<Content> data = new Sync.SyncShadowDataJson<>();
 		data.entities = entities;
-		final String s = App.getDefaultGson().toJson(data, new TypeToken<Sync.SyncShadowDataJson<Content>>() {}.getType());
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final BufferedWriter w = new BufferedWriter(new OutputStreamWriter(baos, Charset.forName("utf-8")));
+		App.getDefaultGson().toJson(data, new TypeToken<Sync.SyncShadowDataJson<Content>>() {}.getType(), w);
+		U.wontThrow(() -> w.flush());
 		final SyncShadow res = new SyncShadow();
-		res.data = U.stringToUtf8Bytes(s);
+		res.data = baos.toByteArray();
 		res.syncSetName = SyncShadow.SYNC_SET_MABEL;
 		res.revno = revno;
 		return res;

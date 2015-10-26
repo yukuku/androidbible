@@ -341,4 +341,16 @@ public class U {
 		obj.last_commit_hash = App.context.getString(R.string.last_commit_hash);
 		return App.getDefaultGson().toJson(obj);
 	}
+
+	public interface ThrowEverythingRunnable {
+		void run() throws Exception;
+	}
+
+	public static void wontThrow(ThrowEverythingRunnable r) {
+		try {
+			r.run();
+		} catch (Exception e) {
+			throw new RuntimeException("ThrowEverythingRunnable is passed but caused exception: " + r.toString(), e);
+		}
+	}
 }
