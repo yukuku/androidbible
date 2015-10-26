@@ -10,8 +10,11 @@ import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.Literals;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -70,7 +73,8 @@ public class Sync_History {
 	}
 
 	private static List<Sync.Entity<Content>> entitiesFromShadow(@NonNull final SyncShadow ss) {
-		final Sync.SyncShadowDataJson<Content> data = App.getDefaultGson().fromJson(U.utf8BytesToString(ss.data), new TypeToken<Sync.SyncShadowDataJson<Content>>() {}.getType());
+		final BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(ss.data), Charset.forName("utf-8")));
+		final Sync.SyncShadowDataJson<Content> data = App.getDefaultGson().fromJson(reader, new TypeToken<Sync.SyncShadowDataJson<Content>>() {}.getType());
 		return data.entities;
 	}
 

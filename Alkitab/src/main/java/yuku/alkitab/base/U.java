@@ -17,13 +17,11 @@ import yuku.alkitab.model.Label;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Locale;
 import java.util.UUID;
 
 public class U {
-	static final String TAG = U.class.getSimpleName();
-
 	/**
 	 * If text is null, this returns null.
 	 * If verse doesn't start with @: don't do anything.
@@ -254,26 +252,6 @@ public class U {
     }
 
 	public static String inputStreamUtf8ToString(InputStream input) throws IOException {
-		return inputStreamToString(input, "utf-8");
-	}
-
-	public static String utf8BytesToString(final byte[] bytes) {
-		try {
-			return new String(bytes, "utf-8");
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public static byte[] stringToUtf8Bytes(final String s) {
-		try {
-			return s.getBytes("utf-8");
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public static String inputStreamToString(final InputStream input, final String encoding) throws IOException {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		final byte[] buf = new byte[1024];
 		while (true) {
@@ -281,7 +259,7 @@ public class U {
 			if (read < 0) break;
 			baos.write(buf, 0, read);
 		}
-		return new String(baos.toByteArray(), encoding);
+		return new String(baos.toByteArray(), Charset.forName("utf-8"));
 	}
 
 	/**

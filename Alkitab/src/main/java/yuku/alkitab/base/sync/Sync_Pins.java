@@ -12,8 +12,11 @@ import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.AttributeView;
 import yuku.alkitab.model.ProgressMark;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -79,7 +82,8 @@ public class Sync_Pins {
 	}
 
 	private static List<Sync.Entity<Content>> entitiesFromShadow(@NonNull final SyncShadow ss) {
-		final Sync.SyncShadowDataJson<Content> data = App.getDefaultGson().fromJson(U.utf8BytesToString(ss.data), new TypeToken<Sync.SyncShadowDataJson<Content>>() {}.getType());
+		final BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(ss.data), Charset.forName("utf-8")));
+		final Sync.SyncShadowDataJson<Content> data = App.getDefaultGson().fromJson(reader, new TypeToken<Sync.SyncShadowDataJson<Content>>() {}.getType());
 		return data.entities;
 	}
 
