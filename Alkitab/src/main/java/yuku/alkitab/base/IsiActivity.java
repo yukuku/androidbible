@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.nfc.NdefMessage;
@@ -45,6 +46,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -365,6 +367,30 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	};
 
+	final ViewTreeObserver.OnGlobalLayoutListener splitRoot_globalLayout = new ViewTreeObserver.OnGlobalLayoutListener() {
+		Point lastSize;
+
+		@Override
+		public void onGlobalLayout() {
+			if (lastSize != null && lastSize.x == splitRoot.getWidth() && lastSize.y == splitRoot.getHeight()) {
+				return; // no need to layout now
+			}
+
+			if (activeSplitVersion == null) {
+				return; // we are not splitting
+			}
+
+			configureSplitSizes();
+
+			if (lastSize == null) {
+				lastSize = new Point();
+			}
+			lastSize.x = splitRoot.getWidth();
+			lastSize.y = splitRoot.getHeight();
+		}
+
+	};
+
 	static class IntentResult {
 		public int ari;
 		public boolean selectVerse;
@@ -421,6 +447,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		lsSplit1 = V.get(this, R.id.lsSplit1);
 		tSplitEmpty = V.get(this, R.id.tSplitEmpty);
 		splitRoot = V.get(this, R.id.splitRoot);
+		splitRoot.getViewTreeObserver().addOnGlobalLayoutListener(splitRoot_globalLayout);
+
 		splitHandleButton = V.get(this, R.id.splitHandleButton);
 		floater = V.get(this, R.id.floater);
 
@@ -1394,67 +1422,67 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			return; // it's already split, no need to do anything
 		}
 
-		// do it on after the layout pass
-		overlayContainer.requestLayout();
-		overlayContainer.post(() -> {
-			splitHandleButton.setVisibility(View.VISIBLE);
-
-			float prop = Preferences.getFloat(Prefkey.lastSplitProp, Float.MIN_VALUE);
-			if (prop == Float.MIN_VALUE || prop < 0.f || prop > 1.f) {
-				prop = 0.5f; // guard against invalid values
-			}
-
-			final int splitHandleThickness = getResources().getDimensionPixelSize(R.dimen.split_handle_thickness);
-			if (splitHandleButton.getOrientation() == LabeledSplitHandleButton.Orientation.vertical) {
-				splitRoot.setOrientation(LinearLayout.VERTICAL);
-
-				final int totalHeight = splitRoot.getHeight();
-				final int masterHeight = (int) ((totalHeight - splitHandleThickness) * prop);
-
-				{ // divide by 2 the screen space
-					final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
-					lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-					lp.height = masterHeight;
-					lsSplit0.setLayoutParams(lp);
-				}
-
-				// no need to set height, because it has been set to match_parent, so it takes the remaining space.
-				lsSplit1.setVisibility(View.VISIBLE);
-
-				{
-					final ViewGroup.LayoutParams lp = splitHandleButton.getLayoutParams();
-					lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-					lp.height = splitHandleThickness;
-					splitHandleButton.setLayoutParams(lp);
-				}
-			} else {
-				splitRoot.setOrientation(LinearLayout.HORIZONTAL);
-
-				final int totalWidth = splitRoot.getWidth();
-				final int masterWidth = (int) ((totalWidth - splitHandleThickness) * prop);
-
-				{ // divide by 2 the screen space
-					final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
-					lp.width = masterWidth;
-					lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
-					lsSplit0.setLayoutParams(lp);
-				}
-
-				// no need to set width, because it has been set to match_parent, so it takes the remaining space.
-				lsSplit1.setVisibility(View.VISIBLE);
-
-				{
-					final ViewGroup.LayoutParams lp = splitHandleButton.getLayoutParams();
-					lp.width = splitHandleThickness;
-					lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
-					splitHandleButton.setLayoutParams(lp);
-				}
-			}
-		});
+		configureSplitSizes();
 
 		bVersion.setVisibility(View.GONE);
 		if (actionMode != null) actionMode.invalidate();
 		leftDrawer.getHandle().setSplitVersion(true);
+	}
+
+	void configureSplitSizes() {
+		splitHandleButton.setVisibility(View.VISIBLE);
+
+		float prop = Preferences.getFloat(Prefkey.lastSplitProp, Float.MIN_VALUE);
+		if (prop == Float.MIN_VALUE || prop < 0.f || prop > 1.f) {
+			prop = 0.5f; // guard against invalid values
+		}
+
+		final int splitHandleThickness = getResources().getDimensionPixelSize(R.dimen.split_handle_thickness);
+		if (splitHandleButton.getOrientation() == LabeledSplitHandleButton.Orientation.vertical) {
+			splitRoot.setOrientation(LinearLayout.VERTICAL);
+
+			final int totalHeight = splitRoot.getHeight();
+			final int masterHeight = (int) ((totalHeight - splitHandleThickness) * prop);
+
+			{ // divide the screen space
+				final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
+				lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+				lp.height = masterHeight;
+				lsSplit0.setLayoutParams(lp);
+			}
+
+			// no need to set height, because it has been set to match_parent, so it takes the remaining space.
+			lsSplit1.setVisibility(View.VISIBLE);
+
+			{
+				final ViewGroup.LayoutParams lp = splitHandleButton.getLayoutParams();
+				lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+				lp.height = splitHandleThickness;
+				splitHandleButton.setLayoutParams(lp);
+			}
+		} else {
+			splitRoot.setOrientation(LinearLayout.HORIZONTAL);
+
+			final int totalWidth = splitRoot.getWidth();
+			final int masterWidth = (int) ((totalWidth - splitHandleThickness) * prop);
+
+			{ // divide the screen space
+				final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
+				lp.width = masterWidth;
+				lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
+				lsSplit0.setLayoutParams(lp);
+			}
+
+			// no need to set width, because it has been set to match_parent, so it takes the remaining space.
+			lsSplit1.setVisibility(View.VISIBLE);
+
+			{
+				final ViewGroup.LayoutParams lp = splitHandleButton.getLayoutParams();
+				lp.width = splitHandleThickness;
+				lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
+				splitHandleButton.setLayoutParams(lp);
+			}
+		}
 	}
 
 	void closeSplitDisplay() {
