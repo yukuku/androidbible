@@ -1399,12 +1399,17 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		overlayContainer.post(() -> {
 			splitHandleButton.setVisibility(View.VISIBLE);
 
+			float prop = Preferences.getFloat(Prefkey.lastSplitProp, Float.MIN_VALUE);
+			if (prop == Float.MIN_VALUE || prop < 0.f || prop > 1.f) {
+				prop = 0.5f; // guard against invalid values
+			}
+
 			final int splitHandleThickness = getResources().getDimensionPixelSize(R.dimen.split_handle_thickness);
 			if (splitHandleButton.getOrientation() == LabeledSplitHandleButton.Orientation.vertical) {
 				splitRoot.setOrientation(LinearLayout.VERTICAL);
 
 				final int totalHeight = splitRoot.getHeight();
-				final int masterHeight = totalHeight / 2 - splitHandleThickness / 2;
+				final int masterHeight = (int) ((totalHeight - splitHandleThickness) * prop);
 
 				{ // divide by 2 the screen space
 					final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
@@ -1426,7 +1431,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				splitRoot.setOrientation(LinearLayout.HORIZONTAL);
 
 				final int totalWidth = splitRoot.getWidth();
-				final int masterWidth = totalWidth / 2 - splitHandleThickness / 2;
+				final int masterWidth = (int) ((totalWidth - splitHandleThickness) * prop);
 
 				{ // divide by 2 the screen space
 					final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
@@ -2439,6 +2444,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		int first;
 		int handle;
 		int root;
+		float prop; // proportion from top or left
 
 		@Override public void onHandleDragStart() {
 			splitRoot.setOnefingerEnabled(false);
@@ -2452,6 +2458,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				handle = splitHandleButton.getWidth();
 				root = splitRoot.getWidth();
 			}
+
+			prop = Float.MIN_VALUE; // guard against glitches
 		}
 
 		@Override
@@ -2462,6 +2470,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			lp.width = newW < 0? 0: newW > maxW? maxW: newW;
 			lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
 			lsSplit0.setLayoutParams(lp);
+			prop = (float) lp.width / maxW;
 		}
 
 		@Override public void onHandleDragMoveY(float dySinceLast, float dySinceStart) {
@@ -2471,10 +2480,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
 			lp.height = newH < 0? 0: newH > maxH? maxH: newH;
 			lsSplit0.setLayoutParams(lp);
+			prop = (float) lp.height / maxH;
 		}
 
 		@Override public void onHandleDragStop() {
 			splitRoot.setOnefingerEnabled(true);
+
+			if (prop != Float.MIN_VALUE) {
+				Preferences.setFloat(Prefkey.lastSplitProp, prop);
+			}
 		}
 	};
 

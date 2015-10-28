@@ -102,6 +102,7 @@ public enum Prefkey {
 	lastVersionId,
 	lastSplitVersionId,
 	lastSplitOrientation, // string "horizontal" or "vertical"
+	lastSplitProp, // float proportion of the top or left split window
 
 	/**
 	 * The whole history (with many entries)
