@@ -34,12 +34,12 @@ public class Jumper {
 
 	private boolean parseSucceeded = false;
 	
-	private static class BookRef {
-		String condensed;
-		int pos;
+	public static class BookRef {
+		public String condensed;
+		public int bookId;
 
 		@Override public String toString() {
-			return condensed + ":" + pos; //$NON-NLS-1$
+			return condensed + ":" + bookId; //$NON-NLS-1$
 		}
 	}
 	
@@ -382,8 +382,19 @@ public class Jumper {
 
 		return res;
 	}
-	
-	private List<BookRef> createBookCandidates(String[] bookNames, int[] bookIds) {
+
+	public static List<BookRef> createBookCandidates(Book[] books) {
+		String[] bookNames = new String[books.length];
+		int[] bookIds = new int[books.length];
+		for (int i = 0, booksLength = books.length; i < booksLength; i++) {
+			final Book book = books[i];
+			bookNames[i] = book.shortName;
+			bookIds[i] = book.bookId;
+		}
+		return createBookCandidates(bookNames, bookIds);
+	}
+
+	static List<BookRef> createBookCandidates(String[] bookNames, int[] bookIds) {
 		// create cache of condensed book titles where all spaces are stripped and lowercased and "1" becomes "I", "2" becomes "II" etc.
 		final List<BookRef> res = new ArrayList<>();
 		
@@ -393,7 +404,7 @@ public class Jumper {
 			{
 				BookRef ref = new BookRef();
 				ref.condensed = condensed;
-				ref.pos = bookIds[i];
+				ref.bookId = bookIds[i];
 					
 				res.add(ref);
 			}
@@ -403,7 +414,7 @@ public class Jumper {
 				
 				BookRef ref = new BookRef();
 				ref.condensed = condensed;
-				ref.pos = bookIds[i];
+				ref.bookId = bookIds[i];
 				
 				res.add(ref);
 			}
@@ -427,7 +438,7 @@ public class Jumper {
 		for (BookRef ref: refs) {
 			if (ref.condensed.equals(p_book)) {
 				if (BuildConfig.DEBUG) logger.d("guessBook phase 1 success: " + p_book);
-				return ref.pos;
+				return ref.bookId;
 			}
 		}
 		
@@ -438,7 +449,7 @@ public class Jumper {
 			for (BookRef ref: refs) {
 				if (ref.condensed.startsWith(p_book)) {
 					passed++;
-					if (passed == 1) pos_forLater = ref.pos;
+					if (passed == 1) pos_forLater = ref.bookId;
 				}
 			}
 			
@@ -467,7 +478,7 @@ public class Jumper {
 
 				if (score < minScore) {
 					minScore = score;
-					pos = ref.pos;
+					pos = ref.bookId;
 				}
 			}
 			
@@ -491,6 +502,10 @@ public class Jumper {
 	 */
 	public boolean getParseSucceeded() {
 		return parseSucceeded;
+	}
+
+	public String getUnparsedBook() {
+		return p_book;
 	}
 	
 	/**

@@ -9,32 +9,32 @@
 		android:id="@+id/lDirectSample"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="@string/jump_to_prompt"
-		android:layout_marginLeft="16dp" />
+		android:layout_marginLeft="16dp"
+		android:labelFor="@+id/tDirectReference"
+		android:text="@string/jump_to_prompt" />
 
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:layout_marginTop="16dp">
+		android:layout_marginTop="16dp"
+		android:orientation="horizontal">
 
-	<EditText
-		android:id="@+id/tDirectReference"
-		android:layout_width="0dp"
-		android:layout_height="wrap_content"
-		android:imeOptions="actionGo|flagNoExtractUi"
-		android:inputType="textCapSentences"
-		android:layout_weight="1"
-		android:layout_marginLeft="16dp" />
+		<AutoCompleteTextView
+			android:id="@+id/tDirectReference"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="16dp"
+			android:layout_weight="1"
+			android:completionThreshold="1" />
 
-	<Button
-		android:id="@+id/bOk"
-		style="?buttonBarButtonStyle"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/ok"
-		android:layout_weight="0"
-		android:layout_marginRight="16dp" />
-		</LinearLayout>
+		<Button
+			android:id="@+id/bOk"
+			style="?buttonBarButtonStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginRight="16dp"
+			android:layout_weight="0"
+			android:text="@string/ok" />
+	</LinearLayout>
 
 </LinearLayout>
