@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.graphics.ColorUtils;
 import android.widget.TextView;
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.storage.NoBackupSharedPreferences;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
@@ -268,11 +269,21 @@ public class U {
 	 * simpleToken, which is sensitive.
 	 */
 	public synchronized static String getInstallationId() {
+		final NoBackupSharedPreferences nbsp = NoBackupSharedPreferences.get();
+
 		String res = Preferences.getString(Prefkey.installation_id, null);
 		if (res == null) {
-			res = "i1:" + UUID.randomUUID().toString();
-			Preferences.setString(Prefkey.installation_id, res);
+			res = nbsp.getString(Prefkey.installation_id.name());
+			if (res == null) {
+				res = "i1:" + UUID.randomUUID().toString();
+				nbsp.setString(Prefkey.installation_id.name(), res);
+			}
+		} else {
+			// we need to remove it from the backed up folder and move it to the nonbacked up folder
+			Preferences.remove(Prefkey.installation_id);
+			nbsp.setString(Prefkey.installation_id.name(), res);
 		}
+
 		return res;
 	}
 
