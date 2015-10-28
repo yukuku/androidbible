@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -23,6 +24,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.analytics.HitBuilders;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -33,6 +35,7 @@ import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.devotion.ArticleMeidA;
 import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
 import yuku.alkitab.base.devotion.ArticleRenunganHarian;
+import yuku.alkitab.base.devotion.ArticleRoc;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
 import yuku.alkitab.base.devotion.DevotionArticle;
 import yuku.alkitab.base.devotion.DevotionDownloader;
@@ -59,8 +62,9 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 	public static final DevotionDownloader devotionDownloader = new DevotionDownloader();
 
 	static final ThreadLocal<SimpleDateFormat> yyyymmdd = new ThreadLocal<SimpleDateFormat>() {
-		@Override protected SimpleDateFormat initialValue() {
-			return new SimpleDateFormat("yyyyMMdd", Locale.US); //$NON-NLS-1$
+		@Override
+		protected SimpleDateFormat initialValue() {
+			return new SimpleDateFormat("yyyyMMdd", Locale.US);
 		}
 	};
 
@@ -82,13 +86,13 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
 	@Override
 	public void bPrev_click() {
-		currentDate.setTime(currentDate.getTime() - 3600*24*1000);
+		currentDate.setTime(currentDate.getTime() - 3600 * 24 * 1000);
 		display();
 	}
 
 	@Override
 	public void bNext_click() {
-		currentDate.setTime(currentDate.getTime() + 3600*24*1000);
+		currentDate.setTime(currentDate.getTime() + 3600 * 24 * 1000);
 		display();
 	}
 
@@ -132,6 +136,17 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 				return "http://www.bibleforandroid.com/renunganpagi/" + yyyymmdd.get().format(date).substring(4);
 			}
 		},
+		ROC("roc", "My Utmost (B. Indonesia)", "Oswald Chambers") {
+			@Override
+			public DevotionArticle getArticle(final String date) {
+				return new ArticleRoc(date);
+			}
+
+			@Override
+			public String getShareUrl(final SimpleDateFormat format, final Date date) {
+				return null;
+			}
+		},
 		RH("rh", "Renungan Harian", "Yayasan Gloria") {
 			@Override
 			public DevotionArticle getArticle(final String date) {
@@ -153,8 +168,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 			public String getShareUrl(final SimpleDateFormat format, final Date date) {
 				return "http://www.ccel.org/ccel/spurgeon/morneve.d" + yyyymmdd.get().format(date) + "am.html";
 			}
-		},
-		;
+		},;
 
 		public final String name;
 		public final String title;
@@ -178,6 +192,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
 		public abstract DevotionArticle getArticle(final String date);
 
+		@Nullable
 		public abstract String getShareUrl(SimpleDateFormat format, Date date);
 	}
 
@@ -190,7 +205,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 	TextView lContent;
 	ScrollView scrollContent;
 	TextView lStatus;
-	
+
 	boolean renderSucceeded = false;
 
 	// currently shown
@@ -207,7 +222,9 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 			ac = new WeakReference<>(activity);
 		}
 
-		/** This will be called 30 seconds after startKind and startDate are set. */
+		/**
+		 * This will be called 30 seconds after startKind and startDate are set.
+		 */
 		@Override
 		public void handleMessage(final Message msg) {
 			final DevotionActivity ac = this.ac.get();
@@ -297,7 +314,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
 		final DevotionKind storedKind = DevotionKind.getByName(Preferences.getString(Prefkey.devotion_last_kind_name, DEFAULT_DEVOTION_KIND.name));
 
-		currentKind = storedKind == null? DEFAULT_DEVOTION_KIND: storedKind;
+		currentKind = storedKind == null ? DEFAULT_DEVOTION_KIND : storedKind;
 		currentDate = new Date();
 
 		new Prefetcher(currentKind).start();
@@ -305,7 +322,8 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		display();
 	}
 
-	@Override protected void onStart() {
+	@Override
+	protected void onStart() {
 		super.onStart();
 
 		{ // apply background color, and clear window background to prevent overdraw
@@ -339,7 +357,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		getMenuInflater().inflate(R.menu.activity_devotion, menu);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		final int itemId = item.getItemId();
@@ -348,15 +366,17 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 			return true;
 		} else if (itemId == R.id.menuCopy) {
 			U.copyToClipboard(currentKind.title + "\n" + lContent.getText());
-			
+
 			Toast.makeText(this, R.string.renungan_sudah_disalin, Toast.LENGTH_SHORT).show();
-			
+
 			return true;
 		} else if (itemId == R.id.menuShare) {
-			Intent intent = ShareCompat.IntentBuilder.from(DevotionActivity.this)
+			final String shareUrl = currentKind.getShareUrl(yyyymmdd.get(), currentDate);
+
+			final Intent intent = ShareCompat.IntentBuilder.from(DevotionActivity.this)
 				.setType("text/plain")
 				.setSubject(currentKind.title)
-				.setText(currentKind.title + '\n' + getCurrentDateDisplay() + '\n' + currentKind.getShareUrl(yyyymmdd.get(), currentDate) + "\n\n" + lContent.getText())
+				.setText(currentKind.title + '\n' + getCurrentDateDisplay() + (shareUrl == null ? "" : ('\n' + shareUrl)) + "\n\n" + lContent.getText())
 				.getIntent();
 			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_renungan)), REQCODE_share);
 			return true;
@@ -364,7 +384,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 			startActivity(DevotionReminderActivity.createIntent());
 			return true;
 		}
-		
+
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -376,7 +396,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		}
 
 		if (article == null) {
-			Log.d(TAG, "rendering null article"); //$NON-NLS-1$
+			Log.d(TAG, "rendering null article");
 		} else {
 			Log.d(TAG, "rendering article name=" + article.getKind().name + " date=" + article.getDate() + " readyToUse=" + article.getReadyToUse());
 		}
@@ -432,7 +452,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 	CallbackSpan.OnClickListener<String> verseClickListener = new CallbackSpan.OnClickListener<String>() {
 		@Override
 		public void onClick(View widget, String reference) {
-			Log.d(TAG, "Clicked verse reference inside devotion: " + reference); //$NON-NLS-1$
+			Log.d(TAG, "Clicked verse reference inside devotion: " + reference);
 
 			if (reference.startsWith("patchtext:")) {
 				final Uri uri = Uri.parse(reference);
@@ -493,9 +513,9 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		final DevotionArticle article = kind.getArticle(date);
 		devotionDownloader.add(article, prioritize);
 	}
-	
+
 	static boolean prefetcherRunning = false;
-	
+
 	class Prefetcher extends Thread {
 		private final DevotionKind prefetchKind;
 
@@ -503,7 +523,8 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 			prefetchKind = kind;
 		}
 
-		@Override public void run() {
+		@Override
+		public void run() {
 			if (prefetcherRunning) {
 				Log.d(TAG, "prefetcher is already running");
 			}
@@ -511,13 +532,13 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 			Thread.yield();
 
 			final Date today = new Date();
-			
+
 			// hapus yang sudah lebih lama dari 6 bulan (180 hari)!
 			final int deleted = S.getDb().deleteDevotionsWithTouchTimeBefore(new Date(today.getTime() - 180 * 86400000L));
 			if (deleted > 0) {
-				Log.d(TAG, "old devotions deleted: " + deleted); //$NON-NLS-1$
+				Log.d(TAG, "old devotions deleted: " + deleted);
 			}
-			
+
 			prefetcherRunning = true;
 			try {
 				int DAYS = 31;
@@ -528,14 +549,14 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 				for (int i = 0; i < DAYS; i++) {
 					String date = yyyymmdd.get().format(today);
 					if (S.getDb().tryGetDevotion(prefetchKind.name, date) == null) {
-						Log.d(TAG, "Prefetcher need to get " + date); //$NON-NLS-1$
+						Log.d(TAG, "Prefetcher need to get " + date);
 						willNeed(prefetchKind, date, false);
 					} else {
 						Thread.yield();
 					}
-					
+
 					// maju ke besoknya
-					today.setTime(today.getTime() + 3600*24*1000);
+					today.setTime(today.getTime() + 3600 * 24 * 1000);
 				}
 			} finally {
 				prefetcherRunning = false;
@@ -543,15 +564,24 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		}
 	}
 
-	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == REQCODE_share) {
-			if (resultCode == RESULT_OK) {
-				ShareActivity.Result result = ShareActivity.obtainResult(data);
-				if (result != null && result.chosenIntent != null) {
-					Intent chosenIntent = result.chosenIntent;
-					if (U.equals(chosenIntent.getComponent().getPackageName(), "com.facebook.katana")) {
-						chosenIntent.putExtra(Intent.EXTRA_TEXT, currentKind.getShareUrl(yyyymmdd.get(), currentDate));
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQCODE_share && resultCode == RESULT_OK) {
+			final ShareActivity.Result result = ShareActivity.obtainResult(data);
+			if (result != null && result.chosenIntent != null) {
+				final Intent chosenIntent = result.chosenIntent;
+				if (U.equals(chosenIntent.getComponent().getPackageName(), "com.facebook.katana")) {
+					final String shareUrl = currentKind.getShareUrl(yyyymmdd.get(), currentDate);
+					if (shareUrl != null) {
+						chosenIntent.putExtra(Intent.EXTRA_TEXT, shareUrl);
+						startActivity(chosenIntent);
+					} else {
+						new MaterialDialog.Builder(this)
+							.content(R.string.no_url_for_facebook)
+							.positiveText(R.string.ok)
+							.show();
 					}
+				} else {
 					startActivity(chosenIntent);
 				}
 			}

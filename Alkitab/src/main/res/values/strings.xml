@@ -202,6 +202,7 @@
     <string name="google_play_store_not_installed">Google Play Store is not installed.</string>
     <string name="pref_language_label_default">Default</string>
     <string name="market_short_desc">Fast, reliable and feature-rich offline Bible.</string>
+    <string name="no_url_for_facebook">This cannot be shared to Facebook.</string>
 
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Dialer</string>
