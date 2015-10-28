@@ -53,6 +53,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 	static class Candidate {
 		String title;
 		int score;
+		boolean bookOnly;
 	}
 
 	public static Bundle createArgs(int bookId, int chapter_1, int verse_1) {
@@ -87,7 +88,9 @@ public class GotoDirectFragment extends BaseGotoFragment {
 		tDirectReference = V.get(res, R.id.tDirectReference);
 		tDirectReference.setAdapter(adapter = new AutoCompleteAdapter());
 		tDirectReference.setOnItemClickListener((parent, view, position, id) -> {
-			bOk.performClick();
+			if (!adapter.getItem(position).bookOnly) {
+				bOk.performClick();
+			}
 		});
 
 		bOk = V.get(res, R.id.bOk);
@@ -269,9 +272,12 @@ public class GotoDirectFragment extends BaseGotoFragment {
 				}
 
 				private void addCandidate(final Jumper jumper, final ArrayList<Candidate> values, String title, final int score, final Book book) {
+					boolean bookOnly = true;
+
 					// try to add chapter and verse
 					final int chapter_1 = jumper.getChapter();
 					if (chapter_1 != 0) {
+						bookOnly = false;
 						title += " " + chapter_1;
 						final int verse_1 = jumper.getVerse();
 						if (verse_1 != 0) {
@@ -291,6 +297,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 					final Candidate c = new Candidate();
 					c.title = title;
 					c.score = score;
+					c.bookOnly = bookOnly;
 					values.add(c);
 				}
 
@@ -308,7 +315,12 @@ public class GotoDirectFragment extends BaseGotoFragment {
 
 				@Override
 				public CharSequence convertResultToString(final Object resultValue) {
-					return ((Candidate) resultValue).title;
+					final Candidate c = (Candidate) resultValue;
+					if (c.bookOnly) {
+						return c.title + " "; // for user to start typing the chapter number
+					}
+
+					return c.title;
 				}
 			};
 		}
