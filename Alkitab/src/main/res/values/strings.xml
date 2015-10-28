@@ -294,7 +294,7 @@
     <string name="pm_progress_4">Pin 4</string>
     <string name="pm_progress_5">Pin 5</string>
     <string name="pm_progress_name">Pin name</string>
-    <string name="pm_activate_tutorial">Long-press and drag to place a pin on a verse.</string>
+    <string name="pm_activate_tutorial">Long-press and drag the pin to place it on a verse.</string>
     <string name="pm_delete_progress_confirm">Remove <b>^1</b>?</string>
 
     <string name="copy_share">Copy or share</string>
