@@ -1,6 +1,7 @@
 package yuku.alkitab.base.ac.base;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -8,9 +9,12 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.ChangeLanguageHelper;
@@ -105,6 +109,26 @@ public abstract class BaseActivity extends AppCompatActivity {
 				.startActivities();
 		} else {
 			NavUtils.navigateUpTo(this, upIntent);
+		}
+	}
+
+	@Override
+	public void onConfigurationChanged(final Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+
+		{ // reconfigure toolbar height (Need to have a toolbar with id toolbar)
+			final View v = findViewById(R.id.toolbar);
+			if (v instanceof Toolbar) {
+				final Toolbar toolbar = (Toolbar) v;
+				final ViewGroup.LayoutParams lp = toolbar.getLayoutParams();
+				final TypedValue tv = new TypedValue();
+				getTheme().resolveAttribute(R.attr.actionBarSize, tv, true);
+				final int h = (int) tv.getDimension(getResources().getDisplayMetrics());
+				lp.height = h;
+				toolbar.setLayoutParams(lp);
+				// Workaround for https://code.google.com/p/android/issues/detail?id=79813
+				toolbar.setMinimumHeight(h);
+			}
 		}
 	}
 }

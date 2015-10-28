@@ -39,7 +39,6 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.URLSpan;
 import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -108,6 +107,7 @@ import yuku.alkitab.base.widget.TwofingerLinearLayout;
 import yuku.alkitab.base.widget.VerseInlineLinkSpan;
 import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.base.widget.VersesView;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
@@ -271,7 +271,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	LeftDrawer.Text leftDrawer;
 
 	FrameLayout overlayContainer;
-	View root;
+	ViewGroup root;
 	Toolbar toolbar;
 	VersesView lsSplit0;
 	VersesView lsSplit1;
@@ -451,6 +451,14 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		splitHandleButton = V.get(this, R.id.splitHandleButton);
 		floater = V.get(this, R.id.floater);
+
+		// If layout is changed, updateToolbarLocation must be updated as well. This will be called in DEBUG to make sure
+		// updateToolbarLocation is also updated when layout is updated.
+		if (BuildConfig.DEBUG) {
+			if (root.getChildCount() != 2 || root.getChildAt(0).getId() != R.id.toolbar || root.getChildAt(1).getId() != R.id.splitRoot) {
+				throw new RuntimeException("Layout changed and this is no longer compatible with updateToolbarLocation");
+			}
+		}
 
 		updateToolbarLocation();
 
@@ -1307,31 +1315,21 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		// - not fullscreen, toolbar at bottom
 		// - not fullscreen, toolbar at top
 
-		final FrameLayout.LayoutParams lp_root = (FrameLayout.LayoutParams) root.getLayoutParams();
+		// root contains exactly 2 children: toolbar and splitRoot. This is checked in DEBUG in onCreate.
+		// Need to move toolbar and splitRoot in order to accomplish this.
 
-		if (fullScreen) {
-			lp_root.topMargin = 0;
-			lp_root.bottomMargin = 0;
-		} else {
-			final TypedValue tv = new TypedValue();
-			getTheme().resolveAttribute(R.attr.actionBarSize, tv, true);
-			final int actionBarSize = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
-			final FrameLayout.LayoutParams lp_toolbar = (FrameLayout.LayoutParams) toolbar.getLayoutParams();
+		if (!fullScreen) {
+			root.removeView(toolbar);
+			root.removeView(splitRoot);
 
 			if (Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default)) {
-				lp_toolbar.gravity = Gravity.BOTTOM;
-				lp_root.topMargin = 0;
-				lp_root.bottomMargin = actionBarSize;
+				root.addView(splitRoot);
+				root.addView(toolbar);
 			} else {
-				lp_toolbar.gravity = Gravity.NO_GRAVITY;
-				lp_root.topMargin = actionBarSize;
-				lp_root.bottomMargin = 0;
+				root.addView(toolbar);
+				root.addView(splitRoot);
 			}
-
-			toolbar.setLayoutParams(lp_toolbar);
 		}
-
-		root.setLayoutParams(lp_root);
 	}
 
 	@Override
