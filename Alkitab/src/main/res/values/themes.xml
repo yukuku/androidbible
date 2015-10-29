@@ -24,6 +24,7 @@
 	<style name="Theme.Alkitab.WithActionBar.AppCompat" parent="Theme.Alkitab.Base">
 		<item name="windowActionBar">true</item>
 		<item name="windowNoTitle">false</item>
+		<item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
 	</style>
 
 	<style name="StandardWidthIndeterminateProgress" parent="@android:style/Widget.Holo.ProgressBar.Small">
