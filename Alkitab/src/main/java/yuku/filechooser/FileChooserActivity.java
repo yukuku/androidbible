@@ -66,7 +66,14 @@ public class FileChooserActivity extends BaseActivity {
         init();
     }
 
-    private AdapterView.OnItemClickListener lsFile_itemClick = (parent, view, position, id) -> {
+	@Override
+	protected void onNeededPermissionsGranted() {
+		super.onNeededPermissionsGranted();
+
+		init();
+	}
+
+	private AdapterView.OnItemClickListener lsFile_itemClick = (parent, view, position, id) -> {
 		File file = adapter.getItem(position);
 		if (file != null) {
 			if (file.isDirectory()) {

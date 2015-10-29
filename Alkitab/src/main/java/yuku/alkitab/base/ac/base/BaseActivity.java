@@ -140,7 +140,16 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 			} else {
 				ActivityCompat.requestPermissions(this, Array(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), REQCODE_PERMISSION_storage);
 			}
+		} else {
+			onNeededPermissionsGranted();
 		}
+	}
+
+	/**
+	 * Override this to do something after we confirm that all needed permissions are granted.
+	 * This is only called if {@link #willNeedStoragePermission()} was called.
+	 */
+	protected void onNeededPermissionsGranted() {
 	}
 
 	@Override
@@ -154,7 +163,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 				}
 			}
 
-			if (!allGranted) {
+			if (allGranted) {
+				onNeededPermissionsGranted();
+			} else {
 				if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 					|| !ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
 
