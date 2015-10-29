@@ -110,13 +110,6 @@ public enum Prefkey {
 	 */
 	history,
 
-	/**
-	 * (int) Do not offer importing yuku.alkitab or yuku.alkitab.kjv backup files any more.
-	 * 1: user suppressed it
-	 * 2: imported already
-	 */
-	stop_import_yuku_alkitab_backups,
-
 	/** Announce: last annoucement check (auto only). Unix time. */
 	announce_last_check,
 

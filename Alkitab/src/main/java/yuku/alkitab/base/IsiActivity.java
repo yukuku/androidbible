@@ -19,7 +19,6 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
@@ -68,7 +67,6 @@ import yuku.alkitab.base.ac.NoteActivity;
 import yuku.alkitab.base.ac.SearchActivity;
 import yuku.alkitab.base.ac.SettingsActivity;
 import yuku.alkitab.base.ac.ShareActivity;
-import yuku.alkitab.base.ac.YukuAlkitabImportOfferActivity;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.dialog.ProgressMarkListDialog;
@@ -121,14 +119,11 @@ import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 import yuku.devoxx.flowlayout.FlowLayout;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Matcher;
 
 import static yuku.alkitab.base.util.Literals.Array;
 
@@ -598,13 +593,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		App.getLbm().registerReceiver(reloadAttributeMapReceiver, new IntentFilter(ACTION_ATTRIBUTE_MAP_CHANGED));
 
-		if (!U.equals(getPackageName(), "yuku.alkitab") /* prevent self-import */
-			&& !U.equals(getPackageName(), "yuku.alkitab.kjv") /* prevent self-import */
-			&& Preferences.getInt(Prefkey.stop_import_yuku_alkitab_backups, 0) == 0
-			&& thereIsYukuAlkitabBackupFiles()) {
-			startActivity(YukuAlkitabImportOfferActivity.createIntent());
-		}
-
 		Announce.checkAnnouncements();
 
 		App.getLbm().registerReceiver(needsRestartReceiver, new IntentFilter(ACTION_NEEDS_RESTART));
@@ -616,23 +604,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			needsRestart = true;
 		}
 	};
-
-	private boolean thereIsYukuAlkitabBackupFiles() {
-		final File dir = new File(Environment.getExternalStorageDirectory(), "bible");
-		if (!dir.exists()) return false;
-
-		final File[] files = dir.listFiles(new FilenameFilter() {
-			final Matcher m = YukuAlkitabImportOfferActivity.getBackupFilenameMatcher();
-
-			@Override
-			public boolean accept(final File dir, final String filename) {
-				m.reset(filename);
-				return m.matches();
-			}
-		});
-
-		return files != null && files.length != 0;
-	}
 
 	@Override protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
@@ -1948,7 +1919,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					.show();
 			}
 		}
-	};
+	}
 
 	class VerseInlineLinkSpanFactory implements VerseInlineLinkSpan.Factory {
 		private final Object source;
