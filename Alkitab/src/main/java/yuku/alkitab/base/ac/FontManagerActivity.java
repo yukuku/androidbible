@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -22,9 +21,6 @@ import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.sv.DownloadService;
-import yuku.alkitab.base.sv.DownloadService.DownloadBinder;
-import yuku.alkitab.base.sv.DownloadService.DownloadEntry;
-import yuku.alkitab.base.sv.DownloadService.DownloadListener;
 import yuku.alkitab.base.util.FontManager;
 import yuku.alkitab.debug.R;
 
@@ -39,7 +35,7 @@ import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class FontManagerActivity extends BaseActivity implements DownloadListener {
+public class FontManagerActivity extends BaseActivity implements DownloadService.DownloadListener {
 	public static final String TAG = FontManagerActivity.class.getSimpleName();
 	
 	private static final String URL_fontList = "https://alkitab-host.appspot.com/addon/fonts/v1/list-v2.txt";
@@ -61,18 +57,15 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 		}
 		
 		@Override public void onServiceConnected(ComponentName name, IBinder service) {
-			dls = ((DownloadBinder) service).getService();
+			dls = ((DownloadService.DownloadBinder) service).getService();
 			dls.setDownloadListener(FontManagerActivity.this);
-			runOnUiThread(new Runnable() {
-				@Override public void run() {
-					loadFontList();
-				}
-			});
+			runOnUiThread(() -> loadFontList());
 		}
 	};
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		enableNonToolbarUpButton();
+		super.willNeedStoragePermission();
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_font_manager);
@@ -205,7 +198,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 				bDelete.setVisibility(View.VISIBLE);
 				lErrorMsg.setVisibility(View.GONE);
 			} else {
-				DownloadEntry entry = dls.getEntry(dlkey);
+				DownloadService.DownloadEntry entry = dls.getEntry(dlkey);
 				if (entry == null) {
 					progressbar.setIndeterminate(false);
 					progressbar.setMax(100);
@@ -256,27 +249,25 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 			return res;
 		}
 		
-		private OnClickListener bDownload_click = new OnClickListener() {
-			@Override public void onClick(View v) {
-				FontItem item = (FontItem) v.getTag(R.id.TAG_fontItem);
-				
-				String dlkey = getFontDownloadKey(item.name);
-				dls.removeEntry(dlkey);
-				
-				if (dls.getEntry(dlkey) == null) {
-					new File(FontManager.getFontsPath()).mkdirs();
-					dls.startDownload(
-						dlkey,
-						String.format(URL_fontData, item.name),
-						getFontDownloadDestination(item.name)
-					);
-				}
-				
-				notifyDataSetChanged();
+		private View.OnClickListener bDownload_click = v -> {
+			FontItem item = (FontItem) v.getTag(R.id.TAG_fontItem);
+
+			String dlkey = getFontDownloadKey(item.name);
+			dls.removeEntry(dlkey);
+
+			if (dls.getEntry(dlkey) == null) {
+				new File(FontManager.getFontsPath()).mkdirs();
+				dls.startDownload(
+					dlkey,
+					String.format(URL_fontData, item.name),
+					getFontDownloadDestination(item.name)
+				);
 			}
+
+			notifyDataSetChanged();
 		};
 		
-		private OnClickListener bDelete_click = v -> {
+		private View.OnClickListener bDelete_click = v -> {
 			final FontItem item = (FontItem) v.getTag(R.id.TAG_fontItem);
 
 			new AlertDialogWrapper.Builder(FontManagerActivity.this)
@@ -300,7 +291,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 		};
 	}
 
-	@Override public void onStateChanged(DownloadEntry entry, DownloadService.State originalState) {
+	@Override public void onStateChanged(DownloadService.DownloadEntry entry, DownloadService.State originalState) {
 		adapter.notifyDataSetChanged();
 		
 		if (originalState == DownloadService.State.finished) {
@@ -348,7 +339,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 		}
 	}
 
-	@Override public void onProgress(DownloadEntry entry, DownloadService.State originalState) {
+	@Override public void onProgress(DownloadService.DownloadEntry entry, DownloadService.State originalState) {
 		adapter.notifyDataSetChanged();
 	}
 }

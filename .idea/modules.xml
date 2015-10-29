@@ -15,7 +15,6 @@
       <module fileurl="file://$PROJECT_DIR$/BintexReader/BintexReader.iml" filepath="$PROJECT_DIR$/BintexReader/BintexReader.iml" />
       <module fileurl="file://$PROJECT_DIR$/BintexWriter/BintexWriter.iml" filepath="$PROJECT_DIR$/BintexWriter/BintexWriter.iml" />
       <module fileurl="file://$PROJECT_DIR$/DragSortListView/DragSortListView.iml" filepath="$PROJECT_DIR$/DragSortListView/DragSortListView.iml" />
-      <module fileurl="file://$PROJECT_DIR$/FileChooser/FileChooser.iml" filepath="$PROJECT_DIR$/FileChooser/FileChooser.iml" />
       <module fileurl="file://$PROJECT_DIR$/FlowLayout/FlowLayout.iml" filepath="$PROJECT_DIR$/FlowLayout/FlowLayout.iml" />
       <module fileurl="file://$PROJECT_DIR$/ImportedDesktopVerseUtil/ImportedDesktopVerseUtil.iml" filepath="$PROJECT_DIR$/ImportedDesktopVerseUtil/ImportedDesktopVerseUtil.iml" />
       <module fileurl="file://$PROJECT_DIR$/KpriModel/KpriModel.iml" filepath="$PROJECT_DIR$/KpriModel/KpriModel.iml" />

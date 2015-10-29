@@ -113,6 +113,7 @@ public class VersionsActivity extends BaseActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		super.willNeedStoragePermission();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_versions);
 

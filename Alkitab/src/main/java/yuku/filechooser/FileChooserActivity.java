@@ -5,24 +5,23 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.debug.R;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FileChooserActivity extends AppCompatActivity {
+public class FileChooserActivity extends BaseActivity {
 	static final String EXTRA_config = "config";
 	static final String EXTRA_result = "result";
 
@@ -46,6 +45,7 @@ public class FileChooserActivity extends AppCompatActivity {
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
+		super.willNeedStoragePermission();
         super.onCreate(savedInstanceState);
 
 		final ActionBar actionBar = getSupportActionBar();
@@ -66,25 +66,22 @@ public class FileChooserActivity extends AppCompatActivity {
         init();
     }
 
-    private OnItemClickListener lsFile_itemClick = new OnItemClickListener() {
-		@Override
-		public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-			File file = adapter.getItem(position);
-			if (file != null) {
-				if (file.isDirectory()) {
-					cd = file;
-					ls();
-				} else {
-					FileChooserResult result = new FileChooserResult();
-					result.currentDir = cd.getAbsolutePath();
-					result.firstFilename = file.getAbsolutePath();
-					
-					Intent data = new Intent();
-					data.putExtra(EXTRA_result, result);
-					
-					setResult(RESULT_OK, data);
-					finish();
-				}
+    private AdapterView.OnItemClickListener lsFile_itemClick = (parent, view, position, id) -> {
+		File file = adapter.getItem(position);
+		if (file != null) {
+			if (file.isDirectory()) {
+				cd = file;
+				ls();
+			} else {
+				FileChooserResult result = new FileChooserResult();
+				result.currentDir = cd.getAbsolutePath();
+				result.firstFilename = file.getAbsolutePath();
+
+				Intent data = new Intent();
+				data.putExtra(EXTRA_result, result);
+
+				setResult(RESULT_OK, data);
+				finish();
 			}
 		}
 	};
@@ -135,28 +132,25 @@ public class FileChooserActivity extends AppCompatActivity {
 			files = new File[0];
 		}
 		
-		Arrays.sort(files, new Comparator<File>() {
-			@Override
-			public int compare(File a, File b) {
-				if (a.isDirectory() && !b.isDirectory()) {
-					return -1;
-				} else if (!a.isDirectory() && b.isDirectory()) {
-					return +1;
-				}
-				// both files or both dirs
-				
-				String aname = a.getName();
-				String bname = b.getName();
-				
-				// dot-files are later
-				if (aname.startsWith(".") && !bname.startsWith(".")) {
-					return +1;
-				} else if (!aname.startsWith(".") && bname.startsWith(".")) {
-					return -1;
-				}
-				
-				return aname.compareToIgnoreCase(bname);
+		Arrays.sort(files, (a, b) -> {
+			if (a.isDirectory() && !b.isDirectory()) {
+				return -1;
+			} else if (!a.isDirectory() && b.isDirectory()) {
+				return +1;
 			}
+			// both files or both dirs
+
+			String aname = a.getName();
+			String bname = b.getName();
+
+			// dot-files are later
+			if (aname.startsWith(".") && !bname.startsWith(".")) {
+				return +1;
+			} else if (!aname.startsWith(".") && bname.startsWith(".")) {
+				return -1;
+			}
+
+			return aname.compareToIgnoreCase(bname);
 		});
 		
 		adapter.setNewData(files);
