@@ -210,7 +210,7 @@ public class App extends yuku.afw.App {
 	@Override public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 
-		Log.d(TAG, "@@onConfigurationChanged: config changed to: " + newConfig); //$NON-NLS-1$
+		Log.d(TAG, "@@onConfigurationChanged: config changed to: " + newConfig);
 		updateConfigurationWithPreferencesLocale();
 	}
 
@@ -218,7 +218,7 @@ public class App extends yuku.afw.App {
 		final Configuration config = context.getResources().getConfiguration();
 		final Locale locale = getLocaleFromPreferences();
 		if (!U.equals(config.locale.getLanguage(), locale.getLanguage()) || !U.equals(config.locale.getCountry(), locale.getCountry())) {
-			Log.d(TAG, "@@updateConfigurationWithPreferencesLocale: locale will be updated to: " + locale); //$NON-NLS-1$
+			Log.d(TAG, "@@updateConfigurationWithPreferencesLocale: locale will be updated to: " + locale);
 
 			config.locale = locale;
 			context.getResources().updateConfiguration(config, null);

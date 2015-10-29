@@ -729,11 +729,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			nfcAdapter.setNdefPushMessageCallback(event -> {
 				JSONObject obj = new JSONObject();
 				try {
-					obj.put("ari", Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, lsSplit0.getVerseBasedOnScroll())); //$NON-NLS-1$
+					obj.put("ari", Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, lsSplit0.getVerseBasedOnScroll()));
 				} catch (JSONException e) { // won't happen
 				}
 				byte[] payload = obj.toString().getBytes();
-				NdefRecord record = new NdefRecord(NdefRecord.TNF_MIME_MEDIA, "application/vnd.yuku.alkitab.nfc.beam".getBytes(), new byte[0], payload); //$NON-NLS-1$
+				NdefRecord record = new NdefRecord(NdefRecord.TNF_MIME_MEDIA, "application/vnd.yuku.alkitab.nfc.beam".getBytes(), new byte[0], payload);
 				return new NdefMessage(new NdefRecord[] {
 					record,
 					NdefRecord.createApplicationRecord(getPackageName()),
@@ -761,9 +761,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, IsiActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 			IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
 			try {
-			    ndef.addDataType("application/vnd.yuku.alkitab.nfc.beam"); //$NON-NLS-1$
+			    ndef.addDataType("application/vnd.yuku.alkitab.nfc.beam");
 			} catch (IntentFilter.MalformedMimeTypeException e) {
-			    throw new RuntimeException("fail mime type", e); //$NON-NLS-1$
+			    throw new RuntimeException("fail mime type", e);
 			}
 			IntentFilter[] intentFiltersArray = new IntentFilter[] {ndef, };
 			nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, null);
@@ -786,12 +786,12 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		String json = new String(records[0].getPayload());
 		try {
 			JSONObject obj = new JSONObject(json);
-			final int ari = obj.optInt("ari", -1); //$NON-NLS-1$
+			final int ari = obj.optInt("ari", -1);
 			if (ari == -1) return null;
 
 			return new IntentResult(ari);
 		} catch (JSONException e) {
-			Log.e(TAG, "Malformed json from nfc", e); //$NON-NLS-1$
+			Log.e(TAG, "Malformed json from nfc", e);
 			return null;
 		}
 	}
@@ -932,7 +932,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			return 0;
 		}
 
-		Log.d(TAG, "going to jump to " + reference); //$NON-NLS-1$
+		Log.d(TAG, "going to jump to " + reference);
 
 		Jumper jumper = new Jumper(reference);
 		if (! jumper.getParseSucceeded()) {
@@ -1551,7 +1551,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (result != null && result.chosenIntent != null) {
 				Intent chosenIntent = result.chosenIntent;
 				final String packageName = chosenIntent.getComponent().getPackageName();
-				if (U.equals(packageName, "com.facebook.katana")) { //$NON-NLS-1$
+				if (U.equals(packageName, "com.facebook.katana")) {
 					String verseUrl = chosenIntent.getStringExtra(EXTRA_verseUrl);
 					if (verseUrl != null) {
 						chosenIntent.putExtra(Intent.EXTRA_TEXT, verseUrl); // change text to url
@@ -2092,7 +2092,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			 * Please ignore it and leave it intact. */
 			if (hasEsvsbAsal == null) {
 				try {
-					getPackageManager().getApplicationInfo("yuku.esvsbasal", 0); //$NON-NLS-1$
+					getPackageManager().getApplicationInfo("yuku.esvsbasal", 0);
 					hasEsvsbAsal = true;
 				} catch (PackageManager.NameNotFoundException e) {
 					hasEsvsbAsal = false;
@@ -2336,11 +2336,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
 
 				try {
-					Intent intent = new Intent("yuku.esvsbasal.action.GOTO"); //$NON-NLS-1$
-					intent.putExtra("ari", ari); //$NON-NLS-1$
+					Intent intent = new Intent("yuku.esvsbasal.action.GOTO");
+					intent.putExtra("ari", ari);
 					startActivity(intent);
 				} catch (Exception e) {
-					Log.e(TAG, "ESVSB starting", e); //$NON-NLS-1$
+					Log.e(TAG, "ESVSB starting", e);
 				}
 			} return true;
 			case R.id.menuGuide: {

@@ -23,8 +23,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FileChooserActivity extends AppCompatActivity {
-	static final String EXTRA_config = "config"; //$NON-NLS-1$
-	static final String EXTRA_result = "result"; //$NON-NLS-1$
+	static final String EXTRA_config = "config";
+	static final String EXTRA_result = "result";
 
 	public static Intent createIntent(Context context, FileChooserConfig config) {
 		Intent res = new Intent(context, FileChooserActivity.class);
@@ -123,7 +123,7 @@ public class FileChooserActivity extends AppCompatActivity {
 				}
 				
 				if (m == null) {
-					m = Pattern.compile(config.pattern).matcher(""); //$NON-NLS-1$
+					m = Pattern.compile(config.pattern).matcher("");
 				}
 				
 				m.reset(pathname.getName());
@@ -149,9 +149,9 @@ public class FileChooserActivity extends AppCompatActivity {
 				String bname = b.getName();
 				
 				// dot-files are later
-				if (aname.startsWith(".") && !bname.startsWith(".")) { //$NON-NLS-1$ //$NON-NLS-2$
+				if (aname.startsWith(".") && !bname.startsWith(".")) {
 					return +1;
-				} else if (!aname.startsWith(".") && bname.startsWith(".")) { //$NON-NLS-1$ //$NON-NLS-2$
+				} else if (!aname.startsWith(".") && bname.startsWith(".")) {
 					return -1;
 				}
 				

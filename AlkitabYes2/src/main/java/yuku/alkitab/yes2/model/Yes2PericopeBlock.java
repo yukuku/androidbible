@@ -21,7 +21,7 @@ public class Yes2PericopeBlock extends PericopeBlock {
 		
 		int version = br.readUint8();
 		if (version != 4) {
-			throw new RuntimeException("Pericope block version not supported: " + version); //$NON-NLS-1$
+			throw new RuntimeException("Pericope block version not supported: " + version);
 		}
 		
 		Yes2PericopeBlock res = new Yes2PericopeBlock();

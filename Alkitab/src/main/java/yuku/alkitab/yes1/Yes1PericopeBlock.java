@@ -34,7 +34,7 @@ public class Yes1PericopeBlock extends PericopeBlock {
 		int version = in.readUint8();
 		
 		if (version > 3) {
-			throw new RuntimeException("Parallel block supported is only up to 3. Got version " + version); //$NON-NLS-1$
+			throw new RuntimeException("Parallel block supported is only up to 3. Got version " + version);
 		}
 		
 		if (version == 3) {

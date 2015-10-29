@@ -103,7 +103,7 @@ public class SongDb {
 		
 		Cursor c = db.query(Table.SongInfo.tableName(),
 			columns,
-			Table.SongInfo.bookName + "=? and " + Table.SongInfo.code + "=?",  //$NON-NLS-1$ //$NON-NLS-2$
+			Table.SongInfo.bookName + "=? and " + Table.SongInfo.code + "=?",
 			new String[]{bookName, code},
 			null, null, null);
 		
@@ -123,8 +123,8 @@ public class SongDb {
 	public boolean songExists(String bookName, String code) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		
-		Cursor c = db.rawQuery("select count(*) from " + Table.SongInfo.tableName() + " where "  //$NON-NLS-1$ //$NON-NLS-2$
-				+ Table.SongInfo.bookName + "=? and " + Table.SongInfo.code + "=?",  //$NON-NLS-1$ //$NON-NLS-2$
+		Cursor c = db.rawQuery("select count(*) from " + Table.SongInfo.tableName() + " where "
+				+ Table.SongInfo.bookName + "=? and " + Table.SongInfo.code + "=?",
 			new String[]{bookName, code});
 
 		try {
@@ -148,9 +148,9 @@ public class SongDb {
 		
 		Cursor c = db.query(Table.SongInfo.tableName(),
 			columns,
-			Table.SongInfo.bookName + "=?",  //$NON-NLS-1$
+			Table.SongInfo.bookName + "=?",
 			new String[]{bookName},
-			null, null, Table.SongInfo.ordering + " asc", "1"); //$NON-NLS-1$ //$NON-NLS-2$
+			null, null, Table.SongInfo.ordering + " asc", "1");
 		
 		try {
 			if (c.moveToNext()) {
@@ -255,13 +255,13 @@ public class SongDb {
 			columns, 
 			null, 
 			null, 
-			null, null, Table.SongInfo.bookName + " asc, " + Table.SongInfo.ordering + " asc"); //$NON-NLS-1$ //$NON-NLS-2$
+			null, null, Table.SongInfo.bookName + " asc, " + Table.SongInfo.ordering + " asc");
 		} else {
 			c = db.query(Table.SongInfo.tableName(), 
 			columns, 
-			Table.SongInfo.bookName + "=?",  //$NON-NLS-1$ 
+			Table.SongInfo.bookName + "=?",
 			new String[] {bookName},
-			null, null, Table.SongInfo.ordering + " asc"); //$NON-NLS-1$
+			null, null, Table.SongInfo.ordering + " asc");
 		}
 		return c;
 	}

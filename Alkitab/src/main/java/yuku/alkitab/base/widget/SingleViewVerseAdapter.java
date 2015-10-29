@@ -207,7 +207,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			} else {
 				lParallels.setVisibility(View.VISIBLE);
 
-				SpannableStringBuilder sb = new SpannableStringBuilder("("); //$NON-NLS-1$
+				SpannableStringBuilder sb = new SpannableStringBuilder("(");
 
 				int total = pericopeBlock.parallels.length;
 				for (int i = 0; i < total; i++) {
@@ -216,9 +216,9 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 					if (i > 0) {
 						// force new line for certain parallel patterns
 						if ((total == 6 && i == 3) || (total == 4 && i == 2) || (total == 5 && i == 3)) {
-							sb.append("; \n"); //$NON-NLS-1$
+							sb.append("; \n");
 						} else {
-							sb.append("; "); //$NON-NLS-1$
+							sb.append("; ");
 						}
 					}
 

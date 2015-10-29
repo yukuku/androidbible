@@ -17,7 +17,7 @@ public class PDBFileStream extends PDBDataStream {
 	
 	public PDBFileStream(String _filename) throws IOException  {
 		filename = _filename;
-		fis = new RandomAccessFile(filename, "r"); //$NON-NLS-1$
+		fis = new RandomAccessFile(filename, "r");
 		pos = 0;
 	}
 	

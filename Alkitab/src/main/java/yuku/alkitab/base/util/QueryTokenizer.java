@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 public class QueryTokenizer {
 	public static final String TAG = QueryTokenizer.class.getSimpleName();
 
-	static Pattern oneToken = Pattern.compile("(\\+?)((?:\".*?\"|\\S)+)"); //$NON-NLS-1$
+	static Pattern oneToken = Pattern.compile("(\\+?)((?:\".*?\"|\\S)+)");
 
 	/**
 	 * Convert a query string into tokens. Takes care of the quotes.
@@ -58,7 +58,7 @@ public class QueryTokenizer {
 	}
 
 	public static boolean isPlussedToken(String token) {
-		return (token.startsWith("+")); //$NON-NLS-1$
+		return (token.startsWith("+"));
 	}
 
 	public static String tokenWithoutPlus(String token) {

@@ -29,7 +29,7 @@ public class SongFilter {
 			for (int i = 0; i < tokens.length; i++) {
 				String token = tokens[i];
 				if (QueryTokenizer.isPlussedToken(token)) {
-					ps[i] = Pattern.compile("\\b" + Pattern.quote(QueryTokenizer.tokenWithoutPlus(token)) + "\\b", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$ //$NON-NLS-2$
+					ps[i] = Pattern.compile("\\b" + Pattern.quote(QueryTokenizer.tokenWithoutPlus(token)) + "\\b", Pattern.CASE_INSENSITIVE);
 				} else {
 					ps[i] = Pattern.compile(Pattern.quote(token), Pattern.CASE_INSENSITIVE);
 				}
@@ -95,7 +95,7 @@ public class SongFilter {
 	}
 	
 	private static boolean match(SongInfo song, Pattern p) {
-		Matcher m = p.matcher(""); //$NON-NLS-1$
+		Matcher m = p.matcher("");
 		
 		if (find(song.code, m)) return true;
 		if (find(song.title, m)) return true;
@@ -105,7 +105,7 @@ public class SongFilter {
 	}
 	
 	private static boolean match(Song song, Pattern p) {
-		Matcher m = p.matcher(""); //$NON-NLS-1$
+		Matcher m = p.matcher("");
 		
 		if (find(song.code, m)) return true;
 		if (find(song.title, m)) return true;

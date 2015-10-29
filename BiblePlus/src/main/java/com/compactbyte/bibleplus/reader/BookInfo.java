@@ -176,7 +176,7 @@ public class BookInfo {
 	private void addSepChar(StringBuffer sb, String word) {
 		if (sb.length() > 0) {
 			if (word.length() == 1) {
-				if (".,?!;:-".indexOf(word.charAt(0)) < 0) { //$NON-NLS-1$
+				if (".,?!;:-".indexOf(word.charAt(0)) < 0) {
 					sb.append(bible.getSepChar());
 				}
 			} else {
@@ -360,8 +360,8 @@ public class BookInfo {
 
 	// <yuku>
 	private String stringFromWords(List<String> words, String sepChar) {
-		if (words == null) return ""; //$NON-NLS-1$
-		if (words.size() == 0) return ""; //$NON-NLS-1$
+		if (words == null) return "";
+		if (words.size() == 0) return "";
 		
 		StringBuilder sb = new StringBuilder();
 		
@@ -398,7 +398,7 @@ public class BookInfo {
 					// no space too, exceptional case
 				} else {
 					char firstCur = cur.charAt(0);
-					if (")]}.,:;?!-".indexOf(firstCur) >= 0 || (firstCur >= 0x2e80 && firstCur <= 0x9fff)) { //$NON-NLS-1$
+					if (")]}.,:;?!-".indexOf(firstCur) >= 0 || (firstCur >= 0x2e80 && firstCur <= 0x9fff)) {
 						// no space
 					} else {
 						sep = true;

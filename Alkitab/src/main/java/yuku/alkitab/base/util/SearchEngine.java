@@ -123,13 +123,13 @@ public class SearchEngine {
 				{
 					long ms = System.currentTimeMillis();
 					result = searchByGrepInside(version, word, prev, query.bookIds);
-					Log.d(TAG, "search word '" + word + "' needed: " + (System.currentTimeMillis() - ms) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					Log.d(TAG, "search word '" + word + "' needed: " + (System.currentTimeMillis() - ms) + " ms");
 				}
 	
 				if (prev != null) {
-					Log.d(TAG, "Will intersect " + prev.size() + " elements with " + result.size() + " elements..."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					Log.d(TAG, "Will intersect " + prev.size() + " elements with " + result.size() + " elements...");
 					result = intersect(prev, result);
-					Log.d(TAG, "... the result is " + result.size() + " elements");  //$NON-NLS-1$//$NON-NLS-2$
+					Log.d(TAG, "... the result is " + result.size() + " elements");
 				}
 				
 				index++;
@@ -224,7 +224,7 @@ public class SearchEngine {
 					}
 				}
 	
-				if (BuildConfig.DEBUG) Log.d(TAG, "searchByGrepInside book " + book.shortName + " done. res.size = " + res.size()); //$NON-NLS-1$ //$NON-NLS-2$
+				if (BuildConfig.DEBUG) Log.d(TAG, "searchByGrepInside book " + book.shortName + " done. res.size = " + res.size());
 			}
 		} else {
 			// search only on book-chapters that are in the source
@@ -251,7 +251,7 @@ public class SearchEngine {
 				count++;
 			}
 			
-			if (BuildConfig.DEBUG) Log.d(TAG, "searchByGrepInside book with source " + source.size() + " needed to read as many as " + count + " book-chapter. res.size=" + res.size()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (BuildConfig.DEBUG) Log.d(TAG, "searchByGrepInside book with source " + source.size() + " needed to read as many as " + count + " book-chapter. res.size=" + res.size());
 		}
 		
 		return res;

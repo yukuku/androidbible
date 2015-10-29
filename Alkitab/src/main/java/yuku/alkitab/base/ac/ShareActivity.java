@@ -180,7 +180,7 @@ public class ShareActivity extends BaseActivity {
 						}
 						ActivityInfo ai = ii.resolveActivityInfo(getPackageManager(), 0);
 						if (ai == null) {
-							Log.w("ResolverActivity", "No activity found for " + ii); //$NON-NLS-1$ //$NON-NLS-2$
+							Log.w("ResolverActivity", "No activity found for " + ii);
 							continue;
 						}
 						ResolveInfo ri = new ResolveInfo();

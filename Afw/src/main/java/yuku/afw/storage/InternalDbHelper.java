@@ -14,7 +14,7 @@ public abstract class InternalDbHelper extends SQLiteOpenHelper {
 	 * @deprecated Use {@link yuku.afw.storage.InternalDbHelper#InternalDbHelper(String)} instead to allow multiple databases in one app.
 	 */
 	@Deprecated public InternalDbHelper() {
-		this("InternalDb"); //$NON-NLS-1$
+		this("InternalDb");
 	}
 	
 	public InternalDbHelper(String name) {
@@ -26,13 +26,13 @@ public abstract class InternalDbHelper extends SQLiteOpenHelper {
 	};
 
 	@Override public void onCreate(SQLiteDatabase db) {
-		Log.d(TAG, "onCreate called"); //$NON-NLS-1$
+		Log.d(TAG, "onCreate called");
 
 		try {
 			createTables(db);
 			createIndexes(db);
 		} catch (SQLException e) {
-			Log.e(TAG, "onCreate db failed!", e); //$NON-NLS-1$
+			Log.e(TAG, "onCreate db failed!", e);
 			throw e;
 		}
 	}

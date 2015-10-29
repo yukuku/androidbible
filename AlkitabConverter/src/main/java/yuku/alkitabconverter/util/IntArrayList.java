@@ -62,7 +62,7 @@ public class IntArrayList {
 		for (int i = 0; i < len; i++) {
 			sb.append(buf[i]);
 			if (i != this.len - 1) {
-				sb.append(", "); //$NON-NLS-1$
+				sb.append(", ");
 			}
 		}
 		sb.append(']');

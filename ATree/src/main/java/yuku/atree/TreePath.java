@@ -94,7 +94,7 @@ public class TreePath implements Serializable {
     public TreeNode getPathComponent(final int element) {
         final int pathCount = getPathCount();
         if (element < 0 || element >= pathCount) {
-            throw new IllegalArgumentException("element index out of bounds"); //$NON-NLS-1$
+            throw new IllegalArgumentException("element index out of bounds");
         }
         if (parent == null) {
             return elements[element];

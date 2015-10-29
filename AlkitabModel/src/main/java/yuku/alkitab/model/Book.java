@@ -91,10 +91,10 @@ public class Book implements Parcelable {
 			} else {
 				// just jumped
 				if (beginVerse_1 != 0) {
-					sb.append(origLen == sb.length()? "": ", ").append(beginVerse_1).append('-').append(lastVerse_1); //$NON-NLS-1$ //$NON-NLS-2$
+					sb.append(origLen == sb.length()? "": ", ").append(beginVerse_1).append('-').append(lastVerse_1);
 					beginVerse_1 = 0;
 				} else {
-					sb.append(origLen == sb.length()? "": ", ").append(lastVerse_1); //$NON-NLS-1$ //$NON-NLS-2$
+					sb.append(origLen == sb.length()? "": ", ").append(lastVerse_1);
 				}
 			}
 			
@@ -103,11 +103,11 @@ public class Book implements Parcelable {
 		
 		// drain the remainings
 		if (beginVerse_1 != 0) {
-			sb.append(origLen == sb.length()? "": ", ").append(beginVerse_1).append('-').append(lastVerse_1);  //$NON-NLS-1$//$NON-NLS-2$
+			sb.append(origLen == sb.length()? "": ", ").append(beginVerse_1).append('-').append(lastVerse_1);
 			//noinspection UnusedAssignment
 			beginVerse_1 = 0; // no need, only to make it consitent with above
 		} else {
-			sb.append(origLen == sb.length()? "": ", ").append(lastVerse_1); //$NON-NLS-1$ //$NON-NLS-2$
+			sb.append(origLen == sb.length()? "": ", ").append(lastVerse_1);
 		}
 	}
 

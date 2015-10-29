@@ -89,7 +89,7 @@ public class DevotionDownloader extends Thread {
 					// success!
 					article.fillIn(output);
 
-					if (output.startsWith("NG")) { //$NON-NLS-1$
+					if (output.startsWith("NG")) {
 						broadcastDownloadStatus(App.context.getString(R.string.kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output, kind.title, article.getDate(), output));
 					} else {
 						broadcastDownloadStatus(App.context.getString(R.string.berhasil_mengunduh_namaumum_tgl_tgl, kind.title, article.getDate()));
@@ -99,10 +99,10 @@ public class DevotionDownloader extends Thread {
 					// let's now store it to db
 					S.getDb().storeArticleToDevotions(article);
 				} catch (IOException e) {
-					Log.w(TAG, "@@run", e); //$NON-NLS-1$
+					Log.w(TAG, "@@run", e);
 
 					broadcastDownloadStatus(App.context.getString(R.string.gagal_mengunduh_namaumum_tgl_tgl, kind.title, article.getDate()));
-					Log.d(TAG, "Downloader failed to download"); //$NON-NLS-1$
+					Log.d(TAG, "Downloader failed to download");
 				}
 			}
 

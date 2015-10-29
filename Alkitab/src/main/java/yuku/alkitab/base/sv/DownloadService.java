@@ -133,7 +133,7 @@ public class DownloadService extends Service {
 		e.state = State.created;
 		e.url = url;
 		e.completeFile = new File(completeFile);
-		e.tempFile = new File(completeFile + ".part." + System.nanoTime() + ".tmp"); //$NON-NLS-1$ //$NON-NLS-2$
+		e.tempFile = new File(completeFile + ".part." + System.nanoTime() + ".tmp");
 		e.length = -1;
 		e.progress = 0;
 		enqueueAndStart(e);
@@ -181,7 +181,7 @@ public class DownloadService extends Service {
 						tempOut.write(buf, 0, read);
 						entry.progress += read;
 						dispatchProgress(entry);
-						Log.d(TAG, "Entry " + entry.key + " progress " + entry.progress + "/" + entry.length); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						Log.d(TAG, "Entry " + entry.key + " progress " + entry.progress + "/" + entry.length);
 					}
 					tempOut.close();
 					is.close();
@@ -193,7 +193,7 @@ public class DownloadService extends Service {
 				entry.completeFile.delete();
 				boolean renameOk = entry.tempFile.renameTo(entry.completeFile);
 				if (!renameOk) {
-					Log.w(TAG, "Failed to rename file from " + entry.tempFile + " to " + entry.completeFile); //$NON-NLS-1$ //$NON-NLS-2$
+					Log.w(TAG, "Failed to rename file from " + entry.tempFile + " to " + entry.completeFile);
 					entry.errorMsg = getString(R.string.dl_failed_to_rename_temporary_file);
 					changeState(State.failed);
 					return entry;
@@ -202,7 +202,7 @@ public class DownloadService extends Service {
 				// finished successfully
 				changeState(State.finished);
 			} catch (Exception e) {
-				Log.w(TAG, "Failed download because of exception", e); //$NON-NLS-1$
+				Log.w(TAG, "Failed download because of exception", e);
 				entry.tempFile.delete();
 				entry.errorMsg = e.getClass().getSimpleName() + ' ' + e.getMessage();
 				changeState(State.failed);
@@ -221,7 +221,7 @@ public class DownloadService extends Service {
 
 	private void incrementWaiting() {
 		nwaiting.incrementAndGet();
-		Log.d(TAG, "(inc) now nwaiting is " + nwaiting); //$NON-NLS-1$
+		Log.d(TAG, "(inc) now nwaiting is " + nwaiting);
 	}
 
 	public synchronized void decrementWaitingAndCheck() {
@@ -231,7 +231,7 @@ public class DownloadService extends Service {
 			Message.obtain(handler, MSG_stopSelf).sendToTarget();
 		}
 		
-		Log.d(TAG, "(dec) now nwaiting is " + nwaiting); //$NON-NLS-1$
+		Log.d(TAG, "(dec) now nwaiting is " + nwaiting);
 	}
 	
 	public void dispatchProgress(DownloadEntry entry) {

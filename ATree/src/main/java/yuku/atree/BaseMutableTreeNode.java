@@ -18,7 +18,7 @@ public abstract class BaseMutableTreeNode implements MutableTreeNode {
 
 	@Override public void insert(final MutableTreeNode child, final int childIndex) {
 		if (child == null || isNodeAncestor(child)) {
-			throw new IllegalArgumentException("invalid child to insert"); //$NON-NLS-1$
+			throw new IllegalArgumentException("invalid child to insert");
 		}
 
 		if (child.getParent() instanceof MutableTreeNode) {
@@ -74,7 +74,7 @@ public abstract class BaseMutableTreeNode implements MutableTreeNode {
 	@Override public void remove(final MutableTreeNode child) {
 		int index = -1;
 		if (child == null || children == null || (index = children.indexOf(child)) == -1) {
-			throw new IllegalArgumentException("child null or not found"); //$NON-NLS-1$
+			throw new IllegalArgumentException("child null or not found");
 		}
 		remove(index);
 	}

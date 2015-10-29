@@ -104,7 +104,7 @@ public class BiblePlusPDB {
 	 * Default encoding used to read strings
 	 * Note: Blackberry only supports very limited encoding
 	 */
-	private String encoding = "UTF-8"; //$NON-NLS-1$
+	private String encoding = "UTF-8";
 
 	private boolean wordIndexLoaded; // initialized with false;
 
@@ -152,7 +152,7 @@ public class BiblePlusPDB {
 	// "1 Esdras", "2 Esdras"
 	// };
 
-	final static String EMPTY_BOOKNAME = ""; //$NON-NLS-1$
+	final static String EMPTY_BOOKNAME = "";
 
 	/**
 	 * If we have a book number we can try to find the index for the book.
@@ -201,7 +201,7 @@ public class BiblePlusPDB {
 	 * 
 	 */
 
-	private String pathSeparator = "/"; //$NON-NLS-1$
+	private String pathSeparator = "/";
 
 	private String filenamepart;
 
@@ -672,8 +672,8 @@ public class BiblePlusPDB {
 			return;
 		}
 		filenamepart = pathName.substring(pos + 1);
-		is_greek = filenamepart.startsWith("z"); //$NON-NLS-1$
-		is_hebrew = filenamepart.startsWith("q"); //$NON-NLS-1$
+		is_greek = filenamepart.startsWith("z");
+		is_hebrew = filenamepart.startsWith("q");
 	}
 
 	/**
@@ -749,7 +749,7 @@ public class BiblePlusPDB {
 		int index = getWordIndex(pos, wordNum);
 		int len = getWordLength(pos);
 		if (index == -1) {
-			return ""; //$NON-NLS-1$
+			return "";
 		}
 		return readString(index, len);
 	}
@@ -1024,7 +1024,7 @@ public class BiblePlusPDB {
 			return false;
 		}
 
-		if (!header.getType().equals("bibl")) { //$NON-NLS-1$
+		if (!header.getType().equals("bibl")) {
 			fail_reason = ERR_NOT_BIBLE_PLUS_FILE;
 			return false;
 		}
@@ -1231,14 +1231,14 @@ public class BiblePlusPDB {
 		if (s == null || s.length() == 0) {
 			return null;
 		}
-		MyStringTokenizer st = new MyStringTokenizer(s, " :"); //$NON-NLS-1$
+		MyStringTokenizer st = new MyStringTokenizer(s, " :");
 		int count = st.countTokens();
 		if (count == 0) {
 			return null;
 		}
 		String[] temp = new String[count];
-		String chapter = "1"; //$NON-NLS-1$
-		String verse = "1"; //$NON-NLS-1$
+		String chapter = "1";
+		String verse = "1";
 
 		for (int i = 0; i < count; i++) {
 			temp[i] = st.nextToken();
@@ -1267,10 +1267,10 @@ public class BiblePlusPDB {
 				end = count - 1;
 			}
 		}
-		String book = ""; //$NON-NLS-1$
+		String book = "";
 		for (int i = 0; i < end; i++) {
 			if (i > 0) {
-				book += " "; //$NON-NLS-1$
+				book += " ";
 			}
 			book += temp[i];
 		}
@@ -1386,7 +1386,7 @@ public class BiblePlusPDB {
 				boolean partial,
 				boolean allwords,
 				int max_match) {
-		if (sepChar.equals(" ")) { //$NON-NLS-1$
+		if (sepChar.equals(" ")) {
 			return fastsearch(query, range, partial, allwords, max_match);
 		} else {
 			return textSearch(query, range, partial, allwords, max_match);

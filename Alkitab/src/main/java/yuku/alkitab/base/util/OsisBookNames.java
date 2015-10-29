@@ -15,72 +15,72 @@ public class OsisBookNames {
 	
 
 	static String[] names = {
-		"Gen",   //$NON-NLS-1$
-		"Exod",  //$NON-NLS-1$
-		"Lev",   //$NON-NLS-1$
-		"Num",   //$NON-NLS-1$
-		"Deut",  //$NON-NLS-1$
-		"Josh",  //$NON-NLS-1$
-		"Judg",  //$NON-NLS-1$
-		"Ruth",  //$NON-NLS-1$
-		"1Sam",  //$NON-NLS-1$
-		"2Sam",  //$NON-NLS-1$
-		"1Kgs",  //$NON-NLS-1$
-		"2Kgs",  //$NON-NLS-1$
-		"1Chr",  //$NON-NLS-1$
-		"2Chr",  //$NON-NLS-1$
-		"Ezra",  //$NON-NLS-1$
-		"Neh",   //$NON-NLS-1$
-		"Esth",  //$NON-NLS-1$
-		"Job",   //$NON-NLS-1$
-		"Ps",    //$NON-NLS-1$
-		"Prov",  //$NON-NLS-1$
-		"Eccl",  //$NON-NLS-1$
-		"Song",  //$NON-NLS-1$
-		"Isa",   //$NON-NLS-1$
-		"Jer",   //$NON-NLS-1$
-		"Lam",   //$NON-NLS-1$
-		"Ezek",  //$NON-NLS-1$
-		"Dan",   //$NON-NLS-1$
-		"Hos",   //$NON-NLS-1$
-		"Joel",  //$NON-NLS-1$
-		"Amos",  //$NON-NLS-1$
-		"Obad",  //$NON-NLS-1$
-		"Jonah", //$NON-NLS-1$
-		"Mic",   //$NON-NLS-1$
-		"Nah",   //$NON-NLS-1$
-		"Hab",   //$NON-NLS-1$
-		"Zeph",  //$NON-NLS-1$
-		"Hag",   //$NON-NLS-1$
-		"Zech",  //$NON-NLS-1$
-		"Mal",   //$NON-NLS-1$
-		"Matt",  //$NON-NLS-1$
-		"Mark",  //$NON-NLS-1$
-		"Luke",  //$NON-NLS-1$
-		"John",  //$NON-NLS-1$
-		"Acts",  //$NON-NLS-1$
-		"Rom",   //$NON-NLS-1$
-		"1Cor",  //$NON-NLS-1$
-		"2Cor",  //$NON-NLS-1$
-		"Gal",   //$NON-NLS-1$
-		"Eph",   //$NON-NLS-1$
-		"Phil",  //$NON-NLS-1$
-		"Col",   //$NON-NLS-1$
-		"1Thess",//$NON-NLS-1$ 
-		"2Thess",//$NON-NLS-1$ 
-		"1Tim",  //$NON-NLS-1$
-		"2Tim",  //$NON-NLS-1$
-		"Titus", //$NON-NLS-1$
-		"Phlm",  //$NON-NLS-1$
-		"Heb",   //$NON-NLS-1$
-		"Jas",   //$NON-NLS-1$
-		"1Pet",  //$NON-NLS-1$
-		"2Pet",  //$NON-NLS-1$
-		"1John", //$NON-NLS-1$
-		"2John", //$NON-NLS-1$
-		"3John", //$NON-NLS-1$
-		"Jude",  //$NON-NLS-1$
-		"Rev",   //$NON-NLS-1$
+		"Gen",
+		"Exod",
+		"Lev",
+		"Num",
+		"Deut",
+		"Josh",
+		"Judg",
+		"Ruth",
+		"1Sam",
+		"2Sam",
+		"1Kgs",
+		"2Kgs",
+		"1Chr",
+		"2Chr",
+		"Ezra",
+		"Neh",
+		"Esth",
+		"Job",
+		"Ps",
+		"Prov",
+		"Eccl",
+		"Song",
+		"Isa",
+		"Jer",
+		"Lam",
+		"Ezek",
+		"Dan",
+		"Hos",
+		"Joel",
+		"Amos",
+		"Obad",
+		"Jonah",
+		"Mic",
+		"Nah",
+		"Hab",
+		"Zeph",
+		"Hag",
+		"Zech",
+		"Mal",
+		"Matt",
+		"Mark",
+		"Luke",
+		"John",
+		"Acts",
+		"Rom",
+		"1Cor",
+		"2Cor",
+		"Gal",
+		"Eph",
+		"Phil",
+		"Col",
+		"1Thess",
+		"2Thess",
+		"1Tim",
+		"2Tim",
+		"Titus",
+		"Phlm",
+		"Heb",
+		"Jas",
+		"1Pet",
+		"2Pet",
+		"1John",
+		"2John",
+		"3John",
+		"Jude",
+		"Rev",
 	};
 	
 	static {
@@ -115,7 +115,7 @@ public class OsisBookNames {
 			}
 			sb.append(')');
 			
-			sb.append("\\.([1-9][0-9]{0,2})(?:\\.([1-9][0-9]{0,2}))?"); //$NON-NLS-1$
+			sb.append("\\.([1-9][0-9]{0,2})(?:\\.([1-9][0-9]{0,2}))?");
 			
 			bookNameWithChapterAndOptionalVersePattern = Pattern.compile(sb.toString());
 		}

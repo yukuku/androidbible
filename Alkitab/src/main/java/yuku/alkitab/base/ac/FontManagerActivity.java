@@ -132,16 +132,16 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 	}
 	
 	String getFontDownloadKey(String name) {
-		return "FontManager/" + name; //$NON-NLS-1$
+		return "FontManager/" + name;
 	}
 	
 	private String getFontNameFromDownloadKey(String key) {
-		if (!key.startsWith("FontManager/")) return null; //$NON-NLS-1$
-		return key.substring("FontManager/".length()); //$NON-NLS-1$
+		if (!key.startsWith("FontManager/")) return null;
+		return key.substring("FontManager/".length());
 	}
 
 	String getFontDownloadDestination(String name) {
-		return new File(FontManager.getFontsPath(), "download-" + name + ".zip").getAbsolutePath(); //$NON-NLS-1$ //$NON-NLS-2$
+		return new File(FontManager.getFontsPath(), "download-" + name + ".zip").getAbsolutePath();
 	}
 	
 	public static class FontItem {
@@ -313,14 +313,14 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 				File fontDir = FontManager.getFontDir(fontName);
 				fontDir.mkdirs();
 				
-				Log.d(TAG, "Going to unzip " + downloadedZip, new Throwable().fillInStackTrace()); //$NON-NLS-1$
+				Log.d(TAG, "Going to unzip " + downloadedZip, new Throwable().fillInStackTrace());
 				
 				ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(downloadedZip)));
 				try {
 					ZipEntry ze;
 					while ((ze = zis.getNextEntry()) != null) {
 						String zname = ze.getName();
-						Log.d(TAG, "Extracting from zip: " + zname); //$NON-NLS-1$
+						Log.d(TAG, "Extracting from zip: " + zname);
 						File extractFile = new File(fontDir, zname);
 						FileOutputStream fos = new FileOutputStream(extractFile);
 						try {
