@@ -7,7 +7,6 @@ import android.content.Context;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
@@ -69,9 +68,6 @@ public abstract class Announce {
 			final AnnounceCheckResult result = getAnnouncements();
 			if (!result.success) {
 				Log.d(TAG, "Announce check returns success=false: " + result.message);
-				if (result.message != null) {
-					Toast.makeText(App.context, "Announce: " + result.message, Toast.LENGTH_LONG).show();
-				}
 				return;
 			}
 
