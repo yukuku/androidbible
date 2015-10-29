@@ -9,6 +9,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.ViewConfiguration;
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.squareup.leakcanary.LeakCanary;
@@ -33,6 +34,8 @@ import yuku.stethoshim.StethoShim;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class App extends yuku.afw.App {
@@ -240,5 +243,18 @@ public class App extends yuku.afw.App {
 
 	public synchronized static Tracker getTracker() {
 		return APP_TRACKER;
+	}
+
+	private static ExecutorService eventSubmitter = Executors.newSingleThreadExecutor();
+
+	public static void trackEvent(final String category) {
+		trackEvent(category, category);
+	}
+
+	public static void trackEvent(final String category, final String action) {
+		final Tracker tracker = getTracker();
+		if (tracker != null) { // guard against wrong initialization order
+			eventSubmitter.submit(() -> tracker.send(new HitBuilders.EventBuilder(category, action).build()));
+		}
 	}
 }
