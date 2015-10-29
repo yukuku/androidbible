@@ -126,6 +126,7 @@ public abstract class LeftDrawer extends ScrollView {
 	@Override
 	public boolean onDragEvent(final DragEvent event) {
 		if (event.getAction() == DragEvent.ACTION_DRAG_STARTED) {
+			App.trackEvent("pin_drag_started");
 			if (event.getClipDescription().hasMimeType(VerseItem.PROGRESS_MARK_DRAG_MIME_TYPE)) {
 				return true; // Just to that the progress pin is not dropped to the verses
 			}

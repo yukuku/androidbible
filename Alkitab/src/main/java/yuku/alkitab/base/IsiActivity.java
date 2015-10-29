@@ -188,11 +188,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		@Override
 		public void onOnefingerLeft() {
+			App.trackEvent("text_onefinger_left");
 			bRight_click();
 		}
 
 		@Override
 		public void onOnefingerRight() {
+			App.trackEvent("text_onefinger_right");
 			bLeft_click();
 		}
 
@@ -247,10 +249,12 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (!moreSwipeYAllowed) return;
 
 			if (dy < 0) {
+				App.trackEvent("text_twofinger_up");
 				setFullScreen(true);
 				leftDrawer.getHandle().setFullScreen(true);
 				moreSwipeYAllowed = false;
 			} else {
+				App.trackEvent("text_twofinger_down");
 				setFullScreen(false);
 				leftDrawer.getHandle().setFullScreen(false);
 				moreSwipeYAllowed = false;
@@ -1121,10 +1125,12 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	void bGoto_click() {
+		App.trackEvent("nav_goto_button_click");
 		startActivityForResult(GotoActivity.createIntent(this.activeBook.bookId, this.chapter_1, lsSplit0.getVerseBasedOnScroll()), REQCODE_goto);
 	}
 
 	void bGoto_longClick() {
+		App.trackEvent("nav_goto_button_long_click");
 		if (history.getSize() > 0) {
 			new MaterialDialog.Builder(this)
 				.adapter(historyAdapter, (materialDialog, view, position, charSequence) -> {
@@ -1236,6 +1242,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			leftDrawer.toggleDrawer();
 			return true;
 		case R.id.menuSearch:
+			App.trackEvent("nav_search_click");
 			menuSearch_click();
 			return true;
 		}
@@ -1675,7 +1682,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	void bLeft_click() {
-		Book currentBook = this.activeBook;
+		App.trackEvent("nav_left_click");
+		final Book currentBook = this.activeBook;
 		if (chapter_1 == 1) {
 			// we are in the beginning of the book, so go to prev book
 			int tryBookId = currentBook.bookId - 1;
@@ -1697,6 +1705,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	void bRight_click() {
+		App.trackEvent("nav_right_click");
 		final Book currentBook = this.activeBook;
 		if (chapter_1 >= currentBook.chapter_count) {
 			final int maxBookId = S.activeVersion.getMaxBookIdPlusOne();
@@ -1718,6 +1727,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	void bVersion_click() {
+		App.trackEvent("nav_version_click");
 		openVersionsDialog();
 	}
 
@@ -2517,21 +2527,25 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	@Override
 	public void bDisplay_click() {
+		App.trackEvent("left_drawer_display_click");
 		setShowTextAppearancePanel(textAppearancePanel == null);
 	}
 
 	@Override
 	public void cFullScreen_checkedChange(final boolean isChecked) {
+		App.trackEvent("left_drawer_full_screen_click");
 		setFullScreen(isChecked);
 	}
 
 	@Override
 	public void cNightMode_checkedChange(final boolean isChecked) {
+		App.trackEvent("left_drawer_night_mode_click");
 		setNightMode(isChecked);
 	}
 
 	@Override
 	public void cSplitVersion_checkedChange(final SwitchCompat cSplitVersion, final boolean isChecked) {
+		App.trackEvent("left_drawer_split_click");
 		if (isChecked) {
 			cSplitVersion.setChecked(false); // do it later, at the version chooser dialog
 			openSplitVersionsDialog();
@@ -2544,6 +2558,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	@Override
 	public void bProgressMarkList_click() {
+		App.trackEvent("left_drawer_progress_mark_list_click");
 		if (S.getDb().countAllProgressMarks() > 0) {
 			final ProgressMarkListDialog dialog = new ProgressMarkListDialog();
 			dialog.show(getSupportFragmentManager(), "dialog_progress_mark_list");
@@ -2588,9 +2603,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		final int ari = progressMark.ari;
 
 		if (ari != 0) {
+			App.trackEvent("left_drawer_progress_mark_pin_click_succeed");
 			jumpToAri(ari, false);
 			history.add(ari);
 		} else {
+			App.trackEvent("left_drawer_progress_mark_pin_click_failed");
 			new AlertDialogWrapper.Builder(this)
 				.setMessage(R.string.pm_activate_tutorial)
 				.setPositiveButton(R.string.ok, null)
