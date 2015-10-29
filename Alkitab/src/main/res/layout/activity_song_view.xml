@@ -11,9 +11,5 @@
 
 	<!-- The navigation drawer -->
 	<include
-		android:id="@+id/left_drawer"
-		layout="@layout/left_drawer_songs"
-		android:layout_width="240dp"
-		android:layout_height="match_parent"
-		android:layout_gravity="start"/>
+		layout="@layout/left_drawer_songs" />
 </android.support.v4.widget.DrawerLayout>
