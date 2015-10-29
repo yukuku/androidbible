@@ -6,7 +6,6 @@ import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -78,7 +77,7 @@ public class FontManager {
 	}
 	
 	public static List<FontEntry> getInstalledFonts() {
-		List<FontEntry> res = new ArrayList<>();
+		final List<FontEntry> res = new ArrayList<>();
 		
 		// enum the bible/fonts directory
     	File fontsDir = new File(getFontsPath());
@@ -90,33 +89,33 @@ public class FontManager {
     		return res;
     	}
     	
-    	File[] dirs = fontsDir.listFiles(new FileFilter() {
-			@Override public boolean accept(File pathname) {
-				if (!pathname.isDirectory()) return false;
-				String basename = pathname.getName();
-				File ttf = getRegularPath(basename);
-				if (!ttf.exists()) {
-					Log.d(TAG, "Font dir " + pathname.getAbsolutePath() + " exists but " + ttf.getAbsolutePath() + " doesn't");
-					return false;
-				} else {
-					return true;
-				}
+    	final File[] dirs = fontsDir.listFiles(pathname -> {
+			if (!pathname.isDirectory()) return false;
+			String basename = pathname.getName();
+			File ttf = getRegularPath(basename);
+			if (!ttf.exists()) {
+				Log.d(TAG, "Font dir " + pathname.getAbsolutePath() + " exists but " + ttf.getAbsolutePath() + " doesn't");
+				return false;
+			} else {
+				return true;
 			}
 		});
-    	
-    	Arrays.sort(dirs);
-    	
-    	for (File dir: dirs) {
-    		FontEntry e = new FontEntry();
-    		e.name = dir.getName(); 
-    		e.title = dir.getName(); // TODO more friendly
-    		e.dir = dir.getAbsolutePath();
-    		String basename = dir.getName();
-    		e.regularPath = getRegularPath(basename).getAbsolutePath();
-    		// TODO italic etc
-    		res.add(e);
-    	}
-    	
+
+		if (dirs != null) {
+			Arrays.sort(dirs);
+
+			for (File dir: dirs) {
+				FontEntry e = new FontEntry();
+				e.name = dir.getName();
+				e.title = dir.getName(); // TODO more friendly
+				e.dir = dir.getAbsolutePath();
+				String basename = dir.getName();
+				e.regularPath = getRegularPath(basename).getAbsolutePath();
+				// TODO italic etc
+				res.add(e);
+			}
+		}
+
     	return res;
 	}
 	

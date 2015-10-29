@@ -79,7 +79,16 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 		
 		bindService(new Intent(App.context, DownloadService.class), serviceConnection, BIND_AUTO_CREATE);
 	}
-	
+
+	@Override
+	protected void onNeededPermissionsGranted() {
+		super.onNeededPermissionsGranted();
+
+		if (dls != null) {
+			loadFontList();
+		}
+	}
+
 	@Override protected void onDestroy() {
 		super.onDestroy();
 		
