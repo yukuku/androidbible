@@ -38,7 +38,7 @@
 
 		<Button
 			android:id="@+id/bRestart"
-			style="?android:buttonBarButtonStyle"
+			style="?buttonBarButtonStyle"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:drawableLeft="@drawable/ic_av_skip_previous"

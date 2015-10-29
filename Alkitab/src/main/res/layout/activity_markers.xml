@@ -18,7 +18,7 @@
 
 		<Button
 			android:id="@+id/bGotoSync"
-			style="?android:attr/buttonBarButtonStyle"
+			style="?buttonBarButtonStyle"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignParentRight="true"

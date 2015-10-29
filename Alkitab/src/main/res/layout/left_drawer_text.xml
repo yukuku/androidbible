@@ -24,7 +24,7 @@
 
 		<Button
 			android:id="@+id/bMarkers"
-			style="?android:buttonBarButtonStyle"
+			style="?buttonBarButtonStyle"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:drawableLeft="@drawable/ic_drawer_markers"
@@ -65,7 +65,7 @@
 
 		<Button
 			android:id="@+id/bCurrentReadingReference"
-			style="?android:buttonBarButtonStyle"
+			style="?buttonBarButtonStyle"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
 			android:fontFamily="sans-serif-regular"
@@ -156,7 +156,7 @@
 
 		<Button
 			android:id="@+id/bDisplay"
-			style="?android:buttonBarButtonStyle"
+			style="?buttonBarButtonStyle"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:drawableLeft="@drawable/ic_drawer_display"

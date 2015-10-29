@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout
-	style="?android:buttonBarStyle"
+	style="?buttonBarStyle"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
@@ -10,7 +10,7 @@
 
 	<Button
 		android:id="@+id/bReference"
-		style="?android:buttonBarButtonStyle"
+		style="?buttonBarButtonStyle"
 		android:layout_width="wrap_content"
 		android:layout_height="match_parent"
 		android:paddingLeft="16dp"
@@ -21,7 +21,7 @@
 
 	<Button
 		android:id="@+id/bSend"
-		style="?android:buttonBarButtonStyle"
+		style="?buttonBarButtonStyle"
 		android:layout_width="wrap_content"
 		android:layout_height="match_parent"
 		android:paddingLeft="16dp"

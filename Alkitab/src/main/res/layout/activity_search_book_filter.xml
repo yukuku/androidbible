@@ -12,7 +12,7 @@
 		android:layout_weight="1" />
 
 	<LinearLayout
-		style="?android:buttonBarStyle"
+		style="?buttonBarStyle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_weight="0"
@@ -20,7 +20,7 @@
 
 		<Button
 			android:id="@+id/bCancel"
-			style="?android:buttonBarButtonStyle"
+			style="?buttonBarButtonStyle"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
@@ -29,7 +29,7 @@
 
 		<Button
 			android:id="@+id/bOk"
-			style="?android:buttonBarButtonStyle"
+			style="?buttonBarButtonStyle"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"

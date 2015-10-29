@@ -50,7 +50,7 @@
 
 			<CheckBox
 				android:id="@+id/cActive"
-				style="?android:buttonBarButtonStyle"
+				style="?buttonBarButtonStyle"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:layout_gravity="center_vertical"
@@ -60,7 +60,7 @@
 
 			<ProgressBar
 				android:id="@+id/progress"
-				style="?android:indeterminateProgressStyle"
+				style="?indeterminateProgressStyle"
 				android:layout_width="48dp"
 				android:layout_height="48dp"
 				android:indeterminate="true"
