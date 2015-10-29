@@ -2,6 +2,6 @@
 <resources>
 	<!-- Smaller prev/next buttons on sw < 360dp, normal otherwise -->
 	<dimen name="nav_prevnext_width">48dp</dimen>
-	<!-- Should be little less than the above -->
-	<dimen name="nav_goto_side_margin">32dp</dimen>
+	<!-- Should be little less than the above for text-and-button overlap -->
+	<dimen name="nav_goto_side_margin">40dp</dimen>
 </resources>
