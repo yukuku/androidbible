@@ -23,7 +23,7 @@ public abstract class Debouncer<RequestType, ResultType> {
 
 	private final DebounceHandler handler;
 	private final long defaultDelay;
-	final ScheduledExecutorService sched = Executors.newScheduledThreadPool(0);
+	final ScheduledExecutorService sched = Executors.newSingleThreadScheduledExecutor();
 
 	final AtomicInteger serial = new AtomicInteger();
 
