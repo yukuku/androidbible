@@ -68,7 +68,8 @@ public class MarkersActivity extends BaseActivity {
 	}
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		super.onCreateWithNonToolbarUpButton(savedInstanceState);
+		enableNonToolbarUpButton();
+		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.activity_markers);
 		setTitle(R.string.activity_title_markers);

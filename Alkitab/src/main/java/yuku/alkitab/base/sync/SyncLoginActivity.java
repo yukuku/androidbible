@@ -59,7 +59,8 @@ public class SyncLoginActivity extends BaseActivity {
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreateWithNonToolbarUpButton(savedInstanceState);
+		enableNonToolbarUpButton();
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_sync_login);
 
 		tIntro = V.get(this, R.id.tIntro);

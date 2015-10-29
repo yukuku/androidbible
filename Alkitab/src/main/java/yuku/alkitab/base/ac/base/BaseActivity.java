@@ -23,7 +23,7 @@ import yuku.alkitab.debug.R;
 public abstract class BaseActivity extends AppCompatActivity {
 	public static final String TAG = BaseActivity.class.getSimpleName();
 
-	private boolean withNonToolbarUpButton;
+	private boolean enableNonToolbarUpButton;
 
 	private int lastKnownLocaleSerialNumber;
 
@@ -67,28 +67,29 @@ public abstract class BaseActivity extends AppCompatActivity {
 		}
 	}
 
+	/**
+	 * Call this from subclasses before super.onCreate() to enable up button.
+	 */
+	protected void enableNonToolbarUpButton() {
+		this.enableNonToolbarUpButton = true;
+	}
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		lastKnownLocaleSerialNumber = ChangeLanguageHelper.getLocaleSerialCounter();
-	}
 
-	protected void onCreateWithNonToolbarUpButton(Bundle savedInstanceState) {
-		this.withNonToolbarUpButton = true;
-
-		super.onCreate(savedInstanceState);
-
-		final ActionBar actionBar = getSupportActionBar();
-		if (actionBar != null) {
-			actionBar.setDisplayHomeAsUpEnabled(true);
+		if (this.enableNonToolbarUpButton) {
+			final ActionBar actionBar = getSupportActionBar();
+			if (actionBar != null) {
+				actionBar.setDisplayHomeAsUpEnabled(true);
+			}
 		}
-
-		lastKnownLocaleSerialNumber = ChangeLanguageHelper.getLocaleSerialCounter();
 	}
 
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
-		if (withNonToolbarUpButton && item.getItemId() == android.R.id.home) {
+		if (enableNonToolbarUpButton && item.getItemId() == android.R.id.home) {
 			navigateUp();
 			return true;
 		}

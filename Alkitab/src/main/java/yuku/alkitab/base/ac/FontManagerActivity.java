@@ -72,7 +72,8 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 	};
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		super.onCreateWithNonToolbarUpButton(savedInstanceState);
+		enableNonToolbarUpButton();
+		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_font_manager);
 		setTitle(R.string.fm_activity_title);

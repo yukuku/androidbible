@@ -48,7 +48,8 @@ public class HelpActivity extends BaseActivity {
 	@SuppressLint("SetJavaScriptEnabled")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreateWithNonToolbarUpButton(savedInstanceState);
+		enableNonToolbarUpButton();
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_help);
 
 		webview = V.get(this, R.id.webView);

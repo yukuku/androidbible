@@ -58,7 +58,8 @@ public class ShareActivity extends BaseActivity {
 	}
 	
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		super.onCreateWithNonToolbarUpButton(savedInstanceState);
+		enableNonToolbarUpButton();
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_share);
 
 		String title = getIntent().getStringExtra(Intent.EXTRA_TITLE);
