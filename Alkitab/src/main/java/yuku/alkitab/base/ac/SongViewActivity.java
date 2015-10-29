@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -24,7 +25,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
@@ -82,7 +82,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	DrawerLayout drawerLayout;
 	LeftDrawer.Songs leftDrawer;
 
-	TwofingerLinearLayout song_container;
+	TwofingerLinearLayout root;
 	ViewGroup no_song_data_container;
 	View bDownload;
 	View circular_progress;
@@ -382,12 +382,12 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			}
 		});
 
-		song_container = V.get(this, R.id.song_container);
+		root = V.get(this, R.id.root);
 		no_song_data_container = V.get(this, R.id.no_song_data_container);
 		bDownload = V.get(this, R.id.bDownload);
 
-		song_container.setTwofingerEnabled(false);
-		song_container.setListener(song_container_listener);
+		root.setTwofingerEnabled(false);
+		root.setListener(song_container_listener);
 
 		bDownload.setOnClickListener(v -> openDownloadSongBookPage());
 	}
@@ -538,7 +538,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			if (currentSong != null) {
 				U.copyToClipboard(convertSongToText(currentSong));
 
-				Toast.makeText(this, R.string.sn_copied, Toast.LENGTH_SHORT).show();
+				Snackbar.make(root, R.string.sn_copied, Snackbar.LENGTH_SHORT).show();
 			}
 		} return true;
 
@@ -818,7 +818,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	}
 
 	void displaySong(String bookName, @Nullable Song song, boolean onCreate) {
-		song_container.setVisibility(song != null? View.VISIBLE: View.GONE);
+		root.setVisibility(song != null ? View.VISIBLE : View.GONE);
 		no_song_data_container.setVisibility(song != null? View.GONE: View.VISIBLE);
 
 		if (!onCreate) {
@@ -841,7 +841,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		templateCustomVars.putString("patch_text_open_link", getString(R.string.patch_text_open_link));
 
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.replace(R.id.song_container, SongFragment.create(song, "templates/song.html", templateCustomVars));
+		ft.replace(R.id.root, SongFragment.create(song, "templates/song.html", templateCustomVars));
 		ft.commitAllowingStateLoss();
 
 		currentBookName = bookName;

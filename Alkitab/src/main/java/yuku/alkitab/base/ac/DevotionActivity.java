@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -22,7 +23,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.analytics.HitBuilders;
@@ -68,7 +68,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		}
 	};
 
-	TwofingerLinearLayout.Listener devotion_root_listener = new TwofingerLinearLayout.OnefingerListener() {
+	TwofingerLinearLayout.Listener root_listener = new TwofingerLinearLayout.OnefingerListener() {
 		@Override
 		public void onOnefingerLeft() {
 			bNext_click();
@@ -201,7 +201,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 	DrawerLayout drawerLayout;
 	LeftDrawer.Devotion leftDrawer;
 
-	TwofingerLinearLayout devotion_root;
+	TwofingerLinearLayout root;
 	TextView lContent;
 	ScrollView scrollContent;
 	TextView lStatus;
@@ -304,13 +304,13 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
 
-		devotion_root = V.get(this, R.id.devotion_root);
+		root = V.get(this, R.id.root);
 		lContent = V.get(this, R.id.lContent);
 		scrollContent = V.get(this, R.id.scrollContent);
 		lStatus = V.get(this, R.id.lStatus);
 
-		devotion_root.setTwofingerEnabled(false);
-		devotion_root.setListener(devotion_root_listener);
+		root.setTwofingerEnabled(false);
+		root.setListener(root_listener);
 
 		final DevotionKind storedKind = DevotionKind.getByName(Preferences.getString(Prefkey.devotion_last_kind_name, DEFAULT_DEVOTION_KIND.name));
 
@@ -367,7 +367,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		} else if (itemId == R.id.menuCopy) {
 			U.copyToClipboard(currentKind.title + "\n" + lContent.getText());
 
-			Toast.makeText(this, R.string.renungan_sudah_disalin, Toast.LENGTH_SHORT).show();
+			Snackbar.make(root, R.string.renungan_sudah_disalin, Snackbar.LENGTH_SHORT).show();
 
 			return true;
 		} else if (itemId == R.id.menuShare) {

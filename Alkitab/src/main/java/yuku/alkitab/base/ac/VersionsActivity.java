@@ -43,7 +43,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.mobeta.android.dslv.DragSortController;
@@ -379,7 +378,7 @@ public class VersionsActivity extends BaseActivity {
 			config.mode = FileChooserConfig.Mode.Open;
 			config.initialDir = Environment.getExternalStorageDirectory().getAbsolutePath();
 			config.title = getString(R.string.ed_choose_pdb_or_yes_file);
-			config.pattern = ".*\\.(?i:pdb|yes|yes\\.gz)"; //$NON-NLS-1$
+			config.pattern = ".*\\.(?i:pdb|yes|yes\\.gz)";
 
 			startActivityForResult(FileChooserActivity.createIntent(App.context, config), REQCODE_openFile);
 		} else {
@@ -441,7 +440,7 @@ public class VersionsActivity extends BaseActivity {
 		ConvertOptionsDialog.ConvertOptionsCallback callback = new ConvertOptionsDialog.ConvertOptionsCallback() {
 			private void showPdbReadErrorDialog(Throwable exception) {
 				final StringWriter sw = new StringWriter(400);
-				sw.append('(').append(exception.getClass().getName()).append("): ").append(exception.getMessage()).append('\n'); //$NON-NLS-1$
+				sw.append('(').append(exception.getClass().getName()).append("): ").append(exception.getMessage()).append('\n');
 				exception.printStackTrace(new PrintWriter(sw));
 
 				new AlertDialogWrapper.Builder(VersionsActivity.this)
@@ -461,7 +460,7 @@ public class VersionsActivity extends BaseActivity {
 					if (wronglyConvertedBookNames != null && wronglyConvertedBookNames.size() > 0) {
 						StringBuilder msg = new StringBuilder(getString(R.string.ed_the_following_books_from_the_pdb_file_are_not_recognized) + '\n');
 						for (String s: wronglyConvertedBookNames) {
-							msg.append("- ").append(s).append('\n'); //$NON-NLS-1$
+							msg.append("- ").append(s).append('\n');
 						}
 
 						new AlertDialogWrapper.Builder(VersionsActivity.this)
@@ -490,12 +489,12 @@ public class VersionsActivity extends BaseActivity {
 						ConvertPdbToYes2 converter = new ConvertPdbToYes2();
 						converter.setConvertProgressListener(new ConvertPdbToYes2.ConvertProgressListener() {
 							@Override public void onProgress(int at, String message) {
-								Log.d(TAG, "Progress " + at + ": " + message); //$NON-NLS-1$ //$NON-NLS-2$
+								Log.d(TAG, "Progress " + at + ": " + message);
 								publishProgress(at, message);
 							}
 
 							@Override public void onFinish() {
-								Log.d(TAG, "Finish"); //$NON-NLS-1$
+								Log.d(TAG, "Finish");
 								publishProgress(null, null);
 							}
 						});
@@ -568,7 +567,7 @@ public class VersionsActivity extends BaseActivity {
 		} catch (Exception e) {
 			new AlertDialogWrapper.Builder(this)
 				.setTitle(R.string.ed_error_encountered)
-				.setMessage(e.getClass().getSimpleName() + ": " + e.getMessage()) //$NON-NLS-1$
+				.setMessage(e.getClass().getSimpleName() + ": " + e.getMessage())
 				.setPositiveButton(R.string.ok, null)
 				.show();
 		}
@@ -664,7 +663,7 @@ public class VersionsActivity extends BaseActivity {
 
 			final String filename = result.firstFilename;
 
-			if (filename.toLowerCase(Locale.US).endsWith(".yes.gz")) { //$NON-NLS-1$
+			if (filename.toLowerCase(Locale.US).endsWith(".yes.gz")) {
 				// decompress or see if the same filename without .gz exists
 				final File maybeDecompressed = new File(filename.substring(0, filename.length() - 3));
 				if (maybeDecompressed.exists() && !maybeDecompressed.isDirectory() && maybeDecompressed.canRead()) {
@@ -678,7 +677,7 @@ public class VersionsActivity extends BaseActivity {
 
 					new AsyncTask<Void, Void, File>() {
 						@Override protected File doInBackground(Void... params) {
-							String tmpfile3 = filename + "-" + (int)(Math.random() * 100000) + ".tmp3"; //$NON-NLS-1$ //$NON-NLS-2$
+							String tmpfile3 = filename + "-" + (int)(Math.random() * 100000) + ".tmp3";
 							try {
 								GZIPInputStream in = new GZIPInputStream(new FileInputStream(filename));
 								FileOutputStream out = new FileOutputStream(tmpfile3); // decompressed file
@@ -695,12 +694,12 @@ public class VersionsActivity extends BaseActivity {
 
 								boolean renameOk = new File(tmpfile3).renameTo(maybeDecompressed);
 								if (!renameOk) {
-									throw new RuntimeException("Failed to rename!"); //$NON-NLS-1$
+									throw new RuntimeException("Failed to rename!");
 								}
 							} catch (Exception e) {
 								return null;
 							} finally {
-								Log.d(TAG, "menghapus tmpfile3: " + tmpfile3); //$NON-NLS-1$
+								Log.d(TAG, "menghapus tmpfile3: " + tmpfile3);
 								new File(tmpfile3).delete();
 							}
 							return maybeDecompressed;
@@ -713,12 +712,15 @@ public class VersionsActivity extends BaseActivity {
 						}
 					}.execute();
 				}
-			} else if (filename.toLowerCase(Locale.US).endsWith(".yes")) { //$NON-NLS-1$
+			} else if (filename.toLowerCase(Locale.US).endsWith(".yes")) {
 				handleFileOpenYes(filename);
-			} else if (filename.toLowerCase(Locale.US).endsWith(".pdb")) { //$NON-NLS-1$
+			} else if (filename.toLowerCase(Locale.US).endsWith(".pdb")) {
 				handleFileOpenPdb(filename);
 			} else {
-				Toast.makeText(App.context, R.string.ed_invalid_file_selected, Toast.LENGTH_SHORT).show();
+				new MaterialDialog.Builder(this)
+					.content(R.string.ed_invalid_file_selected)
+					.positiveText(R.string.ok)
+					.show();
 			}
 
 			return;

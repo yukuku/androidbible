@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
-import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -44,17 +43,14 @@ public class VersionConfigUpdaterService extends IntentService {
 	}
 
 	public void toast(final CharSequence s) {
-		handler.post(new Runnable() {
-			@Override
-			public void run() {
-				if (toast == null) {
-					toast = Toast.makeText(VersionConfigUpdaterService.this, s, Toast.LENGTH_SHORT);
-				} else {
-					toast.setText(s);
-				}
-
-				toast.show();
+		handler.post(() -> {
+			if (toast == null) {
+				toast = Toast.makeText(this, s, Toast.LENGTH_SHORT);
+			} else {
+				toast.setText(s);
 			}
+
+			toast.show();
 		});
 	}
 

@@ -12,7 +12,7 @@
 		android:background="?attr/colorPrimary" />
 
 	<yuku.alkitab.base.widget.TwofingerLinearLayout
-		android:id="@+id/devotion_root"
+		android:id="@+id/root"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
 

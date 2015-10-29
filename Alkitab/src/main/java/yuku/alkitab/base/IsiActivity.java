@@ -1173,7 +1173,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				.autoDismiss(true)
 				.show();
 		} else {
-			Toast.makeText(this, R.string.recentverses_not_available, Toast.LENGTH_SHORT).show();
+			Snackbar.make(root, R.string.recentverses_not_available, Snackbar.LENGTH_SHORT).show();
 		}
 	}
 

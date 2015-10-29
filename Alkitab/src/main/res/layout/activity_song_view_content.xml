@@ -21,7 +21,7 @@
 	</android.support.v7.widget.Toolbar>
 
 	<yuku.alkitab.base.widget.TwofingerLinearLayout
-		android:id="@+id/song_container"
+		android:id="@+id/root"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent" />
 
