@@ -26,6 +26,13 @@
     public <init>(android.content.Context, android.util.AttributeSet, int);
 }
 
+# used for support preferences
+-keep class * extends android.support.v7.preference.Preference {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+}
+
 # serializable used in yuku.kpri.* classes
 -keepnames class * implements java.io.Serializable
 
