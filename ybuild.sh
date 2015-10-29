@@ -138,10 +138,6 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 		sed -i '' 's/<category android:name="yuku.alkitab.debug"/<category android:name="'$BUILD_PACKAGE_NAME'"/' AndroidManifest.xml
 		sed -i '' 's/yuku.alkitab.debug.permission.C2D_MESSAGE/'$BUILD_PACKAGE_NAME'.permission.C2D_MESSAGE/' AndroidManifest.xml
 
-		if [ ! -f res/values/file_providers.xml ] ; then echo 'file_providers.xml does not exist!' ; exit 1 ; fi
-		echo "Replacing file provider name following package name: '$BUILD_PACKAGE_NAME.file_provider'"
-		sed -i '' 's/yuku.alkitab.debug.file_provider/'$BUILD_PACKAGE_NAME'.file_provider/' res/values/file_providers.xml
-
 		echo "Replacing sync provider name following package name: '$BUILD_PACKAGE_NAME.sync_provider'"
 		sed -i '' 's/yuku.alkitab.debug.sync_provider/'$BUILD_PACKAGE_NAME'.sync_provider/' res/values/sync_providers.xml
 

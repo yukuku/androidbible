@@ -383,13 +383,6 @@
 			android:exported="true"
 			tools:ignore="ExportedContentProvider" />
 
-		<!-- file provider for exporting markers -->
-		<provider
-			android:name="yuku.alkitab.base.cp.FileProvider"
-			android:authorities="@string/file_provider_authority"
-			android:exported="true"
-			tools:ignore="ExportedContentProvider" />
-
 		<receiver
 			android:name="yuku.alkitab.base.br.SecretSettingsReceiver"
 			tools:ignore="ExportedReceiver">
