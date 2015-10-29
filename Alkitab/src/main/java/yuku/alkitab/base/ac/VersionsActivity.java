@@ -451,9 +451,11 @@ public class VersionsActivity extends BaseActivity {
 
 			private void showResult(final String filenameyes, Throwable exception, List<String> wronglyConvertedBookNames) {
 				if (exception != null) {
+					App.trackEvent("versions_convert_pdb_error");
 					showPdbReadErrorDialog(exception);
 				} else {
-					// sukses.
+					// success.
+					App.trackEvent("versions_convert_pdb_success");
 					handleFileOpenYes(filenameyes);
 
 					if (wronglyConvertedBookNames != null && wronglyConvertedBookNames.size() > 0) {
@@ -519,6 +521,7 @@ public class VersionsActivity extends BaseActivity {
 			}
 		};
 
+		App.trackEvent("versions_convert_pdb_start");
 		ConvertOptionsDialog dialog = new ConvertOptionsDialog(this, pdbFilename, callback);
 		dialog.show();
 	}
@@ -707,13 +710,16 @@ public class VersionsActivity extends BaseActivity {
 						@Override protected void onPostExecute(File result) {
 							pd.dismiss();
 
+							App.trackEvent("versions_open_yes_gz");
 							handleFileOpenYes(result.getAbsolutePath());
 						}
 					}.execute();
 				}
 			} else if (filename.toLowerCase(Locale.US).endsWith(".yes")) { //$NON-NLS-1$
+				App.trackEvent("versions_open_yes");
 				handleFileOpenYes(filename);
 			} else if (filename.toLowerCase(Locale.US).endsWith(".pdb")) { //$NON-NLS-1$
+				App.trackEvent("versions_open_pdb");
 				handleFileOpenPdb(filename);
 			} else {
 				Toast.makeText(App.context, R.string.ed_invalid_file_selected, Toast.LENGTH_SHORT).show();

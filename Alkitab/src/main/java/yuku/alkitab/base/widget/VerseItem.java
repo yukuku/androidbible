@@ -189,6 +189,7 @@ public class VerseItem extends LinearLayout implements Checkable {
 				return true;
 
 			case DragEvent.ACTION_DROP:
+				App.trackEvent("pin_drop");
 				final ClipData.Item item = event.getClipData().getItemAt(0);
 				final int preset_id = Integer.parseInt(item.getText().toString());
 

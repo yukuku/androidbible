@@ -120,19 +120,32 @@ public class AboutActivity extends BaseActivity {
 		tAboutTextDesc = V.get(this, R.id.tAboutTextDesc);
 
 		bHelp = V.get(this, R.id.bHelp);
-		bHelp.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.bibleforandroid.com/guide?utm_source=app&utm_medium=button&utm_campaign=help"))));
+		bHelp.setOnClickListener(v -> {
+			App.trackEvent("help_button_announcement");
+			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.bibleforandroid.com/guide?utm_source=app&utm_medium=button&utm_campaign=help")));
+		});
 
 		bMaterialSources = V.get(this, R.id.bMaterialSources);
-		bMaterialSources.setOnClickListener(v -> startActivity(HelpActivity.createIntent("help/material_sources.html", getString(R.string.about_material_sources))));
+		bMaterialSources.setOnClickListener(v -> {
+			App.trackEvent("help_button_material_sources");
+			startActivity(HelpActivity.createIntent("help/material_sources.html", getString(R.string.about_material_sources)));
+		});
 
 		bCredits = V.get(this, R.id.bCredits);
-		bCredits.setOnClickListener(v -> startActivity(HelpActivity.createIntent("help/credits.html", getString(R.string.about_credits))));
+		bCredits.setOnClickListener(v -> {
+			App.trackEvent("help_button_credits");
+			startActivity(HelpActivity.createIntent("help/credits.html", getString(R.string.about_credits)));
+		});
 
 		bFeedback = V.get(this, R.id.bFeedback);
-		bFeedback.setOnClickListener(v -> startActivity(new Intent(App.context, com.example.android.wizardpager.MainActivity.class)));
+		bFeedback.setOnClickListener(v -> {
+			App.trackEvent("help_button_feedback");
+			startActivity(new Intent(App.context, com.example.android.wizardpager.MainActivity.class));
+		});
 
 		bEnableBeta = V.get(this, R.id.bEnableBeta);
-		bEnableBeta.setOnClickListener(v ->
+		bEnableBeta.setOnClickListener(v -> {
+				App.trackEvent("help_button_enable_beta");
 				new MaterialDialog.Builder(this)
 					.content(R.string.about_enable_beta_confirmation)
 					.positiveText(R.string.ok)
@@ -147,7 +160,8 @@ public class AboutActivity extends BaseActivity {
 							}
 						}
 					})
-					.show()
+					.show();
+			}
 		);
 
 		// already in beta?
