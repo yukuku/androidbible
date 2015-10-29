@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.SwitchCompat;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
@@ -21,7 +22,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.PopupMenu;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import yuku.afw.V;
@@ -44,7 +44,7 @@ import yuku.alkitab.debug.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class LeftDrawer extends ScrollView {
+public abstract class LeftDrawer extends NestedScrollView {
 
 	// mandatory
 	TextView bBible;
@@ -559,7 +559,7 @@ public abstract class LeftDrawer extends ScrollView {
 			void setDescription(CharSequence description);
 		}
 
-		ScrollView scrollDescription;
+		NestedScrollView scrollDescription;
 		TextView tDescription;
 		View bRestart;
 
