@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.ac.AlertDialogActivity;
 import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.storage.YesReaderFactory;
@@ -110,7 +111,11 @@ public class VersionDownloadCompleteReceiver extends BroadcastReceiver {
 			pfd.close();
 		} catch (IOException e) {
 			Log.e(TAG, "I/O error when saving downloaded version", e);
-			Toast.makeText(context, "I/O error when saving downloaded version", Toast.LENGTH_SHORT).show(); // TODO proper msg
+			context.startActivity(
+				AlertDialogActivity.createOkIntent(null, context.getString(R.string.version_download_saving_io_error))
+					.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+			);
+			App.getLbm().sendBroadcast(new Intent(VersionsActivity.VersionListFragment.ACTION_RELOAD));
 			return;
 		} finally {
 			DownloadMapper.instance.remove(id);
@@ -120,7 +125,11 @@ public class VersionDownloadCompleteReceiver extends BroadcastReceiver {
 		if (reader == null) {
 			new File(destPath).delete();
 
-			Toast.makeText(context, R.string.version_download_corrupted_file, Toast.LENGTH_SHORT).show(); // TODO proper msg
+			context.startActivity(
+				AlertDialogActivity.createOkIntent(null, context.getString(R.string.version_download_corrupted_file))
+					.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+			);
+			App.getLbm().sendBroadcast(new Intent(VersionsActivity.VersionListFragment.ACTION_RELOAD));
 			return;
 		}
 
@@ -146,7 +155,10 @@ public class VersionDownloadCompleteReceiver extends BroadcastReceiver {
 		Toast.makeText(App.context, TextUtils.expandTemplate(context.getText(R.string.version_download_complete), mvDb.longName), Toast.LENGTH_LONG).show();
 
 		if ("ta".equals(mvDb.locale) || "te".equals(mvDb.locale) || "my".equals(mvDb.locale) || "el".equals(mvDb.locale)) {
-			Toast.makeText(App.context, R.string.version_download_need_fonts, Toast.LENGTH_SHORT).show(); // TODO proper msg
+			context.startActivity(
+				AlertDialogActivity.createOkIntent(null, context.getString(R.string.version_download_need_fonts))
+					.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+			);
 		}
 
 		App.getLbm().sendBroadcast(new Intent(VersionsActivity.VersionListFragment.ACTION_RELOAD));

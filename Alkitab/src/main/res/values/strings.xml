@@ -361,6 +361,8 @@
 
 	<string name="version_download_need_fonts">"The version downloaded might need to be displayed with certain fonts. Go to the 'Text appearance' menu and select a font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
     <string name="version_download_corrupted_file">Downloaded file seems to be corrupt.</string>
+    <string name="version_download_saving_io_error">I/O error when saving downloaded version</string>
+
     <string name="menuNightMode">Night mode</string>
     <string name="highlight_custom_color">Other colors</string>
     <string name="menu_compare">Compare</string>

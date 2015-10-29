@@ -369,6 +369,11 @@
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
 			android:icon="@drawable/ic_attr_note"
 			android:windowSoftInputMode="adjustResize" />
+		<activity
+			android:name="yuku.alkitab.base.ac.AlertDialogActivity"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+			android:excludeFromRecents="true"
+			android:theme="@style/Theme.PopupActivity" />
 
 		<service android:name="yuku.alkitab.base.sv.DownloadService" />
 
