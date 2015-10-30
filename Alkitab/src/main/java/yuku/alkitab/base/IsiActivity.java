@@ -591,7 +591,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		if (selectVerse) {
 			for (int i = 0; i < selectVerseCount; i++) {
 				final int verse_1 = Ari.toVerse(openingAri) + i;
-				lsSplit0.callAttentionForVerse(verse_1);
+				callAttentionForVerseToBothSplits(verse_1);
 			}
 		}
 
@@ -600,6 +600,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		Announce.checkAnnouncements();
 
 		App.getLbm().registerReceiver(needsRestartReceiver, new IntentFilter(ACTION_NEEDS_RESTART));
+	}
+
+	void callAttentionForVerseToBothSplits(final int verse_1) {
+		lsSplit0.callAttentionForVerse(verse_1);
+		if (activeSplitVersion != null) {
+			lsSplit1.callAttentionForVerse(verse_1);
+		}
 	}
 
 	final BroadcastReceiver needsRestartReceiver = new BroadcastReceiver() {
@@ -966,7 +973,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		// call attention to the verse only if the displayed verse is equal to the requested verse
 		if (ari == Ari.encode(this.activeBook.bookId, ari_cv)) {
-			lsSplit0.callAttentionForVerse(Ari.toVerse(ari));
+			callAttentionForVerseToBothSplits(Ari.toVerse(ari));
 		}
 	}
 
@@ -1497,7 +1504,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 					// call attention to the verse only if the displayed verse is equal to the requested verse
 					if (Ari.encode(0, result.chapter_1, result.verse_1) == ari_cv) {
-						lsSplit0.callAttentionForVerse(result.verse_1);
+						callAttentionForVerseToBothSplits(result.verse_1);
 					}
 				} else {
 					// change book
@@ -1512,7 +1519,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 					// select the verse only if the displayed verse is equal to the requested verse
 					if (Ari.encode(result.bookId, result.chapter_1, result.verse_1) == Ari.encode(this.activeBook.bookId, ari_cv)) {
-						lsSplit0.callAttentionForVerse(result.verse_1);
+						callAttentionForVerseToBothSplits(result.verse_1);
 					}
 				}
 
