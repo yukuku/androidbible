@@ -81,10 +81,10 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 	}
 
 	@Override
-	protected void onNeededPermissionsGranted() {
-		super.onNeededPermissionsGranted();
+	protected void onNeededPermissionsGranted(final boolean immediatelyGranted) {
+		super.onNeededPermissionsGranted(immediatelyGranted);
 
-		if (dls != null) {
+		if (!immediatelyGranted && dls != null) {
 			loadFontList();
 		}
 	}

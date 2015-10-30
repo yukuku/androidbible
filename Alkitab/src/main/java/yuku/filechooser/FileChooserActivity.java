@@ -67,10 +67,12 @@ public class FileChooserActivity extends BaseActivity {
     }
 
 	@Override
-	protected void onNeededPermissionsGranted() {
-		super.onNeededPermissionsGranted();
+	protected void onNeededPermissionsGranted(final boolean immediatelyGranted) {
+		super.onNeededPermissionsGranted(immediatelyGranted);
 
-		init();
+		if (!immediatelyGranted) {
+			init();
+		}
 	}
 
 	private AdapterView.OnItemClickListener lsFile_itemClick = (parent, view, position, id) -> {

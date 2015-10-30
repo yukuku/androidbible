@@ -141,15 +141,18 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 				ActivityCompat.requestPermissions(this, Array(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), REQCODE_PERMISSION_storage);
 			}
 		} else {
-			onNeededPermissionsGranted();
+			onNeededPermissionsGranted(true);
 		}
 	}
 
 	/**
 	 * Override this to do something after we confirm that all needed permissions are granted.
 	 * This is only called if {@link #willNeedStoragePermission()} was called.
+	 * @param immediatelyGranted whether the permission is granted immediately without leaving the first onCreate().
+	 *                           Use this to determine whether we need to do initialization (e.g. load dir contents)
+	 *                           and to determine whether it is safe to init now.
 	 */
-	protected void onNeededPermissionsGranted() {
+	protected void onNeededPermissionsGranted(boolean immediatelyGranted) {
 	}
 
 	@Override
@@ -164,7 +167,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 			}
 
 			if (allGranted) {
-				onNeededPermissionsGranted();
+				onNeededPermissionsGranted(false);
 			} else {
 				if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 					|| !ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
