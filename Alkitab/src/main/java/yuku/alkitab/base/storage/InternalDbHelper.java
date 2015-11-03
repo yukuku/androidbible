@@ -75,8 +75,19 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		// }
 
 		if (oldVersion <= 50) {
-			// new table Version
-			createTableEdisi(db);
+			// recreate a temporary old-style table "Edisi"
+			// This will later be converted in version 14000166
+			db.execSQL("create table if not exists Edisi (" +
+				"_id integer primary key autoincrement, " +
+				"shortName text, " +
+				"judul text, " +
+				"jenis text, " +
+				"keterangan text, " +
+				"namafile text, " +
+				"namafile_pdbasal text, " +
+				"aktif integer, " +
+				"urutan integer)"
+			);
 		}
 
 		if (oldVersion <= 69) { // 70: 2.0.0
@@ -125,7 +136,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			createIndexReadingPlanProgress(db);
 		}
 
-		if (oldVersion < 14000163) { // last version that doesn't use Marker table
+		if (oldVersion < 14000163) { // 4.0.0-beta1: last version that doesn't use Marker table
 			addGidColumnToLabelIfNeeded(db);
 
 			createTableMarker(db);
@@ -136,7 +147,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			convertFromBookmark2ToMarker(db);
 		}
 
-		if (oldVersion < 14000166) { // last version that doesn't use the new Version table
+		if (oldVersion < 14000166) { // 4.0.0-beta5: last version that doesn't use the new Version table
 			createTableVersion(db);
 			createIndexVersion(db);
 			convertFromEdisiToVersion(db);
@@ -215,19 +226,6 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	private void createIndexDevotion(SQLiteDatabase db) {
 		db.execSQL("create index if not exists index_Devotion_01 on " + Table.Devotion.tableName() + " (" + Table.Devotion.name + ", " + Table.Devotion.date + ", " + Table.Devotion.dataFormatVersion + ")");
 		db.execSQL("create index if not exists index_Devotion_02 on " + Table.Devotion.tableName() + " (" + Table.Devotion.touchTime + ")");
-	}
-
-	private void createTableEdisi(SQLiteDatabase db) {
-		db.execSQL("create table if not exists Edisi (" +
-		"_id integer primary key autoincrement, " +
-		"shortName text, " +
-		"judul text, " +
-		"jenis text, " +
-		"keterangan text, " +
-		Db.Version.filename + "namafile text, " +
-		"namafile_pdbasal text, " +
-		"aktif integer, " +
-		"urutan integer)");
 	}
 
 	void createTableVersion(SQLiteDatabase db) {
