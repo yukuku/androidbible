@@ -34,6 +34,7 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.devotion.ArticleMeidA;
 import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
+import yuku.alkitab.base.devotion.ArticleRefheart;
 import yuku.alkitab.base.devotion.ArticleRenunganHarian;
 import yuku.alkitab.base.devotion.ArticleRoc;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
@@ -134,6 +135,17 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 			@Override
 			public String getShareUrl(final SimpleDateFormat format, final Date date) {
 				return "http://www.bibleforandroid.com/renunganpagi/" + yyyymmdd.get().format(date).substring(4);
+			}
+		},
+		REFHEART("refheart", "Reforming Heart", "STEMI Pemuda") {
+			@Override
+			public DevotionArticle getArticle(final String date) {
+				return new ArticleRefheart(date);
+			}
+
+			@Override
+			public String getShareUrl(final SimpleDateFormat format, final Date date) {
+				return null; // TODO create redirect url
 			}
 		},
 		ROC("roc", "My Utmost (B. Indonesia)", "Oswald Chambers") {
