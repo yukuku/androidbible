@@ -32,6 +32,9 @@ public abstract class DevotionArticle {
 		URLSpan[] spans = sb.getSpans(0, sb.length(), URLSpan.class);
 		for (URLSpan oldSpan: spans) {
 			String url = oldSpan.getURL();
+			if (url.startsWith("http:") || url.startsWith("https:")) {
+				continue; // do not change web links
+			}
 			CallbackSpan<String> newSpan = new CallbackSpan<>(url, verseClickListener);
 			sb.setSpan(newSpan, sb.getSpanStart(oldSpan), sb.getSpanEnd(oldSpan), 0);
 			sb.removeSpan(oldSpan);
