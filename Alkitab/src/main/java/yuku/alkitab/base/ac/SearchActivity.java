@@ -6,10 +6,13 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.util.Log;
+import android.util.Pair;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +37,7 @@ import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.base.util.Debouncer;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.SearchEngine;
@@ -50,7 +54,7 @@ import java.util.List;
 
 public class SearchActivity extends BaseActivity {
 	public static final String TAG = SearchActivity.class.getSimpleName();
-	
+
 	private static final String EXTRA_openedBookId = "openedBookId";
 	private static int REQCODE_bookFilter = 1;
 
@@ -67,6 +71,31 @@ public class SearchActivity extends BaseActivity {
 	CheckBox cFilterSingleBook;
 	TextView tFilterAdvanced;
 	View bEditFilter;
+
+	Debouncer<String, Pair<IntArrayList, String[]>> searchDebouncer = new Debouncer<String, Pair<IntArrayList, String[]>>(200) {
+		@Override
+		public Pair<IntArrayList, String[]> process(String query_string) {
+			synchronized (SearchActivity.this) {
+				String[] tokens = QueryTokenizer.tokenize(query_string);
+				SearchEngine.Query query = getQuery();
+				if (usingRevIndex()) {
+					return new Pair<>(SearchEngine.searchByRevIndex(searchInVersion, query), tokens);
+				} else {
+					return new Pair<>(SearchEngine.searchByGrep(searchInVersion, query), tokens);
+				}
+			}
+		}
+
+		@Override
+		public void onResult(Pair<IntArrayList, String[]> result) {
+			//If no token passed, display empty view
+			if(result.second == null || result.second.length == 0) {
+				lsSearchResults.setAdapter(adapter = null);
+			} else {
+				lsSearchResults.setAdapter(adapter = new SearchAdapter(result.first, result.second));
+			}
+		}
+	};
 
 	int hiliteColor;
 	SparseBooleanArray selectedBookIds = new SparseBooleanArray();
@@ -202,6 +231,7 @@ public class SearchActivity extends BaseActivity {
 			@Override
 			public boolean onQueryTextChange(String newText) {
 				searchHistoryAdapter.setQuery(newText);
+				searchDebouncer.submit(newText);
 				return false;
 			}
 		});
@@ -229,7 +259,7 @@ public class SearchActivity extends BaseActivity {
 		lsSearchResults.setCacheColorHint(S.applied.backgroundColor);
 		lsSearchResults.setEmptyView(empty);
 		Appearances.applyTextAppearance(tSearchTips);
-		
+
 		hiliteColor = U.getSearchKeywordTextColorByBrightness(S.applied.backgroundBrightness);
 
 		lsSearchResults.setOnItemClickListener((parent, view, position, id) -> {
@@ -320,7 +350,7 @@ public class SearchActivity extends BaseActivity {
 		Boolean olds = null;
 		Boolean news = null;
 		int oneOfThemOn = -1;
-		
+
 		{
 			int c_on = 0, c_off = 0;
 			for (int i = 0; i < 39; i++) {
@@ -330,7 +360,7 @@ public class SearchActivity extends BaseActivity {
 			if (c_on == 39) olds = true;
 			if (c_off == 39) olds = false;
 		}
-		
+
 		{
 			int c_on = 0, c_off = 0;
 			for (int i = 39; i < 66; i++) {
@@ -340,7 +370,7 @@ public class SearchActivity extends BaseActivity {
 			if (c_on == 27) news = true;
 			if (c_off == 27) news = false;
 		}
-		
+
 		{
 			int c = 0;
 			int k = 0;
@@ -355,7 +385,7 @@ public class SearchActivity extends BaseActivity {
 				oneOfThemOn = k;
 			}
 		}
-		
+
 		filterUserAction++; {
 			if (olds != null && news != null) {	// both are either true or false
 				cFilterOlds.setVisibility(View.VISIBLE);
@@ -406,45 +436,45 @@ public class SearchActivity extends BaseActivity {
 	private CompoundButton.OnCheckedChangeListener cFilterOlds_checkedChange = new CompoundButton.OnCheckedChangeListener() {
 		@Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			if (filterUserAction != 0) return;
-			
+
 			filterUserAction++; {
 				if (isChecked) {
 					cFilterSingleBook.setVisibility(View.VISIBLE);
 					cFilterSingleBook.setChecked(false);
 					tFilterAdvanced.setVisibility(View.GONE);
 				}
-				
+
 				setSelectedBookIdsBasedOnFilter();
 			} filterUserAction--;
 		}
 	};
-	
+
 	private CompoundButton.OnCheckedChangeListener cFilterNews_checkedChange = new CompoundButton.OnCheckedChangeListener() {
 		@Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			if (filterUserAction != 0) return;
-			
+
 			filterUserAction++; {
 				if (isChecked) {
 					cFilterSingleBook.setVisibility(View.VISIBLE);
 					cFilterSingleBook.setChecked(false);
 					tFilterAdvanced.setVisibility(View.GONE);
 				}
-				
+
 				setSelectedBookIdsBasedOnFilter();
 			} filterUserAction--;
 		}
 	};
-	
+
 	private CompoundButton.OnCheckedChangeListener cFilterSingleBook_checkedChange = new CompoundButton.OnCheckedChangeListener() {
 		@Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			if (filterUserAction != 0) return;
-			
+
 			filterUserAction++; {
 				if (isChecked) {
 					cFilterOlds.setChecked(false);
 					cFilterNews.setChecked(false);
 				}
-				
+
 				setSelectedBookIdsBasedOnFilter();
 			} filterUserAction--;
 		}
@@ -460,9 +490,9 @@ public class SearchActivity extends BaseActivity {
 
 					if (selectedVersion == null) {
 						new AlertDialogWrapper.Builder(SearchActivity.this)
-							.setMessage(getString(R.string.version_error_opening, mv.longName))
-							.setPositiveButton(R.string.ok, null)
-							.show();
+								.setMessage(getString(R.string.version_error_opening, mv.longName))
+								.setPositiveButton(R.string.ok, null)
+								.show();
 						return;
 					}
 
@@ -488,7 +518,7 @@ public class SearchActivity extends BaseActivity {
 			if (cFilterSingleBook.isChecked()) selectedBookIds.put(openedBookId, true);
 		}
 	}
-	
+
 	protected SearchEngine.Query getQuery() {
 		SearchEngine.Query res = new SearchEngine.Query();
 		res.query_string = searchView.getQuery().toString();
@@ -519,25 +549,24 @@ public class SearchActivity extends BaseActivity {
 		if (query_string.trim().length() == 0) {
 			return;
 		}
-		
+
 		{ // check if there is anything chosen
 			int firstSelected = selectedBookIds.indexOfValue(true);
 			if (firstSelected < 0) {
 				new AlertDialogWrapper.Builder(this)
-					.setMessage(R.string.pilih_setidaknya_satu_kitab)
-					.setPositiveButton(R.string.ok, null)
-					.show();
+						.setMessage(R.string.pilih_setidaknya_satu_kitab)
+						.setPositiveButton(R.string.ok, null)
+						.show();
 				return;
 			}
 		}
-		
+
 		final String[] tokens = QueryTokenizer.tokenize(query_string);
 
 		final MaterialDialog pd = new MaterialDialog.Builder(this)
-			.content(getString(R.string.search_searching_tokens, Arrays.toString(tokens)))
-			.cancelable(false)
-			.progress(true, 0)
-			.show();
+				.content(getString(R.string.search_searching_tokens, Arrays.toString(tokens)))
+				.cancelable(false)
+				.progress(true, 0).build();
 
 		new AsyncTask<Void, Void, IntArrayList>() {
 			@Override protected IntArrayList doInBackground(Void... params) {
@@ -597,7 +626,7 @@ public class SearchActivity extends BaseActivity {
 						tSearchTips.setOnClickListener(null);
 					}
 				}
-				
+
 				pd.setOnDismissListener(null);
 				pd.dismiss();
 			}
@@ -673,7 +702,7 @@ public class SearchActivity extends BaseActivity {
 	class SearchAdapter extends EasyAdapter {
 		IntArrayList searchResults;
 		String[] tokens;
-		
+
 		public SearchAdapter(IntArrayList searchResults, String[] tokens) {
 			this.searchResults = searchResults;
 			this.tokens = tokens;
@@ -683,15 +712,15 @@ public class SearchActivity extends BaseActivity {
 		public int getCount() {
 			return searchResults.size();
 		}
-		
+
 		@Override public View newView(int position, ViewGroup parent) {
 			return getLayoutInflater().inflate(R.layout.item_search_result, parent, false);
 		}
-		
+
 		@Override public void bindView(View view, int position, ViewGroup parent) {
 			TextView lReference = V.get(view, R.id.lReference);
 			TextView lSnippet = V.get(view, R.id.lSnippet);
-			
+
 			int ari = searchResults.get(position);
 
 			final SpannableStringBuilder sb = new SpannableStringBuilder(searchInVersion.reference(ari));
@@ -706,7 +735,7 @@ public class SearchActivity extends BaseActivity {
 
 			Appearances.applyTextAppearance(lSnippet);
 		}
-		
+
 		IntArrayList getSearchResults() {
 			return searchResults;
 		}
