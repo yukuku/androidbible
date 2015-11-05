@@ -6,12 +6,10 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
 import android.util.SparseBooleanArray;
 import android.view.View;
@@ -54,7 +52,6 @@ import java.util.List;
 
 public class SearchActivity extends BaseActivity {
 	public static final String TAG = SearchActivity.class.getSimpleName();
-
 	private static final String EXTRA_openedBookId = "openedBookId";
 	private static int REQCODE_bookFilter = 1;
 
@@ -490,9 +487,9 @@ public class SearchActivity extends BaseActivity {
 
 					if (selectedVersion == null) {
 						new AlertDialogWrapper.Builder(SearchActivity.this)
-								.setMessage(getString(R.string.version_error_opening, mv.longName))
-								.setPositiveButton(R.string.ok, null)
-								.show();
+							.setMessage(getString(R.string.version_error_opening, mv.longName))
+							.setPositiveButton(R.string.ok, null)
+							.show();
 						return;
 					}
 
@@ -554,9 +551,9 @@ public class SearchActivity extends BaseActivity {
 			int firstSelected = selectedBookIds.indexOfValue(true);
 			if (firstSelected < 0) {
 				new AlertDialogWrapper.Builder(this)
-						.setMessage(R.string.pilih_setidaknya_satu_kitab)
-						.setPositiveButton(R.string.ok, null)
-						.show();
+					.setMessage(R.string.pilih_setidaknya_satu_kitab)
+					.setPositiveButton(R.string.ok, null)
+					.show();
 				return;
 			}
 		}
