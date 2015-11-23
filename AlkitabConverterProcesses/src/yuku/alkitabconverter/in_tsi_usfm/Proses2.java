@@ -26,10 +26,8 @@ import java.util.Stack;
 public class Proses2 {
 	final SAXParserFactory factory = SAXParserFactory.newInstance();
 
-	static String INPUT_BOOK_NAMES = "../../../bahan-alkitab/in-tsi/in/in-tsi-usfm-kitab.txt";
-	static String INPUT_TEXT_2 = "../../../bahan-alkitab/in-tsi/mid/";
-	static String OUTPUT_YET = "../../../bahan-alkitab/in-tsi/in-tsi.yet";
-	static String OUTPUT_INTERNAL_DIR = "../../../bahan-alkitab/in-tsi/raw/";
+	static String OUTPUT_YET = "/tmp/in-tsi/in-tsi.yet";
+	static String OUTPUT_INTERNAL_DIR = "/tmp/in-tsi/raw/";
 	static String INFO_LOCALE = "in";
 	static String INFO_SHORT_NAME = "TSI";
 	static String INFO_LONG_NAME = "Terjemahan Sederhana Indonesia";
@@ -46,10 +44,13 @@ public class Proses2 {
 	}
 
 	public static void main(String[] args) throws Exception {
-		new Proses2().u();
+		new Proses2().u(args);
 	}
 
-	public void u() throws Exception {
+	public void u(final String[] args) throws Exception {
+		final String INPUT_TEXT_2 = args[0];
+		final String INPUT_BOOK_NAMES = args[1]; //"../../../bahan-alkitab/in-tsi/in/in-tsi-usfm-kitab.txt";
+
 		String[] files = new File(INPUT_TEXT_2).list(new FilenameFilter() {
 			@Override public boolean accept(File dir, String name) {
 				return name.endsWith("-utf8.usfx.xml");
@@ -94,7 +95,7 @@ public class Proses2 {
 
 		{
 			File outDir = new File(OUTPUT_INTERNAL_DIR);
-			outDir.mkdir();
+			outDir.mkdirs();
 			InternalCommon.createInternalFiles(outDir, "tsi", InternalCommon.fileToBookNames(INPUT_BOOK_NAMES), teksDb.toRecList(), pericopeData, xrefDb, footnoteDb);
 		}
 

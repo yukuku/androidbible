@@ -8,15 +8,16 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 
 public class Proses1 {
-	static String INPUT_TEXT_1_DIR = "../../../bahan-alkitab/in-tsi/in/";
 	static String INPUT_TEXT_ENCODING = "utf-8";
-	static final String MID_DIR = "../../../bahan-alkitab/in-tsi/mid/";
 
 	public static void main(String[] args) throws Exception {
-		new Proses1().u();
+		new Proses1().u(args);
 	}
 
-	private void u() throws Exception {
+	private void u(final String[] args) throws Exception {
+		final String INPUT_TEXT_1_DIR = args[0];
+		final String MID_DIR = args[1];
+
 		for (final File inputFile : new File(INPUT_TEXT_1_DIR).listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(final File dir, final String name) {
@@ -49,8 +50,11 @@ public class Proses1 {
 			splitFile.close();
 		}
 
-		String[] usfms = new File(MID_DIR).list(new FilenameFilter() {
-			@Override public boolean accept(File parent, String name) {
+		final File midFile = new File(MID_DIR);
+		midFile.mkdirs();
+		String[] usfms = midFile.list(new FilenameFilter() {
+			@Override
+			public boolean accept(File parent, String name) {
 				return (name.endsWith("-utf8.usfm"));
 			}
 		});
