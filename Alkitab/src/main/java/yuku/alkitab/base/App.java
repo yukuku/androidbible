@@ -3,9 +3,9 @@ package yuku.alkitab.base;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.support.multidex.MultiDex;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ViewConfiguration;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -137,10 +137,15 @@ public class App extends yuku.afw.App {
 		final FeedbackSender fs = FeedbackSender.getInstance(context);
 		fs.trySend();
 
-		PreferenceManager.setDefaultValues(context, R.xml.settings_display, false);
-		PreferenceManager.setDefaultValues(context, R.xml.settings_usage, false);
-		PreferenceManager.setDefaultValues(context, R.xml.secret_settings, false);
-		PreferenceManager.setDefaultValues(context, R.xml.sync_settings, false);
+		for (final int preferenceResId : new int[]{
+			R.xml.settings_display,
+			R.xml.settings_usage,
+			R.xml.settings_copy_share,
+			R.xml.secret_settings,
+			R.xml.sync_settings,
+		}) {
+			PreferenceManager.setDefaultValues(context, preferenceResId, false);
+		}
 
 		updateConfigurationWithPreferencesLocale();
 

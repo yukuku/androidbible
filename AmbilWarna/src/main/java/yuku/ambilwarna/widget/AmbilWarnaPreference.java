@@ -100,7 +100,7 @@ public class AmbilWarnaPreference extends Preference {
 	}
 
 	/**
-	 * SavedState, a subclass of {@link android.preference.Preference.BaseSavedState}, will store the state
+	 * SavedState, a subclass of {@link android.support.v7.preference.Preference.BaseSavedState}, will store the state
 	 * of MyPreference, a subclass of Preference.
 	 * <p>
 	 * It is important to always call through to super methods.
