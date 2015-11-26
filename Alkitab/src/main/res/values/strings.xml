@@ -29,6 +29,7 @@
     <string name="tulis_catatan">Write note</string>
     <string name="tambah_pembatas_buku">Add bookmark</string>
     <string name="salin_ayat">Copy verse</string>
+    <string name="search_copy_selected_verses">Copy selected verses</string>
     <string name="perj_baru">New Test.</string>
     <string name="perj_lama">Old Test.</string>
     <string name="search_bookname_only">%s only</string>
@@ -87,6 +88,8 @@
     <string name="pdb_encoding">PDB encoding</string>
     <string name="sample_text">Sample text</string>
     <string name="include_book_and_chapter_headers">Include book and chapter headers</string>
+    <string name="select_all">Select all</string>
+
     <string name="cp_opening_pdb_file">Opening PDB file</string>
     <string name="cp_loading_version_info">Loading version info</string>
     <string name="cp_loading_word_index">Loading word index</string>

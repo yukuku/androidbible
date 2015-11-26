@@ -110,7 +110,14 @@ public class SearchActivity extends BaseActivity {
 
 				@Override
 				public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
-					if (item.getItemId() == R.id.menuCopy) {
+					final int itemId = item.getItemId();
+					if (itemId == R.id.menuSelectAll) {
+						for (int i = 0, size = adapter.getCount(); i < size; i++) {
+							lsSearchResults.setItemChecked(i, true);
+						}
+						onCheckedVerseChanged();
+
+					} else if (itemId == R.id.menuCopy) {
 						final SpannableStringBuilder sb = new SpannableStringBuilder();
 
 						final IntArrayList aris = adapter.getSearchResults();
@@ -125,13 +132,15 @@ public class SearchActivity extends BaseActivity {
 
 							final int sb_len = sb.length();
 							sb.append(reference).append("\n").append(verseText).append("\n\n");
-							sb.setSpan(new UnderlineSpan(), sb_len, sb_len + reference.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+							if (size < 1000) { // too much spans is very slow
+								sb.setSpan(new UnderlineSpan(), sb_len, sb_len + reference.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+							}
 						}
 
 						U.copyToClipboard(sb);
 						Snackbar.make(root, R.string.search_selected_verse_copied, Snackbar.LENGTH_SHORT).show();
 
-						uncheckAllVerses();
 						mode.finish();
 						return true;
 					}
@@ -140,6 +149,7 @@ public class SearchActivity extends BaseActivity {
 
 				@Override
 				public void onDestroyActionMode(final ActionMode mode) {
+					uncheckAllVerses();
 					actionMode = null;
 				}
 			});
