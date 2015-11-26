@@ -7,19 +7,27 @@ import android.database.MatrixCursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.graphics.ColorUtils;
+import android.support.v4.widget.CursorAdapter;
+import android.support.v7.view.ActionMode;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.UnderlineSpan;
 import android.util.SparseBooleanArray;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.CursorAdapter;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -56,6 +64,7 @@ public class SearchActivity extends BaseActivity {
 
 	final String COLUMN_QUERY_STRING = "query_string";
 
+	View root;
 	TextView bVersion;
 	SearchView searchView;
 	ListView lsSearchResults;
@@ -75,6 +84,92 @@ public class SearchActivity extends BaseActivity {
 	Version searchInVersion;
 	String searchInVersionId;
 	SearchHistoryAdapter searchHistoryAdapter;
+	ActionMode actionMode;
+
+	final AdapterView.OnItemLongClickListener lsSearchResults_itemLongClick = (parent, view, position, id) -> {
+		if (actionMode == null) {
+			actionMode = startSupportActionMode(new ActionMode.Callback() {
+				@Override
+				public boolean onCreateActionMode(final ActionMode mode, final Menu menu) {
+					getMenuInflater().inflate(R.menu.context_search, menu);
+					return true;
+				}
+
+				@Override
+				public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
+					final int checked_count = lsSearchResults.getCheckedItemCount();
+
+					if (checked_count == 1) {
+						mode.setTitle(R.string.verse_select_one_verse_selected);
+					} else {
+						mode.setTitle(getString(R.string.verse_select_multiple_verse_selected, checked_count));
+					}
+
+					return true;
+				}
+
+				@Override
+				public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
+					if (item.getItemId() == R.id.menuCopy) {
+						final SpannableStringBuilder sb = new SpannableStringBuilder();
+
+						final IntArrayList aris = adapter.getSearchResults();
+						final SparseBooleanArray checkeds = lsSearchResults.getCheckedItemPositions();
+						for (int i = 0, size = checkeds.size(); i < size; i++) {
+							if (!checkeds.valueAt(i)) continue;
+							final int position = checkeds.keyAt(i);
+							final int ari = aris.get(position);
+
+							final String reference = searchInVersion.reference(ari);
+							final String verseText = U.removeSpecialCodes(searchInVersion.loadVerseText(ari));
+
+							final int sb_len = sb.length();
+							sb.append(reference).append("\n").append(verseText).append("\n\n");
+							sb.setSpan(new UnderlineSpan(), sb_len, sb_len + reference.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+						}
+
+						U.copyToClipboard(sb);
+						Snackbar.make(root, R.string.search_selected_verse_copied, Snackbar.LENGTH_SHORT).show();
+
+						uncheckAllVerses();
+						mode.finish();
+						return true;
+					}
+					return false;
+				}
+
+				@Override
+				public void onDestroyActionMode(final ActionMode mode) {
+					actionMode = null;
+				}
+			});
+		}
+
+		final boolean old = lsSearchResults.isItemChecked(position);
+		lsSearchResults.setItemChecked(position, !old);
+
+		onCheckedVerseChanged();
+
+		return true;
+	};
+
+	private void uncheckAllVerses() {
+		final SparseBooleanArray checkeds = lsSearchResults.getCheckedItemPositions();
+		for (int i = checkeds.size() - 1; i >= 0; i--) {
+			if (checkeds.valueAt(i)) lsSearchResults.setItemChecked(checkeds.keyAt(i), false);
+		}
+	}
+
+	private void onCheckedVerseChanged() {
+		adapter.notifyDataSetChanged();
+		if (actionMode != null) {
+			if (lsSearchResults.getCheckedItemCount() == 0) {
+				actionMode.finish();
+			} else {
+				actionMode.invalidate();
+			}
+		}
+	}
 
 	static class SearchHistory {
 		public static class Entry {
@@ -144,6 +239,7 @@ public class SearchActivity extends BaseActivity {
 
 		setContentView(R.layout.activity_search);
 
+		root = V.get(this, R.id.root);
 		lsSearchResults = V.get(this, R.id.lsSearchResults);
 		tSearchTips = V.get(this, R.id.tSearchTips);
 		panelFilter = V.get(this, R.id.panelFilter);
@@ -231,10 +327,19 @@ public class SearchActivity extends BaseActivity {
 		
 		hiliteColor = U.getSearchKeywordTextColorByBrightness(S.applied.backgroundBrightness);
 
+		lsSearchResults.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
 		lsSearchResults.setOnItemClickListener((parent, view, position, id) -> {
-			int ari = adapter.getSearchResults().get(position);
-			startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
+			if (actionMode != null) {
+				// By default setItemChecked will be called when action mode is on.
+				// We just need to invalidate the view and the selected verse count.
+				onCheckedVerseChanged();
+			} else {
+				final int ari = adapter.getSearchResults().get(position);
+				startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
+			}
 		});
+		lsSearchResults.setOnItemLongClickListener(lsSearchResults_itemLongClick);
+
 		bEditFilter.setOnClickListener(v -> bEditFilter_click());
 		cFilterOlds.setOnCheckedChangeListener(cFilterOlds_checkedChange);
 		cFilterNews.setOnCheckedChangeListener(cFilterNews_checkedChange);
@@ -556,6 +661,11 @@ public class SearchActivity extends BaseActivity {
 					result = new IntArrayList(); // empty result
 				}
 
+				if (actionMode != null) {
+					actionMode.finish();
+				}
+
+				uncheckAllVerses();
 				lsSearchResults.setAdapter(adapter = new SearchAdapter(result, tokens));
 
 				if (result.size() > 0) {
@@ -688,22 +798,49 @@ public class SearchActivity extends BaseActivity {
 		}
 		
 		@Override public void bindView(View view, int position, ViewGroup parent) {
-			TextView lReference = V.get(view, R.id.lReference);
-			TextView lSnippet = V.get(view, R.id.lSnippet);
-			
-			int ari = searchResults.get(position);
+			final boolean checked = lsSearchResults.isItemChecked(position);
+			final int checkedBgColor;
+			final int checkedTextColor;
+
+			if (checked) {
+				final int colorRgb = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default);
+				checkedBgColor = ColorUtils.setAlphaComponent(colorRgb, 0xa0);
+				checkedTextColor = U.getTextColorForSelectedVerse(checkedBgColor);
+			} else {
+				// no need to calculate
+				checkedBgColor = 0;
+				checkedTextColor = 0;
+			}
+
+			final TextView lReference = V.get(view, R.id.lReference);
+			final TextView lSnippet = V.get(view, R.id.lSnippet);
+
+			final int ari = searchResults.get(position);
 
 			final SpannableStringBuilder sb = new SpannableStringBuilder(searchInVersion.reference(ari));
 			Appearances.applySearchResultReferenceAppearance(lReference, sb);
+			if (checked) {
+				lReference.setTextColor(checkedTextColor);
+			}
+
+			Appearances.applyTextAppearance(lSnippet);
+			if (checked) {
+				lSnippet.setTextColor(checkedTextColor);
+			}
 
 			final String verseText = U.removeSpecialCodes(searchInVersion.loadVerseText(ari));
 			if (verseText != null) {
-				lSnippet.setText(SearchEngine.hilite(verseText, tokens, hiliteColor));
+				lSnippet.setText(SearchEngine.hilite(verseText, tokens, checked? checkedTextColor: hiliteColor));
 			} else {
 				lSnippet.setText(R.string.generic_verse_not_available_in_this_version);
 			}
 
-			Appearances.applyTextAppearance(lSnippet);
+
+			if (checked) {
+				view.setBackgroundColor(checkedBgColor);
+			} else {
+				view.setBackgroundColor(0x0);
+			}
 		}
 		
 		IntArrayList getSearchResults() {

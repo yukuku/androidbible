@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout android:id="@+id/root"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
@@ -33,12 +35,11 @@
 
 	</android.support.v7.widget.Toolbar>
 
-	<android.widget.SearchView
+	<android.support.v7.widget.SearchView
 		android:id="@+id/searchView"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:iconifiedByDefault="false"
-		android:orientation="horizontal" />
+		app:iconifiedByDefault="false" />
 
 	<include
 		android:id="@+id/panelFilter"

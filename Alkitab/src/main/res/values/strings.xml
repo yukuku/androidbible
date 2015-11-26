@@ -62,6 +62,7 @@
     <string name="mengunduh_nama">Downloading %s</string>
     <string name="tuju_v">Go to</string>
     <string name="bagikan_alamat">Share %s</string>
+    <string name="search_selected_verse_copied">The selected verses have been copied.</string>
     <string name="alamat_sudah_disalin">%s has been copied.</string>
     <string name="alamat_tidak_sah_alamat">Invalid address: %s</string>
     <string name="no">No</string>

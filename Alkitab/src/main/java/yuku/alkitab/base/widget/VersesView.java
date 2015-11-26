@@ -314,14 +314,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	void hideOrShowContextMenuButton() {
 		if (verseSelectionMode != VerseSelectionMode.multiple) return;
 		
-		SparseBooleanArray checkedPositions = getCheckedItemPositions();
-		boolean anyChecked = false;
-		if (checkedPositions != null) for (int i = 0; i < checkedPositions.size(); i++) if (checkedPositions.valueAt(i)) {
-			anyChecked = true;
-			break;
-		}
-		
-		if (anyChecked) {
+		if (getCheckedItemCount() > 0) {
 			if (listener != null) listener.onSomeVersesSelected(this);
 		} else {
 			if (listener != null) listener.onNoVersesSelected(this);
