@@ -59,7 +59,6 @@ public class SearchActivity extends BaseActivity {
 	TextView bVersion;
 	SearchView searchView;
 	ListView lsSearchResults;
-	View empty;
 	TextView tSearchTips;
 	View panelFilter;
 	CheckBox cFilterOlds;
@@ -146,7 +145,6 @@ public class SearchActivity extends BaseActivity {
 		setContentView(R.layout.activity_search);
 
 		lsSearchResults = V.get(this, R.id.lsSearchResults);
-		empty = V.get(this, android.R.id.empty);
 		tSearchTips = V.get(this, R.id.tSearchTips);
 		panelFilter = V.get(this, R.id.panelFilter);
 		cFilterOlds = V.get(this, R.id.cFilterOlds);
@@ -224,10 +222,11 @@ public class SearchActivity extends BaseActivity {
 			tSearchTips.setText(sb);
 		}
 
-		empty.setBackgroundColor(S.applied.backgroundColor);
+		tSearchTips.setBackgroundColor(S.applied.backgroundColor);
+
 		lsSearchResults.setBackgroundColor(S.applied.backgroundColor);
 		lsSearchResults.setCacheColorHint(S.applied.backgroundColor);
-		lsSearchResults.setEmptyView(empty);
+		lsSearchResults.setEmptyView(tSearchTips);
 		Appearances.applyTextAppearance(tSearchTips);
 		
 		hiliteColor = U.getSearchKeywordTextColorByBrightness(S.applied.backgroundBrightness);
