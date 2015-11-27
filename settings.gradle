@@ -1,1 +1,1 @@
-include ':Alkitab', ':AlkitabModel', ':AlkitabFeedback', ':AlkitabIntegration', ':AlkitabIo', ':AlkitabYes2', ':BiblePlus', ':DragSortListView', ':KpriModel', ':BintexWriter', ':Snappy', ':BintexReader', ':Afw', ':FlowLayout', ':AmbilWarna', ':FileChooser', ':ATree', ':ImportedDesktopVerseUtil'
+include ':Alkitab', ':AlkitabModel', ':AlkitabFeedback', ':AlkitabIntegration', ':AlkitabIo', ':AlkitabYes2', ':BiblePlus', ':DragSortListView', ':KpriModel', ':BintexWriter', ':Snappy', ':BintexReader', ':Afw', ':FlowLayout', ':AmbilWarna', ':ATree', ':ImportedDesktopVerseUtil'

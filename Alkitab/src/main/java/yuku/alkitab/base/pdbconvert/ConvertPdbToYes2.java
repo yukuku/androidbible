@@ -74,19 +74,19 @@ public class ConvertPdbToYes2 {
 			progress(0, context.getString(R.string.cp_opening_pdb_file));
 			pdb_ = new BiblePlusPDB(new PDBFileStream(filenamepdb), Tabs.hebrewTab, Tabs.greekTab);
 			if (params.inputEncoding != null) pdb_.setEncoding(params.inputEncoding);
-			Log.d(TAG, "Encoding used: " + params.inputEncoding); //$NON-NLS-1$
+			Log.d(TAG, "Encoding used: " + params.inputEncoding);
 			progress(10, context.getString(R.string.cp_loading_version_info));
 			pdb_.loadVersionInfo();
 			progress(20, context.getString(R.string.cp_loading_word_index));
 			pdb_.loadWordIndex();
 			
-			Log.d(TAG, "============ done reading pdb version info"); //$NON-NLS-1$
+			Log.d(TAG, "============ done reading pdb version info");
 			
-			Log.d(TAG, "pdb versionName: " + pdb_.getVersionName()); //$NON-NLS-1$
-			Log.d(TAG, "pdb encoding: " + pdb_.getEncoding()); //$NON-NLS-1$
+			Log.d(TAG, "pdb versionName: " + pdb_.getVersionName());
+			Log.d(TAG, "pdb encoding: " + pdb_.getEncoding());
 			
 			int nbook = pdb_.getBookCount();
-			Log.d(TAG, "pdb getBookCount = " + nbook); //$NON-NLS-1$
+			Log.d(TAG, "pdb getBookCount = " + nbook);
 			
 			progress(30, context.getString(R.string.cp_analyzing_available_books));
 			{
@@ -96,11 +96,11 @@ public class ConvertPdbToYes2 {
 					int bookNumber = pdbBookInfo.getBookNumber();
 					int bookId = PdbBookNumberToBookIdMapping.pdbBookNumberToBookId(bookNumber);
 					if (bookId < 0) {
-						Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL"); //$NON-NLS-1$ //$NON-NLS-2$
+						Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL");
 						if (res.wronglyConvertedBookNames == null) {
 							res.wronglyConvertedBookNames = new ArrayList<>();
 						}
-						res.wronglyConvertedBookNames.add(pdbBookInfo.getFullName() + " (" + bookNumber + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+						res.wronglyConvertedBookNames.add(pdbBookInfo.getFullName() + " (" + bookNumber + ")");
 					}
 				}
 				bookIdToPdbBookPosMap_ = new TIntIntHashMap();
@@ -114,22 +114,22 @@ public class ConvertPdbToYes2 {
 				int pdbBookNumber = pdbBookInfo.getBookNumber();
 				int bookId = PdbBookNumberToBookIdMapping.pdbBookNumberToBookId(pdbBookNumber);
 				if (bookId < 0) {
-					Log.w(TAG, "pdbBookNumber " + pdbBookNumber + " NOT KNOWN"); //$NON-NLS-1$ //$NON-NLS-2$
+					Log.w(TAG, "pdbBookNumber " + pdbBookNumber + " NOT KNOWN");
 				} else {
 					if (bookIdToPdbBookPosMap_.containsKey(bookId)) {
 						// just a warning of duplicate
 						if (res.wronglyConvertedBookNames == null) {
 							res.wronglyConvertedBookNames = new ArrayList<>();
 						}
-						res.wronglyConvertedBookNames.add(pdbBookInfo.getFullName() + " (" + pdbBookNumber + "): duplicate"); //$NON-NLS-1$ //$NON-NLS-2$
+						res.wronglyConvertedBookNames.add(pdbBookInfo.getFullName() + " (" + pdbBookNumber + "): duplicate");
 					}
 					bookIdToPdbBookPosMap_.put(bookId, bookPos);
 				}
 			}
 			
-			Log.d(TAG, "bookIdToPdbBookPosMap_ (size " + bookIdToPdbBookPosMap_.size() + ") = " + bookIdToPdbBookPosMap_.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			Log.d(TAG, "bookIdToPdbBookPosMap_ (size " + bookIdToPdbBookPosMap_.size() + ") = " + bookIdToPdbBookPosMap_.toString());
 
-			Log.d(TAG, "============ done reading list of books"); //$NON-NLS-1$
+			Log.d(TAG, "============ done reading list of books");
 			
 
 			final int[] sortedBookIds = bookIdToPdbBookPosMap_.keys();
@@ -156,7 +156,7 @@ public class ConvertPdbToYes2 {
 			yesWriter.sections.add(lazyText);
 			
 			progress(700, context.getString(R.string.cp_writing_translated_file));
-			RandomOutputStream output = new RandomAccessFileRandomOutputStream(new RandomAccessFile(yesFilename, "rw")); //$NON-NLS-1$
+			RandomOutputStream output = new RandomAccessFileRandomOutputStream(new RandomAccessFile(yesFilename, "rw"));
 			
 			yesWriter.writeToFile(output);
 			output.close();
@@ -164,7 +164,7 @@ public class ConvertPdbToYes2 {
 			pdb_.close();
 		} catch (Throwable e) {
 			pdb_ = null;
-			Log.e(TAG, "Error reading pdb: ", e); //$NON-NLS-1$
+			Log.e(TAG, "Error reading pdb: ", e);
 			res.exception = e;
 		}
 		finish();
@@ -224,7 +224,7 @@ public class ConvertPdbToYes2 {
 				}
 				b.chapter_offsets[chapter_0 + 1] = offsetPassed;
 			}
-			Log.d(TAG, "book " + b.shortName + " (pdbBookNumber=" + pdbBookInfo.getBookNumber() + ", bookId=" + bookId + ") chapter_offsets: " + Arrays.toString(b.chapter_offsets));  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			Log.d(TAG, "book " + b.shortName + " (pdbBookNumber=" + pdbBookInfo.getBookNumber() + ", bookId=" + bookId + ") chapter_offsets: " + Arrays.toString(b.chapter_offsets));
 
 			yes2books.add(b);
 			
@@ -234,7 +234,7 @@ public class ConvertPdbToYes2 {
 		}
 		
 		if (yes2books.size() != bookIdToPdbBookPosMap_.size()) {
-			throw new RuntimeException("Some internal error, res size != bookIdToPdbBookPosMap_ size"); //$NON-NLS-1$
+			throw new RuntimeException("Some internal error, res size != bookIdToPdbBookPosMap_ size");
 		}
 		
 		BooksInfoSection res = new BooksInfoSection();
@@ -264,17 +264,17 @@ public class ConvertPdbToYes2 {
 			boolean prependAtAt = false;
 			
 			// look for 0x0e 'n' 0x0e
-			if (s.contains("\u000en\u000e")) { //$NON-NLS-1$
+			if (s.contains("\u000en\u000e")) {
 				prependAtAt = true;
-				s = s.replaceAll("\\s*\u000en\u000e\\s*", "@8"); //$NON-NLS-1$ //$NON-NLS-2$
+				s = s.replaceAll("\\s*\u000en\u000e\\s*", "@8");
 			}
 			
 			boolean startingItalic = true;
 			while (true) {
-				int pos = s.indexOf("\u000eb\u000e"); //$NON-NLS-1$
+				int pos = s.indexOf("\u000eb\u000e");
 				if (pos > 0) {
 					prependAtAt = true;
-					String tag = startingItalic ? "@9" : "@7"; //$NON-NLS-1$ //$NON-NLS-2$
+					String tag = startingItalic ? "@9" : "@7";
 					s = s.substring(0, pos) + tag + s.substring(pos + 3); // TODO remove extraneous spaces
 					startingItalic = !startingItalic;
 				} else {
@@ -283,7 +283,7 @@ public class ConvertPdbToYes2 {
 			}
 			
 			if (prependAtAt) {
-				s = "@@" + s; //$NON-NLS-1$
+				s = "@@" + s;
 			}
 			
 			ss[i] = s;

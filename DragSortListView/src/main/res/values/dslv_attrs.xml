@@ -12,7 +12,6 @@
       <enum name="slideRight" value="3" />
       <enum name="slideLeft" value="4" />
     </attr>
-    <attr name="track_drag_sort" format="boolean"/>
     <attr name="float_alpha" format="float"/>
     <attr name="slide_shuffle_speed" format="float"/>
     <attr name="remove_animation_duration" format="integer"/>

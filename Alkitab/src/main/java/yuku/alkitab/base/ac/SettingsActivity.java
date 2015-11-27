@@ -1,20 +1,27 @@
 package yuku.alkitab.base.ac;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.preference.CheckBoxPreference;
+import android.support.v7.preference.ListPreference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
+import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
-import yuku.alkitab.base.ac.base.BasePreferenceActivity;
+import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
 import yuku.alkitab.base.util.ChangeLanguageHelper;
@@ -22,58 +29,97 @@ import yuku.alkitab.base.util.OtherAppIntegration;
 import yuku.alkitab.base.widget.VerseItem;
 import yuku.alkitab.debug.R;
 
-import java.util.List;
+public class SettingsActivity extends BaseActivity {
+	private static final String EXTRA_subClassName = "subClassName";
 
-import static yuku.alkitab.base.util.Literals.List;
+	static class Header {
+		int titleResId;
+		Class<? extends PreferenceFragmentCompat> clazz;
+		Intent clickIntent;
 
-public class SettingsActivity extends BasePreferenceActivity {
-	public List<String> VALID_FRAGMENT_NAMES = List(
-		DisplayFragment.class.getName(),
-		UsageFragment.class.getName(),
-		CopyShareFragment.class.getName()
-	);
-	Header firstHeaderWithFragment;
+		public Header(final int titleResId, final Class<? extends PreferenceFragmentCompat> clazz, final Intent clickIntent) {
+			this.titleResId = titleResId;
+			this.clazz = clazz;
+			this.clickIntent = clickIntent;
+		}
+	}
+
+	static Header[] headers = {
+		new Header(R.string.pref_sync_title, null, new Intent(App.context, SyncSettingsActivity.class)),
+		new Header(R.string.pref_penampilan_layar, DisplayFragment.class, null),
+		new Header(R.string.pref_penggunaan, UsageFragment.class, null),
+		new Header(R.string.pref_copy_share, CopyShareFragment.class, null),
+	};
+
+	RecyclerView lsHeaders;
+	HeadersAdapter headersAdapter;
 
 	public static Intent createIntent() {
 		return new Intent(App.context, SettingsActivity.class);
 	}
 
+	private static Intent createSubIntent(Class<? extends PreferenceFragmentCompat> subClass) {
+		return new Intent(App.context, SettingsActivity.class)
+			.putExtra(EXTRA_subClassName, subClass.getName());
+	}
+
 	@Override
-	public void onBuildHeaders(final List<Header> target) {
-		super.onBuildHeaders(target);
+	protected void onCreate(final Bundle savedInstanceState) {
+		super.enableNonToolbarUpButton();
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_settings);
 
-		loadHeadersFromResource(R.xml.settings_headers, target);
-
-		// look for first header with a fragment
-		for (final Header header : target) {
-			if (header.fragment != null) {
-				firstHeaderWithFragment = header;
-				break;
-			}
+		final String subClassName = getIntent().getStringExtra(EXTRA_subClassName);
+		if (subClassName == null) {
+			lsHeaders = V.get(this, R.id.lsHeaders);
+			lsHeaders.setLayoutManager(new LinearLayoutManager(this));
+			lsHeaders.setAdapter(headersAdapter = new HeadersAdapter());
+		} else {
+			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			ft.replace(R.id.fragment_container, Fragment.instantiate(this, subClassName), subClassName);
+			ft.commit();
 		}
+	}
 
-		for (final Header header : target) {
-			if (header.id == R.id.header_id_sync) {
-				header.intent = new Intent(App.context, SyncSettingsActivity.class);
-			}
+	static class VH extends RecyclerView.ViewHolder {
+		public VH(final View itemView) {
+			super(itemView);
 		}
 	}
 
-	@Override
-	public Header onGetInitialHeader() {
-		return firstHeaderWithFragment;
-	}
+	class HeadersAdapter extends RecyclerView.Adapter<VH> {
+		final TypedValue tv = new TypedValue();
 
-	@Override
-	protected boolean isValidFragment(final String fragmentName) {
-		return VALID_FRAGMENT_NAMES.contains(fragmentName);
-	}
-
-	public static class DisplayFragment extends PreferenceFragment {
 		@Override
-		public void onCreate(final Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
+		public VH onCreateViewHolder(final ViewGroup parent, final int viewType) {
+			final View v = getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
+			getTheme().resolveAttribute(R.attr.selectableItemBackground, tv, true);
+			v.setBackgroundResource(tv.resourceId);
+			return new VH(v);
+		}
 
+		@Override
+		public void onBindViewHolder(final VH holder, final int position) {
+			final Header header = headers[position];
+			((TextView) holder.itemView).setText(header.titleResId);
+			holder.itemView.setOnClickListener(v -> {
+				if (header.clickIntent != null) {
+					startActivity(header.clickIntent);
+				} else if (header.clazz != null) {
+					startActivity(createSubIntent(header.clazz));
+				}
+			});
+		}
+
+		@Override
+		public int getItemCount() {
+			return headers.length;
+		}
+	}
+
+	public static class DisplayFragment extends PreferenceFragmentCompat {
+		@Override
+		public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 			addPreferencesFromResource(R.xml.settings_display);
 
 			final ListPreference pref_language = (ListPreference) findPreference(getString(R.string.pref_language_key));
@@ -86,9 +132,7 @@ public class SettingsActivity extends BasePreferenceActivity {
 					ChangeLanguageHelper.notifyLocaleChanged();
 
 					// restart this activity
-					final Activity ac = getActivity();
-					ac.finish();
-					startActivity(ac.getIntent());
+					getActivity().recreate();
 				});
 				return true;
 			});
@@ -118,11 +162,9 @@ public class SettingsActivity extends BasePreferenceActivity {
 		}
 	}
 
-	public static class UsageFragment extends PreferenceFragment {
+	public static class UsageFragment extends PreferenceFragmentCompat {
 		@Override
-		public void onCreate(final Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-
+		public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 			addPreferencesFromResource(R.xml.settings_usage);
 
 			final ListPreference pref_volumeButtonNavigation = (ListPreference) findPreference(getString(R.string.pref_volumeButtonNavigation_key));
@@ -162,11 +204,9 @@ public class SettingsActivity extends BasePreferenceActivity {
 		}
 	}
 
-	public static class CopyShareFragment extends PreferenceFragment {
+	public static class CopyShareFragment extends PreferenceFragmentCompat {
 		@Override
-		public void onCreate(final Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-
+		public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 			addPreferencesFromResource(R.xml.settings_copy_share);
 		}
 	}

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
@@ -261,9 +260,6 @@ public class TextAppearancePanel {
 			
 			if (position < 3) {
 				final String[] defaultFontNames = {"Roboto", "Droid Serif", "Droid Mono"};
-				if (Build.VERSION.SDK_INT < 14) {
-					defaultFontNames[0] = "Droid Sans";
-				}
 
 				text1.setText(defaultFontNames[position]);
 				text1.setTypeface(new Typeface[] {Typeface.SANS_SERIF, Typeface.SERIF, Typeface.MONOSPACE}[position]);

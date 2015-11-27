@@ -1,32 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.percent.PercentFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:padding="@dimen/padding_small"
-	android:scrollbarStyle="outsideOverlay">
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:gravity="center_horizontal"
+	android:orientation="vertical">
 
-	<LinearLayout
-		android:id="@+id/scrollRoot"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:gravity="center_horizontal"
-		android:orientation="vertical">
+	<!--suppress AndroidDomInspection -->
+	<FrameLayout
+		android:layout_width="match_parent"
+		app:layout_heightPercent="15%"
+		app:layout_marginTopPercent="0%">
 
 		<Spinner
 			android:id="@+id/cbBook"
-			android:layout_width="wrap_content"
+			android:layout_width="300dp"
 			android:layout_height="wrap_content"
-			android:minWidth="300dp"
+			android:layout_gravity="center_horizontal|bottom"
 			tools:listitem="@android:layout/simple_spinner_dropdown_item" />
 
+	</FrameLayout>
+
+	<!--suppress AndroidDomInspection -->
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:orientation="vertical"
+		app:layout_heightPercent="15%"
+		app:layout_marginTopPercent="15%">
+
 		<LinearLayout
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:gravity="center_vertical|center_horizontal"
-			android:minHeight="48sp"
-			android:orientation="horizontal"
-			android:paddingTop="8dp">
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1"
+			android:gravity="center"
+			android:orientation="horizontal">
 
 			<TextView
 				android:id="@+id/tChapterLabel"
@@ -38,19 +46,14 @@
 
 			<TextView
 				android:id="@+id/tChapter"
-				android:layout_width="wrap_content"
-				android:layout_height="fill_parent"
-				android:layout_marginBottom="4dp"
-				android:layout_marginTop="4dp"
+				android:layout_width="64dp"
+				android:layout_height="64dp"
 				android:focusable="true"
 				android:fontFamily="sans-serif-light"
-				android:gravity="center_vertical|center_horizontal"
-				android:minHeight="48sp"
-				android:minWidth="48sp"
-				android:text="1"
+				android:gravity="center"
 				android:textAppearance="?android:attr/textAppearanceLarge"
 				android:textSize="24sp"
-				tools:ignore="HardcodedText" />
+				tools:text="123" />
 
 			<TextView
 				android:id="@+id/tVerseLabel"
@@ -63,30 +66,153 @@
 
 			<TextView
 				android:id="@+id/tVerse"
-				android:layout_width="wrap_content"
-				android:layout_height="fill_parent"
-				android:layout_marginBottom="4dp"
-				android:layout_marginTop="4dp"
+				android:layout_width="64dp"
+				android:layout_height="64dp"
 				android:focusable="true"
 				android:fontFamily="sans-serif-light"
-				android:gravity="center_vertical|center_horizontal"
-				android:minHeight="48sp"
-				android:minWidth="48sp"
-				android:text="2"
+				android:gravity="center"
 				android:textAppearance="?android:attr/textAppearanceLarge"
 				android:textSize="24sp"
-				tools:ignore="HardcodedText" />
+				tools:text="123" />
 		</LinearLayout>
 
-		<include
-			layout="@layout/keypad"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" />
-
-		<include
-			layout="@layout/buttonbar_ok"
+		<ImageView
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content" />
+			android:layout_height="1dp"
+			android:src="#1effffff"
+			android:layout_marginLeft="32dp"
+			android:layout_marginRight="32dp" />
 	</LinearLayout>
 
-</ScrollView>
+	<!--suppress AndroidDomInspection -->
+	<android.support.percent.PercentFrameLayout
+		android:layout_width="match_parent"
+		android:orientation="vertical"
+		app:layout_heightPercent="70%"
+		app:layout_marginTopPercent="30%"
+		tools:ignore="HardcodedText,SpUsage">
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bDigit1"
+			style="@style/KeypadButton"
+			android:text="1"
+			app:layout_heightPercent="25%"
+			app:layout_marginLeftPercent="0%"
+			app:layout_widthPercent="33.3%" />
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bDigit2"
+			style="@style/KeypadButton"
+			android:text="2"
+			app:layout_heightPercent="25%"
+			app:layout_marginLeftPercent="33.3%"
+			app:layout_widthPercent="33.3%" />
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bDigit3"
+			style="@style/KeypadButton"
+			android:text="3"
+			app:layout_heightPercent="25%"
+			app:layout_marginLeftPercent="66.7%"
+			app:layout_widthPercent="33.3%" />
+
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bDigit4"
+			style="@style/KeypadButton"
+			android:text="4"
+			app:layout_heightPercent="25%"
+			app:layout_marginLeftPercent="0%"
+			app:layout_marginTopPercent="25%"
+			app:layout_widthPercent="33.3%" />
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bDigit5"
+			style="@style/KeypadButton"
+			android:text="5"
+			app:layout_heightPercent="25%"
+			app:layout_marginLeftPercent="33.3%"
+			app:layout_marginTopPercent="25%"
+			app:layout_widthPercent="33.3%" />
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bDigit6"
+			style="@style/KeypadButton"
+			android:text="6"
+			app:layout_heightPercent="25%"
+			app:layout_marginLeftPercent="66.7%"
+			app:layout_marginTopPercent="25%"
+			app:layout_widthPercent="33.3%" />
+
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bDigit7"
+			style="@style/KeypadButton"
+			android:text="7"
+			app:layout_heightPercent="25%"
+			app:layout_marginLeftPercent="0%"
+			app:layout_marginTopPercent="50%"
+			app:layout_widthPercent="33.3%" />
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bDigit8"
+			style="@style/KeypadButton"
+			android:text="8"
+			app:layout_heightPercent="25%"
+			app:layout_marginLeftPercent="33.3%"
+			app:layout_marginTopPercent="50%"
+			app:layout_widthPercent="33.3%" />
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bDigit9"
+			style="@style/KeypadButton"
+			android:text="9"
+			app:layout_heightPercent="25%"
+			app:layout_marginLeftPercent="66.7%"
+			app:layout_marginTopPercent="50%"
+			app:layout_widthPercent="33.3%" />
+
+
+		<!--suppress AndroidDomInspection -->
+		<ImageButton
+			android:id="@+id/bDigitBackspace"
+			style="@style/KeypadButton"
+			android:src="@drawable/ic_keypad_backspace"
+			app:layout_heightPercent="25%"
+			app:layout_marginLeftPercent="0%"
+			app:layout_marginTopPercent="75%"
+			app:layout_widthPercent="33.3%" />
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bDigit0"
+			style="@style/KeypadButton"
+			android:text="0"
+			app:layout_heightPercent="25%"
+			app:layout_marginLeftPercent="33.3%"
+			app:layout_marginTopPercent="75%"
+			app:layout_widthPercent="33.3%" />
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bOk"
+			android:textSize="16sp"
+			android:text="@string/ok"
+			style="?buttonBarButtonStyle"
+			android:background="?selectableItemBackgroundBorderless"
+			app:layout_heightPercent="25%"
+			app:layout_marginLeftPercent="66.7%"
+			app:layout_marginTopPercent="75%"
+			app:layout_widthPercent="33.3%" />
+
+	</android.support.percent.PercentFrameLayout>
+</android.support.percent.PercentFrameLayout>

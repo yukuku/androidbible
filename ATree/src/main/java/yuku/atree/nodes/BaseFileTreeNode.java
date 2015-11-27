@@ -109,9 +109,9 @@ public abstract class BaseFileTreeNode extends BaseMutableTreeNode implements Co
 			String bname = b.getName();
 			
 			// dot-files are later
-			if (aname.startsWith(".") && !bname.startsWith(".")) { //$NON-NLS-1$ //$NON-NLS-2$
+			if (aname.startsWith(".") && !bname.startsWith(".")) {
 				return +1;
-			} else if (!aname.startsWith(".") && bname.startsWith(".")) { //$NON-NLS-1$ //$NON-NLS-2$
+			} else if (!aname.startsWith(".") && bname.startsWith(".")) {
 				return -1;
 			}
 			

@@ -10,7 +10,7 @@
 		<item name="actionModeStyle">@style/SmallerTitleActionModeStyle</item>
 	</style>
 
-	<style name="Theme.Alkitab.Goto.Base" parent="Theme.AppCompat.DialogWhenLarge">
+	<style name="Theme.Alkitab.DialogWhenLarge.Base" parent="Theme.AppCompat.DialogWhenLarge">
 		<item name="windowActionBar">false</item>
 		<item name="windowNoTitle">true</item>
 		<item name="android:windowNoTitle">true</item>
@@ -24,6 +24,7 @@
 	<style name="Theme.Alkitab.WithActionBar.AppCompat" parent="Theme.Alkitab.Base">
 		<item name="windowActionBar">true</item>
 		<item name="windowNoTitle">false</item>
+		<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
 	</style>
 
 	<style name="StandardWidthIndeterminateProgress" parent="@android:style/Widget.Holo.ProgressBar.Small">
@@ -49,4 +50,16 @@
         <item name="android:windowFrame">@null</item>
         <item name="android:windowActionBar">false</item>
     </style>
+
+	<style name="Theme.PopupActivity.Base" parent="Theme.Alkitab">
+		<item name="android:windowBackground">@android:color/transparent</item>
+		<item name="android:colorBackgroundCacheHint">@null</item>
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowAnimationStyle">@android:style/Animation</item>
+		<item name="android:windowNoTitle">true</item>
+		<item name="android:windowContentOverlay">@null</item>
+		<item name="android:windowFrame">@null</item>
+		<item name="windowActionBar">false</item>
+		<item name="android:windowActionBar">false</item>
+	</style>
 </resources>

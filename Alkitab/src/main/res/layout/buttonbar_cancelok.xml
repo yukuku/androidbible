@@ -11,7 +11,7 @@
 	android:showDividers="beginning">
 
 	<LinearLayout
-		style="?android:attr/buttonBarStyle"
+		style="?buttonBarStyle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:measureWithLargestChild="true"
@@ -20,7 +20,7 @@
 
 		<Button
 			android:id="@+id/bCancel"
-			style="?android:attr/buttonBarButtonStyle"
+			style="?buttonBarButtonStyle"
 			android:layout_width="0dip"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center_horizontal"
@@ -30,7 +30,7 @@
 
 		<Button
 			android:id="@+id/bOk"
-			style="?android:attr/buttonBarButtonStyle"
+			style="?buttonBarButtonStyle"
 			android:layout_width="0dip"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center_horizontal"

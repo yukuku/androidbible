@@ -29,6 +29,7 @@
     <string name="tulis_catatan">Write note</string>
     <string name="tambah_pembatas_buku">Add bookmark</string>
     <string name="salin_ayat">Copy verse</string>
+    <string name="search_copy_selected_verses">Copy selected verses</string>
     <string name="perj_baru">New Test.</string>
     <string name="perj_lama">Old Test.</string>
     <string name="search_bookname_only">%s only</string>
@@ -62,6 +63,7 @@
     <string name="mengunduh_nama">Downloading %s</string>
     <string name="tuju_v">Go to</string>
     <string name="bagikan_alamat">Share %s</string>
+    <string name="search_selected_verse_copied">The selected verses have been copied.</string>
     <string name="alamat_sudah_disalin">%s has been copied.</string>
     <string name="alamat_tidak_sah_alamat">Invalid address: %s</string>
     <string name="no">No</string>
@@ -86,6 +88,8 @@
     <string name="pdb_encoding">PDB encoding</string>
     <string name="sample_text">Sample text</string>
     <string name="include_book_and_chapter_headers">Include book and chapter headers</string>
+    <string name="select_all">Select all</string>
+
     <string name="cp_opening_pdb_file">Opening PDB file</string>
     <string name="cp_loading_version_info">Loading version info</string>
     <string name="cp_loading_word_index">Loading word index</string>
@@ -201,11 +205,15 @@
     <string name="verse_select_multiple_verse_selected">%s verses selected</string>
     <string name="google_play_store_not_installed">Google Play Store is not installed.</string>
     <string name="pref_language_label_default">Default</string>
+    <string name="market_short_desc">Fast, reliable and feature-rich offline Bible.</string>
+    <string name="no_url_for_facebook">This cannot be shared to Facebook.</string>
+    <string name="storage_permission_rationale">We need to access the storage to store shared media such as Bible versions and fonts.</string>
 
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Dialer</string>
     <string name="goto_tab_direct_label">Direct</string>
     <string name="goto_tab_grid_label">Grid</string>
+    <string name="menuAskForVerse">Ask for verse number</string>
 
     <!-- Font Manager -->
     <string name="fm_activity_title">Font Manager</string>
@@ -291,7 +299,7 @@
     <string name="pm_progress_4">Pin 4</string>
     <string name="pm_progress_5">Pin 5</string>
     <string name="pm_progress_name">Pin name</string>
-    <string name="pm_activate_tutorial">Long-press and drag to place a pin on a verse.</string>
+    <string name="pm_activate_tutorial">Long-press and drag the pin to place it on a verse.</string>
     <string name="pm_delete_progress_confirm">Remove <b>^1</b>?</string>
 
     <string name="copy_share">Copy or share</string>
@@ -358,6 +366,8 @@
 
 	<string name="version_download_need_fonts">"The version downloaded might need to be displayed with certain fonts. Go to the 'Text appearance' menu and select a font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
     <string name="version_download_corrupted_file">Downloaded file seems to be corrupt.</string>
+    <string name="version_download_saving_io_error">I/O error when saving downloaded version</string>
+
     <string name="menuNightMode">Night mode</string>
     <string name="highlight_custom_color">Other colors</string>
     <string name="menu_compare">Compare</string>
@@ -553,4 +563,6 @@
     <!-- Maps -->
     <string name="maps_could_not_open">Could not open the Bible Maps app.</string>
 
+    <!-- File chooser -->
+    <string name="filechooser_parent_folder">Parent folder</string>
 </resources>

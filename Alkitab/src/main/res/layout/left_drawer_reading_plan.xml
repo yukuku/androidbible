@@ -4,8 +4,10 @@
 	class="yuku.alkitab.base.widget.LeftDrawer$ReadingPlan"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="240dp"
+	android:id="@+id/left_drawer"
+	android:layout_width="@dimen/left_drawer_width"
 	android:layout_height="match_parent"
+	android:layout_gravity="start"
 	android:background="#263238"
 	android:elevation="4dp"
 	tools:ignore="Overdraw">
@@ -21,7 +23,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content" />
 
-		<ScrollView
+		<android.support.v4.widget.NestedScrollView
 			android:id="@+id/scrollDescription"
 			android:layout_width="match_parent"
 			android:layout_height="128dp">
@@ -34,11 +36,11 @@
 				android:textAppearance="?android:textAppearanceSmall"
 				tools:text="*Info Bla bla bla, bla bla, bla bla, bla bla, bla bla, blablabla, blablablabla." />
 
-		</ScrollView>
+		</android.support.v4.widget.NestedScrollView>
 
 		<Button
 			android:id="@+id/bRestart"
-			style="?android:buttonBarButtonStyle"
+			style="?buttonBarButtonStyle"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:drawableLeft="@drawable/ic_av_skip_previous"

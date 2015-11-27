@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-	<dimen name="song_keypad_button_width">60dp</dimen>
-	<dimen name="song_keypad_button_one_and_half_width">90dp</dimen>
-	<dimen name="song_keypad_button_double_width">120dp</dimen>
-
-	<style name="SongCodeKeypadButton" parent="@android:style/Widget.Holo.Button.Borderless">
-	    <item name="android:layout_width">@dimen/song_keypad_button_width</item>
-	    <item name="android:layout_height">48dp</item>
+	<style name="SongCodeKeypadButton">
+		<item name="android:background">?selectableItemBackgroundBorderless</item>
+	    <item name="android:layout_width">0dp</item>
+	    <item name="android:layout_weight">1</item>
+	    <item name="android:layout_height">56dp</item>
 	    <item name="android:textSize">22sp</item>
-	</style>
-
-	<style name="SongCodeKeypadButton.DoubleWidth" parent="@style/SongCodeKeypadButton">
-	    <item name="android:layout_width">@dimen/song_keypad_button_double_width</item>
 	</style>
 </resources>

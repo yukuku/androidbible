@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<item
+		android:id="@+id/menuSelectAll"
+		android:icon="@drawable/ic_action_content_select_all"
+		android:title="@string/select_all" />
+
+	<item
+		android:id="@+id/menuCopy"
+		android:icon="@drawable/ic_menu_copy"
+		android:title="@string/search_copy_selected_verses" />
+
+</menu>

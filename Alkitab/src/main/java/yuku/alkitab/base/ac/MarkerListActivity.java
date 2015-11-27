@@ -100,7 +100,8 @@ public class MarkerListActivity extends BaseActivity {
 	@SuppressLint("MissingSuperCall")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreateWithNonToolbarUpButton(savedInstanceState);
+		enableNonToolbarUpButton();
+		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_marker_list);
 

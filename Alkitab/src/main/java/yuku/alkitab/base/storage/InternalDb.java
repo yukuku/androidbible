@@ -21,7 +21,9 @@ import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.MarkerListActivity;
 import yuku.alkitab.base.devotion.ArticleMeidA;
 import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
+import yuku.alkitab.base.devotion.ArticleRefheart;
 import yuku.alkitab.base.devotion.ArticleRenunganHarian;
+import yuku.alkitab.base.devotion.ArticleRoc;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
 import yuku.alkitab.base.devotion.DevotionArticle;
 import yuku.alkitab.base.model.MVersion;
@@ -215,7 +217,7 @@ public class InternalDb {
 		final List<Marker> res = new ArrayList<>();
 		final Cursor c;
 		if (label_id == 0) { // no restrictions
-			c = db.query(Db.TABLE_Marker, null, Db.Marker.kind + "=?", new String[] {String.valueOf(kind.code)}, null, null, sortClause);
+			c = db.query(Db.TABLE_Marker, null, Db.Marker.kind + "=?", new String[]{String.valueOf(kind.code)}, null, null, sortClause);
 		} else if (label_id == MarkerListActivity.LABELID_noLabel) { // only without label
 			c = db.rawQuery("select " + Db.TABLE_Marker + ".* from " + Db.TABLE_Marker + " where " + Db.TABLE_Marker + "." + Db.Marker.kind + "=? and " + Db.TABLE_Marker + "." + Db.Marker.gid + " not in (select distinct " + Db.Marker_Label.marker_gid + " from " + Db.TABLE_Marker_Label + ") order by " + Db.TABLE_Marker + "." + sortClause, new String[] {String.valueOf(kind.code)});
 		} else { // filter by label_id
@@ -432,7 +434,7 @@ public class InternalDb {
 		// check if exists
 		final Cursor c = helper.getReadableDatabase().query(
 			Db.TABLE_Marker, null, Db.Marker.ari + ">? and " + Db.Marker.ari + "<=? and " + Db.Marker.kind + "=?",
-			new String[] {String.valueOf(ariMin), String.valueOf(ariMax), String.valueOf(Marker.Kind.highlight.code)},
+			new String[]{String.valueOf(ariMin), String.valueOf(ariMax), String.valueOf(Marker.Kind.highlight.code)},
 			null, null, null
 		);
 
@@ -526,8 +528,7 @@ public class InternalDb {
 	 * Try to get article from local db. Non ready-to-use article will be returned too.
 	 */
 	public DevotionArticle tryGetDevotion(String name, String date) {
-		final Cursor c = helper.getReadableDatabase().query(Table.Devotion.tableName(), null, Table.Devotion.name + "=? and " + Table.Devotion.date + "=? and " + Table.Devotion.dataFormatVersion + "=?", ToStringArray(name, date, 1), null, null, null);
-		try {
+		try (Cursor c = helper.getReadableDatabase().query(Table.Devotion.tableName(), null, Table.Devotion.name + "=? and " + Table.Devotion.date + "=? and " + Table.Devotion.dataFormatVersion + "=?", ToStringArray(name, date, 1), null, null, null)) {
 			final int col_body = c.getColumnIndexOrThrow(Table.Devotion.body.name());
 			final int col_readyToUse = c.getColumnIndexOrThrow(Table.Devotion.readyToUse.name());
 
@@ -549,12 +550,16 @@ public class InternalDb {
 				case MEID_A: {
 					return new ArticleMeidA(date, c.getString(col_body), c.getInt(col_readyToUse) > 0);
 				}
-				default:
-					return null;
+				case ROC: {
+					return new ArticleRoc(date, c.getString(col_body), c.getInt(col_readyToUse) > 0);
+				}
+				case REFHEART: {
+					return new ArticleRefheart(date, c.getString(col_body), c.getInt(col_readyToUse) > 0);
+				}
 			}
-		} finally {
-			c.close();
 		}
+
+		throw new RuntimeException("Should not be reachable");
 	}
 
 	public List<MVersionDb> listAllVersions() {

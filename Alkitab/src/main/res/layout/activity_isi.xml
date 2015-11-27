@@ -13,9 +13,5 @@
 	<!-- Your drawer view. As we have set fitSystemWindows=true
 		 this will be displayed under the status bar. -->
 	<include
-		layout="@layout/left_drawer_text"
-		android:id="@+id/left_drawer"
-		android:layout_width="240dp"
-		android:layout_height="match_parent"
-		android:layout_gravity="start"/>
+		layout="@layout/left_drawer_text" />
 </android.support.v4.widget.DrawerLayout>

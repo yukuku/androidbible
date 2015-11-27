@@ -117,7 +117,7 @@ public class ConvertOptionsDialog {
 		if (tabEncoding == null) {
 			for (Map.Entry<String, Charset> charset: Charset.availableCharsets().entrySet()) {
 				String key = charset.getKey();
-				Log.d(TAG, "available charset: " + key); //$NON-NLS-1$
+				Log.d(TAG, "available charset: " + key);
 				charsets.add(key);
 			}
 			
@@ -125,10 +125,10 @@ public class ConvertOptionsDialog {
 				@Override public int compare(String a, String b) {
 					int va = 0;
 					int vb = 0;
-					if (a.equalsIgnoreCase("utf-8")) va = -2; //$NON-NLS-1$
-					if (a.equalsIgnoreCase("iso-8859-1")) va = -1; //$NON-NLS-1$
-					if (b.equalsIgnoreCase("utf-8")) vb = -2; //$NON-NLS-1$
-					if (b.equalsIgnoreCase("iso-8859-1")) vb = -1; //$NON-NLS-1$
+					if (a.equalsIgnoreCase("utf-8")) va = -2;
+					if (a.equalsIgnoreCase("iso-8859-1")) va = -1;
+					if (b.equalsIgnoreCase("utf-8")) vb = -2;
+					if (b.equalsIgnoreCase("iso-8859-1")) vb = -1;
 					
 					if (va == 0 && vb == 0) {
 						return a.compareToIgnoreCase(b);
@@ -146,7 +146,7 @@ public class ConvertOptionsDialog {
 		encodingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		cbEncoding.setAdapter(encodingAdapter);
 		
-		showSample("utf-8"); // default! if greek or hebrew, this won't be cared! //$NON-NLS-1$
+		showSample("utf-8"); // default! if greek or hebrew, this won't be cared!
 		
 		cbEncoding.setOnItemSelectedListener(cbEncoding_itemSelected);
 	}
@@ -157,9 +157,9 @@ public class ConvertOptionsDialog {
 		String bookName = bookInfo.getFullName();
 		String verse = bookInfo.getVerse(1, 1);
 		if (verse.length() > 90) {
-			verse = verse.substring(0, 88) + "..."; //$NON-NLS-1$
+			verse = verse.substring(0, 88) + "...";
 		}
-		lSample.setText(bookName + " 1:1  " + verse); //$NON-NLS-1$
+		lSample.setText(bookName + " 1:1  " + verse);
 	}
 	
 	private OnItemSelectedListener cbEncoding_itemSelected = new OnItemSelectedListener() {

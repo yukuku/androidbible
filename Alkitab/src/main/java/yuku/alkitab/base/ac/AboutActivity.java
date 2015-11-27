@@ -4,11 +4,10 @@ import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
 import android.content.Intent;
 import android.content.Loader;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
@@ -180,13 +179,7 @@ public class AboutActivity extends BaseActivity {
 		manualAnnouncementReload.set(false);
 		getLoaderManager().initLoader(LOADER_announce, null, announcementLoaderCallbacks).forceLoad();
 
-		final Drawable logoDrawable;
-		if (Build.VERSION.SDK_INT >= 15) {
-			logoDrawable = getResources().getDrawableForDensity(R.drawable.ic_launcher, DisplayMetrics.DENSITY_XXXHIGH);
-		} else {
-			logoDrawable = getResources().getDrawable(R.drawable.ic_launcher);
-		}
-		imgLogo.setImageDrawable(logoDrawable);
+		imgLogo.setImageDrawable(ResourcesCompat.getDrawableForDensity(getResources(), R.drawable.ic_launcher, DisplayMetrics.DENSITY_XXXHIGH, null));
 
 		imgLogo.setOnTouchListener((v,event) -> {
 			if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {

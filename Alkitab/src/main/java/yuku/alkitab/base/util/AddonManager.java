@@ -8,7 +8,7 @@ public class AddonManager {
 	public static final String TAG = AddonManager.class.getSimpleName();
 
 	public static String getYesPath() {
-		return new File(Environment.getExternalStorageDirectory(), "bible/yes").getAbsolutePath(); //$NON-NLS-1$
+		return new File(Environment.getExternalStorageDirectory(), "bible/yes").getAbsolutePath();
 	}
 
 	/**

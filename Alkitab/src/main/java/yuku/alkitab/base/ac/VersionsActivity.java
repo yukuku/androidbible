@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -42,10 +43,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import yuku.afw.V;
@@ -102,10 +101,10 @@ public class VersionsActivity extends BaseActivity {
 
 	private static final int REQCODE_openFile = 1;
 
-	SectionsPagerAdapter mSectionsPagerAdapter;
+	SectionsPagerAdapter sectionsPagerAdapter;
 
-	ViewPager mViewPager;
-	SlidingTabLayout slidingTabs;
+	ViewPager viewPager;
+	TabLayout tablayout;
 	String query_text;
 
 	public static Intent createIntent() {
@@ -114,6 +113,7 @@ public class VersionsActivity extends BaseActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		super.willNeedStoragePermission();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_versions);
 
@@ -126,15 +126,17 @@ public class VersionsActivity extends BaseActivity {
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the activity.
-		mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+		sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
 		// Set up the ViewPager with the sections adapter.
-		mViewPager = V.get(this, R.id.viewPager);
-		mViewPager.setAdapter(mSectionsPagerAdapter);
+		viewPager = V.get(this, R.id.viewPager);
+		viewPager.setAdapter(sectionsPagerAdapter);
 
-		slidingTabs = V.get(this, R.id.sliding_tabs);
-		slidingTabs.setCustomTabColorizer(position -> getResources().getColor(R.color.accent));
-		slidingTabs.setViewPager(mViewPager);
+		tablayout = V.get(this, R.id.tablayout);
+		tablayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+		tablayout.setTabsFromPagerAdapter(sectionsPagerAdapter);
+		tablayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
+		viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tablayout));
 
 		processIntent(getIntent(), "onCreate");
 
@@ -164,7 +166,7 @@ public class VersionsActivity extends BaseActivity {
 		if (!U.equals(intent.getAction(), Intent.ACTION_VIEW)) return;
 
 		// we are trying to open a file, so let's go to the DOWNLOADED tab, as it is more relevant.
-		mViewPager.setCurrentItem(1);
+		viewPager.setCurrentItem(1);
 
 		Uri uri = intent.getData();
 
@@ -377,7 +379,7 @@ public class VersionsActivity extends BaseActivity {
 			config.mode = FileChooserConfig.Mode.Open;
 			config.initialDir = Environment.getExternalStorageDirectory().getAbsolutePath();
 			config.title = getString(R.string.ed_choose_pdb_or_yes_file);
-			config.pattern = ".*\\.(?i:pdb|yes|yes\\.gz)"; //$NON-NLS-1$
+			config.pattern = ".*\\.(?i:pdb|yes|yes\\.gz)";
 
 			startActivityForResult(FileChooserActivity.createIntent(App.context, config), REQCODE_openFile);
 		} else {
@@ -439,7 +441,7 @@ public class VersionsActivity extends BaseActivity {
 		ConvertOptionsDialog.ConvertOptionsCallback callback = new ConvertOptionsDialog.ConvertOptionsCallback() {
 			private void showPdbReadErrorDialog(Throwable exception) {
 				final StringWriter sw = new StringWriter(400);
-				sw.append('(').append(exception.getClass().getName()).append("): ").append(exception.getMessage()).append('\n'); //$NON-NLS-1$
+				sw.append('(').append(exception.getClass().getName()).append("): ").append(exception.getMessage()).append('\n');
 				exception.printStackTrace(new PrintWriter(sw));
 
 				new AlertDialogWrapper.Builder(VersionsActivity.this)
@@ -461,7 +463,7 @@ public class VersionsActivity extends BaseActivity {
 					if (wronglyConvertedBookNames != null && wronglyConvertedBookNames.size() > 0) {
 						StringBuilder msg = new StringBuilder(getString(R.string.ed_the_following_books_from_the_pdb_file_are_not_recognized) + '\n');
 						for (String s: wronglyConvertedBookNames) {
-							msg.append("- ").append(s).append('\n'); //$NON-NLS-1$
+							msg.append("- ").append(s).append('\n');
 						}
 
 						new AlertDialogWrapper.Builder(VersionsActivity.this)
@@ -490,12 +492,12 @@ public class VersionsActivity extends BaseActivity {
 						ConvertPdbToYes2 converter = new ConvertPdbToYes2();
 						converter.setConvertProgressListener(new ConvertPdbToYes2.ConvertProgressListener() {
 							@Override public void onProgress(int at, String message) {
-								Log.d(TAG, "Progress " + at + ": " + message); //$NON-NLS-1$ //$NON-NLS-2$
+								Log.d(TAG, "Progress " + at + ": " + message);
 								publishProgress(at, message);
 							}
 
 							@Override public void onFinish() {
-								Log.d(TAG, "Finish"); //$NON-NLS-1$
+								Log.d(TAG, "Finish");
 								publishProgress(null, null);
 							}
 						});
@@ -569,7 +571,7 @@ public class VersionsActivity extends BaseActivity {
 		} catch (Exception e) {
 			new AlertDialogWrapper.Builder(this)
 				.setTitle(R.string.ed_error_encountered)
-				.setMessage(e.getClass().getSimpleName() + ": " + e.getMessage()) //$NON-NLS-1$
+				.setMessage(e.getClass().getSimpleName() + ": " + e.getMessage())
 				.setPositiveButton(R.string.ok, null)
 				.show();
 		}
@@ -661,11 +663,11 @@ public class VersionsActivity extends BaseActivity {
 			}
 
 			// we are trying to open a file, so let's go to the DOWNLOADED tab, as it is more relevant.
-			mViewPager.setCurrentItem(1);
+			viewPager.setCurrentItem(1);
 
 			final String filename = result.firstFilename;
 
-			if (filename.toLowerCase(Locale.US).endsWith(".yes.gz")) { //$NON-NLS-1$
+			if (filename.toLowerCase(Locale.US).endsWith(".yes.gz")) {
 				// decompress or see if the same filename without .gz exists
 				final File maybeDecompressed = new File(filename.substring(0, filename.length() - 3));
 				if (maybeDecompressed.exists() && !maybeDecompressed.isDirectory() && maybeDecompressed.canRead()) {
@@ -679,7 +681,7 @@ public class VersionsActivity extends BaseActivity {
 
 					new AsyncTask<Void, Void, File>() {
 						@Override protected File doInBackground(Void... params) {
-							String tmpfile3 = filename + "-" + (int)(Math.random() * 100000) + ".tmp3"; //$NON-NLS-1$ //$NON-NLS-2$
+							String tmpfile3 = filename + "-" + (int)(Math.random() * 100000) + ".tmp3";
 							try {
 								GZIPInputStream in = new GZIPInputStream(new FileInputStream(filename));
 								FileOutputStream out = new FileOutputStream(tmpfile3); // decompressed file
@@ -696,12 +698,12 @@ public class VersionsActivity extends BaseActivity {
 
 								boolean renameOk = new File(tmpfile3).renameTo(maybeDecompressed);
 								if (!renameOk) {
-									throw new RuntimeException("Failed to rename!"); //$NON-NLS-1$
+									throw new RuntimeException("Failed to rename!");
 								}
 							} catch (Exception e) {
 								return null;
 							} finally {
-								Log.d(TAG, "menghapus tmpfile3: " + tmpfile3); //$NON-NLS-1$
+								Log.d(TAG, "menghapus tmpfile3: " + tmpfile3);
 								new File(tmpfile3).delete();
 							}
 							return maybeDecompressed;
@@ -715,14 +717,17 @@ public class VersionsActivity extends BaseActivity {
 						}
 					}.execute();
 				}
-			} else if (filename.toLowerCase(Locale.US).endsWith(".yes")) { //$NON-NLS-1$
+			} else if (filename.toLowerCase(Locale.US).endsWith(".yes")) {
 				App.trackEvent("versions_open_yes");
 				handleFileOpenYes(filename);
-			} else if (filename.toLowerCase(Locale.US).endsWith(".pdb")) { //$NON-NLS-1$
+			} else if (filename.toLowerCase(Locale.US).endsWith(".pdb")) {
 				App.trackEvent("versions_open_pdb");
 				handleFileOpenPdb(filename);
 			} else {
-				Toast.makeText(App.context, R.string.ed_invalid_file_selected, Toast.LENGTH_SHORT).show();
+				new MaterialDialog.Builder(this)
+					.content(R.string.ed_invalid_file_selected)
+					.positiveText(R.string.ok)
+					.show();
 			}
 
 			return;

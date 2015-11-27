@@ -26,6 +26,10 @@ import yuku.alkitab.util.IntArrayList;
 
 public class SingleViewVerseAdapter extends VerseAdapter {
 	public static final String TAG = SingleViewVerseAdapter.class.getSimpleName();
+
+	public static final int TYPE_VERSE_TEXT = 0;
+	public static final int TYPE_PERICOPE = 1;
+
 	private SparseBooleanArray dictionaryModeAris;
 
 	public static class DictionaryLinkInfo {
@@ -44,9 +48,24 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 		super(context);
 	}
 
+	@Override
+	public int getViewTypeCount() {
+		return 2;
+	}
+
+	@Override
+	public int getItemViewType(final int position) {
+		final int id = itemPointer_[position];
+		if (id >= 0) {
+			return TYPE_VERSE_TEXT;
+		} else {
+			return TYPE_PERICOPE;
+		}
+	}
+
 	@Override public synchronized View getView(int position, View convertView, ViewGroup parent) {
 		// Need to determine this is pericope or verse
-		int id = itemPointer_[position];
+		final int id = itemPointer_[position];
 
 		if (id >= 0) {
 			// VERSE. not pericope
@@ -58,7 +77,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			}
 
 			final VerseItem res;
-			if (convertView == null || convertView.getId() != R.id.itemVerse) {
+			if (convertView == null) {
 				res = (VerseItem) inflater_.inflate(R.layout.item_verse, parent, false);
 			} else {
 				res = (VerseItem) convertView;
@@ -145,12 +164,19 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 //				}
 //			}
 
+			// Do we need to call attention?
+			if (attentionStart_ != 0 && attentionPositions_ != null && attentionPositions_.contains(position)) {
+				res.callAttention(attentionStart_);
+			} else {
+				res.callAttention(0);
+			}
+
 			return res;
 		} else {
 			// PERICOPE. not verse.
 
 			final PericopeHeaderItem res;
-			if (convertView == null || convertView.getId() != R.id.itemPericopeHeader) {
+			if (convertView == null) {
 				res = (PericopeHeaderItem) inflater_.inflate(R.layout.item_pericope_header, parent, false);
 			} else {
 				res = (PericopeHeaderItem) convertView;
@@ -181,7 +207,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			} else {
 				lParallels.setVisibility(View.VISIBLE);
 
-				SpannableStringBuilder sb = new SpannableStringBuilder("("); //$NON-NLS-1$
+				SpannableStringBuilder sb = new SpannableStringBuilder("(");
 
 				int total = pericopeBlock.parallels.length;
 				for (int i = 0; i < total; i++) {
@@ -190,9 +216,9 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 					if (i > 0) {
 						// force new line for certain parallel patterns
 						if ((total == 6 && i == 3) || (total == 4 && i == 2) || (total == 5 && i == 3)) {
-							sb.append("; \n"); //$NON-NLS-1$
+							sb.append("; \n");
 						} else {
-							sb.append("; "); //$NON-NLS-1$
+							sb.append("; ");
 						}
 					}
 

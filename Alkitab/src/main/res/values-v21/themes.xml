@@ -8,7 +8,7 @@
 		<item name="android:statusBarColor">@android:color/transparent</item>
 	</style>
 
-	<style name="Theme.Alkitab.Goto" parent="Theme.Alkitab.Goto.Base">
+	<style name="Theme.Alkitab.DialogWhenLarge" parent="Theme.Alkitab.DialogWhenLarge.Base">
 		<item name="android:colorPrimary">@color/primary</item>
 		<item name="android:colorPrimaryDark">@color/primary_dark</item>
 		<item name="android:colorAccent">@color/accent</item>
@@ -17,6 +17,11 @@
 	</style>
 
 	<style name="Theme.Alkitab.Transparent" parent="Theme.Alkitab.Transparent.Base">
+		<item name="android:windowTranslucentNavigation">true</item>
+		<item name="android:windowTranslucentStatus">true</item>
+	</style>
+
+	<style name="Theme.PopupActivity" parent="Theme.PopupActivity.Base">
 		<item name="android:windowTranslucentNavigation">true</item>
 		<item name="android:windowTranslucentStatus">true</item>
 	</style>

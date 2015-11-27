@@ -3,9 +3,9 @@ package yuku.alkitab.base;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.support.multidex.MultiDex;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ViewConfiguration;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -14,8 +14,10 @@ import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.okhttp.Call;
+import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.internal.Version;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.model.VersionImpl;
@@ -27,6 +29,7 @@ import yuku.alkitab.reminder.util.DevotionReminder;
 import yuku.alkitabfeedback.FeedbackSender;
 import yuku.alkitabintegration.display.Launcher;
 import yuku.kirimfidbek.CrashReporter;
+import yuku.stethoshim.StethoShim;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -48,9 +51,28 @@ public class App extends yuku.afw.App {
 		OkHttpClient longTimeoutClient = new OkHttpClient();
 
 		{
+			final Interceptor userAgent = chain -> {
+				final Request originalRequest = chain.request();
+				final Request requestWithUserAgent = originalRequest.newBuilder()
+					.removeHeader("User-Agent")
+					.addHeader("User-Agent", Version.userAgent() + " " + App.context.getPackageName() + "/" + App.getVersionName())
+					.build();
+				return chain.proceed(requestWithUserAgent);
+			};
+
+			defaultClient.networkInterceptors().add(userAgent);
+			longTimeoutClient.networkInterceptors().add(userAgent);
+		}
+
+		{ // init longTimeoutClient
 			longTimeoutClient.setConnectTimeout(300, TimeUnit.SECONDS);
 			longTimeoutClient.setReadTimeout(300, TimeUnit.SECONDS);
 			longTimeoutClient.setWriteTimeout(600, TimeUnit.SECONDS);
+		}
+
+		{ // init stetho interceptor
+			StethoShim.addNetworkInterceptor(defaultClient);
+			StethoShim.addNetworkInterceptor(longTimeoutClient);
 		}
 	}
 
@@ -98,6 +120,10 @@ public class App extends yuku.afw.App {
 		{ // LeakCanary, also we need the Application instance.
 			LeakCanary.install(this);
 		}
+
+		{ // Stetho call through proxy
+			StethoShim.initializeWithDefaults(this);
+		}
 	}
 
 	public synchronized static void staticInit() {
@@ -111,10 +137,15 @@ public class App extends yuku.afw.App {
 		final FeedbackSender fs = FeedbackSender.getInstance(context);
 		fs.trySend();
 
-		PreferenceManager.setDefaultValues(context, R.xml.settings_display, false);
-		PreferenceManager.setDefaultValues(context, R.xml.settings_usage, false);
-		PreferenceManager.setDefaultValues(context, R.xml.secret_settings, false);
-		PreferenceManager.setDefaultValues(context, R.xml.sync_settings, false);
+		for (final int preferenceResId : new int[]{
+			R.xml.settings_display,
+			R.xml.settings_usage,
+			R.xml.settings_copy_share,
+			R.xml.secret_settings,
+			R.xml.sync_settings,
+		}) {
+			PreferenceManager.setDefaultValues(context, preferenceResId, false);
+		}
 
 		updateConfigurationWithPreferencesLocale();
 
@@ -187,7 +218,7 @@ public class App extends yuku.afw.App {
 	@Override public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 
-		Log.d(TAG, "@@onConfigurationChanged: config changed to: " + newConfig); //$NON-NLS-1$
+		Log.d(TAG, "@@onConfigurationChanged: config changed to: " + newConfig);
 		updateConfigurationWithPreferencesLocale();
 	}
 
@@ -195,7 +226,7 @@ public class App extends yuku.afw.App {
 		final Configuration config = context.getResources().getConfiguration();
 		final Locale locale = getLocaleFromPreferences();
 		if (!U.equals(config.locale.getLanguage(), locale.getLanguage()) || !U.equals(config.locale.getCountry(), locale.getCountry())) {
-			Log.d(TAG, "@@updateConfigurationWithPreferencesLocale: locale will be updated to: " + locale); //$NON-NLS-1$
+			Log.d(TAG, "@@updateConfigurationWithPreferencesLocale: locale will be updated to: " + locale);
 
 			config.locale = locale;
 			context.getResources().updateConfiguration(config, null);

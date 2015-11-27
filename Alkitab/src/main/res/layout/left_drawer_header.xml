@@ -12,7 +12,7 @@
 
 	<TextView
 		android:id="@+id/bBible"
-		style="?android:buttonBarButtonStyle"
+		style="?buttonBarButtonStyle"
 		android:textColor="?android:textColorPrimary"
         android:textAppearance="?android:attr/textAppearanceMedium"
 		android:layout_width="match_parent"
@@ -26,7 +26,7 @@
 
 	<TextView
 		android:id="@+id/bDevotion"
-		style="?android:buttonBarButtonStyle"
+		style="?buttonBarButtonStyle"
 		android:textColor="?android:textColorPrimary"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
@@ -39,7 +39,7 @@
 
 	<TextView
 		android:id="@+id/bReadingPlan"
-        style="?android:buttonBarButtonStyle"
+        style="?buttonBarButtonStyle"
 		android:textColor="?android:textColorPrimary"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
 
 	<TextView
 		android:id="@+id/bSongs"
-		style="?android:buttonBarButtonStyle"
+		style="?buttonBarButtonStyle"
 		android:textColor="?android:textColorPrimary"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"

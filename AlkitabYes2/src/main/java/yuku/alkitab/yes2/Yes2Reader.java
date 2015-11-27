@@ -127,7 +127,7 @@ public class Yes2Reader implements BibleReader {
 			byte[] buf = new byte[8];
 			file_.read(buf);
 			if (!Arrays.equals(buf, new byte[] { (byte) 0x98, 0x58, 0x0d, 0x0a, 0x00, 0x5d, (byte) 0xe0, 0x02 /* yes version 2 */})) {
-				throw new RuntimeException("YES2: Header is incorrect. Found: " + Arrays.toString(buf)); //$NON-NLS-1$
+				throw new RuntimeException("YES2: Header is incorrect. Found: " + Arrays.toString(buf));
 			}
 		}
 		
@@ -163,7 +163,7 @@ public class Yes2Reader implements BibleReader {
 			loadVersionInfo();
 			return versionInfo_.locale;
 		} catch (Exception e) {
-			Log.e(TAG, "yes load version info error", e); //$NON-NLS-1$
+			Log.e(TAG, "yes load version info error", e);
 			return "";
 		}
 	}
@@ -173,8 +173,8 @@ public class Yes2Reader implements BibleReader {
 			loadVersionInfo();
 			return versionInfo_.shortName;
 		} catch (Exception e) {
-			Log.e(TAG, "yes load version info error", e); //$NON-NLS-1$
-			return ""; //$NON-NLS-1$
+			Log.e(TAG, "yes load version info error", e);
+			return "";
 		}
 	}
 
@@ -183,8 +183,8 @@ public class Yes2Reader implements BibleReader {
 			loadVersionInfo();
 			return versionInfo_.longName;
 		} catch (Exception e) {
-			Log.e(TAG, "yes load version info error", e); //$NON-NLS-1$
-			return ""; //$NON-NLS-1$
+			Log.e(TAG, "yes load version info error", e);
+			return "";
 		}
 	}
 
@@ -194,8 +194,8 @@ public class Yes2Reader implements BibleReader {
 			loadVersionInfo();
 			return versionInfo_.description;
 		} catch (Exception e) {
-			Log.e(TAG, "yes load version info error", e); //$NON-NLS-1$
-			return ""; //$NON-NLS-1$
+			Log.e(TAG, "yes load version info error", e);
+			return "";
 		}
 	}
 
@@ -209,10 +209,10 @@ public class Yes2Reader implements BibleReader {
 				return books.toArray(new Yes2Book[books.size()]);
 			}
 			
-			Log.e(TAG, "no section named " + BooksInfoSection.SECTION_NAME); //$NON-NLS-1$
+			Log.e(TAG, "no section named " + BooksInfoSection.SECTION_NAME);
 			return null;
 		} catch (Exception e) {
-			Log.e(TAG, "loadBooks error", e); //$NON-NLS-1$
+			Log.e(TAG, "loadBooks error", e);
 			return null;
 		}
 	}
@@ -234,7 +234,7 @@ public class Yes2Reader implements BibleReader {
 				} else if (textEncoding == 2) {
 					decoder = new Yes2VerseTextDecoder.Utf8();
 				} else {
-					Log.e(TAG, "Text encoding " + textEncoding + " not supported! Fallback to ascii."); //$NON-NLS-1$ //$NON-NLS-2$
+					Log.e(TAG, "Text encoding " + textEncoding + " not supported! Fallback to ascii.");
 					decoder = new Yes2VerseTextDecoder.Ascii();
 				}
 				
@@ -278,7 +278,7 @@ public class Yes2Reader implements BibleReader {
 
 			return pericopesSection_.getPericopesForAris(ariMin, ariMax, aris, blocks, max);
 		} catch (Exception e) {
-			Log.e(TAG, "General exception in loading pericope block", e); //$NON-NLS-1$
+			Log.e(TAG, "General exception in loading pericope block", e);
 			return 0;
 		}
 	}
@@ -294,7 +294,7 @@ public class Yes2Reader implements BibleReader {
 
 				xrefsSection_ = new XrefsSection.Reader().read(sectionInput);
 			} catch (Exception e) {
-				Log.e(TAG, "General exception in loading xref section", e); //$NON-NLS-1$
+				Log.e(TAG, "General exception in loading xref section", e);
 				return null;
 			}
 		}
@@ -313,7 +313,7 @@ public class Yes2Reader implements BibleReader {
 
 				footnotesSection_ = new FootnotesSection.Reader().read(sectionInput);
 			} catch (Exception e) {
-				Log.e(TAG, "General exception in loading footnote section", e); //$NON-NLS-1$
+				Log.e(TAG, "General exception in loading footnote section", e);
 				return null;
 			}
 		}

@@ -4,8 +4,10 @@
 	class="yuku.alkitab.base.widget.LeftDrawer$Text"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="240dp"
+	android:id="@+id/left_drawer"
+	android:layout_width="@dimen/left_drawer_width"
 	android:layout_height="match_parent"
+	android:layout_gravity="start"
 	android:background="#263238"
 	android:elevation="4dp"
 	tools:ignore="Overdraw">
@@ -24,7 +26,7 @@
 
 		<Button
 			android:id="@+id/bMarkers"
-			style="?android:buttonBarButtonStyle"
+			style="?buttonBarButtonStyle"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:drawableLeft="@drawable/ic_drawer_markers"
@@ -65,7 +67,7 @@
 
 		<Button
 			android:id="@+id/bCurrentReadingReference"
-			style="?android:buttonBarButtonStyle"
+			style="?buttonBarButtonStyle"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
 			android:fontFamily="sans-serif-regular"
@@ -156,7 +158,7 @@
 
 		<Button
 			android:id="@+id/bDisplay"
-			style="?android:buttonBarButtonStyle"
+			style="?buttonBarButtonStyle"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:drawableLeft="@drawable/ic_drawer_display"

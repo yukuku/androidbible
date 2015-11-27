@@ -9,9 +9,9 @@ import java.util.HashMap;
 public class BookNameSorter {
 	public static final String TAG = BookNameSorter.class.getSimpleName();
 
-	static final String[] numberedBookStartsWiths = {null, "I ", "II ", "III ", "IV ", "V "}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-	static final String[] numberedBookStartsWithNumbers = {null, "1", "2", "3", "4", "5"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-	static final String[] numberedBookReplaceWiths = {null, "1", "2", "3", "4", "5"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	static final String[] numberedBookStartsWiths = {null, "I ", "II ", "III ", "IV ", "V "};
+	static final String[] numberedBookStartsWithNumbers = {null, "1", "2", "3", "4", "5"};
+	static final String[] numberedBookReplaceWiths = {null, "1", "2", "3", "4", "5"};
 	static final int[] numberedBookMap;
 	static final HashMap<String, String> hardcodedAbbrs = new HashMap<>();
 	
@@ -88,8 +88,8 @@ public class BookNameSorter {
 		}
 
 		// remove spaces and '.'
-		name = name.replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		name = name.replace(".", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		name = name.replace(" ", "");
+		name = name.replace(".", "");
 
 		if (name.length() > 3) name = name.substring(0, 3);
 		return name;

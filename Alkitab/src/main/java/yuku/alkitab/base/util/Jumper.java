@@ -34,12 +34,12 @@ public class Jumper {
 
 	private boolean parseSucceeded = false;
 	
-	private static class BookRef {
-		String condensed;
-		int pos;
+	public static class BookRef {
+		public String condensed;
+		public int bookId;
 
 		@Override public String toString() {
-			return condensed + ":" + pos; //$NON-NLS-1$
+			return condensed + ":" + bookId;
 		}
 	}
 	
@@ -153,7 +153,7 @@ public class Jumper {
 		
 		//# STAGE 5: Remove spaces on the left and right of "-"
 		if (reference.indexOf('-') >= 0) {
-			reference = reference.replaceAll("\\s+-\\s+|\\s+-|-\\s+", "-"); //$NON-NLS-1$ //$NON-NLS-2$
+			reference = reference.replaceAll("\\s+-\\s+|\\s+-|-\\s+", "-");
 
 			if (BuildConfig.DEBUG) logger.d("jumper stage 5: " + reference);
 		}
@@ -202,7 +202,7 @@ public class Jumper {
 		//# STAGE 10: Split based on SPACE, :, PERIOD, and whitespaces between -'s and numbers.
 		//# Sample of wrong output: [Kisah, rasul34, 6-7, 8]
 		//# Sample of right output: [Kisah, rasul34, 6, -, 7, 8]
-		String[] parts = reference.split("((\\s|:|\\.)+|(?=[0-9])(?<=-)|(?=-)(?<=[0-9][a-z]?))"); //$NON-NLS-1$
+		String[] parts = reference.split("((\\s|:|\\.)+|(?=[0-9])(?<=-)|(?=-)(?<=[0-9][a-z]?))");
 		if (BuildConfig.DEBUG) logger.d("jumper stage 10: " + Arrays.toString(parts));
 
 		//# STAGE 12: Remove string from empty parts
@@ -238,7 +238,7 @@ public class Jumper {
 
 			for (String b: parts) {
 				if (isWord(b)) {
-					String number = ""; //$NON-NLS-1$
+					String number = "";
 					for (int i = b.length() - 1; i >= 0; i--) {
 						char c = b.charAt(i);
 						if (c >= '0' && c <= '9') {
@@ -271,7 +271,7 @@ public class Jumper {
 			int at = -1;
 			
 			for (int i = 0; i < parts.length; i++) {
-				if ("-".equals(parts[i]) || "--".equals(parts[i])) { //$NON-NLS-1$
+				if ("-".equals(parts[i]) || "--".equals(parts[i])) {
 					hasDash = true;
 					at = i;
 					break;
@@ -322,7 +322,7 @@ public class Jumper {
 
 			String s = null;
 			for (int j = 0; j <= startWord; j++) {
-				s = (s == null)? parts[j]: s + " " + parts[j]; //$NON-NLS-1$
+				s = (s == null)? parts[j]: s + " " + parts[j];
 			}
 			
 			bel.add(s);
@@ -382,28 +382,39 @@ public class Jumper {
 
 		return res;
 	}
-	
-	private List<BookRef> createBookCandidates(String[] bookNames, int[] bookIds) {
+
+	public static List<BookRef> createBookCandidates(Book[] books) {
+		String[] bookNames = new String[books.length];
+		int[] bookIds = new int[books.length];
+		for (int i = 0, booksLength = books.length; i < booksLength; i++) {
+			final Book book = books[i];
+			bookNames[i] = book.shortName;
+			bookIds[i] = book.bookId;
+		}
+		return createBookCandidates(bookNames, bookIds);
+	}
+
+	static List<BookRef> createBookCandidates(String[] bookNames, int[] bookIds) {
 		// create cache of condensed book titles where all spaces are stripped and lowercased and "1" becomes "I", "2" becomes "II" etc.
 		final List<BookRef> res = new ArrayList<>();
 		
 		for (int i = 0, len = bookNames.length; i < len; i++) {
-			String condensed = bookNames[i].replaceAll("(\\s|-|_)+", "").toLowerCase(Locale.getDefault()); //$NON-NLS-1$ //$NON-NLS-2$
+			String condensed = bookNames[i].replaceAll("(\\s|-|_)+", "").toLowerCase(Locale.getDefault());
 
 			{
 				BookRef ref = new BookRef();
 				ref.condensed = condensed;
-				ref.pos = bookIds[i];
+				ref.bookId = bookIds[i];
 					
 				res.add(ref);
 			}
 			
-			if (condensed.contains("1") || condensed.contains("2") || condensed.contains("3")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				condensed = condensed.replace("1", "i").replace("2", "ii").replace("3", "iii");    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			if (condensed.contains("1") || condensed.contains("2") || condensed.contains("3")) {
+				condensed = condensed.replace("1", "i").replace("2", "ii").replace("3", "iii");
 				
 				BookRef ref = new BookRef();
 				ref.condensed = condensed;
-				ref.pos = bookIds[i];
+				ref.bookId = bookIds[i];
 				
 				res.add(ref);
 			}
@@ -420,14 +431,14 @@ public class Jumper {
 		int res = -1;
 		
 		// 0. clean up p_book
-		p_book = p_book.replaceAll("(\\s|-|_)", "").toLowerCase(Locale.getDefault()); //$NON-NLS-1$ //$NON-NLS-2$
+		p_book = p_book.replaceAll("(\\s|-|_)", "").toLowerCase(Locale.getDefault());
 		if (BuildConfig.DEBUG) logger.d("guessBook phase 0: p_book = " + p_book);
 		
 		// 1. try to match wholly (e.g.: "genesis", "john")
 		for (BookRef ref: refs) {
 			if (ref.condensed.equals(p_book)) {
 				if (BuildConfig.DEBUG) logger.d("guessBook phase 1 success: " + p_book);
-				return ref.pos;
+				return ref.bookId;
 			}
 		}
 		
@@ -438,7 +449,7 @@ public class Jumper {
 			for (BookRef ref: refs) {
 				if (ref.condensed.startsWith(p_book)) {
 					passed++;
-					if (passed == 1) pos_forLater = ref.pos;
+					if (passed == 1) pos_forLater = ref.bookId;
 				}
 			}
 			
@@ -467,7 +478,7 @@ public class Jumper {
 
 				if (score < minScore) {
 					minScore = score;
-					pos = ref.pos;
+					pos = ref.bookId;
 				}
 			}
 			
@@ -491,6 +502,10 @@ public class Jumper {
 	 */
 	public boolean getParseSucceeded() {
 		return parseSucceeded;
+	}
+
+	public String getUnparsedBook() {
+		return p_book;
 	}
 	
 	/**

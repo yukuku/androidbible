@@ -5,7 +5,7 @@ public class Levenshtein {
 	private static final int deletion = 500;
 	private static final int substitution = 400;
 
-	static int distance(String s, String t) {
+	public static int distance(String s, String t) {
 		// d is a table with m+1 rows and n+1 columns
 		int m = s.length();
 		int n = t.length();

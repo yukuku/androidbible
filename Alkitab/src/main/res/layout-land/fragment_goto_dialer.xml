@@ -1,74 +1,222 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.percent.PercentFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	android:fillViewport="false">
+	android:layout_height="wrap_content"
+	android:gravity="center_horizontal"
+	android:orientation="vertical">
 
-	<LinearLayout
-		android:id="@+id/scrollRoot"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:gravity="center_horizontal"
-		android:orientation="vertical">
+	<!--suppress AndroidDomInspection -->
+	<android.support.percent.PercentFrameLayout
+		app:layout_heightPercent="35%"
+		app:layout_widthPercent="100%"
+		app:layout_marginTopPercent="0%">
 
-		<LinearLayout
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:layout_margin="6dp"
-			android:gravity="center_vertical|center_horizontal"
-			android:orientation="horizontal">
+		<!--suppress AndroidDomInspection -->
+		<FrameLayout
+			app:layout_heightPercent="100%"
+			app:layout_marginTopPercent="0%"
+			app:layout_widthPercent="50%">
 
 			<Spinner
 				android:id="@+id/cbBook"
-				android:layout_width="wrap_content"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				tools:listitem="@android:layout/simple_spinner_dropdown_item"
+				android:layout_marginLeft="16dp"
+				android:layout_marginRight="16dp"/>
+
+		</FrameLayout>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1"
+			android:gravity="center"
+			android:orientation="horizontal"
+			app:layout_heightPercent="100%"
+			app:layout_marginLeftPercent="50%"
+			app:layout_marginTopPercent="0%"
+			app:layout_widthPercent="50%">
+
+			<TextView
+				android:id="@+id/tChapterLabel"
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent"
 				android:layout_marginRight="8dp"
-				android:minWidth="200sp"
-				tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+				android:gravity="fill_vertical"
+				android:text="@string/pasal_sebelumangka" />
 
 			<TextView
 				android:id="@+id/tChapter"
-				android:layout_width="wrap_content"
-				android:layout_height="fill_parent"
+				android:layout_width="64dp"
+				android:layout_height="64dp"
 				android:focusable="true"
 				android:fontFamily="sans-serif-light"
-				android:gravity="center_vertical|center_horizontal"
-				android:minWidth="48sp"
-				android:text="1"
+				android:gravity="center"
 				android:textAppearance="?android:attr/textAppearanceLarge"
-				tools:ignore="HardcodedText" />
+				android:textSize="24sp"
+				tools:text="123" />
 
 			<TextView
+				android:id="@+id/tVerseLabel"
 				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_margin="8dp"
-				android:text=" : "
-				tools:ignore="HardcodedText" />
+				android:layout_height="fill_parent"
+				android:layout_marginLeft="16dp"
+				android:layout_marginRight="8dp"
+				android:gravity="center_vertical"
+				android:text="@string/ayat_sebelumangka" />
 
 			<TextView
 				android:id="@+id/tVerse"
-				android:layout_width="wrap_content"
-				android:layout_height="fill_parent"
+				android:layout_width="64dp"
+				android:layout_height="64dp"
 				android:focusable="true"
 				android:fontFamily="sans-serif-light"
-				android:gravity="center_vertical|center_horizontal"
-				android:minWidth="48sp"
-				android:text="1"
+				android:gravity="center"
 				android:textAppearance="?android:attr/textAppearanceLarge"
-				tools:ignore="HardcodedText" />
+				android:textSize="24sp"
+				tools:text="123" />
 		</LinearLayout>
 
-		<include
-			layout="@layout/keypad"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" />
 
-		<include
-			layout="@layout/buttonbar_ok"
+		<ImageView
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content" />
+			android:layout_height="1dp"
+			android:layout_gravity="bottom"
+			android:layout_marginLeft="32dp"
+			android:layout_marginRight="32dp"
+			android:src="#1effffff" />
 
-	</LinearLayout>
+	</android.support.percent.PercentFrameLayout>
 
-</ScrollView>
+	<!--suppress AndroidDomInspection -->
+	<android.support.percent.PercentFrameLayout
+		android:layout_width="match_parent"
+		android:orientation="vertical"
+		app:layout_heightPercent="65%"
+		app:layout_marginTopPercent="35%"
+		tools:ignore="HardcodedText,SpUsage">
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bDigit1"
+			style="@style/KeypadButton"
+			android:text="1"
+			app:layout_heightPercent="50%"
+			app:layout_marginLeftPercent="0%"
+			app:layout_widthPercent="16.6%" />
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bDigit2"
+			style="@style/KeypadButton"
+			android:text="2"
+			app:layout_heightPercent="50%"
+			app:layout_marginLeftPercent="16.6%"
+			app:layout_widthPercent="16.6%" />
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bDigit3"
+			style="@style/KeypadButton"
+			android:text="3"
+			app:layout_heightPercent="50%"
+			app:layout_marginLeftPercent="33.3%"
+			app:layout_widthPercent="16.6%" />
+
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bDigit4"
+			style="@style/KeypadButton"
+			android:text="4"
+			app:layout_heightPercent="50%"
+			app:layout_marginLeftPercent="50%"
+			app:layout_widthPercent="16.6%" />
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bDigit5"
+			style="@style/KeypadButton"
+			android:text="5"
+			app:layout_heightPercent="50%"
+			app:layout_marginLeftPercent="66.6%"
+			app:layout_widthPercent="16.6%" />
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bDigit6"
+			style="@style/KeypadButton"
+			android:text="6"
+			app:layout_heightPercent="50%"
+			app:layout_marginLeftPercent="0%"
+			app:layout_marginTopPercent="50%"
+			app:layout_widthPercent="16.6%" />
+
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bDigit7"
+			style="@style/KeypadButton"
+			android:text="7"
+			app:layout_heightPercent="50%"
+			app:layout_marginLeftPercent="16.6%"
+			app:layout_marginTopPercent="50%"
+			app:layout_widthPercent="16.6%" />
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bDigit8"
+			style="@style/KeypadButton"
+			android:text="8"
+			app:layout_heightPercent="50%"
+			app:layout_marginLeftPercent="33.3%"
+			app:layout_marginTopPercent="50%"
+			app:layout_widthPercent="16.6%" />
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bDigit9"
+			style="@style/KeypadButton"
+			android:text="9"
+			app:layout_heightPercent="50%"
+			app:layout_marginLeftPercent="50%"
+			app:layout_marginTopPercent="50%"
+			app:layout_widthPercent="16.6%" />
+
+
+		<!--suppress AndroidDomInspection -->
+		<ImageButton
+			android:id="@+id/bDigitBackspace"
+			style="@style/KeypadButton"
+			android:src="@drawable/ic_keypad_backspace"
+			app:layout_heightPercent="50%"
+			app:layout_marginLeftPercent="83.3%"
+			app:layout_marginTopPercent="0%"
+			app:layout_widthPercent="16.6%" />
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bDigit0"
+			style="@style/KeypadButton"
+			android:text="0"
+			app:layout_heightPercent="50%"
+			app:layout_marginLeftPercent="66.7%"
+			app:layout_marginTopPercent="50%"
+			app:layout_widthPercent="16.6%" />
+
+		<!--suppress AndroidDomInspection -->
+		<Button
+			android:id="@+id/bOk"
+			style="@style/KeypadButton"
+			android:text="@string/ok"
+			app:layout_heightPercent="50%"
+			app:layout_marginLeftPercent="83.3%"
+			app:layout_marginTopPercent="50%"
+			app:layout_widthPercent="16.6%" />
+
+	</android.support.percent.PercentFrameLayout>
+</android.support.percent.PercentFrameLayout>

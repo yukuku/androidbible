@@ -8,6 +8,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.storage.NoBackupSharedPreferences;
 import yuku.alkitab.base.storage.Prefkey;
 
 import java.io.IOException;
@@ -92,7 +93,7 @@ public class Gcm {
 	 */
 	@Nullable
 	private static String getStoredRegistrationId() {
-		final String registrationId = Preferences.getString(Prefkey.gcm_registration_id);
+		final String registrationId = readGcmRegistrationId();
 		if (registrationId == null) {
 			Log.i(TAG, "Registration not found.");
 			return null;
@@ -109,6 +110,21 @@ public class Gcm {
 		}
 
 		return registrationId;
+	}
+
+	private static String readGcmRegistrationId() {
+		final NoBackupSharedPreferences nbsp = NoBackupSharedPreferences.get();
+
+		String res = Preferences.getString(Prefkey.gcm_registration_id, null);
+		if (res == null) {
+			res = nbsp.getString(Prefkey.gcm_registration_id.name());
+		} else {
+			// we need to remove it from the backed up folder and move it to the nonbacked up folder
+			Preferences.remove(Prefkey.gcm_registration_id);
+			nbsp.setString(Prefkey.gcm_registration_id.name(), res);
+		}
+
+		return res;
 	}
 
 	private static void registerInBackground() {
@@ -128,12 +144,18 @@ public class Gcm {
 
 				// Persist the regID - no need to register again.
 				Preferences.setInt(Prefkey.gcm_last_app_version_code, App.getVersionCode());
-				Preferences.setString(Prefkey.gcm_registration_id, registrationId);
+				writeGcmRegistrationId(registrationId);
 			} catch (IOException ex) {
 				// If there is an error, don't just keep trying to register.
 				// Require the user to click a button again, or perform exponential back-off.
 				Log.e(TAG, "Error :" + ex.getMessage(), ex);
 			}
 		}).start();
+	}
+
+	private static void writeGcmRegistrationId(final String registrationId) {
+		Preferences.remove(Prefkey.gcm_registration_id);
+
+		NoBackupSharedPreferences.get().setString(Prefkey.gcm_registration_id.name(), registrationId);
 	}
 }

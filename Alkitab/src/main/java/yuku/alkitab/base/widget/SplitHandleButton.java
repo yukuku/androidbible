@@ -12,7 +12,9 @@ public class SplitHandleButton extends Button {
 
 	public interface SplitHandleButtonListener {
 		void onHandleDragStart();
+		/** Only called when orientation is horizontal */
 		void onHandleDragMoveX(float dxSinceLast, float dxSinceStart);
+		/** Only called when orientation is vertical */
 		void onHandleDragMoveY(float dySinceLast, float dySinceStart);
 		void onHandleDragStop();
 	}

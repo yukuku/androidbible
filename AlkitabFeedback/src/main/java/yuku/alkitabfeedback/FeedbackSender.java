@@ -85,7 +85,7 @@ public class FeedbackSender {
 			final String base = "feedback/";
 
 			entries_ = new ArrayList<>();
-			int nfeedback = pref_.getInt(base + "n", 0); //$NON-NLS-1$
+			int nfeedback = pref_.getInt(base + "n", 0);
 
 			for (int i = 0; i < nfeedback; i++) {
 				Entry e = new Entry();
@@ -110,7 +110,7 @@ public class FeedbackSender {
 
 		Editor editor = pref_.edit();
 		{
-			editor.putInt(base + "n", entries_.size()); //$NON-NLS-1$
+			editor.putInt(base + "n", entries_.size());
 
 			for (int i = 0; i < entries_.size(); i++) {
 				Entry entry = entries_.get(i);
@@ -179,7 +179,7 @@ public class FeedbackSender {
 					save();
 				}
 			} catch (IOException e) {
-				Log.w(TAG, "when posting feedback", e); //$NON-NLS-1$
+				Log.w(TAG, "when posting feedback", e);
 			} finally {
 				Log.d(TAG, "feedback sending thread ended. success = " + success);
 				sending_ = false;
@@ -196,7 +196,7 @@ public class FeedbackSender {
 		try {
 			versionCode = context_.getPackageManager().getPackageInfo(context_.getPackageName(), 0).versionCode;
 		} catch (NameNotFoundException e) {
-			Log.w(TAG, "package get versioncode", e); //$NON-NLS-1$
+			Log.w(TAG, "package get versioncode", e);
 		}
 		return versionCode;
 	}
@@ -220,10 +220,10 @@ public class FeedbackSender {
 	String getInstallationId() {
 		if (overrideInstallationId_ != null) return overrideInstallationId_;
 
-		String installationId = pref_.getString("installationId", null); //$NON-NLS-1$
+		String installationId = pref_.getString("installationId", null);
 		if (installationId == null) {
-			installationId = "u2:" + UUID.randomUUID().toString(); //$NON-NLS-1$
-			pref_.edit().putString("installationId", installationId).apply(); //$NON-NLS-1$
+			installationId = "u2:" + UUID.randomUUID().toString();
+			pref_.edit().putString("installationId", installationId).apply();
 		}
 		return installationId;
 	}

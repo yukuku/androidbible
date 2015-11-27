@@ -77,7 +77,7 @@ public class BintexWriter implements Closeable {
 		int len = s.length();
 		
 		if (len > 255) {
-			throw new IllegalArgumentException("string must not more than 255 chars. String is: " + s); //$NON-NLS-1$
+			throw new IllegalArgumentException("string must not more than 255 chars. String is: " + s);
 		}
 		
 		os_.write(len);
@@ -163,7 +163,7 @@ public class BintexWriter implements Closeable {
 	
 	public void writeUint8(int a) throws IOException {
 		if (a < 0 || a > 255) {
-			throw new IllegalArgumentException("uint8 must be 0 to 255"); //$NON-NLS-1$
+			throw new IllegalArgumentException("uint8 must be 0 to 255");
 		}
 		
 		os_.write(a);
@@ -173,7 +173,7 @@ public class BintexWriter implements Closeable {
 	
 	public void writeUint16(int a) throws IOException {
 		if (a < 0 || a > 0xffff) {
-			throw new IllegalArgumentException("uint16 must be 0 to 65535"); //$NON-NLS-1$
+			throw new IllegalArgumentException("uint16 must be 0 to 65535");
 		}
 		
 		os_.write((a & 0x0000ff00) >> 8);

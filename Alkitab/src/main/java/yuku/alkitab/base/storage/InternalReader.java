@@ -233,11 +233,11 @@ public class InternalReader implements BibleReader {
 			return pericopeIndex_;
 
 		} catch (IOException e) {
-			Log.e(TAG, "Error reading pericope index", e); //$NON-NLS-1$
+			Log.e(TAG, "Error reading pericope index", e);
 			return null;
 		} finally {
 			in.close();
-			Log.d(TAG, "Read pericope index needed: " + (System.currentTimeMillis() - startTime)); //$NON-NLS-1$
+			Log.d(TAG, "Read pericope index needed: " + (System.currentTimeMillis() - startTime));
 		}
 	}
 

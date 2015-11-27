@@ -65,7 +65,7 @@ public class BookmarkPDB {
 		if (data.length > 6) {
 			note = Util.readString(data, 6,
 							data.length - 6,
-							"UTF-8"); //$NON-NLS-1$
+							"UTF-8");
 		}
 
 		return new PDBBookmark(booknumber, chapter, verse, note);
@@ -96,7 +96,7 @@ public class BookmarkPDB {
 
 		PDBHeader header = pdbaccess.getHeader();
 
-		if (!header.getType().equals("bkmk")) { //$NON-NLS-1$
+		if (!header.getType().equals("bkmk")) {
 			return false;
 		}
 

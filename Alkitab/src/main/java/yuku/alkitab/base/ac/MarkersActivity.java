@@ -68,7 +68,8 @@ public class MarkersActivity extends BaseActivity {
 	}
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		super.onCreateWithNonToolbarUpButton(savedInstanceState);
+		enableNonToolbarUpButton();
+		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.activity_markers);
 		setTitle(R.string.activity_title_markers);
@@ -124,7 +125,7 @@ public class MarkersActivity extends BaseActivity {
 			case R.id.menuMigrateFromV3: {
 				final FileChooserConfig config = new FileChooserConfig();
 				config.mode = FileChooserConfig.Mode.Open;
-				config.pattern = YukuAlkitabImportOfferActivity.getBackupFilenameMatcher().pattern().toString();
+				config.pattern = "(yuku\\.alkitab|yuku\\.alkitab\\.kjv|org\\.sabda\\.alkitab|org\\.sabda\\.online)-(backup|autobackup-[0-9-]+)\\.xml";
 				config.title = getString(R.string.marker_migrate_file_chooser_title);
 				final Intent intent = FileChooserActivity.createIntent(this, config);
 				startActivityForResult(intent, REQCODE_migrateFromV3);

@@ -102,19 +102,13 @@ public enum Prefkey {
 	lastVersionId,
 	lastSplitVersionId,
 	lastSplitOrientation, // string "horizontal" or "vertical"
+	lastSplitProp, // float proportion of the top or left split window
 
 	/**
 	 * The whole history (with many entries)
 	 * This was moved from instant_preferences.
 	 */
 	history,
-
-	/**
-	 * (int) Do not offer importing yuku.alkitab or yuku.alkitab.kjv backup files any more.
-	 * 1: user suppressed it
-	 * 2: imported already
-	 */
-	stop_import_yuku_alkitab_backups,
 
 	/** Announce: last annoucement check (auto only). Unix time. */
 	announce_last_check,
@@ -125,4 +119,10 @@ public enum Prefkey {
 	/** Current reading vars */
 	current_reading_ari_start,
 	current_reading_ari_end,
+
+	/** Option to ask for verse number in goto screen */
+	gotoAskForVerse,
+	;
+
+	public static final boolean GOTO_ASK_FOR_VERSE_DEFAULT = true;
 }

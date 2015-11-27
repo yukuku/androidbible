@@ -64,7 +64,7 @@ public class BintexReader implements Closeable {
 		if (len < 0) {
 			throw new EOFException();
 		} else if (len == 0) {
-			return ""; //$NON-NLS-1$
+			return "";
 		}
 		
 		// max len = 255, maka buf pasti cukup
@@ -80,7 +80,7 @@ public class BintexReader implements Closeable {
 	public String readLongString() throws IOException {
 		int len = readInt();
 		if (len == 0) {
-			return ""; //$NON-NLS-1$
+			return "";
 		}
 		
 		char[] buf_char = buf_char_.get();

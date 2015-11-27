@@ -140,7 +140,7 @@ public class VersionImpl extends Version {
 			if (b != null) return b;
 		}
 
-		Log.e(TAG, "No books available on this version. Version info: " + (this.bibleReader == null? "reader=null": (this.bibleReader.getLongName() + " books.length=" + books.length)));    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		Log.e(TAG, "No books available on this version. Version info: " + (this.bibleReader == null? "reader=null": (this.bibleReader.getLongName() + " books.length=" + books.length)));
 		return null;
 	}
 

@@ -31,14 +31,14 @@ public class Yes1PericopeIndex extends PericopeIndex {
 			int currentPos = in.getPos();
 
 			if (currentPos > offset) {
-				throw new RuntimeException("currentPos " + currentPos + " > offset " + offset + ", is invalid!"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				throw new RuntimeException("currentPos " + currentPos + " > offset " + offset + ", is invalid!");
 			}
 
 			in.skip(offset - currentPos);
 			
 			return Yes1PericopeBlock.read(in);
 		} catch (IOException e) {
-			Log.e(TAG, "getBlock error", e); //$NON-NLS-1$
+			Log.e(TAG, "getBlock error", e);
 			
 			return null;
 		}

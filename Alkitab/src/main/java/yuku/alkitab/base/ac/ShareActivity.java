@@ -58,7 +58,8 @@ public class ShareActivity extends BaseActivity {
 	}
 	
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		super.onCreateWithNonToolbarUpButton(savedInstanceState);
+		enableNonToolbarUpButton();
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_share);
 
 		String title = getIntent().getStringExtra(Intent.EXTRA_TITLE);
@@ -180,7 +181,7 @@ public class ShareActivity extends BaseActivity {
 						}
 						ActivityInfo ai = ii.resolveActivityInfo(getPackageManager(), 0);
 						if (ai == null) {
-							Log.w("ResolverActivity", "No activity found for " + ii); //$NON-NLS-1$ //$NON-NLS-2$
+							Log.w("ResolverActivity", "No activity found for " + ii);
 							continue;
 						}
 						ResolveInfo ri = new ResolveInfo();

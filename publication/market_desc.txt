@@ -29,10 +29,9 @@ A one-stop Bible app, feature-packed with reading plans, bookmarks, notes, highl
 <b>Widget.</b> Get refreshments from choice verses every day by putting widgets on the home screen.
 
 <b>About Bible for Android</b>
-– Official website http://github.com/yukuku/androidbible
-– Open-source project http://github.com/yukuku/androidbible
+– Official website http://www.bibleforandroid.com
+– Open-source project https://github.com/yukuku/androidbible
 – Blog http://blog.bibleforandroid.com
-– Beta testing http://goo.gl/JjYTK1
 – Donation to developers http://goo.gl/DnVqLV
 
 <b>Glory to God alone – Soli Deo Gloria!</b>

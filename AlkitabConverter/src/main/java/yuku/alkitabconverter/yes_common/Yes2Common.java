@@ -132,7 +132,7 @@ public class Yes2Common {
 	}
 
     public static void createYesFile(final File outputFile, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed, final LinkedHashMap<Integer, XrefEntry> xrefEntries, final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries) throws IOException {
-        RandomAccessFile raf = new RandomAccessFile(outputFile, "rw"); //$NON-NLS-1$
+        RandomAccessFile raf = new RandomAccessFile(outputFile, "rw");
         raf.setLength(0);
         RandomOutputStream output = new RandomAccessFileRandomOutputStream(raf);
         createYesFile(output, versionInfo, textDb, pericopeData, compressed, xrefEntries, footnoteEntries);

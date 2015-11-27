@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.nfc.NdefMessage;
@@ -18,7 +19,6 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
@@ -38,13 +38,13 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.URLSpan;
 import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -67,7 +67,6 @@ import yuku.alkitab.base.ac.NoteActivity;
 import yuku.alkitab.base.ac.SearchActivity;
 import yuku.alkitab.base.ac.SettingsActivity;
 import yuku.alkitab.base.ac.ShareActivity;
-import yuku.alkitab.base.ac.YukuAlkitabImportOfferActivity;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.dialog.ProgressMarkListDialog;
@@ -106,6 +105,7 @@ import yuku.alkitab.base.widget.TwofingerLinearLayout;
 import yuku.alkitab.base.widget.VerseInlineLinkSpan;
 import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.base.widget.VersesView;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
@@ -119,14 +119,11 @@ import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 import yuku.devoxx.flowlayout.FlowLayout;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Matcher;
 
 import static yuku.alkitab.base.util.Literals.Array;
 
@@ -175,7 +172,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	final Floater.Listener floater_listener = new Floater.Listener() {
 		@Override
 		public void onSelectComplete(final int ari) {
-			jumpToAri(ari, false);
+			jumpToAri(ari);
 			history.add(ari);
 		}
 	};
@@ -273,7 +270,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	LeftDrawer.Text leftDrawer;
 
 	FrameLayout overlayContainer;
-	View root;
+	ViewGroup root;
 	Toolbar toolbar;
 	VersesView lsSplit0;
 	VersesView lsSplit1;
@@ -310,7 +307,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			}
 		} else if (data instanceof Integer) {
 			final int ari = (Integer) data;
-			jumpToAri(ari, false);
+			jumpToAri(ari);
 			history.add(ari);
 		}
 	};
@@ -369,6 +366,30 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	};
 
+	final ViewTreeObserver.OnGlobalLayoutListener splitRoot_globalLayout = new ViewTreeObserver.OnGlobalLayoutListener() {
+		Point lastSize;
+
+		@Override
+		public void onGlobalLayout() {
+			if (lastSize != null && lastSize.x == splitRoot.getWidth() && lastSize.y == splitRoot.getHeight()) {
+				return; // no need to layout now
+			}
+
+			if (activeSplitVersion == null) {
+				return; // we are not splitting
+			}
+
+			configureSplitSizes();
+
+			if (lastSize == null) {
+				lastSize = new Point();
+			}
+			lastSize.x = splitRoot.getWidth();
+			lastSize.y = splitRoot.getHeight();
+		}
+
+	};
+
 	static class IntentResult {
 		public int ari;
 		public boolean selectVerse;
@@ -425,8 +446,18 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		lsSplit1 = V.get(this, R.id.lsSplit1);
 		tSplitEmpty = V.get(this, R.id.tSplitEmpty);
 		splitRoot = V.get(this, R.id.splitRoot);
+		splitRoot.getViewTreeObserver().addOnGlobalLayoutListener(splitRoot_globalLayout);
+
 		splitHandleButton = V.get(this, R.id.splitHandleButton);
 		floater = V.get(this, R.id.floater);
+
+		// If layout is changed, updateToolbarLocation must be updated as well. This will be called in DEBUG to make sure
+		// updateToolbarLocation is also updated when layout is updated.
+		if (BuildConfig.DEBUG) {
+			if (root.getChildCount() != 2 || root.getChildAt(0).getId() != R.id.toolbar || root.getChildAt(1).getId() != R.id.splitRoot) {
+				throw new RuntimeException("Layout changed and this is no longer compatible with updateToolbarLocation");
+			}
+		}
 
 		updateToolbarLocation();
 
@@ -560,22 +591,22 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		if (selectVerse) {
 			for (int i = 0; i < selectVerseCount; i++) {
 				final int verse_1 = Ari.toVerse(openingAri) + i;
-				lsSplit0.setVerseSelected(verse_1, true);
+				callAttentionForVerseToBothSplits(verse_1);
 			}
 		}
 
 		App.getLbm().registerReceiver(reloadAttributeMapReceiver, new IntentFilter(ACTION_ATTRIBUTE_MAP_CHANGED));
 
-		if (!U.equals(getPackageName(), "yuku.alkitab") /* prevent self-import */
-			&& !U.equals(getPackageName(), "yuku.alkitab.kjv") /* prevent self-import */
-			&& Preferences.getInt(Prefkey.stop_import_yuku_alkitab_backups, 0) == 0
-			&& thereIsYukuAlkitabBackupFiles()) {
-			startActivity(YukuAlkitabImportOfferActivity.createIntent());
-		}
-
 		Announce.checkAnnouncements();
 
 		App.getLbm().registerReceiver(needsRestartReceiver, new IntentFilter(ACTION_NEEDS_RESTART));
+	}
+
+	void callAttentionForVerseToBothSplits(final int verse_1) {
+		lsSplit0.callAttentionForVerse(verse_1);
+		if (activeSplitVersion != null) {
+			lsSplit1.callAttentionForVerse(verse_1);
+		}
 	}
 
 	final BroadcastReceiver needsRestartReceiver = new BroadcastReceiver() {
@@ -584,23 +615,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			needsRestart = true;
 		}
 	};
-
-	private boolean thereIsYukuAlkitabBackupFiles() {
-		final File dir = new File(Environment.getExternalStorageDirectory(), "bible");
-		if (!dir.exists()) return false;
-
-		final File[] files = dir.listFiles(new FilenameFilter() {
-			final Matcher m = YukuAlkitabImportOfferActivity.getBackupFilenameMatcher();
-
-			@Override
-			public boolean accept(final File dir, final String filename) {
-				m.reset(filename);
-				return m.matches();
-			}
-		});
-
-		return files != null && files.length != 0;
-	}
 
 	@Override protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
@@ -635,13 +649,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			}
 		}
 
-		if (Build.VERSION.SDK_INT >= 14) {
+		{
 			final IntentResult result = tryGetIntentResultFromBeam(intent);
 			if (result != null) return result;
 		}
 
-		final IntentResult result = tryGetIntentResultFromView(intent);
-		if (result != null) return result;
+		{
+			final IntentResult result = tryGetIntentResultFromView(intent);
+			if (result != null) return result;
+		}
 
 		return null;
 	}
@@ -671,7 +687,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			int lid = intent.getIntExtra("lid", 0);
 			int ari = LidToAri.lidToAri(lid);
 			if (ari != 0) {
-				jumpToAri(ari, true);
+				jumpToAri(ari);
 				history.add(ari);
 				final IntentResult res = new IntentResult(ari);
 				res.selectVerse = selectVerse;
@@ -695,11 +711,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			nfcAdapter.setNdefPushMessageCallback(event -> {
 				JSONObject obj = new JSONObject();
 				try {
-					obj.put("ari", Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, lsSplit0.getVerseBasedOnScroll())); //$NON-NLS-1$
+					obj.put("ari", Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, lsSplit0.getVerseBasedOnScroll()));
 				} catch (JSONException e) { // won't happen
 				}
 				byte[] payload = obj.toString().getBytes();
-				NdefRecord record = new NdefRecord(NdefRecord.TNF_MIME_MEDIA, "application/vnd.yuku.alkitab.nfc.beam".getBytes(), new byte[0], payload); //$NON-NLS-1$
+				NdefRecord record = new NdefRecord(NdefRecord.TNF_MIME_MEDIA, "application/vnd.yuku.alkitab.nfc.beam".getBytes(), new byte[0], payload);
 				return new NdefMessage(new NdefRecord[] {
 					record,
 					NdefRecord.createApplicationRecord(getPackageName()),
@@ -727,9 +743,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, IsiActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 			IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
 			try {
-			    ndef.addDataType("application/vnd.yuku.alkitab.nfc.beam"); //$NON-NLS-1$
+			    ndef.addDataType("application/vnd.yuku.alkitab.nfc.beam");
 			} catch (IntentFilter.MalformedMimeTypeException e) {
-			    throw new RuntimeException("fail mime type", e); //$NON-NLS-1$
+			    throw new RuntimeException("fail mime type", e);
 			}
 			IntentFilter[] intentFiltersArray = new IntentFilter[] {ndef, };
 			nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, null);
@@ -752,12 +768,12 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		String json = new String(records[0].getPayload());
 		try {
 			JSONObject obj = new JSONObject(json);
-			final int ari = obj.optInt("ari", -1); //$NON-NLS-1$
+			final int ari = obj.optInt("ari", -1);
 			if (ari == -1) return null;
 
 			return new IntentResult(ari);
 		} catch (JSONException e) {
-			Log.e(TAG, "Malformed json from nfc", e); //$NON-NLS-1$
+			Log.e(TAG, "Malformed json from nfc", e);
 			return null;
 		}
 	}
@@ -898,7 +914,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			return 0;
 		}
 
-		Log.d(TAG, "going to jump to " + reference); //$NON-NLS-1$
+		Log.d(TAG, "going to jump to " + reference);
 
 		Jumper jumper = new Jumper(reference);
 		if (! jumper.getParseSucceeded()) {
@@ -941,7 +957,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	/**
 	 * Jump to a given ari
 	 */
-	void jumpToAri(final int ari, final boolean selectVerse) {
+	void jumpToAri(final int ari) {
 		if (ari == 0) return;
 
 		final int bookId = Ari.toBook(ari);
@@ -955,11 +971,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		this.activeBook = book;
 		final int ari_cv = display(Ari.toChapter(ari), Ari.toVerse(ari));
 
-		if (selectVerse) {
-			// select the verse only if the displayed verse is equal to the requested verse
-			if (ari == Ari.encode(this.activeBook.bookId, ari_cv)) {
-				lsSplit0.setVerseSelected(Ari.toVerse(ari), true);
-			}
+		// call attention to the verse only if the displayed verse is equal to the requested verse
+		if (ari == Ari.encode(this.activeBook.bookId, ari_cv)) {
+			callAttentionForVerseToBothSplits(Ari.toVerse(ari));
 		}
 	}
 
@@ -1135,15 +1149,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			new MaterialDialog.Builder(this)
 				.adapter(historyAdapter, (materialDialog, view, position, charSequence) -> {
 					materialDialog.dismiss();
-					int ari = history.getAri(position);
-					jumpToAri(ari, true);
+					final int ari = history.getAri(position);
+					jumpToAri(ari);
 					history.add(ari);
 					Preferences.setBoolean(Prefkey.history_button_understood, true);
 				})
 				.autoDismiss(true)
 				.show();
 		} else {
-			Toast.makeText(this, R.string.recentverses_not_available, Toast.LENGTH_SHORT).show();
+			Snackbar.make(root, R.string.recentverses_not_available, Snackbar.LENGTH_SHORT).show();
 		}
 	}
 
@@ -1286,31 +1300,21 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		// - not fullscreen, toolbar at bottom
 		// - not fullscreen, toolbar at top
 
-		final FrameLayout.LayoutParams lp_root = (FrameLayout.LayoutParams) root.getLayoutParams();
+		// root contains exactly 2 children: toolbar and splitRoot. This is checked in DEBUG in onCreate.
+		// Need to move toolbar and splitRoot in order to accomplish this.
 
-		if (fullScreen) {
-			lp_root.topMargin = 0;
-			lp_root.bottomMargin = 0;
-		} else {
-			final TypedValue tv = new TypedValue();
-			getTheme().resolveAttribute(R.attr.actionBarSize, tv, true);
-			final int actionBarSize = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
-			final FrameLayout.LayoutParams lp_toolbar = (FrameLayout.LayoutParams) toolbar.getLayoutParams();
+		if (!fullScreen) {
+			root.removeView(toolbar);
+			root.removeView(splitRoot);
 
 			if (Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default)) {
-				lp_toolbar.gravity = Gravity.BOTTOM;
-				lp_root.topMargin = 0;
-				lp_root.bottomMargin = actionBarSize;
+				root.addView(splitRoot);
+				root.addView(toolbar);
 			} else {
-				lp_toolbar.gravity = Gravity.NO_GRAVITY;
-				lp_root.topMargin = actionBarSize;
-				lp_root.bottomMargin = 0;
+				root.addView(toolbar);
+				root.addView(splitRoot);
 			}
-
-			toolbar.setLayoutParams(lp_toolbar);
 		}
-
-		root.setLayoutParams(lp_root);
 	}
 
 	@Override
@@ -1401,62 +1405,67 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			return; // it's already split, no need to do anything
 		}
 
-		// do it on after the layout pass
-		overlayContainer.requestLayout();
-		overlayContainer.post(() -> {
-			splitHandleButton.setVisibility(View.VISIBLE);
-
-			final int splitHandleThickness = getResources().getDimensionPixelSize(R.dimen.split_handle_thickness);
-			if (splitHandleButton.getOrientation() == LabeledSplitHandleButton.Orientation.vertical) {
-				splitRoot.setOrientation(LinearLayout.VERTICAL);
-
-				final int totalHeight = splitRoot.getHeight();
-				final int masterHeight = totalHeight / 2 - splitHandleThickness / 2;
-
-				{ // divide by 2 the screen space
-					final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
-					lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-					lp.height = masterHeight;
-					lsSplit0.setLayoutParams(lp);
-				}
-
-				// no need to set height, because it has been set to match_parent, so it takes the remaining space.
-				lsSplit1.setVisibility(View.VISIBLE);
-
-				{
-					final ViewGroup.LayoutParams lp = splitHandleButton.getLayoutParams();
-					lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-					lp.height = splitHandleThickness;
-					splitHandleButton.setLayoutParams(lp);
-				}
-			} else {
-				splitRoot.setOrientation(LinearLayout.HORIZONTAL);
-
-				final int totalWidth = splitRoot.getWidth();
-				final int masterWidth = totalWidth / 2 - splitHandleThickness / 2;
-
-				{ // divide by 2 the screen space
-					final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
-					lp.width = masterWidth;
-					lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
-					lsSplit0.setLayoutParams(lp);
-				}
-
-				// no need to set width, because it has been set to match_parent, so it takes the remaining space.
-				lsSplit1.setVisibility(View.VISIBLE);
-
-				{
-					final ViewGroup.LayoutParams lp = splitHandleButton.getLayoutParams();
-					lp.width = splitHandleThickness;
-					lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
-					splitHandleButton.setLayoutParams(lp);
-				}
-			}
-		});
+		configureSplitSizes();
 
 		bVersion.setVisibility(View.GONE);
 		if (actionMode != null) actionMode.invalidate();
 		leftDrawer.getHandle().setSplitVersion(true);
+	}
+
+	void configureSplitSizes() {
+		splitHandleButton.setVisibility(View.VISIBLE);
+
+		float prop = Preferences.getFloat(Prefkey.lastSplitProp, Float.MIN_VALUE);
+		if (prop == Float.MIN_VALUE || prop < 0.f || prop > 1.f) {
+			prop = 0.5f; // guard against invalid values
+		}
+
+		final int splitHandleThickness = getResources().getDimensionPixelSize(R.dimen.split_handle_thickness);
+		if (splitHandleButton.getOrientation() == LabeledSplitHandleButton.Orientation.vertical) {
+			splitRoot.setOrientation(LinearLayout.VERTICAL);
+
+			final int totalHeight = splitRoot.getHeight();
+			final int masterHeight = (int) ((totalHeight - splitHandleThickness) * prop);
+
+			{ // divide the screen space
+				final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
+				lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+				lp.height = masterHeight;
+				lsSplit0.setLayoutParams(lp);
+			}
+
+			// no need to set height, because it has been set to match_parent, so it takes the remaining space.
+			lsSplit1.setVisibility(View.VISIBLE);
+
+			{
+				final ViewGroup.LayoutParams lp = splitHandleButton.getLayoutParams();
+				lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+				lp.height = splitHandleThickness;
+				splitHandleButton.setLayoutParams(lp);
+			}
+		} else {
+			splitRoot.setOrientation(LinearLayout.HORIZONTAL);
+
+			final int totalWidth = splitRoot.getWidth();
+			final int masterWidth = (int) ((totalWidth - splitHandleThickness) * prop);
+
+			{ // divide the screen space
+				final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
+				lp.width = masterWidth;
+				lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
+				lsSplit0.setLayoutParams(lp);
+			}
+
+			// no need to set width, because it has been set to match_parent, so it takes the remaining space.
+			lsSplit1.setVisibility(View.VISIBLE);
+
+			{
+				final ViewGroup.LayoutParams lp = splitHandleButton.getLayoutParams();
+				lp.width = splitHandleThickness;
+				lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
+				splitHandleButton.setLayoutParams(lp);
+			}
+		}
 	}
 
 	void closeSplitDisplay() {
@@ -1493,9 +1502,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					// stay on the same book
 					ari_cv = display(result.chapter_1, result.verse_1);
 
-					// select the verse only if the displayed verse is equal to the requested verse
+					// call attention to the verse only if the displayed verse is equal to the requested verse
 					if (Ari.encode(0, result.chapter_1, result.verse_1) == ari_cv) {
-						lsSplit0.setVerseSelected(result.verse_1, true);
+						callAttentionForVerseToBothSplits(result.verse_1);
 					}
 				} else {
 					// change book
@@ -1510,7 +1519,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 					// select the verse only if the displayed verse is equal to the requested verse
 					if (Ari.encode(result.bookId, result.chapter_1, result.verse_1) == Ari.encode(this.activeBook.bookId, ari_cv)) {
-						lsSplit0.setVerseSelected(result.verse_1, true);
+						callAttentionForVerseToBothSplits(result.verse_1);
 					}
 				}
 
@@ -1527,7 +1536,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (result != null && result.chosenIntent != null) {
 				Intent chosenIntent = result.chosenIntent;
 				final String packageName = chosenIntent.getComponent().getPackageName();
-				if (U.equals(packageName, "com.facebook.katana")) { //$NON-NLS-1$
+				if (U.equals(packageName, "com.facebook.katana")) {
 					String verseUrl = chosenIntent.getStringExtra(EXTRA_verseUrl);
 					if (verseUrl != null) {
 						chosenIntent.putExtra(Intent.EXTRA_TEXT, verseUrl); // change text to url
@@ -1741,7 +1750,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		final int ari_source = arif_source >>> 8;
 
 		dialog.dismiss();
-		jumpToAri(ari_target, true);
+		jumpToAri(ari_target);
 
 		// add both xref source and target, so user can go back to source easily
 		history.add(ari_source);
@@ -1927,7 +1936,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					.show();
 			}
 		}
-	};
+	}
 
 	class VerseInlineLinkSpanFactory implements VerseInlineLinkSpan.Factory {
 		private final Object source;
@@ -2071,7 +2080,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			 * Please ignore it and leave it intact. */
 			if (hasEsvsbAsal == null) {
 				try {
-					getPackageManager().getApplicationInfo("yuku.esvsbasal", 0); //$NON-NLS-1$
+					getPackageManager().getApplicationInfo("yuku.esvsbasal", 0);
 					hasEsvsbAsal = true;
 				} catch (PackageManager.NameNotFoundException e) {
 					hasEsvsbAsal = false;
@@ -2315,11 +2324,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
 
 				try {
-					Intent intent = new Intent("yuku.esvsbasal.action.GOTO"); //$NON-NLS-1$
-					intent.putExtra("ari", ari); //$NON-NLS-1$
+					Intent intent = new Intent("yuku.esvsbasal.action.GOTO");
+					intent.putExtra("ari", ari);
 					startActivity(intent);
 				} catch (Exception e) {
-					Log.e(TAG, "ESVSB starting", e); //$NON-NLS-1$
+					Log.e(TAG, "ESVSB starting", e);
 				}
 			} return true;
 			case R.id.menuGuide: {
@@ -2449,6 +2458,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		int first;
 		int handle;
 		int root;
+		float prop; // proportion from top or left
 
 		@Override public void onHandleDragStart() {
 			splitRoot.setOnefingerEnabled(false);
@@ -2462,6 +2472,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				handle = splitHandleButton.getWidth();
 				root = splitRoot.getWidth();
 			}
+
+			prop = Float.MIN_VALUE; // guard against glitches
 		}
 
 		@Override
@@ -2472,6 +2484,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			lp.width = newW < 0? 0: newW > maxW? maxW: newW;
 			lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
 			lsSplit0.setLayoutParams(lp);
+			prop = (float) lp.width / maxW;
 		}
 
 		@Override public void onHandleDragMoveY(float dySinceLast, float dySinceStart) {
@@ -2481,10 +2494,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
 			lp.height = newH < 0? 0: newH > maxH? maxH: newH;
 			lsSplit0.setLayoutParams(lp);
+			prop = (float) lp.height / maxH;
 		}
 
 		@Override public void onHandleDragStop() {
 			splitRoot.setOnefingerEnabled(true);
+
+			if (prop != Float.MIN_VALUE) {
+				Preferences.setFloat(Prefkey.lastSplitProp, prop);
+			}
 		}
 	};
 
@@ -2588,7 +2606,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		final int ari_start = aris[0];
-		jumpToAri(ari_start, false);
+		jumpToAri(ari_start);
 		history.add(ari_start);
 
 		leftDrawer.closeDrawer();
@@ -2604,7 +2622,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		if (ari != 0) {
 			App.trackEvent("left_drawer_progress_mark_pin_click_succeed");
-			jumpToAri(ari, false);
+			jumpToAri(ari);
 			history.add(ari);
 		} else {
 			App.trackEvent("left_drawer_progress_mark_pin_click_failed");
