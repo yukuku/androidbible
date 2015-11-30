@@ -174,9 +174,9 @@ public class SongListActivity extends BaseActivity {
 	    		if (searchState.bookName == null) {
 	    			bChangeBook.setText(R.string.sn_bookselector_all);
 	    		} else {
-	    			bChangeBook.setText(searchState.bookName);
-	    		}
-        	} stillUsingInitialSearchState = false;
+					bChangeBook.setText(SongBookUtil.escapeSongBookName(searchState.bookName));
+				}
+			} stillUsingInitialSearchState = false;
         	setCustomProgressBarIndeterminateVisible(false); // somehow this is needed.
         } else {
         	startSearch();
@@ -221,7 +221,7 @@ public class SongListActivity extends BaseActivity {
 
 		@Override
 		public void onSongBookSelected(final String name) {
-			bChangeBook.setText(name);
+			bChangeBook.setText(SongBookUtil.escapeSongBookName(name));
 			startSearchSettingBookName(name);
 		}
 	};
@@ -297,7 +297,7 @@ public class SongListActivity extends BaseActivity {
 			} else {
 				lTitleOriginal.setVisibility(View.GONE);
 			}
-			lBookName.setText(songInfo.bookName);
+			lBookName.setText(SongBookUtil.escapeSongBookName(songInfo.bookName));
 			
 			return res;
 		}

@@ -1195,7 +1195,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (thisCreatorId.equals(history.getCreatorId(position))) {
 				textView.setTextColor(defaultTextColor);
 			} else {
-				textView.setTextColor(0xff4db6ac);
+				textView.setTextColor(getResources().getColor(R.color.escape));
 			}
 		}
 

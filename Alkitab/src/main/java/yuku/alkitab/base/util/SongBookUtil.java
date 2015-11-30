@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.view.Menu;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.PopupMenu;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.okhttp.Call;
+import com.squareup.okhttp.Response;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.storage.SongDb;
@@ -132,9 +134,12 @@ public class SongBookUtil {
 		final List<SongBookInfo> infos = S.getSongDb().listSongBookInfos();
 		for (int i = 0; i < infos.size(); i++) {
 			final SongBookInfo info = infos.get(i);
-			final SpannableStringBuilder sb = new SpannableStringBuilder(info.name + '\n');
+			final SpannableStringBuilder sb = new SpannableStringBuilder(escapeSongBookName(info.name));
+			sb.append("\n");
 			int sb_len = sb.length();
-			sb.append(Html.fromHtml(info.title));
+			if (!TextUtils.isEmpty(info.title)) {
+				sb.append(Html.fromHtml(info.title));
+			}
 			sb.setSpan(new RelativeSizeSpan(0.7f), sb_len, sb.length(), 0);
 			sb.setSpan(new ForegroundColorSpan(0xffa0a0a0), sb_len, sb.length(), 0);
 			menu.add(0, i + 1, 0, sb);
@@ -171,6 +176,14 @@ public class SongBookUtil {
 		};
 	}
 
+	public static class NotOkException extends IOException {
+		public int code;
+
+		public NotOkException(final int code) {
+			this.code = code;
+		}
+	}
+
 	public static void downloadSongBook(final Activity activity, final SongBookInfo songBookInfo, final int dataFormatVersion, final OnDownloadSongBookListener listener) {
 		final AtomicBoolean cancelled = new AtomicBoolean();
 
@@ -184,7 +197,12 @@ public class SongBookUtil {
 			try {
 				final Call call = App.downloadCall("https://alkitab-host.appspot.com/addon/songs/get_songs?name=" + songBookInfo.name + "&dataFormatVersion=" + dataFormatVersion);
 
-				final InputStream ogis = new OptionalGzipInputStream(call.execute().body().byteStream());
+				final Response response = call.execute();
+				if (response.code() != 200) {
+					throw new NotOkException(response.code());
+				}
+
+				final InputStream ogis = new OptionalGzipInputStream(response.body().byteStream());
 				final ObjectInputStream ois = new ObjectInputStream(ogis);
 				@SuppressWarnings("unchecked") final List<Song> songs = (List<Song>) ois.readObject();
 				ois.close();
@@ -207,5 +225,15 @@ public class SongBookUtil {
 				pd.dismiss();
 			}
 		}).start();
+	}
+
+	public static CharSequence escapeSongBookName(final String name) {
+		if (name != null && name.startsWith("_")) {
+			final int color = App.context.getResources().getColor(R.color.escape);
+			final SpannableStringBuilder res = new SpannableStringBuilder(name.substring(1));
+			res.setSpan(new ForegroundColorSpan(color), 0, res.length(), 0);
+			return res;
+		}
+		return name;
 	}
 }
