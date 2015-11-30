@@ -203,9 +203,17 @@ public class S {
 		new MaterialDialog.Builder(activity)
 			.items(options)
 			.itemsCallbackSingleChoice(selected, (dialog, view, which, text) -> {
-				final MVersion mv = versions.get(which);
-				listener.onVersionSelected(mv);
-				dialog.dismiss();
+				if (which == -1) {
+					// it is possible that 'which' is -1 in the case that
+					// a version is already deleted, but the current displayed version is that version
+					// (hence the initial selected item position is -1) and then the user
+					// presses the "other version" button. This callback will still be triggered
+					// before the positive button callback.
+				} else {
+					final MVersion mv = versions.get(which);
+					listener.onVersionSelected(mv);
+					dialog.dismiss();
+				}
 				return true;
 			})
 			.alwaysCallSingleChoiceCallback()

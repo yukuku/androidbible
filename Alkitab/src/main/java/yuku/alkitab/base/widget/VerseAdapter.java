@@ -193,7 +193,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	}
 
 	@Override public synchronized long getItemId(int position) {
-		return itemPointer_[position];
+		return position;
 	}
 
 	public void setParallelListener(CallbackSpan.OnClickListener<Object> parallelListener) {
@@ -341,7 +341,13 @@ public abstract class VerseAdapter extends BaseAdapter {
 	}
 
 	@Override public boolean isEnabled(int position) {
-		return getItemId(position) >= 0;
+		final int[] _itemPointer = this.itemPointer_;
+
+		// guard against wild ListView.onInitializeAccessibilityNodeInfoForItem
+		if (_itemPointer == null) return false;
+		if (position >= _itemPointer.length) return false;
+
+		return _itemPointer[position] >= 0;
 	}
 	
 	private static int[] makeItemPointer(int nverse, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
