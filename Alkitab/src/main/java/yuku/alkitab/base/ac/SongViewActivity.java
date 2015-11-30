@@ -395,8 +395,15 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		startActivityForResult(
 			HelpActivity.createIntentWithOverflowMenu(
 				"https://alkitab-host.appspot.com/songs/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName()),
-				"Private song book",
-				AlertDialogActivity.createInputIntent(null, "Download a private (hidden) song book", getString(R.string.cancel), getString(R.string.ok), InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS, "Song book name")
+				getString(R.string.sn_menu_private_song_book),
+				AlertDialogActivity.createInputIntent(
+					null,
+					getString(R.string.sn_private_song_book_dialog_desc),
+					getString(R.string.cancel),
+					getString(R.string.ok),
+					InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS,
+					getString(R.string.sn_private_song_book_name_hint)
+				)
 			),
 			REQCODE_downloadSongBook
 		);

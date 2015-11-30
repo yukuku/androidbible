@@ -243,6 +243,9 @@
     <string name="sn_update_book_confirm_button">Update</string>
     <string name="sn_update_book">Update song book</string>
     <string name="sn_update_book_because_too_old">Please update ^1 to the latest version before continuing. After updating, send your edits if needed.</string>
+    <string name="sn_menu_private_song_book">Private song book</string>
+    <string name="sn_private_song_book_dialog_desc">Download a private (hidden) song book</string>
+    <string name="sn_private_song_book_name_hint">Song book name</string>
 
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Previous day</string>
