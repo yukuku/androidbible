@@ -7,7 +7,7 @@ public interface Yes2VerseTextDecoder {
 	String[] separateIntoVerses(BintexReader br, int verse_count, boolean lowercased) throws Exception;
 	String makeIntoSingleString(BintexReader br, int verse_count, boolean lowercased) throws Exception;
 	
-	public static class Ascii implements Yes2VerseTextDecoder {
+	class Ascii implements Yes2VerseTextDecoder {
 		ThreadLocal<byte[]> verseBuf_ = new ThreadLocal<byte[]>() {
 			@Override protected byte[] initialValue() {
 				return new byte[4000];
@@ -51,7 +51,7 @@ public interface Yes2VerseTextDecoder {
 		}
 	}
 	
-	public class Utf8 implements Yes2VerseTextDecoder {
+	class Utf8 implements Yes2VerseTextDecoder {
 		ThreadLocal<byte[]> verseBuf_ = new ThreadLocal<byte[]>() {
 			@Override protected byte[] initialValue() {
 				return new byte[4000];

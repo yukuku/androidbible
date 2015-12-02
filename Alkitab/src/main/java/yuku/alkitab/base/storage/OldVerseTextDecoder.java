@@ -39,8 +39,8 @@ public class OldVerseTextDecoder {
 			return versesBuf.toArray(new String[versesBuf.size()]);
 		}
 
-		@SuppressWarnings("deprecation") @Override public String makeIntoSingleString(byte[] ba, boolean hurufKecilkan) {
-			if (hurufKecilkan) {
+		@SuppressWarnings("deprecation") @Override public String makeIntoSingleString(byte[] ba, boolean lowercased) {
+			if (lowercased) {
 				lowercase(ba);
 			}
 
@@ -71,9 +71,9 @@ public class OldVerseTextDecoder {
 			return versesBuf.toArray(new String[versesBuf.size()]);
 		}
 
-		@Override public String makeIntoSingleString(byte[] ba, boolean hurufKecilkan) {
+		@Override public String makeIntoSingleString(byte[] ba, boolean lowercased) {
 			String res;
-			if (hurufKecilkan) {
+			if (lowercased) {
 				res = Utf8Decoder.toStringLowerCase(ba);
 			} else {
 				res = Utf8Decoder.toString(ba);

@@ -4,6 +4,9 @@ import yuku.bintex.BintexReader;
 
 import java.io.IOException;
 
+/**
+ * This class is an intentionally incomplete UTF-8 decoder that only supports up to U+FFFF.
+ */
 public class Utf8Decoder {
 	public static char[] buf = new char[1000];
 	
@@ -94,15 +97,19 @@ public class Utf8Decoder {
 
 				if (c0 < 0xe0) {
 					// input 2 byte, output 5+6 = 11 bit
-					buf[pos++] = (char) (((c0 & 0x1f) << 6) | (c1 & 0x3f));
+					final int c = ((c0 & 0x1f) << 6) | (c1 & 0x3f);
+					buf[pos++] = (char) Character.toLowerCase(c);
 					continue;
 				}
 
 				i++;
 				int c2 = ba[i] & 0xff;
 
-				// input 3 byte, output 4+6+6 = 16 bit
-				buf[pos++] =  (char) (((c0 & 0x0f) << 12) | ((c1 & 0x3f) << 6) | (c2 & 0x3f));
+				{
+					// input 3 byte, output 4+6+6 = 16 bit
+					final int c = ((c0 & 0x0f) << 12) | ((c1 & 0x3f) << 6) | (c2 & 0x3f);
+					buf[pos++] = (char) Character.toLowerCase(c);
+				}
 			}
 		} catch (ArrayIndexOutOfBoundsException e) {
 			// biarin
@@ -154,15 +161,27 @@ public class Utf8Decoder {
 
 				if (c0 < 0xe0) {
 					// input 2 byte, output 5+6 = 11 bit
-					char_buf[char_pos++] = (char) (((c0 & 0x1f) << 6) | (c1 & 0x3f));
+					final int c = (((c0 & 0x1f) << 6) | (c1 & 0x3f));
+					if (!lowercased) {
+						char_buf[char_pos++] = (char) c;
+					} else {
+						char_buf[char_pos++] = (char) Character.toLowerCase(c);
+					}
 					continue;
 				}
 
 				i++;
 				int c2 = byte_buf[i] & 0xff;
 
-				// input 3 byte, output 4+6+6 = 16 bit
-				char_buf[char_pos++] =  (char) (((c0 & 0x0f) << 12) | ((c1 & 0x3f) << 6) | (c2 & 0x3f));
+				{
+					// input 3 byte, output 4+6+6 = 16 bit
+					final int c = ((c0 & 0x0f) << 12) | ((c1 & 0x3f) << 6) | (c2 & 0x3f);
+					if (!lowercased) {
+						char_buf[char_pos++] = (char) c;
+					} else {
+						char_buf[char_pos++] = (char) Character.toLowerCase(c);
+					}
+				}
 			}
 			
 			// verse separator

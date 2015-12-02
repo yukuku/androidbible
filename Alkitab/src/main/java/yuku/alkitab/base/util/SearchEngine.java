@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -77,18 +76,15 @@ public class SearchEngine {
 		String[] words = QueryTokenizer.tokenize(query.query_string);
 		
 		// urutkan berdasarkan panjang, lalu abjad
-		Arrays.sort(words, new Comparator<String>() {
-			@Override
-			public int compare(String object1, String object2) {
-				int len1 = object1.length();
-				int len2 = object2.length();
-				
-				if (len1 > len2) return -1;
-				if (len1 == len2) {
-					return object1.compareTo(object2);
-				}
-				return 1;
+		Arrays.sort(words, (object1, object2) -> {
+			int len1 = object1.length();
+			int len2 = object2.length();
+
+			if (len1 > len2) return -1;
+			if (len1 == len2) {
+				return object1.compareTo(object2);
 			}
+			return 1;
 		});
 		
 		// remove duplicates
@@ -693,7 +689,7 @@ public class SearchEngine {
 			if (c >= 'A' && c <= 'Z') {
 				newString[i] = (char) (c | 0x20);
 			} else {
-				newString[i] = c;
+				newString[i] = Character.toLowerCase(c);
 			}
 		}
 		final String plainText = new String(newString);
