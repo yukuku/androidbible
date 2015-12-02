@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -77,6 +79,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	private static final int REQCODE_songList = 1;
 	private static final int REQCODE_share = 2;
 	private static final int REQCODE_downloadSongBook = 3;
+	private static final String FRAGMENT_TAG_SONG = "song";
 
 	DrawerLayout drawerLayout;
 	LeftDrawer.Songs leftDrawer;
@@ -100,7 +103,9 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	// cache of song codes for each book
 	Map<String /* bookName */, List<String> /* ordered codes */> cache_codes = new HashMap<>();
 
-	TwofingerLinearLayout.Listener song_container_listener = new TwofingerLinearLayout.OnefingerListener() {
+	final TwofingerLinearLayout.Listener song_container_listener = new TwofingerLinearLayout.Listener() {
+		int textZoom = 0; // stays at 0 if zooming is not ready
+
 		@Override
 		public void onOnefingerLeft() {
 			goTo(+1);
@@ -110,6 +115,35 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		public void onOnefingerRight() {
 			goTo(-1);
 		}
+
+		@Override
+		public void onTwofingerStart() {
+			final Fragment f = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_SONG);
+			if (f instanceof SongFragment) {
+				textZoom = ((SongFragment) f).getWebViewTextZoom();
+			}
+		}
+
+		@Override
+		public void onTwofingerScale(final float scale) {
+			int newTextZoom = (int) (textZoom * scale);
+			if (newTextZoom < 50) newTextZoom = 50;
+			if (newTextZoom > 200) newTextZoom = 200;
+
+			final Fragment f = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_SONG);
+			if (f instanceof SongFragment) {
+				((SongFragment) f).setWebViewTextZoom(newTextZoom);
+			}
+		}
+
+		@Override
+		public void onTwofingerDragX(final float dx) { }
+
+		@Override
+		public void onTwofingerDragY(final float dy) { }
+
+		@Override
+		public void onTwofingerEnd(final TwofingerLinearLayout.Mode mode) { }
 	};
 
 	@Override
@@ -385,8 +419,13 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		no_song_data_container = V.get(this, R.id.no_song_data_container);
 		bDownload = V.get(this, R.id.bDownload);
 
-		root.setTwofingerEnabled(false);
 		root.setListener(song_container_listener);
+
+		// Before KitKat, the WebView can zoom and rewrap text by itself,
+		// so we do not need custom implementation of scaling.
+		if (Build.VERSION.SDK_INT < 19) {
+			root.setTwofingerEnabled(false);
+		}
 
 		bDownload.setOnClickListener(v -> openDownloadSongBookPage());
 	}
@@ -864,7 +903,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		templateCustomVars.putString("patch_text_open_link", getString(R.string.patch_text_open_link));
 
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.replace(R.id.root, SongFragment.create(song, "templates/song.html", templateCustomVars));
+		ft.replace(R.id.root, SongFragment.create(song, "templates/song.html", templateCustomVars), FRAGMENT_TAG_SONG);
 		ft.commitAllowingStateLoss();
 
 		currentBookName = bookName;
