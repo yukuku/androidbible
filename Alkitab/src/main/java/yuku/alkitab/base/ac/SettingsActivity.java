@@ -82,8 +82,11 @@ public class SettingsActivity extends BaseActivity {
 	}
 
 	static class VH extends RecyclerView.ViewHolder {
+		final TextView title;
+
 		public VH(final View itemView) {
 			super(itemView);
+			title = V.get(itemView, android.R.id.title);
 		}
 	}
 
@@ -92,7 +95,7 @@ public class SettingsActivity extends BaseActivity {
 
 		@Override
 		public VH onCreateViewHolder(final ViewGroup parent, final int viewType) {
-			final View v = getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
+			final View v = getLayoutInflater().inflate(R.layout.preference_header_item_material, parent, false);
 			getTheme().resolveAttribute(R.attr.selectableItemBackground, tv, true);
 			v.setBackgroundResource(tv.resourceId);
 			return new VH(v);
@@ -101,7 +104,7 @@ public class SettingsActivity extends BaseActivity {
 		@Override
 		public void onBindViewHolder(final VH holder, final int position) {
 			final Header header = headers[position];
-			((TextView) holder.itemView).setText(header.titleResId);
+			holder.title.setText(header.titleResId);
 			holder.itemView.setOnClickListener(v -> {
 				if (header.clickIntent != null) {
 					startActivity(header.clickIntent);
