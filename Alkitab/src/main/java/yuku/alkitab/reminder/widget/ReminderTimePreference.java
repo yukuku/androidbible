@@ -1,25 +1,20 @@
 package yuku.alkitab.reminder.widget;
 
 import android.content.Context;
-import android.preference.Preference;
+import android.support.v7.preference.Preference;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.TimePicker;
 
 import java.util.Locale;
 
-public class ReminderTimePreference extends Preference{
+public class ReminderTimePreference extends Preference {
 	public ReminderTimePreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 	}
 
 	public ReminderTimePreference(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
-	}
-
-	@Override protected void onBindView(View view) {
-		super.onBindView(view);
 	}
 
 	@Override protected void onClick() {

@@ -622,7 +622,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 			void setAButtonEnabled(boolean enabled);
 			void setBButtonEnabled(boolean enabled);
 			void setCButtonEnabled(boolean enabled);
-			void setBookName(String bookName);
+			void setBookName(CharSequence bookName);
 			void setCode(String code);
 		}
 
@@ -649,7 +649,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 			}
 
 			@Override
-			public void setBookName(final String bookName) {
+			public void setBookName(final CharSequence bookName) {
 				bChangeBook.setText(bookName);
 			}
 

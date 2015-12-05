@@ -5,7 +5,7 @@
     <yuku.alkitab.reminder.widget.ReminderTimePreference
         android:key="reminder_time"
         android:title="@string/dr_alarm"/>
-    <RingtonePreference
+    <Preference
         android:key="reminder_sound"
         android:title="@string/dr_sound"/>
     <CheckBoxPreference

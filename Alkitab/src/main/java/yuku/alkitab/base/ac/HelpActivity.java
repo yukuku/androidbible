@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -26,18 +28,33 @@ import java.util.Locale;
 public class HelpActivity extends BaseActivity {
 	private static final String EXTRA_page = "page";
 	private static final String EXTRA_overrideTitle = "overrideTitle";
+	private static final String EXTRA_overflowMenuItemTitle = "overflowMenuItemTitle";
+	private static final String EXTRA_overflowMenuItemIntent = "overflowMenuItemIntent";
 	private static final String EXTRA_announcementIds = "announcementIds";
+	public static final int REQCODE_overflowMenuItem = 1;
 
 	WebView webview;
+	String overflowMenuItemTitle;
+	Intent overflowMenuItemIntent;
 
 	public static Intent createIntent(final String page) {
-		return createIntent(page, null);
+		return _createIntent(page, null, null, null);
+	}
+
+	public static Intent createIntentWithOverflowMenu(final String page, final String overflowMenuItemTitle, final Intent overflowMenuItemIntent) {
+		return _createIntent(page, null, overflowMenuItemTitle, overflowMenuItemIntent);
 	}
 
 	public static Intent createIntent(final String page, final String overrideTitle) {
+		return _createIntent(page, overrideTitle, null, null);
+	}
+
+	private static Intent _createIntent(final String page, final String overrideTitle, final String overflowMenuItemTitle, final Intent overflowMenuItemIntent) {
 		return new Intent(App.context, HelpActivity.class)
 			.putExtra(EXTRA_page, page)
-			.putExtra(EXTRA_overrideTitle, overrideTitle);
+			.putExtra(EXTRA_overrideTitle, overrideTitle)
+			.putExtra(EXTRA_overflowMenuItemTitle, overflowMenuItemTitle)
+			.putExtra(EXTRA_overflowMenuItemIntent, overflowMenuItemIntent);
 	}
 
 	public static Intent createViewAnnouncementIntent(final long[] announcementIds) {
@@ -69,6 +86,8 @@ public class HelpActivity extends BaseActivity {
 		final String page = getIntent().getStringExtra(EXTRA_page);
 		final String overrideTitle = getIntent().getStringExtra(EXTRA_overrideTitle);
 		final long[] announcementIds = getIntent().getLongArrayExtra(EXTRA_announcementIds);
+		overflowMenuItemTitle = getIntent().getStringExtra(EXTRA_overflowMenuItemTitle);
+		overflowMenuItemIntent = getIntent().getParcelableExtra(EXTRA_overflowMenuItemIntent);
 
 		if (overrideTitle != null) {
 			setTitle(overrideTitle);
@@ -157,5 +176,33 @@ public class HelpActivity extends BaseActivity {
 				}
 			}
 		});
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		if (overflowMenuItemTitle != null) {
+			final MenuItem item = menu.add(0, 1, 0, overflowMenuItemTitle);
+			item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+		}
+
+		return overflowMenuItemTitle != null;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		if (item.getItemId() == 1) {
+			startActivityForResult(overflowMenuItemIntent, REQCODE_overflowMenuItem);
+			return true;
+		}
+
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		if (requestCode == REQCODE_overflowMenuItem && resultCode == RESULT_OK) {
+			setResult(resultCode, data);
+			finish();
+		}
 	}
 }

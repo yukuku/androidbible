@@ -83,7 +83,7 @@ public class SongFragment extends BaseFragment {
 		renderLagu(song);
 	}
 	
-	WebViewClient webViewClient = new WebViewClient() {
+	final WebViewClient webViewClient = new WebViewClient() {
 		@Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			Activity activity = getActivity();
 			if (activity instanceof ShouldOverrideUrlLoadingHandler) {
@@ -95,6 +95,22 @@ public class SongFragment extends BaseFragment {
 			} else {
 				return super.shouldOverrideUrlLoading(view, url);
 			}
+		}
+
+		boolean pendingResize = false;
+
+		@Override
+		public void onScaleChanged(final WebView view, final float oldScale, final float newScale) {
+			super.onScaleChanged(view, oldScale, newScale);
+
+			// "restore" auto text-wrapping behavior from before KitKat
+			if (pendingResize) return;
+
+			pendingResize = true;
+			view.postDelayed(() -> {
+				view.evaluateJavascript("document.getElementsByTagName('body')[0].style.width = window.innerWidth + 'px';", null);
+				pendingResize = false;
+			}, 100);
 		}
 	};
 
@@ -189,14 +205,24 @@ public class SongFragment extends BaseFragment {
 	}
 	
 	private String templateDivReplace(String template, String name, String value) {
-		return template.replace("{{div:" + name + "}}", value == null? "": ("<div class='" + name + "'>" + value + "</div>"));
+		return template.replace("{{div:" + name + "}}", value == null ? "" : ("<div class='" + name + "'>" + value + "</div>"));
 	}
 
 	private String templateDivReplace(String template, String name, List<String> value) {
-		return templateDivReplace(template, name, value == null? null: TextUtils.join("; ", value.toArray(new String[value.size()])));
+		return templateDivReplace(template, name, value == null ? null : TextUtils.join("; ", value.toArray(new String[value.size()])));
 	}
 
 	private String templateVarReplace(String template, String name, Object value) {
-		return template.replace("{{$" + name + "}}", value == null? "": value.toString());
+		return template.replace("{{$" + name + "}}", value == null ? "" : value.toString());
+	}
+
+	public int getWebViewTextZoom() {
+		if (webView == null) return 0; // not ready
+		return webView.getSettings().getTextZoom();
+	}
+
+	public void setWebViewTextZoom(final int percent) {
+		if (webView == null) return;
+		webView.getSettings().setTextZoom(percent);
 	}
 }

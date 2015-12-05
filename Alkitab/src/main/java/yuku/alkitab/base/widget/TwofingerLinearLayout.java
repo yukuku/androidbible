@@ -187,39 +187,42 @@ public class TwofingerLinearLayout extends LinearLayout {
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent event) {
 		final int action = event.getActionMasked();
+		final int pointerCount = event.getPointerCount();
 
-		if (BuildConfig.DEBUG) Log.d(TAG, "Intercept (((" + actionToString(action) + " pointer_count=" + event.getPointerCount() + ")))" + state);
+		if (BuildConfig.DEBUG) Log.d(TAG, "Intercept (((" + actionToString(action) + " pointer_count=" + pointerCount + ")))" + state);
 
 		// one finger for swipe left/right
-		if (action == MotionEvent.ACTION_DOWN) {
-			onefingerStart.x = event.getX();
-			onefingerStart.y = event.getY();
-		} else if (action == MotionEvent.ACTION_MOVE) {
-			if (onefingerStart.x == Float.MIN_VALUE) {
-				// invalidated
-			} else {
-				float dx = event.getX() - onefingerStart.x;
-				float dy = event.getY() - onefingerStart.y;
-				float ady = Math.abs(dy);
+		if (pointerCount == 1) {
+			if (action == MotionEvent.ACTION_DOWN) {
+				onefingerStart.x = event.getX();
+				onefingerStart.y = event.getY();
+			} else if (action == MotionEvent.ACTION_MOVE) {
+				if (onefingerStart.x == Float.MIN_VALUE) {
+					// invalidated
+				} else {
+					float dx = event.getX() - onefingerStart.x;
+					float dy = event.getY() - onefingerStart.y;
+					float ady = Math.abs(dy);
 
-				if (onefingerEnabled && dx > threshold_swipe && ady < 0.5f * threshold_swipe) {
-					// swipe to right
-					state = State.onefinger_right;
-					return true;
-				} else if (onefingerEnabled && dx < -threshold_swipe && ady < 0.5f * threshold_swipe) {
-					// swipe to left
-					state = State.onefinger_left;
-					return true;
-				} else if (ady > threshold_swipe) {
-					// invalidate
-					onefingerStart.x = Float.MIN_VALUE;
+					if (onefingerEnabled && dx > threshold_swipe && ady < 0.5f * threshold_swipe) {
+						// swipe to right
+						state = State.onefinger_right;
+						return true;
+					} else if (onefingerEnabled && dx < -threshold_swipe && ady < 0.5f * threshold_swipe) {
+						// swipe to left
+						state = State.onefinger_left;
+						return true;
+					} else if (ady > threshold_swipe) {
+						// invalidate
+						onefingerStart.x = Float.MIN_VALUE;
+					}
 				}
 			}
-		}
-
-		if (action == MotionEvent.ACTION_POINTER_DOWN && twofingerEnabled && event.getPointerCount() == 2) {
-			state = State.twofinger_start;
-			return true;
+		} else if (pointerCount == 2 && twofingerEnabled) {
+			if (action == MotionEvent.ACTION_POINTER_DOWN) {
+				state = State.twofinger_start;
+				return true;
+			}
 		}
 
 		return false;

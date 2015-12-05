@@ -9,6 +9,12 @@
 	<!-- Light blue accent -->
 	<color name="accent">#0091EA</color>
 
+	<!--
+	Required so that in preference support library this color will be used.
+	https://code.google.com/p/android/issues/detail?id=183376
+	-->
+	<color name="preference_fallback_accent_color">@color/accent</color>
+
 	<!-- action bar and split handle in the night mode -->
 	<color name="primary_night_mode">#f111</color>
 </resources>

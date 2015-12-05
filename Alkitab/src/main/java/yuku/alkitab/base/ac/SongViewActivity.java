@@ -4,16 +4,19 @@ import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.InputType;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
@@ -69,8 +72,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static yuku.alkitab.base.util.Literals.ToStringArray;
-
 public class SongViewActivity extends BaseLeftDrawerActivity implements SongFragment.ShouldOverrideUrlLoadingHandler, LeftDrawer.Songs.Listener, MediaStateListener {
 	public static final String TAG = SongViewActivity.class.getSimpleName();
 
@@ -78,6 +79,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	private static final int REQCODE_songList = 1;
 	private static final int REQCODE_share = 2;
 	private static final int REQCODE_downloadSongBook = 3;
+	private static final String FRAGMENT_TAG_SONG = "song";
 
 	DrawerLayout drawerLayout;
 	LeftDrawer.Songs leftDrawer;
@@ -101,7 +103,9 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	// cache of song codes for each book
 	Map<String /* bookName */, List<String> /* ordered codes */> cache_codes = new HashMap<>();
 
-	TwofingerLinearLayout.Listener song_container_listener = new TwofingerLinearLayout.OnefingerListener() {
+	final TwofingerLinearLayout.Listener song_container_listener = new TwofingerLinearLayout.Listener() {
+		int textZoom = 0; // stays at 0 if zooming is not ready
+
 		@Override
 		public void onOnefingerLeft() {
 			goTo(+1);
@@ -111,6 +115,35 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		public void onOnefingerRight() {
 			goTo(-1);
 		}
+
+		@Override
+		public void onTwofingerStart() {
+			final Fragment f = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_SONG);
+			if (f instanceof SongFragment) {
+				textZoom = ((SongFragment) f).getWebViewTextZoom();
+			}
+		}
+
+		@Override
+		public void onTwofingerScale(final float scale) {
+			int newTextZoom = (int) (textZoom * scale);
+			if (newTextZoom < 50) newTextZoom = 50;
+			if (newTextZoom > 200) newTextZoom = 200;
+
+			final Fragment f = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_SONG);
+			if (f instanceof SongFragment) {
+				((SongFragment) f).setWebViewTextZoom(newTextZoom);
+			}
+		}
+
+		@Override
+		public void onTwofingerDragX(final float dx) { }
+
+		@Override
+		public void onTwofingerDragY(final float dy) { }
+
+		@Override
+		public void onTwofingerEnd(final TwofingerLinearLayout.Mode mode) { }
 	};
 
 	@Override
@@ -386,14 +419,33 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		no_song_data_container = V.get(this, R.id.no_song_data_container);
 		bDownload = V.get(this, R.id.bDownload);
 
-		root.setTwofingerEnabled(false);
 		root.setListener(song_container_listener);
+
+		// Before KitKat, the WebView can zoom and rewrap text by itself,
+		// so we do not need custom implementation of scaling.
+		if (Build.VERSION.SDK_INT < 19) {
+			root.setTwofingerEnabled(false);
+		}
 
 		bDownload.setOnClickListener(v -> openDownloadSongBookPage());
 	}
 
 	void openDownloadSongBookPage() {
-		startActivityForResult(HelpActivity.createIntent("https://alkitab-host.appspot.com/songs/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName())), REQCODE_downloadSongBook);
+		startActivityForResult(
+			HelpActivity.createIntentWithOverflowMenu(
+				"https://alkitab-host.appspot.com/songs/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName()),
+				getString(R.string.sn_menu_private_song_book),
+				AlertDialogActivity.createInputIntent(
+					null,
+					getString(R.string.sn_private_song_book_dialog_desc),
+					getString(R.string.cancel),
+					getString(R.string.ok),
+					InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS,
+					getString(R.string.sn_private_song_book_name_hint)
+				)
+			),
+			REQCODE_downloadSongBook
+		);
 	}
 
 	@Override
@@ -544,11 +596,11 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 		case R.id.menuShare: {
 			if (currentSong != null) {
-				Intent intent = ShareCompat.IntentBuilder.from(SongViewActivity.this)
-				.setType("text/plain")
-				.setSubject(currentBookName + ' ' + currentSong.code + ' ' + currentSong.title)
-				.setText(convertSongToText(currentSong).toString())
-				.getIntent();
+				final Intent intent = ShareCompat.IntentBuilder.from(SongViewActivity.this)
+					.setType("text/plain")
+					.setSubject(SongBookUtil.escapeSongBookName(currentBookName).toString() + ' ' + currentSong.code + ' ' + currentSong.title)
+					.setText(convertSongToText(currentSong).toString())
+					.getIntent();
 				startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.sn_share_title)), REQCODE_share);
 			}
 		} return true;
@@ -565,7 +617,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
         case R.id.menuUpdateBook: {
 			new AlertDialogWrapper.Builder(this)
-				.setMessage(TextUtils.expandTemplate(getString(R.string.sn_update_book_explanation), currentBookName))
+				.setMessage(TextUtils.expandTemplate(getText(R.string.sn_update_book_explanation), SongBookUtil.escapeSongBookName(currentBookName)))
 				.setPositiveButton(R.string.sn_update_book_confirm_button, (dialog, which) -> updateSongBook())
 				.setNegativeButton(R.string.cancel, null)
 				.show();
@@ -573,7 +625,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 		case R.id.menuDeleteSongBook: {
 			new AlertDialogWrapper.Builder(this)
-				.setMessage(TextUtils.expandTemplate(getString(R.string.sn_delete_song_book_explanation), currentBookName))
+				.setMessage(TextUtils.expandTemplate(getText(R.string.sn_delete_song_book_explanation), SongBookUtil.escapeSongBookName(currentBookName)))
 				.setPositiveButton(R.string.delete, (dialog, which) -> deleteSongBook())
 				.setNegativeButton(R.string.cancel, null)
 				.show();
@@ -595,12 +647,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		SongBookUtil.downloadSongBook(SongViewActivity.this, songBookInfo, dataFormatVersion, new SongBookUtil.OnDownloadSongBookListener() {
 			@Override
 			public void onFailedOrCancelled(SongBookUtil.SongBookInfo songBookInfo, Exception e) {
-				if (e != null) {
-					new AlertDialogWrapper.Builder(SongViewActivity.this)
-						.setMessage(e.getClass().getSimpleName() + ' ' + e.getMessage())
-						.setPositiveButton(R.string.ok, null)
-						.show();
-				}
+				showDownloadError(e);
 			}
 
 			@Override
@@ -612,7 +659,23 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		});
 	}
 
-    protected void deleteSongBook() {
+	private void showDownloadError(final Exception e) {
+		if (e == null) return;
+
+		if (e instanceof SongBookUtil.NotOkException) {
+			new MaterialDialog.Builder(this)
+				.content("HTTP error " + ((SongBookUtil.NotOkException) e).code)
+				.positiveText(R.string.ok)
+				.show();
+		} else {
+			new MaterialDialog.Builder(this)
+				.content(e.getClass().getSimpleName() + ": " + e.getMessage())
+				.positiveText(R.string.ok)
+				.show();
+		}
+	}
+
+	protected void deleteSongBook() {
 		final MaterialDialog pd = new MaterialDialog.Builder(this)
 			.content(R.string.please_wait_titik3)
 			.cancelable(false)
@@ -621,26 +684,25 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 		final String bookName = currentBookName;
 
-		new Thread() {
-            @Override public void run() {
-				final int count = S.getSongDb().deleteSongBook(bookName);
+		new Thread(() -> {
+			final int count = S.getSongDb().deleteSongBook(bookName);
 
-				runOnUiThread(() -> {
-					pd.dismiss();
+			runOnUiThread(() -> {
+				pd.dismiss();
 
-					new AlertDialogWrapper.Builder(SongViewActivity.this)
-						.setMessage(TextUtils.expandTemplate(getString(R.string.sn_delete_song_book_result), ToStringArray(count, bookName)))
-						.setPositiveButton(R.string.ok, null)
-						.show()
-						.setOnDismissListener(dialog -> displayAnySongOrFinish());
-				});
-			}
-		}.start();
+				new MaterialDialog.Builder(this)
+					.content(TextUtils.expandTemplate(getText(R.string.sn_delete_song_book_result), "" + count, SongBookUtil.escapeSongBookName(bookName)))
+					.positiveText(R.string.ok)
+					.dismissListener(dialog -> displayAnySongOrFinish())
+					.show();
+			});
+		}).start();
     }
 
 	private StringBuilder convertSongToText(Song song) {
 		// build text to copy
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
+		sb.append(SongBookUtil.escapeSongBookName(currentBookName)).append(' ');
 		sb.append(song.code).append(". ");
 		sb.append(song.title).append('\n');
 		if (song.title_original != null) sb.append('(').append(song.title_original).append(')').append('\n');
@@ -828,10 +890,10 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		if (song == null) return;
 
 		final LeftDrawer.Songs.Handle handle = leftDrawer.getHandle();
-		handle.setBookName(bookName);
+		handle.setBookName(SongBookUtil.escapeSongBookName(bookName));
 		handle.setCode(song.code);
 
-		setTitle(bookName + ' ' + song.code);
+		setTitle(TextUtils.concat(SongBookUtil.escapeSongBookName(bookName), " ", song.code));
 
 		// construct rendition of scripture references
 		String scripture_references = renderScriptureReferences(BIBLE_PROTOCOL, song.scriptureReferences);
@@ -841,7 +903,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		templateCustomVars.putString("patch_text_open_link", getString(R.string.patch_text_open_link));
 
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.replace(R.id.root, SongFragment.create(song, "templates/song.html", templateCustomVars));
+		ft.replace(R.id.root, SongFragment.create(song, "templates/song.html", templateCustomVars), FRAGMENT_TAG_SONG);
 		ft.commitAllowingStateLoss();
 
 		currentBookName = bookName;
@@ -897,6 +959,11 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 					final Uri uri = data.getData();
 					if (uri != null) {
 						downloadByAlkitabUri(uri);
+					} else {
+						final String input = data.getStringExtra(AlertDialogActivity.EXTRA_INPUT);
+						if (!TextUtils.isEmpty(input)) {
+							downloadByAlkitabUri(Uri.parse("alkitab:///addon/download?kind=songbook&type=ser&dataFormatVersion=3&name=_" + Uri.encode(input.toUpperCase())));
+						}
 					}
 					return;
 				}
@@ -951,12 +1018,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 			@Override
 			public void onFailedOrCancelled(final SongBookUtil.SongBookInfo songBookInfo, final Exception e) {
-				if (e != null) {
-					new AlertDialogWrapper.Builder(SongViewActivity.this)
-						.setMessage(e.getClass().getSimpleName() + ' ' + e.getMessage())
-						.setPositiveButton(R.string.ok, null)
-						.show();
-				}
+				showDownloadError(e);
 			}
 		});
 	}
@@ -987,15 +1049,10 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			final int updateTime = S.getSongDb().getSongUpdateTime(currentBookName, song.code);
 			if (updateTime == 0 || Sqlitil.nowDateTime() - updateTime > 21 * 86400) {
 				new MaterialDialog.Builder(this)
-					.content(TextUtils.expandTemplate(getString(R.string.sn_update_book_because_too_old), currentBookName))
+					.content(TextUtils.expandTemplate(getText(R.string.sn_update_book_because_too_old), SongBookUtil.escapeSongBookName(currentBookName)))
 					.positiveText(R.string.sn_update_book_confirm_button)
 					.negativeText(R.string.cancel)
-					.callback(new MaterialDialog.ButtonCallback() {
-						@Override
-						public void onPositive(final MaterialDialog dialog) {
-							updateSongBook();
-						}
-					})
+					.onPositive((dialog, which) -> updateSongBook())
 					.show();
 			} else {
 				final PatchTextExtraInfoJson extraInfo = new PatchTextExtraInfoJson();
