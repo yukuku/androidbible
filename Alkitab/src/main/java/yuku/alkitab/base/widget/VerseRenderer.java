@@ -14,6 +14,7 @@ import android.text.style.LeadingMarginSpan;
 import android.text.style.LineHeightSpan;
 import android.text.style.MetricAffectingSpan;
 import android.text.style.StyleSpan;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import yuku.afw.storage.Preferences;
@@ -296,8 +297,10 @@ public class VerseRenderer {
 		// show verse on lVerseNumber if not shown in lText yet
 		if (lVerseNumber != null) {
 			if (startPosAfterVerseNumber > 0) {
+				lVerseNumber.setVisibility(View.GONE);
 				lVerseNumber.setText("");
 			} else {
+				lVerseNumber.setVisibility(View.VISIBLE);
 				lVerseNumber.setText(verseNumberText);
 				Appearances.applyVerseNumberAppearance(lVerseNumber);
 				if (checked) {
@@ -456,6 +459,7 @@ public class VerseRenderer {
 		// initialize lVerseNumber to have no padding first
 		if (lVerseNumber != null) {
 			lVerseNumber.setPadding(0, 0, 0, 0);
+			lVerseNumber.setVisibility(View.GONE);
 			lVerseNumber.setText("");
 		}
 
