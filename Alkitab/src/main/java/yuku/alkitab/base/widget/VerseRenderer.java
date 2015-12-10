@@ -2,6 +2,7 @@ package yuku.alkitab.base.widget;
 
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -33,15 +34,30 @@ public class VerseRenderer {
 
 	static class ParagraphSpacingBefore implements LineHeightSpan {
 		private final int before;
+
+		// ugly hack
+		static CharSequence lastModifiedText;
 		
 		ParagraphSpacingBefore(int before) {
 			this.before = before;
 		}
 		
 		@Override public void chooseHeight(CharSequence text, int start, int end, int spanstartv, int v, FontMetricsInt fm) {
-			if (spanstartv == v) {
-				fm.top -= before;
-				fm.ascent -= before;
+			if (Build.VERSION.SDK_INT == 23) { // ugly hack
+				if (spanstartv == v) {
+					fm.top -= before;
+					fm.ascent -= before;
+					lastModifiedText = text;
+				} else if (lastModifiedText == text /* identity equals */) {
+					fm.top += before;
+					fm.ascent += before;
+					lastModifiedText = null; // do not do this multiple times
+				}
+			} else {
+				if (spanstartv == v) {
+					fm.top -= before;
+					fm.ascent -= before;
+				}
 			}
 		}
 	}
