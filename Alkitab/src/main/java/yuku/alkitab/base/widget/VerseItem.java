@@ -14,7 +14,7 @@ import android.util.AttributeSet;
 import android.view.DragEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Checkable;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -26,8 +26,7 @@ import yuku.alkitab.model.ProgressMark;
 
 import java.util.Date;
 
-public class VerseItem extends LinearLayout implements Checkable {
-	public static final String TAG = VerseItem.class.getSimpleName();
+public class VerseItem extends RelativeLayout implements Checkable {
 	public static final String PROGRESS_MARK_DRAG_MIME_TYPE = "application/vnd.yuku.alkitab.progress_mark.drag";
 
 	private boolean checked;
@@ -65,7 +64,7 @@ public class VerseItem extends LinearLayout implements Checkable {
 			return;
 		}
 
-		if (Build.VERSION.SDK_INT >= 21) {
+		if ( Build.VERSION.SDK_INT >= 21) {
 			// Fix bug on Lollipop where the last line of the text does not calculate line spacing mult/add.
 			// https://code.google.com/p/android/issues/detail?id=77941
 

@@ -2,14 +2,14 @@
 <yuku.alkitab.base.widget.VerseItem xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/itemVerse"
 	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
-	android:baselineAligned="false"
-	android:orientation="horizontal">
+	android:layout_height="wrap_content">
 
 	<FrameLayout
-		android:layout_width="fill_parent"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_weight="1">
+		android:layout_alignParentLeft="true"
+		android:layout_alignWithParentIfMissing="true"
+		android:layout_toLeftOf="@+id/attributeView">
 
 		<TextView
 			android:id="@+id/lVerseNumber"
@@ -26,5 +26,6 @@
 	<yuku.alkitab.base.widget.AttributeView
 		android:id="@+id/attributeView"
 		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" />
+		android:layout_height="wrap_content"
+		android:layout_alignParentRight="true" />
 </yuku.alkitab.base.widget.VerseItem>
