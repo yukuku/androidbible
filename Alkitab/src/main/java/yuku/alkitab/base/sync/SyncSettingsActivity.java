@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.Menu;
@@ -25,14 +24,10 @@ import java.util.Date;
 import java.util.Set;
 
 public class SyncSettingsActivity extends BaseActivity {
-	private static final int REQCODE_login = 1;
-	private static final int REQCODE_login_initial = 2;
-
 	/** Action to broadcast when sync status needs to be refreshed */
 	public static final String ACTION_RELOAD = SyncSettingsActivity.class.getName() + ".action.RELOAD";
 
 	@Override
-	@SuppressWarnings("deprecation")
 	protected void onCreate(final Bundle savedInstanceState) {
 		enableNonToolbarUpButton();
 		super.onCreate(savedInstanceState);
@@ -40,6 +35,9 @@ public class SyncSettingsActivity extends BaseActivity {
 	}
 
 	public static class SyncSettingsFragment extends PreferenceFragmentCompat {
+		private static final int REQCODE_login = 1;
+		private static final int REQCODE_login_initial = 2;
+
 		private Preference pref_syncAccountName;
 
 		final BroadcastReceiver br = new BroadcastReceiver() {
@@ -151,6 +149,38 @@ public class SyncSettingsActivity extends BaseActivity {
 			}
 			return true;
 		};
+
+		@Override
+		public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+			if (requestCode == REQCODE_login || requestCode == REQCODE_login_initial) {
+				if (resultCode == RESULT_OK) {
+					final SyncLoginActivity.Result result = SyncLoginActivity.obtainResult(data);
+
+					// Success!
+					SyncRecorder.log(SyncRecorder.EventKind.login_success_pre, null, "accountName", result.accountName);
+
+					Preferences.hold();
+					Preferences.setString(App.context.getString(R.string.pref_syncAccountName_key), result.accountName);
+					Preferences.setString(Prefkey.sync_simpleToken, result.simpleToken);
+					Preferences.setInt(Prefkey.sync_token_obtained_time, Sqlitil.nowDateTime());
+					Preferences.unhold();
+
+					SyncRecorder.log(SyncRecorder.EventKind.login_success_post, null, "accountName", result.accountName);
+
+					// force sync immediately after login
+					Sync.forceSyncNow();
+
+					updateDisplay();
+				} else if (resultCode == RESULT_CANCELED) {
+					if (requestCode == REQCODE_login_initial) {
+						getActivity().finish();
+					}
+				}
+				return;
+			}
+
+			super.onActivityResult(requestCode, resultCode, data);
+		}
 	}
 
 	@Override
@@ -171,41 +201,6 @@ public class SyncSettingsActivity extends BaseActivity {
 				return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-		if (requestCode == REQCODE_login || requestCode == REQCODE_login_initial) {
-			if (resultCode == RESULT_OK) {
-				final SyncLoginActivity.Result result = SyncLoginActivity.obtainResult(data);
-
-				// Success!
-				SyncRecorder.log(SyncRecorder.EventKind.login_success_pre, null, "accountName", result.accountName);
-
-				Preferences.hold();
-				Preferences.setString(App.context.getString(R.string.pref_syncAccountName_key), result.accountName);
-				Preferences.setString(Prefkey.sync_simpleToken, result.simpleToken);
-				Preferences.setInt(Prefkey.sync_token_obtained_time, Sqlitil.nowDateTime());
-				Preferences.unhold();
-
-				SyncRecorder.log(SyncRecorder.EventKind.login_success_post, null, "accountName", result.accountName);
-
-				// force sync immediately after login
-				Sync.forceSyncNow();
-
-				runOnUiThread(() -> {
-					final Fragment f = getSupportFragmentManager().findFragmentByTag("settings");
-					((SyncSettingsFragment) f).updateDisplay();
-				});
-			} else if (resultCode == RESULT_CANCELED) {
-				if (requestCode == REQCODE_login_initial) {
-					finish();
-				}
-			}
-			return;
-		}
-
-		super.onActivityResult(requestCode, resultCode, data);
 	}
 
     public static Intent createIntent() {

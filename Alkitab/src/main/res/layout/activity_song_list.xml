@@ -43,12 +43,11 @@
 
 		<TextView
 			android:id="@+id/bChangeBook"
-			style="@style/Widget.AppCompat.Spinner"
+			style="@style/FakeSpinner"
 			android:layout_width="72dp"
 			android:layout_height="match_parent"
 			android:layout_gravity="end"
 			android:gravity="center"
-			android:textSize="14sp"
 			android:textStyle="bold"
 			tools:text="@string/sn_bookselector_all" />
 

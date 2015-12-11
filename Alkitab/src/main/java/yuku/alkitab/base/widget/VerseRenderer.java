@@ -2,6 +2,7 @@ package yuku.alkitab.base.widget;
 
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.text.style.LeadingMarginSpan;
 import android.text.style.LineHeightSpan;
 import android.text.style.MetricAffectingSpan;
 import android.text.style.StyleSpan;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import yuku.afw.storage.Preferences;
@@ -32,15 +34,30 @@ public class VerseRenderer {
 
 	static class ParagraphSpacingBefore implements LineHeightSpan {
 		private final int before;
+
+		// ugly hack
+		static CharSequence lastModifiedText;
 		
 		ParagraphSpacingBefore(int before) {
 			this.before = before;
 		}
 		
 		@Override public void chooseHeight(CharSequence text, int start, int end, int spanstartv, int v, FontMetricsInt fm) {
-			if (spanstartv == v) {
-				fm.top -= before;
-				fm.ascent -= before;
+			if (Build.VERSION.SDK_INT == 23) { // ugly hack
+				if (spanstartv == v) {
+					fm.top -= before;
+					fm.ascent -= before;
+					lastModifiedText = text;
+				} else if (lastModifiedText == text /* identity equals */) {
+					fm.top += before;
+					fm.ascent += before;
+					lastModifiedText = null; // do not do this multiple times
+				}
+			} else {
+				if (spanstartv == v) {
+					fm.top -= before;
+					fm.ascent -= before;
+				}
 			}
 		}
 	}
@@ -296,8 +313,10 @@ public class VerseRenderer {
 		// show verse on lVerseNumber if not shown in lText yet
 		if (lVerseNumber != null) {
 			if (startPosAfterVerseNumber > 0) {
+				lVerseNumber.setVisibility(View.GONE);
 				lVerseNumber.setText("");
 			} else {
+				lVerseNumber.setVisibility(View.VISIBLE);
 				lVerseNumber.setText(verseNumberText);
 				Appearances.applyVerseNumberAppearance(lVerseNumber);
 				if (checked) {
@@ -456,6 +475,7 @@ public class VerseRenderer {
 		// initialize lVerseNumber to have no padding first
 		if (lVerseNumber != null) {
 			lVerseNumber.setPadding(0, 0, 0, 0);
+			lVerseNumber.setVisibility(View.GONE);
 			lVerseNumber.setText("");
 		}
 

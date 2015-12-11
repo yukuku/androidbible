@@ -17,8 +17,8 @@ android {
         applicationId 'yuku.alkitab.debug'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 14000262
-        versionName '4.4.0-beta2'
+        versionCode 14000263
+        versionName '4.4.0-beta3'
         multiDexEnabled true
     }
     buildTypes {
@@ -65,10 +65,10 @@ dependencies {
     compile project(':AmbilWarna')
     compile project(':ATree')
     compile project(':ImportedDesktopVerseUtil')
-    compile('com.afollestad.material-dialogs:core:0.8.5.1@aar') {
+    compile('com.afollestad.material-dialogs:core:0.8.5.2@aar') {
         transitive = true
     }
-    compile('com.afollestad.material-dialogs:commons:0.8.5.1@aar') {
+    compile('com.afollestad.material-dialogs:commons:0.8.5.2@aar') {
         transitive = true
     }
     testCompile 'junit:junit:4.12'
