@@ -30,7 +30,7 @@
 
 			<TextView
 				android:id="@+id/bChangeBook"
-				style="@style/Widget.AppCompat.Spinner"
+				style="@style/FakeSpinner"
 				android:layout_width="@dimen/song_keypad_button_one_and_half_width"
 				android:layout_height="match_parent"
 				android:gravity="center"

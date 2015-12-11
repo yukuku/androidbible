@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<style name="KeypadButton">
+		<item name="android:background">?selectableItemBackgroundBorderless</item>
+		<item name="android:fontFamily">sans-serif-regular</item>
+		<item name="android:textColor">@color/keypad_text_color</item>
+		<item name="android:textSize">28sp</item>
+	</style>
+
+	<!-- Applied to non-Spinner to give an appearance of drop-down control -->
+	<style name="FakeSpinner">
+		<item name="android:background">@drawable/abc_spinner_mtrl_am_alpha</item>
+		<item name="android:textSize">14sp</item>
+		<item name="android:textColor">#fff</item>
+	</style>
+</resources>

@@ -138,7 +138,7 @@
 
 	<yuku.alkitab.base.widget.MultiColorView
 		android:id="@+id/bColorTheme"
-		style="@style/Widget.AppCompat.Spinner"
+		style="@style/FakeSpinner"
 		android:layout_width="match_parent"
 		android:layout_height="48dp" />
 
