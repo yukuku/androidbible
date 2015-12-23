@@ -266,8 +266,7 @@ public class MarkersActivity extends BaseActivity {
 				final File file = new File(result.firstFilename);
 				try {
 					final FileInputStream fis = new FileInputStream(file);
-					BookmarkImporter.importBookmarks(this, fis, false);
-					adapter.reload();
+					BookmarkImporter.importBookmarks(this, fis, false, () -> adapter.reload());
 				} catch (IOException e) {
 					new AlertDialogWrapper.Builder(this)
 						.setMessage(R.string.marker_migrate_error_opening_backup_file)
