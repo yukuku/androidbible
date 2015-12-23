@@ -123,7 +123,7 @@ public class BookmarkImporter {
 		}
 	}
 
-	public static void importBookmarks(final Activity activity, @NonNull final InputStream fis, final boolean finishActivityAfterwards) {
+	public static void importBookmarks(final Activity activity, @NonNull final InputStream fis, final boolean finishActivityAfterwards, final Runnable runWhenDone) {
 		final MaterialDialog pd = new MaterialDialog.Builder(activity)
 			.content(R.string.mengimpor_titiktiga)
 			.cancelable(false)
@@ -229,6 +229,8 @@ public class BookmarkImporter {
 						dialog.setOnDismissListener(dialog1 -> activity.finish());
 					}
 				}
+
+				if (runWhenDone != null) runWhenDone.run();
 			}
 		}.execute();
 	}
