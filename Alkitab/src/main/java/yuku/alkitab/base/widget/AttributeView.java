@@ -8,14 +8,12 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
-import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 import yuku.alkitab.base.App;
 import yuku.alkitab.debug.R;
 
 public class AttributeView extends View {
-
 	public static final int PROGRESS_MARK_BITS_START = 8;
 	public static final int PROGRESS_MARK_TOTAL_COUNT = 5;
 	public static final int PROGRESS_MARK_BIT_MASK = (1 << PROGRESS_MARK_BITS_START) * ((1 << PROGRESS_MARK_TOTAL_COUNT) - 1);
@@ -28,7 +26,6 @@ public class AttributeView extends View {
 	static Bitmap[] scaledProgressMarkBitmaps = new Bitmap[PROGRESS_MARK_TOTAL_COUNT];
 	static Bitmap originalHasMapsBitmap = null;
 	static Bitmap scaledHasMapsBitmap = null;
-	static Paint alphaPaint = new Paint();
 	static Paint attributeCountPaintBookmark;
     static Paint attributeCountPaintNote;
 
@@ -52,7 +49,6 @@ public class AttributeView extends View {
 	private VersesView.AttributeListener attributeListener;
 	private int ari;
 
-	private static SparseArray<Long> progressMarkAnimationStartTimes = new SparseArray<>();
 	private int drawOffsetLeft;
 
 	public AttributeView(final Context context) {
@@ -232,22 +228,7 @@ public class AttributeView extends View {
 			for (int preset_id = 0; preset_id < PROGRESS_MARK_TOTAL_COUNT; preset_id++) {
 				if (isProgressMarkSetFromAttribute(preset_id)) {
 					final Bitmap b = getScaledProgressMarkBitmapByPresetId(preset_id);
-					final Long animationStartTime = progressMarkAnimationStartTimes.get(preset_id);
-					final Paint p;
-					if (animationStartTime == null) {
-						p = null;
-					} else {
-						final int animationElapsed = (int) (System.currentTimeMillis() - animationStartTime);
-						final int animationDuration = 800;
-						if (animationElapsed >= animationDuration) {
-							p = null;
-						} else {
-							alphaPaint.setAlpha(animationElapsed * 255 / animationDuration);
-							p = alphaPaint;
-							invalidate(); // animation is still running so request for invalidate
-						}
-					}
-					canvas.drawBitmap(b, 0, totalHeight, p);
+					canvas.drawBitmap(b, 0, totalHeight, null);
 					totalHeight += b.getHeight();
 				}
 			}
@@ -311,10 +292,6 @@ public class AttributeView extends View {
 	public void setAttributeListener(VersesView.AttributeListener attributeListener, int ari) {
 		this.attributeListener = attributeListener;
 		this.ari = ari;
-	}
-
-	public static void startAnimationForProgressMark(final int preset_id) {
-		progressMarkAnimationStartTimes.put(preset_id, System.currentTimeMillis());
 	}
 
 	public static int getDefaultProgressMarkStringResource(int preset_id) {
