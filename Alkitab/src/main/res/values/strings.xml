@@ -331,7 +331,8 @@
     <string name="rp_commentActual">Finished: %s%%</string>
     <string name="rp_commentTarget">Target: %s%%</string>
     <string name="rp_commentOnSchedule">On schedule</string>
-    <string name="rp_commentBehindSchedule">Behind the schedule: %s%%</string>
+    <string name="rp_commentBehindSchedule">Behind schedule: %s%%</string>
+    <string name="rp_commentAheadSchedule">Ahead of schedule: %s%%</string>
     <string name="rp_noReadingPlanAvailable">No more reading plans available.</string>
     <string name="rp_deletePlan">"Delete '%s'?"</string>
     <string name="rp_reset">Change the starting date so that the first unread reading will be today?</string>

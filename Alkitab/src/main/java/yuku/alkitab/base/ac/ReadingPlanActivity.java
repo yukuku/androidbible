@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -68,7 +69,12 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	private List<ReadingPlan.ReadingPlanInfo> downloadedReadingPlanInfos;
 	private int todayNumber;
 	private int dayNumber;
-	private IntArrayList readingCodes;
+
+	/**
+	 * List of reading codes that is read for the current reading plan.
+	 * A reading code is a combination of day (left-bit-shifted by 8) and the reading sequence for that day starting from 0.
+	 */
+	private IntArrayList readReadingCodes;
 	private boolean newDropDownItems;
 
 	private ImageButton bLeft;
@@ -349,7 +355,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		if (readingPlan == null) {
 			return;
 		}
-		readingCodes = S.getDb().getAllReadingCodesByReadingPlanProgressGid(ReadingPlan.gidFromName(readingPlan.info.name));
+		readReadingCodes = S.getDb().getAllReadingCodesByReadingPlanProgressGid(ReadingPlan.gidFromName(readingPlan.info.name));
 	}
 
 	public void goToIsiActivity(final int dayNumber, final int sequence) {
@@ -456,7 +462,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	private int findFirstUnreadDay() {
 		for (int i = 0; i < readingPlan.info.duration - 1; i++) {
 			boolean[] readMarks = new boolean[readingPlan.dailyVerses[i].length / 2];
-			ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, i);
+			ReadingPlanManager.writeReadMarksByDay(readReadingCodes, readMarks, i);
 			for (boolean readMark : readMarks) {
 				if (!readMark) {
 					return i;
@@ -635,32 +641,27 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	}
 
 	private float getActualPercentage() {
-		return 100.f * countRead() / countAllReadings();
+		return 100.f * readReadingCodes.size() / countAllReadings();
 	}
 
 	private float getTargetPercentage() {
 		return 100.f * countTarget() / countAllReadings();
 	}
 
-	private int countRead() {
-		IntArrayList filteredReadingCodes = ReadingPlanManager.filterReadingCodesByDayStartEnd(readingCodes, 0, todayNumber);
-		return filteredReadingCodes.size();
-	}
-
 	private int countTarget() {
-		int res = 0;
+		int doubledCount = 0;
 		for (int i = 0; i <= todayNumber; i++) {
-			res += readingPlan.dailyVerses[i].length / 2;
+			doubledCount += readingPlan.dailyVerses[i].length;
 		}
-		return res;
+		return doubledCount / 2;
 	}
 
 	private int countAllReadings() {
-		int res = 0;
+		int doubledCount = 0;
 		for (int i = 0; i < readingPlan.info.duration; i++) {
-			res += readingPlan.dailyVerses[i].length / 2;
+			doubledCount += readingPlan.dailyVerses[i].length;
 		}
-		return res;
+		return doubledCount / 2;
 	}
 
 	public String getReadingDateHeader(final int dayNumber) {
@@ -688,6 +689,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 	class ReadingPlanAdapter extends EasyAdapter {
 		private int[] todayReadings;
+		ColorStateList originalCommentTextColor = null;
 
 		public void load() {
 			if (readingPlan == null) {
@@ -730,7 +732,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				final CheckBox checkbox = V.get(res, R.id.checkbox);
 
 				final boolean[] readMarks = new boolean[todayReadings.length / 2];
-				ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, dayNumber);
+				ReadingPlanManager.writeReadMarksByDay(readReadingCodes, readMarks, dayNumber);
 
 				bReference.setText(S.activeVersion.referenceRange(todayReadings[position * 2], todayReadings[position * 2 + 1]));
 
@@ -767,15 +769,20 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				tActual.setText(getString(R.string.rp_commentActual, String.format("%.2f", actualPercentage)));
 				tTarget.setText(getString(R.string.rp_commentTarget, String.format("%.2f", targetPercentage)));
 
-				String comment;
-				if (actualPercentage == targetPercentage) {
-					comment = getString(R.string.rp_commentOnSchedule);
-				} else {
-					String diff = String.format(Locale.US, "%.2f", targetPercentage - actualPercentage);
-					comment = getString(R.string.rp_commentBehindSchedule, diff);
+				if (originalCommentTextColor == null) {
+					originalCommentTextColor = tComment.getTextColors();
 				}
 
-				tComment.setText(comment);
+				if (actualPercentage == targetPercentage) {
+					tComment.setText(R.string.rp_commentOnSchedule);
+					tComment.setTextColor(originalCommentTextColor);
+				} else if (actualPercentage < targetPercentage) {
+					tComment.setText(getString(R.string.rp_commentBehindSchedule, String.format(Locale.US, "%.2f", targetPercentage - actualPercentage)));
+					tComment.setTextColor(getResources().getColor(R.color.escape));
+				} else {
+					tComment.setText(getString(R.string.rp_commentAheadSchedule, String.format(Locale.US, "%.2f", actualPercentage - targetPercentage)));
+					tComment.setTextColor(getResources().getColor(R.color.escape));
+				}
 
 				tDetail.setOnClickListener(v -> {
 					showDetails = !showDetails;
@@ -811,7 +818,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				}
 
 				final boolean[] readMarks = new boolean[checkbox_count];
-				ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, day);
+				ReadingPlanManager.writeReadMarksByDay(readReadingCodes, readMarks, day);
 
 				for (int i = 0; i < checkbox_count; i++) {
 					final int sequence = i;
