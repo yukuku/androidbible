@@ -98,6 +98,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			}
 
 			final AttributeView attributeView = res.attributeView;
+			attributeView.setScale(scaleForAttributeView(S.applied.fontSize2dp));
 			attributeView.setBookmarkCount(bookmarkCountMap_ == null ? 0 : bookmarkCountMap_[id]);
 			attributeView.setNoteCount(noteCountMap_ == null ? 0 : noteCountMap_[id]);
 			attributeView.setProgressMarkBits(progressMarkBitsMap_ == null ? 0 : progressMarkBitsMap_[id]);
@@ -232,6 +233,18 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 
 			return res;
 		}
+	}
+
+	static float scaleForAttributeView(final float fontSizeDp) {
+		if (fontSizeDp >= 13 /* 76% */ && fontSizeDp < 22 /* 129% */) {
+			return 1.f;
+		}
+
+		if (fontSizeDp < 10) return 0.5f;
+		if (fontSizeDp < 17) return 0.75f;
+		if (fontSizeDp >= 38) return 3.f;
+		if (fontSizeDp >= 30) return 2.f;
+		return 1.5f; // 22 to 30
 	}
 
 	private void appendParallel(SpannableStringBuilder sb, String parallel) {

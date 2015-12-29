@@ -8,15 +8,20 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import yuku.alkitab.base.App;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 
 public class AttributeView extends View {
+	static final String TAG = AttributeView.class.getSimpleName();
+
 	public static final int PROGRESS_MARK_BITS_START = 8;
 	public static final int PROGRESS_MARK_TOTAL_COUNT = 5;
 	public static final int PROGRESS_MARK_BIT_MASK = (1 << PROGRESS_MARK_BITS_START) * ((1 << PROGRESS_MARK_TOTAL_COUNT) - 1);
+	private static final float COUNT_TEXT_SIZE_DP = 12.f;
 
 	static Bitmap originalBookmarkBitmap = null;
 	static Bitmap scaledBookmarkBitmap = null;
@@ -26,46 +31,43 @@ public class AttributeView extends View {
 	static Bitmap[] scaledProgressMarkBitmaps = new Bitmap[PROGRESS_MARK_TOTAL_COUNT];
 	static Bitmap originalHasMapsBitmap = null;
 	static Bitmap scaledHasMapsBitmap = null;
-	static Paint attributeCountPaintBookmark;
-    static Paint attributeCountPaintNote;
+	static Paint bookmarkCountPaint;
+    static Paint noteCountPaint;
 
-    static {
-		attributeCountPaintBookmark = new Paint();
-        attributeCountPaintBookmark.setTypeface(Typeface.DEFAULT_BOLD);
-        attributeCountPaintBookmark.setColor(0xff000000);
-        attributeCountPaintBookmark.setTextSize(App.context.getResources().getDisplayMetrics().density * 12.f);
-        attributeCountPaintBookmark.setAntiAlias(true);
-        attributeCountPaintBookmark.setTextAlign(Paint.Align.CENTER);
+	static float density = App.context.getResources().getDisplayMetrics().density;
 
-        attributeCountPaintNote = new Paint(attributeCountPaintBookmark);
+	static {
+		bookmarkCountPaint = new Paint();
+        bookmarkCountPaint.setTypeface(Typeface.DEFAULT_BOLD);
+        bookmarkCountPaint.setColor(0xff000000);
+        bookmarkCountPaint.setAntiAlias(true);
+        bookmarkCountPaint.setTextAlign(Paint.Align.CENTER);
+
+        noteCountPaint = new Paint(bookmarkCountPaint);
+		noteCountPaint.setShadowLayer(density * 4, 0, 0, 0xffffffff);
     }
 
 	int bookmark_count;
 	int note_count;
 	int progress_mark_bits;
 	boolean has_maps;
-	float scale = 2.f;
+	float scale = 1.f;
 
 	private VersesView.AttributeListener attributeListener;
 	private int ari;
 
-	private int drawOffsetLeft;
-
 	public AttributeView(final Context context) {
 		super(context);
-		init();
 	}
 
 	public AttributeView(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
-		init();
 	}
 
-	private void init() {
-        float density = getResources().getDisplayMetrics().density;
-
-		drawOffsetLeft = Math.round(1 * density);
-        attributeCountPaintNote.setShadowLayer(density * 4, 0, 0, 0xffffffff);
+	public void setScale(final float scale) {
+		this.scale = scale;
+		requestLayout();
+		invalidate();
 	}
 
 	public int getBookmarkCount() {
@@ -113,6 +115,10 @@ public class AttributeView extends View {
 	}
 
 	static Bitmap scale(Bitmap original, float scale) {
+		if (BuildConfig.DEBUG) {
+			Log.d(TAG, "@@scale Scale needed. Called with scale=" + scale);
+		}
+
 		if (scale == 1.f) {
 			return Bitmap.createBitmap(original);
 		}
@@ -138,7 +144,7 @@ public class AttributeView extends View {
 			originalNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_attr_note);
 		}
 
-		if (scaledNoteBitmap == null || scaledBookmarkBitmap.getWidth() != Math.round(originalNoteBitmap.getWidth() * scale)) {
+		if (scaledNoteBitmap == null || scaledNoteBitmap.getWidth() != Math.round(originalNoteBitmap.getWidth() * scale)) {
 			scaledNoteBitmap = scale(originalNoteBitmap, scale);
 		}
 
@@ -208,11 +214,15 @@ public class AttributeView extends View {
 	@Override
 	protected void onDraw(final Canvas canvas) {
 		int totalHeight = 0;
+
+		final int drawOffsetLeft = Math.round(0.5f * density * scale);
+
 		if (bookmark_count > 0) {
 			final Bitmap b = getScaledBookmarkBitmap();
 			canvas.drawBitmap(b, drawOffsetLeft, totalHeight, null);
 			if (bookmark_count > 1) {
-				canvas.drawText(String.valueOf(bookmark_count), drawOffsetLeft + b.getWidth() / 2, totalHeight + b.getHeight() * 3 / 4, attributeCountPaintBookmark);
+				bookmarkCountPaint.setTextSize(COUNT_TEXT_SIZE_DP * density * scale);
+				canvas.drawText(String.valueOf(bookmark_count), drawOffsetLeft + b.getWidth() / 2, totalHeight + b.getHeight() * 3 / 4, bookmarkCountPaint);
 			}
 			totalHeight += b.getHeight();
 		}
@@ -220,7 +230,8 @@ public class AttributeView extends View {
 			final Bitmap b = getScaledNoteBitmap();
 			canvas.drawBitmap(b, drawOffsetLeft, totalHeight, null);
 			if (note_count > 1) {
-				canvas.drawText(String.valueOf(note_count), drawOffsetLeft + b.getWidth() / 2, totalHeight + b.getHeight() * 7 / 10, attributeCountPaintNote);
+				noteCountPaint.setTextSize(COUNT_TEXT_SIZE_DP * density * scale);
+				canvas.drawText(String.valueOf(note_count), drawOffsetLeft + b.getWidth() / 2, totalHeight + b.getHeight() * 7 / 10, noteCountPaint);
 			}
 			totalHeight += b.getHeight();
 		}
