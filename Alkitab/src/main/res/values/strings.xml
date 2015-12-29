@@ -368,7 +368,7 @@
 	<string name="rp_download_already_have">You already have this reading plan.</string>
     <string name="rp_mark_as_read_up_to">Mark as read up to here?</string>
 
-	<string name="version_download_need_fonts">"The version downloaded might need to be displayed with certain fonts. Go to the 'Text appearance' menu and select a font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
+	<string name="version_download_need_fonts">"The version downloaded might need to be displayed with certain fonts. Go to the 'Display' menu and select a font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
     <string name="version_download_corrupted_file">Downloaded file seems to be corrupt.</string>
     <string name="version_download_saving_io_error">I/O error when saving downloaded version</string>
 
