@@ -109,7 +109,7 @@ public class AttributeView extends View {
 	}
 
 	public boolean isShowingSomething() {
-		return bookmark_count > 0 || note_count > 0 || ((progress_mark_bits & PROGRESS_MARK_BIT_MASK) != 0);
+		return bookmark_count > 0 || note_count > 0 || (progress_mark_bits & PROGRESS_MARK_BIT_MASK) != 0 || has_maps;
 	}
 
 	static Bitmap scale(Bitmap original, float scale) {
