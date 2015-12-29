@@ -775,10 +775,10 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 				if (actualPercentage == targetPercentage) {
 					tComment.setText(R.string.rp_commentOnSchedule);
-					tComment.setTextColor(originalCommentTextColor);
+					tComment.setTextColor(getResources().getColor(R.color.escape));
 				} else if (actualPercentage < targetPercentage) {
 					tComment.setText(getString(R.string.rp_commentBehindSchedule, String.format(Locale.US, "%.2f", targetPercentage - actualPercentage)));
-					tComment.setTextColor(getResources().getColor(R.color.escape));
+					tComment.setTextColor(originalCommentTextColor);
 				} else {
 					tComment.setText(getString(R.string.rp_commentAheadSchedule, String.format(Locale.US, "%.2f", actualPercentage - targetPercentage)));
 					tComment.setTextColor(getResources().getColor(R.color.escape));
