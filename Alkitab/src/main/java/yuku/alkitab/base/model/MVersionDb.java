@@ -106,4 +106,8 @@ public class MVersionDb extends MVersion {
 		final File f = new File(filename);
 		return f.exists() && f.canRead();
 	}
+
+	public static void clearVersionImplCache() {
+		impl_cache.clear();
+	}
 }

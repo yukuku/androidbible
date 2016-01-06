@@ -565,7 +565,8 @@ public class VersionsActivity extends BaseActivity {
 			}
 			mvDb.preset_name = preset_name;
 
-			S.getDb().insertVersionWithActive(mvDb, true);
+			S.getDb().insertOrUpdateVersionWithActive(mvDb, true);
+			MVersionDb.clearVersionImplCache();
 
 			App.getLbm().sendBroadcast(new Intent(VersionListFragment.ACTION_RELOAD));
 		} catch (Exception e) {

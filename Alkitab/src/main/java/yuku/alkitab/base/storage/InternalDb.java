@@ -598,7 +598,7 @@ public class InternalDb {
 	public void setVersionActive(MVersionDb mv, boolean active) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
 		final ContentValues cv = new ContentValues();
-		cv.put(Db.Version.active, active? 1: 0);
+		cv.put(Db.Version.active, active ? 1 : 0);
 
 		if (mv.preset_name != null) {
 			db.update(Db.TABLE_Version, cv, Db.Version.preset_name + "=?", new String[] {mv.preset_name});
@@ -612,7 +612,13 @@ public class InternalDb {
 		return (int) DatabaseUtils.longForQuery(db, "select max(" + Db.Version.ordering + ") from " + Db.TABLE_Version, null);
 	}
 
-	public void insertVersionWithActive(MVersionDb mv, boolean active) {
+	/**
+	 * If the filename of the inserted mv already exists in the table,
+	 * update is performed instead of an insert.
+	 * In that case, the mv.ordering will be changed to the one in the table,
+	 * and the passed-in mv.ordering will not be used.
+	 */
+	public void insertOrUpdateVersionWithActive(MVersionDb mv, boolean active) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
 		final ContentValues cv = new ContentValues();
 		cv.put(Db.Version.locale, mv.locale);
@@ -627,11 +633,18 @@ public class InternalDb {
 
 		db.beginTransactionNonExclusive();
 		try { // prevent insert for the same filename (absolute path), update instead
-			final long count = DatabaseUtils.queryNumEntries(db, Db.TABLE_Version, Db.Version.filename + "=?", new String[]{mv.filename});
-			if (count == 0) {
-				db.insert(Db.TABLE_Version, null, cv);
-			} else {
-				db.update(Db.TABLE_Version, cv, Db.Version.filename + "=?", new String[]{mv.filename});
+			try (Cursor c = db.query(Db.TABLE_Version, Array("_id", Db.Version.ordering), Db.Version.filename + "=?", Array(mv.filename), null, null, null)) {
+				if (c.moveToNext()) {
+					final long _id = c.getLong(0);
+					final int ordering = c.getInt(1);
+
+					mv.ordering = ordering;
+					cv.put(Db.Version.ordering, ordering);
+
+					db.update(Db.TABLE_Version, cv, "_id=?", ToStringArray(_id));
+				} else {
+					db.insert(Db.TABLE_Version, null, cv);
+				}
 			}
 
 			db.setTransactionSuccessful();
