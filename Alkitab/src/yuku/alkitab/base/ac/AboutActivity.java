@@ -27,7 +27,6 @@ public class AboutActivity extends BaseActivity {
 	TextView tVersion;
 	TextView tTranslators;
 	ImageView imgLogo;
-	ImageView imgBetaRibbon;
 	TextView tAboutTextDesc;
 
 	View bHelp;
@@ -44,7 +43,6 @@ public class AboutActivity extends BaseActivity {
 		tVersion = V.get(this, R.id.tVersion);
 		tTranslators = V.get(this, R.id.tTranslators);
 		imgLogo = V.get(this, R.id.imgLogo);
-		imgBetaRibbon = V.get(this, R.id.imgBetaRibbon);
 		tAboutTextDesc = V.get(this, R.id.tAboutTextDesc);
 		bHelp = V.get(this, R.id.bHelp);
 		bDonation = V.get(this, R.id.bDonation);
@@ -57,13 +55,6 @@ public class AboutActivity extends BaseActivity {
 			logoDrawable = getResources().getDrawable(R.drawable.ic_launcher);
 		}
 		imgLogo.setImageDrawable(logoDrawable);
-
-		imgBetaRibbon.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://goo.gl/JjYTK1")));
-			}
-		});
 
 		tAboutTextDesc.setMovementMethod(LinkMovementMethod.getInstance());
 
