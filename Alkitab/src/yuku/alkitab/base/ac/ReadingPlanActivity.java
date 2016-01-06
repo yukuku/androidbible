@@ -3,19 +3,23 @@ package yuku.alkitab.base.ac;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.PopupMenu;
+import android.text.Editable;
 import android.text.SpannableStringBuilder;
+import android.text.TextWatcher;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
@@ -23,6 +27,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -35,6 +40,7 @@ import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.dialog.LabelEditorDialog;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.ReadingPlanManager;
@@ -563,6 +569,8 @@ public class ReadingPlanActivity extends ActionBarActivity {
 					return;
 				}
 
+				readingPlanDownloadableEntries.add(null); // download by ID
+
 				final AlertDialog.Builder builder = new AlertDialog.Builder(ReadingPlanActivity.this);
 				builder.setAdapter(new EasyAdapter() {
 					@Override
@@ -574,15 +582,19 @@ public class ReadingPlanActivity extends ActionBarActivity {
 					public void bindView(final View view, final int position, final ViewGroup parent) {
 						final TextView textView = (TextView) view;
 						final ReadingPlanServerEntry entry = readingPlanDownloadableEntries.get(position);
-						final SpannableStringBuilder sb = new SpannableStringBuilder();
-						sb.append(entry.title);
-						final int sb_len = sb.length();
-						sb.append(" ");
-						sb.append(getString(R.string.rp_download_day_count_days, entry.day_count));
-						sb.append("\n");
-						sb.append(entry.description);
-						sb.setSpan(new RelativeSizeSpan(0.6f), sb_len, sb.length(), 0);
-						textView.setText(sb);
+						if (entry != null) {
+							final SpannableStringBuilder sb = new SpannableStringBuilder();
+							sb.append(entry.title);
+							final int sb_len = sb.length();
+							sb.append(" ");
+							sb.append(getString(R.string.rp_download_day_count_days, entry.day_count));
+							sb.append("\n");
+							sb.append(entry.description);
+							sb.setSpan(new RelativeSizeSpan(0.6f), sb_len, sb.length(), 0);
+							textView.setText(sb);
+						} else {
+							textView.setText(R.string.rp_download_by_id);
+						}
 					}
 
 					@Override
@@ -601,12 +613,68 @@ public class ReadingPlanActivity extends ActionBarActivity {
 
 			/** run on ui thread */
 			void onReadingPlanSelected(final ReadingPlanServerEntry entry) {
-				downloadReadingPlanFromServer(entry);
+				if (entry != null) {
+					downloadReadingPlanFromServer(entry.name);
+				} else {
+					InputDialog.show(ReadingPlanActivity.this, new InputDialog.OkListener() {
+						@Override
+						public void onOk(final String text) {
+							downloadReadingPlanFromServer(text.trim());
+						}
+					});
+				}
 			}
 		}.start();
 	}
 
-	void downloadReadingPlanFromServer(final ReadingPlanServerEntry entry) {
+	static class InputDialog {
+		public static final String TAG = LabelEditorDialog.class.getSimpleName();
+
+		public interface OkListener {
+			void onOk(String text);
+		}
+
+		public static void show(Context context, final OkListener okListener) {
+			final View dialogView = new EditText(context);
+			final EditText editText = ((EditText) dialogView);
+
+			final AlertDialog dialog = new AlertDialog.Builder(context)
+					.setView(dialogView)
+					.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							if (okListener != null) {
+								okListener.onOk(editText.getText().toString());
+							}
+						}
+					})
+					.setNegativeButton(R.string.cancel, null)
+					.create();
+
+			dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+			dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+			dialog.show();
+
+			final Button bOk = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+			bOk.setEnabled(false);
+
+			editText.addTextChangedListener(new TextWatcher() {
+				@Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+				@Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+				@Override public void afterTextChanged(Editable s) {
+					if (s.length() == 0 || s.toString().trim().length() == 0) {
+						bOk.setEnabled(false);
+						return;
+					}
+					bOk.setEnabled(true);
+				}
+			});
+		}
+	}
+
+	void downloadReadingPlanFromServer(final String name) {
 		final AtomicBoolean cancelled = new AtomicBoolean(false);
 		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.rp_download_reading_plan_progress), true, true);
 		pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -634,7 +702,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 
 			/** run on bg thread */
 			void download() throws Exception {
-				final HttpURLConnection conn = App.openHttp(new URL("https://alkitab-host.appspot.com/rp/get_rp?name=" + entry.name));
+				final HttpURLConnection conn = App.openHttp(new URL("https://alkitab-host.appspot.com/rp/get_rp?name=" + name));
 				final InputStream input = conn.getInputStream();
 				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				final byte[] buf = new byte[1024];

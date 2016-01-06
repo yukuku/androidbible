@@ -309,6 +309,7 @@
   <string name="rp_download_reading_plan_progress">Mengunduh rencana baca&#8230;</string>
   <string name="rp_download_reading_plan_failed">Gagal mengunduh rencana baca yang dipilih. Harap coba lagi dengan terkoneksi ke Internet.</string>
   <string name="rp_download_reading_plan_data_corrupted">Rencana baca yang diunduh datanya rusak. Harap coba lagi lain kali dengan terkoneksi ke Internet.</string>
+  <string name="rp_download_by_id">Unduh menurut ID…</string>
   <string name="version_download_need_fonts">"Versi yang diunduh mungkin perlu ditampilkan dengan jenis huruf tertentu. Bukalah menu \'Penampilan teks\' dan pilih jenis hurufnya. Yunani butuh jenis huruf Ubuntu. Myanmar butuh Parabaik, ParabaikSans, atau Myanmar3. Tamil butuh Akshar. Telugu butuh Suranna."</string>
   <string name="menuNightMode">Mode gelap</string>
   <string name="highlight_custom_color">Warna lainnya</string>
