@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/ATree/ATree.iml" filepath="$PROJECT_DIR$/../yuku-android-util/ATree/ATree.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/Afw/Afw.iml" filepath="$PROJECT_DIR$/../yuku-android-util/Afw/Afw.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Afw/Afw.iml" filepath="$PROJECT_DIR$/Afw/Afw.iml" />
       <module fileurl="file://$PROJECT_DIR$/Alkitab/Alkitab.iml" filepath="$PROJECT_DIR$/Alkitab/Alkitab.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabConverter/AlkitabConverter.iml" filepath="$PROJECT_DIR$/AlkitabConverter/AlkitabConverter.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabConverterProcesses/AlkitabConverterProcesses.iml" filepath="$PROJECT_DIR$/AlkitabConverterProcesses/AlkitabConverterProcesses.iml" />
