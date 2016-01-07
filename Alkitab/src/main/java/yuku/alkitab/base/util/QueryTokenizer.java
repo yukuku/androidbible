@@ -106,14 +106,14 @@ public class QueryTokenizer {
 	static Pattern pattern_letters = Pattern.compile("[\\p{javaLetterOrDigit}'-]+");
 
 	/**
-	 * For tokens such as "abc.,- def", which will be re-tokenized to "abc" "def"
+	 * For tokens such as "abc.,- def123", which will be re-tokenized to "abc" "def123"
 	 */
-	static List<String> tokenizeMultiwordToken(String token) {
-		List<String> res = new ArrayList<>();
+	static String[] tokenizeMultiwordToken(String token) {
+		final List<String> res = new ArrayList<>();
 		Matcher m = pattern_letters.matcher(token);
 		while (m.find()) {
 			res.add(m.group());
 		}
-		return res;
+		return res.toArray(new String[res.size()]);
 	}
 }

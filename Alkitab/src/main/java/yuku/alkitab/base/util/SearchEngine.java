@@ -259,8 +259,7 @@ public class SearchEngine {
 
 		if (hasPlus) {
 			if (QueryTokenizer.isMultiwordToken(word)) {
-				final List<String> tokenList = QueryTokenizer.tokenizeMultiwordToken(word);
-				multiword = tokenList.toArray(new String[tokenList.size()]);
+				multiword = QueryTokenizer.tokenizeMultiwordToken(word);
 			}
 
 			if (multiword != null) {
@@ -454,42 +453,43 @@ public class SearchEngine {
 		// last check: whether multiword tokens are all matching. No way to find this except by loading the text
 		// and examining one by one whether the text contains those multiword tokens
 		if (multiwords != null) {
-			IntArrayList res2 = new IntArrayList(res.size());
+			final IntArrayList res2 = new IntArrayList(res.size());
 			
-			// separate the pluses
-			String[] multiwords_bare = new String[multiwords.size()];
-			boolean[] multiwords_plussed = new boolean[multiwords.size()];
-			
+			// later on we will need each multiword to be separated into tokens
+			final String[][] multiwords_tokens = new String[multiwords.size()][];
+			final int[] consumedLengthPtr = {0};
+
 			for (int i = 0, len = multiwords.size(); i < len; i++) {
-				String multiword = multiwords.get(i);
-				multiwords_bare[i] = QueryTokenizer.tokenWithoutPlus(multiword);
-				multiwords_plussed[i] = QueryTokenizer.isPlussedToken(multiword);
+				multiwords_tokens[i] = QueryTokenizer.tokenizeMultiwordToken(multiwords.get(i));
 			}
 			
 			SingleChapterVerses loadedChapter = null; // the currently loaded chapter, to prevent repeated loading of same chapter
 			int loadedAriCv = 0; // chapter and verse of current Ari
 			for (int i = 0, len = res.size(); i < len; i++) {
-				int ari = res.get(i);
+				final int ari = res.get(i);
 				
-				int ariCv = Ari.toBookChapter(ari);
+				final int ariCv = Ari.toBookChapter(ari);
 				if (ariCv != loadedAriCv) { // we can't reuse, we need to load from disk
-					Book book = version.getBook(Ari.toBook(ari));
-					if (book != null) {
+					final Book book = version.getBook(Ari.toBook(ari));
+					if (book == null) {
+						continue;
+					} else {
 						loadedChapter = version.loadChapterTextLowercased(book, Ari.toChapter(ari));
 						loadedAriCv = ariCv;
 					}
 				}
+
+				if (loadedChapter == null) {
+					continue;
+				}
 				
-				int verse_1 = Ari.toVerse(ari);
+				final int verse_1 = Ari.toVerse(ari);
 				if (verse_1 >= 1 && verse_1 <= loadedChapter.getVerseCount()) {
 					String text = loadedChapter.getVerse(verse_1 - 1);
 					if (text != null) {
 						boolean passed = true;
-						for (int j = 0, len2 = multiwords_bare.length; j < len2; j++) {
-							String multiword_bare = multiwords_bare[j];
-							boolean multiword_plussed = multiwords_plussed[j];
-							
-							if ((multiword_plussed && indexOfWholeWord(text, multiword_bare, 0) < 0) || (!multiword_plussed && !text.contains(multiword_bare))) {
+						for (final String[] multiword_tokens : multiwords_tokens) {
+							if (indexOfWholeMultiword(text, multiword_tokens, 0, consumedLengthPtr) == -1) {
 								passed = false;
 								break;
 							}
@@ -656,29 +656,33 @@ public class SearchEngine {
 		final int len = text.length();
 		
 		while (true) {
-			int pos = text.indexOf(word, start);
+			final int pos = text.indexOf(word, start);
 			if (pos == -1) return -1;
 			
-			// pos is not -1
-			
 			// check left
-			// [pos] [charat pos-1]
-			//  0        *          ok
-			// >0       alpha       ng
-			// >0      !alpha       ok
+			// [pos] [charat pos-1] [charat pos-2]
+			//  0                                    ok
+			// >1       alnum            '@'         ok
+			// >1       alnum          not '@'       ng
+			// >0       alnum                        ng
+			// >0     not alnum                      ok
 			if (pos != 0 && Character.isLetterOrDigit(text.charAt(pos - 1))) {
-				start = pos + 1;
-				continue;
+				if (pos != 1 && text.charAt(pos - 2) == '@') {
+					// oh, before this word there is a tag. Then it is OK.
+				} else {
+					start = pos + 1; // give up
+					continue;
+				}
 			}
 			
 			// check right
 			int end = pos + word.length();
-			// [end] [charat end]
-			// len       *         ok
-			// != len  alpha       ng
-			// != len  !alpha      ok
+			// [end]   [charat end]
+			// len         *         ok
+			// != len    alnum       ng
+			// != len  not alnum     ok
 			if (end != len && Character.isLetterOrDigit(text.charAt(end))) {
-				start = pos + 1;
+				start = pos + 1; // give up
 				continue;
 			}
 			
