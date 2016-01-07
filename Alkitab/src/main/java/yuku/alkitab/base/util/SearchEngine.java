@@ -248,17 +248,28 @@ public class SearchEngine {
 		int lastV = -1;
 
 		// Initial search
-		int consumedLength;
 		String[] multiword = null;
+		final int[] consumedLengthPtr = {0};
+
+		// posWord is the last found position of the searched word
+		// consumedLength is how much characters in the oneChapter was consumed when searching for the word.
+		// Both of these variables must be set together in all cases.
 		int posWord;
+		int consumedLength;
+
 		if (hasPlus) {
 			if (QueryTokenizer.isMultiwordToken(word)) {
 				final List<String> tokenList = QueryTokenizer.tokenizeMultiwordToken(word);
 				multiword = tokenList.toArray(new String[tokenList.size()]);
 			}
 
-			posWord = indexOfWholeWord(oneChapter, word, 0);
-			consumedLength = word.length();
+			if (multiword != null) {
+				posWord = indexOfWholeMultiword(oneChapter, multiword, 0, consumedLengthPtr);
+				consumedLength = consumedLengthPtr[0];
+			} else {
+				posWord = indexOfWholeWord(oneChapter, word, 0);
+				consumedLength = word.length();
+			}
 		} else {
 			posWord = oneChapter.indexOf(word, 0);
 			consumedLength = word.length();
@@ -284,8 +295,13 @@ public class SearchEngine {
 					lastV = verse_0;
 				}
 				if (hasPlus) {
-					posWord = indexOfWholeWord(oneChapter, word, posWord + consumedLength);
-					consumedLength = word.length();
+					if (multiword != null) {
+						posWord = indexOfWholeMultiword(oneChapter, multiword, posWord + consumedLength, consumedLengthPtr);
+						consumedLength = consumedLengthPtr[0];
+					} else {
+						posWord = indexOfWholeWord(oneChapter, word, posWord + consumedLength);
+						consumedLength = word.length();
+					}
 				} else {
 					posWord = oneChapter.indexOf(word, posWord + consumedLength);
 					consumedLength = word.length();
@@ -629,7 +645,7 @@ public class SearchEngine {
 	}
 
 	/**
-	 * This looks for a word that is surrounded by non-letter characters.
+	 * This looks for a word that is surrounded by non-letter-or-digit characters.
 	 * This works well only if the word is not a multiword {@link QueryTokenizer#isMultiwordToken(String)}.
 	 * @param text haystack
 	 * @param word needle
@@ -650,7 +666,7 @@ public class SearchEngine {
 			//  0        *          ok
 			// >0       alpha       ng
 			// >0      !alpha       ok
-			if (pos != 0 && Character.isLetter(text.charAt(pos - 1))) {
+			if (pos != 0 && Character.isLetterOrDigit(text.charAt(pos - 1))) {
 				start = pos + 1;
 				continue;
 			}
@@ -661,13 +677,100 @@ public class SearchEngine {
 			// len       *         ok
 			// != len  alpha       ng
 			// != len  !alpha      ok
-			if (end != len && Character.isLetter(text.charAt(end))) {
+			if (end != len && Character.isLetterOrDigit(text.charAt(end))) {
 				start = pos + 1;
 				continue;
 			}
 			
 			// passed
 			return pos;
+		}
+	}
+
+	/**
+	 * This looks for a multiword that is surrounded by non-letter characters.
+	 * This works for multiword because it tries to strip tags and punctuations from the text before matching.
+	 * @param text haystack with '\n' as delimiter between verses. multiword cannot be searched across different verses.
+	 * @param multiword multiword that has been split into words. Must have at least one element.
+	 * @param start character index of text to start searching from
+	 * @param consumedLengthPtr (length-1 array output) how many characters matched from the source text to satisfy the multiword. Will be 0 if this method returns -1.
+	 * @return -1 or position of the multiword.
+	 */
+	private static int indexOfWholeMultiword(String text, String[] multiword, int start, int[] consumedLengthPtr) {
+		final int len = text.length();
+		final String firstWord = multiword[0];
+
+		findAllWords: while (true) {
+			final int firstPos = indexOfWholeWord(text, firstWord, start);
+			if (firstPos == -1) {
+				// not even the first word is found, so we give up
+				consumedLengthPtr[0] = 0;
+				return -1;
+			}
+
+			int pos = firstPos + firstWord.length();
+
+			// find the next words, but we want to consume everything after the previous word that is
+			// not eligible as search characters, which are tags and non-letters.
+			for (int i = 1, multiwordLen = multiword.length; i < multiwordLen; i++) {
+				final int posBeforeConsume = pos;
+				// consume!
+				while (pos < len) {
+					final char c = text.charAt(pos);
+					if (c == '@') {
+						if (pos == len - 1) {
+							// bad data (nothing after '@')
+						} else {
+							pos++;
+							final char d = text.charAt(pos);
+							if (d == '<') {
+								final int closingTagStart = text.indexOf("@>", pos + 1);
+								if (closingTagStart == -1) {
+									// bad data (no closing tag)
+								} else {
+									pos = closingTagStart + 1;
+								}
+							} else {
+								// single-letter formatting code, move on...
+							}
+						}
+					} else if (Character.isLetterOrDigit(c)) {
+						break;
+					} else if (c == '\n') {
+						// can't cross verse boundary, so we give up and try from beginning again
+						start = pos + 1;
+						continue findAllWords;
+					} else {
+						// non-letter, move on...
+					}
+
+					pos++;
+				}
+
+				if (BuildConfig.DEBUG) {
+					Log.d(TAG, "=========================");
+					Log.d(TAG, "multiword: " + Arrays.toString(multiword));
+					Log.d(TAG, "text     : #" + text.substring(Math.max(0, posBeforeConsume - multiword[i - 1].length()), Math.min(len, posBeforeConsume + 80)) + "#");
+					Log.d(TAG, "skipped  : #" + text.substring(posBeforeConsume, pos) + "#");
+					Log.d(TAG, "=========================////");
+				}
+
+				final String word = multiword[i];
+
+				final int foundWordStart = indexOfWholeWord(text, word, pos);
+				if (foundWordStart == -1 /* Not found... */ || foundWordStart != pos /* ...or another word comes */) {
+					// subsequent words is not found at the correct position, so loop from beginning again
+					start = pos;
+					continue findAllWords;
+				}
+
+				// prepare for next iteration
+				pos = foundWordStart + word.length();
+			}
+
+			// all words are found!
+			consumedLengthPtr[0] = pos - firstPos;
+			return firstPos;
 		}
 	}
 
