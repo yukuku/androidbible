@@ -75,10 +75,10 @@ public class SearchEngine {
 	public static IntArrayList searchByGrep(final Version version, final Query query) {
 		String[] words = QueryTokenizer.tokenize(query.query_string);
 		
-		// urutkan berdasarkan panjang, lalu abjad
+		// sort by word length, then alphabetically
 		Arrays.sort(words, (object1, object2) -> {
-			int len1 = object1.length();
-			int len2 = object2.length();
+			final int len1 = object1.length();
+			final int len2 = object2.length();
 
 			if (len1 > len2) return -1;
 			if (len1 == len2) {
@@ -103,35 +103,23 @@ public class SearchEngine {
 		
 		// really search
 		IntArrayList result = null;
-		
-		{
-			int index = 0;
-			
-			while (true) {
-				if (index >= words.length) {
-					break;
-				}
-				
-				String word = words[index];
-				
-				IntArrayList prev = result;
-	
-				{
-					long ms = System.currentTimeMillis();
-					result = searchByGrepInside(version, word, prev, query.bookIds);
-					Log.d(TAG, "search word '" + word + "' needed: " + (System.currentTimeMillis() - ms) + " ms");
-				}
-	
-				if (prev != null) {
-					Log.d(TAG, "Will intersect " + prev.size() + " elements with " + result.size() + " elements...");
-					result = intersect(prev, result);
-					Log.d(TAG, "... the result is " + result.size() + " elements");
-				}
-				
-				index++;
+
+		for (final String word : words) {
+			final IntArrayList prev = result;
+
+			{
+				long ms = System.currentTimeMillis();
+				result = searchByGrepInside(version, word, prev, query.bookIds);
+				Log.d(TAG, "search word '" + word + "' needed: " + (System.currentTimeMillis() - ms) + " ms");
+			}
+
+			if (prev != null) {
+				Log.d(TAG, "Will intersect " + prev.size() + " elements with " + result.size() + " elements...");
+				result = intersect(prev, result);
+				Log.d(TAG, "... the result is " + result.size() + " elements");
 			}
 		}
-		
+
 		return result;
 	}
 
@@ -196,24 +184,21 @@ public class SearchEngine {
 
 	static IntArrayList searchByGrepInside(final Version version, String word, final IntArrayList source, final SparseBooleanArray bookIds) {
 		final IntArrayList res = new IntArrayList();
-		boolean hasPlus = false;
-		
-		if (QueryTokenizer.isPlussedToken(word)) {
-			hasPlus = true;
+		final boolean hasPlus = QueryTokenizer.isPlussedToken(word);
+
+		if (hasPlus) {
 			word = QueryTokenizer.tokenWithoutPlus(word);
 		}
-	
+
 		if (source == null) {
 			for (Book book: version.getConsecutiveBooks()) {
 				if (!bookIds.get(book.bookId, false)) {
 					continue; // the book is not included in selected books to be searched
 				}
-				
-				int chapter_count = book.chapter_count;
-				
-				for (int chapter_1 = 1; chapter_1 <= chapter_count; chapter_1++) {
+
+				for (int chapter_1 = 1; chapter_1 <= book.chapter_count; chapter_1++) {
 					// try to find it wholly in a chapter
-					String oneChapter = version.loadChapterTextLowercasedWithoutSplit(book, chapter_1);
+					final String oneChapter = version.loadChapterTextLowercasedWithoutSplit(book, chapter_1);
 					if (oneChapter != null && oneChapter.contains(word)) {
 						// only do the following when inside a chapter, word is found
 						searchByGrepInChapter(oneChapter, word, res, Ari.encode(book.bookId, chapter_1, 0), hasPlus);
@@ -231,12 +216,12 @@ public class SearchEngine {
 			
 			while (true) {
 				curAriBc = nextAri(source, ppos, curAriBc);
-				if (curAriBc == 0) break; // habis
+				if (curAriBc == 0) break; // no more
 				
 				// No need to check null book, because we go here only after searching a previous token which is based on
 				// getConsecutiveBooks which is impossible to have null books.
 				final Book book = version.getBook(Ari.toBook(curAriBc));
-				int chapter_1 = Ari.toChapter(curAriBc);
+				final int chapter_1 = Ari.toChapter(curAriBc);
 				
 				final String oneChapter = version.loadChapterTextLowercasedWithoutSplit(book, chapter_1);
 				if (oneChapter.contains(word)) {
@@ -491,7 +476,7 @@ public class SearchEngine {
 		return res;
 	}
 	
-	@SuppressWarnings("synthetic-access") public static void preloadRevIndex() {
+	public static void preloadRevIndex() {
 		new Thread() {
 			@Override public void run() {
 				TimingLogger timing = new TimingLogger("RevIndex", "preloadRevIndex");
