@@ -198,11 +198,8 @@ public class SearchEngine {
 
 				for (int chapter_1 = 1; chapter_1 <= book.chapter_count; chapter_1++) {
 					// try to find it wholly in a chapter
-					final String oneChapter = version.loadChapterTextLowercasedWithoutSplit(book, chapter_1);
-					if (oneChapter != null && oneChapter.contains(word)) {
-						// only do the following when inside a chapter, word is found
-						searchByGrepInChapter(oneChapter, word, res, Ari.encode(book.bookId, chapter_1, 0), hasPlus);
-					}
+					final int ariBc = Ari.encode(book.bookId, chapter_1, 0);
+					searchByGrepForOneChapter(version, book, chapter_1, word, hasPlus, ariBc, res);
 				}
 	
 				if (BuildConfig.DEBUG) Log.d(TAG, "searchByGrepInside book " + book.shortName + " done. res.size = " + res.size());
@@ -219,15 +216,11 @@ public class SearchEngine {
 				if (curAriBc == 0) break; // no more
 				
 				// No need to check null book, because we go here only after searching a previous token which is based on
-				// getConsecutiveBooks which is impossible to have null books.
+				// getConsecutiveBooks, which is impossible to have null books.
 				final Book book = version.getBook(Ari.toBook(curAriBc));
 				final int chapter_1 = Ari.toChapter(curAriBc);
-				
-				final String oneChapter = version.loadChapterTextLowercasedWithoutSplit(book, chapter_1);
-				if (oneChapter.contains(word)) {
-					// Only to the following if inside a chapter we find the word.
-					searchByGrepInChapter(oneChapter, word, res, curAriBc, hasPlus);
-				}
+
+				searchByGrepForOneChapter(version, book, chapter_1, word, hasPlus, curAriBc, res);
 				
 				count++;
 			}
@@ -238,38 +231,53 @@ public class SearchEngine {
 		return res;
 	}
 
-	private static void searchByGrepInChapter(String oneChapter, String word, IntArrayList res, int base, boolean hasPlus) {
+	/**
+	 * @param word searched word without plusses
+	 * @param res (output) result aris
+	 * @param ariBc book-chapter ari, with verse must be set to 0
+	 * @param hasPlus whether the word had plus
+	 */
+	private static void searchByGrepForOneChapter(final Version version, final Book book, final int chapter_1, final String word, final boolean hasPlus, final int ariBc, final IntArrayList res) {
+		// This is a string of one chapter with verses joined by 0x0a ('\n')
+		final String oneChapter = version.loadChapterTextLowercasedWithoutSplit(book, chapter_1);
+		if (oneChapter == null) {
+			return;
+		}
+
 		int verse_0 = 0;
 		int lastV = -1;
-		
+
+		// Initial search
 		int posWord;
 		if (hasPlus) {
 			posWord = indexOfWholeWord(oneChapter, word, 0);
-			if (posWord == -1) {
-				return;
-			}
 		} else {
-			posWord = oneChapter.indexOf(word);
+			posWord = oneChapter.indexOf(word, 0);
 		}
-		
+
+		if (posWord == -1) {
+			// initial search does not return results. It means the whole chapter does not contain the word.
+			return;
+		}
+
 		int posN = oneChapter.indexOf(0x0a);
-		
+
 		while (true) {
 			if (posN < posWord) {
 				verse_0++;
-				posN = oneChapter.indexOf(0x0a, posN+1);
+				posN = oneChapter.indexOf(0x0a, posN + 1);
 				if (posN == -1) {
 					return;
 				}
 			} else {
 				if (verse_0 != lastV) {
-					res.add(base + verse_0 + 1); // +1 to make it verse_1
+					res.add(ariBc + verse_0 + 1); // +1 to make it verse_1
 					lastV = verse_0;
 				}
 				if (hasPlus) {
 					posWord = indexOfWholeWord(oneChapter, word, posWord+1);
 				} else {
-					posWord = oneChapter.indexOf(word, posWord+1);
+					posWord = oneChapter.indexOf(word, posWord + 1);
 				}
 				if (posWord == -1) {
 					return;
@@ -277,7 +285,7 @@ public class SearchEngine {
 			}
 		}
 	}
-	
+
 	public static IntArrayList searchByRevIndex(final Version version, final Query query) {
 		TimingLogger timing = new TimingLogger("RevIndex", "searchByRevIndex");
 		RevIndex revIndex;
@@ -591,10 +599,8 @@ public class SearchEngine {
 	 */
 	public static boolean satisfiesQuery(String s, String[] words) {
 		for (String word: words) {
-			boolean hasPlus = false;
-			
-			if (QueryTokenizer.isPlussedToken(word)) {
-				hasPlus = true;
+			final boolean hasPlus = QueryTokenizer.isPlussedToken(word);
+			if (hasPlus) {
 				word = QueryTokenizer.tokenWithoutPlus(word);
 			}
 			
@@ -611,16 +617,24 @@ public class SearchEngine {
 		return true;
 	}
 
+	/**
+	 * This looks for a word that is surrounded by non-letter characters.
+	 * This works well only if the word is not a multiword {@link QueryTokenizer#isMultiwordToken(String)}.
+	 * @param text haystack
+	 * @param word needle
+	 * @param start start at character
+	 * @return -1 or position of the word
+	 */
 	private static int indexOfWholeWord(String text, String word, int start) {
-		int len = text.length();
+		final int len = text.length();
 		
 		while (true) {
 			int pos = text.indexOf(word, start);
 			if (pos == -1) return -1;
 			
-			// pos bukan -1
+			// pos is not -1
 			
-			// cek kiri
+			// check left
 			// [pos] [charat pos-1]
 			//  0        *          ok
 			// >0       alpha       ng
@@ -630,7 +644,7 @@ public class SearchEngine {
 				continue;
 			}
 			
-			// cek kanan
+			// check right
 			int end = pos + word.length();
 			// [end] [charat end]
 			// len       *         ok
@@ -641,7 +655,7 @@ public class SearchEngine {
 				continue;
 			}
 			
-			// lulus
+			// passed
 			return pos;
 		}
 	}
