@@ -381,6 +381,7 @@
     <string name="search_syntax_tips"><i>Search tips:</i>\n\n<b>+word</b> for that exact word\n<b>[q]city of david[q]</b> for that exact phrase</string>
     <string name="search_no_result">No verses found for <b>^1</b>.</string>
     <string name="search_no_result_fallback">Tap here to go to <u>^1</u>.</string>
+    <string name="search_clear_history">Clear search history</string>
 
     <string name="marker_transfer_to_device_title">Transfer to another device</string>
     <string name="marker_transfer_to_device_description">Move all bookmarks, notes, and highlights to another phone or tablet. We recommend using Gmail/Email.</string>
