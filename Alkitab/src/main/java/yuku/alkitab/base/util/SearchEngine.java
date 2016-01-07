@@ -248,11 +248,20 @@ public class SearchEngine {
 		int lastV = -1;
 
 		// Initial search
+		int consumedLength;
+		String[] multiword = null;
 		int posWord;
 		if (hasPlus) {
+			if (QueryTokenizer.isMultiwordToken(word)) {
+				final List<String> tokenList = QueryTokenizer.tokenizeMultiwordToken(word);
+				multiword = tokenList.toArray(new String[tokenList.size()]);
+			}
+
 			posWord = indexOfWholeWord(oneChapter, word, 0);
+			consumedLength = word.length();
 		} else {
 			posWord = oneChapter.indexOf(word, 0);
+			consumedLength = word.length();
 		}
 
 		if (posWord == -1) {
@@ -275,9 +284,11 @@ public class SearchEngine {
 					lastV = verse_0;
 				}
 				if (hasPlus) {
-					posWord = indexOfWholeWord(oneChapter, word, posWord+1);
+					posWord = indexOfWholeWord(oneChapter, word, posWord + consumedLength);
+					consumedLength = word.length();
 				} else {
-					posWord = oneChapter.indexOf(word, posWord + 1);
+					posWord = oneChapter.indexOf(word, posWord + consumedLength);
+					consumedLength = word.length();
 				}
 				if (posWord == -1) {
 					return;
