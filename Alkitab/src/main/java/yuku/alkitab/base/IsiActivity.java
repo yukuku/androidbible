@@ -1649,7 +1649,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	static boolean loadChapterToVersesView(VersesView versesView, Version version, Book book, int chapter_1, int current_chapter_1, boolean uncheckAllVerses) {
-		SingleChapterVerses verses = version.loadChapterText(book, chapter_1);
+		final SingleChapterVerses verses = version.loadChapterText(book, chapter_1);
 		if (verses == null) {
 			return false;
 		}

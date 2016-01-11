@@ -250,10 +250,14 @@ public class VersionImpl extends Version {
 	 * @return number of verses put into the cursor
 	 */
 	private int resultForOneChapter(Book book, int ari_bc, int v_1_start, int v_1_end, IntArrayList result_aris, List<String> result_verses) {
+		final SingleChapterVerses verses = loadChapterText(book, Ari.toChapter(ari_bc));
+		if (verses == null) {
+			return 0;
+		}
+
 		int count = 0;
-		SingleChapterVerses verses = loadChapterText(book, Ari.toChapter(ari_bc));
 		for (int v_1 = v_1_start; v_1 <= v_1_end; v_1++) {
-			int v_0 = v_1 - 1;
+			final int v_0 = v_1 - 1;
 			if (v_0 < verses.getVerseCount()) {
 				final int ari = ari_bc | v_1;
 				final String verseText = verses.getVerse(v_0);
@@ -283,6 +287,7 @@ public class VersionImpl extends Version {
 	}
 
 	@Override
+	@Nullable
 	public synchronized SingleChapterVerses loadChapterText(Book book, int chapter_1) {
 		if (book == null) {
 			return null;
@@ -292,6 +297,7 @@ public class VersionImpl extends Version {
 	}
 
 	@Override
+	@Nullable
 	public synchronized SingleChapterVerses loadChapterTextLowercased(Book book, int chapter_1) {
 		if (book == null) {
 			return null;

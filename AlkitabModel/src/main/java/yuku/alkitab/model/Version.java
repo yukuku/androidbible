@@ -63,8 +63,10 @@ public abstract class Version {
 	 */
 	public abstract int loadPericope(int bookId, int chapter_1, int[] aris, PericopeBlock[] pericopeBlocks, int max);
 
+	@Nullable
 	public abstract SingleChapterVerses loadChapterText(Book book, int chapter_1);
 
+	@Nullable
 	public abstract SingleChapterVerses loadChapterTextLowercased(Book book, int chapter_1);
 
 	/**
