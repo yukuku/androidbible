@@ -778,28 +778,32 @@ public class SearchEngine {
 		}
 	}
 
-	public static SpannableStringBuilder hilite(final CharSequence s, String[] words, int hiliteColor) {
+	public static SpannableStringBuilder hilite(final CharSequence s, String[] tokens, int hiliteColor) {
 		final SpannableStringBuilder res = new SpannableStringBuilder(s);
 		
-		if (words == null) {
+		if (tokens == null) {
 			return res;
 		}
 		
-		int word_count = words.length;
-		boolean[] hasPlusses = new boolean[word_count];
+		final int token_count = tokens.length;
+		final boolean[] hasPlusses = new boolean[token_count];
+		final String[][] multiwords_tokens = new String[token_count][];
 		{ // point to copy
-			String[] words2 = new String[word_count];
-			System.arraycopy(words, 0, words2, 0, word_count);
-			for (int i = 0; i < word_count; i++) {
-				if (QueryTokenizer.isPlussedToken(words2[i])) {
-					words2[i] = QueryTokenizer.tokenWithoutPlus(words2[i]);
+			final String[] tokens2 = new String[token_count];
+			System.arraycopy(tokens, 0, tokens2, 0, token_count);
+			for (int i = 0; i < token_count; i++) {
+				if (QueryTokenizer.isPlussedToken(tokens2[i])) {
+					tokens2[i] = QueryTokenizer.tokenWithoutPlus(tokens2[i]);
 					hasPlusses[i] = true;
+					if (QueryTokenizer.isMultiwordToken(tokens2[i])) {
+						multiwords_tokens[i] = QueryTokenizer.tokenizeMultiwordToken(tokens2[i]);
+					}
 				}
 			}
-			words = words2;
+			tokens = tokens2;
 		}
 
-		// produce a plain text lowercased
+		// from source text, produce a plain text lowercased
 		final char[] newString = new char[s.length()];
 		for (int i = 0, len = s.length(); i < len; i++) {
 			final char c = s.charAt(i);
@@ -812,38 +816,48 @@ public class SearchEngine {
 		final String plainText = new String(newString);
 		
 		int pos = 0;
-		int[] attempt = new int[word_count];
-		
+		final int[] attempts = new int[token_count];
+		final int[] consumedLengths = new int[token_count];
+
+		// temp buf
+		final int[] consumedLengthPtr = {0};
 		while (true) {
-			for (int i = 0; i < word_count; i++) {
+			for (int i = 0; i < token_count; i++) {
 				if (hasPlusses[i]) {
-					attempt[i] = indexOfWholeWord(plainText, words[i], pos);
+					if (multiwords_tokens[i] != null) {
+						attempts[i] = indexOfWholeMultiword(plainText, multiwords_tokens[i], pos, consumedLengthPtr);
+						consumedLengths[i] = consumedLengthPtr[0];
+					} else {
+						attempts[i] = indexOfWholeWord(plainText, tokens[i], pos);
+						consumedLengths[i] = tokens[i].length();
+					}
 				} else {
-					attempt[i] = plainText.indexOf(words[i], pos);
+					attempts[i] = plainText.indexOf(tokens[i], pos);
+					consumedLengths[i] = tokens[i].length();
 				}
 			}
-			
+
+			// from the attempts above, find the earliest
 			int minpos = Integer.MAX_VALUE;
-			int minword = -1;
+			int mintokenindex = -1;
 			
-			for (int i = 0; i < word_count; i++) {
-				if (attempt[i] >= 0) { // not -1 which means not found
-					if (attempt[i] < minpos) {
-						minpos = attempt[i];
-						minword = i;
+			for (int i = 0; i < token_count; i++) {
+				if (attempts[i] >= 0) { // not -1 which means not found
+					if (attempts[i] < minpos) {
+						minpos = attempts[i];
+						mintokenindex = i;
 					}
 				}
 			}
 			
-			if (minword == -1) {
+			if (mintokenindex == -1) {
 				break; // no more
 			}
 			
-			pos = minpos + words[minword].length();
-			
-			int topos = minpos + words[minword].length();
+			final int topos = minpos + consumedLengths[mintokenindex];
 			res.setSpan(new StyleSpan(Typeface.BOLD), minpos, topos, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 			res.setSpan(new ForegroundColorSpan(hiliteColor), minpos, topos, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+			pos = topos;
 		}
 		
 		return res;
