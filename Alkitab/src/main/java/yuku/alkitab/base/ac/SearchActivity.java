@@ -851,12 +851,12 @@ public class SearchActivity extends BaseActivity {
 	}
 
 	class SearchAdapter extends EasyAdapter {
-		IntArrayList searchResults;
-		String[] tokens;
+		final IntArrayList searchResults;
+		final SearchEngine.ReadyTokens rt;
 		
 		public SearchAdapter(IntArrayList searchResults, String[] tokens) {
 			this.searchResults = searchResults;
-			this.tokens = tokens;
+			this.rt = tokens == null ? null : new SearchEngine.ReadyTokens(tokens);
 		}
 
 		@Override
@@ -901,7 +901,7 @@ public class SearchActivity extends BaseActivity {
 
 			final String verseText = U.removeSpecialCodes(searchInVersion.loadVerseText(ari));
 			if (verseText != null) {
-				lSnippet.setText(SearchEngine.hilite(verseText, tokens, checked? checkedTextColor: hiliteColor));
+				lSnippet.setText(SearchEngine.hilite(verseText, rt, checked? checkedTextColor: hiliteColor));
 			} else {
 				lSnippet.setText(R.string.generic_verse_not_available_in_this_version);
 			}

@@ -3,6 +3,8 @@ package yuku.alkitab.base.util;
 import android.graphics.Typeface;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -27,10 +29,8 @@ import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Semaphore;
 
 public class SearchEngine {
@@ -68,15 +68,52 @@ public class SearchEngine {
 			super(32768);
 		}
 	}
+
+	/**
+	 * Contains processed tokens that is more efficient to be passed in to methods here such as
+	 * {@link #hilite(CharSequence, ReadyTokens, int)} and {@link #satisfiesTokens(String, ReadyTokens)}.
+	 */
+	public static class ReadyTokens {
+		final int token_count;
+		final boolean[] hasPlusses;
+		/** Already without plusses */
+		final String[] tokens;
+		final String[][] multiwords_tokens;
+
+		public ReadyTokens(final String[] tokens) {
+			final int token_count = tokens.length;
+			this.token_count = token_count;
+			this.hasPlusses = new boolean[token_count];
+			this.tokens = new String[token_count];
+			this.multiwords_tokens = new String[token_count][];
+
+			for (int i = 0; i < token_count; i++) {
+				final String token = tokens[i];
+				if (QueryTokenizer.isPlussedToken(token)) {
+					this.hasPlusses[i] = true;
+
+					final String tokenWithoutPlus = QueryTokenizer.tokenWithoutPlus(token);
+					this.tokens[i] = tokenWithoutPlus;
+
+					final String[] multiword = QueryTokenizer.tokenizeMultiwordToken(tokenWithoutPlus);
+					if (multiword != null) {
+						this.multiwords_tokens[i] = multiword;
+					}
+				} else {
+					this.tokens[i] = token;
+				}
+			}
+		}
+	}
 	
 	private static SoftReference<RevIndex> cache_revIndex;
 	private static Semaphore revIndexLoading = new Semaphore(1);
 	
 	public static IntArrayList searchByGrep(final Version version, final Query query) {
-		String[] words = QueryTokenizer.tokenize(query.query_string);
+		String[] tokens = QueryTokenizer.tokenize(query.query_string);
 		
 		// sort by word length, then alphabetically
-		Arrays.sort(words, (object1, object2) -> {
+		Arrays.sort(tokens, (object1, object2) -> {
 			final int len1 = object1.length();
 			final int len2 = object2.length();
 
@@ -89,28 +126,28 @@ public class SearchEngine {
 		
 		// remove duplicates
 		{
-			ArrayList<String> awords = new ArrayList<>();
+			final ArrayList<String> atokens = new ArrayList<>();
 			String last = null;
-			for (String word: words) {
-				if (!word.equals(last)) {
-					awords.add(word);
+			for (String token: tokens) {
+				if (!token.equals(last)) {
+					atokens.add(token);
 				}
-				last = word;
+				last = token;
 			}
-			words = awords.toArray(new String[awords.size()]);
-			if (BuildConfig.DEBUG) Log.d(TAG, "words = " + Arrays.toString(words));
+			tokens = atokens.toArray(new String[atokens.size()]);
+			if (BuildConfig.DEBUG) Log.d(TAG, "tokens = " + Arrays.toString(tokens));
 		}
 		
 		// really search
 		IntArrayList result = null;
 
-		for (final String word : words) {
+		for (final String token : tokens) {
 			final IntArrayList prev = result;
 
 			{
 				long ms = System.currentTimeMillis();
-				result = searchByGrepInside(version, word, prev, query.bookIds);
-				Log.d(TAG, "search word '" + word + "' needed: " + (System.currentTimeMillis() - ms) + " ms");
+				result = searchByGrepInside(version, token, prev, query.bookIds);
+				Log.d(TAG, "search token '" + token + "' needed: " + (System.currentTimeMillis() - ms) + " ms");
 			}
 
 			if (prev != null) {
@@ -182,12 +219,12 @@ public class SearchEngine {
 		}
 	}
 
-	static IntArrayList searchByGrepInside(final Version version, String word, final IntArrayList source, final SparseBooleanArray bookIds) {
+	static IntArrayList searchByGrepInside(final Version version, String token, final IntArrayList source, final SparseBooleanArray bookIds) {
 		final IntArrayList res = new IntArrayList();
-		final boolean hasPlus = QueryTokenizer.isPlussedToken(word);
+		final boolean hasPlus = QueryTokenizer.isPlussedToken(token);
 
 		if (hasPlus) {
-			word = QueryTokenizer.tokenWithoutPlus(word);
+			token = QueryTokenizer.tokenWithoutPlus(token);
 		}
 
 		if (source == null) {
@@ -199,7 +236,7 @@ public class SearchEngine {
 				for (int chapter_1 = 1; chapter_1 <= book.chapter_count; chapter_1++) {
 					// try to find it wholly in a chapter
 					final int ariBc = Ari.encode(book.bookId, chapter_1, 0);
-					searchByGrepForOneChapter(version, book, chapter_1, word, hasPlus, ariBc, res);
+					searchByGrepForOneChapter(version, book, chapter_1, token, hasPlus, ariBc, res);
 				}
 	
 				if (BuildConfig.DEBUG) Log.d(TAG, "searchByGrepInside book " + book.shortName + " done. res.size = " + res.size());
@@ -220,7 +257,7 @@ public class SearchEngine {
 				final Book book = version.getBook(Ari.toBook(curAriBc));
 				final int chapter_1 = Ari.toChapter(curAriBc);
 
-				searchByGrepForOneChapter(version, book, chapter_1, word, hasPlus, curAriBc, res);
+				searchByGrepForOneChapter(version, book, chapter_1, token, hasPlus, curAriBc, res);
 				
 				count++;
 			}
@@ -232,12 +269,12 @@ public class SearchEngine {
 	}
 
 	/**
-	 * @param word searched word without plusses
+	 * @param token searched token without plusses
 	 * @param res (output) result aris
 	 * @param ariBc book-chapter ari, with verse must be set to 0
-	 * @param hasPlus whether the word had plus
+	 * @param hasPlus whether the token had plus
 	 */
-	private static void searchByGrepForOneChapter(final Version version, final Book book, final int chapter_1, final String word, final boolean hasPlus, final int ariBc, final IntArrayList res) {
+	private static void searchByGrepForOneChapter(final Version version, final Book book, final int chapter_1, final String token, final boolean hasPlus, final int ariBc, final IntArrayList res) {
 		// This is a string of one chapter with verses joined by 0x0a ('\n')
 		final String oneChapter = version.loadChapterTextLowercasedWithoutSplit(book, chapter_1);
 		if (oneChapter == null) {
@@ -251,38 +288,36 @@ public class SearchEngine {
 		String[] multiword = null;
 		final int[] consumedLengthPtr = {0};
 
-		// posWord is the last found position of the searched word
-		// consumedLength is how much characters in the oneChapter was consumed when searching for the word.
+		// posToken is the last found position of the searched token
+		// consumedLength is how much characters in the oneChapter was consumed when searching for the token.
 		// Both of these variables must be set together in all cases.
-		int posWord;
+		int posToken;
 		int consumedLength;
 
 		if (hasPlus) {
-			if (QueryTokenizer.isMultiwordToken(word)) {
-				multiword = QueryTokenizer.tokenizeMultiwordToken(word);
-			}
+			multiword = QueryTokenizer.tokenizeMultiwordToken(token);
 
 			if (multiword != null) {
-				posWord = indexOfWholeMultiword(oneChapter, multiword, 0, consumedLengthPtr);
+				posToken = indexOfWholeMultiword(oneChapter, multiword, 0, consumedLengthPtr);
 				consumedLength = consumedLengthPtr[0];
 			} else {
-				posWord = indexOfWholeWord(oneChapter, word, 0);
-				consumedLength = word.length();
+				posToken = indexOfWholeWord(oneChapter, token, 0);
+				consumedLength = token.length();
 			}
 		} else {
-			posWord = oneChapter.indexOf(word, 0);
-			consumedLength = word.length();
+			posToken = oneChapter.indexOf(token, 0);
+			consumedLength = token.length();
 		}
 
-		if (posWord == -1) {
-			// initial search does not return results. It means the whole chapter does not contain the word.
+		if (posToken == -1) {
+			// initial search does not return results. It means the whole chapter does not contain the token.
 			return;
 		}
 
 		int posN = oneChapter.indexOf(0x0a);
 
 		while (true) {
-			if (posN < posWord) {
+			if (posN < posToken) {
 				verse_0++;
 				posN = oneChapter.indexOf(0x0a, posN + 1);
 				if (posN == -1) {
@@ -295,17 +330,17 @@ public class SearchEngine {
 				}
 				if (hasPlus) {
 					if (multiword != null) {
-						posWord = indexOfWholeMultiword(oneChapter, multiword, posWord + consumedLength, consumedLengthPtr);
+						posToken = indexOfWholeMultiword(oneChapter, multiword, posToken + consumedLength, consumedLengthPtr);
 						consumedLength = consumedLengthPtr[0];
 					} else {
-						posWord = indexOfWholeWord(oneChapter, word, posWord + consumedLength);
-						consumedLength = word.length();
+						posToken = indexOfWholeWord(oneChapter, token, posToken + consumedLength);
+						consumedLength = token.length();
 					}
 				} else {
-					posWord = oneChapter.indexOf(word, posWord + consumedLength);
-					consumedLength = word.length();
+					posToken = oneChapter.indexOf(token, posToken + consumedLength);
+					consumedLength = token.length();
 				}
-				if (posWord == -1) {
+				if (posToken == -1) {
 					return;
 				}
 			}
@@ -330,55 +365,21 @@ public class SearchEngine {
 		boolean[] passBitmapOr = new boolean[32768];
 		boolean[] passBitmapAnd = new boolean[32768];
 		Arrays.fill(passBitmapAnd, true);
-		
-		// Query e.g.: "a b" c +"d e" +f
-		List<String> tokens; // this will be: "a" "b" "c" "+d" "+e" "+f"
-		List<String> multiwords = null; // this will be: "a b" "+d e"
-		{
-			Set<String> tokenSet = new LinkedHashSet<>(Arrays.asList(QueryTokenizer.tokenize(query.query_string)));
-			Log.d(TAG, "Tokens before retokenization:");
-			for (String token: tokenSet) {
+
+		final ReadyTokens rt = new ReadyTokens(QueryTokenizer.tokenize(query.query_string));
+
+		if (BuildConfig.DEBUG) {
+			Log.d(TAG, "Tokens after retokenization:");
+			for (String token: rt.tokens) {
 				Log.d(TAG, "- token: " + token);
 			}
-			
-			Set<String> tokenSet2 = new LinkedHashSet<>();
-			for (String token: tokenSet) {
-				if (QueryTokenizer.isMultiwordToken(token)) {
-					if (multiwords == null) {
-						multiwords = new ArrayList<>();
-					}
-					multiwords.add(token);
-					boolean token_plussed = QueryTokenizer.isPlussedToken(token);
-					String token_bare = QueryTokenizer.tokenWithoutPlus(token);
-					for (String token2: QueryTokenizer.tokenizeMultiwordToken(token_bare)) {
-						if (token_plussed) {
-							tokenSet2.add("+" + token2);
-						} else {
-							tokenSet2.add(token2);
-						}
-					}
-				} else {
-					tokenSet2.add(token);
-				}
+
+			Log.d(TAG, "Multiwords:");
+			for (String[] multiword: rt.multiwords_tokens) {
+				Log.d(TAG, "- multiword: " + Arrays.toString(multiword));
 			}
-			
-			if (BuildConfig.DEBUG) {
-				Log.d(TAG, "Tokens after retokenization:");
-				for (String token: tokenSet2) {
-					Log.d(TAG, "- token: " + token);
-				}
-				
-				if (multiwords != null) {
-					Log.d(TAG, "Multiwords:");
-					for (String multiword: multiwords) {
-						Log.d(TAG, "- multiword: " + multiword);
-					}
-				}
-			}
-			
-			tokens = new ArrayList<>(tokenSet2);
 		}
-		
+
 		timing.addSplit("Tokenize query");
 		
 		// optimization, if user doesn't filter any books
@@ -394,14 +395,19 @@ public class SearchEngine {
 				}
 			}
 		}
-		
-		for (String token: tokens) {
-			boolean plussed = QueryTokenizer.isPlussedToken(token);
-			String token_bare = QueryTokenizer.tokenWithoutPlus(token);
-			
+
+		for (int i = 0; i < rt.token_count; i++) {
+			if (rt.multiwords_tokens[i] != null) {
+				// This is multiword token, handled separately below
+				continue;
+			}
+
+			final String token_bare = rt.tokens[i];
+			final boolean plussed = rt.hasPlusses[i];
+
 			Arrays.fill(passBitmapOr, false);
-			
-			for (Map.Entry<String, int[]> e: revIndex.entrySet()) {
+
+			for (Map.Entry<String, int[]> e : revIndex.entrySet()) {
 				String word = e.getKey();
 
 				boolean match = false;
@@ -410,24 +416,24 @@ public class SearchEngine {
 				} else {
 					if (word.contains(token_bare)) match = true;
 				}
-				
+
 				if (match) {
 					int[] lids = e.getValue();
-					for (int lid: lids) {
+					for (int lid : lids) {
 						passBitmapOr[lid] = true; // OR operation
 					}
 				}
 			}
-			
+
 			int c = 0;
-			for (boolean b: passBitmapOr) {
+			for (boolean b : passBitmapOr) {
 				if (b) c++;
 			}
-			timing.addSplit("gather lid for token '" + token + "' (" + c + ")");
-			
+			timing.addSplit("gather lid for token '" + token_bare + "' (" + c + ")");
+
 			// AND operation with existing word(s)
-			for (int i = passBitmapOr.length - 1; i >= 0; i--) {
-				passBitmapAnd[i] &= passBitmapOr[i];
+			for (int j = passBitmapOr.length - 1; j >= 0; j--) {
+				passBitmapAnd[j] &= passBitmapOr[j];
 			}
 			timing.addSplit("AND operation");
 		}
@@ -452,17 +458,18 @@ public class SearchEngine {
 		
 		// last check: whether multiword tokens are all matching. No way to find this except by loading the text
 		// and examining one by one whether the text contains those multiword tokens
-		if (multiwords != null) {
+		final List<String[]> multiwords = new ArrayList<>();
+		for (final String[] multiword_tokens : rt.multiwords_tokens) {
+			if (multiword_tokens != null) {
+				multiwords.add(multiword_tokens);
+			}
+		}
+
+		if (multiwords.size() > 0) {
 			final IntArrayList res2 = new IntArrayList(res.size());
 			
-			// later on we will need each multiword to be separated into tokens
-			final String[][] multiwords_tokens = new String[multiwords.size()][];
 			final int[] consumedLengthPtr = {0};
 
-			for (int i = 0, len = multiwords.size(); i < len; i++) {
-				multiwords_tokens[i] = QueryTokenizer.tokenizeMultiwordToken(multiwords.get(i));
-			}
-			
 			SingleChapterVerses loadedChapter = null; // the currently loaded chapter, to prevent repeated loading of same chapter
 			int loadedAriCv = 0; // chapter and verse of current Ari
 			for (int i = 0, len = res.size(); i < len; i++) {
@@ -488,7 +495,7 @@ public class SearchEngine {
 					String text = loadedChapter.getVerse(verse_1 - 1);
 					if (text != null) {
 						boolean passed = true;
-						for (final String[] multiword_tokens : multiwords_tokens) {
+						for (final String[] multiword_tokens : multiwords) {
 							if (indexOfWholeMultiword(text, multiword_tokens, 0, consumedLengthPtr) == -1) {
 								passed = false;
 								break;
@@ -622,21 +629,24 @@ public class SearchEngine {
 	}
 
 	/**
-	 * Case sensitive! Make sure s and words have been lowercased (or normalized).
+	 * Case sensitive! Make sure <code>s</code> and <code>rt</code> tokens have been lowercased (or normalized).
 	 */
-	public static boolean satisfiesQuery(String s, String[] words) {
-		for (String word: words) {
-			final boolean hasPlus = QueryTokenizer.isPlussedToken(word);
+	public static boolean satisfiesTokens(final String s, @NonNull final ReadyTokens rt) {
+		for (int i = 0; i < rt.token_count; i++) {
+			final boolean hasPlus = rt.hasPlusses[i];
+
+			final int wordPos;
 			if (hasPlus) {
-				word = QueryTokenizer.tokenWithoutPlus(word);
-			}
-			
-			int wordPos;
-			if (hasPlus) {
-				wordPos = indexOfWholeWord(s, word, 0);
+				final String[] multiword_tokens = rt.multiwords_tokens[i];
+				if (multiword_tokens != null) {
+					wordPos = indexOfWholeMultiword(s, multiword_tokens, 0, null);
+				} else {
+					wordPos = indexOfWholeWord(s, rt.tokens[i], 0);
+				}
 			} else {
-				wordPos = s.indexOf(word);
+				wordPos = s.indexOf(rt.tokens[i]);
 			}
+
 			if (wordPos == -1) {
 				return false;
 			}
@@ -646,7 +656,7 @@ public class SearchEngine {
 
 	/**
 	 * This looks for a word that is surrounded by non-letter-or-digit characters.
-	 * This works well only if the word is not a multiword {@link QueryTokenizer#isMultiwordToken(String)}.
+	 * This works well only if the word is not a multiword.
 	 * @param text haystack
 	 * @param word needle
 	 * @param start start at character
@@ -700,7 +710,7 @@ public class SearchEngine {
 	 * @param consumedLengthPtr (length-1 array output) how many characters matched from the source text to satisfy the multiword. Will be 0 if this method returns -1.
 	 * @return -1 or position of the multiword.
 	 */
-	private static int indexOfWholeMultiword(String text, String[] multiword, int start, int[] consumedLengthPtr) {
+	private static int indexOfWholeMultiword(String text, String[] multiword, int start, @Nullable int[] consumedLengthPtr) {
 		final int len = text.length();
 		final String firstWord = multiword[0];
 
@@ -708,7 +718,7 @@ public class SearchEngine {
 			final int firstPos = indexOfWholeWord(text, firstWord, start);
 			if (firstPos == -1) {
 				// not even the first word is found, so we give up
-				consumedLengthPtr[0] = 0;
+				if (consumedLengthPtr != null) consumedLengthPtr[0] = 0;
 				return -1;
 			}
 
@@ -773,35 +783,19 @@ public class SearchEngine {
 			}
 
 			// all words are found!
-			consumedLengthPtr[0] = pos - firstPos;
+			if (consumedLengthPtr != null) consumedLengthPtr[0] = pos - firstPos;
 			return firstPos;
 		}
 	}
 
-	public static SpannableStringBuilder hilite(final CharSequence s, String[] tokens, int hiliteColor) {
+	public static SpannableStringBuilder hilite(final CharSequence s, final ReadyTokens rt, int hiliteColor) {
 		final SpannableStringBuilder res = new SpannableStringBuilder(s);
 		
-		if (tokens == null) {
+		if (rt == null) {
 			return res;
 		}
-		
-		final int token_count = tokens.length;
-		final boolean[] hasPlusses = new boolean[token_count];
-		final String[][] multiwords_tokens = new String[token_count][];
-		{ // point to copy
-			final String[] tokens2 = new String[token_count];
-			System.arraycopy(tokens, 0, tokens2, 0, token_count);
-			for (int i = 0; i < token_count; i++) {
-				if (QueryTokenizer.isPlussedToken(tokens2[i])) {
-					tokens2[i] = QueryTokenizer.tokenWithoutPlus(tokens2[i]);
-					hasPlusses[i] = true;
-					if (QueryTokenizer.isMultiwordToken(tokens2[i])) {
-						multiwords_tokens[i] = QueryTokenizer.tokenizeMultiwordToken(tokens2[i]);
-					}
-				}
-			}
-			tokens = tokens2;
-		}
+
+		final int token_count = rt.token_count;
 
 		// from source text, produce a plain text lowercased
 		final char[] newString = new char[s.length()];
@@ -818,6 +812,11 @@ public class SearchEngine {
 		int pos = 0;
 		final int[] attempts = new int[token_count];
 		final int[] consumedLengths = new int[token_count];
+
+		// local vars for optimizations
+		final boolean[] hasPlusses = rt.hasPlusses;
+		final String[] tokens = rt.tokens;
+		final String[][] multiwords_tokens = rt.multiwords_tokens;
 
 		// temp buf
 		final int[] consumedLengthPtr = {0};
