@@ -123,7 +123,7 @@ public class BookmarkImporter {
 		}
 	}
 
-	public static void importBookmarks(final Activity activity, @NonNull final InputStream fis, final boolean finishActivityAfterwards) {
+	public static void importBookmarks(final Activity activity, @NonNull final InputStream fis, final boolean finishActivityAfterwards, final Runnable runWhenDone) {
 		final MaterialDialog pd = new MaterialDialog.Builder(activity)
 			.content(R.string.mengimpor_titiktiga)
 			.cancelable(false)
@@ -229,6 +229,8 @@ public class BookmarkImporter {
 						dialog.setOnDismissListener(dialog1 -> activity.finish());
 					}
 				}
+
+				if (runWhenDone != null) runWhenDone.run();
 			}
 		}.execute();
 	}
@@ -238,34 +240,31 @@ public class BookmarkImporter {
 		SQLiteDatabase db = S.getDb().getWritableDatabase();
 		db.beginTransaction();
 		try {
-			final TIntLongHashMap markerRelIdToAbsIdMap = new TIntLongHashMap();
+			final TIntObjectHashMap<Marker> markerRelIdToMarker = new TIntObjectHashMap<>();
 
 			{ // write new markers (if not available yet)
-				for (final Marker marker : markers) {
+				for (int i = 0; i < markers.size(); i++) {
+					Marker marker = markers.get(i);
 					final int marker_relId = markerToRelIdMap.get(marker);
 
 					// migrate: look for existing marker with same kind, ari, and content
-					final Cursor cursor = db.query(
+					try (Cursor cursor = db.query(
 						Db.TABLE_Marker,
 						null,
 						Db.Marker.ari + "=? and " + Db.Marker.kind + "=? and " + Db.Marker.caption + "=?",
 						ToStringArray(marker.ari, marker.kind.code, marker.caption),
 						null, null, null
-					);
+					)) {
+						if (cursor.moveToNext()) {
+							marker = InternalDb.markerFromCursor(cursor);
+							markers.set(i, marker);
+						} else {
+							InternalDb.insertMarker(db, marker);
+						}
 
-					// ------------------------------ get _id from
-					//  exists: (nop)                 [1]
-					// !exists:            insert     [2]
-					final long _id;
-					if (cursor.moveToNext()) {
-						_id = cursor.getLong(cursor.getColumnIndexOrThrow("_id")); /* [1] */
-					} else {
-						_id = InternalDb.insertMarker(db, marker); /* [2] */
+						// map it
+						markerRelIdToMarker.put(marker_relId, marker);
 					}
-					cursor.close();
-
-					// map it
-					markerRelIdToAbsIdMap.put(marker_relId, _id);
 				}
 			}
 
@@ -273,18 +272,17 @@ public class BookmarkImporter {
 				for (final int marker_relId : markerRelIdToLabelRelIdsMap.keys()) {
 					final TIntList label_relIds = markerRelIdToLabelRelIdsMap.get(marker_relId);
 
-					final long marker_id = markerRelIdToAbsIdMap.get(marker_relId);
+					final Marker marker = markerRelIdToMarker.get(marker_relId);
 
-					if (marker_id > 0) {
+					if (marker != null) {
 						// existing labels > 0: ignore
 						// existing labels == 0: insert
-						final int existing_label_count = (int) DatabaseUtils.queryNumEntries(db, Db.TABLE_Marker_Label, "_id=?", ToStringArray(marker_id));
+						final int existing_label_count = (int) DatabaseUtils.queryNumEntries(db, Db.TABLE_Marker_Label, Db.Marker_Label.marker_gid + "=?", ToStringArray(marker.gid));
 
 						if (existing_label_count == 0) {
 							for (int label_relId : label_relIds.toArray()) {
 								final long label_id = labelRelIdToAbsIdMap.get(label_relId);
 								if (label_id > 0) {
-									final Marker marker = S.getDb().getMarkerById(marker_id);
 									final Label label = S.getDb().getLabelById(label_id);
 									final Marker_Label marker_label = Marker_Label.createNewMarker_Label(marker.gid, label.gid);
 									InternalDb.insertMarker_LabelIfNotExists(db, marker_label);
@@ -294,7 +292,7 @@ public class BookmarkImporter {
 							}
 						}
 					} else {
-						Log.w(TAG, "wrong marker_id!: " + marker_id);
+						Log.w(TAG, "wrong marker_relId: " + marker_relId);
 					}
 				}
 			}

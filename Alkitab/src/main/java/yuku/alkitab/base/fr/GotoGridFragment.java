@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableStringBuilder;
-import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -165,21 +163,15 @@ public class GotoGridFragment extends BaseGotoFragment {
 	}
 	
 	protected void displaySelectedBookAndChapter() {
-		lSelectedBook.setText(underline(selectedBook.shortName));
+		lSelectedBook.setText(selectedBook.shortName);
 		lSelectedBook.setTextColor(U.getForegroundColorOnDarkBackgroundByBookId(selectedBook.bookId));
 		if (selectedChapter == 0) {
 			lSelectedChapter.setVisibility(View.GONE);
 		} else {
 			lSelectedChapter.setVisibility(View.VISIBLE);
 			ViewCompat.jumpDrawablesToCurrentState(lSelectedChapter);
-			lSelectedChapter.setText(underline("" + selectedChapter));
+			lSelectedChapter.setText("" + selectedChapter);
 		}
-	}
-
-	private CharSequence underline(CharSequence cs) {
-		SpannableStringBuilder sb = SpannableStringBuilder.valueOf(cs);
-		sb.setSpan(new UnderlineSpan(), 0, cs.length(), 0);
-		return sb;
 	}
 
 	GridLayoutManager createLayoutManagerForNumbers() {

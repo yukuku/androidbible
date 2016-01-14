@@ -150,7 +150,8 @@ public class VersionDownloadCompleteReceiver extends BroadcastReceiver {
 		mvDb.modifyTime = modifyTime;
 		mvDb.ordering = maxOrdering + 1;
 
-		S.getDb().insertVersionWithActive(mvDb, true);
+		S.getDb().insertOrUpdateVersionWithActive(mvDb, true);
+		MVersionDb.clearVersionImplCache();
 
 		Toast.makeText(App.context, TextUtils.expandTemplate(context.getText(R.string.version_download_complete), mvDb.longName), Toast.LENGTH_LONG).show();
 

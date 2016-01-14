@@ -331,7 +331,8 @@
     <string name="rp_commentActual">Finished: %s%%</string>
     <string name="rp_commentTarget">Target: %s%%</string>
     <string name="rp_commentOnSchedule">On schedule</string>
-    <string name="rp_commentBehindSchedule">Behind the schedule: %s%%</string>
+    <string name="rp_commentBehindSchedule">Behind schedule: %s%%</string>
+    <string name="rp_commentAheadSchedule">Ahead of schedule: %s%%</string>
     <string name="rp_noReadingPlanAvailable">No more reading plans available.</string>
     <string name="rp_deletePlan">"Delete '%s'?"</string>
     <string name="rp_reset">Change the starting date so that the first unread reading will be today?</string>
@@ -367,7 +368,7 @@
 	<string name="rp_download_already_have">You already have this reading plan.</string>
     <string name="rp_mark_as_read_up_to">Mark as read up to here?</string>
 
-	<string name="version_download_need_fonts">"The version downloaded might need to be displayed with certain fonts. Go to the 'Text appearance' menu and select a font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
+	<string name="version_download_need_fonts">"The version downloaded might need to be displayed with certain fonts. Go to the 'Display' menu and select a font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
     <string name="version_download_corrupted_file">Downloaded file seems to be corrupt.</string>
     <string name="version_download_saving_io_error">I/O error when saving downloaded version</string>
 
@@ -380,6 +381,7 @@
     <string name="search_syntax_tips"><i>Search tips:</i>\n\n<b>+word</b> for that exact word\n<b>[q]city of david[q]</b> for that exact phrase</string>
     <string name="search_no_result">No verses found for <b>^1</b>.</string>
     <string name="search_no_result_fallback">Tap here to go to <u>^1</u>.</string>
+    <string name="search_clear_history">Clear search history</string>
 
     <string name="marker_transfer_to_device_title">Transfer to another device</string>
     <string name="marker_transfer_to_device_description">Move all bookmarks, notes, and highlights to another phone or tablet. We recommend using Gmail/Email.</string>

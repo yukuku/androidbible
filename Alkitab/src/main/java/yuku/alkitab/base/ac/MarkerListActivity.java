@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -97,7 +96,6 @@ public class MarkerListActivity extends BaseActivity {
 		return res;
 	}
 
-	@SuppressLint("MissingSuperCall")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		enableNonToolbarUpButton();
@@ -258,7 +256,7 @@ public class MarkerListActivity extends BaseActivity {
 		String query;
 		boolean needFilter;
 		List<Marker> filteredMarkers;
-		String[] tokens;
+		SearchEngine.ReadyTokens rt;
 	}
 
 	final Debouncer<String, FilterResult> filter = new Debouncer<String, FilterResult>(200) {
@@ -283,18 +281,17 @@ public class MarkerListActivity extends BaseActivity {
 				tokens = null;
 			} else {
 				tokens = QueryTokenizer.tokenize(query);
-				for (int i = 0; i < tokens.length; i++) {
-					tokens[i] = tokens[i].toLowerCase(Locale.getDefault());
-				}
 			}
 
-			final List<Marker> filteredMarkers = filterEngine(allMarkers, filter_kind, tokens);
+			final SearchEngine.ReadyTokens rt = tokens == null || tokens.length == 0 ? null : new SearchEngine.ReadyTokens(tokens);
+
+			final List<Marker> filteredMarkers = filterEngine(allMarkers, filter_kind, rt);
 
 			final FilterResult res = new FilterResult();
 			res.query = query;
 			res.needFilter = needFilter;
 			res.filteredMarkers = filteredMarkers;
-			res.tokens = tokens;
+			res.rt = rt;
 			return res;
 		}
 
@@ -307,7 +304,7 @@ public class MarkerListActivity extends BaseActivity {
 			}
 
 			setTitleAndNothingText();
-			adapter.setData(result.filteredMarkers, result.tokens);
+			adapter.setData(result.filteredMarkers, result.rt);
 		}
 	};
 
@@ -505,12 +502,13 @@ public class MarkerListActivity extends BaseActivity {
 	};
 
 	/**
-	 * The real work of filtering happens here
+	 * The real work of filtering happens here.
+	 * @param rt Tokens have to be already lowercased.
 	 */
-	public static List<Marker> filterEngine(List<Marker> allMarkers, Marker.Kind filter_kind, String[] tokens) {
-		List<Marker> res = new ArrayList<>();
+	public static List<Marker> filterEngine(List<Marker> allMarkers, Marker.Kind filter_kind, @Nullable SearchEngine.ReadyTokens rt) {
+		final List<Marker> res = new ArrayList<>();
 
-		if (tokens == null || tokens.length == 0) {
+		if (rt == null) {
 			res.addAll(allMarkers);
 			return res;
 		}
@@ -518,7 +516,7 @@ public class MarkerListActivity extends BaseActivity {
 		for (final Marker marker : allMarkers) {
 			if (filter_kind != Marker.Kind.highlight) { // "caption" in highlights only stores color information, so it's useless to check
 				String caption_lc = marker.caption.toLowerCase(Locale.getDefault());
-				if (SearchEngine.satisfiesQuery(caption_lc, tokens)) {
+				if (SearchEngine.satisfiesTokens(caption_lc, rt)) {
 					res.add(marker);
 					continue;
 				}
@@ -528,7 +526,7 @@ public class MarkerListActivity extends BaseActivity {
 			String verseText = S.activeVersion.loadVerseText(marker.ari);
 			if (verseText != null) { // this can be null! so beware.
 				String verseText_lc = verseText.toLowerCase(Locale.getDefault());
-				if (SearchEngine.satisfiesQuery(verseText_lc, tokens)) {
+				if (SearchEngine.satisfiesTokens(verseText_lc, rt)) {
 					res.add(marker);
 				}
 			}
@@ -540,7 +538,7 @@ public class MarkerListActivity extends BaseActivity {
 
 	class MarkerListAdapter extends EasyAdapter {
 		List<Marker> filteredMarkers = new ArrayList<>();
-		String[] tokens;
+		SearchEngine.ReadyTokens rt;
 
 		@Override
 		public Marker getItem(final int position) {
@@ -597,9 +595,9 @@ public class MarkerListActivity extends BaseActivity {
 			}
 
 			if (filter_kind == Marker.Kind.bookmark) {
-				lCaption.setText(currentlyUsedFilter != null ? SearchEngine.hilite(caption, tokens, hiliteColor) : caption);
+				lCaption.setText(currentlyUsedFilter != null ? SearchEngine.hilite(caption, rt, hiliteColor) : caption);
 				Appearances.applyMarkerTitleTextAppearance(lCaption);
-				CharSequence snippet = currentlyUsedFilter != null ? SearchEngine.hilite(verseText, tokens, hiliteColor) : verseText;
+				CharSequence snippet = currentlyUsedFilter != null ? SearchEngine.hilite(verseText, rt, hiliteColor) : verseText;
 
 				Appearances.applyMarkerSnippetContentAndAppearance(lSnippet, reference, snippet);
 
@@ -617,14 +615,14 @@ public class MarkerListActivity extends BaseActivity {
 			} else if (filter_kind == Marker.Kind.note) {
 				lCaption.setText(reference);
 				Appearances.applyMarkerTitleTextAppearance(lCaption);
-				lSnippet.setText(currentlyUsedFilter != null ? SearchEngine.hilite(caption, tokens, hiliteColor) : caption);
+				lSnippet.setText(currentlyUsedFilter != null ? SearchEngine.hilite(caption, rt, hiliteColor) : caption);
 				Appearances.applyTextAppearance(lSnippet);
 
 			} else if (filter_kind == Marker.Kind.highlight) {
 				lCaption.setText(reference);
 				Appearances.applyMarkerTitleTextAppearance(lCaption);
 
-				final SpannableStringBuilder snippet = currentlyUsedFilter != null ? SearchEngine.hilite(verseText, tokens, hiliteColor) : new SpannableStringBuilder(verseText);
+				final SpannableStringBuilder snippet = currentlyUsedFilter != null ? SearchEngine.hilite(verseText, rt, hiliteColor) : new SpannableStringBuilder(verseText);
 				final Highlights.Info info = Highlights.decode(caption);
 				if (info != null) {
 					final BackgroundColorSpan span = new BackgroundColorSpan(Highlights.alphaMix(info.colorRgb));
@@ -644,9 +642,9 @@ public class MarkerListActivity extends BaseActivity {
 			return filteredMarkers.size();
 		}
 
-		public void setData(List<Marker> filteredMarkers, String[] tokens) {
+		public void setData(List<Marker> filteredMarkers, SearchEngine.ReadyTokens rt) {
 			this.filteredMarkers = filteredMarkers;
-			this.tokens = tokens;
+			this.rt = rt;
 
 			// set up empty view to make sure it does not show loading progress again
 			tEmpty.setVisibility(View.VISIBLE);

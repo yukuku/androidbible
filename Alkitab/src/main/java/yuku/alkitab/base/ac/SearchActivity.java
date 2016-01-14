@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v4.widget.CursorAdapter;
@@ -15,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.UnderlineSpan;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
@@ -45,6 +49,7 @@ import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.SearchEngine;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.Version;
@@ -56,13 +61,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static yuku.alkitab.base.util.Literals.Array;
+
 public class SearchActivity extends BaseActivity {
 	public static final String TAG = SearchActivity.class.getSimpleName();
 	
 	private static final String EXTRA_openedBookId = "openedBookId";
 	private static int REQCODE_bookFilter = 1;
 
-	final String COLUMN_QUERY_STRING = "query_string";
+	private static final long ID_CLEAR_HISTORY = -1L;
+	private static final int COLINDEX_ID = 0;
+	private static final int COLINDEX_QUERY_STRING = 1;
 
 	View root;
 	TextView bVersion;
@@ -204,16 +213,27 @@ public class SearchActivity extends BaseActivity {
 
 		@Override
 		public void bindView(final View view, final Context context, final Cursor cursor) {
-			TextView text1 = V.get(view, android.R.id.text1);
-			text1.setText(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_QUERY_STRING)));
+			final TextView text1 = V.get(view, android.R.id.text1);
+			final long _id = cursor.getLong(COLINDEX_ID);
+
+			final CharSequence text;
+			if (_id == -1) {
+				final SpannableStringBuilder sb = new SpannableStringBuilder(getString(R.string.search_clear_history));
+				sb.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.escape)), 0, sb.length(), 0);
+				text = sb;
+			} else {
+				text = cursor.getString(COLINDEX_QUERY_STRING);
+			}
+
+			text1.setText(text);
 		}
 
 		@Override
 		public CharSequence convertToString(final Cursor cursor) {
-			return cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_QUERY_STRING));
+			return cursor.getString(COLINDEX_QUERY_STRING);
 		}
 
-		public void setData(final SearchHistory searchHistory) {
+		public void setData(@NonNull final SearchHistory searchHistory) {
 			entries.clear();
 			entries.addAll(searchHistory.entries);
 			filter();
@@ -225,12 +245,17 @@ public class SearchActivity extends BaseActivity {
 		}
 
 		private void filter() {
-			final MatrixCursor mc = new MatrixCursor(new String[]{"_id", COLUMN_QUERY_STRING});
+			final MatrixCursor mc = new MatrixCursor(Array("_id", "query_string") /* Can be any string, but this must correspond to COLINDEX_ID and COLINDEX_QUERY_STRING */);
 			for (int i = 0; i < entries.size(); i++) {
 				final SearchHistory.Entry entry = entries.get(i);
 				if (TextUtils.isEmpty(query_string) || entry.query_string.toLowerCase().startsWith(query_string.toLowerCase())) {
-					mc.addRow(new Object[]{(long) i, entry.query_string});
+					mc.addRow(Array((long) i, entry.query_string));
 				}
+			}
+
+			// add last item to clear search history only if there is something else
+			if (mc.getCount() > 0) {
+				mc.addRow(Array(ID_CLEAR_HISTORY, ""));
 			}
 
 			// sometimes this is called from bg. So we need to make sure this is run on UI thread.
@@ -291,7 +316,13 @@ public class SearchActivity extends BaseActivity {
 				final boolean ok = c.moveToPosition(position);
 				if (!ok) return false;
 
-				searchView.setQuery(c.getString(c.getColumnIndexOrThrow(COLUMN_QUERY_STRING)), true);
+				final long _id = c.getLong(COLINDEX_ID);
+				if (_id == ID_CLEAR_HISTORY) {
+					saveSearchHistory(null);
+					searchHistoryAdapter.setData(loadSearchHistory());
+				} else {
+					searchView.setQuery(c.getString(COLINDEX_QUERY_STRING), true);
+				}
 
 				return true;
 			}
@@ -654,16 +685,31 @@ public class SearchActivity extends BaseActivity {
 			.show();
 
 		new AsyncTask<Void, Void, IntArrayList>() {
+			boolean debugstats_revIndexUsed;
+			long debugstats_totalTimeMs;
+			long debugstats_cpuTimeMs;
+
 			@Override protected IntArrayList doInBackground(Void... params) {
 				searchHistoryAdapter.setData(addSearchHistoryEntry(query_string));
 
+				final long totalMs = System.currentTimeMillis();
+				final long cpuMs = SystemClock.currentThreadTimeMillis();
+				final IntArrayList res;
+
 				synchronized (SearchActivity.this) {
 					if (usingRevIndex()) {
-						return SearchEngine.searchByRevIndex(searchInVersion, getQuery());
+						debugstats_revIndexUsed = true;
+						res = SearchEngine.searchByRevIndex(searchInVersion, getQuery());
 					} else {
-						return SearchEngine.searchByGrep(searchInVersion, getQuery());
+						debugstats_revIndexUsed = false;
+						res = SearchEngine.searchByGrep(searchInVersion, getQuery());
 					}
 				}
+
+				debugstats_totalTimeMs = System.currentTimeMillis() - totalMs;
+				debugstats_cpuTimeMs = SystemClock.currentThreadTimeMillis() - cpuMs;
+
+				return res;
 			}
 
 			@Override protected void onPostExecute(IntArrayList result) {
@@ -716,6 +762,17 @@ public class SearchActivity extends BaseActivity {
 						tSearchTips.setOnClickListener(null);
 					}
 				}
+
+				if (BuildConfig.DEBUG) {
+					new MaterialDialog.Builder(SearchActivity.this)
+						.content("This msg is shown only on DEBUG build\n\n" +
+							"Search results: " + result.size() + "\n" +
+							"Method: " + (debugstats_revIndexUsed? "revindex": "grep") + "\n" +
+							"Total time: " + debugstats_totalTimeMs + " ms\n" +
+							"CPU (thread) time: " + debugstats_cpuTimeMs + " ms")
+						.positiveText(R.string.ok)
+						.show();
+				}
 				
 				pd.setOnDismissListener(null);
 				pd.dismiss();
@@ -750,7 +807,7 @@ public class SearchActivity extends BaseActivity {
 		}.execute();
 	}
 
-	SearchHistory loadSearchHistory() {
+	@NonNull SearchHistory loadSearchHistory() {
 		final String json = Preferences.getString(Prefkey.searchHistory, null);
 		if (json == null) {
 			return new SearchHistory();
@@ -759,9 +816,13 @@ public class SearchActivity extends BaseActivity {
 		return App.getDefaultGson().fromJson(json, SearchHistory.class);
 	}
 
-	void saveSearchHistory(SearchHistory sh) {
-		final String json = App.getDefaultGson().toJson(sh);
-		Preferences.setString(Prefkey.searchHistory, json);
+	void saveSearchHistory(@Nullable SearchHistory sh) {
+		if (sh == null) {
+			Preferences.remove(Prefkey.searchHistory);
+		} else {
+			final String json = App.getDefaultGson().toJson(sh);
+			Preferences.setString(Prefkey.searchHistory, json);
+		}
 	}
 
 	// returns the modified SearchHistory
@@ -790,12 +851,12 @@ public class SearchActivity extends BaseActivity {
 	}
 
 	class SearchAdapter extends EasyAdapter {
-		IntArrayList searchResults;
-		String[] tokens;
+		final IntArrayList searchResults;
+		final SearchEngine.ReadyTokens rt;
 		
 		public SearchAdapter(IntArrayList searchResults, String[] tokens) {
 			this.searchResults = searchResults;
-			this.tokens = tokens;
+			this.rt = tokens == null ? null : new SearchEngine.ReadyTokens(tokens);
 		}
 
 		@Override
@@ -840,7 +901,7 @@ public class SearchActivity extends BaseActivity {
 
 			final String verseText = U.removeSpecialCodes(searchInVersion.loadVerseText(ari));
 			if (verseText != null) {
-				lSnippet.setText(SearchEngine.hilite(verseText, tokens, checked? checkedTextColor: hiliteColor));
+				lSnippet.setText(SearchEngine.hilite(verseText, rt, checked? checkedTextColor: hiliteColor));
 			} else {
 				lSnippet.setText(R.string.generic_verse_not_available_in_this_version);
 			}

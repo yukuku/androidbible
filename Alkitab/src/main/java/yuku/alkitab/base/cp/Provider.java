@@ -270,10 +270,14 @@ public class Provider extends ContentProvider {
 	 * @return number of verses put into the cursor
 	 */
 	private int resultForOneChapter(MatrixCursor cursor, Book book, int last_c, int ari_bc, int v_1_start, int v_1_end, boolean formatting) {
+		final SingleChapterVerses verses = S.activeVersion.loadChapterText(book, Ari.toChapter(ari_bc));
+		if (verses == null) {
+			return 0;
+		}
+
 		int count = 0;
-		SingleChapterVerses verses = S.activeVersion.loadChapterText(book, Ari.toChapter(ari_bc));
 		for (int v_1 = v_1_start; v_1 <= v_1_end; v_1++) {
-			int v_0 = v_1 - 1;
+			final int v_0 = v_1 - 1;
 			if (v_0 < verses.getVerseCount()) {
 				int ari = ari_bc | v_1;
 				String text = verses.getVerse(v_0);
