@@ -39,11 +39,11 @@ public class SearchEngine {
 	public static class Query implements Parcelable {
 		public String query_string;
 		public SparseBooleanArray bookIds;
-		
+
 		@Override public int describeContents() {
 			return 0;
 		}
-		
+
 		@Override public void writeToParcel(Parcel dest, int flags) {
 			dest.writeString(query_string);
 			dest.writeSparseBooleanArray(bookIds);
@@ -62,7 +62,7 @@ public class SearchEngine {
 			}
 		};
 	}
-	
+
 	static class RevIndex extends HashMap<String, int[]> {
 		public RevIndex() {
 			super(32768);
@@ -105,13 +105,13 @@ public class SearchEngine {
 			}
 		}
 	}
-	
+
 	private static SoftReference<RevIndex> cache_revIndex;
 	private static Semaphore revIndexLoading = new Semaphore(1);
-	
+
 	public static IntArrayList searchByGrep(final Version version, final Query query) {
 		String[] tokens = QueryTokenizer.tokenize(query.query_string);
-		
+
 		// sort by word length, then alphabetically
 		Arrays.sort(tokens, (object1, object2) -> {
 			final int len1 = object1.length();
@@ -123,7 +123,7 @@ public class SearchEngine {
 			}
 			return 1;
 		});
-		
+
 		// remove duplicates
 		{
 			final ArrayList<String> atokens = new ArrayList<>();
@@ -137,7 +137,7 @@ public class SearchEngine {
 			tokens = atokens.toArray(new String[atokens.size()]);
 			if (BuildConfig.DEBUG) Log.d(TAG, "tokens = " + Arrays.toString(tokens));
 		}
-		
+
 		// really search
 		IntArrayList result = null;
 
@@ -162,22 +162,22 @@ public class SearchEngine {
 
 	private static IntArrayList intersect(IntArrayList a, IntArrayList b) {
 		IntArrayList res = new IntArrayList(a.size());
-		
+
 		int[] aa = a.buffer();
 		int[] bb = b.buffer();
 		int alen = a.size();
 		int blen = b.size();
-		
+
 		int apos = 0;
 		int bpos = 0;
-		
+
 		while (true) {
 			if (apos >= alen) break;
 			if (bpos >= blen) break;
-			
+
 			int av = aa[apos];
 			int bv = bb[bpos];
-			
+
 			if (av == bv) {
 				res.add(av);
 				apos++;
@@ -188,7 +188,7 @@ public class SearchEngine {
 				apos++;
 			}
 		}
-		
+
 		return res;
 	}
 
@@ -200,13 +200,13 @@ public class SearchEngine {
 		int[] s = source.buffer();
 		int len = source.size();
 		int pos = ppos[0];
-		
+
 		while (true) {
 			if (pos >= len) return 0x0;
-			
+
 			int curAri = s[pos];
 			int curAriBc = Ari.toBookChapter(curAri);
-			
+
 			if (curAriBc != lastAriBc) {
 				// found!
 				pos++;
@@ -238,33 +238,33 @@ public class SearchEngine {
 					final int ariBc = Ari.encode(book.bookId, chapter_1, 0);
 					searchByGrepForOneChapter(version, book, chapter_1, token, hasPlus, ariBc, res);
 				}
-	
+
 				if (BuildConfig.DEBUG) Log.d(TAG, "searchByGrepInside book " + book.shortName + " done. res.size = " + res.size());
 			}
 		} else {
 			// search only on book-chapters that are in the source
 			int count = 0; // for stats
-			
+
 			int[] ppos = new int[1];
 			int curAriBc = 0x000000;
-			
+
 			while (true) {
 				curAriBc = nextAri(source, ppos, curAriBc);
 				if (curAriBc == 0) break; // no more
-				
+
 				// No need to check null book, because we go here only after searching a previous token which is based on
 				// getConsecutiveBooks, which is impossible to have null books.
 				final Book book = version.getBook(Ari.toBook(curAriBc));
 				final int chapter_1 = Ari.toChapter(curAriBc);
 
 				searchByGrepForOneChapter(version, book, chapter_1, token, hasPlus, curAriBc, res);
-				
+
 				count++;
 			}
-			
+
 			if (BuildConfig.DEBUG) Log.d(TAG, "searchByGrepInside book with source " + source.size() + " needed to read as many as " + count + " book-chapter. res.size=" + res.size());
 		}
-		
+
 		return res;
 	}
 
@@ -298,7 +298,7 @@ public class SearchEngine {
 			multiword = QueryTokenizer.tokenizeMultiwordToken(token);
 
 			if (multiword != null) {
-				posToken = indexOfWholeMultiword(oneChapter, multiword, 0, consumedLengthPtr);
+				posToken = indexOfWholeMultiword(oneChapter, multiword, 0, true, consumedLengthPtr);
 				consumedLength = consumedLengthPtr[0];
 			} else {
 				posToken = indexOfWholeWord(oneChapter, token, 0);
@@ -330,7 +330,7 @@ public class SearchEngine {
 				}
 				if (hasPlus) {
 					if (multiword != null) {
-						posToken = indexOfWholeMultiword(oneChapter, multiword, posToken + consumedLength, consumedLengthPtr);
+						posToken = indexOfWholeMultiword(oneChapter, multiword, posToken + consumedLength, true, consumedLengthPtr);
 						consumedLength = consumedLengthPtr[0];
 					} else {
 						posToken = indexOfWholeWord(oneChapter, token, posToken + consumedLength);
@@ -361,7 +361,7 @@ public class SearchEngine {
 			revIndexLoading.release();
 		}
 		timing.addSplit("Load rev index");
-		
+
 		boolean[] passBitmapOr = new boolean[32768];
 		boolean[] passBitmapAnd = new boolean[32768];
 		Arrays.fill(passBitmapAnd, true);
@@ -381,7 +381,7 @@ public class SearchEngine {
 		}
 
 		timing.addSplit("Tokenize query");
-		
+
 		// optimization, if user doesn't filter any books
 		boolean wholeBibleSearched = true;
 		boolean[] searchedBookIds = new boolean[66];
@@ -455,7 +455,7 @@ public class SearchEngine {
 			}
 		}
 		timing.addSplit("convert matching lids to aris (" + res.size() + ")");
-		
+
 		// last check: whether multiword tokens are all matching. No way to find this except by loading the text
 		// and examining one by one whether the text contains those multiword tokens
 		final List<String[]> multiwords = new ArrayList<>();
@@ -467,14 +467,14 @@ public class SearchEngine {
 
 		if (multiwords.size() > 0) {
 			final IntArrayList res2 = new IntArrayList(res.size());
-			
+
 			final int[] consumedLengthPtr = {0};
 
 			SingleChapterVerses loadedChapter = null; // the currently loaded chapter, to prevent repeated loading of same chapter
 			int loadedAriCv = 0; // chapter and verse of current Ari
 			for (int i = 0, len = res.size(); i < len; i++) {
 				final int ari = res.get(i);
-				
+
 				final int ariCv = Ari.toBookChapter(ari);
 				if (ariCv != loadedAriCv) { // we can't reuse, we need to load from disk
 					final Book book = version.getBook(Ari.toBook(ari));
@@ -489,14 +489,14 @@ public class SearchEngine {
 				if (loadedChapter == null) {
 					continue;
 				}
-				
+
 				final int verse_1 = Ari.toVerse(ari);
 				if (verse_1 >= 1 && verse_1 <= loadedChapter.getVerseCount()) {
-					String text = loadedChapter.getVerse(verse_1 - 1);
+					final String text = loadedChapter.getVerse(verse_1 - 1);
 					if (text != null) {
 						boolean passed = true;
 						for (final String[] multiword_tokens : multiwords) {
-							if (indexOfWholeMultiword(text, multiword_tokens, 0, consumedLengthPtr) == -1) {
+							if (indexOfWholeMultiword(text, multiword_tokens, 0, false, consumedLengthPtr) == -1) {
 								passed = false;
 								break;
 							}
@@ -507,9 +507,9 @@ public class SearchEngine {
 					}
 				}
 			}
-			
+
 			res = res2;
-			
+
 			timing.addSplit("filter for multiword tokens (" + res.size() + ")");
 		}
 
@@ -517,7 +517,7 @@ public class SearchEngine {
 
 		return res;
 	}
-	
+
 	public static void preloadRevIndex() {
 		new Thread() {
 			@Override public void run() {
@@ -533,11 +533,11 @@ public class SearchEngine {
 			}
 		}.start();
 	}
-	
+
 	/**
 	 * Revindex: an index used for searching quickly.
 	 * The index is keyed on the word for searching, and the value is the list of verses' lid (KJV verse number, 1..31102).
-	 * 
+	 *
 	 * Format of the Revindex file:
 	 *   int total_word_count
 	 *   {
@@ -549,14 +549,14 @@ public class SearchEngine {
 	 *          byte[] verse_list // see below
 	 *      }[word_by_len_count]
 	 *   }[] // until total_word_count is taken
-	 *   
+	 *
 	 * The verses in verse_list are stored in either 8bit or 16bit, depending on the difference to the last entry before the current entry.
 	 * The first entry on the list is always 16 bit.
 	 * If one verse is specified in 16 bits, the 15-bit LSB is the verse lid itself (max 32767, although 31102 is the real max)
 	 * in binary: 1xxxxxxx xxxxxxxx where x is the absolute verse lid as 15 bit uint.
 	 * If one verse is specified in 8 bits, the 7-bit LSB is the difference between this verse and the last verse.
 	 * in binary: 0ddddddd where d is the relative verse lid as 7 bit uint.
-	 * For example, if a word is located at lids [0xff, 0x100, 0x300, 0x305], the stored data in the disk will be 
+	 * For example, if a word is located at lids [0xff, 0x100, 0x300, 0x305], the stored data in the disk will be
 	 * in bytes: 0x80, 0xff, 0x01, 0x83, 0x00, 0x05.
 	 */
 	private static RevIndex loadRevIndex() {
@@ -577,22 +577,22 @@ public class SearchEngine {
 
 		final RevIndex res = new RevIndex();
 		final InputStream raw = new BufferedInputStream(assetInputStream, 65536);
-		
+
 		byte[] buf = new byte[256];
 		try {
 			BintexReader br = new BintexReader(raw);
-			
+
 			int total_word_count = br.readInt();
 			int word_count = 0;
-			
+
 			while (true) {
 				int word_len = br.readUint8();
 				int word_by_len_count = br.readInt();
-				
+
 				for (int i = 0; i < word_by_len_count; i++) {
 					br.readRaw(buf, 0, word_len);
 					@SuppressWarnings("deprecation") String word = new String(buf, 0, 0, word_len);
-					
+
 					int lid_count = br.readUint16();
 					int last_lid = 0;
 					int[] lids = new int[lid_count];
@@ -609,10 +609,10 @@ public class SearchEngine {
 						last_lid = lid;
 						lids[pos++] = lid;
 					}
-					
+
 					res.put(word, lids);
 				}
-				
+
 				word_count += word_by_len_count;
 				if (word_count >= total_word_count) {
 					break;
@@ -620,10 +620,10 @@ public class SearchEngine {
 			}
 
 			br.close();
-		} catch (IOException e) {	
+		} catch (IOException e) {
 			return null;
 		}
-		
+
 		cache_revIndex = new SoftReference<>(res);
 		return res;
 	}
@@ -635,19 +635,19 @@ public class SearchEngine {
 		for (int i = 0; i < rt.token_count; i++) {
 			final boolean hasPlus = rt.hasPlusses[i];
 
-			final int wordPos;
+			final int posToken;
 			if (hasPlus) {
 				final String[] multiword_tokens = rt.multiwords_tokens[i];
 				if (multiword_tokens != null) {
-					wordPos = indexOfWholeMultiword(s, multiword_tokens, 0, null);
+					posToken = indexOfWholeMultiword(s, multiword_tokens, 0, false, null);
 				} else {
-					wordPos = indexOfWholeWord(s, rt.tokens[i], 0);
+					posToken = indexOfWholeWord(s, rt.tokens[i], 0);
 				}
 			} else {
-				wordPos = s.indexOf(rt.tokens[i]);
+				posToken = s.indexOf(rt.tokens[i]);
 			}
 
-			if (wordPos == -1) {
+			if (posToken == -1) {
 				return false;
 			}
 		}
@@ -664,11 +664,11 @@ public class SearchEngine {
 	 */
 	private static int indexOfWholeWord(String text, String word, int start) {
 		final int len = text.length();
-		
+
 		while (true) {
 			final int pos = text.indexOf(word, start);
 			if (pos == -1) return -1;
-			
+
 			// check left
 			// [pos] [charat pos-1] [charat pos-2]
 			//  0                                    ok
@@ -684,7 +684,7 @@ public class SearchEngine {
 					continue;
 				}
 			}
-			
+
 			// check right
 			int end = pos + word.length();
 			// [end]   [charat end]
@@ -695,7 +695,7 @@ public class SearchEngine {
 				start = pos + 1; // give up
 				continue;
 			}
-			
+
 			// passed
 			return pos;
 		}
@@ -704,13 +704,14 @@ public class SearchEngine {
 	/**
 	 * This looks for a multiword that is surrounded by non-letter characters.
 	 * This works for multiword because it tries to strip tags and punctuations from the text before matching.
-	 * @param text haystack with '\n' as delimiter between verses. multiword cannot be searched across different verses.
+	 * @param text haystack.
 	 * @param multiword multiword that has been split into words. Must have at least one element.
 	 * @param start character index of text to start searching from
+	 * @param isNewlineDelimitedText <code>text</code> has '\n' as delimiter between verses. <code>multiword</code> cannot be searched across different verses.
 	 * @param consumedLengthPtr (length-1 array output) how many characters matched from the source text to satisfy the multiword. Will be 0 if this method returns -1.
 	 * @return -1 or position of the multiword.
 	 */
-	private static int indexOfWholeMultiword(String text, String[] multiword, int start, @Nullable int[] consumedLengthPtr) {
+	private static int indexOfWholeMultiword(String text, String[] multiword, int start, boolean isNewlineDelimitedText, @Nullable int[] consumedLengthPtr) {
 		final int len = text.length();
 		final String firstWord = multiword[0];
 
@@ -750,7 +751,7 @@ public class SearchEngine {
 						}
 					} else if (Character.isLetterOrDigit(c)) {
 						break;
-					} else if (c == '\n') {
+					} else if (isNewlineDelimitedText && c == '\n') {
 						// can't cross verse boundary, so we give up and try from beginning again
 						start = pos + 1;
 						continue findAllWords;
@@ -790,7 +791,7 @@ public class SearchEngine {
 
 	public static SpannableStringBuilder hilite(final CharSequence s, final ReadyTokens rt, int hiliteColor) {
 		final SpannableStringBuilder res = new SpannableStringBuilder(s);
-		
+
 		if (rt == null) {
 			return res;
 		}
@@ -808,7 +809,7 @@ public class SearchEngine {
 			}
 		}
 		final String plainText = new String(newString);
-		
+
 		int pos = 0;
 		final int[] attempts = new int[token_count];
 		final int[] consumedLengths = new int[token_count];
@@ -824,7 +825,7 @@ public class SearchEngine {
 			for (int i = 0; i < token_count; i++) {
 				if (hasPlusses[i]) {
 					if (multiwords_tokens[i] != null) {
-						attempts[i] = indexOfWholeMultiword(plainText, multiwords_tokens[i], pos, consumedLengthPtr);
+						attempts[i] = indexOfWholeMultiword(plainText, multiwords_tokens[i], pos, false, consumedLengthPtr);
 						consumedLengths[i] = consumedLengthPtr[0];
 					} else {
 						attempts[i] = indexOfWholeWord(plainText, tokens[i], pos);
@@ -839,7 +840,7 @@ public class SearchEngine {
 			// from the attempts above, find the earliest
 			int minpos = Integer.MAX_VALUE;
 			int mintokenindex = -1;
-			
+
 			for (int i = 0; i < token_count; i++) {
 				if (attempts[i] >= 0) { // not -1 which means not found
 					if (attempts[i] < minpos) {
@@ -848,17 +849,17 @@ public class SearchEngine {
 					}
 				}
 			}
-			
+
 			if (mintokenindex == -1) {
 				break; // no more
 			}
-			
+
 			final int topos = minpos + consumedLengths[mintokenindex];
 			res.setSpan(new StyleSpan(Typeface.BOLD), minpos, topos, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 			res.setSpan(new ForegroundColorSpan(hiliteColor), minpos, topos, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 			pos = topos;
 		}
-		
+
 		return res;
 	}
 }
