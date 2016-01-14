@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -48,6 +49,7 @@ import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.SearchEngine;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.Version;
@@ -683,16 +685,31 @@ public class SearchActivity extends BaseActivity {
 			.show();
 
 		new AsyncTask<Void, Void, IntArrayList>() {
+			boolean debugstats_revIndexUsed;
+			long debugstats_totalTimeMs;
+			long debugstats_cpuTimeMs;
+
 			@Override protected IntArrayList doInBackground(Void... params) {
 				searchHistoryAdapter.setData(addSearchHistoryEntry(query_string));
 
+				final long totalMs = System.currentTimeMillis();
+				final long cpuMs = SystemClock.currentThreadTimeMillis();
+				final IntArrayList res;
+
 				synchronized (SearchActivity.this) {
 					if (usingRevIndex()) {
-						return SearchEngine.searchByRevIndex(searchInVersion, getQuery());
+						debugstats_revIndexUsed = true;
+						res = SearchEngine.searchByRevIndex(searchInVersion, getQuery());
 					} else {
-						return SearchEngine.searchByGrep(searchInVersion, getQuery());
+						debugstats_revIndexUsed = false;
+						res = SearchEngine.searchByGrep(searchInVersion, getQuery());
 					}
 				}
+
+				debugstats_totalTimeMs = System.currentTimeMillis() - totalMs;
+				debugstats_cpuTimeMs = SystemClock.currentThreadTimeMillis() - cpuMs;
+
+				return res;
 			}
 
 			@Override protected void onPostExecute(IntArrayList result) {
@@ -744,6 +761,17 @@ public class SearchActivity extends BaseActivity {
 						tSearchTips.setClickable(false);
 						tSearchTips.setOnClickListener(null);
 					}
+				}
+
+				if (BuildConfig.DEBUG) {
+					new MaterialDialog.Builder(SearchActivity.this)
+						.content("This msg is shown only on DEBUG build\n\n" +
+							"Search results: " + result.size() + "\n" +
+							"Method: " + (debugstats_revIndexUsed? "revindex": "grep") + "\n" +
+							"Total time: " + debugstats_totalTimeMs + " ms\n" +
+							"CPU (thread) time: " + debugstats_cpuTimeMs + " ms")
+						.positiveText(R.string.ok)
+						.show();
 				}
 				
 				pd.setOnDismissListener(null);
@@ -823,12 +851,12 @@ public class SearchActivity extends BaseActivity {
 	}
 
 	class SearchAdapter extends EasyAdapter {
-		IntArrayList searchResults;
-		String[] tokens;
+		final IntArrayList searchResults;
+		final SearchEngine.ReadyTokens rt;
 		
 		public SearchAdapter(IntArrayList searchResults, String[] tokens) {
 			this.searchResults = searchResults;
-			this.tokens = tokens;
+			this.rt = tokens == null ? null : new SearchEngine.ReadyTokens(tokens);
 		}
 
 		@Override
@@ -873,7 +901,7 @@ public class SearchActivity extends BaseActivity {
 
 			final String verseText = U.removeSpecialCodes(searchInVersion.loadVerseText(ari));
 			if (verseText != null) {
-				lSnippet.setText(SearchEngine.hilite(verseText, tokens, checked? checkedTextColor: hiliteColor));
+				lSnippet.setText(SearchEngine.hilite(verseText, rt, checked? checkedTextColor: hiliteColor));
 			} else {
 				lSnippet.setText(R.string.generic_verse_not_available_in_this_version);
 			}
