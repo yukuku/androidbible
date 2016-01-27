@@ -34,16 +34,16 @@ public class Appearances {
 		applyTextAppearance(t, 1.f);
 	}
 
-	public static void applyPericopeTitleAppearance(TextView t) {
+	public static void applyPericopeTitleAppearance(TextView t, float fontSizeMultiplier) {
 		t.setTypeface(S.applied.fontFace, Typeface.BOLD);
-		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp);
+		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp * fontSizeMultiplier);
 		t.setTextColor(S.applied.fontColor);
 		t.setLineSpacing(0.f, S.applied.lineSpacingMult);
 	}
 
-	public static void applyPericopeParallelTextAppearance(TextView t) {
+	public static void applyPericopeParallelTextAppearance(TextView t, float fontSizeMultiplier) {
 		t.setTypeface(S.applied.fontFace);
-		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp * (14.f / 17.f));
+		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp * 0.8235294f * fontSizeMultiplier);
 		t.setMovementMethod(LinkMovementMethod.getInstance());
 		t.setTextColor(S.applied.fontColor);
 		t.setLinkTextColor(S.applied.fontColor);

@@ -200,7 +200,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 
 			res.setPadding(0, paddingTop, 0, S.applied.pericopeSpacingBottom);
 
-			Appearances.applyPericopeTitleAppearance(lCaption);
+			Appearances.applyPericopeTitleAppearance(lCaption, textSizeMult_);
 
 			// make parallel gone if not exist
 			if (pericopeBlock.parallels.length == 0) {
@@ -228,7 +228,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				sb.append(')');
 
 				lParallels.setText(sb, BufferType.SPANNABLE);
-				Appearances.applyPericopeParallelTextAppearance(lParallels);
+				Appearances.applyPericopeParallelTextAppearance(lParallels, textSizeMult_);
 			}
 
 			return res;
