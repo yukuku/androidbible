@@ -21,13 +21,17 @@ public class Appearances {
 		applyTextAppearance(t);
 	}
 
-	public static void applyTextAppearance(TextView t) {
+	public static void applyTextAppearance(TextView t, float fontSizeMultiplier) {
 		t.setTypeface(S.applied.fontFace, S.applied.fontBold);
-		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp);
+		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp * fontSizeMultiplier);
 		t.setIncludeFontPadding(false);
 		t.setTextColor(S.applied.fontColor);
 		t.setLinkTextColor(S.applied.fontColor);
 		t.setLineSpacing(0.f, S.applied.lineSpacingMult);
+	}
+
+	public static void applyTextAppearance(TextView t) {
+		applyTextAppearance(t, 1.f);
 	}
 
 	public static void applyPericopeTitleAppearance(TextView t) {

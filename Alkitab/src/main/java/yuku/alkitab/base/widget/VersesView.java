@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -131,15 +132,10 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	private String name;
 	private boolean firstTimeScroll = true;
 	/**
-	 * Updated every time {@link #setData(int, SingleChapterVerses, int[], PericopeBlock[], int)}
+	 * Updated every time {@link #setData(int, SingleChapterVerses, int[], PericopeBlock[], int, String)}
 	 * or {@link #setDataEmpty()} is called. Used to track data changes, so delayed scroll, etc can be prevented from happening if the data has changed.
 	 */
 	private AtomicInteger dataVersionNumber = new AtomicInteger();
-
-	public VersesView(Context context) {
-		super(context);
-		init();
-	}
 
 	public VersesView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -256,10 +252,19 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		return pos;
 	}
 
-	public void setData(int ariBc, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
+	/**
+	 * @param versionId can be null if no text size multiplier is to be used
+	 */
+	public void setData(int ariBc, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock, @Nullable String versionId) {
 		dataVersionNumber.incrementAndGet();
-		adapter.setData(ariBc, verses, pericopeAris, pericopeBlocks, nblock);
+		adapter.setData(ariBc, verses, pericopeAris, pericopeBlocks, nblock, versionId);
 		stopFling();
+	}
+
+	@Override
+	public void invalidateViews() {
+		adapter.calculateTextSizeMult();
+		super.invalidateViews();
 	}
 
 	private OnItemClickListener itemClick = new OnItemClickListener() {
@@ -468,7 +473,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		}, smoothScrollDuration + 17);
 	}
 
-	public void setDataWithRetainSelectedVerses(boolean retainSelectedVerses, int ariBc, int[] pericope_aris, PericopeBlock[] pericope_blocks, int nblock, SingleChapterVerses verses) {
+	public void setDataWithRetainSelectedVerses(boolean retainSelectedVerses, int ariBc, int[] pericope_aris, PericopeBlock[] pericope_blocks, int nblock, SingleChapterVerses verses, @NonNull String versionId) {
 		IntArrayList selectedVerses_1 = null;
 		if (retainSelectedVerses) {
 			selectedVerses_1 = getSelectedVerses_1();
@@ -476,7 +481,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		
 		//# fill adapter with new data. make sure all checked states are reset
 		uncheckAllVerses(true);
-		setData(ariBc, verses, pericope_aris, pericope_blocks, nblock);
+		setData(ariBc, verses, pericope_aris, pericope_blocks, nblock, versionId);
 		reloadAttributeMap();
 		
 		boolean anySelected = false;

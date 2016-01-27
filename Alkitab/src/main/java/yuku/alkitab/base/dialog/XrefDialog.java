@@ -55,7 +55,8 @@ public class XrefDialog extends BaseDialog {
 	List<String> displayedVerseNumberTexts;
 	IntArrayList displayedRealAris;
 	Version sourceVersion = S.activeVersion;
-	
+	String sourceVersionId = S.activeVersionId;
+
 	public XrefDialog() {
 	}
 	
@@ -206,7 +207,7 @@ public class XrefDialog extends BaseDialog {
 	
 			int firstAri = displayedRealAris.get(0);
 
-			versesView.setData(Ari.toBookChapter(firstAri), new Verses(), null, null, 0);
+			versesView.setData(Ari.toBookChapter(firstAri), new Verses(), null, null, 0, sourceVersionId);
 		}
 		
 		renderXrefText();
@@ -249,7 +250,8 @@ public class XrefDialog extends BaseDialog {
 		listener.onPlainText(pos, s.length());
 	}
 
-	public void setSourceVersion(Version sourceVersion) {
+	public void setSourceVersion(Version sourceVersion, String sourceVersionId) {
 		this.sourceVersion = sourceVersion;
+		this.sourceVersionId = sourceVersionId;
 	}
 }

@@ -1602,7 +1602,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		{ // main
 			this.uncheckVersesWhenActionModeDestroyed = false;
 			try {
-				boolean ok = loadChapterToVersesView(lsSplit0, S.activeVersion, this.activeBook, chapter_1, current_chapter_1, uncheckAllVerses);
+				boolean ok = loadChapterToVersesView(lsSplit0, S.activeVersion, S.activeVersionId, this.activeBook, chapter_1, current_chapter_1, uncheckAllVerses);
 				if (!ok) return 0;
 			} finally {
 				this.uncheckVersesWhenActionModeDestroyed = true;
@@ -1656,7 +1656,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			} else {
 				this.uncheckVersesWhenActionModeDestroyed = false;
 				try {
-					loadChapterToVersesView(lsSplit1, activeSplitVersion, splitBook, this.chapter_1, this.chapter_1, true);
+					loadChapterToVersesView(lsSplit1, activeSplitVersion, activeSplitVersionId, splitBook, this.chapter_1, this.chapter_1, true);
 				} finally {
 					this.uncheckVersesWhenActionModeDestroyed = true;
 				}
@@ -1665,7 +1665,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	}
 
-	static boolean loadChapterToVersesView(VersesView versesView, Version version, Book book, int chapter_1, int current_chapter_1, boolean uncheckAllVerses) {
+	static boolean loadChapterToVersesView(VersesView versesView, Version version, String versionId, Book book, int chapter_1, int current_chapter_1, boolean uncheckAllVerses) {
 		final SingleChapterVerses verses = version.loadChapterText(book, chapter_1);
 		if (verses == null) {
 			return false;
@@ -1678,7 +1678,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		int nblock = version.loadPericope(book.bookId, chapter_1, pericope_aris, pericope_blocks, max);
 
 		boolean retainSelectedVerses = (!uncheckAllVerses && chapter_1 == current_chapter_1);
-		versesView.setDataWithRetainSelectedVerses(retainSelectedVerses, Ari.encode(book.bookId, chapter_1, 0), pericope_aris, pericope_blocks, nblock, verses);
+		versesView.setDataWithRetainSelectedVerses(retainSelectedVerses, Ari.encode(book.bookId, chapter_1, 0), pericope_aris, pericope_blocks, nblock, verses, versionId);
 
 		return true;
 	}
@@ -1972,9 +1972,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 						// TODO setSourceVersion here is not restored when dialog is restored
 						if (source == lsSplit0) { // use activeVersion
-							dialog.setSourceVersion(S.activeVersion);
+							dialog.setSourceVersion(S.activeVersion, S.activeVersionId);
 						} else if (source == lsSplit1) { // use activeSplitVersion
-							dialog.setSourceVersion(activeSplitVersion);
+							dialog.setSourceVersion(activeSplitVersion, activeSplitVersionId);
 						}
 
 						FragmentManager fm = getSupportFragmentManager();
