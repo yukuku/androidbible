@@ -98,7 +98,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			}
 
 			final AttributeView attributeView = res.attributeView;
-			attributeView.setScale(scaleForAttributeView(S.applied.fontSize2dp));
+			attributeView.setScale(scaleForAttributeView(S.applied.fontSize2dp * textSizeMult_));
 			attributeView.setBookmarkCount(bookmarkCountMap_ == null ? 0 : bookmarkCountMap_[id]);
 			attributeView.setNoteCount(noteCountMap_ == null ? 0 : noteCountMap_[id]);
 			attributeView.setProgressMarkBits(progressMarkBitsMap_ == null ? 0 : progressMarkBitsMap_[id]);
