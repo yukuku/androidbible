@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -256,7 +257,9 @@ public class TextAppearancePanel {
 		}
 
 		@Override public void bindView(View view, int position, ViewGroup parent) {
-			TextView text1 = V.get(view, android.R.id.text1);
+			final TextView text1 = V.get(view, android.R.id.text1);
+			text1.setLines(1); // do not wrap long font names
+			text1.setEllipsize(TextUtils.TruncateAt.END);
 			
 			if (position < 3) {
 				final String[] defaultFontNames = {"Roboto", "Droid Serif", "Droid Mono"};

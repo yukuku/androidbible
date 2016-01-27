@@ -6,8 +6,35 @@
 	android:layout_gravity="bottom|center_horizontal"
 	android:background="#262626"
 	android:orientation="vertical"
-	tools:context=".base.IsiActivity"
 	tools:ignore="Overdraw">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="48dp">
+
+		<TextView
+			android:id="@+id/textView2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="bottom"
+			android:layout_marginLeft="8dp"
+			android:layout_weight="1"
+			android:gravity="center_vertical|left"
+			android:textAllCaps="true"
+			android:textStyle="bold"
+			android:text="@string/text_appearance_font" />
+
+		<ImageButton
+			android:id="@+id/bClose"
+			android:layout_width="48dp"
+			android:layout_height="48dp"
+			android:layout_weight="0"
+			android:background="?android:actionBarItemBackground"
+			android:contentDescription="@string/desc_close"
+			android:scaleType="center"
+			android:src="@drawable/ic_action_remove" />
+
+	</LinearLayout>
 
 	<LinearLayout
 		android:layout_width="match_parent"
@@ -24,115 +51,96 @@
 			android:id="@+id/cBold"
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
+			android:layout_marginRight="8dp"
 			android:layout_weight="0"
 			android:text="@string/text_appearance_bold" />
-
-		<ImageButton
-			android:id="@+id/bClose"
-			android:layout_width="48dp"
-			android:layout_height="48dp"
-			android:layout_weight="0"
-			android:background="?android:actionBarItemBackground"
-			android:contentDescription="@string/desc_close"
-			android:scaleType="center"
-			android:src="@drawable/ic_action_remove" />
 
 	</LinearLayout>
 
 	<LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:baselineAligned="false"
-		android:paddingLeft="8dp"
-		android:paddingRight="8dp">
+		android:layout_height="48dp">
 
-		<LinearLayout
+		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:orientation="vertical">
+			android:layout_gravity="bottom"
+			android:layout_marginLeft="8dp"
+			android:layout_weight="1"
+			android:gravity="center_vertical|left"
+			android:text="@string/text_appearance_text_size"
+			android:textAllCaps="true"
+			android:textStyle="bold" />
 
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="48dp"
-				android:gravity="center_vertical|left"
-				android:text="@string/text_appearance_text_size"
-				android:textAllCaps="true" />
+	</LinearLayout>
 
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="48dp"
+		android:orientation="horizontal">
 
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="48dp"
-				android:gravity="center_vertical|left"
-				android:text="@string/text_appearance_line_spacing"
-				android:textAllCaps="true" />
-
-		</LinearLayout>
-
-		<LinearLayout
+		<SeekBar
+			android:id="@+id/sbTextSize"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:layout_marginLeft="8dp"
+			android:layout_marginRight="8dp"
 			android:layout_weight="1"
-			android:orientation="vertical">
+			android:max="80" />
 
-			<FrameLayout
-				android:layout_width="match_parent"
-				android:layout_height="48dp"
-				android:layout_marginLeft="8dp"
-				android:layout_marginRight="8dp">
+		<TextView
+			android:id="@+id/lTextSize"
+			android:layout_width="64dp"
+			android:layout_height="48dp"
+			android:layout_marginRight="8dp"
+			android:gravity="center_vertical|right"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			tools:text="17.0" />
 
-				<SeekBar
-					android:id="@+id/sbTextSize"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:layout_gravity="center_vertical"
-					android:max="80" />
+	</LinearLayout>
 
-			</FrameLayout>
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="48dp">
 
-			<FrameLayout
-				android:layout_width="match_parent"
-				android:layout_height="48dp"
-				android:layout_marginLeft="8dp"
-				android:layout_marginRight="8dp">
-
-
-				<SeekBar
-					android:id="@+id/sbLineSpacing"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:layout_gravity="center_vertical"
-					android:max="20" />
-
-			</FrameLayout>
-
-
-		</LinearLayout>
-
-		<LinearLayout
+		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_weight="0"
-			android:orientation="vertical">
+			android:layout_gravity="bottom"
+			android:layout_marginLeft="8dp"
+			android:layout_weight="1"
+			android:gravity="center_vertical|left"
+			android:text="@string/text_appearance_line_spacing"
+			android:textAllCaps="true"
+			android:textStyle="bold" />
 
-			<TextView
-				android:id="@+id/lTextSize"
-				android:layout_width="wrap_content"
-				android:layout_height="48dp"
-				android:gravity="center_vertical|right"
-				android:text="*17.0"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				tools:ignore="HardcodedText" />
+	</LinearLayout>
 
-			<TextView
-				android:id="@+id/lLineSpacing"
-				android:layout_width="wrap_content"
-				android:layout_height="48dp"
-				android:gravity="center_vertical|right"
-				android:text="*1.05"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				tools:ignore="HardcodedText" />
 
-		</LinearLayout>
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="48dp"
+		android:orientation="horizontal">
+
+		<SeekBar
+			android:id="@+id/sbLineSpacing"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:layout_marginLeft="8dp"
+			android:layout_marginRight="8dp"
+			android:layout_weight="1"
+			android:max="20" />
+
+		<TextView
+			android:id="@+id/lLineSpacing"
+			android:layout_width="64dp"
+			android:layout_height="48dp"
+			android:layout_marginRight="8dp"
+			android:gravity="center_vertical|right"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			tools:text="1.05" />
 
 	</LinearLayout>
 
