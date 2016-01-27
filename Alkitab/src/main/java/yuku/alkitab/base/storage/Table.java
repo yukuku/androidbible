@@ -137,4 +137,26 @@ public class Table {
 			return Devotion.class.getSimpleName();
 		}
 	}
+
+	public enum PerVersion {
+		versionId(text),
+		settings(text),
+		;
+
+		public final Type type;
+		public final String suffix;
+
+		PerVersion(Type type) {
+			this(type, null);
+		}
+
+		PerVersion(Type type, String suffix) {
+			this.type = type;
+			this.suffix = suffix;
+		}
+
+		public static String tableName() {
+			return PerVersion.class.getSimpleName();
+		}
+	}
 }

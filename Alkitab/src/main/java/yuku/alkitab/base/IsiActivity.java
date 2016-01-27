@@ -851,6 +851,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			activeSplitVersionId = mv.getVersionId();
 			splitHandleButton.setLabel2(getSplitHandleVersionName(mv, version) + " \u25bc");
 
+			configureTextAppearancePanelForSplitVersion();
+
 			return true;
 		} catch (Throwable e) { // so we don't crash on the beginning of the app
 			Log.e(TAG, "Error opening split version", e);
@@ -861,6 +863,16 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				.show();
 
 			return false;
+		}
+	}
+
+	private void configureTextAppearancePanelForSplitVersion() {
+		if (textAppearancePanel != null) {
+			if (activeSplitVersion == null) {
+				textAppearancePanel.clearSplitVersion();
+			} else {
+				textAppearancePanel.setSplitVersion(activeSplitVersionId, activeSplitVersion.getLongName());
+			}
 		}
 	}
 
@@ -1339,7 +1351,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	void setShowTextAppearancePanel(boolean yes) {
 		if (yes) {
 			if (textAppearancePanel == null) { // not showing yet
-				textAppearancePanel = new TextAppearancePanel(this, getLayoutInflater(), overlayContainer, new TextAppearancePanel.Listener() {
+				textAppearancePanel = new TextAppearancePanel(this, overlayContainer, new TextAppearancePanel.Listener() {
 					@Override public void onValueChanged() {
 						applyPreferences();
 					}
@@ -1350,6 +1362,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 						textAppearancePanel = null;
 					}
 				}, REQCODE_textAppearanceGetFonts, REQCODE_textAppearanceCustomColors);
+				configureTextAppearancePanelForSplitVersion();
 				textAppearancePanel.show();
 			}
 		} else {
@@ -1383,21 +1396,25 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	void openSplitVersionsDialog() {
 		S.openVersionsDialog(this, true, activeSplitVersionId, mv -> {
 			if (mv == null) { // closing split version
-				activeSplitVersion = null;
-				activeSplitVersionId = null;
-				closeSplitDisplay();
+				disableSplitVersion();
 			} else {
 				boolean ok = loadSplitVersion(mv);
 				if (ok) {
 					openSplitDisplay();
 					displaySplitFollowingMaster();
 				} else {
-					activeSplitVersion = null;
-					activeSplitVersionId = null;
-					closeSplitDisplay();
+					disableSplitVersion();
 				}
 			}
 		});
+	}
+
+	void disableSplitVersion() {
+		activeSplitVersion = null;
+		activeSplitVersionId = null;
+		closeSplitDisplay();
+
+		configureTextAppearancePanelForSplitVersion();
 	}
 
 	void openSplitDisplay() {
@@ -2612,9 +2629,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			cSplitVersion.setChecked(false); // do it later, at the version chooser dialog
 			openSplitVersionsDialog();
 		} else {
-			activeSplitVersion = null;
-			activeSplitVersionId = null;
-			closeSplitDisplay();
+			disableSplitVersion();
 		}
 	}
 
