@@ -239,10 +239,10 @@ public class Yes1Reader implements BibleReader {
 							k.verse_counts[i] = in.readUint8();
 						}
 					} else if (key.equals("ayatLoncat")) {
-						// TODO di masa depan
+						// ignored
 						in.readInt();
 					} else if (key.equals("pdbBookNumber")) {
-						// TODO di masa depan
+						// ignored
 						in.readInt();
 					} else if (key.equals("pasal_offset")) {
 						k.chapter_offsets = new int[k.chapter_count + 1]; // harus ada +1nya kalo YesPembaca
@@ -250,7 +250,7 @@ public class Yes1Reader implements BibleReader {
 							k.chapter_offsets[i] = in.readInt();
 						}
 					} else if (key.equals("encoding")) {
-						// TODO di masa depan, mungkin deprecated, karena ini lebih cocok di edisi.
+						// ignored, deprecated
 						in.readInt();
 					} else if (key.equals("offset")) {
 						k.offset = in.readInt();

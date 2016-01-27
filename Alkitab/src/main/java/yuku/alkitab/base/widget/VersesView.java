@@ -213,10 +213,6 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		this.onVerseScrollListener = onVerseScrollListener;
 	}
 
-	// TODO external should provide the attribute map into this widget similar to setData(),
-	// instead of this widget itself accessing persistent data.
-	// When this is done, we do not need to provide Book and chapter_1 as parameters to setData(),
-	// because in reality, VersesViews could contain verses taken from multiple books and chapters.
 	public void reloadAttributeMap() {
 		adapter.reloadAttributeMap();
 	}

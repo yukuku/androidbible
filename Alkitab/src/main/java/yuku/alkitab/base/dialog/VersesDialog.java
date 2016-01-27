@@ -258,7 +258,6 @@ public class VersesDialog extends BaseDialog {
 				}
 			}
 
-			// TODO use different text size multiplier for the different versions in compare mode
 			versesView.setData(Ari.toBookChapter(ari), new Verses(), null, null, 0, null, null);
 		}
 
