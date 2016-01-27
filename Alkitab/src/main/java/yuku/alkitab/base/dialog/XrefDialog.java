@@ -56,6 +56,7 @@ public class XrefDialog extends BaseDialog {
 	IntArrayList displayedRealAris;
 	Version sourceVersion = S.activeVersion;
 	String sourceVersionId = S.activeVersionId;
+	float textSizeMult = S.getDb().getPerVersionSettings(sourceVersionId).fontSizeMultiplier;
 
 	public XrefDialog() {
 	}
@@ -160,7 +161,7 @@ public class XrefDialog extends BaseDialog {
 			}
 		});
 		
-		Appearances.applyTextAppearance(tXrefText);
+		Appearances.applyTextAppearance(tXrefText, textSizeMult);
 		
 		tXrefText.setText(sb);
 	}
@@ -253,5 +254,6 @@ public class XrefDialog extends BaseDialog {
 	public void setSourceVersion(Version sourceVersion, String sourceVersionId) {
 		this.sourceVersion = sourceVersion;
 		this.sourceVersionId = sourceVersionId;
+		textSizeMult = S.getDb().getPerVersionSettings(sourceVersionId).fontSizeMultiplier;
 	}
 }
