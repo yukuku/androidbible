@@ -10,10 +10,46 @@
         android:title="@string/salin_ayat" />
 
     <item
+        android:id="@+id/menuCopySplit0"
+        android:icon="@drawable/ic_menu_copy"
+        app:showAsAction="never"
+        android:title="@string/copy_split0" />
+
+    <item
+        android:id="@+id/menuCopySplit1"
+        android:icon="@drawable/ic_menu_copy"
+        app:showAsAction="never"
+        android:title="@string/copy_split1" />
+
+    <item
+        android:id="@+id/menuCopyBothSplits"
+        android:icon="@drawable/ic_menu_copy"
+        app:showAsAction="never"
+        android:title="@string/copy_both_splits" />
+
+    <item
         android:id="@+id/menuShare"
         android:icon="@drawable/ic_menu_share"
         app:showAsAction="never"
         android:title="@string/menuShare" />
+
+    <item
+        android:id="@+id/menuShareSplit0"
+        android:icon="@drawable/ic_menu_share"
+        app:showAsAction="never"
+        android:title="@string/menuShareSplit0" />
+
+    <item
+        android:id="@+id/menuShareSplit1"
+        android:icon="@drawable/ic_menu_share"
+        app:showAsAction="never"
+        android:title="@string/menuShareSplit1" />
+
+    <item
+        android:id="@+id/menuShareBothSplits"
+        android:icon="@drawable/ic_menu_share"
+        app:showAsAction="never"
+        android:title="@string/menuShareBothSplits" />
 
 	<item
 		android:id="@+id/menuCompare"

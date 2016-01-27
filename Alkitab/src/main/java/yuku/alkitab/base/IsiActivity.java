@@ -2124,6 +2124,28 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			menuAddNote.setVisible(contiguous);
 			menuCompare.setVisible(single);
 
+			// just "copy" or ("copy primary" "copy secondary" "copy both")
+			// same with "share".
+			final MenuItem menuCopy = menu.findItem(R.id.menuCopy);
+			final MenuItem menuCopySplit0 = menu.findItem(R.id.menuCopySplit0);
+			final MenuItem menuCopySplit1 = menu.findItem(R.id.menuCopySplit1);
+			final MenuItem menuCopyBothSplits = menu.findItem(R.id.menuCopyBothSplits);
+			final MenuItem menuShare = menu.findItem(R.id.menuShare);
+			final MenuItem menuShareSplit0 = menu.findItem(R.id.menuShareSplit0);
+			final MenuItem menuShareSplit1 = menu.findItem(R.id.menuShareSplit1);
+			final MenuItem menuShareBothSplits = menu.findItem(R.id.menuShareBothSplits);
+
+			final boolean split = activeSplitVersion != null;
+
+			menuCopy.setVisible(!split);
+			menuCopySplit0.setVisible(split);
+			menuCopySplit1.setVisible(split);
+			menuCopyBothSplits.setVisible(split);
+			menuShare.setVisible(!split);
+			menuShareSplit0.setVisible(split);
+			menuShareSplit1.setVisible(split);
+			menuShareBothSplits.setVisible(split);
+
 			// show selected verses
 			if (single) {
 				mode.setSubtitle(R.string.verse_select_one_verse_selected);
@@ -2177,11 +2199,22 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			final int itemId = item.getItemId();
 
 			switch (itemId) {
-			case R.id.menuCopy: { // copy, can be multiple
-				String[] t = prepareTextForCopyShare(selected, reference, false);
-				if (activeSplitVersion != null) {
+			case R.id.menuCopy:
+			case R.id.menuCopySplit0:
+			case R.id.menuCopySplit1:
+			case R.id.menuCopyBothSplits: { // copy, can be multiple verses
+				final String[] t;
+
+				if (itemId == R.id.menuCopy || itemId == R.id.menuCopySplit0 || itemId == R.id.menuCopyBothSplits) {
+					t = prepareTextForCopyShare(selected, reference, false);
+				} else { // menuCopySplit1
+					t = prepareTextForCopyShare(selected, reference, true);
+				}
+
+				if (itemId == R.id.menuCopyBothSplits && activeSplitVersion != null) { // put guard on activeSplitVersion
 					appendSplitTextForCopyShare(t);
 				}
+
 				final String textToCopy = t[0];
 				final String textToSubmit = t[1];
 
@@ -2210,11 +2243,22 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					}
 				});
 			} return true;
-			case R.id.menuShare: {
-				String[] t = prepareTextForCopyShare(selected, reference, false);
-				if (activeSplitVersion != null) {
+			case R.id.menuShare:
+			case R.id.menuShareSplit0:
+			case R.id.menuShareSplit1:
+			case R.id.menuShareBothSplits: { // share, can be multiple verses
+				final String[] t;
+
+				if (itemId == R.id.menuShare || itemId == R.id.menuShareSplit0 || itemId == R.id.menuShareBothSplits) {
+					t = prepareTextForCopyShare(selected, reference, false);
+				} else { // menuShareSplit1
+					t = prepareTextForCopyShare(selected, reference, true);
+				}
+
+				if (itemId == R.id.menuShareBothSplits && activeSplitVersion != null) { // put guard on activeSplitVersion
 					appendSplitTextForCopyShare(t);
 				}
+
 				final String textToShare = t[0];
 				final String textToSubmit = t[1];
 
