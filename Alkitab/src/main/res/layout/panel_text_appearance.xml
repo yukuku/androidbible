@@ -5,23 +5,22 @@
 	android:layout_height="wrap_content"
 	android:layout_gravity="bottom|center_horizontal"
 	android:background="#262626"
-	android:orientation="vertical"
-	tools:ignore="Overdraw">
+	android:orientation="vertical">
 
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="48dp">
 
 		<TextView
-			android:id="@+id/textView2"
-			android:layout_width="wrap_content"
+			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_gravity="bottom"
-			android:layout_marginLeft="8dp"
+			android:layout_marginLeft="16dp"
 			android:layout_weight="1"
 			android:gravity="center_vertical|left"
 			android:text="@string/text_appearance_font"
 			android:textAllCaps="true"
+			android:textSize="12dp"
 			android:textStyle="bold" />
 
 		<ImageButton
@@ -51,7 +50,7 @@
 			android:id="@+id/cBold"
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
-			android:layout_marginRight="8dp"
+			android:layout_marginRight="16dp"
 			android:layout_weight="0"
 			android:text="@string/text_appearance_bold" />
 
@@ -65,11 +64,10 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="bottom"
-			android:layout_marginLeft="8dp"
-			android:layout_weight="1"
-			android:gravity="center_vertical|left"
+			android:layout_marginLeft="16dp"
 			android:text="@string/text_appearance_text_size"
 			android:textAllCaps="true"
+			android:textSize="12dp"
 			android:textStyle="bold" />
 
 	</LinearLayout>
@@ -84,16 +82,14 @@
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center_vertical"
-			android:layout_marginLeft="8dp"
-			android:layout_marginRight="8dp"
 			android:layout_weight="1"
 			android:max="80" />
 
 		<TextView
 			android:id="@+id/lTextSize"
-			android:layout_width="64dp"
+			android:layout_width="48dp"
 			android:layout_height="48dp"
-			android:layout_marginRight="8dp"
+			android:layout_marginRight="16dp"
 			android:gravity="center_vertical|right"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			tools:text="17.0" />
@@ -115,10 +111,10 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_gravity="bottom"
-				android:layout_marginLeft="8dp"
-				android:layout_weight="1"
-				android:gravity="center_vertical|left"
+				android:layout_marginLeft="16dp"
+				android:layout_marginRight="16dp"
 				android:textAllCaps="true"
+				android:textSize="12dp"
 				android:textStyle="bold"
 				tools:text="@string/text_appearance_text_size_for_version" />
 
@@ -134,16 +130,14 @@
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
 				android:layout_gravity="center_vertical"
-				android:layout_marginLeft="8dp"
-				android:layout_marginRight="8dp"
 				android:layout_weight="1"
 				android:max="20" />
 
 			<TextView
 				android:id="@+id/lTextSizePerVersion"
-				android:layout_width="64dp"
+				android:layout_width="48dp"
 				android:layout_height="48dp"
-				android:layout_marginRight="8dp"
+				android:layout_marginRight="16dp"
 				android:gravity="center_vertical|right"
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				tools:text="100%" />
@@ -160,15 +154,13 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="bottom"
-			android:layout_marginLeft="8dp"
-			android:layout_weight="1"
-			android:gravity="center_vertical|left"
+			android:layout_marginLeft="16dp"
 			android:text="@string/text_appearance_line_spacing"
 			android:textAllCaps="true"
+			android:textSize="12dp"
 			android:textStyle="bold" />
 
 	</LinearLayout>
-
 
 	<LinearLayout
 		android:layout_width="match_parent"
@@ -180,16 +172,14 @@
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center_vertical"
-			android:layout_marginLeft="8dp"
-			android:layout_marginRight="8dp"
 			android:layout_weight="1"
 			android:max="20" />
 
 		<TextView
 			android:id="@+id/lLineSpacing"
-			android:layout_width="64dp"
+			android:layout_width="48dp"
 			android:layout_height="48dp"
-			android:layout_marginRight="8dp"
+			android:layout_marginRight="16dp"
 			android:gravity="center_vertical|right"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			tools:text="1.05" />
