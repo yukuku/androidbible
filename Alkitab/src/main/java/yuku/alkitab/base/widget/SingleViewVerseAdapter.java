@@ -20,6 +20,7 @@ import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.PericopeBlock;
+import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 
@@ -94,8 +95,15 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 
 			final int startVerseTextPos = VerseRenderer.render(lText, lVerseNumber, ari, text, verseNumberText, highlightInfo, checked, dontPutSpacingBefore, inlineLinkSpanFactory_, null);
 
-			Appearances.applyTextAppearance(lText, textSizeMult_);
-			Appearances.applyVerseNumberAppearance(lVerseNumber, textSizeMult_);
+			final float textSizeMult;
+			if (verses_ instanceof SingleChapterVerses.WithTextSizeMult) {
+				textSizeMult = ((SingleChapterVerses.WithTextSizeMult) verses_).getTextSizeMult(id);
+			} else {
+				textSizeMult = textSizeMult_;
+			}
+
+			Appearances.applyTextAppearance(lText, textSizeMult);
+			Appearances.applyVerseNumberAppearance(lVerseNumber, textSizeMult);
 
 			if (checked) {
 				lText.setTextColor(U.getTextColorForSelectedVerse(Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default))); // override with black or white!
