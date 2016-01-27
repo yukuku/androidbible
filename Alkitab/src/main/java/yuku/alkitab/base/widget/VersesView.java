@@ -20,6 +20,7 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.SingleChapterVerses;
+import yuku.alkitab.model.Version;
 import yuku.alkitab.util.IntArrayList;
 
 import java.lang.reflect.Field;
@@ -75,10 +76,10 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	}
 
 	public interface AttributeListener {
-		void onBookmarkAttributeClick(int ari);
-		void onNoteAttributeClick(int ari);
-		void onProgressMarkAttributeClick(int preset_id);
-		void onHasMapsAttributeClick(int ari);
+		void onBookmarkAttributeClick(Version version, String versionId, int ari);
+		void onNoteAttributeClick(Version version, String versionId, int ari);
+		void onProgressMarkAttributeClick(Version version, String versionId, int preset_id);
+		void onHasMapsAttributeClick(Version version, String versionId, int ari);
 	}
 
 	public interface OnVerseScrollListener {
@@ -253,11 +254,12 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	}
 
 	/**
+	 * @param version can be null if no text size multiplier is to be used
 	 * @param versionId can be null if no text size multiplier is to be used
 	 */
-	public void setData(int ariBc, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock, @Nullable String versionId) {
+	public void setData(int ariBc, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock, @Nullable Version version, @Nullable String versionId) {
 		dataVersionNumber.incrementAndGet();
-		adapter.setData(ariBc, verses, pericopeAris, pericopeBlocks, nblock, versionId);
+		adapter.setData(ariBc, verses, pericopeAris, pericopeBlocks, nblock, version, versionId);
 		stopFling();
 	}
 
@@ -473,7 +475,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		}, smoothScrollDuration + 17);
 	}
 
-	public void setDataWithRetainSelectedVerses(boolean retainSelectedVerses, int ariBc, int[] pericope_aris, PericopeBlock[] pericope_blocks, int nblock, SingleChapterVerses verses, @NonNull String versionId) {
+	public void setDataWithRetainSelectedVerses(boolean retainSelectedVerses, int ariBc, int[] pericope_aris, PericopeBlock[] pericope_blocks, int nblock, SingleChapterVerses verses, @NonNull Version version, @NonNull String versionId) {
 		IntArrayList selectedVerses_1 = null;
 		if (retainSelectedVerses) {
 			selectedVerses_1 = getSelectedVerses_1();
@@ -481,7 +483,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		
 		//# fill adapter with new data. make sure all checked states are reset
 		uncheckAllVerses(true);
-		setData(ariBc, verses, pericope_aris, pericope_blocks, nblock, versionId);
+		setData(ariBc, verses, pericope_aris, pericope_blocks, nblock, version, versionId);
 		reloadAttributeMap();
 		
 		boolean anySelected = false;

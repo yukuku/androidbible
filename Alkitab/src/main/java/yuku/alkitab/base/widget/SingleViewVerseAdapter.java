@@ -103,7 +103,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			attributeView.setNoteCount(noteCountMap_ == null ? 0 : noteCountMap_[id]);
 			attributeView.setProgressMarkBits(progressMarkBitsMap_ == null ? 0 : progressMarkBitsMap_[id]);
 			attributeView.setHasMaps(hasMapsMap_ != null && hasMapsMap_[id]);
-			attributeView.setAttributeListener(attributeListener_, ari);
+			attributeView.setAttributeListener(attributeListener_, version_, versionId_, ari);
 
 			res.setCollapsed(text.length() == 0 && !attributeView.isShowingSomething());
 

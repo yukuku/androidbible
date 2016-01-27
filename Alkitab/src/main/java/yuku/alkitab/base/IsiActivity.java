@@ -1678,7 +1678,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		int nblock = version.loadPericope(book.bookId, chapter_1, pericope_aris, pericope_blocks, max);
 
 		boolean retainSelectedVerses = (!uncheckAllVerses && chapter_1 == current_chapter_1);
-		versesView.setDataWithRetainSelectedVerses(retainSelectedVerses, Ari.encode(book.bookId, chapter_1, 0), pericope_aris, pericope_blocks, nblock, verses, versionId);
+		versesView.setDataWithRetainSelectedVerses(retainSelectedVerses, Ari.encode(book.bookId, chapter_1, 0), pericope_aris, pericope_blocks, nblock, verses, version, versionId);
 
 		return true;
 	}
@@ -1788,14 +1788,14 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		@Override
-		public void onBookmarkAttributeClick(final int ari) {
+		public void onBookmarkAttributeClick(final Version version, final String versionId, final int ari) {
 			final List<Marker> markers = S.getDb().listMarkersForAriKind(ari, Marker.Kind.bookmark);
 			if (markers.size() == 1) {
 				openBookmarkDialog(markers.get(0)._id);
 			} else {
 				final MaterialDialog dialog = new MaterialDialog.Builder(IsiActivity.this)
 					.title(R.string.edit_bookmark)
-					.adapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.bookmark), (materialDialog, view, which, text) -> {
+					.adapter(new MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.bookmark), (materialDialog, view, which, text) -> {
 						openBookmarkDialog(markers.get(which)._id);
 						materialDialog.dismiss();
 					})
@@ -1811,16 +1811,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			startActivityForResult(NoteActivity.createEditExistingIntent(_id), REQCODE_edit_note_1);
 		}
 
-
 		@Override
-		public void onNoteAttributeClick(final int ari) {
+		public void onNoteAttributeClick(final Version version, final String versionId, final int ari) {
 			final List<Marker> markers = S.getDb().listMarkersForAriKind(ari, Marker.Kind.note);
 			if (markers.size() == 1) {
 				openNoteDialog(markers.get(0)._id);
 			} else {
                 final MaterialDialog dialog = new MaterialDialog.Builder(IsiActivity.this)
                     .title(R.string.edit_note)
-                    .adapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.note), (materialDialog, view, which, text) -> {
+                    .adapter(new MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.note), (materialDialog, view, which, text) -> {
 						openNoteDialog(markers.get(which)._id);
 						materialDialog.dismiss();
 					})
@@ -1833,10 +1832,14 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
         }
 
 		class MultipleMarkerSelectAdapter extends EasyAdapter {
+			final Version version;
+			final float textSizeMult;
 			final List<Marker> markers;
 			final Marker.Kind kind;
 
-			public MultipleMarkerSelectAdapter(final List<Marker> markers, final Marker.Kind kind) {
+			public MultipleMarkerSelectAdapter(final Version version, final String versionId, final List<Marker> markers, final Marker.Kind kind) {
+				this.version = version;
+				this.textSizeMult = S.getDb().getPerVersionSettings(versionId).fontSizeMultiplier;
 				this.markers = markers;
 				this.kind = kind;
 			}
@@ -1870,16 +1873,16 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 						lDate.setText(getString(R.string.create_edited_modified_time, Sqlitil.toLocaleDateMedium(addTime), Sqlitil.toLocaleDateMedium(modifyTime)));
 					}
 
-					Appearances.applyMarkerDateTextAppearance(lDate);
+					Appearances.applyMarkerDateTextAppearance(lDate, textSizeMult);
 				}
 
 				final int ari = marker.ari;
-				final String reference = S.activeVersion.reference(ari);
+				final String reference = version.reference(ari);
 				final String caption = marker.caption;
 
 				if (kind == Marker.Kind.bookmark) {
 					lCaption.setText(caption);
-					Appearances.applyMarkerTitleTextAppearance(lCaption);
+					Appearances.applyMarkerTitleTextAppearance(lCaption, textSizeMult);
 
 					lSnippet.setVisibility(View.GONE);
 
@@ -1896,9 +1899,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 				} else if (kind == Marker.Kind.note) {
 					lCaption.setText(reference);
-					Appearances.applyMarkerTitleTextAppearance(lCaption);
+					Appearances.applyMarkerTitleTextAppearance(lCaption, textSizeMult);
 					lSnippet.setText(caption);
-					Appearances.applyTextAppearance(lSnippet);
+					Appearances.applyTextAppearance(lSnippet, textSizeMult);
 				}
 
 				view.setBackgroundColor(S.applied.backgroundColor);
@@ -1911,7 +1914,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		@Override
-		public void onProgressMarkAttributeClick(final int preset_id) {
+		public void onProgressMarkAttributeClick(final Version version, final String versionId, final int preset_id) {
 			final ProgressMark progressMark = S.getDb().getProgressMarkByPresetId(preset_id);
 
 			ProgressMarkRenameDialog.show(IsiActivity.this, progressMark, new ProgressMarkRenameDialog.Listener() {
@@ -1928,7 +1931,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		@Override
-		public void onHasMapsAttributeClick(final int ari) {
+		public void onHasMapsAttributeClick(final Version version, final String versionId, final int ari) {
 			String locale = null;
 
 			if (this == lsSplit0.getAttributeListener()) {

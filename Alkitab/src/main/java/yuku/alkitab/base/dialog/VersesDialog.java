@@ -170,7 +170,7 @@ public class VersesDialog extends BaseDialog {
 
 				final int firstAri = ariRanges.get(0);
 
-				versesView.setData(Ari.toBookChapter(firstAri), new Verses(), null, null, 0, sourceVersionId);
+				versesView.setData(Ari.toBookChapter(firstAri), new Verses(), null, null, 0, sourceVersion, sourceVersionId);
 			}
 		} else {
 			// read each version and display it. First version must be the sourceVersion.
@@ -252,7 +252,7 @@ public class VersesDialog extends BaseDialog {
 			}
 
 			// TODO use different text size multiplier for the different versions in compare mode
-			versesView.setData(Ari.toBookChapter(ari), new Verses(), null, null, 0, null);
+			versesView.setData(Ari.toBookChapter(ari), new Verses(), null, null, 0, null, null);
 		}
 
 		return res;

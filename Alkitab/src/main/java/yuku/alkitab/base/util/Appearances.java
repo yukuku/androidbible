@@ -50,21 +50,21 @@ public class Appearances {
 		t.setLineSpacing(0.f, S.applied.lineSpacingMult);
 	}
 	
-	public static void applySearchResultReferenceAppearance(TextView t, SpannableStringBuilder sb) {
-		applyMarkerTitleTextAppearance(t);
+	public static void applySearchResultReferenceAppearance(TextView t, SpannableStringBuilder sb, float textSizeMult) {
+		applyMarkerTitleTextAppearance(t, textSizeMult);
 		sb.setSpan(new UnderlineSpan(), 0, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 		t.setText(sb);
 		t.setLineSpacing(0.f, S.applied.lineSpacingMult);
 	}
 
-	public static void applyMarkerTitleTextAppearance(TextView t) {
+	public static void applyMarkerTitleTextAppearance(TextView t, float textSizeMult) {
 		t.setTypeface(S.applied.fontFace, S.applied.fontBold);
-		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp * 1.2f);
+		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp * 1.2f * textSizeMult);
 		t.setTextColor(S.applied.fontColor);
 	}
 
-	public static void applyMarkerDateTextAppearance(TextView t) {
-		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp * 0.8f);
+	public static void applyMarkerDateTextAppearance(TextView t, float textSizeMult) {
+		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp * 0.8f * textSizeMult);
 		t.setTextColor(S.applied.fontColor);
 	}
 

@@ -207,7 +207,7 @@ public class XrefDialog extends BaseDialog {
 	
 			int firstAri = displayedRealAris.get(0);
 
-			versesView.setData(Ari.toBookChapter(firstAri), new Verses(), null, null, 0, sourceVersionId);
+			versesView.setData(Ari.toBookChapter(firstAri), new Verses(), null, null, 0, sourceVersion, sourceVersionId);
 		}
 		
 		renderXrefText();

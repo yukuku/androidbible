@@ -20,6 +20,7 @@ import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.AttributeView;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.ProgressMark;
+import yuku.alkitab.model.Version;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,10 @@ public class ProgressMarkListDialog extends DialogFragment {
 	}
 
 	Listener progressMarkListener;
+
+	Version version = S.activeVersion;
+	String versionId = S.activeVersionId;
+	float textSizeMult = S.getDb().getPerVersionSettings(versionId).fontSizeMultiplier;
 
 	@Override
 	public void onAttach(final Activity activity) {
@@ -122,7 +127,7 @@ public class ProgressMarkListDialog extends DialogFragment {
 			} else {
 				tCaption.setText(progressMark.caption);
 			}
-			Appearances.applyMarkerTitleTextAppearance(tCaption);
+			Appearances.applyMarkerTitleTextAppearance(tCaption, textSizeMult);
 
 			int ari = progressMark.ari;
 			String verseText = "";
@@ -131,8 +136,8 @@ public class ProgressMarkListDialog extends DialogFragment {
 				date = Sqlitil.toLocaleDateMedium(progressMark.modifyTime);
 				tDate.setText(date);
 
-				String reference = S.activeVersion.reference(ari);
-				verseText = U.removeSpecialCodes(S.activeVersion.loadVerseText(ari));
+				final String reference = version.reference(ari);
+				verseText = U.removeSpecialCodes(version.loadVerseText(ari));
 				Appearances.applyMarkerSnippetContentAndAppearance(tVerseText, reference, verseText);
 				view.setEnabled(false);
 			} else {
@@ -140,7 +145,7 @@ public class ProgressMarkListDialog extends DialogFragment {
 				view.setEnabled(true);
 			}
 			tDate.setText(date);
-			Appearances.applyMarkerDateTextAppearance(tDate);
+			Appearances.applyMarkerDateTextAppearance(tDate, textSizeMult);
 		}
 	}
 
