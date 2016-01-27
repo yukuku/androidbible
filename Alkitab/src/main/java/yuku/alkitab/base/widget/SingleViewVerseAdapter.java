@@ -90,9 +90,13 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			final Highlights.Info highlightInfo = highlightInfoMap_ == null ? null : highlightInfoMap_[id];
 
 			final VerseTextView lText = res.lText;
-			final int startVerseTextPos = VerseRenderer.render(lText, res.lVerseNumber, ari, text, verseNumberText, highlightInfo, checked, dontPutSpacingBefore, inlineLinkSpanFactory_, null);
+			final TextView lVerseNumber = res.lVerseNumber;
+
+			final int startVerseTextPos = VerseRenderer.render(lText, lVerseNumber, ari, text, verseNumberText, highlightInfo, checked, dontPutSpacingBefore, inlineLinkSpanFactory_, null);
 
 			Appearances.applyTextAppearance(lText, textSizeMult_);
+			Appearances.applyVerseNumberAppearance(lVerseNumber, textSizeMult_);
+
 			if (checked) {
 				lText.setTextColor(U.getTextColorForSelectedVerse(Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default))); // override with black or white!
 			}
