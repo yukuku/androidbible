@@ -41,6 +41,7 @@ import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
+import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
 import yuku.alkitabintegration.display.Launcher;
 import yuku.devoxx.flowlayout.FlowLayout;
@@ -87,7 +88,9 @@ public class MarkerListActivity extends BaseActivity {
 	long filter_labelId;
 
 	int hiliteColor;
-
+	Version version = S.activeVersion;
+	String versionId = S.activeVersionId;
+	float textSizeMult = S.getDb().getPerVersionSettings(versionId).fontSizeMultiplier;
 
 	public static Intent createIntent(Context context, Marker.Kind filter_kind, long filter_labelId) {
 		Intent res = new Intent(context, MarkerListActivity.class);
@@ -285,7 +288,7 @@ public class MarkerListActivity extends BaseActivity {
 
 			final SearchEngine.ReadyTokens rt = tokens == null || tokens.length == 0 ? null : new SearchEngine.ReadyTokens(tokens);
 
-			final List<Marker> filteredMarkers = filterEngine(allMarkers, filter_kind, rt);
+			final List<Marker> filteredMarkers = filterEngine(version, allMarkers, filter_kind, rt);
 
 			final FilterResult res = new FilterResult();
 			res.query = query;
@@ -479,8 +482,8 @@ public class MarkerListActivity extends BaseActivity {
 					} else if (filter_kind == Marker.Kind.highlight) {
 						final int ari = marker.ari;
 						final Highlights.Info info = Highlights.decode(marker.caption);
-						final String reference = S.activeVersion.referenceWithVerseCount(ari, marker.verseCount);
-						final String rawVerseText = S.activeVersion.loadVerseText(ari);
+						final String reference = version.referenceWithVerseCount(ari, marker.verseCount);
+						final String rawVerseText = version.loadVerseText(ari);
 						final VerseRenderer.FormattedTextResult ftr = new VerseRenderer.FormattedTextResult();
 
 						if (rawVerseText != null) {
@@ -505,7 +508,7 @@ public class MarkerListActivity extends BaseActivity {
 	 * The real work of filtering happens here.
 	 * @param rt Tokens have to be already lowercased.
 	 */
-	public static List<Marker> filterEngine(List<Marker> allMarkers, Marker.Kind filter_kind, @Nullable SearchEngine.ReadyTokens rt) {
+	public static List<Marker> filterEngine(Version version, List<Marker> allMarkers, Marker.Kind filter_kind, @Nullable SearchEngine.ReadyTokens rt) {
 		final List<Marker> res = new ArrayList<>();
 
 		if (rt == null) {
@@ -523,7 +526,7 @@ public class MarkerListActivity extends BaseActivity {
 			}
 
 			// try the verse text!
-			String verseText = S.activeVersion.loadVerseText(marker.ari);
+			String verseText = version.loadVerseText(marker.ari);
 			if (verseText != null) { // this can be null! so beware.
 				String verseText_lc = verseText.toLowerCase(Locale.getDefault());
 				if (SearchEngine.satisfiesTokens(verseText_lc, rt)) {
@@ -534,7 +537,6 @@ public class MarkerListActivity extends BaseActivity {
 
 		return res;
 	}
-
 
 	class MarkerListAdapter extends EasyAdapter {
 		List<Marker> filteredMarkers = new ArrayList<>();
@@ -577,14 +579,14 @@ public class MarkerListActivity extends BaseActivity {
 					}
 				}
 
-				Appearances.applyMarkerDateTextAppearance(lDate);
+				Appearances.applyMarkerDateTextAppearance(lDate, textSizeMult);
 			}
 
 			final int ari = marker.ari;
-			final String reference = S.activeVersion.referenceWithVerseCount(ari, marker.verseCount);
+			final String reference = version.referenceWithVerseCount(ari, marker.verseCount);
 			final String caption = marker.caption;
 
-			final String rawVerseText = S.activeVersion.loadVerseText(ari);
+			final String rawVerseText = version.loadVerseText(ari);
 			final CharSequence verseText;
 			if (rawVerseText == null) {
 				verseText = getString(R.string.generic_verse_not_available_in_this_version);
@@ -596,10 +598,10 @@ public class MarkerListActivity extends BaseActivity {
 
 			if (filter_kind == Marker.Kind.bookmark) {
 				lCaption.setText(currentlyUsedFilter != null ? SearchEngine.hilite(caption, rt, hiliteColor) : caption);
-				Appearances.applyMarkerTitleTextAppearance(lCaption);
+				Appearances.applyMarkerTitleTextAppearance(lCaption, textSizeMult);
 				CharSequence snippet = currentlyUsedFilter != null ? SearchEngine.hilite(verseText, rt, hiliteColor) : verseText;
 
-				Appearances.applyMarkerSnippetContentAndAppearance(lSnippet, reference, snippet);
+				Appearances.applyMarkerSnippetContentAndAppearance(lSnippet, reference, snippet, textSizeMult);
 
 				final List<Label> labels = S.getDb().listLabelsByMarker(marker);
 				if (labels.size() != 0) {
@@ -614,13 +616,13 @@ public class MarkerListActivity extends BaseActivity {
 
 			} else if (filter_kind == Marker.Kind.note) {
 				lCaption.setText(reference);
-				Appearances.applyMarkerTitleTextAppearance(lCaption);
+				Appearances.applyMarkerTitleTextAppearance(lCaption, textSizeMult);
 				lSnippet.setText(currentlyUsedFilter != null ? SearchEngine.hilite(caption, rt, hiliteColor) : caption);
-				Appearances.applyTextAppearance(lSnippet);
+				Appearances.applyTextAppearance(lSnippet, textSizeMult);
 
 			} else if (filter_kind == Marker.Kind.highlight) {
 				lCaption.setText(reference);
-				Appearances.applyMarkerTitleTextAppearance(lCaption);
+				Appearances.applyMarkerTitleTextAppearance(lCaption, textSizeMult);
 
 				final SpannableStringBuilder snippet = currentlyUsedFilter != null ? SearchEngine.hilite(verseText, rt, hiliteColor) : new SpannableStringBuilder(verseText);
 				final Highlights.Info info = Highlights.decode(caption);
@@ -633,7 +635,7 @@ public class MarkerListActivity extends BaseActivity {
 					}
 				}
 				lSnippet.setText(snippet);
-				Appearances.applyTextAppearance(lSnippet);
+				Appearances.applyTextAppearance(lSnippet, textSizeMult);
 			}
 		}
 

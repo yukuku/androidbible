@@ -5,10 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.support.annotation.NonNull;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -25,8 +25,10 @@ import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
+import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.ColorSettingsActivity;
 import yuku.alkitab.base.ac.FontManagerActivity;
+import yuku.alkitab.base.model.PerVersionSettings;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.FontManager;
 import yuku.alkitab.debug.R;
@@ -34,6 +36,7 @@ import yuku.alkitab.debug.R;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class TextAppearancePanel {
 	public static final String TAG = TextAppearancePanel.class.getSimpleName();
@@ -44,7 +47,6 @@ public class TextAppearancePanel {
 	}
 	
 	final Activity activity;
-	final LayoutInflater inflater;
 	final FrameLayout parent;
 	final Listener listener;
 	final View content;
@@ -54,6 +56,10 @@ public class TextAppearancePanel {
 	Spinner cbTypeface;
 	TextView lTextSize;
 	SeekBar sbTextSize;
+	View panelPerVersionTextSize;
+	TextView lTextSizeLabel;
+	TextView lTextSizePerVersion;
+	SeekBar sbTextSizePerVersion;
 	TextView lLineSpacing;
 	SeekBar sbLineSpacing;
 	CheckBox cBold;
@@ -62,15 +68,16 @@ public class TextAppearancePanel {
 
 	TypefaceAdapter typefaceAdapter;
 	boolean shown = false;
+	String splitVersionId;
+	String splitVersionLongName;
 
-	public TextAppearancePanel(Activity activity, LayoutInflater inflater, FrameLayout parent, Listener listener, int reqcodeGetFonts, int reqcodeCustomColors) {
+	public TextAppearancePanel(Activity activity, FrameLayout parent, Listener listener, int reqcodeGetFonts, int reqcodeCustomColors) {
 		this.activity = activity;
-		this.inflater = inflater;
 		this.parent = parent;
 		this.listener = listener;
 		this.reqcodeGetFonts = reqcodeGetFonts;
 		this.reqcodeCustomColors = reqcodeCustomColors;
-		this.content = inflater.inflate(R.layout.panel_text_appearance, parent, false);
+		this.content = activity.getLayoutInflater().inflate(R.layout.panel_text_appearance, parent, false);
 
 		this.content.setOnTouchListener((v, event) -> true); // prevent click-through
 	    
@@ -78,6 +85,10 @@ public class TextAppearancePanel {
 	    cBold = V.get(content, R.id.cBold);
 	    lTextSize = V.get(content, R.id.lTextSize);
 	    sbTextSize = V.get(content, R.id.sbTextSize);
+		panelPerVersionTextSize = V.get(content, R.id.panelPerVersionTextSize);
+		lTextSizeLabel = V.get(content, R.id.lTextSizeLabel);
+		lTextSizePerVersion = V.get(content, R.id.lTextSizePerVersion);
+		sbTextSizePerVersion = V.get(content, R.id.sbTextSizePerVersion);
 	    lLineSpacing = V.get(content, R.id.lLineSpacing);
 	    sbLineSpacing = V.get(content, R.id.sbLineSpacing);
 	    bColorTheme = V.get(content, R.id.bColorTheme);
@@ -90,6 +101,7 @@ public class TextAppearancePanel {
 
 		cbTypeface.setOnItemSelectedListener(cbTypeface_itemSelected);
 		sbTextSize.setOnSeekBarChangeListener(sbTextSize_seekBarChange);
+		sbTextSizePerVersion.setOnSeekBarChangeListener(sbTextSizePerVersion_seekBarChange);
 		sbLineSpacing.setOnSeekBarChangeListener(sbLineSpacing_seekBarChange);
 		cBold.setOnCheckedChangeListener(cBold_checkedChange);
 		bClose.setOnClickListener(bClose_click);
@@ -109,7 +121,19 @@ public class TextAppearancePanel {
 		float textSize = Preferences.getFloat(Prefkey.ukuranHuruf2, (float) App.context.getResources().getInteger(R.integer.pref_ukuranHuruf2_default));
 		sbTextSize.setProgress((int) ((textSize - 2.f) * 2));
 		displayTextSizeText(textSize);
-		
+
+		if (splitVersionId == null) {
+			panelPerVersionTextSize.setVisibility(View.GONE);
+		} else {
+			panelPerVersionTextSize.setVisibility(View.VISIBLE);
+
+			lTextSizeLabel.setText(TextUtils.expandTemplate(activity.getText(R.string.text_appearance_text_size_for_version), splitVersionLongName));
+
+			final PerVersionSettings settings = S.getDb().getPerVersionSettings(splitVersionId);
+			sbTextSizePerVersion.setProgress(Math.round((settings.fontSizeMultiplier - 0.5f) * 20.f));
+			displayTextSizePerVersionText(settings.fontSizeMultiplier);
+		}
+
 		float lineSpacing = Preferences.getFloat(Prefkey.lineSpacingMult, 1.15f);
 		sbLineSpacing.setProgress(Math.round((lineSpacing - 1.f) * 20.f));
 		displayLineSpacingText(lineSpacing);
@@ -208,10 +232,32 @@ public class TextAppearancePanel {
 		}
 	};
 	
+	SeekBar.OnSeekBarChangeListener sbTextSizePerVersion_seekBarChange = new SeekBar.OnSeekBarChangeListener() {
+		@Override public void onStopTrackingTouch(SeekBar seekBar) {}
+
+		@Override public void onStartTrackingTouch(SeekBar seekBar) {}
+
+		@Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+			if (splitVersionId == null) return;
+
+			float textSizeMult = progress * 0.05f + 0.5f;
+			final PerVersionSettings settings = S.getDb().getPerVersionSettings(splitVersionId);
+			settings.fontSizeMultiplier = textSizeMult;
+			S.getDb().storePerVersionSettings(splitVersionId, settings);
+
+			displayTextSizePerVersionText(textSizeMult);
+			listener.onValueChanged();
+		}
+	};
+
 	void displayTextSizeText(float textSize) {
-		lTextSize.setText(String.format("%.1f", textSize));
+		lTextSize.setText(String.format(Locale.US, "%.1f", textSize));
 	}
 	
+	void displayTextSizePerVersionText(float textSizeMult) {
+		lTextSizePerVersion.setText(Math.round(textSizeMult * 100) + "%");
+	}
+
 	SeekBar.OnSeekBarChangeListener sbLineSpacing_seekBarChange = new SeekBar.OnSeekBarChangeListener() {
 		@Override public void onStopTrackingTouch(SeekBar seekBar) {}
 		
@@ -226,7 +272,7 @@ public class TextAppearancePanel {
 	};
 	
 	void displayLineSpacingText(float lineSpacing) {
-		lLineSpacing.setText(String.format("%.2f", lineSpacing));
+		lLineSpacing.setText(String.format(Locale.US, "%.2f", lineSpacing));
 	}
 	
 	CompoundButton.OnCheckedChangeListener cBold_checkedChange = new CompoundButton.OnCheckedChangeListener() {
@@ -235,6 +281,17 @@ public class TextAppearancePanel {
 			listener.onValueChanged();
 		}
 	};
+
+	public void setSplitVersion(@NonNull final String splitVersionId, @NonNull final String splitVersionLongName) {
+		this.splitVersionId = splitVersionId;
+		this.splitVersionLongName = splitVersionLongName;
+		displayValues();
+	}
+
+	public void clearSplitVersion() {
+		this.splitVersionId = this.splitVersionLongName = null;
+		displayValues();
+	}
 	
 	class TypefaceAdapter extends EasyAdapter {
 		List<FontManager.FontEntry> fontEntries;
@@ -253,7 +310,7 @@ public class TextAppearancePanel {
 		}
 		
 		@Override public View newView(int position, ViewGroup parent) {
-			return inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+			return activity.getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
 		}
 
 		@Override public void bindView(View view, int position, ViewGroup parent) {
@@ -325,7 +382,7 @@ public class TextAppearancePanel {
 		}
 		
 		@Override public View newView(int position, ViewGroup parent) {
-			return inflater.inflate(android.R.layout.simple_list_item_single_choice, parent, false);
+			return activity.getLayoutInflater().inflate(android.R.layout.simple_list_item_single_choice, parent, false);
 		}
 
 		@Override public void bindView(View view, int position, ViewGroup parent) {

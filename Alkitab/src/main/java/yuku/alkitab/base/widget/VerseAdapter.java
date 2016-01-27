@@ -16,6 +16,7 @@ import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.model.SingleChapterVerses;
+import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
 
 import java.util.Arrays;
@@ -33,6 +34,9 @@ public abstract class VerseAdapter extends BaseAdapter {
 	int ari_bc_;
 	SingleChapterVerses verses_;
 	PericopeBlock[] pericopeBlocks_;
+	Version version_;
+	String versionId_;
+	float textSizeMult_;
 
 	/**
 	 * For each element, if 0 or more, it refers to the 0-based verse number.
@@ -62,11 +66,14 @@ public abstract class VerseAdapter extends BaseAdapter {
 		inflater_ = LayoutInflater.from(context);
 	}
 
-	/* non-public */ synchronized void setData(int ariBc, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
+	/* non-public */ synchronized void setData(int ariBc, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock, @Nullable final Version version, @Nullable final String versionId) {
 		ari_bc_ = ariBc;
 		verses_ = verses;
 		pericopeBlocks_ = pericopeBlocks;
 		itemPointer_ = makeItemPointer(verses_.getVerseCount(), pericopeAris, pericopeBlocks, nblock);
+		version_ = version;
+		versionId_ = versionId;
+		calculateTextSizeMult();
 		attentionStart_ = 0;
 		if (attentionPositions_ != null) {
 			attentionPositions_.clear();
@@ -384,5 +391,9 @@ public abstract class VerseAdapter extends BaseAdapter {
 		}
 
 		return res;
+	}
+
+	/* non-public */ void calculateTextSizeMult() {
+		textSizeMult_ = versionId_ == null ? 1.f : S.getDb().getPerVersionSettings(versionId_).fontSizeMultiplier;
 	}
 }

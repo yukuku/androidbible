@@ -58,6 +58,7 @@ public class VersesDialog extends BaseDialog {
 
 	Version sourceVersion = S.activeVersion;
 	String sourceVersionId = S.activeVersionId;
+	float textSizeMult = S.getDb().getPerVersionSettings(sourceVersionId).fontSizeMultiplier;
 
 	DialogInterface.OnDismissListener onDismissListener;
 
@@ -125,13 +126,13 @@ public class VersesDialog extends BaseDialog {
 					sb.append("; ");
 				}
 
-				sb.append(S.activeVersion.referenceRange(ari_start, ari_end));
+				sb.append(sourceVersion.referenceRange(ari_start, ari_end));
 			}
 		} else {
 			sb.append(sourceVersion.reference(ari));
 		}
 
-		Appearances.applyTextAppearance(tReference);
+		Appearances.applyTextAppearance(tReference, textSizeMult);
 		tReference.setText(sb);
 
 
@@ -170,7 +171,7 @@ public class VersesDialog extends BaseDialog {
 
 				final int firstAri = ariRanges.get(0);
 
-				versesView.setData(Ari.toBookChapter(firstAri), new Verses(), null, null, 0);
+				versesView.setData(Ari.toBookChapter(firstAri), new Verses(), null, null, 0, sourceVersion, sourceVersionId);
 			}
 		} else {
 			// read each version and display it. First version must be the sourceVersion.
@@ -189,7 +190,7 @@ public class VersesDialog extends BaseDialog {
 				customCallbackData[i] = mversions.get(i);
 			}
 
-			class Verses extends SingleChapterVerses {
+			class Verses extends SingleChapterVerses implements SingleChapterVerses.WithTextSizeMult {
 				@Override
 				public String getVerse(int verse_0) {
 					// load version or take from existing if already loaded
@@ -249,9 +250,16 @@ public class VersesDialog extends BaseDialog {
 
 					return res;
 				}
+
+				@Override
+				public float getTextSizeMult(final int verse_0) {
+					final MVersion mversion = mversions.get(verse_0);
+					return S.getDb().getPerVersionSettings(mversion.getVersionId()).fontSizeMultiplier;
+				}
 			}
 
-			versesView.setData(Ari.toBookChapter(ari), new Verses(), null, null, 0);
+			// TODO use different text size multiplier for the different versions in compare mode
+			versesView.setData(Ari.toBookChapter(ari), new Verses(), null, null, 0, null, null);
 		}
 
 		return res;
