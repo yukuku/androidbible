@@ -138,7 +138,7 @@ public class ProgressMarkListDialog extends DialogFragment {
 
 				final String reference = version.reference(ari);
 				verseText = U.removeSpecialCodes(version.loadVerseText(ari));
-				Appearances.applyMarkerSnippetContentAndAppearance(tVerseText, reference, verseText);
+				Appearances.applyMarkerSnippetContentAndAppearance(tVerseText, reference, verseText, textSizeMult);
 				view.setEnabled(false);
 			} else {
 				tVerseText.setText(verseText);

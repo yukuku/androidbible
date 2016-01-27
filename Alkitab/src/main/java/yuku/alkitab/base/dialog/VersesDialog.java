@@ -58,6 +58,7 @@ public class VersesDialog extends BaseDialog {
 
 	Version sourceVersion = S.activeVersion;
 	String sourceVersionId = S.activeVersionId;
+	float textSizeMult = S.getDb().getPerVersionSettings(sourceVersionId).fontSizeMultiplier;
 
 	DialogInterface.OnDismissListener onDismissListener;
 
@@ -125,13 +126,13 @@ public class VersesDialog extends BaseDialog {
 					sb.append("; ");
 				}
 
-				sb.append(S.activeVersion.referenceRange(ari_start, ari_end));
+				sb.append(sourceVersion.referenceRange(ari_start, ari_end));
 			}
 		} else {
 			sb.append(sourceVersion.reference(ari));
 		}
 
-		Appearances.applyTextAppearance(tReference);
+		Appearances.applyTextAppearance(tReference, textSizeMult);
 		tReference.setText(sb);
 
 

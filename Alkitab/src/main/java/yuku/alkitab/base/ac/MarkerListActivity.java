@@ -601,7 +601,7 @@ public class MarkerListActivity extends BaseActivity {
 				Appearances.applyMarkerTitleTextAppearance(lCaption, textSizeMult);
 				CharSequence snippet = currentlyUsedFilter != null ? SearchEngine.hilite(verseText, rt, hiliteColor) : verseText;
 
-				Appearances.applyMarkerSnippetContentAndAppearance(lSnippet, reference, snippet);
+				Appearances.applyMarkerSnippetContentAndAppearance(lSnippet, reference, snippet, textSizeMult);
 
 				final List<Label> labels = S.getDb().listLabelsByMarker(marker);
 				if (labels.size() != 0) {

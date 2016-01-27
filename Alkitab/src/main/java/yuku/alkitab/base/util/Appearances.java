@@ -13,12 +13,12 @@ import yuku.alkitab.base.S;
 public class Appearances {
 	public static final String TAG = Appearances.class.getSimpleName();
 
-	public static void applyMarkerSnippetContentAndAppearance(TextView t, String reference, CharSequence verseText) {
+	public static void applyMarkerSnippetContentAndAppearance(TextView t, String reference, CharSequence verseText, float textSizeMult) {
 		SpannableStringBuilder sb = new SpannableStringBuilder(reference);
 		sb.setSpan(new UnderlineSpan(), 0, reference.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 		sb.append(' ').append(verseText);
 		t.setText(sb);
-		applyTextAppearance(t);
+		applyTextAppearance(t, textSizeMult);
 	}
 
 	public static void applyTextAppearance(TextView t, float fontSizeMultiplier) {
@@ -28,10 +28,6 @@ public class Appearances {
 		t.setTextColor(S.applied.fontColor);
 		t.setLinkTextColor(S.applied.fontColor);
 		t.setLineSpacing(0.f, S.applied.lineSpacingMult);
-	}
-
-	public static void applyTextAppearance(TextView t) {
-		applyTextAppearance(t, 1.f);
 	}
 
 	public static void applyPericopeTitleAppearance(TextView t, float fontSizeMultiplier) {
