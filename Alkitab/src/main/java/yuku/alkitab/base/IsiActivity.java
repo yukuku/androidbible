@@ -2658,11 +2658,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	@Override
 	public void bCurrentReadingClose_click() {
+		App.trackEvent("left_drawer_current_reading_close_click");
+
 		CurrentReading.clear();
 	}
 
 	@Override
 	public void bCurrentReadingReference_click() {
+		App.trackEvent("left_drawer_current_reading_verse_reference_click");
+
 		final int[] aris = CurrentReading.get();
 		if (aris == null) {
 			return;
