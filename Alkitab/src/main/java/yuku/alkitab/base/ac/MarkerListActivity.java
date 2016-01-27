@@ -618,7 +618,7 @@ public class MarkerListActivity extends BaseActivity {
 				lCaption.setText(reference);
 				Appearances.applyMarkerTitleTextAppearance(lCaption, textSizeMult);
 				lSnippet.setText(currentlyUsedFilter != null ? SearchEngine.hilite(caption, rt, hiliteColor) : caption);
-				Appearances.applyTextAppearance(lSnippet);
+				Appearances.applyTextAppearance(lSnippet, textSizeMult);
 
 			} else if (filter_kind == Marker.Kind.highlight) {
 				lCaption.setText(reference);
@@ -635,7 +635,7 @@ public class MarkerListActivity extends BaseActivity {
 					}
 				}
 				lSnippet.setText(snippet);
-				Appearances.applyTextAppearance(lSnippet);
+				Appearances.applyTextAppearance(lSnippet, textSizeMult);
 			}
 		}
 
