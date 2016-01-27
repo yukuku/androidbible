@@ -39,7 +39,7 @@
 					android:contentDescription="@string/rp_navigationPreviousDay"
 					android:padding="16dp"
 					android:scaleType="center"
-					android:src="@drawable/ic_nav_left_light" />
+					android:src="@drawable/ic_nav_left_light_disableable" />
 
 				<TextView
 					android:id="@+id/bToday"
@@ -61,7 +61,7 @@
 					android:contentDescription="@string/rp_navigationNextDay"
 					android:padding="16dp"
 					android:scaleType="center"
-					android:src="@drawable/ic_nav_right_light" />
+					android:src="@drawable/ic_nav_right_light_disableable" />
 			</LinearLayout>
 
 			<ListView
