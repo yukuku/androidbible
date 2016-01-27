@@ -2642,6 +2642,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		if (S.getDb().countAllProgressMarks() > 0) {
 			final ProgressMarkListDialog dialog = new ProgressMarkListDialog();
 			dialog.show(getSupportFragmentManager(), "dialog_progress_mark_list");
+			leftDrawer.closeDrawer();
 		} else {
 			new AlertDialogWrapper.Builder(this)
 				.setMessage(R.string.pm_activate_tutorial)
