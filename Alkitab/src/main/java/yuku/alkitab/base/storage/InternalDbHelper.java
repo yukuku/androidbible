@@ -64,6 +64,8 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		createIndexSyncShadow(db);
 		createTableSyncLog(db);
 		createIndexSyncLog(db);
+		createTablePerVersion(db);
+		createIndexPerVersion(db);
 	}
 
 	@Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -181,6 +183,12 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			// So we alter table and migrate old to new
 			migrateReadingPlanProgressTable(db);
 		}
+
+		if (oldVersion < 14000265) { // 14000265: v4.4-beta5
+			// new table PerVersion
+			createTablePerVersion(db);
+			createIndexPerVersion(db);
+		}
 	}
 
 	private void createTableMarker(SQLiteDatabase db) {
@@ -226,6 +234,26 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	private void createIndexDevotion(SQLiteDatabase db) {
 		db.execSQL("create index if not exists index_Devotion_01 on " + Table.Devotion.tableName() + " (" + Table.Devotion.name + ", " + Table.Devotion.date + ", " + Table.Devotion.dataFormatVersion + ")");
 		db.execSQL("create index if not exists index_Devotion_02 on " + Table.Devotion.tableName() + " (" + Table.Devotion.touchTime + ")");
+	}
+
+	private void createTablePerVersion(SQLiteDatabase db) {
+		final StringBuilder sb = new StringBuilder("create table if not exists " + Table.PerVersion.tableName() + " ( _id integer primary key ");
+		for (Table.PerVersion field: Table.PerVersion.values()) {
+			sb.append(',');
+			sb.append(field.name());
+			sb.append(' ');
+			sb.append(field.type.name());
+			if (field.suffix != null) {
+				sb.append(' ');
+				sb.append(field.suffix);
+			}
+		}
+		sb.append(")");
+		db.execSQL(sb.toString());
+	}
+
+	private void createIndexPerVersion(SQLiteDatabase db) {
+		db.execSQL("create unique index if not exists index_PerVersion_01 on " + Table.PerVersion.tableName() + " (" + Table.PerVersion.versionId + ")");
 	}
 
 	void createTableVersion(SQLiteDatabase db) {

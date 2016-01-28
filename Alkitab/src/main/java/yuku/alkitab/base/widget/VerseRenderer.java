@@ -22,7 +22,6 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.debug.R;
 
@@ -318,7 +317,6 @@ public class VerseRenderer {
 			} else {
 				lVerseNumber.setVisibility(View.VISIBLE);
 				lVerseNumber.setText(verseNumberText);
-				Appearances.applyVerseNumberAppearance(lVerseNumber);
 				if (checked) {
 					lVerseNumber.setTextColor(U.getTextColorForSelectedVerse(Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default))); // override with black or white!
 				}

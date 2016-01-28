@@ -501,7 +501,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		updateButtonStatus();
 	}
 
-	private void updateButtonStatus() {            //TODO look disabled
+	private void updateButtonStatus() {
 		if (readingPlan == null) {
 			return;
 		}

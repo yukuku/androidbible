@@ -13,6 +13,10 @@ public abstract class SingleChapterVerses {
 		"60", "61", "62", "63", "64", "65", "66", "67", "68", "69",
 		"70", "71", "72", "73", "74", "75", "76", "77", "78", "79",
 	}; // up to [79]
+
+	public interface WithTextSizeMult {
+		float getTextSizeMult(int verse_0);
+	}
 	
 	public abstract String getVerse(int verse_0);
 

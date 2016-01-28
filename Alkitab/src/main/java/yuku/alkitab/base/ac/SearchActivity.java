@@ -92,6 +92,7 @@ public class SearchActivity extends BaseActivity {
 	SearchAdapter adapter;
 	Version searchInVersion;
 	String searchInVersionId;
+	float textSizeMult;
 	SearchHistoryAdapter searchHistoryAdapter;
 	ActionMode actionMode;
 
@@ -293,6 +294,7 @@ public class SearchActivity extends BaseActivity {
 
 		searchInVersion = S.activeVersion;
 		searchInVersionId = S.activeVersionId;
+		textSizeMult = S.getDb().getPerVersionSettings(searchInVersionId).fontSizeMultiplier;
 		bVersion.setOnClickListener(bVersion_click);
 
 		searchView = V.get(SearchActivity.this, R.id.searchView);
@@ -364,7 +366,7 @@ public class SearchActivity extends BaseActivity {
 		lsSearchResults.setBackgroundColor(S.applied.backgroundColor);
 		lsSearchResults.setCacheColorHint(S.applied.backgroundColor);
 		lsSearchResults.setEmptyView(tSearchTips);
-		Appearances.applyTextAppearance(tSearchTips);
+		Appearances.applyTextAppearance(tSearchTips, textSizeMult);
 		
 		hiliteColor = U.getSearchKeywordTextColorByBrightness(S.applied.backgroundBrightness);
 
@@ -613,6 +615,8 @@ public class SearchActivity extends BaseActivity {
 
 					searchInVersion = selectedVersion;
 					searchInVersionId = mv.getVersionId();
+					textSizeMult = S.getDb().getPerVersionSettings(searchInVersionId).fontSizeMultiplier;
+					Appearances.applyTextAppearance(tSearchTips, textSizeMult);
 
 					displaySearchInVersion();
 					configureFilterDisplayOldNewTest();
@@ -889,12 +893,12 @@ public class SearchActivity extends BaseActivity {
 			final int ari = searchResults.get(position);
 
 			final SpannableStringBuilder sb = new SpannableStringBuilder(searchInVersion.reference(ari));
-			Appearances.applySearchResultReferenceAppearance(lReference, sb);
+			Appearances.applySearchResultReferenceAppearance(lReference, sb, textSizeMult);
 			if (checked) {
 				lReference.setTextColor(checkedTextColor);
 			}
 
-			Appearances.applyTextAppearance(lSnippet);
+			Appearances.applyTextAppearance(lSnippet, textSizeMult);
 			if (checked) {
 				lSnippet.setTextColor(checkedTextColor);
 			}

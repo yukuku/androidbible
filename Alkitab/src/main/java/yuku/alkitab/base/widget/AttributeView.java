@@ -14,6 +14,7 @@ import android.view.View;
 import yuku.alkitab.base.App;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
+import yuku.alkitab.model.Version;
 
 public class AttributeView extends View {
 	static final String TAG = AttributeView.class.getSimpleName();
@@ -54,6 +55,8 @@ public class AttributeView extends View {
 	float scale = 1.f;
 
 	private VersesView.AttributeListener attributeListener;
+	private Version version;
+	private String versionId;
 	private int ari;
 
 	public AttributeView(final Context context) {
@@ -262,7 +265,7 @@ public class AttributeView extends View {
 				final Bitmap b = getScaledBookmarkBitmap();
 				totalHeight += b.getHeight();
 				if (totalHeight > y) {
-					attributeListener.onBookmarkAttributeClick(ari);
+					attributeListener.onBookmarkAttributeClick(version, versionId, ari);
 					return true;
 				}
 			}
@@ -270,7 +273,7 @@ public class AttributeView extends View {
 				final Bitmap b = getScaledNoteBitmap();
 				totalHeight += b.getHeight();
 				if (totalHeight > y) {
-					attributeListener.onNoteAttributeClick(ari);
+					attributeListener.onNoteAttributeClick(version, versionId, ari);
 					return true;
 				}
 			}
@@ -280,7 +283,7 @@ public class AttributeView extends View {
 						final Bitmap b = getScaledProgressMarkBitmapByPresetId(preset_id);
 						totalHeight += b.getHeight();
 						if (totalHeight > y) {
-							attributeListener.onProgressMarkAttributeClick(preset_id);
+							attributeListener.onProgressMarkAttributeClick(version, versionId, preset_id);
 							return true;
 						}
 					}
@@ -290,7 +293,7 @@ public class AttributeView extends View {
 				final Bitmap b = getScaledHasMapsBitmap();
 				totalHeight += b.getHeight();
 				if (totalHeight > y) {
-					attributeListener.onHasMapsAttributeClick(ari);
+					attributeListener.onHasMapsAttributeClick(version, versionId, ari);
 					return true;
 				}
 			}
@@ -300,8 +303,10 @@ public class AttributeView extends View {
 		return false;
 	}
 
-	public void setAttributeListener(VersesView.AttributeListener attributeListener, int ari) {
+	public void setAttributeListener(VersesView.AttributeListener attributeListener, final Version version, final String versionId, int ari) {
 		this.attributeListener = attributeListener;
+		this.version = version;
+		this.versionId = versionId;
 		this.ari = ari;
 	}
 

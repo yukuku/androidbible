@@ -3,7 +3,7 @@
 
 	<dimen name="split_handle_thickness">24dp</dimen>
 
-	<dimen name="panel_text_appearance_width">320dp</dimen>
+	<dimen name="panel_text_appearance_width">240dp</dimen>
 
 	<dimen name="reading_plan_day_heading_side_padding">0dp</dimen>
 

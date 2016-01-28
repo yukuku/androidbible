@@ -20,6 +20,7 @@ import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.PericopeBlock;
+import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 
@@ -90,20 +91,31 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			final Highlights.Info highlightInfo = highlightInfoMap_ == null ? null : highlightInfoMap_[id];
 
 			final VerseTextView lText = res.lText;
-			final int startVerseTextPos = VerseRenderer.render(lText, res.lVerseNumber, ari, text, verseNumberText, highlightInfo, checked, dontPutSpacingBefore, inlineLinkSpanFactory_, null);
+			final TextView lVerseNumber = res.lVerseNumber;
 
-			Appearances.applyTextAppearance(lText);
+			final int startVerseTextPos = VerseRenderer.render(lText, lVerseNumber, ari, text, verseNumberText, highlightInfo, checked, dontPutSpacingBefore, inlineLinkSpanFactory_, null);
+
+			final float textSizeMult;
+			if (verses_ instanceof SingleChapterVerses.WithTextSizeMult) {
+				textSizeMult = ((SingleChapterVerses.WithTextSizeMult) verses_).getTextSizeMult(id);
+			} else {
+				textSizeMult = textSizeMult_;
+			}
+
+			Appearances.applyTextAppearance(lText, textSizeMult);
+			Appearances.applyVerseNumberAppearance(lVerseNumber, textSizeMult);
+
 			if (checked) {
 				lText.setTextColor(U.getTextColorForSelectedVerse(Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default))); // override with black or white!
 			}
 
 			final AttributeView attributeView = res.attributeView;
-			attributeView.setScale(scaleForAttributeView(S.applied.fontSize2dp));
+			attributeView.setScale(scaleForAttributeView(S.applied.fontSize2dp * textSizeMult_));
 			attributeView.setBookmarkCount(bookmarkCountMap_ == null ? 0 : bookmarkCountMap_[id]);
 			attributeView.setNoteCount(noteCountMap_ == null ? 0 : noteCountMap_[id]);
 			attributeView.setProgressMarkBits(progressMarkBitsMap_ == null ? 0 : progressMarkBitsMap_[id]);
 			attributeView.setHasMaps(hasMapsMap_ != null && hasMapsMap_[id]);
-			attributeView.setAttributeListener(attributeListener_, ari);
+			attributeView.setAttributeListener(attributeListener_, version_, versionId_, ari);
 
 			res.setCollapsed(text.length() == 0 && !attributeView.isShowingSomething());
 
@@ -200,7 +212,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 
 			res.setPadding(0, paddingTop, 0, S.applied.pericopeSpacingBottom);
 
-			Appearances.applyPericopeTitleAppearance(lCaption);
+			Appearances.applyPericopeTitleAppearance(lCaption, textSizeMult_);
 
 			// make parallel gone if not exist
 			if (pericopeBlock.parallels.length == 0) {
@@ -228,7 +240,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				sb.append(')');
 
 				lParallels.setText(sb, BufferType.SPANNABLE);
-				Appearances.applyPericopeParallelTextAppearance(lParallels);
+				Appearances.applyPericopeParallelTextAppearance(lParallels, textSizeMult_);
 			}
 
 			return res;

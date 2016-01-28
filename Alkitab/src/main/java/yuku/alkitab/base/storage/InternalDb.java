@@ -29,6 +29,7 @@ import yuku.alkitab.base.devotion.DevotionArticle;
 import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.model.MVersionInternal;
+import yuku.alkitab.base.model.PerVersionSettings;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.model.SyncLog;
 import yuku.alkitab.base.model.SyncShadow;
@@ -1833,6 +1834,24 @@ public class InternalDb {
 		} finally {
 			c.close();
 		}
+	}
+
+	@NonNull public PerVersionSettings getPerVersionSettings(@NonNull final String versionId) {
+		try (Cursor c = helper.getReadableDatabase().query(Table.PerVersion.tableName(), ToStringArray(Table.PerVersion.settings), Table.PerVersion.versionId + "=?", Array(versionId), null, null, null)) {
+			if (c.moveToNext()) {
+				return App.getDefaultGson().fromJson(c.getString(0), PerVersionSettings.class);
+			} else {
+				return PerVersionSettings.createDefault();
+			}
+		}
+	}
+
+	public void storePerVersionSettings(@NonNull final String versionId, @NonNull PerVersionSettings settings) {
+		final ContentValues cv = new ContentValues();
+		cv.put(Table.PerVersion.versionId.name(), versionId);
+		cv.put(Table.PerVersion.settings.name(), App.getDefaultGson().toJson(settings));
+
+		helper.getWritableDatabase().replace(Table.PerVersion.tableName(), null, cv);
 	}
 
 	// Do not use this except in rare circumstances
