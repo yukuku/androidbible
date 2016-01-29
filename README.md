@@ -6,8 +6,8 @@ Bible for Android
 Get in on Google Play: <a href="https://play.google.com/store/apps/details?id=yuku.alkitab">Alkitab</a> (Indonesian version) or <a href="https://play.google.com/store/apps/details?id=yuku.alkitab.kjv">Quick Bible</a> (non-Indonesian version)
 
 - <a href="http://www.bibleforandroid.com">Official Website</a>
-- <a href="http://www.bibleforandroid.com/changelog">Changelog</a> and <a href="http://blog.bibleforandroid.com">Development Blog</a>
-- <a href="http://groups.google.com/group/bibleforandroid">Discussion Group and Beta Testers</a>
+- <a href="http://www.bibleforandroid.com/changelog">Changelog and Beta Testers</a> and <a href="http://blog.bibleforandroid.com">Development Blog</a>
+- <a href="http://groups.google.com/group/bibleforandroid">Discussion Group</a>
 
 By the way, Alkitab is the Indonesian word for the Bible.
 
@@ -16,8 +16,9 @@ Bible translations/versions
 
 This app natively uses *.yes* files for the Bible text. You can create a *.yes* file easily by preparing a plain text file. See <a href="http://www.bibleforandroid.com/developer">this page for</a> instructions.
 
-You can also convert PalmBible+ PDB files using the built-in converter in the app or use the <a href="http://pdb2yes.alkitab-host.appspot.com/">pdb2yes online converter</a> 
-that produces compressed YES files.
+You can also convert PalmBible+ PDB files using the built-in converter in the app for your own use. 
+
+Tools for converting PalmBible+ PDB files to *.yet* files, and from *.yet* files to *.yes* files and internal app files, are available at https://goo.gl/3wo5zv.
 
 Customizing and Integrating
 ---------------------------
