@@ -9,7 +9,7 @@ Get in on Google Play: <a href="https://play.google.com/store/apps/details?id=yu
 - <a href="http://www.bibleforandroid.com/changelog">Changelog and Beta Testers</a> and <a href="http://blog.bibleforandroid.com">Development Blog</a>
 - <a href="http://groups.google.com/group/bibleforandroid">Discussion Group</a>
 
-By the way, Alkitab is the Indonesian word for the Bible.
+Alkitab is the Indonesian word for the Bible.
 
 Bible translations/versions
 ---------------------------
@@ -23,7 +23,13 @@ Tools for converting PalmBible+ PDB files to *.yet* files, and from *.yet* files
 Customizing and Integrating
 ---------------------------
 
-Bible for Android is not only open-source, but also designed in a flexible manner. Not only you can read, learn and meditate with the app, but you can extend it to include your own resources, as well as getting and displaying verses from your own apps.
+Bible for Android is not only open-source, but also designed in a flexible manner. You can:
+
+- Create and distribute your own Bible translation
+- Create and make publicly available your favorite Song Book
+- Create and publish a Reading Plan
+- Open specific verses from your app
+- Make your own app that gives further insight regarding specific verses callable by Alkitab / Quick Bible
 
 See the <a href="http://www.bibleforandroid.com/developer">Developer page</a> for more information.
 
