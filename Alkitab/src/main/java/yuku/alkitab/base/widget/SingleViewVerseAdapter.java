@@ -248,15 +248,14 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 	}
 
 	static float scaleForAttributeView(final float fontSizeDp) {
-		if (fontSizeDp >= 13 /* 76% */ && fontSizeDp < 22 /* 129% */) {
+		if (fontSizeDp >= 13 /* 72% */ && fontSizeDp < 24 /* 133% */) {
 			return 1.f;
 		}
 
-		if (fontSizeDp < 10) return 0.5f;
-		if (fontSizeDp < 17) return 0.75f;
-		if (fontSizeDp >= 38) return 3.f;
-		if (fontSizeDp >= 30) return 2.f;
-		return 1.5f; // 22 to 30
+		if (fontSizeDp < 8) return 0.5f; // 0 ~ 44%
+		if (fontSizeDp < 18) return 0.75f; // 44% ~ 72%
+		if (fontSizeDp >= 36) return 2.f; // 200% ~
+		return 1.5f; // 24 to 36 // 133% ~ 200%
 	}
 
 	private void appendParallel(SpannableStringBuilder sb, String parallel) {
