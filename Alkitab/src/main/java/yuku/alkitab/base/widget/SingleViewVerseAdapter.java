@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.TextView.BufferType;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -239,7 +238,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				}
 				sb.append(')');
 
-				lParallels.setText(sb, BufferType.SPANNABLE);
+				lParallels.setText(sb, TextView.BufferType.SPANNABLE);
 				Appearances.applyPericopeParallelTextAppearance(lParallels, textSizeMult_);
 			}
 
