@@ -168,14 +168,9 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 
 	chmod +x ./gradlew
 	echo 'Running gradlew from' `pwd`
-	./gradlew --no-daemon assemblePlainRelease --info || echo GAGAAAAAALLLLL
+	./gradlew --no-daemon assemble${FLAVOR^}Release
 
-	FINAL_APK="$BUILD_MAIN_PROJECT_DIR/build/outputs/apk/$MAIN_PROJECT_NAME-plain-release.apk"
-
-	# rebuild when not successful yet
-	if [ \! -r "$FINAL_APK" ] ; then
-		./gradlew --no-daemon assemblePlainRelease --info
-	fi
+	FINAL_APK="$BUILD_MAIN_PROJECT_DIR/build/outputs/apk/$MAIN_PROJECT_NAME-$FLAVOR-release.apk"
 
 	if [ \! -r "$FINAL_APK" ] ; then
 		echo "$FINAL_APK" 'not found.'
@@ -187,14 +182,3 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 	echo 'BUILD SUCCESSFUL. Output:' "$OUTPUT"
 
 popd
-
-
-
-
-
-
-
-
-
-
-
