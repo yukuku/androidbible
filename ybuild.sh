@@ -155,19 +155,6 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 			exit 1
 		fi
 
-		echo "Overlaying files from $PKGDIST..."
-		overlay 'analytics_trackingId.xml' 'res/values/analytics_trackingId.xml'
-		overlay 'app_config.xml' 'res/xml/app_config.xml'
-		overlay 'version_config.json' 'assets/version_config.json'
-		overlay 'app_name.xml' 'res/values/app_name.xml'
-		overlay 'pref_language_default.xml' 'res/values/pref_language_default.xml'
-		overlay 'drawable-mdpi/ic_launcher.png' 'res/drawable-mdpi/ic_launcher.png'
-		overlay 'drawable-hdpi/ic_launcher.png' 'res/drawable-hdpi/ic_launcher.png'
-		overlay 'drawable-xhdpi/ic_launcher.png' 'res/drawable-xhdpi/ic_launcher.png'
-		overlay 'drawable-xxhdpi/ic_launcher.png' 'res/drawable-xxhdpi/ic_launcher.png'
-		overlay 'drawable-xxxhdpi/ic_launcher.png' 'res/drawable-xxxhdpi/ic_launcher.png'
-		overlay 'drawable-nodpi/daily_verse_app_widget_preview.png' 'res/drawable-nodpi/daily_verse_app_widget_preview.png'
-
 		# END BUILD-SPECIFIC
 
 		MANIFEST_PACKAGE_NAME=`get_attr ../../build.gradle applicationId`

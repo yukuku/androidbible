@@ -45,6 +45,17 @@ android {
         }
         plain {
         }
+
+        // The following flavors are for release
+        yuku_alkitab {
+            applicationId 'yuku.alkitab'
+        }
+        yuku_quick_bible {
+            applicationId 'yuku.alkitab.kjv'
+        }
+        sabda_alkitab {
+            applicationId 'org.sabda.alkitab'
+        }
     }
 }
 
