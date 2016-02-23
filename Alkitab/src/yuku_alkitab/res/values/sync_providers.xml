@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sync_provider_authority" translatable="false">yuku.alkitab.sync_provider</string>
+</resources>

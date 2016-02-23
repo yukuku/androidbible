@@ -36,6 +36,11 @@ if [ "$SIGN_PASSWORD" == "" ] ; then
 	exit 1
 fi
 
+if [ "$FLAVOR" == "" ] ; then
+	echo 'FLAVOR not defined'
+	exit 1
+fi
+
 if [ \! \( -d "$MAIN_PROJECT_NAME" \) ] ; then
 	echo "Must be run from $SUPER_PROJECT_NAME dir, which contains $MAIN_PROJECT_NAME, etc directories"
 	exit 1
@@ -126,23 +131,8 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 		echo '  BUILD_PACKAGE_NAME    = ' $BUILD_PACKAGE_NAME
 		echo '  BUILD_DIST            = ' $BUILD_DIST
 		echo '  PKGDIST               = ' $PKGDIST
+		echo '  FLAVOR                = ' $FLAVOR
 		echo '========================================='
-
-		echo 'Replacing applicationId in build.gradle...'
-		sed -i '' "s/applicationId .*/applicationId '$BUILD_PACKAGE_NAME'/" ../../build.gradle
-
-		echo "Replacing verse provider name following package name: '$BUILD_PACKAGE_NAME.provider'"
-		sed -i '' 's/android:authorities="yuku.alkitab.debug.provider"/android:authorities="'$BUILD_PACKAGE_NAME.provider'"/' AndroidManifest.xml
-
-		echo 'Replacing GCM component names to this app package name:' $BUILD_PACKAGE_NAME
-		sed -i '' 's/<category android:name="yuku.alkitab.debug"/<category android:name="'$BUILD_PACKAGE_NAME'"/' AndroidManifest.xml
-		sed -i '' 's/yuku.alkitab.debug.permission.C2D_MESSAGE/'$BUILD_PACKAGE_NAME'.permission.C2D_MESSAGE/' AndroidManifest.xml
-
-		echo "Replacing sync provider name following package name: '$BUILD_PACKAGE_NAME.sync_provider'"
-		sed -i '' 's/yuku.alkitab.debug.sync_provider/'$BUILD_PACKAGE_NAME'.sync_provider/' res/values/sync_providers.xml
-
-		echo "Replacing account type / authority name following package name: '$BUILD_PACKAGE_NAME'"
-		sed -i '' 's/yuku.alkitab.debug/'$BUILD_PACKAGE_NAME'/' res/values/account_type.xml
 
 		echo 'Removing dummy version on assets/internal...'
 		rm -rf assets/internal
@@ -157,13 +147,11 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 
 		# END BUILD-SPECIFIC
 
-		MANIFEST_PACKAGE_NAME=`get_attr ../../build.gradle applicationId`
 		MANIFEST_VERSION_CODE=`get_attr ../../build.gradle versionCode`
 		MANIFEST_VERSION_NAME=`get_attr ../../build.gradle versionName`
 
 		echo '========================================='
 		echo 'From build.gradle:'
-		echo '  Package name    = ' $MANIFEST_PACKAGE_NAME
 		echo '  Version code    = ' $MANIFEST_VERSION_CODE
 		echo '  Version name    = ' $MANIFEST_VERSION_NAME
 		echo ''
