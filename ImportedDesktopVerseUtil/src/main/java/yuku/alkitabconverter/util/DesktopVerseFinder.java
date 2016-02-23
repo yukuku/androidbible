@@ -46,17 +46,14 @@ public class DesktopVerseFinder {
 
 		while (match_1.find()) {
 			// to solve the problem of "Dan" book
-			char firstLetter = match_1.group(3).charAt(0);
-			if (firstLetter == 'd' /* "dan" instead of "Dan" */) { 
-				continue;
-			} else {
+			if (!"dan".equals(match_1.group(4))) {
 				int beginVerse = match_1.start(2);
 				int endVerse = match_1.end(2);
 
 				// pola yang tertangkap akan di split nodenya untuk disisip tag "a"
 				// node2 = node3.splitText(node3.length - (match_1[6].length + match_1[2].length));
 				// node3 = node2.splitText(match_1[2].length);
-				
+
 				// newPattern to replace Kej.5:4 pattern become Kej 5:4
 				String newPattern = match_1.group(2).replaceFirst("\\.", " ");
 				// if there is word "dan" in pattern, "dan" will remove
