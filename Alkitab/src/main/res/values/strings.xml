@@ -254,6 +254,7 @@
     <string name="sn_menu_private_song_book">Private song book</string>
     <string name="sn_private_song_book_dialog_desc">Download a private (hidden) song book</string>
     <string name="sn_private_song_book_name_hint">Song book name</string>
+	<string name="sn_play_in_loop">Do you want to play on a loop until stopped?</string>
 
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Previous day</string>
