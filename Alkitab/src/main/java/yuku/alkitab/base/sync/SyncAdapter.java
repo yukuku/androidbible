@@ -142,7 +142,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 				if (!Preferences.getBoolean(Sync.prefkeyForSyncSetEnabled(syncSetName), true)) {
 					SyncRecorder.log(SyncRecorder.EventKind.sync_adapter_set_not_enabled, syncSetName);
 
-					return;
+					continue;
 				}
 
 				switch (syncSetName) {
