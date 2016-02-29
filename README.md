@@ -3,7 +3,7 @@ Bible for Android
 
 **100% Free, Open-Source, Quick and Friendly Bible App.**
 
-Get in on Google Play: <a href="https://play.google.com/store/apps/details?id=yuku.alkitab">Alkitab</a> (Indonesian version) or <a href="https://play.google.com/store/apps/details?id=yuku.alkitab.kjv">Quick Bible</a> (non-Indonesian version). You can also download them from the <a href="https://github.com/yukuku/androidbible/releases">Releases</a> page.
+Get the apps on Google Play: <a href="https://play.google.com/store/apps/details?id=yuku.alkitab">Alkitab</a> (Indonesian version) or <a href="https://play.google.com/store/apps/details?id=yuku.alkitab.kjv">Quick Bible</a> (non-Indonesian version). You can also download them from the <a href="https://github.com/yukuku/androidbible/releases">Releases</a> page.
 
 - <a href="http://www.bibleforandroid.com">Official Website</a>
 - <a href="http://www.bibleforandroid.com/changelog">Changelog and Beta Testers</a> and <a href="http://blog.bibleforandroid.com">Development Blog</a>
