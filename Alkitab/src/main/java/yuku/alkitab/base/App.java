@@ -179,6 +179,8 @@ public class App extends yuku.afw.App {
 				return Locale.SIMPLIFIED_CHINESE;
 			case "zh-TW":
 				return Locale.TRADITIONAL_CHINESE;
+			case "zh-HK":
+				return Locale.TRADITIONAL_CHINESE;
 			default:
 				return new Locale(lang);
 		}
