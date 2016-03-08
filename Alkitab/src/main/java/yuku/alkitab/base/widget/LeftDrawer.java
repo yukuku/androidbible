@@ -90,6 +90,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 		if (!isInEditMode()) {
 			bSongs.setVisibility(AppConfig.get().menuSongs? VISIBLE: GONE);
 			bDevotion.setVisibility(AppConfig.get().menuDevotion? VISIBLE: GONE);
+			bReadingPlan.setVisibility(AppConfig.get().menuReadingPlan? VISIBLE: GONE);
 		}
 
 		bBible.setOnClickListener(v -> {
