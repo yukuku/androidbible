@@ -42,7 +42,7 @@ public class Proses1 {
 			
 			if (rec.text.startsWith("@@@8")) {
 				Rec recSblum = xrec.get(i - 1);
-				if (recSblum.book_1 == rec.book_1 && recSblum.chapter_1 == recSblum.chapter_1) {
+				if (recSblum.book_1 == rec.book_1 && recSblum.chapter_1 == rec.chapter_1) {
 					while (rec.text.substring(2, 4).equals("@8")) {
 						rec.text = "@@" + rec.text.substring(4); // buang @8
 						recSblum.text = recSblum.text + "@8"; // tambah @8
