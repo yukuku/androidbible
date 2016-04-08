@@ -98,6 +98,7 @@
   <string name="cp_writing_translated_file">変換したファイルを書き込んでいます.</string>
   <string name="cp_reading_book_info">%s の情報を読み出しています.</string>
   <string name="cp_writing_text_of_book_chapters">%1$s 書 (%2$s 章) のテキストを書き込んでいます.</string>
+  <!-- Versions -->
   <string name="ed_type_key">種類</string>
   <string name="ed_type_internal">ビルトイン</string>
   <string name="ed_type_preset">ダウンロード可能</string>
@@ -198,15 +199,18 @@
   <string name="verse_select_one_verse_selected">１節セレクトしました</string>
   <string name="verse_select_multiple_verse_selected">%s節セレクトしました</string>
   <string name="google_play_store_not_installed">Google Play ストアがインストールされていません。</string>
+  <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">電話風</string>
   <string name="goto_tab_direct_label">直接</string>
   <string name="goto_tab_grid_label">グリッド</string>
+  <!-- Font Manager -->
   <string name="fm_activity_title">フォント管理</string>
   <string name="fm_need_to_log_in_to_wifi">まずネットワーク(Wi-Fi)にログインする必要があります.</string>
   <string name="fm_do_you_want_to_delete">%s フォントを削除しますか?</string>
   <string name="fm_error_when_extracting_font">フォント %1$s: %2$s の取出し時にエラーが発生しました.</string>
   <string name="fm_loading_ellipsis">ロード中です...</string>
   <string name="dl_failed_to_rename_temporary_file">一時ファイル名の変更に失敗しました.</string>
+  <!-- Songs -->
   <string name="menuSongs">聖歌</string>
   <string name="sn_deep_search_enabled">聖唱など</string>
   <string name="sn_songs_activity_title">聖歌</string>
@@ -226,6 +230,7 @@
   <string name="sn_update_book_confirm_button">アップデート</string>
   <string name="sn_update_book">聖歌集をアップデートする</string>
   <string name="sn_update_book_because_too_old">最初に^1を最新版にアップデートしてください。アップデート後、編集内容を送ってください。</string>
+  <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">昨日</string>
   <string name="desc_next_day">翌日</string>
   <string name="desc_open_bookmark">ブックマークを開く</string>
@@ -294,6 +299,7 @@
   <string name="dv_option_transparent_background">背景を透過にする</string>
   <string name="dv_option_dark_text">文字を暗くする</string>
   <string name="dv_option_text_size">文字の大きさ</string>
+  <!-- Reading plan -->
   <string name="rp_menuReadingPlan">読書プラン</string>
   <string name="rp_commentActual">完了: %s%%</string>
   <string name="rp_commentTarget">目標： %s%%</string>
@@ -443,6 +449,7 @@
   <string name="sync_login_form_change_password_success">パスワードの変更が完了しました。</string>
   <string name="pref_textPadding_title">文字の周りの余白</string>
   <string name="pref_textPadding_summary">読みやすくするために文字を細くする。</string>
+  <!-- devotion reminder -->
   <string name="dr_app_name">リマインダー</string>
   <string name="dr_notification_title">日々のデボーション</string>
   <string name="dr_notification_text">今日のデボーションを読む。</string>
@@ -452,6 +459,7 @@
   <string name="dr_vibrate">バイブレート</string>
   <string name="dr_pref_notification_message">リマインダーの内容</string>
   <string name="dr_default_sound">初期の音</string>
+  <!-- about -->
   <string name="about_translators">翻訳者</string>
   <string name="about_user_guide">使用ガイド</string>
   <string name="about_beta_feedback">ベータ版のフィードバック</string>
@@ -461,6 +469,7 @@
   <string name="about_announcements_none">新着情報(0件)</string>
   <string name="about_announcements_number">新着情報(%s件)</string>
   <string name="about_announcement_load_failed">新着情報を表示できませんでした。</string>
+  <!-- marker and label migration -->
   <string name="marker_migrate_introduction">古いバージョン(Yuku Quick Bible v3)のバックアップファイルが見つかりました。栞、ノート、ラベルやマーカーなどの情報が保存されています。\n\nこのアプリにインポートしますか？</string>
   <string name="marker_migrate_later">後で</string>
   <string name="marker_migrate_title">栞をインポートする</string>
@@ -470,13 +479,19 @@
   <string name="marker_migrate_import_from_newest">一番新しいバックアップをインポート (推薦)</string>
   <string name="marker_migrate_import_from_other">他のバックアップ</string>
   <string name="marker_migrate_filename_dated">%1$s日付%2$s</string>
+  <!-- Announcements -->
   <string name="announce_notif_title">%sの新着情報</string>
   <string name="announce_notif_number_new_announcements">%s件の新着情報</string>
+  <!-- Dictionary -->
   <string name="menuDictionary">辞書</string>
   <string name="dict_open_full">辞書を開く</string>
   <string name="dict_no_results">セレクトされた文字の定義は見つかりませんでした。</string>
   <string name="dict_download_prompt">「聖書辞書」をダウンロードし聖書の単語を学ぼう！</string>
   <string name="dict_download_button">ダウンロード</string>
+  <!-- Guide -->
   <string name="menuGuide">ガイド</string>
+  <!-- Commentary -->
   <string name="menuCommentary">解説</string>
+  <!-- Maps -->
+  <!-- File chooser -->
 </resources>

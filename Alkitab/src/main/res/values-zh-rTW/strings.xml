@@ -27,9 +27,16 @@
   <string name="menu_markers">標記</string>
   <string name="hapus_pembatas_buku">刪除書籤</string>
   <string name="menuShare">分享</string>
+  <string name="menuShareSplit0">分享原始版本</string>
+  <string name="menuShareSplit1">分享第二版本</string>
+  <string name="menuShareBothSplits">分享兩個版本</string>
   <string name="tulis_catatan">書寫筆記</string>
   <string name="tambah_pembatas_buku">新增書籤</string>
   <string name="salin_ayat">複製經節</string>
+  <string name="copy_split0">複製原始版本</string>
+  <string name="copy_split1">複製第二版本</string>
+  <string name="copy_both_splits">複製兩個版本</string>
+  <string name="search_copy_selected_verses">複製所選經節</string>
   <string name="perj_baru">新約</string>
   <string name="perj_lama">舊約</string>
   <string name="search_bookname_only">只有%s</string>
@@ -63,6 +70,7 @@
   <string name="mengunduh_nama">下載 %s 中</string>
   <string name="tuju_v">前往</string>
   <string name="bagikan_alamat">分享 %s</string>
+  <string name="search_selected_verse_copied">所選經節已被複製</string>
   <string name="alamat_sudah_disalin">%s 已被複製.</string>
   <string name="alamat_tidak_sah_alamat">錯誤位置: %s</string>
   <string name="no">否</string>
@@ -87,6 +95,7 @@
   <string name="pdb_encoding">PDF檔案編碼</string>
   <string name="sample_text">範例文字</string>
   <string name="include_book_and_chapter_headers">包含書卷與章節標題</string>
+  <string name="select_all">全選</string>
   <string name="cp_opening_pdb_file">開啟PDB檔案中</string>
   <string name="cp_loading_version_info">載入版本資訊中</string>
   <string name="cp_loading_word_index">載入文字索引中</string>
@@ -98,6 +107,7 @@
   <string name="cp_writing_translated_file">寫入翻譯檔案</string>
   <string name="cp_reading_book_info">讀取書卷資訊中: %s</string>
   <string name="cp_writing_text_of_book_chapters">寫入書卷文字 %1$s (%2$s 章)</string>
+  <!-- Versions -->
   <string name="ed_type_key">類別</string>
   <string name="ed_type_internal">內置</string>
   <string name="ed_type_preset">可供下載</string>
@@ -189,8 +199,10 @@
   <string name="color_settings_title">配色</string>
   <string name="color_settings_night_title">配色（夜間模式）</string>
   <string name="menuDisplay">顯示</string>
+  <string name="text_appearance_font">字型</string>
   <string name="text_appearance_theme_custom">設置</string>
   <string name="text_appearance_text_size">文字大小</string>
+  <string name="text_appearance_text_size_for_version">^1的文字大小</string>
   <string name="text_appearance_line_spacing">行距</string>
   <string name="text_appearance_bold">粗體</string>
   <string name="devotion_change_date">更改日期</string>
@@ -200,16 +212,21 @@
   <string name="google_play_store_not_installed">尚未安裝谷歌商店。</string>
   <string name="pref_language_label_default">預設</string>
   <string name="market_short_desc">快速、可靠與多功能的離線聖經。</string>
+  <string name="no_url_for_facebook">這不可以分享到臉書。</string>
+  <string name="storage_permission_rationale">我們需要存取儲存裝置，以便儲存如聖經版本及字型的共享媒體。</string>
+  <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">撥號按鍵</string>
   <string name="goto_tab_direct_label">直接輸入</string>
   <string name="goto_tab_grid_label">格狀排列</string>
   <string name="menuAskForVerse">需要節數</string>
+  <!-- Font Manager -->
   <string name="fm_activity_title">字型管理</string>
   <string name="fm_need_to_log_in_to_wifi">你必須先登入你的Wi-Fi網路</string>
   <string name="fm_do_you_want_to_delete">刪除字體%s？</string>
   <string name="fm_error_when_extracting_font">擷取文字時發生錯誤 %1$s: %2$s</string>
   <string name="fm_loading_ellipsis">載入中...</string>
   <string name="dl_failed_to_rename_temporary_file">暫存檔改名失敗</string>
+  <!-- Songs -->
   <string name="menuSongs">歌</string>
   <string name="sn_deep_search_enabled">歌詞, 等等.</string>
   <string name="sn_songs_activity_title">歌</string>
@@ -229,6 +246,10 @@
   <string name="sn_update_book_confirm_button">更新</string>
   <string name="sn_update_book">更新歌書。</string>
   <string name="sn_update_book_because_too_old">繼續之前請更新^1到最新的版本。更新後，如有需要請傳送你的編輯。</string>
+  <string name="sn_menu_private_song_book">私人的詩歌書</string>
+  <string name="sn_private_song_book_dialog_desc">下載私人的（隱藏）詩歌書</string>
+  <string name="sn_private_song_book_name_hint">詩歌書名稱</string>
+  <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">前一天</string>
   <string name="desc_next_day">後一天</string>
   <string name="desc_open_bookmark">開啟書籤</string>
@@ -298,11 +319,13 @@
   <string name="dv_option_transparent_background">透明的背景</string>
   <string name="dv_option_dark_text">深色文字</string>
   <string name="dv_option_text_size">文字大小</string>
+  <!-- Reading plan -->
   <string name="rp_menuReadingPlan">閱讀計劃</string>
   <string name="rp_commentActual">完成度：%s%%</string>
   <string name="rp_commentTarget">目標：%s%%</string>
   <string name="rp_commentOnSchedule">按照原定的計劃</string>
   <string name="rp_commentBehindSchedule">落後於計劃：%s%%</string>
+  <string name="rp_commentAheadSchedule">超前於計劃：%s%%</string>
   <string name="rp_noReadingPlanAvailable">沒有更多可選的閱讀計劃。</string>
   <string name="rp_deletePlan">
 \"刪除\'%s\'？\"</string>
@@ -340,6 +363,7 @@
   <string name="rp_mark_as_read_up_to">至到這裡標示為己閱讀？</string>
   <string name="version_download_need_fonts">"您下載的版本需要某種字體以正確顯示。請到「文字外觀」目錄，並選擇某種字體。希臘語需要 Ubuntu 字體。緬甸語需要Parabaik，ParabaikSans 或 Myanmar3。泰米爾語需要 Akshar。泰盧固語需要 Suranna。"</string>
   <string name="version_download_corrupted_file">已下載的檔案似是無效的。</string>
+  <string name="version_download_saving_io_error">儲存已下載的版本時發生存取錯誤</string>
   <string name="menuNightMode">夜間模式</string>
   <string name="highlight_custom_color">其他顏色</string>
   <string name="menu_compare">比較</string>
@@ -348,6 +372,7 @@
   <string name="search_syntax_tips"><i>搜尋提示：</i>\n\n<b>+字詞</b>以搜尋準確的單字\n<b>[q]大衛城[q]</b>以搜尋準確的語句</string>
   <string name="search_no_result">找不到這經節 <b>^1</b>.</string>
   <string name="search_no_result_fallback">點此跳到 <u>^1</u>.</string>
+  <string name="search_clear_history">刪除搜尋紀錄</string>
   <string name="marker_transfer_to_device_title">轉移到另一台設備</string>
   <string name="marker_transfer_to_device_description">移動所有書籤、筆記和標記到另一台手機或平板，我們建議你使用谷歌電郵或其他電郵。</string>
   <string name="marker_transfer_to_computer_title">轉移以便編輯</string>
@@ -461,6 +486,7 @@
   <string name="pref_textPadding_summary">縮窄同一行的文字距離以方便閱讀</string>
   <string name="pref_bottomToolbarOnText_title">底部經文導覽</string>
   <string name="pref_bottomToolbarOnText_summary">把經節導覽列放置到聖經顯示底部</string>
+  <!-- devotion reminder -->
   <string name="dr_app_name">提醒</string>
   <string name="dr_notification_title">每日靈修</string>
   <string name="dr_notification_text">現在閱讀今日靈修。</string>
@@ -470,6 +496,7 @@
   <string name="dr_vibrate">震動</string>
   <string name="dr_pref_notification_message">提醒訊息</string>
   <string name="dr_default_sound">預設聲音</string>
+  <!-- about -->
   <string name="about_translators">譯者</string>
   <string name="about_user_guide">使用者指引</string>
   <string name="about_beta_feedback">測試版本回饋</string>
@@ -484,6 +511,7 @@
   <string name="about_announcement_load_failed">讀取公告失敗。</string>
   <string name="about_official_website">官方網站</string>
   <string name="about_project_page">計劃頁面</string>
+  <!-- marker and label migration -->
   <string name="marker_migrate_introduction">我們偵測到一個含有書簽、筆記、標記和標簽的v3 Yuku神速聖經舊版本的備份檔案。\n\n你想匯入它們，讓你在這個程式存取它們嗎？</string>
   <string name="marker_migrate_no_more">不再詢問</string>
   <string name="marker_migrate_later">現在別問我</string>
@@ -494,14 +522,21 @@
   <string name="marker_migrate_import_from_newest">是，匯入最新的（建議選項）</string>
   <string name="marker_migrate_import_from_other">其他備份</string>
   <string name="marker_migrate_filename_dated">%1$s日期%2$s</string>
+  <!-- Announcements -->
   <string name="announce_notif_title">%s 公告</string>
   <string name="announce_notif_number_new_announcements">%s 新的公告</string>
+  <!-- Dictionary -->
   <string name="menuDictionary">字典</string>
   <string name="dict_open_full">開啟字典</string>
   <string name="dict_no_results">找不到所選字詞的解釋。</string>
   <string name="dict_download_prompt">下載「聖經字典」以學習聖經中更多的字詞！</string>
   <string name="dict_download_button">下載</string>
+  <!-- Guide -->
   <string name="menuGuide">指引</string>
+  <!-- Commentary -->
   <string name="menuCommentary">注釋</string>
+  <!-- Maps -->
   <string name="maps_could_not_open">未能開啟聖經地圖程式。</string>
+  <!-- File chooser -->
+  <string name="filechooser_parent_folder">上一層資料夾</string>
 </resources>

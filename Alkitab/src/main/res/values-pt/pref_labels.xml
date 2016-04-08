@@ -22,6 +22,8 @@
   <string name="pref_copyWithShareUrl_summary">Adicionar link de página de compartilhamento ao final do texto copiado ou compartilhado</string>
   <string name="pref_autoDictionaryAnalyze_title">Analisar dicionário automaticamente</string>
   <string name="pref_autoDictionaryAnalyze_summary">Procurar no dicionário as palavras nos versículo selecionado</string>
+  <string name="pref_tapToEditNote_title">Pressione para editar a anotação</string>
+  <string name="pref_tapToEditNote_summary">Desmarque para previnir edições acidentais ao visualizar as notas existentes</string>
   <string name="pref_showHiddenVersion_title">Habilitar versões possivelmente restritas</string>
   <string name="pref_selectedVerseBgColor_title">Selecione o fundo do versículo</string>
 </resources>

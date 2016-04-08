@@ -98,6 +98,7 @@
   <string name="cp_writing_translated_file">Запис перекладеного файлу</string>
   <string name="cp_reading_book_info">Читання інфо про книгу: %s</string>
   <string name="cp_writing_text_of_book_chapters">Запис тексту книги  %1$s (%2$s розділів)</string>
+  <!-- Versions -->
   <string name="ed_type_key">Тип</string>
   <string name="ed_type_internal">Вбудований</string>
   <string name="ed_type_preset">Завантажувані</string>
@@ -188,6 +189,7 @@
   <string name="color_settings_title">Кольори</string>
   <string name="color_settings_night_title">Кольори (Нічний режим)</string>
   <string name="menuDisplay">Екран</string>
+  <string name="text_appearance_font">Шрифт</string>
   <string name="text_appearance_theme_custom">Індивідуалізація...</string>
   <string name="text_appearance_text_size">Розмір тексту</string>
   <string name="text_appearance_line_spacing">Міжрядковий інтервал</string>
@@ -196,15 +198,19 @@
   <string name="bookmark_search">Пошук</string>
   <string name="verse_select_one_verse_selected">1 вірш обрано</string>
   <string name="verse_select_multiple_verse_selected">%s віршів вибрано</string>
+  <string name="pref_language_label_default">За умовчанням</string>
+  <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Номеронабирач</string>
   <string name="goto_tab_direct_label">Прямолінійний</string>
   <string name="goto_tab_grid_label">Сітка</string>
+  <!-- Font Manager -->
   <string name="fm_activity_title">Налаштування шрифту</string>
   <string name="fm_need_to_log_in_to_wifi">Вам потрібно спочатку підключитися до вашої (Wi-Fi) мережі.</string>
   <string name="fm_do_you_want_to_delete">Видалити шрифт %s?</string>
   <string name="fm_error_when_extracting_font">Помилка під час розпакування шрифту %1$s: %2$s</string>
   <string name="fm_loading_ellipsis">Завантаження...</string>
   <string name="dl_failed_to_rename_temporary_file">Невдача при зміні назви тимчасового файлу</string>
+  <!-- Songs -->
   <string name="menuSongs">Псалми, пісні</string>
   <string name="sn_deep_search_enabled">Тексти пісень а також т.і.</string>
   <string name="sn_songs_activity_title">Псалми, пісні</string>
@@ -219,6 +225,7 @@
   <string name="sn_update_book_explanation">Оновіть книгу  ^1 до останньої версії.</string>
   <string name="sn_update_book_confirm_button">Оновлення</string>
   <string name="sn_update_book">Оновлення книги псалмів</string>
+  <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Попередній день</string>
   <string name="desc_next_day">Наступний день</string>
   <string name="desc_open_bookmark">Відкрити закладки</string>
@@ -282,6 +289,7 @@
   <string name="dv_option_transparent_background">Прозорий фон</string>
   <string name="dv_option_dark_text">Темний текст</string>
   <string name="dv_option_text_size">Розмір тексту</string>
+  <!-- Reading plan -->
   <string name="rp_menuReadingPlan">План читання</string>
   <string name="rp_commentActual">Закінчено: %s%%</string>
   <string name="rp_commentTarget">Мета: %s%%</string>
@@ -300,6 +308,7 @@
   <string name="rp_navigationGoToDate">Перейти до дати</string>
   <string name="rp_navigationNextDay">Наступний день</string>
   <string name="rp_menuDownload">Завантажити</string>
+  <string name="rp_menuRestart">Почати спочатку</string>
   <string name="rp_menuDelete">Видалити</string>
   <string name="rp_headingProgress">Прогрес</string>
   <string name="rp_showDetails">Показати подробиці</string>
@@ -365,14 +374,40 @@
   <string name="note_actionbar_delete">Видалити</string>
   <string name="note_actionbar_ok">Зроблено</string>
   <string name="note_activity_cannot_parse_verse">Вибачте, це посилання на вірш не розпізнано.</string>
+  <string name="pref_syncAccountName_title">Обліковий запис</string>
+  <string name="pref_sync_title">Сихнронізувати</string>
+  <string name="sync_menu_item_sync_now">Синхронізувати зараз</string>
+  <string name="sync_login_survey_religion_islam">Іслам</string>
+  <string name="sync_login_survey_religion_buddha">Буддизм</string>
+  <string name="sync_login_survey_religion_atheist">Атеїст</string>
+  <string name="sync_login_change_password_menu_item">Змінити пароль</string>
+  <string name="sync_login_change_password_button">Замінити пароль</string>
+  <string name="sync_login_form_password_hint">Пароль</string>
+  <string name="sync_login_form_email_hint">Email</string>
+  <string name="sync_login_form_forgot_button">Забули?</string>
   <string name="sync_login_form_city">Місто</string>
+  <string name="sync_login_form_login_button">Увійти</string>
+  <!-- devotion reminder -->
   <string name="dr_off">Вимкнути</string>
+  <string name="dr_alarm">Будильник</string>
+  <string name="dr_sound">Звук</string>
   <string name="dr_vibrate">Вібрація</string>
+  <!-- about -->
   <string name="about_translators">Перекладачі</string>
   <string name="about_user_guide">Керівництво користувача</string>
   <string name="about_version_name">Версія складання %s</string>
+  <string name="about_credits">Подяка</string>
+  <!-- marker and label migration -->
   <string name="marker_migrate_no_more">Не питати знову</string>
   <string name="marker_migrate_later">Не тепер</string>
   <string name="marker_migrate_title">Імпортувати старі позначки</string>
   <string name="marker_migrate_error_opening_backup_file">Не вдалося отримати доступ до цієї резервної копії.</string>
+  <!-- Announcements -->
+  <!-- Dictionary -->
+  <string name="dict_download_button">Завантажити</string>
+  <!-- Guide -->
+  <string name="menuGuide">Довідка</string>
+  <!-- Commentary -->
+  <!-- Maps -->
+  <!-- File chooser -->
 </resources>
