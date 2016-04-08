@@ -18,7 +18,10 @@
   <string name="pref_copyWithVerseNumbers_summary">Begin elk vers met het versnummer</string>
   <string name="pref_copyWithVersionName_title">Vers afkortingen</string>
   <string name="pref_copyWithVersionName_summary">Noem de Bijbelversie initialen</string>
+  <string name="pref_copyWithShareUrl_title">Gedeelde URL</string>
   <string name="pref_autoDictionaryAnalyze_title">Automatisch zoeken in woordenboek</string>
   <string name="pref_autoDictionaryAnalyze_summary">Zoek de geselecteerde woorden op in woordenboek</string>
+  <string name="pref_tapToEditNote_title">Druk om te bewerken</string>
+  <string name="pref_tapToEditNote_summary">Vink uit om ongewenst aan te passen</string>
   <string name="pref_showHiddenVersion_title">Schakel mogelijk beperkte versies in</string>
 </resources>

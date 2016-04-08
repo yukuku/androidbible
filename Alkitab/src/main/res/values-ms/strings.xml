@@ -98,6 +98,7 @@
   <string name="cp_writing_translated_file">Menulis fail diterjemahkan</string>
   <string name="cp_reading_book_info">Mrmbaca maklumat buku: %s</string>
   <string name="cp_writing_text_of_book_chapters">Menulis teks buku %1$s (%2$s bab)</string>
+  <!-- Versions -->
   <string name="ed_type_key">Jenis</string>
   <string name="ed_type_internal">Terbina dalam</string>
   <string name="ed_type_preset">Yang boleh dimuat turun</string>
@@ -199,15 +200,18 @@
   <string name="verse_select_multiple_verse_selected">%s ayat dipilih</string>
   <string name="google_play_store_not_installed">Gedung Play Google tidak dipasang.</string>
   <string name="pref_language_label_default">Lalai</string>
+  <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Pendail</string>
   <string name="goto_tab_direct_label">Langsung</string>
   <string name="goto_tab_grid_label">Grid</string>
+  <!-- Font Manager -->
   <string name="fm_activity_title">Pengurus Fon</string>
   <string name="fm_need_to_log_in_to_wifi">Anda perlu log masuk bagi (Wi-Fi) rangkaian anda dahulu.</string>
   <string name="fm_do_you_want_to_delete">Padam fon %s?</string>
   <string name="fm_error_when_extracting_font">Ralat apabila mengekstrak font %1$s: %2$s</string>
   <string name="fm_loading_ellipsis">Memuatkan...</string>
   <string name="dl_failed_to_rename_temporary_file">Gagal menamakan semula fail sementara</string>
+  <!-- Songs -->
   <string name="menuSongs">Lagu</string>
   <string name="sn_deep_search_enabled">Lirik, dan lain-lain. juga</string>
   <string name="sn_songs_activity_title">Lagu</string>
@@ -227,6 +231,7 @@
   <string name="sn_update_book_confirm_button">Kemaskini</string>
   <string name="sn_update_book">Kemaskini buku lagu</string>
   <string name="sn_update_book_because_too_old">Sila kemas kini ^1 kepada versi terkini sebelum meneruskan. Setelah dikemas kini, hantar suntingan anda jika perlu.</string>
+  <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Hari sebelumnya</string>
   <string name="desc_next_day">Hari seterusnya</string>
   <string name="desc_open_bookmark">Buka penanda buku</string>
@@ -296,6 +301,7 @@
   <string name="dv_option_transparent_background">Latar belakang telus</string>
   <string name="dv_option_dark_text">Teks gelap</string>
   <string name="dv_option_text_size">Saiz teks</string>
+  <!-- Reading plan -->
   <string name="rp_menuReadingPlan">Membaca pelan</string>
   <string name="rp_commentActual">Siap: %s%%</string>
   <string name="rp_commentTarget">Sasaran: %s%%</string>
@@ -454,6 +460,7 @@
   <string name="sync_login_form_change_password_success">Kata laluan anda telah diubah.</string>
   <string name="pref_textPadding_title">Jidar sekitar teks</string>
   <string name="pref_textPadding_summary">Jadikan teks dalam barisan lebih sempit agar mudah dibaca</string>
+  <!-- devotion reminder -->
   <string name="dr_app_name">Peringatan</string>
   <string name="dr_notification_title">Pemujaan harian</string>
   <string name="dr_notification_text">Baca pemujaan hari ini sekarang.</string>
@@ -463,6 +470,7 @@
   <string name="dr_vibrate">Getaran</string>
   <string name="dr_pref_notification_message">Pesanan peringatan</string>
   <string name="dr_default_sound">Bunyi lalai</string>
+  <!-- about -->
   <string name="about_translators">Penterjemah</string>
   <string name="about_user_guide">Panduan Pengguna</string>
   <string name="about_beta_feedback">Maklum Balas Versi Beta</string>
@@ -475,6 +483,7 @@
   <string name="about_announcement_load_failed">Gagal memuatkan pengumuman.</string>
   <string name="about_official_website">Tapak Web Rasmi</string>
   <string name="about_project_page">Laman Projek</string>
+  <!-- marker and label migration -->
   <string name="marker_migrate_no_more">Jangan tanya lagi</string>
   <string name="marker_migrate_later">Bukan sekarang</string>
   <string name="marker_migrate_title">Import penanda lama</string>
@@ -484,13 +493,19 @@
   <string name="marker_migrate_import_from_newest">Ya, import daripada yang terbaru (disarankan)</string>
   <string name="marker_migrate_import_from_other">Sandaran lain</string>
   <string name="marker_migrate_filename_dated">%1$s bertarikh %2$s</string>
+  <!-- Announcements -->
   <string name="announce_notif_title">Pengumuman %s</string>
   <string name="announce_notif_number_new_announcements">%s pengumuman baru</string>
+  <!-- Dictionary -->
   <string name="menuDictionary">Kamus</string>
   <string name="dict_open_full">Buka kamus</string>
   <string name="dict_no_results">Tiada takrifan dijumpai untuk perkataan yang dipilih.</string>
   <string name="dict_download_prompt">Muat turun \"Kamus Bible\" untuk mempelajari perkataan dalam Bible!</string>
   <string name="dict_download_button">Muat turun</string>
+  <!-- Guide -->
   <string name="menuGuide">Panduan</string>
+  <!-- Commentary -->
   <string name="menuCommentary">Komen</string>
+  <!-- Maps -->
+  <!-- File chooser -->
 </resources>

@@ -98,6 +98,7 @@
   <string name="cp_writing_translated_file">Schrijven vertaling</string>
   <string name="cp_reading_book_info">Lezen boek info: %s</string>
   <string name="cp_writing_text_of_book_chapters">Schrijven tekst van boek %1$s (%2$s chapters)</string>
+  <!-- Versions -->
   <string name="ed_type_key">Type</string>
   <string name="ed_type_internal">Ingebouwd</string>
   <string name="ed_type_preset">Te downloaden</string>
@@ -195,15 +196,18 @@
   <string name="bookmark_search">Zoeken</string>
   <string name="verse_select_one_verse_selected">1 vers geselecteerd</string>
   <string name="verse_select_multiple_verse_selected">%s verzen geselecteerd</string>
+  <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Kiezer</string>
   <string name="goto_tab_direct_label">Direct</string>
   <string name="goto_tab_grid_label">Tabel</string>
+  <!-- Font Manager -->
   <string name="fm_activity_title">Lettertype Manager</string>
   <string name="fm_need_to_log_in_to_wifi">Je dient eerst in te loggen op een (Wifi) netwerk.</string>
   <string name="fm_do_you_want_to_delete">Lettertype %s verwijderen?</string>
   <string name="fm_error_when_extracting_font">Fout bij uitpakken lettertype %1$s: %2$s</string>
   <string name="fm_loading_ellipsis">Laden&#8230;</string>
   <string name="dl_failed_to_rename_temporary_file">Hernoemen van tijdelijk bestand is mislukt</string>
+  <!-- Songs -->
   <string name="menuSongs">Liederen</string>
   <string name="sn_deep_search_enabled">Ook liedteksten, etc.</string>
   <string name="sn_songs_activity_title">Liederen</string>
@@ -218,6 +222,7 @@
   <string name="sn_update_book_explanation">Het boek ^1 bijwerken naar de laatste versie?</string>
   <string name="sn_update_book_confirm_button">Bijwerken</string>
   <string name="sn_update_book">Liedboek bijwerken</string>
+  <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Vorige dag</string>
   <string name="desc_next_day">Volgende dag</string>
   <string name="desc_open_bookmark">Open bladwijzer</string>
@@ -281,6 +286,7 @@
   <string name="dv_option_transparent_background">Transparante achtergrond</string>
   <string name="dv_option_dark_text">Donkere tekst</string>
   <string name="dv_option_text_size">Tekstgrootte</string>
+  <!-- Reading plan -->
   <string name="rp_menuReadingPlan">Leesplan</string>
   <string name="rp_commentActual">Voltooid: %s%%</string>
   <string name="rp_commentTarget">Doel: %s%%</string>
@@ -427,6 +433,7 @@
   <string name="sync_login_form_change_password_success">Je wachtwoord is gewijzigd.</string>
   <string name="pref_textPadding_title">Marges rondom de tekst</string>
   <string name="pref_textPadding_summary">Maak tekst in een regel smaller voor de leesbaarheid</string>
+  <!-- devotion reminder -->
   <string name="dr_app_name">Herinnering</string>
   <string name="dr_notification_title">Dagelijkse toewijding</string>
   <string name="dr_notification_text">Lees de toewijding van vandaag nu.</string>
@@ -436,6 +443,7 @@
   <string name="dr_vibrate">Trillen</string>
   <string name="dr_pref_notification_message">Herinnering bericht</string>
   <string name="dr_default_sound">Standaardgeluid</string>
+  <!-- about -->
   <string name="about_translators">Vertalers</string>
   <string name="about_user_guide">Handleiding</string>
   <string name="about_beta_feedback">Bètaversie feedback</string>
@@ -446,6 +454,7 @@
   <string name="about_announcements_none">Mededelingen (0)</string>
   <string name="about_announcements_number">Mededelingen (%s)</string>
   <string name="about_announcement_load_failed">Fout bij het laden van mededelingen.</string>
+  <!-- marker and label migration -->
   <string name="marker_migrate_introduction">We hebben een reservekopie gevonden van de oude v3 Yuku Quick Bible met bladwijzers, notities, markeringen en labels.\n\nWil je ze importeren zodat je ze kunt gebruiken in deze app?</string>
   <string name="marker_migrate_no_more">Niet opnieuw vragen</string>
   <string name="marker_migrate_later">Niet nu</string>
@@ -455,6 +464,12 @@
   <string name="marker_migrate_import_from_newest">Ja, importeer de nieuwste reservekopie (aanbevolen)</string>
   <string name="marker_migrate_import_from_other">Andere reservekopie</string>
   <string name="marker_migrate_filename_dated">%1$s van datum %2$s</string>
+  <!-- Announcements -->
   <string name="announce_notif_title">%s Mededelingen</string>
   <string name="announce_notif_number_new_announcements">%s nieuwe mededelingen</string>
+  <!-- Dictionary -->
+  <!-- Guide -->
+  <!-- Commentary -->
+  <!-- Maps -->
+  <!-- File chooser -->
 </resources>
