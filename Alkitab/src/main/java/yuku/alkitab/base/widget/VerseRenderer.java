@@ -300,7 +300,13 @@ public class VerseRenderer {
 		if (highlightInfo != null) {
 			final BackgroundColorSpan span = new BackgroundColorSpan(Highlights.alphaMix(highlightInfo.colorRgb));
 			if (highlightInfo.shouldRenderAsPartialForVerseText(sb.subSequence(startPosAfterVerseNumber, sb.length()))) {
-				sb.setSpan(span, startPosAfterVerseNumber + highlightInfo.partial.startOffset, startPosAfterVerseNumber + highlightInfo.partial.endOffset, 0);
+				final int start = startPosAfterVerseNumber + highlightInfo.partial.startOffset;
+				final int end = startPosAfterVerseNumber + highlightInfo.partial.endOffset;
+				if (end > start) {
+					sb.setSpan(span, start, end, 0);
+				} else {
+					sb.setSpan(span, end, start, 0);
+				}
 			} else {
 				sb.setSpan(span, startPosAfterVerseNumber, sb.length(), 0);
 			}
@@ -462,7 +468,13 @@ public class VerseRenderer {
 		if (highlightInfo != null) {
 			final BackgroundColorSpan span = new BackgroundColorSpan(Highlights.alphaMix(highlightInfo.colorRgb));
 			if (highlightInfo.shouldRenderAsPartialForVerseText(text)) {
-				sb.setSpan(span, startPosAfterVerseNumber + highlightInfo.partial.startOffset, startPosAfterVerseNumber + highlightInfo.partial.endOffset, 0);
+				final int start = startPosAfterVerseNumber + highlightInfo.partial.startOffset;
+				final int end = startPosAfterVerseNumber + highlightInfo.partial.endOffset;
+				if (end > start) {
+					sb.setSpan(span, start, end, 0);
+				} else {
+					sb.setSpan(span, end, start, 0);
+				}
 			} else {
 				sb.setSpan(span, startPosAfterVerseNumber, sb.length(), 0);
 			}
