@@ -188,7 +188,17 @@ public class TypeHighlightDialog {
 
 	void select(final int colorRgb, final int[] offsets) {
 		if (selectedVerses.size() == 1 && verseText != null && colorRgb != -1 && offsets != null && (offsets[0] != 0 || offsets[1] != verseText.length()) && offsets[0] != offsets[1]) {
-			S.getDb().updateOrInsertPartialHighlight(Ari.encodeWithBc(ari_bookchapter, selectedVerses.get(0)), colorRgb, verseText, offsets[0], offsets[1]);
+			// On some devices, startOffset can be > endOffset.
+			final int startOffset, endOffset;
+			if (offsets[0] > offsets[1]) {
+				startOffset = offsets[1];
+				endOffset = offsets[0];
+			} else {
+				startOffset = offsets[0];
+				endOffset = offsets[1];
+			}
+
+			S.getDb().updateOrInsertPartialHighlight(Ari.encodeWithBc(ari_bookchapter, selectedVerses.get(0)), colorRgb, verseText, startOffset, endOffset);
 		} else { // not partial, or deleting
 			S.getDb().updateOrInsertHighlights(ari_bookchapter, selectedVerses, colorRgb);
 		}
