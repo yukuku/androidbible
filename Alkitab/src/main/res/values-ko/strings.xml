@@ -54,9 +54,9 @@
   <string name="hari_sabtu">토</string>
   <string name="hari_jumat">금</string>
   <string name="hari_kamis">목</string>
-  <string name="hari_rabu">수요일</string>
-  <string name="hari_selasa">화요일</string>
-  <string name="hari_senin">월요일</string>
+  <string name="hari_rabu">수</string>
+  <string name="hari_selasa">화</string>
+  <string name="hari_senin">월</string>
   <string name="hari_minggu">일</string>
   <string name="size_hasil">%d 결과</string>
   <string name="search_searching_tokens">%s가 포함된 구절 검색 중...</string>
