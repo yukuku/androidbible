@@ -1,4 +1,5 @@
 language: android
+
 android:
   components:
     # The BuildTools version used by your project
@@ -10,3 +11,6 @@ android:
     # Additional components
     - extra-google-m2repository
     - extra-android-m2repository
+
+jdk:
+  - oraclejdk8
