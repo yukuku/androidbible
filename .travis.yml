@@ -16,3 +16,5 @@ jdk:
   - oraclejdk8
 
 sudo: required
+
+script: ./gradlew assemblePlainDebug assemblePlainRelease
