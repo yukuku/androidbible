@@ -31,6 +31,8 @@ android {
     }
     dexOptions {
         javaMaxHeapSize "4g"
+        // Skip pre-dexing when running on Travis CI
+        preDexLibraries = !travisBuild
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
