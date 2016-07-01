@@ -30,6 +30,7 @@
   <string name="tulis_catatan">ノートを書く</string>
   <string name="tambah_pembatas_buku">ブックーマークの追加</string>
   <string name="salin_ayat">節をコピー</string>
+  <string name="search_copy_selected_verses">選択した箇所をコピー</string>
   <string name="perj_baru">新約</string>
   <string name="perj_lama">旧約</string>
   <string name="search_bookname_only">%s のみ</string>
@@ -63,6 +64,7 @@
   <string name="mengunduh_nama">聖書ファイル %s をダウンロードしています.</string>
   <string name="tuju_v">移動</string>
   <string name="bagikan_alamat">%s の共有</string>
+  <string name="search_selected_verse_copied">選択した箇所をコピーしました。</string>
   <string name="alamat_sudah_disalin">%s をコピーしました.</string>
   <string name="alamat_tidak_sah_alamat">アドレス %s が無効です.</string>
   <string name="no">いいえ</string>
@@ -87,6 +89,7 @@
   <string name="pdb_encoding">PDBファイルのエンコード</string>
   <string name="sample_text">サンプルテキスト</string>
   <string name="include_book_and_chapter_headers">書の名前と章のヘッダを追加する.</string>
+  <string name="select_all">すべて選択</string>
   <string name="cp_opening_pdb_file">PDBファイルをオープンしています.</string>
   <string name="cp_loading_version_info">版の情報をロードしています</string>
   <string name="cp_loading_word_index">インデックス情報をローディングしています.</string>
@@ -190,8 +193,10 @@
   <string name="color_settings_title">色</string>
   <string name="color_settings_night_title">色（夜間モード）</string>
   <string name="menuDisplay">表示</string>
+  <string name="text_appearance_font">フォント</string>
   <string name="text_appearance_theme_custom">カスタム...</string>
   <string name="text_appearance_text_size">文字の大きさ</string>
+  <string name="text_appearance_text_size_for_version">^1の文字サイズ</string>
   <string name="text_appearance_line_spacing">行間</string>
   <string name="text_appearance_bold">太字</string>
   <string name="devotion_change_date">変更日</string>
@@ -199,10 +204,15 @@
   <string name="verse_select_one_verse_selected">１節セレクトしました</string>
   <string name="verse_select_multiple_verse_selected">%s節セレクトしました</string>
   <string name="google_play_store_not_installed">Google Play ストアがインストールされていません。</string>
+  <string name="pref_language_label_default">デフォルト</string>
+  <string name="market_short_desc">敏速、特典豊富で信頼性の高いオフライン聖書。</string>
+  <string name="no_url_for_facebook">これはフェースブックにシェア出来ません。</string>
+  <string name="storage_permission_rationale">聖書訳やフォントを保存するためにストレージへのアクセスが必要です。</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">電話風</string>
   <string name="goto_tab_direct_label">直接</string>
   <string name="goto_tab_grid_label">グリッド</string>
+  <string name="menuAskForVerse">節までナビゲートする</string>
   <!-- Font Manager -->
   <string name="fm_activity_title">フォント管理</string>
   <string name="fm_need_to_log_in_to_wifi">まずネットワーク(Wi-Fi)にログインする必要があります.</string>
@@ -230,6 +240,9 @@
   <string name="sn_update_book_confirm_button">アップデート</string>
   <string name="sn_update_book">聖歌集をアップデートする</string>
   <string name="sn_update_book_because_too_old">最初に^1を最新版にアップデートしてください。アップデート後、編集内容を送ってください。</string>
+  <string name="sn_menu_private_song_book">プライベートの聖歌集</string>
+  <string name="sn_private_song_book_dialog_desc">プライベートな聖歌集をダウンロードする</string>
+  <string name="sn_private_song_book_name_hint">聖歌集の名前</string>
   <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">昨日</string>
   <string name="desc_next_day">翌日</string>
@@ -254,6 +267,7 @@
   <string name="desc_verse_attribute_one_note">この箇所にはメモが付いています。</string>
   <string name="desc_verse_attribute_multiple_notes">この箇所には%s個のメモが付いています。</string>
   <string name="desc_verse_attribute_progress_mark">%sまで来ました。</string>
+  <string name="desc_progress_mark_list">ピンの一覧</string>
   <string name="intent_filter_open_yes_file">YESファイルを開く</string>
   <string name="intent_filter_open_pdb_file">PDBファイルを開く</string>
   <string name="intent_filter_open_pdb_or_yes_file">PDB/YESファイルを開く</string>
@@ -305,8 +319,12 @@
   <string name="rp_commentTarget">目標： %s%%</string>
   <string name="rp_commentOnSchedule">計画通り</string>
   <string name="rp_commentBehindSchedule">遅れあり: %s%%</string>
+  <string name="rp_commentAheadSchedule">スケジュールより先です: %s%%</string>
   <string name="rp_noReadingPlanAvailable">他には読書プランがありません。</string>
   <string name="rp_deletePlan">" \'%s\' を削除しますか?"</string>
+  <string name="rp_reset">スタートの日を今日に変更しますか?</string>
+  <string name="rp_restart_desc">読書プランの箇所をすべて「不朗読」に設定してからスタートしますか?</string>
+  <string name="rp_showCalendar">日</string>
   <string name="rp_gotoFirstUnread">最初の未読に移動する</string>
   <string name="rp_dayHeader">第%1$s日: %2$s</string>
   <string name="rp_floatPreviousReading">前回読んだ箇所</string>
@@ -318,8 +336,12 @@
   <string name="rp_navigationGoToDate">翌日</string>
   <string name="rp_navigationNextDay">翌日</string>
   <string name="rp_menuDownload">ダウンロード</string>
+  <string name="rp_menuCatchMeUp">日を同期する</string>
+  <string name="rp_menuRestart">リスタート</string>
   <string name="rp_menuDelete">削除</string>
   <string name="rp_headingProgress">進捗</string>
+  <string name="rp_gotoToday">今日の箇所に行く</string>
+  <string name="rp_setStartDate">スタート日を設定する</string>
   <string name="rp_showDetails">詳細を表示</string>
   <string name="rp_hideDetails">詳細を隠す</string>
   <string name="rp_aboutPlan">プランについて</string>
@@ -331,8 +353,10 @@
   <string name="rp_download_reading_plan_failed">選択した読書プランのダウンロード失敗。インターネット接続を確認し、再度実行してください。</string>
   <string name="rp_download_reading_plan_data_corrupted">ダウンロードした読書プランのデータは壊れています。インターネット接続を確認し、再度実行してください。</string>
   <string name="rp_download_already_have">この読書プランはすでに持っています</string>
+  <string name="rp_mark_as_read_up_to">ここまでの箇所を「朗読済み」に設定する</string>
   <string name="version_download_need_fonts">”ダウンロードした版は、特定のフォントで表示する必要があるかもしれません。「文字表示の設定」 メニューでフォントを選択してください。ギリシャ語にはUbuntuフォントが必要です。ビルマ語にはParabaik, ParabaikSansまたはMyanmar3フォントが必要です。タミル語にはAksharフォントが必要です。テルグ語にはSurannaフォントが必要です。\"</string>
   <string name="version_download_corrupted_file">ダウンロードしたファイルが破損しています。</string>
+  <string name="version_download_saving_io_error">ダウンロードした訳を保存中にI/Oエラーが発生しました。</string>
   <string name="menuNightMode">夜間モード</string>
   <string name="highlight_custom_color">その他の色</string>
   <string name="menu_compare">比較する</string>
@@ -341,6 +365,7 @@
   <string name="search_syntax_tips"><i>検索のヒント:</i>\n\n<b>+ワード</b> その単語に一致する箇所を表示\n<b>[q]ダビデの町[q]</b> フレーズ全体に一致する箇所を表示</string>
   <string name="search_no_result"><b>^1</b>に一致する箇所がありません.</string>
   <string name="search_no_result_fallback">タップして <u>^1</u> に移動する.</string>
+  <string name="search_clear_history">検索記憶をクリアする</string>
   <string name="marker_transfer_to_device_title">別のデバイスに転送</string>
   <string name="marker_transfer_to_device_description">全てのブックマーク、メモ、マーカーを別のデバイスに移動します. GmailかEmailを推奨します.</string>
   <string name="marker_transfer_to_computer_title">編集のため転送</string>
@@ -355,6 +380,7 @@
   <string name="sn_menu_copy">聖歌をコピー</string>
   <string name="menuPlay">再生</string>
   <string name="menuPause">一時停止</string>
+  <string name="left_drawer_current_reading_title">今日の箇所</string>
   <string name="book_filter_old_testament">旧約聖書</string>
   <string name="book_filter_old_pentateuch">モーセの5書</string>
   <string name="book_filter_old_history">歴史</string>
