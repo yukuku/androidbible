@@ -8,8 +8,8 @@ import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 import android.util.Pair;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.ResponseBody;
+import okhttp3.Call;
+import okhttp3.ResponseBody;
 import yuku.alkitab.base.App;
 import yuku.alkitab.debug.R;
 

@@ -3,10 +3,10 @@ package yuku.kirimfidbek;
 import android.os.Build;
 import android.os.SystemClock;
 import android.util.Log;
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import yuku.afw.App;
 import yuku.afw.storage.Preferences;
 
@@ -148,7 +148,7 @@ public class CrashReporter {
 				final Request.Builder request = new Request.Builder();
 				request.url("http://www.kejut.com/prog/android/fidbek/kirim3.php");
 
-				final FormEncodingBuilder form = new FormEncodingBuilder();
+				final FormBody.Builder form = new FormBody.Builder();
 				for (Entry entry : entries) {
 					if (entry.body.length() > 100000) {
 						entry.body = entry.body.substring(0, 100000);

@@ -9,10 +9,10 @@ import android.support.v4.util.ArrayMap;
 import android.util.Log;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
+import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
@@ -305,7 +305,7 @@ public class Sync {
 	}
 
 	public static boolean sendGcmRegistrationId(final String simpleToken, final String registration_id) {
-		final RequestBody requestBody = new FormEncodingBuilder()
+		final RequestBody requestBody = new FormBody.Builder()
 			.add("simpleToken", simpleToken)
 			.add("sender_id", Gcm.SENDER_ID)  // not really needed, but for logging on server
 			.add("registration_id", registration_id)
@@ -372,7 +372,7 @@ public class Sync {
 	 * Must be called from a background thread.
 	 */
 	@NonNull public static LoginResponseJson register(@NonNull final RegisterForm form) throws NotOkException {
-		final FormEncodingBuilder b = new FormEncodingBuilder();
+		final FormBody.Builder b = new FormBody.Builder();
 		if (form.church != null) b.add("church", form.church);
 		if (form.city != null) b.add("city", form.city);
 		if (form.religion != null) b.add("religion", form.religion);
@@ -411,7 +411,7 @@ public class Sync {
 	 * Must be called from a background thread.
 	 */
 	@NonNull public static LoginResponseJson login(@NonNull final String email, @NonNull final String password) throws NotOkException {
-		final RequestBody requestBody = new FormEncodingBuilder()
+		final RequestBody requestBody = new FormBody.Builder()
 			.add("email", email)
 			.add("password", password)
 			.add("installation_info", U.getInstallationInfoJson())
@@ -445,7 +445,7 @@ public class Sync {
 	 * Must be called from a background thread.
 	 */
 	public static void forgotPassword(@NonNull final String email) throws NotOkException {
-		final RequestBody requestBody = new FormEncodingBuilder()
+		final RequestBody requestBody = new FormBody.Builder()
 			.add("email", email)
 			.build();
 
@@ -475,7 +475,7 @@ public class Sync {
 	 * Must be called from a background thread.
 	 */
 	public static void changePassword(@NonNull final String email, @NonNull final String password_old, @NonNull final String password_new) throws NotOkException {
-		final RequestBody requestBody = new FormEncodingBuilder()
+		final RequestBody requestBody = new FormBody.Builder()
 			.add("email", email)
 			.add("password_old", password_old)
 			.add("password_new", password_new)

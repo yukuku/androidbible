@@ -13,11 +13,11 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.squareup.leakcanary.LeakCanary;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.internal.Version;
+import okhttp3.Call;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.internal.Version;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.model.VersionImpl;
@@ -47,8 +47,8 @@ public class App extends yuku.afw.App {
 	enum OkHttpClientWrapper {
 		INSTANCE;
 
-		OkHttpClient defaultClient = new OkHttpClient();
-		OkHttpClient longTimeoutClient = new OkHttpClient();
+		final OkHttpClient defaultClient;
+		final OkHttpClient longTimeoutClient;
 
 		{
 			final Interceptor userAgent = chain -> {
@@ -60,19 +60,23 @@ public class App extends yuku.afw.App {
 				return chain.proceed(requestWithUserAgent);
 			};
 
-			defaultClient.networkInterceptors().add(userAgent);
-			longTimeoutClient.networkInterceptors().add(userAgent);
-		}
+			{
+				final OkHttpClient.Builder builder = new OkHttpClient.Builder();
+				builder.addNetworkInterceptor(userAgent);
+				StethoShim.addNetworkInterceptor(builder);
+				defaultClient = builder.build();
+			}
 
-		{ // init longTimeoutClient
-			longTimeoutClient.setConnectTimeout(300, TimeUnit.SECONDS);
-			longTimeoutClient.setReadTimeout(300, TimeUnit.SECONDS);
-			longTimeoutClient.setWriteTimeout(600, TimeUnit.SECONDS);
-		}
-
-		{ // init stetho interceptor
-			StethoShim.addNetworkInterceptor(defaultClient);
-			StethoShim.addNetworkInterceptor(longTimeoutClient);
+			{
+				final OkHttpClient.Builder builder = new OkHttpClient.Builder();
+				builder
+					.addNetworkInterceptor(userAgent)
+					.connectTimeout(300, TimeUnit.SECONDS)
+					.readTimeout(300, TimeUnit.SECONDS)
+					.writeTimeout(600, TimeUnit.SECONDS);
+				StethoShim.addNetworkInterceptor(builder);
+				longTimeoutClient = builder.build();
+			}
 		}
 	}
 

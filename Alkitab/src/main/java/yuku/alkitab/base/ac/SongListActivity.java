@@ -135,7 +135,7 @@ public class SongListActivity extends BaseActivity {
 
 		final Toolbar toolbar = V.get(this, R.id.toolbar);
 		setSupportActionBar(toolbar); // must be done first before below lines
-		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
 		toolbar.setNavigationOnClickListener(v -> navigateUp());
 
 		setSupportProgressBarIndeterminate(true);

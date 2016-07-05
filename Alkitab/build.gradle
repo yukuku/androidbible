@@ -30,7 +30,7 @@ android {
         }
     }
     dexOptions {
-        javaMaxHeapSize "4g"
+        javaMaxHeapSize "2g"
         // Skip pre-dexing when running on Travis CI
         preDexLibraries = !travisBuild
     }
@@ -81,28 +81,24 @@ dependencies {
     compile project(':AmbilWarna')
     compile project(':ATree')
     compile project(':ImportedDesktopVerseUtil')
-    compile('com.afollestad.material-dialogs:core:0.8.5.2@aar') {
-        transitive = true
-    }
-    compile('com.afollestad.material-dialogs:commons:0.8.5.2@aar') {
-        transitive = true
-    }
+    compile "com.afollestad.material-dialogs:core:$materialDialogsVersion"
+    compile "com.afollestad.material-dialogs:commons:$materialDialogsVersion"
     testCompile 'junit:junit:4.12'
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta1'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta1'
-    debugCompile 'com.facebook.stetho:stetho:1.2.0'
-    debugCompile 'com.facebook.stetho:stetho-okhttp:1.2.0'
-    compile 'com.android.support:support-v4:23.1.1'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.squareup.okhttp:okhttp:2.5.0'
-    compile 'com.squareup.okhttp:okhttp-urlconnection:2.5.0'
+    debugCompile "com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion"
+    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanaryVersion"
+    debugCompile "com.facebook.stetho:stetho:$stethoVersion"
+    debugCompile "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
+    compile "com.android.support:support-v4:$supportLibVersion"
+    compile "com.squareup.picasso:picasso:$picassoVersion"
+    compile "com.squareup.okhttp3:okhttp:$okhttpVersion"
+    compile "com.squareup.okhttp3:okhttp-urlconnection:$okhttpVersion"
     compile 'net.sf.trove4j:trove4j:3.0.3'
-    compile 'com.google.code.gson:gson:2.4'
-    compile 'com.google.android.gms:play-services-analytics:8.3.0'
-    compile 'com.google.android.gms:play-services-gcm:8.3.0'
-    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile "com.google.code.gson:gson:$gsonVersion"
+    compile "com.google.android.gms:play-services-analytics:$playServicesVersion"
+    compile "com.google.android.gms:play-services-gcm:$playServicesVersion"
+    compile "com.android.support:appcompat-v7:$supportLibVersion"
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.android.support:design:23.1.1'
-    compile 'com.android.support:percent:23.1.1'
-    compile 'com.android.support:preference-v14:23.1.1'
+    compile "com.android.support:design:$supportLibVersion"
+    compile "com.android.support:percent:$supportLibVersion"
+    compile "com.android.support:preference-v14:$supportLibVersion"
 }

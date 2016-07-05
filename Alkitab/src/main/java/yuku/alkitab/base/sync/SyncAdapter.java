@@ -12,11 +12,11 @@ import android.util.Pair;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.MultipartBuilder;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
+import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.MultipartBody;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
@@ -107,7 +107,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 					break;
 				case add:
 				case mod:
-					entities_map.put(Pair.create(o.gid, o.kind), new Sync.Entity<C>(o.kind, o.gid, o.content));
+					entities_map.put(Pair.create(o.gid, o.kind), new Sync.Entity<>(o.kind, o.gid, o.content));
 					break;
 			}
 		}
@@ -276,8 +276,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 		final String serverPrefix = Sync.getEffectiveServerPrefix();
 		Log.d(TAG, "@@syncMabel step 20: building http request. Server prefix: " + serverPrefix);
-		final RequestBody requestBody = new MultipartBuilder()
-			.type(MultipartBuilder.FORM)
+		final RequestBody requestBody = new MultipartBody.Builder()
+			.setType(MultipartBody.FORM)
 			.addFormDataPart("simpleToken", simpleToken)
 			.addFormDataPart("syncSetName", syncSetName)
 			.addFormDataPart("installation_id", U.getInstallationId())
@@ -378,7 +378,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 		final String serverPrefix = Sync.getEffectiveServerPrefix();
 		Log.d(TAG, "@@syncHistory step 20: building http request. Server prefix: " + serverPrefix);
-		final RequestBody requestBody = new FormEncodingBuilder()
+		final RequestBody requestBody = new FormBody.Builder()
 			.add("simpleToken", simpleToken)
 			.add("syncSetName", syncSetName)
 			.add("installation_id", U.getInstallationId())
@@ -471,7 +471,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 		final String serverPrefix = Sync.getEffectiveServerPrefix();
 		Log.d(TAG, "@@syncPins step 20: building http request. Server prefix: " + serverPrefix);
-		final RequestBody requestBody = new FormEncodingBuilder()
+		final RequestBody requestBody = new FormBody.Builder()
 			.add("simpleToken", simpleToken)
 			.add("syncSetName", syncSetName)
 			.add("installation_id", U.getInstallationId())
@@ -566,7 +566,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 		final String serverPrefix = Sync.getEffectiveServerPrefix();
 		Log.d(TAG, "@@syncRp step 20: building http request. Server prefix: " + serverPrefix);
-		final RequestBody requestBody = new FormEncodingBuilder()
+		final RequestBody requestBody = new FormBody.Builder()
 			.add("simpleToken", simpleToken)
 			.add("syncSetName", syncSetName)
 			.add("installation_id", U.getInstallationId())
