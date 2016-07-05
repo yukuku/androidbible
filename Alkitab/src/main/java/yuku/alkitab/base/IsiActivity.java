@@ -557,6 +557,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 			if (this.activeBook == null) { // version failed to load, so books are also failed to load. Fallback!
 				S.activeVersion = VersionImpl.getInternalVersion();
+				S.activeVersionId = MVersionInternal.getVersionInternalId();
 				this.activeBook = S.activeVersion.getFirstBook();
 			}
 		}
@@ -817,6 +818,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 			S.activeVersion = version;
 			S.activeVersionId = mv.getVersionId();
+
 			bVersion.setText(S.getVersionInitials(version));
 			splitHandleButton.setLabel1("\u25b2 " + getSplitHandleVersionName(mv, version));
 

@@ -60,7 +60,7 @@ public class S {
 		public static int pericopeSpacingBottom;
 	}
 	
-	//# 22nya harus siap di siapinKitab
+	// The process-global active Bible version. Both of these must always be set at the same time.
 	public static Version activeVersion;
 	public static String activeVersionId;
 

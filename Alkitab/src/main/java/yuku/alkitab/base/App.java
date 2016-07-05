@@ -19,6 +19,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.internal.Version;
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.storage.Prefkey;
@@ -157,6 +158,7 @@ public class App extends yuku.afw.App {
 		synchronized (S.class) {
 			if (S.activeVersion == null) {
 				S.activeVersion = VersionImpl.getInternalVersion();
+				S.activeVersionId = MVersionInternal.getVersionInternalId();
 			}
 		}
 
