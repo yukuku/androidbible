@@ -66,7 +66,7 @@ public class Appearances {
 
 	public static void applyVerseNumberAppearance(TextView t, float textSizeMult) {
 		t.setTypeface(S.applied.fontFace, S.applied.fontBold);
-		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp * 0.7f);
+		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp * 0.7f * textSizeMult);
 		t.setIncludeFontPadding(false);
 		t.setTextColor(S.applied.verseNumberColor);
 	}
