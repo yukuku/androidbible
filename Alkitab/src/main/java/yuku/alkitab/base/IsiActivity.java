@@ -1141,13 +1141,20 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	@Override public void onBackPressed() {
+		final boolean debug = Preferences.getBoolean("secret_debug_back_button", false);
+
+		if (debug) Toast.makeText(this, "@@onBackPressed TAP=" + (textAppearancePanel != null) + " fullScreen=" + fullScreen, Toast.LENGTH_SHORT).show();
+
 		if (textAppearancePanel != null) {
+			if (debug) Toast.makeText(this, "inside textAppearancePanel != null", Toast.LENGTH_SHORT).show();
 			textAppearancePanel.hide();
 			textAppearancePanel = null;
 		} else if (fullScreen) {
+			if (debug) Toast.makeText(this, "inside fullScreen == true", Toast.LENGTH_SHORT).show();
 			setFullScreen(false);
 			leftDrawer.getHandle().setFullScreen(false);
 		} else {
+			if (debug) Toast.makeText(this, "will call super", Toast.LENGTH_SHORT).show();
 			super.onBackPressed();
 		}
 	}
