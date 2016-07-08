@@ -104,8 +104,10 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			Appearances.applyTextAppearance(lText, textSizeMult);
 			Appearances.applyVerseNumberAppearance(lVerseNumber, textSizeMult);
 
-			if (checked) {
-				lText.setTextColor(U.getTextColorForSelectedVerse(Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default))); // override with black or white!
+			if (checked) { // override text color with black or white!
+				final int selectedTextColor = U.getTextColorForSelectedVerse(Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default));
+				lText.setTextColor(selectedTextColor);
+				lVerseNumber.setTextColor(selectedTextColor);
 			}
 
 			final AttributeView attributeView = res.attributeView;
