@@ -539,7 +539,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	}
 
 	private void downloadReadingPlanList() {
-		startActivityForResult(HelpActivity.createIntent("https://alkitab-host.appspot.com/rp/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName())), REQCODE_openList);
+		startActivityForResult(HelpActivity.createIntent("https://alkitab-host.appspot.com/rp/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName()), getString(R.string.rp_menuDownload)), REQCODE_openList);
 	}
 
 	@Override

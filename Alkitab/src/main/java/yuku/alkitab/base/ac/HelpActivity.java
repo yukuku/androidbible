@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -34,15 +35,13 @@ public class HelpActivity extends BaseActivity {
 	public static final int REQCODE_overflowMenuItem = 1;
 
 	WebView webview;
+	View progress;
+
 	String overflowMenuItemTitle;
 	Intent overflowMenuItemIntent;
 
-	public static Intent createIntent(final String page) {
-		return _createIntent(page, null, null, null);
-	}
-
-	public static Intent createIntentWithOverflowMenu(final String page, final String overflowMenuItemTitle, final Intent overflowMenuItemIntent) {
-		return _createIntent(page, null, overflowMenuItemTitle, overflowMenuItemIntent);
+	public static Intent createIntentWithOverflowMenu(final String page, final String overrideTitle, final String overflowMenuItemTitle, final Intent overflowMenuItemIntent) {
+		return _createIntent(page, overrideTitle, overflowMenuItemTitle, overflowMenuItemIntent);
 	}
 
 	public static Intent createIntent(final String page, final String overrideTitle) {
@@ -69,7 +68,8 @@ public class HelpActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_help);
 
-		webview = V.get(this, R.id.webView);
+		webview = V.get(this, R.id.webview);
+		progress = V.get(this, R.id.progress);
 
 		if (BuildConfig.DEBUG) {
 			if (Build.VERSION.SDK_INT >= 19) {
@@ -92,6 +92,9 @@ public class HelpActivity extends BaseActivity {
 		if (overrideTitle != null) {
 			setTitle(overrideTitle);
 		}
+
+		webview.setVisibility(View.GONE);
+		progress.setVisibility(View.VISIBLE);
 
 		if (page != null) {
 			if (page.startsWith("http:") || page.startsWith("https:")) {
@@ -163,9 +166,21 @@ public class HelpActivity extends BaseActivity {
 				return false;
 			}
 
+			@SuppressWarnings("deprecation")
+			@Override
+			public void onReceivedError(final WebView view, final int errorCode, final String description, final String failingUrl) {
+				super.onReceivedError(view, errorCode, description, failingUrl);
+
+				webview.setVisibility(View.VISIBLE);
+				progress.setVisibility(View.GONE);
+			}
+
 			@Override
 			public void onPageFinished(final WebView view, final String url) {
 				super.onPageFinished(view, url);
+
+				webview.setVisibility(View.VISIBLE);
+				progress.setVisibility(View.GONE);
 
 				if (overrideTitle == null) {
 					setTitle(view.getTitle());
