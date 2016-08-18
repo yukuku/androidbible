@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
@@ -16,7 +17,6 @@ import android.widget.CheckBox;
 import android.widget.CheckedTextView;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
-import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -183,31 +183,15 @@ public class TextAppearancePanel {
 			final ColorThemeAdapter adapter = new ColorThemeAdapter();
 
 			final MaterialDialog dialog = new MaterialDialog.Builder(activity)
-				.adapter(adapter, (materialDialog, view, which, text) -> {
-					materialDialog.dismiss();
-
-					if (which == adapter.getPositionOfCustomColors()) {
-						activity.startActivityForResult(ColorSettingsActivity.createIntent(Preferences.getBoolean(Prefkey.is_night_mode, false)), reqcodeCustomColors);
-						return;
-					}
-
-					final int[] colors = adapter.getColorsAtPosition(which);
-					ColorThemes.setCurrentColors(colors, Preferences.getBoolean(Prefkey.is_night_mode, false));
-					listener.onValueChanged();
-					adapter.notifyDataSetChanged();
-					displayValues();
-				})
+				.adapter(adapter, null)
 				.show();
 
-			final ListView listView = dialog.getListView();
-			if (listView == null) {
-				throw new RuntimeException("ListView should not be null");
-			}
+			final RecyclerView recyclerView = dialog.getRecyclerView();
 
-			{ // set listview scrolling to the selected one
+			{ // scroll to the selected one
 				final int[] currentColors = ColorThemes.getCurrentColors(Preferences.getBoolean(Prefkey.is_night_mode, false));
 				final int position = adapter.getPositionByColors(currentColors);
-				listView.setSelection(position != -1 ? position : adapter.getPositionOfCustomColors());
+				recyclerView.getLayoutManager().scrollToPosition(position != -1 ? position : adapter.getPositionOfCustomColors());
 			}
 		}
 	};
@@ -365,7 +349,17 @@ public class TextAppearancePanel {
 		}
 	}
 
-	class ColorThemeAdapter extends EasyAdapter {
+	static class ColorThemeHolder extends RecyclerView.ViewHolder {
+		final CheckedTextView text1;
+
+		public ColorThemeHolder(final View itemView) {
+			super(itemView);
+
+			text1 = V.get(itemView, android.R.id.text1);
+		}
+	}
+
+	class ColorThemeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		List<int[]> themes;
 		List<String> themeNames;
 
@@ -377,36 +371,55 @@ public class TextAppearancePanel {
 			themeNames = Arrays.asList(activity.getResources().getStringArray(R.array.pref_colorTheme_labels));
 		}
 
-		@Override public int getCount() {
+		@Override
+		public int getItemCount() {
 			return themes.size() + 1;
 		}
-		
-		@Override public View newView(int position, ViewGroup parent) {
-			return activity.getLayoutInflater().inflate(android.R.layout.simple_list_item_single_choice, parent, false);
+
+		@Override
+		public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+			return new ColorThemeHolder(activity.getLayoutInflater().inflate(android.R.layout.simple_list_item_single_choice, parent, false));
 		}
 
-		@Override public void bindView(View view, int position, ViewGroup parent) {
+		@Override
+		public void onBindViewHolder(final RecyclerView.ViewHolder _holder_, final int position) {
+			final ColorThemeHolder holder = (ColorThemeHolder) _holder_;
+
 			final int[] currentColors = ColorThemes.getCurrentColors(Preferences.getBoolean(Prefkey.is_night_mode, false));
 			final int selectedPosition = getPositionByColors(currentColors);
 
-			final CheckedTextView text1 = (CheckedTextView) view;
 			if (position != getPositionOfCustomColors()) {
 				final int colors[] = themes.get(position);
 				final SpannableStringBuilder sb = new SpannableStringBuilder();
-				sb.append("" + (position+1));
+				sb.append(String.valueOf(position + 1));
 				sb.setSpan(new ForegroundColorSpan(colors[2]), 0, sb.length(), 0);
 				sb.setSpan(new VerseRenderer.VerseNumberSpan(false), 0, sb.length(), 0);
 				int sb_len = sb.length();
 				sb.append(" ").append(themeNames.get(position));
 				sb.setSpan(new ForegroundColorSpan(colors[0]), sb_len, sb.length(), 0);
-				text1.setText(sb);
-				text1.setBackgroundColor(colors[1]);
-				text1.setChecked(selectedPosition == position);
+				holder.text1.setText(sb);
+				holder.text1.setBackgroundColor(colors[1]);
+				holder.text1.setChecked(selectedPosition == position);
 			} else {
-				text1.setText(R.string.text_appearance_theme_custom);
-				text1.setBackgroundColor(0x0);
-				text1.setChecked(selectedPosition == -1);
+				holder.text1.setText(R.string.text_appearance_theme_custom);
+				holder.text1.setBackgroundColor(0x0);
+				holder.text1.setChecked(selectedPosition == -1);
 			}
+
+			holder.itemView.setOnClickListener(v -> {
+				final int which = holder.getAdapterPosition();
+
+				if (which == getPositionOfCustomColors()) {
+					activity.startActivityForResult(ColorSettingsActivity.createIntent(Preferences.getBoolean(Prefkey.is_night_mode, false)), reqcodeCustomColors);
+					return;
+				}
+
+				final int[] colors = getColorsAtPosition(which);
+				ColorThemes.setCurrentColors(colors, Preferences.getBoolean(Prefkey.is_night_mode, false));
+				listener.onValueChanged();
+				notifyDataSetChanged();
+				displayValues();
+			});
 		}
 		
 		public int[] getColorsAtPosition(int position) {

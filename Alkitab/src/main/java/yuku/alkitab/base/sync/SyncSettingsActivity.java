@@ -9,7 +9,7 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -122,9 +122,10 @@ public class SyncSettingsActivity extends BaseActivity {
 				startActivityForResult(SyncLoginActivity.createIntent(), REQCODE_login);
 
 			} else { // show logout instead
-				new AlertDialogWrapper.Builder(getActivity())
-					.setMessage(R.string.sync_logout_warning)
-					.setPositiveButton(R.string.ok, (d, w) -> {
+				new MaterialDialog.Builder(getActivity())
+					.content(R.string.sync_logout_warning)
+					.positiveText(R.string.ok)
+					.onPositive((d, w) -> {
 						SyncRecorder.log(SyncRecorder.EventKind.logout_pre, null, "accountName", syncAccountName);
 
 						Preferences.hold();
@@ -144,7 +145,7 @@ public class SyncSettingsActivity extends BaseActivity {
 
 						updateDisplay();
 					})
-					.setNegativeButton(R.string.cancel, null)
+					.negativeText(R.string.cancel)
 					.show();
 			}
 			return true;

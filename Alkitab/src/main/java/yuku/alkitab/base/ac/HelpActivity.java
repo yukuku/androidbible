@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -143,9 +143,9 @@ public class HelpActivity extends BaseActivity {
 						final String ssp = uri.getSchemeSpecificPart();
 						final IntArrayList ariRanges = TargetDecoder.decode("o:" + ssp);
 						if (ariRanges == null || ariRanges.size() == 0) {
-							new AlertDialogWrapper.Builder(HelpActivity.this)
-								.setMessage(getString(R.string.alamat_tidak_sah_alamat, url))
-								.setPositiveButton(R.string.ok, null)
+							new MaterialDialog.Builder(HelpActivity.this)
+								.content(getString(R.string.alamat_tidak_sah_alamat, url))
+								.positiveText(R.string.ok)
 								.show();
 						} else {
 							final VersesDialog dialog = VersesDialog.newInstance(ariRanges);

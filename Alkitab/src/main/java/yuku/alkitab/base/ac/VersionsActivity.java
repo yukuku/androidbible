@@ -43,7 +43,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
@@ -94,7 +93,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.zip.GZIPInputStream;
-
 
 public class VersionsActivity extends BaseActivity {
 	public static final String TAG = VersionsActivity.class.getSimpleName();
@@ -219,9 +217,9 @@ public class VersionsActivity extends BaseActivity {
 
 		try {
 			if (isYesFile == null) { // can't be determined
-				new AlertDialogWrapper.Builder(this)
-					.setMessage(R.string.open_file_unknown_file_format)
-					.setPositiveButton(R.string.ok, null)
+				new MaterialDialog.Builder(this)
+					.content(R.string.open_file_unknown_file_format)
+					.positiveText(R.string.ok)
 					.show();
 				return;
 			}
@@ -249,18 +247,18 @@ public class VersionsActivity extends BaseActivity {
 			// opening a nonlocal yes file
 			boolean mkdirOk = AddonManager.mkYesDir();
 			if (!mkdirOk) {
-				new AlertDialogWrapper.Builder(this)
-					.setMessage(getString(R.string.tidak_bisa_membuat_folder, AddonManager.getYesPath()))
-					.setPositiveButton(R.string.ok, null)
+				new MaterialDialog.Builder(this)
+					.content(getString(R.string.tidak_bisa_membuat_folder, AddonManager.getYesPath()))
+					.positiveText(R.string.ok)
 					.show();
 				return;
 			}
 
 			File localFile = new File(AddonManager.getYesPath(), filelastname);
 			if (localFile.exists()) {
-				new AlertDialogWrapper.Builder(this)
-					.setMessage(getString(R.string.open_yes_file_name_conflict, filelastname, AddonManager.getYesPath()))
-					.setPositiveButton(R.string.ok, null)
+				new MaterialDialog.Builder(this)
+					.content(getString(R.string.open_yes_file_name_conflict, filelastname, AddonManager.getYesPath()))
+					.positiveText(R.string.ok)
 					.show();
 				return;
 			}
@@ -272,9 +270,9 @@ public class VersionsActivity extends BaseActivity {
 			handleFileOpenYes(localFile.getAbsolutePath());
 
 		} catch (Exception e) {
-			new AlertDialogWrapper.Builder(this)
-				.setMessage(R.string.open_file_cant_read_source)
-				.setPositiveButton(R.string.ok, null)
+			new MaterialDialog.Builder(this)
+				.content(R.string.open_file_cant_read_source)
+				.positiveText(R.string.ok)
 				.show();
 		}
 	}
@@ -383,9 +381,9 @@ public class VersionsActivity extends BaseActivity {
 
 			startActivityForResult(FileChooserActivity.createIntent(App.context, config), REQCODE_openFile);
 		} else {
-			new AlertDialogWrapper.Builder(this)
-				.setMessage(R.string.ed_no_external_storage)
-				.setPositiveButton(R.string.ok, null)
+			new MaterialDialog.Builder(this)
+				.content(R.string.ed_no_external_storage)
+				.positiveText(R.string.ok)
 				.show();
 		}
 	}
@@ -423,17 +421,17 @@ public class VersionsActivity extends BaseActivity {
 
 		// check if it exists previously
 		if (S.getDb().hasVersionWithFilename(AddonManager.getVersionPath(yesName))) {
-			new AlertDialogWrapper.Builder(this)
-				.setMessage(R.string.ed_this_file_is_already_on_the_list)
-				.setPositiveButton(R.string.ok, null)
+			new MaterialDialog.Builder(this)
+				.content(R.string.ed_this_file_is_already_on_the_list)
+				.positiveText(R.string.ok)
 				.show();
 			return;
 		}
 
 		if (!AddonManager.mkYesDir()) {
-			new AlertDialogWrapper.Builder(this)
-				.setMessage(getString(R.string.tidak_bisa_membuat_folder, AddonManager.getYesPath()))
-				.setPositiveButton(R.string.ok, null)
+			new MaterialDialog.Builder(this)
+				.content(getString(R.string.tidak_bisa_membuat_folder, AddonManager.getYesPath()))
+				.positiveText(R.string.ok)
 				.show();
 			return;
 		}
@@ -444,10 +442,10 @@ public class VersionsActivity extends BaseActivity {
 				sw.append('(').append(exception.getClass().getName()).append("): ").append(exception.getMessage()).append('\n');
 				exception.printStackTrace(new PrintWriter(sw));
 
-				new AlertDialogWrapper.Builder(VersionsActivity.this)
-					.setTitle(R.string.ed_error_reading_pdb_file)
-					.setMessage(exception instanceof ConvertOptionsDialog.PdbKnownErrorException? exception.getMessage(): (getString(R.string.ed_details) + sw.toString()))
-					.setPositiveButton(R.string.ok, null)
+				new MaterialDialog.Builder(VersionsActivity.this)
+					.title(R.string.ed_error_reading_pdb_file)
+					.content(exception instanceof ConvertOptionsDialog.PdbKnownErrorException? exception.getMessage(): (getString(R.string.ed_details) + sw.toString()))
+					.positiveText(R.string.ok)
 					.show();
 			}
 
@@ -466,9 +464,9 @@ public class VersionsActivity extends BaseActivity {
 							msg.append("- ").append(s).append('\n');
 						}
 
-						new AlertDialogWrapper.Builder(VersionsActivity.this)
-							.setMessage(msg)
-							.setPositiveButton(R.string.ok, null)
+						new MaterialDialog.Builder(VersionsActivity.this)
+							.content(msg)
+							.positiveText(R.string.ok)
 							.show();
 					}
 				}
@@ -531,9 +529,9 @@ public class VersionsActivity extends BaseActivity {
 	void handleFileOpenYes(String filename) {
 		{ // look for duplicates
 			if (S.getDb().hasVersionWithFilename(filename)) {
-				new AlertDialogWrapper.Builder(this)
-					.setMessage(getString(R.string.ed_file_file_sudah_ada_dalam_daftar_versi, filename))
-					.setPositiveButton(R.string.ok, null)
+				new MaterialDialog.Builder(this)
+					.content(getString(R.string.ed_file_file_sudah_ada_dalam_daftar_versi, filename))
+					.positiveText(R.string.ok)
 					.show();
 				return;
 			}
@@ -570,10 +568,10 @@ public class VersionsActivity extends BaseActivity {
 
 			App.getLbm().sendBroadcast(new Intent(VersionListFragment.ACTION_RELOAD));
 		} catch (Exception e) {
-			new AlertDialogWrapper.Builder(this)
-				.setTitle(R.string.ed_error_encountered)
-				.setMessage(e.getClass().getSimpleName() + ": " + e.getMessage())
-				.setPositiveButton(R.string.ok, null)
+			new MaterialDialog.Builder(this)
+				.title(R.string.ed_error_encountered)
+				.content(e.getClass().getSimpleName() + ": " + e.getMessage())
+				.positiveText(R.string.ok)
 				.show();
 		}
 	}
@@ -613,9 +611,9 @@ public class VersionsActivity extends BaseActivity {
 					final Uri uri = Uri.parse(url);
 					final String scheme = uri.getScheme();
 					if (!U.equals(scheme, "http") && !U.equals(scheme, "https")) {
-						new AlertDialogWrapper.Builder(VersionsActivity.this)
-							.setMessage(R.string.version_download_invalid_url)
-							.setPositiveButton(R.string.ok, null)
+						new MaterialDialog.Builder(VersionsActivity.this)
+							.content(R.string.version_download_invalid_url)
+							.positiveText(R.string.ok)
 							.show();
 						return;
 					}
@@ -623,9 +621,9 @@ public class VersionsActivity extends BaseActivity {
 					// guess destination filename
 					String last = uri.getLastPathSegment();
 					if (TextUtils.isEmpty(last) || !last.toLowerCase(Locale.US).endsWith(".yes")) {
-						new AlertDialogWrapper.Builder(VersionsActivity.this)
-							.setMessage(R.string.version_download_not_yes)
-							.setPositiveButton(R.string.ok, null)
+						new MaterialDialog.Builder(VersionsActivity.this)
+							.content(R.string.version_download_not_yes)
+							.positiveText(R.string.ok)
 							.show();
 						return;
 					}
@@ -929,7 +927,7 @@ public class VersionsActivity extends BaseActivity {
 
 			if (mv.description != null) details.append('\n').append(mv.description).append('\n');
 
-			final AlertDialogWrapper.Builder b = new AlertDialogWrapper.Builder(getActivity());
+			final MaterialDialog.Builder b = new MaterialDialog.Builder(getActivity());
 
 			int button_count = 0;
 
@@ -937,7 +935,8 @@ public class VersionsActivity extends BaseActivity {
 			if (hasUpdateAvailable(mv)) {
 				button_count++;
 				//noinspection ConstantConditions
-				b.setPositiveButton(R.string.ed_update_button, (dialog, which) -> startDownload(VersionConfig.get().getPreset(((MVersionDb) mv).preset_name)));
+				b.positiveText(R.string.ed_update_button);
+				b.onPositive((dialog, which) -> startDownload(VersionConfig.get().getPreset(((MVersionDb) mv).preset_name)));
 
 				details.append("\n");
 				final int details_len = details.length();
@@ -949,7 +948,8 @@ public class VersionsActivity extends BaseActivity {
 			// can we share?
 			if (mv instanceof MVersionDb && mv.hasDataFile()) {
 				button_count++;
-				b.setNegativeButton(R.string.version_menu_share, (dialog, which) -> {
+				b.negativeText(R.string.version_menu_share);
+				b.onNegative((dialog, which) -> {
 					final MVersionDb mvDb = (MVersionDb) mv;
 
 					final Intent intent = ShareCompat.IntentBuilder.from(getActivity())
@@ -964,20 +964,23 @@ public class VersionsActivity extends BaseActivity {
 			// can we delete?
 			if (mv instanceof MVersionDb) {
 				button_count++;
-				b.setNeutralButton(R.string.buang_dari_daftar, (dialog, which) -> {
+				b.neutralText(R.string.buang_dari_daftar);
+				b.onNeutral((dialog, which) -> {
 					final MVersionDb mvDb = (MVersionDb) mv;
-					new AlertDialogWrapper.Builder(getActivity())
-						.setMessage(getString(R.string.juga_hapus_file_datanya_file, mvDb.filename))
-						.setPositiveButton(R.string.delete, (dialog1, which1) -> {
+					new MaterialDialog.Builder(getActivity())
+						.content(getString(R.string.juga_hapus_file_datanya_file, mvDb.filename))
+						.positiveText(R.string.delete)
+						.onPositive((dialog1, which1) -> {
 							S.getDb().deleteVersion(mvDb);
 							App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
 							new File(mvDb.filename).delete();
 						})
-						.setNegativeButton(R.string.no, (dialog1, which1) -> {
+						.negativeText(R.string.no)
+						.onNegative((dialog1, which1) -> {
 							S.getDb().deleteVersion(mvDb);
 							App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
 						})
-						.setNeutralButton(R.string.cancel, null)
+						.neutralText(R.string.cancel)
 						.show();
 				});
 			}
@@ -985,16 +988,17 @@ public class VersionsActivity extends BaseActivity {
 			// can we download?
 			if (mv instanceof MVersionPreset) {
 				button_count++;
-				b.setPositiveButton(R.string.ed_download_button, (dialog, which) -> startDownload((MVersionPreset) mv));
+				b.positiveText(R.string.ed_download_button);
+				b.onPositive((dialog, which) -> startDownload((MVersionPreset) mv));
 			}
 
 			// if we have no buttons at all, add a no-op OK
 			if (button_count == 0) {
-				b.setPositiveButton(R.string.ok, null);
+				b.positiveText(R.string.ok);
 			}
 
-			b.setTitle(R.string.ed_version_details);
-			b.setMessage(details);
+			b.title(R.string.ed_version_details);
+			b.content(details);
 			b.show();
 		}
 
@@ -1068,13 +1072,14 @@ public class VersionsActivity extends BaseActivity {
 				if (mv.hasDataFile()) {
 					mv.setActive(true);
 				} else {
-					new AlertDialogWrapper.Builder(getActivity())
-						.setMessage(getString(R.string.the_file_for_this_version_is_no_longer_available_file, mv.filename))
-						.setPositiveButton(R.string.delete, (dialog, which) -> {
+					new MaterialDialog.Builder(getActivity())
+						.content(getString(R.string.the_file_for_this_version_is_no_longer_available_file, mv.filename))
+						.positiveText(R.string.delete)
+						.onPositive((dialog, which) -> {
 							S.getDb().deleteVersion(mv);
 							App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
 						})
-						.setNegativeButton(R.string.no, null)
+						.negativeText(R.string.no)
 						.show();
 				}
 			}

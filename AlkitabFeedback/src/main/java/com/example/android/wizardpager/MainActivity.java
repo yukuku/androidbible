@@ -18,9 +18,9 @@ package com.example.android.wizardpager;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -31,7 +31,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.android.wizardpager.wizard.model.AbstractWizardModel;
 import com.example.android.wizardpager.wizard.model.CustomerInfoPage;
 import com.example.android.wizardpager.wizard.model.ModelCallbacks;
@@ -135,11 +136,12 @@ public class MainActivity extends FragmentActivity implements
 				if (mPager.getCurrentItem() == mCurrentPageSequence.size()) {
 					DialogFragment dg = new DialogFragment() {
 						@Override public Dialog onCreateDialog(Bundle savedInstanceState) {
-							return new AlertDialogWrapper.Builder(getActivity())
-								.setMessage(R.string.alkitabfeedback_submit_confirm_message)
-								.setPositiveButton(R.string.alkitabfeedback_submit_confirm_button, new DialogInterface.OnClickListener() {
+							return new MaterialDialog.Builder(getActivity())
+								.content(R.string.alkitabfeedback_submit_confirm_message)
+								.positiveText(R.string.alkitabfeedback_submit_confirm_button)
+								.onPositive(new MaterialDialog.SingleButtonCallback() {
 									@Override
-									public void onClick(final DialogInterface dialog, final int which) {
+									public void onClick(@NonNull final MaterialDialog dialog, @NonNull final DialogAction which) {
 										String feedback_from_name = null;
 										String feedback_from_email = null;
 										String feedback_body = null;
@@ -166,8 +168,8 @@ public class MainActivity extends FragmentActivity implements
 										finish();
 									}
 								})
-								.setNegativeButton(android.R.string.cancel, null)
-								.create();
+								.negativeText(android.R.string.cancel)
+								.build();
 						}
 					};
 					dg.show(getSupportFragmentManager(), "place_order_dialog");

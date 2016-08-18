@@ -31,7 +31,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -358,9 +357,9 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 						final Activity activity = activityRef.get();
 						if (activity != null) {
 							if (!activity.isFinishing()) {
-								new AlertDialogWrapper.Builder(activity)
-									.setMessage(activity.getString(R.string.song_player_error_description, what, extra))
-									.setPositiveButton(R.string.ok, null)
+								new MaterialDialog.Builder(activity)
+									.content(activity.getString(R.string.song_player_error_description, what, extra))
+									.positiveText(R.string.ok)
 									.show();
 							}
 						}
@@ -647,18 +646,20 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		} return true;
 
         case R.id.menuUpdateBook: {
-			new AlertDialogWrapper.Builder(this)
-				.setMessage(TextUtils.expandTemplate(getText(R.string.sn_update_book_explanation), SongBookUtil.escapeSongBookName(currentBookName)))
-				.setPositiveButton(R.string.sn_update_book_confirm_button, (dialog, which) -> updateSongBook())
-				.setNegativeButton(R.string.cancel, null)
+			new MaterialDialog.Builder(this)
+				.content(TextUtils.expandTemplate(getText(R.string.sn_update_book_explanation), SongBookUtil.escapeSongBookName(currentBookName)))
+				.positiveText(R.string.sn_update_book_confirm_button)
+				.onPositive((dialog, which) -> updateSongBook())
+				.negativeText(R.string.cancel)
 				.show();
 		} return true;
 
 		case R.id.menuDeleteSongBook: {
-			new AlertDialogWrapper.Builder(this)
-				.setMessage(TextUtils.expandTemplate(getText(R.string.sn_delete_song_book_explanation), SongBookUtil.escapeSongBookName(currentBookName)))
-				.setPositiveButton(R.string.delete, (dialog, which) -> deleteSongBook())
-				.setNegativeButton(R.string.cancel, null)
+			new MaterialDialog.Builder(this)
+				.content(TextUtils.expandTemplate(getText(R.string.sn_delete_song_book_explanation), SongBookUtil.escapeSongBookName(currentBookName)))
+				.positiveText(R.string.delete)
+				.onPositive((dialog, which) -> deleteSongBook())
+				.negativeText(R.string.cancel)
 				.show();
 		} return true;
 		}
@@ -771,7 +772,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				if (verse.kind == VerseKind.REFRAIN) {
 					sb.append(getString(R.string.sn_lyric_refrain_marker)).append('\n');
 				} else {
-					sb.append(String.format("%2d: ", verse_normal_no));
+					sb.append(String.format(Locale.US, "%2d: ", verse_normal_no));
 					skipPad = true;
 				}
 

@@ -168,7 +168,7 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 
 	chmod +x ./gradlew
 	echo 'Running gradlew from' `pwd`
-	./gradlew --no-daemon assemble${FLAVOR^}Release
+	./gradlew assemble${FLAVOR^}Release
 
 	FINAL_APK="$BUILD_MAIN_PROJECT_DIR/build/outputs/apk/$MAIN_PROJECT_NAME-$FLAVOR-release.apk"
 

@@ -4,16 +4,15 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
-import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.debug.R;
@@ -87,25 +86,8 @@ public class TypeBookmarkDialog {
 
 			final MaterialDialog dialog = new MaterialDialog.Builder(context)
 				.title(R.string.add_label_title)
-				.adapter(adapter, (materialDialog, view, which, text) -> {
-					if (which == 0) { // new label
-						LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), title -> {
-							final Label newLabel = S.getDb().insertLabel(title, null);
-							if (newLabel != null) {
-								labels.add(newLabel);
-								setLabelsText();
-							}
-						});
-					} else {
-						final Label label = adapter.getItem(which);
-						labels.add(label);
-						setLabelsText();
-					}
-					materialDialog.dismiss();
-				})
+				.adapter(adapter, null)
 				.build();
-
-			adapter.setDialogContext(dialog.getContext());
 
 			dialog.show();
 		});
@@ -119,12 +101,14 @@ public class TypeBookmarkDialog {
 
 		tCaption.setText(marker != null? marker.caption: reference);
 
-		this.dialog = new AlertDialogWrapper.Builder(context)
-			.setView(dialogView)
-			.setTitle(reference)
-			.setIcon(R.drawable.ic_attr_bookmark)
-			.setPositiveButton(R.string.ok, (dialog, which) -> bOk_click())
-			.setNeutralButton(R.string.delete, (dialog, which) -> bDelete_click(marker))
+		this.dialog = new MaterialDialog.Builder(context)
+			.customView(dialogView, false)
+			.title(reference)
+			.iconRes(R.drawable.ic_attr_bookmark)
+			.positiveText(R.string.ok)
+			.onPositive((dialog, which) -> bOk_click())
+			.neutralText(R.string.delete)
+			.onNeutral((dialog, which) -> bDelete_click(marker))
 			.show();
 	}
 
@@ -163,13 +147,14 @@ public class TypeBookmarkDialog {
 			final Label label = (Label) v.getTag(R.id.TAG_label);
 			if (label == null) return;
 
-			new AlertDialogWrapper.Builder(context)
-				.setMessage(context.getString(R.string.do_you_want_to_remove_the_label_label_from_this_bookmark, label.title))
-				.setPositiveButton(R.string.ok, (dialog, which) -> {
+			new MaterialDialog.Builder(context)
+				.content(context.getString(R.string.do_you_want_to_remove_the_label_label_from_this_bookmark, label.title))
+				.positiveText(R.string.ok)
+				.onPositive((dialog, which) -> {
 					labels.remove(label);
 					setLabelsText();
 				})
-				.setNegativeButton(R.string.cancel, null)
+				.negativeText(R.string.cancel)
 				.show();
 		}
 	};
@@ -179,14 +164,15 @@ public class TypeBookmarkDialog {
 			return; // bookmark not saved, so no need to confirm
 		}
 
-		new AlertDialogWrapper.Builder(context)
-			.setMessage(R.string.bookmark_delete_confirmation)
-			.setPositiveButton(R.string.delete, (dialog, which) -> {
+		new MaterialDialog.Builder(context)
+			.content(R.string.bookmark_delete_confirmation)
+			.positiveText(R.string.delete)
+			.onPositive((dialog, which) -> {
 				S.getDb().deleteMarkerById(marker._id);
 
 				if (listener != null) listener.onModifiedOrDeleted();
 			})
-			.setNegativeButton(R.string.cancel, null)
+			.negativeText(R.string.cancel)
 			.show();
 	}
 
@@ -218,54 +204,69 @@ public class TypeBookmarkDialog {
         return res;
     }
 
-	class LabelAdapter extends EasyAdapter {
+	static class LabelHolder extends RecyclerView.ViewHolder {
+		final TextView text1;
+
+		public LabelHolder(final View itemView) {
+			super(itemView);
+
+			text1 = V.get(itemView, android.R.id.text1);
+		}
+	}
+
+	class LabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		private List<Label> labels;
-		private Context dialogContext;
 
 		public LabelAdapter() {
 			labels = S.getDb().listAllLabels();
-			dialogContext = context;
 		}
 
-		public void setDialogContext(Context dialogContext) {
-			this.dialogContext = dialogContext;
-		}
-		
-		@Override public int getCount() {
+		@Override
+		public int getItemCount() {
 			return 1 + labels.size();
 		}
 
-		@Override public Label getItem(int position) {
-			return position == 0 ? null : labels.get(position - 1);
+		@Override
+		public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+			return new LabelHolder(LayoutInflater.from(parent.getContext()).inflate(viewType == 0 ? R.layout.item_label_chooser : android.R.layout.simple_list_item_1, parent, false));
 		}
 
 		@Override
-		public View newView(final int position, final ViewGroup parent) {
+		public void onBindViewHolder(final RecyclerView.ViewHolder _holder_, final int position) {
 			final int type = getItemViewType(position);
 
-			return LayoutInflater.from(dialogContext).inflate(type == 0? R.layout.item_label_chooser: android.R.layout.simple_list_item_1, null);
-		}
+			final LabelHolder holder = (LabelHolder) _holder_;
 
-		@Override
-		public void bindView(final View view, final int position, final ViewGroup parent) {
-			final int type = getItemViewType(position);
-
-			if (type == 0) {
-				final TextView text1 = V.get(view, android.R.id.text1);
-				final Label label = getItem(position);
-				text1.setText(label.title);
-				U.applyLabelColor(label, text1);
-			} else {
-				final TextView text1 = V.get(view, android.R.id.text1);
-				text1.setText(context.getString(R.string.create_label_titik3));
+			{
+				if (type == 0) {
+					final Label label = labels.get(position - 1);
+					holder.text1.setText(label.title);
+					U.applyLabelColor(label, holder.text1);
+				} else {
+					holder.text1.setText(context.getString(R.string.create_label_titik3));
+				}
 			}
+
+			holder.itemView.setOnClickListener(v -> {
+				final int which = holder.getAdapterPosition();
+				if (which == 0) { // new label
+					LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), title -> {
+						final Label newLabel = S.getDb().insertLabel(title, null);
+						if (newLabel != null) {
+							labels.add(newLabel);
+							setLabelsText();
+						}
+					});
+				} else {
+					final Label label = labels.get(position - 1);
+					labels.add(label);
+					setLabelsText();
+				}
+			});
 		}
 
-		@Override public int getViewTypeCount() {
-			return 2;
-		}
-		
-		@Override public int getItemViewType(int position) {
+		@Override
+		public int getItemViewType(final int position) {
 			if (position == 0) return 1;
 			return 0;
 		}

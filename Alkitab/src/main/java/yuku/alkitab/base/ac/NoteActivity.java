@@ -14,7 +14,7 @@ import android.view.MotionEvent;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -148,9 +148,9 @@ public class NoteActivity extends BaseActivity {
 
 		final IntArrayList verseRanges = DesktopVerseParser.verseStringToAri(verse);
 		if (verseRanges == null || verseRanges.size() == 0) {
-			new AlertDialogWrapper.Builder(widget.getContext())
-				.setMessage(R.string.note_activity_cannot_parse_verse)
-				.setPositiveButton(R.string.ok, null)
+			new MaterialDialog.Builder(widget.getContext())
+				.content(R.string.note_activity_cannot_parse_verse)
+				.positiveText(R.string.ok)
 				.show();
 			return;
 		}
@@ -251,9 +251,10 @@ public class NoteActivity extends BaseActivity {
 			case R.id.menuDelete: {
 				// if it's indeed not exist, check if we have some text, if we do, prompt first
 				if (marker != null || tCaption.length() > 0) {
-					new AlertDialogWrapper.Builder(this)
-						.setMessage(R.string.anda_yakin_mau_menghapus_catatan_ini)
-						.setPositiveButton(R.string.delete, (dialog, which) -> {
+					new MaterialDialog.Builder(this)
+						.content(R.string.anda_yakin_mau_menghapus_catatan_ini)
+						.positiveText(R.string.delete)
+						.onPositive((dialog, which) -> {
 							if (marker != null) {
 								// really delete from db
 								S.getDb().deleteNonBookmarkMarkerById(marker._id);
@@ -264,7 +265,7 @@ public class NoteActivity extends BaseActivity {
 							setResult(RESULT_OK);
 							realFinish();
 						})
-						.setNegativeButton(R.string.cancel, null)
+						.negativeText(R.string.cancel)
 						.show();
 				} else { // no existing marker and buffer is empty
 					realFinish(); // no need to setResult(RESULT_OK), because nothing is to be reloaded

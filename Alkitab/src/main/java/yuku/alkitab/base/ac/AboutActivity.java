@@ -16,7 +16,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.alkitab.base.App;
@@ -24,9 +23,12 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.debug.R;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.afollestad.materialdialogs.MaterialDialog.Builder;
 import static yuku.alkitab.base.util.Literals.Array;
+import static yuku.alkitab.base.util.Literals.List;
 
 public class AboutActivity extends BaseActivity {
 	public static final String TAG = AboutActivity.class.getSimpleName();
@@ -80,9 +82,9 @@ public class AboutActivity extends BaseActivity {
 
 				if (manualAnnouncementReload.get()) {
 					if (!isFinishing()) {
-						new AlertDialogWrapper.Builder(AboutActivity.this)
-							.setMessage(R.string.about_announcement_load_failed)
-							.setPositiveButton(R.string.ok, null)
+						new MaterialDialog.Builder(AboutActivity.this)
+							.content(R.string.about_announcement_load_failed)
+							.positiveText(R.string.ok)
 							.show();
 					}
 				}
@@ -256,9 +258,10 @@ public class AboutActivity extends BaseActivity {
 	};
 
 	private void showSecretDialog() {
-		new AlertDialogWrapper.Builder(this)
-			.setItems(Array("Secret settings", "Crash me"), (dialog, which) -> {
-				switch (which) {
+		new MaterialDialog.Builder(this)
+			.items(List("Secret settings", "Crash me"))
+			.itemsCallback((dialog, itemView, position, text) -> {
+				switch (position) {
 					case 0:
 						startActivity(SecretSettingsActivity.createIntent());
 						return;

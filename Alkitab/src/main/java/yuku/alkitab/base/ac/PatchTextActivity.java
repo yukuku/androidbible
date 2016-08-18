@@ -8,7 +8,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.android.wizardpager.MainActivity;
 import name.fraser.neil.plaintext.diff_match_patch;
 import yuku.afw.V;
@@ -76,9 +76,9 @@ public class PatchTextActivity extends BaseActivity {
 
 		bSend.setOnClickListener(v -> bSend_click());
 
-		new AlertDialogWrapper.Builder(this)
-			.setMessage(R.string.patch_text_intro)
-			.setPositiveButton(R.string.ok, null)
+		new MaterialDialog.Builder(this)
+			.content(R.string.patch_text_intro)
+			.positiveText(R.string.ok)
 			.show();
 	}
 
@@ -111,9 +111,9 @@ public class PatchTextActivity extends BaseActivity {
 		}
 
 		if (!hasEdits) {
-			new AlertDialogWrapper.Builder(this)
-				.setMessage(R.string.patch_text_error_no_edits)
-				.setPositiveButton(R.string.ok, null)
+			new MaterialDialog.Builder(this)
+				.content(R.string.patch_text_error_no_edits)
+				.positiveText(R.string.ok)
 				.show();
 			return;
 		}

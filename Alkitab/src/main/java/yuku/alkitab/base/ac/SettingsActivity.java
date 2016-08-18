@@ -16,7 +16,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -178,10 +178,11 @@ public class SettingsActivity extends BaseActivity {
 				final boolean value = (boolean) newValue;
 
 				if (value) {
-					new AlertDialogWrapper.Builder(getActivity())
-						.setMessage(R.string.show_hidden_version_warning)
-						.setNegativeButton(R.string.cancel, null)
-						.setPositiveButton(R.string.ok, (dialog, which) -> pref_showHiddenVersion.setChecked(true))
+					new MaterialDialog.Builder(getActivity())
+						.content(R.string.show_hidden_version_warning)
+						.negativeText(R.string.cancel)
+						.positiveText(R.string.ok)
+						.onPositive((dialog, which) -> pref_showHiddenVersion.setChecked(true))
 						.show();
 					return false;
 				}

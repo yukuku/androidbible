@@ -28,7 +28,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -212,9 +211,10 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			}
 
 			private void catchMeUp() {
-				new AlertDialogWrapper.Builder(ReadingPlanActivity.this)
-					.setMessage(R.string.rp_reset)
-					.setPositiveButton(R.string.ok, (dialog, which) -> {
+				new MaterialDialog.Builder(ReadingPlanActivity.this)
+					.content(R.string.rp_reset)
+					.positiveText(R.string.ok)
+					.onPositive((dialog, which) -> {
 						int firstUnreadDay = findFirstUnreadDay();
 						Calendar calendar = GregorianCalendar.getInstance();
 						calendar.add(Calendar.DATE, -firstUnreadDay);
@@ -225,7 +225,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 						updateButtonStatus();
 					})
-					.setNegativeButton(R.string.cancel, null)
+					.negativeText(R.string.cancel)
 					.show();
 			}
 		});
@@ -473,9 +473,10 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	}
 
 	private void deleteReadingPlan() {
-		new AlertDialogWrapper.Builder(this)
-			.setMessage(getString(R.string.rp_deletePlan, readingPlan.info.title))
-			.setPositiveButton(R.string.delete, (dialog, which) -> {
+		new MaterialDialog.Builder(this)
+			.content(getString(R.string.rp_deletePlan, readingPlan.info.title))
+			.positiveText(R.string.delete)
+			.onPositive((dialog, which) -> {
 				S.getDb().deleteReadingPlanById(readingPlan.info.id);
 				readingPlan = null;
 				Preferences.remove(Prefkey.active_reading_plan_id);
@@ -486,7 +487,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				prepareDisplay();
 				supportInvalidateOptionsMenu();
 			})
-			.setNegativeButton(R.string.cancel, null)
+			.negativeText(R.string.cancel)
 			.show();
 	}
 
@@ -513,9 +514,10 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 	@Override
 	public void bRestart_click() {
-		new AlertDialogWrapper.Builder(this)
-			.setMessage(R.string.rp_restart_desc)
-			.setPositiveButton(R.string.ok, (dialog, which) -> {
+		new MaterialDialog.Builder(this)
+			.content(R.string.rp_restart_desc)
+			.positiveText(R.string.ok)
+			.onPositive((dialog, which) -> {
 				S.getDb().deleteAllReadingPlanProgressForGid(ReadingPlan.gidFromName(readingPlan.info.name));
 				S.getDb().updateReadingPlanStartDate(readingPlan.info.id, System.currentTimeMillis());
 				loadReadingPlan(readingPlan.info.id);
@@ -525,7 +527,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 				updateButtonStatus();
 			})
-			.setNegativeButton(R.string.cancel, null)
+			.negativeText(R.string.cancel)
 			.show();
 
 		leftDrawer.closeDrawer();
@@ -593,9 +595,9 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				} catch (Exception e) {
 					if (cancelled.get()) {
 						Log.e(TAG, "downloading reading plan data", e);
-						new AlertDialogWrapper.Builder(ReadingPlanActivity.this)
-							.setMessage(getString(R.string.rp_download_reading_plan_failed))
-							.setPositiveButton(R.string.ok, null)
+						new MaterialDialog.Builder(ReadingPlanActivity.this)
+							.content(getString(R.string.rp_download_reading_plan_failed))
+							.positiveText(R.string.ok)
 							.show();
 					}
 				} finally {
@@ -622,9 +624,9 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				final long id = ReadingPlanManager.insertReadingPlanToDb(data, name);
 
 				if (id == 0) {
-					new AlertDialogWrapper.Builder(ReadingPlanActivity.this)
-						.setMessage(getString(R.string.rp_download_reading_plan_data_corrupted))
-						.setPositiveButton(R.string.ok, null)
+					new MaterialDialog.Builder(ReadingPlanActivity.this)
+						.content(getString(R.string.rp_download_reading_plan_data_corrupted))
+						.positiveText(R.string.ok)
 						.show();
 					return;
 				}
@@ -677,12 +679,9 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			.content(R.string.rp_mark_as_read_up_to)
 			.positiveText(R.string.ok)
 			.negativeText(R.string.cancel)
-			.callback(new MaterialDialog.ButtonCallback() {
-				@Override
-				public void onPositive(final MaterialDialog dialog) {
-					ReadingPlanManager.markAsReadUpTo(readingPlan.info.name, readingPlan.dailyVerses, day, sequence);
-					reload();
-				}
+			.onPositive((dialog, which) -> {
+				ReadingPlanManager.markAsReadUpTo(readingPlan.info.name, readingPlan.dailyVerses, day, sequence);
+				reload();
 			})
 			.show();
 	}
@@ -766,8 +765,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				pbReadingProgress.setProgress((int) (actualPercentage * 100));
 				pbReadingProgress.setSecondaryProgress((int) (targetPercentage * 100));
 
-				tActual.setText(getString(R.string.rp_commentActual, String.format("%.2f", actualPercentage)));
-				tTarget.setText(getString(R.string.rp_commentTarget, String.format("%.2f", targetPercentage)));
+				tActual.setText(getString(R.string.rp_commentActual, String.format(Locale.US, "%.2f", actualPercentage)));
+				tTarget.setText(getString(R.string.rp_commentTarget, String.format(Locale.US, "%.2f", targetPercentage)));
 
 				if (originalCommentTextColor == null) {
 					originalCommentTextColor = tComment.getTextColors();

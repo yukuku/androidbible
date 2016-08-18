@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import yuku.afw.V;
@@ -279,9 +279,10 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 		private View.OnClickListener bDelete_click = v -> {
 			final FontItem item = (FontItem) v.getTag(R.id.TAG_fontItem);
 
-			new AlertDialogWrapper.Builder(FontManagerActivity.this)
-				.setMessage(getString(R.string.fm_do_you_want_to_delete, item.name))
-				.setPositiveButton(R.string.delete, (dialog, which) -> {
+			new MaterialDialog.Builder(FontManagerActivity.this)
+				.content(getString(R.string.fm_do_you_want_to_delete, item.name))
+				.positiveText(R.string.delete)
+				.onPositive((dialog, which) -> {
 					File fontDir = FontManager.getFontDir(item.name);
 					File[] listFiles = fontDir.listFiles();
 					if (listFiles != null) {
@@ -295,7 +296,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 
 					notifyDataSetChanged();
 				})
-				.setNegativeButton(R.string.cancel, null)
+				.negativeText(R.string.cancel)
 				.show();
 		};
 	}
@@ -340,9 +341,9 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 				
 				new File(downloadedZip).delete();
 			} catch (Exception e) {
-				new AlertDialogWrapper.Builder(FontManagerActivity.this)
-					.setMessage(getString(R.string.fm_error_when_extracting_font, fontName, e.getClass().getSimpleName() + ' ' + e.getMessage()))
-					.setPositiveButton(R.string.ok, null)
+				new MaterialDialog.Builder(FontManagerActivity.this)
+					.content(getString(R.string.fm_error_when_extracting_font, fontName, e.getClass().getSimpleName() + ' ' + e.getMessage()))
+					.positiveText(R.string.ok)
 					.show();
 			}
 		}

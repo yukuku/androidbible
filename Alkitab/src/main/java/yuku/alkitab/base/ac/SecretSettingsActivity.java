@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.widget.Toast;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import gnu.trove.set.TLongSet;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -36,16 +36,17 @@ public class SecretSettingsActivity extends BaseActivity {
 				labels[i] = progressMark.caption + " (preset_id " + progressMark.preset_id + ")";
 			}
 
-			new AlertDialogWrapper.Builder(getActivity())
-				.setItems(labels, (dialog, which) -> {
-					final List<ProgressMarkHistory> pmhs = S.getDb().listProgressMarkHistoryByPresetId(progressMarks.get(which).preset_id);
+			new MaterialDialog.Builder(getActivity())
+				.items(labels)
+				.itemsCallback((dialog, itemView, position, text) -> {
+					final List<ProgressMarkHistory> pmhs = S.getDb().listProgressMarkHistoryByPresetId(progressMarks.get(position).preset_id);
 					final String[] items = new String[pmhs.size()];
 					for (int i = 0; i < pmhs.size(); i++) {
 						final ProgressMarkHistory pmh = pmhs.get(i);
 						items[i] = "'" + pmh.progress_mark_caption + "' " + Sqlitil.toLocaleDateMedium(pmh.createTime) + ": " + S.activeVersion.reference(pmh.ari);
 					}
-					new AlertDialogWrapper.Builder(getActivity())
-						.setItems(items, null)
+					new MaterialDialog.Builder(getActivity())
+						.items(items)
 						.show();
 				})
 				.show();
@@ -63,8 +64,8 @@ public class SecretSettingsActivity extends BaseActivity {
 				);
 			}
 
-			new AlertDialogWrapper.Builder(getActivity())
-				.setItems(items.toArray(new String[items.size()]), null)
+			new MaterialDialog.Builder(getActivity())
+				.items(items)
 				.show();
 
 			return true;
