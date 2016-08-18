@@ -12,6 +12,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 
 import java.io.IOException;
@@ -87,7 +88,7 @@ public class VersionConfigUpdaterService extends IntentService {
 
 		try {
 			Log.d(TAG, "Downloading list modify time");
-			modifyTimeBody = App.downloadString("https://alkitab-host.appspot.com/versions/list_modify_time?packageName=" + Uri.encode(getPackageName()) + "&versionCode=" + Uri.encode(String.valueOf(App.getVersionCode())));
+			modifyTimeBody = App.downloadString(BuildConfig.SERVER_HOST + "versions/list_modify_time?packageName=" + Uri.encode(getPackageName()) + "&versionCode=" + Uri.encode(String.valueOf(App.getVersionCode())));
 		} catch (IOException e) {
 			Log.e(TAG, "failed to download modify time", e);
 

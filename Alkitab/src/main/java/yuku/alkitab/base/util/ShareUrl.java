@@ -9,6 +9,7 @@ import okhttp3.FormBody;
 import okhttp3.Request;
 import okhttp3.Response;
 import yuku.alkitab.base.App;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
@@ -63,7 +64,7 @@ public class ShareUrl {
 
 		final Call call = App.getOkHttpClient().newCall(
 			new Request.Builder()
-				.url("https://alkitab-host.appspot.com/v/create")
+				.url(BuildConfig.SERVER_HOST + "v/create")
 				.post(form.build())
 				.build()
 		);

@@ -41,6 +41,7 @@ import yuku.alkitab.base.util.CurrentReading;
 import yuku.alkitab.base.util.ReadingPlanManager;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.LeftDrawer;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabintegration.display.Launcher;
@@ -539,7 +540,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	}
 
 	private void downloadReadingPlanList() {
-		startActivityForResult(HelpActivity.createIntent("https://alkitab-host.appspot.com/rp/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName()), getString(R.string.rp_menuDownload)), REQCODE_openList);
+		startActivityForResult(HelpActivity.createIntent(BuildConfig.SERVER_HOST + "rp/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName()), getString(R.string.rp_menuDownload)), REQCODE_openList);
 	}
 
 	@Override
@@ -609,7 +610,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			 * run on bg thread
 			 */
 			void download() throws Exception {
-				final byte[] bytes = App.downloadBytes("https://alkitab-host.appspot.com/rp/get_rp?name=" + name);
+				final byte[] bytes = App.downloadBytes(BuildConfig.SERVER_HOST + "rp/get_rp?name=" + name);
 
 				if (cancelled.get()) return;
 				runOnUiThread(() -> onReadingPlanDownloadFinished(bytes));

@@ -131,7 +131,7 @@ public abstract class Announce {
 		final OkHttpClient client = App.getOkHttpClient();
 		final Call call = client.newCall(
 			new Request.Builder()
-				.url("https://alkitab-host.appspot.com/announce/check")
+				.url(BuildConfig.SERVER_HOST + "announce/check")
 				.post(
 					new FormBody.Builder()
 						.add("installation_info", U.getInstallationInfoJson())

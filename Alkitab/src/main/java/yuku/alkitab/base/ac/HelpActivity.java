@@ -104,7 +104,7 @@ public class HelpActivity extends BaseActivity {
 			}
 		} else if (announcementIds != null) {
 			final Locale locale = getResources().getConfiguration().locale;
-			final String url = "https://alkitab-host.appspot.com/announce/view?ids=" + App.getDefaultGson().toJson(announcementIds) + (locale == null ? "" : ("&locale=" + locale.toString()));
+			final String url = BuildConfig.SERVER_HOST + "announce/view?ids=" + App.getDefaultGson().toJson(announcementIds) + (locale == null ? "" : ("&locale=" + locale.toString()));
 			if (BuildConfig.DEBUG) {
 				Log.d(TAG, "loading announce view url: " + url);
 			}

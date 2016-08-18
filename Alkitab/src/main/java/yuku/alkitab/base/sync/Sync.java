@@ -274,7 +274,7 @@ public class Sync {
 
 	/**
 	 * Returns the effective server prefix for syncing.
-	 * @return scheme, host, port, without the trailing slash.
+	 * @return scheme, host, port, with the trailing slash.
 	 */
 	public static String getEffectiveServerPrefix() {
 		final String override = Preferences.getString(Prefkey.sync_server_prefix);
@@ -283,9 +283,9 @@ public class Sync {
 		}
 
 		if (BuildConfig.DEBUG) {
-			return "http://10.0.3.2:9080";
+			return "http://10.0.3.2:9080/";
 		} else {
-			return "https://alkitab-host.appspot.com";
+			return BuildConfig.SERVER_HOST;
 		}
 	}
 
@@ -314,7 +314,7 @@ public class Sync {
 		try {
 			final Call call = App.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
-					.url(getEffectiveServerPrefix() + "/sync/api/register_gcm_client")
+					.url(getEffectiveServerPrefix() + "sync/api/register_gcm_client")
 					.post(requestBody)
 					.build()
 			);
@@ -386,7 +386,7 @@ public class Sync {
 		try {
 			final Call call = App.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
-					.url(getEffectiveServerPrefix() + "/sync/api/create_own_user")
+					.url(getEffectiveServerPrefix() + "sync/api/create_own_user")
 					.post(requestBody)
 					.build()
 			);
@@ -420,7 +420,7 @@ public class Sync {
 		try {
 			final Call call = App.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
-					.url(getEffectiveServerPrefix() + "/sync/api/login_own_user")
+					.url(getEffectiveServerPrefix() + "sync/api/login_own_user")
 					.post(requestBody)
 					.build()
 			);
@@ -452,7 +452,7 @@ public class Sync {
 		try {
 			final Call call = App.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
-					.url(getEffectiveServerPrefix() + "/sync/api/forgot_password")
+					.url(getEffectiveServerPrefix() + "sync/api/forgot_password")
 					.post(requestBody)
 					.build()
 			);
@@ -484,7 +484,7 @@ public class Sync {
 		try {
 			final Call call = App.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
-					.url(getEffectiveServerPrefix() + "/sync/api/change_password")
+					.url(getEffectiveServerPrefix() + "sync/api/change_password")
 					.post(requestBody)
 					.build()
 			);

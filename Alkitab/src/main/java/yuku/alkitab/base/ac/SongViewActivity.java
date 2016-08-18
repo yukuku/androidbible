@@ -49,6 +49,7 @@ import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.base.widget.LeftDrawer;
 import yuku.alkitab.base.widget.TwofingerLinearLayout;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.SongInfo;
@@ -445,7 +446,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	void openDownloadSongBookPage() {
 		startActivityForResult(
 			HelpActivity.createIntentWithOverflowMenu(
-				"https://alkitab-host.appspot.com/songs/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName()),
+				BuildConfig.SERVER_HOST + "songs/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName()),
 				getString(R.string.sn_download_song_books),
 				getString(R.string.sn_menu_private_song_book),
 				AlertDialogActivity.createInputIntent(
@@ -534,13 +535,13 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		new Thread(() -> {
 			try {
 				final String filename = getAudioFilename(checkedBookName, checkedCode);
-				final String response = App.downloadString("https://alkitab-host.appspot.com/addon/audio/exists?filename=" + Uri.encode(filename));
+				final String response = App.downloadString(BuildConfig.SERVER_HOST + "addon/audio/exists?filename=" + Uri.encode(filename));
 				if (response.startsWith("OK")) {
 					// make sure this is the correct one due to possible race condition
 					if (U.equals(currentBookName, checkedBookName) && currentSong != null && U.equals(currentSong.code, checkedCode)) {
 						runOnUiThread(() -> {
 							if (mediaPlayerController.canHaveNewUrl()) {
-								final String baseUrl = "https://alkitab-host.appspot.com/addon/audio/";
+								final String baseUrl = BuildConfig.SERVER_HOST + "addon/audio/";
 								final String url = baseUrl + getAudioFilename(currentBookName, currentSong.code);
 								if (response.contains("extension=mp3")) {
 									mediaPlayerController.mediaKnownToExist(url, false);

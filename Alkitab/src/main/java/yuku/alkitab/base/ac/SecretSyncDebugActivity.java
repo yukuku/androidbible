@@ -366,7 +366,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 		final Call call = App.getLongTimeoutOkHttpClient().newCall(
 			new Request.Builder()
-				.url(Sync.getEffectiveServerPrefix() + "/sync/api/sync")
+				.url(Sync.getEffectiveServerPrefix() + "sync/api/sync")
 				.post(requestBody)
 				.build()
 		);

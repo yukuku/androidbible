@@ -22,6 +22,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.sv.DownloadService;
 import yuku.alkitab.base.util.FontManager;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 
 import java.io.BufferedInputStream;
@@ -38,9 +39,9 @@ import java.util.zip.ZipInputStream;
 public class FontManagerActivity extends BaseActivity implements DownloadService.DownloadListener {
 	public static final String TAG = FontManagerActivity.class.getSimpleName();
 	
-	private static final String URL_fontList = "https://alkitab-host.appspot.com/addon/fonts/v1/list-v2.txt";
-	private static final String URL_fontData = "https://alkitab-host.appspot.com/addon/fonts/v1/data/%s.zip";
-	private static final String URL_fontPreview = "https://alkitab-host.appspot.com/addon/fonts/v1/preview/%s-384x84.png";
+	private static final String URL_fontList = BuildConfig.SERVER_HOST + "addon/fonts/v1/list-v2.txt";
+	private static final String URL_fontData = BuildConfig.SERVER_HOST + "addon/fonts/v1/data/%s.zip";
+	private static final String URL_fontPreview = BuildConfig.SERVER_HOST + "addon/fonts/v1/preview/%s-384x84.png";
 
 	public static Intent createIntent() {
 		return new Intent(App.context, FontManagerActivity.class);
