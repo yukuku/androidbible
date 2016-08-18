@@ -24,6 +24,7 @@ allprojects {
 }
 
 ext {
+    SERVER_HOST = 'https://alkitab-host.appspot.com/'
     compileSdkVersion = 24
     buildToolsVersion = '24.0.1'
     minSdkVersion = 14

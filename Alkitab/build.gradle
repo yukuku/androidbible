@@ -22,7 +22,7 @@ android {
         multiDexEnabled true
         // Keep this synced with build.gradle resConfigs!
         resConfigs 'af', 'bg', 'cs', 'da', 'de', 'es', 'fr', 'in', 'ja', 'lv', 'ms', 'nl', 'pl', 'pt', 'ro', 'ru', 'th', 'uk', 'zh-rCN', 'zh-rTW'
-        buildConfigField 'String', 'SERVER_HOST', '"https://alkitab-host.appspot.com/"'
+        buildConfigField 'String', 'SERVER_HOST', "\"$SERVER_HOST\""
     }
     buildTypes {
         release {
