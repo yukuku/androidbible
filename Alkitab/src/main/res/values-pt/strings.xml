@@ -27,9 +27,16 @@
   <string name="menu_markers">Marcadores</string>
   <string name="hapus_pembatas_buku">Remover marcador</string>
   <string name="menuShare">Compartilhar</string>
+  <string name="menuShareSplit0">Compartilhar versão primária</string>
+  <string name="menuShareSplit1">Compartilhar versão secundária</string>
+  <string name="menuShareBothSplits">Compartilhar as duas versões</string>
   <string name="tulis_catatan">Escrever anotação</string>
   <string name="tambah_pembatas_buku">Adicionar marcador</string>
   <string name="salin_ayat">Copiar versículo</string>
+  <string name="copy_split0">Copiar versão primária</string>
+  <string name="copy_split1">Copiar versão secundária</string>
+  <string name="copy_both_splits">Copiar as duas versões</string>
+  <string name="search_copy_selected_verses">Copiar versículos selecionados</string>
   <string name="perj_baru">Novo Test.</string>
   <string name="perj_lama">Antigo Test.</string>
   <string name="search_bookname_only">%s apenas</string>
@@ -63,6 +70,7 @@
   <string name="mengunduh_nama">Baixando %s</string>
   <string name="tuju_v">Vá para</string>
   <string name="bagikan_alamat">Compartilhar %s</string>
+  <string name="search_selected_verse_copied">Os versículos selecionados foram copiados.</string>
   <string name="alamat_sudah_disalin">%s foi copiado.</string>
   <string name="alamat_tidak_sah_alamat">Endereço inválido: %s</string>
   <string name="no">Não</string>
@@ -87,6 +95,7 @@
   <string name="pdb_encoding">Codificação do PDB</string>
   <string name="sample_text">Texto de exemplo</string>
   <string name="include_book_and_chapter_headers">Incluir cabeçalhos de livros e capítulos</string>
+  <string name="select_all">Selecionar todos</string>
   <string name="cp_opening_pdb_file">Abrindo arquivo PDB</string>
   <string name="cp_loading_version_info">Carregando informação da versão</string>
   <string name="cp_loading_word_index">Carregando índice de palavras</string>
@@ -98,6 +107,7 @@
   <string name="cp_writing_translated_file">Gravando o arquivo traduzido</string>
   <string name="cp_reading_book_info">Lendo informação do livro: %s</string>
   <string name="cp_writing_text_of_book_chapters">Gravando o texto do livro %1$s (%2$s capítulos)</string>
+  <!-- Versions -->
   <string name="ed_type_key">Digite</string>
   <string name="ed_type_internal">Integrado</string>
   <string name="ed_type_preset">Baixável</string>
@@ -189,8 +199,10 @@
   <string name="color_settings_title">Cores</string>
   <string name="color_settings_night_title">Cores (Modo noturno)</string>
   <string name="menuDisplay">Tela</string>
+  <string name="text_appearance_font">Fonte</string>
   <string name="text_appearance_theme_custom">Personalizar&#8230;</string>
   <string name="text_appearance_text_size">Tamanho do texto</string>
+  <string name="text_appearance_text_size_for_version">Tamanho do texto para ^1</string>
   <string name="text_appearance_line_spacing">Espaçamento</string>
   <string name="text_appearance_bold">Negrito</string>
   <string name="devotion_change_date">Alterar data</string>
@@ -199,15 +211,22 @@
   <string name="verse_select_multiple_verse_selected">%s versículos selecionados</string>
   <string name="google_play_store_not_installed">Google Play Store não está instalado.</string>
   <string name="pref_language_label_default">Padrão</string>
+  <string name="market_short_desc">Bíblia offline ágil, confiável e cheia de recursos.</string>
+  <string name="no_url_for_facebook">Isto não pode ser compartilhado no Facebook.</string>
+  <string name="storage_permission_rationale">Precisamos acessar o armazenamento para a guardar mídia compartilhada como versões da Bíblia e fontes.</string>
+  <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Teclado</string>
   <string name="goto_tab_direct_label">Por extenso</string>
   <string name="goto_tab_grid_label">Em grade</string>
+  <string name="menuAskForVerse">Perguntar por número do versículo</string>
+  <!-- Font Manager -->
   <string name="fm_activity_title">Gerenciador de Fontes</string>
   <string name="fm_need_to_log_in_to_wifi">Você precisa conectar-se à sua rede (Wi-Fi) primeiro.</string>
   <string name="fm_do_you_want_to_delete">Excluir fonte %s?</string>
   <string name="fm_error_when_extracting_font">Erro ao extrair fonte %1$s: %2$s</string>
   <string name="fm_loading_ellipsis">Carregando&#8230;</string>
   <string name="dl_failed_to_rename_temporary_file">Falha ao renomear arquivo temporário</string>
+  <!-- Songs -->
   <string name="menuSongs">Canções</string>
   <string name="sn_deep_search_enabled">Também letras, e outros</string>
   <string name="sn_songs_activity_title">Canções</string>
@@ -227,6 +246,10 @@
   <string name="sn_update_book_confirm_button">Atualizar</string>
   <string name="sn_update_book">Atualize hinário</string>
   <string name="sn_update_book_because_too_old">Por favor atualize ^1 para a versão mais recente antes de continuar. Depois de atualizar, envie suas edições se necessário.</string>
+  <string name="sn_menu_private_song_book">Hinário privado</string>
+  <string name="sn_private_song_book_dialog_desc">Baixar um hinário privado (oculto)</string>
+  <string name="sn_private_song_book_name_hint">Nome do hinário</string>
+  <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Dia anterior</string>
   <string name="desc_next_day">Dia seguinte</string>
   <string name="desc_open_bookmark">Abrir marcador</string>
@@ -296,13 +319,18 @@
   <string name="dv_option_transparent_background">Fundo transparente</string>
   <string name="dv_option_dark_text">Texto escuro</string>
   <string name="dv_option_text_size">Tamanho do texto</string>
+  <!-- Reading plan -->
   <string name="rp_menuReadingPlan">Plano de leitura</string>
   <string name="rp_commentActual">Completado: %s%%</string>
   <string name="rp_commentTarget">Objetivo: %s%%</string>
   <string name="rp_commentOnSchedule">Dentro do cronograma</string>
   <string name="rp_commentBehindSchedule">Atrasado ao cronograma: %s%%</string>
+  <string name="rp_commentAheadSchedule">A frente do cronograma: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Nenhum plano de leitura disponível.</string>
   <string name="rp_deletePlan">"Remover \'%s\'?"</string>
+  <string name="rp_reset">Alterar a data de início para que hoje seja o primeiro dia a ser lido?</string>
+  <string name="rp_restart_desc">Reiniciar este plano de leitura marcando todos trechos como não-lidos?</string>
+  <string name="rp_showCalendar">Escolha a data</string>
   <string name="rp_gotoFirstUnread">Ir para o primeiro não lido</string>
   <string name="rp_dayHeader">Dia %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Leitura anterior</string>
@@ -314,8 +342,12 @@
   <string name="rp_navigationGoToDate">Ir para a data</string>
   <string name="rp_navigationNextDay">Dia seguinte</string>
   <string name="rp_menuDownload">Baixar</string>
+  <string name="rp_menuCatchMeUp">Sincronizar novamente as datas</string>
+  <string name="rp_menuRestart">Reiniciar</string>
   <string name="rp_menuDelete">Remover</string>
   <string name="rp_headingProgress">Progresso</string>
+  <string name="rp_gotoToday">Ir para hoje</string>
+  <string name="rp_setStartDate">Defina data inicial</string>
   <string name="rp_showDetails">Exibir detalhes</string>
   <string name="rp_hideDetails">Ocultar detalhes</string>
   <string name="rp_aboutPlan">Sobre o plano</string>
@@ -327,8 +359,10 @@
   <string name="rp_download_reading_plan_failed">Falha ao baixar o plano de leitura selecionado. Tente novamente com uma conexão de Internet ativa.</string>
   <string name="rp_download_reading_plan_data_corrupted">O arquivo do plano de leitura que foi baixado está corrompido. Tente novamente mais tarde com uma conexão de Internet ativa.</string>
   <string name="rp_download_already_have">Você já possui o plano de leitura.</string>
+  <string name="rp_mark_as_read_up_to">Marcar como lido até aqui?</string>
   <string name="version_download_need_fonts">"A versão que você baixou talvez necessite ser exibida com certas fontes. Vá até o menu \'Aparência do texto\' e selecione a fonte correta. Grego necessita a fonte Ubuntu. Birmanês necessita Parabaik, ParabaikSans, ou Myanmar3. Tâmil necessita Akshar. Telugu necessita Suranna."</string>
   <string name="version_download_corrupted_file">Arquivo baixado parece estar corrompido.</string>
+  <string name="version_download_saving_io_error">Erro de entrada ou saída ao salvar versão baixada</string>
   <string name="menuNightMode">Modo noturno</string>
   <string name="highlight_custom_color">Outras cores</string>
   <string name="menu_compare">Comparar</string>
@@ -337,6 +371,7 @@
   <string name="search_syntax_tips"><i>Dicas de pesquisa:</i>\n\n<b>+palavra</b> para exatamente essa palavra\n<b>[q]senhor deus[q]</b> para exatamente essa frase</string>
   <string name="search_no_result">Nenhum versículo encontrado para <b>^1</b>.</string>
   <string name="search_no_result_fallback">Pressione aqui para ir para <u>^1</u>.</string>
+  <string name="search_clear_history">Limpar histórico de busca</string>
   <string name="marker_transfer_to_device_title">Transferir para outro dispositivo</string>
   <string name="marker_transfer_to_device_description">Mover todos os marcadores, anotações e realces para outro telefone ou tablet. Recomendamos o uso do Gmail/Email.</string>
   <string name="marker_transfer_to_computer_title">Transferir para edição</string>
@@ -383,6 +418,7 @@
   <string name="patch_text_error_no_edits">Por favor faça alguma edição antes de enviar.</string>
   <string name="patch_text_menu_reference">Referência</string>
   <string name="patch_text_menu_send">Enviar</string>
+  <string name="patch_text_open_link">Enviar correções</string>
   <string name="note_actionbar_edit">Editar</string>
   <string name="note_actionbar_delete">Apagar</string>
   <string name="note_actionbar_ok">Feito</string>
@@ -400,7 +436,9 @@
   <string name="pref_screen_sync_settings_title">Configurações de Sincronização</string>
   <string name="sync_category_title_data_types">Tipos de dados</string>
   <string name="pref_syncSet_mabel_enabled_title">Marcadores e etiquetas</string>
+  <string name="pref_syncSet_rp_enabled_title">Progresso no plano de leitura</string>
   <string name="pref_syncSet_history_enabled_title">Versículos recentes</string>
+  <string name="pref_syncSet_pins_enabled_title">Marcadores de Progresso</string>
   <string name="sync_menu_item_sync_now">Sincronizar agora</string>
   <string name="sync_menu_item_sync_log">Ver o log</string>
   <string name="sync_sync_set_pref_summary_last_synced">Última sincronização %1$s, %2$s (r%3$s)</string>
@@ -445,6 +483,9 @@
   <string name="sync_login_form_change_password_success">Sua senha foi alterada.</string>
   <string name="pref_textPadding_title">Margens em torno do texto</string>
   <string name="pref_textPadding_summary">Torna o corpo do texto mais estreito facilitando a leitura</string>
+  <string name="pref_bottomToolbarOnText_title">Navegação no rodapé</string>
+  <string name="pref_bottomToolbarOnText_summary">Coloque a barra de navegação na parte inferior da tela</string>
+  <!-- devotion reminder -->
   <string name="dr_app_name">Lembrete</string>
   <string name="dr_notification_title">Devocional diário</string>
   <string name="dr_notification_text">Leia agora o devocional de hoje.</string>
@@ -454,9 +495,12 @@
   <string name="dr_vibrate">Vibrar</string>
   <string name="dr_pref_notification_message">Mensagem de lembrete</string>
   <string name="dr_default_sound">Som padrão</string>
+  <!-- about -->
   <string name="about_translators">Tradutores</string>
   <string name="about_user_guide">Guia do Usuário</string>
   <string name="about_beta_feedback">Feedback da versão beta</string>
+  <string name="about_enable_beta">Teste a versão Beta</string>
+  <string name="about_enable_beta_confirmation">Entre suas credenciais do Google e clique em TORNAR-SE UM AVALIADOR para avaliar a versão Beta com recursos novos e outras melhorias!</string>
   <string name="about_version_name">versão %s</string>
   <string name="about_material_sources">Fontes de material</string>
   <string name="about_credits">Créditos</string>
@@ -464,6 +508,9 @@
   <string name="about_announcements_none">Avisos (0)</string>
   <string name="about_announcements_number">Avisos (%s)</string>
   <string name="about_announcement_load_failed">Falha ao carregar anúncios.</string>
+  <string name="about_official_website">Site oficial</string>
+  <string name="about_project_page">Página do projeto</string>
+  <!-- marker and label migration -->
   <string name="marker_migrate_introduction">Detectamos um arquivo de backup da versão 3 do Quick Bible que contém marcadores, anotações, realces, e etiquetas.\n\nVocê deseja importá-lo para utilizá-lo nesta nova versão do aplicativo?</string>
   <string name="marker_migrate_no_more">Não pergunte novamente</string>
   <string name="marker_migrate_later">Não agora</string>
@@ -474,13 +521,21 @@
   <string name="marker_migrate_import_from_newest">Sim, importe do mais recente (recomendado)</string>
   <string name="marker_migrate_import_from_other">Outros backups</string>
   <string name="marker_migrate_filename_dated">%1$s datado %2$s</string>
+  <!-- Announcements -->
   <string name="announce_notif_title">%s Avisos</string>
   <string name="announce_notif_number_new_announcements">%s novos avisos</string>
+  <!-- Dictionary -->
   <string name="menuDictionary">Dicionário</string>
   <string name="dict_open_full">Abrir Dicionário</string>
   <string name="dict_no_results">Nenhuma definição encontrada para a palavra selecionada.</string>
   <string name="dict_download_prompt">Baixe \"Dicionário Bíblico\" par aprender mais sobre as palavras da Bíblia!</string>
   <string name="dict_download_button">Baixar</string>
+  <!-- Guide -->
   <string name="menuGuide">Guia</string>
+  <!-- Commentary -->
   <string name="menuCommentary">Comentário</string>
+  <!-- Maps -->
+  <string name="maps_could_not_open">Não foi possível abrir o aplicativo de Mapas Bíblicos.</string>
+  <!-- File chooser -->
+  <string name="filechooser_parent_folder">Pasta superior</string>
 </resources>

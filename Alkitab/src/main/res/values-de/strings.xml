@@ -27,9 +27,16 @@
   <string name="menu_markers">Markierungen</string>
   <string name="hapus_pembatas_buku">Lesezeichen löschen</string>
   <string name="menuShare">Teilen</string>
+  <string name="menuShareSplit0">Aus erster Übersetzung teilen</string>
+  <string name="menuShareSplit1">Aus zweiter Übersetzung teilen</string>
+  <string name="menuShareBothSplits">Aus beiden Übersetzungen teilen</string>
   <string name="tulis_catatan">Notiz schreiben</string>
   <string name="tambah_pembatas_buku">Lesezeichen hinfügen</string>
   <string name="salin_ayat">Vers kopieren</string>
+  <string name="copy_split0">Aus erster Übersetzung kopieren</string>
+  <string name="copy_split1">Aus zweiter Übersetzung kopieren</string>
+  <string name="copy_both_splits">Aus beiden Übersetzungen kopieren</string>
+  <string name="search_copy_selected_verses">Ausgewählte Verse kopieren</string>
   <string name="perj_baru">Neues Test.</string>
   <string name="perj_lama">Altes Test.</string>
   <string name="search_bookname_only">Nur %s</string>
@@ -63,6 +70,7 @@
   <string name="mengunduh_nama">Lade %s herunter</string>
   <string name="tuju_v">Gehe zu</string>
   <string name="bagikan_alamat">Mitteilen %s</string>
+  <string name="search_selected_verse_copied">Die ausgewählten Verse wurden kopiert.</string>
   <string name="alamat_sudah_disalin">%s wird mitgeteilt.</string>
   <string name="alamat_tidak_sah_alamat">Adresse ungültig: %s</string>
   <string name="no">Nein</string>
@@ -87,6 +95,7 @@
   <string name="pdb_encoding">PDB-Kodierung</string>
   <string name="sample_text">Textvorschau</string>
   <string name="include_book_and_chapter_headers">Buchtitel und Kapitelüberschriften einfügen</string>
+  <string name="select_all">Alle auswählen</string>
   <string name="cp_opening_pdb_file">Öffne PDB-Datei</string>
   <string name="cp_loading_version_info">Lade Übersetzungsinformationen</string>
   <string name="cp_loading_word_index">Lade Wörter-Index</string>
@@ -98,6 +107,7 @@
   <string name="cp_writing_translated_file">Schreibe konvertierte Datei</string>
   <string name="cp_reading_book_info">Lese Buchinformationen: %s</string>
   <string name="cp_writing_text_of_book_chapters">Schreibe Text des Buches %1$s (%2$s Kapitel)</string>
+  <!-- Versions -->
   <string name="ed_type_key">Typ</string>
   <string name="ed_type_internal">Eingebaut</string>
   <string name="ed_type_preset">Herunterladbar</string>
@@ -189,8 +199,10 @@
   <string name="color_settings_title">Farben</string>
   <string name="color_settings_night_title">Farben (Nachtmodus)</string>
   <string name="menuDisplay">Anzeige</string>
+  <string name="text_appearance_font">Schriftart</string>
   <string name="text_appearance_theme_custom">Benutzerdefiniert&#8230;</string>
   <string name="text_appearance_text_size">Textgröße</string>
+  <string name="text_appearance_text_size_for_version">Textgröße für ^1</string>
   <string name="text_appearance_line_spacing">Zeilenabstand</string>
   <string name="text_appearance_bold">Fett</string>
   <string name="devotion_change_date">Datum ändern</string>
@@ -200,16 +212,21 @@
   <string name="google_play_store_not_installed">Der Google Play Store ist nicht installiert.</string>
   <string name="pref_language_label_default">Systemvorgabe</string>
   <string name="market_short_desc">Schnelle, zuverlässige und leistungsfähige Offline-Bibel.</string>
+  <string name="no_url_for_facebook">Das kann nicht auf Facebook geteilt werden.</string>
+  <string name="storage_permission_rationale">Das Recht zum Schreiben auf den Speicher wird benötigt, um Dateien wie Bibelübersetzungen und Schriftarten abzulegen.</string>
+  <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Wähler</string>
   <string name="goto_tab_direct_label">Direkt</string>
   <string name="goto_tab_grid_label">Tabelle</string>
   <string name="menuAskForVerse">Nach Versnummer fragen</string>
+  <!-- Font Manager -->
   <string name="fm_activity_title">Schriftart-Manager</string>
   <string name="fm_need_to_log_in_to_wifi">Sie müssen sich zuerst mit Ihrem (WLAN-)Netzwerk verbinden.</string>
   <string name="fm_do_you_want_to_delete">Schriftart %s löschen?</string>
   <string name="fm_error_when_extracting_font">Fehler beim Extrahieren der Schriftart %1$s: %2$s</string>
   <string name="fm_loading_ellipsis">Lade&#8230;</string>
   <string name="dl_failed_to_rename_temporary_file">Fehler beim Umbenennen der temporären Datei</string>
+  <!-- Songs -->
   <string name="menuSongs">Lieder</string>
   <string name="sn_deep_search_enabled">Auch Texte, usw. durchsuchen</string>
   <string name="sn_songs_activity_title">Lieder</string>
@@ -229,6 +246,10 @@
   <string name="sn_update_book_confirm_button">Aktualisieren</string>
   <string name="sn_update_book">Liederbuch aktualisieren</string>
   <string name="sn_update_book_because_too_old">Vor dem Fortsetzen installieren Sie bitte die neuste Version von ^1. Senden Sie nach dem Update Ihre Bearbeitungen erneut.</string>
+  <string name="sn_menu_private_song_book">Privates Liederbuch</string>
+  <string name="sn_private_song_book_dialog_desc">Ein privates (verstecktes) Liederbuch herunterladen</string>
+  <string name="sn_private_song_book_name_hint">Liederbuchname</string>
+  <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Voriger Tag</string>
   <string name="desc_next_day">Nächster Tag</string>
   <string name="desc_open_bookmark">Lesezeichen öffnen</string>
@@ -298,11 +319,13 @@
   <string name="dv_option_transparent_background">Transparenter Hintergrund</string>
   <string name="dv_option_dark_text">Dunkler Text</string>
   <string name="dv_option_text_size">Textgröße</string>
+  <!-- Reading plan -->
   <string name="rp_menuReadingPlan">Leseplan</string>
   <string name="rp_commentActual">Erledigt: %s%%</string>
   <string name="rp_commentTarget">Ziel: %s%%</string>
   <string name="rp_commentOnSchedule">Im Zeitplan</string>
   <string name="rp_commentBehindSchedule">Hinter dem Zeitplan: %s%%</string>
+  <string name="rp_commentAheadSchedule">Dem Zeitplan voraus: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Keine weiteren Lesepläne vorhanden.</string>
   <string name="rp_deletePlan">"\'%s\' löschen?"</string>
   <string name="rp_reset">Startdatum ändern, sodass der erste ungelesene Abschnitt heute liegt?</string>
@@ -339,6 +362,7 @@
   <string name="rp_mark_as_read_up_to">Bis hierhin als gelesen markieren?</string>
   <string name="version_download_need_fonts">"Die Übersetzung, die Sie heruntergeladen haben, kann nur mit speziellen Schriftarten angezeigt werden. Gehen Sie zum Menü \'Textdarstellung\' und wählen Sie eine passende Schriftart. Burmese benötigt Parabaik, ParabaikSans oder Myanmar3. Tamil benötigt Akshar. Telugu benötigt Suranna."</string>
   <string name="version_download_corrupted_file">Die heruntergeladene Datei scheint fehlerhaft zu sein.</string>
+  <string name="version_download_saving_io_error">I/O-Fehler beim Speichern der heruntergeladenen Übersetzung</string>
   <string name="menuNightMode">Nachtmodus</string>
   <string name="highlight_custom_color">Weitere Farben</string>
   <string name="menu_compare">Vergleichen</string>
@@ -347,6 +371,7 @@
   <string name="search_syntax_tips"><i>Hinweise für die Suche:</i>\n\n<b>+wort</b> für genau dieses Wort\n<b>[q]Stadt Davids[q]</b> für genau diesen Ausdruck</string>
   <string name="search_no_result">Kein Verse mit <b>^1</b> gefunden.</string>
   <string name="search_no_result_fallback">Hier tippen, um zu <u>^1</u> zu gehen.</string>
+  <string name="search_clear_history">Such-Historie löschen</string>
   <string name="marker_transfer_to_device_title">Auf anderes Gerät übertragen</string>
   <string name="marker_transfer_to_device_description">Überträgt alle Lesezeichen, Notizen und Hervorhebungen auf ein anderes Smartphone oder Tablet. Für die Übertragung empfehlen wir Gmail/E-Mail.</string>
   <string name="marker_transfer_to_computer_title">Zum Bearbeiten übertragen</string>
@@ -460,6 +485,7 @@
   <string name="pref_textPadding_summary">Text in einer Zeile schmaler machen für eine bessere Lesbarkeit</string>
   <string name="pref_bottomToolbarOnText_title">Versnavigation unten</string>
   <string name="pref_bottomToolbarOnText_summary">Toolbar für die Versnavigation am unteren Rand der Bibelanzeige anzeigen</string>
+  <!-- devotion reminder -->
   <string name="dr_app_name">Erinnerung</string>
   <string name="dr_notification_title">Tägliche Andacht</string>
   <string name="dr_notification_text">Lesen Sie jetzt die heutige Andacht.</string>
@@ -469,6 +495,7 @@
   <string name="dr_vibrate">Vibrieren</string>
   <string name="dr_pref_notification_message">Erinnerungsmeldung</string>
   <string name="dr_default_sound">Standardton</string>
+  <!-- about -->
   <string name="about_translators">Übersetzer</string>
   <string name="about_user_guide">Handbuch</string>
   <string name="about_beta_feedback">Feedback zur Betaversion</string>
@@ -483,6 +510,7 @@
   <string name="about_announcement_load_failed">Laden der Meldungen fehlgeschlagen.</string>
   <string name="about_official_website">Offizielle Website</string>
   <string name="about_project_page">Projektseite</string>
+  <!-- marker and label migration -->
   <string name="marker_migrate_introduction">Es wurde eine Backupdatei der alten Quick Bible 3 App von Yuku mit Lesezeichen, Notizen, Hervorhebungen und Stichwörter erkannt.\n\nMöchten Sie diese importieren, sodass sie in dieser App verfügbar sind?</string>
   <string name="marker_migrate_no_more">Nicht noch einmal fragen</string>
   <string name="marker_migrate_later">Nicht jetzt</string>
@@ -493,14 +521,21 @@
   <string name="marker_migrate_import_from_newest">Ja, neuste Datei importieren (empfohlen)</string>
   <string name="marker_migrate_import_from_other">Anderes Backup</string>
   <string name="marker_migrate_filename_dated">%1$s vom %2$s</string>
+  <!-- Announcements -->
   <string name="announce_notif_title">%s Meldungen</string>
   <string name="announce_notif_number_new_announcements">%s neue Meldungen</string>
+  <!-- Dictionary -->
   <string name="menuDictionary">Wörterbuch</string>
   <string name="dict_open_full">Wörterbuch öffnen</string>
   <string name="dict_no_results">Keine Defintion für das ausgewählte Wort gefunden.</string>
   <string name="dict_download_prompt">Laden Sie \"Bible Dictionary\" herunter, um mehr über die Worte in der Bibel zu erfahren!</string>
   <string name="dict_download_button">Herunterladen</string>
+  <!-- Guide -->
   <string name="menuGuide">Leitfaden</string>
+  <!-- Commentary -->
   <string name="menuCommentary">Kommentar</string>
+  <!-- Maps -->
   <string name="maps_could_not_open">Die Bible Map App konnte nicht geöffnet werden.</string>
+  <!-- File chooser -->
+  <string name="filechooser_parent_folder">Eine Ebene nach oben</string>
 </resources>

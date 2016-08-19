@@ -27,9 +27,16 @@
   <string name="menu_markers">标记</string>
   <string name="hapus_pembatas_buku">删除书签</string>
   <string name="menuShare">分享</string>
+  <string name="menuShareSplit0">複製两个版本</string>
+  <string name="menuShareSplit1">複製所选经节</string>
+  <string name="menuShareBothSplits">分享原始版本</string>
   <string name="tulis_catatan">书写笔记</string>
   <string name="tambah_pembatas_buku">新增书签</string>
   <string name="salin_ayat">复制诗句</string>
+  <string name="copy_split0">分享第二版本</string>
+  <string name="copy_split1">分享两个版本</string>
+  <string name="copy_both_splits">複製原始版本</string>
+  <string name="search_copy_selected_verses">複製第二版本</string>
   <string name="perj_baru">新约</string>
   <string name="perj_lama">旧约</string>
   <string name="search_bookname_only">只有%s</string>
@@ -63,6 +70,7 @@
   <string name="mengunduh_nama">正在下载 %s</string>
   <string name="tuju_v">转到</string>
   <string name="bagikan_alamat">共享 %s</string>
+  <string name="search_selected_verse_copied">所选经节已被複製</string>
   <string name="alamat_sudah_disalin">%s 已被复制.</string>
   <string name="alamat_tidak_sah_alamat">地址无效: %s</string>
   <string name="no">不是</string>
@@ -87,6 +95,7 @@
   <string name="pdb_encoding">PDB 编码</string>
   <string name="sample_text">示例文本</string>
   <string name="include_book_and_chapter_headers">包括书和章节标题</string>
+  <string name="select_all">全选</string>
   <string name="cp_opening_pdb_file">打开PDB文件</string>
   <string name="cp_loading_version_info">正在载入版本信息</string>
   <string name="cp_loading_word_index">正在载入字指数</string>
@@ -98,6 +107,7 @@
   <string name="cp_writing_translated_file">正在写作翻译文件</string>
   <string name="cp_reading_book_info">正在读图书信息 %s</string>
   <string name="cp_writing_text_of_book_chapters">写这本书的文字： %1$s (%2$s 章)</string>
+  <!-- Versions -->
   <string name="ed_type_key">类别</string>
   <string name="ed_type_internal">内置</string>
   <string name="ed_type_preset">可供下载</string>
@@ -189,8 +199,10 @@
   <string name="color_settings_title">配色</string>
   <string name="color_settings_night_title">配色（夜间模式）</string>
   <string name="menuDisplay">显示</string>
+  <string name="text_appearance_font">字型</string>
   <string name="text_appearance_theme_custom">设置</string>
   <string name="text_appearance_text_size">文字大小</string>
+  <string name="text_appearance_text_size_for_version">^1的文字大小</string>
   <string name="text_appearance_line_spacing">行距</string>
   <string name="text_appearance_bold">粗体</string>
   <string name="devotion_change_date">更改日期</string>
@@ -200,16 +212,21 @@
   <string name="google_play_store_not_installed">尚未安装谷歌商店。</string>
   <string name="pref_language_label_default">预设</string>
   <string name="market_short_desc">快速、可靠与多功能的离线圣经。</string>
+  <string name="no_url_for_facebook">这不可以分享到脸书。</string>
+  <string name="storage_permission_rationale">我們需要存取儲存裝置，以便儲存如聖經版本及字型的共享媒體。</string>
+  <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">拨号按键</string>
   <string name="goto_tab_direct_label">直接输入</string>
   <string name="goto_tab_grid_label">格状排列</string>
   <string name="menuAskForVerse">需要节数</string>
+  <!-- Font Manager -->
   <string name="fm_activity_title">字体管理</string>
   <string name="fm_need_to_log_in_to_wifi">您需要先登录到您的无线网络。</string>
   <string name="fm_do_you_want_to_delete">删除字体%s？</string>
   <string name="fm_error_when_extracting_font">提取字体时出错 %1$s: %2$s</string>
   <string name="fm_loading_ellipsis">载入中&#8230;</string>
   <string name="dl_failed_to_rename_temporary_file">无法重命名临时文件</string>
+  <!-- Songs -->
   <string name="menuSongs">歌曲</string>
   <string name="sn_deep_search_enabled">歌词，等等</string>
   <string name="sn_songs_activity_title">歌曲</string>
@@ -229,6 +246,10 @@
   <string name="sn_update_book_confirm_button">更新</string>
   <string name="sn_update_book">更新歌书。</string>
   <string name="sn_update_book_because_too_old">继续之前请更新^1到最新的版本。更新后，如有需要请传送你的编辑。</string>
+  <string name="sn_menu_private_song_book">私人的诗歌书</string>
+  <string name="sn_private_song_book_dialog_desc">下载私人的（隐藏）诗歌书</string>
+  <string name="sn_private_song_book_name_hint">诗歌书名称</string>
+  <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">前天</string>
   <string name="desc_next_day">后天</string>
   <string name="desc_open_bookmark">开启书签</string>
@@ -298,11 +319,13 @@
   <string name="dv_option_transparent_background">透明的背景</string>
   <string name="dv_option_dark_text">深色文字</string>
   <string name="dv_option_text_size">文字大小</string>
+  <!-- Reading plan -->
   <string name="rp_menuReadingPlan">阅读计划</string>
   <string name="rp_commentActual">完成度：%s%%</string>
   <string name="rp_commentTarget">目标：%s%%</string>
   <string name="rp_commentOnSchedule">按照原定的计划</string>
   <string name="rp_commentBehindSchedule">落后于计划：%s%%</string>
+  <string name="rp_commentAheadSchedule">超前于计划：%s%%</string>
   <string name="rp_noReadingPlanAvailable">没有可供选择的阅读计划。</string>
   <string name="rp_deletePlan">"删除\'%s\'？"</string>
   <string name="rp_reset">改变开始日期，使到第一个未阅读的日期为今日？</string>
@@ -339,6 +362,7 @@
   <string name="rp_mark_as_read_up_to">至到这裡标示为己阅读？</string>
   <string name="version_download_need_fonts">"您下载的版本需要某种字体以正确显示。请到「文字外观」目录，并选择某种字体。希腊语需要 Ubuntu 字体。缅甸语需要Parabaik，ParabaikSans 或 Myanmar3。泰米尔语需要 Akshar。泰卢固语需要 Suranna。"</string>
   <string name="version_download_corrupted_file">已下载的档桉似是无效的。</string>
+  <string name="version_download_saving_io_error">储存已下载的版本时发生存取错误</string>
   <string name="menuNightMode">夜间模式</string>
   <string name="highlight_custom_color">其他颜色</string>
   <string name="menu_compare">比较</string>
@@ -347,6 +371,7 @@
   <string name="search_syntax_tips"><i>搜寻提示：</i>\n\n<b>+字词</b>以搜寻准确的单字\n<b>[q]大卫城[q]</b>以搜寻准确的语句</string>
   <string name="search_no_result">找不到这经节 <b>^1</b>.</string>
   <string name="search_no_result_fallback">点此跳到 <u>^1</u>.</string>
+  <string name="search_clear_history">删除搜寻纪录</string>
   <string name="marker_transfer_to_device_title">转移到另一台设备</string>
   <string name="marker_transfer_to_device_description">移动所有书籤、笔记和标记到另一台手机或平板，我们建议你使用谷歌电邮或其他电邮。</string>
   <string name="marker_transfer_to_computer_title">转移以便编辑</string>
@@ -460,6 +485,7 @@
   <string name="pref_textPadding_summary">缩窄同一行的文字距离以方便阅读</string>
   <string name="pref_bottomToolbarOnText_title">底部经文导览</string>
   <string name="pref_bottomToolbarOnText_summary">把经节导览列放置到圣经显示底部</string>
+  <!-- devotion reminder -->
   <string name="dr_app_name">提醒</string>
   <string name="dr_notification_title">每日灵修</string>
   <string name="dr_notification_text">现在阅读今日灵修。</string>
@@ -469,6 +495,7 @@
   <string name="dr_vibrate">震动</string>
   <string name="dr_pref_notification_message">提醒讯息</string>
   <string name="dr_default_sound">预设声音</string>
+  <!-- about -->
   <string name="about_translators">译者</string>
   <string name="about_user_guide">使用者指引</string>
   <string name="about_beta_feedback">测试版本回馈</string>
@@ -483,6 +510,7 @@
   <string name="about_announcement_load_failed">读取公告失败。</string>
   <string name="about_official_website">官方网站</string>
   <string name="about_project_page">计划页面</string>
+  <!-- marker and label migration -->
   <string name="marker_migrate_introduction">我们侦测到一个含有书签、笔记、标记和标签的v3 Yuku神速圣经旧版本的备份档桉。\n\n你想汇入它们，让你在这个程式存取它们吗？</string>
   <string name="marker_migrate_no_more">不再询问</string>
   <string name="marker_migrate_later">现在别问我</string>
@@ -493,14 +521,21 @@
   <string name="marker_migrate_import_from_newest">是，汇入最新的（建议选项）</string>
   <string name="marker_migrate_import_from_other">其他备份</string>
   <string name="marker_migrate_filename_dated">%1$s日期%2$s</string>
+  <!-- Announcements -->
   <string name="announce_notif_title">%s 公告</string>
   <string name="announce_notif_number_new_announcements">%s 新的公告</string>
+  <!-- Dictionary -->
   <string name="menuDictionary">字典</string>
   <string name="dict_open_full">开启字典</string>
   <string name="dict_no_results">找不到所选字词的解释。</string>
   <string name="dict_download_prompt">下载「圣经字典」以学习圣经中更多的字词！</string>
   <string name="dict_download_button">下载</string>
+  <!-- Guide -->
   <string name="menuGuide">指引</string>
+  <!-- Commentary -->
   <string name="menuCommentary">注释</string>
+  <!-- Maps -->
   <string name="maps_could_not_open">未能开启圣经地图程式。</string>
+  <!-- File chooser -->
+  <string name="filechooser_parent_folder">上一层资料夹</string>
 </resources>

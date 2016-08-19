@@ -7,10 +7,10 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.util.Log;
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -143,7 +143,7 @@ public class FeedbackSender {
 			Log.d(TAG, "feedback sending thread started");
 
 			try {
-				final FormEncodingBuilder form = new FormEncodingBuilder();
+				final FormBody.Builder form = new FormBody.Builder();
 				for (Entry e : entries_) {
 					form.add("timestamp[]", "" + e.timestamp);
 					form.add("installationId[]", "" + getInstallationId());
@@ -160,7 +160,7 @@ public class FeedbackSender {
 				}
 
 
-				final Response resp = client.newCall(new Request.Builder().url("https://alkitab-host.appspot.com/laban/submit").post(form.build()).build()).execute();
+				final Response resp = client.newCall(new Request.Builder().url(BuildConfig.SERVER_HOST + "laban/submit").post(form.build()).build()).execute();
 				final byte[] out = resp.body().bytes();
 
 				if (out.length >= 2 && out[0] == 'O' && out[1] == 'K') {

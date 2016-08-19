@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.TextView.BufferType;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -105,8 +104,10 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			Appearances.applyTextAppearance(lText, textSizeMult);
 			Appearances.applyVerseNumberAppearance(lVerseNumber, textSizeMult);
 
-			if (checked) {
-				lText.setTextColor(U.getTextColorForSelectedVerse(Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default))); // override with black or white!
+			if (checked) { // override text color with black or white!
+				final int selectedTextColor = U.getTextColorForSelectedVerse(Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default));
+				lText.setTextColor(selectedTextColor);
+				lVerseNumber.setTextColor(selectedTextColor);
 			}
 
 			final AttributeView attributeView = res.attributeView;
@@ -239,7 +240,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				}
 				sb.append(')');
 
-				lParallels.setText(sb, BufferType.SPANNABLE);
+				lParallels.setText(sb, TextView.BufferType.SPANNABLE);
 				Appearances.applyPericopeParallelTextAppearance(lParallels, textSizeMult_);
 			}
 
@@ -248,15 +249,14 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 	}
 
 	static float scaleForAttributeView(final float fontSizeDp) {
-		if (fontSizeDp >= 13 /* 76% */ && fontSizeDp < 22 /* 129% */) {
+		if (fontSizeDp >= 13 /* 72% */ && fontSizeDp < 24 /* 133% */) {
 			return 1.f;
 		}
 
-		if (fontSizeDp < 10) return 0.5f;
-		if (fontSizeDp < 17) return 0.75f;
-		if (fontSizeDp >= 38) return 3.f;
-		if (fontSizeDp >= 30) return 2.f;
-		return 1.5f; // 22 to 30
+		if (fontSizeDp < 8) return 0.5f; // 0 ~ 44%
+		if (fontSizeDp < 18) return 0.75f; // 44% ~ 72%
+		if (fontSizeDp >= 36) return 2.f; // 200% ~
+		return 1.5f; // 24 to 36 // 133% ~ 200%
 	}
 
 	private void appendParallel(SpannableStringBuilder sb, String parallel) {

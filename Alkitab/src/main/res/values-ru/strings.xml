@@ -27,9 +27,16 @@
   <string name="menu_markers">Маркеры</string>
   <string name="hapus_pembatas_buku">Удалить закладку</string>
   <string name="menuShare">Поделиться</string>
+  <string name="menuShareSplit0">Поделиться основной версией</string>
+  <string name="menuShareSplit1">Поделиться вторичной версией</string>
+  <string name="menuShareBothSplits">Поделиться обеими версиями</string>
   <string name="tulis_catatan">Написать примечание</string>
   <string name="tambah_pembatas_buku">Добавить закладку</string>
   <string name="salin_ayat">Скопировать стих</string>
+  <string name="copy_split0">Скопировать основную версию</string>
+  <string name="copy_split1">Скопировать вторичную версию</string>
+  <string name="copy_both_splits">Скопировать обе версии</string>
+  <string name="search_copy_selected_verses">Скопировать выбранные стихи</string>
   <string name="perj_baru">НЗ</string>
   <string name="perj_lama">ВЗ</string>
   <string name="search_bookname_only">Только %s</string>
@@ -63,6 +70,7 @@
   <string name="mengunduh_nama">Загрузка %s</string>
   <string name="tuju_v">Перейти к</string>
   <string name="bagikan_alamat">Поделиться %s</string>
+  <string name="search_selected_verse_copied">Выбранные стихи скопированы.</string>
   <string name="alamat_sudah_disalin">%s скопировано.</string>
   <string name="alamat_tidak_sah_alamat">Недействительны адрес: %s</string>
   <string name="no">Нет</string>
@@ -87,6 +95,7 @@
   <string name="pdb_encoding">Кодировка PDB</string>
   <string name="sample_text">Пример текста</string>
   <string name="include_book_and_chapter_headers">Включать заголовки книг и глав</string>
+  <string name="select_all">Выбрать все</string>
   <string name="cp_opening_pdb_file">Открытие PDB-файла</string>
   <string name="cp_loading_version_info">Загрузка информации о версиях</string>
   <string name="cp_loading_word_index">Загрузка индекса слов</string>
@@ -98,6 +107,7 @@
   <string name="cp_writing_translated_file">Запись преобразованного файла</string>
   <string name="cp_reading_book_info">Чтение информации о книге: %s</string>
   <string name="cp_writing_text_of_book_chapters">Запись текста книги %1$s (%2$s глав)</string>
+  <!-- Versions -->
   <string name="ed_type_key">Тип</string>
   <string name="ed_type_internal">Встроенный</string>
   <string name="ed_type_preset">Загружаемый</string>
@@ -189,8 +199,10 @@
   <string name="color_settings_title">Цвета</string>
   <string name="color_settings_night_title">Цвета (ночной режим)</string>
   <string name="menuDisplay">Отображение</string>
+  <string name="text_appearance_font">Шрифт</string>
   <string name="text_appearance_theme_custom">Настроить&#8230;</string>
   <string name="text_appearance_text_size">Размер текста</string>
+  <string name="text_appearance_text_size_for_version">Размер шрифта для ^1</string>
   <string name="text_appearance_line_spacing">Межстрочное расстояние</string>
   <string name="text_appearance_bold">Полужирный</string>
   <string name="devotion_change_date">Изменить дату</string>
@@ -200,16 +212,21 @@
   <string name="google_play_store_not_installed">Не установлено приложение Google Play Store.</string>
   <string name="pref_language_label_default">По умолчанию</string>
   <string name="market_short_desc">Быстрая и надежная Библия с широкой функциональностью, работающая без подключения к Интернету.</string>
+  <string name="no_url_for_facebook">Это нельзя отправить в Facebook.</string>
+  <string name="storage_permission_rationale">Нам нужен доступ к хранилищу для сохранения общих файлов, таких, как версии Библии и шрифты.</string>
+  <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Набор номера</string>
   <string name="goto_tab_direct_label">Выбор</string>
   <string name="goto_tab_grid_label">Сетка</string>
   <string name="menuAskForVerse">Запрашивать номер стиха</string>
+  <!-- Font Manager -->
   <string name="fm_activity_title">Мереджер шрифтов</string>
   <string name="fm_need_to_log_in_to_wifi">Пожалуйста, сначала войдите в свою Wi-Fi сеть.</string>
   <string name="fm_do_you_want_to_delete">Удалить шрифт %s?</string>
   <string name="fm_error_when_extracting_font">Ошибка при извлечении шрифта %1$s: %2$s</string>
   <string name="fm_loading_ellipsis">Загрузка&#8230;</string>
   <string name="dl_failed_to_rename_temporary_file">Не удалось переименовать временный файл</string>
+  <!-- Songs -->
   <string name="menuSongs">Песни</string>
   <string name="sn_deep_search_enabled">А также стихи и пр.</string>
   <string name="sn_songs_activity_title">Песни</string>
@@ -229,6 +246,10 @@
   <string name="sn_update_book_confirm_button">Обновить</string>
   <string name="sn_update_book">Обновить песенник</string>
   <string name="sn_update_book_because_too_old">Чтобы продолжить, обновите ^1 до последней версии. Отошлите ваши изменения после обновления.</string>
+  <string name="sn_menu_private_song_book">Личная книга гимнов</string>
+  <string name="sn_private_song_book_dialog_desc">Скачать личную (скрытую) книгу гимнов</string>
+  <string name="sn_private_song_book_name_hint">Название книги гимнов</string>
+  <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Предыдущий день</string>
   <string name="desc_next_day">Следующий день</string>
   <string name="desc_open_bookmark">Открыть закладку</string>
@@ -298,11 +319,13 @@
   <string name="dv_option_transparent_background">Прозрачный фон</string>
   <string name="dv_option_dark_text">Темный текст</string>
   <string name="dv_option_text_size">Размер текста</string>
+  <!-- Reading plan -->
   <string name="rp_menuReadingPlan">План чтения</string>
   <string name="rp_commentActual">Закончено %s%%</string>
   <string name="rp_commentTarget">Всего: %s%%</string>
   <string name="rp_commentOnSchedule">В соответствии с планом</string>
   <string name="rp_commentBehindSchedule">Отставание от плана: %s%%</string>
+  <string name="rp_commentAheadSchedule">Опережение расписания: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Других планов чтения нет.</string>
   <string name="rp_deletePlan">Удалить \'%s\'?</string>
   <string name="rp_reset">Изменить дату начала, чтобы первое еще не прочитанное чтение было назначено на сегодня?</string>
@@ -339,6 +362,7 @@
   <string name="rp_mark_as_read_up_to">Отметить, как прочитанное досюда?</string>
   <string name="version_download_need_fonts">Загруженная вами версия может потребовать особых шрифтов. Перейдите в меню \'Вид текста\' и выберите шрифт.</string>
   <string name="version_download_corrupted_file">Загруженный файл выглядит поврежденным.</string>
+  <string name="version_download_saving_io_error">Ошибка ввода/вывода при сохранении загруженной версии</string>
   <string name="menuNightMode">Ночной режим</string>
   <string name="highlight_custom_color">Другие цвета</string>
   <string name="menu_compare">Сравнить</string>
@@ -347,6 +371,7 @@
   <string name="search_syntax_tips"><i>Подсказки по поиску:</i>\n\n<b>+слово</b> для поиска в точности этого слова\n<b>[q]город Давида[q]</b> для поиска в точности этой фразы</string>
   <string name="search_no_result">Не найдены стихи, содержащие <b>^1</b>.</string>
   <string name="search_no_result_fallback">Нажмите здесь чтобы перейти к <u>^`</u>.</string>
+  <string name="search_clear_history">Очистить историю поиска</string>
   <string name="marker_transfer_to_device_title">Передать на другое устройство</string>
   <string name="marker_transfer_to_device_description">Переместить все закладки, примечания, и выделение цветом на другой смартфон или планшет. Рекомендуем использовать  Gmail/Email.</string>
   <string name="marker_transfer_to_computer_title">Передать для редактирования</string>
@@ -460,6 +485,7 @@
   <string name="pref_textPadding_summary">Сделать текст в строке уже для более удобного чтения</string>
   <string name="pref_bottomToolbarOnText_title">Навигация на нижней панели</string>
   <string name="pref_bottomToolbarOnText_summary">Разместить панель навигации внизу окна Библии</string>
+  <!-- devotion reminder -->
   <string name="dr_app_name">Напоминание</string>
   <string name="dr_notification_title">Ежедневое чтение</string>
   <string name="dr_notification_text">Читать сегодняшнее чтение сейчас.</string>
@@ -469,6 +495,7 @@
   <string name="dr_vibrate">Вибрация</string>
   <string name="dr_pref_notification_message">Напоминающее сообщение</string>
   <string name="dr_default_sound">Звук по умолчанию</string>
+  <!-- about -->
   <string name="about_translators">Переводчики</string>
   <string name="about_user_guide">Руководство пользователя</string>
   <string name="about_beta_feedback">Отзывы о бета-версии</string>
@@ -483,6 +510,7 @@
   <string name="about_announcement_load_failed">Не удалось загрузить объявления.</string>
   <string name="about_official_website">Официальный сайт</string>
   <string name="about_project_page">Страница проекта</string>
+  <!-- marker and label migration -->
   <string name="marker_migrate_introduction">Обнаружен файл резервной копии, содержащий закладки, заметки, подкраску и метки, от старой версии Quick Bible v3.\n\nИмпортировать даные из этого файла, чтобы они стали доступны из данного приложения?</string>
   <string name="marker_migrate_no_more">Больше не спрашивать</string>
   <string name="marker_migrate_later">Не сейчас</string>
@@ -493,14 +521,21 @@
   <string name="marker_migrate_import_from_newest">Да, импортировать из самого последнего (рекомендуется)</string>
   <string name="marker_migrate_import_from_other">Другие резервные копии</string>
   <string name="marker_migrate_filename_dated">%1$s датированный %2$s</string>
+  <!-- Announcements -->
   <string name="announce_notif_title">%s объявлений</string>
   <string name="announce_notif_number_new_announcements">%s новых объявлений</string>
+  <!-- Dictionary -->
   <string name="menuDictionary">Словарь</string>
   <string name="dict_open_full">Открыть словарь</string>
   <string name="dict_no_results">Не найдена статья для выбранного слова.</string>
   <string name="dict_download_prompt">Загрузить \"Библейский словарь\", чтобы узнать больше о словах, использованных в Библии!</string>
   <string name="dict_download_button">Загрузить</string>
+  <!-- Guide -->
   <string name="menuGuide">Руководство</string>
+  <!-- Commentary -->
   <string name="menuCommentary">Комментарии</string>
+  <!-- Maps -->
   <string name="maps_could_not_open">Не удалось открыть приложение Bible Maps.</string>
+  <!-- File chooser -->
+  <string name="filechooser_parent_folder">Родительский каталог</string>
 </resources>

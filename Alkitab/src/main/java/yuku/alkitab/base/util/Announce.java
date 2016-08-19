@@ -6,13 +6,14 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
+import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
@@ -96,7 +97,7 @@ public abstract class Announce {
 				.setContentTitle(App.context.getString(R.string.announce_notif_title, App.context.getString(R.string.app_name)))
 				.setContentText(unreadAnnouncements.size() == 1 ? unreadAnnouncements.get(0).title : App.context.getString(R.string.announce_notif_number_new_announcements, unreadAnnouncements.size()))
 				.setSmallIcon(R.drawable.ic_stat_announce)
-				.setColor(App.context.getResources().getColor(R.color.accent))
+				.setColor(ContextCompat.getColor(App.context, R.color.accent))
 				.setContentIntent(PendingIntent.getActivity(App.context, Arrays.hashCode(announcementIds), HelpActivity.createViewAnnouncementIntent(announcementIds), PendingIntent.FLAG_UPDATE_CURRENT))
 				.setAutoCancel(true);
 
@@ -130,9 +131,9 @@ public abstract class Announce {
 		final OkHttpClient client = App.getOkHttpClient();
 		final Call call = client.newCall(
 			new Request.Builder()
-				.url("https://alkitab-host.appspot.com/announce/check")
+				.url(BuildConfig.SERVER_HOST + "announce/check")
 				.post(
-					new FormEncodingBuilder()
+					new FormBody.Builder()
 						.add("installation_info", U.getInstallationInfoJson())
 						.build()
 				)

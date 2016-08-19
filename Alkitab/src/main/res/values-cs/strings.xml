@@ -27,9 +27,16 @@
   <string name="menu_markers">Označení</string>
   <string name="hapus_pembatas_buku">Smazat záložku</string>
   <string name="menuShare">Sdílet</string>
+  <string name="menuShareSplit0">Sdílet primární verzi</string>
+  <string name="menuShareSplit1">Sdílet sekundární verzi</string>
+  <string name="menuShareBothSplits">Sdílet obě verze</string>
   <string name="tulis_catatan">Zapsat poznámku</string>
   <string name="tambah_pembatas_buku">Přidat záložku</string>
   <string name="salin_ayat">Kopírovat verš</string>
+  <string name="copy_split0">Kopírovat primární verzi</string>
+  <string name="copy_split1">Kopírovat sekundární verzi</string>
+  <string name="copy_both_splits">Kopírovat obě verze</string>
+  <string name="search_copy_selected_verses">Kopírovat vybrané verše</string>
   <string name="perj_baru">Nový zákon</string>
   <string name="perj_lama">Starý zákon</string>
   <string name="search_bookname_only">%s pouze</string>
@@ -63,6 +70,7 @@
   <string name="mengunduh_nama">Stahování %s</string>
   <string name="tuju_v">Jděte na</string>
   <string name="bagikan_alamat">Sdílet %s</string>
+  <string name="search_selected_verse_copied">Vybrané verše byly zkopírovány.</string>
   <string name="alamat_sudah_disalin">%s byl zkopírován.</string>
   <string name="alamat_tidak_sah_alamat">Neplatná adresa: %s</string>
   <string name="no">Ne</string>
@@ -87,6 +95,7 @@
   <string name="pdb_encoding">PDB šifrování</string>
   <string name="sample_text">Ukázkový text</string>
   <string name="include_book_and_chapter_headers">Vložit záhlaví knihy a kapitoly</string>
+  <string name="select_all">Vybrat vše</string>
   <string name="cp_opening_pdb_file">Otevírání PDB souboru</string>
   <string name="cp_loading_version_info">Nahrávání informací o překladu</string>
   <string name="cp_loading_word_index">Nahrávání indexu slov</string>
@@ -98,6 +107,7 @@
   <string name="cp_writing_translated_file">Zápis přeloženého souboru</string>
   <string name="cp_reading_book_info">Čtení info o knize: %s</string>
   <string name="cp_writing_text_of_book_chapters">Zápis textu knihy %1$s (%2$s kapitoly)</string>
+  <!-- Versions -->
   <string name="ed_type_key">Typ</string>
   <string name="ed_type_internal">Built-in</string>
   <string name="ed_type_preset">Stažitelný</string>
@@ -189,8 +199,10 @@
   <string name="color_settings_title">Barvy</string>
   <string name="color_settings_night_title">Barvy (noční mód)</string>
   <string name="menuDisplay">Zobrazení</string>
+  <string name="text_appearance_font">Písmo</string>
   <string name="text_appearance_theme_custom">Přizpůsobení...</string>
   <string name="text_appearance_text_size">Velikost textu</string>
+  <string name="text_appearance_text_size_for_version">Velikost textu pro ^1</string>
   <string name="text_appearance_line_spacing">Rozestup řádků</string>
   <string name="text_appearance_bold">Tučně</string>
   <string name="devotion_change_date">Změna data</string>
@@ -198,15 +210,23 @@
   <string name="verse_select_one_verse_selected">vybrán 1 verš</string>
   <string name="verse_select_multiple_verse_selected">vybráno %s veršů</string>
   <string name="google_play_store_not_installed">Obchod Google není nainstalován.</string>
+  <string name="pref_language_label_default">Výchozí</string>
+  <string name="market_short_desc">Rychlý, spolehlivý a na funkce bohatý režim offline Bible.</string>
+  <string name="no_url_for_facebook">Toto nemůže být sdíleno na Facebooku.</string>
+  <string name="storage_permission_rationale">Potřebujeme přístupk uložišti pro ukládání různých verzí bible a fontů.</string>
+  <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Číselník</string>
   <string name="goto_tab_direct_label">Posloupně</string>
   <string name="goto_tab_grid_label">Mřížka</string>
+  <string name="menuAskForVerse">Zeptat se na číslo verze</string>
+  <!-- Font Manager -->
   <string name="fm_activity_title">Manažer fontů</string>
   <string name="fm_need_to_log_in_to_wifi">Nejdříve se musíte přihlásit do své (Wi-Fi) sítě.</string>
   <string name="fm_do_you_want_to_delete">Smazat písmo %s?</string>
   <string name="fm_error_when_extracting_font">Chyba během rozbalování fontu %1$s: %2$s</string>
   <string name="fm_loading_ellipsis">Nahrávání...</string>
   <string name="dl_failed_to_rename_temporary_file">Nepodařilo se přejmenovat dočasný soubor</string>
+  <!-- Songs -->
   <string name="menuSongs">Písně</string>
   <string name="sn_deep_search_enabled">Texty, atd. </string>
   <string name="sn_songs_activity_title">Písně</string>
@@ -226,6 +246,10 @@
   <string name="sn_update_book_confirm_button">Aktualizovat</string>
   <string name="sn_update_book">Aktualizovat knihu</string>
   <string name="sn_update_book_because_too_old">Aktualizujte prosím ^1.</string>
+  <string name="sn_menu_private_song_book">Soukromý zpěvník</string>
+  <string name="sn_private_song_book_dialog_desc">Stáhnout neveřejné zpěvníky</string>
+  <string name="sn_private_song_book_name_hint">Název zpěvníku</string>
+  <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Předchozí den</string>
   <string name="desc_next_day">Následující den</string>
   <string name="desc_open_bookmark">Otevřít záložku</string>
@@ -249,6 +273,7 @@
   <string name="desc_verse_attribute_one_note">Poznámka přiřazená k tomuto verši.</string>
   <string name="desc_verse_attribute_multiple_notes">%s poznámek přiřazených k tomuto verši.</string>
   <string name="desc_verse_attribute_progress_mark">%s je nyní zde.</string>
+  <string name="desc_progress_mark_list">Lišta záložek</string>
   <string name="intent_filter_open_yes_file">Otevřít YES soubor</string>
   <string name="intent_filter_open_pdb_file">Otevřít PDB soubor</string>
   <string name="intent_filter_open_pdb_or_yes_file">Otevřít PDB/YES soubor</string>
@@ -294,13 +319,18 @@
   <string name="dv_option_transparent_background">Průhledné pozadí</string>
   <string name="dv_option_dark_text">Tmavý text</string>
   <string name="dv_option_text_size">Velikost textu</string>
+  <!-- Reading plan -->
   <string name="rp_menuReadingPlan">Plán čtení</string>
   <string name="rp_commentActual">Dokončeno: %s%%</string>
   <string name="rp_commentTarget">Cíl: %s%%</string>
   <string name="rp_commentOnSchedule">Dle plánu</string>
   <string name="rp_commentBehindSchedule">Zpoždění: %s%%</string>
+  <string name="rp_commentAheadSchedule">Před plánem: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Více plánů čtení není k dispozici.</string>
   <string name="rp_deletePlan">"Smazat \'%s\'?"</string>
+  <string name="rp_reset">Posunout počáteční datum čtení tak, aby byla první nepřečtená položka dnes?</string>
+  <string name="rp_restart_desc">Opravdu chcete resetovat plán čtení (označit vše jako nepřečtené a začít dnes)?</string>
+  <string name="rp_showCalendar">Vybrat datum</string>
   <string name="rp_gotoFirstUnread">Jít na první nepřečtený</string>
   <string name="rp_dayHeader">Den %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Předchozí čtení</string>
@@ -312,8 +342,12 @@
   <string name="rp_navigationGoToDate">Jít na datum</string>
   <string name="rp_navigationNextDay">Další den</string>
   <string name="rp_menuDownload">Stáhnout</string>
+  <string name="rp_menuCatchMeUp">Synchronizovat data</string>
+  <string name="rp_menuRestart">Restartovat</string>
   <string name="rp_menuDelete">Smazat</string>
   <string name="rp_headingProgress">Přehled</string>
+  <string name="rp_gotoToday">Přejít na dnešní den</string>
+  <string name="rp_setStartDate">Nastavit počáteční datum</string>
   <string name="rp_showDetails">Zobrazit podrobnosti</string>
   <string name="rp_hideDetails">Skrýt podrobnosti</string>
   <string name="rp_aboutPlan">Více o plánu</string>
@@ -325,8 +359,10 @@
   <string name="rp_download_reading_plan_failed">Chyba při stahování plánu čtení. Zkontrolujte prosím internetové připojení a zkuste to znovu.</string>
   <string name="rp_download_reading_plan_data_corrupted">Stažený plán čtení je požkozen. Zkontrolujte prosím internetové připojení a zkuste jej stáhnout znovu.</string>
   <string name="rp_download_already_have">Ten plán čtení je již stažen.</string>
+  <string name="rp_mark_as_read_up_to">Označit potud jako přečtené?</string>
   <string name="version_download_need_fonts">"Stažená verze nemůže být zobrazena určitým fontem. Jděte do \'Text appearance\' menu a vyberte jiný font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
   <string name="version_download_corrupted_file">Stažený soubor je zřejmě poškozený.</string>
+  <string name="version_download_saving_io_error">I/O error při ukládání stažené verze</string>
   <string name="menuNightMode">Noční mód</string>
   <string name="highlight_custom_color">Jiné barvy</string>
   <string name="menu_compare">Porovnat</string>
@@ -335,6 +371,7 @@
   <string name="search_syntax_tips"><i>Tip:</i>\n\n<b>+slovo</b> pro přesnou shodu\n<b>[q]město Davidovo[q]</b> pro přesnou frázi</string>
   <string name="search_no_result"><b>^1</b> nenalezeno.</string>
   <string name="search_no_result_fallback">Tapněte pro <u>^1</u>.</string>
+  <string name="search_clear_history">Vymazat historii vyhledávání</string>
   <string name="marker_transfer_to_device_title">Přesunout na jiné zařízení</string>
   <string name="marker_transfer_to_device_description">Přesunout všechny oblíbené verše, poznámky a zvýraznění do jiného telefonu nebo tabletu. Doporučujeme použít email.</string>
   <string name="marker_transfer_to_computer_title">Přesunout pro editaci</string>
@@ -348,6 +385,7 @@
   <string name="sn_menu_copy">Kopírovat skladbu</string>
   <string name="menuPlay">Přehrát</string>
   <string name="menuPause">Pauza</string>
+  <string name="left_drawer_current_reading_title">Nynější čtení</string>
   <string name="book_filter_old_testament">Starý zákon</string>
   <string name="book_filter_old_pentateuch">Pentateuch</string>
   <string name="book_filter_old_history">Historie</string>
@@ -380,6 +418,7 @@
   <string name="patch_text_error_no_edits">Proveďte prosím změny, které chcete odeslat.</string>
   <string name="patch_text_menu_reference">Reference</string>
   <string name="patch_text_menu_send">Odeslat</string>
+  <string name="patch_text_open_link">Odeslat opravy</string>
   <string name="note_actionbar_edit">Upravit</string>
   <string name="note_actionbar_delete">Smazat</string>
   <string name="note_actionbar_ok">Hotovo</string>
@@ -397,7 +436,9 @@
   <string name="pref_screen_sync_settings_title">Nastavení synchronizace</string>
   <string name="sync_category_title_data_types">Data</string>
   <string name="pref_syncSet_mabel_enabled_title">Označení a štítky</string>
+  <string name="pref_syncSet_rp_enabled_title">Stav plánu čtení</string>
   <string name="pref_syncSet_history_enabled_title">Současné verše</string>
+  <string name="pref_syncSet_pins_enabled_title">Záložky</string>
   <string name="sync_menu_item_sync_now">Synchronizovat</string>
   <string name="sync_menu_item_sync_log">Zobrazit log</string>
   <string name="sync_sync_set_pref_summary_last_synced">Naposledy synchronizováno %1$s, %2$s (r%3$s)</string>
@@ -442,6 +483,9 @@
   <string name="sync_login_form_change_password_success">Vaše heslo musí být změněno.</string>
   <string name="pref_textPadding_title">Okraje kolem textu</string>
   <string name="pref_textPadding_summary">Užší mezera mezi řádky</string>
+  <string name="pref_bottomToolbarOnText_title">Navigační lišta dole</string>
+  <string name="pref_bottomToolbarOnText_summary">Zobrazovat navigační lištu dole</string>
+  <!-- devotion reminder -->
   <string name="dr_app_name">Připomínač</string>
   <string name="dr_notification_title">Denní zbožnost</string>
   <string name="dr_notification_text">Číst denní zbožnost.</string>
@@ -451,9 +495,12 @@
   <string name="dr_vibrate">Vibrace</string>
   <string name="dr_pref_notification_message">Zpráva připomínky</string>
   <string name="dr_default_sound">Defaultní zvuk</string>
+  <!-- about -->
   <string name="about_translators">Překladatelé</string>
   <string name="about_user_guide">Uživatelská příručka</string>
   <string name="about_beta_feedback">Zpětná vazba</string>
+  <string name="about_enable_beta">Vyzkoušet beta verzi</string>
+  <string name="about_enable_beta_confirmation">Přihlaste se pomocí svého účtu Google a klikněte na tlačítko CHCI SE STÁT TESTEREM, abyste mohli vyzkoušet beta verzi s novějšími funkcemi a vylepšeními!</string>
   <string name="about_version_name">verze %s</string>
   <string name="about_material_sources">Zdroje</string>
   <string name="about_credits">Kredits</string>
@@ -461,6 +508,9 @@
   <string name="about_announcements_none">Oznámení (0)</string>
   <string name="about_announcements_number">Oznámení (%s)</string>
   <string name="about_announcement_load_failed">Chyba při načítání oznámení.</string>
+  <string name="about_official_website">Oficiální webové stránky</string>
+  <string name="about_project_page">Stránka projektů</string>
+  <!-- marker and label migration -->
   <string name="marker_migrate_introduction">Našli jsme zálohu ze staré verze Bible v3, která obsahuje oblíbené verše, poznámky, zvýraznění a tagy.\n\nChtece je naimportovat?</string>
   <string name="marker_migrate_no_more">Neptejte se znovu</string>
   <string name="marker_migrate_later">Nyní ne</string>
@@ -471,13 +521,21 @@
   <string name="marker_migrate_import_from_newest">Ano, importovat nejnovější (doporučeno)</string>
   <string name="marker_migrate_import_from_other">Další zálohy</string>
   <string name="marker_migrate_filename_dated">%1$s datován %2$s</string>
+  <!-- Announcements -->
   <string name="announce_notif_title">%s oznámení</string>
   <string name="announce_notif_number_new_announcements">%s nových oznámení</string>
+  <!-- Dictionary -->
   <string name="menuDictionary">Slovník</string>
   <string name="dict_open_full">Otevřít slovník</string>
   <string name="dict_no_results">Pro vybrané slovo nebyly nalezeny žádné definice.</string>
   <string name="dict_download_prompt">Stáhnout \"Bible Dictionary\"!</string>
   <string name="dict_download_button">Stáhnout</string>
+  <!-- Guide -->
   <string name="menuGuide">Průvodce</string>
+  <!-- Commentary -->
   <string name="menuCommentary">Komentáře</string>
+  <!-- Maps -->
+  <string name="maps_could_not_open">Nelze otevřít aplikaci Bible Maps.</string>
+  <!-- File chooser -->
+  <string name="filechooser_parent_folder">Nadřazená složka</string>
 </resources>

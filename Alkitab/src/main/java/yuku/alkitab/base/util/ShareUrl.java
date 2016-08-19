@@ -4,11 +4,12 @@ import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.Request;
+import okhttp3.Response;
 import yuku.alkitab.base.App;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
@@ -42,7 +43,7 @@ public class ShareUrl {
 			}
 			aris.append(ari);
 		}
-		final FormEncodingBuilder form = new FormEncodingBuilder()
+		final FormBody.Builder form = new FormBody.Builder()
 			.add("verseText", verseText)
 			.add("aris", aris.toString())
 			.add("verseReferences", reference);
@@ -63,7 +64,7 @@ public class ShareUrl {
 
 		final Call call = App.getOkHttpClient().newCall(
 			new Request.Builder()
-				.url("https://alkitab-host.appspot.com/v/create")
+				.url(BuildConfig.SERVER_HOST + "v/create")
 				.post(form.build())
 				.build()
 		);
@@ -95,9 +96,9 @@ public class ShareUrl {
 			})
 			.show();
 
-		call.enqueue(new com.squareup.okhttp.Callback() {
+		call.enqueue(new okhttp3.Callback() {
 			@Override
-			public void onFailure(final Request request, final IOException e) {
+			public void onFailure(final Call call, final IOException e) {
 				if (!done.getAndSet(true)) {
 					activity.runOnUiThread(() -> {
 						callback.onError(e);
@@ -108,7 +109,7 @@ public class ShareUrl {
 			}
 
 			@Override
-			public void onResponse(final Response response) throws IOException {
+			public void onResponse(final Call call, final Response response) throws IOException {
 				if (!done.getAndSet(true)) {
 					final ShareUrlResponseJson obj = App.getDefaultGson().fromJson(response.body().charStream(), ShareUrlResponseJson.class);
 					if (obj.success) {

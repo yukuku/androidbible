@@ -30,6 +30,7 @@
   <string name="tulis_catatan">Scrie o notă</string>
   <string name="tambah_pembatas_buku">Adaugă la favorite</string>
   <string name="salin_ayat">Copiază versetul</string>
+  <string name="search_copy_selected_verses">Copiază versetele slectate</string>
   <string name="perj_baru">Noul Test.</string>
   <string name="perj_lama">Vechiul Test.</string>
   <string name="search_bookname_only">Numai %s</string>
@@ -63,6 +64,7 @@
   <string name="mengunduh_nama">Descărcare %s</string>
   <string name="tuju_v">Alege</string>
   <string name="bagikan_alamat">Partajează %s</string>
+  <string name="search_selected_verse_copied">Versetele copiate au fost selectate.</string>
   <string name="alamat_sudah_disalin">%s au fost copiate.</string>
   <string name="alamat_tidak_sah_alamat">Adresă greşită: %s</string>
   <string name="no">Nu</string>
@@ -87,6 +89,7 @@
   <string name="pdb_encoding">Codificare PDB</string>
   <string name="sample_text">Exemplu text</string>
   <string name="include_book_and_chapter_headers">Include antet carte şi capitol</string>
+  <string name="select_all">Selectează tot</string>
   <string name="cp_opening_pdb_file">Deschidere fişier PDB</string>
   <string name="cp_loading_version_info">Încarcă info versiune</string>
   <string name="cp_loading_word_index">Încarcă index cuvinte</string>
@@ -98,6 +101,7 @@
   <string name="cp_writing_translated_file">Scriere fişier tradus</string>
   <string name="cp_reading_book_info">Citeşte info carte: %s</string>
   <string name="cp_writing_text_of_book_chapters">Scrie textul cărţii %1$s (%2$s capitole)</string>
+  <!-- Versions -->
   <string name="ed_type_key">Tipul</string>
   <string name="ed_type_internal">Construit în</string>
   <string name="ed_type_preset">Descărcabil</string>
@@ -189,8 +193,10 @@
   <string name="color_settings_title">Culori</string>
   <string name="color_settings_night_title">Culori (Mod nocturn)</string>
   <string name="menuDisplay">Afişare</string>
+  <string name="text_appearance_font">Font</string>
   <string name="text_appearance_theme_custom">Personalizat...</string>
   <string name="text_appearance_text_size">Dimensiune text</string>
+  <string name="text_appearance_text_size_for_version">Dimensiune text pentru ^1</string>
   <string name="text_appearance_line_spacing">Spațiu rânduri</string>
   <string name="text_appearance_bold">Aldin</string>
   <string name="devotion_change_date">Schimbă data</string>
@@ -199,15 +205,22 @@
   <string name="verse_select_multiple_verse_selected">%s versete selectate</string>
   <string name="google_play_store_not_installed">Magazin Google Play nu este instalat.</string>
   <string name="pref_language_label_default">Implicit</string>
+  <string name="market_short_desc">O Biblie rapidă, fiabilă și bogată în caracteristici, rulează fără conexiune la internet.</string>
+  <string name="no_url_for_facebook">Acesta nu poarte fi distribuit pe Facebook.</string>
+  <string name="storage_permission_rationale">E necesară accesarea mediului de stocare pentru a stoca media cum ar fi versiuni ale Bibliei și fonturi.</string>
+  <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Numeric</string>
   <string name="goto_tab_direct_label">Direct</string>
   <string name="goto_tab_grid_label">Grilă</string>
+  <string name="menuAskForVerse">Cere numărul veretului</string>
+  <!-- Font Manager -->
   <string name="fm_activity_title">Gestionare Fonturi</string>
   <string name="fm_need_to_log_in_to_wifi">Trebuie să vă logați mai întâi în rețea (Wi-Fi).</string>
   <string name="fm_do_you_want_to_delete">Șterge font %s?</string>
   <string name="fm_error_when_extracting_font">Eroare la extragerea fontului %1$s: %2$s</string>
   <string name="fm_loading_ellipsis">Încărcare&#8230;</string>
   <string name="dl_failed_to_rename_temporary_file">Nu s-a reușit redenumirea fisierului temporar</string>
+  <!-- Songs -->
   <string name="menuSongs">Cântece</string>
   <string name="sn_deep_search_enabled">Texte, etc</string>
   <string name="sn_songs_activity_title">Cântece</string>
@@ -227,6 +240,10 @@
   <string name="sn_update_book_confirm_button">Actualizează</string>
   <string name="sn_update_book">Actualizare cântece</string>
   <string name="sn_update_book_because_too_old">Vă rugăm să actualizați ^1 la cea mai recentă versiune înainte de a continua. După actualizare, trimite modificările dvs., dacă este necesar.</string>
+  <string name="sn_menu_private_song_book">Carte de cântări personală</string>
+  <string name="sn_private_song_book_dialog_desc">Descarcă o carte de cântări personală (ascunsă)</string>
+  <string name="sn_private_song_book_name_hint">Nume carte de cântări</string>
+  <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Ziua precedentă</string>
   <string name="desc_next_day">Ziua următoare</string>
   <string name="desc_open_bookmark">Deschide favorite</string>
@@ -296,11 +313,13 @@
   <string name="dv_option_transparent_background">Fundal transparent</string>
   <string name="dv_option_dark_text">Text închis</string>
   <string name="dv_option_text_size">Dimensiune text</string>
+  <!-- Reading plan -->
   <string name="rp_menuReadingPlan">Plan de citire</string>
   <string name="rp_commentActual">Finalizat: %s%%</string>
   <string name="rp_commentTarget">Țintă: %s%%</string>
   <string name="rp_commentOnSchedule">În grafic</string>
   <string name="rp_commentBehindSchedule">Înaintea planificării: %s%%</string>
+  <string name="rp_commentAheadSchedule">Înaintea planificării: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Nu sunt planuri de citire disponibile.</string>
   <string name="rp_deletePlan">"Ștergeți \'%s\'?"</string>
   <string name="rp_reset">Modificați data de începere, astfel încât prima lectură necitită va fi azi?</string>
@@ -337,6 +356,7 @@
   <string name="rp_mark_as_read_up_to">Marchează ca citit până aici?</string>
   <string name="version_download_need_fonts">"Versiunea ce s-a descărcat, ar putea avea nevoie de anumite fonturi. Mergi la meniul \"aspect Text \" și selectați un font. Grec are nevoie de fontul Ubuntu. Pentru limba birmaneză Parabaik, ParabaikSans sau Myanmar3. Tamil are nevoie de Akshar. Telugu are nevoie de Suranna."</string>
   <string name="version_download_corrupted_file">Fișierul descărcat pare a fi corupt.</string>
+  <string name="version_download_saving_io_error">Eroare I/O când salvează versiunea descărcată</string>
   <string name="menuNightMode">Mod nocturn</string>
   <string name="highlight_custom_color">Alte culori</string>
   <string name="menu_compare">Compară</string>
@@ -345,6 +365,7 @@
   <string name="search_syntax_tips"><i>Sfaturi pentru căutare:</i>\n\n<b>+word</b> pentru cuvântul\n<b>[q]city of david[q]</b> pentru fraza</string>
   <string name="search_no_result">Nu au fost găsite versetele <b>^1</b>.</string>
   <string name="search_no_result_fallback">Apăsați aici pentru a merge la <u>^1</u>.</string>
+  <string name="search_clear_history">Șterge istoric de căutare</string>
   <string name="marker_transfer_to_device_title">Transfer pe alt dispozitiv</string>
   <string name="marker_transfer_to_device_description">Mută toate favorite, note și marcaje pe un alt telefon sau tabletă. Recomandăm utilizarea Gmail/Email.</string>
   <string name="marker_transfer_to_computer_title">Transferă pentru editare</string>
@@ -458,6 +479,7 @@
   <string name="pref_textPadding_summary">Modifică textul într-o linie îngustă pentru a ușura lectura</string>
   <string name="pref_bottomToolbarOnText_title">Navigare verset în jos</string>
   <string name="pref_bottomToolbarOnText_summary">Pune bara de navigare verset, în partea de jos a ecranului Bibliei</string>
+  <!-- devotion reminder -->
   <string name="dr_app_name">Memento</string>
   <string name="dr_notification_title">Devoțional zilnic</string>
   <string name="dr_notification_text">Citește devoționalul de astăzi acum.</string>
@@ -467,9 +489,12 @@
   <string name="dr_vibrate">Vibrează</string>
   <string name="dr_pref_notification_message">Mesaj memento</string>
   <string name="dr_default_sound">Sunet implicit</string>
+  <!-- about -->
   <string name="about_translators">Traducători</string>
   <string name="about_user_guide">Ghidul utilizatorului</string>
   <string name="about_beta_feedback">Feedback-ul versiunii Beta</string>
+  <string name="about_enable_beta">Încearcă versiunea Beta</string>
+  <string name="about_enable_beta_confirmation">Conectați-vă la Google și atingeți butonul DEVIN TESTER pentru a încerca versiunea Beta cu caracteristici noi și îmbunătățiri!</string>
   <string name="about_version_name">versiune %s</string>
   <string name="about_material_sources">Surse materiale</string>
   <string name="about_credits">Credite</string>
@@ -479,6 +504,7 @@
   <string name="about_announcement_load_failed">Eșec la încărcare anunțuri.</string>
   <string name="about_official_website">Site oficial</string>
   <string name="about_project_page">Pagina proiect</string>
+  <!-- marker and label migration -->
   <string name="marker_migrate_introduction">Am detectat un fișier de backup de la vechiul v3 Yuku Quick Bible care conține marcaje, note, evidențieri și etichete.\n\nDoriți să le importați, astfel încât să le puteți accesa din această aplicație?</string>
   <string name="marker_migrate_no_more">Nu mai întreba</string>
   <string name="marker_migrate_later">Nu acum</string>
@@ -489,14 +515,21 @@
   <string name="marker_migrate_import_from_newest">Da, import din cel mai nou (recomandat)</string>
   <string name="marker_migrate_import_from_other">Altă rezervă</string>
   <string name="marker_migrate_filename_dated">%1$s datat %2$s</string>
+  <!-- Announcements -->
   <string name="announce_notif_title">%s Anunțuri</string>
   <string name="announce_notif_number_new_announcements">%s anunțuri noi</string>
+  <!-- Dictionary -->
   <string name="menuDictionary">Dicționar</string>
   <string name="dict_open_full">Deschide dicționarul</string>
   <string name="dict_no_results">Nu s-a găsit o definiție pentru cuvântul selectat.</string>
   <string name="dict_download_prompt">Descarcă \"Biblia Dicționar\" pentru a afla mai multe despre cuvintele din Biblie!</string>
   <string name="dict_download_button">Descarcă</string>
+  <!-- Guide -->
   <string name="menuGuide">Ghid</string>
+  <!-- Commentary -->
   <string name="menuCommentary">Comentariu</string>
+  <!-- Maps -->
   <string name="maps_could_not_open">Nu s-a putut deschide aplicația Hărți biblice.</string>
+  <!-- File chooser -->
+  <string name="filechooser_parent_folder">Folder părinte</string>
 </resources>

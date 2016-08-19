@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import yuku.afw.V;
@@ -22,6 +22,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.sv.DownloadService;
 import yuku.alkitab.base.util.FontManager;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 
 import java.io.BufferedInputStream;
@@ -38,9 +39,9 @@ import java.util.zip.ZipInputStream;
 public class FontManagerActivity extends BaseActivity implements DownloadService.DownloadListener {
 	public static final String TAG = FontManagerActivity.class.getSimpleName();
 	
-	private static final String URL_fontList = "https://alkitab-host.appspot.com/addon/fonts/v1/list-v2.txt";
-	private static final String URL_fontData = "https://alkitab-host.appspot.com/addon/fonts/v1/data/%s.zip";
-	private static final String URL_fontPreview = "https://alkitab-host.appspot.com/addon/fonts/v1/preview/%s-384x84.png";
+	private static final String URL_fontList = BuildConfig.SERVER_HOST + "addon/fonts/v1/list-v2.txt";
+	private static final String URL_fontData = BuildConfig.SERVER_HOST + "addon/fonts/v1/data/%s.zip";
+	private static final String URL_fontPreview = BuildConfig.SERVER_HOST + "addon/fonts/v1/preview/%s-384x84.png";
 
 	public static Intent createIntent() {
 		return new Intent(App.context, FontManagerActivity.class);
@@ -279,9 +280,10 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 		private View.OnClickListener bDelete_click = v -> {
 			final FontItem item = (FontItem) v.getTag(R.id.TAG_fontItem);
 
-			new AlertDialogWrapper.Builder(FontManagerActivity.this)
-				.setMessage(getString(R.string.fm_do_you_want_to_delete, item.name))
-				.setPositiveButton(R.string.delete, (dialog, which) -> {
+			new MaterialDialog.Builder(FontManagerActivity.this)
+				.content(getString(R.string.fm_do_you_want_to_delete, item.name))
+				.positiveText(R.string.delete)
+				.onPositive((dialog, which) -> {
 					File fontDir = FontManager.getFontDir(item.name);
 					File[] listFiles = fontDir.listFiles();
 					if (listFiles != null) {
@@ -295,7 +297,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 
 					notifyDataSetChanged();
 				})
-				.setNegativeButton(R.string.cancel, null)
+				.negativeText(R.string.cancel)
 				.show();
 		};
 	}
@@ -340,9 +342,9 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 				
 				new File(downloadedZip).delete();
 			} catch (Exception e) {
-				new AlertDialogWrapper.Builder(FontManagerActivity.this)
-					.setMessage(getString(R.string.fm_error_when_extracting_font, fontName, e.getClass().getSimpleName() + ' ' + e.getMessage()))
-					.setPositiveButton(R.string.ok, null)
+				new MaterialDialog.Builder(FontManagerActivity.this)
+					.content(getString(R.string.fm_error_when_extracting_font, fontName, e.getClass().getSimpleName() + ' ' + e.getMessage()))
+					.positiveText(R.string.ok)
 					.show();
 			}
 		}

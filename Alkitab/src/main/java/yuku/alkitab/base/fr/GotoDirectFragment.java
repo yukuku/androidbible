@@ -12,7 +12,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TIntSet;
@@ -150,9 +150,9 @@ public class GotoDirectFragment extends BaseGotoFragment {
 
 			final Jumper jumper = new Jumper(reference);
 			if (! jumper.getParseSucceeded()) {
-				new AlertDialogWrapper.Builder(getActivity())
-					.setMessage(getString(R.string.alamat_tidak_sah_alamat, reference))
-					.setPositiveButton(R.string.ok, null)
+				new MaterialDialog.Builder(getActivity())
+					.content(getString(R.string.alamat_tidak_sah_alamat, reference))
+					.positiveText(R.string.ok)
 					.show();
 				return;
 			}

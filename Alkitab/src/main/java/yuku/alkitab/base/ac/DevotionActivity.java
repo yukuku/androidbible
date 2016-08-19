@@ -23,7 +23,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.analytics.HitBuilders;
 import yuku.afw.V;
@@ -484,9 +483,9 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 				} else { // we need to parse it manually by text
 					final Jumper jumper = new Jumper(reference);
 					if (!jumper.getParseSucceeded()) {
-						new AlertDialogWrapper.Builder(DevotionActivity.this)
-							.setMessage(getString(R.string.alamat_tidak_sah_alamat, reference))
-							.setPositiveButton(R.string.ok, null)
+						new MaterialDialog.Builder(DevotionActivity.this)
+							.content(getString(R.string.alamat_tidak_sah_alamat, reference))
+							.positiveText(R.string.ok)
 							.show();
 						return;
 					}

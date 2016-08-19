@@ -27,9 +27,16 @@
   <string name="menu_markers">Marka</string>
   <string name="hapus_pembatas_buku">Hapus pembatas buku</string>
   <string name="menuShare">Bagikan</string>
+  <string name="menuShareSplit0">Bagikan versi utama</string>
+  <string name="menuShareSplit1">Bagikan versi belah</string>
+  <string name="menuShareBothSplits">Bagikan keduanya</string>
   <string name="tulis_catatan">Tulis catatan</string>
   <string name="tambah_pembatas_buku">Tambah pembatas buku</string>
   <string name="salin_ayat">Salin ayat</string>
+  <string name="copy_split0">Salin versi utama</string>
+  <string name="copy_split1">Salin versi belah</string>
+  <string name="copy_both_splits">Salin keduanya</string>
+  <string name="search_copy_selected_verses">Salin ayat-ayat yang dipilih</string>
   <string name="perj_baru">Perj. Baru</string>
   <string name="perj_lama">Perj. Lama</string>
   <string name="search_bookname_only">%s saja</string>
@@ -63,6 +70,7 @@
   <string name="mengunduh_nama">Mengunduh %s</string>
   <string name="tuju_v">Tuju</string>
   <string name="bagikan_alamat">Bagikan %s</string>
+  <string name="search_selected_verse_copied">Ayat-ayat yang dipilih sudah disalin.</string>
   <string name="alamat_sudah_disalin">%s sudah disalin.</string>
   <string name="alamat_tidak_sah_alamat">Alamat tidak sah: %s</string>
   <string name="no">Tidak</string>
@@ -87,6 +95,7 @@
   <string name="pdb_encoding">Enkoding PDB</string>
   <string name="sample_text">Contoh tulisan</string>
   <string name="include_book_and_chapter_headers">Sertakan juga judul kitab dan pasal</string>
+  <string name="select_all">Pilih semua</string>
   <string name="cp_opening_pdb_file">Membuka file PDB</string>
   <string name="cp_loading_version_info">Memuat informasi versi</string>
   <string name="cp_loading_word_index">Memuat indeks kata</string>
@@ -98,6 +107,7 @@
   <string name="cp_writing_translated_file">Menulis file hasil pengubahan</string>
   <string name="cp_reading_book_info">Membaca informasi kitab: %s</string>
   <string name="cp_writing_text_of_book_chapters">Menulis isi kitab %1$s (%2$s pasal)</string>
+  <!-- Versions -->
   <string name="ed_type_key">Jenis</string>
   <string name="ed_type_internal">Internal</string>
   <string name="ed_type_preset">Bisa diunduh</string>
@@ -189,8 +199,10 @@
   <string name="color_settings_title">Warna</string>
   <string name="color_settings_night_title">Warna (Mode gelap)</string>
   <string name="menuDisplay">Tampilan</string>
+  <string name="text_appearance_font">Jenis Huruf</string>
   <string name="text_appearance_theme_custom">Lainnya&#8230;</string>
   <string name="text_appearance_text_size">Ukuran teks</string>
+  <string name="text_appearance_text_size_for_version">Ukuran huruf untuk ^1</string>
   <string name="text_appearance_line_spacing">Jarak antarbaris</string>
   <string name="text_appearance_bold">Tebal</string>
   <string name="devotion_change_date">Ganti tanggal</string>
@@ -200,16 +212,21 @@
   <string name="google_play_store_not_installed">Google Play Store tidak terpasang.</string>
   <string name="pref_language_label_default">Semula</string>
   <string name="market_short_desc">Aplikasi Alkitab yang cepat, terpercaya, dan banyak fiturnya.</string>
+  <string name="no_url_for_facebook">Ini tidak bisa dibagikan ke Facebook.</string>
+  <string name="storage_permission_rationale">Kami perlu mengakses media penyimpanan untuk menyimpan berbagai data seperti versi Alkitab dan jenis huruf.</string>
+  <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Telusuri</string>
   <string name="goto_tab_direct_label">Ketik</string>
   <string name="goto_tab_grid_label">Pilih</string>
   <string name="menuAskForVerse">Tanyakan nomor ayat</string>
+  <!-- Font Manager -->
   <string name="fm_activity_title">Jenis Huruf</string>
   <string name="fm_need_to_log_in_to_wifi">Anda perlu log-in ke jaringan (Wi-Fi) dahulu.</string>
   <string name="fm_do_you_want_to_delete">Hapus jenis huruf %s?</string>
   <string name="fm_error_when_extracting_font">Kesalahan ketika mengekstrak huruf %1$s: %2$s</string>
   <string name="fm_loading_ellipsis">Memuat&#8230;</string>
   <string name="dl_failed_to_rename_temporary_file">Gagal mengganti nama file sementara</string>
+  <!-- Songs -->
   <string name="menuSongs">Kidung</string>
   <string name="sn_deep_search_enabled">Juga lirik, dsb.</string>
   <string name="sn_songs_activity_title">Kidung</string>
@@ -229,6 +246,10 @@
   <string name="sn_update_book_confirm_button">Perbarui</string>
   <string name="sn_update_book">Perbarui buku lagu</string>
   <string name="sn_update_book_because_too_old">Harap perbarui buku lagu ^1 terlebih dahulu. Setelah diperbarui, kirim kembali perbaikan Anda jika perlu.</string>
+  <string name="sn_menu_private_song_book">Buku lagu pribadi</string>
+  <string name="sn_private_song_book_dialog_desc">Unduh buku lagu pribadi (tersembunyi)</string>
+  <string name="sn_private_song_book_name_hint">Nama buku lagu</string>
+  <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Hari sebelumnya</string>
   <string name="desc_next_day">Hari berikutnya</string>
   <string name="desc_open_bookmark">Buka pembatas buku</string>
@@ -298,11 +319,13 @@
   <string name="dv_option_transparent_background">Latar belakang transparan</string>
   <string name="dv_option_dark_text">Teks gelap</string>
   <string name="dv_option_text_size">Ukuran teks</string>
+  <!-- Reading plan -->
   <string name="rp_menuReadingPlan">Rencana baca</string>
   <string name="rp_commentActual">Selesai: %s%%</string>
   <string name="rp_commentTarget">Target: %s%%</string>
   <string name="rp_commentOnSchedule">Sesuai rencana</string>
   <string name="rp_commentBehindSchedule">Ketinggalan: %s%%</string>
+  <string name="rp_commentAheadSchedule">Lebih cepat: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Tidak tersedia rencana baca lainnya.</string>
   <string name="rp_deletePlan">"Hapus \'%s\'?"</string>
   <string name="rp_reset">Ganti tanggal mulainya sehingga hari dengan bacaan pertama yang belum dibaca adalah hari ini? Gunakan jika Anda ketinggalan.</string>
@@ -339,6 +362,7 @@
   <string name="rp_mark_as_read_up_to">Tandai terbaca sampai sini?</string>
   <string name="version_download_need_fonts">"Versi yang diunduh mungkin perlu ditampilkan dengan jenis huruf tertentu. Bukalah menu \'Penampilan teks\' dan pilih jenis hurufnya. Yunani butuh jenis huruf Ubuntu. Myanmar butuh Parabaik, ParabaikSans, atau Myanmar3. Tamil butuh Akshar. Telugu butuh Suranna."</string>
   <string name="version_download_corrupted_file">File yang diunduh tampaknya rusak.</string>
+  <string name="version_download_saving_io_error">Kesalahan I/O saat menyimpan versi unduhan</string>
   <string name="menuNightMode">Mode gelap</string>
   <string name="highlight_custom_color">Warna lainnya</string>
   <string name="menu_compare">Bandingkan</string>
@@ -347,6 +371,7 @@
   <string name="search_syntax_tips"><i>Tip pencarian:</i>\n\n<b>+kata</b> untuk kata itu sendiri\n<b>[q]kota daud[q]</b> untuk urutan kata persis seperti itu</string>
   <string name="search_no_result"><b>^1</b> tidak ditemukan.</string>
   <string name="search_no_result_fallback">Tap di sini untuk membuka <u>^1</u>.</string>
+  <string name="search_clear_history">Hapus riwayat pencarian</string>
   <string name="marker_transfer_to_device_title">Transfer ke perangkat lain</string>
   <string name="marker_transfer_to_device_description">Pindahkan semua pembatas buku, catatan, dan sorotan ke ponsel atau tablet lain. Kami menyarankan menggunakan Gmail/Email.</string>
   <string name="marker_transfer_to_computer_title">Transfer ke komputer</string>
@@ -375,7 +400,7 @@
   <string name="book_filter_new_apocalypse">Apokalips</string>
   <string name="search_filter_multiple_books_selected">%s kitab dipilih</string>
   <string name="search_version_select_label">Temukan dalam:</string>
-  <string name="show_hidden_version_warning">Menyalakan pilihan ini memungkinkan Anda mengunduh versi Alkitab yang mungkin memerlukan persyaratan regional atau pembayaran. Sebelum mengunduh versi-versi Alkitab tersebut, pastikan Anda diperbolehkan melakukannya. Anda sepenuhnya bertanggung jawab dalam mengunduh dan menggunakan versi-versi sedemikian dan saya tidak dapat bertanggung jawab untuk hal ini. Tekan OK jika Anda setuju dengan ketentuan di atas.</string>
+  <string name="show_hidden_version_warning">Menyalakan pilihan ini memungkinkan Anda mengunduh versi Alkitab yang mungkin memerlukan persyaratan regional atau pembayaran. Sebelum mengunduh versi-versi Alkitab tersebut, pastikan Anda diperbolehkan melakukannya. Anda sepenuhnya bertanggung jawab dalam mengunduh dan menggunakan versi-versi tersebut dan saya tidak dapat bertanggung jawab untuk hal ini. Tekan OK jika Anda setuju dengan ketentuan di atas.</string>
   <string name="version_config_updater_error_download_modify_time">Gagal mengecek daftar versi.</string>
   <string name="version_config_updater_error_modify_time_failed">Daftar versi tidak tersedia: %s</string>
   <string name="version_config_updater_no_newer_available">Tidak ditemukan pembaruan versi.</string>
@@ -460,6 +485,7 @@
   <string name="pref_textPadding_summary">Lebih sedikit teks per barisnya agar mudah dibaca</string>
   <string name="pref_bottomToolbarOnText_title">Navigasi ayat di bawah</string>
   <string name="pref_bottomToolbarOnText_summary">Letakkan navigasi ayat di bagian bawah layar Alkitab</string>
+  <!-- devotion reminder -->
   <string name="dr_app_name">Pengingat</string>
   <string name="dr_notification_title">Renungan harian</string>
   <string name="dr_notification_text">Baca renungan hari ini.</string>
@@ -469,6 +495,7 @@
   <string name="dr_vibrate">Getar</string>
   <string name="dr_pref_notification_message">Pesan pengingat</string>
   <string name="dr_default_sound">Suara default</string>
+  <!-- about -->
   <string name="about_translators">Penerjemah</string>
   <string name="about_user_guide">Petunjuk Pemakaian</string>
   <string name="about_beta_feedback">Kotak Saran Versi Beta</string>
@@ -483,6 +510,7 @@
   <string name="about_announcement_load_failed">Gagal memuat pengumuman.</string>
   <string name="about_official_website">Situs Resmi</string>
   <string name="about_project_page">Halaman Proyek</string>
+  <!-- marker and label migration -->
   <string name="marker_migrate_introduction">Terdeteksi file cadangan dari Alkitab (Quick Bible) v3 lama yang mengandung pembatas buku, catatan, sorotan, dan label.\n\nMaukah Anda mempergunakan isi file itu?</string>
   <string name="marker_migrate_no_more">Jangan tanyakan lagi</string>
   <string name="marker_migrate_later">Lain kali</string>
@@ -493,14 +521,21 @@
   <string name="marker_migrate_import_from_newest">Ya, ambil dari yang terbaru (disarankan)</string>
   <string name="marker_migrate_import_from_other">Cadangan lainnya</string>
   <string name="marker_migrate_filename_dated">%1$s tertanggal %2$s</string>
+  <!-- Announcements -->
   <string name="announce_notif_title">Pengumuman %s</string>
   <string name="announce_notif_number_new_announcements">%s pengumuman baru</string>
+  <!-- Dictionary -->
   <string name="menuDictionary">Kamus</string>
   <string name="dict_open_full">Buka Kamus</string>
   <string name="dict_no_results">Tidak ada definisi dari kata yang dipilih.</string>
   <string name="dict_download_prompt">Unduh \"Kamus Alkitab\" untuk mempelajari kata-kata dalam Alkitab!</string>
   <string name="dict_download_button">Unduh</string>
+  <!-- Guide -->
   <string name="menuGuide">Panduan</string>
+  <!-- Commentary -->
   <string name="menuCommentary">Tafsiran</string>
+  <!-- Maps -->
   <string name="maps_could_not_open">Tidak bisa membuka aplikasi Peta Alkitab.</string>
+  <!-- File chooser -->
+  <string name="filechooser_parent_folder">Folder induk</string>
 </resources>

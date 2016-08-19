@@ -31,7 +31,7 @@ public class SongFragment extends BaseFragment {
 	private static final String ARG_templateFile = "templateFile";
 	private static final String ARG_customVars = "customVars";
 
-	private WebView webView;
+	private WebView webview;
 
 	private Song song;
 	private String templateFile;
@@ -62,11 +62,11 @@ public class SongFragment extends BaseFragment {
 	@SuppressLint("SetJavaScriptEnabled")
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View res = inflater.inflate(R.layout.fragment_song, container, false);
-		webView = V.get(res, R.id.webView);
-		webView.setBackgroundColor(0x00000000);
-		webView.setWebViewClient(webViewClient);
+		webview = V.get(res, R.id.webview);
+		webview.setBackgroundColor(0x00000000);
+		webview.setWebViewClient(webViewClient);
 
-		final WebSettings settings = webView.getSettings();
+		final WebSettings settings = webview.getSettings();
 		settings.setJavaScriptEnabled(true);
 		settings.setSupportZoom(true);
 		settings.setBuiltInZoomControls(true);
@@ -143,12 +143,12 @@ public class SongFragment extends BaseFragment {
 
 			template = templateDivReplace(template, "lyrics", songToHtml(song, false));
 
-			webView.loadDataWithBaseURL("file:///android_asset/" + templateFile, template, "text/html", "utf-8", null);
+			webview.loadDataWithBaseURL("file:///android_asset/" + templateFile, template, "text/html", "utf-8", null);
 		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
-			webView.loadDataWithBaseURL(null, sw.toString(), "text/plain", "utf-8", null);
+			webview.loadDataWithBaseURL(null, sw.toString(), "text/plain", "utf-8", null);
 		}
 	}
 
@@ -217,12 +217,12 @@ public class SongFragment extends BaseFragment {
 	}
 
 	public int getWebViewTextZoom() {
-		if (webView == null) return 0; // not ready
-		return webView.getSettings().getTextZoom();
+		if (webview == null) return 0; // not ready
+		return webview.getSettings().getTextZoom();
 	}
 
 	public void setWebViewTextZoom(final int percent) {
-		if (webView == null) return;
-		webView.getSettings().setTextZoom(percent);
+		if (webview == null) return;
+		webview.getSettings().setTextZoom(percent);
 	}
 }

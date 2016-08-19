@@ -27,9 +27,16 @@
   <string name="menu_markers">Merkers</string>
   <string name="hapus_pembatas_buku">Verwyder boekmerk</string>
   <string name="menuShare">Deel</string>
+  <string name="menuShareSplit0">Deel primêre weergawe</string>
+  <string name="menuShareSplit1">Deel sekondêre weergawe</string>
+  <string name="menuShareBothSplits">Deel beide weergawes</string>
   <string name="tulis_catatan">Skryf nota</string>
   <string name="tambah_pembatas_buku">Voeg boekmerk by</string>
   <string name="salin_ayat">Kopiëer vers</string>
+  <string name="copy_split0">Kopieer primêre weergawe</string>
+  <string name="copy_split1">Kopieer sekondêre weergawe</string>
+  <string name="copy_both_splits">Kopieer beide weergawes</string>
+  <string name="search_copy_selected_verses">Kopieer geselekteerde verse</string>
   <string name="perj_baru">Nuwe Test.</string>
   <string name="perj_lama">Ou Test.</string>
   <string name="search_bookname_only">%s alleenlik </string>
@@ -63,6 +70,7 @@
   <string name="mengunduh_nama">Besig met aflaai %s</string>
   <string name="tuju_v">Gaan na</string>
   <string name="bagikan_alamat">Deel%s</string>
+  <string name="search_selected_verse_copied">Die geselekteerde verse is gekopieer.</string>
   <string name="alamat_sudah_disalin">%s is gekopiëer.</string>
   <string name="alamat_tidak_sah_alamat">Ongeldige adres: %s</string>
   <string name="no">Nee</string>
@@ -87,6 +95,7 @@
   <string name="pdb_encoding">VOB kodering</string>
   <string name="sample_text">Voorbeeld teks</string>
   <string name="include_book_and_chapter_headers">Sluit boek en hoofstuk opskrifte in</string>
+  <string name="select_all">Kies alles</string>
   <string name="cp_opening_pdb_file">Maak PDB-lêer oop</string>
   <string name="cp_loading_version_info">Weergawe informasie word gelaai</string>
   <string name="cp_loading_word_index">Woord indeks word gelaai</string>
@@ -98,6 +107,7 @@
   <string name="cp_writing_translated_file">Skryf vertaalde lêer</string>
   <string name="cp_reading_book_info">Lees boek info:%s</string>
   <string name="cp_writing_text_of_book_chapters">Skryf teks van boek %1$s (%2$s hoofstukke)</string>
+  <!-- Versions -->
   <string name="ed_type_key">Tipe</string>
   <string name="ed_type_internal">Ingebou</string>
   <string name="ed_type_preset">Aflaaibaar</string>
@@ -189,8 +199,10 @@
   <string name="color_settings_title">Kleure</string>
   <string name="color_settings_night_title">Kleure (Nag Modus)</string>
   <string name="menuDisplay">Vertoon</string>
+  <string name="text_appearance_font">Lettertipe</string>
   <string name="text_appearance_theme_custom">Persoonlike</string>
   <string name="text_appearance_text_size">Teks grootte</string>
+  <string name="text_appearance_text_size_for_version">Teks grootte vir ^1</string>
   <string name="text_appearance_line_spacing">Spasiëring</string>
   <string name="text_appearance_bold">Vetdruk</string>
   <string name="devotion_change_date">Verander datum</string>
@@ -200,16 +212,21 @@
   <string name="google_play_store_not_installed">Google Play Store is nie geïnstalleer nie.</string>
   <string name="pref_language_label_default">Verstek</string>
   <string name="market_short_desc">Vinnig, betroubaar en eienskap ryk aflyn Bybel.</string>
+  <string name="no_url_for_facebook">Hierdie kan nie op Facebook gedeel word nie.</string>
+  <string name="storage_permission_rationale">Ons moet toegang tot die stoor spasie verkry om gedeelde media soos Bybel weergawes en lettertipes te stoor.</string>
+  <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Skakelaar</string>
   <string name="goto_tab_direct_label">Direk</string>
   <string name="goto_tab_grid_label">Ruit</string>
   <string name="menuAskForVerse">Vra vir vers nommer</string>
+  <!-- Font Manager -->
   <string name="fm_activity_title">Skrif Bestuurder</string>
   <string name="fm_need_to_log_in_to_wifi">U moet eers op U netwerk (Wi-Fi) inskakel.</string>
   <string name="fm_do_you_want_to_delete">Vee lettertipe uit %s?</string>
   <string name="fm_error_when_extracting_font">Fout met skrif onttrekking %1$s: %2$s</string>
   <string name="fm_loading_ellipsis">Laai</string>
   <string name="dl_failed_to_rename_temporary_file">Gefaal om tydelike lêer te hernoem</string>
+  <!-- Songs -->
   <string name="menuSongs">Musiek</string>
   <string name="sn_deep_search_enabled">Lirieke,ens.ook</string>
   <string name="sn_songs_activity_title">Musiek</string>
@@ -229,6 +246,10 @@
   <string name="sn_update_book_confirm_button">Dateer op</string>
   <string name="sn_update_book">Dateer gesange boek op</string>
   <string name="sn_update_book_because_too_old">Dateer asb. ^1 op na die nuutste weergawe voordat jy aangaan. Na opdatering stuur jou regie indien nodig. </string>
+  <string name="sn_menu_private_song_book">Private lied boek</string>
+  <string name="sn_private_song_book_dialog_desc">Laai \'n private (versteekte) lied boek af</string>
+  <string name="sn_private_song_book_name_hint">Lied boek naam</string>
+  <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Vorige dag</string>
   <string name="desc_next_day">Volgende dag</string>
   <string name="desc_open_bookmark">Maak boekmerk oop</string>
@@ -298,11 +319,13 @@
   <string name="dv_option_transparent_background">Deurskynende agtergrond</string>
   <string name="dv_option_dark_text">Donker teks</string>
   <string name="dv_option_text_size">Teks grootte</string>
+  <!-- Reading plan -->
   <string name="rp_menuReadingPlan">Lees plan</string>
   <string name="rp_commentActual">Voltooi: %s%%</string>
   <string name="rp_commentTarget">Teiken: %s%%</string>
   <string name="rp_commentOnSchedule">Op skedule</string>
   <string name="rp_commentBehindSchedule">Agter die skedule: %s%%</string>
+  <string name="rp_commentAheadSchedule">Vooruit met skedule: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Geen verdere lees planne planne beskikbaar nie.</string>
   <string name="rp_deletePlan">"Uitvee \'%s\'?"</string>
   <string name="rp_reset">Verander die begin datum sodat die eerste nie gelese stuk vandag is?</string>
@@ -339,6 +362,7 @@
   <string name="rp_mark_as_read_up_to">Merk as klaar gelees tot hier?</string>
   <string name="version_download_need_fonts">"Die weergawe wat jy afgelaai het mag dalk \'n sekere lettertipe benodig. Gaan na \'Teks voorkoms\' menu en kies lettertipe. Grieks benodig Ubuntu lettertipe. Burmees benodig Parabaik, ParabaikSans, of Myanmar3. Tamil benodig Akshar en Tekugu benodig Suranna."</string>
   <string name="version_download_corrupted_file">Afgelaaide lêer blyk korrup te wees.</string>
+  <string name="version_download_saving_io_error">I/O fout indien afgelaaide weergawe gestoor word</string>
   <string name="menuNightMode">Nag modus</string>
   <string name="highlight_custom_color">Ander Kleure</string>
   <string name="menu_compare">Vergelyk</string>
@@ -347,6 +371,7 @@
   <string name="search_syntax_tips"><i>Soek wenke:</i>\n\n<b>+woord</b> vir die presiese woord\n<b>[q]stad van Dawid[q]</b>vir die presiese frase</string>
   <string name="search_no_result">Geen verse gevind vir <b>^1</b>.</string>
   <string name="search_no_result_fallback">Tik hier om na <u>^1</u> te gaan.</string>
+  <string name="search_clear_history">Verwyder soek geskiedenis</string>
   <string name="marker_transfer_to_device_title">Stuur na ander toestel</string>
   <string name="marker_transfer_to_device_description">Stuur alle boekmerke, notas en beklemtonings na \'n ander toestel. Ons stel voor jy gebruik Gmail/E-pos.</string>
   <string name="marker_transfer_to_computer_title">Stuur vir redigering</string>
@@ -460,6 +485,7 @@
   <string name="pref_textPadding_summary">Maak teks inlyn smaller om lees te vergemaklik</string>
   <string name="pref_bottomToolbarOnText_title">Onderste vers navigasie</string>
   <string name="pref_bottomToolbarOnText_summary">Plaas vers navigasie balk onderaan die Bybel skerm</string>
+  <!-- devotion reminder -->
   <string name="dr_app_name">Herinnering</string>
   <string name="dr_notification_title">Daaglikse toewyding</string>
   <string name="dr_notification_text">Lees vandag se toewyding nou.</string>
@@ -469,6 +495,7 @@
   <string name="dr_vibrate">Vibreer</string>
   <string name="dr_pref_notification_message">Herinnering boodskap</string>
   <string name="dr_default_sound">Verstek klank</string>
+  <!-- about -->
   <string name="about_translators">Vertalers</string>
   <string name="about_user_guide">Gebruikers Gids</string>
   <string name="about_beta_feedback">Beta Weergawe Terugvoer</string>
@@ -483,6 +510,7 @@
   <string name="about_announcement_load_failed">Gefaal om aankondigings te laai.</string>
   <string name="about_official_website">Offisiële Webwerf </string>
   <string name="about_project_page">Projek Bladsy</string>
+  <!-- marker and label migration -->
   <string name="marker_migrate_introduction">Ons bemerk \'n rugsteun lêer van die ou v3 Yuku Quick Bible wat boekmerke, notas, ens bevat.\n\nWil jy dit graag invoer dat jy dit kan gebruik in die nuwe weergawe?</string>
   <string name="marker_migrate_no_more">Moet nie weer vra nie</string>
   <string name="marker_migrate_later">Nie nou nie</string>
@@ -493,14 +521,21 @@
   <string name="marker_migrate_import_from_newest">Ja, voer die nuutste in (aanbeveel)</string>
   <string name="marker_migrate_import_from_other">Ander rugsteun</string>
   <string name="marker_migrate_filename_dated">%1$s gedateer %2$s</string>
+  <!-- Announcements -->
   <string name="announce_notif_title">%s Aankondigings</string>
   <string name="announce_notif_number_new_announcements">%s Nuwe Aankondigings</string>
+  <!-- Dictionary -->
   <string name="menuDictionary">Woordeboek</string>
   <string name="dict_open_full">Maak woordeboek oop</string>
   <string name="dict_no_results">Geen definisie gevind vir die verkose woord nie.</string>
   <string name="dict_download_prompt">Laai \"Bible Dictionary\" af om meer te leer omtrent sekere woorde in die Bybel!</string>
   <string name="dict_download_button">Laai Af</string>
+  <!-- Guide -->
   <string name="menuGuide">Gids</string>
+  <!-- Commentary -->
   <string name="menuCommentary">Kommentaar</string>
+  <!-- Maps -->
   <string name="maps_could_not_open">Kon nie die Bybel Kaarte program oopmaak nie.</string>
+  <!-- File chooser -->
+  <string name="filechooser_parent_folder">Primêre lêer</string>
 </resources>

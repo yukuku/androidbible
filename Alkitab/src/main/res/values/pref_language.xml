@@ -6,6 +6,7 @@
         <item>Afrikaans</item>
         <item>Bahasa Indonesia</item>
         <item>Čeština</item>
+        <item>Dansk</item>
         <item>Deutsch</item>
         <item>English</item>
         <item>Español</item>
@@ -15,9 +16,12 @@
         <item>Polski</item>
         <item>Português</item>
         <item>Română</item>
+        <item>Български</item>
         <item>Русский</item>
         <item>Українська</item>
+        <item>ภาษาไทย</item>
         <item>日本語</item>
+        <item>한국어</item>
         <item>简体中文</item>
         <item>繁體中文</item>
     </string-array>
@@ -26,6 +30,7 @@
         <item>af</item>
         <item>in</item>
         <item>cs</item>
+        <item>da</item>
         <item>de</item>
         <item>en</item>
         <item>es</item>
@@ -35,9 +40,12 @@
         <item>pl</item>
         <item>pt</item>
         <item>ro</item>
+        <item>bg</item>
         <item>ru</item>
         <item>uk</item>
+        <item>th</item>
         <item>ja</item>
+        <item>ko</item>
         <item>zh-CN</item>
         <item>zh-TW</item>
     </string-array>

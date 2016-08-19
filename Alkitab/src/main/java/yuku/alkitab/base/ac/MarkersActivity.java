@@ -21,7 +21,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import yuku.afw.D;
@@ -216,10 +216,11 @@ public class MarkersActivity extends BaseActivity {
 				S.getDb().deleteLabelAndMarker_LabelsByLabelId(label._id);
 				adapter.reload();
 			} else {
-				new AlertDialogWrapper.Builder(this)
-					.setMessage(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, marker_count))
-					.setNegativeButton(R.string.cancel, null)
-					.setPositiveButton(R.string.delete, (dialog, which) -> {
+				new MaterialDialog.Builder(this)
+					.content(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, marker_count))
+					.negativeText(R.string.cancel)
+					.positiveText(R.string.delete)
+					.onPositive((dialog, which) -> {
 						S.getDb().deleteLabelAndMarker_LabelsByLabelId(label._id);
 						adapter.reload();
 					})
@@ -269,9 +270,9 @@ public class MarkersActivity extends BaseActivity {
 					final FileInputStream fis = new FileInputStream(file);
 					BookmarkImporter.importBookmarks(this, fis, false, () -> adapter.reload());
 				} catch (IOException e) {
-					new AlertDialogWrapper.Builder(this)
-						.setMessage(R.string.marker_migrate_error_opening_backup_file)
-						.setPositiveButton(R.string.ok, null)
+					new MaterialDialog.Builder(this)
+						.content(R.string.marker_migrate_error_opening_backup_file)
+						.positiveText(R.string.ok)
 						.show();
 				}
 			}

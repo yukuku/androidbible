@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.text.InputType;
 import android.text.TextUtils;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
@@ -32,10 +31,10 @@ public class ProgressMarkRenameDialog extends DialogFragment {
 			.positiveText(R.string.ok)
 			.neutralText(R.string.delete)
 			.inputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT)
-			.inputMaxLength(32)
+			.inputRange(0, 32)
 			.input(activity.getString(R.string.pm_progress_name), caption, true, (dialog, text) -> {
 				final String name = text.toString();
-				if (TextUtils.isEmpty(name.trim())) {
+				if (TextUtils.getTrimmedLength(name) == 0) {
 					progressMark.caption = null;
 				} else {
 					progressMark.caption = name;
@@ -52,9 +51,10 @@ public class ProgressMarkRenameDialog extends DialogFragment {
 			.callback(new MaterialDialog.ButtonCallback() {
 				@Override
 				public void onNeutral(final MaterialDialog dialog) {
-					new AlertDialogWrapper.Builder(activity)
-						.setMessage(TextUtils.expandTemplate(activity.getText(R.string.pm_delete_progress_confirm), caption))
-						.setPositiveButton(R.string.ok, (_unused_, which) -> {
+					new MaterialDialog.Builder(activity)
+						.content(TextUtils.expandTemplate(activity.getText(R.string.pm_delete_progress_confirm), caption))
+						.positiveText(R.string.ok)
+						.onPositive((_unused_, which) -> {
 							progressMark.ari = 0;
 							progressMark.caption = null;
 							progressMark.modifyTime = new Date();
@@ -66,7 +66,7 @@ public class ProgressMarkRenameDialog extends DialogFragment {
 
 							listener.onDeleted();
 						})
-						.setNegativeButton(R.string.cancel, null)
+						.negativeText(R.string.cancel)
 						.show();
 				}
 			})

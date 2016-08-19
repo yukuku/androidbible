@@ -33,7 +33,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -287,7 +286,7 @@ public class SearchActivity extends BaseActivity {
 
 		final Toolbar toolbar = V.get(this, R.id.toolbar);
 		setSupportActionBar(toolbar); // must be done first before below lines
-		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
 		toolbar.setNavigationOnClickListener(v -> navigateUp());
 
 		bVersion = V.get(this, R.id.bVersion);
@@ -606,9 +605,9 @@ public class SearchActivity extends BaseActivity {
 					final Version selectedVersion = mv.getVersion();
 
 					if (selectedVersion == null) {
-						new AlertDialogWrapper.Builder(SearchActivity.this)
-							.setMessage(getString(R.string.version_error_opening, mv.longName))
-							.setPositiveButton(R.string.ok, null)
+						new MaterialDialog.Builder(SearchActivity.this)
+							.content(getString(R.string.version_error_opening, mv.longName))
+							.positiveText(R.string.ok)
 							.show();
 						return;
 					}
@@ -672,9 +671,9 @@ public class SearchActivity extends BaseActivity {
 		{ // check if there is anything chosen
 			int firstSelected = selectedBookIds.indexOfValue(true);
 			if (firstSelected < 0) {
-				new AlertDialogWrapper.Builder(this)
-					.setMessage(R.string.pilih_setidaknya_satu_kitab)
-					.setPositiveButton(R.string.ok, null)
+				new MaterialDialog.Builder(this)
+					.content(R.string.pilih_setidaknya_satu_kitab)
+					.positiveText(R.string.ok)
 					.show();
 				return;
 			}

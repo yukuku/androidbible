@@ -14,11 +14,12 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.PopupMenu;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.Response;
+import okhttp3.Call;
+import okhttp3.Response;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.storage.SongDb;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.OptionalGzipInputStream;
 import yuku.kpri.model.Song;
@@ -195,7 +196,7 @@ public class SongBookUtil {
 
 		new Thread(() -> {
 			try {
-				final Call call = App.downloadCall("https://alkitab-host.appspot.com/addon/songs/get_songs?name=" + songBookInfo.name + "&dataFormatVersion=" + dataFormatVersion);
+				final Call call = App.downloadCall(BuildConfig.SERVER_HOST + "addon/songs/get_songs?name=" + songBookInfo.name + "&dataFormatVersion=" + dataFormatVersion);
 
 				final Response response = call.execute();
 				if (response.code() != 200) {
