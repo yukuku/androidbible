@@ -17,12 +17,12 @@ android {
         applicationId 'yuku.alkitab.debug'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 14000265
-        versionName '4.4.0-beta5'
+        versionCode 14000266
+        versionName '4.4.0-beta6'
         multiDexEnabled true
         // Keep this synced with build.gradle resConfigs!
         resConfigs 'af', 'bg', 'cs', 'da', 'de', 'es', 'fr', 'in', 'ja', 'lv', 'ms', 'nl', 'pl', 'pt', 'ro', 'ru', 'th', 'uk', 'zh-rCN', 'zh-rTW'
-        buildConfigField 'String', 'SERVER_HOST', '"https://alkitab-host.appspot.com/"'
+        buildConfigField 'String', 'SERVER_HOST', "\"$SERVER_HOST\""
     }
     buildTypes {
         release {
