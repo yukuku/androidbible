@@ -94,6 +94,7 @@ import yuku.alkitab.base.widget.FormattedTextRenderer;
 import yuku.alkitab.base.widget.GotoButton;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.LeftDrawer;
+import yuku.alkitab.base.widget.MaterialDialogAdapterHelper;
 import yuku.alkitab.base.widget.ScrollbarSetter;
 import yuku.alkitab.base.widget.SingleViewVerseAdapter;
 import yuku.alkitab.base.widget.SplitHandleButton;
@@ -1164,10 +1165,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	void bGoto_longClick() {
 		App.trackEvent("nav_goto_button_long_click");
 		if (history.getSize() > 0) {
-			new MaterialDialog.Builder(this)
-				.adapter(historyAdapter, null)
-				.autoDismiss(true)
-				.show();
+			MaterialDialogAdapterHelper.show(new MaterialDialog.Builder(this), new HistoryAdapter());
 		} else {
 			Snackbar.make(root, R.string.recentverses_not_available, Snackbar.LENGTH_SHORT).show();
 		}
@@ -1183,7 +1181,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	}
 
-	private RecyclerView.Adapter<RecyclerView.ViewHolder> historyAdapter = new RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+	class HistoryAdapter extends MaterialDialogAdapterHelper.Adapter {
 		private final java.text.DateFormat timeFormat = DateFormat.getTimeFormat(App.context);
 		private final java.text.DateFormat mediumDateFormat = DateFormat.getMediumDateFormat(App.context);
 
@@ -1222,6 +1220,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			}
 
 			holder.itemView.setOnClickListener(v -> {
+				dismissDialog();
+
 				final int which = holder.getAdapterPosition();
 
 				final int ari = history.getAri(which);
@@ -1813,10 +1813,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (markers.size() == 1) {
 				openBookmarkDialog(markers.get(0)._id);
 			} else {
-				final MaterialDialog dialog = new MaterialDialog.Builder(IsiActivity.this)
-					.title(R.string.edit_bookmark)
-					.adapter(new MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.bookmark), null)
-					.show();
+				MaterialDialogAdapterHelper.show(new MaterialDialog.Builder(IsiActivity.this).title(R.string.edit_bookmark), new MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.bookmark));
 			}
 		}
 
@@ -1830,10 +1827,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (markers.size() == 1) {
 				openNoteDialog(markers.get(0)._id);
 			} else {
-                final MaterialDialog dialog = new MaterialDialog.Builder(IsiActivity.this)
-                    .title(R.string.edit_note)
-                    .adapter(new MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.note), null)
-                    .show();
+				MaterialDialogAdapterHelper.show(new MaterialDialog.Builder(IsiActivity.this).title(R.string.edit_note), new MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.note));
 			}
         }
 
@@ -1853,7 +1847,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			}
 		}
 
-		class MultipleMarkerSelectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+		class MultipleMarkerSelectAdapter extends MaterialDialogAdapterHelper.Adapter {
 			final Version version;
 			final float textSizeMult;
 			final List<Marker> markers;
@@ -1923,6 +1917,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				}
 
 				holder.itemView.setOnClickListener(v -> {
+					dismissDialog();
+
 					final int which = holder.getAdapterPosition();
 					final Marker marker = markers.get(which);
 					if (kind == Marker.Kind.bookmark) {
