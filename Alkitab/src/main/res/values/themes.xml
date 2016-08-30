@@ -9,6 +9,7 @@
         <item name="android:windowBackground">@color/window</item>
 		<item name="actionModeStyle">@style/SmallerTitleActionModeStyle</item>
 		<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+		<item name="toolbarStyle">@style/ToolbarStyle</item>
 	</style>
 
 	<style name="Theme.Alkitab.DialogWhenLarge.Base" parent="Theme.AppCompat.DialogWhenLarge">
@@ -32,6 +33,12 @@
 
 	<style name="SmallerActionModeTitleTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionMode.Title">
 		<item name="android:textSize">16sp</item>
+	</style>
+
+	<style name="ToolbarStyle" parent="Widget.AppCompat.Toolbar">
+		<item name="contentInsetStart">?actionBarSize</item>
+		<item name="contentInsetStartWithNavigation">?actionBarSize</item>
+		<item name="titleMarginStart">0dp</item>
 	</style>
 
     <style name="Theme.Alkitab.Transparent.Base" parent="Theme.Alkitab">

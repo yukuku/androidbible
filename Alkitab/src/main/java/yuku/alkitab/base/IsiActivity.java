@@ -426,12 +426,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		toolbar = V.get(this, R.id.toolbar);
 		setSupportActionBar(toolbar);
-		setTitle("");
-
-		final ActionBar actionBar = getSupportActionBar();
-		assert actionBar != null;
-		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
+		ab.setDisplayShowTitleEnabled(false);
+		ab.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
 
 		bGoto = V.get(this, R.id.bGoto);
 		bLeft = V.get(this, R.id.bLeft);
