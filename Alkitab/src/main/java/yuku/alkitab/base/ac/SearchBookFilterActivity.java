@@ -168,7 +168,7 @@ public class SearchBookFilterActivity extends BaseActivity {
 				return new VH(getLayoutInflater().inflate(R.layout.search_book_filter_categories, parent, false), viewType);
 			} else {
 				final TextView res = new TextView(SearchBookFilterActivity.this);
-				res.setLayoutParams(new GridLayoutManager.LayoutParams(0 /* will be ignored */, getResources().getDimensionPixelSize(R.dimen.goto_grid_cell_height)));
+				res.setLayoutParams(new GridLayoutManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getResources().getDimensionPixelSize(R.dimen.goto_grid_cell_height)));
 				res.setGravity(Gravity.CENTER);
 				res.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
 				return new VH(res, viewType);
