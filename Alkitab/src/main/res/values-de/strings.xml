@@ -249,6 +249,7 @@
   <string name="sn_menu_private_song_book">Privates Liederbuch</string>
   <string name="sn_private_song_book_dialog_desc">Ein privates (verstecktes) Liederbuch herunterladen</string>
   <string name="sn_private_song_book_name_hint">Liederbuchname</string>
+  <string name="sn_play_in_loop">In einer Endlosschleife abspielen, bis Wiedergabe gestoppt wird?</string>
   <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Voriger Tag</string>
   <string name="desc_next_day">Nächster Tag</string>

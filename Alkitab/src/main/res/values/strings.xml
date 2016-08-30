@@ -29,8 +29,8 @@
     <string name="menuShareSplit0">Share primary version</string>
     <string name="menuShareSplit1">Share secondary version</string>
     <string name="menuShareBothSplits">Share both versions</string>
-    <string name="tulis_catatan">Write note</string>
-    <string name="tambah_pembatas_buku">Add bookmark</string>
+    <string name="tulis_catatan">Note</string>
+    <string name="tambah_pembatas_buku">Bookmark</string>
     <string name="salin_ayat">Copy verse</string>
     <string name="copy_split0">Copy primary version</string>
     <string name="copy_split1">Copy secondary version</string>
