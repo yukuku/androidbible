@@ -2,6 +2,7 @@ package yuku.alkitab.base.widget;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Spannable;
@@ -85,7 +86,9 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 
 		row.setTextViewText(R.id.text1, getText(version, aris[position], showVerseNumber));
 		if (savedState.darkText) {
-			row.setTextColor(R.id.text1, 0xff000000);
+			row.setTextColor(R.id.text1, Color.BLACK);
+		} else {
+			row.setTextColor(R.id.text1, Color.WHITE);
 		}
 		row.setFloat(R.id.text1, "setTextSize", savedState.textSize);
 
