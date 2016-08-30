@@ -33,6 +33,7 @@ import yuku.alkitab.base.sync.Sync_History;
 import yuku.alkitab.base.sync.Sync_Mabel;
 import yuku.alkitab.base.sync.Sync_Pins;
 import yuku.alkitab.base.sync.Sync_Rp;
+import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
@@ -442,7 +443,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 			.content("getting entities…")
 			.show();
 
-		new Thread(() -> {
+		Background.run(() -> {
 			switch (syncSetName) {
 				case SyncShadow.SYNC_SET_MABEL:
 					entities.addAll(Sync_Mabel.getEntitiesFromCurrent());
@@ -480,6 +481,6 @@ public class SecretSyncDebugActivity extends BaseActivity {
 				.content("entities.size=" + entities.size() + " hash=" + String.format(Locale.US, "0x%08x", finalHashCode))
 				.positiveText("OK")
 				.show());
-		}).start();
+		});
 	};
 }

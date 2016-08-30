@@ -39,14 +39,14 @@ public abstract class Announce {
 			return;
 		}
 
-		new Thread(() -> {
+		Background.run(() -> {
 			try {
 				SystemClock.sleep(10000); // wait 10 seconds
 				checkAnnouncements_worker();
 			} catch (Exception e) { // handle all exceptions, because we don't want the main app to crash because of this.
 				Log.d(TAG, "@@checkAnnouncements", e);
 			}
-		}).start();
+		});
 	}
 
 	static class Announcement {

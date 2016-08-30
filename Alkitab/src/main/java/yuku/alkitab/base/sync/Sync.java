@@ -18,6 +18,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.Background;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 
@@ -301,7 +302,7 @@ public class Sync {
 			return;
 		}
 
-		new Thread(() -> sendGcmRegistrationId(simpleToken, newRegistrationId)).start();
+		Background.run(() -> sendGcmRegistrationId(simpleToken, newRegistrationId));
 	}
 
 	public static boolean sendGcmRegistrationId(final String simpleToken, final String registration_id) {

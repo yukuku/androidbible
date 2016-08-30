@@ -21,6 +21,7 @@ import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.util.Background;
 import yuku.alkitab.debug.R;
 
 public class SyncLoginActivity extends BaseActivity {
@@ -291,13 +292,13 @@ public class SyncLoginActivity extends BaseActivity {
 			.progress(true, 0)
 			.show();
 
-		new Thread(() -> {
+		Background.run(() -> {
 			try {
 				task.run();
 			} finally {
 				pd.dismiss();
 			}
-		}).start();
+		});
 	}
 
 	void confirmPassword(final String correctPassword, final Runnable whenCorrect) {

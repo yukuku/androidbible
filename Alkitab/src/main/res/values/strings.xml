@@ -337,6 +337,7 @@
     <string name="dv_option_text_size">Text size</string>
 
 	<!-- Reading plan -->
+    <string name="rp_activity_title">Reading Plan</string>
     <string name="rp_menuReadingPlan">Reading plan</string>
     <string name="rp_commentActual">Finished: %s%%</string>
     <string name="rp_commentTarget">Target: %s%%</string>

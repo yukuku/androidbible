@@ -188,13 +188,13 @@ public class SongBookUtil {
 	public static void downloadSongBook(final Activity activity, final SongBookInfo songBookInfo, final int dataFormatVersion, final OnDownloadSongBookListener listener) {
 		final AtomicBoolean cancelled = new AtomicBoolean();
 
-		MaterialDialog pd = new MaterialDialog.Builder(activity)
+		final MaterialDialog pd = new MaterialDialog.Builder(activity)
 			.content(R.string.sn_downloading_ellipsis)
 			.progress(true, 0)
 			.dismissListener(dialog -> cancelled.set(true))
 			.show();
 
-		new Thread(() -> {
+		Background.run(() -> {
 			try {
 				final Call call = App.downloadCall(BuildConfig.SERVER_HOST + "addon/songs/get_songs?name=" + songBookInfo.name + "&dataFormatVersion=" + dataFormatVersion);
 
@@ -217,15 +217,15 @@ public class SongBookUtil {
 				S.getSongDb().insertSongBookInfo(songBookInfo);
 				S.getSongDb().storeSongs(songBookInfo.name, songs, dataFormatVersion);
 
-				activity.runOnUiThread(() -> listener.onDownloadedAndInserted(songBookInfo));
+				Foreground.run(() -> listener.onDownloadedAndInserted(songBookInfo));
 
 			} catch (IOException | ClassNotFoundException e) {
-				activity.runOnUiThread(() -> listener.onFailedOrCancelled(songBookInfo, e));
+				Foreground.run(() -> listener.onFailedOrCancelled(songBookInfo, e));
 
 			} finally {
 				pd.dismiss();
 			}
-		}).start();
+		});
 	}
 
 	public static CharSequence escapeSongBookName(final String name) {

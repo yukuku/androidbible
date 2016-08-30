@@ -41,7 +41,9 @@ import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.storage.SongDb;
 import yuku.alkitab.base.util.AlphanumComparator;
+import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.FontManager;
+import yuku.alkitab.base.util.Foreground;
 import yuku.alkitab.base.util.OsisBookNames;
 import yuku.alkitab.base.util.SongBookUtil;
 import yuku.alkitab.base.util.Sqlitil;
@@ -281,7 +283,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				if (isMidiFile) {
 					final Handler handler = new Handler();
 
-					new Thread(() -> {
+					Background.run(() -> {
 						try {
 							setState(ControllerState.preparing);
 
@@ -305,7 +307,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 							Log.e(TAG, "buffering to local cache", e);
 							setState(ControllerState.error);
 						}
-					}).start();
+					});
 				} else {
 					mediaPlayerPrepare(false, url, playInLoop);
 				}
@@ -528,7 +530,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		final String checkedBookName = currentBookName;
 		final String checkedCode = currentSong.code;
 
-		new Thread(() -> {
+		Background.run(() -> {
 			try {
 				final String filename = getAudioFilename(checkedBookName, checkedCode);
 				final String response = App.downloadString(BuildConfig.SERVER_HOST + "addon/audio/exists?filename=" + Uri.encode(filename));
@@ -555,7 +557,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			} catch (IOException e) {
 				Log.e(TAG, "@@checkAudioExistance", e);
 			}
-		}).start();
+		});
 	}
 
 	@Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -714,10 +716,10 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 		final String bookName = currentBookName;
 
-		new Thread(() -> {
+		Background.run(() -> {
 			final int count = S.getSongDb().deleteSongBook(bookName);
 
-			runOnUiThread(() -> {
+			Foreground.run(() -> {
 				pd.dismiss();
 
 				new MaterialDialog.Builder(this)
@@ -726,7 +728,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 					.dismissListener(dialog -> displayAnySongOrFinish())
 					.show();
 			});
-		}).start();
+		});
     }
 
 	private StringBuilder convertSongToText(Song song) {
