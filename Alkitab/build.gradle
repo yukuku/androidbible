@@ -93,6 +93,7 @@ dependencies {
     debugCompile "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
     compile "com.android.support:support-v4:$supportLibVersion"
     compile "com.squareup.picasso:picasso:$picassoVersion"
+    compile "com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2"
     compile "com.squareup.okhttp3:okhttp:$okhttpVersion"
     compile "com.squareup.okhttp3:okhttp-urlconnection:$okhttpVersion"
     compile 'net.sf.trove4j:trove4j:3.0.3'

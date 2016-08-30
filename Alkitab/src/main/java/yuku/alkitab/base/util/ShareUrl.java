@@ -62,7 +62,7 @@ public class ShareUrl {
 			form.add("versionShortName", versionShortName);
 		}
 
-		final Call call = App.getOkHttpClient().newCall(
+		final Call call = App.okhttp().newCall(
 			new Request.Builder()
 				.url(BuildConfig.SERVER_HOST + "v/create")
 				.post(form.build())

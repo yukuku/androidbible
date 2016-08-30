@@ -12,7 +12,6 @@ import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 import okhttp3.Call;
 import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -128,8 +127,7 @@ public abstract class Announce {
 	}
 
 	private static AnnounceCheckResult getAnnouncements() throws IOException {
-		final OkHttpClient client = App.getOkHttpClient();
-		final Call call = client.newCall(
+		final Call call = App.okhttp().newCall(
 			new Request.Builder()
 				.url(BuildConfig.SERVER_HOST + "announce/check")
 				.post(
