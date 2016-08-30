@@ -6,6 +6,8 @@ import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,12 +67,15 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 	};
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		enableNonToolbarUpButton();
 		super.willNeedStoragePermission();
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.activity_font_manager);
-		setTitle(R.string.fm_activity_title);
+
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 
 		lsFont = V.get(this, R.id.lsFont);
 		lEmptyError = V.get(this, R.id.lEmptyError);

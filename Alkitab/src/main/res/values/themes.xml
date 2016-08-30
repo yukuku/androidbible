@@ -8,6 +8,7 @@
         <item name="android:textColorLink">@color/accent</item>
         <item name="android:windowBackground">@color/window</item>
 		<item name="actionModeStyle">@style/SmallerTitleActionModeStyle</item>
+		<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
 	</style>
 
 	<style name="Theme.Alkitab.DialogWhenLarge.Base" parent="Theme.AppCompat.DialogWhenLarge">
@@ -18,13 +19,6 @@
 		<item name="colorPrimaryDark">@color/primary_dark</item>
 		<item name="colorAccent">@color/accent</item>
         <item name="android:windowBackground">@color/window</item>
-	</style>
-
-	<!-- for appcompat activities -->
-	<style name="Theme.Alkitab.WithActionBar.AppCompat" parent="Theme.Alkitab.Base">
-		<item name="windowActionBar">true</item>
-		<item name="windowNoTitle">false</item>
-		<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
 	</style>
 
 	<style name="StandardWidthIndeterminateProgress" parent="@android:style/Widget.Holo.ProgressBar.Small">

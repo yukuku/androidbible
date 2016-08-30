@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -52,9 +54,15 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setResult(RESULT_CANCELED);
 		setContentView(R.layout.activity_daily_verse_configuration);
+
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
+		ab.setHomeAsUpIndicator(R.drawable.ic_action_remove);
 
 		final ListView lsVersionsAppWidget = V.get(this, R.id.lsVersionsAppWidget);
 		final Button bOk = V.get(this, R.id.bOk);

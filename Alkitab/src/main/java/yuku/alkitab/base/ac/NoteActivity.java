@@ -3,6 +3,7 @@ package yuku.alkitab.base.ac;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
 import android.text.SpannableStringBuilder;
@@ -101,9 +102,10 @@ public class NoteActivity extends BaseActivity {
 		tCaption = V.get(this, R.id.tCaption);
 
 		final Toolbar toolbar = V.get(this, R.id.toolbar);
-		setSupportActionBar(toolbar); // must be done first before below lines
-		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
-		toolbar.setNavigationOnClickListener(v -> navigateUp());
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 
 		if (marker != null) {
 			tCaptionReadOnly.setText(marker.caption);

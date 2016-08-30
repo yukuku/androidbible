@@ -103,5 +103,5 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     compile "com.android.support:design:$supportLibVersion"
     compile "com.android.support:percent:$supportLibVersion"
-    compile "com.android.support:preference-v14:$supportLibVersion"
+    compile "com.takisoft.fix:preference-v7:$supportLibVersion.0"
 }

@@ -28,7 +28,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -165,7 +164,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 	/** This method might be called from non-UI thread. Be careful when manipulating UI. */
 	@Override
-	public void setMediaState(final MediaPlayerController.ControllerState state) {
+	public void setMediaState(@NonNull final MediaPlayerController.ControllerState state) {
 		if (state == MediaPlayerController.ControllerState.reset) {
 			mediaState.enabled = false;
 			mediaState.icon = R.drawable.ic_action_hollowplay;
@@ -399,15 +398,12 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	}
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_song_view);
 
 		circular_progress = V.get(this, R.id.progress_circular);
 
 		setCustomProgressBarIndeterminateVisible(false);
-
-		setTitle(R.string.sn_songs_activity_title);
 
 		drawerLayout = V.get(this, R.id.drawerLayout);
 		leftDrawer = V.get(this, R.id.left_drawer);
@@ -421,7 +417,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
 
-		drawerLayout.setDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+		drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
 			@Override
 			public void onDrawerOpened(final View drawerView) {
 				drawer_opened();

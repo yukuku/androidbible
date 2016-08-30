@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-	package="yuku.alkitab.debug"
+<manifest package="yuku.alkitab.debug"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:installLocation="auto">
@@ -72,21 +71,17 @@
 		<activity
 			android:name="yuku.alkitab.base.ac.SettingsActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:label="@string/pengaturan_alkitab"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:label="@string/pengaturan_alkitab" />
 		<activity
 			android:name="yuku.alkitab.base.ac.ColorSettingsActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity
 			android:name="yuku.alkitab.base.ac.MarkersActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:label="@string/activity_title_markers"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:label="@string/activity_title_markers" />
 		<activity
 			android:name="yuku.alkitab.base.ac.MarkerListActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
 			android:windowSoftInputMode="adjustResize|stateHidden" />
 		<activity
 			android:name="yuku.alkitab.base.ac.VersionsActivity"
@@ -265,8 +260,7 @@
 		</activity>
 		<activity
 			android:name="yuku.alkitab.base.ac.HelpActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat">
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value="yuku.alkitab.base.ac.AboutActivity" />
@@ -281,12 +275,11 @@
 		</activity>
 		<activity
 			android:name="yuku.alkitab.base.ac.ShareActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity
 			android:name="yuku.alkitab.base.ac.FontManagerActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:label="@string/fm_activity_title" />
 		<activity
 			android:name="yuku.alkitab.base.ac.SongListActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
@@ -295,12 +288,12 @@
 			android:windowSoftInputMode="adjustResize|stateHidden" />
 		<activity
 			android:name="yuku.alkitab.base.ac.SongViewActivity"
+			android:label="@string/sn_songs_activity_title"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity
 			android:name="yuku.alkitab.base.ac.SecretSettingsActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:label="Secret settings"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:label="Secret settings" />
 		<activity
 			android:name="yuku.alkitab.base.ac.SecretSyncDebugActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
@@ -311,26 +304,22 @@
 		<activity
 			android:name="yuku.alkitab.base.ac.PatchTextActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
 			android:windowSoftInputMode="adjustResize" />
 		<activity
 			android:name="yuku.alkitab.base.sync.SyncSettingsActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:label="@string/sync_status_activity_title" />
 		<activity
 			android:name="yuku.alkitab.base.sync.SyncLogActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:label="@string/sync_log_activity_title"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:label="@string/sync_log_activity_title"/>
 		<activity
 			android:name="yuku.alkitab.base.sync.SyncLoginActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:label="@string/sync_login_activity_title"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:label="@string/sync_login_activity_title" />
 		<activity
 			android:name="yuku.filechooser.FileChooserActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity
 			android:name="com.example.android.wizardpager.MainActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
@@ -348,7 +337,7 @@
 		<activity
 			android:name="yuku.alkitab.base.ac.DailyVerseAppWidgetConfigurationActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat">
+			android:label="@string/dv_activity_title">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
 			</intent-filter>
@@ -496,8 +485,7 @@
 		<activity
 			android:name="yuku.alkitab.reminder.ac.DevotionReminderActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:label="@string/dr_app_name"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:label="@string/dr_app_name" />
 
 		<receiver android:name="yuku.alkitab.reminder.br.DevotionReminderReceiver" />
 		<receiver android:name="yuku.alkitab.reminder.br.BootCompleteReceiver">

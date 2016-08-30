@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.ContentLoadingProgressBar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
@@ -23,11 +24,8 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.debug.R;
 
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.afollestad.materialdialogs.MaterialDialog.Builder;
-import static yuku.alkitab.base.util.Literals.Array;
 import static yuku.alkitab.base.util.Literals.List;
 
 public class AboutActivity extends BaseActivity {
@@ -109,10 +107,10 @@ public class AboutActivity extends BaseActivity {
 		setContentView(R.layout.activity_about);
 
 		final Toolbar toolbar = V.get(this, R.id.toolbar);
-		setSupportActionBar(toolbar); // must be done first before below lines
-		toolbar.setTitle(null);
-		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
-		toolbar.setNavigationOnClickListener(v -> navigateUp());
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 
 		root = V.get(this, R.id.root);
 		tVersion = V.get(this, R.id.tVersion);

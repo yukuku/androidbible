@@ -1,53 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-	android:id="@+id/root"
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+	android:layout_height="match_parent"
+	android:orientation="vertical">
 
-	<ListView
-		android:id="@android:id/list"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:fastScrollEnabled="true"
-		tools:visibility="gone" />
+	<android.support.v7.widget.Toolbar
+		android:id="@+id/toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?actionBarSize"
+		android:background="@color/primary" />
 
-	<LinearLayout
-		android:id="@android:id/empty"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:gravity="center"
-		android:orientation="vertical"
-		tools:visibility="visible">
+	<FrameLayout
+		android:id="@+id/root"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1">
 
-		<TextView
-			android:id="@+id/tEmpty"
+		<ListView
+			android:id="@android:id/list"
 			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:gravity="center_horizontal"
-			android:paddingLeft="12dp"
-			android:paddingRight="12dp"
-			android:text="@string/belum_ada_pembatas_buku"
-			android:textSize="16sp"
-			android:visibility="gone"
-			tools:visibility="visible" />
+			android:layout_height="fill_parent"
+			android:fastScrollEnabled="true"
+			tools:visibility="gone" />
 
-		<Button
-			android:id="@+id/bClearFilter"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="8dp"
-			android:text="@string/bl_clear_filter"
-			android:visibility="gone"
-			tools:visibility="visible" />
+		<LinearLayout
+			android:id="@android:id/empty"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:gravity="center"
+			android:orientation="vertical"
+			tools:visibility="visible">
 
-		<ProgressBar
-			android:id="@+id/progress"
-			style="?android:attr/progressBarStyleLarge"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center_horizontal" />
-	</LinearLayout>
+			<TextView
+				android:id="@+id/tEmpty"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:gravity="center_horizontal"
+				android:paddingLeft="12dp"
+				android:paddingRight="12dp"
+				android:text="@string/belum_ada_pembatas_buku"
+				android:textSize="16sp"
+				android:visibility="gone"
+				tools:visibility="visible" />
 
-</FrameLayout>
+			<Button
+				android:id="@+id/bClearFilter"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="8dp"
+				android:text="@string/bl_clear_filter"
+				android:visibility="gone"
+				tools:visibility="visible" />
+
+			<ProgressBar
+				android:id="@+id/progress"
+				style="?android:attr/progressBarStyleLarge"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal" />
+		</LinearLayout>
+
+	</FrameLayout>
+</LinearLayout>

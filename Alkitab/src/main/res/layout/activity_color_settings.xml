@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fragment android:name="yuku.alkitab.base.ac.ColorSettingsActivity$ColorSettingsFragment"
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:tag="settings" />
+	android:layout_height="match_parent">
+
+	<android.support.v7.widget.Toolbar
+		android:id="@+id/toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?actionBarSize"
+		android:background="@color/primary" />
+
+	<fragment
+		android:name="yuku.alkitab.base.ac.ColorSettingsActivity$ColorSettingsFragment"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:tag="settings" />
+</LinearLayout>
