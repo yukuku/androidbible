@@ -1352,19 +1352,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	public void onWindowFocusChanged(final boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 
-		final View decorView = getWindow().getDecorView();
-		Log.d(TAG, "@@onWindowFocusChanged bef hasFocus=" + hasFocus + " 0x" + Integer.toHexString(decorView.getSystemUiVisibility()));
-
 		if (hasFocus && fullScreen) {
 			if (Build.VERSION.SDK_INT >= 19) {
+				final View decorView = getWindow().getDecorView();
 				decorView.setSystemUiVisibility(
 					View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
 						| View.SYSTEM_UI_FLAG_IMMERSIVE
 				);
 			}
 		}
-
-		Log.d(TAG, "@@onWindowFocusChanged aft hasFocus=" + hasFocus + " 0x" + Integer.toHexString(decorView.getSystemUiVisibility()));
 	}
 
 	void setShowTextAppearancePanel(boolean yes) {
@@ -1713,7 +1709,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	@Override public boolean onKeyUp(int keyCode, KeyEvent event) {
-		final String volumeButtonsForNavigation = Preferences.getString(getString(R.string.pref_volumeButtonNavigation_key), getString(R.string.pref_volumeButtonNavigation_default));
+		final String volumeButtonsForNavigation = Preferences.getString(R.string.pref_volumeButtonNavigation_key, R.string.pref_volumeButtonNavigation_default);
 		if (! U.equals(volumeButtonsForNavigation, "default")) { // consume here
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) return true;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) return true;

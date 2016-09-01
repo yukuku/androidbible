@@ -361,7 +361,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	}
 	
 	public PressResult press(int keyCode) {
-		String volumeButtonsForNavigation = Preferences.getString(getContext().getString(R.string.pref_volumeButtonNavigation_key), getContext().getString(R.string.pref_volumeButtonNavigation_default));
+		String volumeButtonsForNavigation = Preferences.getString(R.string.pref_volumeButtonNavigation_key, R.string.pref_volumeButtonNavigation_default);
 		if (U.equals(volumeButtonsForNavigation, "pasal" /* chapter */)) { 
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
 				return PressResult.LEFT;
