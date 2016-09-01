@@ -30,8 +30,8 @@
   <string name="menuShareSplit0">Bagikan versi utama</string>
   <string name="menuShareSplit1">Bagikan versi belah</string>
   <string name="menuShareBothSplits">Bagikan keduanya</string>
-  <string name="tulis_catatan">Tulis catatan</string>
-  <string name="tambah_pembatas_buku">Tambah pembatas buku</string>
+  <string name="tulis_catatan">Catatan</string>
+  <string name="tambah_pembatas_buku">Pembatas buku</string>
   <string name="salin_ayat">Salin ayat</string>
   <string name="copy_split0">Salin versi utama</string>
   <string name="copy_split1">Salin versi belah</string>
@@ -249,6 +249,7 @@
   <string name="sn_menu_private_song_book">Buku lagu pribadi</string>
   <string name="sn_private_song_book_dialog_desc">Unduh buku lagu pribadi (tersembunyi)</string>
   <string name="sn_private_song_book_name_hint">Nama buku lagu</string>
+  <string name="sn_play_in_loop">Putar berulang-ulang sampai dihentikan?</string>
   <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Hari sebelumnya</string>
   <string name="desc_next_day">Hari berikutnya</string>
@@ -316,10 +317,12 @@
   <string name="recentverses_button_hint">(Sentuh lama: buka riwayat)</string>
   <string name="dr_reminder">Pengingat</string>
   <string name="dr_error_contact_reminder">Kesalahan menghubungi aplikasi Pengingat.</string>
+  <string name="dv_activity_title">Widget Ayat Harian</string>
   <string name="dv_option_transparent_background">Latar belakang transparan</string>
   <string name="dv_option_dark_text">Teks gelap</string>
   <string name="dv_option_text_size">Ukuran teks</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">Rencana Baca</string>
   <string name="rp_menuReadingPlan">Rencana baca</string>
   <string name="rp_commentActual">Selesai: %s%%</string>
   <string name="rp_commentTarget">Target: %s%%</string>
@@ -445,6 +448,7 @@
   <string name="sync_sync_set_pref_summary_never">Belum pernah sync</string>
   <string name="sync_sync_set_pref_summary_syncing">Sedang sync&#8230;</string>
   <string name="sync_log_activity_title">Log sync</string>
+  <string name="sync_status_activity_title">Status Sync</string>
   <string name="sync_login_activity_title">Login atau buat akun</string>
   <string name="sync_login_survey_religion_select_one">Pilih agama</string>
   <string name="sync_login_survey_religion_christianity">Kristen</string>

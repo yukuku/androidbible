@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools">
+
+	<item
+		android:id="@+id/menuReference"
+		android:title="@string/patch_text_menu_reference"
+		app:showAsAction="always|withText"
+		tools:ignore="AlwaysShowAction" />
+
+	<item
+		android:id="@+id/menuSend"
+		android:title="@string/patch_text_menu_send"
+		app:showAsAction="always|withText"
+		tools:ignore="AlwaysShowAction" />
+
+</menu>

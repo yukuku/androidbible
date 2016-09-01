@@ -182,9 +182,7 @@ public class TextAppearancePanel {
 		public void onClick(final View v) {
 			final ColorThemeAdapter adapter = new ColorThemeAdapter();
 
-			final MaterialDialog dialog = new MaterialDialog.Builder(activity)
-				.adapter(adapter, null)
-				.show();
+			final MaterialDialog dialog = MaterialDialogAdapterHelper.show(new MaterialDialog.Builder(activity), adapter);
 
 			final RecyclerView recyclerView = dialog.getRecyclerView();
 
@@ -359,7 +357,7 @@ public class TextAppearancePanel {
 		}
 	}
 
-	class ColorThemeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+	class ColorThemeAdapter extends MaterialDialogAdapterHelper.Adapter {
 		List<int[]> themes;
 		List<String> themeNames;
 
@@ -407,6 +405,8 @@ public class TextAppearancePanel {
 			}
 
 			holder.itemView.setOnClickListener(v -> {
+				dismissDialog();
+
 				final int which = holder.getAdapterPosition();
 
 				if (which == getPositionOfCustomColors()) {

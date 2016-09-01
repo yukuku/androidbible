@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -64,9 +66,14 @@ public class HelpActivity extends BaseActivity {
 	@SuppressLint("SetJavaScriptEnabled")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		enableNonToolbarUpButton();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_help);
+
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 
 		webview = V.get(this, R.id.webview);
 		progress = V.get(this, R.id.progress);

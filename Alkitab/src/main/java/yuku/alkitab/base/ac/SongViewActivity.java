@@ -28,7 +28,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -42,7 +41,9 @@ import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.storage.SongDb;
 import yuku.alkitab.base.util.AlphanumComparator;
+import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.FontManager;
+import yuku.alkitab.base.util.Foreground;
 import yuku.alkitab.base.util.OsisBookNames;
 import yuku.alkitab.base.util.SongBookUtil;
 import yuku.alkitab.base.util.Sqlitil;
@@ -165,7 +166,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 	/** This method might be called from non-UI thread. Be careful when manipulating UI. */
 	@Override
-	public void setMediaState(final MediaPlayerController.ControllerState state) {
+	public void setMediaState(@NonNull final MediaPlayerController.ControllerState state) {
 		if (state == MediaPlayerController.ControllerState.reset) {
 			mediaState.enabled = false;
 			mediaState.icon = R.drawable.ic_action_hollowplay;
@@ -282,7 +283,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				if (isMidiFile) {
 					final Handler handler = new Handler();
 
-					new Thread(() -> {
+					Background.run(() -> {
 						try {
 							setState(ControllerState.preparing);
 
@@ -306,7 +307,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 							Log.e(TAG, "buffering to local cache", e);
 							setState(ControllerState.error);
 						}
-					}).start();
+					});
 				} else {
 					mediaPlayerPrepare(false, url, playInLoop);
 				}
@@ -399,15 +400,12 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	}
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_song_view);
 
 		circular_progress = V.get(this, R.id.progress_circular);
 
 		setCustomProgressBarIndeterminateVisible(false);
-
-		setTitle(R.string.sn_songs_activity_title);
 
 		drawerLayout = V.get(this, R.id.drawerLayout);
 		leftDrawer = V.get(this, R.id.left_drawer);
@@ -421,7 +419,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
 
-		drawerLayout.setDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+		drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
 			@Override
 			public void onDrawerOpened(final View drawerView) {
 				drawer_opened();
@@ -532,7 +530,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		final String checkedBookName = currentBookName;
 		final String checkedCode = currentSong.code;
 
-		new Thread(() -> {
+		Background.run(() -> {
 			try {
 				final String filename = getAudioFilename(checkedBookName, checkedCode);
 				final String response = App.downloadString(BuildConfig.SERVER_HOST + "addon/audio/exists?filename=" + Uri.encode(filename));
@@ -559,7 +557,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			} catch (IOException e) {
 				Log.e(TAG, "@@checkAudioExistance", e);
 			}
-		}).start();
+		});
 	}
 
 	@Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -718,10 +716,10 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 		final String bookName = currentBookName;
 
-		new Thread(() -> {
+		Background.run(() -> {
 			final int count = S.getSongDb().deleteSongBook(bookName);
 
-			runOnUiThread(() -> {
+			Foreground.run(() -> {
 				pd.dismiss();
 
 				new MaterialDialog.Builder(this)
@@ -730,7 +728,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 					.dismissListener(dialog -> displayAnySongOrFinish())
 					.show();
 			});
-		}).start();
+		});
     }
 
 	private StringBuilder convertSongToText(Song song) {

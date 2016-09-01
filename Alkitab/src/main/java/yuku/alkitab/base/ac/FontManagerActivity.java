@@ -6,6 +6,8 @@ import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +18,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -38,7 +39,7 @@ import java.util.zip.ZipInputStream;
 
 public class FontManagerActivity extends BaseActivity implements DownloadService.DownloadListener {
 	public static final String TAG = FontManagerActivity.class.getSimpleName();
-	
+
 	private static final String URL_fontList = BuildConfig.SERVER_HOST + "addon/fonts/v1/list-v2.txt";
 	private static final String URL_fontData = BuildConfig.SERVER_HOST + "addon/fonts/v1/data/%s.zip";
 	private static final String URL_fontPreview = BuildConfig.SERVER_HOST + "addon/fonts/v1/preview/%s-384x84.png";
@@ -51,33 +52,39 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 	FontAdapter adapter;
 	TextView lEmptyError;
 	DownloadService dls;
-	
+
 	private ServiceConnection serviceConnection = new ServiceConnection() {
-		@Override public void onServiceDisconnected(ComponentName name) {
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
 			dls = null;
 		}
-		
-		@Override public void onServiceConnected(ComponentName name, IBinder service) {
+
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
 			dls = ((DownloadService.DownloadBinder) service).getService();
 			dls.setDownloadListener(FontManagerActivity.this);
 			runOnUiThread(() -> loadFontList());
 		}
 	};
 
-	@Override protected void onCreate(Bundle savedInstanceState) {
-		enableNonToolbarUpButton();
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
 		super.willNeedStoragePermission();
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.activity_font_manager);
-		setTitle(R.string.fm_activity_title);
+
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 
 		lsFont = V.get(this, R.id.lsFont);
 		lEmptyError = V.get(this, R.id.lEmptyError);
-		
+
 		lsFont.setAdapter(adapter = new FontAdapter());
 		lsFont.setEmptyView(lEmptyError);
-		
+
 		bindService(new Intent(App.context, DownloadService.class), serviceConnection, BIND_AUTO_CREATE);
 	}
 
@@ -90,9 +97,10 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 		}
 	}
 
-	@Override protected void onDestroy() {
+	@Override
+	protected void onDestroy() {
 		super.onDestroy();
-		
+
 		if (dls != null) {
 			unbindService(serviceConnection);
 		}
@@ -101,8 +109,9 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 	void loadFontList() {
 		new AsyncTask<Void, Void, List<FontItem>>() {
 			String errorMsg;
-			
-			@Override protected List<FontItem> doInBackground(Void... params) {
+
+			@Override
+			protected List<FontItem> doInBackground(Void... params) {
 				try {
 					final String listString = App.downloadString(URL_fontList);
 					final List<FontItem> list = new ArrayList<>();
@@ -123,8 +132,9 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 					return null;
 				}
 			}
-			
-			@Override protected void onPostExecute(List<FontItem> result) {
+
+			@Override
+			protected void onPostExecute(List<FontItem> result) {
 				if (result != null) {
 					lEmptyError.setText(null);
 					adapter.setData(result);
@@ -134,11 +144,11 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 			}
 		}.execute();
 	}
-	
+
 	String getFontDownloadKey(String name) {
 		return "FontManager/" + name;
 	}
-	
+
 	private String getFontNameFromDownloadKey(String key) {
 		if (!key.startsWith("FontManager/")) return null;
 		return key.substring("FontManager/".length());
@@ -147,32 +157,36 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 	String getFontDownloadDestination(String name) {
 		return new File(FontManager.getFontsPath(), "download-" + name + ".zip").getAbsolutePath();
 	}
-	
+
 	public static class FontItem {
 		public String name;
 	}
-	
+
 	public class FontAdapter extends BaseAdapter {
 		List<FontItem> list;
-		
+
 		public void setData(List<FontItem> list) {
 			this.list = list;
 			notifyDataSetChanged();
 		}
 
-		@Override public int getCount() {
-			return list == null? 0: list.size();
+		@Override
+		public int getCount() {
+			return list == null ? 0 : list.size();
 		}
 
-		@Override public FontItem getItem(int position) {
+		@Override
+		public FontItem getItem(int position) {
 			return list.get(position);
 		}
 
-		@Override public long getItemId(int position) {
+		@Override
+		public long getItemId(int position) {
 			return position;
 		}
 
-		@Override public View getView(int position, View convertView, ViewGroup parent) {
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
 			View res = convertView != null ? convertView : getLayoutInflater().inflate(R.layout.item_font_download, parent, false);
 
 			final ImageView imgPreview = V.get(res, R.id.imgPreview);
@@ -181,13 +195,13 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 			final View bDelete = V.get(res, R.id.bDelete);
 			final ProgressBar progressbar = V.get(res, R.id.progressbar);
 			final TextView lErrorMsg = V.get(res, R.id.lErrorMsg);
-			
+
 			final FontItem item = getItem(position);
 			final String dlkey = getFontDownloadKey(item.name);
-			
+
 			lFontName.setText(item.name);
 			lFontName.setVisibility(View.VISIBLE);
-			Picasso.with(FontManagerActivity.this).load(String.format(URL_fontPreview, item.name)).into(imgPreview, new Callback.EmptyCallback() {
+			App.picasso().load(String.format(URL_fontPreview, item.name)).into(imgPreview, new Callback.EmptyCallback() {
 				@Override
 				public void onSuccess() {
 					lFontName.setVisibility(View.GONE);
@@ -199,7 +213,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 			bDownload.setOnClickListener(bDownload_click);
 			bDelete.setTag(R.id.TAG_fontItem, item);
 			bDelete.setOnClickListener(bDelete_click);
-			
+
 			if (FontManager.isInstalled(item.name)) {
 				progressbar.setIndeterminate(false);
 				progressbar.setMax(100);
@@ -255,10 +269,10 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 					}
 				}
 			}
-			
+
 			return res;
 		}
-		
+
 		private View.OnClickListener bDownload_click = v -> {
 			FontItem item = (FontItem) v.getTag(R.id.TAG_fontItem);
 
@@ -276,7 +290,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 
 			notifyDataSetChanged();
 		};
-		
+
 		private View.OnClickListener bDelete_click = v -> {
 			final FontItem item = (FontItem) v.getTag(R.id.TAG_fontItem);
 
@@ -302,22 +316,23 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 		};
 	}
 
-	@Override public void onStateChanged(DownloadService.DownloadEntry entry, DownloadService.State originalState) {
+	@Override
+	public void onStateChanged(DownloadService.DownloadEntry entry, DownloadService.State originalState) {
 		adapter.notifyDataSetChanged();
-		
+
 		if (originalState == DownloadService.State.finished) {
 			String fontName = getFontNameFromDownloadKey(entry.key);
 			if (fontName == null) { // this download doesn't belong to font manager.
 				return;
 			}
-			
+
 			try {
 				String downloadedZip = getFontDownloadDestination(fontName);
 				File fontDir = FontManager.getFontDir(fontName);
 				fontDir.mkdirs();
-				
+
 				Log.d(TAG, "Going to unzip " + downloadedZip, new Throwable().fillInStackTrace());
-				
+
 				ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(downloadedZip)));
 				try {
 					ZipEntry ze;
@@ -339,7 +354,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 				} finally {
 					zis.close();
 				}
-				
+
 				new File(downloadedZip).delete();
 			} catch (Exception e) {
 				new MaterialDialog.Builder(FontManagerActivity.this)
@@ -350,7 +365,8 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 		}
 	}
 
-	@Override public void onProgress(DownloadService.DownloadEntry entry, DownloadService.State originalState) {
+	@Override
+	public void onProgress(DownloadService.DownloadEntry entry, DownloadService.State originalState) {
 		adapter.notifyDataSetChanged();
 	}
 }

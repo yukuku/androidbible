@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -79,9 +80,11 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 		}
 
 		if (savedState.darkText) {
-			rv.setTextColor(R.id.tReference, 0xff000000);
+			rv.setTextColor(R.id.tReference, Color.BLACK);
 			rv.setImageViewResource(R.id.bPrev, R.drawable.ic_nav_left_dark);
 			rv.setImageViewResource(R.id.bNext, R.drawable.ic_nav_right_dark);
+		} else {
+			rv.setTextColor(R.id.tReference, Color.WHITE);
 		}
 
 		rv.setFloat(R.id.tReference, "setTextSize", savedState.textSize);
@@ -160,7 +163,7 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 			}
 
 			final String appWidgetAction = bundle.getString("app_widget_action");
-			if (appWidgetAction == null || !appWidgetAction.equals("update_widget")) {
+			if (!"update_widget".equals(appWidgetAction)) {
 				return;
 			}
 

@@ -17,8 +17,8 @@ android {
         applicationId 'yuku.alkitab.debug'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 14000266
-        versionName '4.4.0-beta6'
+        versionCode 14000267
+        versionName '4.4.0-beta7'
         multiDexEnabled true
         // Keep this synced with build.gradle resConfigs!
         resConfigs 'af', 'bg', 'cs', 'da', 'de', 'es', 'fr', 'in', 'ja', 'lv', 'ms', 'nl', 'pl', 'pt', 'ro', 'ru', 'th', 'uk', 'zh-rCN', 'zh-rTW'
@@ -93,6 +93,7 @@ dependencies {
     debugCompile "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
     compile "com.android.support:support-v4:$supportLibVersion"
     compile "com.squareup.picasso:picasso:$picassoVersion"
+    compile "com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2"
     compile "com.squareup.okhttp3:okhttp:$okhttpVersion"
     compile "com.squareup.okhttp3:okhttp-urlconnection:$okhttpVersion"
     compile 'net.sf.trove4j:trove4j:3.0.3'
@@ -103,5 +104,5 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     compile "com.android.support:design:$supportLibVersion"
     compile "com.android.support:percent:$supportLibVersion"
-    compile "com.android.support:preference-v14:$supportLibVersion"
+    compile "com.takisoft.fix:preference-v7:$supportLibVersion.0"
 }

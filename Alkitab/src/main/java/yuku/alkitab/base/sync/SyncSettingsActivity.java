@@ -5,11 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.afollestad.materialdialogs.MaterialDialog;
+import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -29,9 +32,14 @@ public class SyncSettingsActivity extends BaseActivity {
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		enableNonToolbarUpButton();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_sync_settings);
+
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 	}
 
 	public static class SyncSettingsFragment extends PreferenceFragmentCompat {

@@ -23,6 +23,7 @@ import android.support.v4.app.ShareCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
@@ -118,9 +119,10 @@ public class VersionsActivity extends BaseActivity {
 		setTitle(R.string.kelola_versi);
 
 		final Toolbar toolbar = V.get(this, R.id.toolbar);
-		setSupportActionBar(toolbar); // must be done first before below lines
-		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
-		toolbar.setNavigationOnClickListener(v -> navigateUp());
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the activity.
@@ -132,9 +134,7 @@ public class VersionsActivity extends BaseActivity {
 
 		tablayout = V.get(this, R.id.tablayout);
 		tablayout.setTabMode(TabLayout.MODE_SCROLLABLE);
-		tablayout.setTabsFromPagerAdapter(sectionsPagerAdapter);
-		tablayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
-		viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tablayout));
+		tablayout.setupWithViewPager(viewPager);
 
 		processIntent(getIntent(), "onCreate");
 

@@ -2,6 +2,8 @@ package yuku.alkitab.base.sync;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.Patterns;
@@ -19,6 +21,7 @@ import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.util.Background;
 import yuku.alkitab.debug.R;
 
 public class SyncLoginActivity extends BaseActivity {
@@ -58,9 +61,14 @@ public class SyncLoginActivity extends BaseActivity {
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		enableNonToolbarUpButton();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_sync_login);
+
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 
 		tIntro = V.get(this, R.id.tIntro);
 		tEmail = V.get(this, R.id.tEmail);
@@ -284,13 +292,13 @@ public class SyncLoginActivity extends BaseActivity {
 			.progress(true, 0)
 			.show();
 
-		new Thread(() -> {
+		Background.run(() -> {
 			try {
 				task.run();
 			} finally {
 				pd.dismiss();
 			}
-		}).start();
+		});
 	}
 
 	void confirmPassword(final String correctPassword, final Runnable whenCorrect) {

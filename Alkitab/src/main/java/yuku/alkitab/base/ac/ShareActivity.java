@@ -10,6 +10,8 @@ import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,9 +60,14 @@ public class ShareActivity extends BaseActivity {
 	}
 	
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		enableNonToolbarUpButton();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_share);
+
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 
 		String title = getIntent().getStringExtra(Intent.EXTRA_TITLE);
 		setTitle(title);

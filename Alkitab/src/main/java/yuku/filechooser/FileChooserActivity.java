@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import yuku.afw.V;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.debug.R;
 
@@ -47,18 +49,18 @@ public class FileChooserActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
 		super.willNeedStoragePermission();
         super.onCreate(savedInstanceState);
+		setContentView(R.layout.filechooser_activity_filechooser);
 
-		final ActionBar actionBar = getSupportActionBar();
-		if (actionBar != null) {
-			actionBar.setDisplayHomeAsUpEnabled(true);
-		}
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 
         config = getIntent().getParcelableExtra(EXTRA_config);
         
 		Utils.configureTitles(this, config.title, config.subtitle);
 
-        setContentView(R.layout.filechooser_activity_filechooser);
-        
         lsFile = (ListView) findViewById(R.id.filechooser_lsFile);
         lsFile.setAdapter(adapter = new FileAdapter());
         lsFile.setOnItemClickListener(lsFile_itemClick);

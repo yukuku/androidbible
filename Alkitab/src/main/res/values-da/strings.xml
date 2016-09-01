@@ -249,6 +249,7 @@
   <string name="sn_menu_private_song_book">Privat sangbog</string>
   <string name="sn_private_song_book_dialog_desc">Nedtag en privat (skjult) sangbog</string>
   <string name="sn_private_song_book_name_hint">Sangbogens navn</string>
+  <string name="sn_play_in_loop">Ønsker du at køre i ring, indtil du stopper den?</string>
   <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Foregående dag</string>
   <string name="desc_next_day">Næste dag</string>

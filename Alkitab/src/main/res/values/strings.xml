@@ -29,8 +29,8 @@
     <string name="menuShareSplit0">Share primary version</string>
     <string name="menuShareSplit1">Share secondary version</string>
     <string name="menuShareBothSplits">Share both versions</string>
-    <string name="tulis_catatan">Write note</string>
-    <string name="tambah_pembatas_buku">Add bookmark</string>
+    <string name="tulis_catatan">Note</string>
+    <string name="tambah_pembatas_buku">Bookmark</string>
     <string name="salin_ayat">Copy verse</string>
     <string name="copy_split0">Copy primary version</string>
     <string name="copy_split1">Copy secondary version</string>
@@ -331,11 +331,13 @@
     <string name="dr_reminder">Reminder</string>
     <string name="dr_error_contact_reminder">Error while contacting Reminder app.</string>
 
+    <string name="dv_activity_title">Daily Verse Widget</string>
     <string name="dv_option_transparent_background">Transparent background</string>
     <string name="dv_option_dark_text">Dark text</string>
     <string name="dv_option_text_size">Text size</string>
 
 	<!-- Reading plan -->
+    <string name="rp_activity_title">Reading Plan</string>
     <string name="rp_menuReadingPlan">Reading plan</string>
     <string name="rp_commentActual">Finished: %s%%</string>
     <string name="rp_commentTarget">Target: %s%%</string>
@@ -472,9 +474,10 @@
 	<string name="sync_sync_set_pref_summary_last_synced">Last synced %1$s, %2$s (r%3$s)</string>
 	<string name="sync_sync_set_pref_summary_never">Not synced yet</string>
 	<string name="sync_sync_set_pref_summary_syncing">Syncing now…</string>
-	<string name="sync_log_activity_title">Sync log</string>
+	<string name="sync_log_activity_title">Sync Log</string>
+	<string name="sync_status_activity_title">Sync Status</string>
 
-	<string name="sync_login_activity_title">Login or create account</string>
+	<string name="sync_login_activity_title">Login or Create Account</string>
 	<string name="sync_login_survey_religion_select_one">Select religion</string>
 	<string name="sync_login_survey_religion_christianity">Christianity</string>
 	<string name="sync_login_survey_religion_christianity_protestant">Protestant</string>

@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.CallSuper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
@@ -37,7 +38,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 	private static final int REQCODE_PERMISSION_storage = 1;
 	private static final int REQCODE_permissionSettings = 9970;
 
-	private boolean enableNonToolbarUpButton;
 	private boolean willNeedStoragePermission;
 
 	private int lastKnownLocaleSerialNumber;
@@ -83,13 +83,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 	}
 
 	/**
-	 * Call this from subclasses before super.onCreate() to enable up button.
-	 */
-	protected void enableNonToolbarUpButton() {
-		this.enableNonToolbarUpButton = true;
-	}
-
-	/**
 	 * Call this from subclasses before super.onCreate() to make
 	 * the activity ask for storage permission and do not proceed
 	 * if the permission is not granted.
@@ -103,13 +96,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 		super.onCreate(savedInstanceState);
 
 		lastKnownLocaleSerialNumber = ChangeLanguageHelper.getLocaleSerialCounter();
-
-		if (this.enableNonToolbarUpButton) {
-			final ActionBar actionBar = getSupportActionBar();
-			if (actionBar != null) {
-				actionBar.setDisplayHomeAsUpEnabled(true);
-			}
-		}
 
 		if (willNeedStoragePermission) {
 			askStoragePermission();
@@ -213,8 +199,10 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	@Override public boolean onOptionsItemSelected(MenuItem item) {
-		if (enableNonToolbarUpButton && item.getItemId() == android.R.id.home) {
+	@CallSuper
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == android.R.id.home) {
 			navigateUp();
 			return true;
 		}

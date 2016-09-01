@@ -1,12 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<EditText
-	android:id="@+id/tBody"
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:background="@null"
-	android:gravity="top"
-	android:inputType="text|textAutoCorrect|textCapSentences|textMultiLine"
-	android:paddingLeft="8dp"
-	android:paddingRight="8dp" />
+	android:orientation="vertical">
+
+	<android.support.v7.widget.Toolbar
+		android:id="@+id/toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?actionBarSize"
+		android:background="@color/primary" />
+
+	<EditText
+		android:id="@+id/tBody"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:background="@null"
+		android:gravity="top"
+		android:inputType="text|textAutoCorrect|textCapSentences|textMultiLine"
+		android:paddingLeft="8dp"
+		android:paddingRight="8dp"
+		tools:ignore="LabelFor" />
+
+</LinearLayout>

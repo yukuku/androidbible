@@ -2,7 +2,9 @@ package yuku.alkitab.base;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.PreferenceManager;
@@ -12,7 +14,10 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
+import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.leakcanary.LeakCanary;
+import com.squareup.picasso.Picasso;
+import okhttp3.Cache;
 import okhttp3.Call;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -25,6 +30,7 @@ import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Gcm;
 import yuku.alkitab.base.sync.Sync;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.reminder.util.DevotionReminder;
 import yuku.alkitabfeedback.FeedbackSender;
@@ -32,6 +38,7 @@ import yuku.alkitabintegration.display.Launcher;
 import yuku.kirimfidbek.CrashReporter;
 import yuku.stethoshim.StethoShim;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Locale;
@@ -45,39 +52,29 @@ public class App extends yuku.afw.App {
 	private static boolean initted = false;
 	private static Tracker APP_TRACKER;
 
+	static final Interceptor userAgent = chain -> {
+		final Request originalRequest = chain.request();
+		final Request requestWithUserAgent = originalRequest.newBuilder()
+			.removeHeader("User-Agent")
+			.addHeader("User-Agent", Version.userAgent() + " " + App.context.getPackageName() + "/" + App.getVersionName())
+			.build();
+		return chain.proceed(requestWithUserAgent);
+	};
+
 	enum OkHttpClientWrapper {
 		INSTANCE;
 
-		final OkHttpClient defaultClient;
 		final OkHttpClient longTimeoutClient;
 
 		{
-			final Interceptor userAgent = chain -> {
-				final Request originalRequest = chain.request();
-				final Request requestWithUserAgent = originalRequest.newBuilder()
-					.removeHeader("User-Agent")
-					.addHeader("User-Agent", Version.userAgent() + " " + App.context.getPackageName() + "/" + App.getVersionName())
-					.build();
-				return chain.proceed(requestWithUserAgent);
-			};
-
-			{
-				final OkHttpClient.Builder builder = new OkHttpClient.Builder();
-				builder.addNetworkInterceptor(userAgent);
-				StethoShim.addNetworkInterceptor(builder);
-				defaultClient = builder.build();
-			}
-
-			{
-				final OkHttpClient.Builder builder = new OkHttpClient.Builder();
-				builder
-					.addNetworkInterceptor(userAgent)
-					.connectTimeout(300, TimeUnit.SECONDS)
-					.readTimeout(300, TimeUnit.SECONDS)
-					.writeTimeout(600, TimeUnit.SECONDS);
-				StethoShim.addNetworkInterceptor(builder);
-				longTimeoutClient = builder.build();
-			}
+			final OkHttpClient.Builder builder = new OkHttpClient.Builder();
+			builder
+				.addNetworkInterceptor(userAgent)
+				.connectTimeout(300, TimeUnit.SECONDS)
+				.readTimeout(300, TimeUnit.SECONDS)
+				.writeTimeout(600, TimeUnit.SECONDS);
+			StethoShim.addNetworkInterceptor(builder);
+			longTimeoutClient = builder.build();
 		}
 	}
 
@@ -88,19 +85,15 @@ public class App extends yuku.afw.App {
 	}
 
 	public static String downloadString(String url) throws IOException {
-		return OkHttpClientWrapper.INSTANCE.defaultClient.newCall(new Request.Builder().url(url).build()).execute().body().string();
+		return downloadCall(url).execute().body().string();
 	}
 
 	public static byte[] downloadBytes(String url) throws IOException {
-		return OkHttpClientWrapper.INSTANCE.defaultClient.newCall(new Request.Builder().url(url).build()).execute().body().bytes();
+		return downloadCall(url).execute().body().bytes();
 	}
 
 	public static Call downloadCall(String url) {
-		return OkHttpClientWrapper.INSTANCE.defaultClient.newCall(new Request.Builder().url(url).build());
-	}
-
-	public static OkHttpClient getOkHttpClient() {
-		return OkHttpClientWrapper.INSTANCE.defaultClient;
+		return okhttp().newCall(new Request.Builder().url(url).build());
 	}
 
 	public static OkHttpClient getLongTimeoutOkHttpClient() {
@@ -267,5 +260,50 @@ public class App extends yuku.afw.App {
 		if (tracker != null) { // guard against wrong initialization order
 			eventSubmitter.submit(() -> tracker.send(new HitBuilders.EventBuilder(category, action).build()));
 		}
+	}
+
+	private static OkHttpClient okhttp;
+
+	@NonNull
+	public static synchronized OkHttpClient okhttp() {
+		OkHttpClient res = okhttp;
+		if (res == null) {
+			final File cacheDir = new File(context.getCacheDir(), "okhttp-cache");
+			if (!cacheDir.exists()) {
+				//noinspection ResultOfMethodCallIgnored
+				cacheDir.mkdirs();
+			}
+
+			final OkHttpClient.Builder builder = new OkHttpClient.Builder()
+				.cache(new Cache(cacheDir, 50 * 1024 * 1024))
+				.connectTimeout(30, TimeUnit.SECONDS)
+				.readTimeout(30, TimeUnit.SECONDS)
+				.writeTimeout(30, TimeUnit.SECONDS)
+				.addNetworkInterceptor(userAgent);
+
+			if (BuildConfig.DEBUG) {
+				builder.hostnameVerifier((hostname, session) -> true);
+			}
+
+			StethoShim.addNetworkInterceptor(builder);
+
+			okhttp = res = builder.build();
+		}
+		return res;
+	}
+
+	static Picasso picasso;
+
+	@NonNull
+	public static synchronized Picasso picasso() {
+		Picasso res;
+		if (picasso == null) {
+			picasso = res = new Picasso.Builder(context)
+				.defaultBitmapConfig(Bitmap.Config.RGB_565)
+				.downloader(new OkHttp3Downloader(okhttp()))
+				.build();
+			return res;
+		}
+		return picasso;
 	}
 }

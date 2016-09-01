@@ -96,6 +96,7 @@ public class SyncRecorder {
 		}
 
 		S.getDb().insertSyncLog(Sqlitil.nowDateTime(), kind, syncSetName, params);
+		App.trackEvent("sync", kind.name());
 	}
 
 	static class LastSyncInfoEntryJson {

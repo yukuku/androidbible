@@ -10,6 +10,7 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.storage.NoBackupSharedPreferences;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.Background;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -128,7 +129,7 @@ public class Gcm {
 	}
 
 	private static void registerInBackground() {
-		new Thread(() -> {
+		Background.run(() -> {
 			try {
 				final GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(App.context);
 				final String registrationId = gcm.register(SENDER_ID);
@@ -150,7 +151,7 @@ public class Gcm {
 				// Require the user to click a button again, or perform exponential back-off.
 				Log.e(TAG, "Error :" + ex.getMessage(), ex);
 			}
-		}).start();
+		});
 	}
 
 	private static void writeGcmRegistrationId(final String registrationId) {

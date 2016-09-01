@@ -1,46 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    android:orientation="horizontal"
-    android:paddingLeft="10dp"
-    android:paddingRight="15dp" >
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="?selectableItemBackground"
+	android:minHeight="?listPreferredItemHeightSmall"
+	android:orientation="horizontal"
+	android:paddingBottom="4dp"
+	android:paddingTop="4dp">
 
-    <ImageView
-        android:id="@+id/icon"
-        android:layout_width="@android:dimen/app_icon_size"
-        android:layout_height="@android:dimen/app_icon_size"
-        android:scaleType="fitCenter"
-        tools:ignore="ContentDescription" />
+	<!-- Activity icon when presenting dialog
+		 Size will be filled in by ResolverActivity -->
+	<ImageView
+		android:id="@+id/icon"
+		android:layout_width="24dp"
+		android:layout_height="24dp"
+		android:layout_gravity="start|center_vertical"
+		android:layout_marginBottom="12dp"
+		android:layout_marginLeft="?listPreferredItemPaddingLeft"
+		android:layout_marginStart="?listPreferredItemPaddingLeft"
+		android:layout_marginTop="12dp"
+		android:scaleType="fitCenter" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="vertical" >
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="start|center_vertical"
+		android:gravity="start|center_vertical"
+		android:orientation="vertical"
+		android:paddingEnd="?listPreferredItemPaddingRight"
+		android:paddingLeft="?listPreferredItemPaddingLeft"
+		android:paddingRight="?listPreferredItemPaddingRight"
+		android:paddingStart="?listPreferredItemPaddingLeft">
 
-        <!-- Activity name -->
+		<!-- Activity name -->
+		<TextView
+			android:id="@android:id/text1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:ellipsize="marquee"
+			android:maxLines="1"
+			android:minLines="1"
+			android:textAppearance="?android:textAppearanceMedium"
+			android:textColor="?android:textColorPrimary" />
 
-        <TextView
-            android:id="@android:id/text1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="2"
-            android:paddingLeft="10dp"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <!-- Extended activity info to distinguish between duplicate activity names -->
-
-        <TextView
-            android:id="@android:id/text2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="2"
-            android:paddingLeft="10dp"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-    </LinearLayout>
-
+		<!-- Extended activity info to distinguish between duplicate activity names -->
+		<TextView
+			android:id="@android:id/text2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:ellipsize="marquee"
+			android:maxLines="1"
+			android:minLines="1"
+			android:textAppearance="?android:textAppearanceSmall" />
+	</LinearLayout>
 </LinearLayout>
+

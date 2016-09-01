@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.app.ActionBar;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -285,9 +286,10 @@ public class SearchActivity extends BaseActivity {
 		bEditFilter = V.get(this, R.id.bEditFilter);
 
 		final Toolbar toolbar = V.get(this, R.id.toolbar);
-		setSupportActionBar(toolbar); // must be done first before below lines
-		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
-		toolbar.setNavigationOnClickListener(v -> navigateUp());
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 
 		bVersion = V.get(this, R.id.bVersion);
 

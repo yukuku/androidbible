@@ -37,7 +37,9 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.CurrentReading;
+import yuku.alkitab.base.util.Foreground;
 import yuku.alkitab.base.util.ReadingPlanManager;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.LeftDrawer;
@@ -406,7 +408,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	public boolean prepareDropDownNavigation() {
 		if (downloadedReadingPlanInfos.size() == 0) {
 			actionBar.setDisplayShowTitleEnabled(true);
-			actionBar.setTitle(R.string.rp_menuReadingPlan);
+			actionBar.setTitle(R.string.rp_activity_title);
 			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 			return true;
 		}
@@ -588,59 +590,42 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			.dismissListener(dialog -> cancelled.set(true))
 			.show();
 
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					download();
-				} catch (Exception e) {
-					if (cancelled.get()) {
-						Log.e(TAG, "downloading reading plan data", e);
+		Background.run(() -> {
+			try {
+				final byte[] data = App.downloadBytes(BuildConfig.SERVER_HOST + "rp/get_rp?name=" + name);
+				if (cancelled.get()) return;
+				Foreground.run(() -> {
+					final long id = ReadingPlanManager.insertReadingPlanToDb(data, name);
+
+					if (id == 0) {
 						new MaterialDialog.Builder(ReadingPlanActivity.this)
-							.content(getString(R.string.rp_download_reading_plan_failed))
+							.content(getString(R.string.rp_download_reading_plan_data_corrupted))
 							.positiveText(R.string.ok)
 							.show();
+						return;
 					}
-				} finally {
-					pd.dismiss();
-				}
-			}
 
-			/**
-			 * run on bg thread
-			 */
-			void download() throws Exception {
-				final byte[] bytes = App.downloadBytes(BuildConfig.SERVER_HOST + "rp/get_rp?name=" + name);
-
-				if (cancelled.get()) return;
-				runOnUiThread(() -> onReadingPlanDownloadFinished(bytes));
-			}
-
-			/**
-			 * run on ui thread
-			 */
-			void onReadingPlanDownloadFinished(final byte[] data) {
-				if (cancelled.get()) return;
-
-				final long id = ReadingPlanManager.insertReadingPlanToDb(data, name);
-
-				if (id == 0) {
-					new MaterialDialog.Builder(ReadingPlanActivity.this)
-						.content(getString(R.string.rp_download_reading_plan_data_corrupted))
+					Preferences.setLong(Prefkey.active_reading_plan_id, id);
+					loadReadingPlan(id);
+					loadReadingPlanProgress();
+					loadDayNumber();
+					prepareDropDownNavigation();
+					prepareDisplay();
+					supportInvalidateOptionsMenu();
+				});
+			} catch (Exception e) {
+				if (!cancelled.get()) {
+					Log.e(TAG, "downloading reading plan data", e);
+					Foreground.run(() -> new MaterialDialog.Builder(ReadingPlanActivity.this)
+						.content(getString(R.string.rp_download_reading_plan_failed))
 						.positiveText(R.string.ok)
-						.show();
-					return;
+						.show()
+					);
 				}
-
-				Preferences.setLong(Prefkey.active_reading_plan_id, id);
-				loadReadingPlan(id);
-				loadReadingPlanProgress();
-				loadDayNumber();
-				prepareDropDownNavigation();
-				prepareDisplay();
-				supportInvalidateOptionsMenu();
+			} finally {
+				pd.dismiss();
 			}
-		}.start();
+		});
 	}
 
 	private float getActualPercentage() {

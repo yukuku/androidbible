@@ -519,19 +519,17 @@ public class SearchEngine {
 	}
 
 	public static void preloadRevIndex() {
-		new Thread() {
-			@Override public void run() {
-				TimingLogger timing = new TimingLogger("RevIndex", "preloadRevIndex");
-				revIndexLoading.acquireUninterruptibly();
-				try {
-					loadRevIndex();
-					timing.addSplit("loadRevIndex");
-				} finally {
-					revIndexLoading.release();
-					timing.dumpToLog();
-				}
+		Background.run(() -> {
+			TimingLogger timing = new TimingLogger("RevIndex", "preloadRevIndex");
+			revIndexLoading.acquireUninterruptibly();
+			try {
+				loadRevIndex();
+				timing.addSplit("loadRevIndex");
+			} finally {
+				revIndexLoading.release();
+				timing.dumpToLog();
 			}
-		}.start();
+		});
 	}
 
 	/**

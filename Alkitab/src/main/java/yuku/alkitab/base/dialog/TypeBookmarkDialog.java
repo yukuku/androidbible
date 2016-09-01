@@ -15,6 +15,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
+import yuku.alkitab.base.widget.MaterialDialogAdapterHelper;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
@@ -34,7 +35,6 @@ public class TypeBookmarkDialog {
 	final Context context;
 	final Dialog dialog;
 	FlowLayout panelLabels;
-	LabelAdapter adapter;
 	EditText tCaption;
 
 	Marker marker;
@@ -81,16 +81,7 @@ public class TypeBookmarkDialog {
 		tCaption = V.get(dialogView, R.id.tCaption);
 		final Button bAddLabel = V.get(dialogView, R.id.bAddLabel);
 
-		bAddLabel.setOnClickListener(v -> {
-			adapter = new LabelAdapter();
-
-			final MaterialDialog dialog = new MaterialDialog.Builder(context)
-				.title(R.string.add_label_title)
-				.adapter(adapter, null)
-				.build();
-
-			dialog.show();
-		});
+		bAddLabel.setOnClickListener(v -> MaterialDialogAdapterHelper.show(new MaterialDialog.Builder(context).title(R.string.add_label_title), new LabelAdapter()));
 
 		if (marker != null) {
 			labels = new TreeSet<>();
@@ -185,13 +176,13 @@ public class TypeBookmarkDialog {
 		
 		int pos = 1;
 		for (Label label: labels) {
-			panelLabels.addView(getLabelView(label), pos++);
+			panelLabels.addView(getLabelView(label, panelLabels), pos++);
 		}
 	}
 	
-	private View getLabelView(Label label) {
-		TextView res = (TextView) LayoutInflater.from(context).inflate(R.layout.label_x, null);
-		res.setLayoutParams(panelLabels.generateDefaultLayoutParams());
+	private View getLabelView(Label label, final ViewGroup parent) {
+		TextView res = (TextView) LayoutInflater.from(context).inflate(R.layout.label_x, parent, false);
+		res.setLayoutParams(this.panelLabels.generateDefaultLayoutParams());
 		res.setText(label.title);
 		res.setTag(R.id.TAG_label, label);
 		res.setOnClickListener(label_click);
@@ -214,16 +205,12 @@ public class TypeBookmarkDialog {
 		}
 	}
 
-	class LabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-		private List<Label> labels;
-
-		public LabelAdapter() {
-			labels = S.getDb().listAllLabels();
-		}
+	class LabelAdapter extends MaterialDialogAdapterHelper.Adapter {
+		private List<Label> availableLabels = S.getDb().listAllLabels();
 
 		@Override
 		public int getItemCount() {
-			return 1 + labels.size();
+			return 1 + availableLabels.size();
 		}
 
 		@Override
@@ -239,7 +226,7 @@ public class TypeBookmarkDialog {
 
 			{
 				if (type == 0) {
-					final Label label = labels.get(position - 1);
+					final Label label = availableLabels.get(position - 1);
 					holder.text1.setText(label.title);
 					U.applyLabelColor(label, holder.text1);
 				} else {
@@ -248,6 +235,8 @@ public class TypeBookmarkDialog {
 			}
 
 			holder.itemView.setOnClickListener(v -> {
+				dismissDialog();
+
 				final int which = holder.getAdapterPosition();
 				if (which == 0) { // new label
 					LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), title -> {
@@ -258,7 +247,7 @@ public class TypeBookmarkDialog {
 						}
 					});
 				} else {
-					final Label label = labels.get(position - 1);
+					final Label label = availableLabels.get(which - 1);
 					labels.add(label);
 					setLabelsText();
 				}

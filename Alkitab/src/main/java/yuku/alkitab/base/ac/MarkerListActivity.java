@@ -7,6 +7,8 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.style.BackgroundColorSpan;
 import android.view.LayoutInflater;
@@ -101,10 +103,14 @@ public class MarkerListActivity extends BaseActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		enableNonToolbarUpButton();
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.activity_marker_list);
+
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 
 		root = V.get(this, R.id.root);
 		empty = V.get(this, android.R.id.empty);

@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -26,11 +28,10 @@ public class PatchTextActivity extends BaseActivity {
 	public static final int REQCODE_send = 1;
 
 	EditText tBody;
-	View bReference;
-	View bSend;
 
 	CharSequence baseBody;
 	String extraInfo;
+	String referenceUrl;
 
 	public static Intent createIntent(final CharSequence baseBody, final String extraInfo, final String referenceUrl) {
 		final Intent res = new Intent(App.context, PatchTextActivity.class);
@@ -45,6 +46,13 @@ public class PatchTextActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_patch_text);
 
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
+		ab.setDisplayShowTitleEnabled(false);
+
 		tBody = V.get(this, R.id.tBody);
 		tBody.setTextColor(S.applied.fontColor);
 		tBody.setBackgroundColor(S.applied.backgroundColor);
@@ -52,29 +60,11 @@ public class PatchTextActivity extends BaseActivity {
 		tBody.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp);
 		tBody.setLineSpacing(0, S.applied.lineSpacingMult);
 
-		final ActionBar actionBar = getSupportActionBar();
-		actionBar.setDisplayShowCustomEnabled(true);
-		actionBar.setDisplayHomeAsUpEnabled(false);
-		actionBar.setDisplayShowTitleEnabled(false);
-		actionBar.setCustomView(R.layout.activity_patch_text_actionbar_custom);
-
-		final View customView = actionBar.getCustomView();
-		bReference = V.get(customView, R.id.bReference);
-		bSend = V.get(customView, R.id.bSend);
-
 		baseBody = getIntent().getCharSequenceExtra(EXTRA_baseBody);
 		tBody.setText(baseBody, TextView.BufferType.EDITABLE);
 
 		extraInfo = getIntent().getStringExtra(EXTRA_extraInfo);
-		final String referenceUrl = getIntent().getStringExtra(EXTRA_referenceUrl);
-
-		if (referenceUrl != null) {
-			bReference.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(referenceUrl))));
-		} else {
-			bReference.setVisibility(View.GONE);
-		}
-
-		bSend.setOnClickListener(v -> bSend_click());
+		referenceUrl = getIntent().getStringExtra(EXTRA_referenceUrl);
 
 		new MaterialDialog.Builder(this)
 			.content(R.string.patch_text_intro)
@@ -82,7 +72,33 @@ public class PatchTextActivity extends BaseActivity {
 			.show();
 	}
 
-	void bSend_click() {
+	@Override
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		getMenuInflater().inflate(R.menu.activity_patch_text, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(final Menu menu) {
+		final MenuItem menuReference = menu.findItem(R.id.menuReference);
+		menuReference.setVisible(referenceUrl != null);
+
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		if (item.getItemId() == R.id.menuReference) {
+			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(referenceUrl)));
+			return true;
+		} else if (item.getItemId() == R.id.menuSend) {
+			menuSend_click();
+		}
+
+		return super.onOptionsItemSelected(item);
+	}
+
+	void menuSend_click() {
 		final String baseText = baseBody.toString();
 		final String currentText = tBody.getText().toString();
 

@@ -3,6 +3,8 @@ package yuku.alkitab.base.sync;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.LeadingMarginSpan;
@@ -40,6 +42,12 @@ public class SyncLogActivity extends BaseActivity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_sync_log);
+
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 
 		lsLog = V.get(this, R.id.lsLog);
 		lsLog.setAdapter(adapter = new LogAdapter());
