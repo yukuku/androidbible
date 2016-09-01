@@ -20,7 +20,7 @@
 			android:gravity="center_vertical|left"
 			android:text="@string/text_appearance_font"
 			android:textAllCaps="true"
-			android:textSize="12dp"
+			android:textSize="12sp"
 			android:textStyle="bold" />
 
 		<ImageButton
@@ -67,7 +67,7 @@
 			android:layout_marginLeft="16dp"
 			android:text="@string/text_appearance_text_size"
 			android:textAllCaps="true"
-			android:textSize="12dp"
+			android:textSize="12sp"
 			android:textStyle="bold" />
 
 	</LinearLayout>
@@ -114,7 +114,7 @@
 				android:layout_marginLeft="16dp"
 				android:layout_marginRight="16dp"
 				android:textAllCaps="true"
-				android:textSize="12dp"
+				android:textSize="12sp"
 				android:textStyle="bold"
 				tools:text="@string/text_appearance_text_size_for_version" />
 
@@ -157,7 +157,7 @@
 			android:layout_marginLeft="16dp"
 			android:text="@string/text_appearance_line_spacing"
 			android:textAllCaps="true"
-			android:textSize="12dp"
+			android:textSize="12sp"
 			android:textStyle="bold" />
 
 	</LinearLayout>

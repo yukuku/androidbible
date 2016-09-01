@@ -173,6 +173,10 @@ public class App extends yuku.afw.App {
 		if (Preferences.contains(Prefkey.sync_simpleToken)) {
 			Sync.notifySyncNeeded(SyncShadow.ALL_SYNC_SET_NAMES);
 		}
+
+		if (BuildConfig.DEBUG) {
+			Log.d(TAG, "Font scale: " + context.getResources().getConfiguration().fontScale);
+		}
 	}
 
 	private static void forceOverflowMenu() {
