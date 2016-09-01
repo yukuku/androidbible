@@ -380,6 +380,9 @@ public class SearchActivity extends BaseActivity {
 			} else {
 				final int ari = adapter.getSearchResults().get(position);
 				startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
+				// Because we are in CHOICE_MODE_MULTIPLE, this verse is automatically marked as checked.
+				// so we have to manually uncheck this.
+				uncheckAllVerses();
 			}
 		});
 		lsSearchResults.setOnItemLongClickListener(lsSearchResults_itemLongClick);
