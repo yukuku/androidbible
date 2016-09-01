@@ -196,14 +196,36 @@ public class Preferences {
 		}
 	}
 
-	public static boolean getBoolean(@StringRes final int keyStringResId, @BoolRes final int defaultIntResId) {
+	public static boolean getBoolean(@StringRes final int keyStringResId, @BoolRes final int defaultBoolResId) {
 		final Resources r = App.context.getResources();
 		final String key = r.getString(keyStringResId);
 		final Object value = get(key);
 		if (value == null) {
-			return r.getBoolean(defaultIntResId);
+			return r.getBoolean(defaultBoolResId);
 		} else {
 			return (boolean) value;
+		}
+	}
+
+	public static String getString(@StringRes final int keyStringResId, @StringRes final int defaultStringResId) {
+		final Resources r = App.context.getResources();
+		final String key = r.getString(keyStringResId);
+		final Object value = get(key);
+		if (value == null) {
+			return r.getString(defaultStringResId);
+		} else {
+			return (String) value;
+		}
+	}
+
+	public static String getString(@StringRes final int keyStringResId) {
+		final Resources r = App.context.getResources();
+		final String key = r.getString(keyStringResId);
+		final Object value = get(key);
+		if (value == null) {
+			return null;
+		} else {
+			return (String) value;
 		}
 	}
 
