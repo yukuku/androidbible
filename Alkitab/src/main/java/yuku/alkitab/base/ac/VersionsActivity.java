@@ -959,21 +959,29 @@ public class VersionsActivity extends BaseActivity {
 				b.neutralText(R.string.buang_dari_daftar);
 				b.onNeutral((dialog, which) -> {
 					final MVersionDb mvDb = (MVersionDb) mv;
-					new MaterialDialog.Builder(getActivity())
-						.content(getString(R.string.juga_hapus_file_datanya_file, mvDb.filename))
-						.positiveText(R.string.delete)
-						.onPositive((dialog1, which1) -> {
-							S.getDb().deleteVersion(mvDb);
-							App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
-							new File(mvDb.filename).delete();
-						})
-						.negativeText(R.string.no)
-						.onNegative((dialog1, which1) -> {
-							S.getDb().deleteVersion(mvDb);
-							App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
-						})
-						.neutralText(R.string.cancel)
-						.show();
+					final String filename = mvDb.filename;
+
+					if (AddonManager.isInSharedStorage(filename)) {
+						new MaterialDialog.Builder(getActivity())
+							.content(getString(R.string.juga_hapus_file_datanya_file, filename))
+							.positiveText(R.string.delete)
+							.onPositive((dialog1, which1) -> {
+								S.getDb().deleteVersion(mvDb);
+								App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
+								new File(filename).delete();
+							})
+							.negativeText(R.string.no)
+							.onNegative((dialog1, which1) -> {
+								S.getDb().deleteVersion(mvDb);
+								App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
+							})
+							.neutralText(R.string.cancel)
+							.show();
+					} else { // just delete the file!
+						S.getDb().deleteVersion(mvDb);
+						App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
+						new File(filename).delete();
+					}
 				});
 			}
 
