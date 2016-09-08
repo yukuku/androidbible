@@ -31,7 +31,7 @@ public class VerseRenderer {
 	static class ParagraphSpacingBefore implements LineHeightSpan {
 		private final int before;
 
-		// ugly hack
+		// ugly hack for API 23
 		static CharSequence lastModifiedText;
 		
 		ParagraphSpacingBefore(int before) {
@@ -39,7 +39,8 @@ public class VerseRenderer {
 		}
 		
 		@Override public void chooseHeight(CharSequence text, int start, int end, int spanstartv, int v, FontMetricsInt fm) {
-			if (Build.VERSION.SDK_INT == 23) { // ugly hack
+			final int sdk = Build.VERSION.SDK_INT;
+			if (sdk == 23) { // ugly hack
 				if (spanstartv == v) {
 					fm.top -= before;
 					fm.ascent -= before;
@@ -49,6 +50,8 @@ public class VerseRenderer {
 					fm.ascent += before;
 					lastModifiedText = null; // do not do this multiple times
 				}
+			} else if (sdk >= 24) {
+				// TODO Fix this. Current workaround: 'before' is ignored.
 			} else {
 				if (spanstartv == v) {
 					fm.top -= before;
