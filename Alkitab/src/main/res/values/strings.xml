@@ -216,8 +216,9 @@
     <string name="market_short_desc">Fast, reliable and feature-rich offline Bible.</string>
     <string name="no_url_for_facebook">This cannot be shared to Facebook.</string>
     <string name="storage_permission_rationale">We need to access the storage to store shared media such as Bible versions and fonts.</string>
+	<string name="goto_button_history_tip">Tip: Next time, long-press this button to access your recently-opened verses.</string>
 
-    <!-- Goto tabs -->
+	<!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Dialer</string>
     <string name="goto_tab_direct_label">Direct</string>
     <string name="goto_tab_grid_label">Grid</string>

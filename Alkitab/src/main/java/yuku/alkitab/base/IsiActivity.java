@@ -1158,13 +1158,28 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	void bGoto_click() {
 		App.trackEvent("nav_goto_button_click");
-		startActivityForResult(GotoActivity.createIntent(this.activeBook.bookId, this.chapter_1, lsSplit0.getVerseBasedOnScroll()), REQCODE_goto);
+
+		final Runnable r = () -> startActivityForResult(GotoActivity.createIntent(this.activeBook.bookId, this.chapter_1, lsSplit0.getVerseBasedOnScroll()), REQCODE_goto);
+
+		if (!Preferences.getBoolean(Prefkey.history_button_understood, false) && history.getSize() > 0) {
+			new MaterialDialog.Builder(this)
+				.content(R.string.goto_button_history_tip)
+				.positiveText(R.string.ok)
+				.onPositive((dialog, which) -> {
+					Preferences.setBoolean(Prefkey.history_button_understood, true);
+					r.run();
+				})
+				.show();
+		} else {
+			r.run();
+		}
 	}
 
 	void bGoto_longClick() {
 		App.trackEvent("nav_goto_button_long_click");
 		if (history.getSize() > 0) {
 			MaterialDialogAdapterHelper.show(new MaterialDialog.Builder(this), new HistoryAdapter());
+			Preferences.setBoolean(Prefkey.history_button_understood, true);
 		} else {
 			Snackbar.make(root, R.string.recentverses_not_available, Snackbar.LENGTH_SHORT).show();
 		}
@@ -1226,7 +1241,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				final int ari = history.getAri(which);
 				jumpToAri(ari);
 				history.add(ari);
-				Preferences.setBoolean(Prefkey.history_button_understood, true);
 			});
 		}
 
@@ -1633,12 +1647,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		// set goto button text
 		final String reference = this.activeBook.reference(chapter_1);
-		if (Preferences.getBoolean(Prefkey.history_button_understood, false) || history.getSize() == 0) {
-			bGoto.setText(reference);
-		} else {
-			// TODO show something to indicate user can long press on goto button
-			bGoto.setText(reference);
-		}
+		bGoto.setText(reference.replace(' ', '\u00a0'));
 
 		if (fullScreen) {
 			if (fullScreenToast == null) {
