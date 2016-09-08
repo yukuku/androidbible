@@ -3,7 +3,6 @@ package yuku.alkitab.base.ac;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.ActionBar;
@@ -11,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -19,10 +17,13 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.picasso.Callback;
 import yuku.afw.V;
+import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.sv.DownloadService;
+import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.FontManager;
+import yuku.alkitab.base.util.Foreground;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 
@@ -50,6 +51,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 
 	ListView lsFont;
 	FontAdapter adapter;
+	View progress;
 	TextView lEmptyError;
 	DownloadService dls;
 
@@ -80,10 +82,10 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 		ab.setDisplayHomeAsUpEnabled(true);
 
 		lsFont = V.get(this, R.id.lsFont);
+		progress = V.get(this, R.id.progress);
 		lEmptyError = V.get(this, R.id.lEmptyError);
 
 		lsFont.setAdapter(adapter = new FontAdapter());
-		lsFont.setEmptyView(lEmptyError);
 
 		bindService(new Intent(App.context, DownloadService.class), serviceConnection, BIND_AUTO_CREATE);
 	}
@@ -107,42 +109,37 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 	}
 
 	void loadFontList() {
-		new AsyncTask<Void, Void, List<FontItem>>() {
-			String errorMsg;
-
-			@Override
-			protected List<FontItem> doInBackground(Void... params) {
-				try {
-					final String listString = App.downloadString(URL_fontList);
-					final List<FontItem> list = new ArrayList<>();
-					final Scanner sc = new Scanner(listString);
-					if (sc.hasNextLine() && sc.nextLine().startsWith("OK")) {
-						while (sc.hasNextLine()) {
-							String line = sc.nextLine().trim();
-							if (line.length() > 0) {
-								FontItem item = new FontItem();
-								item.name = line.split(" ")[0];
-								list.add(item);
-							}
+		Background.run(() -> {
+			try {
+				final String listString = App.downloadString(URL_fontList);
+				final List<FontItem> list = new ArrayList<>();
+				final Scanner sc = new Scanner(listString);
+				if (sc.hasNextLine() && sc.nextLine().startsWith("OK")) {
+					while (sc.hasNextLine()) {
+						String line = sc.nextLine().trim();
+						if (line.length() > 0) {
+							FontItem item = new FontItem();
+							item.name = line.split(" ")[0];
+							list.add(item);
 						}
 					}
-					return list;
-				} catch (IOException e) {
-					errorMsg = e.getMessage();
-					return null;
 				}
-			}
 
-			@Override
-			protected void onPostExecute(List<FontItem> result) {
-				if (result != null) {
-					lEmptyError.setText(null);
-					adapter.setData(result);
-				} else {
+				Foreground.run(() -> {
+					adapter.setData(list);
+					lEmptyError.setVisibility(View.GONE);
+					progress.setVisibility(View.GONE);
+				});
+			} catch (IOException e) {
+				final String errorMsg = e.getMessage();
+
+				Foreground.run(() -> {
+					lEmptyError.setVisibility(View.VISIBLE);
 					lEmptyError.setText(errorMsg);
-				}
+					progress.setVisibility(View.GONE);
+				});
 			}
-		}.execute();
+		});
 	}
 
 	String getFontDownloadKey(String name) {
@@ -162,17 +159,18 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 		public String name;
 	}
 
-	public class FontAdapter extends BaseAdapter {
-		List<FontItem> list;
+	public class FontAdapter extends EasyAdapter {
+		final List<FontItem> list = new ArrayList<>();
 
 		public void setData(List<FontItem> list) {
-			this.list = list;
+			this.list.clear();
+			this.list.addAll(list);
 			notifyDataSetChanged();
 		}
 
 		@Override
 		public int getCount() {
-			return list == null ? 0 : list.size();
+			return list.size();
 		}
 
 		@Override
@@ -181,20 +179,18 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 		}
 
 		@Override
-		public long getItemId(int position) {
-			return position;
+		public View newView(final int position, final ViewGroup parent) {
+			return getLayoutInflater().inflate(R.layout.item_font_download, parent, false);
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View res = convertView != null ? convertView : getLayoutInflater().inflate(R.layout.item_font_download, parent, false);
-
-			final ImageView imgPreview = V.get(res, R.id.imgPreview);
-			final TextView lFontName = V.get(res, R.id.lFontName);
-			final View bDownload = V.get(res, R.id.bDownload);
-			final View bDelete = V.get(res, R.id.bDelete);
-			final ProgressBar progressbar = V.get(res, R.id.progressbar);
-			final TextView lErrorMsg = V.get(res, R.id.lErrorMsg);
+		public void bindView(final View view, final int position, final ViewGroup parent) {
+			final ImageView imgPreview = V.get(view, R.id.imgPreview);
+			final TextView lFontName = V.get(view, R.id.lFontName);
+			final View bDownload = V.get(view, R.id.bDownload);
+			final View bDelete = V.get(view, R.id.bDelete);
+			final ProgressBar progressbar = V.get(view, R.id.progressbar);
+			final TextView lErrorMsg = V.get(view, R.id.lErrorMsg);
 
 			final FontItem item = getItem(position);
 			final String dlkey = getFontDownloadKey(item.name);
@@ -269,8 +265,6 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 					}
 				}
 			}
-
-			return res;
 		}
 
 		private View.OnClickListener bDownload_click = v -> {
