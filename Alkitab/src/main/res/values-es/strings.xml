@@ -317,10 +317,12 @@
   <string name="recentverses_button_hint">(Mantener presionado para versículos recientes)</string>
   <string name="dr_reminder">Recordatorio</string>
   <string name="dr_error_contact_reminder">Error contactaron aplicación de Recordatorios.</string>
+  <string name="dv_activity_title">Widget Del Versículo Diario</string>
   <string name="dv_option_transparent_background">Fondo transparente</string>
   <string name="dv_option_dark_text">Texto oscuro</string>
   <string name="dv_option_text_size">Tamaño de texto</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">Plan de lectura</string>
   <string name="rp_menuReadingPlan">Plan de lectura</string>
   <string name="rp_commentActual">Finalizado: %s%%</string>
   <string name="rp_commentTarget">Objetivo: %s%%</string>
@@ -447,6 +449,7 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
   <string name="sync_sync_set_pref_summary_never">Aún no sincronizado</string>
   <string name="sync_sync_set_pref_summary_syncing">Sincronizando ahora&#8230;</string>
   <string name="sync_log_activity_title">Registro de sincronización</string>
+  <string name="sync_status_activity_title">Estado de la sincronización</string>
   <string name="sync_login_activity_title">Ingresar o crear cuenta</string>
   <string name="sync_login_survey_religion_select_one">Elegir religión</string>
   <string name="sync_login_survey_religion_christianity">Cristianismo</string>

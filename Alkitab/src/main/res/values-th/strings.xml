@@ -317,10 +317,12 @@
   <string name="recentverses_button_hint">(กดค้างสำหรับประวัติข้อล่าสุดค่ะ)</string>
   <string name="dr_reminder">การแจ้งเตือน</string>
   <string name="dr_error_contact_reminder">เกิดการผิดพลาดระหว่างที่เชื่อมโยงกับแอปแจ้งเตือนค่ะ</string>
+  <string name="dv_activity_title">วิดเจ็ตข้อประจำวัน</string>
   <string name="dv_option_transparent_background">พื้นหลังโปร่งใส</string>
   <string name="dv_option_dark_text">ข้อความสีเข้ม</string>
   <string name="dv_option_text_size">ขนาดตัวอักษร</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">แผนการอ่าน</string>
   <string name="rp_menuReadingPlan">แผนการอ่าน</string>
   <string name="rp_commentActual">เสร็จแล้ว: %s%%</string>
   <string name="rp_commentTarget">เป้าหมาย: %s%%</string>
@@ -446,6 +448,7 @@
   <string name="sync_sync_set_pref_summary_never">ยังไมได้ซิงค์</string>
   <string name="sync_sync_set_pref_summary_syncing">กำลังซิงค์&#8230;</string>
   <string name="sync_log_activity_title">ล็อกการซิงค์</string>
+  <string name="sync_status_activity_title">สถานะการซิงค์</string>
   <string name="sync_login_activity_title">เข้าสู่ระบบหรือลงบัญชี</string>
   <string name="sync_login_survey_religion_select_one">เลือกศาสนา</string>
   <string name="sync_login_survey_religion_christianity">ศาสนาคริสต์</string>

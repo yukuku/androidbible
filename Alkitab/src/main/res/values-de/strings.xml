@@ -317,10 +317,12 @@
   <string name="recentverses_button_hint">(Lang drücken für Bibelstellen-Historie)</string>
   <string name="dr_reminder">Erinnerung</string>
   <string name="dr_error_contact_reminder">Fehler beim Herstellen der Verbindung zur App für Erinnerungen.</string>
+  <string name="dv_activity_title">Vers des Tages</string>
   <string name="dv_option_transparent_background">Transparenter Hintergrund</string>
   <string name="dv_option_dark_text">Dunkler Text</string>
   <string name="dv_option_text_size">Textgröße</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">Leseplan</string>
   <string name="rp_menuReadingPlan">Leseplan</string>
   <string name="rp_commentActual">Erledigt: %s%%</string>
   <string name="rp_commentTarget">Ziel: %s%%</string>
@@ -446,6 +448,7 @@
   <string name="sync_sync_set_pref_summary_never">Noch nicht synchronisiert</string>
   <string name="sync_sync_set_pref_summary_syncing">Synchronisiere&#8230;</string>
   <string name="sync_log_activity_title">Synchronisationsprotokoll</string>
+  <string name="sync_status_activity_title">Synchronisationsstatus</string>
   <string name="sync_login_activity_title">Anmelden oder Konto erstellen</string>
   <string name="sync_login_survey_religion_select_one">Religionszugehörigkeit wählen</string>
   <string name="sync_login_survey_religion_christianity">Christentum</string>
