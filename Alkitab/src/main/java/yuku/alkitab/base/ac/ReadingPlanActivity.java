@@ -302,6 +302,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		final int itemId = item.getItemId();
 		if (itemId == android.R.id.home) {
 			leftDrawer.toggleDrawer();
+			return true;
 
 		} else if (itemId == R.id.menuDownload) {
 			downloadReadingPlanList();
