@@ -214,6 +214,7 @@
   <string name="market_short_desc">Aplikasi Alkitab yang cepat, terpercaya, dan banyak fiturnya.</string>
   <string name="no_url_for_facebook">Ini tidak bisa dibagikan ke Facebook.</string>
   <string name="storage_permission_rationale">Kami perlu mengakses media penyimpanan untuk menyimpan berbagai data seperti versi Alkitab dan jenis huruf.</string>
+  <string name="goto_button_history_tip">Tip: Lain kali, tekan dan tahan tombol ini untuk mengakses riwayat ayat yang dibuka.</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Telusuri</string>
   <string name="goto_tab_direct_label">Ketik</string>
@@ -279,6 +280,7 @@
   <string name="intent_filter_open_pdb_file">Buka file PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Buka file PDB/YES</string>
   <string name="open_yes_file_name_conflict">File YES bernama \'%1$s\' sudah ada dalam \'%2$s\'.</string>
+  <string name="open_yes_error_read">Gagal membaca data dari ^1</string>
   <string name="open_file_cant_read_source">Sumber data tidak berhasil dibaca.</string>
   <string name="open_file_unknown_file_format">Tidak dapat memutuskan apakah ini file PDB atau YES.</string>
   <string name="version_preset_delete_filename">Hapus file data \'%s\'?</string>

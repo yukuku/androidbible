@@ -3,7 +3,6 @@ package yuku.alkitab.base.widget;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -452,22 +451,19 @@ public class TextAppearancePanel {
 		}
 
 		static int[] getCurrentColors(final boolean forNightMode) {
-			final Context c = App.context;
-			final Resources r = c.getResources();
-
 			if (forNightMode) {
-				return new int[] {
-				Preferences.getInt(c.getString(R.string.pref_textColor_night_key), r.getInteger(R.integer.pref_textColor_night_default)),
-				Preferences.getInt(c.getString(R.string.pref_backgroundColor_night_key), r.getInteger(R.integer.pref_backgroundColor_night_default)),
-				Preferences.getInt(c.getString(R.string.pref_verseNumberColor_night_key), r.getInteger(R.integer.pref_verseNumberColor_night_default)),
-				Preferences.getInt(c.getString(R.string.pref_redTextColor_night_key), r.getInteger(R.integer.pref_redTextColor_night_default)),
+				return new int[]{
+					Preferences.getInt(R.string.pref_textColor_night_key, R.integer.pref_textColor_night_default),
+					Preferences.getInt(R.string.pref_backgroundColor_night_key, R.integer.pref_backgroundColor_night_default),
+					Preferences.getInt(R.string.pref_verseNumberColor_night_key, R.integer.pref_verseNumberColor_night_default),
+					Preferences.getInt(R.string.pref_redTextColor_night_key, R.integer.pref_redTextColor_night_default),
 				};
 			} else {
-				return new int[] {
-				Preferences.getInt(c.getString(R.string.pref_textColor_key), r.getInteger(R.integer.pref_textColor_default)),
-				Preferences.getInt(c.getString(R.string.pref_backgroundColor_key), r.getInteger(R.integer.pref_backgroundColor_default)),
-				Preferences.getInt(c.getString(R.string.pref_verseNumberColor_key), r.getInteger(R.integer.pref_verseNumberColor_default)),
-				Preferences.getInt(c.getString(R.string.pref_redTextColor_key), r.getInteger(R.integer.pref_redTextColor_default)),
+				return new int[]{
+					Preferences.getInt(R.string.pref_textColor_key, R.integer.pref_textColor_default),
+					Preferences.getInt(R.string.pref_backgroundColor_key, R.integer.pref_backgroundColor_default),
+					Preferences.getInt(R.string.pref_verseNumberColor_key, R.integer.pref_verseNumberColor_default),
+					Preferences.getInt(R.string.pref_redTextColor_key, R.integer.pref_redTextColor_default),
 				};
 			}
 		}

@@ -15,8 +15,8 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_gravity="bottom"
-			android:text="*Language Name"
 			android:layout_marginBottom="4dp"
+			android:text="*Language Name"
 			android:textColor="#898989"
 			android:textSize="12sp"
 			tools:ignore="HardcodedText" />
@@ -32,10 +32,10 @@
 
 		<Button
 			android:id="@+id/bLongName"
-			android:background="?selectableItemBackground"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_weight="1"
+			android:background="?selectableItemBackground"
 			android:drawablePadding="8dp"
 			android:gravity="center_vertical"
 			android:text="*Long version name"
@@ -63,6 +63,7 @@
 				style="?indeterminateProgressStyle"
 				android:layout_width="48dp"
 				android:layout_height="48dp"
+				android:layout_gravity="center_vertical"
 				android:indeterminate="true"
 				android:padding="12dp" />
 
@@ -73,9 +74,9 @@
 			android:layout_width="48dp"
 			android:layout_height="match_parent"
 			android:layout_gravity="fill_vertical|end"
-			android:src="@drawable/ic_drag_handle"
 			android:contentDescription="@string/desc_drag_to_reorder_versions"
-			android:scaleType="center" />
+			android:scaleType="center"
+			android:src="@drawable/ic_drag_handle" />
 
 	</LinearLayout>
 

@@ -25,7 +25,7 @@ import android.view.ViewGroup;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.storage.Prefkey;
-import yuku.alkitab.base.util.ChangeLanguageHelper;
+import yuku.alkitab.base.util.ChangeConfigurationHelper;
 import yuku.alkitab.debug.R;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -40,7 +40,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 
 	private boolean willNeedStoragePermission;
 
-	private int lastKnownLocaleSerialNumber;
+	private int lastKnownConfigurationSerialNumber;
 
 	@Override
 	protected void onStart() {
@@ -48,14 +48,11 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 
 		applyActionBarAndStatusBarColors();
 
-		final int currentLocaleSerialNumber = ChangeLanguageHelper.getLocaleSerialCounter();
-		if (lastKnownLocaleSerialNumber != currentLocaleSerialNumber) {
-			Log.d(TAG, "Restarting activity " + getClass().getName() + " because of locale change " + lastKnownLocaleSerialNumber + " -> " + currentLocaleSerialNumber);
-			lastKnownLocaleSerialNumber = currentLocaleSerialNumber;
-			// restart activity
-			final Intent originalIntent = getIntent();
-			finish();
-			startActivity(originalIntent);
+		final int currentConfigurationSerialNumber = ChangeConfigurationHelper.getSerialCounter();
+		if (lastKnownConfigurationSerialNumber != currentConfigurationSerialNumber) {
+			Log.d(TAG, "Restarting activity " + getClass().getName() + " because of configuration change " + lastKnownConfigurationSerialNumber + " -> " + currentConfigurationSerialNumber);
+			lastKnownConfigurationSerialNumber = currentConfigurationSerialNumber;
+			recreate();
 		}
 	}
 
@@ -95,7 +92,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		lastKnownLocaleSerialNumber = ChangeLanguageHelper.getLocaleSerialCounter();
+		lastKnownConfigurationSerialNumber = ChangeConfigurationHelper.getSerialCounter();
 
 		if (willNeedStoragePermission) {
 			askStoragePermission();

@@ -39,7 +39,8 @@ public class VerseRenderer {
 		}
 		
 		@Override public void chooseHeight(CharSequence text, int start, int end, int spanstartv, int v, FontMetricsInt fm) {
-			if (Build.VERSION.SDK_INT == 23) { // ugly hack
+			final int sdk = Build.VERSION.SDK_INT;
+			if (sdk == 23 || sdk == 24) { // ugly hack
 				if (spanstartv == v) {
 					fm.top -= before;
 					fm.ascent -= before;

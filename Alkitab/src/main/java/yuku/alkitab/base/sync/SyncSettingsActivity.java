@@ -75,7 +75,7 @@ public class SyncSettingsActivity extends BaseActivity {
 		public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
 			addPreferencesFromResource(R.xml.sync_settings);
 
-			final String syncAccountName = Preferences.getString(getString(R.string.pref_syncAccountName_key));
+			final String syncAccountName = Preferences.getString(R.string.pref_syncAccountName_key);
 			if (syncAccountName == null) {
 				startActivityForResult(SyncLoginActivity.createIntent(), REQCODE_login_initial);
 			}
@@ -97,7 +97,7 @@ public class SyncSettingsActivity extends BaseActivity {
 
 		@SuppressWarnings("deprecation")
 		void updateDisplay() {
-			final String syncAccountName = Preferences.getString(getString(R.string.pref_syncAccountName_key));
+			final String syncAccountName = Preferences.getString(R.string.pref_syncAccountName_key);
 			pref_syncAccountName.setSummary(syncAccountName != null ? syncAccountName : getString(R.string.sync_account_not_selected));
 
 			for (final String syncSetName : SyncShadow.ALL_SYNC_SET_NAMES) {
@@ -124,7 +124,7 @@ public class SyncSettingsActivity extends BaseActivity {
 		}
 
 		Preference.OnPreferenceClickListener pref_syncAccountName_click = preference -> {
-			final String syncAccountName = Preferences.getString(getString(R.string.pref_syncAccountName_key));
+			final String syncAccountName = Preferences.getString(R.string.pref_syncAccountName_key);
 
 			if (syncAccountName == null) {
 				startActivityForResult(SyncLoginActivity.createIntent(), REQCODE_login);

@@ -20,6 +20,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -184,7 +185,15 @@ public class VersionsActivity extends BaseActivity {
 			filelastname = uri.getLastPathSegment();
 		} else {
 			// try to read display name from content
-			Cursor c = getContentResolver().query(uri, null, null, null, null);
+			final Cursor c = getContentResolver().query(uri, null, null, null, null);
+			if (c == null) {
+				new MaterialDialog.Builder(this)
+					.content(TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
+					.positiveText(R.string.ok)
+					.show();
+				return;
+			}
+
 			String[] cns = c.getColumnNames();
 			Log.d(TAG, Arrays.toString(cns));
 			c.moveToNext();
@@ -229,45 +238,52 @@ public class VersionsActivity extends BaseActivity {
 					handleFileOpenPdb(uri.getPath());
 				} else {
 					// copy the file to cache first
-					File cacheFile = new File(getCacheDir(), "datafile");
-					InputStream input = getContentResolver().openInputStream(uri);
+					final File cacheFile = new File(getCacheDir(), "datafile");
+					final InputStream input = getContentResolver().openInputStream(uri);
+					if (input == null) {
+						new MaterialDialog.Builder(this)
+							.content(TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
+							.positiveText(R.string.ok)
+							.show();
+						return;
+					}
+
 					copyStreamToFile(input, cacheFile);
 					input.close();
 
-					handleFileOpenPdb(cacheFile.getAbsolutePath());
+					handleFileOpenPdb(cacheFile.getAbsolutePath(), filelastname);
 				}
 				return;
 			}
 
 			if (isLocalFile) { // opening a local yes file
-				handleFileOpenYes(uri.getPath());
+				handleFileOpenYes(new File(uri.getPath()));
 				return;
 			}
 
-			// opening a nonlocal yes file
-			boolean mkdirOk = AddonManager.mkYesDir();
-			if (!mkdirOk) {
+			final File existingFile = AddonManager.getReadableVersionFile(filelastname);
+			if (existingFile != null) {
 				new MaterialDialog.Builder(this)
-					.content(getString(R.string.tidak_bisa_membuat_folder, AddonManager.getYesPath()))
+					.content(getString(R.string.open_yes_file_name_conflict, filelastname, existingFile.getAbsolutePath()))
 					.positiveText(R.string.ok)
 					.show();
 				return;
 			}
 
-			File localFile = new File(AddonManager.getYesPath(), filelastname);
-			if (localFile.exists()) {
+			final InputStream input = getContentResolver().openInputStream(uri);
+			if (input == null) {
 				new MaterialDialog.Builder(this)
-					.content(getString(R.string.open_yes_file_name_conflict, filelastname, AddonManager.getYesPath()))
+					.content(TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
 					.positiveText(R.string.ok)
 					.show();
 				return;
 			}
 
-			InputStream input = getContentResolver().openInputStream(uri);
+			final File localFile = AddonManager.getWritableVersionFile(filelastname);
 			copyStreamToFile(input, localFile);
 			input.close();
 
-			handleFileOpenYes(localFile.getAbsolutePath());
+			handleFileOpenYes(localFile);
 
 		} catch (Exception e) {
 			new MaterialDialog.Builder(this)
@@ -417,10 +433,14 @@ public class VersionsActivity extends BaseActivity {
 	}
 
 	private void handleFileOpenPdb(final String pdbFilename) {
-		final String yesName = yesNameForPdb(pdbFilename);
+		handleFileOpenPdb(pdbFilename, null);
+	}
+
+	private void handleFileOpenPdb(final String pdbFilename, final String filelastname) {
+		final String yesName = yesNameForPdb(filelastname != null ? filelastname : pdbFilename);
 
 		// check if it exists previously
-		if (S.getDb().hasVersionWithFilename(AddonManager.getVersionPath(yesName))) {
+		if (AddonManager.getReadableVersionFile(yesName) != null) {
 			new MaterialDialog.Builder(this)
 				.content(R.string.ed_this_file_is_already_on_the_list)
 				.positiveText(R.string.ok)
@@ -428,15 +448,7 @@ public class VersionsActivity extends BaseActivity {
 			return;
 		}
 
-		if (!AddonManager.mkYesDir()) {
-			new MaterialDialog.Builder(this)
-				.content(getString(R.string.tidak_bisa_membuat_folder, AddonManager.getYesPath()))
-				.positiveText(R.string.ok)
-				.show();
-			return;
-		}
-
-		ConvertOptionsDialog.ConvertOptionsCallback callback = new ConvertOptionsDialog.ConvertOptionsCallback() {
+		final ConvertOptionsDialog.ConvertOptionsCallback callback = new ConvertOptionsDialog.ConvertOptionsCallback() {
 			private void showPdbReadErrorDialog(Throwable exception) {
 				final StringWriter sw = new StringWriter(400);
 				sw.append('(').append(exception.getClass().getName()).append("): ").append(exception.getMessage()).append('\n');
@@ -449,14 +461,14 @@ public class VersionsActivity extends BaseActivity {
 					.show();
 			}
 
-			private void showResult(final String filenameyes, Throwable exception, List<String> wronglyConvertedBookNames) {
+			private void showResult(final File yesFile, Throwable exception, List<String> wronglyConvertedBookNames) {
 				if (exception != null) {
 					App.trackEvent("versions_convert_pdb_error");
 					showPdbReadErrorDialog(exception);
 				} else {
 					// success.
 					App.trackEvent("versions_convert_pdb_success");
-					handleFileOpenYes(filenameyes);
+					handleFileOpenYes(yesFile);
 
 					if (wronglyConvertedBookNames != null && wronglyConvertedBookNames.size() > 0) {
 						StringBuilder msg = new StringBuilder(getString(R.string.ed_the_following_books_from_the_pdb_file_are_not_recognized) + '\n');
@@ -477,7 +489,7 @@ public class VersionsActivity extends BaseActivity {
 			}
 
 			@Override public void onOkYes2(final ConvertPdbToYes2.ConvertParams params) {
-				final String yesFilename = AddonManager.getVersionPath(yesName);
+				final File yesFile = AddonManager.getWritableVersionFile(yesName);
 
 				final MaterialDialog pd = new MaterialDialog.Builder(VersionsActivity.this)
 					.content(R.string.ed_reading_pdb_file)
@@ -499,7 +511,7 @@ public class VersionsActivity extends BaseActivity {
 								publishProgress(null, null);
 							}
 						});
-						return converter.convert(App.context, pdbFilename, yesFilename, params);
+						return converter.convert(App.context, pdbFilename, yesFile, params);
 					}
 
 					@Override protected void onProgressUpdate(Object... values) {
@@ -515,7 +527,7 @@ public class VersionsActivity extends BaseActivity {
 					@Override protected void onPostExecute(ConvertPdbToYes2.ConvertResult result) {
 						pd.dismiss();
 
-						showResult(yesFilename, result.exception, result.wronglyConvertedBookNames);
+						showResult(yesFile, result.exception, result.wronglyConvertedBookNames);
 					}
 				}.execute();
 			}
@@ -526,19 +538,9 @@ public class VersionsActivity extends BaseActivity {
 		dialog.show();
 	}
 
-	void handleFileOpenYes(String filename) {
-		{ // look for duplicates
-			if (S.getDb().hasVersionWithFilename(filename)) {
-				new MaterialDialog.Builder(this)
-					.content(getString(R.string.ed_file_file_sudah_ada_dalam_daftar_versi, filename))
-					.positiveText(R.string.ok)
-					.show();
-				return;
-			}
-		}
-
+	void handleFileOpenYes(File file) {
 		try {
-			final BibleReader reader = YesReaderFactory.createYesReader(filename);
+			final BibleReader reader = YesReaderFactory.createYesReader(file.getAbsolutePath());
 			if (reader == null) {
 				throw new Exception("Not a valid YES file.");
 			}
@@ -551,17 +553,9 @@ public class VersionsActivity extends BaseActivity {
 			mvDb.shortName = reader.getShortName();
 			mvDb.longName = reader.getLongName();
 			mvDb.description = reader.getDescription();
-			mvDb.filename = filename;
+			mvDb.filename = file.getAbsolutePath();
 			mvDb.ordering = maxOrdering + 1;
-
-			// check if this yes file is one already mentioned in the preset list
-			String preset_name = null;
-			for (MVersionPreset preset : VersionConfig.get().presets) {
-				if (U.equals(AddonManager.getVersionPath(preset.preset_name + ".yes"), filename)) {
-					preset_name = preset.preset_name;
-				}
-			}
-			mvDb.preset_name = preset_name;
+			mvDb.preset_name = null;
 
 			S.getDb().insertOrUpdateVersionWithActive(mvDb, true);
 			MVersionDb.clearVersionImplCache();
@@ -598,56 +592,53 @@ public class VersionsActivity extends BaseActivity {
 		new MaterialDialog.Builder(this)
 			.customView(R.layout.dialog_version_add_from_url, false)
 			.positiveText(R.string.ok)
-			.callback(new MaterialDialog.ButtonCallback() {
-				@Override
-				public void onPositive(final MaterialDialog dialog) {
-					final EditText tUrl = V.get(dialog.getCustomView(), R.id.tUrl);
+			.onPositive((dialog, which) -> {
+				final EditText tUrl = V.get(dialog.getCustomView(), R.id.tUrl);
 
-					final String url = tUrl.getText().toString().trim();
-					if (url.length() == 0) {
+				final String url = tUrl.getText().toString().trim();
+				if (url.length() == 0) {
+					return;
+				}
+
+				final Uri uri = Uri.parse(url);
+				final String scheme = uri.getScheme();
+				if (!U.equals(scheme, "http") && !U.equals(scheme, "https")) {
+					new MaterialDialog.Builder(VersionsActivity.this)
+						.content(R.string.version_download_invalid_url)
+						.positiveText(R.string.ok)
+						.show();
+					return;
+				}
+
+				// guess destination filename
+				String last = uri.getLastPathSegment();
+				if (TextUtils.isEmpty(last) || !last.toLowerCase(Locale.US).endsWith(".yes")) {
+					new MaterialDialog.Builder(VersionsActivity.this)
+						.content(R.string.version_download_not_yes)
+						.positiveText(R.string.ok)
+						.show();
+					return;
+				}
+
+				{
+					final String downloadKey = "version:url:" + url;
+
+					final int status = DownloadMapper.instance.getStatus(downloadKey);
+					if (status == DownloadManager.STATUS_PENDING || status == DownloadManager.STATUS_RUNNING) {
+						// it's downloading!
 						return;
 					}
 
-					final Uri uri = Uri.parse(url);
-					final String scheme = uri.getScheme();
-					if (!U.equals(scheme, "http") && !U.equals(scheme, "https")) {
-						new MaterialDialog.Builder(VersionsActivity.this)
-							.content(R.string.version_download_invalid_url)
-							.positiveText(R.string.ok)
-							.show();
-						return;
-					}
+					final DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url))
+						.setTitle(last)
+						.setVisibleInDownloadsUi(false)
+						.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
 
-					// guess destination filename
-					String last = uri.getLastPathSegment();
-					if (TextUtils.isEmpty(last) || !last.toLowerCase(Locale.US).endsWith(".yes")) {
-						new MaterialDialog.Builder(VersionsActivity.this)
-							.content(R.string.version_download_not_yes)
-							.positiveText(R.string.ok)
-							.show();
-						return;
-					}
+					final Map<String, String> attrs = new LinkedHashMap<>();
+					attrs.put("download_type", "url");
+					attrs.put("filename_last_segment", last);
 
-					{
-						final String downloadKey = "version:url:" + url;
-
-						final int status = DownloadMapper.instance.getStatus(downloadKey);
-						if (status == DownloadManager.STATUS_PENDING || status == DownloadManager.STATUS_RUNNING) {
-							// it's downloading!
-							return;
-						}
-
-						final DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url))
-							.setTitle(last)
-							.setVisibleInDownloadsUi(false)
-							.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
-
-						final Map<String, String> attrs = new LinkedHashMap<>();
-						attrs.put("download_type", "url");
-						attrs.put("filename_last_segment", last);
-
-						DownloadMapper.instance.enqueue(downloadKey, req, attrs);
-					}
+					DownloadMapper.instance.enqueue(downloadKey, req, attrs);
 				}
 			})
 			.show();
@@ -670,7 +661,7 @@ public class VersionsActivity extends BaseActivity {
 				// decompress or see if the same filename without .gz exists
 				final File maybeDecompressed = new File(filename.substring(0, filename.length() - 3));
 				if (maybeDecompressed.exists() && !maybeDecompressed.isDirectory() && maybeDecompressed.canRead()) {
-					handleFileOpenYes(maybeDecompressed.getAbsolutePath());
+					handleFileOpenYes(maybeDecompressed);
 				} else {
 					final MaterialDialog pd = new MaterialDialog.Builder(this)
 						.content(R.string.sedang_mendekompres_harap_tunggu)
@@ -712,13 +703,13 @@ public class VersionsActivity extends BaseActivity {
 							pd.dismiss();
 
 							App.trackEvent("versions_open_yes_gz");
-							handleFileOpenYes(result.getAbsolutePath());
+							handleFileOpenYes(result);
 						}
 					}.execute();
 				}
 			} else if (filename.toLowerCase(Locale.US).endsWith(".yes")) {
 				App.trackEvent("versions_open_yes");
-				handleFileOpenYes(filename);
+				handleFileOpenYes(new File(filename));
 			} else if (filename.toLowerCase(Locale.US).endsWith(".pdb")) {
 				App.trackEvent("versions_open_pdb");
 				handleFileOpenPdb(filename);
@@ -826,7 +817,8 @@ public class VersionsActivity extends BaseActivity {
 
 			swiper = V.get(rootView, R.id.swiper);
 			if (swiper != null) { // Can be null, if the layout used is fragment_versions_downloaded.
-				swiper.setColorSchemeColors(getResources().getColor(R.color.accent), 0xffcbcbcb, getResources().getColor(R.color.accent), 0xffcbcbcb);
+				final int accentColor = ResourcesCompat.getColor(getResources(), R.color.accent, null);
+				swiper.setColorSchemeColors(accentColor, 0xffcbcbcb);
 				swiper.setOnRefreshListener(swiper_refresh);
 			}
 
@@ -891,7 +883,7 @@ public class VersionsActivity extends BaseActivity {
 
 		static void addDetail(final SpannableStringBuilder sb, String key, String value) {
 			int sb_len = sb.length();
-			sb.append(key.toUpperCase(Locale.getDefault()) + ": ");
+			sb.append(key.toUpperCase(Locale.getDefault())).append(": ");
 			sb.setSpan(new ForegroundColorSpan(0xffaaaaaa), sb_len, sb.length(), 0);
 			sb.setSpan(new RelativeSizeSpan(0.7f), sb_len, sb.length(), 0);
 			sb.setSpan(new StyleSpan(Typeface.BOLD), sb_len, sb.length(), 0);
@@ -932,7 +924,7 @@ public class VersionsActivity extends BaseActivity {
 			int button_count = 0;
 
 			// can we update?
-			if (hasUpdateAvailable(mv)) {
+			if (mv instanceof MVersionDb && hasUpdateAvailable((MVersionDb) mv)) {
 				button_count++;
 				//noinspection ConstantConditions
 				b.positiveText(R.string.ed_update_button);
@@ -1025,19 +1017,15 @@ public class VersionsActivity extends BaseActivity {
 					new MaterialDialog.Builder(getActivity())
 						.content(R.string.ed_download_manager_not_enabled_prompt)
 						.positiveText(R.string.ok)
-						.negativeText(R.string.cancel)
-						.callback(new MaterialDialog.ButtonCallback() {
-							@Override
-							public void onPositive(final MaterialDialog dialog) {
-								try {
-									startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:com.android.providers.downloads")));
-								} catch (ActivityNotFoundException e) {
-									Log.e(TAG, "opening apps setting", e);
-								}
+						.onPositive((dialog, which) -> {
+							try {
+								startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:com.android.providers.downloads")));
+							} catch (ActivityNotFoundException e) {
+								Log.e(TAG, "opening apps setting", e);
 							}
 						})
+						.negativeText(R.string.cancel)
 						.show();
-
 					return;
 				}
 			}
@@ -1268,7 +1256,7 @@ public class VersionsActivity extends BaseActivity {
 				}
 
 				// Update icon
-				if (hasUpdateAvailable(mv)) {
+				if (mv instanceof MVersionDb && hasUpdateAvailable((MVersionDb) mv)) {
 					bLongName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_version_update, 0, 0, 0);
 				} else {
 					bLongName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
@@ -1317,12 +1305,7 @@ public class VersionsActivity extends BaseActivity {
 			}
 		}
 
-		private boolean hasUpdateAvailable(final MVersion mv) {
-			if (!(mv instanceof MVersionDb)) {
-				return false;
-			}
-
-			final MVersionDb mvDb = (MVersionDb) mv;
+		private boolean hasUpdateAvailable(final MVersionDb mvDb) {
 			if (mvDb.preset_name == null || mvDb.modifyTime == 0) {
 				return false;
 			}

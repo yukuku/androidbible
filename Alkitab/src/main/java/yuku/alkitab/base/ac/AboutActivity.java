@@ -1,5 +1,6 @@
 package yuku.alkitab.base.ac;
 
+import android.annotation.SuppressLint;
 import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
 import android.content.Intent;
@@ -7,7 +8,10 @@ import android.content.Loader;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -47,6 +51,11 @@ public class AboutActivity extends BaseActivity {
 	View bAnnouncements;
 	TextView tAnnouncements;
 	ContentLoadingProgressBar progressAnnouncements;
+
+	final AtomicBoolean backgroundAnimationStarted = new AtomicBoolean(false);
+	int baseHue = 0;
+	final float[] hsl = new float[3];
+	final int[] colors = new int[6];
 
 	enum AnnouncementState {
 		init,
@@ -102,7 +111,8 @@ public class AboutActivity extends BaseActivity {
 		}
 	};
 
-	@Override protected void onCreate(Bundle savedInstanceState) {
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_about);
 
@@ -149,14 +159,10 @@ public class AboutActivity extends BaseActivity {
 					.content(R.string.about_enable_beta_confirmation)
 					.positiveText(R.string.ok)
 					.negativeText(R.string.cancel)
-					.callback(new MaterialDialog.ButtonCallback() {
-						@Override
-						public void onPositive(final MaterialDialog dialog) {
-							try {
-								startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/apps/testing/" + getPackageName())));
-							} catch (Exception ignored) {
-								// just ignore, this is not important if fails.
-							}
+					.onPositive((dialog, which) -> {
+						try {
+							startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/apps/testing/" + getPackageName())));
+						} catch (Exception ignored) {
 						}
 					})
 					.show();
@@ -181,7 +187,7 @@ public class AboutActivity extends BaseActivity {
 
 		imgLogo.setImageDrawable(ResourcesCompat.getDrawableForDensity(getResources(), R.drawable.ic_launcher, DisplayMetrics.DENSITY_XXXHIGH, null));
 
-		imgLogo.setOnTouchListener((v,event) -> {
+		imgLogo.setOnTouchListener((v, event) -> {
 			if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
 				final float x = event.getX();
 				final float y = event.getY();
@@ -204,6 +210,7 @@ public class AboutActivity extends BaseActivity {
 
 	void bAnnouncements_click() {
 		switch (announcementState) {
+			case init:
 			case loading:
 				// do nothing
 				break;
@@ -245,15 +252,41 @@ public class AboutActivity extends BaseActivity {
 		}
 	}
 
-	View.OnTouchListener root_touch = (v, event) -> {
+	final View.OnTouchListener root_touch = (v, event) -> {
 		if (event.getPointerCount() == 4) {
-			getWindow().setBackgroundDrawable(new GradientDrawable(GradientDrawable.Orientation.BR_TL, new int[] {0xffaaffaa, 0xffaaffff, 0xffaaaaff, 0xffffaaff, 0xffffaaaa, 0xffffffaa}));
+			startBackgroundAnimation();
 		} else if (event.getPointerCount() == 5 && event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN) {
 			showSecretDialog();
 		}
 
 		return false;
 	};
+
+	@SuppressLint("HandlerLeak")
+	private void startBackgroundAnimation() {
+		if (!backgroundAnimationStarted.compareAndSet(false, true)) {
+			return;
+		}
+
+		new Handler() {
+			@Override
+			public void handleMessage(final Message msg) {
+				if (isFinishing()) return; // don't leak
+
+				final int baseColor = 0xff99ff99;
+				ColorUtils.colorToHSL(baseColor, hsl);
+				for (int i = 0; i < colors.length; i++) {
+					hsl[0] = (baseHue + i * 60) % 360;
+					colors[i] = ColorUtils.HSLToColor(hsl);
+				}
+
+				getWindow().setBackgroundDrawable(new GradientDrawable(GradientDrawable.Orientation.BR_TL, colors));
+
+				baseHue += 2;
+				sendEmptyMessageDelayed(0, 16);
+			}
+		}.sendEmptyMessage(0);
+	}
 
 	private void showSecretDialog() {
 		new MaterialDialog.Builder(this)

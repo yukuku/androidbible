@@ -232,6 +232,17 @@
 				<data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\.PDB" />
 				<data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\.PDB" />
 			</intent-filter>
+			<!-- chemical/x-pdb -->
+			<intent-filter android:label="@string/intent_filter_open_pdb_file">
+				<action android:name="android.intent.action.VIEW" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+
+				<data android:scheme="file" />
+				<data android:scheme="content" />
+				<data android:mimeType="chemical/x-pdb" />
+			</intent-filter>
 			<!-- last: any file with application/octet-stream type -->
 			<intent-filter android:label="@string/intent_filter_open_pdb_or_yes_file">
 				<action android:name="android.intent.action.VIEW" />

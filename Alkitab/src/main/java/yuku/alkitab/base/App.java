@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
 import android.support.v4.content.LocalBroadcastManager;
@@ -145,7 +146,7 @@ public class App extends yuku.afw.App {
 			PreferenceManager.setDefaultValues(context, preferenceResId, false);
 		}
 
-		updateConfigurationWithPreferencesLocale();
+		forceUpdateConfiguration();
 
 		// all activities need at least the activeVersion from S, so initialize it here.
 		synchronized (S.class) {
@@ -173,6 +174,10 @@ public class App extends yuku.afw.App {
 		if (Preferences.contains(Prefkey.sync_simpleToken)) {
 			Sync.notifySyncNeeded(SyncShadow.ALL_SYNC_SET_NAMES);
 		}
+
+		if (BuildConfig.DEBUG) {
+			Log.d(TAG, "Font scale: " + context.getResources().getConfiguration().fontScale);
+		}
 	}
 
 	private static void forceOverflowMenu() {
@@ -199,7 +204,7 @@ public class App extends yuku.afw.App {
 	}
 
 	private static Locale getLocaleFromPreferences() {
-		final String lang = Preferences.getString(context.getString(R.string.pref_language_key), context.getString(R.string.pref_language_default));
+		final String lang = Preferences.getString(R.string.pref_language_key, R.string.pref_language_default);
 		if (lang == null || "DEFAULT".equals(lang)) {
 			return Locale.getDefault();
 		}
@@ -214,20 +219,57 @@ public class App extends yuku.afw.App {
 		}
 	}
 
+	private static float getFontScaleFromPreferences() {
+		float res = 0.f;
+
+		final String forceFontScale = Preferences.getString(R.string.pref_forceFontScale_key);
+		if (forceFontScale != null && !context.getString(R.string.pref_forceFontScale_default).equals(forceFontScale)) {
+			if (context.getString(R.string.pref_forceFontScale_value_x1_5).equals(forceFontScale)) {
+				res = 1.5f;
+			} else if (context.getString(R.string.pref_forceFontScale_value_x1_7).equals(forceFontScale)) {
+				res = 1.7f;
+			} else if (context.getString(R.string.pref_forceFontScale_value_x2_0).equals(forceFontScale)) {
+				res = 2.0f;
+			}
+		}
+
+		if (res == 0.f) {
+			final float defFontScale = Settings.System.getFloat(context.getContentResolver(), Settings.System.FONT_SCALE, 1.f);
+			if (BuildConfig.DEBUG) Log.d(TAG, "defFontScale: " + defFontScale);
+			res = defFontScale;
+		}
+
+		return res;
+	}
+
 	@Override public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 
 		Log.d(TAG, "@@onConfigurationChanged: config changed to: " + newConfig);
-		updateConfigurationWithPreferencesLocale();
+		forceUpdateConfiguration();
 	}
 
-	public static void updateConfigurationWithPreferencesLocale() {
+	public static void forceUpdateConfiguration() {
 		final Configuration config = context.getResources().getConfiguration();
+		boolean updated = false;
+
 		final Locale locale = getLocaleFromPreferences();
 		if (!U.equals(config.locale.getLanguage(), locale.getLanguage()) || !U.equals(config.locale.getCountry(), locale.getCountry())) {
-			Log.d(TAG, "@@updateConfigurationWithPreferencesLocale: locale will be updated to: " + locale);
+			if (BuildConfig.DEBUG) Log.d(TAG, "@@forceUpdateConfiguration: locale will be updated to: " + locale);
 
 			config.locale = locale;
+			updated = true;
+		}
+
+		final float fontScale = getFontScaleFromPreferences();
+		if (config.fontScale != fontScale) {
+			if (BuildConfig.DEBUG) Log.d(TAG, "@@forceUpdateConfiguration: fontScale will be updated to: " + fontScale);
+
+			config.fontScale = fontScale;
+			updated = true;
+		}
+
+		if (updated) {
 			context.getResources().updateConfiguration(config, null);
 		}
 	}

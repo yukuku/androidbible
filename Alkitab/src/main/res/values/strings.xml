@@ -44,10 +44,10 @@
     <string name="jump_to_prompt"><b>JUMP TO</b> — Example: ^1</string>
     <string name="belum_ada_pembatas_buku">No bookmarks yet.\nSelect a verse to add a bookmark.</string>
     <string name="judul_titikdua">TITLE</string>
-    <string name="gagal_mengunduh_namaumum_tgl_tgl">Failed to download %1$s dated %2$s</string>
-    <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Error in downloading %1$s dated %2$s: %3$s</string>
-    <string name="berhasil_mengunduh_namaumum_tgl_tgl">Succeeded in downloading %1$s dated %2$s</string>
-    <string name="mengunduh_namaumum_tgl_tgl">Downloading %1$s dated %2$s…</string>
+    <string name="devotion_downloader_downloading_title">Downloading ^1</string>
+    <string name="devotion_downloader_downloading_date">dated ^1</string>
+    <string name="devotion_downloader_error_date">Error in date ^1: ^2</string>
+    <string name="devotion_downloader_success_date">Downloadeded date ^1</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Not yet available. Probably the requested date\'s material is not prepared yet, or there are some errors in recognizing the data source. Please try again later.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Not yet available. Fetching from the Internet…\n\n(Ensure there is Internet connection to fetch the devotion materials.)</string>
     <string name="hari_sabtu">Sat</string>
@@ -216,8 +216,9 @@
     <string name="market_short_desc">Fast, reliable and feature-rich offline Bible.</string>
     <string name="no_url_for_facebook">This cannot be shared to Facebook.</string>
     <string name="storage_permission_rationale">We need to access the storage to store shared media such as Bible versions and fonts.</string>
+	<string name="goto_button_history_tip">Tip: Next time, long-press this button to access your recently-opened verses.</string>
 
-    <!-- Goto tabs -->
+	<!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Dialer</string>
     <string name="goto_tab_direct_label">Direct</string>
     <string name="goto_tab_grid_label">Grid</string>
@@ -286,6 +287,7 @@
     <string name="intent_filter_open_pdb_file">Open PDB file</string>
     <string name="intent_filter_open_pdb_or_yes_file">Open PDB/YES file</string>
     <string name="open_yes_file_name_conflict">A YES file named \'%1$s\' already exists in \'%2$s\'.</string>
+	<string name="open_yes_error_read">Error reading data from ^1</string>
     <string name="open_file_cant_read_source">The source could not be successfully read.</string>
     <string name="open_file_unknown_file_format">Could not determine whether this is a PDB or YES file.</string>
     <string name="version_preset_delete_filename">Delete the data file \'%s\'?</string>

@@ -1,5 +1,6 @@
 package yuku.alkitab.base.ac;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -26,7 +27,7 @@ import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
-import yuku.alkitab.base.util.ChangeLanguageHelper;
+import yuku.alkitab.base.util.ChangeConfigurationHelper;
 import yuku.alkitab.base.util.OtherAppIntegration;
 import yuku.alkitab.base.widget.VerseItem;
 import yuku.alkitab.debug.R;
@@ -128,26 +129,34 @@ public class SettingsActivity extends BaseActivity {
 	}
 
 	public static class DisplayFragment extends PreferenceFragmentCompat {
+
+		final Preference.OnPreferenceChangeListener configurationPreferenceChangeListener = (preference, newValue) -> {
+			final Handler handler = new Handler();
+
+			// do this after this method returns true
+			handler.post(() -> {
+				App.forceUpdateConfiguration();
+				ChangeConfigurationHelper.notifyConfigurationNeedsUpdate();
+
+				// restart this activity
+				final Activity ac = getActivity();
+				ac.finish();
+				startActivity(ac.getIntent());
+			});
+			return true;
+		};
+
 		@Override
 		public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 			addPreferencesFromResource(R.xml.settings_display);
 
 			final ListPreference pref_language = (ListPreference) findPreference(getString(R.string.pref_language_key));
-			pref_language.setOnPreferenceChangeListener((preference, newValue) -> {
-				final Handler handler = new Handler();
-
-				// do this after this method returns true
-				handler.post(() -> {
-					App.updateConfigurationWithPreferencesLocale();
-					ChangeLanguageHelper.notifyLocaleChanged();
-
-					// restart this activity
-					getActivity().recreate();
-				});
-				return true;
-			});
+			pref_language.setOnPreferenceChangeListener(configurationPreferenceChangeListener);
 			autoDisplayListPreference(pref_language);
 
+			final ListPreference pref_forceFontScale = (ListPreference) findPreference(getString(R.string.pref_forceFontScale_key));
+			pref_forceFontScale.setOnPreferenceChangeListener(configurationPreferenceChangeListener);
+			autoDisplayListPreference(pref_forceFontScale);
 
 			final CheckBoxPreference pref_bottomToolbarOnText = (CheckBoxPreference) findPreference(getString(R.string.pref_bottomToolbarOnText_key));
 			pref_bottomToolbarOnText.setOnPreferenceChangeListener((preference, newValue) -> {

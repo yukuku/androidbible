@@ -104,7 +104,7 @@ public class MarkersActivity extends BaseActivity {
 		super.onStart();
 
 		// hide sync button if we are already syncing
-		final String syncAccountName = Preferences.getString(getString(R.string.pref_syncAccountName_key));
+		final String syncAccountName = Preferences.getString(R.string.pref_syncAccountName_key);
 		V.get(this, R.id.panelGotoSync).setVisibility(syncAccountName != null ? View.GONE : View.VISIBLE);
 	}
 

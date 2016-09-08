@@ -1,5 +1,6 @@
 package yuku.alkitab.base.ac;
 
+import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,10 +11,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
@@ -40,6 +43,7 @@ import yuku.alkitab.base.devotion.ArticleSantapanHarian;
 import yuku.alkitab.base.devotion.DevotionArticle;
 import yuku.alkitab.base.devotion.DevotionDownloader;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.LeftDrawer;
@@ -105,6 +109,9 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 	public void cbKind_itemSelected(final DevotionKind kind) {
 		currentKind = kind;
 		Preferences.setString(Prefkey.devotion_last_kind_name, currentKind.name);
+
+		Background.run(() -> prefetch(currentKind));
+
 		display();
 	}
 
@@ -146,6 +153,11 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 			public String getShareUrl(final SimpleDateFormat format, final Date date) {
 				return null; // TODO create redirect url
 			}
+
+			@Override
+			public int getPrefetchDays() {
+				return 1;
+			}
 		},
 		ROC("roc", "My Utmost (B. Indonesia)", "Oswald Chambers") {
 			@Override
@@ -167,6 +179,11 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 			@Override
 			public String getShareUrl(final SimpleDateFormat format, final Date date) {
 				return "http://www.sabda.org/publikasi/e-rh/print/?edisi=" + yyyymmdd.get().format(date);
+			}
+
+			@Override
+			public int getPrefetchDays() {
+				return 3;
 			}
 		},
 		ME_EN("me-en", "Morning & Evening", "Charles H. Spurgeon") {
@@ -205,6 +222,10 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
 		@Nullable
 		public abstract String getShareUrl(SimpleDateFormat format, Date date);
+
+		public int getPrefetchDays() {
+			return 31;
+		}
 	}
 
 	public static final DevotionKind DEFAULT_DEVOTION_KIND = DevotionKind.SH;
@@ -215,7 +236,6 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 	TwofingerLinearLayout root;
 	TextView lContent;
 	NestedScrollView scrollContent;
-	TextView lStatus;
 
 	boolean renderSucceeded = false;
 
@@ -269,23 +289,34 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 	final LongReadChecker longReadChecker = new LongReadChecker(this);
 
 	final BroadcastReceiver br = new BroadcastReceiver() {
+		private static final String NOTIFY_TAG = "devotion_downloader";
+		private static final int NOTIFY_ID = 0;
+
+		NotificationManagerCompat nm;
+
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
+			if (nm == null) {
+				nm = NotificationManagerCompat.from(context);
+			}
+
 			final String action = intent.getAction();
 			if (DevotionDownloader.ACTION_DOWNLOAD_STATUS.equals(action)) {
-				final String message = intent.getStringExtra("message");
-				if (message != null) {
-					lStatus.setText(message);
-					lStatus.setVisibility(View.VISIBLE);
+				final CharSequence title = intent.getCharSequenceExtra("title");
+				final CharSequence subtitle = intent.getCharSequenceExtra("subtitle");
 
-					final double nonce = Math.random();
-					lStatus.setTag(R.id.TAG_hideStatus, nonce);
-					lStatus.postDelayed(() -> {
-						if (lStatus.getTag(R.id.TAG_hideStatus).equals(nonce)) {
-							lStatus.setVisibility(View.GONE);
-						}
-					}, 2000);
-				}
+				final Notification n = new NotificationCompat.Builder(DevotionActivity.this)
+					.setContentTitle(title)
+					.setContentText(subtitle)
+					.setProgress(0, 0, true)
+					.setSmallIcon(android.R.drawable.stat_sys_download)
+					.setStyle(new NotificationCompat.BigTextStyle()
+						.bigText(subtitle)
+					)
+					.build();
+
+				nm.notify(NOTIFY_TAG, NOTIFY_ID, n);
+
 			} else if (DevotionDownloader.ACTION_DOWNLOADED.equals(action)) {
 				// is it for us?
 				final String name = intent.getStringExtra("name");
@@ -294,6 +325,8 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 				if (yyyymmdd.get().format(currentDate).equals(date) && currentKind.name.equals(name)) {
 					display();
 				}
+			} else if (DevotionDownloader.ACTION_QUEUE_FINISHED.equals(action)) {
+				nm.cancel(NOTIFY_TAG, NOTIFY_ID);
 			}
 		}
 	};
@@ -318,7 +351,6 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		root = V.get(this, R.id.root);
 		lContent = V.get(this, R.id.lContent);
 		scrollContent = V.get(this, R.id.scrollContent);
-		lStatus = V.get(this, R.id.lStatus);
 
 		root.setTwofingerEnabled(false);
 		root.setListener(root_listener);
@@ -328,7 +360,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		currentKind = storedKind == null ? DEFAULT_DEVOTION_KIND : storedKind;
 		currentDate = new Date();
 
-		new Prefetcher(currentKind).start();
+		Background.run(() -> prefetch(currentKind));
 
 		display();
 	}
@@ -354,6 +386,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
 		App.getLbm().registerReceiver(br, new IntentFilter(DevotionDownloader.ACTION_DOWNLOAD_STATUS));
 		App.getLbm().registerReceiver(br, new IntentFilter(DevotionDownloader.ACTION_DOWNLOADED));
+		App.getLbm().registerReceiver(br, new IntentFilter(DevotionDownloader.ACTION_QUEUE_FINISHED));
 	}
 
 	@Override
@@ -525,53 +558,24 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		devotionDownloader.add(article, prioritize);
 	}
 
-	static boolean prefetcherRunning = false;
+	public void prefetch(DevotionKind kind) {
+		final Date today = new Date();
 
-	class Prefetcher extends Thread {
-		private final DevotionKind prefetchKind;
-
-		public Prefetcher(final DevotionKind kind) {
-			prefetchKind = kind;
+		// delete those older than 180 days!
+		final int deleted = S.getDb().deleteDevotionsWithTouchTimeBefore(new Date(today.getTime() - 180 * 86400_000L));
+		if (deleted > 0) {
+			Log.d(TAG, "old devotions deleted: " + deleted);
 		}
 
-		@Override
-		public void run() {
-			if (prefetcherRunning) {
-				Log.d(TAG, "prefetcher is already running");
+		for (int i = 0; i < kind.getPrefetchDays(); i++) {
+			final String date = yyyymmdd.get().format(today);
+			if (S.getDb().tryGetDevotion(kind.name, date) == null) {
+				Log.d(TAG, "Prefetcher need to get " + kind + " " + date);
+				willNeed(kind, date, false);
 			}
 
-			Thread.yield();
-
-			final Date today = new Date();
-
-			// hapus yang sudah lebih lama dari 6 bulan (180 hari)!
-			final int deleted = S.getDb().deleteDevotionsWithTouchTimeBefore(new Date(today.getTime() - 180 * 86400000L));
-			if (deleted > 0) {
-				Log.d(TAG, "old devotions deleted: " + deleted);
-			}
-
-			prefetcherRunning = true;
-			try {
-				int DAYS = 31;
-				if (prefetchKind == DevotionKind.RH) {
-					DAYS = 3;
-				}
-
-				for (int i = 0; i < DAYS; i++) {
-					String date = yyyymmdd.get().format(today);
-					if (S.getDb().tryGetDevotion(prefetchKind.name, date) == null) {
-						Log.d(TAG, "Prefetcher need to get " + date);
-						willNeed(prefetchKind, date, false);
-					} else {
-						Thread.yield();
-					}
-
-					// maju ke besoknya
-					today.setTime(today.getTime() + 3600 * 24 * 1000);
-				}
-			} finally {
-				prefetcherRunning = false;
-			}
+			// go to the next day
+			today.setTime(today.getTime() + 86400_000L);
 		}
 	}
 
