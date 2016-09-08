@@ -1,10 +1,12 @@
 package yuku.alkitab.base.storage;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import android.os.Build;
 import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -61,6 +63,7 @@ import java.util.Set;
 import static yuku.alkitab.base.util.Literals.Array;
 import static yuku.alkitab.base.util.Literals.ToStringArray;
 
+@TargetApi(Build.VERSION_CODES.KITKAT)
 public class InternalDb {
 	public static final String TAG = InternalDb.class.getSimpleName();
 
@@ -652,11 +655,6 @@ public class InternalDb {
 		} finally {
 			db.endTransaction();
 		}
-	}
-
-	public boolean hasVersionWithFilename(String filename) {
-		final SQLiteDatabase db = helper.getReadableDatabase();
-		return DatabaseUtils.longForQuery(db, "select count(*) from " + Db.TABLE_Version + " where " + Db.Version.filename + "=?", new String[] {filename}) > 0;
 	}
 
 	public void deleteVersion(MVersionDb mv) {

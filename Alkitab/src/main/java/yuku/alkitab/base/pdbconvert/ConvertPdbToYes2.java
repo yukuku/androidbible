@@ -20,6 +20,7 @@ import yuku.alkitab.yes2.section.VersionInfoSection;
 import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexWriter;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class ConvertPdbToYes2 {
 		}
 	}
 	
-	public ConvertResult convert(final Context context, String filenamepdb, String yesFilename, ConvertParams params) {
+	public ConvertResult convert(final Context context, String filenamepdb, File yesFile, ConvertParams params) {
 		ConvertResult res = new ConvertResult();
 		
 		try {
@@ -156,7 +157,7 @@ public class ConvertPdbToYes2 {
 			yesWriter.sections.add(lazyText);
 			
 			progress(700, context.getString(R.string.cp_writing_translated_file));
-			RandomOutputStream output = new RandomAccessFileRandomOutputStream(new RandomAccessFile(yesFilename, "rw"));
+			RandomOutputStream output = new RandomAccessFileRandomOutputStream(new RandomAccessFile(yesFile, "rw"));
 			
 			yesWriter.writeToFile(output);
 			output.close();

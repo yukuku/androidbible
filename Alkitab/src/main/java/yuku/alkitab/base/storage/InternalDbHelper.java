@@ -617,15 +617,14 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			{
 				final VersionConfig vc = VersionConfig.get();
 				for (final MVersionPreset mv : vc.presets) {
-					final String filename = AddonManager.getVersionPath(mv.preset_name + ".yes");
-					final File yesFile = new File(filename);
-					if (yesFile.exists() && yesFile.canRead()) {
+					final File yesFile = AddonManager.getReadableVersionFile(mv.preset_name + ".yes");
+					if (yesFile != null) {
 						cv.clear();
 						cv.put(Db.Version.locale, mv.locale);
 						cv.put(Db.Version.shortName, mv.shortName);
 						cv.put(Db.Version.longName, mv.longName);
 						cv.put(Db.Version.description, mv.description);
-						cv.put(Db.Version.filename, filename);
+						cv.put(Db.Version.filename, yesFile.getAbsolutePath());
 						cv.put(Db.Version.preset_name, mv.preset_name);
 						cv.put(Db.Version.modifyTime, (int) (yesFile.lastModified() / 1000L));
 						cv.put(Db.Version.active, Preferences.getBoolean("edisi/preset/" + mv.preset_name + ".yes/aktif", true) ? 1 : 0);

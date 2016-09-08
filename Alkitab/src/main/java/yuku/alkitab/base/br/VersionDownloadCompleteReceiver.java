@@ -64,7 +64,7 @@ public class VersionDownloadCompleteReceiver extends BroadcastReceiver {
 		final String preset_name;
 		final int modifyTime;
 
-		final String destPath;
+		final File destFile;
 		if ("preset".equals(download_type)) {
 			if (!attrs.containsKey("preset_name")) {
 				Log.w(TAG, "preset_name attr not found for " + id);
@@ -79,8 +79,7 @@ public class VersionDownloadCompleteReceiver extends BroadcastReceiver {
 			}
 
 			modifyTime = Integer.parseInt(attrs.get("modifyTime"));
-			AddonManager.mkYesDir(); // ensure that the directories exist first.
-			destPath = AddonManager.getVersionPath(preset_name + ".yes");
+			destFile = AddonManager.getWritableVersionFile(preset_name + ".yes");
 		} else if ("url".equals(download_type)) {
 			if (!attrs.containsKey("filename_last_segment")) {
 				Log.w(TAG, "filename_last_segment attr not found for " + id);
@@ -88,7 +87,7 @@ public class VersionDownloadCompleteReceiver extends BroadcastReceiver {
 			}
 
 			final String filename_last_segment = attrs.get("filename_last_segment");
-			destPath = AddonManager.getVersionPath(filename_last_segment);
+			destFile = AddonManager.getWritableVersionFile(filename_last_segment);
 
 			preset_name = null;
 			modifyTime = (int) (System.currentTimeMillis() / 1000L);
@@ -105,7 +104,7 @@ public class VersionDownloadCompleteReceiver extends BroadcastReceiver {
 				final ParcelFileDescriptor pfd = dm.openDownloadedFile(id);
 				final FileInputStream fis = new FileInputStream(pfd.getFileDescriptor());
 				final OptionalGzipInputStream ogis = new OptionalGzipInputStream(fis);
-				final AtomicFile af = new AtomicFile(new File(destPath));
+				final AtomicFile af = new AtomicFile(destFile);
 				final FileOutputStream fos = af.startWrite();
 				final byte[] buf = new byte[4096];
 				while (true) {
@@ -127,9 +126,9 @@ public class VersionDownloadCompleteReceiver extends BroadcastReceiver {
 				DownloadMapper.instance.remove(id);
 			}
 
-			final BibleReader reader = YesReaderFactory.createYesReader(destPath);
+			final BibleReader reader = YesReaderFactory.createYesReader(destFile.getAbsolutePath());
 			if (reader == null) {
-				new File(destPath).delete();
+				destFile.delete();
 
 				Foreground.run(() -> context.startActivity(
 					AlertDialogActivity.createOkIntent(null, context.getString(R.string.version_download_corrupted_file))
@@ -149,7 +148,7 @@ public class VersionDownloadCompleteReceiver extends BroadcastReceiver {
 			mvDb.shortName = reader.getShortName();
 			mvDb.longName = reader.getLongName();
 			mvDb.description = reader.getDescription();
-			mvDb.filename = destPath;
+			mvDb.filename = destFile.getAbsolutePath();
 			if ("preset".equals(download_type)) {
 				mvDb.preset_name = preset_name;
 			}

@@ -287,6 +287,7 @@
     <string name="intent_filter_open_pdb_file">Open PDB file</string>
     <string name="intent_filter_open_pdb_or_yes_file">Open PDB/YES file</string>
     <string name="open_yes_file_name_conflict">A YES file named \'%1$s\' already exists in \'%2$s\'.</string>
+	<string name="open_yes_error_read">Error reading data from ^1</string>
     <string name="open_file_cant_read_source">The source could not be successfully read.</string>
     <string name="open_file_unknown_file_format">Could not determine whether this is a PDB or YES file.</string>
     <string name="version_preset_delete_filename">Delete the data file \'%s\'?</string>
