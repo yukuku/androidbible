@@ -3,6 +3,7 @@ package yuku.alkitab.base.devotion;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.util.Log;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -18,6 +19,7 @@ public class DevotionDownloader extends Thread {
 
 	public static final String ACTION_DOWNLOAD_STATUS = DevotionDownloader.class.getName() + ".action.DOWNLOAD_STATUS";
 	public static final String ACTION_DOWNLOADED = DevotionDownloader.class.getName() + ".action.DOWNLOADED";
+	public static final String ACTION_QUEUE_FINISHED = DevotionDownloader.class.getName() + ".action.QUEUE_FINISHED";
 
 	private final LinkedList<DevotionArticle> queue_ = new LinkedList<>();
 
@@ -70,6 +72,8 @@ public class DevotionDownloader extends Thread {
 
 			if (article == null) {
 				try {
+					broadcastQueueFinished();
+
 					synchronized (queue_) {
 						queue_.wait();
 					}
@@ -82,7 +86,10 @@ public class DevotionDownloader extends Thread {
 				final String url = BuildConfig.SERVER_HOST + "devotion/get?name=" + kind.name + "&date=" + article.getDate() + "&app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName());
 
 				Log.d(TAG, "Downloader starts downloading name=" + kind.name + " date=" + article.getDate());
-				broadcastDownloadStatus(App.context.getString(R.string.mengunduh_namaumum_tgl_tgl, kind.title, article.getDate()));
+				broadcastDownloadStatus(
+					TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_downloading_title), kind.title),
+					TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_downloading_date), article.getDate())
+				);
 
 				try {
 					final String output = App.downloadString(url);
@@ -91,9 +98,15 @@ public class DevotionDownloader extends Thread {
 					article.fillIn(output);
 
 					if (output.startsWith("NG")) {
-						broadcastDownloadStatus(App.context.getString(R.string.kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output, kind.title, article.getDate(), output));
+						broadcastDownloadStatus(
+							TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_downloading_title), kind.title),
+							TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_error_date), article.getDate(), output)
+						);
 					} else {
-						broadcastDownloadStatus(App.context.getString(R.string.berhasil_mengunduh_namaumum_tgl_tgl, kind.title, article.getDate()));
+						broadcastDownloadStatus(
+							TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_downloading_title), kind.title),
+							TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_success_date), article.getDate())
+						);
 						broadcastDownloaded(kind.name, article.getDate());
 					}
 
@@ -102,7 +115,10 @@ public class DevotionDownloader extends Thread {
 				} catch (IOException e) {
 					Log.w(TAG, "@@run", e);
 
-					broadcastDownloadStatus(App.context.getString(R.string.gagal_mengunduh_namaumum_tgl_tgl, kind.title, article.getDate()));
+					broadcastDownloadStatus(
+						TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_downloading_title), kind.title),
+						TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_error_date), article.getDate(), e.getMessage())
+					);
 					Log.d(TAG, "Downloader failed to download");
 				}
 			}
@@ -111,11 +127,15 @@ public class DevotionDownloader extends Thread {
 		}
 	}
 
-	void broadcastDownloadStatus(final String message) {
-		App.getLbm().sendBroadcast(new Intent(ACTION_DOWNLOAD_STATUS).putExtra("message", message));
+	void broadcastDownloadStatus(final CharSequence title, final CharSequence subtitle) {
+		App.getLbm().sendBroadcast(new Intent(ACTION_DOWNLOAD_STATUS).putExtra("title", title).putExtra("subtitle", subtitle));
 	}
 
 	void broadcastDownloaded(final String name, final String date) {
 		App.getLbm().sendBroadcast(new Intent(ACTION_DOWNLOADED).putExtra("name", name).putExtra("date", date));
+	}
+
+	void broadcastQueueFinished() {
+		App.getLbm().sendBroadcast(new Intent(ACTION_QUEUE_FINISHED));
 	}
 }

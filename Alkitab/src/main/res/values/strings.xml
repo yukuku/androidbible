@@ -44,10 +44,10 @@
     <string name="jump_to_prompt"><b>JUMP TO</b> — Example: ^1</string>
     <string name="belum_ada_pembatas_buku">No bookmarks yet.\nSelect a verse to add a bookmark.</string>
     <string name="judul_titikdua">TITLE</string>
-    <string name="gagal_mengunduh_namaumum_tgl_tgl">Failed to download %1$s dated %2$s</string>
-    <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Error in downloading %1$s dated %2$s: %3$s</string>
-    <string name="berhasil_mengunduh_namaumum_tgl_tgl">Succeeded in downloading %1$s dated %2$s</string>
-    <string name="mengunduh_namaumum_tgl_tgl">Downloading %1$s dated %2$s…</string>
+    <string name="devotion_downloader_downloading_title">Downloading ^1</string>
+    <string name="devotion_downloader_downloading_date">dated ^1</string>
+    <string name="devotion_downloader_error_date">Error in date ^1: ^2</string>
+    <string name="devotion_downloader_success_date">Downloadeded date ^1</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Not yet available. Probably the requested date\'s material is not prepared yet, or there are some errors in recognizing the data source. Please try again later.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Not yet available. Fetching from the Internet…\n\n(Ensure there is Internet connection to fetch the devotion materials.)</string>
     <string name="hari_sabtu">Sat</string>
