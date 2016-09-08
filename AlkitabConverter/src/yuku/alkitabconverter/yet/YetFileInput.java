@@ -27,7 +27,7 @@ public class YetFileInput {
 		public LinkedHashMap<Integer, FootnoteEntry> footnoteEntries;
 
 		void addInfo(String k, String v) {
-			if (infos == null) infos = new LinkedHashMap<String, String>();
+			if (infos == null) infos = new LinkedHashMap<>();
 			infos.put(k, v);
 		}
 		
@@ -37,14 +37,14 @@ public class YetFileInput {
 		}
 		
 		void addRec(Rec rec) {
-			if (recs == null) recs = new ArrayList<Rec>();
+			if (recs == null) recs = new ArrayList<>();
 			recs.add(rec);
 		}
 		
 		void addBookName(int book_1, String bookName, String bookAbbreviation) {
 			if (bookNames == null) {
-				bookNames = new TreeMap<Integer, String>();
-				bookAbbreviations = new TreeMap<Integer, String>();
+				bookNames = new TreeMap<>();
+				bookAbbreviations = new TreeMap<>();
 			}
 
 			bookNames.put(book_1, bookName);
@@ -57,14 +57,14 @@ public class YetFileInput {
 
 		public void addXrefEntry(final int arif, final XrefEntry xe) {
 			if (xrefEntries == null) {
-				xrefEntries = new LinkedHashMap<Integer, XrefEntry>();
+				xrefEntries = new LinkedHashMap<>();
 			}
 			xrefEntries.put(arif, xe);
 		}
 
 		public void addFootnoteEntry(final int arif, final FootnoteEntry fe) {
 			if (footnoteEntries == null) {
-				footnoteEntries = new LinkedHashMap<Integer, FootnoteEntry>();
+				footnoteEntries = new LinkedHashMap<>();
 			}
 			footnoteEntries.put(arif, fe);
 		}
@@ -73,7 +73,7 @@ public class YetFileInput {
 		 * @return book names indexed from 0
 		 */
 		public List<String> getBookNamesAsList() {
-			final List<String> res = new ArrayList<String>();
+			final List<String> res = new ArrayList<>();
 			for (Map.Entry<Integer, String> e : bookNames.entrySet()) {
 				final int index = e.getKey() - 1;
 				while (index + 1 > res.size()) {
@@ -85,7 +85,7 @@ public class YetFileInput {
 		}
 
 		public List<String> getBookAbbreviationsAsList() {
-			final List<String> res = new ArrayList<String>();
+			final List<String> res = new ArrayList<>();
 			for (Map.Entry<Integer, String> e : bookAbbreviations.entrySet()) {
 				final int index = e.getKey() - 1;
 				while (index + 1 > res.size()) {
@@ -96,9 +96,14 @@ public class YetFileInput {
 			return res;
 		}
 	}
-	
+
+
 	public YetFileInputResult parse(String nf) throws Exception {
-		LinkedHashMap<Integer, Integer> nversePerBook = new LinkedHashMap<Integer, Integer>();
+		return parse(nf, true);
+	}
+
+	public YetFileInputResult parse(String nf, boolean check_verse_ordering) throws Exception {
+		LinkedHashMap<Integer, Integer> nversePerBook = new LinkedHashMap<>();
 		
 		
 		int lastBook_1 = 1;
@@ -162,25 +167,26 @@ public class YetFileInput {
 					int verse_1 = Integer.parseInt(splits[3]);
 					String text = splits[4];
 
-					// check verse ordering
-					boolean validOrdering = false;
-					if (verse_1 == lastVerse_1 + 1) {
-						// next verse
-						validOrdering = true;
-					} else if (verse_1 == 1 && chapter_1 == lastChapter_1 + 1) {
-						// next chapter, verse 1
-						validOrdering = true;
-					} else if (verse_1 == 1 && chapter_1 == 1) {
-						// new book, chapter 1 verse 1
-						validOrdering = true;
-						if (book_1 != lastBook_1 + 1) {
-							// skipped book(s)
-							System.err.println("warning: some book(s) skipped. current book_1: " + book_1 + " previous book_1: " + lastBook_1);
+					if (check_verse_ordering) {
+						boolean validOrdering = false;
+						if (verse_1 == lastVerse_1 + 1) {
+							// next verse
+							validOrdering = true;
+						} else if (verse_1 == 1 && chapter_1 == lastChapter_1 + 1) {
+							// next chapter, verse 1
+							validOrdering = true;
+						} else if (verse_1 == 1 && chapter_1 == 1) {
+							// new book, chapter 1 verse 1
+							validOrdering = true;
+							if (book_1 != lastBook_1 + 1) {
+								// skipped book(s)
+								System.err.println("warning: some book(s) skipped. current book_1: " + book_1 + " previous book_1: " + lastBook_1);
+							}
 						}
-					}
 
-					if (!validOrdering) {
-						throw new RuntimeException("wrong verse ordering at line: " + line);
+						if (!validOrdering) {
+							throw new RuntimeException("wrong verse ordering at line: " + line);
+						}
 					}
 					
 					Rec rec = new Rec();

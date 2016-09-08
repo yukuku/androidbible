@@ -18,7 +18,8 @@ public class YetToYes2 {
 	@Parameter private List<String> params = new ArrayList<String>();
 	@Parameter(names = "--help", help = true, description = "Show this help") private boolean help = false;
 	@Parameter(names = "--no-compress", description = "Disable compression on the resultant yes file") private boolean nocompress = false;
-	
+	@Parameter(names = "--ignore-skipped-verses", description = "Allow skipping verses, e.g. verse 1 1 4 followed directly by verse 1 1 6. However, chapters must still be consecutive and books must start with chapter 1 and verse 1.") private boolean ignore_skipped_verses = false;
+
 	public static void main(String[] args) throws Exception {
 		YetToYes2 main = new YetToYes2();
 		JCommander jc = new JCommander(main, args);
@@ -50,7 +51,7 @@ public class YetToYes2 {
 		System.err.println("input:  " + yetfile);
 		System.err.println("output: " + yesfile);
 		
-		YetFileInputResult result = new YetFileInput().parse(yetfile);
+		YetFileInputResult result = new YetFileInput().parse(yetfile, !ignore_skipped_verses);
 		if (result == null) {
 			// error message given by parse above
 			return 1;
@@ -99,6 +100,10 @@ public class YetToYes2 {
 			if (!KjvUtils.isValidKjv(rec.book_1 - 1, rec.chapter_1, rec.verse_1)) {
 				System.err.println("warning: is not a valid verse in KJV versification: verse " + rec.book_1 + " " + rec.chapter_1 + " " + rec.verse_1);
 			}
+		}
+
+		if (ignore_skipped_verses) {
+			textDb.normalize();
 		}
 
 		boolean compressed = !nocompress;
