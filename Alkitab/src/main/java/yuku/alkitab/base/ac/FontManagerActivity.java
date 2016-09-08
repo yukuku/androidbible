@@ -155,7 +155,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 	}
 
 	String getFontDownloadDestination(String name) {
-		return new File(FontManager.getFontsPath(), "download-" + name + ".zip").getAbsolutePath();
+		return new File(getCacheDir(), "download-" + name + ".zip").getAbsolutePath();
 	}
 
 	public static class FontItem {
@@ -280,7 +280,6 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 			dls.removeEntry(dlkey);
 
 			if (dls.getEntry(dlkey) == null) {
-				new File(FontManager.getFontsPath()).mkdirs();
 				dls.startDownload(
 					dlkey,
 					String.format(URL_fontData, item.name),
