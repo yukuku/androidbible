@@ -93,10 +93,10 @@ fi
 # END BUILD-SPECIFIC
 
 
-echo 'Creating 500 MB ramdisk...'
+echo 'Creating 1000 MB ramdisk...'
 
 BUILD_NAME=$SUPER_PROJECT_NAME-build-`date "+%Y%m%d-%H%M%S"`
-diskutil erasevolume HFS+ $BUILD_NAME `hdiutil attach -nomount ram://1024000`
+diskutil erasevolume HFS+ $BUILD_NAME `hdiutil attach -nomount ram://2048000`
 
 BUILD_DIR=/Volumes/$BUILD_NAME
 

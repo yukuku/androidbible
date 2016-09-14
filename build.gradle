@@ -6,8 +6,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.3'
-        classpath 'me.tatarka:gradle-retrolambda:3.3.0-beta4'
+        classpath 'com.android.tools.build:gradle:2.2.0-rc2'
+        classpath 'me.tatarka:gradle-retrolambda:3.3.0'
     }
 }
 
@@ -26,7 +26,7 @@ allprojects {
 ext {
     SERVER_HOST = 'https://alkitab-host.appspot.com/'
     compileSdkVersion = 24
-    buildToolsVersion = '24.0.1'
+    buildToolsVersion = '24.0.2'
     minSdkVersion = 14
     targetSdkVersion = 24
     travisBuild = System.getenv("TRAVIS") == "true"
