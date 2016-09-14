@@ -22,8 +22,10 @@ import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.ChangeConfigurationHelper;
 import yuku.alkitab.debug.R;
@@ -97,6 +99,14 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 		if (willNeedStoragePermission) {
 			askStoragePermission();
 		}
+
+		// TODO remove this
+		Toast.makeText(this,
+			this.getClass().getSimpleName() + "\n" +
+			"activity context config:\n" + System.identityHashCode(getResources().getConfiguration()) + ": " + getResources().getConfiguration() + "\n"
+				+ "==========\napp context config:\n" + System.identityHashCode(App.context.getResources().getConfiguration()) + ": " + App.context.getResources().getConfiguration()
+			, Toast.LENGTH_LONG
+		).show();
 	}
 
 	private void askStoragePermission() {
