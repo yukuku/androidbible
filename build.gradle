@@ -30,7 +30,7 @@ ext {
     minSdkVersion = 14
     targetSdkVersion = 24
     travisBuild = System.getenv("TRAVIS") == "true"
-    supportLibVersion = '24.2.0'
+    supportLibVersion = '24.2.1'
     materialDialogsVersion = '0.9.0.1'
     gsonVersion = '2.7'
     playServicesVersion = '9.4.0'
