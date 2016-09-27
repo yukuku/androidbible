@@ -16,6 +16,8 @@ public class AppConfig {
 	public boolean menuDictionary;
 	public boolean menuGuide;
 	public boolean menuCommentary;
+	public boolean menuReadingPlan;
+
 
 	public String internalPrefix;
 	public String internalLocale;
@@ -65,6 +67,7 @@ public class AppConfig {
 						res.menuDictionary = parser.getAttributeBooleanValue(null, "dictionary", false);
 						res.menuGuide = parser.getAttributeBooleanValue(null, "guide", false);
 						res.menuCommentary = parser.getAttributeBooleanValue(null, "commentary", false);
+						res.menuReadingPlan = parser.getAttributeBooleanValue(null, "readingplan", false);
 						break;
 					case "devotion":
 						res.devotionNames.add(parser.getAttributeValue(null, "name"));
