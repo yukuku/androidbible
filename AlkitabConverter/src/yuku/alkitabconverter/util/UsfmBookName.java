@@ -25,7 +25,8 @@ public class UsfmBookName {
 		" MAN" + // book_0 84
 		" ESG" + // book_0 85
 		" PS2" + // book_0 86
-		" X87" // book_0 87 -- not implemented
+		" X87" + // book_0 87 -- not implemented
+		" DAG" // book_0 88
 	).split(" ");
 	
 	public static int toBookId(String name) {

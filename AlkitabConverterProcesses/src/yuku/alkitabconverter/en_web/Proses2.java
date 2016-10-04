@@ -24,14 +24,18 @@ import java.util.Stack;
 public class Proses2 {
 	final SAXParserFactory factory = SAXParserFactory.newInstance();
 
-	static String INPUT_PATH_PREFIX = "/Users/yuku/Dropbox/YUKU JAYA/alkitab-sources/step1/usfx/eng-web_usfx";
+	static String INPUT_PATH_PREFIX = "/Users/yuku/alkitab-sources/step1/usfx/eng-web_usfx";
 	static String INPUT_BOOK_NAMES = INPUT_PATH_PREFIX + "/book_names.txt";
 	static String INPUT_TEXT_2 = INPUT_PATH_PREFIX + "/eng-web_usfx.xml";
 	static String OUTPUT_YET = "/tmp/en-web.yet";
 	static String INFO_LOCALE = "en";
 	static String INFO_SHORT_NAME = "WEB";
 	static String INFO_LONG_NAME = "World English Bible";
-	static String INFO_DESCRIPTION = "The World English Bible (WEB) is a Public Domain (no copyright) Modern English translation of the Holy Bible (2014 edition).";
+
+	// Change year when converting!!
+	static String INFO_DESCRIPTION = "The World English Bible (WEB) is a Public Domain (no copyright) " +
+		"Modern English translation of the Holy Bible (2016 edition).";
+
 	static boolean AUTOMATIC_TEXT_WITHOUT_PARAGRAPHS = false; // true if we consider text outside paragraph as Bible text as well.
 	static boolean XREF_SHIFT_TB = false; // whether detected xref references are TB-verse-shifted
 
