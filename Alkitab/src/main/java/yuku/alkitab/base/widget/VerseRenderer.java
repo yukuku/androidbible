@@ -18,6 +18,7 @@ import android.text.style.StyleSpan;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.util.Highlights;
@@ -28,19 +29,37 @@ public class VerseRenderer {
 	static final char[] superscriptDigits = {'\u2070', '\u00b9', '\u00b2', '\u00b3', '\u2074', '\u2075', '\u2076', '\u2077', '\u2078', '\u2079'};
 	public static final char XREF_MARK = '\u203b';
 
-	static class ParagraphSpacingBefore implements LineHeightSpan {
+	public static class ParagraphSpacingBefore implements LineHeightSpan {
 		private final int before;
 
 		// ugly hack
 		static CharSequence lastModifiedText;
-		
+		static int pref_value = 0; // 0 = unknown, 1 = auto, 2 = on, 3 = off
+
+		public static void markPrefValueDirty() {
+			pref_value = 0;
+		}
+
 		ParagraphSpacingBefore(int before) {
 			this.before = before;
 		}
 		
 		@Override public void chooseHeight(CharSequence text, int start, int end, int spanstartv, int v, FontMetricsInt fm) {
+			int _pref_value = pref_value;
+			if (_pref_value == 0) {
+				final String val = Preferences.getString("secret_paragraph_hack");
+				if ("on".equals(val)) {
+					_pref_value = pref_value = 2;
+				} else if ("off".equals(val)) {
+					_pref_value = pref_value = 3;
+				} else { // unset or "auto"
+					_pref_value = pref_value = 1;
+				}
+			}
+			// now, _pref_value can only be 1 or 2 or 3
+
 			final int sdk = Build.VERSION.SDK_INT;
-			if (sdk == 23 || sdk == 24) { // ugly hack
+			if (_pref_value != 3 && (sdk == 23 || sdk == 24 || _pref_value == 2)) { // ugly hack
 				if (spanstartv == v) {
 					fm.top -= before;
 					fm.ascent -= before;

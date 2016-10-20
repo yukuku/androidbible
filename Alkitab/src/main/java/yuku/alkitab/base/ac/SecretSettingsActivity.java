@@ -18,6 +18,7 @@ import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.base.util.Sqlitil;
+import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.model.ProgressMarkHistory;
@@ -30,7 +31,7 @@ public class SecretSettingsActivity extends BaseActivity {
 
 	public static class SecretSettingsFragment extends PreferenceFragmentCompat {
 
-		private Preference.OnPreferenceClickListener secret_progress_mark_history_click = preference -> {
+		final Preference.OnPreferenceClickListener secret_progress_mark_history_click = preference -> {
 			final List<ProgressMark> progressMarks = S.getDb().listAllProgressMarks();
 
 			final String[] labels = new String[progressMarks.size()];
@@ -57,7 +58,7 @@ public class SecretSettingsActivity extends BaseActivity {
 			return true;
 		};
 
-		private Preference.OnPreferenceClickListener secret_version_table_click = preference -> {
+		final Preference.OnPreferenceClickListener secret_version_table_click = preference -> {
 			List<String> items = new ArrayList<>();
 
 			for (final MVersionDb mv : S.getDb().listAllVersions()) {
@@ -74,16 +75,21 @@ public class SecretSettingsActivity extends BaseActivity {
 			return true;
 		};
 
-		Preference.OnPreferenceClickListener secret_sync_debug = preference -> {
+		final Preference.OnPreferenceClickListener secret_sync_debug_click = preference -> {
 			startActivity(new Intent(App.context, SecretSyncDebugActivity.class));
 			return true;
 		};
 
-		Preference.OnPreferenceClickListener secret_reset_read_announcements = preference -> {
+		final Preference.OnPreferenceClickListener secret_reset_read_announcements_click = preference -> {
 			final TLongSet read = Announce.getReadAnnouncementIds();
 			Preferences.remove(Prefkey.announce_read_ids);
 
 			Toast.makeText(getActivity(), "Cleared read announcement ids.\n\nPreviously has " + read.size() + " items:\n" + read, Toast.LENGTH_LONG).show();
+			return true;
+		};
+
+		final Preference.OnPreferenceClickListener secret_paragraph_hack_click = preference -> {
+			VerseRenderer.ParagraphSpacingBefore.markPrefValueDirty();
 			return true;
 		};
 
@@ -93,8 +99,9 @@ public class SecretSettingsActivity extends BaseActivity {
 
 			findPreference("secret_progress_mark_history").setOnPreferenceClickListener(secret_progress_mark_history_click);
 			findPreference("secret_version_table").setOnPreferenceClickListener(secret_version_table_click);
-			findPreference("secret_sync_debug").setOnPreferenceClickListener(secret_sync_debug);
-			findPreference("secret_reset_read_announcements").setOnPreferenceClickListener(secret_reset_read_announcements);
+			findPreference("secret_sync_debug").setOnPreferenceClickListener(secret_sync_debug_click);
+			findPreference("secret_reset_read_announcements").setOnPreferenceClickListener(secret_reset_read_announcements_click);
+			findPreference("secret_paragraph_hack").setOnPreferenceClickListener(secret_paragraph_hack_click);
 		}
 	}
 
