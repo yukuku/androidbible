@@ -460,10 +460,7 @@ public class MarkerListActivity extends BaseActivity {
 		}
 
 		new MaterialDialog.Builder(this)
-			.items(new String[] {
-				deleteMarker,
-				editMarker,
-			})
+			.items(deleteMarker, editMarker)
 			.itemsCallback((dialog, itemView, which, text) -> {
 				final Marker marker = adapter.getItem(position);
 

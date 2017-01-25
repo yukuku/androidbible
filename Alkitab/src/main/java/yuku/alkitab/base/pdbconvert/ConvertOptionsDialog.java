@@ -17,10 +17,10 @@ import yuku.afw.App;
 import yuku.afw.V;
 import yuku.alkitab.debug.R;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -83,7 +83,13 @@ public class ConvertOptionsDialog {
 			bookInfo.getVerse(1, 1);
 		} catch (Throwable e) {
 			callback.onPdbReadError(e);
-			if (pdb != null) pdb.close();
+			if (pdb != null) {
+				try {
+					pdb.close();
+				} catch (IOException e1) {
+					Log.e(TAG, "IO exception when closing", e1);
+				}
+			}
 			return;
 		}
 
@@ -121,20 +127,18 @@ public class ConvertOptionsDialog {
 				charsets.add(key);
 			}
 			
-			Collections.sort(charsets, new Comparator<String>() {
-				@Override public int compare(String a, String b) {
-					int va = 0;
-					int vb = 0;
-					if (a.equalsIgnoreCase("utf-8")) va = -2;
-					if (a.equalsIgnoreCase("iso-8859-1")) va = -1;
-					if (b.equalsIgnoreCase("utf-8")) vb = -2;
-					if (b.equalsIgnoreCase("iso-8859-1")) vb = -1;
-					
-					if (va == 0 && vb == 0) {
-						return a.compareToIgnoreCase(b);
-					} else {
-						return va - vb;
-					}
+			Collections.sort(charsets, (a, b) -> {
+				int va = 0;
+				int vb = 0;
+				if (a.equalsIgnoreCase("utf-8")) va = -2;
+				if (a.equalsIgnoreCase("iso-8859-1")) va = -1;
+				if (b.equalsIgnoreCase("utf-8")) vb = -2;
+				if (b.equalsIgnoreCase("iso-8859-1")) vb = -1;
+
+				if (va == 0 && vb == 0) {
+					return a.compareToIgnoreCase(b);
+				} else {
+					return va - vb;
 				}
 			});
 		} else {
@@ -178,8 +182,12 @@ public class ConvertOptionsDialog {
 	}
 	
 	protected void bOk_click() {
-		pdb.close();
-		
+		try {
+			pdb.close();
+		} catch (IOException e1) {
+			Log.e(TAG, "IO exception when closing", e1);
+		}
+
 		ConvertPdbToYes2.ConvertParams params = new ConvertPdbToYes2.ConvertParams();
 		params.inputEncoding = encodingAdapter.getItem(cbEncoding.getSelectedItemPosition());
 		params.includeAddlTitle = cAddlTitle.isChecked();

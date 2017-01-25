@@ -194,7 +194,7 @@ public class S {
 			}
 		}
 
-		final String[] options = new String[versions.size()];
+		final CharSequence[] options = new CharSequence[versions.size()];
 		for (int i = 0; i < versions.size(); i++) {
 			final MVersion version = versions.get(i);
 			options[i] = version == null ? activity.getString(R.string.split_version_none) : version.longName;

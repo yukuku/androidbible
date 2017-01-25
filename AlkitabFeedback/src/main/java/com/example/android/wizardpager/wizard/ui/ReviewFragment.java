@@ -17,7 +17,6 @@
 package com.example.android.wizardpager.wizard.ui;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.content.res.ResourcesCompat;
@@ -178,8 +177,4 @@ public class ReviewFragment extends ListFragment implements ModelCallbacks {
             return mCurrentReviewItems.size();
         }
     }
-
-	@Override public Context getContext() {
-		return getContext();
-	}
 }

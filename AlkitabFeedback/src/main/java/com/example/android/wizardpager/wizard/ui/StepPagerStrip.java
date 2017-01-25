@@ -255,16 +255,7 @@ public class StepPagerStrip extends View {
         // TODO: Set content description appropriately
     }
 
-    public static interface OnPageSelectedListener {
+    public interface OnPageSelectedListener {
         void onPageStripSelected(int position);
     }
-
-//
-//    @Override
-//    public void computeScroll() {
-//        super.computeScroll();
-//        if (mScroller.computeScrollOffset()) {
-//            setScrollX(mScroller.getCurrX());
-//        }
-//    }
 }

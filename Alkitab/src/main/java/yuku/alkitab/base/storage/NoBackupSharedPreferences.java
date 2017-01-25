@@ -37,7 +37,7 @@ public class NoBackupSharedPreferences {
 	}
 
 	private NoBackupSharedPreferences(final String filename) {
-		file = new File(new ContextCompat().getNoBackupFilesDir(App.context), filename);
+		file = new File(ContextCompat.getNoBackupFilesDir(App.context), filename);
 		if (file.exists()) {
 			final AtomicFile atom = new AtomicFile(file);
 			try {

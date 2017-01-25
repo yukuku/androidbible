@@ -43,7 +43,6 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Appearances;
@@ -602,37 +601,29 @@ public class SearchActivity extends BaseActivity {
 		}
 	};
 
-	final View.OnClickListener bVersion_click = new View.OnClickListener() {
-		@Override
-		public void onClick(final View v) {
-			S.openVersionsDialog(SearchActivity.this, false, searchInVersionId, new S.VersionDialogListener() {
-				@Override
-				public void onVersionSelected(final MVersion mv) {
-					final Version selectedVersion = mv.getVersion();
+	final View.OnClickListener bVersion_click = v -> S.openVersionsDialog(this, false, searchInVersionId, mv -> {
+		final Version selectedVersion = mv.getVersion();
 
-					if (selectedVersion == null) {
-						new MaterialDialog.Builder(SearchActivity.this)
-							.content(getString(R.string.version_error_opening, mv.longName))
-							.positiveText(R.string.ok)
-							.show();
-						return;
-					}
-
-					searchInVersion = selectedVersion;
-					searchInVersionId = mv.getVersionId();
-					textSizeMult = S.getDb().getPerVersionSettings(searchInVersionId).fontSizeMultiplier;
-					Appearances.applyTextAppearance(tSearchTips, textSizeMult);
-
-					displaySearchInVersion();
-					configureFilterDisplayOldNewTest();
-					bVersion.setText(S.getVersionInitials(searchInVersion));
-					if (adapter != null) {
-						adapter.notifyDataSetChanged();
-					}
-				}
-			});
+		if (selectedVersion == null) {
+			new MaterialDialog.Builder(SearchActivity.this)
+				.content(getString(R.string.version_error_opening, mv.longName))
+				.positiveText(R.string.ok)
+				.show();
+			return;
 		}
-	};
+
+		searchInVersion = selectedVersion;
+		searchInVersionId = mv.getVersionId();
+		textSizeMult = S.getDb().getPerVersionSettings(searchInVersionId).fontSizeMultiplier;
+		Appearances.applyTextAppearance(tSearchTips, textSizeMult);
+
+		displaySearchInVersion();
+		configureFilterDisplayOldNewTest();
+		bVersion.setText(S.getVersionInitials(searchInVersion));
+		if (adapter != null) {
+			adapter.notifyDataSetChanged();
+		}
+	});
 
 	protected void setSelectedBookIdsBasedOnFilter() {
 		selectedBookIds.clear();

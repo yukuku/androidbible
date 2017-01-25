@@ -33,7 +33,7 @@ public class SecretSettingsActivity extends BaseActivity {
 		private Preference.OnPreferenceClickListener secret_progress_mark_history_click = preference -> {
 			final List<ProgressMark> progressMarks = S.getDb().listAllProgressMarks();
 
-			final String[] labels = new String[progressMarks.size()];
+			final CharSequence[] labels = new CharSequence[progressMarks.size()];
 			for (int i = 0; i < progressMarks.size(); i++) {
 				final ProgressMark progressMark = progressMarks.get(i);
 				labels[i] = progressMark.caption + " (preset_id " + progressMark.preset_id + ")";
@@ -43,7 +43,7 @@ public class SecretSettingsActivity extends BaseActivity {
 				.items(labels)
 				.itemsCallback((dialog, itemView, position, text) -> {
 					final List<ProgressMarkHistory> pmhs = S.getDb().listProgressMarkHistoryByPresetId(progressMarks.get(position).preset_id);
-					final String[] items = new String[pmhs.size()];
+					final CharSequence[] items = new CharSequence[pmhs.size()];
 					for (int i = 0; i < pmhs.size(); i++) {
 						final ProgressMarkHistory pmh = pmhs.get(i);
 						items[i] = "'" + pmh.progress_mark_caption + "' " + Sqlitil.toLocaleDateMedium(pmh.createTime) + ": " + S.activeVersion.reference(pmh.ari);

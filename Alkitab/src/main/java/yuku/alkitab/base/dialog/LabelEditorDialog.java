@@ -6,6 +6,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import com.afollestad.materialdialogs.DialogAction;
@@ -44,8 +45,11 @@ public class LabelEditorDialog {
 			})
 			.build();
 
-		dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+		final Window window = dialog.getWindow();
+		if (window != null) {
+			window.setLayout(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+			window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+		}
 		dialog.show();
 		
 		final View bOk = dialog.getActionButton(DialogAction.POSITIVE);

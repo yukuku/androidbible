@@ -42,24 +42,18 @@ class PDBAccess {
 		this.is = is;
 	}
 
-	void close() {
-		try {
-			is.close();
-			// make sure it is garbage collected
-			header = null;
-			if (records != null) for (int i = 0; i < records.length; i++) {
-				records[i] = null;
-			}
-			records = null;
-			header_data = null;
-			is = null;
-			record_offsets = null;
-			record_attrs = null;
-
-		} catch (IOException ignored) {
-
+	void close() throws IOException {
+		is.close();
+		// make sure it is garbage collected
+		header = null;
+		if (records != null) for (int i = 0; i < records.length; i++) {
+			records[i] = null;
 		}
-
+		records = null;
+		header_data = null;
+		is = null;
+		record_offsets = null;
+		record_attrs = null;
 	}
 
 	/**

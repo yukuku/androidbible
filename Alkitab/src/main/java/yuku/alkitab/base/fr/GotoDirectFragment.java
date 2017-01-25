@@ -182,7 +182,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 
 		@Override
 		public int getCount() {
-			return candidates == null ? 0 : candidates.size();
+			return candidates.size();
 		}
 
 		/**

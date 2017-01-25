@@ -873,9 +873,9 @@ public class VersionsActivity extends BaseActivity {
 			final MVersion mv = item.mv;
 
 			if (mv instanceof MVersionPreset) {
-				clickOnPresetVersion(V.<CheckBox>get(itemView, R.id.cActive), (MVersionPreset) mv);
+				clickOnPresetVersion(V.get(itemView, R.id.cActive), (MVersionPreset) mv);
 			} else if (mv instanceof MVersionDb) {
-				clickOnDbVersion(V.<CheckBox>get(itemView, R.id.cActive), (MVersionDb) mv);
+				clickOnDbVersion(V.get(itemView, R.id.cActive), (MVersionDb) mv);
 			}
 
 			App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));

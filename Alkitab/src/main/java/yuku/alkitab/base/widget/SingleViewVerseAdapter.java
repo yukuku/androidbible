@@ -86,7 +86,6 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			final int ari = Ari.encodeWithBc(ari_bc_, verse_1);
 			final String text = verses_.getVerse(id);
 			final String verseNumberText = verses_.getVerseNumberText(id);
-			final boolean dontPutSpacingBefore = (position > 0 && itemPointer_[position - 1] < 0) || position == 0;
 			final Highlights.Info highlightInfo = highlightInfoMap_ == null ? null : highlightInfoMap_[id];
 
 			final VerseTextView lText = res.lText;

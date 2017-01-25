@@ -50,19 +50,19 @@ public class DownloadService extends Service {
 			switch (msg.what) {
 			case MSG_stopSelf:
 				sv.stopSelf();
-				return;
+				break;
 			case MSG_progress:
 				if (sv.listener != null) {
 					@SuppressWarnings("unchecked") Pair<DownloadEntry, State> obj = (Pair<DownloadEntry, State>) msg.obj;
 					sv.listener.onProgress(obj.first, obj.second);
 				}
-				return;
+				break;
 			case MSG_stateChanged:
 				if (sv.listener != null) {
 					@SuppressWarnings("unchecked") Pair<DownloadEntry, State> obj = (Pair<DownloadEntry, State>) msg.obj;
 					sv.listener.onStateChanged(obj.first, obj.second);
 				}
-				return;
+				break;
 			}
 		}
 	}

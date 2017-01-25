@@ -3,7 +3,6 @@ package yuku.alkitab.base.util;
 import yuku.alkitab.model.Book;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 
 public class BookNameSorter {
@@ -133,12 +132,10 @@ public class BookNameSorter {
 			cols[i] = c;
 		}
 		
-		Arrays.sort(cols, new Comparator<Collation>() {
-			@Override public int compare(Collation a, Collation b) {
-				int compare = a.base.compareToIgnoreCase(b.base);
-				if (compare != 0) return compare;
-				return a.number - b.number;
-			}
+		Arrays.sort(cols, (a, b) -> {
+			int compare = a.base.compareToIgnoreCase(b.base);
+			if (compare != 0) return compare;
+			return a.number - b.number;
 		});
 		
 		Book[] res = new Book[books.length];

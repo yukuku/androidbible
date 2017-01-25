@@ -198,7 +198,7 @@ public class BiblePlusPDB {
 	/**
 	 * Cleanup object. Only used for debugging.
 	 */
-	public void close() {
+	public void close() throws IOException {
 
 		word_data = null;
 		wordLength = null;

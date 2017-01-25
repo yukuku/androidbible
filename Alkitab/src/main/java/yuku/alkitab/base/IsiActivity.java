@@ -1276,7 +1276,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		public int getItemCount() {
 			return history.getSize();
 		}
-	};
+	}
 
 	public void buildMenu(Menu menu) {
 		menu.clear();
@@ -2363,11 +2363,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 				// always create a new bookmark
 				TypeBookmarkDialog dialog = TypeBookmarkDialog.NewBookmark(IsiActivity.this, ari, verseCount);
-				dialog.setListener(new TypeBookmarkDialog.Listener() {
-					@Override public void onModifiedOrDeleted() {
-						lsSplit0.uncheckAllVerses(true);
-						reloadBothAttributeMaps();
-					}
+				dialog.setListener(() -> {
+					lsSplit0.uncheckAllVerses(true);
+					reloadBothAttributeMaps();
 				});
 				dialog.show();
 
@@ -2390,12 +2388,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				final int ariBc = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
 				int colorRgb = S.getDb().getHighlightColorRgb(ariBc, selected);
 
-				final TypeHighlightDialog.Listener listener = new TypeHighlightDialog.Listener() {
-					@Override
-					public void onOk(int colorRgb) {
-						lsSplit0.uncheckAllVerses(true);
-						reloadBothAttributeMaps();
-					}
+				final TypeHighlightDialog.Listener listener = colorRgb1 -> {
+					lsSplit0.uncheckAllVerses(true);
+					reloadBothAttributeMaps();
 				};
 
 				if (selected.size() == 1) {
@@ -2404,6 +2399,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					final String rawVerseText = S.activeVersion.loadVerseText(ari);
 					final Highlights.Info info = S.getDb().getHighlightColorRgb(ari);
 
+					assert rawVerseText != null;
 					VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, null, ftr);
 					new TypeHighlightDialog(IsiActivity.this, ari, listener, colorRgb, info, reference, ftr.result);
 				} else {
