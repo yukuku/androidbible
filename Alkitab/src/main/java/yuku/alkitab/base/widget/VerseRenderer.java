@@ -50,19 +50,11 @@ public class VerseRenderer {
 		public CharSequence result;
 	}
 
-	/** Creates a leading margin span based on version:
-	 * - API 7 or 11 and above: LeadingMarginSpan.Standard
-	 * - API 8..10: LeadingMarginSpanFixed, which is based on LeadingMarginSpan.LeadingMarginSpan2
-	 */
-	static Object createLeadingMarginSpan(int all) {
+	static LeadingMarginSpan.Standard createLeadingMarginSpan(int all) {
 		return createLeadingMarginSpan(all, all);
 	}
 	
-	/** Creates a leading margin span based on version:
-	 * - API 7 or 11 and above: LeadingMarginSpan.Standard
-	 * - API 8..10: LeadingMarginSpanFixed, which is based on LeadingMarginSpan.LeadingMarginSpan2
-	 */
-	static Object createLeadingMarginSpan(int first, int rest) {
+	static LeadingMarginSpan.Standard createLeadingMarginSpan(int first, int rest) {
 		return new LeadingMarginSpan.Standard(first, rest);
 	}
 	
