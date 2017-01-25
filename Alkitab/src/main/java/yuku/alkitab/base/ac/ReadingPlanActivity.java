@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.PopupMenu;
@@ -761,13 +762,13 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 				if (actualPercentage == targetPercentage) {
 					tComment.setText(R.string.rp_commentOnSchedule);
-					tComment.setTextColor(getResources().getColor(R.color.escape));
+					tComment.setTextColor(ResourcesCompat.getColor(getResources(), R.color.escape, getTheme()));
 				} else if (actualPercentage < targetPercentage) {
 					tComment.setText(getString(R.string.rp_commentBehindSchedule, String.format(Locale.US, "%.2f", targetPercentage - actualPercentage)));
 					tComment.setTextColor(originalCommentTextColor);
 				} else {
 					tComment.setText(getString(R.string.rp_commentAheadSchedule, String.format(Locale.US, "%.2f", actualPercentage - targetPercentage)));
-					tComment.setTextColor(getResources().getColor(R.color.escape));
+					tComment.setTextColor(ResourcesCompat.getColor(getResources(), R.color.escape, getTheme()));
 				}
 
 				tDetail.setOnClickListener(v -> {

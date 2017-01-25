@@ -14,6 +14,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -64,7 +65,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 
 		if (actionBar != null) {
 			if (Preferences.getBoolean(Prefkey.is_night_mode, false)) {
-				actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primary_night_mode)));
+				actionBar.setBackgroundDrawable(new ColorDrawable(ResourcesCompat.getColor(getResources(), R.color.primary_night_mode, getTheme())));
 
 				if (Build.VERSION.SDK_INT >= 21) {
 					getWindow().setStatusBarColor(0xff000000);
@@ -75,7 +76,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 				actionBar.setBackgroundDrawable(new ColorDrawable(tv.data));
 
 				if (Build.VERSION.SDK_INT >= 21) {
-					getWindow().setStatusBarColor(getResources().getColor(R.color.primary_dark));
+					getWindow().setStatusBarColor(ResourcesCompat.getColor(getResources(), R.color.primary_dark, getTheme()));
 				}
 			}
 		}

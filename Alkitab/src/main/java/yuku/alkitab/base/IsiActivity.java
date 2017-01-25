@@ -23,6 +23,7 @@ import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -1229,7 +1230,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				if (thisCreatorId.equals(history.getCreatorId(position))) {
 					holder.text1.setTextColor(defaultTextColor);
 				} else {
-					holder.text1.setTextColor(getResources().getColor(R.color.escape));
+					holder.text1.setTextColor(ResourcesCompat.getColor(getResources(), R.color.escape, getTheme()));
 				}
 			}
 

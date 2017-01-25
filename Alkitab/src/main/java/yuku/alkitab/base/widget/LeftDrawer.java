@@ -6,6 +6,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
@@ -80,7 +81,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 		bSettings = V.get(this, R.id.bSettings);
 		bHelp = V.get(this, R.id.bHelp);
 
-		final int selectedTextColor = getResources().getColor(R.color.accent);
+		final int selectedTextColor = ResourcesCompat.getColor(getResources(), R.color.accent, getContext().getTheme());
 		if (this instanceof Text) bBible.setTextColor(selectedTextColor);
 		if (this instanceof Devotion) bDevotion.setTextColor(selectedTextColor);
 		if (this instanceof ReadingPlan) bReadingPlan.setTextColor(selectedTextColor);

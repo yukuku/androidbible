@@ -10,6 +10,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.ActionBar;
@@ -220,7 +221,7 @@ public class SearchActivity extends BaseActivity {
 			final CharSequence text;
 			if (_id == -1) {
 				final SpannableStringBuilder sb = new SpannableStringBuilder(getString(R.string.search_clear_history));
-				sb.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.escape)), 0, sb.length(), 0);
+				sb.setSpan(new ForegroundColorSpan(ResourcesCompat.getColor(getResources(), R.color.escape, getTheme())), 0, sb.length(), 0);
 				text = sb;
 			} else {
 				text = cursor.getString(COLINDEX_QUERY_STRING);
