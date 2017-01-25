@@ -26,14 +26,14 @@ import java.util.List;
 
 /**
  * Represents a book in the bible
- * 
- * 
+ *
+ *
  */
 public class BookInfo {
 
 	/**
 	 * Factory method for creating BookInfo
-	 * 
+	 *
 	 * @param bible
 	 *            the bible object
 	 * @param data
@@ -63,7 +63,7 @@ public class BookInfo {
 		idx += 8;
 		bi.complexName = new byte[32];
 		System.arraycopy(data, offset + idx, bi.complexName, 0, 32);
-		
+
 		return bi;
 	}
 
@@ -110,7 +110,7 @@ public class BookInfo {
 
 	/***
 	 * These constants are special numbers to indicate "tags"
-	 * 
+	 *
 	 */
 	private final int bookTextType = 0xFFFF;
 
@@ -118,10 +118,6 @@ public class BookInfo {
 
 	private final int descTextType = 0xFFFD;
 	private final int versTextType = 0xFFFC;
-	/**
-	 * PDB Record size
-	 */
-	private final int RECORD_SIZE = 4096;
 	private byte index_data[];
 
 	private byte data[];
@@ -147,7 +143,7 @@ public class BookInfo {
 
 	/**
 	 * Construct this BookInfo. This is not public, will only be called by createFromData
-	 * 
+	 *
 	 * @param bible
 	 *            object that creates this book
 	 */
@@ -170,22 +166,6 @@ public class BookInfo {
 	}
 
 	/**
-	 * Add character separator a StringBuffer given the previous word that was appended
-	 * If the word was a delimiter, then we don't append any separator
-	 */
-	private void addSepChar(StringBuffer sb, String word) {
-		if (sb.length() > 0) {
-			if (word.length() == 1) {
-				if (".,?!;:-".indexOf(word.charAt(0)) < 0) {
-					sb.append(bible.getSepChar());
-				}
-			} else {
-				sb.append(bible.getSepChar());
-			}
-		}
-	}
-
-	/**
 	 * Set references to null. Not really necessary, just for
 	 * debugging. If we set everything to null it makes it easy to
 	 * detect in case we try to access something that we've thrown
@@ -202,7 +182,7 @@ public class BookInfo {
 	/**
 	 * Get book numbefr. PDB Files usually have standard book numbering (10 = Genesis, etc)
 	 * Note: some PDB files are created with non-standard book numbering.
-	 * 
+	 *
 	 * @return the book number
 	 */
 	public int getBookNumber() {
@@ -210,19 +190,8 @@ public class BookInfo {
 	}
 
 	/**
-	 * The position of the book in the bible file.
-	 * For example Matthew can be in position 0 for Bible files with new testament only
-	 * But it can be position 39 for Protestant Bible with old and new testament
-	 * 
-	 * @return book position
-	 */
-	public int getBookPosition() {
-		return bookPosition;
-	}
-
-	/**
 	 * Get number of chapters in this book
-	 * 
+	 *
 	 * @return chapter count
 	 */
 	public int getChapterCount() {
@@ -231,7 +200,7 @@ public class BookInfo {
 
 	/**
 	 * Get complete verse content for this chapter/verse
-	 * 
+	 *
 	 * @param chapter
 	 *            chapter number
 	 * @param verse
@@ -244,7 +213,7 @@ public class BookInfo {
 	 *         title (if exist, this will only appear in verse 1 of a
 	 *         chapter), Index 3 contains book title (if exists, this will
 	 *         only appear in chapter 1 verse 1 of a book.
-	 * 
+	 *
 	 */
 	public String[] getCompleteVerse(int chapter, int verse) {
 
@@ -271,7 +240,7 @@ public class BookInfo {
 //		}
 		// </original>
 		// </yuku>
-		
+
 		// <yuku>
 		@SuppressWarnings("unchecked")
 		ArrayList<String>[] words = new ArrayList[4];
@@ -280,7 +249,7 @@ public class BookInfo {
 		words[2] = new ArrayList<>();
 		words[3] = new ArrayList<>();
 		// </yuku>
-		
+
 
 		int sbpos = 0; // verse
 
@@ -291,9 +260,7 @@ public class BookInfo {
 
 		// System.out.println("Start " + verseStart + " length " + verseLength);
 
-		int compStart = verseStart * 2;
-
-		int idx = compStart;
+		int idx = verseStart * 2;
 
 		for (int i = 0; i < verseLength; i++) {
 			int decWordNum = (data[idx] & 0xff) * 256 + (data[idx + 1] & 0xff);
@@ -302,7 +269,6 @@ public class BookInfo {
 			int pos = bible.getWordPos(decWordNum);
 			// System.out.println("wordpos " + pos);
 			// System.out.println("wordlength " + bible.getWordLength(pos));
-			int wordIndex = bible.getWordIndex(pos, decWordNum);
 			// System.out.println("wordindex " + wordIndex);
 			int[] r = bible.getRepeat(pos, decWordNum);
 			if (r != null) {
@@ -340,7 +306,7 @@ public class BookInfo {
 				// System.out.println("r is null" + word);
 			}
 		}
-		
+
 		// <yuku>
 		String sepChar = bible.getSepChar();
 		String[] res = new String[4];
@@ -362,9 +328,9 @@ public class BookInfo {
 	private String stringFromWords(List<String> words, String sepChar) {
 		if (words == null) return "";
 		if (words.size() == 0) return "";
-		
+
 		StringBuilder sb = new StringBuilder();
-		
+
 		// put spaces in all, except:
 		// word + )
 		// word + ]
@@ -405,22 +371,22 @@ public class BookInfo {
 					}
 				}
 			}
-			
+
 			if (sep) {
 				sb.append(sepChar);
 			}
 			sb.append(cur);
-			
+
 			prev = cur;
 		}
-		
+
 		return sb.toString();
 	}
 	// </yuku>
 
 	/**
 	 * Get raw data for this book
-	 * 
+	 *
 	 * @return raw data bytes of this book
 	 */
 	byte[] getData() {
@@ -429,7 +395,7 @@ public class BookInfo {
 
 	/**
 	 * Get the complete name of this book
-	 * 
+	 *
 	 * @return The complete/long name of this book
 	 */
 	public String getFullName() {
@@ -438,7 +404,7 @@ public class BookInfo {
 
 	/**
 	 * Get the short name of this book
-	 * 
+	 *
 	 * @return The sort name of this book, for example GEN for Genesis
 	 */
 	public String getShortName() {
@@ -447,7 +413,7 @@ public class BookInfo {
 
 	/**
 	 * Get the verse portion only (no chapter title/book title)
-	 * 
+	 *
 	 * @param chapter
 	 *            chapter number
 	 * @param verse
@@ -465,7 +431,7 @@ public class BookInfo {
 	/**
 	 * This is the byteshifted version of getCompleteVerse. It
 	 * will be called by getCompleteVerse when the bible file is byte shifted
-	 * 
+	 *
 	 * @param chapter
 	 *            chapter number
 	 * @param verse
@@ -486,7 +452,7 @@ public class BookInfo {
 
 		// System.out.println("Start " + verseStart + " length " + verseLength);
 
-		int decShift = 0;
+		int decShift;
 		int decValueBuffer[] = new int[3];
 
 		int compStart;
@@ -504,7 +470,6 @@ public class BookInfo {
 			decValueBuffer[2] = data[idx++];
 			break;
 		default:
-			;
 		}
 
 		// <yuku>
@@ -519,8 +484,8 @@ public class BookInfo {
 		int sbpos = 0;
 
 		ayam: for (int i = 0; i < verseLength; i++) {
-			if (idx >= data.length) {Log.d("idx OOB", getFullName() + " c" + chapter + " v" + verse + " i=" + i + " verseLength=" + verseLength + " data.length=" + data.length + " idx=" + idx); break ayam;}
-			
+			if (idx >= data.length) {Log.d("idx OOB", getFullName() + " c" + chapter + " v" + verse + " i=" + i + " verseLength=" + verseLength + " data.length=" + data.length + " idx=" + idx); break;}
+
 			switch (decShift) {
 			case 0:
 				decValueBuffer[0] = data[idx++] & 0xff;
@@ -546,7 +511,6 @@ public class BookInfo {
 				decValueBuffer[2] = 0;
 				break;
 			default:
-				;
 			}
 
 			int value = decValueBuffer[0] << 16 | decValueBuffer[1] << 8 |
@@ -565,7 +529,6 @@ public class BookInfo {
 
 			int decWordNum = value;
 			int pos = bible.getWordPos(decWordNum);
-			int wordIndex = bible.getWordIndex(pos, decWordNum);
 			int[] r = bible.getRepeat(pos, decWordNum);
 			if (r != null) {
 				for (int j = 0; j < r.length; j++) {
@@ -622,7 +585,7 @@ public class BookInfo {
 
 	/**
 	 * Get the total number of verse in a chapter
-	 * 
+	 *
 	 * @return total number of verse in a chapter
 	 */
 	public int getVerseCount(int chapter) {
@@ -634,7 +597,7 @@ public class BookInfo {
 	/**
 	 * Get the total number of "word number" in a verse
 	 * A "word number" can represent multiple words
-	 * 
+	 *
 	 * @param chapter
 	 *            chapter number
 	 * @param verse
@@ -655,7 +618,7 @@ public class BookInfo {
 	/**
 	 * Get the start position of a verse
 	 * This is not public, to be called by BiblePlusPDB for fastsearch
-	 * 
+	 *
 	 * @param chapter
 	 *            chapter number
 	 * @param verse
@@ -675,10 +638,10 @@ public class BookInfo {
 
 		return verseStart;
 	}
-	
+
 	/**
 	 * Try to open this book (load verse data for this book)
-	 * 
+	 *
 	 * @throws IOException
 	 *             in case of error in reading the book
 	 */
@@ -720,6 +683,10 @@ public class BookInfo {
 		data = new byte[total_len];
 		for (int i = 0; i < totalBookRec; i++) {
 			byte[] d = records[i].getData();
+			/*
+	  PDB Record size
+	 */
+			final int RECORD_SIZE = 4096;
 			System.arraycopy(d, 0, data, i * RECORD_SIZE, d.length);
 			access.removeFromCache(bookIndex + i + 1);
 		}
@@ -761,20 +728,6 @@ public class BookInfo {
 	@Override
 	public String toString() {
 		return getFullName();
-	}
-
-	/**
-	 * Try to open a book
-	 * 
-	 * @return true if the book is opened and false on error
-	 */
-	public boolean tryOpenBook() {
-		try {
-			openBook();
-		} catch (IOException e) {
-			return false;
-		}
-		return true;
 	}
 
 	private int vlen(int index) {
