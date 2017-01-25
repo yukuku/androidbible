@@ -11,7 +11,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ViewConfiguration;
-import android.widget.Toast;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -245,9 +244,6 @@ public class App extends yuku.afw.App {
 
 	@Override public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-
-		// TODO remove this
-		Toast.makeText(this, "App @@onConfigurationChanged: config changed to: " + newConfig, Toast.LENGTH_LONG).show();
 
 		Log.d(TAG, "@@onConfigurationChanged: config changed to: " + newConfig);
 		forceUpdateConfiguration();
