@@ -92,7 +92,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			final VerseTextView lText = res.lText;
 			final TextView lVerseNumber = res.lVerseNumber;
 
-			final int startVerseTextPos = VerseRenderer.render(lText, lVerseNumber, ari, text, verseNumberText, highlightInfo, checked, dontPutSpacingBefore, inlineLinkSpanFactory_, null);
+			final int startVerseTextPos = VerseRenderer.render(lText, lVerseNumber, ari, text, verseNumberText, highlightInfo, checked, inlineLinkSpanFactory_, null);
 
 			final float textSizeMult;
 			if (verses_ instanceof SingleChapterVerses.WithTextSizeMult) {

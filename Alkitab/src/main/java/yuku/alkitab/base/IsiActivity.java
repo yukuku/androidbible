@@ -2403,7 +2403,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					final String rawVerseText = S.activeVersion.loadVerseText(ari);
 					final Highlights.Info info = S.getDb().getHighlightColorRgb(ari);
 
-					VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, false, null, ftr);
+					VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, null, ftr);
 					new TypeHighlightDialog(IsiActivity.this, ari, listener, colorRgb, info, reference, ftr.result);
 				} else {
 					new TypeHighlightDialog(IsiActivity.this, ariBc, selected, listener, colorRgb, reference);

@@ -1,8 +1,6 @@
 package yuku.alkitab.base.widget;
 
-import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -12,7 +10,6 @@ import android.text.TextPaint;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.LeadingMarginSpan;
-import android.text.style.LineHeightSpan;
 import android.text.style.MetricAffectingSpan;
 import android.text.style.StyleSpan;
 import android.view.View;
@@ -27,37 +24,6 @@ public class VerseRenderer {
 
 	static final char[] superscriptDigits = {'\u2070', '\u00b9', '\u00b2', '\u00b3', '\u2074', '\u2075', '\u2076', '\u2077', '\u2078', '\u2079'};
 	public static final char XREF_MARK = '\u203b';
-
-	static class ParagraphSpacingBefore implements LineHeightSpan {
-		private final int before;
-
-		// ugly hack
-		static CharSequence lastModifiedText;
-		
-		ParagraphSpacingBefore(int before) {
-			this.before = before;
-		}
-		
-		@Override public void chooseHeight(CharSequence text, int start, int end, int spanstartv, int v, FontMetricsInt fm) {
-			final int sdk = Build.VERSION.SDK_INT;
-			if (sdk == 23 || sdk == 24) { // ugly hack
-				if (spanstartv == v) {
-					fm.top -= before;
-					fm.ascent -= before;
-					lastModifiedText = text;
-				} else if (lastModifiedText == text /* identity equals */) {
-					fm.top += before;
-					fm.ascent += before;
-					lastModifiedText = null; // do not do this multiple times
-				}
-			} else {
-				if (spanstartv == v) {
-					fm.top -= before;
-					fm.ascent -= before;
-				}
-			}
-		}
-	}
 
 	public static class VerseNumberSpan extends MetricAffectingSpan {
 		private final boolean applyColor;
@@ -115,11 +81,10 @@ public class VerseRenderer {
 	/**
 	 * @param lText TextView for verse text, but can be null if rendering is for non-display
 	 * @param lVerseNumber TextView for verse number, but can be null if rendering is for non-display
-	 * @param dontPutSpacingBefore this verse is right after a pericope title or on the 0th position
 	 * @param ftr optional container for result that contains the verse text with span formattings, without the verse numbers
 	 * @return how many characters was used before the real start of verse text. This will be > 0 if the verse number is embedded inside lText.
 	 */
-	public static int render(@Nullable final TextView lText, @Nullable final TextView lVerseNumber, final int ari, @NonNull final String text, final String verseNumberText, @Nullable final Highlights.Info highlightInfo, final boolean checked, final boolean dontPutSpacingBefore, @Nullable final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, @Nullable final FormattedTextResult ftr) {
+	public static int render(@Nullable final TextView lText, @Nullable final TextView lVerseNumber, final int ari, @NonNull final String text, final String verseNumberText, @Nullable final Highlights.Info highlightInfo, final boolean checked, @Nullable final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, @Nullable final FormattedTextResult ftr) {
 		// @@ = start a verse containing paragraphs or formatting
 		// @0 = start with indent 0 [paragraph]
 		// @1 = start with indent 1 [paragraph]
@@ -246,7 +211,7 @@ public class VerseRenderer {
 				case '4':
 				case '^':
 					// apply previous
-					applyParaStyle(sb, paraType, startPara, verseNumberText, startPosAfterVerseNumber > 0, dontPutSpacingBefore && startPara <= startPosAfterVerseNumber, startPara <= startPosAfterVerseNumber, lVerseNumber);
+					applyParaStyle(sb, paraType, startPara, verseNumberText, startPosAfterVerseNumber > 0);
 					if (sb.length() > startPosAfterVerseNumber) {
 						sb.append("\n");
 					}
@@ -292,7 +257,7 @@ public class VerseRenderer {
 		}
 		
 		// apply unapplied
-		applyParaStyle(sb, paraType, startPara, verseNumberText, startPosAfterVerseNumber > 0, dontPutSpacingBefore && startPara <= startPosAfterVerseNumber, startPara <= startPosAfterVerseNumber, lVerseNumber);
+		applyParaStyle(sb, paraType, startPara, verseNumberText, startPosAfterVerseNumber > 0);
 
 		if (highlightInfo != null) {
 			final BackgroundColorSpan span = new BackgroundColorSpan(Highlights.alphaMix(highlightInfo.colorRgb));
@@ -399,9 +364,8 @@ public class VerseRenderer {
 	 * @param paraType if -1, will apply the same thing as when paraType is 0 and firstLineWithVerseNumber is true.
 	 * @param firstLineWithVerseNumber If this is formatting for the first paragraph of a verse and that paragraph contains a verse number, so we can apply more lefty first-line indent.
 	 * This only applies if the paraType is 0.
-	 * @param dontPutSpacingBefore if this paragraph is just after pericope title or on the 0th position, in this case we don't apply paragraph spacing before.
 	 */
-	static void applyParaStyle(SpannableStringBuilder sb, int paraType, int startPara, String verseNumberText, boolean firstLineWithVerseNumber, boolean dontPutSpacingBefore, boolean firstParagraph, @Nullable TextView lVerseNumber) {
+	static void applyParaStyle(SpannableStringBuilder sb, int paraType, int startPara, String verseNumberText, boolean firstLineWithVerseNumber) {
 		int len = sb.length();
 		
 		if (startPara == len) return;
@@ -432,12 +396,6 @@ public class VerseRenderer {
 			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing4 + indentSpacingExtraUnits * S.applied.indentSpacingExtra), startPara, len, 0);
 			break;
 		case '^':
-			if (!dontPutSpacingBefore) {
-				sb.setSpan(new VerseRenderer.ParagraphSpacingBefore(S.applied.paragraphSpacingBefore), startPara, len, 0);
-				if (firstParagraph && lVerseNumber != null) {
-					lVerseNumber.setPadding(0, S.applied.paragraphSpacingBefore, 0, 0);
-				}
-			}
 			sb.setSpan(createLeadingMarginSpan(S.applied.indentParagraphFirst, S.applied.indentParagraphRest), startPara, len, 0);
 			break;
 		}
