@@ -117,7 +117,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		final Sync.ClientState<Sync_Mabel.Content> clientState = pair.clientState;
 
 		sb.append("Base revno: ").append(clientState.base_revno).append('\n');
-		sb.append("Delta operations (size " + clientState.delta.operations.size() + "):\n");
+		sb.append("Delta operations (size ").append(clientState.delta.operations.size()).append("):\n");
 
 		for (final Sync.Operation<Sync_Mabel.Content> operation : clientState.delta.operations) {
 			sb.append("\u2022 ").append(operation).append('\n');

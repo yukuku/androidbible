@@ -9,15 +9,6 @@
 		android:positiveButtonText="@null"
 		android:title="@string/pref_bahasa_language" />
 
-	<ListPreference
-		android:defaultValue="@string/pref_forceFontScale_default"
-		android:entries="@array/pref_forceFontScale_labels"
-		android:entryValues="@array/pref_forceFontScale_values"
-		android:key="@string/pref_forceFontScale_key"
-		android:negativeButtonText="@null"
-		android:positiveButtonText="@null"
-		android:title="@string/pref_forceFontScale_title" />
-
 	<CheckBoxPreference
 		android:defaultValue="@bool/pref_keepScreenOn_default"
 		android:key="@string/pref_keepScreenOn_key"
