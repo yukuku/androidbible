@@ -29,9 +29,8 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:gravity="center_vertical"
-			android:text="FontName"
 			android:textAppearance="?android:attr/textAppearanceMedium"
-			tools:ignore="HardcodedText" />
+			tools:text="FontName" />
 
 		<ProgressBar
 			android:id="@+id/progressbar"
@@ -44,10 +43,9 @@
 			android:id="@+id/lErrorMsg"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="*error msg"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:visibility="gone"
-			tools:ignore="HardcodedText" />
+			tools:text="error msg" />
 
 	</LinearLayout>
 

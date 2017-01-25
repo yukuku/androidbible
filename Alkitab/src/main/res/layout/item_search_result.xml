@@ -1,33 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:padding="16dip" >
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:padding="16dip">
 
-    <TextView
-        android:id="@+id/lReference"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:gravity="center_vertical"
-        android:text="*reference"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        tools:ignore="HardcodedText" />
+	<TextView
+		android:id="@+id/lReference"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentTop="true"
+		android:gravity="center_vertical"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		tools:text="reference" />
 
-    <TextView
-        android:id="@+id/lSnippet"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:textSize="14sp"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_below="@id/lReference"
-        android:gravity="top"
-        android:text="*snippet"
-        tools:ignore="HardcodedText" />
+	<TextView
+		android:id="@+id/lSnippet"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentRight="true"
+		android:layout_alignWithParentIfMissing="true"
+		android:layout_below="@id/lReference"
+		android:gravity="top"
+		android:textSize="14sp"
+		tools:text="snippet" />
 
 </RelativeLayout>

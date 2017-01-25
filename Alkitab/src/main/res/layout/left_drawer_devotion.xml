@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<view
+<view android:id="@+id/left_drawer"
 	class="yuku.alkitab.base.widget.LeftDrawer$Devotion"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-	android:id="@+id/left_drawer"
 	android:layout_width="@dimen/left_drawer_width"
 	android:layout_height="match_parent"
 	android:layout_gravity="start"
@@ -27,17 +26,15 @@
 			android:id="@+id/cbKind"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
-			android:text="*devotion name"
-			tools:ignore="HardcodedText" />
+			tools:text="devotion name" />
 
 		<TextView
 			android:id="@+id/tCurrentDate"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
 			android:gravity="center"
-			android:text="*current date"
-			android:textSize="16sp"
-			tools:ignore="HardcodedText" />
+			tools:text="current date"
+			android:textSize="16sp" />
 
 		<LinearLayout
 			android:layout_width="match_parent"

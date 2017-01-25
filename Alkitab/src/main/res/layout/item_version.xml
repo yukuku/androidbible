@@ -16,10 +16,9 @@
 			android:layout_height="wrap_content"
 			android:layout_gravity="bottom"
 			android:layout_marginBottom="4dp"
-			android:text="*Language Name"
 			android:textColor="#898989"
 			android:textSize="12sp"
-			tools:ignore="HardcodedText" />
+			tools:text="Language Name" />
 
 	</FrameLayout>
 
@@ -38,9 +37,8 @@
 			android:background="?selectableItemBackground"
 			android:drawablePadding="8dp"
 			android:gravity="center_vertical"
-			android:text="*Long version name"
 			android:textAppearance="?android:textAppearanceMedium"
-			tools:ignore="HardcodedText" />
+			tools:text="Long version name" />
 
 		<FrameLayout
 			android:id="@+id/panelRight"

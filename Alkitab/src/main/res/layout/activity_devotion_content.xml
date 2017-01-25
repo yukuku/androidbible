@@ -27,9 +27,8 @@
 				android:layout_height="wrap_content"
 				android:paddingLeft="@dimen/text_side_padding"
 				android:paddingRight="@dimen/text_side_padding"
-				android:text="*Devotion content here."
 				android:textIsSelectable="true"
-				tools:ignore="HardcodedText" />
+				tools:text="Devotion content here." />
 		</android.support.v4.widget.NestedScrollView>
 
 	</yuku.alkitab.base.widget.TwofingerLinearLayout>

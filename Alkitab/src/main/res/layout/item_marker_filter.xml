@@ -30,20 +30,18 @@
 			android:paddingLeft="16dp"
 			android:paddingRight="16dp"
 			android:paddingTop="4dp"
-			android:text="*label"
 			android:textColor="#fff"
 			android:textSize="14sp"
-			tools:ignore="HardcodedText" />
+			tools:text="label" />
 
 		<TextView
 			android:id="@+id/lFilterCaption"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-            android:paddingRight="24dp"
-            android:textColor="#fff"
-			android:text="*nonlabel"
-			tools:ignore="HardcodedText"
-			android:textAppearance="?android:textAppearanceMedium" />
+			android:paddingRight="24dp"
+			android:textAppearance="?android:textAppearanceMedium"
+			android:textColor="#fff"
+			tools:text="nonlabel" />
 	</LinearLayout>
 
 	<ImageView
@@ -51,8 +49,8 @@
 		android:layout_width="48dp"
 		android:layout_height="match_parent"
 		android:layout_gravity="fill_vertical|end"
-		android:src="@drawable/ic_drag_handle"
 		android:contentDescription="@string/desc_drag_to_reorder_versions"
-		android:scaleType="center" />
+		android:scaleType="center"
+		android:src="@drawable/ic_drag_handle" />
 
 </FrameLayout>

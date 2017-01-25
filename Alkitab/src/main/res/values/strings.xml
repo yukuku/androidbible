@@ -282,6 +282,7 @@
     <string name="desc_verse_attribute_multiple_notes">%s notes are attached to this verse.</string>
     <string name="desc_verse_attribute_progress_mark">%s is currently here.</string>
     <string name="desc_progress_mark_list">List of pins</string>
+    <string name="desc_backspace">Backspace</string>
 
     <string name="intent_filter_open_yes_file">Open YES file</string>
     <string name="intent_filter_open_pdb_file">Open PDB file</string>
