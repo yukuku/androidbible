@@ -181,8 +181,7 @@ public class ShareActivity extends BaseActivity {
 
 				// First put the initial items at the top.
 				if (initialIntents != null) {
-					for (int i = 0; i < initialIntents.length; i++) {
-						Intent ii = initialIntents[i];
+					for (Intent ii : initialIntents) {
 						if (ii == null) {
 							continue;
 						}

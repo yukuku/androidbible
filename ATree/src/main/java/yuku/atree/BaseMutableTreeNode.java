@@ -135,8 +135,7 @@ public abstract class BaseMutableTreeNode implements MutableTreeNode {
 			return 0;
 		}
 		int childrenDepth = 0;
-		for (Iterator<TreeNode> it = children.iterator(); it.hasNext();) {
-			TreeNode child = it.next();
+		for (TreeNode child : children) {
 			int childDepth = child.getDepth();
 			if (childDepth > childrenDepth) {
 				childrenDepth = childDepth;
@@ -207,7 +206,7 @@ public abstract class BaseMutableTreeNode implements MutableTreeNode {
 
 	private List<TreeNode> getChildren() {
 		if (children == null) {
-			children = new ArrayList<TreeNode>();
+			children = new ArrayList<>();
 		}
 
 		return children;

@@ -73,8 +73,7 @@ public class BitVector {
 			fillBitSet();
 		}
 		int total = 0;
-		for (int i = 0; i < storage.length; i++) {
-			int v = storage[i];
+		for (int v : storage) {
 			int c = bitsettable[v & 0xff] +
 				bitsettable[(v >> 8) & 0xff] +
 				bitsettable[(v >> 16) & 0xff] +

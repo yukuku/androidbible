@@ -275,10 +275,10 @@ public class BookInfo {
 		// <yuku>
 		@SuppressWarnings("unchecked")
 		ArrayList<String>[] words = new ArrayList[4];
-		words[0] = new ArrayList<String>();
-		words[1] = new ArrayList<String>();
-		words[2] = new ArrayList<String>();
-		words[3] = new ArrayList<String>();
+		words[0] = new ArrayList<>();
+		words[1] = new ArrayList<>();
+		words[2] = new ArrayList<>();
+		words[3] = new ArrayList<>();
 		// </yuku>
 		
 
@@ -306,18 +306,18 @@ public class BookInfo {
 			// System.out.println("wordindex " + wordIndex);
 			int[] r = bible.getRepeat(pos, decWordNum);
 			if (r != null) {
-				for (int j = 0; j < r.length; j++) {
+				for (final int t : r) {
 					// if (r[j]<0) break;
 					// System.out.print("rj " + r[j]+" ");
 
-					if (r[j] == bookTextType || r[j] == chapTextType ||
-						r[j] == descTextType || r[j] == versTextType) {
-						sbpos = r[j] - versTextType;
+					if (t == bookTextType || t == chapTextType ||
+						t == descTextType || t == versTextType) {
+						sbpos = t - versTextType;
 						// System.out.print("switch sbpos " + sbpos+" ");
 						continue;
 					}
 
-					String word = bible.getWord(r[j]);
+					String word = bible.getWord(t);
 
 					// System.out.println("Word " + word);
 					// <yuku>
@@ -383,7 +383,7 @@ public class BookInfo {
 		// - + word
 		// [cjk 0x2e80..0x9fff] + word
 		String prev = null;
-		String cur = null;
+		String cur;
 		for (int i = 0, len = words.size(); i < len; i++) {
 			cur = words.get(i);
 
@@ -510,10 +510,10 @@ public class BookInfo {
 		// <yuku>
 		@SuppressWarnings("unchecked")
 		ArrayList<String>[] words = new ArrayList[4];
-		words[0] = new ArrayList<String>();
-		words[1] = new ArrayList<String>();
-		words[2] = new ArrayList<String>();
-		words[3] = new ArrayList<String>();
+		words[0] = new ArrayList<>();
+		words[1] = new ArrayList<>();
+		words[2] = new ArrayList<>();
+		words[3] = new ArrayList<>();
 		// </yuku>
 
 		int sbpos = 0;
