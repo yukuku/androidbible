@@ -1,13 +1,17 @@
 package yuku.alkitab.base.devotion;
 
+import android.app.Notification;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.SystemClock;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.DevotionActivity;
+import yuku.alkitab.base.util.Foreground;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 
@@ -17,11 +21,13 @@ import java.util.LinkedList;
 public class DevotionDownloader extends Thread {
 	private static final String TAG = DevotionDownloader.class.getSimpleName();
 
-	public static final String ACTION_DOWNLOAD_STATUS = DevotionDownloader.class.getName() + ".action.DOWNLOAD_STATUS";
 	public static final String ACTION_DOWNLOADED = DevotionDownloader.class.getName() + ".action.DOWNLOADED";
-	public static final String ACTION_QUEUE_FINISHED = DevotionDownloader.class.getName() + ".action.QUEUE_FINISHED";
 
 	private final LinkedList<DevotionArticle> queue_ = new LinkedList<>();
+
+	private static final String NOTIFY_TAG = "devotion_downloader";
+	private static final int NOTIFY_ID = 0;
+	NotificationManagerCompat nm;
 
 	public synchronized boolean add(DevotionArticle article, boolean prioritize) {
 		if (queue_.contains(article)) return false;
@@ -72,7 +78,7 @@ public class DevotionDownloader extends Thread {
 
 			if (article == null) {
 				try {
-					broadcastQueueFinished();
+					notifyFinished();
 
 					synchronized (queue_) {
 						queue_.wait();
@@ -86,7 +92,7 @@ public class DevotionDownloader extends Thread {
 				final String url = BuildConfig.SERVER_HOST + "devotion/get?name=" + kind.name + "&date=" + article.getDate() + "&app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName());
 
 				Log.d(TAG, "Downloader starts downloading name=" + kind.name + " date=" + article.getDate());
-				broadcastDownloadStatus(
+				notifyDownloadStatus(
 					TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_downloading_title), kind.title),
 					TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_downloading_date), article.getDate())
 				);
@@ -98,12 +104,12 @@ public class DevotionDownloader extends Thread {
 					article.fillIn(output);
 
 					if (output.startsWith("NG")) {
-						broadcastDownloadStatus(
+						notifyDownloadStatus(
 							TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_downloading_title), kind.title),
 							TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_error_date), article.getDate(), output)
 						);
 					} else {
-						broadcastDownloadStatus(
+						notifyDownloadStatus(
 							TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_downloading_title), kind.title),
 							TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_success_date), article.getDate())
 						);
@@ -115,7 +121,7 @@ public class DevotionDownloader extends Thread {
 				} catch (IOException e) {
 					Log.w(TAG, "@@run", e);
 
-					broadcastDownloadStatus(
+					notifyDownloadStatus(
 						TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_downloading_title), kind.title),
 						TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_error_date), article.getDate(), e.getMessage())
 					);
@@ -127,15 +133,37 @@ public class DevotionDownloader extends Thread {
 		}
 	}
 
-	void broadcastDownloadStatus(final CharSequence title, final CharSequence subtitle) {
-		App.getLbm().sendBroadcast(new Intent(ACTION_DOWNLOAD_STATUS).putExtra("title", title).putExtra("subtitle", subtitle));
+	void notifyDownloadStatus(final CharSequence title, final CharSequence subtitle) {
+		Foreground.run(() -> {
+			if (nm == null) {
+				nm = NotificationManagerCompat.from(App.context);
+			}
+
+			final Notification n = new NotificationCompat.Builder(App.context)
+				.setContentTitle(title)
+				.setContentText(subtitle)
+				.setProgress(0, 0, true)
+				.setSmallIcon(android.R.drawable.stat_sys_download)
+				.setStyle(new NotificationCompat.BigTextStyle()
+					.bigText(subtitle)
+				)
+				.build();
+
+			nm.notify(NOTIFY_TAG, NOTIFY_ID, n);
+		});
 	}
 
 	void broadcastDownloaded(final String name, final String date) {
 		App.getLbm().sendBroadcast(new Intent(ACTION_DOWNLOADED).putExtra("name", name).putExtra("date", date));
 	}
 
-	void broadcastQueueFinished() {
-		App.getLbm().sendBroadcast(new Intent(ACTION_QUEUE_FINISHED));
+	void notifyFinished() {
+		Foreground.run(() -> {
+			if (nm == null) {
+				nm = NotificationManagerCompat.from(App.context);
+			}
+
+			nm.cancel(NOTIFY_TAG, NOTIFY_ID);
+		});
 	}
 }

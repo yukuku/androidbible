@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,12 +10,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
@@ -288,35 +285,10 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 	final LongReadChecker longReadChecker = new LongReadChecker(this);
 
 	final BroadcastReceiver br = new BroadcastReceiver() {
-		private static final String NOTIFY_TAG = "devotion_downloader";
-		private static final int NOTIFY_ID = 0;
-
-		NotificationManagerCompat nm;
-
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
-			if (nm == null) {
-				nm = NotificationManagerCompat.from(context);
-			}
-
 			final String action = intent.getAction();
-			if (DevotionDownloader.ACTION_DOWNLOAD_STATUS.equals(action)) {
-				final CharSequence title = intent.getCharSequenceExtra("title");
-				final CharSequence subtitle = intent.getCharSequenceExtra("subtitle");
-
-				final Notification n = new NotificationCompat.Builder(DevotionActivity.this)
-					.setContentTitle(title)
-					.setContentText(subtitle)
-					.setProgress(0, 0, true)
-					.setSmallIcon(android.R.drawable.stat_sys_download)
-					.setStyle(new NotificationCompat.BigTextStyle()
-						.bigText(subtitle)
-					)
-					.build();
-
-				nm.notify(NOTIFY_TAG, NOTIFY_ID, n);
-
-			} else if (DevotionDownloader.ACTION_DOWNLOADED.equals(action)) {
+			if (DevotionDownloader.ACTION_DOWNLOADED.equals(action)) {
 				// is it for us?
 				final String name = intent.getStringExtra("name");
 				final String date = intent.getStringExtra("date");
@@ -324,8 +296,6 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 				if (yyyymmdd.get().format(currentDate).equals(date) && currentKind.name.equals(name)) {
 					display();
 				}
-			} else if (DevotionDownloader.ACTION_QUEUE_FINISHED.equals(action)) {
-				nm.cancel(NOTIFY_TAG, NOTIFY_ID);
 			}
 		}
 	};
@@ -383,9 +353,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
 		getWindow().getDecorView().setKeepScreenOn(Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default)));
 
-		App.getLbm().registerReceiver(br, new IntentFilter(DevotionDownloader.ACTION_DOWNLOAD_STATUS));
 		App.getLbm().registerReceiver(br, new IntentFilter(DevotionDownloader.ACTION_DOWNLOADED));
-		App.getLbm().registerReceiver(br, new IntentFilter(DevotionDownloader.ACTION_QUEUE_FINISHED));
 	}
 
 	@Override
