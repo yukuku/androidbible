@@ -44,19 +44,15 @@ public class GotoGridFragment extends BaseGotoFragment {
 	Book selectedBook;
 	int selectedChapter;
 
-	private View.OnClickListener lSelectedBook_click = new View.OnClickListener() {
-		@Override public void onClick(View v) {
-			selectedBook = null;
-			selectedChapter = 0;
-			transitionChapterToBook();
-		}
+	final View.OnClickListener lSelectedBook_click = v -> {
+		selectedBook = null;
+		selectedChapter = 0;
+		transitionChapterToBook();
 	};
-	
-	private View.OnClickListener lSelectedChapter_click = new View.OnClickListener() {
-		@Override public void onClick(View v) {
-			selectedChapter = 0;
-			transitionVerseToChapter();
-		}
+
+	final View.OnClickListener lSelectedChapter_click = v -> {
+		selectedChapter = 0;
+		transitionVerseToChapter();
 	};
 	
 	void transitionBookToChapter() {

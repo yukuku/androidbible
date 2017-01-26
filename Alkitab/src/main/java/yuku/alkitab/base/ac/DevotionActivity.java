@@ -24,7 +24,6 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.analytics.HitBuilders;
@@ -493,54 +492,51 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		String date;
 	}
 
-	CallbackSpan.OnClickListener<String> verseClickListener = new CallbackSpan.OnClickListener<String>() {
-		@Override
-		public void onClick(View widget, String reference) {
-			Log.d(TAG, "Clicked verse reference inside devotion: " + reference);
+	final CallbackSpan.OnClickListener<String> verseClickListener = (widget, reference) -> {
+		Log.d(TAG, "Clicked verse reference inside devotion: " + reference);
 
-			if (reference.startsWith("patchtext:")) {
-				final Uri uri = Uri.parse(reference);
-				final String referenceUrl = uri.getQueryParameter("referenceUrl");
+		if (reference.startsWith("patchtext:")) {
+			final Uri uri = Uri.parse(reference);
+			final String referenceUrl = uri.getQueryParameter("referenceUrl");
 
-				final PatchTextExtraInfoJson extraInfo = new PatchTextExtraInfoJson();
-				extraInfo.type = "devotion";
-				extraInfo.kind = currentKind.name;
-				extraInfo.date = yyyymmdd.get().format(currentDate);
-				startActivity(PatchTextActivity.createIntent(lContent.getText(), App.getDefaultGson().toJson(extraInfo), referenceUrl));
-			} else {
-				int ari;
-				if (reference.startsWith("ari:")) {
-					ari = Integer.parseInt(reference.substring(4));
+			final PatchTextExtraInfoJson extraInfo = new PatchTextExtraInfoJson();
+			extraInfo.type = "devotion";
+			extraInfo.kind = currentKind.name;
+			extraInfo.date = yyyymmdd.get().format(currentDate);
+			startActivity(PatchTextActivity.createIntent(lContent.getText(), App.getDefaultGson().toJson(extraInfo), referenceUrl));
+		} else {
+			int ari;
+			if (reference.startsWith("ari:")) {
+				ari = Integer.parseInt(reference.substring(4));
+				startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
+
+			} else { // we need to parse it manually by text
+				final Jumper jumper = new Jumper(reference);
+				if (!jumper.getParseSucceeded()) {
+					new MaterialDialog.Builder(DevotionActivity.this)
+						.content(getString(R.string.alamat_tidak_sah_alamat, reference))
+						.positiveText(R.string.ok)
+						.show();
+					return;
+				}
+
+				// Make sure references are parsed using Indonesian book names.
+				String[] bookNames = getResources().getStringArray(R.array.standard_book_names_in);
+				int[] bookIds = new int[bookNames.length];
+				for (int i = 0, len = bookNames.length; i < len; i++) {
+					bookIds[i] = i;
+				}
+
+				final int bookId = jumper.getBookId(bookNames, bookIds);
+				final int chapter_1 = jumper.getChapter();
+				final int verse_1 = jumper.getVerse();
+				ari = Ari.encode(bookId, chapter_1, verse_1);
+
+				final boolean hasRange = jumper.getHasRange();
+				if (hasRange || verse_1 == 0) {
+					startActivity(Launcher.openAppAtBibleLocation(ari));
+				} else {
 					startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
-
-				} else { // we need to parse it manually by text
-					final Jumper jumper = new Jumper(reference);
-					if (!jumper.getParseSucceeded()) {
-						new MaterialDialog.Builder(DevotionActivity.this)
-							.content(getString(R.string.alamat_tidak_sah_alamat, reference))
-							.positiveText(R.string.ok)
-							.show();
-						return;
-					}
-
-					// Make sure references are parsed using Indonesian book names.
-					String[] bookNames = getResources().getStringArray(R.array.standard_book_names_in);
-					int[] bookIds = new int[bookNames.length];
-					for (int i = 0, len = bookNames.length; i < len; i++) {
-						bookIds[i] = i;
-					}
-
-					final int bookId = jumper.getBookId(bookNames, bookIds);
-					final int chapter_1 = jumper.getChapter();
-					final int verse_1 = jumper.getVerse();
-					ari = Ari.encode(bookId, chapter_1, verse_1);
-
-					final boolean hasRange = jumper.getHasRange();
-					if (hasRange || verse_1 == 0) {
-						startActivity(Launcher.openAppAtBibleLocation(ari));
-					} else {
-						startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
-					}
 				}
 			}
 		}

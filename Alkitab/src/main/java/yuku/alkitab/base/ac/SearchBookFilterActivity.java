@@ -118,17 +118,14 @@ public class SearchBookFilterActivity extends BaseActivity {
 		V.get(this, R.id.bCancel).setOnClickListener(bCancel_click);
 	}
 
-	View.OnClickListener bOk_click = new View.OnClickListener() {
-		@Override
-		public void onClick(final View v) {
-			Intent data = new Intent();
-			data.putExtra(EXTRA_selectedBookIds, sparseBooleanArrayToIntArray(selectedBookIds));
-			setResult(RESULT_OK, data);
-			finish();
-		}
+	final View.OnClickListener bOk_click = v -> {
+		Intent data = new Intent();
+		data.putExtra(EXTRA_selectedBookIds, sparseBooleanArrayToIntArray(selectedBookIds));
+		setResult(RESULT_OK, data);
+		finish();
 	};
 
-	View.OnClickListener bCancel_click = v -> finish();
+	final View.OnClickListener bCancel_click = v -> finish();
 
 	static class VH extends RecyclerView.ViewHolder {
 		int viewType;

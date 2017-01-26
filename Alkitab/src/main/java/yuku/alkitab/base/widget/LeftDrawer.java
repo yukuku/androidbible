@@ -752,12 +752,9 @@ public abstract class LeftDrawer extends NestedScrollView {
 			}
 		}
 
-		OnClickListener button_click = new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (listener != null) {
-					listener.songKeypadButton_click(v);
-				}
+		final OnClickListener button_click = v -> {
+			if (listener != null) {
+				listener.songKeypadButton_click(v);
 			}
 		};
 

@@ -175,8 +175,8 @@ public class TextAppearancePanel {
 		
 		@Override public void onNothingSelected(AdapterView<?> parent) {}
 	};
-	
-	final View.OnClickListener bColorTheme_click = new View.OnClickListener() {
+
+	final View.OnClickListener bColorTheme_click = v -> new View.OnClickListener() {
 		@Override
 		public void onClick(final View v) {
 			final ColorThemeAdapter adapter = new ColorThemeAdapter();

@@ -190,19 +190,11 @@ public class GotoDialerFragment extends BaseGotoFragment {
 		colorize();
 	}
 
-	View.OnClickListener tChapter_click = new View.OnClickListener() {
-		@Override public void onClick(View v) {
-			activate(tChapter, tVerse);
-		}
-	};
-	
-	View.OnClickListener tVerse_click = new View.OnClickListener() {
-		@Override public void onClick(View v) {
-			activate(tVerse, tChapter);
-		}
-	};
+	final View.OnClickListener tChapter_click = v -> activate(tChapter, tVerse);
 
-	View.OnClickListener button_click = v -> {
+	final View.OnClickListener tVerse_click = v -> activate(tVerse, tChapter);
+
+	final View.OnClickListener button_click = v -> {
 		final int id = v.getId();
 		if (id == R.id.bDigit0) press("0");
 		else if (id == R.id.bDigit1) press("1");
