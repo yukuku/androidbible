@@ -91,31 +91,25 @@ public class AlertDialogActivity extends BaseActivity {
 
 		builder.positiveText(positive);
 
-		builder.callback(new MaterialDialog.ButtonCallback() {
-			@Override
-			public void onPositive(final MaterialDialog dialog) {
-				if (inputHint == null) {
-					final Intent returnIntent = new Intent();
-					setResult(RESULT_OK, returnIntent);
-					if (launch != null) {
-						try {
-							startActivity(launch);
-						} catch (ActivityNotFoundException e) {
-							new MaterialDialog.Builder(AlertDialogActivity.this)
-								.content("Actvity was not found for intent: " + launch.toString())
-								.positiveText(R.string.ok)
-								.show();
-						}
+		builder.onPositive((dialog, which) -> {
+			if (inputHint == null) {
+				final Intent returnIntent = new Intent();
+				setResult(RESULT_OK, returnIntent);
+				if (launch != null) {
+					try {
+						startActivity(launch);
+					} catch (ActivityNotFoundException e) {
+						new MaterialDialog.Builder(AlertDialogActivity.this)
+							.content("Actvity was not found for intent: " + launch.toString())
+							.positiveText(R.string.ok)
+							.show();
 					}
-					finish();
 				}
-			}
-
-			@Override
-			public void onNegative(final MaterialDialog dialog) {
 				finish();
 			}
 		});
+
+		builder.onNegative((dialog, which) -> finish());
 
 		if (negative != null) {
 			builder.negativeText(negative);

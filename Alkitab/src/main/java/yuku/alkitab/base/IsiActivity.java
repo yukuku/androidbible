@@ -342,19 +342,16 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 						.title(data.orig_text)
 						.content(sb)
 						.positiveText(R.string.dict_open_full)
-						.callback(new MaterialDialog.ButtonCallback() {
-							@Override
-							public void onPositive(final MaterialDialog dialog) {
-								final Intent intent = new Intent("org.sabda.kamus.action.VIEW");
-								intent.putExtra("key", data.key);
-								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-								intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						.onPositive((dialog, which) -> {
+							final Intent intent = new Intent("org.sabda.kamus.action.VIEW");
+							intent.putExtra("key", data.key);
+							intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+							intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-								try {
-									startActivity(intent);
-								} catch (ActivityNotFoundException e) {
-									OtherAppIntegration.askToInstallDictionary(IsiActivity.this);
-								}
+							try {
+								startActivity(intent);
+							} catch (ActivityNotFoundException e) {
+								OtherAppIntegration.askToInstallDictionary(IsiActivity.this);
 							}
 						})
 						.show();

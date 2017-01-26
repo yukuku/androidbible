@@ -218,12 +218,7 @@ public class S {
 			})
 			.alwaysCallSingleChoiceCallback()
 			.positiveText(R.string.versi_lainnya)
-			.callback(new MaterialDialog.ButtonCallback() {
-				@Override
-				public void onPositive(final MaterialDialog dialog) {
-					activity.startActivity(VersionsActivity.createIntent());
-				}
-			})
+			.onPositive((dialog, which) -> activity.startActivity(VersionsActivity.createIntent()))
 			.show();
 	}
 

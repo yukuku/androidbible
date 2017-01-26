@@ -35,12 +35,9 @@ public class LabelEditorDialog {
 			.title(title)
 			.positiveText(R.string.ok)
 			.negativeText(R.string.cancel)
-			.callback(new MaterialDialog.ButtonCallback() {
-				@Override
-				public void onPositive(final MaterialDialog dialog) {
-					if (okListener != null) {
-						okListener.onOk(tCaption.getText().toString().trim());
-					}
+			.onPositive((dialog1, which) -> {
+				if (okListener != null) {
+					okListener.onOk(tCaption.getText().toString().trim());
 				}
 			})
 			.build();

@@ -86,12 +86,8 @@ public class SongFragment extends BaseFragment {
 	final WebViewClient webViewClient = new WebViewClient() {
 		@Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			Activity activity = getActivity();
-			if (activity instanceof ShouldOverrideUrlLoadingHandler) {
-				if (((ShouldOverrideUrlLoadingHandler)activity).shouldOverrideUrlLoading(this, view, url)) {
-					return true;
-				} else {
-					return super.shouldOverrideUrlLoading(view, url);
-				}
+			if (activity instanceof ShouldOverrideUrlLoadingHandler && ((ShouldOverrideUrlLoadingHandler)activity).shouldOverrideUrlLoading(this, view, url)) {
+				return true;
 			} else {
 				return super.shouldOverrideUrlLoading(view, url);
 			}

@@ -76,15 +76,12 @@ public class ShareUrl {
 			.content("Getting share URL…")
 			.progress(true, 0)
 			.negativeText(R.string.cancel)
-			.callback(new MaterialDialog.ButtonCallback() {
-				@Override
-				public void onNegative(final MaterialDialog dialog) {
-					if (!done.getAndSet(true)) {
-						done.set(true);
-						callback.onUserCancel();
-						dialog.dismiss();
-						callback.onFinally();
-					}
+			.onNegative((dialog1, which) -> {
+				if (!done.getAndSet(true)) {
+					done.set(true);
+					callback.onUserCancel();
+					dialog1.dismiss();
+					callback.onFinally();
 				}
 			})
 			.dismissListener(dialog1 -> {

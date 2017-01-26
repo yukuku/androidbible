@@ -98,12 +98,7 @@ public class ConvertOptionsDialog {
 			.title(R.string.pdb_file_options)
 			.positiveText(R.string.ok)
 			.negativeText(R.string.cancel)
-			.callback(new MaterialDialog.ButtonCallback() {
-				@Override
-				public void onPositive(final MaterialDialog dialog) {
-					bOk_click();
-				}
-			})
+			.onPositive((dialog, which) -> bOk_click())
 			.build();
 
 		final View dialogLayout = this.alert.getCustomView();

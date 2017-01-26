@@ -1,6 +1,6 @@
 package yuku.alkitab.base.dialog;
 
-import android.app.Activity;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -70,17 +70,18 @@ public class XrefDialog extends BaseDialog {
 
 		return res;
 	}
-	
-	@Override public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		
+
+	@Override
+	public void onAttach(final Context context) {
+		super.onAttach(context);
+
 		if (getParentFragment() instanceof XrefDialogListener) {
 			listener = (XrefDialogListener) getParentFragment();
 		} else {
-			listener = (XrefDialogListener) activity;
+			listener = (XrefDialogListener) context;
 		}
 	}
-	
+
 	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setStyle(DialogFragment.STYLE_NO_TITLE, 0);

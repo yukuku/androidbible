@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -230,7 +231,7 @@ public class SongBookUtil {
 
 	public static CharSequence escapeSongBookName(final String name) {
 		if (name != null && name.startsWith("_")) {
-			final int color = App.context.getResources().getColor(R.color.escape);
+			final int color = ResourcesCompat.getColor(App.context.getResources(), R.color.escape, App.context.getTheme());
 			final SpannableStringBuilder res = new SpannableStringBuilder(name.substring(1));
 			res.setSpan(new ForegroundColorSpan(color), 0, res.length(), 0);
 			return res;

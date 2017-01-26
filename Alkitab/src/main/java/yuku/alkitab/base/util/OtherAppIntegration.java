@@ -15,12 +15,7 @@ public class OtherAppIntegration {
 		new MaterialDialog.Builder(activity)
 			.content(R.string.dict_download_prompt)
 			.positiveText(R.string.dict_download_button)
-			.callback(new MaterialDialog.ButtonCallback() {
-				@Override
-				public void onPositive(final MaterialDialog dialog) {
-					openMarket(activity, "org.sabda.kamus");
-				}
-			})
+			.onPositive((dialog, which) -> openMarket(activity, "org.sabda.kamus"))
 			.show();
 	}
 
