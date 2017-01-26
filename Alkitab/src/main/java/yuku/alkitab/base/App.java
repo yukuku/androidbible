@@ -104,6 +104,15 @@ public class App extends yuku.afw.App {
 	@Override public void onCreate() {
 		super.onCreate();
 
+		{ // LeakCanary, also we need the Application instance.
+			if (LeakCanary.isInAnalyzerProcess(this)) {
+				// This process is dedicated to LeakCanary for heap analysis.
+				// You should not init your app in this process.
+				return;
+			}
+			LeakCanary.install(this);
+		}
+
 		staticInit();
 
 		{ // Google Analytics V4
@@ -114,10 +123,6 @@ public class App extends yuku.afw.App {
 			t.enableAdvertisingIdCollection(true);
 			APP_TRACKER = t;
 			analytics.enableAutoActivityReports(this);
-		}
-
-		{ // LeakCanary, also we need the Application instance.
-			LeakCanary.install(this);
 		}
 
 		{ // Stetho call through proxy
