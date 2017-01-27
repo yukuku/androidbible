@@ -333,6 +333,8 @@
 
     <string name="dr_reminder">Reminder</string>
     <string name="dr_error_contact_reminder">Error while contacting Reminder app.</string>
+    <string name="dr_timepicker_set">Set</string>
+    <string name="dr_timepicker_off">Turn off</string>
 
     <string name="dv_activity_title">Daily Verse Widget</string>
     <string name="dv_option_transparent_background">Transparent background</string>

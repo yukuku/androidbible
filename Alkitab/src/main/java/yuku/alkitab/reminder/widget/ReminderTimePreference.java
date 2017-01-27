@@ -5,6 +5,7 @@ import android.support.v7.preference.Preference;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.widget.TimePicker;
+import yuku.alkitab.debug.R;
 
 import java.util.Locale;
 
@@ -24,7 +25,8 @@ public class ReminderTimePreference extends Preference {
 		final int hour = currentValue == null? 12: Integer.parseInt(currentValue.substring(0, 2));
 		final int minute = currentValue == null? 0: Integer.parseInt(currentValue.substring(2, 4));
 
-		HackedTimePickerDialog dialog = new HackedTimePickerDialog(getContext(), getTitle(), "Set", "Turn off", new HackedTimePickerDialog.HackedTimePickerListener() {
+		final Context context = getContext();
+		HackedTimePickerDialog dialog = new HackedTimePickerDialog(context, getTitle(), context.getString(R.string.dr_timepicker_set), context.getString(R.string.dr_timepicker_off), new HackedTimePickerDialog.HackedTimePickerListener() {
 			@Override public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 				persistString(String.format(Locale.US, "%02d%02d", hourOfDay, minute));
 				notifyChanged();
@@ -34,7 +36,7 @@ public class ReminderTimePreference extends Preference {
 				persistString(null);
 				notifyChanged();
 			}
-		}, hour, minute, DateFormat.is24HourFormat(getContext()));
+		}, hour, minute, DateFormat.is24HourFormat(context));
 		dialog.show();
 	}
 
