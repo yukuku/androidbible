@@ -45,10 +45,10 @@
   <string name="jump_to_prompt"><b>SALTAR A</b> — Ejemplo: ^1</string>
   <string name="belum_ada_pembatas_buku">Aún no hay marcadores.\nSeleccione un versículo para agregar marcador.</string>
   <string name="judul_titikdua">TITULO</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">Falló la descarga de %1$s que data de %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Error al descargar %1$s que data de %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">Se ha descargado %1$s que data de %2$s</string>
-  <string name="mengunduh_namaumum_tgl_tgl">Descargado %1$s que data de %2$s&#8230;</string>
+  <string name="devotion_downloader_downloading_title">Descargando ^1</string>
+  <string name="devotion_downloader_downloading_date">fecha ^1</string>
+  <string name="devotion_downloader_error_date">Error en fecha ^1: ^2</string>
+  <string name="devotion_downloader_success_date">Fecha de descarga ^1</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Aún no disponible. Probablemente el material de la fecha solicitada aún no está preparado o hay problemas al reconocer la fuente de los datos. Por favor trate de nuevo.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Aún no disponible. Obteniendo en la Internet&#8230;\n\n(Asegúrese que hay conexión a Internet para obtener el material de devoción.)</string>
   <string name="hari_sabtu">Sáb</string>
@@ -214,6 +214,7 @@
   <string name="market_short_desc">Biblia sin conexión rápida, confiable y repleta de funciones.</string>
   <string name="no_url_for_facebook">Esto no puede ser compartido en Facebook.</string>
   <string name="storage_permission_rationale">Necesitamos acceder al almacenamiento para guardar medios compartidos tales como versiones de la Biblia y fuentes.</string>
+  <string name="goto_button_history_tip">Consejo: La próxima ves mantén presionado para acceder a los versos mas recientes.</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Marcador</string>
   <string name="goto_tab_direct_label">Directo</string>
@@ -249,7 +250,7 @@
   <string name="sn_menu_private_song_book">Cancionero privado</string>
   <string name="sn_private_song_book_dialog_desc">Descargar un himnario privada (esconder)</string>
   <string name="sn_private_song_book_name_hint">Nombre del cancionero</string>
-  <string name="sn_play_in_loop">¿Quieres jugando bucle hasta que sea detenido?</string>
+  <string name="sn_play_in_loop">¿Quieres reproducir en bucle hasta que sea detenido?</string>
   <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Día anterior</string>
   <string name="desc_next_day">Día siguiente</string>
@@ -279,6 +280,7 @@
   <string name="intent_filter_open_pdb_file">Abrir archivo PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Abrir archivo PDB/YES</string>
   <string name="open_yes_file_name_conflict">El archivo YES llamado \'%1$s\' ya existe en \'%2$s\'.</string>
+  <string name="open_yes_error_read">Error leyendo datos de ^1</string>
   <string name="open_file_cant_read_source">La fuente no puede ser leída satisfactoriamente.</string>
   <string name="open_file_unknown_file_format">No se puede determinar si este es un archivo PDB o YES.</string>
   <string name="version_preset_delete_filename">¿Eliminar el archivo de datos \'%s\'?</string>

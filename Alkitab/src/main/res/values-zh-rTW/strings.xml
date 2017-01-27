@@ -45,10 +45,6 @@
   <string name="jump_to_prompt"><b>跳至</b> — 範例: ^1</string>
   <string name="belum_ada_pembatas_buku">尚未有任何書籤。\n選取一節經文以新增書籤。</string>
   <string name="judul_titikdua">標題</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">下載 %1$s 失敗. 日期: %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">下載 %1$s 時失敗, 日期 %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">下載 %1$s 檔案成功, 日期 %2$s</string>
-  <string name="mengunduh_namaumum_tgl_tgl">下載 %1$s 檔案中, 日期 %2$s&#8230;</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">尚不可用. 可能要求日期的材料尚未準備, 或者在辨識資料來源有其它錯誤. 請稍後再試.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">還沒有. 正從網路下載中&#8230;\n\n(請確保網路正常以下載靈修分享材料.)</string>
   <string name="hari_sabtu">週六</string>

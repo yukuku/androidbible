@@ -26,4 +26,5 @@
   <string name="pref_tapToEditNote_summary">Fjern markeringen for at forhindre utilsigtet redigering, ved visning af eksisterende noter</string>
   <string name="pref_showHiddenVersion_title">Aktiver muligt restriktive versioner</string>
   <string name="pref_selectedVerseBgColor_title">Valgt versbaggrund</string>
+  <string name="pref_forceFontScale_title">BF tekststørrelse</string>
 </resources>

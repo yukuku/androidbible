@@ -45,10 +45,10 @@
   <string name="jump_to_prompt"><b>Spring til</b> — Eksempel: ^1</string>
   <string name="belum_ada_pembatas_buku">Ingen bogmærker endnu.\n Vælg et vers for at tilføje et bogmærke.</string>
   <string name="judul_titikdua">Titel</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">Kunne ikke hentes %1$s dateret %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Fejl i nedtagning %1$s dateret %2$s:%3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">Succesfuld nedtagning %1$s dateret %2$s</string>
-  <string name="mengunduh_namaumum_tgl_tgl">Nedtagning %1$s dateret %2$s&#8230;</string>
+  <string name="devotion_downloader_downloading_title">Nedtagning ^1</string>
+  <string name="devotion_downloader_downloading_date">dateret ^1</string>
+  <string name="devotion_downloader_error_date">Fejl i dato ^1: ^2</string>
+  <string name="devotion_downloader_success_date">Nedtagningsdato ^1</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Endnu ikke tilgængelig. Sandsynligvis er den ønskede datos materiale ikke forberedt endnu, eller der er fejl i genkendelse af datakilden. Prøv venligst igen senere.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Endnu ikke tilgængelig. Henter fra internettet...\n\n(Sørg for internetforbindelsen, for at kunne hente andagtsmaterialer.)</string>
   <string name="hari_sabtu">lør</string>
@@ -214,6 +214,7 @@
   <string name="market_short_desc">Hurtig, pålidelig og funktionsrig offline Bibel.</string>
   <string name="no_url_for_facebook">Dette kan ikke deles på Facebook.</string>
   <string name="storage_permission_rationale">Vi har brug for, at få adgang til lagring, for at gemme delte medier, som bibelversioner og skrifttyper.</string>
+  <string name="goto_button_history_tip">Tip: Næste gang; lang-tap på denne knap for at få adgang til dine senest åbnede vers.</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Numre</string>
   <string name="goto_tab_direct_label">Direkte</string>
@@ -279,6 +280,7 @@
   <string name="intent_filter_open_pdb_file">Åben PDB fil</string>
   <string name="intent_filter_open_pdb_or_yes_file">Åben PDB / YES file</string>
   <string name="open_yes_file_name_conflict">En YES fil ved navn \'%1$s\' eksisterer allerede i \'%2$s\'.</string>
+  <string name="open_yes_error_read">Fejl ved læsning af data fra ^1</string>
   <string name="open_file_cant_read_source">Kilden kunne ikke læses succesfuldt.</string>
   <string name="open_file_unknown_file_format">Kunne ikke afgøre, om dette er en PDB eller YES fil.</string>
   <string name="version_preset_delete_filename">Slet datafilen \'%s\'?</string>
@@ -317,10 +319,12 @@
   <string name="recentverses_button_hint">(Lang-tap for de seneste vers)</string>
   <string name="dr_reminder">Påmindelse</string>
   <string name="dr_error_contact_reminder">Fejl ved kontakt til Reminder-app.</string>
+  <string name="dv_activity_title">Widget for daglige vers</string>
   <string name="dv_option_transparent_background">Gennemsigtig baggrund</string>
   <string name="dv_option_dark_text">Mørk tekst</string>
   <string name="dv_option_text_size">Tekststørrelse</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">Læseplan</string>
   <string name="rp_menuReadingPlan">Læseplan</string>
   <string name="rp_commentActual">Færdig: %s%%</string>
   <string name="rp_commentTarget">Mål: %s%%</string>
@@ -446,6 +450,7 @@
   <string name="sync_sync_set_pref_summary_never">Ikke synkroniseret endnu</string>
   <string name="sync_sync_set_pref_summary_syncing">Synkroniserer nu&#8230;</string>
   <string name="sync_log_activity_title">Synkroniserings log</string>
+  <string name="sync_status_activity_title">Synk status</string>
   <string name="sync_login_activity_title">Log ind eller opret konto</string>
   <string name="sync_login_survey_religion_select_one">Vælg religion</string>
   <string name="sync_login_survey_religion_christianity">Kristenhed</string>

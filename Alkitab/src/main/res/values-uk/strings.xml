@@ -27,9 +27,16 @@
   <string name="menu_markers">Закладки</string>
   <string name="hapus_pembatas_buku">Видалити закладку</string>
   <string name="menuShare">Поділитись</string>
+  <string name="menuShareSplit0">Поділитися первинною версією</string>
+  <string name="menuShareSplit1">Поділитися вторинною версією</string>
+  <string name="menuShareBothSplits">Поділитися обома версіями</string>
   <string name="tulis_catatan">Написати нотатку</string>
   <string name="tambah_pembatas_buku">Додати закладку</string>
   <string name="salin_ayat">Скопіювати вірш</string>
+  <string name="copy_split0">Копіювати первинну версію</string>
+  <string name="copy_split1">Копіювати вторинну версію</string>
+  <string name="copy_both_splits">Копіювати обидві версії</string>
+  <string name="search_copy_selected_verses">Копіювати обрані вірші</string>
   <string name="perj_baru">Новий Завіт.</string>
   <string name="perj_lama">Старий Завіт.</string>
   <string name="search_bookname_only">Тільки %s</string>
@@ -38,10 +45,10 @@
   <string name="jump_to_prompt"><b>ШВИДКИЙ ПЕРЕХІД</b> — Приклад: ^1</string>
   <string name="belum_ada_pembatas_buku">Ще немає закладок.\nВиберіть вірш щоб додати закладку.</string>
   <string name="judul_titikdua">НАЗВА</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">Не вдалося завантажити %1$s з дати %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Помилка при завантаженні %1$s датована %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">Вдалі завантаження %1$s датовані %2$s</string>
-  <string name="mengunduh_namaumum_tgl_tgl">Завантаження %1$s датовані %2$s&#8230;</string>
+  <string name="devotion_downloader_downloading_title">Завантаження ^1</string>
+  <string name="devotion_downloader_downloading_date">датовано ^1</string>
+  <string name="devotion_downloader_error_date">Помилка в даті ^1: ^2</string>
+  <string name="devotion_downloader_success_date">Дата завантаження ^1</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Тепер недоступно. Мабуть запитані дані та матеріали ще не готові, або виникли помилки в розпізнаванні джерела даних. Будь ласка спробуйте ще раз пізніше.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Поки що недоступно. Отримати або пошукати в інтернеті...\n\n(Переконайтеся в наявності підключення до інтернету для отримання матеріалів для вивчення.)</string>
   <string name="hari_sabtu">Сб</string>
@@ -63,6 +70,7 @@
   <string name="mengunduh_nama">Завантаження %s</string>
   <string name="tuju_v">Перейти до</string>
   <string name="bagikan_alamat">Поділитись %s</string>
+  <string name="search_selected_verse_copied">Обрані вірші скопійовано.</string>
   <string name="alamat_sudah_disalin">%s було скопійовано.</string>
   <string name="alamat_tidak_sah_alamat">Недійсна адреса: %s</string>
   <string name="no">Ні</string>
@@ -87,6 +95,7 @@
   <string name="pdb_encoding">Кодування PDB</string>
   <string name="sample_text">Зразок тексту</string>
   <string name="include_book_and_chapter_headers">Включаючи книгу та заголовки розділів</string>
+  <string name="select_all">Обрати все</string>
   <string name="cp_opening_pdb_file">Відкриття PDB файлу</string>
   <string name="cp_loading_version_info">Завантаження інфо перекладу</string>
   <string name="cp_loading_word_index">Читання індексу слів</string>
@@ -127,6 +136,7 @@
   <string name="ed_download_button">Завантажити</string>
   <string name="ed_update_button">Оновлення</string>
   <string name="ed_details_update_available">Доступне оновлення</string>
+  <string name="ed_download_manager_not_enabled_prompt">Програма-Менеджер Завантажень не ввімкнена або недосяжна.\n\nУвімкніть її для завантаження версій Біблії.</string>
   <string name="info_terperinci">Деталі</string>
   <string name="buang_dari_daftar">Видалити</string>
   <string name="edit_bookmark">Редагувати закладку</string>
@@ -152,6 +162,7 @@
   <string name="bmcat_notes">Нотатки</string>
   <string name="bmcat_highlights">Виділення, підкреслення</string>
   <string name="bmcat_unlabeled_bookmarks">Закладки без позначок</string>
+  <string name="menuLabelSort">Сортувати мітки за алфавітом</string>
   <string name="bl_no_notes_written_yet">Ще не написано жодної нотатки. \nТапни по віршу щоб почати писати нотатку.</string>
   <string name="bl_no_highlighted_verses">Немає виділених, підкреслених віршів.\nТапни по віршу щоб виділити, підкреслити його.</string>
   <string name="bl_there_are_no_bookmarks_without_any_labels">Немає закладок без позначок.</string>
@@ -192,17 +203,24 @@
   <string name="text_appearance_font">Шрифт</string>
   <string name="text_appearance_theme_custom">Індивідуалізація...</string>
   <string name="text_appearance_text_size">Розмір тексту</string>
+  <string name="text_appearance_text_size_for_version">Розмір тексту для ^1</string>
   <string name="text_appearance_line_spacing">Міжрядковий інтервал</string>
   <string name="text_appearance_bold">Потовщений</string>
   <string name="devotion_change_date">Зміна дати</string>
   <string name="bookmark_search">Пошук</string>
   <string name="verse_select_one_verse_selected">1 вірш обрано</string>
   <string name="verse_select_multiple_verse_selected">%s віршів вибрано</string>
+  <string name="google_play_store_not_installed">Магазин Google Play не встановлено.</string>
   <string name="pref_language_label_default">За умовчанням</string>
+  <string name="market_short_desc">Швидка, надійна та багатофункціональна офлайн Біблія.</string>
+  <string name="no_url_for_facebook">Цим не можна поділитися на Facebook.</string>
+  <string name="storage_permission_rationale">Ми потребуємо доступу до сховища для збереження загального вмісту, такого як Біблійні вірші та шрифти.</string>
+  <string name="goto_button_history_tip">Порада: Наступного разу утримуйте натиснутою цю кнопку, аби переглянути ваші нещодавно відкриті вірші.</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Номеронабирач</string>
   <string name="goto_tab_direct_label">Прямолінійний</string>
   <string name="goto_tab_grid_label">Сітка</string>
+  <string name="menuAskForVerse">Запитати номер вірша</string>
   <!-- Font Manager -->
   <string name="fm_activity_title">Налаштування шрифту</string>
   <string name="fm_need_to_log_in_to_wifi">Вам потрібно спочатку підключитися до вашої (Wi-Fi) мережі.</string>
@@ -215,6 +233,7 @@
   <string name="sn_deep_search_enabled">Тексти пісень а також т.і.</string>
   <string name="sn_songs_activity_title">Псалми, пісні</string>
   <string name="sn_bookselector_all">ВСЕ</string>
+  <string name="sn_bookselector_more">Завантажити ще&#8230;</string>
   <string name="sn_bookselector_all_desc">Пошук всіх інстальованх книг.</string>
   <string name="sn_downloading_ellipsis">Завантаження ...</string>
   <string name="sn_download_song_books">Завантажити книги псалмів, пісень</string>
@@ -222,9 +241,13 @@
   <string name="sn_share_title">Поділитися піснею</string>
   <string name="sn_lyric_version_version">Версія %s</string>
   <string name="sn_lyric_refrain_marker">Присп.</string>
+  <string name="sn_delete_song_book">Видалити пісняр</string>
+  <string name="sn_delete_song_book_explanation">Видалити всі пісні з пісняра ^1?</string>
+  <string name="sn_delete_song_book_result">^1 пісні було видалено з пісняра ^2.</string>
   <string name="sn_update_book_explanation">Оновіть книгу  ^1 до останньої версії.</string>
   <string name="sn_update_book_confirm_button">Оновлення</string>
   <string name="sn_update_book">Оновлення книги псалмів</string>
+  <string name="sn_update_book_because_too_old">Будь ласка, перед продовженням поновіть ^1 до останньої версії. Після поновлення за потреби нашішліть ваші корегування.</string>
   <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Попередній день</string>
   <string name="desc_next_day">Наступний день</string>

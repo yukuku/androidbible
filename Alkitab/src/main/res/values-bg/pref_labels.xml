@@ -26,4 +26,5 @@
   <string name="pref_tapToEditNote_summary">Отмаркирайте, за да предотвратите случайно изменение при преглед на съществуващите бележки</string>
   <string name="pref_showHiddenVersion_title">Разрешете използването на версии с ограничено разпространение</string>
   <string name="pref_selectedVerseBgColor_title">Изберете фон за стиха</string>
+  <string name="pref_forceFontScale_title">UI размер на текста</string>
 </resources>

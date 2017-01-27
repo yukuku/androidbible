@@ -38,10 +38,6 @@
   <string name="jump_to_prompt"><b>LOMPAT KE</b> — Contoh: ^1</string>
   <string name="belum_ada_pembatas_buku">Tiada penanda halaman lagi.\nPilih ayat untuk menambah penanda buku.</string>
   <string name="judul_titikdua">TAJUK</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">Gagal untuk memuat turun %1$s bertarikh %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Ralat dalam memuat turun %1$s bertarikh %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">Berjaya memuat turun %1$s bertarikh %2$s</string>
-  <string name="mengunduh_namaumum_tgl_tgl">Memuat turun %1$s bertarikh %2$s...</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Tidak wujud. Mungkin bahan tarikh yang diminta adalah tidak bersedia lagi, atau terdapat beberapa ralat dalam mengiktiraf sumber data. Sila cuba lagi kemudian.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Tidak Wujud. Semasa mengambil dari Internet...\n\n(Pastikan terdapat sambungan Internet untuk mengambil bahan-bahan ketaatan.)</string>
   <string name="hari_sabtu">Sab</string>

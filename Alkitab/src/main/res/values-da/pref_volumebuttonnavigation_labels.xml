@@ -7,4 +7,10 @@
     <item>Naviger kapitler</item>
     <item>Side op/ned</item>
   </string-array>
+  <string-array name="pref_forceFontScale_labels">
+    <item>Følg systemets indstilling</item>
+    <item>Umådelig stor</item>
+    <item>Enorm</item>
+    <item>Gigantisk</item>
+  </string-array>
 </resources>

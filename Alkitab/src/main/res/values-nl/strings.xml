@@ -7,9 +7,9 @@
   <string name="menuSupport">Ondersteuning</string>
   <string name="mengimpor_titiktiga">Terugzetten...</string>
   <string name="mengekspor_titiktiga">Maken van een reservekopie&#8230;</string>
-  <string name="bagikan_renungan">Deel toewijding</string>
-  <string name="renungan_sudah_disalin">Toewijding is gekopieerd.</string>
-  <string name="salin_renungan">Kopieer toewijding</string>
+  <string name="bagikan_renungan">Deel overdenking</string>
+  <string name="renungan_sudah_disalin">Overdenking is gekopieerd.</string>
+  <string name="salin_renungan">Kopieer overdenking</string>
   <string name="ekspor_berhasil_file_yang_dihasilkan_file">Reservekopie was succesvol.\n\nResultaten staan in bestand: %s</string>
   <string name="impor_berhasil_angka_diproses">Terugzetten was succesvol. In totaal %1$d bladwijzer(s), notitie(s), en/of markeringen, en %2$d labels zijn verwerkt.</string>
   <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Er waren één of meer fouten bij het maken van de reservekopie: %s</string>
@@ -21,7 +21,7 @@
   <string name="ekspor_ke_sd_card">Reservekopie</string>
   <string name="menuBantuan">Help</string>
   <string name="beri_saran_title">Suggesties</string>
-  <string name="menuDevotion">Toewijding</string>
+  <string name="menuDevotion">Overdenking</string>
   <string name="search">Zoeken</string>
   <string name="activity_title_markers">Markeringen</string>
   <string name="menu_markers">Bladwijzers, notities, e.d.</string>
@@ -45,10 +45,10 @@
   <string name="jump_to_prompt"><b>GA NAAR</b> — Voorbeeld: ^1</string>
   <string name="belum_ada_pembatas_buku">Er zijn nog geen bladwijzers.\nSelecteer een vers om een bladwijzer toe te voegen.</string>
   <string name="judul_titikdua">TITEL</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">Download mislukt van %1$s gedateerd op %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Fout in downloaden van %1$s gedateerd op %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">Downloaden van %1$s gedateerd op %2$s is gelukt</string>
-  <string name="mengunduh_namaumum_tgl_tgl">Downloaden van %1$s gedateerd op %2$s&#8230;</string>
+  <string name="devotion_downloader_downloading_title">Downloaden van ^1</string>
+  <string name="devotion_downloader_downloading_date">datum ^1</string>
+  <string name="devotion_downloader_error_date">Fout in datum ^1: ^2</string>
+  <string name="devotion_downloader_success_date">Gedownloade datum ^1</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Nog niet beschikbaar. Waarschijnlijk is het materiaal nog niet voorbereid of er zijn fouten in het herkennen van de databron. Probeer het later nog eens.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Nog niet beschikbaar. Ophalen van internet&#8230;\n\n(Zorg voor een internetverbinding om het materiaal te kunnen downloaden.)</string>
   <string name="hari_sabtu">Za</string>
@@ -214,6 +214,7 @@
   <string name="market_short_desc">Snel, betrouwbaar en veel functies offline Bijbel.</string>
   <string name="no_url_for_facebook">Dit kan niet met Facebook worden gedeeld.</string>
   <string name="storage_permission_rationale">We hebben toegang tot de opslag nodig om gedeelde media zoals Bijbel versies en lettertypes opteslaan.</string>
+  <string name="goto_button_history_tip">Tip voor een volgende keer: houd deze knop ingedrukt om je laatst geopende verzen te zien.</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Kiezer</string>
   <string name="goto_tab_direct_label">Direct</string>
@@ -249,6 +250,7 @@
   <string name="sn_menu_private_song_book">Privé liederen boek</string>
   <string name="sn_private_song_book_dialog_desc">Download een privé (verborgen) liedboek</string>
   <string name="sn_private_song_book_name_hint">Liedboek naam</string>
+  <string name="sn_play_in_loop">Wil je herhalend blijven afspelen tot er wordt gestopt?</string>
   <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Vorige dag</string>
   <string name="desc_next_day">Volgende dag</string>
@@ -278,6 +280,7 @@
   <string name="intent_filter_open_pdb_file">Open PDB bestand</string>
   <string name="intent_filter_open_pdb_or_yes_file">Open PDB/YES bestand</string>
   <string name="open_yes_file_name_conflict">Een YES bestand met de naam \'%1$s\' bestaat al in \'%2$s\'.</string>
+  <string name="open_yes_error_read">Fout bij het lezen van gegevens van ^1</string>
   <string name="open_file_cant_read_source">De bron kon niet worden gelezen.</string>
   <string name="open_file_unknown_file_format">Kon niet bepalen of dit een PDB of een YES bestand is.</string>
   <string name="version_preset_delete_filename">Bestand \'%s\' verwijderen?</string>
@@ -316,10 +319,12 @@
   <string name="recentverses_button_hint">(Ingedrukt houden voor recente verzen)</string>
   <string name="dr_reminder">Herinnering</string>
   <string name="dr_error_contact_reminder">Fout bij verbinden met Herinnering app.</string>
+  <string name="dv_activity_title">Dagelijks Vers Widget</string>
   <string name="dv_option_transparent_background">Transparante achtergrond</string>
   <string name="dv_option_dark_text">Donkere tekst</string>
   <string name="dv_option_text_size">Tekstgrootte</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">Leesrooster</string>
   <string name="rp_menuReadingPlan">Leesplan</string>
   <string name="rp_commentActual">Voltooid: %s%%</string>
   <string name="rp_commentTarget">Doel: %s%%</string>
@@ -445,6 +450,7 @@
   <string name="sync_sync_set_pref_summary_never">Nog niet gesynchroniseerd</string>
   <string name="sync_sync_set_pref_summary_syncing">Aan het synchroniseren&#8230;</string>
   <string name="sync_log_activity_title">Synchronisatie log</string>
+  <string name="sync_status_activity_title">Sync status</string>
   <string name="sync_login_activity_title">Log in of maak een nieuw account</string>
   <string name="sync_login_survey_religion_select_one">Selecteer religie</string>
   <string name="sync_login_survey_religion_christianity">Christendom</string>
@@ -487,8 +493,8 @@
   <string name="pref_bottomToolbarOnText_summary">Zet de vers navigatie toolbar beneden op het Bijbel scherm</string>
   <!-- devotion reminder -->
   <string name="dr_app_name">Herinnering</string>
-  <string name="dr_notification_title">Dagelijkse toewijding</string>
-  <string name="dr_notification_text">Lees de toewijding van vandaag nu.</string>
+  <string name="dr_notification_title">Dagelijkse overdenking</string>
+  <string name="dr_notification_text">Lees de overdenking van vandaag.</string>
   <string name="dr_off">Uit</string>
   <string name="dr_alarm">Alarm</string>
   <string name="dr_sound">Geluid</string>

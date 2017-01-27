@@ -45,10 +45,10 @@
   <string name="jump_to_prompt"><b>ไปยัง</b> — ตัวอย่าง: ^1</string>
   <string name="belum_ada_pembatas_buku">ยังไม่มีตัวบุ๊คมาร์ค\nกรุณาเลือกข้อก่อนที่จะเพิ่มตัวบุ๊คมาร์ค</string>
   <string name="judul_titikdua">หัวข้อ</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">การดาวน์โหลดล้มเหลว %1$s วันที่ %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">เกิดการผิดพลาดขณะดาวน์โหลด %1$s วันที่ %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">สำเร็จการดาวน์โหลด %1$s วันที่ %2$s</string>
-  <string name="mengunduh_namaumum_tgl_tgl">กำลังดาวน์โหลด %1$s วันที่ %2$s&#8230;</string>
+  <string name="devotion_downloader_downloading_title">กำลังดาวน์โหลด ^1</string>
+  <string name="devotion_downloader_downloading_date">โหลดตั้งแต่วันที่ ^1</string>
+  <string name="devotion_downloader_error_date">วันที่ผิดพลาด ^1: ^2</string>
+  <string name="devotion_downloader_success_date">วันที่ดาวน์โหลด ^1</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">ยังไม่สามารถใช้ได้ค่ะ วันที่ที่ขออาจจะเตรียมเนื้อหายังไม่เสร็จ หรืออาจจะเกิดการผิดพลาดในการสังเกตที่แหล่งข้อมูลค่ะ กรุณาลองใหม่อีกครั้งในทีหลังค่ะ</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">ยังไม่สามารถใช้ได้ค่ะ กำลังดึงข้อมูลจากอินเทอร์เน็ต&#8230;\n\n(กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตให้ถูกต้องเพื่อจะได้ดำเนินการดึงข้อมูลให้สำเร็จค่ะ)</string>
   <string name="hari_sabtu">เสาร์</string>
@@ -214,6 +214,7 @@
   <string name="market_short_desc">นี่เป็นพระคำภีร์ที่ร่วดเร็ว วางใจได้ และเต็มด้วยจุดเด่นมากมายที่ไม่ต้องใช้เน็ต</string>
   <string name="no_url_for_facebook">ไม่สามารถแชร์ไปยังเฟซบุ๊กได้ในขณะนี้</string>
   <string name="storage_permission_rationale">เราต้องการอนุญาตเข้าถึงที่จัดเก็บข้อมูลเพื่อจักการบันทึกข้อมูลร่วม เช่น เวอร์ชั่นพระคำภีร์และฟอนท์นะค่ะ</string>
+  <string name="goto_button_history_tip">ข้อแนะนำ: ครั้งต่อไปกรุณากดปุ่มนี้ค้างเพื่อเข้าไปดูประวัติข้อที่เคยเปิด</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">หน้าปัด</string>
   <string name="goto_tab_direct_label">กดตรง</string>
@@ -279,6 +280,7 @@
   <string name="intent_filter_open_pdb_file">เปิดไฟล์ PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">เปิดไฟล์ PDB/YES</string>
   <string name="open_yes_file_name_conflict">ไฟล์ YES ที่ชื่อว่า \'%1$s\' มีอยู่แล้วที่ \'%2$s\'</string>
+  <string name="open_yes_error_read">เกิดผิดพลาดในการอ่านข้อมูลจาก ^1</string>
   <string name="open_file_cant_read_source">ไม่สามารถเปิดอ่านแหลงข้อมูลได้ค่ะ</string>
   <string name="open_file_unknown_file_format">ไม่สามารถตรวจสอบว่าไฟล์นี้เป็นไฟล์ PDB หรือไฟล์ YES ค่ะ</string>
   <string name="version_preset_delete_filename">ต้องการลบไฟล์ข้อมูล \'%s\' หรือไม่?</string>

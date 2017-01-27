@@ -7,4 +7,10 @@
     <item>Kapitel</item>
     <item>Seite nach oben/unten</item>
   </string-array>
+  <string-array name="pref_forceFontScale_labels">
+    <item>Systemvorgabe</item>
+    <item>Groß (150%)</item>
+    <item>Größer (170%)</item>
+    <item>Riesig (200%)</item>
+  </string-array>
 </resources>

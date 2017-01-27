@@ -45,10 +45,6 @@
   <string name="jump_to_prompt"><b>SPRING NA</b> - Voorbeeld: ^1</string>
   <string name="belum_ada_pembatas_buku">Tans geen boekmerke.\nKies \'n vers om by boekmerk te voeg.</string>
   <string name="judul_titikdua">Titel</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">Gefaal om af te laai %1$s dateer %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Fout in aflaai %1$s dateer %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">Aflaai geslaag %1$s dateer %2$s</string>
-  <string name="mengunduh_namaumum_tgl_tgl">Aflaai %1$s dated %2$s</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Nog nie beskikbaar. Moontlik is die datum se materiaal nog nie voorberei,of daar is moontlik foute in die data bron. Probeer asb weer later.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Nog nie beskikbaar.Verkry vanaf Internet..\n\n(Verseker daar is \'n internet konneksie om die materiaal te verkry.)</string>
   <string name="hari_sabtu">Sat</string>

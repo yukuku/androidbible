@@ -45,10 +45,10 @@
   <string name="jump_to_prompt"><b>LONCAT KE</b> — Contoh: ^1</string>
   <string name="belum_ada_pembatas_buku">Belum ada pembatas buku.\nPilih satu ayat untuk menambah pembatas buku.</string>
   <string name="judul_titikdua">JUDUL</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">Gagal mengunduh %1$s tgl %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Kesalahan dalam mengunduh %1$s tgl %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">Berhasil mengunduh %1$s tgl %2$s</string>
-  <string name="mengunduh_namaumum_tgl_tgl">Mengunduh %1$s tgl %2$s&#8230;</string>
+  <string name="devotion_downloader_downloading_title">Mengunduh ^1</string>
+  <string name="devotion_downloader_downloading_date">tanggal ^1</string>
+  <string name="devotion_downloader_error_date">Kesalahan pada tanggal ^1: ^2</string>
+  <string name="devotion_downloader_success_date">Tanggal ^1 terunduh</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Belum tersedia. Mungkin bahan untuk tanggal yang diminta belum siap, atau ada masalah dengan sumbernya. Harap coba lagi lain kali.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Belum tersedia. Menunggu pengambilan data lewat Internet&#8230;\n\n(Pastikan ada koneksi Internet untuk mengambil renungan.)</string>
   <string name="hari_sabtu">Sabtu</string>
@@ -276,6 +276,7 @@
   <string name="desc_verse_attribute_multiple_notes">%s catatan terpasang pada ayat ini.</string>
   <string name="desc_verse_attribute_progress_mark">%s sedang di sini.</string>
   <string name="desc_progress_mark_list">Daftar jejak</string>
+  <string name="desc_backspace">Backspace</string>
   <string name="intent_filter_open_yes_file">Buka file YES</string>
   <string name="intent_filter_open_pdb_file">Buka file PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Buka file PDB/YES</string>
@@ -319,6 +320,8 @@
   <string name="recentverses_button_hint">(Sentuh lama: buka riwayat)</string>
   <string name="dr_reminder">Pengingat</string>
   <string name="dr_error_contact_reminder">Kesalahan menghubungi aplikasi Pengingat.</string>
+  <string name="dr_timepicker_set">Pasang</string>
+  <string name="dr_timepicker_off">Matikan</string>
   <string name="dv_activity_title">Widget Ayat Harian</string>
   <string name="dv_option_transparent_background">Latar belakang transparan</string>
   <string name="dv_option_dark_text">Teks gelap</string>

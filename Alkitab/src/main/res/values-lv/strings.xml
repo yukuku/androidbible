@@ -48,10 +48,10 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="jump_to_prompt"><b>LĒKT UZ</b> — Piemēram: ^1</string>
   <string name="belum_ada_pembatas_buku">Pagaidām nav grāmatzīmju.\nIzvēlies pantu lai pievienotu grāmatzīmi.</string>
   <string name="judul_titikdua">VIRSRAKSTS</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">Neizdevās lejupielādēt %1$s no %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Kļūda lejupielādējot %1$s no %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">Veiksmīgi lejupielādēts %1$s no %2$s</string>
-  <string name="mengunduh_namaumum_tgl_tgl">Lejupielādē %1$s no %2$s&#8230;</string>
+  <string name="devotion_downloader_downloading_title">Lejupielādēt</string>
+  <string name="devotion_downloader_downloading_date">datēts ar ^1</string>
+  <string name="devotion_downloader_error_date">Kļūda datumā ^1: ^2</string>
+  <string name="devotion_downloader_success_date">Lejupielādes datums ^1</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Pagaidām nav pieejams. Iespējams pieprasītais materiāls vēl nav sagatavots vai datu avots pašlaik nav pieejams. Lūdzu pamēģiniet vēlāk.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Pašlaik nav pieejams. Iegūst no interneta &#8230;\n\n(Pārliecinieties, vai internets ir pieejams)</string>
   <string name="hari_sabtu">Se</string>
@@ -217,6 +217,7 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="market_short_desc">Ātra, uzticama un daudzfunkcionāla Bībele, kura strādā bez Interneta pieslēguma.</string>
   <string name="no_url_for_facebook">Nevar koplietot Facebook`ā</string>
   <string name="storage_permission_rationale">Ir nepieciešams piekļūt atmiņai, lai saglabātu koplietotos mēdijus, kā piemēram Bībeles versijas un fontus.</string>
+  <string name="goto_button_history_tip">Padoms: Nākamreiz, lai piekļūtu taviem biežāk-atvērtajiem pantiem, ilgstoši-nospied šo pogu.</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Zvanītājprogramma</string>
   <string name="goto_tab_direct_label">Pa tiešo</string>
@@ -252,6 +253,7 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="sn_menu_private_song_book">Personīgā dziesmu grāmata</string>
   <string name="sn_private_song_book_dialog_desc">Lejuplādēt privāto (slēpto) dziesmu grāmatu</string>
   <string name="sn_private_song_book_name_hint">Dziesmu grāmatas nosaukums</string>
+  <string name="sn_play_in_loop">Vai jūs vēlaties palaist ciklu līdz tas apstāsies?</string>
   <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Iepriekšējā diena</string>
   <string name="desc_next_day">Nākošā diena</string>
@@ -281,6 +283,7 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="intent_filter_open_pdb_file">Atvērt PDB failu</string>
   <string name="intent_filter_open_pdb_or_yes_file">Atvērt PDB/YES failu</string>
   <string name="open_yes_file_name_conflict">YES fails \'%1$s\' jau eksistē iekš \'%2$s\'.</string>
+  <string name="open_yes_error_read">Kļūda lasot datus no ^1</string>
   <string name="open_file_cant_read_source">Avots nevar tikt veiksmīgi ielasīts.</string>
   <string name="open_file_unknown_file_format">Nevar noteikt, vai šis ir PDB vai YES fails.</string>
   <string name="version_preset_delete_filename">Vai dzēst datu failu \'%s\'?</string>
@@ -319,10 +322,12 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="recentverses_button_hint">(Ilgi-nospiest pēdējiem apskatītiem pantiem)</string>
   <string name="dr_reminder">Atgādinājums</string>
   <string name="dr_error_contact_reminder">Savienojoties ar Atgādinājuma aplikāciju ir radusies kļūda.</string>
+  <string name="dv_activity_title">Ikdienas pantu logrīks</string>
   <string name="dv_option_transparent_background">Caurspīdīgs fons</string>
   <string name="dv_option_dark_text">Tumšs teksts</string>
   <string name="dv_option_text_size">Teksta izmērs</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">Lasīšanas plāns</string>
   <string name="rp_menuReadingPlan">Lasīšanas plāns</string>
   <string name="rp_commentActual">Pabeigts: %s%%</string>
   <string name="rp_commentTarget">Mērķis: %s%%</string>
@@ -444,10 +449,11 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="pref_syncSet_pins_enabled_title">Lasīšanas progresa atzīmes</string>
   <string name="sync_menu_item_sync_now">Sinhronizēt tagad</string>
   <string name="sync_menu_item_sync_log">Skatīt žurnālu</string>
-  <string name="sync_sync_set_pref_summary_last_synced">Pagaišreizs sinhronizēts %1$s, %2$s (r%3$s)</string>
+  <string name="sync_sync_set_pref_summary_last_synced">Pēdējo reizi sinhronizēts %1$s, %2$s (r%3$s)</string>
   <string name="sync_sync_set_pref_summary_never">Pagaidām nav sinhronizēts</string>
   <string name="sync_sync_set_pref_summary_syncing">Notiek sinhronizēšana&#8230;</string>
   <string name="sync_log_activity_title">Sinhronizācijas žurnāls</string>
+  <string name="sync_status_activity_title">Sinhronizēšanas statuss</string>
   <string name="sync_login_activity_title">Pieraksties vai izveido kontu</string>
   <string name="sync_login_survey_religion_select_one">Izvēlies reliģiju</string>
   <string name="sync_login_survey_religion_christianity">Kristietība</string>

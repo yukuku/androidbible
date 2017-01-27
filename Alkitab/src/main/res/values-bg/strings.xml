@@ -45,10 +45,10 @@
   <string name="jump_to_prompt"><b>ПРЕХОД КЪМ</b> — Пример: ^1</string>
   <string name="belum_ada_pembatas_buku">Все още няма отбелязки.\nЗа да добавите отбелязка, изберете стих.</string>
   <string name="judul_titikdua">ЗАГЛАВИЕ</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">Не се получи зареждането %1$s от %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Грешка при зареждането %1$s от %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">Заредена %1$s от %2$s</string>
-  <string name="mengunduh_namaumum_tgl_tgl">Зареждане %1$s от %2$s&#8230;</string>
+  <string name="devotion_downloader_downloading_title">Зареждане ^1</string>
+  <string name="devotion_downloader_downloading_date">данни^1</string>
+  <string name="devotion_downloader_error_date">Грешка в данни ^1: ^2</string>
+  <string name="devotion_downloader_success_date">Сваляне на данни ^1</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Няма достъпност. Вероятно, материалите на поисканата заявка още не са подготвни или не е разпознат източника на данни. Моля, повторете опита по-късно.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Все още е недостъпно. Зареждане от интернет&#8230;\n\n(Убедете се, че имате интернет връзка за да свалите материалите за Посвещение)</string>
   <string name="hari_sabtu">Сб</string>
@@ -214,6 +214,7 @@
   <string name="market_short_desc">Бърза и надеждна Библия с отлична функционалност, работеща без Интернет.</string>
   <string name="no_url_for_facebook">Това не може да бъде споделено с Facebook.</string>
   <string name="storage_permission_rationale">Ние се нуждаем от достъп до хранилището за споделени медии, като Библейски стихове и фонтове.</string>
+  <string name="goto_button_history_tip">Подсказка: Следващия път, при продължително натискане на този бутон получавате достъп до последните разглеждани от вас стихове.</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Набиране </string>
   <string name="goto_tab_direct_label">Директно</string>
@@ -249,6 +250,7 @@
   <string name="sn_menu_private_song_book">Частни сборници с духовни химни</string>
   <string name="sn_private_song_book_dialog_desc">Сваляне на частни (скрити) сборници с духовни химни</string>
   <string name="sn_private_song_book_name_hint">Име на сборника с духовни химни</string>
+  <string name="sn_play_in_loop">Искате ли да се повтаря непрекъснато мелодията докато не я спрете?</string>
   <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Предишния ден</string>
   <string name="desc_next_day">Следващия ден</string>
@@ -278,6 +280,7 @@
   <string name="intent_filter_open_pdb_file">Отвори PDB-файл</string>
   <string name="intent_filter_open_pdb_or_yes_file">Отвори PDB/YES-файл</string>
   <string name="open_yes_file_name_conflict">YES-файл с име \'%1$s\' вече съществува в \'%2$s\'.</string>
+  <string name="open_yes_error_read">Грешка при прочитането на данните от ^1</string>
   <string name="open_file_cant_read_source">Неуспешно прочитане на източника.</string>
   <string name="open_file_unknown_file_format">Не може да се определи, дали този файл е PDB или YES-файл.</string>
   <string name="version_preset_delete_filename">Премахване на файлът с данни \'%s\'?</string>
@@ -316,10 +319,12 @@
   <string name="recentverses_button_hint">(Дълго натискане за показване на предишни стихове)</string>
   <string name="dr_reminder">Напомняне</string>
   <string name="dr_error_contact_reminder">Грешка по време на свързването с приложението за напомняне.</string>
+  <string name="dv_activity_title">Уиджет за ежедневен стих</string>
   <string name="dv_option_transparent_background">Прозрачен фон</string>
   <string name="dv_option_dark_text">Тъмен текст</string>
   <string name="dv_option_text_size">Размер на текста</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">План за четене</string>
   <string name="rp_menuReadingPlan">План за четене</string>
   <string name="rp_commentActual">Завършен %s%%</string>
   <string name="rp_commentTarget">Всичко: %s%%</string>
@@ -445,6 +450,7 @@
   <string name="sync_sync_set_pref_summary_never">Все още няма синхронизация</string>
   <string name="sync_sync_set_pref_summary_syncing">Синхронизиране&#8230;</string>
   <string name="sync_log_activity_title">Синхронизиране на дневника</string>
+  <string name="sync_status_activity_title">Статус на синхронизация</string>
   <string name="sync_login_activity_title">Влез в системата или създай отчетен запис</string>
   <string name="sync_login_survey_religion_select_one">Укажете религия</string>
   <string name="sync_login_survey_religion_christianity">Христианство</string>
