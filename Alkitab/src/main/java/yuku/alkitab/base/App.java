@@ -135,7 +135,11 @@ public class App extends yuku.afw.App {
 		initted = true;
 
 		final CrashReporter cr = new CrashReporter();
-		cr.activateDefaultUncaughtExceptionHandler();
+		if (BuildConfig.DEBUG) {
+			Log.d(TAG, "Not activating crash reporter because we are in debug build.");
+		} else {
+			cr.activateDefaultUncaughtExceptionHandler();
+		}
 		cr.trySend();
 
 		final FeedbackSender fs = FeedbackSender.getInstance(context);
