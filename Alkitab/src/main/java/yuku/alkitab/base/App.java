@@ -168,7 +168,7 @@ public class App extends yuku.afw.App {
 			Gcm.renewGcmRegistrationIdIfNeeded(Sync::notifyNewGcmRegistrationId);
 		}
 
-		DevotionReminder.scheduleAlarm(context);
+		DevotionReminder.scheduleAlarm();
 
 		forceOverflowMenu();
 

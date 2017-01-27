@@ -21,15 +21,15 @@ public class DevotionReminder {
 	public static final String REMINDER_VIBRATE = "reminder_vibrate";
 	public static final String REMINDER_TEXT = "reminder_text";
 
-	public static void scheduleAlarm(Context context) {
+	public static void scheduleAlarm() {
 		String reminder_time = Preferences.getString(REMINDER_TIME);
-		setAlarm(context, reminder_time);
+		setAlarm(reminder_time);
 	}
 
-	private static void setAlarm(final Context context, final String reminder_time) {
-		AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-		Intent intent = new Intent(context, DevotionReminderReceiver.class);
-		PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+	private static void setAlarm(final String reminder_time) {
+		final AlarmManager am = (AlarmManager) App.context.getSystemService(Context.ALARM_SERVICE);
+		final Intent intent = new Intent(App.context, DevotionReminderReceiver.class);
+		final PendingIntent pi = PendingIntent.getBroadcast(App.context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		// always cancel current (if any)
 		am.cancel(pi);
