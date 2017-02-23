@@ -4,8 +4,11 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.os.LocaleList;
 import android.provider.Settings;
+import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.multidex.MultiDex;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.PreferenceManager;
@@ -101,7 +104,8 @@ public class App extends yuku.afw.App {
 		return OkHttpClientWrapper.INSTANCE.longTimeoutClient;
 	}
 
-	@Override public void onCreate() {
+	@Override
+	public void onCreate() {
 		super.onCreate();
 
 		{ // LeakCanary, also we need the Application instance.
@@ -251,7 +255,8 @@ public class App extends yuku.afw.App {
 		return res;
 	}
 
-	@Override public void onConfigurationChanged(Configuration newConfig) {
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 
 		Log.d(TAG, "@@onConfigurationChanged: config changed to: " + newConfig);
@@ -262,11 +267,12 @@ public class App extends yuku.afw.App {
 		final Configuration config = context.getResources().getConfiguration();
 		boolean updated = false;
 
-		final Locale locale = getLocaleFromPreferences();
-		if (!U.equals(config.locale.getLanguage(), locale.getLanguage()) || !U.equals(config.locale.getCountry(), locale.getCountry())) {
-			if (BuildConfig.DEBUG) Log.d(TAG, "@@forceUpdateConfiguration: locale will be updated to: " + locale);
+		final Locale prefLocale = getLocaleFromPreferences();
+		final Locale configLocale = ConfigurationCompat.getLocale(config);
+		if (configLocale == null || !U.equals(configLocale.getLanguage(), prefLocale.getLanguage()) || !U.equals(configLocale.getCountry(), prefLocale.getCountry())) {
+			if (BuildConfig.DEBUG) Log.d(TAG, "@@forceUpdateConfiguration: config locale will be updated to: " + prefLocale);
 
-			config.locale = locale;
+			ConfigurationCompat.setLocale(config, prefLocale);
 			updated = true;
 		}
 
@@ -279,7 +285,44 @@ public class App extends yuku.afw.App {
 		}
 
 		if (updated) {
-			context.getResources().updateConfiguration(config, null);
+			context = ConfigurationCompat.updateConfiguration(context, config);
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	static class ConfigurationCompat {
+		@Nullable
+		public static Locale getLocale(Configuration config) {
+			if (Build.VERSION.SDK_INT >= 24) {
+				final LocaleList locales = config.getLocales();
+				if (locales.size() > 0) {
+					return locales.get(0);
+				} else {
+					return null;
+				}
+			} else {
+				return config.locale;
+			}
+		}
+
+		public static void setLocale(Configuration config, @NonNull Locale locale) {
+			if (Build.VERSION.SDK_INT >= 24) {
+				config.setLocales(new LocaleList(locale));
+			} else if (Build.VERSION.SDK_INT >= 17) {
+				config.setLocale(locale);
+			} else {
+				config.locale = locale;
+			}
+		}
+
+		@CheckResult
+		public static Context updateConfiguration(Context context, Configuration config) {
+			if (Build.VERSION.SDK_INT >= 17) {
+				return context.createConfigurationContext(config);
+			} else {
+				context.getResources().updateConfiguration(config, null);
+				return context;
+			}
 		}
 	}
 
