@@ -3,6 +3,7 @@ package yuku.alkitabconverter.yet;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import yuku.alkitabconverter.internal_common.InternalCommon;
+import yuku.alkitabconverter.internal_common.ReverseIndexer;
 import yuku.alkitabconverter.util.FootnoteDb;
 import yuku.alkitabconverter.util.KjvUtils;
 import yuku.alkitabconverter.util.Rec;
@@ -107,6 +108,10 @@ public class YetToInternal {
 			}
 		}
 
+		{ ////////// CREATE REVERSE INDEX
+			final File outDir = new File(internaldir);
+			ReverseIndexer.createReverseIndex(outDir, prefix, new TextDb(result.recs));
+		}
 
 		{ ////////// CONVERT TO INTERNAL
 			final File outDir = new File(internaldir);
