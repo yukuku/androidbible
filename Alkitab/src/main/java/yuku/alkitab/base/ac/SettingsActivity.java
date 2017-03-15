@@ -154,10 +154,6 @@ public class SettingsActivity extends BaseActivity {
 			pref_language.setOnPreferenceChangeListener(configurationPreferenceChangeListener);
 			autoDisplayListPreference(pref_language);
 
-			final ListPreference pref_forceFontScale = (ListPreference) findPreference(getString(R.string.pref_forceFontScale_key));
-			pref_forceFontScale.setOnPreferenceChangeListener(configurationPreferenceChangeListener);
-			autoDisplayListPreference(pref_forceFontScale);
-
 			final CheckBoxPreference pref_bottomToolbarOnText = (CheckBoxPreference) findPreference(getString(R.string.pref_bottomToolbarOnText_key));
 			pref_bottomToolbarOnText.setOnPreferenceChangeListener((preference, newValue) -> {
 				final Handler handler = new Handler();
@@ -231,7 +227,7 @@ public class SettingsActivity extends BaseActivity {
 		}
 	}
 
-	static void autoDisplayListPreference(final ListPreference pref) {
+	public static void autoDisplayListPreference(final ListPreference pref) {
 		final CharSequence label = pref.getEntry();
 		if (label != null) {
 			pref.setSummary(label);
