@@ -148,7 +148,9 @@ public class SongBookUtil {
 		}
 
 		if (withMore) {
-			menu.add(0, POPUP_ID_MORE, 0, R.string.sn_bookselector_more);
+			final SpannableStringBuilder sb = new SpannableStringBuilder(context.getText(R.string.sn_bookselector_more));
+			sb.setSpan(new ForegroundColorSpan(ResourcesCompat.getColor(context.getResources(), R.color.escape, context.getTheme())), 0, sb.length(), 0);
+			menu.add(0, POPUP_ID_MORE, 0, sb);
 		}
 
 		return res;

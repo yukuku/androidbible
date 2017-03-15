@@ -123,7 +123,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		lsReadingPlan.setAdapter(readingPlanAdapter = new ReadingPlanAdapter());
 
 		bToday = V.get(this, R.id.bToday);
-		bToday.setOnClickListener(v -> new View.OnClickListener() {
+		bToday.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
 				final PopupMenu popupMenu = new PopupMenu(ReadingPlanActivity.this, v);

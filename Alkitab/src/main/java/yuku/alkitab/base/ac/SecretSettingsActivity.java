@@ -1,8 +1,11 @@
 package yuku.alkitab.base.ac;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBar;
+import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +20,7 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Announce;
+import yuku.alkitab.base.util.ChangeConfigurationHelper;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.ProgressMark;
@@ -87,6 +91,22 @@ public class SecretSettingsActivity extends BaseActivity {
 			return true;
 		};
 
+		final Preference.OnPreferenceChangeListener configurationPreferenceChangeListener = (preference, newValue) -> {
+			final Handler handler = new Handler();
+
+			// do this after this method returns true
+			handler.post(() -> {
+				App.forceUpdateConfiguration();
+				ChangeConfigurationHelper.notifyConfigurationNeedsUpdate();
+
+				// restart this activity
+				final Activity ac = getActivity();
+				ac.finish();
+				startActivity(ac.getIntent());
+			});
+			return true;
+		};
+
 		@Override
 		public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
 			addPreferencesFromResource(R.xml.secret_settings);
@@ -95,6 +115,10 @@ public class SecretSettingsActivity extends BaseActivity {
 			findPreference("secret_version_table").setOnPreferenceClickListener(secret_version_table_click);
 			findPreference("secret_sync_debug").setOnPreferenceClickListener(secret_sync_debug);
 			findPreference("secret_reset_read_announcements").setOnPreferenceClickListener(secret_reset_read_announcements);
+
+			final ListPreference pref_forceFontScale = (ListPreference) findPreference(getString(R.string.pref_forceFontScale_key));
+			pref_forceFontScale.setOnPreferenceChangeListener(configurationPreferenceChangeListener);
+			SettingsActivity.autoDisplayListPreference(pref_forceFontScale);
 		}
 	}
 

@@ -79,9 +79,9 @@
 		<ImageView
 			android:layout_width="match_parent"
 			android:layout_height="1dp"
-			android:src="#1effffff"
 			android:layout_marginLeft="32dp"
-			android:layout_marginRight="32dp" />
+			android:layout_marginRight="32dp"
+			android:src="#1effffff" />
 	</LinearLayout>
 
 	<!--suppress AndroidDomInspection -->
@@ -205,10 +205,10 @@
 		<!--suppress AndroidDomInspection -->
 		<Button
 			android:id="@+id/bOk"
-			android:textSize="16sp"
-			android:text="@string/ok"
 			style="?buttonBarButtonStyle"
 			android:background="?selectableItemBackgroundBorderless"
+			android:text="@string/ok"
+			android:textSize="16sp"
 			app:layout_heightPercent="25%"
 			app:layout_marginLeftPercent="66.7%"
 			app:layout_marginTopPercent="75%"
