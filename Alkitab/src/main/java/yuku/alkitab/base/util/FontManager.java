@@ -58,11 +58,8 @@ public class FontManager {
 	}
 
 	private static File getLegacyFontsDir() {
-		final File res = new File(Environment.getExternalStorageDirectory(), "bible/fonts");
-		if (!res.exists()) {
-			res.mkdirs();
-		}
-		return res;
+		// do not make a new dir in this method
+		return new File(Environment.getExternalStorageDirectory(), "bible/fonts");
 	}
 
 	public static Typeface getRegular(String name) {
