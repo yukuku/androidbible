@@ -1,14 +1,9 @@
 package yuku.alkitab.base;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Build;
-import android.os.LocaleList;
-import android.provider.Settings;
-import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.multidex.MultiDex;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.PreferenceManager;
@@ -45,7 +40,6 @@ import yuku.stethoshim.StethoShim;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -159,8 +153,6 @@ public class App extends yuku.afw.App {
 			PreferenceManager.setDefaultValues(context, preferenceResId, false);
 		}
 
-		forceUpdateConfiguration();
-
 		// all activities need at least the activeVersion from S, so initialize it here.
 		synchronized (S.class) {
 			if (S.activeVersion == null) {
@@ -213,116 +205,6 @@ public class App extends yuku.afw.App {
 			sHasPermanentMenuKeySet.setBoolean(config, true);
 		} catch (Exception e) {
 			Log.w(TAG, "ViewConfiguration has no sHasPermanentMenuKeySet field", e);
-		}
-	}
-
-	private static Locale getLocaleFromPreferences() {
-		final String lang = Preferences.getString(R.string.pref_language_key, R.string.pref_language_default);
-		if (lang == null || "DEFAULT".equals(lang)) {
-			return Locale.getDefault();
-		}
-
-		switch (lang) {
-			case "zh-CN":
-				return Locale.SIMPLIFIED_CHINESE;
-			case "zh-TW":
-				return Locale.TRADITIONAL_CHINESE;
-			default:
-				return new Locale(lang);
-		}
-	}
-
-	private static float getFontScaleFromPreferences() {
-		float res = 0.f;
-
-		final String forceFontScale = Preferences.getString(R.string.pref_forceFontScale_key);
-		if (forceFontScale != null && !context.getString(R.string.pref_forceFontScale_default).equals(forceFontScale)) {
-			if (context.getString(R.string.pref_forceFontScale_value_x1_5).equals(forceFontScale)) {
-				res = 1.5f;
-			} else if (context.getString(R.string.pref_forceFontScale_value_x1_7).equals(forceFontScale)) {
-				res = 1.7f;
-			} else if (context.getString(R.string.pref_forceFontScale_value_x2_0).equals(forceFontScale)) {
-				res = 2.0f;
-			}
-		}
-
-		if (res == 0.f) {
-			final float defFontScale = Settings.System.getFloat(context.getContentResolver(), Settings.System.FONT_SCALE, 1.f);
-			if (BuildConfig.DEBUG) Log.d(TAG, "defFontScale: " + defFontScale);
-			res = defFontScale;
-		}
-
-		return res;
-	}
-
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-
-		Log.d(TAG, "@@onConfigurationChanged: config changed to: " + newConfig);
-		forceUpdateConfiguration();
-	}
-
-	public static void forceUpdateConfiguration() {
-		final Configuration config = context.getResources().getConfiguration();
-		boolean updated = false;
-
-		final Locale prefLocale = getLocaleFromPreferences();
-		final Locale configLocale = ConfigurationCompat.getLocale(config);
-		if (configLocale == null || !U.equals(configLocale.getLanguage(), prefLocale.getLanguage()) || !U.equals(configLocale.getCountry(), prefLocale.getCountry())) {
-			if (BuildConfig.DEBUG) Log.d(TAG, "@@forceUpdateConfiguration: config locale will be updated to: " + prefLocale);
-
-			ConfigurationCompat.setLocale(config, prefLocale);
-			updated = true;
-		}
-
-		final float fontScale = getFontScaleFromPreferences();
-		if (config.fontScale != fontScale) {
-			if (BuildConfig.DEBUG) Log.d(TAG, "@@forceUpdateConfiguration: fontScale will be updated to: " + fontScale);
-
-			config.fontScale = fontScale;
-			updated = true;
-		}
-
-		if (updated) {
-			context = ConfigurationCompat.updateConfiguration(context, config);
-		}
-	}
-
-	@SuppressWarnings("deprecation")
-	static class ConfigurationCompat {
-		@Nullable
-		public static Locale getLocale(Configuration config) {
-			if (Build.VERSION.SDK_INT >= 24) {
-				final LocaleList locales = config.getLocales();
-				if (locales.size() > 0) {
-					return locales.get(0);
-				} else {
-					return null;
-				}
-			} else {
-				return config.locale;
-			}
-		}
-
-		public static void setLocale(Configuration config, @NonNull Locale locale) {
-			if (Build.VERSION.SDK_INT >= 24) {
-				config.setLocales(new LocaleList(locale));
-			} else if (Build.VERSION.SDK_INT >= 17) {
-				config.setLocale(locale);
-			} else {
-				config.locale = locale;
-			}
-		}
-
-		@CheckResult
-		public static Context updateConfiguration(Context context, Configuration config) {
-			if (Build.VERSION.SDK_INT >= 17) {
-				return context.createConfigurationContext(config);
-			} else {
-				context.getResources().updateConfiguration(config, null);
-				return context;
-			}
 		}
 	}
 

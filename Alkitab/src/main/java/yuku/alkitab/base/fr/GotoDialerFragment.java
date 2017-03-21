@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
@@ -308,7 +307,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 		public BookAdapter() {
 			Book[] booksc = S.activeVersion.getConsecutiveBooks();
 			
-			if (Preferences.getBoolean(App.context.getString(R.string.pref_alphabeticBookSort_key), App.context.getResources().getBoolean(R.bool.pref_alphabeticBookSort_default))) {
+			if (Preferences.getBoolean(R.string.pref_alphabeticBookSort_key, R.bool.pref_alphabeticBookSort_default)) {
 				booksc_ = BookNameSorter.sortAlphabetically(booksc); 
 			} else {
 				booksc_ = booksc.clone();

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -305,7 +306,9 @@ public class TextAppearancePanel {
 				text1.setText(defaultFontNames[position]);
 				text1.setTypeface(new Typeface[] {Typeface.SANS_SERIF, Typeface.SERIF, Typeface.MONOSPACE}[position]);
 			} else if (position == getCount() - 1) {
-				text1.setText(App.context.getString(R.string.get_more_fonts));
+				final SpannableStringBuilder sb = new SpannableStringBuilder(activity.getText(R.string.get_more_fonts));
+				sb.setSpan(new ForegroundColorSpan(ResourcesCompat.getColor(activity.getResources(), R.color.escape, activity.getTheme())), 0, sb.length(), 0);
+				text1.setText(sb);
 				text1.setTypeface(Typeface.DEFAULT);
 			} else {
 				int idx = position - 3;

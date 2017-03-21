@@ -154,7 +154,7 @@ public class SearchBookFilterActivity extends BaseActivity {
 
 		public BookAdapter(Book[] books) {
 			// sort or not based on pref
-			if (Preferences.getBoolean(App.context.getString(R.string.pref_alphabeticBookSort_key), App.context.getResources().getBoolean(R.bool.pref_alphabeticBookSort_default))) {
+			if (Preferences.getBoolean(R.string.pref_alphabeticBookSort_key, R.bool.pref_alphabeticBookSort_default)) {
 				books_grid = BookNameSorter.sortAlphabetically(books);
 			} else {
 				books_grid = books.clone();

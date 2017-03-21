@@ -27,8 +27,8 @@ import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
-import yuku.alkitab.base.util.ChangeConfigurationHelper;
 import yuku.alkitab.base.util.OtherAppIntegration;
+import yuku.alkitab.base.widget.ConfigurationWrapper;
 import yuku.alkitab.base.widget.VerseItem;
 import yuku.alkitab.debug.R;
 
@@ -135,13 +135,11 @@ public class SettingsActivity extends BaseActivity {
 
 			// do this after this method returns true
 			handler.post(() -> {
-				App.forceUpdateConfiguration();
-				ChangeConfigurationHelper.notifyConfigurationNeedsUpdate();
+				ConfigurationWrapper.notifyConfigurationNeedsUpdate();
 
 				// restart this activity
 				final Activity ac = getActivity();
-				ac.finish();
-				startActivity(ac.getIntent());
+				ac.recreate();
 			});
 			return true;
 		};

@@ -20,8 +20,8 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Announce;
-import yuku.alkitab.base.util.ChangeConfigurationHelper;
 import yuku.alkitab.base.util.Sqlitil;
+import yuku.alkitab.base.widget.ConfigurationWrapper;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.model.ProgressMarkHistory;
@@ -96,13 +96,11 @@ public class SecretSettingsActivity extends BaseActivity {
 
 			// do this after this method returns true
 			handler.post(() -> {
-				App.forceUpdateConfiguration();
-				ChangeConfigurationHelper.notifyConfigurationNeedsUpdate();
+				ConfigurationWrapper.notifyConfigurationNeedsUpdate();
 
 				// restart this activity
 				final Activity ac = getActivity();
-				ac.finish();
-				startActivity(ac.getIntent());
+				ac.recreate();
 			});
 			return true;
 		};

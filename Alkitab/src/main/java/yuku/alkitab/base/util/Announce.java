@@ -18,6 +18,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.HelpActivity;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 
@@ -93,8 +94,8 @@ public abstract class Announce {
 			}
 
 			final NotificationCompat.Builder base = new NotificationCompat.Builder(App.context)
-				.setContentTitle(App.context.getString(R.string.announce_notif_title, App.context.getString(R.string.app_name)))
-				.setContentText(unreadAnnouncements.size() == 1 ? unreadAnnouncements.get(0).title : App.context.getString(R.string.announce_notif_number_new_announcements, unreadAnnouncements.size()))
+				.setContentTitle(Localized.string(R.string.announce_notif_title, Localized.string(R.string.app_name)))
+				.setContentText(unreadAnnouncements.size() == 1 ? unreadAnnouncements.get(0).title : Localized.string(R.string.announce_notif_number_new_announcements, unreadAnnouncements.size()))
 				.setSmallIcon(R.drawable.ic_stat_announce)
 				.setColor(ContextCompat.getColor(App.context, R.color.accent))
 				.setContentIntent(PendingIntent.getActivity(App.context, Arrays.hashCode(announcementIds), HelpActivity.createViewAnnouncementIntent(announcementIds), PendingIntent.FLAG_UPDATE_CURRENT))
@@ -103,14 +104,14 @@ public abstract class Announce {
 			final Notification n;
 			if (unreadAnnouncements.size() == 1) {
 				final NotificationCompat.BigTextStyle builder = new NotificationCompat.BigTextStyle(base)
-					.setBigContentTitle(App.context.getString(R.string.announce_notif_title, App.context.getString(R.string.app_name)))
+					.setBigContentTitle(Localized.string(R.string.announce_notif_title, Localized.string(R.string.app_name)))
 					.bigText(unreadAnnouncements.get(0).title);
 
 				n = builder.build();
 			} else {
 				final NotificationCompat.InboxStyle builder = new NotificationCompat.InboxStyle(base)
-					.setBigContentTitle(App.context.getString(R.string.announce_notif_title, App.context.getString(R.string.app_name)))
-					.setSummaryText(App.context.getString(R.string.announce_notif_number_new_announcements, unreadAnnouncements.size()));
+					.setBigContentTitle(Localized.string(R.string.announce_notif_title, Localized.string(R.string.app_name)))
+					.setSummaryText(Localized.string(R.string.announce_notif_number_new_announcements, unreadAnnouncements.size()));
 
 				for (final Announcement announcement : unreadAnnouncements) {
 					builder.addLine(announcement.title);

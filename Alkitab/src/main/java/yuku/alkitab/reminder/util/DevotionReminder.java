@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.text.TextUtils;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.reminder.br.DevotionReminderReceiver;
 
@@ -57,7 +58,7 @@ public class DevotionReminder {
 	public static String getNotificationText() {
 		String notificationText = Preferences.getString(REMINDER_TEXT);
 		if (TextUtils.isEmpty(notificationText)) {
-			notificationText = App.context.getString(R.string.dr_notification_text);
+			notificationText = Localized.string(R.string.dr_notification_text);
 		}
 		return notificationText;
 	}

@@ -13,8 +13,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.compactbyte.android.bible.PDBFileStream;
 import com.compactbyte.bibleplus.reader.BiblePlusPDB;
 import com.compactbyte.bibleplus.reader.BookInfo;
-import yuku.afw.App;
 import yuku.afw.V;
+import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.R;
 
 import java.io.IOException;
@@ -55,11 +55,11 @@ public class ConvertOptionsDialog {
 			if (reason == BiblePlusPDB.ERR_NOT_BIBLE_PLUS_FILE) {
 				String type = pdb.getHeader().getType();
 				String creator = pdb.getHeader().getCreator();
-				return App.context.getString(R.string.pdb_error_not_palmbible, type, creator);
+				return Localized.string(R.string.pdb_error_not_palmbible, type, creator);
 			} else if (reason == BiblePlusPDB.ERR_FILE_CORRUPTED) {
-				return App.context.getString(R.string.pdb_error_corrupted);
+				return Localized.string(R.string.pdb_error_corrupted);
 			} else if (reason == BiblePlusPDB.ERR_NOT_PDB_FILE) {
-				return App.context.getString(R.string.pdb_error_not_pdb_file);
+				return Localized.string(R.string.pdb_error_not_pdb_file);
 			}
 			return null;
 		}

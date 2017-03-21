@@ -12,6 +12,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.util.Foreground;
+import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 
@@ -93,8 +94,8 @@ public class DevotionDownloader extends Thread {
 
 				Log.d(TAG, "Downloader starts downloading name=" + kind.name + " date=" + article.getDate());
 				notifyDownloadStatus(
-					TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_downloading_title), kind.title),
-					TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_downloading_date), article.getDate())
+					TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_downloading_title), kind.title),
+					TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_downloading_date), article.getDate())
 				);
 
 				try {
@@ -105,13 +106,13 @@ public class DevotionDownloader extends Thread {
 
 					if (output.startsWith("NG")) {
 						notifyDownloadStatus(
-							TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_downloading_title), kind.title),
-							TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_error_date), article.getDate(), output)
+							TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_downloading_title), kind.title),
+							TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_error_date), article.getDate(), output)
 						);
 					} else {
 						notifyDownloadStatus(
-							TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_downloading_title), kind.title),
-							TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_success_date), article.getDate())
+							TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_downloading_title), kind.title),
+							TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_success_date), article.getDate())
 						);
 						broadcastDownloaded(kind.name, article.getDate());
 					}
@@ -122,8 +123,8 @@ public class DevotionDownloader extends Thread {
 					Log.w(TAG, "@@run", e);
 
 					notifyDownloadStatus(
-						TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_downloading_title), kind.title),
-						TextUtils.expandTemplate(App.context.getString(R.string.devotion_downloader_error_date), article.getDate(), e.getMessage())
+						TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_downloading_title), kind.title),
+						TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_error_date), article.getDate(), e.getMessage())
 					);
 					Log.d(TAG, "Downloader failed to download");
 				}

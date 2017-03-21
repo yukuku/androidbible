@@ -1,7 +1,9 @@
 package yuku.alkitab.base.ac.base;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
@@ -26,7 +28,8 @@ import android.view.ViewGroup;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.storage.Prefkey;
-import yuku.alkitab.base.util.ChangeConfigurationHelper;
+import yuku.alkitab.base.widget.ConfigurationWrapper;
+import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.R;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -44,12 +47,17 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 	private int lastKnownConfigurationSerialNumber;
 
 	@Override
+	protected void attachBaseContext(final Context base) {
+		super.attachBaseContext(ConfigurationWrapper.wrap(base));
+	}
+
+	@Override
 	protected void onStart() {
 		super.onStart();
 
 		applyActionBarAndStatusBarColors();
 
-		final int currentConfigurationSerialNumber = ChangeConfigurationHelper.getSerialCounter();
+		final int currentConfigurationSerialNumber = ConfigurationWrapper.getSerialCounter();
 		if (lastKnownConfigurationSerialNumber != currentConfigurationSerialNumber) {
 			Log.d(TAG, "Restarting activity " + getClass().getName() + " because of configuration change " + lastKnownConfigurationSerialNumber + " -> " + currentConfigurationSerialNumber);
 			lastKnownConfigurationSerialNumber = currentConfigurationSerialNumber;
@@ -93,23 +101,33 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		lastKnownConfigurationSerialNumber = ChangeConfigurationHelper.getSerialCounter();
+		lastKnownConfigurationSerialNumber = ConfigurationWrapper.getSerialCounter();
 
 		if (willNeedStoragePermission) {
 			askStoragePermission();
+		}
+
+		// to ensure that title is localized
+		try {
+			final ActivityInfo activityInfo = getPackageManager().getActivityInfo(getComponentName(), 0);
+			if (activityInfo.labelRes != 0) {
+				setTitle(Localized.text(activityInfo.labelRes));
+			}
+		} catch (PackageManager.NameNotFoundException e) {
+			Log.e(TAG, "Internal consistency error", e);
 		}
 	}
 
 	private void askStoragePermission() {
 		if (!(
 			Build.VERSION.SDK_INT < 16
-			|| (
+				|| (
 				ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-				&& ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+					&& ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
 			)
 		)) {
 			if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-				||ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+				|| ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)
 				) {
 				final AtomicBoolean oked = new AtomicBoolean(false);
 				new MaterialDialog.Builder(this)
@@ -136,6 +154,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 	/**
 	 * Override this to do something after we confirm that all needed permissions are granted.
 	 * This is only called if {@link #willNeedStoragePermission()} was called.
+	 *
 	 * @param immediatelyGranted whether the permission is granted immediately without leaving the first onCreate().
 	 *                           Use this to determine whether we need to do initialization (e.g. load dir contents)
 	 *                           and to determine whether it is safe to init now.
@@ -208,7 +227,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 		return super.onOptionsItemSelected(item);
 	}
 
-    protected void navigateUp() {
+	protected void navigateUp() {
 		final Intent upIntent = NavUtils.getParentActivityIntent(this);
 		if (upIntent == null) { // not defined in manifest, let us finish() instead.
 			finish();

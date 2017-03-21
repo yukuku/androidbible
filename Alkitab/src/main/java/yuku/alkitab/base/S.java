@@ -26,8 +26,6 @@ import java.util.List;
 
 
 public class S {
-	static final String TAG = S.class.getSimpleName();
-
 	/**
 	 * values applied from settings
 	 */

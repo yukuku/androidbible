@@ -18,6 +18,7 @@ import yuku.afw.App;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.sv.DailyVerseAppWidgetService;
 import yuku.alkitab.base.util.DailyVerseData;
+import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
@@ -102,7 +103,7 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 			final Intent viewVerseIntent = Launcher.openAppAtBibleLocation(aris[0]);
 			rv.setOnClickPendingIntent(R.id.tReference, PendingIntent.getActivity(context, appWidgetId + 10000, viewVerseIntent, PendingIntent.FLAG_UPDATE_CURRENT));
 		} else {
-			rv.setTextViewText(R.id.tReference, App.context.getString(R.string.generic_verse_not_available_in_this_version));
+			rv.setTextViewText(R.id.tReference, Localized.string(R.string.generic_verse_not_available_in_this_version));
 		}
 
 		//------Set Intent to update widget

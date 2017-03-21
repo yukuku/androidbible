@@ -152,7 +152,13 @@ public class Preferences {
 		commitIfNotHeld();
 		if (BuildConfig.DEBUG) Log.d(TAG, key + " = (string) " + val);
 	}
-	
+
+	public static void setString(@StringRes final int keyStringResId, String val) {
+		final Resources r = App.context.getResources();
+		final String key = r.getString(keyStringResId);
+		setString(key, val);
+	}
+
 	public static void setBoolean(Enum<?> key, boolean val) {
 		setBoolean(key.toString(), val);
 	}
