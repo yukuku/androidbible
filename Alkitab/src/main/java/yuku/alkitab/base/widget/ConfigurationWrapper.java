@@ -34,7 +34,13 @@ public class ConfigurationWrapper extends ContextWrapper {
 		final Locale prefLocale = getLocaleFromPreferences();
 		if (BuildConfig.DEBUG) Log.d(TAG, "@@wrap: config locale will be updated to: " + prefLocale);
 
+		// set default locale
 		Locale.setDefault(prefLocale);
+		if (Build.VERSION.SDK_INT >= 24) {
+			LocaleList.setDefault(new LocaleList(prefLocale));
+		}
+
+		// set config locale
 		ConfigurationCompat.setLocale(config, prefLocale);
 
 		final float fontScale = getFontScaleFromPreferences();
@@ -74,9 +80,7 @@ public class ConfigurationWrapper extends ContextWrapper {
 		}
 
 		public static void setLocale(Configuration config, @NonNull Locale locale) {
-			if (Build.VERSION.SDK_INT >= 24) {
-				config.setLocales(new LocaleList(locale));
-			} else if (Build.VERSION.SDK_INT >= 17) {
+			if (Build.VERSION.SDK_INT >= 17) {
 				config.setLocale(locale);
 			} else {
 				config.locale = locale;
@@ -102,11 +106,68 @@ public class ConfigurationWrapper extends ContextWrapper {
 			return Locale.getDefault();
 		}
 
+		if (!lang.contains("-")) {
+			// From https://code.google.com/p/android/issues/detail?id=225679#c2
+			// It's not a good idea to set a locale without a country in Android.
+			// Various parts of the system expect a country and may behave in weird ways otherwise.
+			// So if you are setting a locale programatically, set it to "ru-RU" instead of "ru".
+			return localeWithCountry(lang);
+
+		} else { // contains "-"
+			switch (lang) {
+				case "zh-CN":
+					return Locale.SIMPLIFIED_CHINESE;
+				case "zh-TW":
+					return Locale.TRADITIONAL_CHINESE;
+				default:
+					return new Locale(lang);
+			}
+		}
+	}
+
+	@NonNull
+	private static Locale localeWithCountry(@NonNull final String lang) {
 		switch (lang) {
-			case "zh-CN":
-				return Locale.SIMPLIFIED_CHINESE;
-			case "zh-TW":
-				return Locale.TRADITIONAL_CHINESE;
+			case "af":
+				return new Locale("af", "ZA");
+			case "in":
+				return new Locale("in", "ID");
+			case "cs":
+				return new Locale("cs", "CZ");
+			case "da":
+				return new Locale("da", "DK");
+			case "de":
+				return new Locale("de", "DE");
+			case "en":
+				return new Locale("en", "US");
+			case "es":
+				return new Locale("es", "ES");
+			case "fr":
+				return new Locale("fr", "FR");
+			case "lv":
+				return new Locale("lv", "LV");
+			case "nl":
+				return new Locale("nl", "NL");
+			case "pl":
+				return new Locale("pl", "PL");
+			case "pt":
+				return new Locale("pt", "BR");
+			case "ro":
+				return new Locale("ro", "RO");
+			case "vi":
+				return new Locale("vi", "VN");
+			case "bg":
+				return new Locale("bg", "BG");
+			case "ru":
+				return new Locale("ru", "RU");
+			case "uk":
+				return new Locale("uk", "UA");
+			case "th":
+				return new Locale("th", "TH");
+			case "ja":
+				return new Locale("ja", "JP");
+			case "ko":
+				return new Locale("ko", "KR");
 			default:
 				return new Locale(lang);
 		}
