@@ -6,6 +6,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import com.afollestad.materialdialogs.DialogAction;
@@ -34,18 +35,18 @@ public class LabelEditorDialog {
 			.title(title)
 			.positiveText(R.string.ok)
 			.negativeText(R.string.cancel)
-			.callback(new MaterialDialog.ButtonCallback() {
-				@Override
-				public void onPositive(final MaterialDialog dialog) {
-					if (okListener != null) {
-						okListener.onOk(tCaption.getText().toString().trim());
-					}
+			.onPositive((dialog1, which) -> {
+				if (okListener != null) {
+					okListener.onOk(tCaption.getText().toString().trim());
 				}
 			})
 			.build();
 
-		dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+		final Window window = dialog.getWindow();
+		if (window != null) {
+			window.setLayout(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+			window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+		}
 		dialog.show();
 		
 		final View bOk = dialog.getActionButton(DialogAction.POSITIVE);

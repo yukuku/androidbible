@@ -45,10 +45,10 @@
   <string name="jump_to_prompt"><b>GEHE ZU</b> — Beispiel: ^1</string>
   <string name="belum_ada_pembatas_buku">Keine Lesezeichen vorhanden.\nSelektiere einen Vers, um ein Lesezeichen hinzufügen.</string>
   <string name="judul_titikdua">TITEL</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">Fehler beim Herunterladen von %1$s vom %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Fehler beim Herunterladen von %1$s vom %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">%1$s für das Datum %2$s erfolgreich heruntergeladen</string>
-  <string name="mengunduh_namaumum_tgl_tgl">Lade %1$s für das Datum %2$s herunter&#8230;</string>
+  <string name="devotion_downloader_downloading_title">Lade %s herunter</string>
+  <string name="devotion_downloader_downloading_date">Andacht für Datum ^1</string>
+  <string name="devotion_downloader_error_date">Fehler bei Andacht für Datum ^1: ^2</string>
+  <string name="devotion_downloader_success_date">Andacht für Datum ^1 erfolgreich heruntergeladen</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Zurzeit nicht verfügbar. Wahrscheinlich wurden die Materialen für das gewünschte Datum noch nicht bereitgestellt oder es traten Fehler beim Erkennen der Datenquelle auf. Bitte versuchen Sie es später erneut.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Momentan nicht vorhanden. Lade herunter&#8230;\n\n(Stellen Sie sicher, dass eine Internetverbindung besteht, damit die Andacht heruntergeladen werden kann.)</string>
   <string name="hari_sabtu">Samstag</string>
@@ -214,6 +214,7 @@
   <string name="market_short_desc">Schnelle, zuverlässige und leistungsfähige Offline-Bibel.</string>
   <string name="no_url_for_facebook">Das kann nicht auf Facebook geteilt werden.</string>
   <string name="storage_permission_rationale">Das Recht zum Schreiben auf den Speicher wird benötigt, um Dateien wie Bibelübersetzungen und Schriftarten abzulegen.</string>
+  <string name="goto_button_history_tip">Tipp: Beim nächsten Mal diese Schaltfläche lang drücken, um die zuletzt geöffneten Bibelstellen zu sehen.</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Wähler</string>
   <string name="goto_tab_direct_label">Direkt</string>
@@ -275,10 +276,12 @@
   <string name="desc_verse_attribute_multiple_notes">Zu diesem Vers gibt es %s Notizen.</string>
   <string name="desc_verse_attribute_progress_mark">%s befindet sich zurzeit hier.</string>
   <string name="desc_progress_mark_list">Lesefortschritts-Liste</string>
+  <string name="desc_backspace">Rücktaste</string>
   <string name="intent_filter_open_yes_file">YES-Datei öffnen</string>
   <string name="intent_filter_open_pdb_file">PDB-Datei öffnen</string>
   <string name="intent_filter_open_pdb_or_yes_file">PDB-/YES-Datei öffnen</string>
   <string name="open_yes_file_name_conflict">Die YES-Datei \'%1$s\' existiert schon in \'%2$s\'.</string>
+  <string name="open_yes_error_read">Fehler beim Lesen der Daten aus ^1</string>
   <string name="open_file_cant_read_source">Die Quelldatei konnte nicht erfolgreich gelesen werden.</string>
   <string name="open_file_unknown_file_format">Konnte nicht bestimmen, ob es eine PDB- oder YES-Datei ist.</string>
   <string name="version_preset_delete_filename">Datendatei \'%s\' löschen?</string>
@@ -317,6 +320,8 @@
   <string name="recentverses_button_hint">(Lang drücken für Bibelstellen-Historie)</string>
   <string name="dr_reminder">Erinnerung</string>
   <string name="dr_error_contact_reminder">Fehler beim Herstellen der Verbindung zur App für Erinnerungen.</string>
+  <string name="dr_timepicker_set">Setzen</string>
+  <string name="dr_timepicker_off">Ausschalten</string>
   <string name="dv_activity_title">Vers des Tages</string>
   <string name="dv_option_transparent_background">Transparenter Hintergrund</string>
   <string name="dv_option_dark_text">Dunkler Text</string>

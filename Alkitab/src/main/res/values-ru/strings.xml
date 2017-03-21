@@ -45,10 +45,10 @@
   <string name="jump_to_prompt"><b>ПЕРЕХОД К</b> — Пример: ^1</string>
   <string name="belum_ada_pembatas_buku">Закладок пока нет.\nЧтобы добавить закладку, выберите стих.</string>
   <string name="judul_titikdua">ЗАГОЛОВОК</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">Не удалось загрузить %1$s от %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Ошибка при загрузке %1$s от %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">Загружена %1$s от %2$s</string>
-  <string name="mengunduh_namaumum_tgl_tgl">Загрузка %1$s от %2$s&#8230;</string>
+  <string name="devotion_downloader_downloading_title">Загрузка^1</string>
+  <string name="devotion_downloader_downloading_date">датированный ^1</string>
+  <string name="devotion_downloader_error_date">Ошибка в дате ^1: ^2</string>
+  <string name="devotion_downloader_success_date">Дата загрузки ^1</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Пока недоступно. Вероятно, материал для запрошенной даты еще не подготовлен или не удалось распознать источник данных. Пожалуйста, повторите попытку позже.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Пока недоступно. Загрузка из интернета&#8230;\n\n(Убедитесь, что соединение с интернетом установлено)</string>
   <string name="hari_sabtu">Сб</string>
@@ -274,10 +274,12 @@
   <string name="desc_verse_attribute_multiple_notes">К этому стиху присоединено %s заметок.</string>
   <string name="desc_verse_attribute_progress_mark">В настоящее время здесь %s.</string>
   <string name="desc_progress_mark_list">Список маркеров продвижения</string>
+  <string name="desc_backspace">бекспейс</string>
   <string name="intent_filter_open_yes_file">Открыть YES-файл</string>
   <string name="intent_filter_open_pdb_file">Открыть PDB-файл</string>
   <string name="intent_filter_open_pdb_or_yes_file">Открыть PDB/YES-файл</string>
   <string name="open_yes_file_name_conflict">YES-файл с названием \'%1$s\' уже существует в \'%2$s\'.</string>
+  <string name="open_yes_error_read">Ошибка чтения данных из ^1</string>
   <string name="open_file_cant_read_source">Не удалить прочитать из осточника.</string>
   <string name="open_file_unknown_file_format">Не удалось определить, является ли этот файл PDB или YES-файлом.</string>
   <string name="version_preset_delete_filename">Удалить файл данных \'%s\'?</string>
@@ -316,10 +318,12 @@
   <string name="recentverses_button_hint">(Удерживайте для отображения недавних стихов)</string>
   <string name="dr_reminder">Напоминание</string>
   <string name="dr_error_contact_reminder">Не удалить связаться с приложением напоминания.</string>
+  <string name="dr_timepicker_off">Выключить</string>
   <string name="dv_option_transparent_background">Прозрачный фон</string>
   <string name="dv_option_dark_text">Темный текст</string>
   <string name="dv_option_text_size">Размер текста</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">План чтения</string>
   <string name="rp_menuReadingPlan">План чтения</string>
   <string name="rp_commentActual">Закончено %s%%</string>
   <string name="rp_commentTarget">Всего: %s%%</string>
@@ -445,6 +449,7 @@
   <string name="sync_sync_set_pref_summary_never">Еще не синхронизовано</string>
   <string name="sync_sync_set_pref_summary_syncing">Синхронизуется&#8230;</string>
   <string name="sync_log_activity_title">Синхронизовать журнал</string>
+  <string name="sync_status_activity_title">Статус синхронизации</string>
   <string name="sync_login_activity_title">Войти в систему или создать учетную запись</string>
   <string name="sync_login_survey_religion_select_one">Укажите религию</string>
   <string name="sync_login_survey_religion_christianity">Христианство</string>

@@ -207,7 +207,7 @@ public class HelpActivity extends BaseActivity {
 			item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 		}
 
-		return overflowMenuItemTitle != null;
+		return true;
 	}
 
 	@Override

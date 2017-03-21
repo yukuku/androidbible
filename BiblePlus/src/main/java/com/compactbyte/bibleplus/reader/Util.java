@@ -20,75 +20,11 @@
 
 package com.compactbyte.bibleplus.reader;
 
-import java.util.*;
-
 public class Util {
 
 	static char[] hebrewtab;
 
 	static char[] greektab;
-
-	public static StringBuffer addField(StringBuffer sb, int i) {
-		return sb.append(i).append(":");
-	}
-
-	public static StringBuffer addField(StringBuffer sb, String s) {
-		return sb.append(Util.escape(s)).append(":");
-	}
-
-	public static StringBuffer addLastField(StringBuffer sb, int i) {
-		return sb.append(i);
-	}
-
-	public static StringBuffer addLastField(StringBuffer sb, String s) {
-		return sb.append(Util.escape(s));
-	}
-
-	public static int binarySearch(int[] array, int el) {
-		return Arrays.binarySearch(array, el);
-	}
-
-	public static String escape(String s) {
-		return Util.escape(s, '%', ":\r\n");
-	}
-
-	public static String escape(String s, char prefix, String charsToReplace) {
-		if (s == null || charsToReplace == null) {
-			return null;
-		}
-		StringBuilder res = new StringBuilder();
-		for (int i = 0; i < s.length(); i++) {
-			char c = s.charAt(i);
-			if (c == prefix || charsToReplace.indexOf(c) >= 0) {
-				res.append(prefix);
-				int v = c;
-				String vs = Integer.toHexString(v);
-				if (vs.length() < 4) {
-					res.append("0000".substring(vs.length()));
-				}
-				res.append(vs);
-
-			} else {
-				res.append(c);
-			}
-		}
-		return res.toString();
-	}
-
-	/*
-	 * public static void dumpBytes(byte[] data) {
-	 * for (int i = 0; i < data.length; i++) {
-	 * if (i>0 && (i%16==0)) {
-	 * // System.out.println();
-	 * }
-	 * String s= Integer.toHexString(data[i] & 0xff);
-	 * if (s.length()==1)
-	 * s = "0" + s;
-	 * // System.out.print(s + " ");
-	 * }
-	 * //System.out.println();
-	 * }
-	 */
 
 	public static int readInt(byte[] data, int offs) {
 		return (((data[offs] & 0xff) << 24) |
@@ -102,11 +38,10 @@ public class Util {
 
 	public static String readString(byte[] data, int offs, int length, String encoding) {
 		try {
-			String s = new String(data, offs, length, encoding);
-//			byte[] b = new byte[length];
+			//			byte[] b = new byte[length];
 //			System.arraycopy(data, offs, b, 0, length);
 //			Log.d("readString", (s.length() > 20? s.substring(0, 20): s) + " encoding " + encoding + " from " + Arrays.toString(b));
-			return s;
+			return new String(data, offs, length, encoding);
 		} catch (java.io.UnsupportedEncodingException e) {
 			return readStringISO8859_1(data, offs, length);
 		}
@@ -200,53 +135,10 @@ public class Util {
 			return "";
 		}
 	}
-	
-	static String dumpByteArray(byte[] ba) {
-		StringBuilder sb = new StringBuilder();
-		for (byte b: ba) {
-			sb.append("0x").append(Integer.toHexString(0xff & b)).append(' ');
-		}
-		return sb.toString();
-	}
 
 	public static void setTables(char[] _hebrewtab, char[] _greektab) {
 		hebrewtab = _hebrewtab;
 		greektab = _greektab;
-	}
-
-	public static String unescape(String s) {
-		return Util.unescape(s, '%');
-	}
-
-	public static String unescape(String s, char prefix) {
-		if (s == null) {
-			return null;
-		}
-		StringBuilder res = new StringBuilder();
-		int i = 0;
-		while (i < s.length()) {
-			char c = s.charAt(i);
-			if (c == prefix) {
-				if (i + 4 >= s.length()) {
-					res.append(c);
-				} else {
-					String vs = s.substring(i + 1, i + 5);
-					try {
-						int v = Integer.parseInt(vs, 16);
-						char cn = (char) v;
-						res.append(cn);
-						i += 5;
-						continue;
-					} catch (NumberFormatException e) {
-						res.append(c);
-					}
-				}
-			} else {
-				res.append(c);
-			}
-			i++;
-		}
-		return res.toString();
 	}
 
 }

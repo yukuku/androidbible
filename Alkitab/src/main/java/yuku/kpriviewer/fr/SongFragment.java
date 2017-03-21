@@ -86,12 +86,8 @@ public class SongFragment extends BaseFragment {
 	final WebViewClient webViewClient = new WebViewClient() {
 		@Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			Activity activity = getActivity();
-			if (activity instanceof ShouldOverrideUrlLoadingHandler) {
-				if (((ShouldOverrideUrlLoadingHandler)activity).shouldOverrideUrlLoading(this, view, url)) {
-					return true;
-				} else {
-					return super.shouldOverrideUrlLoading(view, url);
-				}
+			if (activity instanceof ShouldOverrideUrlLoadingHandler && ((ShouldOverrideUrlLoadingHandler)activity).shouldOverrideUrlLoading(this, view, url)) {
+				return true;
 			} else {
 				return super.shouldOverrideUrlLoading(view, url);
 			}
@@ -161,9 +157,9 @@ public class SongFragment extends BaseFragment {
 
 			if (song.lyrics.size() > 1 || lyric.caption != null) { // otherwise, only lyric and has no name
 				if (lyric.caption != null) {
-					sb.append("<div class='lyric_caption'>" + lyric.caption + "</div>");
+					sb.append("<div class='lyric_caption'>").append(lyric.caption).append("</div>");
 				} else {
-					sb.append("<div class='lyric_caption'>Versi " + (i+1) + "</div>");
+					sb.append("<div class='lyric_caption'>Versi ").append(i + 1).append("</div>");
 				}
 			}
 

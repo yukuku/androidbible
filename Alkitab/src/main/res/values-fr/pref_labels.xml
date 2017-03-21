@@ -26,4 +26,5 @@
   <string name="pref_tapToEditNote_summary">Décochez cette case pour éviter toute modification accidentelle lors de l\'affichage des notes existantes</string>
   <string name="pref_showHiddenVersion_title">Autoriser des versions éventuellement limitées</string>
   <string name="pref_selectedVerseBgColor_title">L\'arriere plan pour le verset sélectionné</string>
+  <string name="pref_forceFontScale_title">Taille du texte de l\'IU</string>
 </resources>

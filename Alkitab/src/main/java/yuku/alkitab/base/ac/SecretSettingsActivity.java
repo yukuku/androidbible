@@ -1,8 +1,11 @@
 package yuku.alkitab.base.ac;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBar;
+import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +21,7 @@ import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.base.util.Sqlitil;
+import yuku.alkitab.base.widget.ConfigurationWrapper;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.model.ProgressMarkHistory;
@@ -33,7 +37,7 @@ public class SecretSettingsActivity extends BaseActivity {
 		private Preference.OnPreferenceClickListener secret_progress_mark_history_click = preference -> {
 			final List<ProgressMark> progressMarks = S.getDb().listAllProgressMarks();
 
-			final String[] labels = new String[progressMarks.size()];
+			final CharSequence[] labels = new CharSequence[progressMarks.size()];
 			for (int i = 0; i < progressMarks.size(); i++) {
 				final ProgressMark progressMark = progressMarks.get(i);
 				labels[i] = progressMark.caption + " (preset_id " + progressMark.preset_id + ")";
@@ -43,7 +47,7 @@ public class SecretSettingsActivity extends BaseActivity {
 				.items(labels)
 				.itemsCallback((dialog, itemView, position, text) -> {
 					final List<ProgressMarkHistory> pmhs = S.getDb().listProgressMarkHistoryByPresetId(progressMarks.get(position).preset_id);
-					final String[] items = new String[pmhs.size()];
+					final CharSequence[] items = new CharSequence[pmhs.size()];
 					for (int i = 0; i < pmhs.size(); i++) {
 						final ProgressMarkHistory pmh = pmhs.get(i);
 						items[i] = "'" + pmh.progress_mark_caption + "' " + Sqlitil.toLocaleDateMedium(pmh.createTime) + ": " + S.activeVersion.reference(pmh.ari);
@@ -87,6 +91,20 @@ public class SecretSettingsActivity extends BaseActivity {
 			return true;
 		};
 
+		final Preference.OnPreferenceChangeListener configurationPreferenceChangeListener = (preference, newValue) -> {
+			final Handler handler = new Handler();
+
+			// do this after this method returns true
+			handler.post(() -> {
+				ConfigurationWrapper.notifyConfigurationNeedsUpdate();
+
+				// restart this activity
+				final Activity ac = getActivity();
+				ac.recreate();
+			});
+			return true;
+		};
+
 		@Override
 		public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
 			addPreferencesFromResource(R.xml.secret_settings);
@@ -95,6 +113,10 @@ public class SecretSettingsActivity extends BaseActivity {
 			findPreference("secret_version_table").setOnPreferenceClickListener(secret_version_table_click);
 			findPreference("secret_sync_debug").setOnPreferenceClickListener(secret_sync_debug);
 			findPreference("secret_reset_read_announcements").setOnPreferenceClickListener(secret_reset_read_announcements);
+
+			final ListPreference pref_forceFontScale = (ListPreference) findPreference(getString(R.string.pref_forceFontScale_key));
+			pref_forceFontScale.setOnPreferenceChangeListener(configurationPreferenceChangeListener);
+			SettingsActivity.autoDisplayListPreference(pref_forceFontScale);
 		}
 	}
 

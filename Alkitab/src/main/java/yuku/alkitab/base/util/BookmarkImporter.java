@@ -147,30 +147,36 @@ public class BookmarkImporter {
 					Xml.parse(fis, Xml.Encoding.UTF_8, new DefaultHandler2() {
 						@Override
 						public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-							if (localName.equals(BackupManager.XMLTAG_Bukmak2)) {
-								final Marker marker = BackupManager.markerFromAttributes(attributes);
-								if (marker != null) {
-									markers.add(marker);
-									final int bookmark2_relId = BackupManager.getRelId(attributes);
-									markerToRelIdMap.put(marker, bookmark2_relId);
-									count_bookmark++;
+							switch (localName) {
+								case BackupManager.XMLTAG_Bukmak2:
+									final Marker marker = BackupManager.markerFromAttributes(attributes);
+									if (marker != null) {
+										markers.add(marker);
+										final int bookmark2_relId = BackupManager.getRelId(attributes);
+										markerToRelIdMap.put(marker, bookmark2_relId);
+										count_bookmark++;
+									}
+									break;
+								case BackupManager.XMLTAG_Label: {
+									final Label label = BackupManager.labelFromAttributes(attributes);
+									int label_relId = BackupManager.getRelId(attributes);
+									labels.add(label);
+									labelToRelIdMap.put(label, label_relId);
+									count_label++;
+									break;
 								}
-							} else if (localName.equals(BackupManager.XMLTAG_Label)) {
-								final Label label = BackupManager.labelFromAttributes(attributes);
-								int label_relId = BackupManager.getRelId(attributes);
-								labels.add(label);
-								labelToRelIdMap.put(label, label_relId);
-								count_label++;
-							} else if (localName.equals(Bookmark2_Label.XMLTAG_Bookmark2_Label)) {
-								final int bookmark2_relId = Integer.parseInt(attributes.getValue("", Bookmark2_Label.XMLATTR_bookmark2_relId));
-								final int label_relId = Integer.parseInt(attributes.getValue("", Bookmark2_Label.XMLATTR_label_relId));
+								case Bookmark2_Label.XMLTAG_Bookmark2_Label: {
+									final int bookmark2_relId = Integer.parseInt(attributes.getValue("", Bookmark2_Label.XMLATTR_bookmark2_relId));
+									final int label_relId = Integer.parseInt(attributes.getValue("", Bookmark2_Label.XMLATTR_label_relId));
 
-								TIntList labelRelIds = markerRelIdToLabelRelIdsMap.get(bookmark2_relId);
-								if (labelRelIds == null) {
-									labelRelIds = new TIntArrayList();
-									markerRelIdToLabelRelIdsMap.put(bookmark2_relId, labelRelIds);
+									TIntList labelRelIds = markerRelIdToLabelRelIdsMap.get(bookmark2_relId);
+									if (labelRelIds == null) {
+										labelRelIds = new TIntArrayList();
+										markerRelIdToLabelRelIdsMap.put(bookmark2_relId, labelRelIds);
+									}
+									labelRelIds.add(label_relId);
+									break;
 								}
-								labelRelIds.add(label_relId);
 							}
 						}
 					});

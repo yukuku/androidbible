@@ -169,7 +169,7 @@ public class SyncSettingsActivity extends BaseActivity {
 					SyncRecorder.log(SyncRecorder.EventKind.login_success_pre, null, "accountName", result.accountName);
 
 					Preferences.hold();
-					Preferences.setString(App.context.getString(R.string.pref_syncAccountName_key), result.accountName);
+					Preferences.setString(R.string.pref_syncAccountName_key, result.accountName);
 					Preferences.setString(Prefkey.sync_simpleToken, result.simpleToken);
 					Preferences.setInt(Prefkey.sync_token_obtained_time, Sqlitil.nowDateTime());
 					Preferences.unhold();

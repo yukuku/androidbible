@@ -34,7 +34,7 @@
 				android:layout_height="wrap_content"
 				android:padding="8dp"
 				android:textAppearance="?android:textAppearanceSmall"
-				tools:text="*Info Bla bla bla, bla bla, bla bla, bla bla, bla bla, blablabla, blablablabla." />
+				tools:text="Info Bla bla bla, bla bla, bla bla, bla bla, bla bla, blablabla, blablablabla." />
 
 		</android.support.v4.widget.NestedScrollView>
 

@@ -7,11 +7,11 @@ import java.util.Set;
 
 public class ValueMap implements Map<String, Object> {
 	LinkedHashMap<String, Object> map;
-	
+
 	public ValueMap() {
-		map = new LinkedHashMap<String, Object>();
+		map = new LinkedHashMap<>();
 	}
-	
+
 	@Override public void clear() {
 		map.clear();
 	}
@@ -59,11 +59,11 @@ public class ValueMap implements Map<String, Object> {
 	@Override public Collection<Object> values() {
 		return map.values();
 	}
-	
+
 	public int getInt(String key) {
 		return getInt(key, 0);
 	}
-	
+
 	public int getInt(String key, int def) {
 		Object v = map.get(key);
 		if (v instanceof Number) return ((Number) v).intValue();
@@ -77,14 +77,14 @@ public class ValueMap implements Map<String, Object> {
 		}
 		return def;
 	}
-	
+
 	public String getString(String key) {
 		Object v = map.get(key);
 		if (v == null) return null;
 		if (v instanceof String) return (String) v;
 		return v.toString();
 	}
-	
+
 	public int[] getIntArray(String key) {
 		Object v = map.get(key);
 		if (v instanceof int[]) return (int[]) v;

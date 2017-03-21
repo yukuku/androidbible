@@ -29,20 +29,8 @@ public class PDBHeader {
 	/* 78 bytes total */
 	// char name[ dmDBNameLength ]; /*0*/
 	private byte[] _name;
-	private int attributes; // 32
-	private int version; // 34
-	private int create_time; // 36
-	private int modify_time; // 40
-	private int backup_time; // 44
-	private int modification_number; // 48
-	private int app_info_id; // 52
-	private int sort_info_id; // 56
 	private String type_str; // 4 char (offset 60)
-	private byte type[];
 	private String creator_str; // 4 char (offset 64)
-	private byte creator[];
-	private int id_seed; // 68
-	private int next_record_list; // 72
 	private int num_records; // 76-78
 
 	private byte[] headerdata;
@@ -72,22 +60,22 @@ public class PDBHeader {
 		DataInputStream dis = new DataInputStream(bis);
 		_name = new byte[32];
 		dis.read(_name);
-		attributes = dis.readShort();
-		version = dis.readShort();
-		create_time = readInt(dis);
-		modify_time = readInt(dis);
-		backup_time = readInt(dis);
-		modification_number = readInt(dis);
-		app_info_id = readInt(dis);
-		sort_info_id = readInt(dis);
-		type = new byte[4];
+		dis.readShort();
+		dis.readShort();
+		readInt(dis);
+		readInt(dis);
+		readInt(dis);
+		readInt(dis);
+		readInt(dis);
+		readInt(dis);
+		final byte[] type = new byte[4];
 		dis.read(type, 0, 4);
 		type_str = new String(type);
-		creator = new byte[4];
+		final byte[] creator = new byte[4];
 		dis.read(creator, 0, 4);
 		creator_str = new String(creator);
-		id_seed = readInt(dis);
-		next_record_list = readInt(dis);
+		readInt(dis);
+		readInt(dis);
 		num_records = readShort(dis);
 	}
 
@@ -101,12 +89,10 @@ public class PDBHeader {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Name: ").append(getName("UTF-8")).append("\n");
-		sb.append("type_str: ").append(type_str).append("\n");
-		sb.append("creator_str: ").append(creator_str).append("\n");
-		sb.append("num records: ").append(num_records).append("\n");
-		return sb.toString();
+		return "Name: " + getName("UTF-8") + "\n" +
+			"type_str: " + type_str + "\n" +
+			"creator_str: " + creator_str + "\n" +
+			"num records: " + num_records + "\n";
 	}
 
 }

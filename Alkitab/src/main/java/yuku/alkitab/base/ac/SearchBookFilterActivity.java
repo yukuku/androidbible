@@ -118,17 +118,14 @@ public class SearchBookFilterActivity extends BaseActivity {
 		V.get(this, R.id.bCancel).setOnClickListener(bCancel_click);
 	}
 
-	View.OnClickListener bOk_click = new View.OnClickListener() {
-		@Override
-		public void onClick(final View v) {
-			Intent data = new Intent();
-			data.putExtra(EXTRA_selectedBookIds, sparseBooleanArrayToIntArray(selectedBookIds));
-			setResult(RESULT_OK, data);
-			finish();
-		}
+	final View.OnClickListener bOk_click = v -> {
+		Intent data = new Intent();
+		data.putExtra(EXTRA_selectedBookIds, sparseBooleanArrayToIntArray(selectedBookIds));
+		setResult(RESULT_OK, data);
+		finish();
 	};
 
-	View.OnClickListener bCancel_click = v -> finish();
+	final View.OnClickListener bCancel_click = v -> finish();
 
 	static class VH extends RecyclerView.ViewHolder {
 		int viewType;
@@ -157,7 +154,7 @@ public class SearchBookFilterActivity extends BaseActivity {
 
 		public BookAdapter(Book[] books) {
 			// sort or not based on pref
-			if (Preferences.getBoolean(App.context.getString(R.string.pref_alphabeticBookSort_key), App.context.getResources().getBoolean(R.bool.pref_alphabeticBookSort_default))) {
+			if (Preferences.getBoolean(R.string.pref_alphabeticBookSort_key, R.bool.pref_alphabeticBookSort_default)) {
 				books_grid = BookNameSorter.sortAlphabetically(books);
 			} else {
 				books_grid = books.clone();

@@ -39,10 +39,10 @@
   <string name="jump_to_prompt"><b>書章節に移動</b> — 例: ^1</string>
   <string name="belum_ada_pembatas_buku">ブックマークがありません.\nブックマークを追加するには、節を選択します.</string>
   <string name="judul_titikdua">題名</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">ダウンロード失敗 %1$s 日時 %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">%1$s のダウンロードにてエラーが発生しました 日時 %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">%1$s のダウンロードに成功しました. 日時 %2$s</string>
-  <string name="mengunduh_namaumum_tgl_tgl">%1$s （日付  %2$s）をダウンロードしています...</string>
+  <string name="devotion_downloader_downloading_title">聖書ファイル ^1 をダウンロードしています.</string>
+  <string name="devotion_downloader_downloading_date">日時 ^1</string>
+  <string name="devotion_downloader_error_date">^1: ^2 日付のエラー</string>
+  <string name="devotion_downloader_success_date">ダウンロードした日付 ^1</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">まだ不可用。入力日時のマテリアルはまだ準備中、もしくはデータソースの読み込みエラーがおきました。後でもう一度試してください。</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">まだ利用できません. デボーションをインターネットからフェッチしています...\n\n(インターネット接続を確認してください.)</string>
   <string name="hari_sabtu">土曜</string>
@@ -268,6 +268,7 @@
   <string name="desc_verse_attribute_multiple_notes">この箇所には%s個のメモが付いています。</string>
   <string name="desc_verse_attribute_progress_mark">%sまで来ました。</string>
   <string name="desc_progress_mark_list">ピンの一覧</string>
+  <string name="desc_backspace">バックスペース</string>
   <string name="intent_filter_open_yes_file">YESファイルを開く</string>
   <string name="intent_filter_open_pdb_file">PDBファイルを開く</string>
   <string name="intent_filter_open_pdb_or_yes_file">PDB/YESファイルを開く</string>
@@ -310,10 +311,13 @@
   <string name="recentverses_button_hint">(長押しで最近閲覧した節を表示)</string>
   <string name="dr_reminder">リマインダー</string>
   <string name="dr_error_contact_reminder">リマインダーアプリが見つかりません.</string>
+  <string name="dr_timepicker_set">セット</string>
+  <string name="dr_timepicker_off">オフ</string>
   <string name="dv_option_transparent_background">背景を透過にする</string>
   <string name="dv_option_dark_text">文字を暗くする</string>
   <string name="dv_option_text_size">文字の大きさ</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">読書プラン</string>
   <string name="rp_menuReadingPlan">読書プラン</string>
   <string name="rp_commentActual">完了: %s%%</string>
   <string name="rp_commentTarget">目標： %s%%</string>
@@ -413,6 +417,7 @@
   <string name="patch_text_error_no_edits">送信する前に編集してください。</string>
   <string name="patch_text_menu_reference">参照</string>
   <string name="patch_text_menu_send">送信</string>
+  <string name="patch_text_open_link">修正を送る</string>
   <string name="note_actionbar_edit">編集</string>
   <string name="note_actionbar_delete">削除</string>
   <string name="note_actionbar_ok">終了</string>
@@ -430,13 +435,16 @@
   <string name="pref_screen_sync_settings_title">シンクの設定</string>
   <string name="sync_category_title_data_types">データの種類</string>
   <string name="pref_syncSet_mabel_enabled_title">マーカーとラベル</string>
+  <string name="pref_syncSet_rp_enabled_title">リーディングプランの進捗状況</string>
   <string name="pref_syncSet_history_enabled_title">最近見た箇所</string>
+  <string name="pref_syncSet_pins_enabled_title">ピン</string>
   <string name="sync_menu_item_sync_now">今すぐシンク</string>
   <string name="sync_menu_item_sync_log">ログを見る</string>
   <string name="sync_sync_set_pref_summary_last_synced">最近のシンク%1$s、%2$s (r%3$s)</string>
   <string name="sync_sync_set_pref_summary_never">まだシンクされていません</string>
   <string name="sync_sync_set_pref_summary_syncing">シンク中&#8230;</string>
   <string name="sync_log_activity_title">ログのシンク</string>
+  <string name="sync_status_activity_title">同期ステータス</string>
   <string name="sync_login_activity_title">ログインかアカウントの作成</string>
   <string name="sync_login_survey_religion_select_one">宗教を選択</string>
   <string name="sync_login_survey_religion_christianity">キリスト教</string>
@@ -475,6 +483,7 @@
   <string name="sync_login_form_change_password_success">パスワードの変更が完了しました。</string>
   <string name="pref_textPadding_title">文字の周りの余白</string>
   <string name="pref_textPadding_summary">読みやすくするために文字を細くする。</string>
+  <string name="pref_bottomToolbarOnText_summary">聖書画面の下部にある詩のナビゲーションツールバーを配置します。</string>
   <!-- devotion reminder -->
   <string name="dr_app_name">リマインダー</string>
   <string name="dr_notification_title">日々のデボーション</string>
@@ -489,14 +498,19 @@
   <string name="about_translators">翻訳者</string>
   <string name="about_user_guide">使用ガイド</string>
   <string name="about_beta_feedback">ベータ版のフィードバック</string>
+  <string name="about_enable_beta">ベータ版を試す</string>
   <string name="about_version_name">バージョン %s</string>
   <string name="about_material_sources">出典資料</string>
+  <string name="about_credits">クレジット</string>
   <string name="about_announcements">新着情報</string>
   <string name="about_announcements_none">新着情報(0件)</string>
   <string name="about_announcements_number">新着情報(%s件)</string>
   <string name="about_announcement_load_failed">新着情報を表示できませんでした。</string>
+  <string name="about_official_website">公式ウェブサイト</string>
+  <string name="about_project_page">プロジェクトページ</string>
   <!-- marker and label migration -->
   <string name="marker_migrate_introduction">古いバージョン(Yuku Quick Bible v3)のバックアップファイルが見つかりました。栞、ノート、ラベルやマーカーなどの情報が保存されています。\n\nこのアプリにインポートしますか？</string>
+  <string name="marker_migrate_no_more">もう一度聞かないで</string>
   <string name="marker_migrate_later">後で</string>
   <string name="marker_migrate_title">栞をインポートする</string>
   <string name="marker_migrate_file_chooser_title">ｖ３のバックアップファイルを選ぶ</string>
@@ -519,5 +533,7 @@
   <!-- Commentary -->
   <string name="menuCommentary">解説</string>
   <!-- Maps -->
+  <string name="maps_could_not_open">聖書マップのアプリを開くことができませんでした。</string>
   <!-- File chooser -->
+  <string name="filechooser_parent_folder">親フォルダ</string>
 </resources>

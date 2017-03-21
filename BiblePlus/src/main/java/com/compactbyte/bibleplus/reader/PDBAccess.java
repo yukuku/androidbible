@@ -28,10 +28,6 @@ import java.io.*;
  */
 class PDBAccess {
 
-	private boolean read_all;
-
-	private String filename;
-	private int filesize;
 	private PDBHeader header;
 	private PDBRecord[] records;
 	private byte[] header_data;
@@ -46,24 +42,18 @@ class PDBAccess {
 		this.is = is;
 	}
 
-	void close() {
-		try {
-			is.close();
-			// make sure it is garbage collected
-			header = null;
-			if (records != null) for (int i = 0; i < records.length; i++) {
-				records[i] = null;
-			}
-			records = null;
-			header_data = null;
-			is = null;
-			record_offsets = null;
-			record_attrs = null;
-
-		} catch (IOException e) {
-
+	void close() throws IOException {
+		is.close();
+		// make sure it is garbage collected
+		header = null;
+		if (records != null) for (int i = 0; i < records.length; i++) {
+			records[i] = null;
 		}
-
+		records = null;
+		header_data = null;
+		is = null;
+		record_offsets = null;
+		record_attrs = null;
 	}
 
 	/**
@@ -102,7 +92,7 @@ class PDBAccess {
 	}
 
 	private void loadRecord(int recno) throws IOException {
-		int length = 0;
+		int length;
 		if (recno < records.length - 1) {
 			length = record_offsets[recno + 1] - record_offsets[recno];
 		} else {
@@ -136,7 +126,7 @@ class PDBAccess {
 		record_attrs = new int[n];
 		for (int i = 0; i < n; i++) {
 
-			int val = (((temp_read[offs + 0] & 0xff) << 24)
+			int val = (((temp_read[offs] & 0xff) << 24)
 					| ((temp_read[offs + 1] & 0xff) << 16)
 					| ((temp_read[offs + 2] & 0xff) << 8)
 					| (temp_read[offs + 3] & 0xff));

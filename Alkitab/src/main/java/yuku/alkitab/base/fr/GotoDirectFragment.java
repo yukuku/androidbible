@@ -1,6 +1,6 @@
 package yuku.alkitab.base.fr;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
@@ -48,7 +48,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 	int bookId;
 	int chapter_1;
 	int verse_1;
-	private Activity activity;
+	GotoFinishListener listener;
 
 	static class Candidate {
 		String title;
@@ -65,9 +65,10 @@ public class GotoDirectFragment extends BaseGotoFragment {
 	}
 
 	@Override
-	public void onAttach(final Activity activity) {
-		super.onAttach(activity);
-		this.activity = activity;
+	public void onAttach(final Context context) {
+		super.onAttach(context);
+
+		this.listener = (GotoFinishListener) context;
 	}
 
 	@Override public void onCreate(Bundle savedInstanceState) {
@@ -143,7 +144,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 						verse_1 = 0;
 					}
 
-					((GotoFinishListener) activity).onGotoFinished(GotoFinishListener.GOTO_TAB_direct, bookId, chapter_1, verse_1);
+					listener.onGotoFinished(GotoFinishListener.GOTO_TAB_direct, bookId, chapter_1, verse_1);
 					return;
 				} catch (NumberFormatException ignored) {}
 			}
@@ -161,7 +162,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 			final int chapter = jumper.getChapter();
 			final int verse = jumper.getVerse();
 
-			((GotoFinishListener) activity).onGotoFinished(GotoFinishListener.GOTO_TAB_direct, bookId, chapter, verse);
+			listener.onGotoFinished(GotoFinishListener.GOTO_TAB_direct, bookId, chapter, verse);
 		}
 	};
 
@@ -170,7 +171,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 
 		@Override
 		public View newView(final int position, final ViewGroup parent) {
-			return activity.getLayoutInflater().inflate(R.layout.support_simple_spinner_dropdown_item, parent, false);
+			return getActivity().getLayoutInflater().inflate(R.layout.support_simple_spinner_dropdown_item, parent, false);
 		}
 
 		@Override
@@ -182,7 +183,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 
 		@Override
 		public int getCount() {
-			return candidates == null ? 0 : candidates.size();
+			return candidates.size();
 		}
 
 		/**

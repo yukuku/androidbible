@@ -45,10 +45,9 @@
   <string name="jump_to_prompt"><b>Skoč na</b> — Příklad: ^1</string>
   <string name="belum_ada_pembatas_buku">Žádné oblíbené verše. \nVyberte verš k přidání mezi oblíbené.</string>
   <string name="judul_titikdua">Titulek</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">Nepodařilo se stáhnout %1$s datováno %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Chyba při stahování %1$s datováno %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">Úspěšné stahování  %1$s datováno %2$s</string>
-  <string name="mengunduh_namaumum_tgl_tgl">Stahování  %1$s datováno %2$s</string>
+  <string name="devotion_downloader_downloading_title">Stahování ^1</string>
+  <string name="devotion_downloader_downloading_date">staženo ^1</string>
+  <string name="devotion_downloader_error_date">Chyba v datumu ^1: ^2</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Zatím není k dispozici. Pravděpodobně požadovaný dokument ještě není k dispozici, nebo došlo k chybě v rozpoznávání dat. Zkuste to prosím později.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Zatím není k dispozici. Stahování z Internetu...\n\n (Ujistěte se, že máte funkční připojení pro stažení požadovaného)</string>
   <string name="hari_sabtu">So</string>
@@ -321,6 +320,7 @@
   <string name="dv_option_dark_text">Tmavý text</string>
   <string name="dv_option_text_size">Velikost textu</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">Plán čtení</string>
   <string name="rp_menuReadingPlan">Plán čtení</string>
   <string name="rp_commentActual">Dokončeno: %s%%</string>
   <string name="rp_commentTarget">Cíl: %s%%</string>

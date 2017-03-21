@@ -36,7 +36,7 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 
 		String verseText = U.removeSpecialCodes(version.loadVerseText(ari));
 		if (verseText == null) {
-			verseText = App.context.getString(R.string.generic_verse_not_available_in_this_version);
+			verseText = Localized.string(R.string.generic_verse_not_available_in_this_version);
 		}
 
 		if (showVerseNumber) {

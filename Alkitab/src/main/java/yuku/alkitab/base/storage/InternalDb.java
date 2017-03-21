@@ -23,7 +23,6 @@ import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.MarkerListActivity;
 import yuku.alkitab.base.devotion.ArticleMeidA;
 import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
-import yuku.alkitab.base.devotion.ArticleRefheart;
 import yuku.alkitab.base.devotion.ArticleRenunganHarian;
 import yuku.alkitab.base.devotion.ArticleRoc;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
@@ -556,9 +555,6 @@ public class InternalDb {
 				}
 				case ROC: {
 					return new ArticleRoc(date, c.getString(col_body), c.getInt(col_readyToUse) > 0);
-				}
-				case REFHEART: {
-					return new ArticleRefheart(date, c.getString(col_body), c.getInt(col_readyToUse) > 0);
 				}
 			}
 		}

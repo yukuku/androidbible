@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,12 +10,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
@@ -24,7 +21,6 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.analytics.HitBuilders;
@@ -36,7 +32,6 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.devotion.ArticleMeidA;
 import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
-import yuku.alkitab.base.devotion.ArticleRefheart;
 import yuku.alkitab.base.devotion.ArticleRenunganHarian;
 import yuku.alkitab.base.devotion.ArticleRoc;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
@@ -141,22 +136,6 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 			@Override
 			public String getShareUrl(final SimpleDateFormat format, final Date date) {
 				return "http://www.bibleforandroid.com/renunganpagi/" + yyyymmdd.get().format(date).substring(4);
-			}
-		},
-		REFHEART("refheart", "Reforming Heart", "STEMI Pemuda") {
-			@Override
-			public DevotionArticle getArticle(final String date) {
-				return new ArticleRefheart(date);
-			}
-
-			@Override
-			public String getShareUrl(final SimpleDateFormat format, final Date date) {
-				return null; // TODO create redirect url
-			}
-
-			@Override
-			public int getPrefetchDays() {
-				return 1;
 			}
 		},
 		ROC("roc", "My Utmost (B. Indonesia)", "Oswald Chambers") {
@@ -289,35 +268,10 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 	final LongReadChecker longReadChecker = new LongReadChecker(this);
 
 	final BroadcastReceiver br = new BroadcastReceiver() {
-		private static final String NOTIFY_TAG = "devotion_downloader";
-		private static final int NOTIFY_ID = 0;
-
-		NotificationManagerCompat nm;
-
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
-			if (nm == null) {
-				nm = NotificationManagerCompat.from(context);
-			}
-
 			final String action = intent.getAction();
-			if (DevotionDownloader.ACTION_DOWNLOAD_STATUS.equals(action)) {
-				final CharSequence title = intent.getCharSequenceExtra("title");
-				final CharSequence subtitle = intent.getCharSequenceExtra("subtitle");
-
-				final Notification n = new NotificationCompat.Builder(DevotionActivity.this)
-					.setContentTitle(title)
-					.setContentText(subtitle)
-					.setProgress(0, 0, true)
-					.setSmallIcon(android.R.drawable.stat_sys_download)
-					.setStyle(new NotificationCompat.BigTextStyle()
-						.bigText(subtitle)
-					)
-					.build();
-
-				nm.notify(NOTIFY_TAG, NOTIFY_ID, n);
-
-			} else if (DevotionDownloader.ACTION_DOWNLOADED.equals(action)) {
+			if (DevotionDownloader.ACTION_DOWNLOADED.equals(action)) {
 				// is it for us?
 				final String name = intent.getStringExtra("name");
 				final String date = intent.getStringExtra("date");
@@ -325,8 +279,6 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 				if (yyyymmdd.get().format(currentDate).equals(date) && currentKind.name.equals(name)) {
 					display();
 				}
-			} else if (DevotionDownloader.ACTION_QUEUE_FINISHED.equals(action)) {
-				nm.cancel(NOTIFY_TAG, NOTIFY_ID);
 			}
 		}
 	};
@@ -384,9 +336,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
 		getWindow().getDecorView().setKeepScreenOn(Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default)));
 
-		App.getLbm().registerReceiver(br, new IntentFilter(DevotionDownloader.ACTION_DOWNLOAD_STATUS));
 		App.getLbm().registerReceiver(br, new IntentFilter(DevotionDownloader.ACTION_DOWNLOADED));
-		App.getLbm().registerReceiver(br, new IntentFilter(DevotionDownloader.ACTION_QUEUE_FINISHED));
 	}
 
 	@Override
@@ -493,54 +443,51 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		String date;
 	}
 
-	CallbackSpan.OnClickListener<String> verseClickListener = new CallbackSpan.OnClickListener<String>() {
-		@Override
-		public void onClick(View widget, String reference) {
-			Log.d(TAG, "Clicked verse reference inside devotion: " + reference);
+	final CallbackSpan.OnClickListener<String> verseClickListener = (widget, reference) -> {
+		Log.d(TAG, "Clicked verse reference inside devotion: " + reference);
 
-			if (reference.startsWith("patchtext:")) {
-				final Uri uri = Uri.parse(reference);
-				final String referenceUrl = uri.getQueryParameter("referenceUrl");
+		if (reference.startsWith("patchtext:")) {
+			final Uri uri = Uri.parse(reference);
+			final String referenceUrl = uri.getQueryParameter("referenceUrl");
 
-				final PatchTextExtraInfoJson extraInfo = new PatchTextExtraInfoJson();
-				extraInfo.type = "devotion";
-				extraInfo.kind = currentKind.name;
-				extraInfo.date = yyyymmdd.get().format(currentDate);
-				startActivity(PatchTextActivity.createIntent(lContent.getText(), App.getDefaultGson().toJson(extraInfo), referenceUrl));
-			} else {
-				int ari;
-				if (reference.startsWith("ari:")) {
-					ari = Integer.parseInt(reference.substring(4));
+			final PatchTextExtraInfoJson extraInfo = new PatchTextExtraInfoJson();
+			extraInfo.type = "devotion";
+			extraInfo.kind = currentKind.name;
+			extraInfo.date = yyyymmdd.get().format(currentDate);
+			startActivity(PatchTextActivity.createIntent(lContent.getText(), App.getDefaultGson().toJson(extraInfo), referenceUrl));
+		} else {
+			int ari;
+			if (reference.startsWith("ari:")) {
+				ari = Integer.parseInt(reference.substring(4));
+				startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
+
+			} else { // we need to parse it manually by text
+				final Jumper jumper = new Jumper(reference);
+				if (!jumper.getParseSucceeded()) {
+					new MaterialDialog.Builder(DevotionActivity.this)
+						.content(getString(R.string.alamat_tidak_sah_alamat, reference))
+						.positiveText(R.string.ok)
+						.show();
+					return;
+				}
+
+				// Make sure references are parsed using Indonesian book names.
+				String[] bookNames = getResources().getStringArray(R.array.standard_book_names_in);
+				int[] bookIds = new int[bookNames.length];
+				for (int i = 0, len = bookNames.length; i < len; i++) {
+					bookIds[i] = i;
+				}
+
+				final int bookId = jumper.getBookId(bookNames, bookIds);
+				final int chapter_1 = jumper.getChapter();
+				final int verse_1 = jumper.getVerse();
+				ari = Ari.encode(bookId, chapter_1, verse_1);
+
+				final boolean hasRange = jumper.getHasRange();
+				if (hasRange || verse_1 == 0) {
+					startActivity(Launcher.openAppAtBibleLocation(ari));
+				} else {
 					startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
-
-				} else { // we need to parse it manually by text
-					final Jumper jumper = new Jumper(reference);
-					if (!jumper.getParseSucceeded()) {
-						new MaterialDialog.Builder(DevotionActivity.this)
-							.content(getString(R.string.alamat_tidak_sah_alamat, reference))
-							.positiveText(R.string.ok)
-							.show();
-						return;
-					}
-
-					// Make sure references are parsed using Indonesian book names.
-					String[] bookNames = getResources().getStringArray(R.array.standard_book_names_in);
-					int[] bookIds = new int[bookNames.length];
-					for (int i = 0, len = bookNames.length; i < len; i++) {
-						bookIds[i] = i;
-					}
-
-					final int bookId = jumper.getBookId(bookNames, bookIds);
-					final int chapter_1 = jumper.getChapter();
-					final int verse_1 = jumper.getVerse();
-					ari = Ari.encode(bookId, chapter_1, verse_1);
-
-					final boolean hasRange = jumper.getHasRange();
-					if (hasRange || verse_1 == 0) {
-						startActivity(Launcher.openAppAtBibleLocation(ari));
-					} else {
-						startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
-					}
 				}
 			}
 		}

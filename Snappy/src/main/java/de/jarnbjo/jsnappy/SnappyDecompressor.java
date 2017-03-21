@@ -94,7 +94,7 @@ public class SnappyDecompressor {
 	 */
 	public static Buffer decompress(byte[] in, int offset, int length, Buffer out) throws FormatViolationException {
 
-		int i=0, l, o, c;
+		int i, l, o, c;
 		int sourceIndex = offset, targetIndex = 0;
 		int targetLength = 0;
 

@@ -45,10 +45,10 @@
   <string name="jump_to_prompt"><b>SKOCZ DO</b> — Przykład: ^1</string>
   <string name="belum_ada_pembatas_buku">Brak zakładek.\nWybierz wers, aby dodać do zakładek.</string>
   <string name="judul_titikdua">TYTUŁ</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">Błąd pobierania: %1$s z dnia %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Błąd pobierania %1$s z dnia %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">Udane pobieranie %1$s z dnia %2$s</string>
-  <string name="mengunduh_namaumum_tgl_tgl">Pobieranie %1$s z dnia %2$s&#8230;</string>
+  <string name="devotion_downloader_downloading_title">Pobieranie ^1</string>
+  <string name="devotion_downloader_downloading_date">z dnia ^1</string>
+  <string name="devotion_downloader_error_date">Błąd danych w ^1: ^2</string>
+  <string name="devotion_downloader_success_date">Data pobrania ^1</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Niedostępne. Prawdopodobnie materiały z żądanej daty nie są jeszcze gotowe lub są jakieś błędy w odczytaniu danych z podanej daty. Proszę spróbować jeszcze raz.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Rozważanie nie jest jeszcze dostępne. Pobieranie z internetu.&#8230;\n\n(Upewnij się, że istnieje połączenie internetowe, aby pobrać materiały.)</string>
   <string name="hari_sabtu">Sobota</string>
@@ -214,6 +214,7 @@
   <string name="market_short_desc">Szybki, niezawodny i bogaty w funkcje program Biblijny.</string>
   <string name="no_url_for_facebook">Nie możesz się tym podzielić na Facebooku.</string>
   <string name="storage_permission_rationale">Potrzebujemy dostępu do nośnika danych, aby zapisywać współdzielone media tj. przekłady Biblii i czcionki.</string>
+  <string name="goto_button_history_tip">Podpowiedz: Następnym razem przytrzymaj ten przycisk, aby dostać się do swoich ostatnio otwartych wersów.</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Dialer</string>
   <string name="goto_tab_direct_label">Bezpośrednio</string>
@@ -249,6 +250,7 @@
   <string name="sn_menu_private_song_book">Prywatny śpiewnik</string>
   <string name="sn_private_song_book_dialog_desc">Pobierz prywatny (ukryty) śpiewnik</string>
   <string name="sn_private_song_book_name_hint">Nazwa śpiewnika</string>
+  <string name="sn_play_in_loop">Czy chcesz odtwarzać w pętli aż do ręcznego zatrzymania?</string>
   <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Poprzedni dzień</string>
   <string name="desc_next_day">Następny dzień</string>
@@ -274,10 +276,12 @@
   <string name="desc_verse_attribute_multiple_notes">%s notatek jest dołączonych do tego wersu.</string>
   <string name="desc_verse_attribute_progress_mark">%s jest w tym miejscu.</string>
   <string name="desc_progress_mark_list">Lista wskaźników postępów</string>
+  <string name="desc_backspace">Cofnij</string>
   <string name="intent_filter_open_yes_file">Otwórz plik YES</string>
   <string name="intent_filter_open_pdb_file">Otwórz plik PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Otwórz plik PDB/YES</string>
   <string name="open_yes_file_name_conflict">Plik YES o nazwie \'%1$s\' już istnieje w \'%2$s\'.</string>
+  <string name="open_yes_error_read">Błąd odczytu danych z ^1</string>
   <string name="open_file_cant_read_source">Nie można odczytać źródła.</string>
   <string name="open_file_unknown_file_format">Nie można rozpoznać czy jest to plik PDB lub YES.</string>
   <string name="version_preset_delete_filename">Czy usunąć plik danych \'%s\'?</string>
@@ -316,10 +320,14 @@
   <string name="recentverses_button_hint">(Długie przyciśnięcie pokaże historię)</string>
   <string name="dr_reminder">Przypomnienie</string>
   <string name="dr_error_contact_reminder">Błąd podczas łączenia się z aplikacją Przypominacz.</string>
+  <string name="dr_timepicker_set">Ustaw</string>
+  <string name="dr_timepicker_off">Wyłącz</string>
+  <string name="dv_activity_title">Widget codziennego wersu</string>
   <string name="dv_option_transparent_background">Przeźroczyste tło</string>
   <string name="dv_option_dark_text">Ciemny tekst</string>
   <string name="dv_option_text_size">Rozmiar tekstu</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">Plan czytania</string>
   <string name="rp_menuReadingPlan">Plan czytania</string>
   <string name="rp_commentActual">Ukończono: %s%%</string>
   <string name="rp_commentTarget">Cel: %s%%</string>
@@ -436,7 +444,7 @@
   <string name="pref_screen_sync_settings_title">Ustawienia synchronizacji</string>
   <string name="sync_category_title_data_types">Typy danych</string>
   <string name="pref_syncSet_mabel_enabled_title">Znaczniki i etykiety</string>
-  <string name="pref_syncSet_rp_enabled_title">Postęp planu czytań</string>
+  <string name="pref_syncSet_rp_enabled_title">Postęp planu czytania</string>
   <string name="pref_syncSet_history_enabled_title">Ostatnie wersy</string>
   <string name="pref_syncSet_pins_enabled_title">Znaczniki postępu</string>
   <string name="sync_menu_item_sync_now">Synchronizuj teraz</string>
@@ -445,7 +453,8 @@
   <string name="sync_sync_set_pref_summary_never">Jeszcze nie synchronizowano</string>
   <string name="sync_sync_set_pref_summary_syncing">Synchronizowanie&#8230;</string>
   <string name="sync_log_activity_title">Log synchronizacji</string>
-  <string name="sync_login_activity_title">Zaloguj lub utwórz konto</string>
+  <string name="sync_status_activity_title">Status synchronizacji</string>
+  <string name="sync_login_activity_title">Zaloguj się lub utwórz konto</string>
   <string name="sync_login_survey_religion_select_one">Wybierz religię</string>
   <string name="sync_login_survey_religion_christianity">Chrześcijaństwo</string>
   <string name="sync_login_survey_religion_christianity_protestant">Protestant</string>
@@ -502,7 +511,7 @@
   <string name="about_enable_beta">Wypróbuj wersję Beta</string>
   <string name="about_enable_beta_confirmation">Zaloguj się do konta Google i naciśnij przycisk BECOME A TESTER, aby wypróbować wersję Beta z nowymi funkcjami i udogodnieniami!</string>
   <string name="about_version_name">wersja %s</string>
-  <string name="about_material_sources">Źródła materiału</string>
+  <string name="about_material_sources">Źródła materiałów</string>
   <string name="about_credits">Podziękowania</string>
   <string name="about_announcements">Ogłoszenia</string>
   <string name="about_announcements_none">Ogłoszenia (0)</string>

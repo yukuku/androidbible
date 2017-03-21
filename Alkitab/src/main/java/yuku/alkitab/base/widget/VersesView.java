@@ -87,10 +87,6 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		void onScrollToTop(VersesView v);
 	}
 
-	public interface OnVerseScrollStateChangeListener {
-		void onVerseScrollStateChange(VersesView versesView, int scrollState);
-	}
-	
 	public enum PressKind {
 		left,
 		right,
@@ -122,7 +118,6 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	private VerseSelectionMode verseSelectionMode;
 	private Drawable originalSelector;
 	private OnVerseScrollListener onVerseScrollListener;
-	private OnVerseScrollStateChangeListener onVerseScrollStateChangeListener;
 	private AbsListView.OnScrollListener userOnScrollListener;
 	private int scrollState = 0;
 	/**
@@ -133,7 +128,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	private String name;
 	private boolean firstTimeScroll = true;
 	/**
-	 * Updated every time {@link #setData(int, SingleChapterVerses, int[], PericopeBlock[], int, String)}
+	 * Updated every time {@link #setData(int, SingleChapterVerses, int[], PericopeBlock[], int, Version, String)}
 	 * or {@link #setDataEmpty()} is called. Used to track data changes, so delayed scroll, etc can be prevented from happening if the data has changed.
 	 */
 	private AtomicInteger dataVersionNumber = new AtomicInteger();
@@ -589,17 +584,10 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		this.listener = listener;
 	}
 
-	public void setOnVerseScrollStateChangeListener(OnVerseScrollStateChangeListener onVerseScrollStateChangeListener) {
-		this.onVerseScrollStateChangeListener = onVerseScrollStateChangeListener;
-	}
-
 	@Override public void onScrollStateChanged(AbsListView view, int scrollState) {
 		if (userOnScrollListener != null) userOnScrollListener.onScrollStateChanged(view, scrollState);
 		
 		this.scrollState = scrollState;
-		if (onVerseScrollStateChangeListener != null) {
-			onVerseScrollStateChangeListener.onVerseScrollStateChange(this, scrollState);
-		}
 	}
 	
 	@Override public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {

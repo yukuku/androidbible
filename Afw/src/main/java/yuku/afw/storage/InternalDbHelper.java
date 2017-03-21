@@ -23,7 +23,7 @@ public abstract class InternalDbHelper extends SQLiteOpenHelper {
 
 	@Override public void onOpen(SQLiteDatabase db) {
 		//
-	};
+	}
 
 	@Override public void onCreate(SQLiteDatabase db) {
 		Log.d(TAG, "onCreate called");

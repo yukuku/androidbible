@@ -23,6 +23,7 @@ import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -341,19 +342,16 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 						.title(data.orig_text)
 						.content(sb)
 						.positiveText(R.string.dict_open_full)
-						.callback(new MaterialDialog.ButtonCallback() {
-							@Override
-							public void onPositive(final MaterialDialog dialog) {
-								final Intent intent = new Intent("org.sabda.kamus.action.VIEW");
-								intent.putExtra("key", data.key);
-								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-								intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						.onPositive((dialog, which) -> {
+							final Intent intent = new Intent("org.sabda.kamus.action.VIEW");
+							intent.putExtra("key", data.key);
+							intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+							intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-								try {
-									startActivity(intent);
-								} catch (ActivityNotFoundException e) {
-									OtherAppIntegration.askToInstallDictionary(IsiActivity.this);
-								}
+							try {
+								startActivity(intent);
+							} catch (ActivityNotFoundException e) {
+								OtherAppIntegration.askToInstallDictionary(IsiActivity.this);
 							}
 						})
 						.show();
@@ -1229,7 +1227,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				if (thisCreatorId.equals(history.getCreatorId(position))) {
 					holder.text1.setTextColor(defaultTextColor);
 				} else {
-					holder.text1.setTextColor(getResources().getColor(R.color.escape));
+					holder.text1.setTextColor(ResourcesCompat.getColor(getResources(), R.color.escape, getTheme()));
 				}
 			}
 
@@ -1275,7 +1273,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		public int getItemCount() {
 			return history.getSize();
 		}
-	};
+	}
 
 	public void buildMenu(Menu menu) {
 		menu.clear();
@@ -2362,11 +2360,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 				// always create a new bookmark
 				TypeBookmarkDialog dialog = TypeBookmarkDialog.NewBookmark(IsiActivity.this, ari, verseCount);
-				dialog.setListener(new TypeBookmarkDialog.Listener() {
-					@Override public void onModifiedOrDeleted() {
-						lsSplit0.uncheckAllVerses(true);
-						reloadBothAttributeMaps();
-					}
+				dialog.setListener(() -> {
+					lsSplit0.uncheckAllVerses(true);
+					reloadBothAttributeMaps();
 				});
 				dialog.show();
 
@@ -2389,12 +2385,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				final int ariBc = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
 				int colorRgb = S.getDb().getHighlightColorRgb(ariBc, selected);
 
-				final TypeHighlightDialog.Listener listener = new TypeHighlightDialog.Listener() {
-					@Override
-					public void onOk(int colorRgb) {
-						lsSplit0.uncheckAllVerses(true);
-						reloadBothAttributeMaps();
-					}
+				final TypeHighlightDialog.Listener listener = colorRgb1 -> {
+					lsSplit0.uncheckAllVerses(true);
+					reloadBothAttributeMaps();
 				};
 
 				if (selected.size() == 1) {
@@ -2403,7 +2396,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					final String rawVerseText = S.activeVersion.loadVerseText(ari);
 					final Highlights.Info info = S.getDb().getHighlightColorRgb(ari);
 
-					VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, false, null, ftr);
+					assert rawVerseText != null;
+					VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, null, ftr);
 					new TypeHighlightDialog(IsiActivity.this, ari, listener, colorRgb, info, reference, ftr.result);
 				} else {
 					new TypeHighlightDialog(IsiActivity.this, ariBc, selected, listener, colorRgb, reference);

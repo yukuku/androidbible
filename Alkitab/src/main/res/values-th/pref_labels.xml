@@ -26,4 +26,5 @@
   <string name="pref_tapToEditNote_summary">ยกเลิกการเลือกไม่ให้เกิดการแก้ไข้ข้อมูลเป็นอุบัติเหตุในขณะที่ดูข้อความที่มีอยู่แล้ว</string>
   <string name="pref_showHiddenVersion_title">อนุญาตให้บรรจุเวอร์ชั่นที่อาจจะถูกจำกัดอยู่</string>
   <string name="pref_selectedVerseBgColor_title">สีพื้นหลังของข้อที่ถูกเลือก</string>
+  <string name="pref_forceFontScale_title">ขนาดตัวอักษรบน UI</string>
 </resources>

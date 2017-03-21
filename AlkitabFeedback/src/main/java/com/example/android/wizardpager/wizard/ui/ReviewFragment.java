@@ -17,9 +17,9 @@
 package com.example.android.wizardpager.wizard.ui;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,18 +27,16 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.example.android.wizardpager.wizard.model.AbstractWizardModel;
 import com.example.android.wizardpager.wizard.model.ModelCallbacks;
 import com.example.android.wizardpager.wizard.model.Page;
 import com.example.android.wizardpager.wizard.model.ReviewItem;
+import yuku.alkitabfeedback.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import yuku.alkitabfeedback.R;
 
 public class ReviewFragment extends ListFragment implements ModelCallbacks {
     private Callbacks mCallbacks;
@@ -63,7 +61,7 @@ public class ReviewFragment extends ListFragment implements ModelCallbacks {
 
         TextView titleView = (TextView) rootView.findViewById(android.R.id.title);
         titleView.setText(R.string.alkitabfeedback_review);
-        titleView.setTextColor(getResources().getColor(R.color.alkitabfeedback_review_blue));
+        titleView.setTextColor(ResourcesCompat.getColor(getResources(), R.color.alkitabfeedback_review_blue, container.getContext().getTheme()));
 
         ListView listView = (ListView) rootView.findViewById(android.R.id.list);
         setListAdapter(mReviewAdapter);
@@ -179,8 +177,4 @@ public class ReviewFragment extends ListFragment implements ModelCallbacks {
             return mCurrentReviewItems.size();
         }
     }
-
-	@Override public Context getContext() {
-		return getContext();
-	}
 }

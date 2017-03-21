@@ -4,7 +4,7 @@ import android.text.style.ClickableSpan;
 import android.view.View;
 
 public class CallbackSpan<T> extends ClickableSpan {
-	public static interface OnClickListener<T> {
+	public interface OnClickListener<T> {
 		void onClick(View widget, T data);
 	}
 	

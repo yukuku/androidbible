@@ -173,32 +173,29 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 		return progress + 8.f;
 	}
 
-	private View.OnClickListener bOk_click = new View.OnClickListener() {
-		@Override
-		public void onClick(final View v) {
-			final Context context = DailyVerseAppWidgetConfigurationActivity.this;
-			final String versionId = adapter.versions.get(selectedVersionPosition).getVersionId();
+	final View.OnClickListener bOk_click = v -> {
+		final Context context = DailyVerseAppWidgetConfigurationActivity.this;
+		final String versionId = adapter.versions.get(selectedVersionPosition).getVersionId();
 
-			final DailyVerseData.SavedState savedState = new DailyVerseData.SavedState();
-			savedState.versionId = versionId;
-			savedState.transparentBackground = cTransparentBackground.isChecked();
-			savedState.backgroundAlpha = cTransparentBackground.isChecked() ? progressToActualAlpha(sbTransparent.getProgress()) : 255;
-			savedState.darkText = cDarkText.isChecked();
-			savedState.textSize = progressToActualTextSize(sbTextSize.getProgress());
-			savedState.click = 0;
-			DailyVerseData.saveSavedState(mAppWidgetId, savedState);
+		final DailyVerseData.SavedState savedState = new DailyVerseData.SavedState();
+		savedState.versionId = versionId;
+		savedState.transparentBackground = cTransparentBackground.isChecked();
+		savedState.backgroundAlpha = cTransparentBackground.isChecked() ? progressToActualAlpha(sbTransparent.getProgress()) : 255;
+		savedState.darkText = cDarkText.isChecked();
+		savedState.textSize = progressToActualTextSize(sbTextSize.getProgress());
+		savedState.click = 0;
+		DailyVerseData.saveSavedState(mAppWidgetId, savedState);
 
-			DailyVerseAppWidgetReceiver.buildUpdate(context, mAppWidgetId, 1);
+		DailyVerseAppWidgetReceiver.buildUpdate(context, mAppWidgetId, 1);
 
-			ComponentName provider = new ComponentName(context, DailyVerseAppWidgetReceiver.class);
-			int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(provider);
-			DailyVerseAppWidgetReceiver.setAlarm(DailyVerseAppWidgetConfigurationActivity.this, ids);
+		ComponentName provider = new ComponentName(context, DailyVerseAppWidgetReceiver.class);
+		int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(provider);
+		DailyVerseAppWidgetReceiver.setAlarm(DailyVerseAppWidgetConfigurationActivity.this, ids);
 
-			Intent resultValue = new Intent();
-			resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-			setResult(RESULT_OK, resultValue);
-			finish();
-		}
+		Intent resultValue = new Intent();
+		resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+		setResult(RESULT_OK, resultValue);
+		finish();
 	};
 
 	class VersionAdapter extends EasyAdapter {

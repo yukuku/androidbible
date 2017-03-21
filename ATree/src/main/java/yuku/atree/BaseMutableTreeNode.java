@@ -72,7 +72,7 @@ public abstract class BaseMutableTreeNode implements MutableTreeNode {
 	}
 
 	@Override public void remove(final MutableTreeNode child) {
-		int index = -1;
+		int index;
 		if (child == null || children == null || (index = children.indexOf(child)) == -1) {
 			throw new IllegalArgumentException("child null or not found");
 		}
@@ -110,7 +110,7 @@ public abstract class BaseMutableTreeNode implements MutableTreeNode {
 	}
 
 	public boolean isNodeDescendant(final BaseMutableTreeNode anotherNode) {
-		return anotherNode != null ? anotherNode.isNodeAncestor(this) : false;
+		return anotherNode != null && anotherNode.isNodeAncestor(this);
 	}
 
 	public TreeNode getSharedAncestor(final BaseMutableTreeNode anotherNode) {
@@ -135,8 +135,7 @@ public abstract class BaseMutableTreeNode implements MutableTreeNode {
 			return 0;
 		}
 		int childrenDepth = 0;
-		for (Iterator<TreeNode> it = children.iterator(); it.hasNext();) {
-			TreeNode child = it.next();
+		for (TreeNode child : children) {
 			int childDepth = child.getDepth();
 			if (childDepth > childrenDepth) {
 				childrenDepth = childDepth;
@@ -184,7 +183,7 @@ public abstract class BaseMutableTreeNode implements MutableTreeNode {
 	}
 
 	public boolean isNodeChild(final TreeNode child) {
-		return child != null && children != null ? children.contains(child) : false;
+		return child != null && children != null && children.contains(child);
 	}
 
 	@Override public boolean isLeaf() {
@@ -207,7 +206,7 @@ public abstract class BaseMutableTreeNode implements MutableTreeNode {
 
 	private List<TreeNode> getChildren() {
 		if (children == null) {
-			children = new ArrayList<TreeNode>();
+			children = new ArrayList<>();
 		}
 
 		return children;

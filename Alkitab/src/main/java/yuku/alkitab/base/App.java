@@ -1,10 +1,8 @@
 package yuku.alkitab.base;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Build;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
 import android.support.v4.content.LocalBroadcastManager;
@@ -42,7 +40,6 @@ import yuku.stethoshim.StethoShim;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -101,8 +98,18 @@ public class App extends yuku.afw.App {
 		return OkHttpClientWrapper.INSTANCE.longTimeoutClient;
 	}
 
-	@Override public void onCreate() {
+	@Override
+	public void onCreate() {
 		super.onCreate();
+
+		{ // LeakCanary, also we need the Application instance.
+			if (LeakCanary.isInAnalyzerProcess(this)) {
+				// This process is dedicated to LeakCanary for heap analysis.
+				// You should not init your app in this process.
+				return;
+			}
+			LeakCanary.install(this);
+		}
 
 		staticInit();
 
@@ -116,10 +123,6 @@ public class App extends yuku.afw.App {
 			analytics.enableAutoActivityReports(this);
 		}
 
-		{ // LeakCanary, also we need the Application instance.
-			LeakCanary.install(this);
-		}
-
 		{ // Stetho call through proxy
 			StethoShim.initializeWithDefaults(this);
 		}
@@ -130,7 +133,11 @@ public class App extends yuku.afw.App {
 		initted = true;
 
 		final CrashReporter cr = new CrashReporter();
-		cr.activateDefaultUncaughtExceptionHandler();
+		if (BuildConfig.DEBUG) {
+			Log.d(TAG, "Not activating crash reporter because we are in debug build.");
+		} else {
+			cr.activateDefaultUncaughtExceptionHandler();
+		}
 		cr.trySend();
 
 		final FeedbackSender fs = FeedbackSender.getInstance(context);
@@ -145,8 +152,6 @@ public class App extends yuku.afw.App {
 		}) {
 			PreferenceManager.setDefaultValues(context, preferenceResId, false);
 		}
-
-		forceUpdateConfiguration();
 
 		// all activities need at least the activeVersion from S, so initialize it here.
 		synchronized (S.class) {
@@ -163,7 +168,7 @@ public class App extends yuku.afw.App {
 			Gcm.renewGcmRegistrationIdIfNeeded(Sync::notifyNewGcmRegistrationId);
 		}
 
-		DevotionReminder.scheduleAlarm(context);
+		DevotionReminder.scheduleAlarm();
 
 		forceOverflowMenu();
 
@@ -200,77 +205,6 @@ public class App extends yuku.afw.App {
 			sHasPermanentMenuKeySet.setBoolean(config, true);
 		} catch (Exception e) {
 			Log.w(TAG, "ViewConfiguration has no sHasPermanentMenuKeySet field", e);
-		}
-	}
-
-	private static Locale getLocaleFromPreferences() {
-		final String lang = Preferences.getString(R.string.pref_language_key, R.string.pref_language_default);
-		if (lang == null || "DEFAULT".equals(lang)) {
-			return Locale.getDefault();
-		}
-
-		switch (lang) {
-			case "zh-CN":
-				return Locale.SIMPLIFIED_CHINESE;
-			case "zh-TW":
-				return Locale.TRADITIONAL_CHINESE;
-			default:
-				return new Locale(lang);
-		}
-	}
-
-	private static float getFontScaleFromPreferences() {
-		float res = 0.f;
-
-		final String forceFontScale = Preferences.getString(R.string.pref_forceFontScale_key);
-		if (forceFontScale != null && !context.getString(R.string.pref_forceFontScale_default).equals(forceFontScale)) {
-			if (context.getString(R.string.pref_forceFontScale_value_x1_5).equals(forceFontScale)) {
-				res = 1.5f;
-			} else if (context.getString(R.string.pref_forceFontScale_value_x1_7).equals(forceFontScale)) {
-				res = 1.7f;
-			} else if (context.getString(R.string.pref_forceFontScale_value_x2_0).equals(forceFontScale)) {
-				res = 2.0f;
-			}
-		}
-
-		if (res == 0.f) {
-			final float defFontScale = Settings.System.getFloat(context.getContentResolver(), Settings.System.FONT_SCALE, 1.f);
-			if (BuildConfig.DEBUG) Log.d(TAG, "defFontScale: " + defFontScale);
-			res = defFontScale;
-		}
-
-		return res;
-	}
-
-	@Override public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-
-		Log.d(TAG, "@@onConfigurationChanged: config changed to: " + newConfig);
-		forceUpdateConfiguration();
-	}
-
-	public static void forceUpdateConfiguration() {
-		final Configuration config = context.getResources().getConfiguration();
-		boolean updated = false;
-
-		final Locale locale = getLocaleFromPreferences();
-		if (!U.equals(config.locale.getLanguage(), locale.getLanguage()) || !U.equals(config.locale.getCountry(), locale.getCountry())) {
-			if (BuildConfig.DEBUG) Log.d(TAG, "@@forceUpdateConfiguration: locale will be updated to: " + locale);
-
-			config.locale = locale;
-			updated = true;
-		}
-
-		final float fontScale = getFontScaleFromPreferences();
-		if (config.fontScale != fontScale) {
-			if (BuildConfig.DEBUG) Log.d(TAG, "@@forceUpdateConfiguration: fontScale will be updated to: " + fontScale);
-
-			config.fontScale = fontScale;
-			updated = true;
-		}
-
-		if (updated) {
-			context.getResources().updateConfiguration(config, null);
 		}
 	}
 

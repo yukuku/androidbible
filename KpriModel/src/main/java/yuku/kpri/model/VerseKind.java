@@ -8,7 +8,7 @@ public enum VerseKind {
 	
 	public final int value;
 
-	private VerseKind(int value) {
+	VerseKind(int value) {
 		this.value = value;
 	}
 }

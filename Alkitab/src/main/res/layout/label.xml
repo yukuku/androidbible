@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
-	android:id="@+id/lCaption"
+<TextView android:id="@+id/lCaption"
 	xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@drawable/label_bg"
-    android:gravity="center_vertical"
-    android:paddingBottom="2dp"
-    android:paddingLeft="6dp"
-    android:paddingRight="6dp"
-    android:paddingTop="2dp"
-	android:text="*label caption"
-    android:textColor="#000"
-    tools:ignore="HardcodedText" />
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:background="@drawable/label_bg"
+	android:gravity="center_vertical"
+	android:paddingBottom="2dp"
+	android:paddingLeft="6dp"
+	android:paddingRight="6dp"
+	android:paddingTop="2dp"
+	android:textColor="#000"
+	tools:text="label caption" />

@@ -53,6 +53,6 @@ public class TextareaPage extends Page {
     public boolean isCompleted() {
 	    final String data = mData.getString(Page.SIMPLE_DATA_KEY);
 	    if (data == null) return false;
-	    return data.length() >= 40;
+	    return data.length() >= 100;
     }
 }

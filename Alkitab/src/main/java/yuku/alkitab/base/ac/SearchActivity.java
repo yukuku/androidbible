@@ -10,6 +10,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.ActionBar;
@@ -42,7 +43,6 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Appearances;
@@ -220,7 +220,7 @@ public class SearchActivity extends BaseActivity {
 			final CharSequence text;
 			if (_id == -1) {
 				final SpannableStringBuilder sb = new SpannableStringBuilder(getString(R.string.search_clear_history));
-				sb.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.escape)), 0, sb.length(), 0);
+				sb.setSpan(new ForegroundColorSpan(ResourcesCompat.getColor(getResources(), R.color.escape, getTheme())), 0, sb.length(), 0);
 				text = sb;
 			} else {
 				text = cursor.getString(COLINDEX_QUERY_STRING);
@@ -601,37 +601,29 @@ public class SearchActivity extends BaseActivity {
 		}
 	};
 
-	final View.OnClickListener bVersion_click = new View.OnClickListener() {
-		@Override
-		public void onClick(final View v) {
-			S.openVersionsDialog(SearchActivity.this, false, searchInVersionId, new S.VersionDialogListener() {
-				@Override
-				public void onVersionSelected(final MVersion mv) {
-					final Version selectedVersion = mv.getVersion();
+	final View.OnClickListener bVersion_click = v -> S.openVersionsDialog(this, false, searchInVersionId, mv -> {
+		final Version selectedVersion = mv.getVersion();
 
-					if (selectedVersion == null) {
-						new MaterialDialog.Builder(SearchActivity.this)
-							.content(getString(R.string.version_error_opening, mv.longName))
-							.positiveText(R.string.ok)
-							.show();
-						return;
-					}
-
-					searchInVersion = selectedVersion;
-					searchInVersionId = mv.getVersionId();
-					textSizeMult = S.getDb().getPerVersionSettings(searchInVersionId).fontSizeMultiplier;
-					Appearances.applyTextAppearance(tSearchTips, textSizeMult);
-
-					displaySearchInVersion();
-					configureFilterDisplayOldNewTest();
-					bVersion.setText(S.getVersionInitials(searchInVersion));
-					if (adapter != null) {
-						adapter.notifyDataSetChanged();
-					}
-				}
-			});
+		if (selectedVersion == null) {
+			new MaterialDialog.Builder(SearchActivity.this)
+				.content(getString(R.string.version_error_opening, mv.longName))
+				.positiveText(R.string.ok)
+				.show();
+			return;
 		}
-	};
+
+		searchInVersion = selectedVersion;
+		searchInVersionId = mv.getVersionId();
+		textSizeMult = S.getDb().getPerVersionSettings(searchInVersionId).fontSizeMultiplier;
+		Appearances.applyTextAppearance(tSearchTips, textSizeMult);
+
+		displaySearchInVersion();
+		configureFilterDisplayOldNewTest();
+		bVersion.setText(S.getVersionInitials(searchInVersion));
+		if (adapter != null) {
+			adapter.notifyDataSetChanged();
+		}
+	});
 
 	protected void setSelectedBookIdsBasedOnFilter() {
 		selectedBookIds.clear();

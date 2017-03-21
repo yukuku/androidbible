@@ -1,52 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:padding="16dp" >
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	android:padding="16dp">
 
-    <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
+	<RelativeLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
 
-        <TextView
-                android:id="@+id/lDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="2dp"
-                android:gravity="top|right"
-                android:text="2099-12-32"
-                tools:ignore="HardcodedText" />
+		<TextView
+			android:id="@+id/lDate"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:layout_alignParentTop="true"
+			android:layout_marginTop="2dp"
+			android:gravity="top|right"
+			tools:text="2099-12-32" />
 
-        <TextView
-                android:id="@+id/lCaption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="false"
-                android:layout_alignParentTop="true"
-                android:layout_toLeftOf="@+id/lDate"
-                android:text="Keterangan atau Alamat Ayat dsb"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                tools:ignore="HardcodedText" android:layout_toRightOf="@+id/imgIcon" android:layout_marginLeft="4dp"/>
-        <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/imgIcon" android:layout_alignParentLeft="true" android:layout_alignParentTop="true"
-                tools:ignore="ContentDescription"/>
+		<TextView
+			android:id="@+id/lCaption"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="false"
+			android:layout_alignParentTop="true"
+			android:layout_marginLeft="4dp"
+			android:layout_toLeftOf="@+id/lDate"
+			android:layout_toRightOf="@+id/imgIcon"
+			android:textAppearance="?android:textAppearanceMedium"
+			tools:text="Description or reference" />
 
-    </RelativeLayout>
+		<ImageView
+			android:id="@+id/imgIcon"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentTop="true"
+			tools:ignore="ContentDescription" />
 
-    <TextView
-            android:id="@+id/lSnippet"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textSize="14sp"
-            android:text="Cuplikan ayat kalau bisa ditampilin Cuplikan ayat kalau bisa ditampilin Cuplikan ayat kalau bisa ditampilin Cuplikan ayat kalau bisa ditampilin "
-            tools:ignore="HardcodedText" />
+	</RelativeLayout>
+
+	<TextView
+		android:id="@+id/lSnippet"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="8dp"
+		android:textSize="14sp"
+		tools:text="Verse snippet if can be displayed Verse snippet if can be displayed Verse snippet if can be displayed" />
 
 </LinearLayout>

@@ -7,4 +7,10 @@
     <item>浏览书卷</item>
     <item>上／下一页</item>
   </string-array>
+  <string-array name="pref_forceFontScale_labels">
+    <item>按照系统设置</item>
+    <item>1. 5倍大小</item>
+    <item>1. 7倍大小</item>
+    <item>2. 0倍大小</item>
+  </string-array>
 </resources>

@@ -218,49 +218,63 @@ public class Yes1Reader implements BibleReader {
 				
 				// kalau true, berarti ini kitab NULL
 				boolean kosong = false;
-				
-				for (int keyKe = 0;; keyKe++) {
+
+				label:
+				for (int keyKe = 0; ; keyKe++) {
 					String key = in.readShortString();
-					
-					if (key.equals("versi")) {
-						int versi = in.readInt();
-						if (versi > 2) throw new RuntimeException("Versi Kitab (lebih dari 2): " + versi + " tidak dikenal");
-					} else if (key.equals("pos")) {
-						k.bookId = in.readInt();
-					} else if (key.equals("nama")) {
-						k.shortName = in.readShortString();
-					} else if (key.equals("judul")) {
-						k.shortName = in.readShortString();
-					} else if (key.equals("npasal")) {
-						k.chapter_count = in.readInt();
-					} else if (key.equals("nayat")) {
-						k.verse_counts = new int[k.chapter_count];
-						for (int i = 0; i < k.chapter_count; i++) {
-							k.verse_counts[i] = in.readUint8();
-						}
-					} else if (key.equals("ayatLoncat")) {
-						// ignored
-						in.readInt();
-					} else if (key.equals("pdbBookNumber")) {
-						// ignored
-						in.readInt();
-					} else if (key.equals("pasal_offset")) {
-						k.chapter_offsets = new int[k.chapter_count + 1]; // harus ada +1nya kalo YesPembaca
-						for (int i = 0; i < k.chapter_offsets.length; i++) {
-							k.chapter_offsets[i] = in.readInt();
-						}
-					} else if (key.equals("encoding")) {
-						// ignored, deprecated
-						in.readInt();
-					} else if (key.equals("offset")) {
-						k.offset = in.readInt();
-					} else if (key.equals("end")) {
-						// sudah end sebelum baca apapun?
-						if (keyKe == 0) kosong = true;
-						break;
-					} else {
-						Log.w(TAG, "ada key ga dikenal di kitab " + k + " di infoKitab: " + key);
-						break;
+
+					switch (key) {
+						case "versi":
+							int versi = in.readInt();
+							if (versi > 2) throw new RuntimeException("Versi Kitab (lebih dari 2): " + versi + " tidak dikenal");
+							break;
+						case "pos":
+							k.bookId = in.readInt();
+							break;
+						case "nama":
+							k.shortName = in.readShortString();
+							break;
+						case "judul":
+							k.shortName = in.readShortString();
+							break;
+						case "npasal":
+							k.chapter_count = in.readInt();
+							break;
+						case "nayat":
+							k.verse_counts = new int[k.chapter_count];
+							for (int i = 0; i < k.chapter_count; i++) {
+								k.verse_counts[i] = in.readUint8();
+							}
+							break;
+						case "ayatLoncat":
+							// ignored
+							in.readInt();
+							break;
+						case "pdbBookNumber":
+							// ignored
+							in.readInt();
+							break;
+						case "pasal_offset":
+							k.chapter_offsets = new int[k.chapter_count + 1]; // harus ada +1nya kalo YesPembaca
+
+							for (int i = 0; i < k.chapter_offsets.length; i++) {
+								k.chapter_offsets[i] = in.readInt();
+							}
+							break;
+						case "encoding":
+							// ignored, deprecated
+							in.readInt();
+							break;
+						case "offset":
+							k.offset = in.readInt();
+							break;
+						case "end":
+							// sudah end sebelum baca apapun?
+							if (keyKe == 0) kosong = true;
+							break label;
+						default:
+							Log.w(TAG, "ada key ga dikenal di kitab " + k + " di infoKitab: " + key);
+							break label;
 					}
 				}
 				

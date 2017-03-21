@@ -326,26 +326,20 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 
 				Log.d(TAG, "Going to unzip " + downloadedZip, new Throwable().fillInStackTrace());
 
-				ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(downloadedZip)));
-				try {
+				try (ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(downloadedZip)))) {
 					ZipEntry ze;
 					while ((ze = zis.getNextEntry()) != null) {
 						String zname = ze.getName();
 						Log.d(TAG, "Extracting from zip: " + zname);
 						File extractFile = new File(fontDir, zname);
-						FileOutputStream fos = new FileOutputStream(extractFile);
-						try {
+						try (FileOutputStream fos = new FileOutputStream(extractFile)) {
 							byte[] buf = new byte[4096];
 							int count;
 							while ((count = zis.read(buf)) != -1) {
 								fos.write(buf, 0, count);
 							}
-						} finally {
-							fos.close();
 						}
 					}
-				} finally {
-					zis.close();
 				}
 
 				new File(downloadedZip).delete();

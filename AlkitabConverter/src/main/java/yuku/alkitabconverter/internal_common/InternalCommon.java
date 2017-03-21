@@ -120,7 +120,7 @@ public class InternalCommon {
 						bw.writeUint8(book_1 - 1);
 						bw.writeValueString(bookNames.get(book_1 - 1));
 						bw.writeValueString(null); // TODO support for abbreviation
-						bw.writeValueString(String.format("%s_k%02d", prefix, book_1));
+						bw.writeValueString(String.format(Locale.US, "%s_k%02d", prefix, book_1));
 						bw.writeUint8(chapter_count);
 						for (int i = 0; i < chapter_count; i++) {
 							bw.writeUint8(verse_counts[i]);

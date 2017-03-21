@@ -27,8 +27,8 @@ import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
-import yuku.alkitab.base.util.ChangeConfigurationHelper;
 import yuku.alkitab.base.util.OtherAppIntegration;
+import yuku.alkitab.base.widget.ConfigurationWrapper;
 import yuku.alkitab.base.widget.VerseItem;
 import yuku.alkitab.debug.R;
 
@@ -135,13 +135,11 @@ public class SettingsActivity extends BaseActivity {
 
 			// do this after this method returns true
 			handler.post(() -> {
-				App.forceUpdateConfiguration();
-				ChangeConfigurationHelper.notifyConfigurationNeedsUpdate();
+				ConfigurationWrapper.notifyConfigurationNeedsUpdate();
 
 				// restart this activity
 				final Activity ac = getActivity();
-				ac.finish();
-				startActivity(ac.getIntent());
+				ac.recreate();
 			});
 			return true;
 		};
@@ -153,10 +151,6 @@ public class SettingsActivity extends BaseActivity {
 			final ListPreference pref_language = (ListPreference) findPreference(getString(R.string.pref_language_key));
 			pref_language.setOnPreferenceChangeListener(configurationPreferenceChangeListener);
 			autoDisplayListPreference(pref_language);
-
-			final ListPreference pref_forceFontScale = (ListPreference) findPreference(getString(R.string.pref_forceFontScale_key));
-			pref_forceFontScale.setOnPreferenceChangeListener(configurationPreferenceChangeListener);
-			autoDisplayListPreference(pref_forceFontScale);
 
 			final CheckBoxPreference pref_bottomToolbarOnText = (CheckBoxPreference) findPreference(getString(R.string.pref_bottomToolbarOnText_key));
 			pref_bottomToolbarOnText.setOnPreferenceChangeListener((preference, newValue) -> {
@@ -231,7 +225,7 @@ public class SettingsActivity extends BaseActivity {
 		}
 	}
 
-	static void autoDisplayListPreference(final ListPreference pref) {
+	public static void autoDisplayListPreference(final ListPreference pref) {
 		final CharSequence label = pref.getEntry();
 		if (label != null) {
 			pref.setSummary(label);

@@ -11,7 +11,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
-import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
@@ -47,10 +46,22 @@ public class DevotionReminderActivity extends BaseActivity {
 
 	public static class DevotionReminderFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 		@Override
+		public void onCreate(final Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+
+			Preferences.registerObserver(this);
+		}
+
+		@Override
+		public void onDestroy() {
+			super.onDestroy();
+
+			Preferences.unregisterObserver(this);
+		}
+
+		@Override
 		public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
 			addPreferencesFromResource(R.xml.devotion_reminder_settings);
-
-			PreferenceManager.getDefaultSharedPreferences(getActivity()).registerOnSharedPreferenceChangeListener(this);
 
 			updateReminderTypeEnabledness();
 
@@ -76,7 +87,7 @@ public class DevotionReminderActivity extends BaseActivity {
 			if (TextUtils.isEmpty(Preferences.getString(DevotionReminder.REMINDER_TEXT))) {
 				Preferences.setString(DevotionReminder.REMINDER_TEXT, DevotionReminder.getNotificationText());
 			}
-			DevotionReminder.scheduleAlarm(getActivity());
+			DevotionReminder.scheduleAlarm();
 			updateDisplayedValue();
 		}
 

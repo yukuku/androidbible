@@ -48,28 +48,23 @@ public class ProgressMarkRenameDialog extends DialogFragment {
 
 				listener.onOked();
 			})
-			.callback(new MaterialDialog.ButtonCallback() {
-				@Override
-				public void onNeutral(final MaterialDialog dialog) {
-					new MaterialDialog.Builder(activity)
-						.content(TextUtils.expandTemplate(activity.getText(R.string.pm_delete_progress_confirm), caption))
-						.positiveText(R.string.ok)
-						.onPositive((_unused_, which) -> {
-							progressMark.ari = 0;
-							progressMark.caption = null;
-							progressMark.modifyTime = new Date();
-							S.getDb().insertOrUpdateProgressMark(progressMark);
+			.onNeutral((dialog, which) -> new MaterialDialog.Builder(activity)
+				.content(TextUtils.expandTemplate(activity.getText(R.string.pm_delete_progress_confirm), caption))
+				.positiveText(R.string.ok)
+				.onPositive((_unused_, which1) -> {
+					progressMark.ari = 0;
+					progressMark.caption = null;
+					progressMark.modifyTime = new Date();
+					S.getDb().insertOrUpdateProgressMark(progressMark);
 
-							// Since updating database is the responsibility here,
-							// announcing it will also be here.
-							App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
+					// Since updating database is the responsibility here,
+					// announcing it will also be here.
+					App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
 
-							listener.onDeleted();
-						})
-						.negativeText(R.string.cancel)
-						.show();
-				}
-			})
+					listener.onDeleted();
+				})
+				.negativeText(R.string.cancel)
+				.show())
 			.show();
 	}
 }

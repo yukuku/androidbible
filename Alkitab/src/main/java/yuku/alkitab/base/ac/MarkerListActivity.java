@@ -460,10 +460,7 @@ public class MarkerListActivity extends BaseActivity {
 		}
 
 		new MaterialDialog.Builder(this)
-			.items(new String[] {
-				deleteMarker,
-				editMarker,
-			})
+			.items(deleteMarker, editMarker)
 			.itemsCallback((dialog, itemView, which, text) -> {
 				final Marker marker = adapter.getItem(position);
 
@@ -493,7 +490,7 @@ public class MarkerListActivity extends BaseActivity {
 						final VerseRenderer.FormattedTextResult ftr = new VerseRenderer.FormattedTextResult();
 
 						if (rawVerseText != null) {
-							VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, false, null, ftr);
+							VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, null, ftr);
 						} else {
 							ftr.result = ""; // verse not available
 						}
@@ -598,7 +595,7 @@ public class MarkerListActivity extends BaseActivity {
 				verseText = getString(R.string.generic_verse_not_available_in_this_version);
 			} else {
 				final VerseRenderer.FormattedTextResult ftr = new VerseRenderer.FormattedTextResult();
-				VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, false, null, ftr);
+				VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, null, ftr);
 				verseText = ftr.result;
 			}
 

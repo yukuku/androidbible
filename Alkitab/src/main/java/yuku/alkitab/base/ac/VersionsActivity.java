@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -43,8 +44,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
@@ -151,9 +152,9 @@ public class VersionsActivity extends BaseActivity {
 		Log.d(TAG, "  flags: 0x" + Integer.toHexString(intent.getFlags()));
 		Log.d(TAG, "  mime: " + intent.getType());
 		Bundle extras = intent.getExtras();
-		Log.d(TAG, "  extras: " + (extras == null? "null": extras.size()));
+		Log.d(TAG, "  extras: " + (extras == null ? "null" : extras.size()));
 		if (extras != null) {
-			for (String key: extras.keySet()) {
+			for (String key : extras.keySet()) {
 				Log.d(TAG, "    " + key + " = " + extras.get(key));
 			}
 		}
@@ -373,13 +374,14 @@ public class VersionsActivity extends BaseActivity {
 		}
 	}
 
-	@Override public boolean onOptionsItemSelected(MenuItem item) {
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.menuAddFromLocal:
 				clickOnOpenFile();
 				return true;
 			case R.id.menuAddFromUrl:
-				openUrlInputDialog();
+				openUrlInputDialog(null);
 				return true;
 		}
 
@@ -456,7 +458,7 @@ public class VersionsActivity extends BaseActivity {
 
 				new MaterialDialog.Builder(VersionsActivity.this)
 					.title(R.string.ed_error_reading_pdb_file)
-					.content(exception instanceof ConvertOptionsDialog.PdbKnownErrorException? exception.getMessage(): (getString(R.string.ed_details) + sw.toString()))
+					.content(exception instanceof ConvertOptionsDialog.PdbKnownErrorException ? exception.getMessage() : (getString(R.string.ed_details) + sw.toString()))
 					.positiveText(R.string.ok)
 					.show();
 			}
@@ -472,7 +474,7 @@ public class VersionsActivity extends BaseActivity {
 
 					if (wronglyConvertedBookNames != null && wronglyConvertedBookNames.size() > 0) {
 						StringBuilder msg = new StringBuilder(getString(R.string.ed_the_following_books_from_the_pdb_file_are_not_recognized) + '\n');
-						for (String s: wronglyConvertedBookNames) {
+						for (String s : wronglyConvertedBookNames) {
 							msg.append("- ").append(s).append('\n');
 						}
 
@@ -484,11 +486,13 @@ public class VersionsActivity extends BaseActivity {
 				}
 			}
 
-			@Override public void onPdbReadError(Throwable e) {
+			@Override
+			public void onPdbReadError(Throwable e) {
 				showPdbReadErrorDialog(e);
 			}
 
-			@Override public void onOkYes2(final ConvertPdbToYes2.ConvertParams params) {
+			@Override
+			public void onOkYes2(final ConvertPdbToYes2.ConvertParams params) {
 				final File yesFile = AddonManager.getWritableVersionFile(yesName);
 
 				final MaterialDialog pd = new MaterialDialog.Builder(VersionsActivity.this)
@@ -498,15 +502,18 @@ public class VersionsActivity extends BaseActivity {
 					.show();
 
 				new AsyncTask<String, Object, ConvertPdbToYes2.ConvertResult>() {
-					@Override protected ConvertPdbToYes2.ConvertResult doInBackground(String... _unused_) {
+					@Override
+					protected ConvertPdbToYes2.ConvertResult doInBackground(String... _unused_) {
 						ConvertPdbToYes2 converter = new ConvertPdbToYes2();
 						converter.setConvertProgressListener(new ConvertPdbToYes2.ConvertProgressListener() {
-							@Override public void onProgress(int at, String message) {
+							@Override
+							public void onProgress(int at, String message) {
 								Log.d(TAG, "Progress " + at + ": " + message);
 								publishProgress(at, message);
 							}
 
-							@Override public void onFinish() {
+							@Override
+							public void onFinish() {
 								Log.d(TAG, "Finish");
 								publishProgress(null, null);
 							}
@@ -514,7 +521,8 @@ public class VersionsActivity extends BaseActivity {
 						return converter.convert(App.context, pdbFilename, yesFile, params);
 					}
 
-					@Override protected void onProgressUpdate(Object... values) {
+					@Override
+					protected void onProgressUpdate(Object... values) {
 						if (values[0] == null) {
 							pd.setContent(getString(R.string.ed_finished));
 						} else {
@@ -524,7 +532,8 @@ public class VersionsActivity extends BaseActivity {
 						}
 					}
 
-					@Override protected void onPostExecute(ConvertPdbToYes2.ConvertResult result) {
+					@Override
+					protected void onPostExecute(ConvertPdbToYes2.ConvertResult result) {
 						pd.dismiss();
 
 						showResult(yesFile, result.exception, result.wronglyConvertedBookNames);
@@ -576,7 +585,7 @@ public class VersionsActivity extends BaseActivity {
 	 * XXX is the original filename without the .pdb or .PDB ending, converted to lowercase.
 	 * All except alphanumeric and . - _ are stripped.
 	 * Path not included.
-	 *
+	 * <p>
 	 * Previously it was like "pdb-1234abcd-1.yes".
 	 */
 	private String yesNameForPdb(String filenamepdb) {
@@ -588,14 +597,10 @@ public class VersionsActivity extends BaseActivity {
 		return "pdb-" + base + ".yes";
 	}
 
-	void openUrlInputDialog() {
+	void openUrlInputDialog(@Nullable final String prefill) {
 		new MaterialDialog.Builder(this)
-			.customView(R.layout.dialog_version_add_from_url, false)
-			.positiveText(R.string.ok)
-			.onPositive((dialog, which) -> {
-				final EditText tUrl = V.get(dialog.getCustomView(), R.id.tUrl);
-
-				final String url = tUrl.getText().toString().trim();
+			.input(getText(R.string.version_download_add_from_url_prompt_yes_only), prefill, false, (dialog, input) -> {
+				final String url = input.toString().trim();
 				if (url.length() == 0) {
 					return;
 				}
@@ -606,12 +611,13 @@ public class VersionsActivity extends BaseActivity {
 					new MaterialDialog.Builder(VersionsActivity.this)
 						.content(R.string.version_download_invalid_url)
 						.positiveText(R.string.ok)
+						.onPositive((dialog1, which) -> openUrlInputDialog(url))
 						.show();
 					return;
 				}
 
 				// guess destination filename
-				String last = uri.getLastPathSegment();
+				final String last = uri.getLastPathSegment();
 				if (TextUtils.isEmpty(last) || !last.toLowerCase(Locale.US).endsWith(".yes")) {
 					new MaterialDialog.Builder(VersionsActivity.this)
 						.content(R.string.version_download_not_yes)
@@ -620,27 +626,28 @@ public class VersionsActivity extends BaseActivity {
 					return;
 				}
 
-				{
-					final String downloadKey = "version:url:" + url;
+				final String downloadKey = "version:url:" + url;
 
-					final int status = DownloadMapper.instance.getStatus(downloadKey);
-					if (status == DownloadManager.STATUS_PENDING || status == DownloadManager.STATUS_RUNNING) {
-						// it's downloading!
-						return;
-					}
-
-					final DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url))
-						.setTitle(last)
-						.setVisibleInDownloadsUi(false)
-						.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
-
-					final Map<String, String> attrs = new LinkedHashMap<>();
-					attrs.put("download_type", "url");
-					attrs.put("filename_last_segment", last);
-
-					DownloadMapper.instance.enqueue(downloadKey, req, attrs);
+				final int status = DownloadMapper.instance.getStatus(downloadKey);
+				if (status == DownloadManager.STATUS_PENDING || status == DownloadManager.STATUS_RUNNING) {
+					// it's downloading!
+					return;
 				}
+
+				final DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url))
+					.setTitle(last)
+					.setVisibleInDownloadsUi(false)
+					.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
+
+				final Map<String, String> attrs = new LinkedHashMap<>();
+				attrs.put("download_type", "url");
+				attrs.put("filename_last_segment", last);
+
+				DownloadMapper.instance.enqueue(downloadKey, req, attrs);
+
+				Toast.makeText(this, R.string.mulai_mengunduh, Toast.LENGTH_SHORT).show();
 			})
+			.positiveText(R.string.ok)
 			.show();
 	}
 
@@ -670,8 +677,9 @@ public class VersionsActivity extends BaseActivity {
 						.show();
 
 					new AsyncTask<Void, Void, File>() {
-						@Override protected File doInBackground(Void... params) {
-							String tmpfile3 = filename + "-" + (int)(Math.random() * 100000) + ".tmp3";
+						@Override
+						protected File doInBackground(Void... params) {
+							String tmpfile3 = filename + "-" + (int) (Math.random() * 100000) + ".tmp3";
 							try {
 								GZIPInputStream in = new GZIPInputStream(new FileInputStream(filename));
 								FileOutputStream out = new FileOutputStream(tmpfile3); // decompressed file
@@ -694,12 +702,14 @@ public class VersionsActivity extends BaseActivity {
 								return null;
 							} finally {
 								Log.d(TAG, "menghapus tmpfile3: " + tmpfile3);
+								//noinspection ResultOfMethodCallIgnored
 								new File(tmpfile3).delete();
 							}
 							return maybeDecompressed;
 						}
 
-						@Override protected void onPostExecute(File result) {
+						@Override
+						protected void onPostExecute(File result) {
 							pd.dismiss();
 
 							App.trackEvent("versions_open_yes_gz");
@@ -803,7 +813,7 @@ public class VersionsActivity extends BaseActivity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 			this.inflater = inflater;
-			final View rootView = inflater.inflate(downloadedOnly? R.layout.fragment_versions_downloaded: R.layout.fragment_versions_all, container, false);
+			final View rootView = inflater.inflate(downloadedOnly ? R.layout.fragment_versions_downloaded : R.layout.fragment_versions_all, container, false);
 
 			adapter = new VersionAdapter();
 
@@ -873,9 +883,9 @@ public class VersionsActivity extends BaseActivity {
 			final MVersion mv = item.mv;
 
 			if (mv instanceof MVersionPreset) {
-				clickOnPresetVersion(V.<CheckBox>get(itemView, R.id.cActive), (MVersionPreset) mv);
+				clickOnPresetVersion(V.get(itemView, R.id.cActive), (MVersionPreset) mv);
 			} else if (mv instanceof MVersionDb) {
-				clickOnDbVersion(V.<CheckBox>get(itemView, R.id.cActive), (MVersionDb) mv);
+				clickOnDbVersion(V.get(itemView, R.id.cActive), (MVersionDb) mv);
 			}
 
 			App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
@@ -959,21 +969,31 @@ public class VersionsActivity extends BaseActivity {
 				b.neutralText(R.string.buang_dari_daftar);
 				b.onNeutral((dialog, which) -> {
 					final MVersionDb mvDb = (MVersionDb) mv;
-					new MaterialDialog.Builder(getActivity())
-						.content(getString(R.string.juga_hapus_file_datanya_file, mvDb.filename))
-						.positiveText(R.string.delete)
-						.onPositive((dialog1, which1) -> {
-							S.getDb().deleteVersion(mvDb);
-							App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
-							new File(mvDb.filename).delete();
-						})
-						.negativeText(R.string.no)
-						.onNegative((dialog1, which1) -> {
-							S.getDb().deleteVersion(mvDb);
-							App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
-						})
-						.neutralText(R.string.cancel)
-						.show();
+					final String filename = mvDb.filename;
+
+					if (AddonManager.isInSharedStorage(filename)) {
+						new MaterialDialog.Builder(getActivity())
+							.content(getString(R.string.juga_hapus_file_datanya_file, filename))
+							.positiveText(R.string.delete)
+							.onPositive((dialog1, which1) -> {
+								S.getDb().deleteVersion(mvDb);
+								App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
+								//noinspection ResultOfMethodCallIgnored
+								new File(filename).delete();
+							})
+							.negativeText(R.string.no)
+							.onNegative((dialog1, which1) -> {
+								S.getDb().deleteVersion(mvDb);
+								App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
+							})
+							.neutralText(R.string.cancel)
+							.show();
+					} else { // just delete the file!
+						S.getDb().deleteVersion(mvDb);
+						App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
+						//noinspection ResultOfMethodCallIgnored
+						new File(filename).delete();
+					}
 				});
 			}
 
@@ -1099,9 +1119,9 @@ public class VersionsActivity extends BaseActivity {
 			 * - Internal version {@link yuku.alkitab.base.model.MVersionInternal}, is always there
 			 * - Versions stored in database {@link yuku.alkitab.base.model.MVersionDb} is all loaded
 			 * - For each non-hidden {@link yuku.alkitab.base.model.MVersionPreset} defined in {@link yuku.alkitab.base.config.VersionConfig},
-			 *   check if the {@link yuku.alkitab.base.model.MVersionPreset#preset_name} corresponds to one of the
-			 *   database version above. If it does, do not add to the resulting list. Otherwise, add it so user can download it.
-			 *
+			 * check if the {@link yuku.alkitab.base.model.MVersionPreset#preset_name} corresponds to one of the
+			 * database version above. If it does, do not add to the resulting list. Otherwise, add it so user can download it.
+			 * <p>
 			 * Note: Downloaded preset version will become database version after added.
 			 */
 			void reload() {
@@ -1326,17 +1346,20 @@ public class VersionsActivity extends BaseActivity {
 				setRemoveEnabled(false);
 			}
 
-			@Override public int startDragPosition(MotionEvent ev) {
+			@Override
+			public int startDragPosition(MotionEvent ev) {
 				return super.dragHandleHitPosition(ev);
 			}
 
-			@Override public View onCreateFloatView(int position) {
+			@Override
+			public View onCreateFloatView(int position) {
 				final View res = adapter.getView(position, null, lv);
 				res.setBackgroundColor(0x22ffffff);
 				return res;
 			}
 
-			@Override public void onDestroyFloatView(View floatView) {
+			@Override
+			public void onDestroyFloatView(View floatView) {
 				// Do not call super and do not remove this override.
 				floatView.setBackgroundColor(0);
 			}
