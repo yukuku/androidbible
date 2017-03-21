@@ -276,6 +276,7 @@
   <string name="desc_verse_attribute_multiple_notes">%s notities zijn gekoppeld aan dit vers.</string>
   <string name="desc_verse_attribute_progress_mark">%s is op dit moment hier.</string>
   <string name="desc_progress_mark_list">Lijst over pins</string>
+  <string name="desc_backspace">Backspace</string>
   <string name="intent_filter_open_yes_file">Open YES bestand</string>
   <string name="intent_filter_open_pdb_file">Open PDB bestand</string>
   <string name="intent_filter_open_pdb_or_yes_file">Open PDB/YES bestand</string>
@@ -319,6 +320,8 @@
   <string name="recentverses_button_hint">(Ingedrukt houden voor recente verzen)</string>
   <string name="dr_reminder">Herinnering</string>
   <string name="dr_error_contact_reminder">Fout bij verbinden met Herinnering app.</string>
+  <string name="dr_timepicker_set">Stellen</string>
+  <string name="dr_timepicker_off">Uitschakelen</string>
   <string name="dv_activity_title">Dagelijks Vers Widget</string>
   <string name="dv_option_transparent_background">Transparante achtergrond</string>
   <string name="dv_option_dark_text">Donkere tekst</string>

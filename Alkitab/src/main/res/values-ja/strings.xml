@@ -268,6 +268,7 @@
   <string name="desc_verse_attribute_multiple_notes">この箇所には%s個のメモが付いています。</string>
   <string name="desc_verse_attribute_progress_mark">%sまで来ました。</string>
   <string name="desc_progress_mark_list">ピンの一覧</string>
+  <string name="desc_backspace">バックスペース</string>
   <string name="intent_filter_open_yes_file">YESファイルを開く</string>
   <string name="intent_filter_open_pdb_file">PDBファイルを開く</string>
   <string name="intent_filter_open_pdb_or_yes_file">PDB/YESファイルを開く</string>
@@ -310,6 +311,8 @@
   <string name="recentverses_button_hint">(長押しで最近閲覧した節を表示)</string>
   <string name="dr_reminder">リマインダー</string>
   <string name="dr_error_contact_reminder">リマインダーアプリが見つかりません.</string>
+  <string name="dr_timepicker_set">セット</string>
+  <string name="dr_timepicker_off">オフ</string>
   <string name="dv_option_transparent_background">背景を透過にする</string>
   <string name="dv_option_dark_text">文字を暗くする</string>
   <string name="dv_option_text_size">文字の大きさ</string>

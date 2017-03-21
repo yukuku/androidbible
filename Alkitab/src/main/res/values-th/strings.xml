@@ -152,7 +152,7 @@
   <string name="create_edited_modified_time">%1$s\n(แก้ไขแล้ว %2$s)</string>
   <string name="the_file_for_this_version_is_no_longer_available_file">ไฟล์สำหรับเวอร์ชั่นนี้ไม่มีแล้วค่ะ ต้องการลบเวอร์ชั่นนี้จากรายการหรือไม่?\nไฟล์: %s</string>
   <string name="create_label_title">สร้างป้ายกำกับ</string>
-  <string name="do_you_want_to_remove_the_label_label_from_this_bookmark">\"ต้องการลบป้ายกำกับ \'%s\' จากบุ๊คมาร์คนี้หรือไม่ค่ะ?</string>
+  <string name="do_you_want_to_remove_the_label_label_from_this_bookmark">"ต้องการลบป้ายกำกับ \'%s\' จากบุ๊คมาร์คนี้หรือไม่ค่ะ?"</string>
   <string name="add_label_title">เพิ่มป้ายกำกับ</string>
   <string name="create_label_titik3">เพิ่มป้ายกำกับ&#8230;</string>
   <string name="select_books_to_search">เลือกเล่มที่อยากค้นหา</string>
@@ -276,6 +276,7 @@
   <string name="desc_verse_attribute_multiple_notes">ข้อนี้มีโน้ตจำนวน %s โน้ตแนบมาด้วยค่ะ</string>
   <string name="desc_verse_attribute_progress_mark">%s อยู่ตรงนี้ที่ปัจจุบัน</string>
   <string name="desc_progress_mark_list">รายการพิน</string>
+  <string name="desc_backspace">ลบ</string>
   <string name="intent_filter_open_yes_file">เปิดไฟล์ YES</string>
   <string name="intent_filter_open_pdb_file">เปิดไฟล์ PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">เปิดไฟล์ PDB/YES</string>
@@ -319,6 +320,8 @@
   <string name="recentverses_button_hint">(กดค้างสำหรับประวัติข้อล่าสุดค่ะ)</string>
   <string name="dr_reminder">การแจ้งเตือน</string>
   <string name="dr_error_contact_reminder">เกิดการผิดพลาดระหว่างที่เชื่อมโยงกับแอปแจ้งเตือนค่ะ</string>
+  <string name="dr_timepicker_set">ตั้ง</string>
+  <string name="dr_timepicker_off">ปิด</string>
   <string name="dv_activity_title">วิดเจ็ตข้อประจำวัน</string>
   <string name="dv_option_transparent_background">พื้นหลังโปร่งใส</string>
   <string name="dv_option_dark_text">ข้อความสีเข้ม</string>

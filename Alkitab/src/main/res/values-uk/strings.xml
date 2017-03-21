@@ -244,7 +244,7 @@
   <string name="sn_delete_song_book">Видалити пісняр</string>
   <string name="sn_delete_song_book_explanation">Видалити всі пісні з пісняра ^1?</string>
   <string name="sn_delete_song_book_result">^1 пісні було видалено з пісняра ^2.</string>
-  <string name="sn_update_book_explanation">Оновіть книгу  ^1 до останньої версії.</string>
+  <string name="sn_update_book_explanation">Оновіть книгу ^1 до останньої версії?</string>
   <string name="sn_update_book_confirm_button">Оновлення</string>
   <string name="sn_update_book">Оновлення книги псалмів</string>
   <string name="sn_update_book_because_too_old">Будь ласка, перед продовженням поновіть ^1 до останньої версії. Після поновлення за потреби нашішліть ваші корегування.</string>
@@ -313,6 +313,7 @@
   <string name="dv_option_dark_text">Темний текст</string>
   <string name="dv_option_text_size">Розмір тексту</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">План читання</string>
   <string name="rp_menuReadingPlan">План читання</string>
   <string name="rp_commentActual">Закінчено: %s%%</string>
   <string name="rp_commentTarget">Мета: %s%%</string>
@@ -400,6 +401,15 @@
   <string name="pref_syncAccountName_title">Обліковий запис</string>
   <string name="pref_sync_title">Сихнронізувати</string>
   <string name="sync_menu_item_sync_now">Синхронізувати зараз</string>
+  <string name="sync_sync_set_pref_summary_syncing">Синхронізація&#8230;</string>
+  <string name="sync_login_survey_religion_select_one">Виберіть релігію</string>
+  <string name="sync_login_survey_religion_christianity">Християнство</string>
+  <string name="sync_login_survey_religion_christianity_protestant">Протестант</string>
+  <string name="sync_login_survey_religion_christianity_lutheran">Лютеран</string>
+  <string name="sync_login_survey_religion_christianity_methodist">Методист</string>
+  <string name="sync_login_survey_religion_christianity_anglican">Англіканець</string>
+  <string name="sync_login_survey_religion_christianity_adventist">Адвентист</string>
+  <string name="sync_login_survey_religion_christianity_pentecostal">Харизматик</string>
   <string name="sync_login_survey_religion_islam">Іслам</string>
   <string name="sync_login_survey_religion_buddha">Буддизм</string>
   <string name="sync_login_survey_religion_atheist">Атеїст</string>

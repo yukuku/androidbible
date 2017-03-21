@@ -46,6 +46,9 @@
   <string name="belum_ada_pembatas_buku">尚未有任何书签。\n选取一节经文以新增书签。</string>
   <string name="judul_titikdua">标题</string>
   <string name="devotion_downloader_downloading_title">正在下载 ^1</string>
+  <string name="devotion_downloader_downloading_date">^1已过期</string>
+  <string name="devotion_downloader_error_date">数据^1: ^2有误</string>
+  <string name="devotion_downloader_success_date">数据^1已下载</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">尚未公布。可能要求的日期的材料还没有准备好,或者有一些错误认识到数据源。请稍后再试一次。</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">尚未公布. 正在从互联网...\n\n(确保有互联网连接，以获取灵修的材料。)</string>
   <string name="hari_sabtu">星期六</string>
@@ -211,6 +214,7 @@
   <string name="market_short_desc">快速、可靠与多功能的离线圣经。</string>
   <string name="no_url_for_facebook">这不可以分享到脸书。</string>
   <string name="storage_permission_rationale">我們需要存取儲存裝置，以便儲存如聖經版本及字型的共享媒體。</string>
+  <string name="goto_button_history_tip">提示：下次，长按此键即可访问你最近打开的节目。</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">拨号按键</string>
   <string name="goto_tab_direct_label">直接输入</string>
@@ -272,10 +276,12 @@
   <string name="desc_verse_attribute_multiple_notes">这经节附有%s个笔记。</string>
   <string name="desc_verse_attribute_progress_mark">这里有%s。</string>
   <string name="desc_progress_mark_list">进度标记清单</string>
+  <string name="desc_backspace">退格</string>
   <string name="intent_filter_open_yes_file">打开YES档案</string>
   <string name="intent_filter_open_pdb_file">打开PDB档案</string>
   <string name="intent_filter_open_pdb_or_yes_file">打开PDB/YES档案</string>
   <string name="open_yes_file_name_conflict">在\'%2$s\'里有以经有个叫做\'%1$s\'档案存在了。</string>
+  <string name="open_yes_error_read">从^1读取数据有误</string>
   <string name="open_file_cant_read_source">无法成功读取来源。</string>
   <string name="open_file_unknown_file_format">无法判定这是PDB还是YES档案。</string>
   <string name="version_preset_delete_filename">删除资料档\'%s\'？</string>
@@ -314,6 +320,8 @@
   <string name="recentverses_button_hint">（长按以显示最近经文）</string>
   <string name="dr_reminder">提示</string>
   <string name="dr_error_contact_reminder">与提示程式连接时发生错误。</string>
+  <string name="dr_timepicker_set">设置</string>
+  <string name="dr_timepicker_off">关闭</string>
   <string name="dv_activity_title">每日经文小部件</string>
   <string name="dv_option_transparent_background">透明的背景</string>
   <string name="dv_option_dark_text">深色文字</string>

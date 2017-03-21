@@ -276,6 +276,7 @@
   <string name="desc_verse_attribute_multiple_notes">Zu diesem Vers gibt es %s Notizen.</string>
   <string name="desc_verse_attribute_progress_mark">%s befindet sich zurzeit hier.</string>
   <string name="desc_progress_mark_list">Lesefortschritts-Liste</string>
+  <string name="desc_backspace">Rücktaste</string>
   <string name="intent_filter_open_yes_file">YES-Datei öffnen</string>
   <string name="intent_filter_open_pdb_file">PDB-Datei öffnen</string>
   <string name="intent_filter_open_pdb_or_yes_file">PDB-/YES-Datei öffnen</string>
@@ -319,6 +320,8 @@
   <string name="recentverses_button_hint">(Lang drücken für Bibelstellen-Historie)</string>
   <string name="dr_reminder">Erinnerung</string>
   <string name="dr_error_contact_reminder">Fehler beim Herstellen der Verbindung zur App für Erinnerungen.</string>
+  <string name="dr_timepicker_set">Setzen</string>
+  <string name="dr_timepicker_off">Ausschalten</string>
   <string name="dv_activity_title">Vers des Tages</string>
   <string name="dv_option_transparent_background">Transparenter Hintergrund</string>
   <string name="dv_option_dark_text">Dunkler Text</string>

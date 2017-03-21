@@ -276,6 +276,7 @@
   <string name="desc_verse_attribute_multiple_notes">%s notas están adjuntas a este versículo.</string>
   <string name="desc_verse_attribute_progress_mark">%s es aquí ahora mismo.</string>
   <string name="desc_progress_mark_list">Lista de anclados</string>
+  <string name="desc_backspace">Retroceso</string>
   <string name="intent_filter_open_yes_file">Abrir archivo YES</string>
   <string name="intent_filter_open_pdb_file">Abrir archivo PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Abrir archivo PDB/YES</string>
@@ -319,6 +320,8 @@
   <string name="recentverses_button_hint">(Mantener presionado para versículos recientes)</string>
   <string name="dr_reminder">Recordatorio</string>
   <string name="dr_error_contact_reminder">Error contactaron aplicación de Recordatorios.</string>
+  <string name="dr_timepicker_set">Fijar</string>
+  <string name="dr_timepicker_off">Desactivar</string>
   <string name="dv_activity_title">Widget Del Versículo Diario</string>
   <string name="dv_option_transparent_background">Fondo transparente</string>
   <string name="dv_option_dark_text">Texto oscuro</string>

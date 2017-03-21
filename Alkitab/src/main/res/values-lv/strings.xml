@@ -279,6 +279,7 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="desc_verse_attribute_multiple_notes">%s piezīmes ir pievienotas šim pantam.</string>
   <string name="desc_verse_attribute_progress_mark">%s ir pašlaik šeit.</string>
   <string name="desc_progress_mark_list">Lasīšanas gaitas marķieru saraksts</string>
+  <string name="desc_backspace">Atpakaļatkāpe</string>
   <string name="intent_filter_open_yes_file">Atvērt YES failu</string>
   <string name="intent_filter_open_pdb_file">Atvērt PDB failu</string>
   <string name="intent_filter_open_pdb_or_yes_file">Atvērt PDB/YES failu</string>
@@ -322,6 +323,8 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="recentverses_button_hint">(Ilgi-nospiest pēdējiem apskatītiem pantiem)</string>
   <string name="dr_reminder">Atgādinājums</string>
   <string name="dr_error_contact_reminder">Savienojoties ar Atgādinājuma aplikāciju ir radusies kļūda.</string>
+  <string name="dr_timepicker_set">Noteikt</string>
+  <string name="dr_timepicker_off">Aizgriezt</string>
   <string name="dv_activity_title">Ikdienas pantu logrīks</string>
   <string name="dv_option_transparent_background">Caurspīdīgs fons</string>
   <string name="dv_option_dark_text">Tumšs teksts</string>

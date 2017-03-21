@@ -276,6 +276,7 @@
   <string name="desc_verse_attribute_multiple_notes">%s notes sont attachées à ce verset.</string>
   <string name="desc_verse_attribute_progress_mark">%s est actuellement ici.</string>
   <string name="desc_progress_mark_list">Liste des favoris</string>
+  <string name="desc_backspace">Retour arrière</string>
   <string name="intent_filter_open_yes_file">Ouvrir un fichier YES</string>
   <string name="intent_filter_open_pdb_file">Ouvrir un fichier PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Ouvrir un fichier PDB/YES</string>
@@ -319,6 +320,8 @@
   <string name="recentverses_button_hint">(Appui long pour lister les versets récents)</string>
   <string name="dr_reminder">Pense-bête</string>
   <string name="dr_error_contact_reminder">Erreur lors de l\'accès à l\'application pense-bête.</string>
+  <string name="dr_timepicker_set">Sertir</string>
+  <string name="dr_timepicker_off">Désactiver</string>
   <string name="dv_activity_title">Verset du jour</string>
   <string name="dv_option_transparent_background">Arrière plan transparent</string>
   <string name="dv_option_dark_text">Texte noir</string>

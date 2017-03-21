@@ -276,6 +276,7 @@
   <string name="desc_verse_attribute_multiple_notes">%s notatek jest dołączonych do tego wersu.</string>
   <string name="desc_verse_attribute_progress_mark">%s jest w tym miejscu.</string>
   <string name="desc_progress_mark_list">Lista wskaźników postępów</string>
+  <string name="desc_backspace">Cofnij</string>
   <string name="intent_filter_open_yes_file">Otwórz plik YES</string>
   <string name="intent_filter_open_pdb_file">Otwórz plik PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Otwórz plik PDB/YES</string>
@@ -319,6 +320,8 @@
   <string name="recentverses_button_hint">(Długie przyciśnięcie pokaże historię)</string>
   <string name="dr_reminder">Przypomnienie</string>
   <string name="dr_error_contact_reminder">Błąd podczas łączenia się z aplikacją Przypominacz.</string>
+  <string name="dr_timepicker_set">Ustaw</string>
+  <string name="dr_timepicker_off">Wyłącz</string>
   <string name="dv_activity_title">Widget codziennego wersu</string>
   <string name="dv_option_transparent_background">Przeźroczyste tło</string>
   <string name="dv_option_dark_text">Ciemny tekst</string>

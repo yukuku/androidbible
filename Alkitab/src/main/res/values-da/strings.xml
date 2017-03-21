@@ -276,6 +276,7 @@
   <string name="desc_verse_attribute_multiple_notes">%s noter er knyttet til dette vers.</string>
   <string name="desc_verse_attribute_progress_mark">%s er i øjeblikket her.</string>
   <string name="desc_progress_mark_list">Listen over stifter</string>
+  <string name="desc_backspace">Baktast</string>
   <string name="intent_filter_open_yes_file">Åben .yes-fil</string>
   <string name="intent_filter_open_pdb_file">Åben PDB fil</string>
   <string name="intent_filter_open_pdb_or_yes_file">Åben PDB / YES file</string>
@@ -319,6 +320,8 @@
   <string name="recentverses_button_hint">(Lang-tap for de seneste vers)</string>
   <string name="dr_reminder">Påmindelse</string>
   <string name="dr_error_contact_reminder">Fejl ved kontakt til Reminder-app.</string>
+  <string name="dr_timepicker_set">Sætte</string>
+  <string name="dr_timepicker_off">Slå fra</string>
   <string name="dv_activity_title">Widget for daglige vers</string>
   <string name="dv_option_transparent_background">Gennemsigtig baggrund</string>
   <string name="dv_option_dark_text">Mørk tekst</string>

@@ -320,6 +320,7 @@
   <string name="dv_option_dark_text">Tmavý text</string>
   <string name="dv_option_text_size">Velikost textu</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">Plán čtení</string>
   <string name="rp_menuReadingPlan">Plán čtení</string>
   <string name="rp_commentActual">Dokončeno: %s%%</string>
   <string name="rp_commentTarget">Cíl: %s%%</string>

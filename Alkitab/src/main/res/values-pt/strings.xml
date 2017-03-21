@@ -276,6 +276,7 @@
   <string name="desc_verse_attribute_multiple_notes">%s anotações no versículo.</string>
   <string name="desc_verse_attribute_progress_mark">%s está aqui.</string>
   <string name="desc_progress_mark_list">Lista de marcadores de progresso</string>
+  <string name="desc_backspace">Retrocesso</string>
   <string name="intent_filter_open_yes_file">Abrir arquivo YES</string>
   <string name="intent_filter_open_pdb_file">Abrir arquivo PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Abrir arquivo PDB/YES</string>
@@ -319,6 +320,8 @@
   <string name="recentverses_button_hint">(Pressione por alguns segundos para ver versículos recentes)</string>
   <string name="dr_reminder">Alerta</string>
   <string name="dr_error_contact_reminder">Erro ao fazer contato com o aplicativo de Alerta.</string>
+  <string name="dr_timepicker_set">Definir</string>
+  <string name="dr_timepicker_off">Desativar</string>
   <string name="dv_activity_title">Verso diário do Widget</string>
   <string name="dv_option_transparent_background">Fundo transparente</string>
   <string name="dv_option_dark_text">Texto escuro</string>
@@ -450,7 +453,7 @@
   <string name="sync_sync_set_pref_summary_never">Ainda não sincronizado</string>
   <string name="sync_sync_set_pref_summary_syncing">Sincronizando agora&#8230;</string>
   <string name="sync_log_activity_title">Log de sincronizações</string>
-  <string name="sync_status_activity_title">status da sincronização</string>
+  <string name="sync_status_activity_title">Status da sincronização</string>
   <string name="sync_login_activity_title">Login ou crie uma conta</string>
   <string name="sync_login_survey_religion_select_one">Selecione sua religião</string>
   <string name="sync_login_survey_religion_christianity">Cristianismo</string>
