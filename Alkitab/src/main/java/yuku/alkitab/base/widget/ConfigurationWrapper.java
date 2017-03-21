@@ -34,13 +34,6 @@ public class ConfigurationWrapper extends ContextWrapper {
 		final Locale prefLocale = getLocaleFromPreferences();
 		if (BuildConfig.DEBUG) Log.d(TAG, "@@wrap: config locale will be updated to: " + prefLocale);
 
-		// set default locale
-		Locale.setDefault(prefLocale);
-		if (Build.VERSION.SDK_INT >= 24) {
-			LocaleList.setDefault(new LocaleList(prefLocale));
-		}
-
-		// set config locale
 		ConfigurationCompat.setLocale(config, prefLocale);
 
 		final float fontScale = getFontScaleFromPreferences();
