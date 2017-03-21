@@ -17,11 +17,11 @@ android {
         applicationId 'yuku.alkitab.debug'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 14000269
-        versionName '4.4.0-beta9'
+        versionCode 14000300
+        versionName '4.4.0'
         multiDexEnabled true
-        // Keep this synced with build.gradle resConfigs!
-        resConfigs 'af', 'bg', 'cs', 'da', 'de', 'es', 'fr', 'in', 'ja', 'lv', 'ms', 'nl', 'pl', 'pt', 'ro', 'ru', 'th', 'uk', 'zh-rCN', 'zh-rTW'
+        // Keep this synced with integrate_translations.sh!
+        resConfigs 'af', 'bg', 'cs', 'da', 'de', 'es', 'fr', 'in', 'ja', 'lv', 'ms', 'nl', 'pl', 'pt', 'ro', 'ru', 'th', 'uk', 'vi', 'zh-rCN', 'zh-rTW'
         buildConfigField 'String', 'SERVER_HOST', "\"$SERVER_HOST\""
     }
     buildTypes {
