@@ -4,7 +4,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
   <string name="highlight_stabilo">新增标记</string>
   <string name="menuDonasi">捐款</string>
-  <string name="menuSupport">支援</string>
+  <string name="menuSupport">支持</string>
   <string name="mengimpor_titiktiga">正在进行恢复...</string>
   <string name="mengekspor_titiktiga">新增备份&#8230;</string>
   <string name="bagikan_renungan">共享灵修</string>
@@ -13,9 +13,9 @@
   <string name="ekspor_berhasil_file_yang_dihasilkan_file">备份成功。\n\n结果于档案：%s</string>
   <string name="impor_berhasil_angka_diproses">还原成功。共有%1$d个书签、笔记与／或标记，还有%2$d个标签也被处理。</string>
   <string name="terjadi_kesalahan_ketika_mengekspor_pesan">新增备份时发生错误：%s</string>
-  <string name="ekspor_pembatas_buku_dan_catatan_tanya">新增书签、笔记与标记的备份到记忆卡或USB储存装置？现有的备份将被覆写。</string>
+  <string name="ekspor_pembatas_buku_dan_catatan_tanya">新增书签、笔记与标记的备份到记忆卡或USB储存装置？现有的备份将被覆盖。</string>
   <string name="terjadi_kesalahan_ketika_mengimpor_pesan">恢复时有错误： %s</string>
-  <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">覆写你现在拥有的书籤、笔记和标记？</string>
+  <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">覆写你现在拥有的书签、笔记和标记？</string>
   <string name="file_tidak_bisa_dibaca_file">档案不存在或无法读取：%s</string>
   <string name="impor_dari_sd_card">还原</string>
   <string name="ekspor_ke_sd_card">备份</string>
@@ -27,16 +27,16 @@
   <string name="menu_markers">标记</string>
   <string name="hapus_pembatas_buku">删除书签</string>
   <string name="menuShare">分享</string>
-  <string name="menuShareSplit0">複製两个版本</string>
-  <string name="menuShareSplit1">複製所选经节</string>
+  <string name="menuShareSplit0">复制两个版本</string>
+  <string name="menuShareSplit1">复制所选经节</string>
   <string name="menuShareBothSplits">分享原始版本</string>
   <string name="tulis_catatan">书写笔记</string>
   <string name="tambah_pembatas_buku">新增书签</string>
   <string name="salin_ayat">复制诗句</string>
   <string name="copy_split0">分享第二版本</string>
   <string name="copy_split1">分享两个版本</string>
-  <string name="copy_both_splits">複製原始版本</string>
-  <string name="search_copy_selected_verses">複製第二版本</string>
+  <string name="copy_both_splits">复制原始版本</string>
+  <string name="search_copy_selected_verses">复制第二版本</string>
   <string name="perj_baru">新约</string>
   <string name="perj_lama">旧约</string>
   <string name="search_bookname_only">只有%s</string>
@@ -70,7 +70,7 @@
   <string name="mengunduh_nama">正在下载 %s</string>
   <string name="tuju_v">转到</string>
   <string name="bagikan_alamat">共享 %s</string>
-  <string name="search_selected_verse_copied">所选经节已被複製</string>
+  <string name="search_selected_verse_copied">所选经节已被复制</string>
   <string name="alamat_sudah_disalin">%s 已被复制.</string>
   <string name="alamat_tidak_sah_alamat">地址无效: %s</string>
   <string name="no">不是</string>
@@ -139,7 +139,7 @@
   <string name="ed_download_manager_not_enabled_prompt">下载管理员程式尚未启动或不存在。\n\n请启动程式以下载圣经版本。</string>
   <string name="info_terperinci">详细说明</string>
   <string name="buang_dari_daftar">移除</string>
-  <string name="edit_bookmark">编辑书籤</string>
+  <string name="edit_bookmark">编辑书签</string>
   <string name="hapus_stabilo">移除标记</string>
   <string name="edit_note">编辑笔记</string>
   <string name="edit_highlight">更改标记颜色</string>
@@ -152,12 +152,12 @@
   <string name="create_edited_modified_time">%1$s\n（编辑于%2$s）</string>
   <string name="the_file_for_this_version_is_no_longer_available_file">这个版本的文件不再可用。 你要从列表中删除此版本？\n文件： %s</string>
   <string name="create_label_title">新增标签</string>
-  <string name="do_you_want_to_remove_the_label_label_from_this_bookmark">"从这书籤移除标籤\'%s\'？"</string>
+  <string name="do_you_want_to_remove_the_label_label_from_this_bookmark">"从这书签移除标签\'%s\'？"</string>
   <string name="add_label_title">新增标签</string>
   <string name="create_label_titik3">新增标签&#8230;</string>
   <string name="select_books_to_search">选择要搜寻的书卷</string>
   <string name="rename_label_title">重新命名标签</string>
-  <string name="are_you_sure_you_want_to_delete_the_label_label">"要删除这个\'%1$s\'的标籤？这个标籤会从书籤%2$s之中被删除。"</string>
+  <string name="are_you_sure_you_want_to_delete_the_label_label">"要删除这个\'%1$s\'的标籤？这个标签会从书签%2$s之中被删除。"</string>
   <string name="bmcat_all_bookmarks">所有书签</string>
   <string name="bmcat_notes">笔记</string>
   <string name="bmcat_highlights">标记</string>
@@ -175,7 +175,7 @@
   <string name="bl_file_not_found_filename">找不到文件: %s</string>
   <string name="bl_send_backup_confirmation">新增并传送书签、笔记与标记的备份？举例，你可以电子邮件的方式传送附件到新的设备，或作保存资料用途。</string>
   <string name="bl_sync_suggest">使用同步功能以保护你的标记</string>
-  <string name="labels_titikdua">标籤</string>
+  <string name="labels_titikdua">标签</string>
   <string name="tambah_titiktiga">新增&#8230;</string>
   <string name="nama_label_titikdua">标签名称：</string>
   <string name="change_label_color">更改标签颜色</string>
@@ -213,7 +213,7 @@
   <string name="pref_language_label_default">预设</string>
   <string name="market_short_desc">快速、可靠与多功能的离线圣经。</string>
   <string name="no_url_for_facebook">这不可以分享到脸书。</string>
-  <string name="storage_permission_rationale">我們需要存取儲存裝置，以便儲存如聖經版本及字型的共享媒體。</string>
+  <string name="storage_permission_rationale">我们需要存取储存装置，以便储存如圣经版本及字型的共享媒体。</string>
   <string name="goto_button_history_tip">提示：下次，长按此键即可访问你最近打开的节目。</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">拨号按键</string>
@@ -287,7 +287,7 @@
   <string name="version_preset_delete_filename">删除资料档\'%s\'？</string>
   <string name="version_menu_share">分享</string>
   <string name="version_share_title">分享此版本给：</string>
-  <string name="menuFullScreen">全萤幕</string>
+  <string name="menuFullScreen">全屏幕</string>
   <string name="send_donation_confirmation">要捐一些款项给开发者吗？</string>
   <string name="me_export_markers">汇出标记</string>
   <string name="me_export_menu_item">汇出</string>
@@ -305,7 +305,7 @@
   <string name="pm_progress_4">进度四</string>
   <string name="pm_progress_5">进度五</string>
   <string name="pm_progress_name">进度名称</string>
-  <string name="pm_activate_tutorial">长按并拖曳以在经节上设置进度。</string>
+  <string name="pm_activate_tutorial">长按并拖拽以在经节上设置进度。</string>
   <string name="pm_delete_progress_confirm">移除<b>^1</b>？</string>
   <string name="copy_share">复制或分享</string>
   <string name="backup_last_time">最后备份：%s</string>
@@ -383,14 +383,14 @@
   <string name="marker_transfer_to_device_title">转移到另一台设备</string>
   <string name="marker_transfer_to_device_description">移动所有书籤、笔记和标记到另一台手机或平板，我们建议你使用谷歌电邮或其他电邮。</string>
   <string name="marker_transfer_to_computer_title">转移以便编辑</string>
-  <string name="marker_transfer_to_computer_description">把书籤、笔记及标记储存为一个HTML档桉，以便于电脑上编辑和列印之用。</string>
-  <string name="bookmark_delete_confirmation">要删除这个书籤？</string>
+  <string name="marker_transfer_to_computer_description">把书签、笔记及标记储存为一个HTML档桉，以便于电脑上编辑和列印之用。</string>
+  <string name="bookmark_delete_confirmation">要删除这个书签？</string>
   <string name="drawer_open">开启抽屉</string>
   <string name="drawer_close">关闭抽屉</string>
   <string name="menuSplitVersion">分隔</string>
   <string name="menuBible">圣经</string>
   <string name="menuProgress">进度</string>
-  <string name="sn_menu_copy">複製歌曲</string>
+  <string name="sn_menu_copy">复制歌曲</string>
   <string name="menuPlay">播放</string>
   <string name="menuPause">暂停</string>
   <string name="left_drawer_current_reading_title">现正阅读</string>
@@ -448,7 +448,7 @@
   <string name="pref_syncSet_history_enabled_title">最近的经节</string>
   <string name="pref_syncSet_pins_enabled_title">钉选</string>
   <string name="sync_menu_item_sync_now">现在同步</string>
-  <string name="sync_menu_item_sync_log">检视纪录</string>
+  <string name="sync_menu_item_sync_log">同步记录</string>
   <string name="sync_sync_set_pref_summary_last_synced">最后同步于%1$s, %2$s (r%3$s)</string>
   <string name="sync_sync_set_pref_summary_never">尚未同步</string>
   <string name="sync_sync_set_pref_summary_syncing">正在同步&#8230;</string>
@@ -522,7 +522,7 @@
   <!-- marker and label migration -->
   <string name="marker_migrate_introduction">我们侦测到一个含有书签、笔记、标记和标签的v3 Yuku神速圣经旧版本的备份档桉。\n\n你想汇入它们，让你在这个程式存取它们吗？</string>
   <string name="marker_migrate_no_more">不再询问</string>
-  <string name="marker_migrate_later">现在别问我</string>
+  <string name="marker_migrate_later">稍后询问</string>
   <string name="marker_migrate_title">汇入旧标记</string>
   <string name="marker_migrate_file_chooser_title">选取v3备份档桉</string>
   <string name="marker_migrate_no_more_confirmation">你确定你不需要汇入旧资料？</string>
