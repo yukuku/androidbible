@@ -2202,7 +2202,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			final MenuItem menuDictionary = menu.findItem(R.id.menuDictionary);
 
 			// force-show these items on sw600dp, otherwise never show
-			final int showAsAction = getResources().getConfiguration().screenWidthDp >= 600 ? MenuItem.SHOW_AS_ACTION_ALWAYS : MenuItem.SHOW_AS_ACTION_NEVER;
+			final int showAsAction = getResources().getConfiguration().smallestScreenWidthDp >= 600 ? MenuItem.SHOW_AS_ACTION_ALWAYS : MenuItem.SHOW_AS_ACTION_NEVER;
 			menuGuide.setShowAsActionFlags(showAsAction);
 			menuCommentary.setShowAsActionFlags(showAsAction);
 			menuDictionary.setShowAsActionFlags(showAsAction);
