@@ -9,6 +9,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ViewConfiguration;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -16,6 +17,7 @@ import com.google.gson.Gson;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.picasso.Picasso;
+import io.fabric.sdk.android.Fabric;
 import okhttp3.Cache;
 import okhttp3.Call;
 import okhttp3.Interceptor;
@@ -101,6 +103,8 @@ public class App extends yuku.afw.App {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
+		Fabric.with(this, new Crashlytics());
 
 		{ // LeakCanary, also we need the Application instance.
 			if (LeakCanary.isInAnalyzerProcess(this)) {
