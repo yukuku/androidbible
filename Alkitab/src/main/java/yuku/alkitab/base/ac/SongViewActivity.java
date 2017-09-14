@@ -698,6 +698,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 	private void showDownloadError(final Exception e) {
 		if (e == null) return;
+		if (isFinishing()) return;
 
 		if (e instanceof SongBookUtil.NotOkException) {
 			new MaterialDialog.Builder(this)
