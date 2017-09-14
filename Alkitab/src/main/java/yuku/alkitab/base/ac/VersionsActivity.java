@@ -1,5 +1,6 @@
 package yuku.alkitab.base.ac;
 
+import android.annotation.TargetApi;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -11,6 +12,7 @@ import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -162,6 +164,7 @@ public class VersionsActivity extends BaseActivity {
 		checkAndProcessOpenFileIntent(intent);
 	}
 
+	@TargetApi(Build.VERSION_CODES.KITKAT)
 	private void checkAndProcessOpenFileIntent(Intent intent) {
 		if (!U.equals(intent.getAction(), Intent.ACTION_VIEW)) return;
 
@@ -186,43 +189,42 @@ public class VersionsActivity extends BaseActivity {
 			filelastname = uri.getLastPathSegment();
 		} else {
 			// try to read display name from content
-			final Cursor c = getContentResolver().query(uri, null, null, null, null);
-			if (c == null) {
-				new MaterialDialog.Builder(this)
-					.content(TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
-					.positiveText(R.string.ok)
-					.show();
-				return;
-			}
-
-			String[] cns = c.getColumnNames();
-			Log.d(TAG, Arrays.toString(cns));
-			c.moveToNext();
-			for (int i = 0, len = c.getColumnCount(); i < len; i++) {
-				Log.d(TAG, cns[i] + ": " + c.getString(i));
-			}
-
-			int col = c.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
-			if (col != -1) {
-				String name = c.getString(col);
-				if (name == null) {
-					isYesFile = null;
-				} else {
-					final String namelc = name.toLowerCase(Locale.US);
-					if (namelc.endsWith(".yes")) {
-						isYesFile = true;
-					} else if (namelc.endsWith(".pdb")) {
-						isYesFile = false;
-					} else {
-						isYesFile = null;
-					}
+			try (Cursor c = getContentResolver().query(uri, null, null, null, null)) {
+				if (c == null || !c.moveToNext()) {
+					new MaterialDialog.Builder(this)
+						.content(TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
+						.positiveText(R.string.ok)
+						.show();
+					return;
 				}
-				filelastname = name;
-			} else {
-				isYesFile = null;
-				filelastname = null;
+
+				String[] cns = c.getColumnNames();
+				Log.d(TAG, Arrays.toString(cns));
+				for (int i = 0, len = c.getColumnCount(); i < len; i++) {
+					Log.d(TAG, cns[i] + ": " + c.getString(i));
+				}
+
+				int col = c.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
+				if (col != -1) {
+					String name = c.getString(col);
+					if (name == null) {
+						isYesFile = null;
+					} else {
+						final String namelc = name.toLowerCase(Locale.US);
+						if (namelc.endsWith(".yes")) {
+							isYesFile = true;
+						} else if (namelc.endsWith(".pdb")) {
+							isYesFile = false;
+						} else {
+							isYesFile = null;
+						}
+					}
+					filelastname = name;
+				} else {
+					isYesFile = null;
+					filelastname = null;
+				}
 			}
-			c.close();
 		}
 
 		try {
