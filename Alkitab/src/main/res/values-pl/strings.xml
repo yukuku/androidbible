@@ -505,6 +505,7 @@
   <string name="dr_pref_notification_message">Wiadomość przypomnienia</string>
   <string name="dr_default_sound">Domyślny dźwięk</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">W 100% darmowa aplikacja Biblijna na licencji Apache License 2.0</string>
   <string name="about_translators">Tłumacze</string>
   <string name="about_user_guide">Przewodnik użytkownika</string>
   <string name="about_beta_feedback">Wiadomość zwrotna dla wersji beta</string>

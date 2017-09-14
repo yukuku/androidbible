@@ -506,6 +506,7 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
   <string name="dr_pref_notification_message">Mensaje recordatorio</string>
   <string name="dr_default_sound">Sonido por defecto</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">La Biblia de libre acceso a través de la Licencia Apache 2.0</string>
   <string name="about_translators">Traductores</string>
   <string name="about_user_guide">Guía de usuario</string>
   <string name="about_beta_feedback">Retroalimentación de Versión Beta</string>

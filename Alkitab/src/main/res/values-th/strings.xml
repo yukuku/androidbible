@@ -505,6 +505,7 @@
   <string name="dr_pref_notification_message">ข้อความเตือน</string>
   <string name="dr_default_sound">เสียงดีฟอลต์</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">แอปพระคัมภีร์ฟรี 100% อนุญาตภายใต้ Apache License 2.0</string>
   <string name="about_translators">นักแปล</string>
   <string name="about_user_guide">คู่มือการใช้</string>
   <string name="about_beta_feedback">ข้อเสนอแนะรุ่นเบต้า</string>

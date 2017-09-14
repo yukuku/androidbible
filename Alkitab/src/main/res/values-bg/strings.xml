@@ -276,6 +276,7 @@
   <string name="desc_verse_attribute_multiple_notes">Към този стих са присъединени %s бележки.</string>
   <string name="desc_verse_attribute_progress_mark">В настоящето време тук %s.</string>
   <string name="desc_progress_mark_list">Списък на маркерите за придвижване</string>
+  <string name="desc_backspace">Клавиш за връщане</string>
   <string name="intent_filter_open_yes_file">Отвори YES-файл</string>
   <string name="intent_filter_open_pdb_file">Отвори PDB-файл</string>
   <string name="intent_filter_open_pdb_or_yes_file">Отвори PDB/YES-файл</string>
@@ -319,6 +320,8 @@
   <string name="recentverses_button_hint">(Дълго натискане за показване на предишни стихове)</string>
   <string name="dr_reminder">Напомняне</string>
   <string name="dr_error_contact_reminder">Грешка по време на свързването с приложението за напомняне.</string>
+  <string name="dr_timepicker_set">Мрежа</string>
+  <string name="dr_timepicker_off">Изключи</string>
   <string name="dv_activity_title">Уиджет за ежедневен стих</string>
   <string name="dv_option_transparent_background">Прозрачен фон</string>
   <string name="dv_option_dark_text">Тъмен текст</string>
@@ -502,6 +505,7 @@
   <string name="dr_pref_notification_message">Напомнящо съобщение</string>
   <string name="dr_default_sound">Звук по подразбиране</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% безплатно приложение на Библията, лицензирано под Apache License 2.0</string>
   <string name="about_translators">Преводачи</string>
   <string name="about_user_guide">Ръководство на потребителя</string>
   <string name="about_beta_feedback">Отзиви за бета-версията</string>

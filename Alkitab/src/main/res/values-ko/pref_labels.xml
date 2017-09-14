@@ -26,4 +26,5 @@
   <string name="pref_tapToEditNote_summary">노트 볼 때 실수로 탭해서 수정모드로 바뀌는 것을 막고 싶으시면, 선택하지 마십시오.</string>
   <string name="pref_showHiddenVersion_title">제한된 역본 활성화</string>
   <string name="pref_selectedVerseBgColor_title">선택 구절 색상</string>
+  <string name="pref_forceFontScale_title">UI 텍스트 크기</string>
 </resources>

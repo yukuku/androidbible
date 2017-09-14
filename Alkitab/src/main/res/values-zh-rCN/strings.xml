@@ -27,16 +27,16 @@
   <string name="menu_markers">标记</string>
   <string name="hapus_pembatas_buku">删除书签</string>
   <string name="menuShare">分享</string>
-  <string name="menuShareSplit0">複製两个版本</string>
-  <string name="menuShareSplit1">複製所选经节</string>
-  <string name="menuShareBothSplits">分享原始版本</string>
+  <string name="menuShareSplit0">分享原始版本</string>
+  <string name="menuShareSplit1">分享第二版本</string>
+  <string name="menuShareBothSplits">分享两个版本</string>
   <string name="tulis_catatan">书写笔记</string>
   <string name="tambah_pembatas_buku">新增书签</string>
-  <string name="salin_ayat">复制诗句</string>
-  <string name="copy_split0">分享第二版本</string>
-  <string name="copy_split1">分享两个版本</string>
-  <string name="copy_both_splits">複製原始版本</string>
-  <string name="search_copy_selected_verses">複製第二版本</string>
+  <string name="salin_ayat">复制经节</string>
+  <string name="copy_split0">复制原始版本</string>
+  <string name="copy_split1">复制第二版本</string>
+  <string name="copy_both_splits">复制两个版本</string>
+  <string name="search_copy_selected_verses">复制所选经节</string>
   <string name="perj_baru">新约</string>
   <string name="perj_lama">旧约</string>
   <string name="search_bookname_only">只有%s</string>
@@ -505,6 +505,7 @@
   <string name="dr_pref_notification_message">提醒讯息</string>
   <string name="dr_default_sound">预设声音</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100％免费圣经应用程序，根据Apache许可证2.0许可</string>
   <string name="about_translators">译者</string>
   <string name="about_user_guide">使用者指引</string>
   <string name="about_beta_feedback">测试版本回馈</string>

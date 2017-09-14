@@ -7,4 +7,10 @@
     <item>장 이동</item>
     <item>페이지 상하 스크롤</item>
   </string-array>
+  <string-array name="pref_forceFontScale_labels">
+    <item>시스템 설정을 따름</item>
+    <item>크게</item>
+    <item>아주 크게</item>
+    <item>엄청 크게</item>
+  </string-array>
 </resources>

@@ -505,6 +505,7 @@
   <string name="dr_pref_notification_message">Tin nhắn nhắc nhở</string>
   <string name="dr_default_sound">Âm thanh mặc định</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% miễn phí phần mềm Kinh thánh, đăng ký bởi Apache 2.0</string>
   <string name="about_translators">Dịch giả</string>
   <string name="about_user_guide">Hướng dẫn sử dụng</string>
   <string name="about_beta_feedback">Phiên bản Beta Phản hồi</string>

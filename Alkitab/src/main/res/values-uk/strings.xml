@@ -248,6 +248,9 @@
   <string name="sn_update_book_confirm_button">Оновлення</string>
   <string name="sn_update_book">Оновлення книги псалмів</string>
   <string name="sn_update_book_because_too_old">Будь ласка, перед продовженням поновіть ^1 до останньої версії. Після поновлення за потреби нашішліть ваші корегування.</string>
+  <string name="sn_menu_private_song_book">Особиста книга пісень</string>
+  <string name="sn_private_song_book_dialog_desc">Завантажити особисту (приховану) книгу пісень</string>
+  <string name="sn_private_song_book_name_hint">Назва книги пісень</string>
   <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Попередній день</string>
   <string name="desc_next_day">Наступний день</string>
@@ -267,10 +270,18 @@
   <string name="desc_progress_3">Третє досягнення</string>
   <string name="desc_progress_4">Четверте досягнення</string>
   <string name="desc_progress_5">П\'яте досягнення</string>
+  <string name="desc_verse_attribute_one_bookmark">Закладка додана до  цього вірша.</string>
+  <string name="desc_verse_attribute_multiple_bookmarks">%s закладок додано до цього вірша.</string>
+  <string name="desc_verse_attribute_one_note">Примітка додана до цього вірша.</string>
+  <string name="desc_verse_attribute_multiple_notes">%s приміток додано до цього вірша.</string>
+  <string name="desc_verse_attribute_progress_mark">% відсотків завантажено.</string>
+  <string name="desc_progress_mark_list">Список контактів</string>
+  <string name="desc_backspace">Клавіша назад</string>
   <string name="intent_filter_open_yes_file">Відкрити YES файл</string>
   <string name="intent_filter_open_pdb_file">Відкрити PDB файл</string>
   <string name="intent_filter_open_pdb_or_yes_file">Відкрити PDB/YES файл</string>
   <string name="open_yes_file_name_conflict">YES файл з ім\'ям \'%1$s\' вже існує в \'%2$s\'.</string>
+  <string name="open_yes_error_read">Помилка читання даних з ^1</string>
   <string name="open_file_cant_read_source">Джерело не може бути успішно прочитано.</string>
   <string name="open_file_unknown_file_format">Не вдалося встановити, чи є це PDB або YES файл.</string>
   <string name="version_preset_delete_filename">Видалити файл даних \'%s\'?</string>
@@ -309,6 +320,9 @@
   <string name="recentverses_button_hint">(Притримайте тут для огляду останніх прочитаних віршів)</string>
   <string name="dr_reminder">Нагадування</string>
   <string name="dr_error_contact_reminder">Помилка при контакті Нагадування програми</string>
+  <string name="dr_timepicker_set">Налаштування</string>
+  <string name="dr_timepicker_off">Вимкнути</string>
+  <string name="dv_activity_title">Віджет щоденних віршів</string>
   <string name="dv_option_transparent_background">Прозорий фон</string>
   <string name="dv_option_dark_text">Темний текст</string>
   <string name="dv_option_text_size">Розмір тексту</string>
@@ -321,6 +335,9 @@
   <string name="rp_commentBehindSchedule">Відставання від графіка: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Немає доступних планів читання.</string>
   <string name="rp_deletePlan">"Видалити \'%s\'?"</string>
+  <string name="rp_reset">Змінити дату початку, щоб перше читання було призначено на сьогодні?</string>
+  <string name="rp_restart_desc">Почати цей план читання з самого початку, позначивши все як непрочитане?</string>
+  <string name="rp_showCalendar">Змінити дату</string>
   <string name="rp_gotoFirstUnread">Перейти до непрочитаного</string>
   <string name="rp_dayHeader">День %1$s: %2$s</string>
   <string name="rp_floatPreviousReading">Попереднє читання</string>
@@ -332,9 +349,12 @@
   <string name="rp_navigationGoToDate">Перейти до дати</string>
   <string name="rp_navigationNextDay">Наступний день</string>
   <string name="rp_menuDownload">Завантажити</string>
+  <string name="rp_menuCatchMeUp">Дати синхронізації</string>
   <string name="rp_menuRestart">Почати спочатку</string>
   <string name="rp_menuDelete">Видалити</string>
   <string name="rp_headingProgress">Прогрес</string>
+  <string name="rp_gotoToday">Перейти до сьогоднішнього</string>
+  <string name="rp_setStartDate">Налаштувати дату початку</string>
   <string name="rp_showDetails">Показати подробиці</string>
   <string name="rp_hideDetails">Приховати подробиці</string>
   <string name="rp_aboutPlan">Про план</string>
@@ -344,6 +364,8 @@
   <string name="rp_download_reading_plan_progress">Завантаження плану читання...</string>
   <string name="rp_download_reading_plan_failed">Помилка при завантаженні вибраного плану читання. Будь ласка спробуйте ще раз з доступним підключенням до інтернету.</string>
   <string name="rp_download_reading_plan_data_corrupted">Завантажені дані плану читання пошкоджено. Будь ласка спробуйте ще раз з доступним підключенням до інтернету.</string>
+  <string name="rp_download_already_have">У вас вже є цей план читання.</string>
+  <string name="rp_mark_as_read_up_to">Позначити, як прочитане до цього місця?</string>
   <string name="version_download_need_fonts">"Версія яку ви завантажили можливо потребує для коректного відображення деякі шрифти. Перейдіть в меню до \"Вигляд тексту\" та виберіть потрібний шрифт. Грецька потребує шрифт Ubuntu. Бурмезька потребує Parabaik, ParabaikSans чи Myanmar3. Тамільська потребує Akshar. Телузька потребує Suranna."</string>
   <string name="version_download_corrupted_file">Завантажений файл можливо пошкоджений.</string>
   <string name="menuNightMode">Нічний режим</string>
@@ -354,6 +376,7 @@
   <string name="search_syntax_tips"><i>Поради з пошуку:</i>\n\n<b>+слово</b> для цього точне слово\n<b>[q]місто Давидове[q]</b> для цього точна фраза</string>
   <string name="search_no_result">Не знайдено вірші які містять <b>^1</b>.</string>
   <string name="search_no_result_fallback">Натисніть тут для переходу до <u>^1</u>.</string>
+  <string name="search_clear_history">Очистити історію пошуку</string>
   <string name="marker_transfer_to_device_title">Передати на інший пристрій</string>
   <string name="marker_transfer_to_device_description">Перемістити всі закладки, замітки, виділення та підкреслення на інший телефон або планшет. Ми рекомендуємо використовувати Gmail / Email.</string>
   <string name="marker_transfer_to_computer_title">Передати для редагування</string>
@@ -367,6 +390,7 @@
   <string name="sn_menu_copy">Скопіювати пісню</string>
   <string name="menuPlay">Грати</string>
   <string name="menuPause">Пауза</string>
+  <string name="left_drawer_current_reading_title">Тепер читаєте</string>
   <string name="book_filter_old_testament">Старий Завіт</string>
   <string name="book_filter_old_pentateuch">П\'ятикнижжя</string>
   <string name="book_filter_old_history">Історія</string>
@@ -399,6 +423,8 @@
   <string name="note_actionbar_ok">Зроблено</string>
   <string name="note_activity_cannot_parse_verse">Вибачте, це посилання на вірш не розпізнано.</string>
   <string name="pref_syncAccountName_title">Обліковий запис</string>
+  <string name="sync_progress_register">Створення нового профіля...</string>
+  <string name="sync_progress_login">Вхід в систему...</string>
   <string name="pref_sync_title">Сихнронізувати</string>
   <string name="sync_menu_item_sync_now">Синхронізувати зараз</string>
   <string name="sync_sync_set_pref_summary_syncing">Синхронізація&#8230;</string>
@@ -412,6 +438,7 @@
   <string name="sync_login_survey_religion_christianity_pentecostal">Харизматик</string>
   <string name="sync_login_survey_religion_islam">Іслам</string>
   <string name="sync_login_survey_religion_buddha">Буддизм</string>
+  <string name="sync_login_survey_religion_other">Інша релігія</string>
   <string name="sync_login_survey_religion_atheist">Атеїст</string>
   <string name="sync_login_change_password_menu_item">Змінити пароль</string>
   <string name="sync_login_change_password_button">Замінити пароль</string>
@@ -419,21 +446,33 @@
   <string name="sync_login_form_email_hint">Email</string>
   <string name="sync_login_form_forgot_button">Забули?</string>
   <string name="sync_login_form_city">Місто</string>
+  <string name="sync_login_form_register_button">Зареєструватися</string>
   <string name="sync_login_form_login_button">Увійти</string>
+  <string name="sync_login_dialog_confirm_password_hint">Підтвердіть пароль</string>
+  <string name="sync_login_form_forgot_password_success">Перевірте вашу електронну адресу для подальших інструкцій</string>
+  <string name="sync_login_form_change_password_success">Ваш пароль був змінений</string>
   <!-- devotion reminder -->
+  <string name="dr_app_name">Нагадування</string>
   <string name="dr_off">Вимкнути</string>
   <string name="dr_alarm">Будильник</string>
   <string name="dr_sound">Звук</string>
   <string name="dr_vibrate">Вібрація</string>
+  <string name="dr_default_sound">Звук за замовчуванням</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% безкоштовний додаток для Біблії, ліцензований за ліцензією Apache 2.0</string>
   <string name="about_translators">Перекладачі</string>
   <string name="about_user_guide">Керівництво користувача</string>
   <string name="about_version_name">Версія складання %s</string>
   <string name="about_credits">Подяка</string>
+  <string name="about_official_website">Офіційний вебсайт</string>
+  <string name="about_project_page">Сторінка проекту</string>
   <!-- marker and label migration -->
+  <string name="marker_migrate_introduction">Було виявлено файл резервної копії зі старої версії 3 Yuku Quick Bible, яка містить закладки, примітки, підсвічування та мітки.\n\n Чи ви хочете імпортувати їх, щоб ви могли отримати доступ до них із цього додатку?</string>
   <string name="marker_migrate_no_more">Не питати знову</string>
   <string name="marker_migrate_later">Не тепер</string>
   <string name="marker_migrate_title">Імпортувати старі позначки</string>
+  <string name="marker_migrate_file_chooser_title">Виберіть файл резервної копії v3</string>
+  <string name="marker_migrate_no_more_confirmation">Ви впевнені, що вам не потрібно імпортувати старі дані?</string>
   <string name="marker_migrate_error_opening_backup_file">Не вдалося отримати доступ до цієї резервної копії.</string>
   <!-- Announcements -->
   <!-- Dictionary -->

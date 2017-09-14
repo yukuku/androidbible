@@ -316,6 +316,8 @@
   <string name="recentverses_button_hint">(dlouhý stisk pro současné verše)</string>
   <string name="dr_reminder">Připomínač</string>
   <string name="dr_error_contact_reminder">Chyba během spojení s Připomínačem.</string>
+  <string name="dr_timepicker_set">Nastavit</string>
+  <string name="dr_timepicker_off">Vypnout</string>
   <string name="dv_option_transparent_background">Průhledné pozadí</string>
   <string name="dv_option_dark_text">Tmavý text</string>
   <string name="dv_option_text_size">Velikost textu</string>
@@ -446,6 +448,7 @@
   <string name="sync_sync_set_pref_summary_never">Nesynchronizováno</string>
   <string name="sync_sync_set_pref_summary_syncing">Probíhá synchronizace&#8230;</string>
   <string name="sync_log_activity_title">Log synchronizace</string>
+  <string name="sync_status_activity_title">Stav synchronizace</string>
   <string name="sync_login_activity_title">Přihlásit se nebo založit účet</string>
   <string name="sync_login_survey_religion_select_one">Vyberte církev</string>
   <string name="sync_login_survey_religion_christianity">Křesťan</string>

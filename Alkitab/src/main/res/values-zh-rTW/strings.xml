@@ -211,6 +211,7 @@
   <string name="market_short_desc">快速、可靠與多功能的離線聖經。</string>
   <string name="no_url_for_facebook">這不可以分享到臉書。</string>
   <string name="storage_permission_rationale">我們需要存取儲存裝置，以便儲存如聖經版本及字型的共享媒體。</string>
+  <string name="goto_button_history_tip">貼士：下次長按此按鈕來查看最近看過的經文。</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">撥號按鍵</string>
   <string name="goto_tab_direct_label">直接輸入</string>
@@ -314,6 +315,7 @@
   <string name="recentverses_button_hint">（長按以顯示最近經文）</string>
   <string name="dr_reminder">提示</string>
   <string name="dr_error_contact_reminder">與提示程式連接時發生錯誤。</string>
+  <string name="dr_timepicker_set">設定</string>
   <string name="dr_timepicker_off">停用</string>
   <string name="dv_option_transparent_background">透明的背景</string>
   <string name="dv_option_dark_text">深色文字</string>
@@ -497,6 +499,7 @@
   <string name="dr_pref_notification_message">提醒訊息</string>
   <string name="dr_default_sound">預設聲音</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100%免費的聖經應用，由Apache License 2.0授權</string>
   <string name="about_translators">譯者</string>
   <string name="about_user_guide">使用者指引</string>
   <string name="about_beta_feedback">測試版本回饋</string>

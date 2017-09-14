@@ -505,6 +505,7 @@
   <string name="dr_pref_notification_message">Pesan pengingat</string>
   <string name="dr_default_sound">Suara default</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Aplikasi Alkitab 100% gratis. Terdaftar dibawah Apache License 2.0</string>
   <string name="about_translators">Penerjemah</string>
   <string name="about_user_guide">Petunjuk Pemakaian</string>
   <string name="about_beta_feedback">Kotak Saran Versi Beta</string>

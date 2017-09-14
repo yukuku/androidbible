@@ -46,6 +46,9 @@
   <string name="belum_ada_pembatas_buku">Tans geen boekmerke.\nKies \'n vers om by boekmerk te voeg.</string>
   <string name="judul_titikdua">Titel</string>
   <string name="devotion_downloader_downloading_title">Besig met aflaai ^1</string>
+  <string name="devotion_downloader_downloading_date">gedateer ^1</string>
+  <string name="devotion_downloader_error_date">Vout in data ^1:^2</string>
+  <string name="devotion_downloader_success_date">Aflaai datum ^1</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Nog nie beskikbaar. Moontlik is die datum se materiaal nog nie voorberei,of daar is moontlik foute in die data bron. Probeer asb weer later.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Nog nie beskikbaar.Verkry vanaf Internet..\n\n(Verseker daar is \'n internet konneksie om die materiaal te verkry.)</string>
   <string name="hari_sabtu">Sat</string>
@@ -211,6 +214,7 @@
   <string name="market_short_desc">Vinnig, betroubaar en eienskap ryk aflyn Bybel.</string>
   <string name="no_url_for_facebook">Hierdie kan nie op Facebook gedeel word nie.</string>
   <string name="storage_permission_rationale">Ons moet toegang tot die stoor spasie verkry om gedeelde media soos Bybel weergawes en lettertipes te stoor.</string>
+  <string name="goto_button_history_tip">Wenk: Volgende keer, hou die knoppie lank in om jou onlangs geleesde verse te sien.</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Skakelaar</string>
   <string name="goto_tab_direct_label">Direk</string>
@@ -246,6 +250,7 @@
   <string name="sn_menu_private_song_book">Private lied boek</string>
   <string name="sn_private_song_book_dialog_desc">Laai \'n private (versteekte) lied boek af</string>
   <string name="sn_private_song_book_name_hint">Lied boek naam</string>
+  <string name="sn_play_in_loop">Moet dit aanhoudend speel totdat jy dit stop?</string>
   <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Vorige dag</string>
   <string name="desc_next_day">Volgende dag</string>
@@ -276,6 +281,7 @@
   <string name="intent_filter_open_pdb_file">Maak PDB leêr oop</string>
   <string name="intent_filter_open_pdb_or_yes_file">Maak PDB/YES leêr oop</string>
   <string name="open_yes_file_name_conflict">\'n YES leêr genaamd \'%1$s\' bestaan alreeds in  \'%2$s\'.</string>
+  <string name="open_yes_error_read">Vout met data lees vanaf ^1</string>
   <string name="open_file_cant_read_source">Die bron nie suksesvol gelees.</string>
   <string name="open_file_unknown_file_format">Kon nie tipe leêr PDB/YES  vasstel nie.</string>
   <string name="version_preset_delete_filename">Vee data leêr uit  \'%s\'?</string>
@@ -314,7 +320,9 @@
   <string name="recentverses_button_hint">(Lang druk vir onlangse verse)</string>
   <string name="dr_reminder">Herinner</string>
   <string name="dr_error_contact_reminder">Fout met kontak van herinner applikasie.</string>
+  <string name="dr_timepicker_set">Stel</string>
   <string name="dr_timepicker_off">Skakel af</string>
+  <string name="dv_activity_title">Daaglikse versie wiggie</string>
   <string name="dv_option_transparent_background">Deurskynende agtergrond</string>
   <string name="dv_option_dark_text">Donker teks</string>
   <string name="dv_option_text_size">Teks grootte</string>
@@ -445,6 +453,7 @@
   <string name="sync_sync_set_pref_summary_never">Nog nie gesinchroniseer </string>
   <string name="sync_sync_set_pref_summary_syncing">Sinch nou&#8230;</string>
   <string name="sync_log_activity_title">Sinch log</string>
+  <string name="sync_status_activity_title">Sync Status</string>
   <string name="sync_login_activity_title">Teken aan of skep rekening</string>
   <string name="sync_login_survey_religion_select_one">Kies godsdiens</string>
   <string name="sync_login_survey_religion_christianity">Christen</string>
@@ -496,6 +505,7 @@
   <string name="dr_pref_notification_message">Herinnering boodskap</string>
   <string name="dr_default_sound">Verstek klank</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% gratis Bybel toep, gelisensieerd onder Apache License 2.0</string>
   <string name="about_translators">Vertalers</string>
   <string name="about_user_guide">Gebruikers Gids</string>
   <string name="about_beta_feedback">Beta Weergawe Terugvoer</string>

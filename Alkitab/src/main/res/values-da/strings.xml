@@ -287,7 +287,7 @@
   <string name="version_preset_delete_filename">Slet datafilen \'%s\'?</string>
   <string name="version_menu_share">Del</string>
   <string name="version_share_title">Del version til:</string>
-  <string name="menuFullScreen">Hel skærm</string>
+  <string name="menuFullScreen">Fuldskærm</string>
   <string name="send_donation_confirmation">Doner til udvikleren?</string>
   <string name="me_export_markers">Eksporter markører</string>
   <string name="me_export_menu_item">Eksport</string>

@@ -21,7 +21,7 @@
   <string name="pref_copyWithShareUrl_title">Gedeelde URL</string>
   <string name="pref_copyWithShareUrl_summary">Voeg de gedeelde pagina link aan het einde van de gekopieerde of gedeelde tekst toe</string>
   <string name="pref_autoDictionaryAnalyze_title">Automatisch zoeken in woordenboek</string>
-  <string name="pref_autoDictionaryAnalyze_summary">Zoek de geselecteerde woorden op in woordenboek</string>
+  <string name="pref_autoDictionaryAnalyze_summary">Zoek naar woordenboek woorden in de geselecteerde verzen</string>
   <string name="pref_tapToEditNote_title">Klik om notitie te bewerken</string>
   <string name="pref_tapToEditNote_summary">Vink uit om te voorkomen dat er perongeluk iets aangepast wordt terwijl de notities bekeken worden</string>
   <string name="pref_showHiddenVersion_title">Schakel mogelijk beperkte versies in</string>

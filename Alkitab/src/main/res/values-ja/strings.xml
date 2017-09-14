@@ -27,9 +27,15 @@
   <string name="menu_markers">ブックマークなど</string>
   <string name="hapus_pembatas_buku">ブックマークを削除</string>
   <string name="menuShare">シェア</string>
+  <string name="menuShareSplit0">プライマリ バージョンを共有する</string>
+  <string name="menuShareSplit1">セカンダリ バージョンを共有する</string>
+  <string name="menuShareBothSplits">両方のバーンジョンを共有する</string>
   <string name="tulis_catatan">ノートを書く</string>
   <string name="tambah_pembatas_buku">ブックーマークの追加</string>
   <string name="salin_ayat">節をコピー</string>
+  <string name="copy_split0">プライマリ バージョンをコピーする</string>
+  <string name="copy_split1">セカンダリ バージョンをコピーする</string>
+  <string name="copy_both_splits">両方のバージョンをコピーする</string>
   <string name="search_copy_selected_verses">選択した箇所をコピー</string>
   <string name="perj_baru">新約</string>
   <string name="perj_lama">旧約</string>

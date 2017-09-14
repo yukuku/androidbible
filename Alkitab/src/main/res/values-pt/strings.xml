@@ -505,6 +505,7 @@
   <string name="dr_pref_notification_message">Mensagem de lembrete</string>
   <string name="dr_default_sound">Som padrão</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Aplicativo da Bíblia totalmente gratuito, sob licença da Apache License 2.0</string>
   <string name="about_translators">Tradutores</string>
   <string name="about_user_guide">Guia do Usuário</string>
   <string name="about_beta_feedback">Feedback da versão beta</string>
