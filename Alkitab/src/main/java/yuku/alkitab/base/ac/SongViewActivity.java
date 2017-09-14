@@ -479,7 +479,12 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		{
 			String fontName = Preferences.getString(Prefkey.jenisHuruf, null);
 			if (FontManager.isCustomFont(fontName)) {
-				templateCustomVars.putString("custom_font_loader", String.format("@font-face{ font-family: '%s'; src: url('%s'); }", fontName, FontManager.getCustomFontUri(fontName)));
+				final String customFontUri = FontManager.getCustomFontUri(fontName);
+				if (customFontUri != null) {
+					templateCustomVars.putString("custom_font_loader", String.format("@font-face{ font-family: '%s'; src: url('%s'); }", fontName, customFontUri));
+				} else {
+					templateCustomVars.putString("custom_font_loader", "");
+				}
 			} else {
 				templateCustomVars.putString("custom_font_loader", "");
 			}

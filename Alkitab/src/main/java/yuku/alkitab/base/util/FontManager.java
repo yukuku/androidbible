@@ -74,7 +74,8 @@ public class FontManager {
 		return new File(getFontsDir(), name);
 	}
 
-	@Nullable private static File getRegularFontFile(String name) {
+	@Nullable
+	private static File getRegularFontFile(String name) {
 		final String dfn = getRegularFilename(name);
 		{
 			final File res = new File(getFontsDir(), dfn);
@@ -159,8 +160,11 @@ public class FontManager {
 		return !(name == null || name.equals("DEFAULT") || name.equals("SANS_SERIF") || name.equals("SERIF") || name.equals("MONOSPACE"));
 	}
 
+	@Nullable
 	public static String getCustomFontUri(String name) {
-		File path = getRegularFontFile(name);
+		final File path = getRegularFontFile(name);
+		if (path == null) return null;
+
 		return Uri.fromFile(path).toString();
 	}
 }
