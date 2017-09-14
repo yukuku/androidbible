@@ -36,7 +36,6 @@ import yuku.alkitab.debug.R;
 import yuku.alkitab.reminder.util.DevotionReminder;
 import yuku.alkitabfeedback.FeedbackSender;
 import yuku.alkitabintegration.display.Launcher;
-import yuku.kirimfidbek.CrashReporter;
 import yuku.stethoshim.StethoShim;
 
 import java.io.File;
@@ -135,14 +134,6 @@ public class App extends yuku.afw.App {
 	public synchronized static void staticInit() {
 		if (initted) return;
 		initted = true;
-
-		final CrashReporter cr = new CrashReporter();
-		if (BuildConfig.DEBUG) {
-			Log.d(TAG, "Not activating crash reporter because we are in debug build.");
-		} else {
-			cr.activateDefaultUncaughtExceptionHandler();
-		}
-		cr.trySend();
 
 		final FeedbackSender fs = FeedbackSender.getInstance(context);
 		fs.trySend();
