@@ -21,7 +21,7 @@ android {
         versionName '4.4.1'
         multiDexEnabled true
         // Keep this synced with integrate_translations.sh!
-        resConfigs 'af', 'bg', 'cs', 'da', 'de', 'es', 'fr', 'in', 'ja', 'lv', 'ms', 'nl', 'pl', 'pt', 'ro', 'ru', 'th', 'uk', 'vi', 'zh-rCN', 'zh-rTW'
+        resConfigs 'af', 'bg', 'cs', 'da', 'de', 'es', 'fr', 'in', 'ja', 'ko', 'lv', 'ms', 'nl', 'pl', 'pt', 'ro', 'ru', 'th', 'uk', 'vi', 'zh-rCN', 'zh-rTW'
         buildConfigField 'String', 'SERVER_HOST', "\"$SERVER_HOST\""
     }
     buildTypes {

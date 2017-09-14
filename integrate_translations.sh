@@ -25,7 +25,7 @@ if [ ! -e "$SRC" ] ; then
 fi
 
 # Keep this synced with build.gradle resConfigs!
-PAIRS=(af af bg bg cs cs da da de de es es-ES fr fr in id ja ja lv lv ms ms nl nl pl pl pt pt-BR ro ro ru ru th th uk uk vi vi zh-rCN zh-CN zh-rTW zh-TW)
+PAIRS=(af af bg bg cs cs da da de de es es-ES fr fr in id ja ja ko ko lv lv ms ms nl nl pl pl pt pt-BR ro ro ru ru th th uk uk vi vi zh-rCN zh-CN zh-rTW zh-TW)
 
 for ((i=0; i<${#PAIRS[@]}; i+=2)) ; do
 	DSTLANG="${PAIRS[$i]}"
