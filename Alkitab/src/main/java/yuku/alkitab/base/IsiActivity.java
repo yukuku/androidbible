@@ -726,7 +726,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	private void disableNfcForegroundDispatchIfAvailable() {
-		if (nfcAdapter != null) nfcAdapter.disableForegroundDispatch(this);
+		final NfcAdapter _nfcAdapter = this.nfcAdapter;
+
+		if (_nfcAdapter != null) {
+			try {
+				_nfcAdapter.disableForegroundDispatch(this);
+			} catch (IllegalStateException e) {
+				Log.e(TAG, "sometimes this happens.", e);
+			}
+		}
 	}
 
 	@Override protected void onResume() {
