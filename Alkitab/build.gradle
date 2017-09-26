@@ -61,11 +61,6 @@ android {
     }
     productFlavors {
         // Use this for development
-        emulator_v21 {
-            minSdkVersion 21
-        }
-
-        // Use this for development testing on Android < 5.0
         plain {
         }
 
