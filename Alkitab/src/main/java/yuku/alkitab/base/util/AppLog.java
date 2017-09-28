@@ -4,8 +4,6 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 
 public class AppLog {
-	public static final String TAG = AppLog.class.getSimpleName();
-	
 	public static void d(String tag, String msg) {
 		Crashlytics.log(Log.DEBUG, tag, msg);
 	}
