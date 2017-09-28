@@ -1,6 +1,7 @@
 package yuku.alkitab.base.widget;
 
 import android.content.ClipData;
+import android.content.ClipDescription;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -217,7 +218,8 @@ public class VerseItem extends RelativeLayout implements Checkable {
 		switch (event.getAction()) {
 			case DragEvent.ACTION_DRAG_STARTED:
 				// Determines if this View can accept the dragged data
-				if (event.getClipDescription().hasMimeType(PROGRESS_MARK_DRAG_MIME_TYPE)) {
+				final ClipDescription desc = event.getClipDescription();
+				if (desc != null && desc.hasMimeType(PROGRESS_MARK_DRAG_MIME_TYPE)) {
 					return true;
 				}
 				break;
