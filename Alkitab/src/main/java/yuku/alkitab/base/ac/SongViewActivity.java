@@ -38,7 +38,6 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.storage.Prefkey;
-import yuku.alkitab.base.storage.SongDb;
 import yuku.alkitab.base.util.AlphanumComparator;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
@@ -439,6 +438,11 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		}
 
 		bDownload.setOnClickListener(v -> openDownloadSongBookPage());
+
+		// if no song books is downloaded, open download page immediately
+		if (S.getSongDb().countSongBookInfos() == 0) {
+			openDownloadSongBookPage();
+		}
 	}
 
 	void openDownloadSongBookPage() {
@@ -500,8 +504,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			if (bookName == null || code == null) {
 				displaySong(null, null, true);
 			} else {
-				final SongDb db = S.getSongDb();
-				displaySong(bookName, db.getSong(bookName, code), true);
+				displaySong(bookName, S.getSongDb().getSong(bookName, code), true);
 			}
 		}
 
@@ -510,8 +513,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 	/** Used after deleting a song, and the current song is no longer available */
 	void displayAnySongOrFinish() {
-		final SongDb db = S.getSongDb();
-		final Pair<String, Song> pair = db.getAnySong();
+		final Pair<String, Song> pair = S.getSongDb().getAnySong();
 		if (pair == null) {
 			finish();
 		} else {
