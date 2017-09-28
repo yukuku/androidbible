@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -11,6 +12,7 @@ import android.support.v4.graphics.ColorUtils;
 import android.text.Layout;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Range;
 import android.view.DragEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Checkable;
@@ -127,7 +129,6 @@ public class VerseItem extends RelativeLayout implements Checkable {
 			if (elapsed >= ATTENTION_DURATION) {
 				attentionStart = 0;
 			} else {
-				final float opacity = 0.4f * (1.f - ((float) elapsed / ATTENTION_DURATION));
 				Paint p = attentionPaint;
 				if (p == null) {
 					attentionPaint = p = new Paint();
@@ -136,7 +137,12 @@ public class VerseItem extends RelativeLayout implements Checkable {
 					p.setStyle(Paint.Style.FILL);
 				}
 
-				p.setColor(ColorUtils.setAlphaComponent(p.getColor(), (int) (opacity * 255)));
+				// Clamp to prevent crash
+				int alpha = (int) (0.4f * 255 * (1.f - (float) elapsed / ATTENTION_DURATION));
+				if (alpha < 0) alpha = 0;
+				if (alpha > 255) alpha = 255;
+
+				p.setColor(ColorUtils.setAlphaComponent(p.getColor(), alpha));
 				canvas.drawRect(0, 0, w, h, p);
 
 				invalidate(); // animate
