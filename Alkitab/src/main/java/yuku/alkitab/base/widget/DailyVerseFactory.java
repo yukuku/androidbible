@@ -3,13 +3,11 @@ package yuku.alkitab.base.widget;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.SuperscriptSpan;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 import yuku.alkitab.base.App;
@@ -75,7 +73,7 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 
 	@Override
 	public int getCount() {
-		return aris == null? 0: aris.length;
+		return aris == null ? 0 : aris.length;
 	}
 
 	@Override
@@ -85,19 +83,18 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 		assert aris != null; // getCount returns 0 if aris == null
 		final boolean showVerseNumber = aris.length > 1;
 
-		row.setTextViewText(R.id.text1, getText(version, aris[position], showVerseNumber));
-		if (savedState.darkText) {
-			row.setTextColor(R.id.text1, Color.BLACK);
-		} else {
-			row.setTextColor(R.id.text1, Color.WHITE);
-		}
-		row.setFloat(R.id.text1, "setTextSize", savedState.textSize);
+		// prevent crash: sometimes position is out of range for the aris array.
+		if (position < 0 || position >= aris.length) {
+			row.setTextViewText(R.id.text1, "");
+			row.setOnClickFillInIntent(R.id.text1, new Intent());
 
-		final Intent intent = new Intent();
-		final Bundle extras = new Bundle();
-		extras.putInt("ari", aris[position]);
-		intent.putExtras(extras);
-		row.setOnClickFillInIntent(R.id.text1, intent);
+		} else {
+			final int ari = aris[position];
+			row.setTextViewText(R.id.text1, getText(version, ari, showVerseNumber));
+			row.setTextColor(R.id.text1, savedState.darkText ? Color.BLACK : Color.WHITE);
+			row.setFloat(R.id.text1, "setTextSize", savedState.textSize);
+			row.setOnClickFillInIntent(R.id.text1, new Intent().putExtra("ari", ari));
+		}
 
 		return row;
 	}
