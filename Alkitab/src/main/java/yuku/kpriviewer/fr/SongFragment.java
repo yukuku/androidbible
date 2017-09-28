@@ -2,6 +2,7 @@ package yuku.kpriviewer.fr;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -104,7 +105,13 @@ public class SongFragment extends BaseFragment {
 
 			pendingResize = true;
 			view.postDelayed(() -> {
-				view.evaluateJavascript("document.getElementsByTagName('body')[0].style.width = window.innerWidth + 'px';", null);
+				final String script = "document.getElementsByTagName('body')[0].style.width = window.innerWidth + 'px';";
+				if (Build.VERSION.SDK_INT >= 19) {
+					view.evaluateJavascript(script, null);
+				} else {
+					view.loadUrl("javascript:" + script);
+				}
+
 				pendingResize = false;
 			}, 100);
 		}
