@@ -16,6 +16,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.LoginEvent;
+import com.crashlytics.android.answers.SignUpEvent;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
@@ -25,6 +29,8 @@ import yuku.alkitab.base.util.Background;
 import yuku.alkitab.debug.R;
 
 public class SyncLoginActivity extends BaseActivity {
+
+	public static final String ANSWERS_METHOD = "sync";
 
 	public static class Result {
 		public String accountName;
@@ -137,13 +143,25 @@ public class SyncLoginActivity extends BaseActivity {
 
 						final Sync.LoginResponseJson response = Sync.register(form);
 
+						Answers.getInstance().logSignUp(new SignUpEvent()
+							.putMethod(ANSWERS_METHOD)
+							.putSuccess(true)
+						);
+
+						Crashlytics.setUserEmail(form.email);
+
 						gotSimpleToken(email, response.simpleToken, true);
 					} catch (Sync.NotOkException e) {
-						Log.d(TAG, "Register failed: " + e.getMessage());
+						Log.d(TAG, "Register failed", e);
 						SyncRecorder.log(SyncRecorder.EventKind.register_failed, null, "email", email, "message", e.getMessage());
 
+						Answers.getInstance().logSignUp(new SignUpEvent()
+							.putMethod(ANSWERS_METHOD)
+							.putSuccess(false)
+						);
+
 						runOnUiThread(() -> new MaterialDialog.Builder(this)
-							.content(getString(R.string.sync_register_failed_with_reason, e.getMessage()))
+							.content(R.string.sync_register_failed_with_reason, e.getMessage())
 							.positiveText(R.string.ok)
 							.show()
 						);
@@ -181,10 +199,22 @@ public class SyncLoginActivity extends BaseActivity {
 
 					final Sync.LoginResponseJson response = Sync.login(email, password);
 
+					Answers.getInstance().logLogin(new LoginEvent()
+						.putMethod(ANSWERS_METHOD)
+						.putSuccess(true)
+					);
+
+					Crashlytics.setUserEmail(email);
+
 					gotSimpleToken(email, response.simpleToken, false);
 				} catch (Sync.NotOkException e) {
-					Log.d(TAG, "Login failed: " + e.getMessage());
+					Log.d(TAG, "Login failed", e);
 					SyncRecorder.log(SyncRecorder.EventKind.login_failed, null, "email", email, "message", e.getMessage());
+
+					Answers.getInstance().logLogin(new LoginEvent()
+						.putMethod(ANSWERS_METHOD)
+						.putSuccess(false)
+					);
 
 					runOnUiThread(() -> new MaterialDialog.Builder(this)
 						.content(getString(R.string.sync_login_failed_with_reason, e.getMessage()))
@@ -219,7 +249,7 @@ public class SyncLoginActivity extends BaseActivity {
 						.show()
 					);
 				} catch (Sync.NotOkException e) {
-					Log.d(TAG, "Forgot password failed: " + e.getMessage());
+					Log.d(TAG, "Forgot password failed", e);
 
 					runOnUiThread(() -> new MaterialDialog.Builder(this)
 						.content(e.getMessage())
@@ -269,7 +299,7 @@ public class SyncLoginActivity extends BaseActivity {
 						.setOnDismissListener(dialog -> finish())
 					);
 				} catch (Sync.NotOkException e) {
-					Log.d(TAG, "Change password failed: " + e.getMessage());
+					Log.d(TAG, "Change password failed", e);
 
 					runOnUiThread(() -> new MaterialDialog.Builder(this)
 						.content(e.getMessage())

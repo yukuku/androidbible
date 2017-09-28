@@ -12,6 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -150,6 +152,8 @@ public class SyncSettingsActivity extends BaseActivity {
 						SyncRecorder.removeAllLastSuccessTimes();
 
 						SyncRecorder.log(SyncRecorder.EventKind.logout_post, null, "accountName", syncAccountName);
+
+						Crashlytics.setUserEmail(null);
 
 						updateDisplay();
 					})

@@ -363,8 +363,12 @@ public class Sync {
 	 * Exception thrown by calls to server that has io/parse exception or when server returns success==false.
 	 */
 	static class NotOkException extends Exception {
-		public NotOkException(final String msg) {
-			super(msg);
+		public NotOkException(final String message) {
+			super(message);
+		}
+
+		public NotOkException(final String message, final Throwable cause) {
+			super(message, cause);
 		}
 	}
 
@@ -401,9 +405,10 @@ public class Sync {
 			return response;
 
 		} catch (IOException | JsonIOException e) {
-			throw new NotOkException("Failed to send data");
+			throw new NotOkException("Failed to send data", e);
+
 		} catch (JsonSyntaxException e) {
-			throw new NotOkException("Server response is not a valid JSON");
+			throw new NotOkException("Server response is not a valid JSON", e);
 		}
 	}
 
@@ -435,9 +440,10 @@ public class Sync {
 			return response;
 
 		} catch (IOException | JsonIOException e) {
-			throw new NotOkException("Failed to send data");
+			throw new NotOkException("Failed to send data", e);
+
 		} catch (JsonSyntaxException e) {
-			throw new NotOkException("Server response is not a valid JSON");
+			throw new NotOkException("Server response is not a valid JSON", e);
 		}
 	}
 
@@ -465,9 +471,10 @@ public class Sync {
 			}
 
 		} catch (IOException | JsonIOException e) {
-			throw new NotOkException("Failed to send data");
+			throw new NotOkException("Failed to send data", e);
+
 		} catch (JsonSyntaxException e) {
-			throw new NotOkException("Server response is not a valid JSON");
+			throw new NotOkException("Server response is not a valid JSON", e);
 		}
 	}
 
@@ -497,9 +504,10 @@ public class Sync {
 			}
 
 		} catch (IOException | JsonIOException e) {
-			throw new NotOkException("Failed to send data");
+			throw new NotOkException("Failed to send data", e);
+
 		} catch (JsonSyntaxException e) {
-			throw new NotOkException("Server response is not a valid JSON");
+			throw new NotOkException("Server response is not a valid JSON", e);
 		}
 	}
 
