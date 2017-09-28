@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.FrameLayout;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;
 
 public class NavFrameLayout extends FrameLayout {
@@ -22,7 +23,7 @@ public class NavFrameLayout extends FrameLayout {
 
 		if (maxGivenWidth > maxWidth) {
 			widthMeasureSpec = MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.getMode(widthMeasureSpec));
-			if (BuildConfig.DEBUG) Log.d(TAG, "wms overriden to: " + MeasureSpec.toString(widthMeasureSpec));
+			if (BuildConfig.DEBUG) AppLog.d(TAG, "wms overriden to: " + MeasureSpec.toString(widthMeasureSpec));
 		}
 
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);

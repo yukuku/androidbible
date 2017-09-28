@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.support.annotation.StringRes;
 import android.util.Log;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.util.AppLog;
 
 import java.util.Locale;
 
@@ -38,7 +39,7 @@ public class Localized {
 			}
 		}
 
-		Log.d(TAG, "Need to adjust resources for pref locale: " + prefLocale);
+		AppLog.d(TAG, "Need to adjust resources for pref locale: " + prefLocale);
 		return currentResources = ConfigurationWrapper.wrap(App.context).getResources();
 	}
 }

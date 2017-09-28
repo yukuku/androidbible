@@ -20,7 +20,7 @@ public class Jumper {
 	}
 
 	// default logger
-	private Logger logger = msg -> Log.d(TAG, msg);
+	private Logger logger = msg -> AppLog.d(TAG, msg);
 	
 	private String p_book;
 	private int p_chapter;

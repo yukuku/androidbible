@@ -40,6 +40,7 @@ import yuku.alkitab.base.sync.SyncRecorder;
 import yuku.alkitab.base.sync.Sync_Mabel;
 import yuku.alkitab.base.sync.Sync_Pins;
 import yuku.alkitab.base.sync.Sync_Rp;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.BuildConfig;
@@ -298,7 +299,7 @@ public class InternalDb {
 
 				int mapOffset = Ari.toVerse(ari) - 1;
 				if (mapOffset >= bookmarkCountMap.length) {
-					Log.e(TAG, "mapOffset too many " + mapOffset + " happens on ari 0x" + Integer.toHexString(ari));
+					AppLog.e(TAG, "mapOffset too many " + mapOffset + " happens on ari 0x" + Integer.toHexString(ari));
 					continue;
 				}
 
@@ -993,7 +994,7 @@ public class InternalDb {
 		//   A101 B[104] C102 D[103] E105
 
 		if (D.EBUG) {
-			Log.d(TAG, "@@reorderLabels from _id=" + from._id + " ordering=" + from.ordering + " to _id=" + to._id + " ordering=" + to.ordering);
+			AppLog.d(TAG, "@@reorderLabels from _id=" + from._id + " ordering=" + from.ordering + " to _id=" + to._id + " ordering=" + to.ordering);
 		}
 
 		SQLiteDatabase db = helper.getWritableDatabase();
@@ -1030,7 +1031,7 @@ public class InternalDb {
 		//   A101 B[104] C102 D[103] E105
 
 		if (BuildConfig.DEBUG) {
-			Log.d(TAG, "@@reorderVersions from id=" + from.getVersionId() + " ordering=" + from.ordering + " to id=" + to.getVersionId() + " ordering=" + to.ordering);
+			AppLog.d(TAG, "@@reorderVersions from id=" + from.getVersionId() + " ordering=" + from.ordering + " to id=" + to.getVersionId() + " ordering=" + to.ordering);
 		}
 
 		SQLiteDatabase db = helper.getWritableDatabase();

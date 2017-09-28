@@ -71,7 +71,7 @@ public class History {
 			Preferences.setString(Prefkey.history, new_json);
 			Sync.notifySyncNeeded(SyncShadow.SYNC_SET_HISTORY);
 		} else {
-			Log.d(TAG, "History not changed.");
+			AppLog.d(TAG, "History not changed.");
 		}
 	}
 
@@ -174,10 +174,10 @@ public class History {
 
 			// when debugging, print
 			if (BuildConfig.DEBUG) {
-				Log.d(TAG, "After sync, the history entries are:");
-				Log.d(TAG, String.format("  ari ====   timestamp ===============   %-40s   %-40s", "gid", "creator_id"));
+				AppLog.d(TAG, "After sync, the history entries are:");
+				AppLog.d(TAG, String.format("  ari ====   timestamp ===============   %-40s   %-40s", "gid", "creator_id"));
 				for (final HistoryEntry entry : entries) {
-					Log.d(TAG, String.format("- 0x%06x   %tF %<tT %<tz   %-40s   %-40s", entry.ari, entry.timestamp, entry.gid, entry.creator_id));
+					AppLog.d(TAG, String.format("- 0x%06x   %tF %<tT %<tz   %-40s   %-40s", entry.ari, entry.timestamp, entry.gid, entry.creator_id));
 				}
 			}
 
@@ -298,7 +298,7 @@ public class History {
 				deleteAll();
 				history.save();
 			} catch (Exception e) {
-				Log.e(TAG, "Error when migrating history", e);
+				AppLog.e(TAG, "Error when migrating history", e);
 			}
 		}
 	}

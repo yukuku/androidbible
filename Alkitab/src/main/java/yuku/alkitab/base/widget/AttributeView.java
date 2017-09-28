@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
@@ -119,7 +120,7 @@ public class AttributeView extends View {
 
 	static Bitmap scale(Bitmap original, float scale) {
 		if (BuildConfig.DEBUG) {
-			Log.d(TAG, "@@scale Scale needed. Called with scale=" + scale);
+			AppLog.d(TAG, "@@scale Scale needed. Called with scale=" + scale);
 		}
 
 		if (scale == 1.f) {

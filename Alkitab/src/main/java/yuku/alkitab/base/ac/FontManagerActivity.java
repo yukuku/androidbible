@@ -21,6 +21,7 @@ import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.sv.DownloadService;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.FontManager;
 import yuku.alkitab.base.util.Foreground;
@@ -324,13 +325,13 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 				File fontDir = FontManager.getFontDir(fontName);
 				fontDir.mkdirs();
 
-				Log.d(TAG, "Going to unzip " + downloadedZip, new Throwable().fillInStackTrace());
+				AppLog.d(TAG, "Going to unzip " + downloadedZip, new Throwable().fillInStackTrace());
 
 				try (ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(downloadedZip)))) {
 					ZipEntry ze;
 					while ((ze = zis.getNextEntry()) != null) {
 						String zname = ze.getName();
-						Log.d(TAG, "Extracting from zip: " + zname);
+						AppLog.d(TAG, "Extracting from zip: " + zname);
 						File extractFile = new File(fontDir, zname);
 						try (FileOutputStream fos = new FileOutputStream(extractFile)) {
 							byte[] buf = new byte[4096];

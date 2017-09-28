@@ -38,6 +38,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.CurrentReading;
 import yuku.alkitab.base.util.Foreground;
@@ -617,7 +618,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				});
 			} catch (Exception e) {
 				if (!cancelled.get()) {
-					Log.e(TAG, "downloading reading plan data", e);
+					AppLog.e(TAG, "downloading reading plan data", e);
 					Foreground.run(() -> new MaterialDialog.Builder(ReadingPlanActivity.this)
 						.content(getString(R.string.rp_download_reading_plan_failed))
 						.positiveText(R.string.ok)

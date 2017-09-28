@@ -38,6 +38,7 @@ import yuku.alkitab.base.devotion.ArticleSantapanHarian;
 import yuku.alkitab.base.devotion.DevotionArticle;
 import yuku.alkitab.base.devotion.DevotionDownloader;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.widget.CallbackSpan;
@@ -240,16 +241,16 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 			final DevotionActivity ac = this.ac.get();
 			if (ac == null) return;
 			if (ac.isFinishing()) {
-				Log.d(TAG, "Activity is already closed");
+				AppLog.d(TAG, "Activity is already closed");
 				return;
 			}
 
 			final String currentDate = yyyymmdd.get().format(ac.currentDate);
 			if (U.equals(startKind, ac.currentKind) && U.equals(startDate, currentDate)) {
-				Log.d(TAG, "Long read detected: now=[" + ac.currentKind + " " + currentDate + "]");
+				AppLog.d(TAG, "Long read detected: now=[" + ac.currentKind + " " + currentDate + "]");
 				App.getTracker().send(new HitBuilders.EventBuilder("devotion-longread", startKind.name).setLabel(startDate).setValue(30L).build());
 			} else {
-				Log.d(TAG, "Not long enough for long read: previous=[" + startKind + " " + startDate + "] now=[" + ac.currentKind + " " + currentDate + "]");
+				AppLog.d(TAG, "Not long enough for long read: previous=[" + startKind + " " + startDate + "] now=[" + ac.currentKind + " " + currentDate + "]");
 			}
 		}
 
@@ -390,9 +391,9 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		}
 
 		if (article == null) {
-			Log.d(TAG, "rendering null article");
+			AppLog.d(TAG, "rendering null article");
 		} else {
-			Log.d(TAG, "rendering article name=" + article.getKind().name + " date=" + article.getDate() + " readyToUse=" + article.getReadyToUse());
+			AppLog.d(TAG, "rendering article name=" + article.getKind().name + " date=" + article.getDate() + " readyToUse=" + article.getReadyToUse());
 		}
 
 		if (article != null && article.getReadyToUse()) {
@@ -444,7 +445,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 	}
 
 	final CallbackSpan.OnClickListener<String> verseClickListener = (widget, reference) -> {
-		Log.d(TAG, "Clicked verse reference inside devotion: " + reference);
+		AppLog.d(TAG, "Clicked verse reference inside devotion: " + reference);
 
 		if (reference.startsWith("patchtext:")) {
 			final Uri uri = Uri.parse(reference);
@@ -511,13 +512,13 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		// delete those older than 180 days!
 		final int deleted = S.getDb().deleteDevotionsWithTouchTimeBefore(new Date(today.getTime() - 180 * 86400_000L));
 		if (deleted > 0) {
-			Log.d(TAG, "old devotions deleted: " + deleted);
+			AppLog.d(TAG, "old devotions deleted: " + deleted);
 		}
 
 		for (int i = 0; i < kind.getPrefetchDays(); i++) {
 			final String date = yyyymmdd.get().format(today);
 			if (S.getDb().tryGetDevotion(kind.name, date) == null) {
-				Log.d(TAG, "Prefetcher need to get " + kind + " " + date);
+				AppLog.d(TAG, "Prefetcher need to get " + kind + " " + date);
 				willNeed(kind, date, false);
 			}
 

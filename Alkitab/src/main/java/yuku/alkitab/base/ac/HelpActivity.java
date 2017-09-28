@@ -20,6 +20,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.util.Announce;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
@@ -113,7 +114,7 @@ public class HelpActivity extends BaseActivity {
 			final Locale locale = getResources().getConfiguration().locale;
 			final String url = BuildConfig.SERVER_HOST + "announce/view?ids=" + App.getDefaultGson().toJson(announcementIds) + (locale == null ? "" : ("&locale=" + locale.toString()));
 			if (BuildConfig.DEBUG) {
-				Log.d(TAG, "loading announce view url: " + url);
+				AppLog.d(TAG, "loading announce view url: " + url);
 			}
 			webview.loadUrl(url);
 		}
@@ -163,7 +164,7 @@ public class HelpActivity extends BaseActivity {
 							dialog.setListener(new VersesDialog.VersesDialogListener() {
 								@Override
 								public void onVerseSelected(final VersesDialog dialog, final int ari) {
-									Log.d(TAG, "Verse link clicked from page");
+									AppLog.d(TAG, "Verse link clicked from page");
 									startActivity(Launcher.openAppAtBibleLocation(ari));
 								}
 							});

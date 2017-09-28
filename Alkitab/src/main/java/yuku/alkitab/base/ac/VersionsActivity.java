@@ -68,6 +68,7 @@ import yuku.alkitab.base.pdbconvert.ConvertPdbToYes2;
 import yuku.alkitab.base.storage.YesReaderFactory;
 import yuku.alkitab.base.sv.VersionConfigUpdaterService;
 import yuku.alkitab.base.util.AddonManager;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.DownloadMapper;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.debug.BuildConfig;
@@ -147,17 +148,17 @@ public class VersionsActivity extends BaseActivity {
 	}
 
 	private void processIntent(Intent intent, String via) {
-		Log.d(TAG, "Got intent via " + via);
-		Log.d(TAG, "  action: " + intent.getAction());
-		Log.d(TAG, "  data uri: " + intent.getData());
-		Log.d(TAG, "  component: " + intent.getComponent());
-		Log.d(TAG, "  flags: 0x" + Integer.toHexString(intent.getFlags()));
-		Log.d(TAG, "  mime: " + intent.getType());
+		AppLog.d(TAG, "Got intent via " + via);
+		AppLog.d(TAG, "  action: " + intent.getAction());
+		AppLog.d(TAG, "  data uri: " + intent.getData());
+		AppLog.d(TAG, "  component: " + intent.getComponent());
+		AppLog.d(TAG, "  flags: 0x" + Integer.toHexString(intent.getFlags()));
+		AppLog.d(TAG, "  mime: " + intent.getType());
 		Bundle extras = intent.getExtras();
-		Log.d(TAG, "  extras: " + (extras == null ? "null" : extras.size()));
+		AppLog.d(TAG, "  extras: " + (extras == null ? "null" : extras.size()));
 		if (extras != null) {
 			for (String key : extras.keySet()) {
-				Log.d(TAG, "    " + key + " = " + extras.get(key));
+				AppLog.d(TAG, "    " + key + " = " + extras.get(key));
 			}
 		}
 
@@ -199,9 +200,9 @@ public class VersionsActivity extends BaseActivity {
 				}
 
 				String[] cns = c.getColumnNames();
-				Log.d(TAG, Arrays.toString(cns));
+				AppLog.d(TAG, Arrays.toString(cns));
 				for (int i = 0, len = c.getColumnCount(); i < len; i++) {
-					Log.d(TAG, cns[i] + ": " + c.getString(i));
+					AppLog.d(TAG, cns[i] + ": " + c.getString(i));
 				}
 
 				int col = c.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
@@ -510,13 +511,13 @@ public class VersionsActivity extends BaseActivity {
 						converter.setConvertProgressListener(new ConvertPdbToYes2.ConvertProgressListener() {
 							@Override
 							public void onProgress(int at, String message) {
-								Log.d(TAG, "Progress " + at + ": " + message);
+								AppLog.d(TAG, "Progress " + at + ": " + message);
 								publishProgress(at, message);
 							}
 
 							@Override
 							public void onFinish() {
-								Log.d(TAG, "Finish");
+								AppLog.d(TAG, "Finish");
 								publishProgress(null, null);
 							}
 						});
@@ -703,7 +704,7 @@ public class VersionsActivity extends BaseActivity {
 							} catch (Exception e) {
 								return null;
 							} finally {
-								Log.d(TAG, "menghapus tmpfile3: " + tmpfile3);
+								AppLog.d(TAG, "menghapus tmpfile3: " + tmpfile3);
 								//noinspection ResultOfMethodCallIgnored
 								new File(tmpfile3).delete();
 							}
@@ -1030,7 +1031,7 @@ public class VersionsActivity extends BaseActivity {
 				try {
 					enabled = App.context.getPackageManager().getApplicationEnabledSetting("com.android.providers.downloads");
 				} catch (Exception e) {
-					Log.d(TAG, "getting app enabled setting", e);
+					AppLog.d(TAG, "getting app enabled setting", e);
 				}
 
 				if (enabled == -1
@@ -1043,7 +1044,7 @@ public class VersionsActivity extends BaseActivity {
 							try {
 								startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:com.android.providers.downloads")));
 							} catch (ActivityNotFoundException e) {
-								Log.e(TAG, "opening apps setting", e);
+								AppLog.e(TAG, "opening apps setting", e);
 							}
 						})
 						.negativeText(R.string.cancel)
@@ -1184,10 +1185,10 @@ public class VersionsActivity extends BaseActivity {
 					Collections.sort(items, (a, b) -> a.mv.ordering - b.mv.ordering);
 
 					if (BuildConfig.DEBUG) {
-						Log.d(TAG, "ordering   type                   versionId");
-						Log.d(TAG, "========   ===================    =================");
+						AppLog.d(TAG, "ordering   type                   versionId");
+						AppLog.d(TAG, "========   ===================    =================");
 						for (final Item item : items) {
-							Log.d(TAG, String.format("%8d   %-20s   %s", item.mv.ordering, item.mv.getClass().getSimpleName(), item.mv.getVersionId()));
+							AppLog.d(TAG, String.format("%8d   %-20s   %s", item.mv.ordering, item.mv.getClass().getSimpleName(), item.mv.getVersionId()));
 						}
 					}
 				}

@@ -4,6 +4,7 @@ import android.util.Log;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.storage.YesReaderFactory;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.model.Version;
 
@@ -74,7 +75,7 @@ public class MVersionDb extends MVersion {
 
 			final BibleReader reader = YesReaderFactory.createYesReader(filename);
 			if (reader == null) {
-				Log.e(VersionsActivity.TAG, "YesReaderFactory failed to open the yes file");
+				AppLog.e(VersionsActivity.TAG, "YesReaderFactory failed to open the yes file");
 				return null;
 			}
 

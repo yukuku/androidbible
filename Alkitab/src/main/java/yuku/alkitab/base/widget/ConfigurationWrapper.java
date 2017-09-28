@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 
@@ -32,13 +33,13 @@ public class ConfigurationWrapper extends ContextWrapper {
 		final Configuration config = base.getResources().getConfiguration();
 
 		final Locale prefLocale = getLocaleFromPreferences();
-		if (BuildConfig.DEBUG) Log.d(TAG, "@@wrap: config locale will be updated to: " + prefLocale);
+		if (BuildConfig.DEBUG) AppLog.d(TAG, "@@wrap: config locale will be updated to: " + prefLocale);
 
 		ConfigurationCompat.setLocale(config, prefLocale);
 
 		final float fontScale = getFontScaleFromPreferences();
 		if (config.fontScale != fontScale) {
-			if (BuildConfig.DEBUG) Log.d(TAG, "@@wrap: fontScale will be updated to: " + fontScale);
+			if (BuildConfig.DEBUG) AppLog.d(TAG, "@@wrap: fontScale will be updated to: " + fontScale);
 
 			config.fontScale = fontScale;
 		}
@@ -182,7 +183,7 @@ public class ConfigurationWrapper extends ContextWrapper {
 
 		if (res == 0.f) {
 			final float defFontScale = Settings.System.getFloat(App.context.getContentResolver(), Settings.System.FONT_SCALE, 1.f);
-			if (BuildConfig.DEBUG) Log.d(TAG, "defFontScale: " + defFontScale);
+			if (BuildConfig.DEBUG) AppLog.d(TAG, "defFontScale: " + defFontScale);
 			res = defFontScale;
 		}
 

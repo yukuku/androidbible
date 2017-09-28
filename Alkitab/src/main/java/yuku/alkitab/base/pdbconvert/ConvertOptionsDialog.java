@@ -14,6 +14,7 @@ import com.compactbyte.android.bible.PDBFileStream;
 import com.compactbyte.bibleplus.reader.BiblePlusPDB;
 import com.compactbyte.bibleplus.reader.BookInfo;
 import yuku.afw.V;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.R;
 
@@ -87,7 +88,7 @@ public class ConvertOptionsDialog {
 				try {
 					pdb.close();
 				} catch (IOException e1) {
-					Log.e(TAG, "IO exception when closing", e1);
+					AppLog.e(TAG, "IO exception when closing", e1);
 				}
 			}
 			return;
@@ -118,7 +119,7 @@ public class ConvertOptionsDialog {
 		if (tabEncoding == null) {
 			for (Map.Entry<String, Charset> charset: Charset.availableCharsets().entrySet()) {
 				String key = charset.getKey();
-				Log.d(TAG, "available charset: " + key);
+				AppLog.d(TAG, "available charset: " + key);
 				charsets.add(key);
 			}
 			
@@ -180,7 +181,7 @@ public class ConvertOptionsDialog {
 		try {
 			pdb.close();
 		} catch (IOException e1) {
-			Log.e(TAG, "IO exception when closing", e1);
+			AppLog.e(TAG, "IO exception when closing", e1);
 		}
 
 		ConvertPdbToYes2.ConvertParams params = new ConvertPdbToYes2.ConvertParams();

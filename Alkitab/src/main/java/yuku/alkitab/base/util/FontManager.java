@@ -33,14 +33,14 @@ public class FontManager {
 				}
 			}
 
-			Log.d(TAG, "TypefaceCreateFromFileCacher creating entry for " + path);
+			AppLog.d(TAG, "TypefaceCreateFromFileCacher creating entry for " + path);
 			Typeface typeface = Typeface.createFromFile(path);
 
 			// cache too full?
 			if (keys.size() >= max) {
 				keys.remove(0);
 				values.remove(0);
-				Log.d(TAG, "TypefaceCreateFromFileCacher removed entry from cache because cache is too full");
+				AppLog.d(TAG, "TypefaceCreateFromFileCacher removed entry from cache because cache is too full");
 			}
 			keys.add(path);
 			values.add(typeface);
@@ -131,7 +131,7 @@ public class FontManager {
 			final String basename = pathname.getName();
 			final File file = new File(fontsDir, getRegularFilename(basename));
 			if (!file.exists()) {
-				Log.d(TAG, "Font dir " + pathname.getAbsolutePath() + " exists but " + file.getAbsolutePath() + " doesn't");
+				AppLog.d(TAG, "Font dir " + pathname.getAbsolutePath() + " exists but " + file.getAbsolutePath() + " doesn't");
 				return false;
 			} else {
 				return true;
@@ -149,7 +149,7 @@ public class FontManager {
 		else {
 			res = getRegular(name);
 			if (res == null) {
-				Log.w(TAG, "Failed to load font named " + name + " fallback to SANS_SERIF");
+				AppLog.w(TAG, "Failed to load font named " + name + " fallback to SANS_SERIF");
 				res = Typeface.SANS_SERIF;
 			}
 		}

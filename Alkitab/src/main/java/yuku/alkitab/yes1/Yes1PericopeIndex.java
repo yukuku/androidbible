@@ -1,6 +1,7 @@
 package yuku.alkitab.yes1;
 
 import android.util.Log;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.model.PericopeIndex;
 import yuku.bintex.BintexReader;
 
@@ -38,7 +39,7 @@ public class Yes1PericopeIndex extends PericopeIndex {
 			
 			return Yes1PericopeBlock.read(in);
 		} catch (IOException e) {
-			Log.e(TAG, "getBlock error", e);
+			AppLog.e(TAG, "getBlock error", e);
 			
 			return null;
 		}

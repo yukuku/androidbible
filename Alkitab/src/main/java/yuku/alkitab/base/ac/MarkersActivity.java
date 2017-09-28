@@ -35,6 +35,7 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.LabelEditorDialog;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.BookmarkImporter;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
@@ -435,9 +436,9 @@ public class MarkersActivity extends BaseActivity {
 			labels = S.getDb().listAllLabels();
 			
 			if (D.EBUG) {
-				Log.d(TAG, "_id  title                ordering backgroundColor");
+				AppLog.d(TAG, "_id  title                ordering backgroundColor");
 				for (Label label: labels) {
-					Log.d(TAG, String.format("%4d %20s %8d %s", label._id, label.title, label.ordering, label.backgroundColor));
+					AppLog.d(TAG, String.format("%4d %20s %8d %s", label._id, label.title, label.ordering, label.backgroundColor));
 				}
 			}
 			

@@ -79,6 +79,7 @@ import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Announce;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.CurrentReading;
 import yuku.alkitab.base.util.ExtensionManager;
@@ -526,7 +527,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			openingAri = Ari.encode(lastBookId, lastChapter, lastVerse);
 			selectVerse = false;
 			selectVerseCount = 1;
-			Log.d(TAG, "Going to the last: bookId=" + lastBookId + " chapter=" + lastChapter + " verse=" + lastVerse);
+			AppLog.d(TAG, "Going to the last: bookId=" + lastBookId + " chapter=" + lastChapter + " verse=" + lastVerse);
 		} else {
 			openingAri = intentResult.ari;
 			selectVerse = intentResult.selectVerse;
@@ -631,17 +632,17 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	 * @return non-null if the intent is handled by any of the intent handler (e.g. nfc or VIEW)
 	 */
 	private IntentResult processIntent(Intent intent, String via) {
-		Log.d(TAG, "Got intent via " + via);
-		Log.d(TAG, "  action: " + intent.getAction());
-		Log.d(TAG, "  data uri: " + intent.getData());
-		Log.d(TAG, "  component: " + intent.getComponent());
-		Log.d(TAG, "  flags: 0x" + Integer.toHexString(intent.getFlags()));
-		Log.d(TAG, "  mime: " + intent.getType());
+		AppLog.d(TAG, "Got intent via " + via);
+		AppLog.d(TAG, "  action: " + intent.getAction());
+		AppLog.d(TAG, "  data uri: " + intent.getData());
+		AppLog.d(TAG, "  component: " + intent.getComponent());
+		AppLog.d(TAG, "  flags: 0x" + Integer.toHexString(intent.getFlags()));
+		AppLog.d(TAG, "  mime: " + intent.getType());
 		Bundle extras = intent.getExtras();
-		Log.d(TAG, "  extras: " + (extras == null? "null": extras.size()));
+		AppLog.d(TAG, "  extras: " + (extras == null ? "null" : extras.size()));
 		if (extras != null) {
 			for (String key: extras.keySet()) {
-				Log.d(TAG, "    " + key + " = " + extras.get(key));
+				AppLog.d(TAG, "    " + key + " = " + extras.get(key));
 			}
 		}
 
@@ -732,7 +733,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			try {
 				_nfcAdapter.disableForegroundDispatch(this);
 			} catch (IllegalStateException e) {
-				Log.e(TAG, "sometimes this happens.", e);
+				AppLog.e(TAG, "sometimes this happens.", e);
 			}
 		}
 	}
@@ -777,7 +778,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 			return new IntentResult(ari);
 		} catch (JSONException e) {
-			Log.e(TAG, "Malformed json from nfc", e);
+			AppLog.e(TAG, "Malformed json from nfc", e);
 			return null;
 		}
 	}
@@ -833,7 +834,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 			return true;
 		} catch (Throwable e) { // so we don't crash on the beginning of the app
-			Log.e(TAG, "Error opening main version", e);
+			AppLog.e(TAG, "Error opening main version", e);
 
 			new MaterialDialog.Builder(IsiActivity.this)
 				.content(getString(R.string.version_error_opening, mv.longName))
@@ -860,7 +861,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 			return true;
 		} catch (Throwable e) { // so we don't crash on the beginning of the app
-			Log.e(TAG, "Error opening split version", e);
+			AppLog.e(TAG, "Error opening split version", e);
 
 			new MaterialDialog.Builder(IsiActivity.this)
 				.content(getString(R.string.version_error_opening, mv.longName))
@@ -931,7 +932,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			return 0;
 		}
 
-		Log.d(TAG, "going to jump to " + reference);
+		AppLog.d(TAG, "going to jump to " + reference);
 
 		Jumper jumper = new Jumper(reference);
 		if (! jumper.getParseSucceeded()) {
@@ -981,7 +982,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		final Book book = S.activeVersion.getBook(bookId);
 
 		if (book == null) {
-			Log.w(TAG, "bookId=" + bookId + " not found for ari=" + ari);
+			AppLog.w(TAG, "bookId=" + bookId + " not found for ari=" + ari);
 			return;
 		}
 
@@ -2126,7 +2127,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		@Override public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 			getMenuInflater().inflate(R.menu.context_isi, menu);
 
-			Log.d(TAG, "@@onCreateActionMode");
+			AppLog.d(TAG, "@@onCreateActionMode");
 			
 			/* The following "esvsbasal" thing is a personal thing by yuku that doesn't matter to anyone else.
 			 * Please ignore it and leave it intact. */
@@ -2420,7 +2421,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					intent.putExtra("ari", ari);
 					startActivity(intent);
 				} catch (Exception e) {
-					Log.e(TAG, "ESVSB starting", e);
+					AppLog.e(TAG, "ESVSB starting", e);
 				}
 			} return true;
 			case R.id.menuGuide: {

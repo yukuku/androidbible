@@ -12,6 +12,7 @@ import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.ProgressMark;
@@ -135,7 +136,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 
 			int mapOffset = Ari.toVerse(ari) - 1;
 			if (mapOffset >= progressMarkBitsMap.length) {
-				Log.e(TAG, "(for progressMarkBitsMap:) mapOffset out of bounds: " + mapOffset + " happened on ari 0x" + Integer.toHexString(ari));
+				AppLog.e(TAG, "(for progressMarkBitsMap:) mapOffset out of bounds: " + mapOffset + " happened on ari 0x" + Integer.toHexString(ari));
 			} else {
 				progressMarkBitsMap[mapOffset] |= 1 << (progressMark.preset_id + AttributeView.PROGRESS_MARK_BITS_START);
 			}
@@ -162,7 +163,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 							for (final int ari : aris) {
 								int mapOffset = Ari.toVerse(ari) - 1;
 								if (mapOffset >= hasMapsMap.length) {
-									Log.e(TAG, "(for hasMapsMap:) mapOffset out of bounds: " + mapOffset + " happened on ari 0x" + Integer.toHexString(ari));
+									AppLog.e(TAG, "(for hasMapsMap:) mapOffset out of bounds: " + mapOffset + " happened on ari 0x" + Integer.toHexString(ari));
 								} else {
 									hasMapsMap[mapOffset] = true;
 								}
@@ -295,7 +296,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 			}
 		}
 
-		Log.w(TAG, "pericope title at the last position? does not make sense.");
+		AppLog.w(TAG, "pericope title at the last position? does not make sense.");
 		return 0;
 	}
 

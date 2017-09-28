@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.U;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.SingleChapterVerses;
@@ -506,7 +507,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		final int position = adapter.getPositionOfPericopeBeginningFromVerse(verse_1);
 
 		if (position == -1) {
-			Log.w(TAG, "could not find verse_1=" + verse_1 + ", weird!");
+			AppLog.w(TAG, "could not find verse_1=" + verse_1 + ", weird!");
 		} else {
 			final int delay = firstTimeScroll? 34: 0;
 			final int vn = dataVersionNumber.get();
@@ -534,7 +535,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		final int position = adapter.getPositionIgnoringPericopeFromVerse(verse_1);
 		
 		if (position == -1) {
-			Log.d(TAG, "could not find verse_1: " + verse_1);
+			AppLog.d(TAG, "could not find verse_1: " + verse_1);
 			return;
 		}
 

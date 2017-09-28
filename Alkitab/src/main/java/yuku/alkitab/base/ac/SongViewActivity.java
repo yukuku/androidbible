@@ -41,6 +41,7 @@ import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.storage.SongDb;
 import yuku.alkitab.base.util.AlphanumComparator;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.FontManager;
 import yuku.alkitab.base.util.Foreground;
@@ -251,7 +252,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		}
 
 		private void setState(final ControllerState newState) {
-			Log.d(TAG, "@@setState newState=" + newState);
+			AppLog.d(TAG, "@@setState newState=" + newState);
 			state = newState;
 			updateMediaState();
 		}
@@ -300,11 +301,11 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 									// the following should be synchronous, since we are loading from local.
 									mediaPlayerPrepare(true, cacheFile.getAbsolutePath(), playInLoop);
 								} else {
-									Log.d(TAG, "wrong state after downloading song file: " + state);
+									AppLog.d(TAG, "wrong state after downloading song file: " + state);
 								}
 							});
 						} catch (IOException e) {
-							Log.e(TAG, "buffering to local cache", e);
+							AppLog.e(TAG, "buffering to local cache", e);
 							setState(ControllerState.error);
 						}
 					});
@@ -346,14 +347,14 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 					}
 				});
 				mp.setOnCompletionListener(player -> {
-					Log.d(TAG, "@@onCompletion looping=" + player.isLooping());
+					AppLog.d(TAG, "@@onCompletion looping=" + player.isLooping());
 					if (!player.isLooping()) {
 						player.reset();
 						setState(ControllerState.complete);
 					}
 				});
 				mp.setOnErrorListener((mp1, what, extra) -> {
-					Log.e(TAG, "@@onError controller_state=" + state + " what=" + what + " extra=" + extra);
+					AppLog.e(TAG, "@@onError controller_state=" + state + " what=" + what + " extra=" + extra);
 
 					if (state != ControllerState.reset) { // Errors can happen if we call MediaPlayer#reset when MediaPlayer state is Preparing. In this case, do not show error message.
 						final Activity activity = activityRef.get();
@@ -382,7 +383,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 					mp.prepareAsync();
 				}
 			} catch (IOException e) {
-				Log.e(TAG, "mp setDataSource", e);
+				AppLog.e(TAG, "mp setDataSource", e);
 				setState(ControllerState.error);
 			}
 		}
@@ -552,15 +553,15 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 									mediaPlayerController.mediaKnownToExist(url, true);
 								}
 							} else {
-								Log.d(TAG, "mediaPlayerController can't have new URL at this moment.");
+								AppLog.d(TAG, "mediaPlayerController can't have new URL at this moment.");
 							}
 						});
 					}
 				} else {
-					Log.d(TAG, "@@checkAudioExistance response: " + response);
+					AppLog.d(TAG, "@@checkAudioExistance response: " + response);
 				}
 			} catch (IOException e) {
-				Log.e(TAG, "@@checkAudioExistance", e);
+				AppLog.e(TAG, "@@checkAudioExistance", e);
 			}
 		});
 	}
@@ -871,7 +872,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		
 		String[] parts = osisId.split("\\.");
 		if (parts.length != 2 && parts.length != 3) {
-			Log.w(TAG, "osisId invalid: " + osisId + " in " + line);
+			AppLog.w(TAG, "osisId invalid: " + osisId + " in " + line);
 		} else {
 			String bookName = parts[0];
 			int chapter_1 = Integer.parseInt(parts[1]);
@@ -886,7 +887,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			}
 			
 			if (bookId < 0) {
-				Log.w(TAG, "osisBookName invalid: " + bookName + " in " + line);
+				AppLog.w(TAG, "osisBookName invalid: " + bookName + " in " + line);
 			} else {
 				Book book = S.activeVersion.getBook(bookId);
 				

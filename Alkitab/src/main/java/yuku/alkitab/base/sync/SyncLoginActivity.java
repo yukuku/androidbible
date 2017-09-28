@@ -25,6 +25,7 @@ import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
 import yuku.alkitab.debug.R;
 
@@ -138,7 +139,7 @@ public class SyncLoginActivity extends BaseActivity {
 
 				startThreadWithProgressDialog(getString(R.string.sync_progress_register), () -> {
 					try {
-						Log.d(TAG, "Sending form to server for creating new account...");
+						AppLog.d(TAG, "Sending form to server for creating new account...");
 						SyncRecorder.log(SyncRecorder.EventKind.register_attempt, null, "serverPrefix", Sync.getEffectiveServerPrefix(), "email", email);
 
 						final Sync.LoginResponseJson response = Sync.register(form);
@@ -152,7 +153,7 @@ public class SyncLoginActivity extends BaseActivity {
 
 						gotSimpleToken(email, response.simpleToken, true);
 					} catch (Sync.NotOkException e) {
-						Log.d(TAG, "Register failed", e);
+						AppLog.d(TAG, "Register failed", e);
 						SyncRecorder.log(SyncRecorder.EventKind.register_failed, null, "email", email, "message", e.getMessage());
 
 						Answers.getInstance().logSignUp(new SignUpEvent()
@@ -194,7 +195,7 @@ public class SyncLoginActivity extends BaseActivity {
 
 			startThreadWithProgressDialog(getString(R.string.sync_progress_login), () -> {
 				try {
-					Log.d(TAG, "Sending form to server for login...");
+					AppLog.d(TAG, "Sending form to server for login...");
 					SyncRecorder.log(SyncRecorder.EventKind.login_attempt, null, "serverPrefix", Sync.getEffectiveServerPrefix(), "email", email);
 
 					final Sync.LoginResponseJson response = Sync.login(email, password);
@@ -208,7 +209,7 @@ public class SyncLoginActivity extends BaseActivity {
 
 					gotSimpleToken(email, response.simpleToken, false);
 				} catch (Sync.NotOkException e) {
-					Log.d(TAG, "Login failed", e);
+					AppLog.d(TAG, "Login failed", e);
 					SyncRecorder.log(SyncRecorder.EventKind.login_failed, null, "email", email, "message", e.getMessage());
 
 					Answers.getInstance().logLogin(new LoginEvent()
@@ -239,7 +240,7 @@ public class SyncLoginActivity extends BaseActivity {
 
 			startThreadWithProgressDialog(getString(R.string.sync_progress_processing), () -> {
 				try {
-					Log.d(TAG, "Sending form to server for forgot password...");
+					AppLog.d(TAG, "Sending form to server for forgot password...");
 
 					Sync.forgotPassword(email);
 
@@ -249,7 +250,7 @@ public class SyncLoginActivity extends BaseActivity {
 						.show()
 					);
 				} catch (Sync.NotOkException e) {
-					Log.d(TAG, "Forgot password failed", e);
+					AppLog.d(TAG, "Forgot password failed", e);
 
 					runOnUiThread(() -> new MaterialDialog.Builder(this)
 						.content(e.getMessage())
@@ -288,7 +289,7 @@ public class SyncLoginActivity extends BaseActivity {
 
 			confirmPassword(passwordNew, () -> startThreadWithProgressDialog(getString(R.string.sync_progress_processing), () -> {
 				try {
-					Log.d(TAG, "Sending form to server for changing password...");
+					AppLog.d(TAG, "Sending form to server for changing password...");
 
 					Sync.changePassword(email, password, passwordNew);
 
@@ -299,7 +300,7 @@ public class SyncLoginActivity extends BaseActivity {
 						.setOnDismissListener(dialog -> finish())
 					);
 				} catch (Sync.NotOkException e) {
-					Log.d(TAG, "Change password failed", e);
+					AppLog.d(TAG, "Change password failed", e);
 
 					runOnUiThread(() -> new MaterialDialog.Builder(this)
 						.content(e.getMessage())

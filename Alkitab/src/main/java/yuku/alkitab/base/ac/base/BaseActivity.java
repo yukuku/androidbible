@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.widget.ConfigurationWrapper;
 import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.R;
@@ -59,7 +60,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 
 		final int currentConfigurationSerialNumber = ConfigurationWrapper.getSerialCounter();
 		if (lastKnownConfigurationSerialNumber != currentConfigurationSerialNumber) {
-			Log.d(TAG, "Restarting activity " + getClass().getName() + " because of configuration change " + lastKnownConfigurationSerialNumber + " -> " + currentConfigurationSerialNumber);
+			AppLog.d(TAG, "Restarting activity " + getClass().getName() + " because of configuration change " + lastKnownConfigurationSerialNumber + " -> " + currentConfigurationSerialNumber);
 			lastKnownConfigurationSerialNumber = currentConfigurationSerialNumber;
 			recreate();
 		}
@@ -114,7 +115,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 				setTitle(Localized.text(activityInfo.labelRes));
 			}
 		} catch (PackageManager.NameNotFoundException e) {
-			Log.e(TAG, "Internal consistency error", e);
+			AppLog.e(TAG, "Internal consistency error", e);
 		}
 	}
 

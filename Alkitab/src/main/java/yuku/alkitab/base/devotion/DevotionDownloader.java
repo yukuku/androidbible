@@ -11,6 +11,7 @@ import android.util.Log;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.DevotionActivity;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Foreground;
 import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.BuildConfig;
@@ -84,15 +85,15 @@ public class DevotionDownloader extends Thread {
 					synchronized (queue_) {
 						queue_.wait();
 					}
-					Log.d(TAG, "Downloader is resumed");
+					AppLog.d(TAG, "Downloader is resumed");
 				} catch (InterruptedException e) {
-					Log.d(TAG, "Queue is interrupted");
+					AppLog.d(TAG, "Queue is interrupted");
 				}
 			} else {
 				final DevotionActivity.DevotionKind kind = article.getKind();
 				final String url = BuildConfig.SERVER_HOST + "devotion/get?name=" + kind.name + "&date=" + article.getDate() + "&app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName());
 
-				Log.d(TAG, "Downloader starts downloading name=" + kind.name + " date=" + article.getDate());
+				AppLog.d(TAG, "Downloader starts downloading name=" + kind.name + " date=" + article.getDate());
 				notifyDownloadStatus(
 					TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_downloading_title), kind.title),
 					TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_downloading_date), article.getDate())
@@ -120,13 +121,13 @@ public class DevotionDownloader extends Thread {
 					// let's now store it to db
 					S.getDb().storeArticleToDevotions(article);
 				} catch (IOException e) {
-					Log.w(TAG, "@@run", e);
+					AppLog.w(TAG, "@@run", e);
 
 					notifyDownloadStatus(
 						TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_downloading_title), kind.title),
 						TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_error_date), article.getDate(), e.getMessage())
 					);
-					Log.d(TAG, "Downloader failed to download");
+					AppLog.d(TAG, "Downloader failed to download");
 				}
 			}
 

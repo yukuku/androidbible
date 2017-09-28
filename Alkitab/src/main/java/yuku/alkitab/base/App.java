@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.PreferenceManager;
-import android.util.Log;
 import android.view.ViewConfiguration;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -31,6 +30,7 @@ import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Gcm;
 import yuku.alkitab.base.sync.Sync;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.reminder.util.DevotionReminder;
@@ -103,7 +103,7 @@ public class App extends yuku.afw.App {
 	public void onCreate() {
 		super.onCreate();
 
-		Fabric.with(this, new Crashlytics());
+		staticInit();
 
 		{ // LeakCanary, also we need the Application instance.
 			if (LeakCanary.isInAnalyzerProcess(this)) {
@@ -113,8 +113,6 @@ public class App extends yuku.afw.App {
 			}
 			LeakCanary.install(this);
 		}
-
-		staticInit();
 
 		{ // Google Analytics V4
 			// This can't be in staticInit because we need the Application instance.
@@ -131,9 +129,19 @@ public class App extends yuku.afw.App {
 		}
 	}
 
+	/**
+	 * {@link yuku.afw.App#context} must have been set via {@link #initWithAppContext(Context)}
+	 * before calling this method.
+	 */
 	public synchronized static void staticInit() {
 		if (initted) return;
 		initted = true;
+
+		if (context == null) {
+			throw new RuntimeException("yuku.afw.App.context must have been set via initWithAppContext(Context) before calling this method.");
+		}
+
+		Fabric.with(context, new Crashlytics());
 
 		final FeedbackSender fs = FeedbackSender.getInstance(context);
 		fs.trySend();
@@ -176,7 +184,7 @@ public class App extends yuku.afw.App {
 		}
 
 		if (BuildConfig.DEBUG) {
-			Log.d(TAG, "Font scale: " + context.getResources().getConfiguration().fontScale);
+			AppLog.d(TAG, "Font scale: " + context.getResources().getConfiguration().fontScale);
 		}
 	}
 
@@ -191,7 +199,7 @@ public class App extends yuku.afw.App {
 			sHasPermanentMenuKey.setAccessible(true);
 			sHasPermanentMenuKey.setBoolean(config, false);
 		} catch (Exception e) {
-			Log.w(TAG, "ViewConfiguration has no sHasPermanentMenuKey field", e);
+			AppLog.w(TAG, "ViewConfiguration has no sHasPermanentMenuKey field", e);
 		}
 
 		try {
@@ -199,7 +207,7 @@ public class App extends yuku.afw.App {
 			sHasPermanentMenuKeySet.setAccessible(true);
 			sHasPermanentMenuKeySet.setBoolean(config, true);
 		} catch (Exception e) {
-			Log.w(TAG, "ViewConfiguration has no sHasPermanentMenuKeySet field", e);
+			AppLog.w(TAG, "ViewConfiguration has no sHasPermanentMenuKeySet field", e);
 		}
 	}
 

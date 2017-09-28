@@ -17,6 +17,7 @@ import android.widget.RemoteViews;
 import yuku.afw.App;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.sv.DailyVerseAppWidgetService;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.DailyVerseData;
 import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.BuildConfig;
@@ -39,7 +40,7 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 		protected void onHandleIntent(final Intent intent) {
 			final int[] appWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 			if (appWidgetIds == null) {
-				Log.e(TAG, "appWidgetIds is null");
+				AppLog.e(TAG, "appWidgetIds is null");
 				return;
 			}
 

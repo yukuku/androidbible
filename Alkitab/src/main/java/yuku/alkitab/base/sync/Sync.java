@@ -18,6 +18,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
@@ -200,7 +201,7 @@ public class Sync {
 		for (final String syncSetName : syncSetNames) {
 			final AtomicInteger counter = syncUpdatesOngoingCounters.get(syncSetName);
 			if (counter != null && counter.get() != 0) {
-				Log.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: ongoing counter != 0");
+				AppLog.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: ongoing counter != 0");
 				return;
 			}
 
@@ -215,7 +216,7 @@ public class Sync {
 			// check if we can omit queueing sync request for this sync set name.
 			synchronized (syncSetNameQueue) {
 				if (syncSetNameQueue.contains(syncSetName)) {
-					Log.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: sync queue already contains it");
+					AppLog.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: sync queue already contains it");
 					continue;
 				}
 				syncSetNameQueue.add(syncSetName);
@@ -298,7 +299,7 @@ public class Sync {
 		// must send to server if we are logged in
 		final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
 		if (simpleToken == null) {
-			Log.d(TAG, "Got new GCM registration id, but sync is not logged in");
+			AppLog.d(TAG, "Got new GCM registration id, but sync is not logged in");
 			return;
 		}
 
@@ -325,23 +326,23 @@ public class Sync {
 
 			if (!response.success) {
 				SyncRecorder.log(SyncRecorder.EventKind.gcm_send_not_success, null, "message", response.message);
-				Log.d(TAG, "GCM registration id rejected by server: " + response.message);
+				AppLog.d(TAG, "GCM registration id rejected by server: " + response.message);
 				return false;
 			}
 
 			SyncRecorder.log(SyncRecorder.EventKind.gcm_send_success, null, "is_new_registration_id", response.is_new_registration_id);
-			Log.d(TAG, "GCM registration id accepted by server: is_new_registration_id=" + response.is_new_registration_id);
+			AppLog.d(TAG, "GCM registration id accepted by server: is_new_registration_id=" + response.is_new_registration_id);
 
 			return true;
 
 		} catch (IOException | JsonIOException e) {
 			SyncRecorder.log(SyncRecorder.EventKind.gcm_send_error_io, null);
-			Log.d(TAG, "Failed to send GCM registration id to server", e);
+			AppLog.d(TAG, "Failed to send GCM registration id to server", e);
 			return false;
 
 		} catch (JsonSyntaxException e) {
 			SyncRecorder.log(SyncRecorder.EventKind.gcm_send_error_json, null);
-			Log.d(TAG, "Server response is not valid JSON", e);
+			AppLog.d(TAG, "Server response is not valid JSON", e);
 			return false;
 		}
 	}

@@ -14,6 +14,7 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.DailyVerseData;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
@@ -52,13 +53,13 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 
 	@Override
 	public void onCreate() {
-		Log.d(TAG, "@@onCreate");
+		AppLog.d(TAG, "@@onCreate");
 		reload();
 	}
 
 	@Override
 	public void onDataSetChanged() {
-		Log.d(TAG, "@@onDataSetChanged");
+		AppLog.d(TAG, "@@onDataSetChanged");
 		reload();
 	}
 

@@ -10,6 +10,7 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.storage.NoBackupSharedPreferences;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
 
 import java.io.IOException;
@@ -40,7 +41,7 @@ public class Gcm {
 			if (gaa.isUserResolvableError(statusCode) && thisIsPlayDevice()) {
 				gaa.showErrorNotification(App.context, statusCode);
 			} else {
-				Log.i(TAG, "This device is not supported.");
+				AppLog.i(TAG, "This device is not supported.");
 			}
 			return false;
 		}
@@ -70,7 +71,7 @@ public class Gcm {
 	@Nullable
 	public static String renewGcmRegistrationIdIfNeeded(@Nullable final Listener listener) {
 		if (!checkPlayServices()) {
-			Log.i(TAG, "No valid Google Play Services APK found.");
+			AppLog.i(TAG, "No valid Google Play Services APK found.");
 			return null;
 		}
 
@@ -96,7 +97,7 @@ public class Gcm {
 	private static String getStoredRegistrationId() {
 		final String registrationId = readGcmRegistrationId();
 		if (registrationId == null) {
-			Log.i(TAG, "Registration not found.");
+			AppLog.i(TAG, "Registration not found.");
 			return null;
 		}
 
@@ -106,7 +107,7 @@ public class Gcm {
 		final int registeredVersionCode = Preferences.getInt(Prefkey.gcm_last_app_version_code, Integer.MIN_VALUE);
 		final int currentVersionCode = App.getVersionCode();
 		if (registeredVersionCode != currentVersionCode) {
-			Log.i(TAG, "App version changed from " + registeredVersionCode + " to " + currentVersionCode);
+			AppLog.i(TAG, "App version changed from " + registeredVersionCode + " to " + currentVersionCode);
 			return null;
 		}
 
@@ -133,7 +134,7 @@ public class Gcm {
 			try {
 				final GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(App.context);
 				final String registrationId = gcm.register(SENDER_ID);
-				Log.i(TAG, "Device registered, registration ID=" + registrationId);
+				AppLog.i(TAG, "Device registered, registration ID=" + registrationId);
 
 				// You should send the registration ID to your server over HTTP,
 				// so it can use GCM/HTTP or CCS to send messages to your app.
@@ -149,7 +150,7 @@ public class Gcm {
 			} catch (IOException ex) {
 				// If there is an error, don't just keep trying to register.
 				// Require the user to click a button again, or perform exponential back-off.
-				Log.e(TAG, "Error :" + ex.getMessage(), ex);
+				AppLog.e(TAG, "Error :" + ex.getMessage(), ex);
 			}
 		});
 	}

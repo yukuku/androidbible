@@ -14,6 +14,7 @@ import android.widget.TextView;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.TargetDecoder;
@@ -142,7 +143,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				try {
 					c = cr.query(uri, null, null, null, null);
 				} catch (Exception e) {
-					Log.e(TAG, "Error when querying dictionary content provider", e);
+					AppLog.e(TAG, "Error when querying dictionary content provider", e);
 				}
 
 				if (c != null) {

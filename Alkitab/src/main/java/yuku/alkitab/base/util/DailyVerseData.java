@@ -77,7 +77,7 @@ public abstract class DailyVerseData {
 			}
 
 			if (!allAvailable) {
-				Log.d(TAG, "ari 0x" + Integer.toHexString(aris[0]) + " verseCount=" + verseCount + " click=" + savedState.click + " are not available in version " + savedState.versionId);
+				AppLog.d(TAG, "ari 0x" + Integer.toHexString(aris[0]) + " verseCount=" + verseCount + " click=" + savedState.click + " are not available in version " + savedState.versionId);
 				if (trial != maxTries - 1) {
 					savedState.click += direction;
 					savedStateChanged = true;
@@ -154,7 +154,7 @@ public abstract class DailyVerseData {
 			}
 		}
 
-		Log.w(DailyVerseAppWidgetReceiver.TAG, "Version selected for app widget: " + versionId + " is no longer available. Reverting to internal version.");
+		AppLog.w(DailyVerseAppWidgetReceiver.TAG, "Version selected for app widget: " + versionId + " is no longer available. Reverting to internal version.");
 		return VersionImpl.getInternalVersion();
 	}
 

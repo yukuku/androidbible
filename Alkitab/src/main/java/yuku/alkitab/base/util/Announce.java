@@ -36,7 +36,7 @@ public abstract class Announce {
 	public static void checkAnnouncements() {
 		final int lastCheck = Preferences.getInt(Prefkey.announce_last_check, 0);
 		if (lastCheck != 0 && (Sqlitil.nowDateTime() - lastCheck) < AUTO_CHECK_INTERVAL_SECONDS) {
-			Log.d(TAG, "@@checkAnnouncements exit because it was recently checked");
+			AppLog.d(TAG, "@@checkAnnouncements exit because it was recently checked");
 			return;
 		}
 
@@ -45,7 +45,7 @@ public abstract class Announce {
 				SystemClock.sleep(10000); // wait 10 seconds
 				checkAnnouncements_worker();
 			} catch (Exception e) { // handle all exceptions, because we don't want the main app to crash because of this.
-				Log.d(TAG, "@@checkAnnouncements", e);
+				AppLog.d(TAG, "@@checkAnnouncements", e);
 			}
 		});
 	}
@@ -68,7 +68,7 @@ public abstract class Announce {
 		{
 			final AnnounceCheckResult result = getAnnouncements();
 			if (!result.success) {
-				Log.d(TAG, "Announce check returns success=false: " + result.message);
+				AppLog.d(TAG, "Announce check returns success=false: " + result.message);
 				return;
 			}
 
@@ -146,7 +146,7 @@ public abstract class Announce {
 		try {
 			final AnnounceCheckResult result = getAnnouncements();
 			if (result.announcements == null) {
-				Log.e(TAG, "@@getAnnouncementIds result.announcements == null");
+				AppLog.e(TAG, "@@getAnnouncementIds result.announcements == null");
 				return null;
 			}
 
@@ -157,7 +157,7 @@ public abstract class Announce {
 
 			return res;
 		} catch (IOException e) {
-			Log.e(TAG, "@@getAnnouncementIds", e);
+			AppLog.e(TAG, "@@getAnnouncementIds", e);
 			return null;
 		}
 	}

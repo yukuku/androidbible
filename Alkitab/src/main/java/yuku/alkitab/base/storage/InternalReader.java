@@ -3,6 +3,7 @@ package yuku.alkitab.base.storage;
 import android.util.Log;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.config.AppConfig;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
@@ -233,11 +234,11 @@ public class InternalReader implements BibleReader {
 			return pericopeIndex_;
 
 		} catch (IOException e) {
-			Log.e(TAG, "Error reading pericope index", e);
+			AppLog.e(TAG, "Error reading pericope index", e);
 			return null;
 		} finally {
 			in.close();
-			Log.d(TAG, "Read pericope index needed: " + (System.currentTimeMillis() - startTime));
+			AppLog.d(TAG, "Read pericope index needed: " + (System.currentTimeMillis() - startTime));
 		}
 	}
 
@@ -300,7 +301,7 @@ public class InternalReader implements BibleReader {
 			try {
 				App.context.getAssets().list(assetName);
 			} catch (IOException e) {
-				Log.d(TAG, "Can't load xrefs from internal, marking it as not available.");
+				AppLog.d(TAG, "Can't load xrefs from internal, marking it as not available.");
 				xrefsKnownNotAvailable = true;
 				return null;
 			}
@@ -324,7 +325,7 @@ public class InternalReader implements BibleReader {
 			try {
 				App.context.getAssets().list(assetName);
 			} catch (IOException e) {
-				Log.d(TAG, "Can't load footnotes from internal, marking it as not available.");
+				AppLog.d(TAG, "Can't load footnotes from internal, marking it as not available.");
 				footnotesKnownNotAvailable = true;
 				return null;
 			}
@@ -332,7 +333,7 @@ public class InternalReader implements BibleReader {
 			try {
 				footnotesSection_ = new FootnotesSection.Reader().read(new AssetRandomInputStream(assetName));
 			} catch (Exception e) {
-				Log.e(TAG, "Error reading footnotes section from internal", e);
+				AppLog.e(TAG, "Error reading footnotes section from internal", e);
 				return null;
 			}
 		}

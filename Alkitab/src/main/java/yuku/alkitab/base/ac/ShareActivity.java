@@ -26,6 +26,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.R;
 
 import java.util.ArrayList;
@@ -187,7 +188,7 @@ public class ShareActivity extends BaseActivity {
 						}
 						ActivityInfo ai = ii.resolveActivityInfo(getPackageManager(), 0);
 						if (ai == null) {
-							Log.w("ResolverActivity", "No activity found for " + ii);
+							AppLog.w("ResolverActivity", "No activity found for " + ii);
 							continue;
 						}
 						ResolveInfo ri = new ResolveInfo();

@@ -18,6 +18,7 @@ import yuku.afw.D;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.dialog.base.BaseDialog;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.base.widget.VerseRenderer;
@@ -173,7 +174,7 @@ public class XrefDialog extends BaseDialog {
 		final IntArrayList ranges = decodeTarget(encodedTarget);
 
 		if (D.EBUG) {
-			Log.d(TAG, "linkPos " + linkPos + " target=" + encodedTarget + " ranges=" + ranges);
+			AppLog.d(TAG, "linkPos " + linkPos + " target=" + encodedTarget + " ranges=" + ranges);
 		}
 		
 		displayedVerseTexts = new ArrayList<>();

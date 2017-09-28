@@ -200,11 +200,11 @@ public class BookmarkImporter {
 						if (labelLama != null) {
 							// removed from v3: update warna label lama
 							labelRelIdToAbsIdMap.put(labelRelId, labelLama._id);
-							Log.d(BaseActivity.TAG, "label (lama) r->a : " + labelRelId + "->" + labelLama._id);
+							AppLog.d(BaseActivity.TAG, "label (lama) r->a : " + labelRelId + "->" + labelLama._id);
 						} else { // belum ada, harus bikin baru
 							Label labelBaru = S.getDb().insertLabel(label.title, label.backgroundColor);
 							labelRelIdToAbsIdMap.put(labelRelId, labelBaru._id);
-							Log.d(BaseActivity.TAG, "label (baru) r->a : " + labelRelId + "->" + labelBaru._id);
+							AppLog.d(BaseActivity.TAG, "label (baru) r->a : " + labelRelId + "->" + labelBaru._id);
 						}
 					}
 				}
@@ -219,7 +219,7 @@ public class BookmarkImporter {
 				pd.dismiss();
 
 				if (result instanceof Exception) {
-					Log.e(TAG, "Error when importing markers", (Throwable) result);
+					AppLog.e(TAG, "Error when importing markers", (Throwable) result);
 					new MaterialDialog.Builder(activity)
 						.content(activity.getString(R.string.terjadi_kesalahan_ketika_mengimpor_pesan, ((Exception) result).getMessage()))
 						.positiveText(R.string.ok)
@@ -292,12 +292,12 @@ public class BookmarkImporter {
 									final Marker_Label marker_label = Marker_Label.createNewMarker_Label(marker.gid, label.gid);
 									InternalDb.insertMarker_LabelIfNotExists(db, marker_label);
 								} else {
-									Log.w(TAG, "label_id is invalid!: " + label_id);
+									AppLog.w(TAG, "label_id is invalid!: " + label_id);
 								}
 							}
 						}
 					} else {
-						Log.w(TAG, "wrong marker_relId: " + marker_relId);
+						AppLog.w(TAG, "wrong marker_relId: " + marker_relId);
 					}
 				}
 			}

@@ -12,6 +12,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 
@@ -80,17 +81,17 @@ public class VersionConfigUpdaterService extends IntentService {
 		final int now = (int) (System.currentTimeMillis() / 1000L);
 
 		if (auto && lastUpdateCheck != 0 && now > lastUpdateCheck && now - lastUpdateCheck < 7 * 86400) {
-			Log.d(TAG, "Auto update: no need to check for updates. Last update check: " + new Date(lastUpdateCheck * 1000L) + " now: " + new Date(now * 1000L));
+			AppLog.d(TAG, "Auto update: no need to check for updates. Last update check: " + new Date(lastUpdateCheck * 1000L) + " now: " + new Date(now * 1000L));
 			return;
 		}
 
 		final String modifyTimeBody;
 
 		try {
-			Log.d(TAG, "Downloading list modify time");
+			AppLog.d(TAG, "Downloading list modify time");
 			modifyTimeBody = App.downloadString(BuildConfig.SERVER_HOST + "versions/list_modify_time?packageName=" + Uri.encode(getPackageName()) + "&versionCode=" + Uri.encode(String.valueOf(App.getVersionCode())));
 		} catch (IOException e) {
-			Log.e(TAG, "failed to download modify time", e);
+			AppLog.e(TAG, "failed to download modify time", e);
 
 			if (!auto) {
 				toast(getString(R.string.version_config_updater_error_download_modify_time));
@@ -103,7 +104,7 @@ public class VersionConfigUpdaterService extends IntentService {
 		try {
 			modifyTimeObj = App.getDefaultGson().fromJson(modifyTimeBody, ModifyTimeJson.class);
 		} catch (JsonSyntaxException e) {
-			Log.e(TAG, "failed to parse modify time file", e);
+			AppLog.e(TAG, "failed to parse modify time file", e);
 
 			if (!auto) {
 				toast(getString(R.string.version_config_updater_error_modify_time_cannot_parse));
@@ -120,7 +121,7 @@ public class VersionConfigUpdaterService extends IntentService {
 
 		final int localModifyTime = Preferences.getInt(Prefkey.version_config_current_modify_time, 0);
 		if (localModifyTime != 0 && localModifyTime >= modifyTimeObj.modifyTime) {
-			Log.d(TAG, "Update: no newer version available. Server modify time: " + new Date(modifyTimeObj.modifyTime * 1000L) + " Local modify time: " + new Date(localModifyTime * 1000L));
+			AppLog.d(TAG, "Update: no newer version available. Server modify time: " + new Date(modifyTimeObj.modifyTime * 1000L) + " Local modify time: " + new Date(localModifyTime * 1000L));
 			if (!auto) {
 				toast(getString(R.string.version_config_updater_no_newer_available));
 			}
@@ -129,10 +130,10 @@ public class VersionConfigUpdaterService extends IntentService {
 
 		final String versionConfigBody;
 		try {
-			Log.d(TAG, "Downloading version list");
+			AppLog.d(TAG, "Downloading version list");
 			versionConfigBody = App.downloadString(modifyTimeObj.downloadUrl);
 		} catch (IOException e) {
-			Log.e(TAG, "failed to download version list", e);
+			AppLog.e(TAG, "failed to download version list", e);
 
 			if (!auto) {
 				toast(getString(R.string.version_config_updater_error_download_list));

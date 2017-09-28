@@ -5,6 +5,7 @@ import android.util.Log;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.storage.InternalReader;
 import yuku.alkitab.base.storage.OldVerseTextDecoder;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
@@ -140,7 +141,7 @@ public class VersionImpl extends Version {
 			if (b != null) return b;
 		}
 
-		Log.e(TAG, "No books available on this version. Version info: " + (this.bibleReader == null? "reader=null": (this.bibleReader.getLongName() + " books.length=" + books.length)));
+		AppLog.e(TAG, "No books available on this version. Version info: " + (this.bibleReader == null ? "reader=null" : (this.bibleReader.getLongName() + " books.length=" + books.length)));
 		return null;
 	}
 

@@ -16,6 +16,7 @@ import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.storage.YesReaderFactory;
 import yuku.alkitab.base.util.AddonManager;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.DownloadMapper;
 import yuku.alkitab.base.util.Foreground;
@@ -44,18 +45,18 @@ public class VersionDownloadCompleteReceiver extends BroadcastReceiver {
 
 		final int status = DownloadMapper.instance.getStatus(id);
 		if (status != DownloadManager.STATUS_SUCCESSFUL) {
-			Log.w(TAG, "ACTION_DOWNLOAD_COMPLETE reported for " + id + " but actual status is " + status);
+			AppLog.w(TAG, "ACTION_DOWNLOAD_COMPLETE reported for " + id + " but actual status is " + status);
 			return; // lost download
 		}
 
 		final Map<String, String> attrs = DownloadMapper.instance.getAttrs(id);
 		if (attrs == null) {
-			Log.w(TAG, "No download attrs");
+			AppLog.w(TAG, "No download attrs");
 			return;
 		}
 
 		if (!attrs.containsKey("download_type")) {
-			Log.w(TAG, "download_type attr not found for " + id);
+			AppLog.w(TAG, "download_type attr not found for " + id);
 			return;
 		}
 
@@ -67,14 +68,14 @@ public class VersionDownloadCompleteReceiver extends BroadcastReceiver {
 		final File destFile;
 		if ("preset".equals(download_type)) {
 			if (!attrs.containsKey("preset_name")) {
-				Log.w(TAG, "preset_name attr not found for " + id);
+				AppLog.w(TAG, "preset_name attr not found for " + id);
 				return;
 			}
 
 			preset_name = attrs.get("preset_name");
 
 			if (!attrs.containsKey("modifyTime")) {
-				Log.w(TAG, "modifyTime attr not found for " + id);
+				AppLog.w(TAG, "modifyTime attr not found for " + id);
 				return;
 			}
 
@@ -82,7 +83,7 @@ public class VersionDownloadCompleteReceiver extends BroadcastReceiver {
 			destFile = AddonManager.getWritableVersionFile(preset_name + ".yes");
 		} else if ("url".equals(download_type)) {
 			if (!attrs.containsKey("filename_last_segment")) {
-				Log.w(TAG, "filename_last_segment attr not found for " + id);
+				AppLog.w(TAG, "filename_last_segment attr not found for " + id);
 				return;
 			}
 
@@ -92,7 +93,7 @@ public class VersionDownloadCompleteReceiver extends BroadcastReceiver {
 			preset_name = null;
 			modifyTime = (int) (System.currentTimeMillis() / 1000L);
 		} else {
-			Log.w(TAG, "unknown download_type for " + id + ": " + download_type);
+			AppLog.w(TAG, "unknown download_type for " + id + ": " + download_type);
 			return;
 		}
 
@@ -115,7 +116,7 @@ public class VersionDownloadCompleteReceiver extends BroadcastReceiver {
 				af.finishWrite(fos);
 				pfd.close();
 			} catch (IOException e) {
-				Log.e(TAG, "I/O error when saving downloaded version", e);
+				AppLog.e(TAG, "I/O error when saving downloaded version", e);
 				Foreground.run(() -> context.startActivity(
 					AlertDialogActivity.createOkIntent(null, context.getString(R.string.version_download_saving_io_error))
 						.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

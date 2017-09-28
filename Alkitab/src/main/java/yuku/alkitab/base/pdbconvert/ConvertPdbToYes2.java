@@ -6,6 +6,7 @@ import com.compactbyte.android.bible.PDBFileStream;
 import com.compactbyte.bibleplus.reader.BiblePlusPDB;
 import com.compactbyte.bibleplus.reader.BookInfo;
 import gnu.trove.map.hash.TIntIntHashMap;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.yes2.Yes2Writer;
@@ -75,19 +76,19 @@ public class ConvertPdbToYes2 {
 			progress(0, context.getString(R.string.cp_opening_pdb_file));
 			pdb_ = new BiblePlusPDB(new PDBFileStream(filenamepdb), Tabs.hebrewTab, Tabs.greekTab);
 			if (params.inputEncoding != null) pdb_.setEncoding(params.inputEncoding);
-			Log.d(TAG, "Encoding used: " + params.inputEncoding);
+			AppLog.d(TAG, "Encoding used: " + params.inputEncoding);
 			progress(10, context.getString(R.string.cp_loading_version_info));
 			pdb_.loadVersionInfo();
 			progress(20, context.getString(R.string.cp_loading_word_index));
 			pdb_.loadWordIndex();
-			
-			Log.d(TAG, "============ done reading pdb version info");
-			
-			Log.d(TAG, "pdb versionName: " + pdb_.getVersionName());
-			Log.d(TAG, "pdb encoding: " + pdb_.getEncoding());
+
+			AppLog.d(TAG, "============ done reading pdb version info");
+
+			AppLog.d(TAG, "pdb versionName: " + pdb_.getVersionName());
+			AppLog.d(TAG, "pdb encoding: " + pdb_.getEncoding());
 			
 			int nbook = pdb_.getBookCount();
-			Log.d(TAG, "pdb getBookCount = " + nbook);
+			AppLog.d(TAG, "pdb getBookCount = " + nbook);
 			
 			progress(30, context.getString(R.string.cp_analyzing_available_books));
 			{
@@ -97,7 +98,7 @@ public class ConvertPdbToYes2 {
 					int bookNumber = pdbBookInfo.getBookNumber();
 					int bookId = PdbBookNumberToBookIdMapping.pdbBookNumberToBookId(bookNumber);
 					if (bookId < 0) {
-						Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL");
+						AppLog.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL");
 						if (res.wronglyConvertedBookNames == null) {
 							res.wronglyConvertedBookNames = new ArrayList<>();
 						}
@@ -115,7 +116,7 @@ public class ConvertPdbToYes2 {
 				int pdbBookNumber = pdbBookInfo.getBookNumber();
 				int bookId = PdbBookNumberToBookIdMapping.pdbBookNumberToBookId(pdbBookNumber);
 				if (bookId < 0) {
-					Log.w(TAG, "pdbBookNumber " + pdbBookNumber + " NOT KNOWN");
+					AppLog.w(TAG, "pdbBookNumber " + pdbBookNumber + " NOT KNOWN");
 				} else {
 					if (bookIdToPdbBookPosMap_.containsKey(bookId)) {
 						// just a warning of duplicate
@@ -127,10 +128,10 @@ public class ConvertPdbToYes2 {
 					bookIdToPdbBookPosMap_.put(bookId, bookPos);
 				}
 			}
-			
-			Log.d(TAG, "bookIdToPdbBookPosMap_ (size " + bookIdToPdbBookPosMap_.size() + ") = " + bookIdToPdbBookPosMap_.toString());
 
-			Log.d(TAG, "============ done reading list of books");
+			AppLog.d(TAG, "bookIdToPdbBookPosMap_ (size " + bookIdToPdbBookPosMap_.size() + ") = " + bookIdToPdbBookPosMap_.toString());
+
+			AppLog.d(TAG, "============ done reading list of books");
 			
 
 			final int[] sortedBookIds = bookIdToPdbBookPosMap_.keys();
@@ -165,7 +166,7 @@ public class ConvertPdbToYes2 {
 			pdb_.close();
 		} catch (Throwable e) {
 			pdb_ = null;
-			Log.e(TAG, "Error reading pdb: ", e);
+			AppLog.e(TAG, "Error reading pdb: ", e);
 			res.exception = e;
 		}
 		finish();
@@ -225,7 +226,7 @@ public class ConvertPdbToYes2 {
 				}
 				b.chapter_offsets[chapter_0 + 1] = offsetPassed;
 			}
-			Log.d(TAG, "book " + b.shortName + " (pdbBookNumber=" + pdbBookInfo.getBookNumber() + ", bookId=" + bookId + ") chapter_offsets: " + Arrays.toString(b.chapter_offsets));
+			AppLog.d(TAG, "book " + b.shortName + " (pdbBookNumber=" + pdbBookInfo.getBookNumber() + ", bookId=" + bookId + ") chapter_offsets: " + Arrays.toString(b.chapter_offsets));
 
 			yes2books.add(b);
 			
