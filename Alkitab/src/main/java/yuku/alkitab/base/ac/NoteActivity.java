@@ -221,7 +221,7 @@ public class NoteActivity extends BaseActivity {
 
 		this.editingMode = editingMode;
 
-		invalidateOptionsMenu();
+		supportInvalidateOptionsMenu();
 	}
 
 	@Override

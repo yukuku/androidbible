@@ -184,7 +184,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		mediaState.loading = (state == MediaPlayerController.ControllerState.preparing);
 
 		//noinspection Convert2MethodRef
-		runOnUiThread(() -> invalidateOptionsMenu());
+		runOnUiThread(() -> supportInvalidateOptionsMenu());
 	}
 
 	void goTo(final int dir) {
