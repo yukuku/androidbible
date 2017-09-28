@@ -16,6 +16,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.fr.base.BaseGotoFragment;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.BookNameSorter;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
@@ -45,6 +46,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 	int selectedChapter;
 
 	final View.OnClickListener lSelectedBook_click = v -> {
+		AppLog.d(TAG, "@@lSelectedBook_click: selectedBook = null");
 		selectedBook = null;
 		selectedChapter = 0;
 		transitionChapterToBook();
@@ -56,6 +58,8 @@ public class GotoGridFragment extends BaseGotoFragment {
 	};
 	
 	void transitionBookToChapter() {
+		AppLog.d(TAG, "@@transitionBookToChapter");
+
 		gridBook.setVisibility(View.INVISIBLE);
 		panelChapterVerse.setVisibility(View.VISIBLE);
 		gridChapter.setVisibility(View.VISIBLE);
@@ -71,6 +75,8 @@ public class GotoGridFragment extends BaseGotoFragment {
 	}
 
 	void transitionBookToVerse() {
+		AppLog.d(TAG, "@@transitionBookToVerse");
+
 		gridBook.setVisibility(View.INVISIBLE);
 		panelChapterVerse.setVisibility(View.VISIBLE);
 		gridVerse.setVisibility(View.VISIBLE);
@@ -86,6 +92,8 @@ public class GotoGridFragment extends BaseGotoFragment {
 	}
 
 	void transitionChapterToBook() {
+		AppLog.d(TAG, "@@transitionChapterToBook");
+
 		gridBook.setVisibility(View.VISIBLE);
 		panelChapterVerse.setVisibility(View.INVISIBLE);
 
@@ -93,6 +101,8 @@ public class GotoGridFragment extends BaseGotoFragment {
 	}
 	
 	void transitionChapterToVerse() {
+		AppLog.d(TAG, "@@transitionChapterToVerse");
+
 		gridBook.setVisibility(View.INVISIBLE);
 		panelChapterVerse.setVisibility(View.VISIBLE);
 		gridChapter.setVisibility(View.INVISIBLE);
@@ -105,6 +115,8 @@ public class GotoGridFragment extends BaseGotoFragment {
 	}
 	
 	void transitionVerseToChapter() {
+		AppLog.d(TAG, "@@transitionVerseToChapter");
+
 		gridBook.setVisibility(View.INVISIBLE);
 		panelChapterVerse.setVisibility(View.VISIBLE);
 		gridChapter.setVisibility(View.VISIBLE);
@@ -166,7 +178,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 		} else {
 			lSelectedChapter.setVisibility(View.VISIBLE);
 			ViewCompat.jumpDrawablesToCurrentState(lSelectedChapter);
-			lSelectedChapter.setText("" + selectedChapter);
+			lSelectedChapter.setText(String.valueOf(selectedChapter));
 		}
 	}
 
@@ -255,6 +267,8 @@ public class GotoGridFragment extends BaseGotoFragment {
 
 			holder.itemView.setOnClickListener(v -> {
 				selectedBook = bookAdapter.getItem(position);
+				AppLog.d(TAG, "@@BookAdapter#onBindViewHolder: selectedBook = " + selectedBook);
+
 				if (selectedBook.chapter_count == 1) {
 					// for single-chapter books, jump directly to verse selection
 					selectedChapter = 1;
