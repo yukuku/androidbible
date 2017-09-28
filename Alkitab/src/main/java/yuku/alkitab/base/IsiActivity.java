@@ -318,7 +318,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			.appendQueryParameter("mode", "snippet")
 			.build();
 
-		final Cursor c;
+		Cursor c;
 		try {
 			c = cr.query(uri, null, null, null, null);
 		} catch (Exception e) {
