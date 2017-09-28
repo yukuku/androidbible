@@ -13,7 +13,7 @@ public class AppLog {
 	public static void d(String tag, String msg, Throwable ex) {
 		Crashlytics.log(Log.DEBUG, tag, msg);
 		Crashlytics.logException(ex);
-		AppLog.d(tag, msg, ex);
+		Log.d(tag, msg, ex);
 	}
 
 	public static void i(String tag, String msg) {
@@ -23,7 +23,7 @@ public class AppLog {
 	public static void i(String tag, String msg, Throwable ex) {
 		Crashlytics.log(Log.INFO, tag, msg);
 		Crashlytics.logException(ex);
-		AppLog.i(tag, msg, ex);
+		Log.i(tag, msg, ex);
 	}
 	
 	public static void w(String tag, String msg) {
@@ -33,7 +33,7 @@ public class AppLog {
 	public static void w(String tag, String msg, Throwable ex) {
 		Crashlytics.log(Log.WARN, tag, msg);
 		Crashlytics.logException(ex);
-		AppLog.w(tag, msg, ex);
+		Log.w(tag, msg, ex);
 	}
 	
 	public static void e(String tag, String msg) {
@@ -43,6 +43,6 @@ public class AppLog {
 	public static void e(String tag, String msg, Throwable ex) {
 		Crashlytics.log(Log.ERROR, tag, msg);
 		Crashlytics.logException(ex);
-		AppLog.e(tag, msg, ex);
+		Log.e(tag, msg, ex);
 	}
 }
