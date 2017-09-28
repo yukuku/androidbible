@@ -1,16 +1,19 @@
 package yuku.alkitab.base;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.graphics.ColorUtils;
 import android.widget.TextView;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.storage.NoBackupSharedPreferences;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
@@ -23,6 +26,8 @@ import java.util.Locale;
 import java.util.UUID;
 
 public class U {
+	static final String TAG = U.class.getSimpleName();
+
 	/**
 	 * If text is null, this returns null.
 	 * If verse doesn't start with @: don't do anything.
@@ -292,6 +297,22 @@ public class U {
 			return 0xff000000;
 		} else {
 			return 0xffffffff;
+		}
+	}
+
+	public static void dumpIntent(final Intent intent, final String via) {
+		AppLog.d(TAG, "Got intent via " + via);
+		AppLog.d(TAG, "  action: " + intent.getAction());
+		AppLog.d(TAG, "  data uri: " + intent.getData());
+		AppLog.d(TAG, "  component: " + intent.getComponent());
+		AppLog.d(TAG, "  flags: 0x" + Integer.toHexString(intent.getFlags()));
+		AppLog.d(TAG, "  mime: " + intent.getType());
+		final Bundle extras = intent.getExtras();
+		AppLog.d(TAG, "  extras: " + (extras == null ? "null" : extras.size()));
+		if (extras != null) {
+			for (String key: extras.keySet()) {
+				AppLog.d(TAG, "    " + key + " = " + extras.get(key));
+			}
 		}
 	}
 

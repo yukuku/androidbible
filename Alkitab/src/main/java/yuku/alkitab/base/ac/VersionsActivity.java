@@ -37,7 +37,6 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.ImageSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -148,19 +147,7 @@ public class VersionsActivity extends BaseActivity {
 	}
 
 	private void processIntent(Intent intent, String via) {
-		AppLog.d(TAG, "Got intent via " + via);
-		AppLog.d(TAG, "  action: " + intent.getAction());
-		AppLog.d(TAG, "  data uri: " + intent.getData());
-		AppLog.d(TAG, "  component: " + intent.getComponent());
-		AppLog.d(TAG, "  flags: 0x" + Integer.toHexString(intent.getFlags()));
-		AppLog.d(TAG, "  mime: " + intent.getType());
-		Bundle extras = intent.getExtras();
-		AppLog.d(TAG, "  extras: " + (extras == null ? "null" : extras.size()));
-		if (extras != null) {
-			for (String key : extras.keySet()) {
-				AppLog.d(TAG, "    " + key + " = " + extras.get(key));
-			}
-		}
+		U.dumpIntent(intent, via);
 
 		checkAndProcessOpenFileIntent(intent);
 	}
@@ -225,6 +212,13 @@ public class VersionsActivity extends BaseActivity {
 					isYesFile = null;
 					filelastname = null;
 				}
+
+			} catch (SecurityException e) {
+				new MaterialDialog.Builder(this)
+					.content(TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
+					.positiveText(R.string.ok)
+					.show();
+				return;
 			}
 		}
 

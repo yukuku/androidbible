@@ -627,19 +627,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	 * @return non-null if the intent is handled by any of the intent handler (e.g. nfc or VIEW)
 	 */
 	private IntentResult processIntent(Intent intent, String via) {
-		AppLog.d(TAG, "Got intent via " + via);
-		AppLog.d(TAG, "  action: " + intent.getAction());
-		AppLog.d(TAG, "  data uri: " + intent.getData());
-		AppLog.d(TAG, "  component: " + intent.getComponent());
-		AppLog.d(TAG, "  flags: 0x" + Integer.toHexString(intent.getFlags()));
-		AppLog.d(TAG, "  mime: " + intent.getType());
-		Bundle extras = intent.getExtras();
-		AppLog.d(TAG, "  extras: " + (extras == null ? "null" : extras.size()));
-		if (extras != null) {
-			for (String key: extras.keySet()) {
-				AppLog.d(TAG, "    " + key + " = " + extras.get(key));
-			}
-		}
+		U.dumpIntent(intent, via);
 
 		{
 			final IntentResult result = tryGetIntentResultFromBeam(intent);
