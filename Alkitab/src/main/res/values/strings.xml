@@ -573,6 +573,7 @@
 	<string name="menuDictionary">Dictionary</string>
 	<string name="dict_open_full">Open Dictionary</string>
 	<string name="dict_no_results">No definition found for the selected word.</string>
+	<string name="dict_query_error">Error getting the definition from Dictionary.</string>
 	<string name="dict_download_prompt">Download \"Bible Dictionary\" to learn more about the words in the Bible!</string>
 	<string name="dict_download_button">Download</string>
 

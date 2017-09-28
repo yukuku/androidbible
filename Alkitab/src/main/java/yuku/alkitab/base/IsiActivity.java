@@ -318,47 +318,58 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			.appendQueryParameter("mode", "snippet")
 			.build();
 
-		final Cursor c = cr.query(uri, null, null, null, null);
+		final Cursor c;
+		try {
+			c = cr.query(uri, null, null, null, null);
+		} catch (Exception e) {
+			new MaterialDialog.Builder(this)
+				.content(R.string.dict_no_results)
+				.positiveText(R.string.ok)
+				.show();
+			return;
+		}
+
 		if (c == null) {
 			OtherAppIntegration.askToInstallDictionary(this);
-		} else {
-			try {
-				if (c.getCount() == 0) {
-					new MaterialDialog.Builder(this)
-						.content(R.string.dict_no_results)
-						.positiveText(R.string.ok)
-						.show();
-				} else {
-					c.moveToNext();
-					final Spanned rendered = Html.fromHtml(c.getString(c.getColumnIndexOrThrow("definition")));
-					final SpannableStringBuilder sb = rendered instanceof SpannableStringBuilder ? (SpannableStringBuilder) rendered : new SpannableStringBuilder(rendered);
+			return;
+		}
 
-					// remove links
-					for (final URLSpan span : sb.getSpans(0, sb.length(), URLSpan.class)) {
-						sb.removeSpan(span);
-					}
+		try {
+			if (c.getCount() == 0) {
+				new MaterialDialog.Builder(this)
+					.content(R.string.dict_no_results)
+					.positiveText(R.string.ok)
+					.show();
+			} else {
+				c.moveToNext();
+				final Spanned rendered = Html.fromHtml(c.getString(c.getColumnIndexOrThrow("definition")));
+				final SpannableStringBuilder sb = rendered instanceof SpannableStringBuilder ? (SpannableStringBuilder) rendered : new SpannableStringBuilder(rendered);
 
-					new MaterialDialog.Builder(this)
-						.title(data.orig_text)
-						.content(sb)
-						.positiveText(R.string.dict_open_full)
-						.onPositive((dialog, which) -> {
-							final Intent intent = new Intent("org.sabda.kamus.action.VIEW");
-							intent.putExtra("key", data.key);
-							intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-							intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-							try {
-								startActivity(intent);
-							} catch (ActivityNotFoundException e) {
-								OtherAppIntegration.askToInstallDictionary(IsiActivity.this);
-							}
-						})
-						.show();
+				// remove links
+				for (final URLSpan span : sb.getSpans(0, sb.length(), URLSpan.class)) {
+					sb.removeSpan(span);
 				}
-			} finally {
-				c.close();
+
+				new MaterialDialog.Builder(this)
+					.title(data.orig_text)
+					.content(sb)
+					.positiveText(R.string.dict_open_full)
+					.onPositive((dialog, which) -> {
+						final Intent intent = new Intent("org.sabda.kamus.action.VIEW");
+						intent.putExtra("key", data.key);
+						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+						try {
+							startActivity(intent);
+						} catch (ActivityNotFoundException e) {
+							OtherAppIntegration.askToInstallDictionary(IsiActivity.this);
+						}
+					})
+					.show();
 			}
+		} finally {
+			c.close();
 		}
 	};
 
