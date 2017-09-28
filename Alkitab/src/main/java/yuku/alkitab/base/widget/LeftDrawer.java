@@ -388,7 +388,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 				panelCurrentReadingHeader.setVisibility(VISIBLE);
 				bCurrentReadingReference.setVisibility(VISIBLE);
 
-				bCurrentReadingReference.setText(S.activeVersion.referenceRange(aris[0], aris[1]));
+				bCurrentReadingReference.setText(S.activeVersion().referenceRange(aris[0], aris[1]));
 			}
 		}
 

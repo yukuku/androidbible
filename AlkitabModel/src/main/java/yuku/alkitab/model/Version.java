@@ -1,5 +1,6 @@
 package yuku.alkitab.model;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
@@ -228,5 +229,33 @@ public abstract class Version {
 		}
 
 		return bcstr_start + vstr_start + en_dash + bcstr_end + vstr_end;
+	}
+
+	@NonNull
+	public String getInitials() {
+		final String shortName = getShortName();
+		if (shortName != null) {
+			return shortName;
+		} else {
+			final String longName = getLongName();
+			if (longName == null) {
+				return "";
+			}
+
+			if (longName.length() <= 6) {
+				return longName.toUpperCase();
+			}
+
+			// try to get the first letter of each word
+			final String[] words = longName.split("[^A-Za-z0-9]+");
+			final char[] chars = new char[words.length];
+			int cnt = 0;
+			for (int i = 0; i < chars.length; i++) {
+				if (words[i].length() > 0) {
+					chars[cnt++] = Character.toUpperCase(words[i].charAt(0));
+				}
+			}
+			return new String(chars, 0, cnt);
+		}
 	}
 }

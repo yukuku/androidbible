@@ -90,8 +90,8 @@ public class MarkerListActivity extends BaseActivity {
 	long filter_labelId;
 
 	int hiliteColor;
-	Version version = S.activeVersion;
-	String versionId = S.activeVersionId;
+	Version version = S.activeVersion();
+	String versionId = S.activeVersionId();
 	float textSizeMult = S.getDb().getPerVersionSettings(versionId).fontSizeMultiplier;
 
 	public static Intent createIntent(Context context, Marker.Kind filter_kind, long filter_labelId) {

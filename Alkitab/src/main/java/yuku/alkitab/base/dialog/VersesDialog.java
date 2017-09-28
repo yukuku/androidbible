@@ -56,8 +56,8 @@ public class VersesDialog extends BaseDialog {
 	// data that will be passed when one verse is clicked
 	Object[] customCallbackData;
 
-	Version sourceVersion = S.activeVersion;
-	String sourceVersionId = S.activeVersionId;
+	Version sourceVersion = S.activeVersion();
+	String sourceVersionId = S.activeVersionId();
 	float textSizeMult = S.getDb().getPerVersionSettings(sourceVersionId).fontSizeMultiplier;
 
 	DialogInterface.OnDismissListener onDismissListener;

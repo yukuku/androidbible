@@ -55,8 +55,8 @@ public class XrefDialog extends BaseDialog {
 	List<String> displayedVerseTexts;
 	List<String> displayedVerseNumberTexts;
 	IntArrayList displayedRealAris;
-	Version sourceVersion = S.activeVersion;
-	String sourceVersionId = S.activeVersionId;
+	Version sourceVersion = S.activeVersion();
+	String sourceVersionId = S.activeVersionId();
 	float textSizeMult = S.getDb().getPerVersionSettings(sourceVersionId).fontSizeMultiplier;
 
 	public XrefDialog() {

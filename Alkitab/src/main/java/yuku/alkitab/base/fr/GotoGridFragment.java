@@ -214,7 +214,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 	@Override public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		
-		books = S.activeVersion.getConsecutiveBooks();
+		books = S.activeVersion().getConsecutiveBooks();
 		gridBook.setAdapter(bookAdapter = new BookAdapter());
 	}
 

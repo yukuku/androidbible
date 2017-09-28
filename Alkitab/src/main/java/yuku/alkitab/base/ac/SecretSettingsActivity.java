@@ -50,7 +50,7 @@ public class SecretSettingsActivity extends BaseActivity {
 					final CharSequence[] items = new CharSequence[pmhs.size()];
 					for (int i = 0; i < pmhs.size(); i++) {
 						final ProgressMarkHistory pmh = pmhs.get(i);
-						items[i] = "'" + pmh.progress_mark_caption + "' " + Sqlitil.toLocaleDateMedium(pmh.createTime) + ": " + S.activeVersion.reference(pmh.ari);
+						items[i] = "'" + pmh.progress_mark_caption + "' " + Sqlitil.toLocaleDateMedium(pmh.createTime) + ": " + S.activeVersion().reference(pmh.ari);
 					}
 					new MaterialDialog.Builder(getActivity())
 						.items(items)

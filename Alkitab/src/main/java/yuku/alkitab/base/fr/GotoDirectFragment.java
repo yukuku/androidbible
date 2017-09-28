@@ -107,7 +107,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 	@Override public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		final String example = S.activeVersion.reference(bookId, chapter_1, verse_1);
+		final String example = S.activeVersion().reference(bookId, chapter_1, verse_1);
 		final CharSequence text = getText(R.string.jump_to_prompt);
 		SpannableStringBuilder sb = new SpannableStringBuilder();
 		sb.append(text);
@@ -158,7 +158,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 				return;
 			}
 			
-			final int bookId = jumper.getBookId(S.activeVersion.getConsecutiveBooks());
+			final int bookId = jumper.getBookId(S.activeVersion().getConsecutiveBooks());
 			final int chapter = jumper.getChapter();
 			final int verse = jumper.getVerse();
 
@@ -197,7 +197,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 		@Override
 		public Filter getFilter() {
 			return new Filter() {
-				final Book[] books = S.activeVersion.getConsecutiveBooks();
+				final Book[] books = S.activeVersion().getConsecutiveBooks();
 				final TIntObjectMap<Book> bookIndex = new TIntObjectHashMap<>();
 
 				{

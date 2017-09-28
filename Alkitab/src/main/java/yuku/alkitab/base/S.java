@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.ac.VersionsActivity;
@@ -16,7 +18,9 @@ import yuku.alkitab.base.storage.InternalDbHelper;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.storage.SongDb;
 import yuku.alkitab.base.storage.SongDbHelper;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.FontManager;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
 
@@ -26,6 +30,8 @@ import java.util.List;
 
 
 public class S {
+	static final String TAG = S.class.getSimpleName();
+
 	/**
 	 * values applied from settings
 	 */
@@ -57,10 +63,69 @@ public class S {
 		public static int pericopeSpacingTop;
 		public static int pericopeSpacingBottom;
 	}
-	
+
 	// The process-global active Bible version. Both of these must always be set at the same time.
-	public static Version activeVersion;
-	public static String activeVersionId;
+	private static class ActiveVersionHolder {
+		static Version activeVersion;
+		static String activeVersionId;
+
+		static {
+			if (activeVersion == null) {
+				AppLog.d(TAG, "##1");
+				// Load the version we want before everything, so we do not load it multiple times.
+				final String lastVersionId = Preferences.getString(Prefkey.lastVersionId);
+				AppLog.d(TAG, "##2");
+				final MVersion mv = getVersionFromVersionId(lastVersionId);
+				AppLog.d(TAG, "##3");
+				final MVersion actual = mv == null ? getMVersionInternal() : mv;
+				AppLog.d(TAG, "##4");
+				setActiveVersion(actual.getVersion(), actual.getVersionId());
+				AppLog.d(TAG, "##5");
+			}
+		}
+	}
+
+	@NonNull
+	public static Version activeVersion() {
+		return ActiveVersionHolder.activeVersion;
+	}
+
+	@NonNull
+	public static String activeVersionId() {
+		return ActiveVersionHolder.activeVersionId;
+	}
+
+	public synchronized static void setActiveVersion(final Version version, final String versionId) {
+		final Throwable trace = BuildConfig.DEBUG ? new Throwable().fillInStackTrace() : null;
+		AppLog.d(TAG, "@@setActiveVersion version=" + version + " versionId=" + versionId, trace);
+
+		ActiveVersionHolder.activeVersion = version;
+		ActiveVersionHolder.activeVersionId = versionId;
+	}
+
+	/**
+	 * @return null when the specified versionId is not found OR we really want internal.
+	 */
+	@Nullable
+	public static MVersion getVersionFromVersionId(String versionId) {
+		if (versionId == null || MVersionInternal.getVersionInternalId().equals(versionId)) {
+			return null; // internal is made the same as null
+		}
+
+		// let's look at yes versions
+		for (MVersionDb mvDb : getDb().listAllVersions()) {
+			if (mvDb.getVersionId().equals(versionId)) {
+				if (mvDb.hasDataFile()) {
+					return mvDb;
+				} else {
+					// the data file is not available
+					return null;
+				}
+			}
+		}
+
+		return null; // not known
+	}
 
 	public static void calculateAppliedValuesBasedOnPreferences() {
 		//# configure font size
@@ -138,10 +203,10 @@ public class S {
 		final List<MVersion> res = new ArrayList<>();
 
 		// 1. Internal version
-		res.add(S.getMVersionInternal());
+		res.add(getMVersionInternal());
 
 		// 2. Database versions
-		for (MVersionDb mvDb: S.getDb().listAllVersions()) {
+		for (MVersionDb mvDb: getDb().listAllVersions()) {
 			if (mvDb.hasDataFile() && mvDb.getActive()) {
 				res.add(mvDb);
 			}
@@ -218,28 +283,5 @@ public class S {
 			.positiveText(R.string.versi_lainnya)
 			.onPositive((dialog, which) -> activity.startActivity(VersionsActivity.createIntent()))
 			.show();
-	}
-
-	public static String getVersionInitials(final Version version) {
-		final String shortName = version.getShortName();
-		if (shortName != null) {
-			return shortName;
-		} else {
-			final String longName = version.getLongName();
-			if (longName.length() <= 6) {
-				return longName.toUpperCase();
-			}
-
-			// try to get the first letter of each word
-			final String[] words = longName.split("[^A-Za-z0-9]+");
-			final char[] chars = new char[words.length];
-			int cnt = 0;
-			for (int i = 0; i < chars.length; i++) {
-				if (words[i].length() > 0) {
-					chars[cnt++] = Character.toUpperCase(words[i].charAt(0));
-				}
-			}
-			return new String(chars, 0, cnt);
-		}
 	}
 }

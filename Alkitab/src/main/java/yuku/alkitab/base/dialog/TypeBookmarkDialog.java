@@ -60,7 +60,7 @@ public class TypeBookmarkDialog {
 	 * Open the bookmark edit dialog for a new bookmark by ari.
 	 */
 	public static TypeBookmarkDialog NewBookmark(Context context, int ari, final int verseCount) {
-		final TypeBookmarkDialog res = new TypeBookmarkDialog(context, null, S.activeVersion.referenceWithVerseCount(ari, verseCount));
+		final TypeBookmarkDialog res = new TypeBookmarkDialog(context, null, S.activeVersion().referenceWithVerseCount(ari, verseCount));
 		res.ariForNewBookmark = ari;
 		res.verseCountForNewBookmark = verseCount;
 		return res;
@@ -71,7 +71,7 @@ public class TypeBookmarkDialog {
 		this.marker = marker;
 
 		if (reference == null) {
-			reference = S.activeVersion.referenceWithVerseCount(marker.ari, marker.verseCount);
+			reference = S.activeVersion().referenceWithVerseCount(marker.ari, marker.verseCount);
 		}
 		defaultCaption = reference;
 

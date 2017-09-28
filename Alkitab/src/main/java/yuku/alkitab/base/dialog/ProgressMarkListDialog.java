@@ -36,8 +36,8 @@ public class ProgressMarkListDialog extends DialogFragment {
 
 	Listener progressMarkListener;
 
-	Version version = S.activeVersion;
-	String versionId = S.activeVersionId;
+	Version version = S.activeVersion();
+	String versionId = S.activeVersionId();
 	float textSizeMult = S.getDb().getPerVersionSettings(versionId).fontSizeMultiplier;
 
 	@Override

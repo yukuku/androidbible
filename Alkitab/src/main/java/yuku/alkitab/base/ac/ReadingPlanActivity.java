@@ -722,7 +722,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				final boolean[] readMarks = new boolean[todayReadings.length / 2];
 				ReadingPlanManager.writeReadMarksByDay(readReadingCodes, readMarks, dayNumber);
 
-				bReference.setText(S.activeVersion.referenceRange(todayReadings[position * 2], todayReadings[position * 2 + 1]));
+				bReference.setText(S.activeVersion().referenceRange(todayReadings[position * 2], todayReadings[position * 2 + 1]));
 
 				bReference.setOnClickListener(v -> {
 					final int todayReadingsSize = readingPlan.dailyVerses[dayNumber].length / 2;
@@ -820,7 +820,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 					checkBox.setOnCheckedChangeListener(null);
 					checkBox.setChecked(readMarks[sequence]);
-					checkBox.setText(S.activeVersion.referenceRange(ariRanges[sequence * 2], ariRanges[sequence * 2 + 1]));
+					checkBox.setText(S.activeVersion().referenceRange(ariRanges[sequence * 2], ariRanges[sequence * 2 + 1]));
 					checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
 						ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.name, day, sequence, isChecked);
 						loadReadingPlanProgress();

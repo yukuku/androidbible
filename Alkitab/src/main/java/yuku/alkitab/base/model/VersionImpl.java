@@ -1,7 +1,6 @@
 package yuku.alkitab.base.model;
 
 import android.support.annotation.Nullable;
-import android.util.Log;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.storage.InternalReader;
 import yuku.alkitab.base.storage.OldVerseTextDecoder;
@@ -16,6 +15,7 @@ import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class VersionImpl extends Version {
@@ -336,5 +336,14 @@ public class VersionImpl extends Version {
 	@Override
 	public synchronized FootnoteEntry getFootnoteEntry(final int arif) {
 		return bibleReader.getFootnoteEntry(arif);
+	}
+
+	@Override
+	public String toString() {
+		return "VersionImpl{" +
+			"bibleReader=" + bibleReader +
+			", cache_books=" + Arrays.toString(cache_books) +
+			", cache_consecutiveBooks=" + Arrays.toString(cache_consecutiveBooks) +
+			'}';
 	}
 }

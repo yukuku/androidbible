@@ -889,7 +889,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			if (bookId < 0) {
 				AppLog.w(TAG, "osisBookName invalid: " + bookName + " in " + line);
 			} else {
-				Book book = S.activeVersion.getBook(bookId);
+				Book book = S.activeVersion().getBook(bookId);
 				
 				if (book != null) {
 					boolean full = true;

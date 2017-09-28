@@ -305,7 +305,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 		Book[] booksc_;
 		
 		public BookAdapter() {
-			Book[] booksc = S.activeVersion.getConsecutiveBooks();
+			Book[] booksc = S.activeVersion().getConsecutiveBooks();
 			
 			if (Preferences.getBoolean(R.string.pref_alphabeticBookSort_key, R.bool.pref_alphabeticBookSort_default)) {
 				booksc_ = BookNameSorter.sortAlphabetically(booksc); 

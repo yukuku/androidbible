@@ -293,8 +293,8 @@ public class SearchActivity extends BaseActivity {
 
 		bVersion = V.get(this, R.id.bVersion);
 
-		searchInVersion = S.activeVersion;
-		searchInVersionId = S.activeVersionId;
+		searchInVersion = S.activeVersion();
+		searchInVersionId = S.activeVersionId();
 		textSizeMult = S.getDb().getPerVersionSettings(searchInVersionId).fontSizeMultiplier;
 		bVersion.setOnClickListener(bVersion_click);
 
@@ -395,7 +395,7 @@ public class SearchActivity extends BaseActivity {
 		{
 			openedBookId = getIntent().getIntExtra(EXTRA_openedBookId, -1);
 
-			final Book book = S.activeVersion.getBook(openedBookId);
+			final Book book = S.activeVersion().getBook(openedBookId);
 			if (book == null) { // active version has changed somehow when this activity fainted. so, invalidate openedBookId
 				openedBookId = -1;
 				cFilterSingleBook.setEnabled(false);
@@ -453,7 +453,7 @@ public class SearchActivity extends BaseActivity {
 	}
 
 	void displaySearchInVersion() {
-		final String versionInitials = S.getVersionInitials(searchInVersion);
+		final String versionInitials = searchInVersion.getInitials();
 
 		bVersion.setText(versionInitials);
 		searchView.setQueryHint(getString(R.string.search_in_version_short_name_placeholder, versionInitials));
@@ -619,7 +619,7 @@ public class SearchActivity extends BaseActivity {
 
 		displaySearchInVersion();
 		configureFilterDisplayOldNewTest();
-		bVersion.setText(S.getVersionInitials(searchInVersion));
+		bVersion.setText(selectedVersion.getInitials());
 		if (adapter != null) {
 			adapter.notifyDataSetChanged();
 		}

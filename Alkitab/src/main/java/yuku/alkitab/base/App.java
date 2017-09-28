@@ -24,9 +24,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.internal.Version;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.model.SyncShadow;
-import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Gcm;
 import yuku.alkitab.base.sync.Sync;
@@ -156,14 +154,6 @@ public class App extends yuku.afw.App {
 			PreferenceManager.setDefaultValues(context, preferenceResId, false);
 		}
 
-		// all activities need at least the activeVersion from S, so initialize it here.
-		synchronized (S.class) {
-			if (S.activeVersion == null) {
-				S.activeVersion = VersionImpl.getInternalVersion();
-				S.activeVersionId = MVersionInternal.getVersionInternalId();
-			}
-		}
-
 		// also pre-calculate calculated preferences value here
 		S.calculateAppliedValuesBasedOnPreferences();
 
@@ -181,10 +171,6 @@ public class App extends yuku.afw.App {
 		// sync on app start, if we are logged in
 		if (Preferences.contains(Prefkey.sync_simpleToken)) {
 			Sync.notifySyncNeeded(SyncShadow.ALL_SYNC_SET_NAMES);
-		}
-
-		if (BuildConfig.DEBUG) {
-			AppLog.d(TAG, "Font scale: " + context.getResources().getConfiguration().fontScale);
 		}
 	}
 

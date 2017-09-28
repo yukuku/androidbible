@@ -92,7 +92,7 @@ public class NoteActivity extends BaseActivity {
 		verseCountForNewNote = getIntent().getIntExtra(EXTRA_verseCountForNewNote, 0);
 
 		if (reference == null) {
-			reference = S.activeVersion.referenceWithVerseCount(marker.ari, marker.verseCount);
+			reference = S.activeVersion().referenceWithVerseCount(marker.ari, marker.verseCount);
 		}
 
 		setTitle(reference);
