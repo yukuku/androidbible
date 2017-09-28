@@ -8,6 +8,8 @@ import android.widget.LinearLayout;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;
 
+import java.util.Locale;
+
 public class TwofingerLinearLayout extends LinearLayout {
 	public static final String TAG = TwofingerLinearLayout.class.getSimpleName();
 
@@ -88,7 +90,7 @@ public class TwofingerLinearLayout extends LinearLayout {
 			x2 = event.getX(1);
 			y2 = event.getY(1);
 
-			if (BuildConfig.DEBUG) AppLog.d(TAG, String.format("--- " + pointerCount + " pointer: (%f,%f) (%f,%f)", x1, y1, x2, y2));
+			if (BuildConfig.DEBUG) AppLog.d(TAG, String.format(Locale.US, "--- " + pointerCount + " pointer: (%f,%f) (%f,%f)", x1, y1, x2, y2));
 		}
 
 		if (state == State.onefinger_left) {

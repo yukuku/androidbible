@@ -17,7 +17,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -322,16 +321,18 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 	protected void onStart() {
 		super.onStart();
 
+		final S.CalculatedDimensions applied = S.applied();
+
 		{ // apply background color, and clear window background to prevent overdraw
 			getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-			scrollContent.setBackgroundColor(S.applied.backgroundColor);
+			scrollContent.setBackgroundColor(applied.backgroundColor);
 		}
 
 		// text formats
-		lContent.setTextColor(S.applied.fontColor);
-		lContent.setTypeface(S.applied.fontFace, S.applied.fontBold);
-		lContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp);
-		lContent.setLineSpacing(0, S.applied.lineSpacingMult);
+		lContent.setTextColor(applied.fontColor);
+		lContent.setTypeface(applied.fontFace, applied.fontBold);
+		lContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp);
+		lContent.setLineSpacing(0, applied.lineSpacingMult);
 
 		SettingsActivity.setPaddingBasedOnPreferences(lContent);
 

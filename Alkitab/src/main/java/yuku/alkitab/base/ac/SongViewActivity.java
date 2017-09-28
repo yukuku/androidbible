@@ -22,7 +22,6 @@ import android.text.Html;
 import android.text.InputType;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -465,24 +464,26 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	protected void onStart() {
 		super.onStart();
 
+		final S.CalculatedDimensions applied = S.applied();
+
 		{ // apply background color, and clear window background to prevent overdraw
 			getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-			V.get(this, android.R.id.content).setBackgroundColor(S.applied.backgroundColor);
+			V.get(this, android.R.id.content).setBackgroundColor(applied.backgroundColor);
 		}
 
 		templateCustomVars = new Bundle();
-		templateCustomVars.putString("background_color", String.format("#%06x", S.applied.backgroundColor & 0xffffff));
-		templateCustomVars.putString("text_color", String.format("#%06x", S.applied.fontColor & 0xffffff));
-		templateCustomVars.putString("verse_number_color", String.format("#%06x", S.applied.verseNumberColor & 0xffffff));
-		templateCustomVars.putString("text_size", S.applied.fontSize2dp + "px");
-		templateCustomVars.putString("line_spacing_mult", String.valueOf(S.applied.lineSpacingMult));
+		templateCustomVars.putString("background_color", String.format(Locale.US, "#%06x", applied.backgroundColor & 0xffffff));
+		templateCustomVars.putString("text_color", String.format(Locale.US, "#%06x", applied.fontColor & 0xffffff));
+		templateCustomVars.putString("verse_number_color", String.format(Locale.US, "#%06x", applied.verseNumberColor & 0xffffff));
+		templateCustomVars.putString("text_size", applied.fontSize2dp + "px");
+		templateCustomVars.putString("line_spacing_mult", String.valueOf(applied.lineSpacingMult));
 
 		{
 			String fontName = Preferences.getString(Prefkey.jenisHuruf, null);
 			if (FontManager.isCustomFont(fontName)) {
 				final String customFontUri = FontManager.getCustomFontUri(fontName);
 				if (customFontUri != null) {
-					templateCustomVars.putString("custom_font_loader", String.format("@font-face{ font-family: '%s'; src: url('%s'); }", fontName, customFontUri));
+					templateCustomVars.putString("custom_font_loader", String.format(Locale.US, "@font-face{ font-family: '%s'; src: url('%s'); }", fontName, customFontUri));
 				} else {
 					templateCustomVars.putString("custom_font_loader", "");
 				}
@@ -527,7 +528,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	}
 
 	static String getAudioFilename(String bookName, String code) {
-		return String.format("songs/v2/%s_%s", bookName, code);
+		return String.format(Locale.US, "songs/v2/%s_%s", bookName, code);
 	}
 
 	void checkAudioExistance() {

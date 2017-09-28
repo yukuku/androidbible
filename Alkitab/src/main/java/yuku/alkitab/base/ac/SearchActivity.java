@@ -362,14 +362,16 @@ public class SearchActivity extends BaseActivity {
 			tSearchTips.setText(sb);
 		}
 
-		tSearchTips.setBackgroundColor(S.applied.backgroundColor);
+		final S.CalculatedDimensions applied = S.applied();
 
-		lsSearchResults.setBackgroundColor(S.applied.backgroundColor);
-		lsSearchResults.setCacheColorHint(S.applied.backgroundColor);
+		tSearchTips.setBackgroundColor(applied.backgroundColor);
+
+		lsSearchResults.setBackgroundColor(applied.backgroundColor);
+		lsSearchResults.setCacheColorHint(applied.backgroundColor);
 		lsSearchResults.setEmptyView(tSearchTips);
 		Appearances.applyTextAppearance(tSearchTips, textSizeMult);
 		
-		hiliteColor = U.getSearchKeywordTextColorByBrightness(S.applied.backgroundBrightness);
+		hiliteColor = U.getSearchKeywordTextColorByBrightness(applied.backgroundBrightness);
 
 		lsSearchResults.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
 		lsSearchResults.setOnItemClickListener((parent, view, position, id) -> {

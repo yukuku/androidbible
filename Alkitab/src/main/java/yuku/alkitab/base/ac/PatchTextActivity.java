@@ -53,12 +53,14 @@ public class PatchTextActivity extends BaseActivity {
 		ab.setDisplayHomeAsUpEnabled(true);
 		ab.setDisplayShowTitleEnabled(false);
 
+		final S.CalculatedDimensions applied = S.applied();
+
 		tBody = V.get(this, R.id.tBody);
-		tBody.setTextColor(S.applied.fontColor);
-		tBody.setBackgroundColor(S.applied.backgroundColor);
-		tBody.setTypeface(S.applied.fontFace, S.applied.fontBold);
-		tBody.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp);
-		tBody.setLineSpacing(0, S.applied.lineSpacingMult);
+		tBody.setTextColor(applied.fontColor);
+		tBody.setBackgroundColor(applied.backgroundColor);
+		tBody.setTypeface(applied.fontFace, applied.fontBold);
+		tBody.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp);
+		tBody.setLineSpacing(0, applied.lineSpacingMult);
 
 		baseBody = getIntent().getCharSequenceExtra(EXTRA_baseBody);
 		tBody.setText(baseBody, TextView.BufferType.EDITABLE);

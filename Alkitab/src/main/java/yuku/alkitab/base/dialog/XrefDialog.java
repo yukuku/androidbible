@@ -97,8 +97,8 @@ public class XrefDialog extends BaseDialog {
 		tXrefText = V.get(res, R.id.tXrefText);
 		versesView = V.get(res, R.id.versesView);
 		
-		res.setBackgroundColor(S.applied.backgroundColor);
-		versesView.setCacheColorHint(S.applied.backgroundColor);
+		res.setBackgroundColor(S.applied().backgroundColor);
+		versesView.setCacheColorHint(S.applied().backgroundColor);
 		versesView.setVerseSelectionMode(VerseSelectionMode.singleClick);
 		versesView.setSelectedVersesListener(versesView_selectedVerses);
 		tXrefText.setMovementMethod(LinkMovementMethod.getInstance());

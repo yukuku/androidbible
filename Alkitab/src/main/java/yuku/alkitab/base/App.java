@@ -154,9 +154,6 @@ public class App extends yuku.afw.App {
 			PreferenceManager.setDefaultValues(context, preferenceResId, false);
 		}
 
-		// also pre-calculate calculated preferences value here
-		S.calculateAppliedValuesBasedOnPreferences();
-
 		{ // GCM
 			Gcm.renewGcmRegistrationIdIfNeeded(Sync::notifyNewGcmRegistrationId);
 		}

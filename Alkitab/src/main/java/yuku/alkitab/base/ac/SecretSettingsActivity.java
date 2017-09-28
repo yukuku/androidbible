@@ -28,6 +28,7 @@ import yuku.alkitab.model.ProgressMarkHistory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class SecretSettingsActivity extends BaseActivity {
 	public static final String TAG = SecretSettingsActivity.class.getSimpleName();
@@ -66,7 +67,7 @@ public class SecretSettingsActivity extends BaseActivity {
 
 			for (final MVersionDb mv : S.getDb().listAllVersions()) {
 				items.add(
-					String.format("filename=%s preset_name=%s modifyTime=%s active=%s ordering=%s locale=%s shortName=%s longName=%s description=%s",
+					String.format(Locale.US, "filename=%s preset_name=%s modifyTime=%s active=%s ordering=%s locale=%s shortName=%s longName=%s description=%s",
 						mv.filename, mv.preset_name, mv.modifyTime, mv.getActive(), mv.ordering, mv.locale, mv.shortName, mv.longName, mv.description)
 				);
 			}

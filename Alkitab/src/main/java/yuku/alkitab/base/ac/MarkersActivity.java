@@ -9,7 +9,6 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -50,6 +49,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 public class MarkersActivity extends BaseActivity {
 	public static final String TAG = MarkersActivity.class.getSimpleName();
@@ -438,7 +438,7 @@ public class MarkersActivity extends BaseActivity {
 			if (D.EBUG) {
 				AppLog.d(TAG, "_id  title                ordering backgroundColor");
 				for (Label label: labels) {
-					AppLog.d(TAG, String.format("%4d %20s %8d %s", label._id, label.title, label.ordering, label.backgroundColor));
+					AppLog.d(TAG, String.format(Locale.US, "%4d %20s %8d %s", label._id, label.title, label.ordering, label.backgroundColor));
 				}
 			}
 			

@@ -122,16 +122,18 @@ public class NoteActivity extends BaseActivity {
 	@Override protected void onStart() {
 		super.onStart();
 
+		final S.CalculatedDimensions applied = S.applied();
+
 		{ // apply background color, by overriding window background
-			getWindow().setBackgroundDrawable(new ColorDrawable(S.applied.backgroundColor));
+			getWindow().setBackgroundDrawable(new ColorDrawable(applied.backgroundColor));
 		}
 
 		// text formats
 		for (final TextView tv: new TextView[]{tCaption, tCaptionReadOnly}) {
-			tv.setTextColor(S.applied.fontColor);
-			tv.setTypeface(S.applied.fontFace, S.applied.fontBold);
-			tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp);
-			tv.setLineSpacing(0, S.applied.lineSpacingMult);
+			tv.setTextColor(applied.fontColor);
+			tv.setTypeface(applied.fontFace, applied.fontBold);
+			tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp);
+			tv.setLineSpacing(0, applied.lineSpacingMult);
 
 			SettingsActivity.setPaddingBasedOnPreferences(tv);
 		}

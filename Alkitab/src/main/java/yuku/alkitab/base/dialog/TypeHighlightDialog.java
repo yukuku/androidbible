@@ -104,7 +104,7 @@ public class TypeHighlightDialog {
 
 		dialog = builder.show();
 		dialogView = dialog.getCustomView();
-		dialogView.setBackgroundColor(S.applied.backgroundColor);
+		dialogView.setBackgroundColor(S.applied().backgroundColor);
 
 		for (int i = 0; i < ids.length; i++) {
 			CheckBox cb = V.get(dialogView, ids[i]);
@@ -138,7 +138,7 @@ public class TypeHighlightDialog {
 		} else {
 			tVerseText.setVisibility(View.VISIBLE);
 			tVerseText.setText(verseText, TextView.BufferType.EDITABLE);
-			tVerseText.setTextColor(S.applied.fontColor);
+			tVerseText.setTextColor(S.applied().fontColor);
 
 			if (info == null || !info.shouldRenderAsPartialForVerseText(verseText)) {
 				Selection.setSelection(tVerseText.getEditableText(), 0, tVerseText.length());

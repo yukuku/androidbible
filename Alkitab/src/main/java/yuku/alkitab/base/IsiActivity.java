@@ -1040,11 +1040,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	private void applyPreferences() {
 		// make sure S applied variables are set first
-		S.calculateAppliedValuesBasedOnPreferences();
+		S.recalculateAppliedValuesBasedOnPreferences();
 
 		{ // apply background color, and clear window background to prevent overdraw
 			getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-			final int backgroundColor = S.applied.backgroundColor;
+			final int backgroundColor = S.applied().backgroundColor;
 			root.setBackgroundColor(backgroundColor);
 			lsSplit0.setCacheColorHint(backgroundColor);
 			lsSplit1.setCacheColorHint(backgroundColor);
@@ -1646,7 +1646,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			final Book splitBook = activeSplitVersion.getBook(this.activeBook.bookId);
 			if (splitBook == null) {
 				tSplitEmpty.setText(getString(R.string.split_version_cant_display_verse, this.activeBook.reference(this.chapter_1), activeSplitVersion.getLongName()));
-				tSplitEmpty.setTextColor(S.applied.fontColor);
+				tSplitEmpty.setTextColor(S.applied().fontColor);
 				lsSplit1.setDataEmpty();
 			} else {
 				this.uncheckVersesWhenActionModeDestroyed = false;
@@ -1888,7 +1888,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 						Appearances.applyTextAppearance(holder.lSnippet, textSizeMult);
 					}
 
-					holder.itemView.setBackgroundColor(S.applied.backgroundColor);
+					holder.itemView.setBackgroundColor(S.applied().backgroundColor);
 				}
 
 				holder.itemView.setOnClickListener(v -> {

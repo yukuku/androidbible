@@ -28,6 +28,7 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.debug.R;
 
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static yuku.alkitab.base.util.Literals.List;
@@ -203,7 +204,7 @@ public class AboutActivity extends BaseActivity {
 		tAboutTextDesc.setMovementMethod(LinkMovementMethod.getInstance());
 
 		tVersion.setText(getString(R.string.about_version_name, App.getVersionName()));
-		tBuild.setText(String.format("%s %s", App.getVersionCode(), getString(R.string.last_commit_hash)));
+		tBuild.setText(String.format(Locale.US, "%s %s", App.getVersionCode(), getString(R.string.last_commit_hash)));
 
 		root.setOnTouchListener(root_touch);
 	}

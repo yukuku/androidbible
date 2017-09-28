@@ -110,8 +110,8 @@ public class VersesDialog extends BaseDialog {
 		tReference = V.get(res, R.id.tReference);
 		versesView = V.get(res, R.id.versesView);
 
-		res.setBackgroundColor(S.applied.backgroundColor);
-		versesView.setCacheColorHint(S.applied.backgroundColor);
+		res.setBackgroundColor(S.applied().backgroundColor);
+		versesView.setCacheColorHint(S.applied().backgroundColor);
 		versesView.setVerseSelectionMode(VerseSelectionMode.singleClick);
 		versesView.setSelectedVersesListener(versesView_selectedVerses);
 

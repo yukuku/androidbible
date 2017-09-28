@@ -2,7 +2,6 @@ package yuku.alkitab.base.util;
 
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -17,6 +16,7 @@ import yuku.alkitab.model.util.Gid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -175,9 +175,9 @@ public class History {
 			// when debugging, print
 			if (BuildConfig.DEBUG) {
 				AppLog.d(TAG, "After sync, the history entries are:");
-				AppLog.d(TAG, String.format("  ari ====   timestamp ===============   %-40s   %-40s", "gid", "creator_id"));
+				AppLog.d(TAG, String.format(Locale.US, "  ari ====   timestamp ===============   %-40s   %-40s", "gid", "creator_id"));
 				for (final HistoryEntry entry : entries) {
-					AppLog.d(TAG, String.format("- 0x%06x   %tF %<tT %<tz   %-40s   %-40s", entry.ari, entry.timestamp, entry.gid, entry.creator_id));
+					AppLog.d(TAG, String.format(Locale.US, "- 0x%06x   %tF %<tT %<tz   %-40s   %-40s", entry.ari, entry.timestamp, entry.gid, entry.creator_id));
 				}
 			}
 

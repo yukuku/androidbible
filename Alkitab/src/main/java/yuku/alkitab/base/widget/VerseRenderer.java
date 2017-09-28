@@ -41,7 +41,7 @@ public class VerseRenderer {
 			tp.baselineShift += (int) (tp.ascent() * 0.3f + 0.5f);
 			tp.setTextSize(tp.getTextSize() * 0.7f);
 			if (applyColor) {
-				tp.setColor(S.applied.verseNumberColor);
+				tp.setColor(S.applied().verseNumberColor);
 			}
 		}
 	}
@@ -217,7 +217,7 @@ public class VerseRenderer {
 				case '5':
 					if (startRed != -1) {
 						if (!checked) {
-							sb.setSpan(new ForegroundColorSpan(S.applied.fontRedColor), startRed, sb.length(), 0);
+							sb.setSpan(new ForegroundColorSpan(S.applied().fontRedColor), startRed, sb.length(), 0);
 						}
 						startRed = -1;
 					}
@@ -361,34 +361,35 @@ public class VerseRenderer {
 		int len = sb.length();
 		
 		if (startPara == len) return;
-		
-		int indentSpacingExtraUnits = verseNumberText.length() < 3? 0: (verseNumberText.length() - 2);
-		
+
+		final int indentSpacingExtraUnits = verseNumberText.length() < 3 ? 0 : verseNumberText.length() - 2;
+		final S.CalculatedDimensions applied = S.applied();
+
 		switch (paraType) {
 		case -1:
-			sb.setSpan(createLeadingMarginSpan(0, S.applied.indentParagraphRest), startPara, len, 0);
+			sb.setSpan(createLeadingMarginSpan(0, applied.indentParagraphRest), startPara, len, 0);
 			break;
 		case '0':
 			if (firstLineWithVerseNumber) {
-				sb.setSpan(createLeadingMarginSpan(0, S.applied.indentParagraphRest), startPara, len, 0);
+				sb.setSpan(createLeadingMarginSpan(0, applied.indentParagraphRest), startPara, len, 0);
 			} else {
-				sb.setSpan(createLeadingMarginSpan(S.applied.indentParagraphRest), startPara, len, 0);
+				sb.setSpan(createLeadingMarginSpan(applied.indentParagraphRest), startPara, len, 0);
 			}
 			break;
 		case '1':
-			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing1 + indentSpacingExtraUnits * S.applied.indentSpacingExtra), startPara, len, 0);
+			sb.setSpan(createLeadingMarginSpan(applied.indentSpacing1 + indentSpacingExtraUnits * applied.indentSpacingExtra), startPara, len, 0);
 			break;
 		case '2':
-			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing2 + indentSpacingExtraUnits * S.applied.indentSpacingExtra), startPara, len, 0);
+			sb.setSpan(createLeadingMarginSpan(applied.indentSpacing2 + indentSpacingExtraUnits * applied.indentSpacingExtra), startPara, len, 0);
 			break;
 		case '3':
-			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing3 + indentSpacingExtraUnits * S.applied.indentSpacingExtra), startPara, len, 0);
+			sb.setSpan(createLeadingMarginSpan(applied.indentSpacing3 + indentSpacingExtraUnits * applied.indentSpacingExtra), startPara, len, 0);
 			break;
 		case '4':
-			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing4 + indentSpacingExtraUnits * S.applied.indentSpacingExtra), startPara, len, 0);
+			sb.setSpan(createLeadingMarginSpan(applied.indentSpacing4 + indentSpacingExtraUnits * applied.indentSpacingExtra), startPara, len, 0);
 			break;
 		case '^':
-			sb.setSpan(createLeadingMarginSpan(S.applied.indentParagraphFirst, S.applied.indentParagraphRest), startPara, len, 0);
+			sb.setSpan(createLeadingMarginSpan(applied.indentParagraphFirst, applied.indentParagraphRest), startPara, len, 0);
 			break;
 		}
 	}
@@ -406,7 +407,7 @@ public class VerseRenderer {
 
 		// verse text
 		sb.append(text);
-		sb.setSpan(createLeadingMarginSpan(0, S.applied.indentParagraphRest), 0, sb.length(), 0);
+		sb.setSpan(createLeadingMarginSpan(0, S.applied().indentParagraphRest), 0, sb.length(), 0);
 
 		if (highlightInfo != null) {
 			final BackgroundColorSpan span = new BackgroundColorSpan(Highlights.alphaMix(highlightInfo.colorRgb));

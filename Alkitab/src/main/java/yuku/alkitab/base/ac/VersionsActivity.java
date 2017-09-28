@@ -1188,7 +1188,7 @@ public class VersionsActivity extends BaseActivity {
 						AppLog.d(TAG, "ordering   type                   versionId");
 						AppLog.d(TAG, "========   ===================    =================");
 						for (final Item item : items) {
-							AppLog.d(TAG, String.format("%8d   %-20s   %s", item.mv.ordering, item.mv.getClass().getSimpleName(), item.mv.getVersionId()));
+							AppLog.d(TAG, String.format(Locale.US, "%8d   %-20s   %s", item.mv.ordering, item.mv.getClass().getSimpleName(), item.mv.getVersionId()));
 						}
 					}
 				}

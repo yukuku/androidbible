@@ -164,7 +164,7 @@ public class MarkerListActivity extends BaseActivity {
 
 		adapter = new MarkerListAdapter();
 		lv.setAdapter(adapter);
-		lv.setCacheColorHint(S.applied.backgroundColor);
+		lv.setCacheColorHint(S.applied().backgroundColor);
 		lv.setOnItemClickListener(lv_itemClick);
 		lv.setOnItemLongClickListener(lv_itemLongClick);
 		lv.setEmptyView(emptyView);
@@ -192,14 +192,15 @@ public class MarkerListActivity extends BaseActivity {
 	protected void onStart() {
 		super.onStart();
 
+		final S.CalculatedDimensions applied = S.applied();
+
 		{ // apply background color, and clear window background to prevent overdraw
 			getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-			root.setBackgroundColor(S.applied.backgroundColor);
+			root.setBackgroundColor(applied.backgroundColor);
 		}
 
-		tEmpty.setTextColor(S.applied.fontColor);
-
-		hiliteColor = U.getSearchKeywordTextColorByBrightness(S.applied.backgroundBrightness);
+		tEmpty.setTextColor(applied.fontColor);
+		hiliteColor = U.getSearchKeywordTextColorByBrightness(applied.backgroundBrightness);
 
 		loadAndFilter();
 	}
