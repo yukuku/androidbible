@@ -1,6 +1,5 @@
 package yuku.alkitab.base.storage;
 
-import android.util.Log;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.yes1.Yes1Reader;

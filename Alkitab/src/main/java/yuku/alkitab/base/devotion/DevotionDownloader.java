@@ -7,7 +7,6 @@ import android.os.SystemClock;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
-import android.util.Log;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.DevotionActivity;
@@ -125,7 +124,7 @@ public class DevotionDownloader extends Thread {
 
 					notifyDownloadStatus(
 						TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_downloading_title), kind.title),
-						TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_error_date), article.getDate(), e.getMessage())
+						TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_error_date), String.valueOf(article.getDate()), String.valueOf(e.getMessage()))
 					);
 					AppLog.d(TAG, "Downloader failed to download");
 				}
