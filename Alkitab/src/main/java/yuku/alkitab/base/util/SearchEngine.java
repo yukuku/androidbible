@@ -9,7 +9,6 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TimingLogger;
 import yuku.alkitab.base.App;
@@ -135,7 +134,7 @@ public class SearchEngine {
 				last = token;
 			}
 			tokens = atokens.toArray(new String[atokens.size()]);
-			if (BuildConfig.DEBUG) AppLog.d(TAG, "tokens = " + Arrays.toString(tokens));
+			AppLog.d(TAG, "tokens = " + Arrays.toString(tokens));
 		}
 
 		// really search
