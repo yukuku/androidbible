@@ -36,7 +36,7 @@ See the <a href="http://www.bibleforandroid.com/developer">Developer page</a> fo
 License
 --------
 
-    Copyright 2009-2016 The Alkitab Authors.
+    Copyright 2009-2018 (or the current year) The Alkitab Authors.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
