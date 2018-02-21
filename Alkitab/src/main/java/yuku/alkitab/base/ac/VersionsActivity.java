@@ -3,6 +3,7 @@ package yuku.alkitab.base.ac;
 import android.annotation.TargetApi;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -20,6 +21,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
@@ -750,6 +752,9 @@ public class VersionsActivity extends BaseActivity {
 		boolean downloadedOnly;
 		String query_text;
 
+		// in-ram list of URIs whose permission to be revoked when this activity is destroyed
+		final List<Uri> grantedPermissionUris = new ArrayList<>();
+
 		/**
 		 * Returns a new instance of this fragment for the given section
 		 * number.
@@ -795,6 +800,10 @@ public class VersionsActivity extends BaseActivity {
 		@Override
 		public void onDestroy() {
 			super.onDestroy();
+
+			for (final Uri uri : grantedPermissionUris) {
+				getActivity().revokeUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+			}
 
 			App.getLbm().unregisterReceiver(br);
 		}
@@ -943,12 +952,27 @@ public class VersionsActivity extends BaseActivity {
 				b.onNegative((dialog, which) -> {
 					final MVersionDb mvDb = (MVersionDb) mv;
 
-					final Intent intent = ShareCompat.IntentBuilder.from(getActivity())
-						.setType("application/octet-stream")
-						.addStream(Uri.fromFile(new File(mvDb.filename)))
-						.getIntent();
+					final File file = new File(mvDb.filename);
+					try {
+						final Uri uri = FileProvider.getUriForFile(getActivity(), App.context.getPackageName() + ".file_provider", file);
 
-					startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.version_share_title)), REQCODE_share);
+						if (BuildConfig.DEBUG) {
+							Toast.makeText(getActivity(), "Uri: " + uri, Toast.LENGTH_LONG).show();
+						}
+
+						final Intent intent = ShareCompat.IntentBuilder.from(getActivity())
+							.setType("application/octet-stream")
+							.addStream(uri)
+							.getIntent();
+
+						startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.version_share_title)), REQCODE_share);
+
+					} catch (Exception e) {
+						new MaterialDialog.Builder(getActivity())
+							.content("Can't share " + file.getAbsolutePath() + ": [" + e.getClass() + "] " + e.getMessage())
+							.positiveText(R.string.ok)
+							.show();
+					}
 				});
 			}
 
@@ -1053,12 +1077,23 @@ public class VersionsActivity extends BaseActivity {
 		@Override
 		public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			if (requestCode == REQCODE_share) {
-				ShareActivity.Result result = ShareActivity.obtainResult(data);
+				final ShareActivity.Result result = ShareActivity.obtainResult(data);
 				if (result != null && result.chosenIntent != null) {
-					startActivity(result.chosenIntent);
-				}
+					final Intent intent = new Intent(result.chosenIntent);
+					U.dumpIntent(intent, "share");
 
-				return;
+					// grant permission for the chosen package and uri
+					final ComponentName component = intent.getComponent();
+					if (component != null) {
+						final String packageName = component.getPackageName();
+						final Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+						if (uri != null) {
+							grantedPermissionUris.add(uri);
+							getActivity().grantUriPermission(packageName, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+							startActivity(intent);
+						}
+					}
+				}
 			}
 
 			super.onActivityResult(requestCode, resultCode, data);

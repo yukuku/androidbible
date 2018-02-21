@@ -469,6 +469,20 @@
 				android:resource="@xml/syncadapter" />
 		</service>
 
+		<!--
+			File provider, for sharing app files.
+			Authority MUST NOT be changed without changing sharing code.
+		 -->
+		<provider
+			android:name="android.support.v4.content.FileProvider"
+			android:authorities="${applicationId}.file_provider"
+			android:exported="false"
+			android:grantUriPermissions="true">
+			<meta-data
+				android:name="android.support.FILE_PROVIDER_PATHS"
+				android:resource="@xml/file_provider" />
+		</provider>
+
 		<!-- gcm -->
 		<receiver
 			android:name="yuku.alkitab.base.sync.GcmBroadcastReceiver"
@@ -484,7 +498,7 @@
 			android:name="com.google.android.gms.version"
 			android:value="@integer/google_play_services_version" />
 
-		<!-- from a separate app: devotion reminder -->
+		<!-- devotion reminder -->
 		<activity
 			android:name="yuku.alkitab.reminder.ac.DevotionReminderActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"

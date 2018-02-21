@@ -1,0 +1,14 @@
+<paths>
+	<files-path
+		name="internal_yes_dir"
+		path="bible/yes/" />
+
+	<external-path
+		name="external_yes_dir"
+		path="bible/yes/" />
+
+	<external-path
+		name="external_root"
+		path="/" />
+
+</paths>
