@@ -505,6 +505,7 @@
   <string name="dr_pref_notification_message">알람 메시지</string>
   <string name="dr_default_sound">기본 소리</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% 무료 성경 앱, Apache License 2.0 라이선스</string>
   <string name="about_translators">번역자</string>
   <string name="about_user_guide">사용자 가이드</string>
   <string name="about_beta_feedback">Beta 버전 의견</string>

@@ -45,7 +45,7 @@
   <string name="jump_to_prompt"><b>ПЕРЕХОД К</b> — Пример: ^1</string>
   <string name="belum_ada_pembatas_buku">Закладок пока нет.\nЧтобы добавить закладку, выберите стих.</string>
   <string name="judul_titikdua">ЗАГОЛОВОК</string>
-  <string name="devotion_downloader_downloading_title">Загрузка^1</string>
+  <string name="devotion_downloader_downloading_title">Загрузка ^1</string>
   <string name="devotion_downloader_downloading_date">датированный ^1</string>
   <string name="devotion_downloader_error_date">Ошибка в дате ^1: ^2</string>
   <string name="devotion_downloader_success_date">Дата загрузки ^1</string>

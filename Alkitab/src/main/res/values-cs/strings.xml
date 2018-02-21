@@ -48,6 +48,7 @@
   <string name="devotion_downloader_downloading_title">Stahování ^1</string>
   <string name="devotion_downloader_downloading_date">staženo ^1</string>
   <string name="devotion_downloader_error_date">Chyba v datumu ^1: ^2</string>
+  <string name="devotion_downloader_success_date">Stažená data</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Zatím není k dispozici. Pravděpodobně požadovaný dokument ještě není k dispozici, nebo došlo k chybě v rozpoznávání dat. Zkuste to prosím později.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Zatím není k dispozici. Stahování z Internetu...\n\n (Ujistěte se, že máte funkční připojení pro stažení požadovaného)</string>
   <string name="hari_sabtu">So</string>
@@ -213,6 +214,7 @@
   <string name="market_short_desc">Rychlý, spolehlivý a na funkce bohatý režim offline Bible.</string>
   <string name="no_url_for_facebook">Toto nemůže být sdíleno na Facebooku.</string>
   <string name="storage_permission_rationale">Potřebujeme přístupk uložišti pro ukládání různých verzí bible a fontů.</string>
+  <string name="goto_button_history_tip">Tip: Příště podržte tlačítka a dostanete se k nedávno otevřeným veršům.</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Číselník</string>
   <string name="goto_tab_direct_label">Posloupně</string>
@@ -274,10 +276,12 @@
   <string name="desc_verse_attribute_multiple_notes">%s poznámek přiřazených k tomuto verši.</string>
   <string name="desc_verse_attribute_progress_mark">%s je nyní zde.</string>
   <string name="desc_progress_mark_list">Lišta záložek</string>
+  <string name="desc_backspace">Backspace</string>
   <string name="intent_filter_open_yes_file">Otevřít YES soubor</string>
   <string name="intent_filter_open_pdb_file">Otevřít PDB soubor</string>
   <string name="intent_filter_open_pdb_or_yes_file">Otevřít PDB/YES soubor</string>
   <string name="open_yes_file_name_conflict">YES soubor názvem \'%1$s\' již existuje v \'%2$s\'.</string>
+  <string name="open_yes_error_read">Chyba čtení dat z ^1</string>
   <string name="open_file_cant_read_source">Není možné s úspěchem přečíst zdroj.</string>
   <string name="open_file_unknown_file_format">Nelze určit, zda se jedná PDB nebo YES soubor.</string>
   <string name="version_preset_delete_filename">Smazat datový soubor \'%s\'?</string>
@@ -318,6 +322,7 @@
   <string name="dr_error_contact_reminder">Chyba během spojení s Připomínačem.</string>
   <string name="dr_timepicker_set">Nastavit</string>
   <string name="dr_timepicker_off">Vypnout</string>
+  <string name="dv_activity_title">Denní verše widget</string>
   <string name="dv_option_transparent_background">Průhledné pozadí</string>
   <string name="dv_option_dark_text">Tmavý text</string>
   <string name="dv_option_text_size">Velikost textu</string>
@@ -500,6 +505,7 @@
   <string name="dr_pref_notification_message">Zpráva připomínky</string>
   <string name="dr_default_sound">Defaultní zvuk</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Aplikace Bible je 100% zdarma, licencovaná dle Apache License 2.0</string>
   <string name="about_translators">Překladatelé</string>
   <string name="about_user_guide">Uživatelská příručka</string>
   <string name="about_beta_feedback">Zpětná vazba</string>

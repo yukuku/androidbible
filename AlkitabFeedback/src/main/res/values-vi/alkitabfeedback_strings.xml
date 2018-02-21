@@ -8,7 +8,7 @@
   <string name="alkitabfeedback_label_your_name">Tên</string>
   <string name="alkitabfeedback_label_your_email">Email</string>
   <string name="alkitabfeedback_label_message">Nội dung</string>
-  <string name="alkitabfeedback_hint_message">Các câu hỏi liên quan đến nhóm phát triển phần mềm, than phiền, ý tưởng, bão lỗi, các thông tiên liên quan v.v</string>
+  <string name="alkitabfeedback_hint_message">Các câu hỏi liên quan đến nhóm phát triển phần mềm. Các đề nghị, than phiền, ý tưởng, báo lỗi, các thông tin liên quan v. v.</string>
   <string name="alkitabfeedback_title_about_you">Thông tin về bạn</string>
   <string name="alkitabfeedback_submit_confirm_message">Gửi tin nhắn này đến nhóm phát triển phần mềm?</string>
   <string name="alkitabfeedback_submit_confirm_button">Gửi</string>

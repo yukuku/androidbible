@@ -46,6 +46,9 @@
   <string name="belum_ada_pembatas_buku">尚未有任何書籤。\n選取一節經文以新增書籤。</string>
   <string name="judul_titikdua">標題</string>
   <string name="devotion_downloader_downloading_title">下載 ^1 中</string>
+  <string name="devotion_downloader_downloading_date">過時的 ^1</string>
+  <string name="devotion_downloader_error_date">錯誤的日期 ^1: ^2</string>
+  <string name="devotion_downloader_success_date">下載日期 ^1</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">尚不可用. 可能要求日期的材料尚未準備, 或者在辨識資料來源有其它錯誤. 請稍後再試.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">還沒有. 正從網路下載中&#8230;\n\n(請確保網路正常以下載靈修分享材料.)</string>
   <string name="hari_sabtu">週六</string>
@@ -247,6 +250,7 @@
   <string name="sn_menu_private_song_book">私人的詩歌書</string>
   <string name="sn_private_song_book_dialog_desc">下載私人的（隱藏）詩歌書</string>
   <string name="sn_private_song_book_name_hint">詩歌書名稱</string>
+  <string name="sn_play_in_loop">你想玩循環式直到停止?</string>
   <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">前一天</string>
   <string name="desc_next_day">後一天</string>
@@ -277,6 +281,7 @@
   <string name="intent_filter_open_pdb_file">打開PDB檔案</string>
   <string name="intent_filter_open_pdb_or_yes_file">打開PDB/YES檔案</string>
   <string name="open_yes_file_name_conflict">在\'%2$s\'裡有以經有個叫做 \'%1$s\' 檔案存在了.</string>
+  <string name="open_yes_error_read">從^1數據讀取錯誤</string>
   <string name="open_file_cant_read_source">無法成功讀取來源。</string>
   <string name="open_file_unknown_file_format">無法判定這是PDB還是YES檔案。</string>
   <string name="version_preset_delete_filename">刪除資料檔\'%s\'？</string>
@@ -317,6 +322,7 @@
   <string name="dr_error_contact_reminder">與提示程式連接時發生錯誤。</string>
   <string name="dr_timepicker_set">設定</string>
   <string name="dr_timepicker_off">停用</string>
+  <string name="dv_activity_title">每日詩歌装置</string>
   <string name="dv_option_transparent_background">透明的背景</string>
   <string name="dv_option_dark_text">深色文字</string>
   <string name="dv_option_text_size">文字大小</string>
@@ -448,6 +454,7 @@
   <string name="sync_sync_set_pref_summary_never">尚未同步</string>
   <string name="sync_sync_set_pref_summary_syncing">正在同步&#8230;</string>
   <string name="sync_log_activity_title">同步紀錄</string>
+  <string name="sync_status_activity_title">同步狀態</string>
   <string name="sync_login_activity_title">登入或建立帳戶</string>
   <string name="sync_login_survey_religion_select_one">選擇宗教</string>
   <string name="sync_login_survey_religion_christianity">基督教</string>

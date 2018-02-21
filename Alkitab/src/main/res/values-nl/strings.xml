@@ -505,6 +505,7 @@
   <string name="dr_pref_notification_message">Herinnering bericht</string>
   <string name="dr_default_sound">Standaardgeluid</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% gratis Bijbel app, gelicentieerd onder Apache License 2.0</string>
   <string name="about_translators">Vertalers</string>
   <string name="about_user_guide">Handleiding</string>
   <string name="about_beta_feedback">Bètaversie feedback</string>
