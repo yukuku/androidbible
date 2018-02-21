@@ -419,15 +419,6 @@
 			android:name="yuku.alkitab.base.br.DailyVerseAppWidgetReceiver$UpdateService"
 			android:exported="false" />
 
-		<receiver
-			android:name="yuku.alkitab.base.br.VersionDownloadCompleteReceiver"
-			android:enabled="true"
-			android:exported="true">
-			<intent-filter>
-				<action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
-			</intent-filter>
-		</receiver>
-
 		<service
 			android:name="yuku.alkitab.base.sv.DailyVerseAppWidgetService"
 			android:permission="android.permission.BIND_REMOTEVIEWS" />

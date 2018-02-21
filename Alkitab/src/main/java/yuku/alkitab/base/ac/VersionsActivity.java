@@ -2,12 +2,10 @@ package yuku.alkitab.base.ac;
 
 import android.annotation.TargetApi;
 import android.app.DownloadManager;
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -16,7 +14,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -361,7 +358,7 @@ public class VersionsActivity extends BaseActivity {
 		}
 	};
 
-	private void startSearch() {
+	void startSearch() {
 		// broadcast to all fragments that we have a new query_text
 		for (final String tag : new String[]{makeFragmentName(R.id.viewPager, 0), makeFragmentName(R.id.viewPager, 1)}) {
 			final Fragment f = getSupportFragmentManager().findFragmentByTag(tag);
@@ -460,7 +457,7 @@ public class VersionsActivity extends BaseActivity {
 					.show();
 			}
 
-			private void showResult(final File yesFile, Throwable exception, List<String> wronglyConvertedBookNames) {
+			void showResult(final File yesFile, Throwable exception, List<String> wronglyConvertedBookNames) {
 				if (exception != null) {
 					App.trackEvent("versions_convert_pdb_error");
 					showPdbReadErrorDialog(exception);
@@ -631,16 +628,11 @@ public class VersionsActivity extends BaseActivity {
 					return;
 				}
 
-				final DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url))
-					.setTitle(last)
-					.setVisibleInDownloadsUi(false)
-					.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
-
 				final Map<String, String> attrs = new LinkedHashMap<>();
 				attrs.put("download_type", "url");
 				attrs.put("filename_last_segment", last);
 
-				DownloadMapper.instance.enqueue(downloadKey, req, attrs);
+				DownloadMapper.instance.enqueue(downloadKey, url, last, attrs);
 
 				Toast.makeText(this, R.string.mulai_mengunduh, Toast.LENGTH_SHORT).show();
 			})
@@ -750,13 +742,13 @@ public class VersionsActivity extends BaseActivity {
 		public static final String EXTRA_refreshing = "refreshing";
 
 		private static final int REQCODE_share = 2;
-		private LayoutInflater inflater;
+		LayoutInflater inflater;
 
 		SwipeRefreshLayout swiper;
 		DragSortListView lsVersions;
 		VersionAdapter adapter;
-		private boolean downloadedOnly;
-		private String query_text;
+		boolean downloadedOnly;
+		String query_text;
 
 		/**
 		 * Returns a new instance of this fragment for the given section
@@ -1020,33 +1012,6 @@ public class VersionsActivity extends BaseActivity {
 		}
 
 		void startDownload(final MVersionPreset mv) {
-			{
-				int enabled = -1;
-				try {
-					enabled = App.context.getPackageManager().getApplicationEnabledSetting("com.android.providers.downloads");
-				} catch (Exception e) {
-					AppLog.d(TAG, "getting app enabled setting", e);
-				}
-
-				if (enabled == -1
-					|| enabled == PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-					|| enabled == PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER) {
-					new MaterialDialog.Builder(getActivity())
-						.content(R.string.ed_download_manager_not_enabled_prompt)
-						.positiveText(R.string.ok)
-						.onPositive((dialog, which) -> {
-							try {
-								startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:com.android.providers.downloads")));
-							} catch (ActivityNotFoundException e) {
-								AppLog.e(TAG, "opening apps setting", e);
-							}
-						})
-						.negativeText(R.string.cancel)
-						.show();
-					return;
-				}
-			}
-
 			final String downloadKey = "version:preset_name:" + mv.preset_name;
 
 			final int status = DownloadMapper.instance.getStatus(downloadKey);
@@ -1055,17 +1020,12 @@ public class VersionsActivity extends BaseActivity {
 				return;
 			}
 
-			final DownloadManager.Request req = new DownloadManager.Request(Uri.parse(mv.download_url))
-				.setTitle(mv.longName)
-				.setVisibleInDownloadsUi(false)
-				.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
-
 			final Map<String, String> attrs = new LinkedHashMap<>();
 			attrs.put("download_type", "preset");
 			attrs.put("preset_name", mv.preset_name);
 			attrs.put("modifyTime", "" + mv.modifyTime);
 
-			DownloadMapper.instance.enqueue(downloadKey, req, attrs);
+			DownloadMapper.instance.enqueue(downloadKey, mv.download_url, mv.longName, attrs);
 
 			App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
 		}
@@ -1322,7 +1282,7 @@ public class VersionsActivity extends BaseActivity {
 			}
 		}
 
-		private boolean hasUpdateAvailable(final MVersionDb mvDb) {
+		boolean hasUpdateAvailable(final MVersionDb mvDb) {
 			if (mvDb.preset_name == null || mvDb.modifyTime == 0) {
 				return false;
 			}

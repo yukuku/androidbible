@@ -29,13 +29,13 @@ public class AlertDialogActivity extends BaseActivity {
 	/** Output */
 	public static final String EXTRA_INPUT = "input";
 
-	public static Intent createOkIntent(final String title, final String message) {
+	public static Intent createOkIntent(final CharSequence title, final CharSequence message) {
 		return new Intent(App.context, AlertDialogActivity.class)
 			.putExtra(EXTRA_TITLE, title)
 			.putExtra(EXTRA_MESSAGE, message);
 	}
 
-	public static Intent createAskIntent(final String title, final String message, final String negativeButtonText, final String positiveButtonText, final Intent launchWhenPositive) {
+	public static Intent createAskIntent(final CharSequence title, final CharSequence message, final CharSequence negativeButtonText, final CharSequence positiveButtonText, final Intent launchWhenPositive) {
 		return new Intent(App.context, AlertDialogActivity.class)
 			.putExtra(EXTRA_TITLE, title)
 			.putExtra(EXTRA_MESSAGE, message)
@@ -44,7 +44,7 @@ public class AlertDialogActivity extends BaseActivity {
 			.putExtra(EXTRA_LAUNCH, launchWhenPositive);
 	}
 
-	public static Intent createInputIntent(final String title, final String message, final String negativeButtonText, final String positiveButtonText, final int inputType, final String inputHint) {
+	public static Intent createInputIntent(final CharSequence title, final CharSequence message, final CharSequence negativeButtonText, final CharSequence positiveButtonText, final int inputType, final CharSequence inputHint) {
 		return new Intent(App.context, AlertDialogActivity.class)
 			.putExtra(EXTRA_TITLE, title)
 			.putExtra(EXTRA_MESSAGE, message)
@@ -58,13 +58,14 @@ public class AlertDialogActivity extends BaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		final String title = getIntent().getStringExtra(EXTRA_TITLE);
-		final String message = getIntent().getStringExtra(EXTRA_MESSAGE);
-		final String negative = getIntent().getStringExtra(EXTRA_NEGATIVE);
-		final String positive = getIntent().getExtras().getString(EXTRA_POSITIVE, getString(android.R.string.ok));
-		final int inputType = getIntent().getIntExtra(EXTRA_INPUT_TYPE, 0);
-		final String inputHint = getIntent().getStringExtra(EXTRA_INPUT_HINT);
-		final Intent launch = getIntent().getParcelableExtra(EXTRA_LAUNCH);
+		final Intent intent = getIntent();
+		final CharSequence title = intent.getCharSequenceExtra(EXTRA_TITLE);
+		final CharSequence message = intent.getCharSequenceExtra(EXTRA_MESSAGE);
+		final CharSequence negative = intent.getCharSequenceExtra(EXTRA_NEGATIVE);
+		final CharSequence positive = intent.getExtras().getCharSequence(EXTRA_POSITIVE, getText(android.R.string.ok));
+		final int inputType = intent.getIntExtra(EXTRA_INPUT_TYPE, 0);
+		final CharSequence inputHint = intent.getCharSequenceExtra(EXTRA_INPUT_HINT);
+		final Intent launch = intent.getParcelableExtra(EXTRA_LAUNCH);
 
 		final MaterialDialog.Builder builder = new MaterialDialog.Builder(this);
 

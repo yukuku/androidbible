@@ -137,7 +137,6 @@
 	<string name="ed_download_button">Download</string>
 	<string name="ed_update_button">Update</string>
 	<string name="ed_details_update_available">Update available</string>
-    <string name="ed_download_manager_not_enabled_prompt">The Download Manager app is not enabled or not available.\n\nEnable it to download Bible versions.</string>
 
     <string name="info_terperinci">Details</string>
     <string name="buang_dari_daftar">Remove</string>
@@ -387,6 +386,8 @@
 	<string name="version_download_need_fonts">"The version downloaded might need to be displayed with certain fonts. Go to the 'Display' menu and select a font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
     <string name="version_download_corrupted_file">Downloaded file seems to be corrupt.</string>
     <string name="version_download_saving_io_error">I/O error when saving downloaded version</string>
+    <string name="version_download_network_error">Network error when downloading ^1.</string>
+    <string name="version_download_server_error">Server error when downloading ^1.</string>
 
     <string name="menuNightMode">Night mode</string>
     <string name="highlight_custom_color">Other colors</string>

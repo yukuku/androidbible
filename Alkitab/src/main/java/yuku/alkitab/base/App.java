@@ -9,6 +9,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.PreferenceManager;
 import android.view.ViewConfiguration;
 import com.crashlytics.android.Crashlytics;
+import com.downloader.PRDownloader;
+import com.downloader.PRDownloaderConfig;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -22,6 +24,7 @@ import okhttp3.Call;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.internal.Version;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.model.SyncShadow;
@@ -49,14 +52,22 @@ public class App extends yuku.afw.App {
 	private static boolean initted = false;
 	private static Tracker APP_TRACKER;
 
-	static final Interceptor userAgent = chain -> {
-		final Request originalRequest = chain.request();
-		final Request requestWithUserAgent = originalRequest.newBuilder()
-			.removeHeader("User-Agent")
-			.addHeader("User-Agent", Version.userAgent() + " " + App.context.getPackageName() + "/" + App.getVersionName())
-			.build();
-		return chain.proceed(requestWithUserAgent);
-	};
+	static class UserAgentInterceptor implements Interceptor {
+		@Override
+		public Response intercept(final Chain chain) throws IOException {
+			final Request originalRequest = chain.request();
+			final Request requestWithUserAgent = originalRequest.newBuilder()
+				.removeHeader("User-Agent")
+				.addHeader("User-Agent", httpUserAgent())
+				.build();
+			return chain.proceed(requestWithUserAgent);
+		}
+	}
+
+	@NonNull
+	static String httpUserAgent() {
+		return Version.userAgent() + " " + App.context.getPackageName() + "/" + App.getVersionName();
+	}
 
 	enum OkHttpClientWrapper {
 		INSTANCE;
@@ -66,7 +77,7 @@ public class App extends yuku.afw.App {
 		{
 			final OkHttpClient.Builder builder = new OkHttpClient.Builder();
 			builder
-				.addNetworkInterceptor(userAgent)
+				.addNetworkInterceptor(new UserAgentInterceptor())
 				.connectTimeout(300, TimeUnit.SECONDS)
 				.readTimeout(300, TimeUnit.SECONDS)
 				.writeTimeout(600, TimeUnit.SECONDS);
@@ -162,6 +173,11 @@ public class App extends yuku.afw.App {
 
 		forceOverflowMenu();
 
+		PRDownloader.initialize(context, new PRDownloaderConfig.Builder()
+			.setUserAgent(httpUserAgent())
+			.build()
+		);
+
 		// make sure launcher do not open other variants of the app
 		Launcher.setAppPackageName(context.getPackageName());
 
@@ -241,7 +257,7 @@ public class App extends yuku.afw.App {
 				.connectTimeout(30, TimeUnit.SECONDS)
 				.readTimeout(30, TimeUnit.SECONDS)
 				.writeTimeout(30, TimeUnit.SECONDS)
-				.addNetworkInterceptor(userAgent);
+				.addNetworkInterceptor(new UserAgentInterceptor());
 
 			if (BuildConfig.DEBUG) {
 				builder.hostnameVerifier((hostname, session) -> true);
