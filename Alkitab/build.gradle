@@ -32,8 +32,8 @@ android {
         applicationId 'yuku.alkitab.debug'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 14000330
-        versionName '4.4.3'
+        versionCode 14000350
+        versionName '4.5.0'
         multiDexEnabled true
         // Keep this synced with integrate_translations.sh!
         resConfigs 'af', 'bg', 'cs', 'da', 'de', 'es', 'fr', 'in', 'ja', 'ko', 'lv', 'ms', 'nl', 'pl', 'pt', 'ro', 'ru', 'th', 'uk', 'vi', 'zh-rCN', 'zh-rTW'
