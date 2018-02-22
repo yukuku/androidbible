@@ -22,6 +22,7 @@ import yuku.alkitab.base.br.VersionDownloadCompleteReceiver;
 import yuku.alkitab.debug.R;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -171,7 +172,7 @@ public enum DownloadMapper {
 		final Context context = App.context;
 		final NotificationManagerCompat nmc = NotificationManagerCompat.from(context);
 
-		for (final Row row : currentById.values()) {
+		for (final Row row : new ArrayList<>(currentById.values())) {
 			final Notification n = new NotificationCompat.Builder(context)
 				.setSmallIcon(android.R.drawable.stat_sys_download)
 				.setContentTitle(row.title)
