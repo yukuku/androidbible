@@ -118,13 +118,13 @@ public abstract class Debouncer<RequestType, ResultType> {
 
 		switch (phase) {
 			case 1:
-				Log.d(TAG, "outdated task (" + this_id + " < " + current_id + ") found before process");
+				AppLog.d(TAG, "outdated task (" + this_id + " < " + current_id + ") found before process");
 				break;
 			case 2:
-				Log.d(TAG, "outdated task (" + this_id + " < " + current_id + ") found after process");
+				AppLog.d(TAG, "outdated task (" + this_id + " < " + current_id + ") found after process");
 				break;
 			case 3:
-				Log.d(TAG, "outdated task (" + this_id + " < " + current_id + ") found before onResult");
+				AppLog.d(TAG, "outdated task (" + this_id + " < " + current_id + ") found before onResult");
 				break;
 		}
 

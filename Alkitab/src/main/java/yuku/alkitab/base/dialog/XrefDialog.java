@@ -1,6 +1,6 @@
 package yuku.alkitab.base.dialog;
 
-import android.app.Activity;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -18,6 +18,7 @@ import yuku.afw.D;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.dialog.base.BaseDialog;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.base.widget.VerseRenderer;
@@ -54,8 +55,8 @@ public class XrefDialog extends BaseDialog {
 	List<String> displayedVerseTexts;
 	List<String> displayedVerseNumberTexts;
 	IntArrayList displayedRealAris;
-	Version sourceVersion = S.activeVersion;
-	String sourceVersionId = S.activeVersionId;
+	Version sourceVersion = S.activeVersion();
+	String sourceVersionId = S.activeVersionId();
 	float textSizeMult = S.getDb().getPerVersionSettings(sourceVersionId).fontSizeMultiplier;
 
 	public XrefDialog() {
@@ -70,17 +71,18 @@ public class XrefDialog extends BaseDialog {
 
 		return res;
 	}
-	
-	@Override public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		
+
+	@Override
+	public void onAttach(final Context context) {
+		super.onAttach(context);
+
 		if (getParentFragment() instanceof XrefDialogListener) {
 			listener = (XrefDialogListener) getParentFragment();
 		} else {
-			listener = (XrefDialogListener) activity;
+			listener = (XrefDialogListener) context;
 		}
 	}
-	
+
 	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setStyle(DialogFragment.STYLE_NO_TITLE, 0);
@@ -95,8 +97,8 @@ public class XrefDialog extends BaseDialog {
 		tXrefText = V.get(res, R.id.tXrefText);
 		versesView = V.get(res, R.id.versesView);
 		
-		res.setBackgroundColor(S.applied.backgroundColor);
-		versesView.setCacheColorHint(S.applied.backgroundColor);
+		res.setBackgroundColor(S.applied().backgroundColor);
+		versesView.setCacheColorHint(S.applied().backgroundColor);
 		versesView.setVerseSelectionMode(VerseSelectionMode.singleClick);
 		versesView.setSelectedVersesListener(versesView_selectedVerses);
 		tXrefText.setMovementMethod(LinkMovementMethod.getInstance());
@@ -172,7 +174,7 @@ public class XrefDialog extends BaseDialog {
 		final IntArrayList ranges = decodeTarget(encodedTarget);
 
 		if (D.EBUG) {
-			Log.d(TAG, "linkPos " + linkPos + " target=" + encodedTarget + " ranges=" + ranges);
+			AppLog.d(TAG, "linkPos " + linkPos + " target=" + encodedTarget + " ranges=" + ranges);
 		}
 		
 		displayedVerseTexts = new ArrayList<>();

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-
+    <!-- Also edit "pref_language_values" and "ConfigurationWrapper" class! -->
     <string-array name="pref_language_labels" tools:ignore="MissingTranslation">
         <item>@string/pref_language_label_default</item>
         <item>Afrikaans</item>
         <item>Bahasa Indonesia</item>
         <item>Čeština</item>
+        <item>Dansk</item>
         <item>Deutsch</item>
         <item>English</item>
         <item>Español</item>
@@ -15,6 +16,8 @@
         <item>Polski</item>
         <item>Português</item>
         <item>Română</item>
+        <item>Tiếng Việt</item>
+        <item>Български</item>
         <item>Русский</item>
         <item>Українська</item>
         <item>ภาษาไทย</item>
@@ -23,11 +26,14 @@
         <item>简体中文</item>
         <item>繁體中文</item>
     </string-array>
+
+    <!-- Also edit "pref_language_labels" and "ConfigurationWrapper" class! -->
     <string-array name="pref_language_values" translatable="false">
         <item>DEFAULT</item>
         <item>af</item>
         <item>in</item>
         <item>cs</item>
+        <item>da</item>
         <item>de</item>
         <item>en</item>
         <item>es</item>
@@ -37,6 +43,8 @@
         <item>pl</item>
         <item>pt</item>
         <item>ro</item>
+        <item>vi</item>
+        <item>bg</item>
         <item>ru</item>
         <item>uk</item>
         <item>th</item>

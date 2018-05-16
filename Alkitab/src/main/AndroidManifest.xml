@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-	package="yuku.alkitab.debug"
+<manifest package="yuku.alkitab.debug"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:installLocation="auto">
@@ -41,10 +40,12 @@
 		android:fullBackupContent="true"
 		android:icon="@drawable/ic_launcher"
 		android:label="@string/app_name"
-		android:theme="@style/Theme.Alkitab">
+		android:networkSecurityConfig="@xml/network_security_config"
+		android:theme="@style/Theme.Alkitab"
+		tools:ignore="UnusedAttribute">
 		<activity
 			android:name="yuku.alkitab.base.IsiActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection">
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 
@@ -66,31 +67,26 @@
 		</activity>
 		<activity
 			android:name="yuku.alkitab.base.ac.GotoActivity"
-			android:configChanges="locale|layoutDirection"
-			android:theme="@style/Theme.Alkitab.DialogWhenLarge"
+			android:configChanges="locale|layoutDirection|fontScale"
 			android:windowSoftInputMode="adjustNothing" />
 		<activity
 			android:name="yuku.alkitab.base.ac.SettingsActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:label="@string/pengaturan_alkitab"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
+			android:label="@string/pengaturan_alkitab" />
 		<activity
 			android:name="yuku.alkitab.base.ac.ColorSettingsActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale" />
 		<activity
 			android:name="yuku.alkitab.base.ac.MarkersActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:label="@string/activity_title_markers"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
+			android:label="@string/activity_title_markers" />
 		<activity
 			android:name="yuku.alkitab.base.ac.MarkerListActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
 			android:windowSoftInputMode="adjustResize|stateHidden" />
 		<activity
 			android:name="yuku.alkitab.base.ac.VersionsActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
 			android:label="@string/kelola_versi"
 			android:parentActivityName="yuku.alkitab.base.IsiActivity">
 			<meta-data
@@ -237,6 +233,17 @@
 				<data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\.PDB" />
 				<data android:pathPattern="/.*\\..*\\..*\\..*\\..*\\..*\\.PDB" />
 			</intent-filter>
+			<!-- chemical/x-pdb -->
+			<intent-filter android:label="@string/intent_filter_open_pdb_file">
+				<action android:name="android.intent.action.VIEW" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+
+				<data android:scheme="file" />
+				<data android:scheme="content" />
+				<data android:mimeType="chemical/x-pdb" />
+			</intent-filter>
 			<!-- last: any file with application/octet-stream type -->
 			<intent-filter android:label="@string/intent_filter_open_pdb_or_yes_file">
 				<action android:name="android.intent.action.VIEW" />
@@ -252,12 +259,12 @@
 		</activity>
 		<activity
 			android:name="yuku.alkitab.base.ac.SearchActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
 			android:label="@string/search"
 			android:windowSoftInputMode="adjustResize" />
 		<activity
 			android:name="yuku.alkitab.base.ac.DevotionActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
 			android:label="@string/menuDevotion">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
@@ -265,15 +272,14 @@
 		</activity>
 		<activity
 			android:name="yuku.alkitab.base.ac.HelpActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat">
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value="yuku.alkitab.base.ac.AboutActivity" />
 		</activity>
 		<activity
 			android:name="yuku.alkitab.base.ac.AboutActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
 			android:label="@string/menuBantuan">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
@@ -281,63 +287,58 @@
 		</activity>
 		<activity
 			android:name="yuku.alkitab.base.ac.ShareActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale" />
 		<activity
 			android:name="yuku.alkitab.base.ac.FontManagerActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
+			android:label="@string/fm_activity_title" />
 		<activity
 			android:name="yuku.alkitab.base.ac.SongListActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
 			android:label="@string/sn_songs_activity_title"
 			android:theme="@style/Theme.Alkitab.DialogWhenLarge"
 			android:windowSoftInputMode="adjustResize|stateHidden" />
 		<activity
 			android:name="yuku.alkitab.base.ac.SongViewActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
+			android:label="@string/sn_songs_activity_title" />
 		<activity
 			android:name="yuku.alkitab.base.ac.SecretSettingsActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:label="Secret settings"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
+			android:label="Secret settings" />
 		<activity
 			android:name="yuku.alkitab.base.ac.SecretSyncDebugActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
 			android:label="Secret sync debug" />
 		<activity
 			android:name="yuku.alkitab.base.ac.ReadingPlanActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale" />
 		<activity
 			android:name="yuku.alkitab.base.ac.PatchTextActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
 			android:windowSoftInputMode="adjustResize" />
 		<activity
 			android:name="yuku.alkitab.base.sync.SyncSettingsActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
+			android:label="@string/sync_status_activity_title" />
 		<activity
 			android:name="yuku.alkitab.base.sync.SyncLogActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:label="@string/sync_log_activity_title"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
+			android:label="@string/sync_log_activity_title" />
 		<activity
 			android:name="yuku.alkitab.base.sync.SyncLoginActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:label="@string/sync_login_activity_title"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
+			android:label="@string/sync_login_activity_title" />
 		<activity
 			android:name="yuku.filechooser.FileChooserActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale" />
 		<activity
 			android:name="com.example.android.wizardpager.MainActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
 			android:theme="@style/AlkitabFeedback.Theme" />
 		<activity
 			android:name="yuku.alkitab.base.ac.VersesDialogActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
 			android:theme="@style/Theme.Alkitab.Transparent">
 			<intent-filter>
 				<action android:name="yuku.alkitab.action.SHOW_VERSES_DIALOG" />
@@ -347,25 +348,25 @@
 		</activity>
 		<activity
 			android:name="yuku.alkitab.base.ac.DailyVerseAppWidgetConfigurationActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat">
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
+			android:label="@string/dv_activity_title">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
 			</intent-filter>
 		</activity>
 		<activity
 			android:name="yuku.alkitab.base.ac.SearchBookFilterActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
 			android:label="@string/select_books_to_search"
 			android:theme="@style/Theme.Alkitab.DialogWhenLarge" />
 		<activity
 			android:name="yuku.alkitab.base.ac.NoteActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
 			android:icon="@drawable/ic_attr_note"
 			android:windowSoftInputMode="adjustResize" />
 		<activity
 			android:name="yuku.alkitab.base.ac.AlertDialogActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
 			android:excludeFromRecents="true"
 			android:theme="@style/Theme.PopupActivity" />
 
@@ -418,15 +419,6 @@
 			android:name="yuku.alkitab.base.br.DailyVerseAppWidgetReceiver$UpdateService"
 			android:exported="false" />
 
-		<receiver
-			android:name="yuku.alkitab.base.br.VersionDownloadCompleteReceiver"
-			android:enabled="true"
-			android:exported="true">
-			<intent-filter>
-				<action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
-			</intent-filter>
-		</receiver>
-
 		<service
 			android:name="yuku.alkitab.base.sv.DailyVerseAppWidgetService"
 			android:permission="android.permission.BIND_REMOTEVIEWS" />
@@ -477,6 +469,20 @@
 				android:resource="@xml/syncadapter" />
 		</service>
 
+		<!--
+			File provider, for sharing app files.
+			Authority MUST NOT be changed without changing sharing code.
+		 -->
+		<provider
+			android:name="android.support.v4.content.FileProvider"
+			android:authorities="${applicationId}.file_provider"
+			android:exported="false"
+			android:grantUriPermissions="true">
+			<meta-data
+				android:name="android.support.FILE_PROVIDER_PATHS"
+				android:resource="@xml/file_provider" />
+		</provider>
+
 		<!-- gcm -->
 		<receiver
 			android:name="yuku.alkitab.base.sync.GcmBroadcastReceiver"
@@ -492,12 +498,11 @@
 			android:name="com.google.android.gms.version"
 			android:value="@integer/google_play_services_version" />
 
-		<!-- from a separate app: devotion reminder -->
+		<!-- devotion reminder -->
 		<activity
 			android:name="yuku.alkitab.reminder.ac.DevotionReminderActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:label="@string/dr_app_name"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat" />
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
+			android:label="@string/dr_app_name" />
 
 		<receiver android:name="yuku.alkitab.reminder.br.DevotionReminderReceiver" />
 		<receiver android:name="yuku.alkitab.reminder.br.BootCompleteReceiver">
@@ -518,6 +523,9 @@
 			</intent-filter>
 		</receiver>
 
+		<meta-data
+			android:name="io.fabric.ApiKey"
+			android:value="88fa9dcee81c62d7913a3fd0abd7cb6a652698dc" />
 	</application>
 
 </manifest>

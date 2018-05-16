@@ -2,6 +2,7 @@ package yuku.alkitab.yes1;
 
 import android.util.Log;
 import yuku.afw.D;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
 import yuku.alkitab.model.PericopeBlock;
@@ -69,7 +70,7 @@ public class Yes1Reader implements BibleReader {
 			
 			if (sectionName == null || sectionName.equals("____________")) {
 				// sudah mencapai EOF. Maka kasih tau seksi ini ga ada.
-				Log.d(TAG, "Seksi tidak ditemukan: " + section);
+				AppLog.d(TAG, "Seksi tidak ditemukan: " + section);
 				return -1;
 			}
 			
@@ -78,7 +79,7 @@ public class Yes1Reader implements BibleReader {
 			if (sectionName.equals(section)) {
 				return ukuran;
 			} else {
-				Log.d(TAG, "seksi dilewati: " + sectionName);
+				AppLog.d(TAG, "seksi dilewati: " + sectionName);
 				f.skipBytes(ukuran);
 			}
 		}
@@ -106,7 +107,7 @@ public class Yes1Reader implements BibleReader {
 
 		skipUntilSection("teks________");
 		text_baseOffset = f.getFilePointer();
-		Log.d(TAG, "text_baseOffset = " + text_baseOffset);
+		AppLog.d(TAG, "text_baseOffset = " + text_baseOffset);
 	}
 
 	@Override
@@ -120,7 +121,7 @@ public class Yes1Reader implements BibleReader {
 			init();
 			return shortName;
 		} catch (Exception e) {
-			Log.e(TAG, "init error", e);
+			AppLog.e(TAG, "init error", e);
 			return "";
 		}
 	}
@@ -131,7 +132,7 @@ public class Yes1Reader implements BibleReader {
 			init();
 			return longName;
 		} catch (Exception e) {
-			Log.e(TAG, "init error", e);
+			AppLog.e(TAG, "init error", e);
 			return "";
 		}
 	}
@@ -192,16 +193,16 @@ public class Yes1Reader implements BibleReader {
 
 				}
 			}
-			
-			Log.d(TAG, "readVersionInfo selesai, nama=" + nama + " judul=" + longName + " book_count=" + book_count);
+
+			AppLog.d(TAG, "readVersionInfo selesai, nama=" + nama + " judul=" + longName + " book_count=" + book_count);
 		} catch (Exception e) {
-			Log.e(TAG, "readVersionInfo error", e);
+			AppLog.e(TAG, "readVersionInfo error", e);
 		}
 	}
 
 	@Override public Book[] loadBooks() {
 		try {
-			Log.d(TAG, "bacaInfoKitab dipanggil");
+			AppLog.d(TAG, "bacaInfoKitab dipanggil");
 			
 			init();
 			
@@ -211,56 +212,70 @@ public class Yes1Reader implements BibleReader {
 			byte[] buf = new byte[ukuran];
 			f.read(buf);
 			BintexReader in = new BintexReader(new ByteArrayInputStream(buf));
-			
-			Log.d(TAG, "akan membaca " + this.book_count + " kitab");
+
+			AppLog.d(TAG, "akan membaca " + this.book_count + " kitab");
 			for (int kitabIndex = 0; kitabIndex < this.book_count; kitabIndex++) {
 				Yes1Book k = new Yes1Book();
 				
 				// kalau true, berarti ini kitab NULL
 				boolean kosong = false;
-				
-				for (int keyKe = 0;; keyKe++) {
+
+				label:
+				for (int keyKe = 0; ; keyKe++) {
 					String key = in.readShortString();
-					
-					if (key.equals("versi")) {
-						int versi = in.readInt();
-						if (versi > 2) throw new RuntimeException("Versi Kitab (lebih dari 2): " + versi + " tidak dikenal");
-					} else if (key.equals("pos")) {
-						k.bookId = in.readInt();
-					} else if (key.equals("nama")) {
-						k.shortName = in.readShortString();
-					} else if (key.equals("judul")) {
-						k.shortName = in.readShortString();
-					} else if (key.equals("npasal")) {
-						k.chapter_count = in.readInt();
-					} else if (key.equals("nayat")) {
-						k.verse_counts = new int[k.chapter_count];
-						for (int i = 0; i < k.chapter_count; i++) {
-							k.verse_counts[i] = in.readUint8();
-						}
-					} else if (key.equals("ayatLoncat")) {
-						// ignored
-						in.readInt();
-					} else if (key.equals("pdbBookNumber")) {
-						// ignored
-						in.readInt();
-					} else if (key.equals("pasal_offset")) {
-						k.chapter_offsets = new int[k.chapter_count + 1]; // harus ada +1nya kalo YesPembaca
-						for (int i = 0; i < k.chapter_offsets.length; i++) {
-							k.chapter_offsets[i] = in.readInt();
-						}
-					} else if (key.equals("encoding")) {
-						// ignored, deprecated
-						in.readInt();
-					} else if (key.equals("offset")) {
-						k.offset = in.readInt();
-					} else if (key.equals("end")) {
-						// sudah end sebelum baca apapun?
-						if (keyKe == 0) kosong = true;
-						break;
-					} else {
-						Log.w(TAG, "ada key ga dikenal di kitab " + k + " di infoKitab: " + key);
-						break;
+
+					switch (key) {
+						case "versi":
+							int versi = in.readInt();
+							if (versi > 2) throw new RuntimeException("Versi Kitab (lebih dari 2): " + versi + " tidak dikenal");
+							break;
+						case "pos":
+							k.bookId = in.readInt();
+							break;
+						case "nama":
+							k.shortName = in.readShortString();
+							break;
+						case "judul":
+							k.shortName = in.readShortString();
+							break;
+						case "npasal":
+							k.chapter_count = in.readInt();
+							break;
+						case "nayat":
+							k.verse_counts = new int[k.chapter_count];
+							for (int i = 0; i < k.chapter_count; i++) {
+								k.verse_counts[i] = in.readUint8();
+							}
+							break;
+						case "ayatLoncat":
+							// ignored
+							in.readInt();
+							break;
+						case "pdbBookNumber":
+							// ignored
+							in.readInt();
+							break;
+						case "pasal_offset":
+							k.chapter_offsets = new int[k.chapter_count + 1]; // harus ada +1nya kalo YesPembaca
+
+							for (int i = 0; i < k.chapter_offsets.length; i++) {
+								k.chapter_offsets[i] = in.readInt();
+							}
+							break;
+						case "encoding":
+							// ignored, deprecated
+							in.readInt();
+							break;
+						case "offset":
+							k.offset = in.readInt();
+							break;
+						case "end":
+							// sudah end sebelum baca apapun?
+							if (keyKe == 0) kosong = true;
+							break label;
+						default:
+							AppLog.w(TAG, "ada key ga dikenal di kitab " + k + " di infoKitab: " + key);
+							break label;
 					}
 				}
 				
@@ -283,7 +298,7 @@ public class Yes1Reader implements BibleReader {
 			
 			return res;
 		} catch (Exception e) {
-			Log.e(TAG, "bacaInfoKitab error", e);
+			AppLog.e(TAG, "bacaInfoKitab error", e);
 			return null;
 		}
 	}
@@ -297,10 +312,10 @@ public class Yes1Reader implements BibleReader {
 			} else if (encoding == 2) {
 				verseTextDecoder = new OldVerseTextDecoder.Utf8();
 			} else {
-				Log.e(TAG, "Encoding " + encoding + " not recognized!");
+				AppLog.e(TAG, "Encoding " + encoding + " not recognized!");
 				verseTextDecoder = new OldVerseTextDecoder.Ascii();
 			}
-			Log.d(TAG, "encoding " + encoding + " so decoder is " + verseTextDecoder.getClass().getName());
+			AppLog.d(TAG, "encoding " + encoding + " so decoder is " + verseTextDecoder.getClass().getName());
 		}
 		
 		try {
@@ -319,7 +334,7 @@ public class Yes1Reader implements BibleReader {
 			
 			int length = yesBook.chapter_offsets[pasal_1] - yesBook.chapter_offsets[pasal_1 - 1];
 			
-			if (D.EBUG) Log.d(TAG, "muatTeks kitab=" + book.shortName + " pasal_1=" + pasal_1 + " offset=" + yesBook.offset + " offset pasal: " + yesBook.chapter_offsets[pasal_1-1]);
+			if (D.EBUG) AppLog.d(TAG, "muatTeks kitab=" + book.shortName + " pasal_1=" + pasal_1 + " offset=" + yesBook.offset + " offset pasal: " + yesBook.chapter_offsets[pasal_1 - 1]);
 			
 			byte[] ba = new byte[length];
 			f.read(ba);
@@ -330,7 +345,7 @@ public class Yes1Reader implements BibleReader {
 				return new Yes1SingleChapterVerses(verseTextDecoder.separateIntoVerses(ba, hurufKecil));
 			}
 		} catch (Exception e) {
-			Log.e(TAG, "muatTeks error", e);
+			AppLog.e(TAG, "muatTeks error", e);
 			return null;
 		}
 	}
@@ -361,7 +376,7 @@ public class Yes1Reader implements BibleReader {
 			int ukuran = skipUntilSection("perikopIndex");
 			
 			if (ukuran < 0) {
-				Log.d(TAG, "Tidak ada seksi 'perikopIndex'");
+				AppLog.d(TAG, "Tidak ada seksi 'perikopIndex'");
 				return null;
 			}
 			
@@ -370,10 +385,10 @@ public class Yes1Reader implements BibleReader {
 			pericopeIndex_ = Yes1PericopeIndex.read(in);
 			return pericopeIndex_;
 		} catch (Exception e) {
-			Log.e(TAG, "bacaIndexPerikop error", e);
+			AppLog.e(TAG, "bacaIndexPerikop error", e);
 			return null;
 		} finally {
-			Log.d(TAG, "Muat index perikop butuh ms: " + (System.currentTimeMillis() - wmulai));
+			AppLog.d(TAG, "Muat index perikop butuh ms: " + (System.currentTimeMillis() - wmulai));
 		}
 	}
 
@@ -381,7 +396,7 @@ public class Yes1Reader implements BibleReader {
 		try {
 			init();
 			
-			if (D.EBUG) Log.d(TAG, "muatPerikop dipanggil untuk kitab=" + kitab + " pasal_1=" + pasal);
+			if (D.EBUG) AppLog.d(TAG, "muatPerikop dipanggil untuk kitab=" + kitab + " pasal_1=" + pasal);
 			
 			Yes1PericopeIndex pericopeIndex = loadPericopeIndex();
 			if (pericopeIndex == null) {
@@ -429,7 +444,7 @@ public class Yes1Reader implements BibleReader {
 	
 			return res;
 		} catch (Exception e) {
-			Log.e(TAG, "gagal muatPerikop", e);
+			AppLog.e(TAG, "gagal muatPerikop", e);
 			return 0;
 		}
 	}
@@ -443,7 +458,7 @@ public class Yes1Reader implements BibleReader {
 			init();
 			return description;
 		} catch (Exception e) {
-			Log.e(TAG, "init error", e);
+			AppLog.e(TAG, "init error", e);
 			return null;
 		}
 	}

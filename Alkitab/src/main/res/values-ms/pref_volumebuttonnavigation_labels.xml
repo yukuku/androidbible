@@ -7,4 +7,10 @@
     <item>Navigasi bab</item>
     <item>Laman ke atas/bawah</item>
   </string-array>
+  <string-array name="pref_forceFontScale_labels">
+    <item>Ikut penetapan sistem</item>
+    <item>Sangat besar sekali</item>
+    <item>Sangat besar</item>
+    <item>Amat besar</item>
+  </string-array>
 </resources>

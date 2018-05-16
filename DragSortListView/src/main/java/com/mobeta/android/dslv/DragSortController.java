@@ -3,6 +3,7 @@ package com.mobeta.android.dslv;
 import android.view.GestureDetector;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
+import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.graphics.Point;
@@ -15,8 +16,8 @@ import android.widget.AdapterView;
  * creation.
  *
  * An instance of this class is meant to be passed to the methods
- * {@link DragSortListView#setTouchListener()} and
- * {@link DragSortListView#setFloatViewManager()} of your
+ * {@link DragSortListView#setTouchDelegate(TouchDelegate)} and
+ * {@link DragSortListView#setFloatViewManager(DragSortListView.FloatViewManager)} of your
  * {@link DragSortListView} instance.
  */
 public class DragSortController extends SimpleFloatViewManager implements View.OnTouchListener, GestureDetector.OnGestureListener {
@@ -82,7 +83,7 @@ public class DragSortController extends SimpleFloatViewManager implements View.O
 
 
     /**
-     * Calls {@link #DragSortController(DragSortListView, int)} with a
+     * Calls {@link DragSortController(DragSortListView, int)} with a
      * 0 drag handle id, FLING_RIGHT_REMOVE remove mode,
      * and ON_DOWN drag init. By default, sorting is enabled, and
      * removal is disabled.
@@ -125,7 +126,7 @@ public class DragSortController extends SimpleFloatViewManager implements View.O
 
     /**
      * Set how a drag is initiated. Needs to be one of
-     * {@link ON_DOWN}, {@link ON_DRAG}, or {@link ON_LONG_PRESS}.
+     * {@link #ON_DOWN}, {@link #ON_DRAG}, or {@link #ON_LONG_PRESS}.
      *
      * @param mode The drag init mode.
      */
@@ -149,9 +150,9 @@ public class DragSortController extends SimpleFloatViewManager implements View.O
     }
 
     /**
-     * One of {@link CLICK_REMOVE}, {@link FLING_RIGHT_REMOVE},
-     * {@link FLING_LEFT_REMOVE},
-     * {@link SLIDE_RIGHT_REMOVE}, or {@link SLIDE_LEFT_REMOVE}.
+     * One of {@link #CLICK_REMOVE}, {@link #FLING_RIGHT_REMOVE},
+     * {@link #FLING_LEFT_REMOVE},
+     * {@link #SLIDE_RIGHT_REMOVE}, or {@link #SLIDE_LEFT_REMOVE}.
      */
     public void setRemoveMode(int mode) {
         mRemoveMode = mode;
@@ -267,7 +268,6 @@ public class DragSortController extends SimpleFloatViewManager implements View.O
 
         if (mRemoveEnabled) {
             int x = touch.x;
-            int y = touch.y;
 
             if (mRemoveMode == SLIDE_RIGHT_REMOVE) {
                 int width = mDslv.getWidth();
@@ -349,7 +349,7 @@ public class DragSortController extends SimpleFloatViewManager implements View.O
             final int rawY = (int) ev.getRawY();
         
             //View dragBox = (View) item.getTag();
-            View dragBox = (View) item.findViewById(id);
+            View dragBox = item.findViewById(id);
             boolean dragHit = false;
             if (dragBox != null) {
                 dragBox.getLocationOnScreen(mTempLoc);

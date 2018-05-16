@@ -65,14 +65,14 @@ public class ExtensionManager {
 					final Info info = new Info(ai, label, supportsMultipleVerses, includeVerseText, includeVerseTextFormatting);
 					extensions.add(info);
 				} catch (PackageManager.NameNotFoundException e) {
-					Log.e(TAG, "PackageManager should not emit this", e);
+					AppLog.e(TAG, "PackageManager should not emit this", e);
 				}
 			}
 
 			if (BuildConfig.DEBUG) {
-				Log.d(TAG, "Found " + extensions.size() + " extensions:");
+				AppLog.d(TAG, "Found " + extensions.size() + " extensions:");
 				for (final Info info : extensions) {
-					Log.d(TAG, "- " + info.activityInfo.packageName + "/" + info.activityInfo.name);
+					AppLog.d(TAG, "- " + info.activityInfo.packageName + "/" + info.activityInfo.name);
 				}
 			}
 		}
@@ -87,7 +87,7 @@ public class ExtensionManager {
 	public static class InvalidateExtensionsReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
-			Log.d(TAG, "invalidating extensions because of " + intent.getAction());
+			AppLog.d(TAG, "invalidating extensions because of " + intent.getAction());
 			invalidate();
 		}
 	}

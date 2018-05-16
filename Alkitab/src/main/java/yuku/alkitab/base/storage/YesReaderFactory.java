@@ -1,6 +1,6 @@
 package yuku.alkitab.base.storage;
 
-import android.util.Log;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.yes1.Yes1Reader;
 import yuku.alkitab.yes2.Yes2Reader;
@@ -33,7 +33,7 @@ public class YesReaderFactory {
 			|| header[4] != (byte) 0x00 
 			|| header[5] != (byte) 0x5d 
 			|| header[6] != (byte) 0xe0) {
-				Log.e(TAG, "Yes file '" + filename + "' has not a correct header. Header is: " + Arrays.toString(header));
+				AppLog.e(TAG, "Yes file '" + filename + "' has not a correct header. Header is: " + Arrays.toString(header));
 				return null;
 			}
 			
@@ -42,11 +42,11 @@ public class YesReaderFactory {
 			} else if (header[7] == 0x02) { // VERSION 2 YES
 				return new Yes2Reader(new RandomAccessFileRandomInputStream(filename));
 			} else {
-				Log.e(TAG, "Yes file version unsupported: " + header[7]);
+				AppLog.e(TAG, "Yes file version unsupported: " + header[7]);
 				return null;
 			}
 		} catch (IOException e) {
-			Log.e(TAG, "@@createYesReader io exception", e);
+			AppLog.e(TAG, "@@createYesReader io exception", e);
 			return null;
 		}
 	}

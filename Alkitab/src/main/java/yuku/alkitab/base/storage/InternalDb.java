@@ -1,10 +1,12 @@
 package yuku.alkitab.base.storage;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import android.os.Build;
 import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,7 +23,6 @@ import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.MarkerListActivity;
 import yuku.alkitab.base.devotion.ArticleMeidA;
 import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
-import yuku.alkitab.base.devotion.ArticleRefheart;
 import yuku.alkitab.base.devotion.ArticleRenunganHarian;
 import yuku.alkitab.base.devotion.ArticleRoc;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
@@ -39,6 +40,7 @@ import yuku.alkitab.base.sync.SyncRecorder;
 import yuku.alkitab.base.sync.Sync_Mabel;
 import yuku.alkitab.base.sync.Sync_Pins;
 import yuku.alkitab.base.sync.Sync_Rp;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.BuildConfig;
@@ -61,6 +63,7 @@ import java.util.Set;
 import static yuku.alkitab.base.util.Literals.Array;
 import static yuku.alkitab.base.util.Literals.ToStringArray;
 
+@TargetApi(Build.VERSION_CODES.KITKAT)
 public class InternalDb {
 	public static final String TAG = InternalDb.class.getSimpleName();
 
@@ -296,7 +299,7 @@ public class InternalDb {
 
 				int mapOffset = Ari.toVerse(ari) - 1;
 				if (mapOffset >= bookmarkCountMap.length) {
-					Log.e(TAG, "mapOffset too many " + mapOffset + " happens on ari 0x" + Integer.toHexString(ari));
+					AppLog.e(TAG, "mapOffset too many " + mapOffset + " happens on ari 0x" + Integer.toHexString(ari));
 					continue;
 				}
 
@@ -554,9 +557,6 @@ public class InternalDb {
 				case ROC: {
 					return new ArticleRoc(date, c.getString(col_body), c.getInt(col_readyToUse) > 0);
 				}
-				case REFHEART: {
-					return new ArticleRefheart(date, c.getString(col_body), c.getInt(col_readyToUse) > 0);
-				}
 			}
 		}
 
@@ -652,11 +652,6 @@ public class InternalDb {
 		} finally {
 			db.endTransaction();
 		}
-	}
-
-	public boolean hasVersionWithFilename(String filename) {
-		final SQLiteDatabase db = helper.getReadableDatabase();
-		return DatabaseUtils.longForQuery(db, "select count(*) from " + Db.TABLE_Version + " where " + Db.Version.filename + "=?", new String[] {filename}) > 0;
 	}
 
 	public void deleteVersion(MVersionDb mv) {
@@ -999,7 +994,7 @@ public class InternalDb {
 		//   A101 B[104] C102 D[103] E105
 
 		if (D.EBUG) {
-			Log.d(TAG, "@@reorderLabels from _id=" + from._id + " ordering=" + from.ordering + " to _id=" + to._id + " ordering=" + to.ordering);
+			AppLog.d(TAG, "@@reorderLabels from _id=" + from._id + " ordering=" + from.ordering + " to _id=" + to._id + " ordering=" + to.ordering);
 		}
 
 		SQLiteDatabase db = helper.getWritableDatabase();
@@ -1036,7 +1031,7 @@ public class InternalDb {
 		//   A101 B[104] C102 D[103] E105
 
 		if (BuildConfig.DEBUG) {
-			Log.d(TAG, "@@reorderVersions from id=" + from.getVersionId() + " ordering=" + from.ordering + " to id=" + to.getVersionId() + " ordering=" + to.ordering);
+			AppLog.d(TAG, "@@reorderVersions from id=" + from.getVersionId() + " ordering=" + from.ordering + " to id=" + to.getVersionId() + " ordering=" + to.ordering);
 		}
 
 		SQLiteDatabase db = helper.getWritableDatabase();

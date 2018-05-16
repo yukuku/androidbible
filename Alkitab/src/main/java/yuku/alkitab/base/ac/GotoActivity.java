@@ -102,9 +102,7 @@ public class GotoActivity extends BaseActivity implements BaseGotoFragment.GotoF
 
 		tablayout = V.get(this, R.id.tablayout);
 		tablayout.setTabMode(TabLayout.MODE_SCROLLABLE);
-		tablayout.setTabsFromPagerAdapter(pagerAdapter);
-		tablayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
-		viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tablayout));
+		tablayout.setupWithViewPager(viewPager);
 
 		if (savedInstanceState == null) {
 			// get from preferences

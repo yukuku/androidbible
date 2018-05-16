@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -77,7 +78,7 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 		bezelPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
 		initializePrimaryColor();
-		accentColor = getResources().getColor(R.color.accent);
+		accentColor = ResourcesCompat.getColor(getResources(), R.color.accent, getContext().getTheme());
 		accentColorPaint.setColor(accentColor);
 		accentColorPaint.setAntiAlias(true);
 
@@ -298,9 +299,9 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 
 	private void initializePrimaryColor() {
 		if (Preferences.getBoolean(Prefkey.is_night_mode, false)) {
-			primaryColor = getResources().getColor(R.color.primary_night_mode);
+			primaryColor = ResourcesCompat.getColor(getResources(), R.color.primary_night_mode, getContext().getTheme());
 		} else {
-			primaryColor = getResources().getColor(R.color.primary);
+			primaryColor = ResourcesCompat.getColor(getResources(), R.color.primary, getContext().getTheme());
 		}
 	}
 }

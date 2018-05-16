@@ -5,6 +5,12 @@
     <item>"Не використовувати навігацію"</item>
     <item>Навігація між віршами</item>
     <item>Навігація між розділами</item>
-    <item>Page up/down</item>
+    <item>Сторінка вгору/вниз</item>
+  </string-array>
+  <string-array name="pref_forceFontScale_labels">
+    <item>Слідувати налаштуванням системи</item>
+    <item>Великий</item>
+    <item>Величезний</item>
+    <item>Гіганський</item>
   </string-array>
 </resources>

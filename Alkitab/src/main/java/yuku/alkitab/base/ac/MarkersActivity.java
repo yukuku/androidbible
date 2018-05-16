@@ -7,7 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -21,7 +22,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import yuku.afw.D;
@@ -33,6 +34,7 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.LabelEditorDialog;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.BookmarkImporter;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
@@ -47,6 +49,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 public class MarkersActivity extends BaseActivity {
 	public static final String TAG = MarkersActivity.class.getSimpleName();
@@ -68,12 +71,15 @@ public class MarkersActivity extends BaseActivity {
 	}
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		enableNonToolbarUpButton();
 		super.onCreate(savedInstanceState);
-		
 		setContentView(R.layout.activity_markers);
-		setTitle(R.string.activity_title_markers);
-		
+
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
+
 		adapter = new MarkerFilterAdapter();
 		adapter.reload();
 
@@ -99,7 +105,7 @@ public class MarkersActivity extends BaseActivity {
 		super.onStart();
 
 		// hide sync button if we are already syncing
-		final String syncAccountName = Preferences.getString(getString(R.string.pref_syncAccountName_key));
+		final String syncAccountName = Preferences.getString(R.string.pref_syncAccountName_key);
 		V.get(this, R.id.panelGotoSync).setVisibility(syncAccountName != null ? View.GONE : View.VISIBLE);
 	}
 
@@ -216,10 +222,11 @@ public class MarkersActivity extends BaseActivity {
 				S.getDb().deleteLabelAndMarker_LabelsByLabelId(label._id);
 				adapter.reload();
 			} else {
-				new AlertDialogWrapper.Builder(this)
-					.setMessage(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, marker_count))
-					.setNegativeButton(R.string.cancel, null)
-					.setPositiveButton(R.string.delete, (dialog, which) -> {
+				new MaterialDialog.Builder(this)
+					.content(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, marker_count))
+					.negativeText(R.string.cancel)
+					.positiveText(R.string.delete)
+					.onPositive((dialog, which) -> {
 						S.getDb().deleteLabelAndMarker_LabelsByLabelId(label._id);
 						adapter.reload();
 					})
@@ -269,9 +276,9 @@ public class MarkersActivity extends BaseActivity {
 					final FileInputStream fis = new FileInputStream(file);
 					BookmarkImporter.importBookmarks(this, fis, false, () -> adapter.reload());
 				} catch (IOException e) {
-					new AlertDialogWrapper.Builder(this)
-						.setMessage(R.string.marker_migrate_error_opening_backup_file)
-						.setPositiveButton(R.string.ok, null)
+					new MaterialDialog.Builder(this)
+						.content(R.string.marker_migrate_error_opening_backup_file)
+						.positiveText(R.string.ok)
 						.show();
 				}
 			}
@@ -429,9 +436,9 @@ public class MarkersActivity extends BaseActivity {
 			labels = S.getDb().listAllLabels();
 			
 			if (D.EBUG) {
-				Log.d(TAG, "_id  title                ordering backgroundColor");
+				AppLog.d(TAG, "_id  title                ordering backgroundColor");
 				for (Label label: labels) {
-					Log.d(TAG, String.format("%4d %20s %8d %s", label._id, label.title, label.ordering, label.backgroundColor));
+					AppLog.d(TAG, String.format(Locale.US, "%4d %20s %8d %s", label._id, label.title, label.ordering, label.backgroundColor));
 				}
 			}
 			

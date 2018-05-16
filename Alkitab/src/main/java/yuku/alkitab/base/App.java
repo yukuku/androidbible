@@ -1,39 +1,47 @@
 package yuku.alkitab.base;
 
 import android.content.Context;
-import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.PreferenceManager;
-import android.util.Log;
 import android.view.ViewConfiguration;
+import com.crashlytics.android.Crashlytics;
+import com.downloader.PRDownloader;
+import com.downloader.PRDownloaderConfig;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
+import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.leakcanary.LeakCanary;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.internal.Version;
+import com.squareup.picasso.Picasso;
+import io.fabric.sdk.android.Fabric;
+import okhttp3.Cache;
+import okhttp3.Call;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.internal.Version;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.model.SyncShadow;
-import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Gcm;
 import yuku.alkitab.base.sync.Sync;
+import yuku.alkitab.base.util.AppLog;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.reminder.util.DevotionReminder;
 import yuku.alkitabfeedback.FeedbackSender;
 import yuku.alkitabintegration.display.Launcher;
-import yuku.kirimfidbek.CrashReporter;
 import yuku.stethoshim.StethoShim;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -44,35 +52,37 @@ public class App extends yuku.afw.App {
 	private static boolean initted = false;
 	private static Tracker APP_TRACKER;
 
+	static class UserAgentInterceptor implements Interceptor {
+		@Override
+		public Response intercept(final Chain chain) throws IOException {
+			final Request originalRequest = chain.request();
+			final Request requestWithUserAgent = originalRequest.newBuilder()
+				.removeHeader("User-Agent")
+				.addHeader("User-Agent", httpUserAgent())
+				.build();
+			return chain.proceed(requestWithUserAgent);
+		}
+	}
+
+	@NonNull
+	static String httpUserAgent() {
+		return Version.userAgent() + " " + App.context.getPackageName() + "/" + App.getVersionName();
+	}
+
 	enum OkHttpClientWrapper {
 		INSTANCE;
 
-		OkHttpClient defaultClient = new OkHttpClient();
-		OkHttpClient longTimeoutClient = new OkHttpClient();
+		final OkHttpClient longTimeoutClient;
 
 		{
-			final Interceptor userAgent = chain -> {
-				final Request originalRequest = chain.request();
-				final Request requestWithUserAgent = originalRequest.newBuilder()
-					.removeHeader("User-Agent")
-					.addHeader("User-Agent", Version.userAgent() + " " + App.context.getPackageName() + "/" + App.getVersionName())
-					.build();
-				return chain.proceed(requestWithUserAgent);
-			};
-
-			defaultClient.networkInterceptors().add(userAgent);
-			longTimeoutClient.networkInterceptors().add(userAgent);
-		}
-
-		{ // init longTimeoutClient
-			longTimeoutClient.setConnectTimeout(300, TimeUnit.SECONDS);
-			longTimeoutClient.setReadTimeout(300, TimeUnit.SECONDS);
-			longTimeoutClient.setWriteTimeout(600, TimeUnit.SECONDS);
-		}
-
-		{ // init stetho interceptor
-			StethoShim.addNetworkInterceptor(defaultClient);
-			StethoShim.addNetworkInterceptor(longTimeoutClient);
+			final OkHttpClient.Builder builder = new OkHttpClient.Builder();
+			builder
+				.addNetworkInterceptor(new UserAgentInterceptor())
+				.connectTimeout(300, TimeUnit.SECONDS)
+				.readTimeout(300, TimeUnit.SECONDS)
+				.writeTimeout(600, TimeUnit.SECONDS);
+			StethoShim.addNetworkInterceptor(builder);
+			longTimeoutClient = builder.build();
 		}
 	}
 
@@ -83,29 +93,35 @@ public class App extends yuku.afw.App {
 	}
 
 	public static String downloadString(String url) throws IOException {
-		return OkHttpClientWrapper.INSTANCE.defaultClient.newCall(new Request.Builder().url(url).build()).execute().body().string();
+		return downloadCall(url).execute().body().string();
 	}
 
 	public static byte[] downloadBytes(String url) throws IOException {
-		return OkHttpClientWrapper.INSTANCE.defaultClient.newCall(new Request.Builder().url(url).build()).execute().body().bytes();
+		return downloadCall(url).execute().body().bytes();
 	}
 
 	public static Call downloadCall(String url) {
-		return OkHttpClientWrapper.INSTANCE.defaultClient.newCall(new Request.Builder().url(url).build());
-	}
-
-	public static OkHttpClient getOkHttpClient() {
-		return OkHttpClientWrapper.INSTANCE.defaultClient;
+		return okhttp().newCall(new Request.Builder().url(url).build());
 	}
 
 	public static OkHttpClient getLongTimeoutOkHttpClient() {
 		return OkHttpClientWrapper.INSTANCE.longTimeoutClient;
 	}
 
-	@Override public void onCreate() {
+	@Override
+	public void onCreate() {
 		super.onCreate();
 
 		staticInit();
+
+		{ // LeakCanary, also we need the Application instance.
+			if (LeakCanary.isInAnalyzerProcess(this)) {
+				// This process is dedicated to LeakCanary for heap analysis.
+				// You should not init your app in this process.
+				return;
+			}
+			LeakCanary.install(this);
+		}
 
 		{ // Google Analytics V4
 			// This can't be in staticInit because we need the Application instance.
@@ -117,22 +133,24 @@ public class App extends yuku.afw.App {
 			analytics.enableAutoActivityReports(this);
 		}
 
-		{ // LeakCanary, also we need the Application instance.
-			LeakCanary.install(this);
-		}
-
 		{ // Stetho call through proxy
 			StethoShim.initializeWithDefaults(this);
 		}
 	}
 
+	/**
+	 * {@link yuku.afw.App#context} must have been set via {@link #initWithAppContext(Context)}
+	 * before calling this method.
+	 */
 	public synchronized static void staticInit() {
 		if (initted) return;
 		initted = true;
 
-		final CrashReporter cr = new CrashReporter();
-		cr.activateDefaultUncaughtExceptionHandler();
-		cr.trySend();
+		if (context == null) {
+			throw new RuntimeException("yuku.afw.App.context must have been set via initWithAppContext(Context) before calling this method.");
+		}
+
+		Fabric.with(context, new Crashlytics());
 
 		final FeedbackSender fs = FeedbackSender.getInstance(context);
 		fs.trySend();
@@ -147,25 +165,18 @@ public class App extends yuku.afw.App {
 			PreferenceManager.setDefaultValues(context, preferenceResId, false);
 		}
 
-		updateConfigurationWithPreferencesLocale();
-
-		// all activities need at least the activeVersion from S, so initialize it here.
-		synchronized (S.class) {
-			if (S.activeVersion == null) {
-				S.activeVersion = VersionImpl.getInternalVersion();
-			}
-		}
-
-		// also pre-calculate calculated preferences value here
-		S.calculateAppliedValuesBasedOnPreferences();
-
 		{ // GCM
 			Gcm.renewGcmRegistrationIdIfNeeded(Sync::notifyNewGcmRegistrationId);
 		}
 
-		DevotionReminder.scheduleAlarm(context);
+		DevotionReminder.scheduleAlarm();
 
 		forceOverflowMenu();
+
+		PRDownloader.initialize(context, new PRDownloaderConfig.Builder()
+			.setUserAgent(httpUserAgent())
+			.build()
+		);
 
 		// make sure launcher do not open other variants of the app
 		Launcher.setAppPackageName(context.getPackageName());
@@ -187,7 +198,7 @@ public class App extends yuku.afw.App {
 			sHasPermanentMenuKey.setAccessible(true);
 			sHasPermanentMenuKey.setBoolean(config, false);
 		} catch (Exception e) {
-			Log.w(TAG, "ViewConfiguration has no sHasPermanentMenuKey field", e);
+			AppLog.w(TAG, "ViewConfiguration has no sHasPermanentMenuKey field", e);
 		}
 
 		try {
@@ -195,41 +206,7 @@ public class App extends yuku.afw.App {
 			sHasPermanentMenuKeySet.setAccessible(true);
 			sHasPermanentMenuKeySet.setBoolean(config, true);
 		} catch (Exception e) {
-			Log.w(TAG, "ViewConfiguration has no sHasPermanentMenuKeySet field", e);
-		}
-	}
-
-	private static Locale getLocaleFromPreferences() {
-		final String lang = Preferences.getString(context.getString(R.string.pref_language_key), context.getString(R.string.pref_language_default));
-		if (lang == null || "DEFAULT".equals(lang)) {
-			return Locale.getDefault();
-		}
-
-		switch (lang) {
-			case "zh-CN":
-				return Locale.SIMPLIFIED_CHINESE;
-			case "zh-TW":
-				return Locale.TRADITIONAL_CHINESE;
-			default:
-				return new Locale(lang);
-		}
-	}
-
-	@Override public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-
-		Log.d(TAG, "@@onConfigurationChanged: config changed to: " + newConfig);
-		updateConfigurationWithPreferencesLocale();
-	}
-
-	public static void updateConfigurationWithPreferencesLocale() {
-		final Configuration config = context.getResources().getConfiguration();
-		final Locale locale = getLocaleFromPreferences();
-		if (!U.equals(config.locale.getLanguage(), locale.getLanguage()) || !U.equals(config.locale.getCountry(), locale.getCountry())) {
-			Log.d(TAG, "@@updateConfigurationWithPreferencesLocale: locale will be updated to: " + locale);
-
-			config.locale = locale;
-			context.getResources().updateConfiguration(config, null);
+			AppLog.w(TAG, "ViewConfiguration has no sHasPermanentMenuKeySet field", e);
 		}
 	}
 
@@ -261,5 +238,50 @@ public class App extends yuku.afw.App {
 		if (tracker != null) { // guard against wrong initialization order
 			eventSubmitter.submit(() -> tracker.send(new HitBuilders.EventBuilder(category, action).build()));
 		}
+	}
+
+	private static OkHttpClient okhttp;
+
+	@NonNull
+	public static synchronized OkHttpClient okhttp() {
+		OkHttpClient res = okhttp;
+		if (res == null) {
+			final File cacheDir = new File(context.getCacheDir(), "okhttp-cache");
+			if (!cacheDir.exists()) {
+				//noinspection ResultOfMethodCallIgnored
+				cacheDir.mkdirs();
+			}
+
+			final OkHttpClient.Builder builder = new OkHttpClient.Builder()
+				.cache(new Cache(cacheDir, 50 * 1024 * 1024))
+				.connectTimeout(30, TimeUnit.SECONDS)
+				.readTimeout(30, TimeUnit.SECONDS)
+				.writeTimeout(30, TimeUnit.SECONDS)
+				.addNetworkInterceptor(new UserAgentInterceptor());
+
+			if (BuildConfig.DEBUG) {
+				builder.hostnameVerifier((hostname, session) -> true);
+			}
+
+			StethoShim.addNetworkInterceptor(builder);
+
+			okhttp = res = builder.build();
+		}
+		return res;
+	}
+
+	static Picasso picasso;
+
+	@NonNull
+	public static synchronized Picasso picasso() {
+		Picasso res;
+		if (picasso == null) {
+			picasso = res = new Picasso.Builder(context)
+				.defaultBitmapConfig(Bitmap.Config.RGB_565)
+				.downloader(new OkHttp3Downloader(okhttp()))
+				.build();
+			return res;
+		}
+		return picasso;
 	}
 }

@@ -14,7 +14,7 @@
 		android:background="#30808080"
 		android:padding="@dimen/padding_small"
 		android:textAppearance="?android:attr/textAppearanceMedium"
-		tools:text="*1:1: Abc 2:3-4" />
+		tools:text="1:1: Abc 2:3-4" />
 
 	<View
 		android:layout_width="match_parent"

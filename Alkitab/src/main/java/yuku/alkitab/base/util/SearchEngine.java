@@ -9,7 +9,6 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TimingLogger;
 import yuku.alkitab.base.App;
@@ -135,7 +134,7 @@ public class SearchEngine {
 				last = token;
 			}
 			tokens = atokens.toArray(new String[atokens.size()]);
-			if (BuildConfig.DEBUG) Log.d(TAG, "tokens = " + Arrays.toString(tokens));
+			AppLog.d(TAG, "tokens = " + Arrays.toString(tokens));
 		}
 
 		// really search
@@ -147,13 +146,13 @@ public class SearchEngine {
 			{
 				long ms = System.currentTimeMillis();
 				result = searchByGrepInside(version, token, prev, query.bookIds);
-				Log.d(TAG, "search token '" + token + "' needed: " + (System.currentTimeMillis() - ms) + " ms");
+				AppLog.d(TAG, "search token '" + token + "' needed: " + (System.currentTimeMillis() - ms) + " ms");
 			}
 
 			if (prev != null) {
-				Log.d(TAG, "Will intersect " + prev.size() + " elements with " + result.size() + " elements...");
+				AppLog.d(TAG, "Will intersect " + prev.size() + " elements with " + result.size() + " elements...");
 				result = intersect(prev, result);
-				Log.d(TAG, "... the result is " + result.size() + " elements");
+				AppLog.d(TAG, "... the result is " + result.size() + " elements");
 			}
 		}
 
@@ -239,7 +238,7 @@ public class SearchEngine {
 					searchByGrepForOneChapter(version, book, chapter_1, token, hasPlus, ariBc, res);
 				}
 
-				if (BuildConfig.DEBUG) Log.d(TAG, "searchByGrepInside book " + book.shortName + " done. res.size = " + res.size());
+				if (BuildConfig.DEBUG) AppLog.d(TAG, "searchByGrepInside book " + book.shortName + " done. res.size = " + res.size());
 			}
 		} else {
 			// search only on book-chapters that are in the source
@@ -262,7 +261,7 @@ public class SearchEngine {
 				count++;
 			}
 
-			if (BuildConfig.DEBUG) Log.d(TAG, "searchByGrepInside book with source " + source.size() + " needed to read as many as " + count + " book-chapter. res.size=" + res.size());
+			if (BuildConfig.DEBUG) AppLog.d(TAG, "searchByGrepInside book with source " + source.size() + " needed to read as many as " + count + " book-chapter. res.size=" + res.size());
 		}
 
 		return res;
@@ -354,7 +353,7 @@ public class SearchEngine {
 		try {
 			revIndex = loadRevIndex();
 			if (revIndex == null) {
-				Log.w(TAG, "Cannot load revindex (internal error)!");
+				AppLog.w(TAG, "Cannot load revindex (internal error)!");
 				return searchByGrep(version, query);
 			}
 		} finally {
@@ -369,14 +368,14 @@ public class SearchEngine {
 		final ReadyTokens rt = new ReadyTokens(QueryTokenizer.tokenize(query.query_string));
 
 		if (BuildConfig.DEBUG) {
-			Log.d(TAG, "Tokens after retokenization:");
+			AppLog.d(TAG, "Tokens after retokenization:");
 			for (String token: rt.tokens) {
-				Log.d(TAG, "- token: " + token);
+				AppLog.d(TAG, "- token: " + token);
 			}
 
-			Log.d(TAG, "Multiwords:");
+			AppLog.d(TAG, "Multiwords:");
 			for (String[] multiword: rt.multiwords_tokens) {
-				Log.d(TAG, "- multiword: " + Arrays.toString(multiword));
+				AppLog.d(TAG, "- multiword: " + Arrays.toString(multiword));
 			}
 		}
 
@@ -519,19 +518,17 @@ public class SearchEngine {
 	}
 
 	public static void preloadRevIndex() {
-		new Thread() {
-			@Override public void run() {
-				TimingLogger timing = new TimingLogger("RevIndex", "preloadRevIndex");
-				revIndexLoading.acquireUninterruptibly();
-				try {
-					loadRevIndex();
-					timing.addSplit("loadRevIndex");
-				} finally {
-					revIndexLoading.release();
-					timing.dumpToLog();
-				}
+		Background.run(() -> {
+			TimingLogger timing = new TimingLogger("RevIndex", "preloadRevIndex");
+			revIndexLoading.acquireUninterruptibly();
+			try {
+				loadRevIndex();
+				timing.addSplit("loadRevIndex");
+			} finally {
+				revIndexLoading.release();
+				timing.dumpToLog();
 			}
-		}.start();
+		});
 	}
 
 	/**
@@ -571,7 +568,7 @@ public class SearchEngine {
 		try {
 			assetInputStream = App.context.getAssets().open("internal/" + AppConfig.get().internalPrefix + "_revindex_bt.bt");
 		} catch (IOException e) {
-			Log.d(TAG, "RevIndex is not available");
+			AppLog.d(TAG, "RevIndex is not available");
 			return null;
 		}
 
@@ -763,11 +760,11 @@ public class SearchEngine {
 				}
 
 				if (BuildConfig.DEBUG) {
-					Log.d(TAG, "=========================");
-					Log.d(TAG, "multiword: " + Arrays.toString(multiword));
-					Log.d(TAG, "text     : #" + text.substring(Math.max(0, posBeforeConsume - multiword[i - 1].length()), Math.min(len, posBeforeConsume + 80)) + "#");
-					Log.d(TAG, "skipped  : #" + text.substring(posBeforeConsume, pos) + "#");
-					Log.d(TAG, "=========================////");
+					AppLog.d(TAG, "=========================");
+					AppLog.d(TAG, "multiword: " + Arrays.toString(multiword));
+					AppLog.d(TAG, "text     : #" + text.substring(Math.max(0, posBeforeConsume - multiword[i - 1].length()), Math.min(len, posBeforeConsume + 80)) + "#");
+					AppLog.d(TAG, "skipped  : #" + text.substring(posBeforeConsume, pos) + "#");
+					AppLog.d(TAG, "=========================////");
 				}
 
 				final String word = multiword[i];

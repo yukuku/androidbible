@@ -80,30 +80,23 @@ public class TypeHighlightDialog {
 			.iconRes(R.drawable.ic_attr_highlight)
 			.positiveText(R.string.ok) // this does not actually do anything except closing the dialog.
 			.neutralText(R.string.delete)
-			.callback(new MaterialDialog.ButtonCallback() {
-				@Override
-				public void onPositive(final MaterialDialog dialog) {
-					// only relevant when we edit partial highlight
-					if (verseText == null || info == null) {
-						return;
-					}
-
-					final int[] offsets = getSelectionOffsets();
-					assert offsets != null;
-
-					// check for changes
-					if ((info.partial == null && (offsets[0] != 0 || offsets[1] != verseText.length()))
-						||
-						(info.partial != null && (info.partial.startOffset != offsets[0] || info.partial.endOffset != offsets[1]))) {
-						select(defaultColorRgb, offsets);
-					}
+			.onPositive((dialog1, which) -> {
+				// only relevant when we edit partial highlight
+				if (verseText == null || info == null) {
+					return;
 				}
 
-				@Override
-				public void onNeutral(final MaterialDialog dialog) {
-					select(-1, null);
+				final int[] offsets = getSelectionOffsets();
+				assert offsets != null;
+
+				// check for changes
+				if ((info.partial == null && (offsets[0] != 0 || offsets[1] != verseText.length()))
+					||
+					(info.partial != null && (info.partial.startOffset != offsets[0] || info.partial.endOffset != offsets[1]))) {
+					select(defaultColorRgb, offsets);
 				}
-			});
+			})
+			.onNeutral((dialog1, which) -> select(-1, null));
 
 		if (title != null) {
 			builder.title(title);
@@ -111,7 +104,7 @@ public class TypeHighlightDialog {
 
 		dialog = builder.show();
 		dialogView = dialog.getCustomView();
-		dialogView.setBackgroundColor(S.applied.backgroundColor);
+		dialogView.setBackgroundColor(S.applied().backgroundColor);
 
 		for (int i = 0; i < ids.length; i++) {
 			CheckBox cb = V.get(dialogView, ids[i]);
@@ -145,7 +138,7 @@ public class TypeHighlightDialog {
 		} else {
 			tVerseText.setVisibility(View.VISIBLE);
 			tVerseText.setText(verseText, TextView.BufferType.EDITABLE);
-			tVerseText.setTextColor(S.applied.fontColor);
+			tVerseText.setTextColor(S.applied().fontColor);
 
 			if (info == null || !info.shouldRenderAsPartialForVerseText(verseText)) {
 				Selection.setSelection(tVerseText.getEditableText(), 0, tVerseText.length());

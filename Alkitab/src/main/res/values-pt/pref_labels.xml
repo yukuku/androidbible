@@ -26,4 +26,5 @@
   <string name="pref_tapToEditNote_summary">Desmarque para previnir edições acidentais ao visualizar as notas existentes</string>
   <string name="pref_showHiddenVersion_title">Habilitar versões possivelmente restritas</string>
   <string name="pref_selectedVerseBgColor_title">Selecione o fundo do versículo</string>
+  <string name="pref_forceFontScale_title">Tamanho do texto da interface do usuário</string>
 </resources>

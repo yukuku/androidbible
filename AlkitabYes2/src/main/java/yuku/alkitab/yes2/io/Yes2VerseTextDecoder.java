@@ -8,7 +8,7 @@ public interface Yes2VerseTextDecoder {
 	String makeIntoSingleString(BintexReader br, int verse_count, boolean lowercased) throws Exception;
 	
 	class Ascii implements Yes2VerseTextDecoder {
-		ThreadLocal<byte[]> verseBuf_ = new ThreadLocal<byte[]>() {
+		final ThreadLocal<byte[]> verseBuf_ = new ThreadLocal<byte[]>() {
 			@Override protected byte[] initialValue() {
 				return new byte[4000];
 			}
@@ -40,7 +40,7 @@ public interface Yes2VerseTextDecoder {
 			return res;
 		}
 
-		/* TODO Optimize */
+		/* (2017-01) Can be optimized, but we are moving away from ascii encoding. So probably it is not worth it to optimize this. */
 		@Override public String makeIntoSingleString(BintexReader br, int verse_count, boolean lowercased) throws Exception {
 			StringBuilder sb = new StringBuilder();
 			String[] verses = separateIntoVerses(br, verse_count, lowercased);
@@ -52,7 +52,7 @@ public interface Yes2VerseTextDecoder {
 	}
 	
 	class Utf8 implements Yes2VerseTextDecoder {
-		ThreadLocal<byte[]> verseBuf_ = new ThreadLocal<byte[]>() {
+		final ThreadLocal<byte[]> verseBuf_ = new ThreadLocal<byte[]>() {
 			@Override protected byte[] initialValue() {
 				return new byte[4000];
 			}

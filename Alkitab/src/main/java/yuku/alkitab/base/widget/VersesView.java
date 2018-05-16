@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.U;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.SingleChapterVerses;
@@ -87,10 +88,6 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		void onScrollToTop(VersesView v);
 	}
 
-	public interface OnVerseScrollStateChangeListener {
-		void onVerseScrollStateChange(VersesView versesView, int scrollState);
-	}
-	
 	public enum PressKind {
 		left,
 		right,
@@ -122,7 +119,6 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	private VerseSelectionMode verseSelectionMode;
 	private Drawable originalSelector;
 	private OnVerseScrollListener onVerseScrollListener;
-	private OnVerseScrollStateChangeListener onVerseScrollStateChangeListener;
 	private AbsListView.OnScrollListener userOnScrollListener;
 	private int scrollState = 0;
 	/**
@@ -133,7 +129,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	private String name;
 	private boolean firstTimeScroll = true;
 	/**
-	 * Updated every time {@link #setData(int, SingleChapterVerses, int[], PericopeBlock[], int, String)}
+	 * Updated every time {@link #setData(int, SingleChapterVerses, int[], PericopeBlock[], int, Version, String)}
 	 * or {@link #setDataEmpty()} is called. Used to track data changes, so delayed scroll, etc can be prevented from happening if the data has changed.
 	 */
 	private AtomicInteger dataVersionNumber = new AtomicInteger();
@@ -361,7 +357,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	}
 	
 	public PressResult press(int keyCode) {
-		String volumeButtonsForNavigation = Preferences.getString(getContext().getString(R.string.pref_volumeButtonNavigation_key), getContext().getString(R.string.pref_volumeButtonNavigation_default));
+		String volumeButtonsForNavigation = Preferences.getString(R.string.pref_volumeButtonNavigation_key, R.string.pref_volumeButtonNavigation_default);
 		if (U.equals(volumeButtonsForNavigation, "pasal" /* chapter */)) { 
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
 				return PressResult.LEFT;
@@ -511,7 +507,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		final int position = adapter.getPositionOfPericopeBeginningFromVerse(verse_1);
 
 		if (position == -1) {
-			Log.w(TAG, "could not find verse_1=" + verse_1 + ", weird!");
+			AppLog.w(TAG, "could not find verse_1=" + verse_1 + ", weird!");
 		} else {
 			final int delay = firstTimeScroll? 34: 0;
 			final int vn = dataVersionNumber.get();
@@ -539,7 +535,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		final int position = adapter.getPositionIgnoringPericopeFromVerse(verse_1);
 		
 		if (position == -1) {
-			Log.d(TAG, "could not find verse_1: " + verse_1);
+			AppLog.d(TAG, "could not find verse_1: " + verse_1);
 			return;
 		}
 
@@ -589,17 +585,10 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		this.listener = listener;
 	}
 
-	public void setOnVerseScrollStateChangeListener(OnVerseScrollStateChangeListener onVerseScrollStateChangeListener) {
-		this.onVerseScrollStateChangeListener = onVerseScrollStateChangeListener;
-	}
-
 	@Override public void onScrollStateChanged(AbsListView view, int scrollState) {
 		if (userOnScrollListener != null) userOnScrollListener.onScrollStateChanged(view, scrollState);
 		
 		this.scrollState = scrollState;
-		if (onVerseScrollStateChangeListener != null) {
-			onVerseScrollStateChangeListener.onVerseScrollStateChange(this, scrollState);
-		}
 	}
 	
 	@Override public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {

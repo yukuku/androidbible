@@ -30,7 +30,7 @@ public class Book implements Parcelable {
 	public Book() {
 	}
 
-	private Book(Parcel in) {
+	Book(Parcel in) {
 		this.bookId = in.readInt();
 		this.shortName = in.readString();
 		this.chapter_count = in.readInt();

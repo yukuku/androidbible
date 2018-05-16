@@ -10,8 +10,10 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.app.ActionBar;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -33,7 +35,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -42,7 +43,6 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Appearances;
@@ -220,7 +220,7 @@ public class SearchActivity extends BaseActivity {
 			final CharSequence text;
 			if (_id == -1) {
 				final SpannableStringBuilder sb = new SpannableStringBuilder(getString(R.string.search_clear_history));
-				sb.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.escape)), 0, sb.length(), 0);
+				sb.setSpan(new ForegroundColorSpan(ResourcesCompat.getColor(getResources(), R.color.escape, getTheme())), 0, sb.length(), 0);
 				text = sb;
 			} else {
 				text = cursor.getString(COLINDEX_QUERY_STRING);
@@ -286,14 +286,15 @@ public class SearchActivity extends BaseActivity {
 		bEditFilter = V.get(this, R.id.bEditFilter);
 
 		final Toolbar toolbar = V.get(this, R.id.toolbar);
-		setSupportActionBar(toolbar); // must be done first before below lines
-		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-		toolbar.setNavigationOnClickListener(v -> navigateUp());
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 
 		bVersion = V.get(this, R.id.bVersion);
 
-		searchInVersion = S.activeVersion;
-		searchInVersionId = S.activeVersionId;
+		searchInVersion = S.activeVersion();
+		searchInVersionId = S.activeVersionId();
 		textSizeMult = S.getDb().getPerVersionSettings(searchInVersionId).fontSizeMultiplier;
 		bVersion.setOnClickListener(bVersion_click);
 
@@ -361,14 +362,16 @@ public class SearchActivity extends BaseActivity {
 			tSearchTips.setText(sb);
 		}
 
-		tSearchTips.setBackgroundColor(S.applied.backgroundColor);
+		final S.CalculatedDimensions applied = S.applied();
 
-		lsSearchResults.setBackgroundColor(S.applied.backgroundColor);
-		lsSearchResults.setCacheColorHint(S.applied.backgroundColor);
+		tSearchTips.setBackgroundColor(applied.backgroundColor);
+
+		lsSearchResults.setBackgroundColor(applied.backgroundColor);
+		lsSearchResults.setCacheColorHint(applied.backgroundColor);
 		lsSearchResults.setEmptyView(tSearchTips);
 		Appearances.applyTextAppearance(tSearchTips, textSizeMult);
 		
-		hiliteColor = U.getSearchKeywordTextColorByBrightness(S.applied.backgroundBrightness);
+		hiliteColor = U.getSearchKeywordTextColorByBrightness(applied.backgroundBrightness);
 
 		lsSearchResults.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
 		lsSearchResults.setOnItemClickListener((parent, view, position, id) -> {
@@ -379,6 +382,9 @@ public class SearchActivity extends BaseActivity {
 			} else {
 				final int ari = adapter.getSearchResults().get(position);
 				startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
+				// Because we are in CHOICE_MODE_MULTIPLE, this verse is automatically marked as checked.
+				// so we have to manually uncheck this.
+				uncheckAllVerses();
 			}
 		});
 		lsSearchResults.setOnItemLongClickListener(lsSearchResults_itemLongClick);
@@ -391,7 +397,7 @@ public class SearchActivity extends BaseActivity {
 		{
 			openedBookId = getIntent().getIntExtra(EXTRA_openedBookId, -1);
 
-			final Book book = S.activeVersion.getBook(openedBookId);
+			final Book book = S.activeVersion().getBook(openedBookId);
 			if (book == null) { // active version has changed somehow when this activity fainted. so, invalidate openedBookId
 				openedBookId = -1;
 				cFilterSingleBook.setEnabled(false);
@@ -449,7 +455,7 @@ public class SearchActivity extends BaseActivity {
 	}
 
 	void displaySearchInVersion() {
-		final String versionInitials = S.getVersionInitials(searchInVersion);
+		final String versionInitials = searchInVersion.getInitials();
 
 		bVersion.setText(versionInitials);
 		searchView.setQueryHint(getString(R.string.search_in_version_short_name_placeholder, versionInitials));
@@ -597,37 +603,29 @@ public class SearchActivity extends BaseActivity {
 		}
 	};
 
-	final View.OnClickListener bVersion_click = new View.OnClickListener() {
-		@Override
-		public void onClick(final View v) {
-			S.openVersionsDialog(SearchActivity.this, false, searchInVersionId, new S.VersionDialogListener() {
-				@Override
-				public void onVersionSelected(final MVersion mv) {
-					final Version selectedVersion = mv.getVersion();
+	final View.OnClickListener bVersion_click = v -> S.openVersionsDialog(this, false, searchInVersionId, mv -> {
+		final Version selectedVersion = mv.getVersion();
 
-					if (selectedVersion == null) {
-						new AlertDialogWrapper.Builder(SearchActivity.this)
-							.setMessage(getString(R.string.version_error_opening, mv.longName))
-							.setPositiveButton(R.string.ok, null)
-							.show();
-						return;
-					}
-
-					searchInVersion = selectedVersion;
-					searchInVersionId = mv.getVersionId();
-					textSizeMult = S.getDb().getPerVersionSettings(searchInVersionId).fontSizeMultiplier;
-					Appearances.applyTextAppearance(tSearchTips, textSizeMult);
-
-					displaySearchInVersion();
-					configureFilterDisplayOldNewTest();
-					bVersion.setText(S.getVersionInitials(searchInVersion));
-					if (adapter != null) {
-						adapter.notifyDataSetChanged();
-					}
-				}
-			});
+		if (selectedVersion == null) {
+			new MaterialDialog.Builder(SearchActivity.this)
+				.content(getString(R.string.version_error_opening, mv.longName))
+				.positiveText(R.string.ok)
+				.show();
+			return;
 		}
-	};
+
+		searchInVersion = selectedVersion;
+		searchInVersionId = mv.getVersionId();
+		textSizeMult = S.getDb().getPerVersionSettings(searchInVersionId).fontSizeMultiplier;
+		Appearances.applyTextAppearance(tSearchTips, textSizeMult);
+
+		displaySearchInVersion();
+		configureFilterDisplayOldNewTest();
+		bVersion.setText(selectedVersion.getInitials());
+		if (adapter != null) {
+			adapter.notifyDataSetChanged();
+		}
+	});
 
 	protected void setSelectedBookIdsBasedOnFilter() {
 		selectedBookIds.clear();
@@ -672,9 +670,9 @@ public class SearchActivity extends BaseActivity {
 		{ // check if there is anything chosen
 			int firstSelected = selectedBookIds.indexOfValue(true);
 			if (firstSelected < 0) {
-				new AlertDialogWrapper.Builder(this)
-					.setMessage(R.string.pilih_setidaknya_satu_kitab)
-					.setPositiveButton(R.string.ok, null)
+				new MaterialDialog.Builder(this)
+					.content(R.string.pilih_setidaknya_satu_kitab)
+					.positiveText(R.string.ok)
 					.show();
 				return;
 			}

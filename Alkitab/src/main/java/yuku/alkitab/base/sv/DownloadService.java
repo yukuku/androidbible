@@ -8,9 +8,10 @@ import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 import android.util.Pair;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.ResponseBody;
+import okhttp3.Call;
+import okhttp3.ResponseBody;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.R;
 
 import java.io.File;
@@ -50,19 +51,19 @@ public class DownloadService extends Service {
 			switch (msg.what) {
 			case MSG_stopSelf:
 				sv.stopSelf();
-				return;
+				break;
 			case MSG_progress:
 				if (sv.listener != null) {
 					@SuppressWarnings("unchecked") Pair<DownloadEntry, State> obj = (Pair<DownloadEntry, State>) msg.obj;
 					sv.listener.onProgress(obj.first, obj.second);
 				}
-				return;
+				break;
 			case MSG_stateChanged:
 				if (sv.listener != null) {
 					@SuppressWarnings("unchecked") Pair<DownloadEntry, State> obj = (Pair<DownloadEntry, State>) msg.obj;
 					sv.listener.onStateChanged(obj.first, obj.second);
 				}
-				return;
+				break;
 			}
 		}
 	}
@@ -181,7 +182,7 @@ public class DownloadService extends Service {
 						tempOut.write(buf, 0, read);
 						entry.progress += read;
 						dispatchProgress(entry);
-						Log.d(TAG, "Entry " + entry.key + " progress " + entry.progress + "/" + entry.length);
+						AppLog.d(TAG, "Entry " + entry.key + " progress " + entry.progress + "/" + entry.length);
 					}
 					tempOut.close();
 					is.close();
@@ -193,7 +194,7 @@ public class DownloadService extends Service {
 				entry.completeFile.delete();
 				boolean renameOk = entry.tempFile.renameTo(entry.completeFile);
 				if (!renameOk) {
-					Log.w(TAG, "Failed to rename file from " + entry.tempFile + " to " + entry.completeFile);
+					AppLog.w(TAG, "Failed to rename file from " + entry.tempFile + " to " + entry.completeFile);
 					entry.errorMsg = getString(R.string.dl_failed_to_rename_temporary_file);
 					changeState(State.failed);
 					return entry;
@@ -202,7 +203,7 @@ public class DownloadService extends Service {
 				// finished successfully
 				changeState(State.finished);
 			} catch (Exception e) {
-				Log.w(TAG, "Failed download because of exception", e);
+				AppLog.w(TAG, "Failed download because of exception", e);
 				entry.tempFile.delete();
 				entry.errorMsg = e.getClass().getSimpleName() + ' ' + e.getMessage();
 				changeState(State.failed);
@@ -221,7 +222,7 @@ public class DownloadService extends Service {
 
 	private void incrementWaiting() {
 		nwaiting.incrementAndGet();
-		Log.d(TAG, "(inc) now nwaiting is " + nwaiting);
+		AppLog.d(TAG, "(inc) now nwaiting is " + nwaiting);
 	}
 
 	public synchronized void decrementWaitingAndCheck() {
@@ -230,8 +231,8 @@ public class DownloadService extends Service {
 		if (newValue == 0) {
 			Message.obtain(handler, MSG_stopSelf).sendToTarget();
 		}
-		
-		Log.d(TAG, "(dec) now nwaiting is " + nwaiting);
+
+		AppLog.d(TAG, "(dec) now nwaiting is " + nwaiting);
 	}
 	
 	public void dispatchProgress(DownloadEntry entry) {
@@ -239,7 +240,7 @@ public class DownloadService extends Service {
 	}
 	
 	public void dispatchStateChanged(DownloadEntry entry) {
-		Log.d(TAG, "dispatch state", new Throwable().fillInStackTrace());
+		AppLog.d(TAG, "dispatch state", new Throwable().fillInStackTrace());
 		Message.obtain(handler, MSG_stateChanged, Pair.create(entry, entry.state)).sendToTarget();
 	}
 }

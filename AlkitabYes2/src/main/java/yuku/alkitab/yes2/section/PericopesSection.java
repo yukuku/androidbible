@@ -155,7 +155,7 @@ public class PericopesSection extends SectionContent implements SectionContent.W
 					aris[i] = br.readInt();
 					offsets[i] = br.readInt();
 				}
-			} else if (version == 3) {
+			} else { // version == 3
 				int last_entry_ari = 0;
 				int last_entry_offset = 0;
 				for (int i = 0; i < entry_count; i++) {

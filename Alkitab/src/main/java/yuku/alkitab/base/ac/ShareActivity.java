@@ -10,6 +10,8 @@ import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +26,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.R;
 
 import java.util.ArrayList;
@@ -58,9 +61,14 @@ public class ShareActivity extends BaseActivity {
 	}
 	
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		enableNonToolbarUpButton();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_share);
+
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 
 		String title = getIntent().getStringExtra(Intent.EXTRA_TITLE);
 		setTitle(title);
@@ -174,14 +182,13 @@ public class ShareActivity extends BaseActivity {
 
 				// First put the initial items at the top.
 				if (initialIntents != null) {
-					for (int i = 0; i < initialIntents.length; i++) {
-						Intent ii = initialIntents[i];
+					for (Intent ii : initialIntents) {
 						if (ii == null) {
 							continue;
 						}
 						ActivityInfo ai = ii.resolveActivityInfo(getPackageManager(), 0);
 						if (ai == null) {
-							Log.w("ResolverActivity", "No activity found for " + ii);
+							AppLog.w("ResolverActivity", "No activity found for " + ii);
 							continue;
 						}
 						ResolveInfo ri = new ResolveInfo();

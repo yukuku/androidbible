@@ -20,7 +20,7 @@ public class Jumper {
 	}
 
 	// default logger
-	private Logger logger = msg -> Log.d(TAG, msg);
+	private Logger logger = msg -> AppLog.d(TAG, msg);
 	
 	private String p_book;
 	private int p_chapter;
@@ -326,9 +326,7 @@ public class Jumper {
 			}
 			
 			bel.add(s);
-			for (int j = startWord+1; j < parts.length; j++) {
-				bel.add(parts[j]);
-			}
+			bel.addAll(Arrays.asList(parts).subList(startWord + 1, parts.length));
 
 			parts = bel.toArray(new String[bel.size()]);
 		}

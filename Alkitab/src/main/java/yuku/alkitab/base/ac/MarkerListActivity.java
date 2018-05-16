@@ -7,6 +7,8 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.style.BackgroundColorSpan;
 import android.view.LayoutInflater;
@@ -88,8 +90,8 @@ public class MarkerListActivity extends BaseActivity {
 	long filter_labelId;
 
 	int hiliteColor;
-	Version version = S.activeVersion;
-	String versionId = S.activeVersionId;
+	Version version = S.activeVersion();
+	String versionId = S.activeVersionId();
 	float textSizeMult = S.getDb().getPerVersionSettings(versionId).fontSizeMultiplier;
 
 	public static Intent createIntent(Context context, Marker.Kind filter_kind, long filter_labelId) {
@@ -101,10 +103,14 @@ public class MarkerListActivity extends BaseActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		enableNonToolbarUpButton();
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.activity_marker_list);
+
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 
 		root = V.get(this, R.id.root);
 		empty = V.get(this, android.R.id.empty);
@@ -158,7 +164,7 @@ public class MarkerListActivity extends BaseActivity {
 
 		adapter = new MarkerListAdapter();
 		lv.setAdapter(adapter);
-		lv.setCacheColorHint(S.applied.backgroundColor);
+		lv.setCacheColorHint(S.applied().backgroundColor);
 		lv.setOnItemClickListener(lv_itemClick);
 		lv.setOnItemLongClickListener(lv_itemLongClick);
 		lv.setEmptyView(emptyView);
@@ -186,14 +192,15 @@ public class MarkerListActivity extends BaseActivity {
 	protected void onStart() {
 		super.onStart();
 
+		final S.CalculatedDimensions applied = S.applied();
+
 		{ // apply background color, and clear window background to prevent overdraw
 			getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-			root.setBackgroundColor(S.applied.backgroundColor);
+			root.setBackgroundColor(applied.backgroundColor);
 		}
 
-		tEmpty.setTextColor(S.applied.fontColor);
-
-		hiliteColor = U.getSearchKeywordTextColorByBrightness(S.applied.backgroundBrightness);
+		tEmpty.setTextColor(applied.fontColor);
+		hiliteColor = U.getSearchKeywordTextColorByBrightness(applied.backgroundBrightness);
 
 		loadAndFilter();
 	}
@@ -454,10 +461,7 @@ public class MarkerListActivity extends BaseActivity {
 		}
 
 		new MaterialDialog.Builder(this)
-			.items(new String[] {
-				deleteMarker,
-				editMarker,
-			})
+			.items(deleteMarker, editMarker)
 			.itemsCallback((dialog, itemView, which, text) -> {
 				final Marker marker = adapter.getItem(position);
 
@@ -487,7 +491,7 @@ public class MarkerListActivity extends BaseActivity {
 						final VerseRenderer.FormattedTextResult ftr = new VerseRenderer.FormattedTextResult();
 
 						if (rawVerseText != null) {
-							VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, false, null, ftr);
+							VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, null, ftr);
 						} else {
 							ftr.result = ""; // verse not available
 						}
@@ -592,7 +596,7 @@ public class MarkerListActivity extends BaseActivity {
 				verseText = getString(R.string.generic_verse_not_available_in_this_version);
 			} else {
 				final VerseRenderer.FormattedTextResult ftr = new VerseRenderer.FormattedTextResult();
-				VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, false, null, ftr);
+				VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, null, ftr);
 				verseText = ftr.result;
 			}
 

@@ -28,7 +28,7 @@ public class ReadingPlanManager {
 			reader.close();
 
 			if (!ok) {
-				Log.e(TAG, "Error parsing reading plan data");
+				AppLog.e(TAG, "Error parsing reading plan data");
 				return 0;
 			}
 
@@ -36,7 +36,7 @@ public class ReadingPlanManager {
 
 			return S.getDb().insertReadingPlan(info, data);
 		} catch (IOException e) {
-			Log.e(TAG, "Error reading reading plan, should not happen", e);
+			AppLog.e(TAG, "Error reading reading plan, should not happen", e);
 			return 0;
 		}
 	}

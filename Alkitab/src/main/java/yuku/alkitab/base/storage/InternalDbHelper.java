@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
+import com.crashlytics.android.Crashlytics;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import yuku.afw.App;
 import yuku.afw.storage.Preferences;
@@ -16,6 +17,7 @@ import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.model.MVersionPreset;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.util.AddonManager;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.model.util.Gid;
 
 import java.io.File;
@@ -40,7 +42,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	}
 
 	@Override public void onCreate(SQLiteDatabase db) {
-		Log.d(TAG, "@@onCreate");
+		AppLog.d(TAG, "@@onCreate");
 		
 		createTableMarker(db);
 		createIndexMarker(db);
@@ -69,7 +71,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	}
 
 	@Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		Log.d(TAG, "@@onUpgrade oldVersion=" + oldVersion + " newVersion=" + newVersion);
+		AppLog.d(TAG, "@@onUpgrade oldVersion=" + oldVersion + " newVersion=" + newVersion);
 
 		// No more support for Bookmark (Bukmak) version 1 table (last published: 2010-06-14)
 		// if (oldVersion <= 23) {
@@ -118,7 +120,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			if (c != null) {
 				while (c.moveToNext()) {
 					final String name = c.getString(1 /* "name" column */);
-					Log.d(TAG, "column name: " + name);
+					AppLog.d(TAG, "column name: " + name);
 					if ("checkedTime".equals(name)) { // this is a bad column name
 						needDrop = true;
 					}
@@ -126,7 +128,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 				c.close();
 			}
 			if (needDrop) {
-				Log.d(TAG, "table need to be dropped: " + Db.TABLE_ReadingPlanProgress);
+				AppLog.d(TAG, "table need to be dropped: " + Db.TABLE_ReadingPlanProgress);
 				db.execSQL("drop table " + Db.TABLE_ReadingPlanProgress);
 			}
 		}
@@ -617,15 +619,14 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			{
 				final VersionConfig vc = VersionConfig.get();
 				for (final MVersionPreset mv : vc.presets) {
-					final String filename = AddonManager.getVersionPath(mv.preset_name + ".yes");
-					final File yesFile = new File(filename);
-					if (yesFile.exists() && yesFile.canRead()) {
+					final File yesFile = AddonManager.getReadableVersionFile(mv.preset_name + ".yes");
+					if (yesFile != null) {
 						cv.clear();
 						cv.put(Db.Version.locale, mv.locale);
 						cv.put(Db.Version.shortName, mv.shortName);
 						cv.put(Db.Version.longName, mv.longName);
 						cv.put(Db.Version.description, mv.description);
-						cv.put(Db.Version.filename, filename);
+						cv.put(Db.Version.filename, yesFile.getAbsolutePath());
 						cv.put(Db.Version.preset_name, mv.preset_name);
 						cv.put(Db.Version.modifyTime, (int) (yesFile.lastModified() / 1000L));
 						cv.put(Db.Version.active, Preferences.getBoolean("edisi/preset/" + mv.preset_name + ".yes/aktif", true) ? 1 : 0);

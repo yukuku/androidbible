@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-	android:id="@+id/overlayContainer"
+<FrameLayout android:id="@+id/overlayContainer"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
@@ -41,6 +40,7 @@
 					android:layout_marginLeft="@dimen/nav_goto_side_margin"
 					android:layout_marginRight="@dimen/nav_goto_side_margin"
 					android:fontFamily="sans-serif-medium"
+					android:includeFontPadding="false"
 					android:paddingLeft="0dp"
 					android:paddingRight="0dp"
 					android:textSize="16sp"

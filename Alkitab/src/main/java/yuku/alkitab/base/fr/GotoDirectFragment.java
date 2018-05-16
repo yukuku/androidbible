@@ -1,6 +1,6 @@
 package yuku.alkitab.base.fr;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
@@ -12,7 +12,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TIntSet;
@@ -48,7 +48,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 	int bookId;
 	int chapter_1;
 	int verse_1;
-	private Activity activity;
+	GotoFinishListener listener;
 
 	static class Candidate {
 		String title;
@@ -65,9 +65,10 @@ public class GotoDirectFragment extends BaseGotoFragment {
 	}
 
 	@Override
-	public void onAttach(final Activity activity) {
-		super.onAttach(activity);
-		this.activity = activity;
+	public void onAttach(final Context context) {
+		super.onAttach(context);
+
+		this.listener = (GotoFinishListener) context;
 	}
 
 	@Override public void onCreate(Bundle savedInstanceState) {
@@ -106,7 +107,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 	@Override public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		final String example = S.activeVersion.reference(bookId, chapter_1, verse_1);
+		final String example = S.activeVersion().reference(bookId, chapter_1, verse_1);
 		final CharSequence text = getText(R.string.jump_to_prompt);
 		SpannableStringBuilder sb = new SpannableStringBuilder();
 		sb.append(text);
@@ -143,25 +144,25 @@ public class GotoDirectFragment extends BaseGotoFragment {
 						verse_1 = 0;
 					}
 
-					((GotoFinishListener) activity).onGotoFinished(GotoFinishListener.GOTO_TAB_direct, bookId, chapter_1, verse_1);
+					listener.onGotoFinished(GotoFinishListener.GOTO_TAB_direct, bookId, chapter_1, verse_1);
 					return;
 				} catch (NumberFormatException ignored) {}
 			}
 
 			final Jumper jumper = new Jumper(reference);
 			if (! jumper.getParseSucceeded()) {
-				new AlertDialogWrapper.Builder(getActivity())
-					.setMessage(getString(R.string.alamat_tidak_sah_alamat, reference))
-					.setPositiveButton(R.string.ok, null)
+				new MaterialDialog.Builder(getActivity())
+					.content(getString(R.string.alamat_tidak_sah_alamat, reference))
+					.positiveText(R.string.ok)
 					.show();
 				return;
 			}
 			
-			final int bookId = jumper.getBookId(S.activeVersion.getConsecutiveBooks());
+			final int bookId = jumper.getBookId(S.activeVersion().getConsecutiveBooks());
 			final int chapter = jumper.getChapter();
 			final int verse = jumper.getVerse();
 
-			((GotoFinishListener) activity).onGotoFinished(GotoFinishListener.GOTO_TAB_direct, bookId, chapter, verse);
+			listener.onGotoFinished(GotoFinishListener.GOTO_TAB_direct, bookId, chapter, verse);
 		}
 	};
 
@@ -170,7 +171,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 
 		@Override
 		public View newView(final int position, final ViewGroup parent) {
-			return activity.getLayoutInflater().inflate(R.layout.support_simple_spinner_dropdown_item, parent, false);
+			return getActivity().getLayoutInflater().inflate(R.layout.support_simple_spinner_dropdown_item, parent, false);
 		}
 
 		@Override
@@ -182,7 +183,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 
 		@Override
 		public int getCount() {
-			return candidates == null ? 0 : candidates.size();
+			return candidates.size();
 		}
 
 		/**
@@ -196,7 +197,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 		@Override
 		public Filter getFilter() {
 			return new Filter() {
-				final Book[] books = S.activeVersion.getConsecutiveBooks();
+				final Book[] books = S.activeVersion().getConsecutiveBooks();
 				final TIntObjectMap<Book> bookIndex = new TIntObjectHashMap<>();
 
 				{

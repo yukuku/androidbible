@@ -45,10 +45,10 @@
   <string name="jump_to_prompt"><b>跳至</b> — 範例: ^1</string>
   <string name="belum_ada_pembatas_buku">尚未有任何書籤。\n選取一節經文以新增書籤。</string>
   <string name="judul_titikdua">標題</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">下載 %1$s 失敗. 日期: %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">下載 %1$s 時失敗, 日期 %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">下載 %1$s 檔案成功, 日期 %2$s</string>
-  <string name="mengunduh_namaumum_tgl_tgl">下載 %1$s 檔案中, 日期 %2$s&#8230;</string>
+  <string name="devotion_downloader_downloading_title">下載 ^1 中</string>
+  <string name="devotion_downloader_downloading_date">過時的 ^1</string>
+  <string name="devotion_downloader_error_date">錯誤的日期 ^1: ^2</string>
+  <string name="devotion_downloader_success_date">下載日期 ^1</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">尚不可用. 可能要求日期的材料尚未準備, 或者在辨識資料來源有其它錯誤. 請稍後再試.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">還沒有. 正從網路下載中&#8230;\n\n(請確保網路正常以下載靈修分享材料.)</string>
   <string name="hari_sabtu">週六</string>
@@ -214,6 +214,7 @@
   <string name="market_short_desc">快速、可靠與多功能的離線聖經。</string>
   <string name="no_url_for_facebook">這不可以分享到臉書。</string>
   <string name="storage_permission_rationale">我們需要存取儲存裝置，以便儲存如聖經版本及字型的共享媒體。</string>
+  <string name="goto_button_history_tip">貼士：下次長按此按鈕來查看最近看過的經文。</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">撥號按鍵</string>
   <string name="goto_tab_direct_label">直接輸入</string>
@@ -249,6 +250,7 @@
   <string name="sn_menu_private_song_book">私人的詩歌書</string>
   <string name="sn_private_song_book_dialog_desc">下載私人的（隱藏）詩歌書</string>
   <string name="sn_private_song_book_name_hint">詩歌書名稱</string>
+  <string name="sn_play_in_loop">你想玩循環式直到停止?</string>
   <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">前一天</string>
   <string name="desc_next_day">後一天</string>
@@ -274,10 +276,12 @@
   <string name="desc_verse_attribute_multiple_notes">這經節附有%s個筆記。</string>
   <string name="desc_verse_attribute_progress_mark">這裏有%s。</string>
   <string name="desc_progress_mark_list">進度標記清單</string>
+  <string name="desc_backspace">退格</string>
   <string name="intent_filter_open_yes_file">打開YES檔案</string>
   <string name="intent_filter_open_pdb_file">打開PDB檔案</string>
   <string name="intent_filter_open_pdb_or_yes_file">打開PDB/YES檔案</string>
   <string name="open_yes_file_name_conflict">在\'%2$s\'裡有以經有個叫做 \'%1$s\' 檔案存在了.</string>
+  <string name="open_yes_error_read">從^1數據讀取錯誤</string>
   <string name="open_file_cant_read_source">無法成功讀取來源。</string>
   <string name="open_file_unknown_file_format">無法判定這是PDB還是YES檔案。</string>
   <string name="version_preset_delete_filename">刪除資料檔\'%s\'？</string>
@@ -316,10 +320,14 @@
   <string name="recentverses_button_hint">（長按以顯示最近經文）</string>
   <string name="dr_reminder">提示</string>
   <string name="dr_error_contact_reminder">與提示程式連接時發生錯誤。</string>
+  <string name="dr_timepicker_set">設定</string>
+  <string name="dr_timepicker_off">停用</string>
+  <string name="dv_activity_title">每日詩歌装置</string>
   <string name="dv_option_transparent_background">透明的背景</string>
   <string name="dv_option_dark_text">深色文字</string>
   <string name="dv_option_text_size">文字大小</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">閱讀計劃</string>
   <string name="rp_menuReadingPlan">閱讀計劃</string>
   <string name="rp_commentActual">完成度：%s%%</string>
   <string name="rp_commentTarget">目標：%s%%</string>
@@ -446,6 +454,7 @@
   <string name="sync_sync_set_pref_summary_never">尚未同步</string>
   <string name="sync_sync_set_pref_summary_syncing">正在同步&#8230;</string>
   <string name="sync_log_activity_title">同步紀錄</string>
+  <string name="sync_status_activity_title">同步狀態</string>
   <string name="sync_login_activity_title">登入或建立帳戶</string>
   <string name="sync_login_survey_religion_select_one">選擇宗教</string>
   <string name="sync_login_survey_religion_christianity">基督教</string>
@@ -497,6 +506,7 @@
   <string name="dr_pref_notification_message">提醒訊息</string>
   <string name="dr_default_sound">預設聲音</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100%免費的聖經應用，由Apache License 2.0授權</string>
   <string name="about_translators">譯者</string>
   <string name="about_user_guide">使用者指引</string>
   <string name="about_beta_feedback">測試版本回饋</string>

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -14,11 +15,12 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.PopupMenu;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.Response;
+import okhttp3.Call;
+import okhttp3.Response;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.storage.SongDb;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.OptionalGzipInputStream;
 import yuku.kpri.model.Song;
@@ -146,7 +148,9 @@ public class SongBookUtil {
 		}
 
 		if (withMore) {
-			menu.add(0, POPUP_ID_MORE, 0, R.string.sn_bookselector_more);
+			final SpannableStringBuilder sb = new SpannableStringBuilder(context.getText(R.string.sn_bookselector_more));
+			sb.setSpan(new ForegroundColorSpan(ResourcesCompat.getColor(context.getResources(), R.color.escape, context.getTheme())), 0, sb.length(), 0);
+			menu.add(0, POPUP_ID_MORE, 0, sb);
 		}
 
 		return res;
@@ -187,15 +191,15 @@ public class SongBookUtil {
 	public static void downloadSongBook(final Activity activity, final SongBookInfo songBookInfo, final int dataFormatVersion, final OnDownloadSongBookListener listener) {
 		final AtomicBoolean cancelled = new AtomicBoolean();
 
-		MaterialDialog pd = new MaterialDialog.Builder(activity)
+		final MaterialDialog pd = new MaterialDialog.Builder(activity)
 			.content(R.string.sn_downloading_ellipsis)
 			.progress(true, 0)
 			.dismissListener(dialog -> cancelled.set(true))
 			.show();
 
-		new Thread(() -> {
+		Background.run(() -> {
 			try {
-				final Call call = App.downloadCall("https://alkitab-host.appspot.com/addon/songs/get_songs?name=" + songBookInfo.name + "&dataFormatVersion=" + dataFormatVersion);
+				final Call call = App.downloadCall(BuildConfig.SERVER_HOST + "addon/songs/get_songs?name=" + songBookInfo.name + "&dataFormatVersion=" + dataFormatVersion);
 
 				final Response response = call.execute();
 				if (response.code() != 200) {
@@ -216,20 +220,20 @@ public class SongBookUtil {
 				S.getSongDb().insertSongBookInfo(songBookInfo);
 				S.getSongDb().storeSongs(songBookInfo.name, songs, dataFormatVersion);
 
-				activity.runOnUiThread(() -> listener.onDownloadedAndInserted(songBookInfo));
+				Foreground.run(() -> listener.onDownloadedAndInserted(songBookInfo));
 
 			} catch (IOException | ClassNotFoundException e) {
-				activity.runOnUiThread(() -> listener.onFailedOrCancelled(songBookInfo, e));
+				Foreground.run(() -> listener.onFailedOrCancelled(songBookInfo, e));
 
 			} finally {
 				pd.dismiss();
 			}
-		}).start();
+		});
 	}
 
 	public static CharSequence escapeSongBookName(final String name) {
 		if (name != null && name.startsWith("_")) {
-			final int color = App.context.getResources().getColor(R.color.escape);
+			final int color = ResourcesCompat.getColor(App.context.getResources(), R.color.escape, App.context.getTheme());
 			final SpannableStringBuilder res = new SpannableStringBuilder(name.substring(1));
 			res.setSpan(new ForegroundColorSpan(color), 0, res.length(), 0);
 			return res;

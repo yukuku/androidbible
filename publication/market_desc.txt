@@ -12,7 +12,7 @@ A one-stop Bible app, feature-packed with reading plans, bookmarks, notes, highl
 
 <b>History of Recent Verses.</b> Contains the list of verses opened recently. Touch and hold on the verse reference button to access it.
 
-<b>Bookmarks, Labels, Pins, and Highlights.</b> Mark the verses that you have read with colorful markers. Continue reading from your last read verse without getting lost. Make your own topical system using labels and bookmaks.
+<b>Bookmarks, Labels, Pins, and Highlights.</b> Mark the verses that you have read with colorful markers. Continue reading from your last read verse without getting lost. Make your own topical system using labels and bookmarks.
 
 <b>Sync.</b> Make sure your bookmarks, personal notes, highlights, and labels are safe by activating Sync. With Sync, if you have multiple devices, your data will be accessible and kept updated on all devices.
 

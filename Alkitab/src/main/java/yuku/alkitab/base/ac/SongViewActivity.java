@@ -22,16 +22,13 @@ import android.text.Html;
 import android.text.InputType;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -41,15 +38,18 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.storage.Prefkey;
-import yuku.alkitab.base.storage.SongDb;
 import yuku.alkitab.base.util.AlphanumComparator;
+import yuku.alkitab.base.util.AppLog;
+import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.FontManager;
+import yuku.alkitab.base.util.Foreground;
 import yuku.alkitab.base.util.OsisBookNames;
 import yuku.alkitab.base.util.SongBookUtil;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.base.widget.LeftDrawer;
 import yuku.alkitab.base.widget.TwofingerLinearLayout;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.SongInfo;
@@ -165,7 +165,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 	/** This method might be called from non-UI thread. Be careful when manipulating UI. */
 	@Override
-	public void setMediaState(final MediaPlayerController.ControllerState state) {
+	public void setMediaState(@NonNull final MediaPlayerController.ControllerState state) {
 		if (state == MediaPlayerController.ControllerState.reset) {
 			mediaState.enabled = false;
 			mediaState.icon = R.drawable.ic_action_hollowplay;
@@ -183,7 +183,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		mediaState.loading = (state == MediaPlayerController.ControllerState.preparing);
 
 		//noinspection Convert2MethodRef
-		runOnUiThread(() -> invalidateOptionsMenu());
+		runOnUiThread(() -> supportInvalidateOptionsMenu());
 	}
 
 	void goTo(final int dir) {
@@ -250,7 +250,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		}
 
 		private void setState(final ControllerState newState) {
-			Log.d(TAG, "@@setState newState=" + newState);
+			AppLog.d(TAG, "@@setState newState=" + newState);
 			state = newState;
 			updateMediaState();
 		}
@@ -282,7 +282,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				if (isMidiFile) {
 					final Handler handler = new Handler();
 
-					new Thread(() -> {
+					Background.run(() -> {
 						try {
 							setState(ControllerState.preparing);
 
@@ -299,14 +299,14 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 									// the following should be synchronous, since we are loading from local.
 									mediaPlayerPrepare(true, cacheFile.getAbsolutePath(), playInLoop);
 								} else {
-									Log.d(TAG, "wrong state after downloading song file: " + state);
+									AppLog.d(TAG, "wrong state after downloading song file: " + state);
 								}
 							});
 						} catch (IOException e) {
-							Log.e(TAG, "buffering to local cache", e);
+							AppLog.e(TAG, "buffering to local cache", e);
 							setState(ControllerState.error);
 						}
-					}).start();
+					});
 				} else {
 					mediaPlayerPrepare(false, url, playInLoop);
 				}
@@ -345,22 +345,22 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 					}
 				});
 				mp.setOnCompletionListener(player -> {
-					Log.d(TAG, "@@onCompletion looping=" + player.isLooping());
+					AppLog.d(TAG, "@@onCompletion looping=" + player.isLooping());
 					if (!player.isLooping()) {
 						player.reset();
 						setState(ControllerState.complete);
 					}
 				});
 				mp.setOnErrorListener((mp1, what, extra) -> {
-					Log.e(TAG, "@@onError controller_state=" + state + " what=" + what + " extra=" + extra);
+					AppLog.e(TAG, "@@onError controller_state=" + state + " what=" + what + " extra=" + extra);
 
 					if (state != ControllerState.reset) { // Errors can happen if we call MediaPlayer#reset when MediaPlayer state is Preparing. In this case, do not show error message.
 						final Activity activity = activityRef.get();
 						if (activity != null) {
 							if (!activity.isFinishing()) {
-								new AlertDialogWrapper.Builder(activity)
-									.setMessage(activity.getString(R.string.song_player_error_description, what, extra))
-									.setPositiveButton(R.string.ok, null)
+								new MaterialDialog.Builder(activity)
+									.content(activity.getString(R.string.song_player_error_description, what, extra))
+									.positiveText(R.string.ok)
 									.show();
 							}
 						}
@@ -381,7 +381,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 					mp.prepareAsync();
 				}
 			} catch (IOException e) {
-				Log.e(TAG, "mp setDataSource", e);
+				AppLog.e(TAG, "mp setDataSource", e);
 				setState(ControllerState.error);
 			}
 		}
@@ -399,15 +399,12 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	}
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_song_view);
 
 		circular_progress = V.get(this, R.id.progress_circular);
 
 		setCustomProgressBarIndeterminateVisible(false);
-
-		setTitle(R.string.sn_songs_activity_title);
 
 		drawerLayout = V.get(this, R.id.drawerLayout);
 		leftDrawer = V.get(this, R.id.left_drawer);
@@ -421,7 +418,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
 
-		drawerLayout.setDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+		drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
 			@Override
 			public void onDrawerOpened(final View drawerView) {
 				drawer_opened();
@@ -441,12 +438,18 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		}
 
 		bDownload.setOnClickListener(v -> openDownloadSongBookPage());
+
+		// if no song books is downloaded, open download page immediately
+		if (S.getSongDb().countSongBookInfos() == 0) {
+			openDownloadSongBookPage();
+		}
 	}
 
 	void openDownloadSongBookPage() {
 		startActivityForResult(
 			HelpActivity.createIntentWithOverflowMenu(
-				"https://alkitab-host.appspot.com/songs/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName()),
+				BuildConfig.SERVER_HOST + "songs/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName()),
+				getString(R.string.sn_download_song_books),
 				getString(R.string.sn_menu_private_song_book),
 				AlertDialogActivity.createInputIntent(
 					null,
@@ -465,22 +468,29 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	protected void onStart() {
 		super.onStart();
 
+		final S.CalculatedDimensions applied = S.applied();
+
 		{ // apply background color, and clear window background to prevent overdraw
 			getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-			V.get(this, android.R.id.content).setBackgroundColor(S.applied.backgroundColor);
+			V.get(this, android.R.id.content).setBackgroundColor(applied.backgroundColor);
 		}
 
 		templateCustomVars = new Bundle();
-		templateCustomVars.putString("background_color", String.format("#%06x", S.applied.backgroundColor & 0xffffff));
-		templateCustomVars.putString("text_color", String.format("#%06x", S.applied.fontColor & 0xffffff));
-		templateCustomVars.putString("verse_number_color", String.format("#%06x", S.applied.verseNumberColor & 0xffffff));
-		templateCustomVars.putString("text_size", S.applied.fontSize2dp + "px");
-		templateCustomVars.putString("line_spacing_mult", String.valueOf(S.applied.lineSpacingMult));
+		templateCustomVars.putString("background_color", String.format(Locale.US, "#%06x", applied.backgroundColor & 0xffffff));
+		templateCustomVars.putString("text_color", String.format(Locale.US, "#%06x", applied.fontColor & 0xffffff));
+		templateCustomVars.putString("verse_number_color", String.format(Locale.US, "#%06x", applied.verseNumberColor & 0xffffff));
+		templateCustomVars.putString("text_size", applied.fontSize2dp + "px");
+		templateCustomVars.putString("line_spacing_mult", String.valueOf(applied.lineSpacingMult));
 
 		{
 			String fontName = Preferences.getString(Prefkey.jenisHuruf, null);
 			if (FontManager.isCustomFont(fontName)) {
-				templateCustomVars.putString("custom_font_loader", String.format("@font-face{ font-family: '%s'; src: url('%s'); }", fontName, FontManager.getCustomFontUri(fontName)));
+				final String customFontUri = FontManager.getCustomFontUri(fontName);
+				if (customFontUri != null) {
+					templateCustomVars.putString("custom_font_loader", String.format(Locale.US, "@font-face{ font-family: '%s'; src: url('%s'); }", fontName, customFontUri));
+				} else {
+					templateCustomVars.putString("custom_font_loader", "");
+				}
 			} else {
 				templateCustomVars.putString("custom_font_loader", "");
 			}
@@ -494,8 +504,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			if (bookName == null || code == null) {
 				displaySong(null, null, true);
 			} else {
-				final SongDb db = S.getSongDb();
-				displaySong(bookName, db.getSong(bookName, code), true);
+				displaySong(bookName, S.getSongDb().getSong(bookName, code), true);
 			}
 		}
 
@@ -504,8 +513,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 	/** Used after deleting a song, and the current song is no longer available */
 	void displayAnySongOrFinish() {
-		final SongDb db = S.getSongDb();
-		final Pair<String, Song> pair = db.getAnySong();
+		final Pair<String, Song> pair = S.getSongDb().getAnySong();
 		if (pair == null) {
 			finish();
 		} else {
@@ -522,7 +530,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	}
 
 	static String getAudioFilename(String bookName, String code) {
-		return String.format("songs/v2/%s_%s", bookName, code);
+		return String.format(Locale.US, "songs/v2/%s_%s", bookName, code);
 	}
 
 	void checkAudioExistance() {
@@ -531,16 +539,16 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		final String checkedBookName = currentBookName;
 		final String checkedCode = currentSong.code;
 
-		new Thread(() -> {
+		Background.run(() -> {
 			try {
 				final String filename = getAudioFilename(checkedBookName, checkedCode);
-				final String response = App.downloadString("https://alkitab-host.appspot.com/addon/audio/exists?filename=" + Uri.encode(filename));
+				final String response = App.downloadString(BuildConfig.SERVER_HOST + "addon/audio/exists?filename=" + Uri.encode(filename));
 				if (response.startsWith("OK")) {
 					// make sure this is the correct one due to possible race condition
 					if (U.equals(currentBookName, checkedBookName) && currentSong != null && U.equals(currentSong.code, checkedCode)) {
 						runOnUiThread(() -> {
 							if (mediaPlayerController.canHaveNewUrl()) {
-								final String baseUrl = "https://alkitab-host.appspot.com/addon/audio/";
+								final String baseUrl = BuildConfig.SERVER_HOST + "addon/audio/";
 								final String url = baseUrl + getAudioFilename(currentBookName, currentSong.code);
 								if (response.contains("extension=mp3")) {
 									mediaPlayerController.mediaKnownToExist(url, false);
@@ -548,17 +556,17 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 									mediaPlayerController.mediaKnownToExist(url, true);
 								}
 							} else {
-								Log.d(TAG, "mediaPlayerController can't have new URL at this moment.");
+								AppLog.d(TAG, "mediaPlayerController can't have new URL at this moment.");
 							}
 						});
 					}
 				} else {
-					Log.d(TAG, "@@checkAudioExistance response: " + response);
+					AppLog.d(TAG, "@@checkAudioExistance response: " + response);
 				}
 			} catch (IOException e) {
-				Log.e(TAG, "@@checkAudioExistance", e);
+				AppLog.e(TAG, "@@checkAudioExistance", e);
 			}
-		}).start();
+		});
 	}
 
 	@Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -647,18 +655,20 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		} return true;
 
         case R.id.menuUpdateBook: {
-			new AlertDialogWrapper.Builder(this)
-				.setMessage(TextUtils.expandTemplate(getText(R.string.sn_update_book_explanation), SongBookUtil.escapeSongBookName(currentBookName)))
-				.setPositiveButton(R.string.sn_update_book_confirm_button, (dialog, which) -> updateSongBook())
-				.setNegativeButton(R.string.cancel, null)
+			new MaterialDialog.Builder(this)
+				.content(TextUtils.expandTemplate(getText(R.string.sn_update_book_explanation), SongBookUtil.escapeSongBookName(currentBookName)))
+				.positiveText(R.string.sn_update_book_confirm_button)
+				.onPositive((dialog, which) -> updateSongBook())
+				.negativeText(R.string.cancel)
 				.show();
 		} return true;
 
 		case R.id.menuDeleteSongBook: {
-			new AlertDialogWrapper.Builder(this)
-				.setMessage(TextUtils.expandTemplate(getText(R.string.sn_delete_song_book_explanation), SongBookUtil.escapeSongBookName(currentBookName)))
-				.setPositiveButton(R.string.delete, (dialog, which) -> deleteSongBook())
-				.setNegativeButton(R.string.cancel, null)
+			new MaterialDialog.Builder(this)
+				.content(TextUtils.expandTemplate(getText(R.string.sn_delete_song_book_explanation), SongBookUtil.escapeSongBookName(currentBookName)))
+				.positiveText(R.string.delete)
+				.onPositive((dialog, which) -> deleteSongBook())
+				.negativeText(R.string.cancel)
 				.show();
 		} return true;
 		}
@@ -692,6 +702,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 	private void showDownloadError(final Exception e) {
 		if (e == null) return;
+		if (isFinishing()) return;
 
 		if (e instanceof SongBookUtil.NotOkException) {
 			new MaterialDialog.Builder(this)
@@ -715,10 +726,10 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 		final String bookName = currentBookName;
 
-		new Thread(() -> {
+		Background.run(() -> {
 			final int count = S.getSongDb().deleteSongBook(bookName);
 
-			runOnUiThread(() -> {
+			Foreground.run(() -> {
 				pd.dismiss();
 
 				new MaterialDialog.Builder(this)
@@ -727,7 +738,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 					.dismissListener(dialog -> displayAnySongOrFinish())
 					.show();
 			});
-		}).start();
+		});
     }
 
 	private StringBuilder convertSongToText(Song song) {
@@ -771,7 +782,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				if (verse.kind == VerseKind.REFRAIN) {
 					sb.append(getString(R.string.sn_lyric_refrain_marker)).append('\n');
 				} else {
-					sb.append(String.format("%2d: ", verse_normal_no));
+					sb.append(String.format(Locale.US, "%2d: ", verse_normal_no));
 					skipPad = true;
 				}
 
@@ -864,7 +875,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		
 		String[] parts = osisId.split("\\.");
 		if (parts.length != 2 && parts.length != 3) {
-			Log.w(TAG, "osisId invalid: " + osisId + " in " + line);
+			AppLog.w(TAG, "osisId invalid: " + osisId + " in " + line);
 		} else {
 			String bookName = parts[0];
 			int chapter_1 = Integer.parseInt(parts[1]);
@@ -879,9 +890,9 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			}
 			
 			if (bookId < 0) {
-				Log.w(TAG, "osisBookName invalid: " + bookName + " in " + line);
+				AppLog.w(TAG, "osisBookName invalid: " + bookName + " in " + line);
 			} else {
-				Book book = S.activeVersion.getBook(bookId);
+				Book book = S.activeVersion().getBook(bookId);
 				
 				if (book != null) {
 					boolean full = true;

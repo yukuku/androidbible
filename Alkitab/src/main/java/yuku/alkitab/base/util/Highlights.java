@@ -77,14 +77,14 @@ public class Highlights {
 				res.partial = null;
 				return res;
 			} catch (NumberFormatException e) {
-				Log.e(TAG, "@@decode", e);
+				AppLog.e(TAG, "@@decode", e);
 				return null;
 			}
 		} else if (text.startsWith("{")) { // json format
 			try {
 				return App.getDefaultGson().fromJson(text, Info.class);
 			} catch (JsonSyntaxException e) {
-				Log.e(TAG, "@@decode", e);
+				AppLog.e(TAG, "@@decode", e);
 				return null;
 			}
 		} else {

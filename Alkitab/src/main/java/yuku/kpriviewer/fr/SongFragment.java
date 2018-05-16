@@ -2,6 +2,7 @@ package yuku.kpriviewer.fr;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -31,7 +32,7 @@ public class SongFragment extends BaseFragment {
 	private static final String ARG_templateFile = "templateFile";
 	private static final String ARG_customVars = "customVars";
 
-	private WebView webView;
+	private WebView webview;
 
 	private Song song;
 	private String templateFile;
@@ -62,11 +63,11 @@ public class SongFragment extends BaseFragment {
 	@SuppressLint("SetJavaScriptEnabled")
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View res = inflater.inflate(R.layout.fragment_song, container, false);
-		webView = V.get(res, R.id.webView);
-		webView.setBackgroundColor(0x00000000);
-		webView.setWebViewClient(webViewClient);
+		webview = V.get(res, R.id.webview);
+		webview.setBackgroundColor(0x00000000);
+		webview.setWebViewClient(webViewClient);
 
-		final WebSettings settings = webView.getSettings();
+		final WebSettings settings = webview.getSettings();
 		settings.setJavaScriptEnabled(true);
 		settings.setSupportZoom(true);
 		settings.setBuiltInZoomControls(true);
@@ -86,12 +87,8 @@ public class SongFragment extends BaseFragment {
 	final WebViewClient webViewClient = new WebViewClient() {
 		@Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			Activity activity = getActivity();
-			if (activity instanceof ShouldOverrideUrlLoadingHandler) {
-				if (((ShouldOverrideUrlLoadingHandler)activity).shouldOverrideUrlLoading(this, view, url)) {
-					return true;
-				} else {
-					return super.shouldOverrideUrlLoading(view, url);
-				}
+			if (activity instanceof ShouldOverrideUrlLoadingHandler && ((ShouldOverrideUrlLoadingHandler)activity).shouldOverrideUrlLoading(this, view, url)) {
+				return true;
 			} else {
 				return super.shouldOverrideUrlLoading(view, url);
 			}
@@ -108,7 +105,13 @@ public class SongFragment extends BaseFragment {
 
 			pendingResize = true;
 			view.postDelayed(() -> {
-				view.evaluateJavascript("document.getElementsByTagName('body')[0].style.width = window.innerWidth + 'px';", null);
+				final String script = "document.getElementsByTagName('body')[0].style.width = window.innerWidth + 'px';";
+				if (Build.VERSION.SDK_INT >= 19) {
+					view.evaluateJavascript(script, null);
+				} else {
+					view.loadUrl("javascript:" + script);
+				}
+
 				pendingResize = false;
 			}, 100);
 		}
@@ -143,12 +146,12 @@ public class SongFragment extends BaseFragment {
 
 			template = templateDivReplace(template, "lyrics", songToHtml(song, false));
 
-			webView.loadDataWithBaseURL("file:///android_asset/" + templateFile, template, "text/html", "utf-8", null);
+			webview.loadDataWithBaseURL("file:///android_asset/" + templateFile, template, "text/html", "utf-8", null);
 		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
-			webView.loadDataWithBaseURL(null, sw.toString(), "text/plain", "utf-8", null);
+			webview.loadDataWithBaseURL(null, sw.toString(), "text/plain", "utf-8", null);
 		}
 	}
 
@@ -161,9 +164,9 @@ public class SongFragment extends BaseFragment {
 
 			if (song.lyrics.size() > 1 || lyric.caption != null) { // otherwise, only lyric and has no name
 				if (lyric.caption != null) {
-					sb.append("<div class='lyric_caption'>" + lyric.caption + "</div>");
+					sb.append("<div class='lyric_caption'>").append(lyric.caption).append("</div>");
 				} else {
-					sb.append("<div class='lyric_caption'>Versi " + (i+1) + "</div>");
+					sb.append("<div class='lyric_caption'>Versi ").append(i + 1).append("</div>");
 				}
 			}
 
@@ -217,12 +220,12 @@ public class SongFragment extends BaseFragment {
 	}
 
 	public int getWebViewTextZoom() {
-		if (webView == null) return 0; // not ready
-		return webView.getSettings().getTextZoom();
+		if (webview == null) return 0; // not ready
+		return webview.getSettings().getTextZoom();
 	}
 
 	public void setWebViewTextZoom(final int percent) {
-		if (webView == null) return;
-		webView.getSettings().setTextZoom(percent);
+		if (webview == null) return;
+		webview.getSettings().setTextZoom(percent);
 	}
 }

@@ -1,6 +1,6 @@
 package yuku.alkitab.base.dialog;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
@@ -36,26 +36,29 @@ public class ProgressMarkListDialog extends DialogFragment {
 
 	Listener progressMarkListener;
 
-	Version version = S.activeVersion;
-	String versionId = S.activeVersionId;
+	Version version = S.activeVersion();
+	String versionId = S.activeVersionId();
 	float textSizeMult = S.getDb().getPerVersionSettings(versionId).fontSizeMultiplier;
 
 	@Override
-	public void onAttach(final Activity activity) {
-		super.onAttach(activity);
-		progressMarkListener = (Listener) activity;
+	public void onAttach(final Context context) {
+		super.onAttach(context);
+		progressMarkListener = (Listener) context;
 	}
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		this.inflater = inflater;
 
-		getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+		final Window window = getDialog().getWindow();
+		if (window != null) {
+			window.requestFeature(Window.FEATURE_NO_TITLE);
+		}
 		final View view = inflater.inflate(R.layout.dialog_progress_mark, container, false);
 		final ListView lsProgressMark = V.get(view, R.id.lsProgressMark);
 		final ProgressMarkAdapter adapter = new ProgressMarkAdapter();
 		lsProgressMark.setAdapter(adapter);
-		lsProgressMark.setBackgroundColor(S.applied.backgroundColor);
+		lsProgressMark.setBackgroundColor(S.applied().backgroundColor);
 		lsProgressMark.setOnItemClickListener((parent, view1, position, id) -> {
 			final ProgressMark progressMark = adapter.progressMarks.get(position);
 			progressMarkListener.onProgressMarkSelected(progressMark.preset_id);

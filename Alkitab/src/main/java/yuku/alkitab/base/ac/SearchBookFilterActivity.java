@@ -5,8 +5,10 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -93,6 +95,12 @@ public class SearchBookFilterActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_search_book_filter);
 
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
+
 		selectedBookIds = intArrayToSparseBooleanArray(getIntent().getIntArrayExtra(EXTRA_selectedBookIds));
 		final Parcelable[] booksParcelable = getIntent().getParcelableArrayExtra(EXTRA_books);
 		final Book[] books = new Book[booksParcelable.length];
@@ -110,17 +118,14 @@ public class SearchBookFilterActivity extends BaseActivity {
 		V.get(this, R.id.bCancel).setOnClickListener(bCancel_click);
 	}
 
-	View.OnClickListener bOk_click = new View.OnClickListener() {
-		@Override
-		public void onClick(final View v) {
-			Intent data = new Intent();
-			data.putExtra(EXTRA_selectedBookIds, sparseBooleanArrayToIntArray(selectedBookIds));
-			setResult(RESULT_OK, data);
-			finish();
-		}
+	final View.OnClickListener bOk_click = v -> {
+		Intent data = new Intent();
+		data.putExtra(EXTRA_selectedBookIds, sparseBooleanArrayToIntArray(selectedBookIds));
+		setResult(RESULT_OK, data);
+		finish();
 	};
 
-	View.OnClickListener bCancel_click = v -> finish();
+	final View.OnClickListener bCancel_click = v -> finish();
 
 	static class VH extends RecyclerView.ViewHolder {
 		int viewType;
@@ -149,7 +154,7 @@ public class SearchBookFilterActivity extends BaseActivity {
 
 		public BookAdapter(Book[] books) {
 			// sort or not based on pref
-			if (Preferences.getBoolean(App.context.getString(R.string.pref_alphabeticBookSort_key), App.context.getResources().getBoolean(R.bool.pref_alphabeticBookSort_default))) {
+			if (Preferences.getBoolean(R.string.pref_alphabeticBookSort_key, R.bool.pref_alphabeticBookSort_default)) {
 				books_grid = BookNameSorter.sortAlphabetically(books);
 			} else {
 				books_grid = books.clone();
@@ -168,7 +173,7 @@ public class SearchBookFilterActivity extends BaseActivity {
 				return new VH(getLayoutInflater().inflate(R.layout.search_book_filter_categories, parent, false), viewType);
 			} else {
 				final TextView res = new TextView(SearchBookFilterActivity.this);
-				res.setLayoutParams(new GridLayoutManager.LayoutParams(0 /* will be ignored */, getResources().getDimensionPixelSize(R.dimen.goto_grid_cell_height)));
+				res.setLayoutParams(new GridLayoutManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getResources().getDimensionPixelSize(R.dimen.goto_grid_cell_height)));
 				res.setGravity(Gravity.CENTER);
 				res.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
 				return new VH(res, viewType);

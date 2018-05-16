@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -52,9 +54,15 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setResult(RESULT_CANCELED);
 		setContentView(R.layout.activity_daily_verse_configuration);
+
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
+		ab.setHomeAsUpIndicator(R.drawable.ic_action_remove);
 
 		final ListView lsVersionsAppWidget = V.get(this, R.id.lsVersionsAppWidget);
 		final Button bOk = V.get(this, R.id.bOk);
@@ -165,32 +173,29 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 		return progress + 8.f;
 	}
 
-	private View.OnClickListener bOk_click = new View.OnClickListener() {
-		@Override
-		public void onClick(final View v) {
-			final Context context = DailyVerseAppWidgetConfigurationActivity.this;
-			final String versionId = adapter.versions.get(selectedVersionPosition).getVersionId();
+	final View.OnClickListener bOk_click = v -> {
+		final Context context = DailyVerseAppWidgetConfigurationActivity.this;
+		final String versionId = adapter.versions.get(selectedVersionPosition).getVersionId();
 
-			final DailyVerseData.SavedState savedState = new DailyVerseData.SavedState();
-			savedState.versionId = versionId;
-			savedState.transparentBackground = cTransparentBackground.isChecked();
-			savedState.backgroundAlpha = cTransparentBackground.isChecked() ? progressToActualAlpha(sbTransparent.getProgress()) : 255;
-			savedState.darkText = cDarkText.isChecked();
-			savedState.textSize = progressToActualTextSize(sbTextSize.getProgress());
-			savedState.click = 0;
-			DailyVerseData.saveSavedState(mAppWidgetId, savedState);
+		final DailyVerseData.SavedState savedState = new DailyVerseData.SavedState();
+		savedState.versionId = versionId;
+		savedState.transparentBackground = cTransparentBackground.isChecked();
+		savedState.backgroundAlpha = cTransparentBackground.isChecked() ? progressToActualAlpha(sbTransparent.getProgress()) : 255;
+		savedState.darkText = cDarkText.isChecked();
+		savedState.textSize = progressToActualTextSize(sbTextSize.getProgress());
+		savedState.click = 0;
+		DailyVerseData.saveSavedState(mAppWidgetId, savedState);
 
-			DailyVerseAppWidgetReceiver.buildUpdate(context, mAppWidgetId, 1);
+		DailyVerseAppWidgetReceiver.buildUpdate(context, mAppWidgetId, 1);
 
-			ComponentName provider = new ComponentName(context, DailyVerseAppWidgetReceiver.class);
-			int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(provider);
-			DailyVerseAppWidgetReceiver.setAlarm(DailyVerseAppWidgetConfigurationActivity.this, ids);
+		ComponentName provider = new ComponentName(context, DailyVerseAppWidgetReceiver.class);
+		int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(provider);
+		DailyVerseAppWidgetReceiver.setAlarm(DailyVerseAppWidgetConfigurationActivity.this, ids);
 
-			Intent resultValue = new Intent();
-			resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-			setResult(RESULT_OK, resultValue);
-			finish();
-		}
+		Intent resultValue = new Intent();
+		resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+		setResult(RESULT_OK, resultValue);
+		finish();
 	};
 
 	class VersionAdapter extends EasyAdapter {

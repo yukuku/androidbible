@@ -28,4 +28,5 @@ Latar belakang
   <string name="pref_tapToEditNote_summary">Nyahsemak untuk mencegah penyuntingan yang disengajakan apabila melihat nota yang telah dibuat</string>
   <string name="pref_showHiddenVersion_title">Dayakan versi yang mungkin terhad</string>
   <string name="pref_selectedVerseBgColor_title">Latar belakang ayat terpilih</string>
+  <string name="pref_forceFontScale_title">Saiz perkataan antara muka pengguna</string>
 </resources>

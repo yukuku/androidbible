@@ -45,10 +45,10 @@
   <string name="jump_to_prompt"><b>IR PARA</b> — Exemplo: ^1</string>
   <string name="belum_ada_pembatas_buku">Nenhum marcador ainda.\nSelecione um versículo para adicionar um marcador.</string>
   <string name="judul_titikdua">TÍTULO</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">Falha ao baixar %1$s datado %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Erro ao baixar %1$s datado %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">Sucesso ao baixar %1$s datado %2$s</string>
-  <string name="mengunduh_namaumum_tgl_tgl">Baixando %1$s datado %2$s&#8230;</string>
+  <string name="devotion_downloader_downloading_title">Baixando ^1</string>
+  <string name="devotion_downloader_downloading_date">datado ^1</string>
+  <string name="devotion_downloader_error_date">Erro na data ^1: ^2</string>
+  <string name="devotion_downloader_success_date">Download terminado ^1</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Ainda não disponível. Provavelmente, o material da data requisitada ainda não foi preparado, ou existem erros no reconhecimento da origem dos dados. Por favor, tente novamente mais tarde.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Ainda não disponível. Baixando da Internet&#8230;\n\n(Verifique que há conexão ativa à Internet para baixar os devocionais.)</string>
   <string name="hari_sabtu">Sáb</string>
@@ -214,6 +214,7 @@
   <string name="market_short_desc">Bíblia offline ágil, confiável e cheia de recursos.</string>
   <string name="no_url_for_facebook">Isto não pode ser compartilhado no Facebook.</string>
   <string name="storage_permission_rationale">Precisamos acessar o armazenamento para a guardar mídia compartilhada como versões da Bíblia e fontes.</string>
+  <string name="goto_button_history_tip">Dica: Da próxima vez, clique e segure este botão para acessar seus versos recentemente abertos.</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Teclado</string>
   <string name="goto_tab_direct_label">Por extenso</string>
@@ -249,6 +250,7 @@
   <string name="sn_menu_private_song_book">Hinário privado</string>
   <string name="sn_private_song_book_dialog_desc">Baixar um hinário privado (oculto)</string>
   <string name="sn_private_song_book_name_hint">Nome do hinário</string>
+  <string name="sn_play_in_loop">Você quer voltar para onde parou?</string>
   <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Dia anterior</string>
   <string name="desc_next_day">Dia seguinte</string>
@@ -274,10 +276,12 @@
   <string name="desc_verse_attribute_multiple_notes">%s anotações no versículo.</string>
   <string name="desc_verse_attribute_progress_mark">%s está aqui.</string>
   <string name="desc_progress_mark_list">Lista de marcadores de progresso</string>
+  <string name="desc_backspace">Retrocesso</string>
   <string name="intent_filter_open_yes_file">Abrir arquivo YES</string>
   <string name="intent_filter_open_pdb_file">Abrir arquivo PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Abrir arquivo PDB/YES</string>
   <string name="open_yes_file_name_conflict">Um arquivo YES com o nome \'%1$s\' já existe em \'%2$s\'.</string>
+  <string name="open_yes_error_read">Erro de leitura de dados de ^1</string>
   <string name="open_file_cant_read_source">Não foi possível ler a origem.</string>
   <string name="open_file_unknown_file_format">Não foi possível determinar se este é um arquivo PDB ou YES.</string>
   <string name="version_preset_delete_filename">Remover o arquivo de dados \'%s\'?</string>
@@ -316,10 +320,14 @@
   <string name="recentverses_button_hint">(Pressione por alguns segundos para ver versículos recentes)</string>
   <string name="dr_reminder">Alerta</string>
   <string name="dr_error_contact_reminder">Erro ao fazer contato com o aplicativo de Alerta.</string>
+  <string name="dr_timepicker_set">Definir</string>
+  <string name="dr_timepicker_off">Desativar</string>
+  <string name="dv_activity_title">Verso diário do Widget</string>
   <string name="dv_option_transparent_background">Fundo transparente</string>
   <string name="dv_option_dark_text">Texto escuro</string>
   <string name="dv_option_text_size">Tamanho do texto</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">Plano de leitura</string>
   <string name="rp_menuReadingPlan">Plano de leitura</string>
   <string name="rp_commentActual">Completado: %s%%</string>
   <string name="rp_commentTarget">Objetivo: %s%%</string>
@@ -445,6 +453,7 @@
   <string name="sync_sync_set_pref_summary_never">Ainda não sincronizado</string>
   <string name="sync_sync_set_pref_summary_syncing">Sincronizando agora&#8230;</string>
   <string name="sync_log_activity_title">Log de sincronizações</string>
+  <string name="sync_status_activity_title">Status da sincronização</string>
   <string name="sync_login_activity_title">Login ou crie uma conta</string>
   <string name="sync_login_survey_religion_select_one">Selecione sua religião</string>
   <string name="sync_login_survey_religion_christianity">Cristianismo</string>
@@ -496,6 +505,7 @@
   <string name="dr_pref_notification_message">Mensagem de lembrete</string>
   <string name="dr_default_sound">Som padrão</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Aplicativo da Bíblia totalmente gratuito, sob licença da Apache License 2.0</string>
   <string name="about_translators">Tradutores</string>
   <string name="about_user_guide">Guia do Usuário</string>
   <string name="about_beta_feedback">Feedback da versão beta</string>

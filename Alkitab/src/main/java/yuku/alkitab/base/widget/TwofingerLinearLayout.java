@@ -3,10 +3,12 @@ package yuku.alkitab.base.widget;
 import android.content.Context;
 import android.graphics.PointF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;
+
+import java.util.Locale;
 
 public class TwofingerLinearLayout extends LinearLayout {
 	public static final String TAG = TwofingerLinearLayout.class.getSimpleName();
@@ -77,7 +79,7 @@ public class TwofingerLinearLayout extends LinearLayout {
 		final int action = event.getActionMasked();
 
 		final int pointerCount = event.getPointerCount();
-		if (BuildConfig.DEBUG) Log.d(TAG, "Touch (((" + actionToString(action) + " pointer_count=" + pointerCount + "))) " + state);
+		if (BuildConfig.DEBUG) AppLog.d(TAG, "Touch (((" + actionToString(action) + " pointer_count=" + pointerCount + "))) " + state);
 
 		float x1 = event.getX(0);
 		float y1 = event.getY(0);
@@ -88,7 +90,7 @@ public class TwofingerLinearLayout extends LinearLayout {
 			x2 = event.getX(1);
 			y2 = event.getY(1);
 
-			if (BuildConfig.DEBUG) Log.d(TAG, String.format("--- " + pointerCount + " pointer: (%f,%f) (%f,%f)", x1, y1, x2, y2));
+			if (BuildConfig.DEBUG) AppLog.d(TAG, String.format(Locale.US, "--- " + pointerCount + " pointer: (%f,%f) (%f,%f)", x1, y1, x2, y2));
 		}
 
 		if (state == State.onefinger_left) {
@@ -107,7 +109,7 @@ public class TwofingerLinearLayout extends LinearLayout {
 				startAvg.x = 0.5f * (x1 + x2);
 				startAvg.y = 0.5f * (y1 + y2);
 
-				if (BuildConfig.DEBUG) Log.d(TAG, "### Start dist=" + startDist + " avg=" + startAvg);
+				if (BuildConfig.DEBUG) AppLog.d(TAG, "### Start dist=" + startDist + " avg=" + startAvg);
 
 				listener.onTwofingerStart();
 				state = State.twofinger_performing;
@@ -122,14 +124,14 @@ public class TwofingerLinearLayout extends LinearLayout {
 				float dx = nowAvgX - startAvg.x;
 				float dy = nowAvgY - startAvg.y;
 
-				if (BuildConfig.DEBUG) Log.d(TAG, ">>>>>> drag=(" + dx + "," + dy + ")");
+				if (BuildConfig.DEBUG) AppLog.d(TAG, ">>>>>> drag=(" + dx + "," + dy + ")");
 
 				// start condition
 				if (mode == null) {
 					float scale = nowDist / startDist;
 					float distChange = Math.abs(nowDist - startDist);
 
-					if (BuildConfig.DEBUG) Log.d(TAG, ">>>>>> scale=" + scale);
+					if (BuildConfig.DEBUG) AppLog.d(TAG, ">>>>>> scale=" + scale);
 
 					// Scale mode is started when scale differs by 10~15% or more
 					// and distance between two fingers changes by a certain threshold
@@ -152,7 +154,7 @@ public class TwofingerLinearLayout extends LinearLayout {
 				}
 
 				if (mode != null) {
-					if (BuildConfig.DEBUG) Log.d(TAG, " RESULT: " + mode);
+					if (BuildConfig.DEBUG) AppLog.d(TAG, " RESULT: " + mode);
 
 					if (mode == Mode.scale) {
 						listener.onTwofingerScale(nowDist / startScaleDist);
@@ -189,7 +191,7 @@ public class TwofingerLinearLayout extends LinearLayout {
 		final int action = event.getActionMasked();
 		final int pointerCount = event.getPointerCount();
 
-		if (BuildConfig.DEBUG) Log.d(TAG, "Intercept (((" + actionToString(action) + " pointer_count=" + pointerCount + ")))" + state);
+		if (BuildConfig.DEBUG) AppLog.d(TAG, "Intercept (((" + actionToString(action) + " pointer_count=" + pointerCount + ")))" + state);
 
 		// one finger for swipe left/right
 		if (pointerCount == 1) {

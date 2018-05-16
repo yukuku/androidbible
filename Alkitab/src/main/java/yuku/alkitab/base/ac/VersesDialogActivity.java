@@ -1,7 +1,7 @@
 package yuku.alkitab.base.ac;
 
 import android.os.Bundle;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.util.TargetDecoder;
@@ -27,9 +27,9 @@ public class VersesDialogActivity extends BaseActivity {
 
 		final IntArrayList ariRanges = TargetDecoder.decode(target);
 		if (ariRanges == null) {
-			new AlertDialogWrapper.Builder(this)
-				.setMessage("Could not understand target: " + target)
-				.setPositiveButton("OK", null)
+			new MaterialDialog.Builder(this)
+				.content("Could not understand target: " + target)
+				.positiveText("OK")
 				.show()
 				.setOnDismissListener(dialog -> finish());
 			return;

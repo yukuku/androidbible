@@ -45,10 +45,10 @@
   <string name="jump_to_prompt"><b>Skoč na</b> — Příklad: ^1</string>
   <string name="belum_ada_pembatas_buku">Žádné oblíbené verše. \nVyberte verš k přidání mezi oblíbené.</string>
   <string name="judul_titikdua">Titulek</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">Nepodařilo se stáhnout %1$s datováno %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Chyba při stahování %1$s datováno %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">Úspěšné stahování  %1$s datováno %2$s</string>
-  <string name="mengunduh_namaumum_tgl_tgl">Stahování  %1$s datováno %2$s</string>
+  <string name="devotion_downloader_downloading_title">Stahování ^1</string>
+  <string name="devotion_downloader_downloading_date">staženo ^1</string>
+  <string name="devotion_downloader_error_date">Chyba v datumu ^1: ^2</string>
+  <string name="devotion_downloader_success_date">Stažená data</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Zatím není k dispozici. Pravděpodobně požadovaný dokument ještě není k dispozici, nebo došlo k chybě v rozpoznávání dat. Zkuste to prosím později.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Zatím není k dispozici. Stahování z Internetu...\n\n (Ujistěte se, že máte funkční připojení pro stažení požadovaného)</string>
   <string name="hari_sabtu">So</string>
@@ -214,6 +214,7 @@
   <string name="market_short_desc">Rychlý, spolehlivý a na funkce bohatý režim offline Bible.</string>
   <string name="no_url_for_facebook">Toto nemůže být sdíleno na Facebooku.</string>
   <string name="storage_permission_rationale">Potřebujeme přístupk uložišti pro ukládání různých verzí bible a fontů.</string>
+  <string name="goto_button_history_tip">Tip: Příště podržte tlačítka a dostanete se k nedávno otevřeným veršům.</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Číselník</string>
   <string name="goto_tab_direct_label">Posloupně</string>
@@ -249,6 +250,7 @@
   <string name="sn_menu_private_song_book">Soukromý zpěvník</string>
   <string name="sn_private_song_book_dialog_desc">Stáhnout neveřejné zpěvníky</string>
   <string name="sn_private_song_book_name_hint">Název zpěvníku</string>
+  <string name="sn_play_in_loop">Chcete přehrát smyčku, dokud se neukončí?</string>
   <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Předchozí den</string>
   <string name="desc_next_day">Následující den</string>
@@ -274,10 +276,12 @@
   <string name="desc_verse_attribute_multiple_notes">%s poznámek přiřazených k tomuto verši.</string>
   <string name="desc_verse_attribute_progress_mark">%s je nyní zde.</string>
   <string name="desc_progress_mark_list">Lišta záložek</string>
+  <string name="desc_backspace">Backspace</string>
   <string name="intent_filter_open_yes_file">Otevřít YES soubor</string>
   <string name="intent_filter_open_pdb_file">Otevřít PDB soubor</string>
   <string name="intent_filter_open_pdb_or_yes_file">Otevřít PDB/YES soubor</string>
   <string name="open_yes_file_name_conflict">YES soubor názvem \'%1$s\' již existuje v \'%2$s\'.</string>
+  <string name="open_yes_error_read">Chyba čtení dat z ^1</string>
   <string name="open_file_cant_read_source">Není možné s úspěchem přečíst zdroj.</string>
   <string name="open_file_unknown_file_format">Nelze určit, zda se jedná PDB nebo YES soubor.</string>
   <string name="version_preset_delete_filename">Smazat datový soubor \'%s\'?</string>
@@ -316,10 +320,14 @@
   <string name="recentverses_button_hint">(dlouhý stisk pro současné verše)</string>
   <string name="dr_reminder">Připomínač</string>
   <string name="dr_error_contact_reminder">Chyba během spojení s Připomínačem.</string>
+  <string name="dr_timepicker_set">Nastavit</string>
+  <string name="dr_timepicker_off">Vypnout</string>
+  <string name="dv_activity_title">Denní verše widget</string>
   <string name="dv_option_transparent_background">Průhledné pozadí</string>
   <string name="dv_option_dark_text">Tmavý text</string>
   <string name="dv_option_text_size">Velikost textu</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">Plán čtení</string>
   <string name="rp_menuReadingPlan">Plán čtení</string>
   <string name="rp_commentActual">Dokončeno: %s%%</string>
   <string name="rp_commentTarget">Cíl: %s%%</string>
@@ -445,6 +453,7 @@
   <string name="sync_sync_set_pref_summary_never">Nesynchronizováno</string>
   <string name="sync_sync_set_pref_summary_syncing">Probíhá synchronizace&#8230;</string>
   <string name="sync_log_activity_title">Log synchronizace</string>
+  <string name="sync_status_activity_title">Stav synchronizace</string>
   <string name="sync_login_activity_title">Přihlásit se nebo založit účet</string>
   <string name="sync_login_survey_religion_select_one">Vyberte církev</string>
   <string name="sync_login_survey_religion_christianity">Křesťan</string>
@@ -496,6 +505,7 @@
   <string name="dr_pref_notification_message">Zpráva připomínky</string>
   <string name="dr_default_sound">Defaultní zvuk</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Aplikace Bible je 100% zdarma, licencovaná dle Apache License 2.0</string>
   <string name="about_translators">Překladatelé</string>
   <string name="about_user_guide">Uživatelská příručka</string>
   <string name="about_beta_feedback">Zpětná vazba</string>

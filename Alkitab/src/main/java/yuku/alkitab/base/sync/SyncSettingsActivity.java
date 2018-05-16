@@ -5,11 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
+import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -29,9 +34,14 @@ public class SyncSettingsActivity extends BaseActivity {
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		enableNonToolbarUpButton();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_sync_settings);
+
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 	}
 
 	public static class SyncSettingsFragment extends PreferenceFragmentCompat {
@@ -67,7 +77,7 @@ public class SyncSettingsActivity extends BaseActivity {
 		public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
 			addPreferencesFromResource(R.xml.sync_settings);
 
-			final String syncAccountName = Preferences.getString(getString(R.string.pref_syncAccountName_key));
+			final String syncAccountName = Preferences.getString(R.string.pref_syncAccountName_key);
 			if (syncAccountName == null) {
 				startActivityForResult(SyncLoginActivity.createIntent(), REQCODE_login_initial);
 			}
@@ -89,7 +99,7 @@ public class SyncSettingsActivity extends BaseActivity {
 
 		@SuppressWarnings("deprecation")
 		void updateDisplay() {
-			final String syncAccountName = Preferences.getString(getString(R.string.pref_syncAccountName_key));
+			final String syncAccountName = Preferences.getString(R.string.pref_syncAccountName_key);
 			pref_syncAccountName.setSummary(syncAccountName != null ? syncAccountName : getString(R.string.sync_account_not_selected));
 
 			for (final String syncSetName : SyncShadow.ALL_SYNC_SET_NAMES) {
@@ -116,15 +126,16 @@ public class SyncSettingsActivity extends BaseActivity {
 		}
 
 		Preference.OnPreferenceClickListener pref_syncAccountName_click = preference -> {
-			final String syncAccountName = Preferences.getString(getString(R.string.pref_syncAccountName_key));
+			final String syncAccountName = Preferences.getString(R.string.pref_syncAccountName_key);
 
 			if (syncAccountName == null) {
 				startActivityForResult(SyncLoginActivity.createIntent(), REQCODE_login);
 
 			} else { // show logout instead
-				new AlertDialogWrapper.Builder(getActivity())
-					.setMessage(R.string.sync_logout_warning)
-					.setPositiveButton(R.string.ok, (d, w) -> {
+				new MaterialDialog.Builder(getActivity())
+					.content(R.string.sync_logout_warning)
+					.positiveText(R.string.ok)
+					.onPositive((d, w) -> {
 						SyncRecorder.log(SyncRecorder.EventKind.logout_pre, null, "accountName", syncAccountName);
 
 						Preferences.hold();
@@ -142,9 +153,11 @@ public class SyncSettingsActivity extends BaseActivity {
 
 						SyncRecorder.log(SyncRecorder.EventKind.logout_post, null, "accountName", syncAccountName);
 
+						Crashlytics.setUserEmail(null);
+
 						updateDisplay();
 					})
-					.setNegativeButton(R.string.cancel, null)
+					.negativeText(R.string.cancel)
 					.show();
 			}
 			return true;
@@ -160,7 +173,7 @@ public class SyncSettingsActivity extends BaseActivity {
 					SyncRecorder.log(SyncRecorder.EventKind.login_success_pre, null, "accountName", result.accountName);
 
 					Preferences.hold();
-					Preferences.setString(App.context.getString(R.string.pref_syncAccountName_key), result.accountName);
+					Preferences.setString(R.string.pref_syncAccountName_key, result.accountName);
 					Preferences.setString(Prefkey.sync_simpleToken, result.simpleToken);
 					Preferences.setInt(Prefkey.sync_token_obtained_time, Sqlitil.nowDateTime());
 					Preferences.unhold();

@@ -45,10 +45,10 @@
   <string name="jump_to_prompt"><b>ALLER A</b> — Exemple : ^1</string>
   <string name="belum_ada_pembatas_buku">Il n\'y a aucun marque-page.\nChoisissez un verset pour ajouter un marque-page.</string>
   <string name="judul_titikdua">TITRE</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">Impossible de Télécharger %1$s le %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Erreur dans le téléchargement %1$s du %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">Téléchargement %1$s du %2$s réussi</string>
-  <string name="mengunduh_namaumum_tgl_tgl">Téléchargement %1$s daté %2$s&#8230;</string>
+  <string name="devotion_downloader_downloading_title">Téléchargement de ^1</string>
+  <string name="devotion_downloader_downloading_date">date ^1</string>
+  <string name="devotion_downloader_error_date">Erreur dans la date ^1 : ^2</string>
+  <string name="devotion_downloader_success_date">Téléchargement à la date ^1</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Pas encore disponible. Le document prévu à la date demandée n\'est pas encore prêt, ou la source des données n\'est pas reconnue. Merci d\'essayer plus tard.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Pas encore disponible. Accès à Internet...\n\n (Vérifier qu\'il y a une connexion internet active pour télécharger les textes de méditations.)</string>
   <string name="hari_sabtu">Sam.</string>
@@ -214,6 +214,7 @@
   <string name="market_short_desc">Une Bible rapide, fiable et riche en fonctionnalités, qui fonctionne sans connexion Internet.</string>
   <string name="no_url_for_facebook">Ceci ne peut être partagé sur Facebook.</string>
   <string name="storage_permission_rationale">Nous devons accéder au stockage pour enregistrer des médias partagés tels que la version de la Bible et les polices.</string>
+  <string name="goto_button_history_tip">Conseil : la prochaine fois, pressez longuement ce bouton pour voir les versets ouverts récemment.</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Appeler</string>
   <string name="goto_tab_direct_label">Direct</string>
@@ -249,6 +250,7 @@
   <string name="sn_menu_private_song_book">Recueil de chants privé</string>
   <string name="sn_private_song_book_dialog_desc">Télécharger un recueil de chants privé (caché)</string>
   <string name="sn_private_song_book_name_hint">Nom du recueil de chants</string>
+  <string name="sn_play_in_loop">Voulez-vous jouer en boucle jusqu\'à interruption ?</string>
   <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Jour précédent</string>
   <string name="desc_next_day">Jour suivant</string>
@@ -274,10 +276,12 @@
   <string name="desc_verse_attribute_multiple_notes">%s notes sont attachées à ce verset.</string>
   <string name="desc_verse_attribute_progress_mark">%s est actuellement ici.</string>
   <string name="desc_progress_mark_list">Liste des favoris</string>
+  <string name="desc_backspace">Retour arrière</string>
   <string name="intent_filter_open_yes_file">Ouvrir un fichier YES</string>
   <string name="intent_filter_open_pdb_file">Ouvrir un fichier PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Ouvrir un fichier PDB/YES</string>
   <string name="open_yes_file_name_conflict">Un fichier YES nommé  \'%1$s\' existe toujours dans  \'%2$s\'.</string>
+  <string name="open_yes_error_read">Erreur lors de la lecture de ^1</string>
   <string name="open_file_cant_read_source">Le fichier source ne peut pas être lu correctement.</string>
   <string name="open_file_unknown_file_format">Impossible de déterminer si c\'est un fichier PDB ou YES.</string>
   <string name="version_preset_delete_filename">Détruire le fichier de données \'%s\' ?</string>
@@ -316,10 +320,14 @@
   <string name="recentverses_button_hint">(Appui long pour lister les versets récents)</string>
   <string name="dr_reminder">Pense-bête</string>
   <string name="dr_error_contact_reminder">Erreur lors de l\'accès à l\'application pense-bête.</string>
+  <string name="dr_timepicker_set">Sertir</string>
+  <string name="dr_timepicker_off">Désactiver</string>
+  <string name="dv_activity_title">Verset du jour</string>
   <string name="dv_option_transparent_background">Arrière plan transparent</string>
   <string name="dv_option_dark_text">Texte noir</string>
   <string name="dv_option_text_size">Taille du texte</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">Plan de lecture</string>
   <string name="rp_menuReadingPlan">Plan de lecture</string>
   <string name="rp_commentActual">Termine : %s%%</string>
   <string name="rp_commentTarget">Cible : %s%%</string>
@@ -445,6 +453,7 @@
   <string name="sync_sync_set_pref_summary_never">Pas encore synchronisé</string>
   <string name="sync_sync_set_pref_summary_syncing">Synchroniser maintenant&#8230;</string>
   <string name="sync_log_activity_title">Journal de synchronisation</string>
+  <string name="sync_status_activity_title">Statut de la synchronisation</string>
   <string name="sync_login_activity_title">Vous devez vous identifier ou créer un compte</string>
   <string name="sync_login_survey_religion_select_one">Sélectionnez une religion</string>
   <string name="sync_login_survey_religion_christianity">Chrétien</string>
@@ -496,6 +505,7 @@
   <string name="dr_pref_notification_message">Message de rappel</string>
   <string name="dr_default_sound">Son par défaut</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Application Biblique 100% gratuite, sous licence Apache License 2.0</string>
   <string name="about_translators">Traducteurs</string>
   <string name="about_user_guide">Guide de l\'utilisateur</string>
   <string name="about_beta_feedback">Commentaires de la Version beta</string>

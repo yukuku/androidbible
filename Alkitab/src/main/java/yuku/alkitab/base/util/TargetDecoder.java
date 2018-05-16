@@ -37,7 +37,7 @@ public class TargetDecoder {
 			type = 3;
 			rangesJoined = encoded.substring(4);
 		} else {
-			Log.e(TAG, "Unknown target format: " + encoded);
+			AppLog.e(TAG, "Unknown target format: " + encoded);
 			return null;
 		}
 

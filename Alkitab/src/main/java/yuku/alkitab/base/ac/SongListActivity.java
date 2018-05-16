@@ -8,12 +8,12 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
@@ -127,18 +127,16 @@ public class SongListActivity extends BaseActivity {
 	}
 	
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_song_list);
 
 		circular_progress = V.get(this, R.id.progress_circular);
 
 		final Toolbar toolbar = V.get(this, R.id.toolbar);
-		setSupportActionBar(toolbar); // must be done first before below lines
-		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-		toolbar.setNavigationOnClickListener(v -> navigateUp());
-
-		setSupportProgressBarIndeterminate(true);
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 
 		searchView = V.get(this, R.id.searchView);
 		lsSong = V.get(this, R.id.lsSong);

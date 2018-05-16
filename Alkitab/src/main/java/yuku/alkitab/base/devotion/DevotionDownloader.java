@@ -1,12 +1,19 @@
 package yuku.alkitab.base.devotion;
 
+import android.app.Notification;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.SystemClock;
-import android.util.Log;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v7.app.NotificationCompat;
+import android.text.TextUtils;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.DevotionActivity;
+import yuku.alkitab.base.util.AppLog;
+import yuku.alkitab.base.util.Foreground;
+import yuku.alkitab.base.widget.Localized;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 
 import java.io.IOException;
@@ -15,10 +22,13 @@ import java.util.LinkedList;
 public class DevotionDownloader extends Thread {
 	private static final String TAG = DevotionDownloader.class.getSimpleName();
 
-	public static final String ACTION_DOWNLOAD_STATUS = DevotionDownloader.class.getName() + ".action.DOWNLOAD_STATUS";
 	public static final String ACTION_DOWNLOADED = DevotionDownloader.class.getName() + ".action.DOWNLOADED";
 
 	private final LinkedList<DevotionArticle> queue_ = new LinkedList<>();
+
+	private static final String NOTIFY_TAG = "devotion_downloader";
+	private static final int NOTIFY_ID = 0;
+	NotificationManagerCompat nm;
 
 	public synchronized boolean add(DevotionArticle article, boolean prioritize) {
 		if (queue_.contains(article)) return false;
@@ -69,19 +79,24 @@ public class DevotionDownloader extends Thread {
 
 			if (article == null) {
 				try {
+					notifyFinished();
+
 					synchronized (queue_) {
 						queue_.wait();
 					}
-					Log.d(TAG, "Downloader is resumed");
+					AppLog.d(TAG, "Downloader is resumed");
 				} catch (InterruptedException e) {
-					Log.d(TAG, "Queue is interrupted");
+					AppLog.d(TAG, "Queue is interrupted");
 				}
 			} else {
 				final DevotionActivity.DevotionKind kind = article.getKind();
-				final String url = "https://alkitab-host.appspot.com/devotion/get?name=" + kind.name + "&date=" + article.getDate() + "&app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName());
+				final String url = BuildConfig.SERVER_HOST + "devotion/get?name=" + kind.name + "&date=" + article.getDate() + "&app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName());
 
-				Log.d(TAG, "Downloader starts downloading name=" + kind.name + " date=" + article.getDate());
-				broadcastDownloadStatus(App.context.getString(R.string.mengunduh_namaumum_tgl_tgl, kind.title, article.getDate()));
+				AppLog.d(TAG, "Downloader starts downloading name=" + kind.name + " date=" + article.getDate());
+				notifyDownloadStatus(
+					TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_downloading_title), kind.title),
+					TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_downloading_date), article.getDate())
+				);
 
 				try {
 					final String output = App.downloadString(url);
@@ -90,19 +105,28 @@ public class DevotionDownloader extends Thread {
 					article.fillIn(output);
 
 					if (output.startsWith("NG")) {
-						broadcastDownloadStatus(App.context.getString(R.string.kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output, kind.title, article.getDate(), output));
+						notifyDownloadStatus(
+							TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_downloading_title), kind.title),
+							TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_error_date), article.getDate(), output)
+						);
 					} else {
-						broadcastDownloadStatus(App.context.getString(R.string.berhasil_mengunduh_namaumum_tgl_tgl, kind.title, article.getDate()));
+						notifyDownloadStatus(
+							TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_downloading_title), kind.title),
+							TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_success_date), article.getDate())
+						);
 						broadcastDownloaded(kind.name, article.getDate());
 					}
 
 					// let's now store it to db
 					S.getDb().storeArticleToDevotions(article);
 				} catch (IOException e) {
-					Log.w(TAG, "@@run", e);
+					AppLog.w(TAG, "@@run", e);
 
-					broadcastDownloadStatus(App.context.getString(R.string.gagal_mengunduh_namaumum_tgl_tgl, kind.title, article.getDate()));
-					Log.d(TAG, "Downloader failed to download");
+					notifyDownloadStatus(
+						TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_downloading_title), kind.title),
+						TextUtils.expandTemplate(Localized.string(R.string.devotion_downloader_error_date), String.valueOf(article.getDate()), String.valueOf(e.getMessage()))
+					);
+					AppLog.d(TAG, "Downloader failed to download");
 				}
 			}
 
@@ -110,11 +134,37 @@ public class DevotionDownloader extends Thread {
 		}
 	}
 
-	void broadcastDownloadStatus(final String message) {
-		App.getLbm().sendBroadcast(new Intent(ACTION_DOWNLOAD_STATUS).putExtra("message", message));
+	void notifyDownloadStatus(final CharSequence title, final CharSequence subtitle) {
+		Foreground.run(() -> {
+			if (nm == null) {
+				nm = NotificationManagerCompat.from(App.context);
+			}
+
+			final Notification n = new NotificationCompat.Builder(App.context)
+				.setContentTitle(title)
+				.setContentText(subtitle)
+				.setProgress(0, 0, true)
+				.setSmallIcon(android.R.drawable.stat_sys_download)
+				.setStyle(new NotificationCompat.BigTextStyle()
+					.bigText(subtitle)
+				)
+				.build();
+
+			nm.notify(NOTIFY_TAG, NOTIFY_ID, n);
+		});
 	}
 
 	void broadcastDownloaded(final String name, final String date) {
 		App.getLbm().sendBroadcast(new Intent(ACTION_DOWNLOADED).putExtra("name", name).putExtra("date", date));
+	}
+
+	void notifyFinished() {
+		Foreground.run(() -> {
+			if (nm == null) {
+				nm = NotificationManagerCompat.from(App.context);
+			}
+
+			nm.cancel(NOTIFY_TAG, NOTIFY_ID);
+		});
 	}
 }

@@ -2,17 +2,17 @@ package yuku.alkitab.base.widget;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
-import android.os.Bundle;
+import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.SuperscriptSpan;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.DailyVerseData;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
@@ -35,7 +35,7 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 
 		String verseText = U.removeSpecialCodes(version.loadVerseText(ari));
 		if (verseText == null) {
-			verseText = App.context.getString(R.string.generic_verse_not_available_in_this_version);
+			verseText = Localized.string(R.string.generic_verse_not_available_in_this_version);
 		}
 
 		if (showVerseNumber) {
@@ -51,13 +51,13 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 
 	@Override
 	public void onCreate() {
-		Log.d(TAG, "@@onCreate");
+		AppLog.d(TAG, "@@onCreate");
 		reload();
 	}
 
 	@Override
 	public void onDataSetChanged() {
-		Log.d(TAG, "@@onDataSetChanged");
+		AppLog.d(TAG, "@@onDataSetChanged");
 		reload();
 	}
 
@@ -73,7 +73,7 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 
 	@Override
 	public int getCount() {
-		return aris == null? 0: aris.length;
+		return aris == null ? 0 : aris.length;
 	}
 
 	@Override
@@ -83,17 +83,18 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 		assert aris != null; // getCount returns 0 if aris == null
 		final boolean showVerseNumber = aris.length > 1;
 
-		row.setTextViewText(R.id.text1, getText(version, aris[position], showVerseNumber));
-		if (savedState.darkText) {
-			row.setTextColor(R.id.text1, 0xff000000);
-		}
-		row.setFloat(R.id.text1, "setTextSize", savedState.textSize);
+		// prevent crash: sometimes position is out of range for the aris array.
+		if (position < 0 || position >= aris.length) {
+			row.setTextViewText(R.id.text1, "");
+			row.setOnClickFillInIntent(R.id.text1, new Intent());
 
-		final Intent intent = new Intent();
-		final Bundle extras = new Bundle();
-		extras.putInt("ari", aris[position]);
-		intent.putExtras(extras);
-		row.setOnClickFillInIntent(R.id.text1, intent);
+		} else {
+			final int ari = aris[position];
+			row.setTextViewText(R.id.text1, getText(version, ari, showVerseNumber));
+			row.setTextColor(R.id.text1, savedState.darkText ? Color.BLACK : Color.WHITE);
+			row.setFloat(R.id.text1, "setTextSize", savedState.textSize);
+			row.setOnClickFillInIntent(R.id.text1, new Intent().putExtra("ari", ari));
+		}
 
 		return row;
 	}

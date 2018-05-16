@@ -3,6 +3,7 @@ package yuku.alkitab.base.ac;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
 import android.text.SpannableStringBuilder;
@@ -14,7 +15,7 @@ import android.view.MotionEvent;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -91,7 +92,7 @@ public class NoteActivity extends BaseActivity {
 		verseCountForNewNote = getIntent().getIntExtra(EXTRA_verseCountForNewNote, 0);
 
 		if (reference == null) {
-			reference = S.activeVersion.referenceWithVerseCount(marker.ari, marker.verseCount);
+			reference = S.activeVersion().referenceWithVerseCount(marker.ari, marker.verseCount);
 		}
 
 		setTitle(reference);
@@ -101,9 +102,10 @@ public class NoteActivity extends BaseActivity {
 		tCaption = V.get(this, R.id.tCaption);
 
 		final Toolbar toolbar = V.get(this, R.id.toolbar);
-		setSupportActionBar(toolbar); // must be done first before below lines
-		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-		toolbar.setNavigationOnClickListener(v -> navigateUp());
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 
 		if (marker != null) {
 			tCaptionReadOnly.setText(marker.caption);
@@ -120,16 +122,18 @@ public class NoteActivity extends BaseActivity {
 	@Override protected void onStart() {
 		super.onStart();
 
+		final S.CalculatedDimensions applied = S.applied();
+
 		{ // apply background color, by overriding window background
-			getWindow().setBackgroundDrawable(new ColorDrawable(S.applied.backgroundColor));
+			getWindow().setBackgroundDrawable(new ColorDrawable(applied.backgroundColor));
 		}
 
 		// text formats
 		for (final TextView tv: new TextView[]{tCaption, tCaptionReadOnly}) {
-			tv.setTextColor(S.applied.fontColor);
-			tv.setTypeface(S.applied.fontFace, S.applied.fontBold);
-			tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp);
-			tv.setLineSpacing(0, S.applied.lineSpacingMult);
+			tv.setTextColor(applied.fontColor);
+			tv.setTypeface(applied.fontFace, applied.fontBold);
+			tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp);
+			tv.setLineSpacing(0, applied.lineSpacingMult);
 
 			SettingsActivity.setPaddingBasedOnPreferences(tv);
 		}
@@ -148,9 +152,9 @@ public class NoteActivity extends BaseActivity {
 
 		final IntArrayList verseRanges = DesktopVerseParser.verseStringToAri(verse);
 		if (verseRanges == null || verseRanges.size() == 0) {
-			new AlertDialogWrapper.Builder(widget.getContext())
-				.setMessage(R.string.note_activity_cannot_parse_verse)
-				.setPositiveButton(R.string.ok, null)
+			new MaterialDialog.Builder(widget.getContext())
+				.content(R.string.note_activity_cannot_parse_verse)
+				.positiveText(R.string.ok)
 				.show();
 			return;
 		}
@@ -219,7 +223,7 @@ public class NoteActivity extends BaseActivity {
 
 		this.editingMode = editingMode;
 
-		invalidateOptionsMenu();
+		supportInvalidateOptionsMenu();
 	}
 
 	@Override
@@ -251,9 +255,10 @@ public class NoteActivity extends BaseActivity {
 			case R.id.menuDelete: {
 				// if it's indeed not exist, check if we have some text, if we do, prompt first
 				if (marker != null || tCaption.length() > 0) {
-					new AlertDialogWrapper.Builder(this)
-						.setMessage(R.string.anda_yakin_mau_menghapus_catatan_ini)
-						.setPositiveButton(R.string.delete, (dialog, which) -> {
+					new MaterialDialog.Builder(this)
+						.content(R.string.anda_yakin_mau_menghapus_catatan_ini)
+						.positiveText(R.string.delete)
+						.onPositive((dialog, which) -> {
 							if (marker != null) {
 								// really delete from db
 								S.getDb().deleteNonBookmarkMarkerById(marker._id);
@@ -264,7 +269,7 @@ public class NoteActivity extends BaseActivity {
 							setResult(RESULT_OK);
 							realFinish();
 						})
-						.setNegativeButton(R.string.cancel, null)
+						.negativeText(R.string.cancel)
 						.show();
 				} else { // no existing marker and buffer is empty
 					realFinish(); // no need to setResult(RESULT_OK), because nothing is to be reloaded

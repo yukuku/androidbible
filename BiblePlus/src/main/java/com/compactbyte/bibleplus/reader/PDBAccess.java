@@ -2,18 +2,9 @@
     Bible Plus A Bible Reader for Blackberry
     Copyright (C) 2010 Yohanes Nugroho
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    Bibleplus is dual licensed under either:
+    - Apache license, Version 2.0, (http://www.apache.org/licenses/LICENSE-2.0)
+    - GPL version 3 or later (http://www.gnu.org/licenses/)
 
     Yohanes Nugroho (yohanes@gmail.com)
  */
@@ -28,10 +19,6 @@ import java.io.*;
  */
 class PDBAccess {
 
-	private boolean read_all;
-
-	private String filename;
-	private int filesize;
 	private PDBHeader header;
 	private PDBRecord[] records;
 	private byte[] header_data;
@@ -46,24 +33,18 @@ class PDBAccess {
 		this.is = is;
 	}
 
-	void close() {
-		try {
-			is.close();
-			// make sure it is garbage collected
-			header = null;
-			if (records != null) for (int i = 0; i < records.length; i++) {
-				records[i] = null;
-			}
-			records = null;
-			header_data = null;
-			is = null;
-			record_offsets = null;
-			record_attrs = null;
-
-		} catch (IOException e) {
-
+	void close() throws IOException {
+		is.close();
+		// make sure it is garbage collected
+		header = null;
+		if (records != null) for (int i = 0; i < records.length; i++) {
+			records[i] = null;
 		}
-
+		records = null;
+		header_data = null;
+		is = null;
+		record_offsets = null;
+		record_attrs = null;
 	}
 
 	/**
@@ -102,7 +83,7 @@ class PDBAccess {
 	}
 
 	private void loadRecord(int recno) throws IOException {
-		int length = 0;
+		int length;
 		if (recno < records.length - 1) {
 			length = record_offsets[recno + 1] - record_offsets[recno];
 		} else {
@@ -136,7 +117,7 @@ class PDBAccess {
 		record_attrs = new int[n];
 		for (int i = 0; i < n; i++) {
 
-			int val = (((temp_read[offs + 0] & 0xff) << 24)
+			int val = (((temp_read[offs] & 0xff) << 24)
 					| ((temp_read[offs + 1] & 0xff) << 16)
 					| ((temp_read[offs + 2] & 0xff) << 8)
 					| (temp_read[offs + 3] & 0xff));

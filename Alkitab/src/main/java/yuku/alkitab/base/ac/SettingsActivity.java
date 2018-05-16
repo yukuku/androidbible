@@ -1,22 +1,25 @@
 package yuku.alkitab.base.ac;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -24,8 +27,8 @@ import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
-import yuku.alkitab.base.util.ChangeLanguageHelper;
 import yuku.alkitab.base.util.OtherAppIntegration;
+import yuku.alkitab.base.widget.ConfigurationWrapper;
 import yuku.alkitab.base.widget.VerseItem;
 import yuku.alkitab.debug.R;
 
@@ -65,9 +68,14 @@ public class SettingsActivity extends BaseActivity {
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		super.enableNonToolbarUpButton();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
+
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 
 		final String subClassName = getIntent().getStringExtra(EXTRA_subClassName);
 		if (subClassName == null) {
@@ -121,26 +129,28 @@ public class SettingsActivity extends BaseActivity {
 	}
 
 	public static class DisplayFragment extends PreferenceFragmentCompat {
+
+		final Preference.OnPreferenceChangeListener configurationPreferenceChangeListener = (preference, newValue) -> {
+			final Handler handler = new Handler();
+
+			// do this after this method returns true
+			handler.post(() -> {
+				ConfigurationWrapper.notifyConfigurationNeedsUpdate();
+
+				// restart this activity
+				final Activity ac = getActivity();
+				ac.recreate();
+			});
+			return true;
+		};
+
 		@Override
 		public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 			addPreferencesFromResource(R.xml.settings_display);
 
 			final ListPreference pref_language = (ListPreference) findPreference(getString(R.string.pref_language_key));
-			pref_language.setOnPreferenceChangeListener((preference, newValue) -> {
-				final Handler handler = new Handler();
-
-				// do this after this method returns true
-				handler.post(() -> {
-					App.updateConfigurationWithPreferencesLocale();
-					ChangeLanguageHelper.notifyLocaleChanged();
-
-					// restart this activity
-					getActivity().recreate();
-				});
-				return true;
-			});
+			pref_language.setOnPreferenceChangeListener(configurationPreferenceChangeListener);
 			autoDisplayListPreference(pref_language);
-
 
 			final CheckBoxPreference pref_bottomToolbarOnText = (CheckBoxPreference) findPreference(getString(R.string.pref_bottomToolbarOnText_key));
 			pref_bottomToolbarOnText.setOnPreferenceChangeListener((preference, newValue) -> {
@@ -178,10 +188,11 @@ public class SettingsActivity extends BaseActivity {
 				final boolean value = (boolean) newValue;
 
 				if (value) {
-					new AlertDialogWrapper.Builder(getActivity())
-						.setMessage(R.string.show_hidden_version_warning)
-						.setNegativeButton(R.string.cancel, null)
-						.setPositiveButton(R.string.ok, (dialog, which) -> pref_showHiddenVersion.setChecked(true))
+					new MaterialDialog.Builder(getActivity())
+						.content(R.string.show_hidden_version_warning)
+						.negativeText(R.string.cancel)
+						.positiveText(R.string.ok)
+						.onPositive((dialog, which) -> pref_showHiddenVersion.setChecked(true))
 						.show();
 					return false;
 				}
@@ -214,7 +225,7 @@ public class SettingsActivity extends BaseActivity {
 		}
 	}
 
-	static void autoDisplayListPreference(final ListPreference pref) {
+	public static void autoDisplayListPreference(final ListPreference pref) {
 		final CharSequence label = pref.getEntry();
 		if (label != null) {
 			pref.setSummary(label);

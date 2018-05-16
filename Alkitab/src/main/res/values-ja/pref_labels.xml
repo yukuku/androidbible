@@ -24,6 +24,8 @@
   <string name="pref_autoDictionaryAnalyze_title">自動辞書検索</string>
   <string name="pref_autoDictionaryAnalyze_summary">ハイライトした節を辞書検索する</string>
   <string name="pref_tapToEditNote_title">タップしてノートを編集します。</string>
+  <string name="pref_tapToEditNote_summary">間違いでノートを編集してしまわないためにはここを空欄に残してください。</string>
   <string name="pref_showHiddenVersion_title">制限された聖書版も使用可能にする</string>
   <string name="pref_selectedVerseBgColor_title">ハイライトの色を選ぶ</string>
+  <string name="pref_forceFontScale_title">UI 文字の大きさ</string>
 </resources>

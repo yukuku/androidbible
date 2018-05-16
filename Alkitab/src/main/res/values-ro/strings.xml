@@ -39,10 +39,6 @@
   <string name="jump_to_prompt"><b>MERGI LA</b> — Exemplu: ^1</string>
   <string name="belum_ada_pembatas_buku">Nu sunt marcaje.\nSelectează un verset pentru adăugare în marcaje.</string>
   <string name="judul_titikdua">TITLU</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">Eroare la descărcare %1$s data %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Eroare în descărcare %1$s data %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">Descărcare reuşită %1$s data %2$s</string>
-  <string name="mengunduh_namaumum_tgl_tgl">Descărcare %1$s data %2$s&#8230;</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Nu sunt disponibile. Probabil că datele solicitate nu sunt pregătite sau sunt unele erori în recunoașterea sursei cu date. Vă rog să încercați din nou mai târziu.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Nu este disponibilă. Preluarea de pe Internet&#8230;\n\n(Asiguraţi-vă că există conexiune la Internet pentru a descărca materiale devoţionale.)</string>
   <string name="hari_sabtu">Sam</string>

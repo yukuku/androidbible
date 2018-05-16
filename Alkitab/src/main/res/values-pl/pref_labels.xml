@@ -25,5 +25,6 @@
   <string name="pref_tapToEditNote_title">Naciśnij, aby edytować notatkę</string>
   <string name="pref_tapToEditNote_summary">Odznacz, aby zapobiec przypadkowej edycji kiedy przeglądasz istniejące notatki</string>
   <string name="pref_showHiddenVersion_title">Uaktywnia wersje, z możliwymi ograniczeniami</string>
-  <string name="pref_selectedVerseBgColor_title">Tło dla zaznaczonego tekstu</string>
+  <string name="pref_selectedVerseBgColor_title">Kolor tła dla zaznaczonego tekstu</string>
+  <string name="pref_forceFontScale_title">Rozmiar tekstu w interfejsie</string>
 </resources>

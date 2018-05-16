@@ -27,9 +27,16 @@
   <string name="menu_markers">Petanda</string>
   <string name="hapus_pembatas_buku">Padam penanda buku</string>
   <string name="menuShare">Kongsi</string>
+  <string name="menuShareSplit0">Kongsi versi utama</string>
+  <string name="menuShareSplit1">Kongsi versi sekunder</string>
+  <string name="menuShareBothSplits">Kongsi kedua-dua versi</string>
   <string name="tulis_catatan">Tulis nota</string>
   <string name="tambah_pembatas_buku">Tambah penanda buku</string>
   <string name="salin_ayat">Salinan ayat</string>
+  <string name="copy_split0">Salin versi utama</string>
+  <string name="copy_split1">Salin versi sekunder</string>
+  <string name="copy_both_splits">Salin kedua-kedua versi</string>
+  <string name="search_copy_selected_verses">Salin ayat-ayat terpilih</string>
   <string name="perj_baru">Ujian Baru.</string>
   <string name="perj_lama">Ujian Lama.</string>
   <string name="search_bookname_only">%s hanya</string>
@@ -38,10 +45,10 @@
   <string name="jump_to_prompt"><b>LOMPAT KE</b> — Contoh: ^1</string>
   <string name="belum_ada_pembatas_buku">Tiada penanda halaman lagi.\nPilih ayat untuk menambah penanda buku.</string>
   <string name="judul_titikdua">TAJUK</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">Gagal untuk memuat turun %1$s bertarikh %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Ralat dalam memuat turun %1$s bertarikh %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">Berjaya memuat turun %1$s bertarikh %2$s</string>
-  <string name="mengunduh_namaumum_tgl_tgl">Memuat turun %1$s bertarikh %2$s...</string>
+  <string name="devotion_downloader_downloading_title">Memuat turun ^1</string>
+  <string name="devotion_downloader_downloading_date">bertarikh ^1</string>
+  <string name="devotion_downloader_error_date">Kesulitan dalam tarikh ^1:^2</string>
+  <string name="devotion_downloader_success_date">Tarikh dimuat turun ^1</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Tidak wujud. Mungkin bahan tarikh yang diminta adalah tidak bersedia lagi, atau terdapat beberapa ralat dalam mengiktiraf sumber data. Sila cuba lagi kemudian.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Tidak Wujud. Semasa mengambil dari Internet...\n\n(Pastikan terdapat sambungan Internet untuk mengambil bahan-bahan ketaatan.)</string>
   <string name="hari_sabtu">Sab</string>
@@ -63,6 +70,7 @@
   <string name="mengunduh_nama">Memuat turun %s</string>
   <string name="tuju_v">Pergi ke</string>
   <string name="bagikan_alamat">Kongsi %s</string>
+  <string name="search_selected_verse_copied">Ayat-ayat yang terpilih telah disalin.</string>
   <string name="alamat_sudah_disalin">%s telah disalin.</string>
   <string name="alamat_tidak_sah_alamat">Alamat tidak sah: %s</string>
   <string name="no">Tiada</string>
@@ -87,6 +95,7 @@
   <string name="pdb_encoding">Pengekodan PDB</string>
   <string name="sample_text">Contoh teks</string>
   <string name="include_book_and_chapter_headers">Termasuk buku dan bab tajuk</string>
+  <string name="select_all">Pilih semua</string>
   <string name="cp_opening_pdb_file">Membuka fail PDB</string>
   <string name="cp_loading_version_info">Memuatkan info versi</string>
   <string name="cp_loading_word_index">Memuatkan indeks perkataan</string>
@@ -190,8 +199,10 @@
   <string name="color_settings_title">Warna</string>
   <string name="color_settings_night_title">Warna (Mod malam)</string>
   <string name="menuDisplay">Paparan</string>
+  <string name="text_appearance_font">Gaya perkataan</string>
   <string name="text_appearance_theme_custom">Custom&#8230;</string>
   <string name="text_appearance_text_size">Saiz teks</string>
+  <string name="text_appearance_text_size_for_version">Saiz perkataan bagi ^1</string>
   <string name="text_appearance_line_spacing">Jarak baris</string>
   <string name="text_appearance_bold">Berani</string>
   <string name="devotion_change_date">Perubahan tarikh</string>
@@ -200,10 +211,15 @@
   <string name="verse_select_multiple_verse_selected">%s ayat dipilih</string>
   <string name="google_play_store_not_installed">Gedung Play Google tidak dipasang.</string>
   <string name="pref_language_label_default">Lalai</string>
+  <string name="market_short_desc">Alkitab tanpa Internet yang cepat, boleh dipercayai dan mempunyai pelbagai ciri.</string>
+  <string name="no_url_for_facebook">Bahan ini tidak boleh dikongsikan di Facebook.</string>
+  <string name="storage_permission_rationale">Kami perlu mengakses penyimpanan untuk menyimpan media yang dikongsi seperti versi Alkitab dan gaya perkataan.</string>
+  <string name="goto_button_history_tip">Tip: Pada masa yang akan datang, tekan butang ini secara lama untuk mengakses ayat-ayat yang baru anda buka.</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Pendail</string>
   <string name="goto_tab_direct_label">Langsung</string>
   <string name="goto_tab_grid_label">Grid</string>
+  <string name="menuAskForVerse">Minta nombor ayat</string>
   <!-- Font Manager -->
   <string name="fm_activity_title">Pengurus Fon</string>
   <string name="fm_need_to_log_in_to_wifi">Anda perlu log masuk bagi (Wi-Fi) rangkaian anda dahulu.</string>
@@ -231,6 +247,10 @@
   <string name="sn_update_book_confirm_button">Kemaskini</string>
   <string name="sn_update_book">Kemaskini buku lagu</string>
   <string name="sn_update_book_because_too_old">Sila kemas kini ^1 kepada versi terkini sebelum meneruskan. Setelah dikemas kini, hantar suntingan anda jika perlu.</string>
+  <string name="sn_menu_private_song_book">Buku lagu peribadi</string>
+  <string name="sn_private_song_book_dialog_desc">Muat turun buku lagu peribadi (tersembunyi)</string>
+  <string name="sn_private_song_book_name_hint">Nama buku lagu</string>
+  <string name="sn_play_in_loop">Adakah anda mahu mainkan sebahagian lagu secara berulang sehingga dihentikan?</string>
   <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Hari sebelumnya</string>
   <string name="desc_next_day">Hari seterusnya</string>
@@ -256,10 +276,12 @@
   <string name="desc_verse_attribute_multiple_notes">%s nota telah dilampirkan pada ayat ini.</string>
   <string name="desc_verse_attribute_progress_mark">%s sedang berada di sini.</string>
   <string name="desc_progress_mark_list">Senarai tanda</string>
+  <string name="desc_backspace">Backspace</string>
   <string name="intent_filter_open_yes_file">Buka fail YES</string>
   <string name="intent_filter_open_pdb_file">Buka fail PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Buka fail PDB/YES</string>
   <string name="open_yes_file_name_conflict">Fail YES bernama \'%1$s\' telah wujud dalam \'%2$s\'.</string>
+  <string name="open_yes_error_read">Kesulitan ketika membaca data daripada ^1</string>
   <string name="open_file_cant_read_source">Sumber itu tidak boleh berjaya dibaca.</string>
   <string name="open_file_unknown_file_format">Tidak dapat menentukan sama ada ini adalah fail PDB atau YES.</string>
   <string name="version_preset_delete_filename">Padam fail data \'%s\'?</string>
@@ -298,15 +320,20 @@
   <string name="recentverses_button_hint">(Tekan lama untuk ayat baru-baru ini)</string>
   <string name="dr_reminder">Peringatan</string>
   <string name="dr_error_contact_reminder">Ralat semasa menghubungi aplikasi Peringatan.</string>
+  <string name="dr_timepicker_set">Tetap</string>
+  <string name="dr_timepicker_off">Tutup</string>
+  <string name="dv_activity_title">Widget Ayat Harian</string>
   <string name="dv_option_transparent_background">Latar belakang telus</string>
   <string name="dv_option_dark_text">Teks gelap</string>
   <string name="dv_option_text_size">Saiz teks</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">Rancangan Membaca</string>
   <string name="rp_menuReadingPlan">Membaca pelan</string>
   <string name="rp_commentActual">Siap: %s%%</string>
   <string name="rp_commentTarget">Sasaran: %s%%</string>
   <string name="rp_commentOnSchedule">Pada jadual</string>
   <string name="rp_commentBehindSchedule">Di sebalik jadual: %s%%</string>
+  <string name="rp_commentAheadSchedule">Awal daripada jadual: %s%%</string>
   <string name="rp_noReadingPlanAvailable">Tiada lagi rancangan membaca tersedia.</string>
   <string name="rp_deletePlan">"Padam \'%s\'?"</string>
   <string name="rp_reset">Mengubah tarikh mula supaya pembacaan yang belum dibaca adalah hari ini?</string>
@@ -343,6 +370,7 @@
   <string name="rp_mark_as_read_up_to">Tandakan sebagai telah dibaca sehingga tempat ini?</string>
   <string name="version_download_need_fonts">"Versi dimuat turun mungkin perlu dipaparkan dengan fon tertentu. Pergi ke menu \'Teks rupa\' dan pilih fon. Yunani memerlukan font Ubuntu. Burma memerlukan Parabaik, ParabaikSans, atau Myanmar3. Tamil memerlukan Akshar. Telugu memerlukan Suranna."</string>
   <string name="version_download_corrupted_file">Fail yang dimuat turun seolah-olah menjadi rosak.</string>
+  <string name="version_download_saving_io_error">Kesulitan Input/Pengeluaran ketika menyimpan versi yang dimuat turun</string>
   <string name="menuNightMode">Mod malam</string>
   <string name="highlight_custom_color">Warna lain</string>
   <string name="menu_compare">Bandingkan</string>
@@ -351,6 +379,7 @@
   <string name="search_syntax_tips"><i>Tips carian:</i>\n\n<b>+perkataan</b>untuk perkataan yang tepat\n<b>[q]tuan tuhan[q]</b> untuk frasa tepat itu</string>
   <string name="search_no_result">Tiada ayat-ayat dijumpai untuk <b>^1</b>.</string>
   <string name="search_no_result_fallback">Ketik disini untuk pergi ke <u>^1</u>.</string>
+  <string name="search_clear_history">Padam sejarah carian</string>
   <string name="marker_transfer_to_device_title">Pemindahan ke peranti lain</string>
   <string name="marker_transfer_to_device_description">Pindah semua penanda buku, nota, dan sorotan ke telefon lain atau tablet. Kami mengesyorkan menggunakan Gmail / E-mel.</string>
   <string name="marker_transfer_to_computer_title">Pemindahan untuk mengedit</string>
@@ -379,6 +408,7 @@
   <string name="book_filter_new_apocalypse">Apokalips</string>
   <string name="search_filter_multiple_books_selected">%s buku dipilih</string>
   <string name="search_version_select_label">Cari dalam:</string>
+  <string name="show_hidden_version_warning">Dengan membenarkan opsyen ini, anda dapat memuat turun versi-versi Alkitab yang harus menemui syarat tertentu dari segi daerah atau kewangan. Sebelum memuat turun, sila pastikan anda dibenarkan untuk melakukan demikian. Anda memikul tanggungjawab dengan sepenuhnya atas tindakan memuat turun dan menggunakan versi-versi berkenaan. Saya tidak mempunyai sebarang tanggungjawab terhadap hal ini. Tekan OK sekiranya anda bersetuju dengan terma-terma di atas.</string>
   <string name="version_config_updater_error_download_modify_time">Gagal untuk memeriksa senarai versi.</string>
   <string name="version_config_updater_error_modify_time_failed">Senarai versi tidak tersedia: %s</string>
   <string name="version_config_updater_no_newer_available">Tiada versi kemas kini dijumpai.</string>
@@ -392,6 +422,7 @@
   <string name="version_download_add_from_url_prompt_yes_only">.ya FAIL URL</string>
   <string name="version_download_invalid_url">URL tidak sah.</string>
   <string name="version_download_not_yes">URL internet hendaklah mempunyai pengakhiran .yes.</string>
+  <string name="patch_text_intro">Sila ubahkan bahagian-bahagian teks yang anda rasa boleh dibetulkan atau diperbaik. \n\n Jangan ubahkan bahagian-bahagian lain. \n\n Tekan <b><small>HANTAR</small></b> setelah selesai.</string>
   <string name="patch_text_error_no_edits">Sila lakukan beberapa suntingan sebelum menghantar.</string>
   <string name="patch_text_menu_reference">Rujukan</string>
   <string name="patch_text_menu_send">Hantar</string>
@@ -422,6 +453,7 @@
   <string name="sync_sync_set_pref_summary_never">Tidak disegerak lagi</string>
   <string name="sync_sync_set_pref_summary_syncing">Menyegerak sekarang&#8230;</string>
   <string name="sync_log_activity_title">Log penyegerakan</string>
+  <string name="sync_status_activity_title">Segerakkan Status</string>
   <string name="sync_login_activity_title">Log masuk atau membuat akaun</string>
   <string name="sync_login_survey_religion_select_one">Pilih agama</string>
   <string name="sync_login_survey_religion_christianity">Kristian</string>
@@ -460,6 +492,8 @@
   <string name="sync_login_form_change_password_success">Kata laluan anda telah diubah.</string>
   <string name="pref_textPadding_title">Jidar sekitar teks</string>
   <string name="pref_textPadding_summary">Jadikan teks dalam barisan lebih sempit agar mudah dibaca</string>
+  <string name="pref_bottomToolbarOnText_title">Navigasi ayat di bawah</string>
+  <string name="pref_bottomToolbarOnText_summary">Letakkan bar alat navigasi ayat di bawah pada skrin Alkitab</string>
   <!-- devotion reminder -->
   <string name="dr_app_name">Peringatan</string>
   <string name="dr_notification_title">Pemujaan harian</string>
@@ -471,9 +505,12 @@
   <string name="dr_pref_notification_message">Pesanan peringatan</string>
   <string name="dr_default_sound">Bunyi lalai</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Aplikasi Alkitab percuma 100%, dilesenkan oleh Apache License 2.0</string>
   <string name="about_translators">Penterjemah</string>
   <string name="about_user_guide">Panduan Pengguna</string>
   <string name="about_beta_feedback">Maklum Balas Versi Beta</string>
+  <string name="about_enable_beta">Cuba Versi Beta</string>
+  <string name="about_enable_beta_confirmation">Log masuk ke Google dan tekan butang JADI SEORANG PENCUBA untuk mencuba versi Beta yang mengandungi penambahbaikan dan ciri-ciri yang lebih baharu!</string>
   <string name="about_version_name">versi %s</string>
   <string name="about_material_sources">Sumber Bahan</string>
   <string name="about_credits">Kredit</string>
@@ -484,6 +521,7 @@
   <string name="about_official_website">Tapak Web Rasmi</string>
   <string name="about_project_page">Laman Projek</string>
   <!-- marker and label migration -->
+  <string name="marker_migrate_introduction">Kami telah mengesan sesuatu fail sandaran daripada v3 Yuku Alkitab Cepat yang lama serta mengandungi penandaan, nota, sorotan dan pelabelan.\n\nAdakah anda mahu mengimport segalanya supaya anda dapat mengakses fail sandaran tersebut melalui aplikasi ini?</string>
   <string name="marker_migrate_no_more">Jangan tanya lagi</string>
   <string name="marker_migrate_later">Bukan sekarang</string>
   <string name="marker_migrate_title">Import penanda lama</string>
@@ -507,5 +545,7 @@
   <!-- Commentary -->
   <string name="menuCommentary">Komen</string>
   <!-- Maps -->
+  <string name="maps_could_not_open">Tidak dapat membuka aplikasi Peta-Peta Alkitab.</string>
   <!-- File chooser -->
+  <string name="filechooser_parent_folder">Folder induk</string>
 </resources>

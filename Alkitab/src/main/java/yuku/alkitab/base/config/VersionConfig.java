@@ -6,6 +6,7 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.model.MVersionPreset;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.AppLog;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -148,7 +149,7 @@ public class VersionConfig {
 			convertConfig(App.getDefaultGson().fromJson(json, VersionConfigJson.class));
 			return true;
 		} catch (Exception e) {
-			Log.d(TAG, "@@isValid not valid json file", e);
+			AppLog.d(TAG, "@@isValid not valid json file", e);
 			return false;
 		}
 	}
@@ -166,7 +167,7 @@ public class VersionConfig {
 			fos.write(json.getBytes("utf-8"));
 			file.finishWrite(fos);
 		} catch (IOException e) {
-			Log.d(TAG, "Failed to write to update file", e);
+			AppLog.d(TAG, "Failed to write to update file", e);
 			return false;
 		}
 

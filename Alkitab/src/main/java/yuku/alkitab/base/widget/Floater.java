@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
@@ -94,7 +95,7 @@ public class Floater extends View {
 		activePaint.setColor(0xffffffff);
 		activePaint.setTypeface(Typeface.DEFAULT_BOLD);
 
-		final int accentColor = getResources().getColor(R.color.accent);
+		final int accentColor = ResourcesCompat.getColor(getResources(), R.color.accent, getContext().getTheme());
 
 		currentPaint = new Paint();
 		currentPaint.setColor(accentColor);

@@ -45,10 +45,10 @@
   <string name="jump_to_prompt"><b>ไปยัง</b> — ตัวอย่าง: ^1</string>
   <string name="belum_ada_pembatas_buku">ยังไม่มีตัวบุ๊คมาร์ค\nกรุณาเลือกข้อก่อนที่จะเพิ่มตัวบุ๊คมาร์ค</string>
   <string name="judul_titikdua">หัวข้อ</string>
-  <string name="gagal_mengunduh_namaumum_tgl_tgl">การดาวน์โหลดล้มเหลว %1$s วันที่ %2$s</string>
-  <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">เกิดการผิดพลาดขณะดาวน์โหลด %1$s วันที่ %2$s: %3$s</string>
-  <string name="berhasil_mengunduh_namaumum_tgl_tgl">สำเร็จการดาวน์โหลด %1$s วันที่ %2$s</string>
-  <string name="mengunduh_namaumum_tgl_tgl">กำลังดาวน์โหลด %1$s วันที่ %2$s&#8230;</string>
+  <string name="devotion_downloader_downloading_title">กำลังดาวน์โหลด ^1</string>
+  <string name="devotion_downloader_downloading_date">โหลดตั้งแต่วันที่ ^1</string>
+  <string name="devotion_downloader_error_date">วันที่ผิดพลาด ^1: ^2</string>
+  <string name="devotion_downloader_success_date">วันที่ดาวน์โหลด ^1</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">ยังไม่สามารถใช้ได้ค่ะ วันที่ที่ขออาจจะเตรียมเนื้อหายังไม่เสร็จ หรืออาจจะเกิดการผิดพลาดในการสังเกตที่แหล่งข้อมูลค่ะ กรุณาลองใหม่อีกครั้งในทีหลังค่ะ</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">ยังไม่สามารถใช้ได้ค่ะ กำลังดึงข้อมูลจากอินเทอร์เน็ต&#8230;\n\n(กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตให้ถูกต้องเพื่อจะได้ดำเนินการดึงข้อมูลให้สำเร็จค่ะ)</string>
   <string name="hari_sabtu">เสาร์</string>
@@ -152,7 +152,7 @@
   <string name="create_edited_modified_time">%1$s\n(แก้ไขแล้ว %2$s)</string>
   <string name="the_file_for_this_version_is_no_longer_available_file">ไฟล์สำหรับเวอร์ชั่นนี้ไม่มีแล้วค่ะ ต้องการลบเวอร์ชั่นนี้จากรายการหรือไม่?\nไฟล์: %s</string>
   <string name="create_label_title">สร้างป้ายกำกับ</string>
-  <string name="do_you_want_to_remove_the_label_label_from_this_bookmark">\"ต้องการลบป้ายกำกับ \'%s\' จากบุ๊คมาร์คนี้หรือไม่ค่ะ?</string>
+  <string name="do_you_want_to_remove_the_label_label_from_this_bookmark">"ต้องการลบป้ายกำกับ \'%s\' จากบุ๊คมาร์คนี้หรือไม่ค่ะ?"</string>
   <string name="add_label_title">เพิ่มป้ายกำกับ</string>
   <string name="create_label_titik3">เพิ่มป้ายกำกับ&#8230;</string>
   <string name="select_books_to_search">เลือกเล่มที่อยากค้นหา</string>
@@ -214,6 +214,7 @@
   <string name="market_short_desc">นี่เป็นพระคำภีร์ที่ร่วดเร็ว วางใจได้ และเต็มด้วยจุดเด่นมากมายที่ไม่ต้องใช้เน็ต</string>
   <string name="no_url_for_facebook">ไม่สามารถแชร์ไปยังเฟซบุ๊กได้ในขณะนี้</string>
   <string name="storage_permission_rationale">เราต้องการอนุญาตเข้าถึงที่จัดเก็บข้อมูลเพื่อจักการบันทึกข้อมูลร่วม เช่น เวอร์ชั่นพระคำภีร์และฟอนท์นะค่ะ</string>
+  <string name="goto_button_history_tip">ข้อแนะนำ: ครั้งต่อไปกรุณากดปุ่มนี้ค้างเพื่อเข้าไปดูประวัติข้อที่เคยเปิด</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">หน้าปัด</string>
   <string name="goto_tab_direct_label">กดตรง</string>
@@ -249,6 +250,7 @@
   <string name="sn_menu_private_song_book">หนังสือเพลงส่วนตัว</string>
   <string name="sn_private_song_book_dialog_desc">ดาวน์โหลดหนังสือเพลงส่วนตัว (ซึ่งปิดบังอยู่)</string>
   <string name="sn_private_song_book_name_hint">ชื่อหนังสือเพลง</string>
+  <string name="sn_play_in_loop">ต้องการเปิดฟังอย่างวงต่อเนื่องจนกว่าจะกดหยุดหรือไม่?</string>
   <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">วันก่อน</string>
   <string name="desc_next_day">วันต่อไป</string>
@@ -274,10 +276,12 @@
   <string name="desc_verse_attribute_multiple_notes">ข้อนี้มีโน้ตจำนวน %s โน้ตแนบมาด้วยค่ะ</string>
   <string name="desc_verse_attribute_progress_mark">%s อยู่ตรงนี้ที่ปัจจุบัน</string>
   <string name="desc_progress_mark_list">รายการพิน</string>
+  <string name="desc_backspace">ลบ</string>
   <string name="intent_filter_open_yes_file">เปิดไฟล์ YES</string>
   <string name="intent_filter_open_pdb_file">เปิดไฟล์ PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">เปิดไฟล์ PDB/YES</string>
   <string name="open_yes_file_name_conflict">ไฟล์ YES ที่ชื่อว่า \'%1$s\' มีอยู่แล้วที่ \'%2$s\'</string>
+  <string name="open_yes_error_read">เกิดผิดพลาดในการอ่านข้อมูลจาก ^1</string>
   <string name="open_file_cant_read_source">ไม่สามารถเปิดอ่านแหลงข้อมูลได้ค่ะ</string>
   <string name="open_file_unknown_file_format">ไม่สามารถตรวจสอบว่าไฟล์นี้เป็นไฟล์ PDB หรือไฟล์ YES ค่ะ</string>
   <string name="version_preset_delete_filename">ต้องการลบไฟล์ข้อมูล \'%s\' หรือไม่?</string>
@@ -316,10 +320,14 @@
   <string name="recentverses_button_hint">(กดค้างสำหรับประวัติข้อล่าสุดค่ะ)</string>
   <string name="dr_reminder">การแจ้งเตือน</string>
   <string name="dr_error_contact_reminder">เกิดการผิดพลาดระหว่างที่เชื่อมโยงกับแอปแจ้งเตือนค่ะ</string>
+  <string name="dr_timepicker_set">ตั้ง</string>
+  <string name="dr_timepicker_off">ปิด</string>
+  <string name="dv_activity_title">วิดเจ็ตข้อประจำวัน</string>
   <string name="dv_option_transparent_background">พื้นหลังโปร่งใส</string>
   <string name="dv_option_dark_text">ข้อความสีเข้ม</string>
   <string name="dv_option_text_size">ขนาดตัวอักษร</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">แผนการอ่าน</string>
   <string name="rp_menuReadingPlan">แผนการอ่าน</string>
   <string name="rp_commentActual">เสร็จแล้ว: %s%%</string>
   <string name="rp_commentTarget">เป้าหมาย: %s%%</string>
@@ -445,6 +453,7 @@
   <string name="sync_sync_set_pref_summary_never">ยังไมได้ซิงค์</string>
   <string name="sync_sync_set_pref_summary_syncing">กำลังซิงค์&#8230;</string>
   <string name="sync_log_activity_title">ล็อกการซิงค์</string>
+  <string name="sync_status_activity_title">สถานะการซิงค์</string>
   <string name="sync_login_activity_title">เข้าสู่ระบบหรือลงบัญชี</string>
   <string name="sync_login_survey_religion_select_one">เลือกศาสนา</string>
   <string name="sync_login_survey_religion_christianity">ศาสนาคริสต์</string>
@@ -496,6 +505,7 @@
   <string name="dr_pref_notification_message">ข้อความเตือน</string>
   <string name="dr_default_sound">เสียงดีฟอลต์</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">แอปพระคัมภีร์ฟรี 100% อนุญาตภายใต้ Apache License 2.0</string>
   <string name="about_translators">นักแปล</string>
   <string name="about_user_guide">คู่มือการใช้</string>
   <string name="about_beta_feedback">ข้อเสนอแนะรุ่นเบต้า</string>

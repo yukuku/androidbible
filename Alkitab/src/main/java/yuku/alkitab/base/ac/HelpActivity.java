@@ -5,18 +5,22 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.util.Announce;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
@@ -34,15 +38,13 @@ public class HelpActivity extends BaseActivity {
 	public static final int REQCODE_overflowMenuItem = 1;
 
 	WebView webview;
+	View progress;
+
 	String overflowMenuItemTitle;
 	Intent overflowMenuItemIntent;
 
-	public static Intent createIntent(final String page) {
-		return _createIntent(page, null, null, null);
-	}
-
-	public static Intent createIntentWithOverflowMenu(final String page, final String overflowMenuItemTitle, final Intent overflowMenuItemIntent) {
-		return _createIntent(page, null, overflowMenuItemTitle, overflowMenuItemIntent);
+	public static Intent createIntentWithOverflowMenu(final String page, final String overrideTitle, final String overflowMenuItemTitle, final Intent overflowMenuItemIntent) {
+		return _createIntent(page, overrideTitle, overflowMenuItemTitle, overflowMenuItemIntent);
 	}
 
 	public static Intent createIntent(final String page, final String overrideTitle) {
@@ -65,11 +67,17 @@ public class HelpActivity extends BaseActivity {
 	@SuppressLint("SetJavaScriptEnabled")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		enableNonToolbarUpButton();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_help);
 
-		webview = V.get(this, R.id.webView);
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
+
+		webview = V.get(this, R.id.webview);
+		progress = V.get(this, R.id.progress);
 
 		if (BuildConfig.DEBUG) {
 			if (Build.VERSION.SDK_INT >= 19) {
@@ -93,6 +101,9 @@ public class HelpActivity extends BaseActivity {
 			setTitle(overrideTitle);
 		}
 
+		webview.setVisibility(View.GONE);
+		progress.setVisibility(View.VISIBLE);
+
 		if (page != null) {
 			if (page.startsWith("http:") || page.startsWith("https:")) {
 				webview.loadUrl(page);
@@ -101,9 +112,9 @@ public class HelpActivity extends BaseActivity {
 			}
 		} else if (announcementIds != null) {
 			final Locale locale = getResources().getConfiguration().locale;
-			final String url = "https://alkitab-host.appspot.com/announce/view?ids=" + App.getDefaultGson().toJson(announcementIds) + (locale == null ? "" : ("&locale=" + locale.toString()));
+			final String url = BuildConfig.SERVER_HOST + "announce/view?ids=" + App.getDefaultGson().toJson(announcementIds) + (locale == null ? "" : ("&locale=" + locale.toString()));
 			if (BuildConfig.DEBUG) {
-				Log.d(TAG, "loading announce view url: " + url);
+				AppLog.d(TAG, "loading announce view url: " + url);
 			}
 			webview.loadUrl(url);
 		}
@@ -143,9 +154,9 @@ public class HelpActivity extends BaseActivity {
 						final String ssp = uri.getSchemeSpecificPart();
 						final IntArrayList ariRanges = TargetDecoder.decode("o:" + ssp);
 						if (ariRanges == null || ariRanges.size() == 0) {
-							new AlertDialogWrapper.Builder(HelpActivity.this)
-								.setMessage(getString(R.string.alamat_tidak_sah_alamat, url))
-								.setPositiveButton(R.string.ok, null)
+							new MaterialDialog.Builder(HelpActivity.this)
+								.content(getString(R.string.alamat_tidak_sah_alamat, url))
+								.positiveText(R.string.ok)
 								.show();
 						} else {
 							final VersesDialog dialog = VersesDialog.newInstance(ariRanges);
@@ -153,7 +164,7 @@ public class HelpActivity extends BaseActivity {
 							dialog.setListener(new VersesDialog.VersesDialogListener() {
 								@Override
 								public void onVerseSelected(final VersesDialog dialog, final int ari) {
-									Log.d(TAG, "Verse link clicked from page");
+									AppLog.d(TAG, "Verse link clicked from page");
 									startActivity(Launcher.openAppAtBibleLocation(ari));
 								}
 							});
@@ -163,9 +174,21 @@ public class HelpActivity extends BaseActivity {
 				return false;
 			}
 
+			@SuppressWarnings("deprecation")
+			@Override
+			public void onReceivedError(final WebView view, final int errorCode, final String description, final String failingUrl) {
+				super.onReceivedError(view, errorCode, description, failingUrl);
+
+				webview.setVisibility(View.VISIBLE);
+				progress.setVisibility(View.GONE);
+			}
+
 			@Override
 			public void onPageFinished(final WebView view, final String url) {
 				super.onPageFinished(view, url);
+
+				webview.setVisibility(View.VISIBLE);
+				progress.setVisibility(View.GONE);
 
 				if (overrideTitle == null) {
 					setTitle(view.getTitle());
@@ -185,7 +208,7 @@ public class HelpActivity extends BaseActivity {
 			item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 		}
 
-		return overflowMenuItemTitle != null;
+		return true;
 	}
 
 	@Override

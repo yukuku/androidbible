@@ -337,6 +337,11 @@ public class SongDb {
 		}
 	}
 
+	public int countSongBookInfos() {
+		final SQLiteDatabase db = helper.getReadableDatabase();
+		return (int) DatabaseUtils.queryNumEntries(db, Table.SongBookInfo.tableName());
+	}
+
 	/**
 	 * Insert a songbook info row. An existing songbook with the same name, if exists, will be deleted.
 	 */

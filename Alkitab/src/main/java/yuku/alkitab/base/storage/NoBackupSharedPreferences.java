@@ -15,13 +15,12 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class NoBackupSharedPreferences {
-	static HashMap<String, NoBackupSharedPreferences> instances = new HashMap<>();
-
-	final File file;
+	final static HashMap<String, NoBackupSharedPreferences> instances = new HashMap<>();
 
 	static class Map extends LinkedHashMap<String, Object> {}
 
-	Map map;
+	final File file;
+	final Map map;
 
 	public static NoBackupSharedPreferences get() {
 		return get("default.xml");
@@ -37,12 +36,13 @@ public class NoBackupSharedPreferences {
 	}
 
 	private NoBackupSharedPreferences(final String filename) {
-		file = new File(new ContextCompat().getNoBackupFilesDir(App.context), filename);
+		file = new File(ContextCompat.getNoBackupFilesDir(App.context), filename);
 		if (file.exists()) {
 			final AtomicFile atom = new AtomicFile(file);
 			try {
 				final FileInputStream fis = atom.openRead();
-				map = App.getDefaultGson().fromJson(new InputStreamReader(fis, Charset.forName("utf-8")), Map.class);
+				final Map savedMap = App.getDefaultGson().fromJson(new InputStreamReader(fis, Charset.forName("utf-8")), Map.class);
+				map = savedMap == null ? new Map() : savedMap;
 				fis.close();
 			} catch (IOException e) {
 				throw new RuntimeException(e);

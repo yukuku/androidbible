@@ -49,7 +49,7 @@ public abstract class BaseFileTreeNode extends BaseMutableTreeNode implements Co
 			if (files == null) {
 				this.removeAllChildren();
 			} else {
-				HashMap<String, BaseFileTreeNode> existing = new HashMap<String, BaseFileTreeNode>();
+				HashMap<String, BaseFileTreeNode> existing = new HashMap<>();
 				for (int i = 0; i < this.getChildCount(); i++) {
 					BaseFileTreeNode child = this.getChildAt(i);
 					existing.put(child.file.getName(), child);

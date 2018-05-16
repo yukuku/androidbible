@@ -7,4 +7,10 @@
     <item>Pārvietoties pa nodaļām</item>
     <item>Lapu uz augšu/uz leju</item>
   </string-array>
+  <string-array name="pref_forceFontScale_labels">
+    <item>Sekot sistēmas norādījumiem</item>
+    <item>Ļoti liels</item>
+    <item>Neaptverami liels</item>
+    <item>Milzīgs</item>
+  </string-array>
 </resources>

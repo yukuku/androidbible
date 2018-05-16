@@ -23,10 +23,12 @@ import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -36,7 +38,6 @@ import android.text.format.DateFormat;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.URLSpan;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -49,17 +50,13 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import org.json.JSONException;
 import org.json.JSONObject;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
-import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.ac.GotoActivity;
 import yuku.alkitab.base.ac.MarkerListActivity;
 import yuku.alkitab.base.ac.MarkersActivity;
@@ -81,6 +78,7 @@ import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Announce;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.CurrentReading;
 import yuku.alkitab.base.util.ExtensionManager;
@@ -97,6 +95,7 @@ import yuku.alkitab.base.widget.FormattedTextRenderer;
 import yuku.alkitab.base.widget.GotoButton;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.LeftDrawer;
+import yuku.alkitab.base.widget.MaterialDialogAdapterHelper;
 import yuku.alkitab.base.widget.ScrollbarSetter;
 import yuku.alkitab.base.widget.SingleViewVerseAdapter;
 import yuku.alkitab.base.widget.SplitHandleButton;
@@ -153,7 +152,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		@Override
 		public void onFloaterDragStart(final float screenX, final float screenY) {
 			floater.show(activeBook.bookId, chapter_1);
-			floater.onDragStart(S.activeVersion);
+			floater.onDragStart(S.activeVersion());
 		}
 
 		@Override
@@ -319,50 +318,58 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			.appendQueryParameter("mode", "snippet")
 			.build();
 
-		final Cursor c = cr.query(uri, null, null, null, null);
+		Cursor c;
+		try {
+			c = cr.query(uri, null, null, null, null);
+		} catch (Exception e) {
+			new MaterialDialog.Builder(this)
+				.content(R.string.dict_no_results)
+				.positiveText(R.string.ok)
+				.show();
+			return;
+		}
+
 		if (c == null) {
 			OtherAppIntegration.askToInstallDictionary(this);
-		} else {
-			try {
-				if (c.getCount() == 0) {
-					new MaterialDialog.Builder(this)
-						.content(R.string.dict_no_results)
-						.positiveText(R.string.ok)
-						.show();
-				} else {
-					c.moveToNext();
-					final Spanned rendered = Html.fromHtml(c.getString(c.getColumnIndexOrThrow("definition")));
-					final SpannableStringBuilder sb = rendered instanceof SpannableStringBuilder ? (SpannableStringBuilder) rendered : new SpannableStringBuilder(rendered);
+			return;
+		}
 
-					// remove links
-					for (final URLSpan span : sb.getSpans(0, sb.length(), URLSpan.class)) {
-						sb.removeSpan(span);
-					}
+		try {
+			if (c.getCount() == 0) {
+				new MaterialDialog.Builder(this)
+					.content(R.string.dict_no_results)
+					.positiveText(R.string.ok)
+					.show();
+			} else {
+				c.moveToNext();
+				final Spanned rendered = Html.fromHtml(c.getString(c.getColumnIndexOrThrow("definition")));
+				final SpannableStringBuilder sb = rendered instanceof SpannableStringBuilder ? (SpannableStringBuilder) rendered : new SpannableStringBuilder(rendered);
 
-					new MaterialDialog.Builder(this)
-						.title(data.orig_text)
-						.content(sb)
-						.positiveText(R.string.dict_open_full)
-						.callback(new MaterialDialog.ButtonCallback() {
-							@Override
-							public void onPositive(final MaterialDialog dialog) {
-								final Intent intent = new Intent("org.sabda.kamus.action.VIEW");
-								intent.putExtra("key", data.key);
-								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-								intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-								try {
-									startActivity(intent);
-								} catch (ActivityNotFoundException e) {
-									OtherAppIntegration.askToInstallDictionary(IsiActivity.this);
-								}
-							}
-						})
-						.show();
+				// remove links
+				for (final URLSpan span : sb.getSpans(0, sb.length(), URLSpan.class)) {
+					sb.removeSpan(span);
 				}
-			} finally {
-				c.close();
+
+				new MaterialDialog.Builder(this)
+					.title(data.orig_text)
+					.content(sb)
+					.positiveText(R.string.dict_open_full)
+					.onPositive((dialog, which) -> {
+						final Intent intent = new Intent("org.sabda.kamus.action.VIEW");
+						intent.putExtra("key", data.key);
+						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+						try {
+							startActivity(intent);
+						} catch (ActivityNotFoundException e) {
+							OtherAppIntegration.askToInstallDictionary(IsiActivity.this);
+						}
+					})
+					.show();
 			}
+		} finally {
+			c.close();
 		}
 	};
 
@@ -419,8 +426,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	};
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
+		AppLog.d(TAG, "@@onCreate start");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_isi);
+		AppLog.d(TAG, "@@onCreate setCV");
 
 		drawerLayout = V.get(this, R.id.drawerLayout);
 		leftDrawer = V.get(this, R.id.left_drawer);
@@ -428,12 +437,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		toolbar = V.get(this, R.id.toolbar);
 		setSupportActionBar(toolbar);
-		setTitle("");
-
-		final ActionBar actionBar = getSupportActionBar();
-		assert actionBar != null;
-		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
+		ab.setDisplayShowTitleEnabled(false);
+		ab.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
 
 		bGoto = V.get(this, R.id.bGoto);
 		bLeft = V.get(this, R.id.bLeft);
@@ -531,35 +539,29 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			openingAri = Ari.encode(lastBookId, lastChapter, lastVerse);
 			selectVerse = false;
 			selectVerseCount = 1;
-			Log.d(TAG, "Going to the last: bookId=" + lastBookId + " chapter=" + lastChapter + " verse=" + lastVerse);
+			AppLog.d(TAG, "Going to the last: bookId=" + lastBookId + " chapter=" + lastChapter + " verse=" + lastVerse);
 		} else {
 			openingAri = intentResult.ari;
 			selectVerse = intentResult.selectVerse;
 			selectVerseCount = intentResult.selectVerseCount;
 		}
 
-		final String lastVersionId = Preferences.getString(Prefkey.lastVersionId);
-		final MVersion mv = getVersionFromVersionId(lastVersionId);
-
-		if (mv != null) {
-			loadVersion(mv, false);
-		} else {
-			loadVersion(S.getMVersionInternal(), false);
-		}
-
 		{ // load book
-			final Book book = S.activeVersion.getBook(Ari.toBook(openingAri));
+			final Book book = S.activeVersion().getBook(Ari.toBook(openingAri));
 			if (book != null) {
 				this.activeBook = book;
 			} else { // can't load last book or bookId 0
-				this.activeBook = S.activeVersion.getFirstBook();
+				this.activeBook = S.activeVersion().getFirstBook();
 			}
 
 			if (this.activeBook == null) { // version failed to load, so books are also failed to load. Fallback!
-				S.activeVersion = VersionImpl.getInternalVersion();
-				this.activeBook = S.activeVersion.getFirstBook();
+				S.setActiveVersion(VersionImpl.getInternalVersion(), MVersionInternal.getVersionInternalId());
+				this.activeBook = S.activeVersion().getFirstBook();
 			}
 		}
+
+		// first display of active version
+		displayActiveVersion();
 
 		// load chapter and verse
 		display(Ari.toChapter(openingAri), Ari.toVerse(openingAri));
@@ -578,7 +580,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					splitHandleButton.setOrientation(LabeledSplitHandleButton.Orientation.vertical);
 				}
 
-				final MVersion splitMv = getVersionFromVersionId(lastSplitVersionId);
+				final MVersion splitMv = S.getVersionFromVersionId(lastSplitVersionId);
 				final MVersion splitMvActual = splitMv == null ? S.getMVersionInternal() : splitMv;
 
 				if (loadSplitVersion(splitMvActual)) {
@@ -600,6 +602,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		Announce.checkAnnouncements();
 
 		App.getLbm().registerReceiver(needsRestartReceiver, new IntentFilter(ACTION_NEEDS_RESTART));
+		AppLog.d(TAG, "@@onCreate end");
 	}
 
 	void callAttentionForVerseToBothSplits(final int verse_1) {
@@ -635,19 +638,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	 * @return non-null if the intent is handled by any of the intent handler (e.g. nfc or VIEW)
 	 */
 	private IntentResult processIntent(Intent intent, String via) {
-		Log.d(TAG, "Got intent via " + via);
-		Log.d(TAG, "  action: " + intent.getAction());
-		Log.d(TAG, "  data uri: " + intent.getData());
-		Log.d(TAG, "  component: " + intent.getComponent());
-		Log.d(TAG, "  flags: 0x" + Integer.toHexString(intent.getFlags()));
-		Log.d(TAG, "  mime: " + intent.getType());
-		Bundle extras = intent.getExtras();
-		Log.d(TAG, "  extras: " + (extras == null? "null": extras.size()));
-		if (extras != null) {
-			for (String key: extras.keySet()) {
-				Log.d(TAG, "    " + key + " = " + extras.get(key));
-			}
-		}
+		U.dumpIntent(intent, via);
 
 		{
 			final IntentResult result = tryGetIntentResultFromBeam(intent);
@@ -677,9 +668,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				res.selectVerseCount = selectVerseCount;
 				return res;
 			} else {
-				new AlertDialogWrapper.Builder(this)
-					.setMessage("Invalid ari: " + ari)
-					.setPositiveButton(R.string.ok, null)
+				new MaterialDialog.Builder(this)
+					.content("Invalid ari: " + ari)
+					.positiveText(R.string.ok)
 					.show();
 				return null;
 			}
@@ -694,9 +685,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				res.selectVerseCount = selectVerseCount;
 				return res;
 			} else {
-				new AlertDialogWrapper.Builder(this)
-					.setMessage("Invalid lid: " + lid)
-					.setPositiveButton(R.string.ok, null)
+				new MaterialDialog.Builder(this)
+					.content("Invalid lid: " + lid)
+					.positiveText(R.string.ok)
 					.show();
 				return null;
 			}
@@ -730,7 +721,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	private void disableNfcForegroundDispatchIfAvailable() {
-		if (nfcAdapter != null) nfcAdapter.disableForegroundDispatch(this);
+		final NfcAdapter _nfcAdapter = this.nfcAdapter;
+
+		if (_nfcAdapter != null) {
+			try {
+				_nfcAdapter.disableForegroundDispatch(this);
+			} catch (IllegalStateException e) {
+				AppLog.e(TAG, "sometimes this happens.", e);
+			}
+		}
 	}
 
 	@Override protected void onResume() {
@@ -773,28 +772,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 			return new IntentResult(ari);
 		} catch (JSONException e) {
-			Log.e(TAG, "Malformed json from nfc", e);
+			AppLog.e(TAG, "Malformed json from nfc", e);
 			return null;
 		}
-	}
-
-	MVersion getVersionFromVersionId(String versionId) {
-		if (versionId == null || MVersionInternal.getVersionInternalId().equals(versionId)) {
-			return null; // internal is made the same as null
-		}
-
-		// let's look at yes versions
-		for (MVersionDb mvDb: S.getDb().listAllVersions()) {
-			if (mvDb.getVersionId().equals(versionId)) {
-				if (mvDb.hasDataFile()) {
-					return mvDb;
-				} else {
-					return null; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
-				}
-			}
-		}
-
-		return null; // not known
 	}
 
 	boolean loadVersion(final MVersion mv, boolean display) {
@@ -815,10 +795,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				}
 			}
 
-			S.activeVersion = version;
-			S.activeVersionId = mv.getVersionId();
-			bVersion.setText(S.getVersionInitials(version));
-			splitHandleButton.setLabel1("\u25b2 " + getSplitHandleVersionName(mv, version));
+			S.setActiveVersion(version, mv.getVersionId());
+			displayActiveVersion();
 
 			if (display) {
 				display(chapter_1, lsSplit0.getVerseBasedOnScroll(), false);
@@ -828,15 +806,20 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 			return true;
 		} catch (Throwable e) { // so we don't crash on the beginning of the app
-			Log.e(TAG, "Error opening main version", e);
+			AppLog.e(TAG, "Error opening main version", e);
 
-			new AlertDialogWrapper.Builder(IsiActivity.this)
-				.setMessage(getString(R.string.version_error_opening, mv.longName))
-				.setPositiveButton(R.string.ok, null)
+			new MaterialDialog.Builder(IsiActivity.this)
+				.content(getString(R.string.version_error_opening, mv.longName))
+				.positiveText(R.string.ok)
 				.show();
 
 			return false;
 		}
+	}
+
+	private void displayActiveVersion() {
+		bVersion.setText(S.activeVersion().getInitials());
+		splitHandleButton.setLabel1("\u25b2 " + S.activeVersion().getInitials());
 	}
 
 	boolean loadSplitVersion(final MVersion mv) {
@@ -849,17 +832,17 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 			activeSplitVersion = version;
 			activeSplitVersionId = mv.getVersionId();
-			splitHandleButton.setLabel2(getSplitHandleVersionName(mv, version) + " \u25bc");
+			splitHandleButton.setLabel2(version.getInitials() + " \u25bc");
 
 			configureTextAppearancePanelForSplitVersion();
 
 			return true;
 		} catch (Throwable e) { // so we don't crash on the beginning of the app
-			Log.e(TAG, "Error opening split version", e);
+			AppLog.e(TAG, "Error opening split version", e);
 
-			new AlertDialogWrapper.Builder(IsiActivity.this)
-				.setMessage(getString(R.string.version_error_opening, mv.longName))
-				.setPositiveButton(R.string.ok, null)
+			new MaterialDialog.Builder(IsiActivity.this)
+				.content(getString(R.string.version_error_opening, mv.longName))
+				.positiveText(R.string.ok)
 				.show();
 
 			return false;
@@ -873,20 +856,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			} else {
 				textAppearancePanel.setSplitVersion(activeSplitVersionId, activeSplitVersion.getLongName());
 			}
-		}
-	}
-
-	String getSplitHandleVersionName(MVersion mv, Version version) {
-		String shortName = version.getShortName();
-		if (shortName != null) {
-			return shortName;
-		} else {
-			// try to get it from the model
-			if (mv.shortName != null) {
-				return mv.shortName;
-			}
-
-			return version.getLongName(); // this will not be null
 		}
 	}
 
@@ -926,7 +895,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			return 0;
 		}
 
-		Log.d(TAG, "going to jump to " + reference);
+		AppLog.d(TAG, "going to jump to " + reference);
 
 		Jumper jumper = new Jumper(reference);
 		if (! jumper.getParseSucceeded()) {
@@ -937,10 +906,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			return 0;
 		}
 
-		int bookId = jumper.getBookId(S.activeVersion.getConsecutiveBooks());
+		int bookId = jumper.getBookId(S.activeVersion().getConsecutiveBooks());
 		Book selected;
 		if (bookId != -1) {
-			Book book = S.activeVersion.getBook(bookId);
+			Book book = S.activeVersion().getBook(bookId);
 			if (book != null) {
 				selected = book;
 			} else {
@@ -973,10 +942,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		if (ari == 0) return;
 
 		final int bookId = Ari.toBook(ari);
-		final Book book = S.activeVersion.getBook(bookId);
+		final Book book = S.activeVersion().getBook(bookId);
 
 		if (book == null) {
-			Log.w(TAG, "bookId=" + bookId + " not found for ari=" + ari);
+			AppLog.w(TAG, "bookId=" + bookId + " not found for ari=" + ari);
 			return;
 		}
 
@@ -1012,7 +981,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		res0.append(reference);
 
 		if (Preferences.getBoolean(getString(R.string.pref_copyWithVersionName_key), getResources().getBoolean(R.bool.pref_copyWithVersionName_default))) {
-			final Version version = isSplitVersion ? activeSplitVersion : S.activeVersion;
+			final Version version = isSplitVersion ? activeSplitVersion : S.activeVersion();
 			final String versionShortName = version.getShortName();
 			if (versionShortName != null) {
 				res0.append(" (").append(versionShortName).append(")");
@@ -1070,11 +1039,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	private void applyPreferences() {
 		// make sure S applied variables are set first
-		S.calculateAppliedValuesBasedOnPreferences();
+		S.recalculateAppliedValuesBasedOnPreferences();
 
 		{ // apply background color, and clear window background to prevent overdraw
 			getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-			final int backgroundColor = S.applied.backgroundColor;
+			final int backgroundColor = S.applied().backgroundColor;
 			root.setBackgroundColor(backgroundColor);
 			lsSplit0.setCacheColorHint(backgroundColor);
 			lsSplit1.setCacheColorHint(backgroundColor);
@@ -1108,7 +1077,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			Preferences.setInt(Prefkey.lastBookId, this.activeBook.bookId);
 			Preferences.setInt(Prefkey.lastChapter, chapter_1);
 			Preferences.setInt(Prefkey.lastVerse, lsSplit0.getVerseBasedOnScroll());
-			Preferences.setString(Prefkey.lastVersionId, S.activeVersionId);
+			Preferences.setString(Prefkey.lastVersionId, S.activeVersionId());
 			if (activeSplitVersion == null) {
 				Preferences.remove(Prefkey.lastSplitVersionId);
 			} else {
@@ -1139,42 +1108,64 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	@Override public void onBackPressed() {
+		final boolean debug = Preferences.getBoolean("secret_debug_back_button", false);
+
+		if (debug) Toast.makeText(this, "@@onBackPressed TAP=" + (textAppearancePanel != null) + " fullScreen=" + fullScreen, Toast.LENGTH_SHORT).show();
+
 		if (textAppearancePanel != null) {
+			if (debug) Toast.makeText(this, "inside textAppearancePanel != null", Toast.LENGTH_SHORT).show();
 			textAppearancePanel.hide();
 			textAppearancePanel = null;
 		} else if (fullScreen) {
+			if (debug) Toast.makeText(this, "inside fullScreen == true", Toast.LENGTH_SHORT).show();
 			setFullScreen(false);
 			leftDrawer.getHandle().setFullScreen(false);
 		} else {
+			if (debug) Toast.makeText(this, "will call super", Toast.LENGTH_SHORT).show();
 			super.onBackPressed();
 		}
 	}
 
 	void bGoto_click() {
 		App.trackEvent("nav_goto_button_click");
-		startActivityForResult(GotoActivity.createIntent(this.activeBook.bookId, this.chapter_1, lsSplit0.getVerseBasedOnScroll()), REQCODE_goto);
+
+		final Runnable r = () -> startActivityForResult(GotoActivity.createIntent(this.activeBook.bookId, this.chapter_1, lsSplit0.getVerseBasedOnScroll()), REQCODE_goto);
+
+		if (!Preferences.getBoolean(Prefkey.history_button_understood, false) && history.getSize() > 0) {
+			new MaterialDialog.Builder(this)
+				.content(R.string.goto_button_history_tip)
+				.positiveText(R.string.ok)
+				.onPositive((dialog, which) -> {
+					Preferences.setBoolean(Prefkey.history_button_understood, true);
+					r.run();
+				})
+				.show();
+		} else {
+			r.run();
+		}
 	}
 
 	void bGoto_longClick() {
 		App.trackEvent("nav_goto_button_long_click");
 		if (history.getSize() > 0) {
-			new MaterialDialog.Builder(this)
-				.adapter(historyAdapter, (materialDialog, view, position, charSequence) -> {
-					materialDialog.dismiss();
-					final int ari = history.getAri(position);
-					jumpToAri(ari);
-					history.add(ari);
-					Preferences.setBoolean(Prefkey.history_button_understood, true);
-				})
-				.autoDismiss(true)
-				.show();
+			MaterialDialogAdapterHelper.show(new MaterialDialog.Builder(this), new HistoryAdapter());
+			Preferences.setBoolean(Prefkey.history_button_understood, true);
 		} else {
 			Snackbar.make(root, R.string.recentverses_not_available, Snackbar.LENGTH_SHORT).show();
 		}
 	}
 
-	private ListAdapter historyAdapter = new EasyAdapter() {
+	static class HistoryEntryHolder extends RecyclerView.ViewHolder {
+		final TextView text1;
 
+		public HistoryEntryHolder(final View itemView) {
+			super(itemView);
+
+			text1 = V.get(itemView, android.R.id.text1);
+		}
+	}
+
+	class HistoryAdapter extends MaterialDialogAdapterHelper.Adapter {
 		private final java.text.DateFormat timeFormat = DateFormat.getTimeFormat(App.context);
 		private final java.text.DateFormat mediumDateFormat = DateFormat.getMediumDateFormat(App.context);
 
@@ -1182,33 +1173,45 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		int defaultTextColor;
 
 		@Override
-		public View newView(final int position, final ViewGroup parent) {
-			final View res = getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
-			final TextView textView = (TextView) res;
+		public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+			final View view = getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
+			final TextView textView = (TextView) view;
 			defaultTextColor = textView.getCurrentTextColor();
-			return res;
+			return new HistoryEntryHolder(view);
 		}
 
 		@Override
-		public void bindView(final View view, final int position, final ViewGroup parent) {
-			final TextView textView = (TextView) view;
+		public void onBindViewHolder(final RecyclerView.ViewHolder _holder_, final int position) {
+			final HistoryEntryHolder holder = (HistoryEntryHolder) _holder_;
 
-			int ari = history.getAri(position);
-			SpannableStringBuilder sb = new SpannableStringBuilder();
-			sb.append(S.activeVersion.reference(ari));
-			sb.append("  ");
-			int sb_len = sb.length();
-			sb.append(formatTimestamp(history.getTimestamp(position)));
-			sb.setSpan(new ForegroundColorSpan(0xffaaaaaa), sb_len, sb.length(), 0);
-			sb.setSpan(new RelativeSizeSpan(0.7f), sb_len, sb.length(), 0);
+			{
+				int ari = history.getAri(position);
+				SpannableStringBuilder sb = new SpannableStringBuilder();
+				sb.append(S.activeVersion().reference(ari));
+				sb.append("  ");
+				int sb_len = sb.length();
+				sb.append(formatTimestamp(history.getTimestamp(position)));
+				sb.setSpan(new ForegroundColorSpan(0xffaaaaaa), sb_len, sb.length(), 0);
+				sb.setSpan(new RelativeSizeSpan(0.7f), sb_len, sb.length(), 0);
 
-			textView.setText(sb);
+				holder.text1.setText(sb);
 
-			if (thisCreatorId.equals(history.getCreatorId(position))) {
-				textView.setTextColor(defaultTextColor);
-			} else {
-				textView.setTextColor(getResources().getColor(R.color.escape));
+				if (thisCreatorId.equals(history.getCreatorId(position))) {
+					holder.text1.setTextColor(defaultTextColor);
+				} else {
+					holder.text1.setTextColor(ResourcesCompat.getColor(getResources(), R.color.escape, getTheme()));
+				}
 			}
+
+			holder.itemView.setOnClickListener(v -> {
+				dismissDialog();
+
+				final int which = holder.getAdapterPosition();
+
+				final int ari = history.getAri(which);
+				jumpToAri(ari);
+				history.add(ari);
+			});
 		}
 
 		private CharSequence formatTimestamp(final long timestamp) {
@@ -1239,10 +1242,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		@Override
-		public int getCount() {
+		public int getItemCount() {
 			return history.getSize();
 		}
-	};
+	}
 
 	public void buildMenu(Menu menu) {
 		menu.clear();
@@ -1333,19 +1336,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	public void onWindowFocusChanged(final boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 
-		final View decorView = getWindow().getDecorView();
-		Log.d(TAG, "@@onWindowFocusChanged bef hasFocus=" + hasFocus + " 0x" + Integer.toHexString(decorView.getSystemUiVisibility()));
-
 		if (hasFocus && fullScreen) {
 			if (Build.VERSION.SDK_INT >= 19) {
+				final View decorView = getWindow().getDecorView();
 				decorView.setSystemUiVisibility(
 					View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
 						| View.SYSTEM_UI_FLAG_IMMERSIVE
 				);
 			}
 		}
-
-		Log.d(TAG, "@@onWindowFocusChanged aft hasFocus=" + hasFocus + " 0x" + Integer.toHexString(decorView.getSystemUiVisibility()));
 	}
 
 	void setShowTextAppearancePanel(boolean yes) {
@@ -1390,7 +1389,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	void openVersionsDialog() {
-		S.openVersionsDialog(this, false, S.activeVersionId, mv -> loadVersion(mv, true));
+		S.openVersionsDialog(this, false, S.activeVersionId(), mv -> loadVersion(mv, true));
 	}
 
 	void openSplitVersionsDialog() {
@@ -1525,7 +1524,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					}
 				} else {
 					// change book
-					final Book book = S.activeVersion.getBook(result.bookId);
+					final Book book = S.activeVersion().getBook(result.bookId);
 					if (book != null) {
 						this.activeBook = book;
 					} else { // no book, just chapter and verse.
@@ -1602,7 +1601,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		{ // main
 			this.uncheckVersesWhenActionModeDestroyed = false;
 			try {
-				boolean ok = loadChapterToVersesView(lsSplit0, S.activeVersion, S.activeVersionId, this.activeBook, chapter_1, current_chapter_1, uncheckAllVerses);
+				boolean ok = loadChapterToVersesView(lsSplit0, S.activeVersion(), S.activeVersionId(), this.activeBook, chapter_1, current_chapter_1, uncheckAllVerses);
 				if (!ok) return 0;
 			} finally {
 				this.uncheckVersesWhenActionModeDestroyed = true;
@@ -1618,12 +1617,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		// set goto button text
 		final String reference = this.activeBook.reference(chapter_1);
-		if (Preferences.getBoolean(Prefkey.history_button_understood, false) || history.getSize() == 0) {
-			bGoto.setText(reference);
-		} else {
-			// TODO show something to indicate user can long press on goto button
-			bGoto.setText(reference);
-		}
+		bGoto.setText(reference.replace(' ', '\u00a0'));
 
 		if (fullScreen) {
 			if (fullScreenToast == null) {
@@ -1651,7 +1645,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			final Book splitBook = activeSplitVersion.getBook(this.activeBook.bookId);
 			if (splitBook == null) {
 				tSplitEmpty.setText(getString(R.string.split_version_cant_display_verse, this.activeBook.reference(this.chapter_1), activeSplitVersion.getLongName()));
-				tSplitEmpty.setTextColor(S.applied.fontColor);
+				tSplitEmpty.setTextColor(S.applied().fontColor);
 				lsSplit1.setDataEmpty();
 			} else {
 				this.uncheckVersesWhenActionModeDestroyed = false;
@@ -1694,7 +1688,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	@Override public boolean onKeyUp(int keyCode, KeyEvent event) {
-		final String volumeButtonsForNavigation = Preferences.getString(getString(R.string.pref_volumeButtonNavigation_key), getString(R.string.pref_volumeButtonNavigation_default));
+		final String volumeButtonsForNavigation = Preferences.getString(R.string.pref_volumeButtonNavigation_key, R.string.pref_volumeButtonNavigation_default);
 		if (! U.equals(volumeButtonsForNavigation, "default")) { // consume here
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) return true;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) return true;
@@ -1714,7 +1708,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			// we are in the beginning of the book, so go to prev book
 			int tryBookId = currentBook.bookId - 1;
 			while (tryBookId >= 0) {
-				Book newBook = S.activeVersion.getBook(tryBookId);
+				Book newBook = S.activeVersion().getBook(tryBookId);
 				if (newBook != null) {
 					this.activeBook = newBook;
 					int newChapter_1 = newBook.chapter_count; // to the last chapter
@@ -1734,10 +1728,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		App.trackEvent("nav_right_click");
 		final Book currentBook = this.activeBook;
 		if (chapter_1 >= currentBook.chapter_count) {
-			final int maxBookId = S.activeVersion.getMaxBookIdPlusOne();
+			final int maxBookId = S.activeVersion().getMaxBookIdPlusOne();
 			int tryBookId = currentBook.bookId + 1;
 			while (tryBookId < maxBookId) {
-				final Book newBook = S.activeVersion.getBook(tryBookId);
+				final Book newBook = S.activeVersion().getBook(tryBookId);
 				if (newBook != null) {
 					this.activeBook = newBook;
 					display(1, 1);
@@ -1793,17 +1787,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (markers.size() == 1) {
 				openBookmarkDialog(markers.get(0)._id);
 			} else {
-				final MaterialDialog dialog = new MaterialDialog.Builder(IsiActivity.this)
-					.title(R.string.edit_bookmark)
-					.adapter(new MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.bookmark), (materialDialog, view, which, text) -> {
-						openBookmarkDialog(markers.get(which)._id);
-						materialDialog.dismiss();
-					})
-					.show();
-
-				final ListView listView = dialog.getListView();
-				assert listView != null;
-				listView.setDrawSelectorOnTop(true);
+				MaterialDialogAdapterHelper.show(new MaterialDialog.Builder(IsiActivity.this).title(R.string.edit_bookmark), new MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.bookmark));
 			}
 		}
 
@@ -1817,21 +1801,27 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (markers.size() == 1) {
 				openNoteDialog(markers.get(0)._id);
 			} else {
-                final MaterialDialog dialog = new MaterialDialog.Builder(IsiActivity.this)
-                    .title(R.string.edit_note)
-                    .adapter(new MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.note), (materialDialog, view, which, text) -> {
-						openNoteDialog(markers.get(which)._id);
-						materialDialog.dismiss();
-					})
-                    .show();
-
-				final ListView listView = dialog.getListView();
-				assert listView != null;
-				listView.setDrawSelectorOnTop(true);
+				MaterialDialogAdapterHelper.show(new MaterialDialog.Builder(IsiActivity.this).title(R.string.edit_note), new MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.note));
 			}
         }
 
-		class MultipleMarkerSelectAdapter extends EasyAdapter {
+		class MarkerHolder extends RecyclerView.ViewHolder {
+			final TextView lDate;
+			final TextView lCaption;
+			final TextView lSnippet;
+			final FlowLayout panelLabels;
+
+			public MarkerHolder(final View itemView) {
+				super(itemView);
+
+				lDate = V.get(itemView, R.id.lDate);
+				lCaption = V.get(itemView, R.id.lCaption);
+				lSnippet = V.get(itemView, R.id.lSnippet);
+				panelLabels = V.get(itemView, R.id.panelLabels);
+			}
+		}
+
+		class MultipleMarkerSelectAdapter extends MaterialDialogAdapterHelper.Adapter {
 			final Version version;
 			final float textSizeMult;
 			final List<Marker> markers;
@@ -1845,70 +1835,76 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			}
 
 			@Override
-			public Marker getItem(final int position) {
-				return markers.get(position);
+			public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+				return new MarkerHolder(getLayoutInflater().inflate(R.layout.item_marker, parent, false));
 			}
 
 			@Override
-			public View newView(final int position, final ViewGroup parent) {
-				return getLayoutInflater().inflate(R.layout.item_marker, parent, false);
-			}
-
-			@Override
-			public void bindView(final View view, final int position, final ViewGroup parent) {
-				final TextView lDate = V.get(view, R.id.lDate);
-				final TextView lCaption = V.get(view, R.id.lCaption);
-				final TextView lSnippet = V.get(view, R.id.lSnippet);
-				final FlowLayout panelLabels = V.get(view, R.id.panelLabels);
-
-				final Marker marker = getItem(position);
+			public void onBindViewHolder(final RecyclerView.ViewHolder _holder_, final int position) {
+				final MarkerHolder holder = (MarkerHolder) _holder_;
 
 				{
-					final Date addTime = marker.createTime;
-					final Date modifyTime = marker.modifyTime;
+					final Marker marker = markers.get(position);
 
-					if (addTime.equals(modifyTime)) {
-						lDate.setText(Sqlitil.toLocaleDateMedium(addTime));
-					} else {
-						lDate.setText(getString(R.string.create_edited_modified_time, Sqlitil.toLocaleDateMedium(addTime), Sqlitil.toLocaleDateMedium(modifyTime)));
-					}
+					{
+						final Date addTime = marker.createTime;
+						final Date modifyTime = marker.modifyTime;
 
-					Appearances.applyMarkerDateTextAppearance(lDate, textSizeMult);
-				}
-
-				final int ari = marker.ari;
-				final String reference = version.reference(ari);
-				final String caption = marker.caption;
-
-				if (kind == Marker.Kind.bookmark) {
-					lCaption.setText(caption);
-					Appearances.applyMarkerTitleTextAppearance(lCaption, textSizeMult);
-
-					lSnippet.setVisibility(View.GONE);
-
-					final List<Label> labels = S.getDb().listLabelsByMarker(marker);
-					if (labels.size() != 0) {
-						panelLabels.setVisibility(View.VISIBLE);
-						panelLabels.removeAllViews();
-						for (Label label : labels) {
-							panelLabels.addView(MarkerListActivity.getLabelView(getLayoutInflater(), panelLabels, label));
+						if (addTime.equals(modifyTime)) {
+							holder.lDate.setText(Sqlitil.toLocaleDateMedium(addTime));
+						} else {
+							holder.lDate.setText(getString(R.string.create_edited_modified_time, Sqlitil.toLocaleDateMedium(addTime), Sqlitil.toLocaleDateMedium(modifyTime)));
 						}
-					} else {
-						panelLabels.setVisibility(View.GONE);
+
+						Appearances.applyMarkerDateTextAppearance(holder.lDate, textSizeMult);
 					}
 
-				} else if (kind == Marker.Kind.note) {
-					lCaption.setText(reference);
-					Appearances.applyMarkerTitleTextAppearance(lCaption, textSizeMult);
-					lSnippet.setText(caption);
-					Appearances.applyTextAppearance(lSnippet, textSizeMult);
+					final int ari = marker.ari;
+					final String reference = version.reference(ari);
+					final String caption = marker.caption;
+
+					if (kind == Marker.Kind.bookmark) {
+						holder.lCaption.setText(caption);
+						Appearances.applyMarkerTitleTextAppearance(holder.lCaption, textSizeMult);
+
+						holder.lSnippet.setVisibility(View.GONE);
+
+						final List<Label> labels = S.getDb().listLabelsByMarker(marker);
+						if (labels.size() != 0) {
+							holder.panelLabels.setVisibility(View.VISIBLE);
+							holder.panelLabels.removeAllViews();
+							for (Label label : labels) {
+								holder.panelLabels.addView(MarkerListActivity.getLabelView(getLayoutInflater(), holder.panelLabels, label));
+							}
+						} else {
+							holder.panelLabels.setVisibility(View.GONE);
+						}
+
+					} else if (kind == Marker.Kind.note) {
+						holder.lCaption.setText(reference);
+						Appearances.applyMarkerTitleTextAppearance(holder.lCaption, textSizeMult);
+						holder.lSnippet.setText(caption);
+						Appearances.applyTextAppearance(holder.lSnippet, textSizeMult);
+					}
+
+					holder.itemView.setBackgroundColor(S.applied().backgroundColor);
 				}
 
-				view.setBackgroundColor(S.applied.backgroundColor);
+				holder.itemView.setOnClickListener(v -> {
+					dismissDialog();
+
+					final int which = holder.getAdapterPosition();
+					final Marker marker = markers.get(which);
+					if (kind == Marker.Kind.bookmark) {
+						openBookmarkDialog(marker._id);
+					} else if (kind == Marker.Kind.note) {
+						openNoteDialog(marker._id);
+					}
+				});
 			}
 
 			@Override
-			public int getCount() {
+			public int getItemCount() {
 				return markers.size();
 			}
 		}
@@ -1935,7 +1931,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			String locale = null;
 
 			if (this == lsSplit0.getAttributeListener()) {
-				locale = S.activeVersion.getLocale();
+				locale = S.activeVersion().getLocale();
 			} else if (this == lsSplit1.getAttributeListener()) {
 				locale = activeSplitVersion.getLocale();
 			}
@@ -1975,7 +1971,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 						// TODO setSourceVersion here is not restored when dialog is restored
 						if (source == lsSplit0) { // use activeVersion
-							dialog.setSourceVersion(S.activeVersion, S.activeVersionId);
+							dialog.setSourceVersion(S.activeVersion(), S.activeVersionId());
 						} else if (source == lsSplit1) { // use activeSplitVersion
 							dialog.setSourceVersion(activeSplitVersion, activeSplitVersionId);
 						}
@@ -1985,7 +1981,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					} else if (type == Type.footnote) {
 						FootnoteEntry fe = null;
 						if (source == lsSplit0) { // use activeVersion
-							fe = S.activeVersion.getFootnoteEntry(arif);
+							fe = S.activeVersion().getFootnoteEntry(arif);
 						} else if (source == lsSplit1) { // use activeSplitVersion
 							fe = activeSplitVersion.getFootnoteEntry(arif);
 						}
@@ -1995,20 +1991,20 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 							VerseRenderer.appendSuperscriptNumber(footnoteText, arif & 0xff);
 							footnoteText.append(" ");
 
-							new AlertDialogWrapper.Builder(IsiActivity.this)
-								.setMessage(FormattedTextRenderer.render(fe.content, footnoteText))
-								.setPositiveButton(R.string.ok, null)
+							new MaterialDialog.Builder(IsiActivity.this)
+								.content(FormattedTextRenderer.render(fe.content, footnoteText))
+								.positiveText(R.string.ok)
 								.show();
 						} else {
-							new AlertDialogWrapper.Builder(IsiActivity.this)
-								.setMessage(String.format(Locale.US, "Error: footnote arif 0x%08x couldn't be loaded", arif))
-								.setPositiveButton(R.string.ok, null)
+							new MaterialDialog.Builder(IsiActivity.this)
+								.content(String.format(Locale.US, "Error: footnote arif 0x%08x couldn't be loaded", arif))
+								.positiveText(R.string.ok)
 								.show();
 						}
 					} else {
-						new AlertDialogWrapper.Builder(IsiActivity.this)
-							.setMessage("Error: Unknown inline link type: " + type)
-							.setPositiveButton("OK", null)
+						new MaterialDialog.Builder(IsiActivity.this)
+							.content("Error: Unknown inline link type: " + type)
+							.positiveText("OK")
 							.show();
 					}
 				}
@@ -2094,7 +2090,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		@Override public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 			getMenuInflater().inflate(R.menu.context_isi, menu);
 
-			Log.d(TAG, "@@onCreateActionMode");
+			AppLog.d(TAG, "@@onCreateActionMode");
 			
 			/* The following "esvsbasal" thing is a personal thing by yuku that doesn't matter to anyone else.
 			 * Please ignore it and leave it intact. */
@@ -2178,7 +2174,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			final MenuItem menuDictionary = menu.findItem(R.id.menuDictionary);
 
 			// force-show these items on sw600dp, otherwise never show
-			final int showAsAction = getResources().getConfiguration().screenWidthDp >= 600 ? MenuItem.SHOW_AS_ACTION_ALWAYS : MenuItem.SHOW_AS_ACTION_NEVER;
+			final int showAsAction = getResources().getConfiguration().smallestScreenWidthDp >= 600 ? MenuItem.SHOW_AS_ACTION_ALWAYS : MenuItem.SHOW_AS_ACTION_NEVER;
 			menuGuide.setShowAsActionFlags(showAsAction);
 			menuCommentary.setShowAsActionFlags(showAsAction);
 			menuDictionary.setShowAsActionFlags(showAsAction);
@@ -2238,7 +2234,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				final String textToCopy = t[0];
 				final String textToSubmit = t[1];
 
-				ShareUrl.make(IsiActivity.this, !Preferences.getBoolean(getString(R.string.pref_copyWithShareUrl_key), getResources().getBoolean(R.bool.pref_copyWithShareUrl_default)), textToSubmit, Ari.encode(activeBook.bookId, chapter_1, 0), selected, reference.toString(), S.activeVersion, MVersionDb.presetNameFromVersionId(S.activeVersionId), new ShareUrl.Callback() {
+				ShareUrl.make(IsiActivity.this, !Preferences.getBoolean(getString(R.string.pref_copyWithShareUrl_key), getResources().getBoolean(R.bool.pref_copyWithShareUrl_default)), textToSubmit, Ari.encode(activeBook.bookId, chapter_1, 0), selected, reference.toString(), S.activeVersion(), MVersionDb.presetNameFromVersionId(S.activeVersionId()), new ShareUrl.Callback() {
 					@Override
 					public void onSuccess(final String shareUrl) {
 						U.copyToClipboard(textToCopy + "\n\n" + shareUrl);
@@ -2287,7 +2283,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					.setSubject(reference.toString())
 					.getIntent();
 
-				ShareUrl.make(IsiActivity.this, !Preferences.getBoolean(getString(R.string.pref_copyWithShareUrl_key), getResources().getBoolean(R.bool.pref_copyWithShareUrl_default)), textToSubmit, Ari.encode(activeBook.bookId, chapter_1, 0), selected, reference.toString(), S.activeVersion, MVersionDb.presetNameFromVersionId(S.activeVersionId), new ShareUrl.Callback() {
+				ShareUrl.make(IsiActivity.this, !Preferences.getBoolean(getString(R.string.pref_copyWithShareUrl_key), getResources().getBoolean(R.bool.pref_copyWithShareUrl_default)), textToSubmit, Ari.encode(activeBook.bookId, chapter_1, 0), selected, reference.toString(), S.activeVersion(), MVersionDb.presetNameFromVersionId(S.activeVersionId()), new ShareUrl.Callback() {
 					@Override
 					public void onSuccess(final String shareUrl) {
 						intent.putExtra(Intent.EXTRA_TEXT, textToShare + "\n\n" + shareUrl);
@@ -2336,11 +2332,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 				// always create a new bookmark
 				TypeBookmarkDialog dialog = TypeBookmarkDialog.NewBookmark(IsiActivity.this, ari, verseCount);
-				dialog.setListener(new TypeBookmarkDialog.Listener() {
-					@Override public void onModifiedOrDeleted() {
-						lsSplit0.uncheckAllVerses(true);
-						reloadBothAttributeMaps();
-					}
+				dialog.setListener(() -> {
+					lsSplit0.uncheckAllVerses(true);
+					reloadBothAttributeMaps();
 				});
 				dialog.show();
 
@@ -2356,28 +2350,26 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				final int verseCount = selected.size();
 
 				// always create a new note
-				startActivityForResult(NoteActivity.createNewNoteIntent(S.activeVersion.referenceWithVerseCount(ari, verseCount), ari, verseCount), REQCODE_edit_note_2);
+				startActivityForResult(NoteActivity.createNewNoteIntent(S.activeVersion().referenceWithVerseCount(ari, verseCount), ari, verseCount), REQCODE_edit_note_2);
 				mode.finish();
 			} return true;
 			case R.id.menuAddHighlight: {
 				final int ariBc = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
 				int colorRgb = S.getDb().getHighlightColorRgb(ariBc, selected);
 
-				final TypeHighlightDialog.Listener listener = new TypeHighlightDialog.Listener() {
-					@Override
-					public void onOk(int colorRgb) {
-						lsSplit0.uncheckAllVerses(true);
-						reloadBothAttributeMaps();
-					}
+				final TypeHighlightDialog.Listener listener = colorRgb1 -> {
+					lsSplit0.uncheckAllVerses(true);
+					reloadBothAttributeMaps();
 				};
 
 				if (selected.size() == 1) {
 					final VerseRenderer.FormattedTextResult ftr = new VerseRenderer.FormattedTextResult();
 					final int ari = Ari.encodeWithBc(ariBc, selected.get(0));
-					final String rawVerseText = S.activeVersion.loadVerseText(ari);
+					final String rawVerseText = S.activeVersion().loadVerseText(ari);
 					final Highlights.Info info = S.getDb().getHighlightColorRgb(ari);
 
-					VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, false, null, ftr);
+					assert rawVerseText != null;
+					VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, null, ftr);
 					new TypeHighlightDialog(IsiActivity.this, ari, listener, colorRgb, info, reference, ftr.result);
 				} else {
 					new TypeHighlightDialog(IsiActivity.this, ariBc, selected, listener, colorRgb, reference);
@@ -2392,7 +2384,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					intent.putExtra("ari", ari);
 					startActivity(intent);
 				} catch (Exception e) {
-					Log.e(TAG, "ESVSB starting", e);
+					AppLog.e(TAG, "ESVSB starting", e);
 				}
 			} return true;
 			case R.id.menuGuide: {
@@ -2644,9 +2636,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			dialog.show(getSupportFragmentManager(), "dialog_progress_mark_list");
 			leftDrawer.closeDrawer();
 		} else {
-			new AlertDialogWrapper.Builder(this)
-				.setMessage(R.string.pm_activate_tutorial)
-				.setPositiveButton(R.string.ok, null)
+			new MaterialDialog.Builder(this)
+				.content(R.string.pm_activate_tutorial)
+				.positiveText(R.string.ok)
 				.show();
 		}
 	}
@@ -2693,9 +2685,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			history.add(ari);
 		} else {
 			App.trackEvent("left_drawer_progress_mark_pin_click_failed");
-			new AlertDialogWrapper.Builder(this)
-				.setMessage(R.string.pm_activate_tutorial)
-				.setPositiveButton(R.string.ok, null)
+			new MaterialDialog.Builder(this)
+				.content(R.string.pm_activate_tutorial)
+				.positiveText(R.string.ok)
 				.show();
 		}
 	}

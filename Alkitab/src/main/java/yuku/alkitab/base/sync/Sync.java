@@ -9,15 +9,17 @@ import android.support.v4.util.ArrayMap;
 import android.util.Log;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
+import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.AppLog;
+import yuku.alkitab.base.util.Background;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 
@@ -199,7 +201,7 @@ public class Sync {
 		for (final String syncSetName : syncSetNames) {
 			final AtomicInteger counter = syncUpdatesOngoingCounters.get(syncSetName);
 			if (counter != null && counter.get() != 0) {
-				Log.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: ongoing counter != 0");
+				AppLog.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: ongoing counter != 0");
 				return;
 			}
 
@@ -214,7 +216,7 @@ public class Sync {
 			// check if we can omit queueing sync request for this sync set name.
 			synchronized (syncSetNameQueue) {
 				if (syncSetNameQueue.contains(syncSetName)) {
-					Log.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: sync queue already contains it");
+					AppLog.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: sync queue already contains it");
 					continue;
 				}
 				syncSetNameQueue.add(syncSetName);
@@ -274,7 +276,7 @@ public class Sync {
 
 	/**
 	 * Returns the effective server prefix for syncing.
-	 * @return scheme, host, port, without the trailing slash.
+	 * @return scheme, host, port, with the trailing slash.
 	 */
 	public static String getEffectiveServerPrefix() {
 		final String override = Preferences.getString(Prefkey.sync_server_prefix);
@@ -283,9 +285,9 @@ public class Sync {
 		}
 
 		if (BuildConfig.DEBUG) {
-			return "http://10.0.3.2:9080";
+			return "http://10.0.3.2:9080/";
 		} else {
-			return "https://alkitab-host.appspot.com";
+			return BuildConfig.SERVER_HOST;
 		}
 	}
 
@@ -297,15 +299,15 @@ public class Sync {
 		// must send to server if we are logged in
 		final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
 		if (simpleToken == null) {
-			Log.d(TAG, "Got new GCM registration id, but sync is not logged in");
+			AppLog.d(TAG, "Got new GCM registration id, but sync is not logged in");
 			return;
 		}
 
-		new Thread(() -> sendGcmRegistrationId(simpleToken, newRegistrationId)).start();
+		Background.run(() -> sendGcmRegistrationId(simpleToken, newRegistrationId));
 	}
 
 	public static boolean sendGcmRegistrationId(final String simpleToken, final String registration_id) {
-		final RequestBody requestBody = new FormEncodingBuilder()
+		final RequestBody requestBody = new FormBody.Builder()
 			.add("simpleToken", simpleToken)
 			.add("sender_id", Gcm.SENDER_ID)  // not really needed, but for logging on server
 			.add("registration_id", registration_id)
@@ -314,7 +316,7 @@ public class Sync {
 		try {
 			final Call call = App.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
-					.url(getEffectiveServerPrefix() + "/sync/api/register_gcm_client")
+					.url(getEffectiveServerPrefix() + "sync/api/register_gcm_client")
 					.post(requestBody)
 					.build()
 			);
@@ -324,23 +326,23 @@ public class Sync {
 
 			if (!response.success) {
 				SyncRecorder.log(SyncRecorder.EventKind.gcm_send_not_success, null, "message", response.message);
-				Log.d(TAG, "GCM registration id rejected by server: " + response.message);
+				AppLog.d(TAG, "GCM registration id rejected by server: " + response.message);
 				return false;
 			}
 
 			SyncRecorder.log(SyncRecorder.EventKind.gcm_send_success, null, "is_new_registration_id", response.is_new_registration_id);
-			Log.d(TAG, "GCM registration id accepted by server: is_new_registration_id=" + response.is_new_registration_id);
+			AppLog.d(TAG, "GCM registration id accepted by server: is_new_registration_id=" + response.is_new_registration_id);
 
 			return true;
 
 		} catch (IOException | JsonIOException e) {
 			SyncRecorder.log(SyncRecorder.EventKind.gcm_send_error_io, null);
-			Log.d(TAG, "Failed to send GCM registration id to server", e);
+			AppLog.d(TAG, "Failed to send GCM registration id to server", e);
 			return false;
 
 		} catch (JsonSyntaxException e) {
 			SyncRecorder.log(SyncRecorder.EventKind.gcm_send_error_json, null);
-			Log.d(TAG, "Server response is not valid JSON", e);
+			AppLog.d(TAG, "Server response is not valid JSON", e);
 			return false;
 		}
 	}
@@ -362,8 +364,12 @@ public class Sync {
 	 * Exception thrown by calls to server that has io/parse exception or when server returns success==false.
 	 */
 	static class NotOkException extends Exception {
-		public NotOkException(final String msg) {
-			super(msg);
+		public NotOkException(final String message) {
+			super(message);
+		}
+
+		public NotOkException(final String message, final Throwable cause) {
+			super(message, cause);
 		}
 	}
 
@@ -372,7 +378,7 @@ public class Sync {
 	 * Must be called from a background thread.
 	 */
 	@NonNull public static LoginResponseJson register(@NonNull final RegisterForm form) throws NotOkException {
-		final FormEncodingBuilder b = new FormEncodingBuilder();
+		final FormBody.Builder b = new FormBody.Builder();
 		if (form.church != null) b.add("church", form.church);
 		if (form.city != null) b.add("city", form.city);
 		if (form.religion != null) b.add("religion", form.religion);
@@ -386,7 +392,7 @@ public class Sync {
 		try {
 			final Call call = App.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
-					.url(getEffectiveServerPrefix() + "/sync/api/create_own_user")
+					.url(getEffectiveServerPrefix() + "sync/api/create_own_user")
 					.post(requestBody)
 					.build()
 			);
@@ -400,9 +406,10 @@ public class Sync {
 			return response;
 
 		} catch (IOException | JsonIOException e) {
-			throw new NotOkException("Failed to send data");
+			throw new NotOkException("Failed to send data", e);
+
 		} catch (JsonSyntaxException e) {
-			throw new NotOkException("Server response is not a valid JSON");
+			throw new NotOkException("Server response is not a valid JSON", e);
 		}
 	}
 
@@ -411,7 +418,7 @@ public class Sync {
 	 * Must be called from a background thread.
 	 */
 	@NonNull public static LoginResponseJson login(@NonNull final String email, @NonNull final String password) throws NotOkException {
-		final RequestBody requestBody = new FormEncodingBuilder()
+		final RequestBody requestBody = new FormBody.Builder()
 			.add("email", email)
 			.add("password", password)
 			.add("installation_info", U.getInstallationInfoJson())
@@ -420,7 +427,7 @@ public class Sync {
 		try {
 			final Call call = App.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
-					.url(getEffectiveServerPrefix() + "/sync/api/login_own_user")
+					.url(getEffectiveServerPrefix() + "sync/api/login_own_user")
 					.post(requestBody)
 					.build()
 			);
@@ -434,9 +441,10 @@ public class Sync {
 			return response;
 
 		} catch (IOException | JsonIOException e) {
-			throw new NotOkException("Failed to send data");
+			throw new NotOkException("Failed to send data", e);
+
 		} catch (JsonSyntaxException e) {
-			throw new NotOkException("Server response is not a valid JSON");
+			throw new NotOkException("Server response is not a valid JSON", e);
 		}
 	}
 
@@ -445,14 +453,14 @@ public class Sync {
 	 * Must be called from a background thread.
 	 */
 	public static void forgotPassword(@NonNull final String email) throws NotOkException {
-		final RequestBody requestBody = new FormEncodingBuilder()
+		final RequestBody requestBody = new FormBody.Builder()
 			.add("email", email)
 			.build();
 
 		try {
 			final Call call = App.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
-					.url(getEffectiveServerPrefix() + "/sync/api/forgot_password")
+					.url(getEffectiveServerPrefix() + "sync/api/forgot_password")
 					.post(requestBody)
 					.build()
 			);
@@ -464,9 +472,10 @@ public class Sync {
 			}
 
 		} catch (IOException | JsonIOException e) {
-			throw new NotOkException("Failed to send data");
+			throw new NotOkException("Failed to send data", e);
+
 		} catch (JsonSyntaxException e) {
-			throw new NotOkException("Server response is not a valid JSON");
+			throw new NotOkException("Server response is not a valid JSON", e);
 		}
 	}
 
@@ -475,7 +484,7 @@ public class Sync {
 	 * Must be called from a background thread.
 	 */
 	public static void changePassword(@NonNull final String email, @NonNull final String password_old, @NonNull final String password_new) throws NotOkException {
-		final RequestBody requestBody = new FormEncodingBuilder()
+		final RequestBody requestBody = new FormBody.Builder()
 			.add("email", email)
 			.add("password_old", password_old)
 			.add("password_new", password_new)
@@ -484,7 +493,7 @@ public class Sync {
 		try {
 			final Call call = App.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
-					.url(getEffectiveServerPrefix() + "/sync/api/change_password")
+					.url(getEffectiveServerPrefix() + "sync/api/change_password")
 					.post(requestBody)
 					.build()
 			);
@@ -496,9 +505,10 @@ public class Sync {
 			}
 
 		} catch (IOException | JsonIOException e) {
-			throw new NotOkException("Failed to send data");
+			throw new NotOkException("Failed to send data", e);
+
 		} catch (JsonSyntaxException e) {
-			throw new NotOkException("Server response is not a valid JSON");
+			throw new NotOkException("Server response is not a valid JSON", e);
 		}
 	}
 

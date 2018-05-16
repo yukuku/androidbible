@@ -19,12 +19,10 @@ package yuku.alkitab.reminder.widget;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TimePicker;
-import android.widget.TimePicker.OnTimeChangedListener;
 import yuku.alkitab.debug.R;
 
 /**
@@ -34,7 +32,7 @@ import yuku.alkitab.debug.R;
  * guide.</p>
  */
 public class HackedTimePickerDialog extends AlertDialog
-        implements OnClickListener, OnTimeChangedListener {
+        implements DialogInterface.OnClickListener, TimePicker.OnTimeChangedListener {
 
     /**
      * The callback interface used to indicate the user is done filling in
@@ -104,15 +102,14 @@ public class HackedTimePickerDialog extends AlertDialog
     }
 
     @Override
-	public void onClick(DialogInterface dialog, int which) {
+    public void onClick(DialogInterface dialog, int which) {
         if (mCallback != null) {
-        	mTimePicker.clearFocus();
-        	if (which == AlertDialog.BUTTON_POSITIVE) {
-        		mCallback.onTimeSet(mTimePicker, mTimePicker.getCurrentHour(),
-        		mTimePicker.getCurrentMinute());
-        	} else if (which == AlertDialog.BUTTON_NEGATIVE) {
-        		mCallback.onTimeOff(mTimePicker);
-        	}
+            mTimePicker.clearFocus();
+            if (which == AlertDialog.BUTTON_POSITIVE) {
+                mCallback.onTimeSet(mTimePicker, mTimePicker.getCurrentHour(), mTimePicker.getCurrentMinute());
+            } else if (which == AlertDialog.BUTTON_NEGATIVE) {
+                mCallback.onTimeOff(mTimePicker);
+            }
         }
     }
 

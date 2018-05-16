@@ -7,4 +7,10 @@
     <item>Posun kapitol</item>
     <item>Stránku nahoru/dolů</item>
   </string-array>
+  <string-array name="pref_forceFontScale_labels">
+    <item>Dle nastavení v systému</item>
+    <item>Obrovský</item>
+    <item>Ohromný</item>
+    <item>Gigantický</item>
+  </string-array>
 </resources>

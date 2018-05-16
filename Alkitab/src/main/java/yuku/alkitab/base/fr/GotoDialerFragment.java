@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
@@ -190,19 +189,11 @@ public class GotoDialerFragment extends BaseGotoFragment {
 		colorize();
 	}
 
-	View.OnClickListener tChapter_click = new View.OnClickListener() {
-		@Override public void onClick(View v) {
-			activate(tChapter, tVerse);
-		}
-	};
-	
-	View.OnClickListener tVerse_click = new View.OnClickListener() {
-		@Override public void onClick(View v) {
-			activate(tVerse, tChapter);
-		}
-	};
+	final View.OnClickListener tChapter_click = v -> activate(tChapter, tVerse);
 
-	View.OnClickListener button_click = v -> {
+	final View.OnClickListener tVerse_click = v -> activate(tVerse, tChapter);
+
+	final View.OnClickListener button_click = v -> {
 		final int id = v.getId();
 		if (id == R.id.bDigit0) press("0");
 		else if (id == R.id.bDigit1) press("1");
@@ -314,9 +305,9 @@ public class GotoDialerFragment extends BaseGotoFragment {
 		Book[] booksc_;
 		
 		public BookAdapter() {
-			Book[] booksc = S.activeVersion.getConsecutiveBooks();
+			Book[] booksc = S.activeVersion().getConsecutiveBooks();
 			
-			if (Preferences.getBoolean(App.context.getString(R.string.pref_alphabeticBookSort_key), App.context.getResources().getBoolean(R.bool.pref_alphabeticBookSort_default))) {
+			if (Preferences.getBoolean(R.string.pref_alphabeticBookSort_key, R.bool.pref_alphabeticBookSort_default)) {
 				booksc_ = BookNameSorter.sortAlphabetically(booksc); 
 			} else {
 				booksc_ = booksc.clone();

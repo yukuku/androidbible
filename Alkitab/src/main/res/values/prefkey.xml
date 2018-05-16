@@ -1,35 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-	<string name="pref_keepScreenOn_key">nyalakanTerusLayar</string>
-	<string name="pref_textPadding_key">textPadding</string>
-	<string name="pref_bottomToolbarOnText_key">bottomToolbarOnText</string>
+	<string name="pref_keepScreenOn_key" translatable="false">nyalakanTerusLayar</string>
+	<string name="pref_textPadding_key" translatable="false">textPadding</string>
+	<string name="pref_bottomToolbarOnText_key" translatable="false">bottomToolbarOnText</string>
 
-	<string name="pref_volumeButtonNavigation_key">tombolVolumeBuatPindah</string>
-	
-	<string name="pref_alphabeticBookSort_key">sortKitabAlfabet</string>
-		
+	<string name="pref_volumeButtonNavigation_key" translatable="false">tombolVolumeBuatPindah</string>
+
+	<string name="pref_alphabeticBookSort_key" translatable="false">sortKitabAlfabet</string>
+
 	<!-- defined in pref_language_default.xml : pref_bahasa_default -->
-	<string name="pref_language_key">bahasa</string>
-	
-	<string name="pref_textColor_key">warnaHuruf</string>
-	<string name="pref_backgroundColor_key">warnaLatar</string>
-	<string name="pref_verseNumberColor_key">warnaNomerAyat</string>
-	<string name="pref_redTextColor_key">redTextColor</string>
+	<string name="pref_language_key" translatable="false">bahasa</string>
 
-	<string name="pref_textColor_night_key">textColor_night</string>
-	<string name="pref_backgroundColor_night_key">backgroundColor_night</string>
-	<string name="pref_verseNumberColor_night_key">verseNumberColor_night</string>
-	<string name="pref_redTextColor_night_key">redTextColor_night</string>
+	<string name="pref_textColor_key" translatable="false">warnaHuruf</string>
+	<string name="pref_backgroundColor_key" translatable="false">warnaLatar</string>
+	<string name="pref_verseNumberColor_key" translatable="false">warnaNomerAyat</string>
+	<string name="pref_redTextColor_key" translatable="false">redTextColor</string>
 
-	<string name="pref_copyWithVerseNumbers_key">copyWithVerseNumbers</string>
-	<string name="pref_copyWithVersionName_key">copyWithVersionName</string>
-	<string name="pref_copyWithShareUrl_key">copyWithShareUrl</string>
-	<string name="pref_autoDictionaryAnalyze_key">autoDictionaryAnalyze</string>
-	<string name="pref_tapToEditNote_key">tapToEditNote</string>
-	<string name="pref_showHiddenVersion_key">showHiddenVersion</string>
-	<string name="pref_syncAccountName_key">syncAccountName</string>
-	<string name="pref_sync_key">sync</string>
-	<string name="pref_syncLogout_key">syncLogout</string>
+	<string name="pref_textColor_night_key" translatable="false">textColor_night</string>
+	<string name="pref_backgroundColor_night_key" translatable="false">backgroundColor_night</string>
+	<string name="pref_verseNumberColor_night_key" translatable="false">verseNumberColor_night</string>
+	<string name="pref_redTextColor_night_key" translatable="false">redTextColor_night</string>
 
-	<string name="pref_selectedVerseBgColor_key">selectedVerseBgColor</string>
+	<string name="pref_copyWithVerseNumbers_key" translatable="false">copyWithVerseNumbers</string>
+	<string name="pref_copyWithVersionName_key" translatable="false">copyWithVersionName</string>
+	<string name="pref_copyWithShareUrl_key" translatable="false">copyWithShareUrl</string>
+	<string name="pref_autoDictionaryAnalyze_key" translatable="false">autoDictionaryAnalyze</string>
+	<string name="pref_tapToEditNote_key" translatable="false">tapToEditNote</string>
+	<string name="pref_showHiddenVersion_key" translatable="false">showHiddenVersion</string>
+	<string name="pref_syncAccountName_key" translatable="false">syncAccountName</string>
+	<string name="pref_sync_key" translatable="false">sync</string>
+	<string name="pref_syncLogout_key" translatable="false">syncLogout</string>
+
+	<string name="pref_selectedVerseBgColor_key" translatable="false">selectedVerseBgColor</string>
+
+	<string name="pref_forceFontScale_key" translatable="false">forceFontScale</string>
 </resources>

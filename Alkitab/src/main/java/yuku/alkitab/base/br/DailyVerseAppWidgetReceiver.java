@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,7 +17,9 @@ import android.widget.RemoteViews;
 import yuku.afw.App;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.sv.DailyVerseAppWidgetService;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.DailyVerseData;
+import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
@@ -37,7 +40,7 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 		protected void onHandleIntent(final Intent intent) {
 			final int[] appWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 			if (appWidgetIds == null) {
-				Log.e(TAG, "appWidgetIds is null");
+				AppLog.e(TAG, "appWidgetIds is null");
 				return;
 			}
 
@@ -79,9 +82,11 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 		}
 
 		if (savedState.darkText) {
-			rv.setTextColor(R.id.tReference, 0xff000000);
+			rv.setTextColor(R.id.tReference, Color.BLACK);
 			rv.setImageViewResource(R.id.bPrev, R.drawable.ic_nav_left_dark);
 			rv.setImageViewResource(R.id.bNext, R.drawable.ic_nav_right_dark);
+		} else {
+			rv.setTextColor(R.id.tReference, Color.WHITE);
 		}
 
 		rv.setFloat(R.id.tReference, "setTextSize", savedState.textSize);
@@ -99,7 +104,7 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 			final Intent viewVerseIntent = Launcher.openAppAtBibleLocation(aris[0]);
 			rv.setOnClickPendingIntent(R.id.tReference, PendingIntent.getActivity(context, appWidgetId + 10000, viewVerseIntent, PendingIntent.FLAG_UPDATE_CURRENT));
 		} else {
-			rv.setTextViewText(R.id.tReference, App.context.getString(R.string.generic_verse_not_available_in_this_version));
+			rv.setTextViewText(R.id.tReference, Localized.string(R.string.generic_verse_not_available_in_this_version));
 		}
 
 		//------Set Intent to update widget
@@ -160,7 +165,7 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 			}
 
 			final String appWidgetAction = bundle.getString("app_widget_action");
-			if (appWidgetAction == null || !appWidgetAction.equals("update_widget")) {
+			if (!"update_widget".equals(appWidgetAction)) {
 				return;
 			}
 

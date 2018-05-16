@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;
 
 public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
@@ -14,7 +15,7 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		if (BuildConfig.DEBUG) {
-			Log.d(TAG, "@@onReceive gcm intent: " + intent.toUri(0));
+			AppLog.d(TAG, "@@onReceive gcm intent: " + intent.toUri(0));
 		}
 
 		// Start the service, keeping the device awake while it is launching.

@@ -7,4 +7,10 @@
     <item>Navigation entre les chapitres</item>
     <item>Page précédente/suivante</item>
   </string-array>
+  <string-array name="pref_forceFontScale_labels">
+    <item>Respecter les préférences système</item>
+    <item>Très grand</item>
+    <item>Énorme</item>
+    <item>Gigantesque</item>
+  </string-array>
 </resources>

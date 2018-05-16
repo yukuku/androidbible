@@ -1,10 +1,10 @@
 package yuku.alkitab.base.model;
 
 import android.support.annotation.Nullable;
-import android.util.Log;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.storage.InternalReader;
 import yuku.alkitab.base.storage.OldVerseTextDecoder;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
@@ -15,6 +15,7 @@ import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class VersionImpl extends Version {
@@ -140,7 +141,7 @@ public class VersionImpl extends Version {
 			if (b != null) return b;
 		}
 
-		Log.e(TAG, "No books available on this version. Version info: " + (this.bibleReader == null? "reader=null": (this.bibleReader.getLongName() + " books.length=" + books.length)));
+		AppLog.e(TAG, "No books available on this version. Version info: " + (this.bibleReader == null ? "reader=null" : (this.bibleReader.getLongName() + " books.length=" + books.length)));
 		return null;
 	}
 
@@ -335,5 +336,14 @@ public class VersionImpl extends Version {
 	@Override
 	public synchronized FootnoteEntry getFootnoteEntry(final int arif) {
 		return bibleReader.getFootnoteEntry(arif);
+	}
+
+	@Override
+	public String toString() {
+		return "VersionImpl{" +
+			"bibleReader=" + bibleReader +
+			", cache_books=" + Arrays.toString(cache_books) +
+			", cache_consecutiveBooks=" + Arrays.toString(cache_consecutiveBooks) +
+			'}';
 	}
 }

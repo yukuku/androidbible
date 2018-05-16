@@ -29,8 +29,8 @@
     <string name="menuShareSplit0">Share primary version</string>
     <string name="menuShareSplit1">Share secondary version</string>
     <string name="menuShareBothSplits">Share both versions</string>
-    <string name="tulis_catatan">Write note</string>
-    <string name="tambah_pembatas_buku">Add bookmark</string>
+    <string name="tulis_catatan">Note</string>
+    <string name="tambah_pembatas_buku">Bookmark</string>
     <string name="salin_ayat">Copy verse</string>
     <string name="copy_split0">Copy primary version</string>
     <string name="copy_split1">Copy secondary version</string>
@@ -44,10 +44,10 @@
     <string name="jump_to_prompt"><b>JUMP TO</b> — Example: ^1</string>
     <string name="belum_ada_pembatas_buku">No bookmarks yet.\nSelect a verse to add a bookmark.</string>
     <string name="judul_titikdua">TITLE</string>
-    <string name="gagal_mengunduh_namaumum_tgl_tgl">Failed to download %1$s dated %2$s</string>
-    <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Error in downloading %1$s dated %2$s: %3$s</string>
-    <string name="berhasil_mengunduh_namaumum_tgl_tgl">Succeeded in downloading %1$s dated %2$s</string>
-    <string name="mengunduh_namaumum_tgl_tgl">Downloading %1$s dated %2$s…</string>
+    <string name="devotion_downloader_downloading_title">Downloading ^1</string>
+    <string name="devotion_downloader_downloading_date">dated ^1</string>
+    <string name="devotion_downloader_error_date">Error in date ^1: ^2</string>
+    <string name="devotion_downloader_success_date">Downloadeded date ^1</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Not yet available. Probably the requested date\'s material is not prepared yet, or there are some errors in recognizing the data source. Please try again later.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Not yet available. Fetching from the Internet…\n\n(Ensure there is Internet connection to fetch the devotion materials.)</string>
     <string name="hari_sabtu">Sat</string>
@@ -137,7 +137,6 @@
 	<string name="ed_download_button">Download</string>
 	<string name="ed_update_button">Update</string>
 	<string name="ed_details_update_available">Update available</string>
-    <string name="ed_download_manager_not_enabled_prompt">The Download Manager app is not enabled or not available.\n\nEnable it to download Bible versions.</string>
 
     <string name="info_terperinci">Details</string>
     <string name="buang_dari_daftar">Remove</string>
@@ -216,8 +215,9 @@
     <string name="market_short_desc">Fast, reliable and feature-rich offline Bible.</string>
     <string name="no_url_for_facebook">This cannot be shared to Facebook.</string>
     <string name="storage_permission_rationale">We need to access the storage to store shared media such as Bible versions and fonts.</string>
+	<string name="goto_button_history_tip">Tip: Next time, long-press this button to access your recently-opened verses.</string>
 
-    <!-- Goto tabs -->
+	<!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Dialer</string>
     <string name="goto_tab_direct_label">Direct</string>
     <string name="goto_tab_grid_label">Grid</string>
@@ -281,11 +281,13 @@
     <string name="desc_verse_attribute_multiple_notes">%s notes are attached to this verse.</string>
     <string name="desc_verse_attribute_progress_mark">%s is currently here.</string>
     <string name="desc_progress_mark_list">List of pins</string>
+    <string name="desc_backspace">Backspace</string>
 
     <string name="intent_filter_open_yes_file">Open YES file</string>
     <string name="intent_filter_open_pdb_file">Open PDB file</string>
     <string name="intent_filter_open_pdb_or_yes_file">Open PDB/YES file</string>
     <string name="open_yes_file_name_conflict">A YES file named \'%1$s\' already exists in \'%2$s\'.</string>
+	<string name="open_yes_error_read">Error reading data from ^1</string>
     <string name="open_file_cant_read_source">The source could not be successfully read.</string>
     <string name="open_file_unknown_file_format">Could not determine whether this is a PDB or YES file.</string>
     <string name="version_preset_delete_filename">Delete the data file \'%s\'?</string>
@@ -330,12 +332,16 @@
 
     <string name="dr_reminder">Reminder</string>
     <string name="dr_error_contact_reminder">Error while contacting Reminder app.</string>
+    <string name="dr_timepicker_set">Set</string>
+    <string name="dr_timepicker_off">Turn off</string>
 
+    <string name="dv_activity_title">Daily Verse Widget</string>
     <string name="dv_option_transparent_background">Transparent background</string>
     <string name="dv_option_dark_text">Dark text</string>
     <string name="dv_option_text_size">Text size</string>
 
 	<!-- Reading plan -->
+    <string name="rp_activity_title">Reading Plan</string>
     <string name="rp_menuReadingPlan">Reading plan</string>
     <string name="rp_commentActual">Finished: %s%%</string>
     <string name="rp_commentTarget">Target: %s%%</string>
@@ -380,6 +386,8 @@
 	<string name="version_download_need_fonts">"The version downloaded might need to be displayed with certain fonts. Go to the 'Display' menu and select a font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
     <string name="version_download_corrupted_file">Downloaded file seems to be corrupt.</string>
     <string name="version_download_saving_io_error">I/O error when saving downloaded version</string>
+    <string name="version_download_network_error">Network error when downloading ^1.</string>
+    <string name="version_download_server_error">Server error when downloading ^1.</string>
 
     <string name="menuNightMode">Night mode</string>
     <string name="highlight_custom_color">Other colors</string>
@@ -472,9 +480,10 @@
 	<string name="sync_sync_set_pref_summary_last_synced">Last synced %1$s, %2$s (r%3$s)</string>
 	<string name="sync_sync_set_pref_summary_never">Not synced yet</string>
 	<string name="sync_sync_set_pref_summary_syncing">Syncing now…</string>
-	<string name="sync_log_activity_title">Sync log</string>
+	<string name="sync_log_activity_title">Sync Log</string>
+	<string name="sync_status_activity_title">Sync Status</string>
 
-	<string name="sync_login_activity_title">Login or create account</string>
+	<string name="sync_login_activity_title">Login or Create Account</string>
 	<string name="sync_login_survey_religion_select_one">Select religion</string>
 	<string name="sync_login_survey_religion_christianity">Christianity</string>
 	<string name="sync_login_survey_religion_christianity_protestant">Protestant</string>
@@ -565,6 +574,7 @@
 	<string name="menuDictionary">Dictionary</string>
 	<string name="dict_open_full">Open Dictionary</string>
 	<string name="dict_no_results">No definition found for the selected word.</string>
+	<string name="dict_query_error">Error getting the definition from Dictionary.</string>
 	<string name="dict_download_prompt">Download \"Bible Dictionary\" to learn more about the words in the Bible!</string>
 	<string name="dict_download_button">Download</string>
 

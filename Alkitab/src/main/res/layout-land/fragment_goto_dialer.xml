@@ -10,8 +10,8 @@
 	<!--suppress AndroidDomInspection -->
 	<android.support.percent.PercentFrameLayout
 		app:layout_heightPercent="35%"
-		app:layout_widthPercent="100%"
-		app:layout_marginTopPercent="0%">
+		app:layout_marginTopPercent="0%"
+		app:layout_widthPercent="100%">
 
 		<!--suppress AndroidDomInspection -->
 		<FrameLayout
@@ -24,9 +24,9 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_gravity="center"
-				tools:listitem="@android:layout/simple_spinner_dropdown_item"
 				android:layout_marginLeft="16dp"
-				android:layout_marginRight="16dp"/>
+				android:layout_marginRight="16dp"
+				tools:listitem="@android:layout/simple_spinner_dropdown_item" />
 
 		</FrameLayout>
 
@@ -192,6 +192,7 @@
 		<ImageButton
 			android:id="@+id/bDigitBackspace"
 			style="@style/KeypadButton"
+			android:contentDescription="@string/desc_backspace"
 			android:src="@drawable/ic_keypad_backspace"
 			app:layout_heightPercent="50%"
 			app:layout_marginLeftPercent="83.3%"
@@ -211,8 +212,10 @@
 		<!--suppress AndroidDomInspection -->
 		<Button
 			android:id="@+id/bOk"
-			style="@style/KeypadButton"
+			style="?buttonBarButtonStyle"
+			android:background="?selectableItemBackgroundBorderless"
 			android:text="@string/ok"
+			android:textSize="16sp"
 			app:layout_heightPercent="50%"
 			app:layout_marginLeftPercent="83.3%"
 			app:layout_marginTopPercent="50%"

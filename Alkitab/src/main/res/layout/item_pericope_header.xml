@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <yuku.alkitab.base.widget.PericopeHeaderItem xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:orientation="vertical">
@@ -12,8 +11,7 @@
 		android:layout_marginLeft="12dp"
 		android:layout_marginRight="12dp"
 		android:gravity="center_horizontal"
-		android:textStyle="bold"
-		tools:ignore="HardcodedText" />
+		android:textStyle="bold" />
 
 	<TextView
 		android:id="@+id/lParallels"
@@ -22,7 +20,6 @@
 		android:layout_marginLeft="12dp"
 		android:layout_marginRight="12dp"
 		android:gravity="center_horizontal"
-		android:linksClickable="true"
-		tools:ignore="HardcodedText" />
+		android:linksClickable="true" />
 
 </yuku.alkitab.base.widget.PericopeHeaderItem>

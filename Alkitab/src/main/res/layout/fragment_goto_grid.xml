@@ -28,7 +28,7 @@
 				android:drawableRight="@drawable/ic_delete_x"
 				android:gravity="center"
 				android:textAppearance="?android:attr/textAppearanceMedium"
-				tools:text="*Selected book" />
+				tools:text="Selected book" />
 
 			<TextView
 				android:id="@+id/lSelectedChapter"
@@ -39,7 +39,7 @@
 				android:drawableRight="@drawable/ic_delete_x"
 				android:gravity="center"
 				android:textAppearance="?android:attr/textAppearanceMedium"
-				tools:text="*chap" />
+				tools:text="chap" />
 		</LinearLayout>
 
 		<FrameLayout

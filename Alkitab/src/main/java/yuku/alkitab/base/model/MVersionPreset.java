@@ -27,6 +27,6 @@ public class MVersionPreset extends MVersion {
 	}
 
 	@Override public boolean hasDataFile() {
-		return AddonManager.hasVersion(preset_name + ".yes");
+		return AddonManager.getReadableVersionFile(preset_name + ".yes") != null;
 	}
 }

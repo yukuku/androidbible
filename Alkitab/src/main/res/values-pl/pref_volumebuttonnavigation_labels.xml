@@ -7,4 +7,10 @@
     <item>Nawigacja rozdziałów</item>
     <item>Strona w górę/dół</item>
   </string-array>
+  <string-array name="pref_forceFontScale_labels">
+    <item>Używaj ustawień systemowych</item>
+    <item>Super duże</item>
+    <item>Ogromne</item>
+    <item>Gigantyczne</item>
+  </string-array>
 </resources>

@@ -11,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Xml;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
@@ -148,30 +147,36 @@ public class BookmarkImporter {
 					Xml.parse(fis, Xml.Encoding.UTF_8, new DefaultHandler2() {
 						@Override
 						public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-							if (localName.equals(BackupManager.XMLTAG_Bukmak2)) {
-								final Marker marker = BackupManager.markerFromAttributes(attributes);
-								if (marker != null) {
-									markers.add(marker);
-									final int bookmark2_relId = BackupManager.getRelId(attributes);
-									markerToRelIdMap.put(marker, bookmark2_relId);
-									count_bookmark++;
+							switch (localName) {
+								case BackupManager.XMLTAG_Bukmak2:
+									final Marker marker = BackupManager.markerFromAttributes(attributes);
+									if (marker != null) {
+										markers.add(marker);
+										final int bookmark2_relId = BackupManager.getRelId(attributes);
+										markerToRelIdMap.put(marker, bookmark2_relId);
+										count_bookmark++;
+									}
+									break;
+								case BackupManager.XMLTAG_Label: {
+									final Label label = BackupManager.labelFromAttributes(attributes);
+									int label_relId = BackupManager.getRelId(attributes);
+									labels.add(label);
+									labelToRelIdMap.put(label, label_relId);
+									count_label++;
+									break;
 								}
-							} else if (localName.equals(BackupManager.XMLTAG_Label)) {
-								final Label label = BackupManager.labelFromAttributes(attributes);
-								int label_relId = BackupManager.getRelId(attributes);
-								labels.add(label);
-								labelToRelIdMap.put(label, label_relId);
-								count_label++;
-							} else if (localName.equals(Bookmark2_Label.XMLTAG_Bookmark2_Label)) {
-								final int bookmark2_relId = Integer.parseInt(attributes.getValue("", Bookmark2_Label.XMLATTR_bookmark2_relId));
-								final int label_relId = Integer.parseInt(attributes.getValue("", Bookmark2_Label.XMLATTR_label_relId));
+								case Bookmark2_Label.XMLTAG_Bookmark2_Label: {
+									final int bookmark2_relId = Integer.parseInt(attributes.getValue("", Bookmark2_Label.XMLATTR_bookmark2_relId));
+									final int label_relId = Integer.parseInt(attributes.getValue("", Bookmark2_Label.XMLATTR_label_relId));
 
-								TIntList labelRelIds = markerRelIdToLabelRelIdsMap.get(bookmark2_relId);
-								if (labelRelIds == null) {
-									labelRelIds = new TIntArrayList();
-									markerRelIdToLabelRelIdsMap.put(bookmark2_relId, labelRelIds);
+									TIntList labelRelIds = markerRelIdToLabelRelIdsMap.get(bookmark2_relId);
+									if (labelRelIds == null) {
+										labelRelIds = new TIntArrayList();
+										markerRelIdToLabelRelIdsMap.put(bookmark2_relId, labelRelIds);
+									}
+									labelRelIds.add(label_relId);
+									break;
 								}
-								labelRelIds.add(label_relId);
 							}
 						}
 					});
@@ -195,11 +200,11 @@ public class BookmarkImporter {
 						if (labelLama != null) {
 							// removed from v3: update warna label lama
 							labelRelIdToAbsIdMap.put(labelRelId, labelLama._id);
-							Log.d(BaseActivity.TAG, "label (lama) r->a : " + labelRelId + "->" + labelLama._id);
+							AppLog.d(BaseActivity.TAG, "label (lama) r->a : " + labelRelId + "->" + labelLama._id);
 						} else { // belum ada, harus bikin baru
 							Label labelBaru = S.getDb().insertLabel(label.title, label.backgroundColor);
 							labelRelIdToAbsIdMap.put(labelRelId, labelBaru._id);
-							Log.d(BaseActivity.TAG, "label (baru) r->a : " + labelRelId + "->" + labelBaru._id);
+							AppLog.d(BaseActivity.TAG, "label (baru) r->a : " + labelRelId + "->" + labelBaru._id);
 						}
 					}
 				}
@@ -214,15 +219,15 @@ public class BookmarkImporter {
 				pd.dismiss();
 
 				if (result instanceof Exception) {
-					Log.e(TAG, "Error when importing markers", (Throwable) result);
-					new AlertDialogWrapper.Builder(activity)
-						.setMessage(activity.getString(R.string.terjadi_kesalahan_ketika_mengimpor_pesan, ((Exception) result).getMessage()))
-						.setPositiveButton(R.string.ok, null)
+					AppLog.e(TAG, "Error when importing markers", (Throwable) result);
+					new MaterialDialog.Builder(activity)
+						.content(activity.getString(R.string.terjadi_kesalahan_ketika_mengimpor_pesan, ((Exception) result).getMessage()))
+						.positiveText(R.string.ok)
 						.show();
 				} else {
-					final Dialog dialog = new AlertDialogWrapper.Builder(activity)
-						.setMessage(activity.getString(R.string.impor_berhasil_angka_diproses, count_bookmark, count_label))
-						.setPositiveButton(R.string.ok, null)
+					final Dialog dialog = new MaterialDialog.Builder(activity)
+						.content(activity.getString(R.string.impor_berhasil_angka_diproses, count_bookmark, count_label))
+						.positiveText(R.string.ok)
 						.show();
 
 					if (finishActivityAfterwards) {
@@ -287,12 +292,12 @@ public class BookmarkImporter {
 									final Marker_Label marker_label = Marker_Label.createNewMarker_Label(marker.gid, label.gid);
 									InternalDb.insertMarker_LabelIfNotExists(db, marker_label);
 								} else {
-									Log.w(TAG, "label_id is invalid!: " + label_id);
+									AppLog.w(TAG, "label_id is invalid!: " + label_id);
 								}
 							}
 						}
 					} else {
-						Log.w(TAG, "wrong marker_relId: " + marker_relId);
+						AppLog.w(TAG, "wrong marker_relId: " + marker_relId);
 					}
 				}
 			}

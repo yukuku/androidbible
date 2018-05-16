@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.TextView;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;
 
 import java.util.ArrayList;
@@ -101,13 +102,13 @@ public class VerseTextView extends TextView {
 		}
 
 		if (BuildConfig.DEBUG) {
-			Log.d(TAG, "----------");
-			Log.d(TAG, "touchX=" + touchX);
-			Log.d(TAG, "touchY=" + touchY);
+			AppLog.d(TAG, "----------");
+			AppLog.d(TAG, "touchX=" + touchX);
+			AppLog.d(TAG, "touchY=" + touchY);
 
 			for (int i = 0; i < spanEntries_count; i++) {
 				final SpanEntry e = spanEntries.get(i);
-				Log.d(TAG, "SpanEntry " + i + " at " + e.rect.toString() + ": span " + e.span + " '" + buffer.subSequence(buffer.getSpanStart(e.span), buffer.getSpanEnd(e.span)) + "'");
+				AppLog.d(TAG, "SpanEntry " + i + " at " + e.rect.toString() + ": span " + e.span + " '" + buffer.subSequence(buffer.getSpanStart(e.span), buffer.getSpanEnd(e.span)) + "'");
 			}
 		}
 
@@ -168,7 +169,7 @@ public class VerseTextView extends TextView {
 
 		if (BuildConfig.DEBUG) {
 			final double dist = Math.sqrt(bestDistanceSquared);
-			Log.d(TAG, "Best span is: " + bestSpan + " with distance " + dist + " (" + (dist / density) + "dp)");
+			AppLog.d(TAG, "Best span is: " + bestSpan + " with distance " + dist + " (" + (dist / density) + "dp)");
 		}
 
 		if (bestSpan != null) {

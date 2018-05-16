@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
 	<string-array name="pref_volumeButtonNavigation_labels">
 		<item>"Don't use to navigate"</item>
 		<item>Navigate verses</item>
 		<item>Navigate chapters</item>
 		<item>Page up/down</item>
 	</string-array>
+
+	<string-array name="pref_forceFontScale_labels">
+		<item>Follow system setting</item>
+		<item>Super huge</item>
+		<item>Enormous</item>
+		<item>Gigantic</item>
+	</string-array>
+
 </resources>

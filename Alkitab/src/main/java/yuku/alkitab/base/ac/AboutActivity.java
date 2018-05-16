@@ -1,5 +1,6 @@
 package yuku.alkitab.base.ac;
 
+import android.annotation.SuppressLint;
 import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
 import android.content.Intent;
@@ -7,8 +8,12 @@ import android.content.Loader;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v4.widget.ContentLoadingProgressBar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
@@ -16,7 +21,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.V;
 import yuku.alkitab.base.App;
@@ -24,9 +28,10 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.debug.R;
 
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static yuku.alkitab.base.util.Literals.Array;
+import static yuku.alkitab.base.util.Literals.List;
 
 public class AboutActivity extends BaseActivity {
 	public static final String TAG = AboutActivity.class.getSimpleName();
@@ -47,6 +52,11 @@ public class AboutActivity extends BaseActivity {
 	View bAnnouncements;
 	TextView tAnnouncements;
 	ContentLoadingProgressBar progressAnnouncements;
+
+	final AtomicBoolean backgroundAnimationStarted = new AtomicBoolean(false);
+	int baseHue = 0;
+	final float[] hsl = new float[3];
+	final int[] colors = new int[6];
 
 	enum AnnouncementState {
 		init,
@@ -80,9 +90,9 @@ public class AboutActivity extends BaseActivity {
 
 				if (manualAnnouncementReload.get()) {
 					if (!isFinishing()) {
-						new AlertDialogWrapper.Builder(AboutActivity.this)
-							.setMessage(R.string.about_announcement_load_failed)
-							.setPositiveButton(R.string.ok, null)
+						new MaterialDialog.Builder(AboutActivity.this)
+							.content(R.string.about_announcement_load_failed)
+							.positiveText(R.string.ok)
 							.show();
 					}
 				}
@@ -102,15 +112,16 @@ public class AboutActivity extends BaseActivity {
 		}
 	};
 
-	@Override protected void onCreate(Bundle savedInstanceState) {
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_about);
 
 		final Toolbar toolbar = V.get(this, R.id.toolbar);
-		setSupportActionBar(toolbar); // must be done first before below lines
-		toolbar.setTitle(null);
-		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-		toolbar.setNavigationOnClickListener(v -> navigateUp());
+		setSupportActionBar(toolbar);
+		final ActionBar ab = getSupportActionBar();
+		assert ab != null;
+		ab.setDisplayHomeAsUpEnabled(true);
 
 		root = V.get(this, R.id.root);
 		tVersion = V.get(this, R.id.tVersion);
@@ -149,14 +160,10 @@ public class AboutActivity extends BaseActivity {
 					.content(R.string.about_enable_beta_confirmation)
 					.positiveText(R.string.ok)
 					.negativeText(R.string.cancel)
-					.callback(new MaterialDialog.ButtonCallback() {
-						@Override
-						public void onPositive(final MaterialDialog dialog) {
-							try {
-								startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/apps/testing/" + getPackageName())));
-							} catch (Exception ignored) {
-								// just ignore, this is not important if fails.
-							}
+					.onPositive((dialog, which) -> {
+						try {
+							startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/apps/testing/" + getPackageName())));
+						} catch (Exception ignored) {
 						}
 					})
 					.show();
@@ -181,7 +188,7 @@ public class AboutActivity extends BaseActivity {
 
 		imgLogo.setImageDrawable(ResourcesCompat.getDrawableForDensity(getResources(), R.drawable.ic_launcher, DisplayMetrics.DENSITY_XXXHIGH, null));
 
-		imgLogo.setOnTouchListener((v,event) -> {
+		imgLogo.setOnTouchListener((v, event) -> {
 			if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
 				final float x = event.getX();
 				final float y = event.getY();
@@ -197,13 +204,14 @@ public class AboutActivity extends BaseActivity {
 		tAboutTextDesc.setMovementMethod(LinkMovementMethod.getInstance());
 
 		tVersion.setText(getString(R.string.about_version_name, App.getVersionName()));
-		tBuild.setText(String.format("%s %s", App.getVersionCode(), getString(R.string.last_commit_hash)));
+		tBuild.setText(String.format(Locale.US, "%s %s", App.getVersionCode(), getString(R.string.last_commit_hash)));
 
 		root.setOnTouchListener(root_touch);
 	}
 
 	void bAnnouncements_click() {
 		switch (announcementState) {
+			case init:
 			case loading:
 				// do nothing
 				break;
@@ -245,9 +253,9 @@ public class AboutActivity extends BaseActivity {
 		}
 	}
 
-	View.OnTouchListener root_touch = (v, event) -> {
+	final View.OnTouchListener root_touch = (v, event) -> {
 		if (event.getPointerCount() == 4) {
-			getWindow().setBackgroundDrawable(new GradientDrawable(GradientDrawable.Orientation.BR_TL, new int[] {0xffaaffaa, 0xffaaffff, 0xffaaaaff, 0xffffaaff, 0xffffaaaa, 0xffffffaa}));
+			startBackgroundAnimation();
 		} else if (event.getPointerCount() == 5 && event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN) {
 			showSecretDialog();
 		}
@@ -255,10 +263,37 @@ public class AboutActivity extends BaseActivity {
 		return false;
 	};
 
+	@SuppressLint("HandlerLeak")
+	private void startBackgroundAnimation() {
+		if (!backgroundAnimationStarted.compareAndSet(false, true)) {
+			return;
+		}
+
+		new Handler() {
+			@Override
+			public void handleMessage(final Message msg) {
+				if (isFinishing()) return; // don't leak
+
+				final int baseColor = 0xff99ff99;
+				ColorUtils.colorToHSL(baseColor, hsl);
+				for (int i = 0; i < colors.length; i++) {
+					hsl[0] = (baseHue + i * 60) % 360;
+					colors[i] = ColorUtils.HSLToColor(hsl);
+				}
+
+				getWindow().setBackgroundDrawable(new GradientDrawable(GradientDrawable.Orientation.BR_TL, colors));
+
+				baseHue += 2;
+				sendEmptyMessageDelayed(0, 16);
+			}
+		}.sendEmptyMessage(0);
+	}
+
 	private void showSecretDialog() {
-		new AlertDialogWrapper.Builder(this)
-			.setItems(Array("Secret settings", "Crash me"), (dialog, which) -> {
-				switch (which) {
+		new MaterialDialog.Builder(this)
+			.items(List("Secret settings", "Crash me"))
+			.itemsCallback((dialog, itemView, position, text) -> {
+				switch (position) {
 					case 0:
 						startActivity(SecretSettingsActivity.createIntent());
 						return;

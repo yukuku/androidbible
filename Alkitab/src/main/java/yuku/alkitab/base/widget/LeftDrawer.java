@@ -6,6 +6,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
@@ -61,7 +62,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 	public LeftDrawer(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
-		activity = isInEditMode()? null: (Activity) context;
+		activity = isInEditMode() ? null : (Activity) context;
 	}
 
 	@Override
@@ -80,7 +81,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 		bSettings = V.get(this, R.id.bSettings);
 		bHelp = V.get(this, R.id.bHelp);
 
-		final int selectedTextColor = getResources().getColor(R.color.accent);
+		final int selectedTextColor = ResourcesCompat.getColor(getResources(), R.color.accent, getContext().getTheme());
 		if (this instanceof Text) bBible.setTextColor(selectedTextColor);
 		if (this instanceof Devotion) bDevotion.setTextColor(selectedTextColor);
 		if (this instanceof ReadingPlan) bReadingPlan.setTextColor(selectedTextColor);
@@ -88,8 +89,8 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 		// hide and show according to app config
 		if (!isInEditMode()) {
-			bSongs.setVisibility(AppConfig.get().menuSongs? VISIBLE: GONE);
-			bDevotion.setVisibility(AppConfig.get().menuDevotion? VISIBLE: GONE);
+			bSongs.setVisibility(AppConfig.get().menuSongs ? VISIBLE : GONE);
+			bDevotion.setVisibility(AppConfig.get().menuDevotion ? VISIBLE : GONE);
 		}
 
 		bBible.setOnClickListener(v -> {
@@ -205,9 +206,12 @@ public abstract class LeftDrawer extends NestedScrollView {
 			baseIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			final Intent intent = DevotionActivity.createIntent();
 			activity.startActivities(new Intent[]{baseIntent, intent});
-		}	}
+		}
+	}
 
-	/** This clears all activity on this stack and starts {@link yuku.alkitab.base.IsiActivity}. */
+	/**
+	 * This clears all activity on this stack and starts {@link yuku.alkitab.base.IsiActivity}.
+	 */
 	void bBible_click() {
 		final Intent intent = IsiActivity.createIntent();
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -218,18 +222,27 @@ public abstract class LeftDrawer extends NestedScrollView {
 	public static class Text extends LeftDrawer {
 		public interface Listener {
 			void bMarkers_click();
+
 			void bDisplay_click();
+
 			void cFullScreen_checkedChange(boolean isChecked);
+
 			void cNightMode_checkedChange(boolean isChecked);
+
 			void cSplitVersion_checkedChange(final SwitchCompat cSplitVersion, boolean isChecked);
+
 			void bProgressMarkList_click();
+
 			void bProgress_click(int preset_id);
+
 			void bCurrentReadingClose_click();
+
 			void bCurrentReadingReference_click();
 		}
 
 		public interface Handle {
 			void setFullScreen(boolean fullScreen);
+
 			void setSplitVersion(boolean splitVersion);
 		}
 
@@ -375,7 +388,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 				panelCurrentReadingHeader.setVisibility(VISIBLE);
 				bCurrentReadingReference.setVisibility(VISIBLE);
 
-				bCurrentReadingReference.setText(S.activeVersion.referenceRange(aris[0], aris[1]));
+				bCurrentReadingReference.setText(S.activeVersion().referenceRange(aris[0], aris[1]));
 			}
 		}
 
@@ -418,13 +431,17 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 		public interface Listener {
 			void bPrev_click();
+
 			void bNext_click();
+
 			void bReload_click();
+
 			void cbKind_itemSelected(DevotionActivity.DevotionKind kind);
 		}
 
 		public interface Handle {
 			void setDevotionDate(CharSequence date);
+
 			void setDevotionKind(DevotionActivity.DevotionKind kind);
 		}
 
@@ -477,7 +494,8 @@ public abstract class LeftDrawer extends NestedScrollView {
 				}
 
 				@Override
-				public void onNothingSelected(final AdapterView<?> parent) {}
+				public void onNothingSelected(final AdapterView<?> parent) {
+				}
 			});
 
 
@@ -613,16 +631,23 @@ public abstract class LeftDrawer extends NestedScrollView {
 	public static class Songs extends LeftDrawer {
 		public interface Listener {
 			void songKeypadButton_click(View v);
+
 			void songBookSelected(String name);
+
 			void moreSelected();
 		}
 
 		public interface Handle {
 			void setOkButtonEnabled(boolean enabled);
+
 			void setAButtonEnabled(boolean enabled);
+
 			void setBButtonEnabled(boolean enabled);
+
 			void setCButtonEnabled(boolean enabled);
+
 			void setBookName(CharSequence bookName);
+
 			void setCode(String code);
 		}
 
@@ -706,7 +731,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 			});
 
 			// all buttons
-			for (int buttonId: new int[] {
+			for (int buttonId : new int[]{
 				R.id.bDigit0,
 				R.id.bDigit1,
 				R.id.bDigit2,
@@ -727,11 +752,9 @@ public abstract class LeftDrawer extends NestedScrollView {
 			}
 		}
 
-		OnClickListener button_click = new OnClickListener() {
-			@Override public void onClick(View v) {
-				if (listener != null) {
-					listener.songKeypadButton_click(v);
-				}
+		final OnClickListener button_click = v -> {
+			if (listener != null) {
+				listener.songKeypadButton_click(v);
 			}
 		};
 
