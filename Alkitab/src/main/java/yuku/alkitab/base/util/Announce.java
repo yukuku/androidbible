@@ -1,13 +1,14 @@
 package yuku.alkitab.base.util;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
+import android.os.Build;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 import okhttp3.Call;
@@ -32,6 +33,7 @@ public abstract class Announce {
 	static final String TAG = Announce.class.getSimpleName();
 
 	public static final int AUTO_CHECK_INTERVAL_SECONDS = BuildConfig.DEBUG ? 60 : 86400 /* 1 days */;
+	static final String NOTIFICATION_CHANNEL_ID = "announce";
 
 	public static void checkAnnouncements() {
 		final int lastCheck = Preferences.getInt(Prefkey.announce_last_check, 0);
@@ -93,7 +95,13 @@ public abstract class Announce {
 				announcementIds[i] = unreadAnnouncements.get(i).id;
 			}
 
-			final NotificationCompat.Builder base = new NotificationCompat.Builder(App.context)
+			if (Build.VERSION.SDK_INT >= 26) {
+				final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, App.context.getString(R.string.notification_channel_announce_name), NotificationManager.IMPORTANCE_DEFAULT);
+				final NotificationManager nm = App.context.getSystemService(NotificationManager.class);
+				if (nm != null) nm.createNotificationChannel(channel);
+			}
+
+			final NotificationCompat.Builder base = new NotificationCompat.Builder(App.context, NOTIFICATION_CHANNEL_ID)
 				.setContentTitle(Localized.string(R.string.announce_notif_title, Localized.string(R.string.app_name)))
 				.setContentText(unreadAnnouncements.size() == 1 ? unreadAnnouncements.get(0).title : Localized.string(R.string.announce_notif_number_new_announcements, unreadAnnouncements.size()))
 				.setSmallIcon(R.drawable.ic_stat_announce)
@@ -120,7 +128,7 @@ public abstract class Announce {
 				n = builder.build();
 			}
 
-			final NotificationManager nm = (NotificationManager) App.context.getSystemService(Context.NOTIFICATION_SERVICE);
+			final NotificationManagerCompat nm = NotificationManagerCompat.from(App.context);
 			nm.notify(R.id.NOTIF_announce, n);
 		}
 

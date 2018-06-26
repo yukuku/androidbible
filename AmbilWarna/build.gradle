@@ -1,10 +1,7 @@
 apply plugin: 'com.android.library'
 
-apply plugin: 'me.tatarka.retrolambda'
-
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
@@ -27,7 +24,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile "com.afollestad.material-dialogs:core:$materialDialogsVersion"
-    compile "com.android.support:preference-v7:$supportLibVersion"
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
+    implementation "com.android.support:preference-v7:$supportLibVersion"
 }

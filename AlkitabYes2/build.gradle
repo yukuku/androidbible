@@ -2,7 +2,6 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
@@ -10,8 +9,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     buildTypes {
         release {
@@ -25,9 +24,10 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':AlkitabIo')
-    compile project(':AlkitabModel')
-    compile project(':BintexWriter')
-    compile project(':Snappy')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':AlkitabIo')
+    implementation project(':AlkitabModel')
+    implementation project(':BintexReader')
+    implementation project(':BintexWriter')
+    implementation project(':Snappy')
 }

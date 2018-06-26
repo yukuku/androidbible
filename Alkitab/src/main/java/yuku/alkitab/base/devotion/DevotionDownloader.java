@@ -1,11 +1,14 @@
 package yuku.alkitab.base.devotion;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.SystemClock;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -23,6 +26,7 @@ public class DevotionDownloader extends Thread {
 	private static final String TAG = DevotionDownloader.class.getSimpleName();
 
 	public static final String ACTION_DOWNLOADED = DevotionDownloader.class.getName() + ".action.DOWNLOADED";
+	static final String NOTIFICATION_CHANNEL_ID = "devotion_downloader";
 
 	private final LinkedList<DevotionArticle> queue_ = new LinkedList<>();
 
@@ -140,7 +144,13 @@ public class DevotionDownloader extends Thread {
 				nm = NotificationManagerCompat.from(App.context);
 			}
 
-			final Notification n = new NotificationCompat.Builder(App.context)
+			if (Build.VERSION.SDK_INT >= 26) {
+				final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, App.context.getString(R.string.notification_channel_devotion_downloader_name), NotificationManager.IMPORTANCE_DEFAULT);
+				final NotificationManager nm = App.context.getSystemService(NotificationManager.class);
+				if (nm != null) nm.createNotificationChannel(channel);
+			}
+
+			final Notification n = new NotificationCompat.Builder(App.context, NOTIFICATION_CHANNEL_ID)
 				.setContentTitle(title)
 				.setContentText(subtitle)
 				.setProgress(0, 0, true)

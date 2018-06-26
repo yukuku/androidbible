@@ -589,4 +589,11 @@
 
     <!-- File chooser -->
     <string name="filechooser_parent_folder">Parent folder</string>
+
+	<!-- Notification channels -->
+	<string name="notification_channel_announce_name">Announcements</string>
+	<string name="notification_channel_download_mapper_name">Downloads</string>
+	<string name="notification_channel_devotion_downloader_name">Devotion downloads</string>
+	<string name="notification_channel_devotion_reminder_name">Devotion reminders</string>
+
 </resources>

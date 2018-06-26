@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.25.1'
+        classpath 'io.fabric.tools:gradle:1.25.2'
     }
 }
 apply plugin: 'com.android.application'
@@ -13,9 +13,6 @@ apply plugin: 'io.fabric'
 repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
-
-
-apply plugin: 'me.tatarka.retrolambda'
 
 android {
     signingConfigs {
@@ -27,7 +24,6 @@ android {
         }
     }
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
         applicationId 'yuku.alkitab.debug'
         minSdkVersion rootProject.ext.minSdkVersion
@@ -59,6 +55,9 @@ android {
     lintOptions {
         abortOnError false
     }
+
+    flavorDimensions "playStoreApplicationId"
+
     productFlavors {
         // Use this for development
         plain {
@@ -78,45 +77,47 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':AlkitabFeedback')
-    compile project(':AlkitabIntegration')
-    compile project(':AlkitabIo')
-    compile project(':AlkitabModel')
-    compile project(':AlkitabYes2')
-    compile project(':BiblePlus')
-    compile project(':DragSortListView')
-    compile project(':KpriModel')
-    compile project(':BintexReader')
-    compile project(':BintexWriter')
-    compile project(':Afw')
-    compile project(':FlowLayout')
-    compile project(':AmbilWarna')
-    compile project(':ATree')
-    compile project(':ImportedDesktopVerseUtil')
-    compile "com.afollestad.material-dialogs:core:$materialDialogsVersion"
-    compile "com.afollestad.material-dialogs:commons:$materialDialogsVersion"
-    testCompile 'junit:junit:4.12'
-    debugCompile "com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion"
-    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanaryVersion"
-    debugCompile "com.facebook.stetho:stetho:$stethoVersion"
-    debugCompile "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
-    compile "com.android.support:support-v4:$supportLibVersion"
-    compile "com.squareup.picasso:picasso:$picassoVersion"
-    compile "com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2"
-    compile "com.squareup.okhttp3:okhttp:$okhttpVersion"
-    compile "com.squareup.okhttp3:okhttp-urlconnection:$okhttpVersion"
-    compile 'net.sf.trove4j:trove4j:3.0.3'
-    compile "com.google.code.gson:gson:$gsonVersion"
-    compile "com.google.android.gms:play-services-analytics:$playServicesVersion"
-    compile "com.google.android.gms:play-services-gcm:$playServicesVersion"
-    compile "com.android.support:appcompat-v7:$supportLibVersion"
-    compile 'com.android.support:multidex:1.0.1'
-    compile "com.android.support:design:$supportLibVersion"
-    compile "com.android.support:percent:$supportLibVersion"
-    compile "com.takisoft.fix:preference-v7:24.2.0.0"
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
-        transitive = true;
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':AlkitabFeedback')
+    implementation project(':AlkitabIntegration')
+    implementation project(':AlkitabIo')
+    implementation project(':AlkitabModel')
+    implementation project(':AlkitabYes2')
+    implementation project(':BiblePlus')
+    implementation project(':DragSortListView')
+    implementation project(':KpriModel')
+    implementation project(':BintexReader')
+    implementation project(':BintexWriter')
+    implementation project(':Afw')
+    implementation project(':FlowLayout')
+    implementation project(':AmbilWarna')
+    implementation project(':ATree')
+    implementation project(':ImportedDesktopVerseUtil')
+    implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
+    implementation "com.afollestad.material-dialogs:commons:$materialDialogsVersion"
+    testImplementation 'junit:junit:4.12'
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion"
+    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanaryVersion"
+    debugImplementation "com.facebook.stetho:stetho:$stethoVersion"
+    debugImplementation "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
+    implementation "com.android.support:support-v4:$supportLibVersion"
+    implementation "com.android.support:support-annotations:$supportLibVersion"
+    implementation "com.android.support:support-core-utils:$supportLibVersion"
+    implementation "com.android.support:appcompat-v7:$supportLibVersion"
+    implementation "com.android.support:design:$supportLibVersion"
+    implementation "com.android.support:percent:$supportLibVersion"
+    implementation "com.squareup.picasso:picasso:$picassoVersion"
+    implementation "com.takisoft.fix:preference-v7:$supportLibVersion.1"
+    implementation "com.google.android.gms:play-services-analytics:$playServicesVersion"
+    implementation "com.google.android.gms:play-services-gcm:$playServicesVersion"
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation "com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2"
+    implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
+    implementation "com.squareup.okhttp3:okhttp-urlconnection:$okhttpVersion"
+    implementation 'net.sf.trove4j:trove4j:3.0.3'
+    implementation "com.google.code.gson:gson:$gsonVersion"
+    implementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+        transitive = true
     }
-    compile 'com.mindorks.android:prdownloader:0.2.0'
+    implementation 'com.mindorks.android:prdownloader:0.2.0'
 }

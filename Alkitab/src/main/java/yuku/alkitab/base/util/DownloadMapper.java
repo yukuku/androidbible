@@ -2,11 +2,14 @@ package yuku.alkitab.base.util;
 
 import android.app.DownloadManager;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.util.Log;
@@ -31,6 +34,7 @@ public enum DownloadMapper {
 
 	static final String TAG = DownloadMapper.class.getSimpleName();
 	static final String NOTIF_TAG = "DownloadMapper";
+	static final String NOTIFICATION_CHANNEL_ID = "download_mapper";
 
 	static class Row {
 		public int id;
@@ -172,8 +176,14 @@ public enum DownloadMapper {
 		final Context context = App.context;
 		final NotificationManagerCompat nmc = NotificationManagerCompat.from(context);
 
+		if (Build.VERSION.SDK_INT >= 26) {
+			final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, context.getString(R.string.notification_channel_download_mapper_name), NotificationManager.IMPORTANCE_DEFAULT);
+			final NotificationManager nm = App.context.getSystemService(NotificationManager.class);
+			if (nm != null) nm.createNotificationChannel(channel);
+		}
+
 		for (final Row row : new ArrayList<>(currentById.values())) {
-			final Notification n = new NotificationCompat.Builder(context)
+			final Notification n = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
 				.setSmallIcon(android.R.drawable.stat_sys_download)
 				.setContentTitle(row.title)
 				.setContentText(row.totalBytes <= 0 ? "" : (Formatter.formatFileSize(context, row.currentBytes) + " / " + Formatter.formatFileSize(context, row.totalBytes)))

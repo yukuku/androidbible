@@ -1,29 +1,38 @@
 package yuku.alkitab.reminder.br;
 
-import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.reminder.util.DevotionReminder;
 
 public class DevotionReminderReceiver extends BroadcastReceiver {
 	public static final String TAG = DevotionReminderReceiver.class.getSimpleName();
+	static final String NOTIFICATION_CHANNEL_ID = "devotion_reminder";
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
 
-		PendingIntent pi = PendingIntent.getActivity(context, 0, DevotionActivity.createIntent(), PendingIntent.FLAG_UPDATE_CURRENT);
+		final PendingIntent pi = PendingIntent.getActivity(context, 0, DevotionActivity.createIntent(), PendingIntent.FLAG_UPDATE_CURRENT);
 
-		NotificationCompat.Builder b = new NotificationCompat.Builder(context)
+		if (Build.VERSION.SDK_INT >= 26) {
+			final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, context.getString(R.string.notification_channel_devotion_reminder_name), NotificationManager.IMPORTANCE_DEFAULT);
+			final NotificationManager nm = App.context.getSystemService(NotificationManager.class);
+			if (nm != null) nm.createNotificationChannel(channel);
+		}
+
+		final NotificationCompat.Builder b = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
 			.setAutoCancel(true)
 			.setContentText(DevotionReminder.getNotificationText())
 			.setContentTitle(context.getString(R.string.dr_notification_title))
@@ -43,13 +52,11 @@ public class DevotionReminderReceiver extends BroadcastReceiver {
 		}
 
 		if (reminder_vibrate) {
-			long[] pattern = {500,500,500,500,500,500,500,500,500};
+			long[] pattern = {500, 500, 500, 500, 500, 500, 500, 500, 500};
 			b.setVibrate(pattern);
 		}
 
-		Notification n = b.build();
-
-		NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		nm.notify(R.id.NOTIF_reminder, n);
+		final NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		nm.notify(R.id.NOTIF_reminder, b.build());
 	}
 }
