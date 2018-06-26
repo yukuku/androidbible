@@ -958,7 +958,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	}
 
-	private CharSequence referenceFromSelectedVerses(IntArrayList selectedVerses, Book book) {
+	CharSequence referenceFromSelectedVerses(IntArrayList selectedVerses, Book book) {
 		if (selectedVerses.size() == 0) {
 			// should not be possible. So we don't do anything.
 			return book.reference(this.chapter_1);
@@ -2210,8 +2210,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 			if (selected.size() == 0) return true;
 
-			final CharSequence reference = referenceFromSelectedVerses(selected, activeBook);
-
 			final int itemId = item.getItemId();
 
 			switch (itemId) {
@@ -2221,10 +2219,12 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			case R.id.menuCopyBothSplits: { // copy, can be multiple verses
 				final String[] t;
 
+				final CharSequence reference = referenceFromSelectedVerses(selected, activeBook);
 				if (itemId == R.id.menuCopy || itemId == R.id.menuCopySplit0 || itemId == R.id.menuCopyBothSplits) {
 					t = prepareTextForCopyShare(selected, reference, false);
-				} else { // menuCopySplit1
-					t = prepareTextForCopyShare(selected, reference, true);
+				} else { // menuCopySplit1, do not use split0 reference
+					final Book splitBook = activeSplitVersion.getBook(activeBook.bookId);
+					t = prepareTextForCopyShare(selected, referenceFromSelectedVerses(selected, splitBook), true);
 				}
 
 				if (itemId == R.id.menuCopyBothSplits && activeSplitVersion != null) { // put guard on activeSplitVersion
@@ -2265,10 +2265,12 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			case R.id.menuShareBothSplits: { // share, can be multiple verses
 				final String[] t;
 
+				final CharSequence reference = referenceFromSelectedVerses(selected, activeBook);
 				if (itemId == R.id.menuShare || itemId == R.id.menuShareSplit0 || itemId == R.id.menuShareBothSplits) {
 					t = prepareTextForCopyShare(selected, reference, false);
-				} else { // menuShareSplit1
-					t = prepareTextForCopyShare(selected, reference, true);
+				} else { // menuShareSplit1, do not use split0 reference
+					final Book splitBook = activeSplitVersion.getBook(activeBook.bookId);
+					t = prepareTextForCopyShare(selected, referenceFromSelectedVerses(selected, splitBook), true);
 				}
 
 				if (itemId == R.id.menuShareBothSplits && activeSplitVersion != null) { // put guard on activeSplitVersion
@@ -2362,6 +2364,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					reloadBothAttributeMaps();
 				};
 
+				final CharSequence reference = referenceFromSelectedVerses(selected, activeBook);
 				if (selected.size() == 1) {
 					final VerseRenderer.FormattedTextResult ftr = new VerseRenderer.FormattedTextResult();
 					final int ari = Ari.encodeWithBc(ariBc, selected.get(0));
