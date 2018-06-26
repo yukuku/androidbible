@@ -9,7 +9,6 @@ import android.provider.Settings;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.util.AppLog;
@@ -138,6 +137,8 @@ public class ConfigurationWrapper extends ContextWrapper {
 				return new Locale("es", "ES");
 			case "fr":
 				return new Locale("fr", "FR");
+			case "it":
+				return new Locale("it", "IT");
 			case "lv":
 				return new Locale("lv", "LV");
 			case "nl":
@@ -158,6 +159,8 @@ public class ConfigurationWrapper extends ContextWrapper {
 				return new Locale("uk", "UA");
 			case "th":
 				return new Locale("th", "TH");
+			case "tr":
+				return new Locale("tr", "TR");
 			case "ja":
 				return new Locale("ja", "JP");
 			case "ko":
