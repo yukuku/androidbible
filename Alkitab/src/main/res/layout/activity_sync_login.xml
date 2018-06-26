@@ -45,7 +45,6 @@
 				android:layout_height="wrap_content"
 				android:layout_gravity="center_horizontal"
 				android:layout_marginTop="@dimen/padding_medium"
-				android:fontFamily="sans-serif-light"
 				android:gravity="center_horizontal"
 				android:text="@string/sync_login_form_intro_text"
 				android:textAppearance="?android:attr/textAppearanceSmall"
@@ -99,7 +98,6 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginTop="8dp"
-				android:fontFamily="sans-serif-light"
 				android:text="@string/sync_login_form_privacy_text"
 				android:textAppearance="?android:attr/textAppearanceSmall" />
 
