@@ -94,51 +94,6 @@
 				android:inputType="textPassword"
 				android:visibility="gone" />
 
-			<LinearLayout
-				android:id="@+id/panelRegister"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:orientation="vertical">
-
-				<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="46dp"
-					android:gravity="bottom"
-					android:paddingBottom="2dp"
-					android:paddingLeft="4dp"
-					android:text="@string/sync_login_form_optional_header"
-					android:textAllCaps="true"
-					android:textSize="14sp"
-					android:textStyle="bold" />
-
-				<ImageView
-					android:layout_width="match_parent"
-					android:layout_height="2dp"
-					android:src="#666"
-					tools:ignore="ContentDescription" />
-
-				<EditText
-					android:id="@+id/tChurch"
-					android:layout_width="match_parent"
-					android:layout_height="48dp"
-					android:hint="@string/sync_login_form_church"
-					android:inputType="textPersonName" />
-
-				<EditText
-					android:id="@+id/tCity"
-					android:layout_width="match_parent"
-					android:layout_height="48dp"
-					android:hint="@string/sync_login_form_city"
-					android:inputType="textPersonName" />
-
-				<Spinner
-					android:id="@+id/cbReligion"
-					android:layout_width="match_parent"
-					android:layout_height="48dp"
-					android:spinnerMode="dropdown"
-					tools:listitem="@android:layout/simple_dropdown_item_1line" />
-			</LinearLayout>
-
 			<TextView
 				android:id="@+id/tPrivacy"
 				android:layout_width="wrap_content"

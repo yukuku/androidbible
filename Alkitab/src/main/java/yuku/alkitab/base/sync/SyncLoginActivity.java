@@ -2,18 +2,15 @@ package yuku.alkitab.base.sync;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.util.PatternsCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
-import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
@@ -21,7 +18,6 @@ import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.LoginEvent;
 import com.crashlytics.android.answers.SignUpEvent;
 import yuku.afw.V;
-import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -55,16 +51,10 @@ public class SyncLoginActivity extends BaseActivity {
 	EditText tPassword;
 	EditText tPasswordNew;
 	Button bForgot;
-	View panelRegister;
-	EditText tChurch;
-	EditText tCity;
-	Spinner cbReligion;
 	TextView tPrivacy;
 	Button bRegister;
 	Button bLogin;
 	Button bChangePassword;
-
-	ReligionAdapter religionAdapter;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -82,34 +72,18 @@ public class SyncLoginActivity extends BaseActivity {
 		tPassword = V.get(this, R.id.tPassword);
 		tPasswordNew = V.get(this, R.id.tPasswordNew);
 		bForgot = V.get(this, R.id.bForgot);
-		panelRegister = V.get(this, R.id.panelRegister);
-		tChurch = V.get(this, R.id.tChurch);
-		tCity = V.get(this, R.id.tCity);
-		cbReligion = V.get(this, R.id.cbReligion);
 		tPrivacy = V.get(this, R.id.tPrivacy);
 		bRegister = V.get(this, R.id.bRegister);
 		bLogin = V.get(this, R.id.bLogin);
 		bChangePassword = V.get(this, R.id.bChangePassword);
 
-		cbReligion.setAdapter(religionAdapter = new ReligionAdapter());
-
-		panelRegister.setVisibility(View.GONE);
-		panelRegister.setTag(/* opened: */ false);
-
 		bRegister.setOnClickListener(v -> {
-			if (Boolean.FALSE.equals(panelRegister.getTag())) {
-				panelRegister.setVisibility(View.VISIBLE);
-				panelRegister.setTag(/* opened: */ true);
-				bLogin.setVisibility(View.GONE);
-				return;
-			}
-
 			final String email = tEmail.getText().toString().trim();
 
 			if (email.length() == 0) {
 				tEmail.setError(getString(R.string.sync_login_form_error_required));
 				return;
-			} else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+			} else if (!PatternsCompat.EMAIL_ADDRESS.matcher(email).matches()) {
 				tEmail.setError(getString(R.string.sync_login_form_error_email_pattern));
 				return;
 			} else {
@@ -126,16 +100,9 @@ public class SyncLoginActivity extends BaseActivity {
 			final String password = tPassword.getText().toString();
 
 			confirmPassword(password, () -> {
-				final String religion = (String) cbReligion.getSelectedItem();
-				final String city = tCity.length() == 0 ? null : tCity.getText().toString().trim();
-				final String church = tChurch.length() == 0 ? null : tChurch.getText().toString().trim();
-
 				final Sync.RegisterForm form = new Sync.RegisterForm();
 				form.email = email;
 				form.password = password;
-				form.city = city;
-				form.church = church;
-				form.religion = religion;
 
 				startThreadWithProgressDialog(getString(R.string.sync_progress_register), () -> {
 					try {
@@ -177,7 +144,7 @@ public class SyncLoginActivity extends BaseActivity {
 			if (email.length() == 0) {
 				tEmail.setError(getString(R.string.sync_login_form_error_required));
 				return;
-			} else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+			} else if (!PatternsCompat.EMAIL_ADDRESS.matcher(email).matches()) {
 				tEmail.setError(getString(R.string.sync_login_form_error_email_pattern));
 				return;
 			} else {
@@ -370,7 +337,6 @@ public class SyncLoginActivity extends BaseActivity {
 				bChangePassword.setVisibility(View.VISIBLE);
 
 				tPasswordNew.setVisibility(View.VISIBLE);
-				panelRegister.setVisibility(View.GONE);
 				return true;
 
 			case R.id.menuSyncLog:
@@ -418,53 +384,5 @@ public class SyncLoginActivity extends BaseActivity {
 			setResult(RESULT_OK, data);
 			finish();
 		});
-	}
-
-	class ReligionAdapter extends EasyAdapter {
-		final Object[][] choices = {
-			{null, R.string.sync_login_survey_religion_select_one},
-			{"christianity", R.string.sync_login_survey_religion_christianity},
-			{"christianity.protestant", R.string.sync_login_survey_religion_christianity_protestant},
-			{"christianity.lutheran", R.string.sync_login_survey_religion_christianity_lutheran},
-			{"christianity.methodist", R.string.sync_login_survey_religion_christianity_methodist},
-			{"christianity.anglican", R.string.sync_login_survey_religion_christianity_anglican},
-			{"christianity.adventist", R.string.sync_login_survey_religion_christianity_adventist},
-			{"christianity.pentecostal", R.string.sync_login_survey_religion_christianity_pentecostal},
-			{"christianity.roman", R.string.sync_login_survey_religion_christianity_roman},
-			{"christianity.other", R.string.sync_login_survey_religion_christianity_other},
-			{"islam", R.string.sync_login_survey_religion_islam},
-			{"buddha", R.string.sync_login_survey_religion_buddha},
-			{"hindu", R.string.sync_login_survey_religion_hindu},
-			{"other", R.string.sync_login_survey_religion_other},
-			{"atheist", R.string.sync_login_survey_religion_atheist},
-			{"agnostic", R.string.sync_login_survey_religion_agnostic},
-		};
-
-		@Override
-		public String getItem(final int position) {
-			// used by getSelectedItem
-			return (String) choices[position][0];
-		}
-
-		@Override
-		public View newView(final int position, final ViewGroup parent) {
-			return getLayoutInflater().inflate(android.R.layout.simple_spinner_item, parent, false);
-		}
-
-		@Override
-		public View newDropDownView(final int position, final ViewGroup parent) {
-			return getLayoutInflater().inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
-		}
-
-		@Override
-		public void bindView(final View view, final int position, final ViewGroup parent) {
-			final TextView text = (TextView) view;
-			text.setText(getString((int) choices[position][1]));
-		}
-
-		@Override
-		public int getCount() {
-			return choices.length;
-		}
 	}
 }

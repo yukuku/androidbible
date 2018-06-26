@@ -6,7 +6,6 @@ import android.content.ContentResolver;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
-import android.util.Log;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import okhttp3.Call;
@@ -44,11 +43,17 @@ public class Sync {
 	public enum ApplyAppendDeltaResult {
 		ok,
 		unknown_kind,
-		/** Entities have changed during sync request */
+		/**
+		 * Entities have changed during sync request
+		 */
 		dirty_entities,
-		/** Sync user account has changed during sync request */
+		/**
+		 * Sync user account has changed during sync request
+		 */
 		dirty_sync_account,
-		/** Unsupported operation encountered */
+		/**
+		 * Unsupported operation encountered
+		 */
 		unsupported_operation,
 	}
 
@@ -70,14 +75,15 @@ public class Sync {
 		public String toString() {
 			return "{" + opkind +
 				" " + kind +
-				" " + (gid.length() <= 10? gid: gid.substring(0, 10)) +
+				" " + (gid.length() <= 10 ? gid : gid.substring(0, 10)) +
 				" " + content +
 				'}';
 		}
 	}
 
 	public static class Delta<C> {
-		@NonNull public List<Operation<C>> operations;
+		@NonNull
+		public List<Operation<C>> operations;
 
 		public Delta() {
 			operations = new ArrayList<>();
@@ -139,7 +145,8 @@ public class Sync {
 
 	public static class ClientState<C> {
 		public final int base_revno;
-		@NonNull public final Delta<C> delta;
+		@NonNull
+		public final Delta<C> delta;
 
 		public ClientState(final int base_revno, @NonNull final Delta<C> delta) {
 			this.base_revno = base_revno;
@@ -190,6 +197,7 @@ public class Sync {
 
 	/**
 	 * Notify that we need to sync with server.
+	 *
 	 * @param syncSetNames The names of the sync set that needs sync with server. Should be list of {@link yuku.alkitab.base.model.SyncShadow#SYNC_SET_MABEL} or others.
 	 */
 	public static synchronized void notifySyncNeeded(final String... syncSetNames) {
@@ -258,6 +266,7 @@ public class Sync {
 	/**
 	 * Call this method(true) when updating local storage because of sync. Call this method(false) when finished.
 	 * Calls to {@link #notifySyncNeeded(String...)} will be a no-op when sync updates are ongoing (marked by this method being called).
+	 *
 	 * @param isRunning true to start, false to stop.
 	 */
 	public static synchronized void notifySyncUpdatesOngoing(final String syncSetName, final boolean isRunning) {
@@ -276,6 +285,7 @@ public class Sync {
 
 	/**
 	 * Returns the effective server prefix for syncing.
+	 *
 	 * @return scheme, host, port, with the trailing slash.
 	 */
 	public static String getEffectiveServerPrefix() {
@@ -355,9 +365,6 @@ public class Sync {
 	public static class RegisterForm {
 		public String email;
 		public String password;
-		public String church;
-		public String city;
-		public String religion;
 	}
 
 	/**
@@ -377,11 +384,9 @@ public class Sync {
 	 * Create an own user account.
 	 * Must be called from a background thread.
 	 */
-	@NonNull public static LoginResponseJson register(@NonNull final RegisterForm form) throws NotOkException {
+	@NonNull
+	public static LoginResponseJson register(@NonNull final RegisterForm form) throws NotOkException {
 		final FormBody.Builder b = new FormBody.Builder();
-		if (form.church != null) b.add("church", form.church);
-		if (form.city != null) b.add("city", form.city);
-		if (form.religion != null) b.add("religion", form.religion);
 
 		final RequestBody requestBody = b
 			.add("email", form.email)
@@ -417,7 +422,8 @@ public class Sync {
 	 * Log in to own user account using email and password.
 	 * Must be called from a background thread.
 	 */
-	@NonNull public static LoginResponseJson login(@NonNull final String email, @NonNull final String password) throws NotOkException {
+	@NonNull
+	public static LoginResponseJson login(@NonNull final String email, @NonNull final String password) throws NotOkException {
 		final RequestBody requestBody = new FormBody.Builder()
 			.add("email", email)
 			.add("password", password)
