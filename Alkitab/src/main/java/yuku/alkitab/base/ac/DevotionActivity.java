@@ -135,7 +135,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
 			@Override
 			public String getShareUrl(final SimpleDateFormat format, final Date date) {
-				return "http://www.bibleforandroid.com/renunganpagi/" + yyyymmdd.get().format(date).substring(4);
+				return "https://alkitab.app/renunganpagi/" + yyyymmdd.get().format(date).substring(4);
 			}
 		},
 		ROC("roc", "My Utmost (B. Indonesia)", "Oswald Chambers") {

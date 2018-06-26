@@ -29,7 +29,7 @@ A one-stop Bible app, feature-packed with reading plans, bookmarks, notes, highl
 <b>Widget.</b> Get refreshments from choice verses every day by putting widgets on the home screen.
 
 <b>About Bible for Android</b>
-– Official website http://www.bibleforandroid.com
+– Official website https://alkitab.app (previously was http://www.bibleforandroid.com)
 – Open-source project https://github.com/yukuku/androidbible
 – Blog http://blog.bibleforandroid.com
 – Donation to developers http://goo.gl/DnVqLV
