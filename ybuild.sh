@@ -170,7 +170,7 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 	echo 'Running gradlew from' `pwd`
 	./gradlew assemble${FLAVOR^}Release
 
-	FINAL_APK="$BUILD_MAIN_PROJECT_DIR/build/outputs/apk/$MAIN_PROJECT_NAME-$FLAVOR-release.apk"
+	FINAL_APK="$BUILD_MAIN_PROJECT_DIR/build/outputs/apk/$FLAVOR/release/$MAIN_PROJECT_NAME-$FLAVOR-release.apk"
 
 	if [ \! -r "$FINAL_APK" ] ; then
 		echo "$FINAL_APK" 'not found.'
