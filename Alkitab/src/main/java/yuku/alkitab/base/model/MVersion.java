@@ -11,6 +11,11 @@ public abstract class MVersion {
 	public String description;
 	public int ordering;
 
+	/**
+	 * This is populated when preset list is loaded (Not persisted in DB)
+	 */
+	public transient int group_order;
+
 	/** unique id for comparison purposes */
 	public abstract String getVersionId();
 	/** return version so that it can be read. Null when not possible */

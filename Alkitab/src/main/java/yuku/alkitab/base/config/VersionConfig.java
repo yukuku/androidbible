@@ -20,6 +20,7 @@ public class VersionConfig {
 
 	public List<MVersionPreset> presets;
 	public Map<String, String> locale_display;
+	public Map<String, String> group_order_display;
 
 	private static VersionConfig instance;
 
@@ -33,12 +34,14 @@ public class VersionConfig {
 		public String description;
 		public String preset_name;
 		public int modifyTime;
+		public int group_order;
 	}
 
 	static class VersionConfigJson {
 		public List<PresetJson> presets;
 		public String download_url_format;
 		public Map<String, String> locale_display;
+		public Map<String, String> group_order_display;
 	}
 
 	public static VersionConfig get() {
@@ -129,12 +132,14 @@ public class VersionConfig {
 			preset.description = presetJson.description;
 			preset.preset_name = presetJson.preset_name;
 			preset.modifyTime = presetJson.modifyTime;
+			preset.group_order = presetJson.group_order;
 			preset.download_url = root.download_url_format.replace("$PRESET_NAME", presetJson.preset_name);
 			preset.ordering = ++presetOrdering;
 			presets.add(preset);
 		}
 
 		res.locale_display = root.locale_display;
+		res.group_order_display = root.group_order_display;
 		res.presets = presets;
 
 		return res;

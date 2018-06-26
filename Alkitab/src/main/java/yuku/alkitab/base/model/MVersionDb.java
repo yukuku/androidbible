@@ -1,6 +1,5 @@
 package yuku.alkitab.base.model;
 
-import android.util.Log;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.storage.YesReaderFactory;
@@ -38,7 +37,7 @@ public class MVersionDb extends MVersion {
 	/**
 	 * The version id for MVersionDb can be "preset/" followed by preset_name,
 	 * or "file/" followed by absolute path name of the yes file.
-	 *
+	 * <p>
 	 * Therefore, the id starting with "preset/" does not always indicate MVersionPreset,
 	 * since it probably indicate MVersionDb as well.
 	 */
@@ -103,7 +102,8 @@ public class MVersionDb extends MVersion {
 		return this.cache_active;
 	}
 
-	@Override public boolean hasDataFile() {
+	@Override
+	public boolean hasDataFile() {
 		final File f = new File(filename);
 		return f.exists() && f.canRead();
 	}

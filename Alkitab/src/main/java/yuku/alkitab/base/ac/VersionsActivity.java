@@ -88,12 +88,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.zip.GZIPInputStream;
 
@@ -834,7 +832,7 @@ public class VersionsActivity extends BaseActivity {
 
 		final SwipeRefreshLayout.OnRefreshListener swiper_refresh = () -> VersionConfigUpdaterService.checkUpdate(false);
 
-		Map<String, String> cache_displayLanguage = new HashMap<>();
+		final Map<String, String> cache_displayLanguage = new HashMap<>();
 
 		String getDisplayLanguage(String locale) {
 			if (TextUtils.isEmpty(locale)) {
@@ -861,6 +859,14 @@ public class VersionsActivity extends BaseActivity {
 			return display;
 		}
 
+		@Nullable
+		String getGroupOrderDisplay(int group_order) {
+			final Map<String, String> map = VersionConfig.get().group_order_display;
+			if (map == null) return null;
+
+			return map.get(String.valueOf(group_order));
+		}
+
 		@Override
 		public void setQueryText(final String query_text) {
 			this.query_text = query_text;
@@ -869,7 +875,6 @@ public class VersionsActivity extends BaseActivity {
 
 		static class Item {
 			MVersion mv;
-			boolean firstInGroup;
 
 			public Item(final MVersion mv) {
 				this.mv = mv;
@@ -1122,20 +1127,24 @@ public class VersionsActivity extends BaseActivity {
 					items.add(new Item(S.getMVersionInternal()));
 				}
 
-				final Set<String> presetNamesInDb = new HashSet<>();
+				final Map<String, MVersionDb> presetsInDb = new HashMap<>();
 
 				// db
 				for (MVersionDb mv : S.getDb().listAllVersions()) {
 					items.add(new Item(mv));
 					if (mv.preset_name != null) {
-						presetNamesInDb.add(mv.preset_name);
+						presetsInDb.put(mv.preset_name, mv);
 					}
 				}
 
 				// presets (only for "all" tab)
 				if (!downloadedOnly) {
 					for (MVersionPreset preset : VersionConfig.get().presets) {
-						if (presetNamesInDb.contains(preset.preset_name)) continue;
+						// set group_order of db version from preset list
+						if (presetsInDb.containsKey(preset.preset_name)) {
+							presetsInDb.get(preset.preset_name).group_order = preset.group_order;
+							continue;
+						}
 
 						items.add(new Item(preset));
 					}
@@ -1154,6 +1163,13 @@ public class VersionsActivity extends BaseActivity {
 				// Sort items. For "all" tab, sort is based on display language. For "downloaded" tab, sort is based on ordering.
 				if (!downloadedOnly) {
 					Collections.sort(items, (a, b) -> {
+						// if group_order is defined (not 0), sort by group order
+						final int go_a = a.mv.group_order == 0 ? Integer.MAX_VALUE : a.mv.group_order;
+						final int go_b = b.mv.group_order == 0 ? Integer.MAX_VALUE : b.mv.group_order;
+						if (go_a != go_b) {
+							return go_a < go_b ? -1 : 1;
+						}
+
 						final String locale_a = a.mv.locale;
 						final String locale_b = b.mv.locale;
 						if (U.equals(locale_a, locale_b)) {
@@ -1177,13 +1193,6 @@ public class VersionsActivity extends BaseActivity {
 							AppLog.d(TAG, String.format(Locale.US, "%8d   %-20s   %s", item.mv.ordering, item.mv.getClass().getSimpleName(), item.mv.getVersionId()));
 						}
 					}
-				}
-
-				// mark first item in each group
-				String lastLocale = "<sentinel>";
-				for (Item item : items) {
-					item.firstInGroup = !U.equals(item.mv.locale, lastLocale);
-					lastLocale = item.mv.locale;
 				}
 
 				notifyDataSetChanged();
@@ -1248,7 +1257,6 @@ public class VersionsActivity extends BaseActivity {
 				cActive.setChecked(mv.getActive());
 
 				bLongName.setText(mv.longName);
-				tLanguage.setText(getDisplayLanguage(mv.locale));
 
 				if (mv instanceof MVersionInternal) {
 					cActive.setEnabled(false);
@@ -1258,8 +1266,17 @@ public class VersionsActivity extends BaseActivity {
 					cActive.setEnabled(true);
 				}
 
-				if (item.firstInGroup) {
+				final MVersion prev = position == 0 ? null : getItem(position - 1).mv;
+
+				if (prev == null || prev.group_order != mv.group_order || prev.group_order == 0 && !U.equals(prev.locale, mv.locale)) {
 					header.setVisibility(View.VISIBLE);
+
+					if (mv.group_order != 0) {
+						final String groupName = getGroupOrderDisplay(mv.group_order);
+						tLanguage.setText(groupName != null ? groupName : getDisplayLanguage(mv.locale));
+					} else {
+						tLanguage.setText(getDisplayLanguage(mv.locale));
+					}
 				} else {
 					header.setVisibility(View.GONE);
 				}
