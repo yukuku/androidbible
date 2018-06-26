@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -23,7 +24,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -50,7 +50,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import yuku.afw.V;
-import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -158,7 +157,7 @@ public class VersionsActivity extends BaseActivity {
 		// we are trying to open a file, so let's go to the DOWNLOADED tab, as it is more relevant.
 		viewPager.setCurrentItem(1);
 
-		Uri uri = intent.getData();
+		final Uri uri = intent.getData();
 
 		final boolean isLocalFile = U.equals("file", uri.getScheme());
 		final Boolean isYesFile; // false:pdb true:yes null:cannotdetermine
@@ -315,7 +314,7 @@ public class VersionsActivity extends BaseActivity {
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
 		final MenuItem menuSearch = menu.findItem(R.id.menuSearch);
-		MenuItemCompat.setOnActionExpandListener(menuSearch, new MenuItemCompat.OnActionExpandListener() {
+		menuSearch.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
 			@Override
 			public boolean onMenuItemActionExpand(final MenuItem item) {
 				setOthersVisible(item, false);
@@ -589,7 +588,7 @@ public class VersionsActivity extends BaseActivity {
 		if (base.endsWith(".pdb")) {
 			base = base.substring(0, base.length() - 4);
 		}
-		base = base.replaceAll("[^0-9a-z_\\.-]", "");
+		base = base.replaceAll("[^0-9a-z_.-]", "");
 		return "pdb-" + base + ".yes";
 	}
 
@@ -809,7 +808,7 @@ public class VersionsActivity extends BaseActivity {
 		}
 
 		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 			this.inflater = inflater;
 			final View rootView = inflater.inflate(downloadedOnly ? R.layout.fragment_versions_downloaded : R.layout.fragment_versions_all, container, false);
 
@@ -1135,9 +1134,7 @@ public class VersionsActivity extends BaseActivity {
 
 				// presets (only for "all" tab)
 				if (!downloadedOnly) {
-					final boolean showHidden = Preferences.getBoolean(getString(R.string.pref_showHiddenVersion_key), false);
 					for (MVersionPreset preset : VersionConfig.get().presets) {
-						if (!showHidden && preset.hidden) continue;
 						if (presetNamesInDb.contains(preset.preset_name)) continue;
 
 						items.add(new Item(preset));

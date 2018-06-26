@@ -26,7 +26,6 @@
 	<string name="pref_copyWithShareUrl_key" translatable="false">copyWithShareUrl</string>
 	<string name="pref_autoDictionaryAnalyze_key" translatable="false">autoDictionaryAnalyze</string>
 	<string name="pref_tapToEditNote_key" translatable="false">tapToEditNote</string>
-	<string name="pref_showHiddenVersion_key" translatable="false">showHiddenVersion</string>
 	<string name="pref_syncAccountName_key" translatable="false">syncAccountName</string>
 	<string name="pref_sync_key" translatable="false">sync</string>
 	<string name="pref_syncLogout_key" translatable="false">syncLogout</string>

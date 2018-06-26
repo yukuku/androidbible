@@ -183,23 +183,6 @@ public class SettingsActivity extends BaseActivity {
 			final ListPreference pref_volumeButtonNavigation = (ListPreference) findPreference(getString(R.string.pref_volumeButtonNavigation_key));
 			autoDisplayListPreference(pref_volumeButtonNavigation);
 
-			final CheckBoxPreference pref_showHiddenVersion = (CheckBoxPreference) findPreference(getString(R.string.pref_showHiddenVersion_key));
-			pref_showHiddenVersion.setOnPreferenceChangeListener((preference, newValue) -> {
-				final boolean value = (boolean) newValue;
-
-				if (value) {
-					new MaterialDialog.Builder(getActivity())
-						.content(R.string.show_hidden_version_warning)
-						.negativeText(R.string.cancel)
-						.positiveText(R.string.ok)
-						.onPositive((dialog, which) -> pref_showHiddenVersion.setChecked(true))
-						.show();
-					return false;
-				}
-
-				return true;
-			});
-
 			final CheckBoxPreference pref_autoDictionaryAnalyze = (CheckBoxPreference) findPreference(getString(R.string.pref_autoDictionaryAnalyze_key));
 			pref_autoDictionaryAnalyze.setOnPreferenceChangeListener((preference, newValue) -> {
 				if (((boolean) newValue)) {

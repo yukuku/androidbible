@@ -27,8 +27,4 @@
 		android:summary="@string/pref_tapToEditNote_summary"
 		android:title="@string/pref_tapToEditNote_title" />
 
-	<CheckBoxPreference
-		android:defaultValue="false"
-		android:key="@string/pref_showHiddenVersion_key"
-		android:title="@string/pref_showHiddenVersion_title" />
 </PreferenceScreen>

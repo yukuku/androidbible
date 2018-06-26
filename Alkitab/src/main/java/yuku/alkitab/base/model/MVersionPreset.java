@@ -10,7 +10,6 @@ public class MVersionPreset extends MVersion {
 	public String download_url;
 	public String preset_name;
 	public int modifyTime;
-	public boolean hidden;
 
 	@Override public boolean getActive() {
 		return false; // preset can't be active, because there is no data file activated by the user.
