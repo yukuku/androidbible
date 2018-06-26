@@ -136,7 +136,6 @@
   <string name="ed_download_button">Muat turun</string>
   <string name="ed_update_button">Kemas kini</string>
   <string name="ed_details_update_available">Kemas kini tersedia</string>
-  <string name="ed_download_manager_not_enabled_prompt">Aplikasi Pengurus Muat Turun tidak didayakan atau tidak tersedia.\n\nDayakannya untuk memuat turun versi Bible.</string>
   <string name="info_terperinci">Butiran</string>
   <string name="buang_dari_daftar">Buang</string>
   <string name="edit_bookmark">Edit penanda buku</string>
@@ -548,4 +547,5 @@
   <string name="maps_could_not_open">Tidak dapat membuka aplikasi Peta-Peta Alkitab.</string>
   <!-- File chooser -->
   <string name="filechooser_parent_folder">Folder induk</string>
+  <!-- Notification channels -->
 </resources>

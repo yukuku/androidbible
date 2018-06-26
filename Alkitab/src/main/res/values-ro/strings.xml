@@ -27,9 +27,15 @@
   <string name="menu_markers">Însemnări</string>
   <string name="hapus_pembatas_buku">Şterge favorit</string>
   <string name="menuShare">Trimite</string>
+  <string name="menuShareSplit0">Împărtășește versiunea primară</string>
+  <string name="menuShareSplit1">Împărtășește versiunea secundară</string>
+  <string name="menuShareBothSplits">Împărtășește ambele versiuni</string>
   <string name="tulis_catatan">Scrie o notă</string>
   <string name="tambah_pembatas_buku">Adaugă la favorite</string>
   <string name="salin_ayat">Copiază versetul</string>
+  <string name="copy_split0">Copiază versiunea primară</string>
+  <string name="copy_split1">Copiază versiunea secundară</string>
+  <string name="copy_both_splits">Copiază ambele versiuni</string>
   <string name="search_copy_selected_verses">Copiază versetele slectate</string>
   <string name="perj_baru">Noul Test.</string>
   <string name="perj_lama">Vechiul Test.</string>
@@ -39,6 +45,10 @@
   <string name="jump_to_prompt"><b>MERGI LA</b> — Exemplu: ^1</string>
   <string name="belum_ada_pembatas_buku">Nu sunt marcaje.\nSelectează un verset pentru adăugare în marcaje.</string>
   <string name="judul_titikdua">TITLU</string>
+  <string name="devotion_downloader_downloading_title">Descărcând ^1</string>
+  <string name="devotion_downloader_downloading_date">datate ^1</string>
+  <string name="devotion_downloader_error_date">Eroare în date ^1: ^2</string>
+  <string name="devotion_downloader_success_date">Descărcate datele ^1</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Nu sunt disponibile. Probabil că datele solicitate nu sunt pregătite sau sunt unele erori în recunoașterea sursei cu date. Vă rog să încercați din nou mai târziu.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Nu este disponibilă. Preluarea de pe Internet&#8230;\n\n(Asiguraţi-vă că există conexiune la Internet pentru a descărca materiale devoţionale.)</string>
   <string name="hari_sabtu">Sam</string>
@@ -126,7 +136,6 @@
   <string name="ed_download_button">Descarcă</string>
   <string name="ed_update_button">Actualizează</string>
   <string name="ed_details_update_available">Actualizare disponibilă</string>
-  <string name="ed_download_manager_not_enabled_prompt">Aplicația Download Manager nu este activată sau nu este disponibil. \n\nActivează pentru a descărca versiuni ale Bibliei.</string>
   <string name="info_terperinci">Detalii</string>
   <string name="buang_dari_daftar">Șterge</string>
   <string name="edit_bookmark">Editează favorite</string>
@@ -264,10 +273,12 @@
   <string name="desc_verse_attribute_multiple_notes">%s note sunt atașate la acest verset.</string>
   <string name="desc_verse_attribute_progress_mark">%s este în prezent aici.</string>
   <string name="desc_progress_mark_list">Lista însemne progres</string>
+  <string name="desc_backspace">Tasta de ștergere</string>
   <string name="intent_filter_open_yes_file">Deschide fişier YES</string>
   <string name="intent_filter_open_pdb_file">Deschide fișierul PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Deschide fișierul PDB/YES</string>
   <string name="open_yes_file_name_conflict">Un fișier YES numit \'%1$s\' există deja în \'%2$s\'.</string>
+  <string name="open_yes_error_read">Eroare la citirea datelor din ^1</string>
   <string name="open_file_cant_read_source">Fișierul sursă nu poate fi citit.</string>
   <string name="open_file_unknown_file_format">Nu se poate determina dacă fișierul este PDB sau YES.</string>
   <string name="version_preset_delete_filename">Elimină fișierul \'%s\'?</string>
@@ -306,10 +317,13 @@
   <string name="recentverses_button_hint">(Apasă lung pentru versetele recente)</string>
   <string name="dr_reminder">Memento</string>
   <string name="dr_error_contact_reminder">Eroare la contactarea Memento.</string>
+  <string name="dr_timepicker_set">Setează</string>
+  <string name="dr_timepicker_off">Oprește</string>
   <string name="dv_option_transparent_background">Fundal transparent</string>
   <string name="dv_option_dark_text">Text închis</string>
   <string name="dv_option_text_size">Dimensiune text</string>
   <!-- Reading plan -->
+  <string name="rp_activity_title">Plan de citit</string>
   <string name="rp_menuReadingPlan">Plan de citire</string>
   <string name="rp_commentActual">Finalizat: %s%%</string>
   <string name="rp_commentTarget">Țintă: %s%%</string>
@@ -353,6 +367,7 @@
   <string name="version_download_need_fonts">"Versiunea ce s-a descărcat, ar putea avea nevoie de anumite fonturi. Mergi la meniul \"aspect Text \" și selectați un font. Grec are nevoie de fontul Ubuntu. Pentru limba birmaneză Parabaik, ParabaikSans sau Myanmar3. Tamil are nevoie de Akshar. Telugu are nevoie de Suranna."</string>
   <string name="version_download_corrupted_file">Fișierul descărcat pare a fi corupt.</string>
   <string name="version_download_saving_io_error">Eroare I/O când salvează versiunea descărcată</string>
+  <string name="version_download_network_error">Erori de internet la descărcare ^1.</string>
   <string name="menuNightMode">Mod nocturn</string>
   <string name="highlight_custom_color">Alte culori</string>
   <string name="menu_compare">Compară</string>
@@ -435,6 +450,7 @@
   <string name="sync_sync_set_pref_summary_never">Nesincronizat</string>
   <string name="sync_sync_set_pref_summary_syncing">Sincronizare acum&#8230;</string>
   <string name="sync_log_activity_title">Log sincronizare</string>
+  <string name="sync_status_activity_title">Statutul Sincronizării</string>
   <string name="sync_login_activity_title">Înregistrare sau creare cont</string>
   <string name="sync_login_survey_religion_select_one">Selectează religia</string>
   <string name="sync_login_survey_religion_christianity">Creștinism</string>
@@ -486,6 +502,7 @@
   <string name="dr_pref_notification_message">Mesaj memento</string>
   <string name="dr_default_sound">Sunet implicit</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Aplicație de Biblie 100% gratuită, licențiată sub Licența Apache 2.0</string>
   <string name="about_translators">Traducători</string>
   <string name="about_user_guide">Ghidul utilizatorului</string>
   <string name="about_beta_feedback">Feedback-ul versiunii Beta</string>
@@ -518,6 +535,7 @@
   <string name="menuDictionary">Dicționar</string>
   <string name="dict_open_full">Deschide dicționarul</string>
   <string name="dict_no_results">Nu s-a găsit o definiție pentru cuvântul selectat.</string>
+  <string name="dict_query_error">Eroare la obținerea definiției din dicționar.</string>
   <string name="dict_download_prompt">Descarcă \"Biblia Dicționar\" pentru a afla mai multe despre cuvintele din Biblie!</string>
   <string name="dict_download_button">Descarcă</string>
   <!-- Guide -->
@@ -528,4 +546,5 @@
   <string name="maps_could_not_open">Nu s-a putut deschide aplicația Hărți biblice.</string>
   <!-- File chooser -->
   <string name="filechooser_parent_folder">Folder părinte</string>
+  <!-- Notification channels -->
 </resources>

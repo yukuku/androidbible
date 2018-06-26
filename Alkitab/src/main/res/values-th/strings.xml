@@ -136,7 +136,6 @@
   <string name="ed_download_button">ดาวน์โหลด</string>
   <string name="ed_update_button">อัปเดต</string>
   <string name="ed_details_update_available">ขณะนี้มีอัปเดตใหม่</string>
-  <string name="ed_download_manager_not_enabled_prompt">ตัวแอปจัดการการดาวน์โหลดไม่ได้เปิดใช้งานหรือไม่ได้ติดตั้งค่ะ\n\nกรุณาเปิดใช้งานเพื่อโหลดเวอร์ชั่นพระคำภีร์ต่างๆ ค่ะ</string>
   <string name="info_terperinci">รายละเอียด</string>
   <string name="buang_dari_daftar">ถอนออก</string>
   <string name="edit_bookmark">แก้ไขบุ๊คมาร์ค</string>
@@ -548,4 +547,5 @@
   <string name="maps_could_not_open">ไม่สามารถเปิดแอป Bible Maps (แผนที่พระคำภิร์)</string>
   <!-- File chooser -->
   <string name="filechooser_parent_folder">โฟลเดอร์หลัก</string>
+  <!-- Notification channels -->
 </resources>

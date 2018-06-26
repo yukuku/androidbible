@@ -136,7 +136,6 @@
   <string name="ed_download_button">Pobierz</string>
   <string name="ed_update_button">Aktualizuj</string>
   <string name="ed_details_update_available">Dostępna aktualizacja</string>
-  <string name="ed_download_manager_not_enabled_prompt">Menadżer pobierania nie jest aktywny lub nie jest dostępny.\n\nAktywuj go, aby pobrać przekłady Biblii.</string>
   <string name="info_terperinci">Szczegóły</string>
   <string name="buang_dari_daftar">Usuń</string>
   <string name="edit_bookmark">Edycja zakładek</string>
@@ -371,6 +370,8 @@
   <string name="version_download_need_fonts">"Przekład, który pobrałeś, może wymagać konkretnej czcionki do wyświetlania. Udaj się do menu \'Wygląd tekstu\' i wybierz czcionkę. Grecki wymaga czcionki Ubuntu. Burmański wymaga Parabaik, ParabaikSans, lub Myanmar3. Tamil wymaga Akshar. Telugu wymaga Suranna."</string>
   <string name="version_download_corrupted_file">Pobrany plik wydaje się uszkodzony.</string>
   <string name="version_download_saving_io_error">Błąd operacji I/O podczas zapisu pobranej wersji</string>
+  <string name="version_download_network_error">Błąd sieci podczas pobierania ^1.</string>
+  <string name="version_download_server_error">Błąd serwera podczas pobierania ^1.</string>
   <string name="menuNightMode">Tryb nocny</string>
   <string name="highlight_custom_color">Inne kolory</string>
   <string name="menu_compare">Porównaj</string>
@@ -538,6 +539,7 @@
   <string name="menuDictionary">Słownik</string>
   <string name="dict_open_full">Otwórz słownik</string>
   <string name="dict_no_results">Nie znaleziono definicji dla wybranego słowa.</string>
+  <string name="dict_query_error">Błąd przy pobieraniu definicji ze słownika.</string>
   <string name="dict_download_prompt">Pobierz \"Słownik Biblijny\", aby dowiedzieć się więcej o słowach w Biblii!</string>
   <string name="dict_download_button">Pobierz</string>
   <!-- Guide -->
@@ -548,4 +550,5 @@
   <string name="maps_could_not_open">Nie można było otworzyć aplikacji Bible Maps.</string>
   <!-- File chooser -->
   <string name="filechooser_parent_folder">Folder nadrzędny</string>
+  <!-- Notification channels -->
 </resources>

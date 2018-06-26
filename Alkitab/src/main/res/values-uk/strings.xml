@@ -136,7 +136,6 @@
   <string name="ed_download_button">Завантажити</string>
   <string name="ed_update_button">Оновлення</string>
   <string name="ed_details_update_available">Доступне оновлення</string>
-  <string name="ed_download_manager_not_enabled_prompt">Програма-Менеджер Завантажень не ввімкнена або недосяжна.\n\nУвімкніть її для завантаження версій Біблії.</string>
   <string name="info_terperinci">Деталі</string>
   <string name="buang_dari_daftar">Видалити</string>
   <string name="edit_bookmark">Редагувати закладку</string>
@@ -270,11 +269,11 @@
   <string name="desc_progress_3">Третє досягнення</string>
   <string name="desc_progress_4">Четверте досягнення</string>
   <string name="desc_progress_5">П\'яте досягнення</string>
-  <string name="desc_verse_attribute_one_bookmark">Закладка додана до  цього вірша.</string>
+  <string name="desc_verse_attribute_one_bookmark">Закладка додана до цього вірша.</string>
   <string name="desc_verse_attribute_multiple_bookmarks">%s закладок додано до цього вірша.</string>
   <string name="desc_verse_attribute_one_note">Примітка додана до цього вірша.</string>
   <string name="desc_verse_attribute_multiple_notes">%s приміток додано до цього вірша.</string>
-  <string name="desc_verse_attribute_progress_mark">% відсотків завантажено.</string>
+  <string name="desc_verse_attribute_progress_mark">%s відсотків завантажено.</string>
   <string name="desc_progress_mark_list">Список контактів</string>
   <string name="desc_backspace">Клавіша назад</string>
   <string name="intent_filter_open_yes_file">Відкрити YES файл</string>
@@ -423,8 +422,8 @@
   <string name="note_actionbar_ok">Зроблено</string>
   <string name="note_activity_cannot_parse_verse">Вибачте, це посилання на вірш не розпізнано.</string>
   <string name="pref_syncAccountName_title">Обліковий запис</string>
-  <string name="sync_progress_register">Створення нового профіля...</string>
-  <string name="sync_progress_login">Вхід в систему...</string>
+  <string name="sync_progress_register">Створення нового профіля&#8230;</string>
+  <string name="sync_progress_login">Вхід в систему&#8230;</string>
   <string name="pref_sync_title">Сихнронізувати</string>
   <string name="sync_menu_item_sync_now">Синхронізувати зараз</string>
   <string name="sync_sync_set_pref_summary_syncing">Синхронізація&#8230;</string>
@@ -449,8 +448,8 @@
   <string name="sync_login_form_register_button">Зареєструватися</string>
   <string name="sync_login_form_login_button">Увійти</string>
   <string name="sync_login_dialog_confirm_password_hint">Підтвердіть пароль</string>
-  <string name="sync_login_form_forgot_password_success">Перевірте вашу електронну адресу для подальших інструкцій</string>
-  <string name="sync_login_form_change_password_success">Ваш пароль був змінений</string>
+  <string name="sync_login_form_forgot_password_success">Перевірте вашу електронну адресу для подальших інструкцій.</string>
+  <string name="sync_login_form_change_password_success">Ваш пароль був змінений.</string>
   <!-- devotion reminder -->
   <string name="dr_app_name">Нагадування</string>
   <string name="dr_off">Вимкнути</string>
@@ -482,4 +481,5 @@
   <!-- Commentary -->
   <!-- Maps -->
   <!-- File chooser -->
+  <!-- Notification channels -->
 </resources>

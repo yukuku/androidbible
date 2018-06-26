@@ -136,7 +136,6 @@
   <string name="ed_download_button">Baixar</string>
   <string name="ed_update_button">Atualizar</string>
   <string name="ed_details_update_available">Atualização disponível</string>
-  <string name="ed_download_manager_not_enabled_prompt">O app Gerenciador de Downloads está desabilitado ou indisponível.\n\nHabilite-o para baixar versões da Bíblia.</string>
   <string name="info_terperinci">Detalhes</string>
   <string name="buang_dari_daftar">Remover</string>
   <string name="edit_bookmark">Editar favorito</string>
@@ -371,6 +370,8 @@
   <string name="version_download_need_fonts">"A versão que você baixou talvez necessite ser exibida com certas fontes. Vá até o menu \'Aparência do texto\' e selecione a fonte correta. Grego necessita a fonte Ubuntu. Birmanês necessita Parabaik, ParabaikSans, ou Myanmar3. Tâmil necessita Akshar. Telugu necessita Suranna."</string>
   <string name="version_download_corrupted_file">Arquivo baixado parece estar corrompido.</string>
   <string name="version_download_saving_io_error">Erro de entrada ou saída ao salvar versão baixada</string>
+  <string name="version_download_network_error">Erro de rede ao fazer o download ^ 1.</string>
+  <string name="version_download_server_error">Erro de rede ao fazer o download ^ 1.</string>
   <string name="menuNightMode">Modo noturno</string>
   <string name="highlight_custom_color">Outras cores</string>
   <string name="menu_compare">Comparar</string>
@@ -538,6 +539,7 @@
   <string name="menuDictionary">Dicionário</string>
   <string name="dict_open_full">Abrir Dicionário</string>
   <string name="dict_no_results">Nenhuma definição encontrada para a palavra selecionada.</string>
+  <string name="dict_query_error">Erro ao obter a definição do dicionário.</string>
   <string name="dict_download_prompt">Baixe \"Dicionário Bíblico\" par aprender mais sobre as palavras da Bíblia!</string>
   <string name="dict_download_button">Baixar</string>
   <!-- Guide -->
@@ -548,4 +550,5 @@
   <string name="maps_could_not_open">Não foi possível abrir o aplicativo de Mapas Bíblicos.</string>
   <!-- File chooser -->
   <string name="filechooser_parent_folder">Pasta superior</string>
+  <!-- Notification channels -->
 </resources>

@@ -37,8 +37,8 @@
   <string name="copy_split1">Copiar versión secundaria</string>
   <string name="copy_both_splits">Copiar ambas versiones</string>
   <string name="search_copy_selected_verses">Copiar versículos seleccionados</string>
-  <string name="perj_baru">Nuevo Testamento.</string>
-  <string name="perj_lama">Viejo Testamento.</string>
+  <string name="perj_baru">Nuevo Test</string>
+  <string name="perj_lama">Viejo Test</string>
   <string name="search_bookname_only">Solo %s</string>
   <string name="ayat_sebelumangka">Versículo</string>
   <string name="pasal_sebelumangka">Capítulo</string>
@@ -136,7 +136,6 @@
   <string name="ed_download_button">Descargar</string>
   <string name="ed_update_button">Actualizar</string>
   <string name="ed_details_update_available">Actualización disponible</string>
-  <string name="ed_download_manager_not_enabled_prompt">El administrador de descargas no esta habilitado o disponible. \n\n Habilitalo para descargar la versión bíblica.</string>
   <string name="info_terperinci">Detalles</string>
   <string name="buang_dari_daftar">Remover</string>
   <string name="edit_bookmark">Editar marcador</string>
@@ -371,6 +370,8 @@
   <string name="version_download_need_fonts">"La versión que descargaste puede necesitar ciertas fuentes para mostrarse. Ve al menú de \'Apariencia de texto\' y elige una fuente. Griego necesita la fuente Ubuntu. Birmano necesita Parabaik, ParabaikSans o Myanmar3. Tamil necesita Suranna."</string>
   <string name="version_download_corrupted_file">El archivo descargado parece estar corrupto.</string>
   <string name="version_download_saving_io_error">Error de E/S al guardar la versión descargada</string>
+  <string name="version_download_network_error">Error de red cuando descarga ^1.</string>
+  <string name="version_download_server_error">Error de servidor cuando descarga ^1.</string>
   <string name="menuNightMode">Modo nocturno</string>
   <string name="highlight_custom_color">Otros colores</string>
   <string name="menu_compare">Comparar</string>
@@ -539,6 +540,7 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
   <string name="menuDictionary">Diccionario</string>
   <string name="dict_open_full">Abrir diccionario</string>
   <string name="dict_no_results">Definición no encontrada de la palabra seleccionada.</string>
+  <string name="dict_query_error">Error obteniendo la definición del Diccionario.</string>
   <string name="dict_download_prompt">¡Descarga \"Diccionario Bíblico\" para aprender más acerca de las palabras en la Biblia!</string>
   <string name="dict_download_button">Descragar</string>
   <!-- Guide -->
@@ -549,4 +551,5 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
   <string name="maps_could_not_open">No se pudo abrir la aplicación Bible Maps.</string>
   <!-- File chooser -->
   <string name="filechooser_parent_folder">Carpeta Principal</string>
+  <!-- Notification channels -->
 </resources>

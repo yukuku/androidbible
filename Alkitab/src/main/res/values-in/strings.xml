@@ -136,7 +136,6 @@
   <string name="ed_download_button">Unduh</string>
   <string name="ed_update_button">Perbarui</string>
   <string name="ed_details_update_available">Pembaruan tersedia</string>
-  <string name="ed_download_manager_not_enabled_prompt">Aplikasi Download Manager tidak dinyalakan atau tidak tersedia.\n\nNyalakan untuk mengunduh versi-versi Alkitab.</string>
   <string name="info_terperinci">Info terperinci</string>
   <string name="buang_dari_daftar">Buang</string>
   <string name="edit_bookmark">Edit pembatas buku</string>
@@ -371,6 +370,8 @@
   <string name="version_download_need_fonts">"Versi yang diunduh mungkin perlu ditampilkan dengan jenis huruf tertentu. Bukalah menu \'Penampilan teks\' dan pilih jenis hurufnya. Yunani butuh jenis huruf Ubuntu. Myanmar butuh Parabaik, ParabaikSans, atau Myanmar3. Tamil butuh Akshar. Telugu butuh Suranna."</string>
   <string name="version_download_corrupted_file">File yang diunduh tampaknya rusak.</string>
   <string name="version_download_saving_io_error">Kesalahan I/O saat menyimpan versi unduhan</string>
+  <string name="version_download_network_error">Kesalahan jaringan saat mengunduh ^ 1.</string>
+  <string name="version_download_server_error">Kesalahan server saat mengunduh ^ 1.</string>
   <string name="menuNightMode">Mode gelap</string>
   <string name="highlight_custom_color">Warna lainnya</string>
   <string name="menu_compare">Bandingkan</string>
@@ -538,6 +539,7 @@
   <string name="menuDictionary">Kamus</string>
   <string name="dict_open_full">Buka Kamus</string>
   <string name="dict_no_results">Tidak ada definisi dari kata yang dipilih.</string>
+  <string name="dict_query_error">Kesalahan mendapatkan definisi dari Kamus.</string>
   <string name="dict_download_prompt">Unduh \"Kamus Alkitab\" untuk mempelajari kata-kata dalam Alkitab!</string>
   <string name="dict_download_button">Unduh</string>
   <!-- Guide -->
@@ -548,4 +550,5 @@
   <string name="maps_could_not_open">Tidak bisa membuka aplikasi Peta Alkitab.</string>
   <!-- File chooser -->
   <string name="filechooser_parent_folder">Folder induk</string>
+  <!-- Notification channels -->
 </resources>

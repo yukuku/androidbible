@@ -139,7 +139,6 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="ed_download_button">Lejupielādēt</string>
   <string name="ed_update_button">Atjaunināt</string>
   <string name="ed_details_update_available">ir pieejama jauna versija</string>
-  <string name="ed_download_manager_not_enabled_prompt">Lejupielādes Menedžera aplikācija nav ieslēgta vai nav pieejama.\n\nLai lejupielādētu Bībeles tulkojumus, ieslēdz to.</string>
   <string name="info_terperinci">Detaļas</string>
   <string name="buang_dari_daftar">Izdzēst</string>
   <string name="edit_bookmark">Labot grāmatzīmi</string>
@@ -550,4 +549,5 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="maps_could_not_open">Nevar atvērt Bībeles Kartes aplikāciju.</string>
   <!-- File chooser -->
   <string name="filechooser_parent_folder">Vēcāku (parent) katalogs</string>
+  <!-- Notification channels -->
 </resources>

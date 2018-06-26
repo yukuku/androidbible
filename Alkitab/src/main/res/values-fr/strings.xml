@@ -136,7 +136,6 @@
   <string name="ed_download_button">Téléchargement</string>
   <string name="ed_update_button">Mise à jour</string>
   <string name="ed_details_update_available">Mise à jour disponible</string>
-  <string name="ed_download_manager_not_enabled_prompt">Le gestionnaire de téléchargement de l\'application n\'est pas activé ou disponible.\n\nActivez-le pour télécharger des versions de la Bible.</string>
   <string name="info_terperinci">Détails</string>
   <string name="buang_dari_daftar">Effacement</string>
   <string name="edit_bookmark">Editer le signet</string>
@@ -371,6 +370,8 @@
   <string name="version_download_need_fonts">"La version que vous avez téléchargée exige certaines polices de caractères pour être affichée. Allez au menu \'apparence du texte\' et sélectionnez une police de caractère. Le Grec exige les polices de caractère de Ubuntu. Burmese exige Parabaik, ParabaikSans, or Myanmar3. Tamil exige Akshar. Telugu exige Suranna."</string>
   <string name="version_download_corrupted_file">Le fichier chargé semble défectueux.</string>
   <string name="version_download_saving_io_error">Erreur I/O en sauvegardant la version téléchargée</string>
+  <string name="version_download_network_error">Erreur de réseau lors du téléchargement de ^1.</string>
+  <string name="version_download_server_error">Erreur de serveur lors du téléchargement de ^1.</string>
   <string name="menuNightMode">Mode nuit</string>
   <string name="highlight_custom_color">Autres couleurs</string>
   <string name="menu_compare">Comparer</string>
@@ -538,6 +539,7 @@
   <string name="menuDictionary">Dictionnaire</string>
   <string name="dict_open_full">Ouvrir le dictionnaire</string>
   <string name="dict_no_results">Aucune définition trouvé pour le mot sélectionné.</string>
+  <string name="dict_query_error">Erreur lors de l\'obtention de la définition dans le dictionnaire.</string>
   <string name="dict_download_prompt">Télécharger le \'Dictionnaire de la Bible» pour en savoir plus sur les termes de la Bible !</string>
   <string name="dict_download_button">Télécharger</string>
   <!-- Guide -->
@@ -548,4 +550,5 @@
   <string name="maps_could_not_open">N\'a pas pu ouvrir l\'application Bible Maps.</string>
   <!-- File chooser -->
   <string name="filechooser_parent_folder">Dossier parent</string>
+  <!-- Notification channels -->
 </resources>

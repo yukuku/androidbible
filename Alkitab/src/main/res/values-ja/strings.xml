@@ -136,7 +136,6 @@
   <string name="ed_download_button">ダウンロード</string>
   <string name="ed_update_button">アップデート</string>
   <string name="ed_details_update_available">アップデート利用可能</string>
-  <string name="ed_download_manager_not_enabled_prompt">ダウンロードマネージャーアプリがイネーブルされていないか存在しません。\n\n聖書版をダウンロードするためにはイネーブルにしてください。</string>
   <string name="info_terperinci">詳細</string>
   <string name="buang_dari_daftar">削除</string>
   <string name="edit_bookmark">ブックマークの編集</string>
@@ -214,6 +213,7 @@
   <string name="market_short_desc">敏速、特典豊富で信頼性の高いオフライン聖書。</string>
   <string name="no_url_for_facebook">これはフェースブックにシェア出来ません。</string>
   <string name="storage_permission_rationale">聖書訳やフォントを保存するためにストレージへのアクセスが必要です。</string>
+  <string name="goto_button_history_tip">Tip: 次に、最近読んだ節にアクセスするにはこのボタンを長く押します。</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">電話風</string>
   <string name="goto_tab_direct_label">直接</string>
@@ -542,4 +542,5 @@
   <string name="maps_could_not_open">聖書マップのアプリを開くことができませんでした。</string>
   <!-- File chooser -->
   <string name="filechooser_parent_folder">親フォルダ</string>
+  <!-- Notification channels -->
 </resources>

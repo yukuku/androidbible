@@ -136,7 +136,6 @@
   <string name="ed_download_button">Загруженные</string>
   <string name="ed_update_button">Обновить</string>
   <string name="ed_details_update_available">Доступно обновление</string>
-  <string name="ed_download_manager_not_enabled_prompt">Приложение диспетчера загрузки отключено или отсутствует.\n\nВключите его для загрузки переводов Библии.</string>
   <string name="info_terperinci">Подробности</string>
   <string name="buang_dari_daftar">Удалить</string>
   <string name="edit_bookmark">Редактировать закладку</string>
@@ -214,6 +213,7 @@
   <string name="market_short_desc">Быстрая и надежная Библия с широкой функциональностью, работающая без подключения к Интернету.</string>
   <string name="no_url_for_facebook">Это нельзя отправить в Facebook.</string>
   <string name="storage_permission_rationale">Нам нужен доступ к хранилищу для сохранения общих файлов, таких, как версии Библии и шрифты.</string>
+  <string name="goto_button_history_tip">Совет: В следующий раз зажмите кнопку для доступа к недавно просмотренным стихам.</string>
   <!-- Goto tabs -->
   <string name="goto_tab_dialer_label">Набор номера</string>
   <string name="goto_tab_direct_label">Выбор</string>
@@ -249,6 +249,7 @@
   <string name="sn_menu_private_song_book">Личная книга гимнов</string>
   <string name="sn_private_song_book_dialog_desc">Скачать личную (скрытую) книгу гимнов</string>
   <string name="sn_private_song_book_name_hint">Название книги гимнов</string>
+  <string name="sn_play_in_loop">Вы хотите это зациклить до тех пор, пока вы остановите это?</string>
   <!-- Content descriptions, for blind users -->
   <string name="desc_previous_day">Предыдущий день</string>
   <string name="desc_next_day">Следующий день</string>
@@ -318,7 +319,9 @@
   <string name="recentverses_button_hint">(Удерживайте для отображения недавних стихов)</string>
   <string name="dr_reminder">Напоминание</string>
   <string name="dr_error_contact_reminder">Не удалить связаться с приложением напоминания.</string>
+  <string name="dr_timepicker_set">Задать</string>
   <string name="dr_timepicker_off">Выключить</string>
+  <string name="dv_activity_title">Виджет Ежедневных Стихов</string>
   <string name="dv_option_transparent_background">Прозрачный фон</string>
   <string name="dv_option_dark_text">Темный текст</string>
   <string name="dv_option_text_size">Размер текста</string>
@@ -367,6 +370,8 @@
   <string name="version_download_need_fonts">Загруженная вами версия может потребовать особых шрифтов. Перейдите в меню \'Вид текста\' и выберите шрифт.</string>
   <string name="version_download_corrupted_file">Загруженный файл выглядит поврежденным.</string>
   <string name="version_download_saving_io_error">Ошибка ввода/вывода при сохранении загруженной версии</string>
+  <string name="version_download_network_error">При скачивании ^1 случилась сетевая ошибка.</string>
+  <string name="version_download_server_error">При скачивании ^1 случилась ошибка сервера.</string>
   <string name="menuNightMode">Ночной режим</string>
   <string name="highlight_custom_color">Другие цвета</string>
   <string name="menu_compare">Сравнить</string>
@@ -501,6 +506,7 @@
   <string name="dr_pref_notification_message">Напоминающее сообщение</string>
   <string name="dr_default_sound">Звук по умолчанию</string>
   <!-- about -->
+  <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">На 100% бесплатная Библия, лицензирована по Apache License 2.0</string>
   <string name="about_translators">Переводчики</string>
   <string name="about_user_guide">Руководство пользователя</string>
   <string name="about_beta_feedback">Отзывы о бета-версии</string>
@@ -533,6 +539,7 @@
   <string name="menuDictionary">Словарь</string>
   <string name="dict_open_full">Открыть словарь</string>
   <string name="dict_no_results">Не найдена статья для выбранного слова.</string>
+  <string name="dict_query_error">Ошибка про получении объяснения из Словаря.</string>
   <string name="dict_download_prompt">Загрузить \"Библейский словарь\", чтобы узнать больше о словах, использованных в Библии!</string>
   <string name="dict_download_button">Загрузить</string>
   <!-- Guide -->
@@ -543,4 +550,5 @@
   <string name="maps_could_not_open">Не удалось открыть приложение Bible Maps.</string>
   <!-- File chooser -->
   <string name="filechooser_parent_folder">Родительский каталог</string>
+  <!-- Notification channels -->
 </resources>

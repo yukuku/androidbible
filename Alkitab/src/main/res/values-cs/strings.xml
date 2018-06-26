@@ -136,7 +136,6 @@
   <string name="ed_download_button">Stáhnout</string>
   <string name="ed_update_button">Aktualizovat</string>
   <string name="ed_details_update_available">Dostupná aktualizace</string>
-  <string name="ed_download_manager_not_enabled_prompt">Správce stahování není povolen.\n\nPro stažení nových verzí jej prosím povolte.</string>
   <string name="info_terperinci">Detaily</string>
   <string name="buang_dari_daftar">Odstranit</string>
   <string name="edit_bookmark">Upravit oblíbené</string>
@@ -371,6 +370,8 @@
   <string name="version_download_need_fonts">"Stažená verze nemůže být zobrazena určitým fontem. Jděte do \'Text appearance\' menu a vyberte jiný font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
   <string name="version_download_corrupted_file">Stažený soubor je zřejmě poškozený.</string>
   <string name="version_download_saving_io_error">I/O error při ukládání stažené verze</string>
+  <string name="version_download_network_error">Chyba sítě při stahování^1.</string>
+  <string name="version_download_server_error">Chyba serveru při stahování^1.</string>
   <string name="menuNightMode">Noční mód</string>
   <string name="highlight_custom_color">Jiné barvy</string>
   <string name="menu_compare">Porovnat</string>
@@ -538,6 +539,7 @@
   <string name="menuDictionary">Slovník</string>
   <string name="dict_open_full">Otevřít slovník</string>
   <string name="dict_no_results">Pro vybrané slovo nebyly nalezeny žádné definice.</string>
+  <string name="dict_query_error">Nepodařilo se získat definici ze slovníku.</string>
   <string name="dict_download_prompt">Stáhnout \"Bible Dictionary\"!</string>
   <string name="dict_download_button">Stáhnout</string>
   <!-- Guide -->
@@ -548,4 +550,5 @@
   <string name="maps_could_not_open">Nelze otevřít aplikaci Bible Maps.</string>
   <!-- File chooser -->
   <string name="filechooser_parent_folder">Nadřazená složka</string>
+  <!-- Notification channels -->
 </resources>

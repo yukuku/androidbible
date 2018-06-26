@@ -136,7 +136,6 @@
   <string name="ed_download_button">다운로드</string>
   <string name="ed_update_button">업데이트</string>
   <string name="ed_details_update_available">업데이트 가능</string>
-  <string name="ed_download_manager_not_enabled_prompt">다운로드 관리자 앱이 활성화되지 않았습니다.\n\n 역본 다운로드를 위해, 다운로드 관리자 앱을 활성화 해주십시오.</string>
   <string name="info_terperinci">세부사항</string>
   <string name="buang_dari_daftar">삭제</string>
   <string name="edit_bookmark">북마크 수정</string>
@@ -548,4 +547,5 @@
   <string name="maps_could_not_open">성경 지도 앱을 열 수 없습니다.</string>
   <!-- File chooser -->
   <string name="filechooser_parent_folder">상위 폴더</string>
+  <!-- Notification channels -->
 </resources>

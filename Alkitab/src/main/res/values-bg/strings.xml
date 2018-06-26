@@ -136,7 +136,6 @@
   <string name="ed_download_button">Зареди</string>
   <string name="ed_update_button">Обновяване</string>
   <string name="ed_details_update_available">Обновяването е достъпно</string>
-  <string name="ed_download_manager_not_enabled_prompt">Приложението на диспечера за зареждане е изключено или отсъства.\n\nВключете го за зареждане на преводите на Библиите.</string>
   <string name="info_terperinci">Подробности</string>
   <string name="buang_dari_daftar">Премести</string>
   <string name="edit_bookmark">Редакция на отметката</string>
@@ -371,6 +370,8 @@
   <string name="version_download_need_fonts">Заредената от вас версия може да изисква специфични шрифтове. Отидете в меню \'Вид текст\' и изберете шрифт.</string>
   <string name="version_download_corrupted_file">Заредения файл изглежда е повреден.</string>
   <string name="version_download_saving_io_error">Грешка при съхраняване на свалената версия</string>
+  <string name="version_download_network_error">Мрежова грешка при изтегляне ^1.</string>
+  <string name="version_download_server_error">Грешка в сървъра при изтегляне ^1.</string>
   <string name="menuNightMode">Нощен режим</string>
   <string name="highlight_custom_color">Други цветове</string>
   <string name="menu_compare">Сравни</string>
@@ -538,6 +539,7 @@
   <string name="menuDictionary">Речник</string>
   <string name="dict_open_full">Отвори речника</string>
   <string name="dict_no_results">Не е намерена статия за избраната дума.</string>
+  <string name="dict_query_error">Възникна грешка, получавайки дефиниции от речника.</string>
   <string name="dict_download_prompt">Инсталирай \"Библейски речник\", за да узнаете повече за думите използвани в Библията!</string>
   <string name="dict_download_button">Инсталирай</string>
   <!-- Guide -->
@@ -548,4 +550,5 @@
   <string name="maps_could_not_open">Приложението Bible Maps не е открито.</string>
   <!-- File chooser -->
   <string name="filechooser_parent_folder">Родителска папка</string>
+  <!-- Notification channels -->
 </resources>

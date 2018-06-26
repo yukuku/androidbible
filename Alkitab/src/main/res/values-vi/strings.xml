@@ -136,7 +136,6 @@
   <string name="ed_download_button">Tải</string>
   <string name="ed_update_button">Nâng cấp</string>
   <string name="ed_details_update_available">Có nâng cấp mới</string>
-  <string name="ed_download_manager_not_enabled_prompt">The Download Manager phần mềm không thực hiện được hoặc không tồn tại.\n\n Khởi động để có thể tải các bản Kinh Thánh.</string>
   <string name="info_terperinci">Chi tiết</string>
   <string name="buang_dari_daftar">Xoá</string>
   <string name="edit_bookmark">Chỉnh sửa đánh dấu trang</string>
@@ -548,4 +547,5 @@
   <string name="maps_could_not_open">Không thể mở ứng dụng Kinh Thánh.</string>
   <!-- File chooser -->
   <string name="filechooser_parent_folder">Mục dành cho phụ huynh</string>
+  <!-- Notification channels -->
 </resources>

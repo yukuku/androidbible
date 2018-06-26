@@ -136,7 +136,6 @@
   <string name="ed_download_button">Download</string>
   <string name="ed_update_button">Update</string>
   <string name="ed_details_update_available">Update beschikbaar</string>
-  <string name="ed_download_manager_not_enabled_prompt">De Download Manager app is niet ingeschakeld of niet beschikbaar.\n\nActiveer het om de Bijbel versies te downloaden.</string>
   <string name="info_terperinci">Details</string>
   <string name="buang_dari_daftar">Verwijderen</string>
   <string name="edit_bookmark">Bewerk bladwijzer</string>
@@ -371,6 +370,8 @@
   <string name="version_download_need_fonts">"De gedownloade versie kan moeten worden weergegeven in een bepaald lettertype. Ga naar het menu \"Tekstweergave\" en selecteer een lettertype. Grieks heeft het lettertype Ubuntu nodig. Birmese gebruikt Parabaik, ParabaikSans of Myanmar3. Tamil gebruikt Akshar en Telugu gebruikt het lettertype Suranna."</string>
   <string name="version_download_corrupted_file">Het gedownloade bestand blijkt corrupt te zijn.</string>
   <string name="version_download_saving_io_error">I/O fout wanneer de gedownloade versie opgeslagen wordt</string>
+  <string name="version_download_network_error">Netwerkfout tijdens het downloaden.</string>
+  <string name="version_download_server_error">Serverfout tijdens het downloaden.</string>
   <string name="menuNightMode">Nachtmodus</string>
   <string name="highlight_custom_color">Andere kleuren</string>
   <string name="menu_compare">Vergelijken</string>
@@ -538,6 +539,7 @@
   <string name="menuDictionary">Woordenboek</string>
   <string name="dict_open_full">Open woordenboek</string>
   <string name="dict_no_results">Geen defenitie gevonden voor het geselecteerde woord.</string>
+  <string name="dict_query_error">Fout bij het verkrijgen van vertaalomschrijving.</string>
   <string name="dict_download_prompt">Download \"Bijbel Woordenboek\" om meer te leren over de woorden in de Bijbel!</string>
   <string name="dict_download_button">Download</string>
   <!-- Guide -->
@@ -548,4 +550,5 @@
   <string name="maps_could_not_open">Kan de Bijbel kaarten app niet openen.</string>
   <!-- File chooser -->
   <string name="filechooser_parent_folder">Begin map</string>
+  <!-- Notification channels -->
 </resources>

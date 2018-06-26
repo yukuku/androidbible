@@ -6,7 +6,7 @@
   <string name="alkitabfeedback_finish">Изпрати</string>
   <string name="alkitabfeedback_review">Преглед</string>
   <string name="alkitabfeedback_label_your_name">Име</string>
-  <string name="alkitabfeedback_label_your_email">Email</string>
+  <string name="alkitabfeedback_label_your_email">Имейл</string>
   <string name="alkitabfeedback_label_message">Съобщение</string>
   <string name="alkitabfeedback_hint_message">Какво искате да кажете на разработчика? Предложения, жалби, идеи, съобщения за грешки, информация и т.н.</string>
   <string name="alkitabfeedback_title_about_you">Информация за Вас</string>

@@ -136,7 +136,6 @@
   <string name="ed_download_button">Herunterladen</string>
   <string name="ed_update_button">Update</string>
   <string name="ed_details_update_available">Update verfügbar</string>
-  <string name="ed_download_manager_not_enabled_prompt">Die App \'Download-Manager\' ist nicht aktiviert oder nicht verfügbar.\n\nAktivieren Sie die App, um Bibelübersetzungen herunterzuladen.</string>
   <string name="info_terperinci">Details</string>
   <string name="buang_dari_daftar">Entfernen</string>
   <string name="edit_bookmark">Lesezeichen bearbeiten</string>
@@ -371,6 +370,8 @@
   <string name="version_download_need_fonts">"Die Übersetzung, die Sie heruntergeladen haben, kann nur mit speziellen Schriftarten angezeigt werden. Gehen Sie zum Menü \'Textdarstellung\' und wählen Sie eine passende Schriftart. Burmese benötigt Parabaik, ParabaikSans oder Myanmar3. Tamil benötigt Akshar. Telugu benötigt Suranna."</string>
   <string name="version_download_corrupted_file">Die heruntergeladene Datei scheint fehlerhaft zu sein.</string>
   <string name="version_download_saving_io_error">I/O-Fehler beim Speichern der heruntergeladenen Übersetzung</string>
+  <string name="version_download_network_error">Netzwerkfehler beim herunterladen ^1.</string>
+  <string name="version_download_server_error">Serverfehler beim herunterladen ^1.</string>
   <string name="menuNightMode">Nachtmodus</string>
   <string name="highlight_custom_color">Weitere Farben</string>
   <string name="menu_compare">Vergleichen</string>
@@ -538,6 +539,7 @@
   <string name="menuDictionary">Wörterbuch</string>
   <string name="dict_open_full">Wörterbuch öffnen</string>
   <string name="dict_no_results">Keine Defintion für das ausgewählte Wort gefunden.</string>
+  <string name="dict_query_error">Fehler beim herunterladen der Definition aus dem Verzeichnis.</string>
   <string name="dict_download_prompt">Laden Sie \"Bible Dictionary\" herunter, um mehr über die Worte in der Bibel zu erfahren!</string>
   <string name="dict_download_button">Herunterladen</string>
   <!-- Guide -->
@@ -548,4 +550,5 @@
   <string name="maps_could_not_open">Die Bible Map App konnte nicht geöffnet werden.</string>
   <!-- File chooser -->
   <string name="filechooser_parent_folder">Eine Ebene nach oben</string>
+  <!-- Notification channels -->
 </resources>

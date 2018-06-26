@@ -136,7 +136,6 @@
   <string name="ed_download_button">下載</string>
   <string name="ed_update_button">更新</string>
   <string name="ed_details_update_available">可供安裝的更新</string>
-  <string name="ed_download_manager_not_enabled_prompt">下載管理員程式尚未啟動或不存在。\n\n請啟動程式以下載聖經版本。</string>
   <string name="info_terperinci">細節</string>
   <string name="buang_dari_daftar">移除</string>
   <string name="edit_bookmark">編輯書籤</string>
@@ -372,6 +371,8 @@
   <string name="version_download_need_fonts">"您下載的版本需要某種字體以正確顯示。請到「文字外觀」目錄，並選擇某種字體。希臘語需要 Ubuntu 字體。緬甸語需要Parabaik，ParabaikSans 或 Myanmar3。泰米爾語需要 Akshar。泰盧固語需要 Suranna。"</string>
   <string name="version_download_corrupted_file">已下載的檔案似是無效的。</string>
   <string name="version_download_saving_io_error">儲存已下載的版本時發生存取錯誤</string>
+  <string name="version_download_network_error">下載^ 1時出現網絡錯誤。</string>
+  <string name="version_download_server_error">下載^ 1時出現服務器錯誤。</string>
   <string name="menuNightMode">夜間模式</string>
   <string name="highlight_custom_color">其他顏色</string>
   <string name="menu_compare">比較</string>
@@ -539,6 +540,7 @@
   <string name="menuDictionary">字典</string>
   <string name="dict_open_full">開啟字典</string>
   <string name="dict_no_results">找不到所選字詞的解釋。</string>
+  <string name="dict_query_error">從Dictionary字典獲取定義時出錯。</string>
   <string name="dict_download_prompt">下載「聖經字典」以學習聖經中更多的字詞！</string>
   <string name="dict_download_button">下載</string>
   <!-- Guide -->
@@ -549,4 +551,5 @@
   <string name="maps_could_not_open">未能開啟聖經地圖程式。</string>
   <!-- File chooser -->
   <string name="filechooser_parent_folder">上一層資料夾</string>
+  <!-- Notification channels -->
 </resources>

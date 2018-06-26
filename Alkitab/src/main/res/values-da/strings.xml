@@ -14,7 +14,7 @@
   <string name="impor_berhasil_angka_diproses">Gendannelse lykkedes. I alt %1$d bogmærker, noter, farvemarkører, og også %2$d etiketter blev behandlet.</string>
   <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Der var fejl, da du oprettede sikkerhedskopi: %s</string>
   <string name="ekspor_pembatas_buku_dan_catatan_tanya">Opret sikkerhedskopi af bogmærker, noter og farvemarkører til SD-kort eller USB-lager? Eksisterende sikkerhedskopi vil blive overskrevet.</string>
-  <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Der var fejl, da du genoprettede: %s</string>
+  <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Der var en eller flere fejl, ved genoprettelse: %s</string>
   <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Overskriv de bogmærker, noter og farvemarkører, som du har i øjeblikket?</string>
   <string name="file_tidak_bisa_dibaca_file">Filen eksisterer ikke eller kunne ikke læses: %s</string>
   <string name="impor_dari_sd_card">Gendannelse</string>
@@ -136,7 +136,6 @@
   <string name="ed_download_button">Nedtag</string>
   <string name="ed_update_button">Opdater</string>
   <string name="ed_details_update_available">Opdatering tilgængelig</string>
-  <string name="ed_download_manager_not_enabled_prompt">Download Manager app er ikke aktiveret eller ikke tilgængelig.\n\nAktivering gør det muligt at nedtage bibelversioner.</string>
   <string name="info_terperinci">Detaljer</string>
   <string name="buang_dari_daftar">Fjern fra listen</string>
   <string name="edit_bookmark">Rediger bogmærke</string>
@@ -371,6 +370,8 @@
   <string name="version_download_need_fonts">"Den Nedtagne version bnehøver måske at blive vist med en bestemt skrifttype. Gå til menuen \'Skærm\', og vælg en skrifttype. Græsk behøver Ubuntu skrifttype. Burmesiske behøver Parabaik, ParabaikSans eller Myanmar3. Tamil behøver Akshar. Telugu behøver Suranna."</string>
   <string name="version_download_corrupted_file">Nedtagne fil synes at være beskadiget.</string>
   <string name="version_download_saving_io_error">I/O-fejl, når du gemmer nedtaget version</string>
+  <string name="version_download_network_error">Netværksfejl under hentning af ^1.</string>
+  <string name="version_download_server_error">Server fejl ved hentning af ^1.</string>
   <string name="menuNightMode">Natfunktion</string>
   <string name="highlight_custom_color">Dine markørfarver</string>
   <string name="menu_compare">Sammenlign</string>
@@ -538,6 +539,7 @@
   <string name="menuDictionary">Ordbog</string>
   <string name="dict_open_full">Åben ordbog</string>
   <string name="dict_no_results">Ingen definition fundet for det valgte ord.</string>
+  <string name="dict_query_error">Fejl ved hentning af definition fra Ordbog.</string>
   <string name="dict_download_prompt">Nedtag \"Bibel Ordbogen\" for at lære mere om ordene i Bibelen!</string>
   <string name="dict_download_button">Nedtag</string>
   <!-- Guide -->
@@ -548,4 +550,5 @@
   <string name="maps_could_not_open">Kunne ikke åbne Bibelkort-appen.</string>
   <!-- File chooser -->
   <string name="filechooser_parent_folder">Forældre mappe</string>
+  <!-- Notification channels -->
 </resources>
