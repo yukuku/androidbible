@@ -15,10 +15,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.AnyThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.ShareCompat;
@@ -66,6 +68,7 @@ import yuku.alkitab.base.storage.YesReaderFactory;
 import yuku.alkitab.base.sv.VersionConfigUpdaterService;
 import yuku.alkitab.base.util.AddonManager;
 import yuku.alkitab.base.util.AppLog;
+import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.DownloadMapper;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.debug.BuildConfig;
@@ -773,7 +776,9 @@ public class VersionsActivity extends BaseActivity {
 			public void onReceive(final Context context, final Intent intent) {
 				final String action = intent.getAction();
 				if (ACTION_RELOAD.equals(action)) {
-					if (adapter != null) adapter.reload();
+					if (adapter != null) {
+						Background.run(() -> adapter.reload());
+					}
 				} else if (ACTION_UPDATE_REFRESHING_STATUS.equals(action)) {
 					final boolean refreshing = intent.getBooleanExtra(EXTRA_refreshing, false);
 					if (swiper != null) {
@@ -870,7 +875,7 @@ public class VersionsActivity extends BaseActivity {
 		@Override
 		public void setQueryText(final String query_text) {
 			this.query_text = query_text;
-			adapter.reload(); // do not broadcast, since the query only changes this fragment
+			Background.run(() -> adapter.reload()); // do not broadcast, since the query only changes this fragment
 		}
 
 		static class Item {
@@ -1120,8 +1125,9 @@ public class VersionsActivity extends BaseActivity {
 			 * <p>
 			 * Note: Downloaded preset version will become database version after added.
 			 */
+			@AnyThread
 			void reload() {
-				items.clear();
+				final List<Item> items = new ArrayList<>();
 
 				{ // internal
 					items.add(new Item(S.getMVersionInternal()));
@@ -1195,7 +1201,15 @@ public class VersionsActivity extends BaseActivity {
 					}
 				}
 
-				notifyDataSetChanged();
+				final FragmentActivity activity = getActivity();
+				if (activity != null) {
+					activity.runOnUiThread(() -> {
+						this.items.clear();
+						this.items.addAll(items);
+
+						notifyDataSetChanged();
+					});
+				}
 			}
 
 			private boolean matchMatchers(final MVersion mv, final Matcher[] matchers) {
