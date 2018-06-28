@@ -145,7 +145,7 @@ public class DevotionDownloader extends Thread {
 			}
 
 			if (Build.VERSION.SDK_INT >= 26) {
-				final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, App.context.getString(R.string.notification_channel_devotion_downloader_name), NotificationManager.IMPORTANCE_DEFAULT);
+				final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, App.context.getString(R.string.notification_channel_devotion_downloader_name), NotificationManager.IMPORTANCE_LOW);
 				final NotificationManager nm = App.context.getSystemService(NotificationManager.class);
 				if (nm != null) nm.createNotificationChannel(channel);
 			}

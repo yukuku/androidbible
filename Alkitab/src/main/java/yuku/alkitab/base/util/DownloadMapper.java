@@ -177,7 +177,7 @@ public enum DownloadMapper {
 		final NotificationManagerCompat nmc = NotificationManagerCompat.from(context);
 
 		if (Build.VERSION.SDK_INT >= 26) {
-			final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, context.getString(R.string.notification_channel_download_mapper_name), NotificationManager.IMPORTANCE_DEFAULT);
+			final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, context.getString(R.string.notification_channel_download_mapper_name), NotificationManager.IMPORTANCE_LOW);
 			final NotificationManager nm = App.context.getSystemService(NotificationManager.class);
 			if (nm != null) nm.createNotificationChannel(channel);
 		}
