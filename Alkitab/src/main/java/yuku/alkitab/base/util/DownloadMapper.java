@@ -43,6 +43,11 @@ public enum DownloadMapper {
 		public String destPath;
 		public long currentBytes;
 		public long totalBytes;
+		/**
+		 * When is the last time the progress is notified (in currentTimeMillis).
+		 * We should not notify about progress too often.
+		 */
+		public long previouslyNotifiedTime;
 		public Map<String, String> attrs;
 	}
 
@@ -129,7 +134,12 @@ public enum DownloadMapper {
 			row.currentBytes = progress.currentBytes;
 			row.totalBytes = progress.totalBytes;
 
-			displayNotifs();
+			// only notify if last notification is not recent enough.
+			final long now = System.currentTimeMillis();
+			if (row.previouslyNotifiedTime == 0 || now - row.previouslyNotifiedTime > 1000) {
+				row.previouslyNotifiedTime = now;
+				displayNotifs();
+			}
 		});
 
 		final int[] p_id = {0};
@@ -174,7 +184,6 @@ public enum DownloadMapper {
 
 	void displayNotifs() {
 		final Context context = App.context;
-		final NotificationManagerCompat nmc = NotificationManagerCompat.from(context);
 
 		if (Build.VERSION.SDK_INT >= 26) {
 			final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, context.getString(R.string.notification_channel_download_mapper_name), NotificationManager.IMPORTANCE_LOW);
@@ -182,6 +191,7 @@ public enum DownloadMapper {
 			if (nm != null) nm.createNotificationChannel(channel);
 		}
 
+		final NotificationManagerCompat nmc = NotificationManagerCompat.from(context);
 		for (final Row row : new ArrayList<>(currentById.values())) {
 			final Notification n = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
 				.setSmallIcon(android.R.drawable.stat_sys_download)
