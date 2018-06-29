@@ -1,9 +1,10 @@
 package yuku.alkitab.base.sync;
 
-import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.annotation.NonNull;
+import android.support.v4.app.JobIntentService;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
@@ -11,21 +12,24 @@ import yuku.alkitab.base.util.AppLog;
 
 import java.util.List;
 
-public class GcmIntentService extends IntentService {
+public class GcmIntentService extends JobIntentService {
 	static final String TAG = GcmIntentService.class.getSimpleName();
 
-	public GcmIntentService() {
-		super("GcmIntentService");
+	/**
+	 * Unique job ID for this service.
+	 */
+	static final int JOB_ID = 16305555;
+
+	/**
+	 * Convenience method for enqueuing work in to this service.
+	 */
+	static void enqueueWork(@NonNull Context context, @NonNull Intent work) {
+		enqueueWork(context, GcmIntentService.class, JOB_ID, work);
 	}
 
 	@Override
-	protected void onHandleIntent(Intent intent) {
-		try {
-			handle(intent);
-		} finally {
-			// Release the wake lock provided by the WakefulBroadcastReceiver.
-			GcmBroadcastReceiver.completeWakefulIntent(intent);
-		}
+	protected void onHandleWork(@NonNull final Intent intent) {
+		handle(intent);
 	}
 
 	public static class GcmMessageEncodedDataJson {
@@ -33,11 +37,12 @@ public class GcmIntentService extends IntentService {
 		public List<String> syncSetNames;
 	}
 
-	private void handle(final Intent intent) {
+	private void handle(@NonNull final Intent intent) {
 		final GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
 
 		final Bundle extras = intent.getExtras();
-		if (extras.isEmpty()) {
+		if (extras == null || extras.isEmpty()) {
+			AppLog.e(TAG, "No extras");
 			return;
 		}
 
