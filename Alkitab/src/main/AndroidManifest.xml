@@ -417,7 +417,8 @@
 
 		<service
 			android:name="yuku.alkitab.base.br.DailyVerseAppWidgetReceiver$UpdateService"
-			android:exported="false" />
+			android:exported="true"
+			android:permission="android.permission.BIND_JOB_SERVICE" />
 
 		<service
 			android:name="yuku.alkitab.base.sv.DailyVerseAppWidgetService"

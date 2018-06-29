@@ -1,7 +1,6 @@
 package yuku.alkitab.base.br;
 
 import android.app.AlarmManager;
-import android.app.IntentService;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -12,7 +11,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.annotation.NonNull;
+import android.support.v4.app.JobIntentService;
 import android.widget.RemoteViews;
 import yuku.afw.App;
 import yuku.alkitab.base.IsiActivity;
@@ -31,13 +31,25 @@ import java.util.GregorianCalendar;
 public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 	public static final String TAG = DailyVerseAppWidgetReceiver.class.getSimpleName();
 
-	public static class UpdateService extends IntentService {
-		public UpdateService() {
-			super("Widget updater (temporary)");
+	public static class UpdateService extends JobIntentService {
+		static final String TAG = UpdateService.class.getSimpleName();
+
+		/**
+		 * Unique job ID for this service.
+		 */
+		static final int JOB_ID = 16304444;
+
+		/**
+		 * Convenience method for enqueuing work in to this service.
+		 */
+		static void enqueueWork(@NonNull Context context, @NonNull Intent work) {
+			enqueueWork(context, UpdateService.class, JOB_ID, work);
 		}
 
 		@Override
-		protected void onHandleIntent(final Intent intent) {
+		protected void onHandleWork(@NonNull final Intent intent) {
+			AppLog.d(TAG, "@@onHandleWork");
+
 			final int[] appWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 			if (appWidgetIds == null) {
 				AppLog.e(TAG, "appWidgetIds is null");
@@ -57,9 +69,9 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 
 	@Override
 	public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
-		final Intent intent = new Intent(App.context, UpdateService.class);
+		final Intent intent = new Intent(context, UpdateService.class);
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-		context.startService(intent);
+		UpdateService.enqueueWork(context, intent);
 	}
 
 	@Override
