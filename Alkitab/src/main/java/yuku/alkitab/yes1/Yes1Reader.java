@@ -1,17 +1,16 @@
 package yuku.alkitab.yes1;
 
-import android.util.Log;
-import yuku.afw.D;
+import yuku.alkitab.base.storage.OldVerseTextDecoder;
+import yuku.alkitab.base.storage.VerseTextDecoder;
 import yuku.alkitab.base.util.AppLog;
+import yuku.alkitab.debug.BuildConfig;
+import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.model.XrefEntry;
-import yuku.alkitab.base.storage.OldVerseTextDecoder;
-import yuku.alkitab.base.storage.VerseTextDecoder;
 import yuku.alkitab.util.Ari;
-import yuku.alkitab.io.BibleReader;
 import yuku.bintex.BintexReader;
 
 import java.io.ByteArrayInputStream;
@@ -334,7 +333,7 @@ public class Yes1Reader implements BibleReader {
 			
 			int length = yesBook.chapter_offsets[pasal_1] - yesBook.chapter_offsets[pasal_1 - 1];
 			
-			if (D.EBUG) AppLog.d(TAG, "muatTeks kitab=" + book.shortName + " pasal_1=" + pasal_1 + " offset=" + yesBook.offset + " offset pasal: " + yesBook.chapter_offsets[pasal_1 - 1]);
+			if (BuildConfig.DEBUG) AppLog.d(TAG, "muatTeks kitab=" + book.shortName + " pasal_1=" + pasal_1 + " offset=" + yesBook.offset + " offset pasal: " + yesBook.chapter_offsets[pasal_1 - 1]);
 			
 			byte[] ba = new byte[length];
 			f.read(ba);
@@ -396,7 +395,7 @@ public class Yes1Reader implements BibleReader {
 		try {
 			init();
 			
-			if (D.EBUG) AppLog.d(TAG, "muatPerikop dipanggil untuk kitab=" + kitab + " pasal_1=" + pasal);
+			if (BuildConfig.DEBUG) AppLog.d(TAG, "muatPerikop dipanggil untuk kitab=" + kitab + " pasal_1=" + pasal);
 			
 			Yes1PericopeIndex pericopeIndex = loadPericopeIndex();
 			if (pericopeIndex == null) {

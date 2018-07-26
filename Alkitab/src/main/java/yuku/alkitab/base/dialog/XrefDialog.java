@@ -8,13 +8,11 @@ import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
-import yuku.afw.D;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.dialog.base.BaseDialog;
@@ -24,6 +22,7 @@ import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.base.widget.VersesView.VerseSelectionMode;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.model.Version;
@@ -173,7 +172,7 @@ public class XrefDialog extends BaseDialog {
 		
 		final IntArrayList ranges = decodeTarget(encodedTarget);
 
-		if (D.EBUG) {
+		if (BuildConfig.DEBUG) {
 			AppLog.d(TAG, "linkPos " + linkPos + " target=" + encodedTarget + " ranges=" + ranges);
 		}
 		

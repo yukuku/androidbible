@@ -25,7 +25,6 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
-import yuku.afw.D;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -36,6 +35,7 @@ import yuku.alkitab.base.dialog.LabelEditorDialog;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.BookmarkImporter;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
@@ -435,7 +435,7 @@ public class MarkersActivity extends BaseActivity {
 		void reload() {
 			labels = S.getDb().listAllLabels();
 			
-			if (D.EBUG) {
+			if (BuildConfig.DEBUG) {
 				AppLog.d(TAG, "_id  title                ordering backgroundColor");
 				for (Label label: labels) {
 					AppLog.d(TAG, String.format(Locale.US, "%4d %20s %8d %s", label._id, label.title, label.ordering, label.backgroundColor));

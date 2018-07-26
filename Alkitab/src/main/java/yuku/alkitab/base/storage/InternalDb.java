@@ -15,7 +15,6 @@ import android.util.Pair;
 import com.google.gson.reflect.TypeToken;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
-import yuku.afw.D;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
@@ -993,7 +992,7 @@ public class InternalDb {
 		//   replace ordering of 'from' to 'to'
 		//   A101 B[104] C102 D[103] E105
 
-		if (D.EBUG) {
+		if (BuildConfig.DEBUG) {
 			AppLog.d(TAG, "@@reorderLabels from _id=" + from._id + " ordering=" + from.ordering + " to _id=" + to._id + " ordering=" + to.ordering);
 		}
 
