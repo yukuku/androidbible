@@ -1,4 +1,4 @@
-package yuku.alkitabconverter.in_tsi_usfm;
+package yuku.alkitabconverter.ury_orya;
 
 import yuku.alkitabconverter.util.Usfm2Usfx;
 

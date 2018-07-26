@@ -2,10 +2,13 @@ package yuku.alkitabconverter.yet;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import yuku.alkitabconverter.internal_common.InternalCommon;
+import yuku.alkitabconverter.internal_common.ReverseIndexer;
+import yuku.alkitabconverter.util.FootnoteDb;
 import yuku.alkitabconverter.util.KjvUtils;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.TextDb;
-import yuku.alkitabconverter.yes_common.Yes2Common;
+import yuku.alkitabconverter.util.XrefDb;
 import yuku.alkitabconverter.yet.YetFileInput.YetFileInputResult;
 
 import java.io.File;
@@ -14,18 +17,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class YetToYes2 {
-	@Parameter private List<String> params = new ArrayList<>();
+public class YetToInternal {
+	@Parameter private List<String> params = new ArrayList<String>();
 	@Parameter(names = "--help", help = true, description = "Show this help") private boolean help = false;
-	@Parameter(names = "--no-compress", description = "Disable compression on the resultant yes file") private boolean nocompress = false;
-	@Parameter(names = "--ignore-skipped-verses", description = "Allow skipping verses, e.g. verse 1 1 4 followed directly by verse 1 1 6. However, chapters must still be consecutive and books must start with chapter 1 and verse 1.") private boolean ignore_skipped_verses = false;
+	@Parameter(names = {"--prefix", "-p"}, description = "Set the prefix for internal version") private String prefix = "ddd";
 
 	public static void main(String[] args) throws Exception {
-		YetToYes2 main = new YetToYes2();
+		YetToInternal main = new YetToInternal();
 		JCommander jc = new JCommander(main, args);
 
 		if (main.help) {
-			jc.setProgramName("java -jar YetToYes2.jar");
+			jc.setProgramName("java -jar YetToInternal.jar");
 			jc.usage();
 			System.exit(0);
 		}
@@ -36,22 +38,33 @@ public class YetToYes2 {
 
 	private int main() throws Exception {
 		if (params.size() < 1) {
-			System.err.println("Usage parameters: <yet-file> [<yes-file>]");
+			System.err.println("Usage parameters: <yet-file> [<internal-files-dir>]");
+			System.err.println("Use --help to show options");
 			return 1;
 		}
 		
-		String yetfile = params.get(0);
-		String yesfile;
+		final String yetfile = params.get(0);
+		String internaldir;
 		if (params.size() >= 2) {
-			yesfile = params.get(1);
+			internaldir = params.get(1);
 		} else {
-			yesfile = yetfile.endsWith(".yet") ? (yetfile.substring(0, yetfile.length() - 1) + "s"): yetfile + ".yes";
+			internaldir = yetfile.endsWith(".yet") ? yetfile.substring(0, yetfile.length() - 4) : yetfile + ".internal";
 		}
-	
+
 		System.err.println("input:  " + yetfile);
-		System.err.println("output: " + yesfile);
-		
-		YetFileInputResult result = new YetFileInput().parse(yetfile, !ignore_skipped_verses);
+		System.err.println("output: " + internaldir);
+
+		{ // make output dir
+			final File outputdir = new File(internaldir);
+			if (!outputdir.exists()) {
+				if (!outputdir.mkdirs()) {
+					System.err.println("output dir couldn't be created");
+					return 1;
+				}
+			}
+		}
+
+		YetFileInputResult result = new YetFileInput().parse(yetfile);
 		if (result == null) {
 			// error message given by parse above
 			return 1;
@@ -72,7 +85,7 @@ public class YetToYes2 {
 		}
 		
 		{ // check if all book names are available
-			Set<Integer> books_1 = new HashSet<>();
+			Set<Integer> books_1 = new HashSet<Integer>();
 			for (Rec rec: result.recs) {
 				books_1.add(rec.book_1);
 			}
@@ -85,14 +98,7 @@ public class YetToYes2 {
 				}
 			}
 		}
-		
-		Yes2Common.VersionInfo versionInfo = new Yes2Common.VersionInfo();
-		versionInfo.locale = result.infos.get("locale");
-		versionInfo.shortName = result.infos.get("shortName");
-		versionInfo.longName = result.infos.get("longName");
-		versionInfo.description = result.infos.get("description");
-		versionInfo.setBookNamesAndAbbreviations(result.getBookNamesAsList(), result.getBookAbbreviationsAsList());
-		
+
 		// convert recs to textdb
 		TextDb textDb = new TextDb();
 		for (Rec rec: result.recs) {
@@ -102,13 +108,18 @@ public class YetToYes2 {
 			}
 		}
 
-		if (ignore_skipped_verses) {
-			textDb.normalize();
+		{ ////////// CREATE REVERSE INDEX
+			final File outDir = new File(internaldir);
+			ReverseIndexer.createReverseIndex(outDir, prefix, new TextDb(result.recs));
 		}
 
-		boolean compressed = !nocompress;
-		Yes2Common.createYesFile(new File(yesfile), versionInfo, textDb, result.pericopeData, compressed, result.xrefEntries, result.footnoteEntries);
-		
+		{ ////////// CONVERT TO INTERNAL
+			final File outDir = new File(internaldir);
+			final XrefDb xrefDb = result.xrefEntries == null? null: new XrefDb(result.xrefEntries);
+			final FootnoteDb footnoteDb = result.footnoteEntries == null? null: new FootnoteDb(result.footnoteEntries);
+			InternalCommon.createInternalFiles(outDir, prefix, result.getBookNamesAsList(), result.recs, result.pericopeData, xrefDb, footnoteDb);
+		}
+
 		return 0;
 	}
 }

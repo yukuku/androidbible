@@ -1,4 +1,4 @@
-package yuku.alkitabconverter.in_tb_usfm;
+package yuku.alkitabconverter.in_ayt;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -8,8 +8,6 @@ import yuku.alkitab.util.Ari;
 import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitabconverter.util.FootnoteDb;
 import yuku.alkitabconverter.util.TextDb;
-import yuku.alkitabconverter.util.TextDb.TextProcessor;
-import yuku.alkitabconverter.util.TextDb.VerseState;
 import yuku.alkitabconverter.util.XrefDb;
 import yuku.alkitabconverter.yes_common.Yes2Common;
 import yuku.alkitabconverter.yet.YetFileOutput;
@@ -23,21 +21,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-// process from usfx files to yet
 public class Proses2 {
 	final SAXParserFactory factory = SAXParserFactory.newInstance();
-	
-	static String INPUT_BOOK_NAMES = "../../../bahan-alkitab/in-tb/in/in-tb-usfm-kitab.txt";
-	static String OUTPUT_YET = "../../../bahan-alkitab/in-tb/out/in-tb-usfm.yet";
-	static String INFO_SHORT_NAME = "TB";
-	static String INFO_LONG_NAME = "Terjemahan Baru";
-	static String INFO_DESCRIPTION = "Terjemahan Baru (1974), Lembaga Alkitab Indonesia";
-	static String INFO_LOCALE = "in";
-	static String INPUT_TEKS_2 = "../../../bahan-alkitab/in-tb/mid/";
 
+	static String INPUT_BOOK_NAMES = "../../../bahan-alkitab/in-ayt/in/book_names.txt";
+	static String INPUT_TEXT_2 = "../../../bahan-alkitab/in-ayt/mid/";
+	static String OUTPUT_YET = "../../../bahan-alkitab/in-ayt/in-ayt.yet";
+	static String INFO_LOCALE = "in";
+	static String INFO_SHORT_NAME = "AYT";
+	static String INFO_LONG_NAME = "Alkitab Yang Terbuka (α/β)";
+	static String INFO_DESCRIPTION = "Alkitab Yang Terbuka (Perjanjian Lama: versi Alfa, Perjanjian Baru: versi Beta)";
+	static boolean XREF_SHIFT_TB = false; // whether detected xref references are TB-verse-shifted
 
 	TextDb teksDb = new TextDb();
 	StringBuilder misteri = new StringBuilder();
@@ -54,19 +49,19 @@ public class Proses2 {
 	}
 
 	public void u() throws Exception {
-		String[] files = new File(INPUT_TEKS_2).list(new FilenameFilter() {
+		String[] files = new File(INPUT_TEXT_2).list(new FilenameFilter() {
 			@Override public boolean accept(File dir, String name) {
 				return name.endsWith("-utf8.usfx.xml");
 			}
 		});
 		
 		Arrays.sort(files);
-		
+
 
 		for (String file : files) {
 			System.out.println("file " + file + " start;");
 			
-			FileInputStream in = new FileInputStream(new File(INPUT_TEKS_2, file));
+			FileInputStream in = new FileInputStream(new File(INPUT_TEXT_2, file));
 			SAXParser parser = factory.newSAXParser();
 			XMLReader r = parser.getXMLReader();
 			System.out.println("input buffer size (old) = " + r.getProperty("http://apache.org/xml/properties/input-buffer-size"));
@@ -80,59 +75,26 @@ public class Proses2 {
 		
 		System.out.println("OUTPUT MISTERI:");
 		System.out.println(misteri);
-		
+
 		System.out.println("OUTPUT XREF:");
-		xrefDb.processEach(XrefDb.defaultShiftTbProcessor);
+		xrefDb.processEach(XREF_SHIFT_TB? XrefDb.defaultShiftTbProcessor: XrefDb.defaultWithoutShiftTbProcessor);
 		xrefDb.dump();
-		
+
+		System.out.println("OUTPUT FOOTNOTE:");
+		footnoteDb.dump();
+
 		// POST-PROCESS
 		
 		teksDb.normalize();
-
-		teksDb.processEach(new TextProcessor() {
-			final Pattern xrefTag = Pattern.compile("(@<x[0-9]@>@/)\\s*");
-
-			@Override public void process(int ari, VerseState as) {
-				// tambah @@ kalo perlu
-				if (as.text.contains("@") && !as.text.startsWith("@@")) {
-					as.text = "@@" + as.text;
-				}
-				
-				// patch for "S e l a", "S el a", and "H i g a y o n"
-				as.text = as.text.replace("S e l a", "Sela");
-				as.text = as.text.replace("S el a", "Sela");
-				as.text = as.text.replace("H i g a y o n", "Higayon");
-				
-				// patch for John 12:34
-				if (ari == Ari.encode(42, 12, 34)) {
-					as.text = as.text.replace("bahwa@6Anak Manusia", "bahwa @6Anak Manusia");
-				}
-				
-				// patch for words of Jesus after colon, there must be a space after the colon
-				if (as.text.contains(":@6")) {
-					as.text = as.text.replace(":@6", ": @6");
-				}
-				
-				// replace "--" that is used not to separate verses in verse ranges with emdash
-				if (as.text.contains("--")) {
-					as.text = as.text.replaceAll("--(?=[^a-z0-9])", "\u2014");
-				}
-
-				// Move xrefs at the beginning of verses to the end of verses.
-				final Matcher m = xrefTag.matcher(as.text);
-				String end = "";
-				while (m.find()) {
-					end += m.group();
-				}
-				as.text = xrefTag.matcher(as.text).replaceAll("") + end;
-			}
-		});
-		
+		teksDb.removeEmptyVerses();
 		teksDb.dump();
-		
+
 		////////// PROSES KE YET
 
-		YetFileOutput yet = new YetFileOutput(new File(OUTPUT_YET));
+		final File yetOutputFile = new File(OUTPUT_YET);
+		//noinspection ResultOfMethodCallIgnored
+		yetOutputFile.getParentFile().mkdir();
+		final YetFileOutput yet = new YetFileOutput(yetOutputFile);
 		final Yes2Common.VersionInfo versionInfo = new Yes2Common.VersionInfo();
 		versionInfo.locale = INFO_LOCALE;
 		versionInfo.shortName = INFO_SHORT_NAME;
@@ -143,7 +105,7 @@ public class Proses2 {
 		yet.setTextDb(teksDb);
 		yet.setPericopeData(pericopeData);
 		yet.setXrefDb(xrefDb);
-		// no footnotes
+		yet.setFootnoteDb(footnoteDb);
 
 		yet.write();
 	}
@@ -152,7 +114,7 @@ public class Proses2 {
 		private static final int LEVEL_p_r = -2;
 		private static final int LEVEL_p_ms = -3;
 		private static final int LEVEL_p_mr = -4;
-		
+
 		int kitab_0 = -1;
 		int pasal_1 = 0;
 		int ayat_1 = 0;
@@ -160,21 +122,24 @@ public class Proses2 {
 		String[] tree = new String[80];
 		int depth = 0;
 		
-		Stack<Object> tujuanTulis = new Stack<>();
+		Stack<Object> tujuanTulis = new Stack<Object>();
 		Object tujuanTulis_misteri = new Object();
 		Object tujuanTulis_teks = new Object();
 		Object tujuanTulis_judulPerikop = new Object();
 		Object tujuanTulis_xref = new Object();
 		Object tujuanTulis_footnote = new Object();
-		
-		List<PericopeData.Entry> perikopBuffer = new ArrayList<>();
+
+		List<PericopeData.Entry> perikopBuffer = new ArrayList<PericopeData.Entry>();
 		boolean afterThisMustStartNewPerikop = true; // if true, we have done with a pericope title, so the next text must become a new pericope title instead of appending to existing one
-		
+
 		// states
 		int sLevel = 0;
 		int menjorokTeks = -1; // -2 adalah para start; 0 1 2 3 4 adalah q level;
 		int xref_state = -1; // 0 is initial (just encountered xref tag <x>), 1 is source, 2 is target
 		int footnote_state = -1; // 0 is initial (just encountered footnote tag <f>), 1 is fr (reference), 2 is fk (keywords), 3 is ft (text)
+
+		// for preventing split of characters in text elements
+		StringBuilder charactersBuffer = new StringBuilder();
 
 		public Handler(int kitab_0) {
 			this.kitab_0 = kitab_0;
@@ -182,6 +147,8 @@ public class Proses2 {
 		}
 		
 		@Override public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+			flushCharactersBuffer();
+
 			tree[depth++] = localName;
 
 			System.out.print("(start:) ");
@@ -204,7 +171,7 @@ public class Proses2 {
 					for (int pos = 0; pos < id.length(); pos++) {
 						if (!Character.isDigit(id.charAt(pos))) {
 							String s = id.substring(0, pos);
-							ayat_1 = Integer.parseInt(s);
+							ayat_1 = Integer.parseInt(s); 
 							System.out.println("// number format exception simplified to: " + s);
 							break;
 						}
@@ -212,50 +179,78 @@ public class Proses2 {
 				}
 			} else if (alamat.endsWith("/f")) {
 				tujuanTulis.push(tujuanTulis_footnote);
+				footnote_state = 0;
+			} else if (alamat.endsWith("/f/fr")) {
+				footnote_state = 1;
+			} else if (alamat.endsWith("/f/fk")) {
+				footnote_state = 2;
+			} else if (alamat.endsWith("/f/ft")) {
+				footnote_state = 3;
 			} else if (alamat.endsWith("/p")) {
 				String sfm = attributes.getValue("sfm");
 				if (sfm != null) {
-					switch (sfm) {
-						case "r":
-							tujuanTulis.push(tujuanTulis_judulPerikop);
-							sLevel = LEVEL_p_r;
-							break;
-						case "mt":
-							tujuanTulis.push(tujuanTulis_misteri);
-							break;
-						case "ms":
-							tujuanTulis.push(tujuanTulis_judulPerikop);
-							sLevel = LEVEL_p_ms;
-							break;
-						case "mr":
-							tujuanTulis.push(tujuanTulis_judulPerikop);
-							sLevel = LEVEL_p_mr;
-							break;
-						case "mi":
-							tujuanTulis.push(tujuanTulis_teks);
-							menjorokTeks = 2;
-							break;
-						case "pi":  // Indented para
-							tujuanTulis.push(tujuanTulis_teks);
-							menjorokTeks = 1;
-							break;
-						case "pc":  // Centered para
-							tujuanTulis.push(tujuanTulis_teks);
-							menjorokTeks = 2;
-							break;
-						case "m":
+					if (sfm.equals("r")) {
+						tujuanTulis.push(tujuanTulis_judulPerikop);
+						sLevel = LEVEL_p_r;
+					} else if (sfm.equals("mt")) {
+						tujuanTulis.push(tujuanTulis_misteri);
+					} else if (sfm.equals("ms")) {
+						tujuanTulis.push(tujuanTulis_judulPerikop);
+						sLevel = LEVEL_p_ms;
+					} else if (sfm.equals("mr")) {
+						tujuanTulis.push(tujuanTulis_judulPerikop);
+						sLevel = LEVEL_p_mr;
+					} else if (sfm.equals("mi")) {
+						tujuanTulis.push(tujuanTulis_teks);
+						menjorokTeks = 2;
+					} else if (sfm.equals("pi")) { // Indented para
+						tujuanTulis.push(tujuanTulis_teks);
+						menjorokTeks = 1;
+					} else if (sfm.equals("pc")) { // Centered para
+						tujuanTulis.push(tujuanTulis_teks);
+						menjorokTeks = 2;
+					} else if (sfm.equals("m")) {
 						/*
 						 * Flush left (margin) paragraph.
 						 * • No first line indent.
 						 * • Followed immediately by a space and paragraph text, or by a new line and a verse marker.
 						 * • Usually used to resume prose at the margin (without indent) after poetry or OT quotation (i.e. continuation of the previous paragraph).
 						 */
-							tujuanTulis.push(tujuanTulis_teks);
-							menjorokTeks = 0; // inden 0
-
-							break;
-						default:
-							throw new RuntimeException("p@sfm ga dikenal: " + sfm);
+						tujuanTulis.push(tujuanTulis_teks);
+						menjorokTeks = 0; // inden 0
+					} else if (sfm.equals("li")) {
+						/*
+						 * \li#(_text...)
+						 * List item.
+						 * · An out-dented paragraph meant to highlight the items of a list.
+						 * · Lists may be used to markup the elements of a recurrent structure, such as the days within the creation account, or the Decalogue (10 commandments).
+						 * · The variable # represents the level of indent.
+						 */
+						tujuanTulis.push(tujuanTulis_teks);
+						menjorokTeks = 2; // inden 2
+					} else if (sfm.equals("nb")) {
+						/*
+						 * Indicates "no-break" with previous paragraph (regardless of previous paragraph type).
+						 * Commonly used in cases where the previous paragraph spans the chapter boundary.
+						 */
+						tujuanTulis.push(tujuanTulis_teks);
+						// do not change menjorokTeks, treat as if it was no new para marker
+					} else if (sfm.equals("rq")) {
+						/*
+						 * Inline quotation reference(s).
+						 * A (cross) reference indicating the source text for the preceding quotation (usually an Old Testament quote).
+						 */
+						tujuanTulis.push(tujuanTulis_xref);
+						xref_state = 0;
+					} else if (sfm.equals("cls")) {
+						/*
+						 * Closure of an epistle/letter.
+						 * Similar to "With love," or "Sincerely yours,".
+						 */
+						tujuanTulis.push(tujuanTulis_teks);
+						menjorokTeks = 4; // inden 4
+					} else {
+						throw new RuntimeException("p@sfm ga dikenal: " + sfm);
 					}
 				} else {
 					tujuanTulis.push(tujuanTulis_teks);
@@ -282,13 +277,12 @@ public class Proses2 {
 			} else if (alamat.endsWith("/wj")) {
 				tujuanTulis.push(tujuanTulis_teks);
 				tulis("@6");
-			} else if (alamat.endsWith("/b")) { // line break
-				tulis("@8");
 			}
 		}
 
-
 		@Override public void endElement(String uri, String localName, String qName) throws SAXException {
+			flushCharactersBuffer();
+
 			System.out.print("(end:) ");
 			cetak();
 
@@ -300,6 +294,8 @@ public class Proses2 {
 			} else if (alamat.endsWith("/s")) {
 				afterThisMustStartNewPerikop = true;
 				tujuanTulis.pop();
+				// reset xref_state to -1 to prevent undetected unset xref_state
+				xref_state = -1;
 			} else if (alamat.endsWith("/x")) {
 				tujuanTulis.pop();
 			} else if (alamat.endsWith("/wj")) {
@@ -310,12 +306,26 @@ public class Proses2 {
 			tree[--depth] = null;
 		}
 
-		@Override public void characters(char[] ch, int start, int length) throws SAXException {
-			String chars = new String(ch, start, length);
-			if (chars.trim().length() > 0) {
-				System.out.println("#text:" + chars);
-				tulis(chars);
+		private void flushCharactersBuffer() {
+			if (charactersBuffer.length() > 0) {
+				charactersCompleted(charactersBuffer.toString());
+				charactersBuffer.setLength(0);
 			}
+		}
+
+		@Override public void characters(char[] ch, int start, int length) throws SAXException {
+			charactersBuffer.append(ch, start, length);
+		}
+
+		void charactersCompleted(String text) {
+			System.out.println("#text:" + text);
+			if (text.trim().length() == 0) {
+				// when processing footnotes, we still continue even though the text is whitespace only.
+				if (tujuanTulis.peek() != tujuanTulis_footnote) {
+					return;
+				}
+			}
+			tulis(text);
 		}
 
 		private void tulis(String chars) {
@@ -327,7 +337,7 @@ public class Proses2 {
 				System.out.println("$tulis ke teks[jenis=" + menjorokTeks + "] " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
 				teksDb.append(kitab_0, pasal_1, ayat_1, chars.replace("\n", " ").replaceAll("\\s+", " "), menjorokTeks);
 				menjorokTeks = -1; // reset
-				
+
 				if (perikopBuffer.size() > 0) {
 					for (PericopeData.Entry pe: perikopBuffer) {
 						pe.block.title = pe.block.title.replace("\n", " ").replace("  ", " ").trim();
@@ -340,8 +350,8 @@ public class Proses2 {
 			} else if (tujuan == tujuanTulis_judulPerikop) {
 				// masukin ke data perikop
 				String judul = chars;
-				
-				if (sLevel == 0 || sLevel == 1 || sLevel == LEVEL_p_mr || sLevel == LEVEL_p_ms) {
+
+				if (sLevel == 0 || sLevel == 1 || sLevel == 2 || sLevel == LEVEL_p_mr || sLevel == LEVEL_p_ms) {
 					if (afterThisMustStartNewPerikop || perikopBuffer.size() == 0) {
 						PericopeData.Entry entry = new PericopeData.Entry();
 						entry.ari = 0; // done later when writing teks so we know which verse this pericope starts from
@@ -350,6 +360,8 @@ public class Proses2 {
 						perikopBuffer.add(entry);
 						afterThisMustStartNewPerikop = false;
 						System.out.println("$tulis ke perikopBuffer (new entry) (size now: " + perikopBuffer.size() + "): " + judul);
+					} else if (sLevel > 2) {
+						throw new RuntimeException("sLevel not handled: " + sLevel);
 					} else {
 						perikopBuffer.get(perikopBuffer.size() - 1).block.title += judul;
 						System.out.println("$tulis ke perikopBuffer (append to existing) (size now: " + perikopBuffer.size() + "): " + judul);
@@ -358,7 +370,7 @@ public class Proses2 {
 					if (perikopBuffer.size() == 0) {
 						throw new RuntimeException("paralel found but no perikop on buffer: " + judul);
 					}
-					
+
 					PericopeData.Entry entry = perikopBuffer.get(perikopBuffer.size() - 1);
 					entry.block.parallels = parseParalel(judul);
 				} else if (sLevel == 2) {
@@ -366,6 +378,7 @@ public class Proses2 {
 				} else {
 					throw new RuntimeException("sLevel = " + sLevel + " not understood: " + judul);
 				}
+
 			} else if (tujuan == tujuanTulis_xref) {
 				System.out.println("$tulis ke xref (state=" + xref_state + ") " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
 				int ari = Ari.encode(kitab_0, pasal_1, ayat_1);
@@ -381,12 +394,13 @@ public class Proses2 {
 					}
 					teksDb.append(ari, "@<x" + (xrefIndex + 1) + "@>@/", -1);
 				} else if (xref_state == 1) {
-					xrefDb.appendText(ari, chars.replace("\n", " "));
+					xrefDb.appendText(ari, chars);
 				} else if (xref_state == 2) {
-					xrefDb.appendText(ari, chars.replace("\n", " "));
+					xrefDb.appendText(ari, chars);
 				} else {
 					throw new RuntimeException("xref_state not supported");
 				}
+
 			} else if (tujuan == tujuanTulis_footnote) {
 				System.out.println("$tulis ke footnote (state=" + footnote_state + ") " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
 				final int ari = Ari.encode(kitab_0, pasal_1, ayat_1);
@@ -449,7 +463,7 @@ public class Proses2 {
 	 * (2Taw. 34:3-7, 35:1-27) -> [2Taw. 34:3-7, 2Taw. 35:1-27]
 	 */
 	static List<String> parseParalel(String judul) {
-		List<String> res = new ArrayList<>();
+		List<String> res = new ArrayList<String>();
 
 		judul = judul.trim();
 		if (judul.startsWith("(")) judul = judul.substring(1);
@@ -488,4 +502,3 @@ public class Proses2 {
 		return res;
 	}
 }
-

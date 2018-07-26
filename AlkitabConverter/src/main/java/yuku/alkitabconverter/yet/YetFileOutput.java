@@ -102,7 +102,7 @@ public class YetFileOutput {
 			xrefDb.processEach(new XrefDb.XrefProcessor() {
 				@Override
 				public void process(final XrefEntry xe, final int ari, final int entryIndex) {
-					pw.printf(Locale.US, "%s\t%s\t%s\t%s\t%s\t%s\n", "xref", Ari.toBook(ari) + 1, Ari.toChapter(ari), Ari.toVerse(ari), entryIndex + 1, xe.content);
+					pw.printf(Locale.US, "%s\t%s\t%s\t%s\t%s\t%s\n", "xref", Ari.toBook(ari) + 1, Ari.toChapter(ari), Ari.toVerse(ari), entryIndex + 1, xe.content.replace('\n', ' '));
 				}
 			});
 		}
@@ -112,7 +112,7 @@ public class YetFileOutput {
 			footnoteDb.processEach(new FootnoteDb.FootnoteProcessor() {
 				@Override
 				public void process(final FootnoteEntry fe, final int ari, final int entryIndex) {
-					pw.printf(Locale.US, "%s\t%s\t%s\t%s\t%s\t%s\n", "footnote", Ari.toBook(ari) + 1, Ari.toChapter(ari), Ari.toVerse(ari), entryIndex + 1, fe.content);
+					pw.printf(Locale.US, "%s\t%s\t%s\t%s\t%s\t%s\n", "footnote", Ari.toBook(ari) + 1, Ari.toChapter(ari), Ari.toVerse(ari), entryIndex + 1, fe.content.replace('\n', ' '));
 				}
 			});
 		}

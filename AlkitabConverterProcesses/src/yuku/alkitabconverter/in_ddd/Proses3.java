@@ -1,4 +1,4 @@
-package yuku.alkitabconverter.in_tb_usfm;
+package yuku.alkitabconverter.in_ddd;
 
 import yuku.alkitabconverter.internal_common.InternalCommon;
 import yuku.alkitabconverter.internal_common.ReverseIndexer;
@@ -11,34 +11,29 @@ import java.io.File;
 
 // Process from yet file to internal and revindex
 public class Proses3 {
-	static String INPUT_YET = "../../../bahan-alkitab/in-tb/in-tb.yet";
-	static String OUTPUT_PREFIX = "tb";
-	static String OUTPUT_INTERNAL = "../../../bahan-alkitab/in-tb/raw/";
+	static String INPUT_YET = "../../../bahan-alkitab/in-ddd/in-ddd.yet";
+	static String OUTPUT_PREFIX = "ddd";
+	static String OUTPUT_INTERNAL = "../../../bahan-alkitab/in-ddd/raw/";
 
 	public static void main(String[] args) throws Exception {
-		if (args.length >= 2) {
-			INPUT_YET = args[0];
-			OUTPUT_INTERNAL = args[1];
-		}
-
 		new Proses3().u();
 	}
 
 	public void u() throws Exception {
 		final YetFileInput.YetFileInputResult yet = new YetFileInput().parse(INPUT_YET);
 
+		File outDir = new File(OUTPUT_INTERNAL);
+		outDir.mkdir();
+
 		////////// CREATE REVERSE INDEX
 
 		{
-			File outDir = new File(OUTPUT_INTERNAL);
-			outDir.mkdir();
 			ReverseIndexer.createReverseIndex(outDir, OUTPUT_PREFIX, new TextDb(yet.recs));
 		}
 
 		////////// CONVERT TO INTERNAL
 
 		{
-			File outDir = new File(OUTPUT_INTERNAL);
 			XrefDb xrefDb = yet.xrefEntries == null? null: new XrefDb(yet.xrefEntries);
 			FootnoteDb footnoteDb = yet.footnoteEntries == null? null: new FootnoteDb(yet.footnoteEntries);
 			InternalCommon.createInternalFiles(outDir, OUTPUT_PREFIX, yet.getBookNamesAsList(), yet.recs, yet.pericopeData, xrefDb, footnoteDb);

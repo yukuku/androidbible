@@ -9,10 +9,10 @@ import java.util.Scanner;
 
 // process from sfm file to usfx files
 public class Proses1 {
-	static String INPUT_TEKS_1 = "../../../bahan-alkitab/in-tb-usfm/in/tb-woj-utf8-revyuku.sfm";
+	static String INPUT_TEKS_1 = "../../../bahan-alkitab/in-tb/in/tb-woj-utf8-revyuku.sfm";
 	public static String INPUT_TEKS_ENCODING = "utf-8";
 	public static int INPUT_TEKS_ENCODING_YES = 2; // 1: ascii; 2: utf-8;
-	public static String INPUT_KITAB = "../../../bahan-alkitab/in-tb-usfm/in/in-tb-usfm-kitab.txt";
+	public static String INPUT_KITAB = "../../../bahan-alkitab/in-tb/in/in-tb-usfm-kitab.txt";
 	public static int OUTPUT_ADA_PERIKOP = 0;
 
 	public static void main(String[] args) throws Exception {

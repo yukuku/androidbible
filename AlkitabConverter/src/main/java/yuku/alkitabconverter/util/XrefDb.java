@@ -154,7 +154,17 @@ public class XrefDb {
 		bw.writeRaw(contents.toByteArray());
 	}
 
-	public static XrefProcessor defaultShiftTbProcessor = new XrefDb.XrefProcessor() {
+	public static XrefProcessor defaultShiftTbProcessor = new DefaultXrefProcessor(true);
+
+	public static XrefProcessor defaultWithoutShiftTbProcessor = new DefaultXrefProcessor(false);
+
+	static class DefaultXrefProcessor implements XrefDb.XrefProcessor {
+		private boolean shiftTb;
+
+		public DefaultXrefProcessor(boolean shiftTb) {
+			this.shiftTb = shiftTb;
+		}
+
 		@Override public void process(XrefEntry xe, int ari_location, int entryIndex) {
 			final List<int[]> pairs = new ArrayList<>();
 			DesktopVerseFinder.findInText(xe.content, new DesktopVerseFinder.DetectorListener() {
@@ -172,7 +182,13 @@ public class XrefDb {
 				int[] pair = pairs.get(i);
 				String verse = target.substring(pair[0], pair[1]);
 
-				IntArrayList ariRanges = DesktopVerseParser.verseStringToAriWithShiftTb(verse);
+				IntArrayList ariRanges;
+				if (shiftTb) {
+					ariRanges = DesktopVerseParser.verseStringToAriWithShiftTb(verse);
+				} else {
+					ariRanges = DesktopVerseParser.verseStringToAri(verse);
+				}
+
 				if (ariRanges == null || ariRanges.size() == 0) {
 					throw new RuntimeException("verse cannot be parsed: " + verse);
 				}

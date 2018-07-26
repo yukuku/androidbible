@@ -62,13 +62,24 @@ public class Yes2Common {
 		public void setBookNamesFromFile(final String inputBookNames) throws IOException {
 			List<String> bookNames = new ArrayList<>();
 			final Scanner sc = new Scanner(new File(inputBookNames), "utf-8");
-			int c = 0;
 			while (sc.hasNextLine()) {
 				final String line = sc.nextLine().trim();
 				bookNames.add(line);
-				c++;
 			}
 			this.bookNames = bookNames;
+		}
+
+		public void setBookNamesAndAbbreviationsFromFile(final String inputBookNames) throws IOException {
+			final List<String> bookNames = new ArrayList<>();
+			final List<String> abbrs = new ArrayList<>();
+			final Scanner sc = new Scanner(new File(inputBookNames), "utf-8");
+			while (sc.hasNextLine()) {
+				final String[] line = sc.nextLine().trim().split("\\t");
+				bookNames.add(line[0]);
+				abbrs.add(line.length > 1 ? line[1] : null);
+			}
+			this.bookNames = bookNames;
+			this.bookAbbreviations = abbrs;
 		}
 	}
 

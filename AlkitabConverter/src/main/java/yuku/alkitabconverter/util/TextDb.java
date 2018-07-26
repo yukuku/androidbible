@@ -120,6 +120,10 @@ public class TextDb {
 		}
 		return s;
 	}
+
+	private String dispbcv(int bookId, int chapter_1, int verse_1) {
+		return "book_1 " + (bookId + 1) + " " + chapter_1 + " " + verse_1;
+	}
 	
 	public void normalize() {
 		Set<Integer> keys = new TreeSet<>(map.keySet());
@@ -135,7 +139,7 @@ public class TextDb {
 			if (bookId != last_bookId) {
 				// must start with chapter_1 1 and verse_1 1
 				if (chapter_1 != 1 || verse_1 != 1) {
-					throw new RuntimeException("at " + bookId + " " + chapter_1 + " " + verse_1 + ": " + " new book does not start from 1:1");
+					throw new RuntimeException("at " + dispbcv(bookId, chapter_1, verse_1) + ": " + " new book does not start from 1:1");
 				}
 				// different book, ignore and restart
 				last_bookId = bookId;
@@ -146,19 +150,24 @@ public class TextDb {
 			
 			if (chapter_1 == last_chapter_1) {
 				if (verse_1 != last_verse_1 + 1) {
-					System.out.println("at " + bookId + " " + chapter_1 + " " + verse_1 + ": " + " skipped after " + last_bookId + " " + last_chapter_1 + " " + last_verse_1);
+					System.out.println("at " + dispbcv(bookId, chapter_1, verse_1) + ": " + " skipped after " + dispbcv(last_bookId, last_chapter_1, last_verse_1));
 					System.out.println("Adding empty verses:");
 					for (int a = last_verse_1 + 1; a < verse_1; a++) {
-						System.out.println("  at " + bookId + " " + chapter_1 + " " + a + ": " + " (blank)");
+						System.out.println("  at " + dispbcv(bookId, chapter_1, a) + ": " + " (blank)");
 						append(bookId, chapter_1, a, "", 0);
 					}
 				}
 			} else if (chapter_1 == last_chapter_1 + 1) {
 				if (verse_1 != 1) {
-					throw new RuntimeException("at " + bookId + " " + chapter_1 + " " + verse_1 + ": " + " verse_1 is not 1");
+					System.out.println("at " + dispbcv(bookId, chapter_1, verse_1) + ": " + " chapter does not start with verse 1");
+					System.out.println("Adding empty verses:");
+					for (int a = 1; a < verse_1; a++) {
+						System.out.println("  at " + dispbcv(bookId, chapter_1, a) + ": " + " (blank)");
+						append(bookId, chapter_1, a, "", 0);
+					}
 				}
 			} else {
-				throw new RuntimeException("at " + bookId + " " + chapter_1 + " " + verse_1 + ": " + " so wrong! it's after " + last_bookId + " " + last_chapter_1 + " " + last_verse_1);
+				throw new RuntimeException("at " + dispbcv(bookId, chapter_1, verse_1) + ": " + " so wrong! it's after " + last_bookId + " " + last_chapter_1 + " " + last_verse_1);
 			}
 			
 			last_bookId = bookId;
