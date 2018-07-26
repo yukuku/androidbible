@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="YetToYes2" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="yuku.alkitabconverter.yet.YetToYes2" />
+    <module name="YetToYes2" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

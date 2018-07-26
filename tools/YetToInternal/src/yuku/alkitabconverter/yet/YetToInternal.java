@@ -18,9 +18,12 @@ import java.util.List;
 import java.util.Set;
 
 public class YetToInternal {
-	@Parameter private List<String> params = new ArrayList<String>();
-	@Parameter(names = "--help", help = true, description = "Show this help") private boolean help = false;
-	@Parameter(names = {"--prefix", "-p"}, description = "Set the prefix for internal version") private String prefix = "ddd";
+	@Parameter
+	private List<String> params = new ArrayList<String>();
+	@Parameter(names = "--help", help = true, description = "Show this help")
+	private boolean help = false;
+	@Parameter(names = {"--prefix", "-p"}, description = "Set the prefix for internal version")
+	private String prefix = "ddd";
 
 	public static void main(String[] args) throws Exception {
 		YetToInternal main = new YetToInternal();
@@ -31,7 +34,7 @@ public class YetToInternal {
 			jc.usage();
 			System.exit(0);
 		}
-		
+
 		int retval = main.main();
 		System.exit(retval);
 	}
@@ -42,7 +45,7 @@ public class YetToInternal {
 			System.err.println("Use --help to show options");
 			return 1;
 		}
-		
+
 		final String yetfile = params.get(0);
 		String internaldir;
 		if (params.size() >= 2) {
@@ -69,7 +72,7 @@ public class YetToInternal {
 			// error message given by parse above
 			return 1;
 		}
-		
+
 		if (result.recs == null) {
 			System.err.println("yet file doesn't contain any verses");
 			return 1;
@@ -83,14 +86,14 @@ public class YetToInternal {
 			System.err.println("yet file doesn't contain any book names");
 			return 1;
 		}
-		
+
 		{ // check if all book names are available
 			Set<Integer> books_1 = new HashSet<Integer>();
-			for (Rec rec: result.recs) {
+			for (Rec rec : result.recs) {
 				books_1.add(rec.book_1);
 			}
-			
-			for (Integer book_1: books_1) {
+
+			for (Integer book_1 : books_1) {
 				String bookName = result.bookNames.get(book_1);
 				if (bookName == null) {
 					System.err.println("yet file doesn't contain book name for book " + book_1);
@@ -101,7 +104,7 @@ public class YetToInternal {
 
 		// convert recs to textdb
 		TextDb textDb = new TextDb();
-		for (Rec rec: result.recs) {
+		for (Rec rec : result.recs) {
 			textDb.append(rec.book_1 - 1, rec.chapter_1, rec.verse_1, rec.text, -1);
 			if (!KjvUtils.isValidKjv(rec.book_1 - 1, rec.chapter_1, rec.verse_1)) {
 				System.err.println("warning: is not a valid verse in KJV versification: verse " + rec.book_1 + " " + rec.chapter_1 + " " + rec.verse_1);
@@ -115,8 +118,8 @@ public class YetToInternal {
 
 		{ ////////// CONVERT TO INTERNAL
 			final File outDir = new File(internaldir);
-			final XrefDb xrefDb = result.xrefEntries == null? null: new XrefDb(result.xrefEntries);
-			final FootnoteDb footnoteDb = result.footnoteEntries == null? null: new FootnoteDb(result.footnoteEntries);
+			final XrefDb xrefDb = result.xrefEntries == null ? null : new XrefDb(result.xrefEntries);
+			final FootnoteDb footnoteDb = result.footnoteEntries == null ? null : new FootnoteDb(result.footnoteEntries);
 			InternalCommon.createInternalFiles(outDir, prefix, result.getBookNamesAsList(), result.recs, result.pericopeData, xrefDb, footnoteDb);
 		}
 
