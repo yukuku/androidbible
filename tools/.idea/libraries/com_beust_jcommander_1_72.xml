@@ -5,6 +5,8 @@
       <root url="jar://$MAVEN_REPOSITORY$/com/beust/jcommander/1.72/jcommander-1.72.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ideaLibSources/jcommander-1.72-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

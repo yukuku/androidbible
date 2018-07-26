@@ -1,0 +1,106 @@
+FONTLOG
+Andika font family
+=======================
+
+This file provides detailed information on the Andika family of fonts.
+This information should be distributed along with the Andika fonts and any derivative works.
+
+
+ChangeLog
+----------
+7 Aug 2006 (SIL NRSI team) Andika Design Review version 0.001 released under Open Font License.
+
+
+Basic Font Information
+----------------------
+Andika ("Write!" in Swahili) is a sans serif, Unicode-compliant font designed especially for literacy use, taking into account the needs of beginning readers. The focus is on clear, easy-to-perceive letterforms that will not be easily confused with one another. 
+
+A sans serif font is preferred by some literacy personnel for teaching people to read. Its forms are simpler and less cluttered than some serif fonts can be. For years, literacy workers have had to make do with fonts that were available but not really suitable for beginning readers and writers. In some cases, literacy specialists have had to tediously cobble together letters from a variety of fonts in order to get the all of characters they need for their particular language project, resulting in confusing and unattractive publications. Andika addresses those issues.
+
+The principal purpose of this Design Review release is to get feedback (http://scripts.sil.org/Andika_feedback) from the people who know literacy font needs best. Please make your insights and observations known to us.
+
+The Design Review font found here supports what we call the Basic Character Set. It does *not* contain the same comprehensive glyph inventory (more than 3,000 glyphs) found in Doulos SIL or the Charis SIL font family - not yet. The key word is "review": we seek input from you, the end users, regarding character shapes, spacing, diacritic design & size, or anything else that becomes apparent in your experimentation with this font. Once the feedback period is complete (January 31, 2007), we will adjust the design as needed and draw all the other glyphs that are needed to complete the full set and make Andika a truly global font like Doulos and Charis.
+
+So what's in the Basic Character Set? Close to 600 glyphs - those necessary for basic Macintosh and Windows computer operating systems, plus a small number of common special characters. It is meant for testing purposes, and so it is intentionally incomplete in order to speed its release. 
+
+
+Supported Characters in Andika Design Review
+--------------------------------------------
+Description		Range
+Basic Latin		U+0020-U+007F
+
+
+Latin-1 Supplement	U+00A0-U+00FF
+
+
+Latin Extended-A	U+0100..U+0103, U+0106..U+010E, U+0110, U+0112..U+0117, U+011A..U+0121, U+0124..U+0125, U+0128..U+012D, U+0130..U+013A, U+0141..U+0144, U+0147..U+0148, U+014A..U+0155, U+0158..U+015D, U+0160..U+0161, U+0164, U+0168..U+0171, U+0174..U+017E
+
+
+Latin Extended-B	U+0181, U+0186, U+0189..U+018A, U+018E, U+0190, U+0192, U+0197..U+019A, U+01A9..U+01AA, U+01B3..U+01B4, U+01B7, U+01CD..U+01E3, 	U+01E6..U+01EF, U+01F4..U+01F5, U+01F8..U+01FF, U+021E..U+021F, U+0226..U+0233, U+023D
+
+
+IPA Extensions		U+0251, U+0253..U+0254, U+0257, U+0259, U+025B, U+0263, U+0268..U+0269, U+026B, U+0272, U+0289..U+028A, U+028C, U+0292, U+02A0
+
+
+Spacing Modifier Letters	U+02C6..U+02C7, U+02C9..U+09CB, U+02CD, U+02D7..U+02DD
+
+
+Combining Diacritical Marks	U+0300..U+0304, U+0306..U+0308, U+030A..U+030C, U+0327..U+0328, U+0331, U+033F, U+0340..U+0341, U+03A0, U+03A9, U+03C0
+
+
+Latin Extended Additional	U+1E02..U+1E03, U+1E06..U+1E0B, U+1E0E..U+1E0F, U+1E14..U+1E17, U+1E1C..U+1E1F, U+1E20..U+1E23, U+1E26..U+1E27, U+1E2E..U+1E2F, U+1E30..U+1E31, U+1E34..U+1E35, U+1E3A..U+1E3B, U+1E3E..U+1E3F, U+1E40..U+1E41, U+1E44..U+1E45, U+1E48..U+1E49, U+1E4C..U+1E59, U+1E5E..U+1E61, U+1E64..U+1E67, U+1E6A..U+1E6B, U+1E6E..U+1E6F, U+1E78..U+1E7D, U+1E80..U+1E87, U+1E8A..U+1E91, U+1E94..U+1E99, U+1EA4..U+1EA7, U+1EAA..U+1EAB, U+1EAB..U+1EB1, U+1EB4..U+1EB5, U+1EBC..U+1EC1, U+1EC4..U+1EC5, U+1ED0..U+1ED3, U+1ED6..U+1ED7, U+1EF2..U+1EF3, U+1EF8..U+1EF9
+
+
+General Punctuation 	U+2013..U+2014, U+2018..U+201A, U+201C..U+201E, U+2020..U+2022, U+2026, U+2030, U+2039..U+203A, U+2044 
+
+
+Currency Symbols	U+20AC
+
+
+Letterlike Symbols	U+2122, U+2126
+
+
+Mathematical Operators	U+2202, U+2205..U+2206, U+220F, U+2211..U+2212, U+2219, U+221A, U+221E, U+222B, U+2248, U+2260, U+2264..U+2265
+
+
+Geometric Shapes	U+25CA
+
+
+Private-use (PUA) characters
+Latin:
+LATIN SMALL LETTER DOUBLE-BARRED L	  U+F20E
+LATIN CAPITAL LETTER DOUBLE-BARRED L	  U+F20F
+LATIN CAPITAL LETTER U BAR		  U+F218
+LATIN CAPITAL LETTER TURNED V		  U+F219
+MODIFIER LETTER STRAIGHT APOSTROPHE	  U+F21D
+LATIN CAPITAL LETTER L WITH MIDDLE TILDE  U+F242
+
+Note:
+If the character(s) you're looking for aren't in this set but *are* in Doulos SIL and Charis SIL, remember that they *will be* available eventually. It is not necessary to request these characters.
+
+Andika Design Review is a TrueType font, but without any "smart font" code at this time - again, in the interests of getting it out to you for testing. State-of-the-art font technology will be incorporated with the full glyph inventory, as with other SIL Unicode Roman fonts.
+
+Two fonts from this typeface family are included in this release:
+     Andika Design Review A
+     Andika Design Review B (with 20 alternately designed glyphs)
+
+Note:
+Because we are releasing Andika with the expectation of suggestions for changes, we do anticipate changes to both letter shapes and metrics in future releases. Therefore future versions of the font will most likely result in different line breaks, line spacing, or paragraph lengths. Do not expect that a document laid out in one version will always have the same page breaks, etc.
+
+
+Acknowledgements
+----------------
+(Here is where contributors can be acknowledged. If you make modifications
+be sure to add your name (N), email (E), web-address (W) and description
+(D). This list is sorted by last name in alphabetical order.)
+
+N: Victor Gaultney, Annie Olsen
+E: fonts@sil.org
+W: http://scripts.sil.org
+D: SIL designers and font engineers
+The Andika project is being developed and maintained by SIL International.
+
+For more information please visit the Andika page on SIL International's Computers and Writing systems website:
+http://scripts.sil.org/andika
+
+Or send an e-mail to <andika AT sil DOT org>

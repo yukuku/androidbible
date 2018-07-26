@@ -1,0 +1,177 @@
+FONTLOG
+Gentium font family
+========================
+
+
+This file provides detailed information on the Gentium family of fonts. This
+information should be distributed along with the Gentium fonts and any
+derivative works.
+
+
+Basic Font Information
+----------------------
+
+Gentium ("belonging to the nations" in Latin) is a Unicode typeface family
+designed to enable the many diverse ethnic groups around the world who use
+the Latin script to produce readable, high-quality publications. The design
+is intended to be highly readable, reasonably compact, and visually
+attractive. Gentium has won a "Certificate of Excellence in Typeface Design"
+in two major international typeface design competitions: bukva:raz! (2001),
+TDC2003 (2003).
+
+Gentium provides glyphs for a wide range of Latin and Greek characters. The
+additional 'extended' Latin letters are designed to naturally harmonize with
+the traditional 26 ones. Diacritics are treated with careful thought and
+attention to their use. Gentium also supports both ancient and modern Greek,
+including a number of alternate forms. It currently supports the following
+ranges of Unicode 3.0 (completely unless noted):
+
+Range           Description
+U+0020-U+007F   Basic Latin
+U+00A0-U+00FF   Latin-1 Supplement
+U+0100-U+017F   Latin Extended-A
+U+0180-U+021F   Latin Extended-B
+U+0222-U+0233   Latin Extended-B (continued)
+U+0250-U+02AD   IPA Extensions
+U+02B0-U+02FF   Spacing Modifier Letters
+U+0300-U+036F   Combining Diacritical Marks
+U+0370-U+03D5   Greek (not including archaic or Coptic)
+U+1E00-U+1EFF   Latin Extended Additional
+U+1F00-U+1FFF   Greek Extended
+U+2000-U+203A   General Punctuation (partial)
+U+2070-U+209F   Superscripts and Subscripts
+U+20A0-U+20CF   Currency Symbols (partial)
+U+2100-U+214F   Letterlike Symbols (only a couple)
+
+Gentium Regular also includes some Cyrillic glyphs, but they are only early
+drafts. A future version will include a completely revised set, including
+italic, and will expand the support for Latin, Greek and Cyrillic to Unicode
+4.1.
+
+
+ChangeLog
+---------
+(This should list both major and minor changes, most recent first.)
+
+28 Nov 2005 (Victor Gaultney)  Gentium version 1.02
+- Changed licensing to the SIL Open Font License
+- Included FontLab source files
+- Fixed some duplicate PostScript glyphs names
+- Fixed italic angle
+
+19 Sep 2003 (Victor Gaultney)  Gentium version 1.01 
+- Maintenance release focused on changing internal font
+- Information to reflect the changeover to an SIL project
+- There is only one bug fix - the Greek mu PS name was changed to try and fix
+a display/printing problem. There is still no manual hinting
+
+16 Sep 2002 (Victor Gaultney)  Gentium version 1.00
+- First public release
+- No manual hinting is included in this version. Some has been done - with
+good results - but is not yet complete enough.
+
+
+Information for Contributors
+----------------------------
+
+The main point of version 1.02 is to enable modification via the OFL and to
+establish a means for people to contribute to the project. For information
+on what you're allowed to change or modify, consult the OFL and OFL-FAQ. The
+OFL-FAQ also gives a very general rationale regarding why you would want to
+contribute to the project.
+
+Anyone can make their own modified version of Gentium (using a different
+name), but SIL International will continue to maintain and develop the
+canonical version of the Gentium fonts. As the package maintainer, we warmly
+welcome contributions. Here are some things to keep in mind:
+
+Format: We are open to contributions in various formats, but if you want to
+maximise the chances of us including your work, please make it available to
+us (via email or a URL) as either a FontLab database (preferred) or a
+PostScript Type 1 (or OT-CFF) font.
+
+Source files: For the first time, we're including FontLab databases used in
+developing the fonts. The current fonts, however, were not solely built from
+this FontLab database, so a simple "Generate Font" will not give you an
+identical result. These databases are provided not as canonical source but
+as an aid to anyone who might find it useful to have access to the
+PostScript-style curves before they were turned into TrueType ones. BTW -
+although only two databases are provided, they contain all the Alt glyphs.
+In the future we may be making our 'source' available in three formats:
+OpenType (TrueType), OT-CFF, and FontLab.
+
+Copyright attribution: If you submit something for inclusion in the main
+Gentium fonts, we will ask you to affirm that it is your original work, and
+ask you to assign the copyright of your work to SIL International. This is
+to ensure that future releases can be made under improved versions of the
+OFL without needing to track you down for further permission. This follows
+the same principle used by the FSF. Keep in mind that we are a
+not-for-profit organization committed to free/libre and open source
+software, and that any contributions incorporated in the fonts will always
+be available under the OFL or a similar license.
+
+Quality: Because we want to be able to guarantee a high level of quality for
+the primary Gentium fonts, we will review submissions carefully. Please
+don't be discouraged if we do not include a submission for this reason, or
+ask you to make specific revisions.
+
+What types of contributions are welcomed now (some more than others):
+- Old style figures
+- Small caps (although we would want such done for *all* caps, not just A-Z)
+- Specifications for smart Greek code (write us about this)
+- Coptic
+- Historic/Archaic Cyrillic
+- Glyphs used for ancient Greek text study (but not alphabetic ones, like
+the digamma)
+- Mathematical glyphs
+- OpenType code and glyphs for on-the-fly fraction creation
+- Additional scripts (Armenian, etc.?), and any needed OT/Graphite/AAT code
+- Other things that we may have once told you we didn't have time to do :-)
+
+What is not needed at this point:
+- Revisions to the basic letters or their spacing
+- Cyrillic revisions or additions. These are already in process
+- Other weights (Bold, Bold italic). We already have some work done on this
+- Alphabetic Ancient Greek glyphs (digamma, etc.). These are done and are
+waiting for the next release
+- Unicode 4.1 additions for Latin. We have these already in the pipeline
+- General Latin/Cyrillic OpenType/Graphite/AAT code - we already have this
+(see our Doulos SIL project)
+- Kerning - there is some in place
+- Hinting - although if you could offer to do some hinting, let us know :-)
+
+So why didn't we include some of this in this release? The only change for
+1.02 is the new licensing model. We thought that it was important to get a
+revised font out before we had completed the next big revision. We also
+didn't want to hold up release until we had everything neat and tidy :-)
+
+When submissions will be included: We hope to have a revised version of the
+Regular and Italic fonts (including full Cyrillic) completed by mid-2006. To
+do this we will need submissions early in the year. Other weights will
+follow after that.
+
+WARNINGS: The details of the source files and build procedures will be
+changing radically before the next release, so do not spend too much time
+working on systems that depend on the current FontLab database information.
+Also - the Cyrillic glyphs in the regular font are very early prototypes and
+will be changing completely. So don't bother to modify them!
+
+
+Acknowledgements
+----------------
+(Here is where contributors can be acknowledged. If you make modifications
+be sure to add your name (N), email (E), web-address (W) and description
+(D). This list is sorted by last name in alphabetical order.)
+
+N: Victor Gaultney
+E: victor_gaultney@sil.org
+W: http://www.sil.org/~gaultney/
+D: Original Designer of Latin, Greek and Cyrillic glyphs
+
+The Gentium project is maintained by SIL International.
+
+For more information please visit the Gentium page on SIL International's
+Computers and Writing systems website:
+http://scripts.sil.org/gentium
+
+Or send an email to <gentium AT sil DOT org>

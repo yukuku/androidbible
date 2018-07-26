@@ -1,0 +1,985 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v2004 rel. 3 U (http://www.xmlspy.com) by Michael Paul Johnson (private) -->
+<SFMInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="SFMInfo.xsd">
+	<sfm kind="ignore">
+		<tag>-tag-</tag>
+		<endTag>tag*</endTag>
+		<paragraphStyle>paragraph style</paragraphStyle>
+		<characterStyle>character style</characterStyle>
+		<parameterName>parameter name</parameterName>
+		<contentName>content name</contentName>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<usfx>USFX</usfx>
+		<usfxAttribute>USFX attribute</usfxAttribute>
+		<milestone>false</milestone>
+		<TeXcode>TeX</TeXcode>
+		<comment>comment</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>add</tag>
+		<endTag>add*</endTag>
+		<characterStyle>Supplied</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<usfx>add</usfx>
+		<milestone>false</milestone>
+		<comment>Added words (i. e. KJV italics)</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>b</tag>
+		<paragraphStyle>Stanza Break</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<milestone>false</milestone>
+		<TeXcode>blankLine</TeXcode>
+		<comment>Blank line between poetry stanzas</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>bd</tag>
+		<endTag>bd*</endTag>
+		<characterStyle>Bold</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<milestone>false</milestone>
+		<comment>Not recommended</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>bdit</tag>
+		<endTag>bdit*</endTag>
+		<characterStyle>Bold italic</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<milestone>false</milestone>
+		<comment>Not recommended</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>bk</tag>
+		<endTag>bk*</endTag>
+		<characterStyle>Book Title In Text</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<milestone>false</milestone>
+	</sfm>
+	<sfm kind="meta">
+		<tag>c</tag>
+		<parameterName>currentChapter</parameterName>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<milestone>true</milestone>
+	</sfm>
+	<sfm kind="meta">
+		<tag>ca</tag>
+		<parameterName>altChapter</parameterName>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<milestone>true</milestone>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>cd</tag>
+		<paragraphStyle>Chapter description</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>chapDesc</TeXcode>
+	</sfm>
+	<sfm kind="meta">
+		<tag>cl</tag>
+		<contentName>chapterLabel</contentName>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>cls</tag>
+		<paragraphStyle>Greeting</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Complementary closing of a letter</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>conc</tag>
+		<paragraphStyle>Concordance</paragraphStyle>
+		<levelExpected>false</levelExpected>
+		<usfx>concordance</usfx>
+		<milestone>false</milestone>
+		<comment>Begin concordance</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>cov</tag>
+		<paragraphStyle>Cover</paragraphStyle>
+		<levelExpected>false</levelExpected>
+		<usfx>cover</usfx>
+		<milestone>false</milestone>
+		<comment>Begin cover</comment>
+	</sfm>
+	<sfm kind="meta">
+		<tag>cp</tag>
+		<parameterName>pubChapter</parameterName>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>d</tag>
+		<paragraphStyle>Hebrew Title</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>hebTitle</TeXcode>
+	</sfm>
+	<sfm kind="dc">
+		<tag>dc</tag>
+		<endTag>dc*</endTag>
+		<characterStyle>Deuterocanon</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="meta">
+		<tag>e</tag>
+		<paragraphStyle>Invisible Paragraph</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Ignored</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>ebm</tag>
+		<paragraphStyle>Bridge left</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>ebp</tag>
+		<paragraphStyle>Bridge paragraph</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>ebq</tag>
+		<paragraphStyle>Bridge poetry</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>ebs</tag>
+		<paragraphStyle>Bridge title</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+	</sfm>
+	<sfm kind="character">
+		<tag>em</tag>
+		<endTag>em*</endTag>
+		<characterStyle>Emphasized</characterStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Emphasis, maybe bold</comment>
+	</sfm>
+	<sfm kind="note">
+		<tag>f</tag>
+		<endTag>f*</endTag>
+		<characterStyle>Footnote</characterStyle>
+		<parameterName>footnoteCaller</parameterName>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<usfx>f</usfx>
+		<usfxAttribute>caller</usfxAttribute>
+	</sfm>
+	<sfm kind="dc">
+		<tag>fdc</tag>
+		<endTag>fdc*</endTag>
+		<characterStyle>Footnote Deuterocanon</characterStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Invisible unless Deuterocanon included</comment>
+	</sfm>
+	<sfm kind="note">
+		<tag>fe</tag>
+		<endTag>fe*</endTag>
+		<characterStyle>Endnote</characterStyle>
+		<parameterName>endnoteCaller</parameterName>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="figure">
+		<tag>fig</tag>
+		<endTag>fig*</endTag>
+		<parameterName>figureSpec</parameterName>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="character">
+		<tag>fk</tag>
+		<endTag>fk*</endTag>
+		<characterStyle>Referenced Text</characterStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="note">
+		<tag>fl</tag>
+		<endTag>fl*,ft,fk,fq,fv,fqa</endTag>
+		<characterStyle>Footnote Label</characterStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>For marking or labelling words which are consistently used across certain kinds of translation notes, like "or". Not very useful.</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>fm</tag>
+		<endTag>fm*</endTag>
+		<characterStyle>Footnote marker</characterStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Simple superscript; not recommended</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>fp</tag>
+		<paragraphStyle>Footnote normal</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>For a paragraph break within a footnote (for very long-winded footnotes).</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>fq</tag>
+		<endTag>fq*,ft,fk,fq,fv,fqa</endTag>
+		<characterStyle>Quoted from text</characterStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="character">
+		<tag>fqa</tag>
+		<endTag>fqa*,fq,ft,fk,fv</endTag>
+		<characterStyle>Alternate Reading</characterStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="character">
+		<tag>fr</tag>
+		<endTag>fr*</endTag>
+		<characterStyle>Note Target Reference</characterStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="character">
+		<tag>ft</tag>
+		<endTag>ft*,fk,fq,fv</endTag>
+		<characterStyle>Footnote</characterStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="character">
+		<tag>fv</tag>
+		<endTag>fv*,fq,ft,fk,fv</endTag>
+		<characterStyle>Verse Number In Note</characterStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>glo</tag>
+		<paragraphStyle>Glossary</paragraphStyle>
+		<levelExpected>false</levelExpected>
+		<usfx>glossary</usfx>
+		<milestone>false</milestone>
+		<comment>Begin glossary</comment>
+	</sfm>
+	<sfm kind="meta">
+		<tag>h</tag>
+		<paragraphStyle>Invisible Paragraph</paragraphStyle>
+		<contentName>shortName</contentName>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+		<usfx>h</usfx>
+		<milestone>false</milestone>
+		<comment>Short name for a book of the Bible, like "Mark".</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>hr</tag>
+		<paragraphStyle>Horizontal Rule</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Not USFM; retained from PNGSFM: horizontal rule</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>ib</tag>
+		<paragraphStyle>Intro Stanza Break</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>introBlankLine</TeXcode>
+	</sfm>
+	<sfm kind="meta">
+		<tag>id</tag>
+		<paragraphStyle>Invisible Paragraph</paragraphStyle>
+		<parameterName>bookName</parameterName>
+		<contentName>id</contentName>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<usfx>id</usfx>
+		<milestone>false</milestone>
+		<comment>Required tag at beginning of book of the Bible</comment>
+	</sfm>
+	<sfm kind="meta">
+		<tag>ide</tag>
+		<paragraphStyle>Invisible Paragraph</paragraphStyle>
+		<parameterName>encoding</parameterName>
+		<contentName>fontName</contentName>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<usfx>ide</usfx>
+		<milestone>false</milestone>
+		<comment>UTF-8 recommended</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>idx</tag>
+		<paragraphStyle>Index</paragraphStyle>
+		<levelExpected>false</levelExpected>
+		<usfx>index</usfx>
+		<milestone>false</milestone>
+		<comment>Begin index</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>ie</tag>
+		<paragraphStyle>Introduction end</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>introEnd</TeXcode>
+		<comment>Explicit end of introductory material-- normally a blank paragraph that starts a new page.</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>iex</tag>
+		<paragraphStyle>Introduction explanatory text</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>introEx</TeXcode>
+		<comment>May explain missing book in partially completed Bible</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>im</tag>
+		<paragraphStyle>Intro Paragraph Continuation</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>introLeft</TeXcode>
+		<comment>Flush left, no indent, no first line indent</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>imi</tag>
+		<paragraphStyle>Intro Citation Paragraph</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>introCitationParagraph</TeXcode>
+		<comment>Block of quoted text in the introduction.</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>imq</tag>
+		<paragraphStyle>Introduction block quote</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>introQuoteLeft</TeXcode>
+		<comment>Flush left block quotation from text</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>imt</tag>
+		<paragraphStyle>Intro Title Main</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+		<usfx>p</usfx>
+		<milestone>false</milestone>
+		<TeXcode>introTitle</TeXcode>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>imte</tag>
+		<paragraphStyle>Intro Title End</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<usfx>p</usfx>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>intro</tag>
+		<paragraphStyle>Intro</paragraphStyle>
+		<levelExpected>false</levelExpected>
+		<usfx>intro</usfx>
+		<milestone>false</milestone>
+		<comment>Starts introduction</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>io</tag>
+		<paragraphStyle>Intro List Item</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+		<TeXcode>IntroOutline#</TeXcode>
+	</sfm>
+	<sfm kind="character">
+		<tag>ior</tag>
+		<endTag>ior*</endTag>
+		<characterStyle>Canonical Reference</characterStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>introCite</TeXcode>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>iot</tag>
+		<paragraphStyle>Intro Outline Title</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>IntroOutlineTitle</TeXcode>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>ip</tag>
+		<paragraphStyle>Intro Paragraph</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<milestone>false</milestone>
+		<TeXcode>introduction</TeXcode>
+		<comment>Normal introduction paragraph</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>ipi</tag>
+		<paragraphStyle>Intro Paragraph Indented</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>introParaIndent</TeXcode>
+		<comment>Introduction Paragraph, Indented</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>ipq</tag>
+		<paragraphStyle>Intro Paragraph Quote</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>introQuote</TeXcode>
+		<comment>Introduction paragraph quoting from text</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>ipr</tag>
+		<paragraphStyle>Intro Citation Reference</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>introRight</TeXcode>
+		<comment>Introduction paragraph right aligned</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>iq</tag>
+		<paragraphStyle>Intro Citation Line</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+		<TeXcode>introPoetry#</TeXcode>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>is</tag>
+		<paragraphStyle>Intro Section Head</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+		<milestone>false</milestone>
+		<TeXcode>sectionTitle#</TeXcode>
+		<comment>Section titles for introduction</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>it</tag>
+		<endTag>it*</endTag>
+		<characterStyle>Italics</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Not recommended</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>k</tag>
+		<endTag>k*</endTag>
+		<characterStyle>Key Word</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>keyword</tag>
+		<paragraphStyle>Keyword</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+		<usfx>keyword</usfx>
+		<milestone>false</milestone>
+		<comment>Concordance or glossary keyword; note: this should really be just k, not keyword, but only if in a concordance or glossary. The difference is hard coded in the program, not here in this XML file.</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>li</tag>
+		<paragraphStyle>List Item</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+		<TeXcode>listItem</TeXcode>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>lit</tag>
+		<paragraphStyle>Congregational Response</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Not recommended</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>m</tag>
+		<paragraphStyle>Paragraph Continuation</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>noIndent</TeXcode>
+		<comment>No indent or space at beginning, otherwise normal</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>mi</tag>
+		<paragraphStyle>Letter Greeting</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>indentedLeft</TeXcode>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>mr</tag>
+		<paragraphStyle>Section Range</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>majorCite</TeXcode>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>ms</tag>
+		<paragraphStyle>Section Head Major</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+		<TeXcode>majorTitle#</TeXcode>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>mt</tag>
+		<paragraphStyle>Book Title</paragraphStyle>
+		<contentName>bookTitle</contentName>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>mte</tag>
+		<paragraphStyle>Book Title at Ending</paragraphStyle>
+	</sfm>
+	<sfm kind="meta">
+		<tag>nb</tag>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>No paragraph break at beginning: continue previous paragraph.</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>nd</tag>
+		<endTag>nd*</endTag>
+		<characterStyle>Name of God</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="index">
+		<tag>ndx</tag>
+		<endTag>ndx*</endTag>
+		<parameterName>indexEntry</parameterName>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="character">
+		<tag>no</tag>
+		<endTag>no*</endTag>
+		<characterStyle>Normal Text</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Not recommended</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>ord</tag>
+		<endTag>ord*</endTag>
+		<characterStyle>Ordinal Number Ending</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>underlined superscript</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>p</tag>
+		<paragraphStyle>Normal</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>p</TeXcode>
+	</sfm>
+	<sfm kind="layout">
+		<tag>pb</tag>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>pc</tag>
+		<paragraphStyle>Inscription Paragraph</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>centered</TeXcode>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>pde</tag>
+		<paragraphStyle>Discourse End</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>OBSOLETE</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>pdi</tag>
+		<paragraphStyle>Discourse Intro</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>OBSOLETE</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>ph</tag>
+		<paragraphStyle>Hanging Indent</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+		<TeXcode>hangingPara</TeXcode>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>phi</tag>
+		<paragraphStyle>Indented hanging indent</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>indentedHangingPara</TeXcode>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>pi</tag>
+		<paragraphStyle>Letter Paragraph</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+		<TeXcode>indentedPara</TeXcode>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>pm</tag>
+		<paragraphStyle>Embedded Paragraph</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>pmc</tag>
+		<paragraphStyle>Embedded Closing</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>pmo</tag>
+		<paragraphStyle>Embedded Opening</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>pmr</tag>
+		<paragraphStyle>Embedded Refrain</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="character">
+		<tag>pn</tag>
+		<endTag>pn*</endTag>
+		<characterStyle>Proper name</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>pref</tag>
+		<paragraphStyle>Preface</paragraphStyle>
+		<levelExpected>false</levelExpected>
+		<usfx>pref</usfx>
+		<milestone>false</milestone>
+		<comment>Starts preface</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>pro</tag>
+		<endTag>pro*</endTag>
+		<characterStyle>Pronunciation</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>ps</tag>
+		<paragraphStyle>Normal</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>p</TeXcode>
+		<comment>Paragraph spanning a chapter--OBSOLETE</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>psi</tag>
+		<paragraphStyle>Letter Paragraph</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>pub</tag>
+		<paragraphStyle>Publication data</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<usfx>pub</usfx>
+		<milestone>false</milestone>
+		<comment>Section marker for publication data</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>pubinfo</tag>
+		<paragraphStyle>Publication info</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<usfx>pubinfo</usfx>
+		<milestone>false</milestone>
+		<comment>List of information for verso page: language, credit, version, copies, publisher, ID, Logo</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>q</tag>
+		<paragraphStyle>Poetry line</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+		<TeXcode>poetry#</TeXcode>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>qa</tag>
+		<paragraphStyle>Acrostic heading</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>acrostic</TeXcode>
+	</sfm>
+	<sfm kind="character">
+		<tag>qac</tag>
+		<endTag>qac*</endTag>
+		<characterStyle>Acrostic letter</characterStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>qc</tag>
+		<paragraphStyle>Doxology</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>poetryCentered</TeXcode>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>qm</tag>
+		<paragraphStyle>Embedded Poetry</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>qr</tag>
+		<paragraphStyle>Poetry right</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>poetryRight</TeXcode>
+	</sfm>
+	<sfm kind="character">
+		<tag>qs</tag>
+		<endTag>qs*</endTag>
+		<characterStyle>Interlude</characterStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="character">
+		<tag>qt</tag>
+		<endTag>qt*</endTag>
+		<characterStyle>Quoted Text</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>r</tag>
+		<paragraphStyle>Parallel Passage Reference</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>parallelRef</TeXcode>
+	</sfm>
+	<sfm kind="meta">
+		<tag>rem</tag>
+		<paragraphStyle>Invisible Paragraph</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<usfx>rem</usfx>
+		<milestone>false</milestone>
+		<comment>ignored</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>rr</tag>
+		<paragraphStyle>Right Reference</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Not in USFM: reference for OT Scripture quote in the text, right justified, italics.</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>s</tag>
+		<paragraphStyle>Section title</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+		<TeXcode>sectionTitle</TeXcode>
+	</sfm>
+	<sfm kind="character">
+		<tag>sc</tag>
+		<endTag>sc*</endTag>
+		<characterStyle>Inscription</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Not recommended</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>sig</tag>
+		<endTag>sig*</endTag>
+		<characterStyle>Hand</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Epistle author signature</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>sls</tag>
+		<endTag>sls*</endTag>
+		<characterStyle>Secondary Language Source</characterStyle>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>sp</tag>
+		<paragraphStyle>Speech Speaker</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>speaker</TeXcode>
+		<comment>i. e. for Job, Song of Songs</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>spine</tag>
+		<paragraphStyle>Spine</paragraphStyle>
+		<levelExpected>false</levelExpected>
+		<usfx>spine</usfx>
+		<milestone>false</milestone>
+		<comment>Begin spine</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>sr</tag>
+		<paragraphStyle>Section Reference</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="table">
+		<tag>tc</tag>
+		<endTag>tc, tr,p,q,tcr</endTag>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>true</levelExpected>
+	</sfm>
+	<sfm kind="table">
+		<tag>tcr</tag>
+		<endTag>tc, tr,p,q,tcr</endTag>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>true</levelExpected>
+	</sfm>
+	<sfm kind="table">
+		<tag>th</tag>
+		<characterStyle>Table Cell Head</characterStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+	</sfm>
+	<sfm kind="table">
+		<tag>thr</tag>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+	</sfm>
+	<sfm kind="character">
+		<tag>tl</tag>
+		<endTag>tl*</endTag>
+		<characterStyle>Foreign</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>toc</tag>
+		<paragraphStyle>TOC</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+	</sfm>
+	<sfm kind="table">
+		<tag>tr</tag>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="meta">
+		<tag>v</tag>
+		<parameterName>currentVerse</parameterName>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="meta">
+		<tag>va</tag>
+		<endTag>va*</endTag>
+		<parameterName>altVerse</parameterName>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="meta">
+		<tag>vp</tag>
+		<endTag>vp*</endTag>
+		<parameterName>pubVerse</parameterName>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="index">
+		<tag>w</tag>
+		<endTag>w*</endTag>
+		<characterStyle>Word listed</characterStyle>
+		<parameterName>wordListEntry</parameterName>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="index">
+		<tag>wg</tag>
+		<endTag>wg*</endTag>
+		<parameterName>greekWordListEntry</parameterName>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="index">
+		<tag>wh</tag>
+		<endTag>wh*</endTag>
+		<parameterName>hebrewWordListEntry</parameterName>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="character">
+		<tag>wj</tag>
+		<endTag>wj*</endTag>
+		<characterStyle>Words of Jesus</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Words of Jesus (for optional "red letter" editions)</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>wr</tag>
+		<endTag>wr*</endTag>
+		<characterStyle>Word listed</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>OBSOLETE</comment>
+	</sfm>
+	<sfm kind="note">
+		<tag>x</tag>
+		<endTag>x*</endTag>
+		<characterStyle>Note Xref</characterStyle>
+		<parameterName>crossreferenceCaller</parameterName>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="dc">
+		<tag>xdc</tag>
+		<endTag>xdc*</endTag>
+		<characterStyle>Crossreference Deuterocanon</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="character">
+		<tag>xk</tag>
+		<endTag>xk*</endTag>
+		<characterStyle>Crossreference keywords</characterStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="character">
+		<tag>xo</tag>
+		<endTag>xo*</endTag>
+		<characterStyle>Crossreference origin</characterStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="character">
+		<tag>xq</tag>
+		<endTag>xq*</endTag>
+		<characterStyle>Crossreference Scripture quote</characterStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="character">
+		<tag>xt</tag>
+		<endTag>xt*</endTag>
+		<characterStyle>Crossreference target references</characterStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Vernacular format</comment>
+	</sfm>
+</SFMInfo>
