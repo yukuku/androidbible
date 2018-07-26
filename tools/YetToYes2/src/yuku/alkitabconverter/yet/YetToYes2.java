@@ -15,10 +15,14 @@ import java.util.List;
 import java.util.Set;
 
 public class YetToYes2 {
-	@Parameter private List<String> params = new ArrayList<>();
-	@Parameter(names = "--help", help = true, description = "Show this help") private boolean help = false;
-	@Parameter(names = "--no-compress", description = "Disable compression on the resultant yes file") private boolean nocompress = false;
-	@Parameter(names = "--ignore-skipped-verses", description = "Allow skipping verses, e.g. verse 1 1 4 followed directly by verse 1 1 6. However, chapters must still be consecutive and books must start with chapter 1 and verse 1.") private boolean ignore_skipped_verses = false;
+	@Parameter
+	private List<String> params = new ArrayList<>();
+	@Parameter(names = "--help", help = true, description = "Show this help")
+	private boolean help = false;
+	@Parameter(names = "--no-compress", description = "Disable compression on the resultant yes file")
+	private boolean nocompress = false;
+	@Parameter(names = "--ignore-skipped-verses", description = "Allow skipping verses, e.g. verse 1 1 4 followed directly by verse 1 1 6. However, chapters must still be consecutive and books must start with chapter 1 and verse 1.")
+	private boolean ignore_skipped_verses = false;
 
 	public static void main(String[] args) throws Exception {
 		YetToYes2 main = new YetToYes2();
@@ -29,7 +33,7 @@ public class YetToYes2 {
 			jc.usage();
 			System.exit(0);
 		}
-		
+
 		int retval = main.main();
 		System.exit(retval);
 	}
@@ -39,24 +43,24 @@ public class YetToYes2 {
 			System.err.println("Usage parameters: <yet-file> [<yes-file>]");
 			return 1;
 		}
-		
+
 		String yetfile = params.get(0);
 		String yesfile;
 		if (params.size() >= 2) {
 			yesfile = params.get(1);
 		} else {
-			yesfile = yetfile.endsWith(".yet") ? (yetfile.substring(0, yetfile.length() - 1) + "s"): yetfile + ".yes";
+			yesfile = yetfile.endsWith(".yet") ? (yetfile.substring(0, yetfile.length() - 1) + "s") : yetfile + ".yes";
 		}
-	
+
 		System.err.println("input:  " + yetfile);
 		System.err.println("output: " + yesfile);
-		
+
 		YetFileInputResult result = new YetFileInput().parse(yetfile, !ignore_skipped_verses);
 		if (result == null) {
 			// error message given by parse above
 			return 1;
 		}
-		
+
 		if (result.recs == null) {
 			System.err.println("yet file doesn't contain any verses");
 			return 1;
@@ -70,14 +74,14 @@ public class YetToYes2 {
 			System.err.println("yet file doesn't contain any book names");
 			return 1;
 		}
-		
+
 		{ // check if all book names are available
 			Set<Integer> books_1 = new HashSet<>();
-			for (Rec rec: result.recs) {
+			for (Rec rec : result.recs) {
 				books_1.add(rec.book_1);
 			}
-			
-			for (Integer book_1: books_1) {
+
+			for (Integer book_1 : books_1) {
 				String bookName = result.bookNames.get(book_1);
 				if (bookName == null) {
 					System.err.println("yet file doesn't contain book name for book " + book_1);
@@ -85,17 +89,17 @@ public class YetToYes2 {
 				}
 			}
 		}
-		
+
 		Yes2Common.VersionInfo versionInfo = new Yes2Common.VersionInfo();
 		versionInfo.locale = result.infos.get("locale");
 		versionInfo.shortName = result.infos.get("shortName");
 		versionInfo.longName = result.infos.get("longName");
 		versionInfo.description = result.infos.get("description");
 		versionInfo.setBookNamesAndAbbreviations(result.getBookNamesAsList(), result.getBookAbbreviationsAsList());
-		
+
 		// convert recs to textdb
 		TextDb textDb = new TextDb();
-		for (Rec rec: result.recs) {
+		for (Rec rec : result.recs) {
 			textDb.append(rec.book_1 - 1, rec.chapter_1, rec.verse_1, rec.text, -1);
 			if (!KjvUtils.isValidKjv(rec.book_1 - 1, rec.chapter_1, rec.verse_1)) {
 				System.err.println("warning: is not a valid verse in KJV versification: verse " + rec.book_1 + " " + rec.chapter_1 + " " + rec.verse_1);
@@ -108,7 +112,7 @@ public class YetToYes2 {
 
 		boolean compressed = !nocompress;
 		Yes2Common.createYesFile(new File(yesfile), versionInfo, textDb, result.pericopeData, compressed, result.xrefEntries, result.footnoteEntries);
-		
+
 		return 0;
 	}
 }

@@ -101,6 +101,8 @@ public class YetFileInput {
 		}
 	}
 
+	static Matcher xrefMatcher = Pattern.compile("@<x([0-9]+)@>").matcher("");
+	static Matcher footnoteMatcher = Pattern.compile("@<f([0-9]+)@>").matcher("");
 
 	public YetFileInputResult parse(String nf) throws Exception {
 		return parse(nf, true);
