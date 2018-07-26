@@ -30,7 +30,6 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import com.afollestad.materialdialogs.MaterialDialog;
-import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -402,15 +401,15 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_song_view);
 
-		circular_progress = V.get(this, R.id.progress_circular);
+		circular_progress = findViewById(R.id.progress_circular);
 
 		setCustomProgressBarIndeterminateVisible(false);
 
-		drawerLayout = V.get(this, R.id.drawerLayout);
-		leftDrawer = V.get(this, R.id.left_drawer);
+		drawerLayout = findViewById(R.id.drawerLayout);
+		leftDrawer = findViewById(R.id.left_drawer);
 		leftDrawer.configure(this, drawerLayout);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
 		final ActionBar actionBar = getSupportActionBar();
@@ -425,9 +424,9 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			}
 		});
 
-		root = V.get(this, R.id.root);
-		no_song_data_container = V.get(this, R.id.no_song_data_container);
-		bDownload = V.get(this, R.id.bDownload);
+		root = findViewById(R.id.root);
+		no_song_data_container = findViewById(R.id.no_song_data_container);
+		bDownload = findViewById(R.id.bDownload);
 
 		root.setListener(song_container_listener);
 
@@ -472,7 +471,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 		{ // apply background color, and clear window background to prevent overdraw
 			getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-			V.get(this, android.R.id.content).setBackgroundColor(applied.backgroundColor);
+			findViewById(android.R.id.content).setBackgroundColor(applied.backgroundColor);
 		}
 
 		templateCustomVars = new Bundle();
@@ -573,7 +572,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		getMenuInflater().inflate(R.menu.activity_song_view, menu);
 
 		new Handler().post(() -> {
-			final View view = V.get(this, R.id.menuMediaControl);
+			final View view = findViewById(R.id.menuMediaControl);
 			if (view == null) return;
 
 			view.setOnLongClickListener(v -> {

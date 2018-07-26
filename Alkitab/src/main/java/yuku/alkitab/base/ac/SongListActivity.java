@@ -21,7 +21,6 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import yuku.afw.App;
-import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.util.SongBookUtil;
@@ -130,19 +129,19 @@ public class SongListActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_song_list);
 
-		circular_progress = V.get(this, R.id.progress_circular);
+		circular_progress = findViewById(R.id.progress_circular);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;
 		ab.setDisplayHomeAsUpEnabled(true);
 
-		searchView = V.get(this, R.id.searchView);
-		lsSong = V.get(this, R.id.lsSong);
-		bChangeBook = V.get(this, R.id.bChangeBook);
-		cDeepSearch = V.get(this, R.id.cDeepSearch);
-		panelFilter = V.get(this, R.id.panelFilter);
+		searchView = findViewById(R.id.searchView);
+		lsSong = findViewById(R.id.lsSong);
+		bChangeBook = findViewById(R.id.bChangeBook);
+		cDeepSearch = findViewById(R.id.cDeepSearch);
+		panelFilter = findViewById(R.id.panelFilter);
 		
 		searchView.setSubmitButtonEnabled(false);
 		searchView.setOnQueryTextListener(searchWidget_queryText);
@@ -282,10 +281,10 @@ public class SongListActivity extends BaseActivity {
 
 		@Override public View getView(int position, View convertView, ViewGroup parent) {
 			View res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_song, parent, false);
-			
-			TextView lTitle = V.get(res, R.id.lTitle);
-			TextView lTitleOriginal = V.get(res, R.id.lTitleOriginal);
-			TextView lBookName = V.get(res, R.id.lBookName);
+
+			TextView lTitle = res.findViewById(R.id.lTitle);
+			TextView lTitleOriginal = res.findViewById(R.id.lTitleOriginal);
+			TextView lBookName = res.findViewById(R.id.lBookName);
 			
 			SongInfo songInfo = getItem(position);
 			lTitle.setText(songInfo.code + ". " + songInfo.title);

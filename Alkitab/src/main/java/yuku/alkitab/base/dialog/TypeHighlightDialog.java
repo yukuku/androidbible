@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
-import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.debug.R;
@@ -107,14 +106,14 @@ public class TypeHighlightDialog {
 		dialogView.setBackgroundColor(S.applied().backgroundColor);
 
 		for (int i = 0; i < ids.length; i++) {
-			CheckBox cb = V.get(dialogView, ids[i]);
+			CheckBox cb = dialogView.findViewById(ids[i]);
 			if (defaultColorRgb == rgbs[i]) {
 				cb.setChecked(true);
 			}
 			cb.setOnClickListener(cb_click);
 		}
-		
-		final Button bOtherColors = V.get(dialogView, R.id.bOtherColors);
+
+		final Button bOtherColors = dialogView.findViewById(R.id.bOtherColors);
 		bOtherColors.setOnClickListener(v -> {
 			// save the selection first
 			final int[] offsets = getSelectionOffsets();
@@ -131,7 +130,7 @@ public class TypeHighlightDialog {
 			}).show();
 		});
 
-		tVerseText = V.get(dialogView, R.id.tVerseText);
+		tVerseText = dialogView.findViewById(R.id.tVerseText);
 
 		if (selectedVerses.size() > 1 || verseText == null) {
 			tVerseText.setVisibility(View.GONE);
@@ -173,7 +172,7 @@ public class TypeHighlightDialog {
 				if (id == ids[i]) {
 					select(rgbs[i], getSelectionOffsets());
 				} else {
-					V.<CheckBox>get(dialogView, ids[i]).setChecked(false);
+					((CheckBox) dialogView.findViewById(ids[i])).setChecked(false);
 				}
 			}
 		}

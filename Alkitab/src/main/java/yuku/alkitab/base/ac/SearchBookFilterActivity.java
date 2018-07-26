@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import yuku.afw.App;
-import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -95,7 +94,7 @@ public class SearchBookFilterActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_search_book_filter);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;
@@ -107,15 +106,15 @@ public class SearchBookFilterActivity extends BaseActivity {
 		//noinspection SuspiciousSystemArraycopy
 		System.arraycopy(booksParcelable, 0, books, 0, booksParcelable.length);
 
-		final RecyclerView gridBook = V.get(this, R.id.gridBook);
+		final RecyclerView gridBook = findViewById(R.id.gridBook);
 		adapter = new BookAdapter(books);
 		final GridLayoutManager manager = new GridLayoutManager(getApplication(), 6);
 		manager.setSpanSizeLookup(adapter.spanSizeLookup);
 		gridBook.setLayoutManager(manager);
 		gridBook.setAdapter(adapter);
 
-		V.get(this, R.id.bOk).setOnClickListener(bOk_click);
-		V.get(this, R.id.bCancel).setOnClickListener(bCancel_click);
+		findViewById(R.id.bOk).setOnClickListener(bOk_click);
+		findViewById(R.id.bCancel).setOnClickListener(bCancel_click);
 	}
 
 	final View.OnClickListener bOk_click = v -> {
@@ -184,7 +183,7 @@ public class SearchBookFilterActivity extends BaseActivity {
 		public void onBindViewHolder(final VH holder, final int position) {
 			if (holder.viewType == TYPE_CATEGORIES) {
 				for (int[] bookCategoryMapping : bookCategoryMappings) {
-					final CheckBox checkBox = V.get(holder.itemView, bookCategoryMapping[0]);
+					final CheckBox checkBox = holder.itemView.findViewById(bookCategoryMapping[0]);
 					checkBox.setOnCheckedChangeListener(null);
 
 					{ // show current state

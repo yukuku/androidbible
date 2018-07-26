@@ -6,7 +6,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
 import yuku.afw.App;
-import yuku.afw.V;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.debug.R;
 
@@ -26,7 +25,7 @@ public class ColorSettingsActivity extends BaseActivity {
 		nightMode = getIntent().getBooleanExtra(EXTRA_nightMode, false);
 		setContentView(R.layout.activity_color_settings);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;

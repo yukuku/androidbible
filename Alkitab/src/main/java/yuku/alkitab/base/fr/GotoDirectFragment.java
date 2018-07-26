@@ -17,7 +17,6 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
-import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.fr.base.BaseGotoFragment;
@@ -84,9 +83,9 @@ public class GotoDirectFragment extends BaseGotoFragment {
 
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View res = inflater.inflate(R.layout.fragment_goto_direct, container, false);
-		lDirectSample = V.get(res, R.id.lDirectSample);
+		lDirectSample = res.findViewById(R.id.lDirectSample);
 
-		tDirectReference = V.get(res, R.id.tDirectReference);
+		tDirectReference = res.findViewById(R.id.tDirectReference);
 		tDirectReference.setAdapter(adapter = new AutoCompleteAdapter());
 		tDirectReference.setOnItemClickListener((parent, view, position, id) -> {
 			if (!adapter.getItem(position).bookOnly) {
@@ -94,7 +93,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 			}
 		});
 
-		bOk = V.get(res, R.id.bOk);
+		bOk = res.findViewById(R.id.bOk);
 		bOk.setOnClickListener(bOk_click);
 
 		tDirectReference.setOnEditorActionListener((v, actionId, event) -> {

@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
-import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.widget.MaterialDialogAdapterHelper;
@@ -76,10 +75,10 @@ public class TypeBookmarkDialog {
 		defaultCaption = reference;
 
 		View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_bookmark, null);
-		this.panelLabels = V.get(dialogView, R.id.panelLabels);
+		this.panelLabels = dialogView.findViewById(R.id.panelLabels);
 
-		tCaption = V.get(dialogView, R.id.tCaption);
-		final Button bAddLabel = V.get(dialogView, R.id.bAddLabel);
+		tCaption = dialogView.findViewById(R.id.tCaption);
+		final Button bAddLabel = dialogView.findViewById(R.id.bAddLabel);
 
 		bAddLabel.setOnClickListener(v -> MaterialDialogAdapterHelper.show(new MaterialDialog.Builder(context).title(R.string.add_label_title), new LabelAdapter()));
 
@@ -201,7 +200,7 @@ public class TypeBookmarkDialog {
 		public LabelHolder(final View itemView) {
 			super(itemView);
 
-			text1 = V.get(itemView, android.R.id.text1);
+			text1 = itemView.findViewById(android.R.id.text1);
 		}
 	}
 

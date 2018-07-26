@@ -5,7 +5,6 @@ import android.content.ClipDescription;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -13,13 +12,11 @@ import android.support.v4.graphics.ColorUtils;
 import android.text.Layout;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Range;
 import android.view.DragEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Checkable;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
@@ -62,9 +59,9 @@ public class VerseItem extends RelativeLayout implements Checkable {
 	protected void onFinishInflate() {
 		super.onFinishInflate();
 
-		lText = V.get(this, R.id.lText);
-		lVerseNumber = V.get(this, R.id.lVerseNumber);
-		attributeView = V.get(this, R.id.attributeView);
+		lText = findViewById(R.id.lText);
+		lVerseNumber = findViewById(R.id.lVerseNumber);
+		attributeView = findViewById(R.id.attributeView);
 	}
 
 	@Override

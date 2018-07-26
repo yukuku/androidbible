@@ -11,7 +11,6 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -55,7 +54,7 @@ public class ProgressMarkListDialog extends DialogFragment {
 			window.requestFeature(Window.FEATURE_NO_TITLE);
 		}
 		final View view = inflater.inflate(R.layout.dialog_progress_mark, container, false);
-		final ListView lsProgressMark = V.get(view, R.id.lsProgressMark);
+		final ListView lsProgressMark = view.findViewById(R.id.lsProgressMark);
 		final ProgressMarkAdapter adapter = new ProgressMarkAdapter();
 		lsProgressMark.setAdapter(adapter);
 		lsProgressMark.setBackgroundColor(S.applied().backgroundColor);
@@ -116,10 +115,10 @@ public class ProgressMarkListDialog extends DialogFragment {
 
 		@Override
 		public void bindView(final View view, final int position, final ViewGroup parent) {
-			TextView tCaption = V.get(view, R.id.lCaption);
-			TextView tDate = V.get(view, R.id.lDate);
-			TextView tVerseText = V.get(view, R.id.lSnippet);
-			ImageView imgIcon = V.get(view, R.id.imgIcon);
+			TextView tCaption = view.findViewById(R.id.lCaption);
+			TextView tDate = view.findViewById(R.id.lDate);
+			TextView tVerseText = view.findViewById(R.id.lSnippet);
+			ImageView imgIcon = view.findViewById(R.id.imgIcon);
 
 			final ProgressMark progressMark = progressMarks.get(position);
 

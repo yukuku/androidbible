@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
-import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.dialog.base.BaseDialog;
 import yuku.alkitab.base.util.AppLog;
@@ -93,8 +92,8 @@ public class XrefDialog extends BaseDialog {
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View res = inflater.inflate(R.layout.dialog_xref, container, false);
 
-		tXrefText = V.get(res, R.id.tXrefText);
-		versesView = V.get(res, R.id.versesView);
+		tXrefText = res.findViewById(R.id.tXrefText);
+		versesView = res.findViewById(R.id.versesView);
 		
 		res.setBackgroundColor(S.applied().backgroundColor);
 		versesView.setCacheColorHint(S.applied().backgroundColor);

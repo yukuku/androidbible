@@ -19,7 +19,6 @@ import okhttp3.FormBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
@@ -66,13 +65,13 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_secret_sync_debug);
 
-		tServer = V.get(this, R.id.tServer);
-		tUserEmail = V.get(this, R.id.tUserEmail);
-		cMakeDirtyMarker = V.get(this, R.id.cMakeDirtyMarker);
-		cMakeDirtyLabel = V.get(this, R.id.cMakeDirtyLabel);
-		cMakeDirtyMarker_Label = V.get(this, R.id.cMakeDirtyMarker_Label);
+		tServer = findViewById(R.id.tServer);
+		tUserEmail = findViewById(R.id.tUserEmail);
+		cMakeDirtyMarker = findViewById(R.id.cMakeDirtyMarker);
+		cMakeDirtyLabel = findViewById(R.id.cMakeDirtyLabel);
+		cMakeDirtyMarker_Label = findViewById(R.id.cMakeDirtyMarker_Label);
 
-		V.get(this, R.id.bServerSave).setOnClickListener(v -> new MaterialDialog.Builder(this)
+		findViewById(R.id.bServerSave).setOnClickListener(v -> new MaterialDialog.Builder(this)
 			.content("This will reset your synced shadow to revision 0.")
 			.positiveText(R.string.ok)
 			.onPositive((d, w) -> {
@@ -84,7 +83,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 			.negativeText(R.string.cancel)
 			.show());
 
-		V.get(this, R.id.bServerReset).setOnClickListener(v -> new MaterialDialog.Builder(this)
+		findViewById(R.id.bServerReset).setOnClickListener(v -> new MaterialDialog.Builder(this)
 			.content("This will reset your synced shadow to revision 0.")
 			.positiveText(R.string.ok)
 			.onPositive((d, w) -> {
@@ -98,17 +97,17 @@ public class SecretSyncDebugActivity extends BaseActivity {
 			.negativeText(R.string.cancel)
 			.show());
 
-		V.get(this, R.id.bMabelClientState).setOnClickListener(bMabelClientState_click);
-		V.get(this, R.id.bGenerateDummies).setOnClickListener(bGenerateDummies_click);
-		V.get(this, R.id.bGenerateDummies2).setOnClickListener(bGenerateDummies2_click);
-		V.get(this, R.id.bMabelMonkey).setOnClickListener(bMabelMonkey_click);
-		V.get(this, R.id.bLogout).setOnClickListener(bLogout_click);
-		V.get(this, R.id.bSync).setOnClickListener(bSync_click);
+		findViewById(R.id.bMabelClientState).setOnClickListener(bMabelClientState_click);
+		findViewById(R.id.bGenerateDummies).setOnClickListener(bGenerateDummies_click);
+		findViewById(R.id.bGenerateDummies2).setOnClickListener(bGenerateDummies2_click);
+		findViewById(R.id.bMabelMonkey).setOnClickListener(bMabelMonkey_click);
+		findViewById(R.id.bLogout).setOnClickListener(bLogout_click);
+		findViewById(R.id.bSync).setOnClickListener(bSync_click);
 
-		cbSyncSetName = V.get(this, R.id.cbSyncSetName);
+		cbSyncSetName = findViewById(R.id.cbSyncSetName);
 		cbSyncSetName.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, SyncShadow.ALL_SYNC_SET_NAMES));
 
-		V.get(this, R.id.bCheckHash).setOnClickListener(bCheckHash_click);
+		findViewById(R.id.bCheckHash).setOnClickListener(bCheckHash_click);
 	}
 
 	View.OnClickListener bMabelClientState_click = v -> {

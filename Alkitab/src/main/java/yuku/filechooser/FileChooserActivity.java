@@ -13,7 +13,6 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import yuku.afw.V;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.debug.R;
 
@@ -51,7 +50,7 @@ public class FileChooserActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 		setContentView(R.layout.filechooser_activity_filechooser);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;
@@ -61,7 +60,7 @@ public class FileChooserActivity extends BaseActivity {
         
 		Utils.configureTitles(this, config.title, config.subtitle);
 
-        lsFile = (ListView) findViewById(R.id.filechooser_lsFile);
+        lsFile = findViewById(R.id.filechooser_lsFile);
         lsFile.setAdapter(adapter = new FileAdapter());
         lsFile.setOnItemClickListener(lsFile_itemClick);
         

@@ -21,7 +21,6 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
-import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
@@ -106,19 +105,19 @@ public class MarkerListActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_marker_list);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;
 		ab.setDisplayHomeAsUpEnabled(true);
 
-		root = V.get(this, R.id.root);
-		empty = V.get(this, android.R.id.empty);
-		tEmpty = V.get(this, R.id.tEmpty);
-		bClearFilter = V.get(this, R.id.bClearFilter);
-		progress = V.get(this, R.id.progress);
-		lv = V.get(this, android.R.id.list);
-		emptyView = V.get(this, android.R.id.empty);
+		root = findViewById(R.id.root);
+		empty = findViewById(android.R.id.empty);
+		tEmpty = findViewById(R.id.tEmpty);
+		bClearFilter = findViewById(R.id.bClearFilter);
+		progress = findViewById(R.id.progress);
+		lv = findViewById(android.R.id.list);
+		emptyView = findViewById(android.R.id.empty);
 
 		filter_kind = Marker.Kind.fromCode(getIntent().getIntExtra(EXTRA_filter_kind, 0));
 		filter_labelId = getIntent().getLongExtra(EXTRA_filter_labelId, 0);
@@ -322,7 +321,7 @@ public class MarkerListActivity extends BaseActivity {
 		final View res = inflater.inflate(R.layout.label, panelLabels, false);
 		res.setLayoutParams(panelLabels.generateDefaultLayoutParams());
 
-		final TextView lCaption = V.get(res, R.id.lCaption);
+		final TextView lCaption = res.findViewById(R.id.lCaption);
 		lCaption.setText(label.title);
 
 		U.applyLabelColor(label, lCaption);
@@ -558,10 +557,10 @@ public class MarkerListActivity extends BaseActivity {
 
 		@Override
 		public void bindView(final View view, final int position, final ViewGroup parent) {
-			final TextView lDate = V.get(view, R.id.lDate);
-			final TextView lCaption = V.get(view, R.id.lCaption);
-			final TextView lSnippet = V.get(view, R.id.lSnippet);
-			final FlowLayout panelLabels = V.get(view, R.id.panelLabels);
+			final TextView lDate = view.findViewById(R.id.lDate);
+			final TextView lCaption = view.findViewById(R.id.lCaption);
+			final TextView lSnippet = view.findViewById(R.id.lSnippet);
+			final FlowLayout panelLabels = view.findViewById(R.id.panelLabels);
 
 			final Marker marker = getItem(position);
 

@@ -12,7 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import gnu.trove.set.TLongSet;
-import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -126,7 +125,7 @@ public class SecretSettingsActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_secret_settings);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;

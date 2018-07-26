@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import yuku.afw.V;
 import yuku.alkitab.base.fr.base.BaseFragment;
 import yuku.alkitab.debug.R;
 import yuku.kpri.model.Lyric;
@@ -63,7 +62,7 @@ public class SongFragment extends BaseFragment {
 	@SuppressLint("SetJavaScriptEnabled")
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View res = inflater.inflate(R.layout.fragment_song, container, false);
-		webview = V.get(res, R.id.webview);
+		webview = res.findViewById(R.id.webview);
 		webview.setBackgroundColor(0x00000000);
 		webview.setWebViewClient(webViewClient);
 

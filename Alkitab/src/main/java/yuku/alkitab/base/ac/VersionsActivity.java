@@ -51,7 +51,6 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
-import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -121,7 +120,7 @@ public class VersionsActivity extends BaseActivity {
 
 		setTitle(R.string.kelola_versi);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;
@@ -132,10 +131,10 @@ public class VersionsActivity extends BaseActivity {
 		sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
 		// Set up the ViewPager with the sections adapter.
-		viewPager = V.get(this, R.id.viewPager);
+		viewPager = findViewById(R.id.viewPager);
 		viewPager.setAdapter(sectionsPagerAdapter);
 
-		tablayout = V.get(this, R.id.tablayout);
+		tablayout = findViewById(R.id.tablayout);
 		tablayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 		tablayout.setupWithViewPager(viewPager);
 
@@ -817,7 +816,7 @@ public class VersionsActivity extends BaseActivity {
 
 			adapter = new VersionAdapter();
 
-			lsVersions = V.get(rootView, R.id.lsVersions);
+			lsVersions = rootView.findViewById(R.id.lsVersions);
 			lsVersions.setAdapter(adapter);
 			if (downloadedOnly) {
 				final VersionOrderingController c = new VersionOrderingController(lsVersions);
@@ -825,7 +824,7 @@ public class VersionsActivity extends BaseActivity {
 				lsVersions.setOnTouchListener(c);
 			}
 
-			swiper = V.get(rootView, R.id.swiper);
+			swiper = rootView.findViewById(R.id.swiper);
 			if (swiper != null) { // Can be null, if the layout used is fragment_versions_downloaded.
 				final int accentColor = ResourcesCompat.getColor(getResources(), R.color.accent, null);
 				swiper.setColorSchemeColors(accentColor, 0xffcbcbcb);
@@ -890,9 +889,9 @@ public class VersionsActivity extends BaseActivity {
 			final MVersion mv = item.mv;
 
 			if (mv instanceof MVersionPreset) {
-				clickOnPresetVersion(V.get(itemView, R.id.cActive), (MVersionPreset) mv);
+				clickOnPresetVersion(itemView.findViewById(R.id.cActive), (MVersionPreset) mv);
 			} else if (mv instanceof MVersionDb) {
-				clickOnDbVersion(V.get(itemView, R.id.cActive), (MVersionDb) mv);
+				clickOnDbVersion(itemView.findViewById(R.id.cActive), (MVersionDb) mv);
 			}
 
 			App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
@@ -1253,13 +1252,13 @@ public class VersionsActivity extends BaseActivity {
 
 			@Override
 			public void bindView(final View view, final int position, final ViewGroup parent) {
-				final View panelRight = V.get(view, R.id.panelRight);
-				final CheckBox cActive = V.get(view, R.id.cActive);
-				final View progress = V.get(view, R.id.progress);
-				final Button bLongName = V.get(view, R.id.bLongName);
-				final View header = V.get(view, R.id.header);
-				final TextView tLanguage = V.get(view, R.id.tLanguage);
-				final View drag_handle = V.get(view, R.id.drag_handle);
+				final View panelRight = view.findViewById(R.id.panelRight);
+				final CheckBox cActive = view.findViewById(R.id.cActive);
+				final View progress = view.findViewById(R.id.progress);
+				final Button bLongName = view.findViewById(R.id.bLongName);
+				final View header = view.findViewById(R.id.header);
+				final TextView tLanguage = view.findViewById(R.id.tLanguage);
+				final View drag_handle = view.findViewById(R.id.drag_handle);
 
 				final Item item = getItem(position);
 				final MVersion mv = item.mv;

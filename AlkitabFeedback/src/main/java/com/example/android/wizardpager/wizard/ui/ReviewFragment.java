@@ -59,11 +59,11 @@ public class ReviewFragment extends ListFragment implements ModelCallbacks {
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.alkitabfeedback_fragment_page, container, false);
 
-        TextView titleView = (TextView) rootView.findViewById(android.R.id.title);
+        TextView titleView = rootView.findViewById(android.R.id.title);
         titleView.setText(R.string.alkitabfeedback_review);
         titleView.setTextColor(ResourcesCompat.getColor(getResources(), R.color.alkitabfeedback_review_blue, container.getContext().getTheme()));
 
-        ListView listView = (ListView) rootView.findViewById(android.R.id.list);
+        ListView listView = rootView.findViewById(android.R.id.list);
         setListAdapter(mReviewAdapter);
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         return rootView;

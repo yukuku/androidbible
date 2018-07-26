@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.android.wizardpager.MainActivity;
 import name.fraser.neil.plaintext.diff_match_patch;
-import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -46,7 +45,7 @@ public class PatchTextActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_patch_text);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;
@@ -55,7 +54,7 @@ public class PatchTextActivity extends BaseActivity {
 
 		final S.CalculatedDimensions applied = S.applied();
 
-		tBody = V.get(this, R.id.tBody);
+		tBody = findViewById(R.id.tBody);
 		tBody.setTextColor(applied.fontColor);
 		tBody.setBackgroundColor(applied.backgroundColor);
 		tBody.setTypeface(applied.fontFace, applied.fontBold);

@@ -25,7 +25,6 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
-import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -74,7 +73,7 @@ public class MarkersActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_markers);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;
@@ -83,7 +82,7 @@ public class MarkersActivity extends BaseActivity {
 		adapter = new MarkerFilterAdapter();
 		adapter.reload();
 
-		lv = V.get(this, android.R.id.list);
+		lv = findViewById(android.R.id.list);
 		lv.setDropListener(adapter);
 		lv.setOnItemClickListener(lv_click);
 		lv.setAdapter(adapter);
@@ -94,7 +93,7 @@ public class MarkersActivity extends BaseActivity {
 
 		registerForContextMenu(lv);
 
-		bGotoSync = V.get(this, R.id.bGotoSync);
+		bGotoSync = findViewById(R.id.bGotoSync);
         bGotoSync.setOnClickListener(v -> startActivity(SyncSettingsActivity.createIntent()));
 
 		App.getLbm().registerReceiver(br, new IntentFilter(ACTION_RELOAD));
@@ -106,7 +105,7 @@ public class MarkersActivity extends BaseActivity {
 
 		// hide sync button if we are already syncing
 		final String syncAccountName = Preferences.getString(R.string.pref_syncAccountName_key);
-		V.get(this, R.id.panelGotoSync).setVisibility(syncAccountName != null ? View.GONE : View.VISIBLE);
+		findViewById(R.id.panelGotoSync).setVisibility(syncAccountName != null ? View.GONE : View.VISIBLE);
 	}
 
 	@Override
@@ -394,24 +393,24 @@ public class MarkersActivity extends BaseActivity {
 
 		@Override public View getView(int position, View convertView, ViewGroup parent) {
 			final View res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_marker_filter, parent, false);
-			
-			ImageView imgFilterIcon = V.get(res, R.id.imgFilterIcon);
+
+			ImageView imgFilterIcon = res.findViewById(R.id.imgFilterIcon);
 			if (position < 3) {
 				imgFilterIcon.setVisibility(View.VISIBLE);
 				imgFilterIcon.setImageResource(position == 0? R.drawable.ic_attr_bookmark: position == 1? R.drawable.ic_attr_note: position == 2? R.drawable.ic_attr_highlight: 0);
 			} else {
 				imgFilterIcon.setVisibility(View.GONE);
 			}
-			
-			TextView lFilterCaption = V.get(res, R.id.lFilterCaption);
+
+			TextView lFilterCaption = res.findViewById(R.id.lFilterCaption);
 			if (position < 4) {
 				lFilterCaption.setVisibility(View.VISIBLE);
 				lFilterCaption.setText(presetCaptions[position]);
 			} else {
 				lFilterCaption.setVisibility(View.GONE);
 			}
-			
-			TextView lFilterLabel = V.get(res, R.id.lFilterLabel);
+
+			TextView lFilterLabel = res.findViewById(R.id.lFilterLabel);
 			if (position < 4) {
 				lFilterLabel.setVisibility(View.GONE);
 			} else {
@@ -421,8 +420,8 @@ public class MarkersActivity extends BaseActivity {
 				
 				U.applyLabelColor(label, lFilterLabel);
 			}
-			
-			View drag_handle = V.get(res, R.id.drag_handle);
+
+			View drag_handle = res.findViewById(R.id.drag_handle);
 			if (position < 4) {
 				drag_handle.setVisibility(View.GONE);
 			} else {

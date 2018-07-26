@@ -55,7 +55,6 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import org.json.JSONException;
 import org.json.JSONObject;
-import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.ac.GotoActivity;
 import yuku.alkitab.base.ac.MarkerListActivity;
@@ -431,11 +430,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		setContentView(R.layout.activity_isi);
 		AppLog.d(TAG, "@@onCreate setCV");
 
-		drawerLayout = V.get(this, R.id.drawerLayout);
-		leftDrawer = V.get(this, R.id.left_drawer);
+		drawerLayout = findViewById(R.id.drawerLayout);
+		leftDrawer = findViewById(R.id.left_drawer);
 		leftDrawer.configure(this, drawerLayout);
 
-		toolbar = V.get(this, R.id.toolbar);
+		toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;
@@ -443,21 +442,21 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		ab.setDisplayShowTitleEnabled(false);
 		ab.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
 
-		bGoto = V.get(this, R.id.bGoto);
-		bLeft = V.get(this, R.id.bLeft);
-		bRight = V.get(this, R.id.bRight);
-		bVersion = V.get(this, R.id.bVersion);
+		bGoto = findViewById(R.id.bGoto);
+		bLeft = findViewById(R.id.bLeft);
+		bRight = findViewById(R.id.bRight);
+		bVersion = findViewById(R.id.bVersion);
 
-		overlayContainer = V.get(this, R.id.overlayContainer);
-		root = V.get(this, R.id.root);
-		lsSplit0 = V.get(this, R.id.lsSplit0);
-		lsSplit1 = V.get(this, R.id.lsSplit1);
-		tSplitEmpty = V.get(this, R.id.tSplitEmpty);
-		splitRoot = V.get(this, R.id.splitRoot);
+		overlayContainer = findViewById(R.id.overlayContainer);
+		root = findViewById(R.id.root);
+		lsSplit0 = findViewById(R.id.lsSplit0);
+		lsSplit1 = findViewById(R.id.lsSplit1);
+		tSplitEmpty = findViewById(R.id.tSplitEmpty);
+		splitRoot = findViewById(R.id.splitRoot);
 		splitRoot.getViewTreeObserver().addOnGlobalLayoutListener(splitRoot_globalLayout);
 
-		splitHandleButton = V.get(this, R.id.splitHandleButton);
-		floater = V.get(this, R.id.floater);
+		splitHandleButton = findViewById(R.id.splitHandleButton);
+		floater = findViewById(R.id.floater);
 
 		// If layout is changed, updateToolbarLocation must be updated as well. This will be called in DEBUG to make sure
 		// updateToolbarLocation is also updated when layout is updated.
@@ -1161,7 +1160,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		public HistoryEntryHolder(final View itemView) {
 			super(itemView);
 
-			text1 = V.get(itemView, android.R.id.text1);
+			text1 = itemView.findViewById(android.R.id.text1);
 		}
 	}
 
@@ -1814,10 +1813,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			public MarkerHolder(final View itemView) {
 				super(itemView);
 
-				lDate = V.get(itemView, R.id.lDate);
-				lCaption = V.get(itemView, R.id.lCaption);
-				lSnippet = V.get(itemView, R.id.lSnippet);
-				panelLabels = V.get(itemView, R.id.panelLabels);
+				lDate = itemView.findViewById(R.id.lDate);
+				lCaption = itemView.findViewById(R.id.lCaption);
+				lSnippet = itemView.findViewById(R.id.lSnippet);
+				panelLabels = itemView.findViewById(R.id.panelLabels);
 			}
 		}
 

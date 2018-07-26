@@ -198,8 +198,8 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 
 			PericopeBlock pericopeBlock = pericopeBlocks_[-id - 1];
 
-			TextView lCaption = (TextView) res.findViewById(R.id.lCaption);
-			TextView lParallels = (TextView) res.findViewById(R.id.lParallels);
+			TextView lCaption = res.findViewById(R.id.lCaption);
+			TextView lParallels = res.findViewById(R.id.lParallels);
 
 			lCaption.setText(FormattedTextRenderer.render(pericopeBlock.title));
 

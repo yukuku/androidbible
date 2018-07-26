@@ -68,7 +68,7 @@ public class TextareaFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.alkitabfeedback_fragment_page_textarea, container, false);
         ((TextView) rootView.findViewById(android.R.id.title)).setText(mPage.getTitle());
 
-        mMessageView = ((TextView) rootView.findViewById(R.id.message));
+        mMessageView = rootView.findViewById(R.id.message);
         mMessageView.setText(mPage.getData().getString(Page.SIMPLE_DATA_KEY));
 		if (mPage.getData().getBoolean(TextareaPage.DISABLE_EDITING)) {
 			mMessageView.setEnabled(false);

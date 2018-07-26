@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,7 +15,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.picasso.Callback;
-import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -76,15 +74,15 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_font_manager);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;
 		ab.setDisplayHomeAsUpEnabled(true);
 
-		lsFont = V.get(this, R.id.lsFont);
-		progress = V.get(this, R.id.progress);
-		lEmptyError = V.get(this, R.id.lEmptyError);
+		lsFont = findViewById(R.id.lsFont);
+		progress = findViewById(R.id.progress);
+		lEmptyError = findViewById(R.id.lEmptyError);
 
 		lsFont.setAdapter(adapter = new FontAdapter());
 
@@ -186,12 +184,12 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 
 		@Override
 		public void bindView(final View view, final int position, final ViewGroup parent) {
-			final ImageView imgPreview = V.get(view, R.id.imgPreview);
-			final TextView lFontName = V.get(view, R.id.lFontName);
-			final View bDownload = V.get(view, R.id.bDownload);
-			final View bDelete = V.get(view, R.id.bDelete);
-			final ProgressBar progressbar = V.get(view, R.id.progressbar);
-			final TextView lErrorMsg = V.get(view, R.id.lErrorMsg);
+			final ImageView imgPreview = view.findViewById(R.id.imgPreview);
+			final TextView lFontName = view.findViewById(R.id.lFontName);
+			final View bDownload = view.findViewById(R.id.bDownload);
+			final View bDelete = view.findViewById(R.id.bDelete);
+			final ProgressBar progressbar = view.findViewById(R.id.progressbar);
+			final TextView lErrorMsg = view.findViewById(R.id.lErrorMsg);
 
 			final FontItem item = getItem(position);
 			final String dlkey = getFontDownloadKey(item.name);

@@ -17,7 +17,6 @@ import android.widget.CheckedTextView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -57,23 +56,23 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 		setResult(RESULT_CANCELED);
 		setContentView(R.layout.activity_daily_verse_configuration);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;
 		ab.setDisplayHomeAsUpEnabled(true);
 		ab.setHomeAsUpIndicator(R.drawable.ic_action_remove);
 
-		final ListView lsVersionsAppWidget = V.get(this, R.id.lsVersionsAppWidget);
-		final Button bOk = V.get(this, R.id.bOk);
-		final Button bCancel = V.get(this, R.id.bCancel);
-		cTransparentBackground = V.get(this, R.id.cTransparentBackground);
-		cDarkText = V.get(this, R.id.cDarkText);
-		sbTextSize = V.get(this, R.id.sbTextSize);
-		tTextSize = V.get(this, R.id.tTextSize);
-		panelTransparent = V.get(this, R.id.panelTransparent);
-		sbTransparent = V.get(this, R.id.sbTransparent);
-		tTransparent = V.get(this, R.id.tTransparent);
+		final ListView lsVersionsAppWidget = findViewById(R.id.lsVersionsAppWidget);
+		final Button bOk = findViewById(R.id.bOk);
+		final Button bCancel = findViewById(R.id.bCancel);
+		cTransparentBackground = findViewById(R.id.cTransparentBackground);
+		cDarkText = findViewById(R.id.cDarkText);
+		sbTextSize = findViewById(R.id.sbTextSize);
+		tTextSize = findViewById(R.id.tTextSize);
+		panelTransparent = findViewById(R.id.panelTransparent);
+		sbTransparent = findViewById(R.id.sbTransparent);
+		tTransparent = findViewById(R.id.tTransparent);
 
 		// Find the widget id from the intent.
 		final Intent intent = getIntent();
@@ -213,7 +212,7 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 
 		@Override
 		public void bindView(final View view, final int position, final ViewGroup parent) {
-			CheckedTextView text1 = V.get(view, android.R.id.text1);
+			CheckedTextView text1 = view.findViewById(android.R.id.text1);
 			text1.setText(versions.get(position).longName);
 
 			text1.setChecked(position == selectedVersionPosition);

@@ -23,7 +23,6 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.analytics.HitBuilders;
-import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -288,11 +287,11 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_devotion);
 
-		drawerLayout = V.get(this, R.id.drawerLayout);
-		leftDrawer = V.get(this, R.id.left_drawer);
+		drawerLayout = findViewById(R.id.drawerLayout);
+		leftDrawer = findViewById(R.id.left_drawer);
 		leftDrawer.configure(this, drawerLayout);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
 		final ActionBar actionBar = getSupportActionBar();
@@ -300,9 +299,9 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
 
-		root = V.get(this, R.id.root);
-		lContent = V.get(this, R.id.lContent);
-		scrollContent = V.get(this, R.id.scrollContent);
+		root = findViewById(R.id.root);
+		lContent = findViewById(R.id.lContent);
+		scrollContent = findViewById(R.id.scrollContent);
 
 		root.setTwofingerEnabled(false);
 		root.setListener(root_listener);

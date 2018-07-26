@@ -17,7 +17,6 @@ import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.LoginEvent;
 import com.crashlytics.android.answers.SignUpEvent;
-import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -61,21 +60,21 @@ public class SyncLoginActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_sync_login);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;
 		ab.setDisplayHomeAsUpEnabled(true);
 
-		tIntro = V.get(this, R.id.tIntro);
-		tEmail = V.get(this, R.id.tEmail);
-		tPassword = V.get(this, R.id.tPassword);
-		tPasswordNew = V.get(this, R.id.tPasswordNew);
-		bForgot = V.get(this, R.id.bForgot);
-		tPrivacy = V.get(this, R.id.tPrivacy);
-		bRegister = V.get(this, R.id.bRegister);
-		bLogin = V.get(this, R.id.bLogin);
-		bChangePassword = V.get(this, R.id.bChangePassword);
+		tIntro = findViewById(R.id.tIntro);
+		tEmail = findViewById(R.id.tEmail);
+		tPassword = findViewById(R.id.tPassword);
+		tPasswordNew = findViewById(R.id.tPasswordNew);
+		bForgot = findViewById(R.id.bForgot);
+		tPrivacy = findViewById(R.id.tPrivacy);
+		bRegister = findViewById(R.id.bRegister);
+		bLogin = findViewById(R.id.bLogin);
+		bChangePassword = findViewById(R.id.bChangePassword);
 
 		bRegister.setOnClickListener(v -> {
 			final String email = tEmail.getText().toString().trim();
@@ -304,7 +303,7 @@ public class SyncLoginActivity extends BaseActivity {
 			.customView(R.layout.dialog_sync_confirm_password, false)
 			.positiveText(R.string.ok)
 			.onPositive((dialog, which) -> {
-				final EditText tPassword2 = V.get(dialog.getCustomView(), R.id.tPassword2);
+				final EditText tPassword2 = dialog.getCustomView().findViewById(R.id.tPassword2);
 
 				final String password2 = tPassword2.getText().toString();
 

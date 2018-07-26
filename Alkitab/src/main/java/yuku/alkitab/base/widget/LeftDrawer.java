@@ -25,7 +25,6 @@ import android.widget.CompoundButton;
 import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
-import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
@@ -74,12 +73,12 @@ public abstract class LeftDrawer extends NestedScrollView {
 			getChildAt(i).setDuplicateParentStateEnabled(false);
 		}
 
-		bBible = V.get(this, R.id.bBible);
-		bDevotion = V.get(this, R.id.bDevotion);
-		bReadingPlan = V.get(this, R.id.bReadingPlan);
-		bSongs = V.get(this, R.id.bSongs);
-		bSettings = V.get(this, R.id.bSettings);
-		bHelp = V.get(this, R.id.bHelp);
+		bBible = findViewById(R.id.bBible);
+		bDevotion = findViewById(R.id.bDevotion);
+		bReadingPlan = findViewById(R.id.bReadingPlan);
+		bSongs = findViewById(R.id.bSongs);
+		bSettings = findViewById(R.id.bSettings);
+		bHelp = findViewById(R.id.bHelp);
 
 		final int selectedTextColor = ResourcesCompat.getColor(getResources(), R.color.accent, getContext().getTheme());
 		if (this instanceof Text) bBible.setTextColor(selectedTextColor);
@@ -292,22 +291,22 @@ public abstract class LeftDrawer extends NestedScrollView {
 		protected void onFinishInflate() {
 			super.onFinishInflate();
 
-			bMarkers = V.get(this, R.id.bMarkers);
-			bDisplay = V.get(this, R.id.bDisplay);
-			cFullScreen = V.get(this, R.id.cFullScreen);
-			cNightMode = V.get(this, R.id.cNightMode);
-			cSplitVersion = V.get(this, R.id.cSplitVersion);
+			bMarkers = findViewById(R.id.bMarkers);
+			bDisplay = findViewById(R.id.bDisplay);
+			cFullScreen = findViewById(R.id.cFullScreen);
+			cNightMode = findViewById(R.id.cNightMode);
+			cSplitVersion = findViewById(R.id.cSplitVersion);
 
-			bProgressMarkList = V.get(this, R.id.bProgressMarkList);
-			bProgress1 = V.get(this, R.id.bProgress1);
-			bProgress2 = V.get(this, R.id.bProgress2);
-			bProgress3 = V.get(this, R.id.bProgress3);
-			bProgress4 = V.get(this, R.id.bProgress4);
-			bProgress5 = V.get(this, R.id.bProgress5);
+			bProgressMarkList = findViewById(R.id.bProgressMarkList);
+			bProgress1 = findViewById(R.id.bProgress1);
+			bProgress2 = findViewById(R.id.bProgress2);
+			bProgress3 = findViewById(R.id.bProgress3);
+			bProgress4 = findViewById(R.id.bProgress4);
+			bProgress5 = findViewById(R.id.bProgress5);
 
-			panelCurrentReadingHeader = V.get(this, R.id.panelCurrentReadingHeader);
-			bCurrentReadingClose = V.get(this, R.id.bCurrentReadingClose);
-			bCurrentReadingReference = V.get(this, R.id.bCurrentReadingReference);
+			panelCurrentReadingHeader = findViewById(R.id.panelCurrentReadingHeader);
+			bCurrentReadingClose = findViewById(R.id.bCurrentReadingClose);
+			bCurrentReadingReference = findViewById(R.id.bCurrentReadingReference);
 
 			cNightMode.setChecked(!isInEditMode() && Preferences.getBoolean(Prefkey.is_night_mode, false));
 
@@ -479,11 +478,11 @@ public abstract class LeftDrawer extends NestedScrollView {
 		protected void onFinishInflate() {
 			super.onFinishInflate();
 
-			cbKind = V.get(this, R.id.cbKind);
-			tCurrentDate = V.get(this, R.id.tCurrentDate);
-			bPrev = V.get(this, R.id.bPrev);
-			bNext = V.get(this, R.id.bNext);
-			bReload = V.get(this, R.id.bReload);
+			cbKind = findViewById(R.id.cbKind);
+			tCurrentDate = findViewById(R.id.tCurrentDate);
+			bPrev = findViewById(R.id.bPrev);
+			bNext = findViewById(R.id.bNext);
+			bReload = findViewById(R.id.bReload);
 
 
 			cbKind.setAdapter(adapter = new DevotionKindAdapter());
@@ -610,9 +609,9 @@ public abstract class LeftDrawer extends NestedScrollView {
 		protected void onFinishInflate() {
 			super.onFinishInflate();
 
-			scrollDescription = V.get(this, R.id.scrollDescription);
-			tDescription = V.get(this, R.id.tDescription);
-			bRestart = V.get(this, R.id.bRestart);
+			scrollDescription = findViewById(R.id.scrollDescription);
+			tDescription = findViewById(R.id.tDescription);
+			bRestart = findViewById(R.id.bRestart);
 
 			bRestart.setOnClickListener(v -> listener.bRestart_click());
 		}
@@ -705,13 +704,13 @@ public abstract class LeftDrawer extends NestedScrollView {
 		protected void onFinishInflate() {
 			super.onFinishInflate();
 
-			bChangeBook = V.get(this, R.id.bChangeBook);
-			bChangeCode = V.get(this, R.id.bChangeCode);
+			bChangeBook = findViewById(R.id.bChangeBook);
+			bChangeCode = findViewById(R.id.bChangeCode);
 
-			bOk = V.get(this, R.id.bOk);
-			bDigitA = V.get(this, R.id.bDigitA);
-			bDigitB = V.get(this, R.id.bDigitB);
-			bDigitC = V.get(this, R.id.bDigitC);
+			bOk = findViewById(R.id.bOk);
+			bDigitA = findViewById(R.id.bDigitA);
+			bDigitB = findViewById(R.id.bDigitB);
+			bDigitC = findViewById(R.id.bDigitC);
 
 			bChangeBook.setOnClickListener(v -> {
 				final PopupMenu popupChangeBook = SongBookUtil.getSongBookPopupMenu(activity, false, true, bChangeBook);
@@ -748,7 +747,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 				R.id.bOk,
 				R.id.bBackspace,
 			}) {
-				V.get(this, buttonId).setOnClickListener(button_click);
+				findViewById(buttonId).setOnClickListener(button_click);
 			}
 		}
 

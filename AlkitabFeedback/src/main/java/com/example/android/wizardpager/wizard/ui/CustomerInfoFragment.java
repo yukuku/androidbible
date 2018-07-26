@@ -68,10 +68,10 @@ public class CustomerInfoFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.alkitabfeedback_fragment_page_customer_info, container, false);
         ((TextView) rootView.findViewById(android.R.id.title)).setText(mPage.getTitle());
 
-        mNameView = ((TextView) rootView.findViewById(R.id.your_name));
+        mNameView = rootView.findViewById(R.id.your_name);
         mNameView.setText(mPage.getData().getString(CustomerInfoPage.NAME_DATA_KEY));
 
-        mEmailView = ((TextView) rootView.findViewById(R.id.your_email));
+        mEmailView = rootView.findViewById(R.id.your_email);
         mEmailView.setText(mPage.getData().getString(CustomerInfoPage.EMAIL_DATA_KEY));
         return rootView;
     }

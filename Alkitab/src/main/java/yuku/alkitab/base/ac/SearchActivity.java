@@ -36,7 +36,6 @@ import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
-import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
@@ -214,7 +213,7 @@ public class SearchActivity extends BaseActivity {
 
 		@Override
 		public void bindView(final View view, final Context context, final Cursor cursor) {
-			final TextView text1 = V.get(view, android.R.id.text1);
+			final TextView text1 = view.findViewById(android.R.id.text1);
 			final long _id = cursor.getLong(COLINDEX_ID);
 
 			final CharSequence text;
@@ -275,30 +274,30 @@ public class SearchActivity extends BaseActivity {
 
 		setContentView(R.layout.activity_search);
 
-		root = V.get(this, R.id.root);
-		lsSearchResults = V.get(this, R.id.lsSearchResults);
-		tSearchTips = V.get(this, R.id.tSearchTips);
-		panelFilter = V.get(this, R.id.panelFilter);
-		cFilterOlds = V.get(this, R.id.cFilterOlds);
-		cFilterNews = V.get(this, R.id.cFilterNews);
-		cFilterSingleBook = V.get(this, R.id.cFilterSingleBook);
-		tFilterAdvanced = V.get(this, R.id.tFilterAdvanced);
-		bEditFilter = V.get(this, R.id.bEditFilter);
+		root = findViewById(R.id.root);
+		lsSearchResults = findViewById(R.id.lsSearchResults);
+		tSearchTips = findViewById(R.id.tSearchTips);
+		panelFilter = findViewById(R.id.panelFilter);
+		cFilterOlds = findViewById(R.id.cFilterOlds);
+		cFilterNews = findViewById(R.id.cFilterNews);
+		cFilterSingleBook = findViewById(R.id.cFilterSingleBook);
+		tFilterAdvanced = findViewById(R.id.tFilterAdvanced);
+		bEditFilter = findViewById(R.id.bEditFilter);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;
 		ab.setDisplayHomeAsUpEnabled(true);
 
-		bVersion = V.get(this, R.id.bVersion);
+		bVersion = findViewById(R.id.bVersion);
 
 		searchInVersion = S.activeVersion();
 		searchInVersionId = S.activeVersionId();
 		textSizeMult = S.getDb().getPerVersionSettings(searchInVersionId).fontSizeMultiplier;
 		bVersion.setOnClickListener(bVersion_click);
 
-		searchView = V.get(SearchActivity.this, R.id.searchView);
+		searchView = findViewById(R.id.searchView);
 		searchView.setSubmitButtonEnabled(true);
 		final AutoCompleteTextView autoCompleteTextView = findAutoCompleteTextView(searchView);
 		if (autoCompleteTextView != null) {
@@ -885,8 +884,8 @@ public class SearchActivity extends BaseActivity {
 				checkedTextColor = 0;
 			}
 
-			final TextView lReference = V.get(view, R.id.lReference);
-			final TextView lSnippet = V.get(view, R.id.lSnippet);
+			final TextView lReference = view.findViewById(R.id.lReference);
+			final TextView lSnippet = view.findViewById(R.id.lSnippet);
 
 			final int ari = searchResults.get(position);
 

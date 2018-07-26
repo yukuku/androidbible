@@ -97,12 +97,12 @@ public class MainActivity extends FragmentActivity implements
 		mWizardModel.registerListener(this);
 
 		mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
-		mPager = (ViewPager) findViewById(R.id.pager);
+		mPager = findViewById(R.id.pager);
 
 		mCurrentPageSequence = mWizardModel.getCurrentPageSequence();
 
 		mPager.setAdapter(mPagerAdapter);
-		mStepPagerStrip = (StepPagerStrip) findViewById(R.id.strip);
+		mStepPagerStrip = findViewById(R.id.strip);
 		mStepPagerStrip.setOnPageSelectedListener(new StepPagerStrip.OnPageSelectedListener() {
 			@Override
 			public void onPageStripSelected(int position) {
@@ -113,8 +113,8 @@ public class MainActivity extends FragmentActivity implements
 			}
 		});
 
-		mNextButton = (Button) findViewById(R.id.next_button);
-		mPrevButton = (Button) findViewById(R.id.prev_button);
+		mNextButton = findViewById(R.id.next_button);
+		mPrevButton = findViewById(R.id.prev_button);
 
 		mPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 			@Override

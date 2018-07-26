@@ -12,7 +12,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
-import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.util.AppLog;
@@ -64,7 +62,7 @@ public class ShareActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_share);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;
@@ -76,8 +74,8 @@ public class ShareActivity extends BaseActivity {
 		final Intent intent = getIntent().getParcelableExtra(Intent.EXTRA_INTENT);
 		final Intent[] initialIntents = null;
 		final List<ResolveInfo> rList = null;
-		
-		lsIntent = V.get(this, R.id.lsIntent);
+
+		lsIntent = findViewById(R.id.lsIntent);
 
 		// fix for memory leak:
 		// https://github.com/square/leakcanary/blob/master/leakcanary-android/src/main/java/com/squareup/leakcanary/AndroidExcludedRefs.java
@@ -314,9 +312,9 @@ public class ShareActivity extends BaseActivity {
 		}
 
 		private void bindView(View view, final DisplayResolveInfo info) {
-			TextView text = (TextView) view.findViewById(android.R.id.text1);
-			TextView text2 = (TextView) view.findViewById(android.R.id.text2);
-			final ImageView icon = (ImageView) view.findViewById(R.id.icon);
+			TextView text = view.findViewById(android.R.id.text1);
+			TextView text2 = view.findViewById(android.R.id.text2);
+			final ImageView icon = view.findViewById(R.id.icon);
 			
 			text.setText(info.displayLabel);
 			if (info.extendedInfo != null) {

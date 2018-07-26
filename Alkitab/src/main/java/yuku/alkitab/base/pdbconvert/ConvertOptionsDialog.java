@@ -1,7 +1,6 @@
 package yuku.alkitab.base.pdbconvert;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -13,7 +12,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.compactbyte.android.bible.PDBFileStream;
 import com.compactbyte.bibleplus.reader.BiblePlusPDB;
 import com.compactbyte.bibleplus.reader.BookInfo;
-import yuku.afw.V;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.R;
@@ -104,9 +102,9 @@ public class ConvertOptionsDialog {
 
 		final View dialogLayout = this.alert.getCustomView();
 
-		cbEncoding = V.get(dialogLayout, R.id.cbEncoding);
-		lSample = V.get(dialogLayout, R.id.lSample);
-		cAddlTitle = V.get(dialogLayout, R.id.cAddlTitle);
+		cbEncoding = dialogLayout.findViewById(R.id.cbEncoding);
+		lSample = dialogLayout.findViewById(R.id.lSample);
+		cAddlTitle = dialogLayout.findViewById(R.id.cAddlTitle);
 		
 		String tabEncoding = null;
 		if (pdb.isGreek()) {

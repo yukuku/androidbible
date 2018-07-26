@@ -37,6 +37,6 @@ public class TreeEvent {
 	}
 
 	public int[] getChildIndices() {
-		return childIndices != null ? (int[]) childIndices.clone() : null;
+		return childIndices != null ? childIndices.clone() : null;
 	}
 }

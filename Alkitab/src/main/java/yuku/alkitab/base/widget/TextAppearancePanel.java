@@ -22,7 +22,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.afw.App;
-import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.S;
@@ -80,19 +79,19 @@ public class TextAppearancePanel {
 		this.content = activity.getLayoutInflater().inflate(R.layout.panel_text_appearance, parent, false);
 
 		this.content.setOnTouchListener((v, event) -> true); // prevent click-through
-	    
-	    cbTypeface = V.get(content, R.id.cbTypeface);
-	    cBold = V.get(content, R.id.cBold);
-	    lTextSize = V.get(content, R.id.lTextSize);
-	    sbTextSize = V.get(content, R.id.sbTextSize);
-		panelPerVersionTextSize = V.get(content, R.id.panelPerVersionTextSize);
-		lTextSizeLabel = V.get(content, R.id.lTextSizeLabel);
-		lTextSizePerVersion = V.get(content, R.id.lTextSizePerVersion);
-		sbTextSizePerVersion = V.get(content, R.id.sbTextSizePerVersion);
-	    lLineSpacing = V.get(content, R.id.lLineSpacing);
-	    sbLineSpacing = V.get(content, R.id.sbLineSpacing);
-	    bColorTheme = V.get(content, R.id.bColorTheme);
-		bClose = V.get(content, R.id.bClose);
+
+		cbTypeface = content.findViewById(R.id.cbTypeface);
+		cBold = content.findViewById(R.id.cBold);
+		lTextSize = content.findViewById(R.id.lTextSize);
+		sbTextSize = content.findViewById(R.id.sbTextSize);
+		panelPerVersionTextSize = content.findViewById(R.id.panelPerVersionTextSize);
+		lTextSizeLabel = content.findViewById(R.id.lTextSizeLabel);
+		lTextSizePerVersion = content.findViewById(R.id.lTextSizePerVersion);
+		sbTextSizePerVersion = content.findViewById(R.id.sbTextSizePerVersion);
+		lLineSpacing = content.findViewById(R.id.lLineSpacing);
+		sbLineSpacing = content.findViewById(R.id.sbLineSpacing);
+		bColorTheme = content.findViewById(R.id.bColorTheme);
+		bClose = content.findViewById(R.id.bClose);
 
 		cbTypeface.setAdapter(typefaceAdapter = new TypefaceAdapter());
 		bColorTheme.setOnClickListener(bColorTheme_click);
@@ -296,7 +295,7 @@ public class TextAppearancePanel {
 		}
 
 		@Override public void bindView(View view, int position, ViewGroup parent) {
-			final TextView text1 = V.get(view, android.R.id.text1);
+			final TextView text1 = view.findViewById(android.R.id.text1);
 			text1.setLines(1); // do not wrap long font names
 			text1.setEllipsize(TextUtils.TruncateAt.END);
 			
@@ -355,7 +354,7 @@ public class TextAppearancePanel {
 		public ColorThemeHolder(final View itemView) {
 			super(itemView);
 
-			text1 = V.get(itemView, android.R.id.text1);
+			text1 = itemView.findViewById(android.R.id.text1);
 		}
 	}
 

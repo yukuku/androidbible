@@ -14,7 +14,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,7 +29,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
-import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
@@ -105,11 +103,11 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 		density = getResources().getDisplayMetrics().density;
 
-		drawerLayout = V.get(this, R.id.drawerLayout);
-		leftDrawer = V.get(this, R.id.left_drawer);
+		drawerLayout = findViewById(R.id.drawerLayout);
+		leftDrawer = findViewById(R.id.left_drawer);
 		leftDrawer.configure(this, drawerLayout);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
 		actionBar = getSupportActionBar();
@@ -117,13 +115,13 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
 
-		llNavigations = V.get(this, R.id.llNavigations);
-		flNoData = V.get(this, R.id.flNoDataContainer);
+		llNavigations = findViewById(R.id.llNavigations);
+		flNoData = findViewById(R.id.flNoDataContainer);
 
-		lsReadingPlan = V.get(this, R.id.lsTodayReadings);
+		lsReadingPlan = findViewById(R.id.lsTodayReadings);
 		lsReadingPlan.setAdapter(readingPlanAdapter = new ReadingPlanAdapter());
 
-		bToday = V.get(this, R.id.bToday);
+		bToday = findViewById(R.id.bToday);
 		bToday.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
@@ -235,13 +233,13 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			}
 		});
 
-		bLeft = V.get(this, R.id.bLeft);
+		bLeft = findViewById(R.id.bLeft);
 		bLeft.setOnClickListener(v -> changeDay(-1));
 
-		bRight = V.get(this, R.id.bRight);
+		bRight = findViewById(R.id.bRight);
 		bRight.setOnClickListener(v -> changeDay(+1));
 
-		bDownload = V.get(this, R.id.bDownload);
+		bDownload = findViewById(R.id.bDownload);
 
 		final long id = Preferences.getLong(Prefkey.active_reading_plan_id, 0);
 		loadReadingPlan(id);
@@ -716,8 +714,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		public void bindView(final View res, final int position, final ViewGroup parent) {
 			final int itemViewType = getItemViewType(position);
 			if (itemViewType == 0) {
-				final Button bReference = V.get(res, R.id.bReference);
-				final CheckBox checkbox = V.get(res, R.id.checkbox);
+				final Button bReference = res.findViewById(R.id.bReference);
+				final CheckBox checkbox = res.findViewById(R.id.checkbox);
 
 				final boolean[] readMarks = new boolean[todayReadings.length / 2];
 				ReadingPlanManager.writeReadMarksByDay(readReadingCodes, readMarks, dayNumber);
@@ -741,11 +739,11 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 					load();
 				});
 			} else if (itemViewType == 1) {
-				final ProgressBar pbReadingProgress = V.get(res, R.id.pbReadingProgress);
-				final TextView tActual = V.get(res, R.id.tActual);
-				final TextView tTarget = V.get(res, R.id.tTarget);
-				final TextView tComment = V.get(res, R.id.tComment);
-				final TextView tDetail = V.get(res, R.id.tDetail);
+				final ProgressBar pbReadingProgress = res.findViewById(R.id.pbReadingProgress);
+				final TextView tActual = res.findViewById(R.id.tActual);
+				final TextView tTarget = res.findViewById(R.id.tTarget);
+				final TextView tComment = res.findViewById(R.id.tComment);
+				final TextView tDetail = res.findViewById(R.id.tDetail);
 
 				float actualPercentage = getActualPercentage();
 				float targetPercentage = getTargetPercentage();
@@ -783,12 +781,12 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				});
 
 			} else if (itemViewType == 2) {
-				final LinearLayout layout = V.get(res, R.id.llOneDayReadingPlan);
+				final LinearLayout layout = res.findViewById(R.id.llOneDayReadingPlan);
 
 				final int day = position - todayReadings.length / 2 - 1;
 
 				//Text title
-				TextView tTitle = V.get(res, android.R.id.text1);
+				TextView tTitle = res.findViewById(android.R.id.text1);
 				tTitle.setText(getReadingDateHeader(day));
 
 				//Text reading
@@ -811,7 +809,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				for (int i = 0; i < checkbox_count; i++) {
 					final int sequence = i;
 
-					CheckBox checkBox = (CheckBox) layout.findViewWithTag(i);
+					CheckBox checkBox = layout.findViewWithTag(i);
 					if (checkBox == null) {
 						checkBox = (CheckBox) getLayoutInflater().inflate(R.layout.item_reading_plan_one_reading_checkbox, layout, false);
 						checkBox.setTag(i);

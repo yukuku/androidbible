@@ -94,15 +94,15 @@ public class AmbilWarnaDialog {
 		final View view = dialog.getCustomView();
 
 		viewHue = view.findViewById(R.id.ambilwarna_viewHue);
-		viewSatVal = (AmbilWarnaSquare) view.findViewById(R.id.ambilwarna_viewSatBri);
-		viewCursor = (ImageView) view.findViewById(R.id.ambilwarna_cursor);
+		viewSatVal = view.findViewById(R.id.ambilwarna_viewSatBri);
+		viewCursor = view.findViewById(R.id.ambilwarna_cursor);
 		viewOldColor = view.findViewById(R.id.ambilwarna_oldColor);
 		viewNewColor = view.findViewById(R.id.ambilwarna_newColor);
-		viewTarget = (ImageView) view.findViewById(R.id.ambilwarna_target);
-		viewContainer = (ViewGroup) view.findViewById(R.id.ambilwarna_viewContainer);
+		viewTarget = view.findViewById(R.id.ambilwarna_target);
+		viewContainer = view.findViewById(R.id.ambilwarna_viewContainer);
 		viewAlphaOverlay = view.findViewById(R.id.ambilwarna_overlay);
-		viewAlphaCursor = (ImageView) view.findViewById(R.id.ambilwarna_alphaCursor);
-		viewAlphaCheckered = (ImageView) view.findViewById(R.id.ambilwarna_alphaCheckered);
+		viewAlphaCursor = view.findViewById(R.id.ambilwarna_alphaCursor);
+		viewAlphaCheckered = view.findViewById(R.id.ambilwarna_alphaCheckered);
 
 		{ // hide/show alpha
 			viewAlphaOverlay.setVisibility(supportsAlpha? View.VISIBLE: View.GONE);

@@ -16,7 +16,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 import com.afollestad.materialdialogs.MaterialDialog;
-import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -97,11 +96,11 @@ public class NoteActivity extends BaseActivity {
 
 		setTitle(reference);
 
-		viewFlipper = V.get(this, R.id.viewFlipper);
-		tCaptionReadOnly = V.get(this, R.id.tCaptionReadOnly);
-		tCaption = V.get(this, R.id.tCaption);
+		viewFlipper = findViewById(R.id.viewFlipper);
+		tCaptionReadOnly = findViewById(R.id.tCaptionReadOnly);
+		tCaption = findViewById(R.id.tCaption);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;

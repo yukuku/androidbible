@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -188,13 +187,13 @@ public class GotoGridFragment extends BaseGotoFragment {
 
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View res = inflater.inflate(R.layout.fragment_goto_grid, container, false);
-		panelChapterVerse = V.get(res, R.id.panelChapterVerse);
-		lSelectedBook = V.get(res, R.id.lSelectedBook);
-		lSelectedChapter = V.get(res, R.id.lSelectedChapter);
+		panelChapterVerse = res.findViewById(R.id.panelChapterVerse);
+		lSelectedBook = res.findViewById(R.id.lSelectedBook);
+		lSelectedChapter = res.findViewById(R.id.lSelectedChapter);
 
-		gridBook = V.get(res, R.id.gridBook);
-		gridChapter = V.get(res, R.id.gridChapter);
-		gridVerse = V.get(res, R.id.gridVerse);
+		gridBook = res.findViewById(R.id.gridBook);
+		gridChapter = res.findViewById(R.id.gridChapter);
+		gridVerse = res.findViewById(R.id.gridVerse);
 		
 		panelChapterVerse.setVisibility(View.INVISIBLE);
 		gridBook.setVisibility(View.VISIBLE);

@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -71,13 +70,13 @@ public class GotoDialerFragment extends BaseGotoFragment {
 
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View res = inflater.inflate(R.layout.fragment_goto_dialer, container, false);
-		
-		bOk = V.get(res, R.id.bOk);
-		tChapter = V.get(res, R.id.tChapter);
-		tChapterLabel = V.get(res, R.id.tChapterLabel);
-		tVerse = V.get(res, R.id.tVerse);
-		tVerseLabel = V.get(res, R.id.tVerseLabel);
-		cbBook = V.get(res, R.id.cbBook);
+
+		bOk = res.findViewById(R.id.bOk);
+		tChapter = res.findViewById(R.id.tChapter);
+		tChapterLabel = res.findViewById(R.id.tChapterLabel);
+		tVerse = res.findViewById(R.id.tVerse);
+		tVerseLabel = res.findViewById(R.id.tVerseLabel);
+		cbBook = res.findViewById(R.id.cbBook);
 		cbBook.setAdapter(adapter = new BookAdapter());
 
 		tChapter.setOnClickListener(tChapter_click);
@@ -86,17 +85,17 @@ public class GotoDialerFragment extends BaseGotoFragment {
 		tVerse.setOnClickListener(tVerse_click);
 		tVerseLabel.setOnClickListener(tVerse_click);
 
-		V.get(res, R.id.bDigit0).setOnClickListener(button_click);
-		V.get(res, R.id.bDigit1).setOnClickListener(button_click);
-		V.get(res, R.id.bDigit2).setOnClickListener(button_click);
-		V.get(res, R.id.bDigit3).setOnClickListener(button_click);
-		V.get(res, R.id.bDigit4).setOnClickListener(button_click);
-		V.get(res, R.id.bDigit5).setOnClickListener(button_click);
-		V.get(res, R.id.bDigit6).setOnClickListener(button_click);
-		V.get(res, R.id.bDigit7).setOnClickListener(button_click);
-		V.get(res, R.id.bDigit8).setOnClickListener(button_click);
-		V.get(res, R.id.bDigit9).setOnClickListener(button_click);
-		V.get(res, R.id.bDigitBackspace).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigit0).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigit1).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigit2).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigit3).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigit4).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigit5).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigit6).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigit7).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigit8).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigit9).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigitBackspace).setOnClickListener(button_click);
 
 		showOrHideVerse();
 		Preferences.registerObserver(preferenceChangeListener);

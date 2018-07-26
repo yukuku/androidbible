@@ -19,8 +19,6 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.MaterialDialog;
-import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
@@ -71,7 +69,7 @@ public class SettingsActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;
@@ -79,7 +77,7 @@ public class SettingsActivity extends BaseActivity {
 
 		final String subClassName = getIntent().getStringExtra(EXTRA_subClassName);
 		if (subClassName == null) {
-			lsHeaders = V.get(this, R.id.lsHeaders);
+			lsHeaders = findViewById(R.id.lsHeaders);
 			lsHeaders.setLayoutManager(new LinearLayoutManager(this));
 			lsHeaders.setAdapter(headersAdapter = new HeadersAdapter());
 		} else {
@@ -94,7 +92,7 @@ public class SettingsActivity extends BaseActivity {
 
 		public VH(final View itemView) {
 			super(itemView);
-			title = V.get(itemView, android.R.id.title);
+			title = itemView.findViewById(android.R.id.title);
 		}
 	}
 

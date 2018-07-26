@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import yuku.afw.App;
-import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.fr.GotoDialerFragment;
@@ -74,7 +73,7 @@ public class GotoActivity extends BaseActivity implements BaseGotoFragment.GotoF
 		chapter_1 = getIntent().getIntExtra(EXTRA_chapter, 0);
 		verse_1 = getIntent().getIntExtra(EXTRA_verse, 0);
 
-		toolbar = V.get(this, R.id.toolbar);
+		toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		final ActionBar actionBar = getSupportActionBar();
 		if (actionBar != null) {
@@ -84,13 +83,13 @@ public class GotoActivity extends BaseActivity implements BaseGotoFragment.GotoF
 		}
 
 		// ViewPager and its adapters use support library fragments, so use getSupportFragmentManager.
-		viewPager = V.get(this, R.id.viewPager);
+		viewPager = findViewById(R.id.viewPager);
 		viewPager.setAdapter(pagerAdapter = new GotoPagerAdapter(getSupportFragmentManager()));
 		viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 			@Override
 			public void onPageSelected(int position) {
 				if (okToHideKeyboard && position != 1) {
-					final View editText = V.get(GotoActivity.this, R.id.tDirectReference);
+					final View editText = findViewById(R.id.tDirectReference);
 					if (editText != null) {
 						final InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 						imm.hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
@@ -100,7 +99,7 @@ public class GotoActivity extends BaseActivity implements BaseGotoFragment.GotoF
 			}
 		});
 
-		tablayout = V.get(this, R.id.tablayout);
+		tablayout = findViewById(R.id.tablayout);
 		tablayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 		tablayout.setupWithViewPager(viewPager);
 
@@ -113,7 +112,7 @@ public class GotoActivity extends BaseActivity implements BaseGotoFragment.GotoF
 
 			if (tabUsed == 2) {
 				viewPager.postDelayed(() -> {
-					final View editText = V.get(GotoActivity.this, R.id.tDirectReference);
+					final View editText = findViewById(R.id.tDirectReference);
 					if (editText != null) {
 						InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 						imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);

@@ -11,7 +11,6 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
@@ -27,7 +26,7 @@ public class LabelEditorDialog {
 	
 	public static void show(Context context, String initialText, String title, final OkListener okListener) {
 		View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_label, null);
-		final EditText tCaption = V.get(dialogView, R.id.tCaption);
+		final EditText tCaption = dialogView.findViewById(R.id.tCaption);
 		tCaption.setText(initialText);
 
 		final MaterialDialog dialog = new MaterialDialog.Builder(context)

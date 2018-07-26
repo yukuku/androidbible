@@ -22,7 +22,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
-import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.util.Announce;
@@ -117,43 +116,43 @@ public class AboutActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_about);
 
-		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;
 		ab.setDisplayHomeAsUpEnabled(true);
 
-		root = V.get(this, R.id.root);
-		tVersion = V.get(this, R.id.tVersion);
-		tBuild = V.get(this, R.id.tBuild);
-		imgLogo = V.get(this, R.id.imgLogo);
-		tAboutTextDesc = V.get(this, R.id.tAboutTextDesc);
+		root = findViewById(R.id.root);
+		tVersion = findViewById(R.id.tVersion);
+		tBuild = findViewById(R.id.tBuild);
+		imgLogo = findViewById(R.id.imgLogo);
+		tAboutTextDesc = findViewById(R.id.tAboutTextDesc);
 
-		bHelp = V.get(this, R.id.bHelp);
+		bHelp = findViewById(R.id.bHelp);
 		bHelp.setOnClickListener(v -> {
 			App.trackEvent("help_button_announcement");
 			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://alkitab.app/guide?utm_source=app&utm_medium=button&utm_campaign=help")));
 		});
 
-		bMaterialSources = V.get(this, R.id.bMaterialSources);
+		bMaterialSources = findViewById(R.id.bMaterialSources);
 		bMaterialSources.setOnClickListener(v -> {
 			App.trackEvent("help_button_material_sources");
 			startActivity(HelpActivity.createIntent("help/material_sources.html", getString(R.string.about_material_sources)));
 		});
 
-		bCredits = V.get(this, R.id.bCredits);
+		bCredits = findViewById(R.id.bCredits);
 		bCredits.setOnClickListener(v -> {
 			App.trackEvent("help_button_credits");
 			startActivity(HelpActivity.createIntent("help/credits.html", getString(R.string.about_credits)));
 		});
 
-		bFeedback = V.get(this, R.id.bFeedback);
+		bFeedback = findViewById(R.id.bFeedback);
 		bFeedback.setOnClickListener(v -> {
 			App.trackEvent("help_button_feedback");
 			startActivity(new Intent(App.context, com.example.android.wizardpager.MainActivity.class));
 		});
 
-		bEnableBeta = V.get(this, R.id.bEnableBeta);
+		bEnableBeta = findViewById(R.id.bEnableBeta);
 		bEnableBeta.setOnClickListener(v -> {
 				App.trackEvent("help_button_enable_beta");
 				new MaterialDialog.Builder(this)
@@ -175,11 +174,11 @@ public class AboutActivity extends BaseActivity {
 			bEnableBeta.setVisibility(View.GONE);
 		}
 
-		bAnnouncements = V.get(this, R.id.bAnnouncements);
+		bAnnouncements = findViewById(R.id.bAnnouncements);
 		bAnnouncements.setOnClickListener(v -> bAnnouncements_click());
 
-		tAnnouncements = V.get(this, R.id.tAnnouncements);
-		progressAnnouncements = V.get(this, R.id.progressAnnouncements);
+		tAnnouncements = findViewById(R.id.tAnnouncements);
+		progressAnnouncements = findViewById(R.id.progressAnnouncements);
 
 		setAnnouncementState(AnnouncementState.init);
 

@@ -92,7 +92,7 @@ public class HackedTimePickerDialog extends AlertDialog
                 (LayoutInflater) themeContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.dialog_hacked_time_picker, null);
         setView(view);
-        mTimePicker = (TimePicker) view.findViewById(R.id.timePicker);
+        mTimePicker = view.findViewById(R.id.timePicker);
 
         // initialize state
         mTimePicker.setIs24HourView(mIs24HourView);
