@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <yuku.alkitab.base.widget.VerseItem xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
+	android:layout_width="match_parent"
 	android:layout_height="wrap_content">
 
 	<FrameLayout
@@ -13,12 +13,14 @@
 		<TextView
 			android:id="@+id/lVerseNumber"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" />
+			android:layout_height="wrap_content"
+			android:layout_gravity="start" />
 
 		<yuku.alkitab.base.widget.VerseTextView
 			android:id="@+id/lText"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content" />
+			android:layout_height="wrap_content"
+			android:layout_gravity="start" />
 
 	</FrameLayout>
 

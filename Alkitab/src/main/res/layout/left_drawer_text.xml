@@ -27,13 +27,13 @@
 			style="?buttonBarButtonStyle"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:drawableStart="@drawable/ic_drawer_markers"
 			android:drawablePadding="16dp"
+			android:drawableStart="@drawable/ic_drawer_markers"
 			android:fontFamily="sans-serif-regular"
 			android:gravity="start|center_vertical"
 			android:text="@string/menu_markers"
 			android:textAllCaps="false"
-			android:textColor="#ffffff"
+			android:textColor="#fff"
 			android:textSize="16sp" />
 
 		<FrameLayout
@@ -44,7 +44,7 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_gravity="center_vertical"
+				android:layout_gravity="start|center_vertical"
 				android:layout_marginStart="16dp"
 				android:text="@string/left_drawer_current_reading_title"
 				android:textColor="#bebebe"
@@ -73,7 +73,7 @@
 			android:paddingEnd="0dp"
 			android:paddingStart="16dp"
 			android:textAllCaps="false"
-			android:textColor="#ffffff"
+			android:textColor="#fff"
 			android:textSize="16sp"
 			tools:text="Genesis 1–3" />
 
@@ -84,7 +84,7 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_gravity="center_vertical"
+				android:layout_gravity="start|center_vertical"
 				android:layout_marginStart="16dp"
 				android:text="@string/menuProgress"
 				android:textColor="#bebebe"
@@ -166,43 +166,43 @@
 			android:gravity="start|center_vertical"
 			android:text="@string/menuDisplay"
 			android:textAllCaps="false"
-			android:textColor="#ffffff"
+			android:textColor="#fff"
 			android:textSize="16sp" />
 
 		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/cFullScreen"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
-			android:layout_marginStart="16dp"
 			android:layout_marginEnd="16dp"
+			android:layout_marginStart="16dp"
 			android:fontFamily="sans-serif-regular"
 			android:gravity="start|center_vertical"
 			android:text="@string/menuFullScreen"
-			android:textColor="#ffffff"
+			android:textColor="#fff"
 			android:textSize="16sp" />
 
 		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/cNightMode"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
-			android:layout_marginStart="16dp"
 			android:layout_marginEnd="16dp"
+			android:layout_marginStart="16dp"
 			android:fontFamily="sans-serif-regular"
 			android:gravity="start|center_vertical"
 			android:text="@string/menuNightMode"
-			android:textColor="#ffffff"
+			android:textColor="#fff"
 			android:textSize="16sp" />
 
 		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/cSplitVersion"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
-			android:layout_marginStart="16dp"
 			android:layout_marginEnd="16dp"
+			android:layout_marginStart="16dp"
 			android:fontFamily="sans-serif-regular"
 			android:gravity="start|center_vertical"
 			android:text="@string/menuSplitVersion"
-			android:textColor="#ffffff"
+			android:textColor="#fff"
 			android:textSize="16sp" />
 
 		<include

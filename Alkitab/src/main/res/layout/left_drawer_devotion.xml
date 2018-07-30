@@ -46,7 +46,7 @@
 				android:layout_height="match_parent"
 				android:layout_weight="1"
 				android:contentDescription="@string/desc_previous_day"
-				android:src="@drawable/ic_nav_left_light" />
+				android:src="@drawable/ic_nav_start_light" />
 
 			<ImageButton
 				android:id="@+id/bReload"
@@ -64,7 +64,7 @@
 				android:layout_height="match_parent"
 				android:layout_weight="1"
 				android:contentDescription="@string/desc_next_day"
-				android:src="@drawable/ic_nav_right_light" />
+				android:src="@drawable/ic_nav_end_light" />
 		</LinearLayout>
 
 		<include
