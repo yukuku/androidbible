@@ -10,72 +10,72 @@ public class JumperTest extends TestCase {
 
 	static {
 		String[] ss = {
-				"Kejadian", // 0
-				"Keluaran",
-				"Imamat",
-				"Bilangan",
-				"Ulangan",
-				"Yosua",
-				"Hakim-hakim",
-				"Rut",
-				"1 Samuel",
-				"2 Samuel",
-				"1 Raja-raja", // 10
-				"2 Raja-raja",
-				"1 Tawarikh",
-				"2 Tawarikh",
-				"Ezra",
-				"Nehemia",
-				"Ester",
-				"Ayub",
-				"Mazmur",
-				"Amsal",
-				"Pengkhotbah", // 20
-				"Kidung Agung",
-				"Yesaya",
-				"Yeremia",
-				"Ratapan",
-				"Yehezkiel",
-				"Daniel",
-				"Hosea",
-				"Yoel",
-				"Amos",
-				"Obaja", // 30
-				"Yunus",
-				"Mikha",
-				"Nahum",
-				"Habakuk",
-				"Zefanya",
-				"Hagai",
-				"Zakharia",
-				"Maleakhi",
-				"Matius",
-				"Markus", // 40
-				"Lukas",
-				"Yohanes",
-				"Kisah Para Rasul", // 43
-				"Roma",
-				"1 Korintus",
-				"2 Korintus",
-				"Galatia",
-				"Efesus",
-				"Filipi",
-				"Kolose", // 50
-				"1 Tesalonika",
-				"2 Tesalonika",
-				"1 Timotius",
-				"2 Timotius",
-				"Titus",
-				"Filemon",
-				"Ibrani",
-				"Yakobus",
-				"1 Petrus",
-				"2 Petrus", // 60
-				"1 Yohanes",
-				"2 Yohanes",
-				"3 Yohanes",
-				"Yudas",
-				"Wahyu", // 65
+			"Kejadian", // 0
+			"Keluaran",
+			"Imamat",
+			"Bilangan",
+			"Ulangan",
+			"Yosua",
+			"Hakim-hakim",
+			"Rut",
+			"1 Samuel",
+			"2 Samuel",
+			"1 Raja-raja", // 10
+			"2 Raja-raja",
+			"1 Tawarikh",
+			"2 Tawarikh",
+			"Ezra",
+			"Nehemia",
+			"Ester",
+			"Ayub",
+			"Mazmur",
+			"Amsal",
+			"Pengkhotbah", // 20
+			"Kidung Agung",
+			"Yesaya",
+			"Yeremia",
+			"Ratapan",
+			"Yehezkiel",
+			"Daniel",
+			"Hosea",
+			"Yoel",
+			"Amos",
+			"Obaja", // 30
+			"Yunus",
+			"Mikha",
+			"Nahum",
+			"Habakuk",
+			"Zefanya",
+			"Hagai",
+			"Zakharia",
+			"Maleakhi",
+			"Matius",
+			"Markus", // 40
+			"Lukas",
+			"Yohanes",
+			"Kisah Para Rasul", // 43
+			"Roma",
+			"1 Korintus",
+			"2 Korintus",
+			"Galatia",
+			"Efesus",
+			"Filipi",
+			"Kolose", // 50
+			"1 Tesalonika",
+			"2 Tesalonika",
+			"1 Timotius",
+			"2 Timotius",
+			"Titus",
+			"Filemon",
+			"Ibrani",
+			"Yakobus",
+			"1 Petrus",
+			"2 Petrus", // 60
+			"1 Yohanes",
+			"2 Yohanes",
+			"3 Yohanes",
+			"Yudas",
+			"Wahyu", // 65
 		};
 
 		books = new Book[ss.length];
@@ -100,7 +100,7 @@ public class JumperTest extends TestCase {
 
 		try {
 			final Jumper jumper = new Jumper(reference, logger);
-			
+
 			boolean ok = jumper.getParseSucceeded();
 			if (ok) {
 				int bookId = jumper.getBookId(books);
@@ -222,21 +222,21 @@ public class JumperTest extends TestCase {
 		testParse("Rev.11.13-Rev.12", true, 65, 11, 13, true);
 
 
-		String[] ss = { "Kej", "Kel",
-				"Im", "Bil", "Ul", "Yos",
-				"Hak", "Rut", "1Sam", "2Sam", "1Raj", "2Raj", "1Taw", "2Taw", "Ezr",
-				"Neh", "Est", "Ayub", "Mazm", "Ams", "Pengkh", "Kid",
-				"Yes", "Yer", "Rat", "Yeh", "Dan", "Hos", "Yoel", "Am", "Ob", "Yun",
-				"Mi", "Nah", "Hab", "Zef", "Hag", "Za", "Mal",
-				"Mat", "Mr", "Luk", "Yoh", "Kis", "Rom", "1Kor", "2Kor", "Gal", "Ef", "Fili", "Kol",
-				"1Tes", "2Tes", "1Tim", "2Tim", "Tit",
-				"Filem", "Ibr", "Yak", "1Pet", "2Pet", "1Yoh", "2Yoh", "3Yoh", "Yud",
-				"Wahy",
+		String[] ss = {"Kej", "Kel",
+			"Im", "Bil", "Ul", "Yos",
+			"Hak", "Rut", "1Sam", "2Sam", "1Raj", "2Raj", "1Taw", "2Taw", "Ezr",
+			"Neh", "Est", "Ayub", "Mazm", "Ams", "Pengkh", "Kid",
+			"Yes", "Yer", "Rat", "Yeh", "Dan", "Hos", "Yoel", "Am", "Ob", "Yun",
+			"Mi", "Nah", "Hab", "Zef", "Hag", "Za", "Mal",
+			"Mat", "Mr", "Luk", "Yoh", "Kis", "Rom", "1Kor", "2Kor", "Gal", "Ef", "Fili", "Kol",
+			"1Tes", "2Tes", "1Tim", "2Tim", "Tit",
+			"Filem", "Ibr", "Yak", "1Pet", "2Pet", "1Yoh", "2Yoh", "3Yoh", "Yud",
+			"Wahy",
 		};
-		
+
 		for (int i = 0; i < ss.length; i++) {
 			String s = ss[i];
-			
+
 			testParse(s, true, i, 0, 0, false);
 		}
 	}

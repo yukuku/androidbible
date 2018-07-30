@@ -9,7 +9,7 @@
 		android:id="@+id/lLabel"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_alignParentLeft="true"
+		android:layout_alignParentStart="true"
 		android:layout_alignParentTop="true"
 		android:text="@string/nama_label_titikdua"
 		android:textAppearance="?android:attr/textAppearanceSmall" />
@@ -18,7 +18,7 @@
 		android:id="@+id/tCaption"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:layout_alignParentLeft="true"
+		android:layout_alignParentStart="true"
 		android:layout_below="@+id/lLabel"
 		android:inputType="text"
 		android:maxLength="48"

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 **
 ** Copyright 2007, The Android Open Source Project
 **
@@ -18,8 +17,7 @@
 -->
 
 <TimePicker xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/timePicker"
-    android:layout_gravity="center_horizontal"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    />
+	android:id="@+id/timePicker"
+	android:layout_gravity="center_horizontal"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content" />

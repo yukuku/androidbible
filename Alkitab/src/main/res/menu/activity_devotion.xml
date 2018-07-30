@@ -2,16 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/menuCopy"
-        android:icon="@drawable/ic_menu_copy"
-        app:showAsAction="never"
-        android:title="@string/salin_renungan" />
-    <item
-        android:id="@+id/menuShare"
-        android:icon="@drawable/ic_menu_share"
-        app:showAsAction="never"
-        android:title="@string/menuShare" />
+	<item
+		android:id="@+id/menuCopy"
+		android:icon="@drawable/ic_menu_copy"
+		app:showAsAction="never"
+		android:title="@string/salin_renungan" />
+	<item
+		android:id="@+id/menuShare"
+		android:icon="@drawable/ic_menu_share"
+		app:showAsAction="never"
+		android:title="@string/menuShare" />
 
 	<item
 		android:id="@+id/menuReminder"

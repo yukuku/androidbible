@@ -1,9 +1,11 @@
 package yuku.devoxx.flowlayout;
 
-import android.content.*;
-import android.content.res.*;
-import android.util.*;
-import android.view.*;
+import android.content.Context;
+import android.content.res.TypedArray;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 
 public class FlowLayout extends ViewGroup {
 	public static final String TAG = FlowLayout.class.getSimpleName();

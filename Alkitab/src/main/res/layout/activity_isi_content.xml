@@ -37,12 +37,12 @@
 					style="?actionButtonStyle"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
-					android:layout_marginLeft="@dimen/nav_goto_side_margin"
-					android:layout_marginRight="@dimen/nav_goto_side_margin"
+					android:layout_marginStart="@dimen/nav_goto_side_margin"
+					android:layout_marginEnd="@dimen/nav_goto_side_margin"
 					android:fontFamily="sans-serif-medium"
 					android:includeFontPadding="false"
-					android:paddingLeft="0dp"
-					android:paddingRight="0dp"
+					android:paddingStart="0dp"
+					android:paddingEnd="0dp"
 					android:textSize="16sp"
 					tools:text="Long Name Of Book 123" />
 
@@ -83,8 +83,8 @@
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:clipToPadding="false"
-				android:paddingLeft="@dimen/text_side_padding"
-				android:paddingRight="@dimen/text_side_padding"
+				android:paddingStart="@dimen/text_side_padding"
+				android:paddingEnd="@dimen/text_side_padding"
 				android:scrollbarStyle="outsideOverlay" />
 
 			<yuku.alkitab.base.widget.LabeledSplitHandleButton
@@ -103,8 +103,8 @@
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
 					android:clipToPadding="false"
-					android:paddingLeft="@dimen/text_side_padding"
-					android:paddingRight="@dimen/text_side_padding"
+					android:paddingStart="@dimen/text_side_padding"
+					android:paddingEnd="@dimen/text_side_padding"
 					android:scrollbarStyle="outsideOverlay" />
 
 				<TextView
@@ -112,8 +112,8 @@
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
 					android:gravity="center"
-					android:paddingLeft="32dp"
-					android:paddingRight="32dp"
+					android:paddingStart="32dp"
+					android:paddingEnd="32dp"
 					android:textAppearance="?android:attr/textAppearanceMedium"
 					tools:ignore="SelectableText" />
 			</FrameLayout>

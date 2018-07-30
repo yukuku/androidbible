@@ -8,17 +8,20 @@ import yuku.alkitab.model.XrefEntry;
 
 public interface BibleReader {
 	String getLocale();
+
 	String getShortName();
+
 	String getLongName();
+
 	String getDescription();
-	
+
 	Book[] loadBooks();
-	
+
 	/**
-	 * @return may return null if the requested is not available 
+	 * @return may return null if the requested is not available
 	 */
 	SingleChapterVerses loadVerseText(Book book, int chapter_1, boolean dontSplitVerses, boolean lowercased);
-	
+
 	int loadPericope(int bookId, int chapter_1, int[] aris, PericopeBlock[] pericopeBlocks, int max);
 
 	/**

@@ -1,122 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ambilwarna_dialogView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="center" >
+<FrameLayout android:id="@+id/ambilwarna_dialogView"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:layout_gravity="center">
 
-    <RelativeLayout
-        android:id="@+id/ambilwarna_viewContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:clipToPadding="false"
-        android:paddingBottom="@dimen/ambilwarna_spacer"
-        android:paddingLeft="@dimen/ambilwarna_spacer"
-        android:paddingRight="@dimen/ambilwarna_spacer"
-        android:paddingTop="@dimen/ambilwarna_spacer" >
+	<RelativeLayout
+		android:id="@+id/ambilwarna_viewContainer"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:clipToPadding="false"
+		android:paddingBottom="@dimen/ambilwarna_spacer"
+		android:paddingStart="@dimen/ambilwarna_spacer"
+		android:paddingEnd="@dimen/ambilwarna_spacer"
+		android:paddingTop="@dimen/ambilwarna_spacer">
 
-        <yuku.ambilwarna.AmbilWarnaSquare
-            android:id="@+id/ambilwarna_viewSatBri"
-            android:layout_width="@dimen/ambilwarna_hsvWidth"
-            android:layout_height="@dimen/ambilwarna_hsvHeight"
-            android:layerType="software" />
+		<yuku.ambilwarna.AmbilWarnaSquare
+			android:id="@+id/ambilwarna_viewSatBri"
+			android:layout_width="@dimen/ambilwarna_hsvWidth"
+			android:layout_height="@dimen/ambilwarna_hsvHeight"
+			android:layerType="software" />
 
-        <ImageView
-            android:id="@+id/ambilwarna_viewHue"
-            android:layout_width="@dimen/ambilwarna_hueWidth"
-            android:layout_height="@dimen/ambilwarna_hsvHeight"
-            android:layout_marginLeft="@dimen/ambilwarna_spacer"
-            android:layout_toRightOf="@id/ambilwarna_viewSatBri"
-            android:scaleType="fitXY"
-            android:src="@drawable/ambilwarna_hue" />
+		<ImageView
+			android:id="@+id/ambilwarna_viewHue"
+			android:layout_width="@dimen/ambilwarna_hueWidth"
+			android:layout_height="@dimen/ambilwarna_hsvHeight"
+			android:layout_marginStart="@dimen/ambilwarna_spacer"
+			android:layout_toEndOf="@id/ambilwarna_viewSatBri"
+			android:contentDescription="@null"
+			android:scaleType="fitXY"
+			android:src="@drawable/ambilwarna_hue" />
 
-        <ImageView
-            android:id="@+id/ambilwarna_alphaCheckered"
-            android:layout_width="@dimen/ambilwarna_hueWidth"
-            android:layout_height="@dimen/ambilwarna_hsvHeight"
-            android:layout_marginLeft="@dimen/ambilwarna_spacer"
-            android:layout_toRightOf="@id/ambilwarna_viewHue"
-            android:scaleType="fitXY"
-            android:src="@drawable/ambilwarna_alphacheckered_tiled" />
+		<ImageView
+			android:id="@+id/ambilwarna_alphaCheckered"
+			android:layout_width="@dimen/ambilwarna_hueWidth"
+			android:layout_height="@dimen/ambilwarna_hsvHeight"
+			android:layout_marginStart="@dimen/ambilwarna_spacer"
+			android:layout_toEndOf="@id/ambilwarna_viewHue"
+			android:contentDescription="@null"
+			android:scaleType="fitXY"
+			android:src="@drawable/ambilwarna_alphacheckered_tiled" />
 
-        <View
-            android:id="@+id/ambilwarna_overlay"
-            android:layout_width="@dimen/ambilwarna_hueWidth"
-            android:layout_height="@dimen/ambilwarna_hsvHeight"
-            android:layout_marginLeft="@dimen/ambilwarna_spacer"
-            android:layout_toRightOf="@id/ambilwarna_viewHue" />
+		<View
+			android:id="@+id/ambilwarna_overlay"
+			android:layout_width="@dimen/ambilwarna_hueWidth"
+			android:layout_height="@dimen/ambilwarna_hsvHeight"
+			android:layout_marginStart="@dimen/ambilwarna_spacer"
+			android:layout_toEndOf="@id/ambilwarna_viewHue" />
 
-        <ImageView
-            android:id="@+id/ambilwarna_cursor"
-            android:layout_width="9dp"
-            android:layout_height="9dp"
-            android:scaleType="matrix"
-            android:src="@drawable/ambilwarna_cursor" />
+		<ImageView
+			android:id="@+id/ambilwarna_cursor"
+			android:layout_width="9dp"
+			android:layout_height="9dp"
+			android:contentDescription="@null"
+			android:scaleType="matrix"
+			android:src="@drawable/ambilwarna_cursor" />
 
-        <ImageView
-            android:id="@+id/ambilwarna_alphaCursor"
-            android:layout_width="9dp"
-            android:layout_height="9dp"
-            android:scaleType="matrix"
-            android:src="@drawable/ambilwarna_cursor" />
+		<ImageView
+			android:id="@+id/ambilwarna_alphaCursor"
+			android:layout_width="9dp"
+			android:layout_height="9dp"
+			android:contentDescription="@null"
+			android:scaleType="matrix"
+			android:src="@drawable/ambilwarna_cursor" />
 
-        <ImageView
-            android:id="@+id/ambilwarna_target"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:scaleType="matrix"
-            android:src="@drawable/ambilwarna_target" />
+		<ImageView
+			android:id="@+id/ambilwarna_target"
+			android:layout_width="15dp"
+			android:layout_height="15dp"
+			android:contentDescription="@null"
+			android:scaleType="matrix"
+			android:src="@drawable/ambilwarna_target" />
 
-        <LinearLayout
-            android:id="@+id/ambilwarna_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/ambilwarna_viewSatBri"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/ambilwarna_spacer"
-            android:gravity="center"
-            android:orientation="horizontal" >
+		<LinearLayout
+			android:id="@+id/ambilwarna_state"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/ambilwarna_viewSatBri"
+			android:layout_centerHorizontal="true"
+			android:layout_marginTop="@dimen/ambilwarna_spacer"
+			android:gravity="center"
+			android:orientation="horizontal">
 
-            <FrameLayout
-                android:layout_width="60dp"
-                android:layout_height="30dp" >
+			<FrameLayout
+				android:layout_width="60dp"
+				android:layout_height="30dp">
 
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:background="@drawable/ambilwarna_alphacheckered_tiled" />
+				<View
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:background="@drawable/ambilwarna_alphacheckered_tiled" />
 
-                <View
-                    android:id="@+id/ambilwarna_oldColor"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:background="#faa" />
-            </FrameLayout>
+				<View
+					android:id="@+id/ambilwarna_oldColor"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:background="#faa" />
+			</FrameLayout>
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/ambilwarna_spacer"
-                android:paddingRight="@dimen/ambilwarna_spacer"
-                android:src="@drawable/ambilwarna_arrow_right" />
+			<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@null"
+				android:paddingStart="@dimen/ambilwarna_spacer"
+				android:paddingEnd="@dimen/ambilwarna_spacer"
+				android:src="@drawable/ambilwarna_arrow_right" />
 
-            <FrameLayout
-                android:layout_width="60dp"
-                android:layout_height="30dp" >
+			<FrameLayout
+				android:layout_width="60dp"
+				android:layout_height="30dp">
 
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:background="@drawable/ambilwarna_alphacheckered_tiled" />
+				<View
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:background="@drawable/ambilwarna_alphacheckered_tiled" />
 
-                <View
-                    android:id="@+id/ambilwarna_newColor"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:background="#aaf" />
-            </FrameLayout>
-        </LinearLayout>
-    </RelativeLayout>
+				<View
+					android:id="@+id/ambilwarna_newColor"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:background="#aaf" />
+			</FrameLayout>
+		</LinearLayout>
+	</RelativeLayout>
 
 </FrameLayout>

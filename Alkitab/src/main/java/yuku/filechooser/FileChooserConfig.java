@@ -10,13 +10,13 @@ public class FileChooserConfig implements Parcelable {
 		Open,
 		Save,
 	}
-	
+
 	public Mode mode;
 	public String pattern;
 	public String title;
 	public String subtitle;
 	public String initialDir;
-	
+
 	@Override
 	public int describeContents() {
 		return 0;
@@ -30,17 +30,19 @@ public class FileChooserConfig implements Parcelable {
 		dest.writeString(subtitle);
 		dest.writeString(initialDir);
 	}
-	
+
 	public static final Creator<FileChooserConfig> CREATOR = new Creator<FileChooserConfig>() {
 		@Override
 		public FileChooserConfig[] newArray(int size) {
 			return new FileChooserConfig[size];
 		}
-		
+
 		@Override
 		public FileChooserConfig createFromParcel(Parcel in) {
 			FileChooserConfig res = new FileChooserConfig();
-			int mode_i = in.readInt(); if (mode_i >= 0 || mode_i < Mode.values().length) res.mode = Mode.values()[mode_i]; else res.mode = Mode.Open;
+			int mode_i = in.readInt();
+			if (mode_i >= 0 || mode_i < Mode.values().length) res.mode = Mode.values()[mode_i];
+			else res.mode = Mode.Open;
 			res.pattern = in.readString();
 			res.title = in.readString();
 			res.subtitle = in.readString();

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
@@ -28,8 +27,8 @@
 				android:id="@+id/llNavigations"
 				android:layout_width="match_parent"
 				android:layout_height="?android:actionBarSize"
-				android:paddingLeft="@dimen/reading_plan_day_heading_side_padding"
-				android:paddingRight="@dimen/reading_plan_day_heading_side_padding">
+				android:paddingStart="@dimen/reading_plan_day_heading_side_padding"
+				android:paddingEnd="@dimen/reading_plan_day_heading_side_padding">
 
 				<ImageButton
 					android:id="@+id/bLeft"

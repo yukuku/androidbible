@@ -19,8 +19,8 @@
 		android:background="@null"
 		android:gravity="top"
 		android:inputType="text|textAutoCorrect|textCapSentences|textMultiLine"
-		android:paddingLeft="8dp"
-		android:paddingRight="8dp"
+		android:paddingStart="8dp"
+		android:paddingEnd="8dp"
 		tools:ignore="LabelFor" />
 
 </LinearLayout>

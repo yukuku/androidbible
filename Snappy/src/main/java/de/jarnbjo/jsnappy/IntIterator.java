@@ -32,9 +32,9 @@ class IntIterator {
 	}
 
 	boolean next() {
-		while(offset > 2) {
+		while (offset > 2) {
 			offset -= 2;
-			if(data[offset] == key) {
+			if (data[offset] == key) {
 				return true;
 			}
 		}
@@ -42,7 +42,7 @@ class IntIterator {
 	}
 
 	int get() {
-		return data[offset+1];
+		return data[offset + 1];
 	}
 
 	static IntIterator EMTPY_ITERATOR = new IntIterator() {

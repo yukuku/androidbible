@@ -7,7 +7,6 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.UnderlineSpan;
 import android.util.TypedValue;
 import android.widget.TextView;
-
 import yuku.alkitab.base.S;
 
 public class Appearances {

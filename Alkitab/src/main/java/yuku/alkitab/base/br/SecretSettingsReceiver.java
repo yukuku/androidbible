@@ -3,7 +3,6 @@ package yuku.alkitab.base.br;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-
 import yuku.alkitab.base.ac.SecretSettingsActivity;
 
 public class SecretSettingsReceiver extends BroadcastReceiver {

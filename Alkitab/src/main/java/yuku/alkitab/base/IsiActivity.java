@@ -430,7 +430,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	};
 
-	@Override protected void onCreate(Bundle savedInstanceState) {
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
 		AppLog.d(TAG, "@@onCreate start");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_isi);
@@ -624,7 +625,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	};
 
-	@Override protected void onNewIntent(Intent intent) {
+	@Override
+	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 
 		processIntent(intent, "onNewIntent");
@@ -658,7 +660,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		return null;
 	}
 
-	/** did we get here from VIEW intent? */
+	/**
+	 * did we get here from VIEW intent?
+	 */
 	private IntentResult tryGetIntentResultFromView(Intent intent) {
 		if (!U.equals(intent.getAction(), "yuku.alkitab.action.VIEW")) return null;
 
@@ -712,7 +716,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				}
 				byte[] payload = obj.toString().getBytes();
 				NdefRecord record = new NdefRecord(NdefRecord.TNF_MIME_MEDIA, "application/vnd.yuku.alkitab.nfc.beam".getBytes(), new byte[0], payload);
-				return new NdefMessage(new NdefRecord[] {
+				return new NdefMessage(new NdefRecord[]{
 					record,
 					NdefRecord.createApplicationRecord(getPackageName()),
 				});
@@ -720,7 +724,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	}
 
-	@Override protected void onPause() {
+	@Override
+	protected void onPause() {
 		super.onPause();
 		disableNfcForegroundDispatchIfAvailable();
 	}
@@ -737,7 +742,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	}
 
-	@Override protected void onResume() {
+	@Override
+	protected void onResume() {
 		super.onResume();
 		enableNfcForegroundDispatchIfAvailable();
 	}
@@ -747,11 +753,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, IsiActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 			IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
 			try {
-			    ndef.addDataType("application/vnd.yuku.alkitab.nfc.beam");
+				ndef.addDataType("application/vnd.yuku.alkitab.nfc.beam");
 			} catch (IntentFilter.MalformedMimeTypeException e) {
-			    throw new RuntimeException("fail mime type", e);
+				throw new RuntimeException("fail mime type", e);
 			}
-			IntentFilter[] intentFiltersArray = new IntentFilter[] {ndef, };
+			IntentFilter[] intentFiltersArray = new IntentFilter[]{ndef,};
 			nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, null);
 		}
 	}
@@ -877,24 +883,25 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		VersesView.PressResult pressResult = lsSplit0.press(keyCode);
 		switch (pressResult.kind) {
-		case left:
-			bLeft_click();
-			return true;
-		case right:
-			bRight_click();
-			return true;
-		case consumed:
-			if (activeSplitVersion != null) {
-				lsSplit1.scrollToVerse(pressResult.targetVerse_1);
-			}
-			return true;
-		default:
-			return false;
+			case left:
+				bLeft_click();
+				return true;
+			case right:
+				bRight_click();
+				return true;
+			case consumed:
+				if (activeSplitVersion != null) {
+					lsSplit1.scrollToVerse(pressResult.targetVerse_1);
+				}
+				return true;
+			default:
+				return false;
 		}
 	}
 
 	/**
 	 * Jump to a given verse reference in string format.
+	 *
 	 * @return ari of the parsed reference
 	 */
 	int jumpTo(String reference) {
@@ -905,7 +912,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		AppLog.d(TAG, "going to jump to " + reference);
 
 		Jumper jumper = new Jumper(reference);
-		if (! jumper.getParseSucceeded()) {
+		if (!jumper.getParseSucceeded()) {
 			new MaterialDialog.Builder(this)
 				.content(R.string.alamat_tidak_sah_alamat, reference)
 				.positiveText(R.string.ok)
@@ -978,6 +985,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	/**
 	 * Construct text for copying or sharing (in plain text).
+	 *
 	 * @param isSplitVersion whether take the verse text from the main or from the split version.
 	 * @return [0] text for copy/share, [1] text to be submitted to the share url service
 	 */
@@ -1076,7 +1084,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		SettingsActivity.setPaddingBasedOnPreferences(lsSplit1);
 	}
 
-	@Override protected void onStop() {
+	@Override
+	protected void onStop() {
 		super.onStop();
 
 		Preferences.hold();
@@ -1098,7 +1107,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		history.save();
 	}
 
-	@Override protected void onStart() {
+	@Override
+	protected void onStart() {
 		super.onStart();
 
 		applyPreferences();
@@ -1114,7 +1124,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	}
 
-	@Override public void onBackPressed() {
+	@Override
+	public void onBackPressed() {
 		final boolean debug = Preferences.getBoolean("secret_debug_back_button", false);
 
 		if (debug) Toast.makeText(this, "@@onBackPressed TAP=" + (textAppearancePanel != null) + " fullScreen=" + fullScreen, Toast.LENGTH_SHORT).show();
@@ -1259,12 +1270,14 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		getMenuInflater().inflate(R.menu.activity_isi, menu);
 	}
 
-	@Override public boolean onCreateOptionsMenu(Menu menu) {
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
 		buildMenu(menu);
 		return true;
 	}
 
-	@Override public boolean onPrepareOptionsMenu(Menu menu) {
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
 		if (menu != null) {
 			buildMenu(menu);
 		}
@@ -1272,15 +1285,16 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		return true;
 	}
 
-	@Override public boolean onOptionsItemSelected(MenuItem item) {
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			leftDrawer.toggleDrawer();
-			return true;
-		case R.id.menuSearch:
-			App.trackEvent("nav_search_click");
-			menuSearch_click();
-			return true;
+			case android.R.id.home:
+				leftDrawer.toggleDrawer();
+				return true;
+			case R.id.menuSearch:
+				App.trackEvent("nav_search_click");
+				menuSearch_click();
+				return true;
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -1358,7 +1372,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		if (yes) {
 			if (textAppearancePanel == null) { // not showing yet
 				textAppearancePanel = new TextAppearancePanel(this, overlayContainer, new TextAppearancePanel.Listener() {
-					@Override public void onValueChanged() {
+					@Override
+					public void onValueChanged() {
 						applyPreferences();
 					}
 
@@ -1516,7 +1531,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		startActivity(SearchActivity.createIntent(this.activeBook.bookId));
 	}
 
-	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQCODE_goto && resultCode == RESULT_OK) {
 			GotoActivity.Result result = GotoActivity.obtainResult(data);
 			if (result != null) {
@@ -1586,6 +1602,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	/**
 	 * Display specified chapter and verse of the active book. By default all checked verses will be unchecked.
+	 *
 	 * @return Ari that contains only chapter and verse. Book always set to 0.
 	 */
 	int display(int chapter_1, int verse_1) {
@@ -1594,6 +1611,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	/**
 	 * Display specified chapter and verse of the active book.
+	 *
 	 * @param uncheckAllVerses whether we want to always make all verses unchecked after this operation.
 	 * @return Ari that contains only chapter and verse. Book always set to 0.
 	 */
@@ -1685,19 +1703,22 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		return true;
 	}
 
-	@Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (press(keyCode)) return true;
 		return super.onKeyDown(keyCode, event);
 	}
 
-	@Override public boolean onKeyMultiple(int keyCode, int repeatCount, KeyEvent event) {
+	@Override
+	public boolean onKeyMultiple(int keyCode, int repeatCount, KeyEvent event) {
 		if (press(keyCode)) return true;
 		return super.onKeyMultiple(keyCode, repeatCount, event);
 	}
 
-	@Override public boolean onKeyUp(int keyCode, KeyEvent event) {
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		final String volumeButtonsForNavigation = Preferences.getString(R.string.pref_volumeButtonNavigation_key, R.string.pref_volumeButtonNavigation_default);
-		if (! U.equals(volumeButtonsForNavigation, "default")) { // consume here
+		if (!U.equals(volumeButtonsForNavigation, "default")) { // consume here
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) return true;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) return true;
 		}
@@ -1759,13 +1780,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		openVersionsDialog();
 	}
 
-	@Override public boolean onSearchRequested() {
+	@Override
+	public boolean onSearchRequested() {
 		menuSearch_click();
 
 		return true;
 	}
 
-	@Override public void onVerseSelected(XrefDialog dialog, int arif_source, int ari_target) {
+	@Override
+	public void onVerseSelected(XrefDialog dialog, int arif_source, int ari_target) {
 		final int ari_source = arif_source >>> 8;
 
 		dialog.dismiss();
@@ -1811,7 +1834,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			} else {
 				MaterialDialogAdapterHelper.show(new MaterialDialog.Builder(IsiActivity.this).title(R.string.edit_note), new MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.note));
 			}
-        }
+		}
 
 		class MarkerHolder extends RecyclerView.ViewHolder {
 			final TextView lDate;
@@ -2021,7 +2044,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	VersesView.SelectedVersesListener lsSplit0_selectedVerses = new VersesView.DefaultSelectedVersesListener() {
-		@Override public void onSomeVersesSelected(VersesView v) {
+		@Override
+		public void onSomeVersesSelected(VersesView v) {
 			if (activeSplitVersion != null) {
 				// synchronize the selection with the split view
 				IntArrayList selectedVerses = v.getSelectedVerses_1();
@@ -2037,7 +2061,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			}
 		}
 
-		@Override public void onNoVersesSelected(VersesView v) {
+		@Override
+		public void onNoVersesSelected(VersesView v) {
 			if (activeSplitVersion != null) {
 				// synchronize the selection with the split view
 				lsSplit1.uncheckAllVerses(false);
@@ -2051,26 +2076,30 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	};
 
 	VersesView.SelectedVersesListener lsSplit1_selectedVerses = new VersesView.DefaultSelectedVersesListener() {
-		@Override public void onSomeVersesSelected(VersesView v) {
+		@Override
+		public void onSomeVersesSelected(VersesView v) {
 			// synchronize the selection with the main view
 			IntArrayList selectedVerses = v.getSelectedVerses_1();
 			lsSplit0.checkVerses(selectedVerses, true);
 		}
 
-		@Override public void onNoVersesSelected(VersesView v) {
+		@Override
+		public void onNoVersesSelected(VersesView v) {
 			lsSplit0.uncheckAllVerses(true);
 		}
 	};
 
 	VersesView.OnVerseScrollListener lsSplit0_verseScroll = new VersesView.OnVerseScrollListener() {
-		@Override public void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop) {
+		@Override
+		public void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop) {
 
 			if (!isPericope && activeSplitVersion != null) {
 				lsSplit1.scrollToVerse(verse_1, prop);
 			}
 		}
 
-		@Override public void onScrollToTop(VersesView v) {
+		@Override
+		public void onScrollToTop(VersesView v) {
 			if (activeSplitVersion != null) {
 				lsSplit1.scrollToTop();
 			}
@@ -2078,13 +2107,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	};
 
 	VersesView.OnVerseScrollListener lsSplit1_verseScroll = new VersesView.OnVerseScrollListener() {
-		@Override public void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop) {
+		@Override
+		public void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop) {
 			if (!isPericope) {
 				lsSplit0.scrollToVerse(verse_1, prop);
 			}
 		}
 
-		@Override public void onScrollToTop(VersesView v) {
+		@Override
+		public void onScrollToTop(VersesView v) {
 			lsSplit0.scrollToTop();
 		}
 	};
@@ -2095,7 +2126,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		List<ExtensionManager.Info> extensions;
 
-		@Override public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+		@Override
+		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 			getMenuInflater().inflate(R.menu.context_isi, menu);
 
 			AppLog.d(TAG, "@@onCreateActionMode");
@@ -2123,7 +2155,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			return true;
 		}
 
-		@Override public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+		@Override
+		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 			final MenuItem menuAddBookmark = menu.findItem(R.id.menuAddBookmark);
 			final MenuItem menuAddNote = menu.findItem(R.id.menuAddNote);
 			final MenuItem menuCompare = menu.findItem(R.id.menuCompare);
@@ -2194,7 +2227,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 			// do not show dictionary item if not needed because of auto-lookup from
 			menuDictionary.setVisible(c.menuDictionary
-					&& !Preferences.getBoolean(getString(R.string.pref_autoDictionaryAnalyze_key), getResources().getBoolean(R.bool.pref_autoDictionaryAnalyze_default))
+				&& !Preferences.getBoolean(getString(R.string.pref_autoDictionaryAnalyze_key), getResources().getBoolean(R.bool.pref_autoDictionaryAnalyze_default))
 			);
 
 			final MenuItem menuRibkaReport = menu.findItem(R.id.menuRibkaReport);
@@ -2216,7 +2249,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			return true;
 		}
 
-		@Override public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+		@Override
+		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 			final IntArrayList selected = lsSplit0.getSelectedVerses_1();
 
 			if (selected.size() == 0) return true;
@@ -2224,221 +2258,230 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			final int itemId = item.getItemId();
 
 			switch (itemId) {
-			case R.id.menuCopy:
-			case R.id.menuCopySplit0:
-			case R.id.menuCopySplit1:
-			case R.id.menuCopyBothSplits: { // copy, can be multiple verses
-				final String[] t;
+				case R.id.menuCopy:
+				case R.id.menuCopySplit0:
+				case R.id.menuCopySplit1:
+				case R.id.menuCopyBothSplits: { // copy, can be multiple verses
+					final String[] t;
 
-				final CharSequence reference = referenceFromSelectedVerses(selected, activeBook);
-				if (itemId == R.id.menuCopy || itemId == R.id.menuCopySplit0 || itemId == R.id.menuCopyBothSplits) {
-					t = prepareTextForCopyShare(selected, reference, false);
-				} else { // menuCopySplit1, do not use split0 reference
-					final Book splitBook = activeSplitVersion.getBook(activeBook.bookId);
-					t = prepareTextForCopyShare(selected, referenceFromSelectedVerses(selected, splitBook), true);
+					final CharSequence reference = referenceFromSelectedVerses(selected, activeBook);
+					if (itemId == R.id.menuCopy || itemId == R.id.menuCopySplit0 || itemId == R.id.menuCopyBothSplits) {
+						t = prepareTextForCopyShare(selected, reference, false);
+					} else { // menuCopySplit1, do not use split0 reference
+						final Book splitBook = activeSplitVersion.getBook(activeBook.bookId);
+						t = prepareTextForCopyShare(selected, referenceFromSelectedVerses(selected, splitBook), true);
+					}
+
+					if (itemId == R.id.menuCopyBothSplits && activeSplitVersion != null) { // put guard on activeSplitVersion
+						appendSplitTextForCopyShare(t);
+					}
+
+					final String textToCopy = t[0];
+					final String textToSubmit = t[1];
+
+					ShareUrl.make(IsiActivity.this, !Preferences.getBoolean(getString(R.string.pref_copyWithShareUrl_key), getResources().getBoolean(R.bool.pref_copyWithShareUrl_default)), textToSubmit, Ari.encode(activeBook.bookId, chapter_1, 0), selected, reference.toString(), S.activeVersion(), MVersionDb.presetNameFromVersionId(S.activeVersionId()), new ShareUrl.Callback() {
+						@Override
+						public void onSuccess(final String shareUrl) {
+							U.copyToClipboard(textToCopy + "\n\n" + shareUrl);
+						}
+
+						@Override
+						public void onUserCancel() {
+							U.copyToClipboard(textToCopy);
+						}
+
+						@Override
+						public void onError(final Exception e) {
+							U.copyToClipboard(textToCopy);
+						}
+
+						@Override
+						public void onFinally() {
+							lsSplit0.uncheckAllVerses(true);
+
+							Snackbar.make(root, getString(R.string.alamat_sudah_disalin, reference), Snackbar.LENGTH_SHORT).show();
+							mode.finish();
+						}
+					});
 				}
+				return true;
+				case R.id.menuShare:
+				case R.id.menuShareSplit0:
+				case R.id.menuShareSplit1:
+				case R.id.menuShareBothSplits: { // share, can be multiple verses
+					final String[] t;
 
-				if (itemId == R.id.menuCopyBothSplits && activeSplitVersion != null) { // put guard on activeSplitVersion
-					appendSplitTextForCopyShare(t);
+					final CharSequence reference = referenceFromSelectedVerses(selected, activeBook);
+					if (itemId == R.id.menuShare || itemId == R.id.menuShareSplit0 || itemId == R.id.menuShareBothSplits) {
+						t = prepareTextForCopyShare(selected, reference, false);
+					} else { // menuShareSplit1, do not use split0 reference
+						final Book splitBook = activeSplitVersion.getBook(activeBook.bookId);
+						t = prepareTextForCopyShare(selected, referenceFromSelectedVerses(selected, splitBook), true);
+					}
+
+					if (itemId == R.id.menuShareBothSplits && activeSplitVersion != null) { // put guard on activeSplitVersion
+						appendSplitTextForCopyShare(t);
+					}
+
+					final String textToShare = t[0];
+					final String textToSubmit = t[1];
+
+					final Intent intent = ShareCompat.IntentBuilder.from(IsiActivity.this)
+						.setType("text/plain")
+						.setSubject(reference.toString())
+						.getIntent();
+
+					ShareUrl.make(IsiActivity.this, !Preferences.getBoolean(getString(R.string.pref_copyWithShareUrl_key), getResources().getBoolean(R.bool.pref_copyWithShareUrl_default)), textToSubmit, Ari.encode(activeBook.bookId, chapter_1, 0), selected, reference.toString(), S.activeVersion(), MVersionDb.presetNameFromVersionId(S.activeVersionId()), new ShareUrl.Callback() {
+						@Override
+						public void onSuccess(final String shareUrl) {
+							intent.putExtra(Intent.EXTRA_TEXT, textToShare + "\n\n" + shareUrl);
+							intent.putExtra(EXTRA_verseUrl, shareUrl);
+						}
+
+						@Override
+						public void onUserCancel() {
+							intent.putExtra(Intent.EXTRA_TEXT, textToShare);
+						}
+
+						@Override
+						public void onError(final Exception e) {
+							intent.putExtra(Intent.EXTRA_TEXT, textToShare);
+						}
+
+						@Override
+						public void onFinally() {
+							startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, reference)), REQCODE_share);
+
+							lsSplit0.uncheckAllVerses(true);
+							mode.finish();
+						}
+					});
 				}
-
-				final String textToCopy = t[0];
-				final String textToSubmit = t[1];
-
-				ShareUrl.make(IsiActivity.this, !Preferences.getBoolean(getString(R.string.pref_copyWithShareUrl_key), getResources().getBoolean(R.bool.pref_copyWithShareUrl_default)), textToSubmit, Ari.encode(activeBook.bookId, chapter_1, 0), selected, reference.toString(), S.activeVersion(), MVersionDb.presetNameFromVersionId(S.activeVersionId()), new ShareUrl.Callback() {
-					@Override
-					public void onSuccess(final String shareUrl) {
-						U.copyToClipboard(textToCopy + "\n\n" + shareUrl);
+				return true;
+				case R.id.menuCompare: {
+					final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
+					final VersesDialog dialog = VersesDialog.newCompareInstance(ari);
+					dialog.show(getSupportFragmentManager(), "compare_dialog");
+					dialog.setListener(new VersesDialog.VersesDialogListener() {
+						@Override
+						public void onComparedVerseSelected(final VersesDialog dialog, final int ari, final MVersion mversion) {
+							loadVersion(mversion, true);
+							dialog.dismiss();
+						}
+					});
+				}
+				return true;
+				case R.id.menuAddBookmark: {
+					// contract: this menu only appears when contiguous verses are selected
+					if (selected.get(selected.size() - 1) - selected.get(0) != selected.size() - 1) {
+						throw new RuntimeException("Non contiguous verses when adding bookmark: " + selected);
 					}
 
-					@Override
-					public void onUserCancel() {
-						U.copyToClipboard(textToCopy);
-					}
+					final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
+					final int verseCount = selected.size();
 
-					@Override
-					public void onError(final Exception e) {
-						U.copyToClipboard(textToCopy);
-					}
-
-					@Override
-					public void onFinally() {
+					// always create a new bookmark
+					TypeBookmarkDialog dialog = TypeBookmarkDialog.NewBookmark(IsiActivity.this, ari, verseCount);
+					dialog.setListener(() -> {
 						lsSplit0.uncheckAllVerses(true);
+						reloadBothAttributeMaps();
+					});
+					dialog.show();
 
-						Snackbar.make(root, getString(R.string.alamat_sudah_disalin, reference), Snackbar.LENGTH_SHORT).show();
-						mode.finish();
-					}
-				});
-			} return true;
-			case R.id.menuShare:
-			case R.id.menuShareSplit0:
-			case R.id.menuShareSplit1:
-			case R.id.menuShareBothSplits: { // share, can be multiple verses
-				final String[] t;
-
-				final CharSequence reference = referenceFromSelectedVerses(selected, activeBook);
-				if (itemId == R.id.menuShare || itemId == R.id.menuShareSplit0 || itemId == R.id.menuShareBothSplits) {
-					t = prepareTextForCopyShare(selected, reference, false);
-				} else { // menuShareSplit1, do not use split0 reference
-					final Book splitBook = activeSplitVersion.getBook(activeBook.bookId);
-					t = prepareTextForCopyShare(selected, referenceFromSelectedVerses(selected, splitBook), true);
+					mode.finish();
 				}
+				return true;
+				case R.id.menuAddNote: {
+					// contract: this menu only appears when contiguous verses are selected
+					if (selected.get(selected.size() - 1) - selected.get(0) != selected.size() - 1) {
+						throw new RuntimeException("Non contiguous verses when adding note: " + selected);
+					}
 
-				if (itemId == R.id.menuShareBothSplits && activeSplitVersion != null) { // put guard on activeSplitVersion
-					appendSplitTextForCopyShare(t);
+					final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
+					final int verseCount = selected.size();
+
+					// always create a new note
+					startActivityForResult(NoteActivity.createNewNoteIntent(S.activeVersion().referenceWithVerseCount(ari, verseCount), ari, verseCount), REQCODE_edit_note_2);
+					mode.finish();
 				}
+				return true;
+				case R.id.menuAddHighlight: {
+					final int ariBc = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
+					int colorRgb = S.getDb().getHighlightColorRgb(ariBc, selected);
 
-				final String textToShare = t[0];
-				final String textToSubmit = t[1];
-
-				final Intent intent = ShareCompat.IntentBuilder.from(IsiActivity.this)
-					.setType("text/plain")
-					.setSubject(reference.toString())
-					.getIntent();
-
-				ShareUrl.make(IsiActivity.this, !Preferences.getBoolean(getString(R.string.pref_copyWithShareUrl_key), getResources().getBoolean(R.bool.pref_copyWithShareUrl_default)), textToSubmit, Ari.encode(activeBook.bookId, chapter_1, 0), selected, reference.toString(), S.activeVersion(), MVersionDb.presetNameFromVersionId(S.activeVersionId()), new ShareUrl.Callback() {
-					@Override
-					public void onSuccess(final String shareUrl) {
-						intent.putExtra(Intent.EXTRA_TEXT, textToShare + "\n\n" + shareUrl);
-						intent.putExtra(EXTRA_verseUrl, shareUrl);
-					}
-
-					@Override
-					public void onUserCancel() {
-						intent.putExtra(Intent.EXTRA_TEXT, textToShare);
-					}
-
-					@Override
-					public void onError(final Exception e) {
-						intent.putExtra(Intent.EXTRA_TEXT, textToShare);
-					}
-
-					@Override
-					public void onFinally() {
-						startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, reference)), REQCODE_share);
-
+					final TypeHighlightDialog.Listener listener = colorRgb1 -> {
 						lsSplit0.uncheckAllVerses(true);
-						mode.finish();
+						reloadBothAttributeMaps();
+					};
+
+					final CharSequence reference = referenceFromSelectedVerses(selected, activeBook);
+					if (selected.size() == 1) {
+						final VerseRenderer.FormattedTextResult ftr = new VerseRenderer.FormattedTextResult();
+						final int ari = Ari.encodeWithBc(ariBc, selected.get(0));
+						final String rawVerseText = S.activeVersion().loadVerseText(ari);
+						final Highlights.Info info = S.getDb().getHighlightColorRgb(ari);
+
+						assert rawVerseText != null;
+						VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, null, ftr);
+						new TypeHighlightDialog(IsiActivity.this, ari, listener, colorRgb, info, reference, ftr.result);
+					} else {
+						new TypeHighlightDialog(IsiActivity.this, ariBc, selected, listener, colorRgb, reference);
 					}
-				});
-			} return true;
-			case R.id.menuCompare: {
-				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
-				final VersesDialog dialog = VersesDialog.newCompareInstance(ari);
-				dialog.show(getSupportFragmentManager(), "compare_dialog");
-				dialog.setListener(new VersesDialog.VersesDialogListener() {
-					@Override
-					public void onComparedVerseSelected(final VersesDialog dialog, final int ari, final MVersion mversion) {
-						loadVersion(mversion, true);
-						dialog.dismiss();
+					mode.finish();
+				}
+				return true;
+				case R.id.menuEsvsb: {
+					final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
+
+					try {
+						Intent intent = new Intent("yuku.esvsbasal.action.GOTO");
+						intent.putExtra("ari", ari);
+						startActivity(intent);
+					} catch (Exception e) {
+						AppLog.e(TAG, "ESVSB starting", e);
 					}
-				});
-			} return true;
-			case R.id.menuAddBookmark: {
-				// contract: this menu only appears when contiguous verses are selected
-				if (selected.get(selected.size() - 1) - selected.get(0) != selected.size() - 1) {
-					throw new RuntimeException("Non contiguous verses when adding bookmark: " + selected);
 				}
+				return true;
+				case R.id.menuGuide: {
+					final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
 
-				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
-				final int verseCount = selected.size();
+					try {
+						getPackageManager().getPackageInfo("org.sabda.pedia", 0);
 
-				// always create a new bookmark
-				TypeBookmarkDialog dialog = TypeBookmarkDialog.NewBookmark(IsiActivity.this, ari, verseCount);
-				dialog.setListener(() -> {
-					lsSplit0.uncheckAllVerses(true);
-					reloadBothAttributeMaps();
-				});
-				dialog.show();
-
-				mode.finish();
-			} return true;
-			case R.id.menuAddNote: {
-				// contract: this menu only appears when contiguous verses are selected
-				if (selected.get(selected.size() - 1) - selected.get(0) != selected.size() - 1) {
-					throw new RuntimeException("Non contiguous verses when adding note: " + selected);
+						final Intent intent = new Intent("org.sabda.pedia.action.VIEW");
+						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						intent.putExtra("ari", ari);
+						startActivity(intent);
+					} catch (PackageManager.NameNotFoundException e) {
+						OtherAppIntegration.openMarket(IsiActivity.this, "org.sabda.pedia");
+					}
 				}
+				return true;
+				case R.id.menuCommentary: {
+					final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
 
-				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
-				final int verseCount = selected.size();
+					try {
+						getPackageManager().getPackageInfo("org.sabda.tafsiran", 0);
 
-				// always create a new note
-				startActivityForResult(NoteActivity.createNewNoteIntent(S.activeVersion().referenceWithVerseCount(ari, verseCount), ari, verseCount), REQCODE_edit_note_2);
-				mode.finish();
-			} return true;
-			case R.id.menuAddHighlight: {
-				final int ariBc = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
-				int colorRgb = S.getDb().getHighlightColorRgb(ariBc, selected);
-
-				final TypeHighlightDialog.Listener listener = colorRgb1 -> {
-					lsSplit0.uncheckAllVerses(true);
-					reloadBothAttributeMaps();
-				};
-
-				final CharSequence reference = referenceFromSelectedVerses(selected, activeBook);
-				if (selected.size() == 1) {
-					final VerseRenderer.FormattedTextResult ftr = new VerseRenderer.FormattedTextResult();
-					final int ari = Ari.encodeWithBc(ariBc, selected.get(0));
-					final String rawVerseText = S.activeVersion().loadVerseText(ari);
-					final Highlights.Info info = S.getDb().getHighlightColorRgb(ari);
-
-					assert rawVerseText != null;
-					VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, null, ftr);
-					new TypeHighlightDialog(IsiActivity.this, ari, listener, colorRgb, info, reference, ftr.result);
-				} else {
-					new TypeHighlightDialog(IsiActivity.this, ariBc, selected, listener, colorRgb, reference);
+						final Intent intent = new Intent("org.sabda.tafsiran.action.VIEW");
+						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						intent.putExtra("ari", ari);
+						startActivity(intent);
+					} catch (PackageManager.NameNotFoundException e) {
+						OtherAppIntegration.openMarket(IsiActivity.this, "org.sabda.tafsiran");
+					}
 				}
-				mode.finish();
-			} return true;
-			case R.id.menuEsvsb: {
-				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
-
-				try {
-					Intent intent = new Intent("yuku.esvsbasal.action.GOTO");
-					intent.putExtra("ari", ari);
-					startActivity(intent);
-				} catch (Exception e) {
-					AppLog.e(TAG, "ESVSB starting", e);
-				}
-			} return true;
-			case R.id.menuGuide: {
-				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
-
-				try {
-					getPackageManager().getPackageInfo("org.sabda.pedia", 0);
-
-					final Intent intent = new Intent("org.sabda.pedia.action.VIEW");
-					intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					intent.putExtra("ari", ari);
-					startActivity(intent);
-				} catch (PackageManager.NameNotFoundException e) {
-					OtherAppIntegration.openMarket(IsiActivity.this, "org.sabda.pedia");
-				}
-			} return true;
-			case R.id.menuCommentary: {
-				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
-
-				try {
-					getPackageManager().getPackageInfo("org.sabda.tafsiran", 0);
-
-					final Intent intent = new Intent("org.sabda.tafsiran.action.VIEW");
-					intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					intent.putExtra("ari", ari);
-					startActivity(intent);
-				} catch (PackageManager.NameNotFoundException e) {
-					OtherAppIntegration.openMarket(IsiActivity.this, "org.sabda.tafsiran");
-				}
-			} return true;
-			case R.id.menuDictionary: {
-				final int ariBc = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
-				final SparseBooleanArray aris = new SparseBooleanArray();
-				for (int i = 0, len = selected.size(); i < len; i++) {
-					final int verse_1 = selected.get(i);
-					final int ari = Ari.encodeWithBc(ariBc, verse_1);
-					aris.put(ari, true);
-				}
+				return true;
+				case R.id.menuDictionary: {
+					final int ariBc = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
+					final SparseBooleanArray aris = new SparseBooleanArray();
+					for (int i = 0, len = selected.size(); i < len; i++) {
+						final int verse_1 = selected.get(i);
+						final int ari = Ari.encodeWithBc(ariBc, verse_1);
+						aris.put(ari, true);
+					}
 
 				startDictionaryMode(aris);
 			} return true;
@@ -2471,48 +2514,48 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			default: if (itemId >= MENU_EXTENSIONS_FIRST_ID && itemId < MENU_EXTENSIONS_FIRST_ID + extensions.size()) {
 				final ExtensionManager.Info extension = extensions.get(itemId - MENU_EXTENSIONS_FIRST_ID);
 
-				final Intent intent = new Intent(ExtensionManager.ACTION_SHOW_VERSE_INFO);
-				intent.setComponent(new ComponentName(extension.activityInfo.packageName, extension.activityInfo.name));
-				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						final Intent intent = new Intent(ExtensionManager.ACTION_SHOW_VERSE_INFO);
+						intent.setComponent(new ComponentName(extension.activityInfo.packageName, extension.activityInfo.name));
+						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-				// prepare extra "aris"
-				final int[] aris = new int[selected.size()];
-				final int ariBc = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
-				for (int i = 0, len = selected.size(); i < len; i++) {
-					final int verse_1 = selected.get(i);
-					final int ari = Ari.encodeWithBc(ariBc, verse_1);
-					aris[i] = ari;
-				}
-				intent.putExtra("aris", aris);
-
-				if (extension.includeVerseText) {
-					// prepare extra "verseTexts"
-					final String[] verseTexts = new String[selected.size()];
-					for (int i = 0, len = selected.size(); i < len; i++) {
-						final int verse_1 = selected.get(i);
-
-						final String verseText = lsSplit0.getVerseText(verse_1);
-						if (extension.includeVerseTextFormatting) {
-							verseTexts[i] = verseText;
-						} else {
-							verseTexts[i] = U.removeSpecialCodes(verseText);
+						// prepare extra "aris"
+						final int[] aris = new int[selected.size()];
+						final int ariBc = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
+						for (int i = 0, len = selected.size(); i < len; i++) {
+							final int verse_1 = selected.get(i);
+							final int ari = Ari.encodeWithBc(ariBc, verse_1);
+							aris[i] = ari;
 						}
+						intent.putExtra("aris", aris);
+
+						if (extension.includeVerseText) {
+							// prepare extra "verseTexts"
+							final String[] verseTexts = new String[selected.size()];
+							for (int i = 0, len = selected.size(); i < len; i++) {
+								final int verse_1 = selected.get(i);
+
+								final String verseText = lsSplit0.getVerseText(verse_1);
+								if (extension.includeVerseTextFormatting) {
+									verseTexts[i] = verseText;
+								} else {
+									verseTexts[i] = U.removeSpecialCodes(verseText);
+								}
+							}
+							intent.putExtra("verseTexts", verseTexts);
+						}
+
+						try {
+							startActivity(intent);
+						} catch (ActivityNotFoundException e) {
+							new MaterialDialog.Builder(IsiActivity.this)
+								.content("Error ANFE starting extension\n\n" + extension.activityInfo.packageName + "/" + extension.activityInfo.name)
+								.positiveText(R.string.ok)
+								.show();
+						}
+
+						return true;
 					}
-					intent.putExtra("verseTexts", verseTexts);
-				}
-
-				try {
-					startActivity(intent);
-				} catch (ActivityNotFoundException e) {
-					new MaterialDialog.Builder(IsiActivity.this)
-						.content("Error ANFE starting extension\n\n" + extension.activityInfo.packageName + "/" + extension.activityInfo.name)
-						.positiveText(R.string.ok)
-						.show();
-				}
-
-				return true;
-			}
 			}
 			return false;
 		}
@@ -2531,7 +2574,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			}
 		}
 
-		@Override public void onDestroyActionMode(ActionMode mode) {
+		@Override
+		public void onDestroyActionMode(ActionMode mode) {
 			actionMode = null;
 
 			// FIXME even with this guard, verses are still unchecked when switching version while both Fullscreen and Split is active.
@@ -2580,7 +2624,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		int root;
 		float prop; // proportion from top or left
 
-		@Override public void onHandleDragStart() {
+		@Override
+		public void onHandleDragStart() {
 			splitRoot.setOnefingerEnabled(false);
 
 			if (splitHandleButton.getOrientation() == SplitHandleButton.Orientation.vertical) {
@@ -2601,23 +2646,25 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			final int newW = (int) (first + dxSinceStart);
 			final int maxW = root - handle;
 			final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
-			lp.width = newW < 0? 0: newW > maxW? maxW: newW;
+			lp.width = newW < 0 ? 0 : newW > maxW ? maxW : newW;
 			lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
 			lsSplit0.setLayoutParams(lp);
 			prop = (float) lp.width / maxW;
 		}
 
-		@Override public void onHandleDragMoveY(float dySinceLast, float dySinceStart) {
+		@Override
+		public void onHandleDragMoveY(float dySinceLast, float dySinceStart) {
 			final int newH = (int) (first + dySinceStart);
 			final int maxH = root - handle;
 			final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
 			lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-			lp.height = newH < 0? 0: newH > maxH? maxH: newH;
+			lp.height = newH < 0 ? 0 : newH > maxH ? maxH : newH;
 			lsSplit0.setLayoutParams(lp);
 			prop = (float) lp.height / maxH;
 		}
 
-		@Override public void onHandleDragStop() {
+		@Override
+		public void onHandleDragStop() {
 			splitRoot.setOnefingerEnabled(true);
 
 			if (prop != Float.MIN_VALUE) {

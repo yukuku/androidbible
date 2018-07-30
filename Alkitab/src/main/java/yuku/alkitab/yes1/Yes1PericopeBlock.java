@@ -1,9 +1,9 @@
 package yuku.alkitab.yes1;
 
-import java.io.IOException;
-
 import yuku.alkitab.model.PericopeBlock;
 import yuku.bintex.BintexReader;
+
+import java.io.IOException;
 
 public class Yes1PericopeBlock extends PericopeBlock {
 
@@ -20,23 +20,23 @@ public class Yes1PericopeBlock extends PericopeBlock {
 //		Uint8 nparalel
 //		ShortStr[nparalel] xparalel
 //	}
-	
+
 //	Blok {
 //		uint8 version = 3
 //		autostring title
 //		uint8 parallel_count
 //		autostring[parallel_count] parallels
 //	}
-	
+
 	public static Yes1PericopeBlock read(BintexReader in) throws IOException {
 		Yes1PericopeBlock b = new Yes1PericopeBlock();
-		
+
 		int version = in.readUint8();
-		
+
 		if (version > 3) {
 			throw new RuntimeException("Parallel block supported is only up to 3. Got version " + version);
 		}
-		
+
 		if (version == 3) {
 			b.title = in.readAutoString();
 		} else if (version == 2) {
@@ -44,10 +44,10 @@ public class Yes1PericopeBlock extends PericopeBlock {
 		} else if (version == 1) {
 			b.title = in.readShortString();
 		}
-		
+
 		int nparalel = in.readUint8();
 		b.parallels = new String[nparalel];
-		
+
 		for (int i = 0; i < nparalel; i++) {
 			if (version == 3) {
 				b.parallels[i] = in.readAutoString();
@@ -55,7 +55,7 @@ public class Yes1PericopeBlock extends PericopeBlock {
 				b.parallels[i] = in.readShortString();
 			}
 		}
-		
+
 		return b;
 	}
 }

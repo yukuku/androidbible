@@ -1,10 +1,10 @@
 package yuku.alkitab.yes2.model;
 
-import java.io.IOException;
-
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.yes2.io.RandomInputStream;
 import yuku.bintex.BintexReader;
+
+import java.io.IOException;
 
 public class Yes2PericopeBlock extends PericopeBlock {
 

@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 import com.google.gson.JsonSyntaxException;
 import yuku.afw.storage.Preferences;

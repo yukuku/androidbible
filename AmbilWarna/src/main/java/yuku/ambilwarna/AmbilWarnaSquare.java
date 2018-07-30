@@ -16,7 +16,7 @@ import android.view.View;
 public class AmbilWarnaSquare extends View {
 	Paint paint;
 	Shader luar;
-	final float[] color = { 1.f, 1.f, 1.f };
+	final float[] color = {1.f, 1.f, 1.f};
 
 	public AmbilWarnaSquare(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -26,7 +26,9 @@ public class AmbilWarnaSquare extends View {
 		super(context, attrs, defStyle);
 	}
 
-	@SuppressLint("DrawAllocation") @Override protected void onDraw(Canvas canvas) {
+	@SuppressLint("DrawAllocation")
+	@Override
+	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		if (paint == null) {
 			paint = new Paint();

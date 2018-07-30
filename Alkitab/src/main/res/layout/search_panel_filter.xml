@@ -3,13 +3,14 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
-	android:paddingLeft="12dp">
+	android:paddingEnd="0dp"
+	android:paddingStart="12dp">
 
 	<CheckBox
 		android:id="@+id/cFilterOlds"
 		android:layout_width="wrap_content"
 		android:layout_height="32dp"
-		android:layout_alignParentLeft="true"
+		android:layout_alignParentStart="true"
 		android:checked="true"
 		android:text="@string/perj_lama" />
 
@@ -18,8 +19,8 @@
 		android:layout_width="wrap_content"
 		android:layout_height="32dp"
 		android:layout_alignBaseline="@+id/cFilterOlds"
-		android:layout_marginLeft="8dp"
-		android:layout_toRightOf="@+id/cFilterOlds"
+		android:layout_marginStart="8dp"
+		android:layout_toEndOf="@+id/cFilterOlds"
 		android:checked="true"
 		android:text="@string/perj_baru" />
 
@@ -28,7 +29,7 @@
 		style="?buttonBarButtonStyle"
 		android:layout_width="48dp"
 		android:layout_height="48dp"
-		android:layout_alignParentRight="true"
+		android:layout_alignParentEnd="true"
 		android:contentDescription="@string/desc_change_selected_books"
 		android:src="@drawable/ic_search_book_filter" />
 
@@ -36,9 +37,9 @@
 		android:id="@+id/tFilterAdvanced"
 		android:layout_width="wrap_content"
 		android:layout_height="32dp"
-		android:layout_alignParentLeft="false"
+		android:layout_alignParentStart="false"
 		android:layout_below="@+id/cFilterOlds"
-		android:layout_marginLeft="32dp"
+		android:layout_marginStart="32dp"
 		android:gravity="center_vertical"
 		android:maxLines="2"
 		android:textColor="?android:attr/textColorPrimaryDisableOnly"
@@ -46,11 +47,11 @@
 		tools:text="@string/search_filter_multiple_books_selected" />
 
 	<CheckBox
-		tools:visibility="gone"
 		android:id="@+id/cFilterSingleBook"
 		android:layout_width="wrap_content"
 		android:layout_height="32dp"
 		android:layout_below="@+id/cFilterOlds"
-		tools:text="(book name) only" />
+		tools:text="(book name) only"
+		tools:visibility="gone" />
 
 </RelativeLayout>

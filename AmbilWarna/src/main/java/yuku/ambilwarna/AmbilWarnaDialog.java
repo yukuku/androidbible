@@ -38,8 +38,8 @@ public class AmbilWarnaDialog {
 	/**
 	 * Create an AmbilWarnaDialog.
 	 *
-	 * @param context activity context
-	 * @param color current color
+	 * @param context  activity context
+	 * @param color    current color
 	 * @param listener an OnAmbilWarnaListener, allowing you to get back error or OK
 	 */
 	public AmbilWarnaDialog(final Context context, int color, OnAmbilWarnaListener listener) {
@@ -49,10 +49,10 @@ public class AmbilWarnaDialog {
 	/**
 	 * Create an AmbilWarnaDialog.
 	 *
-	 * @param context activity context
-	 * @param color current color
+	 * @param context       activity context
+	 * @param color         current color
 	 * @param supportsAlpha whether alpha/transparency controls are enabled
-	 * @param listener an OnAmbilWarnaListener, allowing you to get back error or OK
+	 * @param listener      an OnAmbilWarnaListener, allowing you to get back error or OK
 	 */
 	public AmbilWarnaDialog(final Context context, int color, boolean supportsAlpha, OnAmbilWarnaListener listener) {
 		this.supportsAlpha = supportsAlpha;
@@ -105,9 +105,9 @@ public class AmbilWarnaDialog {
 		viewAlphaCheckered = view.findViewById(R.id.ambilwarna_alphaCheckered);
 
 		{ // hide/show alpha
-			viewAlphaOverlay.setVisibility(supportsAlpha? View.VISIBLE: View.GONE);
-			viewAlphaCursor.setVisibility(supportsAlpha? View.VISIBLE: View.GONE);
-			viewAlphaCheckered.setVisibility(supportsAlpha? View.VISIBLE: View.GONE);
+			viewAlphaOverlay.setVisibility(supportsAlpha ? View.VISIBLE : View.GONE);
+			viewAlphaCursor.setVisibility(supportsAlpha ? View.VISIBLE : View.GONE);
+			viewAlphaCheckered.setVisibility(supportsAlpha ? View.VISIBLE : View.GONE);
 		}
 
 		viewSatVal.setHue(getHue());

@@ -15,21 +15,21 @@
 			android:id="@+id/lDate"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_alignParentRight="true"
+			android:layout_alignParentEnd="true"
 			android:layout_alignParentTop="true"
 			android:layout_marginTop="2dp"
-			android:gravity="top|right"
+			android:gravity="top|end"
 			tools:text="2099-12-32" />
 
 		<TextView
 			android:id="@+id/lCaption"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_alignParentLeft="false"
+			android:layout_alignParentStart="false"
 			android:layout_alignParentTop="true"
-			android:layout_marginLeft="4dp"
-			android:layout_toLeftOf="@+id/lDate"
-			android:layout_toRightOf="@+id/imgIcon"
+			android:layout_marginStart="4dp"
+			android:layout_toStartOf="@+id/lDate"
+			android:layout_toEndOf="@+id/imgIcon"
 			android:textAppearance="?android:textAppearanceMedium"
 			tools:text="Description or reference" />
 
@@ -37,7 +37,7 @@
 			android:id="@+id/imgIcon"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_alignParentLeft="true"
+			android:layout_alignParentStart="true"
 			android:layout_alignParentTop="true"
 			tools:ignore="ContentDescription" />
 

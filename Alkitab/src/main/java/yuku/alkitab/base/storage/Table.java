@@ -1,8 +1,6 @@
 package yuku.alkitab.base.storage;
 
-import static yuku.alkitab.base.storage.Table.Type.blob;
-import static yuku.alkitab.base.storage.Table.Type.integer;
-import static yuku.alkitab.base.storage.Table.Type.text;
+import static yuku.alkitab.base.storage.Table.Type.*;
 
 public class Table {
 	public static final String TAG = Table.class.getSimpleName();

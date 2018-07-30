@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SyncResult;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;

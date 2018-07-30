@@ -1,8 +1,9 @@
 package com.compactbyte.android.bible;
 
-import java.io.*;
+import com.compactbyte.bibleplus.reader.PDBDataStream;
 
-import com.compactbyte.bibleplus.reader.*;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
 public class PDBFileStream extends PDBDataStream {
 

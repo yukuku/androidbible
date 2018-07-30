@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.util.Xml;
 import com.afollestad.materialdialogs.MaterialDialog;
 import gnu.trove.list.TIntList;

@@ -1,66 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	android:background="#37474f"
+	android:elevation="4dp"
 	android:orientation="vertical"
-    android:background="#37474f"
-    android:elevation="4dp"
 	android:showDividers="middle"
 	tools:ignore="Overdraw">
 
 	<TextView
 		android:id="@+id/bBible"
 		style="?buttonBarButtonStyle"
-		android:textColor="?android:textColorPrimary"
-        android:textAppearance="?android:attr/textAppearanceMedium"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:drawableLeft="@drawable/ic_drawer_bible"
 		android:drawablePadding="16dp"
-        android:textSize="16sp"
-		android:gravity="left|center_vertical"
+		android:drawableStart="@drawable/ic_drawer_bible"
+		android:focusable="false"
+		android:gravity="start|center_vertical"
 		android:text="@string/menuBible"
-        android:focusable="false" />
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textColor="?android:textColorPrimary"
+		android:textSize="16sp" />
 
 	<TextView
 		android:id="@+id/bDevotion"
 		style="?buttonBarButtonStyle"
-		android:textColor="?android:textColorPrimary"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_width="match_parent"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:drawableLeft="@drawable/ic_drawer_devotion"
 		android:drawablePadding="16dp"
-        android:textSize="16sp"
-		android:gravity="left|center_vertical"
-		android:text="@string/menuDevotion" />
+		android:drawableStart="@drawable/ic_drawer_devotion"
+		android:gravity="start|center_vertical"
+		android:text="@string/menuDevotion"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textColor="?android:textColorPrimary"
+		android:textSize="16sp" />
 
 	<TextView
 		android:id="@+id/bReadingPlan"
-        style="?buttonBarButtonStyle"
-		android:textColor="?android:textColorPrimary"
+		style="?buttonBarButtonStyle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-		android:drawableLeft="@drawable/ic_drawer_reading_plan"
 		android:drawablePadding="16dp"
-        android:textSize="16sp"
-		android:gravity="left|center_vertical"
-		android:text="@string/rp_menuReadingPlan" />
+		android:drawableStart="@drawable/ic_drawer_reading_plan"
+		android:gravity="start|center_vertical"
+		android:text="@string/rp_menuReadingPlan"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textColor="?android:textColorPrimary"
+		android:textSize="16sp" />
 
 	<TextView
 		android:id="@+id/bSongs"
 		style="?buttonBarButtonStyle"
-		android:textColor="?android:textColorPrimary"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_width="match_parent"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:drawableLeft="@drawable/ic_drawer_songs"
 		android:drawablePadding="16dp"
-        android:textSize="16sp"
-		android:gravity="left|center_vertical"
-		android:text="@string/menuSongs" />
+		android:drawableStart="@drawable/ic_drawer_songs"
+		android:gravity="start|center_vertical"
+		android:text="@string/menuSongs"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textColor="?android:textColorPrimary"
+		android:textSize="16sp" />
 
 </LinearLayout>

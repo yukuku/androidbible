@@ -1,13 +1,14 @@
 package yuku.filechooser;
 
-import android.os.*;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 public class FileChooserResult implements Parcelable {
 	public static final String TAG = FileChooserResult.class.getSimpleName();
 
 	public String currentDir;
 	public String firstFilename;
-	
+
 	@Override
 	public int describeContents() {
 		return 0;
@@ -18,13 +19,13 @@ public class FileChooserResult implements Parcelable {
 		dest.writeString(currentDir);
 		dest.writeString(firstFilename);
 	}
-	
+
 	public static final Creator<FileChooserResult> CREATOR = new Creator<FileChooserResult>() {
 		@Override
 		public FileChooserResult[] newArray(int size) {
 			return new FileChooserResult[size];
 		}
-		
+
 		@Override
 		public FileChooserResult createFromParcel(Parcel in) {
 			FileChooserResult res = new FileChooserResult();

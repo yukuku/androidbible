@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	android:background="#37474f"
+	android:elevation="4dp"
 	android:orientation="vertical"
-    android:background="#37474f"
-    android:elevation="4dp"
 	android:showDividers="middle"
 	tools:ignore="Overdraw">
 
 	<Button
 		android:id="@+id/bSettings"
 		style="?buttonBarButtonStyle"
-		android:textColor="?android:textColorPrimary"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:drawableLeft="@drawable/ic_menu_preferences"
+		android:drawableStart="@drawable/ic_menu_preferences"
 		android:drawablePadding="16dp"
-		android:gravity="left|center_vertical"
+		android:elegantTextHeight="true"
+		android:gravity="start|center_vertical"
 		android:text="@string/menuPengaturan"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textSize="16sp"
-        android:clickable="true"
-        android:elegantTextHeight="true" />
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textColor="?android:textColorPrimary"
+		android:textSize="16sp" />
 
 	<Button
 		android:id="@+id/bHelp"
 		style="?buttonBarButtonStyle"
-		android:textColor="?android:textColorPrimary"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:drawableLeft="@drawable/ic_menu_help"
+		android:drawableStart="@drawable/ic_menu_help"
 		android:drawablePadding="16dp"
-		android:gravity="left|center_vertical"
+		android:gravity="start|center_vertical"
 		android:text="@string/menuBantuan"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textSize="16sp"
-        android:clickable="true" />
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textColor="?android:textColorPrimary"
+		android:textSize="16sp" />
 
 </LinearLayout>

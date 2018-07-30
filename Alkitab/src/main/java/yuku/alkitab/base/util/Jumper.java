@@ -1,6 +1,5 @@
 package yuku.alkitab.base.util;
 
-import android.util.Log;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.model.Book;
 
