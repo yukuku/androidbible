@@ -26,7 +26,7 @@ import java.util.List;
 
 public class SongFragment extends BaseFragment {
 	public static final String TAG = SongFragment.class.getSimpleName();
-	
+
 	private static final String ARG_song = "song";
 	private static final String ARG_templateFile = "templateFile";
 	private static final String ARG_customVars = "customVars";
@@ -36,11 +36,11 @@ public class SongFragment extends BaseFragment {
 	private Song song;
 	private String templateFile;
 	private Bundle customVars;
-	
+
 	public interface ShouldOverrideUrlLoadingHandler {
 		boolean shouldOverrideUrlLoading(WebViewClient client, WebView view, String url);
 	}
-	
+
 	public static SongFragment create(Song song, String templateFile, Bundle optionalCustomVars) {
 		SongFragment res = new SongFragment();
 		Bundle args = new Bundle();
@@ -50,17 +50,19 @@ public class SongFragment extends BaseFragment {
 		res.setArguments(args);
 		return res;
 	}
-	
-	@Override public void onCreate(Bundle savedInstanceState) {
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		song = getArguments().getParcelable(ARG_song);
 		templateFile = getArguments().getString(ARG_templateFile);
 		customVars = getArguments().getBundle(ARG_customVars);
 	}
-	
+
 	@SuppressLint("SetJavaScriptEnabled")
-	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View res = inflater.inflate(R.layout.fragment_song, container, false);
 		webview = res.findViewById(R.id.webview);
 		webview.setBackgroundColor(0x00000000);
@@ -77,16 +79,18 @@ public class SongFragment extends BaseFragment {
 
 		return res;
 	}
-	
-	@Override public void onActivityCreated(Bundle savedInstanceState) {
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		renderLagu(song);
 	}
-	
+
 	final WebViewClient webViewClient = new WebViewClient() {
-		@Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
+		@Override
+		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			Activity activity = getActivity();
-			if (activity instanceof ShouldOverrideUrlLoadingHandler && ((ShouldOverrideUrlLoadingHandler)activity).shouldOverrideUrlLoading(this, view, url)) {
+			if (activity instanceof ShouldOverrideUrlLoadingHandler && ((ShouldOverrideUrlLoadingHandler) activity).shouldOverrideUrlLoading(this, view, url)) {
 				return true;
 			} else {
 				return super.shouldOverrideUrlLoading(view, url);
@@ -129,7 +133,7 @@ public class SongFragment extends BaseFragment {
 			String template = new String(baos.toByteArray(), "utf-8");
 
 			if (customVars != null) {
-				for (String key: customVars.keySet()) {
+				for (String key : customVars.keySet()) {
 					template = templateVarReplace(template, key, customVars.get(key));
 				}
 			}
@@ -171,8 +175,8 @@ public class SongFragment extends BaseFragment {
 
 			int bait_normal_no = 0;
 			int bait_reff_no = 0;
-			for (Verse verse: lyric.verses) {
-				sb.append("<div class='verse" + (verse.kind == VerseKind.REFRAIN? " refrain": "") + "'>");
+			for (Verse verse : lyric.verses) {
+				sb.append("<div class='verse" + (verse.kind == VerseKind.REFRAIN ? " refrain" : "") + "'>");
 				{
 					if (verse.kind == VerseKind.REFRAIN) {
 						bait_reff_no++;
@@ -183,7 +187,7 @@ public class SongFragment extends BaseFragment {
 					if (forPatchText) {
 						sb.append(verse.kind == VerseKind.REFRAIN ? ("reff " + bait_reff_no) : bait_normal_no);
 					} else {
-						sb.append("<div class='verse_ordering'>" + (verse.kind == VerseKind.REFRAIN? bait_reff_no: bait_normal_no) + "</div>");
+						sb.append("<div class='verse_ordering'>" + (verse.kind == VerseKind.REFRAIN ? bait_reff_no : bait_normal_no) + "</div>");
 					}
 
 					sb.append("<div class='verse_content'>");
@@ -205,7 +209,7 @@ public class SongFragment extends BaseFragment {
 		}
 		return sb.toString();
 	}
-	
+
 	private String templateDivReplace(String template, String name, String value) {
 		return template.replace("{{div:" + name + "}}", value == null ? "" : ("<div class='" + name + "'>" + value + "</div>"));
 	}

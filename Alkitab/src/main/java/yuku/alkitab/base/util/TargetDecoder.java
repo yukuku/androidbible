@@ -1,6 +1,5 @@
 package yuku.alkitab.base.util;
 
-import android.util.Log;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 

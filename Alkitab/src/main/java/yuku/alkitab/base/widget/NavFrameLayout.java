@@ -2,7 +2,6 @@ package yuku.alkitab.base.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.FrameLayout;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;

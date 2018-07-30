@@ -52,9 +52,8 @@
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:layout_gravity="center_vertical"
-				android:layout_marginLeft="8dp"
-				android:clickable="false"
-				tools:ignore="RtlHardcoded" />
+				android:layout_marginStart="8dp"
+				android:clickable="false" />
 
 			<ProgressBar
 				android:id="@+id/progress"

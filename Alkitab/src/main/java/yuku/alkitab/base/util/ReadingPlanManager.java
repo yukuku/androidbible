@@ -1,7 +1,6 @@
 package yuku.alkitab.base.util;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.util.IntArrayList;

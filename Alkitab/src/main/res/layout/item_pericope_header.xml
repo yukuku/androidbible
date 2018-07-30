@@ -8,8 +8,8 @@
 		android:id="@+id/lCaption"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginLeft="12dp"
-		android:layout_marginRight="12dp"
+		android:layout_marginStart="12dp"
+		android:layout_marginEnd="12dp"
 		android:gravity="center_horizontal"
 		android:textStyle="bold" />
 
@@ -17,8 +17,8 @@
 		android:id="@+id/lParallels"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginLeft="12dp"
-		android:layout_marginRight="12dp"
+		android:layout_marginStart="12dp"
+		android:layout_marginEnd="12dp"
 		android:gravity="center_horizontal"
 		android:linksClickable="true" />
 

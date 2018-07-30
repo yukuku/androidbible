@@ -36,21 +36,25 @@ public class S {
 	 * Values applied from settings, so we do not need to calculate it many times.
 	 */
 	public static class CalculatedDimensions {
-		/** in dp */
+		/**
+		 * in dp
+		 */
 		public float fontSize2dp;
-		
+
 		public Typeface fontFace;
 		public float lineSpacingMult;
 		public int fontBold;
-		
+
 		public int fontColor;
 		public int fontRedColor;
 		public int backgroundColor;
 		public int verseNumberColor;
-		
-		/** 0.f to 1.f */
+
+		/**
+		 * 0.f to 1.f
+		 */
 		public float backgroundBrightness;
-		
+
 		// everything below is in px
 		public int indentParagraphFirst;
 		public int indentParagraphRest;
@@ -161,7 +165,7 @@ public class S {
 		{
 			res.fontFace = FontManager.typeface(Preferences.getString(Prefkey.jenisHuruf, null));
 			res.lineSpacingMult = Preferences.getFloat(Prefkey.lineSpacingMult, 1.15f);
-			res.fontBold = Preferences.getBoolean(Prefkey.boldHuruf, false)? Typeface.BOLD: Typeface.NORMAL;
+			res.fontBold = Preferences.getBoolean(Prefkey.boldHuruf, false) ? Typeface.BOLD : Typeface.NORMAL;
 		}
 
 		//# configure text color, red text color, bg color, and verse color
@@ -200,15 +204,17 @@ public class S {
 	}
 
 	private static InternalDb db;
+
 	public static synchronized InternalDb getDb() {
 		if (db == null) {
 			db = new InternalDb(new InternalDbHelper(App.context));
 		}
-		
+
 		return db;
 	}
 
 	private static SongDb songDb;
+
 	public static synchronized SongDb getSongDb() {
 		if (songDb == null) {
 			songDb = new SongDb(new SongDbHelper());
@@ -229,7 +235,7 @@ public class S {
 		res.add(getMVersionInternal());
 
 		// 2. Database versions
-		for (MVersionDb mvDb: getDb().listAllVersions()) {
+		for (MVersionDb mvDb : getDb().listAllVersions()) {
 			if (mvDb.hasDataFile() && mvDb.getActive()) {
 				res.add(mvDb);
 			}
@@ -271,7 +277,7 @@ public class S {
 		if (withNone && selectedVersionId == null) {
 			selected = 0; // "none"
 		} else {
-			for (int i = (withNone? 1: 0) /* because 0 is None */; i < versions.size(); i++) {
+			for (int i = (withNone ? 1 : 0) /* because 0 is None */; i < versions.size(); i++) {
 				final MVersion mv = versions.get(i);
 				if (mv.getVersionId().equals(selectedVersionId)) {
 					selected = i;

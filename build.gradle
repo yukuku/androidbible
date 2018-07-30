@@ -22,7 +22,7 @@ allprojects {
 ext {
     SERVER_HOST = 'https://alkitab-host.appspot.com/'
     compileSdkVersion = 27
-    minSdkVersion = 14
+    minSdkVersion = 17
     targetSdkVersion = 27
     travisBuild = System.getenv("TRAVIS") == "true"
     supportLibVersion = '27.1.1'
@@ -33,5 +33,5 @@ ext {
     okhttpVersion = '3.10.0'
     retrofitVersion = '2.4.0'
     picassoVersion = '2.5.2'
-    leakcanaryVersion = '1.5'
+    leakcanaryVersion = '1.6'
 }

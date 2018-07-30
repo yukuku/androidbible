@@ -1,127 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout
+<RelativeLayout android:id="@+id/ambilwarna_viewContainer"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
-	android:id="@+id/ambilwarna_viewContainer"
-	android:paddingTop="@dimen/ambilwarna_spacer"
-	android:paddingRight="@dimen/ambilwarna_spacer"
-	android:paddingBottom="0dp"
-	android:paddingLeft="@dimen/ambilwarna_spacer"
-	android:clipToPadding="false"
 	android:layout_gravity="center"
->
+	android:clipToPadding="false"
+	android:paddingBottom="0dp"
+	android:paddingStart="@dimen/ambilwarna_spacer"
+	android:paddingEnd="@dimen/ambilwarna_spacer"
+	android:paddingTop="@dimen/ambilwarna_spacer">
+
 	<LinearLayout
+		android:id="@+id/ambilwarna_state"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:id="@+id/ambilwarna_state"
-		android:orientation="vertical"
-		android:paddingRight="@dimen/ambilwarna_spacer"
-		android:gravity="center"
 		android:layout_centerVertical="true"
-	>
-        <FrameLayout
-            android:layout_width="60dp"
-            android:layout_height="30dp">
+		android:gravity="center"
+		android:orientation="vertical"
+		android:paddingEnd="@dimen/ambilwarna_spacer"
+		android:paddingStart="0dp">
 
-            <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:background="@drawable/ambilwarna_alphacheckered_tiled" />
+		<FrameLayout
+			android:layout_width="60dp"
+			android:layout_height="30dp">
 
-            <View
-                    android:id="@+id/ambilwarna_oldColor"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:background="#faa" />
-        </FrameLayout>
+			<View
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:background="@drawable/ambilwarna_alphacheckered_tiled" />
+
+			<View
+				android:id="@+id/ambilwarna_oldColor"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:background="#faa" />
+		</FrameLayout>
 
 		<ImageView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:src="@drawable/ambilwarna_arrow_down"
-			android:paddingTop="@dimen/ambilwarna_spacer"
+			android:contentDescription="@null"
 			android:paddingBottom="@dimen/ambilwarna_spacer"
-		/>
-        <FrameLayout
-            android:layout_width="60dp"
-            android:layout_height="30dp">
+			android:paddingTop="@dimen/ambilwarna_spacer"
+			android:src="@drawable/ambilwarna_arrow_down" />
 
-            <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:background="@drawable/ambilwarna_alphacheckered_tiled" />
+		<FrameLayout
+			android:layout_width="60dp"
+			android:layout_height="30dp">
 
-            <View
-                    android:id="@+id/ambilwarna_newColor"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:background="#aaf" />
-        </FrameLayout>
+			<View
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:background="@drawable/ambilwarna_alphacheckered_tiled" />
+
+			<View
+				android:id="@+id/ambilwarna_newColor"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:background="#aaf" />
+		</FrameLayout>
 	</LinearLayout>
+
 	<yuku.ambilwarna.AmbilWarnaSquare
 		android:id="@+id/ambilwarna_viewSatBri"
 		android:layout_width="@dimen/ambilwarna_hsvWidth"
 		android:layout_height="@dimen/ambilwarna_hsvHeight"
-		android:layout_toRightOf="@id/ambilwarna_state"
-		android:layerType="software"
-	/>
+		android:layout_toEndOf="@id/ambilwarna_state"
+		android:layerType="software" />
+
 	<!-- needed because i can't get parent keeping its bottom layout
 	and its wrap_content height. This view will serve as a bottom spacer. -->
 	<View
 		android:layout_width="@dimen/ambilwarna_spacer"
 		android:layout_height="@dimen/ambilwarna_spacer"
-		android:layout_below="@id/ambilwarna_viewSatBri"
-	/>
+		android:layout_below="@id/ambilwarna_viewSatBri" />
+
 	<ImageView
 		android:id="@+id/ambilwarna_viewHue"
 		android:layout_width="@dimen/ambilwarna_hueWidth"
 		android:layout_height="@dimen/ambilwarna_hsvHeight"
-		android:layout_toRightOf="@id/ambilwarna_viewSatBri"
-		android:layout_marginLeft="@dimen/ambilwarna_spacer"
-		android:src="@drawable/ambilwarna_hue"
+		android:layout_marginStart="@dimen/ambilwarna_spacer"
+		android:layout_toEndOf="@id/ambilwarna_viewSatBri"
+		android:contentDescription="@null"
 		android:scaleType="fitXY"
-	/>
+		android:src="@drawable/ambilwarna_hue" />
 
-    <ImageView
-            android:id="@+id/ambilwarna_alphaCheckered"
-            android:layout_width="@dimen/ambilwarna_hueWidth"
-            android:layout_height="@dimen/ambilwarna_hsvHeight"
-            android:layout_marginLeft="@dimen/ambilwarna_spacer"
-            android:layout_toRightOf="@id/ambilwarna_viewHue"
-            android:scaleType="fitXY"
-            android:src="@drawable/ambilwarna_alphacheckered_tiled" />
+	<ImageView
+		android:id="@+id/ambilwarna_alphaCheckered"
+		android:layout_width="@dimen/ambilwarna_hueWidth"
+		android:layout_height="@dimen/ambilwarna_hsvHeight"
+		android:layout_marginStart="@dimen/ambilwarna_spacer"
+		android:layout_toEndOf="@id/ambilwarna_viewHue"
+		android:contentDescription="@null"
+		android:scaleType="fitXY"
+		android:src="@drawable/ambilwarna_alphacheckered_tiled" />
 
-    <View
-            android:id="@+id/ambilwarna_overlay"
-            android:layout_width="@dimen/ambilwarna_hueWidth"
-            android:layout_height="@dimen/ambilwarna_hsvHeight"
-            android:layout_marginLeft="@dimen/ambilwarna_spacer"
-            android:layout_toRightOf="@id/ambilwarna_viewHue" />
+	<View
+		android:id="@+id/ambilwarna_overlay"
+		android:layout_width="@dimen/ambilwarna_hueWidth"
+		android:layout_height="@dimen/ambilwarna_hsvHeight"
+		android:layout_marginStart="@dimen/ambilwarna_spacer"
+		android:layout_toEndOf="@id/ambilwarna_viewHue" />
 
-    <ImageView
+	<ImageView
 		android:id="@+id/ambilwarna_cursor"
 		android:layout_width="9dp"
 		android:layout_height="9dp"
-		android:src="@drawable/ambilwarna_cursor"
-		android:scaleType="matrix" 
-		/>
+		android:contentDescription="@null"
+		android:scaleType="matrix"
+		android:src="@drawable/ambilwarna_cursor" />
 
-    <ImageView
-            android:id="@+id/ambilwarna_alphaCursor"
-            android:layout_width="9dp"
-            android:layout_height="9dp"
-            android:scaleType="matrix"
-            android:src="@drawable/ambilwarna_cursor" />
+	<ImageView
+		android:id="@+id/ambilwarna_alphaCursor"
+		android:layout_width="9dp"
+		android:layout_height="9dp"
+		android:contentDescription="@null"
+		android:scaleType="matrix"
+		android:src="@drawable/ambilwarna_cursor" />
 
-    <ImageView
+	<ImageView
 		android:id="@+id/ambilwarna_target"
 		android:layout_width="15dp"
 		android:layout_height="15dp"
-		android:src="@drawable/ambilwarna_target"
+		android:contentDescription="@null"
 		android:scaleType="matrix"
-		 />
-		
+		android:src="@drawable/ambilwarna_target" />
+
 
 </RelativeLayout>

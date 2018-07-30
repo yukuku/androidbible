@@ -6,7 +6,6 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 import android.util.Pair;
 import okhttp3.Call;
 import okhttp3.ResponseBody;

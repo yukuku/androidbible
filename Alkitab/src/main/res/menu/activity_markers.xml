@@ -4,9 +4,9 @@
 	<item
 		android:id="@+id/menuMigrateFromV3"
 		android:title="@string/marker_migrate_title"
-		app:showAsAction="never"/>
+		app:showAsAction="never" />
 	<item
 		android:id="@+id/menuLabelSort"
 		android:title="@string/menuLabelSort"
-		app:showAsAction="never"/>
+		app:showAsAction="never" />
 </menu>

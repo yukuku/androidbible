@@ -1,12 +1,12 @@
 package com.mobeta.android.dslv;
 
+import android.graphics.Point;
 import android.view.GestureDetector;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.graphics.Point;
 import android.widget.AdapterView;
 
 /**

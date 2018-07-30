@@ -1,6 +1,5 @@
 package yuku.alkitab.base.storage;
 
-import android.util.Log;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.util.AppLog;

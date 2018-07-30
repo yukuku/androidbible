@@ -21,7 +21,7 @@ public class RemoveSpecialCodesTest extends TestCase {
 		testRemoveSpecialCodes("@@abc@1@2", "abc "); // do not double space
 		testRemoveSpecialCodes("@@@1@2abc", "abc"); // do not add space at beginning
 		testRemoveSpecialCodes("@@@1abc@2", "abc ");
-		
+
 		testRemoveSpecialCodesForced("abcdef ghijkl", "abcdef ghijkl");
 		testRemoveSpecialCodesForced("abc@1def@2ghi@3jkl", "abc def ghi jkl"); // does not start with "@@"
 		testRemoveSpecialCodesForced("@@abc@1def@2ghi@3jkl", "abc def ghi jkl");
@@ -34,16 +34,16 @@ public class RemoveSpecialCodesTest extends TestCase {
 		testRemoveSpecialCodes("@@@8a", "a");
 
 		// start and end tags
-		testRemoveSpecialCodes("@@abc@<whatever@>def", "abcdef"); 
-		testRemoveSpecialCodes("@@abc@<whatever@>def@/", "abcdef"); 
-		testRemoveSpecialCodes("@@abc@<should not crash", "abcshould not crash"); 
-		testRemoveSpecialCodes("@@abc@>should not crash", "abcshould not crash"); 
-		testRemoveSpecialCodes("@@abc@<should not@>crash@>", "abccrash"); 
-		testRemoveSpecialCodes("@@abc@<", "abc"); 
-		testRemoveSpecialCodes("@@@<abc@>", ""); 
-		testRemoveSpecialCodes("@@@>abc@<", "abc"); 
-		
-		testRemoveSpecialCodesForced("@<abc@>", ""); 
-		testRemoveSpecialCodesForced("@>abc@<", "abc"); 
+		testRemoveSpecialCodes("@@abc@<whatever@>def", "abcdef");
+		testRemoveSpecialCodes("@@abc@<whatever@>def@/", "abcdef");
+		testRemoveSpecialCodes("@@abc@<should not crash", "abcshould not crash");
+		testRemoveSpecialCodes("@@abc@>should not crash", "abcshould not crash");
+		testRemoveSpecialCodes("@@abc@<should not@>crash@>", "abccrash");
+		testRemoveSpecialCodes("@@abc@<", "abc");
+		testRemoveSpecialCodes("@@@<abc@>", "");
+		testRemoveSpecialCodes("@@@>abc@<", "abc");
+
+		testRemoveSpecialCodesForced("@<abc@>", "");
+		testRemoveSpecialCodesForced("@>abc@<", "abc");
 	}
 }

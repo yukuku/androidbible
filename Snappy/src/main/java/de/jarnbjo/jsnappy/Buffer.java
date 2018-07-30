@@ -17,9 +17,9 @@
 package de.jarnbjo.jsnappy;
 
 /**
- *  Reusable byte array buffer, which can be used for input/output
- *  in the Snappy encoder oder decoder.
- *  
+ * Reusable byte array buffer, which can be used for input/output
+ * in the Snappy encoder oder decoder.
+ *
  * @author Tor-Einar Jarnbjo
  * @since 1.0
  */
@@ -36,6 +36,7 @@ public class Buffer {
 
 	/**
 	 * Creates an initialized buffer with the specified capacity.
+	 *
 	 * @param capacity initial buffer length in bytes
 	 */
 	public Buffer(int capacity) {
@@ -48,13 +49,13 @@ public class Buffer {
 	 * is allocated and the content of the old buffer copied to the
 	 * new buffer. If the old buffer is already large enough, no
 	 * changes are made.
+	 *
 	 * @param capacity buffer length in bytes
 	 */
 	public void ensureCapacity(int capacity) {
-		if(data == null) {
+		if (data == null) {
 			data = new byte[capacity];
-		}
-		else if (data.length < capacity) {
+		} else if (data.length < capacity) {
 			byte[] nb = new byte[capacity];
 			System.arraycopy(data, 0, nb, 0, data.length);
 			data = nb;
@@ -65,6 +66,7 @@ public class Buffer {
 	 * Returns the byte array used as a backing store for this
 	 * buffer. Note that invoking ensureCapacity can cause
 	 * the backing array to be replaced.
+	 *
 	 * @return
 	 */
 	public byte[] getData() {
@@ -74,6 +76,7 @@ public class Buffer {
 	/**
 	 * Returns the length of this buffer. The backing array should
 	 * contain valid data from index 0 to length - 1.
+	 *
 	 * @return
 	 */
 	public int getLength() {
@@ -83,8 +86,9 @@ public class Buffer {
 	/**
 	 * Sets the length of this buffer. The backing array should
 	 * contain valid data from index 0 to length - 1.
+	 *
 	 * @param length buffer length
-	 * @throws IllegalStateException if the buffer is not yet initialized
+	 * @throws IllegalStateException    if the buffer is not yet initialized
 	 * @throws IllegalArgumentException if the requested length exceeds the buffers capacity
 	 */
 	public void setLength(int length) throws IllegalStateException, IllegalArgumentException {
@@ -100,6 +104,7 @@ public class Buffer {
 	/**
 	 * Returns a copy of the buffers internal array in a newly allocated
 	 * byte array with the buffer's length.
+	 *
 	 * @return
 	 */
 	public byte[] toByteArray() {

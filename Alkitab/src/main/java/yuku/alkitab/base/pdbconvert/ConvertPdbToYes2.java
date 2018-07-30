@@ -1,7 +1,6 @@
 package yuku.alkitab.base.pdbconvert;
 
 import android.content.Context;
-import android.util.Log;
 import com.compactbyte.android.bible.PDBFileStream;
 import com.compactbyte.bibleplus.reader.BiblePlusPDB;
 import com.compactbyte.bibleplus.reader.BookInfo;

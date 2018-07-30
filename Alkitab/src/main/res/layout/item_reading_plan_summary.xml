@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical"
-	android:paddingLeft="@dimen/padding_medium"
-	android:paddingRight="@dimen/padding_medium"
+	android:paddingStart="@dimen/padding_medium"
+	android:paddingEnd="@dimen/padding_medium"
 	android:paddingTop="@dimen/padding_medium">
 
 	<TextView
@@ -54,10 +53,10 @@
 		android:layout_height="48dp"
 		android:background="?selectableItemBackground"
 		android:fontFamily="sans-serif-medium"
+		android:gravity="center_vertical"
 		android:text="@string/rp_showDetails"
 		android:textAllCaps="true"
-		android:textColor="@color/accent"
-		android:gravity="center_vertical" />
+		android:textColor="@color/accent" />
 
 
 </LinearLayout>

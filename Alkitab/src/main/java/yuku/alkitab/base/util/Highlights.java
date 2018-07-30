@@ -1,6 +1,5 @@
 package yuku.alkitab.base.util;
 
-import android.util.Log;
 import com.google.gson.JsonSyntaxException;
 import yuku.alkitab.base.App;
 

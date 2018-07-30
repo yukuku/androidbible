@@ -6,6 +6,7 @@
 /.idea/artifacts
 /.idea/caches
 /build
+local.properties
 
 # according to https://intellij-support.jetbrains.com/entries/23393067
 /.idea/libraries/*.xml

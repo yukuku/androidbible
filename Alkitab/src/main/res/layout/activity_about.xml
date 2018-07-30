@@ -24,13 +24,13 @@
 			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginLeft="16dp"
-				android:layout_marginRight="16dp"
+				android:layout_marginStart="16dp"
+				android:layout_marginEnd="16dp"
 				android:layout_marginTop="16dp"
 				android:gravity="center_horizontal"
 				android:orientation="vertical"
-				android:paddingLeft="24dp"
-				android:paddingRight="24dp">
+				android:paddingStart="24dp"
+				android:paddingEnd="24dp">
 
 				<ImageView
 					android:id="@+id/imgLogo"
@@ -81,8 +81,8 @@
 				android:id="@+id/bAnnouncements"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginLeft="16dp"
-				android:layout_marginRight="16dp"
+				android:layout_marginStart="16dp"
+				android:layout_marginEnd="16dp"
 				android:background="#2a2a2a"
 				android:elevation="4dp"
 				android:foreground="?selectableItemBackground"
@@ -93,8 +93,8 @@
 					android:id="@+id/tAnnouncements"
 					android:layout_width="match_parent"
 					android:layout_height="48dp"
-					android:layout_marginLeft="24dp"
-					android:layout_marginRight="24dp"
+					android:layout_marginStart="24dp"
+					android:layout_marginEnd="24dp"
 					android:gravity="center_vertical"
 					android:text="@string/about_announcements"
 					android:textAppearance="?android:textAppearanceMedium"
@@ -113,16 +113,16 @@
 				android:id="@+id/bHelp"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginLeft="16dp"
-				android:layout_marginRight="16dp"
+				android:layout_marginStart="16dp"
+				android:layout_marginEnd="16dp"
 				android:layout_marginTop="16dp"
 				android:background="#2a2a2a"
 				android:elevation="4dp"
 				android:foreground="?selectableItemBackground"
 				android:gravity="center_horizontal"
 				android:orientation="vertical"
-				android:paddingLeft="24dp"
-				android:paddingRight="24dp">
+				android:paddingStart="24dp"
+				android:paddingEnd="24dp">
 
 				<TextView
 					android:layout_width="match_parent"
@@ -138,16 +138,16 @@
 				android:id="@+id/bMaterialSources"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginLeft="16dp"
-				android:layout_marginRight="16dp"
+				android:layout_marginStart="16dp"
+				android:layout_marginEnd="16dp"
 				android:layout_marginTop="16dp"
 				android:background="#2a2a2a"
 				android:elevation="4dp"
 				android:foreground="?selectableItemBackground"
 				android:gravity="center_horizontal"
 				android:orientation="vertical"
-				android:paddingLeft="24dp"
-				android:paddingRight="24dp">
+				android:paddingStart="24dp"
+				android:paddingEnd="24dp">
 
 				<TextView
 					android:layout_width="match_parent"
@@ -163,16 +163,16 @@
 				android:id="@+id/bCredits"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginLeft="16dp"
-				android:layout_marginRight="16dp"
+				android:layout_marginStart="16dp"
+				android:layout_marginEnd="16dp"
 				android:layout_marginTop="16dp"
 				android:background="#2a2a2a"
 				android:elevation="4dp"
 				android:foreground="?selectableItemBackground"
 				android:gravity="center_horizontal"
 				android:orientation="vertical"
-				android:paddingLeft="24dp"
-				android:paddingRight="24dp">
+				android:paddingStart="24dp"
+				android:paddingEnd="24dp">
 
 				<TextView
 					android:layout_width="match_parent"
@@ -188,16 +188,16 @@
 				android:id="@+id/bFeedback"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginLeft="16dp"
-				android:layout_marginRight="16dp"
+				android:layout_marginStart="16dp"
+				android:layout_marginEnd="16dp"
 				android:layout_marginTop="16dp"
 				android:background="#2a2a2a"
 				android:elevation="4dp"
 				android:foreground="?selectableItemBackground"
 				android:gravity="center_horizontal"
 				android:orientation="vertical"
-				android:paddingLeft="24dp"
-				android:paddingRight="24dp">
+				android:paddingStart="24dp"
+				android:paddingEnd="24dp">
 
 				<TextView
 					android:layout_width="match_parent"
@@ -213,16 +213,16 @@
 				android:id="@+id/bEnableBeta"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginLeft="16dp"
-				android:layout_marginRight="16dp"
+				android:layout_marginStart="16dp"
+				android:layout_marginEnd="16dp"
 				android:layout_marginTop="16dp"
 				android:background="#2a2a2a"
 				android:elevation="4dp"
 				android:foreground="?selectableItemBackground"
 				android:gravity="center_horizontal"
 				android:orientation="vertical"
-				android:paddingLeft="24dp"
-				android:paddingRight="24dp">
+				android:paddingStart="24dp"
+				android:paddingEnd="24dp">
 
 				<TextView
 					android:layout_width="match_parent"
@@ -238,12 +238,12 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginBottom="24dp"
-				android:layout_marginLeft="16dp"
-				android:layout_marginRight="16dp"
+				android:layout_marginStart="16dp"
+				android:layout_marginEnd="16dp"
 				android:gravity="center_horizontal"
 				android:orientation="vertical"
-				android:paddingLeft="24dp"
-				android:paddingRight="24dp">
+				android:paddingStart="24dp"
+				android:paddingEnd="24dp">
 
 				<TextView
 					android:layout_width="wrap_content"

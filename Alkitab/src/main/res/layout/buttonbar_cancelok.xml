@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?> <!-- Button bar with OK button -->
-<LinearLayout
-	android:id="@+id/ok_panel"
+<LinearLayout android:id="@+id/ok_panel"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"

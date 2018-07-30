@@ -11,7 +11,7 @@
 
 package com.compactbyte.bibleplus.reader;
 
-import java.io.*;
+import java.io.IOException;
 
 /**
  * Class to access any Palm PDB file.

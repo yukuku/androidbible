@@ -5,7 +5,7 @@
 	android:layout_height="wrap_content"
 	android:gravity="center_vertical"
 	android:minHeight="48dp"
-	android:paddingLeft="8dp">
+	android:paddingStart="8dp">
 
 	<TextView
 		android:id="@android:id/text1"
@@ -13,8 +13,8 @@
 		android:layout_height="wrap_content"
 		android:background="@drawable/label_filter_bg"
 		android:paddingBottom="4dp"
-		android:paddingLeft="8dp"
-		android:paddingRight="8dp"
+		android:paddingStart="8dp"
+		android:paddingEnd="8dp"
 		android:paddingTop="4dp"
 		android:textColor="#fff"
 		android:textSize="16sp"

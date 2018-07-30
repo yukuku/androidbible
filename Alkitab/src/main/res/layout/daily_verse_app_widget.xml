@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-	android:id="@+id/root"
+<RelativeLayout android:id="@+id/root"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
@@ -24,46 +23,46 @@
 			android:id="@+id/imgLogo"
 			android:layout_width="32dp"
 			android:layout_height="32dp"
-			android:layout_marginLeft="6dp"
-			android:src="@drawable/ic_launcher"
+			android:layout_marginStart="6dp"
 			android:background="?android:selectableItemBackground"
+			android:src="@drawable/ic_launcher"
 			tools:ignore="ContentDescription" />
 
 		<TextView
 			android:id="@+id/tReference"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_alignParentEnd="true"
 			android:layout_centerVertical="true"
-			android:layout_marginLeft="4dp"
-			android:layout_toRightOf="@+id/imgLogo"
+			android:layout_marginStart="4dp"
+			android:layout_toEndOf="@+id/imgLogo"
 			android:background="?android:selectableItemBackground"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:minHeight="32dp"
 			android:gravity="center_vertical"
-			android:layout_alignParentRight="true" />
+			android:minHeight="32dp"
+			android:textAppearance="?android:attr/textAppearanceSmall" />
 
 		<ImageButton
 			android:id="@+id/bPrev"
 			android:layout_width="32dp"
 			android:layout_height="32dp"
 			android:layout_alignParentTop="true"
-			android:layout_toLeftOf="@+id/bNext"
+			android:layout_centerVertical="true"
+			android:layout_toStartOf="@+id/bNext"
 			android:background="?android:selectableItemBackground"
 			android:contentDescription="@string/desc_previous_day"
-			android:src="@drawable/ic_nav_left_light"
-			android:layout_centerVertical="true" />
+			android:src="@drawable/ic_nav_left_light" />
 
 		<ImageButton
 			android:id="@+id/bNext"
 			android:layout_width="32dp"
 			android:layout_height="32dp"
-			android:layout_alignParentRight="true"
+			android:layout_alignParentEnd="true"
 			android:layout_alignParentTop="true"
-			android:layout_marginRight="6dp"
+			android:layout_centerVertical="true"
+			android:layout_marginEnd="6dp"
 			android:background="?android:selectableItemBackground"
 			android:contentDescription="@string/desc_next_day"
-			android:src="@drawable/ic_nav_right_light"
-			android:layout_centerVertical="true" />
+			android:src="@drawable/ic_nav_right_light" />
 	</RelativeLayout>
 
 	<ListView
@@ -72,8 +71,8 @@
 		android:layout_height="match_parent"
 		android:layout_below="@+id/panelHeader"
 		android:layout_marginBottom="4dp"
-		android:layout_marginLeft="6dp"
-		android:layout_marginRight="6dp"
+		android:layout_marginStart="6dp"
+		android:layout_marginEnd="6dp"
 		android:divider="@android:color/transparent"
 		android:dividerHeight="0dp" />
 </RelativeLayout>

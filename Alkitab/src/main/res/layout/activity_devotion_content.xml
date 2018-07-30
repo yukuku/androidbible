@@ -25,8 +25,8 @@
 				android:id="@+id/lContent"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:paddingLeft="@dimen/text_side_padding"
-				android:paddingRight="@dimen/text_side_padding"
+				android:paddingStart="@dimen/text_side_padding"
+				android:paddingEnd="@dimen/text_side_padding"
 				android:textIsSelectable="true"
 				tools:text="Devotion content here." />
 		</android.support.v4.widget.NestedScrollView>

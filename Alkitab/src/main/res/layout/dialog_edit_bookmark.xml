@@ -1,61 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp">
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:padding="8dp">
 
-        <TextView
-            android:id="@+id/lTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:text="@string/judul_titikdua"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textStyle="bold"/>
+		<TextView
+			android:id="@+id/lTitle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentStart="true"
+			android:layout_alignParentTop="true"
+			android:text="@string/judul_titikdua"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/tCaption"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/lTitle"
-            android:imeOptions="actionGo"
-            android:inputType="textCapSentences"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"/>
+		<EditText
+			android:id="@+id/tCaption"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentStart="true"
+			android:layout_below="@+id/lTitle"
+			android:imeOptions="actionGo"
+			android:inputType="textCapSentences"
+			android:selectAllOnFocus="true"
+			android:singleLine="true" />
 
-        <yuku.devoxx.flowlayout.FlowLayout
-            android:id="@+id/panelLabels"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/tCaption"
-            app:horizontalSpacing="8dp"
-            app:verticalSpacing="6dp">
+		<yuku.devoxx.flowlayout.FlowLayout
+			android:id="@+id/panelLabels"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentStart="true"
+			android:layout_below="@+id/tCaption"
+			app:horizontalSpacing="8dp"
+			app:verticalSpacing="6dp">
 
-            <TextView
-                android:id="@+id/lLabels"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="8dp"
-                android:paddingTop="8dp"
-                android:text="@string/labels_titikdua"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"/>
+			<TextView
+				android:id="@+id/lLabels"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="8dp"
+				android:paddingTop="8dp"
+				android:text="@string/labels_titikdua"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/bAddLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/tambah_titiktiga"/>
-        </yuku.devoxx.flowlayout.FlowLayout>
-    </RelativeLayout>
+			<Button
+				android:id="@+id/bAddLabel"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/tambah_titiktiga" />
+		</yuku.devoxx.flowlayout.FlowLayout>
+	</RelativeLayout>
 
 </android.support.v4.widget.NestedScrollView>

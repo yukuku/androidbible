@@ -31,23 +31,23 @@ public class FileChooserActivity extends BaseActivity {
 		res.putExtra(EXTRA_config, config);
 		return res;
 	}
-	
+
 	public static FileChooserResult obtainResult(Intent data) {
 		if (data == null) return null;
 		return data.getParcelableExtra(EXTRA_result);
 	}
-	
+
 	ListView lsFile;
-	
+
 	FileChooserConfig config;
 	FileAdapter adapter;
 	File cd;
 
-	
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
 		super.willNeedStoragePermission();
-        super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.filechooser_activity_filechooser);
 
 		final Toolbar toolbar = findViewById(R.id.toolbar);
@@ -56,16 +56,16 @@ public class FileChooserActivity extends BaseActivity {
 		assert ab != null;
 		ab.setDisplayHomeAsUpEnabled(true);
 
-        config = getIntent().getParcelableExtra(EXTRA_config);
-        
+		config = getIntent().getParcelableExtra(EXTRA_config);
+
 		Utils.configureTitles(this, config.title, config.subtitle);
 
-        lsFile = findViewById(R.id.filechooser_lsFile);
-        lsFile.setAdapter(adapter = new FileAdapter());
-        lsFile.setOnItemClickListener(lsFile_itemClick);
-        
-        init();
-    }
+		lsFile = findViewById(R.id.filechooser_lsFile);
+		lsFile.setAdapter(adapter = new FileAdapter());
+		lsFile.setOnItemClickListener(lsFile_itemClick);
+
+		init();
+	}
 
 	@Override
 	protected void onNeededPermissionsGranted(final boolean immediatelyGranted) {
@@ -96,7 +96,8 @@ public class FileChooserActivity extends BaseActivity {
 		}
 	};
 
-	@Override public boolean onOptionsItemSelected(MenuItem item) {
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == android.R.id.home) {
 			finish();
 			return true;
@@ -111,7 +112,7 @@ public class FileChooserActivity extends BaseActivity {
 		} else {
 			cd = Environment.getExternalStorageDirectory();
 		}
-		
+
 		ls();
 	}
 
@@ -124,24 +125,24 @@ public class FileChooserActivity extends BaseActivity {
 				if (config.pattern == null) {
 					return true;
 				}
-				
+
 				if (pathname.isDirectory()) {
 					return true;
 				}
-				
+
 				if (m == null) {
 					m = Pattern.compile(config.pattern).matcher("");
 				}
-				
+
 				m.reset(pathname.getName());
 				return m.matches();
 			}
 		});
-		
+
 		if (files == null) {
 			files = new File[0];
 		}
-		
+
 		Arrays.sort(files, (a, b) -> {
 			if (a.isDirectory() && !b.isDirectory()) {
 				return -1;
@@ -162,17 +163,17 @@ public class FileChooserActivity extends BaseActivity {
 
 			return aname.compareToIgnoreCase(bname);
 		});
-		
+
 		adapter.setNewData(files);
 		lsFile.setSelection(0);
 	}
-    
+
 	class FileAdapter extends BaseAdapter {
 		File[] files;
-		
+
 		@Override
 		public int getCount() {
-			return (files == null? 0: files.length) + 1;
+			return (files == null ? 0 : files.length) + 1;
 		}
 
 		public void setNewData(File[] files) {
@@ -194,17 +195,17 @@ public class FileChooserActivity extends BaseActivity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			TextView res = (TextView) (convertView != null? convertView: getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false));
-			
+			TextView res = (TextView) (convertView != null ? convertView : getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false));
+
 			if (position == 0) {
 				res.setText(R.string.filechooser_parent_folder);
 				res.setCompoundDrawablesWithIntrinsicBounds(R.drawable.filechooser_up, 0, 0, 0);
 			} else {
 				File file = getItem(position);
 				res.setText(file.getName());
-				res.setCompoundDrawablesWithIntrinsicBounds(file.isDirectory()? R.drawable.filechooser_folder: R.drawable.filechooser_file, 0, 0, 0);
+				res.setCompoundDrawablesWithIntrinsicBounds(file.isDirectory() ? R.drawable.filechooser_folder : R.drawable.filechooser_file, 0, 0, 0);
 			}
-			
+
 			return res;
 		}
 	}

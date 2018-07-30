@@ -1,42 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="16dp">
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:gravity="center"
+	android:orientation="vertical"
+	android:padding="16dp">
 
-    <TextView
-        android:id="@+id/tVerseText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/padding_small"
-        android:inputType="none"
-        android:maxLines="6"
-        android:textAppearance="?android:textAppearanceMedium"
-        android:textIsSelectable="true" />
+	<TextView
+		android:id="@+id/tVerseText"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="@dimen/padding_small"
+		android:inputType="none"
+		android:maxLines="6"
+		android:textAppearance="?android:textAppearanceMedium"
+		android:textIsSelectable="true" />
 
-    <LinearLayout android:orientation="horizontal" android:gravity="center_horizontal" android:layout_height="wrap_content" android:layout_width="wrap_content">
-        <CheckBox android:id="@+id/c01" android:background="#a0ff0000" android:button="@drawable/highlight_color" android:layout_margin="2dp" android:layout_height="36dp" android:layout_width="36dp" />
-        <CheckBox android:id="@+id/c02" android:background="#a0ff8000" android:button="@drawable/highlight_color" android:layout_margin="2dp" android:layout_height="36dp" android:layout_width="36dp" />
-        <CheckBox android:id="@+id/c03" android:background="#a0ffff00" android:button="@drawable/highlight_color" android:layout_margin="2dp" android:layout_height="36dp" android:layout_width="36dp" />
-        <CheckBox android:id="@+id/c04" android:background="#a080ff00" android:button="@drawable/highlight_color" android:layout_margin="2dp" android:layout_height="36dp" android:layout_width="36dp" />
-        <CheckBox android:id="@+id/c05" android:background="#a000ff00" android:button="@drawable/highlight_color" android:layout_margin="2dp" android:layout_height="36dp" android:layout_width="36dp" />
-        <CheckBox android:id="@+id/c06" android:background="#a000ff80" android:button="@drawable/highlight_color" android:layout_margin="2dp" android:layout_height="36dp" android:layout_width="36dp" />
-    </LinearLayout>
-    <LinearLayout android:orientation="horizontal" android:gravity="center_horizontal" android:layout_height="wrap_content" android:layout_width="wrap_content">
-        <CheckBox android:id="@+id/c12" android:background="#a0ff0080" android:button="@drawable/highlight_color" android:layout_margin="2dp" android:layout_height="36dp" android:layout_width="36dp" />
-        <CheckBox android:id="@+id/c11" android:background="#a0ff00ff" android:button="@drawable/highlight_color" android:layout_margin="2dp" android:layout_height="36dp" android:layout_width="36dp" />
-        <CheckBox android:id="@+id/c10" android:background="#a08000ff" android:button="@drawable/highlight_color" android:layout_margin="2dp" android:layout_height="36dp" android:layout_width="36dp" />
-        <CheckBox android:id="@+id/c09" android:background="#a00000ff" android:button="@drawable/highlight_color" android:layout_margin="2dp" android:layout_height="36dp" android:layout_width="36dp" />
-        <CheckBox android:id="@+id/c08" android:background="#a00080ff" android:button="@drawable/highlight_color" android:layout_margin="2dp" android:layout_height="36dp" android:layout_width="36dp" />
-        <CheckBox android:id="@+id/c07" android:background="#a000ffff" android:button="@drawable/highlight_color" android:layout_margin="2dp" android:layout_height="36dp" android:layout_width="36dp" />
-    </LinearLayout>
+	<LinearLayout
+		android:orientation="horizontal"
+		android:gravity="center_horizontal"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content">
 
-    <Button
-        android:id="@+id/bOtherColors"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:text="@string/highlight_custom_color"/>
+		<CheckBox
+			android:id="@+id/c01"
+			android:background="#a0ff0000"
+			android:button="@drawable/highlight_color"
+			android:layout_margin="2dp"
+			android:layout_height="36dp"
+			android:layout_width="36dp" />
+
+		<CheckBox
+			android:id="@+id/c02"
+			android:background="#a0ff8000"
+			android:button="@drawable/highlight_color"
+			android:layout_margin="2dp"
+			android:layout_height="36dp"
+			android:layout_width="36dp" />
+
+		<CheckBox
+			android:id="@+id/c03"
+			android:background="#a0ffff00"
+			android:button="@drawable/highlight_color"
+			android:layout_margin="2dp"
+			android:layout_height="36dp"
+			android:layout_width="36dp" />
+
+		<CheckBox
+			android:id="@+id/c04"
+			android:background="#a080ff00"
+			android:button="@drawable/highlight_color"
+			android:layout_margin="2dp"
+			android:layout_height="36dp"
+			android:layout_width="36dp" />
+
+		<CheckBox
+			android:id="@+id/c05"
+			android:background="#a000ff00"
+			android:button="@drawable/highlight_color"
+			android:layout_margin="2dp"
+			android:layout_height="36dp"
+			android:layout_width="36dp" />
+
+		<CheckBox
+			android:id="@+id/c06"
+			android:background="#a000ff80"
+			android:button="@drawable/highlight_color"
+			android:layout_margin="2dp"
+			android:layout_height="36dp"
+			android:layout_width="36dp" />
+	</LinearLayout>
+
+	<LinearLayout
+		android:orientation="horizontal"
+		android:gravity="center_horizontal"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content">
+
+		<CheckBox
+			android:id="@+id/c12"
+			android:background="#a0ff0080"
+			android:button="@drawable/highlight_color"
+			android:layout_margin="2dp"
+			android:layout_height="36dp"
+			android:layout_width="36dp" />
+
+		<CheckBox
+			android:id="@+id/c11"
+			android:background="#a0ff00ff"
+			android:button="@drawable/highlight_color"
+			android:layout_margin="2dp"
+			android:layout_height="36dp"
+			android:layout_width="36dp" />
+
+		<CheckBox
+			android:id="@+id/c10"
+			android:background="#a08000ff"
+			android:button="@drawable/highlight_color"
+			android:layout_margin="2dp"
+			android:layout_height="36dp"
+			android:layout_width="36dp" />
+
+		<CheckBox
+			android:id="@+id/c09"
+			android:background="#a00000ff"
+			android:button="@drawable/highlight_color"
+			android:layout_margin="2dp"
+			android:layout_height="36dp"
+			android:layout_width="36dp" />
+
+		<CheckBox
+			android:id="@+id/c08"
+			android:background="#a00080ff"
+			android:button="@drawable/highlight_color"
+			android:layout_margin="2dp"
+			android:layout_height="36dp"
+			android:layout_width="36dp" />
+
+		<CheckBox
+			android:id="@+id/c07"
+			android:background="#a000ffff"
+			android:button="@drawable/highlight_color"
+			android:layout_margin="2dp"
+			android:layout_height="36dp"
+			android:layout_width="36dp" />
+	</LinearLayout>
+
+	<Button
+		android:id="@+id/bOtherColors"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_margin="4dp"
+		android:text="@string/highlight_custom_color" />
 </LinearLayout>

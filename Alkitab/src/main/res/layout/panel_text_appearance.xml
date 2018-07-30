@@ -15,9 +15,9 @@
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_gravity="bottom"
-			android:layout_marginLeft="16dp"
+			android:layout_marginStart="16dp"
 			android:layout_weight="1"
-			android:gravity="center_vertical|left"
+			android:gravity="center_vertical|start"
 			android:text="@string/text_appearance_font"
 			android:textAllCaps="true"
 			android:textSize="12sp"
@@ -50,7 +50,7 @@
 			android:id="@+id/cBold"
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
-			android:layout_marginRight="16dp"
+			android:layout_marginEnd="16dp"
 			android:layout_weight="0"
 			android:text="@string/text_appearance_bold" />
 
@@ -64,7 +64,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="bottom"
-			android:layout_marginLeft="16dp"
+			android:layout_marginStart="16dp"
 			android:text="@string/text_appearance_text_size"
 			android:textAllCaps="true"
 			android:textSize="12sp"
@@ -89,8 +89,8 @@
 			android:id="@+id/lTextSize"
 			android:layout_width="48dp"
 			android:layout_height="48dp"
-			android:layout_marginRight="16dp"
-			android:gravity="center_vertical|right"
+			android:layout_marginEnd="16dp"
+			android:gravity="center_vertical|end"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			tools:text="17.0" />
 
@@ -111,8 +111,8 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_gravity="bottom"
-				android:layout_marginLeft="16dp"
-				android:layout_marginRight="16dp"
+				android:layout_marginStart="16dp"
+				android:layout_marginEnd="16dp"
 				android:textAllCaps="true"
 				android:textSize="12sp"
 				android:textStyle="bold"
@@ -137,8 +137,8 @@
 				android:id="@+id/lTextSizePerVersion"
 				android:layout_width="48dp"
 				android:layout_height="48dp"
-				android:layout_marginRight="16dp"
-				android:gravity="center_vertical|right"
+				android:layout_marginEnd="16dp"
+				android:gravity="center_vertical|end"
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				tools:text="100%" />
 
@@ -154,7 +154,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="bottom"
-			android:layout_marginLeft="16dp"
+			android:layout_marginStart="16dp"
 			android:text="@string/text_appearance_line_spacing"
 			android:textAllCaps="true"
 			android:textSize="12sp"
@@ -179,8 +179,8 @@
 			android:id="@+id/lLineSpacing"
 			android:layout_width="48dp"
 			android:layout_height="48dp"
-			android:layout_marginRight="16dp"
-			android:gravity="center_vertical|right"
+			android:layout_marginEnd="16dp"
+			android:gravity="center_vertical|end"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			tools:text="1.05" />
 

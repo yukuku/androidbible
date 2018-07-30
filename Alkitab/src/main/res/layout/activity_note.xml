@@ -1,52 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary" />
+	<android.support.v7.widget.Toolbar
+		android:id="@+id/toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?attr/actionBarSize"
+		android:background="?attr/colorPrimary" />
 
-    <ViewFlipper
-        android:id="@+id/viewFlipper"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+	<ViewFlipper
+		android:id="@+id/viewFlipper"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
 
-        <android.support.v4.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+		<android.support.v4.widget.NestedScrollView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
 
-            <yuku.alkitab.base.widget.FixedTextView
-                android:id="@+id/tCaptionReadOnly"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:gravity="top"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="16dp"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textIsSelectable="true" />
+			<yuku.alkitab.base.widget.FixedTextView
+				android:id="@+id/tCaptionReadOnly"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:background="@null"
+				android:gravity="top"
+				android:paddingStart="16dp"
+				android:paddingEnd="16dp"
+				android:paddingTop="16dp"
+				android:textAppearance="?android:textAppearanceMedium"
+				android:textIsSelectable="true" />
 
-        </android.support.v4.widget.NestedScrollView>
+		</android.support.v4.widget.NestedScrollView>
 
-        <EditText
-            android:id="@+id/tCaption"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@null"
-            android:gravity="top"
-            android:inputType="text|textAutoCorrect|textCapSentences|textMultiLine"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="16dp"
-            android:textAppearance="?android:textAppearanceMedium"
-            tools:ignore="LabelFor" />
-    </ViewFlipper>
+		<EditText
+			android:id="@+id/tCaption"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:background="@null"
+			android:gravity="top"
+			android:inputType="text|textAutoCorrect|textCapSentences|textMultiLine"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:paddingTop="16dp"
+			android:textAppearance="?android:textAppearanceMedium"
+			tools:ignore="LabelFor" />
+	</ViewFlipper>
 
 </LinearLayout>

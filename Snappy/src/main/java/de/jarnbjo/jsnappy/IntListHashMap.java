@@ -30,19 +30,19 @@ class IntListHashMap {
 
 	void put(int key, int value) {
 		int bucket = key % buckets;
-		if(bucket < 0) {
+		if (bucket < 0) {
 			bucket = -bucket;
 		}
 		int[] data = content[bucket];
-		if(data == null) {
+		if (data == null) {
 			data = new int[33];
 			content[bucket] = data;
 
 		}
 		int off = data[0] * 2 + 1;
 		// eliminate duiplicates
-		if(off == 1 || data[off-2] != key || data[off-1] != value) {
-			if(off >= data.length) {
+		if (off == 1 || data[off - 2] != key || data[off - 1] != value) {
+			if (off >= data.length) {
 				int[] ndata = new int[(data.length - 1) * 2 + 1];
 				System.arraycopy(data, 0, ndata, 0, off);
 				data = ndata;
@@ -56,15 +56,14 @@ class IntListHashMap {
 
 	IntIterator getReverse(int key) {
 		int bucket = key % buckets;
-		if(bucket < 0) {
+		if (bucket < 0) {
 			bucket = -bucket;
 		}
 		int[] data = content[bucket];
 
-		if(data == null) {
+		if (data == null) {
 			return IntIterator.EMTPY_ITERATOR;
-		}
-		else {
+		} else {
 			//return new IntIterator(data, key);
 			iterator.data = data;
 			iterator.offset = data[0] * 2 + 1;
@@ -74,21 +73,20 @@ class IntListHashMap {
 
 	}
 
-	int getFirstHit(int key, int maxValue) {		
+	int getFirstHit(int key, int maxValue) {
 		int bucket = key % buckets;
-		if(bucket < 0) {
+		if (bucket < 0) {
 			bucket = -bucket;
 		}
 		int[] data = content[bucket];
 
-		if(data == null) {
+		if (data == null) {
 			return -1;
-		}
-		else {
+		} else {
 			int offset = data[0] * 2 - 1;
-			while(offset > 0) {
-				if(data[offset] == key && data[offset+1] <= maxValue) {
-					return data[offset+1];
+			while (offset > 0) {
+				if (data[offset] == key && data[offset + 1] <= maxValue) {
+					return data[offset + 1];
 				}
 				offset -= 2;
 			}

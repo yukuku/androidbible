@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
+
 	<style name="SongCodeKeypadButton">
 		<item name="android:background">?selectableItemBackgroundBorderless</item>
-	    <item name="android:layout_width">0dp</item>
-	    <item name="android:layout_weight">1</item>
-	    <item name="android:layout_height">56dp</item>
-	    <item name="android:textSize">22sp</item>
+		<item name="android:layout_width">0dp</item>
+		<item name="android:layout_weight">1</item>
+		<item name="android:layout_height">56dp</item>
+		<item name="android:textSize">22sp</item>
 	</style>
 </resources>
