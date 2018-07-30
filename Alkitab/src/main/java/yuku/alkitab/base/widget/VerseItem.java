@@ -33,6 +33,7 @@ public class VerseItem extends RelativeLayout implements Checkable {
 
 	private boolean checked;
 	private static Paint checkedPaintSolid;
+	/** Whether to set the measured height of this view to zero (i.e. verses without text) */
 	private boolean collapsed;
 	private boolean dragHover;
 	private Drawable dragHoverBg;
