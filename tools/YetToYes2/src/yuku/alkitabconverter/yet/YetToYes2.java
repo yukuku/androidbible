@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 public class YetToYes2 {
 	@Parameter
 	private List<String> params = new ArrayList<>();
@@ -25,9 +26,13 @@ public class YetToYes2 {
 	private boolean ignore_skipped_verses = false;
 
 	public static void main(String[] args) throws Exception {
-		YetToYes2 main = new YetToYes2();
-		JCommander jc = new JCommander(main, args);
+		final YetToYes2 main = new YetToYes2();
+		final JCommander jc = new JCommander();
+		jc.addObject(main);
+		jc.parse(args);
 
+		JCommander.getConsole().println("YetToYes2 version 2.1.0");
+		
 		if (main.help) {
 			jc.setProgramName("java -jar YetToYes2.jar");
 			jc.usage();
@@ -90,7 +95,7 @@ public class YetToYes2 {
 			}
 		}
 
-		Yes2Common.VersionInfo versionInfo = new Yes2Common.VersionInfo();
+		final Yes2Common.VersionInfo versionInfo = new Yes2Common.VersionInfo();
 		versionInfo.locale = result.infos.get("locale");
 		versionInfo.shortName = result.infos.get("shortName");
 		versionInfo.longName = result.infos.get("longName");
@@ -98,7 +103,7 @@ public class YetToYes2 {
 		versionInfo.setBookNamesAndAbbreviations(result.getBookNamesAsList(), result.getBookAbbreviationsAsList());
 
 		// convert recs to textdb
-		TextDb textDb = new TextDb();
+		final TextDb textDb = new TextDb();
 		for (Rec rec : result.recs) {
 			textDb.append(rec.book_1 - 1, rec.chapter_1, rec.verse_1, rec.text, -1);
 			if (!KjvUtils.isValidKjv(rec.book_1 - 1, rec.chapter_1, rec.verse_1)) {

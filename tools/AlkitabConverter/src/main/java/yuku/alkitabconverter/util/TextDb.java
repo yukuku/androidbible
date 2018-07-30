@@ -154,7 +154,7 @@ public class TextDb {
 					System.out.println("Adding empty verses:");
 					for (int a = last_verse_1 + 1; a < verse_1; a++) {
 						System.out.println("  at " + dispbcv(bookId, chapter_1, a) + ": " + " (blank)");
-						append(bookId, chapter_1, a, "", 0);
+						append(bookId, chapter_1, a, "", -1);
 					}
 				}
 			} else if (chapter_1 == last_chapter_1 + 1) {
@@ -163,7 +163,7 @@ public class TextDb {
 					System.out.println("Adding empty verses:");
 					for (int a = 1; a < verse_1; a++) {
 						System.out.println("  at " + dispbcv(bookId, chapter_1, a) + ": " + " (blank)");
-						append(bookId, chapter_1, a, "", 0);
+						append(bookId, chapter_1, a, "", -1);
 					}
 				}
 			} else {
