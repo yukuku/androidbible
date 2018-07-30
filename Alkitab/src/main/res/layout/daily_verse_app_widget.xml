@@ -50,7 +50,7 @@
 			android:layout_toStartOf="@+id/bNext"
 			android:background="?android:selectableItemBackground"
 			android:contentDescription="@string/desc_previous_day"
-			android:src="@drawable/ic_nav_left_light" />
+			android:src="@drawable/ic_nav_start_light" />
 
 		<ImageButton
 			android:id="@+id/bNext"
@@ -62,7 +62,7 @@
 			android:layout_marginEnd="6dp"
 			android:background="?android:selectableItemBackground"
 			android:contentDescription="@string/desc_next_day"
-			android:src="@drawable/ic_nav_right_light" />
+			android:src="@drawable/ic_nav_end_light" />
 	</RelativeLayout>
 
 	<ListView

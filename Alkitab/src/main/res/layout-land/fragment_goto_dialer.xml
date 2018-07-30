@@ -2,7 +2,7 @@
 <android.support.percent.PercentFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="fill_parent"
+	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:gravity="center_horizontal"
 	android:orientation="vertical">
@@ -37,14 +37,14 @@
 			android:gravity="center"
 			android:orientation="horizontal"
 			app:layout_heightPercent="100%"
-			app:layout_marginLeftPercent="50%"
+			app:layout_marginStartPercent="50%"
 			app:layout_marginTopPercent="0%"
 			app:layout_widthPercent="50%">
 
 			<TextView
 				android:id="@+id/tChapterLabel"
 				android:layout_width="wrap_content"
-				android:layout_height="fill_parent"
+				android:layout_height="match_parent"
 				android:layout_marginEnd="8dp"
 				android:gravity="fill_vertical"
 				android:text="@string/pasal_sebelumangka" />
@@ -62,7 +62,7 @@
 			<TextView
 				android:id="@+id/tVerseLabel"
 				android:layout_width="wrap_content"
-				android:layout_height="fill_parent"
+				android:layout_height="match_parent"
 				android:layout_marginStart="16dp"
 				android:layout_marginEnd="8dp"
 				android:gravity="center_vertical"
@@ -104,7 +104,7 @@
 			style="@style/KeypadButton"
 			android:text="1"
 			app:layout_heightPercent="50%"
-			app:layout_marginLeftPercent="0%"
+			app:layout_marginStartPercent="0%"
 			app:layout_widthPercent="16.6%" />
 
 		<!--suppress AndroidDomInspection -->
@@ -113,7 +113,7 @@
 			style="@style/KeypadButton"
 			android:text="2"
 			app:layout_heightPercent="50%"
-			app:layout_marginLeftPercent="16.6%"
+			app:layout_marginStartPercent="16.6%"
 			app:layout_widthPercent="16.6%" />
 
 		<!--suppress AndroidDomInspection -->
@@ -122,7 +122,7 @@
 			style="@style/KeypadButton"
 			android:text="3"
 			app:layout_heightPercent="50%"
-			app:layout_marginLeftPercent="33.3%"
+			app:layout_marginStartPercent="33.3%"
 			app:layout_widthPercent="16.6%" />
 
 
@@ -132,7 +132,7 @@
 			style="@style/KeypadButton"
 			android:text="4"
 			app:layout_heightPercent="50%"
-			app:layout_marginLeftPercent="50%"
+			app:layout_marginStartPercent="50%"
 			app:layout_widthPercent="16.6%" />
 
 		<!--suppress AndroidDomInspection -->
@@ -141,7 +141,7 @@
 			style="@style/KeypadButton"
 			android:text="5"
 			app:layout_heightPercent="50%"
-			app:layout_marginLeftPercent="66.6%"
+			app:layout_marginStartPercent="66.6%"
 			app:layout_widthPercent="16.6%" />
 
 		<!--suppress AndroidDomInspection -->
@@ -150,7 +150,7 @@
 			style="@style/KeypadButton"
 			android:text="6"
 			app:layout_heightPercent="50%"
-			app:layout_marginLeftPercent="0%"
+			app:layout_marginStartPercent="0%"
 			app:layout_marginTopPercent="50%"
 			app:layout_widthPercent="16.6%" />
 
@@ -161,7 +161,7 @@
 			style="@style/KeypadButton"
 			android:text="7"
 			app:layout_heightPercent="50%"
-			app:layout_marginLeftPercent="16.6%"
+			app:layout_marginStartPercent="16.6%"
 			app:layout_marginTopPercent="50%"
 			app:layout_widthPercent="16.6%" />
 
@@ -171,7 +171,7 @@
 			style="@style/KeypadButton"
 			android:text="8"
 			app:layout_heightPercent="50%"
-			app:layout_marginLeftPercent="33.3%"
+			app:layout_marginStartPercent="33.3%"
 			app:layout_marginTopPercent="50%"
 			app:layout_widthPercent="16.6%" />
 
@@ -181,7 +181,7 @@
 			style="@style/KeypadButton"
 			android:text="9"
 			app:layout_heightPercent="50%"
-			app:layout_marginLeftPercent="50%"
+			app:layout_marginStartPercent="50%"
 			app:layout_marginTopPercent="50%"
 			app:layout_widthPercent="16.6%" />
 
@@ -193,7 +193,7 @@
 			android:contentDescription="@string/desc_backspace"
 			android:src="@drawable/ic_keypad_backspace"
 			app:layout_heightPercent="50%"
-			app:layout_marginLeftPercent="83.3%"
+			app:layout_marginStartPercent="83.3%"
 			app:layout_marginTopPercent="0%"
 			app:layout_widthPercent="16.6%" />
 
@@ -203,7 +203,7 @@
 			style="@style/KeypadButton"
 			android:text="0"
 			app:layout_heightPercent="50%"
-			app:layout_marginLeftPercent="66.7%"
+			app:layout_marginStartPercent="66.7%"
 			app:layout_marginTopPercent="50%"
 			app:layout_widthPercent="16.6%" />
 
@@ -215,7 +215,7 @@
 			android:text="@string/ok"
 			android:textSize="16sp"
 			app:layout_heightPercent="50%"
-			app:layout_marginLeftPercent="83.3%"
+			app:layout_marginStartPercent="83.3%"
 			app:layout_marginTopPercent="50%"
 			app:layout_widthPercent="16.6%" />
 

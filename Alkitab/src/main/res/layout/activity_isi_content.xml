@@ -2,13 +2,13 @@
 <FrameLayout android:id="@+id/overlayContainer"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
 
 	<LinearLayout
 		android:id="@+id/root"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
 		android:orientation="vertical"
 		tools:ignore="UselessParent">
 
@@ -54,7 +54,7 @@
 					android:layout_gravity="start"
 					android:contentDescription="@string/desc_previous_chapter"
 					android:scaleType="center"
-					android:src="@drawable/ic_nav_left_light" />
+					android:src="@drawable/ic_nav_start_light" />
 
 				<ImageButton
 					android:id="@+id/bRight"
@@ -65,14 +65,14 @@
 					android:contentDescription="@string/desc_next_chapter"
 					android:padding="16dp"
 					android:scaleType="center"
-					android:src="@drawable/ic_nav_right_light" />
+					android:src="@drawable/ic_nav_end_light" />
 			</yuku.alkitab.base.widget.NavFrameLayout>
 
 		</android.support.v7.widget.Toolbar>
 
 		<yuku.alkitab.base.widget.TwofingerLinearLayout
 			android:id="@+id/splitRoot"
-			android:layout_width="fill_parent"
+			android:layout_width="match_parent"
 			android:layout_height="0dp"
 			android:layout_weight="1"
 			android:orientation="vertical"

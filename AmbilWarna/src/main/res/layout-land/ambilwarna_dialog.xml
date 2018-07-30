@@ -25,14 +25,14 @@
 			android:layout_height="30dp">
 
 			<View
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
 				android:background="@drawable/ambilwarna_alphacheckered_tiled" />
 
 			<View
 				android:id="@+id/ambilwarna_oldColor"
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
 				android:background="#faa" />
 		</FrameLayout>
 
@@ -49,14 +49,14 @@
 			android:layout_height="30dp">
 
 			<View
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
 				android:background="@drawable/ambilwarna_alphacheckered_tiled" />
 
 			<View
 				android:id="@+id/ambilwarna_newColor"
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
 				android:background="#aaf" />
 		</FrameLayout>
 	</LinearLayout>
