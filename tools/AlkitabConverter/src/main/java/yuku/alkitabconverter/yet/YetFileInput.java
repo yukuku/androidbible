@@ -1,10 +1,10 @@
 package yuku.alkitabconverter.yet;
 
-import gnu.trove.list.array.TIntArrayList;
 import yuku.alkitab.model.FootnoteEntry;
 import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.yes2.model.PericopeData;
+import yuku.alkitabconverter.util.IntArrayList;
 import yuku.alkitabconverter.util.Rec;
 
 import java.io.BufferedInputStream;
@@ -244,9 +244,9 @@ public class YetFileInput {
 		}
 
 		{ // verify footnotes and xref entries exist
-			TIntArrayList footnoteArifs = new TIntArrayList();
-			TIntArrayList xrefArifs = new TIntArrayList();
-			List<String> errors = new ArrayList<>();
+			final IntArrayList footnoteArifs = new IntArrayList();
+			final IntArrayList xrefArifs = new IntArrayList();
+			final List<String> errors = new ArrayList<>();
 
 			for (final Rec rec : res.recs) {
 				final int ari = Ari.encode(rec.book_1 - 1, rec.chapter_1, rec.verse_1);
@@ -271,14 +271,16 @@ public class YetFileInput {
 				}
 			}
 
-			for (final int arif : footnoteArifs.toArray()) {
+			for (int i = 0; i < footnoteArifs.size(); i++) {
+				final int arif = footnoteArifs.get(i);
 				if (res.footnoteEntries == null || !res.footnoteEntries.containsKey(arif)) {
 					final int ari = arif >>> 8;
 					errors.add(String.format("footnote referenced in verse text not found: arif 0x%08x (book_1=%d, chapter_1=%d, verse_1=%d, field=%d)", arif, Ari.toBook(ari) + 1, Ari.toChapter(ari), Ari.toVerse(ari), arif & 0xff));
 				}
 			}
 
-			for (final int arif : xrefArifs.toArray()) {
+			for (int i = 0; i < xrefArifs.size(); i++) {
+				final int arif = xrefArifs.get(i);
 				if (res.xrefEntries == null || !res.xrefEntries.containsKey(arif)) {
 					final int ari = arif >>> 8;
 					errors.add(String.format("xref referenced in verse text not found: arif 0x%08x (book_1=%d, chapter_1=%d, verse_1=%d, field=%d)", arif, Ari.toBook(ari) + 1, Ari.toChapter(ari), Ari.toVerse(ari), arif & 0xff));

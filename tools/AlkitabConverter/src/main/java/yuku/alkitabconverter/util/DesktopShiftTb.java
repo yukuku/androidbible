@@ -1,16 +1,18 @@
 package yuku.alkitabconverter.util;
 
-import gnu.trove.map.hash.TIntIntHashMap;
+import yuku.bintex.BintexReader;
 
 import java.io.IOException;
-
-import yuku.bintex.BintexReader;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DesktopShiftTb {
 	public static final String TAG = DesktopShiftTb.class.getSimpleName();
 
-	/** Map from ari of tb to ari of kjv, but the most significant byte is used for flag */
-	static TIntIntHashMap tbToFkjv = new TIntIntHashMap(2048);
+	/**
+	 * Map from ari of tb to ari of kjv, but the most significant byte is used for flag
+	 */
+	static Map<Integer, Integer> tbToFkjv = new HashMap<>(2048);
 
 	static {
 		try {
@@ -62,11 +64,11 @@ public class DesktopShiftTb {
 	public static IntArrayList shiftFromTb(IntArrayList aris) {
 		if (aris == null) return null;
 		IntArrayList res = new IntArrayList(aris.size());
-		
+
 		for (int i = 0, len = aris.size(); i < len; i++) {
 			res.add(shiftFromTb(aris.get(i)));
 		}
-		
+
 		return res;
 	}
 }
