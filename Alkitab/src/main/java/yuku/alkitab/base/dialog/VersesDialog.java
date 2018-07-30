@@ -2,6 +2,7 @@ package yuku.alkitab.base.dialog;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +13,8 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.dialog.base.BaseDialog;
 import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.base.widget.SingleViewVerseAdapter;
 import yuku.alkitab.base.widget.VersesView;
-import yuku.alkitab.base.widget.VersesView.VerseSelectionMode;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.model.Version;
@@ -39,8 +40,11 @@ public class VersesDialog extends BaseDialog {
 	private static final String EXTRA_compareMode = "compareMode";
 
 	public static abstract class VersesDialogListener {
-		public void onVerseSelected(VersesDialog dialog, int ari) {}
-		public void onComparedVerseSelected(VersesDialog dialog, int ari, MVersion mversion) {}
+		public void onVerseSelected(VersesDialog dialog, int ari) {
+		}
+
+		public void onComparedVerseSelected(VersesDialog dialog, int ari, MVersion mversion) {
+		}
 	}
 
 	TextView tReference;
@@ -63,13 +67,13 @@ public class VersesDialog extends BaseDialog {
 
 	public VersesDialog() {
 	}
-	
+
 	public static VersesDialog newInstance(final IntArrayList ariRanges) {
 		VersesDialog res = new VersesDialog();
-		
-        Bundle args = new Bundle();
-        args.putParcelable(EXTRA_ariRanges, ariRanges);
-        res.setArguments(args);
+
+		Bundle args = new Bundle();
+		args.putParcelable(EXTRA_ariRanges, ariRanges);
+		res.setArguments(args);
 
 		return res;
 	}
@@ -94,7 +98,8 @@ public class VersesDialog extends BaseDialog {
 		return res;
 	}
 
-	@Override public void onCreate(Bundle savedInstanceState) {
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setStyle(DialogFragment.STYLE_NO_TITLE, 0);
 
@@ -103,16 +108,16 @@ public class VersesDialog extends BaseDialog {
 		compareMode = getArguments().getBoolean(EXTRA_compareMode);
 	}
 
-	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	@Override
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View res = inflater.inflate(R.layout.dialog_verses, container, false);
 
 		tReference = res.findViewById(R.id.tReference);
 		versesView = res.findViewById(R.id.versesView);
 
 		res.setBackgroundColor(S.applied().backgroundColor);
-		versesView.setCacheColorHint(S.applied().backgroundColor);
-		versesView.setVerseSelectionMode(VerseSelectionMode.singleClick);
-		versesView.setSelectedVersesListener(versesView_selectedVerses);
+		versesView.getAdapter().setVerseSelectionMode(SingleViewVerseAdapter.VerseSelectionMode.singleClick);
+		versesView.getAdapter().setSelectedVersesListener(versesView_selectedVerses);
 
 		// build reference label
 		final StringBuilder sb = new StringBuilder();
@@ -178,8 +183,8 @@ public class VersesDialog extends BaseDialog {
 
 			// sort such that sourceVersion is first
 			Collections.sort(mversions, (lhs, rhs) -> {
-				int a = U.equals(lhs.getVersionId(), sourceVersionId)? -1: 0;
-				int b = U.equals(rhs.getVersionId(), sourceVersionId)? -1: 0;
+				int a = U.equals(lhs.getVersionId(), sourceVersionId) ? -1 : 0;
+				int b = U.equals(rhs.getVersionId(), sourceVersionId) ? -1 : 0;
 				return a - b;
 			});
 
@@ -263,8 +268,9 @@ public class VersesDialog extends BaseDialog {
 		return res;
 	}
 
-	VersesView.SelectedVersesListener versesView_selectedVerses = new VersesView.DefaultSelectedVersesListener() {
-		@Override public void onVerseSingleClick(VersesView v, int verse_1 /* this is actually position+1, not necessaryly verse_1 */) {
+	SingleViewVerseAdapter.SelectedVersesListener versesView_selectedVerses = new SingleViewVerseAdapter.DefaultSelectedVersesListener() {
+		@Override
+		public void onVerseSingleClick(final SingleViewVerseAdapter adapter, final int verse_1) {
 			if (listener != null) {
 				if (!compareMode) {
 					listener.onVerseSelected(VersesDialog.this, (Integer) customCallbackData[verse_1 - 1]);
