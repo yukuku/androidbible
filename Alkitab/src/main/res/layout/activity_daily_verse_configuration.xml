@@ -106,6 +106,12 @@
 			android:enabled="false"
 			android:text="@string/dv_option_dark_text" />
 
+		<CheckBox
+			android:id="@+id/cHideAppIcon"
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:text="@string/dv_option_hide_app_icon" />
+
 	</LinearLayout>
 
 	<include

@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.JobIntentService;
+import android.view.View;
 import android.widget.RemoteViews;
 import yuku.afw.App;
 import yuku.alkitab.base.IsiActivity;
@@ -100,6 +101,8 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 		} else {
 			rv.setTextColor(R.id.tReference, Color.WHITE);
 		}
+
+		rv.setViewVisibility(R.id.imgLogo, savedState.hideAppIcon ? View.GONE : View.VISIBLE);
 
 		rv.setFloat(R.id.tReference, "setTextSize", savedState.textSize);
 

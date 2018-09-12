@@ -32,6 +32,7 @@ public abstract class DailyVerseData {
 	public static class SavedState {
 		public String versionId;
 		public boolean darkText;
+		public boolean hideAppIcon;
 		public float textSize;
 		/** Legacy */
 		public boolean transparentBackground;
@@ -160,6 +161,7 @@ public abstract class DailyVerseData {
 	public static SavedState loadSavedState(final int appWidgetId) {
 		final SavedState res = new SavedState();
 		res.darkText = Preferences.getBoolean("app_widget_" + appWidgetId + "_option_dark_text", false);
+		res.hideAppIcon = Preferences.getBoolean("app_widget_" + appWidgetId + "_option_hide_app_icon", false);
 		res.textSize = Preferences.getFloat("app_widget_" + appWidgetId + "_option_text_size", 14.f);
 		res.transparentBackground = Preferences.getBoolean("app_widget_" + appWidgetId + "_option_transparent_background", false);
 		res.versionId = Preferences.getString("app_widget_" + appWidgetId + "_version");
@@ -176,6 +178,7 @@ public abstract class DailyVerseData {
 		try {
 			if (savedState == null) {
 				Preferences.remove("app_widget_" + appWidgetId + "_option_dark_text");
+				Preferences.remove("app_widget_" + appWidgetId + "_option_hide_app_icon");
 				Preferences.remove("app_widget_" + appWidgetId + "_option_text_size");
 				Preferences.remove("app_widget_" + appWidgetId + "_option_transparent_background");
 				Preferences.remove("app_widget_" + appWidgetId + "_version");
@@ -183,6 +186,7 @@ public abstract class DailyVerseData {
 				Preferences.remove("app_widget_" + appWidgetId + "_option_backgroundAlpha");
 			} else {
 				Preferences.setBoolean("app_widget_" + appWidgetId + "_option_dark_text", savedState.darkText);
+				Preferences.setBoolean("app_widget_" + appWidgetId + "_option_hide_app_icon", savedState.hideAppIcon);
 				Preferences.setFloat("app_widget_" + appWidgetId + "_option_text_size", savedState.textSize);
 				Preferences.setBoolean("app_widget_" + appWidgetId + "_option_transparent_background", savedState.transparentBackground);
 				Preferences.setString("app_widget_" + appWidgetId + "_version", savedState.versionId);
