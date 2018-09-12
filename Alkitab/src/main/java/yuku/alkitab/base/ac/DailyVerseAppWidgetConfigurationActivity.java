@@ -34,6 +34,7 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 	int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 	int selectedVersionPosition = -1;
 	CheckBox cDarkText;
+	CheckBox cHideAppIcon;
 	SeekBar sbTextSize;
 	TextView tTextSize;
 	View panelTransparent;
@@ -68,6 +69,7 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 		final Button bCancel = findViewById(R.id.bCancel);
 		cTransparentBackground = findViewById(R.id.cTransparentBackground);
 		cDarkText = findViewById(R.id.cDarkText);
+		cHideAppIcon = findViewById(R.id.cHideAppIcon);
 		sbTextSize = findViewById(R.id.sbTextSize);
 		tTextSize = findViewById(R.id.tTextSize);
 		panelTransparent = findViewById(R.id.panelTransparent);
@@ -181,6 +183,7 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 		savedState.transparentBackground = cTransparentBackground.isChecked();
 		savedState.backgroundAlpha = cTransparentBackground.isChecked() ? progressToActualAlpha(sbTransparent.getProgress()) : 255;
 		savedState.darkText = cDarkText.isChecked();
+		savedState.hideAppIcon = cHideAppIcon.isChecked();
 		savedState.textSize = progressToActualTextSize(sbTextSize.getProgress());
 		savedState.click = 0;
 		DailyVerseData.saveSavedState(mAppWidgetId, savedState);
@@ -198,7 +201,7 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 	};
 
 	class VersionAdapter extends EasyAdapter {
-		private List<MVersion> versions;
+		List<MVersion> versions;
 
 		void reload() {
 			versions = S.getAvailableVersions();
