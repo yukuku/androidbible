@@ -37,7 +37,7 @@ fun main(args: Array<String>) {
                 val kitab_0 = UsfmBookName.toBookId(newId)
 
                 val outputfile = File(MID_DIR, String.format("%02d-%s-utf8.usfm", kitab_0, newId))
-                outputfile.parentFile.mkdir()
+                outputfile.parentFile?.mkdir()
                 splitFile = PrintWriter(outputfile, "utf-8")
 
                 println("$inputfn -> $outputfile")
