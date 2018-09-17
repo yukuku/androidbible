@@ -81,7 +81,7 @@ fun main(args: Array<String>) {
 
     val yetOutputFile = File(OUTPUT_YET)
 
-    yetOutputFile.parentFile.mkdir()
+    yetOutputFile.parentFile?.mkdir()
     val yet = YetFileOutput(yetOutputFile)
     val versionInfo = Yes2Common.VersionInfo()
     versionInfo.locale = INFO_LOCALE
