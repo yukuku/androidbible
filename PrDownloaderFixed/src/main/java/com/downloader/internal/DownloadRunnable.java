@@ -22,6 +22,8 @@ import com.downloader.Response;
 import com.downloader.Status;
 import com.downloader.request.DownloadRequest;
 
+import java.io.IOException;
+
 /**
  * Created by amitshekhar on 13/11/17.
  */
@@ -50,7 +52,7 @@ public class DownloadRunnable implements Runnable {
         } else if (response.getError() != null) {
             request.deliverError(response.getError());
         } else if (!response.isCancelled()) {
-            request.deliverError(new Error());
+            request.deliverError(Error.newConnectionError(new IOException("Cancelled")));
         }
     }
 

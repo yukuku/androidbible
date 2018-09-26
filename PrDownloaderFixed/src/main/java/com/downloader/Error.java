@@ -21,23 +21,33 @@ package com.downloader;
  */
 
 public class Error {
+	private final boolean isServerError;
+	private final boolean isConnectionError;
+	private final Exception exception;
 
-    private boolean isServerError;
-    private boolean isConnectionError;
+	private Error(final boolean isServerError, final boolean isConnectionError, final Exception exception) {
+		this.isServerError = isServerError;
+		this.isConnectionError = isConnectionError;
+		this.exception = exception;
+	}
 
-    public boolean isServerError() {
-        return isServerError;
-    }
+	public static Error newServerError(final Exception exception) {
+		return new Error(true, false, exception);
+	}
 
-    public void setServerError(boolean serverError) {
-        isServerError = serverError;
-    }
+	public static Error newConnectionError(final Exception exception) {
+		return new Error(false, true, exception);
+	}
 
-    public boolean isConnectionError() {
-        return isConnectionError;
-    }
+	public boolean isServerError() {
+		return isServerError;
+	}
 
-    public void setConnectionError(boolean connectionError) {
-        isConnectionError = connectionError;
-    }
+	public boolean isConnectionError() {
+		return isConnectionError;
+	}
+
+	public Exception getException() {
+		return exception;
+	}
 }

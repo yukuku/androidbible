@@ -129,8 +129,7 @@ public class DownloadTask {
             }
 
             if (!isSuccessful()) {
-                Error error = new Error();
-                error.setServerError(true);
+                final Error error = Error.newServerError(new IOException("Response code: " + responseCode));
                 response.setError(error);
                 return response;
             }
@@ -235,8 +234,7 @@ public class DownloadTask {
             if (!isResumeSupported) {
                 deleteTempFile();
             }
-            Error error = new Error();
-            error.setConnectionError(true);
+            final Error error = Error.newConnectionError(e);
             response.setError(error);
         } finally {
             closeAllSafely(outputStream, fileDescriptor);
