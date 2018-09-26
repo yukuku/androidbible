@@ -118,7 +118,16 @@ public enum DownloadMapper {
 
 	@NonNull
 	static String downloadTempBasename(final String downloadKey) {
-		return "DownloadMapper-" + downloadKey + ".tmp";
+		// Return value must be filename-safe.
+		// So I will remove all non-safe characters and append the hashcode of the downloadKey.
+		final StringBuilder safe = new StringBuilder(downloadKey.length() + 40);
+		for (char c : downloadKey.toCharArray()) {
+			if ('A' <= c && c <= 'Z' || 'a' <= c && c <= 'z' || '0' <= c && c <= '9') {
+				safe.append(c);
+			}
+		}
+		
+		return "DownloadMapper-" + safe + downloadKey.hashCode() + ".tmp";
 	}
 
 	public void enqueue(final String downloadKey, final String url, final String title, final Map<String, String> attrs) {
@@ -155,6 +164,9 @@ public enum DownloadMapper {
 				final int id = p_id[0];
 
 				final CharSequence msg;
+
+				AppLog.e(TAG, "@@onError", error.getException());
+
 				if (error.isConnectionError()) {
 					msg = TextUtils.expandTemplate(App.context.getString(R.string.version_download_network_error), title);
 				} else {
