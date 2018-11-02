@@ -20,6 +20,7 @@ import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
@@ -74,6 +75,7 @@ import yuku.alkitab.base.dialog.XrefDialog;
 import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.model.MVersionInternal;
+import yuku.alkitab.base.model.MVersionPreset;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Announce;
@@ -113,6 +115,7 @@ import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.model.Version;
+import yuku.alkitab.ribka.RibkaReportActivity;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 import yuku.devoxx.flowlayout.FlowLayout;
@@ -294,8 +297,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	// temporary states
 	Boolean hasEsvsbAsal;
-	Version activeSplitVersion;
-	String activeSplitVersionId;
+
+	// these three must be set together
+	@Nullable MVersion activeSplitMVersion;
+	@Nullable Version activeSplitVersion;
+	@Nullable String activeSplitVersionId;
 
 	final CallbackSpan.OnClickListener<Object> parallelListener = (widget, data) -> {
 		if (data instanceof String) {
@@ -554,7 +560,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			}
 
 			if (this.activeBook == null) { // version failed to load, so books are also failed to load. Fallback!
-				S.setActiveVersion(VersionImpl.getInternalVersion(), MVersionInternal.getVersionInternalId());
+				S.setActiveVersion(S.getMVersionInternal());
 				this.activeBook = S.activeVersion().getFirstBook();
 			}
 		}
@@ -794,7 +800,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				}
 			}
 
-			S.setActiveVersion(version, mv.getVersionId());
+			S.setActiveVersion(mv);
 			displayActiveVersion();
 
 			if (display) {
@@ -829,8 +835,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				throw new RuntimeException(); // caught below
 			}
 
+			activeSplitMVersion = mv;
 			activeSplitVersion = version;
 			activeSplitVersionId = mv.getVersionId();
+
 			splitHandleButton.setLabel2(version.getInitials() + " \u25bc");
 
 			configureTextAppearancePanelForSplitVersion();
@@ -1408,6 +1416,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	void disableSplitVersion() {
+		activeSplitMVersion = null;
 		activeSplitVersion = null;
 		activeSplitVersionId = null;
 		closeSplitDisplay();
@@ -2090,7 +2099,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			getMenuInflater().inflate(R.menu.context_isi, menu);
 
 			AppLog.d(TAG, "@@onCreateActionMode");
-			
+
 			/* The following "esvsbasal" thing is a personal thing by yuku that doesn't matter to anyone else.
 			 * Please ignore it and leave it intact. */
 			if (hasEsvsbAsal == null) {
@@ -2187,6 +2196,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			menuDictionary.setVisible(c.menuDictionary
 					&& !Preferences.getBoolean(getString(R.string.pref_autoDictionaryAnalyze_key), getResources().getBoolean(R.bool.pref_autoDictionaryAnalyze_default))
 			);
+
+			final MenuItem menuRibkaReport = menu.findItem(R.id.menuRibkaReport);
+			menuRibkaReport.setVisible(single && checkRibkaEligibility() != 0);
 
 			{ // extensions
 				extensions = ExtensionManager.getExtensions();
@@ -2430,6 +2442,32 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 				startDictionaryMode(aris);
 			} return true;
+
+			case R.id.menuRibkaReport: {
+				final int ribkaEligibility = checkRibkaEligibility();
+				if (ribkaEligibility != 0) {
+					final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
+
+					final CharSequence reference;
+					final String verseText;
+					final String versionDescription;
+
+					if (ribkaEligibility == 1) {
+						reference = S.activeVersion().reference(ari);
+						verseText = S.activeVersion().loadVerseText(ari);
+						versionDescription = S.activeMVersion().description;
+					} else {
+						reference = activeSplitVersion.reference(ari);
+						verseText = activeSplitVersion.loadVerseText(ari);
+						versionDescription = activeSplitMVersion.description;
+					}
+
+					if (reference != null && verseText != null) {
+						startActivity(RibkaReportActivity.createIntent(ari, reference.toString(), verseText, versionDescription));
+					}
+				}
+			} return true;
+
 			default: if (itemId >= MENU_EXTENSIONS_FIRST_ID && itemId < MENU_EXTENSIONS_FIRST_ID + extensions.size()) {
 				final ExtensionManager.Info extension = extensions.get(itemId - MENU_EXTENSIONS_FIRST_ID);
 
@@ -2503,6 +2541,30 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			}
 		}
 	};
+
+	/**
+	 * Check whether we are using a version eligible for ribka.
+	 * @return 0 when neither version, 1 when primary version, 2 when split version
+	 */
+	int checkRibkaEligibility() {
+		final String validPresetName = "in-ayt";
+
+		final MVersion activeMVersion = S.activeMVersion();
+		final String activePresetName = activeMVersion instanceof MVersionDb ? ((MVersionDb) activeMVersion).preset_name : null;
+
+		if (validPresetName.equals(activePresetName)) {
+			return 1;
+		}
+
+		final MVersion splitMVersion = activeSplitMVersion;
+		final String splitPresetName = splitMVersion instanceof MVersionDb ? ((MVersionDb) splitMVersion).preset_name : null;
+
+		if (validPresetName.equals(splitPresetName)) {
+			return 2;
+		}
+
+		return 0;
+	}
 
 	void reloadBothAttributeMaps() {
 		lsSplit0.reloadAttributeMap();

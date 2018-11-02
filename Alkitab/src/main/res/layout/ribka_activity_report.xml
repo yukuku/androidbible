@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:focusable="true"
+	android:focusableInTouchMode="true"
+	android:orientation="vertical">
+
+	<android.support.v7.widget.Toolbar
+		android:id="@+id/toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?actionBarSize" />
+
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:clipToPadding="false"
+		android:fillViewport="true"
+		android:paddingBottom="32dp"
+		android:paddingTop="32dp">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginEnd="24dp"
+			android:layout_marginLeft="24dp"
+			android:layout_marginRight="24dp"
+			android:layout_marginStart="24dp"
+			android:orientation="vertical">
+
+			<TextView
+				android:id="@+id/tRibkaReference"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+				tools:text="Reference" />
+
+			<TextView
+				android:id="@+id/tRibkaVerseText"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="8dp"
+				android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+				tools:text="Contents of the verse" />
+
+			<RadioGroup
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="16dp">
+
+				<RadioButton
+					android:id="@+id/oRibkaCategoryTypo"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:text="@string/ribka_category_typo" />
+
+				<RadioButton
+					android:id="@+id/oRibkaCategoryWord"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:text="@string/ribka_category_word" />
+
+				<RadioButton
+					android:id="@+id/oRibkaCategoryContent"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:text="@string/ribka_category_content" />
+
+				<RadioButton
+					android:id="@+id/oRibkaCategoryOthers"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:text="@string/ribka_category_others" />
+
+			</RadioGroup>
+
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="16dp"
+				android:text="@string/ribka_suggestion_intro" />
+
+			<android.support.design.widget.TextInputLayout
+				android:id="@+id/tRibkaSuggestionContainer"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="16dp"
+				android:hint="@string/ribka_suggestion_hint">
+
+				<android.support.design.widget.TextInputEditText
+					android:id="@+id/tRibkaSuggestion"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:gravity="top"
+					android:inputType="textMultiLine"
+					android:minLines="4" />
+
+			</android.support.design.widget.TextInputLayout>
+
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="16dp"
+				android:text="@string/ribka_remarks_intro" />
+
+			<android.support.design.widget.TextInputLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="16dp"
+				android:hint="@string/ribka_remarks_hint">
+
+				<android.support.design.widget.TextInputEditText
+					android:id="@+id/tRibkaRemarks"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:gravity="top"
+					android:minLines="4" />
+
+			</android.support.design.widget.TextInputLayout>
+
+
+			<android.support.design.widget.TextInputLayout
+				android:id="@+id/tRibkaEmailContainer"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="@string/ribka_email_hint">
+
+				<android.support.design.widget.TextInputEditText
+					android:id="@+id/tRibkaEmail"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:inputType="textEmailAddress" />
+
+			</android.support.design.widget.TextInputLayout>
+
+			<android.support.v7.widget.AppCompatButton
+				android:id="@+id/bRibkaSend"
+				style="@style/Widget.AppCompat.Button.Colored"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/ribka_submit_button"
+				app:backgroundTint="?colorAccent" />
+
+		</LinearLayout>
+
+	</ScrollView>
+</LinearLayout>

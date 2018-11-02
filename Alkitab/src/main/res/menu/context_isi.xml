@@ -101,4 +101,9 @@
 		android:icon="@drawable/ic_menu_dictionary"
 		android:title="@string/menuDictionary" />
 
+	<item
+		android:id="@+id/menuRibkaReport"
+		android:title="@string/ribka_menu_report"
+		app:showAsAction="never" />
+
 </menu>

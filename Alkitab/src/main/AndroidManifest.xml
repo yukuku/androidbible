@@ -370,6 +370,11 @@
 			android:excludeFromRecents="true"
 			android:theme="@style/Theme.PopupActivity" />
 
+		<activity
+			android:name="yuku.alkitab.ribka.RibkaReportActivity"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
+			android:label="@string/ribka_title" />
+
 		<service android:name="yuku.alkitab.base.sv.DownloadService" />
 
 		<provider

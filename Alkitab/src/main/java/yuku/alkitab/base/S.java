@@ -79,25 +79,36 @@ public class S {
 		return CalculatedDimensionsHolder.applied;
 	}
 
-	// The process-global active Bible version. Both of these must always be set at the same time.
+	// The process-global active Bible version.
 	private static class ActiveVersionHolder {
+		static MVersion activeMVersion;
 		static Version activeVersion;
 		static String activeVersionId;
 
 		static {
-			if (activeVersion == null) {
-				AppLog.d(TAG, "##1");
-				// Load the version we want before everything, so we do not load it multiple times.
-				final String lastVersionId = Preferences.getString(Prefkey.lastVersionId);
-				AppLog.d(TAG, "##2");
-				final MVersion mv = getVersionFromVersionId(lastVersionId);
-				AppLog.d(TAG, "##3");
-				final MVersion actual = mv == null ? getMVersionInternal() : mv;
-				AppLog.d(TAG, "##4");
-				setActiveVersion(actual.getVersion(), actual.getVersionId());
-				AppLog.d(TAG, "##5");
-			}
+			// Load the version we want before everything, so we do not load it multiple times.
+			final String lastVersionId = Preferences.getString(Prefkey.lastVersionId);
+			final MVersion mv = getVersionFromVersionId(lastVersionId);
+			final MVersion actual = mv == null ? getMVersionInternal() : mv;
+			setActiveVersion(actual);
 		}
+
+		public synchronized static void setActiveVersion(final MVersion mv) {
+			final Version version = mv.getVersion();
+			final String versionId = mv.getVersionId();
+			activeMVersion = mv;
+
+			final Throwable trace = BuildConfig.DEBUG ? new Throwable().fillInStackTrace() : null;
+			AppLog.d(TAG, "@@setActiveVersion version=" + version + " versionId=" + versionId, trace);
+
+			activeVersion = version;
+			activeVersionId = versionId;
+		}
+	}
+
+	@NonNull
+	public static MVersion activeMVersion() {
+		return ActiveVersionHolder.activeMVersion;
 	}
 
 	@NonNull
@@ -110,12 +121,8 @@ public class S {
 		return ActiveVersionHolder.activeVersionId;
 	}
 
-	public synchronized static void setActiveVersion(final Version version, final String versionId) {
-		final Throwable trace = BuildConfig.DEBUG ? new Throwable().fillInStackTrace() : null;
-		AppLog.d(TAG, "@@setActiveVersion version=" + version + " versionId=" + versionId, trace);
-
-		ActiveVersionHolder.activeVersion = version;
-		ActiveVersionHolder.activeVersionId = versionId;
+	public synchronized static void setActiveVersion(final MVersion mv) {
+		ActiveVersionHolder.setActiveVersion(mv);
 	}
 
 	/**
