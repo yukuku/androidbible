@@ -19,7 +19,7 @@ private val INPUT_TEXT_DIR = File(System.getProperty("java.io.tmpdir")).relative
 private const val INFO_LOCALE = "in"
 private const val INFO_SHORT_NAME = "AYT"
 private const val INFO_LONG_NAME = "Alkitab Yang Terbuka (AYT)"
-private const val INFO_DESCRIPTION = "Alkitab Yang Terbuka"
+private const val INFO_DESCRIPTION = "Alkitab Yang Terbuka (AYT)"
 private const val XREF_SHIFT_TB = false // whether detected xref references are TB-verse-shifted
 
 private const val LEVEL_p_r = -2
@@ -39,6 +39,7 @@ fun main(args: Array<String>) {
     println(File(".").absolutePath)
     val INPUT_BOOK_NAMES = args[0]
     val OUTPUT_YET = args[1]
+    val REVISION = args[2]
 
     val files = INPUT_TEXT_DIR.list { _, name -> name.endsWith("-utf8.usfx.xml") }.sorted()
 
@@ -87,7 +88,7 @@ fun main(args: Array<String>) {
     versionInfo.locale = INFO_LOCALE
     versionInfo.shortName = INFO_SHORT_NAME
     versionInfo.longName = INFO_LONG_NAME
-    versionInfo.description = INFO_DESCRIPTION
+    versionInfo.description = "$INFO_DESCRIPTION revisi #$REVISION"
     versionInfo.setBookNamesFromFile(INPUT_BOOK_NAMES)
     yet.setVersionInfo(versionInfo)
     yet.setTextDb(teksDb)
