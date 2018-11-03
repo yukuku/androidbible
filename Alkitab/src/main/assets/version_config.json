@@ -766,15 +766,6 @@
 		},
 		{
 			"locale": "in",
-			"preset_name": "in-ayt",
-			"shortName": "AYT",
-			"longName": "AYT 2015",
-			"modifyTime": 1456272000,
-			"group_order": 20,
-			"description": "Alkitab Yang Terbuka 2015"
-		},
-		{
-			"locale": "in",
 			"preset_name": "in-bimk",
 			"shortName": "BIMK",
 			"longName": "Bahasa Indonesia Masa Kini",
