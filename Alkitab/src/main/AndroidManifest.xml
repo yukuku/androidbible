@@ -373,7 +373,8 @@
 		<activity
 			android:name="yuku.alkitab.ribka.RibkaReportActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
-			android:label="@string/ribka_title" />
+			android:label="@string/ribka_title"
+			android:theme="@style/Ribka.Theme" />
 
 		<service android:name="yuku.alkitab.base.sv.DownloadService" />
 
