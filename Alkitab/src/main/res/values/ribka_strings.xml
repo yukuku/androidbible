@@ -15,7 +15,7 @@
     <string name="ribka_suggestion_intro">Petunjuk: Editlah <b>hanya</b> bagian ayat yang menurut Anda perlu dikoreksi atau disempurnakan.</string>
     <string name="ribka_suggestion_hint">Perbaikan/usulan Anda</string>
     <string name="ribka_suggestion_error">Harap lakukan perbaikan yang Anda inginkan</string>
-    <string name="ribka_remarks_hint">Alasan/Keterangan (opsional)</string>
+    <string name="ribka_remarks_hint">Alasan/keterangan (opsional)</string>
     <string name="ribka_email_hint">Email</string>
     <string name="ribka_email_error">Harap isi email dengan benar</string>
     <string name="ribka_submit_button">Kirim</string>
