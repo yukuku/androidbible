@@ -2,21 +2,21 @@
 <!-- Strings specific for RIBKA (Reporting of in-ayt errors) -->
 <resources>
     <string name="ribka_title">Koreksi AYT</string>
-    <string name="ribka_menu_report">Laporkan kesalahan AYT</string>
-    <string name="ribka_sending_progress">Mengirimkan laporan…</string>
-    <string name="ribka_send_error">Gagal mengirimkan laporan. Pastikan internet berjalan baik.</string>
-    <string name="ribka_send_success">Selesai mengirimkan laporan. Anda harus membuka imel dan mengeklik tautan di dalamnya untuk mengkonfirmasi laporan anda.</string>
+    <string name="ribka_menu_report">Koreksi AYT</string>
+    <string name="ribka_sending_progress">Mengirim laporan…</string>
+    <string name="ribka_send_error">Gagal mengirim laporan. Periksa koneksi internet Anda.</string>
+    <string name="ribka_send_success">Laporan terkirim. Buka email Anda dan klik tautan untuk mengonfirmasi laporan.</string>
     <string name="ribka_category_typo">Kesalahan ejaan atau tanda baca</string>
-    <string name="ribka_category_word">Penyusunan kalimat atau pemilihan kata (diksi)</string>
+    <string name="ribka_category_word">Pemilihan kata (diksi)</string>
+    <string name="ribka_category_sentence">Penyusunan kalimat</string>
     <string name="ribka_category_content">Konten (Isu teologis atau doktrinal)</string>
     <string name="ribka_category_others">Lain-lain</string>
-    <string name="ribka_category_error">Kategori belum dipilih</string>
-    <string name="ribka_suggestion_intro">Petunjuk: Editlah bagian-bagian dari teks yang menurut Anda bisa dibetulkan atau diperbaiki. Jangan mengubah bagian-bagian lainnya.</string>
+    <string name="ribka_category_error">Jenis koreksi belum dipilih.</string>
+    <string name="ribka_suggestion_intro">Petunjuk: Editlah <b>hanya</b> bagian ayat yang menurut Anda perlu dikoreksi atau disempurnakan.</string>
     <string name="ribka_suggestion_hint">Perbaikan/usulan Anda</string>
     <string name="ribka_suggestion_error">Harap lakukan perbaikan yang Anda inginkan</string>
-    <string name="ribka_remarks_intro">Petunjuk: Berikan alasan atau keterangan yang sesuai untuk perbaikan/usulan yang Anda ajukan.</string>
-    <string name="ribka_remarks_hint">Keterangan (opsional)</string>
+    <string name="ribka_remarks_hint">Alasan/Keterangan (opsional)</string>
     <string name="ribka_email_hint">Email</string>
     <string name="ribka_email_error">Harap isi email dengan benar</string>
-    <string name="ribka_submit_button">Kirim laporan</string>
+    <string name="ribka_submit_button">Kirim</string>
 </resources>

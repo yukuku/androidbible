@@ -65,6 +65,13 @@
 					android:text="@string/ribka_category_word" />
 
 				<RadioButton
+					android:id="@+id/oRibkaCategorySentence"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:text="@string/ribka_category_sentence" />
+
+				<RadioButton
 					android:id="@+id/oRibkaCategoryContent"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
@@ -102,12 +109,6 @@
 					android:minLines="4" />
 
 			</android.support.design.widget.TextInputLayout>
-
-			<TextView
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="16dp"
-				android:text="@string/ribka_remarks_intro" />
 
 			<android.support.design.widget.TextInputLayout
 				android:layout_width="match_parent"

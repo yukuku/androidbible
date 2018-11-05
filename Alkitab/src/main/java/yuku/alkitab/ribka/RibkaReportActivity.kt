@@ -28,6 +28,7 @@ class RibkaReportActivity : BaseActivity() {
     lateinit var tRibkaReference: TextView
     lateinit var oRibkaCategoryTypo: RadioButton
     lateinit var oRibkaCategoryWord: RadioButton
+    lateinit var oRibkaCategorySentence: RadioButton
     lateinit var oRibkaCategoryContent: RadioButton
     lateinit var oRibkaCategoryOthers: RadioButton
     lateinit var tRibkaSuggestionContainer: TextInputLayout
@@ -52,6 +53,7 @@ class RibkaReportActivity : BaseActivity() {
         tRibkaReference = findViewById(R.id.tRibkaReference)
         oRibkaCategoryTypo = findViewById(R.id.oRibkaCategoryTypo)
         oRibkaCategoryWord = findViewById(R.id.oRibkaCategoryWord)
+        oRibkaCategorySentence = findViewById(R.id.oRibkaCategorySentence)
         oRibkaCategoryContent = findViewById(R.id.oRibkaCategoryContent)
         oRibkaCategoryOthers = findViewById(R.id.oRibkaCategoryOthers)
         tRibkaSuggestionContainer = findViewById(R.id.tRibkaSuggestionContainer)
@@ -86,6 +88,7 @@ class RibkaReportActivity : BaseActivity() {
         val category = when {
             oRibkaCategoryTypo.isChecked -> "typo"
             oRibkaCategoryWord.isChecked -> "word"
+            oRibkaCategorySentence.isChecked -> "sentence"
             oRibkaCategoryContent.isChecked -> "content"
             oRibkaCategoryOthers.isChecked -> "others"
             else -> {
@@ -98,12 +101,14 @@ class RibkaReportActivity : BaseActivity() {
         } ?: return
 
         val suggestion = tRibkaSuggestion.text.toString()
+        val remarks = tRibkaRemarks.text.toString().trim()
 
         fun sameAsOriginal(): Boolean {
             return (U.removeSpecialCodes(verseText)?.trim() == suggestion.trim())
         }
 
-        if (suggestion.isBlank() || sameAsOriginal()) {
+        // must have a change in suggestion OR put some remarks
+        if ((suggestion.isBlank() || sameAsOriginal()) && remarks.isBlank()) {
             tRibkaSuggestionContainer.error = getText(R.string.ribka_suggestion_error)
             return
         }
@@ -113,8 +118,6 @@ class RibkaReportActivity : BaseActivity() {
             tRibkaEmailContainer.error = getText(R.string.ribka_email_error)
             return
         }
-
-        val remarks = tRibkaRemarks.text.toString().trim()
 
         val form = FormBody.Builder()
         form.add("reportPresetName", "in-ayt")
@@ -128,6 +131,7 @@ class RibkaReportActivity : BaseActivity() {
 
         val pd = MaterialDialog.Builder(this)
             .content(R.string.ribka_sending_progress)
+            .cancelable(false)
             .progress(true, 0)
             .show()
 
