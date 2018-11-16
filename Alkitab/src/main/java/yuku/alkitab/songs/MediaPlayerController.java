@@ -20,7 +20,7 @@ import java.lang.ref.WeakReference;
 public class MediaPlayerController {
 	static final String TAG = MediaPlayerController.class.getSimpleName();
 
-	MediaPlayer mp = new MediaPlayer();
+	final MediaPlayer mp = new MediaPlayer();
 
 	public enum State {
 		reset,
@@ -150,6 +150,7 @@ public class MediaPlayerController {
 					setState(State.playing);
 				}
 			});
+
 			mp.setOnCompletionListener(player -> {
 				AppLog.d(TAG, "@@onCompletion looping=" + player.isLooping());
 				if (!player.isLooping()) {
@@ -157,6 +158,7 @@ public class MediaPlayerController {
 					setState(State.complete);
 				}
 			});
+
 			mp.setOnErrorListener((mp1, what, extra) -> {
 				AppLog.e(TAG, "@@onError controller_state=" + state + " what=" + what + " extra=" + extra);
 
@@ -190,6 +192,35 @@ public class MediaPlayerController {
 			AppLog.e(TAG, "mp setDataSource", e);
 			setState(State.error);
 		}
+	}
+
+	/**
+	 * @return current position and duration in ms. Any of them can be -1 if unknown.
+	 */
+	public int[] getProgress() {
+		switch (state) {
+			case playing:
+			case paused:
+			case complete: {
+				int position = -1;
+				try {
+					position = mp.getCurrentPosition();
+				} catch (Exception e) {
+					AppLog.e(TAG, "@@getProgress getCurrentPosition", e);
+				}
+
+				int duration = -1;
+				try {
+					duration = mp.getDuration();
+				} catch (Exception e) {
+					AppLog.e(TAG, "@@getProgress getCurrentPosition", e);
+				}
+
+				return new int[]{position, duration};
+			}
+		}
+
+		return new int[]{-1, -1};
 	}
 
 	public boolean canHaveNewUrl() {

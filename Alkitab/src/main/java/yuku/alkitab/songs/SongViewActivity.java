@@ -1,10 +1,12 @@
 package yuku.alkitab.songs;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -158,6 +160,8 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		@StringRes
 		int label;
 		boolean loading;
+		@Nullable
+		String progress;
 	}
 
 	@NonNull
@@ -175,6 +179,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				mediaState.label = R.string.menuPlay;
 			}
 			break;
+
 			case reset_media_known_to_exist:
 			case paused:
 			case complete: {
@@ -183,6 +188,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				mediaState.label = R.string.menuPlay;
 			}
 			break;
+
 			case playing: {
 				// we start playing now
 				if (currentBookName != null && currentSong != null) {
@@ -202,8 +208,27 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 		mediaState.loading = (state == MediaPlayerController.State.preparing);
 
+		obtainSongProgress();
+
 		//noinspection Convert2MethodRef
 		runOnUiThread(() -> supportInvalidateOptionsMenu());
+	}
+
+	void obtainSongProgress() {
+		final int[] progress = mediaPlayerController.getProgress();
+		final int position = progress[0];
+		if (position == -1) {
+			mediaState.progress = null;
+			return;
+		}
+
+		final int duration = progress[1];
+		if (duration == -1) {
+			mediaState.progress = String.format(Locale.US, "%d:%02d", position / 60000, position % 60000 / 1000);
+			return;
+		}
+
+		mediaState.progress = String.format(Locale.US, "%d:%02d / %d:%02d", position / 60000, position % 60000 / 1000, duration / 60000, duration % 60000 / 1000);
 	}
 
 	void goTo(final int dir) {
@@ -250,6 +275,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		return new Intent(App.context, SongViewActivity.class);
 	}
 
+	@SuppressLint("HandlerLeak")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -296,6 +322,18 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		if (S.getSongDb().countSongBookInfos() == 0) {
 			openDownloadSongBookPage();
 		}
+
+		new Handler() {
+			@Override
+			public void handleMessage(final Message msg) {
+				if (isFinishing()) return;
+
+				obtainSongProgress();
+				supportInvalidateOptionsMenu();
+
+				sendEmptyMessageDelayed(0, 1000);
+			}
+		}.sendEmptyMessage(0);
 	}
 
 	void openDownloadSongBookPage() {
@@ -461,6 +499,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			setCustomProgressBarIndeterminateVisible(false);
 			menuMediaControl.setVisible(true);
 		}
+		menuMediaControl.setTitle(mediaState.progress);
 
 		final boolean songShown = currentBookName != null;
 
