@@ -20,6 +20,7 @@ import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
@@ -144,9 +145,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	private static final int REQCODE_edit_note_2 = 12;
 
 	private static final String EXTRA_verseUrl = "verseUrl";
-	private boolean uncheckVersesWhenActionModeDestroyed = true;
+	boolean uncheckVersesWhenActionModeDestroyed = true;
 
-	private boolean needsRestart; // whether this activity needs to be restarted
+	boolean needsRestart; // whether this activity needs to be restarted
 
 	private GotoButton.FloaterDragListener bGoto_floaterDrag = new GotoButton.FloaterDragListener() {
 		final int[] floaterLocationOnScreen = {0, 0};
@@ -791,7 +792,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	}
 
-	boolean loadVersion(final MVersion mv, boolean display) {
+	void loadVersion(final MVersion mv) {
 		try {
 			final Version version = mv.getVersion();
 
@@ -812,13 +813,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			S.setActiveVersion(mv);
 			displayActiveVersion();
 
-			if (display) {
-				display(chapter_1, lsSplit0.getVerseBasedOnScroll(), false);
-			}
+			display(chapter_1, lsSplit0.getVerseBasedOnScroll(), false);
 
 			App.getLbm().sendBroadcast(new Intent(ACTION_ACTIVE_VERSION_CHANGED));
 
-			return true;
 		} catch (Throwable e) { // so we don't crash on the beginning of the app
 			AppLog.e(TAG, "Error opening main version", e);
 
@@ -827,7 +825,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				.positiveText(R.string.ok)
 				.show();
 
-			return false;
 		}
 	}
 
@@ -1055,7 +1052,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		return Array(res0.toString(), res1.toString());
 	}
 
-	private void applyPreferences() {
+	void applyPreferences() {
 		// make sure S applied variables are set first
 		S.recalculateAppliedValuesBasedOnPreferences();
 
@@ -1120,10 +1117,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		if (needsRestart) {
 			needsRestart = false;
-
-			final Intent originalIntent = getIntent();
-			finish();
-			startActivity(originalIntent);
+			recreate();
 		}
 	}
 
@@ -1193,8 +1187,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		final String thisCreatorId = U.getInstallationId();
 		int defaultTextColor;
 
+		@NonNull
 		@Override
-		public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+		public RecyclerView.ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
 			final View view = getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
 			final TextView textView = (TextView) view;
 			defaultTextColor = textView.getCurrentTextColor();
@@ -1202,7 +1197,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		@Override
-		public void onBindViewHolder(final RecyclerView.ViewHolder _holder_, final int position) {
+		public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder _holder_, final int position) {
 			final HistoryEntryHolder holder = (HistoryEntryHolder) _holder_;
 
 			{
@@ -1242,7 +1237,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				if (delta <= 200000) {
 					return getString(R.string.recentverses_just_now);
 				} else if (delta <= 3600000) {
-					return getString(R.string.recentverses_min_plural_ago, Math.round(delta / 60000.0));
+					return getString(R.string.recentverses_min_plural_ago, String.valueOf(Math.round(delta / 60000.0)));
 				}
 			}
 
@@ -1416,7 +1411,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	void openVersionsDialog() {
 		S.openVersionsDialog(this, false, S.activeVersionId(), mv -> {
 			trackVersionSelect(mv, false);
-			loadVersion(mv, true);
+			loadVersion(mv);
 		});
 	}
 
@@ -1721,14 +1716,12 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (press(keyCode)) return true;
-		return super.onKeyDown(keyCode, event);
+		return press(keyCode) || super.onKeyDown(keyCode, event);
 	}
 
 	@Override
 	public boolean onKeyMultiple(int keyCode, int repeatCount, KeyEvent event) {
-		if (press(keyCode)) return true;
-		return super.onKeyMultiple(keyCode, repeatCount, event);
+		return press(keyCode) || super.onKeyMultiple(keyCode, repeatCount, event);
 	}
 
 	@Override
@@ -1881,13 +1874,14 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				this.kind = kind;
 			}
 
+			@NonNull
 			@Override
-			public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+			public RecyclerView.ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
 				return new MarkerHolder(getLayoutInflater().inflate(R.layout.item_marker, parent, false));
 			}
 
 			@Override
-			public void onBindViewHolder(final RecyclerView.ViewHolder _holder_, final int position) {
+			public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder _holder_, final int position) {
 				final MarkerHolder holder = (MarkerHolder) _holder_;
 
 				{
@@ -2223,7 +2217,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (single) {
 				mode.setSubtitle(R.string.verse_select_one_verse_selected);
 			} else {
-				mode.setSubtitle(getString(R.string.verse_select_multiple_verse_selected, selected.size()));
+				mode.setSubtitle(getString(R.string.verse_select_multiple_verse_selected, String.valueOf(selected.size())));
 			}
 
 			final MenuItem menuGuide = menu.findItem(R.id.menuGuide);
@@ -2381,7 +2375,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					dialog.setListener(new VersesDialog.VersesDialogListener() {
 						@Override
 						public void onComparedVerseSelected(final VersesDialog dialog, final int ari, final MVersion mversion) {
-							loadVersion(mversion, true);
+							loadVersion(mversion);
 							dialog.dismiss();
 						}
 					});

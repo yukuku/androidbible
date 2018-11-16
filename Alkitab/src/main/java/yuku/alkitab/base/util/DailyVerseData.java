@@ -4,7 +4,6 @@ import android.support.annotation.Nullable;
 import yuku.afw.App;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.br.DailyVerseAppWidgetReceiver;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.model.VersionImpl;
@@ -154,7 +153,7 @@ public abstract class DailyVerseData {
 			}
 		}
 
-		AppLog.w(DailyVerseAppWidgetReceiver.TAG, "Version selected for app widget: " + versionId + " is no longer available. Reverting to internal version.");
+		AppLog.w(TAG, "Version selected for app widget: " + versionId + " is no longer available. Reverting to internal version.");
 		return VersionImpl.getInternalVersion();
 	}
 

@@ -22,7 +22,6 @@ import org.xml.sax.ext.DefaultHandler2;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.debug.R;
@@ -199,11 +198,11 @@ public class BookmarkImporter {
 						if (labelLama != null) {
 							// removed from v3: update warna label lama
 							labelRelIdToAbsIdMap.put(labelRelId, labelLama._id);
-							AppLog.d(BaseActivity.TAG, "label (lama) r->a : " + labelRelId + "->" + labelLama._id);
+							AppLog.d(TAG, "label (lama) r->a : " + labelRelId + "->" + labelLama._id);
 						} else { // belum ada, harus bikin baru
 							Label labelBaru = S.getDb().insertLabel(label.title, label.backgroundColor);
 							labelRelIdToAbsIdMap.put(labelRelId, labelBaru._id);
-							AppLog.d(BaseActivity.TAG, "label (baru) r->a : " + labelRelId + "->" + labelBaru._id);
+							AppLog.d(TAG, "label (baru) r->a : " + labelRelId + "->" + labelBaru._id);
 						}
 					}
 				}
