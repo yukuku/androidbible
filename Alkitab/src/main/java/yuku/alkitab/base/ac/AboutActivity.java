@@ -26,6 +26,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.debug.R;
+import yuku.alkitab.tracking.Tracker;
 
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -130,32 +131,32 @@ public class AboutActivity extends BaseActivity {
 
 		bHelp = findViewById(R.id.bHelp);
 		bHelp.setOnClickListener(v -> {
-			App.trackEvent("help_button_announcement");
+			Tracker.trackEvent("help_button_announcement");
 			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://alkitab.app/guide?utm_source=app&utm_medium=button&utm_campaign=help")));
 		});
 
 		bMaterialSources = findViewById(R.id.bMaterialSources);
 		bMaterialSources.setOnClickListener(v -> {
-			App.trackEvent("help_button_material_sources");
+			Tracker.trackEvent("help_button_material_sources");
 			startActivity(HelpActivity.createIntent("help/material_sources.html", getString(R.string.about_material_sources)));
 		});
 
 		bCredits = findViewById(R.id.bCredits);
 		bCredits.setOnClickListener(v -> {
-			App.trackEvent("help_button_credits");
+			Tracker.trackEvent("help_button_credits");
 			startActivity(HelpActivity.createIntent("help/credits.html", getString(R.string.about_credits)));
 		});
 
 		bFeedback = findViewById(R.id.bFeedback);
 		bFeedback.setOnClickListener(v -> {
-			App.trackEvent("help_button_feedback");
+			Tracker.trackEvent("help_button_feedback");
 			startActivity(new Intent(App.context, com.example.android.wizardpager.MainActivity.class));
 		});
 
 		bEnableBeta = findViewById(R.id.bEnableBeta);
 		bEnableBeta.setOnClickListener(v -> {
-				App.trackEvent("help_button_enable_beta");
-				new MaterialDialog.Builder(this)
+			Tracker.trackEvent("help_button_enable_beta");
+			new MaterialDialog.Builder(this)
 					.content(R.string.about_enable_beta_confirmation)
 					.positiveText(R.string.ok)
 					.negativeText(R.string.cancel)

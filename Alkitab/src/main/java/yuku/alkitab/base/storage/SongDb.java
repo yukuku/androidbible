@@ -8,11 +8,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.support.annotation.Nullable;
 import android.util.Pair;
-import yuku.alkitab.base.util.SongBookUtil;
-import yuku.alkitab.base.util.SongFilter;
-import yuku.alkitab.base.util.SongFilter.CompiledFilter;
+import yuku.alkitab.songs.SongBookUtil;
+import yuku.alkitab.songs.SongFilter;
+import yuku.alkitab.songs.SongFilter.CompiledFilter;
 import yuku.alkitab.base.util.Sqlitil;
-import yuku.alkitab.model.SongInfo;
+import yuku.alkitab.songs.SongInfo;
 import yuku.kpri.model.Song;
 
 import java.util.ArrayList;

@@ -1,9 +1,10 @@
-package yuku.kpriviewer.fr;
+package yuku.alkitab.songs;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,11 +43,13 @@ public class SongFragment extends BaseFragment {
 	}
 
 	public static SongFragment create(Song song, String templateFile, Bundle optionalCustomVars) {
-		SongFragment res = new SongFragment();
-		Bundle args = new Bundle();
+		final SongFragment res = new SongFragment();
+		final Bundle args = new Bundle();
 		args.putParcelable(ARG_song, song);
 		args.putString(ARG_templateFile, templateFile);
-		if (optionalCustomVars != null) args.putBundle(ARG_customVars, optionalCustomVars);
+		if (optionalCustomVars != null) {
+			args.putBundle(ARG_customVars, optionalCustomVars);
+		}
 		res.setArguments(args);
 		return res;
 	}
@@ -55,15 +58,17 @@ public class SongFragment extends BaseFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		song = getArguments().getParcelable(ARG_song);
-		templateFile = getArguments().getString(ARG_templateFile);
-		customVars = getArguments().getBundle(ARG_customVars);
+		final Bundle args = getArguments();
+		assert args != null;
+		song = args.getParcelable(ARG_song);
+		templateFile = args.getString(ARG_templateFile);
+		customVars = args.getBundle(ARG_customVars);
 	}
 
 	@SuppressLint("SetJavaScriptEnabled")
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View res = inflater.inflate(R.layout.fragment_song, container, false);
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		final View res = inflater.inflate(R.layout.fragment_song, container, false);
 		webview = res.findViewById(R.id.webview);
 		webview.setBackgroundColor(0x00000000);
 		webview.setWebViewClient(webViewClient);
@@ -89,12 +94,8 @@ public class SongFragment extends BaseFragment {
 	final WebViewClient webViewClient = new WebViewClient() {
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			Activity activity = getActivity();
-			if (activity instanceof ShouldOverrideUrlLoadingHandler && ((ShouldOverrideUrlLoadingHandler) activity).shouldOverrideUrlLoading(this, view, url)) {
-				return true;
-			} else {
-				return super.shouldOverrideUrlLoading(view, url);
-			}
+			final Activity activity = getActivity();
+			return activity instanceof ShouldOverrideUrlLoadingHandler && ((ShouldOverrideUrlLoadingHandler) activity).shouldOverrideUrlLoading(this, view, url) || super.shouldOverrideUrlLoading(view, url);
 		}
 
 		boolean pendingResize = false;
@@ -151,17 +152,17 @@ public class SongFragment extends BaseFragment {
 
 			webview.loadDataWithBaseURL("file:///android_asset/" + templateFile, template, "text/html", "utf-8", null);
 		} catch (Exception e) {
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
+			final StringWriter sw = new StringWriter();
+			final PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
 			webview.loadDataWithBaseURL(null, sw.toString(), "text/plain", "utf-8", null);
 		}
 	}
 
 	public static String songToHtml(final Song song, final boolean forPatchText) {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < song.lyrics.size(); i++) {
-			Lyric lyric = song.lyrics.get(i);
+			final Lyric lyric = song.lyrics.get(i);
 
 			sb.append("<div class='lyric'>");
 
@@ -176,18 +177,36 @@ public class SongFragment extends BaseFragment {
 			int bait_normal_no = 0;
 			int bait_reff_no = 0;
 			for (Verse verse : lyric.verses) {
-				sb.append("<div class='verse" + (verse.kind == VerseKind.REFRAIN ? " refrain" : "") + "'>");
+				sb.append("<div class='verse").append(verse.kind == VerseKind.REFRAIN ? " refrain" : "").append("'>");
+
 				{
-					if (verse.kind == VerseKind.REFRAIN) {
-						bait_reff_no++;
-					} else {
-						bait_normal_no++;
+					switch (verse.kind) {
+						case REFRAIN:
+							bait_reff_no++;
+							break;
+						case NORMAL:
+							bait_normal_no++;
+							break;
 					}
 
 					if (forPatchText) {
-						sb.append(verse.kind == VerseKind.REFRAIN ? ("reff " + bait_reff_no) : bait_normal_no);
+						switch (verse.kind) {
+							case REFRAIN:
+								sb.append("reff ").append(bait_reff_no);
+								break;
+							case NORMAL:
+								sb.append(bait_normal_no);
+								break;
+						}
 					} else {
-						sb.append("<div class='verse_ordering'>" + (verse.kind == VerseKind.REFRAIN ? bait_reff_no : bait_normal_no) + "</div>");
+						switch (verse.kind) {
+							case REFRAIN:
+								sb.append("<div class='verse_ordering'>").append(bait_reff_no).append("</div>");
+								break;
+							case NORMAL:
+								sb.append("<div class='verse_ordering'>").append(bait_normal_no).append("</div>");
+								break;
+						}
 					}
 
 					sb.append("<div class='verse_content'>");

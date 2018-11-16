@@ -1,4 +1,4 @@
-package yuku.alkitab.base.util;
+package yuku.alkitab.songs;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,6 +20,8 @@ import okhttp3.Response;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.storage.SongDb;
+import yuku.alkitab.base.util.Background;
+import yuku.alkitab.base.util.Foreground;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.OptionalGzipInputStream;

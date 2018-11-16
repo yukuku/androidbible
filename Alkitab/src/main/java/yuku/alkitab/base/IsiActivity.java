@@ -54,6 +54,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import org.json.JSONException;
 import org.json.JSONObject;
 import yuku.afw.storage.Preferences;
@@ -75,8 +76,6 @@ import yuku.alkitab.base.dialog.XrefDialog;
 import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.model.MVersionInternal;
-import yuku.alkitab.base.model.MVersionPreset;
-import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.base.util.AppLog;
@@ -116,6 +115,7 @@ import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.ribka.RibkaReportActivity;
+import yuku.alkitab.tracking.Tracker;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 import yuku.devoxx.flowlayout.FlowLayout;
@@ -186,13 +186,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		@Override
 		public void onOnefingerLeft() {
-			App.trackEvent("text_onefinger_left");
+			Tracker.trackEvent("text_onefinger_left");
 			bRight_click();
 		}
 
 		@Override
 		public void onOnefingerRight() {
-			App.trackEvent("text_onefinger_right");
+			Tracker.trackEvent("text_onefinger_right");
 			bLeft_click();
 		}
 
@@ -247,12 +247,12 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (!moreSwipeYAllowed) return;
 
 			if (dy < 0) {
-				App.trackEvent("text_twofinger_up");
+				Tracker.trackEvent("text_twofinger_up");
 				setFullScreen(true);
 				leftDrawer.getHandle().setFullScreen(true);
 				moreSwipeYAllowed = false;
 			} else {
-				App.trackEvent("text_twofinger_down");
+				Tracker.trackEvent("text_twofinger_down");
 				setFullScreen(false);
 				leftDrawer.getHandle().setFullScreen(false);
 				moreSwipeYAllowed = false;
@@ -299,9 +299,12 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	Boolean hasEsvsbAsal;
 
 	// these three must be set together
-	@Nullable MVersion activeSplitMVersion;
-	@Nullable Version activeSplitVersion;
-	@Nullable String activeSplitVersionId;
+	@Nullable
+	MVersion activeSplitMVersion;
+	@Nullable
+	Version activeSplitVersion;
+	@Nullable
+	String activeSplitVersionId;
 
 	final CallbackSpan.OnClickListener<Object> parallelListener = (widget, data) -> {
 		if (data instanceof String) {
@@ -1145,7 +1148,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	void bGoto_click() {
-		App.trackEvent("nav_goto_button_click");
+		Tracker.trackEvent("nav_goto_button_click");
 
 		final Runnable r = () -> startActivityForResult(GotoActivity.createIntent(this.activeBook.bookId, this.chapter_1, lsSplit0.getVerseBasedOnScroll()), REQCODE_goto);
 
@@ -1164,7 +1167,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	void bGoto_longClick() {
-		App.trackEvent("nav_goto_button_long_click");
+		Tracker.trackEvent("nav_goto_button_long_click");
 		if (history.getSize() > 0) {
 			MaterialDialogAdapterHelper.show(new MaterialDialog.Builder(this), new HistoryAdapter());
 			Preferences.setBoolean(Prefkey.history_button_understood, true);
@@ -1292,7 +1295,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				leftDrawer.toggleDrawer();
 				return true;
 			case R.id.menuSearch:
-				App.trackEvent("nav_search_click");
+				Tracker.trackEvent("nav_search_click");
 				menuSearch_click();
 				return true;
 		}
@@ -1411,7 +1414,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	void openVersionsDialog() {
-		S.openVersionsDialog(this, false, S.activeVersionId(), mv -> loadVersion(mv, true));
+		S.openVersionsDialog(this, false, S.activeVersionId(), mv -> {
+			trackVersionSelect(mv, false);
+			loadVersion(mv, true);
+		});
 	}
 
 	void openSplitVersionsDialog() {
@@ -1419,6 +1425,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (mv == null) { // closing split version
 				disableSplitVersion();
 			} else {
+				trackVersionSelect(mv, true);
 				boolean ok = loadSplitVersion(mv);
 				if (ok) {
 					openSplitDisplay();
@@ -1428,6 +1435,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				}
 			}
 		});
+	}
+
+	private void trackVersionSelect(final MVersion mv, final boolean isSplit) {
+		if (mv instanceof MVersionDb) {
+			final String preset_name = ((MVersionDb) mv).preset_name;
+			Tracker.trackEvent("versions_dialog_select", "is_split", isSplit, FirebaseAnalytics.Param.ITEM_NAME, preset_name == null ? "no_preset_name" : preset_name);
+		} else if (mv instanceof MVersionInternal) {
+			Tracker.trackEvent("versions_dialog_select", "is_split", isSplit, FirebaseAnalytics.Param.ITEM_NAME, "internal");
+		}
 	}
 
 	void disableSplitVersion() {
@@ -1731,7 +1747,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	void bLeft_click() {
-		App.trackEvent("nav_left_click");
+		Tracker.trackEvent("nav_left_click");
 		final Book currentBook = this.activeBook;
 		if (chapter_1 == 1) {
 			// we are in the beginning of the book, so go to prev book
@@ -1754,7 +1770,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	void bRight_click() {
-		App.trackEvent("nav_right_click");
+		Tracker.trackEvent("nav_right_click");
 		final Book currentBook = this.activeBook;
 		if (chapter_1 >= currentBook.chapter_count) {
 			final int maxBookId = S.activeVersion().getMaxBookIdPlusOne();
@@ -1776,7 +1792,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	void bVersion_click() {
-		App.trackEvent("nav_version_click");
+		Tracker.trackEvent("nav_version_click");
 		openVersionsDialog();
 	}
 
@@ -2483,36 +2499,39 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 						aris.put(ari, true);
 					}
 
-				startDictionaryMode(aris);
-			} return true;
+					startDictionaryMode(aris);
+				}
+				return true;
 
-			case R.id.menuRibkaReport: {
-				final int ribkaEligibility = checkRibkaEligibility();
-				if (ribkaEligibility != 0) {
-					final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
+				case R.id.menuRibkaReport: {
+					final int ribkaEligibility = checkRibkaEligibility();
+					if (ribkaEligibility != 0) {
+						final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
 
-					final CharSequence reference;
-					final String verseText;
-					final String versionDescription;
+						final CharSequence reference;
+						final String verseText;
+						final String versionDescription;
 
-					if (ribkaEligibility == 1) {
-						reference = S.activeVersion().reference(ari);
-						verseText = S.activeVersion().loadVerseText(ari);
-						versionDescription = S.activeMVersion().description;
-					} else {
-						reference = activeSplitVersion.reference(ari);
-						verseText = activeSplitVersion.loadVerseText(ari);
-						versionDescription = activeSplitMVersion.description;
-					}
+						if (ribkaEligibility == 1) {
+							reference = S.activeVersion().reference(ari);
+							verseText = S.activeVersion().loadVerseText(ari);
+							versionDescription = S.activeMVersion().description;
+						} else {
+							reference = activeSplitVersion.reference(ari);
+							verseText = activeSplitVersion.loadVerseText(ari);
+							versionDescription = activeSplitMVersion.description;
+						}
 
-					if (reference != null && verseText != null) {
-						startActivity(RibkaReportActivity.createIntent(ari, reference.toString(), verseText, versionDescription));
+						if (reference != null && verseText != null) {
+							startActivity(RibkaReportActivity.createIntent(ari, reference.toString(), verseText, versionDescription));
+						}
 					}
 				}
-			} return true;
+				return true;
 
-			default: if (itemId >= MENU_EXTENSIONS_FIRST_ID && itemId < MENU_EXTENSIONS_FIRST_ID + extensions.size()) {
-				final ExtensionManager.Info extension = extensions.get(itemId - MENU_EXTENSIONS_FIRST_ID);
+				default:
+					if (itemId >= MENU_EXTENSIONS_FIRST_ID && itemId < MENU_EXTENSIONS_FIRST_ID + extensions.size()) {
+						final ExtensionManager.Info extension = extensions.get(itemId - MENU_EXTENSIONS_FIRST_ID);
 
 						final Intent intent = new Intent(ExtensionManager.ACTION_SHOW_VERSE_INFO);
 						intent.setComponent(new ComponentName(extension.activityInfo.packageName, extension.activityInfo.name));
@@ -2588,6 +2607,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	/**
 	 * Check whether we are using a version eligible for ribka.
+	 *
 	 * @return 0 when neither version, 1 when primary version, 2 when split version
 	 */
 	int checkRibkaEligibility() {
@@ -2712,25 +2732,25 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	@Override
 	public void bDisplay_click() {
-		App.trackEvent("left_drawer_display_click");
+		Tracker.trackEvent("left_drawer_display_click");
 		setShowTextAppearancePanel(textAppearancePanel == null);
 	}
 
 	@Override
 	public void cFullScreen_checkedChange(final boolean isChecked) {
-		App.trackEvent("left_drawer_full_screen_click");
+		Tracker.trackEvent("left_drawer_full_screen_click");
 		setFullScreen(isChecked);
 	}
 
 	@Override
 	public void cNightMode_checkedChange(final boolean isChecked) {
-		App.trackEvent("left_drawer_night_mode_click");
+		Tracker.trackEvent("left_drawer_night_mode_click");
 		setNightMode(isChecked);
 	}
 
 	@Override
 	public void cSplitVersion_checkedChange(final SwitchCompat cSplitVersion, final boolean isChecked) {
-		App.trackEvent("left_drawer_split_click");
+		Tracker.trackEvent("left_drawer_split_click");
 		if (isChecked) {
 			cSplitVersion.setChecked(false); // do it later, at the version chooser dialog
 			openSplitVersionsDialog();
@@ -2741,7 +2761,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	@Override
 	public void bProgressMarkList_click() {
-		App.trackEvent("left_drawer_progress_mark_list_click");
+		Tracker.trackEvent("left_drawer_progress_mark_list_click");
 		if (S.getDb().countAllProgressMarks() > 0) {
 			final ProgressMarkListDialog dialog = new ProgressMarkListDialog();
 			dialog.show(getSupportFragmentManager(), "dialog_progress_mark_list");
@@ -2761,14 +2781,14 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	@Override
 	public void bCurrentReadingClose_click() {
-		App.trackEvent("left_drawer_current_reading_close_click");
+		Tracker.trackEvent("left_drawer_current_reading_close_click");
 
 		CurrentReading.clear();
 	}
 
 	@Override
 	public void bCurrentReadingReference_click() {
-		App.trackEvent("left_drawer_current_reading_verse_reference_click");
+		Tracker.trackEvent("left_drawer_current_reading_verse_reference_click");
 
 		final int[] aris = CurrentReading.get();
 		if (aris == null) {
@@ -2791,11 +2811,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		final int ari = progressMark.ari;
 
 		if (ari != 0) {
-			App.trackEvent("left_drawer_progress_mark_pin_click_succeed");
+			Tracker.trackEvent("left_drawer_progress_mark_pin_click_succeed");
 			jumpToAri(ari);
 			history.add(ari);
 		} else {
-			App.trackEvent("left_drawer_progress_mark_pin_click_failed");
+			Tracker.trackEvent("left_drawer_progress_mark_pin_click_failed");
 			new MaterialDialog.Builder(this)
 				.content(R.string.pm_activate_tutorial)
 				.positiveText(R.string.ok)

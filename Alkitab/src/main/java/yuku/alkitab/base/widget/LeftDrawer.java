@@ -34,12 +34,13 @@ import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
 import yuku.alkitab.base.ac.SettingsActivity;
-import yuku.alkitab.base.ac.SongViewActivity;
+import yuku.alkitab.songs.SongViewActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.CurrentReading;
-import yuku.alkitab.base.util.SongBookUtil;
+import yuku.alkitab.songs.SongBookUtil;
 import yuku.alkitab.debug.R;
+import yuku.alkitab.tracking.Tracker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -126,7 +127,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 	@Override
 	public boolean onDragEvent(final DragEvent event) {
 		if (event.getAction() == DragEvent.ACTION_DRAG_STARTED) {
-			App.trackEvent("pin_drag_started");
+			Tracker.trackEvent("pin_drag_started");
 			if (event.getClipDescription().hasMimeType(VerseItem.PROGRESS_MARK_DRAG_MIME_TYPE)) {
 				return true; // Just to that the progress pin is not dropped to the verses
 			}
@@ -176,7 +177,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 	 * When the current activity is not {@link yuku.alkitab.base.IsiActivity},
 	 * this clears all activity on this stack,
 	 * starts {@link yuku.alkitab.base.IsiActivity} on the background,
-	 * and then starts {@link yuku.alkitab.base.ac.SongViewActivity}.
+	 * and then starts {@link SongViewActivity}.
 	 */
 	void bSongs_click() {
 		if (getContext() instanceof IsiActivity) {

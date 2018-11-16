@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
@@ -120,11 +121,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 
 	private void askStoragePermission() {
 		if (!(
-			Build.VERSION.SDK_INT < 16
-				|| (
-				ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-					&& ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-			)
+			ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
 		)) {
 			if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 				|| ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -163,7 +160,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
 	}
 
 	@Override
-	public void onRequestPermissionsResult(final int requestCode, final String[] permissions, final int[] grantResults) {
+	public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
 		if (requestCode == REQCODE_PERMISSION_storage) {
 			// all must be granted
 			boolean allGranted = true;

@@ -294,13 +294,13 @@
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
 			android:label="@string/fm_activity_title" />
 		<activity
-			android:name="yuku.alkitab.base.ac.SongListActivity"
+			android:name="yuku.alkitab.songs.SongListActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
 			android:label="@string/sn_songs_activity_title"
 			android:theme="@style/Theme.Alkitab.DialogWhenLarge"
 			android:windowSoftInputMode="adjustResize|stateHidden" />
 		<activity
-			android:name="yuku.alkitab.base.ac.SongViewActivity"
+			android:name="yuku.alkitab.songs.SongViewActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale"
 			android:label="@string/sn_songs_activity_title" />
 		<activity

@@ -272,7 +272,7 @@ public class S {
 		void onVersionSelected(MVersion mv);
 	}
 
-	public static void openVersionsDialog(final Activity activity, final boolean withNone, final String selectedVersionId, final VersionDialogListener listener) {
+	public static void openVersionsDialog(@NonNull final Activity activity, final boolean withNone, @Nullable final String selectedVersionId, @NonNull final VersionDialogListener listener) {
 		final List<MVersion> versions = getAvailableVersions();
 
 		if (withNone) {

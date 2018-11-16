@@ -2,12 +2,14 @@ package yuku.alkitab.base.sync;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Sqlitil;
+import yuku.alkitab.tracking.Tracker;
 
 import java.util.HashMap;
 
@@ -96,7 +98,7 @@ public class SyncRecorder {
 		}
 
 		S.getDb().insertSyncLog(Sqlitil.nowDateTime(), kind, syncSetName, params);
-		App.trackEvent("sync", kind.name());
+		Tracker.trackEvent("sync", FirebaseAnalytics.Param.ITEM_NAME, kind.name());
 	}
 
 	static class LastSyncInfoEntryJson {

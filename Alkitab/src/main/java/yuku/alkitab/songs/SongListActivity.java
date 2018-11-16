@@ -1,4 +1,4 @@
-package yuku.alkitab.base.ac;
+package yuku.alkitab.songs;
 
 import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
@@ -23,10 +23,7 @@ import android.widget.TextView;
 import yuku.afw.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.util.SongBookUtil;
-import yuku.alkitab.base.util.SongFilter;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.model.SongInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,11 +36,11 @@ import java.util.List;
  */
 public class SongListActivity extends BaseActivity {
 	public static final String TAG = SongListActivity.class.getSimpleName();
-	
+
 	private static final String EXTRA_bookName = "bookName";
 	private static final String EXTRA_code = "code";
 	private static final String EXTRA_searchState = "searchState";
-	
+
 	SearchView searchView;
 	ListView lsSong;
 	TextView bChangeBook;
@@ -63,14 +60,14 @@ public class SongListActivity extends BaseActivity {
 		public String code;
 		public SearchState last_searchState;
 	}
-	
+
 	public static class SearchState implements Parcelable {
 		public String filter_string;
 		public List<SongInfo> result;
 		public int selectedPosition;
 		public String bookName;
 		public boolean deepSearch;
-		
+
 		public SearchState(String filter_string, List<SongInfo> result, int selectedPosition, String bookName, boolean deepSearch) {
 			this.filter_string = filter_string;
 			this.result = result;
@@ -78,7 +75,7 @@ public class SongListActivity extends BaseActivity {
 			this.bookName = bookName;
 			this.deepSearch = deepSearch;
 		}
-		
+
 		SearchState(Parcel in) {
 			filter_string = in.readString();
 			in.readList(result = new ArrayList<>(), ((Object) this).getClass().getClassLoader());
@@ -87,35 +84,39 @@ public class SongListActivity extends BaseActivity {
 			deepSearch = in.readByte() != 0;
 		}
 
-		@Override public void writeToParcel(Parcel dest, int flags) {
+		@Override
+		public void writeToParcel(Parcel dest, int flags) {
 			dest.writeString(filter_string);
 			dest.writeList(result);
 			dest.writeInt(selectedPosition);
 			dest.writeString(bookName);
-			dest.writeByte((byte) (deepSearch? 1: 0));
+			dest.writeByte((byte) (deepSearch ? 1 : 0));
 		}
-		
-		@Override public int describeContents() {
+
+		@Override
+		public int describeContents() {
 			return 0;
 		}
-		
-	    public static final Creator<SearchState> CREATOR = new Creator<SearchState>() {
-	        @Override public SearchState createFromParcel(Parcel in) {
-	            return new SearchState(in);
-	        }
 
-	        @Override public SearchState[] newArray(int size) {
-	            return new SearchState[size];
-	        }
-	    };
+		public static final Creator<SearchState> CREATOR = new Creator<SearchState>() {
+			@Override
+			public SearchState createFromParcel(Parcel in) {
+				return new SearchState(in);
+			}
+
+			@Override
+			public SearchState[] newArray(int size) {
+				return new SearchState[size];
+			}
+		};
 	}
-	
+
 	public static Intent createIntent(@Nullable SearchState searchState_optional) {
 		Intent res = new Intent(App.context, SongListActivity.class);
 		if (searchState_optional != null) res.putExtra(EXTRA_searchState, searchState_optional);
 		return res;
 	}
-	
+
 	public static Result obtainResult(Intent data) {
 		if (data == null) return null;
 		Result res = new Result();
@@ -124,8 +125,9 @@ public class SongListActivity extends BaseActivity {
 		res.last_searchState = data.getParcelableExtra(EXTRA_searchState);
 		return res;
 	}
-	
-	@Override protected void onCreate(Bundle savedInstanceState) {
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_song_list);
 
@@ -142,58 +144,63 @@ public class SongListActivity extends BaseActivity {
 		bChangeBook = findViewById(R.id.bChangeBook);
 		cDeepSearch = findViewById(R.id.cDeepSearch);
 		panelFilter = findViewById(R.id.panelFilter);
-		
+
 		searchView.setSubmitButtonEnabled(false);
 		searchView.setOnQueryTextListener(searchWidget_queryText);
-		
+
 		lsSong.setAdapter(adapter = new SongAdapter());
 		lsSong.setOnItemClickListener(lsSong_itemClick);
-		
+
 		popupChangeBook = SongBookUtil.getSongBookPopupMenu(this, true, false, searchView);
 		popupChangeBook.setOnMenuItemClickListener(SongBookUtil.getSongBookOnMenuItemClickListener(songBookSelected));
-		
+
 		bChangeBook.setOnClickListener(v -> popupChangeBook.show());
 		cDeepSearch.setOnCheckedChangeListener((buttonView, isChecked) -> startSearch());
-		
+
 		loader = new SongLoader();
 
 		// initial
 		bChangeBook.setText(R.string.sn_bookselector_all);
 
-        SearchState searchState = getIntent().getParcelableExtra(EXTRA_searchState);
-        if (searchState != null) {
-        	stillUsingInitialSearchState = true; { // prevent triggering
-	        	searchView.setQuery(searchState.filter_string, false);
-	        	adapter.setData(searchState.result);
-	        	cDeepSearch.setChecked(searchState.deepSearch);
-	    		lsSong.setSelection(searchState.selectedPosition);
-	    		loader.setSelectedBookName(searchState.bookName);
-	    		if (searchState.bookName == null) {
-	    			bChangeBook.setText(R.string.sn_bookselector_all);
-	    		} else {
+		SearchState searchState = getIntent().getParcelableExtra(EXTRA_searchState);
+		if (searchState != null) {
+			stillUsingInitialSearchState = true;
+			{ // prevent triggering
+				searchView.setQuery(searchState.filter_string, false);
+				adapter.setData(searchState.result);
+				cDeepSearch.setChecked(searchState.deepSearch);
+				lsSong.setSelection(searchState.selectedPosition);
+				loader.setSelectedBookName(searchState.bookName);
+				if (searchState.bookName == null) {
+					bChangeBook.setText(R.string.sn_bookselector_all);
+				} else {
 					bChangeBook.setText(SongBookUtil.escapeSongBookName(searchState.bookName));
 				}
-			} stillUsingInitialSearchState = false;
-        	setCustomProgressBarIndeterminateVisible(false); // somehow this is needed.
-        } else {
-        	startSearch();
-        }
-        
-        getLoaderManager().initLoader(0, null, new LoaderManager.LoaderCallbacks<List<SongInfo>>() {
-        	@Override public Loader<List<SongInfo>> onCreateLoader(int id, Bundle args) {
-        		return loader;
-        	}
-        	
-        	@Override public void onLoadFinished(Loader<List<SongInfo>> loader, List<SongInfo> data) {
-        		adapter.setData(data);
-        		setCustomProgressBarIndeterminateVisible(false);
-        	}
-        	
-        	@Override public void onLoaderReset(Loader<List<SongInfo>> loader) {
-        		adapter.setData(null);
-        		setCustomProgressBarIndeterminateVisible(false);
-        	}
-        });
+			}
+			stillUsingInitialSearchState = false;
+			setCustomProgressBarIndeterminateVisible(false); // somehow this is needed.
+		} else {
+			startSearch();
+		}
+
+		getLoaderManager().initLoader(0, null, new LoaderManager.LoaderCallbacks<List<SongInfo>>() {
+			@Override
+			public Loader<List<SongInfo>> onCreateLoader(int id, Bundle args) {
+				return loader;
+			}
+
+			@Override
+			public void onLoadFinished(Loader<List<SongInfo>> loader, List<SongInfo> data) {
+				adapter.setData(data);
+				setCustomProgressBarIndeterminateVisible(false);
+			}
+
+			@Override
+			public void onLoaderReset(Loader<List<SongInfo>> loader) {
+				adapter.setData(null);
+				setCustomProgressBarIndeterminateVisible(false);
+			}
+		});
 	}
 
 	void startSearch() {
@@ -203,7 +210,7 @@ public class SongListActivity extends BaseActivity {
 		loader.setDeepSearch(cDeepSearch.isChecked());
 		loader.forceLoad();
 	}
-	
+
 	void startSearchSettingBookName(String selectedBookName) {
 		loader.setSelectedBookName(selectedBookName);
 		startSearch();
@@ -224,7 +231,8 @@ public class SongListActivity extends BaseActivity {
 	};
 
 	private AdapterView.OnItemClickListener lsSong_itemClick = new AdapterView.OnItemClickListener() {
-		@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+		@Override
+		public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 			SongInfo songInfo = adapter.getItem(position);
 			Intent data = new Intent();
 			data.putExtra(EXTRA_bookName, songInfo.bookName);
@@ -257,9 +265,10 @@ public class SongListActivity extends BaseActivity {
 
 	public class SongAdapter extends BaseAdapter {
 		List<SongInfo> list;
-		
-		@Override public int getCount() {
-			return list == null? 0: list.size();
+
+		@Override
+		public int getCount() {
+			return list == null ? 0 : list.size();
 		}
 
 		public List<SongInfo> getData() {
@@ -271,21 +280,24 @@ public class SongListActivity extends BaseActivity {
 			notifyDataSetChanged();
 		}
 
-		@Override public SongInfo getItem(int position) {
+		@Override
+		public SongInfo getItem(int position) {
 			return list.get(position);
 		}
 
-		@Override public long getItemId(int position) {
+		@Override
+		public long getItemId(int position) {
 			return position;
 		}
 
-		@Override public View getView(int position, View convertView, ViewGroup parent) {
-			View res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_song, parent, false);
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View res = convertView != null ? convertView : getLayoutInflater().inflate(R.layout.item_song, parent, false);
 
 			TextView lTitle = res.findViewById(R.id.lTitle);
 			TextView lTitleOriginal = res.findViewById(R.id.lTitleOriginal);
 			TextView lBookName = res.findViewById(R.id.lBookName);
-			
+
 			SongInfo songInfo = getItem(position);
 			lTitle.setText(songInfo.code + ". " + songInfo.title);
 			if (songInfo.title_original != null) {
@@ -295,14 +307,14 @@ public class SongListActivity extends BaseActivity {
 				lTitleOriginal.setVisibility(View.GONE);
 			}
 			lBookName.setText(SongBookUtil.escapeSongBookName(songInfo.bookName));
-			
+
 			return res;
 		}
 	}
-	
+
 	static class SongLoader extends AsyncTaskLoader<List<SongInfo>> {
 		public static final String TAG = SongLoader.class.getSimpleName();
-		
+
 		private String filter_string;
 		private String selectedBookName;
 		private boolean deepSearch;
@@ -310,7 +322,7 @@ public class SongListActivity extends BaseActivity {
 		public SongLoader() {
 			super(App.context);
 		}
-		
+
 		public void setDeepSearch(boolean deepSearch) {
 			this.deepSearch = deepSearch;
 		}
@@ -322,16 +334,17 @@ public class SongListActivity extends BaseActivity {
 				filter_string = s.trim();
 			}
 		}
-		
+
 		public String getSelectedBookName() {
 			return selectedBookName;
 		}
-		
+
 		public void setSelectedBookName(String bookName) {
 			this.selectedBookName = bookName;
 		}
 
-		@Override public List<SongInfo> loadInBackground() {
+		@Override
+		public List<SongInfo> loadInBackground() {
 			List<SongInfo> res;
 			if (!deepSearch) {
 				List<SongInfo> songInfos = S.getSongDb().listSongInfosByBookName(getSelectedBookName());

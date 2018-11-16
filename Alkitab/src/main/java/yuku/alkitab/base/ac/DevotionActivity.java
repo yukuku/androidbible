@@ -22,7 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.android.gms.analytics.HitBuilders;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -45,6 +45,7 @@ import yuku.alkitab.base.widget.TwofingerLinearLayout;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.reminder.ac.DevotionReminderActivity;
+import yuku.alkitab.tracking.Tracker;
 import yuku.alkitab.util.Ari;
 import yuku.alkitabintegration.display.Launcher;
 
@@ -63,6 +64,13 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		@Override
 		protected SimpleDateFormat initialValue() {
 			return new SimpleDateFormat("yyyyMMdd", Locale.US);
+		}
+	};
+
+	static final ThreadLocal<SimpleDateFormat> yyyy_mm_dd = new ThreadLocal<SimpleDateFormat>() {
+		@Override
+		protected SimpleDateFormat initialValue() {
+			return new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 		}
 	};
 
@@ -246,7 +254,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 			final String currentDate = yyyymmdd.get().format(ac.currentDate);
 			if (U.equals(startKind, ac.currentKind) && U.equals(startDate, currentDate)) {
 				AppLog.d(TAG, "Long read detected: now=[" + ac.currentKind + " " + currentDate + "]");
-				App.getTracker().send(new HitBuilders.EventBuilder("devotion-longread", startKind.name).setLabel(startDate).setValue(30L).build());
+				Tracker.trackEvent("devotion_longread", FirebaseAnalytics.Param.ITEM_NAME, startKind.name, FirebaseAnalytics.Param.START_DATE, yyyy_mm_dd.get().format(ac.currentDate));
 			} else {
 				AppLog.d(TAG, "Not long enough for long read: previous=[" + startKind + " " + startDate + "] now=[" + ac.currentKind + " " + currentDate + "]");
 			}
@@ -429,7 +437,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		}
 
 		if (renderSucceeded) {
-			App.getTracker().send(new HitBuilders.EventBuilder("devotion-render", currentKind.name).setLabel(yyyymmdd.get().format(currentDate)).setValue(0L).build());
+			Tracker.trackEvent("devotion_render", FirebaseAnalytics.Param.ITEM_NAME, currentKind.name, FirebaseAnalytics.Param.START_DATE, yyyy_mm_dd.get().format(currentDate));
 			longReadChecker.start();
 		}
 	}

@@ -115,8 +115,8 @@ dependencies {
     implementation "com.android.support:percent:$supportLibVersion"
     implementation "com.squareup.picasso:picasso:$picassoVersion"
     implementation "com.takisoft.fix:preference-v7:$supportLibVersion.1"
-    implementation "com.google.android.gms:play-services-analytics:$playServicesVersion"
     implementation "com.google.android.gms:play-services-gcm:$playServicesVersion"
+    implementation 'com.google.firebase:firebase-core:16.0.4'
     implementation 'com.android.support:multidex:1.0.3'
     implementation "com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2"
     implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
@@ -128,3 +128,5 @@ dependencies {
     }
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
+
+apply plugin: 'com.google.gms.google-services'

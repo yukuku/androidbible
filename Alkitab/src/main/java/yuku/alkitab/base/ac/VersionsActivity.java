@@ -73,6 +73,7 @@ import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.BibleReader;
+import yuku.alkitab.tracking.Tracker;
 import yuku.filechooser.FileChooserActivity;
 import yuku.filechooser.FileChooserConfig;
 import yuku.filechooser.FileChooserResult;
@@ -460,11 +461,11 @@ public class VersionsActivity extends BaseActivity {
 
 			void showResult(final File yesFile, Throwable exception, List<String> wronglyConvertedBookNames) {
 				if (exception != null) {
-					App.trackEvent("versions_convert_pdb_error");
+					Tracker.trackEvent("versions_convert_pdb_error");
 					showPdbReadErrorDialog(exception);
 				} else {
 					// success.
-					App.trackEvent("versions_convert_pdb_success");
+					Tracker.trackEvent("versions_convert_pdb_success");
 					handleFileOpenYes(yesFile);
 
 					if (wronglyConvertedBookNames != null && wronglyConvertedBookNames.size() > 0) {
@@ -537,7 +538,7 @@ public class VersionsActivity extends BaseActivity {
 			}
 		};
 
-		App.trackEvent("versions_convert_pdb_start");
+		Tracker.trackEvent("versions_convert_pdb_start");
 		ConvertOptionsDialog dialog = new ConvertOptionsDialog(this, pdbFilename, callback);
 		dialog.show();
 	}
@@ -702,16 +703,16 @@ public class VersionsActivity extends BaseActivity {
 						protected void onPostExecute(File result) {
 							pd.dismiss();
 
-							App.trackEvent("versions_open_yes_gz");
+							Tracker.trackEvent("versions_open_yes_gz");
 							handleFileOpenYes(result);
 						}
 					}.execute();
 				}
 			} else if (filename.toLowerCase(Locale.US).endsWith(".yes")) {
-				App.trackEvent("versions_open_yes");
+				Tracker.trackEvent("versions_open_yes");
 				handleFileOpenYes(new File(filename));
 			} else if (filename.toLowerCase(Locale.US).endsWith(".pdb")) {
-				App.trackEvent("versions_open_pdb");
+				Tracker.trackEvent("versions_open_pdb");
 				handleFileOpenPdb(filename);
 			} else {
 				new MaterialDialog.Builder(this)

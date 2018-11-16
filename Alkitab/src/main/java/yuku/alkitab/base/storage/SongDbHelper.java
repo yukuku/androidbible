@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.util.SongBookUtil;
+import yuku.alkitab.songs.SongBookUtil;
 
 public class SongDbHelper extends SQLiteOpenHelper {
 	public static final String TAG = SongDbHelper.class.getSimpleName();

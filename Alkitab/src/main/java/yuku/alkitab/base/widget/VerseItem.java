@@ -23,6 +23,7 @@ import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.ProgressMark;
+import yuku.alkitab.tracking.Tracker;
 
 import java.util.Date;
 
@@ -236,7 +237,7 @@ public class VerseItem extends RelativeLayout implements Checkable {
 				return true;
 
 			case DragEvent.ACTION_DROP:
-				App.trackEvent("pin_drop");
+				Tracker.trackEvent("pin_drop");
 				final ClipData.Item item = event.getClipData().getItemAt(0);
 				final int preset_id = Integer.parseInt(item.getText().toString());
 

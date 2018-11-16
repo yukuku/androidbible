@@ -11,9 +11,6 @@ import android.view.ViewConfiguration;
 import com.crashlytics.android.Crashlytics;
 import com.downloader.PRDownloader;
 import com.downloader.PRDownloaderConfig;
-import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.leakcanary.LeakCanary;
@@ -35,6 +32,7 @@ import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.reminder.util.DevotionReminder;
+import yuku.alkitab.tracking.Tracker;
 import yuku.alkitabfeedback.FeedbackSender;
 import yuku.alkitabintegration.display.Launcher;
 import yuku.stethoshim.StethoShim;
@@ -42,15 +40,12 @@ import yuku.stethoshim.StethoShim;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class App extends yuku.afw.App {
 	public static final String TAG = App.class.getSimpleName();
 
 	private static boolean initted = false;
-	private static Tracker APP_TRACKER;
 
 	static class UserAgentInterceptor implements Interceptor {
 		@Override
@@ -123,16 +118,6 @@ public class App extends yuku.afw.App {
 			LeakCanary.install(this);
 		}
 
-		{ // Google Analytics V4
-			// This can't be in staticInit because we need the Application instance.
-			final GoogleAnalytics analytics = GoogleAnalytics.getInstance(context);
-			final Tracker t = analytics.newTracker(context.getString(R.string.ga_trackingId));
-			t.enableAutoActivityTracking(true);
-			t.enableAdvertisingIdCollection(true);
-			APP_TRACKER = t;
-			analytics.enableAutoActivityReports(this);
-		}
-
 		{ // Stetho call through proxy
 			StethoShim.initializeWithDefaults(this);
 		}
@@ -150,6 +135,7 @@ public class App extends yuku.afw.App {
 			throw new RuntimeException("yuku.afw.App.context must have been set via initWithAppContext(Context) before calling this method.");
 		}
 
+		Tracker.init(context);
 		Fabric.with(context, new Crashlytics());
 
 		final FeedbackSender fs = FeedbackSender.getInstance(context);
@@ -221,23 +207,6 @@ public class App extends yuku.afw.App {
 	protected void attachBaseContext(Context base) {
 		super.attachBaseContext(base);
 		MultiDex.install(this);
-	}
-
-	public synchronized static Tracker getTracker() {
-		return APP_TRACKER;
-	}
-
-	private static ExecutorService eventSubmitter = Executors.newSingleThreadExecutor();
-
-	public static void trackEvent(final String category) {
-		trackEvent(category, category);
-	}
-
-	public static void trackEvent(final String category, final String action) {
-		final Tracker tracker = getTracker();
-		if (tracker != null) { // guard against wrong initialization order
-			eventSubmitter.submit(() -> tracker.send(new HitBuilders.EventBuilder(category, action).build()));
-		}
 	}
 
 	private static OkHttpClient okhttp;
