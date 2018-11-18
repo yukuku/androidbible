@@ -5,6 +5,7 @@
         <item>@string/pref_language_label_default</item>
         <item>Afrikaans</item>
         <item>Bahasa Indonesia</item>
+        <item>Bahasa Melayu</item>
         <item>Čeština</item>
         <item>Dansk</item>
         <item>Deutsch</item>
@@ -34,6 +35,7 @@
         <item>DEFAULT</item>
         <item>af</item>
         <item>in</item>
+        <item>ms</item>
         <item>cs</item>
         <item>da</item>
         <item>de</item>
