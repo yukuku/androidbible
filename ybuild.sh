@@ -61,23 +61,6 @@ write_last_commit_hash() {
 	sed --in-place='' "s/0000000/$LAST_COMMIT_HASH/g" "$FILE"
 }
 
-overlay() {
-	P_SRC="$1"
-	P_DST="$2"
-
-	SRC="$THIS_SCRIPT_DIR/ybuild/overlay/$PKGDIST/$P_SRC"
-	DST="$BUILD_MAIN_PROJECT_DIR/src/main/$P_DST"
-
-	echo "Overlaying $P_DST with $P_SRC..."
-
-	if [ \! -e `dirname "$DST"` ] ; then
-		echo 'Making dir for overlay destination: ' "`dirname "$DST"`" '...'
-		mkdir -p "`dirname "$DST"`"
-	fi
-
-	cp "$SRC" "$DST" || read
-}
-
 # START BUILD-SPECIFIC
 
 if [ "$BUILD_PACKAGE_NAME" == "" ] ; then
@@ -137,10 +120,10 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 		echo 'Removing dummy version on assets/internal...'
 		rm -rf assets/internal
 
-		TEXT_RAW="$ALKITAB_PROPRIETARY_DIR/overlay/$BUILD_PACKAGE_NAME/text_raw/"
+		TEXT_RAW="$ALKITAB_PROPRIETARY_DIR/overlay/$BUILD_PACKAGE_NAME/text_raw"
 		mkdir assets/internal
 		echo "Copying text overlay from $TEXT_RAW..."
-		if ! cp -R $TEXT_RAW assets/internal ; then
+		if ! cp -R $TEXT_RAW/* assets/internal ; then
 			echo 'Copy text overlay FAILED'
 			exit 1
 		fi
