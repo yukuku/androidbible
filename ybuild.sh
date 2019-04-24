@@ -58,7 +58,7 @@ get_attr() {
 write_last_commit_hash() {
 	FILE="$1"
 	echo 'Setting last commit hash: '$LAST_COMMIT_HASH' to '$FILE
-	sed -i '' "s/0000000/$LAST_COMMIT_HASH/g" "$FILE"
+	sed --in-place='' "s/0000000/$LAST_COMMIT_HASH/g" "$FILE"
 }
 
 overlay() {
