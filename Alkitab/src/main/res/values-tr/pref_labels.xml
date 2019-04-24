@@ -17,7 +17,9 @@
     <string name="pref_copyWithVerseNumbers_title">Ayet numaraları</string>
     <string name="pref_copyWithVerseNumbers_summary">Her ayetin başlangıcında numarasıyla</string>
     <string name="pref_copyWithVersionName_title">Sürüm kısaltmaları</string>
+    <string name="pref_copyWithVersionName_summary">İncil versiyonlarının başharflerini anımsa</string>
     <string name="pref_copyWithShareUrl_title">URL Paylaş</string>
+    <string name="pref_copyWithShareUrl_summary">Kopyalanan yada paylaşılan yazının sonuna paylaşım sayfasının adresini ekle</string>
     <string name="pref_autoDictionaryAnalyze_title">Otomatik sözlük arama</string>
     <string name="pref_autoDictionaryAnalyze_summary">Seçilen ayetlerde sözlük kelimelerine bakın</string>
     <string name="pref_tapToEditNote_title">Notu düzenlemek için dokun</string>

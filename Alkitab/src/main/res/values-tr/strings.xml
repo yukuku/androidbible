@@ -129,7 +129,7 @@
     <string name="ed_finished">Bitti.</string>
     <string name="ed_the_following_books_from_the_pdb_file_are_not_recognized">Aşağıdaki PDB dosyalarından kitaplar tanınmadı ve bu nedenle atlandı. Atlanmaması gerektiğini düşünüyorsanız lütfen email gönderin yukuku@gmail.com.</string>
     <string name="ed_error_reading_pdb_file">PDB Dosyası okunamıyor</string>
-    <string name="ed_details">Ayrıntılar:</string>
+    <string name="ed_details">Ayrıntılar: </string>
     <string name="ed_buka_file_pdb_yes_lainnya">.pdb/.yes dosyasını aç&#8230;</string>
     <string name="ed_section_all">Hepsi</string>
     <string name="ed_section_downloaded">İndirildi</string>
@@ -325,6 +325,7 @@
     <string name="dv_option_transparent_background">Şeffaf arka plan</string>
     <string name="dv_option_dark_text">Koyu metin</string>
     <string name="dv_option_text_size">Yazı Boyutu</string>
+    <string name="dv_option_hide_app_icon">Uygulama simgesini gizle</string>
     <!-- Reading plan -->
     <string name="rp_activity_title">Okuma Planı</string>
     <string name="rp_menuReadingPlan">Okuma Planı</string>
@@ -370,11 +371,14 @@
     <string name="version_download_need_fonts">"İndirilen versiyonun bazı yazı tipleriyle gösterilmesi gerekebilir:\" Ekran \"menüsüne gidin ve bir yazı tipi seçin: Yunanca Ubuntu yazı tipine, biranne Parabaik, ParabaikSans veya Myanmar\'a ihtiyaç duyar 3. Tamil\'in Akshar\'a ihtiyacı var. Telugu\'nun Suranna\'ya ihtiyacı var."</string>
     <string name="version_download_corrupted_file">İndirilen dosya bozuk gibi görünüyor.</string>
     <string name="version_download_saving_io_error">İndirilen sürüm kaydedilirken I/O hatası</string>
+    <string name="version_download_network_error">İndirme yaparken ağ hatası ^1.</string>
+    <string name="version_download_server_error">İndirme yaparken sunucu hatası ^1.</string>
     <string name="menuNightMode">Gece modu</string>
     <string name="highlight_custom_color">Diğer renkler</string>
     <string name="menu_compare">Karşılaştır</string>
     <string name="song_player_error_description">Bu şarkıyı çalarken bir hata oluştu: %1$d, %2$d.</string>
     <string name="search_in_version_short_name_placeholder">%s\'de bul</string>
+    <string name="search_syntax_tips"><i>Arama ipuçları:</i>\n\n<b>+kelime</b> bu kelimenin aynisi için\n<b>[q]david\'in şehri[q]</b> bu deyişin aynisi için</string>
     <string name="search_no_result"><b>^1</b> için ayet bulunamadı.</string>
     <string name="search_no_result_fallback">Buraya gitmek için buraya dokunun <u>^1</u>.</string>
     <string name="search_clear_history">Arama tarihçesini sil</string>
@@ -402,6 +406,7 @@
     <string name="book_filter_new_gospels">Müjdeler</string>
     <string name="book_filter_new_acts">Apostolik Tarih</string>
     <string name="book_filter_new_pauline_epistles">Pavlos Mektupları</string>
+    <string name="book_filter_new_general_epistles">Genel Mektuplar</string>
     <string name="book_filter_new_apocalypse">Vahiy</string>
     <string name="search_filter_multiple_books_selected">%s kitap seçildi</string>
     <string name="search_version_select_label">Bulmak:</string>
@@ -441,7 +446,16 @@
     <string name="pref_screen_sync_settings_title">Sync ayarları</string>
     <string name="sync_category_title_data_types">Veri tipleri</string>
     <string name="pref_syncSet_mabel_enabled_title">İşaretleyiciler ve etiketler</string>
+    <string name="pref_syncSet_rp_enabled_title">Okuma planı ilerliyor</string>
+    <string name="pref_syncSet_history_enabled_title">Son ayetler</string>
     <string name="pref_syncSet_pins_enabled_title">Pinler</string>
+    <string name="sync_menu_item_sync_now">Şimdi senkronize et</string>
+    <string name="sync_menu_item_sync_log">Günlüğü gör</string>
+    <string name="sync_sync_set_pref_summary_last_synced">En son senkronizasyon %1$s, %2$s (r%3$s)</string>
+    <string name="sync_sync_set_pref_summary_never">Henüz senkronize edilmedi</string>
+    <string name="sync_sync_set_pref_summary_syncing">Şimdi senkronize ediliyor&#8230;</string>
+    <string name="sync_log_activity_title">Senkronizasyon günlüğü</string>
+    <string name="sync_status_activity_title">Senkronizasyon Durumu</string>
     <string name="sync_login_activity_title">Giriş yap ya da Hesap Oluştur</string>
     <string name="sync_login_survey_religion_select_one">Dinini seç</string>
     <string name="sync_login_survey_religion_christianity">Hristiyanlık</string>
@@ -464,6 +478,7 @@
     <string name="sync_login_form_error_required">Lütfen bunu doldurun.</string>
     <string name="sync_login_form_password_hint">Şifre</string>
     <string name="sync_login_form_new_password_hint">Yeni şifre</string>
+    <string name="sync_login_form_intro_text">Senkronizasyon senin işaretlerini ve diğer verilerini korur.\n<a href="https://alkitab.app/guide/sync">Daha fazla bilgi</a></string>
     <string name="sync_login_form_email_hint">E-posta</string>
     <string name="sync_login_form_forgot_button">Unuttun mu?</string>
     <string name="sync_login_form_optional_header">Opsiyonel</string>
@@ -473,21 +488,31 @@
     <string name="sync_login_form_login_button">Giriş Yap</string>
     <string name="sync_login_form_privacy_text">Aşağıdaki düğmelerden birine basarak, bunu kabul edersiniz <a href="http://www.bibleforandroid.com/privacy_policy">privacy policy</a>.</string>
     <string name="sync_login_form_error_email_pattern">Geçersiz e-posta adresi.</string>
+    <string name="sync_login_form_passwords_do_not_match">Lütfen doğrulama alanına ayni şifreyi yazın.</string>
     <string name="sync_login_dialog_confirm_password_hint">Parolayı onayla</string>
+    <string name="sync_login_form_forgot_password_success">Lütfen ek talimatlar için epostanızı kontrol edin.</string>
     <string name="sync_login_form_change_password_success">Şifreniz değiştirildi.</string>
+    <string name="pref_textPadding_title">Yazı etrafındaki boşluklar</string>
+    <string name="pref_textPadding_summary">Daha kolay okumak için bir hat üzerindeki yazıyı darlaştır</string>
+    <string name="pref_bottomToolbarOnText_title">Alt ayet gezinimi</string>
+    <string name="pref_bottomToolbarOnText_summary">Ayet gezinti çubuğunu İncil ekranının alt kısmına yerleştir</string>
     <!-- devotion reminder -->
     <string name="dr_app_name">Hatırlatma</string>
     <string name="dr_notification_title">Günlük dua</string>
     <string name="dr_notification_text">Bugünün duasını şimdi oku.</string>
+    <string name="dr_off">Kapalı</string>
     <string name="dr_alarm">Alarm</string>
     <string name="dr_sound">Ses</string>
     <string name="dr_vibrate">Titreşim</string>
+    <string name="dr_pref_notification_message">Hatırlatma mesajı</string>
     <string name="dr_default_sound">Varsayılan ses</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">%100 bedava İncil uygulaması, Apache License 2.0 yetkisi altında</string>
     <string name="about_translators">Çevirmenler</string>
     <string name="about_user_guide">Kullanıcı Rehberi</string>
+    <string name="about_beta_feedback">Beta Versiyon Geridönüşü</string>
     <string name="about_enable_beta">Beta Sürümü Dene</string>
+    <string name="about_enable_beta_confirmation">Google a giriş yapın ve beta versiyonu yeni özellikleri ve geliştirmeleri ile denemek için BECOME A TESTER düğmesine tıklayın!</string>
     <string name="about_version_name">sürüm %s</string>
     <string name="about_material_sources">Materyal Kaynakları</string>
     <string name="about_credits">Krediler</string>
@@ -498,21 +523,37 @@
     <string name="about_official_website">Resmi Website</string>
     <string name="about_project_page">Proje Sayfası</string>
     <!-- marker and label migration -->
+    <string name="marker_migrate_introduction">Yuku Hızlı İncil v3 den kalan ve yer imlerini, notları, vurgulamaları, ve etiketleri içeren eski bir yedekleme dosyası farkettik.\n\n Bu uygulamada da onlara ulaşabilmek için, bunları aktarmak istermisiniz?</string>
     <string name="marker_migrate_no_more">Tekrar sorma</string>
     <string name="marker_migrate_later">Şimdi değil</string>
+    <string name="marker_migrate_title">Eski işaretleri aktar</string>
     <string name="marker_migrate_file_chooser_title">V3 yedek dosyasını seç</string>
+    <string name="marker_migrate_no_more_confirmation">Eski veriyi aktarmaya ihtiyacınız olmadığına emin misiniz?</string>
+    <string name="marker_migrate_error_opening_backup_file">Yedekleme dosyasına ulaşılamıyor.</string>
+    <string name="marker_migrate_import_from_newest">Evet, en yenisinden aktar(önerilir)</string>
     <string name="marker_migrate_import_from_other">Diğer yedeklemeler</string>
+    <string name="marker_migrate_filename_dated">%1$s tarihli %2$s</string>
     <!-- Announcements -->
     <string name="announce_notif_title">%s Duyurular</string>
+    <string name="announce_notif_number_new_announcements">%s yeni duyurular</string>
     <!-- Dictionary -->
     <string name="menuDictionary">Sözlük</string>
     <string name="dict_open_full">Sözlüğü aç</string>
+    <string name="dict_no_results">Seçili kelime için tanımlama bulunamadı.</string>
     <string name="dict_query_error">Sözlük anlamını alamama hatası.</string>
+    <string name="dict_download_prompt">\"İncil Sözlüğünü\" indirerek İncil deki kelimeler hakkında daha fazla bilgi öğren!</string>
     <string name="dict_download_button">İndir</string>
     <!-- Guide -->
     <string name="menuGuide">Rehber</string>
     <!-- Commentary -->
+    <string name="menuCommentary">Yorum</string>
     <!-- Maps -->
+    <string name="maps_could_not_open">İncil Haritaları uygulaması açılamıyor.</string>
     <!-- File chooser -->
+    <string name="filechooser_parent_folder">Ana klasör</string>
     <!-- Notification channels -->
+    <string name="notification_channel_announce_name">Duyurular</string>
+    <string name="notification_channel_download_mapper_name">İndirilenler</string>
+    <string name="notification_channel_devotion_downloader_name">Bağlılık indirmeleri</string>
+    <string name="notification_channel_devotion_reminder_name">Bağlılık hatırlatmaları</string>
 </resources>

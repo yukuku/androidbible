@@ -129,7 +129,7 @@
     <string name="ed_finished">Selesai.</string>
     <string name="ed_the_following_books_from_the_pdb_file_are_not_recognized">Kitab-kitab dari file PDB berikut ini tidak dikenal, maka dari itu dilewatkan. Harap hubungi yukuku@gmail.com kalau seharusnya tidak dilewatkan.</string>
     <string name="ed_error_reading_pdb_file">Kesalahan dalam membaca file PDB</string>
-    <string name="ed_details">Keterangan:</string>
+    <string name="ed_details">Keterangan: </string>
     <string name="ed_buka_file_pdb_yes_lainnya">Buka file .pdb/.yes lainnya&#8230;</string>
     <string name="ed_section_all">Semua</string>
     <string name="ed_section_downloaded">Terunduh</string>

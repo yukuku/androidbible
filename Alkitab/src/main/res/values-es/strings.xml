@@ -129,7 +129,7 @@
     <string name="ed_finished">Finalizado.</string>
     <string name="ed_the_following_books_from_the_pdb_file_are_not_recognized">Los siguientes libros del archivo PDB no fueron reconocidos y por lo tanto omitidos. Por favor envíe un correo a yukuku@gmail.com si consideras que no deben ser omitidos.</string>
     <string name="ed_error_reading_pdb_file">Error leyendo archivo PDB</string>
-    <string name="ed_details">Detalles:</string>
+    <string name="ed_details">Detalles: </string>
     <string name="ed_buka_file_pdb_yes_lainnya">Abrir un archivo .pdb/.yes&#8230;</string>
     <string name="ed_section_all">Todo</string>
     <string name="ed_section_downloaded">Descargado</string>
@@ -325,6 +325,7 @@
     <string name="dv_option_transparent_background">Fondo transparente</string>
     <string name="dv_option_dark_text">Texto oscuro</string>
     <string name="dv_option_text_size">Tamaño de texto</string>
+    <string name="dv_option_hide_app_icon">Ocultar icono</string>
     <!-- Reading plan -->
     <string name="rp_activity_title">Plan de lectura</string>
     <string name="rp_menuReadingPlan">Plan de lectura</string>
@@ -370,8 +371,8 @@
     <string name="version_download_need_fonts">"La versión que descargaste puede necesitar ciertas fuentes para mostrarse. Ve al menú de \'Apariencia de texto\' y elige una fuente. Griego necesita la fuente Ubuntu. Birmano necesita Parabaik, ParabaikSans o Myanmar3. Tamil necesita Suranna."</string>
     <string name="version_download_corrupted_file">El archivo descargado parece estar corrupto.</string>
     <string name="version_download_saving_io_error">Error de E/S al guardar la versión descargada</string>
-    <string name="version_download_network_error">Error de red cuando descarga ^1.</string>
-    <string name="version_download_server_error">Error de servidor cuando descarga ^1.</string>
+    <string name="version_download_network_error">Error de red al descargar ^1.</string>
+    <string name="version_download_server_error">Error de servidor al descargar ^1.</string>
     <string name="menuNightMode">Modo nocturno</string>
     <string name="highlight_custom_color">Otros colores</string>
     <string name="menu_compare">Comparar</string>
@@ -540,7 +541,7 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
     <string name="menuDictionary">Diccionario</string>
     <string name="dict_open_full">Abrir diccionario</string>
     <string name="dict_no_results">Definición no encontrada de la palabra seleccionada.</string>
-    <string name="dict_query_error">Error obteniendo la definición del Diccionario.</string>
+    <string name="dict_query_error">Error al obtener la definición del diccionario.</string>
     <string name="dict_download_prompt">¡Descarga \"Diccionario Bíblico\" para aprender más acerca de las palabras en la Biblia!</string>
     <string name="dict_download_button">Descragar</string>
     <!-- Guide -->
@@ -552,8 +553,8 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
     <!-- File chooser -->
     <string name="filechooser_parent_folder">Carpeta Principal</string>
     <!-- Notification channels -->
-    <string name="notification_channel_announce_name">Announcements</string>
-    <string name="notification_channel_download_mapper_name">Downloads</string>
-    <string name="notification_channel_devotion_downloader_name">Devotion downloads</string>
-    <string name="notification_channel_devotion_reminder_name">Devotion reminders</string>
+    <string name="notification_channel_announce_name">Anuncios</string>
+    <string name="notification_channel_download_mapper_name">Descargas</string>
+    <string name="notification_channel_devotion_downloader_name">Descargas de devoción</string>
+    <string name="notification_channel_devotion_reminder_name">Recordatorios de devoción</string>
 </resources>

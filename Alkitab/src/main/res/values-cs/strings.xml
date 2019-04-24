@@ -228,7 +228,7 @@
     <string name="dl_failed_to_rename_temporary_file">Nepodařilo se přejmenovat dočasný soubor</string>
     <!-- Songs -->
     <string name="menuSongs">Písně</string>
-    <string name="sn_deep_search_enabled">Texty, atd.</string>
+    <string name="sn_deep_search_enabled">Texty, atd. </string>
     <string name="sn_songs_activity_title">Písně</string>
     <string name="sn_bookselector_all">Vše</string>
     <string name="sn_bookselector_more">Stáhnout více&#8230;</string>
@@ -370,8 +370,8 @@
     <string name="version_download_need_fonts">"Stažená verze nemůže být zobrazena určitým fontem. Jděte do \'Text appearance\' menu a vyberte jiný font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
     <string name="version_download_corrupted_file">Stažený soubor je zřejmě poškozený.</string>
     <string name="version_download_saving_io_error">I/O error při ukládání stažené verze</string>
-    <string name="version_download_network_error">Chyba sítě při stahování^1.</string>
-    <string name="version_download_server_error">Chyba serveru při stahování^1.</string>
+    <string name="version_download_network_error">Chyba sítě při stahování ^1.</string>
+    <string name="version_download_server_error">Chyba serveru při stahování ^1.</string>
     <string name="menuNightMode">Noční mód</string>
     <string name="highlight_custom_color">Jiné barvy</string>
     <string name="menu_compare">Porovnat</string>

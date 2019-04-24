@@ -7,4 +7,10 @@
     <item>Deruleazã capitole</item>
     <item>Pagina sus/jos</item>
   </string-array>
+  <string-array name="pref_forceFontScale_labels">
+    <item>Urmăriți setările din sistem</item>
+    <item>Foarte mare</item>
+    <item>Enorm</item>
+    <item>Gigant</item>
+  </string-array>
 </resources>

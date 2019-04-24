@@ -64,7 +64,7 @@
     <string name="pengunduhan_dibatalkan">ダウンロードをキャンセルしました。</string>
     <string name="sedang_mendekompres_harap_tunggu">解凍中、お待ちください。</string>
     <string name="terunduh_sampe_byte">ダウンロード終了: %d バイト</string>
-    <string name="gagal_mengunduh_edisi_judul_ex_pastikan_internet">「%1$s (%2$s)」のダウンロードに失敗しました.\nインターネット接続を確認してください.</string>
+    <string name="gagal_mengunduh_edisi_judul_ex_pastikan_internet">「%1$s (%2$s)」のダウンロードに失敗しました.\nインターネット接続を確認してください. </string>
     <string name="version_download_complete"><b>^1</b>ダウンロード済</string>
     <string name="mulai_mengunduh">ダウンロードの準備中です...</string>
     <string name="mengunduh_nama">聖書ファイル %s をダウンロードしています.</string>
@@ -103,7 +103,7 @@
     <string name="cp_mapping_books">書をマップしています.</string>
     <string name="cp_constructing_book_info">書の情報を構成しています.</string>
     <string name="cp_constructing_version_info">版の情報を構成しています.</string>
-    <string name="cp_writing_num_section_pericope_titles">セクション %s　を書き込んでいます.</string>
+    <string name="cp_writing_num_section_pericope_titles">セクション %s　を書き込んでいます. </string>
     <string name="cp_writing_translated_file">変換したファイルを書き込んでいます.</string>
     <string name="cp_reading_book_info">%s の情報を読み出しています.</string>
     <string name="cp_writing_text_of_book_chapters">%1$s 書 (%2$s 章) のテキストを書き込んでいます.</string>
@@ -129,7 +129,7 @@
     <string name="ed_finished">完了しました。</string>
     <string name="ed_the_following_books_from_the_pdb_file_are_not_recognized">PDFファイルにある以下の書は認識できないためスキップしました。もしスキップすべきでないとお考えの場合、yukuku@gmail.comにメールをお願いします。</string>
     <string name="ed_error_reading_pdb_file">PDBファイルの読み込みでエラーが発生しました</string>
-    <string name="ed_details">詳細：</string>
+    <string name="ed_details">詳細： </string>
     <string name="ed_buka_file_pdb_yes_lainnya">.pdb/.yesファイルをオープンする...</string>
     <string name="ed_section_all">すべて</string>
     <string name="ed_section_downloaded">ダウンロード済</string>

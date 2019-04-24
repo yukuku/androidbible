@@ -129,7 +129,7 @@
     <string name="ed_finished">Færdig.</string>
     <string name="ed_the_following_books_from_the_pdb_file_are_not_recognized">Følgende bøger fra PDB-filen er ikke genkendt, og springes derfor over. Skriv venligst en e-mail til yukuku@gmail.com hvis du tror, at dette er en fejl.</string>
     <string name="ed_error_reading_pdb_file">Fejl ved læsning af PDB-fil</string>
-    <string name="ed_details">Detaljer:</string>
+    <string name="ed_details">Detaljer: </string>
     <string name="ed_buka_file_pdb_yes_lainnya">Åben en .pdb/.yes fil&#8230;</string>
     <string name="ed_section_all">Alle</string>
     <string name="ed_section_downloaded">Nedtaget</string>

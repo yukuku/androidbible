@@ -129,7 +129,7 @@
     <string name="ed_finished">종료.</string>
     <string name="ed_the_following_books_from_the_pdb_file_are_not_recognized">아래의 PDB파일 형식의 역본들은 인식이 되지 않아 처리하지 않았습니다. 해당 역본의 인식이 필요하시면, yukuku@gmail.com로 메일을 주시기 바랍니다.</string>
     <string name="ed_error_reading_pdb_file">PDB 파일 로딩 중 오류 발생</string>
-    <string name="ed_details">세부사항:</string>
+    <string name="ed_details">세부사항: </string>
     <string name="ed_buka_file_pdb_yes_lainnya">역본 파일 로딩 중...</string>
     <string name="ed_section_all">전부</string>
     <string name="ed_section_downloaded">다운로드 완료</string>
@@ -325,6 +325,7 @@
     <string name="dv_option_transparent_background">투명 배경</string>
     <string name="dv_option_dark_text">어두운 글씨</string>
     <string name="dv_option_text_size">본문 크기</string>
+    <string name="dv_option_hide_app_icon">App 아이콘을 감추세요</string>
     <!-- Reading plan -->
     <string name="rp_activity_title">구독 계획</string>
     <string name="rp_menuReadingPlan">성경읽기표</string>
@@ -550,4 +551,7 @@
     <!-- File chooser -->
     <string name="filechooser_parent_folder">상위 폴더</string>
     <!-- Notification channels -->
+    <string name="notification_channel_announce_name">공지사항</string>
+    <string name="notification_channel_download_mapper_name">다운로드</string>
+    <string name="notification_channel_devotion_reminder_name">묵상 알리미</string>
 </resources>

@@ -47,7 +47,7 @@
     <string name="judul_titikdua">TAJUK</string>
     <string name="devotion_downloader_downloading_title">Memuat turun ^1</string>
     <string name="devotion_downloader_downloading_date">bertarikh ^1</string>
-    <string name="devotion_downloader_error_date">Kesulitan dalam tarikh ^1:^2</string>
+    <string name="devotion_downloader_error_date">Kesulitan dalam tarikh ^1: ^2</string>
     <string name="devotion_downloader_success_date">Tarikh dimuat turun ^1</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Tidak wujud. Mungkin bahan tarikh yang diminta adalah tidak bersedia lagi, atau terdapat beberapa ralat dalam mengiktiraf sumber data. Sila cuba lagi kemudian.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Tidak Wujud. Semasa mengambil dari Internet...\n\n(Pastikan terdapat sambungan Internet untuk mengambil bahan-bahan ketaatan.)</string>

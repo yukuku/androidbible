@@ -213,6 +213,7 @@
     <string name="market_short_desc">O Biblie rapidă, fiabilă și bogată în caracteristici, rulează fără conexiune la internet.</string>
     <string name="no_url_for_facebook">Acesta nu poarte fi distribuit pe Facebook.</string>
     <string name="storage_permission_rationale">E necesară accesarea mediului de stocare pentru a stoca media cum ar fi versiuni ale Bibliei și fonturi.</string>
+    <string name="goto_button_history_tip">Data viitoare, apăsați lung acest buton pentru a accesa versetele deschise recent.</string>
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Numeric</string>
     <string name="goto_tab_direct_label">Direct</string>

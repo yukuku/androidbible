@@ -129,7 +129,7 @@
     <string name="ed_finished">完成。</string>
     <string name="ed_the_following_books_from_the_pdb_file_are_not_recognized">PDB文件的书籍不会被确认，因此跳过。 请电子邮件yukuku@gmail.com如果你认为这些不应该被跳过。</string>
     <string name="ed_error_reading_pdb_file">读取PDB文件时出错</string>
-    <string name="ed_details">详细说明：</string>
+    <string name="ed_details">详细说明： </string>
     <string name="ed_buka_file_pdb_yes_lainnya">开启一个.pdb/.yes档案</string>
     <string name="ed_section_all">全部</string>
     <string name="ed_section_downloaded">已下载</string>
@@ -325,6 +325,7 @@
     <string name="dv_option_transparent_background">透明的背景</string>
     <string name="dv_option_dark_text">深色文字</string>
     <string name="dv_option_text_size">文字大小</string>
+    <string name="dv_option_hide_app_icon">隐藏App图标</string>
     <!-- Reading plan -->
     <string name="rp_activity_title">阅读计划</string>
     <string name="rp_menuReadingPlan">阅读计划</string>
@@ -370,8 +371,8 @@
     <string name="version_download_need_fonts">"您下载的版本需要某种字体以正确显示。请到「文字外观」目录，并选择某种字体。希腊语需要 Ubuntu 字体。缅甸语需要Parabaik，ParabaikSans 或 Myanmar3。泰米尔语需要 Akshar。泰卢固语需要 Suranna。"</string>
     <string name="version_download_corrupted_file">已下载的档桉似是无效的。</string>
     <string name="version_download_saving_io_error">储存已下载的版本时发生存取错误</string>
-    <string name="version_download_network_error">下载时网络出现错误 ^1。</string>
-    <string name="version_download_server_error">下载时服务出现错误^1。</string>
+    <string name="version_download_network_error">下载^1时网络出现错误。</string>
+    <string name="version_download_server_error">下载^1时服务出现错误。</string>
     <string name="menuNightMode">夜间模式</string>
     <string name="highlight_custom_color">其他颜色</string>
     <string name="menu_compare">比较</string>
@@ -553,4 +554,6 @@
     <!-- Notification channels -->
     <string name="notification_channel_announce_name">公告</string>
     <string name="notification_channel_download_mapper_name">下载</string>
+    <string name="notification_channel_devotion_downloader_name">灵修下载</string>
+    <string name="notification_channel_devotion_reminder_name">灵修提示</string>
 </resources>
