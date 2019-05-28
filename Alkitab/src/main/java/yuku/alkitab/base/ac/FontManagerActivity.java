@@ -294,9 +294,11 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 					File[] listFiles = fontDir.listFiles();
 					if (listFiles != null) {
 						for (File file : listFiles) {
+							//noinspection ResultOfMethodCallIgnored
 							file.delete();
 						}
 					}
+					//noinspection ResultOfMethodCallIgnored
 					fontDir.delete();
 
 					dls.removeEntry(getFontDownloadKey(item.name));
@@ -319,8 +321,9 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 			}
 
 			try {
-				String downloadedZip = getFontDownloadDestination(fontName);
-				File fontDir = FontManager.getFontDir(fontName);
+				final String downloadedZip = getFontDownloadDestination(fontName);
+				final File fontDir = FontManager.getFontDir(fontName);
+				//noinspection ResultOfMethodCallIgnored
 				fontDir.mkdirs();
 
 				AppLog.d(TAG, "Going to unzip " + downloadedZip, new Throwable().fillInStackTrace());
@@ -328,9 +331,17 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 				try (ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(downloadedZip)))) {
 					ZipEntry ze;
 					while ((ze = zis.getNextEntry()) != null) {
-						String zname = ze.getName();
+						final String zname = ze.getName();
 						AppLog.d(TAG, "Extracting from zip: " + zname);
-						File extractFile = new File(fontDir, zname);
+						final File extractFile = new File(fontDir, zname);
+
+						// https://support.google.com/faqs/answer/9294009
+						final String fontDirPath = fontDir.getCanonicalPath();
+						final String extractFilePath = extractFile.getCanonicalPath();
+						if (!extractFilePath.startsWith(fontDirPath)) {
+							throw new SecurityException("Zip path traversal attack: " + fontDirPath + ", " + zname);
+						}
+
 						try (FileOutputStream fos = new FileOutputStream(extractFile)) {
 							byte[] buf = new byte[4096];
 							int count;
@@ -341,6 +352,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 					}
 				}
 
+				//noinspection ResultOfMethodCallIgnored
 				new File(downloadedZip).delete();
 			} catch (Exception e) {
 				new MaterialDialog.Builder(FontManagerActivity.this)
