@@ -1,5 +1,6 @@
 package yuku.alkitab.base.sync;
 
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.gson.reflect.TypeToken;
@@ -195,6 +196,7 @@ public class Sync_Mabel {
 	/**
 	 * Entity content for {@link yuku.alkitab.model.Marker} and {@link yuku.alkitab.model.Label}.
 	 */
+	@Keep
 	public static class Content {
 		public Integer ari; // marker
 		public Integer kind; // marker

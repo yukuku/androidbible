@@ -37,6 +37,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Sync {
 	static final String TAG = Sync.class.getSimpleName();
 
+	@Keep
 	public enum Opkind {
 		add, mod, del, // do not change the enum value names here. This will be un/serialized by gson.
 	}
@@ -58,6 +59,7 @@ public class Sync {
 		unsupported_operation,
 	}
 
+	@Keep
 	public static class Operation<C> {
 		public Opkind opkind;
 		public String kind;
@@ -82,6 +84,7 @@ public class Sync {
 		}
 	}
 
+	@Keep
 	public static class Delta<C> {
 		@NonNull
 		public List<Operation<C>> operations;
@@ -98,6 +101,7 @@ public class Sync {
 		}
 	}
 
+	@Keep
 	public static class Entity<C> {
 		public static final String KIND_MARKER = "Marker";
 		public static final String KIND_LABEL = "Label";
@@ -144,6 +148,7 @@ public class Sync {
 		//endregion
 	}
 
+	@Keep
 	public static class ClientState<C> {
 		public final int base_revno;
 		@NonNull
@@ -155,10 +160,12 @@ public class Sync {
 		}
 	}
 
+	@Keep
 	public static class SyncShadowDataJson<C> {
 		public List<Entity<C>> entities;
 	}
 
+	@Keep
 	public static class SyncResponseJson<C> extends ResponseJson {
 		public int final_revno;
 		public Delta<C> append_delta;
@@ -359,11 +366,13 @@ public class Sync {
 		}
 	}
 
+	@Keep
 	public static class ResponseJson {
 		public boolean success;
 		public String message;
 	}
 
+	@Keep
 	public static class RegisterForm {
 		public String email;
 		public String password;
@@ -520,6 +529,7 @@ public class Sync {
 		}
 	}
 
+	@Keep
 	public static class LoginResponseJson extends ResponseJson {
 		public String simpleToken;
 	}

@@ -1,5 +1,6 @@
 package yuku.alkitab.base.sync;
 
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.util.Pair;
 import com.google.gson.reflect.TypeToken;
@@ -147,6 +148,7 @@ public class Sync_Rp {
 		return res;
 	}
 
+	@Keep
 	public static class Content {
 		public Long startTime; // time in millis when the reading plan has started. Can be null, if no such data is found. Server should always prioritize entities with non-null startTime.
 		public Set<Integer> done; // reading codes that are checked

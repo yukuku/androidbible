@@ -1,6 +1,7 @@
 package yuku.alkitab.base.util;
 
 import android.content.SharedPreferences;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -25,6 +26,7 @@ public class History {
 
 	private static final int MAX_HISTORY_ENTRIES = 20;
 
+	@Keep
 	public static class HistoryEntry {
 		public String gid;
 		public int ari;
@@ -36,6 +38,7 @@ public class History {
 		}
 	}
 
+	@Keep
 	static class HistoryJson {
 		public List<HistoryEntry> entries;
 	}

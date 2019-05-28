@@ -1800,15 +1800,14 @@ public class InternalDb {
 	}
 
 	public List<SyncLog> listLatestSyncLog(final int maxrows) {
-		final Cursor c = helper.getReadableDatabase().query(Table.SyncLog.tableName(),
+		try (Cursor c = helper.getReadableDatabase().query(Table.SyncLog.tableName(),
 			ToStringArray(
 				Table.SyncLog.createTime,
 				Table.SyncLog.kind,
 				Table.SyncLog.syncSetName,
 				Table.SyncLog.params
 			),
-			null, null, null, null, Table.SyncLog.createTime + " desc", "" + maxrows);
-		try {
+			null, null, null, null, Table.SyncLog.createTime + " desc", "" + maxrows)) {
 			final List<SyncLog> res = new ArrayList<>();
 			while (c.moveToNext()) {
 				final SyncLog row = new SyncLog();
@@ -1819,13 +1818,12 @@ public class InternalDb {
 				if (params_s == null) {
 					row.params = null;
 				} else {
-					row.params = App.getDefaultGson().fromJson(params_s, new TypeToken<Map<String, Object>>() {}.getType());
+					row.params = App.getDefaultGson().fromJson(params_s, new TypeToken<Map<String, Object>>() {
+					}.getType());
 				}
 				res.add(row);
 			}
 			return res;
-		} finally {
-			c.close();
 		}
 	}
 

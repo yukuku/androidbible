@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ShareCompat;
@@ -446,6 +447,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		return dayOfWeekName(currentDate) + ", " + DateFormat.getDateFormat(this).format(currentDate);
 	}
 
+	@Keep
 	static class PatchTextExtraInfoJson {
 		String type;
 		String kind;

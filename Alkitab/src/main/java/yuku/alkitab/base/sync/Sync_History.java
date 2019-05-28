@@ -1,5 +1,6 @@
 package yuku.alkitab.base.sync;
 
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.util.Pair;
 import com.google.gson.reflect.TypeToken;
@@ -107,6 +108,7 @@ public class Sync_History {
 		return res;
 	}
 
+	@Keep
 	public static class Content {
 		public Integer ari;
 		public Long timestamp;

@@ -1,5 +1,6 @@
 package yuku.alkitab.base.sync;
 
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.util.Pair;
 import com.google.gson.reflect.TypeToken;
@@ -125,6 +126,7 @@ public class Sync_Pins {
 		return res;
 	}
 
+	@Keep
 	public static class Content {
 		public List<Pin> pins;
 
@@ -170,6 +172,7 @@ public class Sync_Pins {
 				'}';
 		}
 
+		@Keep
 		public static class Pin {
 			public int preset_id;
 			public String caption;

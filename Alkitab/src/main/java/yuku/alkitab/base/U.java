@@ -7,6 +7,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 import android.support.v4.graphics.ColorUtils;
 import android.widget.TextView;
@@ -338,6 +339,7 @@ public class U {
 		}
 	}
 
+	@Keep
 	static class InstallationInfoJson {
 		public String installation_id;
 		public String app_packageName;

@@ -1,5 +1,6 @@
 package yuku.alkitab.base.util;
 
+import android.support.annotation.Keep;
 import com.google.gson.JsonSyntaxException;
 import yuku.alkitab.base.App;
 
@@ -20,11 +21,13 @@ public class Highlights {
 		}
 	};
 
+	@Keep
 	public static class Info {
 		/** rgb only, without the alpha */
 		public int colorRgb;
 		public Partial partial;
 
+		@Keep
 		public static class Partial {
 			/** hashCode of the plain text (not with formatting) */
 			public int hashCode;

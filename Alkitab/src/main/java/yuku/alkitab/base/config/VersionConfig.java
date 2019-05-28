@@ -1,5 +1,6 @@
 package yuku.alkitab.base.config;
 
+import android.support.annotation.Keep;
 import android.support.v4.util.AtomicFile;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -27,6 +28,7 @@ public class VersionConfig {
 	private VersionConfig() {
 	}
 
+	@Keep
 	static class PresetJson {
 		public String locale;
 		public String shortName;
@@ -37,6 +39,7 @@ public class VersionConfig {
 		public int group_order;
 	}
 
+	@Keep
 	static class VersionConfigJson {
 		public List<PresetJson> presets;
 		public String download_url_format;

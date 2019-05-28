@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.os.Build;
 import android.os.SystemClock;
+import android.support.annotation.Keep;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
@@ -52,12 +53,14 @@ public abstract class Announce {
 		});
 	}
 
+	@Keep
 	static class Announcement {
 		public long id;
 		public String title;
 		public int createTime;
 	}
 
+	@Keep
 	static class AnnounceCheckResult {
 		public boolean success;
 		public String message;

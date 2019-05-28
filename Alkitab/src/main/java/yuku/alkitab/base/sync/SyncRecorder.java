@@ -1,5 +1,6 @@
 package yuku.alkitab.base.sync;
 
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -101,10 +102,12 @@ public class SyncRecorder {
 		Tracker.trackEvent("sync", FirebaseAnalytics.Param.ITEM_NAME, kind.name());
 	}
 
+	@Keep
 	static class LastSyncInfoEntryJson {
 		public int successTime;
 	}
 
+	@Keep
 	static class LastSyncInfosJson extends HashMap<String, LastSyncInfoEntryJson> {
 	}
 

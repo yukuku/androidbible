@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
+import android.support.annotation.Keep;
 import android.widget.Toast;
 import com.google.gson.JsonSyntaxException;
 import yuku.afw.storage.Preferences;
@@ -68,6 +69,7 @@ public class VersionConfigUpdaterService extends IntentService {
 		}
 	}
 
+	@Keep
 	static class ModifyTimeJson {
 		public boolean success;
 		public String message;
