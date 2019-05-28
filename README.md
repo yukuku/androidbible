@@ -5,8 +5,8 @@ Bible for Android
 
 Get the apps on Google Play: <a href="https://play.google.com/store/apps/details?id=yuku.alkitab">Alkitab</a> (Indonesian version) or <a href="https://play.google.com/store/apps/details?id=yuku.alkitab.kjv">Quick Bible</a> (non-Indonesian version). You can also download them from the <a href="https://github.com/yukuku/androidbible/releases">Releases</a> page.
 
-- <a href="http://www.bibleforandroid.com">Official Website</a>
-- <a href="http://www.bibleforandroid.com/changelog">Changelog and Beta Testers</a> and <a href="http://blog.bibleforandroid.com">Development Blog</a>
+- <a href="https://alkitab.app">Official Website</a>
+- <a href="https://alkitab.app/changelog">Changelog and Beta Testers</a> and <a href="http://blog.bibleforandroid.com">Development Blog</a>
 - <a href="http://groups.google.com/group/bibleforandroid">Discussion Group</a>
 
 Alkitab is the Indonesian word for the Bible.
@@ -36,7 +36,7 @@ See the <a href="http://www.bibleforandroid.com/developer">Developer page</a> fo
 License
 --------
 
-    Copyright 2009-2018 (or the current year) The Alkitab Authors.
+    Copyright 2009-2019 (or the current year) The Alkitab Authors.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
