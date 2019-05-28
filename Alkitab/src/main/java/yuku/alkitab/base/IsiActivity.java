@@ -2018,7 +2018,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 						}
 
 						FragmentManager fm = getSupportFragmentManager();
-						dialog.show(fm, XrefDialog.class.getSimpleName());
+						dialog.show(fm, "XrefDialog");
 					} else if (type == Type.footnote) {
 						FootnoteEntry fe = null;
 						if (source == lsSplit0) { // use activeVersion

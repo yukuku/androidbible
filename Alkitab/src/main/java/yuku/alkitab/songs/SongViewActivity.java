@@ -1036,7 +1036,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 					startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
 				}
 			});
-			versesDialog.show(getSupportFragmentManager(), VersesDialog.class.getSimpleName());
+			versesDialog.show(getSupportFragmentManager(), "VersesDialog");
 			return true;
 		}
 		return false;

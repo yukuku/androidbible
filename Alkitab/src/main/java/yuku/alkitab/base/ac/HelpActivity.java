@@ -158,7 +158,7 @@ public class HelpActivity extends BaseActivity {
 								.show();
 						} else {
 							final VersesDialog dialog = VersesDialog.newInstance(ariRanges);
-							dialog.show(getSupportFragmentManager(), VersesDialog.class.getSimpleName());
+							dialog.show(getSupportFragmentManager(), "VersesDialog");
 							dialog.setListener(new VersesDialog.VersesDialogListener() {
 								@Override
 								public void onVerseSelected(final VersesDialog dialog, final int ari) {

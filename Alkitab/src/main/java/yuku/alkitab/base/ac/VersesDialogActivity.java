@@ -45,6 +45,6 @@ public class VersesDialogActivity extends BaseActivity {
 		});
 		versesDialog.setOnDismissListener(dialog -> finish());
 
-		versesDialog.show(getSupportFragmentManager(), VersesDialog.class.getSimpleName());
+		versesDialog.show(getSupportFragmentManager(), "VersesDialog");
 	}
 }

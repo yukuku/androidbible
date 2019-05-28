@@ -1,45 +1,48 @@
 package yuku.alkitab.base.storage;
 
+import android.support.annotation.Keep;
+
 import static yuku.alkitab.base.storage.Table.Type.*;
 
 public class Table {
-	public static final String TAG = Table.class.getSimpleName();
-
+	@Keep
 	public enum Type {
 		integer,
 		real,
 		text,
 		blob,
 	}
-	
+
+	@Keep
 	public enum SongInfo {
 		bookName(text),
 		code(text),
 		title(text, "collate nocase"),
 		title_original(text, "collate nocase"),
 		ordering(integer),
-		dataFormatVersion(integer), 
+		dataFormatVersion(integer),
 		data(blob),
 		updateTime(integer),
 		;
-		
+
 		public final Type type;
 		public final String suffix;
-		
+
 		SongInfo(Type type) {
 			this(type, null);
 		}
-		
+
 		SongInfo(Type type, String suffix) {
 			this.type = type;
 			this.suffix = suffix;
 		}
-		
+
 		public static String tableName() {
-			return SongInfo.class.getSimpleName();
+			return "SongInfo";
 		}
 	}
 
+	@Keep
 	public enum SongBookInfo {
 		name(text),
 		title(text),
@@ -59,10 +62,11 @@ public class Table {
 		}
 
 		public static String tableName() {
-			return SongBookInfo.class.getSimpleName();
+			return "SongBookInfo";
 		}
 	}
 
+	@Keep
 	public enum SyncShadow {
 		syncSetName(text),
 		revno(integer),
@@ -82,10 +86,11 @@ public class Table {
 		}
 
 		public static String tableName() {
-			return SyncShadow.class.getSimpleName();
+			return "SyncShadow";
 		}
 	}
 
+	@Keep
 	public enum SyncLog {
 		createTime(integer),
 		kind(integer),
@@ -106,10 +111,11 @@ public class Table {
 		}
 
 		public static String tableName() {
-			return SyncLog.class.getSimpleName();
+			return "SyncLog";
 		}
 	}
 
+	@Keep
 	public enum Devotion {
 		name(text),
 		date(text),
@@ -132,10 +138,11 @@ public class Table {
 		}
 
 		public static String tableName() {
-			return Devotion.class.getSimpleName();
+			return "Devotion";
 		}
 	}
 
+	@Keep
 	public enum PerVersion {
 		versionId(text),
 		settings(text),
@@ -154,7 +161,7 @@ public class Table {
 		}
 
 		public static String tableName() {
-			return PerVersion.class.getSimpleName();
+			return "PerVersion";
 		}
 	}
 }
