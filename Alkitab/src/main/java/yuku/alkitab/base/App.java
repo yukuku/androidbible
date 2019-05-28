@@ -26,7 +26,7 @@ import okhttp3.internal.Version;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.Prefkey;
-import yuku.alkitab.base.sync.Gcm;
+import yuku.alkitab.base.sync.Fcm;
 import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;
@@ -151,8 +151,8 @@ public class App extends yuku.afw.App {
 			PreferenceManager.setDefaultValues(context, preferenceResId, false);
 		}
 
-		{ // GCM
-			Gcm.renewGcmRegistrationIdIfNeeded(Sync::notifyNewGcmRegistrationId);
+		{ // FCM
+			Fcm.renewFcmRegistrationIdIfNeeded(Sync::notifyNewFcmRegistrationId);
 		}
 
 		DevotionReminder.scheduleAlarm();

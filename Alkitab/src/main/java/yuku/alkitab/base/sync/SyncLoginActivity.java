@@ -351,12 +351,12 @@ public class SyncLoginActivity extends BaseActivity {
 	 * Close this activity and report success.
 	 */
 	void gotSimpleToken(final String accountName, final String simpleToken, final boolean isRegister) {
-		// send GCM registration id, if we already have it.
-		final String registration_id = Gcm.renewGcmRegistrationIdIfNeeded(Sync::notifyNewGcmRegistrationId);
+		// send FCM registration id, if we already have it.
+		final String registration_id = Fcm.renewFcmRegistrationIdIfNeeded(Sync::notifyNewFcmRegistrationId);
 		if (registration_id != null) {
-			final boolean ok = Sync.sendGcmRegistrationId(simpleToken, registration_id);
+			final boolean ok = Sync.sendFcmRegistrationId(simpleToken, registration_id);
 			if (!ok) {
-				SyncRecorder.log(SyncRecorder.EventKind.login_gcm_sending_failed, null, "accountName", accountName);
+				SyncRecorder.log(SyncRecorder.EventKind.login_fcm_sending_failed, null, "accountName", accountName);
 
 				if (isRegister) {
 					runOnUiThread(() -> new MaterialDialog.Builder(this)
@@ -365,7 +365,7 @@ public class SyncLoginActivity extends BaseActivity {
 						.show());
 				} else {
 					runOnUiThread(() -> new MaterialDialog.Builder(this)
-						.content(getString(R.string.sync_login_failed_with_reason, "Could not send GCM registration id. Please try again."))
+						.content(getString(R.string.sync_login_failed_with_reason, "Could not send FCM registration id. Please try again."))
 						.positiveText(R.string.ok)
 						.show());
 				}
@@ -373,7 +373,7 @@ public class SyncLoginActivity extends BaseActivity {
 			}
 		} else {
 			// if not, ignore. Later eventually we will have it.
-			SyncRecorder.log(SyncRecorder.EventKind.login_gcm_not_possessed_yet, null, "accountName", accountName);
+			SyncRecorder.log(SyncRecorder.EventKind.login_fcm_not_possessed_yet, null, "accountName", accountName);
 		}
 
 		runOnUiThread(() -> {

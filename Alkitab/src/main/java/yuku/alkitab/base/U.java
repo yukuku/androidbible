@@ -292,7 +292,7 @@ public class U {
 
 	/**
 	 * The reason we use an installation id instead of just the simpleToken for sync
-	 * to identify originating device, is so that the GCM messages does not contain
+	 * to identify originating device, is so that the FCM messages does not contain
 	 * simpleToken, which is sensitive.
 	 */
 	public synchronized static String getInstallationId() {

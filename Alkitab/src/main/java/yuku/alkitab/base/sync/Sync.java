@@ -4,6 +4,7 @@ package yuku.alkitab.base.sync;
 import android.accounts.Account;
 import android.content.ContentResolver;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
 import com.google.gson.JsonIOException;
@@ -301,25 +302,26 @@ public class Sync {
 		}
 	}
 
-	static class RegisterGcmClientResponseJson extends ResponseJson {
+	@Keep
+	static class RegisterFcmClientResponseJson extends ResponseJson {
 		public boolean is_new_registration_id;
 	}
 
-	public static void notifyNewGcmRegistrationId(final String newRegistrationId) {
+	public static void notifyNewFcmRegistrationId(@NonNull final String newRegistrationId) {
 		// must send to server if we are logged in
 		final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
 		if (simpleToken == null) {
-			AppLog.d(TAG, "Got new GCM registration id, but sync is not logged in");
+			AppLog.d(TAG, "Got new FCM registration id, but sync is not logged in");
 			return;
 		}
 
-		Background.run(() -> sendGcmRegistrationId(simpleToken, newRegistrationId));
+		Background.run(() -> sendFcmRegistrationId(simpleToken, newRegistrationId));
 	}
 
-	public static boolean sendGcmRegistrationId(final String simpleToken, final String registration_id) {
+	public static boolean sendFcmRegistrationId(final String simpleToken, final String registration_id) {
 		final RequestBody requestBody = new FormBody.Builder()
 			.add("simpleToken", simpleToken)
-			.add("sender_id", Gcm.SENDER_ID)  // not really needed, but for logging on server
+			.add("sender_id", Fcm.SENDER_ID)  // not really needed, but for logging on server
 			.add("registration_id", registration_id)
 			.build();
 
@@ -331,27 +333,27 @@ public class Sync {
 					.build()
 			);
 
-			SyncRecorder.log(SyncRecorder.EventKind.gcm_send_attempt, null);
-			final RegisterGcmClientResponseJson response = App.getDefaultGson().fromJson(call.execute().body().charStream(), RegisterGcmClientResponseJson.class);
+			SyncRecorder.log(SyncRecorder.EventKind.fcm_send_attempt, null);
+			final RegisterFcmClientResponseJson response = App.getDefaultGson().fromJson(call.execute().body().charStream(), RegisterFcmClientResponseJson.class);
 
 			if (!response.success) {
-				SyncRecorder.log(SyncRecorder.EventKind.gcm_send_not_success, null, "message", response.message);
-				AppLog.d(TAG, "GCM registration id rejected by server: " + response.message);
+				SyncRecorder.log(SyncRecorder.EventKind.fcm_send_not_success, null, "message", response.message);
+				AppLog.d(TAG, "FCM registration id rejected by server: " + response.message);
 				return false;
 			}
 
-			SyncRecorder.log(SyncRecorder.EventKind.gcm_send_success, null, "is_new_registration_id", response.is_new_registration_id);
-			AppLog.d(TAG, "GCM registration id accepted by server: is_new_registration_id=" + response.is_new_registration_id);
+			SyncRecorder.log(SyncRecorder.EventKind.fcm_send_success, null, "is_new_registration_id", response.is_new_registration_id);
+			AppLog.d(TAG, "FCM registration id accepted by server: is_new_registration_id=" + response.is_new_registration_id);
 
 			return true;
 
 		} catch (IOException | JsonIOException e) {
-			SyncRecorder.log(SyncRecorder.EventKind.gcm_send_error_io, null);
-			AppLog.d(TAG, "Failed to send GCM registration id to server", e);
+			SyncRecorder.log(SyncRecorder.EventKind.fcm_send_error_io, null);
+			AppLog.d(TAG, "Failed to send FCM registration id to server", e);
 			return false;
 
 		} catch (JsonSyntaxException e) {
-			SyncRecorder.log(SyncRecorder.EventKind.gcm_send_error_json, null);
+			SyncRecorder.log(SyncRecorder.EventKind.fcm_send_error_json, null);
 			AppLog.d(TAG, "Server response is not valid JSON", e);
 			return false;
 		}

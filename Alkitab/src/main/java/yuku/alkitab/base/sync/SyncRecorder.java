@@ -28,16 +28,16 @@ public class SyncRecorder {
 		login_attempt(10, INFO),
 		register_attempt(11, INFO),
 		login_failed(12, ERROR),
-		login_gcm_sending_failed(13, ERROR),
-		login_gcm_not_possessed_yet(14, NORMAL_RESULT),
+		login_fcm_sending_failed(13, ERROR),
+		login_fcm_not_possessed_yet(14, NORMAL_RESULT),
 		login_success_pre(15, OK),
 		login_success_post(16, OK),
 		register_failed(17, ERROR),
-		gcm_send_attempt(20, INFO),
-		gcm_send_success(21, INFO),
-		gcm_send_not_success(22, ERROR),
-		gcm_send_error_io(25, ERROR),
-		gcm_send_error_json(26, ERROR),
+		fcm_send_attempt(20, INFO),
+		fcm_send_success(21, INFO),
+		fcm_send_not_success(22, ERROR),
+		fcm_send_error_io(25, ERROR),
+		fcm_send_error_json(26, ERROR),
 		sync_forced(80, INFO),
 		sync_needed_notified(81, INFO),
 		sync_adapter_on_perform(82, INFO),
@@ -67,7 +67,7 @@ public class SyncRecorder {
 		}
 
 		static TIntObjectHashMap<EventKind> codeIndex = new TIntObjectHashMap<>();
-		
+
 		static {
 			for (final EventKind kind : values()) {
 				codeIndex.put(kind.code, kind);

@@ -115,7 +115,7 @@ dependencies {
     implementation "com.android.support:percent:$supportLibVersion"
     implementation "com.squareup.picasso:picasso:$picassoVersion"
     implementation "com.takisoft.fix:preference-v7:$supportLibVersion.1"
-    implementation "com.google.android.gms:play-services-gcm:$playServicesVersion"
+    implementation "com.google.firebase:firebase-messaging:17.5.0"
     implementation 'com.google.firebase:firebase-core:16.0.4'
     implementation 'com.android.support:multidex:1.0.3'
     implementation "com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2"
