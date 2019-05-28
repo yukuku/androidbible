@@ -33,9 +33,9 @@
 		android:icon="@drawable/ic_launcher"
 		android:label="@string/app_name"
 		android:networkSecurityConfig="@xml/network_security_config"
+		android:supportsRtl="true"
 		android:theme="@style/Theme.Alkitab"
-		tools:ignore="UnusedAttribute"
-		android:supportsRtl="true">
+		tools:ignore="UnusedAttribute">
 		<activity
 			android:name="yuku.alkitab.base.IsiActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection|fontScale">
