@@ -9,13 +9,13 @@
     <string name="pref_penggunaan">Kullanım</string>
     <string name="pref_copy_share">Kopyalama ve paylaşma</string>
     <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Alfabetik sırala</string>
-    <string name="pref_kitab_menurut_abjad">Kitapları alfabetik sıraya göre sırala</string>
+    <string name="pref_kitab_menurut_abjad">Kitapları alfabetik olarak sırala</string>
     <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Cihazın ekranı İncil\'i okurken kapanmayacaktır</string>
     <string name="pref_biarkan_layar_menyala">Ekranı açık tut</string>
     <string name="pref_penampilan_layar">Görüntüle</string>
-    <string name="pref_volumeButtonNavigation_title">Ses düğmesi navigasyonu</string>
+    <string name="pref_volumeButtonNavigation_title">Ses düğmesiyle gezinme</string>
     <string name="pref_copyWithVerseNumbers_title">Ayet numaraları</string>
-    <string name="pref_copyWithVerseNumbers_summary">Her ayetin başlangıcında numarasıyla</string>
+    <string name="pref_copyWithVerseNumbers_summary">Her ayeti onun numarasıyla başlatın</string>
     <string name="pref_copyWithVersionName_title">Sürüm kısaltmaları</string>
     <string name="pref_copyWithVersionName_summary">İncil versiyonlarının başharflerini anımsa</string>
     <string name="pref_copyWithShareUrl_title">URL Paylaş</string>

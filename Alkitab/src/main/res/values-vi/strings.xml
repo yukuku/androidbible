@@ -13,7 +13,7 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Sao lưu thành công.\n\nđường dẫn:%s</string>
     <string name="impor_berhasil_angka_diproses">Phục hồi thành công. Tổng %1$d đánh dấu, ghi chú, và/hoặc lưu ý, và %2$d nhãn mục được xử lý.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Báo lỗi trong qua trình sao lưu: %s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Tạo sao lưu các mục đánh dấu, ghi chú và lưu ý vào thẻ nhớ SD hoăc USB? Ghi đề lên các bản sao lưu cũ.</string>
+    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Tại sao nên lưu lại các mục đánh dấu, ghi chú và các phần đáng lưu ý vào thẻ nhớ SD hoặc USB? Vì bằng không thì các tài liệu hiện tại sẽ bị xóa để nhường chỗ cho tài liệu mới.</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Báo lỗi trong qua trình sao lưu: %s</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Lưu đè lên các đánh dấu, ghi chú, và lưu ý bạn đang sử dụng?</string>
     <string name="file_tidak_bisa_dibaca_file">Dữ liệu không tồn tại hoặc không đọc được: %s</string>
@@ -21,7 +21,7 @@
     <string name="ekspor_ke_sd_card">Sao lưu</string>
     <string name="menuBantuan">Giúp đỡ</string>
     <string name="beri_saran_title">Gợi ý</string>
-    <string name="menuDevotion">Kinh thánh</string>
+    <string name="menuDevotion">Sứ điệp bồi linh tĩnh nguyện</string>
     <string name="search">Tìm kiếm</string>
     <string name="activity_title_markers">Đánh dấu</string>
     <string name="menu_markers">Đánh dấu</string>

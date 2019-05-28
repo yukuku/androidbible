@@ -129,7 +129,7 @@
     <string name="ed_finished">Natapos na.</string>
     <string name="ed_the_following_books_from_the_pdb_file_are_not_recognized">Ang mga librong ito na galing sa PDB file ay hindi kilalanin at kaya nilaktawan. Pakiusap i-email si yukuku@gmail.com kung ikaw ay nag-iisip na ito ay hindi dapat nilaktawan.</string>
     <string name="ed_error_reading_pdb_file">Ang pagbasa sa PDB file ay error</string>
-    <string name="ed_details">Mga Detalye:</string>
+    <string name="ed_details">Mga Detalye: </string>
     <string name="ed_buka_file_pdb_yes_lainnya">Buksan a .pdb/.yes file&#8230;</string>
     <string name="ed_section_all">Lahat</string>
     <string name="ed_section_downloaded">Na download</string>
@@ -325,6 +325,7 @@
     <string name="dv_option_transparent_background">Transparent na background</string>
     <string name="dv_option_dark_text">Madilim na teksto</string>
     <string name="dv_option_text_size">Laki ng teksto</string>
+    <string name="dv_option_hide_app_icon">Itago ang icon ng aplikasyon</string>
     <!-- Reading plan -->
     <string name="rp_activity_title">Plano ng pagbabasa</string>
     <string name="rp_menuReadingPlan">Disenyo ng pagbabasa</string>
@@ -551,8 +552,8 @@
     <!-- File chooser -->
     <string name="filechooser_parent_folder">Pinagmulang folder</string>
     <!-- Notification channels -->
-    <string name="notification_channel_announce_name">Mga Anunsyo</string>
-    <string name="notification_channel_download_mapper_name">Download</string>
+    <string name="notification_channel_announce_name">Mga anunsyo</string>
+    <string name="notification_channel_download_mapper_name">I-download</string>
     <string name="notification_channel_devotion_downloader_name">Pag-download ng debosyon</string>
     <string name="notification_channel_devotion_reminder_name">Paalala ng debosyon</string>
 </resources>

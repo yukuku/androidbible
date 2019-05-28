@@ -21,7 +21,7 @@
     <string name="ekspor_ke_sd_card">Сделать резервную копию</string>
     <string name="menuBantuan">Помощь</string>
     <string name="beri_saran_title">Предложение по улучшению</string>
-    <string name="menuDevotion">Посвящение</string>
+    <string name="menuDevotion">Размышления</string>
     <string name="search">Поиск</string>
     <string name="activity_title_markers">Маркеры</string>
     <string name="menu_markers">Маркеры</string>
@@ -81,7 +81,7 @@
     <string name="delete">Удалить</string>
     <string name="cancel">Отменить</string>
     <string name="ok">ОК</string>
-    <string name="tidak_bisa_membuat_folder">Не удалось создать каталог %s</string>
+    <string name="tidak_bisa_membuat_folder">Не удалось создать папку %s</string>
     <string name="menuPengaturan">Настройки</string>
     <string name="menuTentang">О программе</string>
     <string name="pengaturan_alkitab">Настройки Библии</string>

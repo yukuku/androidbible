@@ -325,6 +325,7 @@
     <string name="dv_option_transparent_background">Gennemsigtig baggrund</string>
     <string name="dv_option_dark_text">Mørk tekst</string>
     <string name="dv_option_text_size">Tekststørrelse</string>
+    <string name="dv_option_hide_app_icon">Skjul app-ikon</string>
     <!-- Reading plan -->
     <string name="rp_activity_title">Læseplan</string>
     <string name="rp_menuReadingPlan">Læseplan</string>
@@ -551,4 +552,8 @@
     <!-- File chooser -->
     <string name="filechooser_parent_folder">Forældre mappe</string>
     <!-- Notification channels -->
+    <string name="notification_channel_announce_name">Bekendtgørelser</string>
+    <string name="notification_channel_download_mapper_name">Overførsler</string>
+    <string name="notification_channel_devotion_downloader_name">Andagtsoverførsler</string>
+    <string name="notification_channel_devotion_reminder_name">Andagtspåmindelser</string>
 </resources>
