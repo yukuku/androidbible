@@ -24,6 +24,8 @@ import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
 import yuku.alkitab.debug.R;
 
+import java.util.Locale;
+
 public class SyncLoginActivity extends BaseActivity {
 
 	public static final String ANSWERS_METHOD = "sync";
@@ -77,7 +79,9 @@ public class SyncLoginActivity extends BaseActivity {
 		bChangePassword = findViewById(R.id.bChangePassword);
 
 		bRegister.setOnClickListener(v -> {
-			final String email = tEmail.getText().toString().trim();
+			// don't allow uppercase when registering, but we still allow it for login (because some user accounts were already created using uppercase)
+			final String email = tEmail.getText().toString().trim().toLowerCase(Locale.US);
+			tEmail.setText(email);
 
 			if (email.length() == 0) {
 				tEmail.setError(getString(R.string.sync_login_form_error_required));
