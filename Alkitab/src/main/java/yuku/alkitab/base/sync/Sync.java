@@ -386,8 +386,17 @@ public class Sync {
 			super(message);
 		}
 
-		public NotOkException(final String message, final Throwable cause) {
-			super(message, cause);
+		public NotOkException(final Throwable cause) {
+			super("", cause);
+		}
+
+		@Override
+		public String getMessage() {
+			final String message = super.getMessage();
+			if (message.isEmpty() && getCause() != null) {
+				return getCause().getMessage();
+			}
+			return message;
 		}
 	}
 
@@ -421,11 +430,8 @@ public class Sync {
 
 			return response;
 
-		} catch (IOException | JsonIOException e) {
-			throw new NotOkException("Failed to send data", e);
-
-		} catch (JsonSyntaxException e) {
-			throw new NotOkException("Server response is not a valid JSON", e);
+		} catch (IOException | JsonIOException | JsonSyntaxException e) {
+			throw new NotOkException(e);
 		}
 	}
 
@@ -457,11 +463,8 @@ public class Sync {
 
 			return response;
 
-		} catch (IOException | JsonIOException e) {
-			throw new NotOkException("Failed to send data", e);
-
-		} catch (JsonSyntaxException e) {
-			throw new NotOkException("Server response is not a valid JSON", e);
+		} catch (IOException | JsonIOException | JsonSyntaxException e) {
+			throw new NotOkException(e);
 		}
 	}
 
@@ -488,11 +491,8 @@ public class Sync {
 				throw new NotOkException(response.message);
 			}
 
-		} catch (IOException | JsonIOException e) {
-			throw new NotOkException("Failed to send data", e);
-
-		} catch (JsonSyntaxException e) {
-			throw new NotOkException("Server response is not a valid JSON", e);
+		} catch (IOException | JsonIOException | JsonSyntaxException e) {
+			throw new NotOkException(e);
 		}
 	}
 
@@ -521,11 +521,8 @@ public class Sync {
 				throw new NotOkException(response.message);
 			}
 
-		} catch (IOException | JsonIOException e) {
-			throw new NotOkException("Failed to send data", e);
-
-		} catch (JsonSyntaxException e) {
-			throw new NotOkException("Server response is not a valid JSON", e);
+		} catch (IOException | JsonIOException | JsonSyntaxException e) {
+			throw new NotOkException(e);
 		}
 	}
 
