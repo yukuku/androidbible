@@ -49,7 +49,7 @@ public class ArticleMeidA extends DevotionArticle {
 	@Override
 	public CharSequence getContent(CallbackSpan.OnClickListener<String> verseClickListener) {
 		SpannableStringBuilder sb = new SpannableStringBuilder();
-		sb.append(Html.fromHtml(bodyHtml + "<br/><small><a href='patchtext://host/?referenceUrl=" + Uri.encode("http://www.ccel.org/ccel/spurgeon/morneve.d" + date.substring(4, 8) + "am.html") + "'>" + Localized.string(R.string.patch_text_open_link) + "</a></small>"));
+		sb.append(Html.fromHtml(bodyHtml + "<br/><small><a href='patchtext://host/?referenceUrl=" + Uri.encode("https://www.ccel.org/ccel/spurgeon/morneve.d" + date.substring(4, 8) + "am.html") + "'>" + Localized.string(R.string.patch_text_open_link) + "</a></small>"));
 
 		convertLinks(sb, verseClickListener);
 

@@ -132,7 +132,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
 			@Override
 			public String getShareUrl(final SimpleDateFormat format, final Date date) {
-				return "http://www.sabda.org/publikasi/e-sh/print/?edisi=" + yyyymmdd.get().format(date);
+				return "https://www.sabda.org/publikasi/e-sh/print/?edisi=" + yyyymmdd.get().format(date);
 			}
 		},
 		MEID_A("meid-a", "Renungan Pagi", "Charles H. Spurgeon") {
@@ -165,7 +165,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
 			@Override
 			public String getShareUrl(final SimpleDateFormat format, final Date date) {
-				return "http://www.sabda.org/publikasi/e-rh/print/?edisi=" + yyyymmdd.get().format(date);
+				return "https://www.sabda.org/publikasi/e-rh/print/?edisi=" + yyyymmdd.get().format(date);
 			}
 
 			@Override
@@ -181,7 +181,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
 			@Override
 			public String getShareUrl(final SimpleDateFormat format, final Date date) {
-				return "http://www.ccel.org/ccel/spurgeon/morneve.d" + yyyymmdd.get().format(date) + "am.html";
+				return "https://www.ccel.org/ccel/spurgeon/morneve.d" + yyyymmdd.get().format(date) + "am.html";
 			}
 		},;
 

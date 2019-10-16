@@ -14,7 +14,7 @@ Alkitab is the Indonesian word for the Bible.
 Bible translations/versions
 ---------------------------
 
-This app natively uses *.yes* files for the Bible text. You can create a *.yes* file easily by preparing a plain text file. See <a href="http://www.bibleforandroid.com/developer">this page for</a> instructions.
+This app natively uses *.yes* files for the Bible text. You can create a *.yes* file easily by preparing a plain text file. See <a href="https://alkitab.app/developer">this page for</a> instructions.
 
 You can also convert PalmBible+ PDB files using the built-in converter in the app for your own use. 
 
@@ -31,7 +31,7 @@ Bible for Android is not only open-source, but also designed in a flexible manne
 - Open specific verses from your app
 - Make your own app that gives further insight regarding specific verses callable by Alkitab / Quick Bible
 
-See the <a href="http://www.bibleforandroid.com/developer">Developer page</a> for more information.
+See the <a href="https://alkitab.app/developer">Developer page</a> for more information.
 
 License
 --------
