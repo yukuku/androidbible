@@ -1,7 +1,11 @@
 package yuku.alkitabintegration.test;
 
 import android.content.ContentResolver;
-import android.test.AndroidTestCase;
+import android.support.test.runner.AndroidJUnit4;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.List;
 
@@ -11,19 +15,29 @@ import yuku.alkitabintegration.provider.VerseProvider;
 import yuku.alkitabintegration.provider.VerseProvider.Verse;
 import yuku.alkitabintegration.provider.VerseProvider.VerseRanges;
 
-public class VerseProviderTest extends AndroidTestCase {
+import static android.support.test.InstrumentationRegistry.getContext;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-	@Override
-	public void setUp() throws Exception {
-		super.setUp();
+@RunWith(AndroidJUnit4.class)
+public class VerseProviderTest {
+
+	@Before
+	public void setUp() {
 		AlkitabIntegrationUtil.setOverridenProviderAuthority("yuku.alkitab.debug.provider");
 	}
 
+	@Test
 	public void testAvailable() {
 		assertEquals(ConnectionResult.SUCCESS, AlkitabIntegrationUtil.isIntegrationAvailable(getContext()));
 	}
 
-	public void testSingleVerse() throws Throwable {
+	@Test
+	public void testSingleVerse() {
 		ContentResolver cr = getContext().getContentResolver();
 		VerseProvider vp = new VerseProvider(cr);
 
@@ -46,6 +60,7 @@ public class VerseProviderTest extends AndroidTestCase {
 		assertNull(vp.getVerse(0x000120));
 	}
 
+	@Test
 	public void testVerseRanges() throws Throwable {
 		ContentResolver cr = getContext().getContentResolver();
 		VerseProvider vp = new VerseProvider(cr);
@@ -69,7 +84,7 @@ public class VerseProviderTest extends AndroidTestCase {
 			List<Verse> verses = vp.getVerses(ranges);
 			assertEquals(13, verses.size());
 			assertEquals(0x010301, verses.get(12).ari);
-			assertFalse(verses.get(0).bookName.equals(verses.get(11).bookName));
+			assertNotEquals(verses.get(0).bookName, verses.get(11).bookName);
 		}
 
 		{ // should not have formatting codes

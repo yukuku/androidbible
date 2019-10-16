@@ -1,12 +1,18 @@
 package yuku.alkitabintegration.test;
 
 import android.content.Intent;
-import android.test.AndroidTestCase;
+import android.support.test.runner.AndroidJUnit4;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import yuku.alkitabintegration.display.Launcher;
 
+import static org.junit.Assert.assertEquals;
 
-public class LauncherTest extends AndroidTestCase {
+@RunWith(AndroidJUnit4.class)
+public class LauncherTest {
+	@Test
 	public void testOpenApp() {
 		{
 			Intent intent = Launcher.openAppAtBibleLocation(0x22, 0x01, 0x02);
