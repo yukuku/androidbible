@@ -35,7 +35,7 @@ ext {
     materialDialogsVersion = '0.9.6.0'
     gsonVersion = '2.8.5'
     playServicesVersion = '9.4.0'
-    stethoVersion = '1.5.0'
+    stethoVersion = '1.5.1'
     okhttpVersion = '3.10.0'
     retrofitVersion = '2.4.0'
     picassoVersion = '2.5.2'
