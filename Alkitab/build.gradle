@@ -114,13 +114,12 @@ dependencies {
     implementation "com.android.support:design:$supportLibVersion"
     implementation "com.android.support:percent:$supportLibVersion"
     implementation "com.squareup.picasso:picasso:$picassoVersion"
-    implementation "com.takisoft.fix:preference-v7:$supportLibVersion.1"
+    implementation "com.takisoft.fix:preference-v7:$preferenceFixVersion"
     implementation "com.google.firebase:firebase-messaging:17.5.0"
     implementation 'com.google.firebase:firebase-core:16.0.4'
     implementation 'com.android.support:multidex:1.0.3'
     implementation "com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2"
     implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
-    implementation "com.squareup.okhttp3:okhttp-urlconnection:$okhttpVersion"
     implementation 'net.sf.trove4j:trove4j:3.0.3'
     implementation "com.google.code.gson:gson:$gsonVersion"
     implementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
