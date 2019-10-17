@@ -3,7 +3,7 @@ package yuku.alkitab.base.widget;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;

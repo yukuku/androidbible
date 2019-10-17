@@ -1,7 +1,7 @@
 package yuku.alkitab.base.storage;
 
-import android.support.v4.content.ContextCompat;
-import android.support.v4.util.AtomicFile;
+import androidx.core.content.ContextCompat;
+import androidx.core.util.AtomicFile;
 import yuku.alkitab.base.App;
 
 import java.io.File;

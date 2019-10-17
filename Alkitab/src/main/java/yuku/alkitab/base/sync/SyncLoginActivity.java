@@ -2,9 +2,9 @@ package yuku.alkitab.base.sync;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.util.PatternsCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
+import androidx.core.util.PatternsCompat;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;

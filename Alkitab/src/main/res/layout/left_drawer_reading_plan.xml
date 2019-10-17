@@ -21,7 +21,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content" />
 
-		<android.support.v4.widget.NestedScrollView
+		<androidx.core.widget.NestedScrollView
 			android:id="@+id/scrollDescription"
 			android:layout_width="match_parent"
 			android:layout_height="128dp">
@@ -34,7 +34,7 @@
 				android:textAppearance="?android:textAppearanceSmall"
 				tools:text="Info Bla bla bla, bla bla, bla bla, bla bla, bla bla, blablabla, blablablabla." />
 
-		</android.support.v4.widget.NestedScrollView>
+		</androidx.core.widget.NestedScrollView>
 
 		<Button
 			android:id="@+id/bRestart"

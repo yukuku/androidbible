@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!-- The important thing to note here is the added fitsSystemWindows -->
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/drawerLayout"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
@@ -10,4 +10,4 @@
 	<!-- Your drawer view. As we have set fitSystemWindows=true
 		 this will be displayed under the status bar. -->
 	<include layout="@layout/left_drawer_text" />
-</android.support.v4.widget.DrawerLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

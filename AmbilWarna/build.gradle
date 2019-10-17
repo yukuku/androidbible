@@ -26,5 +26,5 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
-    implementation "com.android.support:preference-v7:$supportLibVersion"
+    implementation 'androidx.preference:preference:1.0.0'
 }

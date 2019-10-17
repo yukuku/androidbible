@@ -1,6 +1,6 @@
 package yuku.alkitab.base.util;
 
-import android.support.annotation.Keep;
+import androidx.annotation.Keep;
 import com.google.gson.JsonSyntaxException;
 import yuku.alkitab.base.App;
 

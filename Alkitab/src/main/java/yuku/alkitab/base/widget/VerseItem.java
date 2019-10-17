@@ -8,7 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.v4.graphics.ColorUtils;
+import androidx.core.graphics.ColorUtils;
 import android.text.Layout;
 import android.text.TextUtils;
 import android.util.AttributeSet;

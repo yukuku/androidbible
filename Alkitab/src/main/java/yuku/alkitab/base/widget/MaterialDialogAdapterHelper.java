@@ -1,6 +1,6 @@
 package yuku.alkitab.base.widget;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 public class MaterialDialogAdapterHelper {

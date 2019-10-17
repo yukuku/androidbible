@@ -6,7 +6,7 @@ import android.database.DatabaseUtils;
 import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Pair;
 import yuku.alkitab.songs.SongBookUtil;
 import yuku.alkitab.songs.SongFilter;

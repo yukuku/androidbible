@@ -1,6 +1,6 @@
 package yuku.alkitab.base.devotion;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public abstract class ArticleFromSabda extends DevotionArticle {
 	String body;

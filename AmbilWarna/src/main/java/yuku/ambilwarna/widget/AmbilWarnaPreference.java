@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceViewHolder;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.view.View;
 import yuku.ambilwarna.AmbilWarnaDialog;
@@ -100,7 +100,7 @@ public class AmbilWarnaPreference extends Preference {
 	}
 
 	/**
-	 * SavedState, a subclass of {@link android.support.v7.preference.Preference.BaseSavedState}, will store the state
+	 * SavedState, a subclass of {@link androidx.preference.Preference.BaseSavedState}, will store the state
 	 * of MyPreference, a subclass of Preference.
 	 * <p>
 	 * It is important to always call through to super methods.

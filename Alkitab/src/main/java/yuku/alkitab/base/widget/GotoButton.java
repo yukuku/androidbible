@@ -2,7 +2,7 @@ package yuku.alkitab.base.widget;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.support.v4.view.MotionEventCompat;
+import androidx.core.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.Button;

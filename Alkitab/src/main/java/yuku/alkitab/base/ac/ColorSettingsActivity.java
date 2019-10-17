@@ -2,9 +2,9 @@ package yuku.alkitab.base.ac;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.preference.PreferenceFragmentCompat;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.app.ActionBar;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.appcompat.widget.Toolbar;
 import yuku.afw.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.debug.R;

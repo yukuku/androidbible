@@ -2,8 +2,8 @@ package yuku.alkitab.ribka
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.TextInputLayout
-import android.support.v4.util.PatternsCompat
+import com.google.android.material.textfield.TextInputLayout
+import androidx.core.util.PatternsCompat
 import android.view.View
 import android.widget.EditText
 import android.widget.RadioButton

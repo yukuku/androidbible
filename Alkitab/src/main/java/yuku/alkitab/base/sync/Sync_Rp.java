@@ -1,7 +1,7 @@
 package yuku.alkitab.base.sync;
 
-import android.support.annotation.Keep;
-import android.support.annotation.NonNull;
+import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
 import android.util.Pair;
 import com.google.gson.reflect.TypeToken;
 import gnu.trove.map.hash.TObjectLongHashMap;

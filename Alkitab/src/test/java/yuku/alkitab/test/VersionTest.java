@@ -1,6 +1,6 @@
 package yuku.alkitab.test;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import junit.framework.TestCase;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;

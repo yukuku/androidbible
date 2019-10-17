@@ -2,8 +2,8 @@ package yuku.alkitab.base.dialog;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import android.text.InputType;
 import android.text.TextUtils;
 import com.afollestad.materialdialogs.MaterialDialog;

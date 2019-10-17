@@ -1,6 +1,6 @@
 package yuku.alkitab.base.util;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import yuku.afw.App;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;

@@ -1,6 +1,6 @@
 package yuku.alkitab.base.model;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import yuku.alkitab.model.Version;
 
 // models

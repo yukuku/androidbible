@@ -1,7 +1,7 @@
 package yuku.alkitab.base.widget;
 
 import android.content.res.Resources;
-import android.support.annotation.StringRes;
+import androidx.annotation.StringRes;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.util.AppLog;
 

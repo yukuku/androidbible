@@ -1,6 +1,6 @@
 package yuku.alkitab.base.devotion;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.SpannableStringBuilder;
 import android.text.style.URLSpan;
 import yuku.alkitab.base.ac.DevotionActivity;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.percent.PercentFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.percentlayout.widget.PercentFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
@@ -84,7 +84,7 @@
 	</LinearLayout>
 
 	<!--suppress AndroidDomInspection -->
-	<android.support.percent.PercentFrameLayout
+	<androidx.percentlayout.widget.PercentFrameLayout
 		android:layout_width="match_parent"
 		android:orientation="vertical"
 		app:layout_heightPercent="70%"
@@ -213,5 +213,5 @@
 			app:layout_marginTopPercent="75%"
 			app:layout_widthPercent="33.3%" />
 
-	</android.support.percent.PercentFrameLayout>
-</android.support.percent.PercentFrameLayout>
+	</androidx.percentlayout.widget.PercentFrameLayout>
+</androidx.percentlayout.widget.PercentFrameLayout>

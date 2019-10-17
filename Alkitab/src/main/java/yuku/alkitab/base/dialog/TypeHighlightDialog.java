@@ -1,7 +1,7 @@
 package yuku.alkitab.base.dialog;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.InputFilter;
 import android.text.Selection;
 import android.view.View;

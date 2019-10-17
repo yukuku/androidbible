@@ -1,7 +1,7 @@
 package yuku.alkitab.reminder.widget;
 
 import android.content.Context;
-import android.support.v7.preference.Preference;
+import androidx.preference.Preference;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.widget.TimePicker;

@@ -1,6 +1,6 @@
 package yuku.alkitab.base.model;
 
-import android.support.annotation.Keep;
+import androidx.annotation.Keep;
 
 // must be gson-compatible
 @Keep

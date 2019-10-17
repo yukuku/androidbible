@@ -1,7 +1,7 @@
 package yuku.alkitab.base.config;
 
-import android.support.annotation.Keep;
-import android.support.v4.util.AtomicFile;
+import androidx.annotation.Keep;
+import androidx.core.util.AtomicFile;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.model.MVersionPreset;

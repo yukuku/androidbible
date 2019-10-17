@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!-- Must make sure this file is in sync with fragment_versions_downloaded.xml -->
-<android.support.v4.widget.SwipeRefreshLayout android:id="@+id/swiper"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout android:id="@+id/swiper"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
@@ -17,4 +17,4 @@
 		android:paddingEnd="@dimen/padding_medium"
 		android:scrollbarStyle="outsideOverlay"
 		tools:listitem="@layout/item_version" />
-</android.support.v4.widget.SwipeRefreshLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

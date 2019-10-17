@@ -107,17 +107,17 @@ dependencies {
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanaryVersion"
     debugImplementation "com.facebook.stetho:stetho:$stethoVersion"
     debugImplementation "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
-    implementation "com.android.support:support-v4:$supportLibVersion"
-    implementation "com.android.support:support-annotations:$supportLibVersion"
-    implementation "com.android.support:support-core-utils:$supportLibVersion"
-    implementation "com.android.support:appcompat-v7:$supportLibVersion"
-    implementation "com.android.support:design:$supportLibVersion"
-    implementation "com.android.support:percent:$supportLibVersion"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.annotation:annotation:1.0.0'
+    implementation 'androidx.legacy:legacy-support-core-utils:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.percentlayout:percentlayout:1.0.0'
     implementation "com.squareup.picasso:picasso:$picassoVersion"
     implementation "com.takisoft.fix:preference-v7:$preferenceFixVersion"
     implementation "com.google.firebase:firebase-messaging:17.5.0"
     implementation 'com.google.firebase:firebase-core:16.0.4'
-    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'androidx.multidex:multidex:2.0.0'
     implementation "com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2"
     implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
     implementation 'net.sf.trove4j:trove4j:3.0.3'

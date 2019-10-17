@@ -1,6 +1,6 @@
 package yuku.alkitab.test;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.SpannableStringBuilder;
 import junit.framework.TestCase;
 import yuku.alkitab.base.widget.FormattedTextRenderer;

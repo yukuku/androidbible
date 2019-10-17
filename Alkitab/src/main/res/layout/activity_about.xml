@@ -5,13 +5,13 @@
 	android:layout_height="match_parent"
 	android:orientation="vertical">
 
-	<android.support.v7.widget.Toolbar
+	<androidx.appcompat.widget.Toolbar
 		android:id="@+id/toolbar"
 		android:layout_width="match_parent"
 		android:layout_height="?attr/actionBarSize"
 		android:background="@color/primary" />
 
-	<android.support.v4.widget.NestedScrollView
+	<androidx.core.widget.NestedScrollView
 		android:id="@+id/root"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
@@ -100,7 +100,7 @@
 					android:textAppearance="?android:textAppearanceMedium"
 					android:textColor="#fff" />
 
-				<android.support.v4.widget.ContentLoadingProgressBar
+				<androidx.core.widget.ContentLoadingProgressBar
 					android:id="@+id/progressAnnouncements"
 					style="?android:progressBarStyleHorizontal"
 					android:layout_width="match_parent"
@@ -281,6 +281,6 @@
 
 			</LinearLayout>
 		</LinearLayout>
-	</android.support.v4.widget.NestedScrollView>
+	</androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
-import android.support.v4.util.LongSparseArray;
+import androidx.collection.LongSparseArray;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import yuku.afw.App;
 import yuku.afw.storage.Preferences;

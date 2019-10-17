@@ -3,7 +3,7 @@ package yuku.alkitab.base.sync;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import yuku.alkitab.base.App;
 import yuku.alkitab.debug.R;
 

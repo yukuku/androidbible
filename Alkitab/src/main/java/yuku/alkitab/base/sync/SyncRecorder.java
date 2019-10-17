@@ -1,8 +1,8 @@
 package yuku.alkitab.base.sync;
 
-import android.support.annotation.Keep;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import yuku.afw.storage.Preferences;

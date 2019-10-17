@@ -18,8 +18,8 @@ package com.example.android.wizardpager.wizard.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
-import android.support.v4.content.res.ResourcesCompat;
+import androidx.fragment.app.ListFragment;
+import androidx.core.content.res.ResourcesCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;

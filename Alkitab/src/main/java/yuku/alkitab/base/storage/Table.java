@@ -1,6 +1,6 @@
 package yuku.alkitab.base.storage;
 
-import android.support.annotation.Keep;
+import androidx.annotation.Keep;
 
 import static yuku.alkitab.base.storage.Table.Type.*;
 
