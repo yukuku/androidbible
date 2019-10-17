@@ -31,7 +31,11 @@ ext {
     targetSdkVersion = 28
     travisBuild = System.getenv("TRAVIS") == "true"
     junitVersion = '4.12'
-    supportLibVersion = '28.0.0'
+
+    androidxAnnotationVersion = '1.1.0'
+    androidxAppcompatVersion = '1.1.0'
+    multidexVersion = '2.0.1'
+
     preferenceFixVersion = '28.0.0.0'
     materialDialogsVersion = '0.9.6.0'
     gsonVersion = '2.8.6'
