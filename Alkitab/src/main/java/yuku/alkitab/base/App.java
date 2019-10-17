@@ -3,18 +3,25 @@ package yuku.alkitab.base;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Build;
-import androidx.annotation.NonNull;
-import androidx.multidex.MultiDex;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.preference.PreferenceManager;
 import android.view.ViewConfiguration;
+
+import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.multidex.MultiDex;
+import androidx.preference.PreferenceManager;
+
 import com.crashlytics.android.Crashlytics;
 import com.downloader.PRDownloader;
 import com.downloader.PRDownloaderConfig;
 import com.google.gson.Gson;
 import com.jakewharton.picasso.OkHttp3Downloader;
-import com.squareup.leakcanary.LeakCanary;
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.concurrent.TimeUnit;
+
 import io.fabric.sdk.android.Fabric;
 import okhttp3.Cache;
 import okhttp3.Call;
@@ -36,11 +43,6 @@ import yuku.alkitab.tracking.Tracker;
 import yuku.alkitabfeedback.FeedbackSender;
 import yuku.alkitabintegration.display.Launcher;
 import yuku.stethoshim.StethoShim;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.concurrent.TimeUnit;
 
 public class App extends yuku.afw.App {
 	public static final String TAG = App.class.getSimpleName();
@@ -108,15 +110,6 @@ public class App extends yuku.afw.App {
 		super.onCreate();
 
 		staticInit();
-
-		{ // LeakCanary, also we need the Application instance.
-			if (LeakCanary.isInAnalyzerProcess(this)) {
-				// This process is dedicated to LeakCanary for heap analysis.
-				// You should not init your app in this process.
-				return;
-			}
-			LeakCanary.install(this);
-		}
 
 		{ // Stetho call through proxy
 			StethoShim.initializeWithDefaults(this);
