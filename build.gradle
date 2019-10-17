@@ -36,6 +36,7 @@ ext {
     androidxAppcompatVersion = '1.1.0'
     androidxCursoradapterVersion = '1.0.0'
     multidexVersion = '2.0.1'
+    materialVersion = '1.0.0'
 
     firebaseCoreVersion = '17.2.0'
     firebaseMessagingVersion = '20.0.0'
