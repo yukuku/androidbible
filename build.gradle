@@ -36,6 +36,9 @@ ext {
     androidxAppcompatVersion = '1.1.0'
     multidexVersion = '2.0.1'
 
+    firebaseCoreVersion = '17.2.0'
+    firebaseMessagingVersion = '20.0.0'
+
     preferenceFixVersion = '28.0.0.0'
     materialDialogsVersion = '0.9.6.0'
     gsonVersion = '2.8.6'
