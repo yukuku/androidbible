@@ -34,6 +34,7 @@ ext {
 
     androidxAnnotationVersion = '1.1.0'
     androidxAppcompatVersion = '1.1.0'
+    androidxCursoradapterVersion = '1.0.0'
     multidexVersion = '2.0.1'
 
     firebaseCoreVersion = '17.2.0'

@@ -106,7 +106,6 @@ dependencies {
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion"
     debugImplementation "com.facebook.stetho:stetho:$stethoVersion"
     debugImplementation "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
-    implementation "androidx.legacy:legacy-support-v4:1.0.0"
     implementation "androidx.annotation:annotation:$androidxAnnotationVersion"
     implementation "androidx.legacy:legacy-support-core-utils:1.0.0"
     implementation "androidx.appcompat:appcompat:$androidxAppcompatVersion"
