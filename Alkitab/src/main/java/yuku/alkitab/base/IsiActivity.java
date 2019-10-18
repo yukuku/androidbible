@@ -104,7 +104,7 @@ import yuku.alkitab.base.widget.TextAppearancePanel;
 import yuku.alkitab.base.widget.TwofingerLinearLayout;
 import yuku.alkitab.base.widget.VerseInlineLinkSpan;
 import yuku.alkitab.base.widget.VerseRenderer;
-import yuku.alkitab.base.widget.VersesView;
+import yuku.alkitab.base.widget.OldVersesView;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
@@ -274,8 +274,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	FrameLayout overlayContainer;
 	ViewGroup root;
 	Toolbar toolbar;
-	VersesView lsSplit0;
-	VersesView lsSplit1;
+	OldVersesView lsSplit0;
+	OldVersesView lsSplit1;
 	TextView tSplitEmpty;
 	TwofingerLinearLayout splitRoot;
 	LabeledSplitHandleButton splitHandleButton;
@@ -516,7 +516,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		lsSplit0.setDictionaryListener(dictionaryListener);
 
 		// additional setup for split1
-		lsSplit1.setVerseSelectionMode(VersesView.VerseSelectionMode.multiple);
+		lsSplit1.setVerseSelectionMode(OldVersesView.VerseSelectionMode.multiple);
 		lsSplit1.setEmptyView(tSplitEmpty);
 		lsSplit1.setParallelListener(parallelListener);
 		lsSplit1.setAttributeListener(new AttributeListener()); // have to be distinct from lsSplit0
@@ -881,7 +881,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			return true;
 		}
 
-		VersesView.PressResult pressResult = lsSplit0.press(keyCode);
+		OldVersesView.PressResult pressResult = lsSplit0.press(keyCode);
 		switch (pressResult.kind) {
 			case left:
 				bLeft_click();
@@ -1696,7 +1696,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	}
 
-	static boolean loadChapterToVersesView(VersesView versesView, Version version, String versionId, Book book, int chapter_1, int current_chapter_1, boolean uncheckAllVerses) {
+	static boolean loadChapterToVersesView(OldVersesView versesView, Version version, String versionId, Book book, int chapter_1, int current_chapter_1, boolean uncheckAllVerses) {
 		final SingleChapterVerses verses = version.loadChapterText(book, chapter_1);
 		if (verses == null) {
 			return false;
@@ -1808,7 +1808,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		history.add(ari_target);
 	}
 
-	class AttributeListener implements VersesView.AttributeListener {
+	class AttributeListener implements OldVersesView.AttributeListener {
 		void openBookmarkDialog(final long _id) {
 			final TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExisting(IsiActivity.this, _id);
 			dialog.setListener(() -> {
@@ -2053,9 +2053,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	}
 
-	VersesView.SelectedVersesListener lsSplit0_selectedVerses = new VersesView.DefaultSelectedVersesListener() {
+	OldVersesView.SelectedVersesListener lsSplit0_selectedVerses = new OldVersesView.DefaultSelectedVersesListener() {
 		@Override
-		public void onSomeVersesSelected(VersesView v) {
+		public void onSomeVersesSelected(OldVersesView v) {
 			if (activeSplitVersion != null) {
 				// synchronize the selection with the split view
 				IntArrayList selectedVerses = v.getSelectedVerses_1();
@@ -2072,7 +2072,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		@Override
-		public void onNoVersesSelected(VersesView v) {
+		public void onNoVersesSelected(OldVersesView v) {
 			if (activeSplitVersion != null) {
 				// synchronize the selection with the split view
 				lsSplit1.uncheckAllVerses(false);
@@ -2085,23 +2085,23 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	};
 
-	VersesView.SelectedVersesListener lsSplit1_selectedVerses = new VersesView.DefaultSelectedVersesListener() {
+	OldVersesView.SelectedVersesListener lsSplit1_selectedVerses = new OldVersesView.DefaultSelectedVersesListener() {
 		@Override
-		public void onSomeVersesSelected(VersesView v) {
+		public void onSomeVersesSelected(OldVersesView v) {
 			// synchronize the selection with the main view
 			IntArrayList selectedVerses = v.getSelectedVerses_1();
 			lsSplit0.checkVerses(selectedVerses, true);
 		}
 
 		@Override
-		public void onNoVersesSelected(VersesView v) {
+		public void onNoVersesSelected(OldVersesView v) {
 			lsSplit0.uncheckAllVerses(true);
 		}
 	};
 
-	VersesView.OnVerseScrollListener lsSplit0_verseScroll = new VersesView.OnVerseScrollListener() {
+	OldVersesView.OnVerseScrollListener lsSplit0_verseScroll = new OldVersesView.OnVerseScrollListener() {
 		@Override
-		public void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop) {
+		public void onVerseScroll(OldVersesView v, boolean isPericope, int verse_1, float prop) {
 
 			if (!isPericope && activeSplitVersion != null) {
 				lsSplit1.scrollToVerse(verse_1, prop);
@@ -2109,23 +2109,23 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		@Override
-		public void onScrollToTop(VersesView v) {
+		public void onScrollToTop(OldVersesView v) {
 			if (activeSplitVersion != null) {
 				lsSplit1.scrollToTop();
 			}
 		}
 	};
 
-	VersesView.OnVerseScrollListener lsSplit1_verseScroll = new VersesView.OnVerseScrollListener() {
+	OldVersesView.OnVerseScrollListener lsSplit1_verseScroll = new OldVersesView.OnVerseScrollListener() {
 		@Override
-		public void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop) {
+		public void onVerseScroll(OldVersesView v, boolean isPericope, int verse_1, float prop) {
 			if (!isPericope) {
 				lsSplit0.scrollToVerse(verse_1, prop);
 			}
 		}
 
 		@Override
-		public void onScrollToTop(VersesView v) {
+		public void onScrollToTop(OldVersesView v) {
 			lsSplit0.scrollToTop();
 		}
 	};

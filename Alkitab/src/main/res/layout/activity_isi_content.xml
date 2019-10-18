@@ -78,7 +78,7 @@
 			android:orientation="vertical"
 			tools:ignore="NestedWeights">
 
-			<yuku.alkitab.base.widget.VersesView
+			<yuku.alkitab.base.widget.OldVersesView
 				android:id="@+id/lsSplit0"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
@@ -98,7 +98,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="match_parent">
 
-				<yuku.alkitab.base.widget.VersesView
+				<yuku.alkitab.base.widget.OldVersesView
 					android:id="@+id/lsSplit1"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"

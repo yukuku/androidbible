@@ -3,7 +3,6 @@ package yuku.alkitab.base.dialog;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import androidx.fragment.app.DialogFragment;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
@@ -12,15 +11,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.fragment.app.DialogFragment;
 import com.afollestad.materialdialogs.MaterialDialog;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.dialog.base.BaseDialog;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.TargetDecoder;
+import yuku.alkitab.base.widget.OldVersesView;
 import yuku.alkitab.base.widget.VerseRenderer;
-import yuku.alkitab.base.widget.VersesView;
-import yuku.alkitab.base.widget.VersesView.VerseSelectionMode;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.SingleChapterVerses;
@@ -28,10 +30,6 @@ import yuku.alkitab.model.Version;
 import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 public class XrefDialog extends BaseDialog {
 	public static final String TAG = XrefDialog.class.getSimpleName();
@@ -41,10 +39,10 @@ public class XrefDialog extends BaseDialog {
 	public interface XrefDialogListener {
 		void onVerseSelected(XrefDialog dialog, int arif_source, int ari_target);
 	}
-	
+
 	TextView tXrefText;
-	VersesView versesView;
-	
+	OldVersesView versesView;
+
 	XrefDialogListener listener;
 
 	int arif_source;
@@ -59,13 +57,13 @@ public class XrefDialog extends BaseDialog {
 
 	public XrefDialog() {
 	}
-	
+
 	public static XrefDialog newInstance(int arif) {
 		XrefDialog res = new XrefDialog();
-		
-        Bundle args = new Bundle();
-        args.putInt(EXTRA_arif, arif);
-        res.setArguments(args);
+
+		Bundle args = new Bundle();
+		args.putInt(EXTRA_arif, arif);
+		res.setArguments(args);
 
 		return res;
 	}
@@ -81,23 +79,25 @@ public class XrefDialog extends BaseDialog {
 		}
 	}
 
-	@Override public void onCreate(Bundle savedInstanceState) {
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setStyle(DialogFragment.STYLE_NO_TITLE, 0);
 
 		arif_source = getArguments().getInt(EXTRA_arif);
 		xrefEntry = sourceVersion.getXrefEntry(arif_source);
 	}
-	
-	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View res = inflater.inflate(R.layout.dialog_xref, container, false);
 
 		tXrefText = res.findViewById(R.id.tXrefText);
 		versesView = res.findViewById(R.id.versesView);
-		
+
 		res.setBackgroundColor(S.applied().backgroundColor);
 		versesView.setCacheColorHint(S.applied().backgroundColor);
-		versesView.setVerseSelectionMode(VerseSelectionMode.singleClick);
+		versesView.setVerseSelectionMode(OldVersesView.VerseSelectionMode.singleClick);
 		versesView.setSelectedVersesListener(versesView_selectedVerses);
 		tXrefText.setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -126,55 +126,58 @@ public class XrefDialog extends BaseDialog {
 		final SpannableStringBuilder sb = new SpannableStringBuilder();
 		sb.append(VerseRenderer.XREF_MARK);
 		sb.append(" ");
-		
+
 		final int[] linkPos = {0};
 		findTags(xrefEntry.content, new FindTagsListener() {
-			@Override public void onTaggedText(final String tag, int start, int end) {
+			@Override
+			public void onTaggedText(final String tag, int start, int end) {
 				final int thisLinkPos = linkPos[0];
 				linkPos[0]++;
-				
+
 				int sb_len = sb.length();
 				sb.append(xrefEntry.content, start, end);
-				
+
 				if (tag.startsWith("t")) { // the only supported tag at the moment
 					final String encodedTarget = tag.substring(1);
-					
-					if (thisLinkPos == displayedLinkPos || (displayedLinkPos == -1 && thisLinkPos == 0)) { 
+
+					if (thisLinkPos == displayedLinkPos || (displayedLinkPos == -1 && thisLinkPos == 0)) {
 						// just make it bold, because this is the currently displayed link
-						sb.setSpan(new StyleSpan(Typeface.BOLD), sb_len, sb.length(), 0); 
-						
+						sb.setSpan(new StyleSpan(Typeface.BOLD), sb_len, sb.length(), 0);
+
 						if (displayedLinkPos == -1) {
 							showVerses(0, encodedTarget);
 						}
 					} else {
 						sb.setSpan(new ClickableSpan() {
-							@Override public void onClick(View widget) {
+							@Override
+							public void onClick(View widget) {
 								showVerses(thisLinkPos, encodedTarget);
 							}
 						}, sb_len, sb.length(), 0);
 					}
 				}
 			}
-			
-			@Override public void onPlainText(int start, int end) {
+
+			@Override
+			public void onPlainText(int start, int end) {
 				sb.append(xrefEntry.content, start, end);
 			}
 		});
-		
+
 		Appearances.applyTextAppearance(tXrefText, textSizeMult);
-		
+
 		tXrefText.setText(sb);
 	}
 
 	void showVerses(int linkPos, String encodedTarget) {
 		displayedLinkPos = linkPos;
-		
+
 		final IntArrayList ranges = decodeTarget(encodedTarget);
 
 		if (BuildConfig.DEBUG) {
 			AppLog.d(TAG, "linkPos " + linkPos + " target=" + encodedTarget + " ranges=" + ranges);
 		}
-		
+
 		displayedVerseTexts = new ArrayList<>();
 		displayedVerseNumberTexts = new ArrayList<>();
 		displayedRealAris = new IntArrayList();
@@ -186,9 +189,10 @@ public class XrefDialog extends BaseDialog {
 				int ari = displayedRealAris.get(i);
 				displayedVerseNumberTexts.add(Ari.toChapter(ari) + ":" + Ari.toVerse(ari));
 			}
-		
+
 			class Verses extends SingleChapterVerses {
-				@Override public String getVerse(int verse_0) {
+				@Override
+				public String getVerse(int verse_0) {
 					final String res = displayedVerseTexts.get(verse_0);
 					// prevent crash if the target xref is not available
 					if (res == null) {
@@ -196,21 +200,23 @@ public class XrefDialog extends BaseDialog {
 					}
 					return res;
 				}
-				
-				@Override public int getVerseCount() {
+
+				@Override
+				public int getVerseCount() {
 					return displayedVerseTexts.size();
 				}
-				
-				@Override public String getVerseNumberText(int verse_0) {
+
+				@Override
+				public String getVerseNumberText(int verse_0) {
 					return displayedVerseNumberTexts.get(verse_0);
 				}
 			}
-	
+
 			int firstAri = displayedRealAris.get(0);
 
 			versesView.setData(Ari.toBookChapter(firstAri), new Verses(), null, null, 0, sourceVersion, sourceVersionId);
 		}
-		
+
 		renderXrefText();
 	}
 
@@ -218,36 +224,38 @@ public class XrefDialog extends BaseDialog {
 		return TargetDecoder.decode(encodedTarget);
 	}
 
-	VersesView.SelectedVersesListener versesView_selectedVerses = new VersesView.DefaultSelectedVersesListener() {
-		@Override public void onVerseSingleClick(VersesView v, int verse_1) {
+	OldVersesView.SelectedVersesListener versesView_selectedVerses = new OldVersesView.DefaultSelectedVersesListener() {
+		@Override
+		public void onVerseSingleClick(OldVersesView v, int verse_1) {
 			listener.onVerseSelected(XrefDialog.this, arif_source, displayedRealAris.get(verse_1 - 1));
 		}
 	};
 
 	interface FindTagsListener {
 		void onPlainText(int start, int end);
+
 		void onTaggedText(String tag, int start, int end);
 	}
-	
+
 	// look for "<@" "@>" "@/" tags
 	void findTags(String s, FindTagsListener listener) {
 		int pos = 0;
 		while (true) {
 			int p = s.indexOf("@<", pos);
 			if (p == -1) break;
-			
+
 			listener.onPlainText(pos, p);
-			
-			int q = s.indexOf("@>", p+2);
+
+			int q = s.indexOf("@>", p + 2);
 			if (q == -1) break;
-			int r = s.indexOf("@/", q+2);
+			int r = s.indexOf("@/", q + 2);
 			if (r == -1) break;
-			
-			listener.onTaggedText(s.substring(p+2, q), q+2, r);
-			
-			pos = r+2;
+
+			listener.onTaggedText(s.substring(p + 2, q), q + 2, r);
+
+			pos = r + 2;
 		}
-		
+
 		listener.onPlainText(pos, s.length());
 	}
 

@@ -2,27 +2,25 @@ package yuku.alkitab.base.dialog;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.fragment.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.fragment.app.DialogFragment;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.dialog.base.BaseDialog;
 import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.util.Appearances;
-import yuku.alkitab.base.widget.VersesView;
-import yuku.alkitab.base.widget.VersesView.VerseSelectionMode;
+import yuku.alkitab.base.widget.OldVersesView;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Dialog that shows a list of verses. There are two modes:
@@ -39,12 +37,15 @@ public class VersesDialog extends BaseDialog {
 	private static final String EXTRA_compareMode = "compareMode";
 
 	public static abstract class VersesDialogListener {
-		public void onVerseSelected(VersesDialog dialog, int ari) {}
-		public void onComparedVerseSelected(VersesDialog dialog, int ari, MVersion mversion) {}
+		public void onVerseSelected(VersesDialog dialog, int ari) {
+		}
+
+		public void onComparedVerseSelected(VersesDialog dialog, int ari, MVersion mversion) {
+		}
 	}
 
 	TextView tReference;
-	VersesView versesView;
+	OldVersesView versesView;
 
 	VersesDialogListener listener;
 
@@ -63,13 +64,13 @@ public class VersesDialog extends BaseDialog {
 
 	public VersesDialog() {
 	}
-	
+
 	public static VersesDialog newInstance(final IntArrayList ariRanges) {
 		VersesDialog res = new VersesDialog();
-		
-        Bundle args = new Bundle();
-        args.putParcelable(EXTRA_ariRanges, ariRanges);
-        res.setArguments(args);
+
+		Bundle args = new Bundle();
+		args.putParcelable(EXTRA_ariRanges, ariRanges);
+		res.setArguments(args);
 
 		return res;
 	}
@@ -94,7 +95,8 @@ public class VersesDialog extends BaseDialog {
 		return res;
 	}
 
-	@Override public void onCreate(Bundle savedInstanceState) {
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setStyle(DialogFragment.STYLE_NO_TITLE, 0);
 
@@ -103,7 +105,8 @@ public class VersesDialog extends BaseDialog {
 		compareMode = getArguments().getBoolean(EXTRA_compareMode);
 	}
 
-	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View res = inflater.inflate(R.layout.dialog_verses, container, false);
 
 		tReference = res.findViewById(R.id.tReference);
@@ -111,7 +114,7 @@ public class VersesDialog extends BaseDialog {
 
 		res.setBackgroundColor(S.applied().backgroundColor);
 		versesView.setCacheColorHint(S.applied().backgroundColor);
-		versesView.setVerseSelectionMode(VerseSelectionMode.singleClick);
+		versesView.setVerseSelectionMode(OldVersesView.VerseSelectionMode.singleClick);
 		versesView.setSelectedVersesListener(versesView_selectedVerses);
 
 		// build reference label
@@ -178,8 +181,8 @@ public class VersesDialog extends BaseDialog {
 
 			// sort such that sourceVersion is first
 			Collections.sort(mversions, (lhs, rhs) -> {
-				int a = U.equals(lhs.getVersionId(), sourceVersionId)? -1: 0;
-				int b = U.equals(rhs.getVersionId(), sourceVersionId)? -1: 0;
+				int a = U.equals(lhs.getVersionId(), sourceVersionId) ? -1 : 0;
+				int b = U.equals(rhs.getVersionId(), sourceVersionId) ? -1 : 0;
 				return a - b;
 			});
 
@@ -263,8 +266,9 @@ public class VersesDialog extends BaseDialog {
 		return res;
 	}
 
-	VersesView.SelectedVersesListener versesView_selectedVerses = new VersesView.DefaultSelectedVersesListener() {
-		@Override public void onVerseSingleClick(VersesView v, int verse_1 /* this is actually position+1, not necessaryly verse_1 */) {
+	OldVersesView.SelectedVersesListener versesView_selectedVerses = new OldVersesView.DefaultSelectedVersesListener() {
+		@Override
+		public void onVerseSingleClick(OldVersesView v, int verse_1 /* this is actually position+1, not necessaryly verse_1 */) {
 			if (listener != null) {
 				if (!compareMode) {
 					listener.onVerseSelected(VersesDialog.this, (Integer) customCallbackData[verse_1 - 1]);

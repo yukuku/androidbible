@@ -54,7 +54,7 @@ public class AttributeView extends View {
 	boolean has_maps;
 	float scale = 1.f;
 
-	private VersesView.AttributeListener attributeListener;
+	private OldVersesView.AttributeListener attributeListener;
 	private Version version;
 	private String versionId;
 	private int ari;
@@ -303,7 +303,7 @@ public class AttributeView extends View {
 		return false;
 	}
 
-	public void setAttributeListener(VersesView.AttributeListener attributeListener, final Version version, final String versionId, int ari) {
+	public void setAttributeListener(OldVersesView.AttributeListener attributeListener, final Version version, final String versionId, int ari) {
 		this.attributeListener = attributeListener;
 		this.version = version;
 		this.versionId = versionId;
