@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.jetbrains.annotations.NotNull;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.util.AppLog;
@@ -126,36 +127,87 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		}
 	}
 
-	private SingleViewVerseAdapter adapter;
-	private SelectedVersesListener listener;
-	private VerseSelectionMode verseSelectionMode;
-	private Drawable originalSelector;
-	private OnVerseScrollListener onVerseScrollListener;
-	private AbsListView.OnScrollListener userOnScrollListener;
-	private int scrollState = 0;
-	/**
-	 * Used as a cache, storing views to be fed to convertView parameter
-	 * when measuring items manually at {@link #getMeasuredItemHeight(int)}.
-	 */
-	private View[] scrollToVerseConvertViews;
-	private String name;
-	private boolean firstTimeScroll = true;
-	/**
-	 * Updated every time {@link #setData(int, SingleChapterVerses, int[], PericopeBlock[], int, Version, String)}
-	 * or {@link #setDataEmpty()} is called. Used to track data changes, so delayed scroll, etc can be prevented from happening if the data has changed.
-	 */
-	private AtomicInteger dataVersionNumber = new AtomicInteger();
-
-	public OldVersesView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		init();
+	public AttributeListener getAttributeListener() {
+		return adapter.getAttributeListener();
 	}
+
+	public void setAttributeListener(final AttributeListener attributeListener) {
+		adapter.setAttributeListener(attributeListener);
+	}
+
+	private String name;
 
 	/**
 	 * Set the name of this VersesView for debugging.
 	 */
 	public void setName(final String name) {
 		this.name = name;
+	}
+
+	@NotNull
+	@Override
+	public String toString() {
+		return name != null ? ("VersesView{name=" + name + "}") : "VersesView";
+	}
+
+	VerseSelectionMode verseSelectionMode;
+
+	public void setVerseSelectionMode(VerseSelectionMode mode) {
+		this.verseSelectionMode = mode;
+
+		if (mode == VerseSelectionMode.singleClick) {
+			setSelector(originalSelector);
+			uncheckAllVerses(false);
+			setChoiceMode(ListView.CHOICE_MODE_NONE);
+		} else if (mode == VerseSelectionMode.multiple) {
+			setSelector(new ColorDrawable(0x0));
+			setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		} else if (mode == VerseSelectionMode.none) {
+			setSelector(new ColorDrawable(0x0));
+			setChoiceMode(ListView.CHOICE_MODE_NONE);
+		}
+	}
+
+	SelectedVersesListener listener;
+
+	public void setSelectedVersesListener(SelectedVersesListener listener) {
+		this.listener = listener;
+	}
+
+	// no longer used in new verseview
+	private Drawable originalSelector;
+
+	private OnVerseScrollListener onVerseScrollListener;
+
+	public void setOnVerseScrollListener(OnVerseScrollListener onVerseScrollListener) {
+		this.onVerseScrollListener = onVerseScrollListener;
+	}
+
+	// no longer used in new verseview
+	private AbsListView.OnScrollListener userOnScrollListener;
+	// no longer used in new verseview
+	private boolean firstTimeScroll = true;
+	// no longer used in new verseview
+	private int scrollState = 0;
+
+	/**
+	 * Updated every time {@link #setData(int, SingleChapterVerses, int[], PericopeBlock[], int, Version, String)}
+	 * or {@link #setDataEmpty()} is called. Used to track data changes, so delayed scroll, etc can be prevented from happening if the data has changed.
+	 */
+	private AtomicInteger dataVersionNumber = new AtomicInteger();
+
+	// ############################# migrate marker
+
+	SingleViewVerseAdapter adapter;
+	/**
+	 * Used as a cache, storing views to be fed to convertView parameter
+	 * when measuring items manually at {@link #getMeasuredItemHeight(int)}.
+	 */
+	private View[] scrollToVerseConvertViews;
+
+	public OldVersesView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		init();
 	}
 
 	private void init() {
@@ -178,21 +230,8 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		userOnScrollListener = l;
 	}
 
-	@Override
-	public VerseAdapter getAdapter() {
-		return adapter;
-	}
-
 	public void setParallelListener(CallbackSpan.OnClickListener<Object> parallelListener) {
 		adapter.setParallelListener(parallelListener);
-	}
-
-	public AttributeListener getAttributeListener() {
-		return adapter.getAttributeListener();
-	}
-
-	public void setAttributeListener(final AttributeListener attributeListener) {
-		adapter.setAttributeListener(attributeListener);
 	}
 
 	public void setInlineLinkSpanFactory(final VerseInlineLinkSpan.Factory inlineLinkSpanFactory) {
@@ -201,26 +240,6 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 
 	public void setDictionaryListener(CallbackSpan.OnClickListener<SingleViewVerseAdapter.DictionaryLinkInfo> listener) {
 		adapter.setDictionaryListener(listener);
-	}
-
-	public void setVerseSelectionMode(VerseSelectionMode mode) {
-		this.verseSelectionMode = mode;
-
-		if (mode == VerseSelectionMode.singleClick) {
-			setSelector(originalSelector);
-			uncheckAllVerses(false);
-			setChoiceMode(ListView.CHOICE_MODE_NONE);
-		} else if (mode == VerseSelectionMode.multiple) {
-			setSelector(new ColorDrawable(0x0));
-			setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-		} else if (mode == VerseSelectionMode.none) {
-			setSelector(new ColorDrawable(0x0));
-			setChoiceMode(ListView.CHOICE_MODE_NONE);
-		}
-	}
-
-	public void setOnVerseScrollListener(OnVerseScrollListener onVerseScrollListener) {
-		this.onVerseScrollListener = onVerseScrollListener;
 	}
 
 	public void reloadAttributeMap() {
@@ -599,10 +618,6 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		post(() -> setSelectionFromTop(0, 0));
 	}
 
-	public void setSelectedVersesListener(SelectedVersesListener listener) {
-		this.listener = listener;
-	}
-
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		if (userOnScrollListener != null) userOnScrollListener.onScrollStateChanged(view, scrollState);
@@ -657,11 +672,6 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 
 	public void stopFling() {
 		StopListFling.stop(this);
-	}
-
-	@Override
-	public String toString() {
-		return name != null ? ("VersesView{name=" + name + "}") : "VersesView";
 	}
 
 	public void setDictionaryModeAris(@Nullable final SparseBooleanArray aris) {
