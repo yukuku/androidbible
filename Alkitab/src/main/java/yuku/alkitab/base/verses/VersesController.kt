@@ -86,6 +86,10 @@ interface VersesController {
      * not to the top of the verse.
      */
     fun scrollToVerse(verse_1: Int)
+    /**
+     * This is different from the other [scrollToVerse] in that if the requested
+     * verse has a pericope header, this will scroll to the verse, ignoring the pericope header.
+     */
     fun scrollToVerse(verse_1: Int, prop: Float)
     /**
      * Old name: getVerseBasedOnScroll

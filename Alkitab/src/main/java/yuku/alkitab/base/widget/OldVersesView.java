@@ -292,13 +292,96 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		return res;
 	}
 
-	// ############################# migrate marker
+	public void scrollToTop() {
+		post(() -> setSelectionFromTop(0, 0));
+	}
+
+	/**
+	 * This is different from {@link #scrollToVerse(int, float)} in that if the requested
+	 * verse has a pericope header, this will scroll to the top of the pericope header,
+	 * not to the top of the verse.
+	 */
+	public void scrollToVerse(final int verse_1) {
+		final int position = adapter.getPositionOfPericopeBeginningFromVerse(verse_1);
+
+		if (position == -1) {
+			AppLog.w(TAG, "could not find verse_1=" + verse_1 + ", weird!");
+		} else {
+			final int delay = firstTimeScroll ? 34 : 0;
+			final int vn = dataVersionNumber.get();
+
+			postDelayed(() -> {
+				// this may happen async from above, so check data version first
+				if (vn != dataVersionNumber.get()) return;
+
+				// negate padding offset, unless this is the first verse
+				final int paddingNegator = position == 0 ? 0 : -this.getPaddingTop();
+
+				stopFling();
+				setSelectionFromTop(position, paddingNegator);
+
+				firstTimeScroll = false;
+			}, delay);
+		}
+	}
+
+	/**
+	 * This is different from {@link #scrollToVerse(int)} in that if the requested
+	 * verse has a pericope header, this will scroll to the verse, ignoring the pericope header.
+	 */
+	public void scrollToVerse(int verse_1, final float prop) {
+		final int position = adapter.getPositionIgnoringPericopeFromVerse(verse_1);
+
+		if (position == -1) {
+			AppLog.d(TAG, "could not find verse_1: " + verse_1);
+			return;
+		}
+
+		post(() -> {
+			// this may happen async from above, so check first if pos is still valid
+			if (position >= getCount()) return;
+
+			// negate padding offset, unless this is the first verse
+			final int paddingNegator = position == 0 ? 0 : -this.getPaddingTop();
+
+			final int firstPos = getFirstVisiblePosition();
+			final int lastPos = getLastVisiblePosition();
+			if (position >= firstPos && position <= lastPos) {
+				// we have the child on screen, no need to measure
+				View child = getChildAt(position - firstPos);
+				stopFling();
+				setSelectionFromTop(position, -(int) (prop * child.getHeight()) + paddingNegator);
+				return;
+			}
+
+			final int measuredHeight = getMeasuredItemHeight(position);
+
+			stopFling();
+			setSelectionFromTop(position, -(int) (prop * measuredHeight) + paddingNegator);
+		});
+	}
 
 	/**
 	 * Used as a cache, storing views to be fed to convertView parameter
 	 * when measuring items manually at {@link #getMeasuredItemHeight(int)}.
 	 */
 	private View[] scrollToVerseConvertViews;
+
+	private int getMeasuredItemHeight(final int position) {
+		// child needed is not on screen, we need to measure
+		if (scrollToVerseConvertViews == null) {
+			// initialize scrollToVerseConvertViews if needed
+			scrollToVerseConvertViews = new View[adapter.getViewTypeCount()];
+		}
+		final int itemType = adapter.getItemViewType(position);
+		final View convertView = scrollToVerseConvertViews[itemType];
+		final View child = adapter.getView(position, convertView, this);
+		child.measure(MeasureSpec.makeMeasureSpec(this.getWidth() - this.getPaddingLeft() - this.getPaddingRight(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+		scrollToVerseConvertViews[itemType] = child;
+		return child.getMeasuredHeight();
+	}
+
+	// ############################# migrate marker
 
 	public OldVersesView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -539,89 +622,6 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 
 	public void callAttentionForVerse(final int verse_1) {
 		adapter.callAttentionForVerse(verse_1);
-	}
-
-	/**
-	 * This is different from {@link #scrollToVerse(int, float)} in that if the requested
-	 * verse has a pericope header, this will scroll to the top of the pericope header,
-	 * not to the top of the verse.
-	 */
-	public void scrollToVerse(final int verse_1) {
-		final int position = adapter.getPositionOfPericopeBeginningFromVerse(verse_1);
-
-		if (position == -1) {
-			AppLog.w(TAG, "could not find verse_1=" + verse_1 + ", weird!");
-		} else {
-			final int delay = firstTimeScroll ? 34 : 0;
-			final int vn = dataVersionNumber.get();
-
-			postDelayed(() -> {
-				// this may happen async from above, so check data version first
-				if (vn != dataVersionNumber.get()) return;
-
-				// negate padding offset, unless this is the first verse
-				final int paddingNegator = position == 0 ? 0 : -this.getPaddingTop();
-
-				stopFling();
-				setSelectionFromTop(position, paddingNegator);
-
-				firstTimeScroll = false;
-			}, delay);
-		}
-	}
-
-	/**
-	 * This is different from {@link #scrollToVerse(int)} in that if the requested
-	 * verse has a pericope header, this will scroll to the verse, ignoring the pericope header.
-	 */
-	public void scrollToVerse(int verse_1, final float prop) {
-		final int position = adapter.getPositionIgnoringPericopeFromVerse(verse_1);
-
-		if (position == -1) {
-			AppLog.d(TAG, "could not find verse_1: " + verse_1);
-			return;
-		}
-
-		post(() -> {
-			// this may happen async from above, so check first if pos is still valid
-			if (position >= getCount()) return;
-
-			// negate padding offset, unless this is the first verse
-			final int paddingNegator = position == 0 ? 0 : -this.getPaddingTop();
-
-			final int firstPos = getFirstVisiblePosition();
-			final int lastPos = getLastVisiblePosition();
-			if (position >= firstPos && position <= lastPos) {
-				// we have the child on screen, no need to measure
-				View child = getChildAt(position - firstPos);
-				stopFling();
-				setSelectionFromTop(position, -(int) (prop * child.getHeight()) + paddingNegator);
-				return;
-			}
-
-			final int measuredHeight = getMeasuredItemHeight(position);
-
-			stopFling();
-			setSelectionFromTop(position, -(int) (prop * measuredHeight) + paddingNegator);
-		});
-	}
-
-	private int getMeasuredItemHeight(final int position) {
-		// child needed is not on screen, we need to measure
-		if (scrollToVerseConvertViews == null) {
-			// initialize scrollToVerseConvertViews if needed
-			scrollToVerseConvertViews = new View[adapter.getViewTypeCount()];
-		}
-		final int itemType = adapter.getItemViewType(position);
-		final View convertView = scrollToVerseConvertViews[itemType];
-		final View child = adapter.getView(position, convertView, this);
-		child.measure(MeasureSpec.makeMeasureSpec(this.getWidth() - this.getPaddingLeft() - this.getPaddingRight(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-		scrollToVerseConvertViews[itemType] = child;
-		return child.getMeasuredHeight();
-	}
-
-	public void scrollToTop() {
-		post(() -> setSelectionFromTop(0, 0));
 	}
 
 	@Override

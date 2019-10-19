@@ -1,10 +1,14 @@
 package yuku.alkitab.base.verses
 
 import android.graphics.Rect
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.widget.VerseInlineLinkSpan
 import yuku.alkitab.util.IntArrayList
 import java.util.concurrent.atomic.AtomicInteger
+
+private const val TAG = "VersesControllerImpl"
 
 class VersesControllerImpl(
     private val rv: RecyclerView,
@@ -78,15 +82,73 @@ class VersesControllerImpl(
     }
 
     override fun scrollToTop() {
-        TODO("not implemented")
+        rv.scrollToPosition(0)
     }
 
     override fun scrollToVerse(verse_1: Int) {
-        TODO("not implemented")
+        val position = versesDataModel.getPositionOfPericopeBeginningFromVerse(verse_1)
+
+        if (position == -1) {
+            AppLog.w(TAG, "could not find verse_1=$verse_1, weird!")
+        } else {
+            val vn = dataVersionNumber.get()
+
+            rv.post {
+                // this may happen async from above, so check data version first
+                if (vn != dataVersionNumber.get()) return@post
+
+                // negate padding offset, unless this is the first verse
+                val paddingNegator = if (position == 0) 0 else -rv.paddingTop
+
+                // TODO unsafe cast to LinearLayoutManager
+                val linearLayoutManager = rv.layoutManager as LinearLayoutManager
+                linearLayoutManager.scrollToPositionWithOffset(position, paddingNegator)
+            }
+        }
     }
 
     override fun scrollToVerse(verse_1: Int, prop: Float) {
-        TODO("not implemented")
+        val position = versesDataModel.getPositionIgnoringPericopeFromVerse(verse_1)
+
+        if (position == -1) {
+            AppLog.d(TAG, "could not find verse_1: $verse_1")
+            return
+        }
+
+        rv.post {
+            // this may happen async from above, so check first if pos is still valid
+            if (position >= versesDataModel.itemCount) return@post
+
+            // negate padding offset, unless this is the first verse
+            val paddingNegator = if (position == 0) 0 else -rv.paddingTop
+
+            // TODO unsafe cast to LinearLayoutManager
+            val linearLayoutManager = rv.layoutManager as LinearLayoutManager
+            val firstPos = linearLayoutManager.findFirstVisibleItemPosition()
+            val lastPos = linearLayoutManager.findLastVisibleItemPosition()
+            if (position in firstPos..lastPos) {
+                // we have the child on screen, no need to measure
+                val child = linearLayoutManager.getChildAt(position - firstPos) ?: return@post
+                linearLayoutManager.scrollToPositionWithOffset(position, -(prop * child.height).toInt() + paddingNegator)
+                return@post
+            }
+
+            val measuredHeight = getMeasuredItemHeight(position)
+            linearLayoutManager.scrollToPositionWithOffset(position, -(prop * measuredHeight).toInt() + paddingNegator)
+        }
+    }
+
+    private fun getMeasuredItemHeight(position: Int): Int {
+        // child needed is not on screen, we need to measure
+        // TODO unsafe cast to LinearLayoutManager
+        val linearLayoutManager = rv.layoutManager as LinearLayoutManager
+
+        // TODO(VersesView revamp): create adapter
+//        val child = adapter.getView(position, convertView, this)
+//        child.measure(View.MeasureSpec.makeMeasureSpec(this.getWidth() - this.getPaddingLeft() - this.getPaddingRight(), View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+//        scrollToVerseConvertViews[itemType] = child
+//        return child.getMeasuredHeight()
+        TODO()
     }
 
     override fun getVerse_1BasedOnScroll(): Int {
