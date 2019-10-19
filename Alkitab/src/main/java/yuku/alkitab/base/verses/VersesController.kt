@@ -1,8 +1,6 @@
-package yuku.alkitab.base.widget
+package yuku.alkitab.base.verses
 
-import yuku.alkitab.base.util.Highlights
-import yuku.alkitab.model.PericopeBlock
-import yuku.alkitab.model.SingleChapterVerses
+import yuku.alkitab.base.widget.VerseInlineLinkSpan
 import yuku.alkitab.model.Version
 
 interface VersesController {
@@ -69,50 +67,3 @@ interface VersesController {
     val versesDataModel: VersesDataModel
 }
 
-class VersesDataModel(
-    var ari_bc_: Int,
-    var verses_: SingleChapterVerses?,
-    var pericopeAris_: IntArray,
-    var pericopeBlocks_: Array<PericopeBlock>,
-    var version_: Version?,
-    var versionId_: String?,
-    var textSizeMult_: Float,
-
-    var bookmarkCountMap_: IntArray,
-    var noteCountMap_: IntArray,
-    var highlightInfoMap_: Array<Highlights.Info>,
-    var progressMarkBitsMap_: IntArray,
-    var hasMapsMap_: BooleanArray
-) {
-    /**
-     * For each element, if 0 or more, it refers to the 0-based verse number.
-     * If negative, -1 is the index 0 of pericope, -2 (a) is index 1 (b) of pericope, etc.
-     *
-     * Convert a to b: b = -a-1;
-     * Convert b to a: a = -b-1;
-     */
-    private val itemPointer_ by lazy {
-        TODO()
-    }
-
-    init {
-
-    }
-
-    companion object {
-        val EMPTY = VersesDataModel(
-            ari_bc_ = 0,
-            verses_ = null,
-            pericopeAris_ = IntArray(0),
-            pericopeBlocks_ = emptyArray(),
-            version_ = null,
-            versionId_ = null,
-            textSizeMult_ = 1f,
-            bookmarkCountMap_ = IntArray(0),
-            noteCountMap_ = IntArray(0),
-            highlightInfoMap_ = emptyArray(),
-            progressMarkBitsMap_ = IntArray(0),
-            hasMapsMap_ = BooleanArray(0)
-        )
-    }
-}

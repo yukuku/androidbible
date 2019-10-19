@@ -144,12 +144,6 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		this.name = name;
 	}
 
-	@NotNull
-	@Override
-	public String toString() {
-		return name != null ? ("VersesView{name=" + name + "}") : "VersesView";
-	}
-
 	VerseSelectionMode verseSelectionMode;
 
 	public void setVerseSelectionMode(VerseSelectionMode mode) {
@@ -196,9 +190,16 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 	 */
 	private AtomicInteger dataVersionNumber = new AtomicInteger();
 
-	// ############################# migrate marker
+	@NotNull
+	@Override
+	public String toString() {
+		return name != null ? ("VersesView{name=" + name + "}") : "VersesView";
+	}
 
 	SingleViewVerseAdapter adapter;
+
+	// ############################# migrate marker
+
 	/**
 	 * Used as a cache, storing views to be fed to convertView parameter
 	 * when measuring items manually at {@link #getMeasuredItemHeight(int)}.

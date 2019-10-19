@@ -1,4 +1,4 @@
-package yuku.alkitab.base.widget
+package yuku.alkitab.base.verses
 
 import androidx.recyclerview.widget.RecyclerView
 import java.util.concurrent.atomic.AtomicInteger

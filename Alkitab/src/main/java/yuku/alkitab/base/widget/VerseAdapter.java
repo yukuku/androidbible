@@ -54,15 +54,17 @@ public abstract class VerseAdapter extends BaseAdapter {
 
 	LayoutInflater inflater_;
 
-	// For calling attention. All attentioned verses have the same start time.
-	// The last call to callAttentionForVerse() decides as when the animation starts.
-	// Calling setData* methods clears the attentioned verses.
-	long attentionStart_;
-	Set<Integer> attentionPositions_;
+	/* non-public */ synchronized void setDataEmpty() {
+		ari_bc_ = 0;
+		verses_ = null;
+		pericopeBlocks_ = null;
+		itemPointer_ = null;
+		attentionStart_ = 0;
+		if (attentionPositions_ != null) {
+			attentionPositions_.clear();
+		}
 
-	public VerseAdapter(Context context) {
-		density_ = context.getResources().getDisplayMetrics().density;
-		inflater_ = LayoutInflater.from(context);
+		notifyDataSetChanged();
 	}
 
 	/* non-public */ synchronized void setData(int ariBc, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock, @Nullable final Version version, @Nullable final String versionId) {
@@ -73,19 +75,6 @@ public abstract class VerseAdapter extends BaseAdapter {
 		version_ = version;
 		versionId_ = versionId;
 		calculateTextSizeMult();
-		attentionStart_ = 0;
-		if (attentionPositions_ != null) {
-			attentionPositions_.clear();
-		}
-
-		notifyDataSetChanged();
-	}
-
-	/* non-public */ synchronized void setDataEmpty() {
-		ari_bc_ = 0;
-		verses_ = null;
-		pericopeBlocks_ = null;
-		itemPointer_ = null;
 		attentionStart_ = 0;
 		if (attentionPositions_ != null) {
 			attentionPositions_.clear();
@@ -182,49 +171,10 @@ public abstract class VerseAdapter extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 
-	@Override public synchronized int getCount() {
-		if (verses_ == null) return 0;
-
-		return itemPointer_.length;
-	}
-
-	@Override public synchronized String getItem(int position) {
-		int id = itemPointer_[position];
-
-		if (id >= 0) {
-			return verses_.getVerse(position);
-		} else {
-			return pericopeBlocks_[-id - 1].toString();
-		}
-	}
-
-	@Override public synchronized long getItemId(int position) {
-		return position;
-	}
-
-	public void setParallelListener(CallbackSpan.OnClickListener<Object> parallelListener) {
-		parallelListener_ = parallelListener;
-		notifyDataSetChanged();
-	}
-
-	public OldVersesView.AttributeListener getAttributeListener() {
-		return attributeListener_;
-	}
-	
-	public void setAttributeListener(OldVersesView.AttributeListener attributeListener) {
-		attributeListener_ = attributeListener;
-		notifyDataSetChanged();
-	}
-
-	public void setInlineLinkSpanFactory(final VerseInlineLinkSpan.Factory inlineLinkSpanFactory) {
-		inlineLinkSpanFactory_ = inlineLinkSpanFactory;
-		notifyDataSetChanged();
-	}
-
 	/**
 	 * For example, when pos=0 is a pericope and pos=1 is the first verse,
 	 * this method returns 0.
-	 * 
+	 *
 	 * @return position on this adapter, or -1 if not found
 	 */
 	public int getPositionOfPericopeBeginningFromVerse(int verse_1) {
@@ -254,7 +204,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	/**
 	 * Let's say pos 0 is pericope and pos 1 is verse_1 1;
 	 * then this method called with verse_1=1 returns 1.
-	 * 
+	 *
 	 * @return position or -1 if not found
 	 */
 	public int getPositionIgnoringPericopeFromVerse(int verse_1) {
@@ -274,21 +224,21 @@ public abstract class VerseAdapter extends BaseAdapter {
 	 */
 	public int getVerseFromPosition(int position) {
 		if (itemPointer_ == null) return 0;
-		
+
 		if (position >= itemPointer_.length) {
 			position = itemPointer_.length - 1;
 		}
-		
+
 		int id = itemPointer_[position];
-		
+
 		if (id >= 0) {
 			return id + 1;
 		}
-		
+
 		// it's a pericope. Let's move forward until we get a verse
 		for (int i = position + 1; i < itemPointer_.length; i++) {
 			id = itemPointer_[i];
-			
+
 			if (id >= 0) {
 				return id + 1;
 			}
@@ -296,20 +246,6 @@ public abstract class VerseAdapter extends BaseAdapter {
 
 		AppLog.w(TAG, "pericope title at the last position? does not make sense.");
 		return 0;
-	}
-
-	void callAttentionForVerse(final int verse_1) {
-		final int pos = getPositionIgnoringPericopeFromVerse(verse_1);
-		if (pos != -1) {
-			Set<Integer> ap = attentionPositions_;
-			if (ap == null) {
-				attentionPositions_ = ap = new HashSet<>();
-			}
-			ap.add(pos);
-			attentionStart_ = System.currentTimeMillis();
-
-			notifyDataSetChanged();
-		}
 	}
 
 	/**
@@ -331,17 +267,6 @@ public abstract class VerseAdapter extends BaseAdapter {
 		}
 	}
 
-	@Nullable public String getVerseText(int verse_1) {
-		if (verses_ == null) return null;
-		if (verse_1 < 1 || verse_1 > verses_.getVerseCount()) return null;
-		return verses_.getVerse(verse_1 - 1);
-	}
-
-	public int getVerseCount() {
-		if (verses_ == null) return 0;
-		return verses_.getVerseCount();
-	}
-
 	@Override public boolean areAllItemsEnabled() {
 		return false;
 	}
@@ -355,7 +280,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 
 		return _itemPointer[position] >= 0;
 	}
-	
+
 	private static int[] makeItemPointer(int nverse, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
 		int[] res = new int[nverse + nblock];
 
@@ -390,6 +315,83 @@ public abstract class VerseAdapter extends BaseAdapter {
 		}
 
 		return res;
+	}
+
+	// ################## migration marker
+
+	// For calling attention. All attentioned verses have the same start time.
+	// The last call to callAttentionForVerse() decides as when the animation starts.
+	// Calling setData* methods clears the attentioned verses.
+	long attentionStart_;
+	Set<Integer> attentionPositions_;
+
+	public VerseAdapter(Context context) {
+		density_ = context.getResources().getDisplayMetrics().density;
+		inflater_ = LayoutInflater.from(context);
+	}
+
+	@Override public synchronized int getCount() {
+		if (verses_ == null) return 0;
+
+		return itemPointer_.length;
+	}
+
+	@Override public synchronized String getItem(int position) {
+		int id = itemPointer_[position];
+
+		if (id >= 0) {
+			return verses_.getVerse(position);
+		} else {
+			return pericopeBlocks_[-id - 1].toString();
+		}
+	}
+
+	@Override public synchronized long getItemId(int position) {
+		return position;
+	}
+
+	public void setParallelListener(CallbackSpan.OnClickListener<Object> parallelListener) {
+		parallelListener_ = parallelListener;
+		notifyDataSetChanged();
+	}
+
+	public OldVersesView.AttributeListener getAttributeListener() {
+		return attributeListener_;
+	}
+
+	public void setAttributeListener(OldVersesView.AttributeListener attributeListener) {
+		attributeListener_ = attributeListener;
+		notifyDataSetChanged();
+	}
+
+	public void setInlineLinkSpanFactory(final VerseInlineLinkSpan.Factory inlineLinkSpanFactory) {
+		inlineLinkSpanFactory_ = inlineLinkSpanFactory;
+		notifyDataSetChanged();
+	}
+
+	void callAttentionForVerse(final int verse_1) {
+		final int pos = getPositionIgnoringPericopeFromVerse(verse_1);
+		if (pos != -1) {
+			Set<Integer> ap = attentionPositions_;
+			if (ap == null) {
+				attentionPositions_ = ap = new HashSet<>();
+			}
+			ap.add(pos);
+			attentionStart_ = System.currentTimeMillis();
+
+			notifyDataSetChanged();
+		}
+	}
+
+	@Nullable public String getVerseText(int verse_1) {
+		if (verses_ == null) return null;
+		if (verse_1 < 1 || verse_1 > verses_.getVerseCount()) return null;
+		return verses_.getVerse(verse_1 - 1);
+	}
+
+	public int getVerseCount() {
+		if (verses_ == null) return 0;
+		return verses_.getVerseCount();
 	}
 
 	/* non-public */ void calculateTextSizeMult() {
