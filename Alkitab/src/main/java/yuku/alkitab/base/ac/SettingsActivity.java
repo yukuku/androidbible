@@ -3,22 +3,23 @@ package yuku.alkitab.base.ac;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.TypedValue;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.ActionBar;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-import android.util.TypedValue;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
@@ -233,6 +234,7 @@ public class SettingsActivity extends BaseActivity {
 		});
 	}
 
+	@Deprecated
 	public static void setPaddingBasedOnPreferences(final View view) {
 		final Resources r = App.context.getResources();
 		if (Preferences.getBoolean(r.getString(R.string.pref_textPadding_key), r.getBoolean(R.bool.pref_textPadding_default))) {
@@ -243,6 +245,19 @@ public class SettingsActivity extends BaseActivity {
 		} else {
 			final int no = r.getDimensionPixelOffset(R.dimen.text_nopadding);
 			view.setPadding(no, no, no, no);
+		}
+	}
+
+	public static Rect getPaddingBasedOnPreferences() {
+		final Resources r = App.context.getResources();
+		if (Preferences.getBoolean(r.getString(R.string.pref_textPadding_key), r.getBoolean(R.bool.pref_textPadding_default))) {
+			final int top = r.getDimensionPixelOffset(R.dimen.text_top_padding);
+			final int bottom = r.getDimensionPixelOffset(R.dimen.text_bottom_padding);
+			final int side = r.getDimensionPixelOffset(R.dimen.text_side_padding);
+			return new Rect(side, top, side, bottom);
+		} else {
+			final int no = r.getDimensionPixelOffset(R.dimen.text_nopadding);
+			return new Rect(no, no, no, no);
 		}
 	}
 }

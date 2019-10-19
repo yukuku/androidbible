@@ -1,20 +1,22 @@
 package yuku.alkitab.base.verses
 
+import android.graphics.Rect
+import androidx.recyclerview.widget.RecyclerView
 import yuku.alkitab.base.widget.VerseInlineLinkSpan
 import yuku.alkitab.util.IntArrayList
 import java.util.concurrent.atomic.AtomicInteger
 
 class VersesControllerImpl(
-    override var name: String,
-    override var verseSelectionMode: VersesController.VerseSelectionMode,
-    override var attributeListener: VersesController.AttributeListener,
-    override var listener: VersesController.SelectedVersesListener,
-    override var onVerseScrollListener: VersesController.OnVerseScrollListener,
-    override var parallelListener_: (VersesController.ParallelClickData) -> Unit,
-    override var inlineLinkSpanFactory_: VerseInlineLinkSpan.Factory
+    private val rv: RecyclerView,
+    override val name: String,
+    override val verseSelectionMode: VersesController.VerseSelectionMode,
+    override val attributeListener: VersesController.AttributeListener,
+    override val listener: VersesController.SelectedVersesListener,
+    override val onVerseScrollListener: VersesController.OnVerseScrollListener,
+    override val parallelListener_: (VersesController.ParallelClickData) -> Unit,
+    override val inlineLinkSpanFactory_: VerseInlineLinkSpan.Factory
 ) : VersesController {
-
-    private val selectedPositions = mutableSetOf<Int>()
+    private val checkedPositions = mutableSetOf<Int>()
 
     // TODO check if we still need this
     private val dataVersionNumber = AtomicInteger()
@@ -27,7 +29,7 @@ class VersesControllerImpl(
         }
 
     override fun uncheckAllVerses(callListener: Boolean) {
-        selectedPositions.clear()
+        checkedPositions.clear()
 
         if (callListener) {
             listener.onNoVersesSelected(this)
@@ -47,7 +49,7 @@ class VersesControllerImpl(
             val count = versesDataModel.itemCount
             val pos = versesDataModel.getPositionIgnoringPericopeFromVerse(verse_1)
             if (pos != -1 && pos < count) {
-                selectedPositions += pos
+                checkedPositions += pos
                 checked_count++
             }
             i++
@@ -62,6 +64,45 @@ class VersesControllerImpl(
         }
 
         render()
+    }
+
+    override fun getCheckedVerses_1(): IntArrayList {
+        val res = IntArrayList(checkedPositions.size)
+        for (checkedPosition in checkedPositions) {
+            val verse_1 = versesDataModel.getVerseFromPosition(checkedPosition)
+            if (verse_1 >= 1) {
+                res.add(verse_1)
+            }
+        }
+        return res
+    }
+
+    override fun scrollToTop() {
+        TODO("not implemented")
+    }
+
+    override fun scrollToVerse(verse_1: Int) {
+        TODO("not implemented")
+    }
+
+    override fun scrollToVerse(verse_1: Int, prop: Float) {
+        TODO("not implemented")
+    }
+
+    override fun getVerse_1BasedOnScroll(): Int {
+        TODO("not implemented")
+    }
+
+    override fun press(keyCode: Int): VersesController.PressResult {
+        TODO("not implemented")
+    }
+
+    override fun setPadding(padding: Rect) {
+        // TODO("not implemented")
+    }
+
+    override fun callAttentionForVerse(verse_1: Int) {
+        // TODO("not implemented")
     }
 
     fun render() {

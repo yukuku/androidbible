@@ -274,6 +274,24 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		adapter.setDataEmpty();
 	}
 
+	public IntArrayList getSelectedVerses_1() {
+		// count how many are selected
+		SparseBooleanArray positions = getCheckedItemPositions();
+		if (positions == null) {
+			return new IntArrayList(0);
+		}
+
+		IntArrayList res = new IntArrayList(positions.size());
+		for (int i = 0, len = positions.size(); i < len; i++) {
+			if (positions.valueAt(i)) {
+				int position = positions.keyAt(i);
+				int verse_1 = adapter.getVerseFromPosition(position);
+				if (verse_1 >= 1) res.add(verse_1);
+			}
+		}
+		return res;
+	}
+
 	// ############################# migrate marker
 
 	/**
@@ -359,24 +377,6 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		} else {
 			if (listener != null) listener.onNoVersesSelected(this);
 		}
-	}
-
-	public IntArrayList getSelectedVerses_1() {
-		// count how many are selected
-		SparseBooleanArray positions = getCheckedItemPositions();
-		if (positions == null) {
-			return new IntArrayList(0);
-		}
-
-		IntArrayList res = new IntArrayList(positions.size());
-		for (int i = 0, len = positions.size(); i < len; i++) {
-			if (positions.valueAt(i)) {
-				int position = positions.keyAt(i);
-				int verse_1 = adapter.getVerseFromPosition(position);
-				if (verse_1 >= 1) res.add(verse_1);
-			}
-		}
-		return res;
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package yuku.alkitab.base.verses
 
+import android.graphics.Rect
 import yuku.alkitab.base.widget.VerseInlineLinkSpan
 import yuku.alkitab.model.Version
 import yuku.alkitab.util.IntArrayList
@@ -69,5 +70,31 @@ interface VersesController {
 
     fun uncheckAllVerses(callListener: Boolean)
     fun checkVerses(verses_1: IntArrayList, callListener: Boolean)
-}
+    /**
+     * Old name: getSelectedVerses_1
+     */
+    fun getCheckedVerses_1(): IntArrayList
 
+    fun reloadAttributeMap() {
+        TODO() // make it load the whole data model
+    }
+
+    fun scrollToTop()
+    /**
+     * This is different from the other [scrollToVerse] in that if the requested
+     * verse has a pericope header, this will scroll to the top of the pericope header,
+     * not to the top of the verse.
+     */
+    fun scrollToVerse(verse_1: Int)
+    fun scrollToVerse(verse_1: Int, prop: Float)
+    /**
+     * Old name: getVerseBasedOnScroll
+     */
+    fun getVerse_1BasedOnScroll(): Int
+
+    fun press(keyCode: Int): PressResult
+
+    fun setPadding(padding: Rect)
+
+    fun callAttentionForVerse(verse_1: Int)
+}
