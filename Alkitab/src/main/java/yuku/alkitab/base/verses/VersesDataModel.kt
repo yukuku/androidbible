@@ -5,13 +5,13 @@ import yuku.alkitab.model.PericopeBlock
 import yuku.alkitab.model.SingleChapterVerses
 import yuku.alkitab.model.Version
 import yuku.alkitab.util.Ari
-import java.util.*
 
 private const val TAG = "VersesDataModel"
 
 class VersesDataModel(
     val ari_bc_: Int,
     val verses_: SingleChapterVerses,
+    val pericopeBlockCount_: Int,
     val pericopeAris_: IntArray,
     val pericopeBlocks_: Array<PericopeBlock>,
     val version_: Version?,
@@ -26,11 +26,9 @@ class VersesDataModel(
      * Convert a to b: b = -a-1;
      * Convert b to a: a = -b-1;
      */
-    private val itemPointer_: IntArray = TODO()
-
-    private fun makeItemPointer(pericopeAris: IntArray, pericopeBlocks: Array<PericopeBlock>, nblock: Int): IntArray {
+    private val itemPointer_: IntArray by lazy {
         val nverse = verses_.verseCount
-        val res = IntArray(nverse + nblock)
+        val res = IntArray(nverse + pericopeBlockCount_)
 
         var pos_block = 0
         var pos_verse = 0
@@ -38,9 +36,9 @@ class VersesDataModel(
 
         while (true) {
             // check if we still have pericopes remaining
-            if (pos_block < nblock) {
+            if (pos_block < pericopeBlockCount_) {
                 // still possible
-                if (Ari.toVerse(pericopeAris[pos_block]) - 1 == pos_verse) {
+                if (Ari.toVerse(pericopeAris_[pos_block]) - 1 == pos_verse) {
                     // We have a pericope.
                     res[pos_itemPointer++] = -pos_block - 1
                     pos_block++
@@ -59,11 +57,13 @@ class VersesDataModel(
         }
 
         if (res.size != pos_itemPointer) {
-            throw RuntimeException("Algorithm to insert pericopes error!! pos_itemPointer=" + pos_itemPointer + " pos_verse=" + pos_verse + " pos_block=" + pos_block + " nverse=" + nverse + " nblock=" + nblock + " pericopeAris:" + Arrays.toString(pericopeAris) + " pericopeBlocks:" + Arrays.toString(pericopeBlocks))
+            throw RuntimeException("Algorithm to insert pericopes error!! pos_itemPointer=$pos_itemPointer pos_verse=$pos_verse pos_block=$pos_block nverse=$nverse pericopeBlockCount_=$pericopeBlockCount_ pericopeAris_:${pericopeAris_.contentToString()} pericopeBlocks_:${pericopeBlocks_.contentToString()}")
         }
 
-        return res
+        res
     }
+
+    val itemCount get() = itemPointer_.size
 
     /**
      * For example, when pos=0 is a pericope and pos=1 is the first verse,
@@ -72,8 +72,6 @@ class VersesDataModel(
      * @return position on this adapter, or -1 if not found
      */
     fun getPositionOfPericopeBeginningFromVerse(verse_1: Int): Int {
-        if (itemPointer_ == null) return -1
-
         val verse_0 = verse_1 - 1
 
         var i = 0
@@ -105,8 +103,6 @@ class VersesDataModel(
      * @return position or -1 if not found
      */
     fun getPositionIgnoringPericopeFromVerse(verse_1: Int): Int {
-        if (itemPointer_ == null) return -1
-
         val verse_0 = verse_1 - 1
 
         var i = 0
@@ -124,7 +120,6 @@ class VersesDataModel(
      */
     fun getVerseFromPosition(position: Int): Int {
         var position = position
-        if (itemPointer_ == null) return 0
 
         if (position >= itemPointer_.size) {
             position = itemPointer_.size - 1
@@ -153,8 +148,6 @@ class VersesDataModel(
      * Similar to [.getVerseFromPosition], but returns 0 if the specified position is a pericope or doesn't make sense.
      */
     fun getVerseOrPericopeFromPosition(position: Int): Int {
-        if (itemPointer_ == null) return 0
-
         if (position < 0 || position >= itemPointer_.size) {
             return 0
         }
@@ -169,12 +162,10 @@ class VersesDataModel(
     }
 
     fun isEnabled(position: Int): Boolean {
-        val _itemPointer = this.itemPointer_ ?: return false
-
         // guard against wild ListView.onInitializeAccessibilityNodeInfoForItem
         return when {
-            position >= _itemPointer.size -> false
-            _itemPointer[position] >= 0 -> true
+            position >= itemPointer_.size -> false
+            itemPointer_[position] >= 0 -> true
             else -> false
         }
     }
@@ -183,6 +174,7 @@ class VersesDataModel(
         val EMPTY = VersesDataModel(
             ari_bc_ = 0,
             verses_ = SingleChapterVerses.EMPTY,
+            pericopeBlockCount_ = 0,
             pericopeAris_ = IntArray(0),
             pericopeBlocks_ = emptyArray(),
             version_ = null,

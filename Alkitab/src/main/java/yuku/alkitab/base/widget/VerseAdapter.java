@@ -317,14 +317,6 @@ public abstract class VerseAdapter extends BaseAdapter {
 		return res;
 	}
 
-	// ################## migration marker
-
-	// For calling attention. All attentioned verses have the same start time.
-	// The last call to callAttentionForVerse() decides as when the animation starts.
-	// Calling setData* methods clears the attentioned verses.
-	long attentionStart_;
-	Set<Integer> attentionPositions_;
-
 	public VerseAdapter(Context context) {
 		density_ = context.getResources().getDisplayMetrics().density;
 		inflater_ = LayoutInflater.from(context);
@@ -369,6 +361,25 @@ public abstract class VerseAdapter extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 
+	@Nullable public String getVerseText(int verse_1) {
+		if (verses_ == null) return null;
+		if (verse_1 < 1 || verse_1 > verses_.getVerseCount()) return null;
+		return verses_.getVerse(verse_1 - 1);
+	}
+
+	public int getVerseCount() {
+		if (verses_ == null) return 0;
+		return verses_.getVerseCount();
+	}
+
+	// ################## migration marker
+
+	// For calling attention. All attentioned verses have the same start time.
+	// The last call to callAttentionForVerse() decides as when the animation starts.
+	// Calling setData* methods clears the attentioned verses.
+	long attentionStart_;
+	Set<Integer> attentionPositions_;
+
 	void callAttentionForVerse(final int verse_1) {
 		final int pos = getPositionIgnoringPericopeFromVerse(verse_1);
 		if (pos != -1) {
@@ -381,17 +392,6 @@ public abstract class VerseAdapter extends BaseAdapter {
 
 			notifyDataSetChanged();
 		}
-	}
-
-	@Nullable public String getVerseText(int verse_1) {
-		if (verses_ == null) return null;
-		if (verse_1 < 1 || verse_1 > verses_.getVerseCount()) return null;
-		return verses_.getVerse(verse_1 - 1);
-	}
-
-	public int getVerseCount() {
-		if (verses_ == null) return 0;
-		return verses_.getVerseCount();
 	}
 
 	/* non-public */ void calculateTextSizeMult() {

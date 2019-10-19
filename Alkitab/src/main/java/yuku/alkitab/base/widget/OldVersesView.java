@@ -17,7 +17,6 @@ import androidx.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.jetbrains.annotations.NotNull;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.util.AppLog;
@@ -33,8 +32,8 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 	// http://stackoverflow.com/questions/6369491/stop-listview-scroll-animation
 	static class StopListFling {
 
-		private static Field mFlingEndField = null;
-		private static Method mFlingEndMethod = null;
+		private static Field mFlingEndField;
+		private static Method mFlingEndMethod;
 
 		static {
 			try {
@@ -190,41 +189,13 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 	 */
 	private AtomicInteger dataVersionNumber = new AtomicInteger();
 
-	@NotNull
+	@NonNull
 	@Override
 	public String toString() {
 		return name != null ? ("VersesView{name=" + name + "}") : "VersesView";
 	}
 
 	SingleViewVerseAdapter adapter;
-
-	// ############################# migrate marker
-
-	/**
-	 * Used as a cache, storing views to be fed to convertView parameter
-	 * when measuring items manually at {@link #getMeasuredItemHeight(int)}.
-	 */
-	private View[] scrollToVerseConvertViews;
-
-	public OldVersesView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		init();
-	}
-
-	private void init() {
-		if (isInEditMode()) return;
-
-		originalSelector = getSelector();
-
-		setDivider(null);
-		setFocusable(false);
-
-		setAdapter(adapter = new SingleViewVerseAdapter(getContext()));
-		setOnItemClickListener(itemClick);
-		setVerseSelectionMode(VerseSelectionMode.multiple);
-
-		super.setOnScrollListener(this);
-	}
 
 	@Override
 	public final void setOnScrollListener(AbsListView.OnScrollListener l) {
@@ -257,6 +228,78 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 	 */
 	public int getVerseBasedOnScroll() {
 		return adapter.getVerseFromPosition(getPositionBasedOnScroll());
+	}
+
+
+	public void uncheckAllVerses(boolean callListener) {
+		SparseBooleanArray checkedPositions = getCheckedItemPositions();
+		if (checkedPositions != null && checkedPositions.size() > 0) {
+			for (int i = checkedPositions.size() - 1; i >= 0; i--) {
+				if (checkedPositions.valueAt(i)) {
+					setItemChecked(checkedPositions.keyAt(i), false);
+				}
+			}
+		}
+
+		if (callListener) {
+			if (listener != null) listener.onNoVersesSelected(this);
+		}
+	}
+
+	public void checkVerses(IntArrayList verses_1, boolean callListener) {
+		uncheckAllVerses(false);
+
+		int checked_count = 0;
+		for (int i = 0, len = verses_1.size(); i < len; i++) {
+			int verse_1 = verses_1.get(i);
+			int count = adapter.getCount();
+			int pos = adapter.getPositionIgnoringPericopeFromVerse(verse_1);
+			if (pos != -1 && pos < count) {
+				setItemChecked(pos, true);
+				checked_count++;
+			}
+		}
+
+		if (callListener) {
+			if (checked_count > 0) {
+				if (listener != null) listener.onSomeVersesSelected(this);
+			} else {
+				if (listener != null) listener.onNoVersesSelected(this);
+			}
+		}
+	}
+
+	public void setDataEmpty() {
+		dataVersionNumber.incrementAndGet();
+		adapter.setDataEmpty();
+	}
+
+	// ############################# migrate marker
+
+	/**
+	 * Used as a cache, storing views to be fed to convertView parameter
+	 * when measuring items manually at {@link #getMeasuredItemHeight(int)}.
+	 */
+	private View[] scrollToVerseConvertViews;
+
+	public OldVersesView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		init();
+	}
+
+	private void init() {
+		if (isInEditMode()) return;
+
+		originalSelector = getSelector();
+
+		setDivider(null);
+		setFocusable(false);
+
+		setAdapter(adapter = new SingleViewVerseAdapter(getContext()));
+		setOnItemClickListener(itemClick);
+		setVerseSelectionMode(VerseSelectionMode.multiple);
+
+		super.setOnScrollListener(this);
 	}
 
 	public int getPositionBasedOnScroll() {
@@ -307,44 +350,6 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 			}
 		}
 	};
-
-	public void uncheckAllVerses(boolean callListener) {
-		SparseBooleanArray checkedPositions = getCheckedItemPositions();
-		if (checkedPositions != null && checkedPositions.size() > 0) {
-			for (int i = checkedPositions.size() - 1; i >= 0; i--) {
-				if (checkedPositions.valueAt(i)) {
-					setItemChecked(checkedPositions.keyAt(i), false);
-				}
-			}
-		}
-
-		if (callListener) {
-			if (listener != null) listener.onNoVersesSelected(this);
-		}
-	}
-
-	public void checkVerses(IntArrayList verses_1, boolean callListener) {
-		uncheckAllVerses(false);
-
-		int checked_count = 0;
-		for (int i = 0, len = verses_1.size(); i < len; i++) {
-			int verse_1 = verses_1.get(i);
-			int count = adapter.getCount();
-			int pos = adapter.getPositionIgnoringPericopeFromVerse(verse_1);
-			if (pos != -1 && pos < count) {
-				setItemChecked(pos, true);
-				checked_count++;
-			}
-		}
-
-		if (callListener) {
-			if (checked_count > 0) {
-				if (listener != null) listener.onSomeVersesSelected(this);
-			} else {
-				if (listener != null) listener.onNoVersesSelected(this);
-			}
-		}
-	}
 
 	void hideOrShowContextMenuButton() {
 		if (verseSelectionMode != VerseSelectionMode.multiple) return;
@@ -664,11 +669,6 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 				onVerseScrollListener.onScrollToTop(this);
 			}
 		}
-	}
-
-	public void setDataEmpty() {
-		dataVersionNumber.incrementAndGet();
-		adapter.setDataEmpty();
 	}
 
 	public void stopFling() {

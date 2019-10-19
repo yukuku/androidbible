@@ -2,6 +2,7 @@ package yuku.alkitab.base.verses
 
 import yuku.alkitab.base.widget.VerseInlineLinkSpan
 import yuku.alkitab.model.Version
+import yuku.alkitab.util.IntArrayList
 
 interface VersesController {
     enum class VerseSelectionMode {
@@ -11,11 +12,11 @@ interface VersesController {
     }
 
     abstract class SelectedVersesListener {
-        open fun onSomeVersesSelected(v: VersesViewController) {}
+        open fun onSomeVersesSelected(v: VersesController) {}
 
-        open fun onNoVersesSelected(v: VersesViewController) {}
+        open fun onNoVersesSelected(v: VersesController) {}
 
-        open fun onVerseSingleClick(v: VersesViewController, verse_1: Int) {}
+        open fun onVerseSingleClick(v: VersesController, verse_1: Int) {}
     }
 
     abstract class AttributeListener {
@@ -29,9 +30,9 @@ interface VersesController {
     }
 
     abstract class OnVerseScrollListener {
-        open fun onVerseScroll(v: VersesViewController, isPericope: Boolean, verse_1: Int, prop: Float) {}
+        open fun onVerseScroll(v: VersesController, isPericope: Boolean, verse_1: Int, prop: Float) {}
 
-        open fun onScrollToTop(v: VersesViewController) {}
+        open fun onScrollToTop(v: VersesController) {}
     }
 
     enum class PressKind {
@@ -64,6 +65,9 @@ interface VersesController {
     val parallelListener_: (ParallelClickData) -> Unit
     val inlineLinkSpanFactory_: VerseInlineLinkSpan.Factory
 
-    val versesDataModel: VersesDataModel
+    var versesDataModel: VersesDataModel
+
+    fun uncheckAllVerses(callListener: Boolean)
+    fun checkVerses(verses_1: IntArrayList, callListener: Boolean)
 }
 
