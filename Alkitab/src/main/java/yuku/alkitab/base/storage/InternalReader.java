@@ -47,22 +47,6 @@ public class InternalReader implements BibleReader {
 		this.versionLongName = versionLongName;
 		this.verseTextDecoder = verseTextDecoder;
 	}
-	
-	static class InternalSingleChapterVerses extends SingleChapterVerses {
-		private final String[] verses;
-
-		public InternalSingleChapterVerses(String[] verses) {
-			this.verses = verses;
-		}
-		
-		@Override public String getVerse(int verse_0) {
-			return verses[verse_0];
-		}
-
-		@Override public int getVerseCount() {
-			return verses.length;
-		}
-	}
 
 	@Override
 	public String getLocale() {

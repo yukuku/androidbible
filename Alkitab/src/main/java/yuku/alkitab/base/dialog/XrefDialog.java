@@ -25,7 +25,6 @@ import yuku.alkitab.base.widget.OldVersesView;
 import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.util.Ari;
@@ -190,31 +189,10 @@ public class XrefDialog extends BaseDialog {
 				displayedVerseNumberTexts.add(Ari.toChapter(ari) + ":" + Ari.toVerse(ari));
 			}
 
-			class Verses extends SingleChapterVerses {
-				@Override
-				public String getVerse(int verse_0) {
-					final String res = displayedVerseTexts.get(verse_0);
-					// prevent crash if the target xref is not available
-					if (res == null) {
-						return getString(R.string.generic_verse_not_available_in_this_version);
-					}
-					return res;
-				}
-
-				@Override
-				public int getVerseCount() {
-					return displayedVerseTexts.size();
-				}
-
-				@Override
-				public String getVerseNumberText(int verse_0) {
-					return displayedVerseNumberTexts.get(verse_0);
-				}
-			}
-
 			int firstAri = displayedRealAris.get(0);
 
-			versesView.setData(Ari.toBookChapter(firstAri), new Verses(), null, null, 0, sourceVersion, sourceVersionId);
+			final XrefDialogVerses verses = new XrefDialogVerses(this.requireContext(), displayedVerseTexts, displayedVerseNumberTexts);
+			versesView.setData(Ari.toBookChapter(firstAri), verses, null, null, 0, sourceVersion, sourceVersionId);
 		}
 
 		renderXrefText();

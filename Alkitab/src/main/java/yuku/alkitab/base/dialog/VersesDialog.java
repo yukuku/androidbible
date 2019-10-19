@@ -17,7 +17,6 @@ import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.widget.OldVersesView;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
@@ -154,26 +153,9 @@ public class VersesDialog extends BaseDialog {
 					customCallbackData[i] = ari;
 				}
 
-				class Verses extends SingleChapterVerses {
-					@Override
-					public String getVerse(int verse_0) {
-						return displayedVerseTexts.get(verse_0);
-					}
-
-					@Override
-					public int getVerseCount() {
-						return displayedVerseTexts.size();
-					}
-
-					@Override
-					public String getVerseNumberText(int verse_0) {
-						return displayedVerseNumberTexts.get(verse_0);
-					}
-				}
-
 				final int firstAri = ariRanges.get(0);
 
-				versesView.setData(Ari.toBookChapter(firstAri), new Verses(), null, null, 0, sourceVersion, sourceVersionId);
+				versesView.setData(Ari.toBookChapter(firstAri), new VersesDialogNormalVerses(displayedVerseTexts, displayedVerseNumberTexts), null, null, 0, sourceVersion, sourceVersionId);
 			}
 		} else {
 			// read each version and display it. First version must be the sourceVersion.
@@ -192,75 +174,8 @@ public class VersesDialog extends BaseDialog {
 				customCallbackData[i] = mversions.get(i);
 			}
 
-			class Verses extends SingleChapterVerses implements SingleChapterVerses.WithTextSizeMult {
-				@Override
-				public String getVerse(int verse_0) {
-					// load version or take from existing if already loaded
-					final MVersion mversion = mversions.get(verse_0);
-					final Version loaded = displayedVersion[verse_0];
-
-					final Version version;
-					if (loaded == null) {
-						version = mversion.getVersion();
-						displayedVersion[verse_0] = version;
-					} else {
-						version = loaded;
-					}
-
-					if (version == null) {
-						return getString(R.string.version_error_opening, mversion.getVersionId());
-					}
-
-					final String res = version.loadVerseText(ari);
-					if (res == null) {
-						return getString(R.string.generic_verse_not_available_in_this_version);
-					}
-
-					return res;
-				}
-
-				@Override
-				public int getVerseCount() {
-					return mversions.size();
-				}
-
-				@Override
-				public String getVerseNumberText(int verse_0) {
-					// load version or take from existing if already loaded
-					final MVersion mversion = mversions.get(verse_0);
-					final Version loaded = displayedVersion[verse_0];
-
-					final Version version;
-					if (loaded == null) {
-						version = mversion.getVersion();
-						displayedVersion[verse_0] = version;
-					} else {
-						version = loaded;
-					}
-
-					if (version == null) {
-						return "ERROR"; // could not load version
-					}
-
-					String res = version.getShortName();
-					if (res == null) {
-						res = mversion.shortName;
-					}
-					if (res == null) { // still null???
-						res = version.getLongName(); // this one may not be null.
-					}
-
-					return res;
-				}
-
-				@Override
-				public float getTextSizeMult(final int verse_0) {
-					final MVersion mversion = mversions.get(verse_0);
-					return S.getDb().getPerVersionSettings(mversion.getVersionId()).fontSizeMultiplier;
-				}
-			}
-
-			versesView.setData(Ari.toBookChapter(ari), new Verses(), null, null, 0, null, null);
+			final VersesDialogCompareVerses verses = new VersesDialogCompareVerses(this.requireContext(), ari, mversions, displayedVersion);
+			versesView.setData(Ari.toBookChapter(ari), verses, null, null, 0, null, null);
 		}
 
 		return res;
