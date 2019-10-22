@@ -98,7 +98,20 @@ interface VersesController {
 
     fun press(keyCode: Int): PressResult
 
-    fun setPadding(padding: Rect)
+    fun setViewVisibility(visibility: Int)
+    fun setViewPadding(padding: Rect)
+
+    /**
+     * Set the layout params of the view that is represented by this controller.
+     */
+    fun setViewLayoutSize(width: Int, height: Int)
 
     fun callAttentionForVerse(verse_1: Int)
+
+    fun setDictionaryModeAris(aris: Set<Int>)
+
+    /**
+     * Ask to render again on the next chance.
+     */
+    fun invalidate() 
 }

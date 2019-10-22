@@ -12,7 +12,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -27,7 +26,6 @@ import android.text.format.DateFormat;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.URLSpan;
-import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -49,7 +47,6 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ShareCompat;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.core.graphics.ColorUtils;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -59,9 +56,12 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import kotlin.Unit;
+import kotlin.collections.SetsKt;
 import kotlin.jvm.functions.Function1;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,7 +72,6 @@ import yuku.alkitab.base.ac.MarkersActivity;
 import yuku.alkitab.base.ac.NoteActivity;
 import yuku.alkitab.base.ac.SearchActivity;
 import yuku.alkitab.base.ac.SettingsActivity;
-import static yuku.alkitab.base.ac.SettingsActivity.getPaddingBasedOnPreferences;
 import yuku.alkitab.base.ac.ShareActivity;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.config.AppConfig;
@@ -108,8 +107,6 @@ import yuku.alkitab.base.widget.GotoButton;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.LeftDrawer;
 import yuku.alkitab.base.widget.MaterialDialogAdapterHelper;
-import yuku.alkitab.base.widget.OldVersesView;
-import yuku.alkitab.base.widget.ScrollbarSetter;
 import yuku.alkitab.base.widget.SingleViewVerseAdapter;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
@@ -513,7 +510,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		// listeners
 		lsSplit0 = new VersesControllerImpl(
-			findViewById(R.id.lsSplit0),
+			findViewById(R.id.lsSplitView0),
 			"lsSplit0",
 			VersesController.VerseSelectionMode.multiple,
 			new AttributeListener(), // have to be distinct from lsSplit1
@@ -525,7 +522,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		// additional setup for split1
 		lsSplit1 = new VersesControllerImpl(
-			findViewById(R.id.lsSplit1),
+			findViewById(R.id.lsSplitView1),
 			"lsSplit1",
 			VersesController.VerseSelectionMode.multiple,
 			new AttributeListener(), // have to be distinct from lsSplit0
@@ -538,6 +535,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		// for splitting
 		splitHandleButton.setListener(splitHandleButton_listener);
 		splitHandleButton.setButtonPressListener(splitHandleButton_labelPressed);
+
+		if (BuildConfig.DEBUG) {
+			// Runtime assertions: splitRoot must have 3 children;
+			// lsSplitView0, splitHandleButton, lsSplitView1 in that order.
+			if (splitRoot.getChildCount() != 3) throw new RuntimeException("splitRoot does not have correct children");
+			if (splitRoot.getChildAt(0) != splitRoot.findViewById(R.id.lsSplitView0)) throw new RuntimeException("splitRoot does not have correct children");
+			if (splitRoot.getChildAt(1) != splitRoot.findViewById(R.id.splitHandleButton)) throw new RuntimeException("splitRoot does not have correct children");
+			if (splitRoot.getChildAt(2) != splitRoot.findViewById(R.id.lsSplitView1)) throw new RuntimeException("splitRoot does not have correct children");
+		}
 
 		// migrate old history?
 		History.migrateOldHistoryWhenNeeded();
@@ -1071,25 +1077,26 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			final int backgroundColor = S.applied().backgroundColor;
 			root.setBackgroundColor(backgroundColor);
 
+			// TODO scrollbar must be visible!
 			// ensure scrollbar is visible on Material devices
-			if (Build.VERSION.SDK_INT >= 21) {
-				final Drawable thumb;
-				if (ColorUtils.calculateLuminance(backgroundColor) > 0.5) {
-					thumb = getResources().getDrawable(R.drawable.scrollbar_handle_material_for_light, null);
-				} else {
-					thumb = getResources().getDrawable(R.drawable.scrollbar_handle_material_for_dark, null);
-				}
-				ScrollbarSetter.setVerticalThumb(lsSplit0, thumb);
-				ScrollbarSetter.setVerticalThumb(lsSplit1, thumb);
-			}
+//			if (Build.VERSION.SDK_INT >= 21) {
+//				final Drawable thumb;
+//				if (ColorUtils.calculateLuminance(backgroundColor) > 0.5) {
+//					thumb = getResources().getDrawable(R.drawable.scrollbar_handle_material_for_light, null);
+//				} else {
+//					thumb = getResources().getDrawable(R.drawable.scrollbar_handle_material_for_dark, null);
+//				}
+//				ScrollbarSetter.setVerticalThumb(lsSplit0, thumb);
+//				ScrollbarSetter.setVerticalThumb(lsSplit1, thumb);
+//			}
 		}
 
 		// necessary
-		lsSplit0.invalidateViews();
-		lsSplit1.invalidateViews();
+		lsSplit0.invalidate();
+		lsSplit1.invalidate();
 
-		lsSplit0.setPadding(SettingsActivity.getPaddingBasedOnPreferences());
-		lsSplit1.setPadding(SettingsActivity.getPaddingBasedOnPreferences());
+		lsSplit0.setViewPadding(SettingsActivity.getPaddingBasedOnPreferences());
+		lsSplit1.setViewPadding(SettingsActivity.getPaddingBasedOnPreferences());
 	}
 
 	@Override
@@ -1486,14 +1493,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			final int masterHeight = (int) ((totalHeight - splitHandleThickness) * prop);
 
 			{ // divide the screen space
-				final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
-				lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-				lp.height = masterHeight;
-				lsSplit0.setLayoutParams(lp);
+				lsSplit0.setViewLayoutSize(ViewGroup.LayoutParams.MATCH_PARENT, masterHeight);
 			}
 
 			// no need to set height, because it has been set to match_parent, so it takes the remaining space.
-			lsSplit1.setVisibility(View.VISIBLE);
+			lsSplit1.setViewVisibility(View.VISIBLE);
 
 			{
 				final ViewGroup.LayoutParams lp = splitHandleButton.getLayoutParams();
@@ -1508,14 +1512,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			final int masterWidth = (int) ((totalWidth - splitHandleThickness) * prop);
 
 			{ // divide the screen space
-				final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
-				lp.width = masterWidth;
-				lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
-				lsSplit0.setLayoutParams(lp);
+				lsSplit0.setViewLayoutSize(masterWidth, ViewGroup.LayoutParams.MATCH_PARENT);
 			}
 
 			// no need to set width, because it has been set to match_parent, so it takes the remaining space.
-			lsSplit1.setVisibility(View.VISIBLE);
+			lsSplit1.setViewVisibility(View.VISIBLE);
 
 			{
 				final ViewGroup.LayoutParams lp = splitHandleButton.getLayoutParams();
@@ -1532,13 +1533,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		splitHandleButton.setVisibility(View.GONE);
-		lsSplit1.setVisibility(View.GONE);
+		lsSplit1.setViewVisibility(View.GONE);
 
 		{
-			final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
-			lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-			lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
-			lsSplit0.setLayoutParams(lp);
+			lsSplit0.setViewLayoutSize(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 		}
 
 		bVersion.setVisibility(View.VISIBLE);
@@ -1704,7 +1702,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	}
 
-	static boolean loadChapterToVersesView(OldVersesView versesView, Version version, String versionId, Book book, int chapter_1, int current_chapter_1, boolean uncheckAllVerses) {
+	static boolean loadChapterToVersesView(VersesController versesController, Version version, String versionId, Book book, int chapter_1, int current_chapter_1, boolean uncheckAllVerses) {
 		final SingleChapterVerses verses = version.loadChapterText(book, chapter_1);
 		if (verses == null) {
 			return false;
@@ -1717,7 +1715,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		int nblock = version.loadPericope(book.bookId, chapter_1, pericope_aris, pericope_blocks, max);
 
 		boolean retainSelectedVerses = (!uncheckAllVerses && chapter_1 == current_chapter_1);
-		versesView.setDataWithRetainSelectedVerses(retainSelectedVerses, Ari.encode(book.bookId, chapter_1, 0), pericope_aris, pericope_blocks, nblock, verses, version, versionId);
+		versesController.setDataWithRetainSelectedVerses(retainSelectedVerses, Ari.encode(book.bookId, chapter_1, 0), pericope_aris, pericope_blocks, nblock, verses, version, versionId);
 
 		return true;
 	}
@@ -2494,11 +2492,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				return true;
 				case R.id.menuDictionary: {
 					final int ariBc = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
-					final SparseBooleanArray aris = new SparseBooleanArray();
+					final Set<Integer> aris = new HashSet<>();
 					for (int i = 0, len = selected.size(); i < len; i++) {
 						final int verse_1 = selected.get(i);
 						final int ari = Ari.encodeWithBc(ariBc, verse_1);
-						aris.put(ari, true);
+						aris.add(ari);
 					}
 
 					startDictionaryMode(aris);
@@ -2651,11 +2649,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			splitRoot.setOnefingerEnabled(false);
 
 			if (splitHandleButton.getOrientation() == SplitHandleButton.Orientation.vertical) {
-				first = lsSplit0.getHeight();
+				first = splitHandleButton.getTop();
 				handle = splitHandleButton.getHeight();
 				root = splitRoot.getHeight();
 			} else {
-				first = lsSplit0.getWidth();
+				first = splitHandleButton.getLeft();
 				handle = splitHandleButton.getWidth();
 				root = splitRoot.getWidth();
 			}
@@ -2667,22 +2665,18 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		public void onHandleDragMoveX(final float dxSinceLast, final float dxSinceStart) {
 			final int newW = (int) (first + dxSinceStart);
 			final int maxW = root - handle;
-			final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
-			lp.width = newW < 0 ? 0 : newW > maxW ? maxW : newW;
-			lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
-			lsSplit0.setLayoutParams(lp);
-			prop = (float) lp.width / maxW;
+			final int width = newW < 0 ? 0 : newW > maxW ? maxW : newW;
+			lsSplit0.setViewLayoutSize(width, ViewGroup.LayoutParams.MATCH_PARENT);
+			prop = (float) width / maxW;
 		}
 
 		@Override
 		public void onHandleDragMoveY(float dySinceLast, float dySinceStart) {
 			final int newH = (int) (first + dySinceStart);
 			final int maxH = root - handle;
-			final ViewGroup.LayoutParams lp = lsSplit0.getLayoutParams();
-			lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-			lp.height = newH < 0 ? 0 : newH > maxH ? maxH : newH;
-			lsSplit0.setLayoutParams(lp);
-			prop = (float) lp.height / maxH;
+			final int height = newH < 0 ? 0 : newH > maxH ? maxH : newH;
+			lsSplit0.setViewLayoutSize(ViewGroup.LayoutParams.MATCH_PARENT, height);
+			prop = (float) height / maxH;
 		}
 
 		@Override
@@ -2710,7 +2704,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	};
 
-	void startDictionaryMode(final SparseBooleanArray aris) {
+	/**
+	 * @param aris aris where the verses are to be checked for dictionary words.
+	 */
+	void startDictionaryMode(final Set<Integer> aris) {
 		if (!OtherAppIntegration.hasIntegratedDictionaryApp()) {
 			OtherAppIntegration.askToInstallDictionary(this);
 			return;
@@ -2723,8 +2720,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	void finishDictionaryMode() {
 		dictionaryMode = false;
-		lsSplit0.setDictionaryModeAris(null);
-		lsSplit1.setDictionaryModeAris(null);
+		lsSplit0.setDictionaryModeAris(SetsKt.emptySet());
+		lsSplit1.setDictionaryModeAris(SetsKt.emptySet());
 	}
 
 	@Override

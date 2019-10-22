@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:id="@+id/overlayContainer"
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/overlayContainer"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 
@@ -79,7 +79,7 @@
 			tools:ignore="NestedWeights">
 
 			<androidx.recyclerview.widget.RecyclerView
-				android:id="@+id/lsSplit0"
+				android:id="@+id/lsSplitView0"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:clipToPadding="false"
@@ -94,30 +94,15 @@
 				android:background="@null"
 				android:visibility="gone" />
 
-			<FrameLayout
+			<androidx.recyclerview.widget.RecyclerView
+				android:id="@+id/lsSplitView1"
 				android:layout_width="match_parent"
-				android:layout_height="match_parent">
+				android:layout_height="match_parent"
+				android:clipToPadding="false"
+				android:paddingStart="@dimen/text_side_padding"
+				android:paddingEnd="@dimen/text_side_padding"
+				android:scrollbarStyle="outsideOverlay" />
 
-				<androidx.recyclerview.widget.RecyclerView
-					android:id="@+id/lsSplit1"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					android:clipToPadding="false"
-					android:paddingStart="@dimen/text_side_padding"
-					android:paddingEnd="@dimen/text_side_padding"
-					android:scrollbarStyle="outsideOverlay" />
-
-				<!-- TODO(VersesView revamp): probably not needed, just show empty items -->
-				<TextView
-					android:id="@+id/tSplitEmpty"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					android:gravity="center"
-					android:paddingStart="32dp"
-					android:paddingEnd="32dp"
-					android:textAppearance="?android:attr/textAppearanceMedium"
-					tools:ignore="SelectableText" />
-			</FrameLayout>
 		</yuku.alkitab.base.widget.TwofingerLinearLayout>
 
 	</LinearLayout>

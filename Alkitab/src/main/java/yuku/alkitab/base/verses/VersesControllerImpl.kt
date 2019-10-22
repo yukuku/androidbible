@@ -1,6 +1,7 @@
 package yuku.alkitab.base.verses
 
 import android.graphics.Rect
+import android.view.Choreographer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import yuku.alkitab.base.util.AppLog
@@ -159,12 +160,31 @@ class VersesControllerImpl(
         TODO("not implemented")
     }
 
-    override fun setPadding(padding: Rect) {
+    override fun setViewVisibility(visibility: Int) {
+        rv.visibility = visibility
+    }
+
+    override fun setViewPadding(padding: Rect) {
         // TODO("not implemented")
+    }
+
+    override fun setViewLayoutSize(width: Int, height: Int) {
+        val lp = rv.layoutParams
+        lp.width = width
+        lp.height = height
+        rv.layoutParams = lp
     }
 
     override fun callAttentionForVerse(verse_1: Int) {
         // TODO("not implemented")
+    }
+
+    override fun setDictionaryModeAris(aris: Set<Int>) = TODO()
+
+    override fun invalidate() {
+        Choreographer.getInstance().postFrameCallback {
+            render()
+        }
     }
 
     fun render() {
