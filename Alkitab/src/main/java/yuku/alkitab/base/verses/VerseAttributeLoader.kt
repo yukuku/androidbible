@@ -13,6 +13,7 @@ import yuku.alkitab.util.Ari
 private const val TAG = "VerseAttributeLoader"
 
 object VerseAttributeLoader {
+    @JvmStatic
     fun load(db: InternalDb, contentResolver: ContentResolver, ari_bc: Int, verses: SingleChapterVerses): VersesAttributes {
         // book_ can be empty when the selected (book, chapter) is not available in this version
         if (ari_bc == 0) return VersesAttributes.EMPTY

@@ -1,7 +1,6 @@
 package yuku.alkitab.base.verses
 
 import android.graphics.Rect
-import android.view.Choreographer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import yuku.alkitab.base.util.AppLog
@@ -21,10 +20,19 @@ class VersesControllerImpl(
     override val parallelListener_: (VersesController.ParallelClickData) -> Unit,
     override val inlineLinkSpanFactory_: VerseInlineLinkSpan.Factory
 ) : VersesController {
+
     private val checkedPositions = mutableSetOf<Int>()
 
     // TODO check if we still need this
     private val dataVersionNumber = AtomicInteger()
+
+    private val layoutManager: LinearLayoutManager
+
+    init {
+        val layoutManager = LinearLayoutManager(rv.context)
+        this.layoutManager = layoutManager
+        rv.layoutManager = layoutManager
+    }
 
     override var versesDataModel = VersesDataModel.EMPTY
         set(value) {
@@ -101,9 +109,7 @@ class VersesControllerImpl(
                 // negate padding offset, unless this is the first verse
                 val paddingNegator = if (position == 0) 0 else -rv.paddingTop
 
-                // TODO unsafe cast to LinearLayoutManager
-                val linearLayoutManager = rv.layoutManager as LinearLayoutManager
-                linearLayoutManager.scrollToPositionWithOffset(position, paddingNegator)
+                layoutManager.scrollToPositionWithOffset(position, paddingNegator)
             }
         }
     }
@@ -116,33 +122,29 @@ class VersesControllerImpl(
             return
         }
 
-        rv.post {
+        rv.post(fun() {
             // this may happen async from above, so check first if pos is still valid
-            if (position >= versesDataModel.itemCount) return@post
+            if (position >= versesDataModel.itemCount) return
 
             // negate padding offset, unless this is the first verse
             val paddingNegator = if (position == 0) 0 else -rv.paddingTop
 
-            // TODO unsafe cast to LinearLayoutManager
-            val linearLayoutManager = rv.layoutManager as LinearLayoutManager
-            val firstPos = linearLayoutManager.findFirstVisibleItemPosition()
-            val lastPos = linearLayoutManager.findLastVisibleItemPosition()
+            val firstPos = layoutManager.findFirstVisibleItemPosition()
+            val lastPos = layoutManager.findLastVisibleItemPosition()
             if (position in firstPos..lastPos) {
                 // we have the child on screen, no need to measure
-                val child = linearLayoutManager.getChildAt(position - firstPos) ?: return@post
-                linearLayoutManager.scrollToPositionWithOffset(position, -(prop * child.height).toInt() + paddingNegator)
-                return@post
+                val child = layoutManager.getChildAt(position - firstPos) ?: return
+                layoutManager.scrollToPositionWithOffset(position, -(prop * child.height).toInt() + paddingNegator)
+                return
             }
 
             val measuredHeight = getMeasuredItemHeight(position)
-            linearLayoutManager.scrollToPositionWithOffset(position, -(prop * measuredHeight).toInt() + paddingNegator)
-        }
+            layoutManager.scrollToPositionWithOffset(position, -(prop * measuredHeight).toInt() + paddingNegator)
+        })
     }
 
     private fun getMeasuredItemHeight(position: Int): Int {
         // child needed is not on screen, we need to measure
-        // TODO unsafe cast to LinearLayoutManager
-        val linearLayoutManager = rv.layoutManager as LinearLayoutManager
 
         // TODO(VersesView revamp): create adapter
 //        val child = adapter.getView(position, convertView, this)
@@ -182,12 +184,12 @@ class VersesControllerImpl(
     override fun setDictionaryModeAris(aris: Set<Int>) = TODO()
 
     override fun invalidate() {
-        Choreographer.getInstance().postFrameCallback {
+        rv.postOnAnimation {
             render()
         }
     }
 
     fun render() {
-        TODO()
+        // TODO()
     }
 }

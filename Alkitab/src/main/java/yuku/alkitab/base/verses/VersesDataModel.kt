@@ -161,6 +161,14 @@ class VersesDataModel(
         }
     }
 
+    fun getVerseText(verse_1: Int): String? {
+        return if (verse_1 in 1..verses_.verseCount) {
+            verses_.getVerse(verse_1 - 1)
+        } else {
+            null
+        }
+    }
+
     fun isEnabled(position: Int): Boolean {
         // guard against wild ListView.onInitializeAccessibilityNodeInfoForItem
         return when {
@@ -171,6 +179,7 @@ class VersesDataModel(
     }
 
     companion object {
+        @JvmField
         val EMPTY = VersesDataModel(
             ari_bc_ = 0,
             verses_ = SingleChapterVerses.EMPTY,

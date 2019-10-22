@@ -98,8 +98,11 @@ import static yuku.alkitab.base.util.Literals.Array;
 import yuku.alkitab.base.util.OtherAppIntegration;
 import yuku.alkitab.base.util.ShareUrl;
 import yuku.alkitab.base.util.Sqlitil;
+import yuku.alkitab.base.verses.VerseAttributeLoader;
+import yuku.alkitab.base.verses.VersesAttributes;
 import yuku.alkitab.base.verses.VersesController;
 import yuku.alkitab.base.verses.VersesControllerImpl;
+import yuku.alkitab.base.verses.VersesDataModel;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.Floater;
 import yuku.alkitab.base.widget.FormattedTextRenderer;
@@ -285,6 +288,12 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	TextView bVersion;
 	Floater floater;
 
+	// Immutable data for lsSplit0 and lsSplit1. These are only replaced, not modified.
+	@NonNull
+	VersesDataModel dataSplit0 = VersesDataModel.EMPTY;
+	@NonNull
+	VersesDataModel dataSplit1 = VersesDataModel.EMPTY;
+
 	Book activeBook;
 	int chapter_1 = 0;
 	boolean fullScreen;
@@ -325,6 +334,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	};
 
+	// TODO(VersesView revamp): use dictionary listener
 	final CallbackSpan.OnClickListener<SingleViewVerseAdapter.DictionaryLinkInfo> dictionaryListener = (widget, data) -> {
 		final ContentResolver cr = getContentResolver();
 		final Uri uri = Uri.parse("content://org.sabda.kamus.provider/define").buildUpon()
@@ -1025,7 +1035,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			// append each selected verse with verse number prepended
 			for (int i = 0, len = selectedVerses_1.size(); i < len; i++) {
 				final int verse_1 = selectedVerses_1.get(i);
-				final String verseText = isSplitVersion ? lsSplit1.getVerseText(verse_1) : lsSplit0.getVerseText(verse_1);
+				final String verseText = isSplitVersion ? dataSplit1.getVerseText(verse_1) : dataSplit0.getVerseText(verse_1);
 
 				if (verseText != null) {
 					final String verseTextPlain = U.removeSpecialCodes(verseText);
@@ -1050,7 +1060,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			// append each selected verse without verse number prepended
 			for (int i = 0; i < selectedVerses_1.size(); i++) {
 				final int verse_1 = selectedVerses_1.get(i);
-				final String verseText = isSplitVersion ? lsSplit1.getVerseText(verse_1) : lsSplit0.getVerseText(verse_1);
+				final String verseText = isSplitVersion ? dataSplit1.getVerseText(verse_1) : dataSplit0.getVerseText(verse_1);
 
 				if (verseText != null) {
 					final String verseTextPlain = U.removeSpecialCodes(verseText);
@@ -1644,7 +1654,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		{ // main
 			this.uncheckVersesWhenActionModeDestroyed = false;
 			try {
-				boolean ok = loadChapterToVersesView(lsSplit0, S.activeVersion(), S.activeVersionId(), this.activeBook, chapter_1, current_chapter_1, uncheckAllVerses);
+				boolean ok = loadChapterToVersesView(getContentResolver(), lsSplit0, S.activeVersion(), S.activeVersionId(), this.activeBook, chapter_1, current_chapter_1, uncheckAllVerses);
 				if (!ok) return 0;
 			} finally {
 				this.uncheckVersesWhenActionModeDestroyed = true;
@@ -1689,11 +1699,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (splitBook == null) {
 				tSplitEmpty.setText(getString(R.string.split_version_cant_display_verse, this.activeBook.reference(this.chapter_1), activeSplitVersion.getLongName()));
 				tSplitEmpty.setTextColor(S.applied().fontColor);
-				lsSplit1.setDataEmpty();
+
+				dataSplit1 = VersesDataModel.EMPTY;
+				lsSplit1.setVersesDataModel(dataSplit1);
 			} else {
 				this.uncheckVersesWhenActionModeDestroyed = false;
 				try {
-					loadChapterToVersesView(lsSplit1, activeSplitVersion, activeSplitVersionId, splitBook, this.chapter_1, this.chapter_1, true);
+					loadChapterToVersesView(getContentResolver(), lsSplit1, activeSplitVersion, activeSplitVersionId, splitBook, this.chapter_1, this.chapter_1, true);
 				} finally {
 					this.uncheckVersesWhenActionModeDestroyed = true;
 				}
@@ -1702,7 +1714,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	}
 
-	static boolean loadChapterToVersesView(VersesController versesController, Version version, String versionId, Book book, int chapter_1, int current_chapter_1, boolean uncheckAllVerses) {
+	static boolean loadChapterToVersesView(ContentResolver cr, VersesController versesController, Version version, String versionId, Book book, int chapter_1, int current_chapter_1, boolean uncheckAllVerses) {
 		final SingleChapterVerses verses = version.loadChapterText(book, chapter_1);
 		if (verses == null) {
 			return false;
@@ -1715,9 +1727,42 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		int nblock = version.loadPericope(book.bookId, chapter_1, pericope_aris, pericope_blocks, max);
 
 		boolean retainSelectedVerses = (!uncheckAllVerses && chapter_1 == current_chapter_1);
-		versesController.setDataWithRetainSelectedVerses(retainSelectedVerses, Ari.encode(book.bookId, chapter_1, 0), pericope_aris, pericope_blocks, nblock, verses, version, versionId);
+		setDataWithRetainSelectedVerses(cr, versesController, retainSelectedVerses, Ari.encode(book.bookId, chapter_1, 0), pericope_aris, pericope_blocks, nblock, verses, version, versionId);
 
 		return true;
+	}
+
+	// Moved from the old VersesView method
+	static void setDataWithRetainSelectedVerses(
+		final ContentResolver cr,
+		final VersesController versesController,
+		final boolean retainSelectedVerses,
+		final int ariBc,
+		final int[] pericope_aris,
+		final PericopeBlock[] pericope_blocks,
+		final int nblock,
+		final SingleChapterVerses verses,
+		@NonNull final Version version,
+		@NonNull final String versionId) {
+
+		@Nullable
+		IntArrayList selectedVerses_1 = null;
+		if (retainSelectedVerses) {
+			selectedVerses_1 = versesController.getCheckedVerses_1();
+		}
+
+		//# fill adapter with new data. make sure all checked states are reset
+		versesController.uncheckAllVerses(true);
+
+		final VersesAttributes versesAttributes = VerseAttributeLoader.load(S.getDb(), cr, ariBc, verses);
+
+		// TODO(VersesView revamp): calculate font size mult
+		final VersesDataModel newData = new VersesDataModel(ariBc, verses, nblock, pericope_aris, pericope_blocks, version, versionId, 1f, versesAttributes);
+		versesController.setVersesDataModel(newData);
+
+		if (selectedVerses_1 != null) {
+			versesController.checkVerses(selectedVerses_1, true);
+		}
 	}
 
 	@Override
@@ -2554,7 +2599,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 							for (int i = 0, len = selected.size(); i < len; i++) {
 								final int verse_1 = selected.get(i);
 
-								final String verseText = lsSplit0.getVerseText(verse_1);
+								final String verseText = dataSplit0.getVerseText(verse_1);
 								if (extension.includeVerseTextFormatting) {
 									verseTexts[i] = verseText;
 								} else {
