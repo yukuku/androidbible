@@ -30,20 +30,6 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 	public static final int TYPE_VERSE_TEXT = 0;
 	public static final int TYPE_PERICOPE = 1;
 
-	private SparseBooleanArray dictionaryModeAris;
-
-	public static class DictionaryLinkInfo {
-		public String orig_text;
-		public String key;
-
-		public DictionaryLinkInfo(final String orig_text, final String key) {
-			this.orig_text = orig_text;
-			this.key = key;
-		}
-	}
-
-	CallbackSpan.OnClickListener<DictionaryLinkInfo> dictionaryListener_;
-
 	public SingleViewVerseAdapter(Context context) {
 		super(context);
 	}
@@ -62,6 +48,22 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			return TYPE_PERICOPE;
 		}
 	}
+
+	// ################## migration marker
+
+	private SparseBooleanArray dictionaryModeAris;
+
+	public static class DictionaryLinkInfo {
+		public String orig_text;
+		public String key;
+
+		public DictionaryLinkInfo(final String orig_text, final String key) {
+			this.orig_text = orig_text;
+			this.key = key;
+		}
+	}
+
+	CallbackSpan.OnClickListener<DictionaryLinkInfo> dictionaryListener_;
 
 	@Override public synchronized View getView(int position, View convertView, ViewGroup parent) {
 		// Need to determine this is pericope or verse
@@ -195,7 +197,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				res = (PericopeHeaderItem) convertView;
 			}
 
-			PericopeBlock pericopeBlock = pericopeBlocks_[-id - 1];
+			PericopeBlock pericopeBlock = pericopeBlocks_[~id];
 
 			TextView lCaption = res.findViewById(R.id.lCaption);
 			TextView lParallels = res.findViewById(R.id.lParallels);

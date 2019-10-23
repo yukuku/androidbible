@@ -19,6 +19,11 @@ class VersesDataModel(
     val textSizeMult_: Float,
     val versesAttributes: VersesAttributes
 ) {
+    enum class ItemType {
+        verseText,
+        pericope,
+    }
+
     /**
      * For each element, if 0 or more, it refers to the 0-based verse number.
      * If negative, -1 is the index 0 of pericope, -2 (a) is index 1 (b) of pericope, etc.
@@ -64,6 +69,33 @@ class VersesDataModel(
     }
 
     val itemCount get() = itemPointer_.size
+
+    fun getItemViewType(position: Int): ItemType {
+        val id = itemPointer_[position]
+        return if (id >= 0) {
+            ItemType.verseText
+        } else {
+            ItemType.pericope
+        }
+    }
+
+    fun getVerse_0(position: Int) : Int {
+        val id = itemPointer_[position]
+        return if (id >= 0) {
+            id
+        } else {
+            throw IllegalArgumentException("getVerse_0: position=$position has id of $id")
+        }
+    }
+
+    fun getPericopeIndex(position: Int) :Int {
+        val id = itemPointer_[position]
+        return if (id < 0) {
+            id.inv()
+        } else {
+            throw IllegalArgumentException("getPericopeIndex: position=$position has id of $id")
+        }
+    }
 
     /**
      * For example, when pos=0 is a pericope and pos=1 is the first verse,

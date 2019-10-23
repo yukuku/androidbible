@@ -1,10 +1,17 @@
 package yuku.alkitab.base.verses
 
 import android.graphics.Rect
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import yuku.alkitab.base.util.AppLog
+import yuku.alkitab.base.verses.VersesDataModel.ItemType
+import yuku.alkitab.base.widget.PericopeHeaderItem
 import yuku.alkitab.base.widget.VerseInlineLinkSpan
+import yuku.alkitab.base.widget.VerseItem
+import yuku.alkitab.debug.R
 import yuku.alkitab.util.IntArrayList
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -27,11 +34,16 @@ class VersesControllerImpl(
     private val dataVersionNumber = AtomicInteger()
 
     private val layoutManager: LinearLayoutManager
+    private val adapter: VersesAdapter
 
     init {
         val layoutManager = LinearLayoutManager(rv.context)
         this.layoutManager = layoutManager
         rv.layoutManager = layoutManager
+
+        val adapter = VersesAdapter()
+        this.adapter = adapter
+        rv.adapter = adapter
     }
 
     override var versesDataModel = VersesDataModel.EMPTY
@@ -190,6 +202,60 @@ class VersesControllerImpl(
     }
 
     fun render() {
-        // TODO()
+        adapter.data = versesDataModel
+    }
+}
+
+sealed class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    /**
+     * @param index the index of verse or pericope block
+     */
+    abstract fun bind(data: VersesDataModel, index: Int)
+}
+
+class VerseTextHolder(itemView: VerseItem): ItemHolder(itemView) {
+    override fun bind(data: VersesDataModel, index: Int) {
+        data.verses_.getVerse(index)
+    }
+}
+
+class PericopeHolder(itemView: PericopeHeaderItem): ItemHolder(itemView) {
+    override fun bind(data: VersesDataModel, index: Int) {
+        data.pericopeBlocks_[index]
+    }
+}
+
+class VersesAdapter : RecyclerView.Adapter<ItemHolder>() {
+
+    var data = VersesDataModel.EMPTY
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+
+    override fun getItemCount() = data.itemCount
+
+    override fun getItemViewType(position: Int) = data.getItemViewType(position).ordinal
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        
+        return when (viewType) {
+            ItemType.verseText.ordinal -> {
+                VerseTextHolder(inflater.inflate(R.layout.item_verse, parent, false) as VerseItem)
+            }
+            ItemType.pericope.ordinal -> {
+                PericopeHolder(inflater.inflate(R.layout.item_pericope_header, parent, false) as PericopeHeaderItem)
+            }
+            else -> throw RuntimeException("Unknown viewType $viewType")
+        }
+    }
+
+    override fun onBindViewHolder(holder: ItemHolder, position: Int) {
+        val index = when(holder) {
+            is VerseTextHolder -> data.getVerse_0(position)
+            is PericopeHolder -> data.getPericopeIndex(position)
+        }
+        holder.bind(data, index)
     }
 }
