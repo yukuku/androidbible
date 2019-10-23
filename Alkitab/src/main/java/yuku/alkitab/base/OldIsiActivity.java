@@ -97,6 +97,7 @@ import yuku.alkitab.base.util.OtherAppIntegration;
 import yuku.alkitab.base.util.ShareUrl;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.CallbackSpan;
+import yuku.alkitab.base.widget.DictionaryLinkInfo;
 import yuku.alkitab.base.widget.Floater;
 import yuku.alkitab.base.widget.FormattedTextRenderer;
 import yuku.alkitab.base.widget.GotoButton;
@@ -105,7 +106,6 @@ import yuku.alkitab.base.widget.LeftDrawer;
 import yuku.alkitab.base.widget.MaterialDialogAdapterHelper;
 import yuku.alkitab.base.widget.OldVersesView;
 import yuku.alkitab.base.widget.ScrollbarSetter;
-import yuku.alkitab.base.widget.SingleViewVerseAdapter;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
 import yuku.alkitab.base.widget.TwofingerLinearLayout;
@@ -318,7 +318,7 @@ public class OldIsiActivity extends BaseLeftDrawerActivity implements XrefDialog
 		}
 	};
 
-	final CallbackSpan.OnClickListener<SingleViewVerseAdapter.DictionaryLinkInfo> dictionaryListener = (widget, data) -> {
+	final CallbackSpan.OnClickListener<DictionaryLinkInfo> dictionaryListener = (widget, data) -> {
 		final ContentResolver cr = getContentResolver();
 		final Uri uri = Uri.parse("content://org.sabda.kamus.provider/define").buildUpon()
 			.appendQueryParameter("key", data.key)

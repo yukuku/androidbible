@@ -210,7 +210,7 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		adapter.setInlineLinkSpanFactory(inlineLinkSpanFactory);
 	}
 
-	public void setDictionaryListener(CallbackSpan.OnClickListener<SingleViewVerseAdapter.DictionaryLinkInfo> listener) {
+	public void setDictionaryListener(CallbackSpan.OnClickListener<DictionaryLinkInfo> listener) {
 		adapter.setDictionaryListener(listener);
 	}
 

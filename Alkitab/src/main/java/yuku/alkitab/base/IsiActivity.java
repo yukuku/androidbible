@@ -104,13 +104,13 @@ import yuku.alkitab.base.verses.VersesController;
 import yuku.alkitab.base.verses.VersesControllerImpl;
 import yuku.alkitab.base.verses.VersesDataModel;
 import yuku.alkitab.base.widget.CallbackSpan;
+import yuku.alkitab.base.widget.DictionaryLinkInfo;
 import yuku.alkitab.base.widget.Floater;
 import yuku.alkitab.base.widget.FormattedTextRenderer;
 import yuku.alkitab.base.widget.GotoButton;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.LeftDrawer;
 import yuku.alkitab.base.widget.MaterialDialogAdapterHelper;
-import yuku.alkitab.base.widget.SingleViewVerseAdapter;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
 import yuku.alkitab.base.widget.TwofingerLinearLayout;
@@ -335,7 +335,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	};
 
 	// TODO(VersesView revamp): use dictionary listener
-	final CallbackSpan.OnClickListener<SingleViewVerseAdapter.DictionaryLinkInfo> dictionaryListener = (widget, data) -> {
+	final CallbackSpan.OnClickListener<DictionaryLinkInfo> dictionaryListener = (widget, data) -> {
 		final ContentResolver cr = getContentResolver();
 		final Uri uri = Uri.parse("content://org.sabda.kamus.provider/define").buildUpon()
 			.appendQueryParameter("key", data.key)

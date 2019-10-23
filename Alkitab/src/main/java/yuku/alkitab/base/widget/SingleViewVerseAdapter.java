@@ -49,22 +49,6 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 		}
 	}
 
-	// ################## migration marker
-
-	private SparseBooleanArray dictionaryModeAris;
-
-	public static class DictionaryLinkInfo {
-		public String orig_text;
-		public String key;
-
-		public DictionaryLinkInfo(final String orig_text, final String key) {
-			this.orig_text = orig_text;
-			this.key = key;
-		}
-	}
-
-	CallbackSpan.OnClickListener<DictionaryLinkInfo> dictionaryListener_;
-
 	@Override public synchronized View getView(int position, View convertView, ViewGroup parent) {
 		// Need to determine this is pericope or verse
 		final int id = itemPointer_[position];
@@ -127,10 +111,10 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			 * Dictionary mode is activated on either of these conditions:
 			 * 1. user manually activate dictionary mode after selecting verses
 			 * 2. automatic lookup is on and this verse is selected (checked)
- 			 */
+			 */
 			if ((dictionaryModeAris != null && dictionaryModeAris.get(ari))
 				|| (checked && Preferences.getBoolean(res.getContext().getString(R.string.pref_autoDictionaryAnalyze_key), res.getContext().getResources().getBoolean(R.bool.pref_autoDictionaryAnalyze_default)))
-				) {
+			) {
 				final ContentResolver cr = res.getContext().getContentResolver();
 
 				final CharSequence renderedText = lText.getText();
@@ -237,7 +221,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 						}
 					}
 
-                    appendParallel(sb, parallel);
+					appendParallel(sb, parallel);
 				}
 				sb.append(')');
 
@@ -248,6 +232,38 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			return res;
 		}
 	}
+
+	private void appendParallel(SpannableStringBuilder sb, String parallel) {
+		int sb_len = sb.length();
+
+		linked: {
+			if (parallel.startsWith("@")) {
+				// look for the end
+				int targetEndPos = parallel.indexOf(' ', 1);
+				if (targetEndPos == -1) {
+					break linked;
+				}
+
+				final String target = parallel.substring(1, targetEndPos);
+				final IntArrayList ariRanges = TargetDecoder.decode(target);
+				if (ariRanges == null || ariRanges.size() == 0) {
+					break linked;
+				}
+
+				final String display = parallel.substring(targetEndPos + 1);
+
+				// if we reach this, data and display should have values, and we must not go to fallback below
+				sb.append(display);
+				sb.setSpan(new CallbackSpan<>(ariRanges.get(0), parallelListener_), sb_len, sb.length(), 0);
+				return; // do not remove this
+			}
+		}
+
+		// fallback if the above code fails
+		sb.append(parallel);
+		sb.setSpan(new CallbackSpan<>(parallel, parallelListener_), sb_len, sb.length(), 0);
+	}
+
 
 	static float scaleForAttributeView(final float fontSizeDp) {
 		if (fontSizeDp >= 13 /* 72% */ && fontSizeDp < 24 /* 133% */) {
@@ -260,36 +276,11 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 		return 1.5f; // 24 to 36 // 133% ~ 200%
 	}
 
-	private void appendParallel(SpannableStringBuilder sb, String parallel) {
-        int sb_len = sb.length();
+	// ################## migration marker
 
-        linked: {
-            if (parallel.startsWith("@")) {
-	            // look for the end
-	            int targetEndPos = parallel.indexOf(' ', 1);
-	            if (targetEndPos == -1) {
-		            break linked;
-	            }
+	private SparseBooleanArray dictionaryModeAris;
 
-	            final String target = parallel.substring(1, targetEndPos);
-	            final IntArrayList ariRanges = TargetDecoder.decode(target);
-	            if (ariRanges == null || ariRanges.size() == 0) {
-		            break linked;
-	            }
-
-	            final String display = parallel.substring(targetEndPos + 1);
-
-                // if we reach this, data and display should have values, and we must not go to fallback below
-                sb.append(display);
-                sb.setSpan(new CallbackSpan<>(ariRanges.get(0), parallelListener_), sb_len, sb.length(), 0);
-                return; // do not remove this
-            }
-        }
-
-        // fallback if the above code fails
-        sb.append(parallel);
-        sb.setSpan(new CallbackSpan<>(parallel, parallelListener_), sb_len, sb.length(), 0);
-    }
+	CallbackSpan.OnClickListener<DictionaryLinkInfo> dictionaryListener_;
 
 	public void setDictionaryModeAris(final SparseBooleanArray aris) {
 		this.dictionaryModeAris = aris;

@@ -79,7 +79,7 @@ class VersesDataModel(
         }
     }
 
-    fun getVerse_0(position: Int) : Int {
+    fun getVerse_0(position: Int): Int {
         val id = itemPointer_[position]
         return if (id >= 0) {
             id
@@ -88,7 +88,7 @@ class VersesDataModel(
         }
     }
 
-    fun getPericopeIndex(position: Int) :Int {
+    fun getPericopeIndex(position: Int): Int {
         val id = itemPointer_[position]
         return if (id < 0) {
             id.inv()
@@ -151,11 +151,7 @@ class VersesDataModel(
      * @return verse_1 or 0 if doesn't make sense
      */
     fun getVerseFromPosition(position: Int): Int {
-        var position = position
-
-        if (position >= itemPointer_.size) {
-            position = itemPointer_.size - 1
-        }
+        val position = position.coerceAtMost(itemPointer_.size - 1)
 
         var id = itemPointer_[position]
 
