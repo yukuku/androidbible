@@ -128,7 +128,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 	public boolean onDragEvent(final DragEvent event) {
 		if (event.getAction() == DragEvent.ACTION_DRAG_STARTED) {
 			Tracker.trackEvent("pin_drag_started");
-			if (event.getClipDescription().hasMimeType(VerseItem.PROGRESS_MARK_DRAG_MIME_TYPE)) {
+			if (event.getClipDescription().hasMimeType(OldVerseItem.PROGRESS_MARK_DRAG_MIME_TYPE)) {
 				return true; // Just to that the progress pin is not dropped to the verses
 			}
 		}
@@ -322,7 +322,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 					closeDrawer();
 				});
 				b.setOnLongClickListener(v -> {
-					final ClipData dragData = new ClipData("progress_mark", new String[]{VerseItem.PROGRESS_MARK_DRAG_MIME_TYPE}, new ClipData.Item("" + preset_id));
+					final ClipData dragData = new ClipData("progress_mark", new String[]{OldVerseItem.PROGRESS_MARK_DRAG_MIME_TYPE}, new ClipData.Item("" + preset_id));
 					b.setPressed(false);
 					final DragShadowBuilder dragShadowBuilder = new DragShadowBuilder(b);
 					performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);

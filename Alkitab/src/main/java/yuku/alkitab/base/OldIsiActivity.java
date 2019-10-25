@@ -321,7 +321,7 @@ public class OldIsiActivity extends BaseLeftDrawerActivity implements XrefDialog
 	final CallbackSpan.OnClickListener<DictionaryLinkInfo> dictionaryListener = (widget, data) -> {
 		final ContentResolver cr = getContentResolver();
 		final Uri uri = Uri.parse("content://org.sabda.kamus.provider/define").buildUpon()
-			.appendQueryParameter("key", data.key)
+			.appendQueryParameter("key", data.getKey())
 			.appendQueryParameter("mode", "snippet")
 			.build();
 
@@ -358,12 +358,12 @@ public class OldIsiActivity extends BaseLeftDrawerActivity implements XrefDialog
 				}
 
 				new MaterialDialog.Builder(this)
-					.title(data.orig_text)
+					.title(data.getOrig_text())
 					.content(sb)
 					.positiveText(R.string.dict_open_full)
 					.onPositive((dialog, which) -> {
 						final Intent intent = new Intent("org.sabda.kamus.action.VIEW");
-						intent.putExtra("key", data.key);
+						intent.putExtra("key", data.getKey());
 						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 

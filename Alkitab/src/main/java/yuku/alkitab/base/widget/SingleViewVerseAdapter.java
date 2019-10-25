@@ -62,11 +62,11 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				checked = ((ListView) parent).isItemChecked(position);
 			}
 
-			final VerseItem res;
+			final OldVerseItem res;
 			if (convertView == null) {
-				res = (VerseItem) inflater_.inflate(R.layout.item_verse, parent, false);
+				res = (OldVerseItem) inflater_.inflate(R.layout.item_old_verse, parent, false);
 			} else {
-				res = (VerseItem) convertView;
+				res = (OldVerseItem) convertView;
 			}
 
 			final int ari = Ari.encodeWithBc(ari_bc_, verse_1);
@@ -95,7 +95,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				lVerseNumber.setTextColor(selectedTextColor);
 			}
 
-			final AttributeView attributeView = res.attributeView;
+			final OldAttributeView attributeView = res.attributeView;
 			attributeView.setScale(scaleForAttributeView(S.applied().fontSize2dp * textSizeMult_));
 			attributeView.setBookmarkCount(bookmarkCountMap_ == null ? 0 : bookmarkCountMap_[id]);
 			attributeView.setNoteCount(noteCountMap_ == null ? 0 : noteCountMap_[id]);
@@ -276,8 +276,6 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 		return 1.5f; // 24 to 36 // 133% ~ 200%
 	}
 
-	// ################## migration marker
-
 	private SparseBooleanArray dictionaryModeAris;
 
 	CallbackSpan.OnClickListener<DictionaryLinkInfo> dictionaryListener_;
@@ -291,4 +289,6 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 		this.dictionaryListener_ = listener;
 		notifyDataSetChanged();
 	}
+
+	// ################## migration marker
 }

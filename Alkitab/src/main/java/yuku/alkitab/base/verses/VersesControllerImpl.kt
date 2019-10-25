@@ -19,12 +19,15 @@ import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.util.TargetDecoder
 import yuku.alkitab.base.verses.VersesDataModel.ItemType
+import yuku.alkitab.base.widget.AriParallelClickData
 import yuku.alkitab.base.widget.AttributeView
-import yuku.alkitab.base.widget.CallbackSpan
 import yuku.alkitab.base.widget.DictionaryLinkInfo
+import yuku.alkitab.base.widget.DictionaryLinkSpan
 import yuku.alkitab.base.widget.FormattedTextRenderer
+import yuku.alkitab.base.widget.ParallelClickData
+import yuku.alkitab.base.widget.ParallelSpan
 import yuku.alkitab.base.widget.PericopeHeaderItem
-import yuku.alkitab.base.widget.VerseInlineLinkSpan
+import yuku.alkitab.base.widget.ReferenceParallelClickData
 import yuku.alkitab.base.widget.VerseItem
 import yuku.alkitab.base.widget.VerseRenderer
 import yuku.alkitab.base.widget.VerseTextView
@@ -39,12 +42,9 @@ private const val TAG = "VersesControllerImpl"
 class VersesControllerImpl(
     private val rv: RecyclerView,
     override val name: String,
-    override val verseSelectionMode: VersesController.VerseSelectionMode,
-    override val attributeListener: VersesController.AttributeListener,
-    override val listener: VersesController.SelectedVersesListener,
-    override val onVerseScrollListener: VersesController.OnVerseScrollListener,
-    override val parallelListener_: (VersesController.ParallelClickData) -> Unit,
-    override val inlineLinkSpanFactory_: VerseInlineLinkSpan.Factory
+    versesDataModel: VersesDataModel = VersesDataModel.EMPTY,
+    versesUiModel: VersesUiModel = VersesUiModel.EMPTY,
+    versesListeners: VersesListeners = VersesListeners.EMPTY
 ) : VersesController {
 
     private val checkedPositions = mutableSetOf<Int>()
@@ -60,7 +60,7 @@ class VersesControllerImpl(
         this.layoutManager = layoutManager
         rv.layoutManager = layoutManager
 
-        val adapter = VersesAdapter()
+        val adapter = VersesAdapter(::isChecked)
         this.adapter = adapter
         rv.adapter = adapter
     }
@@ -68,7 +68,7 @@ class VersesControllerImpl(
     /**
      * Data for adapter: Verse data
      */
-    override var versesDataModel = VersesDataModel.EMPTY
+    override var versesDataModel = versesDataModel
         set(value) {
             field = value
             dataVersionNumber.incrementAndGet()
@@ -78,23 +78,32 @@ class VersesControllerImpl(
     /**
      * Data for adapter: UI data
      */
-    override var versesUiModel = VersesUiModel.EMPTY
-    set(value) {
-        field = value
-        render()
-    }
+    override var versesUiModel = versesUiModel
+        set(value) {
+            field = value
+            render()
+        }
 
-    override fun uncheckAllVerses(callListener: Boolean) {
+    /**
+     * Data for adapter: Callbacks
+     */
+    override var versesListeners = versesListeners
+        set(value) {
+            field = value
+            render()
+        }
+
+    override fun uncheckAllVerses(callSelectedVersesListener: Boolean) {
         checkedPositions.clear()
 
-        if (callListener) {
-            listener.onNoVersesSelected(this)
+        if (callSelectedVersesListener) {
+            versesListeners.selectedVersesListener.onNoVersesSelected(this)
         }
 
         render()
     }
 
-    override fun checkVerses(verses_1: IntArrayList, callListener: Boolean) {
+    override fun checkVerses(verses_1: IntArrayList, callSelectedVersesListener: Boolean) {
         uncheckAllVerses(false)
 
         var checked_count = 0
@@ -111,11 +120,11 @@ class VersesControllerImpl(
             i++
         }
 
-        if (callListener) {
+        if (callSelectedVersesListener) {
             if (checked_count > 0) {
-                listener.onSomeVersesSelected(this)
+                versesListeners.selectedVersesListener.onSomeVersesSelected(this)
             } else {
-                listener.onNoVersesSelected(this)
+                versesListeners.selectedVersesListener.onNoVersesSelected(this)
             }
         }
 
@@ -131,6 +140,11 @@ class VersesControllerImpl(
             }
         }
         return res
+    }
+
+    private fun isChecked(verse_1: Int): Boolean {
+        val pos = versesDataModel.getPositionIgnoringPericopeFromVerse(verse_1)
+        return pos in checkedPositions
     }
 
     override fun scrollToTop() {
@@ -235,12 +249,13 @@ class VersesControllerImpl(
     fun render() {
         adapter.data = versesDataModel
         adapter.ui = versesUiModel
+        adapter.listeners = versesListeners
     }
 }
 
 sealed class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-class VerseTextHolder(private val view: VerseItem): ItemHolder(view) {
+class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
     private val lText: VerseTextView = view.lText
     private val lVerseNumber: TextView = view.lVerseNumber
     private val attributeView: AttributeView = view.attributeView
@@ -248,17 +263,23 @@ class VerseTextHolder(private val view: VerseItem): ItemHolder(view) {
     /**
      * @param index the index of verse
      */
-    fun bind(data: VersesDataModel, ui: VersesUiModel, versesAttributes: VersesAttributes, ari_bc_: Int, checked: Boolean, inlineLinkSpanFactory_: VerseInlineLinkSpan.Factory, index: Int) {
+    fun bind(
+        data: VersesDataModel,
+        ui: VersesUiModel,
+        listeners: VersesListeners,
+        checked: Boolean,
+        index: Int
+    ) {
         val verse_1 = index + 1
-        val ari = Ari.encodeWithBc(ari_bc_, verse_1)
+        val ari = Ari.encodeWithBc(data.ari_bc_, verse_1)
         val text = data.verses_.getVerse(index)
         val verseNumberText = data.verses_.getVerseNumberText(index)
-        val highlightInfo = versesAttributes.highlightInfoMap_[index]
+        val highlightInfo = data.versesAttributes.highlightInfoMap_[index]
 
         val lText = this.lText
         val lVerseNumber = this.lVerseNumber
 
-        val startVerseTextPos = VerseRenderer.render(lText, lVerseNumber, ari, text, verseNumberText, highlightInfo, checked, inlineLinkSpanFactory_, null)
+        val startVerseTextPos = VerseRenderer.render(lText, lVerseNumber, ari, text, verseNumberText, highlightInfo, checked, listeners.inlineLinkSpanFactory_, null)
 
         val textSizeMult = if (data.verses_ is SingleChapterVerses.WithTextSizeMult) {
             data.verses_.getTextSizeMult(index)
@@ -277,11 +298,11 @@ class VerseTextHolder(private val view: VerseItem): ItemHolder(view) {
 
         val attributeView = this.attributeView
         attributeView.setScale(scaleForAttributeView(S.applied().fontSize2dp * ui.textSizeMult))
-        attributeView.bookmarkCount = versesAttributes.bookmarkCountMap_[index]
-        attributeView.noteCount = versesAttributes.noteCountMap_[index]
-        attributeView.progressMarkBits = versesAttributes.progressMarkBitsMap_[index]
-        attributeView.hasMaps = versesAttributes.hasMapsMap_[index]
-        attributeView.setAttributeListener(attributeListener_, data.version_, data.versionId_, ari)
+        attributeView.bookmarkCount = data.versesAttributes.bookmarkCountMap_[index]
+        attributeView.noteCount = data.versesAttributes.noteCountMap_[index]
+        attributeView.progressMarkBits = data.versesAttributes.progressMarkBitsMap_[index]
+        attributeView.hasMaps = data.versesAttributes.hasMapsMap_[index]
+        attributeView.setAttributeListener(listeners.attributeListener, data.version_, data.versionId_, ari)
 
         view.setCollapsed(text.isEmpty() && !attributeView.isShowingSomething)
 
@@ -292,7 +313,7 @@ class VerseTextHolder(private val view: VerseItem): ItemHolder(view) {
          * 1. user manually activate dictionary mode after selecting verses
          * 2. automatic lookup is on and this verse is selected (checked)
          */
-        if (dictionaryModeAris != null && dictionaryModeAris.get(ari) || checked && Preferences.getBoolean(view.context.getString(R.string.pref_autoDictionaryAnalyze_key), view.resources.getBoolean(R.bool.pref_autoDictionaryAnalyze_default))) {
+        if (ari in ui.dictionaryModeAris || checked && Preferences.getBoolean(view.context.getString(R.string.pref_autoDictionaryAnalyze_key), view.resources.getBoolean(R.bool.pref_autoDictionaryAnalyze_default))) {
             val cr = view.context.contentResolver
 
             val renderedText = lText.text
@@ -320,7 +341,9 @@ class VerseTextHolder(private val view: VerseItem): ItemHolder(view) {
                         val len = c.getInt(col_len)
                         val key = c.getString(col_key)
 
-                        verseText.setSpan(CallbackSpan<DictionaryLinkInfo>(DictionaryLinkInfo(analyzeString.substring(offset, offset + len), key), dictionaryListener_), startVerseTextPos + offset, startVerseTextPos + offset + len, 0)
+                        val word = analyzeString.substring(offset, offset + len)
+                        val span = DictionaryLinkSpan(DictionaryLinkInfo(word, key), listeners.dictionaryListener_)
+                        verseText.setSpan(span, startVerseTextPos + offset, startVerseTextPos + offset + len, 0)
                     }
                 } finally {
                     c.close()
@@ -358,11 +381,11 @@ class VerseTextHolder(private val view: VerseItem): ItemHolder(view) {
     }
 }
 
-class PericopeHolder(private val view: PericopeHeaderItem): ItemHolder(view) {
+class PericopeHolder(private val view: PericopeHeaderItem) : ItemHolder(view) {
     /**
      * @param index the index of verse
      */
-    fun bind(data: VersesDataModel, ui: VersesUiModel, position: Int, index: Int) {
+    fun bind(data: VersesDataModel, ui: VersesUiModel, listeners: VersesListeners, position: Int, index: Int) {
         val pericopeBlock = data.pericopeBlocks_[index]
 
         val lCaption = view.findViewById<TextView>(R.id.lCaption)
@@ -402,7 +425,7 @@ class PericopeHolder(private val view: PericopeHeaderItem): ItemHolder(view) {
                     }
                 }
 
-                appendParallel(sb, parallel)
+                appendParallel(sb, parallel, listeners.parallelListener_)
             }
             sb.append(')')
 
@@ -411,7 +434,7 @@ class PericopeHolder(private val view: PericopeHeaderItem): ItemHolder(view) {
         }
     }
 
-    private fun appendParallel(sb: SpannableStringBuilder, parallel: String) {
+    private fun appendParallel(sb: SpannableStringBuilder, parallel: String, parallelListener: (ParallelClickData) -> Unit) {
         val sb_len = sb.length
 
         fun link(): Boolean {
@@ -435,7 +458,7 @@ class PericopeHolder(private val view: PericopeHeaderItem): ItemHolder(view) {
 
             // if we reach this, data and display should have values, and we must not go to fallback below
             sb.append(display)
-            sb.setSpan(CallbackSpan<Any>(ariRanges.get(0), parallelListener_), sb_len, sb.length, 0)
+            sb.setSpan(ParallelSpan(AriParallelClickData(ariRanges.get(0)), parallelListener), sb_len, sb.length, 0)
             return true
         }
 
@@ -443,13 +466,13 @@ class PericopeHolder(private val view: PericopeHeaderItem): ItemHolder(view) {
         if (!completed) {
             // fallback if the above code fails
             sb.append(parallel)
-            sb.setSpan(CallbackSpan<Any>(parallel, parallelListener_), sb_len, sb.length, 0)
+            sb.setSpan(ParallelSpan(ReferenceParallelClickData(parallel), parallelListener), sb_len, sb.length, 0)
         }
     }
 
 }
 
-class VersesAdapter : RecyclerView.Adapter<ItemHolder>() {
+class VersesAdapter(private val isChecked: (verse_1: Int) -> Boolean) : RecyclerView.Adapter<ItemHolder>() {
 
     var data = VersesDataModel.EMPTY
         set(value) {
@@ -463,13 +486,19 @@ class VersesAdapter : RecyclerView.Adapter<ItemHolder>() {
             notifyDataSetChanged()
         }
 
+    var listeners = VersesListeners.EMPTY
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+
     override fun getItemCount() = data.itemCount
 
     override fun getItemViewType(position: Int) = data.getItemViewType(position).ordinal
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemHolder {
         val inflater = LayoutInflater.from(parent.context)
-        
+
         return when (viewType) {
             ItemType.verseText.ordinal -> {
                 VerseTextHolder(inflater.inflate(R.layout.item_verse, parent, false) as VerseItem)
@@ -482,14 +511,17 @@ class VersesAdapter : RecyclerView.Adapter<ItemHolder>() {
     }
 
     override fun onBindViewHolder(holder: ItemHolder, position: Int) {
-        val index = when(holder) {
-            is VerseTextHolder -> data.getVerse_0(position)
-            is PericopeHolder -> data.getPericopeIndex(position)
-        }
-        when(holder) {
-            is VerseTextHolder -> holder.bind(data, position, index)
-            is PericopeHolder -> holder.bind(data, position, index)
-        }
+        when (holder) {
+            is VerseTextHolder -> {
+                val index = data.getVerse_0(position)
+                val verse_1 = index + 1
 
+                holder.bind(data, ui, listeners, isChecked(verse_1), index)
+            }
+            is PericopeHolder -> {
+                val index = data.getPericopeIndex(position)
+                holder.bind(data, ui, listeners, position, index)
+            }
+        }
     }
 }

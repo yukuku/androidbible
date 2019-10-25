@@ -3,6 +3,7 @@ package yuku.alkitab.base.widget;
 import android.text.TextPaint;
 import android.text.style.ClickableSpan;
 import android.view.View;
+import androidx.annotation.NonNull;
 
 public abstract class VerseInlineLinkSpan extends ClickableSpan {
 	public interface Factory {
@@ -25,11 +26,11 @@ public abstract class VerseInlineLinkSpan extends ClickableSpan {
 	}
 
 	@Override
-	public final void onClick(final View widget) {
+	public final void onClick(@NonNull final View widget) {
 		onClick(type, arif, source);
 	}
 
-	public abstract void onClick(final Type type, final int arif, final Object source);
+	public void onClick(final Type type, final int arif, final Object source) {};
 
 	@Override
 	public void updateDrawState(final TextPaint ds) {

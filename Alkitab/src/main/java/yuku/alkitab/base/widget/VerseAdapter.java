@@ -125,7 +125,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 			if (mapOffset >= progressMarkBitsMap.length) {
 				AppLog.e(TAG, "(for progressMarkBitsMap:) mapOffset out of bounds: " + mapOffset + " happened on ari 0x" + Integer.toHexString(ari));
 			} else {
-				progressMarkBitsMap[mapOffset] |= 1 << (progressMark.preset_id + AttributeView.PROGRESS_MARK_BITS_START);
+				progressMarkBitsMap[mapOffset] |= 1 << (progressMark.preset_id + OldAttributeView.PROGRESS_MARK_BITS_START);
 			}
 		}
 
@@ -372,6 +372,10 @@ public abstract class VerseAdapter extends BaseAdapter {
 		return verses_.getVerseCount();
 	}
 
+	/* non-public */ void calculateTextSizeMult() {
+		textSizeMult_ = versionId_ == null ? 1.f : S.getDb().getPerVersionSettings(versionId_).fontSizeMultiplier;
+	}
+
 	// ################## migration marker
 
 	// For calling attention. All attentioned verses have the same start time.
@@ -392,9 +396,5 @@ public abstract class VerseAdapter extends BaseAdapter {
 
 			notifyDataSetChanged();
 		}
-	}
-
-	/* non-public */ void calculateTextSizeMult() {
-		textSizeMult_ = versionId_ == null ? 1.f : S.getDb().getPerVersionSettings(versionId_).fontSizeMultiplier;
 	}
 }

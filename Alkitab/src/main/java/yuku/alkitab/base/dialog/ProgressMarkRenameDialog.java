@@ -10,7 +10,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.widget.AttributeView;
+import yuku.alkitab.base.widget.OldAttributeView;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.ProgressMark;
 
@@ -25,7 +25,7 @@ public class ProgressMarkRenameDialog extends DialogFragment {
 	}
 
 	public static void show(final Activity activity, final ProgressMark progressMark, @NonNull final Listener listener) {
-		final String caption = !TextUtils.isEmpty(progressMark.caption) ? progressMark.caption : activity.getString(AttributeView.getDefaultProgressMarkStringResource(progressMark.preset_id));
+		final String caption = !TextUtils.isEmpty(progressMark.caption) ? progressMark.caption : activity.getString(OldAttributeView.getDefaultProgressMarkStringResource(progressMark.preset_id));
 
 		new MaterialDialog.Builder(activity)
 			.positiveText(R.string.ok)

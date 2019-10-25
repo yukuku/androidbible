@@ -1,7 +1,6 @@
 package yuku.alkitab.base.verses
 
 import android.graphics.Rect
-import yuku.alkitab.base.widget.VerseInlineLinkSpan
 import yuku.alkitab.model.Version
 import yuku.alkitab.util.IntArrayList
 
@@ -51,25 +50,19 @@ interface VersesController {
         }
     }
 
-    interface ParallelClickData
-
     // # field ctor
 
     /**
      * Name of this [VersesController] for debugging.
      */
     val name: String
-    val verseSelectionMode: VerseSelectionMode
-    val attributeListener: AttributeListener
-    val listener: SelectedVersesListener
-    val onVerseScrollListener: OnVerseScrollListener
-    val parallelListener_: (ParallelClickData) -> Unit
-    val inlineLinkSpanFactory_: VerseInlineLinkSpan.Factory
 
     var versesDataModel: VersesDataModel
+    var versesUiModel: VersesUiModel
+    var versesListeners: VersesListeners
 
-    fun uncheckAllVerses(callListener: Boolean)
-    fun checkVerses(verses_1: IntArrayList, callListener: Boolean)
+    fun uncheckAllVerses(callSelectedVersesListener: Boolean)
+    fun checkVerses(verses_1: IntArrayList, callSelectedVersesListener: Boolean)
     /**
      * Old name: getSelectedVerses_1
      */

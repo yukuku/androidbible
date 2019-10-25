@@ -103,7 +103,8 @@ import yuku.alkitab.base.verses.VersesAttributes;
 import yuku.alkitab.base.verses.VersesController;
 import yuku.alkitab.base.verses.VersesControllerImpl;
 import yuku.alkitab.base.verses.VersesDataModel;
-import yuku.alkitab.base.widget.CallbackSpan;
+import yuku.alkitab.base.verses.VersesListeners;
+import yuku.alkitab.base.verses.VersesUiModel;
 import yuku.alkitab.base.widget.DictionaryLinkInfo;
 import yuku.alkitab.base.widget.Floater;
 import yuku.alkitab.base.widget.FormattedTextRenderer;
@@ -111,6 +112,7 @@ import yuku.alkitab.base.widget.GotoButton;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.LeftDrawer;
 import yuku.alkitab.base.widget.MaterialDialogAdapterHelper;
+import yuku.alkitab.base.widget.ParallelClickData;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
 import yuku.alkitab.base.widget.TwofingerLinearLayout;
@@ -316,9 +318,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	@Nullable
 	String activeSplitVersionId;
 
-	final Function1<VersesController.ParallelClickData, Unit> parallelListener = new Function1<VersesController.ParallelClickData, Unit>() {
+	final Function1<ParallelClickData, Unit> parallelListener = new Function1<ParallelClickData, Unit>() {
 		@Override
-		public Unit invoke(final VersesController.ParallelClickData parallelClickData) {
+		public Unit invoke(final ParallelClickData parallelClickData) {
 			// TODO(VersesView revamp): parallelClickData is now typed
 //			if (data instanceof String) {
 //				final int ari = IsiActivity.this.jumpTo((String) data);
@@ -334,11 +336,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	};
 
-	// TODO(VersesView revamp): use dictionary listener
-	final CallbackSpan.OnClickListener<DictionaryLinkInfo> dictionaryListener = (widget, data) -> {
+	// TODO(VersesView revamp): use dictionary selectedVersesListener
+	final Function1<DictionaryLinkInfo, Unit> dictionaryListener = data -> {
 		final ContentResolver cr = getContentResolver();
 		final Uri uri = Uri.parse("content://org.sabda.kamus.provider/define").buildUpon()
-			.appendQueryParameter("key", data.key)
+			.appendQueryParameter("key", data.getKey())
 			.appendQueryParameter("mode", "snippet")
 			.build();
 
@@ -350,12 +352,12 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				.content(R.string.dict_no_results)
 				.positiveText(R.string.ok)
 				.show();
-			return;
+			return Unit.INSTANCE;
 		}
 
 		if (c == null) {
 			OtherAppIntegration.askToInstallDictionary(this);
-			return;
+			return Unit.INSTANCE;
 		}
 
 		try {
@@ -375,12 +377,12 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				}
 
 				new MaterialDialog.Builder(this)
-					.title(data.orig_text)
+					.title(data.getOrig_text())
 					.content(sb)
 					.positiveText(R.string.dict_open_full)
 					.onPositive((dialog, which) -> {
 						final Intent intent = new Intent("org.sabda.kamus.action.VIEW");
-						intent.putExtra("key", data.key);
+						intent.putExtra("key", data.getKey());
 						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -395,6 +397,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		} finally {
 			c.close();
 		}
+
+		return Unit.INSTANCE;
 	};
 
 	final ViewTreeObserver.OnGlobalLayoutListener splitRoot_globalLayout = new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -522,24 +526,32 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		lsSplit0 = new VersesControllerImpl(
 			findViewById(R.id.lsSplitView0),
 			"lsSplit0",
-			VersesController.VerseSelectionMode.multiple,
-			new AttributeListener(), // have to be distinct from lsSplit1
-			lsSplit0_selectedVerses,
-			lsSplit0_verseScroll,
-			parallelListener,
-			new VerseInlineLinkSpanFactory(lsSplit0)
+			VersesDataModel.EMPTY,
+			VersesUiModel.EMPTY,
+			new VersesListeners(
+				new AttributeListener(), // have to be distinct from lsSplit1
+				lsSplit0_selectedVerses,
+				lsSplit0_verseScroll,
+				parallelListener,
+				new VerseInlineLinkSpanFactory(lsSplit0),
+				dictionaryListener
+			)
 		);
 
 		// additional setup for split1
 		lsSplit1 = new VersesControllerImpl(
 			findViewById(R.id.lsSplitView1),
 			"lsSplit1",
-			VersesController.VerseSelectionMode.multiple,
-			new AttributeListener(), // have to be distinct from lsSplit0
-			lsSplit1_selectedVerses,
-			lsSplit1_verseScroll,
-			parallelListener,
-			new VerseInlineLinkSpanFactory(lsSplit1)
+			VersesDataModel.EMPTY,
+			VersesUiModel.EMPTY,
+			new VersesListeners(
+				new AttributeListener(), // have to be distinct from lsSplit0
+				lsSplit1_selectedVerses,
+				lsSplit1_verseScroll,
+				parallelListener,
+				new VerseInlineLinkSpanFactory(lsSplit1),
+				dictionaryListener
+			)
 		);
 
 		// for splitting
@@ -639,6 +651,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		App.getLbm().registerReceiver(needsRestartReceiver, new IntentFilter(ACTION_NEEDS_RESTART));
 		AppLog.d(TAG, "@@onCreate end");
+	}
+
+	float calculateTextSizeMult(@Nullable final String versionId) {
+		return versionId == null ? 1.f : S.getDb().getPerVersionSettings(versionId).fontSizeMultiplier;
 	}
 
 	void callAttentionForVerseToBothSplits(final int verse_1) {
@@ -2002,7 +2018,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		@Override
-		public void onProgressMarkAttributeClick(final Version version, final String versionId, final int preset_id) {
+		public void onProgressMarkAttributeClick(@NonNull final Version version, @NonNull final String versionId, final int preset_id) {
 			final ProgressMark progressMark = S.getDb().getProgressMarkByPresetId(preset_id);
 
 			ProgressMarkRenameDialog.show(IsiActivity.this, progressMark, new ProgressMarkRenameDialog.Listener() {
@@ -2019,14 +2035,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		@Override
-		public void onHasMapsAttributeClick(final Version version, final String versionId, final int ari) {
-			String locale = null;
-
-			if (this == lsSplit0.getAttributeListener()) {
-				locale = S.activeVersion().getLocale();
-			} else if (this == lsSplit1.getAttributeListener()) {
-				locale = activeSplitVersion.getLocale();
-			}
+		public void onHasMapsAttributeClick(@NonNull final Version version, @NonNull final String versionId, final int ari) {
+			final String locale = version.getLocale();
 
 			try {
 				final Intent intent = new Intent("palki.maps.action.SHOW_MAPS_DIALOG");
