@@ -105,6 +105,7 @@ import yuku.alkitab.base.verses.VersesControllerImpl;
 import yuku.alkitab.base.verses.VersesDataModel;
 import yuku.alkitab.base.verses.VersesListeners;
 import yuku.alkitab.base.verses.VersesUiModel;
+import yuku.alkitab.base.widget.AriParallelClickData;
 import yuku.alkitab.base.widget.DictionaryLinkInfo;
 import yuku.alkitab.base.widget.Floater;
 import yuku.alkitab.base.widget.FormattedTextRenderer;
@@ -113,6 +114,7 @@ import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.LeftDrawer;
 import yuku.alkitab.base.widget.MaterialDialogAdapterHelper;
 import yuku.alkitab.base.widget.ParallelClickData;
+import yuku.alkitab.base.widget.ReferenceParallelClickData;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
 import yuku.alkitab.base.widget.TwofingerLinearLayout;
@@ -320,18 +322,17 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	final Function1<ParallelClickData, Unit> parallelListener = new Function1<ParallelClickData, Unit>() {
 		@Override
-		public Unit invoke(final ParallelClickData parallelClickData) {
-			// TODO(VersesView revamp): parallelClickData is now typed
-//			if (data instanceof String) {
-//				final int ari = IsiActivity.this.jumpTo((String) data);
-//				if (ari != 0) {
-//					history.add(ari);
-//				}
-//			} else if (data instanceof Integer) {
-//				final int ari = (Integer) data;
-//				IsiActivity.this.jumpToAri(ari);
-//				history.add(ari);
-//			}
+		public Unit invoke(final ParallelClickData data) {
+			if (data instanceof ReferenceParallelClickData) {
+				final int ari = jumpTo(((ReferenceParallelClickData) data).getReference());
+				if (ari != 0) {
+					history.add(ari);
+				}
+			} else if (data instanceof AriParallelClickData) {
+				final int ari = ((AriParallelClickData) data).getAri();
+				IsiActivity.this.jumpToAri(ari);
+				history.add(ari);
+			}
 			return Unit.INSTANCE;
 		}
 	};
