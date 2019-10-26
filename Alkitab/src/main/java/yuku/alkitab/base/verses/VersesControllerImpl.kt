@@ -134,7 +134,7 @@ class VersesControllerImpl(
     override fun getCheckedVerses_1(): IntArrayList {
         val res = IntArrayList(checkedPositions.size)
         for (checkedPosition in checkedPositions) {
-            val verse_1 = versesDataModel.getVerseFromPosition(checkedPosition)
+            val verse_1 = versesDataModel.getVerse_1FromPosition(checkedPosition)
             if (verse_1 >= 1) {
                 res.add(verse_1)
             }
@@ -203,20 +203,124 @@ class VersesControllerImpl(
     private fun getMeasuredItemHeight(position: Int): Int {
         // child needed is not on screen, we need to measure
 
-        // TODO(VersesView revamp): create adapter
-//        val child = adapter.getView(position, convertView, this)
-//        child.measure(View.MeasureSpec.makeMeasureSpec(this.getWidth() - this.getPaddingLeft() - this.getPaddingRight(), View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
-//        scrollToVerseConvertViews[itemType] = child
-//        return child.getMeasuredHeight()
-        TODO()
+        val viewType = adapter.getItemViewType(position)
+        val holder = adapter.createViewHolder(rv, viewType)
+        adapter.bindViewHolder(holder, position)
+        val child = holder.itemView
+        child.measure(
+            View.MeasureSpec.makeMeasureSpec(rv.width - rv.paddingLeft - rv.paddingRight, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        )
+        return child.measuredHeight
+    }
+
+    private fun getPositionBasedOnScroll(): Int {
+        val pos = layoutManager.findFirstVisibleItemPosition()
+
+        // check if the top one has been scrolled
+        val child = rv.getChildAt(0)
+        if (child != null) {
+            val top = child.top
+            if (top == 0) {
+                return pos
+            }
+            val bottom = child.bottom
+            return if (bottom > 0) {
+                pos
+            } else {
+                pos + 1
+            }
+        }
+
+        return pos
     }
 
     override fun getVerse_1BasedOnScroll(): Int {
-        TODO("not implemented")
+        return versesDataModel.getVerse_1FromPosition(getPositionBasedOnScroll())
     }
 
-    override fun press(keyCode: Int): VersesController.PressResult {
-        TODO("not implemented")
+    override fun pageDown(): VersesController.PressResult {
+        val oldPos = layoutManager.findFirstVisibleItemPosition()
+        var newPos = layoutManager.findLastVisibleItemPosition()
+
+        if (oldPos == newPos && oldPos < versesDataModel.itemCount - 1) { // in case of very long item
+            newPos = oldPos + 1
+        }
+
+        // negate padding offset, unless this is the first item
+        val paddingNegator = if (newPos == 0) 0 else -rv.paddingTop
+
+        // TODO(VersesView revamp): It previously scrolled smoothly
+        layoutManager.scrollToPositionWithOffset(newPos, paddingNegator)
+
+        return VersesController.PressResult.Consumed(versesDataModel.getVerse_1FromPosition(newPos))
+    }
+
+    override fun pageUp(): VersesController.PressResult {
+        val oldPos = layoutManager.findFirstVisibleItemPosition()
+        val targetHeight = (rv.height - rv.paddingTop - rv.paddingBottom).coerceAtLeast(0)
+
+        var totalHeight = 0
+
+        // consider how long the first child has been scrolled up
+        val firstChild = rv.getChildAt(0)
+        if (firstChild != null) {
+            totalHeight += -firstChild.top
+        }
+
+        var curPos = oldPos
+        // try until totalHeight exceeds targetHeight
+        while (true) {
+            curPos--
+            if (curPos < 0) {
+                break
+            }
+
+            totalHeight += getMeasuredItemHeight(curPos)
+
+            if (totalHeight > targetHeight) {
+                break
+            }
+        }
+
+        var newPos = curPos + 1
+
+        if (oldPos == newPos && oldPos > 0) { // move at least one
+            newPos = oldPos - 1
+        }
+
+        // negate padding offset, unless this is the first item
+        val paddingNegator = if (newPos == 0) 0 else -rv.paddingTop
+
+        // TODO(VersesView revamp): It previously scrolled smoothly
+        layoutManager.scrollToPositionWithOffset(newPos, paddingNegator)
+
+        return VersesController.PressResult.Consumed(versesDataModel.getVerse_1FromPosition(newPos))
+    }
+
+    override fun verseDown(): VersesController.PressResult {
+        val oldVerse_1 = getVerse_1BasedOnScroll()
+        // TODO(VersesView revamp): check if we need this: stopFling()
+        val newVerse_1 = if (oldVerse_1 < versesDataModel.verses_.verseCount) {
+            oldVerse_1 + 1
+        } else {
+            oldVerse_1
+        }
+        scrollToVerse(newVerse_1)
+        return VersesController.PressResult.Consumed(newVerse_1)
+    }
+
+    override fun verseUp(): VersesController.PressResult {
+        val oldVerse_1 = getVerse_1BasedOnScroll()
+
+        // TODO(VersesView revamp): check if we need this: stopFling()
+        val newVerse_1 = if (oldVerse_1 > 1) { // can still go prev
+            oldVerse_1 - 1
+        } else {
+            oldVerse_1
+        }
+        scrollToVerse(newVerse_1)
+        return VersesController.PressResult.Consumed(newVerse_1)
     }
 
     override fun setViewVisibility(visibility: Int) {
@@ -224,7 +328,7 @@ class VersesControllerImpl(
     }
 
     override fun setViewPadding(padding: Rect) {
-        // TODO("not implemented")
+        rv.setPadding(padding.left, padding.top, padding.right, padding.bottom)
     }
 
     override fun setViewLayoutSize(width: Int, height: Int) {
@@ -476,23 +580,30 @@ class VersesAdapter(private val isChecked: (verse_1: Int) -> Boolean) : Recycler
 
     var data = VersesDataModel.EMPTY
         set(value) {
+            AppLog.i(TAG, "VersesAdapter @@data set")
             field = value
             notifyDataSetChanged()
         }
 
     var ui = VersesUiModel.EMPTY
         set(value) {
+            AppLog.i(TAG, "VersesAdapter @@ui set")
             field = value
             notifyDataSetChanged()
         }
 
     var listeners = VersesListeners.EMPTY
         set(value) {
+            AppLog.i(TAG, "VersesAdapter @@listeners set")
             field = value
             notifyDataSetChanged()
         }
 
-    override fun getItemCount() = data.itemCount
+    override fun getItemCount(): Int {
+        val res = data.itemCount
+        AppLog.i(TAG, "VersesAdapter @@getItemCount $res")
+        return res
+    }
 
     override fun getItemViewType(position: Int) = data.getItemViewType(position).ordinal
 

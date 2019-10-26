@@ -98,8 +98,6 @@ import static yuku.alkitab.base.util.Literals.Array;
 import yuku.alkitab.base.util.OtherAppIntegration;
 import yuku.alkitab.base.util.ShareUrl;
 import yuku.alkitab.base.util.Sqlitil;
-import yuku.alkitab.base.verses.VerseAttributeLoader;
-import yuku.alkitab.base.verses.VersesAttributes;
 import yuku.alkitab.base.verses.VersesController;
 import yuku.alkitab.base.verses.VersesControllerImpl;
 import yuku.alkitab.base.verses.VersesDataModel;
@@ -126,9 +124,7 @@ import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
-import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.ProgressMark;
-import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.ribka.RibkaReportActivity;
 import yuku.alkitab.tracking.Tracker;
@@ -516,9 +512,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 //		lsSplit0.setOnKeyListener((v, keyCode, event) -> {
 //			int action = event.getAction();
 //			if (action == KeyEvent.ACTION_DOWN) {
-//				return press(keyCode);
+//				return consumeKey(keyCode);
 //			} else if (action == KeyEvent.ACTION_MULTIPLE) {
-//				return press(keyCode);
+//				return consumeKey(keyCode);
 //			}
 //			return false;
 //		});
@@ -915,7 +911,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	}
 
-	boolean press(int keyCode) {
+	boolean consumeKey(int keyCode) {
+		// Handle dpad left/right, this always goes to prev/next chapter.
 		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
 			bLeft_click();
 			return true;
@@ -924,22 +921,57 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			return true;
 		}
 
-		VersesController.PressResult pressResult = lsSplit0.press(keyCode);
-		switch (pressResult.getKind()) {
-			case left:
-				bLeft_click();
-				return true;
-			case right:
-				bRight_click();
-				return true;
-			case consumed:
-				if (activeSplitVersion != null) {
-					lsSplit1.scrollToVerse(pressResult.getTargetVerse_1());
-				}
-				return true;
-			default:
-				return false;
+		// Handle volume up/down, the effect changes based on preferences.
+		final VersesController.PressResult pressResult = consumeUpDownKey(lsSplit0, keyCode);
+
+		if (pressResult instanceof VersesController.PressResult.Left) {
+			bLeft_click();
+			return true;
 		}
+
+		if (pressResult instanceof VersesController.PressResult.Right) {
+			bRight_click();
+			return true;
+		}
+
+		if (pressResult instanceof VersesController.PressResult.Consumed) {
+			if (activeSplitVersion != null) {
+				lsSplit1.scrollToVerse(((VersesController.PressResult.Consumed) pressResult).getTargetVerse_1());
+			}
+			return true;
+		}
+
+		return false;
+	}
+
+	public VersesController.PressResult consumeUpDownKey(@NonNull final VersesController versesController, int keyCode) {
+		final String volumeButtonsForNavigation = Preferences.getString(R.string.pref_volumeButtonNavigation_key, R.string.pref_volumeButtonNavigation_default);
+		if (U.equals(volumeButtonsForNavigation, "pasal" /* chapter */)) {
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+				return VersesController.PressResult.Left.INSTANCE;
+			}
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+				return VersesController.PressResult.Right.INSTANCE;
+			}
+		} else if (U.equals(volumeButtonsForNavigation, "ayat" /* verse */)) {
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_DOWN;
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) keyCode = KeyEvent.KEYCODE_DPAD_UP;
+		} else if (U.equals(volumeButtonsForNavigation, "page")) {
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+				return versesController.pageDown();
+			}
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+				return versesController.pageUp();
+			}
+		}
+
+		if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+			return versesController.verseDown();
+		} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+			return versesController.verseUp();
+		}
+
+		return VersesController.PressResult.Nop.INSTANCE;
 	}
 
 	/**
@@ -1155,7 +1187,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		applyPreferences();
 
-		getWindow().getDecorView().setKeepScreenOn(Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default)));
+		getWindow().getDecorView().setKeepScreenOn(Preferences.getBoolean(R.string.pref_keepScreenOn_key, R.bool.pref_keepScreenOn_default));
 
 		if (needsRestart) {
 			needsRestart = false;
@@ -1671,7 +1703,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		{ // main
 			this.uncheckVersesWhenActionModeDestroyed = false;
 			try {
-				boolean ok = loadChapterToVersesView(getContentResolver(), lsSplit0, S.activeVersion(), S.activeVersionId(), this.activeBook, chapter_1, current_chapter_1, uncheckAllVerses);
+				final Function1<VersesDataModel, Unit> dataSetter = (newData) -> {
+					this.dataSplit0 = newData;
+					return Unit.INSTANCE;
+				};
+				boolean ok = IsiActivityUtil.loadChapterToVersesController(getContentResolver(), lsSplit0, dataSetter, S.activeVersion(), S.activeVersionId(), this.activeBook, chapter_1, current_chapter_1, uncheckAllVerses);
 				if (!ok) return 0;
 			} finally {
 				this.uncheckVersesWhenActionModeDestroyed = true;
@@ -1712,6 +1748,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	private void displaySplitFollowingMaster(int verse_1) {
 		if (activeSplitVersion != null) { // split1
+			assert activeSplitVersionId != null;
+
 			final Book splitBook = activeSplitVersion.getBook(this.activeBook.bookId);
 			if (splitBook == null) {
 				tSplitEmpty.setText(getString(R.string.split_version_cant_display_verse, this.activeBook.reference(this.chapter_1), activeSplitVersion.getLongName()));
@@ -1722,7 +1760,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			} else {
 				this.uncheckVersesWhenActionModeDestroyed = false;
 				try {
-					loadChapterToVersesView(getContentResolver(), lsSplit1, activeSplitVersion, activeSplitVersionId, splitBook, this.chapter_1, this.chapter_1, true);
+					final Function1<VersesDataModel, Unit> dataSetter = (newData) -> {
+						this.dataSplit1 = newData;
+						return Unit.INSTANCE;
+					};
+					IsiActivityUtil.loadChapterToVersesController(getContentResolver(), lsSplit1, dataSetter, activeSplitVersion, activeSplitVersionId, splitBook, this.chapter_1, this.chapter_1, true);
 				} finally {
 					this.uncheckVersesWhenActionModeDestroyed = true;
 				}
@@ -1731,65 +1773,14 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	}
 
-	static boolean loadChapterToVersesView(ContentResolver cr, VersesController versesController, Version version, String versionId, Book book, int chapter_1, int current_chapter_1, boolean uncheckAllVerses) {
-		final SingleChapterVerses verses = version.loadChapterText(book, chapter_1);
-		if (verses == null) {
-			return false;
-		}
-
-		//# max is set to 30 (one chapter has max of 30 blocks. Already almost impossible)
-		int max = 30;
-		int[] pericope_aris = new int[max];
-		PericopeBlock[] pericope_blocks = new PericopeBlock[max];
-		int nblock = version.loadPericope(book.bookId, chapter_1, pericope_aris, pericope_blocks, max);
-
-		boolean retainSelectedVerses = (!uncheckAllVerses && chapter_1 == current_chapter_1);
-		setDataWithRetainSelectedVerses(cr, versesController, retainSelectedVerses, Ari.encode(book.bookId, chapter_1, 0), pericope_aris, pericope_blocks, nblock, verses, version, versionId);
-
-		return true;
-	}
-
-	// Moved from the old VersesView method
-	static void setDataWithRetainSelectedVerses(
-		final ContentResolver cr,
-		final VersesController versesController,
-		final boolean retainSelectedVerses,
-		final int ariBc,
-		final int[] pericope_aris,
-		final PericopeBlock[] pericope_blocks,
-		final int nblock,
-		final SingleChapterVerses verses,
-		@NonNull final Version version,
-		@NonNull final String versionId) {
-
-		@Nullable
-		IntArrayList selectedVerses_1 = null;
-		if (retainSelectedVerses) {
-			selectedVerses_1 = versesController.getCheckedVerses_1();
-		}
-
-		//# fill adapter with new data. make sure all checked states are reset
-		versesController.uncheckAllVerses(true);
-
-		final VersesAttributes versesAttributes = VerseAttributeLoader.load(S.getDb(), cr, ariBc, verses);
-
-		// TODO(VersesView revamp): calculate font size mult
-		final VersesDataModel newData = new VersesDataModel(ariBc, verses, nblock, pericope_aris, pericope_blocks, version, versionId, 1f, versesAttributes);
-		versesController.setVersesDataModel(newData);
-
-		if (selectedVerses_1 != null) {
-			versesController.checkVerses(selectedVerses_1, true);
-		}
-	}
-
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		return press(keyCode) || super.onKeyDown(keyCode, event);
+		return consumeKey(keyCode) || super.onKeyDown(keyCode, event);
 	}
 
 	@Override
 	public boolean onKeyMultiple(int keyCode, int repeatCount, KeyEvent event) {
-		return press(keyCode) || super.onKeyMultiple(keyCode, repeatCount, event);
+		return consumeKey(keyCode) || super.onKeyMultiple(keyCode, repeatCount, event);
 	}
 
 	@Override
@@ -1880,11 +1871,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		void openBookmarkDialog(final long _id) {
 			final TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExisting(IsiActivity.this, _id);
 			dialog.setListener(() -> {
-				lsSplit0.reloadAttributeMap();
-
-				if (activeSplitVersion != null) {
-					lsSplit1.reloadAttributeMap();
-				}
+				reloadBothAttributeMaps();
 			});
 			dialog.show();
 		}
@@ -2687,10 +2674,14 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	void reloadBothAttributeMaps() {
-		lsSplit0.reloadAttributeMap();
+		final VersesDataModel newDataSplit0 = IsiActivityUtil.reloadAttributeMapsToVerseDataModel(this, dataSplit0);
+		dataSplit0 = newDataSplit0;
+		lsSplit0.setVersesDataModel(newDataSplit0);
 
 		if (activeSplitVersion != null) {
-			lsSplit1.reloadAttributeMap();
+			final VersesDataModel newDataSplit1 = IsiActivityUtil.reloadAttributeMapsToVerseDataModel(this, dataSplit1);
+			dataSplit1 = newDataSplit1;
+			lsSplit1.setVersesDataModel(newDataSplit1);
 		}
 	}
 

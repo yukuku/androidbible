@@ -35,19 +35,11 @@ interface VersesController {
         open fun onScrollToTop(v: VersesController) {}
     }
 
-    enum class PressKind {
-        left,
-        right,
-        consumed,
-        nop
-    }
-
-    class PressResult(val kind: PressKind, val targetVerse_1: Int = 0) {
-        companion object {
-            val LEFT = PressResult(PressKind.left)
-            val RIGHT = PressResult(PressKind.right)
-            val NOP = PressResult(PressKind.nop)
-        }
+    sealed class PressResult {
+        object Left: PressResult()
+        object Right: PressResult()
+        class Consumed(val targetVerse_1: Int): PressResult()
+        object Nop: PressResult()
     }
 
     // # field ctor
@@ -68,10 +60,6 @@ interface VersesController {
      */
     fun getCheckedVerses_1(): IntArrayList
 
-    fun reloadAttributeMap() {
-        TODO() // make it load the whole data model
-    }
-
     fun scrollToTop()
     /**
      * This is different from the other [scrollToVerse] in that if the requested
@@ -89,7 +77,10 @@ interface VersesController {
      */
     fun getVerse_1BasedOnScroll(): Int
 
-    fun press(keyCode: Int): PressResult
+    fun pageDown(): PressResult
+    fun pageUp(): PressResult
+    fun verseDown(): PressResult
+    fun verseUp(): PressResult
 
     fun setViewVisibility(visibility: Int)
     fun setViewPadding(padding: Rect)

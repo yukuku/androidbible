@@ -8,15 +8,22 @@ import yuku.alkitab.util.Ari
 
 private const val TAG = "VersesDataModel"
 
-class VersesDataModel(
+data class VersesDataModel(
+    @JvmField
     val ari_bc_: Int,
+    @JvmField
     val verses_: SingleChapterVerses,
+    @JvmField
     val pericopeBlockCount_: Int,
+    @JvmField
     val pericopeAris_: IntArray,
+    @JvmField
     val pericopeBlocks_: Array<PericopeBlock>,
+    @JvmField
     val version_: Version?,
+    @JvmField
     val versionId_: String?,
-    val textSizeMult_: Float,
+    @JvmField
     val versesAttributes: VersesAttributes
 ) {
     enum class ItemType {
@@ -150,7 +157,7 @@ class VersesDataModel(
     /**
      * @return verse_1 or 0 if doesn't make sense
      */
-    fun getVerseFromPosition(position: Int): Int {
+    fun getVerse_1FromPosition(position: Int): Int {
         val position = position.coerceAtMost(itemPointer_.size - 1)
 
         var id = itemPointer_[position]
@@ -173,7 +180,7 @@ class VersesDataModel(
     }
 
     /**
-     * Similar to [.getVerseFromPosition], but returns 0 if the specified position is a pericope or doesn't make sense.
+     * Similar to [.getVerse_1FromPosition], but returns 0 if the specified position is a pericope or doesn't make sense.
      */
     fun getVerseOrPericopeFromPosition(position: Int): Int {
         if (position < 0 || position >= itemPointer_.size) {
@@ -216,7 +223,6 @@ class VersesDataModel(
             pericopeBlocks_ = emptyArray(),
             version_ = null,
             versionId_ = null,
-            textSizeMult_ = 1f,
             versesAttributes = VersesAttributes.EMPTY
         )
     }

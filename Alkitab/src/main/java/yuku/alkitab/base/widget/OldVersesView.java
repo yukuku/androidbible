@@ -126,6 +126,11 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		}
 	}
 
+	public OldVersesView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		init();
+	}
+
 	public AttributeListener getAttributeListener() {
 		return adapter.getAttributeListener();
 	}
@@ -381,49 +386,6 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		return child.getMeasuredHeight();
 	}
 
-	// ############################# migrate marker
-
-	public OldVersesView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		init();
-	}
-
-	private void init() {
-		if (isInEditMode()) return;
-
-		originalSelector = getSelector();
-
-		setDivider(null);
-		setFocusable(false);
-
-		setAdapter(adapter = new SingleViewVerseAdapter(getContext()));
-		setOnItemClickListener(itemClick);
-		setVerseSelectionMode(VerseSelectionMode.multiple);
-
-		super.setOnScrollListener(this);
-	}
-
-	public int getPositionBasedOnScroll() {
-		int pos = getFirstVisiblePosition();
-
-		// check if the top one has been scrolled
-		View child = getChildAt(0);
-		if (child != null) {
-			int top = child.getTop();
-			if (top == 0) {
-				return pos;
-			}
-			int bottom = child.getBottom();
-			if (bottom > 0) {
-				return pos;
-			} else {
-				return pos + 1;
-			}
-		}
-
-		return pos;
-	}
-
 	/**
 	 * @param version   can be null if no text size multiplier is to be used
 	 * @param versionId can be null if no text size multiplier is to be used
@@ -438,48 +400,6 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 	public void invalidateViews() {
 		adapter.calculateTextSizeMult();
 		super.invalidateViews();
-	}
-
-	private OnItemClickListener itemClick = new OnItemClickListener() {
-		@Override
-		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-			if (verseSelectionMode == VerseSelectionMode.singleClick) {
-				if (listener != null) listener.onVerseSingleClick(OldVersesView.this, adapter.getVerseFromPosition(position));
-			} else if (verseSelectionMode == VerseSelectionMode.multiple) {
-				adapter.notifyDataSetChanged();
-				hideOrShowContextMenuButton();
-			}
-		}
-	};
-
-	void hideOrShowContextMenuButton() {
-		if (verseSelectionMode != VerseSelectionMode.multiple) return;
-
-		if (getCheckedItemCount() > 0) {
-			if (listener != null) listener.onSomeVersesSelected(this);
-		} else {
-			if (listener != null) listener.onNoVersesSelected(this);
-		}
-	}
-
-	@Override
-	public Parcelable onSaveInstanceState() {
-		Bundle b = new Bundle();
-		Parcelable superState = super.onSaveInstanceState();
-		b.putParcelable("superState", superState);
-		b.putInt("verseSelectionMode", verseSelectionMode.ordinal());
-		return b;
-	}
-
-	@Override
-	public void onRestoreInstanceState(Parcelable state) {
-		if (state instanceof Bundle) {
-			Bundle b = (Bundle) state;
-			super.onRestoreInstanceState(b.getParcelable("superState"));
-			setVerseSelectionMode(VerseSelectionMode.values()[b.getInt("verseSelectionMode")]);
-		}
-
-		hideOrShowContextMenuButton();
 	}
 
 	public PressResult press(int keyCode) {
@@ -577,6 +497,86 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		}
 
 		return PressResult.NOP;
+	}
+
+	public int getPositionBasedOnScroll() {
+		int pos = getFirstVisiblePosition();
+
+		// check if the top one has been scrolled
+		View child = getChildAt(0);
+		if (child != null) {
+			int top = child.getTop();
+			if (top == 0) {
+				return pos;
+			}
+			int bottom = child.getBottom();
+			if (bottom > 0) {
+				return pos;
+			} else {
+				return pos + 1;
+			}
+		}
+
+		return pos;
+	}
+
+	// ############################# migrate marker
+
+	private void init() {
+		if (isInEditMode()) return;
+
+		originalSelector = getSelector();
+
+		setDivider(null);
+		setFocusable(false);
+
+		setAdapter(adapter = new SingleViewVerseAdapter(getContext()));
+		setOnItemClickListener(itemClick);
+		setVerseSelectionMode(VerseSelectionMode.multiple);
+
+		super.setOnScrollListener(this);
+	}
+
+	private OnItemClickListener itemClick = new OnItemClickListener() {
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			if (verseSelectionMode == VerseSelectionMode.singleClick) {
+				if (listener != null) listener.onVerseSingleClick(OldVersesView.this, adapter.getVerseFromPosition(position));
+			} else if (verseSelectionMode == VerseSelectionMode.multiple) {
+				adapter.notifyDataSetChanged();
+				hideOrShowContextMenuButton();
+			}
+		}
+	};
+
+	void hideOrShowContextMenuButton() {
+		if (verseSelectionMode != VerseSelectionMode.multiple) return;
+
+		if (getCheckedItemCount() > 0) {
+			if (listener != null) listener.onSomeVersesSelected(this);
+		} else {
+			if (listener != null) listener.onNoVersesSelected(this);
+		}
+	}
+
+	@Override
+	public Parcelable onSaveInstanceState() {
+		Bundle b = new Bundle();
+		Parcelable superState = super.onSaveInstanceState();
+		b.putParcelable("superState", superState);
+		b.putInt("verseSelectionMode", verseSelectionMode.ordinal());
+		return b;
+	}
+
+	@Override
+	public void onRestoreInstanceState(Parcelable state) {
+		if (state instanceof Bundle) {
+			Bundle b = (Bundle) state;
+			super.onRestoreInstanceState(b.getParcelable("superState"));
+			setVerseSelectionMode(VerseSelectionMode.values()[b.getInt("verseSelectionMode")]);
+		}
+
+		hideOrShowContextMenuButton();
 	}
 
 	/**
