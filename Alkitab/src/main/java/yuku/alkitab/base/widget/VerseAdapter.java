@@ -4,11 +4,12 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
-import gnu.trove.set.TIntSet;
-import gnu.trove.set.hash.TIntHashSet;
+import androidx.annotation.Nullable;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.util.AppLog;
@@ -18,8 +19,6 @@ import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
-
-import java.util.Arrays;
 
 public abstract class VerseAdapter extends BaseAdapter {
 	public static final String TAG = VerseAdapter.class.getSimpleName();
@@ -59,7 +58,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	// The last call to callAttentionForVerse() decides as when the animation starts.
 	// Calling setData* methods clears the attentioned verses.
 	long attentionStart_;
-	TIntSet attentionPositions_;
+	Set<Integer> attentionPositions_;
 
 	public VerseAdapter(Context context) {
 		density_ = context.getResources().getDisplayMetrics().density;
@@ -302,9 +301,9 @@ public abstract class VerseAdapter extends BaseAdapter {
 	void callAttentionForVerse(final int verse_1) {
 		final int pos = getPositionIgnoringPericopeFromVerse(verse_1);
 		if (pos != -1) {
-			TIntSet ap = attentionPositions_;
+			Set<Integer> ap = attentionPositions_;
 			if (ap == null) {
-				attentionPositions_ = ap = new TIntHashSet();
+				attentionPositions_ = ap = new HashSet<>();
 			}
 			ap.add(pos);
 			attentionStart_ = System.currentTimeMillis();

@@ -7,15 +7,19 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.util.SparseArray;
+import android.util.Xml;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.Xml;
 import com.afollestad.materialdialogs.MaterialDialog;
-import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
-import gnu.trove.map.hash.TIntLongHashMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.map.hash.TObjectIntHashMap;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
@@ -24,20 +28,12 @@ import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.storage.InternalDb;
+import static yuku.alkitab.base.util.Literals.ToStringArray;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.alkitab.model.Marker_Label;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static yuku.alkitab.base.util.Literals.ToStringArray;
+import yuku.alkitab.util.IntArrayList;
 
 // Imported from v3. Used for once-only migration from v3 to v4.
 public class BookmarkImporter {
@@ -134,11 +130,11 @@ public class BookmarkImporter {
 			@Override
 			protected Object doInBackground(Boolean... params) {
 				final List<Marker> markers = new ArrayList<>();
-				final TObjectIntHashMap<Marker> markerToRelIdMap = new TObjectIntHashMap<>();
+				final Map<Marker, Integer> markerToRelIdMap = new HashMap<>();
 				final List<Label> labels = new ArrayList<>();
-				final TObjectIntHashMap<Label> labelToRelIdMap = new TObjectIntHashMap<>();
-				final TIntLongHashMap labelRelIdToAbsIdMap = new TIntLongHashMap();
-				final TIntObjectHashMap<TIntList> markerRelIdToLabelRelIdsMap = new TIntObjectHashMap<>();
+				final Map<Label, Integer> labelToRelIdMap = new HashMap<>();
+				final SparseArray<Long> labelRelIdToAbsIdMap = new SparseArray<>();
+				final SparseArray<IntArrayList> markerRelIdToLabelRelIdsMap = new SparseArray<>();
 
 				try {
 
@@ -167,9 +163,9 @@ public class BookmarkImporter {
 									final int bookmark2_relId = Integer.parseInt(attributes.getValue("", Bookmark2_Label.XMLATTR_bookmark2_relId));
 									final int label_relId = Integer.parseInt(attributes.getValue("", Bookmark2_Label.XMLATTR_label_relId));
 
-									TIntList labelRelIds = markerRelIdToLabelRelIdsMap.get(bookmark2_relId);
+									IntArrayList labelRelIds = markerRelIdToLabelRelIdsMap.get(bookmark2_relId);
 									if (labelRelIds == null) {
-										labelRelIds = new TIntArrayList();
+										labelRelIds = new IntArrayList();
 										markerRelIdToLabelRelIdsMap.put(bookmark2_relId, labelRelIds);
 									}
 									labelRelIds.add(label_relId);
@@ -239,15 +235,16 @@ public class BookmarkImporter {
 	}
 
 
-	public static void importBookmarks(List<Marker> markers, TObjectIntHashMap<Marker> markerToRelIdMap, TIntLongHashMap labelRelIdToAbsIdMap, TIntObjectHashMap<TIntList> markerRelIdToLabelRelIdsMap) {
+	public static void importBookmarks(List<Marker> markers, Map<Marker, Integer> markerToRelIdMap, SparseArray<Long> labelRelIdToAbsIdMap, SparseArray<IntArrayList> markerRelIdToLabelRelIdsMap) {
 		SQLiteDatabase db = S.getDb().getWritableDatabase();
 		db.beginTransaction();
 		try {
-			final TIntObjectHashMap<Marker> markerRelIdToMarker = new TIntObjectHashMap<>();
+			final SparseArray<Marker> markerRelIdToMarker = new SparseArray<>();
 
 			{ // write new markers (if not available yet)
 				for (int i = 0; i < markers.size(); i++) {
 					Marker marker = markers.get(i);
+					@SuppressWarnings("ConstantConditions")
 					final int marker_relId = markerToRelIdMap.get(marker);
 
 					// migrate: look for existing marker with same kind, ari, and content
@@ -272,8 +269,9 @@ public class BookmarkImporter {
 			}
 
 			{ // now is marker-label assignments
-				for (final int marker_relId : markerRelIdToLabelRelIdsMap.keys()) {
-					final TIntList label_relIds = markerRelIdToLabelRelIdsMap.get(marker_relId);
+				for (int i = 0, len = markerRelIdToLabelRelIdsMap.size(); i < len; i++) {
+					final int marker_relId = markerRelIdToLabelRelIdsMap.keyAt(i);
+					final IntArrayList label_relIds = markerRelIdToLabelRelIdsMap.valueAt(i);
 
 					final Marker marker = markerRelIdToMarker.get(marker_relId);
 

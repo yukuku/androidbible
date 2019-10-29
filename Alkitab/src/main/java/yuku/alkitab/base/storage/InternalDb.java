@@ -8,12 +8,18 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.os.Build;
 import android.provider.BaseColumns;
+import android.util.Pair;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.Pair;
 import com.google.gson.reflect.TypeToken;
-import gnu.trove.set.TIntSet;
-import gnu.trove.set.hash.TIntHashSet;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
@@ -40,6 +46,8 @@ import yuku.alkitab.base.sync.Sync_Pins;
 import yuku.alkitab.base.sync.Sync_Rp;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Highlights;
+import static yuku.alkitab.base.util.Literals.Array;
+import static yuku.alkitab.base.util.Literals.ToStringArray;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.model.Label;
@@ -49,17 +57,6 @@ import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.model.ProgressMarkHistory;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static yuku.alkitab.base.util.Literals.Array;
-import static yuku.alkitab.base.util.Literals.ToStringArray;
 
 @TargetApi(Build.VERSION_CODES.KITKAT)
 public class InternalDb {
@@ -1264,17 +1261,17 @@ public class InternalDb {
 	 * The only source of data is from ReadingPlanProgress table, but since reading plans with no done is not listed in ReadingPlanProgress,
 	 * please take care of it.
 	 */
-	public Map<String /* gid */, TIntSet /* done reading codes */> getReadingPlanProgressSummaryForSync() {
+	public Map<String /* gid */, Set<Integer> /* done reading codes */> getReadingPlanProgressSummaryForSync() {
 		final SQLiteDatabase db = helper.getReadableDatabase();
-		final Map<String, TIntSet> res = new HashMap<>();
+		final Map<String, Set<Integer>> res = new HashMap<>();
 		try (Cursor c = db.query(Db.TABLE_ReadingPlanProgress, Array(Db.ReadingPlanProgress.reading_plan_progress_gid, Db.ReadingPlanProgress.reading_code), null, null, null, null, null)) {
 			while (c.moveToNext()) {
 				final String gid = c.getString(0);
 				final int readingCode = c.getInt(1);
 
-				TIntSet set = res.get(gid);
+				Set<Integer> set = res.get(gid);
 				if (set == null) {
-					set = new TIntHashSet();
+					set = new HashSet<>();
 					res.put(gid, set);
 				}
 
@@ -1693,23 +1690,22 @@ public class InternalDb {
 						// the whole logic to update all pins with the ones received from server (all pins in one entity)
 						final Sync_Rp.Content content = o.content;
 						final IntArrayList readingCodes = getAllReadingCodesByReadingPlanProgressGid(o.gid);
-						final TIntHashSet src = new TIntHashSet(readingCodes.size()); // our source (the current 'done' list)
+						final Set<Integer> src = new HashSet<>(readingCodes.size()); // our source (the current 'done' list)
 						for (int i = 0, len = readingCodes.size(); i < len; i++) {
 							src.add(readingCodes.get(i));
 						}
-						final TIntHashSet dst = new TIntHashSet(content.done); // our destination (want to be like this)
+						final Set<Integer> dst = new HashSet<>(content.done); // our destination (want to be like this)
 
 						{ // deletions
-							final TIntHashSet to_del = new TIntHashSet(src);
+							final Set<Integer> to_del = new HashSet<>(src);
 							to_del.removeAll(dst);
-							to_del.forEach(value -> {
+							for (Integer value : to_del) {
 								db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=? and " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(o.gid, value));
-								return true;
-							});
+							}
 						}
 
 						{ // additions
-							final TIntHashSet to_add = new TIntHashSet(dst);
+							final Set<Integer> to_add = new HashSet<>(dst);
 							to_add.removeAll(src);
 
 							// unchanging properties
@@ -1717,11 +1713,10 @@ public class InternalDb {
 							cv.put(Db.ReadingPlanProgress.reading_plan_progress_gid, o.gid);
 							cv.put(Db.ReadingPlanProgress.checkTime, System.currentTimeMillis());
 
-							to_add.forEach(value -> {
+							for (Integer value : to_add) {
 								cv.put(Db.ReadingPlanProgress.reading_code, value);
 								helper.getWritableDatabase().insert(Db.TABLE_ReadingPlanProgress, null, cv);
-								return true;
-							});
+							}
 						}
 
 						// update startTime

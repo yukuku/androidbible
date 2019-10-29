@@ -1,18 +1,9 @@
 package yuku.alkitab.base.sync;
 
+import android.util.Pair;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
-import android.util.Pair;
 import com.google.gson.reflect.TypeToken;
-import gnu.trove.map.hash.TObjectLongHashMap;
-import gnu.trove.set.TIntSet;
-import yuku.alkitab.base.App;
-import yuku.alkitab.base.S;
-import yuku.alkitab.base.U;
-import yuku.alkitab.base.model.ReadingPlan;
-import yuku.alkitab.base.model.SyncShadow;
-import yuku.alkitab.base.util.Literals;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -21,10 +12,17 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import yuku.alkitab.base.App;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
+import yuku.alkitab.base.model.ReadingPlan;
+import yuku.alkitab.base.model.SyncShadow;
+import yuku.alkitab.base.util.Literals;
 
 /**
  * Reading plan sync
@@ -106,7 +104,7 @@ public class Sync_Rp {
 
 		// lookup map for startTime
 		final List<ReadingPlan.ReadingPlanInfo> infos = S.getDb().listAllReadingPlanInfo();
-		final TObjectLongHashMap<String /* gid */> /* long startTime */ startTimes = new TObjectLongHashMap<>(infos.size());
+		final Map<String /* gid */, Long> /* long startTime */ startTimes = new HashMap<>(infos.size());
 		for (final ReadingPlan.ReadingPlanInfo info : infos) {
 			startTimes.put(ReadingPlan.gidFromName(info.name), info.startTime);
 		}
@@ -114,26 +112,26 @@ public class Sync_Rp {
 		// The only source of data is from ReadingPlanProgress table,
 		// but since reading plans with no done is not listed in ReadingPlanProgress,
 		// we need to consult ReadingPlan table to know what they are.
-		final Map<String /* gid */, TIntSet /* done reading codes */> map = S.getDb().getReadingPlanProgressSummaryForSync();
-		for (final Map.Entry<String, TIntSet> e : map.entrySet()) {
+		final Map<String /* gid */, Set<Integer> /* done reading codes */> map = S.getDb().getReadingPlanProgressSummaryForSync();
+		for (final Map.Entry<String, Set<Integer>> e : map.entrySet()) {
 			final String gid = e.getKey();
 
 			final Content content = new Content();
 			content.startTime = startTimes.containsKey(gid)? startTimes.get(gid): null;
 
-			final TIntSet set = e.getValue();
+			final Set<Integer> set = e.getValue();
 			final Set<Integer> done = content.done = new LinkedHashSet<>(set.size());
-			set.forEach(value -> {
-				done.add(value);
-				return true;
-			});
+			done.addAll(set);
 
 			final Sync.Entity<Content> entity = new Sync.Entity<>(Sync.Entity.KIND_RP_PROGRESS, gid, content);
 			res.add(entity);
 		}
 
 		// add remaining reading plans without any done
-		startTimes.forEachEntry((gid, startTime) -> {
+		for (final Map.Entry<String, Long> entry : startTimes.entrySet()) {
+			final String gid = entry.getKey();
+			final Long startTime = entry.getValue();
+
 			if (!map.containsKey(gid)) {
 				final Content content = new Content();
 				content.startTime = startTime;
@@ -142,8 +140,7 @@ public class Sync_Rp {
 				final Sync.Entity<Content> entity = new Sync.Entity<>(Sync.Entity.KIND_RP_PROGRESS, gid, content);
 				res.add(entity);
 			}
-			return true;
-		});
+		}
 
 		return res;
 	}

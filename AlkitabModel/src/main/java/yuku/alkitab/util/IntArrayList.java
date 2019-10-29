@@ -108,6 +108,18 @@ public class IntArrayList implements Parcelable {
 		return sb.toString();
 	}
 
+	/**
+	 * Returns a copy of the contents in a primitive int array with the length
+	 * equal to the actual size, not the capacity.
+	 */
+	public int[] toArray() {
+		final int len = this.len;
+		final int[] buf = this.buf;
+		final int[] res = new int[len];
+		System.arraycopy(buf, 0, res, 0, len);
+		return res;
+	}
+
 	@Override
 	public boolean equals(final Object o) {
 		if (this == o) return true;

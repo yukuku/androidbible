@@ -6,8 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
+import android.util.SparseArray;
 import androidx.collection.LongSparseArray;
-import gnu.trove.map.hash.TIntObjectHashMap;
+import java.io.File;
 import yuku.afw.App;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.config.VersionConfig;
@@ -16,11 +17,8 @@ import yuku.alkitab.base.model.MVersionPreset;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.util.AddonManager;
 import yuku.alkitab.base.util.AppLog;
-import yuku.alkitab.model.util.Gid;
-
-import java.io.File;
-
 import static yuku.alkitab.base.util.Literals.Array;
+import yuku.alkitab.model.util.Gid;
 
 public class InternalDbHelper extends SQLiteOpenHelper {
 	public static final String TAG = InternalDbHelper.class.getSimpleName();
@@ -415,7 +413,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.beginTransaction();
 		try {
 			// create mapping from id to name first
-			final TIntObjectHashMap<String> map = new TIntObjectHashMap<>();
+			final SparseArray<String> map = new SparseArray<>();
 			try (Cursor c = db.rawQuery("select _id, " + Db.ReadingPlan.name + " from " + Db.TABLE_ReadingPlan, null)) {
 				while (c.moveToNext()) {
 					map.put(c.getInt(0), c.getString(1));

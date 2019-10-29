@@ -1,15 +1,15 @@
 package yuku.alkitab.base.util;
 
-import gnu.trove.map.hash.TObjectIntHashMap;
-import yuku.alkitab.util.Ari;
-
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import yuku.alkitab.util.Ari;
 
 public class OsisBookNames {
 	public static final String TAG = OsisBookNames.class.getSimpleName();
 	
-	private static TObjectIntHashMap<String> bookNameToBookIdMap;
+	private static Map<String, Integer> bookNameToBookIdMap;
 	private static Pattern bookNamePattern;
 	private static Pattern bookNameWithChapterAndOptionalVersePattern;
 	
@@ -84,7 +84,7 @@ public class OsisBookNames {
 	};
 	
 	static {
-		bookNameToBookIdMap = new TObjectIntHashMap<>(250, 0.75f, -1);
+		bookNameToBookIdMap = new HashMap<>(250);
 		for (int i = 0; i < names.length; i++) {
 			bookNameToBookIdMap.put(names[i], i);
 		}

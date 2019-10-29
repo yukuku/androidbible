@@ -1,18 +1,17 @@
 package yuku.alkitab.base.sync;
 
+import android.util.SparseArray;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import gnu.trove.map.hash.TIntObjectHashMap;
+import java.util.HashMap;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.tracking.Tracker;
-
-import java.util.HashMap;
 
 /**
  * Class that helps record sync events and status.
@@ -67,7 +66,7 @@ public class SyncRecorder {
 			this.backgroundColor = backgroundColor;
 		}
 
-		static TIntObjectHashMap<EventKind> codeIndex = new TIntObjectHashMap<>();
+		static SparseArray<EventKind> codeIndex = new SparseArray<>();
 
 		static {
 			for (final EventKind kind : values()) {

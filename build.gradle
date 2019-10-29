@@ -53,6 +53,5 @@ ext {
     picassoVersion = '2.71828'
     picassoOkhttpDownloaderVersion = '1.1.0'
     leakcanaryVersion = '2.0-beta-3'
-    trove4jVersion = '3.0.3'
     crashlyticsVersion = '2.10.1'
 }

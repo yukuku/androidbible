@@ -2,9 +2,9 @@ package yuku.alkitab.base.fr;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +12,15 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
+import androidx.annotation.Nullable;
 import com.afollestad.materialdialogs.MaterialDialog;
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.set.TIntSet;
-import gnu.trove.set.hash.TIntHashSet;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.fr.base.BaseGotoFragment;
@@ -24,12 +28,6 @@ import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.Levenshtein;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class GotoDirectFragment extends BaseGotoFragment {
 	public static final String TAG = GotoDirectFragment.class.getSimpleName();
@@ -197,8 +195,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 		public Filter getFilter() {
 			return new Filter() {
 				final Book[] books = S.activeVersion().getConsecutiveBooks();
-				final TIntObjectMap<Book> bookIndex = new TIntObjectHashMap<>();
-
+				final SparseArray<Book> bookIndex = new SparseArray<>();
 				{
 					for (final Book book : books) {
 						bookIndex.put(book.bookId, book);
@@ -224,7 +221,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 					if (bookName != null) {
 						bookName = bookName.trim().toLowerCase();
 						if (bookName.length() >= 1) {
-							final TIntSet addedBookIds = new TIntHashSet();
+							final Set<Integer> addedBookIds = new HashSet<>();
 
 							for (final Book book : books) {
 								String title = null;

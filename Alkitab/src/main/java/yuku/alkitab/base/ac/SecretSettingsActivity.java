@@ -4,14 +4,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.appcompat.widget.Toolbar;
-import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
-import gnu.trove.set.TLongSet;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -24,10 +27,6 @@ import yuku.alkitab.base.widget.ConfigurationWrapper;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.model.ProgressMarkHistory;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 public class SecretSettingsActivity extends BaseActivity {
 	public static final String TAG = SecretSettingsActivity.class.getSimpleName();
@@ -84,7 +83,7 @@ public class SecretSettingsActivity extends BaseActivity {
 		};
 
 		Preference.OnPreferenceClickListener secret_reset_read_announcements = preference -> {
-			final TLongSet read = Announce.getReadAnnouncementIds();
+			final Set<Long> read = Announce.getReadAnnouncementIds();
 			Preferences.remove(Prefkey.announce_read_ids);
 
 			Toast.makeText(getActivity(), "Cleared read announcement ids.\n\nPreviously has " + read.size() + " items:\n" + read, Toast.LENGTH_LONG).show();
