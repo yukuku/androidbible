@@ -1,0 +1,43 @@
+{
+  "_read_this": "This file is just a placeholder. Please set up your own Firebase project, obtain the google-services.json and replace this file with yours.",
+  "project_info": {
+    "project_number": "0000000000",
+    "firebase_url": "https://0000000000.firebaseio.com",
+    "project_id": "0000000000",
+    "storage_bucket": "0000000000.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:0000000000:android:0000000000",
+        "android_client_info": {
+          "package_name": "yuku.alkitab.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "0000000000.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "0000000000"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
