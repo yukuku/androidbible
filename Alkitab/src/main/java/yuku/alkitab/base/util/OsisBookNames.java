@@ -8,11 +8,10 @@ import yuku.alkitab.util.Ari;
 
 public class OsisBookNames {
 	public static final String TAG = OsisBookNames.class.getSimpleName();
-	
+
 	private static Map<String, Integer> bookNameToBookIdMap;
-	private static Pattern bookNamePattern;
 	private static Pattern bookNameWithChapterAndOptionalVersePattern;
-	
+
 
 	static String[] names = {
 		"Gen",
@@ -82,29 +81,14 @@ public class OsisBookNames {
 		"Jude",
 		"Rev",
 	};
-	
+
 	static {
 		bookNameToBookIdMap = new HashMap<>(250);
 		for (int i = 0; i < names.length; i++) {
 			bookNameToBookIdMap.put(names[i], i);
 		}
 	}
-	
-	public static Pattern getBookNamePattern() {
-		if (bookNamePattern == null) {
-			StringBuilder sb = new StringBuilder(400);
-			sb.append('(');
-			for (int i = 0; i < names.length; i++) {
-				if (i != 0) sb.append('|');
-				sb.append(names[i]);
-			}
-			sb.append(')');
-			
-			bookNamePattern = Pattern.compile(sb.toString());
-		}
-		return bookNamePattern;
-	}
-	
+
 	public static Pattern getBookNameWithChapterAndOptionalVersePattern() {
 		if (bookNameWithChapterAndOptionalVersePattern == null) {
 			StringBuilder sb = new StringBuilder(400);
@@ -114,21 +98,22 @@ public class OsisBookNames {
 				sb.append(names[i]);
 			}
 			sb.append(')');
-			
+
 			sb.append("\\.([1-9][0-9]{0,2})(?:\\.([1-9][0-9]{0,2}))?");
-			
+
 			bookNameWithChapterAndOptionalVersePattern = Pattern.compile(sb.toString());
 		}
 		return bookNameWithChapterAndOptionalVersePattern;
 	}
-	
-	/** 
+
+	/**
 	 * @param osisBookName OSIS Book Name (only OT and NT currently supported)
 	 * @return 0 to 65 when OK, -1 when not found
 	 */
 	public static int osisBookNameToBookId(String osisBookName) {
 		if (osisBookName == null) return -1;
-		return bookNameToBookIdMap.get(osisBookName);
+		final Integer res = bookNameToBookIdMap.get(osisBookName);
+		return res == null ? -1 : res;
 	}
 
 	public static int osisToAri(final String osis) {
@@ -140,18 +125,11 @@ public class OsisBookNames {
 
 			final int bookId = osisBookNameToBookId(osisBookName);
 			final int chapter_1 = Integer.parseInt(chapter_s);
-			final int verse_1 = (verse_s == null || verse_s.length() == 0)? 0: Integer.parseInt(verse_s);
+			final int verse_1 = (verse_s == null || verse_s.length() == 0) ? 0 : Integer.parseInt(verse_s);
 
 			return Ari.encode(bookId, chapter_1, verse_1);
 		}
 
 		return 0;
-	}
-
-	public static String getBookName(final int bookId) {
-		if (bookId < 0 || bookId >= names.length) {
-			return null;
-		}
-		return names[bookId];
 	}
 }

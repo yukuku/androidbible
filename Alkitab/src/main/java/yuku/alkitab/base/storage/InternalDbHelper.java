@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Build;
 import android.util.SparseArray;
 import androidx.collection.LongSparseArray;
 import java.io.File;
@@ -25,21 +24,12 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 
 	public InternalDbHelper(Context context) {
 		super(context, "AlkitabDb", null, App.getVersionCode());
-		if (Build.VERSION.SDK_INT >= 16) {
-			setWriteAheadLoggingEnabled(true);
-		}
-	}
-	
-	@Override
-	public void onOpen(SQLiteDatabase db) {
-		if (Build.VERSION.SDK_INT < 16) {
-			db.enableWriteAheadLogging();
-		}
+		setWriteAheadLoggingEnabled(true);
 	}
 
 	@Override public void onCreate(SQLiteDatabase db) {
 		AppLog.d(TAG, "@@onCreate");
-		
+
 		createTableMarker(db);
 		createIndexMarker(db);
 		createTableDevotion(db);
@@ -607,7 +597,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			final ContentValues cv = new ContentValues();
 			int ordering = MVersionDb.DEFAULT_ORDERING_START;
 
-			/**
+			/*
 			 * Automatically add v3 preset versions as {@link yuku.alkitab.base.storage.Db.Version} table rows,
 			 * if there are files with the same preset_name as those defined in {@link yuku.alkitab.base.config.VersionConfig}.
 			 * In version 3, preset versions are not stored in the database. In version 4, they are.

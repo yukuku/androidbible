@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
@@ -93,7 +92,7 @@ public class BookmarkImporter {
 		static ThreadLocal<Matcher> highUnicodeMatcher = new ThreadLocal<Matcher>() {
 			@Override
 			protected Matcher initialValue() {
-				return Pattern.compile("\\[\\[~U([0-9A-Fa-f]{6})~\\]\\]").matcher("");
+				return Pattern.compile("\\[\\[~U([0-9A-Fa-f]{6})~]]").matcher("");
 			}
 		};
 
@@ -140,7 +139,7 @@ public class BookmarkImporter {
 
 					Xml.parse(fis, Xml.Encoding.UTF_8, new DefaultHandler2() {
 						@Override
-						public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+						public void startElement(String uri, String localName, String qName, Attributes attributes) {
 							switch (localName) {
 								case BackupManager.XMLTAG_Bukmak2:
 									final Marker marker = BackupManager.markerFromAttributes(attributes);
@@ -190,6 +189,7 @@ public class BookmarkImporter {
 					for (Label label : labels) {
 						// cari apakah label yang judulnya persis sama udah ada
 						Label labelLama = judulMap.get(label.title);
+						@SuppressWarnings("ConstantConditions")
 						final int labelRelId = labelToRelIdMap.get(label);
 						if (labelLama != null) {
 							// removed from v3: update warna label lama

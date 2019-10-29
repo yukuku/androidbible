@@ -73,21 +73,12 @@ public class ConfigurationWrapper extends ContextWrapper {
 		}
 
 		public static void setLocale(Configuration config, @NonNull Locale locale) {
-			if (Build.VERSION.SDK_INT >= 17) {
-				config.setLocale(locale);
-			} else {
-				config.locale = locale;
-			}
+			config.setLocale(locale);
 		}
 
 		@CheckResult
 		public static Context updateConfiguration(Context context, Configuration config) {
-			if (Build.VERSION.SDK_INT >= 17) {
-				return context.createConfigurationContext(config);
-			} else {
-				context.getResources().updateConfiguration(config, null);
-				return context;
-			}
+			return context.createConfigurationContext(config);
 		}
 	}
 

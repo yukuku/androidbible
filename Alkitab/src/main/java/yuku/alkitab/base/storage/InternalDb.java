@@ -237,15 +237,12 @@ public class InternalDb {
 
 	public List<Marker> listAllMarkers() {
 		final SQLiteDatabase db = helper.getReadableDatabase();
-		final Cursor c = db.query(Db.TABLE_Marker, null, null, null, null, null, null);
 		final List<Marker> res = new ArrayList<>();
 
-		try {
+		try (Cursor c = db.query(Db.TABLE_Marker, null, null, null, null, null, null)) {
 			while (c.moveToNext()) {
 				res.add(markerFromCursor(c));
 			}
-		} finally {
-			c.close();
 		}
 
 		return res;
@@ -281,8 +278,7 @@ public class InternalDb {
 		};
 
 		// order by modifyTime, so in case a verse has more than one highlight, the latest one is shown
-		final Cursor cursor = helper.getReadableDatabase().rawQuery("select * from " + Db.TABLE_Marker + " where " + Db.Marker.ari + ">=? and " + Db.Marker.ari + "<? order by " + Db.Marker.modifyTime, params);
-		try {
+		try (Cursor cursor = helper.getReadableDatabase().rawQuery("select * from " + Db.TABLE_Marker + " where " + Db.Marker.ari + ">=? and " + Db.Marker.ari + "<? order by " + Db.Marker.modifyTime, params)) {
 			final int col_kind = cursor.getColumnIndexOrThrow(Db.Marker.kind);
 			final int col_ari = cursor.getColumnIndexOrThrow(Db.Marker.ari);
 			final int col_caption = cursor.getColumnIndexOrThrow(Db.Marker.caption);
@@ -317,8 +313,6 @@ public class InternalDb {
 					}
 				}
 			}
-		} finally {
-			cursor.close();
 		}
 	}
 
@@ -331,8 +325,7 @@ public class InternalDb {
 		db.beginTransactionNonExclusive();
 		try {
 			// order by modifyTime desc so we modify the latest one and remove earlier ones if they exist.
-			final Cursor c = db.query(Db.TABLE_Marker, null, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?", ToStringArray(ari, Marker.Kind.highlight.code), null, null, Db.Marker.modifyTime + " desc");
-			try {
+			try (Cursor c = db.query(Db.TABLE_Marker, null, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?", ToStringArray(ari, Marker.Kind.highlight.code), null, null, Db.Marker.modifyTime + " desc")) {
 				final int hashCode = Highlights.hashCode(verseText.toString());
 				final Date now = new Date();
 
@@ -353,8 +346,6 @@ public class InternalDb {
 					final Marker marker = Marker.createNewMarker(ari, Marker.Kind.highlight, Highlights.encode(colorRgb, hashCode, startOffset, endOffset), 1, now, now);
 					db.insert(Db.TABLE_Marker, null, markerToContentValues(marker));
 				}
-			} finally {
-				c.close();
 			}
 			db.setTransactionSuccessful();
 		} finally {
@@ -377,8 +368,7 @@ public class InternalDb {
 				params[0] = String.valueOf(ari);
 
 				// order by modifyTime desc so we modify the latest one and remove earlier ones if they exist.
-				final Cursor c = db.query(Db.TABLE_Marker, null, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?", params, null, null, Db.Marker.modifyTime + " desc");
-				try {
+				try (Cursor c = db.query(Db.TABLE_Marker, null, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?", params, null, null, Db.Marker.modifyTime + " desc")) {
 					if (c.moveToNext()) { // check if marker exists
 						{ // modify the latest one
 							final Marker marker = markerFromCursor(c);
@@ -406,8 +396,6 @@ public class InternalDb {
 							db.insert(Db.TABLE_Marker, null, markerToContentValues(marker));
 						}
 					}
-				} finally {
-					c.close();
 				}
 			}
 			db.setTransactionSuccessful();
@@ -431,13 +419,12 @@ public class InternalDb {
 		for (int i = 0; i < colors.length; i++) colors[i] = -1;
 
 		// check if exists
-		final Cursor c = helper.getReadableDatabase().query(
+
+		try (Cursor c = helper.getReadableDatabase().query(
 			Db.TABLE_Marker, null, Db.Marker.ari + ">? and " + Db.Marker.ari + "<=? and " + Db.Marker.kind + "=?",
 			new String[]{String.valueOf(ariMin), String.valueOf(ariMax), String.valueOf(Marker.Kind.highlight.code)},
 			null, null, null
-		);
-
-		try {
+		)) {
 			final int col_ari = c.getColumnIndexOrThrow(Db.Marker.ari);
 			final int col_caption = c.getColumnIndexOrThrow(Db.Marker.caption);
 
@@ -462,8 +449,6 @@ public class InternalDb {
 
 			if (res == -2) return -1;
 			return res;
-		} finally {
-			c.close();
 		}
 	}
 
@@ -560,8 +545,7 @@ public class InternalDb {
 
 	public List<MVersionDb> listAllVersions() {
 		List<MVersionDb> res = new ArrayList<>();
-		Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Version, null, null, null, null, null, Db.Version.ordering + " asc");
-		try {
+		try (Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Version, null, null, null, null, null, Db.Version.ordering + " asc")) {
 			int col_locale = cursor.getColumnIndexOrThrow(Db.Version.locale);
 			int col_shortName = cursor.getColumnIndexOrThrow(Db.Version.shortName);
 			int col_longName = cursor.getColumnIndexOrThrow(Db.Version.longName);
@@ -585,8 +569,6 @@ public class InternalDb {
 				mv.ordering = cursor.getInt(col_ordering);
 				res.add(mv);
 			}
-		} finally {
-			cursor.close();
 		}
 		return res;
 	}
@@ -665,52 +647,40 @@ public class InternalDb {
 
 	public List<Label> listAllLabels() {
 		List<Label> res = new ArrayList<>();
-		Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Label, null, null, null, null, null, Db.Label.ordering + " asc");
-		try {
+		try (Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Label, null, null, null, null, null, Db.Label.ordering + " asc")) {
 			while (cursor.moveToNext()) {
 				res.add(labelFromCursor(cursor));
 			}
-		} finally {
-			cursor.close();
 		}
 		return res;
 	}
 
 	public List<Marker_Label> listAllMarker_Labels() {
 		final List<Marker_Label> res = new ArrayList<>();
-		final Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Marker_Label, null, null, null, null, null, null);
-		try {
+		try (Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Marker_Label, null, null, null, null, null, null)) {
 			while (cursor.moveToNext()) {
 				res.add(marker_LabelFromCursor(cursor));
 			}
-		} finally {
-			cursor.close();
 		}
 		return res;
 	}
 
 	public List<Marker_Label> listMarker_LabelsByMarker(final Marker marker) {
 		final List<Marker_Label> res = new ArrayList<>();
-		final Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Marker_Label, null, Db.Marker_Label.marker_gid + "=?", ToStringArray(marker.gid), null, null, null);
-		try {
+		try (Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Marker_Label, null, Db.Marker_Label.marker_gid + "=?", ToStringArray(marker.gid), null, null, null)) {
 			while (cursor.moveToNext()) {
 				res.add(marker_LabelFromCursor(cursor));
 			}
-		} finally {
-			cursor.close();
 		}
 		return res;
 	}
 
 	public List<Label> listLabelsByMarker(final Marker marker) {
 		final List<Label> res = new ArrayList<>();
-		final Cursor cursor = helper.getReadableDatabase().rawQuery("select " + Db.TABLE_Label + ".* from " + Db.TABLE_Label + ", " + Db.TABLE_Marker_Label + " where " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.label_gid + " = " + Db.TABLE_Label + "." + Db.Label.gid + " and " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.marker_gid + "=? order by " + Db.TABLE_Label + "." + Db.Label.ordering + " asc", Array(marker.gid));
-		try {
+		try (Cursor cursor = helper.getReadableDatabase().rawQuery("select " + Db.TABLE_Label + ".* from " + Db.TABLE_Label + ", " + Db.TABLE_Marker_Label + " where " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.label_gid + " = " + Db.TABLE_Label + "." + Db.Label.gid + " and " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.marker_gid + "=? order by " + Db.TABLE_Label + "." + Db.Label.ordering + " asc", Array(marker.gid))) {
 			while (cursor.moveToNext()) {
 				res.add(labelFromCursor(cursor));
 			}
-		} finally {
-			cursor.close();
 		}
 		return res;
 	}
@@ -756,11 +726,8 @@ public class InternalDb {
 
 	public int getLabelMaxOrdering() {
 		SQLiteDatabase db = helper.getReadableDatabase();
-		SQLiteStatement stmt = db.compileStatement("select max(" + Db.Label.ordering + ") from " + Db.TABLE_Label);
-		try {
+		try (SQLiteStatement stmt = db.compileStatement("select max(" + Db.Label.ordering + ") from " + Db.TABLE_Label)) {
 			return (int) stmt.simpleQueryForLong();
-		} finally {
-			stmt.close();
 		}
 	}
 
@@ -841,37 +808,26 @@ public class InternalDb {
 
     public Label getLabelById(long _id) {
         SQLiteDatabase db = helper.getReadableDatabase();
-		Cursor cursor = db.query(Db.TABLE_Label, null, "_id=?", new String[]{String.valueOf(_id)}, null, null, null);
-		try {
-            if (cursor.moveToNext()) {
-                return labelFromCursor(cursor);
-            } else {
-                return null;
-            }
-        } finally {
-            cursor.close();
-        }
+		try (Cursor cursor = db.query(Db.TABLE_Label, null, "_id=?", new String[]{String.valueOf(_id)}, null, null, null)) {
+			if (cursor.moveToNext()) {
+				return labelFromCursor(cursor);
+			} else {
+				return null;
+			}
+		}
     }
 
     @Nullable public Label getLabelByGid(@NonNull final String gid) {
-		final Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Label, null, Db.Label.gid + "=?", Array(gid), null, null, null);
-
-		try {
+		try (Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Label, null, Db.Label.gid + "=?", Array(gid), null, null, null)) {
 			if (!cursor.moveToNext()) return null;
 			return labelFromCursor(cursor);
-		} finally {
-			cursor.close();
 		}
 	}
 
     @Nullable public Marker_Label getMarker_LabelByGid(@NonNull final String gid) {
-		final Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Marker_Label, null, Db.Marker_Label.gid + "=?", Array(gid), null, null, null);
-
-		try {
+		try (Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Marker_Label, null, Db.Marker_Label.gid + "=?", Array(gid), null, null, null)) {
 			if (!cursor.moveToNext()) return null;
 			return marker_LabelFromCursor(cursor);
-		} finally {
-			cursor.close();
 		}
 	}
 
@@ -922,15 +878,12 @@ public class InternalDb {
 	public static long insertMarker_LabelIfNotExists(final SQLiteDatabase db, final Marker_Label marker_label) {
 		db.beginTransactionNonExclusive();
 		try {
-			final Cursor cursor = db.rawQuery("select _id from " + Db.TABLE_Marker_Label + " where " + Db.Marker_Label.marker_gid + "=? and " + Db.Marker_Label.label_gid + "=?", Array(marker_label.marker_gid, marker_label.label_gid));
-			try {
+			try (Cursor cursor = db.rawQuery("select _id from " + Db.TABLE_Marker_Label + " where " + Db.Marker_Label.marker_gid + "=? and " + Db.Marker_Label.label_gid + "=?", Array(marker_label.marker_gid, marker_label.label_gid))) {
 				if (cursor.moveToNext()) {
 					marker_label._id = cursor.getLong(0);
 				} else {
 					marker_label._id = db.insert(Db.TABLE_Marker_Label, null, marker_labelToContentValues(marker_label));
 				}
-			} finally {
-				cursor.close();
 			}
 			db.setTransactionSuccessful();
 		} finally {
@@ -1066,13 +1019,10 @@ public class InternalDb {
 	 */
 	public List<ProgressMark> listAllProgressMarks() {
 		final List<ProgressMark> res = new ArrayList<>();
-		final Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_ProgressMark, null, Db.ProgressMark.ari + " != 0", null, null, null, null);
-		try {
+		try (Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_ProgressMark, null, Db.ProgressMark.ari + " != 0", null, null, null, null)) {
 			while (cursor.moveToNext()) {
 				res.add(progressMarkFromCursor(cursor));
 			}
-		} finally {
-			cursor.close();
 		}
 
 		return res;
@@ -1087,20 +1037,16 @@ public class InternalDb {
 	}
 
 	@Nullable public ProgressMark getProgressMarkByPresetId(final int preset_id) {
-		Cursor cursor = helper.getReadableDatabase().query(
+		try (Cursor cursor = helper.getReadableDatabase().query(
 			Db.TABLE_ProgressMark,
 			null,
 			Db.ProgressMark.preset_id + "=?",
 			new String[]{String.valueOf(preset_id)},
 			null, null, null
-		);
-
-		try {
+		)) {
 			if (!cursor.moveToNext()) return null;
 
 			return progressMarkFromCursor(cursor);
-		} finally {
-			cursor.close();
 		}
 	}
 
@@ -1137,15 +1083,12 @@ public class InternalDb {
 	}
 
 	public List<ProgressMarkHistory> listProgressMarkHistoryByPresetId(final int preset_id) {
-		final Cursor c = helper.getReadableDatabase().rawQuery("select * from " + Db.TABLE_ProgressMarkHistory + " where " + Db.ProgressMarkHistory.progress_mark_preset_id + "=? order by " + Db.ProgressMarkHistory.createTime + " asc", new String[]{String.valueOf(preset_id)});
-		try {
+		try (Cursor c = helper.getReadableDatabase().rawQuery("select * from " + Db.TABLE_ProgressMarkHistory + " where " + Db.ProgressMarkHistory.progress_mark_preset_id + "=? order by " + Db.ProgressMarkHistory.createTime + " asc", new String[]{String.valueOf(preset_id)})) {
 			final List<ProgressMarkHistory> res = new ArrayList<>();
 			while (c.moveToNext()) {
 				res.add(progressMarkHistoryFromCursor(c));
 			}
 			return res;
-		} finally {
-			c.close();
 		}
 	}
 
@@ -1303,14 +1246,11 @@ public class InternalDb {
 	}
 
 	public Pair<String, byte[]> getReadingPlanNameAndData(long _id) {
-		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan, Array(Db.ReadingPlan.name, Db.ReadingPlan.data), "_id=?", ToStringArray(_id), null, null, null);
-		try {
+		try (Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan, Array(Db.ReadingPlan.name, Db.ReadingPlan.data), "_id=?", ToStringArray(_id), null, null, null)) {
 			if (c.moveToNext()) {
 				return Pair.create(c.getString(0), c.getBlob(1));
 			}
 			return null;
-		} finally {
-			c.close();
 		}
 	}
 
@@ -1353,14 +1293,11 @@ public class InternalDb {
 
 	public List<String> listReadingPlanNames() {
 		final List<String> res = new ArrayList<>();
-		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan, new String[] {Db.ReadingPlan.name}, null, null, null, null, null);
-		try {
+		try (Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan, new String[]{Db.ReadingPlan.name}, null, null, null, null, null)) {
 			while (c.moveToNext()) {
 				res.add(c.getString(0));
 			}
 			return res;
-		} finally {
-			c.close();
 		}
 	}
 
@@ -1378,26 +1315,22 @@ public class InternalDb {
 			final long _id;
 			final int revno;
 
-			{ // get blob len
-				final Cursor c = db.rawQuery(
-					"select "
-						+ Table.SyncShadow.revno.name() + ", " // col 0
-						+ "length(" + Table.SyncShadow.data.name() + "), " // col 1
-						+ "_id " // col 2
-						+ " from " + Table.SyncShadow.tableName()
-						+ " where " + Table.SyncShadow.syncSetName + "=?",
-					Array(syncSetName)
-				);
-				try {
-					if (c.moveToNext()) {
-						revno = c.getInt(0);
-						data_len = c.getInt(1);
-						_id = c.getLong(2);
-					} else {
-						return null;
-					}
-				} finally {
-					c.close();
+			// get blob len
+			try (final Cursor c = db.rawQuery(
+				"select "
+					+ Table.SyncShadow.revno.name() + ", " // col 0
+					+ "length(" + Table.SyncShadow.data.name() + "), " // col 1
+					+ "_id " // col 2
+					+ " from " + Table.SyncShadow.tableName()
+					+ " where " + Table.SyncShadow.syncSetName + "=?",
+				Array(syncSetName)
+			)) {
+				if (c.moveToNext()) {
+					revno = c.getInt(0);
+					data_len = c.getInt(1);
+					_id = c.getLong(2);
+				} else {
+					return null;
 				}
 			}
 
@@ -1406,16 +1339,14 @@ public class InternalDb {
 			{ // fill in blob
 				final int chunkSize = 1000_000;
 				for (int i = 0; i < data_len; i += chunkSize) {
-					final Cursor c = db.rawQuery(
+					try (final Cursor c = db.rawQuery(
 						// sqlite substr func is 1-indexed
 						"select "
 							+ "substr(" + Table.SyncShadow.data.name() + ", " + (i + 1) + ", " + chunkSize + ")" // col 0
 							+ " from " + Table.SyncShadow.tableName()
 							+ " where _id=?",
 						ToStringArray(_id)
-					);
-
-					try {
+					)) {
 						if (c.moveToNext()) {
 							final byte[] chunk = c.getBlob(0);
 							if (i + chunk.length != data_len) {
@@ -1431,8 +1362,6 @@ public class InternalDb {
 						} else {
 							throw new RuntimeException("Cursor moveToNext returns false, does not make sense, since previous query has indicated that this cursor has rows.");
 						}
-					} finally {
-						c.close();
 					}
 				}
 			}
@@ -1451,15 +1380,12 @@ public class InternalDb {
 
 	public int getRevnoFromSyncShadowBySyncSetName(final String syncSetName) {
 		final SQLiteDatabase db = helper.getReadableDatabase();
-		final Cursor c = db.query(Table.SyncShadow.tableName(), Array(
+		try (Cursor c = db.query(Table.SyncShadow.tableName(), Array(
 			Table.SyncShadow.revno.name()
-		), Table.SyncShadow.syncSetName + "=?", Array(syncSetName), null, null, null);
-		try {
+		), Table.SyncShadow.syncSetName + "=?", Array(syncSetName), null, null, null)) {
 			if (c.moveToNext()) {
 				return c.getInt(0);
 			}
-		} finally {
-			c.close();
 		}
 		return 0;
 	}

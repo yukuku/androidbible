@@ -3,7 +3,6 @@ package yuku.alkitab.base.storage;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Build;
 import yuku.alkitab.base.App;
 import yuku.alkitab.songs.SongBookUtil;
 
@@ -12,17 +11,7 @@ public class SongDbHelper extends SQLiteOpenHelper {
 
 	public SongDbHelper() {
 		super(App.context, "SongDb", null, App.getVersionCode());
-		if (Build.VERSION.SDK_INT >= 16) {
-			setWriteAheadLoggingEnabled(true);
-		}
-	}
-
-	@Override
-	public void onOpen(final SQLiteDatabase db) {
-		super.onOpen(db);
-		if (Build.VERSION.SDK_INT < 16) {
-			db.enableWriteAheadLogging();
-		}
+		setWriteAheadLoggingEnabled(true);
 	}
 
 	@Override

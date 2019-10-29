@@ -1,5 +1,6 @@
 package yuku.alkitab.base.pdbconvert;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.SparseIntArray;
 import com.compactbyte.android.bible.PDBFileStream;
@@ -67,6 +68,7 @@ public class ConvertPdbToYes2 {
 		}
 	}
 
+	@SuppressLint("StringFormatMatches")
 	public ConvertResult convert(final Context context, String filenamepdb, File yesFile, ConvertParams params) {
 		ConvertResult res = new ConvertResult();
 
@@ -140,7 +142,7 @@ public class ConvertPdbToYes2 {
 
 			progress(100, context.getString(R.string.cp_constructing_book_info));
 			// this will also build the pericope blocks and indexes
-			BooksInfoSection booksInfoSection = getBooksInfo(context, 100, params.includeAddlTitle, sortedBookIds);
+			BooksInfoSection booksInfoSection = getBooksInfo(context, params.includeAddlTitle, sortedBookIds);
 
 			progress(200, context.getString(R.string.cp_constructing_version_info));
 			VersionInfoSection versionInfoSection = getVersionInfo();
@@ -186,7 +188,7 @@ public class ConvertPdbToYes2 {
 		return res;
 	}
 
-	private BooksInfoSection getBooksInfo(final Context context, int baseProgress, boolean includeAddlTitle, int[] sortedBookIds) throws Exception {
+	private BooksInfoSection getBooksInfo(final Context context, boolean includeAddlTitle, int[] sortedBookIds) throws Exception {
 		// no nulls allowed
 		final List<Yes2Book> yes2books = new ArrayList<>();
 
@@ -200,7 +202,7 @@ public class ConvertPdbToYes2 {
 			BookInfo pdbBookInfo = pdb_.getBook(pdbBookPos);
 			pdbBookInfo.openBook();
 
-			progress(baseProgress + 1 + bookId, context.getString(R.string.cp_reading_book_info, pdbBookInfo.getFullName()));
+			progress(100 + 1 + bookId, context.getString(R.string.cp_reading_book_info, pdbBookInfo.getFullName()));
 
 			Yes2Book b = new Yes2Book();
 			b.bookId = bookId;
@@ -220,10 +222,10 @@ public class ConvertPdbToYes2 {
 
 					// pericopes!
 					if (includeAddlTitle) {
-						if (complete[3].length() > 0) storePericope(3, complete[3], bookId, chapter_0, verse_0);
-						if (complete[2].length() > 0) storePericope(2, complete[2], bookId, chapter_0, verse_0);
+						if (complete[3].length() > 0) storePericope(complete[3], bookId, chapter_0, verse_0);
+						if (complete[2].length() > 0) storePericope(complete[2], bookId, chapter_0, verse_0);
 					}
-					if (complete[1].length() > 0) storePericope(1, complete[1], bookId, chapter_0, verse_0);
+					if (complete[1].length() > 0) storePericope(complete[1], bookId, chapter_0, verse_0);
 				}
 				b.chapter_offsets[chapter_0 + 1] = offsetPassed;
 			}
@@ -294,7 +296,7 @@ public class ConvertPdbToYes2 {
 		return ss;
 	}
 
-	private void storePericope(int type, String title, int bookId, int chapter_0, int verse_0) {
+	private void storePericope(String title, int bookId, int chapter_0, int verse_0) {
 		int ari = Ari.encode(bookId, chapter_0 + 1, verse_0 + 1);
 
 		if (pericopeData_ == null) {
@@ -326,6 +328,7 @@ public class ConvertPdbToYes2 {
 			this.sortedBookIds = sortedBookIds;
 		}
 
+		@SuppressLint("StringFormatMatches")
 		@Override public void write(RandomOutputStream output) throws IOException {
 			BintexWriter bw = new BintexWriter(output);
 
