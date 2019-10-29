@@ -21,6 +21,11 @@ android {
     lintOptions {
         abortOnError false
     }
+    externalNativeBuild {
+        ndkBuild {
+            path file('jni/Android.mk')
+        }
+    }
 }
 
 dependencies {
