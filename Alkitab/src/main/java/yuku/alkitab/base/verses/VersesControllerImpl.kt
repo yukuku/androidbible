@@ -60,7 +60,30 @@ class VersesControllerImpl(
         this.layoutManager = layoutManager
         rv.layoutManager = layoutManager
 
-        val adapter = VersesAdapter(::isChecked)
+        val adapter = VersesAdapter(
+            getCheckedPositions = {
+                val positions = checkedPositions.toIntArray()
+                positions.sort()
+                IntArrayList(positions.size).apply {
+                    positions.forEach { add(it) }
+                }
+            },
+            isChecked = { position -> position in checkedPositions },
+            toggleChecked = { position -> 
+                if (position !in checkedPositions) {
+                    checkedPositions += position
+                } else {
+                    checkedPositions -= position
+                }
+                notifyItemChanged(position)
+
+                if (checkedPositions.size > 0) {
+                    listeners.selectedVersesListener.onSomeVersesSelected(getCheckedVerses_1())
+                } else {
+                    listeners.selectedVersesListener.onNoVersesSelected()
+                }
+            }
+        )
         this.adapter = adapter
         rv.adapter = adapter
     }
@@ -97,7 +120,7 @@ class VersesControllerImpl(
         checkedPositions.clear()
 
         if (callSelectedVersesListener) {
-            versesListeners.selectedVersesListener.onNoVersesSelected(this)
+            versesListeners.selectedVersesListener.onNoVersesSelected()
         }
 
         render()
@@ -122,9 +145,9 @@ class VersesControllerImpl(
 
         if (callSelectedVersesListener) {
             if (checked_count > 0) {
-                versesListeners.selectedVersesListener.onSomeVersesSelected(this)
+                versesListeners.selectedVersesListener.onSomeVersesSelected(getCheckedVerses_1())
             } else {
-                versesListeners.selectedVersesListener.onNoVersesSelected(this)
+                versesListeners.selectedVersesListener.onNoVersesSelected()
             }
         }
 
@@ -140,11 +163,6 @@ class VersesControllerImpl(
             }
         }
         return res
-    }
-
-    private fun isChecked(verse_1: Int): Boolean {
-        val pos = versesDataModel.getPositionIgnoringPericopeFromVerse(verse_1)
-        return pos in checkedPositions
     }
 
     override fun scrollToTop() {
@@ -372,6 +390,7 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         ui: VersesUiModel,
         listeners: VersesListeners,
         checked: Boolean,
+        toggleChecked: (position: Int) -> Unit,
         index: Int
     ) {
         val verse_1 = index + 1
@@ -474,6 +493,19 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
 //        } else {
 //            res.callAttention(0)
 //        }
+
+        // Click listener on the whole item view
+        view.setOnClickListener {
+            when (ui.verseSelectionMode) {
+                VersesController.VerseSelectionMode.none -> {}
+                VersesController.VerseSelectionMode.singleClick -> {
+                    listeners.selectedVersesListener.onVerseSingleClick(data.getVerse_1FromPosition(adapterPosition))
+                }
+                VersesController.VerseSelectionMode.multiple -> {
+                    toggleChecked(adapterPosition)
+                }
+            }
+        }
     }
 
     private fun scaleForAttributeView(fontSizeDp: Float) = when {
@@ -576,7 +608,11 @@ class PericopeHolder(private val view: PericopeHeaderItem) : ItemHolder(view) {
 
 }
 
-class VersesAdapter(private val isChecked: (verse_1: Int) -> Boolean) : RecyclerView.Adapter<ItemHolder>() {
+class VersesAdapter(
+    private val getCheckedPositions: VersesAdapter.() -> IntArrayList,
+    private val isChecked: VersesAdapter.(position: Int) -> Boolean,
+    private val toggleChecked: VersesAdapter.(position: Int) -> Unit
+) : RecyclerView.Adapter<ItemHolder>() {
 
     var data = VersesDataModel.EMPTY
         set(value) {
@@ -625,9 +661,7 @@ class VersesAdapter(private val isChecked: (verse_1: Int) -> Boolean) : Recycler
         when (holder) {
             is VerseTextHolder -> {
                 val index = data.getVerse_0(position)
-                val verse_1 = index + 1
-
-                holder.bind(data, ui, listeners, isChecked(verse_1), index)
+                holder.bind(data, ui, listeners, isChecked(position), { toggleChecked(it) }, index)
             }
             is PericopeHolder -> {
                 val index = data.getPericopeIndex(position)

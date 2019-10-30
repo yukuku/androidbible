@@ -520,23 +520,6 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		return pos;
 	}
 
-	// ############################# migrate marker
-
-	private void init() {
-		if (isInEditMode()) return;
-
-		originalSelector = getSelector();
-
-		setDivider(null);
-		setFocusable(false);
-
-		setAdapter(adapter = new SingleViewVerseAdapter(getContext()));
-		setOnItemClickListener(itemClick);
-		setVerseSelectionMode(VerseSelectionMode.multiple);
-
-		super.setOnScrollListener(this);
-	}
-
 	private OnItemClickListener itemClick = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -557,6 +540,23 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		} else {
 			if (listener != null) listener.onNoVersesSelected(this);
 		}
+	}
+
+	// ############################# migrate marker
+
+	private void init() {
+		if (isInEditMode()) return;
+
+		originalSelector = getSelector();
+
+		setDivider(null);
+		setFocusable(false);
+
+		setAdapter(adapter = new SingleViewVerseAdapter(getContext()));
+		setOnItemClickListener(itemClick);
+		setVerseSelectionMode(VerseSelectionMode.multiple);
+
+		super.setOnScrollListener(this);
 	}
 
 	@Override

@@ -12,11 +12,11 @@ interface VersesController {
     }
 
     abstract class SelectedVersesListener {
-        open fun onSomeVersesSelected(v: VersesController) {}
+        open fun onSomeVersesSelected(verses_1: IntArrayList) {}
 
-        open fun onNoVersesSelected(v: VersesController) {}
+        open fun onNoVersesSelected() {}
 
-        open fun onVerseSingleClick(v: VersesController, verse_1: Int) {}
+        open fun onVerseSingleClick(verse_1: Int) {}
     }
 
     abstract class AttributeListener {

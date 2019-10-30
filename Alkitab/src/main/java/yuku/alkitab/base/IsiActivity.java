@@ -2104,11 +2104,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	VersesController.SelectedVersesListener lsSplit0_selectedVerses = new VersesController.SelectedVersesListener() {
 		@Override
-		public void onSomeVersesSelected(@NonNull VersesController v) {
+		public void onSomeVersesSelected(@NonNull final IntArrayList selectedVerses_1) {
 			if (activeSplitVersion != null) {
 				// synchronize the selection with the split view
-				IntArrayList selectedVerses = v.getCheckedVerses_1();
-				lsSplit1.checkVerses(selectedVerses, false);
+				lsSplit1.checkVerses(selectedVerses_1, false);
 			}
 
 			if (actionMode == null) {
@@ -2121,7 +2120,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		@Override
-		public void onNoVersesSelected(@NonNull VersesController v) {
+		public void onNoVersesSelected() {
 			if (activeSplitVersion != null) {
 				// synchronize the selection with the split view
 				lsSplit1.uncheckAllVerses(false);
@@ -2136,14 +2135,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	VersesController.SelectedVersesListener lsSplit1_selectedVerses = new VersesController.SelectedVersesListener() {
 		@Override
-		public void onSomeVersesSelected(@NonNull VersesController v) {
+		public void onSomeVersesSelected(@NonNull final IntArrayList selectedVerses_1) {
 			// synchronize the selection with the main view
-			IntArrayList selectedVerses = v.getCheckedVerses_1();
-			lsSplit0.checkVerses(selectedVerses, true);
+			lsSplit0.checkVerses(selectedVerses_1, true);
 		}
 
 		@Override
-		public void onNoVersesSelected(@NonNull VersesController v) {
+		public void onNoVersesSelected() {
 			lsSplit0.uncheckAllVerses(true);
 		}
 	};
