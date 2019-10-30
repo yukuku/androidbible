@@ -94,6 +94,8 @@ interface VersesController {
 
     fun setDictionaryModeAris(aris: Set<Int>)
 
+    fun setEmptyMessage(message: CharSequence?, textColor: Int)
+
     /**
      * Ask to render again on the next chance.
      */

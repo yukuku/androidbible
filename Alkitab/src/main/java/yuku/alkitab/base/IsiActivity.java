@@ -279,7 +279,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	Toolbar toolbar;
 	VersesController lsSplit0;
 	VersesController lsSplit1;
-	TextView tSplitEmpty;
 	TwofingerLinearLayout splitRoot;
 	LabeledSplitHandleButton splitHandleButton;
 	GotoButton bGoto;
@@ -476,7 +475,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		overlayContainer = findViewById(R.id.overlayContainer);
 		root = findViewById(R.id.root);
-		tSplitEmpty = findViewById(R.id.tSplitEmpty);
 		splitRoot = findViewById(R.id.splitRoot);
 		splitRoot.getViewTreeObserver().addOnGlobalLayoutListener(splitRoot_globalLayout);
 
@@ -1752,12 +1750,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 			final Book splitBook = activeSplitVersion.getBook(this.activeBook.bookId);
 			if (splitBook == null) {
-				tSplitEmpty.setText(getString(R.string.split_version_cant_display_verse, this.activeBook.reference(this.chapter_1), activeSplitVersion.getLongName()));
-				tSplitEmpty.setTextColor(S.applied().fontColor);
-
+				lsSplit1.setEmptyMessage(getString(R.string.split_version_cant_display_verse, this.activeBook.reference(this.chapter_1), activeSplitVersion.getShortName()), S.applied().fontColor);
 				dataSplit1 = VersesDataModel.EMPTY;
 				lsSplit1.setVersesDataModel(dataSplit1);
 			} else {
+				lsSplit1.setEmptyMessage(null, S.applied().fontColor);
 				this.uncheckVersesWhenActionModeDestroyed = false;
 				try {
 					final Function1<VersesDataModel, Unit> dataSetter = (newData) -> {

@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicInteger
 private const val TAG = "VersesControllerImpl"
 
 class VersesControllerImpl(
-    private val rv: RecyclerView,
+    private val rv: EmptyableRecyclerView,
     override val name: String,
     versesDataModel: VersesDataModel = VersesDataModel.EMPTY,
     versesUiModel: VersesUiModel = VersesUiModel.EMPTY,
@@ -361,6 +361,11 @@ class VersesControllerImpl(
     }
 
     override fun setDictionaryModeAris(aris: Set<Int>) = TODO()
+
+    override fun setEmptyMessage(message: CharSequence?, textColor: Int) {
+        rv.emptyMessage = message
+        rv.emptyMessagePaint.color = textColor
+    }
 
     override fun invalidate() {
         rv.postOnAnimation {
