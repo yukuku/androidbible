@@ -6,8 +6,8 @@
 	<FrameLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_alignParentStart="true"
 		android:layout_alignWithParentIfMissing="true"
+		android:layout_alignParentStart="true"
 		android:layout_toStartOf="@+id/attributeView">
 
 		<TextView
@@ -20,7 +20,8 @@
 			android:id="@+id/lText"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_gravity="start" />
+			android:layout_gravity="start"
+			android:includeFontPadding="true" />
 
 	</FrameLayout>
 

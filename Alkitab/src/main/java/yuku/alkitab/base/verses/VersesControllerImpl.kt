@@ -20,7 +20,6 @@ import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.util.TargetDecoder
 import yuku.alkitab.base.verses.VersesDataModel.ItemType
 import yuku.alkitab.base.widget.AriParallelClickData
-import yuku.alkitab.base.widget.AttributeView
 import yuku.alkitab.base.widget.DictionaryLinkInfo
 import yuku.alkitab.base.widget.DictionaryLinkSpan
 import yuku.alkitab.base.widget.FormattedTextRenderer
@@ -29,7 +28,6 @@ import yuku.alkitab.base.widget.ParallelSpan
 import yuku.alkitab.base.widget.PericopeHeaderItem
 import yuku.alkitab.base.widget.ReferenceParallelClickData
 import yuku.alkitab.base.widget.VerseRenderer
-import yuku.alkitab.base.widget.VerseTextView
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.SingleChapterVerses
 import yuku.alkitab.util.Ari
@@ -60,15 +58,8 @@ class VersesControllerImpl(
         rv.layoutManager = layoutManager
 
         val adapter = VersesAdapter(
-            getCheckedPositions = {
-                val positions = checkedPositions.toIntArray()
-                positions.sort()
-                IntArrayList(positions.size).apply {
-                    positions.forEach { add(it) }
-                }
-            },
             isChecked = { position -> position in checkedPositions },
-            toggleChecked = { position -> 
+            toggleChecked = { position ->
                 if (position !in checkedPositions) {
                     checkedPositions += position
                 } else {
@@ -116,13 +107,16 @@ class VersesControllerImpl(
         }
 
     override fun uncheckAllVerses(callSelectedVersesListener: Boolean) {
+        // Animate
+        for (checkedPosition in checkedPositions) {
+            adapter.notifyItemChanged(checkedPosition)
+        }
+
         checkedPositions.clear()
 
         if (callSelectedVersesListener) {
             versesListeners.selectedVersesListener.onNoVersesSelected()
         }
-
-        render()
     }
 
     override fun checkVerses(verses_1: IntArrayList, callSelectedVersesListener: Boolean) {
@@ -142,6 +136,11 @@ class VersesControllerImpl(
             i++
         }
 
+        // Animate
+        for (checkedPosition in checkedPositions) {
+            adapter.notifyItemChanged(checkedPosition)
+        }
+
         if (callSelectedVersesListener) {
             if (checked_count > 0) {
                 versesListeners.selectedVersesListener.onSomeVersesSelected(getCheckedVerses_1())
@@ -149,8 +148,6 @@ class VersesControllerImpl(
                 versesListeners.selectedVersesListener.onNoVersesSelected()
             }
         }
-
-        render()
     }
 
     override fun getCheckedVerses_1(): IntArrayList {
@@ -382,10 +379,6 @@ class VersesControllerImpl(
 sealed class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
 class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
-    private val lText: VerseTextView = view.lText
-    private val lVerseNumber: TextView = view.lVerseNumber
-    private val attributeView: AttributeView = view.attributeView
-
     /**
      * @param index the index of verse
      */
@@ -403,8 +396,8 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         val verseNumberText = data.verses_.getVerseNumberText(index)
         val highlightInfo = data.versesAttributes.highlightInfoMap_[index]
 
-        val lText = this.lText
-        val lVerseNumber = this.lVerseNumber
+        val lText = view.lText
+        val lVerseNumber = view.lVerseNumber
 
         val startVerseTextPos = VerseRenderer.render(lText, lVerseNumber, ari, text, verseNumberText, highlightInfo, checked, listeners.inlineLinkSpanFactory_, null)
 
@@ -423,7 +416,7 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
             lVerseNumber.setTextColor(selectedTextColor)
         }
 
-        val attributeView = this.attributeView
+        val attributeView = view.attributeView
         attributeView.setScale(scaleForAttributeView(S.applied().fontSize2dp * ui.textSizeMult))
         attributeView.bookmarkCount = data.versesAttributes.bookmarkCountMap_[index]
         attributeView.noteCount = data.versesAttributes.noteCountMap_[index]
@@ -431,7 +424,8 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         attributeView.hasMaps = data.versesAttributes.hasMapsMap_[index]
         attributeView.setAttributeListener(listeners.attributeListener, data.version_, data.versionId_, ari)
 
-        view.setCollapsed(text.isEmpty() && !attributeView.isShowingSomething)
+        view.checked = checked
+        view.collapsed = text.isEmpty() && !attributeView.isShowingSomething
 
         view.setAri(ari)
 
@@ -613,10 +607,12 @@ class PericopeHolder(private val view: PericopeHeaderItem) : ItemHolder(view) {
 }
 
 class VersesAdapter(
-    private val getCheckedPositions: VersesAdapter.() -> IntArrayList,
     private val isChecked: VersesAdapter.(position: Int) -> Boolean,
     private val toggleChecked: VersesAdapter.(position: Int) -> Unit
 ) : RecyclerView.Adapter<ItemHolder>() {
+    init {
+        setHasStableIds(true)
+    }
 
     var data = VersesDataModel.EMPTY
         set(value) {
@@ -643,6 +639,27 @@ class VersesAdapter(
         val res = data.itemCount
         AppLog.i(TAG, "VersesAdapter @@getItemCount $res")
         return res
+    }
+
+    /**
+     * Id assignment for nice animation, keeping verses animated.
+     * For verses, it is always verse_1 * 1000
+     * For pericopes, it is located between verses, so it is assigned to be the next verse_1 * 1000 - distance to that verse.
+     *
+     * For example:
+     * [verse 1, pericope, verse 2, verse 3, pericope, pericope, verse 4] will have ids
+     * [1000, 1999, 2000, 3000, 3998, 3999, 4000]
+     */
+    override fun getItemId(position: Int): Long {
+        return when (data.getItemViewType(position)) {
+            ItemType.verseText -> data.getVerse_1FromPosition(position) * 1000L
+            ItemType.pericope -> {
+                when (val locateResult = data.locateVerse_1FromPosition(position)) {
+                    LocateResult.EMPTY -> 1000000L + position
+                    else -> locateResult.verse_1 * 1000L - locateResult.distanceToNextVerse
+                }
+            }
+        }
     }
 
     override fun getItemViewType(position: Int) = data.getItemViewType(position).ordinal

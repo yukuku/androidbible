@@ -8,6 +8,19 @@ import yuku.alkitab.util.Ari
 
 private const val TAG = "VersesDataModel"
 
+inline class LocateResult constructor(private val raw: Long) {
+    constructor(verse_1: Int, distanceToNextVerse: Int) : this(
+        verse_1.toLong() or (distanceToNextVerse.toLong() shl 32)
+    )
+
+    val verse_1 get() = raw.toInt()
+    val distanceToNextVerse get() = (raw shr 32).toInt()
+
+    companion object {
+        val EMPTY = LocateResult(0L)
+    }
+}
+
 data class VersesDataModel(
     @JvmField
     val ari_bc_: Int,
@@ -155,19 +168,21 @@ data class VersesDataModel(
     }
 
     /**
+     * Get the 1-based verse number from the position given.
+     * If the position points to a pericope, the next verse number is returned.
      * @return verse_1 or 0 if doesn't make sense
      */
     fun getVerse_1FromPosition(position: Int): Int {
-        val position = position.coerceAtMost(itemPointer_.size - 1)
+        val pos = position.coerceAtMost(itemPointer_.size - 1)
 
-        var id = itemPointer_[position]
+        var id = itemPointer_[pos]
 
         if (id >= 0) {
             return id + 1
         }
 
         // it's a pericope. Let's move forward until we get a verse
-        for (i in position + 1 until itemPointer_.size) {
+        for (i in pos + 1 until itemPointer_.size) {
             id = itemPointer_[i]
 
             if (id >= 0) {
@@ -180,7 +195,36 @@ data class VersesDataModel(
     }
 
     /**
-     * Similar to [.getVerse_1FromPosition], but returns 0 if the specified position is a pericope or doesn't make sense.
+     * Get the 1-based verse number and the distance to the verse from the position given.
+     * If the position points to a pericope, the next verse number is returned.
+     * @return [LocateResult.EMPTY] if the position points to a pericope without following verse.
+     */
+    fun locateVerse_1FromPosition(position: Int): LocateResult {
+        val pos = position.coerceAtMost(itemPointer_.size - 1)
+
+        var id = itemPointer_[pos]
+
+        if (id >= 0) {
+            return LocateResult(id + 1, 0)
+        }
+
+        // it's a pericope. Let's move forward until we get a verse
+        var distance = 0
+        for (i in pos + 1 until itemPointer_.size) {
+            distance++
+            id = itemPointer_[i]
+
+            if (id >= 0) {
+                return LocateResult(id + 1, distance)
+            }
+        }
+
+        AppLog.w(TAG, "pericope title at the last position? does not make sense.")
+        return LocateResult(0, 0)
+    }
+
+    /**
+     * Similar to [getVerse_1FromPosition], but returns 0 if the specified position is a pericope or doesn't make sense.
      */
     fun getVerseOrPericopeFromPosition(position: Int): Int {
         if (position < 0 || position >= itemPointer_.size) {
