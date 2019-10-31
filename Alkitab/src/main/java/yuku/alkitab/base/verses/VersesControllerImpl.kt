@@ -250,7 +250,7 @@ class VersesControllerImpl(
             val lastPos = layoutManager.findLastVisibleItemPosition()
             if (position in firstPos..lastPos) {
                 // we have the child on screen, no need to measure
-                val child = layoutManager.getChildAt(position - firstPos) ?: return
+                val child = layoutManager.findViewByPosition(position) ?: return
                 layoutManager.scrollToPositionWithOffset(position, -(prop * child.height).toInt() + paddingNegator)
                 return
             }
@@ -278,7 +278,7 @@ class VersesControllerImpl(
         val pos = layoutManager.findFirstVisibleItemPosition()
 
         // check if the top one has been scrolled
-        val child = rv.getChildAt(0)
+        val child = layoutManager.findViewByPosition(pos)
         if (child != null) {
             val top = child.top
             if (top == 0) {
@@ -323,7 +323,7 @@ class VersesControllerImpl(
         var totalHeight = 0
 
         // consider how long the first child has been scrolled up
-        val firstChild = rv.getChildAt(0)
+        val firstChild = layoutManager.findViewByPosition(oldPos)
         if (firstChild != null) {
             totalHeight += -firstChild.top
         }
