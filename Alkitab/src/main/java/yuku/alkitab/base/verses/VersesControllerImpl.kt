@@ -28,7 +28,6 @@ import yuku.alkitab.base.widget.ParallelClickData
 import yuku.alkitab.base.widget.ParallelSpan
 import yuku.alkitab.base.widget.PericopeHeaderItem
 import yuku.alkitab.base.widget.ReferenceParallelClickData
-import yuku.alkitab.base.widget.VerseItem
 import yuku.alkitab.base.widget.VerseRenderer
 import yuku.alkitab.base.widget.VerseTextView
 import yuku.alkitab.debug.R

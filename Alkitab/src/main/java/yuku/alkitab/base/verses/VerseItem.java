@@ -1,5 +1,6 @@
-package yuku.alkitab.base.widget;
+package yuku.alkitab.base.verses;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
@@ -22,6 +23,8 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.widget.AttributeView;
+import yuku.alkitab.base.widget.VerseTextView;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.tracking.Tracker;
@@ -266,6 +269,7 @@ public class VerseItem extends RelativeLayout implements Checkable {
 	/**
 	 * Make sure TalkBack reads the verse correctly by setting content description.
 	 */
+	@SuppressLint("StringFormatMatches")
 	@Override
 	public CharSequence getContentDescription() {
 		final StringBuilder res = new StringBuilder();
