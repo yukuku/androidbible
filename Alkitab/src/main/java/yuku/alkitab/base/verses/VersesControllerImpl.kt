@@ -10,7 +10,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.view.get
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import yuku.afw.storage.Preferences
@@ -91,20 +90,19 @@ class VersesControllerImpl(
         override fun onScrolled(view: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(view, dx, dy)
 
-            if (view.childCount == 0) return
-            val firstChild = view[0]
+            val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+            val firstChild = layoutManager.findViewByPosition(firstVisibleItemPosition) ?: return
 
             var prop = 0f
             var position = -1
 
             val remaining = firstChild.bottom // padding top is ignored
             if (remaining >= 0) { // bottom of first child is lower than top padding
-                position = layoutManager.findFirstVisibleItemPosition()
+                position = firstVisibleItemPosition
                 prop = 1f - remaining.toFloat() / firstChild.height
             } else { // we should have a second child
-                if (view.childCount > 1) {
-                    val secondChild = view[1]
-                    position = layoutManager.findFirstVisibleItemPosition() + 1
+                layoutManager.findViewByPosition(firstVisibleItemPosition + 1)?.let { secondChild ->
+                    position = firstVisibleItemPosition + 1
                     prop = (-remaining).toFloat() / secondChild.height
                 }
             }
@@ -474,8 +472,7 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
 
         view.checked = checked
         view.collapsed = text.isEmpty() && !attributeView.isShowingSomething
-
-        view.setAri(ari)
+        view.ari = ari
 
         /*
          * Dictionary mode is activated on either of these conditions:
@@ -664,29 +661,24 @@ class VersesAdapter(
 
     var data = VersesDataModel.EMPTY
         set(value) {
-            AppLog.i(TAG, "VersesAdapter @@data set")
             field = value
             notifyDataSetChanged()
         }
 
     var ui = VersesUiModel.EMPTY
         set(value) {
-            AppLog.i(TAG, "VersesAdapter @@ui set")
             field = value
             notifyDataSetChanged()
         }
 
     var listeners = VersesListeners.EMPTY
         set(value) {
-            AppLog.i(TAG, "VersesAdapter @@listeners set")
             field = value
             notifyDataSetChanged()
         }
 
     override fun getItemCount(): Int {
-        val res = data.itemCount
-        AppLog.i(TAG, "VersesAdapter @@getItemCount $res")
-        return res
+        return data.itemCount
     }
 
     /**

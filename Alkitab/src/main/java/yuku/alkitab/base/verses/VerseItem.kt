@@ -70,7 +70,7 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
     lateinit var attributeView: AttributeView
 
     /** the ari of the verse represented by this view. If this is 0, this is a pericope or something else.  */
-    private var ari: Int = 0
+    var ari: Int = 0
 
     /**
      * Whether we briefly "color" this verse resulting from navigation from other parts of the app (e.g. verse navigation, search results).
@@ -160,10 +160,6 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
             }
             invalidate()
         }
-    }
-
-    fun setAri(ari: Int) {
-        this.ari = ari
     }
 
     override fun onDragEvent(event: DragEvent): Boolean {
