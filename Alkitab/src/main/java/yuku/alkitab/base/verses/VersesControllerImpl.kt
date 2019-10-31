@@ -10,6 +10,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.get
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import yuku.afw.storage.Preferences
@@ -56,6 +57,7 @@ class VersesControllerImpl(
         val layoutManager = LinearLayoutManager(rv.context)
         this.layoutManager = layoutManager
         rv.layoutManager = layoutManager
+        rv.addOnScrollListener(rvScrollListener)
 
         val adapter = VersesAdapter(
             isChecked = { position -> position in checkedPositions },
@@ -76,6 +78,52 @@ class VersesControllerImpl(
         )
         this.adapter = adapter
         rv.adapter = adapter
+    }
+
+    private val rvScrollListener get() = object: RecyclerView.OnScrollListener() {
+        var scrollState = RecyclerView.SCROLL_STATE_IDLE
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            super.onScrollStateChanged(recyclerView, newState)
+            this.scrollState = newState
+        }
+
+        override fun onScrolled(view: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(view, dx, dy)
+
+            if (view.childCount == 0) return
+            val firstChild = view[0]
+
+            var prop = 0f
+            var position = -1
+
+            val remaining = firstChild.bottom // padding top is ignored
+            if (remaining >= 0) { // bottom of first child is lower than top padding
+                position = layoutManager.findFirstVisibleItemPosition()
+                prop = 1f - remaining.toFloat() / firstChild.height
+            } else { // we should have a second child
+                if (view.childCount > 1) {
+                    val secondChild = view[1]
+                    position = layoutManager.findFirstVisibleItemPosition() + 1
+                    prop = (-remaining).toFloat() / secondChild.height
+                }
+            }
+
+            val verse_1 = versesDataModel.getVerseOrPericopeFromPosition(position)
+
+            if (scrollState != RecyclerView.SCROLL_STATE_IDLE) {
+                if (verse_1 > 0) {
+                    versesListeners.onVerseScrollListener.onVerseScroll(false, verse_1, prop)
+                } else {
+                    versesListeners.onVerseScrollListener.onVerseScroll(true, 0, 0f)
+                }
+
+                if (position == 0 && firstChild.top == view.paddingTop) {
+                    // we are really at the top
+                    versesListeners.onVerseScrollListener.onScrollToTop()
+                }
+            }
+        }
     }
 
     /**

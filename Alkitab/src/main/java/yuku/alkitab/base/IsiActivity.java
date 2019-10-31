@@ -2145,7 +2145,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	VersesController.OnVerseScrollListener lsSplit0_verseScroll = new VersesController.OnVerseScrollListener() {
 		@Override
-		public void onVerseScroll(@NonNull VersesController v, boolean isPericope, int verse_1, float prop) {
+		public void onVerseScroll(boolean isPericope, int verse_1, float prop) {
 
 			if (!isPericope && activeSplitVersion != null) {
 				lsSplit1.scrollToVerse(verse_1, prop);
@@ -2153,7 +2153,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		@Override
-		public void onScrollToTop(@NonNull VersesController v) {
+		public void onScrollToTop() {
 			if (activeSplitVersion != null) {
 				lsSplit1.scrollToTop();
 			}
@@ -2162,14 +2162,14 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	VersesController.OnVerseScrollListener lsSplit1_verseScroll = new VersesController.OnVerseScrollListener() {
 		@Override
-		public void onVerseScroll(@NonNull VersesController v, boolean isPericope, int verse_1, float prop) {
+		public void onVerseScroll(boolean isPericope, int verse_1, float prop) {
 			if (!isPericope) {
 				lsSplit0.scrollToVerse(verse_1, prop);
 			}
 		}
 
 		@Override
-		public void onScrollToTop(@NonNull VersesController v) {
+		public void onScrollToTop() {
 			lsSplit0.scrollToTop();
 		}
 	};

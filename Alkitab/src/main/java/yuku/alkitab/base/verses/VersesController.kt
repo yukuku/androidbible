@@ -30,9 +30,9 @@ interface VersesController {
     }
 
     abstract class OnVerseScrollListener {
-        open fun onVerseScroll(v: VersesController, isPericope: Boolean, verse_1: Int, prop: Float) {}
+        open fun onVerseScroll(isPericope: Boolean, verse_1: Int, prop: Float) {}
 
-        open fun onScrollToTop(v: VersesController) {}
+        open fun onScrollToTop() {}
     }
 
     sealed class PressResult {
