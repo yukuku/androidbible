@@ -2,7 +2,6 @@ package yuku.alkitab.base.verses
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
@@ -16,14 +15,11 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import yuku.afw.storage.Preferences
-import yuku.alkitab.base.App
-import yuku.alkitab.base.IsiActivity
 import yuku.alkitab.base.S
 import yuku.alkitab.base.widget.AttributeView
+import yuku.alkitab.base.widget.LeftDrawer.PROGRESS_MARK_DRAG_MIME_TYPE
 import yuku.alkitab.base.widget.VerseTextView
 import yuku.alkitab.debug.R
-import yuku.alkitab.tracking.Tracker
-import java.util.*
 
 class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context, attrs) {
     init {
@@ -42,6 +38,8 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
             field = value
             requestLayout()
         }
+
+    var onPinDropped: (presetId: Int) -> Unit = {}
 
     private var dragHover = false
         set(value) {
@@ -68,9 +66,6 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
     lateinit var lText: VerseTextView
     lateinit var lVerseNumber: TextView
     lateinit var attributeView: AttributeView
-
-    /** the ari of the verse represented by this view. If this is 0, this is a pericope or something else.  */
-    var ari: Int = 0
 
     /**
      * Whether we briefly "color" this verse resulting from navigation from other parts of the app (e.g. verse navigation, search results).
@@ -162,46 +157,33 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
         }
     }
 
-    override fun onDragEvent(event: DragEvent): Boolean {
-        // Dropping only works on verse not pericope or something else
-        if (ari == 0) return false
-
-        return when (event.action) {
-            DragEvent.ACTION_DRAG_STARTED -> {
-                // Determines if this View can accept the dragged data
-                val desc = event.clipDescription
-                desc != null && desc.hasMimeType(PROGRESS_MARK_DRAG_MIME_TYPE)
-            }
-
-            DragEvent.ACTION_DRAG_ENTERED -> {
-                // Indicate this will receive the drag data.
-                dragHover = true
-                true
-            }
-
-            DragEvent.ACTION_DRAG_EXITED, DragEvent.ACTION_DRAG_ENDED -> {
-                // Indicate this will no more receive the drag data.
-                dragHover = false
-                true
-            }
-
-            DragEvent.ACTION_DROP -> {
-                Tracker.trackEvent("pin_drop")
-                val item = event.clipData.getItemAt(0)
-                val preset_id = Integer.parseInt(item.text.toString())
-
-                val progressMark = S.getDb().getProgressMarkByPresetId(preset_id)
-                progressMark!!.ari = this.ari
-                progressMark.modifyTime = Date()
-                S.getDb().insertOrUpdateProgressMark(progressMark)
-
-                App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED))
-
-                true
-            }
-
-            else -> false
+    override fun onDragEvent(event: DragEvent) = when (event.action) {
+        DragEvent.ACTION_DRAG_STARTED -> {
+            // Determines if this View can accept the dragged data
+            val desc = event.clipDescription
+            desc != null && desc.hasMimeType(PROGRESS_MARK_DRAG_MIME_TYPE)
         }
+
+        DragEvent.ACTION_DRAG_ENTERED -> {
+            // Indicate this will receive the drag data.
+            dragHover = true
+            true
+        }
+
+        DragEvent.ACTION_DRAG_EXITED, DragEvent.ACTION_DRAG_ENDED -> {
+            // Indicate this will no more receive the drag data.
+            dragHover = false
+            true
+        }
+
+        DragEvent.ACTION_DROP -> {
+            val item = event.clipData.getItemAt(0)
+            val presetId = Integer.parseInt(item.text.toString())
+            onPinDropped(presetId)
+            true
+        }
+
+        else -> false
     }
 
     /**
@@ -267,7 +249,6 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
     }
 
     companion object {
-        const val PROGRESS_MARK_DRAG_MIME_TYPE = "application/vnd.yuku.alkitab.progress_mark.drag"
         private const val ATTENTION_DURATION = 2000f
     }
 }

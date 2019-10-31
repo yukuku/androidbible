@@ -29,10 +29,14 @@ interface VersesController {
         open fun onHasMapsAttributeClick(version: Version, versionId: String, ari: Int) {}
     }
 
-    abstract class OnVerseScrollListener {
+    abstract class VerseScrollListener {
         open fun onVerseScroll(isPericope: Boolean, verse_1: Int, prop: Float) {}
 
         open fun onScrollToTop() {}
+    }
+
+    abstract class PinDropListener {
+        open fun onPinDropped(presetId: Int, ari: Int) {}
     }
 
     sealed class PressResult {

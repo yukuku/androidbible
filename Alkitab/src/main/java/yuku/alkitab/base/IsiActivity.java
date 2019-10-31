@@ -397,6 +397,22 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		return Unit.INSTANCE;
 	};
 
+	final VersesController.PinDropListener pinDropListener = new VersesController.PinDropListener() {
+		@Override
+		public void onPinDropped(final int presetId, final int ari) {
+			Tracker.trackEvent("pin_drop");
+
+			final ProgressMark progressMark = S.getDb().getProgressMarkByPresetId(presetId);
+			if (progressMark != null) {
+				progressMark.ari = ari;
+				progressMark.modifyTime = new Date();
+				S.getDb().insertOrUpdateProgressMark(progressMark);
+			}
+
+			App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
+		}
+	};
+
 	final ViewTreeObserver.OnGlobalLayoutListener splitRoot_globalLayout = new ViewTreeObserver.OnGlobalLayoutListener() {
 		Point lastSize;
 
@@ -529,7 +545,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				lsSplit0_verseScroll,
 				parallelListener,
 				new VerseInlineLinkSpanFactory(lsSplit0),
-				dictionaryListener
+				dictionaryListener,
+				pinDropListener
 			)
 		);
 
@@ -545,7 +562,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				lsSplit1_verseScroll,
 				parallelListener,
 				new VerseInlineLinkSpanFactory(lsSplit1),
-				dictionaryListener
+				dictionaryListener,
+				pinDropListener
 			)
 		);
 
@@ -2143,7 +2161,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	};
 
-	VersesController.OnVerseScrollListener lsSplit0_verseScroll = new VersesController.OnVerseScrollListener() {
+	VersesController.VerseScrollListener lsSplit0_verseScroll = new VersesController.VerseScrollListener() {
 		@Override
 		public void onVerseScroll(boolean isPericope, int verse_1, float prop) {
 
@@ -2160,7 +2178,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	};
 
-	VersesController.OnVerseScrollListener lsSplit1_verseScroll = new VersesController.OnVerseScrollListener() {
+	VersesController.VerseScrollListener lsSplit1_verseScroll = new VersesController.VerseScrollListener() {
 		@Override
 		public void onVerseScroll(boolean isPericope, int verse_1, float prop) {
 			if (!isPericope) {

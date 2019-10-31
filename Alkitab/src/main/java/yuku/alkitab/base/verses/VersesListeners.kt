@@ -7,23 +7,25 @@ import yuku.alkitab.base.widget.VerseInlineLinkSpan
 class VersesListeners(
     val attributeListener: VersesController.AttributeListener,
     val selectedVersesListener: VersesController.SelectedVersesListener,
-    val onVerseScrollListener: VersesController.OnVerseScrollListener,
+    val verseScrollListener: VersesController.VerseScrollListener,
     val parallelListener_: (ParallelClickData) -> Unit,
     val inlineLinkSpanFactory_: VerseInlineLinkSpan.Factory,
-    val dictionaryListener_: (DictionaryLinkInfo) -> Unit
+    val dictionaryListener_: (DictionaryLinkInfo) -> Unit,
+    val pinDropListener: VersesController.PinDropListener
 ) {
     companion object {
         @JvmField
         val EMPTY = VersesListeners(
             attributeListener = object : VersesController.AttributeListener() {},
             selectedVersesListener = object : VersesController.SelectedVersesListener() {},
-            onVerseScrollListener = object : VersesController.OnVerseScrollListener() {},
+            verseScrollListener = object : VersesController.VerseScrollListener() {},
             parallelListener_ = {},
             inlineLinkSpanFactory_ = VerseInlineLinkSpan.Factory { type, arif ->
                 object : VerseInlineLinkSpan(type, arif, null) {
                 }
             },
-            dictionaryListener_ = {}
+            dictionaryListener_ = {},
+            pinDropListener = object : VersesController.PinDropListener() {}
         )
     }
 }

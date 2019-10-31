@@ -111,14 +111,14 @@ class VersesControllerImpl(
 
             if (scrollState != RecyclerView.SCROLL_STATE_IDLE) {
                 if (verse_1 > 0) {
-                    versesListeners.onVerseScrollListener.onVerseScroll(false, verse_1, prop)
+                    versesListeners.verseScrollListener.onVerseScroll(false, verse_1, prop)
                 } else {
-                    versesListeners.onVerseScrollListener.onVerseScroll(true, 0, 0f)
+                    versesListeners.verseScrollListener.onVerseScroll(true, 0, 0f)
                 }
 
                 if (position == 0 && firstChild.top == view.paddingTop) {
                     // we are really at the top
-                    versesListeners.onVerseScrollListener.onScrollToTop()
+                    versesListeners.verseScrollListener.onScrollToTop()
                 }
             }
         }
@@ -472,7 +472,9 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
 
         view.checked = checked
         view.collapsed = text.isEmpty() && !attributeView.isShowingSomething
-        view.ari = ari
+        view.onPinDropped = { presetId ->
+            listeners.pinDropListener.onPinDropped(presetId, Ari.encodeWithBc(data.ari_bc_, data.getVerse_1FromPosition(adapterPosition)))
+        }
 
         /*
          * Dictionary mode is activated on either of these conditions:

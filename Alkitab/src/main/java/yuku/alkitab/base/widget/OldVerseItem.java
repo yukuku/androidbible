@@ -28,7 +28,6 @@ import yuku.alkitab.tracking.Tracker;
 import java.util.Date;
 
 public class OldVerseItem extends RelativeLayout implements Checkable {
-	public static final String PROGRESS_MARK_DRAG_MIME_TYPE = "application/vnd.yuku.alkitab.progress_mark.drag";
 
 	private static final float ATTENTION_DURATION = 2000L;
 
@@ -218,7 +217,7 @@ public class OldVerseItem extends RelativeLayout implements Checkable {
 			case DragEvent.ACTION_DRAG_STARTED:
 				// Determines if this View can accept the dragged data
 				final ClipDescription desc = event.getClipDescription();
-				if (desc != null && desc.hasMimeType(PROGRESS_MARK_DRAG_MIME_TYPE)) {
+				if (desc != null && desc.hasMimeType(LeftDrawer.PROGRESS_MARK_DRAG_MIME_TYPE)) {
 					return true;
 				}
 				break;
