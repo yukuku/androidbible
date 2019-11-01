@@ -257,6 +257,7 @@ public class S {
 	/**
 	 * Get the internal version model. This does not return a singleton. The ordering is the latest taken from preferences.
 	 */
+	@NonNull
 	public static MVersionInternal getMVersionInternal() {
 		final AppConfig ac = AppConfig.get();
 		final MVersionInternal res = new MVersionInternal();

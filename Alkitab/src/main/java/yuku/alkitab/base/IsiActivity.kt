@@ -105,7 +105,6 @@ import yuku.alkitab.base.widget.VerseRenderer
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Book
-import yuku.alkitab.model.FootnoteEntry
 import yuku.alkitab.model.Marker
 import yuku.alkitab.model.PericopeBlock
 import yuku.alkitab.model.SingleChapterVerses
@@ -119,6 +118,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.GregorianCalendar
 import java.util.Locale
+import kotlin.math.roundToLong
 
 private const val TAG = "IsiActivity"
 
@@ -151,7 +151,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         history.add(ari)
     }
 
-    private var splitRoot_listener: TwofingerLinearLayout.Listener = object : TwofingerLinearLayout.Listener {
+    private val splitRoot_listener = object : TwofingerLinearLayout.Listener {
         var startFontSize: Float = 0.toFloat()
         var startDx = java.lang.Float.MIN_VALUE
         var chapterSwipeCellWidth: Float = 0.toFloat() // initted later
@@ -182,9 +182,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
 
             applyPreferences()
 
-            if (textAppearancePanel != null) {
-                textAppearancePanel!!.displayValues()
-            }
+            textAppearancePanel?.displayValues()
         }
 
         override fun onTwofingerDragX(dx: Float) {
@@ -217,13 +215,13 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
                 Tracker.trackEvent("text_twofinger_up")
                 setFullScreen(true)
                 leftDrawer.handle.setFullScreen(true)
-                moreSwipeYAllowed = false
             } else {
                 Tracker.trackEvent("text_twofinger_down")
                 setFullScreen(false)
                 leftDrawer.handle.setFullScreen(false)
-                moreSwipeYAllowed = false
             }
+
+            moreSwipeYAllowed = false
         }
 
         override fun onTwofingerEnd(mode: TwofingerLinearLayout.Mode) {
@@ -249,7 +247,6 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
     private lateinit var bVersion: TextView
     lateinit var floater: Floater
 
-    // Immutable data for lsSplit0 and lsSplit1. These are only replaced, not modified.
     private var dataSplit0 = VersesDataModel.EMPTY
         set(value) {
             field = value
@@ -260,6 +257,18 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         set(value) {
             field = value
             lsSplit1.versesDataModel = value
+        }
+
+    private var uiSplit0 = VersesUiModel.EMPTY
+        set(value) {
+            field = value
+            lsSplit0.versesUiModel = value
+        }
+
+    private var uiSplit1 = VersesUiModel.EMPTY
+        set(value) {
+            field = value
+            lsSplit1.versesUiModel = value
         }
 
     /**
@@ -280,13 +289,25 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
     private var dictionaryMode: Boolean = false
     var textAppearancePanel: TextAppearancePanel? = null
 
-    // temporary states
-    var hasEsvsbAsal: Boolean? = null
+    /**
+     * The following "esvsbasal" thing is a personal thing by yuku that doesn't matter to anyone else.
+     * Please ignore it and leave it intact.
+     */
+    val hasEsvsbAsal by lazy {
+        try {
+            packageManager.getApplicationInfo("yuku.esvsbasal", 0)
+            true
+        } catch (e: PackageManager.NameNotFoundException) {
+            false
+        }
+    }
 
-    // these three must be set together
-    var activeSplitMVersion: MVersion? = null
-    var activeSplitVersion: Version? = null
-    var activeSplitVersionId: String? = null
+    data class ActiveSplit(
+        val mv: MVersion,
+        val version: Version,
+        val versionId: String
+    )
+    var activeSplit: ActiveSplit? = null
 
     private val parallelListener: (data: ParallelClickData) -> Unit = { data ->
         if (data is ReferenceParallelClickData) {
@@ -356,7 +377,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         }
     }
 
-    private val pinDropListener: VersesController.PinDropListener = object : VersesController.PinDropListener() {
+    private val pinDropListener = object : VersesController.PinDropListener() {
         override fun onPinDropped(presetId: Int, ari: Int) {
             Tracker.trackEvent("pin_drop")
 
@@ -371,44 +392,40 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         }
     }
 
-    private val splitRoot_globalLayout: ViewTreeObserver.OnGlobalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
-        var lastSize: Point? = null
+    private val splitRoot_globalLayout = object : ViewTreeObserver.OnGlobalLayoutListener {
+        val lastSize = Point()
 
         override fun onGlobalLayout() {
-            if (lastSize != null && lastSize!!.x == splitRoot.width && lastSize!!.y == splitRoot.height) {
+            if (lastSize.x == splitRoot.width && lastSize.y == splitRoot.height) {
                 return  // no need to layout now
             }
 
-            if (activeSplitVersion == null) {
+            if (activeSplit == null) {
                 return  // we are not splitting
             }
 
             configureSplitSizes()
 
-            if (lastSize == null) {
-                lastSize = Point()
-            }
-            lastSize!!.x = splitRoot.width
-            lastSize!!.y = splitRoot.height
+            lastSize.x = splitRoot.width
+            lastSize.y = splitRoot.height
         }
-
     }
 
-    private val reloadAttributeMapReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+    private val reloadAttributeMapReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             reloadBothAttributeMaps()
         }
     }
 
-    private val needsRestartReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+    private val needsRestartReceiver= object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             needsRestart = true
         }
     }
 
-    private var lsSplit0_selectedVerses: VersesController.SelectedVersesListener = object : VersesController.SelectedVersesListener() {
+    private val lsSplit0_selectedVerses = object : VersesController.SelectedVersesListener() {
         override fun onSomeVersesSelected(verses_1: IntArrayList) {
-            if (activeSplitVersion != null) {
+            if (activeSplit != null) {
                 // synchronize the selection with the split view
                 lsSplit1.checkVerses(verses_1, false)
             }
@@ -417,25 +434,21 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
                 actionMode = startSupportActionMode(actionMode_callback)
             }
 
-            if (actionMode != null) {
-                actionMode!!.invalidate()
-            }
+            actionMode?.invalidate()
         }
 
         override fun onNoVersesSelected() {
-            if (activeSplitVersion != null) {
+            if (activeSplit != null) {
                 // synchronize the selection with the split view
                 lsSplit1.uncheckAllVerses(false)
             }
 
-            if (actionMode != null) {
-                actionMode!!.finish()
-                actionMode = null
-            }
+            actionMode?.finish()
+            actionMode = null
         }
     }
 
-    private var lsSplit1_selectedVerses: VersesController.SelectedVersesListener = object : VersesController.SelectedVersesListener() {
+    private val lsSplit1_selectedVerses = object : VersesController.SelectedVersesListener() {
         override fun onSomeVersesSelected(verses_1: IntArrayList) {
             // synchronize the selection with the main view
             lsSplit0.checkVerses(verses_1, true)
@@ -446,22 +459,22 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         }
     }
 
-    private var lsSplit0_verseScroll: VersesController.VerseScrollListener = object : VersesController.VerseScrollListener() {
+    private val lsSplit0_verseScroll = object : VersesController.VerseScrollListener() {
         override fun onVerseScroll(isPericope: Boolean, verse_1: Int, prop: Float) {
 
-            if (!isPericope && activeSplitVersion != null) {
+            if (!isPericope && activeSplit != null) {
                 lsSplit1.scrollToVerse(verse_1, prop)
             }
         }
 
         override fun onScrollToTop() {
-            if (activeSplitVersion != null) {
+            if (activeSplit != null) {
                 lsSplit1.scrollToTop()
             }
         }
     }
 
-    private var lsSplit1_verseScroll: VersesController.VerseScrollListener = object : VersesController.VerseScrollListener() {
+    private val lsSplit1_verseScroll = object : VersesController.VerseScrollListener() {
         override fun onVerseScroll(isPericope: Boolean, verse_1: Int, prop: Float) {
             if (!isPericope) {
                 lsSplit0.scrollToVerse(verse_1, prop)
@@ -473,7 +486,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         }
     }
 
-    val actionMode_callback: ActionMode.Callback = object : ActionMode.Callback {
+    val actionMode_callback = object : ActionMode.Callback {
         private val MENU_GROUP_EXTENSIONS = Menu.FIRST + 1
         private val MENU_EXTENSIONS_FIRST_ID = 0x1000
 
@@ -484,21 +497,9 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
 
             AppLog.d(TAG, "@@onCreateActionMode")
 
-            /* The following "esvsbasal" thing is a personal thing by yuku that doesn't matter to anyone else.
-			 * Please ignore it and leave it intact. */
-            if (hasEsvsbAsal == null) {
-                try {
-                    packageManager.getApplicationInfo("yuku.esvsbasal", 0)
-                    hasEsvsbAsal = true
-                } catch (e: PackageManager.NameNotFoundException) {
-                    hasEsvsbAsal = false
-                }
-
-            }
-
-            if (hasEsvsbAsal!!) {
+            if (hasEsvsbAsal) {
                 val esvsb = menu.findItem(R.id.menuEsvsb)
-                if (esvsb != null) esvsb.isVisible = true
+                esvsb?.isVisible = true
             }
 
             // show book name and chapter
@@ -547,7 +548,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
             val menuShareSplit1 = menu.findItem(R.id.menuShareSplit1)
             val menuShareBothSplits = menu.findItem(R.id.menuShareBothSplits)
 
-            val split = activeSplitVersion != null
+            val split = activeSplit != null
 
             menuCopy.isVisible = !split
             menuCopySplit0.isVisible = split
@@ -584,7 +585,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
             menuDictionary.isVisible = c.menuDictionary && !Preferences.getBoolean(getString(R.string.pref_autoDictionaryAnalyze_key), resources.getBoolean(R.bool.pref_autoDictionaryAnalyze_default))
 
             val menuRibkaReport = menu.findItem(R.id.menuRibkaReport)
-            menuRibkaReport.isVisible = single && checkRibkaEligibility() != 0
+            menuRibkaReport.isVisible = single && checkRibkaEligibility() != RibkaEligibility.None
 
             run {
                 // extensions
@@ -613,18 +614,18 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
                 R.id.menuCopy, R.id.menuCopySplit0, R.id.menuCopySplit1, R.id.menuCopyBothSplits -> {
 
                     // copy, can be multiple verses
-                    val t: Array<String>
 
                     val reference = referenceFromSelectedVerses(selected, activeBook)
-                    if (itemId == R.id.menuCopy || itemId == R.id.menuCopySplit0 || itemId == R.id.menuCopyBothSplits) {
-                        t = prepareTextForCopyShare(selected, reference, false)
+                    val activeSplit = activeSplit
+                    val t = if (itemId == R.id.menuCopy || itemId == R.id.menuCopySplit0 || itemId == R.id.menuCopyBothSplits || activeSplit == null) {
+                        prepareTextForCopyShare(selected, reference, false)
                     } else { // menuCopySplit1, do not use split0 reference
-                        val splitBook = activeSplitVersion!!.getBook(activeBook.bookId)
-                        t = prepareTextForCopyShare(selected, referenceFromSelectedVerses(selected, splitBook), true)
+                        val splitBook = activeSplit.version.getBook(activeBook.bookId)
+                        prepareTextForCopyShare(selected, referenceFromSelectedVerses(selected, splitBook ?: activeBook), true)
                     }
 
-                    if (itemId == R.id.menuCopyBothSplits && activeSplitVersion != null) { // put guard on activeSplitVersion
-                        appendSplitTextForCopyShare(t)
+                    if (itemId == R.id.menuCopyBothSplits && activeSplit != null) { // put guard on activeSplitVersion
+                        appendSplitTextForCopyShare(activeSplit.version, lsSplit1.getCheckedVerses_1(), t)
                     }
 
                     val textToCopy = t[0]
@@ -655,18 +656,18 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
                 }
                 R.id.menuShare, R.id.menuShareSplit0, R.id.menuShareSplit1, R.id.menuShareBothSplits -> {
                     // share, can be multiple verses
-                    val t: Array<String>
-
                     val reference = referenceFromSelectedVerses(selected, activeBook)
-                    if (itemId == R.id.menuShare || itemId == R.id.menuShareSplit0 || itemId == R.id.menuShareBothSplits) {
-                        t = prepareTextForCopyShare(selected, reference, false)
+                    val activeSplit = activeSplit
+
+                    val t = if (itemId == R.id.menuShare || itemId == R.id.menuShareSplit0 || itemId == R.id.menuShareBothSplits || activeSplit == null) {
+                        prepareTextForCopyShare(selected, reference, false)
                     } else { // menuShareSplit1, do not use split0 reference
-                        val splitBook = activeSplitVersion!!.getBook(activeBook.bookId)
-                        t = prepareTextForCopyShare(selected, referenceFromSelectedVerses(selected, splitBook), true)
+                        val splitBook = activeSplit.version.getBook(activeBook.bookId)
+                        prepareTextForCopyShare(selected, referenceFromSelectedVerses(selected, splitBook ?: activeBook), true)
                     }
 
-                    if (itemId == R.id.menuShareBothSplits && activeSplitVersion != null) { // put guard on activeSplitVersion
-                        appendSplitTextForCopyShare(t)
+                    if (itemId == R.id.menuShareBothSplits && activeSplit != null) { // put guard on activeSplitVersion
+                        appendSplitTextForCopyShare(activeSplit.version, lsSplit1.getCheckedVerses_1(), t)
                     }
 
                     val textToShare = t[0]
@@ -841,21 +842,21 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
                 R.id.menuRibkaReport -> {
 
                     val ribkaEligibility = checkRibkaEligibility()
-                    if (ribkaEligibility != 0) {
+                    if (ribkaEligibility != RibkaEligibility.None) {
                         val ari = Ari.encode(this@IsiActivity.activeBook.bookId, this@IsiActivity.chapter_1, selected.get(0))
 
                         val reference: CharSequence?
                         val verseText: String?
-                        val versionDescription: String
+                        val versionDescription: String?
 
-                        if (ribkaEligibility == 1) {
+                        if (ribkaEligibility == RibkaEligibility.Main) {
                             reference = S.activeVersion().reference(ari)
                             verseText = S.activeVersion().loadVerseText(ari)
                             versionDescription = S.activeMVersion().description
                         } else {
-                            reference = activeSplitVersion!!.reference(ari)
-                            verseText = activeSplitVersion!!.loadVerseText(ari)
-                            versionDescription = activeSplitMVersion!!.description
+                            reference = activeSplit?.version?.reference(ari)
+                            verseText = activeSplit?.version?.loadVerseText(ari)
+                            versionDescription = activeSplit?.mv?.description
                         }
 
                         if (reference != null && verseText != null) {
@@ -926,12 +927,11 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         /**
          * @param t [0] is text to copy, [1] is text to submit
          */
-        fun appendSplitTextForCopyShare(t: Array<String>) {
-            val splitBook = activeSplitVersion!!.getBook(activeBook.bookId)
+        fun appendSplitTextForCopyShare(version: Version, selectedVerses_1: IntArrayList, t: Array<String>) {
+            val splitBook = version.getBook(activeBook.bookId)
             if (splitBook != null) {
-                val selectedSplit = lsSplit1.getCheckedVerses_1()
-                val referenceSplit = referenceFromSelectedVerses(selectedSplit, splitBook)
-                val a = prepareTextForCopyShare(selectedSplit, referenceSplit, true)
+                val referenceSplit = referenceFromSelectedVerses(selectedVerses_1, splitBook)
+                val a = prepareTextForCopyShare(selectedVerses_1, referenceSplit, true)
                 t[0] += "\n\n" + a[0]
                 t[1] += "\n\n" + a[1]
             }
@@ -948,7 +948,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         }
     }
 
-    private val splitHandleButton_listener: SplitHandleButton.SplitHandleButtonListener = object : SplitHandleButton.SplitHandleButtonListener {
+    private val splitHandleButton_listener = object : SplitHandleButton.SplitHandleButtonListener {
         var first: Int = 0
         var handle: Int = 0
         var root: Int = 0
@@ -1024,10 +1024,11 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
 
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-        val ab = supportActionBar!!
-        ab.setDisplayHomeAsUpEnabled(true)
-        ab.setDisplayShowTitleEnabled(false)
-        ab.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowTitleEnabled(false)
+            setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
+        }
 
         bGoto = findViewById(R.id.bGoto)
         bLeft = findViewById(R.id.bLeft)
@@ -1054,16 +1055,16 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
 
         splitRoot.setListener(splitRoot_listener)
 
-        bGoto.setOnClickListener { v -> bGoto_click() }
-        bGoto.setOnLongClickListener { v ->
+        bGoto.setOnClickListener { bGoto_click() }
+        bGoto.setOnLongClickListener {
             bGoto_longClick()
             true
         }
         bGoto.setFloaterDragListener(bGoto_floaterDrag)
 
-        bLeft.setOnClickListener { v -> bLeft_click() }
-        bRight.setOnClickListener { v -> bRight_click() }
-        bVersion.setOnClickListener { v -> bVersion_click() }
+        bLeft.setOnClickListener { bLeft_click() }
+        bRight.setOnClickListener { bRight_click() }
+        bVersion.setOnClickListener { bVersion_click() }
 
         floater.setListener(floater_listener)
 
@@ -1150,19 +1151,12 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
             selectVerseCount = intentResult.selectVerseCount
         }
 
-        this.activeBook = run {
-            // load book
-            val book = S.activeVersion().getBook(Ari.toBook(openingAri))
-            if (book != null) {
-                book
-            } else { // can't load last book or bookId 0
-                val firstBook = S.activeVersion().firstBook
-                if (firstBook != null) {
-                    firstBook
-                } else { // version failed to load, so books are also failed to load. Fallback!
-                    S.setActiveVersion(S.getMVersionInternal())
-                    S.activeVersion().firstBook // this is assumed to be never null
-                }
+        this.activeBook = S.activeVersion().getBook(Ari.toBook(openingAri)) ?: run {
+            // can't load last book or bookId 0
+            S.activeVersion().firstBook ?: run {
+                // version failed to load, so books are also failed to load. Fallback!
+                S.setActiveVersion(S.getMVersionInternal())
+                S.activeVersion().firstBook // this is assumed to be never null
             }
         }
 
@@ -1212,13 +1206,13 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         AppLog.d(TAG, "@@onCreate end")
     }
 
-    fun calculateTextSizeMult(versionId: String?): Float {
+    private fun calculateTextSizeMult(versionId: String?): Float {
         return if (versionId == null) 1f else S.getDb().getPerVersionSettings(versionId).fontSizeMultiplier
     }
 
     private fun callAttentionForVerseToBothSplits(verse_1: Int) {
         lsSplit0.callAttentionForVerse(verse_1)
-        if (activeSplitVersion != null) {
+        if (activeSplit != null) {
             lsSplit1.callAttentionForVerse(verse_1)
         }
     }
@@ -1265,39 +1259,41 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         val selectVerse = intent.getBooleanExtra("selectVerse", false)
         val selectVerseCount = intent.getIntExtra("selectVerseCount", 1)
 
-        if (intent.hasExtra("ari")) {
-            val ari = intent.getIntExtra("ari", 0)
-            if (ari != 0) {
-                val res = IntentResult(ari)
-                res.selectVerse = selectVerse
-                res.selectVerseCount = selectVerseCount
-                return res
-            } else {
-                MaterialDialog.Builder(this)
-                    .content("Invalid ari: $ari")
-                    .positiveText(R.string.ok)
-                    .show()
-                return null
+        return when {
+            intent.hasExtra("ari") -> {
+                val ari = intent.getIntExtra("ari", 0)
+                if (ari != 0) {
+                    val res = IntentResult(ari)
+                    res.selectVerse = selectVerse
+                    res.selectVerseCount = selectVerseCount
+                    res
+                } else {
+                    MaterialDialog.Builder(this)
+                        .content("Invalid ari: $ari")
+                        .positiveText(R.string.ok)
+                        .show()
+                    null
+                }
             }
-        } else if (intent.hasExtra("lid")) {
-            val lid = intent.getIntExtra("lid", 0)
-            val ari = LidToAri.lidToAri(lid)
-            if (ari != 0) {
-                jumpToAri(ari)
-                history.add(ari)
-                val res = IntentResult(ari)
-                res.selectVerse = selectVerse
-                res.selectVerseCount = selectVerseCount
-                return res
-            } else {
-                MaterialDialog.Builder(this)
-                    .content("Invalid lid: $lid")
-                    .positiveText(R.string.ok)
-                    .show()
-                return null
+            intent.hasExtra("lid") -> {
+                val lid = intent.getIntExtra("lid", 0)
+                val ari = LidToAri.lidToAri(lid)
+                if (ari != 0) {
+                    jumpToAri(ari)
+                    history.add(ari)
+                    val res = IntentResult(ari)
+                    res.selectVerse = selectVerse
+                    res.selectVerseCount = selectVerseCount
+                    res
+                } else {
+                    MaterialDialog.Builder(this)
+                        .content("Invalid lid: $lid")
+                        .positiveText(R.string.ok)
+                        .show()
+                    null
+                }
             }
-        } else {
-            return null
+            else -> null
         }
     }
 
@@ -1337,17 +1333,11 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
     }
 
     private fun enableNfcForegroundDispatchIfAvailable() {
-        if (nfcAdapter != null) {
+        nfcAdapter?.let { nfcAdapter ->
             val pendingIntent = PendingIntent.getActivity(this, 0, Intent(this, IsiActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
             val ndef = IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED)
-            try {
-                ndef.addDataType("application/vnd.yuku.alkitab.nfc.beam")
-            } catch (e: IntentFilter.MalformedMimeTypeException) {
-                throw RuntimeException("fail mime type", e)
-            }
-
-            val intentFiltersArray = arrayOf(ndef)
-            nfcAdapter!!.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, null)
+            ndef.addDataType("application/vnd.yuku.alkitab.nfc.beam")
+            nfcAdapter.enableForegroundDispatch(this, pendingIntent, arrayOf(ndef), null)
         }
     }
 
@@ -1357,24 +1347,23 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
 
         val rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
         // only one message sent during the beam
-        if (rawMsgs == null || rawMsgs.size <= 0) return null
+        if (rawMsgs == null || rawMsgs.isEmpty()) return null
 
         val msg = rawMsgs[0] as NdefMessage
         // record 0 contains the MIME type, record 1 is the AAR, if present
         val records = msg.records
-        if (records.size <= 0) return null
+        if (records.isEmpty()) return null
 
         val json = String(records[0].payload)
-        try {
+        return try {
             val obj = JSONObject(json)
             val ari = obj.optInt("ari", -1)
-            return if (ari == -1) null else IntentResult(ari)
+            if (ari == -1) null else IntentResult(ari)
 
         } catch (e: JSONException) {
             AppLog.e(TAG, "Malformed json from nfc", e)
-            return null
+            null
         }
-
     }
 
     fun loadVersion(mv: MVersion) {
@@ -1412,14 +1401,11 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         splitHandleButton.setLabel1("\u25b2 " + S.activeVersion().initials)
     }
 
-    private fun loadSplitVersion(mv: MVersion?): Boolean {
+    private fun loadSplitVersion(mv: MVersion): Boolean {
         try {
-            val version = mv!!.version
-                ?: throw RuntimeException() // caught below
+            val version = mv.version ?: throw RuntimeException() // caught below
 
-            activeSplitMVersion = mv
-            activeSplitVersion = version
-            activeSplitVersionId = mv.versionId
+            activeSplit = ActiveSplit(mv, version, mv.versionId)
 
             splitHandleButton.setLabel2(version.initials + " \u25bc")
 
@@ -1430,7 +1416,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
             AppLog.e(TAG, "Error opening split version", e)
 
             MaterialDialog.Builder(this@IsiActivity)
-                .content(getString(R.string.version_error_opening, mv!!.longName))
+                .content(getString(R.string.version_error_opening, mv.longName))
                 .positiveText(R.string.ok)
                 .show()
 
@@ -1440,11 +1426,13 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
     }
 
     private fun configureTextAppearancePanelForSplitVersion() {
+        val textAppearancePanel = textAppearancePanel
         if (textAppearancePanel != null) {
-            if (activeSplitVersion == null) {
-                textAppearancePanel!!.clearSplitVersion()
+            val activeSplit = activeSplit
+            if (activeSplit == null) {
+                textAppearancePanel.clearSplitVersion()
             } else {
-                textAppearancePanel!!.setSplitVersion(activeSplitVersionId!!, activeSplitVersion!!.longName)
+                textAppearancePanel.setSplitVersion(activeSplit.versionId, activeSplit.version.longName)
             }
         }
     }
@@ -1473,7 +1461,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         }
 
         if (pressResult is VersesController.PressResult.Consumed) {
-            if (activeSplitVersion != null) {
+            if (activeSplit != null) {
                 lsSplit1.scrollToVerse(pressResult.targetVerse_1)
             }
             return true
@@ -1482,8 +1470,8 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         return false
     }
 
-    private fun consumeUpDownKey(versesController: VersesController, keyCode: Int): VersesController.PressResult {
-        var keyCode = keyCode
+    private fun consumeUpDownKey(versesController: VersesController, originalKeyCode: Int): VersesController.PressResult {
+        var keyCode = originalKeyCode
         val volumeButtonsForNavigation = Preferences.getString(R.string.pref_volumeButtonNavigation_key, R.string.pref_volumeButtonNavigation_default)
         if (U.equals(volumeButtonsForNavigation, "pasal" /* chapter */)) {
             if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
@@ -1535,17 +1523,10 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         }
 
         val bookId = jumper.getBookId(S.activeVersion().consecutiveBooks)
-        val selected: Book
-        if (bookId != -1) {
-            val book = S.activeVersion().getBook(bookId)
-            if (book != null) {
-                selected = book
-            } else {
-                // not avail, just fallback
-                selected = this.activeBook
-            }
+        val selected = if (bookId != -1) {
+            S.activeVersion().getBook(bookId) ?: this.activeBook // not avail, just fallback
         } else {
-            selected = this.activeBook
+            this.activeBook
         }
 
         // set book
@@ -1553,11 +1534,10 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
 
         val chapter = jumper.chapter
         val verse = jumper.verse
-        val ari_cv: Int
-        if (chapter == -1 && verse == -1) {
-            ari_cv = display(1, 1)
+        val ari_cv = if (chapter == -1 && verse == -1) {
+            display(1, 1)
         } else {
-            ari_cv = display(chapter, verse)
+            display(chapter, verse)
         }
 
         return Ari.encode(selected.bookId, ari_cv)
@@ -1586,14 +1566,12 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         }
     }
 
-    fun referenceFromSelectedVerses(selectedVerses: IntArrayList, book: Book?): CharSequence {
-        return if (selectedVerses.size() == 0) {
+    fun referenceFromSelectedVerses(selectedVerses: IntArrayList, book: Book): CharSequence {
+        return when(selectedVerses.size()) {
             // should not be possible. So we don't do anything.
-            book!!.reference(this.chapter_1)
-        } else if (selectedVerses.size() == 1) {
-            book!!.reference(this.chapter_1, selectedVerses.get(0))
-        } else {
-            book!!.reference(this.chapter_1, selectedVerses)
+            0 -> book.reference(this.chapter_1)
+            1 -> book.reference(this.chapter_1, selectedVerses.get(0))
+            else -> book.reference(this.chapter_1, selectedVerses)
         }
     }
 
@@ -1610,8 +1588,9 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         res0.append(reference)
 
         if (Preferences.getBoolean(getString(R.string.pref_copyWithVersionName_key), resources.getBoolean(R.bool.pref_copyWithVersionName_default))) {
-            val version = if (isSplitVersion) activeSplitVersion else S.activeVersion()
-            val versionShortName = version!!.shortName
+            // Fallback to primary version for safety
+            val version = if (isSplitVersion) activeSplit?.version ?: S.activeVersion() else S.activeVersion()
+            val versionShortName = version.shortName
             if (versionShortName != null) {
                 res0.append(" (").append(versionShortName).append(")")
             }
@@ -1694,8 +1673,8 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         }
 
         // necessary
-        lsSplit0.invalidate()
-        lsSplit1.invalidate()
+        uiSplit0 = uiSplit0.copy(textSizeMult = calculateTextSizeMult(S.activeVersionId()))
+        uiSplit1 = uiSplit1.copy(textSizeMult = calculateTextSizeMult(activeSplit?.versionId))
 
         lsSplit0.setViewPadding(SettingsActivity.getPaddingBasedOnPreferences())
         lsSplit1.setViewPadding(SettingsActivity.getPaddingBasedOnPreferences())
@@ -1710,10 +1689,11 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
             Preferences.setInt(Prefkey.lastChapter, chapter_1)
             Preferences.setInt(Prefkey.lastVerse, lsSplit0.getVerse_1BasedOnScroll())
             Preferences.setString(Prefkey.lastVersionId, S.activeVersionId())
-            if (activeSplitVersion == null) {
+            val activeSplit = activeSplit
+            if (activeSplit == null) {
                 Preferences.remove(Prefkey.lastSplitVersionId)
             } else {
-                Preferences.setString(Prefkey.lastSplitVersionId, activeSplitVersionId)
+                Preferences.setString(Prefkey.lastSplitVersionId, activeSplit.versionId)
                 Preferences.setString(Prefkey.lastSplitOrientation, splitHandleButton.orientation.name)
             }
         } finally {
@@ -1741,17 +1721,21 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
 
         if (debug) Toast.makeText(this, "@@onBackPressed TAP=" + (textAppearancePanel != null) + " fullScreen=" + fullScreen, Toast.LENGTH_SHORT).show()
 
-        if (textAppearancePanel != null) {
-            if (debug) Toast.makeText(this, "inside textAppearancePanel != null", Toast.LENGTH_SHORT).show()
-            textAppearancePanel!!.hide()
-            textAppearancePanel = null
-        } else if (fullScreen) {
-            if (debug) Toast.makeText(this, "inside fullScreen == true", Toast.LENGTH_SHORT).show()
-            setFullScreen(false)
-            leftDrawer.handle.setFullScreen(false)
-        } else {
-            if (debug) Toast.makeText(this, "will call super", Toast.LENGTH_SHORT).show()
-            super.onBackPressed()
+        when {
+            textAppearancePanel != null -> {
+                if (debug) Toast.makeText(this, "inside textAppearancePanel != null", Toast.LENGTH_SHORT).show()
+                textAppearancePanel?.hide()
+                textAppearancePanel = null
+            }
+            fullScreen -> {
+                if (debug) Toast.makeText(this, "inside fullScreen == true", Toast.LENGTH_SHORT).show()
+                setFullScreen(false)
+                leftDrawer.handle.setFullScreen(false)
+            }
+            else -> {
+                if (debug) Toast.makeText(this, "will call super", Toast.LENGTH_SHORT).show()
+                super.onBackPressed()
+            }
         }
     }
 
@@ -1826,7 +1810,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
                 }
             }
 
-            holder.itemView.setOnClickListener { v ->
+            holder.itemView.setOnClickListener {
                 dismissDialog()
 
                 val which = holder.adapterPosition
@@ -1844,7 +1828,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
                 if (delta <= 200000) {
                     return getString(R.string.recentverses_just_now)
                 } else if (delta <= 3600000) {
-                    return getString(R.string.recentverses_min_plural_ago, Math.round(delta / 60000.0).toString())
+                    return getString(R.string.recentverses_min_plural_ago, (delta / 60000.0).roundToLong().toString())
                 }
             }
 
@@ -1911,14 +1895,14 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
 
         if (yes) {
             window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-            supportActionBar!!.hide()
+            supportActionBar?.hide()
 
             if (Build.VERSION.SDK_INT >= 19) {
                 decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE
             }
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-            supportActionBar!!.show()
+            supportActionBar?.show()
 
             if (Build.VERSION.SDK_INT >= 19) {
                 decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
@@ -1965,26 +1949,31 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
     }
 
     private fun setShowTextAppearancePanel(yes: Boolean) {
-        if (yes) {
-            if (textAppearancePanel == null) { // not showing yet
-                textAppearancePanel = TextAppearancePanel(this, overlayContainer, object : TextAppearancePanel.Listener {
+        if (!yes) {
+            textAppearancePanel?.hide()
+            textAppearancePanel = null
+            return
+        }
+
+        if (textAppearancePanel == null) { // not showing yet
+            textAppearancePanel = TextAppearancePanel(
+                this,
+                overlayContainer,
+                object : TextAppearancePanel.Listener {
                     override fun onValueChanged() {
                         applyPreferences()
                     }
 
                     override fun onCloseButtonClick() {
-                        textAppearancePanel!!.hide()
+                        textAppearancePanel?.hide()
                         textAppearancePanel = null
                     }
-                }, REQCODE_textAppearanceGetFonts, REQCODE_textAppearanceCustomColors)
-                configureTextAppearancePanelForSplitVersion()
-                textAppearancePanel!!.show()
-            }
-        } else {
-            if (textAppearancePanel != null) {
-                textAppearancePanel!!.hide()
-                textAppearancePanel = null
-            }
+                },
+                REQCODE_textAppearanceGetFonts,
+                REQCODE_textAppearanceCustomColors
+            )
+            configureTextAppearancePanelForSplitVersion()
+            textAppearancePanel?.show()
         }
     }
 
@@ -1997,9 +1986,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         applyPreferences()
         applyActionBarAndStatusBarColors()
 
-        if (textAppearancePanel != null) {
-            textAppearancePanel!!.displayValues()
-        }
+        textAppearancePanel?.displayValues()
 
         App.getLbm().sendBroadcast(Intent(ACTION_NIGHT_MODE_CHANGED))
     }
@@ -2012,7 +1999,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
     }
 
     private fun openSplitVersionsDialog() {
-        S.openVersionsDialog(this, true, activeSplitVersionId) { mv ->
+        S.openVersionsDialog(this, true, activeSplit?.versionId) { mv ->
             if (mv == null) { // closing split version
                 disableSplitVersion()
             } else {
@@ -2038,9 +2025,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
     }
 
     private fun disableSplitVersion() {
-        activeSplitMVersion = null
-        activeSplitVersion = null
-        activeSplitVersionId = null
+        activeSplit = null
         closeSplitDisplay()
 
         configureTextAppearancePanelForSplitVersion()
@@ -2054,7 +2039,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         configureSplitSizes()
 
         bVersion.visibility = View.GONE
-        if (actionMode != null) actionMode!!.invalidate()
+        actionMode?.invalidate()
         leftDrawer.handle.setSplitVersion(true)
     }
 
@@ -2121,7 +2106,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         run { lsSplit0.setViewLayoutSize(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT) }
 
         bVersion.visibility = View.VISIBLE
-        if (actionMode != null) actionMode!!.invalidate()
+        actionMode?.invalidate()
         leftDrawer.handle.setSplitVersion(false)
     }
 
@@ -2130,8 +2115,8 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQCODE_goto && resultCode == Activity.RESULT_OK) {
-            val result = GotoActivity.obtainResult(data!!)
+        if (requestCode == REQCODE_goto && resultCode == Activity.RESULT_OK && data != null) {
+            val result = GotoActivity.obtainResult(data)
             if (result != null) {
                 val ari_cv: Int
 
@@ -2170,9 +2155,9 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
             }
         } else if (requestCode == REQCODE_share && resultCode == Activity.RESULT_OK) {
             val result = ShareActivity.obtainResult(data)
-            if (result != null && result.chosenIntent != null) {
-                val chosenIntent = result.chosenIntent
-                val packageName = chosenIntent.component!!.packageName
+            val chosenIntent = result?.chosenIntent
+            val packageName = chosenIntent?.component?.packageName
+            if (packageName != null) {
                 if (U.equals(packageName, "com.facebook.katana")) {
                     val verseUrl = chosenIntent.getStringExtra(EXTRA_verseUrl)
                     if (verseUrl != null) {
@@ -2184,9 +2169,9 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
                 startActivity(chosenIntent)
             }
         } else if (requestCode == REQCODE_textAppearanceGetFonts) {
-            if (textAppearancePanel != null) textAppearancePanel!!.onActivityResult(requestCode, resultCode, data)
+            textAppearancePanel?.onActivityResult(requestCode)
         } else if (requestCode == REQCODE_textAppearanceCustomColors) {
-            if (textAppearancePanel != null) textAppearancePanel!!.onActivityResult(requestCode, resultCode, data)
+            textAppearancePanel?.onActivityResult(requestCode)
         } else if (requestCode == REQCODE_edit_note_1 && resultCode == Activity.RESULT_OK) {
             reloadBothAttributeMaps()
         } else if (requestCode == REQCODE_edit_note_2 && resultCode == Activity.RESULT_OK) {
@@ -2205,49 +2190,44 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
      */
     @JvmOverloads
     fun display(chapter_1: Int, verse_1: Int, uncheckAllVerses: Boolean = true): Int {
-        var chapter_1 = chapter_1
-        var verse_1 = verse_1
         val current_chapter_1 = this.chapter_1
 
-        if (chapter_1 < 1) chapter_1 = 1
-        if (chapter_1 > this.activeBook.chapter_count) chapter_1 = this.activeBook.chapter_count
-
-        if (verse_1 < 1) verse_1 = 1
-        if (verse_1 > this.activeBook.verse_counts[chapter_1 - 1]) verse_1 = this.activeBook.verse_counts[chapter_1 - 1]
+        val available_chapter_1 = chapter_1.coerceIn(1, this.activeBook.chapter_count)
+        val available_verse_1 = verse_1.coerceIn(1, this.activeBook.verse_counts[available_chapter_1 - 1])
 
         run {
             // main
             this.uncheckVersesWhenActionModeDestroyed = false
             try {
-                val ok = loadChapterToVersesController(contentResolver, lsSplit0, { dataSplit0 = it }, S.activeVersion(), S.activeVersionId(), this.activeBook, chapter_1, current_chapter_1, uncheckAllVerses)
+                val ok = loadChapterToVersesController(contentResolver, lsSplit0, { dataSplit0 = it }, S.activeVersion(), S.activeVersionId(), this.activeBook, available_chapter_1, current_chapter_1, uncheckAllVerses)
                 if (!ok) return 0
             } finally {
                 this.uncheckVersesWhenActionModeDestroyed = true
             }
 
             // tell activity
-            this.chapter_1 = chapter_1
+            this.chapter_1 = available_chapter_1
 
-            lsSplit0.scrollToVerse(verse_1)
+            lsSplit0.scrollToVerse(available_verse_1)
         }
 
-        displaySplitFollowingMaster(verse_1)
+        displaySplitFollowingMaster(available_verse_1)
 
         // set goto button text
-        val reference = this.activeBook.reference(chapter_1)
+        val reference = this.activeBook.reference(available_chapter_1)
         bGoto.text = reference.replace(' ', '\u00a0')
 
         if (fullScreen) {
-            val fullScreenToast = Toast.makeText(this, reference, Toast.LENGTH_SHORT)
-            fullScreenToast.setGravity(Gravity.CENTER_HORIZONTAL or Gravity.TOP, 0, 0)
-            fullScreenToast.show()
+            Toast.makeText(this, reference, Toast.LENGTH_SHORT).apply {
+                setGravity(Gravity.CENTER_HORIZONTAL or Gravity.TOP, 0, 0)
+            }.show()
         }
 
         if (dictionaryMode) {
             finishDictionaryMode()
         }
 
-        return Ari.encode(0, chapter_1, verse_1)
+        return Ari.encode(0, available_chapter_1, available_verse_1)
     }
 
     private fun loadChapterToVersesController(
@@ -2314,18 +2294,17 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
     }
 
     private fun displaySplitFollowingMaster(verse_1: Int) {
-        if (activeSplitVersion != null) { // split1
-            assert(activeSplitVersionId != null)
-
-            val splitBook = activeSplitVersion!!.getBook(this.activeBook.bookId)
+        val activeSplit = activeSplit
+        if (activeSplit != null) { // split1
+            val splitBook = activeSplit.version.getBook(this.activeBook.bookId)
             if (splitBook == null) {
-                lsSplit1.setEmptyMessage(getString(R.string.split_version_cant_display_verse, this.activeBook.reference(this.chapter_1), activeSplitVersion!!.shortName), S.applied().fontColor)
+                lsSplit1.setEmptyMessage(getString(R.string.split_version_cant_display_verse, this.activeBook.reference(this.chapter_1), activeSplit.version.shortName), S.applied().fontColor)
                 dataSplit1 = VersesDataModel.EMPTY
             } else {
                 lsSplit1.setEmptyMessage(null, S.applied().fontColor)
                 this.uncheckVersesWhenActionModeDestroyed = false
                 try {
-                    loadChapterToVersesController(contentResolver, lsSplit1, { dataSplit1 = it }, activeSplitVersion!!, activeSplitVersionId!!, splitBook, this.chapter_1, this.chapter_1, true)
+                    loadChapterToVersesController(contentResolver, lsSplit1, { dataSplit1 = it }, activeSplit.version, activeSplit.versionId, splitBook, this.chapter_1, this.chapter_1, true)
                 } finally {
                     this.uncheckVersesWhenActionModeDestroyed = true
                 }
@@ -2452,18 +2431,10 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         }
 
         inner class MarkerHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val lDate: TextView
-            val lCaption: TextView
-            val lSnippet: TextView
-            val panelLabels: FlowLayout
-
-            init {
-
-                lDate = itemView.findViewById(R.id.lDate)
-                lCaption = itemView.findViewById(R.id.lCaption)
-                lSnippet = itemView.findViewById(R.id.lSnippet)
-                panelLabels = itemView.findViewById(R.id.panelLabels)
-            }
+            val lDate: TextView = itemView.findViewById(R.id.lDate)
+            val lCaption: TextView = itemView.findViewById(R.id.lCaption)
+            val lSnippet: TextView = itemView.findViewById(R.id.lSnippet)
+            val panelLabels: FlowLayout = itemView.findViewById(R.id.panelLabels)
         }
 
         inner class MultipleMarkerSelectAdapter(val version: Version, versionId: String, private val markers: List<Marker>, val kind: Marker.Kind) : MaterialDialogAdapterHelper.Adapter() {
@@ -2523,7 +2494,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
                     holder.itemView.setBackgroundColor(S.applied().backgroundColor)
                 }
 
-                holder.itemView.setOnClickListener { v ->
+                holder.itemView.setOnClickListener {
                     dismissDialog()
 
                     val which = holder.adapterPosition
@@ -2542,17 +2513,17 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         }
 
         override fun onProgressMarkAttributeClick(version: Version, versionId: String, preset_id: Int) {
-            val progressMark = S.getDb().getProgressMarkByPresetId(preset_id)
+            S.getDb().getProgressMarkByPresetId(preset_id)?.let { progressMark ->
+                ProgressMarkRenameDialog.show(this@IsiActivity, progressMark, object : ProgressMarkRenameDialog.Listener {
+                    override fun onOked() {
+                        lsSplit0.uncheckAllVerses(true)
+                    }
 
-            ProgressMarkRenameDialog.show(this@IsiActivity, progressMark!!, object : ProgressMarkRenameDialog.Listener {
-                override fun onOked() {
-                    lsSplit0.uncheckAllVerses(true)
-                }
-
-                override fun onDeleted() {
-                    lsSplit0.uncheckAllVerses(true)
-                }
-            })
+                    override fun onDeleted() {
+                        lsSplit0.uncheckAllVerses(true)
+                    }
+                })
+            }
         }
 
         override fun onHasMapsAttributeClick(version: Version, versionId: String, ari: Int) {
@@ -2583,24 +2554,24 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
             return object : VerseInlineLinkSpan(type, arif) {
                 override fun onClick(type: Type, arif: Int) {
                     val source = sourceSupplier()
+                    val activeSplit = activeSplit
                     if (type == Type.xref) {
                         val dialog = XrefDialog.newInstance(arif)
 
                         // TODO setSourceVersion here is not restored when dialog is restored
-                        if (source === lsSplit0) { // use activeVersion
+                        if (source === lsSplit0 || activeSplit == null) { // use activeVersion
                             dialog.setSourceVersion(S.activeVersion(), S.activeVersionId())
                         } else if (source === lsSplit1) { // use activeSplitVersion
-                            dialog.setSourceVersion(activeSplitVersion, activeSplitVersionId)
+                            dialog.setSourceVersion(activeSplit.version, activeSplit.versionId)
                         }
 
                         val fm = supportFragmentManager
                         dialog.show(fm, "XrefDialog")
                     } else if (type == Type.footnote) {
-                        var fe: FootnoteEntry? = null
-                        if (source === lsSplit0) { // use activeVersion
-                            fe = S.activeVersion().getFootnoteEntry(arif)
-                        } else if (source === lsSplit1) { // use activeSplitVersion
-                            fe = activeSplitVersion!!.getFootnoteEntry(arif)
+                        val fe = when {
+                            source === lsSplit0 -> S.activeVersion().getFootnoteEntry(arif)
+                            source === lsSplit1 -> activeSplit?.version?.getFootnoteEntry(arif)
+                            else -> null
                         }
 
                         if (fe != null) {
@@ -2629,35 +2600,35 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         }
     }
 
+    enum class RibkaEligibility {
+        None,
+        Main,
+        Split,
+    }
+
     /**
      * Check whether we are using a version eligible for ribka.
-     *
-     * @return 0 when neither version, 1 when primary version, 2 when split version
      */
-    fun checkRibkaEligibility(): Int {
+    fun checkRibkaEligibility(): RibkaEligibility {
         val validPresetName = "in-ayt"
 
         val activeMVersion = S.activeMVersion()
         val activePresetName = if (activeMVersion is MVersionDb) activeMVersion.preset_name else null
 
         if (validPresetName == activePresetName) {
-            return 1
+            return RibkaEligibility.Main
         }
 
-        val splitMVersion = activeSplitMVersion
-        val splitPresetName = if (splitMVersion is MVersionDb) splitMVersion.preset_name else null
+        val splitPresetName = (activeSplit?.mv as? MVersionDb)?.preset_name
 
-        return if (validPresetName == splitPresetName) {
-            2
-        } else 0
-
+        return if (validPresetName == splitPresetName) RibkaEligibility.Split else RibkaEligibility.None
     }
 
     fun reloadBothAttributeMaps() {
         val newDataSplit0 = reloadAttributeMapsToVerseDataModel(dataSplit0)
         dataSplit0 = newDataSplit0
 
-        if (activeSplitVersion != null) {
+        if (activeSplit != null) {
             val newDataSplit1 = reloadAttributeMapsToVerseDataModel(dataSplit1)
             dataSplit1 = newDataSplit1
         }
@@ -2679,24 +2650,23 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
     /**
      * @param aris aris where the verses are to be checked for dictionary words.
      */
-    fun startDictionaryMode(aris: Set<Int>) {
+    private fun startDictionaryMode(aris: Set<Int>) {
         if (!OtherAppIntegration.hasIntegratedDictionaryApp()) {
             OtherAppIntegration.askToInstallDictionary(this)
             return
         }
 
         dictionaryMode = true
-        // TODO do dictionary mode via versesUiModel
-        //		lsSplit0.setDictionaryModeAris(aris);
-        //		lsSplit1.setDictionaryModeAris(aris);
+
+        uiSplit0 = uiSplit0.copy(dictionaryModeAris = aris)
+        uiSplit1 = uiSplit1.copy(dictionaryModeAris = aris)
     }
 
     private fun finishDictionaryMode() {
         dictionaryMode = false
 
-        // TODO do dictionary mode via versesUiModel
-        //		lsSplit0.setDictionaryModeAris(SetsKt.emptySet());
-        //		lsSplit1.setDictionaryModeAris(SetsKt.emptySet());
+        uiSplit0 = uiSplit0.copy(dictionaryModeAris = emptySet())
+        uiSplit1 = uiSplit1.copy(dictionaryModeAris = emptySet())
     }
 
     override fun bMarkers_click() {

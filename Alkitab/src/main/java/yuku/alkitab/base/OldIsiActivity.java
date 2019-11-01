@@ -1596,9 +1596,9 @@ public class OldIsiActivity extends BaseLeftDrawerActivity implements XrefDialog
 				startActivity(chosenIntent);
 			}
 		} else if (requestCode == REQCODE_textAppearanceGetFonts) {
-			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode, resultCode, data);
+			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode);
 		} else if (requestCode == REQCODE_textAppearanceCustomColors) {
-			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode, resultCode, data);
+			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode);
 		} else if (requestCode == REQCODE_edit_note_1 && resultCode == RESULT_OK) {
 			reloadBothAttributeMaps();
 		} else if (requestCode == REQCODE_edit_note_2 && resultCode == RESULT_OK) {
