@@ -30,6 +30,10 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 	public static final int TYPE_VERSE_TEXT = 0;
 	public static final int TYPE_PERICOPE = 1;
 
+	private SparseBooleanArray dictionaryModeAris;
+
+	CallbackSpan.OnClickListener<DictionaryLinkInfo> dictionaryListener_;
+
 	public SingleViewVerseAdapter(Context context) {
 		super(context);
 	}
@@ -181,7 +185,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				res = (PericopeHeaderItem) convertView;
 			}
 
-			PericopeBlock pericopeBlock = pericopeBlocks_[~id];
+			PericopeBlock pericopeBlock = pericopeBlocks_[-id - 1];
 
 			TextView lCaption = res.findViewById(R.id.lCaption);
 			TextView lParallels = res.findViewById(R.id.lParallels);
@@ -233,6 +237,17 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 		}
 	}
 
+	static float scaleForAttributeView(final float fontSizeDp) {
+		if (fontSizeDp >= 13 /* 72% */ && fontSizeDp < 24 /* 133% */) {
+			return 1.f;
+		}
+
+		if (fontSizeDp < 8) return 0.5f; // 0 ~ 44%
+		if (fontSizeDp < 18) return 0.75f; // 44% ~ 72%
+		if (fontSizeDp >= 36) return 2.f; // 200% ~
+		return 1.5f; // 24 to 36 // 133% ~ 200%
+	}
+
 	private void appendParallel(SpannableStringBuilder sb, String parallel) {
 		int sb_len = sb.length();
 
@@ -264,22 +279,6 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 		sb.setSpan(new CallbackSpan<>(parallel, parallelListener_), sb_len, sb.length(), 0);
 	}
 
-
-	static float scaleForAttributeView(final float fontSizeDp) {
-		if (fontSizeDp >= 13 /* 72% */ && fontSizeDp < 24 /* 133% */) {
-			return 1.f;
-		}
-
-		if (fontSizeDp < 8) return 0.5f; // 0 ~ 44%
-		if (fontSizeDp < 18) return 0.75f; // 44% ~ 72%
-		if (fontSizeDp >= 36) return 2.f; // 200% ~
-		return 1.5f; // 24 to 36 // 133% ~ 200%
-	}
-
-	private SparseBooleanArray dictionaryModeAris;
-
-	CallbackSpan.OnClickListener<DictionaryLinkInfo> dictionaryListener_;
-
 	public void setDictionaryModeAris(final SparseBooleanArray aris) {
 		this.dictionaryModeAris = aris;
 		notifyDataSetChanged();
@@ -289,6 +288,4 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 		this.dictionaryListener_ = listener;
 		notifyDataSetChanged();
 	}
-
-	// ################## migration marker
 }
