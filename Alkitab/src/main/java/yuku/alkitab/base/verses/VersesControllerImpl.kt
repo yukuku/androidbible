@@ -1,6 +1,5 @@
 package yuku.alkitab.base.verses
 
-import android.database.Cursor
 import android.graphics.Rect
 import android.net.Uri
 import android.text.SpannableStringBuilder
@@ -482,8 +481,6 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
          * 2. automatic lookup is on and this verse is selected (checked)
          */
         if (ari in ui.dictionaryModeAris || checked && Preferences.getBoolean(view.context.getString(R.string.pref_autoDictionaryAnalyze_key), view.resources.getBoolean(R.bool.pref_autoDictionaryAnalyze_default))) {
-            val cr = view.context.contentResolver
-
             val renderedText = lText.text
             val verseText = if (renderedText is SpannableStringBuilder) renderedText else SpannableStringBuilder(renderedText)
 
@@ -491,15 +488,9 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
             val analyzeString = verseText.toString().substring(startVerseTextPos)
 
             val uri = Uri.parse("content://org.sabda.kamus.provider/analyze").buildUpon().appendQueryParameter("text", analyzeString).build()
-            var c: Cursor? = null
-            try {
-                c = cr.query(uri, null, null, null, null)
-            } catch (e: Exception) {
-                AppLog.e(TAG, "Error when querying dictionary content provider", e)
-            }
 
-            if (c != null) {
-                try {
+            try {
+                view.context.contentResolver.query(uri, null, null, null, null)?.use { c ->
                     val col_offset = c.getColumnIndexOrThrow("offset")
                     val col_len = c.getColumnIndexOrThrow("len")
                     val col_key = c.getColumnIndexOrThrow("key")
@@ -513,14 +504,13 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
                         val span = DictionaryLinkSpan(DictionaryLinkInfo(word, key), listeners.dictionaryListener_)
                         verseText.setSpan(span, startVerseTextPos + offset, startVerseTextPos + offset + len, 0)
                     }
-                } finally {
-                    c.close()
                 }
-
                 lText.text = verseText
+            } catch (e: Exception) {
+                AppLog.e(TAG, "Error when querying dictionary content provider", e)
             }
         }
-
+        
 //			{ // DUMP
 //				Log.d(TAG, "==== DUMP verse " + (id + 1));
 //				SpannedString sb = (SpannedString) lText.getText();
