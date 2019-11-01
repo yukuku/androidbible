@@ -28,6 +28,8 @@ import yuku.alkitabintegration.display.Launcher;
 import java.util.Locale;
 
 public class HelpActivity extends BaseActivity {
+	static final String TAG = HelpActivity.class.getSimpleName();
+
 	private static final String EXTRA_page = "page";
 	private static final String EXTRA_overrideTitle = "overrideTitle";
 	private static final String EXTRA_overflowMenuItemTitle = "overflowMenuItemTitle";

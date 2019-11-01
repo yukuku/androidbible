@@ -47,6 +47,7 @@ public class History {
 
 	private static History instance;
 
+	@NonNull
 	public static History getInstance() {
 		if (instance == null) {
 			instance = new History();

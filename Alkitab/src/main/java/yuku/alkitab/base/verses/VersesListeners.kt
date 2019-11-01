@@ -21,7 +21,7 @@ class VersesListeners(
             verseScrollListener = object : VersesController.VerseScrollListener() {},
             parallelListener_ = {},
             inlineLinkSpanFactory_ = VerseInlineLinkSpan.Factory { type, arif ->
-                object : VerseInlineLinkSpan(type, arif, null) {
+                object : VerseInlineLinkSpan(type, arif) {
                 }
             },
             dictionaryListener_ = {},

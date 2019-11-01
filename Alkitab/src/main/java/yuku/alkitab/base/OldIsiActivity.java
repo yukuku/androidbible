@@ -1994,17 +1994,17 @@ public class OldIsiActivity extends BaseLeftDrawerActivity implements XrefDialog
 	}
 
 	class VerseInlineLinkSpanFactory implements VerseInlineLinkSpan.Factory {
-		private final Object source;
+		final OldVersesView source;
 
-		VerseInlineLinkSpanFactory(final Object source) {
+		VerseInlineLinkSpanFactory(final OldVersesView source) {
 			this.source = source;
 		}
 
 		@Override
 		public VerseInlineLinkSpan create(final VerseInlineLinkSpan.Type type, final int arif) {
-			return new VerseInlineLinkSpan(type, arif, source) {
+			return new VerseInlineLinkSpan(type, arif) {
 				@Override
-				public void onClick(final Type type, final int arif, final Object source) {
+				public void onClick(final Type type, final int arif) {
 					if (type == Type.xref) {
 						final XrefDialog dialog = XrefDialog.newInstance(arif);
 
