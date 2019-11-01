@@ -401,8 +401,6 @@ class VersesControllerImpl(
         // TODO("not implemented")
     }
 
-    override fun setDictionaryModeAris(aris: Set<Int>) = TODO()
-
     override fun setEmptyMessage(message: CharSequence?, textColor: Int) {
         rv.emptyMessage = message
         rv.emptyMessagePaint.color = textColor

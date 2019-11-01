@@ -96,8 +96,6 @@ interface VersesController {
 
     fun callAttentionForVerse(verse_1: Int)
 
-    fun setDictionaryModeAris(aris: Set<Int>)
-
     fun setEmptyMessage(message: CharSequence?, textColor: Int)
 
     /**

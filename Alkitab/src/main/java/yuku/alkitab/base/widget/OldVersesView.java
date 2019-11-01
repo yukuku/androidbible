@@ -587,47 +587,6 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		StopListFling.stop(this);
 	}
 
-	// ############################# migrate marker
-
-	private void init() {
-		if (isInEditMode()) return;
-
-		originalSelector = getSelector();
-
-		setDivider(null);
-		setFocusable(false);
-
-		setAdapter(adapter = new SingleViewVerseAdapter(getContext()));
-		setOnItemClickListener(itemClick);
-		setVerseSelectionMode(VerseSelectionMode.multiple);
-
-		super.setOnScrollListener(this);
-	}
-
-	@Override
-	public Parcelable onSaveInstanceState() {
-		Bundle b = new Bundle();
-		Parcelable superState = super.onSaveInstanceState();
-		b.putParcelable("superState", superState);
-		b.putInt("verseSelectionMode", verseSelectionMode.ordinal());
-		return b;
-	}
-
-	@Override
-	public void onRestoreInstanceState(Parcelable state) {
-		if (state instanceof Bundle) {
-			Bundle b = (Bundle) state;
-			super.onRestoreInstanceState(b.getParcelable("superState"));
-			setVerseSelectionMode(VerseSelectionMode.values()[b.getInt("verseSelectionMode")]);
-		}
-
-		hideOrShowContextMenuButton();
-	}
-
-	public void callAttentionForVerse(final int verse_1) {
-		adapter.callAttentionForVerse(verse_1);
-	}
-
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		if (userOnScrollListener != null) userOnScrollListener.onScrollStateChanged(view, scrollState);
@@ -678,4 +637,46 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 	public void setDictionaryModeAris(@Nullable final SparseBooleanArray aris) {
 		adapter.setDictionaryModeAris(aris);
 	}
+
+	// ############################# migrate marker
+
+	private void init() {
+		if (isInEditMode()) return;
+
+		originalSelector = getSelector();
+
+		setDivider(null);
+		setFocusable(false);
+
+		setAdapter(adapter = new SingleViewVerseAdapter(getContext()));
+		setOnItemClickListener(itemClick);
+		setVerseSelectionMode(VerseSelectionMode.multiple);
+
+		super.setOnScrollListener(this);
+	}
+
+	@Override
+	public Parcelable onSaveInstanceState() {
+		Bundle b = new Bundle();
+		Parcelable superState = super.onSaveInstanceState();
+		b.putParcelable("superState", superState);
+		b.putInt("verseSelectionMode", verseSelectionMode.ordinal());
+		return b;
+	}
+
+	@Override
+	public void onRestoreInstanceState(Parcelable state) {
+		if (state instanceof Bundle) {
+			Bundle b = (Bundle) state;
+			super.onRestoreInstanceState(b.getParcelable("superState"));
+			setVerseSelectionMode(VerseSelectionMode.values()[b.getInt("verseSelectionMode")]);
+		}
+
+		hideOrShowContextMenuButton();
+	}
+
+	public void callAttentionForVerse(final int verse_1) {
+		adapter.callAttentionForVerse(verse_1);
+	}
+
 }

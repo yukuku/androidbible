@@ -61,7 +61,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import kotlin.Unit;
-import kotlin.collections.SetsKt;
 import kotlin.jvm.functions.Function1;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -2774,14 +2773,17 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		dictionaryMode = true;
-		lsSplit0.setDictionaryModeAris(aris);
-		lsSplit1.setDictionaryModeAris(aris);
+		// TODO do dictionary mode via versesUiModel
+//		lsSplit0.setDictionaryModeAris(aris);
+//		lsSplit1.setDictionaryModeAris(aris);
 	}
 
 	void finishDictionaryMode() {
 		dictionaryMode = false;
-		lsSplit0.setDictionaryModeAris(SetsKt.emptySet());
-		lsSplit1.setDictionaryModeAris(SetsKt.emptySet());
+
+		// TODO do dictionary mode via versesUiModel
+//		lsSplit0.setDictionaryModeAris(SetsKt.emptySet());
+//		lsSplit1.setDictionaryModeAris(SetsKt.emptySet());
 	}
 
 	@Override
