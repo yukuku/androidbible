@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.ActivityNotFoundException
 import android.content.BroadcastReceiver
 import android.content.ComponentName
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -80,6 +81,7 @@ import yuku.alkitab.base.util.Literals.Array
 import yuku.alkitab.base.util.OtherAppIntegration
 import yuku.alkitab.base.util.ShareUrl
 import yuku.alkitab.base.util.Sqlitil
+import yuku.alkitab.base.verses.VerseAttributeLoader
 import yuku.alkitab.base.verses.VersesController
 import yuku.alkitab.base.verses.VersesControllerImpl
 import yuku.alkitab.base.verses.VersesDataModel
@@ -105,6 +107,8 @@ import yuku.alkitab.debug.R
 import yuku.alkitab.model.Book
 import yuku.alkitab.model.FootnoteEntry
 import yuku.alkitab.model.Marker
+import yuku.alkitab.model.PericopeBlock
+import yuku.alkitab.model.SingleChapterVerses
 import yuku.alkitab.model.Version
 import yuku.alkitab.ribka.RibkaReportActivity
 import yuku.alkitab.tracking.Tracker
@@ -246,8 +250,17 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
     lateinit var floater: Floater
 
     // Immutable data for lsSplit0 and lsSplit1. These are only replaced, not modified.
-    var dataSplit0 = VersesDataModel.EMPTY
+    private var dataSplit0 = VersesDataModel.EMPTY
+        set(value) {
+            field = value
+            lsSplit0.versesDataModel = value
+        }
+
     private var dataSplit1 = VersesDataModel.EMPTY
+        set(value) {
+            field = value
+            lsSplit1.versesDataModel = value
+        }
 
     /**
      * There is always an active book.
@@ -2206,7 +2219,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
             // main
             this.uncheckVersesWhenActionModeDestroyed = false
             try {
-                val ok = IsiActivityUtil.loadChapterToVersesController(contentResolver, lsSplit0, { dataSplit0 = it }, S.activeVersion(), S.activeVersionId(), this.activeBook, chapter_1, current_chapter_1, uncheckAllVerses)
+                val ok = loadChapterToVersesController(contentResolver, lsSplit0, { dataSplit0 = it }, S.activeVersion(), S.activeVersionId(), this.activeBook, chapter_1, current_chapter_1, uncheckAllVerses)
                 if (!ok) return 0
             } finally {
                 this.uncheckVersesWhenActionModeDestroyed = true
@@ -2237,6 +2250,65 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         return Ari.encode(0, chapter_1, verse_1)
     }
 
+    private fun loadChapterToVersesController(
+        cr: ContentResolver,
+        versesController: VersesController,
+        dataSetter: (VersesDataModel) -> Unit,
+        version: Version,
+        versionId: String,
+        book: Book,
+        chapter_1: Int,
+        current_chapter_1: Int,
+        uncheckAllVerses: Boolean
+    ): Boolean {
+        val verses = version.loadChapterText(book, chapter_1) ?: return false
+
+        //# max is set to 30 (one chapter has max of 30 blocks. Already almost impossible)
+        val max = 30
+        val tmp_pericope_aris = IntArray(max)
+        val tmp_pericope_blocks = arrayOfNulls<PericopeBlock>(max)
+        val nblock = version.loadPericope(book.bookId, chapter_1, tmp_pericope_aris, tmp_pericope_blocks, max)
+        val pericope_aris = tmp_pericope_aris.copyOf(nblock)
+        val pericope_blocks = tmp_pericope_blocks.copyOf(nblock).map { block -> block!! }.toTypedArray()
+
+        val retainSelectedVerses = !uncheckAllVerses && chapter_1 == current_chapter_1
+        setDataWithRetainSelectedVerses(cr, versesController, dataSetter, retainSelectedVerses, Ari.encode(book.bookId, chapter_1, 0), pericope_aris, pericope_blocks, nblock, verses, version, versionId)
+
+        return true
+    }
+
+    // Moved from the old VersesView method
+    private fun setDataWithRetainSelectedVerses(
+        cr: ContentResolver,
+        versesController: VersesController,
+        dataSetter: (VersesDataModel) -> Unit,
+        retainSelectedVerses: Boolean,
+        ariBc: Int,
+        pericope_aris: IntArray,
+        pericope_blocks: Array<PericopeBlock>,
+        nblock: Int,
+        verses: SingleChapterVerses,
+        version: Version,
+        versionId: String
+    ) {
+        var selectedVerses_1: IntArrayList? = null
+        if (retainSelectedVerses) {
+            selectedVerses_1 = versesController.getCheckedVerses_1()
+        }
+
+        //# fill adapter with new data. make sure all checked states are reset
+        versesController.uncheckAllVerses(true)
+
+        val versesAttributes = VerseAttributeLoader.load(S.getDb(), cr, ariBc, verses)
+
+        val newData = VersesDataModel(ariBc, verses, nblock, pericope_aris, pericope_blocks, version, versionId, versesAttributes)
+        dataSetter(newData)
+
+        if (selectedVerses_1 != null) {
+            versesController.checkVerses(selectedVerses_1, true)
+        }
+    }
+
     private fun displaySplitFollowingMaster() {
         displaySplitFollowingMaster(lsSplit0.getVerse_1BasedOnScroll())
     }
@@ -2249,12 +2321,11 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
             if (splitBook == null) {
                 lsSplit1.setEmptyMessage(getString(R.string.split_version_cant_display_verse, this.activeBook.reference(this.chapter_1), activeSplitVersion!!.shortName), S.applied().fontColor)
                 dataSplit1 = VersesDataModel.EMPTY
-                lsSplit1.versesDataModel = dataSplit1
             } else {
                 lsSplit1.setEmptyMessage(null, S.applied().fontColor)
                 this.uncheckVersesWhenActionModeDestroyed = false
                 try {
-                    IsiActivityUtil.loadChapterToVersesController(contentResolver, lsSplit1, { dataSplit1 = it }, activeSplitVersion!!, activeSplitVersionId!!, splitBook, this.chapter_1, this.chapter_1, true)
+                    loadChapterToVersesController(contentResolver, lsSplit1, { dataSplit1 = it }, activeSplitVersion!!, activeSplitVersionId!!, splitBook, this.chapter_1, this.chapter_1, true)
                 } finally {
                     this.uncheckVersesWhenActionModeDestroyed = true
                 }
@@ -2583,15 +2654,26 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
     }
 
     fun reloadBothAttributeMaps() {
-        val newDataSplit0 = IsiActivityUtil.reloadAttributeMapsToVerseDataModel(this, dataSplit0)
+        val newDataSplit0 = reloadAttributeMapsToVerseDataModel(dataSplit0)
         dataSplit0 = newDataSplit0
-        lsSplit0.versesDataModel = newDataSplit0
 
         if (activeSplitVersion != null) {
-            val newDataSplit1 = IsiActivityUtil.reloadAttributeMapsToVerseDataModel(this, dataSplit1)
+            val newDataSplit1 = reloadAttributeMapsToVerseDataModel(dataSplit1)
             dataSplit1 = newDataSplit1
-            lsSplit1.versesDataModel = newDataSplit1
         }
+    }
+
+    private fun reloadAttributeMapsToVerseDataModel(
+        data: VersesDataModel
+    ): VersesDataModel {
+        val versesAttributes = VerseAttributeLoader.load(
+            S.getDb(),
+            contentResolver,
+            data.ari_bc_,
+            data.verses_
+        )
+
+        return data.copy(versesAttributes = versesAttributes)
     }
 
     /**
