@@ -31,6 +31,7 @@ public abstract class Version {
 	/**
 	 * @return null if bookId is out of range, or the book is not available on this version.
 	 */
+	@Nullable
 	public abstract Book getBook(int bookId);
 	
 	public abstract Book getFirstBook();

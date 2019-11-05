@@ -16,7 +16,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.Sqlitil;
-import yuku.alkitab.base.widget.AttributeView;
+import yuku.alkitab.base.widget.OldAttributeView;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.model.Version;
@@ -122,10 +122,10 @@ public class ProgressMarkListDialog extends DialogFragment {
 
 			final ProgressMark progressMark = progressMarks.get(position);
 
-			imgIcon.setImageResource(AttributeView.getProgressMarkIconResource(progressMark.preset_id));
+			imgIcon.setImageResource(OldAttributeView.getProgressMarkIconResource(progressMark.preset_id));
 
 			if (progressMark.ari == 0 || TextUtils.isEmpty(progressMark.caption)) {
-				tCaption.setText(AttributeView.getDefaultProgressMarkStringResource(progressMark.preset_id));
+				tCaption.setText(OldAttributeView.getDefaultProgressMarkStringResource(progressMark.preset_id));
 			} else {
 				tCaption.setText(progressMark.caption);
 			}

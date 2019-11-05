@@ -8,7 +8,6 @@ import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
 import yuku.alkitab.model.PericopeBlock;
-import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.util.Ari;
 import yuku.bintex.BintexReader;
@@ -37,24 +36,6 @@ public class Yes1Reader implements BibleReader {
 	private int encoding = 1; // 1 = ascii; 2 = utf-8;
 
 	private Yes1PericopeIndex pericopeIndex_;
-
-	static class Yes1SingleChapterVerses extends SingleChapterVerses {
-		private final String[] verses;
-
-		public Yes1SingleChapterVerses(String[] verses) {
-			this.verses = verses;
-		}
-
-		@Override
-		public String getVerse(int verse_0) {
-			return verses[verse_0];
-		}
-
-		@Override
-		public int getVerseCount() {
-			return verses.length;
-		}
-	}
 
 	public Yes1Reader(String filename) throws IOException {
 		this.f = new RandomAccessFile(filename, "r");

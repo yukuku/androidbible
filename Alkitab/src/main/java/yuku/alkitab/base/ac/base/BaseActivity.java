@@ -38,7 +38,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static yuku.alkitab.base.util.Literals.Array;
 
 public abstract class BaseActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
-	public static final String TAG = BaseActivity.class.getSimpleName();
+	static final String TAG = BaseActivity.class.getSimpleName();
 
 	private static final int REQCODE_PERMISSION_storage = 1;
 	private static final int REQCODE_permissionSettings = 9970;

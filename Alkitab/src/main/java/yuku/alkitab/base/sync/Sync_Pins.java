@@ -10,7 +10,7 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.util.Literals;
 import yuku.alkitab.base.util.Sqlitil;
-import yuku.alkitab.base.widget.AttributeView;
+import yuku.alkitab.base.widget.OldAttributeView;
 import yuku.alkitab.model.ProgressMark;
 
 import java.io.BufferedReader;
@@ -108,7 +108,7 @@ public class Sync_Pins {
 		final Content content = new Content();
 		final List<Content.Pin> pins = content.pins = new ArrayList<>();
 
-		for (int preset_id = 0; preset_id < AttributeView.PROGRESS_MARK_TOTAL_COUNT; preset_id++) {
+		for (int preset_id = 0; preset_id < OldAttributeView.PROGRESS_MARK_TOTAL_COUNT; preset_id++) {
 			final ProgressMark pm = S.getDb().getProgressMarkByPresetId(preset_id);
 			if (pm == null) continue;
 

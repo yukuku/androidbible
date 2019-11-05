@@ -5,7 +5,6 @@ import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
 import yuku.alkitab.model.PericopeBlock;
-import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.yes2.compress.SnappyInputStream;
@@ -40,23 +39,7 @@ public class Yes2Reader implements BibleReader {
 	private XrefsSection xrefsSection_;
 	private FootnotesSection footnotesSection_;
 
-	static class Yes2SingleChapterVerses extends SingleChapterVerses {
-		private final String[] verses;
-
-		public Yes2SingleChapterVerses(String[] verses) {
-			this.verses = verses;
-		}
-		
-		@Override public String getVerse(int verse_0) {
-			return verses[verse_0];
-		}
-
-		@Override public int getVerseCount() {
-			return verses.length;
-		}
-	}
-	
-	/** 
+	/**
 	 * This class simplify many operations regarding reading the verse texts from the yes file.
 	 * This stores the offset to the beginning of text section content 
 	 * and also understands the text section attributes (compression, encryption etc.)

@@ -41,14 +41,14 @@ public class HackedTimePickerDialog extends AlertDialog
     public interface HackedTimePickerListener {
 
         /**
-         * @param view The view associated with this listener.
+         * @param view The view associated with this selectedVersesListener.
          * @param hourOfDay The hour that was set.
          * @param minute The minute that was set.
          */
     	void onTimeSet(TimePicker view, int hourOfDay, int minute);
     	
     	/**
-    	 * @param view The view associated with this listener.
+    	 * @param view The view associated with this selectedVersesListener.
     	 */
         void onTimeOff(TimePicker view);
     }

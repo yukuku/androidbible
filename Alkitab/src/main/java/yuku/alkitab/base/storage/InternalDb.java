@@ -250,6 +250,9 @@ public class InternalDb {
 
 	private SQLiteStatement stmt_countMarkersForBookChapter = null;
 
+	/**
+	 * TODO this is only called together with {@link #putAttributes(int, int[], int[], Highlights.Info[])}, make it private.
+	 */
 	public int countMarkersForBookChapter(int ari_bookchapter) {
 		final int ariMin = ari_bookchapter & 0x00ffff00;
 		final int ariMax = ari_bookchapter | 0x000000ff;

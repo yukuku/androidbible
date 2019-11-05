@@ -27,8 +27,7 @@ import yuku.alkitab.tracking.Tracker;
 
 import java.util.Date;
 
-public class VerseItem extends RelativeLayout implements Checkable {
-	public static final String PROGRESS_MARK_DRAG_MIME_TYPE = "application/vnd.yuku.alkitab.progress_mark.drag";
+public class OldVerseItem extends RelativeLayout implements Checkable {
 
 	private static final float ATTENTION_DURATION = 2000L;
 
@@ -41,7 +40,7 @@ public class VerseItem extends RelativeLayout implements Checkable {
 
 	public VerseTextView lText;
 	public TextView lVerseNumber;
-	public AttributeView attributeView;
+	public OldAttributeView attributeView;
 
 	/** the ari of the verse represented by this view. If this is 0, this is a pericope or something else. */
 	private int ari;
@@ -53,7 +52,7 @@ public class VerseItem extends RelativeLayout implements Checkable {
 	private long attentionStart;
 	private static Paint attentionPaint;
 
-	public VerseItem(Context context, AttributeSet attrs) {
+	public OldVerseItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
@@ -218,7 +217,7 @@ public class VerseItem extends RelativeLayout implements Checkable {
 			case DragEvent.ACTION_DRAG_STARTED:
 				// Determines if this View can accept the dragged data
 				final ClipDescription desc = event.getClipDescription();
-				if (desc != null && desc.hasMimeType(PROGRESS_MARK_DRAG_MIME_TYPE)) {
+				if (desc != null && desc.hasMimeType(LeftDrawer.PROGRESS_MARK_DRAG_MIME_TYPE)) {
 					return true;
 				}
 				break;
@@ -292,13 +291,13 @@ public class VerseItem extends RelativeLayout implements Checkable {
 		}
 
 		final int progress_mark_bits = attributeView.getProgressMarkBits();
-		for (int preset_id = 0; preset_id < AttributeView.PROGRESS_MARK_TOTAL_COUNT; preset_id++) {
-			if ((progress_mark_bits & 1 << AttributeView.PROGRESS_MARK_BITS_START + preset_id) != 0) {
+		for (int preset_id = 0; preset_id < OldAttributeView.PROGRESS_MARK_TOTAL_COUNT; preset_id++) {
+			if ((progress_mark_bits & 1 << OldAttributeView.PROGRESS_MARK_BITS_START + preset_id) != 0) {
 				final ProgressMark progressMark = S.getDb().getProgressMarkByPresetId(preset_id);
 
 				final String caption;
 				if (TextUtils.isEmpty(progressMark.caption)) {
-					caption = getContext().getString(AttributeView.getDefaultProgressMarkStringResource(preset_id));
+					caption = getContext().getString(OldAttributeView.getDefaultProgressMarkStringResource(preset_id));
 				} else {
 					caption = progressMark.caption;
 				}

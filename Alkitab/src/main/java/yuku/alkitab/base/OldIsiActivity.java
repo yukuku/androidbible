@@ -20,19 +20,6 @@ import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.fragment.app.FragmentManager;
-import androidx.core.app.ShareCompat;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.core.graphics.ColorUtils;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.view.ActionMode;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -54,8 +41,26 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ShareCompat;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.core.graphics.ColorUtils;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Locale;
 import org.json.JSONException;
 import org.json.JSONObject;
 import yuku.afw.storage.Preferences;
@@ -87,24 +92,25 @@ import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.LidToAri;
+import static yuku.alkitab.base.util.Literals.Array;
 import yuku.alkitab.base.util.OtherAppIntegration;
 import yuku.alkitab.base.util.ShareUrl;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.CallbackSpan;
+import yuku.alkitab.base.widget.DictionaryLinkInfo;
 import yuku.alkitab.base.widget.Floater;
 import yuku.alkitab.base.widget.FormattedTextRenderer;
 import yuku.alkitab.base.widget.GotoButton;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.LeftDrawer;
 import yuku.alkitab.base.widget.MaterialDialogAdapterHelper;
+import yuku.alkitab.base.widget.OldVersesView;
 import yuku.alkitab.base.widget.ScrollbarSetter;
-import yuku.alkitab.base.widget.SingleViewVerseAdapter;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
 import yuku.alkitab.base.widget.TwofingerLinearLayout;
 import yuku.alkitab.base.widget.VerseInlineLinkSpan;
 import yuku.alkitab.base.widget.VerseRenderer;
-import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
@@ -121,21 +127,13 @@ import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 import yuku.devoxx.flowlayout.FlowLayout;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
-
-import static yuku.alkitab.base.util.Literals.Array;
-
-public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.XrefDialogListener, LeftDrawer.Text.Listener, ProgressMarkListDialog.Listener {
-	public static final String TAG = IsiActivity.class.getSimpleName();
+public class OldIsiActivity extends BaseLeftDrawerActivity implements XrefDialog.XrefDialogListener, LeftDrawer.Text.Listener, ProgressMarkListDialog.Listener {
+	public static final String TAG = OldIsiActivity.class.getSimpleName();
 
 	public static final String ACTION_ATTRIBUTE_MAP_CHANGED = "yuku.alkitab.action.ATTRIBUTE_MAP_CHANGED";
-	public static final String ACTION_ACTIVE_VERSION_CHANGED = IsiActivity.class.getName() + ".action.ACTIVE_VERSION_CHANGED";
-	public static final String ACTION_NIGHT_MODE_CHANGED = IsiActivity.class.getName() + ".action.NIGHT_MODE_CHANGED";
-	public static final String ACTION_NEEDS_RESTART = IsiActivity.class.getName() + ".action.NEEDS_RESTART";
+	public static final String ACTION_ACTIVE_VERSION_CHANGED = OldIsiActivity.class.getName() + ".action.ACTIVE_VERSION_CHANGED";
+	public static final String ACTION_NIGHT_MODE_CHANGED = OldIsiActivity.class.getName() + ".action.NIGHT_MODE_CHANGED";
+	public static final String ACTION_NEEDS_RESTART = OldIsiActivity.class.getName() + ".action.NEEDS_RESTART";
 
 	private static final int REQCODE_goto = 1;
 	private static final int REQCODE_share = 7;
@@ -261,7 +259,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		@Override
-		public void onTwofingerEnd(final TwofingerLinearLayout.Mode mode) {
+		public void onTwofingerEnd(@Nullable final TwofingerLinearLayout.Mode mode) {
 			startFontSize = 0;
 			startDx = Float.MIN_VALUE;
 			moreSwipeYAllowed = true;
@@ -274,8 +272,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	FrameLayout overlayContainer;
 	ViewGroup root;
 	Toolbar toolbar;
-	VersesView lsSplit0;
-	VersesView lsSplit1;
+	OldVersesView lsSplit0;
+	OldVersesView lsSplit1;
 	TextView tSplitEmpty;
 	TwofingerLinearLayout splitRoot;
 	LabeledSplitHandleButton splitHandleButton;
@@ -320,10 +318,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	};
 
-	final CallbackSpan.OnClickListener<SingleViewVerseAdapter.DictionaryLinkInfo> dictionaryListener = (widget, data) -> {
+	final CallbackSpan.OnClickListener<DictionaryLinkInfo> dictionaryListener = (widget, data) -> {
 		final ContentResolver cr = getContentResolver();
 		final Uri uri = Uri.parse("content://org.sabda.kamus.provider/define").buildUpon()
-			.appendQueryParameter("key", data.key)
+			.appendQueryParameter("key", data.getKey())
 			.appendQueryParameter("mode", "snippet")
 			.build();
 
@@ -360,19 +358,19 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				}
 
 				new MaterialDialog.Builder(this)
-					.title(data.orig_text)
+					.title(data.getOrig_text())
 					.content(sb)
 					.positiveText(R.string.dict_open_full)
 					.onPositive((dialog, which) -> {
 						final Intent intent = new Intent("org.sabda.kamus.action.VIEW");
-						intent.putExtra("key", data.key);
+						intent.putExtra("key", data.getKey());
 						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
 						try {
 							startActivity(intent);
 						} catch (ActivityNotFoundException e) {
-							OtherAppIntegration.askToInstallDictionary(IsiActivity.this);
+							OtherAppIntegration.askToInstallDictionary(OldIsiActivity.this);
 						}
 					})
 					.show();
@@ -417,11 +415,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	public static Intent createIntent() {
-		return new Intent(App.context, IsiActivity.class);
+		return new Intent(App.context, OldIsiActivity.class);
 	}
 
 	public static Intent createIntent(int ari) {
-		Intent res = new Intent(App.context, IsiActivity.class);
+		Intent res = new Intent(App.context, OldIsiActivity.class);
 		res.setAction("yuku.alkitab.action.VIEW");
 		res.putExtra("ari", ari);
 		return res;
@@ -438,7 +436,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	protected void onCreate(Bundle savedInstanceState) {
 		AppLog.d(TAG, "@@onCreate start");
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_isi);
+		setContentView(R.layout.activity_old_isi);
 		AppLog.d(TAG, "@@onCreate setCV");
 
 		drawerLayout = findViewById(R.id.drawerLayout);
@@ -516,7 +514,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		lsSplit0.setDictionaryListener(dictionaryListener);
 
 		// additional setup for split1
-		lsSplit1.setVerseSelectionMode(VersesView.VerseSelectionMode.multiple);
+		lsSplit1.setVerseSelectionMode(OldVersesView.VerseSelectionMode.multiple);
 		lsSplit1.setEmptyView(tSplitEmpty);
 		lsSplit1.setParallelListener(parallelListener);
 		lsSplit1.setAttributeListener(new AttributeListener()); // have to be distinct from lsSplit0
@@ -715,7 +713,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			nfcAdapter.setNdefPushMessageCallback(event -> {
 				JSONObject obj = new JSONObject();
 				try {
-					obj.put("ari", Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, lsSplit0.getVerseBasedOnScroll()));
+					obj.put("ari", Ari.encode(OldIsiActivity.this.activeBook.bookId, OldIsiActivity.this.chapter_1, lsSplit0.getVerseBasedOnScroll()));
 				} catch (JSONException e) { // won't happen
 				}
 				byte[] payload = obj.toString().getBytes();
@@ -754,7 +752,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	private void enableNfcForegroundDispatchIfAvailable() {
 		if (nfcAdapter != null) {
-			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, IsiActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, OldIsiActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 			IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
 			try {
 				ndef.addDataType("application/vnd.yuku.alkitab.nfc.beam");
@@ -820,7 +818,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		} catch (Throwable e) { // so we don't crash on the beginning of the app
 			AppLog.e(TAG, "Error opening main version", e);
 
-			new MaterialDialog.Builder(IsiActivity.this)
+			new MaterialDialog.Builder(OldIsiActivity.this)
 				.content(getString(R.string.version_error_opening, mv.longName))
 				.positiveText(R.string.ok)
 				.show();
@@ -853,7 +851,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		} catch (Throwable e) { // so we don't crash on the beginning of the app
 			AppLog.e(TAG, "Error opening split version", e);
 
-			new MaterialDialog.Builder(IsiActivity.this)
+			new MaterialDialog.Builder(OldIsiActivity.this)
 				.content(getString(R.string.version_error_opening, mv.longName))
 				.positiveText(R.string.ok)
 				.show();
@@ -881,7 +879,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			return true;
 		}
 
-		VersesView.PressResult pressResult = lsSplit0.press(keyCode);
+		OldVersesView.PressResult pressResult = lsSplit0.press(keyCode);
 		switch (pressResult.kind) {
 			case left:
 				bLeft_click();
@@ -1598,9 +1596,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				startActivity(chosenIntent);
 			}
 		} else if (requestCode == REQCODE_textAppearanceGetFonts) {
-			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode, resultCode, data);
+			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode);
 		} else if (requestCode == REQCODE_textAppearanceCustomColors) {
-			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode, resultCode, data);
+			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode);
 		} else if (requestCode == REQCODE_edit_note_1 && resultCode == RESULT_OK) {
 			reloadBothAttributeMaps();
 		} else if (requestCode == REQCODE_edit_note_2 && resultCode == RESULT_OK) {
@@ -1696,7 +1694,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	}
 
-	static boolean loadChapterToVersesView(VersesView versesView, Version version, String versionId, Book book, int chapter_1, int current_chapter_1, boolean uncheckAllVerses) {
+	static boolean loadChapterToVersesView(OldVersesView versesView, Version version, String versionId, Book book, int chapter_1, int current_chapter_1, boolean uncheckAllVerses) {
 		final SingleChapterVerses verses = version.loadChapterText(book, chapter_1);
 		if (verses == null) {
 			return false;
@@ -1808,9 +1806,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		history.add(ari_target);
 	}
 
-	class AttributeListener implements VersesView.AttributeListener {
+	class AttributeListener implements OldVersesView.AttributeListener {
 		void openBookmarkDialog(final long _id) {
-			final TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExisting(IsiActivity.this, _id);
+			final TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExisting(OldIsiActivity.this, _id);
 			dialog.setListener(() -> {
 				lsSplit0.reloadAttributeMap();
 
@@ -1827,7 +1825,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (markers.size() == 1) {
 				openBookmarkDialog(markers.get(0)._id);
 			} else {
-				MaterialDialogAdapterHelper.show(new MaterialDialog.Builder(IsiActivity.this).title(R.string.edit_bookmark), new MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.bookmark));
+				MaterialDialogAdapterHelper.show(new MaterialDialog.Builder(OldIsiActivity.this).title(R.string.edit_bookmark), new MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.bookmark));
 			}
 		}
 
@@ -1841,7 +1839,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (markers.size() == 1) {
 				openNoteDialog(markers.get(0)._id);
 			} else {
-				MaterialDialogAdapterHelper.show(new MaterialDialog.Builder(IsiActivity.this).title(R.string.edit_note), new MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.note));
+				MaterialDialogAdapterHelper.show(new MaterialDialog.Builder(OldIsiActivity.this).title(R.string.edit_note), new MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.note));
 			}
 		}
 
@@ -1954,7 +1952,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		public void onProgressMarkAttributeClick(final Version version, final String versionId, final int preset_id) {
 			final ProgressMark progressMark = S.getDb().getProgressMarkByPresetId(preset_id);
 
-			ProgressMarkRenameDialog.show(IsiActivity.this, progressMark, new ProgressMarkRenameDialog.Listener() {
+			ProgressMarkRenameDialog.show(OldIsiActivity.this, progressMark, new ProgressMarkRenameDialog.Listener() {
 				@Override
 				public void onOked() {
 					lsSplit0.uncheckAllVerses(true);
@@ -1987,7 +1985,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 				startActivity(intent);
 			} catch (ActivityNotFoundException e) {
-				new MaterialDialog.Builder(IsiActivity.this)
+				new MaterialDialog.Builder(OldIsiActivity.this)
 					.content(R.string.maps_could_not_open)
 					.positiveText(R.string.ok)
 					.show();
@@ -1996,17 +1994,17 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	class VerseInlineLinkSpanFactory implements VerseInlineLinkSpan.Factory {
-		private final Object source;
+		final OldVersesView source;
 
-		VerseInlineLinkSpanFactory(final Object source) {
+		VerseInlineLinkSpanFactory(final OldVersesView source) {
 			this.source = source;
 		}
 
 		@Override
 		public VerseInlineLinkSpan create(final VerseInlineLinkSpan.Type type, final int arif) {
-			return new VerseInlineLinkSpan(type, arif, source) {
+			return new VerseInlineLinkSpan(type, arif) {
 				@Override
-				public void onClick(final Type type, final int arif, final Object source) {
+				public void onClick(final Type type, final int arif) {
 					if (type == Type.xref) {
 						final XrefDialog dialog = XrefDialog.newInstance(arif);
 
@@ -2032,18 +2030,18 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 							VerseRenderer.appendSuperscriptNumber(footnoteText, arif & 0xff);
 							footnoteText.append(" ");
 
-							new MaterialDialog.Builder(IsiActivity.this)
+							new MaterialDialog.Builder(OldIsiActivity.this)
 								.content(FormattedTextRenderer.render(fe.content, footnoteText))
 								.positiveText(R.string.ok)
 								.show();
 						} else {
-							new MaterialDialog.Builder(IsiActivity.this)
+							new MaterialDialog.Builder(OldIsiActivity.this)
 								.content(String.format(Locale.US, "Error: footnote arif 0x%08x couldn't be loaded", arif))
 								.positiveText(R.string.ok)
 								.show();
 						}
 					} else {
-						new MaterialDialog.Builder(IsiActivity.this)
+						new MaterialDialog.Builder(OldIsiActivity.this)
 							.content("Error: Unknown inline link type: " + type)
 							.positiveText("OK")
 							.show();
@@ -2053,9 +2051,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	}
 
-	VersesView.SelectedVersesListener lsSplit0_selectedVerses = new VersesView.DefaultSelectedVersesListener() {
+	OldVersesView.SelectedVersesListener lsSplit0_selectedVerses = new OldVersesView.DefaultSelectedVersesListener() {
 		@Override
-		public void onSomeVersesSelected(VersesView v) {
+		public void onSomeVersesSelected(OldVersesView v) {
 			if (activeSplitVersion != null) {
 				// synchronize the selection with the split view
 				IntArrayList selectedVerses = v.getSelectedVerses_1();
@@ -2072,7 +2070,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		@Override
-		public void onNoVersesSelected(VersesView v) {
+		public void onNoVersesSelected(OldVersesView v) {
 			if (activeSplitVersion != null) {
 				// synchronize the selection with the split view
 				lsSplit1.uncheckAllVerses(false);
@@ -2085,23 +2083,23 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	};
 
-	VersesView.SelectedVersesListener lsSplit1_selectedVerses = new VersesView.DefaultSelectedVersesListener() {
+	OldVersesView.SelectedVersesListener lsSplit1_selectedVerses = new OldVersesView.DefaultSelectedVersesListener() {
 		@Override
-		public void onSomeVersesSelected(VersesView v) {
+		public void onSomeVersesSelected(OldVersesView v) {
 			// synchronize the selection with the main view
 			IntArrayList selectedVerses = v.getSelectedVerses_1();
 			lsSplit0.checkVerses(selectedVerses, true);
 		}
 
 		@Override
-		public void onNoVersesSelected(VersesView v) {
+		public void onNoVersesSelected(OldVersesView v) {
 			lsSplit0.uncheckAllVerses(true);
 		}
 	};
 
-	VersesView.OnVerseScrollListener lsSplit0_verseScroll = new VersesView.OnVerseScrollListener() {
+	OldVersesView.OnVerseScrollListener lsSplit0_verseScroll = new OldVersesView.OnVerseScrollListener() {
 		@Override
-		public void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop) {
+		public void onVerseScroll(OldVersesView v, boolean isPericope, int verse_1, float prop) {
 
 			if (!isPericope && activeSplitVersion != null) {
 				lsSplit1.scrollToVerse(verse_1, prop);
@@ -2109,23 +2107,23 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		@Override
-		public void onScrollToTop(VersesView v) {
+		public void onScrollToTop(OldVersesView v) {
 			if (activeSplitVersion != null) {
 				lsSplit1.scrollToTop();
 			}
 		}
 	};
 
-	VersesView.OnVerseScrollListener lsSplit1_verseScroll = new VersesView.OnVerseScrollListener() {
+	OldVersesView.OnVerseScrollListener lsSplit1_verseScroll = new OldVersesView.OnVerseScrollListener() {
 		@Override
-		public void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop) {
+		public void onVerseScroll(OldVersesView v, boolean isPericope, int verse_1, float prop) {
 			if (!isPericope) {
 				lsSplit0.scrollToVerse(verse_1, prop);
 			}
 		}
 
 		@Override
-		public void onScrollToTop(VersesView v) {
+		public void onScrollToTop(OldVersesView v) {
 			lsSplit0.scrollToTop();
 		}
 	};
@@ -2289,7 +2287,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					final String textToCopy = t[0];
 					final String textToSubmit = t[1];
 
-					ShareUrl.make(IsiActivity.this, !Preferences.getBoolean(getString(R.string.pref_copyWithShareUrl_key), getResources().getBoolean(R.bool.pref_copyWithShareUrl_default)), textToSubmit, Ari.encode(activeBook.bookId, chapter_1, 0), selected, reference.toString(), S.activeVersion(), MVersionDb.presetNameFromVersionId(S.activeVersionId()), new ShareUrl.Callback() {
+					ShareUrl.make(OldIsiActivity.this, !Preferences.getBoolean(getString(R.string.pref_copyWithShareUrl_key), getResources().getBoolean(R.bool.pref_copyWithShareUrl_default)), textToSubmit, Ari.encode(activeBook.bookId, chapter_1, 0), selected, reference.toString(), S.activeVersion(), MVersionDb.presetNameFromVersionId(S.activeVersionId()), new ShareUrl.Callback() {
 						@Override
 						public void onSuccess(final String shareUrl) {
 							U.copyToClipboard(textToCopy + "\n\n" + shareUrl);
@@ -2336,12 +2334,12 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					final String textToShare = t[0];
 					final String textToSubmit = t[1];
 
-					final Intent intent = ShareCompat.IntentBuilder.from(IsiActivity.this)
+					final Intent intent = ShareCompat.IntentBuilder.from(OldIsiActivity.this)
 						.setType("text/plain")
 						.setSubject(reference.toString())
 						.getIntent();
 
-					ShareUrl.make(IsiActivity.this, !Preferences.getBoolean(getString(R.string.pref_copyWithShareUrl_key), getResources().getBoolean(R.bool.pref_copyWithShareUrl_default)), textToSubmit, Ari.encode(activeBook.bookId, chapter_1, 0), selected, reference.toString(), S.activeVersion(), MVersionDb.presetNameFromVersionId(S.activeVersionId()), new ShareUrl.Callback() {
+					ShareUrl.make(OldIsiActivity.this, !Preferences.getBoolean(getString(R.string.pref_copyWithShareUrl_key), getResources().getBoolean(R.bool.pref_copyWithShareUrl_default)), textToSubmit, Ari.encode(activeBook.bookId, chapter_1, 0), selected, reference.toString(), S.activeVersion(), MVersionDb.presetNameFromVersionId(S.activeVersionId()), new ShareUrl.Callback() {
 						@Override
 						public void onSuccess(final String shareUrl) {
 							intent.putExtra(Intent.EXTRA_TEXT, textToShare + "\n\n" + shareUrl);
@@ -2369,7 +2367,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				}
 				return true;
 				case R.id.menuCompare: {
-					final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
+					final int ari = Ari.encode(OldIsiActivity.this.activeBook.bookId, OldIsiActivity.this.chapter_1, selected.get(0));
 					final VersesDialog dialog = VersesDialog.newCompareInstance(ari);
 					dialog.show(getSupportFragmentManager(), "compare_dialog");
 					dialog.setListener(new VersesDialog.VersesDialogListener() {
@@ -2387,11 +2385,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 						throw new RuntimeException("Non contiguous verses when adding bookmark: " + selected);
 					}
 
-					final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
+					final int ari = Ari.encode(OldIsiActivity.this.activeBook.bookId, OldIsiActivity.this.chapter_1, selected.get(0));
 					final int verseCount = selected.size();
 
 					// always create a new bookmark
-					TypeBookmarkDialog dialog = TypeBookmarkDialog.NewBookmark(IsiActivity.this, ari, verseCount);
+					TypeBookmarkDialog dialog = TypeBookmarkDialog.NewBookmark(OldIsiActivity.this, ari, verseCount);
 					dialog.setListener(() -> {
 						lsSplit0.uncheckAllVerses(true);
 						reloadBothAttributeMaps();
@@ -2407,7 +2405,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 						throw new RuntimeException("Non contiguous verses when adding note: " + selected);
 					}
 
-					final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
+					final int ari = Ari.encode(OldIsiActivity.this.activeBook.bookId, OldIsiActivity.this.chapter_1, selected.get(0));
 					final int verseCount = selected.size();
 
 					// always create a new note
@@ -2416,7 +2414,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				}
 				return true;
 				case R.id.menuAddHighlight: {
-					final int ariBc = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
+					final int ariBc = Ari.encode(OldIsiActivity.this.activeBook.bookId, OldIsiActivity.this.chapter_1, 0);
 					int colorRgb = S.getDb().getHighlightColorRgb(ariBc, selected);
 
 					final TypeHighlightDialog.Listener listener = colorRgb1 -> {
@@ -2433,15 +2431,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 						assert rawVerseText != null;
 						VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, null, ftr);
-						new TypeHighlightDialog(IsiActivity.this, ari, listener, colorRgb, info, reference, ftr.result);
+						new TypeHighlightDialog(OldIsiActivity.this, ari, listener, colorRgb, info, reference, ftr.result);
 					} else {
-						new TypeHighlightDialog(IsiActivity.this, ariBc, selected, listener, colorRgb, reference);
+						new TypeHighlightDialog(OldIsiActivity.this, ariBc, selected, listener, colorRgb, reference);
 					}
 					mode.finish();
 				}
 				return true;
 				case R.id.menuEsvsb: {
-					final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
+					final int ari = Ari.encode(OldIsiActivity.this.activeBook.bookId, OldIsiActivity.this.chapter_1, selected.get(0));
 
 					try {
 						Intent intent = new Intent("yuku.esvsbasal.action.GOTO");
@@ -2453,7 +2451,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				}
 				return true;
 				case R.id.menuGuide: {
-					final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
+					final int ari = Ari.encode(OldIsiActivity.this.activeBook.bookId, OldIsiActivity.this.chapter_1, 0);
 
 					try {
 						getPackageManager().getPackageInfo("org.sabda.pedia", 0);
@@ -2464,12 +2462,12 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 						intent.putExtra("ari", ari);
 						startActivity(intent);
 					} catch (PackageManager.NameNotFoundException e) {
-						OtherAppIntegration.openMarket(IsiActivity.this, "org.sabda.pedia");
+						OtherAppIntegration.openMarket(OldIsiActivity.this, "org.sabda.pedia");
 					}
 				}
 				return true;
 				case R.id.menuCommentary: {
-					final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
+					final int ari = Ari.encode(OldIsiActivity.this.activeBook.bookId, OldIsiActivity.this.chapter_1, selected.get(0));
 
 					try {
 						getPackageManager().getPackageInfo("org.sabda.tafsiran", 0);
@@ -2480,12 +2478,12 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 						intent.putExtra("ari", ari);
 						startActivity(intent);
 					} catch (PackageManager.NameNotFoundException e) {
-						OtherAppIntegration.openMarket(IsiActivity.this, "org.sabda.tafsiran");
+						OtherAppIntegration.openMarket(OldIsiActivity.this, "org.sabda.tafsiran");
 					}
 				}
 				return true;
 				case R.id.menuDictionary: {
-					final int ariBc = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
+					final int ariBc = Ari.encode(OldIsiActivity.this.activeBook.bookId, OldIsiActivity.this.chapter_1, 0);
 					final SparseBooleanArray aris = new SparseBooleanArray();
 					for (int i = 0, len = selected.size(); i < len; i++) {
 						final int verse_1 = selected.get(i);
@@ -2500,7 +2498,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				case R.id.menuRibkaReport: {
 					final int ribkaEligibility = checkRibkaEligibility();
 					if (ribkaEligibility != 0) {
-						final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
+						final int ari = Ari.encode(OldIsiActivity.this.activeBook.bookId, OldIsiActivity.this.chapter_1, selected.get(0));
 
 						final CharSequence reference;
 						final String verseText;
@@ -2534,7 +2532,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 						// prepare extra "aris"
 						final int[] aris = new int[selected.size()];
-						final int ariBc = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
+						final int ariBc = Ari.encode(OldIsiActivity.this.activeBook.bookId, OldIsiActivity.this.chapter_1, 0);
 						for (int i = 0, len = selected.size(); i < len; i++) {
 							final int verse_1 = selected.get(i);
 							final int ari = Ari.encodeWithBc(ariBc, verse_1);
@@ -2561,7 +2559,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 						try {
 							startActivity(intent);
 						} catch (ActivityNotFoundException e) {
-							new MaterialDialog.Builder(IsiActivity.this)
+							new MaterialDialog.Builder(OldIsiActivity.this)
 								.content("Error ANFE starting extension\n\n" + extension.activityInfo.packageName + "/" + extension.activityInfo.name)
 								.positiveText(R.string.ok)
 								.show();

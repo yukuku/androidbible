@@ -27,6 +27,7 @@ import yuku.alkitab.debug.R;
 import java.util.Locale;
 
 public class SyncLoginActivity extends BaseActivity {
+	static final String TAG = SyncLoginActivity.class.getSimpleName();
 
 	public static final String ANSWERS_METHOD = "sync";
 

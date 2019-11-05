@@ -32,16 +32,6 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 
 	private SparseBooleanArray dictionaryModeAris;
 
-	public static class DictionaryLinkInfo {
-		public String orig_text;
-		public String key;
-
-		public DictionaryLinkInfo(final String orig_text, final String key) {
-			this.orig_text = orig_text;
-			this.key = key;
-		}
-	}
-
 	CallbackSpan.OnClickListener<DictionaryLinkInfo> dictionaryListener_;
 
 	public SingleViewVerseAdapter(Context context) {
@@ -76,11 +66,11 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				checked = ((ListView) parent).isItemChecked(position);
 			}
 
-			final VerseItem res;
+			final OldVerseItem res;
 			if (convertView == null) {
-				res = (VerseItem) inflater_.inflate(R.layout.item_verse, parent, false);
+				res = (OldVerseItem) inflater_.inflate(R.layout.item_old_verse, parent, false);
 			} else {
-				res = (VerseItem) convertView;
+				res = (OldVerseItem) convertView;
 			}
 
 			final int ari = Ari.encodeWithBc(ari_bc_, verse_1);
@@ -109,7 +99,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				lVerseNumber.setTextColor(selectedTextColor);
 			}
 
-			final AttributeView attributeView = res.attributeView;
+			final OldAttributeView attributeView = res.attributeView;
 			attributeView.setScale(scaleForAttributeView(S.applied().fontSize2dp * textSizeMult_));
 			attributeView.setBookmarkCount(bookmarkCountMap_ == null ? 0 : bookmarkCountMap_[id]);
 			attributeView.setNoteCount(noteCountMap_ == null ? 0 : noteCountMap_[id]);
@@ -125,10 +115,10 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			 * Dictionary mode is activated on either of these conditions:
 			 * 1. user manually activate dictionary mode after selecting verses
 			 * 2. automatic lookup is on and this verse is selected (checked)
- 			 */
+			 */
 			if ((dictionaryModeAris != null && dictionaryModeAris.get(ari))
 				|| (checked && Preferences.getBoolean(res.getContext().getString(R.string.pref_autoDictionaryAnalyze_key), res.getContext().getResources().getBoolean(R.bool.pref_autoDictionaryAnalyze_default)))
-				) {
+			) {
 				final ContentResolver cr = res.getContext().getContentResolver();
 
 				final CharSequence renderedText = lText.getText();
@@ -235,7 +225,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 						}
 					}
 
-                    appendParallel(sb, parallel);
+					appendParallel(sb, parallel);
 				}
 				sb.append(')');
 
@@ -259,35 +249,35 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 	}
 
 	private void appendParallel(SpannableStringBuilder sb, String parallel) {
-        int sb_len = sb.length();
+		int sb_len = sb.length();
 
-        linked: {
-            if (parallel.startsWith("@")) {
-	            // look for the end
-	            int targetEndPos = parallel.indexOf(' ', 1);
-	            if (targetEndPos == -1) {
-		            break linked;
-	            }
+		linked: {
+			if (parallel.startsWith("@")) {
+				// look for the end
+				int targetEndPos = parallel.indexOf(' ', 1);
+				if (targetEndPos == -1) {
+					break linked;
+				}
 
-	            final String target = parallel.substring(1, targetEndPos);
-	            final IntArrayList ariRanges = TargetDecoder.decode(target);
-	            if (ariRanges == null || ariRanges.size() == 0) {
-		            break linked;
-	            }
+				final String target = parallel.substring(1, targetEndPos);
+				final IntArrayList ariRanges = TargetDecoder.decode(target);
+				if (ariRanges == null || ariRanges.size() == 0) {
+					break linked;
+				}
 
-	            final String display = parallel.substring(targetEndPos + 1);
+				final String display = parallel.substring(targetEndPos + 1);
 
-                // if we reach this, data and display should have values, and we must not go to fallback below
-                sb.append(display);
-                sb.setSpan(new CallbackSpan<>(ariRanges.get(0), parallelListener_), sb_len, sb.length(), 0);
-                return; // do not remove this
-            }
-        }
+				// if we reach this, data and display should have values, and we must not go to fallback below
+				sb.append(display);
+				sb.setSpan(new CallbackSpan<>(ariRanges.get(0), parallelListener_), sb_len, sb.length(), 0);
+				return; // do not remove this
+			}
+		}
 
-        // fallback if the above code fails
-        sb.append(parallel);
-        sb.setSpan(new CallbackSpan<>(parallel, parallelListener_), sb_len, sb.length(), 0);
-    }
+		// fallback if the above code fails
+		sb.append(parallel);
+		sb.setSpan(new CallbackSpan<>(parallel, parallelListener_), sb_len, sb.length(), 0);
+	}
 
 	public void setDictionaryModeAris(final SparseBooleanArray aris) {
 		this.dictionaryModeAris = aris;

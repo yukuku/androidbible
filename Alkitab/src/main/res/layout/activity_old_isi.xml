@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?><!-- The important thing to note here is the added fitsSystemWindows -->
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/drawerLayout"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<!-- The main content view -->
+	<include layout="@layout/activity_old_isi_content" />
+
+	<!-- Your drawer view. As we have set fitSystemWindows=true
+		 this will be displayed under the status bar. -->
+	<include layout="@layout/left_drawer_text" />
+</androidx.drawerlayout.widget.DrawerLayout>

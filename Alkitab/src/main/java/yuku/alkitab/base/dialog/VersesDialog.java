@@ -2,27 +2,24 @@ package yuku.alkitab.base.dialog;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.fragment.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.fragment.app.DialogFragment;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.dialog.base.BaseDialog;
 import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.util.Appearances;
-import yuku.alkitab.base.widget.VersesView;
-import yuku.alkitab.base.widget.VersesView.VerseSelectionMode;
+import yuku.alkitab.base.widget.OldVersesView;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Dialog that shows a list of verses. There are two modes:
@@ -39,12 +36,15 @@ public class VersesDialog extends BaseDialog {
 	private static final String EXTRA_compareMode = "compareMode";
 
 	public static abstract class VersesDialogListener {
-		public void onVerseSelected(VersesDialog dialog, int ari) {}
-		public void onComparedVerseSelected(VersesDialog dialog, int ari, MVersion mversion) {}
+		public void onVerseSelected(VersesDialog dialog, int ari) {
+		}
+
+		public void onComparedVerseSelected(VersesDialog dialog, int ari, MVersion mversion) {
+		}
 	}
 
 	TextView tReference;
-	VersesView versesView;
+	OldVersesView versesView;
 
 	VersesDialogListener listener;
 
@@ -63,13 +63,13 @@ public class VersesDialog extends BaseDialog {
 
 	public VersesDialog() {
 	}
-	
+
 	public static VersesDialog newInstance(final IntArrayList ariRanges) {
 		VersesDialog res = new VersesDialog();
-		
-        Bundle args = new Bundle();
-        args.putParcelable(EXTRA_ariRanges, ariRanges);
-        res.setArguments(args);
+
+		Bundle args = new Bundle();
+		args.putParcelable(EXTRA_ariRanges, ariRanges);
+		res.setArguments(args);
 
 		return res;
 	}
@@ -94,7 +94,8 @@ public class VersesDialog extends BaseDialog {
 		return res;
 	}
 
-	@Override public void onCreate(Bundle savedInstanceState) {
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setStyle(DialogFragment.STYLE_NO_TITLE, 0);
 
@@ -103,7 +104,8 @@ public class VersesDialog extends BaseDialog {
 		compareMode = getArguments().getBoolean(EXTRA_compareMode);
 	}
 
-	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View res = inflater.inflate(R.layout.dialog_verses, container, false);
 
 		tReference = res.findViewById(R.id.tReference);
@@ -111,7 +113,7 @@ public class VersesDialog extends BaseDialog {
 
 		res.setBackgroundColor(S.applied().backgroundColor);
 		versesView.setCacheColorHint(S.applied().backgroundColor);
-		versesView.setVerseSelectionMode(VerseSelectionMode.singleClick);
+		versesView.setVerseSelectionMode(OldVersesView.VerseSelectionMode.singleClick);
 		versesView.setSelectedVersesListener(versesView_selectedVerses);
 
 		// build reference label
@@ -151,26 +153,9 @@ public class VersesDialog extends BaseDialog {
 					customCallbackData[i] = ari;
 				}
 
-				class Verses extends SingleChapterVerses {
-					@Override
-					public String getVerse(int verse_0) {
-						return displayedVerseTexts.get(verse_0);
-					}
-
-					@Override
-					public int getVerseCount() {
-						return displayedVerseTexts.size();
-					}
-
-					@Override
-					public String getVerseNumberText(int verse_0) {
-						return displayedVerseNumberTexts.get(verse_0);
-					}
-				}
-
 				final int firstAri = ariRanges.get(0);
 
-				versesView.setData(Ari.toBookChapter(firstAri), new Verses(), null, null, 0, sourceVersion, sourceVersionId);
+				versesView.setData(Ari.toBookChapter(firstAri), new VersesDialogNormalVerses(displayedVerseTexts, displayedVerseNumberTexts), null, null, 0, sourceVersion, sourceVersionId);
 			}
 		} else {
 			// read each version and display it. First version must be the sourceVersion.
@@ -178,8 +163,8 @@ public class VersesDialog extends BaseDialog {
 
 			// sort such that sourceVersion is first
 			Collections.sort(mversions, (lhs, rhs) -> {
-				int a = U.equals(lhs.getVersionId(), sourceVersionId)? -1: 0;
-				int b = U.equals(rhs.getVersionId(), sourceVersionId)? -1: 0;
+				int a = U.equals(lhs.getVersionId(), sourceVersionId) ? -1 : 0;
+				int b = U.equals(rhs.getVersionId(), sourceVersionId) ? -1 : 0;
 				return a - b;
 			});
 
@@ -189,82 +174,16 @@ public class VersesDialog extends BaseDialog {
 				customCallbackData[i] = mversions.get(i);
 			}
 
-			class Verses extends SingleChapterVerses implements SingleChapterVerses.WithTextSizeMult {
-				@Override
-				public String getVerse(int verse_0) {
-					// load version or take from existing if already loaded
-					final MVersion mversion = mversions.get(verse_0);
-					final Version loaded = displayedVersion[verse_0];
-
-					final Version version;
-					if (loaded == null) {
-						version = mversion.getVersion();
-						displayedVersion[verse_0] = version;
-					} else {
-						version = loaded;
-					}
-
-					if (version == null) {
-						return getString(R.string.version_error_opening, mversion.getVersionId());
-					}
-
-					final String res = version.loadVerseText(ari);
-					if (res == null) {
-						return getString(R.string.generic_verse_not_available_in_this_version);
-					}
-
-					return res;
-				}
-
-				@Override
-				public int getVerseCount() {
-					return mversions.size();
-				}
-
-				@Override
-				public String getVerseNumberText(int verse_0) {
-					// load version or take from existing if already loaded
-					final MVersion mversion = mversions.get(verse_0);
-					final Version loaded = displayedVersion[verse_0];
-
-					final Version version;
-					if (loaded == null) {
-						version = mversion.getVersion();
-						displayedVersion[verse_0] = version;
-					} else {
-						version = loaded;
-					}
-
-					if (version == null) {
-						return "ERROR"; // could not load version
-					}
-
-					String res = version.getShortName();
-					if (res == null) {
-						res = mversion.shortName;
-					}
-					if (res == null) { // still null???
-						res = version.getLongName(); // this one may not be null.
-					}
-
-					return res;
-				}
-
-				@Override
-				public float getTextSizeMult(final int verse_0) {
-					final MVersion mversion = mversions.get(verse_0);
-					return S.getDb().getPerVersionSettings(mversion.getVersionId()).fontSizeMultiplier;
-				}
-			}
-
-			versesView.setData(Ari.toBookChapter(ari), new Verses(), null, null, 0, null, null);
+			final VersesDialogCompareVerses verses = new VersesDialogCompareVerses(this.requireContext(), ari, mversions, displayedVersion);
+			versesView.setData(Ari.toBookChapter(ari), verses, null, null, 0, null, null);
 		}
 
 		return res;
 	}
 
-	VersesView.SelectedVersesListener versesView_selectedVerses = new VersesView.DefaultSelectedVersesListener() {
-		@Override public void onVerseSingleClick(VersesView v, int verse_1 /* this is actually position+1, not necessaryly verse_1 */) {
+	OldVersesView.SelectedVersesListener versesView_selectedVerses = new OldVersesView.DefaultSelectedVersesListener() {
+		@Override
+		public void onVerseSingleClick(OldVersesView v, int verse_1 /* this is actually position+1, not necessaryly verse_1 */) {
 			if (listener != null) {
 				if (!compareMode) {
 					listener.onVerseSelected(VersesDialog.this, (Integer) customCallbackData[verse_1 - 1]);

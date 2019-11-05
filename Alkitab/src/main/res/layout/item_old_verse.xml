@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<yuku.alkitab.base.verses.VerseItem xmlns:android="http://schemas.android.com/apk/res/android"
+<yuku.alkitab.base.widget.OldVerseItem xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content">
 
 	<FrameLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_alignWithParentIfMissing="true"
 		android:layout_alignParentStart="true"
+		android:layout_alignWithParentIfMissing="true"
 		android:layout_toStartOf="@+id/attributeView">
 
 		<TextView
@@ -20,15 +20,14 @@
 			android:id="@+id/lText"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_gravity="start"
-			android:includeFontPadding="true" />
+			android:layout_gravity="start" />
 
 	</FrameLayout>
 
-	<yuku.alkitab.base.widget.AttributeView
+	<yuku.alkitab.base.widget.OldAttributeView
 		android:id="@+id/attributeView"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentEnd="true" />
 
-</yuku.alkitab.base.verses.VerseItem>
+</yuku.alkitab.base.widget.OldVerseItem>

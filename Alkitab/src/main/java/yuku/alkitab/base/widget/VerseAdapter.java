@@ -25,7 +25,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 
 	// # field ctor
 	CallbackSpan.OnClickListener<Object> parallelListener_;
-	VersesView.AttributeListener attributeListener_;
+	OldVersesView.AttributeListener attributeListener_;
 	VerseInlineLinkSpan.Factory inlineLinkSpanFactory_;
 	final float density_;
 
@@ -207,11 +207,11 @@ public abstract class VerseAdapter extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 
-	public VersesView.AttributeListener getAttributeListener() {
+	public OldVersesView.AttributeListener getAttributeListener() {
 		return attributeListener_;
 	}
-	
-	public void setAttributeListener(VersesView.AttributeListener attributeListener) {
+
+	public void setAttributeListener(OldVersesView.AttributeListener attributeListener) {
 		attributeListener_ = attributeListener;
 		notifyDataSetChanged();
 	}
@@ -224,7 +224,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	/**
 	 * For example, when pos=0 is a pericope and pos=1 is the first verse,
 	 * this method returns 0.
-	 * 
+	 *
 	 * @return position on this adapter, or -1 if not found
 	 */
 	public int getPositionOfPericopeBeginningFromVerse(int verse_1) {
@@ -254,7 +254,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	/**
 	 * Let's say pos 0 is pericope and pos 1 is verse_1 1;
 	 * then this method called with verse_1=1 returns 1.
-	 * 
+	 *
 	 * @return position or -1 if not found
 	 */
 	public int getPositionIgnoringPericopeFromVerse(int verse_1) {
@@ -274,21 +274,21 @@ public abstract class VerseAdapter extends BaseAdapter {
 	 */
 	public int getVerseFromPosition(int position) {
 		if (itemPointer_ == null) return 0;
-		
+
 		if (position >= itemPointer_.length) {
 			position = itemPointer_.length - 1;
 		}
-		
+
 		int id = itemPointer_[position];
-		
+
 		if (id >= 0) {
 			return id + 1;
 		}
-		
+
 		// it's a pericope. Let's move forward until we get a verse
 		for (int i = position + 1; i < itemPointer_.length; i++) {
 			id = itemPointer_[i];
-			
+
 			if (id >= 0) {
 				return id + 1;
 			}
@@ -355,7 +355,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 
 		return _itemPointer[position] >= 0;
 	}
-	
+
 	private static int[] makeItemPointer(int nverse, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
 		int[] res = new int[nverse + nblock];
 

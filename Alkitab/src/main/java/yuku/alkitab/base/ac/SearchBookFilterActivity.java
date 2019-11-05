@@ -199,7 +199,7 @@ public class SearchBookFilterActivity extends BaseActivity {
 						checkBox.setChecked(all_on);
 					}
 
-					{ // then, put a change listener
+					{ // then, put a change selectedVersesListener
 						checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
 							// all on?
 							boolean all_on = true;

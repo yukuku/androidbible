@@ -49,6 +49,10 @@ android {
             signingConfig signingConfigs.release
         }
     }
+    kotlinOptions {
+        jvmTarget = '1.8'
+        freeCompilerArgs = ["-XXLanguage:+InlineClasses"]
+    }
     dexOptions {
         javaMaxHeapSize "2g"
         // Skip pre-dexing when running on Travis CI
@@ -106,6 +110,7 @@ dependencies {
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion"
     debugImplementation "com.facebook.stetho:stetho:$stethoVersion"
     debugImplementation "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
+    implementation "androidx.core:core-ktx:$androidxCoreVersion"
     implementation "androidx.annotation:annotation:$androidxAnnotationVersion"
     implementation "androidx.appcompat:appcompat:$androidxAppcompatVersion"
     implementation "androidx.percentlayout:percentlayout:$androidxPercentlayoutVersion"

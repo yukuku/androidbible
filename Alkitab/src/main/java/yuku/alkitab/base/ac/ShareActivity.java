@@ -354,7 +354,7 @@ public class ShareActivity extends BaseActivity {
 						}
 					}.execute();
 				} else {
-					// it's already loading, just add listener.
+					// it's already loading, just add selectedVersesListener.
 					info.loadedListeners.add(icon);
 				}
 			}
