@@ -28,7 +28,6 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':AlkitabIo')
     implementation project(':AlkitabModel')
     implementation project(':BintexReader')

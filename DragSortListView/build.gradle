@@ -26,6 +26,5 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "androidx.cursoradapter:cursoradapter:$androidxCursoradapterVersion"
 }

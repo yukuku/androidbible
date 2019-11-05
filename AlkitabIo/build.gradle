@@ -24,7 +24,6 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':AlkitabModel')
     implementation project(':BintexReader')
     testImplementation 'junit:junit:4.12'
