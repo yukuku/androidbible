@@ -5,6 +5,7 @@ import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
+import androidx.annotation.Nullable;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;
 
@@ -251,7 +252,7 @@ public class TwofingerLinearLayout extends LinearLayout {
 		void onTwofingerScale(float scale);
 		void onTwofingerDragX(float dx);
 		void onTwofingerDragY(float dy);
-		void onTwofingerEnd(Mode mode);
+		void onTwofingerEnd(@Nullable Mode mode);
 	}
 
 	public abstract static class OnefingerListener implements Listener {
@@ -268,7 +269,7 @@ public class TwofingerLinearLayout extends LinearLayout {
 		public void onTwofingerDragY(final float dy) {}
 
 		@Override
-		public void onTwofingerEnd(final Mode mode) {}
+		public void onTwofingerEnd(@Nullable final Mode mode) {}
 	}
 
 	// From API 19

@@ -224,9 +224,9 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
             moreSwipeYAllowed = false
         }
 
-        override fun onTwofingerEnd(mode: TwofingerLinearLayout.Mode) {
+        override fun onTwofingerEnd(mode: TwofingerLinearLayout.Mode?) {
             startFontSize = 0f
-            startDx = java.lang.Float.MIN_VALUE
+            startDx = Float.MIN_VALUE
             moreSwipeYAllowed = true
         }
     }

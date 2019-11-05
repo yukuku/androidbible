@@ -145,7 +145,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		}
 
 		@Override
-		public void onTwofingerEnd(final TwofingerLinearLayout.Mode mode) {
+		public void onTwofingerEnd(@Nullable final TwofingerLinearLayout.Mode mode) {
 		}
 	};
 

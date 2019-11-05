@@ -259,7 +259,7 @@ public class OldIsiActivity extends BaseLeftDrawerActivity implements XrefDialog
 		}
 
 		@Override
-		public void onTwofingerEnd(final TwofingerLinearLayout.Mode mode) {
+		public void onTwofingerEnd(@Nullable final TwofingerLinearLayout.Mode mode) {
 			startFontSize = 0;
 			startDx = Float.MIN_VALUE;
 			moreSwipeYAllowed = true;
