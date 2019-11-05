@@ -44,6 +44,7 @@ class VersesControllerImpl(
 ) : VersesController {
 
     private val checkedPositions = mutableSetOf<Int>()
+    private val attention = Attention()
 
     // TODO check if we still need this
     private val dataVersionNumber = AtomicInteger()
@@ -58,6 +59,7 @@ class VersesControllerImpl(
         rv.addOnScrollListener(rvScrollListener)
 
         val adapter = VersesAdapter(
+            attention = attention,
             isChecked = { position -> position in checkedPositions },
             toggleChecked = { position ->
                 if (position !in checkedPositions) {
@@ -78,50 +80,51 @@ class VersesControllerImpl(
         rv.adapter = adapter
     }
 
-    private val rvScrollListener get() = object: RecyclerView.OnScrollListener() {
-        var scrollState = RecyclerView.SCROLL_STATE_IDLE
+    private val rvScrollListener
+        get() = object : RecyclerView.OnScrollListener() {
+            var scrollState = RecyclerView.SCROLL_STATE_IDLE
 
-        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-            super.onScrollStateChanged(recyclerView, newState)
-            this.scrollState = newState
-        }
-
-        override fun onScrolled(view: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(view, dx, dy)
-
-            val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-            val firstChild = layoutManager.findViewByPosition(firstVisibleItemPosition) ?: return
-
-            var prop = 0f
-            var position = -1
-
-            val remaining = firstChild.bottom // padding top is ignored
-            if (remaining >= 0) { // bottom of first child is lower than top padding
-                position = firstVisibleItemPosition
-                prop = 1f - remaining.toFloat() / firstChild.height
-            } else { // we should have a second child
-                layoutManager.findViewByPosition(firstVisibleItemPosition + 1)?.let { secondChild ->
-                    position = firstVisibleItemPosition + 1
-                    prop = (-remaining).toFloat() / secondChild.height
-                }
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                this.scrollState = newState
             }
 
-            val verse_1 = versesDataModel.getVerseOrPericopeFromPosition(position)
+            override fun onScrolled(view: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(view, dx, dy)
 
-            if (scrollState != RecyclerView.SCROLL_STATE_IDLE) {
-                if (verse_1 > 0) {
-                    versesListeners.verseScrollListener.onVerseScroll(false, verse_1, prop)
-                } else {
-                    versesListeners.verseScrollListener.onVerseScroll(true, 0, 0f)
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+                val firstChild = layoutManager.findViewByPosition(firstVisibleItemPosition) ?: return
+
+                var prop = 0f
+                var position = -1
+
+                val remaining = firstChild.bottom // padding top is ignored
+                if (remaining >= 0) { // bottom of first child is lower than top padding
+                    position = firstVisibleItemPosition
+                    prop = 1f - remaining.toFloat() / firstChild.height
+                } else { // we should have a second child
+                    layoutManager.findViewByPosition(firstVisibleItemPosition + 1)?.let { secondChild ->
+                        position = firstVisibleItemPosition + 1
+                        prop = (-remaining).toFloat() / secondChild.height
+                    }
                 }
 
-                if (position == 0 && firstChild.top == view.paddingTop) {
-                    // we are really at the top
-                    versesListeners.verseScrollListener.onScrollToTop()
+                val verse_1 = versesDataModel.getVerseOrPericopeFromPosition(position)
+
+                if (scrollState != RecyclerView.SCROLL_STATE_IDLE) {
+                    if (verse_1 > 0) {
+                        versesListeners.verseScrollListener.onVerseScroll(false, verse_1, prop)
+                    } else {
+                        versesListeners.verseScrollListener.onVerseScroll(true, 0, 0f)
+                    }
+
+                    if (position == 0 && firstChild.top == view.paddingTop) {
+                        // we are really at the top
+                        versesListeners.verseScrollListener.onScrollToTop()
+                    }
                 }
             }
         }
-    }
 
     /**
      * Data for adapter: Verse data
@@ -130,6 +133,7 @@ class VersesControllerImpl(
         set(value) {
             field = value
             dataVersionNumber.incrementAndGet()
+            attention.clear()
             render()
         }
 
@@ -398,7 +402,13 @@ class VersesControllerImpl(
     }
 
     override fun callAttentionForVerse(verse_1: Int) {
-        // TODO("not implemented")
+        val pos = versesDataModel.getPositionIgnoringPericopeFromVerse(verse_1)
+        if (pos == -1) return
+
+        attention.verses_1 += verse_1
+        attention.start = System.currentTimeMillis()
+
+        layoutManager.findViewByPosition(pos)?.invalidate()
     }
 
     override fun setEmptyMessage(message: CharSequence?, textColor: Int) {
@@ -406,17 +416,24 @@ class VersesControllerImpl(
         rv.emptyMessagePaint.color = textColor
     }
 
-    override fun invalidate() {
-        rv.postOnAnimation {
-            render()
-        }
-    }
-
     fun render() {
         adapter.data = versesDataModel
         adapter.ui = versesUiModel
         adapter.listeners = versesListeners
     }
+}
+
+/**
+ * For calling attention. All attentioned verses have the same start time.
+ * The last call to callAttentionForVerse() decides as when the animation starts.
+ */
+class Attention(var start: Long = 0L, val verses_1: MutableSet<Int> = mutableSetOf()) {
+    fun clear() {
+        start = 0L
+        verses_1.clear()
+    }
+
+    fun hasAny() = start != 0L && verses_1.isNotEmpty()
 }
 
 sealed class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
@@ -429,6 +446,7 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         data: VersesDataModel,
         ui: VersesUiModel,
         listeners: VersesListeners,
+        attention: Attention,
         checked: Boolean,
         toggleChecked: (position: Int) -> Unit,
         index: Int
@@ -508,7 +526,7 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
                 AppLog.e(TAG, "Error when querying dictionary content provider", e)
             }
         }
-        
+
 //			{ // DUMP
 //				Log.d(TAG, "==== DUMP verse " + (id + 1));
 //				SpannedString sb = (SpannedString) lText.getText();
@@ -520,17 +538,18 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
 //				}
 //			}
 
-        // TODO Do we need to call attention?
-//        if (attentionStart_ != 0L && attentionPositions_ != null && attentionPositions_.contains(position)) {
-//            res.callAttention(attentionStart_)
-//        } else {
-//            res.callAttention(0)
-//        }
+        // Do we need to call attention?
+        if (attention.hasAny() && verse_1 in attention.verses_1) {
+            view.callAttention(attention.start)
+        } else {
+            view.callAttention(0L)
+        }
 
         // Click listener on the whole item view
         view.setOnClickListener {
             when (ui.verseSelectionMode) {
-                VersesController.VerseSelectionMode.none -> {}
+                VersesController.VerseSelectionMode.none -> {
+                }
                 VersesController.VerseSelectionMode.singleClick -> {
                     listeners.selectedVersesListener.onVerseSingleClick(data.getVerse_1FromPosition(adapterPosition))
                 }
@@ -642,6 +661,7 @@ class PericopeHolder(private val view: PericopeHeaderItem) : ItemHolder(view) {
 }
 
 class VersesAdapter(
+    private val attention: Attention,
     private val isChecked: VersesAdapter.(position: Int) -> Boolean,
     private val toggleChecked: VersesAdapter.(position: Int) -> Unit
 ) : RecyclerView.Adapter<ItemHolder>() {
@@ -712,7 +732,7 @@ class VersesAdapter(
         when (holder) {
             is VerseTextHolder -> {
                 val index = data.getVerse_0(position)
-                holder.bind(data, ui, listeners, isChecked(position), { toggleChecked(it) }, index)
+                holder.bind(data, ui, listeners, attention, isChecked(position), { toggleChecked(it) }, index)
             }
             is PericopeHolder -> {
                 val index = data.getPericopeIndex(position)

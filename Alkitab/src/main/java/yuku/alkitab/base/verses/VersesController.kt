@@ -97,9 +97,4 @@ interface VersesController {
     fun callAttentionForVerse(verse_1: Int)
 
     fun setEmptyMessage(message: CharSequence?, textColor: Int)
-
-    /**
-     * Ask to render again on the next chance.
-     */
-    fun invalidate() 
 }

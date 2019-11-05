@@ -71,7 +71,11 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
      * Whether we briefly "color" this verse resulting from navigation from other parts of the app (e.g. verse navigation, search results).
      * If the value is 0, it means do not color. If nonzero, it is the starting time when the animation starts.
      */
-    private var attentionStart: Long = 0
+    private var attentionStart = 0L
+        set(value) {
+            field = value
+            invalidate()
+        }
 
     override fun onFinishInflate() {
         super.onFinishInflate()
@@ -146,15 +150,8 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
         super.onDraw(canvas)
     }
 
-    fun callAttention(attentionStartTime: Long) {
-        if (this.attentionStart != attentionStartTime) {
-            this.attentionStart = attentionStartTime
-
-            if (attentionStartTime != 0L) {
-                setWillNotDraw(false)
-            }
-            invalidate()
-        }
+    fun callAttention(startTime: Long) {
+        this.attentionStart = startTime
     }
 
     override fun onDragEvent(event: DragEvent) = when (event.action) {
@@ -226,26 +223,19 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
         val progress_mark_bits = attributeView.progressMarkBits
         for (preset_id in 0 until AttributeView.PROGRESS_MARK_TOTAL_COUNT) {
             if (progress_mark_bits and (1 shl AttributeView.PROGRESS_MARK_BITS_START + preset_id) != 0) {
-                val progressMark = S.getDb().getProgressMarkByPresetId(preset_id)
+                S.getDb().getProgressMarkByPresetId(preset_id)?.let { progressMark ->
+                    val caption = if (TextUtils.isEmpty(progressMark.caption)) {
+                        context.getString(AttributeView.getDefaultProgressMarkStringResource(preset_id))
+                    } else {
+                        progressMark.caption
+                    }
 
-                val caption: String
-                if (TextUtils.isEmpty(progressMark!!.caption)) {
-                    caption = context.getString(AttributeView.getDefaultProgressMarkStringResource(preset_id))
-                } else {
-                    caption = progressMark.caption
+                    res.append(' ').append(context.getString(R.string.desc_verse_attribute_progress_mark, caption))
                 }
-
-                res.append(' ').append(context.getString(R.string.desc_verse_attribute_progress_mark, caption))
             }
         }
 
         return res
-    }
-
-    // TODO(VersesView revamp)
-    fun invalidateSelectedVersePaints() {
-//        checkedPaintSolid = null
-//        attentionPaint = null
     }
 
     companion object {

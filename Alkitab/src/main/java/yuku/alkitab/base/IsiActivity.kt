@@ -1212,9 +1212,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
 
     private fun callAttentionForVerseToBothSplits(verse_1: Int) {
         lsSplit0.callAttentionForVerse(verse_1)
-        if (activeSplit != null) {
-            lsSplit1.callAttentionForVerse(verse_1)
-        }
+        lsSplit1.callAttentionForVerse(verse_1)
     }
 
     override fun onNewIntent(intent: Intent) {

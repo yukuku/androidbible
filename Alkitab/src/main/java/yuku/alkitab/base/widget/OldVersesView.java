@@ -638,6 +638,10 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		adapter.setDictionaryModeAris(aris);
 	}
 
+	public void callAttentionForVerse(final int verse_1) {
+		adapter.callAttentionForVerse(verse_1);
+	}
+
 	// ############################# migrate marker
 
 	private void init() {
@@ -674,9 +678,4 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 
 		hideOrShowContextMenuButton();
 	}
-
-	public void callAttentionForVerse(final int verse_1) {
-		adapter.callAttentionForVerse(verse_1);
-	}
-
 }
