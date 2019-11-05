@@ -32,8 +32,8 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 	// http://stackoverflow.com/questions/6369491/stop-listview-scroll-animation
 	static class StopListFling {
 
-		private static Field mFlingEndField;
-		private static Method mFlingEndMethod;
+		private static Field mFlingEndField = null;
+		private static Method mFlingEndMethod = null;
 
 		static {
 			try {
@@ -64,39 +64,25 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 
 	public interface SelectedVersesListener {
 		void onSomeVersesSelected(OldVersesView v);
-
 		void onNoVersesSelected(OldVersesView v);
-
 		void onVerseSingleClick(OldVersesView v, int verse_1);
 	}
 
 	public static abstract class DefaultSelectedVersesListener implements SelectedVersesListener {
-		@Override
-		public void onSomeVersesSelected(final OldVersesView v) {
-		}
-
-		@Override
-		public void onNoVersesSelected(final OldVersesView v) {
-		}
-
-		@Override
-		public void onVerseSingleClick(final OldVersesView v, final int verse_1) {
-		}
+		@Override public void onSomeVersesSelected(final OldVersesView v) {}
+		@Override public void onNoVersesSelected(final OldVersesView v) {}
+		@Override public void onVerseSingleClick(final OldVersesView v, final int verse_1) {}
 	}
 
 	public interface AttributeListener {
 		void onBookmarkAttributeClick(Version version, String versionId, int ari);
-
 		void onNoteAttributeClick(Version version, String versionId, int ari);
-
 		void onProgressMarkAttributeClick(Version version, String versionId, int preset_id);
-
 		void onHasMapsAttributeClick(Version version, String versionId, int ari);
 	}
 
 	public interface OnVerseScrollListener {
 		void onVerseScroll(OldVersesView v, boolean isPericope, int verse_1, float prop);
-
 		void onScrollToTop(OldVersesView v);
 	}
 
@@ -126,9 +112,63 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		}
 	}
 
+	private SingleViewVerseAdapter adapter;
+	private SelectedVersesListener listener;
+	private VerseSelectionMode verseSelectionMode;
+	private Drawable originalSelector;
+	private OnVerseScrollListener onVerseScrollListener;
+	private AbsListView.OnScrollListener userOnScrollListener;
+	private int scrollState = 0;
+	/**
+	 * Used as a cache, storing views to be fed to convertView parameter
+	 * when measuring items manually at {@link #getMeasuredItemHeight(int)}.
+	 */
+	private View[] scrollToVerseConvertViews;
+	private String name;
+	private boolean firstTimeScroll = true;
+	/**
+	 * Updated every time {@link #setData(int, SingleChapterVerses, int[], PericopeBlock[], int, Version, String)}
+	 * or {@link #setDataEmpty()} is called. Used to track data changes, so delayed scroll, etc can be prevented from happening if the data has changed.
+	 */
+	private AtomicInteger dataVersionNumber = new AtomicInteger();
+
 	public OldVersesView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init();
+	}
+
+	/**
+	 * Set the name of this VersesView for debugging.
+	 */
+	public void setName(final String name) {
+		this.name = name;
+	}
+
+	private void init() {
+		if (isInEditMode()) return;
+
+		originalSelector = getSelector();
+
+		setDivider(null);
+		setFocusable(false);
+
+		setAdapter(adapter = new SingleViewVerseAdapter(getContext()));
+		setOnItemClickListener(itemClick);
+		setVerseSelectionMode(VerseSelectionMode.multiple);
+
+		super.setOnScrollListener(this);
+	}
+
+	@Override public final void setOnScrollListener(AbsListView.OnScrollListener l) {
+		userOnScrollListener = l;
+	}
+
+	@Override public VerseAdapter getAdapter() {
+		return adapter;
+	}
+
+	public void setParallelListener(CallbackSpan.OnClickListener<Object> parallelListener) {
+		adapter.setParallelListener(parallelListener);
 	}
 
 	public AttributeListener getAttributeListener() {
@@ -139,16 +179,13 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		adapter.setAttributeListener(attributeListener);
 	}
 
-	private String name;
-
-	/**
-	 * Set the name of this VersesView for debugging.
-	 */
-	public void setName(final String name) {
-		this.name = name;
+	public void setInlineLinkSpanFactory(final VerseInlineLinkSpan.Factory inlineLinkSpanFactory) {
+		adapter.setInlineLinkSpanFactory(inlineLinkSpanFactory);
 	}
 
-	VerseSelectionMode verseSelectionMode;
+	public void setDictionaryListener(CallbackSpan.OnClickListener<DictionaryLinkInfo> listener) {
+		adapter.setDictionaryListener(listener);
+	}
 
 	public void setVerseSelectionMode(VerseSelectionMode mode) {
 		this.verseSelectionMode = mode;
@@ -166,65 +203,15 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		}
 	}
 
-	SelectedVersesListener listener;
-
-	public void setSelectedVersesListener(SelectedVersesListener listener) {
-		this.listener = listener;
-	}
-
-	// no longer used in new verseview
-	private Drawable originalSelector;
-
-	private OnVerseScrollListener onVerseScrollListener;
-
 	public void setOnVerseScrollListener(OnVerseScrollListener onVerseScrollListener) {
 		this.onVerseScrollListener = onVerseScrollListener;
-	}
-
-	// no longer used in new verseview
-	private AbsListView.OnScrollListener userOnScrollListener;
-	// no longer used in new verseview
-	private boolean firstTimeScroll = true;
-	// no longer used in new verseview
-	private int scrollState = 0;
-
-	/**
-	 * Updated every time {@link #setData(int, SingleChapterVerses, int[], PericopeBlock[], int, Version, String)}
-	 * or {@link #setDataEmpty()} is called. Used to track data changes, so delayed scroll, etc can be prevented from happening if the data has changed.
-	 */
-	private AtomicInteger dataVersionNumber = new AtomicInteger();
-
-	@NonNull
-	@Override
-	public String toString() {
-		return name != null ? ("VersesView{name=" + name + "}") : "VersesView";
-	}
-
-	SingleViewVerseAdapter adapter;
-
-	@Override
-	public final void setOnScrollListener(AbsListView.OnScrollListener l) {
-		userOnScrollListener = l;
-	}
-
-	public void setParallelListener(CallbackSpan.OnClickListener<Object> parallelListener) {
-		adapter.setParallelListener(parallelListener);
-	}
-
-	public void setInlineLinkSpanFactory(final VerseInlineLinkSpan.Factory inlineLinkSpanFactory) {
-		adapter.setInlineLinkSpanFactory(inlineLinkSpanFactory);
-	}
-
-	public void setDictionaryListener(CallbackSpan.OnClickListener<DictionaryLinkInfo> listener) {
-		adapter.setDictionaryListener(listener);
 	}
 
 	public void reloadAttributeMap() {
 		adapter.reloadAttributeMap();
 	}
 
-	@Nullable
-	public String getVerseText(int verse_1) {
+	@Nullable public String getVerseText(int verse_1) {
 		return adapter.getVerseText(verse_1);
 	}
 
@@ -235,6 +222,53 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		return adapter.getVerseFromPosition(getPositionBasedOnScroll());
 	}
 
+	public int getPositionBasedOnScroll() {
+		int pos = getFirstVisiblePosition();
+
+		// check if the top one has been scrolled
+		View child = getChildAt(0);
+		if (child != null) {
+			int top = child.getTop();
+			if (top == 0) {
+				return pos;
+			}
+			int bottom = child.getBottom();
+			if (bottom > 0) {
+				return pos;
+			} else {
+				return pos + 1;
+			}
+		}
+
+		return pos;
+	}
+
+	/**
+	 * @param version can be null if no text size multiplier is to be used
+	 * @param versionId can be null if no text size multiplier is to be used
+	 */
+	public void setData(int ariBc, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock, @Nullable Version version, @Nullable String versionId) {
+		dataVersionNumber.incrementAndGet();
+		adapter.setData(ariBc, verses, pericopeAris, pericopeBlocks, nblock, version, versionId);
+		stopFling();
+	}
+
+	@Override
+	public void invalidateViews() {
+		adapter.calculateTextSizeMult();
+		super.invalidateViews();
+	}
+
+	private OnItemClickListener itemClick = new OnItemClickListener() {
+		@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			if (verseSelectionMode == VerseSelectionMode.singleClick) {
+				if (listener != null) listener.onVerseSingleClick(OldVersesView.this, adapter.getVerseFromPosition(position));
+			} else if (verseSelectionMode == VerseSelectionMode.multiple) {
+				adapter.notifyDataSetChanged();
+				hideOrShowContextMenuButton();
+			}
+		}
+	};
 
 	public void uncheckAllVerses(boolean callListener) {
 		SparseBooleanArray checkedPositions = getCheckedItemPositions();
@@ -274,9 +308,14 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		}
 	}
 
-	public void setDataEmpty() {
-		dataVersionNumber.incrementAndGet();
-		adapter.setDataEmpty();
+	void hideOrShowContextMenuButton() {
+		if (verseSelectionMode != VerseSelectionMode.multiple) return;
+
+		if (getCheckedItemCount() > 0) {
+			if (listener != null) listener.onSomeVersesSelected(this);
+		} else {
+			if (listener != null) listener.onNoVersesSelected(this);
+		}
 	}
 
 	public IntArrayList getSelectedVerses_1() {
@@ -297,109 +336,22 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		return res;
 	}
 
-	public void scrollToTop() {
-		post(() -> setSelectionFromTop(0, 0));
+	@Override public Parcelable onSaveInstanceState() {
+		Bundle b = new Bundle();
+		Parcelable superState = super.onSaveInstanceState();
+		b.putParcelable("superState", superState);
+		b.putInt("verseSelectionMode", verseSelectionMode.ordinal());
+		return b;
 	}
 
-	/**
-	 * This is different from {@link #scrollToVerse(int, float)} in that if the requested
-	 * verse has a pericope header, this will scroll to the top of the pericope header,
-	 * not to the top of the verse.
-	 */
-	public void scrollToVerse(final int verse_1) {
-		final int position = adapter.getPositionOfPericopeBeginningFromVerse(verse_1);
-
-		if (position == -1) {
-			AppLog.w(TAG, "could not find verse_1=" + verse_1 + ", weird!");
-		} else {
-			final int delay = firstTimeScroll ? 34 : 0;
-			final int vn = dataVersionNumber.get();
-
-			postDelayed(() -> {
-				// this may happen async from above, so check data version first
-				if (vn != dataVersionNumber.get()) return;
-
-				// negate padding offset, unless this is the first verse
-				final int paddingNegator = position == 0 ? 0 : -this.getPaddingTop();
-
-				stopFling();
-				setSelectionFromTop(position, paddingNegator);
-
-				firstTimeScroll = false;
-			}, delay);
-		}
-	}
-
-	/**
-	 * This is different from {@link #scrollToVerse(int)} in that if the requested
-	 * verse has a pericope header, this will scroll to the verse, ignoring the pericope header.
-	 */
-	public void scrollToVerse(int verse_1, final float prop) {
-		final int position = adapter.getPositionIgnoringPericopeFromVerse(verse_1);
-
-		if (position == -1) {
-			AppLog.d(TAG, "could not find verse_1: " + verse_1);
-			return;
+	@Override public void onRestoreInstanceState(Parcelable state) {
+		if (state instanceof Bundle) {
+			Bundle b = (Bundle) state;
+			super.onRestoreInstanceState(b.getParcelable("superState"));
+			setVerseSelectionMode(VerseSelectionMode.values()[b.getInt("verseSelectionMode")]);
 		}
 
-		post(() -> {
-			// this may happen async from above, so check first if pos is still valid
-			if (position >= getCount()) return;
-
-			// negate padding offset, unless this is the first verse
-			final int paddingNegator = position == 0 ? 0 : -this.getPaddingTop();
-
-			final int firstPos = getFirstVisiblePosition();
-			final int lastPos = getLastVisiblePosition();
-			if (position >= firstPos && position <= lastPos) {
-				// we have the child on screen, no need to measure
-				View child = getChildAt(position - firstPos);
-				stopFling();
-				setSelectionFromTop(position, -(int) (prop * child.getHeight()) + paddingNegator);
-				return;
-			}
-
-			final int measuredHeight = getMeasuredItemHeight(position);
-
-			stopFling();
-			setSelectionFromTop(position, -(int) (prop * measuredHeight) + paddingNegator);
-		});
-	}
-
-	/**
-	 * Used as a cache, storing views to be fed to convertView parameter
-	 * when measuring items manually at {@link #getMeasuredItemHeight(int)}.
-	 */
-	private View[] scrollToVerseConvertViews;
-
-	private int getMeasuredItemHeight(final int position) {
-		// child needed is not on screen, we need to measure
-		if (scrollToVerseConvertViews == null) {
-			// initialize scrollToVerseConvertViews if needed
-			scrollToVerseConvertViews = new View[adapter.getViewTypeCount()];
-		}
-		final int itemType = adapter.getItemViewType(position);
-		final View convertView = scrollToVerseConvertViews[itemType];
-		final View child = adapter.getView(position, convertView, this);
-		child.measure(MeasureSpec.makeMeasureSpec(this.getWidth() - this.getPaddingLeft() - this.getPaddingRight(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-		scrollToVerseConvertViews[itemType] = child;
-		return child.getMeasuredHeight();
-	}
-
-	/**
-	 * @param version   can be null if no text size multiplier is to be used
-	 * @param versionId can be null if no text size multiplier is to be used
-	 */
-	public void setData(int ariBc, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock, @Nullable Version version, @Nullable String versionId) {
-		dataVersionNumber.incrementAndGet();
-		adapter.setData(ariBc, verses, pericopeAris, pericopeBlocks, nblock, version, versionId);
-		stopFling();
-	}
-
-	@Override
-	public void invalidateViews() {
-		adapter.calculateTextSizeMult();
-		super.invalidateViews();
+		hideOrShowContextMenuButton();
 	}
 
 	public PressResult press(int keyCode) {
@@ -424,7 +376,7 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 				}
 
 				// negate padding offset, unless this is the first item
-				final int paddingNegator = newPos == 0 ? 0 : -this.getPaddingTop();
+				final int paddingNegator = newPos == 0? 0 : -this.getPaddingTop();
 				smoothScrollFixed(newPos, paddingNegator);
 
 				return new PressResult(PressKind.consumed, adapter.getVerseFromPosition(newPos));
@@ -463,7 +415,7 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 				}
 
 				// negate padding offset, unless this is the first item
-				final int paddingNegator = newPos == 0 ? 0 : -this.getPaddingTop();
+				final int paddingNegator = newPos == 0? 0 : -this.getPaddingTop();
 				smoothScrollFixed(newPos, paddingNegator);
 
 				return new PressResult(PressKind.consumed, adapter.getVerseFromPosition(newPos));
@@ -497,49 +449,6 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		}
 
 		return PressResult.NOP;
-	}
-
-	public int getPositionBasedOnScroll() {
-		int pos = getFirstVisiblePosition();
-
-		// check if the top one has been scrolled
-		View child = getChildAt(0);
-		if (child != null) {
-			int top = child.getTop();
-			if (top == 0) {
-				return pos;
-			}
-			int bottom = child.getBottom();
-			if (bottom > 0) {
-				return pos;
-			} else {
-				return pos + 1;
-			}
-		}
-
-		return pos;
-	}
-
-	private OnItemClickListener itemClick = new OnItemClickListener() {
-		@Override
-		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-			if (verseSelectionMode == VerseSelectionMode.singleClick) {
-				if (listener != null) listener.onVerseSingleClick(OldVersesView.this, adapter.getVerseFromPosition(position));
-			} else if (verseSelectionMode == VerseSelectionMode.multiple) {
-				adapter.notifyDataSetChanged();
-				hideOrShowContextMenuButton();
-			}
-		}
-	};
-
-	void hideOrShowContextMenuButton() {
-		if (verseSelectionMode != VerseSelectionMode.multiple) return;
-
-		if (getCheckedItemCount() > 0) {
-			if (listener != null) listener.onSomeVersesSelected(this);
-		} else {
-			if (listener != null) listener.onNoVersesSelected(this);
-		}
 	}
 
 	/**
@@ -583,19 +492,104 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		}
 	}
 
-	public void stopFling() {
-		StopListFling.stop(this);
+	public void callAttentionForVerse(final int verse_1) {
+		adapter.callAttentionForVerse(verse_1);
 	}
 
-	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) {
+	/**
+	 * This is different from {@link #scrollToVerse(int, float)} in that if the requested
+	 * verse has a pericope header, this will scroll to the top of the pericope header,
+	 * not to the top of the verse.
+	 */
+	public void scrollToVerse(final int verse_1) {
+		final int position = adapter.getPositionOfPericopeBeginningFromVerse(verse_1);
+
+		if (position == -1) {
+			AppLog.w(TAG, "could not find verse_1=" + verse_1 + ", weird!");
+		} else {
+			final int delay = firstTimeScroll? 34: 0;
+			final int vn = dataVersionNumber.get();
+
+			postDelayed(() -> {
+				// this may happen async from above, so check data version first
+				if (vn != dataVersionNumber.get()) return;
+
+				// negate padding offset, unless this is the first verse
+				final int paddingNegator = position == 0? 0 : -this.getPaddingTop();
+
+				stopFling();
+				setSelectionFromTop(position, paddingNegator);
+
+				firstTimeScroll = false;
+			}, delay);
+		}
+	}
+
+	/**
+	 * This is different from {@link #scrollToVerse(int)} in that if the requested
+	 * verse has a pericope header, this will scroll to the verse, ignoring the pericope header.
+	 */
+	public void scrollToVerse(int verse_1, final float prop) {
+		final int position = adapter.getPositionIgnoringPericopeFromVerse(verse_1);
+
+		if (position == -1) {
+			AppLog.d(TAG, "could not find verse_1: " + verse_1);
+			return;
+		}
+
+		post(() -> {
+			// this may happen async from above, so check first if pos is still valid
+			if (position >= getCount()) return;
+
+			// negate padding offset, unless this is the first verse
+			final int paddingNegator = position == 0? 0 : -this.getPaddingTop();
+
+			final int firstPos = getFirstVisiblePosition();
+			final int lastPos = getLastVisiblePosition();
+			if (position >= firstPos && position <= lastPos) {
+				// we have the child on screen, no need to measure
+				View child = getChildAt(position - firstPos);
+				stopFling();
+				setSelectionFromTop(position, -(int) (prop * child.getHeight()) + paddingNegator);
+				return;
+			}
+
+			final int measuredHeight = getMeasuredItemHeight(position);
+
+			stopFling();
+			setSelectionFromTop(position, -(int) (prop * measuredHeight) + paddingNegator);
+		});
+	}
+
+	private int getMeasuredItemHeight(final int position) {
+		// child needed is not on screen, we need to measure
+		if (scrollToVerseConvertViews == null) {
+			// initialize scrollToVerseConvertViews if needed
+			scrollToVerseConvertViews = new View[adapter.getViewTypeCount()];
+		}
+		final int itemType = adapter.getItemViewType(position);
+		final View convertView = scrollToVerseConvertViews[itemType];
+		final View child = adapter.getView(position, convertView, this);
+		child.measure(MeasureSpec.makeMeasureSpec(this.getWidth() - this.getPaddingLeft() - this.getPaddingRight(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+		scrollToVerseConvertViews[itemType] = child;
+		return child.getMeasuredHeight();
+	}
+
+	public void scrollToTop() {
+		post(() -> setSelectionFromTop(0, 0));
+	}
+
+	public void setSelectedVersesListener(SelectedVersesListener listener) {
+		this.listener = listener;
+	}
+
+	@Override public void onScrollStateChanged(AbsListView view, int scrollState) {
 		if (userOnScrollListener != null) userOnScrollListener.onScrollStateChanged(view, scrollState);
 
 		this.scrollState = scrollState;
 	}
 
-	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+	@Override public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 		if (userOnScrollListener != null) userOnScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
 
 		if (onVerseScrollListener == null) return;
@@ -634,48 +628,22 @@ public class OldVersesView extends ListView implements AbsListView.OnScrollListe
 		}
 	}
 
+	public void setDataEmpty() {
+		dataVersionNumber.incrementAndGet();
+		adapter.setDataEmpty();
+	}
+
+	public void stopFling() {
+		StopListFling.stop(this);
+	}
+
+	@NonNull
+	@Override
+	public String toString() {
+		return name != null? ("VersesView{name=" + name + "}"): "VersesView";
+	}
+
 	public void setDictionaryModeAris(@Nullable final SparseBooleanArray aris) {
 		adapter.setDictionaryModeAris(aris);
-	}
-
-	public void callAttentionForVerse(final int verse_1) {
-		adapter.callAttentionForVerse(verse_1);
-	}
-
-	// ############################# migrate marker
-
-	private void init() {
-		if (isInEditMode()) return;
-
-		originalSelector = getSelector();
-
-		setDivider(null);
-		setFocusable(false);
-
-		setAdapter(adapter = new SingleViewVerseAdapter(getContext()));
-		setOnItemClickListener(itemClick);
-		setVerseSelectionMode(VerseSelectionMode.multiple);
-
-		super.setOnScrollListener(this);
-	}
-
-	@Override
-	public Parcelable onSaveInstanceState() {
-		Bundle b = new Bundle();
-		Parcelable superState = super.onSaveInstanceState();
-		b.putParcelable("superState", superState);
-		b.putInt("verseSelectionMode", verseSelectionMode.ordinal());
-		return b;
-	}
-
-	@Override
-	public void onRestoreInstanceState(Parcelable state) {
-		if (state instanceof Bundle) {
-			Bundle b = (Bundle) state;
-			super.onRestoreInstanceState(b.getParcelable("superState"));
-			setVerseSelectionMode(VerseSelectionMode.values()[b.getInt("verseSelectionMode")]);
-		}
-
-		hideOrShowContextMenuButton();
 	}
 }
