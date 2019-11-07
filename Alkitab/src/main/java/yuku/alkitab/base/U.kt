@@ -1,13 +1,17 @@
 package yuku.alkitab.base
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.StateListDrawable
 import android.os.Build
 import android.widget.TextView
 import androidx.annotation.Keep
 import androidx.core.graphics.ColorUtils
+import androidx.core.os.ConfigurationCompat
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.storage.NoBackupSharedPreferences
 import yuku.alkitab.base.storage.Prefkey
@@ -49,8 +53,7 @@ object U {
             pos = p + 2
 
             if (p + 1 < text.length) {
-                val skipped = text[p + 1]
-                when (skipped) {
+                when (text[p + 1] /* skipped character */) {
                     // did we skip "@<"?
                     '<' -> {
                         // look for matching "@>"
@@ -81,7 +84,7 @@ object U {
         val sb = StringBuilder(10)
         sb.append('b') // 'b': background color
         val h = Integer.toHexString(colorRgb_background)
-        for (x in h.length..5) {
+        for (x in h.length until 6) {
             sb.append('0')
         }
         sb.append(h)
@@ -93,7 +96,7 @@ object U {
      */
     @JvmStatic
     fun decodeLabelBackgroundColor(backgroundColor: String?): Int {
-        if (backgroundColor == null || backgroundColor.length == 0) return -1
+        if (backgroundColor == null || backgroundColor.isEmpty()) return -1
         return if (backgroundColor.length >= 7 && backgroundColor[0] == 'b') { // 'b': background color
             Integer.parseInt(backgroundColor.substring(1, 7), 16)
         } else {
@@ -104,110 +107,25 @@ object U {
     @JvmStatic
     fun getLabelForegroundColorBasedOnBackgroundColor(colorRgb: Int): Int {
         val hsl = floatArrayOf(0f, 0f, 0f)
-        rgbToHsl(colorRgb, hsl)
+        ColorUtils.RGBToHSL(Color.red(colorRgb), Color.green(colorRgb), Color.blue(colorRgb), hsl)
 
-        if (hsl[2] > 0.5f)
+        if (hsl[2] > 0.5f) {
             hsl[2] -= 0.44f
-        else
+        } else {
             hsl[2] += 0.44f
-
-        return hslToRgb(hsl)
-    }
-
-    @JvmStatic
-    fun rgbToHsl(rgb: Int, hsl: FloatArray) {
-        val r = (0x00ff0000 and rgb shr 16) / 255f
-        val g = (0x0000ff00 and rgb shr 8) / 255f
-        val b = (0x000000ff and rgb) / 255f
-        val max = Math.max(Math.max(r, g), b)
-        val min = Math.min(Math.min(r, g), b)
-        val c = max - min
-
-        var h_ = 0f
-        if (c == 0f) {
-            h_ = 0f
-        } else if (max == r) {
-            h_ = (g - b) / c
-            if (h_ < 0) h_ += 6f
-        } else if (max == g) {
-            h_ = (b - r) / c + 2f
-        } else if (max == b) {
-            h_ = (r - g) / c + 4f
-        }
-        val h = 60f * h_
-
-        val l = (max + min) * 0.5f
-
-        val s: Float
-        if (c == 0f) {
-            s = 0f
-        } else {
-            s = c / (1 - Math.abs(2f * l - 1f))
         }
 
-        hsl[0] = h
-        hsl[1] = s
-        hsl[2] = l
-    }
-
-    @JvmStatic
-    fun hslToRgb(hsl: FloatArray): Int {
-        val h = hsl[0]
-        val s = hsl[1]
-        val l = hsl[2]
-
-        val c = (1 - Math.abs(2f * l - 1f)) * s
-        val h_ = h / 60f
-        var h_mod2 = h_
-        if (h_mod2 >= 4f)
-            h_mod2 -= 4f
-        else if (h_mod2 >= 2f) h_mod2 -= 2f
-
-        val x = c * (1 - Math.abs(h_mod2 - 1))
-        val r_: Float
-        val g_: Float
-        val b_: Float
-        if (h_ < 1) {
-            r_ = c
-            g_ = x
-            b_ = 0f
-        } else if (h_ < 2) {
-            r_ = x
-            g_ = c
-            b_ = 0f
-        } else if (h_ < 3) {
-            r_ = 0f
-            g_ = c
-            b_ = x
-        } else if (h_ < 4) {
-            r_ = 0f
-            g_ = x
-            b_ = c
-        } else if (h_ < 5) {
-            r_ = x
-            g_ = 0f
-            b_ = c
-        } else {
-            r_ = c
-            g_ = 0f
-            b_ = x
-        }
-
-        val m = l - 0.5f * c
-        val r = ((r_ + m) * 255f + 0.5f).toInt()
-        val g = ((g_ + m) * 255f + 0.5f).toInt()
-        val b = ((b_ + m) * 255f + 0.5f).toInt()
-        return r shl 16 or (g shl 8) or b
+        return ColorUtils.HSLToColor(hsl) and 0xffffff
     }
 
     @JvmStatic
     fun copyToClipboard(text: CharSequence) {
-        val clipboardManager = App.context.getSystemService(Context.CLIPBOARD_SERVICE) as android.text.ClipboardManager
-        clipboardManager.text = text
+        val clipboardManager = App.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipboardManager.setPrimaryClip(ClipData.newPlainText(null, text))
     }
 
     @JvmStatic
-    fun getForegroundColorOnDarkBackgroundByBookId(bookId: Int):Int {
+    fun getForegroundColorOnDarkBackgroundByBookId(bookId: Int): Int {
         return when (bookId) {
             in 0..38 -> // OT
                 0xff_ef5350.toInt() // Pink
@@ -216,7 +134,7 @@ object U {
             else -> // others
                 0xff_eeeeee.toInt() // Grey 200
         }
-	}
+    }
 
     @JvmStatic
     fun getBackgroundColorByBookId(bookId: Int): Int {
@@ -228,7 +146,7 @@ object U {
             else -> // others
                 0xff_212121.toInt() // Grey 900
         }
-	}
+    }
 
     @JvmStatic
     fun getSearchKeywordTextColorByBrightness(brightness: Float): Int {
@@ -338,40 +256,44 @@ object U {
     }
 
     @Keep
-    class InstallationInfoJson {
-        var installation_id: String? = null
-        var app_packageName: String? = null
-        var app_versionCode: Int = 0
-        var app_debug: Boolean = false
-        var build_manufacturer: String? = null
-        var build_model: String? = null
-        var build_device: String? = null
-        var build_product: String? = null
-        var os_sdk_int: Int = 0
-        var os_release: String? = null
-        var locale: String? = null
-        var last_commit_hash: String? = null
-    }
+    @Suppress("unused")
+    class InstallationInfoJson(
+        val installation_id: String,
+        val app_packageName: String,
+        val app_versionCode: Int,
+        val app_debug: Boolean,
+        val build_manufacturer: String,
+        val build_model: String,
+        val build_device: String,
+        val build_product: String,
+        val os_sdk_int: Int,
+        val os_release: String,
+        val locale: String,
+        val last_commit_hash: String
+    )
 
     /**
      * Return a JSON string that contains information about the app installation on this particular device.
      */
     @JvmStatic
     fun getInstallationInfoJson(): String {
-        val obj = InstallationInfoJson()
-        obj.installation_id = getInstallationId()
-        obj.app_packageName = App.context.packageName
-        obj.app_versionCode = App.getVersionCode()
-        obj.app_debug = BuildConfig.DEBUG
-        obj.build_manufacturer = Build.MANUFACTURER
-        obj.build_model = Build.MODEL
-        obj.build_device = Build.DEVICE
-        obj.build_product = Build.PRODUCT
-        obj.os_sdk_int = Build.VERSION.SDK_INT
-        obj.os_release = Build.VERSION.RELEASE
-        val locale = App.context.resources.configuration.locale
-        obj.locale = locale?.toString()
-        obj.last_commit_hash = App.context.getString(R.string.last_commit_hash)
+        val context = App.context
+
+        val obj = InstallationInfoJson(
+            installation_id = getInstallationId(),
+            app_packageName = context.packageName,
+            app_versionCode = App.getVersionCode(),
+            app_debug = BuildConfig.DEBUG,
+            build_manufacturer = Build.MANUFACTURER,
+            build_model = Build.MODEL,
+            build_device = Build.DEVICE,
+            build_product = Build.PRODUCT,
+            os_sdk_int = Build.VERSION.SDK_INT,
+            os_release = Build.VERSION.RELEASE,
+            locale = ConfigurationCompat.getLocales(context.resources.configuration)[0].toString(),
+            last_commit_hash = context.getString(R.string.last_commit_hash)
+        )
+
         return App.getDefaultGson().toJson(obj)
     }
 
