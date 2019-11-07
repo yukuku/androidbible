@@ -69,13 +69,7 @@ public class S {
 	}
 
 	private static class CalculatedDimensionsHolder {
-		static CalculatedDimensions applied;
-
-		static {
-			if (applied == null) {
-				applied = calculateDimensionsFromPreferences();
-			}
-		}
+		static CalculatedDimensions applied = calculateDimensionsFromPreferences();
 	}
 
 	@NonNull
@@ -158,7 +152,7 @@ public class S {
 	}
 
 	@NonNull
-	private static CalculatedDimensions calculateDimensionsFromPreferences() {
+	static CalculatedDimensions calculateDimensionsFromPreferences() {
 		final CalculatedDimensions res = new CalculatedDimensions();
 
 		final Resources resources = App.context.getResources();
