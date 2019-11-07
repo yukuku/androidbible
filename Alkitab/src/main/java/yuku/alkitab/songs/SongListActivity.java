@@ -35,8 +35,6 @@ import java.util.List;
  * 3. loader.forceLoad()
  */
 public class SongListActivity extends BaseActivity {
-	public static final String TAG = SongListActivity.class.getSimpleName();
-
 	private static final String EXTRA_bookName = "bookName";
 	private static final String EXTRA_code = "code";
 	private static final String EXTRA_searchState = "searchState";
@@ -313,8 +311,6 @@ public class SongListActivity extends BaseActivity {
 	}
 
 	static class SongLoader extends AsyncTaskLoader<List<SongInfo>> {
-		public static final String TAG = SongLoader.class.getSimpleName();
-
 		private String filter_string;
 		private String selectedBookName;
 		private boolean deepSearch;

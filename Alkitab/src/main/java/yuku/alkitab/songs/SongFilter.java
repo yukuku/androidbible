@@ -12,8 +12,6 @@ import java.util.regex.Pattern;
 
 
 public class SongFilter {
-	public static final String TAG = SongFilter.class.getSimpleName();
-
 	public static class CompiledFilter {
 		Pattern[] ps;
 	}

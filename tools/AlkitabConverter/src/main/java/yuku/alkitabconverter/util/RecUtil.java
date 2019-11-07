@@ -5,7 +5,7 @@ import java.util.List;
 
 
 public class RecUtil {
-	public static final String TAG = RecUtil.class.getSimpleName();
+	static final String TAG = RecUtil.class.getSimpleName();
 	
 	/** hitung ada berapa macam kitab dalam list rec. */
 	public static int hitungKitab(List<Rec> xrec) {

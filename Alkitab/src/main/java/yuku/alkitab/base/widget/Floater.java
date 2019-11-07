@@ -14,7 +14,6 @@ import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
 
 public class Floater extends View {
-	public static final String TAG = Floater.class.getSimpleName();
 	public static final int LONG_PRESS_DELAY_MILLIS = 650;
 	private int currentBookId;
 	private int currentChapter_1;

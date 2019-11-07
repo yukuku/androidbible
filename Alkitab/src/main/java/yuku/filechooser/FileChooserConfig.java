@@ -4,8 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class FileChooserConfig implements Parcelable {
-	public static final String TAG = FileChooserConfig.class.getSimpleName();
-
 	public enum Mode {
 		Open,
 		Save,

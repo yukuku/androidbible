@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Verse implements Serializable, Parcelable {
-	public static final String TAG = Verse.class.getSimpleName();
 	private static final long serialVersionUID = 3643842595381652L;
 	
 	public int ordering;

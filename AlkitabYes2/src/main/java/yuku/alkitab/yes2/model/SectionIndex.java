@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 
 public class SectionIndex {
-	public static final String TAG = SectionIndex.class.getSimpleName();
+	static final String TAG = SectionIndex.class.getSimpleName();
 	
 	static class Entry {
 		String name;

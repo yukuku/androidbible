@@ -21,7 +21,7 @@ import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 
 public class GotoGridFragment extends BaseGotoFragment {
-	public static final String TAG = GotoGridFragment.class.getSimpleName();
+	static final String TAG = GotoGridFragment.class.getSimpleName();
 	
 	private static final String EXTRA_verse = "verse";
 	private static final String EXTRA_chapter = "chapter";

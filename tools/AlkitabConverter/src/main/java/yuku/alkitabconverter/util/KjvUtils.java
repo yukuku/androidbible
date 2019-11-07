@@ -5,7 +5,7 @@ import yuku.alkitab.util.Ari;
 import java.util.Arrays;
 
 public class KjvUtils {
-	public static final String TAG = KjvUtils.class.getSimpleName();
+	static final String TAG = KjvUtils.class.getSimpleName();
 	
 	/**
 	 * lid for the verse 1 of each book-chapter.

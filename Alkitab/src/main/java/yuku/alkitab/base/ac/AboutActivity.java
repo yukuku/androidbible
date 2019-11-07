@@ -34,8 +34,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static yuku.alkitab.base.util.Literals.List;
 
 public class AboutActivity extends BaseActivity {
-	public static final String TAG = AboutActivity.class.getSimpleName();
-
 	public static final int LOADER_announce = 1;
 
 	View root;

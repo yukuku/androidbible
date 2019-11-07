@@ -3,8 +3,6 @@ package yuku.alkitab.yes2.io;
 import java.io.IOException;
 
 public class MemoryRandomOutputStream extends RandomOutputStream {
-	public static final String TAG = MemoryRandomOutputStream.class.getSimpleName();
-
 	private int length = 0;
 	private int pos = 0;
 	private byte[] buf = new byte[16];

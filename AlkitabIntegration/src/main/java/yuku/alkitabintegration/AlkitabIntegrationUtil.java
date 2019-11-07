@@ -8,7 +8,7 @@ import android.content.pm.ProviderInfo;
 import android.util.Log;
 
 public class AlkitabIntegrationUtil {
-	public static final String TAG = AlkitabIntegrationUtil.class.getSimpleName();
+	static final String TAG = AlkitabIntegrationUtil.class.getSimpleName();
 	
 	public static final String DEFAULT_ALKITAB_PROVIDER_AUTHORITY = "yuku.alkitab.provider";
 	private static String overridenProviderAuthority = null;

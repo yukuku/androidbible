@@ -4,11 +4,9 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.widget.TextView;
+import androidx.appcompat.widget.AppCompatTextView;
 
-public class MultiColorView extends TextView {
-	public static final String TAG = MultiColorView.class.getSimpleName();
-	
+public class MultiColorView extends AppCompatTextView {
 	float density;
 	Paint p;
 	int bgColor;

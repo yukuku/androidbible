@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Song implements Serializable, Parcelable {
-	public static final String TAG = Song.class.getSimpleName();
 	private static final long serialVersionUID = 3264548831320138544L;
 	
 	public String code;

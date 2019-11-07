@@ -12,7 +12,7 @@ import yuku.alkitab.debug.BuildConfig;
 import java.util.Locale;
 
 public class TwofingerLinearLayout extends LinearLayout {
-	public static final String TAG = TwofingerLinearLayout.class.getSimpleName();
+	static final String TAG = TwofingerLinearLayout.class.getSimpleName();
 
 	State state = State.none;
 	Mode mode = null;

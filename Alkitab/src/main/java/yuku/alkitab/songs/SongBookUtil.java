@@ -34,8 +34,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SongBookUtil {
-	public static final String TAG = SongBookUtil.class.getSimpleName();
-
 	private static final int POPUP_ID_ALL = -1;
 	private static final int POPUP_ID_MORE = -2;
 

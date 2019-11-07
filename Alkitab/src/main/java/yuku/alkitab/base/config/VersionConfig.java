@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 public class VersionConfig {
-	public static final String TAG = VersionConfig.class.getSimpleName();
+	static final String TAG = VersionConfig.class.getSimpleName();
 
 	public List<MVersionPreset> presets;
 	public Map<String, String> locale_display;

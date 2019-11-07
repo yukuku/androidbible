@@ -30,8 +30,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
-	public static final String TAG = DailyVerseAppWidgetReceiver.class.getSimpleName();
-
 	public static class UpdateService extends JobIntentService {
 		static final String TAG = UpdateService.class.getSimpleName();
 
@@ -170,8 +168,6 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 	}
 
 	public static class ClickReceiver extends BroadcastReceiver {
-		public static final String TAG = ClickReceiver.class.getSimpleName();
-
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
 			final Bundle bundle = intent.getExtras();

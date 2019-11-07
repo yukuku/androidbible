@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DesktopShiftTb {
-	public static final String TAG = DesktopShiftTb.class.getSimpleName();
+	static final String TAG = DesktopShiftTb.class.getSimpleName();
 
 	/**
 	 * Map from ari of tb to ari of kjv, but the most significant byte is used for flag

@@ -7,8 +7,6 @@ import java.util.regex.Pattern;
 import yuku.alkitab.util.Ari;
 
 public class OsisBookNames {
-	public static final String TAG = OsisBookNames.class.getSimpleName();
-
 	private static Map<String, Integer> bookNameToBookIdMap;
 	private static Pattern bookNameWithChapterAndOptionalVersePattern;
 

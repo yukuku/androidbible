@@ -51,7 +51,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class MarkersActivity extends BaseActivity {
-	public static final String TAG = MarkersActivity.class.getSimpleName();
+	static final String TAG = MarkersActivity.class.getSimpleName();
 	
 	private static final int REQCODE_markerList = 1;
 	private static final int REQCODE_share = 2;

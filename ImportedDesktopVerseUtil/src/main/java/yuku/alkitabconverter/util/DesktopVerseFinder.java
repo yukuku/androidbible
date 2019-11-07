@@ -4,8 +4,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DesktopVerseFinder {
-	public static final String TAG = DesktopVerseFinder.class.getSimpleName();
-
 	public interface DetectorListener {
 		/**
 		 * A verse reference is detected.

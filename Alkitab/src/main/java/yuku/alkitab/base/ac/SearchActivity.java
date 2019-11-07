@@ -65,8 +65,6 @@ import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabintegration.display.Launcher;
 
 public class SearchActivity extends BaseActivity {
-	public static final String TAG = SearchActivity.class.getSimpleName();
-	
 	private static final String EXTRA_openedBookId = "openedBookId";
 	private static int REQCODE_bookFilter = 1;
 

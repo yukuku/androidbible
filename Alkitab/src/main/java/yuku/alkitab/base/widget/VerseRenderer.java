@@ -20,8 +20,6 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.util.Highlights;
 
 public class VerseRenderer {
-	public static final String TAG = VerseRenderer.class.getSimpleName();
-
 	static final char[] superscriptDigits = {'\u2070', '\u00b9', '\u00b2', '\u00b3', '\u2074', '\u2075', '\u2076', '\u2077', '\u2078', '\u2079'};
 	public static final char XREF_MARK = '\u203b';
 

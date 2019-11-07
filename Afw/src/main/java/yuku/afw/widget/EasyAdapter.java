@@ -5,8 +5,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 public abstract class EasyAdapter extends BaseAdapter {
-	public static final String TAG = EasyAdapter.class.getSimpleName();
-
 	@Override
 	public Object getItem(int position) {
 		return null;

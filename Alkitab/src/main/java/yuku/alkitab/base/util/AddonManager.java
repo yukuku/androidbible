@@ -8,8 +8,6 @@ import yuku.alkitab.base.App;
 import java.io.File;
 
 public class AddonManager {
-	public static final String TAG = AddonManager.class.getSimpleName();
-
 	private static File getYesDir() {
 		final File res = new File(App.context.getFilesDir(), "bible/yes");
 		if (!res.exists()) {

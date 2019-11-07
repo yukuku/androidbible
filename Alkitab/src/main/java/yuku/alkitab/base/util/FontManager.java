@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class FontManager {
-	public static final String TAG = FontManager.class.getSimpleName();
+	static final String TAG = FontManager.class.getSimpleName();
 
 	public static class FontEntry {
 		public String name;

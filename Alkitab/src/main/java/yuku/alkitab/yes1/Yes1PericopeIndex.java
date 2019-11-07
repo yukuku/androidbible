@@ -7,7 +7,7 @@ import yuku.bintex.BintexReader;
 import java.io.IOException;
 
 public class Yes1PericopeIndex extends PericopeIndex {
-	public static final String TAG = Yes1PericopeIndex.class.getSimpleName();
+	static final String TAG = Yes1PericopeIndex.class.getSimpleName();
 
 	public static Yes1PericopeIndex read(BintexReader in) throws IOException {
 		Yes1PericopeIndex pi = new Yes1PericopeIndex();

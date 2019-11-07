@@ -4,8 +4,6 @@ import android.view.*;
 import android.widget.*;
 
 public class TreeAdapter extends BaseAdapter {
-	public static final String TAG = TreeAdapter.class.getSimpleName();
-
 	private TreeNode root;
 	private boolean rootVisible = true;
 	private TreeListener listener;

@@ -28,7 +28,7 @@ import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexWriter;
 
 public class ConvertPdbToYes2 {
-	public static final String TAG = ConvertPdbToYes2.class.getSimpleName();
+	static final String TAG = ConvertPdbToYes2.class.getSimpleName();
 
 	BiblePlusPDB pdb_;
 

@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Scanner;
 
 public class FormatXml {
-	public static final String TAG = FormatXml.class.getSimpleName();
+	static final String TAG = FormatXml.class.getSimpleName();
 
 	public static int format(String nfi, String nfo) {
 		new File(nfo).delete();

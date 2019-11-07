@@ -1,9 +1,7 @@
 package yuku.alkitab.base.pdbconvert;
 
 public class Tabs {
-	public static final String TAG = Tabs.class.getSimpleName();
-
-	public static final char[] hebrewTab = 
+	public static final char[] hebrewTab =
 	{ 
 	  /* 0x00 */
 	  0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007,

@@ -30,8 +30,6 @@ import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 
 public class GotoDirectFragment extends BaseGotoFragment {
-	public static final String TAG = GotoDirectFragment.class.getSimpleName();
-	
 	private static final String EXTRA_verse = "verse";
 	private static final String EXTRA_chapter = "chapter";
 	private static final String EXTRA_bookId = "bookId";

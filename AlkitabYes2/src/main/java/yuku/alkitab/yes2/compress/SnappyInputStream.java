@@ -8,8 +8,6 @@ import yuku.snappy.codec.Snappy;
 import java.io.IOException;
 
 public class SnappyInputStream extends RandomInputStream {
-	public final String TAG = SnappyInputStream.class.getSimpleName();
-	
 	private final RandomAccessFileRandomInputStream input;
 
 	private final Snappy snappy;

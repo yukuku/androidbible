@@ -36,8 +36,6 @@ import yuku.alkitab.base.util.FontManager;
 import yuku.alkitab.debug.R;
 
 public class TextAppearancePanel {
-	public static final String TAG = TextAppearancePanel.class.getSimpleName();
-
 	public interface Listener {
 		void onValueChanged();
 		void onCloseButtonClick();

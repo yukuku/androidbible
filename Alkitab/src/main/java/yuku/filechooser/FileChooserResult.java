@@ -4,8 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class FileChooserResult implements Parcelable {
-	public static final String TAG = FileChooserResult.class.getSimpleName();
-
 	public String currentDir;
 	public String firstFilename;
 

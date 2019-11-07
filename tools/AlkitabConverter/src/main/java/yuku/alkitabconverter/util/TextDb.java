@@ -15,7 +15,7 @@ import java.util.TreeSet;
 
 
 public class TextDb {
-	public static final String TAG = TextDb.class.getSimpleName();
+	static final String TAG = TextDb.class.getSimpleName();
 
 	TreeMap<Integer, VerseState> map = new TreeMap<>();
 

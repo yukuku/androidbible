@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Proses1 {
-	public static final String TAG = Proses1.class.getSimpleName();
+	static final String TAG = Proses1.class.getSimpleName();
 	public static final String INFO_LONG_NAME = "Cornilescu";
 	private static final String INFO_LOCALE = "ro";
 	private static final String INFO_SHORT_NAME = "VDC";

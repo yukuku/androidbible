@@ -9,7 +9,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 public abstract class BaseFileTreeNode extends BaseMutableTreeNode implements Comparable<BaseFileTreeNode> {
-	public static final String TAG = BaseFileTreeNode.class.getSimpleName();
 	protected final File file;
 	protected final VirtualChild[] virtualChildren;
 

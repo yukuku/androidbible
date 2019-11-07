@@ -10,7 +10,6 @@ import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.R;
 
 public class ArticleMeidA extends DevotionArticle {
-	public static final String TAG = ArticleMeidA.class.getSimpleName();
 	private String date;
 	private String bodyHtml;
 	private boolean readyToUse;

@@ -1,8 +1,6 @@
 package yuku.alkitabintegration;
 
 public class ConnectionResult {
-	public static final String TAG = ConnectionResult.class.getSimpleName();
-	
 	/** The connection was successful. */
 	public static final int SUCCESS = 0;
 

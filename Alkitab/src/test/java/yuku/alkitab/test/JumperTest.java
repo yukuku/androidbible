@@ -5,7 +5,6 @@ import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.model.Book;
 
 public class JumperTest extends TestCase {
-	public static final String TAG = JumperTest.class.getSimpleName();
 	static Book[] books;
 
 	static {

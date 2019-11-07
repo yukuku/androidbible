@@ -25,7 +25,7 @@ import yuku.alkitab.util.IntArrayList;
 
 
 public class SingleViewVerseAdapter extends VerseAdapter {
-	public static final String TAG = SingleViewVerseAdapter.class.getSimpleName();
+	static final String TAG = SingleViewVerseAdapter.class.getSimpleName();
 
 	public static final int TYPE_VERSE_TEXT = 0;
 	public static final int TYPE_PERICOPE = 1;

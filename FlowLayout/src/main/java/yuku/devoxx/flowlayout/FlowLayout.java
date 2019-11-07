@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class FlowLayout extends ViewGroup {
-	public static final String TAG = FlowLayout.class.getSimpleName();
+	static final String TAG = FlowLayout.class.getSimpleName();
 	
 	private int mHorizontalSpacing;
 	private int mVerticalSpacing;

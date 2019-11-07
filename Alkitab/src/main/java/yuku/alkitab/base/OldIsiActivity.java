@@ -131,7 +131,7 @@ import yuku.alkitab.util.IntArrayList;
 import yuku.devoxx.flowlayout.FlowLayout;
 
 public class OldIsiActivity extends BaseLeftDrawerActivity implements XrefDialog.XrefDialogListener, LeftDrawer.Text.Listener, ProgressMarkListDialog.Listener {
-	public static final String TAG = OldIsiActivity.class.getSimpleName();
+	static final String TAG = OldIsiActivity.class.getSimpleName();
 
 	public static final String ACTION_ATTRIBUTE_MAP_CHANGED = "yuku.alkitab.action.ATTRIBUTE_MAP_CHANGED";
 	public static final String ACTION_ACTIVE_VERSION_CHANGED = OldIsiActivity.class.getName() + ".action.ACTIVE_VERSION_CHANGED";

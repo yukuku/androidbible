@@ -99,7 +99,7 @@ import java.util.regex.Matcher;
 import java.util.zip.GZIPInputStream;
 
 public class VersionsActivity extends BaseActivity {
-	public static final String TAG = VersionsActivity.class.getSimpleName();
+	static final String TAG = VersionsActivity.class.getSimpleName();
 
 	private static final int REQCODE_openFile = 1;
 

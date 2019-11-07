@@ -3,8 +3,6 @@ package yuku.alkitab.model;
 import yuku.alkitab.model.util.Gid;
 
 public class Label implements Comparable<Label> {
-	public static final String TAG = Label.class.getSimpleName();
-
 	public long _id;
 	public String gid;
 	public String title;

@@ -60,7 +60,7 @@ import yuku.alkitab.util.IntArrayList;
 
 @TargetApi(Build.VERSION_CODES.KITKAT)
 public class InternalDb {
-	public static final String TAG = InternalDb.class.getSimpleName();
+	static final String TAG = InternalDb.class.getSimpleName();
 
 	private final InternalDbHelper helper;
 

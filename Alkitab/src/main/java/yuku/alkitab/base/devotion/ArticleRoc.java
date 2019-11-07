@@ -7,7 +7,6 @@ import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.widget.CallbackSpan;
 
 public class ArticleRoc extends DevotionArticle {
-	public static final String TAG = ArticleRoc.class.getSimpleName();
 	private String date;
 	private String bodyHtml;
 	private boolean readyToUse;

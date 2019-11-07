@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class SnappyOutputStream extends FilterOutputStream {
-	public final String TAG = SnappyOutputStream.class.getSimpleName();
-	
 	private final Snappy snappy;
 	private final int block_size; 
 	private byte[] uncompressed_buf;

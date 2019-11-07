@@ -51,8 +51,6 @@ import yuku.alkitab.model.Marker;
 import yuku.alkitab.model.Marker_Label;
 
 public class SecretSyncDebugActivity extends BaseActivity {
-	public static final String TAG = SecretSyncDebugActivity.class.getSimpleName();
-
 	EditText tServer;
 	EditText tUserEmail;
 	CheckBox cMakeDirtyMarker;

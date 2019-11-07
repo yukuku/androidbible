@@ -18,7 +18,6 @@ import yuku.alkitab.debug.R;
 import yuku.alkitab.reminder.util.DevotionReminder;
 
 public class DevotionReminderReceiver extends BroadcastReceiver {
-	public static final String TAG = DevotionReminderReceiver.class.getSimpleName();
 	static final String NOTIFICATION_CHANNEL_ID = "devotion_reminder";
 
 	@Override

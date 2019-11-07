@@ -7,7 +7,6 @@ import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.widget.CallbackSpan;
 
 public class ArticleMorningEveningEnglish extends DevotionArticle {
-	public static final String TAG = ArticleMorningEveningEnglish.class.getSimpleName();
 	private String date;
 	private String body;
 	private boolean readyToUse;

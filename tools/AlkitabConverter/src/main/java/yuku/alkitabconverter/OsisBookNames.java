@@ -1,7 +1,7 @@
 package yuku.alkitabconverter;
 
 public class OsisBookNames {
-	public static final String TAG = OsisBookNames.class.getSimpleName();
+	static final String TAG = OsisBookNames.class.getSimpleName();
 	
 	public static int abbrToKitab0(String abbr) {
 		for (int i = 0; i < abbrs.length; i++) {

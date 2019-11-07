@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Yes2Common {
-	public static final String TAG = Yes2Common.class.getSimpleName();
+	static final String TAG = Yes2Common.class.getSimpleName();
 
 	public static class VersionInfo {
 		public String locale;

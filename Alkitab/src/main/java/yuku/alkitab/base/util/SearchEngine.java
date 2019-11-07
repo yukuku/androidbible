@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 public class SearchEngine {
-	public static final String TAG = SearchEngine.class.getSimpleName();
+	static final String TAG = SearchEngine.class.getSimpleName();
 
 	public static class Query implements Parcelable {
 		public String query_string;

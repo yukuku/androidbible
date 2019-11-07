@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DownloadService extends Service {
-	public static final String TAG = DownloadService.class.getSimpleName();
+	static final String TAG = DownloadService.class.getSimpleName();
 
 	private static final int MSG_progress = 1;
 	private static final int MSG_stateChanged = 2;

@@ -35,15 +35,6 @@ public class AlertDialogActivity extends BaseActivity {
 			.putExtra(EXTRA_MESSAGE, message);
 	}
 
-	public static Intent createAskIntent(final CharSequence title, final CharSequence message, final CharSequence negativeButtonText, final CharSequence positiveButtonText, final Intent launchWhenPositive) {
-		return new Intent(App.context, AlertDialogActivity.class)
-			.putExtra(EXTRA_TITLE, title)
-			.putExtra(EXTRA_MESSAGE, message)
-			.putExtra(EXTRA_NEGATIVE, negativeButtonText)
-			.putExtra(EXTRA_POSITIVE, positiveButtonText)
-			.putExtra(EXTRA_LAUNCH, launchWhenPositive);
-	}
-
 	public static Intent createInputIntent(final CharSequence title, final CharSequence message, final CharSequence negativeButtonText, final CharSequence positiveButtonText, final int inputType, final CharSequence inputHint) {
 		return new Intent(App.context, AlertDialogActivity.class)
 			.putExtra(EXTRA_TITLE, title)

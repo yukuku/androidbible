@@ -18,8 +18,6 @@ import yuku.alkitab.model.Label;
 import java.util.List;
 
 public class LabelEditorDialog {
-	public static final String TAG = LabelEditorDialog.class.getSimpleName();
-	
 	public interface OkListener {
 		void onOk(String title);
 	}

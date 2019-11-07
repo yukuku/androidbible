@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ConvertOptionsDialog {
-	public static final String TAG = ConvertOptionsDialog.class.getSimpleName();
+	static final String TAG = ConvertOptionsDialog.class.getSimpleName();
 	
 	Context context;
 	MaterialDialog alert;

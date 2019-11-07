@@ -29,8 +29,6 @@ import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.model.ProgressMarkHistory;
 
 public class SecretSettingsActivity extends BaseActivity {
-	public static final String TAG = SecretSettingsActivity.class.getSimpleName();
-
 	public static class SecretSettingsFragment extends PreferenceFragmentCompat {
 
 		private Preference.OnPreferenceClickListener secret_progress_mark_history_click = preference -> {

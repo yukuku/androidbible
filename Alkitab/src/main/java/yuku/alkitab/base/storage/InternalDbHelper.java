@@ -20,7 +20,7 @@ import static yuku.alkitab.base.util.Literals.Array;
 import yuku.alkitab.model.util.Gid;
 
 public class InternalDbHelper extends SQLiteOpenHelper {
-	public static final String TAG = InternalDbHelper.class.getSimpleName();
+	static final String TAG = InternalDbHelper.class.getSimpleName();
 
 	public InternalDbHelper(Context context) {
 		super(context, "AlkitabDb", null, App.getVersionCode());

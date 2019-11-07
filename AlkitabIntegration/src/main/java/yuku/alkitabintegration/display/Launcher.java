@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 
 public class Launcher {
-	public static final String TAG = Launcher.class.getSimpleName();
 	private static String appPackageName;
 
 	/**

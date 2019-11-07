@@ -19,7 +19,7 @@ import java.util.Arrays;
 //   value<string> footnote_entry_contents[footnote_entry_count]
 // }
 public class FootnotesSection extends SectionContent {
-	public static final String TAG = FootnotesSection.class.getSimpleName();
+	static final String TAG = FootnotesSection.class.getSimpleName();
 
 	public static final String SECTION_NAME = "footnotes";
 

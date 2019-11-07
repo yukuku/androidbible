@@ -20,7 +20,7 @@ import java.util.Locale;
 import java.util.Scanner;
 
 public class InternalCommon {
-	public static final String TAG = InternalCommon.class.getSimpleName();
+	static final String TAG = InternalCommon.class.getSimpleName();
 
 	public final static Charset ascii = Charset.forName("ascii");
 	public final static Charset utf8 = Charset.forName("utf8");

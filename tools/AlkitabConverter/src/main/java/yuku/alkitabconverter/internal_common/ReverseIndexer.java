@@ -17,7 +17,7 @@ import yuku.alkitabconverter.util.TextDb;
 import yuku.bintex.BintexWriter;
 
 public class ReverseIndexer {
-	public static final String TAG = ReverseIndexer.class.getSimpleName();
+	static final String TAG = ReverseIndexer.class.getSimpleName();
 
 	public final static Charset ascii = Charset.forName("ascii");
 	public final static Charset utf8 = Charset.forName("utf8");

@@ -33,8 +33,6 @@ import java.util.HashSet;
 import java.util.List;
 
 public class ShareActivity extends BaseActivity {
-	public static final String TAG = ShareActivity.class.getSimpleName();
-
 	PackageManager mPm;
 	ResolveListAdapter mAdapter;
 

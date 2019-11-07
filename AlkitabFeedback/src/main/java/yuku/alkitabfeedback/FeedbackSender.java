@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class FeedbackSender {
-	public static final String TAG = FeedbackSender.class.getSimpleName();
+	static final String TAG = FeedbackSender.class.getSimpleName();
 
 	public interface OnSuccessListener {
 		void onSuccess(byte[] response);

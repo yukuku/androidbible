@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 public class RandomAccessFileRandomInputStream extends RandomInputStream {
-	public static final String TAG = RandomAccessFileRandomInputStream.class.getSimpleName();
-
 	private final RandomAccessFile f;
 
 	public RandomAccessFileRandomInputStream(String filename) throws IOException {

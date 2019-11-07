@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Scanner;
 
 public class Usfm2Usfx {
-	public static final String TAG = Usfm2Usfx.class.getSimpleName();
+	static final String TAG = Usfm2Usfx.class.getSimpleName();
 
 	public static int convert(String nfi, String nfo) {
 		new File(nfo).delete();

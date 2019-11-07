@@ -21,7 +21,7 @@ import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
 
 public abstract class VerseAdapter extends BaseAdapter {
-	public static final String TAG = VerseAdapter.class.getSimpleName();
+	static final String TAG = VerseAdapter.class.getSimpleName();
 
 	// # field ctor
 	CallbackSpan.OnClickListener<Object> parallelListener_;

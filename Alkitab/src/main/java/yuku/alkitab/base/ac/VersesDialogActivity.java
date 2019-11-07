@@ -12,8 +12,6 @@ import yuku.alkitabintegration.display.Launcher;
  * Transparent activity that shows verses dialog only.
  */
 public class VersesDialogActivity extends BaseActivity {
-	public static final String TAG = VersesDialogActivity.class.getSimpleName();
-
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

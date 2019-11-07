@@ -17,8 +17,6 @@ import yuku.alkitab.model.ProgressMark;
 import java.util.Date;
 
 public class ProgressMarkRenameDialog extends DialogFragment {
-	public static final String TAG = ProgressMarkRenameDialog.class.getSimpleName();
-
 	public interface Listener {
 		void onOked();
 		void onDeleted();

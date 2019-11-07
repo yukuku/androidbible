@@ -6,8 +6,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class BookNameSorter {
-	public static final String TAG = BookNameSorter.class.getSimpleName();
-
 	static final String[] numberedBookStartsWiths = {null, "I ", "II ", "III ", "IV ", "V "};
 	static final String[] numberedBookStartsWithNumbers = {null, "1", "2", "3", "4", "5"};
 	static final String[] numberedBookReplaceWiths = {null, "1", "2", "3", "4", "5"};

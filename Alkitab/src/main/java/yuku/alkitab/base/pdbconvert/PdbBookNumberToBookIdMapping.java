@@ -1,8 +1,6 @@
 package yuku.alkitab.base.pdbconvert;
 
 public class PdbBookNumberToBookIdMapping {
-	public static final String TAG = PdbBookNumberToBookIdMapping.class.getSimpleName();
-	
 	// ref: http://sourceforge.net/projects/palmbibleplus/files/zDocumentation/1.0/
 	private static final int[] pdbBookNumbers = {
 		10,

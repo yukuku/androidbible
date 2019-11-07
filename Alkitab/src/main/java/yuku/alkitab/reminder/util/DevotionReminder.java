@@ -15,8 +15,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class DevotionReminder {
-	public static final String TAG = DevotionReminder.class.getSimpleName();
-
 	public static final String REMINDER_TIME = "reminder_time";
 	public static final String REMINDER_SOUND = "reminder_sound";
 	public static final String REMINDER_VIBRATE = "reminder_vibrate";

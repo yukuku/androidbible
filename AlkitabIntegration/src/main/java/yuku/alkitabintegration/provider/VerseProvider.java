@@ -10,8 +10,6 @@ import java.util.List;
 import yuku.alkitabintegration.AlkitabIntegrationUtil;
 
 public class VerseProvider {
-	public static final String TAG = VerseProvider.class.getSimpleName();
-	
 	public static class Verse {
 		public long _id;
 		public int ari;

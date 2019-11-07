@@ -38,7 +38,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class FontManagerActivity extends BaseActivity implements DownloadService.DownloadListener {
-	public static final String TAG = FontManagerActivity.class.getSimpleName();
+	static final String TAG = FontManagerActivity.class.getSimpleName();
 
 	private static final String URL_fontList = BuildConfig.SERVER_HOST + "addon/fonts/v1/list-v2.txt";
 	private static final String URL_fontData = BuildConfig.SERVER_HOST + "addon/fonts/v1/data/%s.zip";

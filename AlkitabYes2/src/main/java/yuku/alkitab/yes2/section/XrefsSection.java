@@ -19,7 +19,7 @@ import java.util.Arrays;
 //   value<string> xref_entry_contents[xref_entry_count]
 // }
 public class XrefsSection extends SectionContent {
-	public static final String TAG = XrefsSection.class.getSimpleName();
+	static final String TAG = XrefsSection.class.getSimpleName();
 
 	public static final String SECTION_NAME = "xrefs";
 

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Lyric implements Serializable, Parcelable {
-	public static final String TAG = Lyric.class.getSimpleName();
 	private static final long serialVersionUID = 4661867042967439L;
 
 	public String caption;

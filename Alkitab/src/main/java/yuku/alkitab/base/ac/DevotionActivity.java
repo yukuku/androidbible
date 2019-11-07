@@ -56,7 +56,7 @@ import yuku.alkitab.util.Ari;
 import yuku.alkitabintegration.display.Launcher;
 
 public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDrawer.Devotion.Listener {
-	public static final String TAG = DevotionActivity.class.getSimpleName();
+	static final String TAG = DevotionActivity.class.getSimpleName();
 
 	private static final int REQCODE_share = 1;
 	public static final DevotionDownloader devotionDownloader = new DevotionDownloader();

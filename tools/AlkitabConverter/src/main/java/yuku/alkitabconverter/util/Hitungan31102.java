@@ -5,7 +5,7 @@ import yuku.alkitab.util.Ari;
 import java.util.Arrays;
 
 public class Hitungan31102 {
-	public static final String TAG = Hitungan31102.class.getSimpleName();
+	static final String TAG = Hitungan31102.class.getSimpleName();
 	
 	private static int[] offsetKitab_0; 
 	

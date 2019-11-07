@@ -3,8 +3,6 @@ package yuku.alkitab.model;
 import java.util.Arrays;
 
 public class PericopeIndex {
-	public static final String TAG = PericopeIndex.class.getSimpleName();
-	
 	public int[] aris;
 	public int[] offsets;
 	

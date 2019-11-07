@@ -6,8 +6,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 
 public class App extends Application {
-	public static final String TAG = App.class.getSimpleName();
-
 	private static boolean initted = false;
 	private static PackageInfo packageInfo;
 	

@@ -7,8 +7,6 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.songs.SongBookUtil;
 
 public class SongDbHelper extends SQLiteOpenHelper {
-	public static final String TAG = SongDbHelper.class.getSimpleName();
-
 	public SongDbHelper() {
 		super(App.context, "SongDb", null, App.getVersionCode());
 		setWriteAheadLoggingEnabled(true);

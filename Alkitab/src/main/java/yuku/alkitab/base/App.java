@@ -45,7 +45,7 @@ import yuku.alkitabintegration.display.Launcher;
 import yuku.stethoshim.StethoShim;
 
 public class App extends yuku.afw.App {
-	public static final String TAG = App.class.getSimpleName();
+	static final String TAG = App.class.getSimpleName();
 
 	private static boolean initted = false;
 

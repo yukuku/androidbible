@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AppConfig {
-	public static final String TAG = AppConfig.class.getSimpleName();
-
 	public boolean menuDevotion;
 	public boolean menuSongs;
 	public boolean menuDictionary;

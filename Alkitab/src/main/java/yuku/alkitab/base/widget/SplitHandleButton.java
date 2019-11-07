@@ -10,8 +10,6 @@ import static android.view.MotionEvent.ACTION_UP;
 import androidx.appcompat.widget.AppCompatButton;
 
 public class SplitHandleButton extends AppCompatButton {
-	public static final String TAG = SplitHandleButton.class.getSimpleName();
-
 	public interface SplitHandleButtonListener {
 		void onHandleDragStart();
 		/** Only called when orientation is horizontal */

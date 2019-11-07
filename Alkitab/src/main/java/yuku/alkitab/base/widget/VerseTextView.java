@@ -2,6 +2,7 @@ package yuku.alkitab.base.widget;
 
 import android.content.Context;
 import android.graphics.Rect;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.view.MotionEventCompat;
 import android.text.Layout;
 import android.text.Spanned;
@@ -15,8 +16,8 @@ import yuku.alkitab.debug.BuildConfig;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VerseTextView extends TextView {
-	public static final String TAG = VerseTextView.class.getSimpleName();
+public class VerseTextView extends AppCompatTextView {
+	static final String TAG = VerseTextView.class.getSimpleName();
 
 	static class SpanEntry {
 		public Rect rect = new Rect();

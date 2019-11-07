@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Jumper {
-	public static final String TAG = Jumper.class.getSimpleName();
+	static final String TAG = Jumper.class.getSimpleName();
 
 	public interface Logger {
 		void d(String msg);

@@ -27,7 +27,7 @@ import yuku.alkitab.model.Version;
 import yuku.alkitab.util.IntArrayList;
 
 public class OldVersesView extends ListView implements AbsListView.OnScrollListener {
-	public static final String TAG = OldVersesView.class.getSimpleName();
+	static final String TAG = OldVersesView.class.getSimpleName();
 
 	// http://stackoverflow.com/questions/6369491/stop-listview-scroll-animation
 	static class StopListFling {

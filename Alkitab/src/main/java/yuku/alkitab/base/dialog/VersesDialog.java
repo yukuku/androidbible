@@ -29,8 +29,6 @@ import yuku.alkitab.util.IntArrayList;
  * -- field ari is used, compareMode==true.
  */
 public class VersesDialog extends BaseDialog {
-	public static final String TAG = VersesDialog.class.getSimpleName();
-
 	private static final String EXTRA_ariRanges = "ariRanges";
 	private static final String EXTRA_ari = "ari";
 	private static final String EXTRA_compareMode = "compareMode";

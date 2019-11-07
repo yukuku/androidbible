@@ -10,8 +10,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class QueryTokenizer {
-	public static final String TAG = QueryTokenizer.class.getSimpleName();
-
 	static Pattern oneToken = Pattern.compile("(\\+?)((?:\".*?\"|\\S)+)");
 
 	/**

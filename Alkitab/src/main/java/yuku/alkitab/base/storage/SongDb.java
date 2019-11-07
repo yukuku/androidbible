@@ -22,8 +22,6 @@ import static yuku.alkitab.base.util.Literals.Array;
 import static yuku.alkitab.base.util.Literals.ToStringArray;
 
 public class SongDb {
-	public static final String TAG = SongDb.class.getSimpleName();
-
 	private SongDbHelper helper;
 
 	public SongDb(SongDbHelper helper) {

@@ -3,8 +3,6 @@ package yuku.alkitab.base.util;
 import java.util.Arrays;
 
 public class LidToAri {
-	public static final String TAG = LidToAri.class.getSimpleName();
-	
 	/**
 	 * lid for the verse 1 of each book-chapter.
 	 * 

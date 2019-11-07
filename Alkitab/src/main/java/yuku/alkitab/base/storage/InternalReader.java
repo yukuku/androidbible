@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class InternalReader implements BibleReader {
-	public static final String TAG = InternalReader.class.getSimpleName();
+	static final String TAG = InternalReader.class.getSimpleName();
 
 	// # for asset cache
 	private static InputStream cache_inputStream = null;

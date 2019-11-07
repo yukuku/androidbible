@@ -31,7 +31,7 @@ import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 
 public class XrefDialog extends BaseDialog {
-	public static final String TAG = XrefDialog.class.getSimpleName();
+	static final String TAG = XrefDialog.class.getSimpleName();
 
 	private static final String EXTRA_arif = "arif";
 

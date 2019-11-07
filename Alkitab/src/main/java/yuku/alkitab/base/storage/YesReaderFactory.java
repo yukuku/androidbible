@@ -11,7 +11,7 @@ import java.io.RandomAccessFile;
 import java.util.Arrays;
 
 public class YesReaderFactory {
-	public static final String TAG = YesReaderFactory.class.getSimpleName();
+	static final String TAG = YesReaderFactory.class.getSimpleName();
 	
 	/**
 	 * @return A {@link Yes1Reader}, {@link Yes2Reader}, or null if there is any error.

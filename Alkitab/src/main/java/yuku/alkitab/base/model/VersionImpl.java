@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class VersionImpl extends Version {
-	public static final String TAG = VersionImpl.class.getSimpleName();
+	static final String TAG = VersionImpl.class.getSimpleName();
 
 	private BibleReader bibleReader;
 

@@ -24,7 +24,6 @@ import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.debug.R;
 
 public class GotoActivity extends BaseActivity implements BaseGotoFragment.GotoFinishListener {
-	public static final String TAG = GotoActivity.class.getSimpleName();
 
 	private static final String EXTRA_bookId = "bookId";
 	private static final String EXTRA_chapter = "chapter";

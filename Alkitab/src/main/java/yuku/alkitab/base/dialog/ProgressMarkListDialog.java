@@ -25,8 +25,6 @@ import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.model.Version;
 
 public class ProgressMarkListDialog extends DialogFragment {
-	public static final String TAG = ProgressMarkListDialog.class.getSimpleName();
-
 	LayoutInflater inflater;
 
 	public interface Listener {

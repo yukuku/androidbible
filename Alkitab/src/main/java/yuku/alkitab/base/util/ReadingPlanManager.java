@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.util.Date;
 
 public class ReadingPlanManager {
-	public static final String TAG = ReadingPlanManager.class.getSimpleName();
+	static final String TAG = ReadingPlanManager.class.getSimpleName();
 
 	private static final byte[] RPB_HEADER = {0x52, (byte) 0x8a, 0x61, 0x34, 0x00, (byte) 0xe0, (byte) 0xea};
 

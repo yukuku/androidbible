@@ -24,7 +24,7 @@ import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabintegration.provider.VerseProvider;
 
 public class Provider extends ContentProvider {
-	public static final String TAG = Provider.class.getSimpleName();
+	static final String TAG = Provider.class.getSimpleName();
 
 	private static final int PATHID_bible_verses_single_by_lid = 1;
 	private static final int PATHID_bible_verses_single_by_ari = 2;

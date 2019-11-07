@@ -26,8 +26,6 @@ import java.io.StringWriter;
 import java.util.List;
 
 public class SongFragment extends BaseFragment {
-	public static final String TAG = SongFragment.class.getSimpleName();
-
 	private static final String ARG_song = "song";
 	private static final String ARG_templateFile = "templateFile";
 	private static final String ARG_customVars = "customVars";
