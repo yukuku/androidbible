@@ -10,6 +10,7 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,13 +40,13 @@ public class ProgressMarkListDialog extends DialogFragment {
 	float textSizeMult = S.getDb().getPerVersionSettings(versionId).fontSizeMultiplier;
 
 	@Override
-	public void onAttach(final Context context) {
+	public void onAttach(@NonNull final Context context) {
 		super.onAttach(context);
 		progressMarkListener = (Listener) context;
 	}
 
 	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+	public View onCreateView(@NonNull final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		this.inflater = inflater;
 
 		final Window window = getDialog().getWindow();
@@ -130,24 +131,19 @@ public class ProgressMarkListDialog extends DialogFragment {
 			}
 			Appearances.applyMarkerTitleTextAppearance(tCaption, textSizeMult);
 
-			int ari = progressMark.ari;
-			String verseText = "";
-			String date = "";
+			final int ari = progressMark.ari;
+			final String date = Sqlitil.toLocaleDateMedium(progressMark.modifyTime);
 			if (ari != 0) {
-				date = Sqlitil.toLocaleDateMedium(progressMark.modifyTime);
 				tDate.setText(date);
 
 				final String reference = version.reference(ari);
-				verseText = FormattedVerseText.removeSpecialCodes(version.loadVerseText(ari));
+				final String loadedVerseText = FormattedVerseText.removeSpecialCodes(version.loadVerseText(ari));
+				final String verseText = loadedVerseText != null ? loadedVerseText : getString(R.string.generic_verse_not_available_in_this_version);
 				Appearances.applyMarkerSnippetContentAndAppearance(tVerseText, reference, verseText, textSizeMult);
 				view.setEnabled(false);
-			} else {
-				tVerseText.setText(verseText);
-				view.setEnabled(true);
 			}
 			tDate.setText(date);
 			Appearances.applyMarkerDateTextAppearance(tDate, textSizeMult);
 		}
 	}
-
 }
