@@ -146,7 +146,7 @@ public class VersionsActivity extends BaseActivity {
 	}
 
 	private void processIntent(Intent intent, String via) {
-		U.dumpIntent(intent, via);
+		dumpIntent(intent, via);
 
 		checkAndProcessOpenFileIntent(intent);
 	}
@@ -1089,7 +1089,7 @@ public class VersionsActivity extends BaseActivity {
 				final ShareActivity.Result result = ShareActivity.obtainResult(data);
 				if (result != null && result.chosenIntent != null) {
 					final Intent intent = new Intent(result.chosenIntent);
-					U.dumpIntent(intent, "share");
+					dumpIntent(intent, "share");
 
 					// grant permission for the chosen package and uri
 					final ComponentName component = intent.getComponent();

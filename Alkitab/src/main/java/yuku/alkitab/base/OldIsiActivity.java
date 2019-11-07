@@ -650,7 +650,7 @@ public class OldIsiActivity extends BaseLeftDrawerActivity implements XrefDialog
 	 * @return non-null if the intent is handled by any of the intent handler (e.g. nfc or VIEW)
 	 */
 	private IntentResult processIntent(Intent intent, String via) {
-		U.dumpIntent(intent, via);
+		dumpIntent(intent, via);
 
 		{
 			final IntentResult result = tryGetIntentResultFromBeam(intent);

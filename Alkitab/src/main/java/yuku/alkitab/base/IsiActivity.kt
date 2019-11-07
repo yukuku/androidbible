@@ -82,6 +82,7 @@ import yuku.alkitab.base.util.Jumper
 import yuku.alkitab.base.util.LidToAri
 import yuku.alkitab.base.util.Literals.Array
 import yuku.alkitab.base.util.OtherAppIntegration
+import yuku.alkitab.base.util.RequestCodes
 import yuku.alkitab.base.util.ShareUrl
 import yuku.alkitab.base.util.Sqlitil
 import yuku.alkitab.base.verses.VerseAttributeLoader
@@ -310,6 +311,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         val version: Version,
         val versionId: String
     )
+
     var activeSplit: ActiveSplit? = null
 
     private val parallelListener: (data: ParallelClickData) -> Unit = { data ->
@@ -420,7 +422,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         }
     }
 
-    private val needsRestartReceiver= object : BroadcastReceiver() {
+    private val needsRestartReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             needsRestart = true
         }
@@ -590,18 +592,15 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
             val menuRibkaReport = menu.findItem(R.id.menuRibkaReport)
             menuRibkaReport.isVisible = single && checkRibkaEligibility() != RibkaEligibility.None
 
-            run {
-                // extensions
-                extensions.clear()
-                extensions.addAll(ExtensionManager.getExtensions())
+            // extensions
+            extensions.clear()
+            extensions.addAll(ExtensionManager.getExtensions())
 
-                menu.removeGroup(MENU_GROUP_EXTENSIONS)
+            menu.removeGroup(MENU_GROUP_EXTENSIONS)
 
-                for (i in extensions.indices) {
-                    val extension = extensions[i]
-                    if (single || /* not single */ extension.supportsMultipleVerses) {
-                        menu.add(MENU_GROUP_EXTENSIONS, MENU_EXTENSIONS_FIRST_ID + i, 0, extension.label)
-                    }
+            for ((i, extension) in extensions.withIndex()) {
+                if (single || /* not single */ extension.supportsMultipleVerses) {
+                    menu.add(MENU_GROUP_EXTENSIONS, MENU_EXTENSIONS_FIRST_ID + i, 0, extension.label)
                 }
             }
 
@@ -696,7 +695,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
                         }
 
                         override fun onFinally() {
-                            startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, reference)), REQCODE_share)
+                            startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, reference)), RequestCodes.FromActivity.Share)
 
                             lsSplit0.uncheckAllVerses(true)
                             mode.finish()
@@ -748,7 +747,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
                     val verseCount = selected.size()
 
                     // always create a new note
-                    startActivityForResult(NoteActivity.createNewNoteIntent(S.activeVersion().referenceWithVerseCount(ari, verseCount), ari, verseCount), REQCODE_edit_note_2)
+                    startActivityForResult(NoteActivity.createNewNoteIntent(S.activeVersion().referenceWithVerseCount(ari, verseCount), ari, verseCount), RequestCodes.FromActivity.EditNote2)
                     mode.finish()
 
                     true
@@ -1236,26 +1235,17 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
      * @return non-null if the intent is handled by any of the intent handler (e.g. nfc or VIEW)
      */
     private fun processIntent(intent: Intent, via: String): IntentResult? {
-        U.dumpIntent(intent, via)
+        dumpIntent(intent, via)
 
-        run {
-            val result = tryGetIntentResultFromBeam(intent)
-            if (result != null) return result
-        }
-
-        run {
-            val result = tryGetIntentResultFromView(intent)
-            if (result != null) return result
-        }
-
-        return null
+        return tryGetIntentResultFromBeam(intent)
+            ?: tryGetIntentResultFromView(intent)
     }
 
     /**
      * did we get here from VIEW intent?
      */
     private fun tryGetIntentResultFromView(intent: Intent): IntentResult? {
-        if (!U.equals(intent.action, "yuku.alkitab.action.VIEW")) return null
+        if (intent.action != "yuku.alkitab.action.VIEW") return null
 
         val selectVerse = intent.getBooleanExtra("selectVerse", false)
         val selectVerseCount = intent.getIntExtra("selectVerseCount", 1)
@@ -1344,7 +1334,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
 
     private fun tryGetIntentResultFromBeam(intent: Intent): IntentResult? {
         val action = intent.action
-        if (!U.equals(action, NfcAdapter.ACTION_NDEF_DISCOVERED)) return null
+        if (action != NfcAdapter.ACTION_NDEF_DISCOVERED) return null
 
         val rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
         // only one message sent during the beam
@@ -1427,8 +1417,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
     }
 
     private fun configureTextAppearancePanelForSplitVersion() {
-        val textAppearancePanel = textAppearancePanel
-        if (textAppearancePanel != null) {
+        textAppearancePanel?.let { textAppearancePanel ->
             val activeSplit = activeSplit
             if (activeSplit == null) {
                 textAppearancePanel.clearSplitVersion()
@@ -1474,17 +1463,17 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
     private fun consumeUpDownKey(versesController: VersesController, originalKeyCode: Int): VersesController.PressResult {
         var keyCode = originalKeyCode
         val volumeButtonsForNavigation = Preferences.getString(R.string.pref_volumeButtonNavigation_key, R.string.pref_volumeButtonNavigation_default)
-        if (U.equals(volumeButtonsForNavigation, "pasal" /* chapter */)) {
+        if (volumeButtonsForNavigation == "pasal" /* chapter */) {
             if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
                 return VersesController.PressResult.Left
             }
             if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
                 return VersesController.PressResult.Right
             }
-        } else if (U.equals(volumeButtonsForNavigation, "ayat" /* verse */)) {
+        } else if (volumeButtonsForNavigation == "ayat" /* verse */) {
             if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_DOWN
             if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) keyCode = KeyEvent.KEYCODE_DPAD_UP
-        } else if (U.equals(volumeButtonsForNavigation, "page")) {
+        } else if (volumeButtonsForNavigation == "page") {
             if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
                 return versesController.pageDown()
             }
@@ -1568,7 +1557,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
     }
 
     fun referenceFromSelectedVerses(selectedVerses: IntArrayList, book: Book): CharSequence {
-        return when(selectedVerses.size()) {
+        return when (selectedVerses.size()) {
             // should not be possible. So we don't do anything.
             0 -> book.reference(this.chapter_1)
             1 -> book.reference(this.chapter_1, selectedVerses.get(0))
@@ -1580,7 +1569,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
      * Construct text for copying or sharing (in plain text).
      *
      * @param isSplitVersion whether take the verse text from the main or from the split version.
-     * @return [0] text for copy/share, [1] text to be submitted to the share url service
+     * @return [0] text for copying/sharing, [1] text to be submitted to the share url service
      */
     fun prepareTextForCopyShare(selectedVerses_1: IntArrayList, reference: CharSequence, isSplitVersion: Boolean): Array<String> {
         val res0 = StringBuilder()
@@ -1660,7 +1649,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
             root.setBackgroundColor(backgroundColor)
 
             // TODO scrollbar must be visible!
-            // ensure scrollbar is visible on Material devices
+            // ensure the scrollbar is visible on Material devices
             //			if (Build.VERSION.SDK_INT >= 21) {
             //				final Drawable thumb;
             //				if (ColorUtils.calculateLuminance(backgroundColor) > 0.5) {
@@ -1744,7 +1733,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         Tracker.trackEvent("nav_goto_button_click")
 
         val r = {
-            startActivityForResult(GotoActivity.createIntent(this.activeBook.bookId, this.chapter_1, lsSplit0.getVerse_1BasedOnScroll()), REQCODE_goto)
+            startActivityForResult(GotoActivity.createIntent(this.activeBook.bookId, this.chapter_1, lsSplit0.getVerse_1BasedOnScroll()), RequestCodes.FromActivity.Goto)
         }
 
         if (!Preferences.getBoolean(Prefkey.history_button_understood, false) && history.size > 0) {
@@ -1921,7 +1910,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         // - not fullscreen, toolbar at bottom
         // - not fullscreen, toolbar at top
 
-        // root contains exactly 2 children: toolbar and splitRoot. This is checked in DEBUG in onCreate.
+        // root contains exactly 2 children: toolbar and splitRoot.
         // Need to move toolbar and splitRoot in order to accomplish this.
 
         if (!fullScreen) {
@@ -1970,8 +1959,8 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
                         textAppearancePanel = null
                     }
                 },
-                REQCODE_textAppearanceGetFonts,
-                REQCODE_textAppearanceCustomColors
+                RequestCodes.FromActivity.TextAppearanceGetFonts,
+                RequestCodes.FromActivity.TextAppearanceCustomColors
             )
             configureTextAppearancePanelForSplitVersion()
             textAppearancePanel?.show()
@@ -2116,7 +2105,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQCODE_goto && resultCode == Activity.RESULT_OK && data != null) {
+        if (requestCode == RequestCodes.FromActivity.Goto && resultCode == Activity.RESULT_OK && data != null) {
             val result = GotoActivity.obtainResult(data)
             if (result != null) {
                 val ari_cv: Int
@@ -2154,28 +2143,28 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
                     history.add(Ari.encode(this.activeBook.bookId, ari_cv))
                 }
             }
-        } else if (requestCode == REQCODE_share && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == RequestCodes.FromActivity.Share && resultCode == Activity.RESULT_OK) {
             val result = ShareActivity.obtainResult(data)
             val chosenIntent = result?.chosenIntent
             val packageName = chosenIntent?.component?.packageName
             if (packageName != null) {
-                if (U.equals(packageName, "com.facebook.katana")) {
+                if (packageName == "com.facebook.katana") {
                     val verseUrl = chosenIntent.getStringExtra(EXTRA_verseUrl)
                     if (verseUrl != null) {
                         chosenIntent.putExtra(Intent.EXTRA_TEXT, verseUrl) // change text to url
                     }
-                } else if (U.equals(packageName, "com.whatsapp")) {
+                } else if (packageName == "com.whatsapp") {
                     chosenIntent.removeExtra(Intent.EXTRA_SUBJECT)
                 }
                 startActivity(chosenIntent)
             }
-        } else if (requestCode == REQCODE_textAppearanceGetFonts) {
+        } else if (requestCode == RequestCodes.FromActivity.TextAppearanceGetFonts) {
             textAppearancePanel?.onActivityResult(requestCode)
-        } else if (requestCode == REQCODE_textAppearanceCustomColors) {
+        } else if (requestCode == RequestCodes.FromActivity.TextAppearanceCustomColors) {
             textAppearancePanel?.onActivityResult(requestCode)
-        } else if (requestCode == REQCODE_edit_note_1 && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == RequestCodes.FromActivity.EditNote1 && resultCode == Activity.RESULT_OK) {
             reloadBothAttributeMaps()
-        } else if (requestCode == REQCODE_edit_note_2 && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == RequestCodes.FromActivity.EditNote2 && resultCode == Activity.RESULT_OK) {
             lsSplit0.uncheckAllVerses(true)
             reloadBothAttributeMaps()
         }
@@ -2184,7 +2173,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
     }
 
     /**
-     * Display specified chapter and verse of the active book. By default all checked verses will be unchecked.
+     * Display specified chapter and verse of the active book. By default, all checked verses will be unchecked.
      *
      * @param uncheckAllVerses whether we want to always make all verses unchecked after this operation.
      * @return Ari that contains only chapter and verse. Book always set to 0.
@@ -2244,7 +2233,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
     ): Boolean {
         val verses = version.loadChapterText(book, chapter_1) ?: return false
 
-        //# max is set to 30 (one chapter has max of 30 blocks. Already almost impossible)
+        //# max is set to 30 (one chapter has a max of 30 blocks. Already almost impossible)
         val max = 30
         val tmp_pericope_aris = IntArray(max)
         val tmp_pericope_blocks = arrayOfNulls<PericopeBlock>(max)
@@ -2324,7 +2313,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         val volumeButtonsForNavigation = Preferences.getString(R.string.pref_volumeButtonNavigation_key, R.string.pref_volumeButtonNavigation_default)
-        if (!U.equals(volumeButtonsForNavigation, "default")) { // consume here
+        if (volumeButtonsForNavigation != "default") { // consume here
             if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) return true
             if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) return true
         }
@@ -2419,7 +2408,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         }
 
         fun openNoteDialog(_id: Long) {
-            startActivityForResult(NoteActivity.createEditExistingIntent(_id), REQCODE_edit_note_1)
+            startActivityForResult(NoteActivity.createEditExistingIntent(_id), RequestCodes.FromActivity.EditNote1)
         }
 
         override fun onNoteAttributeClick(version: Version, versionId: String, ari: Int) {
@@ -2762,13 +2751,6 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         const val ACTION_ACTIVE_VERSION_CHANGED = "yuku.alkitab.base.IsiActivity.action.ACTIVE_VERSION_CHANGED"
         const val ACTION_NIGHT_MODE_CHANGED = "yuku.alkitab.base.IsiActivity.action.NIGHT_MODE_CHANGED"
         const val ACTION_NEEDS_RESTART = "yuku.alkitab.base.IsiActivity.action.NEEDS_RESTART"
-
-        private const val REQCODE_goto = 1
-        private const val REQCODE_share = 7
-        private const val REQCODE_textAppearanceGetFonts = 9
-        private const val REQCODE_textAppearanceCustomColors = 10
-        private const val REQCODE_edit_note_1 = 11
-        private const val REQCODE_edit_note_2 = 12
 
         private const val EXTRA_verseUrl = "verseUrl"
 
