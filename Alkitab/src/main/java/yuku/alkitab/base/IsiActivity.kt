@@ -74,6 +74,7 @@ import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.util.CurrentReading
 import yuku.alkitab.base.util.ExtensionManager
+import yuku.alkitab.base.util.FormattedVerseText
 import yuku.alkitab.base.util.History
 import yuku.alkitab.base.util.Jumper
 import yuku.alkitab.base.util.LidToAri
@@ -901,7 +902,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
                             if (extension.includeVerseTextFormatting) {
                                 verseTexts[i] = verseText
                             } else {
-                                verseTexts[i] = U.removeSpecialCodes(verseText)
+                                verseTexts[i] = FormattedVerseText.removeSpecialCodes(verseText)
                             }
                             i++
                         }
@@ -1605,7 +1606,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
                 val verseText = if (isSplitVersion) dataSplit1.getVerseText(verse_1) else dataSplit0.getVerseText(verse_1)
 
                 if (verseText != null) {
-                    val verseTextPlain = U.removeSpecialCodes(verseText)
+                    val verseTextPlain = FormattedVerseText.removeSpecialCodes(verseText)
 
                     res0.append(verse_1)
                     res1.append(verse_1)
@@ -1631,7 +1632,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
                 val verseText = if (isSplitVersion) dataSplit1.getVerseText(verse_1) else dataSplit0.getVerseText(verse_1)
 
                 if (verseText != null) {
-                    val verseTextPlain = U.removeSpecialCodes(verseText)
+                    val verseTextPlain = FormattedVerseText.removeSpecialCodes(verseText)
 
                     if (i != 0) {
                         res0.append('\n')

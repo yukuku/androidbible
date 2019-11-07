@@ -16,8 +16,8 @@ import okhttp3.Request
 import okhttp3.Response
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
-import yuku.alkitab.base.U
 import yuku.alkitab.base.ac.base.BaseActivity
+import yuku.alkitab.base.util.FormattedVerseText
 import yuku.alkitab.base.widget.VerseRenderer
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
@@ -71,7 +71,7 @@ class RibkaReportActivity : BaseActivity() {
         tRibkaReference.text = reference
         VerseRenderer.render(tRibkaVerseText, null, ari, verseText, "", null, false, null, null)
 
-        tRibkaSuggestion.setText(U.removeSpecialCodes(verseText))
+        tRibkaSuggestion.setText(FormattedVerseText.removeSpecialCodes(verseText))
 
         val defaultEmail = Preferences.getString(R.string.pref_syncAccountName_key)
         if (defaultEmail != null) {
@@ -104,7 +104,7 @@ class RibkaReportActivity : BaseActivity() {
         val remarks = tRibkaRemarks.text.toString().trim()
 
         fun sameAsOriginal(): Boolean {
-            return (U.removeSpecialCodes(verseText)?.trim() == suggestion.trim())
+            return (FormattedVerseText.removeSpecialCodes(verseText)?.trim() == suggestion.trim())
         }
 
         // must have a change in suggestion OR put some remarks

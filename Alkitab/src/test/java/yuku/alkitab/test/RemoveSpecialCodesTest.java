@@ -1,18 +1,18 @@
 package yuku.alkitab.test;
 
 import junit.framework.TestCase;
-import yuku.alkitab.base.U;
+import yuku.alkitab.base.util.FormattedVerseText;
 
 public class RemoveSpecialCodesTest extends TestCase {
 	void testRemoveSpecialCodes(String formatted, String plain) {
-		assertEquals(plain, U.removeSpecialCodes(formatted));
+		assertEquals(plain, FormattedVerseText.removeSpecialCodes(formatted));
 	}
 
 	void testRemoveSpecialCodesForced(String formatted, String plain) {
-		assertEquals(plain, U.removeSpecialCodes(formatted, true));
+		assertEquals(plain, FormattedVerseText.removeSpecialCodes(formatted, true));
 	}
 
-	public void testRemoveSpecialCodes() throws Throwable {
+	public void testRemoveSpecialCodes() {
 		testRemoveSpecialCodes("abcdef ghijkl", "abcdef ghijkl");
 		testRemoveSpecialCodes("abc@1def@2ghi@3jkl", "abc@1def@2ghi@3jkl"); // does not start with "@@"
 		testRemoveSpecialCodes("@@abc@1def@2ghi@3jkl", "abc def ghi jkl");

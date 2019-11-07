@@ -2,7 +2,6 @@ package yuku.alkitab.base.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.fragment.app.DialogFragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,18 +10,18 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import androidx.fragment.app.DialogFragment;
+import java.util.ArrayList;
+import java.util.List;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.base.util.FormattedVerseText;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.OldAttributeView;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.model.Version;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ProgressMarkListDialog extends DialogFragment {
 	public static final String TAG = ProgressMarkListDialog.class.getSimpleName();
@@ -139,7 +138,7 @@ public class ProgressMarkListDialog extends DialogFragment {
 				tDate.setText(date);
 
 				final String reference = version.reference(ari);
-				verseText = U.removeSpecialCodes(version.loadVerseText(ari));
+				verseText = FormattedVerseText.removeSpecialCodes(version.loadVerseText(ari));
 				Appearances.applyMarkerSnippetContentAndAppearance(tVerseText, reference, verseText, textSizeMult);
 				view.setEnabled(false);
 			} else {

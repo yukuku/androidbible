@@ -3,17 +3,17 @@ package yuku.alkitab.base.widget;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.graphics.Color;
-import androidx.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.SuperscriptSpan;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
+import androidx.annotation.Nullable;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.DailyVerseData;
+import yuku.alkitab.base.util.FormattedVerseText;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
@@ -33,7 +33,7 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 	public static SpannableStringBuilder getText(Version version, int ari, boolean showVerseNumber) {
 		final SpannableStringBuilder sb = new SpannableStringBuilder();
 
-		String verseText = U.removeSpecialCodes(version.loadVerseText(ari));
+		String verseText = FormattedVerseText.removeSpecialCodes(version.loadVerseText(ari));
 		if (verseText == null) {
 			verseText = Localized.string(R.string.generic_verse_not_available_in_this_version);
 		}

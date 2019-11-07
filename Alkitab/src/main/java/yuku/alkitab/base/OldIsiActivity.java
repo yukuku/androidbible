@@ -88,6 +88,7 @@ import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.CurrentReading;
 import yuku.alkitab.base.util.ExtensionManager;
+import yuku.alkitab.base.util.FormattedVerseText;
 import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.Jumper;
@@ -1010,7 +1011,7 @@ public class OldIsiActivity extends BaseLeftDrawerActivity implements XrefDialog
 				final String verseText = isSplitVersion ? lsSplit1.getVerseText(verse_1) : lsSplit0.getVerseText(verse_1);
 
 				if (verseText != null) {
-					final String verseTextPlain = U.removeSpecialCodes(verseText);
+					final String verseTextPlain = FormattedVerseText.removeSpecialCodes(verseText);
 
 					res0.append(verse_1);
 					res1.append(verse_1);
@@ -1035,7 +1036,7 @@ public class OldIsiActivity extends BaseLeftDrawerActivity implements XrefDialog
 				final String verseText = isSplitVersion ? lsSplit1.getVerseText(verse_1) : lsSplit0.getVerseText(verse_1);
 
 				if (verseText != null) {
-					final String verseTextPlain = U.removeSpecialCodes(verseText);
+					final String verseTextPlain = FormattedVerseText.removeSpecialCodes(verseText);
 
 					if (i != 0) {
 						res0.append('\n');
@@ -2550,7 +2551,7 @@ public class OldIsiActivity extends BaseLeftDrawerActivity implements XrefDialog
 								if (extension.includeVerseTextFormatting) {
 									verseTexts[i] = verseText;
 								} else {
-									verseTexts[i] = U.removeSpecialCodes(verseText);
+									verseTexts[i] = FormattedVerseText.removeSpecialCodes(verseText);
 								}
 							}
 							intent.putExtra("verseTexts", verseTexts);
