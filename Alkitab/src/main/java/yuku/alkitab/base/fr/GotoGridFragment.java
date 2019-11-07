@@ -3,19 +3,19 @@ package yuku.alkitab.base.fr;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
-import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.fr.base.BaseGotoFragment;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AppLog;
+import yuku.alkitab.base.util.BookColorUtil;
 import yuku.alkitab.base.util.BookNameSorter;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
@@ -171,7 +171,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 	
 	protected void displaySelectedBookAndChapter() {
 		lSelectedBook.setText(selectedBook.shortName);
-		lSelectedBook.setTextColor(U.getForegroundColorOnDarkBackgroundByBookId(selectedBook.bookId));
+		lSelectedBook.setTextColor(BookColorUtil.getForegroundOnDark(selectedBook.bookId));
 		if (selectedChapter == 0) {
 			lSelectedChapter.setVisibility(View.GONE);
 		} else {
@@ -291,7 +291,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 		@Override
 		int textColorForView(final int position) {
 			final Book book = getItem(position);
-			return U.getForegroundColorOnDarkBackgroundByBookId(book.bookId);
+			return BookColorUtil.getForegroundOnDark(book.bookId);
 		}
 	}
 	

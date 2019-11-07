@@ -86,11 +86,13 @@ import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.base.util.ClipboardUtil;
 import yuku.alkitab.base.util.CurrentReading;
 import yuku.alkitab.base.util.ExtensionManager;
 import yuku.alkitab.base.util.FormattedVerseText;
 import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.History;
+import yuku.alkitab.base.util.InstallationUtil;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.LidToAri;
 import static yuku.alkitab.base.util.Literals.Array;
@@ -1183,7 +1185,7 @@ public class OldIsiActivity extends BaseLeftDrawerActivity implements XrefDialog
 		private final java.text.DateFormat timeFormat = DateFormat.getTimeFormat(App.context);
 		private final java.text.DateFormat mediumDateFormat = DateFormat.getMediumDateFormat(App.context);
 
-		final String thisCreatorId = U.getInstallationId();
+		final String thisCreatorId = InstallationUtil.getInstallationId();
 		int defaultTextColor;
 
 		@NonNull
@@ -2291,17 +2293,17 @@ public class OldIsiActivity extends BaseLeftDrawerActivity implements XrefDialog
 					ShareUrl.make(OldIsiActivity.this, !Preferences.getBoolean(getString(R.string.pref_copyWithShareUrl_key), getResources().getBoolean(R.bool.pref_copyWithShareUrl_default)), textToSubmit, Ari.encode(activeBook.bookId, chapter_1, 0), selected, reference.toString(), S.activeVersion(), MVersionDb.presetNameFromVersionId(S.activeVersionId()), new ShareUrl.Callback() {
 						@Override
 						public void onSuccess(final String shareUrl) {
-							U.copyToClipboard(textToCopy + "\n\n" + shareUrl);
+							ClipboardUtil.copyToClipboard(textToCopy + "\n\n" + shareUrl);
 						}
 
 						@Override
 						public void onUserCancel() {
-							U.copyToClipboard(textToCopy);
+							ClipboardUtil.copyToClipboard(textToCopy);
 						}
 
 						@Override
 						public void onError(final Exception e) {
-							U.copyToClipboard(textToCopy);
+							ClipboardUtil.copyToClipboard(textToCopy);
 						}
 
 						@Override

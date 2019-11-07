@@ -98,7 +98,7 @@ public class History {
 		entry.gid = Gid.newGid();
 		entry.ari = ari;
 		entry.timestamp = timestamp;
-		entry.creator_id = U.getInstallationId();
+		entry.creator_id = InstallationUtil.getInstallationId();
 		entries.add(0, entry);
 
 		// and remove if overflow

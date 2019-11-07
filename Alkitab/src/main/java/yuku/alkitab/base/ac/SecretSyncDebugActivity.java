@@ -13,6 +13,15 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -23,7 +32,6 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.Prefkey;
@@ -34,21 +42,13 @@ import yuku.alkitab.base.sync.Sync_Pins;
 import yuku.alkitab.base.sync.Sync_Rp;
 import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.Highlights;
+import yuku.alkitab.base.util.InstallationUtil;
+import yuku.alkitab.base.util.LabelColorUtil;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.alkitab.model.Marker_Label;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SecretSyncDebugActivity extends BaseActivity {
 	public static final String TAG = SecretSyncDebugActivity.class.getSimpleName();
@@ -133,8 +133,8 @@ public class SecretSyncDebugActivity extends BaseActivity {
 	}
 
 	View.OnClickListener bGenerateDummies_click = v -> {
-		final Label label1 = S.getDb().insertLabel(randomString("L1_", 1, 3, 8), U.encodeLabelBackgroundColor(rand(0xffffff)));
-		final Label label2 = S.getDb().insertLabel(randomString("L2_", 1, 3, 8), U.encodeLabelBackgroundColor(rand(0xffffff)));
+		final Label label1 = S.getDb().insertLabel(randomString("L1_", 1, 3, 8), LabelColorUtil.encodeBackground(rand(0xffffff)));
+		final Label label2 = S.getDb().insertLabel(randomString("L2_", 1, 3, 8), LabelColorUtil.encodeBackground(rand(0xffffff)));
 
 		for (int i = 0; i < 10; i++) {
 			final Marker marker = S.getDb().insertMarker(0x000101 + rand(30), Marker.Kind.values()[rand(3)], randomString("M" + i + "_", rand(2) + 1, 4, 7), rand(2) + 1, new Date(), new Date());
@@ -155,8 +155,8 @@ public class SecretSyncDebugActivity extends BaseActivity {
 	};
 
 	View.OnClickListener bGenerateDummies2_click = v -> {
-		final Label label1 = S.getDb().insertLabel(randomString("LL1_", 1, 3, 8), U.encodeLabelBackgroundColor(rand(0xffffff)));
-		final Label label2 = S.getDb().insertLabel(randomString("LL2_", 1, 3, 8), U.encodeLabelBackgroundColor(rand(0xffffff)));
+		final Label label1 = S.getDb().insertLabel(randomString("LL1_", 1, 3, 8), LabelColorUtil.encodeBackground(rand(0xffffff)));
+		final Label label2 = S.getDb().insertLabel(randomString("LL2_", 1, 3, 8), LabelColorUtil.encodeBackground(rand(0xffffff)));
 
 		for (int i = 0; i < 1000; i++) {
 			final Marker.Kind kind = Marker.Kind.values()[rand(3)];
@@ -208,7 +208,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 					int nlabel = rand(5);
 					toast("creating " + nlabel + " labels");
 					for (int i = 0; i < nlabel; i++) {
-						S.getDb().insertLabel(randomString("monkey L " + i + " ", 1, 3, 8), U.encodeLabelBackgroundColor(rand(0xffffff)));
+						S.getDb().insertLabel(randomString("monkey L " + i + " ", 1, 3, 8), LabelColorUtil.encodeBackground(rand(0xffffff)));
 					}
 				}
 
@@ -360,7 +360,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		final RequestBody requestBody = new FormBody.Builder()
 			.add("simpleToken", simpleToken)
 			.add("syncSetName", SyncShadow.SYNC_SET_MABEL)
-			.add("installation_id", U.getInstallationId())
+			.add("installation_id", InstallationUtil.getInstallationId())
 			.add("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 
@@ -376,7 +376,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		}
 
 		if (cMakeDirtyLabel.isChecked()) {
-			S.getDb().insertLabel(randomString("LMD_", 1, 3, 8), U.encodeLabelBackgroundColor(rand(0xffffff)));
+			S.getDb().insertLabel(randomString("LMD_", 1, 3, 8), LabelColorUtil.encodeBackground(rand(0xffffff)));
 		}
 
 		if (cMakeDirtyMarker_Label.isChecked()) {

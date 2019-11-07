@@ -11,6 +11,7 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.util.AppLog;
 
 import java.util.List;
+import yuku.alkitab.base.util.InstallationUtil;
 
 public class FcmIntentService extends JobIntentService {
 	static final String TAG = FcmIntentService.class.getSimpleName();
@@ -50,7 +51,7 @@ public class FcmIntentService extends JobIntentService {
 
 		try {
 			final String source_installation_id = intent.getStringExtra(FCM_MESSAGE_KEY_source_installation_id);
-			if (U.equals(source_installation_id, U.getInstallationId())) {
+			if (U.equals(source_installation_id, InstallationUtil.getInstallationId())) {
 				AppLog.d(TAG, "FCM message sourced from self is ignored");
 			} else {
 				final String encoded_data = intent.getStringExtra(FCM_MESSAGE_KEY_encoded_data);

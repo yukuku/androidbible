@@ -13,10 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.S
-import yuku.alkitab.base.U
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.util.TargetDecoder
+import yuku.alkitab.base.util.TextColorUtil
 import yuku.alkitab.base.verses.VersesDataModel.ItemType
 import yuku.alkitab.base.widget.AriParallelClickData
 import yuku.alkitab.base.widget.DictionaryLinkInfo
@@ -472,7 +472,7 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         Appearances.applyVerseNumberAppearance(lVerseNumber, textSizeMult)
 
         if (checked) { // override text color with black or white!
-            val selectedTextColor = U.getTextColorForSelectedVerse(Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default))
+            val selectedTextColor = TextColorUtil.getForCheckedVerse(Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default))
             lText.setTextColor(selectedTextColor)
             lVerseNumber.setTextColor(selectedTextColor)
         }

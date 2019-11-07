@@ -12,11 +12,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.base.util.TargetDecoder;
+import yuku.alkitab.base.util.TextColorUtil;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.SingleChapterVerses;
@@ -94,7 +94,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			Appearances.applyVerseNumberAppearance(lVerseNumber, textSizeMult);
 
 			if (checked) { // override text color with black or white!
-				final int selectedTextColor = U.getTextColorForSelectedVerse(Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default));
+				final int selectedTextColor = TextColorUtil.getForCheckedVerse(Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default));
 				lText.setTextColor(selectedTextColor);
 				lVerseNumber.setTextColor(selectedTextColor);
 			}

@@ -49,11 +49,13 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.base.util.ClipboardUtil;
 import yuku.alkitab.base.util.FormattedVerseText;
 import yuku.alkitab.base.util.Jumper;
 import static yuku.alkitab.base.util.Literals.Array;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.SearchEngine;
+import yuku.alkitab.base.util.TextColorUtil;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
@@ -147,7 +149,7 @@ public class SearchActivity extends BaseActivity {
 							}
 						}
 
-						U.copyToClipboard(sb);
+						ClipboardUtil.copyToClipboard(sb);
 						Snackbar.make(root, R.string.search_selected_verse_copied, Snackbar.LENGTH_SHORT).show();
 
 						mode.finish();
@@ -372,7 +374,7 @@ public class SearchActivity extends BaseActivity {
 		lsSearchResults.setEmptyView(tSearchTips);
 		Appearances.applyTextAppearance(tSearchTips, textSizeMult);
 		
-		hiliteColor = U.getSearchKeywordTextColorByBrightness(applied.backgroundBrightness);
+		hiliteColor = TextColorUtil.getSearchKeywordByBrightness(applied.backgroundBrightness);
 
 		lsSearchResults.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
 		lsSearchResults.setOnItemClickListener((parent, view, position, id) -> {
@@ -879,7 +881,7 @@ public class SearchActivity extends BaseActivity {
 			if (checked) {
 				final int colorRgb = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default);
 				checkedBgColor = ColorUtils.setAlphaComponent(colorRgb, 0xa0);
-				checkedTextColor = U.getTextColorForSelectedVerse(checkedBgColor);
+				checkedTextColor = TextColorUtil.getForCheckedVerse(checkedBgColor);
 			} else {
 				// no need to calculate
 				checkedBgColor = 0;

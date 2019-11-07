@@ -8,22 +8,26 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import androidx.annotation.Keep;
-import androidx.annotation.Nullable;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.app.ShareCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.core.widget.NestedScrollView;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import androidx.annotation.Keep;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ShareCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.drawerlayout.widget.DrawerLayout;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -39,6 +43,7 @@ import yuku.alkitab.base.devotion.DevotionDownloader;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
+import yuku.alkitab.base.util.ClipboardUtil;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.LeftDrawer;
@@ -49,11 +54,6 @@ import yuku.alkitab.reminder.ac.DevotionReminderActivity;
 import yuku.alkitab.tracking.Tracker;
 import yuku.alkitab.util.Ari;
 import yuku.alkitabintegration.display.Launcher;
-
-import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDrawer.Devotion.Listener {
 	public static final String TAG = DevotionActivity.class.getSimpleName();
@@ -369,7 +369,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 			leftDrawer.toggleDrawer();
 			return true;
 		} else if (itemId == R.id.menuCopy) {
-			U.copyToClipboard(currentKind.title + "\n" + lContent.getText());
+			ClipboardUtil.copyToClipboard(currentKind.title + "\n" + lContent.getText());
 
 			Snackbar.make(root, R.string.renungan_sudah_disalin, Snackbar.LENGTH_SHORT).show();
 

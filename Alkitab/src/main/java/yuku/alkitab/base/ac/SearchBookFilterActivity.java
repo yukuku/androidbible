@@ -5,10 +5,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.appcompat.app.ActionBar;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -16,10 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import yuku.afw.App;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.util.BookColorUtil;
 import yuku.alkitab.base.util.BookNameSorter;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
@@ -226,12 +226,12 @@ public class SearchBookFilterActivity extends BaseActivity {
 
 				if (selectedBookIds.get(book.bookId)) {
 					lName.setTextColor(0xffffffff);
-					final ColorDrawable color = new ColorDrawable(U.getBackgroundColorByBookId(book.bookId));
+					final ColorDrawable color = new ColorDrawable(BookColorUtil.getBackground(book.bookId));
 					final InsetDrawable bg = new InsetDrawable(color, getResources().getDimensionPixelOffset(R.dimen.goto_grid_cell_inset));
 					//noinspection deprecation
 					lName.setBackgroundDrawable(bg);
 				} else {
-					lName.setTextColor(U.getForegroundColorOnDarkBackgroundByBookId(book.bookId));
+					lName.setTextColor(BookColorUtil.getForegroundOnDark(book.bookId));
 					lName.setBackgroundColor(0x0);
 				}
 

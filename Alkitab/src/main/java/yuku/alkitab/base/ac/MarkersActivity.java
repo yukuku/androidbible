@@ -28,12 +28,12 @@ import com.mobeta.android.dslv.DragSortListView;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.LabelEditorDialog;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.BookmarkImporter;
+import yuku.alkitab.base.util.LabelColorUtil;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
@@ -239,10 +239,10 @@ public class MarkersActivity extends BaseActivity {
 				return true;
 			}
 			
-			int warnaLatarRgb = U.decodeLabelBackgroundColor(label.backgroundColor);
-			new AmbilWarnaDialog(MarkersActivity.this, 0xff000000 | warnaLatarRgb, new OnAmbilWarnaListener() {
+			int colorRgb = LabelColorUtil.decodeBackground(label.backgroundColor);
+			new AmbilWarnaDialog(MarkersActivity.this, 0xff000000 | colorRgb, new OnAmbilWarnaListener() {
 				@Override public void onOk(AmbilWarnaDialog dialog, int color) {
-					label.backgroundColor = U.encodeLabelBackgroundColor(0x00ffffff & color);
+					label.backgroundColor = LabelColorUtil.encodeBackground(0x00ffffff & color);
 
 					S.getDb().insertOrUpdateLabel(label);
 					adapter.notifyDataSetChanged();
@@ -417,8 +417,8 @@ public class MarkersActivity extends BaseActivity {
 				Label label = getItem(position);
 				lFilterLabel.setVisibility(View.VISIBLE);
 				lFilterLabel.setText(label.title);
-				
-				U.applyLabelColor(label, lFilterLabel);
+
+				LabelColorUtil.apply(label, lFilterLabel);
 			}
 
 			View drag_handle = res.findViewById(R.id.drag_handle);

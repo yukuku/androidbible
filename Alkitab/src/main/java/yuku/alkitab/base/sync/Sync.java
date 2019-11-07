@@ -9,20 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.collection.ArrayMap;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import okhttp3.Call;
-import okhttp3.FormBody;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import yuku.afw.storage.Preferences;
-import yuku.alkitab.base.App;
-import yuku.alkitab.base.U;
-import yuku.alkitab.base.model.SyncShadow;
-import yuku.alkitab.base.storage.Prefkey;
-import yuku.alkitab.base.util.AppLog;
-import yuku.alkitab.base.util.Background;
-import yuku.alkitab.debug.BuildConfig;
-import yuku.alkitab.debug.R;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +19,19 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.App;
+import yuku.alkitab.base.model.SyncShadow;
+import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.AppLog;
+import yuku.alkitab.base.util.Background;
+import yuku.alkitab.base.util.InstallationUtil;
+import yuku.alkitab.debug.BuildConfig;
+import yuku.alkitab.debug.R;
 
 public class Sync {
 	static final String TAG = Sync.class.getSimpleName();
@@ -411,7 +410,7 @@ public class Sync {
 		final RequestBody requestBody = b
 			.add("email", form.email)
 			.add("password", form.password)
-			.add("installation_info", U.getInstallationInfoJson())
+			.add("installation_info", InstallationUtil.getInfoJson())
 			.build();
 
 		try {
@@ -444,7 +443,7 @@ public class Sync {
 		final RequestBody requestBody = new FormBody.Builder()
 			.add("email", email)
 			.add("password", password)
-			.add("installation_info", U.getInstallationInfoJson())
+			.add("installation_info", InstallationUtil.getInfoJson())
 			.build();
 
 		try {

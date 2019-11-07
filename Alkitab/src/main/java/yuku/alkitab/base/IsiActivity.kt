@@ -72,10 +72,12 @@ import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.Announce
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
+import yuku.alkitab.base.util.ClipboardUtil
 import yuku.alkitab.base.util.CurrentReading
 import yuku.alkitab.base.util.ExtensionManager
 import yuku.alkitab.base.util.FormattedVerseText
 import yuku.alkitab.base.util.History
+import yuku.alkitab.base.util.InstallationUtil
 import yuku.alkitab.base.util.Jumper
 import yuku.alkitab.base.util.LidToAri
 import yuku.alkitab.base.util.Literals.Array
@@ -634,15 +636,15 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
 
                     ShareUrl.make(this@IsiActivity, !Preferences.getBoolean(getString(R.string.pref_copyWithShareUrl_key), resources.getBoolean(R.bool.pref_copyWithShareUrl_default)), textToSubmit, Ari.encode(activeBook.bookId, chapter_1, 0), selected, reference.toString(), S.activeVersion(), MVersionDb.presetNameFromVersionId(S.activeVersionId()), object : ShareUrl.Callback {
                         override fun onSuccess(shareUrl: String) {
-                            U.copyToClipboard(textToCopy + "\n\n" + shareUrl)
+                            ClipboardUtil.copyToClipboard(textToCopy + "\n\n" + shareUrl)
                         }
 
                         override fun onUserCancel() {
-                            U.copyToClipboard(textToCopy)
+                            ClipboardUtil.copyToClipboard(textToCopy)
                         }
 
                         override fun onError(e: Exception) {
-                            U.copyToClipboard(textToCopy)
+                            ClipboardUtil.copyToClipboard(textToCopy)
                         }
 
                         override fun onFinally() {
@@ -1777,7 +1779,7 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         private val timeFormat = DateFormat.getTimeFormat(App.context)
         private val mediumDateFormat = DateFormat.getMediumDateFormat(App.context)
 
-        private val thisCreatorId = U.getInstallationId()
+        private val thisCreatorId = InstallationUtil.getInstallationId()
         private var defaultTextColor: Int = 0
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

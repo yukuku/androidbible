@@ -22,7 +22,6 @@ import okhttp3.FormBody;
 import okhttp3.Request;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.HelpActivity;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.widget.Localized;
@@ -143,7 +142,7 @@ public abstract class Announce {
 				.url(BuildConfig.SERVER_HOST + "announce/check")
 				.post(
 					new FormBody.Builder()
-						.add("installation_info", U.getInstallationInfoJson())
+						.add("installation_info", InstallationUtil.getInfoJson())
 						.build()
 				)
 				.build()

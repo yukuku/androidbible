@@ -7,18 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.Keep;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.core.app.ShareCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Html;
 import android.text.InputType;
 import android.text.Spanned;
@@ -30,8 +18,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ShareCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -46,6 +53,7 @@ import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AlphanumComparator;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
+import yuku.alkitab.base.util.ClipboardUtil;
 import yuku.alkitab.base.util.FontManager;
 import yuku.alkitab.base.util.Foreground;
 import yuku.alkitab.base.util.OsisBookNames;
@@ -63,14 +71,6 @@ import yuku.kpri.model.Lyric;
 import yuku.kpri.model.Song;
 import yuku.kpri.model.Verse;
 import yuku.kpri.model.VerseKind;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 public class SongViewActivity extends BaseLeftDrawerActivity implements SongFragment.ShouldOverrideUrlLoadingHandler, LeftDrawer.Songs.Listener, MediaStateListener {
 	static final String TAG = SongViewActivity.class.getSimpleName();
@@ -526,7 +526,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 			case R.id.menuCopy: {
 				if (currentSong != null) {
-					U.copyToClipboard(convertSongToText(currentSong));
+					ClipboardUtil.copyToClipboard(convertSongToText(currentSong));
 
 					Snackbar.make(root, R.string.sn_copied, Snackbar.LENGTH_SHORT).show();
 				}

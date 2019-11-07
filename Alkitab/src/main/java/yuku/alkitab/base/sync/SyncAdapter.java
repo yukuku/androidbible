@@ -28,6 +28,7 @@ import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.History;
+import yuku.alkitab.base.util.InstallationUtil;
 import yuku.alkitab.base.util.Sqlitil;
 
 import java.io.IOException;
@@ -280,7 +281,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			.setType(MultipartBody.FORM)
 			.addFormDataPart("simpleToken", simpleToken)
 			.addFormDataPart("syncSetName", syncSetName)
-			.addFormDataPart("installation_id", U.getInstallationId())
+			.addFormDataPart("installation_id", InstallationUtil.getInstallationId())
 			.addFormDataPart("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 
@@ -381,7 +382,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		final RequestBody requestBody = new FormBody.Builder()
 			.add("simpleToken", simpleToken)
 			.add("syncSetName", syncSetName)
-			.add("installation_id", U.getInstallationId())
+			.add("installation_id", InstallationUtil.getInstallationId())
 			.add("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 
@@ -474,7 +475,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		final RequestBody requestBody = new FormBody.Builder()
 			.add("simpleToken", simpleToken)
 			.add("syncSetName", syncSetName)
-			.add("installation_id", U.getInstallationId())
+			.add("installation_id", InstallationUtil.getInstallationId())
 			.add("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 
@@ -569,7 +570,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		final RequestBody requestBody = new FormBody.Builder()
 			.add("simpleToken", simpleToken)
 			.add("syncSetName", syncSetName)
-			.add("installation_id", U.getInstallationId())
+			.add("installation_id", InstallationUtil.getInstallationId())
 			.add("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 

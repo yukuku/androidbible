@@ -14,9 +14,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.fr.base.BaseGotoFragment;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.BookColorUtil;
 import yuku.alkitab.base.util.BookNameSorter;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
@@ -343,7 +343,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 			final Book book = getItem(position);
 			res.setText(booksc_[position].shortName);
 			res.setTextSize(18);
-			res.setTextColor(U.getForegroundColorOnDarkBackgroundByBookId(book.bookId));
+			res.setTextColor(BookColorUtil.getForegroundOnDark(book.bookId));
 
 			return res;
 		}
@@ -354,7 +354,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 			final Book book = getItem(position);
 			res.setText(book.shortName);
 			res.setTextSize(18);
-			res.setTextColor(U.getForegroundColorOnDarkBackgroundByBookId(book.bookId));
+			res.setTextColor(BookColorUtil.getForegroundOnDark(book.bookId));
 
 			return res;
 		}

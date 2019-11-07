@@ -4,26 +4,25 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import androidx.recyclerview.widget.RecyclerView;
 import com.afollestad.materialdialogs.MaterialDialog;
+import java.util.Date;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.U;
+import yuku.alkitab.base.util.LabelColorUtil;
 import yuku.alkitab.base.widget.MaterialDialogAdapterHelper;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.devoxx.flowlayout.FlowLayout;
-
-import java.util.Date;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 public class TypeBookmarkDialog {
 	public interface Listener {
@@ -186,7 +185,7 @@ public class TypeBookmarkDialog {
 		res.setTag(R.id.TAG_label, label);
 		res.setOnClickListener(label_click);
         final Drawable drawableRight = res.getCompoundDrawables()[2];
-        final int labelColor = U.applyLabelColor(label, res);
+        final int labelColor = LabelColorUtil.apply(label, res);
         if (drawableRight != null && labelColor != 0) {
             drawableRight.mutate();
             drawableRight.setColorFilter(labelColor, PorterDuff.Mode.MULTIPLY);
@@ -227,7 +226,7 @@ public class TypeBookmarkDialog {
 				if (type == 0) {
 					final Label label = availableLabels.get(position - 1);
 					holder.text1.setText(label.title);
-					U.applyLabelColor(label, holder.text1);
+					LabelColorUtil.apply(label, holder.text1);
 				} else {
 					holder.text1.setText(context.getString(R.string.create_label_titik3));
 				}

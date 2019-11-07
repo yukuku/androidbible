@@ -35,9 +35,11 @@ import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.Debouncer;
 import yuku.alkitab.base.util.Highlights;
+import yuku.alkitab.base.util.LabelColorUtil;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.SearchEngine;
 import yuku.alkitab.base.util.Sqlitil;
+import yuku.alkitab.base.util.TextColorUtil;
 import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
@@ -199,7 +201,7 @@ public class MarkerListActivity extends BaseActivity {
 		}
 
 		tEmpty.setTextColor(applied.fontColor);
-		hiliteColor = U.getSearchKeywordTextColorByBrightness(applied.backgroundBrightness);
+		hiliteColor = TextColorUtil.getSearchKeywordByBrightness(applied.backgroundBrightness);
 
 		loadAndFilter();
 	}
@@ -324,7 +326,7 @@ public class MarkerListActivity extends BaseActivity {
 		final TextView lCaption = res.findViewById(R.id.lCaption);
 		lCaption.setText(label.title);
 
-		U.applyLabelColor(label, lCaption);
+		LabelColorUtil.apply(label, lCaption);
 
 		return res;
 	}
