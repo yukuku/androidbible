@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
@@ -14,7 +13,6 @@ import android.util.TypedValue
 import android.view.MenuItem
 import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NavUtils
 import androidx.core.app.TaskStackBuilder
@@ -208,22 +206,6 @@ abstract class BaseActivity : AppCompatActivity(), ActivityCompat.OnRequestPermi
                 .startActivities()
         } else {
             NavUtils.navigateUpTo(this, upIntent)
-        }
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-
-        // reconfigure toolbar height (Need to have a toolbar with id toolbar)
-        findViewById<Toolbar>(R.id.toolbar)?.let { v ->
-            val lp = v.layoutParams
-            val tv = TypedValue()
-            theme.resolveAttribute(R.attr.actionBarSize, tv, true)
-            val h = tv.getDimension(resources.displayMetrics).toInt()
-            lp.height = h
-            v.layoutParams = lp
-            // Workaround for https://code.google.com/p/android/issues/detail?id=79813
-            v.minimumHeight = h
         }
     }
 
