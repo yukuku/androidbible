@@ -43,9 +43,13 @@ public class FileChooserActivity extends BaseActivity {
 	FileAdapter adapter;
 	File cd;
 
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		// 20200101: This has to be set before super.onCreate()
+		// because the callback of asking storage permission calls init(),
+		// which requires config to be set.
+		config = getIntent().getParcelableExtra(EXTRA_config);
+
 		super.willNeedStoragePermission();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.filechooser_activity_filechooser);
@@ -55,8 +59,6 @@ public class FileChooserActivity extends BaseActivity {
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;
 		ab.setDisplayHomeAsUpEnabled(true);
-
-		config = getIntent().getParcelableExtra(EXTRA_config);
 
 		Utils.configureTitles(this, config.title, config.subtitle);
 
