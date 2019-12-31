@@ -1,6 +1,5 @@
 package yuku.alkitab.base.dialog
 
-import android.content.Context
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.SpannableStringBuilder
@@ -39,13 +38,9 @@ private const val TAG = "XrefDialog"
 private const val EXTRA_arif = "arif"
 
 class XrefDialog : BaseDialog() {
-    interface XrefDialogListener {
-        fun onVerseSelected(dialog: XrefDialog, arif_source: Int, ari_target: Int)
-    }
-
     private var arif_source by notNull<Int>()
     private var xrefEntry: XrefEntry? = null
-    private lateinit var listener: XrefDialogListener
+    private lateinit var verseSelectedListener: (arif_source: Int, ari_target: Int) -> Unit
 
     private lateinit var tXrefText: TextView
     private lateinit var versesController: VersesController
@@ -62,19 +57,11 @@ class XrefDialog : BaseDialog() {
     /**
      * This must be called after [newInstance].
      */
-    fun init(sourceVersion: Version, sourceVersionId: String) {
+    fun init(sourceVersion: Version, sourceVersionId: String, verseSelectedListener: (arif_source: Int, ari_target: Int) -> Unit) {
         this.sourceVersion = sourceVersion
         this.sourceVersionId = sourceVersionId
         this.textSizeMult = S.getDb().getPerVersionSettings(sourceVersionId).fontSizeMultiplier
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        this.listener = if (parentFragment is XrefDialogListener) {
-            parentFragment as XrefDialogListener
-        } else {
-            context as XrefDialogListener
-        }
+        this.verseSelectedListener = verseSelectedListener
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -185,7 +172,7 @@ class XrefDialog : BaseDialog() {
 
     private val selectedVersesListener = object : VersesController.SelectedVersesListener() {
         override fun onVerseSingleClick(verse_1: Int) {
-            listener.onVerseSelected(this@XrefDialog, arif_source, displayedRealAris[verse_1 - 1])
+            verseSelectedListener(arif_source, displayedRealAris[verse_1 - 1])
         }
     }
 

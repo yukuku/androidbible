@@ -126,7 +126,7 @@ import kotlin.math.roundToLong
 
 private const val TAG = "IsiActivity"
 
-class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, LeftDrawer.Text.Listener, ProgressMarkListDialog.Listener {
+class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, ProgressMarkListDialog.Listener {
     var uncheckVersesWhenActionModeDestroyed = true
 
     var needsRestart: Boolean = false // whether this activity needs to be restarted
@@ -2380,17 +2380,6 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
         return true
     }
 
-    override fun onVerseSelected(dialog: XrefDialog, arif_source: Int, ari_target: Int) {
-        val ari_source = arif_source.ushr(8)
-
-        dialog.dismiss()
-        jumpToAri(ari_target)
-
-        // add both xref source and target, so user can go back to source easily
-        history.add(ari_source)
-        history.add(ari_target)
-    }
-
     inner class AttributeListener : VersesController.AttributeListener() {
         fun openBookmarkDialog(_id: Long) {
             val dialog = TypeBookmarkDialog.EditExisting(this@IsiActivity, _id)
@@ -2548,11 +2537,22 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
                     if (type == Type.xref) {
                         val dialog = XrefDialog.newInstance(arif)
 
+                        val verseSelectedListener = { arif_source: Int, ari_target: Int ->
+                            val ari_source = arif_source ushr 8
+
+                            dialog.dismiss()
+                            jumpToAri(ari_target)
+
+                            // add both xref source and target, so user can go back to source easily
+                            history.add(ari_source)
+                            history.add(ari_target)
+                        }
+
                         // TODO setSourceVersion here is not restored when dialog is restored
                         if (source === lsSplit0 || activeSplit == null) { // use activeVersion
-                            dialog.init(S.activeVersion(), S.activeVersionId())
+                            dialog.init(S.activeVersion(), S.activeVersionId(), verseSelectedListener)
                         } else if (source === lsSplit1) { // use activeSplitVersion
-                            dialog.init(activeSplit.version, activeSplit.versionId)
+                            dialog.init(activeSplit.version, activeSplit.versionId, verseSelectedListener)
                         }
 
                         val fm = supportFragmentManager
