@@ -125,11 +125,11 @@ import java.util.Locale
 import kotlin.math.roundToLong
 
 private const val TAG = "IsiActivity"
+private const val EXTRA_verseUrl = "verseUrl"
 
 class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     var uncheckVersesWhenActionModeDestroyed = true
-
-    var needsRestart: Boolean = false // whether this activity needs to be restarted
+    var needsRestart = false // whether this activity needs to be restarted
 
     private val bGoto_floaterDrag = object : GotoButton.FloaterDragListener {
         val floaterLocationOnScreen = intArrayOf(0, 0)
@@ -150,15 +150,15 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
     }
 
-    private val floater_listener: Floater.Listener = Floater.Listener { ari ->
+    private val floater_listener = Floater.Listener { ari ->
         jumpToAri(ari)
         history.add(ari)
     }
 
     private val splitRoot_listener = object : TwofingerLinearLayout.Listener {
-        var startFontSize: Float = 0.toFloat()
-        var startDx = java.lang.Float.MIN_VALUE
-        var chapterSwipeCellWidth: Float = 0.toFloat() // initted later
+        var startFontSize = 0f
+        var startDx = Float.MIN_VALUE
+        var chapterSwipeCellWidth = 0f // initted later
         var moreSwipeYAllowed = true // to prevent setting and unsetting fullscreen many times within one gesture
 
         override fun onOnefingerLeft() {
@@ -173,7 +173,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
         override fun onTwofingerStart() {
             chapterSwipeCellWidth = 24f * resources.displayMetrics.density
-            startFontSize = Preferences.getFloat(Prefkey.ukuranHuruf2, App.context.resources.getInteger(R.integer.pref_ukuranHuruf2_default).toFloat())
+            startFontSize = Preferences.getFloat(Prefkey.ukuranHuruf2, resources.getInteger(R.integer.pref_ukuranHuruf2_default).toFloat())
         }
 
         override fun onTwofingerScale(scale: Float) {
@@ -190,7 +190,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
 
         override fun onTwofingerDragX(dx: Float) {
-            if (startDx == java.lang.Float.MIN_VALUE) { // just started
+            if (startDx == Float.MIN_VALUE) { // just started
                 startDx = dx
 
                 if (dx < 0) {
@@ -280,7 +280,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
      */
     lateinit var activeBook: Book
     var chapter_1 = 0
-    private var fullScreen: Boolean = false
+    private var fullScreen = false
 
     val history by lazy { History.getInstance() }
 
@@ -290,7 +290,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     private val nfcAdapter: NfcAdapter? by lazy { NfcAdapter.getDefaultAdapter(applicationContext) }
 
     var actionMode: ActionMode? = null
-    private var dictionaryMode: Boolean = false
+    private var dictionaryMode = false
     var textAppearancePanel: TextAppearancePanel? = null
 
     /**
@@ -951,10 +951,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     private val splitHandleButton_listener = object : SplitHandleButton.SplitHandleButtonListener {
-        var first: Int = 0
-        var handle: Int = 0
-        var root: Int = 0
-        var prop: Float = 0.toFloat() // proportion from top or left
+        var first = 0
+        var handle = 0
+        var root = 0
+        var prop = 0f // proportion from top or left
 
         override fun onHandleDragStart() {
             splitRoot.setOnefingerEnabled(false)
@@ -969,7 +969,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 root = splitRoot.width
             }
 
-            prop = java.lang.Float.MIN_VALUE // guard against glitches
+            prop = Float.MIN_VALUE // guard against glitches
         }
 
         override fun onHandleDragMoveX(dxSinceLast: Float, dxSinceStart: Float) {
@@ -991,7 +991,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         override fun onHandleDragStop() {
             splitRoot.setOnefingerEnabled(true)
 
-            if (prop != java.lang.Float.MIN_VALUE) {
+            if (prop != Float.MIN_VALUE) {
                 Preferences.setFloat(Prefkey.lastSplitProp, prop)
             }
         }
@@ -1009,10 +1009,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
     }
 
-    class IntentResult(var ari: Int) {
-        var selectVerse: Boolean = false
-        var selectVerseCount: Int = 0
-    }
+    data class IntentResult(
+        val ari: Int,
+        val selectVerse: Boolean = false,
+        val selectVerseCount: Int = 0
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AppLog.d(TAG, "@@onCreate start")
@@ -1254,10 +1255,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             intent.hasExtra("ari") -> {
                 val ari = intent.getIntExtra("ari", 0)
                 if (ari != 0) {
-                    val res = IntentResult(ari)
-                    res.selectVerse = selectVerse
-                    res.selectVerseCount = selectVerseCount
-                    res
+                    IntentResult(ari, selectVerse, selectVerseCount)
                 } else {
                     MaterialDialog.Builder(this)
                         .content("Invalid ari: $ari")
@@ -1272,10 +1270,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 if (ari != 0) {
                     jumpToAri(ari)
                     history.add(ari)
-                    val res = IntentResult(ari)
-                    res.selectVerse = selectVerse
-                    res.selectVerseCount = selectVerseCount
-                    res
+                    IntentResult(ari, selectVerse, selectVerseCount)
                 } else {
                     MaterialDialog.Builder(this)
                         .content("Invalid lid: $lid")
@@ -1769,7 +1764,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         private val mediumDateFormat = DateFormat.getMediumDateFormat(App.context)
 
         private val thisCreatorId = InstallationUtil.getInstallationId()
-        private var defaultTextColor: Int = 0
+        private var defaultTextColor = 0
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             val view = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false)
@@ -2036,8 +2031,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     fun configureSplitSizes() {
         splitHandleButton.visibility = View.VISIBLE
 
-        var prop = Preferences.getFloat(Prefkey.lastSplitProp, java.lang.Float.MIN_VALUE)
-        if (prop == java.lang.Float.MIN_VALUE || prop < 0f || prop > 1f) {
+        var prop = Preferences.getFloat(Prefkey.lastSplitProp, Float.MIN_VALUE)
+        if (prop == Float.MIN_VALUE || prop < 0f || prop > 1f) {
             prop = 0.5f // guard against invalid values
         }
 
@@ -2417,7 +2412,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
 
         inner class MultipleMarkerSelectAdapter(val version: Version, versionId: String, private val markers: List<Marker>, val kind: Marker.Kind) : MaterialDialogAdapterHelper.Adapter() {
-            val textSizeMult: Float = S.getDb().getPerVersionSettings(versionId).fontSizeMultiplier
+            val textSizeMult = S.getDb().getPerVersionSettings(versionId).fontSizeMultiplier
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
                 return MarkerHolder(layoutInflater.inflate(R.layout.item_marker, parent, false))
@@ -2751,19 +2746,15 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         const val ACTION_NIGHT_MODE_CHANGED = "yuku.alkitab.base.IsiActivity.action.NIGHT_MODE_CHANGED"
         const val ACTION_NEEDS_RESTART = "yuku.alkitab.base.IsiActivity.action.NEEDS_RESTART"
 
-        private const val EXTRA_verseUrl = "verseUrl"
-
         @JvmStatic
         fun createIntent(): Intent {
             return Intent(App.context, IsiActivity::class.java)
         }
 
         @JvmStatic
-        fun createIntent(ari: Int): Intent {
-            val res = Intent(App.context, IsiActivity::class.java)
-            res.action = "yuku.alkitab.action.VIEW"
-            res.putExtra("ari", ari)
-            return res
+        fun createIntent(ari: Int) = Intent(App.context, IsiActivity::class.java).apply {
+            action = "yuku.alkitab.action.VIEW"
+            putExtra("ari", ari)
         }
     }
 }
