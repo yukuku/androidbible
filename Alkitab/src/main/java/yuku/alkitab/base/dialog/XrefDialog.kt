@@ -18,7 +18,6 @@ import yuku.alkitab.base.dialog.base.BaseDialog
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances.applyTextAppearance
 import yuku.alkitab.base.util.TargetDecoder
-import yuku.alkitab.base.verses.VersesAttributes
 import yuku.alkitab.base.verses.VersesController
 import yuku.alkitab.base.verses.VersesControllerImpl
 import yuku.alkitab.base.verses.VersesDataModel
@@ -159,9 +158,14 @@ class XrefDialog : BaseDialog() {
                 displayedVerseNumberTexts.add(Ari.toChapter(ari).toString() + ":" + Ari.toVerse(ari))
             }
             val firstAri = displayedRealAris[0]
-            val verses = XrefDialogVerses(requireContext(), displayedVerseTexts, displayedVerseNumberTexts)
+            val notAvailableText = getString(R.string.generic_verse_not_available_in_this_version)
 
-            versesController.versesDataModel = VersesDataModel(Ari.toBookChapter(firstAri), verses, 0, IntArray(0), emptyArray(), sourceVersion, sourceVersionId, VersesAttributes.createEmpty(verses.verseCount))
+            versesController.versesDataModel = VersesDataModel(
+                ari_bc_ = Ari.toBookChapter(firstAri),
+                verses_ = XrefDialogVerses(notAvailableText, displayedVerseTexts, displayedVerseNumberTexts),
+                version_ = sourceVersion,
+                versionId_ = sourceVersionId
+            )
         }
         renderXrefText()
     }
