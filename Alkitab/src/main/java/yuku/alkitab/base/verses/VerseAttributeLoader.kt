@@ -6,7 +6,7 @@ import yuku.alkitab.base.App
 import yuku.alkitab.base.storage.InternalDb
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Highlights
-import yuku.alkitab.base.widget.OldAttributeView
+import yuku.alkitab.base.widget.AttributeView
 import yuku.alkitab.model.SingleChapterVerses
 import yuku.alkitab.util.Ari
 
@@ -43,7 +43,7 @@ object VerseAttributeLoader {
             if (mapOffset >= progressMarkBitsMap.size) {
                 AppLog.e(TAG, "(for progressMarkBitsMap:) mapOffset out of bounds: " + mapOffset + " happened on ari 0x" + Integer.toHexString(ari))
             } else {
-                progressMarkBitsMap[mapOffset] = progressMarkBitsMap[mapOffset] or (1 shl progressMark.preset_id + OldAttributeView.PROGRESS_MARK_BITS_START)
+                progressMarkBitsMap[mapOffset] = progressMarkBitsMap[mapOffset] or (1 shl progressMark.preset_id + AttributeView.PROGRESS_MARK_BITS_START)
             }
         }
 

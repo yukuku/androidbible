@@ -2,19 +2,18 @@ package yuku.alkitab.base.dialog;
 
 import android.app.Activity;
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 import android.text.InputType;
 import android.text.TextUtils;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import com.afollestad.materialdialogs.MaterialDialog;
+import java.util.Date;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.widget.OldAttributeView;
+import yuku.alkitab.base.widget.AttributeView;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.ProgressMark;
-
-import java.util.Date;
 
 public class ProgressMarkRenameDialog extends DialogFragment {
 	public interface Listener {
@@ -23,7 +22,7 @@ public class ProgressMarkRenameDialog extends DialogFragment {
 	}
 
 	public static void show(final Activity activity, final ProgressMark progressMark, @NonNull final Listener listener) {
-		final String caption = !TextUtils.isEmpty(progressMark.caption) ? progressMark.caption : activity.getString(OldAttributeView.getDefaultProgressMarkStringResource(progressMark.preset_id));
+		final String caption = !TextUtils.isEmpty(progressMark.caption) ? progressMark.caption : activity.getString(AttributeView.getDefaultProgressMarkStringResource(progressMark.preset_id));
 
 		new MaterialDialog.Builder(activity)
 			.positiveText(R.string.ok)

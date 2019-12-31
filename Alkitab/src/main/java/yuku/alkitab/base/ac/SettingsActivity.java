@@ -28,7 +28,6 @@ import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
 import yuku.alkitab.base.util.OtherAppIntegration;
 import yuku.alkitab.base.widget.ConfigurationWrapper;
-import yuku.alkitab.base.widget.OldVerseItem;
 import yuku.alkitab.debug.R;
 
 public class SettingsActivity extends BaseActivity {
@@ -157,12 +156,6 @@ public class SettingsActivity extends BaseActivity {
 
 				// do this after this method returns true
 				handler.post(() -> App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_NEEDS_RESTART)));
-				return true;
-			});
-
-			final Preference pref_selectedVerseBgColor = findPreference(getString(R.string.pref_selectedVerseBgColor_key));
-			pref_selectedVerseBgColor.setOnPreferenceChangeListener((preference, newValue) -> {
-				OldVerseItem.invalidateSelectedVersePaints();
 				return true;
 			});
 

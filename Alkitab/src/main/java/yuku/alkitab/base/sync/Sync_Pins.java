@@ -1,18 +1,9 @@
 package yuku.alkitab.base.sync;
 
+import android.util.Pair;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
-import android.util.Pair;
 import com.google.gson.reflect.TypeToken;
-import yuku.alkitab.base.App;
-import yuku.alkitab.base.S;
-import yuku.alkitab.base.U;
-import yuku.alkitab.base.model.SyncShadow;
-import yuku.alkitab.base.util.Literals;
-import yuku.alkitab.base.util.Sqlitil;
-import yuku.alkitab.base.widget.OldAttributeView;
-import yuku.alkitab.model.ProgressMark;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -24,6 +15,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import yuku.alkitab.base.App;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
+import yuku.alkitab.base.model.SyncShadow;
+import yuku.alkitab.base.util.Literals;
+import yuku.alkitab.base.util.Sqlitil;
+import yuku.alkitab.base.widget.AttributeView;
+import yuku.alkitab.model.ProgressMark;
 
 /**
  * Pin is the new name for progress mark.
@@ -108,7 +107,7 @@ public class Sync_Pins {
 		final Content content = new Content();
 		final List<Content.Pin> pins = content.pins = new ArrayList<>();
 
-		for (int preset_id = 0; preset_id < OldAttributeView.PROGRESS_MARK_TOTAL_COUNT; preset_id++) {
+		for (int preset_id = 0; preset_id < AttributeView.PROGRESS_MARK_TOTAL_COUNT; preset_id++) {
 			final ProgressMark pm = S.getDb().getProgressMarkByPresetId(preset_id);
 			if (pm == null) continue;
 
