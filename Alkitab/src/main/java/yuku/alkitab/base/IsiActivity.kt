@@ -126,7 +126,7 @@ import kotlin.math.roundToLong
 
 private const val TAG = "IsiActivity"
 
-class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, ProgressMarkListDialog.Listener {
+class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     var uncheckVersesWhenActionModeDestroyed = true
 
     var needsRestart: Boolean = false // whether this activity needs to be restarted
@@ -2692,6 +2692,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Progress
         Tracker.trackEvent("left_drawer_progress_mark_list_click")
         if (S.getDb().countAllProgressMarks() > 0) {
             val dialog = ProgressMarkListDialog()
+            dialog.progressMarkSelectedListener = { preset_id ->
+                gotoProgressMark(preset_id)
+            }
             dialog.show(supportFragmentManager, "dialog_progress_mark_list")
             leftDrawer.closeDrawer()
         } else {
@@ -2740,10 +2743,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Progress
                 .positiveText(R.string.ok)
                 .show()
         }
-    }
-
-    override fun onProgressMarkSelected(preset_id: Int) {
-        gotoProgressMark(preset_id)
     }
 
     companion object {

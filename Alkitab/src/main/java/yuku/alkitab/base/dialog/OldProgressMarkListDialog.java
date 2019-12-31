@@ -24,7 +24,7 @@ import yuku.alkitab.debug.R;
 import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.model.Version;
 
-public class ProgressMarkListDialog extends DialogFragment {
+public class OldProgressMarkListDialog extends DialogFragment {
 	LayoutInflater inflater;
 
 	public interface Listener {
@@ -51,7 +51,7 @@ public class ProgressMarkListDialog extends DialogFragment {
 		if (window != null) {
 			window.requestFeature(Window.FEATURE_NO_TITLE);
 		}
-		final View view = inflater.inflate(R.layout.dialog_progress_mark, container, false);
+		final View view = inflater.inflate(R.layout.dialog_old_progress_mark, container, false);
 		final ListView lsProgressMark = view.findViewById(R.id.lsProgressMark);
 		final ProgressMarkAdapter adapter = new ProgressMarkAdapter();
 		lsProgressMark.setAdapter(adapter);

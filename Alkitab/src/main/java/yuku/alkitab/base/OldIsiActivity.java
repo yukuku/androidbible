@@ -74,7 +74,7 @@ import yuku.alkitab.base.ac.ShareActivity;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.dialog.OldXrefDialog;
-import yuku.alkitab.base.dialog.ProgressMarkListDialog;
+import yuku.alkitab.base.dialog.OldProgressMarkListDialog;
 import yuku.alkitab.base.dialog.ProgressMarkRenameDialog;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeHighlightDialog;
@@ -130,7 +130,7 @@ import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 import yuku.devoxx.flowlayout.FlowLayout;
 
-public class OldIsiActivity extends BaseLeftDrawerActivity implements OldXrefDialog.XrefDialogListener, LeftDrawer.Text.Listener, ProgressMarkListDialog.Listener {
+public class OldIsiActivity extends BaseLeftDrawerActivity implements OldXrefDialog.XrefDialogListener, LeftDrawer.Text.Listener, OldProgressMarkListDialog.Listener {
 	static final String TAG = OldIsiActivity.class.getSimpleName();
 
 	public static final String ACTION_ATTRIBUTE_MAP_CHANGED = "yuku.alkitab.action.ATTRIBUTE_MAP_CHANGED";
@@ -2758,7 +2758,7 @@ public class OldIsiActivity extends BaseLeftDrawerActivity implements OldXrefDia
 	public void bProgressMarkList_click() {
 		Tracker.trackEvent("left_drawer_progress_mark_list_click");
 		if (S.getDb().countAllProgressMarks() > 0) {
-			final ProgressMarkListDialog dialog = new ProgressMarkListDialog();
+			final OldProgressMarkListDialog dialog = new OldProgressMarkListDialog();
 			dialog.show(getSupportFragmentManager(), "dialog_progress_mark_list");
 			leftDrawer.closeDrawer();
 		} else {
