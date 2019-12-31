@@ -2550,9 +2550,9 @@ class IsiActivity : BaseLeftDrawerActivity(), XrefDialog.XrefDialogListener, Lef
 
                         // TODO setSourceVersion here is not restored when dialog is restored
                         if (source === lsSplit0 || activeSplit == null) { // use activeVersion
-                            dialog.setSourceVersion(S.activeVersion(), S.activeVersionId())
+                            dialog.init(S.activeVersion(), S.activeVersionId())
                         } else if (source === lsSplit1) { // use activeSplitVersion
-                            dialog.setSourceVersion(activeSplit.version, activeSplit.versionId)
+                            dialog.init(activeSplit.version, activeSplit.versionId)
                         }
 
                         val fm = supportFragmentManager

@@ -30,13 +30,13 @@ import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 
-public class XrefDialog extends BaseDialog {
+public class OldXrefDialog extends BaseDialog {
 	static final String TAG = XrefDialog.class.getSimpleName();
 
 	private static final String EXTRA_arif = "arif";
 
 	public interface XrefDialogListener {
-		void onVerseSelected(XrefDialog dialog, int arif_source, int ari_target);
+		void onVerseSelected(OldXrefDialog dialog, int arif_source, int ari_target);
 	}
 
 	TextView tXrefText;
@@ -54,11 +54,11 @@ public class XrefDialog extends BaseDialog {
 	String sourceVersionId = S.activeVersionId();
 	float textSizeMult = S.getDb().getPerVersionSettings(sourceVersionId).fontSizeMultiplier;
 
-	public XrefDialog() {
+	public OldXrefDialog() {
 	}
 
-	public static XrefDialog newInstance(int arif) {
-		XrefDialog res = new XrefDialog();
+	public static OldXrefDialog newInstance(int arif) {
+		OldXrefDialog res = new OldXrefDialog();
 
 		Bundle args = new Bundle();
 		args.putInt(EXTRA_arif, arif);
@@ -89,7 +89,7 @@ public class XrefDialog extends BaseDialog {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View res = inflater.inflate(R.layout.dialog_xref, container, false);
+		View res = inflater.inflate(R.layout.dialog_old_xref, container, false);
 
 		tXrefText = res.findViewById(R.id.tXrefText);
 		versesView = res.findViewById(R.id.versesView);
@@ -205,7 +205,7 @@ public class XrefDialog extends BaseDialog {
 	OldVersesView.SelectedVersesListener versesView_selectedVerses = new OldVersesView.DefaultSelectedVersesListener() {
 		@Override
 		public void onVerseSingleClick(OldVersesView v, int verse_1) {
-			listener.onVerseSelected(XrefDialog.this, arif_source, displayedRealAris.get(verse_1 - 1));
+			listener.onVerseSelected(OldXrefDialog.this, arif_source, displayedRealAris.get(verse_1 - 1));
 		}
 	};
 

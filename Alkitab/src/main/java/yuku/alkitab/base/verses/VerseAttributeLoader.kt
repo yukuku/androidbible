@@ -16,7 +16,7 @@ object VerseAttributeLoader {
     @JvmStatic
     fun load(db: InternalDb, contentResolver: ContentResolver, ari_bc: Int, verses: SingleChapterVerses): VersesAttributes {
         // book_ can be empty when the selected (book, chapter) is not available in this version
-        if (ari_bc == 0) return VersesAttributes.EMPTY
+        if (ari_bc == 0) return VersesAttributes.createEmpty(verses.verseCount)
         val verseCount = verses.verseCount
 
         // 1/3: Bookmarks/Notes/Highlights

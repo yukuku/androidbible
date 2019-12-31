@@ -73,12 +73,12 @@ import yuku.alkitab.base.ac.SettingsActivity;
 import yuku.alkitab.base.ac.ShareActivity;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.config.AppConfig;
+import yuku.alkitab.base.dialog.OldXrefDialog;
 import yuku.alkitab.base.dialog.ProgressMarkListDialog;
 import yuku.alkitab.base.dialog.ProgressMarkRenameDialog;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeHighlightDialog;
 import yuku.alkitab.base.dialog.VersesDialog;
-import yuku.alkitab.base.dialog.XrefDialog;
 import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.model.MVersionInternal;
@@ -130,7 +130,7 @@ import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 import yuku.devoxx.flowlayout.FlowLayout;
 
-public class OldIsiActivity extends BaseLeftDrawerActivity implements XrefDialog.XrefDialogListener, LeftDrawer.Text.Listener, ProgressMarkListDialog.Listener {
+public class OldIsiActivity extends BaseLeftDrawerActivity implements OldXrefDialog.XrefDialogListener, LeftDrawer.Text.Listener, ProgressMarkListDialog.Listener {
 	static final String TAG = OldIsiActivity.class.getSimpleName();
 
 	public static final String ACTION_ATTRIBUTE_MAP_CHANGED = "yuku.alkitab.action.ATTRIBUTE_MAP_CHANGED";
@@ -1798,7 +1798,7 @@ public class OldIsiActivity extends BaseLeftDrawerActivity implements XrefDialog
 	}
 
 	@Override
-	public void onVerseSelected(XrefDialog dialog, int arif_source, int ari_target) {
+	public void onVerseSelected(OldXrefDialog dialog, int arif_source, int ari_target) {
 		final int ari_source = arif_source >>> 8;
 
 		dialog.dismiss();
@@ -2009,7 +2009,7 @@ public class OldIsiActivity extends BaseLeftDrawerActivity implements XrefDialog
 				@Override
 				public void onClick(final Type type, final int arif) {
 					if (type == Type.xref) {
-						final XrefDialog dialog = XrefDialog.newInstance(arif);
+						final OldXrefDialog dialog = OldXrefDialog.newInstance(arif);
 
 						// TODO setSourceVersion here is not restored when dialog is restored
 						if (source == lsSplit0) { // use activeVersion

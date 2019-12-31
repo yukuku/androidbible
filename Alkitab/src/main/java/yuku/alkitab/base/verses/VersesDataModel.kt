@@ -267,7 +267,7 @@ data class VersesDataModel(
             pericopeBlocks_ = emptyArray(),
             version_ = null,
             versionId_ = null,
-            versesAttributes = VersesAttributes.EMPTY
+            versesAttributes = VersesAttributes.createEmpty(0)
         )
     }
 }

@@ -4,7 +4,7 @@ import yuku.alkitab.base.widget.DictionaryLinkInfo
 import yuku.alkitab.base.widget.ParallelClickData
 import yuku.alkitab.base.widget.VerseInlineLinkSpan
 
-class VersesListeners(
+data class VersesListeners(
     val attributeListener: VersesController.AttributeListener,
     val selectedVersesListener: VersesController.SelectedVersesListener,
     val verseScrollListener: VersesController.VerseScrollListener,
