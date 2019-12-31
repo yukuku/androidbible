@@ -21,7 +21,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.dialog.VersesDialog;
+import yuku.alkitab.base.dialog.OldVersesDialog;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Marker;
@@ -158,10 +158,10 @@ public class NoteActivity extends BaseActivity {
 			return;
 		}
 
-		final VersesDialog versesDialog = VersesDialog.newInstance(verseRanges);
-		versesDialog.setListener(new VersesDialog.VersesDialogListener() {
+		final OldVersesDialog versesDialog = OldVersesDialog.newInstance(verseRanges);
+		versesDialog.setListener(new OldVersesDialog.VersesDialogListener() {
 			@Override
-			public void onVerseSelected(final VersesDialog dialog, final int ari) {
+			public void onVerseSelected(final OldVersesDialog dialog, final int ari) {
 				startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
 				versesDialog.dismiss();
 			}

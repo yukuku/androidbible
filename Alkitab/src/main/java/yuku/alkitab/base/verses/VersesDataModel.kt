@@ -27,17 +27,17 @@ data class VersesDataModel(
     @JvmField
     val verses_: SingleChapterVerses,
     @JvmField
-    val pericopeBlockCount_: Int,
+    val pericopeBlockCount_: Int = 0,
     @JvmField
-    val pericopeAris_: IntArray,
+    val pericopeAris_: IntArray = IntArray(0),
     @JvmField
-    val pericopeBlocks_: Array<PericopeBlock>,
+    val pericopeBlocks_: Array<PericopeBlock> = emptyArray(),
     @JvmField
-    val version_: Version?,
+    val version_: Version? = null,
     @JvmField
-    val versionId_: String?,
+    val versionId_: String? = null,
     @JvmField
-    val versesAttributes: VersesAttributes
+    val versesAttributes: VersesAttributes = VersesAttributes.createEmpty(verses_.verseCount)
 ) {
     enum class ItemType {
         verseText,

@@ -16,7 +16,7 @@ import android.webkit.WebViewClient;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.dialog.VersesDialog;
+import yuku.alkitab.base.dialog.OldVersesDialog;
 import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.TargetDecoder;
@@ -159,11 +159,11 @@ public class HelpActivity extends BaseActivity {
 								.positiveText(R.string.ok)
 								.show();
 						} else {
-							final VersesDialog dialog = VersesDialog.newInstance(ariRanges);
-							dialog.show(getSupportFragmentManager(), "VersesDialog");
-							dialog.setListener(new VersesDialog.VersesDialogListener() {
+							final OldVersesDialog dialog = OldVersesDialog.newInstance(ariRanges);
+							dialog.show(getSupportFragmentManager(), "OldVersesDialog");
+							dialog.setListener(new OldVersesDialog.VersesDialogListener() {
 								@Override
-								public void onVerseSelected(final VersesDialog dialog, final int ari) {
+								public void onVerseSelected(final OldVersesDialog dialog, final int ari) {
 									AppLog.d(TAG, "Verse link clicked from page");
 									startActivity(Launcher.openAppAtBibleLocation(ari));
 								}

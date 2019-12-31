@@ -21,8 +21,8 @@
 		android:layout_height="1dp"
 		android:background="?android:listDivider" />
 
-	<yuku.alkitab.base.verses.EmptyableRecyclerView
-		android:id="@+id/lsView"
+	<yuku.alkitab.base.widget.OldVersesView
+		android:id="@+id/versesView"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_weight="1" />

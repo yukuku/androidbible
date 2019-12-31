@@ -78,7 +78,7 @@ import yuku.alkitab.base.dialog.ProgressMarkListDialog;
 import yuku.alkitab.base.dialog.ProgressMarkRenameDialog;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeHighlightDialog;
-import yuku.alkitab.base.dialog.VersesDialog;
+import yuku.alkitab.base.dialog.OldVersesDialog;
 import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.model.MVersionInternal;
@@ -2371,11 +2371,11 @@ public class OldIsiActivity extends BaseLeftDrawerActivity implements OldXrefDia
 				return true;
 				case R.id.menuCompare: {
 					final int ari = Ari.encode(OldIsiActivity.this.activeBook.bookId, OldIsiActivity.this.chapter_1, selected.get(0));
-					final VersesDialog dialog = VersesDialog.newCompareInstance(ari);
+					final OldVersesDialog dialog = OldVersesDialog.newCompareInstance(ari);
 					dialog.show(getSupportFragmentManager(), "compare_dialog");
-					dialog.setListener(new VersesDialog.VersesDialogListener() {
+					dialog.setListener(new OldVersesDialog.VersesDialogListener() {
 						@Override
-						public void onComparedVerseSelected(final VersesDialog dialog, final int ari, final MVersion mversion) {
+						public void onComparedVerseSelected(final OldVersesDialog dialog, final int ari, final MVersion mversion) {
 							loadVersion(mversion);
 							dialog.dismiss();
 						}

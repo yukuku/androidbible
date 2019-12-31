@@ -28,16 +28,16 @@ import yuku.alkitab.util.IntArrayList;
  * "compare mode" that is created via {@link #newCompareInstance(int)} to show a list of different version of a verse.
  * -- field ari is used, compareMode==true.
  */
-public class VersesDialog extends BaseDialog {
+public class OldVersesDialog extends BaseDialog {
 	private static final String EXTRA_ariRanges = "ariRanges";
 	private static final String EXTRA_ari = "ari";
 	private static final String EXTRA_compareMode = "compareMode";
 
 	public static abstract class VersesDialogListener {
-		public void onVerseSelected(VersesDialog dialog, int ari) {
+		public void onVerseSelected(OldVersesDialog dialog, int ari) {
 		}
 
-		public void onComparedVerseSelected(VersesDialog dialog, int ari, MVersion mversion) {
+		public void onComparedVerseSelected(OldVersesDialog dialog, int ari, MVersion mversion) {
 		}
 	}
 
@@ -59,11 +59,11 @@ public class VersesDialog extends BaseDialog {
 
 	DialogInterface.OnDismissListener onDismissListener;
 
-	public VersesDialog() {
+	public OldVersesDialog() {
 	}
 
-	public static VersesDialog newInstance(final IntArrayList ariRanges) {
-		VersesDialog res = new VersesDialog();
+	public static OldVersesDialog newInstance(final IntArrayList ariRanges) {
+		OldVersesDialog res = new OldVersesDialog();
 
 		Bundle args = new Bundle();
 		args.putParcelable(EXTRA_ariRanges, ariRanges);
@@ -81,8 +81,8 @@ public class VersesDialog extends BaseDialog {
 		}
 	}
 
-	public static VersesDialog newCompareInstance(final int ari) {
-		VersesDialog res = new VersesDialog();
+	public static OldVersesDialog newCompareInstance(final int ari) {
+		OldVersesDialog res = new OldVersesDialog();
 
 		Bundle args = new Bundle();
 		args.putInt(EXTRA_ari, ari);
@@ -104,7 +104,7 @@ public class VersesDialog extends BaseDialog {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View res = inflater.inflate(R.layout.dialog_verses, container, false);
+		View res = inflater.inflate(R.layout.dialog_old_verses, container, false);
 
 		tReference = res.findViewById(R.id.tReference);
 		versesView = res.findViewById(R.id.versesView);
@@ -184,13 +184,13 @@ public class VersesDialog extends BaseDialog {
 		public void onVerseSingleClick(OldVersesView v, int verse_1 /* this is actually position+1, not necessaryly verse_1 */) {
 			if (listener != null) {
 				if (!compareMode) {
-					listener.onVerseSelected(VersesDialog.this, (Integer) customCallbackData[verse_1 - 1]);
+					listener.onVerseSelected(OldVersesDialog.this, (Integer) customCallbackData[verse_1 - 1]);
 				} else {
 					// only if the verse is available in this version.
 					final MVersion mversion = (MVersion) customCallbackData[verse_1 - 1];
 					final Version version = mversion.getVersion();
 					if (version != null && version.loadVerseText(ari) != null) {
-						listener.onComparedVerseSelected(VersesDialog.this, ari, mversion);
+						listener.onComparedVerseSelected(OldVersesDialog.this, ari, mversion);
 					}
 				}
 			}
