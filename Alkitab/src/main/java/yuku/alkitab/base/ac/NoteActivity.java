@@ -3,8 +3,6 @@ package yuku.alkitab.base.ac;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Layout;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
@@ -15,13 +13,16 @@ import android.view.MotionEvent;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 import com.afollestad.materialdialogs.MaterialDialog;
+import java.util.Date;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.dialog.OldVersesDialog;
+import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Marker;
@@ -29,8 +30,6 @@ import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabconverter.util.DesktopVerseFinder;
 import yuku.alkitabconverter.util.DesktopVerseParser;
 import yuku.alkitabintegration.display.Launcher;
-
-import java.util.Date;
 
 public class NoteActivity extends BaseActivity {
 	//region static constructors
@@ -158,10 +157,10 @@ public class NoteActivity extends BaseActivity {
 			return;
 		}
 
-		final OldVersesDialog versesDialog = OldVersesDialog.newInstance(verseRanges);
-		versesDialog.setListener(new OldVersesDialog.VersesDialogListener() {
+		final VersesDialog versesDialog = VersesDialog.newInstance(verseRanges);
+		versesDialog.setListener(new VersesDialog.VersesDialogListener() {
 			@Override
-			public void onVerseSelected(final OldVersesDialog dialog, final int ari) {
+			public void onVerseSelected(final int ari) {
 				startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
 				versesDialog.dismiss();
 			}

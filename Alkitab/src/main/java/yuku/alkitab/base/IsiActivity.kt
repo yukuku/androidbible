@@ -707,7 +707,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Progress
                     val ari = Ari.encode(this@IsiActivity.activeBook.bookId, this@IsiActivity.chapter_1, selected.get(0))
                     val dialog = VersesDialog.newCompareInstance(ari)
                     dialog.listener = object : VersesDialog.VersesDialogListener() {
-                        override fun onComparedVerseSelected(dialog: VersesDialog, ari: Int, mversion: MVersion) {
+                        override fun onComparedVerseSelected(ari: Int, mversion: MVersion) {
                             loadVersion(mversion)
                             dialog.dismiss()
                         }

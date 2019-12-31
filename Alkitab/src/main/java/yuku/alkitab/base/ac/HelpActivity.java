@@ -5,18 +5,19 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 import com.afollestad.materialdialogs.MaterialDialog;
+import java.util.Locale;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.dialog.OldVersesDialog;
+import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.TargetDecoder;
@@ -24,8 +25,6 @@ import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabintegration.display.Launcher;
-
-import java.util.Locale;
 
 public class HelpActivity extends BaseActivity {
 	static final String TAG = HelpActivity.class.getSimpleName();
@@ -137,14 +136,16 @@ public class HelpActivity extends BaseActivity {
 						final Intent intent = new Intent(Intent.ACTION_VIEW);
 						intent.setData(uri);
 						startActivity(intent);
-					} return true;
+					}
+					return true;
 					case "alkitab": {
 						// send back to caller
 						final Intent intent = new Intent();
 						intent.setData(uri);
 						setResult(RESULT_OK, intent);
 						finish();
-					} return true;
+					}
+					return true;
 					case "suggest":
 						startActivity(com.example.android.wizardpager.MainActivity.createIntent(App.context));
 						finish();
@@ -159,22 +160,21 @@ public class HelpActivity extends BaseActivity {
 								.positiveText(R.string.ok)
 								.show();
 						} else {
-							final OldVersesDialog dialog = OldVersesDialog.newInstance(ariRanges);
-							dialog.show(getSupportFragmentManager(), "OldVersesDialog");
-							dialog.setListener(new OldVersesDialog.VersesDialogListener() {
+							final VersesDialog dialog = VersesDialog.newInstance(ariRanges);
+							dialog.setListener(new VersesDialog.VersesDialogListener() {
 								@Override
-								public void onVerseSelected(final OldVersesDialog dialog, final int ari) {
+								public void onVerseSelected(final int ari) {
 									AppLog.d(TAG, "Verse link clicked from page");
 									startActivity(Launcher.openAppAtBibleLocation(ari));
 								}
 							});
+							dialog.show(getSupportFragmentManager(), "VersesDialog");
 						}
 						return true;
 				}
 				return false;
 			}
 
-			@SuppressWarnings("deprecation")
 			@Override
 			public void onReceivedError(final WebView view, final int errorCode, final String description, final String failingUrl) {
 				super.onReceivedError(view, errorCode, description, failingUrl);

@@ -190,8 +190,9 @@ public class OldXrefDialog extends BaseDialog {
 			}
 
 			int firstAri = displayedRealAris.get(0);
+			final String notAvailableText = getString(R.string.generic_verse_not_available_in_this_version);
 
-			final XrefDialogVerses verses = new XrefDialogVerses(this.requireContext(), displayedVerseTexts, displayedVerseNumberTexts);
+			final XrefDialogVerses verses = new XrefDialogVerses(notAvailableText, displayedVerseTexts, displayedVerseNumberTexts);
 			versesView.setData(Ari.toBookChapter(firstAri), verses, null, null, 0, sourceVersion, sourceVersionId);
 		}
 

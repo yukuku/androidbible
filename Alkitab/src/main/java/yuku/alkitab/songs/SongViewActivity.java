@@ -48,7 +48,7 @@ import yuku.alkitab.base.ac.HelpActivity;
 import yuku.alkitab.base.ac.PatchTextActivity;
 import yuku.alkitab.base.ac.ShareActivity;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
-import yuku.alkitab.base.dialog.OldVersesDialog;
+import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AlphanumComparator;
 import yuku.alkitab.base.util.AppLog;
@@ -1029,14 +1029,16 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			return true;
 		} else if (BIBLE_PROTOCOL.equals(scheme)) {
 			final IntArrayList ariRanges = TargetDecoder.decode("o:" + uri.getSchemeSpecificPart());
-			final OldVersesDialog versesDialog = OldVersesDialog.newInstance(ariRanges);
-			versesDialog.setListener(new OldVersesDialog.VersesDialogListener() {
-				@Override
-				public void onVerseSelected(final OldVersesDialog dialog, final int ari) {
-					startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
-				}
-			});
-			versesDialog.show(getSupportFragmentManager(), "OldVersesDialog");
+			if (ariRanges != null) {
+				final VersesDialog versesDialog = VersesDialog.newInstance(ariRanges);
+				versesDialog.setListener(new VersesDialog.VersesDialogListener() {
+					@Override
+					public void onVerseSelected(final int ari) {
+						startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
+					}
+				});
+				versesDialog.show(getSupportFragmentManager(), "VersesDialog");
+			}
 			return true;
 		}
 		return false;

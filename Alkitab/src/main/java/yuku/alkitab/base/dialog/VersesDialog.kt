@@ -38,8 +38,8 @@ private const val EXTRA_compareMode = "compareMode"
  */
 class VersesDialog : BaseDialog() {
     abstract class VersesDialogListener {
-        open fun onVerseSelected(dialog: VersesDialog, ari: Int) {}
-        open fun onComparedVerseSelected(dialog: VersesDialog, ari: Int, mversion: MVersion) {}
+        open fun onVerseSelected(ari: Int) {}
+        open fun onComparedVerseSelected(ari: Int, mversion: MVersion) {}
     }
 
     private var ari by notNull<Int>()
@@ -155,13 +155,13 @@ class VersesDialog : BaseDialog() {
 
             if (!compareMode) {
                 when (callbackData) {
-                    is CallbackData.WithAri -> listener.onVerseSelected(this@VersesDialog, callbackData.ari)
+                    is CallbackData.WithAri -> listener.onVerseSelected(callbackData.ari)
                 }
             } else { // only if the verse is available in this version.
                 when (callbackData) {
                     is CallbackData.WithMVersion -> {
                         if (callbackData.mversion.version?.loadVerseText(ari) != null) {
-                            listener.onComparedVerseSelected(this@VersesDialog, ari, callbackData.mversion)
+                            listener.onComparedVerseSelected(ari, callbackData.mversion)
                         }
                     }
                 }
@@ -170,12 +170,14 @@ class VersesDialog : BaseDialog() {
     }
 
     companion object {
+        @JvmStatic
         fun newInstance(ariRanges: IntArrayList) = VersesDialog().apply {
             arguments = bundleOf(
                 EXTRA_ariRanges to ariRanges
             )
         }
 
+        @JvmStatic
         fun newCompareInstance(ari: Int) = VersesDialog().apply {
             arguments = bundleOf(
                 EXTRA_ari to ari,

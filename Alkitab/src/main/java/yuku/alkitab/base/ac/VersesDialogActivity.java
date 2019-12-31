@@ -3,7 +3,7 @@ package yuku.alkitab.base.ac;
 import android.os.Bundle;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.dialog.OldVersesDialog;
+import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabintegration.display.Launcher;
@@ -33,16 +33,16 @@ public class VersesDialogActivity extends BaseActivity {
 			return;
 		}
 
-		final OldVersesDialog versesDialog = OldVersesDialog.newInstance(ariRanges);
-		versesDialog.setListener(new OldVersesDialog.VersesDialogListener() {
+		final VersesDialog versesDialog = VersesDialog.newInstance(ariRanges);
+		versesDialog.setListener(new VersesDialog.VersesDialogListener() {
 			@Override
-			public void onVerseSelected(final OldVersesDialog dialog, final int ari) {
+			public void onVerseSelected(final int ari) {
 				startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
 				finish();
 			}
 		});
 		versesDialog.setOnDismissListener(dialog -> finish());
 
-		versesDialog.show(getSupportFragmentManager(), "OldVersesDialog");
+		versesDialog.show(getSupportFragmentManager(), "VersesDialog");
 	}
 }
