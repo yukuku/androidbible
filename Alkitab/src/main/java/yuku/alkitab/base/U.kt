@@ -6,7 +6,7 @@ import java.io.InputStream
 object U {
 
     @JvmStatic
-    fun equals(a: Any?, b: Any): Boolean {
+    fun equals(a: Any?, b: Any?): Boolean {
         return a == b
     }
 
