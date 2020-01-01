@@ -466,7 +466,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     private val lsSplit0_verseScroll = object : VersesController.VerseScrollListener() {
         override fun onVerseScroll(isPericope: Boolean, verse_1: Int, prop: Float) {
-
             if (!isPericope && activeSplit != null) {
                 lsSplit1.scrollToVerse(verse_1, prop)
             }

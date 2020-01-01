@@ -254,11 +254,13 @@ class VersesControllerImpl(
             if (position in firstPos..lastPos) {
                 // we have the child on screen, no need to measure
                 val child = layoutManager.findViewByPosition(position) ?: return
+                rv.stopScroll()
                 layoutManager.scrollToPositionWithOffset(position, -(prop * child.height).toInt() + paddingNegator)
                 return
             }
 
             val measuredHeight = getMeasuredItemHeight(position)
+            rv.stopScroll()
             layoutManager.scrollToPositionWithOffset(position, -(prop * measuredHeight).toInt() + paddingNegator)
         })
     }
