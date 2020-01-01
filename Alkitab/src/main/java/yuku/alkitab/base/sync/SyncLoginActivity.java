@@ -2,9 +2,6 @@ package yuku.alkitab.base.sync;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.core.util.PatternsCompat;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,19 +9,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.util.PatternsCompat;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.LoginEvent;
 import com.crashlytics.android.answers.SignUpEvent;
+import java.util.Locale;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
 import yuku.alkitab.debug.R;
-
-import java.util.Locale;
 
 public class SyncLoginActivity extends BaseActivity {
 	static final String TAG = SyncLoginActivity.class.getSimpleName();
@@ -312,7 +310,7 @@ public class SyncLoginActivity extends BaseActivity {
 
 				final String password2 = tPassword2.getText().toString();
 
-				if (!U.equals(correctPassword, password2)) {
+				if (!password2.equals(correctPassword)) {
 					new MaterialDialog.Builder(dialog.getContext())
 						.content(R.string.sync_login_form_passwords_do_not_match)
 						.positiveText(R.string.ok)

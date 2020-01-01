@@ -20,7 +20,6 @@ import java.util.Date;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.widget.CallbackSpan;
@@ -290,7 +289,7 @@ public class NoteActivity extends BaseActivity {
 			final Date now = new Date();
 
 			if (marker != null) { // update existing marker
-				if (U.equals(marker.caption, caption)) {
+				if (caption.equals(marker.caption)) {
 					// when there is no change, do nothing
 				} else {
 					if (caption.length() == 0) { // delete instead of update

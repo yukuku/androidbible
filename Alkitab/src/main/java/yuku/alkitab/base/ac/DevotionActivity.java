@@ -559,5 +559,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 				}
 			}
 		}
+
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 }

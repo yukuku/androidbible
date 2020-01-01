@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.MarkerListActivity;
 import yuku.alkitab.base.devotion.ArticleMeidA;
@@ -1445,7 +1444,7 @@ public class InternalDb {
 
 			{ // if the current simpleToken has changed (sync user logged off or changed), reject this append delta
 				final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
-				if (!U.equals(simpleToken, simpleTokenBeforeSync)) {
+				if (!simpleTokenBeforeSync.equals(simpleToken)) {
 					return Sync.ApplyAppendDeltaResult.dirty_sync_account;
 				}
 			}
@@ -1530,7 +1529,7 @@ public class InternalDb {
 
 			{ // if the current simpleToken has changed (sync user logged off or changed), reject this append delta
 				final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
-				if (!U.equals(simpleToken, simpleTokenBeforeSync)) {
+				if (!simpleTokenBeforeSync.equals(simpleToken)) {
 					return Sync.ApplyAppendDeltaResult.dirty_sync_account;
 				}
 			}
@@ -1600,7 +1599,7 @@ public class InternalDb {
 
 			{ // if the current simpleToken has changed (sync user logged off or changed), reject this append delta
 				final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
-				if (!U.equals(simpleToken, simpleTokenBeforeSync)) {
+				if (!simpleTokenBeforeSync.equals(simpleToken)) {
 					return Sync.ApplyAppendDeltaResult.dirty_sync_account;
 				}
 			}
@@ -1651,7 +1650,7 @@ public class InternalDb {
 						// update startTime
 						if (content.startTime != null) {
 							for (final ReadingPlan.ReadingPlanInfo info : listAllReadingPlanInfo()) {
-								if (U.equals(ReadingPlan.gidFromName(info.name), o.gid)) {
+								if (ReadingPlan.gidFromName(info.name).equals(o.gid)) {
 									if (info.startTime != content.startTime) {
 										final ContentValues cv = new ContentValues();
 										cv.put(Db.ReadingPlan.startTime, content.startTime);

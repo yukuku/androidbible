@@ -663,7 +663,7 @@ public class SearchActivity extends BaseActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	protected void search(final String query_string) {
+	protected void search(@NonNull final String query_string) {
 		if (query_string.trim().length() == 0) {
 			return;
 		}
@@ -833,7 +833,7 @@ public class SearchActivity extends BaseActivity {
 		final SearchHistory sh = loadSearchHistory();
 		// look for this query_string and remove
 		for (int i = sh.entries.size() - 1; i >= 0; i--) {
-			if (U.equals(sh.entries.get(i).query_string, query_string)) {
+			if (query_string.equals(sh.entries.get(i).query_string)) {
 				sh.entries.remove(i);
 			}
 		}

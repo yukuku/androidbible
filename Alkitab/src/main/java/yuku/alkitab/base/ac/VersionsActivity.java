@@ -850,7 +850,7 @@ public class VersionsActivity extends BaseActivity {
 			}
 
 			display = new Locale(locale).getDisplayLanguage();
-			if (display == null || U.equals(display, locale)) {
+			if (display.equals(locale)) {
 
 				// try asking version config locale display
 				display = VersionConfig.get().locale_display.get(locale);
