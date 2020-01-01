@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Set;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.util.Literals;
@@ -41,12 +40,12 @@ public class Sync_Rp {
 
 		// additions and modifications
 		for (final Sync.Entity<Content> dst : dsts) {
-			final Sync.Entity<Content> existing = findEntity(srcs, dst.gid, dst.kind);
+			final Sync.Entity<Content> existing = SyncUtils.findEntity(srcs, dst.gid, dst.kind);
 
 			if (existing == null) {
 				delta.operations.add(new Sync.Operation<>(Sync.Opkind.add, dst.kind, dst.gid, dst.content));
 			} else {
-				if (!isSameContent(dst, existing)) { // only when it changes
+				if (!SyncUtils.isSameContent(dst, existing)) { // only when it changes
 					delta.operations.add(new Sync.Operation<>(Sync.Opkind.mod, dst.kind, dst.gid, dst.content));
 				}
 			}
@@ -54,29 +53,13 @@ public class Sync_Rp {
 
 		// deletions
 		for (final Sync.Entity<Content> src : srcs) {
-			final Sync.Entity<Content> still_have = findEntity(dsts, src.gid, src.kind);
+			final Sync.Entity<Content> still_have = SyncUtils.findEntity(dsts, src.gid, src.kind);
 			if (still_have == null) {
 				delta.operations.add(new Sync.Operation<>(Sync.Opkind.del, src.kind, src.gid, null));
 			}
 		}
 
 		return Pair.create(new Sync.ClientState<>(ss == null ? 0 : ss.revno, delta), dsts);
-	}
-
-	private static boolean isSameContent(final Sync.Entity<Content> a, final Sync.Entity<Content> b) {
-		if (!U.equals(a.gid, b.gid)) return false;
-		if (!U.equals(a.kind, b.kind)) return false;
-
-		return U.equals(a.content, b.content);
-	}
-
-	private static Sync.Entity<Content> findEntity(final List<Sync.Entity<Content>> list, final String gid, final String kind) {
-		for (final Sync.Entity<Content> entity : list) {
-			if (U.equals(gid, entity.gid) && U.equals(kind, entity.kind)) {
-				return entity;
-			}
-		}
-		return null;
 	}
 
 	private static List<Sync.Entity<Content>> entitiesFromShadow(@NonNull final SyncShadow ss) {

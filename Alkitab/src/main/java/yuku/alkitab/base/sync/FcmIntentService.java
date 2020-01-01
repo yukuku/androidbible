@@ -6,11 +6,9 @@ import android.os.Bundle;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
-import yuku.alkitab.base.App;
-import yuku.alkitab.base.U;
-import yuku.alkitab.base.util.AppLog;
-
 import java.util.List;
+import yuku.alkitab.base.App;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.InstallationUtil;
 
 public class FcmIntentService extends JobIntentService {
@@ -51,14 +49,14 @@ public class FcmIntentService extends JobIntentService {
 
 		try {
 			final String source_installation_id = intent.getStringExtra(FCM_MESSAGE_KEY_source_installation_id);
-			if (U.equals(source_installation_id, InstallationUtil.getInstallationId())) {
+			if (InstallationUtil.getInstallationId().equals(source_installation_id)) {
 				AppLog.d(TAG, "FCM message sourced from self is ignored");
 			} else {
 				final String encoded_data = intent.getStringExtra(FCM_MESSAGE_KEY_encoded_data);
 				final FcmMessageEncodedDataJson data = App.getDefaultGson().fromJson(encoded_data, FcmMessageEncodedDataJson.class);
 				if ("sync".equals(data.kind)) {
 					if (data.syncSetNames != null) {
-						Sync.notifySyncNeeded(data.syncSetNames.toArray(new String[data.syncSetNames.size()]));
+						Sync.notifySyncNeeded(data.syncSetNames.toArray(new String[0]));
 					}
 				}
 			}

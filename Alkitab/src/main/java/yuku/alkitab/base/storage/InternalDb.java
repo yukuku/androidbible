@@ -1606,7 +1606,7 @@ public class InternalDb {
 			}
 
 			for (final Sync.Operation<Sync_Rp.Content> o : append_delta.operations) {
-				if (!U.equals(o.kind, Sync.Entity.KIND_RP_PROGRESS)) {
+				if (!Sync.Entity.KIND_RP_PROGRESS.equals(o.kind)) {
 					return Sync.ApplyAppendDeltaResult.unknown_kind;
 				}
 
