@@ -93,7 +93,7 @@ public class Sync_Pins {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		final BufferedWriter w = new BufferedWriter(new OutputStreamWriter(baos, Charset.forName("utf-8")));
 		App.getDefaultGson().toJson(data, new TypeToken<Sync.SyncShadowDataJson<Content>>() {}.getType(), w);
-		U.wontThrow(() -> w.flush());
+		SyncUtils.wontThrow(w::flush);
 		final SyncShadow res = new SyncShadow();
 		res.data = baos.toByteArray();
 		res.syncSetName = SyncShadow.SYNC_SET_PINS;

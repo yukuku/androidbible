@@ -28,7 +28,6 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.MarkerListActivity;
 import yuku.alkitab.base.ac.MarkersActivity;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
@@ -298,7 +297,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			// arbritrary amount of time may pass on the next line. It is possible for the current data to be modified during this operation.
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "serverPrefix", Sync.getEffectiveServerPrefix());
 			final long startTime = System.currentTimeMillis();
-			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
+			final String response_s = call.execute().body().string();
 			AppLog.d(TAG, "@@syncMabel server response string: " + response_s);
 			final Sync.SyncResponseJson<Sync_Mabel.Content> response = App.getDefaultGson().fromJson(response_s, new TypeToken<Sync.SyncResponseJson<Sync_Mabel.Content>>() {}.getType());
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, syncSetName, "duration_ms", System.currentTimeMillis() - startTime);
@@ -399,7 +398,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			// arbritrary amount of time may pass on the next line. It is possible for the current data to be modified during this operation.
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "serverPrefix", Sync.getEffectiveServerPrefix());
 			final long startTime = System.currentTimeMillis();
-			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
+			final String response_s = call.execute().body().string();
 			AppLog.d(TAG, "@@syncHistory server response string: " + response_s);
 			final Sync.SyncResponseJson<Sync_History.Content> response = App.getDefaultGson().fromJson(response_s, new TypeToken<Sync.SyncResponseJson<Sync_History.Content>>() {}.getType());
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, syncSetName, "duration_ms", System.currentTimeMillis() - startTime);
@@ -492,7 +491,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			// arbritrary amount of time may pass on the next line. It is possible for the current data to be modified during this operation.
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "serverPrefix", Sync.getEffectiveServerPrefix());
 			final long startTime = System.currentTimeMillis();
-			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
+			final String response_s = call.execute().body().string();
 			AppLog.d(TAG, "@@syncPins server response string: " + response_s);
 			final Sync.SyncResponseJson<Sync_Pins.Content> response = App.getDefaultGson().fromJson(response_s, new TypeToken<Sync.SyncResponseJson<Sync_Pins.Content>>() {}.getType());
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, syncSetName, "duration_ms", System.currentTimeMillis() - startTime);
@@ -587,7 +586,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			// arbritrary amount of time may pass on the next line. It is possible for the current data to be modified during this operation.
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "serverPrefix", Sync.getEffectiveServerPrefix());
 			final long startTime = System.currentTimeMillis();
-			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
+			final String response_s = call.execute().body().string();
 			AppLog.d(TAG, "@@syncRp server response string: " + response_s);
 			final Sync.SyncResponseJson<Sync_Rp.Content> response = App.getDefaultGson().fromJson(response_s, new TypeToken<Sync.SyncResponseJson<Sync_Rp.Content>>() {}.getType());
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, syncSetName, "duration_ms", System.currentTimeMillis() - startTime);
