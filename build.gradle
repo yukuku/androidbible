@@ -49,7 +49,7 @@ ext {
     materialDialogsVersion = '0.9.6.0'
     gsonVersion = '2.8.6'
     stethoVersion = '1.5.1'
-    okhttpVersion = '4.2.2'
+    okhttpVersion = '3.12.6' // For 3.13.0 "This release bumps our minimum requirements to Java 8+ or Android 5+"
     retrofitVersion = '2.6.2'
     picassoVersion = '2.71828'
     picassoOkhttpDownloaderVersion = '1.1.0'

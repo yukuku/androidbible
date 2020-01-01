@@ -63,7 +63,7 @@ public class App extends yuku.afw.App {
 
 	@NonNull
 	static String httpUserAgent() {
-		return Version.userAgent + " " + App.context.getPackageName() + "/" + App.getVersionName();
+		return Version.userAgent() + " " + App.context.getPackageName() + "/" + App.getVersionName();
 	}
 
 	enum OkHttpClientWrapper {
