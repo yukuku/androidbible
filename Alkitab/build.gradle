@@ -122,6 +122,8 @@ dependencies {
     implementation "com.jakewharton.picasso:picasso2-okhttp3-downloader:$picassoOkhttpDownloaderVersion"
     implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
     implementation "com.google.code.gson:gson:$gsonVersion"
+    implementation "com.google.android.exoplayer:exoplayer-core:$exoplayerVersion"
+    implementation "com.google.android.exoplayer:extension-okhttp:$exoplayerVersion"
     implementation("com.crashlytics.sdk.android:crashlytics:$crashlyticsVersion@aar") {
         transitive = true
     }

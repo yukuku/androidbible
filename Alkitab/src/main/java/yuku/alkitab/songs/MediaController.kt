@@ -41,7 +41,7 @@ abstract class MediaController {
 
     abstract fun playOrPause(playInLoop: Boolean)
 
-    abstract fun getProgress(): IntArray
+    abstract fun getProgress(): LongArray
 
     fun canHaveNewUrl(): Boolean {
         return state == State.reset || state == State.reset_media_known_to_exist || state == State.error

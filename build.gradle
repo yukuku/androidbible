@@ -54,5 +54,6 @@ ext {
     picassoVersion = '2.71828'
     picassoOkhttpDownloaderVersion = '1.1.0'
     leakcanaryVersion = '2.0-beta-3'
+    exoplayerVersion = '2.11.1'
     crashlyticsVersion = '2.10.1'
 }

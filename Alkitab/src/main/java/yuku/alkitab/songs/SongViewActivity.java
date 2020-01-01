@@ -216,14 +216,16 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	}
 
 	void obtainSongProgress() {
-		final int[] progress = midiController.getProgress();
-		final int position = progress[0];
+		if (mediaController == null) return;
+
+		final long[] progress = mediaController.getProgress();
+		final long position = progress[0];
 		if (position == -1) {
 			mediaState.progress = null;
 			return;
 		}
 
-		final int duration = progress[1];
+		final long duration = progress[1];
 		if (duration == -1) {
 			mediaState.progress = String.format(Locale.US, "%d:%02d", position / 60000, position % 60000 / 1000);
 			return;
@@ -269,8 +271,16 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		displaySong(currentBookName, newSong);
 	}
 
-	// this has to be static to prevent double media player
+	/**
+	 * (This has to be static to prevent double media player.)
+	 * The "active" media player, either midiController or exoplayerController.
+	 * When no song has been examined, this is null.
+	 */
+	@Nullable
+	static MediaController mediaController = null;
+
 	static MidiController midiController = new MidiController();
+	static ExoplayerController exoplayerController = new ExoplayerController(App.context);
 
 	public static Intent createIntent() {
 		return new Intent(App.context, SongViewActivity.class);
@@ -419,8 +429,10 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	protected void onResume() {
 		super.onResume();
 
-		midiController.setUI(this, this);
-		midiController.updateMediaState();
+		if (mediaController != null) {
+			mediaController.setUI(this, this);
+			mediaController.updateMediaState();
+		}
 	}
 
 	static String getAudioFilename(String bookName, String code) {
@@ -441,16 +453,17 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 					// make sure this is the correct one due to possible race condition
 					if (U.equals(currentBookName, checkedBookName) && currentSong != null && U.equals(currentSong.code, checkedCode)) {
 						runOnUiThread(() -> {
-							if (midiController.canHaveNewUrl()) {
+							if (mediaController == null || mediaController.canHaveNewUrl()) {
 								final String baseUrl = BuildConfig.SERVER_HOST + "addon/audio/";
 								final String url = baseUrl + getAudioFilename(currentBookName, currentSong.code);
 								if (response.contains("extension=mid")) {
-									midiController.mediaKnownToExist(url);
+									setActiveMediaController(midiController);
 								} else {
-									midiController.mediaKnownToExist(url);
+									setActiveMediaController(exoplayerController);
 								}
+								mediaController.mediaKnownToExist(url);
 							} else {
-								AppLog.d(TAG, "midiController can't have new URL at this moment.");
+								AppLog.d(TAG, "mediaController can't have new URL at this moment.");
 							}
 						});
 					}
@@ -461,6 +474,16 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				AppLog.e(TAG, "@@checkAudioExistance", e);
 			}
 		});
+	}
+
+	private void setActiveMediaController(@NonNull final MediaController controller) {
+		// reset the "other" media controller
+		if (mediaController != null && mediaController != controller) {
+			mediaController.reset();
+		}
+		mediaController = controller;
+		mediaController.setUI(this, this);
+		mediaController.updateMediaState();
 	}
 
 	@Override
@@ -477,7 +500,10 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 						.content(R.string.sn_play_in_loop)
 						.negativeText(R.string.cancel)
 						.positiveText(R.string.ok)
-						.onPositive((dialog, which) -> midiController.playOrPause(true))
+						.onPositive((dialog, which) -> {
+							if (mediaController == null) return;
+							mediaController.playOrPause(true);
+						})
 						.show();
 					return true;
 				}
@@ -552,7 +578,9 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 			case R.id.menuMediaControl: {
 				if (currentBookName != null && currentSong != null) {
-					midiController.playOrPause(false);
+					if (mediaController != null) {
+						mediaController.playOrPause(false);
+					}
 				}
 			}
 			return true;
@@ -832,7 +860,9 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		no_song_data_container.setVisibility(song != null ? View.GONE : View.VISIBLE);
 
 		if (!onCreate) {
-			midiController.reset();
+			if (mediaController != null) {
+				mediaController.reset();
+			}
 		}
 
 		if (song == null) return;

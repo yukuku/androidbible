@@ -394,6 +394,7 @@
     <string name="highlight_custom_color">Other colors</string>
     <string name="menu_compare">Compare</string>
     <string name="song_player_error_description">An error was encountered when playing this song: %1$d, %2$d.</string>
+    <string name="song_player_error_message">An error was encountered when playing this song: ^1.</string>
 
     <string name="search_in_version_short_name_placeholder">Find in %s</string>
     <string name="search_syntax_tips"><i>Search tips:</i>\n\n<b>+word</b> for that exact word\n<b>[q]city of david[q]</b> for that exact phrase</string>

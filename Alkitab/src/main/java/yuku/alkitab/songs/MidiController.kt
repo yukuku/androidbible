@@ -14,7 +14,7 @@ import java.io.IOException
 private const val TAG = "MidiController"
 
 /**
- * We will use Exoplayer for non-MIDI files.
+ * We will use [ExoplayerController] for non-MIDI files.
  * One of the reason is that Exoplayer allows us to use OkHttp as the downloader.
  */
 class MidiController : MediaController() {
@@ -121,24 +121,25 @@ class MidiController : MediaController() {
     /**
      * @return current position and duration in ms. Any of them can be -1 if unknown.
      */
-    override fun getProgress(): IntArray = when (state) {
+    override fun getProgress(): LongArray = when (state) {
         State.playing, State.paused, State.complete -> {
             val position = try {
-                mp.currentPosition
+                mp.currentPosition.toLong()
             } catch (e: Exception) {
                 AppLog.e(TAG, "@@getProgress getCurrentPosition", e)
-                -1
+                -1L
             }
 
             val duration = try {
-                mp.duration
+                mp.duration.toLong()
             } catch (e: Exception) {
-                AppLog.e(TAG, "@@getProgress getCurrentPosition", e)
-                -1
+                AppLog.e(TAG, "@@getProgress getDuration", e)
+                -1L
             }
-            intArrayOf(position, duration)
+
+            longArrayOf(position, duration)
         }
 
-        else -> intArrayOf(-1, -1)
+        else -> longArrayOf(-1, -1)
     }
 }
