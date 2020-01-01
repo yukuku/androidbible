@@ -96,7 +96,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	// for initially populating the search song activity
 	SongListActivity.SearchState last_searchState = null;
 
-	// state for keypad
+	// state for the keypad
 	String state_originalCode;
 	String state_tempCode;
 
@@ -172,7 +172,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	 * This method might be called from non-UI thread. Be careful when manipulating UI.
 	 */
 	@Override
-	public void onControllerStateChanged(@NonNull final MediaPlayerController.State state) {
+	public void onControllerStateChanged(@NonNull final MediaController.State state) {
 		switch (state) {
 			case reset: {
 				mediaState.enabled = false;
@@ -207,7 +207,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			break;
 		}
 
-		mediaState.loading = (state == MediaPlayerController.State.preparing);
+		mediaState.loading = state == MediaController.State.preparing;
 
 		obtainSongProgress();
 
@@ -216,7 +216,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	}
 
 	void obtainSongProgress() {
-		final int[] progress = mediaPlayerController.getProgress();
+		final int[] progress = midiController.getProgress();
 		final int position = progress[0];
 		if (position == -1) {
 			mediaState.progress = null;
@@ -269,8 +269,8 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		displaySong(currentBookName, newSong);
 	}
 
-	// this have to be static to prevent double media player
-	static MediaPlayerController mediaPlayerController = new MediaPlayerController();
+	// this has to be static to prevent double media player
+	static MidiController midiController = new MidiController();
 
 	public static Intent createIntent() {
 		return new Intent(App.context, SongViewActivity.class);
@@ -326,7 +326,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 		new Handler() {
 			@Override
-			public void handleMessage(final Message msg) {
+			public void handleMessage(@NonNull final Message msg) {
 				if (isFinishing()) return;
 
 				obtainSongProgress();
@@ -419,8 +419,8 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	protected void onResume() {
 		super.onResume();
 
-		mediaPlayerController.setUI(this, this);
-		mediaPlayerController.updateMediaState();
+		midiController.setUI(this, this);
+		midiController.updateMediaState();
 	}
 
 	static String getAudioFilename(String bookName, String code) {
@@ -441,16 +441,16 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 					// make sure this is the correct one due to possible race condition
 					if (U.equals(currentBookName, checkedBookName) && currentSong != null && U.equals(currentSong.code, checkedCode)) {
 						runOnUiThread(() -> {
-							if (mediaPlayerController.canHaveNewUrl()) {
+							if (midiController.canHaveNewUrl()) {
 								final String baseUrl = BuildConfig.SERVER_HOST + "addon/audio/";
 								final String url = baseUrl + getAudioFilename(currentBookName, currentSong.code);
-								if (response.contains("extension=mp3")) {
-									mediaPlayerController.mediaKnownToExist(url, false);
+								if (response.contains("extension=mid")) {
+									midiController.mediaKnownToExist(url);
 								} else {
-									mediaPlayerController.mediaKnownToExist(url, true);
+									midiController.mediaKnownToExist(url);
 								}
 							} else {
-								AppLog.d(TAG, "mediaPlayerController can't have new URL at this moment.");
+								AppLog.d(TAG, "midiController can't have new URL at this moment.");
 							}
 						});
 					}
@@ -477,7 +477,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 						.content(R.string.sn_play_in_loop)
 						.negativeText(R.string.cancel)
 						.positiveText(R.string.ok)
-						.onPositive((dialog, which) -> mediaPlayerController.playOrPause(true))
+						.onPositive((dialog, which) -> midiController.playOrPause(true))
 						.show();
 					return true;
 				}
@@ -552,7 +552,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 			case R.id.menuMediaControl: {
 				if (currentBookName != null && currentSong != null) {
-					mediaPlayerController.playOrPause(false);
+					midiController.playOrPause(false);
 				}
 			}
 			return true;
@@ -808,7 +808,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 								res = String.valueOf(verse_1);
 								full = false;
 							} else {
-								res = String.valueOf(chapter_1) + ':' + String.valueOf(verse_1);
+								res = String.valueOf(chapter_1) + ':' + verse_1;
 								full = false;
 							}
 						}
@@ -832,7 +832,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		no_song_data_container.setVisibility(song != null ? View.GONE : View.VISIBLE);
 
 		if (!onCreate) {
-			mediaPlayerController.reset();
+			midiController.reset();
 		}
 
 		if (song == null) return;
@@ -945,7 +945,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		final String dataFormatVersion_s = uri.getQueryParameter("dataFormatVersion");
 		final int dataFormatVersion;
 		try {
-			dataFormatVersion = Integer.parseInt(dataFormatVersion_s);
+			dataFormatVersion = Integer.parseInt("" + dataFormatVersion_s);
 		} catch (NumberFormatException | NullPointerException e) {
 			new MaterialDialog.Builder(this)
 				.content("Invalid uri:\n\n" + uri)
@@ -1063,7 +1063,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		int num = -1;
 		for (int i = 0; i < numIds.length; i++) if (id == numIds[i]) num = i;
 		for (int i = 0; i < alphaIds.length; i++) if (id == alphaIds[i]) num = 10 + i; // special code for alpha
-		if (id == R.id.bBackspace) num = 20; // special code for backspace
+		if (id == R.id.bBackspace) num = 20; // special code for the backspace
 
 		final LeftDrawer.Songs.Handle handle = leftDrawer.getHandle();
 
