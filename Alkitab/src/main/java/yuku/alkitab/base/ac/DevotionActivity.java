@@ -543,7 +543,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 			final ShareActivity.Result result = ShareActivity.obtainResult(data);
 			if (result != null && result.chosenIntent != null) {
 				final Intent chosenIntent = result.chosenIntent;
-				if (U.equals(chosenIntent.getComponent().getPackageName(), "com.facebook.katana")) {
+				if ("com.facebook.katana".equals(chosenIntent.getComponent().getPackageName())) {
 					final String shareUrl = currentKind.getShareUrl(yyyymmdd.get(), currentDate);
 					if (shareUrl != null) {
 						chosenIntent.putExtra(Intent.EXTRA_TEXT, shareUrl);

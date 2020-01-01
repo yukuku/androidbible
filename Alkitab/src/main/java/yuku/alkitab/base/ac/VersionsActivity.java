@@ -153,14 +153,14 @@ public class VersionsActivity extends BaseActivity {
 
 	@TargetApi(Build.VERSION_CODES.KITKAT)
 	private void checkAndProcessOpenFileIntent(Intent intent) {
-		if (!U.equals(intent.getAction(), Intent.ACTION_VIEW)) return;
+		if (!Intent.ACTION_VIEW.equals(intent.getAction())) return;
 
 		// we are trying to open a file, so let's go to the DOWNLOADED tab, as it is more relevant.
 		viewPager.setCurrentItem(1);
 
 		final Uri uri = intent.getData();
 
-		final boolean isLocalFile = U.equals("file", uri.getScheme());
+		final boolean isLocalFile = "file".equals(uri.getScheme());
 		final Boolean isYesFile; // false:pdb true:yes null:cannotdetermine
 		final String filelastname;
 
@@ -603,7 +603,7 @@ public class VersionsActivity extends BaseActivity {
 
 				final Uri uri = Uri.parse(url);
 				final String scheme = uri.getScheme();
-				if (!U.equals(scheme, "http") && !U.equals(scheme, "https")) {
+				if (!"http".equals(scheme) && !"https".equals(scheme)) {
 					new MaterialDialog.Builder(VersionsActivity.this)
 						.content(R.string.version_download_invalid_url)
 						.positiveText(R.string.ok)
