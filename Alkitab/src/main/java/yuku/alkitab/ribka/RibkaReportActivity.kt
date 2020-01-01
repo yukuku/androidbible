@@ -2,13 +2,13 @@ package yuku.alkitab.ribka
 
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.textfield.TextInputLayout
-import androidx.core.util.PatternsCompat
 import android.view.View
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.TextView
+import androidx.core.util.PatternsCompat
 import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.textfield.TextInputLayout
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.FormBody
@@ -17,6 +17,8 @@ import okhttp3.Response
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
 import yuku.alkitab.base.ac.base.BaseActivity
+import yuku.alkitab.base.connection.Connections
+import yuku.alkitab.base.connection.Connections.okHttp
 import yuku.alkitab.base.util.FormattedVerseText
 import yuku.alkitab.base.widget.VerseRenderer
 import yuku.alkitab.debug.BuildConfig
@@ -135,7 +137,7 @@ class RibkaReportActivity : BaseActivity() {
             .progress(true, 0)
             .show()
 
-        App.okhttp().newCall(Request.Builder().url(BuildConfig.RIBKA_FUNCTIONS_HOST + "addIssue").post(form.build()).build()).enqueue(object : Callback {
+        Connections.okHttp.newCall(Request.Builder().url(BuildConfig.RIBKA_FUNCTIONS_HOST + "addIssue").post(form.build()).build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 pd.dismiss()
 

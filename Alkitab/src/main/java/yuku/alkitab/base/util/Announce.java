@@ -23,6 +23,7 @@ import okhttp3.Request;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.HelpActivity;
+import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.BuildConfig;
@@ -137,7 +138,7 @@ public abstract class Announce {
 	}
 
 	private static AnnounceCheckResult getAnnouncements() throws IOException {
-		final Call call = App.okhttp().newCall(
+		final Call call = Connections.getOkHttp().newCall(
 			new Request.Builder()
 				.url(BuildConfig.SERVER_HOST + "announce/check")
 				.post(

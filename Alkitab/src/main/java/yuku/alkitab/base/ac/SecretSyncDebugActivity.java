@@ -33,6 +33,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Sync;
@@ -362,7 +363,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 			.add("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 
-		final Call call = App.getLongTimeoutOkHttpClient().newCall(
+		final Call call = Connections.getLongTimeoutOkHttpClient().newCall(
 			new Request.Builder()
 				.url(Sync.getEffectiveServerPrefix() + "sync/api/sync")
 				.post(requestBody)

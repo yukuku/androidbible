@@ -11,6 +11,14 @@ import android.util.Pair;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.MultipartBody;
@@ -24,21 +32,13 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.MarkerListActivity;
 import yuku.alkitab.base.ac.MarkersActivity;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
+import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.InstallationUtil;
 import yuku.alkitab.base.util.Sqlitil;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
 
 /**
  * Handle the transfer of data between a server and an
@@ -285,7 +285,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			.addFormDataPart("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 
-		final Call call = App.getLongTimeoutOkHttpClient().newCall(
+		final Call call = Connections.getLongTimeoutOkHttpClient().newCall(
 			new Request.Builder()
 				.url(serverPrefix + "sync/api/sync")
 				.post(requestBody)
@@ -386,7 +386,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			.add("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 
-		final Call call = App.getLongTimeoutOkHttpClient().newCall(
+		final Call call = Connections.getLongTimeoutOkHttpClient().newCall(
 			new Request.Builder()
 				.url(serverPrefix + "sync/api/sync")
 				.post(requestBody)
@@ -479,7 +479,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			.add("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 
-		final Call call = App.getLongTimeoutOkHttpClient().newCall(
+		final Call call = Connections.getLongTimeoutOkHttpClient().newCall(
 			new Request.Builder()
 				.url(serverPrefix + "sync/api/sync")
 				.post(requestBody)
@@ -574,7 +574,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			.add("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 
-		final Call call = App.getLongTimeoutOkHttpClient().newCall(
+		final Call call = Connections.getLongTimeoutOkHttpClient().newCall(
 			new Request.Builder()
 				.url(serverPrefix + "sync/api/sync")
 				.post(requestBody)

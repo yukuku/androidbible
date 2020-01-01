@@ -25,6 +25,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AppLog;
@@ -332,7 +333,7 @@ public class Sync {
 			.build();
 
 		try {
-			final Call call = App.getLongTimeoutOkHttpClient().newCall(
+			final Call call = Connections.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
 					.url(getEffectiveServerPrefix() + "sync/api/register_gcm_client")
 					.post(requestBody)
@@ -414,7 +415,7 @@ public class Sync {
 			.build();
 
 		try {
-			final Call call = App.getLongTimeoutOkHttpClient().newCall(
+			final Call call = Connections.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
 					.url(getEffectiveServerPrefix() + "sync/api/create_own_user")
 					.post(requestBody)
@@ -447,7 +448,7 @@ public class Sync {
 			.build();
 
 		try {
-			final Call call = App.getLongTimeoutOkHttpClient().newCall(
+			final Call call = Connections.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
 					.url(getEffectiveServerPrefix() + "sync/api/login_own_user")
 					.post(requestBody)
@@ -477,7 +478,7 @@ public class Sync {
 			.build();
 
 		try {
-			final Call call = App.getLongTimeoutOkHttpClient().newCall(
+			final Call call = Connections.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
 					.url(getEffectiveServerPrefix() + "sync/api/forgot_password")
 					.post(requestBody)
@@ -507,7 +508,7 @@ public class Sync {
 			.build();
 
 		try {
-			final Call call = App.getLongTimeoutOkHttpClient().newCall(
+			final Call call = Connections.getLongTimeoutOkHttpClient().newCall(
 				new Request.Builder()
 					.url(getEffectiveServerPrefix() + "sync/api/change_password")
 					.post(requestBody)

@@ -5,19 +5,19 @@ import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.afollestad.materialdialogs.MaterialDialog;
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.Request;
 import okhttp3.Response;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
-
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ShareUrl {
 	public interface Callback {
@@ -63,7 +63,7 @@ public class ShareUrl {
 			form.add("versionShortName", versionShortName);
 		}
 
-		final Call call = App.okhttp().newCall(
+		final Call call = Connections.getOkHttp().newCall(
 			new Request.Builder()
 				.url(BuildConfig.SERVER_HOST + "v/create")
 				.post(form.build())
