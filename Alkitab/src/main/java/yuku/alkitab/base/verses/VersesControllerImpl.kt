@@ -46,7 +46,6 @@ class VersesControllerImpl(
     private val checkedPositions = mutableSetOf<Int>()
     private val attention = Attention()
 
-    // TODO check if we still need this
     private val dataVersionNumber = AtomicInteger()
 
     private val layoutManager: LinearLayoutManager
@@ -365,12 +364,14 @@ class VersesControllerImpl(
 
     override fun verseDown(): VersesController.PressResult {
         val oldVerse_1 = getVerse_1BasedOnScroll()
-        // TODO(VersesView revamp): check if we need this: stopFling()
+
         val newVerse_1 = if (oldVerse_1 < versesDataModel.verses_.verseCount) {
             oldVerse_1 + 1
         } else {
             oldVerse_1
         }
+
+        rv.stopScroll()
         scrollToVerse(newVerse_1)
         return VersesController.PressResult.Consumed(newVerse_1)
     }
@@ -378,12 +379,13 @@ class VersesControllerImpl(
     override fun verseUp(): VersesController.PressResult {
         val oldVerse_1 = getVerse_1BasedOnScroll()
 
-        // TODO(VersesView revamp): check if we need this: stopFling()
         val newVerse_1 = if (oldVerse_1 > 1) { // can still go prev
             oldVerse_1 - 1
         } else {
             oldVerse_1
         }
+
+        rv.stopScroll()
         scrollToVerse(newVerse_1)
         return VersesController.PressResult.Consumed(newVerse_1)
     }
