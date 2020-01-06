@@ -1,5 +1,6 @@
 package yuku.alkitab.base.appwidget;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.graphics.Color;
@@ -7,6 +8,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.SuperscriptSpan;
+import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 import androidx.annotation.Nullable;
@@ -17,20 +19,23 @@ import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
+import yuku.alkitabintegration.display.Launcher;
 
 public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory {
 	static final String TAG = DailyVerseFactory.class.getSimpleName();
 
 	private int appWidgetId;
+	private int direction;
 	private DailyVerseData.SavedState savedState;
 	private Version version;
 	@Nullable private int[] aris;
 
 	public DailyVerseFactory(final Intent intent) {
 		this.appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+		this.direction = intent.getIntExtra(DailyVerseAppWidgetService.EXTRA_direction, 0);
 	}
 
-	public static SpannableStringBuilder getText(Version version, int ari, boolean showVerseNumber) {
+	private static SpannableStringBuilder getText(Version version, int ari, boolean showVerseNumber) {
 		final SpannableStringBuilder sb = new SpannableStringBuilder();
 
 		String verseText = FormattedVerseText.removeSpecialCodes(version.loadVerseText(ari));
@@ -73,14 +78,77 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 
 	@Override
 	public int getCount() {
-		return aris == null ? 0 : aris.length;
+		return 1 + (aris == null ? 0 : aris.length);
 	}
 
 	@Override
 	public RemoteViews getViewAt(final int position) {
-		final RemoteViews row = new RemoteViews(App.context.getPackageName(), R.layout.item_daily_verse_app_widget);
+		if (position == 0) {
+			return getHeaderView();
+		} else {
+			return getVerseViewAt(position - 1);
+		}
+	}
 
-		assert aris != null; // getCount returns 0 if aris == null
+	RemoteViews getHeaderView() {
+		final RemoteViews rv = new RemoteViews(App.context.getPackageName(), R.layout.appwidget_daily_verse_item_header);
+
+		// get saved state
+		final DailyVerseData.SavedState savedState = DailyVerseData.loadSavedState(appWidgetId);
+
+		if (savedState.darkText) {
+			rv.setTextColor(R.id.tReference, Color.BLACK);
+			rv.setImageViewResource(R.id.bPrev, R.drawable.ic_nav_left_dark);
+			rv.setImageViewResource(R.id.bNext, R.drawable.ic_nav_right_dark);
+		} else {
+			rv.setTextColor(R.id.tReference, Color.WHITE);
+		}
+
+		//--App logo button
+		rv.setViewVisibility(R.id.imgLogo, savedState.hideAppIcon ? View.GONE : View.VISIBLE);
+		rv.setOnClickFillInIntent(R.id.imgLogo, new Intent().putExtra("app_widget_action", "open_app"));
+
+		final int[] appWidgetIds = {appWidgetId};
+
+		//--Prev button
+		{
+			final Intent intent = new Intent();
+			intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+			intent.putExtra("app_widget_action", "update_widget");
+			intent.putExtra("app_widget_button", 1);
+
+			rv.setOnClickFillInIntent(R.id.bPrev, intent);
+		}
+
+		//--Next button
+		{
+			final Intent intent = new Intent();
+			intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+			intent.putExtra("app_widget_action", "update_widget");
+			intent.putExtra("app_widget_button", 2);
+
+			rv.setOnClickFillInIntent(R.id.bNext, intent);
+		}
+
+		rv.setFloat(R.id.tReference, "setTextSize", savedState.textSize);
+
+		final Version version = DailyVerseData.getVersion(savedState.versionId);
+		final int[] aris = DailyVerseData.getAris(appWidgetId, savedState, version, direction);
+		if (aris != null) {
+			rv.setTextViewText(R.id.tReference, version.referenceWithVerseCount(aris[0], aris.length));
+
+			final Intent viewVerseIntent = Launcher.openAppAtBibleLocation(aris[0]);
+			rv.setOnClickPendingIntent(R.id.tReference, PendingIntent.getActivity(App.context, appWidgetId + 10000, viewVerseIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+		} else {
+			rv.setTextViewText(R.id.tReference, Localized.string(R.string.generic_verse_not_available_in_this_version));
+		}
+
+		return rv;
+	}
+
+	RemoteViews getVerseViewAt(final int position) {
+		final RemoteViews row = new RemoteViews(App.context.getPackageName(), R.layout.appwidget_daily_verse_item_verse);
+		assert aris != null;
 		final boolean showVerseNumber = aris.length > 1;
 
 		// prevent crash: sometimes position is out of range for the aris array.
@@ -93,7 +161,7 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 			row.setTextViewText(R.id.text1, getText(version, ari, showVerseNumber));
 			row.setTextColor(R.id.text1, savedState.darkText ? Color.BLACK : Color.WHITE);
 			row.setFloat(R.id.text1, "setTextSize", savedState.textSize);
-			row.setOnClickFillInIntent(R.id.text1, new Intent().putExtra("ari", ari));
+			row.setOnClickFillInIntent(R.id.text1, new Intent().putExtra("app_widget_action", "open_verse").putExtra("ari", ari));
 		}
 
 		return row;
@@ -106,7 +174,7 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 
 	@Override
 	public int getViewTypeCount() {
-		return 1;
+		return 2;
 	}
 
 	@Override

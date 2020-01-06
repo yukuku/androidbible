@@ -7,8 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,18 +15,20 @@ import android.widget.CheckedTextView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import java.util.List;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.br.DailyVerseAppWidgetReceiver;
 import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.debug.R;
 
-import java.util.List;
-
 public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
-	private VersionAdapter adapter;
+	VersionAdapter adapter;
 
 	int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 	int selectedVersionPosition = -1;
@@ -187,11 +187,11 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 		savedState.click = 0;
 		DailyVerseData.saveSavedState(mAppWidgetId, savedState);
 
-		DailyVerseAppWidgetReceiver.buildUpdate(context, mAppWidgetId, 1);
+		DailyVerseAppWidgetReceiver.buildUpdate(context, mAppWidgetId);
 
 		ComponentName provider = new ComponentName(context, DailyVerseAppWidgetReceiver.class);
 		int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(provider);
-		DailyVerseAppWidgetReceiver.setAlarm(DailyVerseAppWidgetConfigurationActivity.this, ids);
+		yuku.alkitab.base.br.DailyVerseAppWidgetReceiver.setAlarm(DailyVerseAppWidgetConfigurationActivity.this, ids);
 
 		Intent resultValue = new Intent();
 		resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);

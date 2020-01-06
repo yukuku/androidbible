@@ -354,7 +354,7 @@
 		</receiver>
 
 		<receiver
-			android:name="yuku.alkitab.base.appwidget.DailyVerseAppWidgetReceiver"
+			android:name="yuku.alkitab.base.br.DailyVerseAppWidgetReceiver"
 			android:icon="@mipmap/ic_launcher">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -364,10 +364,10 @@
 				android:name="android.appwidget.provider"
 				android:resource="@xml/daily_verse_app_widget_provider" />
 		</receiver>
-		<receiver android:name="yuku.alkitab.base.appwidget.DailyVerseAppWidgetReceiver$ClickReceiver" />
+		<receiver android:name="yuku.alkitab.base.br.DailyVerseAppWidgetReceiver$ClickReceiver" />
 
 		<service
-			android:name="yuku.alkitab.base.appwidget.DailyVerseAppWidgetReceiver$UpdateService"
+			android:name="yuku.alkitab.base.br.DailyVerseAppWidgetReceiver$UpdateService"
 			android:exported="true"
 			android:permission="android.permission.BIND_JOB_SERVICE" />
 
