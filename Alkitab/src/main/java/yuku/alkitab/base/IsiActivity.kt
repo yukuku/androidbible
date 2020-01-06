@@ -1286,12 +1286,25 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     private fun initNfcIfAvailable() {
         nfcAdapter?.setNdefPushMessageCallback(NfcAdapter.CreateNdefMessageCallback {
             val obj = JSONObject()
-            obj.put("ari", Ari.encode(this@IsiActivity.activeBook.bookId, this@IsiActivity.chapter_1, lsSplit0.getVerse_1BasedOnScroll()))
+            obj.put("ari", Ari.encode(this@IsiActivity.activeBook.bookId, this@IsiActivity.chapter_1, getVerse_1BasedOnScrolls()))
 
             val payload = obj.toString().toByteArray()
             val record = NdefRecord(NdefRecord.TNF_MIME_MEDIA, "application/vnd.yuku.alkitab.nfc.beam".toByteArray(), ByteArray(0), payload)
             NdefMessage(arrayOf(record, NdefRecord.createApplicationRecord(packageName)))
         }, this)
+    }
+
+    /**
+     * Try to get the verse_1 based on split0, when failed, try to get it from the split1.
+     */
+    fun getVerse_1BasedOnScrolls(): Int {
+        val split0verse_1 = lsSplit0.getVerse_1BasedOnScroll()
+        if (split0verse_1 != 0) return split0verse_1
+
+        val split1verse_1 = lsSplit1.getVerse_1BasedOnScroll()
+        if (split1verse_1 != 0) return split1verse_1
+
+        return 1 // default value for verse_1
     }
 
     override fun onPause() {
@@ -1367,7 +1380,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             S.setActiveVersion(mv)
             displayActiveVersion()
 
-            display(chapter_1, lsSplit0.getVerse_1BasedOnScroll(), false)
+            display(chapter_1, getVerse_1BasedOnScrolls(), false)
 
             App.getLbm().sendBroadcast(Intent(ACTION_ACTIVE_VERSION_CHANGED))
 
@@ -1671,7 +1684,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         try {
             Preferences.setInt(Prefkey.lastBookId, this.activeBook.bookId)
             Preferences.setInt(Prefkey.lastChapter, chapter_1)
-            Preferences.setInt(Prefkey.lastVerse, lsSplit0.getVerse_1BasedOnScroll())
+            Preferences.setInt(Prefkey.lastVerse, getVerse_1BasedOnScrolls())
             Preferences.setString(Prefkey.lastVersionId, S.activeVersionId())
             val activeSplit = activeSplit
             if (activeSplit == null) {
@@ -1727,7 +1740,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         Tracker.trackEvent("nav_goto_button_click")
 
         val r = {
-            startActivityForResult(GotoActivity.createIntent(this.activeBook.bookId, this.chapter_1, lsSplit0.getVerse_1BasedOnScroll()), RequestCodes.FromActivity.Goto)
+            startActivityForResult(GotoActivity.createIntent(this.activeBook.bookId, this.chapter_1, getVerse_1BasedOnScrolls()), RequestCodes.FromActivity.Goto)
         }
 
         if (!Preferences.getBoolean(Prefkey.history_button_understood, false) && history.size > 0) {
@@ -1991,7 +2004,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 val ok = loadSplitVersion(mv)
                 if (ok) {
                     openSplitDisplay()
-                    displaySplitFollowingMaster()
+                    displaySplitFollowingMaster(getVerse_1BasedOnScrolls())
                 } else {
                     disableSplitVersion()
                 }
@@ -2271,10 +2284,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         if (selectedVerses_1 != null) {
             versesController.checkVerses(selectedVerses_1, true)
         }
-    }
-
-    private fun displaySplitFollowingMaster() {
-        displaySplitFollowingMaster(lsSplit0.getVerse_1BasedOnScroll())
     }
 
     private fun displaySplitFollowingMaster(verse_1: Int) {

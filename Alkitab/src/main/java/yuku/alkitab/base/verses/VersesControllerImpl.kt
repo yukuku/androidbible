@@ -278,6 +278,9 @@ class VersesControllerImpl(
         return child.measuredHeight
     }
 
+    /**
+     * Returns -1 if there is no visible child (e.g. when split is collapsed until the height is 0).
+     */
     private fun getPositionBasedOnScroll(): Int {
         val pos = layoutManager.findFirstVisibleItemPosition()
 
