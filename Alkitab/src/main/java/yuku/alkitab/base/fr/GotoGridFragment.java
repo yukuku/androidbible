@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import androidx.core.view.ViewCompat;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import yuku.afw.storage.Preferences;
@@ -66,7 +66,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 		gridVerse.setVisibility(View.INVISIBLE);
 		
 		animateFadeOutAndSlideLeft(gridBook, gridChapter);
-		ViewCompat.jumpDrawablesToCurrentState(lSelectedBook);
+		lSelectedBook.jumpDrawablesToCurrentState();
 		lSelectedBook.setAlpha(0.f);
 		lSelectedBook.animate().alpha(1.f).setDuration(ANIM_DURATION);
 
@@ -83,7 +83,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 		gridChapter.setVisibility(View.INVISIBLE);
 
 		animateFadeOutAndSlideLeft(gridBook, gridVerse);
-		ViewCompat.jumpDrawablesToCurrentState(lSelectedBook);
+		lSelectedBook.jumpDrawablesToCurrentState();
 		lSelectedBook.setAlpha(0.f);
 		lSelectedBook.animate().alpha(1.f).setDuration(ANIM_DURATION);
 
@@ -170,13 +170,16 @@ public class GotoGridFragment extends BaseGotoFragment {
 	}
 	
 	protected void displaySelectedBookAndChapter() {
+		// Prevent crash when this is suddenly null
+		if (selectedBook == null) return;
+
 		lSelectedBook.setText(selectedBook.shortName);
 		lSelectedBook.setTextColor(BookColorUtil.getForegroundOnDark(selectedBook.bookId));
 		if (selectedChapter == 0) {
 			lSelectedChapter.setVisibility(View.GONE);
 		} else {
 			lSelectedChapter.setVisibility(View.VISIBLE);
-			ViewCompat.jumpDrawablesToCurrentState(lSelectedChapter);
+			lSelectedChapter.jumpDrawablesToCurrentState();
 			lSelectedChapter.setText(String.valueOf(selectedChapter));
 		}
 	}
@@ -224,9 +227,10 @@ public class GotoGridFragment extends BaseGotoFragment {
 	}
 
 	abstract class GridAdapter extends RecyclerView.Adapter<VH> {
+		@NonNull
 		@Override
-		public VH onCreateViewHolder(final ViewGroup parent, final int viewType) {
-			return new VH(getActivity().getLayoutInflater().inflate(R.layout.item_goto_grid_cell, parent, false));
+		public VH onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
+			return new VH(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_goto_grid_cell, parent, false));
 		}
 
 		@Override
@@ -317,7 +321,10 @@ public class GotoGridFragment extends BaseGotoFragment {
 				if (Preferences.getBoolean(Prefkey.gotoAskForVerse, Prefkey.GOTO_ASK_FOR_VERSE_DEFAULT)) {
 					transitionChapterToVerse();
 				} else {
-					((GotoFinishListener) getActivity()).onGotoFinished(GotoFinishListener.GOTO_TAB_grid, selectedBook.bookId, selectedChapter, 0);
+					final GotoFinishListener activity = (GotoFinishListener) getActivity();
+					if (activity != null) {
+						activity.onGotoFinished(GotoFinishListener.GOTO_TAB_grid, selectedBook.bookId, selectedChapter, 0);
+					}
 				}
 			});
 		}
@@ -348,7 +355,10 @@ public class GotoGridFragment extends BaseGotoFragment {
 
 			holder.itemView.setOnClickListener(v -> {
 				final int selectedVerse = position + 1;
-				((GotoFinishListener) getActivity()).onGotoFinished(GotoFinishListener.GOTO_TAB_grid, selectedBook.bookId, selectedChapter, selectedVerse);
+				final GotoFinishListener activity = (GotoFinishListener) getActivity();
+				if (activity != null) {
+					activity.onGotoFinished(GotoFinishListener.GOTO_TAB_grid, selectedBook.bookId, selectedChapter, selectedVerse);
+				}
 			});
 		}
 
