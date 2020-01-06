@@ -59,7 +59,9 @@ interface VersesController {
 
     fun uncheckAllVerses(callSelectedVersesListener: Boolean)
     fun checkVerses(verses_1: IntArrayList, callSelectedVersesListener: Boolean)
+
     /**
+     * Returns a list of checked verse_1 in ascending order.
      * Old name: getSelectedVerses_1
      */
     fun getCheckedVerses_1(): IntArrayList

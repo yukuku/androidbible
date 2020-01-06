@@ -199,12 +199,17 @@ class VersesControllerImpl(
     }
 
     override fun getCheckedVerses_1(): IntArrayList {
-        val res = IntArrayList(checkedPositions.size)
+        val checkedVerses_1 = mutableSetOf<Int>()
         for (checkedPosition in checkedPositions) {
             val verse_1 = versesDataModel.getVerse_1FromPosition(checkedPosition)
             if (verse_1 >= 1) {
-                res.add(verse_1)
+                checkedVerses_1 += verse_1
             }
+        }
+
+        val res = IntArrayList(checkedVerses_1.size)
+        for (verse_1 in checkedVerses_1.sorted()) {
+            res.add(verse_1)
         }
         return res
     }
