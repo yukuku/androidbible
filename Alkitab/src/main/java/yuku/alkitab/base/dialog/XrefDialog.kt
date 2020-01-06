@@ -49,8 +49,6 @@ class XrefDialog : BaseDialog() {
     private var textSizeMult by notNull<Float>()
 
     private var displayedLinkPos = -1 // -1 indicates that we should auto-select the first link
-    private val displayedVerseTexts = mutableListOf<String>()
-    private val displayedVerseNumberTexts = mutableListOf<String>()
     private val displayedRealAris = IntArrayList()
 
     /**
@@ -151,6 +149,9 @@ class XrefDialog : BaseDialog() {
         if (BuildConfig.DEBUG) {
             AppLog.d(TAG, "linkPos $linkPos target=$encodedTarget ranges=$ranges")
         }
+
+        val displayedVerseTexts = mutableListOf<String>()
+        val displayedVerseNumberTexts = mutableListOf<String>()
         val verse_count = sourceVersion.loadVersesByAriRanges(ranges, displayedRealAris, displayedVerseTexts)
         if (verse_count > 0) { // set up verse number texts
             for (i in 0 until verse_count) {
