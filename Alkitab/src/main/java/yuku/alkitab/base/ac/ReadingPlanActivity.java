@@ -8,11 +8,6 @@ import android.content.IntentFilter;
 import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.PopupMenu;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.Menu;
@@ -28,7 +23,20 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import com.afollestad.materialdialogs.MaterialDialog;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
@@ -48,15 +56,6 @@ import yuku.alkitab.debug.R;
 import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabintegration.display.Launcher;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftDrawer.ReadingPlan.Listener {
 	static final String TAG = ReadingPlanActivity.class.getSimpleName();
 
@@ -67,28 +66,28 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	DrawerLayout drawerLayout;
 	LeftDrawer.ReadingPlan leftDrawer;
 
-	private ReadingPlan readingPlan;
+	ReadingPlan readingPlan;
 	private List<ReadingPlan.ReadingPlanInfo> downloadedReadingPlanInfos;
 	private int todayNumber;
-	private int dayNumber;
+	int dayNumber;
 
 	/**
 	 * List of reading codes that is read for the current reading plan.
 	 * A reading code is a combination of day (left-bit-shifted by 8) and the reading sequence for that day starting from 0.
 	 */
-	private IntArrayList readReadingCodes;
+	IntArrayList readReadingCodes;
 	private boolean newDropDownItems;
 
 	private ImageButton bLeft;
 	private ImageButton bRight;
 	private TextView bToday;
 	private ListView lsReadingPlan;
-	private ReadingPlanAdapter readingPlanAdapter;
+	ReadingPlanAdapter readingPlanAdapter;
 	private ActionBar actionBar;
 	private LinearLayout llNavigations;
 	private FrameLayout flNoData;
 	private Button bDownload;
-	private boolean showDetails;
+	boolean showDetails;
 
 	float density;
 
@@ -188,8 +187,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 					changeDay(0);
 				};
 
-				DatePickerDialog datePickerDialog = new DatePickerDialog(ReadingPlanActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-				datePickerDialog.show();
+				new DatePickerDialog(ReadingPlanActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
 			}
 
 			private void showSetStartDateDialog() {
@@ -245,6 +243,11 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		loadReadingPlan(id);
 		prepareDropDownNavigation();
 		loadDayNumber();
+
+		// if no reading plans have been downloaded, open download page immediately
+		if (downloadedReadingPlanInfos.size() == 0) {
+			openDownloadReadingPlanPage();
+		}
 
 		App.getLbm().registerReceiver(reload, new IntentFilter(ACTION_READING_PLAN_PROGRESS_CHANGED));
 	}
@@ -305,7 +308,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			return true;
 
 		} else if (itemId == R.id.menuDownload) {
-			downloadReadingPlanList();
+			openDownloadReadingPlanPage();
 			return true;
 		} else if (itemId == R.id.menuDelete) {
 			deleteReadingPlan();
@@ -314,7 +317,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void loadReadingPlan(long id) {
+	void loadReadingPlan(long id) {
 		downloadedReadingPlanInfos = S.getDb().listAllReadingPlanInfo();
 
 		if (downloadedReadingPlanInfos.size() == 0) {
@@ -355,7 +358,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		);
 	}
 
-	private void loadReadingPlanProgress() {
+	void loadReadingPlanProgress() {
 		if (readingPlan == null) {
 			return;
 		}
@@ -372,7 +375,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		startActivity(Launcher.openAppAtBibleLocation(ari_start));
 	}
 
-	private void loadDayNumber() {
+	void loadDayNumber() {
 		if (readingPlan == null) {
 			return;
 		}
@@ -390,7 +393,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		dayNumber = todayNumber = tn;
 	}
 
-	private int calculateDaysDiff(Calendar startCalendar, Calendar endCalendar) {
+	int calculateDaysDiff(Calendar startCalendar, Calendar endCalendar) {
 		startCalendar.set(Calendar.HOUR_OF_DAY, 0);
 		startCalendar.set(Calendar.MINUTE, 0);
 		startCalendar.set(Calendar.SECOND, 0);
@@ -406,12 +409,12 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	}
 
 
-	public boolean prepareDropDownNavigation() {
+	public void prepareDropDownNavigation() {
 		if (downloadedReadingPlanInfos.size() == 0) {
 			actionBar.setDisplayShowTitleEnabled(true);
 			actionBar.setTitle(R.string.rp_activity_title);
 			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-			return true;
+			return;
 		}
 
 		actionBar.setDisplayShowTitleEnabled(false);
@@ -442,7 +445,6 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			return true;
 		});
 		actionBar.setSelectedNavigationItem(itemNumber);
-		return false;
 	}
 
 	public void prepareDisplay() {
@@ -451,7 +453,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			lsReadingPlan.setVisibility(View.GONE);
 			flNoData.setVisibility(View.VISIBLE);
 
-			bDownload.setOnClickListener(v -> downloadReadingPlanList());
+			bDownload.setOnClickListener(v -> openDownloadReadingPlanPage());
 		} else {
 			llNavigations.setVisibility(View.VISIBLE);
 			lsReadingPlan.setVisibility(View.VISIBLE);
@@ -463,7 +465,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		updateButtonStatus();
 	}
 
-	private int findFirstUnreadDay() {
+	int findFirstUnreadDay() {
 		for (int i = 0; i < readingPlan.info.duration - 1; i++) {
 			boolean[] readMarks = new boolean[readingPlan.dailyVerses[i].length / 2];
 			ReadingPlanManager.writeReadMarksByDay(readReadingCodes, readMarks, i);
@@ -495,7 +497,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			.show();
 	}
 
-	private void changeDay(int day) {
+	void changeDay(int day) {
 		int newDay = dayNumber + day;
 		if (newDay < 0 || newDay >= readingPlan.info.duration) {
 			return;
@@ -506,7 +508,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		updateButtonStatus();
 	}
 
-	private void updateButtonStatus() {
+	void updateButtonStatus() {
 		if (readingPlan == null) {
 			return;
 		}
@@ -542,8 +544,14 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		return leftDrawer;
 	}
 
-	private void downloadReadingPlanList() {
-		startActivityForResult(HelpActivity.createIntent(BuildConfig.SERVER_HOST + "rp/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName()), getString(R.string.rp_menuDownload)), REQCODE_openList);
+	private void openDownloadReadingPlanPage() {
+		startActivityForResult(
+			HelpActivity.createIntent(
+				BuildConfig.SERVER_HOST + "rp/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName()),
+				getString(R.string.rp_menuDownload)
+			),
+			REQCODE_openList
+		);
 	}
 
 	@Override
@@ -629,11 +637,11 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		});
 	}
 
-	private float getActualPercentage() {
+	float getActualPercentage() {
 		return 100.f * readReadingCodes.size() / countAllReadings();
 	}
 
-	private float getTargetPercentage() {
+	float getTargetPercentage() {
 		return 100.f * countTarget() / countAllReadings();
 	}
 
@@ -658,7 +666,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		calendar.setTimeInMillis(readingPlan.info.startTime);
 		calendar.add(Calendar.DATE, dayNumber);
 
-		return getString(R.string.rp_dayHeader, (dayNumber + 1), Sqlitil.toLocaleDateMedium(calendar.getTime()));
+		return getString(R.string.rp_dayHeader, String.valueOf(dayNumber + 1), Sqlitil.toLocaleDateMedium(calendar.getTime()));
 	}
 
 	void one_reading_longClick(final int day, final int sequence) {

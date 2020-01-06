@@ -1227,6 +1227,7 @@ public class InternalDb {
 		return res;
 	}
 
+	@NonNull
 	public List<ReadingPlan.ReadingPlanInfo> listAllReadingPlanInfo() {
 		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan,
 		new String[] {"_id", Db.ReadingPlan.version, Db.ReadingPlan.name, Db.ReadingPlan.title, Db.ReadingPlan.description, Db.ReadingPlan.duration, Db.ReadingPlan.startTime},

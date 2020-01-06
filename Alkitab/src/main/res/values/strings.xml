@@ -364,7 +364,7 @@
     <string name="rp_navigationPreviousDay">Previous day</string>
     <string name="rp_navigationGoToDate">Go to date</string>
     <string name="rp_navigationNextDay">Next day</string>
-    <string name="rp_menuDownload">Download</string>
+    <string name="rp_menuDownload">Download a reading plan</string>
     <string name="rp_menuCatchMeUp">Resync dates</string>
     <string name="rp_menuRestart">Restart</string>
     <string name="rp_menuDelete">Delete</string>
