@@ -1,4 +1,4 @@
-package yuku.alkitab.base.ac;
+package yuku.alkitab.base.appwidget;
 
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
@@ -20,10 +20,9 @@ import android.widget.TextView;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.br.DailyVerseAppWidgetReceiver;
 import yuku.alkitab.base.model.MVersion;
-import yuku.alkitab.base.util.DailyVerseData;
 import yuku.alkitab.debug.R;
 
 import java.util.List;

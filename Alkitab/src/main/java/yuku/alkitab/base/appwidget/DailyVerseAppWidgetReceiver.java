@@ -1,4 +1,4 @@
-package yuku.alkitab.base.br;
+package yuku.alkitab.base.appwidget;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -17,9 +17,7 @@ import android.view.View;
 import android.widget.RemoteViews;
 import yuku.afw.App;
 import yuku.alkitab.base.IsiActivity;
-import yuku.alkitab.base.sv.DailyVerseAppWidgetService;
 import yuku.alkitab.base.util.AppLog;
-import yuku.alkitab.base.util.DailyVerseData;
 import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;

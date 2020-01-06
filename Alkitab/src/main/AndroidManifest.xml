@@ -309,7 +309,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="yuku.alkitab.base.ac.DailyVerseAppWidgetConfigurationActivity"
+			android:name="yuku.alkitab.base.appwidget.DailyVerseAppWidgetConfigurationActivity"
 			android:label="@string/dv_activity_title">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
@@ -354,7 +354,7 @@
 		</receiver>
 
 		<receiver
-			android:name="yuku.alkitab.base.br.DailyVerseAppWidgetReceiver"
+			android:name="yuku.alkitab.base.appwidget.DailyVerseAppWidgetReceiver"
 			android:icon="@mipmap/ic_launcher">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -364,15 +364,15 @@
 				android:name="android.appwidget.provider"
 				android:resource="@xml/daily_verse_app_widget_provider" />
 		</receiver>
-		<receiver android:name="yuku.alkitab.base.br.DailyVerseAppWidgetReceiver$ClickReceiver" />
+		<receiver android:name="yuku.alkitab.base.appwidget.DailyVerseAppWidgetReceiver$ClickReceiver" />
 
 		<service
-			android:name="yuku.alkitab.base.br.DailyVerseAppWidgetReceiver$UpdateService"
+			android:name="yuku.alkitab.base.appwidget.DailyVerseAppWidgetReceiver$UpdateService"
 			android:exported="true"
 			android:permission="android.permission.BIND_JOB_SERVICE" />
 
 		<service
-			android:name="yuku.alkitab.base.sv.DailyVerseAppWidgetService"
+			android:name="yuku.alkitab.base.appwidget.DailyVerseAppWidgetService"
 			android:permission="android.permission.BIND_REMOTEVIEWS" />
 
 		<uses-library

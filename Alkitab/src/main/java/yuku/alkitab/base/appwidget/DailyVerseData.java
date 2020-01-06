@@ -1,4 +1,4 @@
-package yuku.alkitab.base.util;
+package yuku.alkitab.base.appwidget;
 
 import androidx.annotation.Nullable;
 import yuku.afw.App;
@@ -7,6 +7,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.model.VersionImpl;
+import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
@@ -43,7 +44,7 @@ public abstract class DailyVerseData {
 	 * Get list of ari for the specified parameter.
 	 * @param savedState WILL be changed AND SAVED in case of unavailable verses.
 	 * @param version to be checked to know whether we have the requested aris
-	 * @param direction try increasing {@link yuku.alkitab.base.util.DailyVerseData.SavedState#click} or decrease, according to this direction
+	 * @param direction try increasing {@link DailyVerseData.SavedState#click} or decrease, according to this direction
 	 * @return list of ari
 	 */
 	@Nullable public static int[] getAris(int appWidgetId, final SavedState savedState, final Version version, final int direction) {

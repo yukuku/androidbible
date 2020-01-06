@@ -1,8 +1,7 @@
-package yuku.alkitab.base.sv;
+package yuku.alkitab.base.appwidget;
 
 import android.content.Intent;
 import android.widget.RemoteViewsService;
-import yuku.alkitab.base.widget.DailyVerseFactory;
 
 public class DailyVerseAppWidgetService extends RemoteViewsService {
 	@Override

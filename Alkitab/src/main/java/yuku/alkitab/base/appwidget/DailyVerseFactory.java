@@ -1,4 +1,4 @@
-package yuku.alkitab.base.widget;
+package yuku.alkitab.base.appwidget;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
@@ -12,8 +12,8 @@ import android.widget.RemoteViewsService;
 import androidx.annotation.Nullable;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.util.AppLog;
-import yuku.alkitab.base.util.DailyVerseData;
 import yuku.alkitab.base.util.FormattedVerseText;
+import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
