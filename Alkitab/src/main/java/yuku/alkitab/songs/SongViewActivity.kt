@@ -88,7 +88,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     // cache of song codes for each book
     private var cache_codes = mutableMapOf<String /* bookName */, MutableList<String> /* ordered codes */>()
 
-    private val song_container_listener: TwofingerLinearLayout.Listener = object : TwofingerLinearLayout.Listener {
+    private val song_container_listener = object : TwofingerLinearLayout.Listener {
         var textZoom = 0 // stays at 0 if zooming is not ready
 
         override fun onOnefingerLeft() {
@@ -979,7 +979,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
     override fun songKeypadButton_click(v: View) {
         val currentBookName = currentBookName ?: return
-        if (state_tempCode.isEmpty()) return
 
         val numIds = intArrayOf(R.id.bDigit0, R.id.bDigit1, R.id.bDigit2, R.id.bDigit3, R.id.bDigit4, R.id.bDigit5, R.id.bDigit6, R.id.bDigit7, R.id.bDigit8, R.id.bDigit9)
 
