@@ -977,60 +977,76 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         return false
     }
 
+    private val keypadViewToNumConverter by lazy {
+        val numIds = intArrayOf(R.id.bDigit0, R.id.bDigit1, R.id.bDigit2, R.id.bDigit3, R.id.bDigit4, R.id.bDigit5, R.id.bDigit6, R.id.bDigit7, R.id.bDigit8, R.id.bDigit9)
+        val alphaIds = intArrayOf(R.id.bDigitA, R.id.bDigitB, R.id.bDigitC) // num = 10, 11, 12
+
+        fun(v: View): Int {
+            val id = v.id
+
+            for (i in numIds.indices) if (id == numIds[i]) return i
+            for (i in alphaIds.indices) if (id == alphaIds[i]) return 10 + i // special code for alpha
+            if (id == R.id.bBackspace) return 20 // special code for the backspace
+            if (id == R.id.bOk) return 21 // special code for OK
+            return -1
+        }
+    }
+
     override fun songKeypadButton_click(v: View) {
         val currentBookName = currentBookName ?: return
 
-        val numIds = intArrayOf(R.id.bDigit0, R.id.bDigit1, R.id.bDigit2, R.id.bDigit3, R.id.bDigit4, R.id.bDigit5, R.id.bDigit6, R.id.bDigit7, R.id.bDigit8, R.id.bDigit9)
-
-        val alphaIds = intArrayOf(R.id.bDigitA, R.id.bDigitB, R.id.bDigitC) // num = 10, 11, 12
-
-        val id = v.id
-        var num = -1
-        for (i in numIds.indices) if (id == numIds[i]) num = i
-        for (i in alphaIds.indices) if (id == alphaIds[i]) num = 10 + i // special code for alpha
-        if (id == R.id.bBackspace) num = 20 // special code for the backspace
-
         val handle = leftDrawer.handle
 
-        if (num >= 0) { // digits or letters or backspace
-            if (num == 20) { // backspace
-                if (state_tempCode.isNotEmpty()) {
-                    state_tempCode = state_tempCode.substring(0, state_tempCode.length - 1)
-                }
-            } else {
-                if (state_tempCode.length >= 4) state_tempCode = "" // can't be more than 4 digits
-
-                if (num <= 9) { // digits
-                    if (state_tempCode.isNotEmpty() || num != 0) {
-                        state_tempCode += num
-                    }
-                } else if (num <= 19) { // letters
-                    val letter = ('A'.toInt() + num - 10).toChar()
-                    if (state_tempCode.isNotEmpty()) {
-                        state_tempCode += letter
-                    }
-                }
-            }
-
+        fun updateHandle() {
             handle.setCode(state_tempCode)
 
             handle.setOkButtonEnabled(S.getSongDb().songExists(currentBookName, state_tempCode))
             handle.setAButtonEnabled(state_tempCode.length <= 3 && S.getSongDb().songExists(currentBookName, state_tempCode + "A"))
             handle.setBButtonEnabled(state_tempCode.length <= 3 && S.getSongDb().songExists(currentBookName, state_tempCode + "B"))
             handle.setCButtonEnabled(state_tempCode.length <= 3 && S.getSongDb().songExists(currentBookName, state_tempCode + "C"))
-        } else if (id == R.id.bOk) {
-            if (state_tempCode.isNotEmpty()) {
-                val song = S.getSongDb().getSong(currentBookName, state_tempCode)
-                if (song != null) {
-                    trackSongSelect(currentBookName, song.code)
-                    displaySong(currentBookName, song)
+        }
+
+        when(val num = keypadViewToNumConverter(v)) {
+            in 0..9 -> { // digits
+                if (state_tempCode.length >= 4) state_tempCode = "" // can't be more than 4 digits
+
+                if (state_tempCode.isNotEmpty() || num != 0) {
+                    state_tempCode += num
+                }
+
+                updateHandle()
+            }
+            in 10..19 -> { // letters
+                if (state_tempCode.length >= 4) state_tempCode = "" // can't be more than 4 digits
+
+                val letter = ('A'.toInt() + num - 10).toChar()
+                if (state_tempCode.isNotEmpty()) {
+                    state_tempCode += letter
+                }
+
+                updateHandle()
+            }
+            20 -> { // backspace
+                if (state_tempCode.isNotEmpty()) {
+                    state_tempCode = state_tempCode.substring(0, state_tempCode.length - 1)
+                }
+
+                updateHandle()
+            }
+            21 -> { // OK
+                if (state_tempCode.isNotEmpty()) {
+                    val song = S.getSongDb().getSong(currentBookName, state_tempCode)
+                    if (song != null) {
+                        trackSongSelect(currentBookName, song.code)
+                        displaySong(currentBookName, song)
+                    } else {
+                        handle.setCode(state_originalCode) // revert
+                    }
                 } else {
                     handle.setCode(state_originalCode) // revert
                 }
-            } else {
-                handle.setCode(state_originalCode) // revert
+                leftDrawer.closeDrawer()
             }
-            leftDrawer.closeDrawer()
         }
     }
 
