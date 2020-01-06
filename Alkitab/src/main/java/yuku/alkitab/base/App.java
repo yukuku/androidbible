@@ -3,6 +3,7 @@ package yuku.alkitab.base;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.os.StrictMode;
 import android.view.ViewConfiguration;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -78,6 +79,13 @@ public class App extends yuku.afw.App {
 
 		if (context == null) {
 			throw new RuntimeException("yuku.afw.App.context must have been set via initWithAppContext(Context) before calling this method.");
+		}
+
+		// Do not crash even if the devotion notification sound settings is set to file URI.
+		// This only happens on Android 7.0 and 7.1.
+		// https://console.firebase.google.com/u/0/project/alkitab-host-hrd/crashlytics/app/android:yuku.alkitab/issues/5b34ea186007d59fcd13a1ab
+		if (Build.VERSION.SDK_INT >= 24 && Build.VERSION.SDK_INT <= 25) {
+			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().build());
 		}
 
 		Tracker.init(context);
