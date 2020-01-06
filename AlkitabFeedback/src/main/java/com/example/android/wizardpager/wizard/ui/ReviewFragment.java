@@ -159,7 +159,7 @@ public class ReviewFragment extends ListFragment implements ModelCallbacks {
 
         @Override
         public View getView(int position, View view, ViewGroup container) {
-            LayoutInflater inflater = LayoutInflater.from(getActivity());
+            LayoutInflater inflater = LayoutInflater.from(container.getContext());
             View rootView = inflater.inflate(R.layout.alkitabfeedback_list_item_review, container, false);
 
             ReviewItem reviewItem = mCurrentReviewItems.get(position);
