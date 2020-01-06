@@ -6,11 +6,11 @@ object BookColorUtil {
     fun getForegroundOnDark(bookId: Int): Int {
         return when (bookId) {
             in 0..38 -> // OT
-                0xff_ef5350.toInt() // Pink
+                0xff_ff80ab.toInt() // Accent Pink 100
             in 39..65 -> // NT
-                0xff_42a5f5.toInt() // Blue 400
+                0xff_82b1ff.toInt() // Accent Blue 100
             else -> // others
-                0xff_eeeeee.toInt() // Grey 200
+                0xff_e0e0e0.toInt() // Grey 200
         }
     }
 
@@ -19,12 +19,11 @@ object BookColorUtil {
     fun getBackground(bookId: Int): Int {
         return when (bookId) {
             in 0..38 -> // OT
-                0xff_e53935.toInt() // Red 600
+                0xff_880e4f.toInt() // Pink 900
             in 39..65 -> // NT
-                0xff_1e88e5.toInt() // Blue 600
+                0xff_0d47a1.toInt() // Blue 900
             else -> // others
                 0xff_212121.toInt() // Grey 900
         }
     }
-
 }

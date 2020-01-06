@@ -159,8 +159,6 @@ public class GotoDialerFragment extends BaseGotoFragment {
 
 				if (Preferences.getBoolean(Prefkey.gotoAskForVerse, Prefkey.GOTO_ASK_FOR_VERSE_DEFAULT)) {
 					selectedVerse_1 = Integer.parseInt(tVerse.getText().toString());
-				} else {
-					selectedVerse_1 = 0;
 				}
 			} catch (NumberFormatException e) {
 				// let it still be 0
@@ -168,7 +166,10 @@ public class GotoDialerFragment extends BaseGotoFragment {
 
 			final int selectedBookId = adapter.getItem(cbBook.getSelectedItemPosition()).bookId;
 
-			((GotoFinishListener) getActivity()).onGotoFinished(GotoFinishListener.GOTO_TAB_dialer, selectedBookId, selectedChapter_1, selectedVerse_1);
+			final GotoFinishListener activity = (GotoFinishListener) getActivity();
+			if (activity != null) {
+				activity.onGotoFinished(GotoFinishListener.GOTO_TAB_dialer, selectedBookId, selectedChapter_1, selectedVerse_1);
+			}
 		});
 
 		active = tChapter;
@@ -336,22 +337,20 @@ public class GotoDialerFragment extends BaseGotoFragment {
 		}
 
 		@Override public View getView(int position, View convertView, ViewGroup parent) {
-			TextView res = (TextView) (convertView != null ? convertView : LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_spinner_item, parent, false));
+			TextView res = (TextView) (convertView != null ? convertView : LayoutInflater.from(parent.getContext()).inflate(R.layout.item_goto_dialer_book, parent, false));
 
 			final Book book = getItem(position);
 			res.setText(booksc_[position].shortName);
-			res.setTextSize(18);
 			res.setTextColor(BookColorUtil.getForegroundOnDark(book.bookId));
 
 			return res;
 		}
 
 		@Override public View getDropDownView(int position, View convertView, ViewGroup parent) {
-			CheckedTextView res = (CheckedTextView) (convertView != null ? convertView : LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_spinner_dropdown_item, parent, false));
+			CheckedTextView res = (CheckedTextView) (convertView != null ? convertView : LayoutInflater.from(parent.getContext()).inflate(R.layout.item_goto_dialer_book_dropdown, parent, false));
 
 			final Book book = getItem(position);
 			res.setText(book.shortName);
-			res.setTextSize(18);
 			res.setTextColor(BookColorUtil.getForegroundOnDark(book.bookId));
 
 			return res;

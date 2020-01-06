@@ -6,8 +6,8 @@
 	<color name="primary">#455A64</color>
 	<!-- Blue Gray 900 -->
 	<color name="primary_dark">#263238</color>
-	<!-- Light blue accent -->
-	<color name="accent">#0091EA</color>
+	<!-- Accent Light Blue 200 -->
+	<color name="accent">#40c4ff</color>
 
 	<!--
 	Required so that in preference support library this color will be used.
