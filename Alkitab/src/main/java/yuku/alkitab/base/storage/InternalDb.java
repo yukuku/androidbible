@@ -545,8 +545,9 @@ public class InternalDb {
 		throw new RuntimeException("Should not be reachable");
 	}
 
+	@NonNull
 	public List<MVersionDb> listAllVersions() {
-		List<MVersionDb> res = new ArrayList<>();
+		final List<MVersionDb> res = new ArrayList<>();
 		try (Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Version, null, null, null, null, null, Db.Version.ordering + " asc")) {
 			int col_locale = cursor.getColumnIndexOrThrow(Db.Version.locale);
 			int col_shortName = cursor.getColumnIndexOrThrow(Db.Version.shortName);

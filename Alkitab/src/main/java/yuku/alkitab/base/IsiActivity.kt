@@ -57,6 +57,7 @@ import yuku.alkitab.base.ac.NoteActivity
 import yuku.alkitab.base.ac.SearchActivity
 import yuku.alkitab.base.ac.SettingsActivity
 import yuku.alkitab.base.ac.ShareActivity
+import yuku.alkitab.base.ac.VersionsActivity
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity
 import yuku.alkitab.base.config.AppConfig
 import yuku.alkitab.base.dialog.ProgressMarkListDialog
@@ -1989,6 +1990,12 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     private fun openVersionsDialog() {
+        // If there is no db versions, immediately open manage version screen.
+        if (S.getDb().listAllVersions().isEmpty()) {
+            startActivity(VersionsActivity.createIntent())
+            return
+        }
+
         S.openVersionsDialog(this, false, S.activeVersionId()) { mv ->
             trackVersionSelect(mv, false)
             loadVersion(mv)
