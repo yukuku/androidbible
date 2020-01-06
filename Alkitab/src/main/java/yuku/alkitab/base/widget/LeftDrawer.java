@@ -6,6 +6,8 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Typeface;
+import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -83,11 +85,10 @@ public abstract class LeftDrawer extends NestedScrollView {
 		bSettings = findViewById(R.id.bSettings);
 		bHelp = findViewById(R.id.bHelp);
 
-		final int selectedTextColor = ResourcesCompat.getColor(getResources(), R.color.accent, getContext().getTheme());
-		if (this instanceof Text) bBible.setTextColor(selectedTextColor);
-		if (this instanceof Devotion) bDevotion.setTextColor(selectedTextColor);
-		if (this instanceof ReadingPlan) bReadingPlan.setTextColor(selectedTextColor);
-		if (this instanceof Songs) bSongs.setTextColor(selectedTextColor);
+		if (this instanceof Text) setDrawerItemSelected(bBible);
+		if (this instanceof Devotion) setDrawerItemSelected(bDevotion);
+		if (this instanceof ReadingPlan) setDrawerItemSelected(bReadingPlan);
+		if (this instanceof Songs) setDrawerItemSelected(bSongs);
 
 		// hide and show according to app config
 		if (!isInEditMode()) {
@@ -124,6 +125,12 @@ public abstract class LeftDrawer extends NestedScrollView {
 			bHelp_click();
 			closeDrawer();
 		});
+	}
+
+	void setDrawerItemSelected(@NonNull TextView drawerItem) {
+		final int selectedTextColor = ResourcesCompat.getColor(getResources(), R.color.accent, getContext().getTheme());
+		drawerItem.setTextColor(selectedTextColor);
+		drawerItem.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
 	}
 
 	@Override
