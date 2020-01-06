@@ -2,9 +2,9 @@ package yuku.alkitab.base.widget;
 
 import android.content.Context;
 import android.os.Build;
-import androidx.appcompat.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import androidx.appcompat.widget.AppCompatTextView;
 import yuku.alkitab.base.util.AppLog;
 
 /**
@@ -35,6 +35,8 @@ public class FixedTextView extends AppCompatTextView {
 			} catch (Exception e) {
 				AppLog.e(TAG, "Still error in dispatchTouchEvent", e);
 			}
+
+			return false;
 		}
 
 		// simple workaround to https://code.google.com/p/android/issues/detail?id=191430
