@@ -37,6 +37,11 @@ private const val TAG = "XrefDialog"
 private const val EXTRA_arif = "arif"
 
 class XrefDialog : BaseDialog() {
+    /**
+     * This dialog does not support fragment recreation,
+     * it will just be closed when the dialog is recreated without calling [init].
+     */
+    private var initted = false
     private var arif_source by notNull<Int>()
     private var xrefEntry: XrefEntry? = null
     private lateinit var verseSelectedListener: (arif_source: Int, ari_target: Int) -> Unit
@@ -59,17 +64,29 @@ class XrefDialog : BaseDialog() {
         this.sourceVersionId = sourceVersionId
         this.textSizeMult = S.getDb().getPerVersionSettings(sourceVersionId).fontSizeMultiplier
         this.verseSelectedListener = verseSelectedListener
+        this.initted = true
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(DialogFragment.STYLE_NO_TITLE, 0)
+
+        if (!initted) {
+            dismiss()
+            return
+        }
+
         this.arif_source = requireArguments().getInt(EXTRA_arif)
-        this.xrefEntry = sourceVersion.getXrefEntry(arif_source)
+        this.xrefEntry = sourceVersion.getXrefEntry(arif_source) ?: run {
+            dismiss()
+            return
+        }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-        inflater.inflate(R.layout.dialog_xref, container, false).apply {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        if (!initted) return null
+
+        return inflater.inflate(R.layout.dialog_xref, container, false).apply {
             tXrefText = findViewById(R.id.tXrefText)
             setBackgroundColor(S.applied().backgroundColor)
 
@@ -94,12 +111,6 @@ class XrefDialog : BaseDialog() {
                     .positiveText(R.string.ok)
                     .show()
             }
-        }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        if (xrefEntry == null) {
-            dismiss()
         }
     }
 

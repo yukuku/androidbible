@@ -2539,62 +2539,59 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     inner class VerseInlineLinkSpanFactory(private val sourceSupplier: () -> VersesController) : VerseInlineLinkSpan.Factory {
 
-        override fun create(type: VerseInlineLinkSpan.Type, arif: Int): VerseInlineLinkSpan {
-            return object : VerseInlineLinkSpan(type, arif) {
-                override fun onClick(type: Type, arif: Int) {
-                    val source = sourceSupplier()
-                    val activeSplit = activeSplit
-                    if (type == Type.xref) {
-                        val dialog = XrefDialog.newInstance(arif)
+        override fun create(type: VerseInlineLinkSpan.Type, arif: Int) = object : VerseInlineLinkSpan(type, arif) {
+            override fun onClick(type: Type, arif: Int) {
+                val source = sourceSupplier()
+                val activeSplit = activeSplit
+                if (type == Type.xref) {
+                    val dialog = XrefDialog.newInstance(arif)
 
-                        val verseSelectedListener = { arif_source: Int, ari_target: Int ->
-                            val ari_source = arif_source ushr 8
+                    val verseSelectedListener = { arif_source: Int, ari_target: Int ->
+                        val ari_source = arif_source ushr 8
 
-                            dialog.dismiss()
-                            jumpToAri(ari_target)
+                        dialog.dismiss()
+                        jumpToAri(ari_target)
 
-                            // add both xref source and target, so user can go back to source easily
-                            history.add(ari_source)
-                            history.add(ari_target)
-                        }
+                        // add both xref source and target, so user can go back to source easily
+                        history.add(ari_source)
+                        history.add(ari_target)
+                    }
 
-                        // TODO setSourceVersion here is not restored when dialog is restored
-                        if (source === lsSplit0 || activeSplit == null) { // use activeVersion
-                            dialog.init(S.activeVersion(), S.activeVersionId(), verseSelectedListener)
-                        } else if (source === lsSplit1) { // use activeSplitVersion
-                            dialog.init(activeSplit.version, activeSplit.versionId, verseSelectedListener)
-                        }
+                    if (source === lsSplit0 || activeSplit == null) { // use activeVersion
+                        dialog.init(S.activeVersion(), S.activeVersionId(), verseSelectedListener)
+                    } else if (source === lsSplit1) { // use activeSplitVersion
+                        dialog.init(activeSplit.version, activeSplit.versionId, verseSelectedListener)
+                    }
 
-                        val fm = supportFragmentManager
-                        dialog.show(fm, "XrefDialog")
-                    } else if (type == Type.footnote) {
-                        val fe = when {
-                            source === lsSplit0 -> S.activeVersion().getFootnoteEntry(arif)
-                            source === lsSplit1 -> activeSplit?.version?.getFootnoteEntry(arif)
-                            else -> null
-                        }
+                    val fm = supportFragmentManager
+                    dialog.show(fm, "XrefDialog")
+                } else if (type == Type.footnote) {
+                    val fe = when {
+                        source === lsSplit0 -> S.activeVersion().getFootnoteEntry(arif)
+                        source === lsSplit1 -> activeSplit?.version?.getFootnoteEntry(arif)
+                        else -> null
+                    }
 
-                        if (fe != null) {
-                            val footnoteText = SpannableStringBuilder()
-                            VerseRenderer.appendSuperscriptNumber(footnoteText, arif and 0xff)
-                            footnoteText.append(" ")
+                    if (fe != null) {
+                        val footnoteText = SpannableStringBuilder()
+                        VerseRenderer.appendSuperscriptNumber(footnoteText, arif and 0xff)
+                        footnoteText.append(" ")
 
-                            MaterialDialog.Builder(this@IsiActivity)
-                                .content(FormattedTextRenderer.render(fe.content, footnoteText))
-                                .positiveText(R.string.ok)
-                                .show()
-                        } else {
-                            MaterialDialog.Builder(this@IsiActivity)
-                                .content(String.format(Locale.US, "Error: footnote arif 0x%08x couldn't be loaded", arif))
-                                .positiveText(R.string.ok)
-                                .show()
-                        }
+                        MaterialDialog.Builder(this@IsiActivity)
+                            .content(FormattedTextRenderer.render(fe.content, footnoteText))
+                            .positiveText(R.string.ok)
+                            .show()
                     } else {
                         MaterialDialog.Builder(this@IsiActivity)
-                            .content("Error: Unknown inline link type: $type")
-                            .positiveText("OK")
+                            .content(String.format(Locale.US, "Error: footnote arif 0x%08x couldn't be loaded", arif))
+                            .positiveText(R.string.ok)
                             .show()
                     }
+                } else {
+                    MaterialDialog.Builder(this@IsiActivity)
+                        .content("Error: Unknown inline link type: $type")
+                        .positiveText("OK")
+                        .show()
                 }
             }
         }
