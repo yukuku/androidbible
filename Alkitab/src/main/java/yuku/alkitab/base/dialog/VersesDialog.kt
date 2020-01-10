@@ -61,7 +61,8 @@ class VersesDialog : BaseDialog() {
         super.onCreate(savedInstanceState)
         setStyle(DialogFragment.STYLE_NO_TITLE, 0)
 
-        val arguments = requireArguments()
+        // TODO appcompat 1.1.0: change to requireArguments()
+        val arguments = requireNotNull(arguments)
         ariRanges = arguments.getParcelable(EXTRA_ariRanges) ?: IntArrayList(0)
         ari = arguments.getInt(EXTRA_ari)
         compareMode = arguments.getBoolean(EXTRA_compareMode)
