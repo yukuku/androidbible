@@ -55,8 +55,8 @@ public class SongBookUtil {
 	}
 
 	public interface OnDownloadSongBookListener {
-		void onDownloadedAndInserted(SongBookInfo songBookInfo);
-		void onFailedOrCancelled(SongBookInfo songBookInfo, Exception e);
+		void onDownloadedAndInserted(@NonNull SongBookInfo songBookInfo);
+		void onFailedOrCancelled(@NonNull SongBookInfo songBookInfo, @Nullable Exception e);
 	}
 
 	public static class SongBookInfo {

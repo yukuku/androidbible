@@ -549,7 +549,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         val dataFormatVersion = S.getSongDb().getDataFormatVersionForSongs(currentBookName)
 
         SongBookUtil.downloadSongBook(this@SongViewActivity, songBookInfo, dataFormatVersion, object : SongBookUtil.OnDownloadSongBookListener {
-            override fun onFailedOrCancelled(songBookInfo: SongBookUtil.SongBookInfo, e: Exception) {
+            override fun onFailedOrCancelled(songBookInfo: SongBookUtil.SongBookInfo, e: Exception?) {
                 showDownloadError(e)
             }
 
@@ -919,7 +919,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                 displaySong(name, song)
             }
 
-            override fun onFailedOrCancelled(songBookInfo: SongBookUtil.SongBookInfo, e: Exception) {
+            override fun onFailedOrCancelled(songBookInfo: SongBookUtil.SongBookInfo, e: Exception?) {
                 showDownloadError(e)
             }
         })
