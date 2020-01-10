@@ -85,7 +85,8 @@
 				android:clipToPadding="false"
 				android:paddingStart="@dimen/text_side_padding"
 				android:paddingEnd="@dimen/text_side_padding"
-				android:scrollbarStyle="outsideOverlay" />
+				android:scrollbarStyle="outsideOverlay"
+				android:scrollbars="vertical" />
 
 			<yuku.alkitab.base.widget.LabeledSplitHandleButton
 				android:id="@+id/splitHandleButton"
@@ -101,7 +102,8 @@
 				android:clipToPadding="false"
 				android:paddingStart="@dimen/text_side_padding"
 				android:paddingEnd="@dimen/text_side_padding"
-				android:scrollbarStyle="outsideOverlay" />
+				android:scrollbarStyle="outsideOverlay"
+				android:scrollbars="vertical" />
 
 		</yuku.alkitab.base.widget.TwofingerLinearLayout>
 

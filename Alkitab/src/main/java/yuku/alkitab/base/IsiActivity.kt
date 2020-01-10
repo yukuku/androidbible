@@ -39,8 +39,10 @@ import android.widget.Toast
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
 import androidx.core.app.ShareCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.ColorUtils
 import androidx.core.text.HtmlCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
@@ -1643,31 +1645,28 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             }
         }
 
-        return Array(res0.toString(), res1.toString())
+        return arrayOf(res0.toString(), res1.toString())
     }
 
     fun applyPreferences() {
         // make sure S applied variables are set first
         S.recalculateAppliedValuesBasedOnPreferences()
 
-        run {
-            // apply background color, and clear window background to prevent overdraw
-            window.setBackgroundDrawableResource(android.R.color.transparent)
-            val backgroundColor = S.applied().backgroundColor
-            root.setBackgroundColor(backgroundColor)
+        // apply background color, and clear window background to prevent overdraw
+        window.setBackgroundDrawableResource(android.R.color.transparent)
+        val backgroundColor = S.applied().backgroundColor
+        root.setBackgroundColor(backgroundColor)
 
-            // TODO scrollbar must be visible!
-            // ensure the scrollbar is visible on Material devices
-            //			if (Build.VERSION.SDK_INT >= 21) {
-            //				final Drawable thumb;
-            //				if (ColorUtils.calculateLuminance(backgroundColor) > 0.5) {
-            //					thumb = getResources().getDrawable(R.drawable.scrollbar_handle_material_for_light, null);
-            //				} else {
-            //					thumb = getResources().getDrawable(R.drawable.scrollbar_handle_material_for_dark, null);
-            //				}
-            //				ScrollbarSetter.setVerticalThumb(lsSplit0, thumb);
-            //				ScrollbarSetter.setVerticalThumb(lsSplit1, thumb);
-            //			}
+        // scrollbar must be visible!
+        val thumb = if (ColorUtils.calculateLuminance(backgroundColor) > 0.5) {
+            ActivityCompat.getDrawable(this, R.drawable.scrollbar_handle_material_for_light)
+        } else {
+            ActivityCompat.getDrawable(this, R.drawable.scrollbar_handle_material_for_dark)
+        }
+
+        if (thumb != null) {
+            lsSplit0.setViewScrollbarThumb(thumb)
+            lsSplit1.setViewScrollbarThumb(thumb)
         }
 
         // necessary
@@ -2590,7 +2589,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 } else {
                     MaterialDialog.Builder(this@IsiActivity)
                         .content("Error: Unknown inline link type: $type")
-                        .positiveText("OK")
+                        .positiveText(R.string.ok)
                         .show()
                 }
             }

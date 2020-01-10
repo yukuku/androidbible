@@ -1,6 +1,7 @@
 package yuku.alkitab.base.verses
 
 import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import yuku.alkitab.model.Version
 import yuku.alkitab.util.IntArrayList
 
@@ -92,6 +93,7 @@ interface VersesController {
 
     fun setViewVisibility(visibility: Int)
     fun setViewPadding(padding: Rect)
+    fun setViewScrollbarThumb(thumb: Drawable)
 
     /**
      * Set the layout params of the view that is represented by this controller.

@@ -1,6 +1,7 @@
 package yuku.alkitab.base.verses
 
 import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
@@ -26,6 +27,7 @@ import yuku.alkitab.base.widget.ParallelClickData
 import yuku.alkitab.base.widget.ParallelSpan
 import yuku.alkitab.base.widget.PericopeHeaderItem
 import yuku.alkitab.base.widget.ReferenceParallelClickData
+import yuku.alkitab.base.widget.ScrollbarSetter.setVerticalThumb
 import yuku.alkitab.base.widget.VerseRenderer
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.SingleChapterVerses
@@ -404,6 +406,10 @@ class VersesControllerImpl(
 
     override fun setViewPadding(padding: Rect) {
         rv.setPadding(padding.left, padding.top, padding.right, padding.bottom)
+    }
+
+    override fun setViewScrollbarThumb(thumb: Drawable) {
+        rv.setVerticalThumb(thumb)
     }
 
     override fun setViewLayoutSize(width: Int, height: Int) {
