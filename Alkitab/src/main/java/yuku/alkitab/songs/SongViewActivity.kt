@@ -10,6 +10,7 @@ import android.os.Handler
 import android.os.Message
 import android.text.InputType
 import android.text.TextUtils
+import android.text.style.RelativeSizeSpan
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -21,8 +22,11 @@ import android.webkit.WebViewClient
 import androidx.annotation.DrawableRes
 import androidx.annotation.Keep
 import androidx.annotation.StringRes
+import androidx.annotation.WorkerThread
 import androidx.core.app.ShareCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.text.buildSpannedString
+import androidx.core.text.inSpans
 import androidx.drawerlayout.widget.DrawerLayout
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.snackbar.Snackbar
@@ -128,7 +132,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
     override fun getLeftDrawer() = leftDrawer
 
-    class MediaState {
+    inner class MediaState {
         var enabled = false
         @DrawableRes
         var icon = 0
@@ -136,11 +140,16 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         var label = 0
         var loading = false
         var progress: String? = null
+            set(value) {
+                field = value
+                updateActivityTitle()
+            }
     }
 
     /**
      * This method might be called from non-UI thread. Be careful when manipulating UI.
      */
+    @WorkerThread
     override fun onControllerStateChanged(state: MediaController.State) {
         when (state) {
             MediaController.State.reset -> {
@@ -179,10 +188,10 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
         mediaState.loading = state == MediaController.State.preparing
 
-        obtainSongProgress()
-
-
-        runOnUiThread { invalidateOptionsMenu() }
+        runOnUiThread {
+            obtainSongProgress()
+            invalidateOptionsMenu()
+        }
     }
 
     fun obtainSongProgress() {
@@ -457,7 +466,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             setCustomProgressBarIndeterminateVisible(false)
             menuMediaControl.isVisible = true
         }
-        menuMediaControl.title = mediaState.progress
 
         val songShown = currentBookName != null
 
@@ -793,8 +801,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         handle.setBookName(SongBookUtil.escapeSongBookName(bookName))
         handle.setCode(song.code)
 
-        title = TextUtils.concat(SongBookUtil.escapeSongBookName(bookName), " ", song.code)
-
         // construct rendition of scripture references
         val scripture_references = renderScriptureReferences(BIBLE_PROTOCOL, song.scriptureReferences)
         templateCustomVars.putString("scripture_references", scripture_references)
@@ -809,11 +815,32 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         currentBookName = bookName
         currentSong = song
 
+        updateActivityTitle()
+
         // save latest viewed song
         Preferences.setString(Prefkey.song_last_bookName, bookName)
         Preferences.setString(Prefkey.song_last_code, song.code)
 
         checkAudioExistance()
+    }
+
+    private fun updateActivityTitle() {
+        val bookName = currentBookName ?: return
+        val song = currentSong ?: return
+
+        title = buildSpannedString {
+            append(SongBookUtil.escapeSongBookName(bookName))
+            append(" ")
+            append(song.code)
+
+            val progress = mediaState.progress
+            if (progress != null) {
+                append(" ")
+                inSpans(RelativeSizeSpan(0.75f)) {
+                    append(progress)
+                }
+            }
+        }
     }
 
     fun drawer_opened() {
@@ -1006,7 +1033,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             handle.setCButtonEnabled(state_tempCode.length <= 3 && S.getSongDb().songExists(currentBookName, state_tempCode + "C"))
         }
 
-        when(val num = keypadViewToNumConverter(v)) {
+        when (val num = keypadViewToNumConverter(v)) {
             in 0..9 -> { // digits
                 if (state_tempCode.length >= 4) state_tempCode = "" // can't be more than 4 digits
 
