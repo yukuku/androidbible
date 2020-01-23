@@ -83,7 +83,6 @@ import yuku.alkitab.base.util.History
 import yuku.alkitab.base.util.InstallationUtil
 import yuku.alkitab.base.util.Jumper
 import yuku.alkitab.base.util.LidToAri
-import yuku.alkitab.base.util.Literals.Array
 import yuku.alkitab.base.util.OtherAppIntegration
 import yuku.alkitab.base.util.RequestCodes
 import yuku.alkitab.base.util.ShareUrl
@@ -523,6 +522,14 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
             val selected = lsSplit0.getCheckedVerses_1()
             val single = selected.size() == 1
+
+            // For unknown reasons the size of selected can be zero and get(0) causes crash.
+            // https://console.firebase.google.com/u/0/project/alkitab-host-hrd/crashlytics/app/android:yuku.alkitab/issues/cc11d3466c89303f88b9e27ab3fdd534
+            if (selected.size() == 0) {
+                AppLog.e(TAG, "@@onPrepareActionMode checked verses is empty.")
+                mode.finish()
+                return true
+            }
 
             var contiguous = true
             if (!single) {
