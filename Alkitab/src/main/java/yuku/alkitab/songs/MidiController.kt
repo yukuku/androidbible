@@ -122,7 +122,7 @@ class MidiController : MediaController() {
      * @return current position and duration in ms. Any of them can be -1 if unknown.
      */
     override fun getProgress(): LongArray = when (state) {
-        State.playing, State.paused, State.complete -> {
+        State.playing, State.paused -> {
             val position = try {
                 mp.currentPosition.toLong()
             } catch (e: Exception) {
