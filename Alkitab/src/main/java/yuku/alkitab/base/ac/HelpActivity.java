@@ -14,6 +14,8 @@ import android.webkit.WebViewClient;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import com.afollestad.materialdialogs.MaterialDialog;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Locale;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -67,7 +69,19 @@ public class HelpActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_help);
+
+		// Missing WebView exception sometimes occur when webview is being updated.
+		// https://console.firebase.google.com/u/0/project/alkitab-host-hrd/crashlytics/app/android:yuku.alkitab/issues/3f47086cbb547d618eaf6be34bd96407
+		try {
+			setContentView(R.layout.activity_help);
+		} catch (Exception e) {
+			final StringWriter buf = new StringWriter();
+			e.printStackTrace(new PrintWriter(buf));
+			final Intent alert = AlertDialogActivity.createOkIntent("Missing WebView error", "Please try again later.\n\n" + buf.toString());
+			startActivity(alert);
+			finish();
+			return;
+		}
 
 		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -85,7 +99,6 @@ public class HelpActivity extends BaseActivity {
 		}
 
 		final WebSettings webSettings = webview.getSettings();
-		//noinspection deprecation
 		webSettings.setSavePassword(false);
 		webSettings.setSaveFormData(false);
 		webSettings.setJavaScriptEnabled(true);
