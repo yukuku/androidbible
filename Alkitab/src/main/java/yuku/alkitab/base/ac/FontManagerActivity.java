@@ -18,6 +18,7 @@ import com.squareup.picasso.Callback;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.sv.DownloadService;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
@@ -196,7 +197,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadService
 
 			lFontName.setText(item.name);
 			lFontName.setVisibility(View.VISIBLE);
-			App.picasso().load(String.format(URL_fontPreview, item.name)).into(imgPreview, new Callback.EmptyCallback() {
+			Connections.picasso().load(String.format(URL_fontPreview, item.name)).into(imgPreview, new Callback.EmptyCallback() {
 				@Override
 				public void onSuccess() {
 					lFontName.setVisibility(View.GONE);

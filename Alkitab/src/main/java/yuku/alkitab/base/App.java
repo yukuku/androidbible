@@ -1,11 +1,9 @@
 package yuku.alkitab.base;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.StrictMode;
 import android.view.ViewConfiguration;
-import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.multidex.MultiDex;
 import androidx.preference.PreferenceManager;
@@ -13,8 +11,6 @@ import com.crashlytics.android.Crashlytics;
 import com.downloader.PRDownloader;
 import com.downloader.PRDownloaderConfig;
 import com.google.gson.Gson;
-import com.jakewharton.picasso.OkHttp3Downloader;
-import com.squareup.picasso.Picasso;
 import io.fabric.sdk.android.Fabric;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -161,20 +157,5 @@ public class App extends yuku.afw.App {
 	protected void attachBaseContext(Context base) {
 		super.attachBaseContext(base);
 		MultiDex.install(this);
-	}
-
-	static Picasso picasso;
-
-	@NonNull
-	public static synchronized Picasso picasso() {
-		Picasso res;
-		if (picasso == null) {
-			picasso = res = new Picasso.Builder(context)
-				.defaultBitmapConfig(Bitmap.Config.RGB_565)
-				.downloader(new OkHttp3Downloader(Connections.getOkHttp()))
-				.build();
-			return res;
-		}
-		return picasso;
 	}
 }
