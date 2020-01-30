@@ -26,4 +26,5 @@
     <string name="pref_tapToEditNote_summary">Neverificat pentru a preveni editarile accidental atunci cand vizualizezi notitele existente</string>
     <string name="pref_showHiddenVersion_title">Activați eventuale versiuni cu acces restricționat</string>
     <string name="pref_selectedVerseBgColor_title">Selectează fundal verset</string>
+    <string name="pref_forceFontScale_title">Dimensiunea textului UI</string>
 </resources>

@@ -349,7 +349,6 @@
     <string name="rp_navigationPreviousDay">Poprzedni dzień</string>
     <string name="rp_navigationGoToDate">Idź do dnia</string>
     <string name="rp_navigationNextDay">Następny dzień</string>
-    <string name="rp_menuDownload">Pobierz</string>
     <string name="rp_menuCatchMeUp">Synchronizuje czasy</string>
     <string name="rp_menuRestart">Zresetuj</string>
     <string name="rp_menuDelete">Usuń</string>

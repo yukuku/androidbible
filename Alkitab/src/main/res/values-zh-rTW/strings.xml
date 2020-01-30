@@ -348,7 +348,6 @@
     <string name="rp_navigationPreviousDay">上一天</string>
     <string name="rp_navigationGoToDate">到某日期</string>
     <string name="rp_navigationNextDay">下一天</string>
-    <string name="rp_menuDownload">下載</string>
     <string name="rp_menuCatchMeUp">再次同步日期</string>
     <string name="rp_menuRestart">從新開始</string>
     <string name="rp_menuDelete">刪除</string>

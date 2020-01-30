@@ -47,7 +47,7 @@
     <string name="devotion_downloader_downloading_title">Downloading ^1</string>
     <string name="devotion_downloader_downloading_date">dated ^1</string>
     <string name="devotion_downloader_error_date">Error in date ^1: ^2</string>
-    <string name="devotion_downloader_success_date">Downloadeded date ^1</string>
+    <string name="devotion_downloader_success_date">Downloaded date ^1</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Not yet available. Probably the requested date\'s material is not prepared yet, or there are some errors in recognizing the data source. Please try again later.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Not yet available. Fetching from the Internet…\n\n(Ensure there is Internet connection to fetch the devotion materials.)</string>
     <string name="hari_sabtu">Sat</string>

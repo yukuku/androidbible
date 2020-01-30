@@ -325,6 +325,7 @@
     <string name="dv_option_transparent_background">Latar belakang telus</string>
     <string name="dv_option_dark_text">Teks gelap</string>
     <string name="dv_option_text_size">Saiz teks</string>
+    <string name="dv_option_hide_app_icon">Sembunyikan ikon applikasi</string>
     <!-- Reading plan -->
     <string name="rp_activity_title">Rancangan Membaca</string>
     <string name="rp_menuReadingPlan">Membaca pelan</string>
@@ -348,7 +349,6 @@
     <string name="rp_navigationPreviousDay">Bacaan sebelumnya</string>
     <string name="rp_navigationGoToDate">Pergi ke tarikh</string>
     <string name="rp_navigationNextDay">Hari seterusnya</string>
-    <string name="rp_menuDownload">Muat turun</string>
     <string name="rp_menuCatchMeUp">Segerak semula tarikh</string>
     <string name="rp_menuRestart">Mula semula</string>
     <string name="rp_menuDelete">Padam</string>
@@ -370,6 +370,8 @@
     <string name="version_download_need_fonts">"Versi dimuat turun mungkin perlu dipaparkan dengan fon tertentu. Pergi ke menu \'Teks rupa\' dan pilih fon. Yunani memerlukan font Ubuntu. Burma memerlukan Parabaik, ParabaikSans, atau Myanmar3. Tamil memerlukan Akshar. Telugu memerlukan Suranna."</string>
     <string name="version_download_corrupted_file">Fail yang dimuat turun seolah-olah menjadi rosak.</string>
     <string name="version_download_saving_io_error">Kesulitan Input/Pengeluaran ketika menyimpan versi yang dimuat turun</string>
+    <string name="version_download_network_error">Talian bermasalah semasa muat turun ^1.</string>
+    <string name="version_download_server_error">Pelayan bermasalah semasa muat turun ^1.</string>
     <string name="menuNightMode">Mod malam</string>
     <string name="highlight_custom_color">Warna lain</string>
     <string name="menu_compare">Bandingkan</string>
@@ -537,6 +539,7 @@
     <string name="menuDictionary">Kamus</string>
     <string name="dict_open_full">Buka kamus</string>
     <string name="dict_no_results">Tiada takrifan dijumpai untuk perkataan yang dipilih.</string>
+    <string name="dict_query_error">Gagal mendapatkan makna dari Kamus.</string>
     <string name="dict_download_prompt">Muat turun \"Kamus Bible\" untuk mempelajari perkataan dalam Bible!</string>
     <string name="dict_download_button">Muat turun</string>
     <!-- Guide -->
@@ -548,4 +551,8 @@
     <!-- File chooser -->
     <string name="filechooser_parent_folder">Folder induk</string>
     <!-- Notification channels -->
+    <string name="notification_channel_announce_name">Pengumuman</string>
+    <string name="notification_channel_download_mapper_name">Muat turun</string>
+    <string name="notification_channel_devotion_downloader_name">Muat turun Pengabdian</string>
+    <string name="notification_channel_devotion_reminder_name">Peringatan Pengabdian</string>
 </resources>

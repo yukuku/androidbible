@@ -129,7 +129,7 @@
     <string name="ed_finished">เสร็จแล้ว</string>
     <string name="ed_the_following_books_from_the_pdb_file_are_not_recognized">หนังสือดังกล่าวจากไฟล์ PDB ถูกข้ามไปเนื่องจากไม่สามารถใช้ได้ค่ะ ถ้าหากท่านคิดว่าหนังสือดังกล่าวไม่ควรถูกข้ามไป กรุณาติดต่อที่อีเมล yukuku@gmail.com</string>
     <string name="ed_error_reading_pdb_file">เกิดผิดพลาดในการอ่านไฟล์ PDB</string>
-    <string name="ed_details">รายละเอียด:</string>
+    <string name="ed_details">รายละเอียด: </string>
     <string name="ed_buka_file_pdb_yes_lainnya">เปิดไฟล์ .pdb/.yes&#8230;</string>
     <string name="ed_section_all">ทั้งหมด</string>
     <string name="ed_section_downloaded">ดาวน์โหลดเรียบร้อย</string>
@@ -348,7 +348,6 @@
     <string name="rp_navigationPreviousDay">วันก่อน</string>
     <string name="rp_navigationGoToDate">ไปยังวันที่</string>
     <string name="rp_navigationNextDay">วันต่อไป</string>
-    <string name="rp_menuDownload">ดาวน์โหลด</string>
     <string name="rp_menuCatchMeUp">วันที่ซิงค์ใหม่</string>
     <string name="rp_menuRestart">เริ่มต้นใหม่</string>
     <string name="rp_menuDelete">ลบ</string>

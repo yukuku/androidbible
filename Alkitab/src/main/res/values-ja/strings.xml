@@ -249,6 +249,7 @@
     <string name="sn_menu_private_song_book">プライベートの聖歌集</string>
     <string name="sn_private_song_book_dialog_desc">プライベートな聖歌集をダウンロードする</string>
     <string name="sn_private_song_book_name_hint">聖歌集の名前</string>
+    <string name="sn_play_in_loop">停止するまでループで再生しますか？</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">昨日</string>
     <string name="desc_next_day">翌日</string>
@@ -279,6 +280,7 @@
     <string name="intent_filter_open_pdb_file">PDBファイルを開く</string>
     <string name="intent_filter_open_pdb_or_yes_file">PDB/YESファイルを開く</string>
     <string name="open_yes_file_name_conflict">YESファイル \'%1$s\' は \'%2$s\'にすでに存在します。</string>
+    <string name="open_yes_error_read">^1からのデータ読み取りエラー</string>
     <string name="open_file_cant_read_source">オリジナルの読み込みが完了しませんでした。</string>
     <string name="open_file_unknown_file_format">このファイルがPDB/YESファイルのどちらなのか識別ができません。</string>
     <string name="version_preset_delete_filename">データファイル \'%s\' を削除しますか?</string>
@@ -317,11 +319,14 @@
     <string name="recentverses_button_hint">(長押しで最近閲覧した節を表示)</string>
     <string name="dr_reminder">リマインダー</string>
     <string name="dr_error_contact_reminder">リマインダーアプリが見つかりません.</string>
+    <string name="dr_timepicker_fallback_hint">HHMM（例：1930は午後7時30分）</string>
     <string name="dr_timepicker_set">セット</string>
     <string name="dr_timepicker_off">オフ</string>
+    <string name="dv_activity_title">今日の節ウィジェット</string>
     <string name="dv_option_transparent_background">背景を透過にする</string>
     <string name="dv_option_dark_text">文字を暗くする</string>
     <string name="dv_option_text_size">文字の大きさ</string>
+    <string name="dv_option_hide_app_icon">アプリのアイコンを非表示</string>
     <!-- Reading plan -->
     <string name="rp_activity_title">読書プラン</string>
     <string name="rp_menuReadingPlan">読書プラン</string>
@@ -345,7 +350,7 @@
     <string name="rp_navigationPreviousDay">前日</string>
     <string name="rp_navigationGoToDate">翌日</string>
     <string name="rp_navigationNextDay">翌日</string>
-    <string name="rp_menuDownload">ダウンロード</string>
+    <string name="rp_menuDownload">読書プランをダウンロード</string>
     <string name="rp_menuCatchMeUp">日を同期する</string>
     <string name="rp_menuRestart">リスタート</string>
     <string name="rp_menuDelete">削除</string>
@@ -367,10 +372,13 @@
     <string name="version_download_need_fonts">”ダウンロードした版は、特定のフォントで表示する必要があるかもしれません。「文字表示の設定」 メニューでフォントを選択してください。ギリシャ語にはUbuntuフォントが必要です。ビルマ語にはParabaik, ParabaikSansまたはMyanmar3フォントが必要です。タミル語にはAksharフォントが必要です。テルグ語にはSurannaフォントが必要です。\"</string>
     <string name="version_download_corrupted_file">ダウンロードしたファイルが破損しています。</string>
     <string name="version_download_saving_io_error">ダウンロードした訳を保存中にI/Oエラーが発生しました。</string>
+    <string name="version_download_network_error">^1をダウンロードした時のネットワークエラー。</string>
+    <string name="version_download_server_error">^1をダウンロードした時のサーバーエラー。</string>
     <string name="menuNightMode">夜間モード</string>
     <string name="highlight_custom_color">その他の色</string>
     <string name="menu_compare">比較する</string>
     <string name="song_player_error_description">聖歌 %1$d %2$d 再生中にエラーになりました</string>
+    <string name="song_player_error_message">この曲の再生中にエラーが発生した: ^1。</string>
     <string name="search_in_version_short_name_placeholder">%s内で検索</string>
     <string name="search_syntax_tips"><i>検索のヒント:</i>\n\n<b>+ワード</b> その単語に一致する箇所を表示\n<b>[q]ダビデの町[q]</b> フレーズ全体に一致する箇所を表示</string>
     <string name="search_no_result"><b>^1</b>に一致する箇所がありません.</string>
@@ -488,6 +496,7 @@
     <string name="sync_login_form_change_password_success">パスワードの変更が完了しました。</string>
     <string name="pref_textPadding_title">文字の周りの余白</string>
     <string name="pref_textPadding_summary">読みやすくするために文字を細くする。</string>
+    <string name="pref_bottomToolbarOnText_title">ナビゲーションバーを下にする</string>
     <string name="pref_bottomToolbarOnText_summary">聖書画面の下部にある詩のナビゲーションツールバーを配置します。</string>
     <!-- devotion reminder -->
     <string name="dr_app_name">リマインダー</string>
@@ -500,10 +509,12 @@
     <string name="dr_pref_notification_message">リマインダーの内容</string>
     <string name="dr_default_sound">初期の音</string>
     <!-- about -->
+    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Apache License 2.0でライセンスされた100％無料の聖書アプリ</string>
     <string name="about_translators">翻訳者</string>
     <string name="about_user_guide">使用ガイド</string>
     <string name="about_beta_feedback">ベータ版のフィードバック</string>
     <string name="about_enable_beta">ベータ版を試す</string>
+    <string name="about_enable_beta_confirmation">Googleにサインインし、[テスターに参加] ボタンをタップして、新しい機能と強化されたベータ版をお試しください！</string>
     <string name="about_version_name">バージョン %s</string>
     <string name="about_material_sources">出典資料</string>
     <string name="about_credits">クレジット</string>
@@ -531,6 +542,7 @@
     <string name="menuDictionary">辞書</string>
     <string name="dict_open_full">辞書を開く</string>
     <string name="dict_no_results">セレクトされた文字の定義は見つかりませんでした。</string>
+    <string name="dict_query_error">辞書から定義を取得中にエラーが発生しました。</string>
     <string name="dict_download_prompt">「聖書辞書」をダウンロードし聖書の単語を学ぼう！</string>
     <string name="dict_download_button">ダウンロード</string>
     <!-- Guide -->
@@ -542,4 +554,8 @@
     <!-- File chooser -->
     <string name="filechooser_parent_folder">親フォルダ</string>
     <!-- Notification channels -->
+    <string name="notification_channel_announce_name">新着情報</string>
+    <string name="notification_channel_download_mapper_name">ダウンロード</string>
+    <string name="notification_channel_devotion_downloader_name">デボーションのダウンロード情報</string>
+    <string name="notification_channel_devotion_reminder_name">デボーションのレマインダー</string>
 </resources>

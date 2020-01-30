@@ -348,7 +348,6 @@
     <string name="rp_navigationPreviousDay">Předchozí den</string>
     <string name="rp_navigationGoToDate">Jít na datum</string>
     <string name="rp_navigationNextDay">Další den</string>
-    <string name="rp_menuDownload">Stáhnout</string>
     <string name="rp_menuCatchMeUp">Synchronizovat data</string>
     <string name="rp_menuRestart">Restartovat</string>
     <string name="rp_menuDelete">Smazat</string>

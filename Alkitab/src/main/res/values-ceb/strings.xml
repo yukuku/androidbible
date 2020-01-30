@@ -129,7 +129,7 @@
     <string name="ed_finished">Humana.</string>
     <string name="ed_the_following_books_from_the_pdb_file_are_not_recognized">Ang mga sumusunod na libro gikan sa dokumento sa PDB kai wala mailhi og maong gi labyan nalang. Palihug pag send og email yukuku@gmail.com kung nagatoo ka nga kining mga libro wala unta gilabyan.</string>
     <string name="ed_error_reading_pdb_file">Sayop na pagbasa sa dokumento sa PDB</string>
-    <string name="ed_details">Mga detalye:</string>
+    <string name="ed_details">Mga detalye: </string>
     <string name="ed_buka_file_pdb_yes_lainnya">Pag abli og .pdb/.yes file&#8230;</string>
     <string name="ed_section_all">Tanan</string>
     <string name="ed_section_downloaded">Na download na</string>
@@ -348,7 +348,6 @@
     <string name="rp_navigationPreviousDay">Niaging adlaw</string>
     <string name="rp_navigationGoToDate">Adto sa petsa</string>
     <string name="rp_navigationNextDay">Sunod adlaw</string>
-    <string name="rp_menuDownload">Download</string>
     <string name="rp_menuCatchMeUp">E-resync ang mga petsa</string>
     <string name="rp_menuRestart">Sugdi og balik</string>
     <string name="rp_menuDelete">Delita</string>

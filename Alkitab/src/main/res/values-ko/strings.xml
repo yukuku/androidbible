@@ -349,7 +349,6 @@
     <string name="rp_navigationPreviousDay">어제</string>
     <string name="rp_navigationGoToDate">날짜 이동</string>
     <string name="rp_navigationNextDay">내일</string>
-    <string name="rp_menuDownload">다운로드</string>
     <string name="rp_menuCatchMeUp">날짜 동기화</string>
     <string name="rp_menuRestart">재시작</string>
     <string name="rp_menuDelete">삭제</string>
@@ -540,6 +539,7 @@
     <string name="menuDictionary">사전</string>
     <string name="dict_open_full">사전 열기</string>
     <string name="dict_no_results">선택한 단어에 대한 정의 없음</string>
+    <string name="dict_query_error">사전에서 정의를 불러오는 도중 오류가 발생했습니다.</string>
     <string name="dict_download_prompt">성경 사전 다운로드</string>
     <string name="dict_download_button">다운로드</string>
     <!-- Guide -->
@@ -553,5 +553,6 @@
     <!-- Notification channels -->
     <string name="notification_channel_announce_name">공지사항</string>
     <string name="notification_channel_download_mapper_name">다운로드</string>
+    <string name="notification_channel_devotion_downloader_name">묵상 다운로드</string>
     <string name="notification_channel_devotion_reminder_name">묵상 알리미</string>
 </resources>

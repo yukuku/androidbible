@@ -349,7 +349,6 @@
     <string name="rp_navigationPreviousDay">Önceki gün</string>
     <string name="rp_navigationGoToDate">Tarihe git</string>
     <string name="rp_navigationNextDay">Sonraki gün</string>
-    <string name="rp_menuDownload">İndir</string>
     <string name="rp_menuCatchMeUp">Tarihleri ​​yeniden senkronize et</string>
     <string name="rp_menuRestart">Yeniden Başlat</string>
     <string name="rp_menuDelete">Sil</string>

@@ -92,7 +92,7 @@
     <string name="pdb_file_options">Настройки на PDB-файла</string>
     <string name="greek_charset">Таблица на гръцки символи</string>
     <string name="hebrew_charset">Таблица на иврит символи</string>
-    <string name="pdb_encoding">PDB кодировка</string>
+    <string name="pdb_encoding">PDB кодировка </string>
     <string name="sample_text">Примерен текст</string>
     <string name="include_book_and_chapter_headers">Включва заглавията на книгите и главите</string>
     <string name="select_all">Избери всички</string>
@@ -129,7 +129,7 @@
     <string name="ed_finished">Завършено.</string>
     <string name="ed_the_following_books_from_the_pdb_file_are_not_recognized">Следващите книги от PDB-файла не са разпознати и затова са пропуснати. Моля, пишете на yukuku@gmail.com, ако смятате, че не трбва да бъдат пропуснати.</string>
     <string name="ed_error_reading_pdb_file">Грешка при четене на PDB-файла</string>
-    <string name="ed_details">Подробности:</string>
+    <string name="ed_details">Подробности: </string>
     <string name="ed_buka_file_pdb_yes_lainnya">Отваряне на файл .pdb/.yes&#8230;</string>
     <string name="ed_section_all">Всички</string>
     <string name="ed_section_downloaded">Заредени</string>
@@ -215,7 +215,7 @@
     <string name="storage_permission_rationale">Ние се нуждаем от достъп до хранилището за споделени медии, като Библейски стихове и фонтове.</string>
     <string name="goto_button_history_tip">Подсказка: Следващия път, при продължително натискане на този бутон получавате достъп до последните разглеждани от вас стихове.</string>
     <!-- Goto tabs -->
-    <string name="goto_tab_dialer_label">Набиране</string>
+    <string name="goto_tab_dialer_label">Набиране </string>
     <string name="goto_tab_direct_label">Директно</string>
     <string name="goto_tab_grid_label">Мрежа</string>
     <string name="menuAskForVerse">Искай номера на стиха</string>
@@ -348,7 +348,6 @@
     <string name="rp_navigationPreviousDay">Предишен ден</string>
     <string name="rp_navigationGoToDate">Премини към дата</string>
     <string name="rp_navigationNextDay">Следващ ден</string>
-    <string name="rp_menuDownload">Зареди</string>
     <string name="rp_menuCatchMeUp">Повторно синхронизиране на датата</string>
     <string name="rp_menuRestart">Започни наново</string>
     <string name="rp_menuDelete">Изтрий</string>

@@ -26,7 +26,7 @@
     <string name="activity_title_markers">Marcaje</string>
     <string name="menu_markers">Însemnări</string>
     <string name="hapus_pembatas_buku">Şterge favorit</string>
-    <string name="menuShare">Trimite</string>
+    <string name="menuShare">Partajează</string>
     <string name="menuShareSplit0">Împărtășește versiunea primară</string>
     <string name="menuShareSplit1">Împărtășește versiunea secundară</string>
     <string name="menuShareBothSplits">Împărtășește ambele versiuni</string>
@@ -249,6 +249,7 @@
     <string name="sn_menu_private_song_book">Carte de cântări personală</string>
     <string name="sn_private_song_book_dialog_desc">Descarcă o carte de cântări personală (ascunsă)</string>
     <string name="sn_private_song_book_name_hint">Nume carte de cântări</string>
+    <string name="sn_play_in_loop">Vrei să redă până la oprire?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Ziua precedentă</string>
     <string name="desc_next_day">Ziua următoare</string>
@@ -320,9 +321,11 @@
     <string name="dr_error_contact_reminder">Eroare la contactarea Memento.</string>
     <string name="dr_timepicker_set">Setează</string>
     <string name="dr_timepicker_off">Oprește</string>
+    <string name="dv_activity_title">Widget cu versetul zilei</string>
     <string name="dv_option_transparent_background">Fundal transparent</string>
     <string name="dv_option_dark_text">Text închis</string>
     <string name="dv_option_text_size">Dimensiune text</string>
+    <string name="dv_option_hide_app_icon">Ascunde icoana aplicației</string>
     <!-- Reading plan -->
     <string name="rp_activity_title">Plan de citit</string>
     <string name="rp_menuReadingPlan">Plan de citire</string>
@@ -346,7 +349,6 @@
     <string name="rp_navigationPreviousDay">Ziua precedentă</string>
     <string name="rp_navigationGoToDate">Mergi la data</string>
     <string name="rp_navigationNextDay">Ziua următoare</string>
-    <string name="rp_menuDownload">Descarcă</string>
     <string name="rp_menuCatchMeUp">Resincronizare date</string>
     <string name="rp_menuRestart">Restart</string>
     <string name="rp_menuDelete">Șterge</string>
@@ -369,6 +371,7 @@
     <string name="version_download_corrupted_file">Fișierul descărcat pare a fi corupt.</string>
     <string name="version_download_saving_io_error">Eroare I/O când salvează versiunea descărcată</string>
     <string name="version_download_network_error">Erori de internet la descărcare ^1.</string>
+    <string name="version_download_server_error">Eroare de server la descărcarea ^ 1.</string>
     <string name="menuNightMode">Mod nocturn</string>
     <string name="highlight_custom_color">Alte culori</string>
     <string name="menu_compare">Compară</string>
@@ -548,4 +551,8 @@
     <!-- File chooser -->
     <string name="filechooser_parent_folder">Folder părinte</string>
     <!-- Notification channels -->
+    <string name="notification_channel_announce_name">Anunțuri</string>
+    <string name="notification_channel_download_mapper_name">Descărcări</string>
+    <string name="notification_channel_devotion_downloader_name">Descărcări devoționale</string>
+    <string name="notification_channel_devotion_reminder_name">Memento-uri devoționale</string>
 </resources>

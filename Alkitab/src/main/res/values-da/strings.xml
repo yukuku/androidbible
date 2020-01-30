@@ -349,7 +349,6 @@
     <string name="rp_navigationPreviousDay">Foregående læsning</string>
     <string name="rp_navigationGoToDate">Gå til dato</string>
     <string name="rp_navigationNextDay">Næste dag</string>
-    <string name="rp_menuDownload">Nedtag</string>
     <string name="rp_menuCatchMeUp">Resynkronisere datoer</string>
     <string name="rp_menuRestart">Genstart</string>
     <string name="rp_menuDelete">Slet</string>

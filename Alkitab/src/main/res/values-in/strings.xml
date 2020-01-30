@@ -319,6 +319,7 @@
     <string name="recentverses_button_hint">(Sentuh lama: buka riwayat)</string>
     <string name="dr_reminder">Pengingat</string>
     <string name="dr_error_contact_reminder">Kesalahan menghubungi aplikasi Pengingat.</string>
+    <string name="dr_timepicker_fallback_hint">JJMM (mis.: 1930 = 7.30 malam)</string>
     <string name="dr_timepicker_set">Pasang</string>
     <string name="dr_timepicker_off">Matikan</string>
     <string name="dv_activity_title">Widget Ayat Harian</string>
@@ -349,7 +350,7 @@
     <string name="rp_navigationPreviousDay">Hari sebelumnya</string>
     <string name="rp_navigationGoToDate">Pindah ke tanggal</string>
     <string name="rp_navigationNextDay">Hari selanjutnya</string>
-    <string name="rp_menuDownload">Unduh</string>
+    <string name="rp_menuDownload">Unduh rencana baca</string>
     <string name="rp_menuCatchMeUp">Ketinggalan nih</string>
     <string name="rp_menuRestart">Ulang dari awal</string>
     <string name="rp_menuDelete">Hapus</string>
@@ -377,6 +378,7 @@
     <string name="highlight_custom_color">Warna lainnya</string>
     <string name="menu_compare">Bandingkan</string>
     <string name="song_player_error_description">Ada kesalahan ketika memainkan lagu ini: %1$d, %2$d.</string>
+    <string name="song_player_error_message">Terjadi kesalahan saat memutar lagu ini: ^1.</string>
     <string name="search_in_version_short_name_placeholder">Temukan dalam %s</string>
     <string name="search_syntax_tips"><i>Tip pencarian:</i>\n\n<b>+kata</b> untuk kata itu sendiri\n<b>[q]kota daud[q]</b> untuk urutan kata persis seperti itu</string>
     <string name="search_no_result"><b>^1</b> tidak ditemukan.</string>

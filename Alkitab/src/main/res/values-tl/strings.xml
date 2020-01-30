@@ -349,7 +349,6 @@
     <string name="rp_navigationPreviousDay">Nakaraang araw</string>
     <string name="rp_navigationGoToDate">Pumunta sa petsa</string>
     <string name="rp_navigationNextDay">Susunod na araw</string>
-    <string name="rp_menuDownload">Download</string>
     <string name="rp_menuCatchMeUp">I-resync ang mga petsa</string>
     <string name="rp_menuRestart">I-restart</string>
     <string name="rp_menuDelete">Burahin</string>

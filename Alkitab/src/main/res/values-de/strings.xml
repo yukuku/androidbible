@@ -349,7 +349,6 @@
     <string name="rp_navigationPreviousDay">Voriger Tag</string>
     <string name="rp_navigationGoToDate">Gehe zu Tag</string>
     <string name="rp_navigationNextDay">Nächster Tag</string>
-    <string name="rp_menuDownload">Herunterladen</string>
     <string name="rp_menuCatchMeUp">Lesedaten neu festlegen</string>
     <string name="rp_menuRestart">Neu beginnen</string>
     <string name="rp_menuDelete">Löschen</string>
