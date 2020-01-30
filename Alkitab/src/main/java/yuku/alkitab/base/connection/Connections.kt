@@ -42,7 +42,7 @@ object Connections {
     }
 
     private fun newOkHttpClientBuilder(): OkHttpClient.Builder {
-        if (Build.VERSION.SDK_INT <= 20) {
+        if (Build.VERSION.SDK_INT <= 21) {
             AppLog.d(TAG, "Android version ${Build.VERSION.SDK_INT}, accessing ProviderInstaller to ensure https connections work")
             try {
                 ProviderInstaller.installIfNeeded(appContext)
@@ -82,7 +82,7 @@ object Connections {
             builder.hostnameVerifier { _, _ -> true }
         }
         StethoShim.addNetworkInterceptor(builder)
-        EnableTls12.enableTls12OnPreLollipop(builder).build()
+        builder.build()
     }
 
     @JvmStatic
@@ -94,7 +94,7 @@ object Connections {
             .readTimeout(300, TimeUnit.SECONDS)
             .writeTimeout(600, TimeUnit.SECONDS)
         StethoShim.addNetworkInterceptor(builder)
-        EnableTls12.enableTls12OnPreLollipop(builder).build()
+        builder.build()
     }
 
     @JvmStatic
