@@ -2,6 +2,7 @@ package yuku.alkitab.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import androidx.annotation.NonNull;
 import yuku.alkitab.util.IntArrayList;
 
 
@@ -111,6 +112,7 @@ public class Book implements Parcelable {
 		}
 	}
 
+	@NonNull
 	@Override
 	public String toString() {
 		return "Book{" +

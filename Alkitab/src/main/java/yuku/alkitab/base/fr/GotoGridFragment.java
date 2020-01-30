@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import yuku.afw.storage.Preferences;
@@ -22,7 +23,7 @@ import yuku.alkitab.model.Book;
 
 public class GotoGridFragment extends BaseGotoFragment {
 	static final String TAG = GotoGridFragment.class.getSimpleName();
-	
+
 	private static final String EXTRA_verse = "verse";
 	private static final String EXTRA_chapter = "chapter";
 	private static final String EXTRA_bookId = "bookId";
@@ -40,7 +41,8 @@ public class GotoGridFragment extends BaseGotoFragment {
 	BookAdapter bookAdapter;
 	ChapterAdapter chapterAdapter;
 	VerseAdapter verseAdapter;
-	
+
+	@Nullable
 	Book selectedBook;
 	int selectedChapter;
 
@@ -55,16 +57,17 @@ public class GotoGridFragment extends BaseGotoFragment {
 		selectedChapter = 0;
 		transitionVerseToChapter();
 	};
-	
+
 	void transitionBookToChapter() {
-		AppLog.d(TAG, "@@transitionBookToChapter");
+		AppLog.d(TAG, "@@transitionBookToChapter selectedBook=" + selectedBook);
+		if (selectedBook == null) return;
 
 		gridBook.setVisibility(View.INVISIBLE);
 		panelChapterVerse.setVisibility(View.VISIBLE);
 		gridChapter.setVisibility(View.VISIBLE);
 		gridChapter.setAdapter(chapterAdapter = new ChapterAdapter(selectedBook));
 		gridVerse.setVisibility(View.INVISIBLE);
-		
+
 		animateFadeOutAndSlideLeft(gridBook, gridChapter);
 		lSelectedBook.jumpDrawablesToCurrentState();
 		lSelectedBook.setAlpha(0.f);
@@ -74,7 +77,8 @@ public class GotoGridFragment extends BaseGotoFragment {
 	}
 
 	void transitionBookToVerse() {
-		AppLog.d(TAG, "@@transitionBookToVerse");
+		AppLog.d(TAG, "@@transitionBookToVerse selectedBook=" + selectedBook);
+		if (selectedBook == null) return;
 
 		gridBook.setVisibility(View.INVISIBLE);
 		panelChapterVerse.setVisibility(View.VISIBLE);
@@ -98,9 +102,10 @@ public class GotoGridFragment extends BaseGotoFragment {
 
 		animateFadeOutAndSlideRight(gridChapter, gridBook);
 	}
-	
+
 	void transitionChapterToVerse() {
-		AppLog.d(TAG, "@@transitionChapterToVerse");
+		AppLog.d(TAG, "@@transitionChapterToVerse selectedBook=" + selectedBook + " selectedChapter=" + selectedChapter);
+		if (selectedBook == null) return;
 
 		gridBook.setVisibility(View.INVISIBLE);
 		panelChapterVerse.setVisibility(View.VISIBLE);
@@ -112,7 +117,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 
 		displaySelectedBookAndChapter();
 	}
-	
+
 	void transitionVerseToChapter() {
 		AppLog.d(TAG, "@@transitionVerseToChapter");
 
@@ -148,14 +153,16 @@ public class GotoGridFragment extends BaseGotoFragment {
 	static void animateFadeOutAndSlideRight(final View fadingOut, final View slidingRight) {
 		fadingOut.setVisibility(View.VISIBLE);
 		fadingOut.animate().alpha(0.f).setDuration(ANIM_DURATION).setListener(new AnimatorListenerAdapter() {
-			@Override public void onAnimationEnd(Animator animation) {
+			@Override
+			public void onAnimationEnd(Animator animation) {
 				fadingOut.setAlpha(1.f);
 				fadingOut.setVisibility(View.INVISIBLE);
 			}
 		});
 		slidingRight.setX(-slidingRight.getWidth());
 		slidingRight.animate().translationXBy(slidingRight.getWidth()).setDuration(ANIM_DURATION).setListener(new AnimatorListenerAdapter() {
-			@Override public void onAnimationEnd(Animator animation) {
+			@Override
+			public void onAnimationEnd(Animator animation) {
 				slidingRight.setVisibility(View.VISIBLE);
 			}
 		});
@@ -168,7 +175,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 		args.putInt(EXTRA_verse, verse_1);
 		return args;
 	}
-	
+
 	protected void displaySelectedBookAndChapter() {
 		// Prevent crash when this is suddenly null
 		if (selectedBook == null) return;
@@ -188,7 +195,8 @@ public class GotoGridFragment extends BaseGotoFragment {
 		return new GridLayoutManager(getActivity(), getResources().getInteger(R.integer.goto_grid_numeric_num_columns));
 	}
 
-	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View res = inflater.inflate(R.layout.fragment_goto_grid, container, false);
 		panelChapterVerse = res.findViewById(R.id.panelChapterVerse);
 		lSelectedBook = res.findViewById(R.id.lSelectedBook);
@@ -197,7 +205,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 		gridBook = res.findViewById(R.id.gridBook);
 		gridChapter = res.findViewById(R.id.gridChapter);
 		gridVerse = res.findViewById(R.id.gridVerse);
-		
+
 		panelChapterVerse.setVisibility(View.INVISIBLE);
 		gridBook.setVisibility(View.VISIBLE);
 		gridChapter.setVisibility(View.INVISIBLE);
@@ -209,13 +217,14 @@ public class GotoGridFragment extends BaseGotoFragment {
 
 		lSelectedBook.setOnClickListener(lSelectedBook_click);
 		lSelectedChapter.setOnClickListener(lSelectedChapter_click);
-		
+
 		return res;
 	}
-	
-	@Override public void onActivityCreated(Bundle savedInstanceState) {
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		
+
 		books = S.activeVersion().getConsecutiveBooks();
 		gridBook.setAdapter(bookAdapter = new BookAdapter());
 	}
@@ -239,17 +248,17 @@ public class GotoGridFragment extends BaseGotoFragment {
 			lName.setText(textForView(position));
 			lName.setTextColor(textColorForView(position));
 		}
-		
+
 		abstract CharSequence textForView(int position);
-		
+
 		int textColorForView(int position) {
 			return 0xffffffff;
 		}
 	}
-	
+
 	class BookAdapter extends GridAdapter {
 		final Book[] books_grid;
-		
+
 		public BookAdapter() {
 			// sort or not based on pref
 			if (Preferences.getBoolean(R.string.pref_alphabeticBookSort_key, R.bool.pref_alphabeticBookSort_default)) {
@@ -270,7 +279,8 @@ public class GotoGridFragment extends BaseGotoFragment {
 
 			holder.itemView.setOnClickListener(v -> {
 				selectedBook = bookAdapter.getItem(position);
-				AppLog.d(TAG, "@@BookAdapter#onBindViewHolder: selectedBook = " + selectedBook);
+				AppLog.d(TAG, "@@BookAdapter#onBindViewHolder: selectedBook=" + selectedBook);
+				if (selectedBook == null) return;
 
 				if (selectedBook.chapter_count == 1) {
 					// for single-chapter books, jump directly to verse selection
@@ -286,9 +296,10 @@ public class GotoGridFragment extends BaseGotoFragment {
 			return books_grid[position];
 		}
 
-		@Override CharSequence textForView(int position) {
+		@Override
+		CharSequence textForView(int position) {
 			Book book = getItem(position);
-			
+
 			return BookNameSorter.getBookAbbr(book);
 		}
 
@@ -298,10 +309,10 @@ public class GotoGridFragment extends BaseGotoFragment {
 			return BookColorUtil.getForegroundOnDark(book.bookId);
 		}
 	}
-	
+
 	class ChapterAdapter extends GridAdapter {
 		private final Book book;
-		
+
 		public ChapterAdapter(Book book) {
 			this.book = book;
 		}
@@ -322,23 +333,25 @@ public class GotoGridFragment extends BaseGotoFragment {
 					transitionChapterToVerse();
 				} else {
 					final GotoFinishListener activity = (GotoFinishListener) getActivity();
-					if (activity != null) {
+					if (activity != null && selectedBook != null) {
 						activity.onGotoFinished(GotoFinishListener.GOTO_TAB_grid, selectedBook.bookId, selectedChapter, 0);
 					}
 				}
 			});
 		}
 
-		@Override CharSequence textForView(int position) {
+		@Override
+		CharSequence textForView(int position) {
 			return String.valueOf(position + 1);
 		}
 	}
-	
+
 	class VerseAdapter extends GridAdapter {
+		@NonNull
 		private final Book book;
 		private final int chapter_1;
 
-		public VerseAdapter(Book book, int chapter_1) {
+		public VerseAdapter(@NonNull Book book, int chapter_1) {
 			this.book = book;
 			this.chapter_1 = chapter_1;
 		}
@@ -346,7 +359,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 		@Override
 		public int getItemCount() {
 			int chapter_0 = chapter_1 - 1;
-			return chapter_0 < 0 || chapter_0 >= book.verse_counts.length? 0: book.verse_counts[chapter_0];
+			return chapter_0 < 0 || chapter_0 >= book.verse_counts.length ? 0 : book.verse_counts[chapter_0];
 		}
 
 		@Override
@@ -356,13 +369,14 @@ public class GotoGridFragment extends BaseGotoFragment {
 			holder.itemView.setOnClickListener(v -> {
 				final int selectedVerse = position + 1;
 				final GotoFinishListener activity = (GotoFinishListener) getActivity();
-				if (activity != null) {
+				if (activity != null && selectedBook != null) {
 					activity.onGotoFinished(GotoFinishListener.GOTO_TAB_grid, selectedBook.bookId, selectedChapter, selectedVerse);
 				}
 			});
 		}
 
-		@Override CharSequence textForView(int position) {
+		@Override
+		CharSequence textForView(int position) {
 			return String.valueOf(position + 1);
 		}
 	}
