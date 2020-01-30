@@ -2,6 +2,7 @@ package yuku.alkitab.base.ac;
 
 import android.os.Bundle;
 import com.afollestad.materialdialogs.MaterialDialog;
+import kotlin.Unit;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.util.TargetDecoder;
@@ -41,7 +42,10 @@ public class VersesDialogActivity extends BaseActivity {
 				finish();
 			}
 		});
-		versesDialog.setOnDismissListener(dialog -> finish());
+		versesDialog.setOnDismissListener(() -> {
+			finish();
+			return Unit.INSTANCE;
+		});
 
 		versesDialog.show(getSupportFragmentManager(), "VersesDialog");
 	}
