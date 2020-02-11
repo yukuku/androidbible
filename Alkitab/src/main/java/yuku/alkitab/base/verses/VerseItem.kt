@@ -3,6 +3,7 @@ package yuku.alkitab.base.verses
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -25,6 +26,8 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
     init {
         setWillNotDraw(false)
     }
+
+    var yukuid: Int = 0
 
     var checked = false
         set(value) {
@@ -121,6 +124,10 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
             solid.color = color
 
             canvas.drawRect(0f, 0f, w.toFloat(), h.toFloat(), solid)
+        } else {
+            val solid = checkedPaintSolid
+            solid.color = Color.BLUE
+            canvas.drawRect(0f, 0f, w.toFloat(), h.toFloat(), solid)
         }
 
         if (dragHover) {
@@ -148,6 +155,11 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
         }
 
         super.onDraw(canvas)
+
+        val pp = Paint()
+        pp.color = Color.GREEN
+        pp.textSize = 15f
+        canvas.drawText("$yukuid", 15f, 15f, pp)
     }
 
     fun callAttention(startTime: Long) {

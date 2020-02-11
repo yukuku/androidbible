@@ -15,6 +15,7 @@ import android.text.style.StyleSpan;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import kotlin.random.Random;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.util.Highlights;
@@ -265,7 +266,8 @@ public class VerseRenderer {
 		}
 
 		if (lText != null) {
-			lText.setText(sb);
+			sb.append("" + (char) Random.Default.nextInt(32, 255) + (char) Random.Default.nextInt(32, 255) + (char) Random.Default.nextInt(32, 255));
+			lText.setText(sb, TextView.BufferType.SPANNABLE);
 		}
 		
 		// show verse on lVerseNumber if not shown in lText yet
@@ -423,7 +425,8 @@ public class VerseRenderer {
 		}
 
 		if (lText != null) {
-			lText.setText(sb);
+			sb.append("" + (char) Random.Default.nextInt(32, 255) + (char) Random.Default.nextInt(32, 255) + (char) Random.Default.nextInt(32, 255));
+			lText.setText(sb, TextView.BufferType.SPANNABLE);
 		}
 
 		// initialize lVerseNumber to have no padding first

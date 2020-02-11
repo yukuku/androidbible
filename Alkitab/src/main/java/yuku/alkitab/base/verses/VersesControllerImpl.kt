@@ -34,6 +34,7 @@ import yuku.alkitab.model.SingleChapterVerses
 import yuku.alkitab.util.Ari
 import yuku.alkitab.util.IntArrayList
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.random.Random
 
 private const val TAG = "VersesControllerImpl"
 
@@ -61,19 +62,21 @@ class VersesControllerImpl(
 
         val adapter = VersesAdapter(
             attention = attention,
-            isChecked = { position -> position in checkedPositions },
+            isChecked = { position -> true },
             toggleChecked = { position ->
                 if (position !in checkedPositions) {
                     checkedPositions += position
                 } else {
                     checkedPositions -= position
                 }
+                rv.recycledViewPool.clear()
+
                 notifyItemChanged(position)
 
                 if (checkedPositions.size > 0) {
-                    listeners.selectedVersesListener.onSomeVersesSelected(getCheckedVerses_1())
+                    //listeners.selectedVersesListener.onSomeVersesSelected(getCheckedVerses_1())
                 } else {
-                    listeners.selectedVersesListener.onNoVersesSelected()
+                    //listeners.selectedVersesListener.onNoVersesSelected()
                 }
             }
         )
@@ -435,11 +438,17 @@ class VersesControllerImpl(
     }
 
     fun render() {
+        forcerenderid++
+        rv.setItemViewCacheSize(0)
+        rv.setRecycledViewPool(RecyclerView.RecycledViewPool())
+
         adapter.data = versesDataModel
         adapter.ui = versesUiModel
         adapter.listeners = versesListeners
     }
 }
+
+var forcerenderid = 0
 
 /**
  * For calling attention. All attentioned verses have the same start time.
@@ -478,7 +487,7 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         val lText = view.lText
         val lVerseNumber = view.lVerseNumber
 
-        val startVerseTextPos = VerseRenderer.render(lText, lVerseNumber, ari, text, verseNumberText, highlightInfo, checked, listeners.inlineLinkSpanFactory_, null)
+        val startVerseTextPos = VerseRenderer.render(lText, lVerseNumber, ari, text, verseNumberText, highlightInfo, true, listeners.inlineLinkSpanFactory_, null)
 
         val textSizeMult = if (data.verses_ is SingleChapterVerses.WithTextSizeMult) {
             data.verses_.getTextSizeMult(index)
@@ -489,10 +498,13 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         Appearances.applyTextAppearance(lText, textSizeMult)
         Appearances.applyVerseNumberAppearance(lVerseNumber, textSizeMult)
 
-        if (checked) { // override text color with black or white!
+        if (true) { // override text color with black or white!
             val selectedTextColor = TextColorUtil.getForCheckedVerse(Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default))
             lText.setTextColor(selectedTextColor)
             lVerseNumber.setTextColor(selectedTextColor)
+        } else {
+            lText.setTextColor(lText.currentTextColor + Random.Default.nextInt(0, 100))
+            lVerseNumber.setTextColor(lVerseNumber.currentTextColor + Random.Default.nextInt(0, 100))
         }
 
         val attributeView = view.attributeView
@@ -503,7 +515,7 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         attributeView.hasMaps = data.versesAttributes.hasMapsMap_[index]
         attributeView.setAttributeListener(listeners.attributeListener, data.version_, data.versionId_, ari)
 
-        view.checked = checked
+        // view.checked = checked
         view.collapsed = text.isEmpty() && !attributeView.isShowingSomething
         view.onPinDropped = { presetId ->
             listeners.pinDropListener.onPinDropped(presetId, Ari.encodeWithBc(data.ari_bc_, data.getVerse_1FromPosition(adapterPosition)))
@@ -689,18 +701,22 @@ class VersesAdapter(
 
     var data = VersesDataModel.EMPTY
         set(value) {
+            if (field === value) return
             field = value
             notifyDataSetChanged()
         }
 
     var ui = VersesUiModel.EMPTY
         set(value) {
+            if (field === value) return
             field = value
-            notifyDataSetChanged()
+            //notifyDataSetChanged()
+            notifyItemRangeChanged(0, itemCount)
         }
 
     var listeners = VersesListeners.EMPTY
         set(value) {
+            if (field === value) return
             field = value
             notifyDataSetChanged()
         }
@@ -730,14 +746,18 @@ class VersesAdapter(
         }
     }
 
-    override fun getItemViewType(position: Int) = data.getItemViewType(position).ordinal
+    override fun getItemViewType(position: Int) = data.getItemViewType(position).ordinal or (forcerenderid shl 16)
+
+    var yukuid = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemHolder {
         val inflater = LayoutInflater.from(parent.context)
 
-        return when (viewType) {
+        return when (viewType and 0xffff) {
             ItemType.verseText.ordinal -> {
-                VerseTextHolder(inflater.inflate(R.layout.item_verse, parent, false) as VerseItem)
+                val view = inflater.inflate(R.layout.item_verse, parent, false) as VerseItem
+                view.yukuid = ++yukuid
+                VerseTextHolder(view)
             }
             ItemType.pericope.ordinal -> {
                 PericopeHolder(inflater.inflate(R.layout.item_pericope_header, parent, false) as PericopeHeaderItem)
@@ -750,7 +770,7 @@ class VersesAdapter(
         when (holder) {
             is VerseTextHolder -> {
                 val index = data.getVerse_0(position)
-                holder.bind(data, ui, listeners, attention, isChecked(position), { toggleChecked(it) }, index)
+                holder.bind(data, ui, listeners, attention, true, { toggleChecked(it) }, index)
             }
             is PericopeHolder -> {
                 val index = data.getPericopeIndex(position)
