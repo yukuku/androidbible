@@ -721,7 +721,13 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                             dialog.dismiss()
                         }
                     }
-                    dialog.show(supportFragmentManager, "compare_dialog")
+
+                    // Allow state loss to prevent
+                    // https://console.firebase.google.com/u/0/project/alkitab-host-hrd/crashlytics/app/android:yuku.alkitab/issues/b80d5209ee90ebd9c5eb30f87f19c85f
+                    val ft = supportFragmentManager.beginTransaction()
+                    ft.add(dialog, "compare_dialog")
+                    ft.commitAllowingStateLoss()
+
                     true
                 }
                 R.id.menuAddBookmark -> {
