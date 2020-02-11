@@ -46,6 +46,7 @@
       <option name="RIGHT_MARGIN" value="999" />
     </codeStyleSettings>
     <codeStyleSettings language="JAVA">
+      <option name="BLANK_LINES_AROUND_METHOD_IN_INTERFACE" value="0" />
       <indentOptions>
         <option name="CONTINUATION_INDENT_SIZE" value="4" />
       </indentOptions>
