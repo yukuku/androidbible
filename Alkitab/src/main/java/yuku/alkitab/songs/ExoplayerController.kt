@@ -93,8 +93,16 @@ class ExoplayerController(appContext: Context) : MediaController() {
             AppLog.e(TAG, "@@onPlayerError error=$error")
             val activity = activityRef?.get()
             if (activity != null && !activity.isFinishing) {
+                // https://stackoverflow.com/a/42996915/11238
+                val innerException = when (error.type) {
+                    ExoPlaybackException.TYPE_SOURCE -> error.sourceException
+                    ExoPlaybackException.TYPE_RENDERER -> error.rendererException
+                    ExoPlaybackException.TYPE_UNEXPECTED -> error.unexpectedException
+                    else -> null
+                }
+
                 MaterialDialog.Builder(activity)
-                    .content(TextUtils.expandTemplate(activity.getString(R.string.song_player_error_description), "${error.type} ${error.sourceException}"))
+                    .content(TextUtils.expandTemplate(activity.getString(R.string.song_player_error_description), "${error.type} $innerException"))
                     .positiveText(R.string.ok)
                     .show()
             }
