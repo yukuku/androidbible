@@ -265,7 +265,9 @@ public class VerseRenderer {
 		}
 
 		if (lText != null) {
-			lText.setText(sb);
+			sb.append(" COMPLEX");
+			lText.setText("", TextView.BufferType.NORMAL);
+			lText.setText(sb, TextView.BufferType.SPANNABLE);
 		}
 		
 		// show verse on lVerseNumber if not shown in lText yet
@@ -423,7 +425,9 @@ public class VerseRenderer {
 		}
 
 		if (lText != null) {
-			lText.setText(sb);
+			sb.append(" SIMPLE");
+			lText.setText("", TextView.BufferType.NORMAL);
+			lText.setText(sb, TextView.BufferType.SPANNABLE);
 		}
 
 		// initialize lVerseNumber to have no padding first
