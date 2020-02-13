@@ -32,27 +32,35 @@ ext {
     targetSdkVersion = 28
     travisBuild = System.getenv("TRAVIS") == "true"
 
-    junitVersion = '4.12'
-
-    androidxCoreVersion = '1.1.0'
+    // Android X
     androidxAnnotationVersion = '1.1.0'
     androidxAppcompatVersion = '1.0.2'
+    androidxCoreVersion = '1.1.0'
     androidxCursoradapterVersion = '1.0.0'
+    androidxMultidexVersion = '2.0.1'
     androidxPercentlayoutVersion = '1.0.0'
-    multidexVersion = '2.0.1'
+
+    // Google
+    exoplayerVersion = '2.11.1'
+    gsonVersion = '2.8.6'
     materialVersion = '1.0.0'
 
+    // Tests
+    junitVersion = '4.12'
+    leakcanaryVersion = '2.0-beta-3'
+    stethoVersion = '1.5.1'
+
+    // Analytics & Crashlytics
+    crashlyticsVersion = '2.10.1'
     firebaseCoreVersion = '17.2.1'
     firebaseMessagingVersion = '20.1.0'
 
-    preferenceFixVersion = '28.0.0.0'
-    materialDialogsVersion = '0.9.6.0'
-    gsonVersion = '2.8.6'
-    stethoVersion = '1.5.1'
+    // Misc
     okhttpVersion = '3.12.6' // For 3.13.0 "This release bumps our minimum requirements to Java 8+ or Android 5+"
     picassoVersion = '2.71828'
     picassoOkhttpDownloaderVersion = '1.1.0'
-    leakcanaryVersion = '2.0-beta-3'
-    exoplayerVersion = '2.11.1'
-    crashlyticsVersion = '2.10.1'
+    preferenceFixVersion = '28.0.0.0'
+
+    // UI
+    materialDialogsVersion = '0.9.6.0'
 }
