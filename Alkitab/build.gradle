@@ -107,17 +107,17 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     // Android X
-    implementation "androidx.core:core-ktx:$androidxCoreVersion"
     implementation "androidx.annotation:annotation:$androidxAnnotationVersion"
     implementation "androidx.appcompat:appcompat:$androidxAppcompatVersion"
+    implementation "androidx.core:core-ktx:$androidxCoreVersion"
+    implementation "androidx.multidex:multidex:$androidxMultidexVersion"
     implementation "androidx.percentlayout:percentlayout:$androidxPercentlayoutVersion"
-    implementation "androidx.multidex:multidex:$multidexVersion"
 
     // Google
-    implementation "com.google.android.material:material:$materialVersion"
-    implementation "com.google.code.gson:gson:$gsonVersion"
     implementation "com.google.android.exoplayer:exoplayer-core:$exoplayerVersion"
     implementation "com.google.android.exoplayer:extension-okhttp:$exoplayerVersion"
+    implementation "com.google.android.material:material:$materialVersion"
+    implementation "com.google.code.gson:gson:$gsonVersion"
 
     // Tests
     testImplementation "junit:junit:$junitVersion"
@@ -126,19 +126,20 @@ dependencies {
     debugImplementation "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
 
     // Analytics & Crashlytics
-    implementation "com.google.firebase:firebase-core:$firebaseCoreVersion"
-    implementation "com.google.firebase:firebase-messaging:$firebaseMessagingVersion"
     implementation("com.crashlytics.sdk.android:crashlytics:$crashlyticsVersion@aar") {
         transitive = true
     }
+    implementation "com.google.firebase:firebase-core:$firebaseCoreVersion"
+    implementation "com.google.firebase:firebase-messaging:$firebaseMessagingVersion"
 
     // Misc
+    implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
+
     implementation "com.squareup.picasso:picasso:$picassoVersion"
     implementation "com.jakewharton.picasso:picasso2-okhttp3-downloader:$picassoOkhttpDownloaderVersion"
 
     implementation "com.takisoft.fix:preference-v7:$preferenceFixVersion"
 
-    implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
 
     // UI
     implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
