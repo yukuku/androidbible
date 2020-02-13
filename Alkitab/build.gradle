@@ -144,7 +144,6 @@ dependencies {
     // UI
     implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
     implementation "com.afollestad.material-dialogs:commons:$materialDialogsVersion"
-    implementation "com.github.takusemba:spotlight:$spotlight"
 }
 
 apply plugin: 'com.google.gms.google-services'
