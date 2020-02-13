@@ -1,10 +1,9 @@
 package yuku.alkitab.base.widget;
 
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.text.style.BackgroundColorSpan;
@@ -15,6 +14,8 @@ import android.text.style.StyleSpan;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.util.Highlights;
@@ -25,16 +26,16 @@ public class VerseRenderer {
 
 	public static class VerseNumberSpan extends MetricAffectingSpan {
 		private final boolean applyColor;
-	
+
 		public VerseNumberSpan(boolean applyColor) {
 			this.applyColor = applyColor;
 		}
-		
+
 		@Override public void updateMeasureState(TextPaint tp) {
 			tp.baselineShift += (int) (tp.ascent() * 0.3f + 0.5f);
 			tp.setTextSize(tp.getTextSize() * 0.7f);
 		}
-	
+
 		@Override public void updateDrawState(TextPaint tp) {
 			tp.baselineShift += (int) (tp.ascent() * 0.3f + 0.5f);
 			tp.setTextSize(tp.getTextSize() * 0.7f);
@@ -51,17 +52,17 @@ public class VerseRenderer {
 	static LeadingMarginSpan.Standard createLeadingMarginSpan(int all) {
 		return createLeadingMarginSpan(all, all);
 	}
-	
+
 	static LeadingMarginSpan.Standard createLeadingMarginSpan(int first, int rest) {
 		return new LeadingMarginSpan.Standard(first, rest);
 	}
-	
+
 	private static ThreadLocal<char[]> buf_char_ = new ThreadLocal<char[]>() {
 		@Override protected char[] initialValue() {
 			return new char[1024];
 		}
 	};
-	
+
 	private static ThreadLocal<StringBuilder> buf_tag_ = new ThreadLocal<StringBuilder>() {
 		@Override protected StringBuilder initialValue() {
 			return new StringBuilder(100);
@@ -89,10 +90,10 @@ public class VerseRenderer {
 		// @^ = start-of-paragraph marker
 		// @< to @> = special tags (not visible for unsupported tags) [can be considered formatting]
 		// @/ = end of special tags (closing tag) (As of 2013-10-04, all special tags must be closed) [can be considered formatting]
-		
+
 		final int text_len = text.length();
-		
-		// Determine if this verse text is a simple verse or formatted verse. 
+
+		// Determine if this verse text is a simple verse or formatted verse.
 		// Formatted verses start with "@@".
 		// Second character must be '@' too, if not it's wrong, we will fallback to simple render.
 		if (text_len < 2 || text.charAt(0) != '@' || text.charAt(1) != '@') {
@@ -109,12 +110,12 @@ public class VerseRenderer {
 			buf_char_.set(text_c);
 		}
 		text.getChars(0, text_len, text_c, 0);
-		
+
 		/**
 		 * '0'..'4', '^' indent 0..4 or new para
 		 * -1 undefined
 		 */
-		int paraType = -1; 
+		int paraType = -1;
 		/**
 		 * position of start of paragraph
 		 */
@@ -185,9 +186,9 @@ public class VerseRenderer {
 					pos = nextAt;
 				}
 			}
-			
+
 			pos++;
-			// just in case 
+			// just in case
 			if (pos >= text_len) {
 				break;
 			}
@@ -245,7 +246,7 @@ public class VerseRenderer {
 
 			pos++;
 		}
-		
+
 		// apply unapplied
 		applyParaStyle(sb, paraType, startPara, verseNumberText, startPosAfterVerseNumber > 0);
 
@@ -265,9 +266,9 @@ public class VerseRenderer {
 		}
 
 		if (lText != null) {
-			lText.setText(sb);
+            safeSetText(lText, sb);
 		}
-		
+
 		// show verse on lVerseNumber if not shown in lText yet
 		if (lVerseNumber != null) {
 			if (startPosAfterVerseNumber > 0) {
@@ -357,7 +358,7 @@ public class VerseRenderer {
 	 */
 	static void applyParaStyle(SpannableStringBuilder sb, int paraType, int startPara, String verseNumberText, boolean firstLineWithVerseNumber) {
 		int len = sb.length();
-		
+
 		if (startPara == len) return;
 
 		final int indentSpacingExtraUnits = verseNumberText.length() < 3 ? 0 : verseNumberText.length() - 2;
@@ -423,7 +424,7 @@ public class VerseRenderer {
 		}
 
 		if (lText != null) {
-			lText.setText(sb);
+            safeSetText(lText, sb);
 		}
 
 		// initialize lVerseNumber to have no padding first
@@ -435,4 +436,21 @@ public class VerseRenderer {
 
 		return startPosAfterVerseNumber;
 	}
+
+    /**
+     * On Android 4.4 and lower, changing the text size causes the textview not to set the correct height.
+     * <p>
+     * Work around this by forcing the textview to relayout. However, this workaround still does not work
+     * for text that are laid out in single line.
+     */
+    static void safeSetText(@NonNull final TextView lText, @NonNull final SpannableStringBuilder sb) {
+        // This bug has been fixed in Android 5.0
+        if (Build.VERSION.SDK_INT >= 21) {
+            lText.setText(sb);
+            return;
+        }
+
+        lText.setText("", TextView.BufferType.NORMAL);
+        lText.setText(sb, TextView.BufferType.SPANNABLE);
+    }
 }
