@@ -63,5 +63,5 @@ ext {
 
     // UI
     materialDialogsVersion = '0.9.6.0'
-
+    spotlight = '2.0.1'
 }
