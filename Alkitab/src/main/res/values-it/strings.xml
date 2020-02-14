@@ -319,6 +319,7 @@
     <string name="recentverses_button_hint">(Premi a lungo per i versetti recenti)</string>
     <string name="dr_reminder">Promemoria</string>
     <string name="dr_error_contact_reminder">Errore nell\'accesso all\'app Promemoria.</string>
+    <string name="dr_timepicker_fallback_hint">HHMM (es. 1930 per 19.30)</string>
     <string name="dr_timepicker_set">Impostato</string>
     <string name="dr_timepicker_off">Spegni</string>
     <string name="dv_activity_title">Widget Versetto quotidiano</string>
@@ -349,6 +350,7 @@
     <string name="rp_navigationPreviousDay">Giorno precedente</string>
     <string name="rp_navigationGoToDate">Vai alla data</string>
     <string name="rp_navigationNextDay">Giorno successivo</string>
+    <string name="rp_menuDownload">Scarica un piano di lettura</string>
     <string name="rp_menuCatchMeUp">Risincronizza le date</string>
     <string name="rp_menuRestart">Riavvia</string>
     <string name="rp_menuDelete">Cancella</string>
@@ -376,6 +378,7 @@
     <string name="highlight_custom_color">Altri colori</string>
     <string name="menu_compare">Compara</string>
     <string name="song_player_error_description">Si è verificato un errore durante la riproduzione di questo brano: %1$d, %2$d.</string>
+    <string name="song_player_error_message">Si è verificato un errore riproducendo questa canzone: ^1.</string>
     <string name="search_in_version_short_name_placeholder">Cerca in %s</string>
     <string name="search_syntax_tips"><i>Suggerimenti per la ricerca:</i>\n\n<b>+parola</b> per quella esatta parola\n<b>[q]città di david[q]</b>per quella frase esatta</string>
     <string name="search_no_result">Nessun versetto trovato per <b>^1</b>.</string>
