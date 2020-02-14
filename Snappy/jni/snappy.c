@@ -72,14 +72,14 @@
 // MODIFIED FOR ANDROID #define UNALIGNED_STORE64(_p, _val) put_unaligned(_val, (u64 *)(_p))
 
 // MODIFIED FOR ANDROID
-inline u64 UNALIGNED_LOAD64(const void *p) {
+static inline  u64 UNALIGNED_LOAD64(const void *p) {
   u64 t;
   memcpy(&t, p, sizeof t);
   return t;
 }
 
 // MODIFIED FOR ANDROID
-inline void UNALIGNED_STORE64(void *p, u64 v) {
+static inline void UNALIGNED_STORE64(void *p, u64 v) {
   memcpy(p, &v, sizeof v);
 }
 
