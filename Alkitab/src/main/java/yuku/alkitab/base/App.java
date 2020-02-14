@@ -16,11 +16,8 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import okhttp3.Call;
 import okhttp3.Request;
-import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.connection.PRDownloaderOkHttpClient;
-import yuku.alkitab.base.model.SyncShadow;
-import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Fcm;
 import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.util.AppLog;
@@ -116,11 +113,6 @@ public class App extends yuku.afw.App {
 
 		// make sure launcher do not open other variants of the app
 		Launcher.setAppPackageName(context.getPackageName());
-
-		// sync on app start, if we are logged in
-		if (Preferences.contains(Prefkey.sync_simpleToken)) {
-			Sync.notifySyncNeeded(SyncShadow.ALL_SYNC_SET_NAMES);
-		}
 	}
 
 	private static void forceOverflowMenu() {
