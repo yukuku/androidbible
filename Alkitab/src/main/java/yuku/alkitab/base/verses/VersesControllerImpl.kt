@@ -506,7 +506,10 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         view.checked = checked
         view.collapsed = text.isEmpty() && !attributeView.isShowingSomething
         view.onPinDropped = { presetId ->
-            listeners.pinDropListener.onPinDropped(presetId, Ari.encodeWithBc(data.ari_bc_, data.getVerse_1FromPosition(adapterPosition)))
+            val adapterPosition = adapterPosition
+            if (adapterPosition != -1) {
+                listeners.pinDropListener.onPinDropped(presetId, Ari.encodeWithBc(data.ari_bc_, data.getVerse_1FromPosition(adapterPosition)))
+            }
         }
 
         /*
@@ -569,10 +572,16 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
                 VersesController.VerseSelectionMode.none -> {
                 }
                 VersesController.VerseSelectionMode.singleClick -> {
-                    listeners.selectedVersesListener.onVerseSingleClick(data.getVerse_1FromPosition(adapterPosition))
+                    val adapterPosition = adapterPosition
+                    if (adapterPosition != -1) {
+                        listeners.selectedVersesListener.onVerseSingleClick(data.getVerse_1FromPosition(adapterPosition))
+                    }
                 }
                 VersesController.VerseSelectionMode.multiple -> {
-                    toggleChecked(adapterPosition)
+                    val adapterPosition = adapterPosition
+                    if (adapterPosition != -1) {
+                        toggleChecked(adapterPosition)
+                    }
                 }
             }
         }
