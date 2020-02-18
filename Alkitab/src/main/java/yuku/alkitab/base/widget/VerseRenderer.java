@@ -373,16 +373,14 @@ public class VerseRenderer {
 
 		switch (paraType) {
 		case -1:
-			sb.setSpan(createLeadingMarginSpan(0, applied.indentParagraphRest), startPara, len, 0);
-			break;
-		case '0':
-			if (firstLineWithVerseNumber) {
+        case '0':
+            if (firstLineWithVerseNumber) {
 				sb.setSpan(createLeadingMarginSpan(0, applied.indentParagraphRest), startPara, len, 0);
 			} else {
 				sb.setSpan(createLeadingMarginSpan(applied.indentParagraphRest), startPara, len, 0);
 			}
 			break;
-		case '1':
+        case '1':
 			sb.setSpan(createLeadingMarginSpan(applied.indentSpacing1 + indentSpacingExtraUnits * applied.indentSpacingExtra), startPara, len, 0);
 			break;
 		case '2':
@@ -416,7 +414,11 @@ public class VerseRenderer {
 
 		// verse text
 		sb.append(text);
-		sb.setSpan(createLeadingMarginSpan(0, S.applied().indentParagraphRest), 0, sb.length(), 0);
+        if (isVerseNumberShown) {
+            sb.setSpan(createLeadingMarginSpan(0, S.applied().indentParagraphRest), 0, sb.length(), 0);;
+        } else {
+            sb.setSpan(createLeadingMarginSpan(S.applied().indentParagraphRest), 0, sb.length(), 0);
+        }
 
 		if (highlightInfo != null) {
 			final BackgroundColorSpan span = new BackgroundColorSpan(Highlights.alphaMix(highlightInfo.colorRgb));
