@@ -48,7 +48,6 @@ import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.alkitab.model.Version;
-import yuku.alkitab.util.Ari;
 import yuku.alkitabintegration.display.Launcher;
 import yuku.devoxx.flowlayout.FlowLayout;
 
@@ -488,7 +487,7 @@ public class MarkerListActivity extends BaseActivity {
 						final VerseRenderer.FormattedTextResult ftr = new VerseRenderer.FormattedTextResult();
 
 						if (rawVerseText != null) {
-							VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, null, ftr);
+							VerseRenderer.render(null, null, false, ari, rawVerseText, "", null, false, null, ftr);
 						} else {
 							ftr.result = ""; // verse not available
 						}
@@ -593,7 +592,7 @@ public class MarkerListActivity extends BaseActivity {
 				verseText = getString(R.string.generic_verse_not_available_in_this_version);
 			} else {
 				final VerseRenderer.FormattedTextResult ftr = new VerseRenderer.FormattedTextResult();
-				VerseRenderer.render(null, null, ari, rawVerseText, "" + Ari.toVerse(ari), null, false, null, ftr);
+				VerseRenderer.render(null, null, false, ari, rawVerseText, "", null, false, null, ftr);
 				verseText = ftr.result;
 			}
 

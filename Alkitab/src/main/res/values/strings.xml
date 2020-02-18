@@ -530,7 +530,7 @@
 	<string name="pref_bottomToolbarOnText_summary">Put verse navigation toolbar at the bottom on the Bible screen</string>
 
 	<string name="pref_verseNumberIsShown_title">Show verse numbers</string>
-	<string name="pref_verseNumberIsShown_summary">Show the verse number for each verse</string>
+	<string name="pref_verseNumberIsShown_summary">Show the verse number at the beginning of each verse</string>
 
 	<!-- devotion reminder -->
 	<string name="dr_app_name">Reminder</string>

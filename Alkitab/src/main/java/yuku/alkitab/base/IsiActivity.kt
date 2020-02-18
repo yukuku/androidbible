@@ -108,6 +108,7 @@ import yuku.alkitab.base.widget.TextAppearancePanel
 import yuku.alkitab.base.widget.TwofingerLinearLayout
 import yuku.alkitab.base.widget.VerseInlineLinkSpan
 import yuku.alkitab.base.widget.VerseRenderer
+import yuku.alkitab.base.widget.VerseRendererHelper
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Book
@@ -780,11 +781,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     if (selected.size() == 1) {
                         val ftr = VerseRenderer.FormattedTextResult()
                         val ari = Ari.encodeWithBc(ariBc, selected.get(0))
-                        val rawVerseText = S.activeVersion().loadVerseText(ari)
+                        val rawVerseText = S.activeVersion().loadVerseText(ari) ?: ""
                         val info = S.getDb().getHighlightColorRgb(ari)
 
-                        assert(rawVerseText != null)
-                        VerseRenderer.render(null, null, ari, rawVerseText!!, "" + Ari.toVerse(ari), null, false, null, ftr)
+                        VerseRendererHelper.render(ari = ari, text = rawVerseText, ftr = ftr)
                         TypeHighlightDialog(this@IsiActivity, ari, listener, colorRgb, info, reference, ftr.result)
                     } else {
                         TypeHighlightDialog(this@IsiActivity, ariBc, selected, listener, colorRgb, reference)
@@ -1683,8 +1683,15 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
 
         // necessary
-        uiSplit0 = uiSplit0.copy(textSizeMult = calculateTextSizeMult(S.activeVersionId()))
-        uiSplit1 = uiSplit1.copy(textSizeMult = calculateTextSizeMult(activeSplit?.versionId))
+        val isVerseNumberShown = Preferences.getBoolean(R.string.pref_verseNumberIsShown_key, R.bool.pref_verseNumberIsShown_default)
+        uiSplit0 = uiSplit0.copy(
+            textSizeMult = calculateTextSizeMult(S.activeVersionId()),
+            isVerseNumberShown = isVerseNumberShown
+        )
+        uiSplit1 = uiSplit1.copy(
+            textSizeMult = calculateTextSizeMult(activeSplit?.versionId),
+            isVerseNumberShown = isVerseNumberShown
+        )
 
         lsSplit0.setViewPadding(SettingsActivity.getPaddingBasedOnPreferences())
         lsSplit1.setViewPadding(SettingsActivity.getPaddingBasedOnPreferences())

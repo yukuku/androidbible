@@ -16,11 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.util.Highlights;
-import yuku.alkitab.debug.R;
 
 public class VerseRenderer {
 	static final char[] superscriptDigits = {'\u2070', '\u00b9', '\u00b2', '\u00b3', '\u2074', '\u2075', '\u2076', '\u2077', '\u2078', '\u2079'};
@@ -77,7 +75,7 @@ public class VerseRenderer {
 	 * @param ftr optional container for result that contains the verse text with span formattings, without the verse numbers
 	 * @return how many characters was used before the real start of verse text. This will be > 0 if the verse number is embedded inside lText.
 	 */
-	public static int render(@Nullable final TextView lText, @Nullable final TextView lVerseNumber, final int ari, @NonNull final String text, final String verseNumberText, @Nullable final Highlights.Info highlightInfo, final boolean checked, @Nullable final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, @Nullable final FormattedTextResult ftr) {
+	public static int render(@Nullable final TextView lText, @Nullable final TextView lVerseNumber, final boolean isVerseNumberShown, final int ari, @NonNull final String text, final String verseNumberText, @Nullable final Highlights.Info highlightInfo, final boolean checked, @Nullable final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, @Nullable final FormattedTextResult ftr) {
 		// @@ = start a verse containing paragraphs or formatting
 		// @0 = start with indent 0 [paragraph]
 		// @1 = start with indent 1 [paragraph]
@@ -102,7 +100,7 @@ public class VerseRenderer {
 			if (ftr != null) {
 				ftr.result = text;
 			}
-			return simpleRender(lText, lVerseNumber, text, verseNumberText, highlightInfo, checked);
+			return simpleRender(lText, lVerseNumber, isVerseNumberShown, text, verseNumberText, highlightInfo, checked);
 		}
 
 		// optimization, to prevent repeated calls to charAt()
@@ -146,17 +144,14 @@ public class VerseRenderer {
 		// - to check whether we need to put a new line when encountering a new para
 		final int startPosAfterVerseNumber;
 
-		boolean isVerseNumberShown = Preferences.getBoolean(R.string.pref_verseNumberIsShown_key, R.bool.pref_verseNumberIsShown_default);
-		int visibility = isVerseNumberShown ? View.VISIBLE : View.GONE;
-
 		int pos = 2; // we start after "@@"
 
-		// write verse number inline only when no @[1234^] on the beginning of text
+		// write verse number inline only when no @[1234^] is at the beginning of text
 		if (text_len >= 4 && text_c[pos] == '@' && (text_c[pos+1] == '^' || (text_c[pos+1] >= '1' && text_c[pos+1] <= '4'))) {
 			// don't write verse number now
 			startPosAfterVerseNumber = 0;
 		} else {
-			if(isVerseNumberShown){
+			if (isVerseNumberShown) {
 				sb.append(verseNumberText);
 				sb.setSpan(new VerseRenderer.VerseNumberSpan(!checked), 0, sb.length(), 0);
 				sb.append("  ");
@@ -278,7 +273,7 @@ public class VerseRenderer {
 
 		// show verse on lVerseNumber if not shown in lText yet
 		if (lVerseNumber != null) {
-			lVerseNumber.setVisibility(visibility);
+			lVerseNumber.setVisibility(isVerseNumberShown ? View.VISIBLE : View.GONE);
 
 			if (startPosAfterVerseNumber > 0) {
 				lVerseNumber.setText("");
@@ -288,11 +283,7 @@ public class VerseRenderer {
 		}
 
 		if (ftr != null) {
-			if (startPosAfterVerseNumber == 0) {
-				ftr.result = sb;
-			} else {
-				ftr.result = sb.subSequence(startPosAfterVerseNumber, sb.length());
-			}
+			ftr.result = sb;
 		}
 
 		return startPosAfterVerseNumber;
@@ -399,14 +390,13 @@ public class VerseRenderer {
 	}
 
 	/**
-	 * @return how many characters was used before the real start of verse text. This will be > 0 if the verse number is embedded inside lText.
+	 * @return how many characters were used before the actual start of verse text. This will be > 0 if the verse number is embedded inside lText.
 	 */
-	public static int simpleRender(@Nullable TextView lText, @Nullable TextView lVerseNumber, String text, String verseNumberText, @Nullable final Highlights.Info highlightInfo, boolean checked) {
+	private static int simpleRender(@Nullable TextView lText, @Nullable TextView lVerseNumber, final boolean isVerseNumberShown, String text, String verseNumberText, @Nullable final Highlights.Info highlightInfo, boolean checked) {
 		final SpannableStringBuilder sb = new SpannableStringBuilder();
 
 		// verse number
-		boolean isVerseNumberShown = Preferences.getBoolean(R.string.pref_verseNumberIsShown_key, R.bool.pref_verseNumberIsShown_default);
-		if(isVerseNumberShown){
+		if (isVerseNumberShown) {
 			sb.append(verseNumberText).append("  ");
 			sb.setSpan(new VerseRenderer.VerseNumberSpan(!checked), 0, verseNumberText.length(), 0);
 		}

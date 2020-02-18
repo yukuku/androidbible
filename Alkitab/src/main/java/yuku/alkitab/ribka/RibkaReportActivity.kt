@@ -18,9 +18,8 @@ import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
 import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.connection.Connections
-import yuku.alkitab.base.connection.Connections.okHttp
 import yuku.alkitab.base.util.FormattedVerseText
-import yuku.alkitab.base.widget.VerseRenderer
+import yuku.alkitab.base.widget.VerseRendererHelper
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 import java.io.IOException
@@ -71,7 +70,11 @@ class RibkaReportActivity : BaseActivity() {
         versionDescription = intent.getStringExtra("versionDescription")
 
         tRibkaReference.text = reference
-        VerseRenderer.render(tRibkaVerseText, null, ari, verseText, "", null, false, null, null)
+        VerseRendererHelper.render(
+            lText = tRibkaVerseText,
+            ari = ari,
+            text = verseText
+        )
 
         tRibkaSuggestion.setText(FormattedVerseText.removeSpecialCodes(verseText))
 

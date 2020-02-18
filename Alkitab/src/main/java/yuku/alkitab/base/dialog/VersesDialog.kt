@@ -82,7 +82,8 @@ class VersesDialog : BaseDialog() {
             "verses",
             VersesDataModel.EMPTY,
             VersesUiModel.EMPTY.copy(
-                verseSelectionMode = VersesController.VerseSelectionMode.singleClick
+                verseSelectionMode = VersesController.VerseSelectionMode.singleClick,
+                isVerseNumberShown = true
             ),
             VersesListeners.EMPTY.copy(
                 selectedVersesListener = selectedVersesListener
