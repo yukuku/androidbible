@@ -16,9 +16,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.util.Highlights;
+import yuku.alkitab.debug.R;
 
 public class VerseRenderer {
 	static final char[] superscriptDigits = {'\u2070', '\u00b9', '\u00b2', '\u00b3', '\u2074', '\u2075', '\u2076', '\u2077', '\u2078', '\u2079'};
@@ -144,6 +146,9 @@ public class VerseRenderer {
 		// - to check whether we need to put a new line when encountering a new para
 		final int startPosAfterVerseNumber;
 
+		boolean isVerseNumberShown = Preferences.getBoolean(R.string.pref_verseNumberIsShown_key, R.bool.pref_verseNumberIsShown_default);
+		int visibility = isVerseNumberShown ? View.VISIBLE : View.GONE;
+
 		int pos = 2; // we start after "@@"
 
 		// write verse number inline only when no @[1234^] on the beginning of text
@@ -151,9 +156,11 @@ public class VerseRenderer {
 			// don't write verse number now
 			startPosAfterVerseNumber = 0;
 		} else {
-			sb.append(verseNumberText);
-			sb.setSpan(new VerseRenderer.VerseNumberSpan(!checked), 0, sb.length(), 0);
-			sb.append("  ");
+			if(isVerseNumberShown){
+				sb.append(verseNumberText);
+				sb.setSpan(new VerseRenderer.VerseNumberSpan(!checked), 0, sb.length(), 0);
+				sb.append("  ");
+			}
 			startPosAfterVerseNumber = sb.length();
 		}
 
@@ -271,11 +278,11 @@ public class VerseRenderer {
 
 		// show verse on lVerseNumber if not shown in lText yet
 		if (lVerseNumber != null) {
+			lVerseNumber.setVisibility(visibility);
+
 			if (startPosAfterVerseNumber > 0) {
-				lVerseNumber.setVisibility(View.GONE);
 				lVerseNumber.setText("");
 			} else {
-				lVerseNumber.setVisibility(View.VISIBLE);
 				lVerseNumber.setText(verseNumberText);
 			}
 		}
@@ -366,16 +373,14 @@ public class VerseRenderer {
 
 		switch (paraType) {
 		case -1:
-			sb.setSpan(createLeadingMarginSpan(0, applied.indentParagraphRest), startPara, len, 0);
-			break;
-		case '0':
-			if (firstLineWithVerseNumber) {
+        case '0':
+            if (firstLineWithVerseNumber) {
 				sb.setSpan(createLeadingMarginSpan(0, applied.indentParagraphRest), startPara, len, 0);
 			} else {
 				sb.setSpan(createLeadingMarginSpan(applied.indentParagraphRest), startPara, len, 0);
 			}
 			break;
-		case '1':
+        case '1':
 			sb.setSpan(createLeadingMarginSpan(applied.indentSpacing1 + indentSpacingExtraUnits * applied.indentSpacingExtra), startPara, len, 0);
 			break;
 		case '2':
@@ -400,13 +405,20 @@ public class VerseRenderer {
 		final SpannableStringBuilder sb = new SpannableStringBuilder();
 
 		// verse number
-		sb.append(verseNumberText).append("  ");
-		sb.setSpan(new VerseRenderer.VerseNumberSpan(!checked), 0, verseNumberText.length(), 0);
+		boolean isVerseNumberShown = Preferences.getBoolean(R.string.pref_verseNumberIsShown_key, R.bool.pref_verseNumberIsShown_default);
+		if(isVerseNumberShown){
+			sb.append(verseNumberText).append("  ");
+			sb.setSpan(new VerseRenderer.VerseNumberSpan(!checked), 0, verseNumberText.length(), 0);
+		}
 		final int startPosAfterVerseNumber = sb.length();
 
 		// verse text
 		sb.append(text);
-		sb.setSpan(createLeadingMarginSpan(0, S.applied().indentParagraphRest), 0, sb.length(), 0);
+        if (isVerseNumberShown) {
+            sb.setSpan(createLeadingMarginSpan(0, S.applied().indentParagraphRest), 0, sb.length(), 0);;
+        } else {
+            sb.setSpan(createLeadingMarginSpan(S.applied().indentParagraphRest), 0, sb.length(), 0);
+        }
 
 		if (highlightInfo != null) {
 			final BackgroundColorSpan span = new BackgroundColorSpan(Highlights.alphaMix(highlightInfo.colorRgb));

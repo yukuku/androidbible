@@ -529,6 +529,9 @@
 	<string name="pref_bottomToolbarOnText_title">Bottom verse navigation</string>
 	<string name="pref_bottomToolbarOnText_summary">Put verse navigation toolbar at the bottom on the Bible screen</string>
 
+	<string name="pref_verseNumberIsShown_title">Show verse numbers</string>
+	<string name="pref_verseNumberIsShown_summary">Show the verse number for each verse</string>
+
 	<!-- devotion reminder -->
 	<string name="dr_app_name">Reminder</string>
 	<string name="dr_notification_title">Daily devotion</string>
