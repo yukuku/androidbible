@@ -3,6 +3,7 @@
 	<string name="pref_keepScreenOn_key" translatable="false">nyalakanTerusLayar</string>
 	<string name="pref_textPadding_key" translatable="false">textPadding</string>
 	<string name="pref_bottomToolbarOnText_key" translatable="false">bottomToolbarOnText</string>
+	<string name="pref_verseNumberIsShown_key" translatable="false">verseNumberIsShown</string>
 
 	<string name="pref_volumeButtonNavigation_key" translatable="false">tombolVolumeBuatPindah</string>
 

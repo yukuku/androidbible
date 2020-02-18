@@ -27,6 +27,12 @@
 		android:summary="@string/pref_bottomToolbarOnText_summary"
 		android:title="@string/pref_bottomToolbarOnText_title" />
 
+	<CheckBoxPreference
+		android:defaultValue="@bool/pref_verseNumberIsShown_default"
+		android:key="@string/pref_verseNumberIsShown_key"
+		android:summary="@string/pref_verseNumberIsShown_summary"
+		android:title="@string/pref_verseNumberIsShown_title" />
+
 	<yuku.ambilwarna.widget.AmbilWarnaPreference
 		android:defaultValue="@integer/pref_selectedVerseBgColor_default"
 		android:key="@string/pref_selectedVerseBgColor_key"
