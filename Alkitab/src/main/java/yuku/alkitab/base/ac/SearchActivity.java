@@ -778,7 +778,10 @@ public class SearchActivity extends BaseActivity {
 				}
 				
 				pd.setOnDismissListener(null);
-				pd.dismiss();
+				try {
+					pd.dismiss();
+				} catch (Exception ignored) {
+				}
 			}
 
 			/**
