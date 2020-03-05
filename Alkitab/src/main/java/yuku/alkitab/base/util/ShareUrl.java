@@ -5,6 +5,7 @@ import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.gson.JsonParseException;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import okhttp3.Call;
@@ -111,11 +112,15 @@ public class ShareUrl {
                 if (body == null) {
                     onComplete(() -> callback.onError(new IOException("empty response body")));
                 } else {
-                    final ShareUrlResponseJson obj = App.getDefaultGson().fromJson(body.charStream(), ShareUrlResponseJson.class);
-                    if (obj.success) {
-                        onComplete(() -> callback.onSuccess(obj.share_url));
-                    } else {
-                        onComplete(() -> callback.onError(new Exception(obj.message)));
+                    try {
+                        final ShareUrlResponseJson obj = App.getDefaultGson().fromJson(body.charStream(), ShareUrlResponseJson.class);
+                        if (obj.success) {
+                            onComplete(() -> callback.onSuccess(obj.share_url));
+                        } else {
+                            onComplete(() -> callback.onError(new Exception(obj.message)));
+                        }
+                    } catch (JsonParseException e) {
+                        onComplete(() -> callback.onError(e));
                     }
                 }
             }

@@ -653,6 +653,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         }
 
                         override fun onError(e: Exception) {
+                            AppLog.e(TAG, "Error in ShareUrl, copying without shareUrl", e)
                             ClipboardUtil.copyToClipboard(textToCopy)
                         }
 
@@ -701,6 +702,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         }
 
                         override fun onError(e: Exception) {
+                            AppLog.e(TAG, "Error in ShareUrl, sharing without shareUrl", e)
                             intent.putExtra(Intent.EXTRA_TEXT, textToShare)
                         }
 
