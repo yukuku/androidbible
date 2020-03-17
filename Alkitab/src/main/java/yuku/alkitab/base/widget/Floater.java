@@ -4,13 +4,13 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
-import androidx.core.content.res.ResourcesCompat;
 import android.util.AttributeSet;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
+import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
-import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
 
 public class Floater extends View {
@@ -273,8 +273,8 @@ public class Floater extends View {
 		canvas.drawText(text, left, bottom, activePaint);
 	}
 
-	public void onDragStart(final Version version) {
-		this.books = version.getConsecutiveBooks();
+	public void onDragStart(@NonNull final Book[] books) {
+		this.books = books;
 		this.state = State.selectBook;
 		this.activeBookIndex = -1;
 		this.activeChapterIndex = -1;

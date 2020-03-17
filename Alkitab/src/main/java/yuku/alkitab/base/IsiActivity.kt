@@ -138,8 +138,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         val floaterLocationOnScreen = intArrayOf(0, 0)
 
         override fun onFloaterDragStart(screenX: Float, screenY: Float) {
-            floater.show(activeBook.bookId, chapter_1)
-            floater.onDragStart(S.activeVersion())
+            floater.show(activeSplit0.book.bookId, chapter_1)
+            floater.onDragStart(activeSplit0.version.consecutiveBooks)
         }
 
         override fun onFloaterDragMove(screenX: Float, screenY: Float) {
@@ -238,7 +238,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
     }
 
-    lateinit var drawerLayout: DrawerLayout
+    private lateinit var drawerLayout: DrawerLayout
     lateinit var leftDrawer: LeftDrawer.Text
 
     private lateinit var overlayContainer: FrameLayout
@@ -278,10 +278,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             lsSplit1.versesUiModel = value
         }
 
-    /**
-     * There is always an active book.
-     */
-    lateinit var activeBook: Book
     var chapter_1 = 0
     private var fullScreen = false
 
@@ -309,13 +305,55 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
     }
 
-    data class ActiveSplit(
+    /**
+     * Container class to make sure that the fields are changed simultaneously.
+     */
+    data class ActiveSplit0(
+        val mv: MVersion,
+        val version: Version,
+        val versionId: String,
+        val book: Book
+    )
+
+    private var _activeSplit0: ActiveSplit0? = null
+
+    /**
+     * The primary version, ensured to be always non-null.
+     */
+    var activeSplit0: ActiveSplit0
+        get() {
+            val _activeSplit0 = this._activeSplit0
+            if (_activeSplit0 != null) {
+                return _activeSplit0
+            }
+            val version = S.activeVersion()
+            val new = ActiveSplit0(
+                mv = S.activeMVersion(),
+                version = version,
+                versionId = S.activeVersionId(),
+                book = version.firstBook
+            )
+            this._activeSplit0 = new
+            return new
+        }
+        set(value) {
+            _activeSplit0 = value
+        }
+
+    /**
+     * Container class to make sure that the fields are changed simultaneously.
+     */
+    data class ActiveSplit1(
         val mv: MVersion,
         val version: Version,
         val versionId: String
     )
 
-    var activeSplit: ActiveSplit? = null
+    /**
+     * The secondary version. Set to null if the secondary version is not opened,
+     * and to non-null if the secondary version is opened.
+     */
+    var activeSplit1: ActiveSplit1? = null
 
     private val parallelListener: (data: ParallelClickData) -> Unit = { data ->
         if (data is ReferenceParallelClickData) {
@@ -408,7 +446,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 return  // no need to layout now
             }
 
-            if (activeSplit == null) {
+            if (activeSplit1 == null) {
                 return  // we are not splitting
             }
 
@@ -433,7 +471,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     private val lsSplit0_selectedVerses = object : VersesController.SelectedVersesListener() {
         override fun onSomeVersesSelected(verses_1: IntArrayList) {
-            if (activeSplit != null) {
+            if (activeSplit1 != null) {
                 // synchronize the selection with the split view
                 lsSplit1.checkVerses(verses_1, false)
             }
@@ -446,7 +484,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
 
         override fun onNoVersesSelected() {
-            if (activeSplit != null) {
+            if (activeSplit1 != null) {
                 // synchronize the selection with the split view
                 lsSplit1.uncheckAllVerses(false)
             }
@@ -469,13 +507,13 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     private val lsSplit0_verseScroll = object : VersesController.VerseScrollListener() {
         override fun onVerseScroll(isPericope: Boolean, verse_1: Int, prop: Float) {
-            if (!isPericope && activeSplit != null) {
+            if (!isPericope && activeSplit1 != null) {
                 lsSplit1.scrollToVerse(verse_1, prop)
             }
         }
 
         override fun onScrollToTop() {
-            if (activeSplit != null) {
+            if (activeSplit1 != null) {
                 lsSplit1.scrollToTop()
             }
         }
@@ -510,7 +548,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             }
 
             // show book name and chapter
-            val reference = activeBook.reference(chapter_1)
+            val reference = activeSplit0.book.reference(chapter_1)
             mode.title = reference
 
             return true
@@ -563,7 +601,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             val menuShareSplit1 = menu.findItem(R.id.menuShareSplit1)
             val menuShareBothSplits = menu.findItem(R.id.menuShareBothSplits)
 
-            val split = activeSplit != null
+            val split = activeSplit1 != null
 
             menuCopy.isVisible = !split
             menuCopySplit0.isVisible = split
@@ -627,23 +665,24 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
                     // copy, can be multiple verses
 
-                    val reference = referenceFromSelectedVerses(selected, activeBook)
-                    val activeSplit = activeSplit
-                    val t = if (itemId == R.id.menuCopy || itemId == R.id.menuCopySplit0 || itemId == R.id.menuCopyBothSplits || activeSplit == null) {
+                    val reference = referenceFromSelectedVerses(selected, activeSplit0.book)
+                    val activeSplit1 = activeSplit1
+                    val t = if (itemId == R.id.menuCopy || itemId == R.id.menuCopySplit0 || itemId == R.id.menuCopyBothSplits || activeSplit1 == null) {
                         prepareTextForCopyShare(selected, reference, false)
                     } else { // menuCopySplit1, do not use split0 reference
-                        val splitBook = activeSplit.version.getBook(activeBook.bookId)
-                        prepareTextForCopyShare(selected, referenceFromSelectedVerses(selected, splitBook ?: activeBook), true)
+                        val book = activeSplit1.version.getBook(activeSplit0.book.bookId) ?: activeSplit0.book
+                        prepareTextForCopyShare(selected, referenceFromSelectedVerses(selected, book), true)
                     }
 
-                    if (itemId == R.id.menuCopyBothSplits && activeSplit != null) { // put guard on activeSplitVersion
-                        appendSplitTextForCopyShare(activeSplit.version, lsSplit1.getCheckedVerses_1(), t)
+                    if (itemId == R.id.menuCopyBothSplits && activeSplit1 != null) {
+                        val book = activeSplit1.version.getBook(activeSplit0.book.bookId) ?: activeSplit0.book
+                        appendSplitTextForCopyShare(book, lsSplit1.getCheckedVerses_1(), t)
                     }
 
                     val textToCopy = t[0]
                     val textToSubmit = t[1]
 
-                    ShareUrl.make(this@IsiActivity, !Preferences.getBoolean(getString(R.string.pref_copyWithShareUrl_key), resources.getBoolean(R.bool.pref_copyWithShareUrl_default)), textToSubmit, Ari.encode(activeBook.bookId, chapter_1, 0), selected, reference.toString(), S.activeVersion(), MVersionDb.presetNameFromVersionId(S.activeVersionId()), object : ShareUrl.Callback {
+                    ShareUrl.make(this@IsiActivity, !Preferences.getBoolean(getString(R.string.pref_copyWithShareUrl_key), resources.getBoolean(R.bool.pref_copyWithShareUrl_default)), textToSubmit, Ari.encode(activeSplit0.book.bookId, chapter_1, 0), selected, reference.toString(), activeSplit0.version, MVersionDb.presetNameFromVersionId(activeSplit0.versionId), object : ShareUrl.Callback {
                         override fun onSuccess(shareUrl: String) {
                             ClipboardUtil.copyToClipboard(textToCopy + "\n\n" + shareUrl)
                         }
@@ -669,18 +708,19 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 }
                 R.id.menuShare, R.id.menuShareSplit0, R.id.menuShareSplit1, R.id.menuShareBothSplits -> {
                     // share, can be multiple verses
-                    val reference = referenceFromSelectedVerses(selected, activeBook)
-                    val activeSplit = activeSplit
+                    val reference = referenceFromSelectedVerses(selected, activeSplit0.book)
+                    val activeSplit1 = activeSplit1
 
-                    val t = if (itemId == R.id.menuShare || itemId == R.id.menuShareSplit0 || itemId == R.id.menuShareBothSplits || activeSplit == null) {
+                    val t = if (itemId == R.id.menuShare || itemId == R.id.menuShareSplit0 || itemId == R.id.menuShareBothSplits || activeSplit1 == null) {
                         prepareTextForCopyShare(selected, reference, false)
                     } else { // menuShareSplit1, do not use split0 reference
-                        val splitBook = activeSplit.version.getBook(activeBook.bookId)
-                        prepareTextForCopyShare(selected, referenceFromSelectedVerses(selected, splitBook ?: activeBook), true)
+                        val book = activeSplit1.version.getBook(activeSplit0.book.bookId) ?: activeSplit0.book
+                        prepareTextForCopyShare(selected, referenceFromSelectedVerses(selected, book), true)
                     }
 
-                    if (itemId == R.id.menuShareBothSplits && activeSplit != null) { // put guard on activeSplitVersion
-                        appendSplitTextForCopyShare(activeSplit.version, lsSplit1.getCheckedVerses_1(), t)
+                    if (itemId == R.id.menuShareBothSplits && activeSplit1 != null) {
+                        val book = activeSplit1.version.getBook(activeSplit0.book.bookId) ?: activeSplit0.book
+                        appendSplitTextForCopyShare(book, lsSplit1.getCheckedVerses_1(), t)
                     }
 
                     val textToShare = t[0]
@@ -691,7 +731,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         .setSubject(reference.toString())
                         .intent
 
-                    ShareUrl.make(this@IsiActivity, !Preferences.getBoolean(getString(R.string.pref_copyWithShareUrl_key), resources.getBoolean(R.bool.pref_copyWithShareUrl_default)), textToSubmit, Ari.encode(activeBook.bookId, chapter_1, 0), selected, reference.toString(), S.activeVersion(), MVersionDb.presetNameFromVersionId(S.activeVersionId()), object : ShareUrl.Callback {
+                    ShareUrl.make(this@IsiActivity, !Preferences.getBoolean(getString(R.string.pref_copyWithShareUrl_key), resources.getBoolean(R.bool.pref_copyWithShareUrl_default)), textToSubmit, Ari.encode(activeSplit0.book.bookId, chapter_1, 0), selected, reference.toString(), activeSplit0.version, MVersionDb.presetNameFromVersionId(activeSplit0.versionId), object : ShareUrl.Callback {
                         override fun onSuccess(shareUrl: String) {
                             intent.putExtra(Intent.EXTRA_TEXT, textToShare + "\n\n" + shareUrl)
                             intent.putExtra(EXTRA_verseUrl, shareUrl)
@@ -716,7 +756,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     true
                 }
                 R.id.menuCompare -> {
-                    val ari = Ari.encode(this@IsiActivity.activeBook.bookId, this@IsiActivity.chapter_1, selected.get(0))
+                    val ari = Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, selected.get(0))
                     val dialog = VersesDialog.newCompareInstance(ari)
                     dialog.listener = object : VersesDialog.VersesDialogListener() {
                         override fun onComparedVerseSelected(ari: Int, mversion: MVersion) {
@@ -740,7 +780,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         throw RuntimeException("Non contiguous verses when adding bookmark: $selected")
                     }
 
-                    val ari = Ari.encode(this@IsiActivity.activeBook.bookId, this@IsiActivity.chapter_1, selected.get(0))
+                    val ari = Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, selected.get(0))
                     val verseCount = selected.size()
 
                     // always create a new bookmark
@@ -761,17 +801,17 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         throw RuntimeException("Non contiguous verses when adding note: $selected")
                     }
 
-                    val ari = Ari.encode(this@IsiActivity.activeBook.bookId, this@IsiActivity.chapter_1, selected.get(0))
+                    val ari = Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, selected.get(0))
                     val verseCount = selected.size()
 
                     // always create a new note
-                    startActivityForResult(NoteActivity.createNewNoteIntent(S.activeVersion().referenceWithVerseCount(ari, verseCount), ari, verseCount), RequestCodes.FromActivity.EditNote2)
+                    startActivityForResult(NoteActivity.createNewNoteIntent(activeSplit0.version.referenceWithVerseCount(ari, verseCount), ari, verseCount), RequestCodes.FromActivity.EditNote2)
                     mode.finish()
 
                     true
                 }
                 R.id.menuAddHighlight -> {
-                    val ariBc = Ari.encode(this@IsiActivity.activeBook.bookId, this@IsiActivity.chapter_1, 0)
+                    val ariBc = Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, 0)
                     val colorRgb = S.getDb().getHighlightColorRgb(ariBc, selected)
 
                     val listener = TypeHighlightDialog.Listener {
@@ -779,11 +819,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         reloadBothAttributeMaps()
                     }
 
-                    val reference = referenceFromSelectedVerses(selected, activeBook)
+                    val reference = referenceFromSelectedVerses(selected, activeSplit0.book)
                     if (selected.size() == 1) {
                         val ftr = VerseRenderer.FormattedTextResult()
                         val ari = Ari.encodeWithBc(ariBc, selected.get(0))
-                        val rawVerseText = S.activeVersion().loadVerseText(ari) ?: ""
+                        val rawVerseText = activeSplit0.version.loadVerseText(ari) ?: ""
                         val info = S.getDb().getHighlightColorRgb(ari)
 
                         VerseRendererHelper.render(ari = ari, text = rawVerseText, ftr = ftr)
@@ -796,7 +836,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 }
                 R.id.menuEsvsb -> {
 
-                    val ari = Ari.encode(this@IsiActivity.activeBook.bookId, this@IsiActivity.chapter_1, selected.get(0))
+                    val ari = Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, selected.get(0))
 
                     try {
                         val intent = Intent("yuku.esvsbasal.action.GOTO")
@@ -809,7 +849,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 }
                 R.id.menuGuide -> {
 
-                    val ari = Ari.encode(this@IsiActivity.activeBook.bookId, this@IsiActivity.chapter_1, 0)
+                    val ari = Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, 0)
 
                     try {
                         packageManager.getPackageInfo("org.sabda.pedia", 0)
@@ -826,7 +866,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 }
                 R.id.menuCommentary -> {
 
-                    val ari = Ari.encode(this@IsiActivity.activeBook.bookId, this@IsiActivity.chapter_1, selected.get(0))
+                    val ari = Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, selected.get(0))
 
                     try {
                         packageManager.getPackageInfo("org.sabda.tafsiran", 0)
@@ -843,7 +883,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 }
                 R.id.menuDictionary -> {
 
-                    val ariBc = Ari.encode(this@IsiActivity.activeBook.bookId, this@IsiActivity.chapter_1, 0)
+                    val ariBc = Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, 0)
                     val aris = HashSet<Int>()
                     var i = 0
                     val len = selected.size()
@@ -862,20 +902,20 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
                     val ribkaEligibility = checkRibkaEligibility()
                     if (ribkaEligibility != RibkaEligibility.None) {
-                        val ari = Ari.encode(this@IsiActivity.activeBook.bookId, this@IsiActivity.chapter_1, selected.get(0))
+                        val ari = Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, selected.get(0))
 
                         val reference: CharSequence?
                         val verseText: String?
                         val versionDescription: String?
 
                         if (ribkaEligibility == RibkaEligibility.Main) {
-                            reference = S.activeVersion().reference(ari)
-                            verseText = S.activeVersion().loadVerseText(ari)
-                            versionDescription = S.activeMVersion().description
+                            reference = activeSplit0.version.reference(ari)
+                            verseText = activeSplit0.version.loadVerseText(ari)
+                            versionDescription = activeSplit0.mv.description
                         } else {
-                            reference = activeSplit?.version?.reference(ari)
-                            verseText = activeSplit?.version?.loadVerseText(ari)
-                            versionDescription = activeSplit?.mv?.description
+                            reference = activeSplit1?.version?.reference(ari)
+                            verseText = activeSplit1?.version?.loadVerseText(ari)
+                            versionDescription = activeSplit1?.mv?.description
                         }
 
                         if (reference != null && verseText != null) {
@@ -895,7 +935,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
                     // prepare extra "aris"
                     val aris = IntArray(selected.size())
-                    val ariBc = Ari.encode(this@IsiActivity.activeBook.bookId, this@IsiActivity.chapter_1, 0)
+                    val ariBc = Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, 0)
                     run {
                         var i = 0
                         val len = selected.size()
@@ -946,14 +986,12 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         /**
          * @param t [0] is text to copy, [1] is text to submit
          */
-        fun appendSplitTextForCopyShare(version: Version, selectedVerses_1: IntArrayList, t: Array<String>) {
-            val splitBook = version.getBook(activeBook.bookId)
-            if (splitBook != null) {
-                val referenceSplit = referenceFromSelectedVerses(selectedVerses_1, splitBook)
-                val a = prepareTextForCopyShare(selectedVerses_1, referenceSplit, true)
-                t[0] += "\n\n" + a[0]
-                t[1] += "\n\n" + a[1]
-            }
+        fun appendSplitTextForCopyShare(book: Book?, selectedVerses_1: IntArrayList, t: Array<String>) {
+            if (book == null) return
+            val referenceSplit = referenceFromSelectedVerses(selectedVerses_1, book)
+            val a = prepareTextForCopyShare(selectedVerses_1, referenceSplit, true)
+            t[0] += "\n\n" + a[0]
+            t[1] += "\n\n" + a[1]
         }
 
         override fun onDestroyActionMode(mode: ActionMode) {
@@ -1171,12 +1209,31 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             selectVerseCount = intentResult.selectVerseCount
         }
 
-        this.activeBook = S.activeVersion().getBook(Ari.toBook(openingAri)) ?: run {
-            // can't load last book or bookId 0
-            S.activeVersion().firstBook ?: run {
-                // version failed to load, so books are also failed to load. Fallback!
-                S.setActiveVersion(S.getMVersionInternal())
-                S.activeVersion().firstBook // this is assumed to be never null
+        // Configure active book
+        run {
+            val activeBook = activeSplit0.version.getBook(Ari.toBook(openingAri))
+            if (activeBook != null) {
+                activeSplit0 = activeSplit0.copy(book = activeBook)
+            } else {
+                // can't load last book or bookId 0
+                val activeBook2 = activeSplit0.version.firstBook
+                if (activeBook2 != null) {
+                    activeSplit0 = activeSplit0.copy(book = activeBook2)
+                } else {
+                    // version failed to load, so books also failed to load. Fallback to internal!
+                    val mv = S.getMVersionInternal()
+                    S.setActiveVersion(mv)
+
+                    val version = S.activeVersion()
+                    val versionId = S.activeVersionId()
+                    val book = version.firstBook // this is assumed to be never null
+                    activeSplit0 = ActiveSplit0(
+                        mv = mv,
+                        version = version,
+                        versionId = versionId,
+                        book = book
+                    )
+                }
             }
         }
 
@@ -1304,7 +1361,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     private fun initNfcIfAvailable() {
         nfcAdapter?.setNdefPushMessageCallback(NfcAdapter.CreateNdefMessageCallback {
             val obj = JSONObject()
-            obj.put("ari", Ari.encode(this@IsiActivity.activeBook.bookId, this@IsiActivity.chapter_1, getVerse_1BasedOnScrolls()))
+            obj.put("ari", Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, getVerse_1BasedOnScrolls()))
 
             val payload = obj.toString().toByteArray()
             val record = NdefRecord(NdefRecord.TNF_MIME_MEDIA, "application/vnd.yuku.alkitab.nfc.beam".toByteArray(), ByteArray(0), payload)
@@ -1315,7 +1372,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     /**
      * Try to get the verse_1 based on split0, when failed, try to get it from the split1.
      */
-    fun getVerse_1BasedOnScrolls(): Int {
+    private fun getVerse_1BasedOnScrolls(): Int {
         val split0verse_1 = lsSplit0.getVerse_1BasedOnScroll()
         if (split0verse_1 != 0) return split0verse_1
 
@@ -1387,15 +1444,20 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             val version = mv.version ?: throw RuntimeException() // caught below
 
             // we already have some other version loaded, so make the new version open the same book
-            val bookId = this.activeBook.bookId
-            val book = version.getBook(bookId)
-            if (book != null) { // we load the new book succesfully
-                this.activeBook = book
-            } else { // too bad, this book was not found, get any book
-                this.activeBook = version.firstBook
-            }
+            val bookId = activeSplit0.book.bookId
 
+            // Set globally
             S.setActiveVersion(mv)
+
+            // If a book is not found, get any book
+            val book = version.getBook(bookId) ?: version.firstBook
+            activeSplit0 = ActiveSplit0(
+                mv = mv,
+                version = version,
+                versionId = S.activeVersionId(),
+                book = book
+            )
+
             displayActiveVersion()
 
             display(chapter_1, getVerse_1BasedOnScrolls(), false)
@@ -1413,15 +1475,15 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     private fun displayActiveVersion() {
-        bVersion.text = S.activeVersion().initials
-        splitHandleButton.setLabel1("\u25b2 " + S.activeVersion().initials)
+        bVersion.text = activeSplit0.version.initials
+        splitHandleButton.setLabel1("\u25b2 " + activeSplit0.version.initials)
     }
 
     private fun loadSplitVersion(mv: MVersion): Boolean {
         try {
             val version = mv.version ?: throw RuntimeException() // caught below
 
-            activeSplit = ActiveSplit(mv, version, mv.versionId)
+            activeSplit1 = ActiveSplit1(mv, version, mv.versionId)
 
             splitHandleButton.setLabel2(version.initials + " \u25bc")
 
@@ -1443,11 +1505,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     private fun configureTextAppearancePanelForSplitVersion() {
         textAppearancePanel?.let { textAppearancePanel ->
-            val activeSplit = activeSplit
-            if (activeSplit == null) {
+            val activeSplit1 = activeSplit1
+            if (activeSplit1 == null) {
                 textAppearancePanel.clearSplitVersion()
             } else {
-                textAppearancePanel.setSplitVersion(activeSplit.versionId, activeSplit.version.longName)
+                textAppearancePanel.setSplitVersion(activeSplit1.versionId, activeSplit1.version.longName)
             }
         }
     }
@@ -1476,7 +1538,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
 
         if (pressResult is VersesController.PressResult.Consumed) {
-            if (activeSplit != null) {
+            if (activeSplit1 != null) {
                 lsSplit1.scrollToVerse(pressResult.targetVerse_1)
             }
             return true
@@ -1537,15 +1599,15 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             return 0
         }
 
-        val bookId = jumper.getBookId(S.activeVersion().consecutiveBooks)
+        val bookId = jumper.getBookId(activeSplit0.version.consecutiveBooks)
         val selected = if (bookId != -1) {
-            S.activeVersion().getBook(bookId) ?: this.activeBook // not avail, just fallback
+            activeSplit0.version.getBook(bookId) ?: activeSplit0.book // not avail, just fallback
         } else {
-            this.activeBook
+            activeSplit0.book
         }
 
         // set book
-        this.activeBook = selected
+        activeSplit0 = activeSplit0.copy(book = selected)
 
         val chapter = jumper.chapter
         val verse = jumper.verse
@@ -1565,18 +1627,18 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         if (ari == 0) return
 
         val bookId = Ari.toBook(ari)
-        val book = S.activeVersion().getBook(bookId)
+        val book = activeSplit0.version.getBook(bookId)
 
         if (book == null) {
             AppLog.w(TAG, "bookId=$bookId not found for ari=$ari")
             return
         }
 
-        this.activeBook = book
+        activeSplit0 = activeSplit0.copy(book = book)
         val ari_cv = display(Ari.toChapter(ari), Ari.toVerse(ari))
 
         // call attention to the verse only if the displayed verse is equal to the requested verse
-        if (ari == Ari.encode(this.activeBook.bookId, ari_cv)) {
+        if (ari == Ari.encode(activeSplit0.book.bookId, ari_cv)) {
             callAttentionForVerseToBothSplits(Ari.toVerse(ari))
         }
     }
@@ -1604,7 +1666,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
         if (Preferences.getBoolean(getString(R.string.pref_copyWithVersionName_key), resources.getBoolean(R.bool.pref_copyWithVersionName_default))) {
             // Fallback to primary version for safety
-            val version = if (isSplitVersion) activeSplit?.version ?: S.activeVersion() else S.activeVersion()
+            val version = if (isSplitVersion) activeSplit1?.version ?: activeSplit0.version else activeSplit0.version
             val versionShortName = version.shortName
             if (versionShortName != null) {
                 res0.append(" (").append(versionShortName).append(")")
@@ -1687,11 +1749,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         // necessary
         val isVerseNumberShown = Preferences.getBoolean(R.string.pref_verseNumberIsShown_key, R.bool.pref_verseNumberIsShown_default)
         uiSplit0 = uiSplit0.copy(
-            textSizeMult = calculateTextSizeMult(S.activeVersionId()),
+            textSizeMult = calculateTextSizeMult(activeSplit0.versionId),
             isVerseNumberShown = isVerseNumberShown
         )
         uiSplit1 = uiSplit1.copy(
-            textSizeMult = calculateTextSizeMult(activeSplit?.versionId),
+            textSizeMult = calculateTextSizeMult(activeSplit1?.versionId),
             isVerseNumberShown = isVerseNumberShown
         )
 
@@ -1704,15 +1766,15 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
         Preferences.hold()
         try {
-            Preferences.setInt(Prefkey.lastBookId, this.activeBook.bookId)
+            Preferences.setInt(Prefkey.lastBookId, activeSplit0.book.bookId)
             Preferences.setInt(Prefkey.lastChapter, chapter_1)
             Preferences.setInt(Prefkey.lastVerse, getVerse_1BasedOnScrolls())
-            Preferences.setString(Prefkey.lastVersionId, S.activeVersionId())
-            val activeSplit = activeSplit
-            if (activeSplit == null) {
+            Preferences.setString(Prefkey.lastVersionId, activeSplit0.versionId)
+            val activeSplit1 = activeSplit1
+            if (activeSplit1 == null) {
                 Preferences.remove(Prefkey.lastSplitVersionId)
             } else {
-                Preferences.setString(Prefkey.lastSplitVersionId, activeSplit.versionId)
+                Preferences.setString(Prefkey.lastSplitVersionId, activeSplit1.versionId)
                 Preferences.setString(Prefkey.lastSplitOrientation, splitHandleButton.orientation.name)
             }
         } finally {
@@ -1762,7 +1824,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         Tracker.trackEvent("nav_goto_button_click")
 
         val r = {
-            startActivityForResult(GotoActivity.createIntent(this.activeBook.bookId, this.chapter_1, getVerse_1BasedOnScrolls()), RequestCodes.FromActivity.Goto)
+            startActivityForResult(GotoActivity.createIntent(activeSplit0.book.bookId, this.chapter_1, getVerse_1BasedOnScrolls()), RequestCodes.FromActivity.Goto)
         }
 
         if (!Preferences.getBoolean(Prefkey.history_button_understood, false) && history.size > 0) {
@@ -1813,7 +1875,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             run {
                 val ari = history.getAri(position)
                 val sb = SpannableStringBuilder()
-                sb.append(S.activeVersion().reference(ari))
+                sb.append(activeSplit0.version.reference(ari))
                 sb.append("  ")
                 val sb_len = sb.length
                 sb.append(formatTimestamp(history.getTimestamp(position)))
@@ -2017,14 +2079,14 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             return
         }
 
-        S.openVersionsDialog(this, false, S.activeVersionId()) { mv ->
+        S.openVersionsDialog(this, false, activeSplit0.versionId) { mv ->
             trackVersionSelect(mv, false)
             loadVersion(mv)
         }
     }
 
     private fun openSplitVersionsDialog() {
-        S.openVersionsDialog(this, true, activeSplit?.versionId) { mv ->
+        S.openVersionsDialog(this, true, activeSplit1?.versionId) { mv ->
             if (mv == null) { // closing split version
                 disableSplitVersion()
             } else {
@@ -2050,7 +2112,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     private fun disableSplitVersion() {
-        activeSplit = null
+        activeSplit1 = null
         closeSplitDisplay()
 
         configureTextAppearancePanelForSplitVersion()
@@ -2136,7 +2198,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     private fun menuSearch_click() {
-        startActivity(SearchActivity.createIntent(this.activeBook.bookId))
+        startActivity(SearchActivity.createIntent(activeSplit0.book.bookId))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -2155,27 +2217,27 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     }
                 } else {
                     // change book
-                    val book = S.activeVersion().getBook(result.bookId)
+                    val book = activeSplit0.version.getBook(result.bookId)
                     if (book != null) {
-                        this.activeBook = book
+                        activeSplit0 = activeSplit0.copy(book = book)
                     } else { // no book, just chapter and verse.
-                        result.bookId = this.activeBook.bookId
+                        result.bookId = activeSplit0.book.bookId
                     }
 
                     ari_cv = display(result.chapter_1, result.verse_1)
 
                     // select the verse only if the displayed verse is equal to the requested verse
-                    if (Ari.encode(result.bookId, result.chapter_1, result.verse_1) == Ari.encode(this.activeBook.bookId, ari_cv)) {
+                    if (Ari.encode(result.bookId, result.chapter_1, result.verse_1) == Ari.encode(activeSplit0.book.bookId, ari_cv)) {
                         callAttentionForVerseToBothSplits(result.verse_1)
                     }
                 }
 
                 if (result.verse_1 == 0 && Ari.toVerse(ari_cv) == 1) {
                     // verse 0 requested, but display method causes it to show verse_1 1.
-                    // However we want to store verse_1 0 on the history.
-                    history.add(Ari.encode(this.activeBook.bookId, Ari.toChapter(ari_cv), 0))
+                    // However, we want to store verse_1 0 on the history.
+                    history.add(Ari.encode(activeSplit0.book.bookId, Ari.toChapter(ari_cv), 0))
                 } else {
-                    history.add(Ari.encode(this.activeBook.bookId, ari_cv))
+                    history.add(Ari.encode(activeSplit0.book.bookId, ari_cv))
                 }
             }
         } else if (requestCode == RequestCodes.FromActivity.Share && resultCode == Activity.RESULT_OK) {
@@ -2217,14 +2279,14 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     fun display(chapter_1: Int, verse_1: Int, uncheckAllVerses: Boolean = true): Int {
         val current_chapter_1 = this.chapter_1
 
-        val available_chapter_1 = chapter_1.coerceIn(1, this.activeBook.chapter_count)
-        val available_verse_1 = verse_1.coerceIn(1, this.activeBook.verse_counts[available_chapter_1 - 1])
+        val available_chapter_1 = chapter_1.coerceIn(1, activeSplit0.book.chapter_count)
+        val available_verse_1 = verse_1.coerceIn(1, activeSplit0.book.verse_counts[available_chapter_1 - 1])
 
         run {
             // main
             this.uncheckVersesWhenActionModeDestroyed = false
             try {
-                val ok = loadChapterToVersesController(contentResolver, lsSplit0, { dataSplit0 = it }, S.activeVersion(), S.activeVersionId(), this.activeBook, available_chapter_1, current_chapter_1, uncheckAllVerses)
+                val ok = loadChapterToVersesController(contentResolver, lsSplit0, { dataSplit0 = it }, activeSplit0.version, activeSplit0.versionId, activeSplit0.book, available_chapter_1, current_chapter_1, uncheckAllVerses)
                 if (!ok) return 0
             } finally {
                 this.uncheckVersesWhenActionModeDestroyed = true
@@ -2239,7 +2301,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         displaySplitFollowingMaster(available_verse_1)
 
         // set goto button text
-        val reference = this.activeBook.reference(available_chapter_1)
+        val reference = activeSplit0.book.reference(available_chapter_1)
         bGoto.text = reference.replace(' ', '\u00a0')
 
         if (fullScreen) {
@@ -2315,17 +2377,17 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     private fun displaySplitFollowingMaster(verse_1: Int) {
-        val activeSplit = activeSplit
-        if (activeSplit != null) { // split1
-            val splitBook = activeSplit.version.getBook(this.activeBook.bookId)
+        val activeSplit1 = activeSplit1
+        if (activeSplit1 != null) { // split1
+            val splitBook = activeSplit1.version.getBook(activeSplit0.book.bookId)
             if (splitBook == null) {
-                lsSplit1.setEmptyMessage(getString(R.string.split_version_cant_display_verse, this.activeBook.reference(this.chapter_1), activeSplit.version.shortName), S.applied().fontColor)
+                lsSplit1.setEmptyMessage(getString(R.string.split_version_cant_display_verse, activeSplit0.book.reference(this.chapter_1), activeSplit1.version.shortName), S.applied().fontColor)
                 dataSplit1 = VersesDataModel.EMPTY
             } else {
                 lsSplit1.setEmptyMessage(null, S.applied().fontColor)
                 this.uncheckVersesWhenActionModeDestroyed = false
                 try {
-                    loadChapterToVersesController(contentResolver, lsSplit1, { dataSplit1 = it }, activeSplit.version, activeSplit.versionId, splitBook, this.chapter_1, this.chapter_1, true)
+                    loadChapterToVersesController(contentResolver, lsSplit1, { dataSplit1 = it }, activeSplit1.version, activeSplit1.versionId, splitBook, this.chapter_1, this.chapter_1, true)
                 } finally {
                     this.uncheckVersesWhenActionModeDestroyed = true
                 }
@@ -2357,14 +2419,14 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     fun bLeft_click() {
         Tracker.trackEvent("nav_left_click")
-        val currentBook = this.activeBook
+        val currentBook = activeSplit0.book
         if (chapter_1 == 1) {
             // we are in the beginning of the book, so go to prev book
             var tryBookId = currentBook.bookId - 1
             while (tryBookId >= 0) {
-                val newBook = S.activeVersion().getBook(tryBookId)
+                val newBook = activeSplit0.version.getBook(tryBookId)
                 if (newBook != null) {
-                    this.activeBook = newBook
+                    activeSplit0 = activeSplit0.copy(book = newBook)
                     val newChapter_1 = newBook.chapter_count // to the last chapter
                     display(newChapter_1, 1)
                     break
@@ -2380,14 +2442,14 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     fun bRight_click() {
         Tracker.trackEvent("nav_right_click")
-        val currentBook = this.activeBook
+        val currentBook = activeSplit0.book
         if (chapter_1 >= currentBook.chapter_count) {
-            val maxBookId = S.activeVersion().maxBookIdPlusOne
+            val maxBookId = activeSplit0.version.maxBookIdPlusOne
             var tryBookId = currentBook.bookId + 1
             while (tryBookId < maxBookId) {
-                val newBook = S.activeVersion().getBook(tryBookId)
+                val newBook = activeSplit0.version.getBook(tryBookId)
                 if (newBook != null) {
-                    this.activeBook = newBook
+                    activeSplit0 = activeSplit0.copy(book = newBook)
                     display(1, 1)
                     break
                 }
@@ -2563,7 +2625,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         override fun create(type: VerseInlineLinkSpan.Type, arif: Int) = object : VerseInlineLinkSpan(type, arif) {
             override fun onClick(type: Type, arif: Int) {
                 val source = sourceSupplier()
-                val activeSplit = activeSplit
+                val activeSplit1 = activeSplit1
                 if (type == Type.xref) {
                     val dialog = XrefDialog.newInstance(arif)
 
@@ -2578,18 +2640,18 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         history.add(ari_target)
                     }
 
-                    if (source === lsSplit0 || activeSplit == null) { // use activeVersion
-                        dialog.init(S.activeVersion(), S.activeVersionId(), verseSelectedListener)
+                    if (source === lsSplit0 || activeSplit1 == null) { // use activeVersion
+                        dialog.init(activeSplit0.version, activeSplit0.versionId, verseSelectedListener)
                     } else if (source === lsSplit1) { // use activeSplitVersion
-                        dialog.init(activeSplit.version, activeSplit.versionId, verseSelectedListener)
+                        dialog.init(activeSplit1.version, activeSplit1.versionId, verseSelectedListener)
                     }
 
                     val fm = supportFragmentManager
                     dialog.show(fm, "XrefDialog")
                 } else if (type == Type.footnote) {
                     val fe = when {
-                        source === lsSplit0 -> S.activeVersion().getFootnoteEntry(arif)
-                        source === lsSplit1 -> activeSplit?.version?.getFootnoteEntry(arif)
+                        source === lsSplit0 -> activeSplit0.version.getFootnoteEntry(arif)
+                        source === lsSplit1 -> activeSplit1?.version?.getFootnoteEntry(arif)
                         else -> null
                     }
 
@@ -2630,14 +2692,14 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     fun checkRibkaEligibility(): RibkaEligibility {
         val validPresetName = "in-ayt"
 
-        val activeMVersion = S.activeMVersion()
+        val activeMVersion = activeSplit0.mv
         val activePresetName = if (activeMVersion is MVersionDb) activeMVersion.preset_name else null
 
         if (validPresetName == activePresetName) {
             return RibkaEligibility.Main
         }
 
-        val splitPresetName = (activeSplit?.mv as? MVersionDb)?.preset_name
+        val splitPresetName = (activeSplit1?.mv as? MVersionDb)?.preset_name
 
         return if (validPresetName == splitPresetName) RibkaEligibility.Split else RibkaEligibility.None
     }
@@ -2646,7 +2708,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         val newDataSplit0 = reloadAttributeMapsToVerseDataModel(dataSplit0)
         dataSplit0 = newDataSplit0
 
-        if (activeSplit != null) {
+        if (activeSplit1 != null) {
             val newDataSplit1 = reloadAttributeMapsToVerseDataModel(dataSplit1)
             dataSplit1 = newDataSplit1
         }
