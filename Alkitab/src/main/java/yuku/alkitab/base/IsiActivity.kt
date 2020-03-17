@@ -281,7 +281,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     var chapter_1 = 0
     private var fullScreen = false
 
-    val history by lazy { History.getInstance() }
+    val history get() = History
 
     /**
      * Can be null for devices without NfcAdapter

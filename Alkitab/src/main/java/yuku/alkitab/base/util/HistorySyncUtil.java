@@ -15,6 +15,8 @@ import yuku.alkitab.base.sync.Sync_History;
 import yuku.alkitab.debug.BuildConfig;
 
 public class HistorySyncUtil {
+    static final String TAG = HistorySyncUtil.class.getSimpleName();
+
     /**
      * Makes the current history updated with patches (append delta) from server.
      * Also updates the shadow (both data and the revno).
@@ -23,7 +25,7 @@ public class HistorySyncUtil {
      */
     @NonNull
     public static Sync.ApplyAppendDeltaResult applyHistoryAppendDelta(@NonNull final History history, final int final_revno, @NonNull final Sync.Delta<Sync_History.Content> append_delta, @NonNull final List<Sync.Entity<Sync_History.Content>> entitiesBeforeSync, @NonNull final String simpleTokenBeforeSync) {
-        final ArrayList<History.HistoryEntry> entriesCopy = new ArrayList<>(history.entries);
+        final ArrayList<History.HistoryEntry> entriesCopy = new ArrayList<>(history.getEntries());
 
         Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_HISTORY, true);
         try {
@@ -57,8 +59,8 @@ public class HistorySyncUtil {
             Collections.sort(entriesCopy, (a, b) -> (a.timestamp < b.timestamp) ? +1 : ((a.timestamp > b.timestamp) ? -1 : 0));
 
             // commit changes
-            history.entries.clear();
-            history.entries.addAll(new ArrayList<>(entriesCopy));
+            history.getEntries().clear();
+            history.getEntries().addAll(new ArrayList<>(entriesCopy));
 
             // if we reach here, the local database has been updated with the append delta.
             final SyncShadow ss = Sync_History.shadowFromEntities(Sync_History.getEntitiesFromCurrent(), final_revno);
@@ -67,10 +69,10 @@ public class HistorySyncUtil {
 
             // when debugging, print
             if (BuildConfig.DEBUG) {
-                AppLog.d(History.TAG, "After sync, the history entries are:");
-                AppLog.d(History.TAG, String.format(Locale.US, "  ari ====   timestamp ===============   %-40s   %-40s", "gid", "creator_id"));
-                for (final History.HistoryEntry entry : history.entries) {
-                    AppLog.d(History.TAG, String.format(Locale.US, "- 0x%06x   %tF %<tT %<tz   %-40s   %-40s", entry.ari, entry.timestamp, entry.gid, entry.creator_id));
+                AppLog.d(TAG, "After sync, the history entries are:");
+                AppLog.d(TAG, String.format(Locale.US, "  ari ====   timestamp ===============   %-40s   %-40s", "gid", "creator_id"));
+                for (final History.HistoryEntry entry : history.getEntries()) {
+                    AppLog.d(TAG, String.format(Locale.US, "- 0x%06x   %tF %<tT %<tz   %-40s   %-40s", entry.ari, entry.timestamp, entry.gid, entry.creator_id));
                 }
             }
 
@@ -96,21 +98,12 @@ public class HistorySyncUtil {
             final History.HistoryEntry entry = entries.get(i);
             if (U.equals(entry.gid, gid)) {
                 // update!
-                entry.ari = content.ari;
-                entry.timestamp = content.timestamp;
-                entry.creator_id = creator_id;
+                entries.set(i, new History.HistoryEntry(gid, content.ari, content.timestamp, creator_id));
                 return;
             }
         }
 
         // not found, create new one
-        final History.HistoryEntry entry = History.HistoryEntry.createEmptyEntry();
-
-        entry.gid = gid;
-        entry.ari = content.ari;
-        entry.timestamp = content.timestamp;
-        entry.creator_id = creator_id;
-
-        entries.add(entry);
+        entries.add(new History.HistoryEntry(gid, content.ari, content.timestamp, creator_id));
     }
 }
