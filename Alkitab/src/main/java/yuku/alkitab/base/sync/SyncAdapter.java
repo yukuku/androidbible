@@ -36,6 +36,7 @@ import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.History;
+import yuku.alkitab.base.util.HistorySyncUtil;
 import yuku.alkitab.base.util.InstallationUtil;
 import yuku.alkitab.base.util.Sqlitil;
 
@@ -422,7 +423,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_got_success_data, syncSetName, "final_revno", final_revno, "append_delta_operations_size", append_delta.operations.size());
 
-			final Sync.ApplyAppendDeltaResult applyResult = History.getInstance().applyHistoryAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
+			final Sync.ApplyAppendDeltaResult applyResult = HistorySyncUtil.applyHistoryAppendDelta(History.getInstance(), final_revno, append_delta, entitiesBeforeSync, simpleToken);
 
 			SyncRecorder.log(SyncRecorder.EventKind.apply_result, syncSetName, "apply_result", applyResult.name());
 
