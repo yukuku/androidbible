@@ -1870,18 +1870,18 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             val holder = _holder_ as HistoryEntryHolder
 
             run {
-                val ari = history.getAri(position)
+                val entry = history.getEntry(position)
                 val sb = SpannableStringBuilder()
-                sb.append(activeSplit0.version.reference(ari))
+                sb.append(activeSplit0.version.reference(entry.ari))
                 sb.append("  ")
                 val sb_len = sb.length
-                sb.append(formatTimestamp(history.getTimestamp(position)))
+                sb.append(formatTimestamp(entry.timestamp))
                 sb.setSpan(ForegroundColorSpan(-0x555556), sb_len, sb.length, 0)
                 sb.setSpan(RelativeSizeSpan(0.7f), sb_len, sb.length, 0)
 
                 holder.text1.text = sb
 
-                if (thisCreatorId == history.getCreatorId(position)) {
+                if (thisCreatorId == entry.creator_id) {
                     holder.text1.setTextColor(defaultTextColor)
                 } else {
                     holder.text1.setTextColor(ResourcesCompat.getColor(resources, R.color.escape, theme))
@@ -1893,7 +1893,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
                 val which = holder.adapterPosition
 
-                val ari = history.getAri(which)
+                val ari = history.getEntry(which).ari
                 jumpToAri(ari)
                 history.add(ari)
             }

@@ -22,6 +22,9 @@ public class History {
 		public String gid;
 		public int ari;
 		public long timestamp;
+		/**
+		 * The installationId of the device that creates this history entry.
+		 */
 		public String creator_id;
 
 		public static HistoryEntry createEmptyEntry() {
@@ -71,10 +74,6 @@ public class History {
 	}
 
 	public synchronized void add(int ari) {
-		add(ari, System.currentTimeMillis());
-	}
-
-	synchronized void add(int ari, long timestamp) {
 		// check: do we have this previously?
 		for (int i = entries.size() - 1; i >= 0; i--) {
 			final HistoryEntry entry = entries.get(i);
@@ -88,7 +87,7 @@ public class History {
 		final HistoryEntry entry = new HistoryEntry();
 		entry.gid = Gid.newGid();
 		entry.ari = ari;
-		entry.timestamp = timestamp;
+		entry.timestamp = System.currentTimeMillis();
 		entry.creator_id = InstallationUtil.getInstallationId();
 		entries.add(0, entry);
 
@@ -98,20 +97,12 @@ public class History {
 		}
 	}
 
+	public synchronized HistoryEntry getEntry(final int position) {
+		return entries.get(position);
+	}
+
 	public synchronized int getSize() {
 		return entries.size();
-	}
-
-	public synchronized int getAri(final int position) {
-		return entries.get(position).ari;
-	}
-
-	public synchronized long getTimestamp(final int position) {
-		return entries.get(position).timestamp;
-	}
-
-	public synchronized String getCreatorId(final int position) {
-		return entries.get(position).creator_id;
 	}
 
 	public List<HistoryEntry> listAllEntries() {
