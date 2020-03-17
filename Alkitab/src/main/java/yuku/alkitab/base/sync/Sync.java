@@ -74,6 +74,7 @@ public class Sync {
 			this.content = content;
 		}
 
+		@NonNull
 		@Override
 		public String toString() {
 			return "{" + opkind +
@@ -93,6 +94,7 @@ public class Sync {
 			operations = new ArrayList<>();
 		}
 
+		@NonNull
 		@Override
 		public String toString() {
 			return "Delta{" +

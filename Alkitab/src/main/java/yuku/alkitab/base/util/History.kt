@@ -15,7 +15,7 @@ private const val TAG = "History"
 
 object History {
     @Keep
-    data class HistoryEntry(
+    data class Entry(
         @JvmField
         val gid: String,
 
@@ -34,16 +34,12 @@ object History {
 
     @Keep
     data class HistoryJson(
-        val entries: List<HistoryEntry>
+        val entries: List<Entry>
     )
 
-    val entries = mutableListOf<HistoryEntry>()
-
-    init {
-        val s = Preferences.getString(Prefkey.history)
-        if (s != null) {
-            val obj = App.getDefaultGson().fromJson(s, HistoryJson::class.java)
-            entries.addAll(obj.entries)
+    val entries = mutableListOf<Entry>().apply {
+        Preferences.getString(Prefkey.history)?.let { s ->
+            this.addAll(App.getDefaultGson().fromJson(s, HistoryJson::class.java).entries)
         }
     }
 
@@ -72,7 +68,7 @@ object History {
         }
 
         // Add it to the front
-        entries.add(0, HistoryEntry(Gid.newGid(), ari, System.currentTimeMillis(), getInstallationId()))
+        entries.add(0, Entry(Gid.newGid(), ari, System.currentTimeMillis(), getInstallationId()))
 
         // and remove if overflow
         while (entries.size > MAX_HISTORY_ENTRIES) {
@@ -81,7 +77,7 @@ object History {
     }
 
     @Synchronized
-    fun getEntry(position: Int): HistoryEntry {
+    fun getEntry(position: Int): Entry {
         return entries[position]
     }
 
@@ -89,7 +85,7 @@ object History {
     val size
         get() = entries.size
 
-    fun listAllEntries(): List<HistoryEntry> {
+    fun listAllEntries(): List<Entry> {
         return ArrayList(entries)
     }
 }

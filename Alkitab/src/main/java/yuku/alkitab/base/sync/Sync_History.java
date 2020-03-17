@@ -78,7 +78,7 @@ public class Sync_History {
 	@NonNull public static List<Sync.Entity<Content>> getEntitiesFromCurrent() {
 		final List<Sync.Entity<Content>> res = new ArrayList<>();
 
-		for (final History.HistoryEntry entry: History.INSTANCE.listAllEntries()) {
+		for (final History.Entry entry: History.INSTANCE.listAllEntries()) {
 			final Content content = new Content();
 			content.ari = entry.ari;
 			content.timestamp = entry.timestamp;
@@ -119,7 +119,7 @@ public class Sync_History {
 
 		//endregion
 
-
+		@NonNull
 		@Override
 		public String toString() {
 			return "{" +
