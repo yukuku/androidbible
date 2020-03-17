@@ -1,8 +1,11 @@
 package yuku.alkitab.base.util;
 
-import android.content.SharedPreferences;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -13,13 +16,6 @@ import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.sync.Sync_History;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.model.util.Gid;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 public class History {
 	static final String TAG = History.class.getSimpleName();
@@ -223,88 +219,6 @@ public class History {
 		entry.creator_id = creator_id;
 
 		entries.add(entry);
-	}
-
-	public static void migrateOldHistoryWhenNeeded() {
-		if (OldHistoryMigrator.needsMigration()) {
-			OldHistoryMigrator.migrate();
-		}
-	}
-
-	static class OldHistoryMigrator {
-		private static final String HISTORY_PREFIX = "sejarah/";
-		private static final String FIELD_SEPARATOR_STRING = ":";
-		private static final Pattern FIELD_SEPARATOR_PATTERN = Pattern.compile(FIELD_SEPARATOR_STRING);
-
-		static class ClientHistoryEntry {
-			public int ari;
-			public long timestamp;
-			public boolean savedInServer;
-		}
-
-		static List<ClientHistoryEntry> load() {
-			final List<ClientHistoryEntry> entries = new ArrayList<>();
-
-			// instant preferences
-			final SharedPreferences preferences = App.context.getSharedPreferences(App.context.getPackageName(), 0);
-
-			int n = preferences.getInt(HISTORY_PREFIX + "n", 0);
-
-			final Map<String, ?> all = preferences.getAll();
-
-			for (int i = n - 1; i >= 0; i--) {
-				final ClientHistoryEntry entry = new ClientHistoryEntry();
-				final Object val = all.get(HISTORY_PREFIX + i);
-				if (val instanceof Integer) {
-					// for compatibility when upgrading from older version without sync and timestamp support
-					entry.ari = (Integer) val;
-					entry.savedInServer = false;
-					entry.timestamp = System.currentTimeMillis();
-				} else if (val instanceof String) {
-					// v1:ari:timestamp:(int)savedinserver
-					final String[] splits = FIELD_SEPARATOR_PATTERN.split((String) val);
-					entry.ari = Integer.parseInt(splits[1]);
-					entry.timestamp = Long.parseLong(splits[2]);
-					entry.savedInServer = Integer.parseInt(splits[3]) != 0;
-				}
-				entries.add(entry);
-			}
-
-			return entries;
-		}
-
-		static void deleteAll() {
-			// instant preferences
-			final SharedPreferences preferences = App.context.getSharedPreferences(App.context.getPackageName(), 0);
-
-			int n = preferences.getInt(HISTORY_PREFIX + "n", 0);
-
-			final SharedPreferences.Editor editor = preferences.edit();
-			for (int i = 0; i < n; i++) {
-				editor.remove(HISTORY_PREFIX + i);
-			}
-			editor.remove(HISTORY_PREFIX + "n");
-			editor.apply();
-		}
-
-		static boolean needsMigration() {
-			// to prevent accessing/creating the instant preferences, we check the default preferences instead.
-			return !Preferences.contains(Prefkey.history);
-		}
-
-		static void migrate() {
-			try {
-				final History history = History.getInstance();
-				final List<ClientHistoryEntry> entries = load();
-				for (final ClientHistoryEntry entry : entries) {
-					history.add(entry.ari, entry.timestamp);
-				}
-				deleteAll();
-				history.save();
-			} catch (Exception e) {
-				AppLog.e(TAG, "Error when migrating history", e);
-			}
-		}
 	}
 }
 

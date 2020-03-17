@@ -1184,9 +1184,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             if (splitRoot.getChildAt(2) !== splitRoot.findViewById<View>(R.id.lsSplitView1)) throw RuntimeException("splitRoot does not have correct children")
         }
 
-        // migrate old history?
-        History.migrateOldHistoryWhenNeeded()
-
         initNfcIfAvailable()
 
         val intentResult = processIntent(intent, "onCreate")
