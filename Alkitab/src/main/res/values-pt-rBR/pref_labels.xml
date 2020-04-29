@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_bahasa_language">Idioma</string>
+    <string name="pref_warna_teks_alkitab">Texto</string>
+    <string name="pref_warna_latar_belakang">Fundo</string>
+    <string name="pref_warna_nomor_ayat">Número do versículo</string>
+    <string name="pref_redTextColor_title">Palavras de Jesus</string>
+    <string name="pref_penggunaan">Utilização</string>
+    <string name="pref_copy_share">Cópia e compartilhamento</string>
+    <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Listar livros em ordem alfabética (a-z) ao invés da ordem original</string>
+    <string name="pref_kitab_menurut_abjad">Ordenar livros alfabeticamente</string>
+    <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">A tela do dispositivo não irá desligar enquanto lendo a Bíblia</string>
+    <string name="pref_biarkan_layar_menyala">Manter a tela ligada</string>
+    <string name="pref_penampilan_layar">Tela</string>
+    <string name="pref_volumeButtonNavigation_title">Navegação com botões de volume</string>
+    <string name="pref_copyWithVerseNumbers_title">Números de versículos</string>
+    <string name="pref_copyWithVerseNumbers_summary">Começar cada versículo com seu número</string>
+    <string name="pref_copyWithVersionName_title">Abreviações de versão</string>
+    <string name="pref_copyWithVersionName_summary">Mencionar as iniciais da versão da Bíblia</string>
+    <string name="pref_copyWithShareUrl_title">Compartilhar URL</string>
+    <string name="pref_copyWithShareUrl_summary">Adicionar link de página de compartilhamento ao final do texto copiado ou compartilhado</string>
+    <string name="pref_autoDictionaryAnalyze_title">Analisar dicionário automaticamente</string>
+    <string name="pref_autoDictionaryAnalyze_summary">Procurar no dicionário as palavras nos versículo selecionado</string>
+    <string name="pref_tapToEditNote_title">Pressione para editar a anotação</string>
+    <string name="pref_tapToEditNote_summary">Desmarque para previnir edições acidentais ao visualizar as notas existentes</string>
+    <string name="pref_showHiddenVersion_title">Habilitar versões possivelmente restritas</string>
+    <string name="pref_selectedVerseBgColor_title">Selecione o fundo do versículo</string>
+    <string name="pref_forceFontScale_title">Tamanho do texto da interface do usuário</string>
+</resources>

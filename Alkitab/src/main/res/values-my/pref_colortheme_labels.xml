@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- Names of the color themes -->
+	<string-array name="pref_colorTheme_labels">
+		<item>စင်ကြယ်သောစက္ကူအရောင်</item>
+		<item>လော်လီပေါ့အရောင်</item>
+		<item>ပူဖောင်းမှုတ်ပီကေအရောင်</item>
+		<item>ချယ်ရီပန်းရောင်</item>
+		<item>စိမ်းလန်းစိုပြေသောအရောင်</item>
+		<item>ရေညှိပင်ရေကန်အရောင်</item>
+		<item>ပူနွေးတဲ့ပြာမှုန်အရောင်</item>
+		<item>အမွှေးအလိမ္မော်ရောင်အရောင်</item>
+		<item>အပူပိုင်းကန္တာရအရောင်</item>
+		<item>သစ်သားအရောင်</item>
+		<item>ချောကလက်အရောင်</item>
+		<item>စိုစွတ်သောမာလကာအရောင်</item>
+		<item>ရှင်းလင်းသောညဥ့်အရောင်</item>
+		<item>ကြယ်တွေစုံတဲ့ညဥ့်အရောင်</item>
+		<item>မှောင်မိုက်သောအရောင်</item>
+		<item>ကျောက်သင်ပုန်းအရောင်</item>
+		<item>ပျော့ပျောင်းသောအလင်းအရောင်</item>
+	</string-array>
+</resources>
