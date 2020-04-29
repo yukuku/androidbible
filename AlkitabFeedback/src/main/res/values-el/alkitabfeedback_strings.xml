@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alkitabfeedback_next">Επόμενο</string>
+    <string name="alkitabfeedback_prev">Προηγούμενο</string>
+    <string name="alkitabfeedback_finish">Υποβάλετε</string>
+    <string name="alkitabfeedback_review">Έλεγχος</string>
+    <string name="alkitabfeedback_label_your_name">Όνομασία</string>
+    <string name="alkitabfeedback_label_your_email">Email</string>
+    <string name="alkitabfeedback_label_message">Μήνυμα</string>
+    <string name="alkitabfeedback_hint_message">Αν θέλεις να πεις κάτι στον δημιουργό. Προτάσεις, παράπονα, ιδέες, αναφορές λαθών, πληροφορίες, κλπ.</string>
+    <string name="alkitabfeedback_title_about_you">Οι πληροφόρηση σας</string>
+    <string name="alkitabfeedback_submit_confirm_message">Να στείλω το μήνυμα στο δημιουργό;</string>
+    <string name="alkitabfeedback_submit_confirm_button">Αποστείλετε</string>
+    <string name="alkitabfeedback_submit_thanks">Ευχαριστώ για το μήνυμα σας!</string>
+</resources>
