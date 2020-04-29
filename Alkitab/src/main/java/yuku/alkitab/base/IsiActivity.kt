@@ -44,6 +44,8 @@ import androidx.core.app.ShareCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.text.HtmlCompat
+import androidx.core.text.buildSpannedString
+import androidx.core.text.inSpans
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
@@ -155,7 +157,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     private val floater_listener = Floater.Listener { ari ->
         jumpToAri(ari)
-        history.add(ari)
     }
 
     private val splitRoot_listener = object : TwofingerLinearLayout.Listener {
@@ -357,14 +358,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     private val parallelListener: (data: ParallelClickData) -> Unit = { data ->
         if (data is ReferenceParallelClickData) {
-            val ari = jumpTo(data.reference)
-            if (ari != 0) {
-                history.add(ari)
-            }
+            jumpTo(data.reference)
         } else if (data is AriParallelClickData) {
             val ari = data.ari
             jumpToAri(ari)
-            history.add(ari)
         }
     }
 
@@ -1241,7 +1238,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         display(Ari.toChapter(openingAri), Ari.toVerse(openingAri))
 
         if (intentResult != null) { // also add to history if not opening the last seen verse
-            history.add(openingAri)
+            addToHistory(openingAri, recordJumpback = false)
         }
 
         run {
@@ -1278,6 +1275,19 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
         App.getLbm().registerReceiver(needsRestartReceiver, IntentFilter(ACTION_NEEDS_RESTART))
         AppLog.d(TAG, "@@onCreate end")
+    }
+
+    /**
+     * Add the given ari to the history.
+     *
+     * @param recordJumpback If true, the currently shown verse will also be added as a [History.Entry.jumpback] entry.
+     */
+    private fun addToHistory(ari: Int, recordJumpback: Boolean = true) {
+        if (ari == 0) return
+        if (recordJumpback) {
+            history.add(Ari.encode(activeSplit0.book.bookId, chapter_1, getVerse_1BasedOnScrolls()), true)
+        }
+        history.add(ari, false)
     }
 
     private fun calculateTextSizeMult(versionId: String?): Float {
@@ -1340,7 +1350,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 val ari = LidToAri.lidToAri(lid)
                 if (ari != 0) {
                     jumpToAri(ari)
-                    history.add(ari)
                     IntentResult(ari, selectVerse, selectVerseCount)
                 } else {
                     MaterialDialog.Builder(this)
@@ -1578,12 +1587,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     /**
      * Jump to a given verse reference in string format.
      *
-     * @return ari of the parsed reference
+     * If successful, the destination will be added to history.
      */
-    private fun jumpTo(reference: String): Int {
-        if (reference.trim().isEmpty()) {
-            return 0
-        }
+    private fun jumpTo(reference: String) {
+        if (reference.trim().isEmpty()) return
 
         AppLog.d(TAG, "going to jump to $reference")
 
@@ -1593,7 +1600,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 .content(R.string.alamat_tidak_sah_alamat, reference)
                 .positiveText(R.string.ok)
                 .show()
-            return 0
+            return
         }
 
         val bookId = jumper.getBookId(activeSplit0.version.consecutiveBooks)
@@ -1614,11 +1621,13 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             display(chapter, verse)
         }
 
-        return Ari.encode(selected.bookId, ari_cv)
+        addToHistory(Ari.encode(selected.bookId, ari_cv))
     }
 
     /**
-     * Jump to a given ari
+     * Jump to a given ari.
+     *
+     * If successful, the destination will be added to history.
      */
     fun jumpToAri(ari: Int) {
         if (ari == 0) return
@@ -1633,6 +1642,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
         activeSplit0 = activeSplit0.copy(book = book)
         val ari_cv = display(Ari.toChapter(ari), Ari.toVerse(ari))
+
+        // Add target ari to history
+        addToHistory(ari)
 
         // call attention to the verse only if the displayed verse is equal to the requested verse
         if (ari == Ari.encode(activeSplit0.book.bookId, ari_cv)) {
@@ -1853,17 +1865,16 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     inner class HistoryAdapter : MaterialDialogAdapterHelper.Adapter() {
-        private val timeFormat = DateFormat.getTimeFormat(App.context)
-        private val mediumDateFormat = DateFormat.getMediumDateFormat(App.context)
+        private val timeFormat = DateFormat.getTimeFormat(this@IsiActivity)
+        private val mediumDateFormat = DateFormat.getMediumDateFormat(this@IsiActivity)
 
         private val thisCreatorId = InstallationUtil.getInstallationId()
         private var defaultTextColor = 0
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            val view = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false)
-            val textView = view as TextView
+            val textView = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false) as TextView
             defaultTextColor = textView.currentTextColor
-            return HistoryEntryHolder(view)
+            return HistoryEntryHolder(textView)
         }
 
         override fun onBindViewHolder(_holder_: RecyclerView.ViewHolder, position: Int) {
@@ -1871,15 +1882,17 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
             run {
                 val entry = history.getEntry(position)
-                val sb = SpannableStringBuilder()
-                sb.append(activeSplit0.version.reference(entry.ari))
-                sb.append("  ")
-                val sb_len = sb.length
-                sb.append(formatTimestamp(entry.timestamp))
-                sb.setSpan(ForegroundColorSpan(-0x555556), sb_len, sb.length, 0)
-                sb.setSpan(RelativeSizeSpan(0.7f), sb_len, sb.length, 0)
 
-                holder.text1.text = sb
+                holder.text1.text = buildSpannedString {
+                    append(activeSplit0.version.reference(entry.ari))
+                    if (entry.jumpback) {
+                        append("[J]")
+                    }
+                    append("  ")
+                    inSpans(ForegroundColorSpan(0xffaaaaaaL.toInt()), RelativeSizeSpan(0.7f)) {
+                        this.append(formatTimestamp(entry.timestamp))
+                    }
+                }
 
                 if (thisCreatorId == entry.creator_id) {
                     holder.text1.setTextColor(defaultTextColor)
@@ -1891,11 +1904,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             holder.itemView.setOnClickListener {
                 dismissDialog()
 
-                val which = holder.adapterPosition
-
-                val ari = history.getEntry(which).ari
-                jumpToAri(ari)
-                history.add(ari)
+                jumpToAri(history.getEntry(holder.adapterPosition).ari)
             }
         }
 
@@ -2232,9 +2241,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 if (result.verse_1 == 0 && Ari.toVerse(ari_cv) == 1) {
                     // verse 0 requested, but display method causes it to show verse_1 1.
                     // However, we want to store verse_1 0 on the history.
-                    history.add(Ari.encode(activeSplit0.book.bookId, Ari.toChapter(ari_cv), 0))
+                    addToHistory(Ari.encode(activeSplit0.book.bookId, Ari.toChapter(ari_cv), 0))
                 } else {
-                    history.add(Ari.encode(activeSplit0.book.bookId, ari_cv))
+                    addToHistory(Ari.encode(activeSplit0.book.bookId, ari_cv))
                 }
             }
         } else if (requestCode == RequestCodes.FromActivity.Share && resultCode == Activity.RESULT_OK) {
@@ -2626,15 +2635,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 if (type == Type.xref) {
                     val dialog = XrefDialog.newInstance(arif)
 
-                    val verseSelectedListener = { arif_source: Int, ari_target: Int ->
-                        val ari_source = arif_source ushr 8
-
+                    val verseSelectedListener = { _: Int, ari_target: Int ->
                         dialog.dismiss()
                         jumpToAri(ari_target)
-
-                        // add both xref source and target, so user can go back to source easily
-                        history.add(ari_source)
-                        history.add(ari_target)
                     }
 
                     if (source === lsSplit0 || activeSplit1 == null) { // use activeVersion
@@ -2809,7 +2812,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
         val ari_start = aris[0]
         jumpToAri(ari_start)
-        history.add(ari_start)
 
         leftDrawer.closeDrawer()
     }
@@ -2822,7 +2824,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         if (ari != 0) {
             Tracker.trackEvent("left_drawer_progress_mark_pin_click_succeed")
             jumpToAri(ari)
-            history.add(ari)
         } else {
             Tracker.trackEvent("left_drawer_progress_mark_pin_click_failed")
             MaterialDialog.Builder(this)

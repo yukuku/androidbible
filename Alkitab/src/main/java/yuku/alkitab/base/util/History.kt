@@ -29,7 +29,14 @@ object History {
          * The installationId of the device that creates this history entry.
          */
         @JvmField
-        val creator_id: String
+        val creator_id: String,
+
+        /**
+         * Whether this entry is created as a result of a jumpback operation,
+         * i.e. the last verse viewed before navigating away.
+         */
+        @JvmField
+        val jumpback: Boolean
     )
 
     @Keep
@@ -57,7 +64,7 @@ object History {
     }
 
     @Synchronized
-    fun add(ari: Int) {
+    fun add(ari: Int, jumpback: Boolean) {
         // check: do we have this previously?
         for (i in entries.indices.reversed()) {
             val entry = entries[i]
@@ -68,7 +75,7 @@ object History {
         }
 
         // Add it to the front
-        entries.add(0, Entry(Gid.newGid(), ari, System.currentTimeMillis(), getInstallationId()))
+        entries.add(0, Entry(Gid.newGid(), ari, System.currentTimeMillis(), getInstallationId(), jumpback))
 
         // and remove if overflow
         while (entries.size > MAX_HISTORY_ENTRIES) {

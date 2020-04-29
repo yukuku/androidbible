@@ -94,6 +94,7 @@ public class Sync_History {
 	public static class Content {
 		public Integer ari;
 		public Long timestamp;
+		public Boolean jumpback;
 
 		//region boilerplate equals and hashCode methods
 
@@ -106,14 +107,14 @@ public class Sync_History {
 
 			if (ari != null ? !ari.equals(content.ari) : content.ari != null) return false;
 			if (timestamp != null ? !timestamp.equals(content.timestamp) : content.timestamp != null) return false;
-
-			return true;
+			return jumpback != null ? jumpback.equals(content.jumpback) : content.jumpback == null;
 		}
 
 		@Override
 		public int hashCode() {
 			int result = ari != null ? ari.hashCode() : 0;
 			result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
+			result = 31 * result + (jumpback != null ? jumpback.hashCode() : 0);
 			return result;
 		}
 
@@ -122,9 +123,10 @@ public class Sync_History {
 		@NonNull
 		@Override
 		public String toString() {
-			return "{" +
-				ari +
+			return "Content{" +
+				"ari=" + ari +
 				", ts=" + timestamp +
+				", jumpback=" + jumpback +
 				'}';
 		}
 	}
