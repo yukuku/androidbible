@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_bahasa_language">ဘာသာစကား</string>
+    <string name="pref_warna_teks_alkitab">စာသား</string>
+    <string name="pref_warna_latar_belakang">နောက်ခံအရောင်</string>
+    <string name="pref_warna_nomor_ayat">အခန်းငယ်နံပါတ်များ</string>
+    <string name="pref_redTextColor_title">ယေရှုရဲ့စကားတော်</string>
+    <string name="pref_penggunaan">အသုံးအနှုန်း</string>
+    <string name="pref_copy_share">ကူးယူခြင်း နှင့် မျှဝေခြင်း</string>
+    <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">စာအုပ်များကို မူရင်းအတိုင်း အစဉ်လိုက်ထားမည့်အစား အက္ခရာစဉ်အတိုင်း (a-z) ဖြင့်စာရင်းပြုစုပါ</string>
+    <string name="pref_kitab_menurut_abjad">စာအုပ်များကို အက္ခရာစဉ်ဖြင့် စီထားပါ</string>
+    <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">သမ္မာကျမ်းစာကို ဖတ်ရှုချိန်တွင် ဖန်သားပြင် ပိတ်သွားမည်မဟုတ်ပါ</string>
+    <string name="pref_biarkan_layar_menyala">ဖန်သားပြင်ကို လင်းနေစေရန်</string>
+    <string name="pref_penampilan_layar">မြင်ကွင်းပုံစံ</string>
+    <string name="pref_volumeButtonNavigation_title">အသံအတိုးအကျယ်ခလုတ် လမ်းညွှန်မှု</string>
+    <string name="pref_copyWithVerseNumbers_title">အခန်းငယ်နံပါတ်များ</string>
+    <string name="pref_copyWithVerseNumbers_summary">ကျမ်းပိုဒ်တစ်ပိုဒ်စီကို နံပါတ်နှင့် စတင်ပါ</string>
+    <string name="pref_copyWithVersionName_title">ဘာသာပြန်သမ္မာကျမ်းစာ ဗားရှင်း အတိုကောက်များ</string>
+    <string name="pref_copyWithVersionName_summary">ဘာသာပြန်သမ္မာကျမ်းစာ၏ အမည် အစ အက္ခရာများ</string>
+    <string name="pref_copyWithShareUrl_title">URL ကိုဝေမျှရန်</string>
+    <string name="pref_copyWithShareUrl_summary">ကူးယူထားသည့် သို့မဟုတ် မျှဝေမည့် စာသားရဲ့အဆုံးမှာ ဖြန့်ဝေမည့် စာမျက်နှာလင့် link ကို ပူးတွဲဖြည့်စွက်ပေးပါ</string>
+    <string name="pref_autoDictionaryAnalyze_title">အလိုအလျှောက် အဘိဓာန်တွင် ရှာဖွေမှု</string>
+    <string name="pref_autoDictionaryAnalyze_summary">ရွေးချယ်ထားသည့် ကျမ်းပိုဒ်များ၏ အဘိဓာန်စကားလုံးများကို ရှာဖွေရန်</string>
+    <string name="pref_tapToEditNote_title">မှတ်စုကို တည်းဖြတ်ရန် နှိပ်ပါ</string>
+    <string name="pref_tapToEditNote_summary">ရှိပြီးသားမှတ်စုများကို ကြည့်စဉ်တွင် မတော်တဆ တည်းဖြတ်မိခြင်းကို ကာကွယ်ရန် ရွေးထားသည့် အမှတ်ခြစ်ထားမှု ဖြုတ်ပေးပါ</string>
+    <string name="pref_showHiddenVersion_title">ကန့်သတ်ထားသည့် ဗားရှင်များကို ဖွင့်နိုင်ရန်</string>
+    <string name="pref_selectedVerseBgColor_title">ရွေးချယ်ထားသည့် ကျမ်းပိုဒ်၏ နောက်ခံ</string>
+    <string name="pref_forceFontScale_title">UI စာသားအရွယ်အစား</string>
+</resources>

@@ -34,7 +34,7 @@ android {
         versionName '4.6.4'
         multiDexEnabled true
         // Keep this synced with integrate_translations.sh!
-        resConfigs 'af', 'bg', 'ceb', 'cs', 'da', 'de', 'es', 'fr', 'in', 'it', 'ja', 'ko', 'lv', 'ms', 'nl', 'pl', 'pt', 'ro', 'ru', 'th', 'tl', 'tr', 'vi', 'zh-rCN', 'zh-rTW'
+        resConfigs 'af', 'bg', 'ceb', 'cs', 'da', 'de', 'el', 'es', 'fr', 'in', 'it', 'ja', 'ko', 'lv', 'ms', 'my', 'nl', 'pl', 'pt-rBR', 'pt', 'ro', 'ru', 'th', 'tl', 'tr', 'uk', 'vi', 'zh-rCN', 'zh-rTW'
         buildConfigField 'String', 'SERVER_HOST', "\"$SERVER_HOST\""
         buildConfigField 'String', 'RIBKA_FUNCTIONS_HOST', "\"$RIBKA_FUNCTIONS_HOST\""
     }

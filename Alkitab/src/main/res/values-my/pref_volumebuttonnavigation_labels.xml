@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="pref_volumeButtonNavigation_labels">
+		<item>"ခလုတ်မသုံးပါနှင့်"</item>
+		<item>အခန်းငယ်များ ကိုပြောင်းရန်</item>
+		<item>အခန်းကြီများ ကိုပြောင်းရန်</item>
+		<item>စာမျက်နှာအတက် / အဆင်း</item>
+	</string-array>
+	<string-array name="pref_forceFontScale_labels">
+		<item>ချိန်ညှိချက်အတိုင်း လိုက်နာပါ</item>
+		<item>ကြီးစေရန်</item>
+		<item>ပိုမိုကြီးကျယ်စေရန်</item>
+		<item>အလွန်ကြီးမားစေရန်</item>
+	</string-array>
+</resources>
