@@ -13,6 +13,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Outline
 import android.graphics.Point
+import android.graphics.Rect
 import android.net.Uri
 import android.nfc.NdefMessage
 import android.nfc.NdefRecord
@@ -22,6 +23,7 @@ import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.format.DateFormat
 import android.text.style.ForegroundColorSpan
+import android.text.style.ImageSpan
 import android.text.style.RelativeSizeSpan
 import android.text.style.URLSpan
 import android.view.Gravity
@@ -1913,6 +1915,12 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         private val thisCreatorId = InstallationUtil.getInstallationId()
         private var defaultTextColor = 0
 
+        private val jumpbackIndicator by lazy {
+            ResourcesCompat.getDrawable(resources, R.drawable.ic_keyboard_return_white_16dp, theme)!!.apply {
+                bounds = Rect(0, 0, intrinsicWidth, intrinsicHeight)
+            }
+        }
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             val textView = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false) as TextView
             defaultTextColor = textView.currentTextColor
@@ -1927,9 +1935,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
                 holder.text1.text = buildSpannedString {
                     if (entry.jumpback) {
-                        inSpans(RelativeSizeSpan(1.2f)) {
-                            append("↵  ")
+                        inSpans(ImageSpan(jumpbackIndicator)) {
+                            append("↵")
                         }
+                        append("  ")
                     }
                     append(activeSplit0.version.reference(entry.ari))
                     append("  ")
