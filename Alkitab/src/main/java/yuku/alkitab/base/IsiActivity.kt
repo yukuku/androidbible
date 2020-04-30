@@ -1926,10 +1926,12 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 val entry = history.getEntry(position)
 
                 holder.text1.text = buildSpannedString {
-                    append(activeSplit0.version.reference(entry.ari))
                     if (entry.jumpback) {
-                        append("[J]")
+                        inSpans(RelativeSizeSpan(1.2f)) {
+                            append("↵  ")
+                        }
                     }
+                    append(activeSplit0.version.reference(entry.ari))
                     append("  ")
                     inSpans(ForegroundColorSpan(0xffaaaaaaL.toInt()), RelativeSizeSpan(0.7f)) {
                         this.append(formatTimestamp(entry.timestamp))
