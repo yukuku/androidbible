@@ -112,6 +112,7 @@ dependencies {
     implementation "androidx.core:core-ktx:$androidxCoreVersion"
     implementation "androidx.multidex:multidex:$androidxMultidexVersion"
     implementation "androidx.percentlayout:percentlayout:$androidxPercentlayoutVersion"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$androidxSwiperefreshlayoutVersion"
 
     // Google
     implementation "com.google.android.exoplayer:exoplayer-core:$exoplayerVersion"

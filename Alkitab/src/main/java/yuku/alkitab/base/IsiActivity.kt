@@ -11,6 +11,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.Outline
 import android.graphics.Point
 import android.net.Uri
 import android.nfc.NdefMessage
@@ -29,6 +30,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewOutlineProvider
 import android.view.ViewTreeObserver
 import android.view.WindowManager
 import android.widget.FrameLayout
@@ -46,9 +48,12 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.text.HtmlCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
+import androidx.core.view.ViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
 import org.json.JSONException
@@ -1182,6 +1187,20 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
 
         initNfcIfAvailable()
+
+        // make shadow of jumpback button work
+        val bJumpback = findViewById<MaterialButton>(R.id.bJumpback)
+        val bJumpbackClear = findViewById<MaterialButton>(R.id.bJumpbackClear)
+
+        val groupJumpback = findViewById<MaterialButtonToggleGroup>(R.id.groupJumpback)
+        if (Build.VERSION.SDK_INT >= 21) {
+            groupJumpback.outlineProvider = object : ViewOutlineProvider() {
+                override fun getOutline(view: View, outline: Outline) {
+                    // Take account the appearance of the buttons with padding.
+                    outline.setRect(0, bJumpback.paddingTop, view.width + 0, view.height - bJumpback.paddingBottom)
+                }
+            }
+        }
 
         val intentResult = processIntent(intent, "onCreate")
         val openingAri: Int

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:id="@+id/overlayContainer"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
@@ -115,5 +116,40 @@
 		android:layout_height="match_parent"
 		android:padding="8dp"
 		android:visibility="gone" />
+
+	<com.google.android.material.button.MaterialButtonToggleGroup
+		android:id="@+id/groupJumpback"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="end|bottom"
+		android:layout_marginEnd="16dp"
+		android:layout_marginBottom="8dp"
+		android:elevation="8dp">
+
+		<com.google.android.material.button.MaterialButton
+			android:id="@+id/bJumpback"
+			style="?materialButtonOutlinedStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:backgroundTint="@color/accent"
+			android:textAllCaps="false"
+			android:textColor="#000"
+			app:icon="@drawable/ic_keyboard_return_black_16dp"
+			app:iconGravity="textStart"
+			app:iconTint="@null"
+			tools:text="Back to XXX" />
+
+		<com.google.android.material.button.MaterialButton
+			android:id="@+id/bJumpbackClear"
+			style="?materialButtonOutlinedStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:backgroundTint="@color/accent"
+			android:minWidth="0dp"
+			app:icon="@drawable/ic_clear_black_16dp"
+			app:iconPadding="0dp"
+			app:iconTint="@null" />
+
+	</com.google.android.material.button.MaterialButtonToggleGroup>
 
 </FrameLayout>

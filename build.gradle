@@ -39,11 +39,12 @@ ext {
     androidxCursoradapterVersion = '1.0.0'
     androidxMultidexVersion = '2.0.1'
     androidxPercentlayoutVersion = '1.0.0'
+    androidxSwiperefreshlayoutVersion = '1.0.0'
 
     // Google
     exoplayerVersion = '2.11.1'
     gsonVersion = '2.8.6'
-    materialVersion = '1.0.0'
+    materialVersion = '1.1.0'
 
     // Tests
     junitVersion = '4.12'
