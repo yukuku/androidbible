@@ -1,5 +1,7 @@
 package yuku.alkitab.base.util
 
+import android.os.Handler
+import android.os.Looper
 import androidx.annotation.Keep
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
@@ -8,6 +10,7 @@ import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.sync.Sync
 import yuku.alkitab.base.util.InstallationUtil.getInstallationId
 import yuku.alkitab.model.util.Gid
+import java.lang.ref.WeakReference
 import java.util.ArrayList
 
 private const val MAX_HISTORY_ENTRIES = 20
@@ -44,11 +47,14 @@ object History {
         val entries: List<Entry>
     )
 
-    val entries = mutableListOf<Entry>().apply {
+    private val entries = mutableListOf<Entry>().apply {
         Preferences.getString(Prefkey.history)?.let { s ->
             this.addAll(App.getDefaultGson().fromJson(s, HistoryJson::class.java).entries)
         }
     }
+
+    private val onChangeListeners = mutableListOf<() -> Unit>()
+    private val mainHandler by lazy { Handler(Looper.getMainLooper()) }
 
     @Synchronized
     fun save() {
@@ -81,6 +87,16 @@ object History {
         while (entries.size > MAX_HISTORY_ENTRIES) {
             entries.removeAt(MAX_HISTORY_ENTRIES)
         }
+
+        notifyOnChangeListeners()
+    }
+
+    @Synchronized
+    fun replaceAllEntries(newEntries: List<Entry>) {
+        entries.clear()
+        entries.addAll(newEntries)
+
+        notifyOnChangeListeners()
     }
 
     @Synchronized
@@ -92,7 +108,32 @@ object History {
     val size
         get() = entries.size
 
+    /**
+     * Entries sorted from the newest to the oldest
+     */
     fun listAllEntries(): List<Entry> {
         return ArrayList(entries)
+    }
+
+    /**
+     * Add a change listener. The listener will always be called on the main thread.
+     */
+    @Synchronized
+    fun addOnChangeListener(listener: () -> Unit) {
+        onChangeListeners.add(listener)
+    }
+
+    @Synchronized
+    fun removeOnChangeListener(listener: () -> Unit) {
+        onChangeListeners.remove(listener)
+    }
+
+    @Synchronized
+    private fun notifyOnChangeListeners() {
+        for (listener in onChangeListeners) {
+            mainHandler.post {
+                listener()
+            }
+        }
     }
 }

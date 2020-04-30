@@ -48,7 +48,6 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.text.HtmlCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
-import androidx.core.view.ViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
@@ -88,6 +87,7 @@ import yuku.alkitab.base.util.ExtensionManager
 import yuku.alkitab.base.util.FormattedVerseText
 import yuku.alkitab.base.util.History
 import yuku.alkitab.base.util.InstallationUtil
+import yuku.alkitab.base.util.JumpbackController
 import yuku.alkitab.base.util.Jumper
 import yuku.alkitab.base.util.LidToAri
 import yuku.alkitab.base.util.OtherAppIntegration
@@ -259,6 +259,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     private lateinit var bRight: ImageButton
     private lateinit var bVersion: TextView
     lateinit var floater: Floater
+    private lateinit var jumpbackController: JumpbackController
 
     private var dataSplit0 = VersesDataModel.EMPTY
         set(value) {
@@ -1066,6 +1067,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
     }
 
+    private val history_change = {
+        jumpbackController.processEntries(history.listAllEntries())
+    }
+
     data class IntentResult(
         val ari: Int,
         val selectVerse: Boolean = false,
@@ -1189,10 +1194,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         initNfcIfAvailable()
 
         // make shadow of jumpback button work
-        val bJumpback = findViewById<MaterialButton>(R.id.bJumpback)
-        val bJumpbackClear = findViewById<MaterialButton>(R.id.bJumpbackClear)
-
         val groupJumpback = findViewById<MaterialButtonToggleGroup>(R.id.groupJumpback)
+        val bJumpback = groupJumpback.findViewById<MaterialButton>(R.id.bJumpback)
         if (Build.VERSION.SDK_INT >= 21) {
             groupJumpback.outlineProvider = object : ViewOutlineProvider() {
                 override fun getOutline(view: View, outline: Outline) {
@@ -1201,6 +1204,16 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 }
             }
         }
+
+        jumpbackController = JumpbackController(
+            groupJumpback,
+            onJumpbackAriChange = { ari ->
+                bJumpback.text = activeSplit0.version.reference(ari)
+            },
+            onJumpbackClick = { ari ->
+                jumpToAri(ari, addSourceToHistory = false)
+            }
+        )
 
         val intentResult = processIntent(intent, "onCreate")
         val openingAri: Int
@@ -1288,6 +1301,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             }
         }
 
+        history.addOnChangeListener(history_change)
+
         App.getLbm().registerReceiver(reloadAttributeMapReceiver, IntentFilter(ACTION_ATTRIBUTE_MAP_CHANGED))
 
         Announce.checkAnnouncements()
@@ -1313,6 +1328,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     override fun onDestroy() {
         super.onDestroy()
+
+        history.removeOnChangeListener(history_change)
 
         App.getLbm().unregisterReceiver(reloadAttributeMapReceiver)
 
@@ -1649,7 +1666,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
      *
      * If successful, the destination will be added to history.
      */
-    fun jumpToAri(ari: Int) {
+    fun jumpToAri(ari: Int, addSourceToHistory: Boolean = true) {
         if (ari == 0) return
 
         val bookId = Ari.toBook(ari)
@@ -1660,8 +1677,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             return
         }
 
-        // Add source ari to history
-        history.add(getCurrentAriForHistory(), jumpback = true)
+        if (addSourceToHistory) {
+            // Add source ari to history
+            history.add(getCurrentAriForHistory(), jumpback = true)
+        }
 
         activeSplit0 = activeSplit0.copy(book = book)
         val ari_cv = display(Ari.toChapter(ari), Ari.toVerse(ari))
@@ -2664,9 +2683,12 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 if (type == Type.xref) {
                     val dialog = XrefDialog.newInstance(arif)
 
-                    val verseSelectedListener = { _: Int, ari_target: Int ->
+                    val verseSelectedListener = { arif_source: Int, ari_target: Int ->
                         dialog.dismiss()
-                        jumpToAri(ari_target)
+
+                        val ari_source = arif_source ushr 8
+                        history.add(ari_source, jumpback = true)
+                        jumpToAri(ari_target, addSourceToHistory = false)
                     }
 
                     if (source === lsSplit0 || activeSplit1 == null) { // use activeVersion
