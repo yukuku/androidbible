@@ -1238,7 +1238,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         display(Ari.toChapter(openingAri), Ari.toVerse(openingAri))
 
         if (intentResult != null) { // also add to history if not opening the last seen verse
-            addToHistory(openingAri, recordJumpback = false)
+            history.add(openingAri, jumpback = false)
         }
 
         run {
@@ -1275,19 +1275,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
         App.getLbm().registerReceiver(needsRestartReceiver, IntentFilter(ACTION_NEEDS_RESTART))
         AppLog.d(TAG, "@@onCreate end")
-    }
-
-    /**
-     * Add the given ari to the history.
-     *
-     * @param recordJumpback If true, the currently shown verse will also be added as a [History.Entry.jumpback] entry.
-     */
-    private fun addToHistory(ari: Int, recordJumpback: Boolean = true) {
-        if (ari == 0) return
-        if (recordJumpback) {
-            history.add(Ari.encode(activeSplit0.book.bookId, chapter_1, getVerse_1BasedOnScrolls()), true)
-        }
-        history.add(ari, false)
     }
 
     private fun calculateTextSizeMult(versionId: String?): Float {
@@ -1373,6 +1360,16 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             val record = NdefRecord(NdefRecord.TNF_MIME_MEDIA, "application/vnd.yuku.alkitab.nfc.beam".toByteArray(), ByteArray(0), payload)
             NdefMessage(arrayOf(record, NdefRecord.createApplicationRecord(packageName)))
         }, this)
+    }
+
+    private fun getCurrentAriForHistory(): Int {
+        val bookId = activeSplit0.book.bookId
+        val chapter_1 = chapter_1
+        val verse_1 = getVerse_1BasedOnScrolls()
+
+        // For history, verse_1 == 1 will be treated as the beginning of the chapter,
+        // and the verse_1 will be set to 0.
+        return Ari.encode(bookId, chapter_1, if (verse_1 == 1) 0 else verse_1)
     }
 
     /**
@@ -1610,6 +1607,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             activeSplit0.book
         }
 
+        // Add source ari to history
+        history.add(getCurrentAriForHistory(), jumpback = true)
+
         // set book
         activeSplit0 = activeSplit0.copy(book = selected)
 
@@ -1621,7 +1621,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             display(chapter, verse)
         }
 
-        addToHistory(Ari.encode(selected.bookId, ari_cv))
+        // Add target ari to history
+        history.add(Ari.encode(selected.bookId, ari_cv), jumpback = false)
     }
 
     /**
@@ -1640,11 +1641,14 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             return
         }
 
+        // Add source ari to history
+        history.add(getCurrentAriForHistory(), jumpback = true)
+
         activeSplit0 = activeSplit0.copy(book = book)
         val ari_cv = display(Ari.toChapter(ari), Ari.toVerse(ari))
 
         // Add target ari to history
-        addToHistory(ari)
+        history.add(ari, jumpback = false)
 
         // call attention to the verse only if the displayed verse is equal to the requested verse
         if (ari == Ari.encode(activeSplit0.book.bookId, ari_cv)) {
@@ -2213,6 +2217,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             if (result != null) {
                 val ari_cv: Int
 
+                // Add source ari to history
+                history.add(getCurrentAriForHistory(), jumpback = true)
+
                 if (result.bookId == -1) {
                     // stay on the same book
                     ari_cv = display(result.chapter_1, result.verse_1)
@@ -2238,13 +2245,16 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     }
                 }
 
-                if (result.verse_1 == 0 && Ari.toVerse(ari_cv) == 1) {
+                val target_ari = if (result.verse_1 == 0 && Ari.toVerse(ari_cv) == 1) {
                     // verse 0 requested, but display method causes it to show verse_1 1.
                     // However, we want to store verse_1 0 on the history.
-                    addToHistory(Ari.encode(activeSplit0.book.bookId, Ari.toChapter(ari_cv), 0))
+                    Ari.encode(activeSplit0.book.bookId, Ari.toChapter(ari_cv), 0)
                 } else {
-                    addToHistory(Ari.encode(activeSplit0.book.bookId, ari_cv))
+                    Ari.encode(activeSplit0.book.bookId, ari_cv)
                 }
+
+                // Add target ari to history
+                history.add(target_ari, jumpback = false)
             }
         } else if (requestCode == RequestCodes.FromActivity.Share && resultCode == Activity.RESULT_OK) {
             val result = ShareActivity.obtainResult(data)
