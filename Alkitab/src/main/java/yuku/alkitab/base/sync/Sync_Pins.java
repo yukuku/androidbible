@@ -3,6 +3,7 @@ package yuku.alkitab.base.sync;
 import android.util.Pair;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -110,6 +111,7 @@ public class Sync_Pins {
 
 	@Keep
 	public static class Content {
+		@Nullable
 		public List<Pin> pins;
 
 		static Comparator<Pin> listSorter = (lhs, rhs) -> lhs.preset_id - rhs.preset_id;

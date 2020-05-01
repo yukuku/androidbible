@@ -3,6 +3,7 @@ package yuku.alkitab.base.sync;
 import android.util.Pair;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -130,7 +131,9 @@ public class Sync_Rp {
 
 	@Keep
 	public static class Content {
+		@Nullable
 		public Long startTime; // time in millis when the reading plan has started. Can be null, if no such data is found. Server should always prioritize entities with non-null startTime.
+		@Nullable
 		public Set<Integer> done; // reading codes that are checked
 
 		//region boilerplate equals and hashCode methods
