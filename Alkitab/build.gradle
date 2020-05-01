@@ -144,6 +144,9 @@ dependencies {
     // UI
     implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
     implementation "com.afollestad.material-dialogs:commons:$materialDialogsVersion"
+
+    implementation "me.toptas.fancyshowcase:fancyshowcaseview:$fancyShowcaseView"
+
 }
 
 apply plugin: 'com.google.gms.google-services'
