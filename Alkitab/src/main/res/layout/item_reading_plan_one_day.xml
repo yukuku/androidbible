@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/llOneDayReadingPlan"
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/llOneDayReadingPlan"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical"
-	android:paddingEnd="0dp"
-	android:paddingStart="@dimen/padding_medium">
+	android:paddingStart="@dimen/padding_medium"
+	android:paddingEnd="0dp">
 
 	<TextView
 		android:id="@android:id/text1"
@@ -16,8 +16,7 @@
 		android:gravity="bottom"
 		android:minHeight="48dp"
 		android:paddingBottom="4dp"
-		android:textColor="#898989"
-		android:textSize="12sp"
+		android:textAppearance="?textAppearanceCaption"
 		tools:text="Dayname, 13 February 2015" />
 
 </LinearLayout>

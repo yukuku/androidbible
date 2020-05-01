@@ -16,8 +16,7 @@
 			android:layout_height="wrap_content"
 			android:layout_gravity="bottom"
 			android:layout_marginBottom="4dp"
-			android:textColor="#898989"
-			android:textSize="12sp"
+			android:textAppearance="?textAppearanceCaption"
 			tools:text="Language Name" />
 
 	</FrameLayout>
@@ -37,7 +36,6 @@
 			android:background="?selectableItemBackground"
 			android:drawablePadding="8dp"
 			android:gravity="center_vertical"
-			android:textAppearance="?android:textAppearanceMedium"
 			tools:text="Long version name" />
 
 		<FrameLayout

@@ -67,7 +67,7 @@ abstract class BaseActivity : AppCompatActivity(), ActivityCompat.OnRequestPermi
                 actionBar.setBackgroundDrawable(ColorDrawable(tv.data))
 
                 if (Build.VERSION.SDK_INT >= 21) {
-                    window.statusBarColor = ResourcesCompat.getColor(resources, R.color.primary_variant, theme)
+                    window.statusBarColor = ResourcesCompat.getColor(resources, R.color.primary_dark, theme)
                 }
             }
         }

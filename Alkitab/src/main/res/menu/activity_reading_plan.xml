@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:ignore="AlwaysShowAction">
+
 	<item
 		android:id="@+id/menuDownload"
-		android:icon="@drawable/ic_menu_add_light"
+		android:icon="@drawable/ic_add_black_24dp"
 		android:title="@string/rp_menuDownload"
 		app:showAsAction="always" />
+
 	<item
 		android:id="@+id/menuDelete"
-		android:icon="@drawable/ic_action_discard"
+		android:icon="@drawable/ic_delete_black_24dp"
 		android:title="@string/rp_menuDelete"
 		app:showAsAction="always" />
 </menu>

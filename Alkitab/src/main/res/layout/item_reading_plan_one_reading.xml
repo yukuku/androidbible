@@ -6,17 +6,17 @@
 	android:gravity="center_vertical"
 	android:orientation="horizontal">
 
-	<Button
+	<com.google.android.material.button.MaterialButton
 		android:id="@+id/bReference"
+		style="@style/OutlinedButton"
 		android:layout_width="0dp"
 		android:layout_height="match_parent"
+		android:layout_marginStart="16dp"
+		android:layout_marginEnd="8dp"
 		android:layout_weight="1"
-		android:background="?selectableItemBackground"
 		android:gravity="center_vertical"
-		android:paddingEnd="0dp"
 		android:paddingStart="@dimen/padding_medium"
-		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textColor="#fff"
+		android:paddingEnd="0dp"
 		tools:text="Some book name 123" />
 
 	<CheckBox

@@ -3,12 +3,12 @@
 	<!-- Gray 800 -->
 	<color name="window">#303030</color>
 
-	<!-- From https://material.io/resources/color/#!/?view.left=1&view.right=0&primary.color=90A4AE&secondary.color=40C4FF -->
+	<!-- From https://material.io/resources/color/#!/?view.left=1&view.right=0&primary.color=90A4AE&secondary.color=00B0FF -->
 	<color name="primary">#90a4ae</color>
-	<color name="primary_variant">#62757f</color>
+	<color name="primary_dark">#62757f</color>
 	<color name="on_primary">#000</color>
-	<color name="secondary">#40c4ff</color>
-	<color name="secondary_variant">#0094cc</color>
+	<color name="secondary">#00b0ff</color>
+	<color name="secondary_dark">#0081cb</color>
 	<color name="on_secondary">#000</color>
 	<color name="surface">#c1d5e0</color>
 	<color name="on_surface">#000</color>

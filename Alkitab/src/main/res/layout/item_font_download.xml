@@ -73,6 +73,6 @@
 		android:background="?android:actionBarItemBackground"
 		android:contentDescription="@string/desc_delete"
 		android:scaleType="center"
-		android:src="@drawable/ic_action_discard" />
+		android:src="@drawable/ic_delete_black_24dp" />
 
 </LinearLayout>

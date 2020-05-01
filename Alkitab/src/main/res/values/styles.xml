@@ -13,4 +13,10 @@
 		<item name="android:background">@drawable/abc_spinner_mtrl_am_alpha</item>
 		<item name="android:textSize">14sp</item>
 	</style>
+
+	<style name="OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+		<item name="android:textColor">?colorPrimaryVariant</item>
+		<item name="rippleColor">?colorPrimary</item>
+		<item name="textAllCaps">false</item>
+	</style>
 </resources>

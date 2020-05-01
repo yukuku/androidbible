@@ -2,5 +2,5 @@
 <resources>
 	<color name="keypad_text_color">#fff</color>
 	<!-- Color for something interesting -->
-	<color name="escape">#4db6ac</color>
+	<color name="escape">#008c7e</color>
 </resources>

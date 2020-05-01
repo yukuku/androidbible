@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<view android:id="@+id/left_drawer"
-	class="yuku.alkitab.base.widget.LeftDrawer$ReadingPlan"
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<view xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/left_drawer"
+	class="yuku.alkitab.base.widget.LeftDrawer$ReadingPlan"
 	android:layout_width="@dimen/left_drawer_width"
 	android:layout_height="match_parent"
 	android:layout_gravity="start"
-	android:background="#263238"
+	android:background="?colorSurface"
 	android:elevation="4dp"
 	tools:ignore="Overdraw">
 
@@ -31,23 +31,20 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:padding="8dp"
-				android:textAppearance="?android:textAppearanceSmall"
 				tools:text="Info Bla bla bla, bla bla, bla bla, bla bla, bla bla, blablabla, blablablabla." />
 
 		</androidx.core.widget.NestedScrollView>
 
-		<Button
+		<TextView
 			android:id="@+id/bRestart"
 			style="?buttonBarButtonStyle"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:drawableStart="@drawable/ic_av_skip_previous"
+			android:drawableStart="@drawable/ic_skip_previous_black_32dp"
 			android:drawablePadding="16dp"
 			android:gravity="start|center_vertical"
 			android:text="@string/rp_menuRestart"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:textColor="?android:textColorPrimary"
-			android:textSize="16sp" />
+			android:textAppearance="?textAppearanceBody1" />
 
 		<include
 			layout="@layout/left_drawer_footer"

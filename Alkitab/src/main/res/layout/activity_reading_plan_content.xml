@@ -3,13 +3,13 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:orientation="vertical">
 
 	<androidx.appcompat.widget.Toolbar
 		android:id="@+id/toolbar"
 		android:layout_width="match_parent"
-		android:layout_height="?attr/actionBarSize"
-		android:background="?attr/colorPrimary" />
+		android:layout_height="?actionBarSize" />
 
 	<FrameLayout
 		android:layout_width="match_parent"
@@ -40,16 +40,13 @@
 					android:scaleType="center"
 					android:src="@drawable/ic_navigate_before_black_24dp_disableable" />
 
-				<TextView
+				<com.google.android.material.button.MaterialButton
 					android:id="@+id/bToday"
-					style="@style/FakeSpinner"
+					style="@style/OutlinedButton"
 					android:layout_width="0dp"
 					android:layout_height="match_parent"
 					android:layout_weight="1"
 					android:contentDescription="@string/rp_navigationGoToDate"
-					android:gravity="center"
-					android:textAllCaps="true"
-					android:textStyle="bold"
 					tools:text="Dayname, 13 February 2015" />
 
 				<ImageButton

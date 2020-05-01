@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent"
+	android:layout_height="wrap_content"
 	android:orientation="vertical"
 	android:paddingStart="@dimen/padding_medium"
-	android:paddingEnd="@dimen/padding_medium"
-	android:paddingTop="@dimen/padding_medium">
+	android:paddingTop="@dimen/padding_medium"
+	android:paddingEnd="@dimen/padding_medium">
 
 	<TextView
 		android:layout_width="match_parent"
@@ -13,16 +13,15 @@
 		android:gravity="center_horizontal"
 		android:paddingBottom="4dp"
 		android:text="@string/rp_headingProgress"
-		android:textColor="#898989"
-		android:textSize="12sp" />
+		android:textAppearance="?textAppearanceCaption" />
 
 	<ProgressBar
 		android:id="@+id/pbReadingProgress"
 		style="?android:attr/progressBarStyleHorizontal"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:paddingBottom="4dp"
 		android:paddingTop="4dp"
+		android:paddingBottom="4dp"
 		android:progressDrawable="@drawable/progressbar_reading_plan" />
 
 	<TextView
@@ -30,33 +29,30 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:paddingTop="4dp"
-		android:textAppearance="?android:attr/textAppearanceMedium" />
+		android:textAppearance="?textAppearanceBody1" />
 
 	<TextView
 		android:id="@+id/tTarget"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:paddingTop="4dp"
-		android:textAppearance="?android:attr/textAppearanceMedium" />
+		android:textAppearance="?textAppearanceBody1" />
 
 	<TextView
 		android:id="@+id/tComment"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:paddingBottom="4dp"
 		android:paddingTop="4dp"
-		android:textAppearance="?android:attr/textAppearanceMedium" />
+		android:paddingBottom="4dp"
+		android:textAppearance="?textAppearanceBody1" />
 
-	<TextView
+	<com.google.android.material.button.MaterialButton
 		android:id="@+id/tDetail"
+		style="@style/OutlinedButton"
 		android:layout_width="match_parent"
 		android:layout_height="48dp"
-		android:background="?selectableItemBackground"
-		android:fontFamily="sans-serif-medium"
 		android:gravity="center_vertical"
-		android:text="@string/rp_showDetails"
-		android:textAllCaps="true"
-		android:textColor="@color/secondary" />
+		android:text="@string/rp_showDetails" />
 
 
 </LinearLayout>
