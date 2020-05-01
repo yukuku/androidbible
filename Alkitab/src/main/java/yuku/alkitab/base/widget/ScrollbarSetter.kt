@@ -27,7 +27,6 @@ object ScrollbarSetter {
             val setVerticalThumbDrawable = scrollBarClass.getDeclaredMethod("setVerticalThumbDrawable", Drawable::class.java)
             setVerticalThumbDrawable.isAccessible = true
             ReflectionHolder(scrollCacheField, scrollBarField, setVerticalThumbDrawable)
-
         } catch (e: Exception) {
             AppLog.e(TAG, "reflection init error", e)
             null

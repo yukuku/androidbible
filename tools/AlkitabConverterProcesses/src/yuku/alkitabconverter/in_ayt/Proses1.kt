@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
         var splitFile: PrintWriter? = null
         for (line in lines) {
             var baris = line
-            
+
             // remove ALL BOM (0xfeff)
             if (baris.isNotEmpty()) {
                 baris = baris.replace("\ufeff", "")

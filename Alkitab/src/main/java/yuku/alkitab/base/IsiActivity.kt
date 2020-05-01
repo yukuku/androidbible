@@ -445,11 +445,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
         override fun onGlobalLayout() {
             if (lastSize.x == splitRoot.width && lastSize.y == splitRoot.height) {
-                return  // no need to layout now
+                return // no need to layout now
             }
 
             if (activeSplit1 == null) {
-                return  // we are not splitting
+                return // we are not splitting
             }
 
             configureSplitSizes()
@@ -1129,15 +1129,15 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         floater.setListener(floater_listener)
 
         // TODO(VersesView revamp): Move it somewhere else
-        //		lsSplit0.setOnKeyListener((v, keyCode, event) -> {
-        //			int action = event.getAction();
-        //			if (action == KeyEvent.ACTION_DOWN) {
-        //				return consumeKey(keyCode);
-        //			} else if (action == KeyEvent.ACTION_MULTIPLE) {
-        //				return consumeKey(keyCode);
-        //			}
-        //			return false;
-        //		});
+        // 		lsSplit0.setOnKeyListener((v, keyCode, event) -> {
+        // 			int action = event.getAction();
+        // 			if (action == KeyEvent.ACTION_DOWN) {
+        // 				return consumeKey(keyCode);
+        // 			} else if (action == KeyEvent.ACTION_MULTIPLE) {
+        // 				return consumeKey(keyCode);
+        // 			}
+        // 			return false;
+        // 		});
 
         // listeners
         lsSplit0 = VersesControllerImpl(
@@ -1395,7 +1395,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             } catch (e: IllegalStateException) {
                 AppLog.e(TAG, "sometimes this happens.", e)
             }
-
         }
     }
 
@@ -1431,7 +1430,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             val obj = JSONObject(json)
             val ari = obj.optInt("ari", -1)
             if (ari == -1) null else IntentResult(ari)
-
         } catch (e: JSONException) {
             AppLog.e(TAG, "Malformed json from nfc", e)
             null
@@ -1462,7 +1460,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             display(chapter_1, getVerse_1BasedOnScrolls(), false)
 
             App.getLbm().sendBroadcast(Intent(ACTION_ACTIVE_VERSION_CHANGED))
-
         } catch (e: Throwable) { // so we don't crash on the beginning of the app
             AppLog.e(TAG, "Error opening main version", e)
 
@@ -1499,7 +1496,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
             return false
         }
-
     }
 
     private fun configureTextAppearancePanelForSplitVersion() {
@@ -1978,7 +1974,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     @TargetApi(19)
     fun setFullScreen(yes: Boolean) {
-        if (fullScreen == yes) return  // no change
+        if (fullScreen == yes) return // no change
 
         val decorView = window.decorView
 
@@ -2128,7 +2124,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     private fun openSplitDisplay() {
         if (splitHandleButton.visibility == View.VISIBLE) {
-            return  // it's already split, no need to do anything
+            return // it's already split, no need to do anything
         }
 
         configureSplitSizes()
@@ -2192,7 +2188,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     private fun closeSplitDisplay() {
         if (splitHandleButton.visibility == View.GONE) {
-            return  // it's already not split, no need to do anything
+            return // it's already not split, no need to do anything
         }
 
         splitHandleButton.visibility = View.GONE
@@ -2338,7 +2334,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     ): Boolean {
         val verses = version.loadChapterText(book, chapter_1) ?: return false
 
-        //# max is set to 30 (one chapter has a max of 30 blocks. Already almost impossible)
+        // # max is set to 30 (one chapter has a max of 30 blocks. Already almost impossible)
         val max = 30
         val tmp_pericope_aris = IntArray(max)
         val tmp_pericope_blocks = arrayOfNulls<PericopeBlock>(max)
@@ -2371,7 +2367,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             selectedVerses_1 = versesController.getCheckedVerses_1()
         }
 
-        //# fill adapter with new data. make sure all checked states are reset
+        // # fill adapter with new data. make sure all checked states are reset
         versesController.uncheckAllVerses(true)
 
         val versesAttributes = VerseAttributeLoader.load(S.getDb(), cr, ariBc, verses)
@@ -2563,7 +2559,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         } else {
                             holder.panelLabels.visibility = View.GONE
                         }
-
                     } else if (kind == Marker.Kind.note) {
                         holder.lCaption.text = reference
                         Appearances.applyMarkerTitleTextAppearance(holder.lCaption, textSizeMult)
@@ -2624,7 +2619,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     .positiveText(R.string.ok)
                     .show()
             }
-
         }
     }
 

@@ -15,7 +15,6 @@ import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.debug.R
 import java.io.IOException
 
-
 private const val TAG = "ExoplayerController"
 
 /**
@@ -45,7 +44,6 @@ class ExoplayerController(appContext: Context) : MediaController() {
                         .createMediaSource(Uri.parse(url))
 
                     mediaPlayerPrepare(mediaSource, playInLoop)
-
                 } catch (e: IOException) {
                     AppLog.e(TAG, "buffering to local cache", e)
                     state = State.error
@@ -53,7 +51,7 @@ class ExoplayerController(appContext: Context) : MediaController() {
             }
             State.preparing -> {
             }
-            State.playing ->  // pause button pressed
+            State.playing -> // pause button pressed
                 if (playInLoop) { // looping play is selected, but we are already playing. So just set looping parameter.
                     mp.repeatMode = Player.REPEAT_MODE_ONE
                 } else {
@@ -119,7 +117,6 @@ class ExoplayerController(appContext: Context) : MediaController() {
             // Prepare the player with the source.
             mp.repeatMode = if (playInLoop) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
             mp.prepare(mediaSource)
-
         } catch (e: IOException) {
             AppLog.e(TAG, "mp setDataSource", e)
             state = State.error
