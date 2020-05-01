@@ -49,6 +49,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
+import me.toptas.fancyshowcase.FancyShowCaseView
+import me.toptas.fancyshowcase.listener.DismissListener
 import org.json.JSONException
 import org.json.JSONObject
 import yuku.afw.storage.Preferences
@@ -1825,14 +1827,23 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
 
         if (!Preferences.getBoolean(Prefkey.history_button_understood, false) && history.size > 0) {
-            MaterialDialog.Builder(this)
-                .content(R.string.goto_button_history_tip)
-                .positiveText(R.string.ok)
-                .onPositive { _, _ ->
-                    Preferences.setBoolean(Prefkey.history_button_understood, true)
-                    r()
-                }
+
+            FancyShowCaseView.Builder(this)
+                .focusOn(bGoto)
+                .title(getString(R.string.goto_button_history_tip))
+                .enableAutoTextPosition()
+                .dismissListener(object : DismissListener {
+                    override fun onDismiss(id: String?) {
+                        Preferences.setBoolean(Prefkey.history_button_understood, true)
+                        r()
+                    }
+
+                    override fun onSkipped(id: String?) = Unit
+                })
+                .closeOnTouch(true)
+                .build()
                 .show()
+
         } else {
             r()
         }
