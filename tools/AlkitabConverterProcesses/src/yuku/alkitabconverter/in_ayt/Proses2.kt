@@ -78,7 +78,7 @@ fun main(args: Array<String>) {
     teksDb.removeEmptyVerses()
     teksDb.dump()
 
-    ////////// PROSES KE YET
+    // //////// PROSES KE YET
 
     val yetOutputFile = File(OUTPUT_YET)
 
@@ -164,7 +164,6 @@ private class Handler(kitab_0: Int) : DefaultHandler2() {
                     }
                 }
             }
-
         } else if (alamat.endsWith("/f")) {
             tujuanTulis.push(tujuanTulis_footnote)
             footnote_state = 0
@@ -375,7 +374,6 @@ private class Handler(kitab_0: Int) : DefaultHandler2() {
             } else {
                 throw RuntimeException("sLevel = $sLevel not understood: $chars")
             }
-
         } else if (tujuan === tujuanTulis_xref) {
             println("\$tulis ke xref (state=$xref_state) $kitab_0 $pasal_1 $ayat_1:$chars")
             val ari = Ari.encode(kitab_0, pasal_1, ayat_1)
@@ -394,7 +392,6 @@ private class Handler(kitab_0: Int) : DefaultHandler2() {
                 2 -> xrefDb.appendText(ari, chars)
                 else -> throw RuntimeException("xref_state not supported")
             }
-
         } else if (tujuan === tujuanTulis_footnote) {
             println("\$tulis ke footnote (state=$footnote_state) $kitab_0 $pasal_1 $ayat_1:$chars")
             val ari = Ari.encode(kitab_0, pasal_1, ayat_1)

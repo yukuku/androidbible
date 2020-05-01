@@ -33,7 +33,6 @@ object LabelColorUtil {
         }
     }
 
-
     @JvmStatic
     fun getForegroundBasedOnBackground(colorRgb: Int): Int {
         val hsl = floatArrayOf(0f, 0f, 0f)

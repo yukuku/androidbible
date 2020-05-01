@@ -25,7 +25,7 @@ interface SingleChapterVerses {
      * Implement this when displaying verses in different font size for each verse.
      * For example, during comparison of different translations.
      */
-    interface WithTextSizeMult: SingleChapterVerses {
+    interface WithTextSizeMult : SingleChapterVerses {
         fun getTextSizeMult(verse_0: Int): Float
     }
 

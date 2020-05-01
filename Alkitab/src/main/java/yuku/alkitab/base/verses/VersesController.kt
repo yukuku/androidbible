@@ -41,10 +41,10 @@ interface VersesController {
     }
 
     sealed class PressResult {
-        object Left: PressResult()
-        object Right: PressResult()
-        class Consumed(val targetVerse_1: Int): PressResult()
-        object Nop: PressResult()
+        object Left : PressResult()
+        object Right : PressResult()
+        class Consumed(val targetVerse_1: Int) : PressResult()
+        object Nop : PressResult()
     }
 
     // # field ctor
