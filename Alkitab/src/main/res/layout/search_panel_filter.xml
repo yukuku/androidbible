@@ -55,6 +55,7 @@
 		style="@style/OutlinedButton"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:layout_marginEnd="16dp"
 		android:contentDescription="@string/desc_change_selected_books"
 		android:text="@string/search_select_books_button"
 		app:icon="@drawable/ic_search_book_filter"

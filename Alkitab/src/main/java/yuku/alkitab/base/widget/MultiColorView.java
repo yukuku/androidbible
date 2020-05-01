@@ -4,9 +4,9 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import androidx.appcompat.widget.AppCompatTextView;
+import com.google.android.material.button.MaterialButton;
 
-public class MultiColorView extends AppCompatTextView {
+public class MultiColorView extends MaterialButton {
 	float density;
 	Paint p;
 	int bgColor;

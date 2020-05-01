@@ -4,7 +4,8 @@
 	android:layout_width="@dimen/panel_text_appearance_width"
 	android:layout_height="wrap_content"
 	android:layout_gravity="bottom|center_horizontal"
-	android:background="#262626"
+	android:background="?colorSurface"
+	android:elevation="16dp"
 	android:orientation="vertical">
 
 	<LinearLayout
@@ -19,9 +20,7 @@
 			android:layout_weight="1"
 			android:gravity="center_vertical|start"
 			android:text="@string/text_appearance_font"
-			android:textAllCaps="true"
-			android:textSize="12sp"
-			android:textStyle="bold" />
+			android:textAppearance="?textAppearanceCaption" />
 
 		<ImageButton
 			android:id="@+id/bClose"
@@ -66,9 +65,7 @@
 			android:layout_gravity="bottom"
 			android:layout_marginStart="16dp"
 			android:text="@string/text_appearance_text_size"
-			android:textAllCaps="true"
-			android:textSize="12sp"
-			android:textStyle="bold" />
+			android:textAppearance="?textAppearanceCaption" />
 
 	</LinearLayout>
 
@@ -91,7 +88,7 @@
 			android:layout_height="48dp"
 			android:layout_marginEnd="16dp"
 			android:gravity="center_vertical|end"
-			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textAppearance="?textAppearanceBody1"
 			tools:text="17.0" />
 
 	</LinearLayout>
@@ -113,9 +110,7 @@
 				android:layout_gravity="bottom"
 				android:layout_marginStart="16dp"
 				android:layout_marginEnd="16dp"
-				android:textAllCaps="true"
-				android:textSize="12sp"
-				android:textStyle="bold"
+				android:textAppearance="?textAppearanceCaption"
 				tools:text="@string/text_appearance_text_size_for_version" />
 
 		</LinearLayout>
@@ -139,7 +134,7 @@
 				android:layout_height="48dp"
 				android:layout_marginEnd="16dp"
 				android:gravity="center_vertical|end"
-				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:textAppearance="?textAppearanceBody1"
 				tools:text="100%" />
 
 		</LinearLayout>
@@ -156,9 +151,7 @@
 			android:layout_gravity="bottom"
 			android:layout_marginStart="16dp"
 			android:text="@string/text_appearance_line_spacing"
-			android:textAllCaps="true"
-			android:textSize="12sp"
-			android:textStyle="bold" />
+			android:textAppearance="?textAppearanceCaption" />
 
 	</LinearLayout>
 
@@ -181,15 +174,16 @@
 			android:layout_height="48dp"
 			android:layout_marginEnd="16dp"
 			android:gravity="center_vertical|end"
-			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textAppearance="?textAppearanceBody1"
 			tools:text="1.05" />
 
 	</LinearLayout>
 
 	<yuku.alkitab.base.widget.MultiColorView
 		android:id="@+id/bColorTheme"
-		style="@style/FakeSpinner"
 		android:layout_width="match_parent"
-		android:layout_height="48dp" />
+		android:layout_height="48dp"
+		android:layout_marginStart="16dp"
+		android:layout_marginEnd="16dp" />
 
 </LinearLayout>

@@ -41,14 +41,12 @@
 		android:layout_gravity="center_vertical"
 		android:paddingStart="@dimen/padding_medium">
 
-		<TextView
+		<com.google.android.material.button.MaterialButton
 			android:id="@+id/bChangeBook"
-			style="@style/FakeSpinner"
 			android:layout_width="72dp"
 			android:layout_height="match_parent"
 			android:layout_gravity="end"
 			android:gravity="center"
-			android:textStyle="bold"
 			tools:text="@string/sn_bookselector_all" />
 
 		<CheckBox
