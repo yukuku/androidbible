@@ -31,7 +31,7 @@
 			android:background="?android:actionBarItemBackground"
 			android:contentDescription="@string/desc_close"
 			android:scaleType="center"
-			android:src="@drawable/ic_action_remove" />
+			android:src="@drawable/ic_close_black_24dp" />
 
 	</LinearLayout>
 

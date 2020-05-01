@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<view android:id="@+id/left_drawer"
-	class="yuku.alkitab.base.widget.LeftDrawer$Text"
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<view xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/left_drawer"
+	class="yuku.alkitab.base.widget.LeftDrawer$Text"
 	android:layout_width="@dimen/left_drawer_width"
 	android:layout_height="match_parent"
 	android:layout_gravity="start"
-	android:background="#263238"
+	android:background="?colorSurface"
 	android:elevation="4dp"
 	tools:ignore="Overdraw">
 
@@ -22,19 +22,17 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content" />
 
-		<Button
+		<TextView
 			android:id="@+id/bMarkers"
 			style="?buttonBarButtonStyle"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:drawablePadding="16dp"
 			android:drawableStart="@drawable/ic_drawer_markers"
-			android:fontFamily="sans-serif-regular"
+			android:drawablePadding="16dp"
+			android:drawableTint="@color/on_primary"
 			android:gravity="start|center_vertical"
 			android:text="@string/menu_markers"
-			android:textAllCaps="false"
-			android:textColor="#fff"
-			android:textSize="16sp" />
+			android:textAppearance="?textAppearanceBody1" />
 
 		<FrameLayout
 			android:id="@+id/panelCurrentReadingHeader"
@@ -47,8 +45,7 @@
 				android:layout_gravity="start|center_vertical"
 				android:layout_marginStart="16dp"
 				android:text="@string/left_drawer_current_reading_title"
-				android:textColor="#bebebe"
-				android:textSize="12sp" />
+				android:textAppearance="?textAppearanceCaption" />
 
 			<ImageButton
 				android:id="@+id/bCurrentReadingClose"
@@ -59,22 +56,20 @@
 				android:contentDescription="@string/desc_close"
 				android:gravity="center"
 				android:minWidth="48dp"
-				android:src="@drawable/ic_action_remove" />
+				android:src="@drawable/ic_close_black_24dp" />
 
 		</FrameLayout>
 
-		<Button
+		<TextView
 			android:id="@+id/bCurrentReadingReference"
 			style="?buttonBarButtonStyle"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
-			android:fontFamily="sans-serif-regular"
+			android:drawableTint="@color/on_primary"
 			android:gravity="center_vertical"
-			android:paddingEnd="0dp"
 			android:paddingStart="16dp"
-			android:textAllCaps="false"
-			android:textColor="#fff"
-			android:textSize="16sp"
+			android:paddingEnd="0dp"
+			android:textAppearance="?textAppearanceBody1"
 			tools:text="Genesis 1–3" />
 
 		<FrameLayout
@@ -87,8 +82,7 @@
 				android:layout_gravity="start|center_vertical"
 				android:layout_marginStart="16dp"
 				android:text="@string/menuProgress"
-				android:textColor="#bebebe"
-				android:textSize="12sp" />
+				android:textAppearance="?textAppearanceCaption" />
 
 			<ImageButton
 				android:id="@+id/bProgressMarkList"
@@ -99,7 +93,7 @@
 				android:contentDescription="@string/desc_progress_mark_list"
 				android:gravity="center"
 				android:minWidth="48dp"
-				android:src="@drawable/ic_progress_mark_list" />
+				android:src="@drawable/ic_more_horiz_black_24dp" />
 
 		</FrameLayout>
 
@@ -155,55 +149,44 @@
 
 		</LinearLayout>
 
-		<Button
+		<TextView
 			android:id="@+id/bDisplay"
 			style="?buttonBarButtonStyle"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:drawablePadding="16dp"
 			android:drawableStart="@drawable/ic_drawer_display"
-			android:fontFamily="sans-serif-regular"
+			android:drawablePadding="16dp"
+			android:drawableTint="@color/on_primary"
 			android:gravity="start|center_vertical"
 			android:text="@string/menuDisplay"
-			android:textAllCaps="false"
-			android:textColor="#fff"
-			android:textSize="16sp" />
+			android:textAppearance="?textAppearanceBody1" />
 
-		<androidx.appcompat.widget.SwitchCompat
+		<com.google.android.material.switchmaterial.SwitchMaterial
 			android:id="@+id/cFullScreen"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
-			android:layout_marginEnd="16dp"
 			android:layout_marginStart="16dp"
-			android:fontFamily="sans-serif-regular"
+			android:layout_marginEnd="16dp"
 			android:gravity="start|center_vertical"
-			android:text="@string/menuFullScreen"
-			android:textColor="#fff"
-			android:textSize="16sp" />
+			android:text="@string/menuFullScreen" />
 
-		<androidx.appcompat.widget.SwitchCompat
+		<com.google.android.material.switchmaterial.SwitchMaterial
 			android:id="@+id/cNightMode"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
-			android:layout_marginEnd="16dp"
 			android:layout_marginStart="16dp"
-			android:fontFamily="sans-serif-regular"
+			android:layout_marginEnd="16dp"
 			android:gravity="start|center_vertical"
-			android:text="@string/menuNightMode"
-			android:textColor="#fff"
-			android:textSize="16sp" />
+			android:text="@string/menuNightMode" />
 
-		<androidx.appcompat.widget.SwitchCompat
+		<com.google.android.material.switchmaterial.SwitchMaterial
 			android:id="@+id/cSplitVersion"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
-			android:layout_marginEnd="16dp"
 			android:layout_marginStart="16dp"
-			android:fontFamily="sans-serif-regular"
+			android:layout_marginEnd="16dp"
 			android:gravity="start|center_vertical"
-			android:text="@string/menuSplitVersion"
-			android:textColor="#fff"
-			android:textSize="16sp" />
+			android:text="@string/menuSplitVersion" />
 
 		<include
 			layout="@layout/left_drawer_footer"

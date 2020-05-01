@@ -3,7 +3,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:background="#37474f"
+	android:background="?colorPrimary"
 	android:elevation="4dp"
 	android:orientation="vertical"
 	android:showDividers="middle"
@@ -14,52 +14,48 @@
 		style="?buttonBarButtonStyle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:drawablePadding="16dp"
 		android:drawableStart="@drawable/ic_drawer_bible"
+		android:drawablePadding="16dp"
+		android:drawableTint="@color/on_primary"
 		android:focusable="false"
 		android:gravity="start|center_vertical"
 		android:text="@string/menuBible"
-		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textColor="?android:textColorPrimary"
-		android:textSize="16sp" />
+		android:textAppearance="?textAppearanceBody1" />
 
 	<TextView
 		android:id="@+id/bDevotion"
 		style="?buttonBarButtonStyle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:drawablePadding="16dp"
 		android:drawableStart="@drawable/ic_drawer_devotion"
+		android:drawablePadding="16dp"
+		android:drawableTint="@color/on_primary"
 		android:gravity="start|center_vertical"
 		android:text="@string/menuDevotion"
-		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textColor="?android:textColorPrimary"
-		android:textSize="16sp" />
+		android:textAppearance="?textAppearanceBody1" />
 
 	<TextView
 		android:id="@+id/bReadingPlan"
 		style="?buttonBarButtonStyle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:drawablePadding="16dp"
 		android:drawableStart="@drawable/ic_drawer_reading_plan"
+		android:drawablePadding="16dp"
+		android:drawableTint="@color/on_primary"
 		android:gravity="start|center_vertical"
 		android:text="@string/rp_menuReadingPlan"
-		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textColor="?android:textColorPrimary"
-		android:textSize="16sp" />
+		android:textAppearance="?textAppearanceBody1" />
 
 	<TextView
 		android:id="@+id/bSongs"
 		style="?buttonBarButtonStyle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:drawablePadding="16dp"
 		android:drawableStart="@drawable/ic_drawer_songs"
+		android:drawablePadding="16dp"
+		android:drawableTint="@color/on_primary"
 		android:gravity="start|center_vertical"
 		android:text="@string/menuSongs"
-		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textColor="?android:textColorPrimary"
-		android:textSize="16sp" />
+		android:textAppearance="?textAppearanceBody1" />
 
 </LinearLayout>

@@ -61,7 +61,7 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;
 		ab.setDisplayHomeAsUpEnabled(true);
-		ab.setHomeAsUpIndicator(R.drawable.ic_action_remove);
+		ab.setHomeAsUpIndicator(R.drawable.ic_close_black_24dp);
 
 		final ListView lsVersionsAppWidget = findViewById(R.id.lsVersionsAppWidget);
 		final Button bOk = findViewById(R.id.bOk);

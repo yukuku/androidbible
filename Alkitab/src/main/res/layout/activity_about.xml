@@ -8,8 +8,7 @@
 	<androidx.appcompat.widget.Toolbar
 		android:id="@+id/toolbar"
 		android:layout_width="match_parent"
-		android:layout_height="?attr/actionBarSize"
-		android:background="@color/primary" />
+		android:layout_height="?actionBarSize" />
 
 	<androidx.core.widget.NestedScrollView
 		android:id="@+id/root"
@@ -25,8 +24,8 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginStart="16dp"
-				android:layout_marginEnd="16dp"
 				android:layout_marginTop="16dp"
+				android:layout_marginEnd="16dp"
 				android:gravity="center_horizontal"
 				android:orientation="vertical"
 				android:paddingStart="24dp"
@@ -47,7 +46,6 @@
 					android:fontFamily="sans-serif-medium"
 					android:gravity="center"
 					android:text="@string/app_name"
-					android:textColor="#fff"
 					android:textSize="24sp" />
 
 				<TextView
@@ -66,12 +64,11 @@
 					android:id="@+id/tAboutTextDesc"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_marginBottom="24dp"
 					android:layout_marginTop="16dp"
+					android:layout_marginBottom="24dp"
 					android:autoLink="all"
 					android:gravity="center_horizontal"
 					android:text="@string/about_text_desc"
-					android:textColor="#fff"
 					android:textSize="16sp" />
 
 			</LinearLayout>
@@ -114,8 +111,8 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginStart="16dp"
-				android:layout_marginEnd="16dp"
 				android:layout_marginTop="16dp"
+				android:layout_marginEnd="16dp"
 				android:background="#2a2a2a"
 				android:elevation="4dp"
 				android:foreground="?selectableItemBackground"
@@ -139,8 +136,8 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginStart="16dp"
-				android:layout_marginEnd="16dp"
 				android:layout_marginTop="16dp"
+				android:layout_marginEnd="16dp"
 				android:background="#2a2a2a"
 				android:elevation="4dp"
 				android:foreground="?selectableItemBackground"
@@ -164,8 +161,8 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginStart="16dp"
-				android:layout_marginEnd="16dp"
 				android:layout_marginTop="16dp"
+				android:layout_marginEnd="16dp"
 				android:background="#2a2a2a"
 				android:elevation="4dp"
 				android:foreground="?selectableItemBackground"
@@ -189,8 +186,8 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginStart="16dp"
-				android:layout_marginEnd="16dp"
 				android:layout_marginTop="16dp"
+				android:layout_marginEnd="16dp"
 				android:background="#2a2a2a"
 				android:elevation="4dp"
 				android:foreground="?selectableItemBackground"
@@ -214,8 +211,8 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginStart="16dp"
-				android:layout_marginEnd="16dp"
 				android:layout_marginTop="16dp"
+				android:layout_marginEnd="16dp"
 				android:background="#2a2a2a"
 				android:elevation="4dp"
 				android:foreground="?selectableItemBackground"
@@ -237,9 +234,9 @@
 			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginBottom="24dp"
 				android:layout_marginStart="16dp"
 				android:layout_marginEnd="16dp"
+				android:layout_marginBottom="24dp"
 				android:gravity="center_horizontal"
 				android:orientation="vertical"
 				android:paddingStart="24dp"

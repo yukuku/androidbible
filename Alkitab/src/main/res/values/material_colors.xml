@@ -10,6 +10,8 @@
 	<color name="secondary">#40c4ff</color>
 	<color name="secondary_variant">#0094cc</color>
 	<color name="on_secondary">#000</color>
+	<color name="surface">#c1d5e0</color>
+	<color name="on_surface">#000</color>
 
 	<!--
 	Required so that in preference support library this color will be used.
