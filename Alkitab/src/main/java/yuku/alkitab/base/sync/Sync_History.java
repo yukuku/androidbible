@@ -3,6 +3,7 @@ package yuku.alkitab.base.sync;
 import android.util.Pair;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -92,8 +93,11 @@ public class Sync_History {
 
 	@Keep
 	public static class Content {
+		@Nullable
 		public Integer ari;
+		@Nullable
 		public Long timestamp;
+		@Nullable
 		public Boolean jumpback;
 
 		//region boilerplate equals and hashCode methods

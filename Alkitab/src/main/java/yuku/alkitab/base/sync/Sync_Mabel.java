@@ -180,16 +180,27 @@ public class Sync_Mabel {
 	 */
 	@Keep
 	public static class Content {
+		@Nullable
 		public Integer ari; // marker
+		@Nullable
 		public Integer kind; // marker
+		@Nullable
 		public String caption; // marker
+		@Nullable
 		public Integer verseCount; // marker
+		@Nullable
 		public Integer createTime; // marker
+		@Nullable
 		public Integer modifyTime; // marker
+		@Nullable
 		public String title; // label
+		@Nullable
 		public Integer ordering; // label
+		@Nullable
 		public String backgroundColor; // label
+		@Nullable
 		public String marker_gid; // marker_label
+		@Nullable
 		public String label_gid; // marker_label
 
 		//region boilerplate equals and hashCode methods
