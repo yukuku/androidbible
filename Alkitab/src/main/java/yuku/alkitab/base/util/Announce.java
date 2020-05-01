@@ -107,7 +107,7 @@ public abstract class Announce {
 				.setContentTitle(Localized.string(R.string.announce_notif_title, Localized.string(R.string.app_name)))
 				.setContentText(unreadAnnouncements.size() == 1 ? unreadAnnouncements.get(0).title : Localized.string(R.string.announce_notif_number_new_announcements, unreadAnnouncements.size()))
 				.setSmallIcon(R.drawable.ic_stat_announce)
-				.setColor(ContextCompat.getColor(App.context, R.color.accent))
+				.setColor(ContextCompat.getColor(App.context, R.color.secondary))
 				.setContentIntent(PendingIntent.getActivity(App.context, Arrays.hashCode(announcementIds), HelpActivity.createViewAnnouncementIntent(announcementIds), PendingIntent.FLAG_UPDATE_CURRENT))
 				.setAutoCancel(true);
 

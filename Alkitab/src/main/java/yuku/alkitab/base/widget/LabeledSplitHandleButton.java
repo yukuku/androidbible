@@ -75,7 +75,7 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 		bezelPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
 		initializePrimaryColor();
-		accentColor = ResourcesCompat.getColor(getResources(), R.color.accent, getContext().getTheme());
+		accentColor = ResourcesCompat.getColor(getResources(), R.color.secondary, getContext().getTheme());
 		accentColorPaint.setColor(accentColor);
 		accentColorPaint.setAntiAlias(true);
 

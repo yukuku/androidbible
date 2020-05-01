@@ -112,7 +112,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		actionBar = getSupportActionBar();
 		assert actionBar != null;
 		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
+		actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
 
 		llNavigations = findViewById(R.id.llNavigations);
 		flNoData = findViewById(R.id.flNoDataContainer);

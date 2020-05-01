@@ -1,57 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:paddingEnd="0dp"
-	android:paddingStart="12dp">
+	android:paddingStart="12dp"
+	android:paddingEnd="0dp">
 
 	<CheckBox
 		android:id="@+id/cFilterOlds"
 		android:layout_width="wrap_content"
-		android:layout_height="32dp"
-		android:layout_alignParentStart="true"
+		android:layout_height="wrap_content"
 		android:checked="true"
-		android:text="@string/perj_lama" />
+		android:text="@string/perj_lama"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
 
 	<CheckBox
 		android:id="@+id/cFilterNews"
 		android:layout_width="wrap_content"
-		android:layout_height="32dp"
-		android:layout_alignBaseline="@+id/cFilterOlds"
+		android:layout_height="wrap_content"
 		android:layout_marginStart="8dp"
-		android:layout_toEndOf="@+id/cFilterOlds"
 		android:checked="true"
-		android:text="@string/perj_baru" />
-
-	<ImageButton
-		android:id="@+id/bEditFilter"
-		style="?buttonBarButtonStyle"
-		android:layout_width="48dp"
-		android:layout_height="48dp"
-		android:layout_alignParentEnd="true"
-		android:contentDescription="@string/desc_change_selected_books"
-		android:src="@drawable/ic_search_book_filter" />
+		android:text="@string/perj_baru"
+		app:layout_constraintStart_toEndOf="@+id/cFilterOlds"
+		app:layout_constraintTop_toTopOf="parent" />
 
 	<TextView
 		android:id="@+id/tFilterAdvanced"
 		android:layout_width="wrap_content"
-		android:layout_height="32dp"
-		android:layout_alignParentStart="false"
-		android:layout_below="@+id/cFilterOlds"
+		android:layout_height="wrap_content"
 		android:layout_marginStart="32dp"
 		android:gravity="center_vertical"
 		android:maxLines="2"
-		android:textColor="?android:attr/textColorPrimaryDisableOnly"
+		android:minHeight="48dp"
+		android:textColor="?colorOnSurface"
 		android:textSize="14sp"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/cFilterOlds"
 		tools:text="@string/search_filter_multiple_books_selected" />
 
 	<CheckBox
 		android:id="@+id/cFilterSingleBook"
 		android:layout_width="wrap_content"
-		android:layout_height="32dp"
-		android:layout_below="@+id/cFilterOlds"
+		android:layout_height="wrap_content"
+		android:minHeight="48dp"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/cFilterOlds"
 		tools:text="(book name) only"
-		tools:visibility="gone" />
+		tools:visibility="invisible" />
 
-</RelativeLayout>
+	<com.google.android.material.button.MaterialButton
+		android:id="@+id/bEditFilter"
+		style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:contentDescription="@string/desc_change_selected_books"
+		android:text="@string/search_select_books_button"
+		app:icon="@drawable/ic_search_book_filter"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/cFilterOlds" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

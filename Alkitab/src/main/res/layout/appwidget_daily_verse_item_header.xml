@@ -37,7 +37,7 @@
 		android:layout_toStartOf="@+id/bNext"
 		android:background="?android:selectableItemBackground"
 		android:contentDescription="@string/desc_previous_day"
-		android:src="@drawable/ic_nav_start_light" />
+		android:src="@drawable/ic_navigate_before_black_24dp" />
 
 	<ImageButton
 		android:id="@+id/bNext"
@@ -49,5 +49,5 @@
 		android:layout_marginEnd="4dp"
 		android:background="?android:selectableItemBackground"
 		android:contentDescription="@string/desc_next_day"
-		android:src="@drawable/ic_nav_end_light" />
+		android:src="@drawable/ic_navigate_next_black_24dp" />
 </RelativeLayout>

@@ -38,6 +38,7 @@
     <string name="search_copy_selected_verses">Copy selected verses</string>
     <string name="perj_baru">New Test.</string>
     <string name="perj_lama">Old Test.</string>
+    <string name="search_select_books_button">Select books</string>
     <string name="search_bookname_only">%s only</string>
     <string name="ayat_sebelumangka">Verse</string>
     <string name="pasal_sebelumangka">Chapter</string>

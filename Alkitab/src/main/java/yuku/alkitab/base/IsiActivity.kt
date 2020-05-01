@@ -1096,7 +1096,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(false)
-            setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
+            setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp)
         }
 
         bGoto = findViewById(R.id.bGoto)

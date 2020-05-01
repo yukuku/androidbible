@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:id="@+id/overlayContainer"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
@@ -16,17 +16,15 @@
 		<androidx.appcompat.widget.Toolbar
 			android:id="@+id/toolbar"
 			android:layout_width="match_parent"
-			android:layout_height="?attr/actionBarSize"
-			android:background="?attr/colorPrimary">
+			android:layout_height="?actionBarSize">
 
-			<TextView
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/bVersion"
-				style="@style/FakeSpinner"
-				android:layout_width="72dp"
+				android:layout_width="wrap_content"
 				android:layout_height="match_parent"
 				android:layout_gravity="end"
 				android:gravity="center"
-				android:textStyle="bold"
+				android:minWidth="72dp"
 				tools:text="VERSNM" />
 
 			<yuku.alkitab.base.widget.NavFrameLayout
@@ -35,15 +33,17 @@
 
 				<yuku.alkitab.base.widget.GotoButton
 					android:id="@+id/bGoto"
-					style="?actionButtonStyle"
+					style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
 					android:layout_marginStart="@dimen/nav_goto_side_margin"
 					android:layout_marginEnd="@dimen/nav_goto_side_margin"
 					android:fontFamily="sans-serif-medium"
 					android:includeFontPadding="false"
+					android:letterSpacing="0.0"
 					android:paddingStart="0dp"
 					android:paddingEnd="0dp"
+					android:textAllCaps="false"
 					android:textSize="16sp"
 					tools:text="Long Name Of Book 123" />
 
@@ -55,7 +55,7 @@
 					android:layout_gravity="start"
 					android:contentDescription="@string/desc_previous_chapter"
 					android:scaleType="center"
-					android:src="@drawable/ic_nav_start_light" />
+					android:src="@drawable/ic_navigate_before_black_24dp" />
 
 				<ImageButton
 					android:id="@+id/bRight"
@@ -66,7 +66,7 @@
 					android:contentDescription="@string/desc_next_chapter"
 					android:padding="16dp"
 					android:scaleType="center"
-					android:src="@drawable/ic_nav_end_light" />
+					android:src="@drawable/ic_navigate_next_black_24dp" />
 			</yuku.alkitab.base.widget.NavFrameLayout>
 
 		</androidx.appcompat.widget.Toolbar>
@@ -135,7 +135,7 @@
 			android:layout_height="wrap_content"
 			android:textAllCaps="false"
 			android:textColor="#000"
-			app:backgroundTint="@color/accent"
+			app:backgroundTint="@color/secondary"
 			app:icon="@drawable/ic_keyboard_return_black_16dp"
 			app:iconGravity="textStart"
 			app:iconTint="@null"
@@ -147,7 +147,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:minWidth="0dp"
-			app:backgroundTint="@color/accent"
+			app:backgroundTint="@color/secondary"
 			app:icon="@drawable/ic_clear_black_16dp"
 			app:iconPadding="0dp"
 			app:iconTint="@null" />

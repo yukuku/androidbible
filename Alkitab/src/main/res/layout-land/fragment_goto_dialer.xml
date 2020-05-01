@@ -191,7 +191,7 @@
 			android:id="@+id/bDigitBackspace"
 			style="@style/KeypadButton"
 			android:contentDescription="@string/desc_backspace"
-			android:src="@drawable/ic_keypad_backspace"
+			android:src="@drawable/ic_backspace_white_24dp"
 			app:layout_heightPercent="50%"
 			app:layout_marginStartPercent="83.3%"
 			app:layout_marginTopPercent="0%"

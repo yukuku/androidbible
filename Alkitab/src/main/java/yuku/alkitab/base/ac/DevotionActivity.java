@@ -306,7 +306,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		final ActionBar actionBar = getSupportActionBar();
 		assert actionBar != null;
 		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
+		actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
 
 		root = findViewById(R.id.root);
 		lContent = findViewById(R.id.lContent);

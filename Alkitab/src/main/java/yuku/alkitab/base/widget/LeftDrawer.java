@@ -128,7 +128,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 	}
 
 	void setDrawerItemSelected(@NonNull TextView drawerItem) {
-		final int selectedTextColor = ResourcesCompat.getColor(getResources(), R.color.accent, getContext().getTheme());
+		final int selectedTextColor = ResourcesCompat.getColor(getResources(), R.color.secondary, getContext().getTheme());
 		drawerItem.setTextColor(selectedTextColor);
 		drawerItem.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
 	}

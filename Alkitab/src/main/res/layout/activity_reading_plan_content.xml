@@ -38,7 +38,7 @@
 					android:contentDescription="@string/rp_navigationPreviousDay"
 					android:padding="16dp"
 					android:scaleType="center"
-					android:src="@drawable/ic_nav_start_light_disableable" />
+					android:src="@drawable/ic_navigate_before_black_24dp_disableable" />
 
 				<TextView
 					android:id="@+id/bToday"
@@ -60,7 +60,7 @@
 					android:contentDescription="@string/rp_navigationNextDay"
 					android:padding="16dp"
 					android:scaleType="center"
-					android:src="@drawable/ic_nav_end_light_disableable" />
+					android:src="@drawable/ic_navigate_next_black_24dp_disableable" />
 			</LinearLayout>
 
 			<ListView

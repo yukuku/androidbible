@@ -54,7 +54,7 @@
 				style="@style/SongCodeKeypadButton"
 				android:contentDescription="@string/desc_backspace"
 				android:scaleType="center"
-				android:src="@drawable/ic_keypad_backspace" />
+				android:src="@drawable/ic_backspace_white_24dp" />
 		</LinearLayout>
 
 

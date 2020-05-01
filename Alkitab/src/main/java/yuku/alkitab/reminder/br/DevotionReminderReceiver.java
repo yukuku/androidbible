@@ -36,7 +36,7 @@ public class DevotionReminderReceiver extends BroadcastReceiver {
 			.setContentText(DevotionReminder.getNotificationText())
 			.setContentTitle(context.getString(R.string.dr_notification_title))
 			.setContentIntent(pi)
-			.setColor(ResourcesCompat.getColor(context.getResources(), R.color.accent, context.getTheme()))
+			.setColor(ResourcesCompat.getColor(context.getResources(), R.color.secondary, context.getTheme()))
 			.setSmallIcon(R.drawable.ic_stat_reminder);
 
 		String reminder_sound = Preferences.getString(DevotionReminder.REMINDER_SOUND);

@@ -12,6 +12,5 @@
 	<style name="FakeSpinner">
 		<item name="android:background">@drawable/abc_spinner_mtrl_am_alpha</item>
 		<item name="android:textSize">14sp</item>
-		<item name="android:textColor">#fff</item>
 	</style>
 </resources>

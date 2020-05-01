@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<style name="Theme.Alkitab.Base" parent="Theme.MaterialComponents.NoActionBar">
+	<style name="Theme.Alkitab.Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 		<item name="colorPrimary">@color/primary</item>
-		<item name="colorPrimaryDark">@color/primary_dark</item>
-		<item name="colorAccent">@color/accent</item>
+		<item name="colorPrimaryVariant">@color/primary_variant</item>
+		<item name="colorOnPrimary">@color/on_primary</item>
+		<item name="colorSecondary">@color/secondary</item>
+		<item name="colorSecondaryVariant">@color/secondary_variant</item>
+		<item name="colorOnSecondary">@color/on_secondary</item>
 		<item name="windowActionModeOverlay">true</item>
-		<item name="android:textColorLink">@color/accent</item>
+		<item name="android:textColorLink">@color/secondary</item>
 		<item name="android:windowBackground">@color/window</item>
 		<item name="actionModeStyle">@style/SmallerTitleActionModeStyle</item>
 		<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
@@ -18,8 +21,9 @@
 		<item name="windowNoTitle">true</item>
 		<item name="android:windowNoTitle">true</item>
 		<item name="colorPrimary">@color/primary</item>
-		<item name="colorPrimaryDark">@color/primary_dark</item>
-		<item name="colorAccent">@color/accent</item>
+		<item name="colorPrimaryVariant">@color/primary_variant</item>
+		<item name="colorSecondary">@color/secondary</item>
+		<item name="colorSecondaryVariant">@color/secondary_variant</item>
 		<item name="android:windowBackground">@color/window</item>
 	</style>
 

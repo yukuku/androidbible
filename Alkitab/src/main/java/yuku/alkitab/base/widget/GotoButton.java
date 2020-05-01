@@ -3,11 +3,11 @@ package yuku.alkitab.base.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.view.MotionEventCompat;
+import com.google.android.material.button.MaterialButton;
 import yuku.alkitab.debug.R;
 
-public class GotoButton extends AppCompatButton {
+public class GotoButton extends MaterialButton {
 	public interface FloaterDragListener {
 		void onFloaterDragStart(float screenX, float screenY);
 

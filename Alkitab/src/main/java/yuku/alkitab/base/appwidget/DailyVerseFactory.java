@@ -98,8 +98,8 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 
 		if (savedState.darkText) {
 			rv.setTextColor(R.id.tReference, Color.BLACK);
-			rv.setImageViewResource(R.id.bPrev, R.drawable.ic_nav_left_dark);
-			rv.setImageViewResource(R.id.bNext, R.drawable.ic_nav_right_dark);
+			rv.setImageViewResource(R.id.bPrev, R.drawable.ic_navigate_before_black_24dp);
+			rv.setImageViewResource(R.id.bNext, R.drawable.ic_navigate_next_black_24dp);
 		} else {
 			rv.setTextColor(R.id.tReference, Color.WHITE);
 		}

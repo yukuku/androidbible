@@ -527,13 +527,13 @@ public class SearchActivity extends BaseActivity {
 					cFilterNews.setChecked(false);
 					cFilterSingleBook.setVisibility(View.VISIBLE);
 					cFilterSingleBook.setChecked(true);
-					tFilterAdvanced.setVisibility(View.GONE);
+					tFilterAdvanced.setVisibility(View.INVISIBLE);
 				} else {
 					cFilterOlds.setVisibility(View.VISIBLE);
 					cFilterOlds.setChecked(false);
 					cFilterNews.setVisibility(View.VISIBLE);
 					cFilterNews.setChecked(false);
-					cFilterSingleBook.setVisibility(View.GONE);
+					cFilterSingleBook.setVisibility(View.INVISIBLE);
 					tFilterAdvanced.setVisibility(View.VISIBLE);
 
 					int cnt = 0;

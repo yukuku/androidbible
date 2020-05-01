@@ -827,7 +827,7 @@ public class VersionsActivity extends BaseActivity {
 
 			swiper = rootView.findViewById(R.id.swiper);
 			if (swiper != null) { // Can be null, if the layout used is fragment_versions_downloaded.
-				final int accentColor = ResourcesCompat.getColor(getResources(), R.color.accent, null);
+				final int accentColor = ResourcesCompat.getColor(getResources(), R.color.secondary, null);
 				swiper.setColorSchemeColors(accentColor, 0xffcbcbcb);
 				swiper.setOnRefreshListener(swiper_refresh);
 			}

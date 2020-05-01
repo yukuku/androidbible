@@ -94,7 +94,7 @@ public class Floater extends View {
 		activePaint.setColor(0xffffffff);
 		activePaint.setTypeface(Typeface.DEFAULT_BOLD);
 
-		final int accentColor = ResourcesCompat.getColor(getResources(), R.color.accent, getContext().getTheme());
+		final int accentColor = ResourcesCompat.getColor(getResources(), R.color.secondary, getContext().getTheme());
 
 		currentPaint = new Paint();
 		currentPaint.setColor(accentColor);
