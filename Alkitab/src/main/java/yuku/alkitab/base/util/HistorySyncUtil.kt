@@ -95,15 +95,21 @@ object HistorySyncUtil {
         content: Sync_History.Content,
         creator_id: String
     ) {
+        val newEntry = History.Entry(
+            gid = gid,
+            ari = content.ari ?: 0,
+            timestamp = content.timestamp ?: 0L,
+            creator_id = creator_id
+        )
         for (i in entries.indices) {
             if (entries[i].gid == gid) {
                 // update!
-                entries[i] = History.Entry(gid, content.ari, content.timestamp, creator_id)
+                entries[i] = newEntry
                 return
             }
         }
 
         // not found, create new one
-        entries.add(History.Entry(gid, content.ari, content.timestamp, creator_id))
+        entries.add(newEntry)
     }
 }
