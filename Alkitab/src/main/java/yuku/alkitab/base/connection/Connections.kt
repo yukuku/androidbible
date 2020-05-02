@@ -48,13 +48,11 @@ object Connections {
                 ProviderInstaller.installIfNeeded(appContext)
 
                 AppLog.d(TAG, "ProviderInstaller.installIfNeeded returns normally")
-
             } catch (e: GooglePlayServicesRepairableException) {
                 AppLog.e(TAG, "ProviderInstaller.installIfNeeded throws GooglePlayServicesRepairableException", e)
 
                 GoogleApiAvailability.getInstance()
                     .showErrorNotification(appContext, e.connectionStatusCode)
-
             } catch (e: GooglePlayServicesNotAvailableException) {
                 AppLog.e(TAG, "ProviderInstaller.installIfNeeded throws GooglePlayServicesNotAvailableException", e)
 

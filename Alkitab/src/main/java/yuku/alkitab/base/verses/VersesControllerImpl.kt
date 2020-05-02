@@ -558,16 +558,16 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
             }
         }
 
-//			{ // DUMP
-//				Log.d(TAG, "==== DUMP verse " + (id + 1));
-//				SpannedString sb = (SpannedString) lText.getText();
-//				Object[] spans = sb.getSpans(0, sb.length(), Object.class);
-//				for (Object span: spans) {
-//					int start = sb.getSpanStart(span);
-//					int end = sb.getSpanEnd(span);
-//					Log.d(TAG, "Span " + span.getClass().getSimpleName() + " " + start + ".." + end + ": " + sb.toString().substring(start, end));
-//				}
-//			}
+// 			{ // DUMP
+// 				Log.d(TAG, "==== DUMP verse " + (id + 1));
+// 				SpannedString sb = (SpannedString) lText.getText();
+// 				Object[] spans = sb.getSpans(0, sb.length(), Object.class);
+// 				for (Object span: spans) {
+// 					int start = sb.getSpanStart(span);
+// 					int end = sb.getSpanEnd(span);
+// 					Log.d(TAG, "Span " + span.getClass().getSimpleName() + " " + start + ".." + end + ": " + sb.toString().substring(start, end));
+// 				}
+// 			}
 
         // Do we need to call attention?
         if (attention.hasAny() && verse_1 in attention.verses_1) {
@@ -694,7 +694,6 @@ class PericopeHolder(private val view: PericopeHeaderItem) : ItemHolder(view) {
             sb.setSpan(ParallelSpan(ReferenceParallelClickData(parallel), parallelListener), sb_len, sb.length, 0)
         }
     }
-
 }
 
 class VersesAdapter(

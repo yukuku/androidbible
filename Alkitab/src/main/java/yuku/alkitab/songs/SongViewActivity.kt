@@ -229,12 +229,12 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         // find index of current song
         val pos = codes.indexOf(currentSong.code)
         if (pos == -1) {
-            return  // should not happen
+            return // should not happen
         }
 
         val newPos = pos + dir
         if (newPos < 0 || newPos >= codes.size) {
-            return  // can't go left or right
+            return // can't go left or right
         }
 
         val newCode = codes[newPos]
@@ -676,7 +676,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
      * <a href="protocol:B1.C1.V1-B2.C2.V2">Book 1 c1:v1-v2</a>; <a href="protocol:B3.C3.V3>Book 3 c3:v3</a>
      *
      * @param protocol null to output text
-     * @param line     scripture ref in osis
+     * @param line scripture ref in osis
      */
     private fun renderScriptureReferences(protocol: String?, line: String?): String {
         if (line.isNullOrBlank()) return ""
@@ -737,7 +737,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
     /**
      * @param compareWithRangeStart if this is the second part of a range, set this to non-null, with [0] is bookId and [1] chapter_1.
-     * @param outBcv                if not null and length is >= 3, will be filled with parsed bcv
+     * @param outBcv if not null and length is >= 3, will be filled with parsed bcv
      */
     private fun osisIdToReadable(line: String, osisId: String, compareWithRangeStart: IntArray?, outBcv: IntArray?): String? {
         var res: String? = null
@@ -1132,4 +1132,3 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         }
     }
 }
-
