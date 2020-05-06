@@ -5,13 +5,11 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class VersesViewController(val rv: RecyclerView) {
 
-
     /**
      * Updated every time [setData] or [setDataEmpty] is called.
      * Used to track data changes, so delayed scroll, etc can be prevented from happening if the data has changed.
      */
     private val dataVersionNumber = AtomicInteger()
-
 
     // Ultimate method
 

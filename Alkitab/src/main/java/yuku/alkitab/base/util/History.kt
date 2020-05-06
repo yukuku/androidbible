@@ -10,7 +10,6 @@ import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.sync.Sync
 import yuku.alkitab.base.util.InstallationUtil.getInstallationId
 import yuku.alkitab.model.util.Gid
-import java.lang.ref.WeakReference
 import java.util.ArrayList
 
 private const val MAX_HISTORY_ENTRIES = 20

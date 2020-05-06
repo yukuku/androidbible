@@ -55,7 +55,7 @@ class VersesDialogCompareVerses(
             return "ERROR" // could not load version
         }
 
-        return version.shortName ?:  mversion.shortName ?: version.longName ?: ""
+        return version.shortName ?: mversion.shortName ?: version.longName ?: ""
     }
 
     override fun getTextSizeMult(verse_0: Int): Float {

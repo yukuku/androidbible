@@ -5,7 +5,6 @@ import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import java.util.concurrent.Executors
 
-
 object Tracker {
     private lateinit var fa: FirebaseAnalytics
 

@@ -14,7 +14,6 @@ object BookColorUtil {
         }
     }
 
-
     @JvmStatic
     fun getBackground(bookId: Int): Int {
         return when (bookId) {

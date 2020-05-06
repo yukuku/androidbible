@@ -54,7 +54,7 @@ class MidiController : MediaController() {
             }
             State.preparing -> {
             }
-            State.playing ->  // pause button pressed
+            State.playing -> // pause button pressed
                 if (playInLoop) { // looping play is selected, but we are already playing. So just set looping parameter.
                     mp.isLooping = true
                 } else {
