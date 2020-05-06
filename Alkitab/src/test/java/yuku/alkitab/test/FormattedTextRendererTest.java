@@ -91,6 +91,7 @@ public class FormattedTextRendererTest extends TestCase {
 		};
 	}
 
+	@SuppressWarnings("SameParameterValue")
 	SpannableStringBuilder mockSb(String prefix) {
 		final SpannableStringBuilder res = mockSb();
 		res.append(prefix);
@@ -99,14 +100,14 @@ public class FormattedTextRendererTest extends TestCase {
 
 	public void testPericopeRenderer() {
 		// test robustness
-		assertEquals("123", FormattedTextRenderer.render("123", mockSb()).toString());
-		assertEquals("23", FormattedTextRenderer.render("@123", mockSb()).toString());
-		assertEquals("123", FormattedTextRenderer.render("@@123", mockSb()).toString());
+		assertEquals("123", FormattedTextRenderer.render("123", false, mockSb()).toString());
+		assertEquals("23", FormattedTextRenderer.render("@123", false, mockSb()).toString());
+		assertEquals("123", FormattedTextRenderer.render("@@123", false, mockSb()).toString());
 
 		// test italic
-		assertEquals("ab", FormattedTextRenderer.render("@@@9ab@7", mockSb()).toString());
-		assertEquals("abcd", FormattedTextRenderer.render("@@@9ab@7cd", mockSb()).toString());
-		assertEquals("abcd", FormattedTextRenderer.render("@@ab@9cd@7", mockSb()).toString());
+		assertEquals("ab", FormattedTextRenderer.render("@@@9ab@7", false, mockSb()).toString());
+		assertEquals("abcd", FormattedTextRenderer.render("@@@9ab@7cd", false, mockSb()).toString());
+		assertEquals("abcd", FormattedTextRenderer.render("@@ab@9cd@7", false, mockSb()).toString());
 
 		// required vs optional formatting header
 		assertEquals("ab", FormattedTextRenderer.render("@9ab@7", false, mockSb()).toString());
@@ -119,7 +120,7 @@ public class FormattedTextRendererTest extends TestCase {
 		assertEquals("prefixab@9ab@7", FormattedTextRenderer.render("@9ab@7", true, prefix).toString());
 		assertEquals("prefixab@9ab@7ab", FormattedTextRenderer.render("@@@9ab@7", true, prefix).toString());
 
-		final SpannableStringBuilder text = FormattedTextRenderer.render("@@ab@9cd@7ef@9gh@7ij", mockSb());
+		final SpannableStringBuilder text = FormattedTextRenderer.render("@@ab@9cd@7ef@9gh@7ij", false, mockSb());
 		final Object[] spans = text.getSpans(0, text.length(), Object.class);
 		assertEquals(2, spans.length);
 		assertEquals(2, text.getSpanStart(spans[0]));
@@ -127,6 +128,6 @@ public class FormattedTextRendererTest extends TestCase {
 		assertEquals(6, text.getSpanStart(spans[1]));
 		assertEquals(8, text.getSpanEnd(spans[1]));
 
-		assertTrue(FormattedTextRenderer.render("@@rr@@ab@9cd@9@@9@9@@&@&7&77@@7@7@7", mockSb()).toString().startsWith("rr@@abcd"));
+		assertTrue(FormattedTextRenderer.render("@@rr@@ab@9cd@9@@9@9@@&@&7&77@@7@7@7", false, mockSb()).toString().startsWith("rr@@abcd"));
 	}
 }

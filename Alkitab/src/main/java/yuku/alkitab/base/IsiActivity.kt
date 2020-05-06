@@ -2663,7 +2663,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         footnoteText.append(" ")
 
                         MaterialDialog.Builder(this@IsiActivity)
-                            .content(FormattedTextRenderer.render(fe.content, footnoteText))
+                            .content(FormattedTextRenderer.render(fe.content, false, footnoteText))
                             .positiveText(R.string.ok)
                             .show()
                     } else {
