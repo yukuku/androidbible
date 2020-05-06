@@ -100,8 +100,7 @@ public class JumperTest extends TestCase {
 		try {
 			final Jumper jumper = new Jumper(reference, logger);
 
-			boolean ok = jumper.getParseSucceeded();
-			if (ok) {
+			if (jumper.getParseSucceeded()) {
 				int bookId = jumper.getBookId(books);
 				assertEquals(expectBookId, bookId);
 
@@ -116,7 +115,7 @@ public class JumperTest extends TestCase {
 
 				logger.d(reference + " -> " + expectBookId + " " + expectChapter_1 + " " + expectVerse_1);
 			} else {
-				assertEquals(expectOk, ok);
+				assertFalse(expectOk);
 
 				logger.d(reference + " -> false");
 			}
@@ -125,7 +124,7 @@ public class JumperTest extends TestCase {
 		}
 	}
 
-	public void testParse1() throws Throwable {
+	public void testParse1() {
 		testParse("Kej 1:1", true, 0, 1, 1, false);
 		testParse("K 1:1", true, 0, 1, 1, false);
 		testParse("K 1 1", true, 0, 1, 1, false);

@@ -1,15 +1,14 @@
 package yuku.alkitab.base.util;
 
-import yuku.alkitab.debug.BuildConfig;
-import yuku.alkitab.model.Book;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.WeakHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import kotlin.text.MatchResult;
+import kotlin.text.Regex;
+import yuku.alkitab.debug.BuildConfig;
+import yuku.alkitab.model.Book;
 
 public class Jumper {
 	static final String TAG = Jumper.class.getSimpleName();
@@ -177,18 +176,19 @@ public class Jumper {
 				osisId = reference;
 			}
 			
-			Pattern p = OsisBookNames.getBookNameWithChapterAndOptionalVersePattern();
-			Matcher m = p.matcher(osisId);
-			if (m.matches()) {
+			final Regex p = OsisBookNames.getBookNameWithChapterAndOptionalVerseRegex();
+			final MatchResult m = p.matchEntire(osisId);
+			if (m != null) {
 				if (BuildConfig.DEBUG) logger.d("jumper stage 7: ref matching osis pattern found: " + osisId);
-				String osisBookName = m.group(1);
-				String chapter_s = m.group(2);
-				String verse_s = m.group(3);
-				
+				final List<String> groups = m.getGroupValues();
+				final String osisBookName = groups.get(1);
+				final String chapter_s = groups.get(2);
+				final String verse_s = groups.get(3);
+
 				try {
 					p_bookIdFromOsis = OsisBookNames.osisBookNameToBookId(osisBookName);
 					p_chapter = Integer.parseInt(chapter_s);
-					p_verse = (verse_s == null || verse_s.length() == 0)? 0: Integer.parseInt(verse_s);
+					p_verse = (verse_s == null || verse_s.length() == 0) ? 0 : Integer.parseInt(verse_s);
 				} catch (Exception e) {
 					throw new RuntimeException("Should not happen. In jumper stage 7", e);
 				}
