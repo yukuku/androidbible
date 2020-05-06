@@ -219,6 +219,9 @@ public class JumperTest extends TestCase {
 		testParse("Gen.11.12-Gen.22.3", true, 0, 11, 12, true);
 		testParse("Rev.11.13-Rev.12", true, 65, 11, 13, true);
 
+		// Non-canonical and wrong-case OSIS
+		testParse("3MaCC.3.2", true, 72, 3, 2, false);
+		testParse("4macc.4", true, 73, 4, 0, false);
 
 		String[] ss = {"Kej", "Kel",
 			"Im", "Bil", "Ul", "Yos",

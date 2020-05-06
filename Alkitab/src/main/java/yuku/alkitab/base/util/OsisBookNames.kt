@@ -2,6 +2,7 @@ package yuku.alkitab.base.util
 
 import yuku.alkitab.util.Ari
 import java.util.HashMap
+import java.util.Locale
 
 object OsisBookNames {
     private val names = arrayOf(
@@ -70,13 +71,42 @@ object OsisBookNames {
         "2John",
         "3John",
         "Jude",
-        "Rev"
+        "Rev", // bookId=65, book_1=66
+        "1Esd",
+        "2Esd",
+        "Tob",
+        "Jdt",
+        "1Macc",
+        "2Macc",
+        "3Macc",
+        "4Macc", // bookId=73, book_1=74
+        null,
+        "Odes",
+        "Wis",
+        "Sir",
+        "PssSol",
+        "EpJer",
+        "Bar",
+        "Sus",
+        "PrAzar",
+        "Bel",
+        "PrMan",
+        "AddEsth",
+        "AddPs",
+        "EpLao",
+        "AddDan" // bookId=88, book_1=89
     )
 
+    /**
+     * Map of lowercase OSIS book name to bookId
+     */
     private val bookNameToBookIdMap: Map<String, Int> by lazy {
         HashMap<String, Int>(names.size).apply {
             for (i in names.indices) {
-                put(names[i], i)
+                val name = names[i]
+                if (name != null) {
+                    put(name.toLowerCase(Locale.US), i)
+                }
             }
         }
     }
@@ -89,21 +119,23 @@ object OsisBookNames {
                 if (i != 0) {
                     append('|')
                 }
-                append(names[i])
+                val name = names[i]
+                if (name != null) {
+                    append(name)
+                }
             }
             append(')')
             append("\\.([1-9][0-9]{0,2})(?:\\.([1-9][0-9]{0,2}))?")
-        })
+        }, RegexOption.IGNORE_CASE)
     }
 
     /**
      * @param osisBookName OSIS Book Name (only OT and NT currently supported)
-     * @return 0 to 65 when OK, -1 when not found
+     * @return non-negative bookId when found, -1 when not found
      */
     @JvmStatic
-    fun osisBookNameToBookId(osisBookName: String?): Int {
-        if (osisBookName == null) return -1
-        return bookNameToBookIdMap[osisBookName] ?: -1
+    fun osisBookNameToBookId(osisBookName: String): Int {
+        return bookNameToBookIdMap[osisBookName.toLowerCase(Locale.US)] ?: -1
     }
 
     @JvmStatic
