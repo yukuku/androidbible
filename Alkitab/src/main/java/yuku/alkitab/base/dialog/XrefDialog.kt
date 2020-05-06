@@ -2,6 +2,7 @@ package yuku.alkitab.base.dialog
 
 import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
@@ -23,6 +24,7 @@ import yuku.alkitab.base.verses.VersesControllerImpl
 import yuku.alkitab.base.verses.VersesDataModel
 import yuku.alkitab.base.verses.VersesListeners
 import yuku.alkitab.base.verses.VersesUiModel
+import yuku.alkitab.base.widget.FormattedTextRenderer
 import yuku.alkitab.base.widget.VerseRenderer
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
@@ -125,31 +127,24 @@ class XrefDialog : BaseDialog() {
         sb.append(" ")
         var linkPos = 0
 
-        findTags(xrefEntry.content, object : FindTagsListener {
-            override fun onTaggedText(tag: String, start: Int, end: Int) {
-                val thisLinkPos = linkPos
-                linkPos++
-                val sb_len = sb.length
-                sb.append(xrefEntry.content, start, end)
+        FormattedTextRenderer.render(xrefEntry.content, appendToThis = sb, tagListener = object : FormattedTextRenderer.TagListener {
+            override fun onTag(tag: String, buffer: Spannable, start: Int, end: Int) {
+                val thisLinkPos = linkPos++
                 if (tag.startsWith("t")) { // the only supported tag at the moment
                     val encodedTarget = tag.substring(1)
                     if (thisLinkPos == displayedLinkPos || displayedLinkPos == -1 && thisLinkPos == 0) { // just make it bold, because this is the currently displayed link
-                        sb.setSpan(StyleSpan(Typeface.BOLD), sb_len, sb.length, 0)
+                        buffer.setSpan(StyleSpan(Typeface.BOLD), start, end, 0)
                         if (displayedLinkPos == -1) {
                             showVerses(0, encodedTarget)
                         }
                     } else {
-                        sb.setSpan(object : ClickableSpan() {
+                        buffer.setSpan(object : ClickableSpan() {
                             override fun onClick(widget: View) {
                                 showVerses(thisLinkPos, encodedTarget)
                             }
-                        }, sb_len, sb.length, 0)
+                        }, start, end, 0)
                     }
                 }
-            }
-
-            override fun onPlainText(start: Int, end: Int) {
-                sb.append(xrefEntry.content, start, end)
             }
         })
 
@@ -193,28 +188,6 @@ class XrefDialog : BaseDialog() {
         override fun onVerseSingleClick(verse_1: Int) {
             verseSelectedListener(arif_source, displayedRealAris[verse_1 - 1])
         }
-    }
-
-    private interface FindTagsListener {
-        fun onPlainText(start: Int, end: Int)
-        fun onTaggedText(tag: String, start: Int, end: Int)
-    }
-
-    // look for "<@" "@>" "@/" tags
-    private fun findTags(s: String, listener: FindTagsListener) {
-        var pos = 0
-        while (true) {
-            val p = s.indexOf("@<", pos)
-            if (p == -1) break
-            listener.onPlainText(pos, p)
-            val q = s.indexOf("@>", p + 2)
-            if (q == -1) break
-            val r = s.indexOf("@/", q + 2)
-            if (r == -1) break
-            listener.onTaggedText(s.substring(p + 2, q), q + 2, r)
-            pos = r + 2
-        }
-        listener.onPlainText(pos, s.length)
     }
 
     companion object {
