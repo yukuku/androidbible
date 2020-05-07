@@ -9,6 +9,7 @@ import android.provider.Settings;
 import androidx.annotation.CheckResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.os.LocaleListCompat;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.util.AppLog;
@@ -86,7 +87,7 @@ public class ConfigurationWrapper extends ContextWrapper {
 	@NonNull
 	public static Locale getLocaleFromPreferences() {
 		final String lang = Preferences.getString(R.string.pref_language_key, R.string.pref_language_default);
-		if (lang == null || "DEFAULT".equals(lang)) {
+		if ("DEFAULT".equals(lang)) {
 			return Locale.getDefault();
 		}
 
@@ -98,24 +99,22 @@ public class ConfigurationWrapper extends ContextWrapper {
 			return localeWithCountry(lang);
 
 		} else { // contains "-"
-			switch (lang) {
-				case "zh-CN":
-					return Locale.SIMPLIFIED_CHINESE;
-				case "zh-TW":
-					return Locale.TRADITIONAL_CHINESE;
-				default:
-					return new Locale(lang);
-			}
+			return LocaleListCompat.forLanguageTags(lang).get(0);
 		}
 	}
 
 	@NonNull
 	private static Locale localeWithCountry(@NonNull final String lang) {
+		// Reference:
+		// http://download.geonames.org/export/dump/countryInfo.txt
+		// https://wiki.openstreetmap.org/wiki/Nominatim/Country_Codes
 		switch (lang) {
 			case "af":
 				return new Locale("af", "ZA");
-			case "in":
-				return new Locale("in", "ID");
+			case "bg":
+				return new Locale("bg", "BG");
+			case "ceb":
+				return new Locale("ceb", "PH");
 			case "cs":
 				return new Locale("cs", "CZ");
 			case "da":
@@ -124,38 +123,46 @@ public class ConfigurationWrapper extends ContextWrapper {
 				return new Locale("de", "DE");
 			case "en":
 				return new Locale("en", "US");
+			case "el":
+				return new Locale("el", "GR");
 			case "es":
 				return new Locale("es", "ES");
 			case "fr":
 				return new Locale("fr", "FR");
+			case "in":
+				return new Locale("in", "ID");
 			case "it":
 				return new Locale("it", "IT");
-			case "lv":
-				return new Locale("lv", "LV");
-			case "nl":
-				return new Locale("nl", "NL");
-			case "pl":
-				return new Locale("pl", "PL");
-			case "pt":
-				return new Locale("pt", "BR");
-			case "ro":
-				return new Locale("ro", "RO");
-			case "vi":
-				return new Locale("vi", "VN");
-			case "bg":
-				return new Locale("bg", "BG");
-			case "ru":
-				return new Locale("ru", "RU");
-			case "uk":
-				return new Locale("uk", "UA");
-			case "th":
-				return new Locale("th", "TH");
-			case "tr":
-				return new Locale("tr", "TR");
 			case "ja":
 				return new Locale("ja", "JP");
 			case "ko":
 				return new Locale("ko", "KR");
+			case "lv":
+				return new Locale("lv", "LV");
+			case "ms":
+				return new Locale("ms", "MY");
+			case "my":
+				return new Locale("my", "MM");
+			case "nl":
+				return new Locale("nl", "NL");
+			case "pl":
+				return new Locale("pl", "PL");
+			case "pt": // pt-BR has its own resources already
+				return new Locale("pt", "PT");
+			case "ro":
+				return new Locale("ro", "RO");
+			case "ru":
+				return new Locale("ru", "RU");
+			case "th":
+				return new Locale("th", "TH");
+			case "tl":
+				return new Locale("tl", "PH");
+			case "tr":
+				return new Locale("tr", "TR");
+			case "uk":
+				return new Locale("uk", "UA");
+			case "vi":
+				return new Locale("vi", "VN");
 			default:
 				return new Locale(lang);
 		}
