@@ -21,7 +21,7 @@
 		<item name="toolbarStyle">@style/ToolbarStyle</item>
 	</style>
 
-	<style name="Theme.Alkitab.DialogWhenLarge.Base" parent="Theme.MaterialComponents.DialogWhenLarge">
+	<style name="Theme.Alkitab.DialogWhenLarge.Base" parent="Theme.MaterialComponents.DayNight.DialogWhenLarge">
 		<item name="windowActionBar">false</item>
 		<item name="windowNoTitle">true</item>
 		<item name="android:windowNoTitle">true</item>
@@ -32,7 +32,7 @@
 		<item name="android:windowBackground">@color/window</item>
 	</style>
 
-	<style name="StandardWidthIndeterminateProgress" parent="@android:style/Widget.Holo.ProgressBar.Small">
+	<style name="StandardWidthIndeterminateProgress" parent="@style/Widget.MaterialProgressBar.ProgressBar.Small">
 		<item name="android:minWidth">48dp</item>
 		<item name="android:maxWidth">48dp</item>
 	</style>

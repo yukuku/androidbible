@@ -23,7 +23,7 @@
         <item name="colorAccent">@color/alkitabfeedback_accent</item>
     </style>
 
-    <style name="alkitabfeedback_TextAppearanceFinish" parent="android:TextAppearance.Holo.Medium">
+    <style name="alkitabfeedback_TextAppearanceFinish" parent="TextAppearance.AppCompat.Button">
         <item name="android:textColor">#fff</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textAllCaps">true</item>
