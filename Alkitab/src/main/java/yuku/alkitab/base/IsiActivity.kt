@@ -79,6 +79,7 @@ import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.Announce
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
+import yuku.alkitab.base.util.BackForwardListController
 import yuku.alkitab.base.util.ClipboardUtil
 import yuku.alkitab.base.util.CurrentReading
 import yuku.alkitab.base.util.ExtensionManager
@@ -256,6 +257,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     private lateinit var bRight: ImageButton
     private lateinit var bVersion: TextView
     lateinit var floater: Floater
+    private lateinit var backForwardListController: BackForwardListController
 
     private var dataSplit0 = VersesDataModel.EMPTY
         set(value) {
@@ -1185,6 +1187,16 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
         initNfcIfAvailable()
 
+        backForwardListController = BackForwardListController(
+            group = findViewById(R.id.panelBackForwardList),
+            onBackButtonNeedUpdate = { backButton, ari ->
+                backButton.text = activeSplit0.version.reference(ari)
+            },
+            onBackButtonClick = { ari ->
+                jumpToAri(ari, addHistoryEntry = false)
+            }
+        )
+
         val intentResult = processIntent(intent, "onCreate")
         val openingAri: Int
         val selectVerse: Boolean
@@ -1242,6 +1254,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         if (intentResult != null) { // also add to history if not opening the last seen verse
             history.add(openingAri)
         }
+
+        backForwardListController.newEntry(openingAri)
 
         run {
             // load last split version. This must be after load book, chapter, and verse.
@@ -1620,7 +1634,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
 
         // Add target ari to history
-        history.add(Ari.encode(selected.bookId, ari_cv))
+        val target_ari = Ari.encode(selected.bookId, ari_cv)
+        history.add(target_ari)
+        backForwardListController.newEntry(target_ari)
     }
 
     /**
@@ -1628,7 +1644,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
      *
      * If successful, the destination will be added to history.
      */
-    fun jumpToAri(ari: Int, updateCurrentBackForwardListWithSource: Boolean = true) {
+    fun jumpToAri(ari: Int, updateCurrentBackForwardListWithSource: Boolean = true, addHistoryEntry: Boolean = true) {
         if (ari == 0) return
 
         val bookId = Ari.toBook(ari)
@@ -1648,7 +1664,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         val ari_cv = display(Ari.toChapter(ari), Ari.toVerse(ari))
 
         // Add target ari to history
-        history.add(ari)
+        if (addHistoryEntry) {
+            history.add(ari)
+            backForwardListController.newEntry(ari)
+        }
 
         // call attention to the verse only if the displayed verse is equal to the requested verse
         if (ari == Ari.encode(activeSplit0.book.bookId, ari_cv)) {
@@ -2261,6 +2280,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
                 // Add target ari to history
                 history.add(target_ari)
+                backForwardListController.newEntry(target_ari)
             }
         } else if (requestCode == RequestCodes.FromActivity.Share && resultCode == Activity.RESULT_OK) {
             val result = ShareActivity.obtainResult(data)
