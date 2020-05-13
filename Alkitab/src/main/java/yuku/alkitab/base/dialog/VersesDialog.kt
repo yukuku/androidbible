@@ -143,19 +143,13 @@ class VersesDialog : BaseDialog() {
         return res
     }
 
-    /**
-     * The param [dialog] should be nonnull, but crashes occur where dialog is null:
-     * https://console.firebase.google.com/u/0/project/alkitab-host-hrd/crashlytics/app/android:yuku.alkitab/issues/668b2d1c981ea9e972cfd5e99a40fdb2
-     *
-     * So I will mark it as nullable.
-     */
-    override fun onDismiss(dialog: DialogInterface?) {
+    override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         onDismissListener()
     }
 
     private val selectedVersesListener = object : VersesController.SelectedVersesListener() {
-        override fun onVerseSingleClick(verse_1: Int /* this is actually position+1, not necessarily verse_1 */) {
+        override fun onVerseSingleClick(verse_1: Int) {
             val listener = listener ?: return
             val position = verse_1 - 1
             val callbackData = customCallbackDatas[position]
