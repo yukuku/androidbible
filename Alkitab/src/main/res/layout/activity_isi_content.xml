@@ -123,6 +123,7 @@
 		android:layout_gravity="end|bottom"
 		android:layout_marginEnd="16dp"
 		android:layout_marginBottom="8dp"
+		android:background="@color/primary"
 		android:elevation="8dp"
 		android:orientation="horizontal"
 		android:visibility="gone"
@@ -131,22 +132,27 @@
 		<Button
 			android:id="@+id/bBackForwardListBack"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+			android:layout_height="40dp"
 			android:background="?selectableItemBackground"
-			android:minWidth="36dp"
-			android:minHeight="36dp"
+			android:drawableStart="@drawable/ic_arrow_back_white_16dp"
+			android:drawablePadding="4dp"
+			android:paddingStart="8dp"
+			android:paddingEnd="8dp"
 			android:textAllCaps="false"
-			android:textColor="#000"
 			tools:text="Back to XXX" />
 
+		<ImageView
+			android:layout_width="1dp"
+			android:layout_height="match_parent"
+			android:contentDescription="@null"
+			android:src="#2fff" />
+
 		<ImageButton
-			android:id="@+id/bBackForwardListMenu"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+			android:id="@+id/bBackForwardListForward"
+			android:layout_width="40dp"
+			android:layout_height="40dp"
 			android:background="?selectableItemBackground"
-			android:minWidth="36dp"
-			android:minHeight="36dp"
-			android:src="@drawable/ic_delete_x" />
+			android:src="@drawable/ic_arrow_forward_white_16dp" />
 
 	</LinearLayout>
 

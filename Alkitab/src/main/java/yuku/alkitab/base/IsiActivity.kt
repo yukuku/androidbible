@@ -31,6 +31,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.WindowManager
+import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -257,7 +258,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     private lateinit var bRight: ImageButton
     private lateinit var bVersion: TextView
     lateinit var floater: Floater
-    private lateinit var backForwardListController: BackForwardListController
+    private lateinit var backForwardListController: BackForwardListController<Button, ImageButton>
 
     private var dataSplit0 = VersesDataModel.EMPTY
         set(value) {
@@ -1127,17 +1128,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
         floater.setListener(floater_listener)
 
-        // TODO(VersesView revamp): Move it somewhere else
-        // 		lsSplit0.setOnKeyListener((v, keyCode, event) -> {
-        // 			int action = event.getAction();
-        // 			if (action == KeyEvent.ACTION_DOWN) {
-        // 				return consumeKey(keyCode);
-        // 			} else if (action == KeyEvent.ACTION_MULTIPLE) {
-        // 				return consumeKey(keyCode);
-        // 			}
-        // 			return false;
-        // 		});
-
         // listeners
         lsSplit0 = VersesControllerImpl(
             findViewById(R.id.lsSplitView0),
@@ -1189,10 +1179,23 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
         backForwardListController = BackForwardListController(
             group = findViewById(R.id.panelBackForwardList),
-            onBackButtonNeedUpdate = { backButton, ari ->
-                backButton.text = activeSplit0.version.reference(ari)
+            onBackButtonNeedUpdate = { button, ari ->
+                if (ari == 0) {
+                    button.visibility = View.GONE
+                    button.text = ""
+                } else {
+                    button.visibility = View.VISIBLE
+                    button.text = activeSplit0.version.reference(ari)
+                }
             },
-            onBackButtonClick = { ari ->
+            onForwardButtonNeedUpdate = { button, ari ->
+                // the forward button does not show any text
+                button.isEnabled = ari != 0
+            },
+            onButtonPreMove = { controller ->
+                controller.updateCurrentEntry(getCurrentAriForBackForwardList())
+            },
+            onButtonPostMove = { ari ->
                 jumpToAri(ari, addHistoryEntry = false)
             }
         )
@@ -1382,10 +1385,13 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         val bookId = activeSplit0.book.bookId
         val chapter_1 = chapter_1
         val verse_1 = getVerse_1BasedOnScrolls()
+        return Ari.encode(bookId, chapter_1, verse_1)
+    }
 
-        // For history, verse_1 == 1 will be treated as the beginning of the chapter,
-        // and the verse_1 will be set to 0.
-        return Ari.encode(bookId, chapter_1, if (verse_1 == 1) 0 else verse_1)
+    private fun updateBackForwardListCurrentEntry(ari: Int = getCurrentAriForBackForwardList()) {
+        if (ari != 0) {
+            backForwardListController.updateCurrentEntry(ari)
+        }
     }
 
     /**
@@ -1619,8 +1625,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             activeSplit0.book
         }
 
-        // TODO(backforwardlist): Update current bfl entry
-        // history.add(getCurrentAriForBackForwardList())
+        updateBackForwardListCurrentEntry()
 
         // set book
         activeSplit0 = activeSplit0.copy(book = selected)
@@ -1644,7 +1649,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
      *
      * If successful, the destination will be added to history.
      */
-    fun jumpToAri(ari: Int, updateCurrentBackForwardListWithSource: Boolean = true, addHistoryEntry: Boolean = true) {
+    fun jumpToAri(ari: Int, updateBackForwardListCurrentEntryWithSource: Boolean = true, addHistoryEntry: Boolean = true) {
         if (ari == 0) return
 
         val bookId = Ari.toBook(ari)
@@ -1655,9 +1660,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             return
         }
 
-        if (updateCurrentBackForwardListWithSource) {
-            // TODO(backforwardlist): Update current bfl entry
-            // history.add(getCurrentAriForBackForwardList())
+        if (updateBackForwardListCurrentEntryWithSource) {
+            updateBackForwardListCurrentEntry()
         }
 
         activeSplit0 = activeSplit0.copy(book = book)
@@ -2242,8 +2246,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             if (result != null) {
                 val ari_cv: Int
 
-                // TODO(backforwardlist): Update current bfl entry
-                // history.add(getCurrentAriForBackForwardList())
+                updateBackForwardListCurrentEntry()
 
                 if (result.bookId == -1) {
                     // stay on the same book
@@ -2673,9 +2676,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         dialog.dismiss()
 
                         val ari_source = arif_source ushr 8
-                        // TODO(backforwardlist): Update current bfl entry
-                        // history.add(ari_source, jumpback = true)
-                        jumpToAri(ari_target, updateCurrentBackForwardListWithSource = false)
+                        updateBackForwardListCurrentEntry(ari_source)
+                        jumpToAri(ari_target, updateBackForwardListCurrentEntryWithSource = false)
                     }
 
                     if (source === lsSplit0 || activeSplit1 == null) { // use activeVersion
