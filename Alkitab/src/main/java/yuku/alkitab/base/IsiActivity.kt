@@ -258,7 +258,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     private lateinit var bRight: ImageButton
     private lateinit var bVersion: TextView
     lateinit var floater: Floater
-    private lateinit var backForwardListController: BackForwardListController<Button, ImageButton>
+    private lateinit var backForwardListController: BackForwardListController<ImageButton, ImageButton>
 
     private var dataSplit0 = VersesDataModel.EMPTY
         set(value) {
@@ -1181,16 +1181,21 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             group = findViewById(R.id.panelBackForwardList),
             onBackButtonNeedUpdate = { button, ari ->
                 if (ari == 0) {
-                    button.visibility = View.GONE
-                    button.text = ""
+                    button.isEnabled = false
+                    button.alpha = 0.2f
                 } else {
-                    button.visibility = View.VISIBLE
-                    button.text = activeSplit0.version.reference(ari)
+                    button.isEnabled = true
+                    button.alpha = 1.0f
                 }
             },
             onForwardButtonNeedUpdate = { button, ari ->
-                // the forward button does not show any text
-                button.isEnabled = ari != 0
+                if (ari == 0) {
+                    button.isEnabled = false
+                    button.alpha = 0.2f
+                } else {
+                    button.isEnabled = true
+                    button.alpha = 1.0f
+                }
             },
             onButtonPreMove = { controller ->
                 controller.updateCurrentEntry(getCurrentAriForBackForwardList())
