@@ -136,7 +136,7 @@
 			android:layout_height="40dp"
 			android:background="?selectableItemBackground"
 			android:contentDescription="@string/desc_bfl_back"
-			android:src="@drawable/ic_arrow_back_white_16dp"
+			android:src="@drawable/ic_undo_white_16dp"
 			android:tooltipText="@string/desc_bfl_back"
 			tools:targetApi="o" />
 
@@ -152,7 +152,7 @@
 			android:layout_height="40dp"
 			android:background="?selectableItemBackground"
 			android:contentDescription="@string/desc_bfl_forward"
-			android:src="@drawable/ic_arrow_forward_white_16dp"
+			android:src="@drawable/ic_redo_white_16dp"
 			android:tooltipText="@string/desc_bfl_forward"
 			tools:targetApi="o" />
 
