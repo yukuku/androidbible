@@ -1201,7 +1201,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 controller.updateCurrentEntry(getCurrentAriForBackForwardList())
             },
             onButtonPostMove = { ari ->
-                jumpToAri(ari, addHistoryEntry = false)
+                jumpToAri(ari, addHistoryEntry = false, callAttention = false)
             }
         )
 
@@ -1654,7 +1654,12 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
      *
      * If successful, the destination will be added to history.
      */
-    fun jumpToAri(ari: Int, updateBackForwardListCurrentEntryWithSource: Boolean = true, addHistoryEntry: Boolean = true) {
+    fun jumpToAri(
+        ari: Int,
+        updateBackForwardListCurrentEntryWithSource: Boolean = true,
+        addHistoryEntry: Boolean = true,
+        callAttention: Boolean = true
+    ) {
         if (ari == 0) return
 
         val bookId = Ari.toBook(ari)
@@ -1679,7 +1684,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
 
         // call attention to the verse only if the displayed verse is equal to the requested verse
-        if (ari == Ari.encode(activeSplit0.book.bookId, ari_cv)) {
+        if (callAttention && ari == Ari.encode(activeSplit0.book.bookId, ari_cv)) {
             callAttentionForVerseToBothSplits(Ari.toVerse(ari))
         }
     }
