@@ -31,7 +31,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.WindowManager
-import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -2114,7 +2113,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         Preferences.setBoolean(Prefkey.is_night_mode, yes)
 
         applyPreferences()
-        applyActionBarAndStatusBarColors()
+        applyNightModeColors()
 
         textAppearancePanel?.displayValues()
 
