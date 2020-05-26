@@ -213,6 +213,7 @@
     <string name="no_url_for_facebook">Ini tidak bisa dibagikan ke Facebook.</string>
     <string name="storage_permission_rationale">Kami perlu mengakses media penyimpanan untuk menyimpan berbagai data seperti versi Alkitab dan jenis huruf.</string>
     <string name="goto_button_history_tip">Tip: Lain kali, tekan dan tahan tombol ini untuk mengakses riwayat ayat yang dibuka.</string>
+    <string name="backforwardlist_clear">Hapus semua</string>
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Telusuri</string>
     <string name="goto_tab_direct_label">Ketik</string>
@@ -275,6 +276,8 @@
     <string name="desc_verse_attribute_progress_mark">%s sedang di sini.</string>
     <string name="desc_progress_mark_list">Daftar jejak</string>
     <string name="desc_backspace">Backspace</string>
+    <string name="desc_bfl_back">Tekan untuk kembali, tahan untuk melihat daftar lokasi kunjungan</string>
+    <string name="desc_bfl_forward">Tekan untuk maju, tahan untuk melihat daftar lokasi kunjungan</string>
     <string name="intent_filter_open_yes_file">Buka file YES</string>
     <string name="intent_filter_open_pdb_file">Buka file PDB</string>
     <string name="intent_filter_open_pdb_or_yes_file">Buka file PDB/YES</string>
