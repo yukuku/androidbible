@@ -3,5 +3,5 @@
 	<dimen name="text_nopadding">4dp</dimen>
 	<dimen name="text_side_padding">32dp</dimen>
     <dimen name="text_top_padding">16dp</dimen>
-	<dimen name="text_bottom_padding">32dp</dimen>
+	<dimen name="text_bottom_padding">64dp</dimen>
 </resources>
