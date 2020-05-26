@@ -26,7 +26,7 @@ object HistorySyncUtil {
         entitiesBeforeSync: List<Sync.Entity<Sync_History.Content>>,
         simpleTokenBeforeSync: String
     ): Sync.ApplyAppendDeltaResult {
-        val entriesCopy = history.entries.toMutableList()
+        val entriesCopy = history.listAllEntries().toMutableList()
         Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_HISTORY, true)
         return try {
             // if the current entities are not the same as the ones had when contacting server, reject this append delta.
@@ -53,8 +53,7 @@ object HistorySyncUtil {
             entriesCopy.sortByDescending { it.timestamp }
 
             // commit changes
-            history.entries.clear()
-            history.entries.addAll(entriesCopy)
+            history.replaceAllEntries(entriesCopy)
 
             // if we reach here, the local database has been updated with the append delta.
             val ss = Sync_History.shadowFromEntities(Sync_History.getEntitiesFromCurrent(), final_revno)
@@ -65,7 +64,7 @@ object HistorySyncUtil {
             if (BuildConfig.DEBUG) {
                 AppLog.d(TAG, "After sync, the history entries are:")
                 AppLog.d(TAG, String.format(Locale.US, "  ari ====   timestamp ===============   %-40s   %-40s", "gid", "creator_id"))
-                for ((gid, ari, timestamp, creator_id) in history.entries) {
+                for ((gid, ari, timestamp, creator_id) in history.listAllEntries()) {
                     AppLog.d(TAG, String.format(Locale.US, "- 0x%06x   %tF %<tT %<tz   %-40s   %-40s", ari, timestamp, gid, creator_id))
                 }
             }

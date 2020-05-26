@@ -37,7 +37,7 @@ object History {
         val entries: List<Entry>
     )
 
-    val entries = mutableListOf<Entry>().apply {
+    private val entries = mutableListOf<Entry>().apply {
         Preferences.getString(Prefkey.history)?.let { s ->
             this.addAll(App.getDefaultGson().fromJson(s, HistoryJson::class.java).entries)
         }
@@ -77,6 +77,12 @@ object History {
     }
 
     @Synchronized
+    fun replaceAllEntries(newEntries: List<Entry>) {
+        entries.clear()
+        entries.addAll(newEntries)
+    }
+
+    @Synchronized
     fun getEntry(position: Int): Entry {
         return entries[position]
     }
@@ -85,6 +91,9 @@ object History {
     val size
         get() = entries.size
 
+    /**
+     * Entries sorted from the newest to the oldest
+     */
     fun listAllEntries(): List<Entry> {
         return ArrayList(entries)
     }

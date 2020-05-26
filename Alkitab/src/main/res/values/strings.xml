@@ -216,6 +216,7 @@
     <string name="no_url_for_facebook">This cannot be shared to Facebook.</string>
     <string name="storage_permission_rationale">We need to access the storage to store shared media such as Bible versions and fonts.</string>
 	<string name="goto_button_history_tip">Tip: Next time, long-press this button to access your recently-opened verses.</string>
+	<string name="backforwardlist_clear">Clear all</string>
 
 	<!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Dialer</string>
@@ -282,6 +283,8 @@
     <string name="desc_verse_attribute_progress_mark">%s is currently here.</string>
     <string name="desc_progress_mark_list">List of pins</string>
     <string name="desc_backspace">Backspace</string>
+    <string name="desc_bfl_back">Tap to go back, long-press to see visited locations</string>
+    <string name="desc_bfl_forward">Tap to go forward, long-press to see visited locations</string>
 
     <string name="intent_filter_open_yes_file">Open YES file</string>
     <string name="intent_filter_open_pdb_file">Open PDB file</string>

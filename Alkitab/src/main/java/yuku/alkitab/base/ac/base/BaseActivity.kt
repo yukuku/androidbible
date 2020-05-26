@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
@@ -11,6 +12,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.TypedValue
 import android.view.MenuItem
+import android.view.View
 import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -42,7 +44,7 @@ abstract class BaseActivity : AppCompatActivity(), ActivityCompat.OnRequestPermi
     override fun onStart() {
         super.onStart()
 
-        applyActionBarAndStatusBarColors()
+        applyNightModeColors()
 
         val currentConfigurationSerialNumber = ConfigurationWrapper.getSerialCounter()
         if (lastKnownConfigurationSerialNumber != currentConfigurationSerialNumber) {
@@ -52,24 +54,28 @@ abstract class BaseActivity : AppCompatActivity(), ActivityCompat.OnRequestPermi
         }
     }
 
-    protected fun applyActionBarAndStatusBarColors() {
-        // action bar color and status bar color are set based on the night mode
-        supportActionBar?.let { actionBar ->
-            if (Preferences.getBoolean(Prefkey.is_night_mode, false)) {
-                actionBar.setBackgroundDrawable(ColorDrawable(ResourcesCompat.getColor(resources, R.color.primary_night_mode, theme)))
+    protected fun applyNightModeColors() {
+        // action bar color, status bar color, backforward buttons color
+        val isNightMode = Preferences.getBoolean(Prefkey.is_night_mode, false)
 
-                if (Build.VERSION.SDK_INT >= 21) {
-                    window.statusBarColor = 0xff000000.toInt()
-                }
-            } else {
-                val tv = TypedValue()
-                theme.resolveAttribute(R.attr.colorPrimary, tv, true)
-                actionBar.setBackgroundDrawable(ColorDrawable(tv.data))
+        val primaryColor = if (isNightMode) {
+            ResourcesCompat.getColor(resources, R.color.primary_night_mode, theme)
+        } else {
+            TypedValue().apply { theme.resolveAttribute(R.attr.colorPrimary, this, true) }.data
+        }
 
-                if (Build.VERSION.SDK_INT >= 21) {
-                    window.statusBarColor = ResourcesCompat.getColor(resources, R.color.primary_dark, theme)
-                }
-            }
+        val statusBarColor = if (isNightMode) {
+            Color.BLACK
+        } else {
+            ResourcesCompat.getColor(resources, R.color.primary_dark, theme)
+        }
+
+        supportActionBar?.setBackgroundDrawable(ColorDrawable(primaryColor))
+
+        findViewById<View>(R.id.panelBackForwardList)?.background = ColorDrawable(primaryColor)
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            window.statusBarColor = statusBarColor
         }
     }
 
