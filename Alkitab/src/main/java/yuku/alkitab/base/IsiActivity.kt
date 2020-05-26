@@ -1200,8 +1200,14 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 controller.updateCurrentEntry(getCurrentAriForBackForwardList())
             },
             onButtonPostMove = { ari ->
-                jumpToAri(ari, addHistoryEntry = false, callAttention = false)
-            }
+                jumpToAri(
+                    ari = ari,
+                    updateBackForwardListCurrentEntryWithSource = false,
+                    addHistoryEntry = false,
+                    callAttention = false
+                )
+            },
+            referenceDisplayer = { ari -> activeSplit0.version.reference(ari) }
         )
 
         val intentResult = processIntent(intent, "onCreate")

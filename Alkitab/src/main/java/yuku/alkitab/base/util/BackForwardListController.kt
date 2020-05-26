@@ -1,7 +1,13 @@
 package yuku.alkitab.base.util
 
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.MaterialDialog
+import yuku.alkitab.base.widget.MaterialDialogAdapterHelper
 import yuku.alkitab.debug.R
 
 class BackForwardListController<BackButton: View, ForwardButton: View>(
@@ -23,11 +29,82 @@ class BackForwardListController<BackButton: View, ForwardButton: View>(
     /**
      * Called when the back/forward button is tapped after the current index is changed.
      */
-    private val onButtonPostMove: (ari: Int) -> Unit
+    private val onButtonPostMove: (ari: Int) -> Unit,
+    /**
+     * Return a user-friendly reference of an ari.
+     */
+    private val referenceDisplayer: (ari: Int) -> CharSequence
 ) {
     private val backForwardList = BackForwardList()
     private val bBack = group.findViewById<BackButton>(R.id.bBackForwardListBack)
     private val bForward = group.findViewById<ForwardButton>(R.id.bBackForwardListForward)
+
+    class BackForwardEntryHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val text1: TextView = itemView.findViewById(android.R.id.text1)
+    }
+
+    private val longClickListener = View.OnLongClickListener { v ->
+        /**
+         * Store history entries temporarily here so we can easily sort and refer back.
+         */
+        class DisplayEntry(val index: Int, val isCurrent: Boolean, val entry: BackForwardList.Entry?)
+
+        MaterialDialogAdapterHelper.show(MaterialDialog.Builder(v.context), object: MaterialDialogAdapterHelper.Adapter() {
+            private var defaultTextColor: Int = 0
+            private val escapeTextColor = ContextCompat.getColor(v.context, R.color.escape)
+
+            private val displayEntries = MutableList(backForwardList.size) { index ->
+                DisplayEntry(index, index == backForwardList.currentIndex, backForwardList.getEntry(index))
+            }.apply {
+                sortByDescending { it.entry?.createTime ?: 0 }
+            }.toList()
+
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+                val textView = LayoutInflater.from(parent.context).inflate(android.R.layout.simple_list_item_1, parent, false) as TextView
+                defaultTextColor = textView.currentTextColor
+                return BackForwardEntryHolder(textView)
+            }
+
+            override fun getItemCount() = displayEntries.size + 1
+
+            override fun onBindViewHolder(_holder_: RecyclerView.ViewHolder, _position_: Int) {
+                val holder = _holder_ as BackForwardEntryHolder
+
+                run {
+                    if (_position_ != itemCount - 1) {
+                        val entry = displayEntries[_position_].entry
+                        if (entry != null) {
+                            holder.text1.text = referenceDisplayer(entry.currentAri)
+                        }
+                        holder.text1.setTextColor(defaultTextColor)
+                    } else { // clear item
+                        holder.text1.setText(R.string.backforwardlist_clear)
+                        holder.text1.setTextColor(escapeTextColor)
+                    }
+                }
+
+                holder.itemView.setOnClickListener {
+                    dismissDialog()
+
+                    val position = holder.adapterPosition
+                    if (position != itemCount - 1) {
+                        val displayEntry = displayEntries[position]
+                        onButtonPreMove(this@BackForwardListController)
+                        backForwardList.moveTo(displayEntry.index)
+                        val ari = displayEntry.entry?.currentAri
+                        if (ari != null) {
+                            onButtonPostMove(ari)
+                        }
+                    } else { // clear item
+                        backForwardList.purgeOthers()
+                    }
+
+                    display()
+                }
+            }
+        })
+        true
+    }
 
     init {
         bBack.setOnClickListener {
@@ -56,6 +133,9 @@ class BackForwardListController<BackButton: View, ForwardButton: View>(
 
             display()
         }
+
+        bBack.setOnLongClickListener(longClickListener)
+        bForward.setOnLongClickListener(longClickListener)
     }
 
     fun newEntry(initialAri: Int) {

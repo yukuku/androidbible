@@ -78,4 +78,25 @@ class BackForwardList {
         entries += Entry(initialAri)
         currentIndex = entries.lastIndex
     }
+
+    /**
+     * Keep only the current entry and remove all others.
+     * The current entry become entry with index 0.
+     *
+     * If there are no entries, this function does nothing.
+     */
+    fun purgeOthers() {
+        val index = currentIndex
+        if (index < 0) return
+
+        val currentEntry = currentEntry ?: return
+
+        // set the current entry as the first and remove the rest
+        entries[0] = currentEntry
+        currentIndex = 0
+
+        for (i in size - 1 downTo 1) {
+            entries.removeAt(i)
+        }
+    }
 }
