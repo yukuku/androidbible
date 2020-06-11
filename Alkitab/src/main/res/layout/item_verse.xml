@@ -16,13 +16,7 @@
 			android:layout_height="wrap_content"
 			android:layout_gravity="start" />
 
-		<yuku.alkitab.base.widget.VerseTextView
-			android:id="@+id/lText"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_gravity="start"
-			android:includeFontPadding="true" />
-
+		<include layout="@layout/item_verse_verse_text_view" />
 	</FrameLayout>
 
 	<yuku.alkitab.base.widget.AttributeView
