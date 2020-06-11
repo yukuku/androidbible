@@ -7,11 +7,9 @@ import android.view.ViewConfiguration;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.multidex.MultiDex;
 import androidx.preference.PreferenceManager;
-import com.crashlytics.android.Crashlytics;
 import com.downloader.PRDownloader;
 import com.downloader.PRDownloaderConfig;
 import com.google.gson.Gson;
-import io.fabric.sdk.android.Fabric;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import okhttp3.Call;
@@ -82,7 +80,6 @@ public class App extends yuku.afw.App {
 		}
 
 		Tracker.init(context);
-		Fabric.with(context, new Crashlytics());
 
 		final FeedbackSender fs = FeedbackSender.getInstance(context);
 		fs.trySend();

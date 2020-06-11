@@ -480,10 +480,6 @@
 				<data android:scheme="package" />
 			</intent-filter>
 		</receiver>
-
-		<meta-data
-			android:name="io.fabric.ApiKey"
-			android:value="88fa9dcee81c62d7913a3fd0abd7cb6a652698dc" />
 	</application>
 
 </manifest>

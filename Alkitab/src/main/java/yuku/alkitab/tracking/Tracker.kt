@@ -8,8 +8,6 @@ import java.util.concurrent.Executors
 object Tracker {
     private lateinit var fa: FirebaseAnalytics
 
-    private val eventSubmitter by lazy { Executors.newSingleThreadExecutor() }
-
     @JvmStatic
     fun init(context: Context) {
         if (!::fa.isInitialized) {
@@ -26,10 +24,9 @@ object Tracker {
             }
 
             bundle = Bundle()
-            for (i in 0 until paramPairs.size step 2) {
+            for (i in paramPairs.indices step 2) {
                 val key = paramPairs[i] as String
-                val value = paramPairs[i + 1]
-                when (value) {
+                when (val value = paramPairs[i + 1]) {
                     is Int -> bundle.putInt(key, value)
                     is Double -> bundle.putDouble(key, value)
                     is Float -> bundle.putDouble(key, value.toDouble())

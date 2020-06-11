@@ -21,8 +21,5 @@ local.properties
 # Mac
 .DS_Store
 
-# Fabric: https://docs.fabric.io/android/fabric/settings/working-in-teams.html
-fabric.properties
-
 # Do not expose this so others do not use the same project
 google-services.json

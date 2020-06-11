@@ -12,7 +12,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -151,7 +151,7 @@ public class SyncSettingsActivity extends BaseActivity {
 
 						SyncRecorder.log(SyncRecorder.EventKind.logout_post, null, "accountName", syncAccountName);
 
-						Crashlytics.setUserEmail(null);
+						FirebaseCrashlytics.getInstance().setUserId("");
 
 						updateDisplay();
 					})
