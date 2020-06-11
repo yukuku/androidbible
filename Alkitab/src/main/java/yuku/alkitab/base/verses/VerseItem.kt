@@ -67,7 +67,7 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
         }
     }
 
-    val lText: VerseTextView get() = findViewById(R.id.lText)
+    lateinit var lText: VerseTextView
     lateinit var lVerseNumber: TextView
     lateinit var attributeView: AttributeView
 
@@ -84,6 +84,7 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
     override fun onFinishInflate() {
         super.onFinishInflate()
 
+        lText = findViewById(R.id.lText)
         lVerseNumber = findViewById(R.id.lVerseNumber)
         attributeView = findViewById(R.id.attributeView)
     }
@@ -96,8 +97,8 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
             return
         }
 
-        // Bug in Android 7.1 and 8.0 only (8.1 are ok!), the text can be cut off when changing text size.
-        if (Build.VERSION.SDK_INT in 25..26) {
+        // Bug in Android 8.0 and under (8.1 are ok!), the text can be cut off when changing text size.
+        if (Build.VERSION.SDK_INT <= 26) {
             val lText = this.lText
             val oldTag = lText.getTag(R.id.TAG_textSize)
             if (oldTag == null) {
@@ -107,27 +108,8 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
                 val newSize = lText.textSize
 
                 if (oldSize != newSize) {
-                    // We fix this in a rough way: make a new textview to replace the old textview
-                    val parent = lText.parent as ViewGroup
-                    val index = parent.indexOfChild(lText)
-
-                    val newLText = LayoutInflater.from(parent.context).inflate(R.layout.item_verse_verse_text_view, parent, false) as VerseTextView
-
-                    // Copy text and attributes
-                    newLText.setText(lText.text, TextView.BufferType.SPANNABLE)
-                    newLText.typeface = lText.typeface
-                    newLText.setTextSize(TypedValue.COMPLEX_UNIT_PX, lText.textSize)
-                    newLText.includeFontPadding = lText.includeFontPadding
-                    newLText.setTextColor(lText.currentTextColor)
-                    newLText.setLinkTextColor(lText.linkTextColors)
-                    newLText.setLineSpacing(lText.lineSpacingExtra, lText.lineSpacingMultiplier)
-
-                    newLText.setTag(R.id.TAG_textSize, newLText.textSize)
-
-                    // Remove old and add new. The requestLayout has to be called after exiting this method.
-                    parent.removeViewAt(index)
-                    parent.addView(newLText, index)
-                    newLText.post { newLText.requestLayout() }
+                    lText.setTag(R.id.TAG_textSize, newSize)
+                    lText.post { lText.requestLayout() }
                 }
             }
         }
