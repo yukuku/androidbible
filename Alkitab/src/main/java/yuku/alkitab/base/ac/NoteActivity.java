@@ -147,6 +147,9 @@ public class NoteActivity extends BaseActivity {
 	final CallbackSpan.OnClickListener<String> verseClickListener = (widget, verse) -> {
 		justClickedLink = true;
 
+		// prevent "Can not perform this action after onSaveInstanceState"
+		if (isFinishing()) return;
+
 		final IntArrayList verseRanges = DesktopVerseParser.verseStringToAri(verse);
 		if (verseRanges == null || verseRanges.size() == 0) {
 			new MaterialDialog.Builder(widget.getContext())
