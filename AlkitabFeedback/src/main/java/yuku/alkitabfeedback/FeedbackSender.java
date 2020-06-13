@@ -59,10 +59,6 @@ public class FeedbackSender {
 		pref_ = context.getSharedPreferences("FeedbackSender", 0);
 	}
 
-	public void setOnSuccessListener(OnSuccessListener onSuccessListener) {
-		onSuccessListener_ = onSuccessListener;
-	}
-
 	public void addEntry(String feedback_from_name, String feedback_from_email, String feedback_body) {
 		load();
 
@@ -228,10 +224,4 @@ public class FeedbackSender {
 		return installationId;
 	}
 
-	/**
-	 * Set the uniqueId to use rather than the generated one
-	 */
-	public void setOverrideInstallationId(String installationId) {
-		overrideInstallationId_ = installationId;
-	}
 }
