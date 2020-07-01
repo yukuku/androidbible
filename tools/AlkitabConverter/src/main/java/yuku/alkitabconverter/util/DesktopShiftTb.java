@@ -52,8 +52,8 @@ public class DesktopShiftTb {
 	 * Impl note: only kjv ari with flag 0x0 or 0x1. With other flags, the original ari is returned.
 	 */
 	public static int shiftFromTb(int ari) {
+		if (!tbToFkjv.containsKey(ari)) return ari; // original ari
 		int fkjv = tbToFkjv.get(ari);
-		if (fkjv == 0) return ari; // original ari
 
 		int flag = fkjv >> 24;
 		if (flag != 0 && flag != 1) return ari; // original ari
