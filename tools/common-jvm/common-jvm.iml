@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../AlkitabIo">
+      <sourceFolder url="file://$MODULE_DIR$/../../AlkitabIo/src/main/java" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../AlkitabModel">
+      <sourceFolder url="file://$MODULE_DIR$/../../AlkitabModel/src/main/java" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../AlkitabYes2">
+      <sourceFolder url="file://$MODULE_DIR$/../../AlkitabYes2/src/main/java" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../BintexReader">
+      <sourceFolder url="file://$MODULE_DIR$/../../BintexReader/src/main/java" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../BintexWriter">
+      <sourceFolder url="file://$MODULE_DIR$/../../BintexWriter/src/main/java" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Snappy">
+      <sourceFolder url="file://$MODULE_DIR$/../../Snappy/src/main/java" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../AlkitabConverter">
+      <sourceFolder url="file://$MODULE_DIR$/../AlkitabConverter/src/main/java" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="fakeandroid" exported="" />
+    <orderEntry type="library" name="com.beust:jcommander:1.72" level="project" />
+  </component>
+</module>
