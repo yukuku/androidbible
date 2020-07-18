@@ -84,14 +84,22 @@ public class ShareUrl {
                 done.set(true);
 
                 callback.onUserCancel();
-                dialog1.dismiss();
+                try {
+                    dialog1.dismiss();
+                } catch (Exception ignored) {
+                }
+
                 callback.onFinally();
             })
             .dismissListener(dialog1 -> {
                 if (done.getAndSet(true)) return;
 
                 callback.onUserCancel();
-                dialog1.dismiss();
+                try {
+                    dialog1.dismiss();
+                } catch (Exception ignored) {
+                }
+
                 callback.onFinally();
             })
             .show();

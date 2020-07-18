@@ -8,6 +8,7 @@
 /.idea/caches
 /.idea/assetWizardSettings.xml
 /.idea/modules.xml
+/.idea/jarRepositories.xml
 /build
 local.properties
 
