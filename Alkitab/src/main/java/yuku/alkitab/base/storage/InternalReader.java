@@ -1,5 +1,6 @@
 package yuku.alkitab.base.storage;
 
+import java.util.List;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.util.AppLog;
@@ -225,7 +226,7 @@ public class InternalReader implements BibleReader {
 		}
 	}
 
-	@Override public int loadPericope(int bookId, int chapter_1, int[] aris, PericopeBlock[] pericopeBlocks, int max) {
+	@Override public int loadPericope(int bookId, int chapter_1, List<Integer> aris, List<PericopeBlock> pericopeBlocks) {
 		Yes1PericopeIndex pericopeIndex = loadPericopeIndex();
 
 		if (pericopeIndex == null) {
@@ -236,35 +237,31 @@ public class InternalReader implements BibleReader {
 		int ariMax = Ari.encode(bookId, chapter_1 + 1, 0);
 		int res = 0;
 
-		int pertama = pericopeIndex.findFirst(ariMin, ariMax);
+		int first = pericopeIndex.findFirst(ariMin, ariMax);
 
-		if (pertama == -1) {
+		if (first == -1) {
 			return 0;
 		}
 
-		int kini = pertama;
+		int current = first;
 
 		BintexReader in = null;
 		try {
 			in = new BintexReader(App.context.getAssets().open("internal/" + versionPrefix + "_pericope_blocks_bt.bt"));
 			while (true) {
-				int ari = pericopeIndex.getAri(kini);
+				int ari = pericopeIndex.getAri(current);
 
 				if (ari >= ariMax) {
 					// That's all. No longer relevant.
 					break;
 				}
 
-				PericopeBlock pericopeBlock = pericopeIndex.getBlock(in, kini);
-				kini++;
+				PericopeBlock pericopeBlock = pericopeIndex.getBlock(in, current);
+				current++;
 
-				if (res < max) {
-					aris[res] = ari;
-					pericopeBlocks[res] = pericopeBlock;
-					res++;
-				} else {
-					break;
-				}
+				aris.add(ari);
+				pericopeBlocks.add(pericopeBlock);
+				res++;
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);

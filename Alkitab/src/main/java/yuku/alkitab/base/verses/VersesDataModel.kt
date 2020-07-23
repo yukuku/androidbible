@@ -29,9 +29,9 @@ data class VersesDataModel(
     @JvmField
     val pericopeBlockCount_: Int = 0,
     @JvmField
-    val pericopeAris_: IntArray = IntArray(0),
+    val pericopeAris_: List<Int> = emptyList(),
     @JvmField
-    val pericopeBlocks_: Array<PericopeBlock> = emptyArray(),
+    val pericopeBlocks_: List<PericopeBlock> = emptyList(),
     @JvmField
     val version_: Version? = null,
     @JvmField
@@ -82,7 +82,7 @@ data class VersesDataModel(
         }
 
         if (res.size != pos_itemPointer) {
-            throw RuntimeException("Algorithm to insert pericopes error!! pos_itemPointer=$pos_itemPointer pos_verse=$pos_verse pos_block=$pos_block nverse=$nverse pericopeBlockCount_=$pericopeBlockCount_ pericopeAris_:${pericopeAris_.contentToString()} pericopeBlocks_:${pericopeBlocks_.contentToString()}")
+            throw RuntimeException("Algorithm to insert pericopes error!! pos_itemPointer=$pos_itemPointer pos_verse=$pos_verse pos_block=$pos_block nverse=$nverse pericopeBlockCount_=$pericopeBlockCount_ pericopeAris_:$pericopeAris_ pericopeBlocks_:$pericopeBlocks_")
         }
 
         res
@@ -263,13 +263,7 @@ data class VersesDataModel(
         @JvmField
         val EMPTY = VersesDataModel(
             ari_bc_ = 0,
-            verses_ = SingleChapterVerses.EMPTY,
-            pericopeBlockCount_ = 0,
-            pericopeAris_ = IntArray(0),
-            pericopeBlocks_ = emptyArray(),
-            version_ = null,
-            versionId_ = null,
-            versesAttributes = VersesAttributes.createEmpty(0)
+            verses_ = SingleChapterVerses.EMPTY
         )
     }
 }

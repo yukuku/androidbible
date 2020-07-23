@@ -1,5 +1,6 @@
 package yuku.alkitab.yes1;
 
+import java.util.List;
 import yuku.alkitab.base.storage.OldVerseTextDecoder;
 import yuku.alkitab.base.storage.VerseTextDecoder;
 import yuku.alkitab.base.util.AppLog;
@@ -377,26 +378,26 @@ public class Yes1Reader implements BibleReader {
 	}
 
 	@Override
-	public int loadPericope(int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max) {
+	public int loadPericope(int bookId, int chapter_1, List<Integer> aris, List<PericopeBlock> pericopeBlocks) {
 		try {
 			init();
 
-			if (BuildConfig.DEBUG) AppLog.d(TAG, "muatPerikop dipanggil untuk kitab=" + kitab + " pasal_1=" + pasal);
+			if (BuildConfig.DEBUG) AppLog.d(TAG, "loadPericope called for bookId=" + bookId + " chapter_1=" + chapter_1);
 
 			Yes1PericopeIndex pericopeIndex = loadPericopeIndex();
 			if (pericopeIndex == null) {
 				return 0; // ga ada perikop!
 			}
 
-			int ariMin = Ari.encode(kitab, pasal, 0);
-			int ariMax = Ari.encode(kitab, pasal + 1, 0);
+			int ariMin = Ari.encode(bookId, chapter_1, 0);
+			int ariMax = Ari.encode(bookId, chapter_1 + 1, 0);
 
-			int pertama = pericopeIndex.findFirst(ariMin, ariMax);
-			if (pertama == -1) {
+			int first = pericopeIndex.findFirst(ariMin, ariMax);
+			if (first == -1) {
 				return 0;
 			}
 
-			int kini = pertama;
+			int current = first;
 			int res = 0;
 
 			if (pericopeBlock_baseOffset != 0) {
@@ -408,28 +409,24 @@ public class Yes1Reader implements BibleReader {
 
 			BintexReader in = new BintexReader(new RandomInputStream(f));
 			while (true) {
-				int ari = pericopeIndex.getAri(kini);
+				int ari = pericopeIndex.getAri(current);
 
 				if (ari >= ariMax) {
 					// habis. Uda ga relevan
 					break;
 				}
 
-				Yes1PericopeBlock pericopeBlock = pericopeIndex.getBlock(in, kini);
-				kini++;
+				Yes1PericopeBlock pericopeBlock = pericopeIndex.getBlock(in, current);
+				current++;
 
-				if (res < max) {
-					xari[res] = ari;
-					xblok[res] = pericopeBlock;
-					res++;
-				} else {
-					break;
-				}
+				aris.add(ari);
+				pericopeBlocks.add(pericopeBlock);
+				res++;
 			}
 
 			return res;
 		} catch (Exception e) {
-			AppLog.e(TAG, "gagal muatPerikop", e);
+			AppLog.e(TAG, "failed to loadPericope", e);
 			return 0;
 		}
 	}

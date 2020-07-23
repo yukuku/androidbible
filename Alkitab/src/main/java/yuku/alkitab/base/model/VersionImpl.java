@@ -279,12 +279,11 @@ public class VersionImpl extends Version {
 	 * Loads the list of pericopes for a chapter
 	 * @param aris output parameter; will be filled in with the aris where the pericopes start
 	 * @param pericopeBlocks output parameter; will be filled with the content of the pericopes
-	 * @param max the maximum number of pericopes to return. The output arrays must have at least max entries.
 	 * @return the number of pericopes loaded. 0 if the version does not have pericopes or some errors happen.
 	 */
 	@Override
-	public synchronized int loadPericope(int bookId, int chapter_1, int[] aris, PericopeBlock[] pericopeBlocks, int max) {
-		return bibleReader.loadPericope(bookId, chapter_1, aris, pericopeBlocks, max);
+	public synchronized int loadPericope(final int bookId, final int chapter_1, final List<Integer> aris, final List<PericopeBlock> pericopeBlocks) {
+		return bibleReader.loadPericope(bookId, chapter_1, aris, pericopeBlocks);
 	}
 
 	@Override

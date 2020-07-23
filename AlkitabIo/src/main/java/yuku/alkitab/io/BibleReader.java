@@ -1,5 +1,6 @@
 package yuku.alkitab.io;
 
+import java.util.List;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
 import yuku.alkitab.model.PericopeBlock;
@@ -22,7 +23,7 @@ public interface BibleReader {
 	 */
 	SingleChapterVerses loadVerseText(Book book, int chapter_1, boolean dontSplitVerses, boolean lowercased);
 
-	int loadPericope(int bookId, int chapter_1, int[] aris, PericopeBlock[] pericopeBlocks, int max);
+	int loadPericope(int bookId, int chapter_1, List<Integer> aris, List<PericopeBlock> pericopeBlocks);
 
 	/**
 	 * @param arif 24bit ari at the MSB + which xref field at the 8bit LSB (starts from 1)

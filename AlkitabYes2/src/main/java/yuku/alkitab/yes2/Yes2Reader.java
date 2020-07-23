@@ -233,7 +233,7 @@ public class Yes2Reader implements BibleReader {
 		}
 	}
 
-	@Override public int loadPericope(int bookId, int chapter_1, int[] aris, PericopeBlock[] blocks, int max) {
+	@Override public int loadPericope(final int bookId, final int chapter_1, final List<Integer> aris, final List<PericopeBlock> pericopeBlocks) {
 		try {
 			loadVersionInfo();
 			
@@ -259,7 +259,7 @@ public class Yes2Reader implements BibleReader {
 			int ariMin = Ari.encode(bookId, chapter_1, 0);
 			int ariMax = Ari.encode(bookId, chapter_1 + 1, 0);
 
-			return pericopesSection_.getPericopesForAris(ariMin, ariMax, aris, blocks, max);
+			return pericopesSection_.getPericopesForAris(ariMin, ariMax, aris, pericopeBlocks);
 		} catch (Exception e) {
 			Log.e(TAG, "General exception in loading pericope block", e);
 			return 0;

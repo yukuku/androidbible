@@ -80,7 +80,7 @@ public class VersionTest extends TestCase {
 			}
 
 			@Override
-			public int loadPericope(final int bookId, final int chapter_1, final int[] aris, final PericopeBlock[] pericopeBlocks, final int max) {
+			public int loadPericope(final int bookId, final int chapter_1, final List<Integer> aris, final List<PericopeBlock> pericopeBlocks) {
 				return 0;
 			}
 

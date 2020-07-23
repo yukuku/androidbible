@@ -2390,13 +2390,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     ): Boolean {
         val verses = version.loadChapterText(book, chapter_1) ?: return false
 
-        // # max is set to 30 (one chapter has a max of 30 blocks. Already almost impossible)
-        val max = 30
-        val tmp_pericope_aris = IntArray(max)
-        val tmp_pericope_blocks = arrayOfNulls<PericopeBlock>(max)
-        val nblock = version.loadPericope(book.bookId, chapter_1, tmp_pericope_aris, tmp_pericope_blocks, max)
-        val pericope_aris = tmp_pericope_aris.copyOf(nblock)
-        val pericope_blocks = tmp_pericope_blocks.copyOf(nblock).map { block -> block!! }.toTypedArray()
+        val pericope_aris = mutableListOf<Int>()
+        val pericope_blocks = mutableListOf<PericopeBlock>()
+        val nblock = version.loadPericope(book.bookId, chapter_1, pericope_aris, pericope_blocks)
 
         val retainSelectedVerses = !uncheckAllVerses && chapter_1 == current_chapter_1
         setDataWithRetainSelectedVerses(cr, versesController, dataSetter, retainSelectedVerses, Ari.encode(book.bookId, chapter_1, 0), pericope_aris, pericope_blocks, nblock, verses, version, versionId)
@@ -2411,8 +2407,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         dataSetter: (VersesDataModel) -> Unit,
         retainSelectedVerses: Boolean,
         ariBc: Int,
-        pericope_aris: IntArray,
-        pericope_blocks: Array<PericopeBlock>,
+        pericope_aris: List<Int>,
+        pericope_blocks: List<PericopeBlock>,
         nblock: Int,
         verses: SingleChapterVerses,
         version: Version,

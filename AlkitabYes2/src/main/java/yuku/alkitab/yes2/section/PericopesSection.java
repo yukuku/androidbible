@@ -1,5 +1,7 @@
 package yuku.alkitab.yes2.section;
 
+import java.io.IOException;
+import java.util.List;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.PericopeIndex;
 import yuku.alkitab.yes2.io.RandomInputStream;
@@ -10,8 +12,6 @@ import yuku.alkitab.yes2.model.Yes2PericopeBlock;
 import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexReader;
 import yuku.bintex.BintexWriter;
-
-import java.io.IOException;
 
 public class PericopesSection extends SectionContent implements SectionContent.Writer {
 	public static final String SECTION_NAME = "pericopes";
@@ -188,11 +188,10 @@ public class PericopesSection extends SectionContent implements SectionContent.W
 
 	/**
 	 * @param aris (result param) the actual aris of the pericopes 
-	 * @param blocks (result param) the pericope blocks found
-	 * @param max maximum number of results to return, must be less than or equal to min(aris.length, blocks.length)
+	 * @param pericopeBlocks (result param) the pericope blocks found
 	 * @return number of pericopes loaded by this method
 	 */
-	public int getPericopesForAris(int ari_from, int ari_to, int[] aris, PericopeBlock[] blocks, int max) throws IOException {
+	public int getPericopesForAris(int ari_from, int ari_to, List<Integer> aris, List<PericopeBlock> pericopeBlocks) throws IOException {
 		int first = index_.findFirst(ari_from, ari_to);
 		if (first == -1) {
 			return 0;
@@ -210,13 +209,9 @@ public class PericopesSection extends SectionContent implements SectionContent.W
 			Yes2PericopeBlock block = readBlock(cur);
 			cur++;
 			
-			if (res < max) {
-				aris[res] = ari;
-				blocks[res] = block;
-				res++;
-			} else {
-				break;
-			}
+			aris.add(ari);
+			pericopeBlocks.add(block);
+			res++;
 		}
 		
 		return res;
