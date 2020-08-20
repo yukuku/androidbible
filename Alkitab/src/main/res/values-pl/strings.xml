@@ -12,7 +12,6 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Kopia wykonana.\n\nRezultat został zapisany w pliku: %s</string>
     <string name="impor_berhasil_angka_diproses">Pomyślne przywrócenie kopii. W sumie %1$d zakładek, notatek lub podkreśleń. Przetworzono również %2$d etykiet.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Nastąpił błąd(błędy) podczas tworzenia kopii: %s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Stworzyć kopię zakładek, notatek oraz podkreśleń na karcie SD lub dysku USB? Istniejąca kopia zostanie nadpisana.</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Nastąpił błąd(błędy) podczas przywracania: %s</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Czy nadpisać obecnie posiadane przez ciebie zakładki, notatki i podkreślenia?</string>
     <string name="file_tidak_bisa_dibaca_file">Plik nie istnieje lub nie może być odczytany: %s</string>
@@ -119,7 +118,6 @@
     <string name="ed_download_url_url">Adres pobierania</string>
     <string name="ed_version_details">Informacje o przekładzie</string>
     <string name="ed_choose_pdb_or_yes_file">Wybierz plik .pdb lub .yes</string>
-    <string name="ed_no_external_storage">Brak karty SD lub nie znaleziono dysku USB.</string>
     <string name="ed_invalid_file_selected">Wybrano niewłaściwy plik.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Plik %s znajduje się już na liście.</string>
     <string name="ed_error_encountered">Napotkano błąd</string>
@@ -368,7 +366,6 @@
     <string name="rp_download_reading_plan_data_corrupted">Pobrany plik plan czytań jest uszkodzony. Proszę spróbować później, gdy będzie dostępne połączenie internetowe.</string>
     <string name="rp_download_already_have">Posiadasz już ten plan czytania.</string>
     <string name="rp_mark_as_read_up_to">Czy zaznaczyć, że przeczytano aż dotąd?</string>
-    <string name="version_download_need_fonts">"Przekład, który pobrałeś, może wymagać konkretnej czcionki do wyświetlania. Udaj się do menu \'Wygląd tekstu\' i wybierz czcionkę. Grecki wymaga czcionki Ubuntu. Burmański wymaga Parabaik, ParabaikSans, lub Myanmar3. Tamil wymaga Akshar. Telugu wymaga Suranna."</string>
     <string name="version_download_corrupted_file">Pobrany plik wydaje się uszkodzony.</string>
     <string name="version_download_saving_io_error">Błąd operacji I/O podczas zapisu pobranej wersji</string>
     <string name="version_download_network_error">Błąd sieci podczas pobierania ^1.</string>

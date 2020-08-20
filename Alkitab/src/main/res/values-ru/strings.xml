@@ -12,7 +12,6 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Резервная копия создана.\n\nРезультаты находятся в файле %s</string>
     <string name="impor_berhasil_angka_diproses">Восстановление выполнено. Обработано %1$d закладок, примечаний и выделений, и %2$d меток.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Ошибка при резервном копировании: %s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Создать резервную копию закладок, примечаний и выделений на SD карту или на USB-накопитель? Уже существующая резервная копия будет перезаписана.</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Ошибка при восстановлении: %s</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Перезаписать существующие закладки, заметки и выделения?</string>
     <string name="file_tidak_bisa_dibaca_file">Файл не найден или не читается: %s</string>
@@ -119,7 +118,6 @@
     <string name="ed_download_url_url">Адрес загрузки</string>
     <string name="ed_version_details">Подробности о версии</string>
     <string name="ed_choose_pdb_or_yes_file">Выберите .pdb-файл или .yes-файл</string>
-    <string name="ed_no_external_storage">Не обнаружено ни SD-карты, ни USB-накопителя.</string>
     <string name="ed_invalid_file_selected">Выбран недействительный файл.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Файл %s уже находится в списке.</string>
     <string name="ed_error_encountered">Вознила ошибки</string>
@@ -368,7 +366,6 @@
     <string name="rp_download_reading_plan_data_corrupted">Загруженный план чтения поврежден. Пожалуйста, повторите попытку при работающем соединении с Интернетом.</string>
     <string name="rp_download_already_have">У Вас уже есть этот план чтения.</string>
     <string name="rp_mark_as_read_up_to">Отметить, как прочитанное досюда?</string>
-    <string name="version_download_need_fonts">Загруженная вами версия может потребовать особых шрифтов. Перейдите в меню \'Вид текста\' и выберите шрифт.</string>
     <string name="version_download_corrupted_file">Загруженный файл выглядит поврежденным.</string>
     <string name="version_download_saving_io_error">Ошибка ввода/вывода при сохранении загруженной версии</string>
     <string name="version_download_network_error">Сетевая ошибка при скачивании ^1.</string>

@@ -12,7 +12,6 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">备份成功。\n\n结果于档案：%s</string>
     <string name="impor_berhasil_angka_diproses">还原成功。共有%1$d个书签、笔记与／或标记，还有%2$d个标签也被处理。</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">新增备份时发生错误：%s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">新增书签、笔记与标记的备份到记忆卡或USB储存装置？现有的备份将被覆写。</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">恢复时有错误： %s</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">覆写你现在拥有的书籤、笔记和标记？</string>
     <string name="file_tidak_bisa_dibaca_file">档案不存在或无法读取：%s</string>
@@ -119,7 +118,6 @@
     <string name="ed_download_url_url">下载网址</string>
     <string name="ed_version_details">版本详细信息</string>
     <string name="ed_choose_pdb_or_yes_file">选择一个.pdb或.yes档案</string>
-    <string name="ed_no_external_storage">没有SD卡或USB存储设备发现。</string>
     <string name="ed_invalid_file_selected">无效的文件被选择。</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">%s 文件已在名单上。</string>
     <string name="ed_error_encountered">遇到错误</string>
@@ -366,7 +364,6 @@
     <string name="rp_download_reading_plan_data_corrupted">已下载的阅读计划资料损毁，请以有效的互联网连线再次尝试。</string>
     <string name="rp_download_already_have">你已经拥有此阅读计划。</string>
     <string name="rp_mark_as_read_up_to">至到这裡标示为己阅读？</string>
-    <string name="version_download_need_fonts">"您下载的版本需要某种字体以正确显示。请到「文字外观」目录，并选择某种字体。希腊语需要 Ubuntu 字体。缅甸语需要Parabaik，ParabaikSans 或 Myanmar3。泰米尔语需要 Akshar。泰卢固语需要 Suranna。"</string>
     <string name="version_download_corrupted_file">已下载的档桉似是无效的。</string>
     <string name="version_download_saving_io_error">储存已下载的版本时发生存取错误</string>
     <string name="version_download_network_error">下载^1时网络出现错误。</string>
@@ -375,6 +372,7 @@
     <string name="highlight_custom_color">其他颜色</string>
     <string name="menu_compare">比较</string>
     <string name="song_player_error_description">播放歌曲%1$d, %2$d的时候遇到问题。</string>
+    <string name="song_player_error_message">播放歌曲, 的时候遇到问题: ^1.</string>
     <string name="search_in_version_short_name_placeholder">在%s中搜寻</string>
     <string name="search_syntax_tips"><i>搜寻提示：</i>\n\n<b>+字词</b>以搜寻准确的单字\n<b>[q]大卫城[q]</b>以搜寻准确的语句</string>
     <string name="search_no_result">找不到这经节 <b>^1</b>.</string>

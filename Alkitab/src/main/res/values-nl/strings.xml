@@ -12,7 +12,6 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Reservekopie was succesvol.\n\nResultaten staan in bestand: %s</string>
     <string name="impor_berhasil_angka_diproses">Terugzetten was succesvol. In totaal %1$d bladwijzer(s), notitie(s), en/of markeringen, en %2$d labels zijn verwerkt.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Er waren één of meer fouten bij het maken van de reservekopie: %s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Maak een reservekopie van bladwijzers, notities en markeringen naar SD-kaart of USB opslag? Bestaande reservekopiën zullen worden overschreven.</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Er waren één of meer fouten bij terugzetten: %s</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Wil je de huidige bladwijzers, notities en markeringen overschrijven?</string>
     <string name="file_tidak_bisa_dibaca_file">Het bestand %s bestaat niet of kon niet worden gelezen</string>
@@ -119,7 +118,6 @@
     <string name="ed_download_url_url">Downloadlink</string>
     <string name="ed_version_details">Versie details</string>
     <string name="ed_choose_pdb_or_yes_file">Kies een .pdb of .yes bestand</string>
-    <string name="ed_no_external_storage">Geen SD-kaart of USB opslag gevonden.</string>
     <string name="ed_invalid_file_selected">Ongeldig bestand geselecteerd.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Bestand %s is al op de lijst.</string>
     <string name="ed_error_encountered">Er is een fout opgetreden</string>
@@ -366,7 +364,6 @@
     <string name="rp_download_reading_plan_data_corrupted">Het gedownloade leesplan is corrupt. Probeer het opnieuw met een werkende internetverbinding.</string>
     <string name="rp_download_already_have">Je heb dit leesplan al.</string>
     <string name="rp_mark_as_read_up_to">Markeer om tot hier te lezen?</string>
-    <string name="version_download_need_fonts">"De gedownloade versie kan moeten worden weergegeven in een bepaald lettertype. Ga naar het menu \"Tekstweergave\" en selecteer een lettertype. Grieks heeft het lettertype Ubuntu nodig. Birmese gebruikt Parabaik, ParabaikSans of Myanmar3. Tamil gebruikt Akshar en Telugu gebruikt het lettertype Suranna."</string>
     <string name="version_download_corrupted_file">Het gedownloade bestand blijkt corrupt te zijn.</string>
     <string name="version_download_saving_io_error">I/O fout wanneer de gedownloade versie opgeslagen wordt</string>
     <string name="version_download_network_error">Netwerkfout tijdens het downloaden.</string>

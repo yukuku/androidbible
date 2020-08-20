@@ -12,7 +12,6 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Cópia de segurança bem sucedida.\n\nO resultado está no arquivo: %s</string>
     <string name="impor_berhasil_angka_diproses">Restauração bem sucedida. No total, %1$d marcadores, anotações, e/ou realces, e também %2$d etiquetas foram processadas.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Houve(ram) erro(s) na criação da cópia de segurança: %s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Criar cópia de segurança dos marcadores, anotações e realces no cartão SD ou armazenamento USB? Cópias de segurança prévias serão substituídas.</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Houve(ram) erro(s) ao restaurar: %s</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Deseja sobrescrever os favoritos, anotações e marcações salvas atualmente?</string>
     <string name="file_tidak_bisa_dibaca_file">O arquivo não existe ou não pode ser lido: %s</string>
@@ -119,7 +118,6 @@
     <string name="ed_download_url_url">URL do download</string>
     <string name="ed_version_details">Detalhes da versão</string>
     <string name="ed_choose_pdb_or_yes_file">Selecione um arquivo .pdb ou .yes</string>
-    <string name="ed_no_external_storage">Não foi encontrado cartão SD ou armazenamento USB.</string>
     <string name="ed_invalid_file_selected">Arquivo selecionado inválido.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Arquivo %s já está na lista.</string>
     <string name="ed_error_encountered">Erro encontrado</string>
@@ -366,7 +364,6 @@
     <string name="rp_download_reading_plan_data_corrupted">O arquivo do plano de leitura que foi baixado está corrompido. Tente novamente mais tarde com uma conexão de Internet ativa.</string>
     <string name="rp_download_already_have">Você já possui o plano de leitura.</string>
     <string name="rp_mark_as_read_up_to">Marcar como lido até aqui?</string>
-    <string name="version_download_need_fonts">"A versão que você baixou talvez necessite ser exibida com certas fontes. Vá até o menu \'Aparência do texto\' e selecione a fonte correta. Grego necessita a fonte Ubuntu. Birmanês necessita Parabaik, ParabaikSans, ou Myanmar3. Tâmil necessita Akshar. Telugu necessita Suranna."</string>
     <string name="version_download_corrupted_file">Arquivo baixado parece estar corrompido.</string>
     <string name="version_download_saving_io_error">Erro de entrada ou saída ao salvar versão baixada</string>
     <string name="version_download_network_error">Erro de rede ao fazer o download ^1.</string>

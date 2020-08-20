@@ -12,7 +12,6 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Backup completato.\n\nI risultati sono nel file: %s</string>
     <string name="impor_berhasil_angka_diproses">Ripristino completato. In totale %1$d segnalibri, note, e/o evidenziazioni, e anche %2$d etichette sono stati processati.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Ci sono stati errori durante il backup: %s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Creare backup di segnalibri, note, e evidenziazioni sulla scheda SD o sul dispositivo USB? I backup precedenti verranno sovrascritti.</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Ci sono stati errori durante il ripristino: %s</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Sovrascrivi i segnalibri, le note e le evidenziazioni correnti?</string>
     <string name="file_tidak_bisa_dibaca_file">Il file non esiste o non può essere letto: %s</string>
@@ -119,7 +118,6 @@
     <string name="ed_download_url_url">Download URL</string>
     <string name="ed_version_details">Dettagli della versione</string>
     <string name="ed_choose_pdb_or_yes_file">Scegli un file .pdb o .yes</string>
-    <string name="ed_no_external_storage">SD Card o memoria USB non trovata.</string>
     <string name="ed_invalid_file_selected">File selezionato non valido.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Il file %s è già nella lista.</string>
     <string name="ed_error_encountered">Si è verificato un errore</string>
@@ -368,7 +366,6 @@
     <string name="rp_download_reading_plan_data_corrupted">I dati del piano di lettura scaricati sono corrotti. Si prega di riprovare più tardi con una connessione Internet funzionante.</string>
     <string name="rp_download_already_have">Hai già questo piano di lettura.</string>
     <string name="rp_mark_as_read_up_to">Segna come letto fino a qui?</string>
-    <string name="version_download_need_fonts">"La versione scaricata potrebbe avere bisogno di essere visualizzata con caratteri speciali. Vai al menu \"Schermo\" e seleziona un tipo di carattere. Il greco richiede i caratteri Ubuntu. Il birmano richiede i Parabaik, ParabaikSans o Myanmar3. Il tamil richiede gli Akshar. Il telugu richiede i Suranna."</string>
     <string name="version_download_corrupted_file">Il file scaricato sembra essere corrotto.</string>
     <string name="version_download_saving_io_error">Errore I/O durante il salvataggio della versione scaricata</string>
     <string name="version_download_network_error">Errore di rete durante il download ^1.</string>

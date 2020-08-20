@@ -12,7 +12,6 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Zálohování proběhlo úspěšně.\n\nUloženo v souboru: %s</string>
     <string name="impor_berhasil_angka_diproses">Obnova proběhla úspěšně. Celkem bylo zpracováno %1$d záložek, poznámek, a/nebo zvýraznění, a také %2$d štítků.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Při vytváření zálohy se vyskytlo %s chyb.</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Vytvořit zálohu pro záložky, poznámky a zvýraznění na SD kartu nebo USB prostor. Existující zálohy budou přepsány.</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Při obnově ze zálohy se vyskytlo %s chyb.</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Přepsat oblíbené verše, poznámky a zvýraznění, které momentálně máte definované?</string>
     <string name="file_tidak_bisa_dibaca_file">Soubor neexistuje nebo nelze přečíst: %s</string>
@@ -119,7 +118,6 @@
     <string name="ed_download_url_url">Stáhnout url</string>
     <string name="ed_version_details">Detaily překladu</string>
     <string name="ed_choose_pdb_or_yes_file">Vyberte si .pdb nebo .yes soubor</string>
-    <string name="ed_no_external_storage">Žádná SD karta nebo USB úložiště nenalezeno.</string>
     <string name="ed_invalid_file_selected">Vybrán neplatný soubor.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Soubor %s je již na seznamu.</string>
     <string name="ed_error_encountered">Došlo k chybě</string>
@@ -368,7 +366,6 @@
     <string name="rp_download_reading_plan_data_corrupted">Stažený plán čtení je požkozen. Zkontrolujte prosím internetové připojení a zkuste jej stáhnout znovu.</string>
     <string name="rp_download_already_have">Ten plán čtení je již stažen.</string>
     <string name="rp_mark_as_read_up_to">Označit potud jako přečtené?</string>
-    <string name="version_download_need_fonts">"Stažená verze nemůže být zobrazena určitým fontem. Jděte do \'Text appearance\' menu a vyberte jiný font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
     <string name="version_download_corrupted_file">Stažený soubor je zřejmě poškozený.</string>
     <string name="version_download_saving_io_error">I/O error při ukládání stažené verze</string>
     <string name="version_download_network_error">Chyba sítě při stahování ^1.</string>

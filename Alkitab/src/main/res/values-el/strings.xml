@@ -12,7 +12,6 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Η δημιουργία αντιγράφου ασφαλείας ήταν επιτυχής. \n\nΤα αποτελέσματα είναι στο αρχείο: %s</string>
     <string name="impor_berhasil_angka_diproses">H επαναφορά ήταν επιτυχής.. Συνολικά %1$d ανευρέσεις στο λεξικό, σημειώσεις, ή/και επισημάνσεις, και επίσης %2$d ετικέτες.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Υπήρξαν σφάλματα κατά την δημιουργία του αντιγράφου ασφαλείας: %s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Δημιουργία σελιδοδείκτη, σημειώσεων, και επισημάνσεων στην SD Card ή στο USB Storage; Τα είδη υπάρχοντα αντίγραφα ασφαλείας θα διαγραφούν.</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Υπήρξαν σφάλματα στην δημιουργία αντιγράφου ασφαλείας: %s</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Διαγράφει τους σελιδοδείκτες, σημειώσεις, και επισημάνσεις που ήδη έχετε;</string>
     <string name="file_tidak_bisa_dibaca_file">Ο φίλος δεν υπάρχει ή δεν γνωρίζει ανάγνωση: %s</string>
@@ -119,7 +118,6 @@
     <string name="ed_download_url_url">URL Λήψης</string>
     <string name="ed_version_details">Λεπτομέρειες έκδοσης</string>
     <string name="ed_choose_pdb_or_yes_file">Επιλέξτε ένα αρχείο .pdb ή .yes</string>
-    <string name="ed_no_external_storage">Δε βρέθηκε κάρτα SD ή χώρος αποθήκευσης USB.</string>
     <string name="ed_invalid_file_selected">Επιλέχθηκε μη έγκυρο αρχείο.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Το αρχείο %s είναι ήδη στη λίστα.</string>
     <string name="ed_error_encountered">Παρουσιάστηκε σφάλμα</string>
@@ -366,7 +364,6 @@
     <string name="rp_download_reading_plan_data_corrupted">Τα ληφθέντα δεδομένα πλάνου ανάγνωσης είναι χαλασμένα. Παρακαλώ προσπαθήστε ξανά αργότερα με σύνδεση στο Διαδίκτυο που να λειτουργεί.</string>
     <string name="rp_download_already_have">Έχετε ήδη αυτό το πλάνο ανάγνωσης.</string>
     <string name="rp_mark_as_read_up_to">Να σημειωθεί ότι διαβάστηκε μέχρι εδώ;</string>
-    <string name="version_download_need_fonts">"Η μορφή με την οποία ανοίχθηκε ο φάκελλος ίσως πρέπει να προβληθεί σε ειδικό φόντο. Πηγαίνετε στο μενού \'Display\' (Προβολή) και επιλέξετε έναν φόντο. Τα Ελληνικά χρειάζονται φόντο Ubuntu Τα Βιρμανικά χρειάζονται Parabaik, ParabaikSans, ή Myanmar3. Η γλώσσα Ταμίλ χρειάζεται το Akshar. Το Τελουγκού χρειάζεται Suranna."</string>
     <string name="version_download_corrupted_file">Ο φάκελλος που ανοίχτηκε δείχνει να είναι κατεστραμμένος.</string>
     <string name="version_download_saving_io_error">Σφάλμα Ι/Ο κατά την αποθήκευση της φόρμας που ανοίχτηκε</string>
     <string name="version_download_network_error">Σφάλμα στο διαδίκτυο στο άνοιγμα ^1.</string>

@@ -12,7 +12,6 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Резервното копие е създадено.\n\nРезултатът се намира във файл %s</string>
     <string name="impor_berhasil_angka_diproses">Възстановяването е изпълнено. Обработени %1$d отбелязки, бележки и маркирания, и %2$d отметки.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Грешка при резервното копиране: %s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Да създам ли резервно копие на отметките, бележките и подчертаванията на SD карта или на USB-устройство? Съществуващото резервно копие ще бъде презаписано.</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Грешка при възстановяването: %s</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Да презапиша ли съществуващите отметки, бележки и подчертавания?</string>
     <string name="file_tidak_bisa_dibaca_file">Файлът не е намерен или не се чете: %s</string>
@@ -119,7 +118,6 @@
     <string name="ed_download_url_url">Интернет адрес на зареждането</string>
     <string name="ed_version_details">Информация за версията</string>
     <string name="ed_choose_pdb_or_yes_file">Изберете .pdb или .yes файл</string>
-    <string name="ed_no_external_storage">Не е намерен нито на SD-картата, нито на USB-хранилището.</string>
     <string name="ed_invalid_file_selected">Избран е недействителен файл.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Файлът %s вече се намира в списъка.</string>
     <string name="ed_error_encountered">Възникна грешка</string>
@@ -368,7 +366,6 @@
     <string name="rp_download_reading_plan_data_corrupted">Зареденият план за четене е повреден. Моля, повторете по-късно при работеща Интернет връзка.</string>
     <string name="rp_download_already_have">Вие вече имате този план за четене.</string>
     <string name="rp_mark_as_read_up_to">Отбележете, като прочетено дотук?</string>
-    <string name="version_download_need_fonts">Заредената от вас версия може да изисква специфични шрифтове. Отидете в меню \'Вид текст\' и изберете шрифт.</string>
     <string name="version_download_corrupted_file">Заредения файл изглежда е повреден.</string>
     <string name="version_download_saving_io_error">Грешка при съхраняване на свалената версия</string>
     <string name="version_download_network_error">Мрежова грешка при изтегляне ^1.</string>

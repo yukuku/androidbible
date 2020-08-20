@@ -12,7 +12,6 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">バックアップが成功しました.\n\n ファイル: %s</string>
     <string name="impor_berhasil_angka_diproses">復元が成功しました. 合計 %1$d のブックマーク、ノート、マーカーと、%2$dのラベルを処理しました.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">バックアップを作成するときにエラーがありました: %s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">ブックマーク、ノート、マーカーをSDカードやUSBメモリーにバックアップしますか？ 現在のバックアップファイルは上書きされます.</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">%sの復元処理中にエラーが発生しました</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">現在のブックマーク、ノート、マーカーを上書きしますか?</string>
     <string name="file_tidak_bisa_dibaca_file">ファイル %s が見つからないか、読み込めません.</string>
@@ -119,7 +118,6 @@
     <string name="ed_download_url_url">ダウンロードURL</string>
     <string name="ed_version_details">バージョンの詳細</string>
     <string name="ed_choose_pdb_or_yes_file">.pdbか.yesファイルを選択</string>
-    <string name="ed_no_external_storage">SDカードか USBストレージが見つかりません。</string>
     <string name="ed_invalid_file_selected">無効なファイルが選択されました。</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">ファイル %s はリストにすでにあります。</string>
     <string name="ed_error_encountered">エラーが発生しました</string>
@@ -368,7 +366,6 @@
     <string name="rp_download_reading_plan_data_corrupted">ダウンロードした読書プランのデータは壊れています。インターネット接続を確認し、再度実行してください。</string>
     <string name="rp_download_already_have">この読書プランはすでに持っています</string>
     <string name="rp_mark_as_read_up_to">ここまでの箇所を「朗読済み」に設定する</string>
-    <string name="version_download_need_fonts">”ダウンロードした版は、特定のフォントで表示する必要があるかもしれません。「文字表示の設定」 メニューでフォントを選択してください。ギリシャ語にはUbuntuフォントが必要です。ビルマ語にはParabaik, ParabaikSansまたはMyanmar3フォントが必要です。タミル語にはAksharフォントが必要です。テルグ語にはSurannaフォントが必要です。\"</string>
     <string name="version_download_corrupted_file">ダウンロードしたファイルが破損しています。</string>
     <string name="version_download_saving_io_error">ダウンロードした訳を保存中にI/Oエラーが発生しました。</string>
     <string name="version_download_network_error">^1をダウンロードした時のネットワークエラー。</string>

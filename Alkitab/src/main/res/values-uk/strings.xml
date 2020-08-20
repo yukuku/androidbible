@@ -12,7 +12,6 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Резервну копію створено вдало.\n\nВідомості в файлі: %s</string>
     <string name="impor_berhasil_angka_diproses">Відновлення пройшло успішно. Загалом %1$d закладок,нотаток,і/або виділень, підкреслювань, та також %2$d позначок було оброблено.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Сталася помилка(и) під час створення резервної копії: %s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Створити резервну копію закладок, нотаток, виділень та підкреслень на SD-картці або USB накопичувачі? Існуючі резервні копії будуть перезаписані.</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Була помилка(помилок) під час відновлення: %s</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Перезаписати наявні у вас закладки, нотатки, виділення або підкреслення?</string>
     <string name="file_tidak_bisa_dibaca_file">Файлу не існує або його не може бути прочитано: %s</string>
@@ -119,7 +118,6 @@
     <string name="ed_download_url_url">Завантажити URL</string>
     <string name="ed_version_details">Деталі версії</string>
     <string name="ed_choose_pdb_or_yes_file">Виберіть .pdb або .yes файл</string>
-    <string name="ed_no_external_storage">Не знайдено SD картки або USB носія.</string>
     <string name="ed_invalid_file_selected">Вибрано непідтримуваний файл.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Файл %s вже знаходиться в списку.</string>
     <string name="ed_error_encountered">Сталася помилка</string>
@@ -369,7 +367,6 @@
     <string name="rp_download_reading_plan_data_corrupted">Завантажені дані плану читання пошкоджено. Будь ласка спробуйте ще раз з доступним підключенням до інтернету.</string>
     <string name="rp_download_already_have">У вас вже є цей план читання.</string>
     <string name="rp_mark_as_read_up_to">Позначити, як прочитане до цього місця?</string>
-    <string name="version_download_need_fonts">"Версія яку ви завантажили можливо потребує для коректного відображення деякі шрифти. Перейдіть в меню до \"Вигляд тексту\" та виберіть потрібний шрифт. Грецька потребує шрифт Ubuntu. Бурмезька потребує Parabaik, ParabaikSans чи Myanmar3. Тамільська потребує Akshar. Телузька потребує Suranna."</string>
     <string name="version_download_corrupted_file">Завантажений файл можливо пошкоджений.</string>
     <string name="version_download_saving_io_error">Помилка введення/виведення при збереженні завантаженої версії</string>
     <string name="version_download_network_error">Мережева помилка при завантаженні ^1.</string>

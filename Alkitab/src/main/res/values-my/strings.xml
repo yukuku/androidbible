@@ -12,7 +12,6 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">မူရင်းဖိုင်များကို ကူးယူသိုမှီးထားရာတွင် အောင်မြင်သည်။\n\nရလဒ်များဖိုင်ထဲမှာရှိသည် − %s</string>
     <string name="impor_berhasil_angka_diproses">မူလပုံစံအတိုင်း ပြန်လည်သိမ်းဆည်းရာတွင် အောင်မြင်သည်။ စုစုပေါင်းအရေအတွက် %1$d မှတ်သားချက်များ၊ မှတ်စုများ နှင့်/သို့မဟုတ် အရောင်မှတ်ချက်များ နှင့် %2$d ဆုတံဆိပ်များကိုလည်း ပြန်လည်သိမ်းဆည်းပြီးဖြစ်သည်။</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">မူရင်းဖိုင်များကို ကူးယူသိုမှီးထားရှိရာတွင် မှားယွင်းချက် (များ) ရှိခြင်း − %s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">SD ကဒ် သို့မဟုတ် USB storage ထည့်သို့ အမှတ်အသားများ၊ မှတ်စုများ နှင့် အရောင်မှတ်ချက်များကို မူရင်းဖိုင်များအား ကူးယူသိုမှီးထားရှိပါသည်။ ရှိပြီးသားမူရင်းဖိုင်များကို ကူးယူသိုမှီးခြင်းကို ဖျက်ပြီးအသစ်တွေကို ထပ်သိမ်းပါမည်။</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">မူလပုံစံအတိုင်း ပြန်လည်သိမ်းဆည်းရာတွင် ချို့ယွင်းချက် (များ) ရှိသည်− %s</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">သင့်တွင် လက်ရှိ အမှတ်အသားများ၊ မှတ်စုများ နှင့် အရောင်မှတ်ချက်များ၊ ဒေတာများကို ဖျက်ပြီးအသစ်တွေကို ထပ်သိမ်းမလား။</string>
     <string name="file_tidak_bisa_dibaca_file">ဖိုင် မရှိပါ သို့မဟုတ် ဖတ်၍ မရပါ − %s</string>
@@ -119,7 +118,6 @@
     <string name="ed_download_url_url">URLကို ဒေါင်းလုဒ်ဆွဲရန်</string>
     <string name="ed_version_details">ကျန်းစာဗားရှင်း အသေးစိတ်များ</string>
     <string name="ed_choose_pdb_or_yes_file">.pdb သို့မဟုတ် .yes ဖိုင်ကို ရွေးချယ်ပါ</string>
-    <string name="ed_no_external_storage">SD ကဒ် သို့မဟုတ် USB storage ကို ရှှှှှှှှှှာမတွေ့ပါ။</string>
     <string name="ed_invalid_file_selected">မမှန်ကန်သောဖိုင်ကို ရွေးထားသည်။</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">%s ဖိုင်သည် စာရင်းတွင် ရှိပြီးဖြစ်သည်။ </string>
     <string name="ed_error_encountered">အမှားကို တွေ့ကြုံရသည်</string>
@@ -368,7 +366,6 @@
     <string name="rp_download_reading_plan_data_corrupted">ဒေါင်းလုဒ်ဆွဲထားသည့် စာဖတ်ရှုခြင်းအစီအစဉ် ဒေတာသည် ပျက်ဆီးယိုယွင်းနေသည်။ ကျေးဇူးပြု၍ အလုပ်လုပ်သော အင်တာနက် ချိတ်ဆက်မှုဖြင့် နောက်ထပ်ကြိုးစားပါ။</string>
     <string name="rp_download_already_have">သင့်တွင် ဤစာဖတ်ရှုခြင်းအစီအစဉ် ရှိပြီးဖြစ်သည်။</string>
     <string name="rp_mark_as_read_up_to">ဤနေရာအထိ ဖတ်ရင်း မှတ်သားထားချင်ပါသလား။</string>
-    <string name="version_download_need_fonts">"ဒေါင်းလုဒ်ဆွဲယူထားသည့် ဗားရှင်းကို စာလုံးအချို့နှင့် ပြသရန်လိုအပ်နိုင်သည်။ မြင်ကွင်းပြသမှု လိုရာရွေးဇယား ဆီကို သွားပြီး ဖောင့်တစ်ခုကို ရွေးပါ။ ဂရိဘာသာအတွက် Ubuntu ဖောင့်ကို လိုအပ်သည်။ မြန်မာဘာသာစကားအတွက် Parabaik, ParabaikSans သို့မဟုတ် Myanmar3 လိုအပ်သည်။ တမီးလ်ဘာသာအတွက် Akshar လိုအပ်သည်။ တီလီဂုဘာသာအတွက် Suranna လိုအပ်ပါသည်။"</string>
     <string name="version_download_corrupted_file">ဒေါင်းလုဒ်ဆွဲထားသည့် ဖိုင်များသည် ပျက်ဆီးယိုယွင်းနေသည်။</string>
     <string name="version_download_saving_io_error">ဒေါင်းလုဒ်ဆွဲထားဗားရှင်းကို သိမ်းဆည်းရာတွင် I/O အမှားအယွင်းဖြစ်ခြင်း</string>
     <string name="version_download_network_error">^1 ကို ဒေါင်းလုဒ်ဆွဲရာတွင် ကွန်ယက်ချို့ယွင်းချက်ဖြင့် ကြုံရခြင်း။</string>

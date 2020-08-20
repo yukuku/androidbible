@@ -12,7 +12,6 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Cópia de segurança feita com sucesso.\n\nResultados estão no ficheiro:%s</string>
     <string name="impor_berhasil_angka_diproses">Restauro com sucesso. No total foram processadas %1$d marcadores, notas, e/ou destaques, e também %2$d etiquetas.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Existem erro(s) quando é criada a cópia de segurança: %s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Criar cópia de segurança dos marcadores, notas, e destaques para o Cartão SD? Cópias de segurança existentes serão substituídos.</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Existem erro(s) ao restaurar: %s</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Substituir os marcadores, notas e destaques que você tem atualmente?</string>
     <string name="file_tidak_bisa_dibaca_file">O ficheiro não existe ou não pode ser lido: %s</string>
@@ -119,7 +118,6 @@
     <string name="ed_download_url_url">Carregar URL</string>
     <string name="ed_version_details">Dados da versao</string>
     <string name="ed_choose_pdb_or_yes_file">Escolher umo ficheiro.pdb. si</string>
-    <string name="ed_no_external_storage">Nenhuma Carta SD o almacen do USB.</string>
     <string name="ed_invalid_file_selected">Ficheiro invalido selecionado.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">O ficheiro %s ja esta na lista.</string>
     <string name="ed_error_encountered">Erro encontrado</string>
@@ -368,7 +366,6 @@
     <string name="rp_download_reading_plan_data_corrupted">Baixar o plano para leer foi detruido. Por favor tenta novamente com uma conexao no Internet,.</string>
     <string name="rp_download_already_have">Voce ja tem esto plano de leer.</string>
     <string name="rp_mark_as_read_up_to">Marcar como lido até aqui?</string>
-    <string name="version_download_need_fonts">\"A versão transferida pode precisar de ser exibida com determinadas fontes. Volte para o menu \'Exibir\' e selecione uma fonte. Grega precisa de fonte Ubuntu. Parabaik, ParabaikSans ou Myanmar 3. Tamil precisa de Akshar. Telugu precisa de Suranna</string>
     <string name="version_download_corrupted_file">O ficheiro transferido parece estar danificado.</string>
     <string name="version_download_saving_io_error">I/O erro quando guarda a versão transferida</string>
     <string name="version_download_network_error">Erro do network baixando ^1.</string>

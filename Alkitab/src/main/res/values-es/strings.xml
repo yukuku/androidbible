@@ -12,7 +12,6 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Respaldo exitoso.\n\nLos resultados están en el archivo: %s</string>
     <string name="impor_berhasil_angka_diproses">Restauración exitosa. En total %1$d marcadores, notas y/o resaltos, y además  %2$d etiquetas fueron procesadas.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Ocurrió un error (o errores) creando el respaldo: %s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">¿Crear respaldo de marcadores, notas y resaltos a la Tarjeta SD o al Almacenamiento USB? Los respaldos existentes serán sobreescritos.</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Ocurrió un error (o errores) restaurando: %s</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">¿Sobrescribir los marcadores, notas, y resaltos que tienes actualmente?</string>
     <string name="file_tidak_bisa_dibaca_file">El archivo no existe o no puede ser leído: %s</string>
@@ -36,8 +35,8 @@
     <string name="copy_split1">Copiar versión secundaria</string>
     <string name="copy_both_splits">Copiar ambas versiones</string>
     <string name="search_copy_selected_verses">Copiar versículos seleccionados</string>
-    <string name="perj_baru">Nuevo Test</string>
-    <string name="perj_lama">Viejo Test</string>
+    <string name="perj_baru">Nuevo Test.</string>
+    <string name="perj_lama">Viejo Test. </string>
     <string name="search_bookname_only">Solo %s</string>
     <string name="ayat_sebelumangka">Versículo</string>
     <string name="pasal_sebelumangka">Capítulo</string>
@@ -119,7 +118,6 @@
     <string name="ed_download_url_url">Descargar URL</string>
     <string name="ed_version_details">Detalles de la Versión</string>
     <string name="ed_choose_pdb_or_yes_file">Elija un archivo .pdb o .yes</string>
-    <string name="ed_no_external_storage">No se encontró Tarjeta SD ni Almacenamiento USB.</string>
     <string name="ed_invalid_file_selected">Archivo inválido seleccionado.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">El archivo %s ya está en la lista.</string>
     <string name="ed_error_encountered">Error encontrado</string>
@@ -368,7 +366,6 @@
     <string name="rp_download_reading_plan_data_corrupted">Los datos del plan de lectura descargado están dañados. Por favor trate de nuevo con una conexión a Internet que funcione.</string>
     <string name="rp_download_already_have">Ya tiene este plan de lectura.</string>
     <string name="rp_mark_as_read_up_to">¿Marcar como leído hasta aquí?</string>
-    <string name="version_download_need_fonts">"La versión que descargaste puede necesitar ciertas fuentes para mostrarse. Ve al menú de \'Apariencia de texto\' y elige una fuente. Griego necesita la fuente Ubuntu. Birmano necesita Parabaik, ParabaikSans o Myanmar3. Tamil necesita Suranna."</string>
     <string name="version_download_corrupted_file">El archivo descargado parece estar corrupto.</string>
     <string name="version_download_saving_io_error">Error de E/S al guardar la versión descargada</string>
     <string name="version_download_network_error">Error de red al descargar ^1.</string>

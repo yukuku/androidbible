@@ -12,7 +12,6 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Sandaran berjaya.\n\nKeputusan adalah dalam fail: %s</string>
     <string name="impor_berhasil_angka_diproses">Simpan semula berjaya. Dalam jumlah %1$d penanda buku, nota, dan / atau acara kemuncak, dan juga %2$d label telah diproses.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Terdapat kesilapan(s) apabila membuat sandaran: %s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Membuat sandaran penanda buku, nota, dan sorotan ke Kad SD atau Storan USB? Sandaran sedia ada akan ditulis ganti.</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Terdapat kesilapan(s) apabila memulihkan: %s</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Tulis ganti penanda buku, nota, dan sorotan anda kini mempunyai?</string>
     <string name="file_tidak_bisa_dibaca_file">Fail tidak wujud atau tidak boleh dibaca: %s</string>
@@ -119,7 +118,6 @@
     <string name="ed_download_url_url">Muat turun URL</string>
     <string name="ed_version_details">Maklumat versi</string>
     <string name="ed_choose_pdb_or_yes_file">Pilih fail .pdb atau .yes</string>
-    <string name="ed_no_external_storage">Tiada Kad SD atau storan USB dijumpai.</string>
     <string name="ed_invalid_file_selected">Fail tidak sah dipilih.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Fail %s sudah ada dalam senarai.</string>
     <string name="ed_error_encountered">Ralat dihadapi</string>
@@ -366,7 +364,6 @@
     <string name="rp_download_reading_plan_data_corrupted">Data pelan bacaan yang dimuat turun adalah rosak. Sila cuba sekali lagi dengan sambungan Internet yang berfungsi.</string>
     <string name="rp_download_already_have">Anda telah mempunyai rancangan pembacaan ini.</string>
     <string name="rp_mark_as_read_up_to">Tandakan sebagai telah dibaca sehingga tempat ini?</string>
-    <string name="version_download_need_fonts">"Versi dimuat turun mungkin perlu dipaparkan dengan fon tertentu. Pergi ke menu \'Teks rupa\' dan pilih fon. Yunani memerlukan font Ubuntu. Burma memerlukan Parabaik, ParabaikSans, atau Myanmar3. Tamil memerlukan Akshar. Telugu memerlukan Suranna."</string>
     <string name="version_download_corrupted_file">Fail yang dimuat turun seolah-olah menjadi rosak.</string>
     <string name="version_download_saving_io_error">Kesulitan Input/Pengeluaran ketika menyimpan versi yang dimuat turun</string>
     <string name="version_download_network_error">Talian bermasalah semasa muat turun ^1.</string>

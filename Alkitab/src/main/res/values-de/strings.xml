@@ -12,7 +12,6 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Sicherung erfolgreich.\n\nDatei wurde gespeichert unter %s</string>
     <string name="impor_berhasil_angka_diproses">Wiederherstellung erfolgreich. Insgesamt wurden %1$d Lesezeichen, Notizen, Hervorhebungen und %2$d Stichwörter verarbeitet.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Fehler beim Erstellen der Sicherung: %s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Sollen die Lesezeichen, Notizen und Hervorhebungen auf die SD-Karte oder dem USB-Stick gesichert werden? Vorhandene Sicherungen werden überschrieben.</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Fehler beim Wiederherstellen: %s</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Möchten Sie Ihre Lesezeichen, Notizen und Hervorhebungen wirklich überschreiben?</string>
     <string name="file_tidak_bisa_dibaca_file">Datei existiert nicht oder konnte nicht gelesen werden: %s</string>
@@ -119,7 +118,6 @@
     <string name="ed_download_url_url">Download-URL</string>
     <string name="ed_version_details">Übersetzungsdetails</string>
     <string name="ed_choose_pdb_or_yes_file">Eine .pdb- or .yes-Datei auswählen</string>
-    <string name="ed_no_external_storage">Keine SD-Karte oder USB-Stick gefunden.</string>
     <string name="ed_invalid_file_selected">Datei ungültig</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Die Datei %s ist bereits in der Liste vorhanden.</string>
     <string name="ed_error_encountered">Fehler aufgetreten</string>
@@ -368,7 +366,6 @@
     <string name="rp_download_reading_plan_data_corrupted">Der heruntergeladene Leseplan ist beschädigt. Versuchen Sie es mit einer funktionierenden Internetverbindung erneut.</string>
     <string name="rp_download_already_have">Diesen Leseplan haben Sie bereits heruntergeladen.</string>
     <string name="rp_mark_as_read_up_to">Bis hierhin als gelesen markieren?</string>
-    <string name="version_download_need_fonts">"Die Übersetzung, die Sie heruntergeladen haben, kann nur mit speziellen Schriftarten angezeigt werden. Gehen Sie zum Menü \'Textdarstellung\' und wählen Sie eine passende Schriftart. Burmese benötigt Parabaik, ParabaikSans oder Myanmar3. Tamil benötigt Akshar. Telugu benötigt Suranna."</string>
     <string name="version_download_corrupted_file">Die heruntergeladene Datei scheint fehlerhaft zu sein.</string>
     <string name="version_download_saving_io_error">I/O-Fehler beim Speichern der heruntergeladenen Übersetzung</string>
     <string name="version_download_network_error">Netzwerkfehler beim Herunterladen von ^1.</string>

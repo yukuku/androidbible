@@ -12,7 +12,6 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Rezerva s-a creat.\n\nRezultatele sunt în fişierul: %s</string>
     <string name="impor_berhasil_angka_diproses">Restabilire cu succes. În total sunt %1$d favorite, note, şi/sau marcaje, şi %2$d etichete au fost procesate.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">A apărut o eroare când s-a creat restabilirea: %s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Creează rezerve ale marcajelor, notelor și evidențiere pe cardul SD sau de stocare USB? Rezervele existente vor fi suprascrise.</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">A apărut o eroare la restabilire: %s</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Suprascrieți marcajele, notele și evidențierile pe care le aveți?</string>
     <string name="file_tidak_bisa_dibaca_file">Fişierul nu există sau nu poate fi citit: %s</string>
@@ -119,7 +118,6 @@
     <string name="ed_download_url_url">Descarcă URL</string>
     <string name="ed_version_details">Detalii versiune</string>
     <string name="ed_choose_pdb_or_yes_file">Alege un fişier .pdb sau .yes</string>
-    <string name="ed_no_external_storage">Nu s-a găsit cardul SD sau unitatea USB.</string>
     <string name="ed_invalid_file_selected">Fişier selectat invalid.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Fişierul %s este deja în listă.</string>
     <string name="ed_error_encountered">Eroare…</string>
@@ -318,6 +316,7 @@
     <string name="recentverses_button_hint">(Apasă lung pentru versetele recente)</string>
     <string name="dr_reminder">Memento</string>
     <string name="dr_error_contact_reminder">Eroare la contactarea Memento.</string>
+    <string name="dr_timepicker_fallback_hint">HHMM (ex. 1930 pentru 7:30pm)</string>
     <string name="dr_timepicker_set">Setează</string>
     <string name="dr_timepicker_off">Oprește</string>
     <string name="dv_activity_title">Widget cu versetul zilei</string>
@@ -348,6 +347,7 @@
     <string name="rp_navigationPreviousDay">Ziua precedentă</string>
     <string name="rp_navigationGoToDate">Mergi la data</string>
     <string name="rp_navigationNextDay">Ziua următoare</string>
+    <string name="rp_menuDownload">Descarcă un plan de citire</string>
     <string name="rp_menuCatchMeUp">Resincronizare date</string>
     <string name="rp_menuRestart">Restart</string>
     <string name="rp_menuDelete">Șterge</string>
@@ -366,7 +366,6 @@
     <string name="rp_download_reading_plan_data_corrupted">Planul de citire descărcat este corupt. Încearcă încă o dată având o conexiune la internet.</string>
     <string name="rp_download_already_have">Aveți deja acest plan de citire.</string>
     <string name="rp_mark_as_read_up_to">Marchează ca citit până aici?</string>
-    <string name="version_download_need_fonts">"Versiunea ce s-a descărcat, ar putea avea nevoie de anumite fonturi. Mergi la meniul \"aspect Text \" și selectați un font. Grec are nevoie de fontul Ubuntu. Pentru limba birmaneză Parabaik, ParabaikSans sau Myanmar3. Tamil are nevoie de Akshar. Telugu are nevoie de Suranna."</string>
     <string name="version_download_corrupted_file">Fișierul descărcat pare a fi corupt.</string>
     <string name="version_download_saving_io_error">Eroare I/O când salvează versiunea descărcată</string>
     <string name="version_download_network_error">Erori de internet la descărcare ^1.</string>
@@ -375,6 +374,7 @@
     <string name="highlight_custom_color">Alte culori</string>
     <string name="menu_compare">Compară</string>
     <string name="song_player_error_description">O eroare a fost întâlnită în timpul redării acestui cântec: %1$d, %2$d.</string>
+    <string name="song_player_error_message">A apărut o eroare la redarea acestui cântec: ^1.</string>
     <string name="search_in_version_short_name_placeholder">Găseșe în %s</string>
     <string name="search_syntax_tips"><i>Sfaturi pentru căutare:</i>\n\n<b>+word</b> pentru cuvântul\n<b>[q]city of david[q]</b> pentru fraza</string>
     <string name="search_no_result">Nu au fost găsite versetele <b>^1</b>.</string>

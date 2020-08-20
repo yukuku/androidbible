@@ -12,7 +12,6 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Pembuatan cadangan berhasil.\n\nFile yang dihasilkan: %s</string>
     <string name="impor_berhasil_angka_diproses">Pemulihan berhasil. Semuanya ada %1$d marka dan %2$d label yang diproses.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Terjadi kesalahan ketika membuat cadangan: %s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Buat cadangan pembatas buku, catatan, dan sorotan pada SD Card atau Penyimpanan USB? Cadangan sebelumnya akan ditumpuk.</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Terjadi kesalahan ketika memulihkan: %s</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Tumpuk pembatas buku, catatan, dan sorotan yang Anda punya saat ini?</string>
     <string name="file_tidak_bisa_dibaca_file">File tidak ada atau tidak bisa dibaca: %s</string>
@@ -119,7 +118,6 @@
     <string name="ed_download_url_url">URL unduh</string>
     <string name="ed_version_details">Rincian versi</string>
     <string name="ed_choose_pdb_or_yes_file">Pilih file .pdb atau .yes</string>
-    <string name="ed_no_external_storage">Tidak ditemukan SD Card atau penyimpanan USB.</string>
     <string name="ed_invalid_file_selected">File tidak dikenal yang dipilih.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">File %s sudah ada dalam daftar versi.</string>
     <string name="ed_error_encountered">Ada kesalahan</string>
@@ -276,8 +274,8 @@
     <string name="desc_verse_attribute_progress_mark">%s sedang di sini.</string>
     <string name="desc_progress_mark_list">Daftar jejak</string>
     <string name="desc_backspace">Backspace</string>
-    <string name="desc_bfl_back">Tekan untuk kembali, tahan untuk melihat daftar lokasi kunjungan</string>
-    <string name="desc_bfl_forward">Tekan untuk maju, tahan untuk melihat daftar lokasi kunjungan</string>
+    <string name="desc_bfl_back">Klik untuk mundur, tahan untuk melihat lokasi yang pernah dikunjungi</string>
+    <string name="desc_bfl_forward">Klik untuk maju, tahan untuk melihat lokasi yang pernah dikunjungi</string>
     <string name="intent_filter_open_yes_file">Buka file YES</string>
     <string name="intent_filter_open_pdb_file">Buka file PDB</string>
     <string name="intent_filter_open_pdb_or_yes_file">Buka file PDB/YES</string>
@@ -371,7 +369,6 @@
     <string name="rp_download_reading_plan_data_corrupted">Rencana baca yang diunduh datanya rusak. Harap coba lagi lain kali dengan terkoneksi ke Internet.</string>
     <string name="rp_download_already_have">Anda sudah memiliki rencana baca ini.</string>
     <string name="rp_mark_as_read_up_to">Tandai terbaca sampai sini?</string>
-    <string name="version_download_need_fonts">"Versi yang diunduh mungkin perlu ditampilkan dengan jenis huruf tertentu. Bukalah menu \'Penampilan teks\' dan pilih jenis hurufnya. Yunani butuh jenis huruf Ubuntu. Myanmar butuh Parabaik, ParabaikSans, atau Myanmar3. Tamil butuh Akshar. Telugu butuh Suranna."</string>
     <string name="version_download_corrupted_file">File yang diunduh tampaknya rusak.</string>
     <string name="version_download_saving_io_error">Kesalahan I/O saat menyimpan versi unduhan</string>
     <string name="version_download_network_error">Kesalahan jaringan saat mengunduh ^1.</string>
@@ -500,6 +497,8 @@
     <string name="pref_textPadding_summary">Lebih sedikit teks per barisnya agar mudah dibaca</string>
     <string name="pref_bottomToolbarOnText_title">Navigasi ayat di bawah</string>
     <string name="pref_bottomToolbarOnText_summary">Letakkan navigasi ayat di bagian bawah layar Alkitab</string>
+    <string name="pref_verseNumberIsShown_title">Nomor ayat</string>
+    <string name="pref_verseNumberIsShown_summary">Bubuhkan nomor ayat di depan tiap ayat</string>
     <!-- devotion reminder -->
     <string name="dr_app_name">Pengingat</string>
     <string name="dr_notification_title">Renungan harian</string>
