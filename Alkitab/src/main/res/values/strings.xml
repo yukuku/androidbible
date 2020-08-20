@@ -12,7 +12,6 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Backup was successful.\n\nResults are in file: %s</string>
     <string name="impor_berhasil_angka_diproses">Restore was successful. In total %1$d bookmarks, notes, and/or highlights, and also %2$d labels were processed.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">There were error(s) when creating backup: %s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Create backup of bookmarks, notes, and highlights to SD Card or USB Storage? Existing backups will be overwritten.</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">There were error(s) when restoring: %s</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Overwrite the bookmarks, notes, and highlights you currently have?</string>
     <string name="file_tidak_bisa_dibaca_file">The file does not exist or could not be read: %s</string>
@@ -121,7 +120,6 @@
     <string name="ed_download_url_url">Download URL</string>
     <string name="ed_version_details">Version details</string>
     <string name="ed_choose_pdb_or_yes_file">Choose a .pdb or .yes file</string>
-    <string name="ed_no_external_storage">No SD Card or USB storage found.</string>
     <string name="ed_invalid_file_selected">Invalid file selected.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">File %s is already on the list.</string>
     <string name="ed_error_encountered">Error encountered</string>

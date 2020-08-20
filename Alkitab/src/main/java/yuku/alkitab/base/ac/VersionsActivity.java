@@ -385,21 +385,13 @@ public class VersionsActivity extends BaseActivity {
 	}
 
 	void clickOnOpenFile() {
-		String state = Environment.getExternalStorageState();
-		if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-			FileChooserConfig config = new FileChooserConfig();
-			config.mode = FileChooserConfig.Mode.Open;
-			config.initialDir = Environment.getExternalStorageDirectory().getAbsolutePath();
-			config.title = getString(R.string.ed_choose_pdb_or_yes_file);
-			config.pattern = ".*\\.(?i:pdb|yes|yes\\.gz)";
+		final FileChooserConfig config = new FileChooserConfig();
+		config.mode = FileChooserConfig.Mode.Open;
+		config.initialDir = Environment.getExternalStorageDirectory().getAbsolutePath();
+		config.title = getString(R.string.ed_choose_pdb_or_yes_file);
+		config.pattern = ".*\\.(?i:pdb|yes|yes\\.gz)";
 
-			startActivityForResult(FileChooserActivity.createIntent(App.context, config), REQCODE_openFile);
-		} else {
-			new MaterialDialog.Builder(this)
-				.content(R.string.ed_no_external_storage)
-				.positiveText(R.string.ok)
-				.show();
-		}
+		startActivityForResult(FileChooserActivity.createIntent(App.context, config), REQCODE_openFile);
 	}
 
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
