@@ -51,6 +51,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
+import java.util.Calendar
+import java.util.Date
+import java.util.GregorianCalendar
+import java.util.Locale
+import kotlin.math.roundToLong
 import me.toptas.fancyshowcase.FancyShowCaseView
 import me.toptas.fancyshowcase.listener.DismissListener
 import org.json.JSONException
@@ -126,11 +131,6 @@ import yuku.alkitab.tracking.Tracker
 import yuku.alkitab.util.Ari
 import yuku.alkitab.util.IntArrayList
 import yuku.devoxx.flowlayout.FlowLayout
-import java.util.Calendar
-import java.util.Date
-import java.util.GregorianCalendar
-import java.util.Locale
-import kotlin.math.roundToLong
 
 private const val TAG = "IsiActivity"
 private const val EXTRA_verseUrl = "verseUrl"
@@ -248,6 +248,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     private lateinit var overlayContainer: FrameLayout
     lateinit var root: ViewGroup
     lateinit var toolbar: Toolbar
+    lateinit var nontoolbar: View
     lateinit var lsSplit0: VersesController
     lateinit var lsSplit1: VersesController
     lateinit var splitRoot: TwofingerLinearLayout
@@ -1089,6 +1090,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
         }
 
+        nontoolbar = findViewById(R.id.nontoolbar)
+
         bGoto = findViewById(R.id.bGoto)
         bLeft = findViewById(R.id.bLeft)
         bRight = findViewById(R.id.bRight)
@@ -1105,7 +1108,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         // If layout is changed, updateToolbarLocation must be updated as well. This will be called in DEBUG to make sure
         // updateToolbarLocation is also updated when layout is updated.
         if (BuildConfig.DEBUG) {
-            if (root.childCount != 2 || root.getChildAt(0).id != R.id.toolbar || root.getChildAt(1).id != R.id.splitRoot) {
+            if (root.childCount != 2 || root.getChildAt(0).id != R.id.toolbar || root.getChildAt(1).id != R.id.nontoolbar) {
                 throw RuntimeException("Layout changed and this is no longer compatible with updateToolbarLocation")
             }
         }
@@ -2055,19 +2058,19 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         // - not fullscreen, toolbar at bottom
         // - not fullscreen, toolbar at top
 
-        // root contains exactly 2 children: toolbar and splitRoot.
-        // Need to move toolbar and splitRoot in order to accomplish this.
+        // root contains exactly 2 children: toolbar and nontoolbar.
+        // Need to move toolbar and nontoolbar in order to accomplish this.
 
         if (!fullScreen) {
             root.removeView(toolbar)
-            root.removeView(splitRoot)
+            root.removeView(nontoolbar)
 
             if (Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default)) {
-                root.addView(splitRoot)
+                root.addView(nontoolbar)
                 root.addView(toolbar)
             } else {
                 root.addView(toolbar)
-                root.addView(splitRoot)
+                root.addView(nontoolbar)
             }
         }
     }

@@ -70,42 +70,91 @@
 
 		</androidx.appcompat.widget.Toolbar>
 
-		<yuku.alkitab.base.widget.TwofingerLinearLayout
-			android:id="@+id/splitRoot"
+		<FrameLayout
+			android:id="@+id/nontoolbar"
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
-			android:layout_weight="1"
-			android:orientation="vertical"
-			tools:ignore="NestedWeights">
+			android:layout_weight="1">
 
-			<yuku.alkitab.base.verses.EmptyableRecyclerView
-				android:id="@+id/lsSplitView0"
+			<yuku.alkitab.base.widget.TwofingerLinearLayout
+				android:id="@+id/splitRoot"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
-				android:clipToPadding="false"
-				android:paddingStart="@dimen/text_side_padding"
-				android:paddingEnd="@dimen/text_side_padding"
-				android:scrollbarStyle="outsideOverlay"
-				android:scrollbars="vertical" />
+				android:orientation="vertical"
+				tools:ignore="NestedWeights">
 
-			<yuku.alkitab.base.widget.LabeledSplitHandleButton
-				android:id="@+id/splitHandleButton"
-				android:layout_width="match_parent"
-				android:layout_height="@dimen/split_handle_thickness"
-				android:background="@null"
-				android:visibility="gone" />
+				<yuku.alkitab.base.verses.EmptyableRecyclerView
+					android:id="@+id/lsSplitView0"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:clipToPadding="false"
+					android:paddingStart="@dimen/text_side_padding"
+					android:paddingEnd="@dimen/text_side_padding"
+					android:scrollbarStyle="outsideOverlay"
+					android:scrollbars="vertical" />
 
-			<yuku.alkitab.base.verses.EmptyableRecyclerView
-				android:id="@+id/lsSplitView1"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:clipToPadding="false"
-				android:paddingStart="@dimen/text_side_padding"
-				android:paddingEnd="@dimen/text_side_padding"
-				android:scrollbarStyle="outsideOverlay"
-				android:scrollbars="vertical" />
+				<yuku.alkitab.base.widget.LabeledSplitHandleButton
+					android:id="@+id/splitHandleButton"
+					android:layout_width="match_parent"
+					android:layout_height="@dimen/split_handle_thickness"
+					android:background="@null"
+					android:visibility="gone" />
 
-		</yuku.alkitab.base.widget.TwofingerLinearLayout>
+				<yuku.alkitab.base.verses.EmptyableRecyclerView
+					android:id="@+id/lsSplitView1"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:clipToPadding="false"
+					android:paddingStart="@dimen/text_side_padding"
+					android:paddingEnd="@dimen/text_side_padding"
+					android:scrollbarStyle="outsideOverlay"
+					android:scrollbars="vertical" />
+
+			</yuku.alkitab.base.widget.TwofingerLinearLayout>
+
+			<LinearLayout
+				android:id="@+id/panelBackForwardList"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="end|bottom"
+				android:layout_marginEnd="16dp"
+				android:layout_marginBottom="8dp"
+				android:background="@color/primary"
+				android:elevation="8dp"
+				android:orientation="horizontal"
+				android:visibility="gone"
+				tools:targetApi="lollipop"
+				tools:visibility="visible">
+
+				<ImageButton
+					android:id="@+id/bBackForwardListBack"
+					android:layout_width="40dp"
+					android:layout_height="40dp"
+					android:background="?selectableItemBackground"
+					android:contentDescription="@string/desc_bfl_back"
+					android:src="@drawable/ic_undo_white_16dp"
+					android:tooltipText="@string/desc_bfl_back"
+					tools:targetApi="o" />
+
+				<ImageView
+					android:layout_width="1dp"
+					android:layout_height="match_parent"
+					android:contentDescription="@null"
+					android:src="#2fff" />
+
+				<ImageButton
+					android:id="@+id/bBackForwardListForward"
+					android:layout_width="40dp"
+					android:layout_height="40dp"
+					android:background="?selectableItemBackground"
+					android:contentDescription="@string/desc_bfl_forward"
+					android:src="@drawable/ic_redo_white_16dp"
+					android:tooltipText="@string/desc_bfl_forward"
+					tools:targetApi="o" />
+
+			</LinearLayout>
+
+		</FrameLayout>
 
 	</LinearLayout>
 
@@ -115,47 +164,5 @@
 		android:layout_height="match_parent"
 		android:padding="8dp"
 		android:visibility="gone" />
-
-	<LinearLayout
-		android:id="@+id/panelBackForwardList"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_gravity="end|bottom"
-		android:layout_marginEnd="16dp"
-		android:layout_marginBottom="8dp"
-		android:background="@color/primary"
-		android:elevation="8dp"
-		android:orientation="horizontal"
-		android:visibility="gone"
-		tools:targetApi="lollipop"
-		tools:visibility="visible">
-
-		<ImageButton
-			android:id="@+id/bBackForwardListBack"
-			android:layout_width="40dp"
-			android:layout_height="40dp"
-			android:background="?selectableItemBackground"
-			android:contentDescription="@string/desc_bfl_back"
-			android:src="@drawable/ic_undo_white_16dp"
-			android:tooltipText="@string/desc_bfl_back"
-			tools:targetApi="o" />
-
-		<ImageView
-			android:layout_width="1dp"
-			android:layout_height="match_parent"
-			android:contentDescription="@null"
-			android:src="#2fff" />
-
-		<ImageButton
-			android:id="@+id/bBackForwardListForward"
-			android:layout_width="40dp"
-			android:layout_height="40dp"
-			android:background="?selectableItemBackground"
-			android:contentDescription="@string/desc_bfl_forward"
-			android:src="@drawable/ic_redo_white_16dp"
-			android:tooltipText="@string/desc_bfl_forward"
-			tools:targetApi="o" />
-
-	</LinearLayout>
 
 </FrameLayout>
