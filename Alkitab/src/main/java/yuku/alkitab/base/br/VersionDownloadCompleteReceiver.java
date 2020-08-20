@@ -151,13 +151,6 @@ public class VersionDownloadCompleteReceiver {
 
 			Foreground.run(() -> {
 				Toast.makeText(App.context, TextUtils.expandTemplate(context.getText(R.string.version_download_complete), mvDb.longName), Toast.LENGTH_LONG).show();
-
-				if ("ta".equals(mvDb.locale) || "te".equals(mvDb.locale) || "my".equals(mvDb.locale) || "el".equals(mvDb.locale)) {
-					context.startActivity(
-						AlertDialogActivity.createOkIntent(null, context.getString(R.string.version_download_need_fonts))
-							.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-					);
-				}
 			});
 
 			App.getLbm().sendBroadcast(new Intent(VersionsActivity.VersionListFragment.ACTION_RELOAD));
