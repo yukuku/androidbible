@@ -90,8 +90,6 @@ dependencies {
     implementation project(':ImportedDesktopVerseUtil')
     implementation project(':PrDownloaderFixed')
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-
     // Android X
     implementation "androidx.annotation:annotation:$androidxAnnotationVersion"
     implementation "androidx.appcompat:appcompat:$androidxAppcompatVersion"

@@ -33,7 +33,6 @@ dependencies {
     implementation project(':BintexReader')
     implementation project(':BintexWriter')
     implementation project(':Snappy')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 repositories {
     mavenCentral()
