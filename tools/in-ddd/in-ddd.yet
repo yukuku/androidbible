@@ -31590,7 +31590,7 @@ pericope	40	28	11	P40:28:11
 pericope	40	28	16	P40:28:16
 footnote	1	4	1	1	The first footnote on verse 1
 footnote	1	4	1	2	The second footnote on verse 1
-footnote	1	4	2	1	Formatting and links test on footnote: Tap @9here@7!!! -> @<to:Gen.2.1@>Going to Gen 2:1@/ and @<to:Gen.2.11@>Gen 2:11@/
+footnote	1	4	2	1	Formatting and links test on footnote: Tap @9here@7!!! -> @<to:Gen.2.1@>Going to Gen 2:1@/ and @<ta:3736580,3736586-3736587@>Book. 4:4, 10-11@/
 footnote	1	4	2	2	https://www.alkitab.app and http://www.example.com, also www.example.com and www.alkitab.app
 xref	1	1	2	1	Tap @9here@7!!! -> @<to:Gen.2.1@>Dest 1@/ and @<to:Gen.2.11@>Dest 2@/
 xref	1	1	2	2	Tap here!!! -> @<to:Gen.3.1@>@9Dest@7 3@/
