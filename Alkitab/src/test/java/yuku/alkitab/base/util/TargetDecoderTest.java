@@ -1,7 +1,6 @@
-package yuku.alkitab.test;
+package yuku.alkitab.base.util;
 
 import junit.framework.TestCase;
-import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.util.IntArrayList;
 
 public class TargetDecoderTest extends TestCase {
@@ -9,7 +8,7 @@ public class TargetDecoderTest extends TestCase {
 		assertEquals(ariRanges, TargetDecoder.decode(encoded));
 	}
 
-	public void testDecode() throws Throwable {
+	public void testDecode() {
 		IntArrayList ariRanges = new IntArrayList();
 		ariRanges.clear();
 		ariRanges.add(0x123);

@@ -1,4 +1,4 @@
-package yuku.alkitab.test;
+package yuku.alkitab.base.widget;
 
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -7,7 +7,6 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import junit.framework.TestCase;
-import yuku.alkitab.base.widget.FormattedTextRenderer;
 
 public class FormattedTextRendererTest extends TestCase {
     SpannableStringBuilder mockSb() {

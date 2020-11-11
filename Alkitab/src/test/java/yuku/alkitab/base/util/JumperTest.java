@@ -1,7 +1,6 @@
-package yuku.alkitab.test;
+package yuku.alkitab.base.util;
 
 import junit.framework.TestCase;
-import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.model.Book;
 
 public class JumperTest extends TestCase {

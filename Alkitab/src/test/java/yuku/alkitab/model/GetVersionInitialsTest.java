@@ -1,16 +1,9 @@
-package yuku.alkitab.test;
+package yuku.alkitab.model;
 
 import androidx.annotation.Nullable;
-import junit.framework.TestCase;
-import yuku.alkitab.model.Book;
-import yuku.alkitab.model.FootnoteEntry;
-import yuku.alkitab.model.PericopeBlock;
-import yuku.alkitab.model.SingleChapterVerses;
-import yuku.alkitab.model.Version;
-import yuku.alkitab.model.XrefEntry;
-import yuku.alkitab.util.IntArrayList;
-
 import java.util.List;
+import junit.framework.TestCase;
+import yuku.alkitab.util.IntArrayList;
 
 public class GetVersionInitialsTest extends TestCase {
 
@@ -100,7 +93,7 @@ public class GetVersionInitialsTest extends TestCase {
 		};
 	}
 
-	public void test1() throws Throwable {
+	public void test1() {
 		assertEquals(fakeVersion("King James Version").getInitials(), "KJV");
 		assertEquals(fakeVersion("king james version").getInitials(), "KJV");
 		assertEquals(fakeVersion("King-James - Version").getInitials(), "KJV");

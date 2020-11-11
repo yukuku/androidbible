@@ -1,16 +1,9 @@
-package yuku.alkitab.test;
+package yuku.alkitab.model;
 
 import androidx.annotation.Nullable;
-import junit.framework.TestCase;
-import yuku.alkitab.model.Book;
-import yuku.alkitab.model.FootnoteEntry;
-import yuku.alkitab.model.PericopeBlock;
-import yuku.alkitab.model.SingleChapterVerses;
-import yuku.alkitab.model.Version;
-import yuku.alkitab.model.XrefEntry;
-import yuku.alkitab.util.IntArrayList;
-
 import java.util.List;
+import junit.framework.TestCase;
+import yuku.alkitab.util.IntArrayList;
 
 public class VersionTest extends TestCase {
 	Version fakeVersion() {
@@ -111,7 +104,7 @@ public class VersionTest extends TestCase {
 		};
 	}
 
-	private void testReferenceRange0(final int ari_start, final int ari_end, final String result) throws Throwable {
+	private void testReferenceRange0(final int ari_start, final int ari_end, final String result) {
 		final Version version = fakeVersion();
 		assertEquals(result, version.referenceRange(ari_start, ari_end));
 	}

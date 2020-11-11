@@ -1,7 +1,6 @@
-package yuku.alkitab.test;
+package yuku.alkitab.base.util;
 
 import junit.framework.TestCase;
-import yuku.alkitab.base.util.FormattedVerseText;
 
 public class RemoveSpecialCodesTest extends TestCase {
 	void testRemoveSpecialCodes(String formatted, String plain) {
