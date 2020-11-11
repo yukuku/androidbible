@@ -20,7 +20,7 @@ data class VersesListeners(
             selectedVersesListener = object : VersesController.SelectedVersesListener() {},
             verseScrollListener = object : VersesController.VerseScrollListener() {},
             parallelListener_ = {},
-            inlineLinkSpanFactory_ = VerseInlineLinkSpan.Factory { type, arif ->
+            inlineLinkSpanFactory_ = { type, arif ->
                 object : VerseInlineLinkSpan(type, arif) {
                 }
             },
