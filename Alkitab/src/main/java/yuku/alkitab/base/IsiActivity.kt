@@ -2775,7 +2775,15 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                             rendered.setSpan(span, matcher.start(), matcher.end(), 0)
                         }
 
+                        val ari = arif ushr 8
+                        val title = when {
+                            source === lsSplit0 -> activeSplit0.version.reference(ari)
+                            source === lsSplit1 -> activeSplit1?.version?.reference(ari)
+                            else -> null
+                        }.orEmpty()
+
                         footnoteDialog = MaterialDialog.Builder(this@IsiActivity)
+                            .title(title)
                             .content(rendered)
                             .positiveText(R.string.ok)
                             .show()
