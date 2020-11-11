@@ -18,8 +18,10 @@ import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
 import android.os.Build
 import android.os.Bundle
+import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.format.DateFormat
+import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.text.style.URLSpan
@@ -46,6 +48,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.text.HtmlCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
+import androidx.core.util.PatternsCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
@@ -97,6 +100,7 @@ import yuku.alkitab.base.util.OtherAppIntegration
 import yuku.alkitab.base.util.RequestCodes
 import yuku.alkitab.base.util.ShareUrl
 import yuku.alkitab.base.util.Sqlitil
+import yuku.alkitab.base.util.TargetDecoder
 import yuku.alkitab.base.verses.VerseAttributeLoader
 import yuku.alkitab.base.verses.VersesController
 import yuku.alkitab.base.verses.VersesControllerImpl
@@ -248,7 +252,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     private lateinit var overlayContainer: FrameLayout
     lateinit var root: ViewGroup
     lateinit var toolbar: Toolbar
-    lateinit var nontoolbar: View
+    private lateinit var nontoolbar: View
     lateinit var lsSplit0: VersesController
     lateinit var lsSplit1: VersesController
     lateinit var splitRoot: TwofingerLinearLayout
@@ -1384,7 +1388,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     @Suppress("DEPRECATION")
     private fun initNfcIfAvailable() {
-        nfcAdapter?.setNdefPushMessageCallback(NfcAdapter.CreateNdefMessageCallback {
+        nfcAdapter?.setNdefPushMessageCallback({
             val obj = JSONObject()
             obj.put("ari", Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, getVerse_1BasedOnScrolls()))
 
@@ -2714,8 +2718,65 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         VerseRenderer.appendSuperscriptNumber(footnoteText, arif and 0xff)
                         footnoteText.append(" ")
 
-                        MaterialDialog.Builder(this@IsiActivity)
-                            .content(FormattedTextRenderer.render(fe.content, false, footnoteText))
+                        var footnoteDialog: MaterialDialog? = null
+
+                        val rendered = FormattedTextRenderer.render(
+                            fe.content,
+                            mustHaveFormattedHeader = false,
+                            appendToThis = footnoteText,
+                            tagListener = object : FormattedTextRenderer.TagListener {
+                                override fun onTag(tag: String, buffer: Spannable, start: Int, end: Int) {
+                                    when {
+                                        tag.startsWith("t") -> { // target verse
+                                            val encodedTarget = tag.substring(1)
+                                            buffer.setSpan(object : ClickableSpan() {
+                                                override fun onClick(widget: View) {
+                                                    val ranges = TargetDecoder.decode(encodedTarget)
+                                                    val versesDialog = VersesDialog.newInstance(ranges)
+                                                    versesDialog.listener = object : VersesDialog.VersesDialogListener() {
+                                                        override fun onVerseSelected(ari: Int) {
+                                                            footnoteDialog?.dismiss()
+                                                            versesDialog.dismiss()
+                                                            jumpToAri(ari)
+                                                        }
+                                                    }
+                                                    versesDialog.show(supportFragmentManager, "verses_dialog_from_footnote")
+                                                }
+                                            }, start, end, 0)
+                                        }
+                                        else -> {
+                                            MaterialDialog.Builder(this@IsiActivity)
+                                                .content(String.format(Locale.US, "Error: footnote at arif 0x%08x contains unsupported tag %s", arif, tag))
+                                                .positiveText(R.string.ok)
+                                                .show()
+                                        }
+                                    }
+                                }
+                            },
+                        )
+
+                        // Detect URLs
+                        val matcher = PatternsCompat.WEB_URL.matcher(rendered)
+                        while (matcher.find()) {
+                            val url = matcher.group()
+                            val span = object : ClickableSpan() {
+                                override fun onClick(widget: View) {
+                                    val uri = if (url.startsWith("http:") || url.startsWith("https:")) {
+                                        Uri.parse(url)
+                                    } else {
+                                        Uri.parse("http://$url")
+                                    }
+                                    try {
+                                        startActivity(Intent(Intent.ACTION_VIEW, uri))
+                                    } catch (ignored: Exception) {
+                                    }
+                                }
+                            }
+                            rendered.setSpan(span, matcher.start(), matcher.end(), 0)
+                        }
+
+                        footnoteDialog = MaterialDialog.Builder(this@IsiActivity)
+                            .content(rendered)
                             .positiveText(R.string.ok)
                             .show()
                     } else {

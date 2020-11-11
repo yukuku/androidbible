@@ -163,7 +163,7 @@ class XrefDialog : BaseDialog() {
 
     fun showVerses(linkPos: Int, encodedTarget: String) {
         displayedLinkPos = linkPos
-        val ranges = decodeTarget(encodedTarget)
+        val ranges = TargetDecoder.decode(encodedTarget)
         if (BuildConfig.DEBUG) {
             AppLog.d(TAG, "linkPos $linkPos target=$encodedTarget ranges=$ranges")
         }
@@ -187,10 +187,6 @@ class XrefDialog : BaseDialog() {
             )
         }
         renderXrefText()
-    }
-
-    private fun decodeTarget(encodedTarget: String): IntArrayList {
-        return TargetDecoder.decode(encodedTarget)
     }
 
     private val selectedVersesListener = object : VersesController.SelectedVersesListener() {
