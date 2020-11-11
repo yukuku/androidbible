@@ -148,8 +148,8 @@ verse	1	3	21	1:3:21
 verse	1	3	22	1:3:22
 verse	1	3	23	1:3:23
 verse	1	3	24	1:3:24
-verse	1	4	1	1:4:1
-verse	1	4	2	1:4:2
+verse	1	4	1	@@Open me --> @<f1@>@/ <--, or open me --> @<f2@>@/
+verse	1	4	2	@@Links on footnote test --> @<f1@>@/ <--, or this --> @<f2@>@/
 verse	1	4	3	1:4:3
 verse	1	4	4	1:4:4
 verse	1	4	5	1:4:5
@@ -31173,7 +31173,7 @@ verse	66	22	21	66:22:21
 pericope	1	1	1	P1:1:1
 pericope	1	2	8	P1:2:8
 pericope	1	3	1	P1:3:1
-pericope	1	4	1	P1:4:1
+pericope	1	4	1	Footnote Test
 pericope	1	4	17	P1:4:17
 pericope	1	5	1	P1:5:1
 pericope	1	6	1	P1:6:1
@@ -31588,6 +31588,10 @@ parallel	B20. 24:1-12
 parallel	Yoh. 20:1-10
 pericope	40	28	11	P40:28:11
 pericope	40	28	16	P40:28:16
+footnote	1	4	1	1	The first footnote on verse 1
+footnote	1	4	1	2	The second footnote on verse 1
+footnote	1	4	2	1	Formatting and links test on footnote: Tap @9here@7!!! -> @<to:Gen.2.1@>Going to Gen 2:1@/ and @<to:Gen.2.11@>Gen 2:11@/
+footnote	1	4	2	2	https://www.alkitab.app and http://www.example.com, also www.example.com and www.alkitab.app
 xref	1	1	2	1	Tap @9here@7!!! -> @<to:Gen.2.1@>Dest 1@/ and @<to:Gen.2.11@>Dest 2@/
 xref	1	1	2	2	Tap here!!! -> @<to:Gen.3.1@>@9Dest@7 3@/
 xref	1	2	2	1	2:2-3: @<ta:70667@>Book. 20:11@/; @<ta:3736580,3736586@>Book. 4:4, 10@/
