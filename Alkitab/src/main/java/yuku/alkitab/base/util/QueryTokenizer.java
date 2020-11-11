@@ -2,7 +2,6 @@ package yuku.alkitab.base.util;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -10,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class QueryTokenizer {
-	static Pattern oneToken = Pattern.compile("(\\+?)((?:\".*?\"|\\S)+)");
+	static Pattern oneToken = Pattern.compile("(\\+?)((?:[\"\u201c\u201d].*?[\"\u201c\u201d]|\\S)+)");
 
 	/**
 	 * Convert a query string into tokens. Takes care of the quotes.
@@ -21,7 +20,7 @@ public class QueryTokenizer {
 	 * Examples:
 	 *   a b => 'a', 'b'
 	 *   "a b" c => '+a b', 'c'
-	 *   a"bc"d => 'abcd'
+	 *   a"bc"d => 'a"bc"d'
 	 *   "a bc" => '+a bc'
 	 *   "a" bc => '+a', 'bc'
 	 *   "a+b" => '+a+b'
@@ -49,11 +48,11 @@ public class QueryTokenizer {
 					// prefixed with '+'
 					plussed = true;
 					raw_token = raw_token.substring(1);
-				} else if (raw_token.length() >= 2 && raw_token.charAt(0) == '"' && raw_token.charAt(raw_token.length() - 1) == '"') {
+				} else if (raw_token.length() >= 2 && isQuoteChar(raw_token.charAt(0)) && isQuoteChar(raw_token.charAt(raw_token.length() - 1))) {
 					// surrounded by quotes
 					plussed = true;
 					raw_token = raw_token.substring(1, raw_token.length() - 1);
-				} else if (raw_token.length() >= 2 && raw_token.charAt(0) == '"') {
+				} else if (raw_token.length() >= 2 && isQuoteChar(raw_token.charAt(0))) {
 					// opening quote is present, but no closing quote. This is still considered as a complete quoted token.
 					plussed = true;
 					raw_token = raw_token.substring(1);
@@ -70,12 +69,17 @@ public class QueryTokenizer {
 		return processed.toArray(new String[0]);
 	}
 
+	private static boolean isQuoteChar(char c) {
+		return c == '"' || c == '\u201c' || c == '\u201d';
+	}
+
 	public static boolean isPlussedToken(String token) {
 		return token.length() >= 1 && token.charAt(0) == '+';
 	}
 
 	/**
 	 * Removes a single '+' from the <code>token</code> if exists.
+	 *
 	 * @param token may start or not start with '+'
 	 */
 	public static String tokenWithoutPlus(@NonNull String token) {
@@ -104,9 +108,11 @@ public class QueryTokenizer {
 
 	/**
 	 * For tokens such as "abc.,- def123", which will be re-tokenized to "abc" "def123"
+	 *
 	 * @return null if the token is not a multiword token (i.e. not an array with 1 element!).
 	 */
-	@Nullable static String[] tokenizeMultiwordToken(String token) {
+	@Nullable
+	static String[] tokenizeMultiwordToken(String token) {
 		List<String> res = null;
 		final Matcher m = pattern_letters.matcher(token);
 		while (m.find()) {
