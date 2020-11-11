@@ -211,6 +211,7 @@
     <string name="no_url_for_facebook">Isto não pode ser compartilhado no Facebook.</string>
     <string name="storage_permission_rationale">Precisamos acessar o armazenamento para a guardar mídia compartilhada como versões da Bíblia e fontes.</string>
     <string name="goto_button_history_tip">Dica: Da próxima vez, clique e segure este botão para acessar seus versos recentemente abertos.</string>
+    <string name="backforwardlist_clear">Limpar tudo</string>
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Teclado</string>
     <string name="goto_tab_direct_label">Por extenso</string>
@@ -273,6 +274,8 @@
     <string name="desc_verse_attribute_progress_mark">%s está aqui.</string>
     <string name="desc_progress_mark_list">Lista de marcadores de progresso</string>
     <string name="desc_backspace">Retrocesso</string>
+    <string name="desc_bfl_back">Aperte para voltar, mantenha pressionado para ver locais visitados</string>
+    <string name="desc_bfl_forward">Aperte para continuar, mantenha pressionado para ver locais visitados</string>
     <string name="intent_filter_open_yes_file">Abrir arquivo YES</string>
     <string name="intent_filter_open_pdb_file">Abrir arquivo PDB</string>
     <string name="intent_filter_open_pdb_or_yes_file">Abrir arquivo PDB/YES</string>
@@ -316,6 +319,7 @@
     <string name="recentverses_button_hint">(Pressione por alguns segundos para ver versículos recentes)</string>
     <string name="dr_reminder">Alerta</string>
     <string name="dr_error_contact_reminder">Erro ao fazer contato com o aplicativo de Alerta.</string>
+    <string name="dr_timepicker_fallback_hint">HHMM (e.g. 1930 para 19:30)</string>
     <string name="dr_timepicker_set">Definir</string>
     <string name="dr_timepicker_off">Desativar</string>
     <string name="dv_activity_title">Verso diário do Widget</string>
@@ -346,6 +350,7 @@
     <string name="rp_navigationPreviousDay">Dia anterior</string>
     <string name="rp_navigationGoToDate">Ir para a data</string>
     <string name="rp_navigationNextDay">Dia seguinte</string>
+    <string name="rp_menuDownload">Baixe um plano de leitura</string>
     <string name="rp_menuCatchMeUp">Sincronizar novamente as datas</string>
     <string name="rp_menuRestart">Reiniciar</string>
     <string name="rp_menuDelete">Remover</string>
@@ -372,6 +377,7 @@
     <string name="highlight_custom_color">Outras cores</string>
     <string name="menu_compare">Comparar</string>
     <string name="song_player_error_description">Ocorreu um erro ao reproduzir esta canção: %1$d, %2$d.</string>
+    <string name="song_player_error_message">Um erro foi encontrado ao reproduzir essa canção: ^1.</string>
     <string name="search_in_version_short_name_placeholder">Buscar em %s</string>
     <string name="search_syntax_tips"><i>Dicas de pesquisa:</i>\n\n<b>+palavra</b> para exatamente essa palavra\n<b>[q]senhor deus[q]</b> para exatamente essa frase</string>
     <string name="search_no_result">Nenhum versículo encontrado para <b>^1</b>.</string>
@@ -491,6 +497,8 @@
     <string name="pref_textPadding_summary">Torna o corpo do texto mais estreito facilitando a leitura</string>
     <string name="pref_bottomToolbarOnText_title">Navegação no rodapé</string>
     <string name="pref_bottomToolbarOnText_summary">Coloque a barra de navegação na parte inferior da tela</string>
+    <string name="pref_verseNumberIsShown_title">Mostrar número de versículos</string>
+    <string name="pref_verseNumberIsShown_summary">Mostrar o número do versículo no início de cada versículo</string>
     <!-- devotion reminder -->
     <string name="dr_app_name">Lembrete</string>
     <string name="dr_notification_title">Devocional diário</string>

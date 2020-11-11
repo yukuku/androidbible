@@ -211,6 +211,7 @@
     <string name="no_url_for_facebook">Bu Facebook\'ta paylaşılamaz.</string>
     <string name="storage_permission_rationale">İncil versiyonları ve yazı tipleri gibi paylaşılan öğeleri kaydetmek için dosyalarınıza erişmemiz gerekiyor.</string>
     <string name="goto_button_history_tip">İpucu: Bir sonraki seferde son açılan ayetlere erişmek için bu butona uzunca basın.</string>
+    <string name="backforwardlist_clear">Hepsini temizle</string>
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Arayıcı</string>
     <string name="goto_tab_direct_label">Direkt</string>
@@ -273,6 +274,8 @@
     <string name="desc_verse_attribute_progress_mark">%s şuan burada.</string>
     <string name="desc_progress_mark_list">İğnelerin listesi</string>
     <string name="desc_backspace">Geri tuşu</string>
+    <string name="desc_bfl_back">Geri dönmek için dokunun, ziyaret edilen yerleri görmek için uzun basın</string>
+    <string name="desc_bfl_forward">İleri gitmek için dokunun, ziyaret edilen yerleri görmek için uzun basın</string>
     <string name="intent_filter_open_yes_file">YES dosyasını aç</string>
     <string name="intent_filter_open_pdb_file">PDB dosyasını aç</string>
     <string name="intent_filter_open_pdb_or_yes_file">PDB/YES dosyası aç</string>
@@ -494,6 +497,8 @@
     <string name="pref_textPadding_summary">Daha kolay okumak için bir hat üzerindeki yazıyı darlaştır</string>
     <string name="pref_bottomToolbarOnText_title">Alt ayet gezinimi</string>
     <string name="pref_bottomToolbarOnText_summary">Ayet gezinti çubuğunu İncil ekranının alt kısmına yerleştir</string>
+    <string name="pref_verseNumberIsShown_title">Ayet numaralarını göster</string>
+    <string name="pref_verseNumberIsShown_summary">Her ayetin başında ayet numarasını göster</string>
     <!-- devotion reminder -->
     <string name="dr_app_name">Hatırlatma</string>
     <string name="dr_notification_title">Günlük dua</string>

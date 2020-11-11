@@ -211,6 +211,7 @@
     <string name="no_url_for_facebook">Dit kan niet met Facebook worden gedeeld.</string>
     <string name="storage_permission_rationale">We hebben toegang tot de opslag nodig om gedeelde media zoals Bijbel versies en lettertypes opteslaan.</string>
     <string name="goto_button_history_tip">Tip voor een volgende keer: houd deze knop ingedrukt om je laatst geopende verzen te zien.</string>
+    <string name="backforwardlist_clear">Wis alles</string>
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Kiezer</string>
     <string name="goto_tab_direct_label">Direct</string>
@@ -273,6 +274,8 @@
     <string name="desc_verse_attribute_progress_mark">%s is op dit moment hier.</string>
     <string name="desc_progress_mark_list">Lijst over pins</string>
     <string name="desc_backspace">Backspace</string>
+    <string name="desc_bfl_back">Klik om terug te gaan, klik langer om bezochte locaties te zien</string>
+    <string name="desc_bfl_forward">Klik om verder te gaan, klik langer om bezochte locaties te zien</string>
     <string name="intent_filter_open_yes_file">Open YES bestand</string>
     <string name="intent_filter_open_pdb_file">Open PDB bestand</string>
     <string name="intent_filter_open_pdb_or_yes_file">Open PDB/YES bestand</string>
@@ -346,6 +349,7 @@
     <string name="rp_navigationPreviousDay">Vorige dag</string>
     <string name="rp_navigationGoToDate">Ga naar datum</string>
     <string name="rp_navigationNextDay">Volgende dag</string>
+    <string name="rp_menuDownload">Download een lees plan</string>
     <string name="rp_menuCatchMeUp">Hersync datum</string>
     <string name="rp_menuRestart">Herstart</string>
     <string name="rp_menuDelete">Verwijderen</string>
@@ -372,6 +376,7 @@
     <string name="highlight_custom_color">Andere kleuren</string>
     <string name="menu_compare">Vergelijken</string>
     <string name="song_player_error_description">Er is een fout opgetreden bij het afspelen van dit lied: %1$d, %2$d.</string>
+    <string name="song_player_error_message">Er is een fout opgetreden bij het afspelen van dit lied: ^1.</string>
     <string name="search_in_version_short_name_placeholder">Zoeken in %s</string>
     <string name="search_syntax_tips"><i>Zoektips:</i>\n\n<b>+woord</b> voor dit exacte woord\n<b>[q]stad van David[q]</b> voor deze exacte zin</string>
     <string name="search_no_result">Geen verzen gevonden voor <b>^1</b>.</string>
@@ -491,6 +496,8 @@
     <string name="pref_textPadding_summary">Maak tekst in een regel smaller voor de leesbaarheid</string>
     <string name="pref_bottomToolbarOnText_title">Onderste vers navigatie</string>
     <string name="pref_bottomToolbarOnText_summary">Zet de vers navigatie toolbar beneden op het Bijbel scherm</string>
+    <string name="pref_verseNumberIsShown_title">Toon vers nummers</string>
+    <string name="pref_verseNumberIsShown_summary">Toon de vers nummers aan het begin van elk vers</string>
     <!-- devotion reminder -->
     <string name="dr_app_name">Herinnering</string>
     <string name="dr_notification_title">Dagelijkse overdenking</string>

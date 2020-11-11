@@ -211,6 +211,7 @@
     <string name="no_url_for_facebook">这不可以分享到脸书。</string>
     <string name="storage_permission_rationale">我們需要存取儲存裝置，以便儲存如聖經版本及字型的共享媒體。</string>
     <string name="goto_button_history_tip">提示：下次，长按此键即可访问你最近打开的节目。</string>
+    <string name="backforwardlist_clear">清除所有</string>
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">拨号按键</string>
     <string name="goto_tab_direct_label">直接输入</string>
@@ -273,6 +274,8 @@
     <string name="desc_verse_attribute_progress_mark">这里有%s。</string>
     <string name="desc_progress_mark_list">进度标记清单</string>
     <string name="desc_backspace">退格</string>
+    <string name="desc_bfl_back">点击回退，长按看已访问位置</string>
+    <string name="desc_bfl_forward">点击前进，长按看已访问位置</string>
     <string name="intent_filter_open_yes_file">打开YES档案</string>
     <string name="intent_filter_open_pdb_file">打开PDB档案</string>
     <string name="intent_filter_open_pdb_or_yes_file">打开PDB/YES档案</string>
@@ -316,6 +319,7 @@
     <string name="recentverses_button_hint">（长按以显示最近经文）</string>
     <string name="dr_reminder">提示</string>
     <string name="dr_error_contact_reminder">与提示程式连接时发生错误。</string>
+    <string name="dr_timepicker_fallback_hint">24小时制，HHMM (例如 1930 代表下午7:30)</string>
     <string name="dr_timepicker_set">设置</string>
     <string name="dr_timepicker_off">关闭</string>
     <string name="dv_activity_title">每日经文小部件</string>
@@ -346,6 +350,7 @@
     <string name="rp_navigationPreviousDay">上一天</string>
     <string name="rp_navigationGoToDate">到某日期</string>
     <string name="rp_navigationNextDay">下一天</string>
+    <string name="rp_menuDownload">下载一个阅读计划</string>
     <string name="rp_menuCatchMeUp">再次同步日期</string>
     <string name="rp_menuRestart">从新开始</string>
     <string name="rp_menuDelete">删除</string>
@@ -372,7 +377,7 @@
     <string name="highlight_custom_color">其他颜色</string>
     <string name="menu_compare">比较</string>
     <string name="song_player_error_description">播放歌曲%1$d, %2$d的时候遇到问题。</string>
-    <string name="song_player_error_message">播放歌曲, 的时候遇到问题: ^1.</string>
+    <string name="song_player_error_message">播放这首歌曲的时候遇到问题: ^1.</string>
     <string name="search_in_version_short_name_placeholder">在%s中搜寻</string>
     <string name="search_syntax_tips"><i>搜寻提示：</i>\n\n<b>+字词</b>以搜寻准确的单字\n<b>[q]大卫城[q]</b>以搜寻准确的语句</string>
     <string name="search_no_result">找不到这经节 <b>^1</b>.</string>
@@ -492,6 +497,8 @@
     <string name="pref_textPadding_summary">缩窄同一行的文字距离以方便阅读</string>
     <string name="pref_bottomToolbarOnText_title">底部经文导览</string>
     <string name="pref_bottomToolbarOnText_summary">把经节导览列放置到圣经显示底部</string>
+    <string name="pref_verseNumberIsShown_title">显示经节号码</string>
+    <string name="pref_verseNumberIsShown_summary">在每个经节开头显示经节号码</string>
     <!-- devotion reminder -->
     <string name="dr_app_name">提醒</string>
     <string name="dr_notification_title">每日灵修</string>

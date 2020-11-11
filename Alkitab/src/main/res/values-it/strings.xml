@@ -211,6 +211,7 @@
     <string name="no_url_for_facebook">Questo non può essere condiviso su Facebook.</string>
     <string name="storage_permission_rationale">Abbiamo bisogno di accedere alla memoria per archiviare media condivisi come le versioni della Bibbia e i caratteri.</string>
     <string name="goto_button_history_tip">Suggerimento: La prossima volta tieni premuto questo bottone per accedere ai versetti aperti di recente.</string>
+    <string name="backforwardlist_clear">Cancella tutto</string>
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Tastiera numerica</string>
     <string name="goto_tab_direct_label">Diretto</string>
@@ -273,6 +274,8 @@
     <string name="desc_verse_attribute_progress_mark">%s è questo.</string>
     <string name="desc_progress_mark_list">Lista di pin</string>
     <string name="desc_backspace">Indietro</string>
+    <string name="desc_bfl_back">Tocca per tornare indietro, lunga pressione per vedere i luoghi visitati</string>
+    <string name="desc_bfl_forward">Tocca per andare avanti, lunga pressione per vedere i luoghi visitati</string>
     <string name="intent_filter_open_yes_file">Apri file YES</string>
     <string name="intent_filter_open_pdb_file">Apri file PDB</string>
     <string name="intent_filter_open_pdb_or_yes_file">Apri file PDB\YES</string>
@@ -495,6 +498,8 @@
     <string name="pref_textPadding_summary">Rendi il testo più stretto per facilitare la lettura</string>
     <string name="pref_bottomToolbarOnText_title">Navigazione versetti in basso</string>
     <string name="pref_bottomToolbarOnText_summary">Posiziona la barra degli strumenti di navigazione in basso nella schermata della Bibbia</string>
+    <string name="pref_verseNumberIsShown_title">Mostra numeri del verso</string>
+    <string name="pref_verseNumberIsShown_summary">Mostra il numero del verso all\'inizio di ogni verso</string>
     <!-- devotion reminder -->
     <string name="dr_app_name">Promemoria</string>
     <string name="dr_notification_title">Devozione giornaliera</string>

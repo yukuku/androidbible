@@ -211,6 +211,7 @@
     <string name="no_url_for_facebook">Nie możesz się tym podzielić na Facebooku.</string>
     <string name="storage_permission_rationale">Potrzebujemy dostępu do nośnika danych, aby zapisywać współdzielone media tj. przekłady Biblii i czcionki.</string>
     <string name="goto_button_history_tip">Podpowiedz: Następnym razem przytrzymaj ten przycisk, aby dostać się do swoich ostatnio otwartych wersów.</string>
+    <string name="backforwardlist_clear">Wyczyść wszystko</string>
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Dialer</string>
     <string name="goto_tab_direct_label">Bezpośrednio</string>
@@ -273,6 +274,8 @@
     <string name="desc_verse_attribute_progress_mark">%s jest w tym miejscu.</string>
     <string name="desc_progress_mark_list">Lista wskaźników postępów</string>
     <string name="desc_backspace">Cofnij</string>
+    <string name="desc_bfl_back">Kliknij aby powrócić, przytryzymaj aby zobaczyć historie przeglądanych miejsc</string>
+    <string name="desc_bfl_forward">Kliknij aby przejść dalej, przytrzymaj aby zobaczyć historie przeglądanych miejsc</string>
     <string name="intent_filter_open_yes_file">Otwórz plik YES</string>
     <string name="intent_filter_open_pdb_file">Otwórz plik PDB</string>
     <string name="intent_filter_open_pdb_or_yes_file">Otwórz plik PDB/YES</string>
@@ -494,6 +497,8 @@
     <string name="pref_textPadding_summary">Uczyń tekst w lini węższym, aby ułatwić czytanie</string>
     <string name="pref_bottomToolbarOnText_title">Nawigacja na dole ekranu</string>
     <string name="pref_bottomToolbarOnText_summary">Umieść pasek nawigacji na dole ekranu Biblii</string>
+    <string name="pref_verseNumberIsShown_title">Pokaż numer wersu</string>
+    <string name="pref_verseNumberIsShown_summary">Pokaż numer wersu na początku każdego wersu</string>
     <!-- devotion reminder -->
     <string name="dr_app_name">Przypomnienie</string>
     <string name="dr_notification_title">Codzienne rozważanie</string>

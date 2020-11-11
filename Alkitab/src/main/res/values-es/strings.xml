@@ -211,6 +211,7 @@
     <string name="no_url_for_facebook">Esto no puede ser compartido en Facebook.</string>
     <string name="storage_permission_rationale">Necesitamos acceder al almacenamiento para guardar medios compartidos tales como versiones de la Biblia y fuentes.</string>
     <string name="goto_button_history_tip">Consejo: La próxima ves mantén presionado para acceder a los versos mas recientes.</string>
+    <string name="backforwardlist_clear">Limpiar todo</string>
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Marcador</string>
     <string name="goto_tab_direct_label">Directo</string>
@@ -273,6 +274,8 @@
     <string name="desc_verse_attribute_progress_mark">%s es aquí ahora mismo.</string>
     <string name="desc_progress_mark_list">Lista de anclados</string>
     <string name="desc_backspace">Retroceso</string>
+    <string name="desc_bfl_back">Toque para ir atrás, presione prolongadamente para ver los lugares visitados</string>
+    <string name="desc_bfl_forward">Toque para ir adelante, presione prolongadamente para ver los lugares visitados</string>
     <string name="intent_filter_open_yes_file">Abrir archivo YES</string>
     <string name="intent_filter_open_pdb_file">Abrir archivo PDB</string>
     <string name="intent_filter_open_pdb_or_yes_file">Abrir archivo PDB/YES</string>
@@ -495,6 +498,8 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
     <string name="pref_textPadding_summary">Hacer el texto en línea más estrecho para facilitar la lectura</string>
     <string name="pref_bottomToolbarOnText_title">Botón de navegación de versículo</string>
     <string name="pref_bottomToolbarOnText_summary">Poner la barra de navegación de versículo en la parte inferior de la pantalla de la Biblia</string>
+    <string name="pref_verseNumberIsShown_title">Mostrar número de versículos</string>
+    <string name="pref_verseNumberIsShown_summary">Muestre el número del versículo al comienzo de cada versículo</string>
     <!-- devotion reminder -->
     <string name="dr_app_name">Recordatorio</string>
     <string name="dr_notification_title">Devoción diaria</string>

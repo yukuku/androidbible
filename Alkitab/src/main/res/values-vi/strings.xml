@@ -211,6 +211,7 @@
     <string name="no_url_for_facebook">Không thể được chia sẻ lên Facebook.</string>
     <string name="storage_permission_rationale">Chúng tôi cần phải truy cập bộ nhớ để lưu trữ thông tin chia sẻ như các phiên bản Kinh Thánh và phông chữ.</string>
     <string name="goto_button_history_tip">Mẹo: Lần sau, giữ nút này để truy cập gần đây câu thơ gần đây nhất của bạn.</string>
+    <string name="backforwardlist_clear">Xóa hết</string>
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Quay số</string>
     <string name="goto_tab_direct_label">Trực tiếp</string>
@@ -273,6 +274,8 @@
     <string name="desc_verse_attribute_progress_mark">%s hiện ở đây.</string>
     <string name="desc_progress_mark_list">Danh sách các đánh dấu</string>
     <string name="desc_backspace">Phím xóa lùi</string>
+    <string name="desc_bfl_back">Nhấp để trở lại, nhấn giữ để xem các địa điểm đã thăm quan</string>
+    <string name="desc_bfl_forward">Nhấp để chuyển tiếp, nhấn giữ để xem các địa điểm đã thăm quan</string>
     <string name="intent_filter_open_yes_file">Mở thư mục YES</string>
     <string name="intent_filter_open_pdb_file">Mở thư mục PDB</string>
     <string name="intent_filter_open_pdb_or_yes_file">Mở thư mục YES/PDB</string>
@@ -494,6 +497,8 @@
     <string name="pref_textPadding_summary">Làm cho khoảng cách dòng trong văn bản hẹp lại để dễ dàng đọc</string>
     <string name="pref_bottomToolbarOnText_title">Chuyển hướng câu</string>
     <string name="pref_bottomToolbarOnText_summary">Đặt thanh công cụ ở phía dưới trên màn hình Kinh Thánh</string>
+    <string name="pref_verseNumberIsShown_title">Hiện số câu</string>
+    <string name="pref_verseNumberIsShown_summary">Hiện số câu ở đầu mỗi câu</string>
     <!-- devotion reminder -->
     <string name="dr_app_name">Nhắc nhở</string>
     <string name="dr_notification_title">Sùng kính hàng ngày</string>
