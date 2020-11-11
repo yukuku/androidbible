@@ -133,7 +133,7 @@ public class SearchEngine {
 				}
 				last = token;
 			}
-			tokens = atokens.toArray(new String[atokens.size()]);
+			tokens = atokens.toArray(new String[0]);
 			AppLog.d(TAG, "tokens = " + Arrays.toString(tokens));
 		}
 
@@ -304,7 +304,7 @@ public class SearchEngine {
 				consumedLength = token.length();
 			}
 		} else {
-			posToken = oneChapter.indexOf(token, 0);
+			posToken = oneChapter.indexOf(token);
 			consumedLength = token.length();
 		}
 
@@ -492,17 +492,15 @@ public class SearchEngine {
 				final int verse_1 = Ari.toVerse(ari);
 				if (verse_1 >= 1 && verse_1 <= loadedChapter.getVerseCount()) {
 					final String text = loadedChapter.getVerse(verse_1 - 1);
-					if (text != null) {
-						boolean passed = true;
-						for (final String[] multiword_tokens : multiwords) {
-							if (indexOfWholeMultiword(text, multiword_tokens, 0, false, consumedLengthPtr) == -1) {
-								passed = false;
-								break;
-							}
+					boolean passed = true;
+					for (final String[] multiword_tokens : multiwords) {
+						if (indexOfWholeMultiword(text, multiword_tokens, 0, false, consumedLengthPtr) == -1) {
+							passed = false;
+							break;
 						}
-						if (passed) {
-							res2.add(ari);
-						}
+					}
+					if (passed) {
+						res2.add(ari);
 					}
 				}
 			}

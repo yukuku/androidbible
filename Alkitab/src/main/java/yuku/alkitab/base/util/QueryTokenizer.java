@@ -67,7 +67,7 @@ public class QueryTokenizer {
 			}
 		}
 
-		return processed.toArray(new String[processed.size()]);
+		return processed.toArray(new String[0]);
 	}
 
 	public static boolean isPlussedToken(String token) {
@@ -120,6 +120,6 @@ public class QueryTokenizer {
 			return null;
 		}
 
-		return res.toArray(new String[res.size()]);
+		return res.toArray(new String[0]);
 	}
 }
