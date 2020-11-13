@@ -39,6 +39,7 @@ import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.util.ClipboardUtil
 import yuku.alkitab.base.util.Debouncer
+import yuku.alkitab.base.util.FormattedVerseText
 import yuku.alkitab.base.util.Highlights
 import yuku.alkitab.base.util.LabelColorUtil
 import yuku.alkitab.base.util.QueryTokenizer
@@ -449,19 +450,17 @@ class MarkerListActivity : BaseActivity() {
                         }
 
                         R.id.menuCopy -> {
-                            val sb = SpannableStringBuilder()
-//                            val aris: IntArrayList = adapter.getSearchResults()
-//                            val checkeds: SparseBooleanArray = lsSearchResults.getCheckedItemPositions()
-//                            for (i in 0 until checkeds.size()) {
-//                                if (!checkeds.valueAt(i)) continue
-//
-//                                val ari = aris[checkeds.keyAt(i)]
-//                                val reference: String = searchInVersion.reference(ari)
-//                                val verseText = removeSpecialCodes(searchInVersion.loadVerseText(ari))
-//                                val sb_len = sb.length
-//                                sb.append(reference).append("\n").append(verseText).append("\n\n")
-//                                sb.setSpan(UnderlineSpan(), sb_len, sb_len + reference.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-//                            }
+                            val markers = adapter.filteredMarkers
+                            val checkeds = lv.checkedItemPositions
+                            val sb = buildString {
+                                for (i in 0 until checkeds.size) {
+                                    if (!checkeds.valueAt(i)) continue
+
+                                    dumpMarker(markers[checkeds.keyAt(i)])
+                                    appendLine()
+                                }
+                            }
+
                             ClipboardUtil.copyToClipboard(sb)
                             Snackbar.make(root, R.string.bl_copied_toast, Snackbar.LENGTH_SHORT).show()
                             mode.finish()
@@ -517,7 +516,7 @@ class MarkerListActivity : BaseActivity() {
 
                                 // whatever the kind is, the way to delete is the same
                                 S.getDb().deleteMarkerById(marker._id)
-                                uncheckAllItems()
+                                mode.finish()
                                 loadAndFilter()
                                 App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED))
                             }
@@ -541,8 +540,51 @@ class MarkerListActivity : BaseActivity() {
         true
     }
 
+    private fun StringBuilder.dumpMarker(marker: Marker) {
+        val reference = version.referenceWithVerseCount(marker.ari, marker.verseCount)
+        val rawVerseText = version.loadVerseText(marker.ari)
+        val verseText = if (rawVerseText == null) {
+            getString(R.string.generic_verse_not_available_in_this_version)
+        } else {
+            FormattedVerseText.removeSpecialCodes(rawVerseText)
+        }
+
+        val kind = marker.kind ?: return
+        when (kind) {
+            Marker.Kind.bookmark -> {
+                appendLine(marker.caption)
+                // the caption defaults to the same as reference, so prevent double-mention
+                if (marker.caption != reference) {
+                    appendLine(reference)
+                }
+                appendLine(verseText)
+                if (marker.verseCount > 1) {
+                    appendLine("...")
+                }
+
+                val labels = S.getDb().listLabelsByMarker(marker)
+                if (labels.isNotEmpty()) {
+                    appendLine(labels.joinToString { it.title })
+                }
+            }
+
+            Marker.Kind.note -> {
+                appendLine(reference)
+                appendLine(marker.caption)
+            }
+
+            Marker.Kind.highlight -> {
+                appendLine(reference)
+                appendLine(verseText)
+                if (marker.verseCount > 1) {
+                    appendLine("...")
+                }
+            }
+        }
+    }
+
     inner class MarkerListAdapter : EasyAdapter() {
-        private var filteredMarkers = emptyList<Marker>()
+        var filteredMarkers = emptyList<Marker>()
         private var rt: ReadyTokens? = null
 
         override fun getItem(position: Int): Marker {
