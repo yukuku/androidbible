@@ -1,109 +1,131 @@
 package yuku.alkitab.datatransfer.model
 
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@JsonClass(generateAdapter = true)
-class Root(
+@Serializable
+data class Root(
     val success: Boolean,
     val snapshots: Snapshots,
 )
 
-@JsonClass(generateAdapter = true)
-class Snapshots(
+@Serializable
+data class Snapshots(
     val history: Snapshot<HistoryEntity>,
     val mabel: Snapshot<MabelEntity>,
     val pins: Snapshot<PinsEntity>,
     val rp: Snapshot<RppEntity>,
 )
 
-@JsonClass(generateAdapter = true)
-class Snapshot<E>(
+@Serializable
+data class Snapshot<E>(
     val revno: Int,
     val entities: List<E>,
 )
 
-abstract class Entity(
-    val gid: String,
-    val kind: String,
-    val creator_id: String,
-)
+@Serializable
+sealed class Entity {
+    abstract val gid: String
+    abstract val kind: String
+    abstract val creator_id: String
+}
 
-@JsonClass(generateAdapter = true)
-class HistoryEntity(
-    gid: String,
-    kind: String,
-    creator_id: String,
+@Serializable
+data class HistoryEntity(
+    override val gid: String,
+    override val kind: String,
+    override val creator_id: String,
     val content: HistoryContent,
-) : Entity(gid, kind, creator_id)
+) : Entity()
 
-@JsonClass(generateAdapter = true)
-class HistoryContent(
+@Serializable
+data class HistoryContent(
     val ari: Int,
     val timestamp: Long,
 )
 
-@JsonClass(generateAdapter = true)
-class MabelEntity(
-    gid: String,
-    kind: String,
-    creator_id: String,
-    val content: MabelContent,
-) : Entity(gid, kind, creator_id)
+@Serializable
+sealed class MabelEntity: Entity()
 
-abstract class MabelContent
+@Serializable
+@SerialName("Marker")
+data class MarkerEntity(
+    override val gid: String,
+    override val kind: String,
+    override val creator_id: String,
+    val content: MarkerContent,
+) : MabelEntity()
 
-@JsonClass(generateAdapter = true)
-class MarkerContent(
+@Serializable
+data class MarkerContent(
     val kind: Int,
     val ari: Int,
     val verseCount: Int,
     val createTime: Long,
     val modifyTime: Long,
     val caption: String,
-) : MabelContent()
+)
 
-@JsonClass(generateAdapter = true)
-class LabelContent(
+@Serializable
+@SerialName("Label")
+data class LabelEntity(
+    override val gid: String,
+    override val kind: String,
+    override val creator_id: String,
+    val content: LabelContent,
+) : MabelEntity()
+
+@Serializable
+data class LabelContent(
     val title: String,
     val ordering: Int,
-) : MabelContent()
+)
 
-@JsonClass(generateAdapter = true)
-class MarkerLabelContent(
+@Serializable
+@SerialName("Marker_Label")
+data class MarkerLabelEntity(
+    override val gid: String,
+    override val kind: String,
+    override val creator_id: String,
+    val content: MarkerLabelContent,
+) : MabelEntity()
+
+@Serializable
+data class MarkerLabelContent(
     val marker_gid: String,
     val label_gid: String,
-) : MabelContent()
+)
 
-@JsonClass(generateAdapter = true)
-class PinsEntity(
-    gid: String,
-    kind: String,
-    creator_id: String,
+@Serializable
+data class PinsEntity(
+    override val gid: String,
+    override val kind: String,
+    override val creator_id: String,
     val content: PinsContent,
-) : Entity(gid, kind, creator_id)
+) : Entity()
 
-@JsonClass(generateAdapter = true)
-class PinsContent(
+@Serializable
+data class PinsContent(
     val pins: List<Pin>
 )
 
-@JsonClass(generateAdapter = true)
-class Pin(
+@Serializable
+data class Pin(
     val ari: Int,
     val modifyTime: Long,
     val preset_id: Int,
 )
 
-@JsonClass(generateAdapter = true)
-class RppEntity(
-    gid: String,
-    kind: String,
-    creator_id: String,
+@Serializable
+data class RppEntity(
+    override val gid: String,
+    override val kind: String,
+    override val creator_id: String,
     val content: RppContent,
-) : Entity(gid, kind, creator_id)
+) : Entity()
 
-@JsonClass(generateAdapter = true)
-class RppContent(
+@Serializable
+data class RppContent(
     val startTime: Long,
     val done: List<Int>,
 )

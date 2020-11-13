@@ -1,17 +1,21 @@
 package yuku.alkitab.datatransfer.model
 
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import java.io.File
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.junit.Test
+
+val format = Json {
+    ignoreUnknownKeys = true
+    prettyPrint = true
+    classDiscriminator = "kind"
+}
 
 class JsonFileExportTest {
     @Test
     fun testParse() {
-        val moshi = Moshi.Builder().apply {
-            PolymorphicJsonAdapterFactory.of(MabelContent::class.java, )
-        }.build()
-        val root = moshi.adapter(Root::class.java).fromJson(File("/tmp/download_all.json").readText())
+        val json = File("/tmp/download_all.json").readText()
+        val root = format.decodeFromString<Root>(json)
         println(root)
     }
 }
