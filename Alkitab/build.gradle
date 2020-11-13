@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'kotlin-kapt'
 
 android {
     signingConfigs {
@@ -122,6 +123,9 @@ dependencies {
 
     implementation "com.takisoft.fix:preference-v7:$preferenceFixVersion"
 
+    implementation "com.squareup.moshi:moshi-kotlin:$moshiVersion"
+    implementation "com.squareup.moshi:moshi-adapters:$moshiVersion"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion"
 
     // UI
     implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"

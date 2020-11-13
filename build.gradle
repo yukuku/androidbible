@@ -63,6 +63,7 @@ ext {
     picassoVersion = '2.71828'
     picassoOkhttpDownloaderVersion = '1.1.0'
     preferenceFixVersion = '28.0.0.0'
+    moshiVersion = '1.11.0'
 
     // UI
     materialDialogsVersion = '0.9.6.0'
