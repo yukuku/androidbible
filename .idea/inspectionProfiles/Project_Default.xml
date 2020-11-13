@@ -13,7 +13,6 @@
     <inspection_tool class="LocalVariableName" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="ObjectPropertyName" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="PackageName" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
-    <inspection_tool class="PrivateMemberAccessBetweenOuterAndInnerClass" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="PrivatePropertyName" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="PropertyName" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="SpellCheckingInspection" enabled="false" level="TYPO" enabled_by_default="false">
@@ -22,10 +21,5 @@
       <option name="processComments" value="true" />
     </inspection_tool>
     <inspection_tool class="TestFunctionName" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
-    <inspection_tool class="WeakerAccess" enabled="false" level="WARNING" enabled_by_default="false">
-      <option name="SUGGEST_PACKAGE_LOCAL_FOR_MEMBERS" value="true" />
-      <option name="SUGGEST_PACKAGE_LOCAL_FOR_TOP_CLASSES" value="true" />
-      <option name="SUGGEST_PRIVATE_FOR_INNERS" value="false" />
-    </inspection_tool>
   </profile>
 </component>
