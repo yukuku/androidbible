@@ -1856,23 +1856,16 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     override fun onBackPressed() {
-        val debug = Preferences.getBoolean("secret_debug_back_button", false)
-
-        if (debug) Toast.makeText(this, "@@onBackPressed TAP=" + (textAppearancePanel != null) + " fullScreen=" + fullScreen, Toast.LENGTH_SHORT).show()
-
         when {
             textAppearancePanel != null -> {
-                if (debug) Toast.makeText(this, "inside textAppearancePanel != null", Toast.LENGTH_SHORT).show()
                 textAppearancePanel?.hide()
                 textAppearancePanel = null
             }
             fullScreen -> {
-                if (debug) Toast.makeText(this, "inside fullScreen == true", Toast.LENGTH_SHORT).show()
                 setFullScreen(false)
                 leftDrawer.handle.setFullScreen(false)
             }
             else -> {
-                if (debug) Toast.makeText(this, "will call super", Toast.LENGTH_SHORT).show()
                 super.onBackPressed()
             }
         }
