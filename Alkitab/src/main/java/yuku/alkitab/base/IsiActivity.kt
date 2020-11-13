@@ -263,6 +263,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     private lateinit var bVersion: TextView
     lateinit var floater: Floater
     private lateinit var backForwardListController: BackForwardListController<ImageButton, ImageButton>
+    private var fullscreenReferenceToast: Toast? = null
 
     private var dataSplit0 = VersesDataModel.EMPTY
         set(value) {
@@ -2365,9 +2366,13 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         bGoto.text = reference.replace(' ', '\u00a0')
 
         if (fullScreen) {
-            Toast.makeText(this, reference, Toast.LENGTH_SHORT).apply {
+            fullscreenReferenceToast?.cancel()
+
+            val toast = Toast.makeText(this, reference, Toast.LENGTH_SHORT).apply {
                 setGravity(Gravity.CENTER_HORIZONTAL or Gravity.TOP, 0, 0)
-            }.show()
+            }
+            toast.show()
+            fullscreenReferenceToast = toast
         }
 
         if (dictionaryMode) {
