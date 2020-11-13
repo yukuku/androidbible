@@ -5,25 +5,25 @@
 
 	<item
 		android:id="@+id/menuCopy"
-		android:icon="@drawable/ic_menu_copy"
+		android:icon="@drawable/ic_baseline_content_copy_24_white"
 		android:title="@string/salin_ayat"
 		app:showAsAction="never" />
 
 	<item
 		android:id="@+id/menuCopySplit0"
-		android:icon="@drawable/ic_menu_copy"
+		android:icon="@drawable/ic_baseline_content_copy_24_white"
 		android:title="@string/copy_split0"
 		app:showAsAction="never" />
 
 	<item
 		android:id="@+id/menuCopySplit1"
-		android:icon="@drawable/ic_menu_copy"
+		android:icon="@drawable/ic_baseline_content_copy_24_white"
 		android:title="@string/copy_split1"
 		app:showAsAction="never" />
 
 	<item
 		android:id="@+id/menuCopyBothSplits"
-		android:icon="@drawable/ic_menu_copy"
+		android:icon="@drawable/ic_baseline_content_copy_24_white"
 		android:title="@string/copy_both_splits"
 		app:showAsAction="never" />
 
