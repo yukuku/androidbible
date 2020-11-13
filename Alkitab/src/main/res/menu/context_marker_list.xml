@@ -1,24 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:ignore="AlwaysShowAction">
 
 	<item
 		android:id="@+id/menuSelectAll"
 		android:icon="@drawable/ic_baseline_select_all_24_white"
-		android:title="@string/select_all" />
+		android:title="@string/select_all"
+		app:showAsAction="always" />
 
 	<item
 		android:id="@+id/menuCopy"
 		android:icon="@drawable/ic_baseline_content_copy_24_white"
-		android:title="@string/bl_selection_copy" />
+		android:title="@string/bl_selection_copy"
+		app:showAsAction="always" />
 
 	<item
 		android:id="@+id/menuEdit"
 		android:icon="@drawable/ic_baseline_edit_24_white"
-		android:title="@string/bl_selection_edit" />
+		android:title="@string/bl_selection_edit"
+		app:showAsAction="always" />
 
 	<item
 		android:id="@+id/menuDelete"
 		android:icon="@drawable/ic_baseline_delete_outline_24_white"
-		android:title="@string/bl_selection_delete" />
+		android:title="@string/bl_selection_delete"
+		app:showAsAction="always" />
 
 </menu>

@@ -6,19 +6,24 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.text.SpannableStringBuilder
+import android.text.TextUtils
 import android.text.style.BackgroundColorSpan
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AbsListView
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.AdapterView.OnItemLongClickListener
 import android.widget.ListView
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.annotation.IdRes
-import com.afollestad.materialdialogs.MaterialDialog
+import androidx.appcompat.view.ActionMode
+import androidx.core.graphics.ColorUtils
+import androidx.core.util.size
+import com.google.android.material.snackbar.Snackbar
 import java.util.Locale
 import kotlin.properties.Delegates
 import yuku.afw.storage.Preferences
@@ -32,6 +37,7 @@ import yuku.alkitab.base.dialog.TypeHighlightDialog
 import yuku.alkitab.base.storage.Db
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.Appearances
+import yuku.alkitab.base.util.ClipboardUtil
 import yuku.alkitab.base.util.Debouncer
 import yuku.alkitab.base.util.Highlights
 import yuku.alkitab.base.util.LabelColorUtil
@@ -70,6 +76,7 @@ class MarkerListActivity : BaseActivity() {
     private var filter_labelId by Delegates.notNull<Long>()
 
     private var searchView: SearchView? = null
+    private var actionMode: ActionMode? = null
 
     private var sort_column = Db.Marker.createTime
     private var sort_ascending = false
@@ -132,6 +139,7 @@ class MarkerListActivity : BaseActivity() {
         adapter = MarkerListAdapter()
         lv.adapter = adapter
         lv.cacheColorHint = S.applied().backgroundColor
+        lv.choiceMode = AbsListView.CHOICE_MODE_MULTIPLE
         lv.onItemClickListener = lv_itemClick
         lv.onItemLongClickListener = lv_itemLongClick
         lv.emptyView = empty
@@ -173,24 +181,30 @@ class MarkerListActivity : BaseActivity() {
         var nothingText: String? = null
 
         // set title based on filter
-        if (filter_kind == Marker.Kind.note) {
-            title = getString(R.string.bmcat_notes)
-            nothingText = getString(R.string.bl_no_notes_written_yet)
-        } else if (filter_kind == Marker.Kind.highlight) {
-            title = getString(R.string.bmcat_highlights)
-            nothingText = getString(R.string.bl_no_highlighted_verses)
-        } else if (filter_kind == Marker.Kind.bookmark) {
-            if (filter_labelId == 0L) {
-                title = getString(R.string.bmcat_all_bookmarks)
-                nothingText = getString(R.string.belum_ada_pembatas_buku)
-            } else if (filter_labelId == LABELID_noLabel.toLong()) {
-                title = getString(R.string.bmcat_unlabeled_bookmarks)
-                nothingText = getString(R.string.bl_there_are_no_bookmarks_without_any_labels)
-            } else {
-                val label = S.getDb().getLabelById(filter_labelId)
-                if (label != null) {
-                    title = label.title
-                    nothingText = getString(R.string.bl_there_are_no_bookmarks_with_the_label_label, label.title)
+        when (filter_kind) {
+            Marker.Kind.note -> {
+                title = getString(R.string.bmcat_notes)
+                nothingText = getString(R.string.bl_no_notes_written_yet)
+            }
+
+            Marker.Kind.highlight -> {
+                title = getString(R.string.bmcat_highlights)
+                nothingText = getString(R.string.bl_no_highlighted_verses)
+            }
+
+            Marker.Kind.bookmark -> {
+                if (filter_labelId == 0L) {
+                    title = getString(R.string.bmcat_all_bookmarks)
+                    nothingText = getString(R.string.belum_ada_pembatas_buku)
+                } else if (filter_labelId == LABELID_noLabel.toLong()) {
+                    title = getString(R.string.bmcat_unlabeled_bookmarks)
+                    nothingText = getString(R.string.bl_there_are_no_bookmarks_without_any_labels)
+                } else {
+                    val label = S.getDb().getLabelById(filter_labelId)
+                    if (label != null) {
+                        title = label.title
+                        nothingText = getString(R.string.bl_there_are_no_bookmarks_with_the_label_label, label.title)
+                    }
                 }
             }
         }
@@ -211,22 +225,22 @@ class MarkerListActivity : BaseActivity() {
     }
 
     data class FilterResult(
-        val query: String,
+        val query: String?,
         val needFilter: Boolean,
         val filteredMarkers: List<Marker>,
         val rt: ReadyTokens?,
     )
 
-    private val filter = object : Debouncer<String, FilterResult>(200) {
-        override fun process(payload: String): FilterResult {
-            val query = payload.trim()
-            val needFilter = if (query.isEmpty()) {
+    private val filter = object : Debouncer<String?, FilterResult>(200) {
+        override fun process(payload: String?): FilterResult {
+            val query = payload?.trim()
+            val needFilter = if (query.isNullOrEmpty()) {
                 false
             } else {
                 QueryTokenizer.tokenize(query).isNotEmpty()
             }
 
-            val tokens = if (query.isEmpty()) {
+            val tokens = if (query.isNullOrEmpty()) {
                 emptyArray()
             } else {
                 QueryTokenizer.tokenize(query)
@@ -353,82 +367,177 @@ class MarkerListActivity : BaseActivity() {
     }
 
     private val lv_itemClick = OnItemClickListener { _, _, position, _ ->
-        val marker = adapter.getItem(position)
-        startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(marker.ari, marker.verseCount))
+        if (actionMode != null) {
+            // By default setItemChecked will be called when action mode is on.
+            // We just need to invalidate the view and the selected verse count.
+            onCheckedItemsChanged()
+        } else {
+            val marker = adapter.getItem(position)
+            startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(marker.ari, marker.verseCount))
+
+            // Because we are in CHOICE_MODE_MULTIPLE, this verse is automatically marked as checked.
+            // so we have to manually uncheck this.
+            uncheckAllItems()
+        }
+    }
+
+    private fun onCheckedItemsChanged() {
+        adapter.notifyDataSetChanged()
+
+        val actionMode = actionMode
+        if (actionMode != null) {
+            if (lv.checkedItemCount == 0) {
+                actionMode.finish()
+            } else {
+                actionMode.invalidate()
+            }
+        }
+    }
+
+    private fun uncheckAllItems() {
+        val checkeds = lv.checkedItemPositions
+        for (i in checkeds.size() - 1 downTo 0) {
+            if (checkeds.valueAt(i)) {
+                lv.setItemChecked(checkeds.keyAt(i), false)
+            }
+        }
+        onCheckedItemsChanged()
     }
 
     private val lv_itemLongClick = OnItemLongClickListener { _, _, position, _ ->
-        // set menu item titles based on the kind of marker
-        val deleteMarker: String
-        val editMarker: String
+        if (actionMode == null) {
+            actionMode = startSupportActionMode(object : ActionMode.Callback {
+                override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+                    menuInflater.inflate(R.menu.context_marker_list, menu)
+                    return true
+                }
 
-        when (filter_kind) {
-            Marker.Kind.bookmark -> {
-                deleteMarker = getString(R.string.hapus_pembatas_buku)
-                editMarker = getString(R.string.edit_bookmark)
-            }
-            Marker.Kind.note -> {
-                deleteMarker = getString(R.string.hapus_catatan)
-                editMarker = getString(R.string.edit_note)
-            }
-            Marker.Kind.highlight -> {
-                deleteMarker = getString(R.string.hapus_stabilo)
-                editMarker = getString(R.string.edit_highlight)
-            }
-            else -> throw RuntimeException("Unknown kind: $filter_kind")
-        }
+                override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
+                    val checked_count = lv.checkedItemCount
 
-        MaterialDialog.Builder(this)
-            .items(deleteMarker, editMarker)
-            .itemsCallback { _, _, which, _ ->
-                val marker = adapter.getItem(position)
+                    if (checked_count == 1) {
+                        mode.setTitle(R.string.bl_selection_one_selected)
+                    } else {
+                        mode.title = TextUtils.expandTemplate(getText(R.string.bl_selection_many_selected), "$checked_count")
+                    }
 
-                if (which == 0) {
-                    // whatever the kind is, the way to delete is the same
-                    S.getDb().deleteMarkerById(marker._id)
-                    loadAndFilter()
-                    App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED))
-                } else if (which == 1) {
-                    when (filter_kind) {
-                        Marker.Kind.bookmark -> {
-                            val dialog1 = TypeBookmarkDialog.EditExisting(this, marker._id)
-                            dialog1.setListener {
+                    menu.findItem(R.id.menuEdit).isVisible = checked_count == 1
+                    menu.findItem(R.id.menuDelete).isVisible = checked_count == 1
+
+                    return true
+                }
+
+                override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+                    val singlePosition = fun(): Int? {
+                        val positions = lv.checkedItemPositions ?: return null
+                        if (lv.checkedItemCount != 1) return null
+
+                        for (i in 0 until positions.size) {
+                            if (positions.valueAt(i)) {
+                                return positions.keyAt(i)
+                            }
+                        }
+                        return null
+                    }()
+
+                    when (item.itemId) {
+                        R.id.menuSelectAll -> {
+                            for (i in 0 until adapter.count) {
+                                lv.setItemChecked(i, true)
+                            }
+                            onCheckedItemsChanged()
+                        }
+
+                        R.id.menuCopy -> {
+                            val sb = SpannableStringBuilder()
+//                            val aris: IntArrayList = adapter.getSearchResults()
+//                            val checkeds: SparseBooleanArray = lsSearchResults.getCheckedItemPositions()
+//                            for (i in 0 until checkeds.size()) {
+//                                if (!checkeds.valueAt(i)) continue
+//
+//                                val ari = aris[checkeds.keyAt(i)]
+//                                val reference: String = searchInVersion.reference(ari)
+//                                val verseText = removeSpecialCodes(searchInVersion.loadVerseText(ari))
+//                                val sb_len = sb.length
+//                                sb.append(reference).append("\n").append(verseText).append("\n\n")
+//                                sb.setSpan(UnderlineSpan(), sb_len, sb_len + reference.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+//                            }
+                            ClipboardUtil.copyToClipboard(sb)
+                            Snackbar.make(root, R.string.bl_copied_toast, Snackbar.LENGTH_SHORT).show()
+                            mode.finish()
+                        }
+
+                        R.id.menuEdit -> {
+                            if (singlePosition != null) {
+                                val marker = adapter.getItem(singlePosition)
+
+                                when (filter_kind) {
+                                    Marker.Kind.bookmark -> {
+                                        TypeBookmarkDialog.EditExisting(this@MarkerListActivity, marker._id).apply {
+                                            setListener {
+                                                loadAndFilter()
+                                                App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED))
+                                            }
+                                        }.show()
+                                    }
+
+                                    Marker.Kind.note -> {
+                                        startActivityForResult(NoteActivity.createEditExistingIntent(marker._id), REQCODE_edit_note)
+                                    }
+
+                                    Marker.Kind.highlight -> {
+                                        val ari = marker.ari
+                                        val info = Highlights.decode(marker.caption)
+                                        val reference = version.referenceWithVerseCount(ari, marker.verseCount)
+                                        val rawVerseText = version.loadVerseText(ari)
+                                        val ftr = FormattedTextResult()
+                                        if (rawVerseText != null) {
+                                            VerseRendererHelper.render(
+                                                ari = ari,
+                                                text = rawVerseText,
+                                                verseNumberText = "",
+                                                ftr = ftr,
+                                            )
+                                        } else {
+                                            ftr.result = "" // verse not available
+                                        }
+
+                                        TypeHighlightDialog(this@MarkerListActivity, ari, {
+                                            loadAndFilter()
+                                            App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED))
+                                        }, info.colorRgb, info, reference, ftr.result)
+                                    }
+                                }
+                            }
+                        }
+
+                        R.id.menuDelete -> {
+                            if (singlePosition != null) {
+                                val marker = adapter.getItem(singlePosition)
+
+                                // whatever the kind is, the way to delete is the same
+                                S.getDb().deleteMarkerById(marker._id)
+                                uncheckAllItems()
                                 loadAndFilter()
                                 App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED))
                             }
-                            dialog1.show()
-                        }
-
-                        Marker.Kind.note -> {
-                            startActivityForResult(NoteActivity.createEditExistingIntent(marker._id), REQCODE_edit_note)
-                        }
-
-                        Marker.Kind.highlight -> {
-                            val ari = marker.ari
-                            val info = Highlights.decode(marker.caption)
-                            val reference = version.referenceWithVerseCount(ari, marker.verseCount)
-                            val rawVerseText = version.loadVerseText(ari)
-                            val ftr = FormattedTextResult()
-                            if (rawVerseText != null) {
-                                VerseRendererHelper.render(
-                                    ari = ari,
-                                    text = rawVerseText,
-                                    verseNumberText = "",
-                                    ftr = ftr,
-                                )
-                            } else {
-                                ftr.result = "" // verse not available
-                            }
-
-                            TypeHighlightDialog(this, ari, {
-                                loadAndFilter()
-                                App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED))
-                            }, info.colorRgb, info, reference, ftr.result)
                         }
                     }
+
+                    return true
                 }
-            }
-            .show()
+
+                override fun onDestroyActionMode(mode: ActionMode) {
+                    uncheckAllItems()
+                    actionMode = null
+                }
+            })
+        }
+
+        val old = lv.isItemChecked(position)
+        lv.setItemChecked(position, !old)
+        onCheckedItemsChanged()
+
         true
     }
 
@@ -526,6 +635,20 @@ class MarkerListActivity : BaseActivity() {
                     lSnippet.text = snippet
                     Appearances.applyTextAppearance(lSnippet, textSizeMult)
                 }
+            }
+
+            val checked = lv.isItemChecked(position)
+
+            if (checked) {
+                val colorRgb = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
+                val checkedBgColor = ColorUtils.setAlphaComponent(colorRgb, 0xa0)
+                val checkedTextColor = TextColorUtil.getForCheckedVerse(checkedBgColor)
+                view.setBackgroundColor(checkedBgColor)
+                lDate.setTextColor(checkedTextColor)
+                lSnippet.setTextColor(checkedTextColor)
+                lCaption.setTextColor(checkedTextColor)
+            } else {
+                view.setBackgroundColor(0x0)
             }
         }
 
