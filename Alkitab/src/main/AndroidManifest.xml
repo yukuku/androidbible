@@ -60,7 +60,7 @@
 			android:name="yuku.alkitab.base.ac.GotoActivity"
 			android:windowSoftInputMode="adjustNothing" />
 		<activity
-			android:name="yuku.alkitab.base.ac.SettingsActivity"
+			android:name="yuku.alkitab.base.settings.SettingsActivity"
 			android:label="@string/pengaturan_alkitab" />
 		<activity android:name="yuku.alkitab.base.ac.ColorSettingsActivity" />
 		<activity

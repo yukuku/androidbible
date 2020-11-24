@@ -1,4 +1,4 @@
-package yuku.alkitab.base.ac;
+package yuku.alkitab.base.settings;
 
 import android.app.Activity;
 import android.content.Intent;

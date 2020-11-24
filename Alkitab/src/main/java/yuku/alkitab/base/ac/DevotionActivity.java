@@ -40,6 +40,7 @@ import yuku.alkitab.base.devotion.ArticleRoc;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
 import yuku.alkitab.base.devotion.DevotionArticle;
 import yuku.alkitab.base.devotion.DevotionDownloader;
+import yuku.alkitab.base.settings.SettingsActivity;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;

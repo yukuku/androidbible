@@ -35,7 +35,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
-import yuku.alkitab.base.ac.SettingsActivity;
+import yuku.alkitab.base.settings.SettingsActivity;
 import yuku.alkitab.songs.SongViewActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.storage.Prefkey;

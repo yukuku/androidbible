@@ -69,7 +69,7 @@ import yuku.alkitab.base.ac.MarkerListActivity
 import yuku.alkitab.base.ac.MarkersActivity
 import yuku.alkitab.base.ac.NoteActivity
 import yuku.alkitab.base.ac.SearchActivity
-import yuku.alkitab.base.ac.SettingsActivity
+import yuku.alkitab.base.settings.SettingsActivity
 import yuku.alkitab.base.ac.ShareActivity
 import yuku.alkitab.base.ac.VersionsActivity
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity

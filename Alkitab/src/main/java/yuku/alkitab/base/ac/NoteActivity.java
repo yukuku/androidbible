@@ -22,6 +22,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.VersesDialog;
+import yuku.alkitab.base.settings.SettingsActivity;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Marker;
