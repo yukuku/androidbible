@@ -1,6 +1,7 @@
 package yuku.alkitab.base.ac;
 
 import android.content.Intent;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Layout;
@@ -133,7 +134,8 @@ public class NoteActivity extends BaseActivity {
 			tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp);
 			tv.setLineSpacing(0, applied.lineSpacingMult);
 
-			SettingsActivity.setPaddingBasedOnPreferences(tv);
+			final Rect padding = SettingsActivity.getPaddingBasedOnPreferences();
+			tv.setPadding(padding.left, padding.top, padding.right, padding.bottom);
 		}
 
 		getWindow().getDecorView().setKeepScreenOn(Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default)));

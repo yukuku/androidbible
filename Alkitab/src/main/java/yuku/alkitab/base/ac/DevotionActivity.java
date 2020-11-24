@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -343,7 +344,8 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		lContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp);
 		lContent.setLineSpacing(0, applied.lineSpacingMult);
 
-		SettingsActivity.setPaddingBasedOnPreferences(lContent);
+		final Rect padding = SettingsActivity.getPaddingBasedOnPreferences();
+		lContent.setPadding(padding.left, padding.top, padding.right, padding.bottom);
 
 		getWindow().getDecorView().setKeepScreenOn(Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default)));
 
