@@ -27,12 +27,12 @@ class SettingsActivity : BaseActivity() {
         val clickIntent: Intent?,
     )
 
-    val headers = arrayOf(
+    val headers = listOf(
         Header(R.string.pref_sync_title, null, Intent(App.context, SyncSettingsActivity::class.java)),
         Header(R.string.pref_penampilan_layar, DisplayFragment::class.java, null),
         Header(R.string.pref_penggunaan, UsageFragment::class.java, null),
         Header(R.string.pref_copy_share, CopyShareFragment::class.java, null),
-        Header(R.string.pref_data_transfer, DataTransferFragment::class.java, null)
+        Header(R.string.pref_data_transfer, DataTransferFragment::class.java, null),
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,6 +93,7 @@ class SettingsActivity : BaseActivity() {
     }
 
     companion object {
+        @JvmStatic
         fun createIntent(): Intent {
             return Intent(App.context, SettingsActivity::class.java)
         }
