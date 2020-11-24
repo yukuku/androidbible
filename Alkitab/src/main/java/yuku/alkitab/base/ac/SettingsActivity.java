@@ -50,6 +50,7 @@ public class SettingsActivity extends BaseActivity {
         new Header(R.string.pref_penampilan_layar, DisplayFragment.class, null),
         new Header(R.string.pref_penggunaan, UsageFragment.class, null),
         new Header(R.string.pref_copy_share, CopyShareFragment.class, null),
+        new Header(R.string.pref_data_transfer, DataTransferFragment.class, null),
     };
 
     RecyclerView lsHeaders;
@@ -197,6 +198,21 @@ public class SettingsActivity extends BaseActivity {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             addPreferencesFromResource(R.xml.settings_copy_share);
+        }
+    }
+
+    public static class DataTransferFragment extends PreferenceFragmentCompat {
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            addPreferencesFromResource(R.xml.settings_data_transfer);
+
+            findPreference(getString(R.string.pref_data_transfer_export_key)).setOnPreferenceClickListener(pref -> {
+                return true;
+            });
+
+            findPreference(getString(R.string.pref_data_transfer_import_key)).setOnPreferenceClickListener(pref -> {
+                return true;
+            });
         }
     }
 
