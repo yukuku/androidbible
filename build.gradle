@@ -39,6 +39,7 @@ ext {
     // Android X
     androidxAnnotationVersion = '1.1.0'
     androidxAppcompatVersion = '1.0.2'
+    androidxConstraintlayoutVersion = '2.0.4'
     androidxCoreVersion = '1.1.0'
     androidxCursoradapterVersion = '1.0.0'
     androidxMultidexVersion = '2.0.1'

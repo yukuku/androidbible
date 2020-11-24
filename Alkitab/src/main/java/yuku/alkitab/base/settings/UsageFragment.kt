@@ -10,7 +10,7 @@ import yuku.alkitab.base.util.OtherAppIntegration
 import yuku.alkitab.debug.R
 
 class UsageFragment : PreferenceFragmentCompat() {
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String) {
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.settings_usage)
 
         val pref_volumeButtonNavigation = findPreference(getString(R.string.pref_volumeButtonNavigation_key)) as ListPreference

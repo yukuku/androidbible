@@ -27,7 +27,7 @@ class DisplayFragment : PreferenceFragmentCompat() {
         true
     }
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String) {
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.settings_display)
 
         val pref_language = findPreference(getString(R.string.pref_language_key)) as ListPreference

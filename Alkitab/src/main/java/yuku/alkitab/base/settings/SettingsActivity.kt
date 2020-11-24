@@ -48,6 +48,12 @@ class SettingsActivity : BaseActivity() {
             lsHeaders.layoutManager = LinearLayoutManager(this)
             lsHeaders.adapter = HeadersAdapter()
         } else {
+            val header = headers.find { it.clazz?.name == subClassName }
+            if (header == null) {
+                finish()
+                return
+            }
+
             val ft = supportFragmentManager.beginTransaction()
             ft.replace(
                 R.id.fragment_container,

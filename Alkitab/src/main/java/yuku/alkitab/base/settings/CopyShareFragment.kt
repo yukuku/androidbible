@@ -5,7 +5,7 @@ import androidx.preference.PreferenceFragmentCompat
 import yuku.alkitab.debug.R
 
 class CopyShareFragment : PreferenceFragmentCompat() {
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String) {
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.settings_copy_share)
     }
 }

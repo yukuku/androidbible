@@ -22,10 +22,9 @@ import yuku.alkitab.datatransfer.model.RppEntity
 import yuku.alkitab.datatransfer.model.Snapshot
 import yuku.alkitab.datatransfer.model.Snapshots
 
-private const val REVNO_NOT_USED = 0
-
 class ExportProcess(
     private val storage: StorageInterface,
+    private val log: LogInterface,
     private val creator_id: String,
 ) {
     private val format = Json {}
@@ -35,25 +34,34 @@ class ExportProcess(
             history(),
             mabel(),
             pins(),
-            rp(),
+            rpp(),
         )
 
         val root = Root(true, snapshots)
-        return format.encodeToString(root)
+        log.log("Encoding to JSON")
+        val res = format.encodeToString(root)
+        log.log("Exported successfully")
+        return res
+    }
+
+    private fun <T> logList(list: List<T>, suffix: String): List<T> {
+        log.log("Read ${list.size} $suffix")
+        return list
     }
 
     private fun history(): Snapshot<HistoryEntity> {
         val entities = mutableListOf<HistoryEntity>()
-        for (entry in storage.history()) {
+        for (entry in logList(storage.history(), "history entry(s)")) {
             val content = HistoryContent(ari = entry.ari, timestamp = entry.timestamp)
             entities += HistoryEntity(gid = entry.gid, kind = Sync.Entity.KIND_HISTORY_ENTRY, creator_id = creator_id, content = content)
         }
-        return Snapshot(REVNO_NOT_USED, entities)
+        log.log("Exported history")
+        return Snapshot(entities = entities)
     }
 
     private fun mabel(): Snapshot<MabelEntity> {
         val entities = mutableListOf<MabelEntity>()
-        for (marker in storage.markers()) {
+        for (marker in logList(storage.markers(), "marker(s)")) {
             val content = MarkerContent(
                 kind = marker.kind.code,
                 ari = marker.ari,
@@ -64,33 +72,38 @@ class ExportProcess(
             )
             entities += MarkerEntity(gid = marker.gid, kind = Sync.Entity.KIND_MARKER, creator_id = creator_id, content = content)
         }
-        for (label in storage.labels()) {
+        log.log("Exported markers")
+        for (label in logList(storage.labels(), "label(s)")) {
             val content = LabelContent(title = label.title, ordering = label.ordering, backgroundColor = label.backgroundColor)
             entities += LabelEntity(gid = label.gid, kind = Sync.Entity.KIND_LABEL, creator_id = creator_id, content = content)
         }
-        for (markerLabel in storage.markerLabels()) {
+        log.log("Exported labels")
+        for (markerLabel in logList(storage.markerLabels(), "marker-label assignments")) {
             val content = MarkerLabelContent(markerLabel.marker_gid, markerLabel.label_gid)
             entities += MarkerLabelEntity(markerLabel.gid, kind = Sync.Entity.KIND_MARKER_LABEL, creator_id = creator_id, content = content)
         }
-        return Snapshot(REVNO_NOT_USED, entities)
+        log.log("Exported marker-label assignments")
+        return Snapshot(entities = entities)
     }
 
     private fun pins(): Snapshot<PinsEntity> {
         val pins = mutableListOf<Pin>()
-        for (pm in storage.pins()) {
+        for (pm in logList(storage.pins(), "pin(s)")) {
             pins += Pin(ari = pm.ari, modifyTime = pm.modifyTime.time, preset_id = pm.preset_id, caption = pm.caption)
         }
         val content = PinsContent(pins)
         val entity = PinsEntity(gid = Sync_Pins.GID_SPECIAL_PINS, kind = Sync.Entity.KIND_PINS, creator_id = creator_id, content = content)
-        return Snapshot(REVNO_NOT_USED, listOf(entity))
+        log.log("Exported pins")
+        return Snapshot(entities = listOf(entity))
     }
 
-    private fun rp(): Snapshot<RppEntity> {
+    private fun rpp(): Snapshot<RppEntity> {
         val entities = mutableListOf<RppEntity>()
-        for (rpp in storage.rpps()) {
+        for (rpp in logList(storage.rpps(), "reading plan progress(es)")) {
             val content = RppContent(startTime = rpp.startTime, done = rpp.done)
             entities += RppEntity(gid = rpp.gid.value, kind = Sync.Entity.KIND_RP_PROGRESS, creator_id = creator_id, content = content)
         }
-        return Snapshot(REVNO_NOT_USED, entities)
+        log.log("Exported reading plan progresses")
+        return Snapshot(entities = entities)
     }
 }

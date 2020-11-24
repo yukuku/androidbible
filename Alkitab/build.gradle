@@ -103,6 +103,7 @@ dependencies {
     implementation "com.google.android.exoplayer:extension-okhttp:$exoplayerVersion"
     implementation "com.google.android.material:material:$materialVersion"
     implementation "com.google.code.gson:gson:$gsonVersion"
+    implementation "androidx.constraintlayout:constraintlayout:$androidxConstraintlayoutVersion"
 
     // Tests
     testImplementation "junit:junit:$junitVersion"
