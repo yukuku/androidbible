@@ -19,7 +19,7 @@ data class Snapshots(
 
 @Serializable
 data class Snapshot<E>(
-    val revno: Int,
+    val revno: Int = 0,
     val entities: List<E>,
 )
 
@@ -79,6 +79,7 @@ data class LabelEntity(
 data class LabelContent(
     val title: String,
     val ordering: Int,
+    val backgroundColor: String? = null,
 )
 
 @Serializable
@@ -114,6 +115,7 @@ data class Pin(
     val ari: Int,
     val modifyTime: Long,
     val preset_id: Int,
+    val caption: String? = null,
 )
 
 @Serializable
