@@ -1,7 +1,6 @@
 package yuku.alkitab.datatransfer.process
 
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import yuku.alkitab.base.sync.Sync
 import yuku.alkitab.base.sync.Sync_Pins
 import yuku.alkitab.datatransfer.model.HistoryContent
@@ -23,12 +22,10 @@ import yuku.alkitab.datatransfer.model.Snapshot
 import yuku.alkitab.datatransfer.model.Snapshots
 
 class ExportProcess(
-    private val storage: StorageInterface,
+    private val storage: ReadonlyStorageInterface,
     private val log: LogInterface,
     private val creator_id: String,
 ) {
-    private val format = Json {}
-
     fun export(): String {
         val snapshots = Snapshots(
             history(),
@@ -39,7 +36,7 @@ class ExportProcess(
 
         val root = Root(true, snapshots)
         log.log("Encoding to JSON")
-        val res = format.encodeToString(root)
+        val res = Serializer.json.encodeToString(root)
         log.log("Exported successfully")
         return res
     }

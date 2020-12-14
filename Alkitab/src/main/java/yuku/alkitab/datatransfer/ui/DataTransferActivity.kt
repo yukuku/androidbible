@@ -10,7 +10,7 @@ import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.util.InstallationUtil
 import yuku.alkitab.datatransfer.process.ExportProcess
 import yuku.alkitab.datatransfer.process.LogInterface
-import yuku.alkitab.datatransfer.process.StorageImpl
+import yuku.alkitab.datatransfer.process.ReadonlyStorageImpl
 import yuku.alkitab.debug.R
 
 class DataTransferActivity : BaseActivity() {
@@ -36,7 +36,11 @@ class DataTransferActivity : BaseActivity() {
         bSend = findViewById<Button>(R.id.bSend).apply {
             isEnabled = false
         }
-        bClose = findViewById(R.id.bClose)
+        bClose = findViewById<Button>(R.id.bClose).apply {
+            setOnClickListener {
+                finish()
+            }
+        }
 
         when (mode) {
             Mode.export -> setTitle(R.string.data_transfer_export_title)
@@ -51,7 +55,7 @@ class DataTransferActivity : BaseActivity() {
     }
 
     private fun startExport() {
-        val storage = StorageImpl()
+        val storage = ReadonlyStorageImpl()
         val log = LogInterface { line -> log(line) }
         val process = ExportProcess(storage, log, InstallationUtil.getInstallationId())
 
@@ -70,7 +74,7 @@ class DataTransferActivity : BaseActivity() {
     private fun successfulExport(result: String) {
         bSend.isEnabled = true
         bSend.setOnClickListener {
-
+            tLog.append(result)
         }
     }
 

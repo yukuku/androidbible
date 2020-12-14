@@ -8,7 +8,7 @@ import yuku.alkitab.model.Marker_Label
 import yuku.alkitab.model.ProgressMark
 
 
-interface StorageInterface {
+interface ReadonlyStorageInterface {
     fun history(): List<History.Entry>
 
     fun markers(): List<Marker>

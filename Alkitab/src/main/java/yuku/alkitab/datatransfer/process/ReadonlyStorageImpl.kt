@@ -10,7 +10,7 @@ import yuku.alkitab.model.Marker
 import yuku.alkitab.model.Marker_Label
 import yuku.alkitab.model.ProgressMark
 
-class StorageImpl : StorageInterface {
+open class ReadonlyStorageImpl : ReadonlyStorageInterface {
     override fun history(): List<History.Entry> {
         return History.listAllEntries()
     }
