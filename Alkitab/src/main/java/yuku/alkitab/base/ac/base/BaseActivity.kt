@@ -93,6 +93,12 @@ abstract class BaseActivity : AppCompatActivity(), ActivityCompat.OnRequestPermi
 
         lastKnownConfigurationSerialNumber = ConfigurationWrapper.getSerialCounter()
 
+        // Force locale that is needed after androidx activity 1.2.0
+        // Reference: https://stackoverflow.com/a/40704077/11238
+        val context = ConfigurationWrapper.wrap(this)
+        @Suppress("DEPRECATION")
+        resources.updateConfiguration(context.resources.configuration, context.resources.displayMetrics)
+
         if (willNeedStoragePermission) {
             askStoragePermission()
         }

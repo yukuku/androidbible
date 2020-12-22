@@ -3,31 +3,22 @@ package yuku.alkitab.base.widget;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.res.Configuration;
-import android.os.Build;
-import android.os.LocaleList;
 import android.provider.Settings;
-import androidx.annotation.CheckResult;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.os.LocaleListCompat;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 
-import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  * Context wrapper for changing app-wide locale or font scale.
  */
-public class ConfigurationWrapper extends ContextWrapper {
+public class ConfigurationWrapper {
 	static final String TAG = ConfigurationWrapper.class.getSimpleName();
-
-	public ConfigurationWrapper(final Context base) {
-		super(base);
-	}
 
 	public static Context wrap(final Context base) {
 		final Configuration config = base.getResources().getConfiguration();
@@ -35,7 +26,7 @@ public class ConfigurationWrapper extends ContextWrapper {
 		final Locale prefLocale = getLocaleFromPreferences();
 		if (BuildConfig.DEBUG) AppLog.d(TAG, "@@wrap: config locale will be updated to: " + prefLocale);
 
-		ConfigurationCompat.setLocale(config, prefLocale);
+		config.setLocale(prefLocale);
 
 		final float fontScale = getFontScaleFromPreferences();
 		if (config.fontScale != fontScale) {
@@ -44,10 +35,10 @@ public class ConfigurationWrapper extends ContextWrapper {
 			config.fontScale = fontScale;
 		}
 
-		return new ConfigurationWrapper(ConfigurationCompat.updateConfiguration(base, config));
+		return new ContextWrapper(base.createConfigurationContext(config));
 	}
 
-	private static AtomicInteger serialCounter = new AtomicInteger();
+	private static final AtomicInteger serialCounter = new AtomicInteger();
 
 	public static int getSerialCounter() {
 		return serialCounter.get();
@@ -56,33 +47,6 @@ public class ConfigurationWrapper extends ContextWrapper {
 	public static void notifyConfigurationNeedsUpdate() {
 		serialCounter.incrementAndGet();
 	}
-
-	@SuppressWarnings("deprecation")
-	public static class ConfigurationCompat {
-		@Nullable
-		public static Locale getLocale(Configuration config) {
-			if (Build.VERSION.SDK_INT >= 24) {
-				final LocaleList locales = config.getLocales();
-				if (locales.size() > 0) {
-					return locales.get(0);
-				} else {
-					return null;
-				}
-			} else {
-				return config.locale;
-			}
-		}
-
-		public static void setLocale(Configuration config, @NonNull Locale locale) {
-			config.setLocale(locale);
-		}
-
-		@CheckResult
-		public static Context updateConfiguration(Context context, Configuration config) {
-			return context.createConfigurationContext(config);
-		}
-	}
-
 
 	@NonNull
 	public static Locale getLocaleFromPreferences() {
