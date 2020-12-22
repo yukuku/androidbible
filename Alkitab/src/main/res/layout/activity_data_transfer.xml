@@ -21,6 +21,7 @@
 		android:layout_height="0dp"
 		android:clipToPadding="false"
 		android:padding="8dp"
+		android:scrollbarStyle="outsideOverlay"
 		app:layout_constraintBottom_toTopOf="@+id/bSend"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
@@ -30,7 +31,11 @@
 			android:id="@+id/tLog"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			tools:text="Very very long log. Very very long log.\nVery very long log. Very very long log.\nVery very long log. Very very long log.\n" />
+			android:fontFamily="monospace"
+			android:lineSpacingMultiplier="1.2"
+			android:textIsSelectable="true"
+			android:textSize="12sp"
+			tools:text="Very very long log.\nVery very long log.\nVery very long log. Very very long log.\nVery very long log. Very very long log.\n" />
 
 	</ScrollView>
 
@@ -39,6 +44,15 @@
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
 		android:text="Send"
+		app:layout_constraintBottom_toTopOf="@+id/bStart"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent" />
+
+	<Button
+		android:id="@+id/bStart"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:text="Start"
 		app:layout_constraintBottom_toTopOf="@+id/bClose"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent" />

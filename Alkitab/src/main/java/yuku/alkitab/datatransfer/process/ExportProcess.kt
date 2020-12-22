@@ -75,11 +75,11 @@ class ExportProcess(
             entities += LabelEntity(gid = label.gid, kind = Sync.Entity.KIND_LABEL, creator_id = creator_id, content = content)
         }
         log.log("Exported labels")
-        for (markerLabel in logList(storage.markerLabels(), "marker-label assignments")) {
+        for (markerLabel in logList(storage.markerLabels(), "label-assignments")) {
             val content = MarkerLabelContent(markerLabel.marker_gid, markerLabel.label_gid)
             entities += MarkerLabelEntity(markerLabel.gid, kind = Sync.Entity.KIND_MARKER_LABEL, creator_id = creator_id, content = content)
         }
-        log.log("Exported marker-label assignments")
+        log.log("Exported label-assignments")
         return Snapshot(entities = entities)
     }
 

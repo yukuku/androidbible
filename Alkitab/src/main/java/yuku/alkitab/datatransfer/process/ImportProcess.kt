@@ -9,6 +9,7 @@ import yuku.alkitab.datatransfer.model.LabelEntity
 import yuku.alkitab.datatransfer.model.MabelEntity
 import yuku.alkitab.datatransfer.model.MarkerEntity
 import yuku.alkitab.datatransfer.model.MarkerLabelEntity
+import yuku.alkitab.datatransfer.model.Pin
 import yuku.alkitab.datatransfer.model.PinsEntity
 import yuku.alkitab.datatransfer.model.Root
 import yuku.alkitab.datatransfer.model.Rpp
@@ -17,6 +18,7 @@ import yuku.alkitab.datatransfer.model.Snapshot
 import yuku.alkitab.model.Label
 import yuku.alkitab.model.Marker
 import yuku.alkitab.model.Marker_Label
+import yuku.alkitab.model.ProgressMark
 
 class ImportProcess(
     private val storage: ReadWriteStorageInterface,
@@ -34,7 +36,7 @@ class ImportProcess(
         log.log("Decoding from JSON")
 
         val root = Serializer.json.decodeFromString<Root>(json)
-        log.log("JSON read successfully")
+        log.log("JSON was read successfully")
 
         if (options.actualRun) {
             log.log("Proceeding with actual import unless error happens")
@@ -163,7 +165,7 @@ class ImportProcess(
 
         logger("added $markerNewCount markers, edited existing $markerEditCount markers")
         logger("added $labelNewCount labels, edited existing $labelEditCount labels")
-        logger("added $markerLabelEditCount label-assignments, edited existing $markerLabelEditCount label-assignments")
+        logger("added $markerLabelNewCount label-assignments, edited existing $markerLabelEditCount label-assignments")
     }
 
     private fun pins(pins: Snapshot<PinsEntity>) {
@@ -172,16 +174,24 @@ class ImportProcess(
         val new = pins.entities.firstOrNull()?.content?.pins.orEmpty()
         logger("there are currently ${old.size} pins, incoming ${new.size} pins")
 
+        fun ProgressMark.display(): String {
+            val caption = caption
+            return if (caption == null) "Pin ${preset_id + 1}" else "Pin ${preset_id + 1} ($caption)"
+        }
+
+        fun Pin.display(): String {
+            val caption = caption
+            return if (caption == null) "Pin ${preset_id + 1}" else "Pin ${preset_id + 1} ($caption)"
+        }
+
         for (newPin in new) {
             val oldPin = old.find { it.preset_id == newPin.preset_id }
             if (oldPin != null) {
-                logger("current pin ${oldPin.preset_id + 1} '${oldPin.caption.orEmpty()}'" +
-                    " will be replaced by an incoming pin '${newPin.caption.orEmpty()}'"
-                )
+                logger("current ${oldPin.display()} will be replaced by an incoming ${newPin.display()}")
             }
 
             storage.replacePin(newPin)
-            logger("replace pin ${newPin.preset_id + 1} '${newPin.caption.orEmpty()}' succeeded")
+            logger("replace pin ${newPin.preset_id + 1} succeeded")
         }
     }
 

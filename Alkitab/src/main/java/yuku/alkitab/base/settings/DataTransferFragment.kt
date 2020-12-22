@@ -15,6 +15,7 @@ class DataTransferFragment : PreferenceFragmentCompat() {
             true
         }
         findPreference(getString(R.string.pref_data_transfer_import_key)).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            activity?.startActivity(DataTransferActivity.createIntent(requireActivity(), DataTransferActivity.Mode.import))
             true
         }
     }
