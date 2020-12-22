@@ -2,8 +2,14 @@ package yuku.alkitab.datatransfer.ui
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.os.Looper
+import android.os.SystemClock
+import android.view.View
 import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.AnyThread
@@ -11,7 +17,7 @@ import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
-import com.afollestad.materialdialogs.MaterialDialog
+import androidx.core.text.color
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -34,12 +40,12 @@ class DataTransferActivity : BaseActivity() {
     }
 
     private lateinit var mode: Mode
+    private lateinit var scroll: ScrollView
     private lateinit var tLog: TextView
+    private lateinit var progress: ProgressBar
     private lateinit var bSend: Button
     private lateinit var bStart: Button
     private lateinit var bClose: Button
-
-    private var pendingExportJsonString: String? = null
 
     private val openImportFileRequest = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (mode != Mode.import) return@registerForActivityResult
@@ -63,38 +69,6 @@ class DataTransferActivity : BaseActivity() {
         }
     }
 
-    private val saveExportFileRequest = registerForActivityResult(ActivityResultContracts.CreateDocument()) { uri ->
-        if (mode != Mode.export) return@registerForActivityResult
-        if (uri == null) return@registerForActivityResult
-
-        val pendingExportJsonString = pendingExportJsonString
-        if (pendingExportJsonString == null) {
-            MaterialDialog.Builder(this)
-                .content("There was not enough RAM to hold on the contents of the exported data.")
-                .positiveText(R.string.ok)
-                .show()
-            return@registerForActivityResult
-        }
-
-        val output = contentResolver.openOutputStream(uri)
-        if (output == null) {
-            MaterialDialog.Builder(this)
-                .content("Could not open $uri for writing.")
-                .positiveText(R.string.ok)
-                .show()
-            return@registerForActivityResult
-        }
-
-        try {
-            output.use {
-                output.bufferedWriter().write(pendingExportJsonString)
-            }
-            logBold("Successfully exported data")
-        } catch (e: Exception) {
-            logBold("Error writing contents to $uri")
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_data_transfer)
@@ -103,12 +77,18 @@ class DataTransferActivity : BaseActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         mode = Mode.values()[intent.getIntExtra("mode", 0)]
+        scroll = findViewById(R.id.scroll)
         tLog = findViewById(R.id.tLog)
+        progress = findViewById<ProgressBar>(R.id.progress).apply {
+            visibility = View.INVISIBLE
+        }
         bSend = findViewById<Button>(R.id.bSend).apply {
             isEnabled = false
+            if (mode == Mode.import) visibility = View.GONE
         }
         bStart = findViewById<Button>(R.id.bStart).apply {
             isEnabled = false
+            if (mode == Mode.export) visibility = View.GONE
         }
         bClose = findViewById<Button>(R.id.bClose).apply {
             setOnClickListener {
@@ -133,13 +113,15 @@ class DataTransferActivity : BaseActivity() {
         val process = ExportProcess(storage, log, InstallationUtil.getInstallationId())
 
         thread {
-            try {
-                val result = process.export()
-                runOnUiThread {
-                    successfulExport(result)
+            showInProgress {
+                try {
+                    val result = process.export()
+                    runOnUiThread {
+                        successfulExport(result)
+                    }
+                } catch (e: Throwable) {
+                    logBold("Error occurred: $e")
                 }
-            } catch (e: Throwable) {
-                logBold("Error occurred: $e")
             }
         }
     }
@@ -186,13 +168,15 @@ class DataTransferActivity : BaseActivity() {
         )
 
         thread {
-            try {
-                process.import(jsonString, options)
-                runOnUiThread {
-                    successfulImport(jsonString, options)
+            showInProgress {
+                try {
+                    process.import(jsonString, options)
+                    runOnUiThread {
+                        successfulImport(jsonString, options)
+                    }
+                } catch (e: Throwable) {
+                    logBold("Error occurred, all changes have been rolled back: $e")
                 }
-            } catch (e: Throwable) {
-                logBold("Error occurred, all changes have been rolled back: $e")
             }
         }
     }
@@ -212,20 +196,30 @@ class DataTransferActivity : BaseActivity() {
 
     @AnyThread
     private fun log(line: String) {
+        // artificial delay
+        if (Thread.currentThread() != Looper.getMainLooper().thread) SystemClock.sleep(200)
+
         runOnUiThread {
             tLog.append(line.trim())
             tLog.append("\n")
+            scroll.post { scroll.fullScroll(View.FOCUS_DOWN) }
         }
     }
 
     @AnyThread
-    private fun logBold(line: String) {
-        runOnUiThread {
-            tLog.append(buildSpannedString {
-                bold { append(line.trim()) }
-                appendLine()
-            })
-        }
+    private fun logBold(line: String) = runOnUiThread {
+        tLog.append(buildSpannedString {
+            bold { color(Color.YELLOW) { append(line.trim()) } }
+            appendLine()
+        })
+        scroll.post { scroll.fullScroll(View.FOCUS_DOWN) }
+    }
+
+    @AnyThread
+    private fun showInProgress(action: () -> Unit) {
+        runOnUiThread { progress.visibility = View.VISIBLE }
+        action()
+        runOnUiThread { progress.visibility = View.INVISIBLE }
     }
 
     companion object {
