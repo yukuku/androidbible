@@ -7,6 +7,16 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.AnyThread
+import androidx.core.app.ShareCompat
+import androidx.core.content.FileProvider
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
+import com.afollestad.materialdialogs.MaterialDialog
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 import kotlin.concurrent.thread
 import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.util.InstallationUtil
@@ -29,26 +39,59 @@ class DataTransferActivity : BaseActivity() {
     private lateinit var bStart: Button
     private lateinit var bClose: Button
 
+    private var pendingExportJsonString: String? = null
+
     private val openImportFileRequest = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-        if (mode != Mode.import) {
-            return@registerForActivityResult
-        }
+        if (mode != Mode.import) return@registerForActivityResult
 
         if (uri == null) {
             finish()
+            return@registerForActivityResult
+        }
+
+        val jsonString = try {
+            contentResolver.openInputStream(uri)?.use { input ->
+                input.bufferedReader().readText()
+            }
+        } catch (e: Exception) {
+            null
+        }
+        if (jsonString == null) {
+            log("Could not read contents from $uri")
         } else {
-            val jsonString = try {
-                contentResolver.openInputStream(uri)?.use { input ->
-                    input.reader().readText()
-                }
-            } catch (e: Exception) {
-                null
+            startImport(jsonString, false)
+        }
+    }
+
+    private val saveExportFileRequest = registerForActivityResult(ActivityResultContracts.CreateDocument()) { uri ->
+        if (mode != Mode.export) return@registerForActivityResult
+        if (uri == null) return@registerForActivityResult
+
+        val pendingExportJsonString = pendingExportJsonString
+        if (pendingExportJsonString == null) {
+            MaterialDialog.Builder(this)
+                .content("There was not enough RAM to hold on the contents of the exported data.")
+                .positiveText(R.string.ok)
+                .show()
+            return@registerForActivityResult
+        }
+
+        val output = contentResolver.openOutputStream(uri)
+        if (output == null) {
+            MaterialDialog.Builder(this)
+                .content("Could not open $uri for writing.")
+                .positiveText(R.string.ok)
+                .show()
+            return@registerForActivityResult
+        }
+
+        try {
+            output.use {
+                output.bufferedWriter().write(pendingExportJsonString)
             }
-            if (jsonString == null) {
-                log("Could not read contents from $uri")
-            } else {
-                startImport(jsonString, false)
-            }
+            logBold("Successfully exported data")
+        } catch (e: Exception) {
+            logBold("Error writing contents to $uri")
         }
     }
 
@@ -80,7 +123,7 @@ class DataTransferActivity : BaseActivity() {
 
         when (mode) {
             Mode.export -> startExport()
-            Mode.import -> openImportFileRequest.launch(arrayOf("application/octet-stream"))
+            Mode.import -> openImportFileRequest.launch(arrayOf("application/json"))
         }
     }
 
@@ -96,15 +139,37 @@ class DataTransferActivity : BaseActivity() {
                     successfulExport(result)
                 }
             } catch (e: Throwable) {
-                log.log("Error occurred: $e")
+                logBold("Error occurred: $e")
             }
         }
     }
 
     private fun successfulExport(result: String) {
+        logBold("Press [Send] to send your exported data to another app of your choice.")
         bSend.isEnabled = true
         bSend.setOnClickListener {
-            tLog.append(result) // TODO
+            bSend.isEnabled = false
+
+            try {
+                val dir = File(this.cacheDir, "data_transfer")
+                dir.mkdir()
+
+                val date = SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'", Locale.US).apply {
+                    timeZone = TimeZone.getTimeZone("UTC")
+                }.format(Date())
+                val file = File(dir, "${getString(R.string.app_name)} data ${date}.export.json")
+                file.writeText(result)
+
+                val uri = FileProvider.getUriForFile(this, "$packageName.file_provider", file)
+
+                ShareCompat.IntentBuilder.from(this)
+                    .setType("application/octet-stream")
+                    .addStream(uri)
+                    .startChooser()
+
+            } catch (e: Exception) {
+                logBold("Error while preparing exported data: $e")
+            }
         }
     }
 
@@ -127,19 +192,21 @@ class DataTransferActivity : BaseActivity() {
                     successfulImport(jsonString, options)
                 }
             } catch (e: Throwable) {
-                log.log("Error occurred, all changes have been rolled back: $e")
+                logBold("Error occurred, all changes have been rolled back: $e")
             }
         }
     }
 
     private fun successfulImport(jsonString: String, options: ImportProcess.Options) {
         if (!options.actualRun) {
-            log("Press Start to do the actual import or Close to cancel")
+            logBold("The operations above are only simulation. Press [Start] to start the actual import or [Close] to cancel.")
             bStart.isEnabled = true
             bStart.setOnClickListener {
                 bStart.isEnabled = false
                 startImport(jsonString, true)
             }
+        } else {
+            logBold("Done. Press [Close] to end the import operation.")
         }
     }
 
@@ -148,6 +215,16 @@ class DataTransferActivity : BaseActivity() {
         runOnUiThread {
             tLog.append(line.trim())
             tLog.append("\n")
+        }
+    }
+
+    @AnyThread
+    private fun logBold(line: String) {
+        runOnUiThread {
+            tLog.append(buildSpannedString {
+                bold { append(line.trim()) }
+                appendLine()
+            })
         }
     }
 

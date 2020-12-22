@@ -36,7 +36,7 @@ class ExportProcess(
 
         val root = Root(true, snapshots)
         log.log("Encoding to JSON")
-        val res = Serializer.json.encodeToString(root)
+        val res = Serializer.exportJson.encodeToString(root)
         log.log("Exported successfully")
         return res
     }
@@ -48,7 +48,7 @@ class ExportProcess(
 
     private fun history(): Snapshot<HistoryEntity> {
         val entities = mutableListOf<HistoryEntity>()
-        for (entry in logList(storage.history(), "history entry(s)")) {
+        for (entry in logList(storage.history(), "history entries")) {
             val content = HistoryContent(ari = entry.ari, timestamp = entry.timestamp)
             entities += HistoryEntity(gid = entry.gid, kind = Sync.Entity.KIND_HISTORY_ENTRY, creator_id = creator_id, content = content)
         }
@@ -58,7 +58,7 @@ class ExportProcess(
 
     private fun mabel(): Snapshot<MabelEntity> {
         val entities = mutableListOf<MabelEntity>()
-        for (marker in logList(storage.markers(), "marker(s)")) {
+        for (marker in logList(storage.markers(), "markers")) {
             val content = MarkerContent(
                 kind = marker.kind.code,
                 ari = marker.ari,
@@ -70,7 +70,7 @@ class ExportProcess(
             entities += MarkerEntity(gid = marker.gid, kind = Sync.Entity.KIND_MARKER, creator_id = creator_id, content = content)
         }
         log.log("Exported markers")
-        for (label in logList(storage.labels(), "label(s)")) {
+        for (label in logList(storage.labels(), "labels")) {
             val content = LabelContent(title = label.title, ordering = label.ordering, backgroundColor = label.backgroundColor)
             entities += LabelEntity(gid = label.gid, kind = Sync.Entity.KIND_LABEL, creator_id = creator_id, content = content)
         }
@@ -85,7 +85,7 @@ class ExportProcess(
 
     private fun pins(): Snapshot<PinsEntity> {
         val pins = mutableListOf<Pin>()
-        for (pm in logList(storage.pins(), "pin(s)")) {
+        for (pm in logList(storage.pins(), "pins")) {
             pins += Pin(ari = pm.ari, modifyTime = pm.modifyTime.time, preset_id = pm.preset_id, caption = pm.caption)
         }
         val content = PinsContent(pins)
@@ -96,7 +96,7 @@ class ExportProcess(
 
     private fun rpp(): Snapshot<RppEntity> {
         val entities = mutableListOf<RppEntity>()
-        for (rpp in logList(storage.rpps(), "reading plan progress(es)")) {
+        for (rpp in logList(storage.rpps(), "reading plan progresses")) {
             val content = RppContent(startTime = rpp.startTime, done = rpp.done)
             entities += RppEntity(gid = rpp.gid.value, kind = Sync.Entity.KIND_RP_PROGRESS, creator_id = creator_id, content = content)
         }

@@ -9,7 +9,7 @@ class JsonFileExportTest {
     @Test
     fun testParse() {
         val json = File("/tmp/download_all.json").readText()
-        val root = Serializer.json.decodeFromString<Root>(json)
+        val root = Serializer.importJson.decodeFromString<Root>(json)
         println(root)
     }
 }

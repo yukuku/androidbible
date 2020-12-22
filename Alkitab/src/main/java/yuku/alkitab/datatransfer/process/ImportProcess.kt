@@ -35,7 +35,7 @@ class ImportProcess(
     fun import(json: String, options: Options) {
         log.log("Decoding from JSON")
 
-        val root = Serializer.json.decodeFromString<Root>(json)
+        val root = Serializer.importJson.decodeFromString<Root>(json)
         log.log("JSON was read successfully")
 
         if (options.actualRun) {

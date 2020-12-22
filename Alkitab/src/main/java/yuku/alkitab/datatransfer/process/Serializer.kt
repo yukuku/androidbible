@@ -3,10 +3,13 @@ package yuku.alkitab.datatransfer.process
 import kotlinx.serialization.json.Json
 
 object Serializer {
-    val json = Json {
-        classDiscriminator = "kind"
+    val exportJson = Json {
         encodeDefaults = false
-        ignoreUnknownKeys = true
         prettyPrint = true
+    }
+
+    val importJson = Json {
+        classDiscriminator = "kind"
+        ignoreUnknownKeys = true
     }
 }
