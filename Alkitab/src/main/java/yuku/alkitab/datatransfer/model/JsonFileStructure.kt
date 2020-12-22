@@ -2,7 +2,7 @@ package yuku.alkitab.datatransfer.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
+import yuku.alkitab.base.sync.Sync
 
 @Serializable
 data class Root(
@@ -27,8 +27,12 @@ data class Snapshot<E>(
 @Serializable
 sealed class Entity {
     abstract val gid: String
-    abstract val kind: String
     abstract val creator_id: String
+}
+
+@Serializable
+sealed class EntityWithKind : Entity() {
+    abstract val kind: String
 }
 
 @Serializable
@@ -37,7 +41,7 @@ data class HistoryEntity(
     override val kind: String,
     override val creator_id: String,
     val content: HistoryContent,
-) : Entity()
+) : EntityWithKind()
 
 @Serializable
 data class HistoryContent(
@@ -45,14 +49,16 @@ data class HistoryContent(
     val timestamp: Long,
 )
 
+/**
+ * This entity has "kind" property as type ddefined by the serializer.
+ */
 @Serializable
-sealed class MabelEntity: Entity()
+sealed class MabelEntity : Entity()
 
 @Serializable
-@SerialName("Marker")
+@SerialName(Sync.Entity.KIND_MARKER)
 data class MarkerEntity(
     override val gid: String,
-    override val kind: String,
     override val creator_id: String,
     val content: MarkerContent,
 ) : MabelEntity()
@@ -68,10 +74,9 @@ data class MarkerContent(
 )
 
 @Serializable
-@SerialName("Label")
+@SerialName(Sync.Entity.KIND_LABEL)
 data class LabelEntity(
     override val gid: String,
-    override val kind: String,
     override val creator_id: String,
     val content: LabelContent,
 ) : MabelEntity()
@@ -84,10 +89,9 @@ data class LabelContent(
 )
 
 @Serializable
-@SerialName("Marker_Label")
+@SerialName(Sync.Entity.KIND_MARKER_LABEL)
 data class MarkerLabelEntity(
     override val gid: String,
-    override val kind: String,
     override val creator_id: String,
     val content: MarkerLabelContent,
 ) : MabelEntity()
@@ -104,11 +108,11 @@ data class PinsEntity(
     override val kind: String,
     override val creator_id: String,
     val content: PinsContent,
-) : Entity()
+) : EntityWithKind()
 
 @Serializable
 data class PinsContent(
-    val pins: List<Pin>
+    val pins: List<Pin>,
 )
 
 @Serializable
@@ -125,7 +129,7 @@ data class RppEntity(
     override val kind: String,
     override val creator_id: String,
     val content: RppContent,
-) : Entity()
+) : EntityWithKind()
 
 @Serializable
 data class RppContent(

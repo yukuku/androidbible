@@ -68,17 +68,17 @@ class ExportProcess(
                 modifyTime = Sqlitil.toInt(marker.modifyTime),
                 caption = marker.caption,
             )
-            entities += MarkerEntity(gid = marker.gid, kind = Sync.Entity.KIND_MARKER, creator_id = creator_id, content = content)
+            entities += MarkerEntity(gid = marker.gid, creator_id = creator_id, content = content)
         }
         log.log("Exported markers")
         for (label in logList(storage.labels(), "labels")) {
             val content = LabelContent(title = label.title, ordering = label.ordering, backgroundColor = label.backgroundColor)
-            entities += LabelEntity(gid = label.gid, kind = Sync.Entity.KIND_LABEL, creator_id = creator_id, content = content)
+            entities += LabelEntity(gid = label.gid, creator_id = creator_id, content = content)
         }
         log.log("Exported labels")
         for (markerLabel in logList(storage.markerLabels(), "label-assignments")) {
             val content = MarkerLabelContent(markerLabel.marker_gid, markerLabel.label_gid)
-            entities += MarkerLabelEntity(markerLabel.gid, kind = Sync.Entity.KIND_MARKER_LABEL, creator_id = creator_id, content = content)
+            entities += MarkerLabelEntity(markerLabel.gid, creator_id = creator_id, content = content)
         }
         log.log("Exported label-assignments")
         return Snapshot(entities = entities)
