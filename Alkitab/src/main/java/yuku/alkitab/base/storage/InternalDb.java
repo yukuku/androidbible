@@ -61,7 +61,7 @@ import yuku.alkitab.util.IntArrayList;
 public class InternalDb {
 	static final String TAG = InternalDb.class.getSimpleName();
 
-	private final InternalDbHelper helper;
+	final InternalDbHelper helper;
 
 	public InternalDb(InternalDbHelper helper) {
 		this.helper = helper;
@@ -865,7 +865,7 @@ public class InternalDb {
 
 	/**
 	 * Insert a new marker-label association or update an existing one.
-	 * @param marker_label if the _id is 0, this label will be inserted. Otherwise, updated.
+	 * @param marker_label if the _id is 0, this marker_label will be inserted. Otherwise, updated.
 	 */
 	public void insertOrUpdateMarker_Label(@NonNull final Marker_Label marker_label) {
 		final SQLiteDatabase db = helper.getWritableDatabase();

@@ -66,7 +66,7 @@ class DataTransferActivity : BaseActivity() {
                     successfulExport(result)
                 }
             } catch (e: Throwable) {
-                log.log("Error occured: $e")
+                log.log("Error occurred: $e")
             }
         }
     }
