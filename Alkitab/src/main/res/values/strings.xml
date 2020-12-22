@@ -174,7 +174,14 @@
     <string name="bl_file_not_found_filename">File not found: %s</string>
     <string name="bl_send_backup_confirmation">Create and send backup of bookmarks, notes, and highlights? You can, for example, send the attached file by email to a new device, or just for archiving purposes.</string>
 	<string name="bl_sync_suggest">Protect your markers with sync</string>
-    <string name="labels_titikdua">LABELS</string>
+	<string name="bl_selection_copy">Copy</string>
+	<string name="bl_selection_edit">Edit</string>
+	<string name="bl_selection_delete">Delete</string>
+	<string name="bl_selection_one_selected">1 selected</string>
+	<string name="bl_selection_many_selected">^1 selected</string>
+	<string name="bl_copied_toast">The selected items have been copied.</string>
+
+	<string name="labels_titikdua">LABELS</string>
     <string name="tambah_titiktiga">Add…</string>
     <string name="nama_label_titikdua">Label name:</string>
     <string name="change_label_color">Change label color</string>

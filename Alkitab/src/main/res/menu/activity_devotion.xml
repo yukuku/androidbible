@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:ignore="AlwaysShowAction">
 
 	<item
 		android:id="@+id/menuCopy"
-		android:icon="@drawable/ic_menu_copy"
-		app:showAsAction="never"
-		android:title="@string/salin_renungan" />
+		android:icon="@drawable/ic_baseline_content_copy_24_white"
+		android:title="@string/salin_renungan"
+		app:showAsAction="never" />
+
 	<item
 		android:id="@+id/menuShare"
 		android:icon="@drawable/ic_menu_share"
-		app:showAsAction="never"
-		android:title="@string/menuShare" />
+		android:title="@string/menuShare"
+		app:showAsAction="never" />
 
 	<item
 		android:id="@+id/menuReminder"
 		android:icon="@drawable/ic_action_reminder"
-		app:showAsAction="always"
-		android:title="@string/dr_reminder" />
+		android:title="@string/dr_reminder"
+		app:showAsAction="always" />
 </menu>

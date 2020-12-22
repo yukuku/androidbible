@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:ignore="AlwaysShowAction">
 	<item
 		android:id="@+id/menuEdit"
-		android:icon="@drawable/ic_action_edit"
+		android:icon="@drawable/ic_baseline_edit_24_white"
 		android:title="@string/note_actionbar_edit"
 		app:showAsAction="always|withText" />
 	<item
 		android:id="@+id/menuDelete"
-		android:icon="@drawable/ic_action_discard"
+		android:icon="@drawable/ic_baseline_delete_outline_24_white"
 		android:title="@string/note_actionbar_delete"
 		app:showAsAction="always|withText" />
 	<item

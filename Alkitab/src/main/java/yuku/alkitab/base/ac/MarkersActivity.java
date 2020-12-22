@@ -160,7 +160,7 @@ public class MarkersActivity extends BaseActivity {
 		}
 	};
 
-	private OnItemClickListener lv_click = new OnItemClickListener() {
+	private final OnItemClickListener lv_click = new OnItemClickListener() {
 		@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 			Intent intent;
 			if (position == 0) {

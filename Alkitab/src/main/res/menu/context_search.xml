@@ -3,12 +3,12 @@
 
 	<item
 		android:id="@+id/menuSelectAll"
-		android:icon="@drawable/ic_action_content_select_all"
+		android:icon="@drawable/ic_baseline_select_all_24_white"
 		android:title="@string/select_all" />
 
 	<item
 		android:id="@+id/menuCopy"
-		android:icon="@drawable/ic_menu_copy"
+		android:icon="@drawable/ic_baseline_content_copy_24_white"
 		android:title="@string/search_copy_selected_verses" />
 
 </menu>

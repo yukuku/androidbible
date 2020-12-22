@@ -30,6 +30,7 @@ public class QueryTokenizer {
 	 * @return List of tokens, starting with the character '+' if it is to be matched in a whole-word/whole-phrase manner.
 	 * No tokens will be an empty string or "+" (just a plus sign). After the optional '+', there will not be another '+'.
 	 */
+	@NonNull
 	public static String[] tokenize(String query) {
 		final List<String> raw_tokens = new ArrayList<>();
 

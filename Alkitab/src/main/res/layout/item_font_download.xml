@@ -52,8 +52,8 @@
 	<ImageView
 		android:layout_width="1dp"
 		android:layout_height="match_parent"
-		android:layout_marginBottom="4dp"
 		android:layout_marginTop="4dp"
+		android:layout_marginBottom="4dp"
 		android:src="#4ccc"
 		tools:ignore="ContentDescription" />
 
@@ -73,6 +73,6 @@
 		android:background="?android:actionBarItemBackground"
 		android:contentDescription="@string/desc_delete"
 		android:scaleType="center"
-		android:src="@drawable/ic_action_discard" />
+		android:src="@drawable/ic_baseline_delete_outline_24_white" />
 
 </LinearLayout>

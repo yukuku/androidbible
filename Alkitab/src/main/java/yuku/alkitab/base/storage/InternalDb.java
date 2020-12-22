@@ -678,6 +678,7 @@ public class InternalDb {
 		return res;
 	}
 
+	@NonNull
 	public List<Label> listLabelsByMarker(final Marker marker) {
 		final List<Label> res = new ArrayList<>();
 		try (Cursor cursor = helper.getReadableDatabase().rawQuery("select " + Db.TABLE_Label + ".* from " + Db.TABLE_Label + ", " + Db.TABLE_Marker_Label + " where " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.label_gid + " = " + Db.TABLE_Label + "." + Db.Label.gid + " and " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.marker_gid + "=? order by " + Db.TABLE_Label + "." + Db.Label.ordering + " asc", Array(marker.gid))) {
