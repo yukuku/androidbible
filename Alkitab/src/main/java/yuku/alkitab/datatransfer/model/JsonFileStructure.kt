@@ -2,6 +2,7 @@ package yuku.alkitab.datatransfer.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @Serializable
 data class Root(
@@ -61,8 +62,8 @@ data class MarkerContent(
     val kind: Int,
     val ari: Int,
     val verseCount: Int,
-    val createTime: Long,
-    val modifyTime: Long,
+    val createTime: Int,
+    val modifyTime: Int,
     val caption: String,
 )
 
@@ -113,7 +114,7 @@ data class PinsContent(
 @Serializable
 data class Pin(
     val ari: Int,
-    val modifyTime: Long,
+    val modifyTime: Int,
     val preset_id: Int,
     val caption: String? = null,
 )

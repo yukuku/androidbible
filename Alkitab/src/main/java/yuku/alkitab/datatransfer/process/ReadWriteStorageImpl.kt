@@ -4,6 +4,7 @@ import java.util.Date
 import yuku.alkitab.base.S
 import yuku.alkitab.base.storage.InternalDbTxWrapper
 import yuku.alkitab.base.util.History
+import yuku.alkitab.base.util.Sqlitil
 import yuku.alkitab.datatransfer.model.Pin
 import yuku.alkitab.datatransfer.model.Rpp
 import yuku.alkitab.model.Label
@@ -46,7 +47,7 @@ class ReadWriteStorageImpl : ReadonlyStorageImpl(), ReadWriteStorageInterface {
             preset_id = pin.preset_id
             ari = pin.ari
             caption = pin.caption
-            modifyTime = Date(pin.modifyTime)
+            modifyTime = Sqlitil.toDate(pin.modifyTime)
         }
         S.getDb().insertOrUpdateProgressMark(pm)
     }

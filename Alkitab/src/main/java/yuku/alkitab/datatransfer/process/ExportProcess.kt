@@ -3,6 +3,7 @@ package yuku.alkitab.datatransfer.process
 import kotlinx.serialization.encodeToString
 import yuku.alkitab.base.sync.Sync
 import yuku.alkitab.base.sync.Sync_Pins
+import yuku.alkitab.base.util.Sqlitil
 import yuku.alkitab.datatransfer.model.HistoryContent
 import yuku.alkitab.datatransfer.model.HistoryEntity
 import yuku.alkitab.datatransfer.model.LabelContent
@@ -63,8 +64,8 @@ class ExportProcess(
                 kind = marker.kind.code,
                 ari = marker.ari,
                 verseCount = marker.verseCount,
-                createTime = marker.createTime.time,
-                modifyTime = marker.modifyTime.time,
+                createTime = Sqlitil.toInt(marker.createTime),
+                modifyTime = Sqlitil.toInt(marker.modifyTime),
                 caption = marker.caption,
             )
             entities += MarkerEntity(gid = marker.gid, kind = Sync.Entity.KIND_MARKER, creator_id = creator_id, content = content)
@@ -86,7 +87,7 @@ class ExportProcess(
     private fun pins(): Snapshot<PinsEntity> {
         val pins = mutableListOf<Pin>()
         for (pm in logList(storage.pins(), "pins")) {
-            pins += Pin(ari = pm.ari, modifyTime = pm.modifyTime.time, preset_id = pm.preset_id, caption = pm.caption)
+            pins += Pin(ari = pm.ari, modifyTime = Sqlitil.toInt(pm.modifyTime), preset_id = pm.preset_id, caption = pm.caption)
         }
         val content = PinsContent(pins)
         val entity = PinsEntity(gid = Sync_Pins.GID_SPECIAL_PINS, kind = Sync.Entity.KIND_PINS, creator_id = creator_id, content = content)

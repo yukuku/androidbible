@@ -123,7 +123,7 @@ class DataTransferActivity : BaseActivity() {
 
         when (mode) {
             Mode.export -> startExport()
-            Mode.import -> openImportFileRequest.launch(arrayOf("application/json"))
+            Mode.import -> openImportFileRequest.launch(arrayOf("application/json", "application/octet-stream"))
         }
     }
 

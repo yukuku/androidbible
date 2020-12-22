@@ -3,6 +3,7 @@ package yuku.alkitab.datatransfer.process
 import java.util.Date
 import kotlinx.serialization.decodeFromString
 import yuku.alkitab.base.util.History
+import yuku.alkitab.base.util.Sqlitil
 import yuku.alkitab.datatransfer.model.Gid
 import yuku.alkitab.datatransfer.model.HistoryEntity
 import yuku.alkitab.datatransfer.model.LabelEntity
@@ -131,8 +132,8 @@ class ImportProcess(
                         kind = Marker.Kind.fromCode(entity.content.kind)
                         caption = entity.content.caption
                         verseCount = entity.content.verseCount
-                        createTime = Date(entity.content.createTime)
-                        modifyTime = Date(entity.content.modifyTime)
+                        createTime = Sqlitil.toDate(entity.content.createTime)
+                        modifyTime = Sqlitil.toDate(entity.content.modifyTime)
                     }
                     storage.replaceMarker(newMarker)
                 }
