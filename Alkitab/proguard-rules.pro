@@ -19,20 +19,6 @@
 
 -dontobfuscate
 
-# used in action bar
--keep class android.support.v7.widget.SearchView {
-    public <init>(android.content.Context);
-    public <init>(android.content.Context, android.util.AttributeSet);
-    public <init>(android.content.Context, android.util.AttributeSet, int);
-}
-
-# used for support preferences
--keep class * extends android.support.v7.preference.Preference {
-    public <init>(android.content.Context);
-    public <init>(android.content.Context, android.util.AttributeSet);
-    public <init>(android.content.Context, android.util.AttributeSet, int);
-}
-
 # serializable used in yuku.kpri.* classes
 -keepnames class * implements java.io.Serializable
 
@@ -76,3 +62,21 @@
 # OkHttp platform used only on JVM and when Conscrypt dependency is available.
 -dontwarn okhttp3.internal.platform.ConscryptPlatform
 # </okhttp3>
+
+# <serialization>
+
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.serialization.AnnotationsKt # core serialization annotations
+
+# kotlinx-serialization-json specific. Add this if you have java.lang.NoClassDefFoundError kotlinx.serialization.json.JsonObjectSerializer
+-keepclassmembers class kotlinx.serialization.json.** {
+    *** Companion;
+}
+-keepclasseswithmembers class kotlinx.serialization.json.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+
+# Added by yuku
+-keep @kotlinx.serialization.Serializable class *
+
+# </serialization>

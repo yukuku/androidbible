@@ -20,6 +20,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.MVersionDb;
+import yuku.alkitab.base.settings.SettingsActivity;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.base.util.Sqlitil;

@@ -61,7 +61,7 @@ import yuku.alkitab.util.IntArrayList;
 public class InternalDb {
 	static final String TAG = InternalDb.class.getSimpleName();
 
-	private final InternalDbHelper helper;
+	final InternalDbHelper helper;
 
 	public InternalDb(InternalDbHelper helper) {
 		this.helper = helper;
@@ -865,7 +865,7 @@ public class InternalDb {
 
 	/**
 	 * Insert a new marker-label association or update an existing one.
-	 * @param marker_label if the _id is 0, this label will be inserted. Otherwise, updated.
+	 * @param marker_label if the _id is 0, this marker_label will be inserted. Otherwise, updated.
 	 */
 	public void insertOrUpdateMarker_Label(@NonNull final Marker_Label marker_label) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
@@ -1154,6 +1154,34 @@ public class InternalDb {
 			cv.put(Db.ReadingPlanProgress.reading_code, readingCode);
 			cv.put(Db.ReadingPlanProgress.checkTime, checkTime);
 			db.insert(Db.TABLE_ReadingPlanProgress, null, cv);
+
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
+	}
+
+	/**
+	 * Removes all existing reading codes that matches the specified gid and adds the one specified in readingCodes.
+	 * @param checkTime the time of checking the reading code, applied to all reading codes.
+	 */
+	public void replaceReadingPlanProgress(final String gid, final IntArrayList readingCodes, final long checkTime) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+		db.beginTransactionNonExclusive();
+		try {
+			db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=?", ToStringArray(gid));
+
+			for (int i = 0; i < readingCodes.size(); i++) {
+				final int readingCode = readingCodes.get(i);
+
+				final ContentValues cv = new ContentValues();
+				cv.put(Db.ReadingPlanProgress.reading_plan_progress_gid, gid);
+				cv.put(Db.ReadingPlanProgress.reading_code, readingCode);
+				cv.put(Db.ReadingPlanProgress.checkTime, checkTime);
+				db.insert(Db.TABLE_ReadingPlanProgress, null, cv);
+			}
 
 			db.setTransactionSuccessful();
 		} finally {

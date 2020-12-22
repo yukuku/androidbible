@@ -204,12 +204,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	 * If the client state's delta is too big, we remove some of the changes, so only some changes are transmitted to the server,
 	 * and the server will not time out anymore.
 	 *
-	 * The selection of the changes follow these rules:
-	 * - all operations with opkind {@link yuku.alkitab.base.sync.Sync.Opkind#mod} and {@link yuku.alkitab.base.sync.Sync.Opkind#del}
-	 *   must be included in the selection
-	 * - if the number of operations are still less than a certain threshold, operations with opkind
-	 *   {@link yuku.alkitab.base.sync.Sync.Opkind#add} are also included until the certain threshold is reached.
-	 *
 	 * WARNING: If you are using partial sync by this method, do not create sync shadow from the current state, but you must
 	 * create it from an existing sync shadow by applying the client delta AND the append delta (given from the server).
 	 * Also, the current state must be updated using the append delta from the server.
@@ -227,22 +221,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 		final List<Sync.Operation<C>> dst = new ArrayList<>();
 
-		// insert all mod and del operations
-		for (final Sync.Operation<C> o : src) {
-			if (o.opkind == Sync.Opkind.mod || o.opkind == Sync.Opkind.del) {
-				dst.add(o);
-			}
-		}
-
-		// if we are still ok, add operations too
+		// Add operations until we reach the threshold
 		for (final Sync.Operation<C> o : src) {
 			if (dst.size() >= PARTIAL_SYNC_THRESHOLD) {
 				break;
 			}
 
-			if (o.opkind == Sync.Opkind.add) {
-				dst.add(o);
-			}
+			dst.add(o);
 		}
 
 		SyncRecorder.log(SyncRecorder.EventKind.partial_sync_info, syncSetName, "client_delta_operations_size_original", src.size(), "client_delta_operations_size_chopped", dst.size());
@@ -547,7 +532,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			sr.stats.numIoExceptions++;
 		}
 	}
-	
+
 	void syncRp(final SyncResult sr) {
 		final String syncSetName = SyncShadow.SYNC_SET_RP;
 

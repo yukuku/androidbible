@@ -572,6 +572,11 @@
 	<string name="marker_migrate_import_from_other">Other backup</string>
 	<string name="marker_migrate_filename_dated">%1$s dated %2$s</string>
 
+	<!-- Data transfer -->
+	<string name="data_transfer_title">Data transfer</string>
+	<string name="data_transfer_export_title">Export data</string>
+	<string name="data_transfer_import_title">Import data</string>
+
 	<!-- Announcements -->
 	<string name="announce_notif_title">%s Announcements</string>
 	<string name="announce_notif_number_new_announcements">%s new announcements</string>

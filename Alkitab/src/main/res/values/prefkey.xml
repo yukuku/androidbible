@@ -34,4 +34,7 @@
 	<string name="pref_selectedVerseBgColor_key" translatable="false">selectedVerseBgColor</string>
 
 	<string name="pref_forceFontScale_key" translatable="false">forceFontScale</string>
+
+	<string name="pref_data_transfer_export_key" translatable="false">data_transfer_export</string>
+	<string name="pref_data_transfer_import_key" translatable="false">data_transfer_import</string>
 </resources>

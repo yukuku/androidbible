@@ -28,7 +28,7 @@ import yuku.alkitab.model.ProgressMark;
  * Pin is the new name for progress mark.
  */
 public class Sync_Pins {
-	private static final String GID_SPECIAL_PINS = "g2:pins";
+	public static final String GID_SPECIAL_PINS = "g2:pins";
 
 	/**
 	 * @return base revno, delta of shadow -> current.

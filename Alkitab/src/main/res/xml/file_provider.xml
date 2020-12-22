@@ -1,4 +1,9 @@
 <paths>
+	<!-- Used in DataTransferActivity -->
+	<cache-path
+		name="cache_for_data_transfer"
+		path="data_transfer/" />
+
 	<files-path
 		name="internal_yes_dir"
 		path="bible/yes/" />

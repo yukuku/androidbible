@@ -60,7 +60,7 @@
 			android:name="yuku.alkitab.base.ac.GotoActivity"
 			android:windowSoftInputMode="adjustNothing" />
 		<activity
-			android:name="yuku.alkitab.base.ac.SettingsActivity"
+			android:name="yuku.alkitab.base.settings.SettingsActivity"
 			android:label="@string/pengaturan_alkitab" />
 		<activity android:name="yuku.alkitab.base.ac.ColorSettingsActivity" />
 		<activity
@@ -329,6 +329,11 @@
 			android:theme="@style/Theme.PopupActivity" />
 
 		<activity
+			android:name="yuku.alkitab.datatransfer.ui.DataTransferActivity"
+			android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"
+			android:label="@string/data_transfer_title" />
+
+		<activity
 			android:name="yuku.alkitab.ribka.RibkaReportActivity"
 			android:label="@string/ribka_title"
 			android:theme="@style/Ribka.Theme" />
@@ -412,7 +417,7 @@
 			<!--
 			This service is not run in a separate process, because the singleton Preferences might not work well when accessed by multiple processes.
 			Moreover, local broadcast manager is in-process only (for example, the sync service asks the app UI to update something using LBM, it won't work.
-			 -->
+            -->
 			<intent-filter>
 				<action android:name="android.content.SyncAdapter" />
 			</intent-filter>
@@ -424,7 +429,7 @@
 		<!--
 			File provider, for sharing app files.
 			Authority MUST NOT be changed without changing sharing code.
-		 -->
+        -->
 		<provider
 			android:name="androidx.core.content.FileProvider"
 			android:authorities="${applicationId}.file_provider"
