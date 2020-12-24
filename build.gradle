@@ -63,9 +63,8 @@ ext {
     firebaseCrashlyticsVersion = '17.0.1'
 
     // Misc
-    okhttpVersion = '3.12.6' // For 3.13.0 "This release bumps our minimum requirements to Java 8+ or Android 5+"
-    picassoVersion = '2.71828'
-    picassoOkhttpDownloaderVersion = '1.1.0'
+    okhttpVersion = '3.12.12' // For 3.13.0 "This release bumps our minimum requirements to Java 8+ or Android 5+"
+    coilVersion = '1.1.0'
     preferenceFixVersion = '28.0.0.0'
     kotlinxSerializationJsonVersion = '1.0.1'
 

@@ -121,8 +121,7 @@ dependencies {
     // Misc
     implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
 
-    implementation "com.squareup.picasso:picasso:$picassoVersion"
-    implementation "com.jakewharton.picasso:picasso2-okhttp3-downloader:$picassoOkhttpDownloaderVersion"
+    implementation "io.coil-kt:coil:$coilVersion"
 
     implementation "com.takisoft.fix:preference-v7:$preferenceFixVersion"
 

@@ -1,13 +1,12 @@
 package yuku.alkitab.base.connection
 
-import android.graphics.Bitmap
 import android.os.Build
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException
 import com.google.android.gms.common.GooglePlayServicesRepairableException
 import com.google.android.gms.security.ProviderInstaller
-import com.jakewharton.picasso.OkHttp3Downloader
-import com.squareup.picasso.Picasso
+import java.io.File
+import java.util.concurrent.TimeUnit
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -17,8 +16,6 @@ import yuku.alkitab.base.App
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.debug.BuildConfig
 import yuku.stethoshim.StethoShim
-import java.io.File
-import java.util.concurrent.TimeUnit
 
 private const val TAG = "Connections"
 

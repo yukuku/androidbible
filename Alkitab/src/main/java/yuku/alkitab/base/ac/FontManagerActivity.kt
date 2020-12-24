@@ -11,10 +11,8 @@ import android.widget.ImageView
 import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
+import coil.load
 import com.afollestad.materialdialogs.MaterialDialog
-import com.jakewharton.picasso.OkHttp3Downloader
-import com.squareup.picasso.Callback.EmptyCallback
-import com.squareup.picasso.Picasso
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
@@ -25,7 +23,6 @@ import java.util.zip.ZipInputStream
 import yuku.afw.widget.EasyAdapter
 import yuku.alkitab.base.App
 import yuku.alkitab.base.ac.base.BaseActivity
-import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.sv.DownloadService
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Background
@@ -46,12 +43,6 @@ class FontManagerActivity : BaseActivity(), DownloadService.DownloadListener {
     private lateinit var lEmptyError: TextView
 
     private var dls: DownloadService? = null
-
-    private val picasso: Picasso by lazy {
-        Picasso.Builder(this)
-            .downloader(OkHttp3Downloader(Connections.okHttp))
-            .build()
-    }
 
     private val serviceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceDisconnected(name: ComponentName) {
@@ -99,9 +90,8 @@ class FontManagerActivity : BaseActivity(), DownloadService.DownloadListener {
 
     fun loadFontList() = Background.run {
         try {
-            val listString = App.downloadString(URL_fontList)
+            val lines = App.downloadString(URL_fontList).lines()
             val list = mutableListOf<FontItem>()
-            val lines = listString.lines()
             if (lines.firstOrNull() == "OK") {
                 for (line in lines.drop(1)) {
                     if (line.isNotBlank()) {
@@ -172,21 +162,16 @@ class FontManagerActivity : BaseActivity(), DownloadService.DownloadListener {
             lFontName.text = item.name
             lFontName.visibility = View.VISIBLE
 
-            picasso.load(String.format(URL_fontPreview, item.name)).into(imgPreview, object : EmptyCallback() {
-                override fun onError(e: Exception) {
-                    AppLog.e(TAG, "error loading font preview", e)
-                }
-
-                override fun onSuccess() {
-                    lFontName.visibility = View.GONE
-                }
-            })
-
+            val previewUrl = String.format(URL_fontPreview, item.name)
+            imgPreview.load(previewUrl)
             imgPreview.contentDescription = item.name
+
             bDownload.setTag(R.id.TAG_fontItem, item)
             bDownload.setOnClickListener(bDownload_click)
+
             bDelete.setTag(R.id.TAG_fontItem, item)
             bDelete.setOnClickListener(bDelete_click)
+
             if (FontManager.isInstalled(item.name)) {
                 progressbar.isIndeterminate = false
                 progressbar.max = 100
