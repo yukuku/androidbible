@@ -94,13 +94,4 @@ object Connections {
         StethoShim.addNetworkInterceptor(builder)
         builder.build()
     }
-
-    @JvmStatic
-    @get:JvmName("picasso")
-    val picasso: Picasso by lazy {
-        Picasso.Builder(appContext)
-            .defaultBitmapConfig(Bitmap.Config.RGB_565)
-            .downloader(OkHttp3Downloader(okHttp))
-            .build()
-    }
 }
