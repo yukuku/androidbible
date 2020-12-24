@@ -76,7 +76,16 @@
     kotlinx.serialization.KSerializer serializer(...);
 }
 
-# Added by yuku
--keep @kotlinx.serialization.Serializable class *
+# Change here com.yourcompany.yourpackage
+# --> Actually we need to set the package name of the classes that are serializable
+-keep,includedescriptorclasses class yuku.alkitab.datatransfer.model.**$$serializer { *; } # <-- change package name to your app's
+
+-keepclassmembers class yuku.alkitab.datatransfer.model.** {
+    *** Companion;
+}
+
+-keepclasseswithmembers class yuku.alkitab.datatransfer.model.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
 
 # </serialization>
