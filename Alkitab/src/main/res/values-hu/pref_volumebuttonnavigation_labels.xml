@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="pref_volumeButtonNavigation_labels">
+		<item>"Ne használja navigálásra"</item>
+		<item>Versszakok navigálása</item>
+		<item>Fejezetek navigálása</item>
+		<item>Oldal fel/le</item>
+	</string-array>
+	<string-array name="pref_forceFontScale_labels">
+		<item>Rendszer beállítások követése</item>
+		<item>Szuper óriási</item>
+		<item>Hatalmas</item>
+		<item>Gigantikus</item>
+	</string-array>
+</resources>

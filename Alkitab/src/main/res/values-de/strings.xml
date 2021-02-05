@@ -211,6 +211,7 @@
     <string name="no_url_for_facebook">Das kann nicht auf Facebook geteilt werden.</string>
     <string name="storage_permission_rationale">Das Recht zum Schreiben auf den Speicher wird benötigt, um Dateien wie Bibelübersetzungen und Schriftarten abzulegen.</string>
     <string name="goto_button_history_tip">Tipp: Beim nächsten Mal diese Schaltfläche lang drücken, um die zuletzt geöffneten Bibelstellen zu sehen.</string>
+    <string name="backforwardlist_clear">Alles löschen</string>
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Wähler</string>
     <string name="goto_tab_direct_label">Direkt</string>
@@ -273,6 +274,8 @@
     <string name="desc_verse_attribute_progress_mark">%s befindet sich zurzeit hier.</string>
     <string name="desc_progress_mark_list">Lesefortschritts-Liste</string>
     <string name="desc_backspace">Rücktaste</string>
+    <string name="desc_bfl_back">Tippen, um zurück zu gehen. Lang drücken, um besuchte Stellen anzuzeigen.</string>
+    <string name="desc_bfl_forward">Tippen, um vorwärts zu gehen. Lang drücken, um besuchte Stellen anzuzeigen.</string>
     <string name="intent_filter_open_yes_file">YES-Datei öffnen</string>
     <string name="intent_filter_open_pdb_file">PDB-Datei öffnen</string>
     <string name="intent_filter_open_pdb_or_yes_file">PDB-/YES-Datei öffnen</string>
@@ -494,6 +497,8 @@
     <string name="pref_textPadding_summary">Text in einer Zeile schmaler machen für eine bessere Lesbarkeit</string>
     <string name="pref_bottomToolbarOnText_title">Versnavigation unten</string>
     <string name="pref_bottomToolbarOnText_summary">Toolbar für die Versnavigation am unteren Rand der Bibelanzeige anzeigen</string>
+    <string name="pref_verseNumberIsShown_title">Versnummern anzeigen</string>
+    <string name="pref_verseNumberIsShown_summary">Versnummer am Anfang jedes Verses anzeigen</string>
     <!-- devotion reminder -->
     <string name="dr_app_name">Erinnerung</string>
     <string name="dr_notification_title">Tägliche Andacht</string>

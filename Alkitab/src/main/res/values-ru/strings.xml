@@ -211,6 +211,7 @@
     <string name="no_url_for_facebook">Это нельзя отправить в Facebook.</string>
     <string name="storage_permission_rationale">Нам нужен доступ к хранилищу для сохранения общих файлов, таких, как версии Библии и шрифты.</string>
     <string name="goto_button_history_tip">Совет: В следующий раз зажмите кнопку для доступа к недавно просмотренным стихам.</string>
+    <string name="backforwardlist_clear">Очистить все</string>
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Набор номера</string>
     <string name="goto_tab_direct_label">Выбор</string>
@@ -273,6 +274,8 @@
     <string name="desc_verse_attribute_progress_mark">В настоящее время здесь %s.</string>
     <string name="desc_progress_mark_list">Список маркеров продвижения</string>
     <string name="desc_backspace">бекспейс</string>
+    <string name="desc_bfl_back">Нажмите, чтобы вернуться, удерживайте, чтобы увидеть просмотренное</string>
+    <string name="desc_bfl_forward">Нажмите, чтобы продолжить, удерживайте, чтобы увидеть просмотренное</string>
     <string name="intent_filter_open_yes_file">Открыть YES-файл</string>
     <string name="intent_filter_open_pdb_file">Открыть PDB-файл</string>
     <string name="intent_filter_open_pdb_or_yes_file">Открыть PDB/YES-файл</string>
@@ -494,6 +497,8 @@
     <string name="pref_textPadding_summary">Сделать текст в строке уже для более удобного чтения</string>
     <string name="pref_bottomToolbarOnText_title">Навигация на нижней панели</string>
     <string name="pref_bottomToolbarOnText_summary">Разместить панель навигации внизу окна Библии</string>
+    <string name="pref_verseNumberIsShown_title">Отображать номера стихов</string>
+    <string name="pref_verseNumberIsShown_summary">Отображать номера перед стихами</string>
     <!-- devotion reminder -->
     <string name="dr_app_name">Напоминание</string>
     <string name="dr_notification_title">Ежедневое чтение</string>

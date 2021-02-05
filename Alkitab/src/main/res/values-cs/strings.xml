@@ -211,6 +211,7 @@
     <string name="no_url_for_facebook">Toto nemůže být sdíleno na Facebooku.</string>
     <string name="storage_permission_rationale">Potřebujeme přístupk uložišti pro ukládání různých verzí bible a fontů.</string>
     <string name="goto_button_history_tip">Tip: Příště podržte tlačítka a dostanete se k nedávno otevřeným veršům.</string>
+    <string name="backforwardlist_clear">Smazat vše</string>
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Číselník</string>
     <string name="goto_tab_direct_label">Posloupně</string>

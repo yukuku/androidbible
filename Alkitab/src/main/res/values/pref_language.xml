@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Also edit "pref_language_values" and "ConfigurationWrapper" class! -->
+    <!-- Also edit "pref_language_values" and "ConfigurationWrapper" class, and build.gradle! -->
     <string-array name="pref_language_labels" tools:ignore="MissingTranslation">
         <item>@string/pref_language_label_default</item>
         <item>Afrikaans</item>
@@ -14,6 +14,7 @@
         <item>Français</item>
         <item>Italiano</item>
         <item>Latviešu</item>
+        <item>Magyar</item>
         <item>Nederlands</item>
         <item>Polski</item>
         <item>Português</item>
@@ -34,7 +35,7 @@
         <item>မြန်မာဘာသာ</item>
     </string-array>
 
-    <!-- Also edit "pref_language_labels" and "ConfigurationWrapper" class! -->
+    <!-- Also edit "pref_language_labels" and "ConfigurationWrapper" class, and build.gradle! -->
     <string-array name="pref_language_values" translatable="false">
         <item>DEFAULT</item>
         <item>af</item>
@@ -48,6 +49,7 @@
         <item>fr</item>
         <item>it</item>
         <item>lv</item>
+        <item>hu</item>
         <item>nl</item>
         <item>pl</item>
         <item>pt</item>

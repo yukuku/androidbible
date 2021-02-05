@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_bahasa_language">Nyelv</string>
+    <string name="pref_warna_teks_alkitab">Szöveg</string>
+    <string name="pref_warna_latar_belakang">Háttér</string>
+    <string name="pref_warna_nomor_ayat">Versszak száma</string>
+    <string name="pref_redTextColor_title">Jézus Tanításai</string>
+    <string name="pref_penggunaan">Használat</string>
+    <string name="pref_copy_share">Másolás és megosztás</string>
+    <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Könyvek listázása ABC sorrendbe (a-z) az eredeti helyett</string>
+    <string name="pref_kitab_menurut_abjad">Könyvek rendezése ABC sorrendbe</string>
+    <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">A készülék kijelzője nem kapcsol ki a Biblia olvasása közben</string>
+    <string name="pref_biarkan_layar_menyala">Képernyő bekapcsolva tartása</string>
+    <string name="pref_penampilan_layar">Kijelző</string>
+    <string name="pref_volumeButtonNavigation_title">Hangerő gomb navigálása</string>
+    <string name="pref_copyWithVerseNumbers_title">Versszak száma</string>
+    <string name="pref_copyWithVerseNumbers_summary">Minden versszak kezdődjön a saját számával</string>
+    <string name="pref_copyWithVersionName_title">Verzió rövidítések</string>
+    <string name="pref_copyWithShareUrl_title">URL megosztása</string>
+    <string name="pref_autoDictionaryAnalyze_title">Automatikus nyelvhelyesség ellenőrzés</string>
+    <string name="pref_tapToEditNote_title">A jegyzet szerkesztéséhez koppintson</string>
+    <string name="pref_tapToEditNote_summary">Hagyja üresen, hogy megakadályozza a meglévő jegyzetek véletlen szerkesztését</string>
+    <string name="pref_showHiddenVersion_title">Az esetlegesen korlátozott verziók engedélyezése</string>
+    <string name="pref_selectedVerseBgColor_title">A kiválasztott vers háttere</string>
+    <string name="pref_forceFontScale_title">Felhasználói felület szövegének mérete</string>
+</resources>

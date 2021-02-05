@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- Names of the color themes -->
+	<string-array name="pref_colorTheme_labels">
+		<item>Tiszta papír</item>
+		<item>Nyalóka</item>
+		<item>Rágógumi</item>
+		<item>Cseresznyevirág</item>
+		<item>Trópusi Frissesség</item>
+		<item>Mohás Tó</item>
+		<item>Meleg hamu</item>
+		<item>Édes narancs</item>
+		<item>Száraz sivatag</item>
+		<item>Fa</item>
+		<item>Csokoládé</item>
+		<item>Nedves Guáva</item>
+		<item>Tiszta éj</item>
+		<item>Csillagos éj</item>
+		<item>Sötét anyag</item>
+		<item>Fekete tábla</item>
+		<item>Lágy fény</item>
+	</string-array>
+</resources>

@@ -93,6 +93,8 @@ public class ConfigurationWrapper {
 				return new Locale("es", "ES");
 			case "fr":
 				return new Locale("fr", "FR");
+			case "hu":
+				return new Locale("hu", "HU");
 			case "in":
 				return new Locale("in", "ID");
 			case "it":
