@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
+import kotlin.properties.Delegates.notNull
 import yuku.alkitab.base.S
 import yuku.alkitab.base.dialog.VersesDialog.Companion.newCompareInstance
 import yuku.alkitab.base.dialog.VersesDialog.Companion.newInstance
@@ -19,11 +20,11 @@ import yuku.alkitab.base.verses.VersesControllerImpl
 import yuku.alkitab.base.verses.VersesDataModel
 import yuku.alkitab.base.verses.VersesListeners
 import yuku.alkitab.base.verses.VersesUiModel
+import yuku.alkitab.base.widget.VerseInlineLinkSpan
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Version
 import yuku.alkitab.util.Ari
 import yuku.alkitab.util.IntArrayList
-import kotlin.properties.Delegates.notNull
 
 private const val EXTRA_ariRanges = "ariRanges"
 private const val EXTRA_ari = "ari"
@@ -86,7 +87,15 @@ class VersesDialog : BaseDialog() {
                 isVerseNumberShown = true
             ),
             VersesListeners.EMPTY.copy(
-                selectedVersesListener = selectedVersesListener
+                selectedVersesListener = selectedVersesListener,
+                inlineLinkSpanFactory_ = { type, arif ->
+                    object : VerseInlineLinkSpan(type, arif) {
+                        override fun onClick(type: Type, arif: Int) {
+                            val ari = arif ushr 8
+                            selectedVersesListener.onVerseSingleClick(Ari.toVerse(ari))
+                        }
+                    }
+                }
             )
         )
 
