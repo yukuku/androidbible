@@ -31,6 +31,8 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
+import java.io.IOException
+import java.util.Locale
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
 import yuku.alkitab.base.S
@@ -57,8 +59,6 @@ import yuku.alkitab.tracking.Tracker
 import yuku.alkitabintegration.display.Launcher
 import yuku.kpri.model.Song
 import yuku.kpri.model.VerseKind
-import java.io.IOException
-import java.util.Locale
 
 private const val TAG = "SongViewActivity"
 
@@ -69,7 +69,6 @@ private const val REQCODE_downloadSongBook = 3
 private const val FRAGMENT_TAG_SONG = "song"
 
 class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUrlLoadingHandler, LeftDrawer.Songs.Listener, MediaStateListener {
-
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var leftDrawer: LeftDrawer.Songs
 
@@ -134,8 +133,10 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
     inner class MediaState {
         var enabled = false
+
         @DrawableRes
         var icon = 0
+
         @StringRes
         var label = 0
         var loading = false
@@ -515,11 +516,27 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             }
 
             R.id.menuMediaControl -> {
-                val currentBookName = currentBookName
-                val currentSong = currentSong
-                if (currentBookName != null && currentSong != null) {
-                    activeMediaController?.playOrPause(false)
+                val proceed = {
+                    val currentBookName = currentBookName
+                    val currentSong = currentSong
+                    if (currentBookName != null && currentSong != null) {
+                        activeMediaController?.playOrPause(false)
+                    }
                 }
+                if (audioDisclaimerAcknowledged) {
+                    proceed()
+                } else {
+                    MaterialDialog.Builder(this)
+                        .content(R.string.sn_audio_disclaimer_message)
+                        .positiveText(R.string.ok)
+                        .onPositive { _, _ ->
+                            audioDisclaimerAcknowledged = true
+                            proceed()
+                        }
+                        .negativeText(R.string.cancel)
+                        .show()
+                }
+
                 return true
             }
 
@@ -1105,6 +1122,8 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
         val midiController = MidiController()
         val exoplayerController = ExoplayerController(App.context)
+
+        var audioDisclaimerAcknowledged = false
 
         @JvmStatic
         fun createIntent(): Intent {
