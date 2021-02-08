@@ -536,6 +536,7 @@
     <string name="marker_migrate_import_from_newest">Có, nhập từ mới nhất (đề nghị)</string>
     <string name="marker_migrate_import_from_other">Sao lưu khác</string>
     <string name="marker_migrate_filename_dated">%1$s ngày %2$s</string>
+    <!-- Data transfer -->
     <!-- Announcements -->
     <string name="announce_notif_title">%s Thông báo</string>
     <string name="announce_notif_number_new_announcements">%s Thông báo mới</string>

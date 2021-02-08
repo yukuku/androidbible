@@ -527,6 +527,7 @@
     <string name="marker_migrate_import_from_newest">是，匯入最新的（建議選項）</string>
     <string name="marker_migrate_import_from_other">其他備份</string>
     <string name="marker_migrate_filename_dated">%1$s日期%2$s</string>
+    <!-- Data transfer -->
     <!-- Announcements -->
     <string name="announce_notif_title">%s 公告</string>
     <string name="announce_notif_number_new_announcements">%s 新的公告</string>

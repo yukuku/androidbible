@@ -528,6 +528,7 @@
     <string name="marker_migrate_import_from_newest">Ya, import daripada yang terbaru (disarankan)</string>
     <string name="marker_migrate_import_from_other">Sandaran lain</string>
     <string name="marker_migrate_filename_dated">%1$s bertarikh %2$s</string>
+    <!-- Data transfer -->
     <!-- Announcements -->
     <string name="announce_notif_title">Pengumuman %s</string>
     <string name="announce_notif_number_new_announcements">%s pengumuman baru</string>

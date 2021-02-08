@@ -528,6 +528,7 @@
     <string name="marker_migrate_import_from_newest">Oo, i-angkat galing sa pinakabagong (rekomendasyon)</string>
     <string name="marker_migrate_import_from_other">Ibang reserba</string>
     <string name="marker_migrate_filename_dated">%1$sNapetsahan %2$s</string>
+    <!-- Data transfer -->
     <!-- Announcements -->
     <string name="announce_notif_title">%s Anunsyo</string>
     <string name="announce_notif_number_new_announcements">%s Bagong mga anunsyo</string>

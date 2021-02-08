@@ -532,6 +532,7 @@
     <string name="marker_migrate_import_from_newest">Так, імпортувати з самого останнього (рекомендується)</string>
     <string name="marker_migrate_import_from_other">Інші резервні копії</string>
     <string name="marker_migrate_filename_dated">%1$s датований %2$s</string>
+    <!-- Data transfer -->
     <!-- Announcements -->
     <string name="announce_notif_title">%s Оголошень</string>
     <string name="announce_notif_number_new_announcements">%s нових оголошень</string>

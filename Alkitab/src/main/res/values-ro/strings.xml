@@ -536,6 +536,7 @@
     <string name="marker_migrate_import_from_newest">Da, import din cel mai nou (recomandat)</string>
     <string name="marker_migrate_import_from_other">Altă rezervă</string>
     <string name="marker_migrate_filename_dated">%1$s datat %2$s</string>
+    <!-- Data transfer -->
     <!-- Announcements -->
     <string name="announce_notif_title">%s Anunțuri</string>
     <string name="announce_notif_number_new_announcements">%s anunțuri noi</string>

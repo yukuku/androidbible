@@ -528,6 +528,7 @@
     <string name="marker_migrate_import_from_newest">Ja, voer die nuutste in (aanbeveel)</string>
     <string name="marker_migrate_import_from_other">Ander rugsteun</string>
     <string name="marker_migrate_filename_dated">%1$s gedateer %2$s</string>
+    <!-- Data transfer -->
     <!-- Announcements -->
     <string name="announce_notif_title">%s Aankondigings</string>
     <string name="announce_notif_number_new_announcements">%s Nuwe Aankondigings</string>

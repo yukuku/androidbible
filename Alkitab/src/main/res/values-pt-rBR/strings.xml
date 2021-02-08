@@ -536,6 +536,7 @@
     <string name="marker_migrate_import_from_newest">Sim, importe do mais recente (recomendado)</string>
     <string name="marker_migrate_import_from_other">Outros backups</string>
     <string name="marker_migrate_filename_dated">%1$s datado %2$s</string>
+    <!-- Data transfer -->
     <!-- Announcements -->
     <string name="announce_notif_title">%s Avisos</string>
     <string name="announce_notif_number_new_announcements">%s novos avisos</string>

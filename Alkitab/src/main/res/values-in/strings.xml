@@ -171,6 +171,12 @@
     <string name="bl_file_not_found_filename">File tidak ditemukan: %s</string>
     <string name="bl_send_backup_confirmation">Buat dan kirimkan cadangan semua marka? Misalnya, anda dapat mengirimkannya lewat imel ke perangkat yang baru, atau sekedar untuk dimasukkan ke dalam arsip.</string>
     <string name="bl_sync_suggest">Simpan marka dengan sync</string>
+    <string name="bl_selection_copy">Salin</string>
+    <string name="bl_selection_edit">Edit</string>
+    <string name="bl_selection_delete">Hapus</string>
+    <string name="bl_selection_one_selected">1 dipilih</string>
+    <string name="bl_selection_many_selected">^1 dipilih</string>
+    <string name="bl_copied_toast">Marka yang dipilih sudah disalin.</string>
     <string name="labels_titikdua">LABEL</string>
     <string name="tambah_titiktiga">Tambah&#8230;</string>
     <string name="nama_label_titikdua">Nama label:</string>
@@ -248,6 +254,7 @@
     <string name="sn_private_song_book_dialog_desc">Unduh buku lagu pribadi (tersembunyi)</string>
     <string name="sn_private_song_book_name_hint">Nama buku lagu</string>
     <string name="sn_play_in_loop">Putar berulang-ulang sampai dihentikan?</string>
+    <string name="sn_audio_disclaimer_message">Harap diperhatikan bahwa semua audio yang tersedia dalam aplikasi ini belum tentu bersumber dari penerbit lagu atau buku lagu.</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Hari sebelumnya</string>
     <string name="desc_next_day">Hari berikutnya</string>
@@ -536,6 +543,10 @@
     <string name="marker_migrate_import_from_newest">Ya, ambil dari yang terbaru (disarankan)</string>
     <string name="marker_migrate_import_from_other">Cadangan lainnya</string>
     <string name="marker_migrate_filename_dated">%1$s tertanggal %2$s</string>
+    <!-- Data transfer -->
+    <string name="data_transfer_title">Transfer data</string>
+    <string name="data_transfer_export_title">Ekspor data</string>
+    <string name="data_transfer_import_title">Impor data</string>
     <!-- Announcements -->
     <string name="announce_notif_title">Pengumuman %s</string>
     <string name="announce_notif_number_new_announcements">%s pengumuman baru</string>

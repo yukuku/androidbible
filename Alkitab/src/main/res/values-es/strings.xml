@@ -537,6 +537,7 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
     <string name="marker_migrate_import_from_newest">Si, importar desde lo más reciente (recomendado)</string>
     <string name="marker_migrate_import_from_other">Otros respardos</string>
     <string name="marker_migrate_filename_dated">%1$s con fecha %2$s</string>
+    <!-- Data transfer -->
     <!-- Announcements -->
     <string name="announce_notif_title">%s Avisos</string>
     <string name="announce_notif_number_new_announcements">%s avisos nuevos</string>

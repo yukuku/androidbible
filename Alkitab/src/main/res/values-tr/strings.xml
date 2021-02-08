@@ -536,6 +536,7 @@
     <string name="marker_migrate_import_from_newest">Evet, en yenisinden aktar(önerilir)</string>
     <string name="marker_migrate_import_from_other">Diğer yedeklemeler</string>
     <string name="marker_migrate_filename_dated">%1$s tarihli %2$s</string>
+    <!-- Data transfer -->
     <!-- Announcements -->
     <string name="announce_notif_title">%s Duyurular</string>
     <string name="announce_notif_number_new_announcements">%s yeni duyurular</string>

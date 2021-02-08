@@ -531,6 +531,7 @@
     <string name="marker_migrate_import_from_newest">ဟုတ်ပါသည်၊ နောက်ဆုံးပေါ် (အကြံပြုထားသည်)မှ တင်သွင်းပါ</string>
     <string name="marker_migrate_import_from_other">အခြားသော အရန်ဖိုင်သိမ်းဆည်း သိုမှီခြင်း</string>
     <string name="marker_migrate_filename_dated">%1$s ရက်စွဲတပ်ထားသည့် %2$s</string>
+    <!-- Data transfer -->
     <!-- Announcements -->
     <string name="announce_notif_title">%s ကြေညာချက်များ</string>
     <string name="announce_notif_number_new_announcements">%s ကြေညာချက်အသစ်များ</string>

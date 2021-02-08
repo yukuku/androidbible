@@ -530,6 +530,7 @@
     <string name="marker_migrate_import_from_newest">Jā, importēt no jaunākā (ieteicams)</string>
     <string name="marker_migrate_import_from_other">Cita rezerves kopija</string>
     <string name="marker_migrate_filename_dated">%1$s datēts %2$s</string>
+    <!-- Data transfer -->
     <!-- Announcements -->
     <string name="announce_notif_title">%s Paziņojumi</string>
     <string name="announce_notif_number_new_announcements">%s jauni paziņojumi</string>

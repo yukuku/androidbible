@@ -536,6 +536,7 @@
     <string name="marker_migrate_import_from_newest">Ja, neuste Datei importieren (empfohlen)</string>
     <string name="marker_migrate_import_from_other">Anderes Backup</string>
     <string name="marker_migrate_filename_dated">%1$s vom %2$s</string>
+    <!-- Data transfer -->
     <!-- Announcements -->
     <string name="announce_notif_title">%s Meldungen</string>
     <string name="announce_notif_number_new_announcements">%s neue Meldungen</string>

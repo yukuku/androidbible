@@ -531,6 +531,7 @@
     <string name="marker_migrate_import_from_newest">ใช่ นำเข้าจากแบ็คอัพล่าสุด (เป็นที่แนะนำค่ะ)</string>
     <string name="marker_migrate_import_from_other">แบ็คอัพอื่นๆ</string>
     <string name="marker_migrate_filename_dated">%1$s ลงวันที่ %2$s</string>
+    <!-- Data transfer -->
     <!-- Announcements -->
     <string name="announce_notif_title">คำประกาศจาก %s</string>
     <string name="announce_notif_number_new_announcements">ข่าวประกาศใหม่ %s รายการ</string>

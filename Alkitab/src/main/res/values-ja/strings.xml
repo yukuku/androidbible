@@ -531,6 +531,7 @@
     <string name="marker_migrate_import_from_newest">一番新しいバックアップをインポート (推薦)</string>
     <string name="marker_migrate_import_from_other">他のバックアップ</string>
     <string name="marker_migrate_filename_dated">%1$s日付%2$s</string>
+    <!-- Data transfer -->
     <!-- Announcements -->
     <string name="announce_notif_title">%sの新着情報</string>
     <string name="announce_notif_number_new_announcements">%s件の新着情報</string>

@@ -527,6 +527,7 @@
     <string name="marker_migrate_import_from_newest">Oo, I-import gikan sa pinakabag-o (girekomendar)</string>
     <string name="marker_migrate_import_from_other">Laing reserba</string>
     <string name="marker_migrate_filename_dated">%1$s gipetsahan %2$s</string>
+    <!-- Data transfer -->
     <!-- Announcements -->
     <string name="announce_notif_title">%s Mga pahibalo</string>
     <string name="announce_notif_number_new_announcements">%s bag-ong mga pahibalo</string>

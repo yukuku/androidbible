@@ -536,6 +536,7 @@
     <string name="marker_migrate_import_from_newest">Oui, importation depuis la plus récente (recommandé)</string>
     <string name="marker_migrate_import_from_other">Autre sauvegarde</string>
     <string name="marker_migrate_filename_dated">%1$s daté %2$s</string>
+    <!-- Data transfer -->
     <!-- Announcements -->
     <string name="announce_notif_title">%s Annonces</string>
     <string name="announce_notif_number_new_announcements">%s nouvelles annonces</string>

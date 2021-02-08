@@ -531,6 +531,7 @@
     <string name="marker_migrate_import_from_newest">예, 가장 최신 것을 불러오기 (추천)</string>
     <string name="marker_migrate_import_from_other">다른 백업</string>
     <string name="marker_migrate_filename_dated">%1$s 날짜 %2$s</string>
+    <!-- Data transfer -->
     <!-- Announcements -->
     <string name="announce_notif_title">%s 공지 사항</string>
     <string name="announce_notif_number_new_announcements">%s 새 공지사항</string>
