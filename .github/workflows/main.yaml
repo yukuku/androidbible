@@ -33,7 +33,7 @@ jobs:
           java-version: 11
 
       - name: Build project
-        run: ./gradlew assemblePlainDebug assemblePlainRelease
+        run: ./gradlew assemblePlainDebug
 
       - name: Upload build outputs (APKs)
         uses: actions/upload-artifact@v2
