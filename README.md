@@ -36,7 +36,7 @@ See the <a href="https://alkitab.app/developer">Developer page</a> for more info
 License
 --------
 
-    Copyright 2009-2019 (or the current year) The Alkitab Authors.
+    Copyright 2009-present The Alkitab Authors.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
