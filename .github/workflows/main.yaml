@@ -39,14 +39,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: build-outputs
-          path: app/build/outputs
-
-      - name: Upload build reports
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: build-reports
-          path: app/build/reports
+          path: Alkitab/build/outputs
 
   test:
     needs: build
