@@ -34,7 +34,6 @@ ext {
     compileSdkVersion = 29
     minSdkVersion = 17
     targetSdkVersion = 29
-    travisBuild = System.getenv("TRAVIS") == "true"
 
     // Android X
     androidxActivityVersion = '1.2.0-rc01'
