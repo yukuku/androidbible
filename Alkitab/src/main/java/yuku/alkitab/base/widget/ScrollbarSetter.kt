@@ -1,6 +1,7 @@
 package yuku.alkitab.base.widget
 
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import yuku.alkitab.base.util.AppLog
@@ -34,14 +35,18 @@ object ScrollbarSetter {
     }
 
     fun RecyclerView.setVerticalThumb(drawable: Drawable) {
-        val reflectionHolder = reflectionHolder ?: return
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            this.verticalScrollbarThumbDrawable = drawable
+        } else {
+            val reflectionHolder = reflectionHolder ?: return
 
-        try {
-            val scrollCache = reflectionHolder.scrollCacheField.get(this)
-            val scrollBar = reflectionHolder.scrollBarField.get(scrollCache)
-            reflectionHolder.setVerticalThumbDrawable.invoke(scrollBar, drawable)
-        } catch (e: Exception) {
-            AppLog.e(TAG, "reflection call error", e)
+            try {
+                val scrollCache = reflectionHolder.scrollCacheField.get(this)
+                val scrollBar = reflectionHolder.scrollBarField.get(scrollCache)
+                reflectionHolder.setVerticalThumbDrawable.invoke(scrollBar, drawable)
+            } catch (e: Exception) {
+                AppLog.e(TAG, "reflection call error", e)
+            }
         }
     }
 }
