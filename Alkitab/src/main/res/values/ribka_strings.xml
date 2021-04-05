@@ -6,6 +6,7 @@
     <string name="ribka_sending_progress">Mengirim laporan…</string>
     <string name="ribka_send_error">Gagal mengirim laporan. Periksa koneksi internet Anda.</string>
     <string name="ribka_send_success">Laporan terkirim. Buka email Anda dan klik tautan untuk mengonfirmasi laporan.</string>
+    <string name="ribka_send_failure">Laporan gagal dikirim: ^1</string>
     <string name="ribka_category_typo">Kesalahan ejaan atau tanda baca</string>
     <string name="ribka_category_word">Pemilihan kata (diksi)</string>
     <string name="ribka_category_sentence">Penyusunan kalimat</string>

@@ -2,6 +2,7 @@ package yuku.alkitab.ribka
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.View
 import android.widget.EditText
 import android.widget.RadioButton
@@ -155,14 +156,23 @@ class RibkaReportActivity : BaseActivity() {
             override fun onResponse(call: Call, response: Response) {
                 pd.dismiss()
 
-                runOnUiThread {
-                    MaterialDialog.Builder(this@RibkaReportActivity)
-                        .content(R.string.ribka_send_success)
-                        .positiveText(R.string.ok)
-                        .show()
-                        .setOnDismissListener {
-                            finish()
-                        }
+                if (response.isSuccessful) {
+                    runOnUiThread {
+                        MaterialDialog.Builder(this@RibkaReportActivity)
+                            .content(R.string.ribka_send_success)
+                            .positiveText(R.string.ok)
+                            .show()
+                            .setOnDismissListener {
+                                finish()
+                            }
+                    }
+                } else {
+                    runOnUiThread {
+                        MaterialDialog.Builder(this@RibkaReportActivity)
+                            .content(TextUtils.expandTemplate(getString(R.string.ribka_send_failure), "${response.code()} ${response.body()?.string()}"))
+                            .positiveText(R.string.ok)
+                            .show()
+                    }
                 }
             }
         })
