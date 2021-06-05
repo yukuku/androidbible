@@ -1,6 +1,7 @@
 package yuku.alkitabconverter.util;
 
 import yuku.alkitab.model.FootnoteEntry;
+import yuku.alkitab.util.Ari;
 import yuku.bintex.BintexWriter;
 
 import java.io.ByteArrayOutputStream;
@@ -12,7 +13,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class FootnoteDb {
-	public static interface FootnoteProcessor {
+    public static interface FootnoteProcessor {
 		void process(FootnoteEntry fe, int ari, int entryIndex);
 	}
 
@@ -122,5 +123,9 @@ public class FootnoteDb {
 
 		// value<string> footnote_entry_contents[entry_count]
 		bw.writeRaw(contents.toByteArray());
+	}
+
+	public void removeAllNonBibleVerses() {
+		map.entrySet().removeIf(entry -> Ari.toBook(entry.getKey()) >= 66);
 	}
 }

@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class XrefDb {
-	public static interface XrefProcessor {
+    public static interface XrefProcessor {
 		void process(XrefEntry xe, int ari, int entryIndex);
 	}
 
@@ -56,20 +56,20 @@ public class XrefDb {
 			list = new ArrayList<>();
 			map.put(ari, list);
 		}
-		
+
 		XrefEntry xe = new XrefEntry();
 		list.add(xe);
 
 		return list.size() - 1;
 	}
-	
+
 	/** must be after addBegin */
 	public void appendText(int ari, String text) {
 		List<XrefEntry> list = map.get(ari);
 		if (list == null) {
 			throw new RuntimeException("Must be after addBegin (1)");
 		}
-		
+
 		XrefEntry xe = list.get(list.size() - 1);
 		if (xe.content == null) {
 			xe.content = text;
@@ -77,7 +77,7 @@ public class XrefDb {
 			xe.content += text;
 		}
 	}
-	
+
 	/**
 	 * Combines addBegin and appendText into a single call.
 	 * @param content The complete xref between \x and \x*. e.g. "+ Joh 3:16; Joh 16:29"
@@ -117,7 +117,7 @@ public class XrefDb {
 			}
 		}
 	}
-	
+
 	public void processEach(XrefProcessor processor) {
 		for (Map.Entry<Integer, List<XrefEntry>> e: map.entrySet()) {
 			List<XrefEntry> xes = e.getValue();
@@ -268,4 +268,8 @@ public class XrefDb {
 			return ari_target_hex.length() <= ari_target_dec.length()? ari_target_hex: ari_target_dec;
 		}
 	};
+
+	public void removeAllNonBibleVerses() {
+		map.entrySet().removeIf(entry -> Ari.toBook(entry.getKey()) >= 66);
+	}
 }

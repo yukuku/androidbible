@@ -56,13 +56,13 @@ public class Proses2 {
 				return name.endsWith("-utf8.usfx.xml");
 			}
 		});
-		
+
 		Arrays.sort(files);
 
 
 		for (String file : files) {
 			System.out.println("file " + file + " start;");
-			
+
 			FileInputStream in = new FileInputStream(new File(INPUT_TEXT_2, file));
 			SAXParser parser = factory.newSAXParser();
 			XMLReader r = parser.getXMLReader();
@@ -71,10 +71,10 @@ public class Proses2 {
 			System.out.println("input buffer size (new) = " + r.getProperty("http://apache.org/xml/properties/input-buffer-size"));
 			r.setFeature("http://xml.org/sax/features/namespaces", true);
 			parser.parse(in, new Handler(Integer.parseInt(file.substring(0, 2))));
-			
+
 			System.out.println("file " + file + " done; now total rec: " + teksDb.size());
 		}
-		
+
 		System.out.println("OUTPUT MISTERI:");
 		System.out.println(misteri);
 
@@ -86,10 +86,14 @@ public class Proses2 {
 		footnoteDb.dump();
 
 		// POST-PROCESS
-		
+
 		teksDb.normalize();
 		teksDb.removeEmptyVerses();
+		teksDb.removeAllNonBibleVerses();
 		teksDb.dump();
+
+		xrefDb.removeAllNonBibleVerses();
+		footnoteDb.removeAllNonBibleVerses();
 
 		////////// PROSES KE INTERNAL
 
@@ -128,10 +132,10 @@ public class Proses2 {
 		int kitab_0 = -1;
 		int pasal_1 = 0;
 		int ayat_1 = 0;
-		
+
 		String[] tree = new String[80];
 		int depth = 0;
-		
+
 		Stack<Object> tujuanTulis = new Stack<>();
 		Object tujuanTulis_misteri = new Object();
 		Object tujuanTulis_teks = new Object();
@@ -155,7 +159,7 @@ public class Proses2 {
 			this.kitab_0 = kitab_0;
 			tujuanTulis.push(tujuanTulis_misteri);
 		}
-		
+
 		@Override public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			flushCharactersBuffer();
 
@@ -163,7 +167,7 @@ public class Proses2 {
 
 			System.out.print("(start:) ");
 			cetak();
-			
+
 			String alamat = alamat();
 			if (alamat.endsWith("/c")) {
 				String id = attributes.getValue("id");
@@ -181,7 +185,7 @@ public class Proses2 {
 					for (int pos = 0; pos < id.length(); pos++) {
 						if (!Character.isDigit(id.charAt(pos))) {
 							String s = id.substring(0, pos);
-							ayat_1 = Integer.parseInt(s); 
+							ayat_1 = Integer.parseInt(s);
 							System.out.println("// number format exception simplified to: " + s);
 							break;
 						}

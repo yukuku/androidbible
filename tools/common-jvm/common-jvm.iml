@@ -27,5 +27,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="fakeandroid" exported="" />
     <orderEntry type="library" name="com.beust:jcommander:1.72" level="project" />
+    <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
   </component>
 </module>

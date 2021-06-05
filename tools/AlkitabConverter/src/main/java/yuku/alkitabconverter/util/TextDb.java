@@ -42,21 +42,21 @@ public class TextDb {
 	public String append(int bookId, int chapter_1, int verse_1, String s, int currentIndent) {
 		return append(Ari.encode(bookId, chapter_1, verse_1), s, currentIndent);
 	}
-	
+
 	public String append(int bookId, int chapter_1, int verse_1, String s, int currentIndent, String separatorWhenExisting) {
 		return append(Ari.encode(bookId, chapter_1, verse_1), s, currentIndent, separatorWhenExisting);
 	}
-	
+
 	/**
-	 * @param currentIndent if -1, don't write anything. 
+	 * @param currentIndent if -1, don't write anything.
 	 */
 	public String append(int ari, String s, int currentIndent) {
 		return append(ari, s, currentIndent, null);
 	}
 
 	/**
-	 * @param separatorWhenExisting if the text is appended to an ari that has already some text, append this first, then the text. 
-	 * @param currentIndent if -1, don't write anything. 
+	 * @param separatorWhenExisting if the text is appended to an ari that has already some text, append this first, then the text.
+	 * @param currentIndent if -1, don't write anything.
 	 */
 	public String append(int ari, String text, int currentIndent, String separatorWhenExisting) {
 		VerseState as = map.get(ari);
@@ -67,9 +67,9 @@ public class TextDb {
 			map.put(ari, as);
 			isNew = true;
 		}
-		
+
 		boolean writtenParaMarker = false;
-		
+
 		if (currentIndent != -1) {
 			if (currentIndent == -2) {
 				as.text += "@^";
@@ -78,9 +78,9 @@ public class TextDb {
 			} else {
 				as.text += "@" + String.valueOf(currentIndent);
 			}
-			
+
 			writtenParaMarker = true;
-			
+
 			// was: "update menjoroknya ayatstate" but no longer used
 //			for (int i = 0; i < as.isi.length(); i++) {
 //				if (as.isi.charAt(i) == '@' && as.isi.charAt(i+1) >= '0' && as.isi.charAt(i+1) <= '4') {
@@ -88,30 +88,30 @@ public class TextDb {
 //				}
 //			}
 		}
-		
+
 		if (!isNew && separatorWhenExisting != null) {
 			as.text += separatorWhenExisting;
 		}
-		
+
 		if (writtenParaMarker) {
 			as.text += leftSpaceTrim(text);
 		} else {
 			as.text += text;
 		}
-		
+
 		// buang spasi di depan kalo ada
 		while (as.text.startsWith(" ")) {
 			as.text = as.text.substring(1);
 		}
-		
+
 		// kasih @@ kalo depannya blum ada
 		if (as.text.contains("@") && !as.text.startsWith("@@")) {
 			as.text = "@@" + as.text;
 		}
-		
+
 		return as.text;
 	}
-	
+
 	private static String leftSpaceTrim(String s) {
 		for (int i = 0; i < s.length(); i++) {
 			if (s.charAt(i) != ' ') {
@@ -124,18 +124,18 @@ public class TextDb {
 	private String dispbcv(int bookId, int chapter_1, int verse_1) {
 		return "book_1 " + (bookId + 1) + " " + chapter_1 + " " + verse_1;
 	}
-	
+
 	public void normalize() {
 		Set<Integer> keys = new TreeSet<>(map.keySet());
 		int last_bookId = -1;
 		int last_chapter_1 = 0;
 		int last_verse_1 = 0;
-		
+
 		for (int ari: keys) {
 			int bookId = Ari.toBook(ari);
 			int chapter_1 = Ari.toChapter(ari);
 			int verse_1 = Ari.toVerse(ari);
-			
+
 			if (bookId != last_bookId) {
 				// must start with chapter_1 1 and verse_1 1
 				if (chapter_1 != 1 || verse_1 != 1) {
@@ -147,7 +147,7 @@ public class TextDb {
 				last_verse_1 = verse_1;
 				continue;
 			}
-			
+
 			if (chapter_1 == last_chapter_1) {
 				if (verse_1 != last_verse_1 + 1) {
 					System.out.println("at " + dispbcv(bookId, chapter_1, verse_1) + ": " + " skipped after " + dispbcv(last_bookId, last_chapter_1, last_verse_1));
@@ -169,7 +169,7 @@ public class TextDb {
 			} else {
 				throw new RuntimeException("at " + dispbcv(bookId, chapter_1, verse_1) + ": " + " so wrong! it's after " + last_bookId + " " + last_chapter_1 + " " + last_verse_1);
 			}
-			
+
 			last_bookId = bookId;
 			last_chapter_1 = chapter_1;
 			last_verse_1 = verse_1;
@@ -186,14 +186,14 @@ public class TextDb {
 			}
 		}
 	}
-	
+
 	public void dump(PrintStream ps) {
 		ps.println("TOTAL text: " + map.size());
 		for (Entry<Integer, VerseState> e: map.entrySet()) {
 			ps.printf("%d\t%d\t%d\t%s%n", Ari.toBook(e.getKey()) + 1, Ari.toChapter(e.getKey()), Ari.toVerse(e.getKey()), e.getValue().text);
 		}
 	}
-	
+
 	public void dump() {
 		dump(System.out);
 	}
@@ -230,7 +230,7 @@ public class TextDb {
 		}
 		return bookIds.size();
 	}
-	
+
 	public int[] getBookIds() {
 		Set<Integer> bookIds = new TreeSet<>();
 		for (Map.Entry<Integer, VerseState> e: map.entrySet()) {
@@ -244,9 +244,9 @@ public class TextDb {
 		}
 		return res;
 	}
-	
+
 	/**
-	 * No skipped chapters recognized. So if a book has chapters [1, 5, 6], this returns 6, not 3. 
+	 * No skipped chapters recognized. So if a book has chapters [1, 5, 6], this returns 6, not 3.
 	 */
 	public int getChapterCountForBook(int bookId) {
 		int maxChapter = 0;
@@ -254,14 +254,14 @@ public class TextDb {
 			int ari = e.getKey();
 			if (Ari.toBook(ari) == bookId) {
 				int chapter_1 = Ari.toChapter(ari);
-				if (chapter_1 > maxChapter) maxChapter = chapter_1; 
+				if (chapter_1 > maxChapter) maxChapter = chapter_1;
 			}
 		}
 		return maxChapter;
 	}
 
 	/**
-	 * No skipped verses recognized. So if a chapter has verses [1, 5, 6], this returns 6, not 3. 
+	 * No skipped verses recognized. So if a chapter has verses [1, 5, 6], this returns 6, not 3.
 	 */
 	public int getVerseCountForBookChapter(int bookId, int chapter_1) {
 		int maxVerse = 0;
@@ -269,7 +269,7 @@ public class TextDb {
 			int ari = e.getKey();
 			if (Ari.toBook(ari) == bookId && Ari.toChapter(ari) == chapter_1) {
 				int verse_1 = Ari.toVerse(ari);
-				if (verse_1 > maxVerse) maxVerse = verse_1; 
+				if (verse_1 > maxVerse) maxVerse = verse_1;
 			}
 		}
 		return maxVerse;
@@ -277,5 +277,9 @@ public class TextDb {
 
 	public String getVerseText(int bookId, int chapter_1, int verse_1) {
 		return map.get(Ari.encode(bookId, chapter_1, verse_1)).text;
+	}
+
+	public void removeAllNonBibleVerses() {
+		map.entrySet().removeIf(entry -> Ari.toBook(entry.getKey()) >= 66);
 	}
 }
