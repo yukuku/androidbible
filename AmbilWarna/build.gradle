@@ -23,6 +23,12 @@ android {
     }
 }
 
+repositories {
+    maven {
+        url 'https://jitpack.io'
+    }
+}
+
 dependencies {
     implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
     implementation 'androidx.preference:preference:1.0.0'

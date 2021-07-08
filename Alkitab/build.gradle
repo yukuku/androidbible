@@ -69,6 +69,10 @@ android {
             applicationId 'org.sabda.alkitab'
         }
     }
+
+    maven {
+        url 'https://jitpack.io'
+    }
 }
 
 dependencies {
