@@ -6,6 +6,7 @@ import yuku.alkitabconverter.util.UsfmBookName;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.PrintWriter;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Proses1 {
@@ -16,15 +17,18 @@ public class Proses1 {
 	}
 
 	private void u(final String[] args) throws Exception {
-		final String INPUT_TEXT_1_DIR = args[0];
+		final String INPUT_TEXT_1_DIR_OR_FILE = args[0];
 		final String MID_DIR = args[1].endsWith("/") ? args[1] : (args[1] + "/");
 
-		for (final File inputFile : new File(INPUT_TEXT_1_DIR).listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(final File dir, final String name) {
-				return name.endsWith(".usfm") || name.endsWith(".SFM");
-			}
-		})) {
+		final File inputDirOrFile = new File(INPUT_TEXT_1_DIR_OR_FILE);
+		final File[] inputFileList;
+		if (inputDirOrFile.isDirectory()) {
+			inputFileList = inputDirOrFile.listFiles((dir, name) -> name.endsWith(".usfm") || name.endsWith(".SFM"));
+		} else {
+			inputFileList = new File[]{inputDirOrFile};
+		}
+
+		for (final File inputFile : Objects.requireNonNull(inputFileList)) {
 			final Scanner sc = new Scanner(inputFile, INPUT_TEXT_ENCODING);
 
 			PrintWriter splitFile = null;
@@ -40,6 +44,9 @@ public class Proses1 {
 					//noinspection ResultOfMethodCallIgnored
 					outputFile.getParentFile().mkdir();
 
+					if (splitFile != null) {
+						splitFile.close();
+					}
 					splitFile = new PrintWriter(outputFile, "utf-8");
 					continue;
 				}
