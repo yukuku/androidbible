@@ -242,6 +242,11 @@ public class Proses2 {
 							menjorokTeks = 0; // inden 0
 
 							break;
+						case "li":
+							tujuanTulis.push(tujuanTulis_teks);
+							menjorokTeks = 1; // inden 1, should have "• ", but ... probably not now
+
+							break;
 						default:
 							throw new RuntimeException("p@sfm ga dikenal: " + sfm);
 					}

@@ -30,7 +30,7 @@ public class Proses1 {
 			PrintWriter splitFile = null;
 
 			while (sc.hasNextLine()) { // look for "\id"
-				final String baris = sc.nextLine();
+				String baris = sc.nextLine();
 
 				if (baris.startsWith("\\id ")) {
 					final String newId = baris.split(" ")[1];
@@ -41,11 +41,9 @@ public class Proses1 {
 					outputFile.getParentFile().mkdir();
 
 					splitFile = new PrintWriter(outputFile, "utf-8");
+					continue;
 				}
-			}
 
-			while (sc.hasNextLine()) {
-				String baris = sc.nextLine();
 				// remove ALL BOM (0xfeff)
 				if (baris.length() > 0) {
 					baris = baris.replace("\ufeff", "");

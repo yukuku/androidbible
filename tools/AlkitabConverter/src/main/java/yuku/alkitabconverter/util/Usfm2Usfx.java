@@ -2,6 +2,7 @@ package yuku.alkitabconverter.util;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Usfm2Usfx {
@@ -15,7 +16,10 @@ public class Usfm2Usfx {
 		new File(nfo).delete();
 		try {
 			// patch dulu
-			Process p = new ProcessBuilder("mono", new File("./prog/wordsend/usfm2usfx.exe").getAbsolutePath(), "-o", nfoString, nfiString).redirectErrorStream(true).start();
+			final String[] command = {"mono", new File("./prog/wordsend/usfm2usfx.exe").getAbsolutePath(), "-o", nfoString, nfiString};
+			System.out.println("Command: " + Arrays.toString(command));
+
+			Process p = new ProcessBuilder(command).redirectErrorStream(true).start();
 			Scanner sc = new Scanner(p.getInputStream());
 			while (sc.hasNextLine()) {
 				System.out.println(sc.nextLine());
