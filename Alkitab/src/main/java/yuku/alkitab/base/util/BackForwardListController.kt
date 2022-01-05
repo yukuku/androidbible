@@ -47,14 +47,14 @@ class BackForwardListController<BackButton: View, ForwardButton: View>(
         /**
          * Store history entries temporarily here so we can easily sort and refer back.
          */
-        class DisplayEntry(val index: Int, val isCurrent: Boolean, val entry: BackForwardList.Entry?)
+        class DisplayEntry(val index: Int, val entry: BackForwardList.Entry?)
 
         MaterialDialogAdapterHelper.show(MaterialDialog.Builder(v.context), object: MaterialDialogAdapterHelper.Adapter() {
             private var defaultTextColor: Int = 0
             private val escapeTextColor = ContextCompat.getColor(v.context, R.color.escape)
 
             private val displayEntries = MutableList(backForwardList.size) { index ->
-                DisplayEntry(index, index == backForwardList.currentIndex, backForwardList.getEntry(index))
+                DisplayEntry(index, backForwardList.getEntry(index))
             }.apply {
                 sortByDescending { it.entry?.createTime ?: 0 }
             }.toList()
