@@ -37,11 +37,7 @@ android {
         }
     }
     kotlinOptions {
-        jvmTarget = '1.8'
-        freeCompilerArgs = ["-XXLanguage:+InlineClasses"]
-    }
-    dexOptions {
-        javaMaxHeapSize "2g"
+        useOldBackend = true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
