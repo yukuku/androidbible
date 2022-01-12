@@ -461,10 +461,6 @@
     <string name="about_enable_beta">Próbáld ki a Béta Verziót</string>
     <string name="about_version_name">verzió %s</string>
     <string name="about_credits">Kreditek</string>
-    <string name="about_announcements">Közlemények</string>
-    <string name="about_announcements_none">Közlemények (0)</string>
-    <string name="about_announcements_number">Közlemények (%s)</string>
-    <string name="about_announcement_load_failed">Hiba történt a Közlemények betöltésekor.</string>
     <string name="about_official_website">Hivatalos weboldal</string>
     <!-- marker and label migration -->
     <string name="marker_migrate_no_more">Ne kérdezd újra</string>
@@ -473,9 +469,6 @@
     <string name="marker_migrate_import_from_newest">Ámen, importálja a legújabból (ajánlott)</string>
     <string name="marker_migrate_import_from_other">Más mentés</string>
     <!-- Data transfer -->
-    <!-- Announcements -->
-    <string name="announce_notif_title">%s-közlemények</string>
-    <string name="announce_notif_number_new_announcements">%s új közlemény</string>
     <!-- Dictionary -->
     <string name="menuDictionary">Szótár</string>
     <string name="dict_open_full">Szótár megnyitása</string>
@@ -492,6 +485,5 @@
     <!-- File chooser -->
     <string name="filechooser_parent_folder">Szülőkönyvtár</string>
     <!-- Notification channels -->
-    <string name="notification_channel_announce_name">Közlemények</string>
     <string name="notification_channel_download_mapper_name">Letöltések</string>
 </resources>

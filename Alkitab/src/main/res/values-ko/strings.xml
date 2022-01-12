@@ -514,10 +514,6 @@
     <string name="about_version_name">버전 %s</string>
     <string name="about_material_sources">자료 출처</string>
     <string name="about_credits">이수 인정 학점</string>
-    <string name="about_announcements">공지 사항</string>
-    <string name="about_announcements_none">공지 사항 (0)</string>
-    <string name="about_announcements_number">공지 사항 (%s)</string>
-    <string name="about_announcement_load_failed">공지 사항 가져오기 실패</string>
     <string name="about_official_website">공식 웹사이트</string>
     <string name="about_project_page">프로젝트 페이지</string>
     <!-- marker and label migration -->
@@ -532,9 +528,6 @@
     <string name="marker_migrate_import_from_other">다른 백업</string>
     <string name="marker_migrate_filename_dated">%1$s 날짜 %2$s</string>
     <!-- Data transfer -->
-    <!-- Announcements -->
-    <string name="announce_notif_title">%s 공지 사항</string>
-    <string name="announce_notif_number_new_announcements">%s 새 공지사항</string>
     <!-- Dictionary -->
     <string name="menuDictionary">사전</string>
     <string name="dict_open_full">사전 열기</string>
@@ -551,7 +544,6 @@
     <!-- File chooser -->
     <string name="filechooser_parent_folder">상위 폴더</string>
     <!-- Notification channels -->
-    <string name="notification_channel_announce_name">공지 사항</string>
     <string name="notification_channel_download_mapper_name">다운로드</string>
     <string name="notification_channel_devotion_downloader_name">묵상 다운로드</string>
     <string name="notification_channel_devotion_reminder_name">묵상 알람</string>

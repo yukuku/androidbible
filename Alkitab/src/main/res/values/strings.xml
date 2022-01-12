@@ -561,10 +561,6 @@
 	<string name="about_version_name">version %s</string>
 	<string name="about_material_sources">Material Sources</string>
 	<string name="about_credits">Credits</string>
-	<string name="about_announcements">Announcements</string>
-	<string name="about_announcements_none">Announcements (0)</string>
-	<string name="about_announcements_number">Announcements (%s)</string>
-	<string name="about_announcement_load_failed">Failed to load announcements.</string>
     <string name="about_official_website">Official Website</string>
     <string name="about_project_page">Project Page</string>
 
@@ -584,10 +580,6 @@
 	<string name="data_transfer_title">Data transfer</string>
 	<string name="data_transfer_export_title">Export data</string>
 	<string name="data_transfer_import_title">Import data</string>
-
-	<!-- Announcements -->
-	<string name="announce_notif_title">%s Announcements</string>
-	<string name="announce_notif_number_new_announcements">%s new announcements</string>
 
 	<!-- Dictionary -->
 	<string name="menuDictionary">Dictionary</string>
@@ -610,7 +602,6 @@
     <string name="filechooser_parent_folder">Parent folder</string>
 
 	<!-- Notification channels -->
-	<string name="notification_channel_announce_name">Announcements</string>
 	<string name="notification_channel_download_mapper_name">Downloads</string>
 	<string name="notification_channel_devotion_downloader_name">Devotion downloads</string>
 	<string name="notification_channel_devotion_reminder_name">Devotion reminders</string>

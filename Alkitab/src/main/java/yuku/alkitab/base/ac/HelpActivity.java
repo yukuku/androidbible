@@ -3,7 +3,6 @@ package yuku.alkitab.base.ac;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,11 +15,9 @@ import androidx.appcompat.widget.Toolbar;
 import com.afollestad.materialdialogs.MaterialDialog;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Locale;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.VersesDialog;
-import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.debug.BuildConfig;
@@ -35,7 +32,6 @@ public class HelpActivity extends BaseActivity {
 	private static final String EXTRA_overrideTitle = "overrideTitle";
 	private static final String EXTRA_overflowMenuItemTitle = "overflowMenuItemTitle";
 	private static final String EXTRA_overflowMenuItemIntent = "overflowMenuItemIntent";
-	private static final String EXTRA_announcementIds = "announcementIds";
 	public static final int REQCODE_overflowMenuItem = 1;
 
 	WebView webview;
@@ -58,11 +54,6 @@ public class HelpActivity extends BaseActivity {
 			.putExtra(EXTRA_overrideTitle, overrideTitle)
 			.putExtra(EXTRA_overflowMenuItemTitle, overflowMenuItemTitle)
 			.putExtra(EXTRA_overflowMenuItemIntent, overflowMenuItemIntent);
-	}
-
-	public static Intent createViewAnnouncementIntent(final long[] announcementIds) {
-		return new Intent(App.context, HelpActivity.class)
-			.putExtra(EXTRA_announcementIds, announcementIds);
 	}
 
 	@SuppressLint("SetJavaScriptEnabled")
@@ -93,9 +84,7 @@ public class HelpActivity extends BaseActivity {
 		progress = findViewById(R.id.progress);
 
 		if (BuildConfig.DEBUG) {
-			if (Build.VERSION.SDK_INT >= 19) {
 				WebView.setWebContentsDebuggingEnabled(true);
-			}
 		}
 
 		final WebSettings webSettings = webview.getSettings();
@@ -105,7 +94,6 @@ public class HelpActivity extends BaseActivity {
 
 		final String page = getIntent().getStringExtra(EXTRA_page);
 		final String overrideTitle = getIntent().getStringExtra(EXTRA_overrideTitle);
-		final long[] announcementIds = getIntent().getLongArrayExtra(EXTRA_announcementIds);
 		overflowMenuItemTitle = getIntent().getStringExtra(EXTRA_overflowMenuItemTitle);
 		overflowMenuItemIntent = getIntent().getParcelableExtra(EXTRA_overflowMenuItemIntent);
 
@@ -122,13 +110,6 @@ public class HelpActivity extends BaseActivity {
 			} else {
 				webview.loadUrl("file:///android_asset/" + page);
 			}
-		} else if (announcementIds != null) {
-			final Locale locale = getResources().getConfiguration().locale;
-			final String url = BuildConfig.SERVER_HOST + "announce/view?ids=" + App.getDefaultGson().toJson(announcementIds) + (locale == null ? "" : ("&locale=" + locale.toString()));
-			if (BuildConfig.DEBUG) {
-				AppLog.d(TAG, "loading announce view url: " + url);
-			}
-			webview.loadUrl(url);
 		}
 
 		webview.setWebViewClient(new WebViewClient() {
@@ -205,10 +186,6 @@ public class HelpActivity extends BaseActivity {
 
 				if (overrideTitle == null) {
 					setTitle(view.getTitle());
-				}
-
-				if (announcementIds != null) {
-					Announce.markAsRead(announcementIds);
 				}
 			}
 		});

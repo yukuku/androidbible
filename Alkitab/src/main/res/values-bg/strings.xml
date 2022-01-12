@@ -514,10 +514,6 @@
     <string name="about_version_name">версия %s</string>
     <string name="about_material_sources">Източници на материали</string>
     <string name="about_credits">Благодарности</string>
-    <string name="about_announcements">Обяви</string>
-    <string name="about_announcements_none">Обяви (0)</string>
-    <string name="about_announcements_number">Обяви (%s)</string>
-    <string name="about_announcement_load_failed">Неуспешно зареждане на обявите.</string>
     <string name="about_official_website">Официален сайт</string>
     <string name="about_project_page">Страница на проекта</string>
     <!-- marker and label migration -->
@@ -532,9 +528,6 @@
     <string name="marker_migrate_import_from_other">Други резервни копия</string>
     <string name="marker_migrate_filename_dated">%1$s по дата %2$s</string>
     <!-- Data transfer -->
-    <!-- Announcements -->
-    <string name="announce_notif_title">%s обявления</string>
-    <string name="announce_notif_number_new_announcements">%s нови обявления</string>
     <!-- Dictionary -->
     <string name="menuDictionary">Речник</string>
     <string name="dict_open_full">Отвори речника</string>
@@ -551,7 +544,6 @@
     <!-- File chooser -->
     <string name="filechooser_parent_folder">Родителска папка</string>
     <!-- Notification channels -->
-    <string name="notification_channel_announce_name">Известия</string>
     <string name="notification_channel_download_mapper_name">Изтегляния</string>
     <string name="notification_channel_devotion_downloader_name">Изтегляне на посвещения</string>
     <string name="notification_channel_devotion_reminder_name">Напомняне на посвещения</string>

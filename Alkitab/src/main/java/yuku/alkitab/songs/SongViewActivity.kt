@@ -274,12 +274,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
         root.setListener(song_container_listener)
 
-        // Before KitKat, the WebView can zoom and rewrap text by itself,
-        // so we do not need custom implementation of scaling.
-        if (Build.VERSION.SDK_INT < 19) {
-            root.setTwofingerEnabled(false)
-        }
-
         bDownload.setOnClickListener { openDownloadSongBookPage() }
 
         // if no song books is downloaded, open download page immediately

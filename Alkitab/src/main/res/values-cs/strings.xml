@@ -515,10 +515,6 @@
     <string name="about_version_name">verze %s</string>
     <string name="about_material_sources">Zdroje</string>
     <string name="about_credits">Kredits</string>
-    <string name="about_announcements">Oznámení</string>
-    <string name="about_announcements_none">Oznámení (0)</string>
-    <string name="about_announcements_number">Oznámení (%s)</string>
-    <string name="about_announcement_load_failed">Chyba při načítání oznámení.</string>
     <string name="about_official_website">Oficiální webové stránky</string>
     <string name="about_project_page">Stránka projektů</string>
     <!-- marker and label migration -->
@@ -533,9 +529,6 @@
     <string name="marker_migrate_import_from_other">Další zálohy</string>
     <string name="marker_migrate_filename_dated">%1$s datován %2$s</string>
     <!-- Data transfer -->
-    <!-- Announcements -->
-    <string name="announce_notif_title">%s oznámení</string>
-    <string name="announce_notif_number_new_announcements">%s nových oznámení</string>
     <!-- Dictionary -->
     <string name="menuDictionary">Slovník</string>
     <string name="dict_open_full">Otevřít slovník</string>
@@ -552,7 +545,6 @@
     <!-- File chooser -->
     <string name="filechooser_parent_folder">Nadřazená složka</string>
     <!-- Notification channels -->
-    <string name="notification_channel_announce_name">Oznámení</string>
     <string name="notification_channel_download_mapper_name">Stažené soubory</string>
     <string name="notification_channel_devotion_downloader_name">Oddanost stahování</string>
     <string name="notification_channel_devotion_reminder_name">Připomenutí oddanosti</string>

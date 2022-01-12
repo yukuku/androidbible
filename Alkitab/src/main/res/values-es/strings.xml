@@ -520,10 +520,6 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
     <string name="about_version_name">versión %s</string>
     <string name="about_material_sources">Fuentes Materiales</string>
     <string name="about_credits">Créditos</string>
-    <string name="about_announcements">Avisos</string>
-    <string name="about_announcements_none">Avisos (0)</string>
-    <string name="about_announcements_number">Avisos (%s)</string>
-    <string name="about_announcement_load_failed">Fallo al cargar los avisos.</string>
     <string name="about_official_website">Página web oficial</string>
     <string name="about_project_page">La Página del Proyecto</string>
     <!-- marker and label migration -->
@@ -538,9 +534,6 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
     <string name="marker_migrate_import_from_other">Otros respardos</string>
     <string name="marker_migrate_filename_dated">%1$s con fecha %2$s</string>
     <!-- Data transfer -->
-    <!-- Announcements -->
-    <string name="announce_notif_title">%s Avisos</string>
-    <string name="announce_notif_number_new_announcements">%s avisos nuevos</string>
     <!-- Dictionary -->
     <string name="menuDictionary">Diccionario</string>
     <string name="dict_open_full">Abrir diccionario</string>
@@ -557,7 +550,6 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
     <!-- File chooser -->
     <string name="filechooser_parent_folder">Carpeta Principal</string>
     <!-- Notification channels -->
-    <string name="notification_channel_announce_name">Anuncios</string>
     <string name="notification_channel_download_mapper_name">Descargas</string>
     <string name="notification_channel_devotion_downloader_name">Descargas de devoción</string>
     <string name="notification_channel_devotion_reminder_name">Recordatorios de devoción</string>

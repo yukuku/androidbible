@@ -74,9 +74,7 @@ abstract class BaseActivity : AppCompatActivity(), ActivityCompat.OnRequestPermi
 
         findViewById<View>(R.id.panelBackForwardList)?.background = ColorDrawable(primaryColor)
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            window.statusBarColor = statusBarColor
-        }
+        window.statusBarColor = statusBarColor
     }
 
     /**

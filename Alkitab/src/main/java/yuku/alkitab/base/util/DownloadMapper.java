@@ -6,28 +6,26 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
-import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import com.downloader.Error;
 import com.downloader.OnDownloadListener;
 import com.downloader.PRDownloader;
 import com.downloader.Status;
 import com.downloader.request.DownloadRequest;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.AlertDialogActivity;
 import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.br.VersionDownloadCompleteReceiver;
 import yuku.alkitab.debug.R;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public enum DownloadMapper {
 	instance;
@@ -197,11 +195,9 @@ public enum DownloadMapper {
 	void displayNotifs() {
 		final Context context = App.context;
 
-		if (Build.VERSION.SDK_INT >= 26) {
-			final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, context.getString(R.string.notification_channel_download_mapper_name), NotificationManager.IMPORTANCE_LOW);
-			final NotificationManager nm = App.context.getSystemService(NotificationManager.class);
-			if (nm != null) nm.createNotificationChannel(channel);
-		}
+		final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, context.getString(R.string.notification_channel_download_mapper_name), NotificationManager.IMPORTANCE_LOW);
+		final NotificationManager nm = App.context.getSystemService(NotificationManager.class);
+		if (nm != null) nm.createNotificationChannel(channel);
 
 		final NotificationManagerCompat nmc = NotificationManagerCompat.from(context);
 		for (final Row row : new ArrayList<>(currentById.values())) {

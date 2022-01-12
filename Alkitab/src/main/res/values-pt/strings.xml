@@ -514,10 +514,6 @@
     <string name="about_version_name">versão %s</string>
     <string name="about_material_sources">Fontes de materias</string>
     <string name="about_credits">Créditos</string>
-    <string name="about_announcements">Avisos</string>
-    <string name="about_announcements_none">Avisos (0)</string>
-    <string name="about_announcements_number">Avisos (%s)</string>
-    <string name="about_announcement_load_failed">Falha ao carregar anúncios.</string>
     <string name="about_official_website">Sítio eletrónico oficial</string>
     <string name="about_project_page">Página projeto</string>
     <!-- marker and label migration -->
@@ -532,9 +528,6 @@
     <string name="marker_migrate_import_from_other">Outra cópia de segurança</string>
     <string name="marker_migrate_filename_dated">%1$s datado %2$s</string>
     <!-- Data transfer -->
-    <!-- Announcements -->
-    <string name="announce_notif_title">%s Avisos</string>
-    <string name="announce_notif_number_new_announcements">%s novos avisos</string>
     <!-- Dictionary -->
     <string name="menuDictionary">Dicionário</string>
     <string name="dict_open_full">Dicionário aberto</string>
@@ -551,7 +544,6 @@
     <!-- File chooser -->
     <string name="filechooser_parent_folder">Pasta principal</string>
     <!-- Notification channels -->
-    <string name="notification_channel_announce_name">Anuncios</string>
     <string name="notification_channel_download_mapper_name">Downloads</string>
     <string name="notification_channel_devotion_downloader_name">Downloads de devocao</string>
     <string name="notification_channel_devotion_reminder_name">Remarcas para lembrar se a devocao</string>

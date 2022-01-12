@@ -514,10 +514,6 @@
     <string name="about_version_name">เวอร์ชั่น %s</string>
     <string name="about_material_sources">แหล่งข้อมูล</string>
     <string name="about_credits">เครดิต</string>
-    <string name="about_announcements">การประกาศ</string>
-    <string name="about_announcements_none">การประกาศ (0)</string>
-    <string name="about_announcements_number">การประกาศ (%s)</string>
-    <string name="about_announcement_load_failed">การโหลดการประกาศล้มเหลวค่ะ</string>
     <string name="about_official_website">เว็ปไซต์ทางการ</string>
     <string name="about_project_page">หน้าหลักโครงการ</string>
     <!-- marker and label migration -->
@@ -532,9 +528,6 @@
     <string name="marker_migrate_import_from_other">แบ็คอัพอื่นๆ</string>
     <string name="marker_migrate_filename_dated">%1$s ลงวันที่ %2$s</string>
     <!-- Data transfer -->
-    <!-- Announcements -->
-    <string name="announce_notif_title">คำประกาศจาก %s</string>
-    <string name="announce_notif_number_new_announcements">ข่าวประกาศใหม่ %s รายการ</string>
     <!-- Dictionary -->
     <string name="menuDictionary">พจนานุกรม</string>
     <string name="dict_open_full">เปิดพจนานุกรม</string>
@@ -551,7 +544,6 @@
     <!-- File chooser -->
     <string name="filechooser_parent_folder">โฟลเดอร์หลัก</string>
     <!-- Notification channels -->
-    <string name="notification_channel_announce_name">การประกาศ</string>
     <string name="notification_channel_download_mapper_name">ดาวน์โหลด</string>
     <string name="notification_channel_devotion_downloader_name">รายการดาวน์โหลดบทความประจำวัน</string>
     <string name="notification_channel_devotion_reminder_name">การแจ้งเตือนของบทความประจำวัน</string>

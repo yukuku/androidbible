@@ -519,10 +519,6 @@
     <string name="about_version_name">phiên bản %s</string>
     <string name="about_material_sources">Nguồn nguyên liệu</string>
     <string name="about_credits">Ghi nhận</string>
-    <string name="about_announcements">Thông báo</string>
-    <string name="about_announcements_none">Thông báo (0)</string>
-    <string name="about_announcements_number">Thông báo (%s)</string>
-    <string name="about_announcement_load_failed">Không tải được thông báo.</string>
     <string name="about_official_website">Trang web chính thức</string>
     <string name="about_project_page">Trang dự án</string>
     <!-- marker and label migration -->
@@ -537,9 +533,6 @@
     <string name="marker_migrate_import_from_other">Sao lưu khác</string>
     <string name="marker_migrate_filename_dated">%1$s ngày %2$s</string>
     <!-- Data transfer -->
-    <!-- Announcements -->
-    <string name="announce_notif_title">%s Thông báo</string>
-    <string name="announce_notif_number_new_announcements">%s Thông báo mới</string>
     <!-- Dictionary -->
     <string name="menuDictionary">Từ điển</string>
     <string name="dict_open_full">Mở từ điển</string>
@@ -556,7 +549,6 @@
     <!-- File chooser -->
     <string name="filechooser_parent_folder">Mục dành cho phụ huynh</string>
     <!-- Notification channels -->
-    <string name="notification_channel_announce_name">Thông báo</string>
     <string name="notification_channel_download_mapper_name">Các tài liệu được tải về</string>
     <string name="notification_channel_devotion_downloader_name">Các tài liệu bồi linh tĩnh tâm được tải về</string>
     <string name="notification_channel_devotion_reminder_name">Vài điều nhắc nhở về tài liệu bồi linh tĩnh tâm</string>

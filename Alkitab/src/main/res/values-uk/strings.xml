@@ -515,10 +515,6 @@
     <string name="about_version_name">Версія складання %s</string>
     <string name="about_material_sources">Джерела матеріалів</string>
     <string name="about_credits">Подяка</string>
-    <string name="about_announcements">Оголошення</string>
-    <string name="about_announcements_none">Оголошення (0)</string>
-    <string name="about_announcements_number">Оголошення (%s)</string>
-    <string name="about_announcement_load_failed">Не вдалося завантажити оголошення.</string>
     <string name="about_official_website">Офіційний вебсайт</string>
     <string name="about_project_page">Сторінка проекту</string>
     <!-- marker and label migration -->
@@ -533,9 +529,6 @@
     <string name="marker_migrate_import_from_other">Інші резервні копії</string>
     <string name="marker_migrate_filename_dated">%1$s датований %2$s</string>
     <!-- Data transfer -->
-    <!-- Announcements -->
-    <string name="announce_notif_title">%s Оголошень</string>
-    <string name="announce_notif_number_new_announcements">%s нових оголошень</string>
     <!-- Dictionary -->
     <string name="menuDictionary">Словник</string>
     <string name="dict_open_full">Відкрити словник</string>
@@ -552,7 +545,6 @@
     <!-- File chooser -->
     <string name="filechooser_parent_folder">Батьківський каталог</string>
     <!-- Notification channels -->
-    <string name="notification_channel_announce_name">Сповіщення</string>
     <string name="notification_channel_download_mapper_name">Завантаження</string>
     <string name="notification_channel_devotion_downloader_name">Завантаження роздумів</string>
     <string name="notification_channel_devotion_reminder_name">Нагадування про роздуми</string>

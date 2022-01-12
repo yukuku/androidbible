@@ -16,7 +16,6 @@ import android.net.Uri
 import android.nfc.NdefMessage
 import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
-import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -84,7 +83,6 @@ import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.model.MVersionDb
 import yuku.alkitab.base.model.MVersionInternal
 import yuku.alkitab.base.storage.Prefkey
-import yuku.alkitab.base.util.Announce
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.util.BackForwardListController
@@ -1308,8 +1306,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
         App.getLbm().registerReceiver(reloadAttributeMapReceiver, IntentFilter(ACTION_ATTRIBUTE_MAP_CHANGED))
 
-        Announce.checkAnnouncements()
-
         App.getLbm().registerReceiver(needsRestartReceiver, IntentFilter(ACTION_NEEDS_RESTART))
         AppLog.d(TAG, "@@onCreate end")
     }
@@ -2032,17 +2028,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         if (yes) {
             window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
             supportActionBar?.hide()
-
-            if (Build.VERSION.SDK_INT >= 19) {
-                decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE
-            }
+            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
             supportActionBar?.show()
-
-            if (Build.VERSION.SDK_INT >= 19) {
-                decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
-            }
+            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
         }
 
         fullScreen = yes
@@ -2077,10 +2067,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         super.onWindowFocusChanged(hasFocus)
 
         if (hasFocus && fullScreen) {
-            if (Build.VERSION.SDK_INT >= 19) {
-                val decorView = window.decorView
-                decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE
-            }
+            val decorView = window.decorView
+            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE
         }
     }
 

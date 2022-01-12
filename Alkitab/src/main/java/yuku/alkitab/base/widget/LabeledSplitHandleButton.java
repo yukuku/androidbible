@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import androidx.annotation.NonNull;
@@ -66,11 +65,7 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 		labelPaint.setColor(0xffffffff);
 		labelPaint.setShadowLayer(2.f * density, 0, 0, 0xff000000);
 		labelPaint.setTextSize(textSize * density);
-		if (Build.VERSION.SDK_INT >= 21) {
-			labelPaint.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-		} else {
-			labelPaint.setTypeface(Typeface.DEFAULT_BOLD);
-		}
+		labelPaint.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
 		labelPaint.setAntiAlias(true);
 		bezelPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
