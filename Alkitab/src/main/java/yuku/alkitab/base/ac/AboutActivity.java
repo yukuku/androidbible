@@ -1,41 +1,32 @@
 package yuku.alkitab.base.ac;
 
 import android.annotation.SuppressLint;
-import android.app.LoaderManager;
-import android.content.AsyncTaskLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.core.graphics.ColorUtils;
-import androidx.core.widget.ContentLoadingProgressBar;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.core.graphics.ColorUtils;
 import com.afollestad.materialdialogs.MaterialDialog;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.util.Announce;
+import static yuku.alkitab.base.util.Literals.List;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.tracking.Tracker;
 
-import java.util.Locale;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static yuku.alkitab.base.util.Literals.List;
-
 public class AboutActivity extends BaseActivity {
-	public static final int LOADER_announce = 1;
-
 	View root;
 	TextView tVersion;
 	TextView tBuild;
@@ -47,68 +38,11 @@ public class AboutActivity extends BaseActivity {
 	View bCredits;
 	View bFeedback;
 	View bEnableBeta;
-	View bAnnouncements;
-	TextView tAnnouncements;
-	ContentLoadingProgressBar progressAnnouncements;
 
 	final AtomicBoolean backgroundAnimationStarted = new AtomicBoolean(false);
 	int baseHue = 0;
 	final float[] hsl = new float[3];
 	final int[] colors = new int[6];
-
-	enum AnnouncementState {
-		init,
-		loading,
-		has_none,
-		has_few,
-		error,
-	}
-
-	AnnouncementState announcementState;
-	long[] announcementIds;
-	final AtomicBoolean manualAnnouncementReload = new AtomicBoolean();
-
-	final LoaderManager.LoaderCallbacks<long[]> announcementLoaderCallbacks = new LoaderManager.LoaderCallbacks<long[]>() {
-		@Override
-		public Loader<long[]> onCreateLoader(final int id, final Bundle args) {
-			setAnnouncementState(AnnouncementState.loading);
-
-			return new AsyncTaskLoader<long[]>(AboutActivity.this) {
-				@Override
-				public long[] loadInBackground() {
-					return Announce.getAnnouncementIds();
-				}
-			};
-		}
-
-		@Override
-		public void onLoadFinished(final Loader<long[]> loader, final long[] data) {
-			if (data == null) {
-				setAnnouncementState(AnnouncementState.error);
-
-				if (manualAnnouncementReload.get()) {
-					if (!isFinishing()) {
-						new MaterialDialog.Builder(AboutActivity.this)
-							.content(R.string.about_announcement_load_failed)
-							.positiveText(R.string.ok)
-							.show();
-					}
-				}
-			} else {
-				announcementIds = data;
-				if (data.length == 0) {
-					setAnnouncementState(AnnouncementState.has_none);
-				} else {
-					setAnnouncementState(AnnouncementState.has_few);
-				}
-			}
-		}
-
-		@Override
-		public void onLoaderReset(final Loader<long[]> loader) {
-			setAnnouncementState(AnnouncementState.init);
-		}
-	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +63,7 @@ public class AboutActivity extends BaseActivity {
 
 		bHelp = findViewById(R.id.bHelp);
 		bHelp.setOnClickListener(v -> {
-			Tracker.trackEvent("help_button_announcement");
+			Tracker.trackEvent("help_button_guide");
 			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://alkitab.app/guide?utm_source=app&utm_medium=button&utm_campaign=help")));
 		});
 
@@ -173,17 +107,6 @@ public class AboutActivity extends BaseActivity {
 			bEnableBeta.setVisibility(View.GONE);
 		}
 
-		bAnnouncements = findViewById(R.id.bAnnouncements);
-		bAnnouncements.setOnClickListener(v -> bAnnouncements_click());
-
-		tAnnouncements = findViewById(R.id.tAnnouncements);
-		progressAnnouncements = findViewById(R.id.progressAnnouncements);
-
-		setAnnouncementState(AnnouncementState.init);
-
-		manualAnnouncementReload.set(false);
-		getLoaderManager().initLoader(LOADER_announce, null, announcementLoaderCallbacks).forceLoad();
-
 		imgLogo.setImageDrawable(ResourcesCompat.getDrawableForDensity(getResources(), R.mipmap.ic_launcher, DisplayMetrics.DENSITY_XXXHIGH, null));
 
 		imgLogo.setOnTouchListener((v, event) -> {
@@ -205,50 +128,6 @@ public class AboutActivity extends BaseActivity {
 		tBuild.setText(String.format(Locale.US, "%s %s", App.getVersionCode(), getString(R.string.last_commit_hash)));
 
 		root.setOnTouchListener(root_touch);
-	}
-
-	void bAnnouncements_click() {
-		switch (announcementState) {
-			case init:
-			case loading:
-				// do nothing
-				break;
-			case has_none:
-			case has_few:
-				startActivity(HelpActivity.createViewAnnouncementIntent(announcementIds));
-				break;
-			case error:
-				manualAnnouncementReload.set(true);
-				getLoaderManager().getLoader(LOADER_announce).forceLoad();
-				break;
-		}
-	}
-
-	void setAnnouncementState(final AnnouncementState state) {
-		this.announcementState = state;
-
-		switch (state) {
-			case init:
-				tAnnouncements.setText(R.string.about_announcements);
-				progressAnnouncements.hide();
-				break;
-			case loading:
-				tAnnouncements.setText(R.string.about_announcements);
-				progressAnnouncements.show();
-				break;
-			case has_none:
-				tAnnouncements.setText(R.string.about_announcements_none);
-				progressAnnouncements.hide();
-				break;
-			case has_few:
-				tAnnouncements.setText(getString(R.string.about_announcements_number, announcementIds.length));
-				progressAnnouncements.hide();
-				break;
-			case error:
-				tAnnouncements.setText(R.string.about_announcements);
-				progressAnnouncements.hide();
-				break;
-		}
 	}
 
 	final View.OnTouchListener root_touch = (v, event) -> {

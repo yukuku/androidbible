@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.ListPreference;
@@ -14,15 +13,11 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.settings.SettingsActivity;
-import yuku.alkitab.base.storage.Prefkey;
-import yuku.alkitab.base.util.Announce;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.ConfigurationWrapper;
 import yuku.alkitab.debug.R;
@@ -81,14 +76,6 @@ public class SecretSettingsActivity extends BaseActivity {
 			return true;
 		};
 
-		Preference.OnPreferenceClickListener secret_reset_read_announcements = preference -> {
-			final Set<Long> read = Announce.getReadAnnouncementIds();
-			Preferences.remove(Prefkey.announce_read_ids);
-
-			Toast.makeText(getActivity(), "Cleared read announcement ids.\n\nPreviously has " + read.size() + " items:\n" + read, Toast.LENGTH_LONG).show();
-			return true;
-		};
-
 		final Preference.OnPreferenceChangeListener configurationPreferenceChangeListener = (preference, newValue) -> {
 			final Handler handler = new Handler();
 
@@ -110,7 +97,6 @@ public class SecretSettingsActivity extends BaseActivity {
 			findPreference("secret_progress_mark_history").setOnPreferenceClickListener(secret_progress_mark_history_click);
 			findPreference("secret_version_table").setOnPreferenceClickListener(secret_version_table_click);
 			findPreference("secret_sync_debug").setOnPreferenceClickListener(secret_sync_debug);
-			findPreference("secret_reset_read_announcements").setOnPreferenceClickListener(secret_reset_read_announcements);
 
 			final ListPreference pref_forceFontScale = (ListPreference) findPreference(getString(R.string.pref_forceFontScale_key));
 			pref_forceFontScale.setOnPreferenceChangeListener(configurationPreferenceChangeListener);

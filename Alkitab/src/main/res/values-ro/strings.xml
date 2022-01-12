@@ -519,10 +519,6 @@
     <string name="about_version_name">versiune %s</string>
     <string name="about_material_sources">Surse materiale</string>
     <string name="about_credits">Credite</string>
-    <string name="about_announcements">Anunțuri</string>
-    <string name="about_announcements_none">Anunțuri (0)</string>
-    <string name="about_announcements_number">Anunțuri (%s)</string>
-    <string name="about_announcement_load_failed">Eșec la încărcare anunțuri.</string>
     <string name="about_official_website">Site oficial</string>
     <string name="about_project_page">Pagina proiect</string>
     <!-- marker and label migration -->
@@ -537,9 +533,6 @@
     <string name="marker_migrate_import_from_other">Altă rezervă</string>
     <string name="marker_migrate_filename_dated">%1$s datat %2$s</string>
     <!-- Data transfer -->
-    <!-- Announcements -->
-    <string name="announce_notif_title">%s Anunțuri</string>
-    <string name="announce_notif_number_new_announcements">%s anunțuri noi</string>
     <!-- Dictionary -->
     <string name="menuDictionary">Dicționar</string>
     <string name="dict_open_full">Deschide dicționarul</string>
@@ -556,7 +549,6 @@
     <!-- File chooser -->
     <string name="filechooser_parent_folder">Folder părinte</string>
     <!-- Notification channels -->
-    <string name="notification_channel_announce_name">Anunțuri</string>
     <string name="notification_channel_download_mapper_name">Descărcări</string>
     <string name="notification_channel_devotion_downloader_name">Descărcări devoționale</string>
     <string name="notification_channel_devotion_reminder_name">Memento-uri devoționale</string>

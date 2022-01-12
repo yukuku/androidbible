@@ -518,10 +518,6 @@
     <string name="about_version_name">versie %s</string>
     <string name="about_material_sources">Bronmateriaal</string>
     <string name="about_credits">Credits</string>
-    <string name="about_announcements">Mededelingen</string>
-    <string name="about_announcements_none">Mededelingen (0)</string>
-    <string name="about_announcements_number">Mededelingen (%s)</string>
-    <string name="about_announcement_load_failed">Fout bij het laden van mededelingen.</string>
     <string name="about_official_website">Officiële website</string>
     <string name="about_project_page">Project pagina</string>
     <!-- marker and label migration -->
@@ -536,9 +532,6 @@
     <string name="marker_migrate_import_from_other">Andere reservekopie</string>
     <string name="marker_migrate_filename_dated">%1$s van datum %2$s</string>
     <!-- Data transfer -->
-    <!-- Announcements -->
-    <string name="announce_notif_title">%s Mededelingen</string>
-    <string name="announce_notif_number_new_announcements">%s nieuwe mededelingen</string>
     <!-- Dictionary -->
     <string name="menuDictionary">Woordenboek</string>
     <string name="dict_open_full">Open woordenboek</string>
@@ -555,7 +548,6 @@
     <!-- File chooser -->
     <string name="filechooser_parent_folder">Begin map</string>
     <!-- Notification channels -->
-    <string name="notification_channel_announce_name">Mededelingen</string>
     <string name="notification_channel_download_mapper_name">Downloads</string>
     <string name="notification_channel_devotion_downloader_name">Devotie downloads</string>
     <string name="notification_channel_devotion_reminder_name">Devotie herinneringen</string>

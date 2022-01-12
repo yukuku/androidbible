@@ -519,10 +519,6 @@
     <string name="about_version_name">sürüm %s</string>
     <string name="about_material_sources">Materyal Kaynakları</string>
     <string name="about_credits">Krediler</string>
-    <string name="about_announcements">Duyurular</string>
-    <string name="about_announcements_none">Duyurular (0)</string>
-    <string name="about_announcements_number">Duyurular (%s)</string>
-    <string name="about_announcement_load_failed">Duyurular yüklenirken başarısız oldu.</string>
     <string name="about_official_website">Resmi Website</string>
     <string name="about_project_page">Proje Sayfası</string>
     <!-- marker and label migration -->
@@ -537,9 +533,6 @@
     <string name="marker_migrate_import_from_other">Diğer yedeklemeler</string>
     <string name="marker_migrate_filename_dated">%1$s tarihli %2$s</string>
     <!-- Data transfer -->
-    <!-- Announcements -->
-    <string name="announce_notif_title">%s Duyurular</string>
-    <string name="announce_notif_number_new_announcements">%s yeni duyurular</string>
     <!-- Dictionary -->
     <string name="menuDictionary">Sözlük</string>
     <string name="dict_open_full">Sözlüğü aç</string>
@@ -556,7 +549,6 @@
     <!-- File chooser -->
     <string name="filechooser_parent_folder">Ana klasör</string>
     <!-- Notification channels -->
-    <string name="notification_channel_announce_name">Duyurular</string>
     <string name="notification_channel_download_mapper_name">İndirilenler</string>
     <string name="notification_channel_devotion_downloader_name">Bağlılık indirmeleri</string>
     <string name="notification_channel_devotion_reminder_name">Bağlılık hatırlatmaları</string>

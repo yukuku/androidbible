@@ -514,10 +514,6 @@
     <string name="about_version_name">バージョン %s</string>
     <string name="about_material_sources">出典資料</string>
     <string name="about_credits">クレジット</string>
-    <string name="about_announcements">新着情報</string>
-    <string name="about_announcements_none">新着情報(0件)</string>
-    <string name="about_announcements_number">新着情報(%s件)</string>
-    <string name="about_announcement_load_failed">新着情報を表示できませんでした。</string>
     <string name="about_official_website">公式ウェブサイト</string>
     <string name="about_project_page">プロジェクトページ</string>
     <!-- marker and label migration -->
@@ -532,9 +528,6 @@
     <string name="marker_migrate_import_from_other">他のバックアップ</string>
     <string name="marker_migrate_filename_dated">%1$s日付%2$s</string>
     <!-- Data transfer -->
-    <!-- Announcements -->
-    <string name="announce_notif_title">%sの新着情報</string>
-    <string name="announce_notif_number_new_announcements">%s件の新着情報</string>
     <!-- Dictionary -->
     <string name="menuDictionary">辞書</string>
     <string name="dict_open_full">辞書を開く</string>
@@ -551,7 +544,6 @@
     <!-- File chooser -->
     <string name="filechooser_parent_folder">親フォルダ</string>
     <!-- Notification channels -->
-    <string name="notification_channel_announce_name">新着情報</string>
     <string name="notification_channel_download_mapper_name">ダウンロード</string>
     <string name="notification_channel_devotion_downloader_name">デボーションのダウンロード情報</string>
     <string name="notification_channel_devotion_reminder_name">デボーションのレマインダー</string>

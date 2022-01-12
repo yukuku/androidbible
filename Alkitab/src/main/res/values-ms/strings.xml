@@ -511,10 +511,6 @@
     <string name="about_version_name">versi %s</string>
     <string name="about_material_sources">Sumber Bahan</string>
     <string name="about_credits">Kredit</string>
-    <string name="about_announcements">Pengumuman</string>
-    <string name="about_announcements_none">Pengumuman (0)</string>
-    <string name="about_announcements_number">Pengumuman (%s)</string>
-    <string name="about_announcement_load_failed">Gagal memuatkan pengumuman.</string>
     <string name="about_official_website">Tapak Web Rasmi</string>
     <string name="about_project_page">Laman Projek</string>
     <!-- marker and label migration -->
@@ -529,9 +525,6 @@
     <string name="marker_migrate_import_from_other">Sandaran lain</string>
     <string name="marker_migrate_filename_dated">%1$s bertarikh %2$s</string>
     <!-- Data transfer -->
-    <!-- Announcements -->
-    <string name="announce_notif_title">Pengumuman %s</string>
-    <string name="announce_notif_number_new_announcements">%s pengumuman baru</string>
     <!-- Dictionary -->
     <string name="menuDictionary">Kamus</string>
     <string name="dict_open_full">Buka kamus</string>
@@ -548,7 +541,6 @@
     <!-- File chooser -->
     <string name="filechooser_parent_folder">Folder induk</string>
     <!-- Notification channels -->
-    <string name="notification_channel_announce_name">Pengumuman</string>
     <string name="notification_channel_download_mapper_name">Muat turun</string>
     <string name="notification_channel_devotion_downloader_name">Muat turun Pengabdian</string>
     <string name="notification_channel_devotion_reminder_name">Peringatan Pengabdian</string>

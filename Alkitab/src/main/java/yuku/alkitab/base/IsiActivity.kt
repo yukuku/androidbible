@@ -16,7 +16,6 @@ import android.net.Uri
 import android.nfc.NdefMessage
 import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
-import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -84,7 +83,6 @@ import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.model.MVersionDb
 import yuku.alkitab.base.model.MVersionInternal
 import yuku.alkitab.base.storage.Prefkey
-import yuku.alkitab.base.util.Announce
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.util.BackForwardListController
@@ -1307,8 +1305,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
 
         App.getLbm().registerReceiver(reloadAttributeMapReceiver, IntentFilter(ACTION_ATTRIBUTE_MAP_CHANGED))
-
-        Announce.checkAnnouncements()
 
         App.getLbm().registerReceiver(needsRestartReceiver, IntentFilter(ACTION_NEEDS_RESTART))
         AppLog.d(TAG, "@@onCreate end")

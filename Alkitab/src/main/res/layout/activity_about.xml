@@ -76,39 +76,6 @@
 
 			</LinearLayout>
 
-
-			<FrameLayout
-				android:id="@+id/bAnnouncements"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginStart="16dp"
-				android:layout_marginEnd="16dp"
-				android:background="#2a2a2a"
-				android:elevation="4dp"
-				android:foreground="?selectableItemBackground"
-				android:gravity="center_horizontal"
-				android:orientation="vertical">
-
-				<TextView
-					android:id="@+id/tAnnouncements"
-					android:layout_width="match_parent"
-					android:layout_height="48dp"
-					android:layout_marginStart="24dp"
-					android:layout_marginEnd="24dp"
-					android:gravity="center_vertical"
-					android:text="@string/about_announcements"
-					android:textAppearance="?android:textAppearanceMedium"
-					android:textColor="#fff" />
-
-				<androidx.core.widget.ContentLoadingProgressBar
-					android:id="@+id/progressAnnouncements"
-					style="?android:progressBarStyleHorizontal"
-					android:layout_width="match_parent"
-					android:layout_height="6dp"
-					android:indeterminate="true" />
-
-			</FrameLayout>
-
 			<FrameLayout
 				android:id="@+id/bHelp"
 				android:layout_width="match_parent"
