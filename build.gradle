@@ -13,7 +13,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
         classpath 'com.google.gms:google-services:4.3.10'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.5.2'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
     }
 }
 
@@ -31,35 +31,32 @@ ext {
     RIBKA_FUNCTIONS_HOST = 'https://us-central1-pulau-ribka.cloudfunctions.net/'
     RIBKA_FUNCTIONS_HOST_DEBUG = 'http://10.0.3.2:5001/pulau-ribka/us-central1/'
 
-    compileSdkVersion = 29
-    minSdkVersion = 17
-    targetSdkVersion = 29
+    compileSdkVersion = 31
+    minSdkVersion = 26
+    targetSdkVersion = 31
 
     // Android X
-    androidxActivityVersion = '1.2.4'
-    androidxAnnotationVersion = '1.1.0'
-    androidxAppcompatVersion = '1.0.2'
-    androidxConstraintlayoutVersion = '2.0.4'
-    androidxCoreVersion = '1.1.0'
+    androidxActivityVersion = '1.4.0'
+    androidxAnnotationVersion = '1.3.0'
+    androidxAppcompatVersion = '1.4.0'
+    androidxConstraintlayoutVersion = '2.1.2'
+    androidxCoreVersion = '1.7.0'
     androidxCursoradapterVersion = '1.0.0'
-    androidxFragmentVersion = '1.3.6'
+    androidxFragmentVersion = '1.4.0'
     androidxMultidexVersion = '2.0.1'
     androidxPercentlayoutVersion = '1.0.0'
 
     // Google
     exoplayerVersion = '2.11.1'
     gsonVersion = '2.8.6'
-    materialVersion = '1.0.0'
+    materialVersion = '1.4.0'
 
     // Tests
     junitVersion = '4.12'
-    leakcanaryVersion = '2.0'
+    leakcanaryVersion = '2.8.1'
     stethoVersion = '1.5.1'
 
-    // Firebase BOM 25.4.1
-    firebaseCoreVersion = '17.4.3'
-    firebaseMessagingVersion = '20.2.0'
-    firebaseCrashlyticsVersion = '17.0.1'
+    firebaseBomVersion = '29.0.3'
 
     // Misc
     okhttpVersion = '3.12.12' // For 3.13.0 "This release bumps our minimum requirements to Java 8+ or Android 5+"
