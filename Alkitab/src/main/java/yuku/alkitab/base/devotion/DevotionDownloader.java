@@ -5,11 +5,12 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import android.text.TextUtils;
+import java.io.IOException;
+import java.util.LinkedList;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.DevotionActivity;
@@ -18,9 +19,6 @@ import yuku.alkitab.base.util.Foreground;
 import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
-
-import java.io.IOException;
-import java.util.LinkedList;
 
 public class DevotionDownloader extends Thread {
 	private static final String TAG = DevotionDownloader.class.getSimpleName();
@@ -144,11 +142,9 @@ public class DevotionDownloader extends Thread {
 				nm = NotificationManagerCompat.from(App.context);
 			}
 
-			if (Build.VERSION.SDK_INT >= 26) {
-				final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, App.context.getString(R.string.notification_channel_devotion_downloader_name), NotificationManager.IMPORTANCE_LOW);
-				final NotificationManager nm = App.context.getSystemService(NotificationManager.class);
-				if (nm != null) nm.createNotificationChannel(channel);
-			}
+			final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, App.context.getString(R.string.notification_channel_devotion_downloader_name), NotificationManager.IMPORTANCE_LOW);
+			final NotificationManager nm = App.context.getSystemService(NotificationManager.class);
+			if (nm != null) nm.createNotificationChannel(channel);
 
 			final Notification n = new NotificationCompat.Builder(App.context, NOTIFICATION_CHANNEL_ID)
 				.setContentTitle(title)

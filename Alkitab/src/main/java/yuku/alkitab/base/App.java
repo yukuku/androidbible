@@ -1,9 +1,6 @@
 package yuku.alkitab.base;
 
 import android.content.Context;
-import android.os.Build;
-import android.os.StrictMode;
-import android.view.ViewConfiguration;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.multidex.MultiDex;
 import androidx.preference.PreferenceManager;
@@ -11,14 +8,12 @@ import com.downloader.PRDownloader;
 import com.downloader.PRDownloaderConfig;
 import com.google.gson.Gson;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import okhttp3.Call;
 import okhttp3.Request;
 import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.connection.PRDownloaderOkHttpClient;
 import yuku.alkitab.base.sync.Fcm;
 import yuku.alkitab.base.sync.Sync;
-import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.reminder.util.DevotionReminder;
 import yuku.alkitab.tracking.Tracker;
@@ -72,13 +67,6 @@ public class App extends yuku.afw.App {
 			throw new RuntimeException("yuku.afw.App.context must have been set via initWithAppContext(Context) before calling this method.");
 		}
 
-		// Do not crash even if the devotion notification sound settings is set to file URI.
-		// This only happens on Android 7.0 and 7.1.
-		// https://console.firebase.google.com/u/0/project/alkitab-host-hrd/crashlytics/app/android:yuku.alkitab/issues/5b34ea186007d59fcd13a1ab
-		if (Build.VERSION.SDK_INT >= 24 && Build.VERSION.SDK_INT <= 25) {
-			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().build());
-		}
-
 		Tracker.init(context);
 
 		final FeedbackSender fs = FeedbackSender.getInstance(context);
@@ -100,8 +88,6 @@ public class App extends yuku.afw.App {
 
 		DevotionReminder.scheduleAlarm();
 
-		forceOverflowMenu();
-
 		PRDownloader.initialize(context, new PRDownloaderConfig.Builder()
 			.setHttpClient(new PRDownloaderOkHttpClient(Connections.getOkHttp()))
 			.setUserAgent(Connections.getHttpUserAgent())
@@ -110,29 +96,6 @@ public class App extends yuku.afw.App {
 
 		// make sure launcher do not open other variants of the app
 		Launcher.setAppPackageName(context.getPackageName());
-	}
-
-	private static void forceOverflowMenu() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-			return; // no need to do anything, it is already forced on KitKat
-		}
-
-		final ViewConfiguration config = ViewConfiguration.get(context);
-		try {
-			final Field sHasPermanentMenuKey = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
-			sHasPermanentMenuKey.setAccessible(true);
-			sHasPermanentMenuKey.setBoolean(config, false);
-		} catch (Exception e) {
-			AppLog.w(TAG, "ViewConfiguration has no sHasPermanentMenuKey field", e);
-		}
-
-		try {
-			final Field sHasPermanentMenuKeySet = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKeySet");
-			sHasPermanentMenuKeySet.setAccessible(true);
-			sHasPermanentMenuKeySet.setBoolean(config, true);
-		} catch (Exception e) {
-			AppLog.w(TAG, "ViewConfiguration has no sHasPermanentMenuKeySet field", e);
-		}
 	}
 
 	public static LocalBroadcastManager getLbm() {

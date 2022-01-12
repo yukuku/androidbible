@@ -1,10 +1,5 @@
 package yuku.alkitab.base.connection
 
-import android.os.Build
-import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException
-import com.google.android.gms.common.GooglePlayServicesRepairableException
-import com.google.android.gms.security.ProviderInstaller
 import java.io.File
 import java.util.concurrent.TimeUnit
 import okhttp3.Cache
@@ -13,11 +8,8 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.internal.Version
 import yuku.alkitab.base.App
-import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.debug.BuildConfig
 import yuku.stethoshim.StethoShim
-
-private const val TAG = "Connections"
 
 object Connections {
     private val appContext by lazy { App.context }
@@ -39,25 +31,6 @@ object Connections {
     }
 
     private fun newOkHttpClientBuilder(): OkHttpClient.Builder {
-        if (Build.VERSION.SDK_INT <= 21) {
-            AppLog.d(TAG, "Android version ${Build.VERSION.SDK_INT}, accessing ProviderInstaller to ensure https connections work")
-            try {
-                ProviderInstaller.installIfNeeded(appContext)
-
-                AppLog.d(TAG, "ProviderInstaller.installIfNeeded returns normally")
-            } catch (e: GooglePlayServicesRepairableException) {
-                AppLog.e(TAG, "ProviderInstaller.installIfNeeded throws GooglePlayServicesRepairableException", e)
-
-                GoogleApiAvailability.getInstance()
-                    .showErrorNotification(appContext, e.connectionStatusCode)
-            } catch (e: GooglePlayServicesNotAvailableException) {
-                AppLog.e(TAG, "ProviderInstaller.installIfNeeded throws GooglePlayServicesNotAvailableException", e)
-
-                GoogleApiAvailability.getInstance()
-                    .showErrorNotification(appContext, e.errorCode)
-            }
-        }
-
         return OkHttpClient.Builder()
     }
 

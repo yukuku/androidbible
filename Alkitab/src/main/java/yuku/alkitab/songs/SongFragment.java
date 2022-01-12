@@ -2,9 +2,7 @@ package yuku.alkitab.songs;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,18 +10,18 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import androidx.annotation.NonNull;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.List;
 import yuku.alkitab.base.fr.base.BaseFragment;
 import yuku.alkitab.debug.R;
 import yuku.kpri.model.Lyric;
 import yuku.kpri.model.Song;
 import yuku.kpri.model.Verse;
 import yuku.kpri.model.VerseKind;
-
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.List;
 
 public class SongFragment extends BaseFragment {
 	private static final String ARG_song = "song";
@@ -108,11 +106,7 @@ public class SongFragment extends BaseFragment {
 			pendingResize = true;
 			view.postDelayed(() -> {
 				final String script = "document.getElementsByTagName('body')[0].style.width = window.innerWidth + 'px';";
-				if (Build.VERSION.SDK_INT >= 19) {
-					view.evaluateJavascript(script, null);
-				} else {
-					view.loadUrl("javascript:" + script);
-				}
+				view.evaluateJavascript(script, null);
 
 				pendingResize = false;
 			}, 100);

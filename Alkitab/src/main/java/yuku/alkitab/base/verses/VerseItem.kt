@@ -114,20 +114,17 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
             }
         }
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            // Fix bug on Lollipop where the last line of the text does not calculate line spacing mult/add.
-            // https://code.google.com/p/android/issues/detail?id=77941
+        // Fix bug on Lollipop where the last line of the text does not calculate line spacing mult/add.
+        // https://code.google.com/p/android/issues/detail?id=77941
+        val lText = this.lText
+        val layout = lText.layout
 
-            val lText = this.lText
-            val layout = lText.layout
+        if (layout != null) {
+            val lastLine = layout.lineCount - 1
+            val spacing = if (lText.includeFontPadding) layout.getLineBottom(lastLine) - layout.getLineTop(lastLine) else layout.getLineDescent(lastLine) - layout.getLineAscent(lastLine)
+            val extra = (spacing * (layout.spacingMultiplier - 1) + layout.spacingAdd + 0.5f).toInt()
 
-            if (layout != null) {
-                val lastLine = layout.lineCount - 1
-                val spacing = if (lText.includeFontPadding) layout.getLineBottom(lastLine) - layout.getLineTop(lastLine) else layout.getLineDescent(lastLine) - layout.getLineAscent(lastLine)
-                val extra = (spacing * (layout.spacingMultiplier - 1) + layout.spacingAdd + 0.5f).toInt()
-
-                setMeasuredDimension(measuredWidth, measuredHeight + extra)
-            }
+            setMeasuredDimension(measuredWidth, measuredHeight + extra)
         }
     }
 

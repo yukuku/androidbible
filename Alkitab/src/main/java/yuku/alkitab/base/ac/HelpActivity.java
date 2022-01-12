@@ -3,7 +3,6 @@ package yuku.alkitab.base.ac;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -93,9 +92,7 @@ public class HelpActivity extends BaseActivity {
 		progress = findViewById(R.id.progress);
 
 		if (BuildConfig.DEBUG) {
-			if (Build.VERSION.SDK_INT >= 19) {
 				WebView.setWebContentsDebuggingEnabled(true);
-			}
 		}
 
 		final WebSettings webSettings = webview.getSettings();

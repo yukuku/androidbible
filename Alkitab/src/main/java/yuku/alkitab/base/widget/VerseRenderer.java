@@ -1,7 +1,6 @@
 package yuku.alkitab.base.widget;
 
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.SpannableStringBuilder;
@@ -268,7 +267,7 @@ public class VerseRenderer {
 		}
 
 		if (lText != null) {
-            safeSetText(lText, sb);
+			lText.setText(sb);
 		}
 
 		// show verse on lVerseNumber if not shown in lText yet
@@ -426,7 +425,7 @@ public class VerseRenderer {
 		}
 
 		if (lText != null) {
-            safeSetText(lText, sb);
+			lText.setText(sb);
 		}
 
 		// initialize lVerseNumber to have no padding first
@@ -439,20 +438,4 @@ public class VerseRenderer {
 		return startPosAfterVerseNumber;
 	}
 
-    /**
-     * On Android 4.4 and lower, changing the text size causes the textview not to set the correct height.
-     * <p>
-     * Work around this by forcing the textview to relayout. However, this workaround still does not work
-     * for text that are laid out in single line.
-     */
-    static void safeSetText(@NonNull final TextView lText, @NonNull final SpannableStringBuilder sb) {
-        // This bug has been fixed in Android 5.0
-        if (Build.VERSION.SDK_INT >= 21) {
-            lText.setText(sb);
-            return;
-        }
-
-        lText.setText("", TextView.BufferType.NORMAL);
-        lText.setText(sb, TextView.BufferType.SPANNABLE);
-    }
 }

@@ -2032,17 +2032,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         if (yes) {
             window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
             supportActionBar?.hide()
-
-            if (Build.VERSION.SDK_INT >= 19) {
-                decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE
-            }
+            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
             supportActionBar?.show()
-
-            if (Build.VERSION.SDK_INT >= 19) {
-                decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
-            }
+            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
         }
 
         fullScreen = yes
@@ -2077,10 +2071,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         super.onWindowFocusChanged(hasFocus)
 
         if (hasFocus && fullScreen) {
-            if (Build.VERSION.SDK_INT >= 19) {
-                val decorView = window.decorView
-                decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE
-            }
+            val decorView = window.decorView
+            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE
         }
     }
 
