@@ -41,6 +41,7 @@ import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.model.MVersionInternal
 import yuku.alkitab.base.storage.Prefkey
+import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.util.Background
 import yuku.alkitab.base.util.ClipboardUtil
@@ -51,7 +52,6 @@ import yuku.alkitab.base.util.QueryTokenizer
 import yuku.alkitab.base.util.SearchEngine
 import yuku.alkitab.base.util.SearchEngine.ReadyTokens
 import yuku.alkitab.base.util.TextColorUtil
-import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Version
 import yuku.alkitab.util.Ari
@@ -63,6 +63,7 @@ private const val REQCODE_bookFilter = 1
 private const val ID_CLEAR_HISTORY = -1L
 private const val COLINDEX_ID = 0
 private const val COLINDEX_QUERY_STRING = 1
+private const val TAG = "SearchActivity"
 
 class SearchActivity : BaseActivity() {
     private lateinit var root: View
@@ -238,45 +239,47 @@ class SearchActivity : BaseActivity() {
 
         bVersion = findViewById(R.id.bVersion)
         bVersion.setOnClickListener(bVersion_click)
-        searchView = findViewById(R.id.searchView)
-        searchView.isSubmitButtonEnabled = true
-        findAutoCompleteTextView(searchView)?.threshold = 0
-        searchView.suggestionsAdapter = SearchHistoryAdapter().also { searchHistoryAdapter = it }
-        searchView.setOnSuggestionListener(object : SearchView.OnSuggestionListener {
-            override fun onSuggestionSelect(position: Int): Boolean {
-                return false
-            }
-
-            override fun onSuggestionClick(position: Int): Boolean {
-                val c = searchHistoryAdapter.cursor ?: return false
-                val ok = c.moveToPosition(position)
-                if (!ok) return false
-                val _id = c.getLong(COLINDEX_ID)
-                if (_id == ID_CLEAR_HISTORY) {
-                    saveSearchHistory(null)
-                    searchHistoryAdapter.setData(loadSearchHistory())
-                } else {
-                    searchView.setQuery(c.getString(COLINDEX_QUERY_STRING), true)
+        searchView = findViewById<SearchView>(R.id.searchView).apply {
+            isSubmitButtonEnabled = true
+            findAutoCompleteTextView()?.threshold = 0
+            suggestionsAdapter = SearchHistoryAdapter().also { searchHistoryAdapter = it }
+            setOnSuggestionListener(object : SearchView.OnSuggestionListener {
+                override fun onSuggestionSelect(position: Int): Boolean {
+                    return false
                 }
-                return true
-            }
-        })
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query1: String): Boolean {
-                search(query1)
-                return true
-            }
 
-            override fun onQueryTextChange(newText: String): Boolean {
-                searchHistoryAdapter.setQuery(newText)
-                return false
-            }
-        })
+                override fun onSuggestionClick(position: Int): Boolean {
+                    val c = searchHistoryAdapter.cursor ?: return false
+                    val ok = c.moveToPosition(position)
+                    if (!ok) return false
+                    val _id = c.getLong(COLINDEX_ID)
+                    if (_id == ID_CLEAR_HISTORY) {
+                        saveSearchHistory(null)
+                        searchHistoryAdapter.setData(loadSearchHistory())
+                    } else {
+                        searchView.setQuery(c.getString(COLINDEX_QUERY_STRING), true)
+                    }
+                    return true
+                }
+            })
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query1: String): Boolean {
+                    search(query1)
+                    return true
+                }
 
-        // stop opening suggestion dropdown
-        searchView.post {
-            findAutoCompleteTextViewRecursive(searchView)?.dismissDropDown()
+                override fun onQueryTextChange(newText: String): Boolean {
+                    searchHistoryAdapter.setQuery(newText)
+                    return false
+                }
+            })
+
+            // stop opening suggestion dropdown
+            post {
+                searchView.findAutoCompleteTextView()?.dismissDropDown()
+            }
         }
+
         run {
             val sb = SpannableStringBuilder(tSearchTips.text)
             while (true) {
@@ -286,11 +289,13 @@ class SearchActivity : BaseActivity() {
             }
             tSearchTips.text = sb
         }
+
         val applied = S.applied()
         tSearchTips.setBackgroundColor(applied.backgroundColor)
         lsSearchResults.setBackgroundColor(applied.backgroundColor)
         Appearances.applyTextAppearance(tSearchTips, textSizeMult)
         hiliteColor = TextColorUtil.getSearchKeywordByBrightness(applied.backgroundBrightness)
+
         bEditFilter.setOnClickListener { bEditFilter_click() }
         cFilterOlds.setOnCheckedChangeListener(cFilterOlds_checkedChange)
         cFilterNews.setOnCheckedChangeListener(cFilterNews_checkedChange)
@@ -318,17 +323,17 @@ class SearchActivity : BaseActivity() {
         displaySearchInVersion()
     }
 
-    private fun findAutoCompleteTextView(group: ViewGroup): AutoCompleteTextView? {
-        var i = 0
-        val len = group.childCount
-        while (i < len) {
-            val child = group.getChildAt(i)
+    private fun ViewGroup.findAutoCompleteTextView(): AutoCompleteTextView? {
+        for (i in 0 until childCount) {
+            val child = getChildAt(i)
             if (child is AutoCompleteTextView) {
                 return child
             } else if (child is ViewGroup) {
-                return findAutoCompleteTextView(child)
+                val res = child.findAutoCompleteTextView()
+                if (res != null) {
+                    return res
+                }
             }
-            i++
         }
         return null
     }
@@ -548,27 +553,24 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun search(query_string: String) {
-        if (query_string.trim().isEmpty()) {
+        if (query_string.isBlank()) return
+
+        // check if there is anything chosen
+        val firstSelected = selectedBookIds.indexOfValue(true)
+        if (firstSelected < 0) {
+            MaterialDialog.Builder(this)
+                .content(R.string.pilih_setidaknya_satu_kitab)
+                .positiveText(R.string.ok)
+                .show()
             return
         }
-        run {
-            // check if there is anything chosen
-            val firstSelected = selectedBookIds.indexOfValue(true)
-            if (firstSelected < 0) {
-                MaterialDialog.Builder(this)
-                    .content(R.string.pilih_setidaknya_satu_kitab)
-                    .positiveText(R.string.ok)
-                    .show()
-                return
-            }
-        }
+
         val tokens = QueryTokenizer.tokenize(query_string).toList()
         val pd = MaterialDialog.Builder(this)
             .content(getString(R.string.search_searching_tokens, tokens))
             .cancelable(false)
             .progress(true, 0)
             .show()
-
 
         Background.run {
             val debugstats_revIndexUsed: Boolean
@@ -609,9 +611,7 @@ class SearchActivity : BaseActivity() {
                      * @return ari not 0 if fallback is to be shown
                      */
                     fun shouldShowFallback(jumper: Jumper): Int {
-                        if (!jumper.parseSucceeded) {
-                            return 0
-                        }
+                        if (!jumper.parseSucceeded) return 0
                         val chapter_1 = jumper.chapter
                         if (chapter_1 == 0) return 0
                         val version = searchInVersion
@@ -620,12 +620,15 @@ class SearchActivity : BaseActivity() {
                         val book = version.getBook(bookId) ?: return 0
                         if (chapter_1 > book.chapter_count) return 0
                         val verse_1 = jumper.verse
-                        return if (verse_1 != 0 && verse_1 > book.verse_counts[chapter_1 - 1]) 0 else Ari.encode(bookId, chapter_1, verse_1)
+                        return if (verse_1 != 0 && verse_1 > book.verse_counts[chapter_1 - 1]) {
+                            0
+                        } else {
+                            Ari.encode(bookId, chapter_1, verse_1)
+                        }
                     }
 
-                    val jumper = Jumper(query_string)
                     val noresult = TextUtils.expandTemplate(getText(R.string.search_no_result), query_string)
-                    val fallbackAri = shouldShowFallback(jumper)
+                    val fallbackAri = shouldShowFallback(Jumper(query_string))
                     if (fallbackAri != 0) {
                         tSearchTips.text = buildString {
                             append(noresult)
@@ -647,17 +650,13 @@ class SearchActivity : BaseActivity() {
                     }
                 }
 
-                if (BuildConfig.DEBUG) {
-                    MaterialDialog.Builder(this@SearchActivity)
-                        .content("This msg is shown only on DEBUG build\n\n" +
-                            "Search results: ${result.size()}\n" +
-                            "Method: ${if (debugstats_revIndexUsed) "revindex" else "grep"}\n" +
-                            "Total time: $debugstats_totalTimeMs ms\n" +
-                            "CPU (thread) time: $debugstats_cpuTimeMs ms"
-                        )
-                        .positiveText(R.string.ok)
-                        .show()
-                }
+                AppLog.d(
+                    TAG,
+                    "Search results: ${result.size()}\n" +
+                        "Method: ${if (debugstats_revIndexUsed) "revindex" else "grep"}\n" +
+                        "Total time: $debugstats_totalTimeMs ms\n" +
+                        "CPU (thread) time: $debugstats_cpuTimeMs ms"
+                )
 
                 pd.setOnDismissListener(null)
                 try {
@@ -770,7 +769,7 @@ class SearchActivity : BaseActivity() {
                     actionMode = startSupportActionMode(createActionModeCallback())
                 }
 
-                val position = holder.adapterPosition
+                val position = holder.bindingAdapterPosition
                 if (position in adapter.checkedPositions) {
                     adapter.checkedPositions -= position
                 } else {
@@ -782,7 +781,7 @@ class SearchActivity : BaseActivity() {
             }
 
             holder.itemView.setOnClickListener {
-                val position = holder.adapterPosition
+                val position = holder.bindingAdapterPosition
                 if (actionMode != null) {
                     if (position in adapter.checkedPositions) {
                         adapter.checkedPositions -= position
@@ -817,25 +816,8 @@ class SearchActivity : BaseActivity() {
 
     companion object {
         fun createIntent(openedBookId: Int): Intent {
-            val res = Intent(App.context, SearchActivity::class.java)
-            res.putExtra(EXTRA_openedBookId, openedBookId)
-            return res
-        }
-
-        fun findAutoCompleteTextViewRecursive(group: ViewGroup): AutoCompleteTextView? {
-            for (i in 0 until group.childCount) {
-                val child = group.getChildAt(i)
-                if (child is AutoCompleteTextView) {
-                    return child
-                }
-                if (child is ViewGroup) {
-                    val res = findAutoCompleteTextViewRecursive(child)
-                    if (res != null) {
-                        return res
-                    }
-                }
-            }
-            return null
+            return Intent(App.context, SearchActivity::class.java)
+                .putExtra(EXTRA_openedBookId, openedBookId)
         }
     }
 }
