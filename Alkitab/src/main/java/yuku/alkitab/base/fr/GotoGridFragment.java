@@ -15,6 +15,7 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.fr.base.BaseGotoFragment;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.storage.PrefkeyKt;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.BookColorUtil;
 import yuku.alkitab.base.util.BookNameSorter;
@@ -329,7 +330,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 			holder.itemView.setOnClickListener(v -> {
 				selectedChapter = position + 1;
 
-				if (Preferences.getBoolean(Prefkey.gotoAskForVerse, Prefkey.GOTO_ASK_FOR_VERSE_DEFAULT)) {
+				if (Preferences.getBoolean(Prefkey.gotoAskForVerse, PrefkeyKt.GOTO_ASK_FOR_VERSE_DEFAULT)) {
 					transitionChapterToVerse();
 				} else {
 					final GotoFinishListener activity = (GotoFinishListener) getActivity();
