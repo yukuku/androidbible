@@ -33,6 +33,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.snackbar.Snackbar
 import java.util.ArrayList
 import java.util.Locale
+import me.zhanghai.android.fastscroll.FastScrollerBuilder
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
 import yuku.alkitab.base.S
@@ -223,6 +224,7 @@ class SearchActivity : BaseActivity() {
 
         root = findViewById(R.id.root)
         lsSearchResults = findViewById(R.id.lsSearchResults)
+        FastScrollerBuilder(lsSearchResults).build()
         tSearchTips = findViewById(R.id.tSearchTips)
         panelFilter = findViewById(R.id.panelFilter)
         cFilterOlds = findViewById(R.id.cFilterOlds)
@@ -238,10 +240,7 @@ class SearchActivity : BaseActivity() {
         bVersion.setOnClickListener(bVersion_click)
         searchView = findViewById(R.id.searchView)
         searchView.isSubmitButtonEnabled = true
-        val autoCompleteTextView = findAutoCompleteTextView(searchView)
-        if (autoCompleteTextView != null) {
-            autoCompleteTextView.threshold = 0
-        }
+        findAutoCompleteTextView(searchView)?.threshold = 0
         searchView.suggestionsAdapter = SearchHistoryAdapter().also { searchHistoryAdapter = it }
         searchView.setOnSuggestionListener(object : SearchView.OnSuggestionListener {
             override fun onSuggestionSelect(position: Int): Boolean {

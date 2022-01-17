@@ -57,11 +57,6 @@
 			android:id="@+id/lsSearchResults"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			app:fastScrollEnabled="true"
-			app:fastScrollHorizontalThumbDrawable="@drawable/fast_scroll_thumb"
-			app:fastScrollHorizontalTrackDrawable="@drawable/fast_scroll_track"
-			app:fastScrollVerticalThumbDrawable="@drawable/fast_scroll_thumb"
-			app:fastScrollVerticalTrackDrawable="@drawable/fast_scroll_track"
 			app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 		<TextView

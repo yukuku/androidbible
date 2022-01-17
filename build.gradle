@@ -45,22 +45,24 @@ ext {
     androidxFragmentVersion = '1.4.0'
     androidxMultidexVersion = '2.0.1'
     androidxPercentlayoutVersion = '1.0.0'
+    androidxRecyclerviewVersion = '1.2.1'
     androidxSwiperefreshlayoutVersion = '1.1.0'
 
     // Google
     exoplayerVersion = '2.11.1'
     gsonVersion = '2.8.6'
+    fastscrollVersion = '1.1.7'
     materialVersion = '1.4.0'
 
     // Tests
-    junitVersion = '4.12'
+    junitVersion = '4.13.2'
     leakcanaryVersion = '2.8.1'
     stethoVersion = '1.5.1'
 
     firebaseBomVersion = '29.0.3'
 
     // Misc
-    okhttpVersion = '3.12.12' // For 3.13.0 "This release bumps our minimum requirements to Java 8+ or Android 5+"
+    okhttpVersion = '3.12.13' // For 3.13.0 "This release bumps our minimum requirements to Java 8+ or Android 5+"
     coilVersion = '1.1.0'
     preferenceFixVersion = '28.0.0.0'
     kotlinxSerializationJsonVersion = '1.0.1'
