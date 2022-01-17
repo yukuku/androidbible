@@ -17,26 +17,23 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.AbsListView
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemLongClickListener
 import android.widget.AutoCompleteTextView
 import android.widget.CheckBox
 import android.widget.CompoundButton
-import android.widget.ListView
 import android.widget.TextView
 import androidx.annotation.Keep
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
+import androidx.core.view.isVisible
 import androidx.cursoradapter.widget.CursorAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.snackbar.Snackbar
 import java.util.ArrayList
 import java.util.Locale
 import yuku.afw.storage.Preferences
-import yuku.afw.widget.EasyAdapter
 import yuku.alkitab.base.App
 import yuku.alkitab.base.S
 import yuku.alkitab.base.ac.base.BaseActivity
@@ -70,7 +67,7 @@ class SearchActivity : BaseActivity() {
     private lateinit var root: View
     private lateinit var bVersion: TextView
     private lateinit var searchView: SearchView
-    private lateinit var lsSearchResults: ListView
+    private lateinit var lsSearchResults: RecyclerView
     private lateinit var tSearchTips: TextView
     private lateinit var panelFilter: View
     private lateinit var cFilterOlds: CheckBox
@@ -89,91 +86,70 @@ class SearchActivity : BaseActivity() {
             lsSearchResults.adapter = value
         }
 
-    private lateinit var searchInVersion: Version
-    private lateinit var searchInVersionId: String
-    private var textSizeMult = 0f
+    private var searchInVersion: Version = S.activeVersion()
+    private var searchInVersionId: String = S.activeVersionId()
+    private var textSizeMult = S.getDb().getPerVersionSettings(searchInVersionId).fontSizeMultiplier
+
     private lateinit var searchHistoryAdapter: SearchHistoryAdapter
     private var actionMode: ActionMode? = null
 
-    private val lsSearchResults_itemLongClick = OnItemLongClickListener { _, _, position, _ ->
-        if (actionMode == null) {
-            actionMode = startSupportActionMode(object : ActionMode.Callback {
-                override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
-                    menuInflater.inflate(R.menu.context_search, menu)
-                    return true
-                }
-
-                override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
-                    val checked_count = lsSearchResults.checkedItemCount
-                    if (checked_count == 1) {
-                        mode.setTitle(R.string.verse_select_one_verse_selected)
-                    } else {
-                        mode.title = getString(R.string.verse_select_multiple_verse_selected, checked_count.toString())
-                    }
-                    return true
-                }
-
-                override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
-                    val itemId = item.itemId
-                    if (itemId == R.id.menuSelectAll) {
-                        var i = 0
-                        val size = adapter.count
-                        while (i < size) {
-                            lsSearchResults.setItemChecked(i, true)
-                            i++
-                        }
-                        onCheckedVerseChanged()
-                    } else if (itemId == R.id.menuCopy) {
-                        val sb = SpannableStringBuilder()
-                        val aris = adapter.searchResults
-                        val checkeds = lsSearchResults.checkedItemPositions
-                        var i = 0
-                        val size = checkeds.size()
-                        while (i < size) {
-                            if (!checkeds.valueAt(i)) {
-                                i++
-                                continue
-                            }
-                            val ari = aris[checkeds.keyAt(i)]
-                            val reference = searchInVersion.reference(ari)
-                            val verseText = FormattedVerseText.removeSpecialCodes(searchInVersion.loadVerseText(ari))
-                            val sb_len = sb.length
-                            sb.append(reference).append("\n").append(verseText).append("\n\n")
-                            if (size < 1000) { // too much spans is very slow
-                                sb.setSpan(UnderlineSpan(), sb_len, sb_len + reference.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                            }
-                            i++
-                        }
-                        ClipboardUtil.copyToClipboard(sb)
-                        Snackbar.make(root, R.string.search_selected_verse_copied, Snackbar.LENGTH_SHORT).show()
-                        mode.finish()
-                        return true
-                    }
-                    return false
-                }
-
-                override fun onDestroyActionMode(mode: ActionMode) {
-                    uncheckAllVerses()
-                    actionMode = null
-                }
-            })
+    private fun createActionModeCallback() = object : ActionMode.Callback {
+        override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+            menuInflater.inflate(R.menu.context_search, menu)
+            return true
         }
-        val old = lsSearchResults.isItemChecked(position)
-        lsSearchResults.setItemChecked(position, !old)
-        onCheckedVerseChanged()
-        true
-    }
 
-    private fun uncheckAllVerses() {
-        val checkeds = lsSearchResults.checkedItemPositions
-        for (i in checkeds.size() - 1 downTo 0) {
-            if (checkeds.valueAt(i)) lsSearchResults.setItemChecked(checkeds.keyAt(i), false)
+        override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
+            val checked_count = adapter.checkedPositions.size
+            if (checked_count == 1) {
+                mode.setTitle(R.string.verse_select_one_verse_selected)
+            } else {
+                mode.title = getString(R.string.verse_select_multiple_verse_selected, checked_count.toString())
+            }
+            return true
+        }
+
+        override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+            return when (item.itemId) {
+                R.id.menuSelectAll -> {
+                    adapter.checkAll()
+                    true
+                }
+
+                R.id.menuCopy -> {
+                    val sb = SpannableStringBuilder()
+                    val aris = adapter.searchResults
+                    for (i in adapter.checkedPositions.sorted()) {
+                        val ari = aris[i]
+                        val reference = searchInVersion.reference(ari)
+                        val verseText = FormattedVerseText.removeSpecialCodes(searchInVersion.loadVerseText(ari))
+                        val sb_len = sb.length
+                        sb.append(reference).append("\n").append(verseText).append("\n\n")
+                        if (adapter.checkedPositions.size < 1000) { // too much spans is very slow
+                            sb.setSpan(UnderlineSpan(), sb_len, sb_len + reference.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        }
+                    }
+                    ClipboardUtil.copyToClipboard(sb)
+                    Snackbar.make(root, R.string.search_selected_verse_copied, Snackbar.LENGTH_SHORT).show()
+                    mode.finish()
+                    true
+                }
+
+                else -> false
+            }
+        }
+
+        override fun onDestroyActionMode(mode: ActionMode) {
+            adapter.uncheckAll()
+            actionMode = null
         }
     }
 
     private fun onCheckedVerseChanged() {
+        @Suppress("NotifyDataSetChanged")
         adapter.notifyDataSetChanged()
-        if (lsSearchResults.checkedItemCount == 0) {
+
+        if (adapter.checkedPositions.isEmpty()) {
             actionMode?.finish()
         } else {
             actionMode?.invalidate()
@@ -259,10 +235,6 @@ class SearchActivity : BaseActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         bVersion = findViewById(R.id.bVersion)
-        searchInVersion = S.activeVersion()
-        searchInVersionId = S.activeVersionId()
-
-        textSizeMult = S.getDb().getPerVersionSettings(searchInVersionId).fontSizeMultiplier
         bVersion.setOnClickListener(bVersion_click)
         searchView = findViewById(R.id.searchView)
         searchView.isSubmitButtonEnabled = true
@@ -318,29 +290,13 @@ class SearchActivity : BaseActivity() {
         val applied = S.applied()
         tSearchTips.setBackgroundColor(applied.backgroundColor)
         lsSearchResults.setBackgroundColor(applied.backgroundColor)
-        lsSearchResults.cacheColorHint = applied.backgroundColor
-        lsSearchResults.emptyView = tSearchTips
         Appearances.applyTextAppearance(tSearchTips, textSizeMult)
         hiliteColor = TextColorUtil.getSearchKeywordByBrightness(applied.backgroundBrightness)
-        lsSearchResults.choiceMode = AbsListView.CHOICE_MODE_MULTIPLE
-        lsSearchResults.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            if (actionMode != null) {
-                // By default setItemChecked will be called when action mode is on.
-                // We just need to invalidate the view and the selected verse count.
-                onCheckedVerseChanged()
-            } else {
-                val ari = adapter.searchResults[position]
-                startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari))
-                // Because we are in CHOICE_MODE_MULTIPLE, this verse is automatically marked as checked.
-                // so we have to manually uncheck this.
-                uncheckAllVerses()
-            }
-        }
-        lsSearchResults.onItemLongClickListener = lsSearchResults_itemLongClick
         bEditFilter.setOnClickListener { bEditFilter_click() }
         cFilterOlds.setOnCheckedChangeListener(cFilterOlds_checkedChange)
         cFilterNews.setOnCheckedChangeListener(cFilterNews_checkedChange)
         cFilterSingleBook.setOnCheckedChangeListener(cFilterSingleBook_checkedChange)
+
         run {
             openedBookId = intent.getIntExtra(EXTRA_openedBookId, -1)
             val book = S.activeVersion().getBook(openedBookId)
@@ -351,10 +307,12 @@ class SearchActivity : BaseActivity() {
                 cFilterSingleBook.text = getString(R.string.search_bookname_only, book.shortName)
             }
         }
+
         for (book in searchInVersion.consecutiveBooks) {
             selectedBookIds.put(book.bookId, true)
         }
         configureFilterDisplayOldNewTest()
+
         if (usingRevIndex()) {
             SearchEngine.preloadRevIndex()
         }
@@ -385,6 +343,8 @@ class SearchActivity : BaseActivity() {
         val versionInitials = searchInVersion.initials
         bVersion.text = versionInitials
         searchView.queryHint = getString(R.string.search_in_version_short_name_placeholder, versionInitials)
+
+        @Suppress("NotifyDataSetChanged")
         adapter.notifyDataSetChanged()
     }
 
@@ -539,13 +499,17 @@ class SearchActivity : BaseActivity() {
                     .show()
                 return@openVersionsDialog
             }
+
             searchInVersion = selectedVersion
             searchInVersionId = mv.versionId
             textSizeMult = S.getDb().getPerVersionSettings(searchInVersionId).fontSizeMultiplier
+
             Appearances.applyTextAppearance(tSearchTips, textSizeMult)
             displaySearchInVersion()
             configureFilterDisplayOldNewTest()
             bVersion.text = selectedVersion.initials
+
+            @Suppress("NotifyDataSetChanged")
             adapter.notifyDataSetChanged()
         }
     }
@@ -626,8 +590,12 @@ class SearchActivity : BaseActivity() {
 
             Foreground.run {
                 actionMode?.finish()
-                uncheckAllVerses()
+
+                adapter.uncheckAll()
                 adapter = SearchAdapter(result, tokens)
+
+                tSearchTips.isVisible = result.size() == 0
+                lsSearchResults.isVisible = result.size() > 0
 
                 if (result.size() > 0) {
                     Snackbar.make(lsSearchResults, getString(R.string.size_hasil, result.size()), Snackbar.LENGTH_LONG).show()
@@ -657,17 +625,15 @@ class SearchActivity : BaseActivity() {
                     }
 
                     val jumper = Jumper(query_string)
-                    var noresult: CharSequence? = getText(R.string.search_no_result)
-                    noresult = TextUtils.expandTemplate(noresult, query_string)
+                    val noresult = TextUtils.expandTemplate(getText(R.string.search_no_result), query_string)
                     val fallbackAri = shouldShowFallback(jumper)
                     if (fallbackAri != 0) {
-                        val sb = SpannableStringBuilder()
-                        sb.append(noresult)
-                        sb.append("\n\n")
-                        var fallback: CharSequence? = getText(R.string.search_no_result_fallback)
-                        fallback = TextUtils.expandTemplate(fallback, searchInVersion.reference(fallbackAri))
-                        sb.append(fallback)
-                        tSearchTips.text = sb
+                        tSearchTips.text = buildString {
+                            append(noresult)
+                            append("\n\n")
+                            append(TextUtils.expandTemplate(getText(R.string.search_no_result_fallback), searchInVersion.reference(fallbackAri)))
+                        }
+
                         tSearchTips.setOnClickListener {
                             if (Ari.toVerse(fallbackAri) == 0) {
                                 startActivity(Launcher.openAppAtBibleLocation(fallbackAri))
@@ -681,6 +647,7 @@ class SearchActivity : BaseActivity() {
                         tSearchTips.setOnClickListener(null)
                     }
                 }
+
                 if (BuildConfig.DEBUG) {
                     MaterialDialog.Builder(this@SearchActivity)
                         .content("This msg is shown only on DEBUG build\n\n" +
@@ -692,6 +659,7 @@ class SearchActivity : BaseActivity() {
                         .positiveText(R.string.ok)
                         .show()
                 }
+
                 pd.setOnDismissListener(null)
                 try {
                     pd.dismiss()
@@ -738,19 +706,29 @@ class SearchActivity : BaseActivity() {
         return searchInVersionId == MVersionInternal.getVersionInternalId()
     }
 
-    inner class SearchAdapter(val searchResults: IntArrayList, tokens: List<String>) : EasyAdapter() {
-        val rt: ReadyTokens = ReadyTokens(tokens.toTypedArray())
+    class ResultHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val lReference: TextView = itemView.findViewById(R.id.lReference)
+        val lSnippet: TextView = itemView.findViewById(R.id.lSnippet)
+    }
 
-        override fun getCount(): Int {
+    inner class SearchAdapter(val searchResults: IntArrayList, tokens: List<String>) : RecyclerView.Adapter<ResultHolder>() {
+        init {
+            setHasStableIds(true)
+        }
+
+        val rt = ReadyTokens(tokens.toTypedArray())
+        val checkedPositions = mutableSetOf<Int>()
+
+        override fun getItemCount(): Int {
             return searchResults.size()
         }
 
-        override fun newView(position: Int, parent: ViewGroup): View {
-            return layoutInflater.inflate(R.layout.item_search_result, parent, false)
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResultHolder {
+            return ResultHolder(layoutInflater.inflate(R.layout.item_search_result, parent, false))
         }
 
-        override fun bindView(view: View, position: Int, parent: ViewGroup) {
-            val checked = lsSearchResults.isItemChecked(position)
+        override fun onBindViewHolder(holder: ResultHolder, bindPosition: Int) {
+            val checked = bindPosition in checkedPositions
             val checkedBgColor: Int
             val checkedTextColor: Int
             if (checked) {
@@ -762,31 +740,80 @@ class SearchActivity : BaseActivity() {
                 checkedBgColor = 0
                 checkedTextColor = 0
             }
-            val lReference = view.findViewById<TextView>(R.id.lReference)
-            val lSnippet = view.findViewById<TextView>(R.id.lSnippet)
-            val ari = searchResults[position]
+
+            val ari = searchResults[bindPosition]
             val sb = SpannableStringBuilder(searchInVersion.reference(ari))
-            Appearances.applySearchResultReferenceAppearance(lReference, sb, textSizeMult)
+            Appearances.applySearchResultReferenceAppearance(holder.lReference, sb, textSizeMult)
             if (checked) {
-                lReference.setTextColor(checkedTextColor)
+                holder.lReference.setTextColor(checkedTextColor)
             }
-            Appearances.applyTextAppearance(lSnippet, textSizeMult)
+
+            Appearances.applyTextAppearance(holder.lSnippet, textSizeMult)
             if (checked) {
-                lSnippet.setTextColor(checkedTextColor)
+                holder.lSnippet.setTextColor(checkedTextColor)
             }
+
             val verseText = FormattedVerseText.removeSpecialCodes(searchInVersion.loadVerseText(ari))
             if (verseText != null) {
-                lSnippet.text = SearchEngine.hilite(verseText, rt, if (checked) checkedTextColor else hiliteColor)
+                holder.lSnippet.text = SearchEngine.hilite(verseText, rt, if (checked) checkedTextColor else hiliteColor)
             } else {
-                lSnippet.setText(R.string.generic_verse_not_available_in_this_version)
+                holder.lSnippet.setText(R.string.generic_verse_not_available_in_this_version)
             }
+
             if (checked) {
-                view.setBackgroundColor(checkedBgColor)
+                holder.itemView.setBackgroundColor(checkedBgColor)
             } else {
-                view.setBackgroundColor(0x0)
+                holder.itemView.setBackgroundColor(0x0)
+            }
+
+            holder.itemView.setOnLongClickListener {
+                if (actionMode == null) {
+                    actionMode = startSupportActionMode(createActionModeCallback())
+                }
+
+                val position = holder.adapterPosition
+                if (position in adapter.checkedPositions) {
+                    adapter.checkedPositions -= position
+                } else {
+                    adapter.checkedPositions += position
+                }
+                onCheckedVerseChanged()
+
+                true
+            }
+
+            holder.itemView.setOnClickListener {
+                val position = holder.adapterPosition
+                if (actionMode != null) {
+                    if (position in adapter.checkedPositions) {
+                        adapter.checkedPositions -= position
+                    } else {
+                        adapter.checkedPositions += position
+                    }
+                    onCheckedVerseChanged()
+                } else {
+                    startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(searchResults[position]))
+                    uncheckAll()
+                }
             }
         }
 
+        override fun getItemId(position: Int): Long {
+            return searchResults[position].toLong()
+        }
+
+        fun checkAll() {
+            val size = adapter.itemCount
+            for (i in 0 until size) {
+                checkedPositions += i
+            }
+            onCheckedVerseChanged()
+        }
+
+        fun uncheckAll() {
+            checkedPositions.clear()
+            onCheckedVerseChanged()
+        }
     }
 
     companion object {
