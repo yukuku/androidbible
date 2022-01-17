@@ -30,6 +30,7 @@ import androidx.core.view.isVisible
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import java.util.ArrayList
 import java.util.Locale
@@ -43,14 +44,13 @@ import yuku.alkitab.base.model.MVersionInternal
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
-import yuku.alkitab.base.util.Background
 import yuku.alkitab.base.util.ClipboardUtil
+import yuku.alkitab.base.util.Debouncer
 import yuku.alkitab.base.util.Foreground
 import yuku.alkitab.base.util.FormattedVerseText
 import yuku.alkitab.base.util.Jumper
 import yuku.alkitab.base.util.QueryTokenizer
 import yuku.alkitab.base.util.SearchEngine
-import yuku.alkitab.base.util.SearchEngine.ReadyTokens
 import yuku.alkitab.base.util.TextColorUtil
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Version
@@ -69,6 +69,7 @@ class SearchActivity : BaseActivity() {
     private lateinit var root: View
     private lateinit var bVersion: TextView
     private lateinit var searchView: SearchView
+    private lateinit var progressbar: CircularProgressIndicator
     private lateinit var lsSearchResults: RecyclerView
     private lateinit var tSearchTips: TextView
     private lateinit var panelFilter: View
@@ -82,11 +83,7 @@ class SearchActivity : BaseActivity() {
     private var selectedBookIds = SparseBooleanArray()
     private var openedBookId = 0
     private var filterUserAction = 0 // when it's not user action, set to nonzero
-    private var adapter = SearchAdapter(IntArrayList(), emptyList())
-        set(value) {
-            field = value
-            lsSearchResults.adapter = value
-        }
+    private val adapter = SearchAdapter(IntArrayList(), emptyList())
 
     private var searchInVersion: Version = S.activeVersion()
     private var searchInVersionId: String = S.activeVersionId()
@@ -225,6 +222,7 @@ class SearchActivity : BaseActivity() {
 
         root = findViewById(R.id.root)
         lsSearchResults = findViewById(R.id.lsSearchResults)
+        lsSearchResults.adapter = adapter
         FastScrollerBuilder(lsSearchResults).build()
         tSearchTips = findViewById(R.id.tSearchTips)
         panelFilter = findViewById(R.id.panelFilter)
@@ -240,7 +238,6 @@ class SearchActivity : BaseActivity() {
         bVersion = findViewById(R.id.bVersion)
         bVersion.setOnClickListener(bVersion_click)
         searchView = findViewById<SearchView>(R.id.searchView).apply {
-            isSubmitButtonEnabled = true
             findAutoCompleteTextView()?.threshold = 0
             suggestionsAdapter = SearchHistoryAdapter().also { searchHistoryAdapter = it }
             setOnSuggestionListener(object : SearchView.OnSuggestionListener {
@@ -263,13 +260,13 @@ class SearchActivity : BaseActivity() {
                 }
             })
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query1: String): Boolean {
-                    search(query1)
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    search(query, isOnSubmit = true)
                     return true
                 }
 
                 override fun onQueryTextChange(newText: String): Boolean {
-                    searchHistoryAdapter.setQuery(newText)
+                    search(newText, isOnSubmit = false)
                     return false
                 }
             })
@@ -279,6 +276,8 @@ class SearchActivity : BaseActivity() {
                 searchView.findAutoCompleteTextView()?.dismissDropDown()
             }
         }
+
+        progressbar = findViewById(R.id.progressbar)
 
         run {
             val sb = SpannableStringBuilder(tSearchTips.text)
@@ -386,15 +385,12 @@ class SearchActivity : BaseActivity() {
         val oneOfThemOn = run {
             var c = 0
             var k = 0
-            var i = 0
-            val len = selectedBookIds.size()
-            while (i < len) {
+            for (i in 0 until selectedBookIds.size()) {
                 if (selectedBookIds.valueAt(i)) {
                     k = selectedBookIds.keyAt(i)
                     c++
                     if (c > 1) break
                 }
-                i++
             }
             when (c) {
                 1 -> k
@@ -403,40 +399,33 @@ class SearchActivity : BaseActivity() {
         }
         filterUserAction++
 
-        if (olds != null && news != null) {    // both are either true or false
-            cFilterOlds.visibility = View.VISIBLE
-            cFilterOlds.isChecked = olds
-            cFilterNews.visibility = View.VISIBLE
-            cFilterNews.isChecked = news
-            cFilterSingleBook.visibility = View.VISIBLE
-            cFilterSingleBook.isChecked = false
-            tFilterAdvanced.visibility = View.GONE
-        } else {
-            if (oneOfThemOn != -1 && oneOfThemOn == openedBookId) {
-                cFilterOlds.visibility = View.VISIBLE
+        when {
+            olds != null && news != null -> {    // both are either true or false
+                cFilterOlds.isChecked = olds
+                cFilterNews.isChecked = news
+                cFilterSingleBook.visibility = View.VISIBLE
+                cFilterSingleBook.isChecked = false
+                tFilterAdvanced.visibility = View.GONE
+            }
+            oneOfThemOn != -1 && oneOfThemOn == openedBookId -> {
                 cFilterOlds.isChecked = false
-                cFilterNews.visibility = View.VISIBLE
                 cFilterNews.isChecked = false
                 cFilterSingleBook.visibility = View.VISIBLE
                 cFilterSingleBook.isChecked = true
                 tFilterAdvanced.visibility = View.GONE
-            } else {
-                cFilterOlds.visibility = View.VISIBLE
+            }
+            else -> {
                 cFilterOlds.isChecked = false
-                cFilterNews.visibility = View.VISIBLE
                 cFilterNews.isChecked = false
                 cFilterSingleBook.visibility = View.GONE
                 tFilterAdvanced.visibility = View.VISIBLE
                 var cnt = 0
                 var bookId = 0
-                var i = 0
-                val len = selectedBookIds.size()
-                while (i < len) {
+                for (i in 0 until selectedBookIds.size()) {
                     if (selectedBookIds.valueAt(i)) {
                         cnt++
                         bookId = selectedBookIds.keyAt(i)
                     }
-                    i++
                 }
                 if (cnt != 1) {
                     tFilterAdvanced.text = getString(R.string.search_filter_multiple_books_selected, cnt.toString())
@@ -527,13 +516,6 @@ class SearchActivity : BaseActivity() {
         }
     }
 
-    private fun getQuery(): SearchEngine.Query {
-        val res = SearchEngine.Query()
-        res.query_string = searchView.query.toString()
-        res.bookIds = selectedBookIds
-        return res
-    }
-
     private fun bEditFilter_click() {
         @Suppress("deprecation")
         startActivityForResult(SearchBookFilterActivity.createIntent(selectedBookIds, searchInVersion.consecutiveBooks), REQCODE_bookFilter)
@@ -552,119 +534,136 @@ class SearchActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private fun search(query_string: String) {
-        if (query_string.isBlank()) return
+    data class SearchRequest(val query: SearchEngine.Query, val isOnSubmit: Boolean)
+    data class SearchResult(val query: SearchEngine.Query, val isOnSubmit: Boolean, val result: IntArrayList)
 
-        // check if there is anything chosen
-        val firstSelected = selectedBookIds.indexOfValue(true)
-        if (firstSelected < 0) {
-            MaterialDialog.Builder(this)
-                .content(R.string.pilih_setidaknya_satu_kitab)
-                .positiveText(R.string.ok)
-                .show()
-            return
-        }
+    private val searcher = object : Debouncer<SearchRequest, SearchResult>(400) {
+        override fun process(request: SearchRequest): SearchResult {
+            val (query, isOnSubmit) = request
 
-        val tokens = QueryTokenizer.tokenize(query_string).toList()
-        val pd = MaterialDialog.Builder(this)
-            .content(getString(R.string.search_searching_tokens, tokens))
-            .cancelable(false)
-            .progress(true, 0)
-            .show()
+            if (!isOnSubmit) {
+                Foreground.run {
+                    searchHistoryAdapter.setQuery(query.query_string)
+                }
+            }
 
-        Background.run {
-            val debugstats_revIndexUsed: Boolean
-            searchHistoryAdapter.setData(addSearchHistoryEntry(query_string))
+            if (isOnSubmit) {
+                searchHistoryAdapter.setData(addSearchHistoryEntry(query.query_string))
+            }
+
             val totalMs = System.currentTimeMillis()
             val cpuMs = SystemClock.currentThreadTimeMillis()
-            val result: IntArrayList = synchronized(this@SearchActivity) {
-                if (usingRevIndex()) {
-                    debugstats_revIndexUsed = true
-                    SearchEngine.searchByRevIndex(searchInVersion, getQuery())
-                } else {
-                    debugstats_revIndexUsed = false
-                    SearchEngine.searchByGrep(searchInVersion, getQuery())
-                }
+            val debugstats_revIndexUsed: Boolean
+            val result = if (usingRevIndex()) {
+                debugstats_revIndexUsed = true
+                SearchEngine.searchByRevIndex(searchInVersion, query)
+            } else {
+                debugstats_revIndexUsed = false
+                SearchEngine.searchByGrep(searchInVersion, query)
             }
             val debugstats_totalTimeMs = System.currentTimeMillis() - totalMs
             val debugstats_cpuTimeMs = SystemClock.currentThreadTimeMillis() - cpuMs
 
-            Foreground.run {
-                actionMode?.finish()
+            AppLog.d(
+                TAG,
+                "Search results: ${result.size()}\n" +
+                    "Method: ${if (debugstats_revIndexUsed) "revindex" else "grep"}\n" +
+                    "Total time: $debugstats_totalTimeMs ms\n" +
+                    "CPU (thread) time: $debugstats_cpuTimeMs ms"
+            )
 
-                adapter.uncheckAll()
-                adapter = SearchAdapter(result, tokens)
+            return SearchResult(query, isOnSubmit, result)
+        }
 
-                tSearchTips.isVisible = result.size() == 0
-                lsSearchResults.isVisible = result.size() > 0
+        override fun onResult(searchResult: SearchResult) {
+            val (query, isOnSubmit, result) = searchResult
+            progressbar.isVisible = false
+            actionMode?.finish()
 
-                if (result.size() > 0) {
-                    Snackbar.make(lsSearchResults, getString(R.string.size_hasil, result.size()), Snackbar.LENGTH_LONG).show()
+            val tokens = QueryTokenizer.tokenize(query.query_string).toList()
+            adapter.uncheckAll()
+            adapter.setData(result, tokens)
 
+            tSearchTips.isVisible = result.size() == 0
+            lsSearchResults.isVisible = result.size() > 0
+
+            if (result.size() > 0) {
+                Snackbar.make(lsSearchResults, getString(R.string.size_hasil, result.size()), Snackbar.LENGTH_LONG).show()
+
+                if (isOnSubmit) {
                     //# close soft keyboard
                     val inputManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                     inputManager.hideSoftInputFromWindow(searchView.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
                     searchView.clearFocus()
                     lsSearchResults.requestFocus()
-                } else {
-                    /**
-                     * @return ari not 0 if fallback is to be shown
-                     */
-                    fun shouldShowFallback(jumper: Jumper): Int {
-                        if (!jumper.parseSucceeded) return 0
-                        val chapter_1 = jumper.chapter
-                        if (chapter_1 == 0) return 0
-                        val version = searchInVersion
-                        val bookId = jumper.getBookId(version.consecutiveBooks)
-                        if (bookId == -1) return 0
-                        val book = version.getBook(bookId) ?: return 0
-                        if (chapter_1 > book.chapter_count) return 0
-                        val verse_1 = jumper.verse
-                        return if (verse_1 != 0 && verse_1 > book.verse_counts[chapter_1 - 1]) {
-                            0
-                        } else {
-                            Ari.encode(bookId, chapter_1, verse_1)
-                        }
-                    }
-
-                    val noresult = TextUtils.expandTemplate(getText(R.string.search_no_result), query_string)
-                    val fallbackAri = shouldShowFallback(Jumper(query_string))
-                    if (fallbackAri != 0) {
-                        tSearchTips.text = buildString {
-                            append(noresult)
-                            append("\n\n")
-                            append(TextUtils.expandTemplate(getText(R.string.search_no_result_fallback), searchInVersion.reference(fallbackAri)))
-                        }
-
-                        tSearchTips.setOnClickListener {
-                            if (Ari.toVerse(fallbackAri) == 0) {
-                                startActivity(Launcher.openAppAtBibleLocation(fallbackAri))
-                            } else {
-                                startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(fallbackAri))
-                            }
-                        }
+                }
+            } else {
+                /**
+                 * @return ari not 0 if fallback is to be shown
+                 */
+                fun shouldShowFallback(jumper: Jumper): Int {
+                    if (!jumper.parseSucceeded) return 0
+                    val chapter_1 = jumper.chapter
+                    if (chapter_1 == 0) return 0
+                    val version = searchInVersion
+                    val bookId = jumper.getBookId(version.consecutiveBooks)
+                    if (bookId == -1) return 0
+                    val book = version.getBook(bookId) ?: return 0
+                    if (chapter_1 > book.chapter_count) return 0
+                    val verse_1 = jumper.verse
+                    return if (verse_1 != 0 && verse_1 > book.verse_counts[chapter_1 - 1]) {
+                        0
                     } else {
-                        tSearchTips.text = noresult
-                        tSearchTips.isClickable = false
-                        tSearchTips.setOnClickListener(null)
+                        Ari.encode(bookId, chapter_1, verse_1)
                     }
                 }
 
-                AppLog.d(
-                    TAG,
-                    "Search results: ${result.size()}\n" +
-                        "Method: ${if (debugstats_revIndexUsed) "revindex" else "grep"}\n" +
-                        "Total time: $debugstats_totalTimeMs ms\n" +
-                        "CPU (thread) time: $debugstats_cpuTimeMs ms"
-                )
+                val noresult = TextUtils.expandTemplate(getText(R.string.search_no_result), query.query_string)
+                val fallbackAri = shouldShowFallback(Jumper(query.query_string))
+                if (fallbackAri != 0) {
+                    tSearchTips.text = buildString {
+                        append(noresult)
+                        append("\n\n")
+                        append(TextUtils.expandTemplate(getText(R.string.search_no_result_fallback), searchInVersion.reference(fallbackAri)))
+                    }
 
-                pd.setOnDismissListener(null)
-                try {
-                    pd.dismiss()
-                } catch (ignored: Exception) {
+                    tSearchTips.setOnClickListener {
+                        if (Ari.toVerse(fallbackAri) == 0) {
+                            startActivity(Launcher.openAppAtBibleLocation(fallbackAri))
+                        } else {
+                            startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(fallbackAri))
+                        }
+                    }
+                } else {
+                    tSearchTips.text = noresult
+                    tSearchTips.isClickable = false
+                    tSearchTips.setOnClickListener(null)
                 }
             }
         }
+    }
+
+    private fun search(query_string: String, isOnSubmit: Boolean) {
+        if (query_string.isBlank()) return
+
+        // check if there is anything chosen
+        val firstSelected = selectedBookIds.indexOfValue(true)
+        if (firstSelected < 0) {
+            if (isOnSubmit) {
+                MaterialDialog.Builder(this)
+                    .content(R.string.pilih_setidaknya_satu_kitab)
+                    .positiveText(R.string.ok)
+                    .show()
+            }
+            return
+        }
+
+        val query = SearchEngine.Query()
+        query.query_string = query_string
+        query.bookIds = selectedBookIds
+
+        progressbar.isVisible = true
+        searcher.submit(SearchRequest(query, isOnSubmit))
     }
 
     fun loadSearchHistory(): SearchHistory {
@@ -714,7 +713,7 @@ class SearchActivity : BaseActivity() {
             setHasStableIds(true)
         }
 
-        val rt = ReadyTokens(tokens.toTypedArray())
+        var rt = SearchEngine.ReadyTokens(tokens.toTypedArray())
         val checkedPositions = mutableSetOf<Int>()
 
         override fun getItemCount(): Int {
@@ -811,6 +810,16 @@ class SearchActivity : BaseActivity() {
         fun uncheckAll() {
             checkedPositions.clear()
             onCheckedVerseChanged()
+        }
+
+        fun setData(searchResults: IntArrayList, tokens: List<String>) {
+            this.searchResults.clear()
+            for (i in 0 until searchResults.size()) {
+                this.searchResults.add(searchResults[i])
+            }
+
+            this.rt = SearchEngine.ReadyTokens(tokens.toTypedArray())
+            uncheckAll()
         }
     }
 

@@ -35,11 +35,30 @@
 
 	</androidx.appcompat.widget.Toolbar>
 
-	<androidx.appcompat.widget.SearchView
-		android:id="@+id/searchView"
+	<FrameLayout
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		app:iconifiedByDefault="false" />
+		android:layout_height="wrap_content">
+
+		<androidx.appcompat.widget.SearchView
+			android:id="@+id/searchView"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginEnd="40dp"
+			app:iconifiedByDefault="false" />
+
+		<com.google.android.material.progressindicator.CircularProgressIndicator
+			android:id="@+id/progressbar"
+			style="@style/Widget.MaterialComponents.CircularProgressIndicator.Small"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="end|center_vertical"
+			android:indeterminate="true"
+			android:padding="6dp"
+			android:visibility="gone"
+			app:trackColor="@color/accent"
+			tools:visibility="visible" />
+
+	</FrameLayout>
 
 	<include
 		android:id="@+id/panelFilter"
@@ -57,6 +76,7 @@
 			android:id="@+id/lsSearchResults"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
+			android:visibility="gone"
 			app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 		<TextView
@@ -68,7 +88,7 @@
 			android:paddingEnd="16dp"
 			android:text="@string/search_syntax_tips"
 			android:textSize="16sp"
-			android:visibility="gone" />
+			android:visibility="visible" />
 
 	</LinearLayout>
 
