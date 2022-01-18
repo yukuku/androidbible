@@ -20,6 +20,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.AutoCompleteTextView
 import android.widget.CheckBox
 import android.widget.CompoundButton
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.annotation.Keep
 import androidx.appcompat.view.ActionMode
@@ -70,6 +71,7 @@ class SearchActivity : BaseActivity() {
     private lateinit var bVersion: TextView
     private lateinit var searchView: SearchView
     private lateinit var progressbar: CircularProgressIndicator
+    private lateinit var bSearch: ImageButton
     private lateinit var lsSearchResults: RecyclerView
     private lateinit var tSearchTips: TextView
     private lateinit var panelFilter: View
@@ -261,13 +263,13 @@ class SearchActivity : BaseActivity() {
             })
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String): Boolean {
-                    search(query, isOnSubmit = true)
+                    search(query)
                     return true
                 }
 
                 override fun onQueryTextChange(newText: String): Boolean {
-                    search(newText, isOnSubmit = false)
-                    return false
+                    suggester.submit(newText)
+                    return true
                 }
             })
 
@@ -278,6 +280,10 @@ class SearchActivity : BaseActivity() {
         }
 
         progressbar = findViewById(R.id.progressbar)
+        bSearch = findViewById(R.id.bSearch)
+        bSearch.setOnClickListener {
+            search(searchView.query.toString())
+        }
 
         run {
             val sb = SpannableStringBuilder(tSearchTips.text)
@@ -444,41 +450,44 @@ class SearchActivity : BaseActivity() {
     private val cFilterOlds_checkedChange = CompoundButton.OnCheckedChangeListener { _, isChecked ->
         if (filterUserAction != 0) return@OnCheckedChangeListener
         filterUserAction++
-        run {
-            if (isChecked) {
-                cFilterSingleBook.visibility = View.VISIBLE
-                cFilterSingleBook.isChecked = false
-                tFilterAdvanced.visibility = View.GONE
-            }
-            setSelectedBookIdsBasedOnFilter()
+
+        if (isChecked) {
+            cFilterSingleBook.visibility = View.VISIBLE
+            cFilterSingleBook.isChecked = false
+            tFilterAdvanced.visibility = View.GONE
         }
+        setSelectedBookIdsBasedOnFilter()
+        search(searchView.query.toString())
+
         filterUserAction--
     }
 
     private val cFilterNews_checkedChange = CompoundButton.OnCheckedChangeListener { _, isChecked ->
         if (filterUserAction != 0) return@OnCheckedChangeListener
         filterUserAction++
-        run {
-            if (isChecked) {
-                cFilterSingleBook.visibility = View.VISIBLE
-                cFilterSingleBook.isChecked = false
-                tFilterAdvanced.visibility = View.GONE
-            }
-            setSelectedBookIdsBasedOnFilter()
+
+        if (isChecked) {
+            cFilterSingleBook.visibility = View.VISIBLE
+            cFilterSingleBook.isChecked = false
+            tFilterAdvanced.visibility = View.GONE
         }
+        setSelectedBookIdsBasedOnFilter()
+        search(searchView.query.toString())
+
         filterUserAction--
     }
 
     private val cFilterSingleBook_checkedChange = CompoundButton.OnCheckedChangeListener { _, isChecked ->
         if (filterUserAction != 0) return@OnCheckedChangeListener
         filterUserAction++
-        run {
-            if (isChecked) {
-                cFilterOlds.isChecked = false
-                cFilterNews.isChecked = false
-            }
-            setSelectedBookIdsBasedOnFilter()
+
+        if (isChecked) {
+            cFilterOlds.isChecked = false
+            cFilterNews.isChecked = false
         }
+        setSelectedBookIdsBasedOnFilter()
+        search(searchView.query.toString())
+
         filterUserAction--
     }
 
@@ -527,6 +536,7 @@ class SearchActivity : BaseActivity() {
             if (result != null) {
                 selectedBookIds = result.selectedBookIds
                 configureFilterDisplayOldNewTest()
+                search(searchView.query.toString())
             }
             return
         }
@@ -534,23 +544,27 @@ class SearchActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    data class SearchRequest(val query: SearchEngine.Query, val isOnSubmit: Boolean)
-    data class SearchResult(val query: SearchEngine.Query, val isOnSubmit: Boolean, val result: IntArrayList)
+    @JvmInline
+    value class SearchRequest(val query: SearchEngine.Query)
 
-    private val searcher = object : Debouncer<SearchRequest, SearchResult>(400) {
+    data class SearchResult(val query: SearchEngine.Query, val result: IntArrayList)
+
+    /**
+     * So we can delay a bit before updating suggestions.
+     */
+    private val suggester = object : Debouncer<String, String>(200) {
+        override fun process(payload: String): String {
+            return payload
+        }
+
+        override fun onResult(result: String) {
+            searchHistoryAdapter.setQuery(result)
+        }
+    }
+
+    private val searcher = object : Debouncer<SearchRequest, SearchResult>(0) {
         override fun process(request: SearchRequest): SearchResult {
-            val (query, isOnSubmit) = request
-
-            if (!isOnSubmit) {
-                Foreground.run {
-                    searchHistoryAdapter.setQuery(query.query_string)
-                }
-            }
-
-            if (isOnSubmit) {
-                searchHistoryAdapter.setData(addSearchHistoryEntry(query.query_string))
-            }
-
+            val query = request.query
             val totalMs = System.currentTimeMillis()
             val cpuMs = SystemClock.currentThreadTimeMillis()
             val debugstats_revIndexUsed: Boolean
@@ -572,12 +586,13 @@ class SearchActivity : BaseActivity() {
                     "CPU (thread) time: $debugstats_cpuTimeMs ms"
             )
 
-            return SearchResult(query, isOnSubmit, result)
+            return SearchResult(query, result)
         }
 
         override fun onResult(searchResult: SearchResult) {
-            val (query, isOnSubmit, result) = searchResult
+            val (query, result) = searchResult
             progressbar.isVisible = false
+            bSearch.isVisible = true
             actionMode?.finish()
 
             val tokens = QueryTokenizer.tokenize(query.query_string).toList()
@@ -590,13 +605,11 @@ class SearchActivity : BaseActivity() {
             if (result.size() > 0) {
                 Snackbar.make(lsSearchResults, getString(R.string.size_hasil, result.size()), Snackbar.LENGTH_LONG).show()
 
-                if (isOnSubmit) {
-                    //# close soft keyboard
-                    val inputManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                    inputManager.hideSoftInputFromWindow(searchView.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
-                    searchView.clearFocus()
-                    lsSearchResults.requestFocus()
-                }
+                //# close soft keyboard
+                val inputManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                inputManager.hideSoftInputFromWindow(searchView.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+                searchView.clearFocus()
+                lsSearchResults.requestFocus()
             } else {
                 /**
                  * @return ari not 0 if fallback is to be shown
@@ -618,11 +631,11 @@ class SearchActivity : BaseActivity() {
                     }
                 }
 
-                val noresult = TextUtils.expandTemplate(getText(R.string.search_no_result), query.query_string)
+                val zeroResultMessage = TextUtils.expandTemplate(getText(R.string.search_no_result), query.query_string)
                 val fallbackAri = shouldShowFallback(Jumper(query.query_string))
                 if (fallbackAri != 0) {
                     tSearchTips.text = buildString {
-                        append(noresult)
+                        append(zeroResultMessage)
                         append("\n\n")
                         append(TextUtils.expandTemplate(getText(R.string.search_no_result_fallback), searchInVersion.reference(fallbackAri)))
                     }
@@ -635,7 +648,12 @@ class SearchActivity : BaseActivity() {
                         }
                     }
                 } else {
-                    tSearchTips.text = noresult
+                    // If there is no books chosen, display a different message
+                    if (selectedBookIds.indexOfValue(true) < 0) {
+                        tSearchTips.setText(R.string.pilih_setidaknya_satu_kitab)
+                    } else {
+                        tSearchTips.text = zeroResultMessage
+                    }
                     tSearchTips.isClickable = false
                     tSearchTips.setOnClickListener(null)
                 }
@@ -643,27 +661,20 @@ class SearchActivity : BaseActivity() {
         }
     }
 
-    private fun search(query_string: String, isOnSubmit: Boolean) {
+    private fun search(query_string: String) {
         if (query_string.isBlank()) return
-
-        // check if there is anything chosen
-        val firstSelected = selectedBookIds.indexOfValue(true)
-        if (firstSelected < 0) {
-            if (isOnSubmit) {
-                MaterialDialog.Builder(this)
-                    .content(R.string.pilih_setidaknya_satu_kitab)
-                    .positiveText(R.string.ok)
-                    .show()
-            }
-            return
-        }
 
         val query = SearchEngine.Query()
         query.query_string = query_string
         query.bookIds = selectedBookIds
 
         progressbar.isVisible = true
-        searcher.submit(SearchRequest(query, isOnSubmit))
+        bSearch.isVisible = false
+
+        searchHistoryAdapter.setData(addSearchHistoryEntry(query.query_string))
+        searchView.findAutoCompleteTextView()?.dismissDropDown()
+
+        searcher.submit(SearchRequest(query))
     }
 
     fun loadSearchHistory(): SearchHistory {

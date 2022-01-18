@@ -44,19 +44,35 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginEnd="40dp"
-			app:iconifiedByDefault="false" />
+			app:iconifiedByDefault="false"
+			app:searchHintIcon="@null"
+			app:searchIcon="@null" />
 
-		<com.google.android.material.progressindicator.CircularProgressIndicator
-			android:id="@+id/progressbar"
-			style="@style/Widget.MaterialComponents.CircularProgressIndicator.Small"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="end|center_vertical"
-			android:indeterminate="true"
-			android:padding="6dp"
-			android:visibility="gone"
-			app:trackColor="@color/accent"
-			tools:visibility="visible" />
+		<FrameLayout
+			android:layout_width="48dp"
+			android:layout_height="48dp"
+			android:layout_gravity="end|center_vertical">
+
+			<com.google.android.material.progressindicator.CircularProgressIndicator
+				android:id="@+id/progressbar"
+				style="@style/Widget.MaterialComponents.CircularProgressIndicator.Small"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:indeterminate="true"
+				android:visibility="gone"
+				app:trackColor="@color/accent"
+				tools:visibility="visible" />
+
+			<ImageButton
+				android:id="@+id/bSearch"
+				android:layout_width="48dp"
+				android:layout_height="48dp"
+				android:background="?selectableItemBackgroundBorderless"
+				android:contentDescription="@string/search"
+				android:src="@drawable/ic_menu_search" />
+
+		</FrameLayout>
 
 	</FrameLayout>
 
