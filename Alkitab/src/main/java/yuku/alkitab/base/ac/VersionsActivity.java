@@ -961,7 +961,7 @@ public class VersionsActivity extends BaseActivity {
 							Toast.makeText(getActivity(), "Uri: " + uri, Toast.LENGTH_LONG).show();
 						}
 
-						final Intent intent = ShareCompat.IntentBuilder.from(getActivity())
+						final Intent intent = new ShareCompat.IntentBuilder(getActivity())
 							.setType("application/octet-stream")
 							.addStream(uri)
 							.getIntent();

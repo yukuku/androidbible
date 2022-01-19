@@ -144,7 +144,7 @@ class DataTransferActivity : BaseActivity() {
 
                 val uri = FileProvider.getUriForFile(this, "$packageName.file_provider", file)
 
-                ShareCompat.IntentBuilder.from(this)
+                ShareCompat.IntentBuilder(this)
                     .setType("application/octet-stream")
                     .addStream(uri)
                     .startChooser()

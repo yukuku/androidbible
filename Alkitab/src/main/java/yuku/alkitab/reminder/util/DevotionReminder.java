@@ -28,7 +28,7 @@ public class DevotionReminder {
 	private static void setAlarm(final String reminder_time) {
 		final AlarmManager am = (AlarmManager) App.context.getSystemService(Context.ALARM_SERVICE);
 		final Intent intent = new Intent(App.context, DevotionReminderReceiver.class);
-		final PendingIntent pi = PendingIntent.getBroadcast(App.context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		final PendingIntent pi = PendingIntent.getBroadcast(App.context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
 		// always cancel current (if any)
 		am.cancel(pi);

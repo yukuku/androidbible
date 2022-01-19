@@ -86,7 +86,7 @@ class BackForwardListController<BackButton: View, ForwardButton: View>(
                 holder.itemView.setOnClickListener {
                     dismissDialog()
 
-                    val position = holder.adapterPosition
+                    val position = holder.bindingAdapterPosition
                     if (position != itemCount - 1) {
                         val displayEntry = displayEntries[position]
                         onButtonPreMove(this@BackForwardListController)

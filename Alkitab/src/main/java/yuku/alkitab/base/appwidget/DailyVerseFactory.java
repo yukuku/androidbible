@@ -24,8 +24,8 @@ import yuku.alkitabintegration.display.Launcher;
 public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory {
 	static final String TAG = DailyVerseFactory.class.getSimpleName();
 
-	private int appWidgetId;
-	private int direction;
+	private final int appWidgetId;
+	private final int direction;
 	private DailyVerseData.SavedState savedState;
 	private Version version;
 	@Nullable private int[] aris;
@@ -138,7 +138,7 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 			rv.setTextViewText(R.id.tReference, version.referenceWithVerseCount(aris[0], aris.length));
 
 			final Intent viewVerseIntent = Launcher.openAppAtBibleLocation(aris[0]);
-			rv.setOnClickPendingIntent(R.id.tReference, PendingIntent.getActivity(App.context, appWidgetId + 10000, viewVerseIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+			rv.setOnClickPendingIntent(R.id.tReference, PendingIntent.getActivity(App.context, appWidgetId + 10000, viewVerseIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE));
 		} else {
 			rv.setTextViewText(R.id.tReference, Localized.string(R.string.generic_verse_not_available_in_this_version));
 		}

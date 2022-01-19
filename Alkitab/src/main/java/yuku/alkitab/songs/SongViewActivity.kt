@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -494,9 +493,9 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
             R.id.menuShare -> {
                 currentSong?.let { currentSong ->
-                    val intent = ShareCompat.IntentBuilder.from(this@SongViewActivity)
+                    val intent = ShareCompat.IntentBuilder(this@SongViewActivity)
                         .setType("text/plain")
-                        .setSubject(SongBookUtil.escapeSongBookName(currentBookName).toString() + ' '.toString() + currentSong.code + ' '.toString() + currentSong.title)
+                        .setSubject("${SongBookUtil.escapeSongBookName(currentBookName)} ${currentSong.code} ${currentSong.title}")
                         .setText(convertSongToText(currentSong).toString())
                         .intent
                     startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.sn_share_title)), REQCODE_share)

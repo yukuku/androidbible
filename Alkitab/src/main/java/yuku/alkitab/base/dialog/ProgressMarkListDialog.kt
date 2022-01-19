@@ -93,7 +93,7 @@ class ProgressMarkListDialog : DialogFragment() {
             }
 
             holder.itemView.setOnClickListener {
-                val adapterPosition = holder.adapterPosition
+                val adapterPosition = holder.bindingAdapterPosition
                 if (adapterPosition == -1) return@setOnClickListener
 
                 val progressMark = progressMarks[adapterPosition]
@@ -102,7 +102,7 @@ class ProgressMarkListDialog : DialogFragment() {
             }
 
             holder.itemView.setOnLongClickListener {
-                val adapterPosition = holder.adapterPosition
+                val adapterPosition = holder.bindingAdapterPosition
                 if (adapterPosition == -1) return@setOnLongClickListener true
 
                 val progressMark = progressMarks[adapterPosition]

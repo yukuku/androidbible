@@ -731,7 +731,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     val textToShare = t[0]
                     val textToSubmit = t[1]
 
-                    val intent = ShareCompat.IntentBuilder.from(this@IsiActivity)
+                    ShareCompat.IntentBuilder(this@IsiActivity)
                         .setType("text/plain")
                         .setSubject(reference.toString())
                         .intent
@@ -1445,7 +1445,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     private fun enableNfcForegroundDispatchIfAvailable() {
         nfcAdapter?.let { nfcAdapter ->
-            val pendingIntent = PendingIntent.getActivity(this, 0, Intent(this, IsiActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
+            val pendingIntent = PendingIntent.getActivity(this, 0, Intent(this, IsiActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), PendingIntent.FLAG_IMMUTABLE)
             val ndef = IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED)
             ndef.addDataType("application/vnd.yuku.alkitab.nfc.beam")
             nfcAdapter.enableForegroundDispatch(this, pendingIntent, arrayOf(ndef), null)
@@ -1949,7 +1949,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             holder.itemView.setOnClickListener {
                 dismissDialog()
 
-                jumpToAri(history.getEntry(holder.adapterPosition).ari)
+                jumpToAri(history.getEntry(holder.bindingAdapterPosition).ari)
             }
         }
 
@@ -2617,7 +2617,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 holder.itemView.setOnClickListener {
                     dismissDialog()
 
-                    val which = holder.adapterPosition
+                    val which = holder.bindingAdapterPosition
                     val marker = markers[which]
                     if (kind == Marker.Kind.bookmark) {
                         openBookmarkDialog(marker._id)

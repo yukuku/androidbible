@@ -380,7 +380,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 		} else if (itemId == R.id.menuShare) {
 			final String shareUrl = currentKind.getShareUrl(yyyymmdd.get(), currentDate);
 
-			final Intent intent = ShareCompat.IntentBuilder.from(DevotionActivity.this)
+			final Intent intent = new ShareCompat.IntentBuilder(DevotionActivity.this)
 				.setType("text/plain")
 				.setSubject(currentKind.title)
 				.setText(currentKind.title + '\n' + getCurrentDateDisplay() + (shareUrl == null ? "" : ('\n' + shareUrl)) + "\n\n" + lContent.getText())
