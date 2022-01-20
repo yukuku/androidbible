@@ -498,4 +498,11 @@
 		</receiver>
 	</application>
 
+	<queries>
+		<package android:name="org.sabda.kamus" />
+		<package android:name="org.sabda.pedia" />
+		<package android:name="org.sabda.tafsiran" />
+		<package android:name="yuku.esvsbasal" />
+	</queries>
+
 </manifest>
