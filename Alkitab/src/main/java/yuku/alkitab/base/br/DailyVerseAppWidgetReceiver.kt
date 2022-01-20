@@ -115,6 +115,7 @@ class DailyVerseAppWidgetReceiver : AppWidgetProvider() {
     }
 
     companion object {
+        @JvmStatic
         fun buildUpdate(context: Context, appWidgetId: Int) {
             // get saved state
             val savedState = DailyVerseData.loadSavedState(appWidgetId)
@@ -150,6 +151,7 @@ class DailyVerseAppWidgetReceiver : AppWidgetProvider() {
             mgr.notifyAppWidgetViewDataChanged(appWidgetId, R.id.lsItems)
         }
 
+        @JvmStatic
         fun setAlarm(context: Context, ids: IntArray) {
             val intent = Intent(context, DailyVerseAppWidgetReceiver::class.java)
             intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE

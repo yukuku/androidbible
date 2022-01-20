@@ -191,7 +191,7 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 
 		ComponentName provider = new ComponentName(context, DailyVerseAppWidgetReceiver.class);
 		int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(provider);
-		yuku.alkitab.base.br.DailyVerseAppWidgetReceiver.setAlarm(DailyVerseAppWidgetConfigurationActivity.this, ids);
+		DailyVerseAppWidgetReceiver.setAlarm(DailyVerseAppWidgetConfigurationActivity.this, ids);
 
 		Intent resultValue = new Intent();
 		resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
