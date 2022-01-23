@@ -35,6 +35,9 @@ enum class Prefkey {
     /** Night mode activated (boolean)  */
     is_night_mode,
 
+    /** Night mode follows system theme (boolean)  */
+    follow_system_theme,
+
     /** marker (bookmark) list selected sorting option  */
     marker_list_sort_column, marker_list_sort_ascending,
 

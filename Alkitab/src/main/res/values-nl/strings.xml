@@ -373,6 +373,7 @@
     <string name="version_download_network_error">Netwerkfout tijdens het downloaden.</string>
     <string name="version_download_server_error">Serverfout tijdens het downloaden.</string>
     <string name="menuNightMode">Nachtmodus</string>
+    <string name="menuFollowSystemTheme">Volg het systeemthema</string>
     <string name="highlight_custom_color">Andere kleuren</string>
     <string name="menu_compare">Vergelijken</string>
     <string name="song_player_error_description">Er is een fout opgetreden bij het afspelen van dit lied: %1$d, %2$d.</string>

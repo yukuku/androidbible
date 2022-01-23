@@ -371,6 +371,7 @@
     <string name="version_download_network_error">Мрежова грешка при изтегляне ^1.</string>
     <string name="version_download_server_error">Грешка в сървъра при изтегляне ^1.</string>
     <string name="menuNightMode">Нощен режим</string>
+    <string name="menuFollowSystemTheme">Следвайте темата на системата</string>
     <string name="highlight_custom_color">Други цветове</string>
     <string name="menu_compare">Сравни</string>
     <string name="song_player_error_description">Възникна грешка при възпроизвеждане на тази песен: %1$d, %2$d.</string>

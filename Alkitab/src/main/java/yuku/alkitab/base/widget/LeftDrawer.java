@@ -6,6 +6,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
@@ -237,6 +238,8 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 			void cNightMode_checkedChange(boolean isChecked);
 
+			void cFollowSystemTheme_checkedChange(boolean isChecked, final SwitchCompat cNightMode);
+
 			void cSplitVersion_checkedChange(final SwitchCompat cSplitVersion, boolean isChecked);
 
 			void bProgressMarkList_click();
@@ -258,6 +261,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 		View bDisplay;
 		SwitchCompat cFullScreen;
 		SwitchCompat cNightMode;
+		SwitchCompat cFollowSystemTheme;
 		SwitchCompat cSplitVersion;
 
 		View bProgressMarkList;
@@ -304,6 +308,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 			bDisplay = findViewById(R.id.bDisplay);
 			cFullScreen = findViewById(R.id.cFullScreen);
 			cNightMode = findViewById(R.id.cNightMode);
+			cFollowSystemTheme = findViewById(R.id.cFollowSystemTheme);
 			cSplitVersion = findViewById(R.id.cSplitVersion);
 
 			bProgressMarkList = findViewById(R.id.bProgressMarkList);
@@ -317,7 +322,15 @@ public abstract class LeftDrawer extends NestedScrollView {
 			bCurrentReadingClose = findViewById(R.id.bCurrentReadingClose);
 			bCurrentReadingReference = findViewById(R.id.bCurrentReadingReference);
 
-			cNightMode.setChecked(!isInEditMode() && Preferences.getBoolean(Prefkey.is_night_mode, false));
+			final boolean followSystemTheme = Preferences.getBoolean(Prefkey.follow_system_theme, true);
+			if (followSystemTheme) {
+				final int systemTheme = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+				cNightMode.setChecked(!isInEditMode() && systemTheme == Configuration.UI_MODE_NIGHT_YES);
+			} else {
+				cNightMode.setChecked(!isInEditMode() && Preferences.getBoolean(Prefkey.is_night_mode, false));
+			}
+			cNightMode.setEnabled(!followSystemTheme);
+			cFollowSystemTheme.setChecked(followSystemTheme);
 
 			bProgressMarkList.setOnClickListener(v -> listener.bProgressMarkList_click());
 
@@ -354,6 +367,8 @@ public abstract class LeftDrawer extends NestedScrollView {
 			cFullScreen.setOnCheckedChangeListener(cFullScreen_checkedChange);
 
 			cNightMode.setOnCheckedChangeListener(cNightMode_checkedChange);
+
+			cFollowSystemTheme.setOnCheckedChangeListener(cFollowSystemTheme_checkedChange);
 
 			cSplitVersion.setOnCheckedChangeListener(cSplitVersion_checkedChange);
 
@@ -411,6 +426,13 @@ public abstract class LeftDrawer extends NestedScrollView {
 			@Override
 			public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
 				listener.cNightMode_checkedChange(isChecked);
+			}
+		};
+
+		CompoundButton.OnCheckedChangeListener cFollowSystemTheme_checkedChange = new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+				listener.cFollowSystemTheme_checkedChange(isChecked, cNightMode);
 			}
 		};
 

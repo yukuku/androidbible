@@ -371,6 +371,7 @@
     <string name="version_download_network_error">Radās tīkla kļūda lejuplādējot ^1.</string>
     <string name="version_download_server_error">Servera kļūda lejuplādējot ^1.</string>
     <string name="menuNightMode">Nakts režīms</string>
+    <string name="menuFollowSystemTheme">Sekojiet sistēmas tēmai</string>
     <string name="highlight_custom_color">Citas krāsas</string>
     <string name="menu_compare">Salīdzināt</string>
     <string name="song_player_error_description">Atskaņojot šo dziesmu ir radusies kļūda: %1$d, %2$d.</string>

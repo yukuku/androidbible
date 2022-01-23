@@ -374,6 +374,7 @@
     <string name="version_download_network_error">Błąd sieci podczas pobierania ^1.</string>
     <string name="version_download_server_error">Błąd serwera podczas pobierania ^1.</string>
     <string name="menuNightMode">Tryb nocny</string>
+    <string name="menuFollowSystemTheme">Postępuj zgodnie z tematem systemu</string>
     <string name="highlight_custom_color">Inne kolory</string>
     <string name="menu_compare">Porównaj</string>
     <string name="song_player_error_description">Wystąpił błąd podczas odtwarzania pieśni: %1$d, %2$d.</string>
