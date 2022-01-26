@@ -371,6 +371,7 @@
     <string name="version_download_network_error">^1 ကို ဒေါင်းလုဒ်ဆွဲရာတွင် ကွန်ယက်ချို့ယွင်းချက်ဖြင့် ကြုံရခြင်း။</string>
     <string name="version_download_server_error">^1 ကို ဒေါင်းလုဒ်ဆွဲရာတွင် ဆာဗာချို့ယွင်းချက်ဖြင့် ကြုံရခြင်း။</string>
     <string name="menuNightMode">ညကြည့် အသွင်</string>
+    <string name="menuFollowSystemTheme">စနစ်အပြင်အဆင်ကို လိုက်နာပါ။</string>
     <string name="highlight_custom_color">အခြားအရောင်များ</string>
     <string name="menu_compare">နှိုင်းယှဉ်ရန်</string>
     <string name="song_player_error_description">ဤသီချင်းကို ဖွင့်စဉ်မှာ အမှားကြုံတွေ့ရသည်- %1$d, %2$d။</string>

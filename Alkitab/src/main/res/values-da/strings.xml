@@ -369,6 +369,7 @@
     <string name="version_download_network_error">Netværksfejl under hentning af ^1.</string>
     <string name="version_download_server_error">Server fejl ved hentning af ^1.</string>
     <string name="menuNightMode">Natfunktion</string>
+    <string name="menuFollowSystemTheme">Følg systemtemaet</string>
     <string name="highlight_custom_color">Dine markørfarver</string>
     <string name="menu_compare">Sammenlign</string>
     <string name="song_player_error_description">Der opstår en fejl, når denne sang afspilles: %1$d, %2$d.</string>

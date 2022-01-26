@@ -371,6 +371,7 @@
     <string name="version_download_network_error">^1을(를) 다운로드하는 도중 네트워크 오류가 발생했습니다.</string>
     <string name="version_download_server_error">^1을(를) 다운로드하는 도중 서버 오류가 발생했습니다.</string>
     <string name="menuNightMode">야간모드</string>
+    <string name="menuFollowSystemTheme">시스템 테마 팔로우</string>
     <string name="highlight_custom_color">다른 색상</string>
     <string name="menu_compare">번역본 대조</string>
     <string name="song_player_error_description">찬양 재생 중 오류 발생: %1$d,%2$d</string>

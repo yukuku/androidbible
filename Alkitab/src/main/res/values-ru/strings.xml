@@ -374,6 +374,7 @@
     <string name="version_download_network_error">Сетевая ошибка при скачивании ^1.</string>
     <string name="version_download_server_error">Ошибка сервера при скачивании ^1.</string>
     <string name="menuNightMode">Ночной режим</string>
+    <string name="menuFollowSystemTheme">Следуйте системной теме</string>
     <string name="highlight_custom_color">Другие цвета</string>
     <string name="menu_compare">Сравнить</string>
     <string name="song_player_error_description">Произошла ошибка при воспроизведении этой песни : %1$d, %2$d.</string>

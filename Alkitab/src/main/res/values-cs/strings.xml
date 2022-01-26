@@ -372,6 +372,7 @@
     <string name="version_download_network_error">Chyba sítě při stahování ^1.</string>
     <string name="version_download_server_error">Chyba serveru při stahování ^1.</string>
     <string name="menuNightMode">Noční mód</string>
+    <string name="menuFollowSystemTheme">Sledování systémového tématu</string>
     <string name="highlight_custom_color">Jiné barvy</string>
     <string name="menu_compare">Porovnat</string>
     <string name="song_player_error_description">Chyba při přehrávání: %1$d, %2$d.</string>

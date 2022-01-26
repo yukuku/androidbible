@@ -374,6 +374,7 @@
     <string name="version_download_network_error">Error de red al descargar ^1.</string>
     <string name="version_download_server_error">Error de servidor al descargar ^1.</string>
     <string name="menuNightMode">Modo nocturno</string>
+    <string name="menuFollowSystemTheme">Seguir el tema del sistema</string>
     <string name="highlight_custom_color">Otros colores</string>
     <string name="menu_compare">Comparar</string>
     <string name="song_player_error_description">Se encontró un error mientras se reproducía está canción: %1$d, %2$d.</string>

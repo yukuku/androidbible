@@ -381,6 +381,7 @@
     <string name="version_download_network_error">Kesalahan jaringan saat mengunduh ^1.</string>
     <string name="version_download_server_error">Kesalahan server saat mengunduh ^1.</string>
     <string name="menuNightMode">Mode gelap</string>
+    <string name="menuFollowSystemTheme">Ikuti tema sistem</string>
     <string name="highlight_custom_color">Warna lainnya</string>
     <string name="menu_compare">Bandingkan</string>
     <string name="song_player_error_description">Ada kesalahan ketika memainkan lagu ini: %1$d, %2$d.</string>
