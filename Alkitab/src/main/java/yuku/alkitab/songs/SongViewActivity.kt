@@ -38,7 +38,6 @@ import yuku.alkitab.base.S
 import yuku.alkitab.base.ac.AlertDialogActivity
 import yuku.alkitab.base.ac.HelpActivity
 import yuku.alkitab.base.ac.PatchTextActivity
-import yuku.alkitab.base.ac.ShareActivity
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity
 import yuku.alkitab.base.dialog.VersesDialog
 import yuku.alkitab.base.storage.Prefkey
@@ -63,7 +62,6 @@ private const val TAG = "SongViewActivity"
 
 private const val BIBLE_PROTOCOL = "bible"
 private const val REQCODE_songList = 1
-private const val REQCODE_share = 2
 private const val REQCODE_downloadSongBook = 3
 private const val FRAGMENT_TAG_SONG = "song"
 
@@ -493,12 +491,12 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
             R.id.menuShare -> {
                 currentSong?.let { currentSong ->
-                    val intent = ShareCompat.IntentBuilder(this@SongViewActivity)
+                    ShareCompat.IntentBuilder(this@SongViewActivity)
                         .setType("text/plain")
                         .setSubject("${SongBookUtil.escapeSongBookName(currentBookName)} ${currentSong.code} ${currentSong.title}")
                         .setText(convertSongToText(currentSong).toString())
-                        .intent
-                    startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.sn_share_title)), REQCODE_share)
+                        .setChooserTitle(getString(R.string.sn_share_title))
+                        .startChooser()
                 }
                 return true
             }
@@ -879,15 +877,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                         displaySong(result.bookName, S.getSongDb().getSong(result.bookName, result.code))
                         // store this for next search
                         last_searchState = result.last_searchState
-                    }
-                }
-                return
-            }
-            REQCODE_share -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    val result = ShareActivity.obtainResult(data)
-                    if (result?.chosenIntent != null) {
-                        startActivity(result.chosenIntent)
                     }
                 }
                 return

@@ -41,9 +41,6 @@
     <Objective-C>
       <option name="INTRODUCE_CONST_VARS" value="true" />
     </Objective-C>
-    <XML>
-      <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
-    </XML>
     <codeStyleSettings language="Dart">
       <option name="RIGHT_MARGIN" value="999" />
     </codeStyleSettings>

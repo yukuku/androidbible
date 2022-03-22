@@ -268,7 +268,6 @@
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value="yuku.alkitab.base.IsiActivity" />
 		</activity>
-		<activity android:name="yuku.alkitab.base.ac.ShareActivity" />
 		<activity
 			android:name="yuku.alkitab.base.ac.FontManagerActivity"
 			android:label="@string/fm_activity_title" />

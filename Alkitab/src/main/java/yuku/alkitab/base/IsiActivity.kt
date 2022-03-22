@@ -68,8 +68,6 @@ import yuku.alkitab.base.ac.MarkerListActivity
 import yuku.alkitab.base.ac.MarkersActivity
 import yuku.alkitab.base.ac.NoteActivity
 import yuku.alkitab.base.ac.SearchActivity
-import yuku.alkitab.base.settings.SettingsActivity
-import yuku.alkitab.base.ac.ShareActivity
 import yuku.alkitab.base.ac.VersionsActivity
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity
 import yuku.alkitab.base.config.AppConfig
@@ -82,6 +80,7 @@ import yuku.alkitab.base.dialog.XrefDialog
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.model.MVersionDb
 import yuku.alkitab.base.model.MVersionInternal
+import yuku.alkitab.base.settings.SettingsActivity
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
@@ -321,7 +320,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         val mv: MVersion,
         val version: Version,
         val versionId: String,
-        val book: Book
+        val book: Book,
     )
 
     private var _activeSplit0: ActiveSplit0? = null
@@ -355,7 +354,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     data class ActiveSplit1(
         val mv: MVersion,
         val version: Version,
-        val versionId: String
+        val versionId: String,
     )
 
     /**
@@ -731,7 +730,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     val textToShare = t[0]
                     val textToSubmit = t[1]
 
-                    ShareCompat.IntentBuilder(this@IsiActivity)
+                    val intent = ShareCompat.IntentBuilder(this@IsiActivity)
                         .setType("text/plain")
                         .setSubject(reference.toString())
                         .intent
@@ -752,7 +751,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         }
 
                         override fun onFinally() {
-                            startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, reference)), RequestCodes.FromActivity.Share)
+                            startActivity(Intent.createChooser(intent, getString(R.string.bagikan_alamat, reference)))
 
                             lsSplit0.uncheckAllVerses(true)
                             mode.finish()
@@ -1072,7 +1071,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     data class IntentResult(
         val ari: Int,
         val selectVerse: Boolean = false,
-        val selectVerseCount: Int = 0
+        val selectVerseCount: Int = 0,
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -1667,7 +1666,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         ari: Int,
         updateBackForwardListCurrentEntryWithSource: Boolean = true,
         addHistoryEntry: Boolean = true,
-        callAttention: Boolean = true
+        callAttention: Boolean = true,
     ) {
         if (ari == 0) return
 
@@ -2289,21 +2288,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 history.add(target_ari)
                 backForwardListController.newEntry(target_ari)
             }
-        } else if (requestCode == RequestCodes.FromActivity.Share && resultCode == Activity.RESULT_OK) {
-            val result = ShareActivity.obtainResult(data)
-            val chosenIntent = result?.chosenIntent
-            val packageName = chosenIntent?.component?.packageName
-            if (packageName != null) {
-                if (packageName == "com.facebook.katana") {
-                    val verseUrl = chosenIntent.getStringExtra(EXTRA_verseUrl)
-                    if (verseUrl != null) {
-                        chosenIntent.putExtra(Intent.EXTRA_TEXT, verseUrl) // change text to url
-                    }
-                } else if (packageName == "com.whatsapp") {
-                    chosenIntent.removeExtra(Intent.EXTRA_SUBJECT)
-                }
-                startActivity(chosenIntent)
-            }
         } else if (requestCode == RequestCodes.FromActivity.TextAppearanceGetFonts) {
             textAppearancePanel?.onActivityResult(requestCode)
         } else if (requestCode == RequestCodes.FromActivity.TextAppearanceCustomColors) {
@@ -2379,7 +2363,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         book: Book,
         chapter_1: Int,
         current_chapter_1: Int,
-        uncheckAllVerses: Boolean
+        uncheckAllVerses: Boolean,
     ): Boolean {
         val verses = version.loadChapterText(book, chapter_1) ?: return false
 
@@ -2405,7 +2389,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         nblock: Int,
         verses: SingleChapterVerses,
         version: Version,
-        versionId: String
+        versionId: String,
     ) {
         var selectedVerses_1: IntArrayList? = null
         if (retainSelectedVerses) {
@@ -2824,7 +2808,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     private fun reloadAttributeMapsToVerseDataModel(
-        data: VersesDataModel
+        data: VersesDataModel,
     ): VersesDataModel {
         val versesAttributes = VerseAttributeLoader.load(
             S.getDb(),
