@@ -9,6 +9,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.widget.RemoteViews
 import androidx.core.app.JobIntentService
 import java.util.Calendar
@@ -135,13 +136,14 @@ class DailyVerseAppWidgetReceiver : AppWidgetProvider() {
 
             // Set general intent
             val generalIntent = Intent(context, ClickReceiver::class.java)
+            val mutableFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE else 0
             rv.setPendingIntentTemplate(
                 R.id.lsItems,
                 PendingIntent.getBroadcast(
                     context,
                     appWidgetId * 10 + 2,
                     generalIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                    PendingIntent.FLAG_UPDATE_CURRENT or mutableFlag
                 )
             )
 
