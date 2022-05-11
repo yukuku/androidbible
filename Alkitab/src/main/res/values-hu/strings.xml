@@ -369,6 +369,7 @@
     <string name="version_download_network_error">Hálózati hiba ^1 letöltése közben.</string>
     <string name="version_download_server_error">Szerverhiba ^1 letöltése közben.</string>
     <string name="menuNightMode">Éjszakai mód</string>
+    <string name="menuFollowSystemTheme">Kövesse a rendszer témáját</string>
     <string name="highlight_custom_color">Más színek</string>
     <string name="menu_compare">Összehasonlítás</string>
     <string name="song_player_error_description">Hiba történt a dal lejátszása során: %1$d, %2$d.</string>

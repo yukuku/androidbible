@@ -374,6 +374,7 @@
     <string name="version_download_network_error">下载^1时网络出现错误。</string>
     <string name="version_download_server_error">下载^1时服务出现错误。</string>
     <string name="menuNightMode">夜间模式</string>
+    <string name="menuFollowSystemTheme">遵循系统主题</string>
     <string name="highlight_custom_color">其他颜色</string>
     <string name="menu_compare">比较</string>
     <string name="song_player_error_description">播放歌曲%1$d, %2$d的时候遇到问题。</string>

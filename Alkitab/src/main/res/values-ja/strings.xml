@@ -371,6 +371,7 @@
     <string name="version_download_network_error">^1をダウンロードした時のネットワークエラー。</string>
     <string name="version_download_server_error">^1をダウンロードした時のサーバーエラー。</string>
     <string name="menuNightMode">夜間モード</string>
+    <string name="menuFollowSystemTheme">システムテーマに沿って</string>
     <string name="highlight_custom_color">その他の色</string>
     <string name="menu_compare">比較する</string>
     <string name="song_player_error_description">聖歌 %1$d %2$d 再生中にエラーになりました</string>

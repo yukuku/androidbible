@@ -369,6 +369,7 @@
     <string name="version_download_network_error">Talian bermasalah semasa muat turun ^1.</string>
     <string name="version_download_server_error">Pelayan bermasalah semasa muat turun ^1.</string>
     <string name="menuNightMode">Mod malam</string>
+    <string name="menuFollowSystemTheme">Ikut tema sistem</string>
     <string name="highlight_custom_color">Warna lain</string>
     <string name="menu_compare">Bandingkan</string>
     <string name="song_player_error_description">Ralat berlaku semasa bermain lagu ini: %1$d, %2$d.</string>

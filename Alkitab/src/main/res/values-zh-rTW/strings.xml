@@ -368,6 +368,7 @@
     <string name="version_download_network_error">下載^1時出現網絡錯誤。</string>
     <string name="version_download_server_error">下載^1時出現服務器錯誤。</string>
     <string name="menuNightMode">夜間模式</string>
+    <string name="menuFollowSystemTheme">遵循系統主題</string>
     <string name="highlight_custom_color">其他顏色</string>
     <string name="menu_compare">比較</string>
     <string name="song_player_error_description">播放歌曲%1$d, %2$d的時候遇到問題。</string>
