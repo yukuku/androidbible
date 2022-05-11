@@ -36,11 +36,11 @@ class PRDownloaderOkHttpClient(private val okHttpClient: OkHttpClient) : HttpCli
     }
 
     override fun getResponseCode(): Int {
-        return response?.code() ?: 0
+        return response?.code ?: 0
     }
 
     override fun getInputStream(): InputStream {
-        return response?.body()?.byteStream() ?: throw IOException("response or body is null")
+        return response?.body?.byteStream() ?: throw IOException("response or body is null")
     }
 
     override fun getContentLength(): Long {

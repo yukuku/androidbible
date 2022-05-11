@@ -62,7 +62,7 @@ ext {
     firebaseBomVersion = '29.0.3'
 
     // Misc
-    okhttpVersion = '3.12.13' // For 3.13.0 "This release bumps our minimum requirements to Java 8+ or Android 5+"
+    okhttpVersion = '4.9.3'
     coilVersion = '1.1.0'
     preferenceFixVersion = '28.0.0.0'
     kotlinxSerializationJsonVersion = '1.0.1'

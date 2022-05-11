@@ -169,7 +169,7 @@ class RibkaReportActivity : BaseActivity() {
                 } else {
                     runOnUiThread {
                         MaterialDialog.Builder(this@RibkaReportActivity)
-                            .content(TextUtils.expandTemplate(getString(R.string.ribka_send_failure), "${response.code()} ${response.body()?.string()}"))
+                            .content(TextUtils.expandTemplate(getString(R.string.ribka_send_failure), "${response.code} ${response.body?.string()}"))
                             .positiveText(R.string.ok)
                             .show()
                     }

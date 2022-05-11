@@ -6,7 +6,6 @@ import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
-import okhttp3.internal.Version
 import yuku.alkitab.base.App
 import yuku.alkitab.debug.BuildConfig
 import yuku.stethoshim.StethoShim
@@ -16,7 +15,7 @@ object Connections {
 
     @JvmStatic
     val httpUserAgent by lazy {
-        Version.userAgent() + " " + appContext.packageName + "/" + App.getVersionName()
+        appContext.packageName + "/" + App.getVersionName()
     }
 
     class UserAgentInterceptor : Interceptor {
