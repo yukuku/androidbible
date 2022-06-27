@@ -6,7 +6,7 @@ import static org.junit.Assert.assertEquals;
 
 public class DesktopVerseParserTest {
 	@Test
-	public void testVerseStringToAri() throws Exception {
+	public void testVerseStringToAri() {
 		test("John 3:16", "0x2a0310 .");
 		test("John 3.16", "0x2a0310 .");
 		test("John 3:16-18", "0x2a0310 0x2a0312");
@@ -26,11 +26,16 @@ public class DesktopVerseParserTest {
 		// not one chapter books
 		test("ps 9", "0x120900 .");
 		test("ps 9-12", "0x120900 0x120c00");
+		test("ps 9–12", "0x120900 0x120c00"); // with endash
+		test("ps 9—12", "0x120900 0x120c00"); // with emdash
 		test("ps 1:9", "0x120109 .");
 		test("ps 1:9-12", "0x120109 0x12010c");
+		test("ps 1:9–12", "0x120109 0x12010c"); // with endash
+		test("ps 1:9—12", "0x120109 0x12010c"); // with emdash
 
 		// multiple
 		test("gn 2:2, 5, 8-32", "0x000202 . 0x000205 . 0x000208 0x000220");
+		test("gn 2:2, 5, 8—32", "0x000202 . 0x000205 . 0x000208 0x000220"); // with emdash
 
 		// new abbr
 		test("wah 9:9", "0x410909 .");
