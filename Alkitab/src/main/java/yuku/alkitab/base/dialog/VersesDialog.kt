@@ -164,15 +164,13 @@ class VersesDialog : BaseDialog() {
             val callbackData = customCallbackDatas[position]
 
             if (!compareMode) {
-                when (callbackData) {
-                    is CallbackData.WithAri -> listener.onVerseSelected(callbackData.ari)
+                if (callbackData is CallbackData.WithAri) {
+                    listener.onVerseSelected(callbackData.ari)
                 }
             } else { // only if the verse is available in this version.
-                when (callbackData) {
-                    is CallbackData.WithMVersion -> {
-                        if (callbackData.mversion.version?.loadVerseText(ari) != null) {
-                            listener.onComparedVerseSelected(ari, callbackData.mversion)
-                        }
+                if (callbackData is CallbackData.WithMVersion) {
+                    if (callbackData.mversion.version?.loadVerseText(ari) != null) {
+                        listener.onComparedVerseSelected(ari, callbackData.mversion)
                     }
                 }
             }

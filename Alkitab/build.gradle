@@ -36,9 +36,6 @@ android {
             signingConfig signingConfigs.release
         }
     }
-    kotlinOptions {
-        useOldBackend = true
-    }
     lintOptions {
         abortOnError false
     }
