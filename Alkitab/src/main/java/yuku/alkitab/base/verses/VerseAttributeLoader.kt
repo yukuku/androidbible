@@ -6,6 +6,7 @@ import yuku.alkitab.base.App
 import yuku.alkitab.base.storage.InternalDb
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Highlights
+import yuku.alkitab.base.util.safeQuery
 import yuku.alkitab.base.widget.AttributeView
 import yuku.alkitab.model.SingleChapterVerses
 import yuku.alkitab.util.Ari
@@ -51,7 +52,7 @@ object VerseAttributeLoader {
         // Look up for maps locations.
         // If the app is installed, query its content provider to see which verses has locations on the map.
         val hasMapsMap = BooleanArray(verseCount)
-        contentResolver.query(Uri.parse("content://palki.maps/exists?ari=$ari_bc"), null, null, null, null)?.use { c ->
+        contentResolver.safeQuery(Uri.parse("content://palki.maps/exists?ari=$ari_bc"), null, null, null, null)?.use { c ->
             if (c.moveToNext()) {
                 val col_aris = c.getColumnIndexOrThrow("aris")
                 val aris_json = c.getString(col_aris)

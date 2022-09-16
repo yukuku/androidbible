@@ -34,6 +34,7 @@ import yuku.alkitab.model.SingleChapterVerses
 import yuku.alkitab.util.Ari
 import yuku.alkitab.util.IntArrayList
 import java.util.concurrent.atomic.AtomicInteger
+import yuku.alkitab.base.util.safeQuery
 
 private const val TAG = "VersesControllerImpl"
 
@@ -537,7 +538,7 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
             val uri = Uri.parse("content://org.sabda.kamus.provider/analyze").buildUpon().appendQueryParameter("text", analyzeString).build()
 
             try {
-                view.context.contentResolver.query(uri, null, null, null, null)?.use { c ->
+                view.context.contentResolver.safeQuery(uri, null, null, null, null)?.use { c ->
                     val col_offset = c.getColumnIndexOrThrow("offset")
                     val col_len = c.getColumnIndexOrThrow("len")
                     val col_key = c.getColumnIndexOrThrow("key")

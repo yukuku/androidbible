@@ -137,7 +137,7 @@ public class VersionsActivity extends BaseActivity {
         tablayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         tablayout.setupWithViewPager(viewPager);
 
-        processIntent(getIntent(), "onCreate");
+        processIntent(getIntent(), "VersionsActivity#onCreate");
 
         // try to auto-update version list
         VersionConfigUpdaterService.checkUpdate(true);

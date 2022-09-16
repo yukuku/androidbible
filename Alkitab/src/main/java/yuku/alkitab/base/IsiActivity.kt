@@ -99,6 +99,7 @@ import yuku.alkitab.base.util.RequestCodes
 import yuku.alkitab.base.util.ShareUrl
 import yuku.alkitab.base.util.Sqlitil
 import yuku.alkitab.base.util.TargetDecoder
+import yuku.alkitab.base.util.safeQuery
 import yuku.alkitab.base.verses.VerseAttributeLoader
 import yuku.alkitab.base.verses.VersesController
 import yuku.alkitab.base.verses.VersesControllerImpl
@@ -137,6 +138,7 @@ import yuku.devoxx.flowlayout.FlowLayout
 
 private const val TAG = "IsiActivity"
 private const val EXTRA_verseUrl = "verseUrl"
+private const val INSTANCE_STATE_ari = "ari"
 
 class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     var uncheckVersesWhenActionModeDestroyed = true
@@ -382,7 +384,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             .build()
 
         try {
-            cr.query(uri, null, null, null, null) ?: run {
+            cr.safeQuery(uri, null, null, null, null) ?: run {
                 OtherAppIntegration.askToInstallDictionary(this)
                 return
             }
@@ -1217,7 +1219,17 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             referenceDisplayer = { ari -> activeSplit0.version.reference(ari) }
         )
 
-        val intentResult = processIntent(intent, "onCreate")
+        val intentResult = if (savedInstanceState != null) {
+            val ari = savedInstanceState.getInt(INSTANCE_STATE_ari)
+            if (ari != 0) {
+                IntentResult(ari)
+            } else {
+                null
+            }
+        } else {
+            extractIntent(intent, "IsiActivity#onCreate")
+        }
+
         val openingAri: Int
         val selectVerse: Boolean
         val selectVerseCount: Int
@@ -1320,12 +1332,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         lsSplit1.callAttentionForVerse(verse_1)
     }
 
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-
-        processIntent(intent, "onNewIntent")
-    }
-
     override fun onDestroy() {
         super.onDestroy()
 
@@ -1334,10 +1340,15 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         App.getLbm().unregisterReceiver(needsRestartReceiver)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(INSTANCE_STATE_ari, Ari.encode(activeSplit0.book.bookId, chapter_1, getVerse_1BasedOnScrolls()))
+    }
+
     /**
      * @return non-null if the intent is handled by any of the intent handler (e.g. nfc or VIEW)
      */
-    private fun processIntent(intent: Intent, via: String): IntentResult? {
+    private fun extractIntent(intent: Intent, via: String): IntentResult? {
         dumpIntent(intent, via)
 
         return tryGetIntentResultFromBeam(intent)
@@ -1359,10 +1370,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 if (ari != 0) {
                     IntentResult(ari, selectVerse, selectVerseCount)
                 } else {
-                    MaterialDialog.Builder(this)
-                        .content("Invalid ari: $ari")
-                        .positiveText(R.string.ok)
-                        .show()
                     null
                 }
             }
@@ -1373,10 +1380,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     jumpToAri(ari)
                     IntentResult(ari, selectVerse, selectVerseCount)
                 } else {
-                    MaterialDialog.Builder(this)
-                        .content("Invalid lid: $lid")
-                        .positiveText(R.string.ok)
-                        .show()
                     null
                 }
             }
@@ -2115,6 +2118,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
         App.getLbm().sendBroadcast(Intent(ACTION_NIGHT_MODE_CHANGED))
     }
+
     private fun setFollowSystemTheme(yes: Boolean, cNightMode: SwitchCompat) {
         val previousValue = Preferences.getBoolean(Prefkey.follow_system_theme, true)
         if (previousValue == yes) return
@@ -2884,6 +2888,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         Tracker.trackEvent("left_drawer_night_mode_click")
         setNightMode(isChecked)
     }
+
     override fun cFollowSystemTheme_checkedChange(isChecked: Boolean, cNightMode: SwitchCompat) {
         Tracker.trackEvent("left_drawer_follow_system_theme_click")
         cNightMode.isEnabled = !isChecked
