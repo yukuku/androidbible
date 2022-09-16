@@ -18,7 +18,7 @@ This app natively uses *.yes* files for the Bible text. You can create a *.yes* 
 
 You can also convert PalmBible+ PDB files using the built-in converter in the app for your own use. 
 
-Tools for converting PalmBible+ PDB files to *.yet* files, and from *.yet* files to *.yes* files and internal app files, are available at https://goo.gl/3wo5zv.
+Tools for converting PalmBible+ PDB files to *.yet* files, and from *.yet* files to *.yes* files and internal app files, are available at in [this folder](https://drive.google.com/drive/folders/0B0mZXH9nEuQ0dGdxbUI5T1lyeUU?resourcekey=0-V_emMiw0Q1APka5ddsS2rA&usp=sharing).
 
 Customizing and Integrating
 ---------------------------
