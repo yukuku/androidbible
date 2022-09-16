@@ -502,6 +502,7 @@
 		<package android:name="org.sabda.pedia" />
 		<package android:name="org.sabda.tafsiran" />
 		<package android:name="yuku.esvsbasal" />
+		<package android:name="palki.maps" />
 	</queries>
 
 </manifest>
