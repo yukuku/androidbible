@@ -17,6 +17,9 @@ android {
     lintOptions {
         abortOnError false
     }
+
+    ndkVersion "25.0.8775105"
+
     externalNativeBuild {
         ndkBuild {
             path file('jni/Android.mk')
