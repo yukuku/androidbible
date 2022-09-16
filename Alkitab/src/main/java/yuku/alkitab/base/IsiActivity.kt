@@ -113,6 +113,7 @@ import yuku.alkitab.base.widget.GotoButton
 import yuku.alkitab.base.widget.LabeledSplitHandleButton
 import yuku.alkitab.base.widget.LeftDrawer
 import yuku.alkitab.base.widget.MaterialDialogAdapterHelper
+import yuku.alkitab.base.widget.MaterialDialogAdapterHelper.showWithAdapter
 import yuku.alkitab.base.widget.ParallelClickData
 import yuku.alkitab.base.widget.ReferenceParallelClickData
 import yuku.alkitab.base.widget.SplitHandleButton
@@ -1901,7 +1902,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     private fun bGoto_longClick() {
         Tracker.trackEvent("nav_goto_button_long_click")
         if (history.size > 0) {
-            MaterialDialogAdapterHelper.show(MaterialDialog.Builder(this), HistoryAdapter())
+            MaterialDialog.Builder(this).showWithAdapter(HistoryAdapter())
             Preferences.setBoolean(Prefkey.history_button_understood, true)
         } else {
             Snackbar.make(root, R.string.recentverses_not_available, Snackbar.LENGTH_SHORT).show()
@@ -2531,7 +2532,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             if (markers.size == 1) {
                 openBookmarkDialog(markers[0]._id)
             } else {
-                MaterialDialogAdapterHelper.show(MaterialDialog.Builder(this@IsiActivity).title(R.string.edit_bookmark), MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.bookmark))
+                MaterialDialog.Builder(this@IsiActivity)
+                    .title(R.string.edit_bookmark)
+                    .showWithAdapter(MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.bookmark))
             }
         }
 
@@ -2544,7 +2547,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             if (markers.size == 1) {
                 openNoteDialog(markers[0]._id)
             } else {
-                MaterialDialogAdapterHelper.show(MaterialDialog.Builder(this@IsiActivity).title(R.string.edit_note), MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.note))
+                MaterialDialog.Builder(this@IsiActivity)
+                    .title(R.string.edit_note)
+                    .showWithAdapter(MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.note))
             }
         }
 
@@ -2555,7 +2560,13 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             val panelLabels: FlowLayout = itemView.findViewById(R.id.panelLabels)
         }
 
-        inner class MultipleMarkerSelectAdapter(val version: Version, versionId: String, private val markers: List<Marker>, val kind: Marker.Kind) : MaterialDialogAdapterHelper.Adapter() {
+        inner class MultipleMarkerSelectAdapter(
+            val version: Version,
+            versionId: String,
+            private val markers: List<Marker>,
+            val kind: Marker.Kind,
+        ) : MaterialDialogAdapterHelper.Adapter() {
+
             val textSizeMult = S.getDb().getPerVersionSettings(versionId).fontSizeMultiplier
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
