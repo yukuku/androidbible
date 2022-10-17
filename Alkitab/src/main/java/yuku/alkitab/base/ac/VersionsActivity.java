@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.annotation.TargetApi;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,7 +9,6 @@ import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -149,7 +147,6 @@ public class VersionsActivity extends BaseActivity {
         checkAndProcessOpenFileIntent(intent);
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     private void checkAndProcessOpenFileIntent(Intent intent) {
         if (!Intent.ACTION_VIEW.equals(intent.getAction())) return;
 
@@ -305,7 +302,7 @@ public class VersionsActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.activity_versions, menu);
         return true;
     }
@@ -370,13 +367,13 @@ public class VersionsActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menuAddFromLocal:
-                clickOnOpenFile();
-                return true;
-            case R.id.menuAddFromUrl:
-                openUrlInputDialog(null);
-                return true;
+        int itemId = item.getItemId();
+        if (itemId == R.id.menuAddFromLocal) {
+            clickOnOpenFile();
+            return true;
+        } else if (itemId == R.id.menuAddFromUrl) {
+            openUrlInputDialog(null);
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -398,6 +395,7 @@ public class VersionsActivity extends BaseActivity {
             super(fm);
         }
 
+        @NonNull
         @Override
         public Fragment getItem(int position) {
             return VersionListFragment.newInstance(position == 1, query_text);
@@ -741,9 +739,6 @@ public class VersionsActivity extends BaseActivity {
         boolean downloadedOnly;
         String query_text;
 
-        // in-ram list of URIs whose permission to be revoked when this activity is destroyed
-        final List<Uri> grantedPermissionUris = new ArrayList<>();
-
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -791,10 +786,6 @@ public class VersionsActivity extends BaseActivity {
         @Override
         public void onDestroy() {
             super.onDestroy();
-
-            for (final Uri uri : grantedPermissionUris) {
-                getActivity().revokeUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            }
 
             App.getLbm().unregisterReceiver(br);
         }
@@ -932,7 +923,6 @@ public class VersionsActivity extends BaseActivity {
             // can we update?
             if (mv instanceof MVersionDb && hasUpdateAvailable((MVersionDb) mv)) {
                 button_count++;
-                //noinspection ConstantConditions
                 b.positiveText(R.string.ed_update_button);
                 b.onPositive((dialog, which) -> startDownload(VersionConfig.get().getPreset(((MVersionDb) mv).preset_name)));
 
