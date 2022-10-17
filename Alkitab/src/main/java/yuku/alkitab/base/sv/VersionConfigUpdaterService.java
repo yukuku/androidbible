@@ -4,20 +4,19 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
-import androidx.annotation.Keep;
 import android.widget.Toast;
+import androidx.annotation.Keep;
 import com.google.gson.JsonSyntaxException;
+import java.io.IOException;
+import java.util.Date;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
-
-import java.io.IOException;
-import java.util.Date;
+import yuku.alkitab.versionmanager.VersionListFragment;
 
 public class VersionConfigUpdaterService extends IntentService {
 	private static final String TAG = VersionConfigUpdaterService.class.getSimpleName();
@@ -61,10 +60,10 @@ public class VersionConfigUpdaterService extends IntentService {
 		if (intent != null) {
 			final boolean auto = intent.getBooleanExtra(EXTRA_auto, true);
 			try {
-				App.getLbm().sendBroadcast(new Intent(VersionsActivity.VersionListFragment.ACTION_UPDATE_REFRESHING_STATUS).putExtra(VersionsActivity.VersionListFragment.EXTRA_refreshing, true));
+				App.getLbm().sendBroadcast(new Intent(VersionListFragment.ACTION_UPDATE_REFRESHING_STATUS).putExtra(VersionListFragment.EXTRA_refreshing, true));
 				handleCheckUpdate(auto);
 			} finally {
-				App.getLbm().sendBroadcast(new Intent(VersionsActivity.VersionListFragment.ACTION_UPDATE_REFRESHING_STATUS).putExtra(VersionsActivity.VersionListFragment.EXTRA_refreshing, false));
+				App.getLbm().sendBroadcast(new Intent(VersionListFragment.ACTION_UPDATE_REFRESHING_STATUS).putExtra(VersionListFragment.EXTRA_refreshing, false));
 			}
 		}
 	}
@@ -164,6 +163,6 @@ public class VersionConfigUpdaterService extends IntentService {
 		}
 
 		Preferences.setInt(Prefkey.version_config_last_update_check, now);
-		App.getLbm().sendBroadcast(new Intent(VersionsActivity.VersionListFragment.ACTION_RELOAD));
+		App.getLbm().sendBroadcast(new Intent(VersionListFragment.ACTION_RELOAD));
 	}
 }

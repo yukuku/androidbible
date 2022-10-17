@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
@@ -32,7 +33,6 @@ import java.util.Locale;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.devotion.ArticleMeidA;
 import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
@@ -232,11 +232,16 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
             ac = new WeakReference<>(activity);
         }
 
+        private boolean equals(Object a, Object b) {
+            //noinspection EqualsReplaceableByObjectsCall
+            return a == b || a != null && a.equals(b);
+        }
+
         /**
          * This will be called 30 seconds after startKind and startDate are set.
          */
         @Override
-        public void handleMessage(final Message msg) {
+        public void handleMessage(@NonNull final Message msg) {
             final DevotionActivity ac = this.ac.get();
             if (ac == null) return;
             if (ac.isFinishing()) {
@@ -245,7 +250,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
             }
 
             final String currentDate = yyyymmdd.get().format(ac.currentDate);
-            if (U.equals(startKind, ac.currentKind) && U.equals(startDate, currentDate)) {
+            if (equals(startKind, ac.currentKind) && equals(startDate, currentDate)) {
                 AppLog.d(TAG, "Long read detected: now=[" + ac.currentKind + " " + currentDate + "]");
                 Tracker.trackEvent("devotion_longread", FirebaseAnalytics.Param.ITEM_NAME, startKind.name, FirebaseAnalytics.Param.START_DATE, yyyy_mm_dd.get().format(ac.currentDate));
             } else {
@@ -350,7 +355,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.activity_devotion, menu);
         return true;
     }

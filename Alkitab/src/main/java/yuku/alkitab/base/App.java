@@ -22,14 +22,12 @@ import yuku.alkitabintegration.display.Launcher;
 import yuku.stethoshim.StethoShim;
 
 public class App extends yuku.afw.App {
-	static final String TAG = App.class.getSimpleName();
-
 	private static boolean initted = false;
 
 	enum GsonWrapper {
 		INSTANCE;
 
-		Gson gson = new Gson();
+		final Gson gson = new Gson();
 	}
 
 	public static String downloadString(String url) throws IOException {

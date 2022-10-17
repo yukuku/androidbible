@@ -34,8 +34,8 @@
 		android:networkSecurityConfig="@xml/network_security_config"
 		android:requestLegacyExternalStorage="true"
 		android:supportsRtl="true"
-		android:theme="@style/Theme.Alkitab"
-		tools:targetApi="n">
+		android:theme="@style/Theme.Alkitab">
+
 		<activity
 			android:name="yuku.alkitab.base.IsiActivity"
 			android:exported="true">
@@ -72,7 +72,7 @@
 			android:name="yuku.alkitab.base.ac.MarkerListActivity"
 			android:windowSoftInputMode="adjustResize|stateHidden" />
 		<activity
-			android:name="yuku.alkitab.base.ac.VersionsActivity"
+			android:name="yuku.alkitab.versionmanager.VersionsActivity"
 			android:exported="true"
 			android:label="@string/kelola_versi"
 			android:parentActivityName="yuku.alkitab.base.IsiActivity">

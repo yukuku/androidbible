@@ -23,9 +23,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.AlertDialogActivity;
-import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.br.VersionDownloadCompleteReceiver;
 import yuku.alkitab.debug.R;
+import yuku.alkitab.versionmanager.VersionListFragment;
 
 public enum DownloadMapper {
 	instance;
@@ -178,7 +178,7 @@ public enum DownloadMapper {
 
 				remove(id);
 
-				App.getLbm().sendBroadcast(new Intent(VersionsActivity.VersionListFragment.ACTION_RELOAD));
+				App.getLbm().sendBroadcast(new Intent(VersionListFragment.ACTION_RELOAD));
 			}
 		});
 

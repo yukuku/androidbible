@@ -3,9 +3,9 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:paddingBottom="0dp"
 	android:paddingTop="0dp"
-	tools:context="yuku.alkitab.base.ac.VersionsActivity$VersionListFragment">
+	android:paddingBottom="0dp"
+	tools:context="yuku.alkitab.versionmanager.VersionListFragment">
 
 	<com.mobeta.android.dslv.DragSortListView
 		android:id="@+id/lsVersions"

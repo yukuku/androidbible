@@ -69,7 +69,6 @@ import yuku.alkitab.base.ac.MarkerListActivity
 import yuku.alkitab.base.ac.MarkersActivity
 import yuku.alkitab.base.ac.NoteActivity
 import yuku.alkitab.base.ac.SearchActivity
-import yuku.alkitab.base.ac.VersionsActivity
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity
 import yuku.alkitab.base.config.AppConfig
 import yuku.alkitab.base.dialog.ProgressMarkListDialog
@@ -134,6 +133,7 @@ import yuku.alkitab.ribka.RibkaReportActivity
 import yuku.alkitab.tracking.Tracker
 import yuku.alkitab.util.Ari
 import yuku.alkitab.util.IntArrayList
+import yuku.alkitab.versionmanager.VersionsActivity
 import yuku.devoxx.flowlayout.FlowLayout
 
 private const val TAG = "IsiActivity"
@@ -1237,7 +1237,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 null
             }
         } else {
-            extractIntent(intent, "IsiActivity#onCreate")
+            extractIntent(intent)
         }
 
         val openingAri: Int
@@ -1358,8 +1358,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     /**
      * @return non-null if the intent is handled by any of the intent handler (e.g. nfc or VIEW)
      */
-    private fun extractIntent(intent: Intent, via: String): IntentResult? {
-        dumpIntent(intent, via)
+    private fun extractIntent(intent: Intent): IntentResult? {
+        dumpIntent(intent, "IsiActivity#onCreate")
 
         return tryGetIntentResultFromBeam(intent)
             ?: tryGetIntentResultFromView(intent)
