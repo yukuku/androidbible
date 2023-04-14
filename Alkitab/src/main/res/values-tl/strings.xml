@@ -505,9 +505,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">10% libreng Bibliyang app, lisensyado sa ilalim ng Apache License 2.0</string>
     <string name="about_translators">Mga Tagapagsaling-wika</string>
     <string name="about_user_guide">Gabay ng tagagamit</string>
-    <string name="about_beta_feedback">Beta Bersyong Feedback</string>
-    <string name="about_enable_beta">Subukan ang bersyong Beta</string>
-    <string name="about_enable_beta_confirmation">Mag sign in sa Google at i-tap ang BECOME A TESTER na pindutan para masubukan ang bersyong Beta na may mas bagong mga tampok at mga pagpapahusay!</string>
     <string name="about_version_name">bersyon %s</string>
     <string name="about_material_sources">Mga pinagmulan ng materyales</string>
     <string name="about_credits">Kredito</string>

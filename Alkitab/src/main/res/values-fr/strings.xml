@@ -513,9 +513,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Application Biblique 100% gratuite, sous licence Apache License 2.0</string>
     <string name="about_translators">Traducteurs</string>
     <string name="about_user_guide">Guide de l\'utilisateur</string>
-    <string name="about_beta_feedback">Commentaires de la Version beta</string>
-    <string name="about_enable_beta">Essayer la version Beta</string>
-    <string name="about_enable_beta_confirmation">Connectez-vous sur votre compte Google et appuyez sur le bouton DEVENIR TESTEUR pour essayer la version bêta avec les nouvelles fonctionnalités et améliorations!</string>
     <string name="about_version_name">version %s</string>
     <string name="about_material_sources">Sources matérielles</string>
     <string name="about_credits">Remerciements</string>

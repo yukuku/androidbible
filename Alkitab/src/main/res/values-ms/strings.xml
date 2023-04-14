@@ -505,9 +505,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Aplikasi Alkitab percuma 100%, dilesenkan oleh Apache License 2.0</string>
     <string name="about_translators">Penterjemah</string>
     <string name="about_user_guide">Panduan Pengguna</string>
-    <string name="about_beta_feedback">Maklum Balas Versi Beta</string>
-    <string name="about_enable_beta">Cuba Versi Beta</string>
-    <string name="about_enable_beta_confirmation">Log masuk ke Google dan tekan butang JADI SEORANG PENCUBA untuk mencuba versi Beta yang mengandungi penambahbaikan dan ciri-ciri yang lebih baharu!</string>
     <string name="about_version_name">versi %s</string>
     <string name="about_material_sources">Sumber Bahan</string>
     <string name="about_credits">Kredit</string>

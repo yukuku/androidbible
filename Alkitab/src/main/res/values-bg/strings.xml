@@ -508,9 +508,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% безплатно приложение на Библията, лицензирано под Apache License 2.0</string>
     <string name="about_translators">Преводачи</string>
     <string name="about_user_guide">Ръководство на потребителя</string>
-    <string name="about_beta_feedback">Отзиви за бета-версията</string>
-    <string name="about_enable_beta">Изпробвай бета-версията</string>
-    <string name="about_enable_beta_confirmation">Влезте в своя Google-акаунт и натиснете бутона\"Стани тестер\", за да получите достъп към бета-версията с нови функции и подобрения!</string>
     <string name="about_version_name">версия %s</string>
     <string name="about_material_sources">Източници на материали</string>
     <string name="about_credits">Благодарности</string>

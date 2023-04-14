@@ -504,9 +504,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100%免費的聖經應用，由Apache License 2.0授權</string>
     <string name="about_translators">譯者</string>
     <string name="about_user_guide">使用者指引</string>
-    <string name="about_beta_feedback">測試版本回饋</string>
-    <string name="about_enable_beta">使用試用版本</string>
-    <string name="about_enable_beta_confirmation">登入谷歌並按下「成為測試員」按鈕，以使用有更新的功能和更完善的試用版本！</string>
     <string name="about_version_name">版本 %s</string>
     <string name="about_material_sources">資料來源</string>
     <string name="about_credits">工作人員</string>

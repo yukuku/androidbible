@@ -512,9 +512,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% gratis Bijbel app, gelicentieerd onder Apache License 2.0</string>
     <string name="about_translators">Vertalers</string>
     <string name="about_user_guide">Handleiding</string>
-    <string name="about_beta_feedback">Bètaversie feedback</string>
-    <string name="about_enable_beta">Probeer Bèta versie</string>
-    <string name="about_enable_beta_confirmation">Log in bij Google en klik op de WORDT EEN TESTER knop en probeer de bèta versie met nieuwe mogelijkheden en verbeteringen!</string>
     <string name="about_version_name">versie %s</string>
     <string name="about_material_sources">Bronmateriaal</string>
     <string name="about_credits">Credits</string>

@@ -508,9 +508,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Apache License 2.0でライセンスされた100％無料の聖書アプリ</string>
     <string name="about_translators">翻訳者</string>
     <string name="about_user_guide">使用ガイド</string>
-    <string name="about_beta_feedback">ベータ版のフィードバック</string>
-    <string name="about_enable_beta">ベータ版を試す</string>
-    <string name="about_enable_beta_confirmation">Googleにサインインし、[テスターに参加] ボタンをタップして、新しい機能と強化されたベータ版をお試しください！</string>
     <string name="about_version_name">バージョン %s</string>
     <string name="about_material_sources">出典資料</string>
     <string name="about_credits">クレジット</string>

@@ -508,9 +508,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% Bible app gratuida, com licenza de Apache License 2.0</string>
     <string name="about_translators">Tradutores</string>
     <string name="about_user_guide">Guia do utilizador</string>
-    <string name="about_beta_feedback">Opinião da Versão Beta</string>
-    <string name="about_enable_beta">Tentar a versão Beta</string>
-    <string name="about_enable_beta_confirmation">Faça login no Google e toque no botão TORNE-SE UM TESTADOR para experimentar a versão Beta com recursos e aprimoramentos mais recentes!</string>
     <string name="about_version_name">versão %s</string>
     <string name="about_material_sources">Fontes de materias</string>
     <string name="about_credits">Créditos</string>

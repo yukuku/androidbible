@@ -513,9 +513,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Aplicativo da Bíblia totalmente gratuito, sob licença da Apache License 2.0</string>
     <string name="about_translators">Tradutores</string>
     <string name="about_user_guide">Guia do Usuário</string>
-    <string name="about_beta_feedback">Feedback da versão beta</string>
-    <string name="about_enable_beta">Teste a versão Beta</string>
-    <string name="about_enable_beta_confirmation">Entre suas credenciais do Google e clique em TORNAR-SE UM AVALIADOR para avaliar a versão Beta com recursos novos e outras melhorias!</string>
     <string name="about_version_name">versão %s</string>
     <string name="about_material_sources">Fontes de material</string>
     <string name="about_credits">Créditos</string>

@@ -513,9 +513,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% miễn phí phần mềm Kinh thánh, đăng ký bởi Apache 2.0</string>
     <string name="about_translators">Dịch giả</string>
     <string name="about_user_guide">Hướng dẫn sử dụng</string>
-    <string name="about_beta_feedback">Phiên bản Beta Phản hồi</string>
-    <string name="about_enable_beta">Hãy thử Beta</string>
-    <string name="about_enable_beta_confirmation">Đăng nhập vào Google và bấm vào BECOME A TESTER để thử phiên bản Beta với các tính năng mới và cải tiến!</string>
     <string name="about_version_name">phiên bản %s</string>
     <string name="about_material_sources">Nguồn nguyên liệu</string>
     <string name="about_credits">Ghi nhận</string>

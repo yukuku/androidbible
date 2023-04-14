@@ -458,8 +458,7 @@
     <string name="dr_default_sound">Alapértelmezett hang</string>
     <!-- about -->
     <string name="about_translators">Fordítók</string>
-    <string name="about_enable_beta">Próbáld ki a Béta Verziót</string>
-    <string name="about_version_name">verzió %s</string>
+	<string name="about_version_name">verzió %s</string>
     <string name="about_credits">Kreditek</string>
     <string name="about_official_website">Hivatalos weboldal</string>
     <!-- Data transfer -->

@@ -513,9 +513,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">%100 bedava İncil uygulaması, Apache License 2.0 yetkisi altında</string>
     <string name="about_translators">Çevirmenler</string>
     <string name="about_user_guide">Kullanıcı Rehberi</string>
-    <string name="about_beta_feedback">Beta Versiyon Geridönüşü</string>
-    <string name="about_enable_beta">Beta Sürümü Dene</string>
-    <string name="about_enable_beta_confirmation">Google a giriş yapın ve beta versiyonu yeni özellikleri ve geliştirmeleri ile denemek için BECOME A TESTER düğmesine tıklayın!</string>
     <string name="about_version_name">sürüm %s</string>
     <string name="about_material_sources">Materyal Kaynakları</string>
     <string name="about_credits">Krediler</string>

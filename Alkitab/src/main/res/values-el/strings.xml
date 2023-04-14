@@ -505,9 +505,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% δωρεάν πρόγραμμα Βίβλου, με άδεια υπό την Άδεια Apache 2.0</string>
     <string name="about_translators">Μεταφραστές</string>
     <string name="about_user_guide">Οδηγός Χρήσης</string>
-    <string name="about_beta_feedback">Σχόλια επί της Εκδοχής Beta</string>
-    <string name="about_enable_beta">Δοκιμάστε την Εκδοχή Beta</string>
-    <string name="about_enable_beta_confirmation">Συνδεθείτε στο Google και πατήστε το κουμπί BECOME A TESTER για να δοκιμάσετε την εκδοχή Beta με νέα χαρακτηριστικά και αναβαθμίσεις!</string>
     <string name="about_version_name">έκδοση %s</string>
     <string name="about_material_sources">Πηγές Υλικού</string>
     <string name="about_credits">Πιστώσεις</string>

@@ -505,9 +505,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% gratis Bible App, licenseret under Apache License 2.0</string>
     <string name="about_translators">Oversættere</string>
     <string name="about_user_guide">Brugervejledning</string>
-    <string name="about_beta_feedback">Beta version tilbagemelding</string>
-    <string name="about_enable_beta">Prøv Beta version</string>
-    <string name="about_enable_beta_confirmation">Log ind på Google og tryk på \"BLIV TESTER\"-knappen for at prøve Beta version med nyere funktioner og forbedringer!</string>
     <string name="about_version_name">version %s</string>
     <string name="about_material_sources">Materiale Kilder</string>
     <string name="about_credits">Krediteringer</string>

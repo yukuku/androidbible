@@ -514,9 +514,6 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">La Biblia de libre acceso a través de la Licencia Apache 2.0</string>
     <string name="about_translators">Traductores</string>
     <string name="about_user_guide">Guía de usuario</string>
-    <string name="about_beta_feedback">Retroalimentación de Versión Beta</string>
-    <string name="about_enable_beta">Probar la versión Beta</string>
-    <string name="about_enable_beta_confirmation">¡Inicia sesión con Google y selecciona el botón CONVERTIRSE EN BETA TESTER para probar la versión beta con nuevas características y mejoras!</string>
     <string name="about_version_name">versión %s</string>
     <string name="about_material_sources">Fuentes Materiales</string>
     <string name="about_credits">Créditos</string>
