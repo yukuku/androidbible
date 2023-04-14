@@ -2,19 +2,17 @@ package yuku.alkitab.base.widget;
 
 import android.content.Context;
 import android.graphics.Rect;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.core.view.MotionEventCompat;
 import android.text.Layout;
 import android.text.Spanned;
 import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.widget.TextView;
-import yuku.alkitab.base.util.AppLog;
-import yuku.alkitab.debug.BuildConfig;
-
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.view.MotionEventCompat;
 import java.util.ArrayList;
 import java.util.List;
+import yuku.alkitab.base.util.AppLog;
+import yuku.alkitab.debug.BuildConfig;
 
 public class VerseTextView extends AppCompatTextView {
 	static final String TAG = VerseTextView.class.getSimpleName();
@@ -29,12 +27,7 @@ public class VerseTextView extends AppCompatTextView {
 		}
 	}
 
-	public static ThreadLocal<List<SpanEntry>> spanEntriesBuffer = new ThreadLocal<List<SpanEntry>>() {
-		@Override
-		protected List<SpanEntry> initialValue() {
-			return new ArrayList<>(8);
-		}
-	};
+	public static final ThreadLocal<List<SpanEntry>> spanEntriesBuffer = ThreadLocal.withInitial(() -> new ArrayList<>(8));
 
 	public VerseTextView(Context context, AttributeSet attrs) {
 		super(context, attrs);

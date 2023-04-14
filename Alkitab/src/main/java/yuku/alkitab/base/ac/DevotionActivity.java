@@ -62,19 +62,9 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
     public static final DevotionDownloader devotionDownloader = new DevotionDownloader();
 
-    static final ThreadLocal<SimpleDateFormat> yyyymmdd = new ThreadLocal<SimpleDateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyyMMdd", Locale.US);
-        }
-    };
+    static final ThreadLocal<SimpleDateFormat> yyyymmdd = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyyMMdd", Locale.US));
 
-    static final ThreadLocal<SimpleDateFormat> yyyy_mm_dd = new ThreadLocal<SimpleDateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        }
-    };
+    static final ThreadLocal<SimpleDateFormat> yyyy_mm_dd = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd", Locale.US));
 
     TwofingerLinearLayout.Listener root_listener = new TwofingerLinearLayout.OnefingerListener() {
         @Override

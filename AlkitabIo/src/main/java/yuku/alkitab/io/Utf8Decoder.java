@@ -10,19 +10,9 @@ import java.io.IOException;
 public class Utf8Decoder {
 	public static char[] buf = new char[1000];
 
-	static ThreadLocal<byte[]> byte_buf_ = new ThreadLocal<byte[]>() {
-		@Override
-		protected byte[] initialValue() {
-			return new byte[1000];
-		}
-	};
+	static final ThreadLocal<byte[]> byte_buf_ = ThreadLocal.withInitial(() -> new byte[1000]);
 
-	static ThreadLocal<char[]> char_buf_ = new ThreadLocal<char[]>() {
-		@Override
-		protected char[] initialValue() {
-			return new char[8000];
-		}
-	};
+	static final ThreadLocal<char[]> char_buf_ = ThreadLocal.withInitial(() -> new char[8000]);
 
 	public static String toString(byte[] ba) {
 		return toString(ba, 0, ba.length);

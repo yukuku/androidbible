@@ -56,17 +56,9 @@ public class VerseRenderer {
 		return new LeadingMarginSpan.Standard(first, rest);
 	}
 
-	private static ThreadLocal<char[]> buf_char_ = new ThreadLocal<char[]>() {
-		@Override protected char[] initialValue() {
-			return new char[1024];
-		}
-	};
+	private static final ThreadLocal<char[]> buf_char_ = ThreadLocal.withInitial(() -> new char[1024]);
 
-	private static ThreadLocal<StringBuilder> buf_tag_ = new ThreadLocal<StringBuilder>() {
-		@Override protected StringBuilder initialValue() {
-			return new StringBuilder(100);
-		}
-	};
+	private static final ThreadLocal<StringBuilder> buf_tag_ = ThreadLocal.withInitial(() -> new StringBuilder(100));
 
 	/**
 	 * @param lText TextView for verse text, but can be null if rendering is for non-display

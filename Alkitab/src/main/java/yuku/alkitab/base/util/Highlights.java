@@ -7,19 +7,9 @@ import yuku.alkitab.base.App;
 public class Highlights {
 	static final String TAG = Highlights.class.getSimpleName();
 
-	final static ThreadLocal<Info> tmpInfo = new ThreadLocal<Info>() {
-		@Override
-		protected Info initialValue() {
-			return new Info();
-		}
-	};
+	final static ThreadLocal<Info> tmpInfo = ThreadLocal.withInitial(() -> new Info());
 
-	final static ThreadLocal<Info.Partial> tmpPartial = new ThreadLocal<Info.Partial>() {
-		@Override
-		protected Info.Partial initialValue() {
-			return new Info.Partial();
-		}
-	};
+	final static ThreadLocal<Info.Partial> tmpPartial = ThreadLocal.withInitial(() -> new Info.Partial());
 
 	@Keep
 	public static class Info {

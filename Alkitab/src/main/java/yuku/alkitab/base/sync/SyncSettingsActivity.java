@@ -57,19 +57,9 @@ public class SyncSettingsActivity extends BaseActivity {
 			}
 		};
 
-		static final ThreadLocal<DateFormat> lastSyncDateFormat = new ThreadLocal<DateFormat>() {
-			@Override
-			protected DateFormat initialValue() {
-				return android.text.format.DateFormat.getDateFormat(App.context);
-			}
-		};
+		static final ThreadLocal<DateFormat> lastSyncDateFormat = ThreadLocal.withInitial(() -> android.text.format.DateFormat.getDateFormat(App.context));
 
-		static final ThreadLocal<DateFormat> lastSyncTimeFormat = new ThreadLocal<DateFormat>() {
-			@Override
-			protected DateFormat initialValue() {
-				return android.text.format.DateFormat.getTimeFormat(App.context);
-			}
-		};
+		static final ThreadLocal<DateFormat> lastSyncTimeFormat = ThreadLocal.withInitial(() -> android.text.format.DateFormat.getTimeFormat(App.context));
 
 		@Override
 		public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {

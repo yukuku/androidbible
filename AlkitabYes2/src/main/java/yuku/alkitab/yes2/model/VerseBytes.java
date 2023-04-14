@@ -13,11 +13,7 @@ import java.io.IOException;
  *  - byte[length_in_bytes] encoded_text
  */
 public class VerseBytes {
-	static ThreadLocal<ByteArrayOutputStream> baos_ = new ThreadLocal<ByteArrayOutputStream>() {
-		@Override protected ByteArrayOutputStream initialValue() {
-			return new ByteArrayOutputStream(1000);
-		}
-	};
+	static ThreadLocal<ByteArrayOutputStream> baos_ = ThreadLocal.withInitial(() -> new ByteArrayOutputStream(1000));
 
 	public static byte[] bytesForAVerse(String verse) {
 		ByteArrayOutputStream baos = baos_.get();

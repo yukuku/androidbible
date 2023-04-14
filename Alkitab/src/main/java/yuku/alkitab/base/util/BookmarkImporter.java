@@ -89,12 +89,7 @@ public class BookmarkImporter {
 			return Label.createNewLabel(title, 0, bgColor);
 		}
 
-		static ThreadLocal<Matcher> highUnicodeMatcher = new ThreadLocal<Matcher>() {
-			@Override
-			protected Matcher initialValue() {
-				return Pattern.compile("\\[\\[~U([0-9A-Fa-f]{6})~]]").matcher("");
-			}
-		};
+		static ThreadLocal<Matcher> highUnicodeMatcher = ThreadLocal.withInitial(() -> Pattern.compile("\\[\\[~U([0-9A-Fa-f]{6})~]]").matcher(""));
 
 		public static String unescapeHighUnicode(String input) {
 			if (input == null) return null;

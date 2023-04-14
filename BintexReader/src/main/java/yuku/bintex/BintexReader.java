@@ -30,19 +30,9 @@ public class BintexReader implements Closeable {
 
 	private int pos_ = 0;
 
-	private static ThreadLocal<byte[]> buf_byte_ = new ThreadLocal<byte[]>() {
-		@Override
-		protected byte[] initialValue() {
-			return new byte[2048];
-		}
-	};
+	private static final ThreadLocal<byte[]> buf_byte_ = ThreadLocal.withInitial(() -> new byte[2048]);
 
-	private static ThreadLocal<char[]> buf_char_ = new ThreadLocal<char[]>() {
-		@Override
-		protected char[] initialValue() {
-			return new char[1024];
-		}
-	};
+	private static final ThreadLocal<char[]> buf_char_ = ThreadLocal.withInitial(() -> new char[1024]);
 
 	public BintexReader(InputStream is) {
 		this.is_ = is;

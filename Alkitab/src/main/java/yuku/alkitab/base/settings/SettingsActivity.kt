@@ -7,6 +7,7 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.FragmentManager
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -54,10 +55,11 @@ class SettingsActivity : BaseActivity() {
                 return
             }
 
-            val ft = supportFragmentManager.beginTransaction()
+            val fm: FragmentManager = supportFragmentManager
+            val ft = fm.beginTransaction()
             ft.replace(
                 R.id.fragment_container,
-                supportFragmentManager.fragmentFactory.instantiate(classLoader, subClassName),
+                fm.fragmentFactory.instantiate(classLoader, subClassName),
                 subClassName,
             )
             ft.commit()

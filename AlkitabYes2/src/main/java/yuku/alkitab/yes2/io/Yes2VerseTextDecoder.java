@@ -8,11 +8,7 @@ public interface Yes2VerseTextDecoder {
 	String makeIntoSingleString(BintexReader br, int verse_count, boolean lowercased) throws Exception;
 	
 	class Ascii implements Yes2VerseTextDecoder {
-		final ThreadLocal<byte[]> verseBuf_ = new ThreadLocal<byte[]>() {
-			@Override protected byte[] initialValue() {
-				return new byte[4000];
-			}
-		};
+		final ThreadLocal<byte[]> verseBuf_ = ThreadLocal.withInitial(() -> new byte[4000]);
 		
 		@Override public String[] separateIntoVerses(BintexReader br, int verse_count, boolean lowercased) throws Exception {
 			byte[] verseBuf = verseBuf_.get();
@@ -52,11 +48,7 @@ public interface Yes2VerseTextDecoder {
 	}
 	
 	class Utf8 implements Yes2VerseTextDecoder {
-		final ThreadLocal<byte[]> verseBuf_ = new ThreadLocal<byte[]>() {
-			@Override protected byte[] initialValue() {
-				return new byte[4000];
-			}
-		};
+		final ThreadLocal<byte[]> verseBuf_ = ThreadLocal.withInitial(() -> new byte[4000]);
 		
 		@Override public String[] separateIntoVerses(BintexReader br, int verse_count, boolean lowercased) throws Exception {
 			byte[] verseBuf = verseBuf_.get();
