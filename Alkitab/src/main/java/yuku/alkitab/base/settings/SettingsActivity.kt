@@ -73,7 +73,7 @@ class SettingsActivity : BaseActivity() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
             val v = layoutInflater.inflate(R.layout.preference_header_item_material, parent, false)
-            theme.resolveAttribute(R.attr.selectableItemBackground, tv, true)
+            theme.resolveAttribute(androidx.appcompat.R.attr.selectableItemBackground, tv, true)
             v.setBackgroundResource(tv.resourceId)
             return VH(v)
         }

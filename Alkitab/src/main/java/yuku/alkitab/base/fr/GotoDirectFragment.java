@@ -166,7 +166,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 
 		@Override
 		public View newView(final int position, final ViewGroup parent) {
-			return getActivity().getLayoutInflater().inflate(R.layout.support_simple_spinner_dropdown_item, parent, false);
+			return getActivity().getLayoutInflater().inflate(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, parent, false);
 		}
 
 		@Override

@@ -61,7 +61,7 @@ abstract class BaseActivity : AppCompatActivity(), ActivityCompat.OnRequestPermi
         val primaryColor = if (isNightMode) {
             ResourcesCompat.getColor(resources, R.color.primary_night_mode, theme)
         } else {
-            TypedValue().apply { theme.resolveAttribute(R.attr.colorPrimary, this, true) }.data
+            TypedValue().apply { theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary, this, true) }.data
         }
 
         val statusBarColor = if (isNightMode) {
