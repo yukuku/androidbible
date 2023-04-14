@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Gendannelse</string>
     <string name="ekspor_ke_sd_card">Sikkerhedskopi</string>
     <string name="menuBantuan">Hjælp</string>
-    <string name="beri_saran_title">Foreslå</string>
-    <string name="menuDevotion">Andagt</string>
+	<string name="menuDevotion">Andagt</string>
     <string name="search">Søg</string>
     <string name="activity_title_markers">Markører</string>
     <string name="menu_markers">Markører</string>

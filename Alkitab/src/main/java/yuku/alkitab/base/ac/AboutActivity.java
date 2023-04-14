@@ -36,7 +36,6 @@ public class AboutActivity extends BaseActivity {
 	View bHelp;
 	View bMaterialSources;
 	View bCredits;
-	View bFeedback;
 	View bEnableBeta;
 
 	final AtomicBoolean backgroundAnimationStarted = new AtomicBoolean(false);
@@ -77,12 +76,6 @@ public class AboutActivity extends BaseActivity {
 		bCredits.setOnClickListener(v -> {
 			Tracker.trackEvent("help_button_credits");
 			startActivity(HelpActivity.createIntent("help/credits.html", getString(R.string.about_credits)));
-		});
-
-		bFeedback = findViewById(R.id.bFeedback);
-		bFeedback.setOnClickListener(v -> {
-			Tracker.trackEvent("help_button_feedback");
-			startActivity(new Intent(App.context, com.example.android.wizardpager.MainActivity.class));
 		});
 
 		bEnableBeta = findViewById(R.id.bEnableBeta);

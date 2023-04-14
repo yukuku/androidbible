@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Restaurar</string>
     <string name="ekspor_ke_sd_card">Cópia de segurança</string>
     <string name="menuBantuan">Ajuda</string>
-    <string name="beri_saran_title">Sugerir</string>
-    <string name="menuDevotion">Devoção</string>
+	<string name="menuDevotion">Devoção</string>
     <string name="search">Procura</string>
     <string name="activity_title_markers">Marcadores</string>
     <string name="menu_markers">Marcadores</string>

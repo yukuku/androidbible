@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">복구</string>
     <string name="ekspor_ke_sd_card">백업</string>
     <string name="menuBantuan">도움말</string>
-    <string name="beri_saran_title">제안</string>
-    <string name="menuDevotion">묵상</string>
+	<string name="menuDevotion">묵상</string>
     <string name="search">검색</string>
     <string name="activity_title_markers">마커</string>
     <string name="menu_markers">마커</string>

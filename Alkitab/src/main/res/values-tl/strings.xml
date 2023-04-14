@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Ibalik</string>
     <string name="ekspor_ke_sd_card">Backup</string>
     <string name="menuBantuan">Tulong</string>
-    <string name="beri_saran_title">Mungkahi</string>
-    <string name="menuDevotion">Debosyon</string>
+	<string name="menuDevotion">Debosyon</string>
     <string name="search">Maghanap</string>
     <string name="activity_title_markers">Mga marker</string>
     <string name="menu_markers">Mga marker</string>

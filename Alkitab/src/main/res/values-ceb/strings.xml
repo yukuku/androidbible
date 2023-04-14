@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Pagbalik</string>
     <string name="ekspor_ke_sd_card">Resirba</string>
     <string name="menuBantuan">Tabang</string>
-    <string name="beri_saran_title">E-suggest</string>
-    <string name="menuDevotion">Debosyon</string>
+	<string name="menuDevotion">Debosyon</string>
     <string name="search">Pangita</string>
     <string name="activity_title_markers">Mga marker</string>
     <string name="menu_markers">Mga marker</string>

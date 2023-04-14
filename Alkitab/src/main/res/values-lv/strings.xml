@@ -20,8 +20,7 @@
     <string name="impor_dari_sd_card">Atjaunot</string>
     <string name="ekspor_ke_sd_card">Dublējums</string>
     <string name="menuBantuan">Palīdzība</string>
-    <string name="beri_saran_title">Ieteikums</string>
-    <string name="menuDevotion">Veltījums</string>
+	<string name="menuDevotion">Veltījums</string>
     <string name="search">Meklēt</string>
     <string name="activity_title_markers">Atzīmes</string>
     <string name="menu_markers">Atzīmes</string>

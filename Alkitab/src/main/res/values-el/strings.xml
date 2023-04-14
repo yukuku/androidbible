@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Διόρθωση</string>
     <string name="ekspor_ke_sd_card">Δημιουργία αντιγράφου ασφαλείας</string>
     <string name="menuBantuan">Βοήθεια</string>
-    <string name="beri_saran_title">Πρόταση</string>
-    <string name="menuDevotion">Αφοσίωση</string>
+	<string name="menuDevotion">Αφοσίωση</string>
     <string name="search">Αναζήτηση</string>
     <string name="activity_title_markers">Μαρκαδόροι</string>
     <string name="menu_markers">Μαρκαδόροι</string>

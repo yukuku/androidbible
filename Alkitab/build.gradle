@@ -67,7 +67,6 @@ android {
 }
 
 dependencies {
-    implementation project(':AlkitabFeedback')
     implementation project(':AlkitabIntegration')
     implementation project(':AlkitabIo')
     implementation project(':AlkitabModel')

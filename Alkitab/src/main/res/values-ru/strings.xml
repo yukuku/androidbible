@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Восстановить</string>
     <string name="ekspor_ke_sd_card">Сделать резервную копию</string>
     <string name="menuBantuan">Помощь</string>
-    <string name="beri_saran_title">Предложение по улучшению</string>
-    <string name="menuDevotion">Размышления</string>
+	<string name="menuDevotion">Размышления</string>
     <string name="search">Поиск</string>
     <string name="activity_title_markers">Маркеры</string>
     <string name="menu_markers">Маркеры</string>

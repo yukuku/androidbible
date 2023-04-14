@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Visszaállítás</string>
     <string name="ekspor_ke_sd_card">Biztonsági mentés</string>
     <string name="menuBantuan">Segítség</string>
-    <string name="beri_saran_title">Javaslat</string>
-    <string name="menuDevotion">Áldozás</string>
+	<string name="menuDevotion">Áldozás</string>
     <string name="search">Keresés</string>
     <string name="activity_title_markers">Jelölők</string>
     <string name="menu_markers">Jelölők</string>

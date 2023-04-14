@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Przywróć</string>
     <string name="ekspor_ke_sd_card">Kopia</string>
     <string name="menuBantuan">Pomoc</string>
-    <string name="beri_saran_title">Sugestie</string>
-    <string name="menuDevotion">Rozważania</string>
+	<string name="menuDevotion">Rozważania</string>
     <string name="search">Szukaj</string>
     <string name="activity_title_markers">Znaczniki</string>
     <string name="menu_markers">Znaczniki</string>

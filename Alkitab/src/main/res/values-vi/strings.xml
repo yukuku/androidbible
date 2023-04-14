@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Khôi phục</string>
     <string name="ekspor_ke_sd_card">Sao lưu</string>
     <string name="menuBantuan">Giúp đỡ</string>
-    <string name="beri_saran_title">Gợi ý</string>
-    <string name="menuDevotion">Sứ điệp bồi linh tĩnh nguyện</string>
+	<string name="menuDevotion">Sứ điệp bồi linh tĩnh nguyện</string>
     <string name="search">Tìm kiếm</string>
     <string name="activity_title_markers">Đánh dấu</string>
     <string name="menu_markers">Đánh dấu</string>

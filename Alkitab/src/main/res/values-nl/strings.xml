@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Terugzetten</string>
     <string name="ekspor_ke_sd_card">Reservekopie</string>
     <string name="menuBantuan">Help</string>
-    <string name="beri_saran_title">Suggesties</string>
-    <string name="menuDevotion">Overdenking</string>
+	<string name="menuDevotion">Overdenking</string>
     <string name="search">Zoeken</string>
     <string name="activity_title_markers">Markeringen</string>
     <string name="menu_markers">Bladwijzers, notities, e.d.</string>

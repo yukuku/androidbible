@@ -17,7 +17,6 @@ import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.reminder.util.DevotionReminder;
 import yuku.alkitab.tracking.Tracker;
-import yuku.alkitabfeedback.FeedbackSender;
 import yuku.alkitabintegration.display.Launcher;
 
 public class App extends yuku.afw.App {
@@ -61,9 +60,6 @@ public class App extends yuku.afw.App {
         }
 
         Tracker.init(context);
-
-        final FeedbackSender fs = FeedbackSender.getInstance(context);
-        fs.trySend();
 
         for (final int preferenceResId : new int[]{
             R.xml.settings_display,

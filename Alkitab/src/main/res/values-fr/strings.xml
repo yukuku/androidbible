@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Restauration</string>
     <string name="ekspor_ke_sd_card">Sauvegarde</string>
     <string name="menuBantuan">Aide</string>
-    <string name="beri_saran_title">Suggestion</string>
-    <string name="menuDevotion">Prière</string>
+	<string name="menuDevotion">Prière</string>
     <string name="search">Chercher</string>
     <string name="activity_title_markers">Balises</string>
     <string name="menu_markers">Marque-pages</string>

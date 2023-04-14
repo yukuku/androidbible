@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Відновити</string>
     <string name="ekspor_ke_sd_card">Резервна копія</string>
     <string name="menuBantuan">Допомога</string>
-    <string name="beri_saran_title">Запропонувати</string>
-    <string name="menuDevotion">Вивчення Біблії</string>
+	<string name="menuDevotion">Вивчення Біблії</string>
     <string name="search">Пошук</string>
     <string name="activity_title_markers">Позначки</string>
     <string name="menu_markers">Закладки</string>

@@ -540,7 +540,7 @@ class SearchActivity : BaseActivity() {
             }
             return
         }
-        @Suppress("deprecation")
+
         super.onActivityResult(requestCode, resultCode, data)
     }
 

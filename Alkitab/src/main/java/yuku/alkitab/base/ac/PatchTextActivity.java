@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.example.android.wizardpager.MainActivity;
 import name.fraser.neil.plaintext.diff_match_patch;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -136,7 +135,9 @@ public class PatchTextActivity extends BaseActivity {
 		}
 
 		final String patchTextMessage = "PATCHTEXT\n\n" + extraInfo + "\n\n" + sb.toString();
-		startActivityForResult(MainActivity.createIntent(App.context, patchTextMessage), REQCODE_send);
+
+		// TODO send patch using a different way
+		// startActivityForResult(MainActivity.createIntent(App.context, patchTextMessage), REQCODE_send);
 	}
 
 	@Override

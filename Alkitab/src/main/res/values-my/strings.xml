@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">မူလပုံစံအတိုင်း ပြန်လည်သိမ်းဆည်းရန်</string>
     <string name="ekspor_ke_sd_card">မူရင်းဖိုင်များကို ကူးယူသိုမှီးထားရှိရန်</string>
     <string name="menuBantuan">အကူအညီ</string>
-    <string name="beri_saran_title">အကြံပြုချက်ပေးရန်</string>
-    <string name="menuDevotion">ဝတ်ပြုခြင်း</string>
+	<string name="menuDevotion">ဝတ်ပြုခြင်း</string>
     <string name="search">ရှာဖွေရန်</string>
     <string name="activity_title_markers">အမှတ်အသားများ</string>
     <string name="menu_markers">အမှတ်အသားများ</string>
