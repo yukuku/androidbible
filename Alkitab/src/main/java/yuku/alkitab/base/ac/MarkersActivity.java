@@ -127,20 +127,19 @@ public class MarkersActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menuMigrateFromV3: {
-                final FileChooserConfig config = new FileChooserConfig();
-                config.mode = FileChooserConfig.Mode.Open;
-                config.pattern = "(yuku\\.alkitab|yuku\\.alkitab\\.kjv|org\\.sabda\\.alkitab|org\\.sabda\\.online)-(backup|autobackup-[0-9-]+)\\.xml";
-                config.title = getString(R.string.marker_migrate_file_chooser_title);
-                final Intent intent = FileChooserActivity.createIntent(this, config);
-                startActivityForResult(intent, REQCODE_migrateFromV3);
-            }
+        int itemId = item.getItemId();
+        if (itemId == R.id.menuMigrateFromV3) {
+            final FileChooserConfig config = new FileChooserConfig();
+            config.mode = FileChooserConfig.Mode.Open;
+            config.pattern = "(yuku\\.alkitab|yuku\\.alkitab\\.kjv|org\\.sabda\\.alkitab|org\\.sabda\\.online)-(backup|autobackup-[0-9-]+)\\.xml";
+            config.title = getString(R.string.marker_migrate_file_chooser_title);
+            final Intent intent = FileChooserActivity.createIntent(this, config);
+            startActivityForResult(intent, REQCODE_migrateFromV3);
             return true;
-            case R.id.menuLabelSort:
-                S.getDb().sortLabelsAlphabetically();
-                adapter.reload();
-                return true;
+        } else if (itemId == R.id.menuLabelSort) {
+            S.getDb().sortLabelsAlphabetically();
+            adapter.reload();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

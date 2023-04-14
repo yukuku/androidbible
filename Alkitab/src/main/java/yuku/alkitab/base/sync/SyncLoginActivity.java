@@ -335,18 +335,16 @@ public class SyncLoginActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         final int itemId = item.getItemId();
-        switch (itemId) {
-            case R.id.menuChangePassword:
-                bLogin.setVisibility(View.GONE);
-                bRegister.setVisibility(View.GONE);
-                bChangePassword.setVisibility(View.VISIBLE);
+        if (itemId == R.id.menuChangePassword) {
+            bLogin.setVisibility(View.GONE);
+            bRegister.setVisibility(View.GONE);
+            bChangePassword.setVisibility(View.VISIBLE);
 
-                tPasswordNew.setVisibility(View.VISIBLE);
-                return true;
-
-            case R.id.menuSyncLog:
-                startActivity(SyncLogActivity.createIntent());
-                return true;
+            tPasswordNew.setVisibility(View.VISIBLE);
+            return true;
+        } else if (itemId == R.id.menuSyncLog) {
+            startActivity(SyncLogActivity.createIntent());
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

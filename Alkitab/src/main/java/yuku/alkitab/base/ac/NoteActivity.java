@@ -250,39 +250,34 @@ public class NoteActivity extends BaseActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.menuEdit: {
-				setEditingMode(true);
+		int itemId = item.getItemId();
+		if (itemId == R.id.menuEdit) {
+			setEditingMode(true);
+			return true;
+		} else if (itemId == R.id.menuDelete) {// if it's indeed not exist, check if we have some text, if we do, prompt first
+			if (marker != null || tCaption.length() > 0) {
+				new MaterialDialog.Builder(this)
+					.content(R.string.anda_yakin_mau_menghapus_catatan_ini)
+					.positiveText(R.string.delete)
+					.onPositive((dialog, which) -> {
+						if (marker != null) {
+							// really delete from db
+							S.getDb().deleteNonBookmarkMarkerById(marker._id);
+						} else {
+							// do nothing, because it's indeed not in the db, only in editor buffer
+						}
+
+						setResult(RESULT_OK);
+						realFinish();
+					})
+					.negativeText(R.string.cancel)
+					.show();
+			} else { // no existing marker and buffer is empty
+				realFinish(); // no need to setResult(RESULT_OK), because nothing is to be reloaded
 			}
 			return true;
-			case R.id.menuDelete: {
-				// if it's indeed not exist, check if we have some text, if we do, prompt first
-				if (marker != null || tCaption.length() > 0) {
-					new MaterialDialog.Builder(this)
-						.content(R.string.anda_yakin_mau_menghapus_catatan_ini)
-						.positiveText(R.string.delete)
-						.onPositive((dialog, which) -> {
-							if (marker != null) {
-								// really delete from db
-								S.getDb().deleteNonBookmarkMarkerById(marker._id);
-							} else {
-								// do nothing, because it's indeed not in the db, only in editor buffer
-							}
-
-							setResult(RESULT_OK);
-							realFinish();
-						})
-						.negativeText(R.string.cancel)
-						.show();
-				} else { // no existing marker and buffer is empty
-					realFinish(); // no need to setResult(RESULT_OK), because nothing is to be reloaded
-				}
-
-			}
-			return true;
-			case R.id.menuOk: {
-				ok_click();
-			}
+		} else if (itemId == R.id.menuOk) {
+			ok_click();
 			return true;
 		}
 

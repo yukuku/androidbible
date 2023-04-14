@@ -193,13 +193,12 @@ public class SyncSettingsActivity extends BaseActivity {
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		final int itemId = item.getItemId();
-		switch (itemId) {
-			case R.id.menuSyncNow:
-				Sync.forceSyncNow();
-				return true;
-			case R.id.menuSyncLog:
-				startActivity(SyncLogActivity.createIntent());
-				return true;
+		if (itemId == R.id.menuSyncNow) {
+			Sync.forceSyncNow();
+			return true;
+		} else if (itemId == R.id.menuSyncLog) {
+			startActivity(SyncLogActivity.createIntent());
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
