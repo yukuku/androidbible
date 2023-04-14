@@ -817,7 +817,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         templateCustomVars.putString("patch_text_open_link", getString(R.string.patch_text_open_link))
 
         val ft = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.root, SongFragment.create(song, "templates/song.html", templateCustomVars), FRAGMENT_TAG_SONG)
+        ft.replace(R.id.root, SongFragment.create(song, templateCustomVars), FRAGMENT_TAG_SONG)
         ft.commitAllowingStateLoss()
 
         currentBookName = bookName

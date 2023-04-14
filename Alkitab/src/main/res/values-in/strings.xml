@@ -254,6 +254,7 @@
     <string name="sn_private_song_book_dialog_desc">Unduh buku lagu pribadi (tersembunyi)</string>
     <string name="sn_private_song_book_name_hint">Nama buku lagu</string>
     <string name="sn_play_in_loop">Putar berulang-ulang sampai dihentikan?</string>
+    <string name="sn_error_rendering_lyrics">Kesalahan dalam menampilkan lirik. Harap tekan tombol menu dan pilih \"Perbarui buku lagu\".</string>
     <string name="sn_audio_disclaimer_message">Harap diperhatikan bahwa semua audio yang tersedia dalam aplikasi ini belum tentu bersumber dari penerbit lagu atau buku lagu.</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Hari sebelumnya</string>

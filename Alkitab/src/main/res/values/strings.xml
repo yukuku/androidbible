@@ -261,6 +261,7 @@
     <string name="sn_private_song_book_dialog_desc">Download a private (hidden) song book</string>
     <string name="sn_private_song_book_name_hint">Song book name</string>
 	<string name="sn_play_in_loop">Do you want to play on a loop until stopped?</string>
+	<string name="sn_error_rendering_lyrics">Error in rendering lyrics. Please tap the menu button and select \"Update song book\".</string>
     <string name="sn_audio_disclaimer_message">Please note that all audio provided in this app does not necessarily originate from the publisher of the song or the song book.</string>
 
     <!-- Content descriptions, for blind users -->

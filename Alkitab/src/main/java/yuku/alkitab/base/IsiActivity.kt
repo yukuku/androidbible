@@ -714,6 +714,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
                     true
                 }
+
                 R.id.menuShare, R.id.menuShareSplit0, R.id.menuShareSplit1, R.id.menuShareBothSplits -> {
                     // share, can be multiple verses
                     val reference = referenceFromSelectedVerses(selected, activeSplit0.book)
@@ -763,6 +764,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     })
                     true
                 }
+
                 R.id.menuCompare -> {
                     val ari = Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, selected.get(0))
                     val dialog = VersesDialog.newCompareInstance(ari)
@@ -781,6 +783,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
                     true
                 }
+
                 R.id.menuAddBookmark -> {
 
                     // contract: this menu only appears when contiguous verses are selected
@@ -802,6 +805,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     mode.finish()
                     true
                 }
+
                 R.id.menuAddNote -> {
 
                     // contract: this menu only appears when contiguous verses are selected
@@ -818,6 +822,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
                     true
                 }
+
                 R.id.menuAddHighlight -> {
                     val ariBc = Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, 0)
                     val colorRgb = S.getDb().getHighlightColorRgb(ariBc, selected)
@@ -842,6 +847,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     mode.finish()
                     true
                 }
+
                 R.id.menuEsvsb -> {
 
                     val ari = Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, selected.get(0))
@@ -855,6 +861,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     }
                     true
                 }
+
                 R.id.menuGuide -> {
 
                     val ari = Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, 0)
@@ -872,6 +879,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     }
                     true
                 }
+
                 R.id.menuCommentary -> {
 
                     val ari = Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, selected.get(0))
@@ -889,6 +897,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     }
                     true
                 }
+
                 R.id.menuDictionary -> {
 
                     val ariBc = Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, 0)
@@ -1066,6 +1075,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 closeSplitDisplay()
                 openSplitDisplay()
             }
+
             LabeledSplitHandleButton.Button.start -> openVersionsDialog()
             LabeledSplitHandleButton.Button.end -> openSplitVersionsDialog()
             else -> throw IllegalStateException("should not happen")
@@ -1373,6 +1383,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     null
                 }
             }
+
             intent.hasExtra("lid") -> {
                 val lid = intent.getIntExtra("lid", 0)
                 val ari = LidToAri.lidToAri(lid)
@@ -1383,6 +1394,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     null
                 }
             }
+
             else -> null
         }
     }
@@ -1862,10 +1874,12 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 textAppearancePanel?.hide()
                 textAppearancePanel = null
             }
+
             fullScreen -> {
                 setFullScreen(false)
                 leftDrawer.handle.setFullScreen(false)
             }
+
             else -> {
                 super.onBackPressed()
             }
@@ -2013,6 +2027,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 leftDrawer.toggleDrawer()
                 return true
             }
+
             R.id.menuSearch -> {
                 Tracker.trackEvent("nav_search_click")
                 menuSearch_click()
@@ -2742,6 +2757,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                                                 }
                                             }, start, end, 0)
                                         }
+
                                         else -> {
                                             MaterialDialog.Builder(this@IsiActivity)
                                                 .content(String.format(Locale.US, "Error: footnote at arif 0x%08x contains unsupported tag %s", arif, tag))
