@@ -9,7 +9,9 @@ import android.widget.RadioButton
 import android.widget.TextView
 import androidx.core.util.PatternsCompat
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.google.android.material.textfield.TextInputLayout
+import java.io.IOException
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.FormBody
@@ -23,7 +25,6 @@ import yuku.alkitab.base.util.FormattedVerseText
 import yuku.alkitab.base.widget.VerseRendererHelper
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
-import java.io.IOException
 
 class RibkaReportActivity : BaseActivity() {
     lateinit var tRibkaVerseText: TextView
@@ -98,10 +99,10 @@ class RibkaReportActivity : BaseActivity() {
             oRibkaCategoryContent.isChecked -> "content"
             oRibkaCategoryOthers.isChecked -> "others"
             else -> {
-MaterialDialog(this).show {
-message(R.string.ribka_category_error)
-positiveButton(R.string.ok)
-}
+                MaterialDialog(this).show {
+                    message(R.string.ribka_category_error)
+                    positiveButton(R.string.ok)
+                }
                 null
             }
         } ?: return
@@ -136,7 +137,7 @@ positiveButton(R.string.ok)
         form.add("reportVersionDescription", versionDescription.orEmpty())
 
         val pd = MaterialDialog.Builder(this)
-            message(R.string.ribka_sending_progress)
+        message(R.string.ribka_sending_progress)
             .cancelable(false)
             .progress(true, 0)
             .show()
@@ -146,10 +147,10 @@ positiveButton(R.string.ok)
                 pd.dismiss()
 
                 runOnUiThread {
-                    MaterialDialog.Builder(this@RibkaReportActivity)
+                    MaterialDialog(this@RibkaReportActivity).show {
                         message(R.string.ribka_send_error)
                         positiveButton(R.string.ok)
-                        .show()
+                    }
                 }
             }
 
@@ -158,20 +159,18 @@ positiveButton(R.string.ok)
 
                 if (response.isSuccessful) {
                     runOnUiThread {
-                        MaterialDialog.Builder(this@RibkaReportActivity)
+                        MaterialDialog(this@RibkaReportActivity).show {
                             message(R.string.ribka_send_success)
                             positiveButton(R.string.ok)
-                            .show()
-                            .setOnDismissListener {
-                                finish()
-                            }
+                            onDismiss { finish() }
+                        }
                     }
                 } else {
                     runOnUiThread {
-                        MaterialDialog.Builder(this@RibkaReportActivity)
+                        MaterialDialog(this@RibkaReportActivity).show {
                             message(text = TextUtils.expandTemplate(getString(R.string.ribka_send_failure), "${response.code} ${response.body?.string()}"))
                             positiveButton(R.string.ok)
-                            .show()
+                        }
                     }
                 }
             }

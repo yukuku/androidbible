@@ -120,10 +120,10 @@ class XrefDialog : BaseDialog() {
             if (xrefEntry != null) {
                 renderXrefText()
             } else {
-                MaterialDialog.Builder(inflater.context)
+                MaterialDialog(inflater.context).show {
                     message(text = String.format(Locale.US, "Error: xref at arif 0x%08x couldn't be loaded", arif_source))
                     positiveButton(R.string.ok)
-                    .show()
+                }
             }
         }
     }

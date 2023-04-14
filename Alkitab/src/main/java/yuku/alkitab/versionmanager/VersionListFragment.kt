@@ -230,10 +230,10 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
                         .setChooserTitle(getString(R.string.version_share_title))
                         .startChooser()
                 } catch (e: Exception) {
-                    MaterialDialog.Builder(requireActivity())
+                    MaterialDialog(requireActivity()).show {
                         message(text = "Can't share " + file.absolutePath + ": [" + e.javaClass + "] " + e.message)
                         positiveButton(R.string.ok)
-                        .show()
+                    }
                 }
             }
         }
@@ -245,21 +245,19 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
             b.onNeutral { _, _ ->
                 val filename = mv.filename
                 if (AddonManager.isInSharedStorage(filename)) {
-                    MaterialDialog.Builder(requireActivity())
+                    MaterialDialog(requireActivity()).show {
                         message(text = getString(R.string.juga_hapus_file_datanya_file, filename))
-                        positiveButton(R.string.delete)
-                        .onPositive { _, _ ->
+                        positiveButton(R.string.delete) {
                             S.getDb().deleteVersion(mv)
                             App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
                             File(filename).delete()
                         }
-                        .negativeText(R.string.no)
-                        .onNegative { _, _ ->
+                        negativeButton(R.string.no) {
                             S.getDb().deleteVersion(mv)
                             App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
                         }
-                        .neutralText(R.string.cancel)
-                        .show()
+                        neutralButton(R.string.cancel)
+                    }
                 } else { // just delete the file!
                     S.getDb().deleteVersion(mv)
                     App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
@@ -313,15 +311,14 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
             cActive.isChecked -> mv.active = false
             mv.hasDataFile() -> mv.active = true
             else -> {
-                MaterialDialog.Builder(requireActivity())
+                MaterialDialog(requireActivity()).show {
                     message(R.string.the_file_for_this_version_is_no_longer_available_file, mv.filename)
-                    positiveButton(R.string.delete)
-                    .onPositive { _, _ ->
+                    positiveButton(R.string.delete) {
                         S.getDb().deleteVersion(mv)
                         App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
                     }
-                    .negativeText(R.string.no)
-                    .show()
+                    negativeButton(R.string.no)
+                }
             }
         }
     }

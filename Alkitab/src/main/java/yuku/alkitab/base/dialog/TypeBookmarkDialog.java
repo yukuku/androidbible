@@ -79,7 +79,7 @@ public class TypeBookmarkDialog {
 		tCaption = dialogView.findViewById(R.id.tCaption);
 		final Button bAddLabel = dialogView.findViewById(R.id.bAddLabel);
 
-		bAddLabel.setOnClickListener(v -> MaterialDialogAdapterHelper.showWithAdapter(new MaterialDialog.Builder(context).title(R.string.add_label_title), new LabelAdapter()));
+		bAddLabel.setOnClickListener(v -> MaterialDialogAdapterHelper.withAdapter(new MaterialDialog.Builder(context).title(R.string.add_label_title), new LabelAdapter()));
 
 		if (marker != null) {
 			labels = new TreeSet<>();

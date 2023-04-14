@@ -433,13 +433,12 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                 if (mediaState.icon == R.drawable.ic_action_play) {
                     MaterialDialog(this).show {
                         message(R.string.sn_play_in_loop)
-                        .negativeText(R.string.cancel)
-                        positiveButton(R.string.ok)
-                        .onPositive { _, _ ->
+                        negativeButton(R.string.cancel)
+                        positiveButton(R.string.ok) {
                             val activeMediaController = activeMediaController ?: return@onPositive
                             activeMediaController.playOrPause(true)
                         }
-                        .show()
+                    }
                     true
                 } else {
                     false

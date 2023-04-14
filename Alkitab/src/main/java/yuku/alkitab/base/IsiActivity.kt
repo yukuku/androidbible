@@ -113,7 +113,7 @@ import yuku.alkitab.base.widget.GotoButton
 import yuku.alkitab.base.widget.LabeledSplitHandleButton
 import yuku.alkitab.base.widget.LeftDrawer
 import yuku.alkitab.base.widget.MaterialDialogAdapterHelper
-import yuku.alkitab.base.widget.MaterialDialogAdapterHelper.showWithAdapter
+import yuku.alkitab.base.widget.MaterialDialogAdapterHelper.withAdapter
 import yuku.alkitab.base.widget.ParallelClickData
 import yuku.alkitab.base.widget.ReferenceParallelClickData
 import yuku.alkitab.base.widget.SplitHandleButton
@@ -422,7 +422,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         try {
                             startActivity(intent)
                         } catch (e: ActivityNotFoundException) {
-                            OtherAppIntegration.askToInstallDictionary(this)
+                            OtherAppIntegration.askToInstallDictionary(this@IsiActivity)
                         }
                     }
                 }
@@ -1919,7 +1919,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         Tracker.trackEvent("nav_goto_button_long_click")
         if (history.size > 0) {
             MaterialDialog(this).show {
-                .showWithAdapter(HistoryAdapter())
+                withAdapter(HistoryAdapter())
             }
             Preferences.setBoolean(Prefkey.history_button_understood, true)
         } else {
@@ -2552,9 +2552,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             if (markers.size == 1) {
                 openBookmarkDialog(markers[0]._id)
             } else {
-                MaterialDialog.Builder(this@IsiActivity)
-                    .title(R.string.edit_bookmark)
-                    .showWithAdapter(MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.bookmark))
+                MaterialDialog(this@IsiActivity).show {
+                    title(R.string.edit_bookmark)
+                    withAdapter(MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.bookmark))
+                }
             }
         }
 
@@ -2567,9 +2568,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             if (markers.size == 1) {
                 openNoteDialog(markers[0]._id)
             } else {
-                MaterialDialog.Builder(this@IsiActivity)
-                    .title(R.string.edit_note)
-                    .showWithAdapter(MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.note))
+                MaterialDialog(this@IsiActivity).show {
+                    title(R.string.edit_note)
+                    withAdapter(MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.note))
+                }
             }
         }
 

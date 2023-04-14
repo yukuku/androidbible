@@ -177,7 +177,7 @@ public class TextAppearancePanel {
 		public void onClick(final View v) {
 			final ColorThemeAdapter adapter = new ColorThemeAdapter();
 
-			final MaterialDialog dialog = MaterialDialogAdapterHelper.showWithAdapter(new MaterialDialog.Builder(activity), adapter);
+			final MaterialDialog dialog = MaterialDialogAdapterHelper.withAdapter(new MaterialDialog.Builder(activity), adapter);
 
 			final RecyclerView recyclerView = dialog.getRecyclerView();
 

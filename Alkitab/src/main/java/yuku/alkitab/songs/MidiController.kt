@@ -96,10 +96,10 @@ class MidiController : MediaController() {
                 if (state != State.reset) { // Errors can happen if we call MediaPlayer#reset when MediaPlayer state is Preparing. In this case, do not show error message.
                     val activity = activityRef?.get()
                     if (activity != null && !activity.isFinishing) {
-                        MaterialDialog.Builder(activity)
+                        MaterialDialog(activity).show {
                             message(text = activity.getString(R.string.song_player_error_description, what, extra))
                             positiveButton(R.string.ok)
-                            .show()
+                        }
                     }
                 }
                 state = State.error

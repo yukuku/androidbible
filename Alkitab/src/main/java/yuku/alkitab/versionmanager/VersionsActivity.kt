@@ -138,7 +138,7 @@ class VersionsActivity : BaseActivity() {
                 MaterialDialog(this).show {
                     message(text = TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
                     positiveButton(R.string.ok)
-                    .show()
+                }
                 return
             }
         }
@@ -163,7 +163,7 @@ class VersionsActivity : BaseActivity() {
                         MaterialDialog(this).show {
                             message(text = TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
                             positiveButton(R.string.ok)
-                            .show()
+                        }
                         return
                     }
 
@@ -197,7 +197,7 @@ class VersionsActivity : BaseActivity() {
                 MaterialDialog(this).show {
                     message(text = TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
                     positiveButton(R.string.ok)
-                    .show()
+                }
                 return
             }
 
@@ -325,7 +325,7 @@ class VersionsActivity : BaseActivity() {
             MaterialDialog(this).show {
                 message(R.string.ed_this_file_is_already_on_the_list)
                 positiveButton(R.string.ok)
-                .show()
+            }
             return
         }
 
@@ -337,11 +337,11 @@ class VersionsActivity : BaseActivity() {
 
                 val message = if (exception is ConvertOptionsDialog.PdbKnownErrorException) exception.message.orEmpty() else getString(R.string.ed_details) + sw.toString()
 
-                MaterialDialog.Builder(this@VersionsActivity)
-                    .title(R.string.ed_error_reading_pdb_file)
+                MaterialDialog(this@VersionsActivity).show {
+                    title(R.string.ed_error_reading_pdb_file)
                     message(text = message)
                     positiveButton(R.string.ok)
-                    .show()
+                }
             }
 
             fun showResult(yesFile: File, exception: Throwable?, wronglyConvertedBookNames: List<String?>?) {
@@ -365,10 +365,10 @@ class VersionsActivity : BaseActivity() {
                         }
                     }
 
-                    MaterialDialog.Builder(this@VersionsActivity)
+                    MaterialDialog(this@VersionsActivity).show {
                         message(text = msg)
                         positiveButton(R.string.ok)
-                        .show()
+                    }
                 }
             }
 
@@ -378,17 +378,17 @@ class VersionsActivity : BaseActivity() {
 
             override fun onOkYes2(params: ConvertPdbToYes2.ConvertParams) {
                 val yesFile = AddonManager.getWritableVersionFile(yesName)
-                val pd = MaterialDialog.Builder(this@VersionsActivity)
+                val pd = MaterialDialog(this@VersionsActivity).show {
                     message(R.string.ed_reading_pdb_file)
-                    .cancelable(false)
-                    .progress(true, 0)
-                    .show()
+                        cancelable(false)
+                        progress(true, 0)
+                }
 
                 fun onProgressUpdate(at: Int?, message: String?) = Foreground.run {
                     if (at == null) {
-                        pd.setContent(getString(R.string.ed_finished))
+                        pd.message(R.string.ed_finished)
                     } else {
-                        pd.setContent("($at) $message...")
+                        pd.message(text = "($at) $message...")
                     }
                 }
 
@@ -444,10 +444,10 @@ class VersionsActivity : BaseActivity() {
             App.getLbm().sendBroadcast(Intent(VersionListFragment.ACTION_RELOAD))
         } catch (e: Exception) {
             MaterialDialog(this).show {
-                .title(R.string.ed_error_encountered)
+                title(R.string.ed_error_encountered)
                 message(text = "${e.javaClass.simpleName}: ${e.message}")
                 positiveButton(R.string.ok)
-                .show()
+            }
         }
     }
 
@@ -477,21 +477,20 @@ class VersionsActivity : BaseActivity() {
                 val uri = Uri.parse(url)
                 val scheme = uri.scheme
                 if ("http" != scheme && "https" != scheme) {
-                    MaterialDialog.Builder(this@VersionsActivity)
+                    MaterialDialog(this@VersionsActivity).show {
                         message(R.string.version_download_invalid_url)
-                        positiveButton(R.string.ok)
-                        .onPositive { _, _ -> openUrlInputDialog(url) }
-                        .show()
+                        positiveButton(R.string.ok) { openUrlInputDialog(url) }
+                    }
                     return@input
                 }
 
                 // guess destination filename
                 val last = uri.lastPathSegment ?: return@input
                 if (last.isEmpty() || !last.endsWith(".yes", ignoreCase = true)) {
-                    MaterialDialog.Builder(this@VersionsActivity)
+                    MaterialDialog(this@VersionsActivity).show {
                         message(R.string.version_download_not_yes)
                         positiveButton(R.string.ok)
-                        .show()
+                    }
                     return@input
                 }
 
@@ -527,11 +526,11 @@ class VersionsActivity : BaseActivity() {
                 if (maybeDecompressed.exists() && !maybeDecompressed.isDirectory && maybeDecompressed.canRead()) {
                     handleFileOpenYes(maybeDecompressed)
                 } else {
-                    val pd = MaterialDialog.Builder(this)
+                    val pd = MaterialDialog(this).show {
                         message(R.string.sedang_mendekompres_harap_tunggu)
-                        .cancelable(false)
-                        .progress(true, 0)
-                        .show()
+                        cancelable(false)
+                        progress(true, 0)
+                    }
 
                     Background.run {
                         val tmpfile3 = filename + "-" + (Math.random() * 100000).toInt() + ".tmp3"
