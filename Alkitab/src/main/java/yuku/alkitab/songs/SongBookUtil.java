@@ -192,7 +192,7 @@ public class SongBookUtil {
 		final AtomicBoolean cancelled = new AtomicBoolean();
 
 		final MaterialDialog pd = new MaterialDialog.Builder(activity)
-			.content(R.string.sn_downloading_ellipsis)
+			message(R.string.sn_downloading_ellipsis)
 			.progress(true, 0)
 			.dismissListener(dialog -> cancelled.set(true))
 			.show();

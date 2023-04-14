@@ -92,8 +92,8 @@ public class AlertDialogActivity extends BaseActivity {
 						startActivity(launch);
 					} catch (ActivityNotFoundException e) {
 						new MaterialDialog.Builder(AlertDialogActivity.this)
-							.content("Actvity was not found for intent: " + launch.toString())
-							.positiveText(R.string.ok)
+							message(text = "Actvity was not found for intent: " + launch.toString())
+							positiveButton(R.string.ok)
 							.show();
 					}
 				}

@@ -389,17 +389,17 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 return
             }
         } catch (e: Exception) {
-            MaterialDialog.Builder(this)
-                .content(R.string.dict_no_results)
-                .positiveText(R.string.ok)
-                .show()
+            MaterialDialog(this).show {
+                message(R.string.dict_no_results)
+                positiveButton(R.string.ok)
+            }
             return
         }.use { c ->
             if (c.count == 0) {
-                MaterialDialog.Builder(this)
-                    .content(R.string.dict_no_results)
-                    .positiveText(R.string.ok)
-                    .show()
+                MaterialDialog(this).show {
+                    message(R.string.dict_no_results)
+                    positiveButton(R.string.ok)
+                }
             } else {
                 c.moveToNext()
                 val rendered = HtmlCompat.fromHtml(c.getString(c.getColumnIndexOrThrow("definition")), HtmlCompat.FROM_HTML_MODE_COMPACT)
@@ -410,11 +410,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     sb.removeSpan(span)
                 }
 
-                MaterialDialog.Builder(this)
-                    .title(data.orig_text)
-                    .content(sb)
-                    .positiveText(R.string.dict_open_full)
-                    .onPositive { _, _ ->
+                MaterialDialog(this).show {
+                    title(text = data.orig_text)
+                    message(text = sb)
+                    positiveButton(R.string.dict_open_full) {
                         val intent = Intent("org.sabda.kamus.action.VIEW")
                             .putExtra("key", data.key)
                             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -426,7 +425,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                             OtherAppIntegration.askToInstallDictionary(this)
                         }
                     }
-                    .show()
+                }
             }
         }
     }
@@ -987,10 +986,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     try {
                         startActivity(intent)
                     } catch (e: ActivityNotFoundException) {
-                        MaterialDialog.Builder(this@IsiActivity)
-                            .content("Error ANFE starting extension\n\n" + extension.activityInfo.packageName + "/" + extension.activityInfo.name)
-                            .positiveText(R.string.ok)
-                            .show()
+                        MaterialDialog(this@IsiActivity).show {
+                            message(text = "Error ANFE starting extension\n\n${extension.activityInfo.packageName}/${extension.activityInfo.name}")
+                            positiveButton(R.string.ok)
+                        }
                     }
 
                     true
@@ -1519,10 +1518,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         } catch (e: Throwable) { // so we don't crash on the beginning of the app
             AppLog.e(TAG, "Error opening main version", e)
 
-            MaterialDialog.Builder(this)
-                .content(getString(R.string.version_error_opening, mv.longName))
-                .positiveText(R.string.ok)
-                .show()
+            MaterialDialog(this).show {
+                message(text = getString(R.string.version_error_opening, mv.longName))
+                positiveButton(R.string.ok)
+            }
         }
     }
 
@@ -1545,10 +1544,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         } catch (e: Throwable) { // so we don't crash on the beginning of the app
             AppLog.e(TAG, "Error opening split version", e)
 
-            MaterialDialog.Builder(this@IsiActivity)
-                .content(getString(R.string.version_error_opening, mv.longName))
-                .positiveText(R.string.ok)
-                .show()
+            MaterialDialog(this@IsiActivity).show {
+                message(text = getString(R.string.version_error_opening, mv.longName))
+                positiveButton(R.string.ok)
+            }
 
             return false
         }
@@ -1641,10 +1640,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
         val jumper = Jumper(reference)
         if (!jumper.parseSucceeded) {
-            MaterialDialog.Builder(this)
-                .content(R.string.alamat_tidak_sah_alamat, reference)
-                .positiveText(R.string.ok)
-                .show()
+            MaterialDialog(this).show {
+                message(text = getString(R.string.alamat_tidak_sah_alamat, reference))
+                positiveButton(R.string.ok)
+            }
             return
         }
 
@@ -1919,7 +1918,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     private fun bGoto_longClick() {
         Tracker.trackEvent("nav_goto_button_long_click")
         if (history.size > 0) {
-            MaterialDialog.Builder(this).showWithAdapter(HistoryAdapter())
+            MaterialDialog(this).show {
+                .showWithAdapter(HistoryAdapter())
+            }
             Preferences.setBoolean(Prefkey.history_button_understood, true)
         } else {
             Snackbar.make(root, R.string.recentverses_not_available, Snackbar.LENGTH_SHORT).show()
@@ -2686,10 +2687,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
                 startActivity(intent)
             } catch (e: ActivityNotFoundException) {
-                MaterialDialog.Builder(this@IsiActivity)
-                    .content(R.string.maps_could_not_open)
-                    .positiveText(R.string.ok)
-                    .show()
+                MaterialDialog(this@IsiActivity).show {
+                    message(R.string.maps_could_not_open)
+                    positiveButton(R.string.ok)
+                }
             }
         }
     }
@@ -2759,10 +2760,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                                         }
 
                                         else -> {
-                                            MaterialDialog.Builder(this@IsiActivity)
-                                                .content(String.format(Locale.US, "Error: footnote at arif 0x%08x contains unsupported tag %s", arif, tag))
-                                                .positiveText(R.string.ok)
-                                                .show()
+                                            MaterialDialog(this@IsiActivity).show {
+                                                message(text = String.format(Locale.US, "Error: footnote at arif 0x%08x contains unsupported tag %s", arif, tag))
+                                                positiveButton(R.string.ok)
+                                            }
                                         }
                                     }
                                 }
@@ -2796,22 +2797,22 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                             else -> null
                         }.orEmpty()
 
-                        footnoteDialog = MaterialDialog.Builder(this@IsiActivity)
-                            .title(title)
-                            .content(rendered)
-                            .positiveText(R.string.ok)
-                            .show()
+                        footnoteDialog = MaterialDialog(this@IsiActivity).show {
+                            title(text = title)
+                            message(text = rendered)
+                            positiveButton(R.string.ok)
+                        }
                     } else {
-                        MaterialDialog.Builder(this@IsiActivity)
-                            .content(String.format(Locale.US, "Error: footnote arif 0x%08x couldn't be loaded", arif))
-                            .positiveText(R.string.ok)
-                            .show()
+                        MaterialDialog(this@IsiActivity).show {
+                            message(text = String.format(Locale.US, "Error: footnote arif 0x%08x couldn't be loaded", arif))
+                            positiveButton(R.string.ok)
+                        }
                     }
                 } else {
-                    MaterialDialog.Builder(this@IsiActivity)
-                        .content("Error: Unknown inline link type: $type")
-                        .positiveText(R.string.ok)
-                        .show()
+                    MaterialDialog(this@IsiActivity) .show {
+                        message(text = "Error: Unknown inline link type: $type")
+                        positiveButton(R.string.ok)
+                    }
                 }
             }
         }
@@ -2931,10 +2932,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             dialog.show(supportFragmentManager, "dialog_progress_mark_list")
             leftDrawer.closeDrawer()
         } else {
-            MaterialDialog.Builder(this)
-                .content(R.string.pm_activate_tutorial)
-                .positiveText(R.string.ok)
-                .show()
+            MaterialDialog(this).show {
+                message(R.string.pm_activate_tutorial)
+                positiveButton(R.string.ok)
+            }
         }
     }
 
@@ -2969,10 +2970,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             jumpToAri(ari)
         } else {
             Tracker.trackEvent("left_drawer_progress_mark_pin_click_failed")
-            MaterialDialog.Builder(this)
-                .content(R.string.pm_activate_tutorial)
-                .positiveText(R.string.ok)
-                .show()
+            MaterialDialog(this).show {
+                message(R.string.pm_activate_tutorial)
+                positiveButton(R.string.ok)
+            }
         }
     }
 

@@ -76,7 +76,7 @@ public class ShareUrl {
         final AtomicBoolean done = new AtomicBoolean();
 
         final MaterialDialog dialog = new MaterialDialog.Builder(activity)
-            .content("Getting share URL…")
+            message(text = "Getting share URL…")
             .progress(true, 0)
             .negativeText(R.string.cancel)
             .onNegative((dialog1, which) -> {

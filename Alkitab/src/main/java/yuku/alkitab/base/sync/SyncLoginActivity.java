@@ -132,8 +132,8 @@ public class SyncLoginActivity extends BaseActivity {
                         );
 
                         runOnUiThread(() -> new MaterialDialog.Builder(this)
-                            .content(R.string.sync_register_failed_with_reason, e.getMessage())
-                            .positiveText(R.string.ok)
+                            message(R.string.sync_register_failed_with_reason, e.getMessage())
+                            positiveButton(R.string.ok)
                             .show()
                         );
                     }
@@ -190,8 +190,8 @@ public class SyncLoginActivity extends BaseActivity {
                     );
 
                     runOnUiThread(() -> new MaterialDialog.Builder(this)
-                        .content(getString(R.string.sync_login_failed_with_reason, e.getMessage()))
-                        .positiveText(R.string.ok)
+                        message(text = getString(R.string.sync_login_failed_with_reason, e.getMessage()))
+                        positiveButton(R.string.ok)
                         .show()
                     );
                 }
@@ -217,16 +217,16 @@ public class SyncLoginActivity extends BaseActivity {
                     Sync.forgotPassword(email);
 
                     runOnUiThread(() -> new MaterialDialog.Builder(this)
-                        .content(R.string.sync_login_form_forgot_password_success)
-                        .positiveText(R.string.ok)
+                        message(R.string.sync_login_form_forgot_password_success)
+                        positiveButton(R.string.ok)
                         .show()
                     );
                 } catch (Sync.NotOkException e) {
                     AppLog.d(TAG, "Forgot password failed", e);
 
                     runOnUiThread(() -> new MaterialDialog.Builder(this)
-                        .content(e.getMessage())
-                        .positiveText(R.string.ok)
+                        message(text = e.getMessage())
+                        positiveButton(R.string.ok)
                         .show()
                     );
                 }
@@ -266,8 +266,8 @@ public class SyncLoginActivity extends BaseActivity {
                     Sync.changePassword(email, password, passwordNew);
 
                     runOnUiThread(() -> new MaterialDialog.Builder(this)
-                        .content(R.string.sync_login_form_change_password_success)
-                        .positiveText(R.string.ok)
+                        message(R.string.sync_login_form_change_password_success)
+                        positiveButton(R.string.ok)
                         .show()
                         .setOnDismissListener(dialog -> finish())
                     );
@@ -275,8 +275,8 @@ public class SyncLoginActivity extends BaseActivity {
                     AppLog.d(TAG, "Change password failed", e);
 
                     runOnUiThread(() -> new MaterialDialog.Builder(this)
-                        .content(e.getMessage())
-                        .positiveText(R.string.ok)
+                        message(text = e.getMessage())
+                        positiveButton(R.string.ok)
                         .show()
                     );
                 }
@@ -290,7 +290,7 @@ public class SyncLoginActivity extends BaseActivity {
 
     void startThreadWithProgressDialog(final String message, final Runnable task) {
         final MaterialDialog pd = new MaterialDialog.Builder(this)
-            .content(message)
+            message(text = message)
             .cancelable(false)
             .progress(true, 0)
             .show();
@@ -307,7 +307,7 @@ public class SyncLoginActivity extends BaseActivity {
     void confirmPassword(final String correctPassword, final Runnable whenCorrect) {
         new MaterialDialog.Builder(this)
             .customView(R.layout.dialog_sync_confirm_password, false)
-            .positiveText(R.string.ok)
+            positiveButton(R.string.ok)
             .onPositive((dialog, which) -> {
                 final EditText tPassword2 = dialog.getCustomView().findViewById(R.id.tPassword2);
 
@@ -315,8 +315,8 @@ public class SyncLoginActivity extends BaseActivity {
 
                 if (!password2.equals(correctPassword)) {
                     new MaterialDialog.Builder(dialog.getContext())
-                        .content(R.string.sync_login_form_passwords_do_not_match)
-                        .positiveText(R.string.ok)
+                        message(R.string.sync_login_form_passwords_do_not_match)
+                        positiveButton(R.string.ok)
                         .show();
                     return;
                 }
@@ -364,13 +364,13 @@ public class SyncLoginActivity extends BaseActivity {
 
                 if (isRegister) {
                     runOnUiThread(() -> new MaterialDialog.Builder(this)
-                        .content(R.string.sync_registered_but_no_gcm)
-                        .positiveText(R.string.ok)
+                        message(R.string.sync_registered_but_no_gcm)
+                        positiveButton(R.string.ok)
                         .show());
                 } else {
                     runOnUiThread(() -> new MaterialDialog.Builder(this)
-                        .content(getString(R.string.sync_login_failed_with_reason, "Could not send FCM registration id. Please try again."))
-                        .positiveText(R.string.ok)
+                        message(text = getString(R.string.sync_login_failed_with_reason, "Could not send FCM registration id. Please try again."))
+                        positiveButton(R.string.ok)
                         .show());
                 }
                 return;

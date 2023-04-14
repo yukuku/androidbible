@@ -95,7 +95,7 @@ public class ConvertOptionsDialog {
 		this.alert = new MaterialDialog.Builder(context)
 			.customView(R.layout.dialog_pdbconvert_options, false)
 			.title(R.string.pdb_file_options)
-			.positiveText(R.string.ok)
+			positiveButton(R.string.ok)
 			.negativeText(R.string.cancel)
 			.onPositive((dialog, which) -> bOk_click())
 			.build();

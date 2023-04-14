@@ -210,9 +210,9 @@ public class MarkersActivity extends BaseActivity {
                 adapter.reload();
             } else {
                 new MaterialDialog.Builder(this)
-                    .content(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, marker_count))
+                    message(text = getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, marker_count))
                     .negativeText(R.string.cancel)
-                    .positiveText(R.string.delete)
+                    positiveButton(R.string.delete)
                     .onPositive((dialog, which) -> {
                         S.getDb().deleteLabelAndMarker_LabelsByLabelId(label._id);
                         adapter.reload();

@@ -475,8 +475,8 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
                 final Jumper jumper = new Jumper(reference);
                 if (!jumper.getParseSucceeded()) {
                     new MaterialDialog.Builder(DevotionActivity.this)
-                        .content(getString(R.string.alamat_tidak_sah_alamat, reference))
-                        .positiveText(R.string.ok)
+                        message(text = getString(R.string.alamat_tidak_sah_alamat, reference))
+                        positiveButton(R.string.ok)
                         .show();
                     return;
                 }

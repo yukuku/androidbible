@@ -156,8 +156,8 @@ public class NoteActivity extends BaseActivity {
 		final IntArrayList verseRanges = DesktopVerseParser.verseStringToAri(verse);
 		if (verseRanges == null || verseRanges.size() == 0) {
 			new MaterialDialog.Builder(widget.getContext())
-				.content(R.string.note_activity_cannot_parse_verse)
-				.positiveText(R.string.ok)
+				message(R.string.note_activity_cannot_parse_verse)
+				positiveButton(R.string.ok)
 				.show();
 			return;
 		}
@@ -257,8 +257,8 @@ public class NoteActivity extends BaseActivity {
 		} else if (itemId == R.id.menuDelete) {// if it's indeed not exist, check if we have some text, if we do, prompt first
 			if (marker != null || tCaption.length() > 0) {
 				new MaterialDialog.Builder(this)
-					.content(R.string.anda_yakin_mau_menghapus_catatan_ini)
-					.positiveText(R.string.delete)
+					message(R.string.anda_yakin_mau_menghapus_catatan_ini)
+					positiveButton(R.string.delete)
 					.onPositive((dialog, which) -> {
 						if (marker != null) {
 							// really delete from db

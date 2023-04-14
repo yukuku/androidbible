@@ -495,10 +495,10 @@ class SearchActivity : BaseActivity() {
         S.openVersionsDialog(this, false, searchInVersionId) { mv: MVersion ->
             val selectedVersion = mv.version
             if (selectedVersion == null) {
-                MaterialDialog.Builder(this@SearchActivity)
-                    .content(getString(R.string.version_error_opening, mv.longName))
-                    .positiveText(R.string.ok)
-                    .show()
+                MaterialDialog(this@SearchActivity).show {
+                    message(text = getString(R.string.version_error_opening, mv.longName))
+                    positiveButton(R.string.ok)
+                }
                 return@openVersionsDialog
             }
 

@@ -213,8 +213,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 			private void catchMeUp() {
 				new MaterialDialog.Builder(ReadingPlanActivity.this)
-					.content(R.string.rp_reset)
-					.positiveText(R.string.ok)
+					message(R.string.rp_reset)
+					positiveButton(R.string.ok)
 					.onPositive((dialog, which) -> {
 						int firstUnreadDay = findFirstUnreadDay();
 						Calendar calendar = GregorianCalendar.getInstance();
@@ -480,8 +480,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 	private void deleteReadingPlan() {
 		new MaterialDialog.Builder(this)
-			.content(getString(R.string.rp_deletePlan, readingPlan.info.title))
-			.positiveText(R.string.delete)
+			message(text = getString(R.string.rp_deletePlan, readingPlan.info.title))
+			positiveButton(R.string.delete)
 			.onPositive((dialog, which) -> {
 				S.getDb().deleteReadingPlanById(readingPlan.info.id);
 				readingPlan = null;
@@ -521,8 +521,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	@Override
 	public void bRestart_click() {
 		new MaterialDialog.Builder(this)
-			.content(R.string.rp_restart_desc)
-			.positiveText(R.string.ok)
+			message(R.string.rp_restart_desc)
+			positiveButton(R.string.ok)
 			.onPositive((dialog, which) -> {
 				S.getDb().deleteAllReadingPlanProgressForGid(ReadingPlan.gidFromName(readingPlan.info.name));
 				S.getDb().updateReadingPlanStartDate(readingPlan.info.id, System.currentTimeMillis());
@@ -570,8 +570,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	private void downloadByAlkitabUri(final Uri uri) {
 		if (!"alkitab".equals(uri.getScheme()) || !"/addon/download".equals(uri.getPath()) || !"readingplan".equals(uri.getQueryParameter("kind")) || !"rpb".equals(uri.getQueryParameter("type")) || uri.getQueryParameter("name") == null) {
 			new MaterialDialog.Builder(this)
-				.content("Invalid uri:\n\n" + uri)
-				.positiveText(R.string.ok)
+				message(text = "Invalid uri:\n\n" + uri)
+				positiveButton(R.string.ok)
 				.show();
 			return;
 		}
@@ -584,8 +584,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	void downloadReadingPlanFromServer(final String name) {
 		if (S.getDb().listReadingPlanNames().contains(name)) {
 			new MaterialDialog.Builder(this)
-				.content(R.string.rp_download_already_have)
-				.positiveText(R.string.ok)
+				message(R.string.rp_download_already_have)
+				positiveButton(R.string.ok)
 				.show();
 
 			return;
@@ -594,7 +594,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		final AtomicBoolean cancelled = new AtomicBoolean(false);
 
 		final MaterialDialog pd = new MaterialDialog.Builder(this)
-			.content(R.string.rp_download_reading_plan_progress)
+			message(R.string.rp_download_reading_plan_progress)
 			.progress(true, 0)
 			.dismissListener(dialog -> cancelled.set(true))
 			.show();
@@ -608,8 +608,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 					if (id == 0) {
 						new MaterialDialog.Builder(ReadingPlanActivity.this)
-							.content(getString(R.string.rp_download_reading_plan_data_corrupted))
-							.positiveText(R.string.ok)
+							message(text = getString(R.string.rp_download_reading_plan_data_corrupted))
+							positiveButton(R.string.ok)
 							.show();
 						return;
 					}
@@ -626,8 +626,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				if (!cancelled.get()) {
 					AppLog.e(TAG, "downloading reading plan data", e);
 					Foreground.run(() -> new MaterialDialog.Builder(ReadingPlanActivity.this)
-						.content(getString(R.string.rp_download_reading_plan_failed))
-						.positiveText(R.string.ok)
+						message(text = getString(R.string.rp_download_reading_plan_failed))
+						positiveButton(R.string.ok)
 						.show()
 					);
 				}
@@ -671,8 +671,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 	void one_reading_longClick(final int day, final int sequence) {
 		new MaterialDialog.Builder(this)
-			.content(R.string.rp_mark_as_read_up_to)
-			.positiveText(R.string.ok)
+			message(R.string.rp_mark_as_read_up_to)
+			positiveButton(R.string.ok)
 			.negativeText(R.string.cancel)
 			.onPositive((dialog, which) -> {
 				ReadingPlanManager.markAsReadUpTo(readingPlan.info.name, readingPlan.dailyVerses, day, sequence);

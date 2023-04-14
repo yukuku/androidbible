@@ -231,8 +231,8 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
                         .startChooser()
                 } catch (e: Exception) {
                     MaterialDialog.Builder(requireActivity())
-                        .content("Can't share " + file.absolutePath + ": [" + e.javaClass + "] " + e.message)
-                        .positiveText(R.string.ok)
+                        message(text = "Can't share " + file.absolutePath + ": [" + e.javaClass + "] " + e.message)
+                        positiveButton(R.string.ok)
                         .show()
                 }
             }
@@ -246,8 +246,8 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
                 val filename = mv.filename
                 if (AddonManager.isInSharedStorage(filename)) {
                     MaterialDialog.Builder(requireActivity())
-                        .content(getString(R.string.juga_hapus_file_datanya_file, filename))
-                        .positiveText(R.string.delete)
+                        message(text = getString(R.string.juga_hapus_file_datanya_file, filename))
+                        positiveButton(R.string.delete)
                         .onPositive { _, _ ->
                             S.getDb().deleteVersion(mv)
                             App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
@@ -314,8 +314,8 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
             mv.hasDataFile() -> mv.active = true
             else -> {
                 MaterialDialog.Builder(requireActivity())
-                    .content(R.string.the_file_for_this_version_is_no_longer_available_file, mv.filename)
-                    .positiveText(R.string.delete)
+                    message(R.string.the_file_for_this_version_is_no_longer_available_file, mv.filename)
+                    positiveButton(R.string.delete)
                     .onPositive { _, _ ->
                         S.getDb().deleteVersion(mv)
                         App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))

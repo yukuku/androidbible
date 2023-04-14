@@ -67,8 +67,8 @@ public class PatchTextActivity extends BaseActivity {
 		referenceUrl = getIntent().getStringExtra(EXTRA_referenceUrl);
 
 		new MaterialDialog.Builder(this)
-			.content(R.string.patch_text_intro)
-			.positiveText(R.string.ok)
+			message(R.string.patch_text_intro)
+			positiveButton(R.string.ok)
 			.show();
 	}
 
@@ -128,8 +128,8 @@ public class PatchTextActivity extends BaseActivity {
 
 		if (!hasEdits) {
 			new MaterialDialog.Builder(this)
-				.content(R.string.patch_text_error_no_edits)
-				.positiveText(R.string.ok)
+				message(R.string.patch_text_error_no_edits)
+				positiveButton(R.string.ok)
 				.show();
 			return;
 		}

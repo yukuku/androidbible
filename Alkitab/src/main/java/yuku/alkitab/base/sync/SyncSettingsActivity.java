@@ -121,8 +121,8 @@ public class SyncSettingsActivity extends BaseActivity {
 
 			} else { // show logout instead
 				new MaterialDialog.Builder(getActivity())
-					.content(R.string.sync_logout_warning)
-					.positiveText(R.string.ok)
+					message(R.string.sync_logout_warning)
+					positiveButton(R.string.ok)
 					.onPositive((d, w) -> {
 						SyncRecorder.log(SyncRecorder.EventKind.logout_pre, null, "accountName", syncAccountName);
 

@@ -97,8 +97,8 @@ class MidiController : MediaController() {
                     val activity = activityRef?.get()
                     if (activity != null && !activity.isFinishing) {
                         MaterialDialog.Builder(activity)
-                            .content(activity.getString(R.string.song_player_error_description, what, extra))
-                            .positiveText(R.string.ok)
+                            message(text = activity.getString(R.string.song_player_error_description, what, extra))
+                            positiveButton(R.string.ok)
                             .show()
                     }
                 }

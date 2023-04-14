@@ -28,6 +28,7 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
 import androidx.drawerlayout.widget.DrawerLayout
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
 import java.io.IOException
@@ -168,7 +169,8 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                 val currentSong = currentSong
 
                 if (currentBookName != null && currentSong != null) {
-                    Tracker.trackEvent("song_playing",
+                    Tracker.trackEvent(
+                        "song_playing",
                         FirebaseAnalytics.Param.ITEM_NAME, currentBookName + " " + currentSong.code,
                         FirebaseAnalytics.Param.ITEM_CATEGORY, currentBookName,
                         FirebaseAnalytics.Param.ITEM_VARIANT, currentSong.code
@@ -296,7 +298,8 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                 BuildConfig.SERVER_HOST + "songs/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName()),
                 getString(R.string.sn_download_song_books),
                 getString(R.string.sn_menu_private_song_book),
-                AlertDialogActivity.createInputIntent(null,
+                AlertDialogActivity.createInputIntent(
+                    null,
                     getString(R.string.sn_private_song_book_dialog_desc),
                     getString(R.string.cancel),
                     getString(R.string.ok),
@@ -428,10 +431,10 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
             view.setOnLongClickListener {
                 if (mediaState.icon == R.drawable.ic_action_play) {
-                    MaterialDialog.Builder(this)
-                        .content(R.string.sn_play_in_loop)
+                    MaterialDialog(this).show {
+                        message(R.string.sn_play_in_loop)
                         .negativeText(R.string.cancel)
-                        .positiveText(R.string.ok)
+                        positiveButton(R.string.ok)
                         .onPositive { _, _ ->
                             val activeMediaController = activeMediaController ?: return@onPositive
                             activeMediaController.playOrPause(true)
@@ -517,9 +520,9 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                 if (audioDisclaimerAcknowledged) {
                     proceed()
                 } else {
-                    MaterialDialog.Builder(this)
-                        .content(R.string.sn_audio_disclaimer_message)
-                        .positiveText(R.string.ok)
+                    MaterialDialog(this).show {
+                        message(R.string.sn_audio_disclaimer_message)
+                        positiveButton(R.string.ok)
                         .onPositive { _, _ ->
                             audioDisclaimerAcknowledged = true
                             proceed()
@@ -532,9 +535,9 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             }
 
             R.id.menuUpdateBook -> {
-                MaterialDialog.Builder(this)
-                    .content(TextUtils.expandTemplate(getText(R.string.sn_update_book_explanation), SongBookUtil.escapeSongBookName(currentBookName)))
-                    .positiveText(R.string.sn_update_book_confirm_button)
+                MaterialDialog(this).show {
+                    message(text = TextUtils.expandTemplate(getText(R.string.sn_update_book_explanation), SongBookUtil.escapeSongBookName(currentBookName)))
+                    positiveButton(R.string.sn_update_book_confirm_button)
                     .onPositive { _, _ -> updateSongBook() }
                     .negativeText(R.string.cancel)
                     .show()
@@ -542,9 +545,9 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             }
 
             R.id.menuDeleteSongBook -> {
-                MaterialDialog.Builder(this)
-                    .content(TextUtils.expandTemplate(getText(R.string.sn_delete_song_book_explanation), SongBookUtil.escapeSongBookName(currentBookName)))
-                    .positiveText(R.string.delete)
+                MaterialDialog(this).show {
+                    message(text = TextUtils.expandTemplate(getText(R.string.sn_delete_song_book_explanation), SongBookUtil.escapeSongBookName(currentBookName)))
+                    positiveButton(R.string.delete)
                     .onPositive { _, _ -> deleteSongBook() }
                     .negativeText(R.string.cancel)
                     .show()
@@ -582,21 +585,21 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         if (isFinishing) return
 
         if (e is SongBookUtil.NotOkException) {
-            MaterialDialog.Builder(this)
-                .content("HTTP error " + e.code)
-                .positiveText(R.string.ok)
+            MaterialDialog(this).show {
+                message(text = "HTTP error " + e.code)
+                positiveButton(R.string.ok)
                 .show()
         } else {
-            MaterialDialog.Builder(this)
-                .content(e.javaClass.simpleName + ": " + e.message)
-                .positiveText(R.string.ok)
+            MaterialDialog(this).show {
+                message(text = e.javaClass.simpleName + ": " + e.message)
+                positiveButton(R.string.ok)
                 .show()
         }
     }
 
     private fun deleteSongBook() {
         val pd = MaterialDialog.Builder(this)
-            .content(R.string.please_wait_titik3)
+            message(R.string.please_wait_titik3)
             .cancelable(false)
             .progress(true, 0)
             .show()
@@ -609,11 +612,11 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             runOnUiThread {
                 pd.dismiss()
 
-                MaterialDialog.Builder(this)
-                    .content(TextUtils.expandTemplate(getText(R.string.sn_delete_song_book_result), "" + count, SongBookUtil.escapeSongBookName(bookName)))
-                    .positiveText(R.string.ok)
-                    .dismissListener { displayAnySongOrFinish() }
-                    .show()
+                MaterialDialog(this).show {
+                    message(text = TextUtils.expandTemplate(getText(R.string.sn_delete_song_book_result), "" + count, SongBookUtil.escapeSongBookName(bookName)))
+                    positiveButton(R.string.ok)
+                    onDismiss { displayAnySongOrFinish() }
+                }
             }
         }
     }
@@ -881,6 +884,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                 }
                 return
             }
+
             REQCODE_downloadSongBook -> {
                 if (resultCode == Activity.RESULT_OK) {
                     val uri = data?.data
@@ -903,9 +907,9 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
     private fun downloadByAlkitabUri(uri: Uri) {
         if ("alkitab" != uri.scheme || "/addon/download" != uri.path || "songbook" != uri.getQueryParameter("kind") || "ser" != uri.getQueryParameter("type") || uri.getQueryParameter("name") == null) {
-            MaterialDialog.Builder(this)
-                .content("Invalid uri:\n\n$uri")
-                .positiveText(R.string.ok)
+            MaterialDialog(this).show {
+                message(text = "Invalid uri:\n\n$uri")
+                positiveButton(R.string.ok)
                 .show()
             return
         }
@@ -915,20 +919,20 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         try {
             dataFormatVersion = Integer.parseInt("" + dataFormatVersion_s)
         } catch (e: NumberFormatException) {
-            MaterialDialog.Builder(this)
-                .content("Invalid uri:\n\n$uri")
-                .positiveText(R.string.ok)
-                .show()
+            MaterialDialog(this).show {
+                message(text = "Invalid uri:\n\n$uri")
+                positiveButton(R.string.ok)
+            }
             return
         } catch (e: NullPointerException) {
-            MaterialDialog.Builder(this).content("Invalid uri:\n\n$uri").positiveText(R.string.ok).show()
+            MaterialDialog(this).show {.content("Invalid uri:\n\n$uri").positiveText(R.string.ok).show()
             return
         }
 
         if (!SongBookUtil.isSupportedDataFormatVersion(dataFormatVersion)) {
-            MaterialDialog.Builder(this)
-                .content("Unsupported data format version: $dataFormatVersion")
-                .positiveText(R.string.ok)
+            MaterialDialog(this).show {
+                message(text = "Unsupported data format version: $dataFormatVersion")
+                positiveButton(R.string.ok)
                 .show()
             return
         }
@@ -968,9 +972,9 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                 // do not proceed if the song is too old
                 val updateTime = S.getSongDb().getSongUpdateTime(currentBookName, song.code)
                 if (updateTime == 0 || Sqlitil.nowDateTime() - updateTime > 21 * 86400) {
-                    MaterialDialog.Builder(this)
-                        .content(TextUtils.expandTemplate(getText(R.string.sn_update_book_because_too_old), SongBookUtil.escapeSongBookName(currentBookName)))
-                        .positiveText(R.string.sn_update_book_confirm_button)
+                    MaterialDialog(this).show {
+                        message(text = TextUtils.expandTemplate(getText(R.string.sn_update_book_because_too_old), SongBookUtil.escapeSongBookName(currentBookName)))
+                        positiveButton(R.string.sn_update_book_confirm_button)
                         .negativeText(R.string.cancel)
                         .onPositive { _, _ -> updateSongBook() }
                         .show()
@@ -1042,6 +1046,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
                 updateHandle()
             }
+
             in 10..19 -> { // letters
                 if (state_tempCode.length >= 4) state_tempCode = "" // can't be more than 4 digits
 
@@ -1052,6 +1057,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
                 updateHandle()
             }
+
             20 -> { // backspace
                 if (state_tempCode.isNotEmpty()) {
                     state_tempCode = state_tempCode.substring(0, state_tempCode.length - 1)
@@ -1059,6 +1065,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
                 updateHandle()
             }
+
             21 -> { // OK
                 if (state_tempCode.isNotEmpty()) {
                     val song = S.getSongDb().getSong(currentBookName, state_tempCode)
@@ -1117,7 +1124,8 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         }
 
         private fun trackSongSelect(bookName: String, code: String) {
-            Tracker.trackEvent("song_select",
+            Tracker.trackEvent(
+                "song_select",
                 FirebaseAnalytics.Param.ITEM_NAME, "$bookName $code",
                 FirebaseAnalytics.Param.ITEM_CATEGORY, bookName,
                 FirebaseAnalytics.Param.ITEM_VARIANT, code

@@ -25,7 +25,7 @@ public class ProgressMarkRenameDialog extends DialogFragment {
 		final String caption = !TextUtils.isEmpty(progressMark.caption) ? progressMark.caption : activity.getString(AttributeView.getDefaultProgressMarkStringResource(progressMark.preset_id));
 
 		new MaterialDialog.Builder(activity)
-			.positiveText(R.string.ok)
+			positiveButton(R.string.ok)
 			.neutralText(R.string.delete)
 			.inputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT)
 			.inputRange(0, 32)
@@ -46,8 +46,8 @@ public class ProgressMarkRenameDialog extends DialogFragment {
 				listener.onOked();
 			})
 			.onNeutral((dialog, which) -> new MaterialDialog.Builder(activity)
-				.content(TextUtils.expandTemplate(activity.getText(R.string.pm_delete_progress_confirm), caption))
-				.positiveText(R.string.ok)
+				message(text = TextUtils.expandTemplate(activity.getText(R.string.pm_delete_progress_confirm), caption))
+				positiveButton(R.string.ok)
 				.onPositive((_unused_, which1) -> {
 					progressMark.ari = 0;
 					progressMark.caption = null;

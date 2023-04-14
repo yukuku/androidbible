@@ -71,8 +71,8 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		cMakeDirtyMarker_Label = findViewById(R.id.cMakeDirtyMarker_Label);
 
 		findViewById(R.id.bServerSave).setOnClickListener(v -> new MaterialDialog.Builder(this)
-			.content("This will reset your synced shadow to revision 0.")
-			.positiveText(R.string.ok)
+			message(text = "This will reset your synced shadow to revision 0.")
+			positiveButton(R.string.ok)
 			.onPositive((d, w) -> {
 				Preferences.setString(Prefkey.sync_server_prefix, tServer.getText().toString().trim());
 
@@ -83,8 +83,8 @@ public class SecretSyncDebugActivity extends BaseActivity {
 			.show());
 
 		findViewById(R.id.bServerReset).setOnClickListener(v -> new MaterialDialog.Builder(this)
-			.content("This will reset your synced shadow to revision 0.")
-			.positiveText(R.string.ok)
+			message(text = "This will reset your synced shadow to revision 0.")
+			positiveButton(R.string.ok)
 			.onPositive((d, w) -> {
 				Preferences.remove(Prefkey.sync_server_prefix);
 
@@ -122,8 +122,8 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		}
 
 		new MaterialDialog.Builder(this)
-			.content(sb)
-			.positiveText(R.string.ok)
+			message(text = sb)
+			positiveButton(R.string.ok)
 			.show();
 	};
 
@@ -148,8 +148,8 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		}
 
 		new MaterialDialog.Builder(this)
-			.content("10 markers, 2 labels generated.")
-			.positiveText(R.string.ok)
+			message(text = "10 markers, 2 labels generated.")
+			positiveButton(R.string.ok)
 			.show();
 	};
 
@@ -172,8 +172,8 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		}
 
 		new MaterialDialog.Builder(this)
-			.content("1000 markers, 2 labels generated.")
-			.positiveText(R.string.ok)
+			message(text = "1000 markers, 2 labels generated.")
+			positiveButton(R.string.ok)
 			.show();
 	};
 
@@ -297,13 +297,13 @@ public class SecretSyncDebugActivity extends BaseActivity {
 			monkey.requestStop();
 			monkey = null;
 			new MaterialDialog.Builder(this)
-				.content("monkey stopped")
+				message(text = "monkey stopped")
 				.show();
 			return;
 		}
 
 		new MaterialDialog.Builder(this)
-			.content("This will MESS UP YOUR MARKERS. JANGAN TEKAN TOMBOL INI karena segala datamu akan rusak.")
+			message(text = "This will MESS UP YOUR MARKERS. JANGAN TEKAN TOMBOL INI karena segala datamu akan rusak.")
 			.positiveText("DO NOT PRESS")
 			.negativeText("OK")
 			.onPositive((dialog, which) -> {
@@ -346,8 +346,8 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
 		if (simpleToken == null) {
 			new MaterialDialog.Builder(this)
-				.content("not logged in")
-				.positiveText(R.string.ok)
+				message(text = "not logged in")
+				positiveButton(R.string.ok)
 				.show();
 			return;
 		}
@@ -386,8 +386,8 @@ public class SecretSyncDebugActivity extends BaseActivity {
 				S.getDb().insertOrUpdateMarker_Label(marker_label);
 			} else {
 				new MaterialDialog.Builder(this)
-					.content("not enough markers and labels to create marker_label")
-					.positiveText(R.string.ok)
+					message(text = "not enough markers and labels to create marker_label")
+					positiveButton(R.string.ok)
 					.show();
 				return;
 			}
@@ -397,8 +397,8 @@ public class SecretSyncDebugActivity extends BaseActivity {
 			@Override
 			public void onFailure(final Call call, final IOException e) {
 				runOnUiThread(() -> new MaterialDialog.Builder(SecretSyncDebugActivity.this)
-					.content("Error: " + e.getMessage())
-					.positiveText(R.string.ok)
+					message(text = "Error: " + e.getMessage())
+					positiveButton(R.string.ok)
 					.show());
 			}
 
@@ -412,8 +412,8 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 						final Sync.ApplyAppendDeltaResult applyResult = S.getDb().applyMabelAppendDelta(final_revno, pair.shadowEntities, clientState, append_delta, entitiesBeforeSync, simpleToken);
 						new MaterialDialog.Builder(SecretSyncDebugActivity.this)
-							.content("Final revno: " + final_revno + "\nApply result: " + applyResult + "\nAppend delta: " + append_delta)
-							.positiveText(R.string.ok)
+							message(text = "Final revno: " + final_revno + "\nApply result: " + applyResult + "\nAppend delta: " + append_delta)
+							positiveButton(R.string.ok)
 							.show();
 
 						if (applyResult == Sync.ApplyAppendDeltaResult.ok) {
@@ -423,8 +423,8 @@ public class SecretSyncDebugActivity extends BaseActivity {
 						}
 					} else {
 						new MaterialDialog.Builder(SecretSyncDebugActivity.this)
-							.content(debugSyncResponse.message)
-							.positiveText(R.string.ok)
+							message(text = debugSyncResponse.message)
+							positiveButton(R.string.ok)
 							.show();
 					}
 				});
@@ -438,7 +438,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 		final MaterialDialog pd = new MaterialDialog.Builder(this)
 			.progress(true, 0)
-			.content("getting entities…")
+			message(text = "getting entities…")
 			.show();
 
 		Background.run(() -> {
@@ -476,7 +476,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 			final int finalHashCode = hashCode;
 
 			runOnUiThread(() -> new MaterialDialog.Builder(this)
-				.content("entities.size=" + entities.size() + " hash=" + String.format(Locale.US, "0x%08x", finalHashCode))
+				message(text = "entities.size=" + entities.size() + " hash=" + String.format(Locale.US, "0x%08x", finalHashCode))
 				.positiveText("OK")
 				.show());
 		});

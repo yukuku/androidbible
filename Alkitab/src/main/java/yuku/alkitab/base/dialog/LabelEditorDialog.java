@@ -30,7 +30,7 @@ public class LabelEditorDialog {
 		final MaterialDialog dialog = new MaterialDialog.Builder(context)
 			.customView(dialogView, false)
 			.title(title)
-			.positiveText(R.string.ok)
+			positiveButton(R.string.ok)
 			.negativeText(R.string.cancel)
 			.onPositive((dialog1, which) -> {
 				if (okListener != null) {

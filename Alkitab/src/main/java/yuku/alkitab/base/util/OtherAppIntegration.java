@@ -13,8 +13,8 @@ import yuku.alkitab.debug.R;
 public class OtherAppIntegration {
 	public static void askToInstallDictionary(final Activity activity) {
 		new MaterialDialog.Builder(activity)
-			.content(R.string.dict_download_prompt)
-			.positiveText(R.string.dict_download_button)
+			message(R.string.dict_download_prompt)
+			positiveButton(R.string.dict_download_button)
 			.onPositive((dialog, which) -> openMarket(activity, "org.sabda.kamus"))
 			.show();
 	}
@@ -25,8 +25,8 @@ public class OtherAppIntegration {
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, uri));
 		} catch (ActivityNotFoundException e) {
 			new MaterialDialog.Builder(activity)
-				.content(R.string.google_play_store_not_installed)
-				.positiveText(R.string.ok)
+				message(R.string.google_play_store_not_installed)
+				positiveButton(R.string.ok)
 				.show();
 		}
 	}

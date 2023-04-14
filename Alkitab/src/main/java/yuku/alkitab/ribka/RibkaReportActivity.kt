@@ -98,10 +98,10 @@ class RibkaReportActivity : BaseActivity() {
             oRibkaCategoryContent.isChecked -> "content"
             oRibkaCategoryOthers.isChecked -> "others"
             else -> {
-                MaterialDialog.Builder(this)
-                    .content(R.string.ribka_category_error)
-                    .positiveText(R.string.ok)
-                    .show()
+MaterialDialog(this).show {
+message(R.string.ribka_category_error)
+positiveButton(R.string.ok)
+}
                 null
             }
         } ?: return
@@ -136,7 +136,7 @@ class RibkaReportActivity : BaseActivity() {
         form.add("reportVersionDescription", versionDescription.orEmpty())
 
         val pd = MaterialDialog.Builder(this)
-            .content(R.string.ribka_sending_progress)
+            message(R.string.ribka_sending_progress)
             .cancelable(false)
             .progress(true, 0)
             .show()
@@ -147,8 +147,8 @@ class RibkaReportActivity : BaseActivity() {
 
                 runOnUiThread {
                     MaterialDialog.Builder(this@RibkaReportActivity)
-                        .content(R.string.ribka_send_error)
-                        .positiveText(R.string.ok)
+                        message(R.string.ribka_send_error)
+                        positiveButton(R.string.ok)
                         .show()
                 }
             }
@@ -159,8 +159,8 @@ class RibkaReportActivity : BaseActivity() {
                 if (response.isSuccessful) {
                     runOnUiThread {
                         MaterialDialog.Builder(this@RibkaReportActivity)
-                            .content(R.string.ribka_send_success)
-                            .positiveText(R.string.ok)
+                            message(R.string.ribka_send_success)
+                            positiveButton(R.string.ok)
                             .show()
                             .setOnDismissListener {
                                 finish()
@@ -169,8 +169,8 @@ class RibkaReportActivity : BaseActivity() {
                 } else {
                     runOnUiThread {
                         MaterialDialog.Builder(this@RibkaReportActivity)
-                            .content(TextUtils.expandTemplate(getString(R.string.ribka_send_failure), "${response.code} ${response.body?.string()}"))
-                            .positiveText(R.string.ok)
+                            message(text = TextUtils.expandTemplate(getString(R.string.ribka_send_failure), "${response.code} ${response.body?.string()}"))
+                            positiveButton(R.string.ok)
                             .show()
                     }
                 }

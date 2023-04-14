@@ -36,7 +36,6 @@ public class AboutActivity extends BaseActivity {
 	View bHelp;
 	View bMaterialSources;
 	View bCredits;
-	View bEnableBeta;
 
 	final AtomicBoolean backgroundAnimationStarted = new AtomicBoolean(false);
 	int baseHue = 0;
@@ -77,28 +76,6 @@ public class AboutActivity extends BaseActivity {
 			Tracker.trackEvent("help_button_credits");
 			startActivity(HelpActivity.createIntent("help/credits.html", getString(R.string.about_credits)));
 		});
-
-		bEnableBeta = findViewById(R.id.bEnableBeta);
-		bEnableBeta.setOnClickListener(v -> {
-			Tracker.trackEvent("help_button_enable_beta");
-			new MaterialDialog.Builder(this)
-					.content(R.string.about_enable_beta_confirmation)
-					.positiveText(R.string.ok)
-					.negativeText(R.string.cancel)
-					.onPositive((dialog, which) -> {
-						try {
-							startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/apps/testing/" + getPackageName())));
-						} catch (Exception ignored) {
-						}
-					})
-					.show();
-			}
-		);
-
-		// already in beta?
-		if (App.getVersionName().contains("beta")) {
-			bEnableBeta.setVisibility(View.GONE);
-		}
 
 		imgLogo.setImageDrawable(ResourcesCompat.getDrawableForDensity(getResources(), R.mipmap.ic_launcher, DisplayMetrics.DENSITY_XXXHIGH, null));
 

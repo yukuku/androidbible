@@ -94,7 +94,7 @@ public class TypeBookmarkDialog {
 			.customView(dialogView, false)
 			.title(reference)
 			.iconRes(R.drawable.ic_attr_bookmark)
-			.positiveText(R.string.ok)
+			positiveButton(R.string.ok)
 			.onPositive((dialog, which) -> bOk_click())
 			.neutralText(R.string.delete)
 			.onNeutral((dialog, which) -> bDelete_click(marker))
@@ -137,8 +137,8 @@ public class TypeBookmarkDialog {
 			if (label == null) return;
 
 			new MaterialDialog.Builder(context)
-				.content(context.getString(R.string.do_you_want_to_remove_the_label_label_from_this_bookmark, label.title))
-				.positiveText(R.string.ok)
+				message(text = context.getString(R.string.do_you_want_to_remove_the_label_label_from_this_bookmark, label.title))
+				positiveButton(R.string.ok)
 				.onPositive((dialog, which) -> {
 					labels.remove(label);
 					setLabelsText();
@@ -154,8 +154,8 @@ public class TypeBookmarkDialog {
 		}
 
 		new MaterialDialog.Builder(context)
-			.content(R.string.bookmark_delete_confirmation)
-			.positiveText(R.string.delete)
+			message(R.string.bookmark_delete_confirmation)
+			positiveButton(R.string.delete)
 			.onPositive((dialog, which) -> {
 				S.getDb().deleteMarkerById(marker._id);
 

@@ -144,8 +144,8 @@ public class HelpActivity extends BaseActivity {
                         final IntArrayList ariRanges = TargetDecoder.decode("o:" + ssp);
                         if (ariRanges == null || ariRanges.size() == 0) {
                             new MaterialDialog.Builder(HelpActivity.this)
-                                .content(getString(R.string.alamat_tidak_sah_alamat, url))
-                                .positiveText(R.string.ok)
+                                message(text = getString(R.string.alamat_tidak_sah_alamat, url))
+                                positiveButton(R.string.ok)
                                 .show();
                         } else {
                             final VersesDialog dialog = VersesDialog.newInstance(ariRanges);

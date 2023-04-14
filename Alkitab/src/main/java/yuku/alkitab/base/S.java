@@ -309,7 +309,7 @@ public class S {
                 return true;
             })
             .alwaysCallSingleChoiceCallback()
-            .positiveText(R.string.versi_lainnya)
+            positiveButton(R.string.versi_lainnya)
             .onPositive((dialog, which) -> activity.startActivity(VersionsActivity.createIntent()))
             .show();
     }

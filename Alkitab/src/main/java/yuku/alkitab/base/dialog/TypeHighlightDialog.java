@@ -77,7 +77,7 @@ public class TypeHighlightDialog {
 		final MaterialDialog.Builder builder = new MaterialDialog.Builder(context)
 			.customView(R.layout.dialog_edit_highlight, false)
 			.iconRes(R.drawable.ic_attr_highlight)
-			.positiveText(R.string.ok) // this does not actually do anything except closing the dialog.
+			positiveButton(R.string.ok) // this does not actually do anything except closing the dialog.
 			.neutralText(R.string.delete)
 			.onPositive((dialog1, which) -> {
 				// only relevant when we edit partial highlight

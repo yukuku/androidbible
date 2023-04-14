@@ -27,7 +27,7 @@ public class VersesDialogActivity extends BaseActivity {
 		final IntArrayList ariRanges = TargetDecoder.decode(target);
 		if (ariRanges == null) {
 			new MaterialDialog.Builder(this)
-				.content("Could not understand target: " + target)
+				message(text = "Could not understand target: " + target)
 				.positiveText("OK")
 				.show()
 				.setOnDismissListener(dialog -> finish());

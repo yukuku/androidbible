@@ -256,10 +256,9 @@ class FontManagerActivity : BaseActivity(), DownloadService.DownloadListener {
         private val bDelete_click = View.OnClickListener { v ->
             val dls = dls ?: return@OnClickListener
             val item = v.getTag(R.id.TAG_fontItem) as FontItem
-            MaterialDialog.Builder(this@FontManagerActivity)
-                .content(getString(R.string.fm_do_you_want_to_delete, item.name))
-                .positiveText(R.string.delete)
-                .onPositive { _, _ ->
+            MaterialDialog(this@FontManagerActivity).show {
+                message(text = getString(R.string.fm_do_you_want_to_delete, item.name))
+                positiveButton(R.string.delete) {
                     val fontDir = FontManager.getFontDir(item.name)
                     val listFiles = fontDir.listFiles()
                     if (listFiles != null) {
@@ -271,8 +270,8 @@ class FontManagerActivity : BaseActivity(), DownloadService.DownloadListener {
                     dls.removeEntry(getFontDownloadKey(item.name))
                     notifyDataSetChanged()
                 }
-                .negativeText(R.string.cancel)
-                .show()
+                negativeButton(R.string.cancel)
+            }
         }
     }
 
@@ -310,10 +309,10 @@ class FontManagerActivity : BaseActivity(), DownloadService.DownloadListener {
             File(downloadedZip).delete()
 
         } catch (e: Exception) {
-            MaterialDialog.Builder(this@FontManagerActivity)
-                .content(getString(R.string.fm_error_when_extracting_font, fontName, "$e"))
-                .positiveText(R.string.ok)
-                .show()
+            MaterialDialog(this@FontManagerActivity).show {
+                message(text = getString(R.string.fm_error_when_extracting_font, fontName, "$e"))
+                positiveButton(R.string.ok)
+            }
         }
     }
 
