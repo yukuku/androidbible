@@ -57,7 +57,6 @@ ext {
     // Tests
     junitVersion = '4.13.2'
     leakcanaryVersion = '2.8.1'
-    stethoVersion = '1.5.1'
 
     firebaseBomVersion = '29.0.3'
 

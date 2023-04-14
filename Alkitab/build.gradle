@@ -106,8 +106,6 @@ dependencies {
     // Tests
     testImplementation "junit:junit:$junitVersion"
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion"
-    debugImplementation "com.facebook.stetho:stetho:$stethoVersion"
-    debugImplementation "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
 
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:29.0.3')
