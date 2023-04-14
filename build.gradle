@@ -45,6 +45,7 @@ ext {
     androidxFragmentVersion = '1.4.0'
     androidxMultidexVersion = '2.0.1'
     androidxPercentlayoutVersion = '1.0.0'
+    androidxPreferenceVersion = '1.1.0'
     androidxRecyclerviewVersion = '1.2.1'
     androidxSwiperefreshlayoutVersion = '1.1.0'
 
@@ -63,10 +64,10 @@ ext {
     // Misc
     okhttpVersion = '4.9.3'
     coilVersion = '1.1.0'
-    preferenceFixVersion = '28.0.0.0'
+    preferenceFixVersion = '1.1.0'
     kotlinxSerializationJsonVersion = '1.0.1'
 
     // UI
-    materialDialogsVersion = '0.9.6.0'
+    materialDialogsVersion = '2.0.3'
     fancyShowcaseView = '1.3.0'
 }
