@@ -463,12 +463,6 @@
     <string name="about_version_name">verzió %s</string>
     <string name="about_credits">Kreditek</string>
     <string name="about_official_website">Hivatalos weboldal</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_no_more">Ne kérdezd újra</string>
-    <string name="marker_migrate_later">Ne most</string>
-    <string name="marker_migrate_error_opening_backup_file">Nem sikerült elérni ezt a biztonsági mentést.</string>
-    <string name="marker_migrate_import_from_newest">Ámen, importálja a legújabból (ajánlott)</string>
-    <string name="marker_migrate_import_from_other">Más mentés</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Szótár</string>

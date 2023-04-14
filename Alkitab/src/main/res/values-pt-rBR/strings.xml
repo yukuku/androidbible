@@ -522,17 +522,6 @@
     <string name="about_credits">Créditos</string>
     <string name="about_official_website">Site oficial</string>
     <string name="about_project_page">Página do projeto</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Detectamos um arquivo de backup da versão 3 do Quick Bible que contém marcadores, anotações, realces, e etiquetas.\n\nVocê deseja importá-lo para utilizá-lo nesta nova versão do aplicativo?</string>
-    <string name="marker_migrate_no_more">Não pergunte novamente</string>
-    <string name="marker_migrate_later">Não agora</string>
-    <string name="marker_migrate_title">Importe marcadores anteriores</string>
-    <string name="marker_migrate_file_chooser_title">Selecione o arquivo de backup v3</string>
-    <string name="marker_migrate_no_more_confirmation">Você tem certeza que não precisa importar os dados anteriores?</string>
-    <string name="marker_migrate_error_opening_backup_file">Não foi possível acessar o arquivo de backup fornecido.</string>
-    <string name="marker_migrate_import_from_newest">Sim, importe do mais recente (recomendado)</string>
-    <string name="marker_migrate_import_from_other">Outros backups</string>
-    <string name="marker_migrate_filename_dated">%1$s datado %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Dicionário</string>

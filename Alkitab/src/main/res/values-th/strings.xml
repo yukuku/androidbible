@@ -517,17 +517,6 @@
     <string name="about_credits">เครดิต</string>
     <string name="about_official_website">เว็ปไซต์ทางการ</string>
     <string name="about_project_page">หน้าหลักโครงการ</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">เราได้ตรวจพบไฟล์แบ็คอัพจาก v3 Yuku Quick Bible รุ่นเก่าที่ประกอบด้วยบุ๊คมาร์ค โน้ต การไฮไลท์ และป้ายกำกับค่ะ\n\nท่านต้องการนำเข้าสิ่งเหล่านี้เพื่อใช้ในแอปเวอร์ชั่นปัจจุบันหรือไม่ค่ะ?</string>
-    <string name="marker_migrate_no_more">ไม่ต้องถามอีก</string>
-    <string name="marker_migrate_later">ยังไม่ทำ</string>
-    <string name="marker_migrate_title">นำเข้ามาร์กเกอร์เก่า</string>
-    <string name="marker_migrate_file_chooser_title">เลือกไฟล์แบ็คอัพ v3</string>
-    <string name="marker_migrate_no_more_confirmation">ท่านแน่ใจว่าไม่ต้องการที่จะนำข้อมูลเก่าเข้าหรือไม่ค่ะ?</string>
-    <string name="marker_migrate_error_opening_backup_file">ไม่สามารถเปิดไฟล์แบ็คอัพได้ค่ะ</string>
-    <string name="marker_migrate_import_from_newest">ใช่ นำเข้าจากแบ็คอัพล่าสุด (เป็นที่แนะนำค่ะ)</string>
-    <string name="marker_migrate_import_from_other">แบ็คอัพอื่นๆ</string>
-    <string name="marker_migrate_filename_dated">%1$s ลงวันที่ %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">พจนานุกรม</string>

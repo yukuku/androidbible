@@ -514,17 +514,6 @@
     <string name="about_credits">Kredito</string>
     <string name="about_official_website">Opisyal na Website</string>
     <string name="about_project_page">Pahina ng Proyekto</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Kami ay naka tuklas mg reserbang file galing sa old v3 uku Quick Bible na naglalaman ng mga bookmark, mga nota, mga highlight, at mga label.\n\nGusto mo bang i-angkat sila, para maka access ka nila mula sa app na ito?</string>
-    <string name="marker_migrate_no_more">Wag kang magtanung ulit</string>
-    <string name="marker_migrate_later">Wag ngayun</string>
-    <string name="marker_migrate_title">Mag angkat ng lumang mga marker</string>
-    <string name="marker_migrate_file_chooser_title">Piliin v3 reserbang file</string>
-    <string name="marker_migrate_no_more_confirmation">Sigurado ka bang hindi mo kailangang mag angkat ng lumang data?</string>
-    <string name="marker_migrate_error_opening_backup_file">Hindi ma access ang reserbang file.</string>
-    <string name="marker_migrate_import_from_newest">Oo, i-angkat galing sa pinakabagong (rekomendasyon)</string>
-    <string name="marker_migrate_import_from_other">Ibang reserba</string>
-    <string name="marker_migrate_filename_dated">%1$sNapetsahan %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Diksyunaryo</string>

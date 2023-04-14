@@ -522,17 +522,6 @@
     <string name="about_credits">Podziękowania</string>
     <string name="about_official_website">Oficjalna strona</string>
     <string name="about_project_page">Strona projektu</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Wykryliśmy plik kopii ze starej wersji Yuku QuickBible v3, która zawiera zakładki, notatki, podkreślenia i etykiety.\n\nCzy chcesz je zaimportować, aby mieć do nich dostęp z tej aplikacji?</string>
-    <string name="marker_migrate_no_more">Nie pytaj ponownie</string>
-    <string name="marker_migrate_later">Nie teraz</string>
-    <string name="marker_migrate_title">Zaimportuj stare znaczniki</string>
-    <string name="marker_migrate_file_chooser_title">Wybierz plik kopii v3</string>
-    <string name="marker_migrate_no_more_confirmation">Czy jesteś pewien, że nie potrzebujesz zaimportować starych danych?</string>
-    <string name="marker_migrate_error_opening_backup_file">Nie można dostać się do pliku kopii.</string>
-    <string name="marker_migrate_import_from_newest">Tak, zaimportuj z najnowszej (zalecane)</string>
-    <string name="marker_migrate_import_from_other">Inne kopie</string>
-    <string name="marker_migrate_filename_dated">%1$s z dnia %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Słownik</string>

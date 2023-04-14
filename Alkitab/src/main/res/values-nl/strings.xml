@@ -521,17 +521,6 @@
     <string name="about_credits">Credits</string>
     <string name="about_official_website">Officiële website</string>
     <string name="about_project_page">Project pagina</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">We hebben een reservekopie gevonden van de oude v3 Yuku Quick Bible met bladwijzers, notities, markeringen en labels.\n\nWil je ze importeren zodat je ze kunt gebruiken in deze app?</string>
-    <string name="marker_migrate_no_more">Niet opnieuw vragen</string>
-    <string name="marker_migrate_later">Niet nu</string>
-    <string name="marker_migrate_title">Oude markeringen importeren</string>
-    <string name="marker_migrate_file_chooser_title">Selecteer v3 backup bestand</string>
-    <string name="marker_migrate_no_more_confirmation">Weet je zeker dat je de oude gegevens niet wilt importeren?</string>
-    <string name="marker_migrate_error_opening_backup_file">Kon het reservekopie niet vinden.</string>
-    <string name="marker_migrate_import_from_newest">Ja, importeer de nieuwste reservekopie (aanbevolen)</string>
-    <string name="marker_migrate_import_from_other">Andere reservekopie</string>
-    <string name="marker_migrate_filename_dated">%1$s van datum %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Woordenboek</string>

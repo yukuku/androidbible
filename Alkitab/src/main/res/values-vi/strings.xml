@@ -522,17 +522,6 @@
     <string name="about_credits">Ghi nhận</string>
     <string name="about_official_website">Trang web chính thức</string>
     <string name="about_project_page">Trang dự án</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Chúng tôi phát hiện một tập tin sao lưu từ v3 Yuku Kinh Thánh nhanh cũ có chứa dấu, ghi chú, nổi bật, và nhãn.\n\nBạn có muốn nhập chúng, để bạn có thể truy cập chúng từ ứng dụng này?</string>
-    <string name="marker_migrate_no_more">Đừng hỏi lại</string>
-    <string name="marker_migrate_later">Không phải bây giờ</string>
-    <string name="marker_migrate_title">Nhập đánh dấu cũ</string>
-    <string name="marker_migrate_file_chooser_title">Chọn v3 sao lưu</string>
-    <string name="marker_migrate_no_more_confirmation">Bạn có chắc là không cần nhập các dữ liệu cũ?</string>
-    <string name="marker_migrate_error_opening_backup_file">Không thể truy cập tập tin sao lưu.</string>
-    <string name="marker_migrate_import_from_newest">Có, nhập từ mới nhất (đề nghị)</string>
-    <string name="marker_migrate_import_from_other">Sao lưu khác</string>
-    <string name="marker_migrate_filename_dated">%1$s ngày %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Từ điển</string>

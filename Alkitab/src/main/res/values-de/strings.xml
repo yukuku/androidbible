@@ -522,17 +522,6 @@
     <string name="about_credits">Danksagungen</string>
     <string name="about_official_website">Offizielle Website</string>
     <string name="about_project_page">Projektseite</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Es wurde eine Backupdatei der alten Quick Bible 3 App von Yuku mit Lesezeichen, Notizen, Hervorhebungen und Stichwörter erkannt.\n\nMöchten Sie diese importieren, sodass sie in dieser App verfügbar sind?</string>
-    <string name="marker_migrate_no_more">Nicht noch einmal fragen</string>
-    <string name="marker_migrate_later">Nicht jetzt</string>
-    <string name="marker_migrate_title">Alte Markierungen importieren</string>
-    <string name="marker_migrate_file_chooser_title">Backupdatei der Version 3 auswählen</string>
-    <string name="marker_migrate_no_more_confirmation">Möchten Sie die alten Daten wirklich nicht importieren?</string>
-    <string name="marker_migrate_error_opening_backup_file">Kann nicht auf die Backupdatei zugreifen.</string>
-    <string name="marker_migrate_import_from_newest">Ja, neuste Datei importieren (empfohlen)</string>
-    <string name="marker_migrate_import_from_other">Anderes Backup</string>
-    <string name="marker_migrate_filename_dated">%1$s vom %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Wörterbuch</string>

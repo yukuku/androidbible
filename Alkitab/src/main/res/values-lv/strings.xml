@@ -516,17 +516,6 @@
     <string name="about_credits">Kredīti</string>
     <string name="about_official_website">Oficiālā mājaslapa</string>
     <string name="about_project_page">Projekta mājas lapa</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Ir atrasts rezerves kopijas fails uz vecajā v3 Yku Quick Bible aplikācijā, kurš satur grāmatzīmes, piezīmes, pasvītrojumus un iezīmes.\n\nVai tu vēlies tās tagad ieimportēt, tad tu varēsi tām pieklūt no šīs aplikācijas?</string>
-    <string name="marker_migrate_no_more">Vairāk neprasi</string>
-    <string name="marker_migrate_later">Ne tagad</string>
-    <string name="marker_migrate_title">Importēt vecos marķierus</string>
-    <string name="marker_migrate_file_chooser_title">Izvēlies v3 rezerves kopiju failu</string>
-    <string name="marker_migrate_no_more_confirmation">Vai tu patiešām nevēlies importēt vecos datus?</string>
-    <string name="marker_migrate_error_opening_backup_file">Nevar piekļūt rezerves kopijas failam.</string>
-    <string name="marker_migrate_import_from_newest">Jā, importēt no jaunākā (ieteicams)</string>
-    <string name="marker_migrate_import_from_other">Cita rezerves kopija</string>
-    <string name="marker_migrate_filename_dated">%1$s datēts %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Vārdnīca</string>

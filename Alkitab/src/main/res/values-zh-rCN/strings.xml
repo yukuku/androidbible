@@ -522,17 +522,6 @@
     <string name="about_credits">工作人员</string>
     <string name="about_official_website">官方网站</string>
     <string name="about_project_page">计划页面</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">我们侦测到一个含有书签、笔记、标记和标签的v3 Yuku神速圣经旧版本的备份档桉。\n\n你想汇入它们，让你在这个程式存取它们吗？</string>
-    <string name="marker_migrate_no_more">不再询问</string>
-    <string name="marker_migrate_later">现在别问我</string>
-    <string name="marker_migrate_title">汇入旧标记</string>
-    <string name="marker_migrate_file_chooser_title">选取v3备份档桉</string>
-    <string name="marker_migrate_no_more_confirmation">你确定你不需要汇入旧资料？</string>
-    <string name="marker_migrate_error_opening_backup_file">不能存取备份档桉。</string>
-    <string name="marker_migrate_import_from_newest">是，汇入最新的（建议选项）</string>
-    <string name="marker_migrate_import_from_other">其他备份</string>
-    <string name="marker_migrate_filename_dated">%1$s日期%2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">字典</string>

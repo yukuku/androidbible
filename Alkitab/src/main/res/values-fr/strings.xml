@@ -522,17 +522,6 @@
     <string name="about_credits">Remerciements</string>
     <string name="about_official_website">Site officiel</string>
     <string name="about_project_page">Page de projet</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Nous avons détecté une sauvegarde de la version 3 de Yuku Quick Bible qui contient des marque-pages, des notes, des surlignés et des étiquettes.\n\nVoulez-vous les importer, pour pouvoir y accéder depuis cette application?</string>
-    <string name="marker_migrate_no_more">Ne plus demander</string>
-    <string name="marker_migrate_later">Pas maintenant</string>
-    <string name="marker_migrate_title">Importation d\'anciens marque-pages</string>
-    <string name="marker_migrate_file_chooser_title">Sélectionnez le fichier de sauvegarde v3</string>
-    <string name="marker_migrate_no_more_confirmation">Etes-vous sûr de ne pas avoir besoin d\'importer les anciennes données ?</string>
-    <string name="marker_migrate_error_opening_backup_file">Impossible d\'accéder à ce fichier de sauvegarde.</string>
-    <string name="marker_migrate_import_from_newest">Oui, importation depuis la plus récente (recommandé)</string>
-    <string name="marker_migrate_import_from_other">Autre sauvegarde</string>
-    <string name="marker_migrate_filename_dated">%1$s daté %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Dictionnaire</string>

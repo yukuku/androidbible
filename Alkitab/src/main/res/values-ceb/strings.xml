@@ -513,17 +513,6 @@
     <string name="about_credits">Mga credit</string>
     <string name="about_official_website">Opisyal na Website</string>
     <string name="about_project_page">Pahina sa Proyekto</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Kami na ka matngun na ang reserba na file gikan sa karaang v3 Yuku Quick bible na naglangkob sa mga bookmark, mga nota, mga highlight, og mga label.\n\n Gusto mo bang i-import sila, para ma access nimo ang sila sa kani na app?</string>
-    <string name="marker_migrate_no_more">Ayaw pangutana og balik</string>
-    <string name="marker_migrate_later">Dili sa karun</string>
-    <string name="marker_migrate_title">I-import ang karaang mga marker</string>
-    <string name="marker_migrate_file_chooser_title">Pilia ang v3 reserbang file</string>
-    <string name="marker_migrate_no_more_confirmation">Sigurado ka bang dili nimo kinahanglan na mag import sa karaan na data?</string>
-    <string name="marker_migrate_error_opening_backup_file">Dili ma-acces ang reserbang file.</string>
-    <string name="marker_migrate_import_from_newest">Oo, I-import gikan sa pinakabag-o (girekomendar)</string>
-    <string name="marker_migrate_import_from_other">Laing reserba</string>
-    <string name="marker_migrate_filename_dated">%1$s gipetsahan %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Diksiyonaryo</string>

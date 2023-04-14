@@ -513,17 +513,6 @@
     <string name="about_credits">工作人員</string>
     <string name="about_official_website">官方網站</string>
     <string name="about_project_page">計劃頁面</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">我們偵測到一個含有書簽、筆記、標記和標簽的v3 Yuku神速聖經舊版本的備份檔案。\n\n你想匯入它們，讓你在這個程式存取它們嗎？</string>
-    <string name="marker_migrate_no_more">不再詢問</string>
-    <string name="marker_migrate_later">現在別問我</string>
-    <string name="marker_migrate_title">匯入舊標記</string>
-    <string name="marker_migrate_file_chooser_title">選取v3備份檔案</string>
-    <string name="marker_migrate_no_more_confirmation">你確定你不需要匯入舊資料？</string>
-    <string name="marker_migrate_error_opening_backup_file">不能存取備份檔案。</string>
-    <string name="marker_migrate_import_from_newest">是，匯入最新的（建議選項）</string>
-    <string name="marker_migrate_import_from_other">其他備份</string>
-    <string name="marker_migrate_filename_dated">%1$s日期%2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">字典</string>

@@ -517,17 +517,6 @@
     <string name="about_credits">Créditos</string>
     <string name="about_official_website">Sítio eletrónico oficial</string>
     <string name="about_project_page">Página projeto</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Detectamos um arquivo de backup da antiga v3 Yuku Quick Bible que contém marcadores, notas, destaques e títulos.\n\nDeseja importá-los, para que tenha acesso a partir deste aplicativo?</string>
-    <string name="marker_migrate_no_more">Não pergunte outra vez</string>
-    <string name="marker_migrate_later">Agora não</string>
-    <string name="marker_migrate_title">Importar os marcadores antigos</string>
-    <string name="marker_migrate_file_chooser_title">Selecionar o ficheiro da cópia de segurança da V3</string>
-    <string name="marker_migrate_no_more_confirmation">Tem certeza que não precisa de importar os dados antigos?</string>
-    <string name="marker_migrate_error_opening_backup_file">Não foi possível aceder ao arquivo da cópia de segurança.</string>
-    <string name="marker_migrate_import_from_newest">Sim, importar o mais novo (recomendado)</string>
-    <string name="marker_migrate_import_from_other">Outra cópia de segurança</string>
-    <string name="marker_migrate_filename_dated">%1$s datado %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Dicionário</string>

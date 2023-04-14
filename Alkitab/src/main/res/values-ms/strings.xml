@@ -514,17 +514,6 @@
     <string name="about_credits">Kredit</string>
     <string name="about_official_website">Tapak Web Rasmi</string>
     <string name="about_project_page">Laman Projek</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Kami telah mengesan sesuatu fail sandaran daripada v3 Yuku Alkitab Cepat yang lama serta mengandungi penandaan, nota, sorotan dan pelabelan.\n\nAdakah anda mahu mengimport segalanya supaya anda dapat mengakses fail sandaran tersebut melalui aplikasi ini?</string>
-    <string name="marker_migrate_no_more">Jangan tanya lagi</string>
-    <string name="marker_migrate_later">Bukan sekarang</string>
-    <string name="marker_migrate_title">Import penanda lama</string>
-    <string name="marker_migrate_file_chooser_title">Pilih fail sandaran v3</string>
-    <string name="marker_migrate_no_more_confirmation">Adakah anda pasti anda tidak memerlukan data lama untuk diimport?</string>
-    <string name="marker_migrate_error_opening_backup_file">Tidak dapat mencapai fail sandaran.</string>
-    <string name="marker_migrate_import_from_newest">Ya, import daripada yang terbaru (disarankan)</string>
-    <string name="marker_migrate_import_from_other">Sandaran lain</string>
-    <string name="marker_migrate_filename_dated">%1$s bertarikh %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Kamus</string>

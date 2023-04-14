@@ -517,17 +517,6 @@
     <string name="about_credits">ဂုဏ်ပြုမှတ်တမ်းတင်လွှာ</string>
     <string name="about_official_website">တရားဝင် ဝက်ဘ်ဆိုက်</string>
     <string name="about_project_page">စီမံကိန်းစာမျက်နှာ</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">မှတ်သားချက်များ၊ မှတ်စုများ၊ အရောင်မှတ်ချက်များ နှင့် အမှတ်တံဆိပ်များ ပါ၀င်သည့် v3 Yuku Quick Bible အဟောင်းမှ အရန်ကူးယူသိုမှီးထားသည့်ဖိုင်ကို ကျွန်ုပ်တို့ ရှာဖွေတွေ့ရှိခဲ့သည်။\n\n၄င်းတို့ကို ထည့်သွင်းချင်ပါသလား၊ သို့ဖြစ်ပါ၍ ထည့်သွင်းမည်ဆိုလျှင် ဒီအက်ပလီကေးရှင်းမှ ၄င်းတို့ကို သင် ဝင်ရောက်ကြည့်ရှုနိုင်ပါမည်။</string>
-    <string name="marker_migrate_no_more">နောက်ထပ်မမေးပါနှင့်</string>
-    <string name="marker_migrate_later">ယခုမဟုတ်ပါ</string>
-    <string name="marker_migrate_title">အမှတ်အသား အဟောင်းများကို တင်သွင်းရန်</string>
-    <string name="marker_migrate_file_chooser_title">v3 ကူးယူသိမ်းဆည်းထားသည့်ဖိုင်ကို ရွေးချယ်ရန်</string>
-    <string name="marker_migrate_no_more_confirmation">ဒေတာအဟောင်းကို တင်သွင်းရန် မလိုအပ်ဘူးဆိုတာ သေချာပါသလား။</string>
-    <string name="marker_migrate_error_opening_backup_file">အဲ့ဒီ အရန်ကူးဖိုင်ကို မဝင်ရောက်နိုင်ပါ။</string>
-    <string name="marker_migrate_import_from_newest">ဟုတ်ပါသည်၊ နောက်ဆုံးပေါ် (အကြံပြုထားသည်)မှ တင်သွင်းပါ</string>
-    <string name="marker_migrate_import_from_other">အခြားသော အရန်ဖိုင်သိမ်းဆည်း သိုမှီခြင်း</string>
-    <string name="marker_migrate_filename_dated">%1$s ရက်စွဲတပ်ထားသည့် %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">အဘိဓာန်</string>

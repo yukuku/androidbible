@@ -517,17 +517,6 @@
     <string name="about_credits">Подяка</string>
     <string name="about_official_website">Офіційний вебсайт</string>
     <string name="about_project_page">Сторінка проекту</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Було виявлено файл резервної копії зі старої версії 3 Yuku Quick Bible, яка містить закладки, примітки, підсвічування та мітки.\n\n Чи ви хочете імпортувати їх, щоб ви могли отримати доступ до них із цього додатку?</string>
-    <string name="marker_migrate_no_more">Не питати знову</string>
-    <string name="marker_migrate_later">Не тепер</string>
-    <string name="marker_migrate_title">Імпортувати старі позначки</string>
-    <string name="marker_migrate_file_chooser_title">Виберіть файл резервної копії v3</string>
-    <string name="marker_migrate_no_more_confirmation">Ви впевнені, що вам не потрібно імпортувати старі дані?</string>
-    <string name="marker_migrate_error_opening_backup_file">Не вдалося отримати доступ до цієї резервної копії.</string>
-    <string name="marker_migrate_import_from_newest">Так, імпортувати з самого останнього (рекомендується)</string>
-    <string name="marker_migrate_import_from_other">Інші резервні копії</string>
-    <string name="marker_migrate_filename_dated">%1$s датований %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Словник</string>

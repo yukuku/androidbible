@@ -514,17 +514,6 @@
     <string name="about_credits">Krediteringer</string>
     <string name="about_official_website">Officiel webside</string>
     <string name="about_project_page">Projekt side</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Vi har registreret en sikkerhedskopi-fil fra den gamle v3 Yuku Quick Bible, der indeholder bogmærker, notater, farvemarkører, og etiketter.\n\nVil du importere dem, så du kan få adgang til dem fra denne app?</string>
-    <string name="marker_migrate_no_more">Spørg ikke igen</string>
-    <string name="marker_migrate_later">Ikke nu</string>
-    <string name="marker_migrate_title">Importer gamle markører</string>
-    <string name="marker_migrate_file_chooser_title">Vælg v3 sikkerhedskopi-fil</string>
-    <string name="marker_migrate_no_more_confirmation">Er du sikker på, at du ikke behøver, at importere de gamle data?</string>
-    <string name="marker_migrate_error_opening_backup_file">Kunne ikke få adgang til sikkerhedskopi-filen.</string>
-    <string name="marker_migrate_import_from_newest">Ja, importer fra den nyeste (anbefales)</string>
-    <string name="marker_migrate_import_from_other">Anden sikkerhedskopi</string>
-    <string name="marker_migrate_filename_dated">%1$s dateret %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Ordbog</string>

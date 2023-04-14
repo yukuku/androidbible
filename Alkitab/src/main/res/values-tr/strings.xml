@@ -522,17 +522,6 @@
     <string name="about_credits">Krediler</string>
     <string name="about_official_website">Resmi Website</string>
     <string name="about_project_page">Proje Sayfası</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Yuku Hızlı İncil v3 den kalan ve yer imlerini, notları, vurgulamaları, ve etiketleri içeren eski bir yedekleme dosyası farkettik.\n\n Bu uygulamada da onlara ulaşabilmek için, bunları aktarmak istermisiniz?</string>
-    <string name="marker_migrate_no_more">Tekrar sorma</string>
-    <string name="marker_migrate_later">Şimdi değil</string>
-    <string name="marker_migrate_title">Eski işaretleri aktar</string>
-    <string name="marker_migrate_file_chooser_title">V3 yedek dosyasını seç</string>
-    <string name="marker_migrate_no_more_confirmation">Eski veriyi aktarmaya ihtiyacınız olmadığına emin misiniz?</string>
-    <string name="marker_migrate_error_opening_backup_file">Yedekleme dosyasına ulaşılamıyor.</string>
-    <string name="marker_migrate_import_from_newest">Evet, en yenisinden aktar(önerilir)</string>
-    <string name="marker_migrate_import_from_other">Diğer yedeklemeler</string>
-    <string name="marker_migrate_filename_dated">%1$s tarihli %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Sözlük</string>

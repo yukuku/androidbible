@@ -522,17 +522,6 @@
     <string name="about_credits">Благодарности</string>
     <string name="about_official_website">Официальный сайт</string>
     <string name="about_project_page">Страница проекта</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Обнаружен файл резервной копии, содержащий закладки, заметки, подкраску и метки, от старой версии Quick Bible v3.\n\nИмпортировать даные из этого файла, чтобы они стали доступны из данного приложения?</string>
-    <string name="marker_migrate_no_more">Больше не спрашивать</string>
-    <string name="marker_migrate_later">Не сейчас</string>
-    <string name="marker_migrate_title">Импортировать старые маркеры</string>
-    <string name="marker_migrate_file_chooser_title">Выбрать файл резервной копии v3</string>
-    <string name="marker_migrate_no_more_confirmation">Вы уверены, что не нужно импортировать старые данные?</string>
-    <string name="marker_migrate_error_opening_backup_file">Ошибка доступа к файлу резервной копии.</string>
-    <string name="marker_migrate_import_from_newest">Да, импортировать из самого последнего (рекомендуется)</string>
-    <string name="marker_migrate_import_from_other">Другие резервные копии</string>
-    <string name="marker_migrate_filename_dated">%1$s датированный %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Словарь</string>

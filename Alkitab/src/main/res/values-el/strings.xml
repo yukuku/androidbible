@@ -514,17 +514,6 @@
     <string name="about_credits">Πιστώσεις</string>
     <string name="about_official_website">Επίσημη Ιστοσελίδα</string>
     <string name="about_project_page">Σελίδα Προστασίας</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Βρήκαμε έναν φάκελλο με αντίγραφο ασφαλείας από την παλιά v3 Yuku Quick Bible που περιλαμβάνει σημειώσεις, επισημάνσεις και ετικέτες.\n\nΘέλετε να τους εισάγετε, ώστε να τους βρείτε από αυτήν την εφαρμογή;</string>
-    <string name="marker_migrate_no_more">Μην ρωτήσετε πάλι</string>
-    <string name="marker_migrate_later">Όχι τώρα</string>
-    <string name="marker_migrate_title">Εισαγωγή παλαιών σημειώσεων</string>
-    <string name="marker_migrate_file_chooser_title">Επιλογή φακέλλου υποστήριξης v3</string>
-    <string name="marker_migrate_no_more_confirmation">Είστε σίγουρος ότι δεν χρειάζεται να εισάγετε τα προηγούμενα δεδομένα;</string>
-    <string name="marker_migrate_error_opening_backup_file">Δεν μπόρεσε να έχει πρόσβαση στον φάκελλο υποστήριξης.</string>
-    <string name="marker_migrate_import_from_newest">Ναι, εισάγετε από τον νεότερο (συνιστάται)</string>
-    <string name="marker_migrate_import_from_other">Άλλη υποστήριξη</string>
-    <string name="marker_migrate_filename_dated">%1$s χρονολόγηση από %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Λεξικό</string>

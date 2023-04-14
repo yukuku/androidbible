@@ -25,9 +25,6 @@ import androidx.appcompat.widget.Toolbar;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import yuku.afw.storage.Preferences;
@@ -37,7 +34,6 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.LabelEditorDialog;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
 import yuku.alkitab.base.util.AppLog;
-import yuku.alkitab.base.util.BookmarkImporter;
 import yuku.alkitab.base.util.LabelColorUtil;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
@@ -45,15 +41,11 @@ import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.ambilwarna.AmbilWarnaDialog;
 import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
-import yuku.filechooser.FileChooserActivity;
-import yuku.filechooser.FileChooserConfig;
-import yuku.filechooser.FileChooserResult;
 
 public class MarkersActivity extends BaseActivity {
     static final String TAG = MarkersActivity.class.getSimpleName();
 
     private static final int REQCODE_markerList = 1;
-    private static final int REQCODE_migrateFromV3 = 3;
 
     /**
      * Action to broadcast when label list needs to be reloaded due to some background changes
@@ -128,15 +120,7 @@ public class MarkersActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         int itemId = item.getItemId();
-        if (itemId == R.id.menuMigrateFromV3) {
-            final FileChooserConfig config = new FileChooserConfig();
-            config.mode = FileChooserConfig.Mode.Open;
-            config.pattern = "(yuku\\.alkitab|yuku\\.alkitab\\.kjv|org\\.sabda\\.alkitab|org\\.sabda\\.online)-(backup|autobackup-[0-9-]+)\\.xml";
-            config.title = getString(R.string.marker_migrate_file_chooser_title);
-            final Intent intent = FileChooserActivity.createIntent(this, config);
-            startActivityForResult(intent, REQCODE_migrateFromV3);
-            return true;
-        } else if (itemId == R.id.menuLabelSort) {
+        if (itemId == R.id.menuLabelSort) {
             S.getDb().sortLabelsAlphabetically();
             adapter.reload();
             return true;
@@ -269,21 +253,6 @@ public class MarkersActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQCODE_markerList) {
             adapter.reload();
-            return;
-        } else if (requestCode == REQCODE_migrateFromV3 && resultCode == RESULT_OK) {
-            final FileChooserResult result = FileChooserActivity.obtainResult(data);
-            if (result != null) {
-                final File file = new File(result.firstFilename);
-                try {
-                    final FileInputStream fis = new FileInputStream(file);
-                    BookmarkImporter.importBookmarks(this, fis, false, () -> adapter.reload());
-                } catch (IOException e) {
-                    new MaterialDialog.Builder(this)
-                        .content(R.string.marker_migrate_error_opening_backup_file)
-                        .positiveText(R.string.ok)
-                        .show();
-                }
-            }
             return;
         }
 

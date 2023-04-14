@@ -522,17 +522,6 @@
     <string name="about_credits">Credite</string>
     <string name="about_official_website">Site oficial</string>
     <string name="about_project_page">Pagina proiect</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Am detectat un fișier de backup de la vechiul v3 Yuku Quick Bible care conține marcaje, note, evidențieri și etichete.\n\nDoriți să le importați, astfel încât să le puteți accesa din această aplicație?</string>
-    <string name="marker_migrate_no_more">Nu mai întreba</string>
-    <string name="marker_migrate_later">Nu acum</string>
-    <string name="marker_migrate_title">Importă marcajele vechi</string>
-    <string name="marker_migrate_file_chooser_title">Selectați fișierul de backup v3</string>
-    <string name="marker_migrate_no_more_confirmation">Sunteți sigur că nu este necesar importul datelor vechi?</string>
-    <string name="marker_migrate_error_opening_backup_file">Nu poate fi accesat fișierul de rezervă.</string>
-    <string name="marker_migrate_import_from_newest">Da, import din cel mai nou (recomandat)</string>
-    <string name="marker_migrate_import_from_other">Altă rezervă</string>
-    <string name="marker_migrate_filename_dated">%1$s datat %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Dicționar</string>

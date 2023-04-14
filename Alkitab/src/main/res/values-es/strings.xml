@@ -523,17 +523,6 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
     <string name="about_credits">Créditos</string>
     <string name="about_official_website">Página web oficial</string>
     <string name="about_project_page">La Página del Proyecto</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Detectamos un archivo de respaldo de la antigua v3 Yuku Quick Bible que contiene marcadores, notas, resaltos y etiquetas.\n\n¿Desea importarlos para así poder accesarlos desde esta aplicación?</string>
-    <string name="marker_migrate_no_more">No preguntar de nuevo</string>
-    <string name="marker_migrate_later">Ahora no</string>
-    <string name="marker_migrate_title">Importar marcadores antiguos</string>
-    <string name="marker_migrate_file_chooser_title">Seleccionar la copia de reserva v3</string>
-    <string name="marker_migrate_no_more_confirmation">¿Está seguro que no necesita importar los datos antiguos?</string>
-    <string name="marker_migrate_error_opening_backup_file">No se pudo accesar a ese archivo de respaldo.</string>
-    <string name="marker_migrate_import_from_newest">Si, importar desde lo más reciente (recomendado)</string>
-    <string name="marker_migrate_import_from_other">Otros respardos</string>
-    <string name="marker_migrate_filename_dated">%1$s con fecha %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Diccionario</string>

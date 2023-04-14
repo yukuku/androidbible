@@ -517,17 +517,6 @@
     <string name="about_credits">クレジット</string>
     <string name="about_official_website">公式ウェブサイト</string>
     <string name="about_project_page">プロジェクトページ</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">古いバージョン(Yuku Quick Bible v3)のバックアップファイルが見つかりました。栞、ノート、ラベルやマーカーなどの情報が保存されています。\n\nこのアプリにインポートしますか？</string>
-    <string name="marker_migrate_no_more">もう一度聞かないで</string>
-    <string name="marker_migrate_later">後で</string>
-    <string name="marker_migrate_title">栞をインポートする</string>
-    <string name="marker_migrate_file_chooser_title">ｖ３のバックアップファイルを選ぶ</string>
-    <string name="marker_migrate_no_more_confirmation">古いバージョンのデータをインポートしません。よろしいですね？</string>
-    <string name="marker_migrate_error_opening_backup_file">バックアップファイルをアクセス出来ません。</string>
-    <string name="marker_migrate_import_from_newest">一番新しいバックアップをインポート (推薦)</string>
-    <string name="marker_migrate_import_from_other">他のバックアップ</string>
-    <string name="marker_migrate_filename_dated">%1$s日付%2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">辞書</string>
