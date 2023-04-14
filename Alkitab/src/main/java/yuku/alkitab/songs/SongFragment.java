@@ -80,7 +80,7 @@ public class SongFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        renderLagu(song);
+        renderSong(song);
     }
 
     final WebViewClient webViewClient = new WebViewClient() {
@@ -109,7 +109,7 @@ public class SongFragment extends BaseFragment {
         }
     };
 
-    private void renderLagu(Song song) {
+    private void renderSong(Song song) {
         try {
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try (InputStream is = getResources().getAssets().open("templates/song.html")) {
