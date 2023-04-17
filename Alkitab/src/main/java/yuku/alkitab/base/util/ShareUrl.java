@@ -16,7 +16,6 @@ import okhttp3.ResponseBody;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.debug.BuildConfig;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
@@ -75,34 +74,7 @@ public class ShareUrl {
         // when set to true, do not call any callback
         final AtomicBoolean done = new AtomicBoolean();
 
-        final MaterialDialog dialog = new MaterialDialog.Builder(activity)
-            .content("Getting share URL…")
-            .progress(true, 0)
-            .negativeText(R.string.cancel)
-            .onNegative((dialog1, which) -> {
-                if (done.getAndSet(true)) return;
-                done.set(true);
-
-                callback.onUserCancel();
-                try {
-                    dialog1.dismiss();
-                } catch (Exception ignored) {
-                }
-
-                callback.onFinally();
-            })
-            .dismissListener(dialog1 -> {
-                if (done.getAndSet(true)) return;
-
-                callback.onUserCancel();
-                try {
-                    dialog1.dismiss();
-                } catch (Exception ignored) {
-                }
-
-                callback.onFinally();
-            })
-            .show();
+        final MaterialDialog dialog = ShareUrlJavaHelper.showMaterialDialog(activity, callback, done);
 
         call.enqueue(new okhttp3.Callback() {
             @Override

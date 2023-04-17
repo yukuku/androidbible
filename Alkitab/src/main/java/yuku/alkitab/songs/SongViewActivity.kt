@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.text.InputType
 import android.text.TextUtils
@@ -281,7 +282,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             openDownloadSongBookPage()
         }
 
-        object : Handler() {
+        object : Handler(Looper.getMainLooper()) {
             override fun handleMessage(msg: Message) {
                 if (isFinishing) return
 
@@ -427,7 +428,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.activity_song_view, menu)
 
-        Handler().post {
+        Handler(Looper.getMainLooper()).post {
             val view = findViewById<View>(R.id.menuMediaControl) ?: return@post
 
             view.setOnLongClickListener {
