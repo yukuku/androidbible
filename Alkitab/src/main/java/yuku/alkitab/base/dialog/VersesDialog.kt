@@ -136,7 +136,7 @@ class VersesDialog : BaseDialog() {
                 versionId_ = sourceVersionId
             )
         } else { // read each version and display it. First version must be the sourceVersion.
-            val mversions = S.getAvailableVersions()
+            val mversions = S.getAvailableVersions().toMutableList()
             // sort such that sourceVersion is first
             mversions.sortBy { if (it.versionId == sourceVersionId) -1 else 0 }
 

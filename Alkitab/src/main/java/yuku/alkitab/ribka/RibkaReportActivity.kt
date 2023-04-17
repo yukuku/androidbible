@@ -22,24 +22,25 @@ import yuku.alkitab.base.App
 import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.util.FormattedVerseText
+import yuku.alkitab.base.widget.MaterialDialogProgressHelper.progress
 import yuku.alkitab.base.widget.VerseRendererHelper
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 
 class RibkaReportActivity : BaseActivity() {
-    lateinit var tRibkaVerseText: TextView
-    lateinit var tRibkaReference: TextView
-    lateinit var oRibkaCategoryTypo: RadioButton
-    lateinit var oRibkaCategoryWord: RadioButton
-    lateinit var oRibkaCategorySentence: RadioButton
-    lateinit var oRibkaCategoryContent: RadioButton
-    lateinit var oRibkaCategoryOthers: RadioButton
-    lateinit var tRibkaSuggestionContainer: TextInputLayout
-    lateinit var tRibkaSuggestion: EditText
-    lateinit var tRibkaEmailContainer: TextInputLayout
-    lateinit var tRibkaEmail: EditText
-    lateinit var tRibkaRemarks: EditText
-    lateinit var bRibkaSend: View
+    private lateinit var tRibkaVerseText: TextView
+    private lateinit var tRibkaReference: TextView
+    private lateinit var oRibkaCategoryTypo: RadioButton
+    private lateinit var oRibkaCategoryWord: RadioButton
+    private lateinit var oRibkaCategorySentence: RadioButton
+    private lateinit var oRibkaCategoryContent: RadioButton
+    private lateinit var oRibkaCategoryOthers: RadioButton
+    private lateinit var tRibkaSuggestionContainer: TextInputLayout
+    private lateinit var tRibkaSuggestion: EditText
+    private lateinit var tRibkaEmailContainer: TextInputLayout
+    private lateinit var tRibkaEmail: EditText
+    private lateinit var tRibkaRemarks: EditText
+    private lateinit var bRibkaSend: View
 
     var ari: Int = 0
     lateinit var verseText: String
@@ -136,11 +137,11 @@ class RibkaReportActivity : BaseActivity() {
         form.add("reportRemarks", remarks)
         form.add("reportVersionDescription", versionDescription.orEmpty())
 
-        val pd = MaterialDialog.Builder(this)
-        message(R.string.ribka_sending_progress)
-            .cancelable(false)
-            .progress(true, 0)
-            .show()
+        val pd = MaterialDialog(this).show {
+            message(R.string.ribka_sending_progress)
+            cancelable(false)
+            progress(true, 0)
+        }
 
         Connections.okHttp.newCall(Request.Builder().url(BuildConfig.RIBKA_FUNCTIONS_HOST + "addIssue").post(form.build()).build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {

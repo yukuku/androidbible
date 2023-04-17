@@ -106,7 +106,7 @@ class ProgressMarkListDialog : DialogFragment() {
                 if (adapterPosition == -1) return@setOnLongClickListener true
 
                 val progressMark = progressMarks[adapterPosition]
-                ProgressMarkRenameDialog.show(activity, progressMark, object : ProgressMarkRenameDialog.Listener {
+                ProgressMarkRenameDialog.show(requireActivity(), progressMark, object : ProgressMarkRenameDialog.Listener {
                     override fun onOked() {
                         reload()
                     }

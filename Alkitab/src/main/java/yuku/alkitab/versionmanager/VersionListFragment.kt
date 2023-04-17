@@ -197,14 +197,13 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
 
         if (mv.description != null) details.append('\n').append(mv.description).append('\n')
 
-        val b = MaterialDialog.Builder(requireActivity())
+        val b = MaterialDialog(requireActivity())
         var button_count = 0
 
         // can we update?
         if (mv is MVersionDb && hasUpdateAvailable(mv)) {
             button_count++
-            b.positiveText(R.string.ed_update_button)
-            b.onPositive { _, _ -> startDownload(VersionConfig.get().getPreset(mv.preset_name)) }
+            b.positiveButton(R.string.ed_update_button) { startDownload(VersionConfig.get().getPreset(mv.preset_name)) }
             details.append("\n")
             val details_len = details.length
             details.append("  ")
@@ -215,8 +214,7 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
         // can we share?
         if (mv is MVersionDb && mv.hasDataFile()) {
             button_count++
-            b.negativeText(R.string.version_menu_share)
-            b.onNegative { _, _ ->
+            b.negativeButton(R.string.version_menu_share) {
                 val file = File(mv.filename)
                 try {
                     val uri = FileProvider.getUriForFile(requireActivity(), App.context.packageName + ".file_provider", file)
@@ -241,8 +239,7 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
         // can we delete?
         if (mv is MVersionDb) {
             button_count++
-            b.neutralText(R.string.buang_dari_daftar)
-            b.onNeutral { _, _ ->
+            b.neutralButton(R.string.buang_dari_daftar) {
                 val filename = mv.filename
                 if (AddonManager.isInSharedStorage(filename)) {
                     MaterialDialog(requireActivity()).show {
@@ -269,16 +266,15 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
         // can we download?
         if (mv is MVersionPreset) {
             button_count++
-            b.positiveText(R.string.ed_download_button)
-            b.onPositive { _, _ -> startDownload(mv) }
+            b.positiveButton(R.string.ed_download_button) { startDownload(mv) }
         }
 
         // if we have no buttons at all, add a no-op OK
         if (button_count == 0) {
-            b.positiveText(R.string.ok)
+            b.positiveButton(R.string.ok)
         }
         b.title(R.string.ed_version_details)
-        b.content(details)
+        b.message(text = details)
         b.show()
     }
 

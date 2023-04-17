@@ -13,7 +13,6 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
-import com.afollestad.materialdialogs.MaterialDialog;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -26,6 +25,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.fr.base.BaseGotoFragment;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.Levenshtein;
+import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 
@@ -146,10 +146,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 
 			final Jumper jumper = new Jumper(reference);
 			if (! jumper.getParseSucceeded()) {
-				new MaterialDialog.Builder(getActivity())
-					message(text = getString(R.string.alamat_tidak_sah_alamat, reference))
-					positiveButton(R.string.ok)
-					.show();
+				MaterialDialogJavaHelper.showOkDialog(requireActivity(), getString(R.string.alamat_tidak_sah_alamat, reference));
 				return;
 			}
 			

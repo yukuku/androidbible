@@ -23,7 +23,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ShareCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.drawerlayout.widget.DrawerLayout;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import java.lang.ref.WeakReference;
@@ -49,6 +48,7 @@ import yuku.alkitab.base.util.ClipboardUtil;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.LeftDrawer;
+import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
 import yuku.alkitab.base.widget.TwofingerLinearLayout;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
@@ -474,10 +474,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
             } else { // we need to parse it manually by text
                 final Jumper jumper = new Jumper(reference);
                 if (!jumper.getParseSucceeded()) {
-                    new MaterialDialog.Builder(DevotionActivity.this)
-                        message(text = getString(R.string.alamat_tidak_sah_alamat, reference))
-                        positiveButton(R.string.ok)
-                        .show();
+                    MaterialDialogJavaHelper.showOkDialog(DevotionActivity.this, getString(R.string.alamat_tidak_sah_alamat, reference));
                     return;
                 }
 

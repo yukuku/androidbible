@@ -16,9 +16,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import kotlin.Unit;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.util.LabelColorUtil;
 import yuku.alkitab.base.widget.MaterialDialogAdapterHelper;
+import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
@@ -94,7 +96,7 @@ public class TypeBookmarkDialog {
 			.customView(dialogView, false)
 			.title(reference)
 			.iconRes(R.drawable.ic_attr_bookmark)
-			positiveButton(R.string.ok)
+			.positiveButton(R.string.ok)
 			.onPositive((dialog, which) -> bOk_click())
 			.neutralText(R.string.delete)
 			.onNeutral((dialog, which) -> bDelete_click(marker))
@@ -131,20 +133,22 @@ public class TypeBookmarkDialog {
 		this.listener = listener;
 	}
 	
-	private View.OnClickListener label_click = new View.OnClickListener() {
+	private final View.OnClickListener label_click = new View.OnClickListener() {
 		@Override public void onClick(View v) {
 			final Label label = (Label) v.getTag(R.id.TAG_label);
 			if (label == null) return;
 
-			new MaterialDialog.Builder(context)
-				message(text = context.getString(R.string.do_you_want_to_remove_the_label_label_from_this_bookmark, label.title))
-				positiveButton(R.string.ok)
-				.onPositive((dialog, which) -> {
+			MaterialDialogJavaHelper.showOkDialog(
+				context,
+				context.getString(R.string.do_you_want_to_remove_the_label_label_from_this_bookmark, label.title),
+				context.getString(R.string.ok),
+				() -> {
 					labels.remove(label);
 					setLabelsText();
-				})
-				.negativeText(R.string.cancel)
-				.show();
+					return Unit.INSTANCE;
+				},
+				context.getString(R.string.cancel)
+			);
 		}
 	};
 
@@ -153,16 +157,18 @@ public class TypeBookmarkDialog {
 			return; // bookmark not saved, so no need to confirm
 		}
 
-		new MaterialDialog.Builder(context)
-			message(R.string.bookmark_delete_confirmation)
-			positiveButton(R.string.delete)
-			.onPositive((dialog, which) -> {
+		MaterialDialogJavaHelper.showOkDialog(
+			context,
+			context.getString(R.string.bookmark_delete_confirmation),
+			context.getString(R.string.delete),
+			() -> {
 				S.getDb().deleteMarkerById(marker._id);
 
 				if (listener != null) listener.onModifiedOrDeleted();
-			})
-			.negativeText(R.string.cancel)
-			.show();
+				return Unit.INSTANCE;
+			},
+			context.getString(R.string.cancel)
+		);
 	}
 
 	void setLabelsText() {
@@ -204,7 +210,7 @@ public class TypeBookmarkDialog {
 	}
 
 	class LabelAdapter extends MaterialDialogAdapterHelper.Adapter {
-		private List<Label> availableLabels = S.getDb().listAllLabels();
+		private final List<Label> availableLabels = S.getDb().listAllLabels();
 
 		@Override
 		public int getItemCount() {

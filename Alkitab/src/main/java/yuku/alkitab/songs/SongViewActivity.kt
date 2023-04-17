@@ -51,6 +51,7 @@ import yuku.alkitab.base.util.OsisBookNames
 import yuku.alkitab.base.util.Sqlitil
 import yuku.alkitab.base.util.TargetDecoder
 import yuku.alkitab.base.widget.LeftDrawer
+import yuku.alkitab.base.widget.MaterialDialogProgressHelper.progress
 import yuku.alkitab.base.widget.TwofingerLinearLayout
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
@@ -435,7 +436,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                         message(R.string.sn_play_in_loop)
                         negativeButton(R.string.cancel)
                         positiveButton(R.string.ok) {
-                            val activeMediaController = activeMediaController ?: return@onPositive
+                            val activeMediaController = activeMediaController ?: return@positiveButton
                             activeMediaController.playOrPause(true)
                         }
                     }
@@ -521,13 +522,12 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                 } else {
                     MaterialDialog(this).show {
                         message(R.string.sn_audio_disclaimer_message)
-                        positiveButton(R.string.ok)
-                        .onPositive { _, _ ->
+                        positiveButton(R.string.ok) {
                             audioDisclaimerAcknowledged = true
                             proceed()
                         }
-                        .negativeText(R.string.cancel)
-                        .show()
+                        negativeButton(R.string.cancel)
+                    }
                 }
 
                 return true
@@ -536,20 +536,18 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             R.id.menuUpdateBook -> {
                 MaterialDialog(this).show {
                     message(text = TextUtils.expandTemplate(getText(R.string.sn_update_book_explanation), SongBookUtil.escapeSongBookName(currentBookName)))
-                    positiveButton(R.string.sn_update_book_confirm_button)
-                    .onPositive { _, _ -> updateSongBook() }
-                    .negativeText(R.string.cancel)
-                    .show()
+                    positiveButton(R.string.sn_update_book_confirm_button) { updateSongBook() }
+                    negativeButton(R.string.cancel)
+                }
                 return true
             }
 
             R.id.menuDeleteSongBook -> {
                 MaterialDialog(this).show {
                     message(text = TextUtils.expandTemplate(getText(R.string.sn_delete_song_book_explanation), SongBookUtil.escapeSongBookName(currentBookName)))
-                    positiveButton(R.string.delete)
-                    .onPositive { _, _ -> deleteSongBook() }
-                    .negativeText(R.string.cancel)
-                    .show()
+                    positiveButton(R.string.delete) { deleteSongBook() }
+                    negativeButton(R.string.cancel)
+                }
                 return true
             }
         }
@@ -587,21 +585,21 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             MaterialDialog(this).show {
                 message(text = "HTTP error " + e.code)
                 positiveButton(R.string.ok)
-                .show()
+            }
         } else {
             MaterialDialog(this).show {
-                message(text = e.javaClass.simpleName + ": " + e.message)
+                message(text = "${e.javaClass.simpleName}: ${e.message}")
                 positiveButton(R.string.ok)
-                .show()
+            }
         }
     }
 
     private fun deleteSongBook() {
-        val pd = MaterialDialog.Builder(this)
+        val pd = MaterialDialog(this).show {
             message(R.string.please_wait_titik3)
-            .cancelable(false)
-            .progress(true, 0)
-            .show()
+            cancelable(false)
+            progress(true, 0)
+        }
 
         val bookName = currentBookName
 
@@ -631,7 +629,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
         if (song.authors_lyric != null && song.authors_lyric.size > 0) sb.append(TextUtils.join("; ", song.authors_lyric)).append('\n')
         if (song.authors_music != null && song.authors_music.size > 0) sb.append(TextUtils.join("; ", song.authors_music)).append('\n')
-        if (song.tune != null) sb.append(song.tune.toUpperCase(Locale.getDefault())).append('\n')
+        if (song.tune != null) sb.append(song.tune.uppercase()).append('\n')
         sb.append('\n')
 
         if (song.scriptureReferences != null) sb.append(renderScriptureReferences(null, song.scriptureReferences)).append('\n')
@@ -892,7 +890,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                     } else {
                         val input = data?.getStringExtra(AlertDialogActivity.EXTRA_INPUT)
                         if (!input.isNullOrEmpty()) {
-                            downloadByAlkitabUri(Uri.parse("alkitab:///addon/download?kind=songbook&type=ser&dataFormatVersion=3&name=_" + Uri.encode(input.toUpperCase(Locale.US))))
+                            downloadByAlkitabUri(Uri.parse("alkitab:///addon/download?kind=songbook&type=ser&dataFormatVersion=3&name=_" + Uri.encode(input.uppercase(Locale.US))))
                         }
                     }
                     return
@@ -909,7 +907,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             MaterialDialog(this).show {
                 message(text = "Invalid uri:\n\n$uri")
                 positiveButton(R.string.ok)
-                .show()
+            }
             return
         }
 
@@ -924,7 +922,10 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             }
             return
         } catch (e: NullPointerException) {
-            MaterialDialog(this).show {.content("Invalid uri:\n\n$uri").positiveText(R.string.ok).show()
+            MaterialDialog(this).show {
+                message(text = "Invalid uri:\n\n$uri")
+                positiveButton(R.string.ok)
+            }
             return
         }
 
@@ -932,7 +933,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             MaterialDialog(this).show {
                 message(text = "Unsupported data format version: $dataFormatVersion")
                 positiveButton(R.string.ok)
-                .show()
+            }
             return
         }
 
@@ -973,10 +974,9 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                 if (updateTime == 0 || Sqlitil.nowDateTime() - updateTime > 21 * 86400) {
                     MaterialDialog(this).show {
                         message(text = TextUtils.expandTemplate(getText(R.string.sn_update_book_because_too_old), SongBookUtil.escapeSongBookName(currentBookName)))
-                        positiveButton(R.string.sn_update_book_confirm_button)
-                        .negativeText(R.string.cancel)
-                        .onPositive { _, _ -> updateSongBook() }
-                        .show()
+                        positiveButton(R.string.sn_update_book_confirm_button) { updateSongBook() }
+                        negativeButton(R.string.cancel)
+                    }
                 } else {
                     val extraInfo = PatchTextExtraInfoJson()
                     extraInfo.type = "song"
@@ -1049,7 +1049,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             in 10..19 -> { // letters
                 if (state_tempCode.length >= 4) state_tempCode = "" // can't be more than 4 digits
 
-                val letter = ('A'.toInt() + num - 10).toChar()
+                val letter = ('A'.code + num - 10).toChar()
                 if (state_tempCode.isNotEmpty()) {
                     state_tempCode += letter
                 }

@@ -19,11 +19,11 @@ class DataTransferFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.settings_data_transfer)
 
-        findPreference(getString(R.string.pref_data_transfer_export_key)).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+        findPreference<Preference>(getString(R.string.pref_data_transfer_export_key))?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             startActivityRequest.launch(DataTransferActivity.createIntent(requireActivity(), DataTransferActivity.Mode.export))
             true
         }
-        findPreference(getString(R.string.pref_data_transfer_import_key)).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+        findPreference<Preference>(getString(R.string.pref_data_transfer_import_key))?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             startActivityRequest.launch(DataTransferActivity.createIntent(requireActivity(), DataTransferActivity.Mode.import))
             true
         }

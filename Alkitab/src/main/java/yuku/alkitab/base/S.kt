@@ -55,15 +55,25 @@ object S {
         var backgroundBrightness = 0f
 
         // everything below is in px
+        @JvmField
         var indentParagraphFirst = 0
+        @JvmField
         var indentParagraphRest = 0
+        @JvmField
         var indentSpacing1 = 0
+        @JvmField
         var indentSpacing2 = 0
+        @JvmField
         var indentSpacing3 = 0
+        @JvmField
         var indentSpacing4 = 0
+        @JvmField
         var indentSpacingExtra = 0
+        @JvmField
         var paragraphSpacingBefore = 0
+        @JvmField
         var pericopeSpacingTop = 0
+        @JvmField
         var pericopeSpacingBottom = 0
     }
 
@@ -208,6 +218,7 @@ object S {
      * 1. internal, or
      * 2. database versions that have the data file and active
      */
+    @JvmStatic
     fun getAvailableVersions(): List<MVersion> {
         val res = mutableListOf<MVersion>()
 

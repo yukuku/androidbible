@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import kotlin.Unit;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -20,6 +21,7 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Sqlitil;
+import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
 import yuku.alkitab.debug.R;
 
 import java.text.DateFormat;
@@ -104,7 +106,7 @@ public class SyncSettingsActivity extends BaseActivity {
 							pref.setSummary(getString(R.string.sync_sync_set_pref_summary_never));
 						} else {
 							final Date date = Sqlitil.toDate(time);
-							pref.setSummary(getString(R.string.sync_sync_set_pref_summary_last_synced, lastSyncDateFormat.get().format(date), lastSyncTimeFormat.get().format(date), S.getDb().getRevnoFromSyncShadowBySyncSetName(syncSetName)));
+							pref.setSummary(getString(R.string.sync_sync_set_pref_summary_last_synced, lastSyncDateFormat.get().format(date), lastSyncTimeFormat.get().format(date), 	S.getDb().getRevnoFromSyncShadowBySyncSetName(syncSetName)));
 						}
 					}
 				} else {
@@ -120,10 +122,11 @@ public class SyncSettingsActivity extends BaseActivity {
 				startActivityForResult(SyncLoginActivity.createIntent(), REQCODE_login);
 
 			} else { // show logout instead
-				new MaterialDialog.Builder(getActivity())
-					message(R.string.sync_logout_warning)
-					positiveButton(R.string.ok)
-					.onPositive((d, w) -> {
+				MaterialDialogJavaHelper.showOkDialog(
+					requireActivity(),
+					getString(R.string.sync_logout_warning),
+					getString(R.string.ok),
+					() -> {
 						SyncRecorder.log(SyncRecorder.EventKind.logout_pre, null, "accountName", syncAccountName);
 
 						Preferences.hold();
@@ -144,9 +147,10 @@ public class SyncSettingsActivity extends BaseActivity {
 						FirebaseCrashlytics.getInstance().setUserId("");
 
 						updateDisplay();
-					})
-					.negativeText(R.string.cancel)
-					.show();
+						return Unit.INSTANCE;
+					},
+					getString(R.string.cancel)
+				);
 			}
 			return true;
 		};

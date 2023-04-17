@@ -30,12 +30,14 @@ class DisplayFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.settings_display)
 
-        val pref_language = findPreference(getString(R.string.pref_language_key)) as ListPreference
-        pref_language.onPreferenceChangeListener = configurationPreferenceChangeListener
-        SettingsActivity.autoDisplayListPreference(pref_language)
+        val pref_language = findPreference<ListPreference>(getString(R.string.pref_language_key))
+        if (pref_language != null) {
+            pref_language.onPreferenceChangeListener = configurationPreferenceChangeListener
+            SettingsActivity.autoDisplayListPreference(pref_language)
+        }
 
-        val pref_bottomToolbarOnText = findPreference(getString(R.string.pref_bottomToolbarOnText_key)) as CheckBoxPreference
-        pref_bottomToolbarOnText.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
+        val pref_bottomToolbarOnText = findPreference<CheckBoxPreference>(getString(R.string.pref_bottomToolbarOnText_key))
+        pref_bottomToolbarOnText?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
             // do this after this method returns true
             Handler().post { App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_NEEDS_RESTART)) }
             true
@@ -43,7 +45,7 @@ class DisplayFragment : PreferenceFragmentCompat() {
 
         // show textPadding preference only when there is nonzero side padding on this configuration
         if (resources.getDimensionPixelOffset(R.dimen.text_side_padding) == 0) {
-            val preference = findPreference(getString(R.string.pref_textPadding_key))
+            val preference = findPreference<Preference>(getString(R.string.pref_textPadding_key))
             preferenceScreen.removePreference(preference)
         }
     }

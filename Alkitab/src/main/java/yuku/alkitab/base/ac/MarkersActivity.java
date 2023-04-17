@@ -41,7 +41,6 @@ import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.ambilwarna.AmbilWarnaDialog;
-import yuku.ambilwarna.ShowMaterialDialog.OnAmbilWarnaListener;
 
 public class MarkersActivity extends BaseActivity {
     static final String TAG = MarkersActivity.class.getSimpleName();
@@ -212,7 +211,7 @@ public class MarkersActivity extends BaseActivity {
             } else {
                 MaterialDialogJavaHelper.showOkDialog(
                     this,
-                    getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, marker_count),
+                    getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, "" + marker_count),
                     getString(R.string.delete),
                     () -> {
                         S.getDb().deleteLabelAndMarker_LabelsByLabelId(label._id);

@@ -134,6 +134,7 @@ class AboutActivity : BaseActivity() {
     }
 
     companion object {
+        @JvmStatic
         fun createIntent(): Intent {
             return Intent(App.context, AboutActivity::class.java)
         }
