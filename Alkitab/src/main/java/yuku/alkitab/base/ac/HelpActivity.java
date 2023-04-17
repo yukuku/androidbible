@@ -12,14 +12,12 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
-import com.afollestad.materialdialogs.MaterialDialog;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.TargetDecoder;
+import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.util.IntArrayList;
@@ -60,19 +58,7 @@ public class HelpActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Missing WebView exception sometimes occur when webview is being updated.
-        // https://console.firebase.google.com/u/0/project/alkitab-host-hrd/crashlytics/app/android:yuku.alkitab/issues/3f47086cbb547d618eaf6be34bd96407
-        try {
-            setContentView(R.layout.activity_help);
-        } catch (Exception e) {
-            final StringWriter buf = new StringWriter();
-            e.printStackTrace(new PrintWriter(buf));
-            final Intent alert = AlertDialogActivity.createOkIntent("Missing WebView error", "Please try again later.\n\n" + buf.toString());
-            startActivity(alert);
-            finish();
-            return;
-        }
+        setContentView(R.layout.activity_help);
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -143,10 +129,7 @@ public class HelpActivity extends BaseActivity {
                         final String ssp = uri.getSchemeSpecificPart();
                         final IntArrayList ariRanges = TargetDecoder.decode("o:" + ssp);
                         if (ariRanges == null || ariRanges.size() == 0) {
-                            new MaterialDialog.Builder(HelpActivity.this)
-                                message(text = getString(R.string.alamat_tidak_sah_alamat, url))
-                                positiveButton(R.string.ok)
-                                .show();
+                            MaterialDialogJavaHelper.showOkDialog(HelpActivity.this, getString(R.string.alamat_tidak_sah_alamat, url));
                         } else {
                             final VersesDialog dialog = VersesDialog.newInstance(ariRanges);
                             dialog.setListener(new VersesDialog.VersesDialogListener() {

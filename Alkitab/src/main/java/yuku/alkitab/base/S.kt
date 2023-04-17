@@ -31,18 +31,27 @@ object S {
         /**
          * in dp
          */
+        @JvmField
         var fontSize2dp = 0f
+        @JvmField
         var fontFace: Typeface? = null
+        @JvmField
         var lineSpacingMult = 0f
+        @JvmField
         var fontBold = 0
+        @JvmField
         var fontColor = 0
+        @JvmField
         var fontRedColor = 0
+        @JvmField
         var backgroundColor = 0
+        @JvmField
         var verseNumberColor = 0
 
         /**
          * 0.f to 1.f
          */
+        @JvmField
         var backgroundBrightness = 0f
 
         // everything below is in px
@@ -62,6 +71,7 @@ object S {
         var applied = calculateDimensionsFromPreferences()
     }
 
+    @JvmStatic
     fun applied(): CalculatedDimensions {
         return CalculatedDimensionsHolder.applied
     }
@@ -95,6 +105,7 @@ object S {
         return ActiveVersionHolder.activeMVersion!!
     }
 
+    @JvmStatic
     fun activeVersion(): Version {
         return ActiveVersionHolder.activeVersion!!
     }

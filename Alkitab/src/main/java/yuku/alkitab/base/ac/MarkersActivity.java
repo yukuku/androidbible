@@ -27,6 +27,7 @@ import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import java.util.List;
 import java.util.Locale;
+import kotlin.Unit;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -35,6 +36,7 @@ import yuku.alkitab.base.dialog.LabelEditorDialog;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.LabelColorUtil;
+import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
@@ -209,15 +211,17 @@ public class MarkersActivity extends BaseActivity {
                 S.getDb().deleteLabelAndMarker_LabelsByLabelId(label._id);
                 adapter.reload();
             } else {
-                new MaterialDialog.Builder(this)
-                    message(text = getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, marker_count))
-                    .negativeText(R.string.cancel)
-                    positiveButton(R.string.delete)
-                    .onPositive((dialog, which) -> {
+                MaterialDialogJavaHelper.showOkDialog(
+                    this,
+                    getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, marker_count),
+                    getString(R.string.delete),
+                    () -> {
                         S.getDb().deleteLabelAndMarker_LabelsByLabelId(label._id);
                         adapter.reload();
-                    })
-                    .show();
+                        return Unit.INSTANCE;
+                    },
+                    getString(R.string.cancel)
+                );
             }
 
             return true;
