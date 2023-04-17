@@ -434,11 +434,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         override fun onPinDropped(presetId: Int, ari: Int) {
             Tracker.trackEvent("pin_drop")
 
-            val progressMark = S.getDb().getProgressMarkByPresetId(presetId)
+            val progressMark = S.db.getProgressMarkByPresetId(presetId)
             if (progressMark != null) {
                 progressMark.ari = ari
                 progressMark.modifyTime = Date()
-                S.getDb().insertOrUpdateProgressMark(progressMark)
+                S.db.insertOrUpdateProgressMark(progressMark)
             }
 
             App.getLbm().sendBroadcast(Intent(ACTION_ATTRIBUTE_MAP_CHANGED))
@@ -824,7 +824,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
                 R.id.menuAddHighlight -> {
                     val ariBc = Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, 0)
-                    val colorRgb = S.getDb().getHighlightColorRgb(ariBc, selected)
+                    val colorRgb = S.db.getHighlightColorRgb(ariBc, selected)
 
                     val listener = TypeHighlightDialog.Listener {
                         lsSplit0.uncheckAllVerses(true)
@@ -836,7 +836,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         val ftr = VerseRenderer.FormattedTextResult()
                         val ari = Ari.encodeWithBc(ariBc, selected.get(0))
                         val rawVerseText = activeSplit0.version.loadVerseText(ari) ?: ""
-                        val info = S.getDb().getHighlightColorRgb(ari)
+                        val info = S.db.getHighlightColorRgb(ari)
 
                         VerseRendererHelper.render(ari = ari, text = rawVerseText, ftr = ftr)
                         TypeHighlightDialog(this@IsiActivity, ari, listener, colorRgb, info, reference, ftr.result)
@@ -1333,7 +1333,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     private fun calculateTextSizeMult(versionId: String?): Float {
-        return if (versionId == null) 1f else S.getDb().getPerVersionSettings(versionId).fontSizeMultiplier
+        return if (versionId == null) 1f else S.db.getPerVersionSettings(versionId).fontSizeMultiplier
     }
 
     private fun callAttentionForVerseToBothSplits(verse_1: Int) {
@@ -2150,19 +2150,19 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     private fun openVersionsDialog() {
         // If there is no db versions, immediately open manage version screen.
-        if (S.getDb().listAllVersions().isEmpty()) {
+        if (S.db.listAllVersions().isEmpty()) {
             startActivity(VersionsActivity.createIntent())
             return
         }
 
-        S.openVersionsDialog(this, false, activeSplit0.versionId) { mv ->
+        S.openVersionsDialog(this, activeSplit0.versionId) { mv ->
             trackVersionSelect(mv, false)
             loadVersion(mv)
         }
     }
 
     private fun openSplitVersionsDialog() {
-        S.openVersionsDialog(this, true, activeSplit1?.versionId) { mv ->
+        S.openVersionsDialogWithNone(this, activeSplit1?.versionId) { mv: MVersion? ->
             if (mv == null) { // closing split version
                 disableSplitVersion()
             } else {
@@ -2433,7 +2433,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         // # fill adapter with new data. make sure all checked states are reset
         versesController.uncheckAllVerses(true)
 
-        val versesAttributes = VerseAttributeLoader.load(S.getDb(), cr, ariBc, verses)
+        val versesAttributes = VerseAttributeLoader.load(S.db, cr, ariBc, verses)
 
         val newData = VersesDataModel(ariBc, verses, nblock, pericope_aris, pericope_blocks, version, versionId, versesAttributes)
         dataSetter(newData)
@@ -2548,7 +2548,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
 
         override fun onBookmarkAttributeClick(version: Version, versionId: String, ari: Int) {
-            val markers = S.getDb().listMarkersForAriKind(ari, Marker.Kind.bookmark)
+            val markers = S.db.listMarkersForAriKind(ari, Marker.Kind.bookmark)
             if (markers.size == 1) {
                 openBookmarkDialog(markers[0]._id)
             } else {
@@ -2564,7 +2564,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
 
         override fun onNoteAttributeClick(version: Version, versionId: String, ari: Int) {
-            val markers = S.getDb().listMarkersForAriKind(ari, Marker.Kind.note)
+            val markers = S.db.listMarkersForAriKind(ari, Marker.Kind.note)
             if (markers.size == 1) {
                 openNoteDialog(markers[0]._id)
             } else {
@@ -2589,7 +2589,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             val kind: Marker.Kind,
         ) : MaterialDialogAdapterHelper.Adapter() {
 
-            val textSizeMult = S.getDb().getPerVersionSettings(versionId).fontSizeMultiplier
+            val textSizeMult = S.db.getPerVersionSettings(versionId).fontSizeMultiplier
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
                 return MarkerHolder(layoutInflater.inflate(R.layout.item_marker, parent, false))
@@ -2624,7 +2624,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
                         holder.lSnippet.visibility = View.GONE
 
-                        val labels = S.getDb().listLabelsByMarker(marker)
+                        val labels = S.db.listLabelsByMarker(marker)
                         if (labels.size != 0) {
                             holder.panelLabels.visibility = View.VISIBLE
                             holder.panelLabels.removeAllViews()
@@ -2663,7 +2663,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
 
         override fun onProgressMarkAttributeClick(version: Version, versionId: String, preset_id: Int) {
-            S.getDb().getProgressMarkByPresetId(preset_id)?.let { progressMark ->
+            S.db.getProgressMarkByPresetId(preset_id)?.let { progressMark ->
                 ProgressMarkRenameDialog.show(this@IsiActivity, progressMark, object : ProgressMarkRenameDialog.Listener {
                     override fun onOked() {
                         lsSplit0.uncheckAllVerses(true)
@@ -2858,7 +2858,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         data: VersesDataModel,
     ): VersesDataModel {
         val versesAttributes = VerseAttributeLoader.load(
-            S.getDb(),
+            S.db,
             contentResolver,
             data.ari_bc_,
             data.verses_
@@ -2926,7 +2926,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     override fun bProgressMarkList_click() {
         Tracker.trackEvent("left_drawer_progress_mark_list_click")
-        if (S.getDb().countAllProgressMarks() > 0) {
+        if (S.db.countAllProgressMarks() > 0) {
             val dialog = ProgressMarkListDialog()
             dialog.progressMarkSelectedListener = { preset_id ->
                 gotoProgressMark(preset_id)
@@ -2963,7 +2963,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     private fun gotoProgressMark(preset_id: Int) {
-        val progressMark = S.getDb().getProgressMarkByPresetId(preset_id) ?: return
+        val progressMark = S.db.getProgressMarkByPresetId(preset_id) ?: return
 
         val ari = progressMark.ari
 

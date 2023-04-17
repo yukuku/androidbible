@@ -6,7 +6,7 @@ import com.afollestad.materialdialogs.list.customListAdapter
 
 object MaterialDialogAdapterHelper {
     @JvmStatic
-    fun MaterialDialog.withAdapter(adapter: Adapter): MaterialDialog {
+    fun MaterialDialog.withAdapter(adapter: Adapter) {
         adapter.dialog = customListAdapter(adapter)
     }
 

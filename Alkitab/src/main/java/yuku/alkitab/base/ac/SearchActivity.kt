@@ -33,7 +33,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.snackbar.Snackbar
-import java.util.ArrayList
 import java.util.Locale
 import me.zhanghai.android.fastscroll.FastScrollerBuilder
 import yuku.afw.storage.Preferences
@@ -47,7 +46,6 @@ import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.util.ClipboardUtil
 import yuku.alkitab.base.util.Debouncer
-import yuku.alkitab.base.util.Foreground
 import yuku.alkitab.base.util.FormattedVerseText
 import yuku.alkitab.base.util.Jumper
 import yuku.alkitab.base.util.QueryTokenizer
@@ -89,7 +87,7 @@ class SearchActivity : BaseActivity() {
 
     private var searchInVersion: Version = S.activeVersion()
     private var searchInVersionId: String = S.activeVersionId()
-    private var textSizeMult = S.getDb().getPerVersionSettings(searchInVersionId).fontSizeMultiplier
+    private var textSizeMult = S.db.getPerVersionSettings(searchInVersionId).fontSizeMultiplier
 
     private lateinit var searchHistoryAdapter: SearchHistoryAdapter
     private var actionMode: ActionMode? = null
@@ -413,6 +411,7 @@ class SearchActivity : BaseActivity() {
                 cFilterSingleBook.isChecked = false
                 tFilterAdvanced.visibility = View.GONE
             }
+
             oneOfThemOn != -1 && oneOfThemOn == openedBookId -> {
                 cFilterOlds.isChecked = false
                 cFilterNews.isChecked = false
@@ -420,6 +419,7 @@ class SearchActivity : BaseActivity() {
                 cFilterSingleBook.isChecked = true
                 tFilterAdvanced.visibility = View.GONE
             }
+
             else -> {
                 cFilterOlds.isChecked = false
                 cFilterNews.isChecked = false
@@ -492,7 +492,7 @@ class SearchActivity : BaseActivity() {
     }
 
     private val bVersion_click = View.OnClickListener {
-        S.openVersionsDialog(this, false, searchInVersionId) { mv: MVersion ->
+        S.openVersionsDialog(this, searchInVersionId) { mv: MVersion ->
             val selectedVersion = mv.version
             if (selectedVersion == null) {
                 MaterialDialog(this@SearchActivity).show {
@@ -504,7 +504,7 @@ class SearchActivity : BaseActivity() {
 
             searchInVersion = selectedVersion
             searchInVersionId = mv.versionId
-            textSizeMult = S.getDb().getPerVersionSettings(searchInVersionId).fontSizeMultiplier
+            textSizeMult = S.db.getPerVersionSettings(searchInVersionId).fontSizeMultiplier
 
             Appearances.applyTextAppearance(tSearchTips, textSizeMult)
             displaySearchInVersion()
@@ -526,7 +526,6 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun bEditFilter_click() {
-        @Suppress("deprecation")
         startActivityForResult(SearchBookFilterActivity.createIntent(selectedBookIds, searchInVersion.consecutiveBooks), REQCODE_bookFilter)
     }
 

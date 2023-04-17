@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.input
 import com.google.android.material.tabs.TabLayout
 import java.io.File
 import java.io.FileInputStream
@@ -36,6 +37,7 @@ import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Background
 import yuku.alkitab.base.util.DownloadMapper
 import yuku.alkitab.base.util.Foreground
+import yuku.alkitab.base.widget.MaterialDialogProgressHelper.progress
 import yuku.alkitab.debug.R
 import yuku.alkitab.tracking.Tracker
 import yuku.filechooser.FileChooserActivity
@@ -303,7 +305,7 @@ class VersionsActivity : BaseActivity() {
         startActivityForResult(FileChooserActivity.createIntent(App.context, config), REQCODE_openFile)
     }
 
-    inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
         override fun getItem(position: Int) = VersionListFragment.newInstance(position == 1, query_text)
 
         override fun getCount() = 2
@@ -380,8 +382,8 @@ class VersionsActivity : BaseActivity() {
                 val yesFile = AddonManager.getWritableVersionFile(yesName)
                 val pd = MaterialDialog(this@VersionsActivity).show {
                     message(R.string.ed_reading_pdb_file)
-                        cancelable(false)
-                        progress(true, 0)
+                    cancelable(false)
+                    progress(true, 0)
                 }
 
                 fun onProgressUpdate(at: Int?, message: String?) = Foreground.run {
@@ -425,7 +427,7 @@ class VersionsActivity : BaseActivity() {
         try {
             val reader = YesReaderFactory.createYesReader(file.absolutePath) ?: throw Exception("Not a valid YES file.")
 
-            var maxOrdering = S.getDb().versionMaxOrdering
+            var maxOrdering = S.db.versionMaxOrdering
             if (maxOrdering == 0) maxOrdering = MVersionDb.DEFAULT_ORDERING_START
 
             val mvDb = MVersionDb().apply {
@@ -438,7 +440,7 @@ class VersionsActivity : BaseActivity() {
                 preset_name = null
             }
 
-            S.getDb().insertOrUpdateVersionWithActive(mvDb, true)
+            S.db.insertOrUpdateVersionWithActive(mvDb, true)
             MVersionDb.clearVersionImplCache()
 
             App.getLbm().sendBroadcast(Intent(VersionListFragment.ACTION_RELOAD))
@@ -469,8 +471,9 @@ class VersionsActivity : BaseActivity() {
     }
 
     private fun openUrlInputDialog(prefill: String?) {
-        MaterialDialog(this).show {
-            .input(getText(R.string.version_download_add_from_url_prompt_yes_only), prefill, false) { _: MaterialDialog?, input: CharSequence ->
+        MaterialDialog(this)
+            .title(R.string.version_download_add_from_url_prompt_yes_only)
+            .input(prefill = prefill) { _: MaterialDialog?, input: CharSequence ->
                 val url = input.toString().trim()
                 if (url.isEmpty()) return@input
 
@@ -507,13 +510,13 @@ class VersionsActivity : BaseActivity() {
                 )
                 DownloadMapper.instance.enqueue(downloadKey, url, last, attrs)
 
-                Toast.makeText(this, R.string.mulai_mengunduh, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@VersionsActivity, R.string.mulai_mengunduh, Toast.LENGTH_SHORT).show()
             }
-            positiveButton(R.string.ok)
+            .positiveButton(R.string.ok)
             .show()
     }
 
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQCODE_openFile) {
             val result = FileChooserActivity.obtainResult(data) ?: return
 

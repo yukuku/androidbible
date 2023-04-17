@@ -124,6 +124,7 @@ dependencies {
 
     // UI
     implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
+    implementation "com.afollestad.material-dialogs:input:$materialDialogsVersion"
     implementation "me.toptas.fancyshowcase:fancyshowcaseview:$fancyShowcaseView"
 }
 
