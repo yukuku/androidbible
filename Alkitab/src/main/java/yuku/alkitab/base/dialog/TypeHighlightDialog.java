@@ -1,13 +1,13 @@
 package yuku.alkitab.base.dialog;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
 import android.text.InputFilter;
 import android.text.Selection;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import androidx.annotation.Nullable;
 import com.afollestad.materialdialogs.MaterialDialog;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.util.Highlights;
@@ -44,7 +44,7 @@ public class TypeHighlightDialog {
 		 */
 		void onOk(int colorRgb);
 	}
-	
+
 	/**
 	 * Open dialog for a single verse
 	 * @param defaultColorRgb -1 if not selected. #rrggbb without alpha.
@@ -77,7 +77,7 @@ public class TypeHighlightDialog {
 		final MaterialDialog.Builder builder = new MaterialDialog.Builder(context)
 			.customView(R.layout.dialog_edit_highlight, false)
 			.iconRes(R.drawable.ic_attr_highlight)
-			positiveButton(R.string.ok) // this does not actually do anything except closing the dialog.
+			.positiveButton(R.string.ok) // this does not actually do anything except closing the dialog.
 			.neutralText(R.string.delete)
 			.onPositive((dialog1, which) -> {
 				// only relevant when we edit partial highlight

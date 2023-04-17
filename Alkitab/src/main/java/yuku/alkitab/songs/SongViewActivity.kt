@@ -216,7 +216,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         val currentSong = currentSong ?: return
 
         val codes = cache_codes.getOrPut(currentBookName) {
-            val songInfos = S.getSongDb().listSongInfosByBookName(currentBookName)
+            val songInfos = S.songDb.listSongInfosByBookName(currentBookName)
             val codes = mutableListOf<String>()
             for (songInfo in songInfos) {
                 codes.add(songInfo.code)
@@ -238,7 +238,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         }
 
         val newCode = codes[newPos]
-        val newSong = S.getSongDb().getSong(currentBookName, newCode) ?: return // should not happen
+        val newSong = S.songDb.getSong(currentBookName, newCode) ?: return // should not happen
 
         trackSongSelect(currentBookName, newCode)
         displaySong(currentBookName, newSong)
@@ -276,7 +276,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         bDownload.setOnClickListener { openDownloadSongBookPage() }
 
         // if no song books is downloaded, open download page immediately
-        if (S.getSongDb().countSongBookInfos() == 0) {
+        if (S.songDb.countSongBookInfos() == 0) {
             openDownloadSongBookPage()
         }
 
@@ -347,7 +347,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         if (bookName == null || code == null) {
             displaySong(null, null, true)
         } else {
-            displaySong(bookName, S.getSongDb().getSong(bookName, code), true)
+            displaySong(bookName, S.songDb.getSong(bookName, code), true)
         }
 
         window.decorView.keepScreenOn = Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), resources.getBoolean(R.bool.pref_keepScreenOn_default))
@@ -357,7 +357,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
      * Used after deleting a song, and the current song is no longer available
      */
     private fun displayAnySongOrFinish() {
-        val pair = S.getSongDb().anySong
+        val pair = S.songDb.anySong
         if (pair == null) {
             finish()
         } else {
@@ -564,7 +564,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         val songBookInfo = SongBookUtil.getSongBookInfo(currentBookName) ?: throw RuntimeException("SongBookInfo named $currentBookName was not found")
 
         val currentSongCode = currentSong.code
-        val dataFormatVersion = S.getSongDb().getDataFormatVersionForSongs(currentBookName)
+        val dataFormatVersion = S.songDb.getDataFormatVersionForSongs(currentBookName)
 
         SongBookUtil.downloadSongBook(this@SongViewActivity, songBookInfo, dataFormatVersion, object : SongBookUtil.OnDownloadSongBookListener {
             override fun onFailedOrCancelled(songBookInfo: SongBookUtil.SongBookInfo, e: Exception?) {
@@ -572,7 +572,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             }
 
             override fun onDownloadedAndInserted(songBookInfo: SongBookUtil.SongBookInfo) {
-                val song = S.getSongDb().getSong(songBookInfo.name, currentSongCode)
+                val song = S.songDb.getSong(songBookInfo.name, currentSongCode)
                 cache_codes.remove(songBookInfo.name)
                 displaySong(songBookInfo.name, song)
             }
@@ -606,7 +606,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         val bookName = currentBookName
 
         Background.run {
-            val count = S.getSongDb().deleteSongBook(bookName)
+            val count = S.songDb.deleteSongBook(bookName)
 
             runOnUiThread {
                 pd.dismiss()
@@ -876,7 +876,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                     val result = SongListActivity.obtainResult(data)
                     if (result != null) {
                         trackSongSelect(result.bookName, result.code)
-                        displaySong(result.bookName, S.getSongDb().getSong(result.bookName, result.code))
+                        displaySong(result.bookName, S.songDb.getSong(result.bookName, result.code))
                         // store this for next search
                         last_searchState = result.last_searchState
                     }
@@ -944,7 +944,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         SongBookUtil.downloadSongBook(this, info, dataFormatVersion, object : SongBookUtil.OnDownloadSongBookListener {
             override fun onDownloadedAndInserted(songBookInfo: SongBookUtil.SongBookInfo) {
                 val name = songBookInfo.name
-                val song = S.getSongDb().getFirstSongFromBook(name)
+                val song = S.songDb.getFirstSongFromBook(name)
                 displaySong(name, song)
             }
 
@@ -969,7 +969,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
             if (song != null) {
                 // do not proceed if the song is too old
-                val updateTime = S.getSongDb().getSongUpdateTime(currentBookName, song.code)
+                val updateTime = S.songDb.getSongUpdateTime(currentBookName, song.code)
                 if (updateTime == 0 || Sqlitil.nowDateTime() - updateTime > 21 * 86400) {
                     MaterialDialog(this).show {
                         message(text = TextUtils.expandTemplate(getText(R.string.sn_update_book_because_too_old), SongBookUtil.escapeSongBookName(currentBookName)))
@@ -1029,10 +1029,10 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         fun updateHandle() {
             handle.setCode(state_tempCode)
 
-            handle.setOkButtonEnabled(S.getSongDb().songExists(currentBookName, state_tempCode))
-            handle.setAButtonEnabled(state_tempCode.length <= 3 && S.getSongDb().songExists(currentBookName, state_tempCode + "A"))
-            handle.setBButtonEnabled(state_tempCode.length <= 3 && S.getSongDb().songExists(currentBookName, state_tempCode + "B"))
-            handle.setCButtonEnabled(state_tempCode.length <= 3 && S.getSongDb().songExists(currentBookName, state_tempCode + "C"))
+            handle.setOkButtonEnabled(S.songDb.songExists(currentBookName, state_tempCode))
+            handle.setAButtonEnabled(state_tempCode.length <= 3 && S.songDb.songExists(currentBookName, state_tempCode + "A"))
+            handle.setBButtonEnabled(state_tempCode.length <= 3 && S.songDb.songExists(currentBookName, state_tempCode + "B"))
+            handle.setCButtonEnabled(state_tempCode.length <= 3 && S.songDb.songExists(currentBookName, state_tempCode + "C"))
         }
 
         when (val num = keypadViewToNumConverter(v)) {
@@ -1067,7 +1067,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
             21 -> { // OK
                 if (state_tempCode.isNotEmpty()) {
-                    val song = S.getSongDb().getSong(currentBookName, state_tempCode)
+                    val song = S.songDb.getSong(currentBookName, state_tempCode)
                     if (song != null) {
                         trackSongSelect(currentBookName, song.code)
                         displaySong(currentBookName, song)
@@ -1083,7 +1083,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     }
 
     override fun songBookSelected(name: String) {
-        val song = S.getSongDb().getFirstSongFromBook(name)
+        val song = S.songDb.getFirstSongFromBook(name)
 
         if (song != null) {
             displaySong(name, song)

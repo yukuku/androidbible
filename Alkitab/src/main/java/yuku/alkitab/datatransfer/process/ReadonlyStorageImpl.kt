@@ -16,33 +16,33 @@ open class ReadonlyStorageImpl : ReadonlyStorageInterface {
     }
 
     override fun markers(): List<Marker> {
-        return S.getDb().listAllMarkers()
+        return S.db.listAllMarkers()
     }
 
     override fun labels(): List<Label> {
-        return S.getDb().listAllLabels()
+        return S.db.listAllLabels()
     }
 
     override fun markerLabels(): List<Marker_Label> {
-        return S.getDb().listAllMarker_Labels()
+        return S.db.listAllMarker_Labels()
     }
 
     override fun pins(): List<ProgressMark> {
-        return S.getDb().listAllProgressMarks()
+        return S.db.listAllProgressMarks()
     }
 
     override fun rpps(): List<Rpp> {
         val res = mutableListOf<Rpp>()
 
         // lookup map for startTime
-        val startTimes = S.getDb().listAllReadingPlanInfo().associate { info ->
+        val startTimes = S.db.listAllReadingPlanInfo().associate { info ->
             ReadingPlan.gidFromName(info.name) to info.startTime
         }
 
         // The only source of data is from ReadingPlanProgress table,
         // but since reading plans with no done is not listed in ReadingPlanProgress,
         // we need to consult ReadingPlan table to know what they are.
-        val map: Map<String, Set<Int>> = S.getDb().readingPlanProgressSummaryForSync
+        val map: Map<String, Set<Int>> = S.db.readingPlanProgressSummaryForSync
         for ((gid, set) in map) {
             val startTime = startTimes[gid] ?: continue
 

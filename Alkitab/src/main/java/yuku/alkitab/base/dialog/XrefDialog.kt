@@ -65,7 +65,7 @@ class XrefDialog : BaseDialog() {
     fun init(sourceVersion: Version, sourceVersionId: String, verseSelectedListener: (arif_source: Int, ari_target: Int) -> Unit) {
         this.sourceVersion = sourceVersion
         this.sourceVersionId = sourceVersionId
-        this.textSizeMult = S.getDb().getPerVersionSettings(sourceVersionId).fontSizeMultiplier
+        this.textSizeMult = S.db.getPerVersionSettings(sourceVersionId).fontSizeMultiplier
         this.verseSelectedListener = verseSelectedListener
         this.initted = true
     }

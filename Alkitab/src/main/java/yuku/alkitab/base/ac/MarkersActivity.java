@@ -22,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import java.util.List;
@@ -42,7 +41,7 @@ import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.ambilwarna.AmbilWarnaDialog;
-import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
+import yuku.ambilwarna.ShowMaterialDialog.OnAmbilWarnaListener;
 
 public class MarkersActivity extends BaseActivity {
     static final String TAG = MarkersActivity.class.getSimpleName();
@@ -232,7 +231,7 @@ public class MarkersActivity extends BaseActivity {
             }
 
             int colorRgb = LabelColorUtil.decodeBackground(label.backgroundColor);
-            new AmbilWarnaDialog(MarkersActivity.this, 0xff000000 | colorRgb, new OnAmbilWarnaListener() {
+            new AmbilWarnaDialog(MarkersActivity.this, 0xff000000 | colorRgb, new AmbilWarnaDialog.OnAmbilWarnaListener() {
                 @Override
                 public void onOk(AmbilWarnaDialog dialog, int color) {
                     label.backgroundColor = LabelColorUtil.encodeBackground(0x00ffffff & color);

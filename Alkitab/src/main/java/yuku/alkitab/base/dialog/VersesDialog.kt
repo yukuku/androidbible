@@ -72,7 +72,7 @@ class VersesDialog : BaseDialog() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val sourceVersion = S.activeVersion()
         val sourceVersionId = S.activeVersionId()
-        val textSizeMult = S.getDb().getPerVersionSettings(sourceVersionId).fontSizeMultiplier
+        val textSizeMult = S.db.getPerVersionSettings(sourceVersionId).fontSizeMultiplier
 
         val res = inflater.inflate(R.layout.dialog_verses, container, false)
         res.setBackgroundColor(S.applied().backgroundColor)

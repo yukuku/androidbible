@@ -248,18 +248,18 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
                     MaterialDialog(requireActivity()).show {
                         message(text = getString(R.string.juga_hapus_file_datanya_file, filename))
                         positiveButton(R.string.delete) {
-                            S.getDb().deleteVersion(mv)
+                            S.db.deleteVersion(mv)
                             App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
                             File(filename).delete()
                         }
                         negativeButton(R.string.no) {
-                            S.getDb().deleteVersion(mv)
+                            S.db.deleteVersion(mv)
                             App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
                         }
                         neutralButton(R.string.cancel)
                     }
                 } else { // just delete the file!
-                    S.getDb().deleteVersion(mv)
+                    S.db.deleteVersion(mv)
                     App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
                     File(filename).delete()
                 }
@@ -314,7 +314,7 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
                 MaterialDialog(requireActivity()).show {
                     message(R.string.the_file_for_this_version_is_no_longer_available_file, mv.filename)
                     positiveButton(R.string.delete) {
-                        S.getDb().deleteVersion(mv)
+                        S.db.deleteVersion(mv)
                         App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
                     }
                     negativeButton(R.string.no)
@@ -349,7 +349,7 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
             val presetsInDb = mutableMapOf<String, MVersionDb>()
 
             // db
-            for (mv in S.getDb().listAllVersions()) {
+            for (mv in S.db.listAllVersions()) {
                 items.add(Item(mv))
                 if (mv.preset_name != null) {
                     presetsInDb[mv.preset_name] = mv
@@ -507,7 +507,7 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
             if (from == to) return
             val fromItem = getItem(from)
             val toItem = getItem(to)
-            S.getDb().reorderVersions(fromItem.mv, toItem.mv)
+            S.db.reorderVersions(fromItem.mv, toItem.mv)
             App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
         }
     }

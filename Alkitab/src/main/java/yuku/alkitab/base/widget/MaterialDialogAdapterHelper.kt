@@ -3,6 +3,7 @@ package yuku.alkitab.base.widget
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.customListAdapter
+import com.afollestad.materialdialogs.list.getItemSelector
 
 object MaterialDialogAdapterHelper {
     @JvmStatic

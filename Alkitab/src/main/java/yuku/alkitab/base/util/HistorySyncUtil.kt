@@ -57,7 +57,7 @@ object HistorySyncUtil {
 
             // if we reach here, the local database has been updated with the append delta.
             val ss = Sync_History.shadowFromEntities(Sync_History.getEntitiesFromCurrent(), final_revno)
-            S.getDb().insertOrUpdateSyncShadowBySyncSetName(ss)
+            S.db.insertOrUpdateSyncShadowBySyncSetName(ss)
             history.save()
 
             // when debugging, print
