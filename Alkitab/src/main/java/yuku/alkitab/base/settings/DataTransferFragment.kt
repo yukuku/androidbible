@@ -12,7 +12,7 @@ import yuku.alkitab.debug.R
 
 class DataTransferFragment : PreferenceFragmentCompat() {
 
-    val startActivityRequest = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+    private val startActivityRequest = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED))
     }
 

@@ -68,7 +68,7 @@ class SecretSettingsActivity : BaseActivity() {
             true
         }
 
-        override fun onCreatePreferences(savedInstanceState: Bundle, rootKey: String) {
+        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             addPreferencesFromResource(R.xml.secret_settings)
             findPreference<Preference>("secret_progress_mark_history")?.onPreferenceClickListener = secret_progress_mark_history_click
             findPreference<Preference>("secret_version_table")?.onPreferenceClickListener = secret_version_table_click

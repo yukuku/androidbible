@@ -117,7 +117,7 @@ dependencies {
 
     implementation "io.coil-kt:coil:$coilVersion"
 
-    implementation "androidx.preference:preference:$androidxPreferenceVersion"
+    implementation "androidx.preference:preference-ktx:$androidxPreferenceVersion"
     implementation "com.takisoft.preferencex:preferencex:$preferenceFixVersion"
 
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationJsonVersion"

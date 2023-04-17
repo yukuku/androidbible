@@ -31,7 +31,10 @@ class UsageFragment : PreferenceFragmentCompat() {
 
         // only show dictionary auto-lookup when enabled in app_config
         if (!AppConfig.get().menuDictionary) {
-            preferenceScreen.removePreference(findPreference(getString(R.string.pref_autoDictionaryAnalyze_key)))
+            val preference = findPreference<Preference>(getString(R.string.pref_autoDictionaryAnalyze_key))
+            if (preference != null) {
+                preferenceScreen.removePreference(preference)
+            }
         }
     }
 }

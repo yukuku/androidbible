@@ -746,7 +746,7 @@ class MarkerListActivity : BaseActivity() {
 
             for (marker in allMarkers) {
                 if (filter_kind != Marker.Kind.highlight) { // "caption" in highlights only stores color information, so it's useless to check
-                    val caption_lc = marker.caption.toLowerCase(Locale.getDefault())
+                    val caption_lc = marker.caption.lowercase(Locale.getDefault())
                     if (SearchEngine.satisfiesTokens(caption_lc, rt)) {
                         res.add(marker)
                         continue
@@ -756,7 +756,7 @@ class MarkerListActivity : BaseActivity() {
                 // try the verse text!
                 val verseText = version.loadVerseText(marker.ari)
                 if (verseText != null) { // this can be null! so beware.
-                    val verseText_lc = verseText.toLowerCase(Locale.getDefault())
+                    val verseText_lc = verseText.lowercase(Locale.getDefault())
                     if (SearchEngine.satisfiesTokens(verseText_lc, rt)) {
                         res.add(marker)
                     }

@@ -65,7 +65,7 @@ class AboutActivity : BaseActivity() {
         }
 
         bCredits = findViewById(R.id.bCredits)
-        bCredits.setOnClickListener { v: View? ->
+        bCredits.setOnClickListener {
             trackEvent("help_button_credits")
             startActivity(HelpActivity.createIntent("help/credits.html", getString(R.string.about_credits)))
         }
@@ -120,7 +120,7 @@ class AboutActivity : BaseActivity() {
 
     private fun showSecretDialog() {
         MaterialDialog(this)
-            .listItems(items = listOf("Secret settings", "Crash me")) { dialog, index, text ->
+            .listItems(items = listOf("Secret settings", "Crash me")) { _, index, _ ->
                 when (index) {
                     0 -> {
                         startActivity(SecretSettingsActivity.createIntent())

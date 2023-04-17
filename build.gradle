@@ -45,7 +45,7 @@ ext {
     androidxFragmentVersion = '1.4.0'
     androidxMultidexVersion = '2.0.1'
     androidxPercentlayoutVersion = '1.0.0'
-    androidxPreferenceVersion = '1.1.0'
+    androidxPreferenceVersion = '1.2.0'
     androidxRecyclerviewVersion = '1.2.1'
     androidxSwiperefreshlayoutVersion = '1.1.0'
 

@@ -39,7 +39,7 @@ class AlertDialogActivity : BaseActivity() {
             builder.message(text = message)
         }
         if (inputHint != null) {
-            builder.input(inputType = inputType, hint = inputHint) { dialog, input ->
+            builder.input(inputType = inputType, hint = inputHint) { _, input ->
                 val returnIntent = Intent()
                 returnIntent.putExtra(EXTRA_INPUT, input.toString())
                 setResult(RESULT_OK, returnIntent)
