@@ -19,7 +19,6 @@ import java.util.List;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.SyncShadow;
-import yuku.alkitab.base.util.Literals;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.AttributeView;
 import yuku.alkitab.model.ProgressMark;
@@ -36,7 +35,7 @@ public class Sync_Pins {
 	public static Pair<Sync.ClientState<Content>, List<Sync.Entity<Content>>> getClientStateAndCurrentEntities() {
 		final SyncShadow ss = S.getDb().getSyncShadowBySyncSetName(SyncShadow.SYNC_SET_PINS);
 
-		final List<Sync.Entity<Content>> srcs = ss == null? Literals.List(): entitiesFromShadow(ss);
+		final List<Sync.Entity<Content>> srcs = ss == null? Collections.emptyList(): entitiesFromShadow(ss);
 		final List<Sync.Entity<Content>> dsts = getEntitiesFromCurrent();
 
 		final Sync.Delta<Content> delta = new Sync.Delta<>();
