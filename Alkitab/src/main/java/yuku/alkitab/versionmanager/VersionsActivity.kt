@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.input
 import com.google.android.material.tabs.TabLayout
 import java.io.File
 import java.io.FileInputStream
@@ -36,6 +37,7 @@ import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Background
 import yuku.alkitab.base.util.DownloadMapper
 import yuku.alkitab.base.util.Foreground
+import yuku.alkitab.base.widget.MaterialDialogProgressHelper.progress
 import yuku.alkitab.debug.R
 import yuku.alkitab.tracking.Tracker
 import yuku.filechooser.FileChooserActivity
@@ -112,10 +114,10 @@ class VersionsActivity : BaseActivity() {
             try {
                 contentResolver.query(uri, null, null, null, null).use { c ->
                     if (c == null || !c.moveToNext()) {
-                        MaterialDialog.Builder(this)
-                            .content(TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
-                            .positiveText(R.string.ok)
-                            .show()
+                        MaterialDialog(this).show {
+                            message(text = TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
+                            positiveButton(R.string.ok)
+                        }
                         return
                     }
 
@@ -135,19 +137,19 @@ class VersionsActivity : BaseActivity() {
                     }
                 }
             } catch (e: SecurityException) {
-                MaterialDialog.Builder(this)
-                    .content(TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
-                    .positiveText(R.string.ok)
-                    .show()
+                MaterialDialog(this).show {
+                    message(text = TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
+                    positiveButton(R.string.ok)
+                }
                 return
             }
         }
 
         if (isYesFile == null) { // can't be determined
-            MaterialDialog.Builder(this)
-                .content(R.string.open_file_unknown_file_format)
-                .positiveText(R.string.ok)
-                .show()
+            MaterialDialog(this).show {
+                message(R.string.open_file_unknown_file_format)
+                positiveButton(R.string.ok)
+            }
             return
         }
 
@@ -160,10 +162,10 @@ class VersionsActivity : BaseActivity() {
                     val cacheFile = File(cacheDir, "datafile")
                     val input = contentResolver.openInputStream(uri)
                     if (input == null) {
-                        MaterialDialog.Builder(this)
-                            .content(TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
-                            .positiveText(R.string.ok)
-                            .show()
+                        MaterialDialog(this).show {
+                            message(text = TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
+                            positiveButton(R.string.ok)
+                        }
                         return
                     }
 
@@ -185,19 +187,19 @@ class VersionsActivity : BaseActivity() {
 
             val existingFile = AddonManager.getReadableVersionFile(filelastname)
             if (existingFile != null) {
-                MaterialDialog.Builder(this)
-                    .content(getString(R.string.open_yes_file_name_conflict, filelastname, existingFile.absolutePath))
-                    .positiveText(R.string.ok)
-                    .show()
+                MaterialDialog(this).show {
+                    message(text = getString(R.string.open_yes_file_name_conflict, filelastname, existingFile.absolutePath))
+                    positiveButton(R.string.ok)
+                }
                 return
             }
 
             val input = contentResolver.openInputStream(uri)
             if (input == null) {
-                MaterialDialog.Builder(this)
-                    .content(TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
-                    .positiveText(R.string.ok)
-                    .show()
+                MaterialDialog(this).show {
+                    message(text = TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
+                    positiveButton(R.string.ok)
+                }
                 return
             }
 
@@ -210,10 +212,10 @@ class VersionsActivity : BaseActivity() {
             handleFileOpenYes(localFile)
 
         } catch (e: Exception) {
-            MaterialDialog.Builder(this)
-                .content(R.string.open_file_cant_read_source)
-                .positiveText(R.string.ok)
-                .show()
+            MaterialDialog(this).show {
+                message(R.string.open_file_cant_read_source)
+                positiveButton(R.string.ok)
+            }
         }
     }
 
@@ -284,10 +286,12 @@ class VersionsActivity : BaseActivity() {
                 clickOnOpenFile()
                 true
             }
+
             R.id.menuAddFromUrl -> {
                 openUrlInputDialog(null)
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -301,7 +305,7 @@ class VersionsActivity : BaseActivity() {
         startActivityForResult(FileChooserActivity.createIntent(App.context, config), REQCODE_openFile)
     }
 
-    inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
         override fun getItem(position: Int) = VersionListFragment.newInstance(position == 1, query_text)
 
         override fun getCount() = 2
@@ -320,10 +324,10 @@ class VersionsActivity : BaseActivity() {
 
         // check if it exists previously
         if (AddonManager.getReadableVersionFile(yesName) != null) {
-            MaterialDialog.Builder(this)
-                .content(R.string.ed_this_file_is_already_on_the_list)
-                .positiveText(R.string.ok)
-                .show()
+            MaterialDialog(this).show {
+                message(R.string.ed_this_file_is_already_on_the_list)
+                positiveButton(R.string.ok)
+            }
             return
         }
 
@@ -335,11 +339,11 @@ class VersionsActivity : BaseActivity() {
 
                 val message = if (exception is ConvertOptionsDialog.PdbKnownErrorException) exception.message.orEmpty() else getString(R.string.ed_details) + sw.toString()
 
-                MaterialDialog.Builder(this@VersionsActivity)
-                    .title(R.string.ed_error_reading_pdb_file)
-                    .content(message)
-                    .positiveText(R.string.ok)
-                    .show()
+                MaterialDialog(this@VersionsActivity).show {
+                    title(R.string.ed_error_reading_pdb_file)
+                    message(text = message)
+                    positiveButton(R.string.ok)
+                }
             }
 
             fun showResult(yesFile: File, exception: Throwable?, wronglyConvertedBookNames: List<String?>?) {
@@ -363,10 +367,10 @@ class VersionsActivity : BaseActivity() {
                         }
                     }
 
-                    MaterialDialog.Builder(this@VersionsActivity)
-                        .content(msg)
-                        .positiveText(R.string.ok)
-                        .show()
+                    MaterialDialog(this@VersionsActivity).show {
+                        message(text = msg)
+                        positiveButton(R.string.ok)
+                    }
                 }
             }
 
@@ -376,17 +380,17 @@ class VersionsActivity : BaseActivity() {
 
             override fun onOkYes2(params: ConvertPdbToYes2.ConvertParams) {
                 val yesFile = AddonManager.getWritableVersionFile(yesName)
-                val pd = MaterialDialog.Builder(this@VersionsActivity)
-                    .content(R.string.ed_reading_pdb_file)
-                    .cancelable(false)
-                    .progress(true, 0)
-                    .show()
+                val pd = MaterialDialog(this@VersionsActivity).show {
+                    message(R.string.ed_reading_pdb_file)
+                    cancelable(false)
+                    progress(true, 0)
+                }
 
                 fun onProgressUpdate(at: Int?, message: String?) = Foreground.run {
                     if (at == null) {
-                        pd.setContent(getString(R.string.ed_finished))
+                        pd.message(R.string.ed_finished)
                     } else {
-                        pd.setContent("($at) $message...")
+                        pd.message(text = "($at) $message...")
                     }
                 }
 
@@ -423,7 +427,7 @@ class VersionsActivity : BaseActivity() {
         try {
             val reader = YesReaderFactory.createYesReader(file.absolutePath) ?: throw Exception("Not a valid YES file.")
 
-            var maxOrdering = S.getDb().versionMaxOrdering
+            var maxOrdering = S.db.versionMaxOrdering
             if (maxOrdering == 0) maxOrdering = MVersionDb.DEFAULT_ORDERING_START
 
             val mvDb = MVersionDb().apply {
@@ -436,16 +440,16 @@ class VersionsActivity : BaseActivity() {
                 preset_name = null
             }
 
-            S.getDb().insertOrUpdateVersionWithActive(mvDb, true)
+            S.db.insertOrUpdateVersionWithActive(mvDb, true)
             MVersionDb.clearVersionImplCache()
 
             App.getLbm().sendBroadcast(Intent(VersionListFragment.ACTION_RELOAD))
         } catch (e: Exception) {
-            MaterialDialog.Builder(this)
-                .title(R.string.ed_error_encountered)
-                .content("${e.javaClass.simpleName}: ${e.message}")
-                .positiveText(R.string.ok)
-                .show()
+            MaterialDialog(this).show {
+                title(R.string.ed_error_encountered)
+                message(text = "${e.javaClass.simpleName}: ${e.message}")
+                positiveButton(R.string.ok)
+            }
         }
     }
 
@@ -467,29 +471,29 @@ class VersionsActivity : BaseActivity() {
     }
 
     private fun openUrlInputDialog(prefill: String?) {
-        MaterialDialog.Builder(this)
-            .input(getText(R.string.version_download_add_from_url_prompt_yes_only), prefill, false) { _: MaterialDialog?, input: CharSequence ->
+        MaterialDialog(this)
+            .title(R.string.version_download_add_from_url_prompt_yes_only)
+            .input(prefill = prefill) { _: MaterialDialog?, input: CharSequence ->
                 val url = input.toString().trim()
                 if (url.isEmpty()) return@input
 
                 val uri = Uri.parse(url)
                 val scheme = uri.scheme
                 if ("http" != scheme && "https" != scheme) {
-                    MaterialDialog.Builder(this@VersionsActivity)
-                        .content(R.string.version_download_invalid_url)
-                        .positiveText(R.string.ok)
-                        .onPositive { _, _ -> openUrlInputDialog(url) }
-                        .show()
+                    MaterialDialog(this@VersionsActivity).show {
+                        message(R.string.version_download_invalid_url)
+                        positiveButton(R.string.ok) { openUrlInputDialog(url) }
+                    }
                     return@input
                 }
 
                 // guess destination filename
                 val last = uri.lastPathSegment ?: return@input
                 if (last.isEmpty() || !last.endsWith(".yes", ignoreCase = true)) {
-                    MaterialDialog.Builder(this@VersionsActivity)
-                        .content(R.string.version_download_not_yes)
-                        .positiveText(R.string.ok)
-                        .show()
+                    MaterialDialog(this@VersionsActivity).show {
+                        message(R.string.version_download_not_yes)
+                        positiveButton(R.string.ok)
+                    }
                     return@input
                 }
 
@@ -506,13 +510,13 @@ class VersionsActivity : BaseActivity() {
                 )
                 DownloadMapper.instance.enqueue(downloadKey, url, last, attrs)
 
-                Toast.makeText(this, R.string.mulai_mengunduh, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@VersionsActivity, R.string.mulai_mengunduh, Toast.LENGTH_SHORT).show()
             }
-            .positiveText(R.string.ok)
+            .positiveButton(R.string.ok)
             .show()
     }
 
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQCODE_openFile) {
             val result = FileChooserActivity.obtainResult(data) ?: return
 
@@ -525,11 +529,11 @@ class VersionsActivity : BaseActivity() {
                 if (maybeDecompressed.exists() && !maybeDecompressed.isDirectory && maybeDecompressed.canRead()) {
                     handleFileOpenYes(maybeDecompressed)
                 } else {
-                    val pd = MaterialDialog.Builder(this)
-                        .content(R.string.sedang_mendekompres_harap_tunggu)
-                        .cancelable(false)
-                        .progress(true, 0)
-                        .show()
+                    val pd = MaterialDialog(this).show {
+                        message(R.string.sedang_mendekompres_harap_tunggu)
+                        cancelable(false)
+                        progress(true, 0)
+                    }
 
                     Background.run {
                         val tmpfile3 = filename + "-" + (Math.random() * 100000).toInt() + ".tmp3"
@@ -572,10 +576,10 @@ class VersionsActivity : BaseActivity() {
                 handleFileOpenPdb(filename)
 
             } else {
-                MaterialDialog.Builder(this)
-                    .content(R.string.ed_invalid_file_selected)
-                    .positiveText(R.string.ok)
-                    .show()
+                MaterialDialog(this).show {
+                    message(R.string.ed_invalid_file_selected)
+                    positiveButton(R.string.ok)
+                }
             }
             return
         }

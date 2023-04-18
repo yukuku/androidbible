@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">还原</string>
     <string name="ekspor_ke_sd_card">备份</string>
     <string name="menuBantuan">帮助</string>
-    <string name="beri_saran_title">建议</string>
-    <string name="menuDevotion">灵修心得</string>
+	<string name="menuDevotion">灵修心得</string>
     <string name="search">搜寻</string>
     <string name="activity_title_markers">标记</string>
     <string name="menu_markers">标记</string>
@@ -514,9 +513,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100％免费圣经应用程序，根据Apache许可证2.0许可</string>
     <string name="about_translators">译者</string>
     <string name="about_user_guide">使用者指引</string>
-    <string name="about_beta_feedback">测试版本回馈</string>
-    <string name="about_enable_beta">使用试用版本</string>
-    <string name="about_enable_beta_confirmation">登入谷歌并按下「成为测试员」按钮，以使用有更新的功能和更完善的试用版本！</string>
     <string name="about_version_name">版本 %s</string>
     <string name="about_material_sources">资料来源</string>
     <string name="about_credits">工作人员</string>

@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Восстановить</string>
     <string name="ekspor_ke_sd_card">Сделать резервную копию</string>
     <string name="menuBantuan">Помощь</string>
-    <string name="beri_saran_title">Предложение по улучшению</string>
-    <string name="menuDevotion">Размышления</string>
+	<string name="menuDevotion">Размышления</string>
     <string name="search">Поиск</string>
     <string name="activity_title_markers">Маркеры</string>
     <string name="menu_markers">Маркеры</string>
@@ -514,9 +513,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% бесплатное приложение Bible app, лицензия от Apache License 2.0</string>
     <string name="about_translators">Переводчики</string>
     <string name="about_user_guide">Руководство пользователя</string>
-    <string name="about_beta_feedback">Отзывы о бета-версии</string>
-    <string name="about_enable_beta">Попробовать бета-версию</string>
-    <string name="about_enable_beta_confirmation">Войдите в свой Google-аккаунт и нажмите кнопку \"Стать тестировщиком\", чтобы получить доступ к бета-версии с новыми функциями и усовершенствованиями!</string>
     <string name="about_version_name">версия %s</string>
     <string name="about_material_sources">Источники материалов</string>
     <string name="about_credits">Благодарности</string>

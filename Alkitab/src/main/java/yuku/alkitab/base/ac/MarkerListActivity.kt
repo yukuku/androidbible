@@ -49,7 +49,7 @@ import yuku.alkitab.base.util.Sqlitil
 import yuku.alkitab.base.util.TextColorUtil
 import yuku.alkitab.base.widget.VerseRenderer
 import yuku.alkitab.base.widget.VerseRenderer.FormattedTextResult
-import yuku.alkitab.base.widget.VerseRendererHelper
+import yuku.alkitab.base.widget.VerseRendererJavaHelper
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Label
 import yuku.alkitab.model.Marker
@@ -89,7 +89,7 @@ class MarkerListActivity : BaseActivity() {
     private var allMarkers = emptyList<Marker>()
     private val version = S.activeVersion()
     private val versionId = S.activeVersionId()
-    private val textSizeMult = S.getDb().getPerVersionSettings(versionId).fontSizeMultiplier
+    private val textSizeMult = S.db.getPerVersionSettings(versionId).fontSizeMultiplier
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -173,7 +173,7 @@ class MarkerListActivity : BaseActivity() {
     }
 
     fun loadAndFilter() {
-        allMarkers = S.getDb().listMarkers(filter_kind, filter_labelId, sort_column, sort_ascending)
+        allMarkers = S.db.listMarkers(filter_kind, filter_labelId, sort_column, sort_ascending)
         filter.submit(currentlyUsedFilter)
     }
 
@@ -201,7 +201,7 @@ class MarkerListActivity : BaseActivity() {
                     title = getString(R.string.bmcat_unlabeled_bookmarks)
                     nothingText = getString(R.string.bl_there_are_no_bookmarks_without_any_labels)
                 } else {
-                    val label = S.getDb().getLabelById(filter_labelId)
+                    val label = S.db.getLabelById(filter_labelId)
                     if (label != null) {
                         title = label.title
                         nothingText = getString(R.string.bl_there_are_no_bookmarks_with_the_label_label, label.title)
@@ -491,7 +491,7 @@ class MarkerListActivity : BaseActivity() {
                                         val rawVerseText = version.loadVerseText(ari)
                                         val ftr = FormattedTextResult()
                                         if (rawVerseText != null) {
-                                            VerseRendererHelper.render(
+                                            VerseRendererJavaHelper.render(
                                                 ari = ari,
                                                 text = rawVerseText,
                                                 verseNumberText = "",
@@ -515,7 +515,7 @@ class MarkerListActivity : BaseActivity() {
                                 val marker = adapter.getItem(singlePosition)
 
                                 // whatever the kind is, the way to delete is the same
-                                S.getDb().deleteMarkerById(marker._id)
+                                S.db.deleteMarkerById(marker._id)
                                 mode.finish()
                                 loadAndFilter()
                                 App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED))
@@ -562,7 +562,7 @@ class MarkerListActivity : BaseActivity() {
                     appendLine("...")
                 }
 
-                val labels = S.getDb().listLabelsByMarker(marker)
+                val labels = S.db.listLabelsByMarker(marker)
                 if (labels.isNotEmpty()) {
                     appendLine(labels.joinToString { it.title })
                 }
@@ -640,7 +640,7 @@ class MarkerListActivity : BaseActivity() {
                     val snippet = if (currentlyUsedFilter != null) SearchEngine.hilite(verseText, rt, hiliteColor) else verseText
                     Appearances.applyMarkerSnippetContentAndAppearance(lSnippet, reference, snippet, textSizeMult)
 
-                    val labels = S.getDb().listLabelsByMarker(marker)
+                    val labels = S.db.listLabelsByMarker(marker)
                     if (labels.isNotEmpty()) {
                         panelLabels.visibility = View.VISIBLE
                         panelLabels.removeAllViews()
@@ -746,7 +746,7 @@ class MarkerListActivity : BaseActivity() {
 
             for (marker in allMarkers) {
                 if (filter_kind != Marker.Kind.highlight) { // "caption" in highlights only stores color information, so it's useless to check
-                    val caption_lc = marker.caption.toLowerCase(Locale.getDefault())
+                    val caption_lc = marker.caption.lowercase(Locale.getDefault())
                     if (SearchEngine.satisfiesTokens(caption_lc, rt)) {
                         res.add(marker)
                         continue
@@ -756,7 +756,7 @@ class MarkerListActivity : BaseActivity() {
                 // try the verse text!
                 val verseText = version.loadVerseText(marker.ari)
                 if (verseText != null) { // this can be null! so beware.
-                    val verseText_lc = verseText.toLowerCase(Locale.getDefault())
+                    val verseText_lc = verseText.lowercase(Locale.getDefault())
                     if (SearchEngine.satisfiesTokens(verseText_lc, rt)) {
                         res.add(marker)
                     }

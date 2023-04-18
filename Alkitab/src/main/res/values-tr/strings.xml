@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Geri al</string>
     <string name="ekspor_ke_sd_card">Yedekle</string>
     <string name="menuBantuan">Yardım et</string>
-    <string name="beri_saran_title">Öneri</string>
-    <string name="menuDevotion">Bağlantı</string>
+	<string name="menuDevotion">Bağlantı</string>
     <string name="search">Ara</string>
     <string name="activity_title_markers">İşaretler</string>
     <string name="menu_markers">İşaretler</string>
@@ -514,9 +513,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">%100 bedava İncil uygulaması, Apache License 2.0 yetkisi altında</string>
     <string name="about_translators">Çevirmenler</string>
     <string name="about_user_guide">Kullanıcı Rehberi</string>
-    <string name="about_beta_feedback">Beta Versiyon Geridönüşü</string>
-    <string name="about_enable_beta">Beta Sürümü Dene</string>
-    <string name="about_enable_beta_confirmation">Google a giriş yapın ve beta versiyonu yeni özellikleri ve geliştirmeleri ile denemek için BECOME A TESTER düğmesine tıklayın!</string>
     <string name="about_version_name">sürüm %s</string>
     <string name="about_material_sources">Materyal Kaynakları</string>
     <string name="about_credits">Krediler</string>

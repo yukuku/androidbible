@@ -60,6 +60,6 @@ class VersesDialogCompareVerses(
 
     override fun getTextSizeMult(verse_0: Int): Float {
         val mversion = mversions[verse_0]
-        return S.getDb().getPerVersionSettings(mversion.versionId).fontSizeMultiplier
+        return S.db.getPerVersionSettings(mversion.versionId).fontSizeMultiplier
     }
 }

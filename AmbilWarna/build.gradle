@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -18,9 +19,14 @@ android {
     lint {
         abortOnError false
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
 }
 
 dependencies {
     implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
-    implementation 'androidx.preference:preference:1.0.0'
+    implementation "androidx.preference:preference:$androidxPreferenceVersion"
 }

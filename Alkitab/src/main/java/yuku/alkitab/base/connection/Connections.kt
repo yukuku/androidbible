@@ -8,7 +8,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import yuku.alkitab.base.App
 import yuku.alkitab.debug.BuildConfig
-import yuku.stethoshim.StethoShim
 
 object Connections {
     private val appContext by lazy { App.context }
@@ -48,7 +47,6 @@ object Connections {
         if (BuildConfig.DEBUG) {
             builder.hostnameVerifier { _, _ -> true }
         }
-        StethoShim.addNetworkInterceptor(builder)
         builder.build()
     }
 
@@ -60,7 +58,6 @@ object Connections {
             .connectTimeout(300, TimeUnit.SECONDS)
             .readTimeout(300, TimeUnit.SECONDS)
             .writeTimeout(600, TimeUnit.SECONDS)
-        StethoShim.addNetworkInterceptor(builder)
         builder.build()
     }
 }

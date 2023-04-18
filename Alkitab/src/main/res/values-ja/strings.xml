@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">復元</string>
     <string name="ekspor_ke_sd_card">バックアップ</string>
     <string name="menuBantuan">ヘルプ</string>
-    <string name="beri_saran_title">提案する</string>
-    <string name="menuDevotion">祈り</string>
+	<string name="menuDevotion">祈り</string>
     <string name="search">検索</string>
     <string name="activity_title_markers">ブックマークなど</string>
     <string name="menu_markers">ブックマークなど</string>
@@ -509,9 +508,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Apache License 2.0でライセンスされた100％無料の聖書アプリ</string>
     <string name="about_translators">翻訳者</string>
     <string name="about_user_guide">使用ガイド</string>
-    <string name="about_beta_feedback">ベータ版のフィードバック</string>
-    <string name="about_enable_beta">ベータ版を試す</string>
-    <string name="about_enable_beta_confirmation">Googleにサインインし、[テスターに参加] ボタンをタップして、新しい機能と強化されたベータ版をお試しください！</string>
     <string name="about_version_name">バージョン %s</string>
     <string name="about_material_sources">出典資料</string>
     <string name="about_credits">クレジット</string>

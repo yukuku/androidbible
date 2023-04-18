@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">မူလပုံစံအတိုင်း ပြန်လည်သိမ်းဆည်းရန်</string>
     <string name="ekspor_ke_sd_card">မူရင်းဖိုင်များကို ကူးယူသိုမှီးထားရှိရန်</string>
     <string name="menuBantuan">အကူအညီ</string>
-    <string name="beri_saran_title">အကြံပြုချက်ပေးရန်</string>
-    <string name="menuDevotion">ဝတ်ပြုခြင်း</string>
+	<string name="menuDevotion">ဝတ်ပြုခြင်း</string>
     <string name="search">ရှာဖွေရန်</string>
     <string name="activity_title_markers">အမှတ်အသားများ</string>
     <string name="menu_markers">အမှတ်အသားများ</string>
@@ -509,9 +508,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Apache License 2.0 အောက်တွင် မူပိုင်ခွင့်ရသည့် 100% အခမဲ့ ကျမ်းစာအက်ပလီကေးရှင်း</string>
     <string name="about_translators">ဘာသာပြန်ဆိုသူများ</string>
     <string name="about_user_guide">အသုံးပြုသူလမ်းညွှန်</string>
-    <string name="about_beta_feedback">ဘီတာ ဗားရှင်း တုံ့ပြန်ချက်</string>
-    <string name="about_enable_beta">ဘီတာဗားရှင်းကို သုံးကြည့်ပါ</string>
-    <string name="about_enable_beta_confirmation">ဂူဂဲလ်သို့ ဝင်ရောက်ပြီး အင်္ဂါရပ်အသစ်များ နှင့် အဆင့်မြှင့်မှုများဖြင့် Beta ဗားရှင်းကို စမ်းကြည့်ရန် \"စမ်းသပ်သူတစ်ဦး ဖြစ်ရန်\" ဆိုသည့် ခလုတ်ကိုနှိပ်ပါ။</string>
     <string name="about_version_name">ဗားရှင်း %s</string>
     <string name="about_material_sources">အချက်အလက်ကုန်ကြမ်း ရင်းမြစ်များ</string>
     <string name="about_credits">ဂုဏ်ပြုမှတ်တမ်းတင်လွှာ</string>

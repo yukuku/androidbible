@@ -12,11 +12,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.SyncShadow;
-import yuku.alkitab.base.util.Literals;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
@@ -26,7 +26,7 @@ public class Sync_Mabel {
 	public static Sync.GetClientStateResult<Content> getClientStateAndCurrentEntities() {
 		final SyncShadow ss = S.getDb().getSyncShadowBySyncSetName(SyncShadow.SYNC_SET_MABEL);
 
-		final List<Sync.Entity<Content>> srcs = ss == null? Literals.List(): entitiesFromShadow(ss);
+		final List<Sync.Entity<Content>> srcs = ss == null? Collections.emptyList(): entitiesFromShadow(ss);
 		final List<Sync.Entity<Content>> dsts = getEntitiesFromCurrent();
 
 		final Sync.Delta<Content> delta = new Sync.Delta<>();

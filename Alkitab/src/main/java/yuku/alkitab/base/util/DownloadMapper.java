@@ -172,7 +172,7 @@ public enum DownloadMapper {
 				}
 
 				App.context.startActivity(
-					AlertDialogActivity.createOkIntent(null, msg)
+					AlertDialogActivity.createOkIntent(null, msg.toString())
 						.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 				);
 

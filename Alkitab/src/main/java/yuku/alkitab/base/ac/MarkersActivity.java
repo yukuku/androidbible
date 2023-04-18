@@ -22,11 +22,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import java.util.List;
 import java.util.Locale;
+import kotlin.Unit;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -35,12 +35,12 @@ import yuku.alkitab.base.dialog.LabelEditorDialog;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.LabelColorUtil;
+import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.ambilwarna.AmbilWarnaDialog;
-import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
 
 public class MarkersActivity extends BaseActivity {
     static final String TAG = MarkersActivity.class.getSimpleName();
@@ -209,15 +209,17 @@ public class MarkersActivity extends BaseActivity {
                 S.getDb().deleteLabelAndMarker_LabelsByLabelId(label._id);
                 adapter.reload();
             } else {
-                new MaterialDialog.Builder(this)
-                    .content(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, marker_count))
-                    .negativeText(R.string.cancel)
-                    .positiveText(R.string.delete)
-                    .onPositive((dialog, which) -> {
+                MaterialDialogJavaHelper.showOkDialog(
+                    this,
+                    getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, "" + marker_count),
+                    getString(R.string.delete),
+                    () -> {
                         S.getDb().deleteLabelAndMarker_LabelsByLabelId(label._id);
                         adapter.reload();
-                    })
-                    .show();
+                        return Unit.INSTANCE;
+                    },
+                    getString(R.string.cancel)
+                );
             }
 
             return true;
@@ -228,7 +230,7 @@ public class MarkersActivity extends BaseActivity {
             }
 
             int colorRgb = LabelColorUtil.decodeBackground(label.backgroundColor);
-            new AmbilWarnaDialog(MarkersActivity.this, 0xff000000 | colorRgb, new OnAmbilWarnaListener() {
+            new AmbilWarnaDialog(MarkersActivity.this, 0xff000000 | colorRgb, new AmbilWarnaDialog.OnAmbilWarnaListener() {
                 @Override
                 public void onOk(AmbilWarnaDialog dialog, int color) {
                     label.backgroundColor = LabelColorUtil.encodeBackground(0x00ffffff & color);

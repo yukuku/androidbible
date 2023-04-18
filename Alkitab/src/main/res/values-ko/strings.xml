@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">복구</string>
     <string name="ekspor_ke_sd_card">백업</string>
     <string name="menuBantuan">도움말</string>
-    <string name="beri_saran_title">제안</string>
-    <string name="menuDevotion">묵상</string>
+	<string name="menuDevotion">묵상</string>
     <string name="search">검색</string>
     <string name="activity_title_markers">마커</string>
     <string name="menu_markers">마커</string>
@@ -509,9 +508,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% 무료 성경 앱, Apache License 2.0</string>
     <string name="about_translators">번역자</string>
     <string name="about_user_guide">사용자 가이드</string>
-    <string name="about_beta_feedback">Beta 버전 의견</string>
-    <string name="about_enable_beta">Beta 버전 사용해 보기</string>
-    <string name="about_enable_beta_confirmation">새로운 기능이 있는 베타 버전을 테스트하려면, 구글에 로그인한 후 테스터 희망하기를 누르세요.</string>
     <string name="about_version_name">버전 %s</string>
     <string name="about_material_sources">자료 출처</string>
     <string name="about_credits">이수 인정 학점</string>

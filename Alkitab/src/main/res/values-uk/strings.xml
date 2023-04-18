@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Відновити</string>
     <string name="ekspor_ke_sd_card">Резервна копія</string>
     <string name="menuBantuan">Допомога</string>
-    <string name="beri_saran_title">Запропонувати</string>
-    <string name="menuDevotion">Вивчення Біблії</string>
+	<string name="menuDevotion">Вивчення Біблії</string>
     <string name="search">Пошук</string>
     <string name="activity_title_markers">Позначки</string>
     <string name="menu_markers">Закладки</string>
@@ -509,9 +508,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% безкоштовний додаток для Біблії, ліцензований за ліцензією Apache 2.0</string>
     <string name="about_translators">Перекладачі</string>
     <string name="about_user_guide">Керівництво користувача</string>
-    <string name="about_beta_feedback">Відгуки про бета-версію</string>
-    <string name="about_enable_beta">Спробувати бета-версію</string>
-    <string name="about_enable_beta_confirmation">Увійдіть в свій Google-акаунт і натисніть кнопку \"Стати тестувальником\", щоб отримати доступ до бета-версії з новими функціями і вдосконаленнями!</string>
     <string name="about_version_name">Версія складання %s</string>
     <string name="about_material_sources">Джерела матеріалів</string>
     <string name="about_credits">Подяка</string>

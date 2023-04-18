@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Διόρθωση</string>
     <string name="ekspor_ke_sd_card">Δημιουργία αντιγράφου ασφαλείας</string>
     <string name="menuBantuan">Βοήθεια</string>
-    <string name="beri_saran_title">Πρόταση</string>
-    <string name="menuDevotion">Αφοσίωση</string>
+	<string name="menuDevotion">Αφοσίωση</string>
     <string name="search">Αναζήτηση</string>
     <string name="activity_title_markers">Μαρκαδόροι</string>
     <string name="menu_markers">Μαρκαδόροι</string>
@@ -506,9 +505,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% δωρεάν πρόγραμμα Βίβλου, με άδεια υπό την Άδεια Apache 2.0</string>
     <string name="about_translators">Μεταφραστές</string>
     <string name="about_user_guide">Οδηγός Χρήσης</string>
-    <string name="about_beta_feedback">Σχόλια επί της Εκδοχής Beta</string>
-    <string name="about_enable_beta">Δοκιμάστε την Εκδοχή Beta</string>
-    <string name="about_enable_beta_confirmation">Συνδεθείτε στο Google και πατήστε το κουμπί BECOME A TESTER για να δοκιμάσετε την εκδοχή Beta με νέα χαρακτηριστικά και αναβαθμίσεις!</string>
     <string name="about_version_name">έκδοση %s</string>
     <string name="about_material_sources">Πηγές Υλικού</string>
     <string name="about_credits">Πιστώσεις</string>

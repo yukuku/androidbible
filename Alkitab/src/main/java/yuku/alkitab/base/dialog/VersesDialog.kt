@@ -72,7 +72,7 @@ class VersesDialog : BaseDialog() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val sourceVersion = S.activeVersion()
         val sourceVersionId = S.activeVersionId()
-        val textSizeMult = S.getDb().getPerVersionSettings(sourceVersionId).fontSizeMultiplier
+        val textSizeMult = S.db.getPerVersionSettings(sourceVersionId).fontSizeMultiplier
 
         val res = inflater.inflate(R.layout.dialog_verses, container, false)
         res.setBackgroundColor(S.applied().backgroundColor)
@@ -136,7 +136,7 @@ class VersesDialog : BaseDialog() {
                 versionId_ = sourceVersionId
             )
         } else { // read each version and display it. First version must be the sourceVersion.
-            val mversions = S.getAvailableVersions()
+            val mversions = S.getAvailableVersions().toMutableList()
             // sort such that sourceVersion is first
             mversions.sortBy { if (it.versionId == sourceVersionId) -1 else 0 }
 

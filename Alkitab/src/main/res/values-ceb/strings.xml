@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Pagbalik</string>
     <string name="ekspor_ke_sd_card">Resirba</string>
     <string name="menuBantuan">Tabang</string>
-    <string name="beri_saran_title">E-suggest</string>
-    <string name="menuDevotion">Debosyon</string>
+	<string name="menuDevotion">Debosyon</string>
     <string name="search">Pangita</string>
     <string name="activity_title_markers">Mga marker</string>
     <string name="menu_markers">Mga marker</string>
@@ -505,9 +504,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% libreng biblya nga app, lisensyado ubos sa Apache License 2.0</string>
     <string name="about_translators">Mga maghuhubad</string>
     <string name="about_user_guide">Giya sa tiggamit</string>
-    <string name="about_beta_feedback">Beta Bersyong Feedback</string>
-    <string name="about_enable_beta">Sulayi ang Bersyong Beta</string>
-    <string name="about_enable_beta_confirmation">Sign sa google og i-tap ang BECOME A TESTER na pindutanan para masulayan ang bersong beta na naay mas bag-ong mga bahin niini og mga gipanindot!</string>
     <string name="about_version_name">beryon %s</string>
     <string name="about_material_sources">Mga tinubdan sa materyales</string>
     <string name="about_credits">Mga credit</string>

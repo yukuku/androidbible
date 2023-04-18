@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">กู้ข้อมูล</string>
     <string name="ekspor_ke_sd_card">จัดทำการสำรองข้อมูล</string>
     <string name="menuBantuan">การช่วยเหลือ</string>
-    <string name="beri_saran_title">เสนอแนะ</string>
-    <string name="menuDevotion">การอ่านประจำวัน</string>
+	<string name="menuDevotion">การอ่านประจำวัน</string>
     <string name="search">ค้นหา</string>
     <string name="activity_title_markers">เครื่องหมาย</string>
     <string name="menu_markers">เครื่องหมาย</string>
@@ -509,9 +508,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">แอปพระคัมภีร์ฟรี 100% อนุญาตภายใต้ Apache License 2.0</string>
     <string name="about_translators">นักแปล</string>
     <string name="about_user_guide">คู่มือการใช้</string>
-    <string name="about_beta_feedback">ข้อเสนอแนะรุ่นเบต้า</string>
-    <string name="about_enable_beta">ลองรุ่นเบต้า</string>
-    <string name="about_enable_beta_confirmation">เข้าสู่ระบบ Google แล้วกดปุ่ม BECOME A TESTER เพื่อลองรุ่นเบต้าพร้อมด้วยฟิเช่อร์ใหม่ๆ และการปรับปรุงอย่างล่าสุดได้ค่ะ</string>
     <string name="about_version_name">เวอร์ชั่น %s</string>
     <string name="about_material_sources">แหล่งข้อมูล</string>
     <string name="about_credits">เครดิต</string>

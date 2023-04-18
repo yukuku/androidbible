@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Terugzetten</string>
     <string name="ekspor_ke_sd_card">Reservekopie</string>
     <string name="menuBantuan">Help</string>
-    <string name="beri_saran_title">Suggesties</string>
-    <string name="menuDevotion">Overdenking</string>
+	<string name="menuDevotion">Overdenking</string>
     <string name="search">Zoeken</string>
     <string name="activity_title_markers">Markeringen</string>
     <string name="menu_markers">Bladwijzers, notities, e.d.</string>
@@ -513,9 +512,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% gratis Bijbel app, gelicentieerd onder Apache License 2.0</string>
     <string name="about_translators">Vertalers</string>
     <string name="about_user_guide">Handleiding</string>
-    <string name="about_beta_feedback">Bètaversie feedback</string>
-    <string name="about_enable_beta">Probeer Bèta versie</string>
-    <string name="about_enable_beta_confirmation">Log in bij Google en klik op de WORDT EEN TESTER knop en probeer de bèta versie met nieuwe mogelijkheden en verbeteringen!</string>
     <string name="about_version_name">versie %s</string>
     <string name="about_material_sources">Bronmateriaal</string>
     <string name="about_credits">Credits</string>

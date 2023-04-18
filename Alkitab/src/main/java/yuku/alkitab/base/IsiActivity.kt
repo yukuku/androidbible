@@ -113,7 +113,7 @@ import yuku.alkitab.base.widget.GotoButton
 import yuku.alkitab.base.widget.LabeledSplitHandleButton
 import yuku.alkitab.base.widget.LeftDrawer
 import yuku.alkitab.base.widget.MaterialDialogAdapterHelper
-import yuku.alkitab.base.widget.MaterialDialogAdapterHelper.showWithAdapter
+import yuku.alkitab.base.widget.MaterialDialogAdapterHelper.withAdapter
 import yuku.alkitab.base.widget.ParallelClickData
 import yuku.alkitab.base.widget.ReferenceParallelClickData
 import yuku.alkitab.base.widget.SplitHandleButton
@@ -121,7 +121,7 @@ import yuku.alkitab.base.widget.TextAppearancePanel
 import yuku.alkitab.base.widget.TwofingerLinearLayout
 import yuku.alkitab.base.widget.VerseInlineLinkSpan
 import yuku.alkitab.base.widget.VerseRenderer
-import yuku.alkitab.base.widget.VerseRendererHelper
+import yuku.alkitab.base.widget.VerseRendererJavaHelper
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Book
@@ -389,17 +389,17 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 return
             }
         } catch (e: Exception) {
-            MaterialDialog.Builder(this)
-                .content(R.string.dict_no_results)
-                .positiveText(R.string.ok)
-                .show()
+            MaterialDialog(this).show {
+                message(R.string.dict_no_results)
+                positiveButton(R.string.ok)
+            }
             return
         }.use { c ->
             if (c.count == 0) {
-                MaterialDialog.Builder(this)
-                    .content(R.string.dict_no_results)
-                    .positiveText(R.string.ok)
-                    .show()
+                MaterialDialog(this).show {
+                    message(R.string.dict_no_results)
+                    positiveButton(R.string.ok)
+                }
             } else {
                 c.moveToNext()
                 val rendered = HtmlCompat.fromHtml(c.getString(c.getColumnIndexOrThrow("definition")), HtmlCompat.FROM_HTML_MODE_COMPACT)
@@ -410,11 +410,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     sb.removeSpan(span)
                 }
 
-                MaterialDialog.Builder(this)
-                    .title(data.orig_text)
-                    .content(sb)
-                    .positiveText(R.string.dict_open_full)
-                    .onPositive { _, _ ->
+                MaterialDialog(this).show {
+                    title(text = data.orig_text)
+                    message(text = sb)
+                    positiveButton(R.string.dict_open_full) {
                         val intent = Intent("org.sabda.kamus.action.VIEW")
                             .putExtra("key", data.key)
                             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -423,10 +422,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         try {
                             startActivity(intent)
                         } catch (e: ActivityNotFoundException) {
-                            OtherAppIntegration.askToInstallDictionary(this)
+                            OtherAppIntegration.askToInstallDictionary(this@IsiActivity)
                         }
                     }
-                    .show()
+                }
             }
         }
     }
@@ -435,11 +434,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         override fun onPinDropped(presetId: Int, ari: Int) {
             Tracker.trackEvent("pin_drop")
 
-            val progressMark = S.getDb().getProgressMarkByPresetId(presetId)
+            val progressMark = S.db.getProgressMarkByPresetId(presetId)
             if (progressMark != null) {
                 progressMark.ari = ari
                 progressMark.modifyTime = Date()
-                S.getDb().insertOrUpdateProgressMark(progressMark)
+                S.db.insertOrUpdateProgressMark(progressMark)
             }
 
             App.getLbm().sendBroadcast(Intent(ACTION_ATTRIBUTE_MAP_CHANGED))
@@ -825,7 +824,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
                 R.id.menuAddHighlight -> {
                     val ariBc = Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, 0)
-                    val colorRgb = S.getDb().getHighlightColorRgb(ariBc, selected)
+                    val colorRgb = S.db.getHighlightColorRgb(ariBc, selected)
 
                     val listener = TypeHighlightDialog.Listener {
                         lsSplit0.uncheckAllVerses(true)
@@ -837,9 +836,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         val ftr = VerseRenderer.FormattedTextResult()
                         val ari = Ari.encodeWithBc(ariBc, selected.get(0))
                         val rawVerseText = activeSplit0.version.loadVerseText(ari) ?: ""
-                        val info = S.getDb().getHighlightColorRgb(ari)
+                        val info = S.db.getHighlightColorRgb(ari)
 
-                        VerseRendererHelper.render(ari = ari, text = rawVerseText, ftr = ftr)
+                        VerseRendererJavaHelper.render(ari = ari, text = rawVerseText, ftr = ftr)
                         TypeHighlightDialog(this@IsiActivity, ari, listener, colorRgb, info, reference, ftr.result)
                     } else {
                         TypeHighlightDialog(this@IsiActivity, ariBc, selected, listener, colorRgb, reference)
@@ -987,10 +986,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     try {
                         startActivity(intent)
                     } catch (e: ActivityNotFoundException) {
-                        MaterialDialog.Builder(this@IsiActivity)
-                            .content("Error ANFE starting extension\n\n" + extension.activityInfo.packageName + "/" + extension.activityInfo.name)
-                            .positiveText(R.string.ok)
-                            .show()
+                        MaterialDialog(this@IsiActivity).show {
+                            message(text = "Error ANFE starting extension\n\n${extension.activityInfo.packageName}/${extension.activityInfo.name}")
+                            positiveButton(R.string.ok)
+                        }
                     }
 
                     true
@@ -1334,7 +1333,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     private fun calculateTextSizeMult(versionId: String?): Float {
-        return if (versionId == null) 1f else S.getDb().getPerVersionSettings(versionId).fontSizeMultiplier
+        return if (versionId == null) 1f else S.db.getPerVersionSettings(versionId).fontSizeMultiplier
     }
 
     private fun callAttentionForVerseToBothSplits(verse_1: Int) {
@@ -1519,10 +1518,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         } catch (e: Throwable) { // so we don't crash on the beginning of the app
             AppLog.e(TAG, "Error opening main version", e)
 
-            MaterialDialog.Builder(this)
-                .content(getString(R.string.version_error_opening, mv.longName))
-                .positiveText(R.string.ok)
-                .show()
+            MaterialDialog(this).show {
+                message(text = getString(R.string.version_error_opening, mv.longName))
+                positiveButton(R.string.ok)
+            }
         }
     }
 
@@ -1545,10 +1544,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         } catch (e: Throwable) { // so we don't crash on the beginning of the app
             AppLog.e(TAG, "Error opening split version", e)
 
-            MaterialDialog.Builder(this@IsiActivity)
-                .content(getString(R.string.version_error_opening, mv.longName))
-                .positiveText(R.string.ok)
-                .show()
+            MaterialDialog(this@IsiActivity).show {
+                message(text = getString(R.string.version_error_opening, mv.longName))
+                positiveButton(R.string.ok)
+            }
 
             return false
         }
@@ -1641,10 +1640,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
         val jumper = Jumper(reference)
         if (!jumper.parseSucceeded) {
-            MaterialDialog.Builder(this)
-                .content(R.string.alamat_tidak_sah_alamat, reference)
-                .positiveText(R.string.ok)
-                .show()
+            MaterialDialog(this).show {
+                message(text = getString(R.string.alamat_tidak_sah_alamat, reference))
+                positiveButton(R.string.ok)
+            }
             return
         }
 
@@ -1714,7 +1713,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
     }
 
-    fun referenceFromSelectedVerses(selectedVerses: IntArrayList, book: Book): CharSequence {
+    fun referenceFromSelectedVerses(selectedVerses: IntArrayList, book: Book): String {
         return when (selectedVerses.size()) {
             // should not be possible. So we don't do anything.
             0 -> book.reference(this.chapter_1)
@@ -1919,7 +1918,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     private fun bGoto_longClick() {
         Tracker.trackEvent("nav_goto_button_long_click")
         if (history.size > 0) {
-            MaterialDialog.Builder(this).showWithAdapter(HistoryAdapter())
+            MaterialDialog(this).show {
+                withAdapter(HistoryAdapter())
+            }
             Preferences.setBoolean(Prefkey.history_button_understood, true)
         } else {
             Snackbar.make(root, R.string.recentverses_not_available, Snackbar.LENGTH_SHORT).show()
@@ -2149,19 +2150,19 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     private fun openVersionsDialog() {
         // If there is no db versions, immediately open manage version screen.
-        if (S.getDb().listAllVersions().isEmpty()) {
+        if (S.db.listAllVersions().isEmpty()) {
             startActivity(VersionsActivity.createIntent())
             return
         }
 
-        S.openVersionsDialog(this, false, activeSplit0.versionId) { mv ->
+        S.openVersionsDialog(this, activeSplit0.versionId) { mv ->
             trackVersionSelect(mv, false)
             loadVersion(mv)
         }
     }
 
     private fun openSplitVersionsDialog() {
-        S.openVersionsDialog(this, true, activeSplit1?.versionId) { mv ->
+        S.openVersionsDialogWithNone(this, activeSplit1?.versionId) { mv: MVersion? ->
             if (mv == null) { // closing split version
                 disableSplitVersion()
             } else {
@@ -2432,7 +2433,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         // # fill adapter with new data. make sure all checked states are reset
         versesController.uncheckAllVerses(true)
 
-        val versesAttributes = VerseAttributeLoader.load(S.getDb(), cr, ariBc, verses)
+        val versesAttributes = VerseAttributeLoader.load(S.db, cr, ariBc, verses)
 
         val newData = VersesDataModel(ariBc, verses, nblock, pericope_aris, pericope_blocks, version, versionId, versesAttributes)
         dataSetter(newData)
@@ -2547,13 +2548,14 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
 
         override fun onBookmarkAttributeClick(version: Version, versionId: String, ari: Int) {
-            val markers = S.getDb().listMarkersForAriKind(ari, Marker.Kind.bookmark)
+            val markers = S.db.listMarkersForAriKind(ari, Marker.Kind.bookmark)
             if (markers.size == 1) {
                 openBookmarkDialog(markers[0]._id)
             } else {
-                MaterialDialog.Builder(this@IsiActivity)
-                    .title(R.string.edit_bookmark)
-                    .showWithAdapter(MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.bookmark))
+                MaterialDialog(this@IsiActivity).show {
+                    title(R.string.edit_bookmark)
+                    withAdapter(MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.bookmark))
+                }
             }
         }
 
@@ -2562,13 +2564,14 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
 
         override fun onNoteAttributeClick(version: Version, versionId: String, ari: Int) {
-            val markers = S.getDb().listMarkersForAriKind(ari, Marker.Kind.note)
+            val markers = S.db.listMarkersForAriKind(ari, Marker.Kind.note)
             if (markers.size == 1) {
                 openNoteDialog(markers[0]._id)
             } else {
-                MaterialDialog.Builder(this@IsiActivity)
-                    .title(R.string.edit_note)
-                    .showWithAdapter(MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.note))
+                MaterialDialog(this@IsiActivity).show {
+                    title(R.string.edit_note)
+                    withAdapter(MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.note))
+                }
             }
         }
 
@@ -2586,7 +2589,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             val kind: Marker.Kind,
         ) : MaterialDialogAdapterHelper.Adapter() {
 
-            val textSizeMult = S.getDb().getPerVersionSettings(versionId).fontSizeMultiplier
+            val textSizeMult = S.db.getPerVersionSettings(versionId).fontSizeMultiplier
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
                 return MarkerHolder(layoutInflater.inflate(R.layout.item_marker, parent, false))
@@ -2621,7 +2624,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
                         holder.lSnippet.visibility = View.GONE
 
-                        val labels = S.getDb().listLabelsByMarker(marker)
+                        val labels = S.db.listLabelsByMarker(marker)
                         if (labels.size != 0) {
                             holder.panelLabels.visibility = View.VISIBLE
                             holder.panelLabels.removeAllViews()
@@ -2660,7 +2663,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
 
         override fun onProgressMarkAttributeClick(version: Version, versionId: String, preset_id: Int) {
-            S.getDb().getProgressMarkByPresetId(preset_id)?.let { progressMark ->
+            S.db.getProgressMarkByPresetId(preset_id)?.let { progressMark ->
                 ProgressMarkRenameDialog.show(this@IsiActivity, progressMark, object : ProgressMarkRenameDialog.Listener {
                     override fun onOked() {
                         lsSplit0.uncheckAllVerses(true)
@@ -2686,10 +2689,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
                 startActivity(intent)
             } catch (e: ActivityNotFoundException) {
-                MaterialDialog.Builder(this@IsiActivity)
-                    .content(R.string.maps_could_not_open)
-                    .positiveText(R.string.ok)
-                    .show()
+                MaterialDialog(this@IsiActivity).show {
+                    message(R.string.maps_could_not_open)
+                    positiveButton(R.string.ok)
+                }
             }
         }
     }
@@ -2759,10 +2762,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                                         }
 
                                         else -> {
-                                            MaterialDialog.Builder(this@IsiActivity)
-                                                .content(String.format(Locale.US, "Error: footnote at arif 0x%08x contains unsupported tag %s", arif, tag))
-                                                .positiveText(R.string.ok)
-                                                .show()
+                                            MaterialDialog(this@IsiActivity).show {
+                                                message(text = String.format(Locale.US, "Error: footnote at arif 0x%08x contains unsupported tag %s", arif, tag))
+                                                positiveButton(R.string.ok)
+                                            }
                                         }
                                     }
                                 }
@@ -2796,22 +2799,22 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                             else -> null
                         }.orEmpty()
 
-                        footnoteDialog = MaterialDialog.Builder(this@IsiActivity)
-                            .title(title)
-                            .content(rendered)
-                            .positiveText(R.string.ok)
-                            .show()
+                        footnoteDialog = MaterialDialog(this@IsiActivity).show {
+                            title(text = title)
+                            message(text = rendered)
+                            positiveButton(R.string.ok)
+                        }
                     } else {
-                        MaterialDialog.Builder(this@IsiActivity)
-                            .content(String.format(Locale.US, "Error: footnote arif 0x%08x couldn't be loaded", arif))
-                            .positiveText(R.string.ok)
-                            .show()
+                        MaterialDialog(this@IsiActivity).show {
+                            message(text = String.format(Locale.US, "Error: footnote arif 0x%08x couldn't be loaded", arif))
+                            positiveButton(R.string.ok)
+                        }
                     }
                 } else {
-                    MaterialDialog.Builder(this@IsiActivity)
-                        .content("Error: Unknown inline link type: $type")
-                        .positiveText(R.string.ok)
-                        .show()
+                    MaterialDialog(this@IsiActivity) .show {
+                        message(text = "Error: Unknown inline link type: $type")
+                        positiveButton(R.string.ok)
+                    }
                 }
             }
         }
@@ -2855,7 +2858,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         data: VersesDataModel,
     ): VersesDataModel {
         val versesAttributes = VerseAttributeLoader.load(
-            S.getDb(),
+            S.db,
             contentResolver,
             data.ari_bc_,
             data.verses_
@@ -2923,7 +2926,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     override fun bProgressMarkList_click() {
         Tracker.trackEvent("left_drawer_progress_mark_list_click")
-        if (S.getDb().countAllProgressMarks() > 0) {
+        if (S.db.countAllProgressMarks() > 0) {
             val dialog = ProgressMarkListDialog()
             dialog.progressMarkSelectedListener = { preset_id ->
                 gotoProgressMark(preset_id)
@@ -2931,10 +2934,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             dialog.show(supportFragmentManager, "dialog_progress_mark_list")
             leftDrawer.closeDrawer()
         } else {
-            MaterialDialog.Builder(this)
-                .content(R.string.pm_activate_tutorial)
-                .positiveText(R.string.ok)
-                .show()
+            MaterialDialog(this).show {
+                message(R.string.pm_activate_tutorial)
+                positiveButton(R.string.ok)
+            }
         }
     }
 
@@ -2960,7 +2963,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     private fun gotoProgressMark(preset_id: Int) {
-        val progressMark = S.getDb().getProgressMarkByPresetId(preset_id) ?: return
+        val progressMark = S.db.getProgressMarkByPresetId(preset_id) ?: return
 
         val ari = progressMark.ari
 
@@ -2969,10 +2972,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             jumpToAri(ari)
         } else {
             Tracker.trackEvent("left_drawer_progress_mark_pin_click_failed")
-            MaterialDialog.Builder(this)
-                .content(R.string.pm_activate_tutorial)
-                .positiveText(R.string.ok)
-                .show()
+            MaterialDialog(this).show {
+                message(R.string.pm_activate_tutorial)
+                positiveButton(R.string.ok)
+            }
         }
     }
 

@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Restabileşte</string>
     <string name="ekspor_ke_sd_card">Rezerve</string>
     <string name="menuBantuan">Ajutor</string>
-    <string name="beri_saran_title">Sugestie</string>
-    <string name="menuDevotion">Devoţional</string>
+	<string name="menuDevotion">Devoţional</string>
     <string name="search">Caută</string>
     <string name="activity_title_markers">Marcaje</string>
     <string name="menu_markers">Însemnări</string>
@@ -514,9 +513,6 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Aplicație de Biblie 100% gratuită, licențiată sub Licența Apache 2.0</string>
     <string name="about_translators">Traducători</string>
     <string name="about_user_guide">Ghidul utilizatorului</string>
-    <string name="about_beta_feedback">Feedback-ul versiunii Beta</string>
-    <string name="about_enable_beta">Încearcă versiunea Beta</string>
-    <string name="about_enable_beta_confirmation">Conectați-vă la Google și atingeți butonul DEVIN TESTER pentru a încerca versiunea Beta cu caracteristici noi și îmbunătățiri!</string>
     <string name="about_version_name">versiune %s</string>
     <string name="about_material_sources">Surse materiale</string>
     <string name="about_credits">Credite</string>

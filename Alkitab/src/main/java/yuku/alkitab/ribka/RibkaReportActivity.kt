@@ -9,7 +9,9 @@ import android.widget.RadioButton
 import android.widget.TextView
 import androidx.core.util.PatternsCompat
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.google.android.material.textfield.TextInputLayout
+import java.io.IOException
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.FormBody
@@ -20,25 +22,25 @@ import yuku.alkitab.base.App
 import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.util.FormattedVerseText
-import yuku.alkitab.base.widget.VerseRendererHelper
+import yuku.alkitab.base.widget.MaterialDialogProgressHelper.progress
+import yuku.alkitab.base.widget.VerseRendererJavaHelper
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
-import java.io.IOException
 
 class RibkaReportActivity : BaseActivity() {
-    lateinit var tRibkaVerseText: TextView
-    lateinit var tRibkaReference: TextView
-    lateinit var oRibkaCategoryTypo: RadioButton
-    lateinit var oRibkaCategoryWord: RadioButton
-    lateinit var oRibkaCategorySentence: RadioButton
-    lateinit var oRibkaCategoryContent: RadioButton
-    lateinit var oRibkaCategoryOthers: RadioButton
-    lateinit var tRibkaSuggestionContainer: TextInputLayout
-    lateinit var tRibkaSuggestion: EditText
-    lateinit var tRibkaEmailContainer: TextInputLayout
-    lateinit var tRibkaEmail: EditText
-    lateinit var tRibkaRemarks: EditText
-    lateinit var bRibkaSend: View
+    private lateinit var tRibkaVerseText: TextView
+    private lateinit var tRibkaReference: TextView
+    private lateinit var oRibkaCategoryTypo: RadioButton
+    private lateinit var oRibkaCategoryWord: RadioButton
+    private lateinit var oRibkaCategorySentence: RadioButton
+    private lateinit var oRibkaCategoryContent: RadioButton
+    private lateinit var oRibkaCategoryOthers: RadioButton
+    private lateinit var tRibkaSuggestionContainer: TextInputLayout
+    private lateinit var tRibkaSuggestion: EditText
+    private lateinit var tRibkaEmailContainer: TextInputLayout
+    private lateinit var tRibkaEmail: EditText
+    private lateinit var tRibkaRemarks: EditText
+    private lateinit var bRibkaSend: View
 
     var ari: Int = 0
     lateinit var verseText: String
@@ -71,7 +73,7 @@ class RibkaReportActivity : BaseActivity() {
         versionDescription = intent.getStringExtra("versionDescription")
 
         tRibkaReference.text = reference
-        VerseRendererHelper.render(
+        VerseRendererJavaHelper.render(
             lText = tRibkaVerseText,
             ari = ari,
             text = verseText
@@ -98,10 +100,10 @@ class RibkaReportActivity : BaseActivity() {
             oRibkaCategoryContent.isChecked -> "content"
             oRibkaCategoryOthers.isChecked -> "others"
             else -> {
-                MaterialDialog.Builder(this)
-                    .content(R.string.ribka_category_error)
-                    .positiveText(R.string.ok)
-                    .show()
+                MaterialDialog(this).show {
+                    message(R.string.ribka_category_error)
+                    positiveButton(R.string.ok)
+                }
                 null
             }
         } ?: return
@@ -135,21 +137,21 @@ class RibkaReportActivity : BaseActivity() {
         form.add("reportRemarks", remarks)
         form.add("reportVersionDescription", versionDescription.orEmpty())
 
-        val pd = MaterialDialog.Builder(this)
-            .content(R.string.ribka_sending_progress)
-            .cancelable(false)
-            .progress(true, 0)
-            .show()
+        val pd = MaterialDialog(this).show {
+            message(R.string.ribka_sending_progress)
+            cancelable(false)
+            progress(true, 0)
+        }
 
         Connections.okHttp.newCall(Request.Builder().url(BuildConfig.RIBKA_FUNCTIONS_HOST + "addIssue").post(form.build()).build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 pd.dismiss()
 
                 runOnUiThread {
-                    MaterialDialog.Builder(this@RibkaReportActivity)
-                        .content(R.string.ribka_send_error)
-                        .positiveText(R.string.ok)
-                        .show()
+                    MaterialDialog(this@RibkaReportActivity).show {
+                        message(R.string.ribka_send_error)
+                        positiveButton(R.string.ok)
+                    }
                 }
             }
 
@@ -158,20 +160,18 @@ class RibkaReportActivity : BaseActivity() {
 
                 if (response.isSuccessful) {
                     runOnUiThread {
-                        MaterialDialog.Builder(this@RibkaReportActivity)
-                            .content(R.string.ribka_send_success)
-                            .positiveText(R.string.ok)
-                            .show()
-                            .setOnDismissListener {
-                                finish()
-                            }
+                        MaterialDialog(this@RibkaReportActivity).show {
+                            message(R.string.ribka_send_success)
+                            positiveButton(R.string.ok)
+                            onDismiss { finish() }
+                        }
                     }
                 } else {
                     runOnUiThread {
-                        MaterialDialog.Builder(this@RibkaReportActivity)
-                            .content(TextUtils.expandTemplate(getString(R.string.ribka_send_failure), "${response.code} ${response.body?.string()}"))
-                            .positiveText(R.string.ok)
-                            .show()
+                        MaterialDialog(this@RibkaReportActivity).show {
+                            message(text = TextUtils.expandTemplate(getString(R.string.ribka_send_failure), "${response.code} ${response.body?.string()}"))
+                            positiveButton(R.string.ok)
+                        }
                     }
                 }
             }

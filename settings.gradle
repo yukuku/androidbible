@@ -1,6 +1,5 @@
 include ':Alkitab'
 include ':AlkitabModel'
-include ':AlkitabFeedback'
 include ':AlkitabIntegration'
 include ':AlkitabIo'
 include ':AlkitabYes2'

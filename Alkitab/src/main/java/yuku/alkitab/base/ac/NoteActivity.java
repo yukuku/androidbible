@@ -14,10 +14,11 @@ import android.view.MotionEvent;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
-import com.afollestad.materialdialogs.MaterialDialog;
 import java.util.Date;
+import kotlin.Unit;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -25,6 +26,7 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.settings.SettingsActivity;
 import yuku.alkitab.base.widget.CallbackSpan;
+import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Marker;
 import yuku.alkitab.util.IntArrayList;
@@ -155,10 +157,7 @@ public class NoteActivity extends BaseActivity {
 
 		final IntArrayList verseRanges = DesktopVerseParser.verseStringToAri(verse);
 		if (verseRanges == null || verseRanges.size() == 0) {
-			new MaterialDialog.Builder(widget.getContext())
-				.content(R.string.note_activity_cannot_parse_verse)
-				.positiveText(R.string.ok)
-				.show();
+			MaterialDialogJavaHelper.showOkDialog(widget.getContext(), getString(R.string.note_activity_cannot_parse_verse));
 			return;
 		}
 
@@ -230,7 +229,7 @@ public class NoteActivity extends BaseActivity {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
+	public boolean onCreateOptionsMenu(@NonNull final Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_note, menu);
 		return true;
 	}
@@ -256,10 +255,11 @@ public class NoteActivity extends BaseActivity {
 			return true;
 		} else if (itemId == R.id.menuDelete) {// if it's indeed not exist, check if we have some text, if we do, prompt first
 			if (marker != null || tCaption.length() > 0) {
-				new MaterialDialog.Builder(this)
-					.content(R.string.anda_yakin_mau_menghapus_catatan_ini)
-					.positiveText(R.string.delete)
-					.onPositive((dialog, which) -> {
+				MaterialDialogJavaHelper.showOkDialog(
+					this,
+					getString(R.string.anda_yakin_mau_menghapus_catatan_ini),
+					getString(R.string.delete),
+					() -> {
 						if (marker != null) {
 							// really delete from db
 							S.getDb().deleteNonBookmarkMarkerById(marker._id);
@@ -269,9 +269,10 @@ public class NoteActivity extends BaseActivity {
 
 						setResult(RESULT_OK);
 						realFinish();
-					})
-					.negativeText(R.string.cancel)
-					.show();
+						return Unit.INSTANCE;
+					},
+					getString(R.string.cancel)
+				);
 			} else { // no existing marker and buffer is empty
 				realFinish(); // no need to setResult(RESULT_OK), because nothing is to be reloaded
 			}
