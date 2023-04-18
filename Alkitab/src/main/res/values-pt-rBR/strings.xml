@@ -532,9 +532,7 @@
     <string name="menuCommentary">Comentário</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Não foi possível abrir o aplicativo de Mapas Bíblicos.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Pasta superior</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Baixados</string>
     <string name="notification_channel_devotion_downloader_name">Devoções Baixadas</string>
     <string name="notification_channel_devotion_reminder_name">Lembretes das Devoções</string>

@@ -523,8 +523,6 @@
     <string name="menuCommentary">注釋</string>
     <!-- Maps -->
     <string name="maps_could_not_open">未能開啟聖經地圖程式。</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">上一層資料夾</string>
     <!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">下載</string>
     <string name="notification_channel_devotion_downloader_name">靈修下載</string>

@@ -527,8 +527,6 @@
     <string name="menuCommentary">အနက်ဖွင့်ကျမ်း</string>
     <!-- Maps -->
     <string name="maps_could_not_open">သမ္မာကျမ်းစာမြေပုံ အက်ပ်ကို ဖွင့်လို့မရပါ။</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">အထက်ဖိုင်တွဲ</string>
     <!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">ဒေါင်းလုဒ်ဆွဲချထားသည့် ဖိုင်များ</string>
     <string name="notification_channel_devotion_downloader_name">ဒေါင်းလုဒ်ဆွဲချထားသည့် ဝတ်ပြုရေးဆိုင်ရာ ဖိုင်များ</string>

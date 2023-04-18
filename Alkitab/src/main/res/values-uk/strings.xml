@@ -527,9 +527,7 @@
     <string name="menuCommentary">Коментарі</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Не вдалося відкрити програму Bible Maps.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Батьківський каталог</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Завантаження</string>
     <string name="notification_channel_devotion_downloader_name">Завантаження роздумів</string>
     <string name="notification_channel_devotion_reminder_name">Нагадування про роздуми</string>

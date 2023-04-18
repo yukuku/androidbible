@@ -528,8 +528,6 @@
     <string name="menuCommentary">Komentáře</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Nelze otevřít aplikaci Bible Maps.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Nadřazená složka</string>
     <!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Stažené soubory</string>
     <string name="notification_channel_devotion_downloader_name">Oddanost stahování</string>

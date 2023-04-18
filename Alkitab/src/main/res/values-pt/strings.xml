@@ -527,9 +527,7 @@
     <string name="menuCommentary">Comentário</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Não foi possível abrir o aplicativo Mapas da Bíblia.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Pasta principal</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Downloads</string>
     <string name="notification_channel_devotion_downloader_name">Downloads de devocao</string>
     <string name="notification_channel_devotion_reminder_name">Remarcas para lembrar se a devocao</string>

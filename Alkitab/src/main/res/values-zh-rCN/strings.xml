@@ -532,9 +532,7 @@
     <string name="menuCommentary">注释</string>
     <!-- Maps -->
     <string name="maps_could_not_open">未能开启圣经地图程式。</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">上一层资料夹</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">下载</string>
     <string name="notification_channel_devotion_downloader_name">灵修下载</string>
     <string name="notification_channel_devotion_reminder_name">灵修提示</string>

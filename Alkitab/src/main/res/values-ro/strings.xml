@@ -532,9 +532,7 @@
     <string name="menuCommentary">Comentariu</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Nu s-a putut deschide aplicația Hărți biblice.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Folder părinte</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Descărcări</string>
     <string name="notification_channel_devotion_downloader_name">Descărcări devoționale</string>
     <string name="notification_channel_devotion_reminder_name">Memento-uri devoționale</string>

@@ -532,9 +532,7 @@
     <string name="menuCommentary">Bình luận</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Không thể mở ứng dụng Kinh Thánh.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Mục dành cho phụ huynh</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Các tài liệu được tải về</string>
     <string name="notification_channel_devotion_downloader_name">Các tài liệu bồi linh tĩnh tâm được tải về</string>
     <string name="notification_channel_devotion_reminder_name">Vài điều nhắc nhở về tài liệu bồi linh tĩnh tâm</string>

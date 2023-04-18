@@ -524,9 +524,7 @@
     <string name="menuCommentary">Σχόλιο</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Δεν μπόρεσε να ανοίξει το πρόγραμμα Χαρτών της Βίβλου.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Μητρικός φάκελλος</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Κατέβασμα από τον υπολογιστή διάφορες φορές</string>
     <string name="notification_channel_devotion_downloader_name">Κατέβασμα φακέλλων με αγαπημένο περιεχόμενο</string>
     <string name="notification_channel_devotion_reminder_name">Υπενθυμίσεις αφοσίωσης</string>

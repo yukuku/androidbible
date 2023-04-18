@@ -527,9 +527,7 @@
     <string name="menuCommentary">주석</string>
     <!-- Maps -->
     <string name="maps_could_not_open">성경 지도 앱을 열 수 없습니다.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">상위 폴더</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">다운로드</string>
     <string name="notification_channel_devotion_downloader_name">묵상 다운로드</string>
     <string name="notification_channel_devotion_reminder_name">묵상 알람</string>

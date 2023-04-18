@@ -524,9 +524,7 @@
     <string name="menuCommentary">Kommentar</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Kunne ikke åbne Bibelkort-appen.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Forældre mappe</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Overførsler</string>
     <string name="notification_channel_devotion_downloader_name">Andagtsoverførsler</string>
     <string name="notification_channel_devotion_reminder_name">Andagtspåmindelser</string>

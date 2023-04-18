@@ -527,8 +527,6 @@
     <string name="menuCommentary">Коментарии</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Приложението Bible Maps не е открито.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Родителска папка</string>
     <!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Изтегляния</string>
     <string name="notification_channel_devotion_downloader_name">Изтегляне на посвещения</string>

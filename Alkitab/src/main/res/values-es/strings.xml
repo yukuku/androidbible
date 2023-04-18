@@ -533,9 +533,7 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
     <string name="menuCommentary">Comentario</string>
     <!-- Maps -->
     <string name="maps_could_not_open">No se pudo abrir la aplicación Bible Maps.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Carpeta Principal</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Descargas</string>
     <string name="notification_channel_devotion_downloader_name">Descargas de devoción</string>
     <string name="notification_channel_devotion_reminder_name">Recordatorios de devoción</string>

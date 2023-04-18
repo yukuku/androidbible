@@ -543,9 +543,7 @@
     <string name="menuCommentary">Tafsiran</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Tidak bisa membuka aplikasi Peta Alkitab.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Folder induk</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Unduhan</string>
     <string name="notification_channel_devotion_downloader_name">Unduhan renungan</string>
     <string name="notification_channel_devotion_reminder_name">Pengingat renungan</string>

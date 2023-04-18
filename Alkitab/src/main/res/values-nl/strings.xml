@@ -531,9 +531,7 @@
     <string name="menuCommentary">Commentaar</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Kan de Bijbel kaarten app niet openen.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Begin map</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Downloads</string>
     <string name="notification_channel_devotion_downloader_name">Devotie downloads</string>
     <string name="notification_channel_devotion_reminder_name">Devotie herinneringen</string>

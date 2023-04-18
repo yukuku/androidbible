@@ -527,9 +527,7 @@
     <string name="menuCommentary">อรรถกถา</string>
     <!-- Maps -->
     <string name="maps_could_not_open">ไม่สามารถเปิดแอป Bible Maps (แผนที่พระคำภิร์)</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">โฟลเดอร์หลัก</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">ดาวน์โหลด</string>
     <string name="notification_channel_devotion_downloader_name">รายการดาวน์โหลดบทความประจำวัน</string>
     <string name="notification_channel_devotion_reminder_name">การแจ้งเตือนของบทความประจำวัน</string>

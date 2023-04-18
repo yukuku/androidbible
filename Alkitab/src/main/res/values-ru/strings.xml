@@ -532,9 +532,7 @@
     <string name="menuCommentary">Комментарии</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Не удалось открыть приложение Bible Maps.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Родительский каталог</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Загрузки</string>
     <string name="notification_channel_devotion_downloader_name">Загрузки размышлений</string>
     <string name="notification_channel_devotion_reminder_name">Напоминания о размышлениях</string>

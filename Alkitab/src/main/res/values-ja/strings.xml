@@ -527,9 +527,7 @@
     <string name="menuCommentary">解説</string>
     <!-- Maps -->
     <string name="maps_could_not_open">聖書マップのアプリを開くことができませんでした。</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">親フォルダ</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">ダウンロード</string>
     <string name="notification_channel_devotion_downloader_name">デボーションのダウンロード情報</string>
     <string name="notification_channel_devotion_reminder_name">デボーションのレマインダー</string>

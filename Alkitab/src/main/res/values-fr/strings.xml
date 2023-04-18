@@ -532,9 +532,7 @@
     <string name="menuCommentary">Commentaire</string>
     <!-- Maps -->
     <string name="maps_could_not_open">N\'a pas pu ouvrir l\'application Bible Maps.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Dossier parent</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Téléchargement</string>
     <string name="notification_channel_devotion_downloader_name">Téléchargement dévotionnel</string>
     <string name="notification_channel_devotion_reminder_name">Rappels de consacration</string>

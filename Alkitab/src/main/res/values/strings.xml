@@ -586,9 +586,6 @@
     <!-- Maps -->
     <string name="maps_could_not_open">Could not open the Bible Maps app.</string>
 
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Parent folder</string>
-
 	<!-- Notification channels -->
 	<string name="notification_channel_download_mapper_name">Downloads</string>
 	<string name="notification_channel_devotion_downloader_name">Devotion downloads</string>

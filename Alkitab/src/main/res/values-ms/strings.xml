@@ -524,9 +524,7 @@
     <string name="menuCommentary">Komen</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Tidak dapat membuka aplikasi Peta-Peta Alkitab.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Folder induk</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Muat turun</string>
     <string name="notification_channel_devotion_downloader_name">Muat turun Pengabdian</string>
     <string name="notification_channel_devotion_reminder_name">Peringatan Pengabdian</string>

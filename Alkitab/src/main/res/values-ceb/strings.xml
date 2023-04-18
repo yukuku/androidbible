@@ -523,7 +523,5 @@
     <string name="menuCommentary">Komentaryo</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Dili ma abli ang Bible Maps app.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Magulang na folder</string>
     <!-- Notification channels -->
 </resources>

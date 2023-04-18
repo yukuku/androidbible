@@ -524,8 +524,6 @@
     <string name="menuCommentary">Kommentaar</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Kon nie die Bybel Kaarte program oopmaak nie.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Primêre lêer</string>
     <!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Afgelaai</string>
     <string name="notification_channel_devotion_downloader_name">Toewydings afgelaai</string>

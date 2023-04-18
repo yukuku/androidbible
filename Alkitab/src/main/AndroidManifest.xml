@@ -296,7 +296,6 @@
 		<activity
 			android:name="yuku.alkitab.base.sync.SyncLoginActivity"
 			android:label="@string/sync_login_activity_title" />
-		<activity android:name="yuku.filechooser.FileChooserActivity" />
 		<activity
 			android:name="yuku.alkitab.base.ac.VersesDialogActivity"
 			android:exported="true"

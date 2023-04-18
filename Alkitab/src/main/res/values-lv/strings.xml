@@ -526,9 +526,7 @@
     <string name="menuCommentary">Komentāri</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Nevar atvērt Bībeles Kartes aplikāciju.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Vēcāku (parent) katalogs</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Lejupielādes</string>
     <string name="notification_channel_devotion_downloader_name">Mācīšanās lejuplādes</string>
     <string name="notification_channel_devotion_reminder_name">Mācīšanās atgādinājumi</string>

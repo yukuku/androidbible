@@ -524,9 +524,7 @@
     <string name="menuCommentary">Komentaryo</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Hindi ma buksan ang Mapa sa app ng Bible.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Pinagmulang folder</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">I-download</string>
     <string name="notification_channel_devotion_downloader_name">Pag-download ng debosyon</string>
     <string name="notification_channel_devotion_reminder_name">Paalala ng debosyon</string>

@@ -532,9 +532,7 @@
     <string name="menuCommentary">Kommentar</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Die Bible Map App konnte nicht geöffnet werden.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Eine Ebene nach oben</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Downloads</string>
     <string name="notification_channel_devotion_downloader_name">Andacht-Downloads</string>
     <string name="notification_channel_devotion_reminder_name">Erinnerungen an Andacht</string>
