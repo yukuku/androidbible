@@ -39,6 +39,7 @@ import yuku.alkitab.base.util.DownloadMapper
 import yuku.alkitab.base.util.Foreground
 import yuku.alkitab.base.widget.MaterialDialogProgressHelper.progress
 import yuku.alkitab.debug.R
+import yuku.alkitab.io.OptionalGzipInputStream
 import yuku.alkitab.tracking.Tracker
 
 private const val TAG = "VersionsActivity"
@@ -61,16 +62,25 @@ class VersionsActivity : BaseActivity() {
 
                 val displayName = c.getString(0)
 
-                when (val ext = displayName.substringAfterLast('.', "").lowercase()) {
-                    "yes", "pdb" -> contentResolver.openInputStream(uri)?.use { input ->
-                        val tempFile = File(cacheDir, "${UUID.randomUUID()}.$ext")
-                        tempFile.outputStream().use { output ->
-                            input.copyTo(output)
+                // Transparently decompress .yes.gz and .pdb.gz files
+                val ext = when {
+                    displayName.lowercase().endsWith(".gz") -> displayName.dropLast(3).substringAfterLast('.', "").lowercase()
+                    else -> displayName.substringAfterLast('.', "").lowercase()
+                }
+
+                when (ext) {
+                    "yes", "pdb" -> {
+                        val inputStream = contentResolver.openInputStream(uri)
+                        inputStream?.use { input ->
+                            val tempFile = File(cacheDir, "${UUID.randomUUID()}.$ext")
+                            tempFile.outputStream().use { output ->
+                                OptionalGzipInputStream(input).use { it.copyTo(output) }
+                            }
+                            onFileSelected(displayName, tempFile.absolutePath)
+                        } ?: MaterialDialog(this).show {
+                            message(R.string.ed_error_encountered)
+                            positiveButton(R.string.ok)
                         }
-                        onFileSelected(displayName, tempFile.absolutePath)
-                    } ?: MaterialDialog(this).show {
-                        message(R.string.ed_error_encountered)
-                        positiveButton(R.string.ok)
                     }
 
                     else -> MaterialDialog(this).show {
@@ -81,7 +91,8 @@ class VersionsActivity : BaseActivity() {
             }
         } catch (e: Exception) {
             MaterialDialog(this).show {
-                message(text = "$e")
+                title(R.string.ed_error_encountered)
+                message(text = "${e.javaClass.simpleName}: ${e.message}")
                 positiveButton(R.string.ok)
             }
         }
@@ -448,6 +459,7 @@ class VersionsActivity : BaseActivity() {
         ConvertOptionsDialog(this, pdbFilename, callback).show()
     }
 
+    // TODO make [file] must always point to a file in cache dir
     fun handleFileOpenYes(file: File) {
         try {
             val reader = YesReaderFactory.createYesReader(file.absolutePath) ?: throw Exception("Not a valid YES file.")
@@ -460,6 +472,7 @@ class VersionsActivity : BaseActivity() {
                 shortName = reader.shortName
                 longName = reader.longName
                 description = reader.description
+                // TODO do not use file.absolutePath, but copy to the permanent files dir (files/bible)
                 filename = file.absolutePath
                 ordering = maxOrdering + 1
                 preset_name = null
@@ -545,6 +558,7 @@ class VersionsActivity : BaseActivity() {
         // we are trying to open a file, so let's go to the DOWNLOADED tab, as it is more relevant.
         viewPager.currentItem = 1
 
+        // TODO fix this, displayName can sometimes be .gz. Check ext, not displayName
         if (displayName.endsWith(".yes", ignoreCase = true)) {
             Tracker.trackEvent("versions_open_yes")
             handleFileOpenYes(File(tempFilename))
