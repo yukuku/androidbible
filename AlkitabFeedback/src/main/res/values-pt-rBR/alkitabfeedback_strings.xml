@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alkitabfeedback_next">Próximo</string>
+    <string name="alkitabfeedback_prev">Anterior</string>
+    <string name="alkitabfeedback_finish">Enviar</string>
+    <string name="alkitabfeedback_review">Revisar</string>
+    <string name="alkitabfeedback_label_your_name">Nome</string>
+    <string name="alkitabfeedback_label_your_email">Email</string>
+    <string name="alkitabfeedback_label_message">Mensagem</string>
+    <string name="alkitabfeedback_hint_message">Qualquer coisa que quiser dizer ao desenvolvedor. Sugestões, reclamações, idéias, bugs, informações, etc.</string>
+    <string name="alkitabfeedback_title_about_you">Suas informações</string>
+    <string name="alkitabfeedback_submit_confirm_message">Envia sua mensagem para o desenvolvedor?</string>
+    <string name="alkitabfeedback_submit_confirm_button">Enviar</string>
+    <string name="alkitabfeedback_submit_thanks">Obrigado pela mensagem!</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alkitabfeedback_next">下一步</string>
+    <string name="alkitabfeedback_prev">上一步</string>
+    <string name="alkitabfeedback_finish">提交</string>
+    <string name="alkitabfeedback_review">检阅</string>
+    <string name="alkitabfeedback_label_your_name">名字</string>
+    <string name="alkitabfeedback_label_your_email">电邮</string>
+    <string name="alkitabfeedback_label_message">讯息</string>
+    <string name="alkitabfeedback_hint_message">任何你想对开发者说的话，建议、投诉、意见、故障、报告、资讯等。</string>
+    <string name="alkitabfeedback_title_about_you">你的资料</string>
+    <string name="alkitabfeedback_submit_confirm_message">传送你的讯息给开发者？</string>
+    <string name="alkitabfeedback_submit_confirm_button">传送</string>
+    <string name="alkitabfeedback_submit_thanks">谢谢你的讯息！</string>
+</resources>

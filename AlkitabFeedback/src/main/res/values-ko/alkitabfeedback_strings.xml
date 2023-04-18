@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alkitabfeedback_next">다음</string>
+    <string name="alkitabfeedback_prev">이전</string>
+    <string name="alkitabfeedback_finish">보내기</string>
+    <string name="alkitabfeedback_review">미리보기</string>
+    <string name="alkitabfeedback_label_your_name">이름</string>
+    <string name="alkitabfeedback_label_your_email">이메일</string>
+    <string name="alkitabfeedback_label_message">메시지</string>
+    <string name="alkitabfeedback_hint_message">개발자에게 전달하고 싶은 제안, 불편한 점, 기능 개선을 위한 새로운 아이디어, 버그, 혹은 기타 정보들을 입력해 주십시오.</string>
+    <string name="alkitabfeedback_title_about_you">사용자 정보</string>
+    <string name="alkitabfeedback_submit_confirm_message">개발자에게 메시지를 보내시겠습니까?</string>
+    <string name="alkitabfeedback_submit_confirm_button">보내기</string>
+    <string name="alkitabfeedback_submit_thanks">메시지를 보내주셔서 감사합니다!</string>
+</resources>

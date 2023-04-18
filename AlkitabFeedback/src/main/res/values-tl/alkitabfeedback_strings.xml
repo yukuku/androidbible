@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alkitabfeedback_next">Sunod</string>
+    <string name="alkitabfeedback_prev">Nakaraan</string>
+    <string name="alkitabfeedback_finish">Ipasa</string>
+    <string name="alkitabfeedback_review">Pagsusuri</string>
+    <string name="alkitabfeedback_label_your_name">Pangalan</string>
+    <string name="alkitabfeedback_label_your_email">Email</string>
+    <string name="alkitabfeedback_label_message">Mensahi</string>
+    <string name="alkitabfeedback_hint_message">Kung anu mang gusto mong sabihin sa developer. Mungkahi, mga reklamo, mga ideya, bug na mga report, impormasyon, etc.</string>
+    <string name="alkitabfeedback_title_about_you">Iyong impormasyon</string>
+    <string name="alkitabfeedback_submit_confirm_message">Ipasa ang iyong mensahi sa developer?</string>
+    <string name="alkitabfeedback_submit_confirm_button">Ipasa</string>
+    <string name="alkitabfeedback_submit_thanks">Salamat sa iyong mensahi!</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alkitabfeedback_next">Következő</string>
+    <string name="alkitabfeedback_prev">Előző</string>
+    <string name="alkitabfeedback_finish">Elküldés</string>
+    <string name="alkitabfeedback_review">Értékelés</string>
+    <string name="alkitabfeedback_label_your_name">Név</string>
+    <string name="alkitabfeedback_label_your_email">E-mail</string>
+    <string name="alkitabfeedback_label_message">Üzenet</string>
+    <string name="alkitabfeedback_hint_message">Bármi, amit a fejlesztőnek szeretne elmondani. Javaslatok, problémák, ötletek, hibajelentések, információ, stb.</string>
+    <string name="alkitabfeedback_title_about_you">Adatai</string>
+    <string name="alkitabfeedback_submit_confirm_message">Elküldi az üzenetét a fejlesztőnek?</string>
+    <string name="alkitabfeedback_submit_confirm_button">Küldés</string>
+    <string name="alkitabfeedback_submit_thanks">Köszönet az üzenetért!</string>
+</resources>
