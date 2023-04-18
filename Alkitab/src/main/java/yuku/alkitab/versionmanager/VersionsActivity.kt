@@ -4,12 +4,13 @@ import android.app.DownloadManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
@@ -19,11 +20,10 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
 import com.google.android.material.tabs.TabLayout
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.PrintWriter
 import java.io.StringWriter
-import java.util.zip.GZIPInputStream
+import java.util.UUID
 import yuku.alkitab.base.App
 import yuku.alkitab.base.S
 import yuku.alkitab.base.ac.base.BaseActivity
@@ -40,11 +40,8 @@ import yuku.alkitab.base.util.Foreground
 import yuku.alkitab.base.widget.MaterialDialogProgressHelper.progress
 import yuku.alkitab.debug.R
 import yuku.alkitab.tracking.Tracker
-import yuku.filechooser.FileChooserActivity
-import yuku.filechooser.FileChooserConfig
 
 private const val TAG = "VersionsActivity"
-private const val REQCODE_openFile = 1
 
 class VersionsActivity : BaseActivity() {
     private lateinit var sectionsPagerAdapter: SectionsPagerAdapter
@@ -52,6 +49,43 @@ class VersionsActivity : BaseActivity() {
     private lateinit var tablayout: TabLayout
 
     var query_text: String? = null
+
+    private val getContentRequest = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        if (uri == null) return@registerForActivityResult
+
+        try {
+            contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use { c ->
+                if (!c.moveToNext()) {
+                    return@registerForActivityResult
+                }
+
+                val displayName = c.getString(0)
+
+                when (val ext = displayName.substringAfterLast('.', "").lowercase()) {
+                    "yes", "pdb" -> contentResolver.openInputStream(uri)?.use { input ->
+                        val tempFile = File(cacheDir, "${UUID.randomUUID()}.$ext")
+                        tempFile.outputStream().use { output ->
+                            input.copyTo(output)
+                        }
+                        onFileSelected(displayName, tempFile.absolutePath)
+                    } ?: MaterialDialog(this).show {
+                        message(R.string.ed_error_encountered)
+                        positiveButton(R.string.ok)
+                    }
+
+                    else -> MaterialDialog(this).show {
+                        message(R.string.ed_invalid_file_selected)
+                        positiveButton(R.string.ok)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            MaterialDialog(this).show {
+                message(text = "$e")
+                positiveButton(R.string.ok)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -283,7 +317,7 @@ class VersionsActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menuAddFromLocal -> {
-                clickOnOpenFile()
+                getContentRequest.launch("*/*")
                 true
             }
 
@@ -294,15 +328,6 @@ class VersionsActivity : BaseActivity() {
 
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    private fun clickOnOpenFile() {
-        val config = FileChooserConfig()
-        config.mode = FileChooserConfig.Mode.Open
-        config.initialDir = Environment.getExternalStorageDirectory().absolutePath
-        config.title = getString(R.string.ed_choose_pdb_or_yes_file)
-        config.pattern = ".*\\.(?i:pdb|yes|yes\\.gz)"
-        startActivityForResult(FileChooserActivity.createIntent(App.context, config), REQCODE_openFile)
     }
 
     inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
@@ -516,74 +541,24 @@ class VersionsActivity : BaseActivity() {
             .show()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQCODE_openFile) {
-            val result = FileChooserActivity.obtainResult(data) ?: return
+    private fun onFileSelected(displayName: String, tempFilename: String) {
+        // we are trying to open a file, so let's go to the DOWNLOADED tab, as it is more relevant.
+        viewPager.currentItem = 1
 
-            // we are trying to open a file, so let's go to the DOWNLOADED tab, as it is more relevant.
-            viewPager.currentItem = 1
-            val filename = result.firstFilename
-            if (filename.endsWith(".yes.gz", ignoreCase = true)) {
-                // decompress or see if the same filename without .gz exists
-                val maybeDecompressed = File(filename.substring(0, filename.length - 3))
-                if (maybeDecompressed.exists() && !maybeDecompressed.isDirectory && maybeDecompressed.canRead()) {
-                    handleFileOpenYes(maybeDecompressed)
-                } else {
-                    val pd = MaterialDialog(this).show {
-                        message(R.string.sedang_mendekompres_harap_tunggu)
-                        cancelable(false)
-                        progress(true, 0)
-                    }
+        if (displayName.endsWith(".yes", ignoreCase = true)) {
+            Tracker.trackEvent("versions_open_yes")
+            handleFileOpenYes(File(tempFilename))
 
-                    Background.run {
-                        val tmpfile3 = filename + "-" + (Math.random() * 100000).toInt() + ".tmp3"
-                        val result2 = try {
-                            val input = GZIPInputStream(FileInputStream(filename))
-                            val output = FileOutputStream(tmpfile3) // decompressed file
-                            input.copyTo(output)
-                            output.close()
-                            input.close()
+        } else if (displayName.endsWith(".pdb", ignoreCase = true)) {
+            Tracker.trackEvent("versions_open_pdb")
+            handleFileOpenPdb(tempFilename)
 
-                            val renameOk = File(tmpfile3).renameTo(maybeDecompressed)
-                            if (!renameOk) {
-                                throw RuntimeException("Failed to rename!")
-                            }
-
-                            maybeDecompressed
-                        } catch (e: Exception) {
-                            null
-                        } finally {
-                            AppLog.d(TAG, "menghapus tmpfile3: $tmpfile3")
-                            File(tmpfile3).delete()
-                        }
-
-                        Foreground.run {
-                            pd.dismiss()
-
-                            if (result2 != null) {
-                                Tracker.trackEvent("versions_open_yes_gz")
-                                handleFileOpenYes(result2)
-                            }
-                        }
-                    }
-                }
-            } else if (filename.endsWith(".yes", ignoreCase = true)) {
-                Tracker.trackEvent("versions_open_yes")
-                handleFileOpenYes(File(filename))
-
-            } else if (filename.endsWith(".pdb", ignoreCase = true)) {
-                Tracker.trackEvent("versions_open_pdb")
-                handleFileOpenPdb(filename)
-
-            } else {
-                MaterialDialog(this).show {
-                    message(R.string.ed_invalid_file_selected)
-                    positiveButton(R.string.ok)
-                }
+        } else {
+            MaterialDialog(this).show {
+                message(R.string.ed_invalid_file_selected)
+                positiveButton(R.string.ok)
             }
-            return
         }
-        super.onActivityResult(requestCode, resultCode, data)
     }
 
     companion object {
