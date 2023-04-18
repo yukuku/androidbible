@@ -1713,7 +1713,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
     }
 
-    fun referenceFromSelectedVerses(selectedVerses: IntArrayList, book: Book): CharSequence {
+    fun referenceFromSelectedVerses(selectedVerses: IntArrayList, book: Book): String {
         return when (selectedVerses.size()) {
             // should not be possible. So we don't do anything.
             0 -> book.reference(this.chapter_1)

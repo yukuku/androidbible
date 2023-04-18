@@ -9,6 +9,7 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.customview.DialogCustomViewExtKt;
 import com.compactbyte.android.bible.PDBFileStream;
 import com.compactbyte.bibleplus.reader.BiblePlusPDB;
 import com.compactbyte.bibleplus.reader.BookInfo;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import kotlin.Unit;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.R;
@@ -91,15 +93,12 @@ public class ConvertOptionsDialog {
             return;
         }
 
-        this.alert = new MaterialDialog.Builder(context)
-            .customView(R.layout.dialog_pdbconvert_options, false)
-            .title(R.string.pdb_file_options)
-            .positiveButton(R.string.ok)
-            .negativeText(R.string.cancel)
-            .onPositive((dialog, which) -> bOk_click())
-            .build();
+        this.alert = ConvertOptionsDialogJavaHelper.buildMaterialDialog(context, () -> {
+            bOk_click();
+            return Unit.INSTANCE;
+        });
 
-        final View dialogLayout = this.alert.getCustomView();
+        final View dialogLayout = DialogCustomViewExtKt.getCustomView(this.alert);
 
         cbEncoding = dialogLayout.findViewById(R.id.cbEncoding);
         lSample = dialogLayout.findViewById(R.id.lSample);

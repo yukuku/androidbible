@@ -6,8 +6,9 @@ import com.afollestad.materialdialogs.list.customListAdapter
 
 object MaterialDialogAdapterHelper {
     @JvmStatic
-    fun MaterialDialog.withAdapter(adapter: Adapter) {
+    fun MaterialDialog.withAdapter(adapter: Adapter): MaterialDialog {
         adapter.dialog = customListAdapter(adapter)
+        return this
     }
 
     abstract class Adapter : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
