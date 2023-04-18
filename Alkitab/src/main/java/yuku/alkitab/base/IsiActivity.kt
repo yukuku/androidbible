@@ -121,7 +121,7 @@ import yuku.alkitab.base.widget.TextAppearancePanel
 import yuku.alkitab.base.widget.TwofingerLinearLayout
 import yuku.alkitab.base.widget.VerseInlineLinkSpan
 import yuku.alkitab.base.widget.VerseRenderer
-import yuku.alkitab.base.widget.VerseRendererHelper
+import yuku.alkitab.base.widget.VerseRendererJavaHelper
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Book
@@ -838,7 +838,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         val rawVerseText = activeSplit0.version.loadVerseText(ari) ?: ""
                         val info = S.db.getHighlightColorRgb(ari)
 
-                        VerseRendererHelper.render(ari = ari, text = rawVerseText, ftr = ftr)
+                        VerseRendererJavaHelper.render(ari = ari, text = rawVerseText, ftr = ftr)
                         TypeHighlightDialog(this@IsiActivity, ari, listener, colorRgb, info, reference, ftr.result)
                     } else {
                         TypeHighlightDialog(this@IsiActivity, ariBc, selected, listener, colorRgb, reference)

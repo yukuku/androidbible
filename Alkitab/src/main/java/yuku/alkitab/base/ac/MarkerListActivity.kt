@@ -49,7 +49,7 @@ import yuku.alkitab.base.util.Sqlitil
 import yuku.alkitab.base.util.TextColorUtil
 import yuku.alkitab.base.widget.VerseRenderer
 import yuku.alkitab.base.widget.VerseRenderer.FormattedTextResult
-import yuku.alkitab.base.widget.VerseRendererHelper
+import yuku.alkitab.base.widget.VerseRendererJavaHelper
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Label
 import yuku.alkitab.model.Marker
@@ -491,7 +491,7 @@ class MarkerListActivity : BaseActivity() {
                                         val rawVerseText = version.loadVerseText(ari)
                                         val ftr = FormattedTextResult()
                                         if (rawVerseText != null) {
-                                            VerseRendererHelper.render(
+                                            VerseRendererJavaHelper.render(
                                                 ari = ari,
                                                 text = rawVerseText,
                                                 verseNumberText = "",

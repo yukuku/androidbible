@@ -41,6 +41,7 @@ import yuku.alkitab.base.util.Background
 import yuku.alkitab.base.util.Highlights
 import yuku.alkitab.base.util.InstallationUtil.getInstallationId
 import yuku.alkitab.base.util.LabelColorUtil.encodeBackground
+import yuku.alkitab.base.widget.MaterialDialogProgressHelper.progress
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Label
@@ -415,7 +416,7 @@ class SecretSyncDebugActivity : BaseActivity() {
         val entities = mutableListOf<Sync.Entity<*>>()
 
         val pd = MaterialDialog(this).show {
-            // TODO .progress(true, 0)
+            progress(true, 0)
             message(text = "getting entities…")
         }
 

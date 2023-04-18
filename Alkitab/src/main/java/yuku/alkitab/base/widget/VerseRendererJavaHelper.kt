@@ -7,7 +7,7 @@ import yuku.alkitab.util.Ari
 /**
  * TODO Remove this when [VerseRenderer] is converted to Kotlin.
  */
-object VerseRendererHelper {
+object VerseRendererJavaHelper {
     fun render(
         lText: TextView? = null,
         lVerseNumber: TextView? = null,

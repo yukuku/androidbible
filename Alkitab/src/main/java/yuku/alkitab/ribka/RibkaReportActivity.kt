@@ -23,7 +23,7 @@ import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.util.FormattedVerseText
 import yuku.alkitab.base.widget.MaterialDialogProgressHelper.progress
-import yuku.alkitab.base.widget.VerseRendererHelper
+import yuku.alkitab.base.widget.VerseRendererJavaHelper
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 
@@ -73,7 +73,7 @@ class RibkaReportActivity : BaseActivity() {
         versionDescription = intent.getStringExtra("versionDescription")
 
         tRibkaReference.text = reference
-        VerseRendererHelper.render(
+        VerseRendererJavaHelper.render(
             lText = tRibkaVerseText,
             ari = ari,
             text = verseText

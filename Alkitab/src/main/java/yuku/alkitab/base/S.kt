@@ -33,18 +33,25 @@ object S {
          */
         @JvmField
         var fontSize2dp = 0f
+
         @JvmField
         var fontFace: Typeface? = null
+
         @JvmField
         var lineSpacingMult = 0f
+
         @JvmField
         var fontBold = 0
+
         @JvmField
         var fontColor = 0
+
         @JvmField
         var fontRedColor = 0
+
         @JvmField
         var backgroundColor = 0
+
         @JvmField
         var verseNumberColor = 0
 
@@ -57,22 +64,31 @@ object S {
         // everything below is in px
         @JvmField
         var indentParagraphFirst = 0
+
         @JvmField
         var indentParagraphRest = 0
+
         @JvmField
         var indentSpacing1 = 0
+
         @JvmField
         var indentSpacing2 = 0
+
         @JvmField
         var indentSpacing3 = 0
+
         @JvmField
         var indentSpacing4 = 0
+
         @JvmField
         var indentSpacingExtra = 0
+
         @JvmField
         var paragraphSpacingBefore = 0
+
         @JvmField
         var pericopeSpacingTop = 0
+
         @JvmField
         var pericopeSpacingBottom = 0
     }
@@ -266,14 +282,13 @@ object S {
 
         val options = versions.map { it.longName }
         MaterialDialog(activity)
-            .listItemsSingleChoice(items = options, initialSelection = selected) { dialog, index, _ ->
+            .listItemsSingleChoice(items = options, initialSelection = selected, waitForPositiveButton = false) { dialog, index, _ ->
                 if (index >= 0) {
                     val mv = versions[index]
                     onVersionSelected(mv)
                     dialog.dismiss()
                 }
             }
-            // TODO .alwaysCallSingleChoiceCallback()
             .positiveButton(R.string.versi_lainnya) {
                 activity.startActivity(VersionsActivity.createIntent())
             }
@@ -293,7 +308,7 @@ object S {
         val options = listOf(activity.getString(R.string.split_version_none)) + versions.map { it.longName }
 
         MaterialDialog(activity)
-            .listItemsSingleChoice(items = options, initialSelection = selected) { dialog, index, _ ->
+            .listItemsSingleChoice(items = options, initialSelection = selected, waitForPositiveButton = false) { dialog, index, _ ->
                 if (index == 0) {
                     onVersionSelected(null)
                 } else if (index > 0) {
@@ -302,7 +317,6 @@ object S {
                     dialog.dismiss()
                 }
             }
-            // TODO .alwaysCallSingleChoiceCallback()
             .positiveButton(R.string.versi_lainnya) {
                 activity.startActivity(VersionsActivity.createIntent())
             }

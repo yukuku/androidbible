@@ -79,8 +79,7 @@ class XrefDialog : BaseDialog() {
             return
         }
 
-        // TODO appcompat 1.1.0: change to requireArguments()
-        val arguments = requireNotNull(arguments)
+        val arguments = requireArguments()
         this.arif_source = arguments.getInt(EXTRA_arif)
         this.xrefEntry = sourceVersion.getXrefEntry(arif_source) ?: run {
             dismiss()
