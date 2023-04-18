@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+import com.example.android.wizardpager.AlkitabFeedbackActivity;
 import java.util.LinkedList;
 import name.fraser.neil.plaintext.diff_match_patch;
 import yuku.alkitab.base.App;
@@ -126,10 +127,8 @@ public class PatchTextActivity extends BaseActivity {
             return;
         }
 
-        final String patchTextMessage = "PATCHTEXT\n\n" + extraInfo + "\n\n" + sb.toString();
-
-        // TODO send patch using a different way
-        // startActivityForResult(MainActivity.createIntent(App.context, patchTextMessage), REQCODE_send);
+        final String patchTextMessage = "PATCHTEXT\n\n" + extraInfo + "\n\n" + sb;
+        startActivityForResult(AlkitabFeedbackActivity.createIntent(App.context, patchTextMessage), REQCODE_send);
     }
 
     @Override

@@ -16,10 +16,8 @@
 
 package com.example.android.wizardpager.wizard.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -27,17 +25,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
-
-import yuku.alkitabfeedback.R;
-
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import com.example.android.wizardpager.wizard.model.Page;
 import com.example.android.wizardpager.wizard.model.TextareaPage;
+import yuku.alkitabfeedback.R;
 
 public class TextareaFragment extends Fragment {
     private static final String ARG_KEY = "key";
 
     private PageFragmentCallbacks mCallbacks;
-    private String mKey;
     private TextareaPage mPage;
     private TextView mMessageView;
 
@@ -58,33 +55,33 @@ public class TextareaFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         Bundle args = getArguments();
-        mKey = args.getString(ARG_KEY);
+        String mKey = args.getString(ARG_KEY);
         mPage = (TextareaPage) mCallbacks.onGetPage(mKey);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.alkitabfeedback_fragment_page_textarea, container, false);
         ((TextView) rootView.findViewById(android.R.id.title)).setText(mPage.getTitle());
 
         mMessageView = rootView.findViewById(R.id.message);
         mMessageView.setText(mPage.getData().getString(Page.SIMPLE_DATA_KEY));
-		if (mPage.getData().getBoolean(TextareaPage.DISABLE_EDITING)) {
-			mMessageView.setEnabled(false);
-		}
+        if (mPage.getData().getBoolean(TextareaPage.DISABLE_EDITING)) {
+            mMessageView.setEnabled(false);
+        }
         return rootView;
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
 
-        if (!(activity instanceof PageFragmentCallbacks)) {
+        if (!(context instanceof PageFragmentCallbacks)) {
             throw new ClassCastException("Activity must implement PageFragmentCallbacks");
         }
 
-        mCallbacks = (PageFragmentCallbacks) activity;
+        mCallbacks = (PageFragmentCallbacks) context;
     }
 
     @Override
@@ -100,7 +97,7 @@ public class TextareaFragment extends Fragment {
         mMessageView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1,
-                    int i2) {
+                                          int i2) {
             }
 
             @Override
@@ -110,7 +107,7 @@ public class TextareaFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable editable) {
                 mPage.getData().putString(Page.SIMPLE_DATA_KEY,
-                        (editable != null) ? editable.toString() : null);
+                    (editable != null) ? editable.toString() : null);
                 mPage.notifyDataChanged();
             }
         });
@@ -124,7 +121,7 @@ public class TextareaFragment extends Fragment {
         // instead of setMenuVisibility.
         if (mMessageView != null) {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
-                    Context.INPUT_METHOD_SERVICE);
+                Context.INPUT_METHOD_SERVICE);
             if (!menuVisible) {
                 imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
             }

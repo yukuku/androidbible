@@ -18,8 +18,6 @@ package com.example.android.wizardpager.wizard.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
-import androidx.fragment.app.ListFragment;
-import androidx.core.content.res.ResourcesCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,21 +25,22 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.fragment.app.ListFragment;
 import com.example.android.wizardpager.wizard.model.AbstractWizardModel;
 import com.example.android.wizardpager.wizard.model.ModelCallbacks;
 import com.example.android.wizardpager.wizard.model.Page;
 import com.example.android.wizardpager.wizard.model.ReviewItem;
-import yuku.alkitabfeedback.R;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import yuku.alkitabfeedback.R;
 
 public class ReviewFragment extends ListFragment implements ModelCallbacks {
     private Callbacks mCallbacks;
     private AbstractWizardModel mWizardModel;
-    private List<ReviewItem> mCurrentReviewItems;
+    List<ReviewItem> mCurrentReviewItems;
 
     private ReviewAdapter mReviewAdapter;
 
@@ -55,8 +54,7 @@ public class ReviewFragment extends ListFragment implements ModelCallbacks {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.alkitabfeedback_fragment_page, container, false);
 
         TextView titleView = rootView.findViewById(android.R.id.title);
@@ -127,6 +125,9 @@ public class ReviewFragment extends ListFragment implements ModelCallbacks {
     }
 
     private class ReviewAdapter extends BaseAdapter {
+        ReviewAdapter() {
+        }
+
         @Override
         public boolean hasStableIds() {
             return true;

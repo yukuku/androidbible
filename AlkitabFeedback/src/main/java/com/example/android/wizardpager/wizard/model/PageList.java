@@ -17,15 +17,14 @@
 package com.example.android.wizardpager.wizard.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Represents a list of wizard pages.
  */
 public class PageList extends ArrayList<Page> implements PageTreeNode {
     public PageList(Page... pages) {
-        for (Page page : pages) {
-            add(page);
-        }
+        this.addAll(Arrays.asList(pages));
     }
 
     @Override

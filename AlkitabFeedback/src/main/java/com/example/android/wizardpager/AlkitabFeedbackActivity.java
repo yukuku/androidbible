@@ -43,7 +43,7 @@ import yuku.alkitabfeedback.AlkitabFeedbackModel;
 import yuku.alkitabfeedback.FeedbackSender;
 import yuku.alkitabfeedback.R;
 
-public class MainActivity extends FragmentActivity implements
+public class AlkitabFeedbackActivity extends FragmentActivity implements
     PageFragmentCallbacks,
     ReviewFragment.Callbacks,
     ModelCallbacks {
@@ -63,11 +63,11 @@ public class MainActivity extends FragmentActivity implements
     StepPagerStrip mStepPagerStrip;
 
     public static Intent createIntent(Context context) {
-        return new Intent(context, MainActivity.class);
+        return new Intent(context, AlkitabFeedbackActivity.class);
     }
 
     public static Intent createIntent(Context context, String patchTextMessage) {
-        return new Intent(context, MainActivity.class).putExtra("patchTextMessage", patchTextMessage);
+        return new Intent(context, AlkitabFeedbackActivity.class).putExtra("patchTextMessage", patchTextMessage);
     }
 
     @Override
@@ -150,7 +150,7 @@ public class MainActivity extends FragmentActivity implements
                     sender.trySend();
                 }
 
-                Toast.makeText(MainActivity.this, R.string.alkitabfeedback_submit_thanks, Toast.LENGTH_LONG).show();
+                Toast.makeText(AlkitabFeedbackActivity.this, R.string.alkitabfeedback_submit_thanks, Toast.LENGTH_LONG).show();
                 setResult(RESULT_OK);
                 finish();
             } else {

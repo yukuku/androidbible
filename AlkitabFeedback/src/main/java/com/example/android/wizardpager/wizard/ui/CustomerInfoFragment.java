@@ -16,10 +16,8 @@
 
 package com.example.android.wizardpager.wizard.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -27,17 +25,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
-
-import yuku.alkitabfeedback.R;
-
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import com.example.android.wizardpager.wizard.model.CustomerInfoPage;
+import yuku.alkitabfeedback.R;
 
 public class CustomerInfoFragment extends Fragment {
     private static final String ARG_KEY = "key";
 
     private PageFragmentCallbacks mCallbacks;
-    private String mKey;
-    private CustomerInfoPage mPage;
+    CustomerInfoPage mPage;
     private TextView mNameView;
     private TextView mEmailView;
 
@@ -58,13 +55,13 @@ public class CustomerInfoFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         Bundle args = getArguments();
-        mKey = args.getString(ARG_KEY);
+        String mKey = args.getString(ARG_KEY);
         mPage = (CustomerInfoPage) mCallbacks.onGetPage(mKey);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.alkitabfeedback_fragment_page_customer_info, container, false);
         ((TextView) rootView.findViewById(android.R.id.title)).setText(mPage.getTitle());
 
@@ -77,14 +74,14 @@ public class CustomerInfoFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
 
-        if (!(activity instanceof PageFragmentCallbacks)) {
+        if (!(context instanceof PageFragmentCallbacks)) {
             throw new ClassCastException("Activity must implement PageFragmentCallbacks");
         }
 
-        mCallbacks = (PageFragmentCallbacks) activity;
+        mCallbacks = (PageFragmentCallbacks) context;
     }
 
     @Override
@@ -94,13 +91,13 @@ public class CustomerInfoFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         mNameView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1,
-                    int i2) {
+                                          int i2) {
             }
 
             @Override
@@ -110,7 +107,7 @@ public class CustomerInfoFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable editable) {
                 mPage.getData().putString(CustomerInfoPage.NAME_DATA_KEY,
-                        (editable != null) ? editable.toString() : null);
+                    (editable != null) ? editable.toString() : null);
                 mPage.notifyDataChanged();
             }
         });
@@ -118,7 +115,7 @@ public class CustomerInfoFragment extends Fragment {
         mEmailView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1,
-                    int i2) {
+                                          int i2) {
             }
 
             @Override
@@ -128,7 +125,7 @@ public class CustomerInfoFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable editable) {
                 mPage.getData().putString(CustomerInfoPage.EMAIL_DATA_KEY,
-                        (editable != null) ? editable.toString() : null);
+                    (editable != null) ? editable.toString() : null);
                 mPage.notifyDataChanged();
             }
         });
@@ -141,8 +138,7 @@ public class CustomerInfoFragment extends Fragment {
         // In a future update to the support library, this should override setUserVisibleHint
         // instead of setMenuVisibility.
         if (mNameView != null) {
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
-                    Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (!menuVisible) {
                 imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
             }

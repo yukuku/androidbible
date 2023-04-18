@@ -16,7 +16,6 @@ import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import yuku.afw.BuildConfig;
 
 public class FeedbackSender {
     static final String TAG = FeedbackSender.class.getSimpleName();
