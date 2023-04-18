@@ -4,17 +4,17 @@ import android.content.Context
 import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
-import yuku.alkitab.base.dialog.TypeBookmarkDialog.LabelAdapter
+import yuku.alkitab.base.widget.MaterialDialogAdapterHelper
 import yuku.alkitab.base.widget.MaterialDialogAdapterHelper.withAdapter
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Marker
 
-internal object TypeBookmarkDialogJavaHelper {
+object TypeBookmarkDialogJavaHelper {
     @JvmStatic
-    fun showAddLabelDialog(context: Context, labelAdapter: LabelAdapter) {
+    fun showAddLabelDialog(context: Context, adapter: MaterialDialogAdapterHelper.Adapter) {
         MaterialDialog(context)
             .title(R.string.add_label_title)
-            .withAdapter(labelAdapter)
+            .withAdapter(adapter)
             .show()
     }
 

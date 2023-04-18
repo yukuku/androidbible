@@ -5,7 +5,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import yuku.alkitab.debug.R
 
-internal object TypeHighlightDialogJavaHelper {
+object TypeHighlightDialogJavaHelper {
     @JvmStatic
     fun showHighlightDialog(
         context: Context,

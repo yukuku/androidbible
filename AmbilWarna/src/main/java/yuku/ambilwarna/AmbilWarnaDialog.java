@@ -67,7 +67,7 @@ public class AmbilWarnaDialog {
         Color.colorToHSV(color, currentColorHsv);
         alpha = Color.alpha(color);
 
-        dialog = ShowMaterialDialog.buildMaterialDialog(this, context, listener, this::getColor);
+        dialog = AmbilWarnaDialogJavaHelper.buildMaterialDialog(this, context, listener, this::getColor);
 
         final View view = DialogCustomViewExtKt.getCustomView(dialog);
         viewHue = view.findViewById(R.id.ambilwarna_viewHue);
