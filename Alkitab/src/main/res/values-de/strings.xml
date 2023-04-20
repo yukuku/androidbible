@@ -478,7 +478,7 @@
     <string name="sync_login_form_error_required">Bitte füllen Sie dieses Feld aus.</string>
     <string name="sync_login_form_password_hint">Passwort</string>
     <string name="sync_login_form_new_password_hint">Neues Passwort</string>
-    <string name="sync_login_form_intro_text">Synchronisation schützt ihre Markierungen und weitere Daten.\n<a href="http://www.bibleforandroid.com/guide/sync">Weitere Informationen</a></string>
+    <string name="sync_login_form_intro_text">Synchronisation schützt ihre Markierungen und weitere Daten.\n<a href="https://www.alkitab.app/guide/sync">Weitere Informationen</a></string>
     <string name="sync_login_form_email_hint">E-Mail</string>
     <string name="sync_login_form_forgot_button">Vergessen?</string>
     <string name="sync_login_form_optional_header">Freiwillige Angaben</string>
@@ -486,7 +486,7 @@
     <string name="sync_login_form_city">Stadt</string>
     <string name="sync_login_form_register_button">Registrieren</string>
     <string name="sync_login_form_login_button">Anmelden</string>
-    <string name="sync_login_form_privacy_text">Durch das Drücken einer der Button unten stimmen Sie der <a href="http://www.bibleforandroid.com/privacy_policy">Datenschutzerklärung</a> zu.</string>
+    <string name="sync_login_form_privacy_text">Durch das Drücken einer der Button unten stimmen Sie der <a href="https://www.alkitab.app/privacy_policy">Datenschutzerklärung</a> zu.</string>
     <string name="sync_login_form_error_email_pattern">Ungültige E-Mailadresse.</string>
     <string name="sync_login_form_passwords_do_not_match">Bitte geben Sie dasselbe Passwort im Bestätigungsdialog ein.</string>
     <string name="sync_login_dialog_confirm_password_hint">Passwort bestätigen</string>

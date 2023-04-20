@@ -472,7 +472,7 @@
     <string name="sync_login_form_error_required">Pakiusap punan ito sa.</string>
     <string name="sync_login_form_password_hint">Ang password</string>
     <string name="sync_login_form_new_password_hint">Ang bagong password</string>
-    <string name="sync_login_form_intro_text">I-sync para maprotektahan ang iyong mga marker at ibang data.\n<a href="http://www.bibleforandroid.com/guide/sync">Marami pang impormayon</a></string>
+    <string name="sync_login_form_intro_text">I-sync para maprotektahan ang iyong mga marker at ibang data.\n<a href="https://www.alkitab.app/guide/sync">Marami pang impormayon</a></string>
     <string name="sync_login_form_email_hint">Email</string>
     <string name="sync_login_form_forgot_button">Nakalimutan?</string>
     <string name="sync_login_form_optional_header">Opsyonal</string>
@@ -480,7 +480,7 @@
     <string name="sync_login_form_city">Lungsod</string>
     <string name="sync_login_form_register_button">Rehistro</string>
     <string name="sync_login_form_login_button">Login</string>
-    <string name="sync_login_form_privacy_text">Sa pamamagitan ng pag pindot sa kahit alin sa mga pindutan sa ibaba, ikaw ay sumasangayon sa <a href="http://www.bibleforandroid.com/privacy_policy">patakaran sa polisiya</a>.</string>
+    <string name="sync_login_form_privacy_text">Sa pamamagitan ng pag pindot sa kahit alin sa mga pindutan sa ibaba, ikaw ay sumasangayon sa <a href="https://www.alkitab.app/privacy_policy">patakaran sa polisiya</a>.</string>
     <string name="sync_login_form_error_email_pattern">Walang bisang email address.</string>
     <string name="sync_login_form_passwords_do_not_match">Pakiusap i-type ang parehong password sa dialog na kumpirmasyon.</string>
     <string name="sync_login_dialog_confirm_password_hint">Kumpirmahin ang password</string>

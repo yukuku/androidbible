@@ -477,7 +477,7 @@
     <string name="sync_login_form_error_required">Vul dit alsjeblieft in.</string>
     <string name="sync_login_form_password_hint">Wachtwoord</string>
     <string name="sync_login_form_new_password_hint">Nieuw wachtwoord</string>
-    <string name="sync_login_form_intro_text">Bescherm je bladwijzers, notities en andere gegevens door ze te synchroniseren.\n<a href="http://www.bibleforandroid.com/guide/sync">Meer informatie</a></string>
+    <string name="sync_login_form_intro_text">Bescherm je bladwijzers, notities en andere gegevens door ze te synchroniseren.\n<a href="https://www.alkitab.app/guide/sync">Meer informatie</a></string>
     <string name="sync_login_form_email_hint">E-mail</string>
     <string name="sync_login_form_forgot_button">Vergeten?</string>
     <string name="sync_login_form_optional_header">Optioneel</string>
@@ -485,7 +485,7 @@
     <string name="sync_login_form_city">Stad</string>
     <string name="sync_login_form_register_button">Registreren</string>
     <string name="sync_login_form_login_button">Login</string>
-    <string name="sync_login_form_privacy_text">Bij klikken op één van de onderstaande knoppen ga je akkoord met het <a href="http://www.bibleforandroid.com/privacy_policy">privacybeleid</a>.</string>
+    <string name="sync_login_form_privacy_text">Bij klikken op één van de onderstaande knoppen ga je akkoord met het <a href="https://www.alkitab.app/privacy_policy">privacybeleid</a>.</string>
     <string name="sync_login_form_error_email_pattern">Ongeldig e-mailadres.</string>
     <string name="sync_login_form_passwords_do_not_match">Type alsjeblieft hetzelfde wachtwoord in het bevestigingsvenster.</string>
     <string name="sync_login_dialog_confirm_password_hint">Bevestig wachtwoord</string>

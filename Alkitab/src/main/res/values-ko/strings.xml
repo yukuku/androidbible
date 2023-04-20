@@ -475,7 +475,7 @@
     <string name="sync_login_form_error_required">로그인 정보를 입력하여 주십시오.</string>
     <string name="sync_login_form_password_hint">비밀번호</string>
     <string name="sync_login_form_new_password_hint">새 비밀번호</string>
-    <string name="sync_login_form_intro_text">동기화를 이용하시면 형광펜 및 다른 데이터를 인터넷에 보관할 수 있습니다.\n<a href="http://www.bibleforandroid.com/guide/sync">자세한 정보 보기</a></string>
+    <string name="sync_login_form_intro_text">동기화를 이용하시면 형광펜 및 다른 데이터를 인터넷에 보관할 수 있습니다.\n<a href="https://www.alkitab.app/guide/sync">자세한 정보 보기</a></string>
     <string name="sync_login_form_email_hint">이메일</string>
     <string name="sync_login_form_forgot_button">로그인 정보 찾기</string>
     <string name="sync_login_form_optional_header">선택 사항</string>
@@ -483,7 +483,7 @@
     <string name="sync_login_form_city">도시</string>
     <string name="sync_login_form_register_button">등록</string>
     <string name="sync_login_form_login_button">로그인</string>
-    <string name="sync_login_form_privacy_text"><a href="http://www.bibleforandroid.com/privacy_policy">약관</a>에 동의하시면 아래 버튼을 누르십시오.</string>
+    <string name="sync_login_form_privacy_text"><a href="https://www.alkitab.app/privacy_policy">약관</a>에 동의하시면 아래 버튼을 누르십시오.</string>
     <string name="sync_login_form_error_email_pattern">잘못된 이메일 주소</string>
     <string name="sync_login_form_passwords_do_not_match">동일한 비밀번호를 비밀번호 확인에 입력해 주십시오.</string>
     <string name="sync_login_dialog_confirm_password_hint">비밀번호 확인</string>

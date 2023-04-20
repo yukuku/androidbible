@@ -471,7 +471,7 @@
     <string name="sync_login_form_error_required">請填寫。</string>
     <string name="sync_login_form_password_hint">密碼</string>
     <string name="sync_login_form_new_password_hint">新密碼</string>
-    <string name="sync_login_form_intro_text">同步能夠保障你的標記和其他資料。\n<a href="http://www.bibleforandroid.com/guide/sync">更多資料</a></string>
+    <string name="sync_login_form_intro_text">同步能夠保障你的標記和其他資料。\n<a href="https://www.alkitab.app/guide/sync">更多資料</a></string>
     <string name="sync_login_form_email_hint">電郵</string>
     <string name="sync_login_form_forgot_button">忘記了？</string>
     <string name="sync_login_form_optional_header">例外的</string>
@@ -479,7 +479,7 @@
     <string name="sync_login_form_city">城市</string>
     <string name="sync_login_form_register_button">註冊</string>
     <string name="sync_login_form_login_button">登入</string>
-    <string name="sync_login_form_privacy_text">按下以下任何一個按鈕即代表你同意<a href="http://www.bibleforandroid.com/privacy_policy">私隱政策</a>。</string>
+    <string name="sync_login_form_privacy_text">按下以下任何一個按鈕即代表你同意<a href="https://www.alkitab.app/privacy_policy">私隱政策</a>。</string>
     <string name="sync_login_form_error_email_pattern">無效的電郵地址。</string>
     <string name="sync_login_form_passwords_do_not_match">請於確認對話中輸入相同的密碼。</string>
     <string name="sync_login_dialog_confirm_password_hint">確認密碼</string>

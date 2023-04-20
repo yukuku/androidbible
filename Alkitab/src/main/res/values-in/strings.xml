@@ -486,7 +486,7 @@
     <string name="sync_login_form_error_required">Harap isi.</string>
     <string name="sync_login_form_password_hint">Password</string>
     <string name="sync_login_form_new_password_hint">Password baru</string>
-    <string name="sync_login_form_intro_text">Sync melindungi data marka dan lainnya.\n<a href="http://www.bibleforandroid.com/guide/sync">Informasi lebih lanjut</a></string>
+    <string name="sync_login_form_intro_text">Sync melindungi data marka dan lainnya.\n<a href="https://www.alkitab.app/guide/sync">Informasi lebih lanjut</a></string>
     <string name="sync_login_form_email_hint">Email</string>
     <string name="sync_login_form_forgot_button">Lupa?</string>
     <string name="sync_login_form_optional_header">Tidak wajib</string>
@@ -494,7 +494,7 @@
     <string name="sync_login_form_city">Kota</string>
     <string name="sync_login_form_register_button">Buat akun</string>
     <string name="sync_login_form_login_button">Login</string>
-    <string name="sync_login_form_privacy_text">Menekan tombol di bawah berarti Anda setuju dengan <a href="http://www.bibleforandroid.com/privacy_policy">kebijakan privasi</a>.</string>
+    <string name="sync_login_form_privacy_text">Menekan tombol di bawah berarti Anda setuju dengan <a href="https://www.alkitab.app/privacy_policy">kebijakan privasi</a>.</string>
     <string name="sync_login_form_error_email_pattern">Alamat email tidak sah.</string>
     <string name="sync_login_form_passwords_do_not_match">Tuliskan password yang sama pada dialog konfirmasi.</string>
     <string name="sync_login_dialog_confirm_password_hint">Ketik ulang password</string>

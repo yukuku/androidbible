@@ -478,7 +478,7 @@
     <string name="sync_login_form_error_required">Пожалуйста, заполните это.</string>
     <string name="sync_login_form_password_hint">Пароль</string>
     <string name="sync_login_form_new_password_hint">Новый пароль</string>
-    <string name="sync_login_form_intro_text">Синхронизация защищает Ваши маркеры и другие данные.\n<a href="http://www.bibleforandroid.com/guide/sync">Дополнительные сведения</a></string>
+    <string name="sync_login_form_intro_text">Синхронизация защищает Ваши маркеры и другие данные.\n<a href="https://www.alkitab.app/guide/sync">Дополнительные сведения</a></string>
     <string name="sync_login_form_email_hint">Email</string>
     <string name="sync_login_form_forgot_button">Забыли?</string>
     <string name="sync_login_form_optional_header">Необязательное</string>
@@ -486,7 +486,7 @@
     <string name="sync_login_form_city">Город</string>
     <string name="sync_login_form_register_button">Зарегистрироваться</string>
     <string name="sync_login_form_login_button">Войти в систему</string>
-    <string name="sync_login_form_privacy_text">Нажав одну из кнопок ниже, Вы соглашаетесь с <a href="http://www.bibleforandroid.com/privacy_policy">политикой конфиденциальности</a>.</string>
+    <string name="sync_login_form_privacy_text">Нажав одну из кнопок ниже, Вы соглашаетесь с <a href="https://www.alkitab.app/privacy_policy">политикой конфиденциальности</a>.</string>
     <string name="sync_login_form_error_email_pattern">Неверный email адрес.</string>
     <string name="sync_login_form_passwords_do_not_match">Пжалуйста, введите этот пароль еще раз в диалоге подтверждения.</string>
     <string name="sync_login_dialog_confirm_password_hint">Подтвердите пароль</string>

@@ -479,7 +479,7 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
     <string name="sync_login_form_error_required">Por favor complete lo siguiente.</string>
     <string name="sync_login_form_password_hint">Contraseña</string>
     <string name="sync_login_form_new_password_hint">Nueva contraseña</string>
-    <string name="sync_login_form_intro_text">Sincronizar protege sus marcadores y otros datos.\n<a href="http://www.bibleforandroid.com/guide/sync">Más información</a></string>
+    <string name="sync_login_form_intro_text">Sincronizar protege sus marcadores y otros datos.\n<a href="https://www.alkitab.app/guide/sync">Más información</a></string>
     <string name="sync_login_form_email_hint">Correo electrónico</string>
     <string name="sync_login_form_forgot_button">¿Lo olvidó?</string>
     <string name="sync_login_form_optional_header">Opcional</string>
@@ -487,7 +487,7 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
     <string name="sync_login_form_city">Ciudad</string>
     <string name="sync_login_form_register_button">Registrar</string>
     <string name="sync_login_form_login_button">Iniciar sesión</string>
-    <string name="sync_login_form_privacy_text">Al presionar cualquiera de los botones de abajo usted acepta la <a href="http://www.bibleforandroid.com/privacy_policy">política de privacidad</a>.</string>
+    <string name="sync_login_form_privacy_text">Al presionar cualquiera de los botones de abajo usted acepta la <a href="https://www.alkitab.app/privacy_policy">política de privacidad</a>.</string>
     <string name="sync_login_form_error_email_pattern">Dirección de correo electrónico inválida.</string>
     <string name="sync_login_form_passwords_do_not_match">Por favor ingrese la misma contraseña en el dialogo de confirmación.</string>
     <string name="sync_login_dialog_confirm_password_hint">Confirmar contraseña</string>
