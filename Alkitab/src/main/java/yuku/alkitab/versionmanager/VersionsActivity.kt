@@ -4,9 +4,6 @@ import android.app.DownloadManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
-import android.provider.OpenableColumns
-import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -20,10 +17,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
 import com.google.android.material.tabs.TabLayout
 import java.io.File
-import java.io.FileOutputStream
-import java.io.PrintWriter
-import java.io.StringWriter
-import java.util.UUID
+import java.io.IOException
 import yuku.alkitab.base.App
 import yuku.alkitab.base.S
 import yuku.alkitab.base.ac.base.BaseActivity
@@ -39,7 +33,6 @@ import yuku.alkitab.base.util.DownloadMapper
 import yuku.alkitab.base.util.Foreground
 import yuku.alkitab.base.widget.MaterialDialogProgressHelper.progress
 import yuku.alkitab.debug.R
-import yuku.alkitab.io.OptionalGzipInputStream
 import yuku.alkitab.tracking.Tracker
 
 private const val TAG = "VersionsActivity"
@@ -53,49 +46,7 @@ class VersionsActivity : BaseActivity() {
 
     private val getContentRequest = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         if (uri == null) return@registerForActivityResult
-
-        try {
-            contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use { c ->
-                if (!c.moveToNext()) {
-                    return@registerForActivityResult
-                }
-
-                val displayName = c.getString(0)
-
-                // Transparently decompress .yes.gz and .pdb.gz files
-                val ext = when {
-                    displayName.lowercase().endsWith(".gz") -> displayName.dropLast(3).substringAfterLast('.', "").lowercase()
-                    else -> displayName.substringAfterLast('.', "").lowercase()
-                }
-
-                when (ext) {
-                    "yes", "pdb" -> {
-                        val inputStream = contentResolver.openInputStream(uri)
-                        inputStream?.use { input ->
-                            val tempFile = File(cacheDir, "${UUID.randomUUID()}.$ext")
-                            tempFile.outputStream().use { output ->
-                                OptionalGzipInputStream(input).use { it.copyTo(output) }
-                            }
-                            onFileSelected(displayName, tempFile.absolutePath)
-                        } ?: MaterialDialog(this).show {
-                            message(R.string.ed_error_encountered)
-                            positiveButton(R.string.ok)
-                        }
-                    }
-
-                    else -> MaterialDialog(this).show {
-                        message(R.string.ed_invalid_file_selected)
-                        positiveButton(R.string.ok)
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            MaterialDialog(this).show {
-                title(R.string.ed_error_encountered)
-                message(text = "${e.javaClass.simpleName}: ${e.message}")
-                positiveButton(R.string.ok)
-            }
-        }
+        importFromUri(uri)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -134,134 +85,16 @@ class VersionsActivity : BaseActivity() {
 
     private fun checkAndProcessOpenFileIntent(intent: Intent) {
         if (intent.action != Intent.ACTION_VIEW) return
-
-        // we are trying to open a file, so let's go to the DOWNLOADED tab, as it is more relevant.
-        viewPager.currentItem = 1
-
-        val uri = intent.data ?: return
-        val isLocalFile = "file" == uri.scheme
-
-        val isYesFile: Boolean? // false:pdb true:yes null:cannotdetermine
-        val filelastname: String?
-
-        // Determine file type from path if this is a local file
-        if (isLocalFile) {
-            val path = uri.path
-            isYesFile = when {
-                path == null -> null
-                path.endsWith(".yes", ignoreCase = true) -> true
-                path.endsWith(".pdb", ignoreCase = true) -> false
-                else -> null
-            }
-            filelastname = uri.lastPathSegment
-        } else {
-            // try to read display name from content
-            try {
-                contentResolver.query(uri, null, null, null, null).use { c ->
-                    if (c == null || !c.moveToNext()) {
-                        MaterialDialog(this).show {
-                            message(text = TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
-                            positiveButton(R.string.ok)
-                        }
-                        return
-                    }
-
-                    val col = c.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
-                    if (col != -1) {
-                        val name = c.getString(col)
-                        isYesFile = when {
-                            name == null -> null
-                            name.endsWith(".yes", ignoreCase = true) -> true
-                            name.endsWith(".pdb", ignoreCase = true) -> false
-                            else -> null
-                        }
-                        filelastname = name
-                    } else {
-                        isYesFile = null
-                        filelastname = null
-                    }
-                }
-            } catch (e: SecurityException) {
+        val uri = intent.data
+            ?: run {
                 MaterialDialog(this).show {
-                    message(text = TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
+                    title(R.string.ed_error_encountered)
+                    message(text = "Intent data is null.")
                     positiveButton(R.string.ok)
                 }
                 return
             }
-        }
-
-        if (isYesFile == null) { // can't be determined
-            MaterialDialog(this).show {
-                message(R.string.open_file_unknown_file_format)
-                positiveButton(R.string.ok)
-            }
-            return
-        }
-
-        try {
-            if (!isYesFile) { // pdb file
-                if (isLocalFile) {
-                    handleFileOpenPdb(uri.path!!)
-                } else {
-                    // copy the file to cache first
-                    val cacheFile = File(cacheDir, "datafile")
-                    val input = contentResolver.openInputStream(uri)
-                    if (input == null) {
-                        MaterialDialog(this).show {
-                            message(text = TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
-                            positiveButton(R.string.ok)
-                        }
-                        return
-                    }
-
-                    input.use {
-                        FileOutputStream(cacheFile).use { output ->
-                            input.copyTo(output)
-                        }
-                    }
-
-                    handleFileOpenPdb(cacheFile.absolutePath, filelastname)
-                }
-                return
-            }
-
-            if (isLocalFile) { // opening a local yes file
-                handleFileOpenYes(File(uri.path!!))
-                return
-            }
-
-            val existingFile = AddonManager.getReadableVersionFile(filelastname)
-            if (existingFile != null) {
-                MaterialDialog(this).show {
-                    message(text = getString(R.string.open_yes_file_name_conflict, filelastname, existingFile.absolutePath))
-                    positiveButton(R.string.ok)
-                }
-                return
-            }
-
-            val input = contentResolver.openInputStream(uri)
-            if (input == null) {
-                MaterialDialog(this).show {
-                    message(text = TextUtils.expandTemplate(getString(R.string.open_yes_error_read), uri.toString()))
-                    positiveButton(R.string.ok)
-                }
-                return
-            }
-
-            val localFile = AddonManager.getWritableVersionFile(filelastname)
-            input.use {
-                FileOutputStream(localFile).use { output ->
-                    input.copyTo(output)
-                }
-            }
-            handleFileOpenYes(localFile)
-
-        } catch (e: Exception) {
-            MaterialDialog(this).show {
-                message(R.string.open_file_cant_read_source)
-                positiveButton(R.string.ok)
-            }
-        }
+        importFromUri(uri)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -355,114 +188,13 @@ class VersionsActivity : BaseActivity() {
         }
     }
 
-    private fun handleFileOpenPdb(pdbFilename: String, filelastname: String? = null) {
-        val yesName = yesNameForPdb(filelastname ?: pdbFilename)
-
-        // check if it exists previously
-        if (AddonManager.getReadableVersionFile(yesName) != null) {
-            MaterialDialog(this).show {
-                message(R.string.ed_this_file_is_already_on_the_list)
-                positiveButton(R.string.ok)
-            }
-            return
-        }
-
-        val callback = object : ConvertOptionsDialog.ConvertOptionsCallback {
-            private fun showPdbReadErrorDialog(exception: Throwable) {
-                val sw = StringWriter(400)
-                sw.append('(').append(exception.javaClass.name).append("): ").append(exception.message).append('\n')
-                exception.printStackTrace(PrintWriter(sw))
-
-                val message = if (exception is ConvertOptionsDialog.PdbKnownErrorException) exception.message.orEmpty() else getString(R.string.ed_details) + sw.toString()
-
-                MaterialDialog(this@VersionsActivity).show {
-                    title(R.string.ed_error_reading_pdb_file)
-                    message(text = message)
-                    positiveButton(R.string.ok)
-                }
-            }
-
-            fun showResult(yesFile: File, exception: Throwable?, wronglyConvertedBookNames: List<String?>?) {
-                if (exception != null) {
-                    Tracker.trackEvent("versions_convert_pdb_error")
-                    showPdbReadErrorDialog(exception)
-                    return
-                }
-
-                // success.
-                Tracker.trackEvent("versions_convert_pdb_success")
-                handleFileOpenYes(yesFile)
-
-                if (wronglyConvertedBookNames != null && wronglyConvertedBookNames.isNotEmpty()) {
-                    val msg = buildString {
-                        append(getString(R.string.ed_the_following_books_from_the_pdb_file_are_not_recognized))
-                        for (s in wronglyConvertedBookNames) {
-                            append("- ")
-                            append(s)
-                            append('\n')
-                        }
-                    }
-
-                    MaterialDialog(this@VersionsActivity).show {
-                        message(text = msg)
-                        positiveButton(R.string.ok)
-                    }
-                }
-            }
-
-            override fun onPdbReadError(e: Throwable) {
-                showPdbReadErrorDialog(e)
-            }
-
-            override fun onOkYes2(params: ConvertPdbToYes2.ConvertParams) {
-                val yesFile = AddonManager.getWritableVersionFile(yesName)
-                val pd = MaterialDialog(this@VersionsActivity).show {
-                    message(R.string.ed_reading_pdb_file)
-                    cancelable(false)
-                    progress(true, 0)
-                }
-
-                fun onProgressUpdate(at: Int?, message: String?) = Foreground.run {
-                    if (at == null) {
-                        pd.message(R.string.ed_finished)
-                    } else {
-                        pd.message(text = "($at) $message...")
-                    }
-                }
-
-                fun onPostExecute(result: ConvertPdbToYes2.ConvertResult) = Foreground.run {
-                    pd.dismiss()
-                    showResult(yesFile, result.exception, result.wronglyConvertedBookNames)
-                }
-
-                Background.run {
-                    val converter = ConvertPdbToYes2()
-                    converter.setConvertProgressListener(object : ConvertPdbToYes2.ConvertProgressListener {
-                        override fun onProgress(at: Int, message: String) {
-                            AppLog.d(TAG, "Progress $at: $message")
-                            onProgressUpdate(at, message)
-                        }
-
-                        override fun onFinish() {
-                            AppLog.d(TAG, "Finish")
-                            onProgressUpdate(null, null)
-                        }
-                    })
-
-                    val result = converter.convert(App.context, pdbFilename, yesFile, params)
-                    onPostExecute(result)
-                }
-            }
-        }
-
-        Tracker.trackEvent("versions_convert_pdb_start")
-        ConvertOptionsDialog(this, pdbFilename, callback).show()
-    }
-
-    // TODO make [file] must always point to a file in cache dir
-    fun handleFileOpenYes(file: File) {
+    /**
+     * We have a local persistent yes file, register that to the DB.
+     */
+    private fun registerLocalYesFile(localYesFile: File) {
         try {
-            val reader = YesReaderFactory.createYesReader(file.absolutePath) ?: throw Exception("Not a valid YES file.")
+            val reader = YesReaderFactory.createYesReader(localYesFile.absolutePath)
+                ?: throw IOException("Local file $localYesFile is not a valid YES file.")
 
             var maxOrdering = S.db.versionMaxOrdering
             if (maxOrdering == 0) maxOrdering = MVersionDb.DEFAULT_ORDERING_START
@@ -472,8 +204,7 @@ class VersionsActivity : BaseActivity() {
                 shortName = reader.shortName
                 longName = reader.longName
                 description = reader.description
-                // TODO do not use file.absolutePath, but copy to the permanent files dir (files/bible)
-                filename = file.absolutePath
+                filename = localYesFile.absolutePath
                 ordering = maxOrdering + 1
                 preset_name = null
             }
@@ -489,23 +220,9 @@ class VersionsActivity : BaseActivity() {
                 positiveButton(R.string.ok)
             }
         }
-    }
 
-    /**
-     * @return a filename for yes that will be converted from pdb file, such as "pdb-XXX.yes"
-     * XXX is the original filename without the .pdb or .PDB ending, converted to lowercase.
-     * All except alphanumeric and . - _ are stripped.
-     * Path not included.
-     *
-     * Previously it was like "pdb-1234abcd-1.yes".
-     */
-    private fun yesNameForPdb(filenamepdb: String): String {
-        var base = File(filenamepdb).name.lowercase()
-        if (base.endsWith(".pdb")) {
-            base = base.substring(0, base.length - 4)
-        }
-        base = base.replace("[^0-9a-z_.-]".toRegex(), "")
-        return "pdb-$base.yes"
+        // we are trying to open a file, so let's go to the DOWNLOADED tab, as it is more relevant.
+        viewPager.currentItem = 1
     }
 
     private fun openUrlInputDialog(prefill: String?) {
@@ -554,25 +271,119 @@ class VersionsActivity : BaseActivity() {
             .show()
     }
 
-    private fun onFileSelected(displayName: String, tempFilename: String) {
-        // we are trying to open a file, so let's go to the DOWNLOADED tab, as it is more relevant.
-        viewPager.currentItem = 1
+    private fun importFromUri(uri: Uri) {
+        val importer = VersionFileImporter(this)
 
-        // TODO fix this, displayName can sometimes be .gz. Check ext, not displayName
-        if (displayName.endsWith(".yes", ignoreCase = true)) {
-            Tracker.trackEvent("versions_open_yes")
-            handleFileOpenYes(File(tempFilename))
+        try {
+            when (val result = importer.importFromUri(uri)) {
+                is VersionFileImporter.Result.YesFileIsAvailableLocally -> {
+                    registerLocalYesFile(result.localYesFile)
+                }
 
-        } else if (displayName.endsWith(".pdb", ignoreCase = true)) {
-            Tracker.trackEvent("versions_open_pdb")
-            handleFileOpenPdb(tempFilename)
-
-        } else {
+                is VersionFileImporter.Result.ShouldImportPdb -> {
+                    showPdbConvertDialog(result.cacheFile, result.yesName)
+                }
+            }
+        } catch (e: Exception) {
             MaterialDialog(this).show {
-                message(R.string.ed_invalid_file_selected)
+                title(R.string.ed_error_encountered)
+                message(text = "${e.javaClass.simpleName}: ${e.message}")
                 positiveButton(R.string.ok)
             }
         }
+    }
+
+    private fun showPdbConvertDialog(cacheFile: File, yesName: String) {
+        fun showPdbReadErrorDialog(exception: Throwable) {
+            val message = when (exception) {
+                is ConvertOptionsDialog.PdbKnownErrorException -> exception.message.orEmpty()
+                else -> "${getString(R.string.ed_details)}(${exception.javaClass.name}): ${exception.message}\n${exception.stackTraceToString()}"
+            }
+
+            MaterialDialog(this@VersionsActivity).show {
+                title(R.string.ed_error_reading_pdb_file)
+                message(text = message)
+                positiveButton(R.string.ok)
+            }
+        }
+
+        val callback = object : ConvertOptionsDialog.ConvertOptionsCallback {
+            fun showResult(yesFile: File, exception: Throwable?, wronglyConvertedBookNames: List<String>?) {
+                if (exception != null) {
+                    Tracker.trackEvent("versions_convert_pdb_error")
+                    showPdbReadErrorDialog(exception)
+                    return
+                }
+
+                // success.
+                Tracker.trackEvent("versions_convert_pdb_success")
+                registerLocalYesFile(yesFile)
+
+                if (!wronglyConvertedBookNames.isNullOrEmpty()) {
+                    val msg = buildString {
+                        append(getString(R.string.ed_the_following_books_from_the_pdb_file_are_not_recognized))
+                        for (s in wronglyConvertedBookNames) {
+                            append("- $s\n")
+                        }
+                    }
+
+                    MaterialDialog(this@VersionsActivity).show {
+                        message(text = msg)
+                        positiveButton(R.string.ok)
+                    }
+                }
+
+                // we are trying to open a file, so let's go to the DOWNLOADED tab, as it is more relevant.
+                viewPager.currentItem = 1
+            }
+
+            override fun onPdbReadError(e: Throwable) {
+                showPdbReadErrorDialog(e)
+            }
+
+            override fun onOkYes2(params: ConvertPdbToYes2.ConvertParams) {
+                val yesFile = AddonManager.getWritableVersionFile(yesName)
+                val pd = MaterialDialog(this@VersionsActivity).show {
+                    message(R.string.ed_reading_pdb_file)
+                    cancelable(false)
+                    progress(true, 0)
+                }
+
+                fun onProgressUpdate(at: Int?, message: String?) = Foreground.run {
+                    if (at == null) {
+                        pd.message(R.string.ed_finished)
+                    } else {
+                        pd.message(text = "($at) $message...")
+                    }
+                }
+
+                fun onPostExecute(result: ConvertPdbToYes2.ConvertResult) = Foreground.run {
+                    pd.dismiss()
+                    showResult(yesFile, result.exception, result.wronglyConvertedBookNames)
+                }
+
+                Background.run {
+                    val converter = ConvertPdbToYes2()
+                    converter.setConvertProgressListener(object : ConvertPdbToYes2.ConvertProgressListener {
+                        override fun onProgress(at: Int, message: String) {
+                            AppLog.d(TAG, "Progress $at: $message")
+                            onProgressUpdate(at, message)
+                        }
+
+                        override fun onFinish() {
+                            AppLog.d(TAG, "Finish")
+                            onProgressUpdate(null, null)
+                        }
+                    })
+
+                    val result = converter.convert(App.context, cacheFile.absolutePath, yesFile, params)
+                    onPostExecute(result)
+                }
+            }
+        }
+
+        Tracker.trackEvent("versions_convert_pdb_start")
+        ConvertOptionsDialog(this, cacheFile.absolutePath, callback).show()
     }
 
     companion object {
