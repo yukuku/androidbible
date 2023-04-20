@@ -272,13 +272,7 @@ object S {
         val versions = getAvailableVersions()
 
         // determine the currently selected one
-        var selected = -1
-        for (i in versions.indices) {
-            if (versions[i].versionId == selectedVersionId) {
-                selected = i
-                break
-            }
-        }
+        val selected = versions.indexOfFirst { it.versionId == selectedVersionId }
 
         val options = versions.map { it.longName }
         MaterialDialog(activity)
@@ -302,7 +296,7 @@ object S {
         val selected = if (selectedVersionId == null) {
             0 // "none"
         } else {
-            versions.indexOfFirst { it.versionId == selectedVersionId }
+            versions.indexOfFirst { it.versionId == selectedVersionId } + 1
         }
 
         val options = listOf(activity.getString(R.string.split_version_none)) + versions.map { it.longName }
