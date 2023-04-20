@@ -312,11 +312,6 @@
     <string name="recentverses_today_time">오늘, %s</string>
     <string name="recentverses_yesterday_time">어제, %s</string>
     <string name="recentverses_button_hint">(최근 구절, 길게 눌러주세요)</string>
-    <string name="dr_reminder">알람</string>
-    <string name="dr_error_contact_reminder">알람 앱 접속 중 오류</string>
-    <string name="dr_timepicker_fallback_hint">24시간 표시 (예: 오후7:30 는 19:30으로 표시)</string>
-    <string name="dr_timepicker_set">시간 설정</string>
-    <string name="dr_timepicker_off">끄기</string>
     <string name="dv_activity_title">일일 구절 위젯</string>
     <string name="dv_option_transparent_background">투명 배경</string>
     <string name="dv_option_dark_text">어두운 글씨</string>
@@ -493,16 +488,6 @@
     <string name="pref_textPadding_summary">자간 간격을 좁혀 읽기에 더 편하게 합니다.</string>
     <string name="pref_bottomToolbarOnText_title">하단 문구 툴바</string>
     <string name="pref_bottomToolbarOnText_summary">장/절 이동을 위한 툴바를 본문 하단에 위치시킵니다.</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">알람</string>
-    <string name="dr_notification_title">매일 묵상</string>
-    <string name="dr_notification_text">오늘의 묵상 읽기</string>
-    <string name="dr_off">끄기</string>
-    <string name="dr_alarm">알람</string>
-    <string name="dr_sound">소리</string>
-    <string name="dr_vibrate">진동</string>
-    <string name="dr_pref_notification_message">알람 메시지</string>
-    <string name="dr_default_sound">기본 소리</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% 무료 성경 앱, Apache License 2.0</string>
     <string name="about_translators">번역자</string>
@@ -529,5 +514,4 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">다운로드</string>
     <string name="notification_channel_devotion_downloader_name">묵상 다운로드</string>
-    <string name="notification_channel_devotion_reminder_name">묵상 알람</string>
 </resources>

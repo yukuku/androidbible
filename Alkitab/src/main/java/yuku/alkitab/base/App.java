@@ -15,7 +15,6 @@ import yuku.alkitab.base.connection.PRDownloaderOkHttpClient;
 import yuku.alkitab.base.sync.Fcm;
 import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.reminder.util.DevotionReminder;
 import yuku.alkitab.tracking.Tracker;
 import yuku.alkitabfeedback.FeedbackSender;
 import yuku.alkitabintegration.display.Launcher;
@@ -77,8 +76,6 @@ public class App extends yuku.afw.App {
         { // FCM
             Fcm.renewFcmRegistrationIdIfNeeded(Sync::notifyNewFcmRegistrationId);
         }
-
-        DevotionReminder.scheduleAlarm();
 
         PRDownloader.initialize(context, new PRDownloaderConfig.Builder()
             .setHttpClient(new PRDownloaderOkHttpClient(Connections.getOkHttp()))

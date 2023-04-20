@@ -14,10 +14,6 @@
 	<uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
 	<uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
 
-	<!-- from a separate app: devotion reminder -->
-	<uses-permission android:name="android.permission.VIBRATE" />
-	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
 	<uses-feature
 		android:name="android.hardware.touchscreen"
 		android:required="false" />
@@ -461,20 +457,6 @@
 		<meta-data
 			android:name="com.google.android.gms.version"
 			android:value="@integer/google_play_services_version" />
-
-		<!-- devotion reminder -->
-		<activity
-			android:name="yuku.alkitab.reminder.ac.DevotionReminderActivity"
-			android:label="@string/dr_app_name" />
-
-		<receiver android:name="yuku.alkitab.reminder.br.DevotionReminderReceiver" />
-		<receiver
-			android:name="yuku.alkitab.reminder.br.BootCompleteReceiver"
-			android:exported="true">
-			<intent-filter>
-				<action android:name="android.intent.action.BOOT_COMPLETED" />
-			</intent-filter>
-		</receiver>
 
 		<!-- remove extensions cache when other apps are installed/updated/removed -->
 		<receiver

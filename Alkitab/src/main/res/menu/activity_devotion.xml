@@ -1,24 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
-	tools:ignore="AlwaysShowAction">
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 
 	<item
 		android:id="@+id/menuCopy"
 		android:icon="@drawable/ic_baseline_content_copy_24_white"
 		android:title="@string/salin_renungan"
-		app:showAsAction="never" />
+		app:showAsAction="ifRoom" />
 
 	<item
 		android:id="@+id/menuShare"
 		android:icon="@drawable/ic_menu_share"
 		android:title="@string/menuShare"
-		app:showAsAction="never" />
+		app:showAsAction="ifRoom" />
 
-	<item
-		android:id="@+id/menuReminder"
-		android:icon="@drawable/ic_action_reminder"
-		android:title="@string/dr_reminder"
-		app:showAsAction="always" />
 </menu>

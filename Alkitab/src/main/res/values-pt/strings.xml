@@ -312,11 +312,6 @@
     <string name="recentverses_today_time">Hoje,%s</string>
     <string name="recentverses_yesterday_time">Ontem, %s</string>
     <string name="recentverses_button_hint">(Premir longo para versículos recentes)</string>
-    <string name="dr_reminder">Lembrete</string>
-    <string name="dr_error_contact_reminder">Erro ao contactar o aplicativo do lembrete.</string>
-    <string name="dr_timepicker_fallback_hint">HHMM (e.g. 1930 por 7:30pm)</string>
-    <string name="dr_timepicker_set">Configurar</string>
-    <string name="dr_timepicker_off">Desligar</string>
     <string name="dv_activity_title">Ferramenta do Versículo Diario</string>
     <string name="dv_option_transparent_background">Fundo transparente</string>
     <string name="dv_option_dark_text">Texto escuro</string>
@@ -493,16 +488,6 @@
     <string name="pref_textPadding_summary">Tornar o texto numa linha mais estreita para facilitar a leitura</string>
     <string name="pref_bottomToolbarOnText_title">Navegação em verso inferior</string>
     <string name="pref_bottomToolbarOnText_summary">Coloque a barra de navegação de verso na parte inferior da tela da Bíblia</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">Lembrete</string>
-    <string name="dr_notification_title">Devoção diária</string>
-    <string name="dr_notification_text">Ler agora a devoção de hoje.</string>
-    <string name="dr_off">Desligar</string>
-    <string name="dr_alarm">Alarme</string>
-    <string name="dr_sound">Som</string>
-    <string name="dr_vibrate">Vibrar</string>
-    <string name="dr_pref_notification_message">Mensagens do lembrete</string>
-    <string name="dr_default_sound">Som padrão</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% Bible app gratuida, com licenza de Apache License 2.0</string>
     <string name="about_translators">Tradutores</string>
@@ -529,5 +514,4 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Downloads</string>
     <string name="notification_channel_devotion_downloader_name">Downloads de devocao</string>
-    <string name="notification_channel_devotion_reminder_name">Remarcas para lembrar se a devocao</string>
 </resources>

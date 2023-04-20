@@ -312,10 +312,6 @@
     <string name="recentverses_today_time">Vandag, %s</string>
     <string name="recentverses_yesterday_time">Gister, %s</string>
     <string name="recentverses_button_hint">(Lang druk vir onlangse verse)</string>
-    <string name="dr_reminder">Herinner</string>
-    <string name="dr_error_contact_reminder">Fout met kontak van herinner applikasie.</string>
-    <string name="dr_timepicker_set">Stel</string>
-    <string name="dr_timepicker_off">Skakel af</string>
     <string name="dv_activity_title">Daaglikse versie wiggie</string>
     <string name="dv_option_transparent_background">Deurskynende agtergrond</string>
     <string name="dv_option_dark_text">Donker teks</string>
@@ -490,16 +486,6 @@
     <string name="pref_textPadding_summary">Maak teks inlyn smaller om lees te vergemaklik</string>
     <string name="pref_bottomToolbarOnText_title">Onderste vers navigasie</string>
     <string name="pref_bottomToolbarOnText_summary">Plaas vers navigasie balk onderaan die Bybel skerm</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">Herinnering</string>
-    <string name="dr_notification_title">Daaglikse toewyding</string>
-    <string name="dr_notification_text">Lees vandag se toewyding nou.</string>
-    <string name="dr_off">Af</string>
-    <string name="dr_alarm">Alarm</string>
-    <string name="dr_sound">Klank</string>
-    <string name="dr_vibrate">Vibreer</string>
-    <string name="dr_pref_notification_message">Herinnering boodskap</string>
-    <string name="dr_default_sound">Verstek klank</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% gratis Bybel toep, gelisensieerd onder Apache License 2.0</string>
     <string name="about_translators">Vertalers</string>
@@ -526,5 +512,4 @@
     <!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Afgelaai</string>
     <string name="notification_channel_devotion_downloader_name">Toewydings afgelaai</string>
-    <string name="notification_channel_devotion_reminder_name">Toewyding herinnering</string>
 </resources>

@@ -312,11 +312,6 @@
     <string name="recentverses_today_time">Днеска, %s</string>
     <string name="recentverses_yesterday_time">Вчера, %s</string>
     <string name="recentverses_button_hint">(Дълго натискане за показване на предишни стихове)</string>
-    <string name="dr_reminder">Напомняне</string>
-    <string name="dr_error_contact_reminder">Грешка по време на свързването с приложението за напомняне.</string>
-    <string name="dr_timepicker_fallback_hint">ЧЧММ (Напр. 1930 за 7:30pm)</string>
-    <string name="dr_timepicker_set">Мрежа</string>
-    <string name="dr_timepicker_off">Изключи</string>
     <string name="dv_activity_title">Уиджет за ежедневен стих</string>
     <string name="dv_option_transparent_background">Прозрачен фон</string>
     <string name="dv_option_dark_text">Тъмен текст</string>
@@ -493,16 +488,6 @@
     <string name="pref_textPadding_summary">Прави граница около текста за по-удобно четене.</string>
     <string name="pref_bottomToolbarOnText_title">Навигация на долния панел</string>
     <string name="pref_bottomToolbarOnText_summary">Разполага панела за навигации в долната част на прозореца на Библията</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">Напомняне</string>
-    <string name="dr_notification_title">Ежедневно четене</string>
-    <string name="dr_notification_text">Прочети днешното предложение сега.</string>
-    <string name="dr_off">Отключен</string>
-    <string name="dr_alarm">Будилник</string>
-    <string name="dr_sound">Звук</string>
-    <string name="dr_vibrate">Вибрация</string>
-    <string name="dr_pref_notification_message">Напомнящо съобщение</string>
-    <string name="dr_default_sound">Звук по подразбиране</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% безплатно приложение на Библията, лицензирано под Apache License 2.0</string>
     <string name="about_translators">Преводачи</string>
@@ -529,5 +514,4 @@
     <!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Изтегляния</string>
     <string name="notification_channel_devotion_downloader_name">Изтегляне на посвещения</string>
-    <string name="notification_channel_devotion_reminder_name">Напомняне на посвещения</string>
 </resources>

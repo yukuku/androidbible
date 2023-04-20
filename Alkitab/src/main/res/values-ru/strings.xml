@@ -315,11 +315,6 @@
     <string name="recentverses_today_time">Сегодня, %s</string>
     <string name="recentverses_yesterday_time">Вчера, %s</string>
     <string name="recentverses_button_hint">(Удерживайте для отображения недавних стихов)</string>
-    <string name="dr_reminder">Напоминание</string>
-    <string name="dr_error_contact_reminder">Не удалить связаться с приложением напоминания.</string>
-    <string name="dr_timepicker_fallback_hint">ЧЧММ (Напр., 1930 для 7:30pm)</string>
-    <string name="dr_timepicker_set">Задать</string>
-    <string name="dr_timepicker_off">Выключить</string>
     <string name="dv_activity_title">Виджет Ежедневных Стихов</string>
     <string name="dv_option_transparent_background">Прозрачный фон</string>
     <string name="dv_option_dark_text">Темный текст</string>
@@ -498,16 +493,6 @@
     <string name="pref_bottomToolbarOnText_summary">Разместить панель навигации внизу окна Библии</string>
     <string name="pref_verseNumberIsShown_title">Отображать номера стихов</string>
     <string name="pref_verseNumberIsShown_summary">Отображать номера перед стихами</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">Напоминание</string>
-    <string name="dr_notification_title">Ежедневое чтение</string>
-    <string name="dr_notification_text">Читать сегодняшнее чтение сейчас.</string>
-    <string name="dr_off">Отключено</string>
-    <string name="dr_alarm">Будильник</string>
-    <string name="dr_sound">Звук</string>
-    <string name="dr_vibrate">Вибрация</string>
-    <string name="dr_pref_notification_message">Напоминающее сообщение</string>
-    <string name="dr_default_sound">Звук по умолчанию</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% бесплатное приложение Bible app, лицензия от Apache License 2.0</string>
     <string name="about_translators">Переводчики</string>
@@ -534,5 +519,4 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Загрузки</string>
     <string name="notification_channel_devotion_downloader_name">Загрузки размышлений</string>
-    <string name="notification_channel_devotion_reminder_name">Напоминания о размышлениях</string>
 </resources>

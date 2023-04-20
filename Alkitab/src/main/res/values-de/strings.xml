@@ -315,11 +315,6 @@
     <string name="recentverses_today_time">Heute, %s</string>
     <string name="recentverses_yesterday_time">Gestern, %s</string>
     <string name="recentverses_button_hint">(Lang drücken für Bibelstellen-Historie)</string>
-    <string name="dr_reminder">Erinnerung</string>
-    <string name="dr_error_contact_reminder">Fehler beim Herstellen der Verbindung zur App für Erinnerungen.</string>
-    <string name="dr_timepicker_fallback_hint">HHMM (e.g. 1930 von 7:30pm)</string>
-    <string name="dr_timepicker_set">Setzen</string>
-    <string name="dr_timepicker_off">Ausschalten</string>
     <string name="dv_activity_title">Vers des Tages</string>
     <string name="dv_option_transparent_background">Transparenter Hintergrund</string>
     <string name="dv_option_dark_text">Dunkler Text</string>
@@ -498,16 +493,6 @@
     <string name="pref_bottomToolbarOnText_summary">Toolbar für die Versnavigation am unteren Rand der Bibelanzeige anzeigen</string>
     <string name="pref_verseNumberIsShown_title">Versnummern anzeigen</string>
     <string name="pref_verseNumberIsShown_summary">Versnummer am Anfang jedes Verses anzeigen</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">Erinnerung</string>
-    <string name="dr_notification_title">Tägliche Andacht</string>
-    <string name="dr_notification_text">Lesen Sie jetzt die heutige Andacht.</string>
-    <string name="dr_off">Aus</string>
-    <string name="dr_alarm">Alarm</string>
-    <string name="dr_sound">Ton</string>
-    <string name="dr_vibrate">Vibrieren</string>
-    <string name="dr_pref_notification_message">Erinnerungsmeldung</string>
-    <string name="dr_default_sound">Standardton</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% kostenlose Bibel-App, lizenziert unter der Apache Lizenz 2.0</string>
     <string name="about_translators">Übersetzer</string>
@@ -534,5 +519,4 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Downloads</string>
     <string name="notification_channel_devotion_downloader_name">Andacht-Downloads</string>
-    <string name="notification_channel_devotion_reminder_name">Erinnerungen an Andacht</string>
 </resources>

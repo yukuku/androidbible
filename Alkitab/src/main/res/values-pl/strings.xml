@@ -315,11 +315,6 @@
     <string name="recentverses_today_time">Dziś, %s</string>
     <string name="recentverses_yesterday_time">Wczoraj, %s</string>
     <string name="recentverses_button_hint">(Długie przyciśnięcie pokaże historię)</string>
-    <string name="dr_reminder">Przypomnienie</string>
-    <string name="dr_error_contact_reminder">Błąd podczas łączenia się z aplikacją Przypominacz.</string>
-    <string name="dr_timepicker_fallback_hint">GGMM (np: 1930 dla 19:30)</string>
-    <string name="dr_timepicker_set">Ustaw</string>
-    <string name="dr_timepicker_off">Wyłącz</string>
     <string name="dv_activity_title">Widget codziennego wersu</string>
     <string name="dv_option_transparent_background">Przeźroczyste tło</string>
     <string name="dv_option_dark_text">Ciemny tekst</string>
@@ -498,16 +493,6 @@
     <string name="pref_bottomToolbarOnText_summary">Umieść pasek nawigacji na dole ekranu Biblii</string>
     <string name="pref_verseNumberIsShown_title">Pokaż numer wersu</string>
     <string name="pref_verseNumberIsShown_summary">Pokaż numer wersu na początku każdego wersu</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">Przypomnienie</string>
-    <string name="dr_notification_title">Codzienne rozważanie</string>
-    <string name="dr_notification_text">Przeczytaj teraz dzisiejsze rozważania.</string>
-    <string name="dr_off">Wyłącz</string>
-    <string name="dr_alarm">Alarm</string>
-    <string name="dr_sound">Dźwięk</string>
-    <string name="dr_vibrate">Wibracje</string>
-    <string name="dr_pref_notification_message">Wiadomość przypomnienia</string>
-    <string name="dr_default_sound">Domyślny dźwięk</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">W 100% darmowa aplikacja Biblijna na licencji Apache License 2.0</string>
     <string name="about_translators">Tłumacze</string>
@@ -534,5 +519,4 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Pobrane</string>
     <string name="notification_channel_devotion_downloader_name">Pobrane rozważania</string>
-    <string name="notification_channel_devotion_reminder_name">Przypomnienia rozważań</string>
 </resources>

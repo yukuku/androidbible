@@ -312,10 +312,6 @@
     <string name="recentverses_today_time">Karung adlawa, %s</string>
     <string name="recentverses_yesterday_time">Kagahapon, %s</string>
     <string name="recentverses_button_hint">(Pinduton og dugay para sa bag-o lang na mga bersikulo)</string>
-    <string name="dr_reminder">Pahinumdom</string>
-    <string name="dr_error_contact_reminder">Nag error samtang nag kontak sa pahinumdom na app.</string>
-    <string name="dr_timepicker_set">Itakda</string>
-    <string name="dr_timepicker_off">Pawngon</string>
     <string name="dv_activity_title">Widget sa matag adlaw na bersikulo</string>
     <string name="dv_option_transparent_background">Transparent background</string>
     <string name="dv_option_dark_text">Itom na teksto</string>
@@ -489,16 +485,6 @@
     <string name="pref_textPadding_summary">Maghimo og teksto sa linyang mas pig-ot para sayon sa pagbasa</string>
     <string name="pref_bottomToolbarOnText_title">Ubos na bersikulong nabigasyon</string>
     <string name="pref_bottomToolbarOnText_summary">Ibutang ang bersikulong nabigasyong toolbar sa ubos sa Bible screen</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">Pahinumdom</string>
-    <string name="dr_notification_title">Adlaw-adlaw nga debosyon</string>
-    <string name="dr_notification_text">Pasahon ang karung adlawang debosyon karun.</string>
-    <string name="dr_off">Pawng</string>
-    <string name="dr_alarm">Alarm</string>
-    <string name="dr_sound">Tingog</string>
-    <string name="dr_vibrate">Mangurog</string>
-    <string name="dr_pref_notification_message">Pahibalong mensahe</string>
-    <string name="dr_default_sound">I-default ang sound</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% libreng biblya nga app, lisensyado ubos sa Apache License 2.0</string>
     <string name="about_translators">Mga maghuhubad</string>

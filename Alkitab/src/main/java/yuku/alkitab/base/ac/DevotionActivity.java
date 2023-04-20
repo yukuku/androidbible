@@ -52,7 +52,6 @@ import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
 import yuku.alkitab.base.widget.TwofingerLinearLayout;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.reminder.ac.DevotionReminderActivity;
 import yuku.alkitab.tracking.Tracker;
 import yuku.alkitab.util.Ari;
 import yuku.alkitabintegration.display.Launcher;
@@ -382,9 +381,6 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
                 .setChooserTitle(getString(R.string.bagikan_renungan))
                 .startChooser();
 
-            return true;
-        } else if (itemId == R.id.menuReminder) {
-            startActivity(DevotionReminderActivity.createIntent());
             return true;
         }
 

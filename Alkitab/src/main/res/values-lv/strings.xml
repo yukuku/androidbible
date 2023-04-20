@@ -314,10 +314,6 @@
     <string name="recentverses_today_time">Šodien, %s</string>
     <string name="recentverses_yesterday_time">Vakardien, %s</string>
     <string name="recentverses_button_hint">(Ilgi-nospiest pēdējiem apskatītiem pantiem)</string>
-    <string name="dr_reminder">Atgādinājums</string>
-    <string name="dr_error_contact_reminder">Savienojoties ar Atgādinājuma aplikāciju ir radusies kļūda.</string>
-    <string name="dr_timepicker_set">Noteikt</string>
-    <string name="dr_timepicker_off">Aizgriezt</string>
     <string name="dv_activity_title">Ikdienas pantu logrīks</string>
     <string name="dv_option_transparent_background">Caurspīdīgs fons</string>
     <string name="dv_option_dark_text">Tumšs teksts</string>
@@ -492,16 +488,6 @@
     <string name="pref_textPadding_summary">Padara rindstarpas šaurākā lai atvieglotu lasīšanu</string>
     <string name="pref_bottomToolbarOnText_title">Pārvietošanās pa pantiem apakšā</string>
     <string name="pref_bottomToolbarOnText_summary">Ieliec pantu pārvietošanās rīkjoslu Bībeles ekrāna apakšā</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">Atgādinājums</string>
-    <string name="dr_notification_title">Ikdienas lūgšana</string>
-    <string name="dr_notification_text">Tagad lasi šodienas lūgšanu.</string>
-    <string name="dr_off">Izslēgts</string>
-    <string name="dr_alarm">Modinātājs</string>
-    <string name="dr_sound">Skaņa</string>
-    <string name="dr_vibrate">Vibrācija</string>
-    <string name="dr_pref_notification_message">Atgādinājums</string>
-    <string name="dr_default_sound">Noklusētā skaņa</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% bezmaksas Bībeles aplikācija, licenzēts zem Apache Licenze 2.0</string>
     <string name="about_translators">Tulkotāji</string>
@@ -528,5 +514,4 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Lejupielādes</string>
     <string name="notification_channel_devotion_downloader_name">Mācīšanās lejuplādes</string>
-    <string name="notification_channel_devotion_reminder_name">Mācīšanās atgādinājumi</string>
 </resources>
