@@ -312,11 +312,6 @@
     <string name="recentverses_today_time">本日 %s</string>
     <string name="recentverses_yesterday_time">昨日 %s</string>
     <string name="recentverses_button_hint">(長押しで最近閲覧した節を表示)</string>
-    <string name="dr_reminder">リマインダー</string>
-    <string name="dr_error_contact_reminder">リマインダーアプリが見つかりません.</string>
-    <string name="dr_timepicker_fallback_hint">HHMM（例：1930は午後7時30分）</string>
-    <string name="dr_timepicker_set">セット</string>
-    <string name="dr_timepicker_off">オフ</string>
     <string name="dv_activity_title">今日の節ウィジェット</string>
     <string name="dv_option_transparent_background">背景を透過にする</string>
     <string name="dv_option_dark_text">文字を暗くする</string>
@@ -493,16 +488,6 @@
     <string name="pref_textPadding_summary">読みやすくするために文字を細くする。</string>
     <string name="pref_bottomToolbarOnText_title">ナビゲーションバーを下にする</string>
     <string name="pref_bottomToolbarOnText_summary">聖書画面の下部にある詩のナビゲーションツールバーを配置します。</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">リマインダー</string>
-    <string name="dr_notification_title">日々のデボーション</string>
-    <string name="dr_notification_text">今日のデボーションを読む。</string>
-    <string name="dr_off">オフ</string>
-    <string name="dr_alarm">アラーム</string>
-    <string name="dr_sound">音</string>
-    <string name="dr_vibrate">バイブレート</string>
-    <string name="dr_pref_notification_message">リマインダーの内容</string>
-    <string name="dr_default_sound">初期の音</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Apache License 2.0でライセンスされた100％無料の聖書アプリ</string>
     <string name="about_translators">翻訳者</string>
@@ -529,5 +514,4 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">ダウンロード</string>
     <string name="notification_channel_devotion_downloader_name">デボーションのダウンロード情報</string>
-    <string name="notification_channel_devotion_reminder_name">デボーションのレマインダー</string>
 </resources>

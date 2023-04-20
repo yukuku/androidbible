@@ -312,10 +312,6 @@
     <string name="recentverses_today_time">Σήμερα, %s</string>
     <string name="recentverses_yesterday_time">Χθες, %s</string>
     <string name="recentverses_button_hint">(Παρατεταμένο πάτημα για πρόσφατους στίχους)</string>
-    <string name="dr_reminder">Υπενθύμιση</string>
-    <string name="dr_error_contact_reminder">Σφάλμα κατά την επικοινωνία με την εφαρμογή Υπενθυμίσεις.</string>
-    <string name="dr_timepicker_set">Ρύθμιση</string>
-    <string name="dr_timepicker_off">Κλείστε</string>
     <string name="dv_activity_title">Μάγος Στίχων Συνέχεια</string>
     <string name="dv_option_transparent_background">Διαφανές φόντο</string>
     <string name="dv_option_dark_text">Σκούρο κείμενο</string>
@@ -490,16 +486,6 @@
     <string name="pref_textPadding_summary">Σμικρύνετε το κείμενο σε μια γραμμή για ευκολία ανάγνωσης</string>
     <string name="pref_bottomToolbarOnText_title">Περιήγηση στον κάτω στίχο</string>
     <string name="pref_bottomToolbarOnText_summary">Βάλτε την γραμμή εργαλείων περιήγησης στο στίχο στο κάτω μέρος της οθόνης Βίβλου</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">Υπενθύμιση</string>
-    <string name="dr_notification_title">Καθημερινή αφοσίωση</string>
-    <string name="dr_notification_text">Διαβάστε την σημερινή αφιέρωση τώρα.</string>
-    <string name="dr_off">Σβήστε</string>
-    <string name="dr_alarm">Σήμα</string>
-    <string name="dr_sound">Ήχος</string>
-    <string name="dr_vibrate">Δόνηση</string>
-    <string name="dr_pref_notification_message">Μήνυμα υπενθύμισης</string>
-    <string name="dr_default_sound">Επιλεγμένος ήχος</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% δωρεάν πρόγραμμα Βίβλου, με άδεια υπό την Άδεια Apache 2.0</string>
     <string name="about_translators">Μεταφραστές</string>
@@ -526,5 +512,4 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Κατέβασμα από τον υπολογιστή διάφορες φορές</string>
     <string name="notification_channel_devotion_downloader_name">Κατέβασμα φακέλλων με αγαπημένο περιεχόμενο</string>
-    <string name="notification_channel_devotion_reminder_name">Υπενθυμίσεις αφοσίωσης</string>
 </resources>

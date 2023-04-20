@@ -312,10 +312,6 @@
     <string name="recentverses_today_time">I dag. %s</string>
     <string name="recentverses_yesterday_time">I går %s</string>
     <string name="recentverses_button_hint">(Lang-tap for de seneste vers)</string>
-    <string name="dr_reminder">Påmindelse</string>
-    <string name="dr_error_contact_reminder">Fejl ved kontakt til Reminder-app.</string>
-    <string name="dr_timepicker_set">Sæt</string>
-    <string name="dr_timepicker_off">Slå fra</string>
     <string name="dv_activity_title">Widget for daglige vers</string>
     <string name="dv_option_transparent_background">Gennemsigtig baggrund</string>
     <string name="dv_option_dark_text">Mørk tekst</string>
@@ -490,16 +486,6 @@
     <string name="pref_textPadding_summary">Lav tekst i en linje smallere, for at lette læsning</string>
     <string name="pref_bottomToolbarOnText_title">Vers-navigation i bund</string>
     <string name="pref_bottomToolbarOnText_summary">Sæt vers-navigation værktøjslinjen nederst på skærmen</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">Påmindelse</string>
-    <string name="dr_notification_title">Daglig andagt</string>
-    <string name="dr_notification_text">Læs dagens andagt nu.</string>
-    <string name="dr_off">Afbryd</string>
-    <string name="dr_alarm">Alarm</string>
-    <string name="dr_sound">Lyd</string>
-    <string name="dr_vibrate">Vibrer</string>
-    <string name="dr_pref_notification_message">Påmindelsesbesked</string>
-    <string name="dr_default_sound">Standard lyd</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% gratis Bible App, licenseret under Apache License 2.0</string>
     <string name="about_translators">Oversættere</string>
@@ -526,5 +512,4 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Overførsler</string>
     <string name="notification_channel_devotion_downloader_name">Andagtsoverførsler</string>
-    <string name="notification_channel_devotion_reminder_name">Andagtspåmindelser</string>
 </resources>

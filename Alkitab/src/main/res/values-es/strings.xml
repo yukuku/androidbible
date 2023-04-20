@@ -315,11 +315,6 @@
     <string name="recentverses_today_time">Hoy, %s</string>
     <string name="recentverses_yesterday_time">Ayer, %s</string>
     <string name="recentverses_button_hint">(Mantener presionado para versículos recientes)</string>
-    <string name="dr_reminder">Recordatorio</string>
-    <string name="dr_error_contact_reminder">Error contactaron aplicación de Recordatorios.</string>
-    <string name="dr_timepicker_fallback_hint">HHMM (ej. 1930 por 7:30pm)</string>
-    <string name="dr_timepicker_set">Fijar</string>
-    <string name="dr_timepicker_off">Desactivar</string>
     <string name="dv_activity_title">Widget Del Versículo Diario</string>
     <string name="dv_option_transparent_background">Fondo transparente</string>
     <string name="dv_option_dark_text">Texto oscuro</string>
@@ -499,16 +494,6 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
     <string name="pref_bottomToolbarOnText_summary">Poner la barra de navegación de versículo en la parte inferior de la pantalla de la Biblia</string>
     <string name="pref_verseNumberIsShown_title">Mostrar número de versículos</string>
     <string name="pref_verseNumberIsShown_summary">Muestre el número del versículo al comienzo de cada versículo</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">Recordatorio</string>
-    <string name="dr_notification_title">Devoción diaria</string>
-    <string name="dr_notification_text">Leer la devoción de hoy ahora.</string>
-    <string name="dr_off">apagado</string>
-    <string name="dr_alarm">Alarma</string>
-    <string name="dr_sound">Sonido</string>
-    <string name="dr_vibrate">Vibrar</string>
-    <string name="dr_pref_notification_message">Mensaje recordatorio</string>
-    <string name="dr_default_sound">Sonido por defecto</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">La Biblia de libre acceso a través de la Licencia Apache 2.0</string>
     <string name="about_translators">Traductores</string>
@@ -535,5 +520,4 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Descargas</string>
     <string name="notification_channel_devotion_downloader_name">Descargas de devoción</string>
-    <string name="notification_channel_devotion_reminder_name">Recordatorios de devoción</string>
 </resources>

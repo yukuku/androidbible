@@ -313,11 +313,6 @@
     <string name="recentverses_today_time">Сьогодні, %s</string>
     <string name="recentverses_yesterday_time">Вчора, %s</string>
     <string name="recentverses_button_hint">(Притримайте тут для огляду останніх прочитаних віршів)</string>
-    <string name="dr_reminder">Нагадування</string>
-    <string name="dr_error_contact_reminder">Помилка при контакті Нагадування програми</string>
-    <string name="dr_timepicker_fallback_hint">HHMM (напр. 1930 для 19:30)</string>
-    <string name="dr_timepicker_set">Налаштування</string>
-    <string name="dr_timepicker_off">Вимкнути</string>
     <string name="dv_activity_title">Віджет щоденних віршів</string>
     <string name="dv_option_transparent_background">Прозорий фон</string>
     <string name="dv_option_dark_text">Темний текст</string>
@@ -493,16 +488,6 @@
     <string name="pref_textPadding_summary">Зробіть текст рідшим рядком, щоб полегшити читання</string>
     <string name="pref_bottomToolbarOnText_title">Навігація на нижній панелі</string>
     <string name="pref_bottomToolbarOnText_summary">Розмістити панель навігації внизу вікна Біблії</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">Нагадування</string>
-    <string name="dr_notification_title">Щоденне читання</string>
-    <string name="dr_notification_text">Читати сьогоднішнє читання зараз.</string>
-    <string name="dr_off">Вимкнути</string>
-    <string name="dr_alarm">Будильник</string>
-    <string name="dr_sound">Звук</string>
-    <string name="dr_vibrate">Вібрація</string>
-    <string name="dr_pref_notification_message">Нагадувальне повідомлення</string>
-    <string name="dr_default_sound">Звук за замовчуванням</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% безкоштовний додаток для Біблії, ліцензований за ліцензією Apache 2.0</string>
     <string name="about_translators">Перекладачі</string>
@@ -529,5 +514,4 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Завантаження</string>
     <string name="notification_channel_devotion_downloader_name">Завантаження роздумів</string>
-    <string name="notification_channel_devotion_reminder_name">Нагадування про роздуми</string>
 </resources>

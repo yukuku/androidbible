@@ -312,10 +312,6 @@
     <string name="recentverses_today_time">Ngayon, %s</string>
     <string name="recentverses_yesterday_time">Kagahapon, %s</string>
     <string name="recentverses_button_hint">(Pindutin nang matagal para sa nagdaang berso)</string>
-    <string name="dr_reminder">Paalala</string>
-    <string name="dr_error_contact_reminder">Nagkaroon ng error habang kino-kontak ang Reminder app.</string>
-    <string name="dr_timepicker_set">Set</string>
-    <string name="dr_timepicker_off">Papatayin</string>
     <string name="dv_activity_title">Daily Verse Widget</string>
     <string name="dv_option_transparent_background">Transparent na background</string>
     <string name="dv_option_dark_text">Madilim na teksto</string>
@@ -490,16 +486,6 @@
     <string name="pref_textPadding_summary">Gumawa ng teksto sa isang linyang makitid upang mapadali ang pagbabasa</string>
     <string name="pref_bottomToolbarOnText_title">Ibabang taludtod ng nabigasyon</string>
     <string name="pref_bottomToolbarOnText_summary">Ilagay ang taludtod nabigasyong toolbar sa ibaba ng Bible screen</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">Paalala</string>
-    <string name="dr_notification_title">Araw-araw na debosyon</string>
-    <string name="dr_notification_text">Basahin ang debosyon sa araw na ito ngayon.</string>
-    <string name="dr_off">Patayin</string>
-    <string name="dr_alarm">Alarm</string>
-    <string name="dr_sound">Tunog</string>
-    <string name="dr_vibrate">Tumaginting</string>
-    <string name="dr_pref_notification_message">Paalalang mensahe</string>
-    <string name="dr_default_sound">Default na tunog</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">10% libreng Bibliyang app, lisensyado sa ilalim ng Apache License 2.0</string>
     <string name="about_translators">Mga Tagapagsaling-wika</string>
@@ -526,5 +512,4 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">I-download</string>
     <string name="notification_channel_devotion_downloader_name">Pag-download ng debosyon</string>
-    <string name="notification_channel_devotion_reminder_name">Paalala ng debosyon</string>
 </resources>

@@ -315,11 +315,6 @@
     <string name="recentverses_today_time">Hôm nay, %s</string>
     <string name="recentverses_yesterday_time">Hôm qua, %s</string>
     <string name="recentverses_button_hint">(Giữ để thấy câu thơ gần đây)</string>
-    <string name="dr_reminder">Nhắc nhở</string>
-    <string name="dr_error_contact_reminder">Lỗi khi kết nối với ứng dụng ghi nhớ.</string>
-    <string name="dr_timepicker_fallback_hint">Giờ : Phút (VD: 1930 tương ứng 7:30 phút tối)</string>
-    <string name="dr_timepicker_set">Đặt</string>
-    <string name="dr_timepicker_off">Tắt</string>
     <string name="dv_activity_title">Tiện ích lời thánh hàng ngày</string>
     <string name="dv_option_transparent_background">Hình nền trong suốt</string>
     <string name="dv_option_dark_text">Chữ màu tối</string>
@@ -498,16 +493,6 @@
     <string name="pref_bottomToolbarOnText_summary">Đặt thanh công cụ ở phía dưới trên màn hình Kinh Thánh</string>
     <string name="pref_verseNumberIsShown_title">Hiện số câu</string>
     <string name="pref_verseNumberIsShown_summary">Hiện số câu ở đầu mỗi câu</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">Nhắc nhở</string>
-    <string name="dr_notification_title">Sùng kính hàng ngày</string>
-    <string name="dr_notification_text">Đọc sùng kính ngày hôm nay.</string>
-    <string name="dr_off">Tắt</string>
-    <string name="dr_alarm">Báo thức</string>
-    <string name="dr_sound">Âm thanh</string>
-    <string name="dr_vibrate">Rung</string>
-    <string name="dr_pref_notification_message">Tin nhắn nhắc nhở</string>
-    <string name="dr_default_sound">Âm thanh mặc định</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% miễn phí phần mềm Kinh thánh, đăng ký bởi Apache 2.0</string>
     <string name="about_translators">Dịch giả</string>
@@ -534,5 +519,4 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Các tài liệu được tải về</string>
     <string name="notification_channel_devotion_downloader_name">Các tài liệu bồi linh tĩnh tâm được tải về</string>
-    <string name="notification_channel_devotion_reminder_name">Vài điều nhắc nhở về tài liệu bồi linh tĩnh tâm</string>
 </resources>

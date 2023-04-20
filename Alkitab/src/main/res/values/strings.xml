@@ -338,20 +338,14 @@
     <string name="recentverses_yesterday_time">Yesterday, %s</string>
     <string name="recentverses_button_hint">(Long-press for recent verses)</string>
 
-    <string name="dr_reminder">Reminder</string>
-    <string name="dr_error_contact_reminder">Error while contacting Reminder app.</string>
-    <string name="dr_timepicker_fallback_hint">HHMM (e.g. 1930 for 7:30pm)</string>
-    <string name="dr_timepicker_set">Set</string>
-    <string name="dr_timepicker_off">Turn off</string>
-
-    <string name="dv_activity_title">Daily Verse Widget</string>
+	<string name="dv_activity_title">Daily Verse Widget</string>
     <string name="dv_option_transparent_background">Transparent background</string>
     <string name="dv_option_dark_text">Dark text</string>
     <string name="dv_option_text_size">Text size</string>
     <string name="dv_option_hide_app_icon">Hide app icon</string>
 
 	<!-- Reading plan -->
-    <string name="rp_activity_title">Reading Plan</string>
+    <string name="rp_activity_title" translatable="false">Reading Plan</string>
     <string name="rp_menuReadingPlan">Reading plan</string>
     <string name="rp_commentActual">Finished: %s%%</string>
     <string name="rp_commentTarget">Target: %s%%</string>
@@ -540,17 +534,6 @@
 	<string name="pref_verseNumberIsShown_title">Show verse numbers</string>
 	<string name="pref_verseNumberIsShown_summary">Show the verse number at the beginning of each verse</string>
 
-	<!-- devotion reminder -->
-	<string name="dr_app_name">Reminder</string>
-	<string name="dr_notification_title">Daily devotion</string>
-	<string name="dr_notification_text">Read today\'s devotion now.</string>
-	<string name="dr_off">Off</string>
-	<string name="dr_alarm">Alarm</string>
-	<string name="dr_sound">Sound</string>
-	<string name="dr_vibrate">Vibrate</string>
-	<string name="dr_pref_notification_message">Reminder message</string>
-	<string name="dr_default_sound">Default sound</string>
-
 	<!-- about -->
 	<string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% free Bible app, licensed under Apache License 2.0</string>
 	<string name="about_translators">Translators</string>
@@ -588,6 +571,5 @@
 	<!-- Notification channels -->
 	<string name="notification_channel_download_mapper_name">Downloads</string>
 	<string name="notification_channel_devotion_downloader_name">Devotion downloads</string>
-	<string name="notification_channel_devotion_reminder_name">Devotion reminders</string>
 
 </resources>

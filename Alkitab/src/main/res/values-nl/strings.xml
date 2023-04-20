@@ -315,10 +315,6 @@
     <string name="recentverses_today_time">Vandaag, %s</string>
     <string name="recentverses_yesterday_time">Gisteren, %s</string>
     <string name="recentverses_button_hint">(Ingedrukt houden voor recente verzen)</string>
-    <string name="dr_reminder">Herinnering</string>
-    <string name="dr_error_contact_reminder">Fout bij verbinden met Herinnering app.</string>
-    <string name="dr_timepicker_set">Stellen</string>
-    <string name="dr_timepicker_off">Uitschakelen</string>
     <string name="dv_activity_title">Dagelijks Vers Widget</string>
     <string name="dv_option_transparent_background">Transparante achtergrond</string>
     <string name="dv_option_dark_text">Donkere tekst</string>
@@ -497,16 +493,6 @@
     <string name="pref_bottomToolbarOnText_summary">Zet de vers navigatie toolbar beneden op het Bijbel scherm</string>
     <string name="pref_verseNumberIsShown_title">Toon vers nummers</string>
     <string name="pref_verseNumberIsShown_summary">Toon de vers nummers aan het begin van elk vers</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">Herinnering</string>
-    <string name="dr_notification_title">Dagelijkse overdenking</string>
-    <string name="dr_notification_text">Lees de overdenking van vandaag.</string>
-    <string name="dr_off">Uit</string>
-    <string name="dr_alarm">Alarm</string>
-    <string name="dr_sound">Geluid</string>
-    <string name="dr_vibrate">Trillen</string>
-    <string name="dr_pref_notification_message">Herinnering bericht</string>
-    <string name="dr_default_sound">Standaardgeluid</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% gratis Bijbel app, gelicentieerd onder Apache License 2.0</string>
     <string name="about_translators">Vertalers</string>
@@ -533,5 +519,4 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Downloads</string>
     <string name="notification_channel_devotion_downloader_name">Devotie downloads</string>
-    <string name="notification_channel_devotion_reminder_name">Devotie herinneringen</string>
 </resources>

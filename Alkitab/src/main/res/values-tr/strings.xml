@@ -315,11 +315,6 @@
     <string name="recentverses_today_time">Bugün, %s</string>
     <string name="recentverses_yesterday_time">Dün, %s</string>
     <string name="recentverses_button_hint">(Son ayetler için uzun basın)</string>
-    <string name="dr_reminder">Hatırlatma</string>
-    <string name="dr_error_contact_reminder">Hatırlatıcı uygulamasına bağlanılırken hata.</string>
-    <string name="dr_timepicker_fallback_hint">SSDD (örn. 19:30 yazmak için 1930)</string>
-    <string name="dr_timepicker_set">Set</string>
-    <string name="dr_timepicker_off">Kapat</string>
     <string name="dv_activity_title">Günlük Ayet Pencere Ögesi</string>
     <string name="dv_option_transparent_background">Şeffaf arka plan</string>
     <string name="dv_option_dark_text">Koyu metin</string>
@@ -498,16 +493,6 @@
     <string name="pref_bottomToolbarOnText_summary">Ayet gezinti çubuğunu İncil ekranının alt kısmına yerleştir</string>
     <string name="pref_verseNumberIsShown_title">Ayet numaralarını göster</string>
     <string name="pref_verseNumberIsShown_summary">Her ayetin başında ayet numarasını göster</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">Hatırlatma</string>
-    <string name="dr_notification_title">Günlük dua</string>
-    <string name="dr_notification_text">Bugünün duasını şimdi oku.</string>
-    <string name="dr_off">Kapalı</string>
-    <string name="dr_alarm">Alarm</string>
-    <string name="dr_sound">Ses</string>
-    <string name="dr_vibrate">Titreşim</string>
-    <string name="dr_pref_notification_message">Hatırlatma mesajı</string>
-    <string name="dr_default_sound">Varsayılan ses</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">%100 bedava İncil uygulaması, Apache License 2.0 yetkisi altında</string>
     <string name="about_translators">Çevirmenler</string>
@@ -534,5 +519,4 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">İndirilenler</string>
     <string name="notification_channel_devotion_downloader_name">Bağlılık indirmeleri</string>
-    <string name="notification_channel_devotion_reminder_name">Bağlılık hatırlatmaları</string>
 </resources>

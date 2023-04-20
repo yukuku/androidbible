@@ -312,11 +312,6 @@
     <string name="recentverses_today_time">วันนี้ %s</string>
     <string name="recentverses_yesterday_time">เมื่อวัน %s</string>
     <string name="recentverses_button_hint">(กดค้างสำหรับประวัติข้อล่าสุดค่ะ)</string>
-    <string name="dr_reminder">การแจ้งเตือน</string>
-    <string name="dr_error_contact_reminder">เกิดการผิดพลาดระหว่างที่เชื่อมโยงกับแอปแจ้งเตือนค่ะ</string>
-    <string name="dr_timepicker_fallback_hint">HHMM (เช่น 1930 แทน 7:30pm)</string>
-    <string name="dr_timepicker_set">ตั้ง</string>
-    <string name="dr_timepicker_off">ปิด</string>
     <string name="dv_activity_title">วิดเจ็ตข้อประจำวัน</string>
     <string name="dv_option_transparent_background">พื้นหลังโปร่งใส</string>
     <string name="dv_option_dark_text">ข้อความสีเข้ม</string>
@@ -493,16 +488,6 @@
     <string name="pref_textPadding_summary">ทำให้ตัวอักษรที่อยู่เส้นเดียวกันให้แคบลงเพื่อการอ่านที่สะดวกขึ้น</string>
     <string name="pref_bottomToolbarOnText_title">ให้ระบบการนำทางข้ออยู่ด้านหลัง</string>
     <string name="pref_bottomToolbarOnText_summary">ให้แถบเครื่องมือนำทางข้ออยู่ด้านหลังของหน้าจอในจอพระคัมภีร์</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">ตัวเตือนความจำ</string>
-    <string name="dr_notification_title">บทความประจำวัน</string>
-    <string name="dr_notification_text">อ่านบทความประจำวันของวันนี้ตอนนี้</string>
-    <string name="dr_off">ปิด</string>
-    <string name="dr_alarm">เสียงปลุก</string>
-    <string name="dr_sound">เสียง</string>
-    <string name="dr_vibrate">เตือนสั่น</string>
-    <string name="dr_pref_notification_message">ข้อความเตือน</string>
-    <string name="dr_default_sound">เสียงดีฟอลต์</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">แอปพระคัมภีร์ฟรี 100% อนุญาตภายใต้ Apache License 2.0</string>
     <string name="about_translators">นักแปล</string>
@@ -529,5 +514,4 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">ดาวน์โหลด</string>
     <string name="notification_channel_devotion_downloader_name">รายการดาวน์โหลดบทความประจำวัน</string>
-    <string name="notification_channel_devotion_reminder_name">การแจ้งเตือนของบทความประจำวัน</string>
 </resources>

@@ -315,11 +315,6 @@
     <string name="recentverses_today_time">今天，%s</string>
     <string name="recentverses_yesterday_time">昨天，%s</string>
     <string name="recentverses_button_hint">（长按以显示最近经文）</string>
-    <string name="dr_reminder">提示</string>
-    <string name="dr_error_contact_reminder">与提示程式连接时发生错误。</string>
-    <string name="dr_timepicker_fallback_hint">24小时制，HHMM (例如 1930 代表下午7:30)</string>
-    <string name="dr_timepicker_set">设置</string>
-    <string name="dr_timepicker_off">关闭</string>
     <string name="dv_activity_title">每日经文小部件</string>
     <string name="dv_option_transparent_background">透明的背景</string>
     <string name="dv_option_dark_text">深色文字</string>
@@ -498,16 +493,6 @@
     <string name="pref_bottomToolbarOnText_summary">把经节导览列放置到圣经显示底部</string>
     <string name="pref_verseNumberIsShown_title">显示经节号码</string>
     <string name="pref_verseNumberIsShown_summary">在每个经节开头显示经节号码</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">提醒</string>
-    <string name="dr_notification_title">每日灵修</string>
-    <string name="dr_notification_text">现在阅读今日灵修。</string>
-    <string name="dr_off">关闭</string>
-    <string name="dr_alarm">闹钟</string>
-    <string name="dr_sound">声音</string>
-    <string name="dr_vibrate">震动</string>
-    <string name="dr_pref_notification_message">提醒讯息</string>
-    <string name="dr_default_sound">预设声音</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100％免费圣经应用程序，根据Apache许可证2.0许可</string>
     <string name="about_translators">译者</string>
@@ -534,5 +519,4 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">下载</string>
     <string name="notification_channel_devotion_downloader_name">灵修下载</string>
-    <string name="notification_channel_devotion_reminder_name">灵修提示</string>
 </resources>

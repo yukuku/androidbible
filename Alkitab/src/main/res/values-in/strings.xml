@@ -323,11 +323,6 @@
     <string name="recentverses_today_time">Hari ini, %s</string>
     <string name="recentverses_yesterday_time">Kemarin, %s</string>
     <string name="recentverses_button_hint">(Sentuh lama: buka riwayat)</string>
-    <string name="dr_reminder">Pengingat</string>
-    <string name="dr_error_contact_reminder">Kesalahan menghubungi aplikasi Pengingat.</string>
-    <string name="dr_timepicker_fallback_hint">JJMM (mis.: 1930 = 7.30 malam)</string>
-    <string name="dr_timepicker_set">Pasang</string>
-    <string name="dr_timepicker_off">Matikan</string>
     <string name="dv_activity_title">Widget Ayat Harian</string>
     <string name="dv_option_transparent_background">Latar belakang transparan</string>
     <string name="dv_option_dark_text">Teks gelap</string>
@@ -506,16 +501,6 @@
     <string name="pref_bottomToolbarOnText_summary">Letakkan navigasi ayat di bagian bawah layar Alkitab</string>
     <string name="pref_verseNumberIsShown_title">Nomor ayat</string>
     <string name="pref_verseNumberIsShown_summary">Bubuhkan nomor ayat di depan tiap ayat</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">Pengingat</string>
-    <string name="dr_notification_title">Renungan harian</string>
-    <string name="dr_notification_text">Baca renungan hari ini.</string>
-    <string name="dr_off">Padam</string>
-    <string name="dr_alarm">Alarm</string>
-    <string name="dr_sound">Suara</string>
-    <string name="dr_vibrate">Getar</string>
-    <string name="dr_pref_notification_message">Pesan pengingat</string>
-    <string name="dr_default_sound">Suara default</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Aplikasi Alkitab 100% gratis. Terdaftar dibawah Apache License 2.0</string>
     <string name="about_translators">Penerjemah</string>
@@ -545,5 +530,4 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Unduhan</string>
     <string name="notification_channel_devotion_downloader_name">Unduhan renungan</string>
-    <string name="notification_channel_devotion_reminder_name">Pengingat renungan</string>
 </resources>

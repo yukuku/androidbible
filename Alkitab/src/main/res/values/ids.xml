@@ -5,5 +5,4 @@
 	<item name="TAG_fontName" type="id" />
 	<item name="TAG_hideStatus" type="id" />
 	<item name="TAG_textSize" type="id" />
-	<item name="NOTIF_reminder" type="id" />
 </resources>

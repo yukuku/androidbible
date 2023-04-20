@@ -315,11 +315,6 @@
     <string name="recentverses_today_time">Aujourd\'hui, %s</string>
     <string name="recentverses_yesterday_time">Hier, %s</string>
     <string name="recentverses_button_hint">(Appui long pour lister les versets récents)</string>
-    <string name="dr_reminder">Pense-bête</string>
-    <string name="dr_error_contact_reminder">Erreur lors de l\'accès à l\'application de rappel.</string>
-    <string name="dr_timepicker_fallback_hint">HHMM (ex. 1930 pour 19h30)</string>
-    <string name="dr_timepicker_set">Sertir</string>
-    <string name="dr_timepicker_off">Désactiver</string>
     <string name="dv_activity_title">Verset du jour</string>
     <string name="dv_option_transparent_background">Arrière plan transparent</string>
     <string name="dv_option_dark_text">Texte noir</string>
@@ -498,16 +493,6 @@
     <string name="pref_bottomToolbarOnText_summary">Mettre barre d\'outil de navigation de verset en bas sur l\'écran de la Bible</string>
     <string name="pref_verseNumberIsShown_title">Montrez les numéros de verset</string>
     <string name="pref_verseNumberIsShown_summary">Montrez les numéros de verset au début de chaque verset</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">Rappel</string>
-    <string name="dr_notification_title">Méditation quotidienne</string>
-    <string name="dr_notification_text">Lire la méditation quotidienne.</string>
-    <string name="dr_off">Eteint</string>
-    <string name="dr_alarm">Alarme</string>
-    <string name="dr_sound">Son</string>
-    <string name="dr_vibrate">Vibration</string>
-    <string name="dr_pref_notification_message">Message de rappel</string>
-    <string name="dr_default_sound">Son par défaut</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Application Biblique 100% gratuite, sous licence Apache License 2.0</string>
     <string name="about_translators">Traducteurs</string>
@@ -534,5 +519,4 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Téléchargement</string>
     <string name="notification_channel_devotion_downloader_name">Téléchargement dévotionnel</string>
-    <string name="notification_channel_devotion_reminder_name">Rappels de consacration</string>
 </resources>

@@ -312,11 +312,6 @@
     <string name="recentverses_today_time">ဒီနေ့ - %s</string>
     <string name="recentverses_yesterday_time">မနေ့က - %s</string>
     <string name="recentverses_button_hint">(ယခင် အခန်းငယ်များ ကျမ်းပိုဒ်များအတွက် ကြာမြင့်စွာနှိပ်ရန်)</string>
-    <string name="dr_reminder">သတိပေးနှိုးဆော်ချက်</string>
-    <string name="dr_error_contact_reminder">သတိပေးနှိုးဆော်ချက်အက်ပ်ကို ဆက်သွယ်နေစဉ် ချို့ယွင်းချက်ရှိခြင်း</string>
-    <string name="dr_timepicker_fallback_hint">HHMM (ဥပမာ − ညနေ ၇: ၃၀ တွင် ၁၉၃၀)</string>
-    <string name="dr_timepicker_set">သတ်မှတ်ထားရန်</string>
-    <string name="dr_timepicker_off">ပိတ်ရန်</string>
     <string name="dv_activity_title">နေ့စဉ်ကျမ်းပိုဒ် ဝစ်ဂျက်</string>
     <string name="dv_option_transparent_background">ထွင်းဖောက်မြင်နိုင်သည့် အနောက်ခံ</string>
     <string name="dv_option_dark_text">အနက်ရောင်စာသား</string>
@@ -493,16 +488,6 @@
     <string name="pref_textPadding_summary">စာဖတ်ခြင်းကို လွယ်ကူစေရန် စာသားများကို မျဉ်းကြောင်းကို ပိုမိုကျဉ်းမြောင်းအောင်ပြုလုပ်ရန်</string>
     <string name="pref_bottomToolbarOnText_title">ကျမ်းချက်လမ်းညွှန်ကို အောက်ခြေတွင်ထားရန်</string>
     <string name="pref_bottomToolbarOnText_summary">သမ္မာကျမ်းစာမျက်နှာပြင်ပေါ်ရှိ ကျမ်းချက်လမ်းညွှန် ကိရိယာတန်းကို အောက်ခြေတွင်ထားပါ။</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">သတိပေးချက်</string>
-    <string name="dr_notification_title">နေ့စဉ် ဝတ်ပြုခြင်း</string>
-    <string name="dr_notification_text">ယနေ့အတွက် ဝတ်ပြုခြင်းအစီစဥ်ကို ယခုဖတ်ပါ။</string>
-    <string name="dr_off">ပိတ်ရန်</string>
-    <string name="dr_alarm">သတိပေးချက်</string>
-    <string name="dr_sound">အသံ</string>
-    <string name="dr_vibrate">တုန်ခါမှု</string>
-    <string name="dr_pref_notification_message">သတိပေးနှိုးဆော်စာတို</string>
-    <string name="dr_default_sound">မူလသတ်မှတ်ထားသည့် အသံ</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Apache License 2.0 အောက်တွင် မူပိုင်ခွင့်ရသည့် 100% အခမဲ့ ကျမ်းစာအက်ပလီကေးရှင်း</string>
     <string name="about_translators">ဘာသာပြန်ဆိုသူများ</string>
@@ -529,5 +514,4 @@
     <!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">ဒေါင်းလုဒ်ဆွဲချထားသည့် ဖိုင်များ</string>
     <string name="notification_channel_devotion_downloader_name">ဒေါင်းလုဒ်ဆွဲချထားသည့် ဝတ်ပြုရေးဆိုင်ရာ ဖိုင်များ</string>
-    <string name="notification_channel_devotion_reminder_name">ဝတ်ပြုရေးဆိုင်ရာ သတိပေးနှိုးဆော်ချက်များ</string>
 </resources>

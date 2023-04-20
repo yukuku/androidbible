@@ -315,11 +315,6 @@
     <string name="recentverses_today_time">Ma, %s</string>
     <string name="recentverses_yesterday_time">Tegnap, %s</string>
     <string name="recentverses_button_hint">(Versszakok hosszannyomással)</string>
-    <string name="dr_reminder">Emlékeztető</string>
-    <string name="dr_error_contact_reminder">Hiba történt az Emlékeztető app kapcsolódása során.</string>
-    <string name="dr_timepicker_fallback_hint">HHMM (pl. 1930 = 7:30 DU)</string>
-    <string name="dr_timepicker_set">Beállítás</string>
-    <string name="dr_timepicker_off">Kikapcsolás</string>
     <string name="dv_activity_title">Napi Versszak kisalkalmazás</string>
     <string name="dv_option_transparent_background">Átlátszó háttér</string>
     <string name="dv_option_dark_text">Sötét szöveg</string>
@@ -447,14 +442,6 @@
     <string name="sync_login_form_forgot_password_success">Kérjük, ellenőrizze email-jét a további utasításokért.</string>
     <string name="sync_login_form_change_password_success">A jelszava módosítva lett.</string>
     <string name="pref_textPadding_title">Szöveg körüli margók</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">Emlékeztető</string>
-    <string name="dr_notification_title">Napi áldozás</string>
-    <string name="dr_off">Ki</string>
-    <string name="dr_sound">Hang</string>
-    <string name="dr_vibrate">Rezgés</string>
-    <string name="dr_pref_notification_message">Emlékeztető üzenet</string>
-    <string name="dr_default_sound">Alapértelmezett hang</string>
     <!-- about -->
     <string name="about_translators">Fordítók</string>
 	<string name="about_version_name">verzió %s</string>

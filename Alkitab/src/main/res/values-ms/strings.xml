@@ -312,10 +312,6 @@
     <string name="recentverses_today_time">Hari ini, %s</string>
     <string name="recentverses_yesterday_time">Semalam, %s</string>
     <string name="recentverses_button_hint">(Tekan lama untuk ayat baru-baru ini)</string>
-    <string name="dr_reminder">Peringatan</string>
-    <string name="dr_error_contact_reminder">Ralat semasa menghubungi aplikasi Peringatan.</string>
-    <string name="dr_timepicker_set">Tetap</string>
-    <string name="dr_timepicker_off">Tutup</string>
     <string name="dv_activity_title">Widget Ayat Harian</string>
     <string name="dv_option_transparent_background">Latar belakang telus</string>
     <string name="dv_option_dark_text">Teks gelap</string>
@@ -490,16 +486,6 @@
     <string name="pref_textPadding_summary">Jadikan teks dalam barisan lebih sempit agar mudah dibaca</string>
     <string name="pref_bottomToolbarOnText_title">Navigasi ayat di bawah</string>
     <string name="pref_bottomToolbarOnText_summary">Letakkan bar alat navigasi ayat di bawah pada skrin Alkitab</string>
-    <!-- devotion reminder -->
-    <string name="dr_app_name">Peringatan</string>
-    <string name="dr_notification_title">Pemujaan harian</string>
-    <string name="dr_notification_text">Baca pemujaan hari ini sekarang.</string>
-    <string name="dr_off">Tutup</string>
-    <string name="dr_alarm">Penggera</string>
-    <string name="dr_sound">Bunyi</string>
-    <string name="dr_vibrate">Getaran</string>
-    <string name="dr_pref_notification_message">Pesanan peringatan</string>
-    <string name="dr_default_sound">Bunyi lalai</string>
     <!-- about -->
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Aplikasi Alkitab percuma 100%, dilesenkan oleh Apache License 2.0</string>
     <string name="about_translators">Penterjemah</string>
@@ -526,5 +512,4 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Muat turun</string>
     <string name="notification_channel_devotion_downloader_name">Muat turun Pengabdian</string>
-    <string name="notification_channel_devotion_reminder_name">Peringatan Pengabdian</string>
 </resources>
