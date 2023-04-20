@@ -64,7 +64,6 @@ ext {
     // Misc
     okhttpVersion = '4.9.3'
     coilVersion = '1.1.0'
-    preferenceFixVersion = '1.1.0'
     kotlinxSerializationJsonVersion = '1.0.1'
 
     // UI
