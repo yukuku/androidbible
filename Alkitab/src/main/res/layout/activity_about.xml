@@ -151,56 +151,6 @@
 
 			</FrameLayout>
 
-			<FrameLayout
-				android:id="@+id/bFeedback"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginStart="16dp"
-				android:layout_marginEnd="16dp"
-				android:layout_marginTop="16dp"
-				android:background="#2a2a2a"
-				android:elevation="4dp"
-				android:foreground="?selectableItemBackground"
-				android:gravity="center_horizontal"
-				android:orientation="vertical"
-				android:paddingStart="24dp"
-				android:paddingEnd="24dp">
-
-				<TextView
-					android:layout_width="match_parent"
-					android:layout_height="48dp"
-					android:gravity="center_vertical"
-					android:text="@string/beri_saran_title"
-					android:textAppearance="?android:textAppearanceMedium"
-					android:textColor="#fff" />
-
-			</FrameLayout>
-
-			<FrameLayout
-				android:id="@+id/bEnableBeta"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginStart="16dp"
-				android:layout_marginEnd="16dp"
-				android:layout_marginTop="16dp"
-				android:background="#2a2a2a"
-				android:elevation="4dp"
-				android:foreground="?selectableItemBackground"
-				android:gravity="center_horizontal"
-				android:orientation="vertical"
-				android:paddingStart="24dp"
-				android:paddingEnd="24dp">
-
-				<TextView
-					android:layout_width="match_parent"
-					android:layout_height="48dp"
-					android:gravity="center_vertical"
-					android:text="@string/about_enable_beta"
-					android:textAppearance="?android:textAppearanceMedium"
-					android:textColor="#fff" />
-
-			</FrameLayout>
-
 			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"

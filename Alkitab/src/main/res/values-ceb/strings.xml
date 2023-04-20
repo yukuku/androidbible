@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Pagbalik</string>
     <string name="ekspor_ke_sd_card">Resirba</string>
     <string name="menuBantuan">Tabang</string>
-    <string name="beri_saran_title">E-suggest</string>
-    <string name="menuDevotion">Debosyon</string>
+	<string name="menuDevotion">Debosyon</string>
     <string name="search">Pangita</string>
     <string name="activity_title_markers">Mga marker</string>
     <string name="menu_markers">Mga marker</string>
@@ -178,8 +177,7 @@
     <string name="rename_label">Ilisdan ang pangalan sa label</string>
     <string name="delete_label">Tang-galon ang label</string>
     <string name="please_wait_titik3">Palihug mag hulat&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Og deleton pud ang file \'%s\'?</string>
-    <string name="get_more_fonts">Pagdownload og daghan pang fonts&#8230;</string>
+	<string name="get_more_fonts">Pagdownload og daghan pang fonts&#8230;</string>
     <string name="intent_filter_import_from_backup">Pagbalhin gikan sa binuck up</string>
     <string name="redownload">Pagbalik og download</string>
     <string name="read_faq_before_suggest">Palihug og basa sa FAQ nga naa sa ibaibaw sa dili pa mag send og suhestiyon. Padayonon sa pagsend og suhestiyon?</string>
@@ -505,25 +503,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% libreng biblya nga app, lisensyado ubos sa Apache License 2.0</string>
     <string name="about_translators">Mga maghuhubad</string>
     <string name="about_user_guide">Giya sa tiggamit</string>
-    <string name="about_beta_feedback">Beta Bersyong Feedback</string>
-    <string name="about_enable_beta">Sulayi ang Bersyong Beta</string>
-    <string name="about_enable_beta_confirmation">Sign sa google og i-tap ang BECOME A TESTER na pindutanan para masulayan ang bersong beta na naay mas bag-ong mga bahin niini og mga gipanindot!</string>
     <string name="about_version_name">beryon %s</string>
     <string name="about_material_sources">Mga tinubdan sa materyales</string>
     <string name="about_credits">Mga credit</string>
     <string name="about_official_website">Opisyal na Website</string>
     <string name="about_project_page">Pahina sa Proyekto</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Kami na ka matngun na ang reserba na file gikan sa karaang v3 Yuku Quick bible na naglangkob sa mga bookmark, mga nota, mga highlight, og mga label.\n\n Gusto mo bang i-import sila, para ma access nimo ang sila sa kani na app?</string>
-    <string name="marker_migrate_no_more">Ayaw pangutana og balik</string>
-    <string name="marker_migrate_later">Dili sa karun</string>
-    <string name="marker_migrate_title">I-import ang karaang mga marker</string>
-    <string name="marker_migrate_file_chooser_title">Pilia ang v3 reserbang file</string>
-    <string name="marker_migrate_no_more_confirmation">Sigurado ka bang dili nimo kinahanglan na mag import sa karaan na data?</string>
-    <string name="marker_migrate_error_opening_backup_file">Dili ma-acces ang reserbang file.</string>
-    <string name="marker_migrate_import_from_newest">Oo, I-import gikan sa pinakabag-o (girekomendar)</string>
-    <string name="marker_migrate_import_from_other">Laing reserba</string>
-    <string name="marker_migrate_filename_dated">%1$s gipetsahan %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Diksiyonaryo</string>
@@ -538,7 +522,5 @@
     <string name="menuCommentary">Komentaryo</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Dili ma abli ang Bible Maps app.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Magulang na folder</string>
     <!-- Notification channels -->
 </resources>

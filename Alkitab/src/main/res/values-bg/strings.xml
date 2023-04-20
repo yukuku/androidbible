@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Възстанови</string>
     <string name="ekspor_ke_sd_card">Направи резервно копие</string>
     <string name="menuBantuan">Помощ</string>
-    <string name="beri_saran_title">Предложение за подобряване</string>
-    <string name="menuDevotion">Посвещение</string>
+	<string name="menuDevotion">Посвещение</string>
     <string name="search">Търсене</string>
     <string name="activity_title_markers">Маркери</string>
     <string name="menu_markers">Маркери</string>
@@ -178,7 +177,6 @@
     <string name="rename_label">Преименувай етикета</string>
     <string name="delete_label">Изтрий етикета</string>
     <string name="please_wait_titik3">Моля, почакайте&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Изтрийте също и файла с данни \'%s\'?</string>
     <string name="get_more_fonts">Заредете допълнителни шрифтове&#8230;</string>
     <string name="intent_filter_import_from_backup">Импортирай от резервното копие</string>
     <string name="redownload">Повторно зареждане</string>
@@ -509,25 +507,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% безплатно приложение на Библията, лицензирано под Apache License 2.0</string>
     <string name="about_translators">Преводачи</string>
     <string name="about_user_guide">Ръководство на потребителя</string>
-    <string name="about_beta_feedback">Отзиви за бета-версията</string>
-    <string name="about_enable_beta">Изпробвай бета-версията</string>
-    <string name="about_enable_beta_confirmation">Влезте в своя Google-акаунт и натиснете бутона\"Стани тестер\", за да получите достъп към бета-версията с нови функции и подобрения!</string>
     <string name="about_version_name">версия %s</string>
     <string name="about_material_sources">Източници на материали</string>
     <string name="about_credits">Благодарности</string>
     <string name="about_official_website">Официален сайт</string>
     <string name="about_project_page">Страница на проекта</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Намерен е файл с резервно копие, съдържащо отметки, бележки, подчертавания и етикети от старата версия Quick Bible v3.\n\nДа се импортират ли данните от този файл, за да станат достъпни от даденото приложение?</string>
-    <string name="marker_migrate_no_more">Повече не питай</string>
-    <string name="marker_migrate_later">Не сега</string>
-    <string name="marker_migrate_title">Импортиране на стари маркери</string>
-    <string name="marker_migrate_file_chooser_title">Избор на файл с резервно копие v3</string>
-    <string name="marker_migrate_no_more_confirmation">Уверени ли сте, че не е необходимо импортирване на стрите данни?</string>
-    <string name="marker_migrate_error_opening_backup_file">Грешка в достъпа към файла с резервното копие.</string>
-    <string name="marker_migrate_import_from_newest">Да, импортирай от най-последния(препоръчително)!</string>
-    <string name="marker_migrate_import_from_other">Други резервни копия</string>
-    <string name="marker_migrate_filename_dated">%1$s по дата %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Речник</string>
@@ -542,8 +526,6 @@
     <string name="menuCommentary">Коментарии</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Приложението Bible Maps не е открито.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Родителска папка</string>
     <!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Изтегляния</string>
     <string name="notification_channel_devotion_downloader_name">Изтегляне на посвещения</string>

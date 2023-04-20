@@ -16,15 +16,12 @@
 
 package com.example.android.wizardpager.wizard.model;
 
-import androidx.fragment.app.Fragment;
 import android.text.TextUtils;
-
-import java.util.ArrayList;
-import java.util.regex.Pattern;
-
-import yuku.alkitabfeedback.R;
-
+import android.util.Patterns;
+import androidx.fragment.app.Fragment;
 import com.example.android.wizardpager.wizard.ui.CustomerInfoFragment;
+import java.util.ArrayList;
+import yuku.alkitabfeedback.R;
 
 /**
  * A page asking for a name and an email.
@@ -32,15 +29,16 @@ import com.example.android.wizardpager.wizard.ui.CustomerInfoFragment;
 public class CustomerInfoPage extends Page {
     public static final String NAME_DATA_KEY = "name";
     public static final String EMAIL_DATA_KEY = "email";
-	private final String key;
+    private final String key;
 
     public CustomerInfoPage(String key, ModelCallbacks callbacks, String title) {
         super(callbacks, title);
-		this.key = key;
+        this.key = key;
     }
-    
-    @Override public String getKey() {
-    	return key;
+
+    @Override
+    public String getKey() {
+        return key;
     }
 
     @Override
@@ -54,23 +52,11 @@ public class CustomerInfoPage extends Page {
         dest.add(new ReviewItem(getContext().getString(R.string.alkitabfeedback_label_your_email), mData.getString(EMAIL_DATA_KEY), getKey(), -1));
     }
 
-    // copied from Android SDK 8
-    private static final Pattern EMAIL_ADDRESS
-    = Pattern.compile(
-        "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
-        "\\@" +
-        "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
-        "(" +
-            "\\." +
-            "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
-        ")+"
-    );
-
     @Override
     public boolean isCompleted() {
         boolean name_ok = !TextUtils.isEmpty(mData.getString(NAME_DATA_KEY));
         String email = mData.getString(EMAIL_DATA_KEY);
-		boolean email_ok = email != null && EMAIL_ADDRESS.matcher(email).matches();
+        boolean email_ok = email != null && Patterns.EMAIL_ADDRESS.matcher(email).matches();
         return name_ok && email_ok;
     }
 }

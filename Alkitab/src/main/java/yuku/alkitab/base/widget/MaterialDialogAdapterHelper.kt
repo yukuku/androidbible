@@ -2,16 +2,13 @@ package yuku.alkitab.base.widget
 
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.list.customListAdapter
 
 object MaterialDialogAdapterHelper {
     @JvmStatic
-    fun MaterialDialog.Builder.showWithAdapter(adapter: Adapter): MaterialDialog {
-        val dialog = this
-            .adapter(adapter, null)
-            .build()
-        adapter.dialog = dialog
-        dialog.show()
-        return dialog
+    fun MaterialDialog.withAdapter(adapter: Adapter): MaterialDialog {
+        adapter.dialog = customListAdapter(adapter)
+        return this
     }
 
     abstract class Adapter : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {

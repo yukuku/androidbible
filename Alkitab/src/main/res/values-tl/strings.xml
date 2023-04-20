@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Ibalik</string>
     <string name="ekspor_ke_sd_card">Backup</string>
     <string name="menuBantuan">Tulong</string>
-    <string name="beri_saran_title">Mungkahi</string>
-    <string name="menuDevotion">Debosyon</string>
+	<string name="menuDevotion">Debosyon</string>
     <string name="search">Maghanap</string>
     <string name="activity_title_markers">Mga marker</string>
     <string name="menu_markers">Mga marker</string>
@@ -178,8 +177,7 @@
     <string name="rename_label">Ibahin ang pangalan ng label</string>
     <string name="delete_label">Burahin ang label</string>
     <string name="please_wait_titik3">Pakiusap maghintay&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">At burahin din ang data ng file \'%s\'?</string>
-    <string name="get_more_fonts">Mag download ng maraming mga font&#8230;</string>
+	<string name="get_more_fonts">Mag download ng maraming mga font&#8230;</string>
     <string name="intent_filter_import_from_backup">Mag-angkat galing sa backup</string>
     <string name="redownload">I-download ulit</string>
     <string name="read_faq_before_suggest">Pakiusap basahin ang nasa taas FAQ bago ipasa ang mungkahi. Ipagpatuloy ang pagpasa ng mungkahi?</string>
@@ -506,25 +504,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">10% libreng Bibliyang app, lisensyado sa ilalim ng Apache License 2.0</string>
     <string name="about_translators">Mga Tagapagsaling-wika</string>
     <string name="about_user_guide">Gabay ng tagagamit</string>
-    <string name="about_beta_feedback">Beta Bersyong Feedback</string>
-    <string name="about_enable_beta">Subukan ang bersyong Beta</string>
-    <string name="about_enable_beta_confirmation">Mag sign in sa Google at i-tap ang BECOME A TESTER na pindutan para masubukan ang bersyong Beta na may mas bagong mga tampok at mga pagpapahusay!</string>
     <string name="about_version_name">bersyon %s</string>
     <string name="about_material_sources">Mga pinagmulan ng materyales</string>
     <string name="about_credits">Kredito</string>
     <string name="about_official_website">Opisyal na Website</string>
     <string name="about_project_page">Pahina ng Proyekto</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Kami ay naka tuklas mg reserbang file galing sa old v3 uku Quick Bible na naglalaman ng mga bookmark, mga nota, mga highlight, at mga label.\n\nGusto mo bang i-angkat sila, para maka access ka nila mula sa app na ito?</string>
-    <string name="marker_migrate_no_more">Wag kang magtanung ulit</string>
-    <string name="marker_migrate_later">Wag ngayun</string>
-    <string name="marker_migrate_title">Mag angkat ng lumang mga marker</string>
-    <string name="marker_migrate_file_chooser_title">Piliin v3 reserbang file</string>
-    <string name="marker_migrate_no_more_confirmation">Sigurado ka bang hindi mo kailangang mag angkat ng lumang data?</string>
-    <string name="marker_migrate_error_opening_backup_file">Hindi ma access ang reserbang file.</string>
-    <string name="marker_migrate_import_from_newest">Oo, i-angkat galing sa pinakabagong (rekomendasyon)</string>
-    <string name="marker_migrate_import_from_other">Ibang reserba</string>
-    <string name="marker_migrate_filename_dated">%1$sNapetsahan %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Diksyunaryo</string>
@@ -539,9 +523,7 @@
     <string name="menuCommentary">Komentaryo</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Hindi ma buksan ang Mapa sa app ng Bible.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Pinagmulang folder</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">I-download</string>
     <string name="notification_channel_devotion_downloader_name">Pag-download ng debosyon</string>
     <string name="notification_channel_devotion_reminder_name">Paalala ng debosyon</string>

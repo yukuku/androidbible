@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">还原</string>
     <string name="ekspor_ke_sd_card">备份</string>
     <string name="menuBantuan">帮助</string>
-    <string name="beri_saran_title">建议</string>
-    <string name="menuDevotion">灵修心得</string>
+	<string name="menuDevotion">灵修心得</string>
     <string name="search">搜寻</string>
     <string name="activity_title_markers">标记</string>
     <string name="menu_markers">标记</string>
@@ -178,8 +177,7 @@
     <string name="rename_label">重新命名标签</string>
     <string name="delete_label">删除标签</string>
     <string name="please_wait_titik3">请稍候&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">也删除资料档案\'%s\'？</string>
-    <string name="get_more_fonts">下载更多的字体...</string>
+	<string name="get_more_fonts">下载更多的字体...</string>
     <string name="intent_filter_import_from_backup">进口从备份</string>
     <string name="redownload">重新下载</string>
     <string name="read_faq_before_suggest">在提出建议前，请先阅读以上常见问题解答。继续提出建议？</string>
@@ -514,25 +512,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100％免费圣经应用程序，根据Apache许可证2.0许可</string>
     <string name="about_translators">译者</string>
     <string name="about_user_guide">使用者指引</string>
-    <string name="about_beta_feedback">测试版本回馈</string>
-    <string name="about_enable_beta">使用试用版本</string>
-    <string name="about_enable_beta_confirmation">登入谷歌并按下「成为测试员」按钮，以使用有更新的功能和更完善的试用版本！</string>
     <string name="about_version_name">版本 %s</string>
     <string name="about_material_sources">资料来源</string>
     <string name="about_credits">工作人员</string>
     <string name="about_official_website">官方网站</string>
     <string name="about_project_page">计划页面</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">我们侦测到一个含有书签、笔记、标记和标签的v3 Yuku神速圣经旧版本的备份档桉。\n\n你想汇入它们，让你在这个程式存取它们吗？</string>
-    <string name="marker_migrate_no_more">不再询问</string>
-    <string name="marker_migrate_later">现在别问我</string>
-    <string name="marker_migrate_title">汇入旧标记</string>
-    <string name="marker_migrate_file_chooser_title">选取v3备份档桉</string>
-    <string name="marker_migrate_no_more_confirmation">你确定你不需要汇入旧资料？</string>
-    <string name="marker_migrate_error_opening_backup_file">不能存取备份档桉。</string>
-    <string name="marker_migrate_import_from_newest">是，汇入最新的（建议选项）</string>
-    <string name="marker_migrate_import_from_other">其他备份</string>
-    <string name="marker_migrate_filename_dated">%1$s日期%2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">字典</string>
@@ -547,9 +531,7 @@
     <string name="menuCommentary">注释</string>
     <!-- Maps -->
     <string name="maps_could_not_open">未能开启圣经地图程式。</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">上一层资料夹</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">下载</string>
     <string name="notification_channel_devotion_downloader_name">灵修下载</string>
     <string name="notification_channel_devotion_reminder_name">灵修提示</string>

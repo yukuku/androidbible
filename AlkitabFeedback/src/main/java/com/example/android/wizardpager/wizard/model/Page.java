@@ -58,10 +58,6 @@ public abstract class Page implements PageTreeNode {
         return mRequired;
     }
 
-    void setParentKey(String parentKey) {
-        mParentKey = parentKey;
-    }
-
     @Override
     public Page findByKey(String key) {
         return getKey().equals(key) ? this : null;

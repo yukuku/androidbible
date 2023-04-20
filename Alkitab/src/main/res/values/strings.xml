@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Restore</string>
     <string name="ekspor_ke_sd_card">Backup</string>
     <string name="menuBantuan">Help</string>
-    <string name="beri_saran_title">Suggest</string>
-    <string name="menuDevotion">Devotion</string>
+	<string name="menuDevotion">Devotion</string>
     <string name="search">Search</string>
     <string name="activity_title_markers">Markers</string>
     <string name="menu_markers">Markers</string>
@@ -188,8 +187,7 @@
     <string name="rename_label">Rename label</string>
     <string name="delete_label">Delete label</string>
     <string name="please_wait_titik3">Please wait…</string>
-    <string name="juga_hapus_file_datanya_file">Also delete the data file \'%s\'?</string>
-    <string name="get_more_fonts">Download more fonts…</string>
+	<string name="get_more_fonts">Download more fonts…</string>
     <string name="intent_filter_import_from_backup">Import from backup</string>
     <string name="redownload">Redownload</string>
     <string name="read_faq_before_suggest">Please read the above FAQ before sending a suggestion. Continue with sending a suggestion?</string>
@@ -557,9 +555,6 @@
 	<string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% free Bible app, licensed under Apache License 2.0</string>
 	<string name="about_translators">Translators</string>
 	<string name="about_user_guide">User\'s Guide</string>
-	<string name="about_beta_feedback">Beta Version Feedback</string>
-	<string name="about_enable_beta">Try Beta Version</string>
-	<string name="about_enable_beta_confirmation">Sign in to Google and tap the BECOME A TESTER button to try the Beta version with newer features and enhancements!</string>
 	<string name="about_version_name">version %s</string>
 	<string name="about_material_sources">Material Sources</string>
 	<string name="about_credits">Credits</string>
@@ -567,16 +562,6 @@
     <string name="about_project_page">Project Page</string>
 
 	<!-- marker and label migration -->
-	<string name="marker_migrate_introduction">We detected a backup file from the old v3 Yuku Quick Bible that contains bookmarks, notes, highlights, and labels.\n\nDo you want to import them, so you can access them from this app?</string>
-	<string name="marker_migrate_no_more">Don\'t ask again</string>
-	<string name="marker_migrate_later">Not now</string>
-	<string name="marker_migrate_title">Import old markers</string>
-	<string name="marker_migrate_file_chooser_title">Select v3 backup file</string>
-	<string name="marker_migrate_no_more_confirmation">Are you sure you don\'t need to import the old data?</string>
-	<string name="marker_migrate_error_opening_backup_file">Could not access that backup file.</string>
-	<string name="marker_migrate_import_from_newest">Yes, import from the newest (recommended)</string>
-	<string name="marker_migrate_import_from_other">Other backup</string>
-	<string name="marker_migrate_filename_dated">%1$s dated %2$s</string>
 
 	<!-- Data transfer -->
 	<string name="data_transfer_title">Data transfer</string>
@@ -599,9 +584,6 @@
 
     <!-- Maps -->
     <string name="maps_could_not_open">Could not open the Bible Maps app.</string>
-
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Parent folder</string>
 
 	<!-- Notification channels -->
 	<string name="notification_channel_download_mapper_name">Downloads</string>

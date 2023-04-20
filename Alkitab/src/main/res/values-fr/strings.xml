@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Restauration</string>
     <string name="ekspor_ke_sd_card">Sauvegarde</string>
     <string name="menuBantuan">Aide</string>
-    <string name="beri_saran_title">Suggestion</string>
-    <string name="menuDevotion">Prière</string>
+	<string name="menuDevotion">Prière</string>
     <string name="search">Chercher</string>
     <string name="activity_title_markers">Balises</string>
     <string name="menu_markers">Marque-pages</string>
@@ -178,7 +177,6 @@
     <string name="rename_label">Renommer le libellé</string>
     <string name="delete_label">Effacer le libellé</string>
     <string name="please_wait_titik3">Patientez&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Supprimer aussi le fichier de données \'%s\' ?</string>
     <string name="get_more_fonts">Télécharger plus de fontes&#8230;</string>
     <string name="intent_filter_import_from_backup">Récupérer depuis une sauvegarde</string>
     <string name="redownload">Télécharger à nouveau</string>
@@ -514,25 +512,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Application Biblique 100% gratuite, sous licence Apache License 2.0</string>
     <string name="about_translators">Traducteurs</string>
     <string name="about_user_guide">Guide de l\'utilisateur</string>
-    <string name="about_beta_feedback">Commentaires de la Version beta</string>
-    <string name="about_enable_beta">Essayer la version Beta</string>
-    <string name="about_enable_beta_confirmation">Connectez-vous sur votre compte Google et appuyez sur le bouton DEVENIR TESTEUR pour essayer la version bêta avec les nouvelles fonctionnalités et améliorations!</string>
     <string name="about_version_name">version %s</string>
     <string name="about_material_sources">Sources matérielles</string>
     <string name="about_credits">Remerciements</string>
     <string name="about_official_website">Site officiel</string>
     <string name="about_project_page">Page de projet</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Nous avons détecté une sauvegarde de la version 3 de Yuku Quick Bible qui contient des marque-pages, des notes, des surlignés et des étiquettes.\n\nVoulez-vous les importer, pour pouvoir y accéder depuis cette application?</string>
-    <string name="marker_migrate_no_more">Ne plus demander</string>
-    <string name="marker_migrate_later">Pas maintenant</string>
-    <string name="marker_migrate_title">Importation d\'anciens marque-pages</string>
-    <string name="marker_migrate_file_chooser_title">Sélectionnez le fichier de sauvegarde v3</string>
-    <string name="marker_migrate_no_more_confirmation">Etes-vous sûr de ne pas avoir besoin d\'importer les anciennes données ?</string>
-    <string name="marker_migrate_error_opening_backup_file">Impossible d\'accéder à ce fichier de sauvegarde.</string>
-    <string name="marker_migrate_import_from_newest">Oui, importation depuis la plus récente (recommandé)</string>
-    <string name="marker_migrate_import_from_other">Autre sauvegarde</string>
-    <string name="marker_migrate_filename_dated">%1$s daté %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Dictionnaire</string>
@@ -547,9 +531,7 @@
     <string name="menuCommentary">Commentaire</string>
     <!-- Maps -->
     <string name="maps_could_not_open">N\'a pas pu ouvrir l\'application Bible Maps.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Dossier parent</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Téléchargement</string>
     <string name="notification_channel_devotion_downloader_name">Téléchargement dévotionnel</string>
     <string name="notification_channel_devotion_reminder_name">Rappels de consacration</string>

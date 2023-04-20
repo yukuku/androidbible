@@ -106,8 +106,6 @@ dependencies {
     // Tests
     testImplementation "junit:junit:$junitVersion"
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion"
-    debugImplementation "com.facebook.stetho:stetho:$stethoVersion"
-    debugImplementation "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
 
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:29.0.3')
@@ -120,14 +118,14 @@ dependencies {
 
     implementation "io.coil-kt:coil:$coilVersion"
 
-    implementation "com.takisoft.fix:preference-v7:$preferenceFixVersion"
+    implementation "androidx.preference:preference-ktx:$androidxPreferenceVersion"
+    implementation "com.takisoft.preferencex:preferencex:$preferenceFixVersion"
 
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationJsonVersion"
 
     // UI
     implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
-    implementation "com.afollestad.material-dialogs:commons:$materialDialogsVersion"
-
+    implementation "com.afollestad.material-dialogs:input:$materialDialogsVersion"
     implementation "me.toptas.fancyshowcase:fancyshowcaseview:$fancyShowcaseView"
 }
 

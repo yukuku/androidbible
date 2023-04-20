@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Gendannelse</string>
     <string name="ekspor_ke_sd_card">Sikkerhedskopi</string>
     <string name="menuBantuan">Hjælp</string>
-    <string name="beri_saran_title">Foreslå</string>
-    <string name="menuDevotion">Andagt</string>
+	<string name="menuDevotion">Andagt</string>
     <string name="search">Søg</string>
     <string name="activity_title_markers">Markører</string>
     <string name="menu_markers">Markører</string>
@@ -178,8 +177,7 @@
     <string name="rename_label">Omdøb etiket</string>
     <string name="delete_label">Slet etiket</string>
     <string name="please_wait_titik3">Vent venligst&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Slet også data filen \'%s\'?</string>
-    <string name="get_more_fonts">Nedtag flere skrifttyper&#8230;</string>
+	<string name="get_more_fonts">Nedtag flere skrifttyper&#8230;</string>
     <string name="intent_filter_import_from_backup">Importer fra sikkerhedskopi</string>
     <string name="redownload">Gennedtag</string>
     <string name="read_faq_before_suggest">Læs venligst ovenstående FAQ før du sender et forslag. Fortsæt med at sende et forslag?</string>
@@ -506,25 +504,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% gratis Bible App, licenseret under Apache License 2.0</string>
     <string name="about_translators">Oversættere</string>
     <string name="about_user_guide">Brugervejledning</string>
-    <string name="about_beta_feedback">Beta version tilbagemelding</string>
-    <string name="about_enable_beta">Prøv Beta version</string>
-    <string name="about_enable_beta_confirmation">Log ind på Google og tryk på \"BLIV TESTER\"-knappen for at prøve Beta version med nyere funktioner og forbedringer!</string>
     <string name="about_version_name">version %s</string>
     <string name="about_material_sources">Materiale Kilder</string>
     <string name="about_credits">Krediteringer</string>
     <string name="about_official_website">Officiel webside</string>
     <string name="about_project_page">Projekt side</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Vi har registreret en sikkerhedskopi-fil fra den gamle v3 Yuku Quick Bible, der indeholder bogmærker, notater, farvemarkører, og etiketter.\n\nVil du importere dem, så du kan få adgang til dem fra denne app?</string>
-    <string name="marker_migrate_no_more">Spørg ikke igen</string>
-    <string name="marker_migrate_later">Ikke nu</string>
-    <string name="marker_migrate_title">Importer gamle markører</string>
-    <string name="marker_migrate_file_chooser_title">Vælg v3 sikkerhedskopi-fil</string>
-    <string name="marker_migrate_no_more_confirmation">Er du sikker på, at du ikke behøver, at importere de gamle data?</string>
-    <string name="marker_migrate_error_opening_backup_file">Kunne ikke få adgang til sikkerhedskopi-filen.</string>
-    <string name="marker_migrate_import_from_newest">Ja, importer fra den nyeste (anbefales)</string>
-    <string name="marker_migrate_import_from_other">Anden sikkerhedskopi</string>
-    <string name="marker_migrate_filename_dated">%1$s dateret %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Ordbog</string>
@@ -539,9 +523,7 @@
     <string name="menuCommentary">Kommentar</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Kunne ikke åbne Bibelkort-appen.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Forældre mappe</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Overførsler</string>
     <string name="notification_channel_devotion_downloader_name">Andagtsoverførsler</string>
     <string name="notification_channel_devotion_reminder_name">Andagtspåmindelser</string>

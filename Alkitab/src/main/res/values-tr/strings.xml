@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Geri al</string>
     <string name="ekspor_ke_sd_card">Yedekle</string>
     <string name="menuBantuan">Yardım et</string>
-    <string name="beri_saran_title">Öneri</string>
-    <string name="menuDevotion">Bağlantı</string>
+	<string name="menuDevotion">Bağlantı</string>
     <string name="search">Ara</string>
     <string name="activity_title_markers">İşaretler</string>
     <string name="menu_markers">İşaretler</string>
@@ -178,8 +177,7 @@
     <string name="rename_label">Etiketi yeniden adlandır</string>
     <string name="delete_label">Etiketi sil</string>
     <string name="please_wait_titik3">Lütfen bekleyin&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">\'%s\' veri dosyası da silinsin mi?</string>
-    <string name="get_more_fonts">Daha fazla yazı tipi indir&#8230;</string>
+	<string name="get_more_fonts">Daha fazla yazı tipi indir&#8230;</string>
     <string name="intent_filter_import_from_backup">Yedeği içe aktar</string>
     <string name="redownload">Yeniden İndir</string>
     <string name="read_faq_before_suggest">Lütfen bir öneri göndermeden önce yukarıdan SSS bölümünü okuyun. Hala bir öneride bulunmak istiyor musunuz?</string>
@@ -514,25 +512,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">%100 bedava İncil uygulaması, Apache License 2.0 yetkisi altında</string>
     <string name="about_translators">Çevirmenler</string>
     <string name="about_user_guide">Kullanıcı Rehberi</string>
-    <string name="about_beta_feedback">Beta Versiyon Geridönüşü</string>
-    <string name="about_enable_beta">Beta Sürümü Dene</string>
-    <string name="about_enable_beta_confirmation">Google a giriş yapın ve beta versiyonu yeni özellikleri ve geliştirmeleri ile denemek için BECOME A TESTER düğmesine tıklayın!</string>
     <string name="about_version_name">sürüm %s</string>
     <string name="about_material_sources">Materyal Kaynakları</string>
     <string name="about_credits">Krediler</string>
     <string name="about_official_website">Resmi Website</string>
     <string name="about_project_page">Proje Sayfası</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Yuku Hızlı İncil v3 den kalan ve yer imlerini, notları, vurgulamaları, ve etiketleri içeren eski bir yedekleme dosyası farkettik.\n\n Bu uygulamada da onlara ulaşabilmek için, bunları aktarmak istermisiniz?</string>
-    <string name="marker_migrate_no_more">Tekrar sorma</string>
-    <string name="marker_migrate_later">Şimdi değil</string>
-    <string name="marker_migrate_title">Eski işaretleri aktar</string>
-    <string name="marker_migrate_file_chooser_title">V3 yedek dosyasını seç</string>
-    <string name="marker_migrate_no_more_confirmation">Eski veriyi aktarmaya ihtiyacınız olmadığına emin misiniz?</string>
-    <string name="marker_migrate_error_opening_backup_file">Yedekleme dosyasına ulaşılamıyor.</string>
-    <string name="marker_migrate_import_from_newest">Evet, en yenisinden aktar(önerilir)</string>
-    <string name="marker_migrate_import_from_other">Diğer yedeklemeler</string>
-    <string name="marker_migrate_filename_dated">%1$s tarihli %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Sözlük</string>
@@ -547,9 +531,7 @@
     <string name="menuCommentary">Yorum</string>
     <!-- Maps -->
     <string name="maps_could_not_open">İncil Haritaları uygulaması açılamıyor.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Ana klasör</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">İndirilenler</string>
     <string name="notification_channel_devotion_downloader_name">Bağlılık indirmeleri</string>
     <string name="notification_channel_devotion_reminder_name">Bağlılık hatırlatmaları</string>

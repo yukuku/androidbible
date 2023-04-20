@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Importieren</string>
     <string name="ekspor_ke_sd_card">Exportieren</string>
     <string name="menuBantuan">Hilfe</string>
-    <string name="beri_saran_title">Feedback</string>
-    <string name="menuDevotion">Andacht</string>
+	<string name="menuDevotion">Andacht</string>
     <string name="search">Suchen</string>
     <string name="activity_title_markers">Markierungen</string>
     <string name="menu_markers">Markierungen</string>
@@ -178,8 +177,7 @@
     <string name="rename_label">Stichwort umbenennen</string>
     <string name="delete_label">Stichwort löschen</string>
     <string name="please_wait_titik3">Bitte warten&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Soll auch die Datendatei \'%s\' gelöscht werden?</string>
-    <string name="get_more_fonts">Weitere Schriftarten herunterladen&#8230;</string>
+	<string name="get_more_fonts">Weitere Schriftarten herunterladen&#8230;</string>
     <string name="intent_filter_import_from_backup">Aus Sicherung importieren</string>
     <string name="redownload">Erneut herunterladen</string>
     <string name="read_faq_before_suggest">Lesen Sie zuerst die häufig gestellten Fragen, bevor Sie einen Vorschlag senden. Mit dem Senden eines Vorschlag fortfahren?</string>
@@ -514,25 +512,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% kostenlose Bibel-App, lizenziert unter der Apache Lizenz 2.0</string>
     <string name="about_translators">Übersetzer</string>
     <string name="about_user_guide">Handbuch</string>
-    <string name="about_beta_feedback">Feedback zur Betaversion</string>
-    <string name="about_enable_beta">Beta-Version ausprobieren</string>
-    <string name="about_enable_beta_confirmation">Melden Sie sich bei Google an und tippen Sie auf den Button BECOME A TESTER, um die Beta-Version mit neuen Features und Erweiterungen auszuprobieren!</string>
     <string name="about_version_name">Version %s</string>
     <string name="about_material_sources">Material-Quellen</string>
     <string name="about_credits">Danksagungen</string>
     <string name="about_official_website">Offizielle Website</string>
     <string name="about_project_page">Projektseite</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Es wurde eine Backupdatei der alten Quick Bible 3 App von Yuku mit Lesezeichen, Notizen, Hervorhebungen und Stichwörter erkannt.\n\nMöchten Sie diese importieren, sodass sie in dieser App verfügbar sind?</string>
-    <string name="marker_migrate_no_more">Nicht noch einmal fragen</string>
-    <string name="marker_migrate_later">Nicht jetzt</string>
-    <string name="marker_migrate_title">Alte Markierungen importieren</string>
-    <string name="marker_migrate_file_chooser_title">Backupdatei der Version 3 auswählen</string>
-    <string name="marker_migrate_no_more_confirmation">Möchten Sie die alten Daten wirklich nicht importieren?</string>
-    <string name="marker_migrate_error_opening_backup_file">Kann nicht auf die Backupdatei zugreifen.</string>
-    <string name="marker_migrate_import_from_newest">Ja, neuste Datei importieren (empfohlen)</string>
-    <string name="marker_migrate_import_from_other">Anderes Backup</string>
-    <string name="marker_migrate_filename_dated">%1$s vom %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Wörterbuch</string>
@@ -547,9 +531,7 @@
     <string name="menuCommentary">Kommentar</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Die Bible Map App konnte nicht geöffnet werden.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Eine Ebene nach oben</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Downloads</string>
     <string name="notification_channel_devotion_downloader_name">Andacht-Downloads</string>
     <string name="notification_channel_devotion_reminder_name">Erinnerungen an Andacht</string>

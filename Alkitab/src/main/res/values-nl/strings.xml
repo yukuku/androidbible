@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Terugzetten</string>
     <string name="ekspor_ke_sd_card">Reservekopie</string>
     <string name="menuBantuan">Help</string>
-    <string name="beri_saran_title">Suggesties</string>
-    <string name="menuDevotion">Overdenking</string>
+	<string name="menuDevotion">Overdenking</string>
     <string name="search">Zoeken</string>
     <string name="activity_title_markers">Markeringen</string>
     <string name="menu_markers">Bladwijzers, notities, e.d.</string>
@@ -178,8 +177,7 @@
     <string name="rename_label">Hernoem label</string>
     <string name="delete_label">Verwijder label</string>
     <string name="please_wait_titik3">Even geduld&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Verwijder ook het databestand \'%s\'?</string>
-    <string name="get_more_fonts">Download meer lettertypen&#8230;</string>
+	<string name="get_more_fonts">Download meer lettertypen&#8230;</string>
     <string name="intent_filter_import_from_backup">Importeer van reservekopie</string>
     <string name="redownload">Download opnieuw</string>
     <string name="read_faq_before_suggest">Lees alsjeblieft de FAQ voordat je een suggestie instuurt. Doorgaan met verzenden van een suggestie?</string>
@@ -513,25 +511,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% gratis Bijbel app, gelicentieerd onder Apache License 2.0</string>
     <string name="about_translators">Vertalers</string>
     <string name="about_user_guide">Handleiding</string>
-    <string name="about_beta_feedback">Bètaversie feedback</string>
-    <string name="about_enable_beta">Probeer Bèta versie</string>
-    <string name="about_enable_beta_confirmation">Log in bij Google en klik op de WORDT EEN TESTER knop en probeer de bèta versie met nieuwe mogelijkheden en verbeteringen!</string>
     <string name="about_version_name">versie %s</string>
     <string name="about_material_sources">Bronmateriaal</string>
     <string name="about_credits">Credits</string>
     <string name="about_official_website">Officiële website</string>
     <string name="about_project_page">Project pagina</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">We hebben een reservekopie gevonden van de oude v3 Yuku Quick Bible met bladwijzers, notities, markeringen en labels.\n\nWil je ze importeren zodat je ze kunt gebruiken in deze app?</string>
-    <string name="marker_migrate_no_more">Niet opnieuw vragen</string>
-    <string name="marker_migrate_later">Niet nu</string>
-    <string name="marker_migrate_title">Oude markeringen importeren</string>
-    <string name="marker_migrate_file_chooser_title">Selecteer v3 backup bestand</string>
-    <string name="marker_migrate_no_more_confirmation">Weet je zeker dat je de oude gegevens niet wilt importeren?</string>
-    <string name="marker_migrate_error_opening_backup_file">Kon het reservekopie niet vinden.</string>
-    <string name="marker_migrate_import_from_newest">Ja, importeer de nieuwste reservekopie (aanbevolen)</string>
-    <string name="marker_migrate_import_from_other">Andere reservekopie</string>
-    <string name="marker_migrate_filename_dated">%1$s van datum %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Woordenboek</string>
@@ -546,9 +530,7 @@
     <string name="menuCommentary">Commentaar</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Kan de Bijbel kaarten app niet openen.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Begin map</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Downloads</string>
     <string name="notification_channel_devotion_downloader_name">Devotie downloads</string>
     <string name="notification_channel_devotion_reminder_name">Devotie herinneringen</string>

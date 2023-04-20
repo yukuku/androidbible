@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Restaurar</string>
     <string name="ekspor_ke_sd_card">Cópia de segurança</string>
     <string name="menuBantuan">Ajuda</string>
-    <string name="beri_saran_title">Sugerir</string>
-    <string name="menuDevotion">Devocional</string>
+	<string name="menuDevotion">Devocional</string>
     <string name="search">Busca</string>
     <string name="activity_title_markers">Marcadores</string>
     <string name="menu_markers">Marcadores</string>
@@ -178,8 +177,7 @@
     <string name="rename_label">Renomear etiqueta</string>
     <string name="delete_label">Remover etiqueta</string>
     <string name="please_wait_titik3">Por favor, aguarde&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Remover também o arquivo de dados \'%s\'?</string>
-    <string name="get_more_fonts">Baixar mais fontes&#8230;</string>
+	<string name="get_more_fonts">Baixar mais fontes&#8230;</string>
     <string name="intent_filter_import_from_backup">Importar da cópia de segurança</string>
     <string name="redownload">Baixar novamente</string>
     <string name="read_faq_before_suggest">Por favor, leia o FAQ acima antes de enviar uma sugestão. Deseja continuar com o envio da sugestão?</string>
@@ -514,25 +512,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Aplicativo da Bíblia totalmente gratuito, sob licença da Apache License 2.0</string>
     <string name="about_translators">Tradutores</string>
     <string name="about_user_guide">Guia do Usuário</string>
-    <string name="about_beta_feedback">Feedback da versão beta</string>
-    <string name="about_enable_beta">Teste a versão Beta</string>
-    <string name="about_enable_beta_confirmation">Entre suas credenciais do Google e clique em TORNAR-SE UM AVALIADOR para avaliar a versão Beta com recursos novos e outras melhorias!</string>
     <string name="about_version_name">versão %s</string>
     <string name="about_material_sources">Fontes de material</string>
     <string name="about_credits">Créditos</string>
     <string name="about_official_website">Site oficial</string>
     <string name="about_project_page">Página do projeto</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Detectamos um arquivo de backup da versão 3 do Quick Bible que contém marcadores, anotações, realces, e etiquetas.\n\nVocê deseja importá-lo para utilizá-lo nesta nova versão do aplicativo?</string>
-    <string name="marker_migrate_no_more">Não pergunte novamente</string>
-    <string name="marker_migrate_later">Não agora</string>
-    <string name="marker_migrate_title">Importe marcadores anteriores</string>
-    <string name="marker_migrate_file_chooser_title">Selecione o arquivo de backup v3</string>
-    <string name="marker_migrate_no_more_confirmation">Você tem certeza que não precisa importar os dados anteriores?</string>
-    <string name="marker_migrate_error_opening_backup_file">Não foi possível acessar o arquivo de backup fornecido.</string>
-    <string name="marker_migrate_import_from_newest">Sim, importe do mais recente (recomendado)</string>
-    <string name="marker_migrate_import_from_other">Outros backups</string>
-    <string name="marker_migrate_filename_dated">%1$s datado %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Dicionário</string>
@@ -547,9 +531,7 @@
     <string name="menuCommentary">Comentário</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Não foi possível abrir o aplicativo de Mapas Bíblicos.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Pasta superior</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Baixados</string>
     <string name="notification_channel_devotion_downloader_name">Devoções Baixadas</string>
     <string name="notification_channel_devotion_reminder_name">Lembretes das Devoções</string>

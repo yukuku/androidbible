@@ -24,10 +24,6 @@ public class AddonManager {
 		return res;
 	}
 
-	public static boolean isInSharedStorage(@NonNull String filename) {
-		return !filename.startsWith(App.context.getFilesDir().getAbsolutePath());
-	}
-
 	/**
 	 * @param yesName a yes filename without the path, but with extension.
 	 * @return null if no such file exists both on normal yes dir and legacy yes dir.

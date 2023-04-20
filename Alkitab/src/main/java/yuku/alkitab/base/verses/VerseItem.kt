@@ -241,7 +241,7 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
         val progress_mark_bits = attributeView.progressMarkBits
         for (preset_id in 0 until AttributeView.PROGRESS_MARK_TOTAL_COUNT) {
             if (progress_mark_bits and (1 shl AttributeView.PROGRESS_MARK_BITS_START + preset_id) != 0) {
-                S.getDb().getProgressMarkByPresetId(preset_id)?.let { progressMark ->
+                S.db.getProgressMarkByPresetId(preset_id)?.let { progressMark ->
                     val caption = if (TextUtils.isEmpty(progressMark.caption)) {
                         context.getString(AttributeView.getDefaultProgressMarkStringResource(preset_id))
                     } else {

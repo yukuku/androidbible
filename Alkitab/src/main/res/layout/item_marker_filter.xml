@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
@@ -10,8 +11,8 @@
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_vertical"
 		android:gravity="center_vertical"
-		android:paddingEnd="64dp"
-		android:paddingStart="14dp">
+		android:paddingStart="14dp"
+		android:paddingEnd="64dp">
 
 		<ImageView
 			android:id="@+id/imgFilterIcon"
@@ -26,10 +27,10 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:background="@drawable/label_filter_bg"
-			android:paddingBottom="4dp"
 			android:paddingStart="16dp"
-			android:paddingEnd="16dp"
 			android:paddingTop="4dp"
+			android:paddingEnd="16dp"
+			android:paddingBottom="4dp"
 			android:textColor="#fff"
 			android:textSize="14sp"
 			tools:text="label" />
@@ -38,8 +39,8 @@
 			android:id="@+id/lFilterCaption"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:paddingEnd="24dp"
 			android:paddingStart="0dp"
+			android:paddingEnd="24dp"
 			android:textAppearance="?android:textAppearanceMedium"
 			android:textColor="#fff"
 			tools:text="nonlabel" />
@@ -52,6 +53,7 @@
 		android:layout_gravity="fill_vertical|end"
 		android:contentDescription="@string/desc_drag_to_reorder_versions"
 		android:scaleType="center"
-		android:src="@drawable/ic_drag_handle" />
+		android:src="@drawable/ic_baseline_drag_indicator_24"
+		app:tint="?android:textColorSecondary" />
 
 </FrameLayout>

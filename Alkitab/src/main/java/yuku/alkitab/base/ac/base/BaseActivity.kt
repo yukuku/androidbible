@@ -21,6 +21,7 @@ import androidx.core.app.TaskStackBuilder
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.callbacks.onDismiss
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
@@ -112,19 +113,18 @@ abstract class BaseActivity : AppCompatActivity(), ActivityCompat.OnRequestPermi
         if (!(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 var oked = false
-                MaterialDialog.Builder(this)
-                    .content(R.string.storage_permission_rationale)
-                    .positiveText(R.string.ok)
-                    .onPositive { _, _ ->
+                MaterialDialog(this).show {
+                    message(R.string.storage_permission_rationale)
+                    positiveButton(R.string.ok) {
                         oked = true
-                        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), RequestCodes.PermissionFromActivity.Storage)
+                        ActivityCompat.requestPermissions(this@BaseActivity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), RequestCodes.PermissionFromActivity.Storage)
                     }
-                    .dismissListener {
+                    onDismiss {
                         if (!oked) {
                             finish()
                         }
                     }
-                    .show()
+                }
             } else {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), RequestCodes.PermissionFromActivity.Storage)
             }
@@ -155,10 +155,9 @@ abstract class BaseActivity : AppCompatActivity(), ActivityCompat.OnRequestPermi
 
                     // user selects do not ask again
                     var oked = false
-                    MaterialDialog.Builder(this)
-                        .content("You need to have the Storage permission enabled to continue, because we need to store shared media such as Bible versions and fonts.")
-                        .positiveText(R.string.ok)
-                        .onPositive { _, _ ->
+                    MaterialDialog(this).show {
+                        message(text = "You need to have the Storage permission enabled to continue, because we need to store shared media such as Bible versions and fonts.")
+                        positiveButton(R.string.ok) {
                             oked = true
 
                             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
@@ -166,13 +165,13 @@ abstract class BaseActivity : AppCompatActivity(), ActivityCompat.OnRequestPermi
 
                             startActivityForResult(intent, RequestCodes.FromActivity.PermissionSettings)
                         }
-                        .negativeText(R.string.cancel)
-                        .dismissListener {
+                        negativeButton(R.string.cancel)
+                        onDismiss {
                             if (!oked) {
                                 finish()
                             }
                         }
-                        .show()
+                    }
                 } else {
                     finish()
                 }

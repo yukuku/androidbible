@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import yuku.alkitab.base.widget.MaterialDialogAdapterHelper
-import yuku.alkitab.base.widget.MaterialDialogAdapterHelper.showWithAdapter
+import yuku.alkitab.base.widget.MaterialDialogAdapterHelper.withAdapter
 import yuku.alkitab.debug.R
 
 class BackForwardListController<BackButton : View, ForwardButton : View>(
@@ -107,7 +107,9 @@ class BackForwardListController<BackButton : View, ForwardButton : View>(
 
     private val longClickListener = View.OnLongClickListener { v ->
         val adapter = BackForwardAdapter(v.context)
-        MaterialDialog.Builder(v.context).showWithAdapter(adapter)
+        MaterialDialog(v.context).show {
+            withAdapter(adapter)
+        }
         true
     }
 

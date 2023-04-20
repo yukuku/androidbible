@@ -10,6 +10,7 @@
 /.idea/modules.xml
 /.idea/jarRepositories.xml
 /.idea/deploymentTargetDropDown.xml
+/.idea/androidTestResultsUserPreferences.xml
 /build
 local.properties
 

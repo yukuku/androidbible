@@ -2,14 +2,15 @@ package yuku.alkitab.songs
 
 import android.media.MediaPlayer
 import android.os.Handler
+import android.os.Looper
 import com.afollestad.materialdialogs.MaterialDialog
+import java.io.File
+import java.io.FileInputStream
+import java.io.IOException
 import yuku.alkitab.base.App
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Background
 import yuku.alkitab.debug.R
-import java.io.File
-import java.io.FileInputStream
-import java.io.IOException
 
 private const val TAG = "MidiController"
 
@@ -29,8 +30,9 @@ class MidiController : MediaController() {
         when (state) {
             State.reset -> {
             }
+
             State.reset_media_known_to_exist, State.complete, State.error -> {
-                val handler = Handler()
+                val handler = Handler(Looper.getMainLooper())
                 Background.run {
                     try {
                         state = State.preparing
@@ -52,8 +54,10 @@ class MidiController : MediaController() {
                     }
                 }
             }
+
             State.preparing -> {
             }
+
             State.playing -> // pause button pressed
                 if (playInLoop) { // looping play is selected, but we are already playing. So just set looping parameter.
                     mp.isLooping = true
@@ -61,6 +65,7 @@ class MidiController : MediaController() {
                     mp.pause()
                     state = State.paused
                 }
+
             State.paused -> {
                 // play button pressed when paused
                 mp.isLooping = playInLoop
@@ -96,10 +101,10 @@ class MidiController : MediaController() {
                 if (state != State.reset) { // Errors can happen if we call MediaPlayer#reset when MediaPlayer state is Preparing. In this case, do not show error message.
                     val activity = activityRef?.get()
                     if (activity != null && !activity.isFinishing) {
-                        MaterialDialog.Builder(activity)
-                            .content(activity.getString(R.string.song_player_error_description, what, extra))
-                            .positiveText(R.string.ok)
-                            .show()
+                        MaterialDialog(activity).show {
+                            message(text = activity.getString(R.string.song_player_error_description, what, extra))
+                            positiveButton(R.string.ok)
+                        }
                     }
                 }
                 state = State.error

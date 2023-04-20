@@ -10,180 +10,188 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.afollestad.materialdialogs.MaterialDialog;
 import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import kotlin.Unit;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.util.LabelColorUtil;
 import yuku.alkitab.base.widget.MaterialDialogAdapterHelper;
+import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.devoxx.flowlayout.FlowLayout;
 
 public class TypeBookmarkDialog {
-	public interface Listener {
-		/** Called when this dialog is closed with the bookmark modified or deleted */
-		void onModifiedOrDeleted();
-	}
+    public interface Listener {
+        /**
+         * Called when this dialog is closed with the bookmark modified or deleted
+         */
+        void onModifiedOrDeleted();
+    }
 
-	final Context context;
-	final Dialog dialog;
-	FlowLayout panelLabels;
-	EditText tCaption;
+    final Context context;
+    final Dialog dialog;
+    FlowLayout panelLabels;
+    EditText tCaption;
 
-	Marker marker;
-	int ariForNewBookmark;
-	int verseCountForNewBookmark;
-	String defaultCaption;
+    Marker marker;
+    int ariForNewBookmark;
+    int verseCountForNewBookmark;
+    String defaultCaption;
 
-	// optional
-	Listener listener;
+    // optional
+    Listener listener;
 
-	// current labels (can be not in the db)
-	SortedSet<Label> labels = new TreeSet<>();
+    // current labels (can be not in the db)
+    SortedSet<Label> labels = new TreeSet<>();
 
-	/**
-	 * Open the bookmark edit dialog, editing existing bookmark.
-	 * @param context Activity context to create dialogs
-	 */
-	public static TypeBookmarkDialog EditExisting(Context context, long _id) {
-		return new TypeBookmarkDialog(context, S.getDb().getMarkerById(_id), null);
-	}
+    /**
+     * Open the bookmark edit dialog, editing existing bookmark.
+     *
+     * @param context Activity context to create dialogs
+     */
+    public static TypeBookmarkDialog EditExisting(Context context, long _id) {
+        return new TypeBookmarkDialog(context, S.getDb().getMarkerById(_id), null);
+    }
 
-	/**
-	 * Open the bookmark edit dialog for a new bookmark by ari.
-	 */
-	public static TypeBookmarkDialog NewBookmark(Context context, int ari, final int verseCount) {
-		final TypeBookmarkDialog res = new TypeBookmarkDialog(context, null, S.activeVersion().referenceWithVerseCount(ari, verseCount));
-		res.ariForNewBookmark = ari;
-		res.verseCountForNewBookmark = verseCount;
-		return res;
-	}
+    /**
+     * Open the bookmark edit dialog for a new bookmark by ari.
+     */
+    public static TypeBookmarkDialog NewBookmark(Context context, int ari, final int verseCount) {
+        final TypeBookmarkDialog res = new TypeBookmarkDialog(context, null, S.activeVersion().referenceWithVerseCount(ari, verseCount));
+        res.ariForNewBookmark = ari;
+        res.verseCountForNewBookmark = verseCount;
+        return res;
+    }
 
-	private TypeBookmarkDialog(final Context context, final Marker marker, String reference) {
-		this.context = context;
-		this.marker = marker;
+    private TypeBookmarkDialog(final Context context, final Marker marker, String reference) {
+        this.context = context;
+        this.marker = marker;
 
-		if (reference == null) {
-			reference = S.activeVersion().referenceWithVerseCount(marker.ari, marker.verseCount);
-		}
-		defaultCaption = reference;
+        if (reference == null) {
+            reference = S.activeVersion().referenceWithVerseCount(marker.ari, marker.verseCount);
+        }
+        defaultCaption = reference;
 
-		View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_bookmark, null);
-		this.panelLabels = dialogView.findViewById(R.id.panelLabels);
+        View dialogView = View.inflate(context, R.layout.dialog_edit_bookmark, null);
+        this.panelLabels = dialogView.findViewById(R.id.panelLabels);
 
-		tCaption = dialogView.findViewById(R.id.tCaption);
-		final Button bAddLabel = dialogView.findViewById(R.id.bAddLabel);
+        tCaption = dialogView.findViewById(R.id.tCaption);
+        final Button bAddLabel = dialogView.findViewById(R.id.bAddLabel);
 
-		bAddLabel.setOnClickListener(v -> MaterialDialogAdapterHelper.showWithAdapter(new MaterialDialog.Builder(context).title(R.string.add_label_title), new LabelAdapter()));
+        bAddLabel.setOnClickListener(v -> TypeBookmarkDialogJavaHelper.showAddLabelDialog(context, new LabelAdapter()));
 
-		if (marker != null) {
-			labels = new TreeSet<>();
-			final List<Label> ll = S.getDb().listLabelsByMarker(marker);
-			labels.addAll(ll);
-		}
-		setLabelsText();
+        if (marker != null) {
+            labels = new TreeSet<>();
+            final List<Label> ll = S.getDb().listLabelsByMarker(marker);
+            labels.addAll(ll);
+        }
+        setLabelsText();
 
-		tCaption.setText(marker != null? marker.caption: reference);
+        tCaption.setText(marker != null ? marker.caption : reference);
 
-		this.dialog = new MaterialDialog.Builder(context)
-			.customView(dialogView, false)
-			.title(reference)
-			.iconRes(R.drawable.ic_attr_bookmark)
-			.positiveText(R.string.ok)
-			.onPositive((dialog, which) -> bOk_click())
-			.neutralText(R.string.delete)
-			.onNeutral((dialog, which) -> bDelete_click(marker))
-			.show();
-	}
+        this.dialog = TypeBookmarkDialogJavaHelper.showBookmarkDialog(context, marker, reference, dialogView, () -> {
+            bOk_click();
+            return Unit.INSTANCE;
+        }, marker1 -> {
+            bDelete_click(marker1);
+            return Unit.INSTANCE;
+        });
+    }
 
-	void bOk_click() {
-		String caption = tCaption.getText().toString();
+    void bOk_click() {
+        String caption = tCaption.getText().toString();
 
-		// If there is no caption, show reference
-		if (caption.length() == 0 || caption.trim().length() == 0) {
-			caption = defaultCaption;
-		}
+        // If there is no caption, show reference
+        if (caption.length() == 0 || caption.trim().length() == 0) {
+            caption = defaultCaption;
+        }
 
-		final Date now = new Date();
-		if (marker != null) { // update existing
-			marker.caption = caption;
-			marker.modifyTime = now;
-			S.getDb().insertOrUpdateMarker(marker);
-		} else { // add new
-			marker = S.getDb().insertMarker(ariForNewBookmark, Marker.Kind.bookmark, caption, verseCountForNewBookmark, now, now);
-		}
+        final Date now = new Date();
+        if (marker != null) { // update existing
+            marker.caption = caption;
+            marker.modifyTime = now;
+            S.getDb().insertOrUpdateMarker(marker);
+        } else { // add new
+            marker = S.getDb().insertMarker(ariForNewBookmark, Marker.Kind.bookmark, caption, verseCountForNewBookmark, now, now);
+        }
 
-		S.getDb().updateLabels(marker, labels);
+        S.getDb().updateLabels(marker, labels);
 
-		if (listener != null) listener.onModifiedOrDeleted();
-	}
+        if (listener != null) listener.onModifiedOrDeleted();
+    }
 
-	public void show() {
-		dialog.show();
-	}
+    public void show() {
+        dialog.show();
+    }
 
-	public void setListener(Listener listener) {
-		this.listener = listener;
-	}
-	
-	private View.OnClickListener label_click = new View.OnClickListener() {
-		@Override public void onClick(View v) {
-			final Label label = (Label) v.getTag(R.id.TAG_label);
-			if (label == null) return;
+    public void setListener(Listener listener) {
+        this.listener = listener;
+    }
 
-			new MaterialDialog.Builder(context)
-				.content(context.getString(R.string.do_you_want_to_remove_the_label_label_from_this_bookmark, label.title))
-				.positiveText(R.string.ok)
-				.onPositive((dialog, which) -> {
-					labels.remove(label);
-					setLabelsText();
-				})
-				.negativeText(R.string.cancel)
-				.show();
-		}
-	};
+    private final View.OnClickListener label_click = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            final Label label = (Label) v.getTag(R.id.TAG_label);
+            if (label == null) return;
 
-	protected void bDelete_click(final Marker marker) {
-		if (marker == null) {
-			return; // bookmark not saved, so no need to confirm
-		}
+            MaterialDialogJavaHelper.showOkDialog(
+                context,
+                context.getString(R.string.do_you_want_to_remove_the_label_label_from_this_bookmark, label.title),
+                context.getString(R.string.ok),
+                () -> {
+                    labels.remove(label);
+                    setLabelsText();
+                    return Unit.INSTANCE;
+                },
+                context.getString(R.string.cancel)
+            );
+        }
+    };
 
-		new MaterialDialog.Builder(context)
-			.content(R.string.bookmark_delete_confirmation)
-			.positiveText(R.string.delete)
-			.onPositive((dialog, which) -> {
-				S.getDb().deleteMarkerById(marker._id);
+    protected void bDelete_click(final Marker marker) {
+        if (marker == null) {
+            return; // bookmark not saved, so no need to confirm
+        }
 
-				if (listener != null) listener.onModifiedOrDeleted();
-			})
-			.negativeText(R.string.cancel)
-			.show();
-	}
+        MaterialDialogJavaHelper.showOkDialog(
+            context,
+            context.getString(R.string.bookmark_delete_confirmation),
+            context.getString(R.string.delete),
+            () -> {
+                S.getDb().deleteMarkerById(marker._id);
 
-	void setLabelsText() {
-		// remove all first
-		final int childCount = panelLabels.getChildCount();
-		if (childCount > 1) {
-			panelLabels.removeViews(1, childCount - 2);
-		}
-		
-		int pos = 1;
-		for (Label label: labels) {
-			panelLabels.addView(getLabelView(label, panelLabels), pos++);
-		}
-	}
-	
-	private View getLabelView(Label label, final ViewGroup parent) {
-		TextView res = (TextView) LayoutInflater.from(context).inflate(R.layout.label_x, parent, false);
-		res.setLayoutParams(this.panelLabels.generateDefaultLayoutParams());
-		res.setText(label.title);
-		res.setTag(R.id.TAG_label, label);
-		res.setOnClickListener(label_click);
+                if (listener != null) listener.onModifiedOrDeleted();
+                return Unit.INSTANCE;
+            },
+            context.getString(R.string.cancel)
+        );
+    }
+
+    void setLabelsText() {
+        // remove all first
+        final int childCount = panelLabels.getChildCount();
+        if (childCount > 1) {
+            panelLabels.removeViews(1, childCount - 2);
+        }
+
+        int pos = 1;
+        for (Label label : labels) {
+            panelLabels.addView(getLabelView(label, panelLabels), pos++);
+        }
+    }
+
+    private View getLabelView(Label label, final ViewGroup parent) {
+        TextView res = (TextView) LayoutInflater.from(context).inflate(R.layout.label_x, parent, false);
+        res.setLayoutParams(this.panelLabels.generateDefaultLayoutParams());
+        res.setText(label.title);
+        res.setTag(R.id.TAG_label, label);
+        res.setOnClickListener(label_click);
         final Drawable drawableRight = res.getCompoundDrawables()[2];
         final int labelColor = LabelColorUtil.apply(label, res);
         if (drawableRight != null && labelColor != 0) {
@@ -193,69 +201,70 @@ public class TypeBookmarkDialog {
         return res;
     }
 
-	static class LabelHolder extends RecyclerView.ViewHolder {
-		final TextView text1;
+    static class LabelHolder extends RecyclerView.ViewHolder {
+        final TextView text1;
 
-		public LabelHolder(final View itemView) {
-			super(itemView);
+        public LabelHolder(final View itemView) {
+            super(itemView);
 
-			text1 = itemView.findViewById(android.R.id.text1);
-		}
-	}
+            text1 = itemView.findViewById(android.R.id.text1);
+        }
+    }
 
-	class LabelAdapter extends MaterialDialogAdapterHelper.Adapter {
-		private List<Label> availableLabels = S.getDb().listAllLabels();
+    class LabelAdapter extends MaterialDialogAdapterHelper.Adapter {
+        private final List<Label> availableLabels = S.getDb().listAllLabels();
 
-		@Override
-		public int getItemCount() {
-			return 1 + availableLabels.size();
-		}
+        @Override
+        public int getItemCount() {
+            return 1 + availableLabels.size();
+        }
 
-		@Override
-		public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
-			return new LabelHolder(LayoutInflater.from(parent.getContext()).inflate(viewType == 0 ? R.layout.item_label_chooser : android.R.layout.simple_list_item_1, parent, false));
-		}
+        @NonNull
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+            return new LabelHolder(LayoutInflater.from(parent.getContext()).inflate(viewType == 0 ? R.layout.item_label_chooser : android.R.layout.simple_list_item_1, parent, false));
+        }
 
-		@Override
-		public void onBindViewHolder(final RecyclerView.ViewHolder _holder_, final int position) {
-			final int type = getItemViewType(position);
+        @Override
+        public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder _holder_, final int position) {
+            final int type = getItemViewType(position);
 
-			final LabelHolder holder = (LabelHolder) _holder_;
+            final LabelHolder holder = (LabelHolder) _holder_;
 
-			{
-				if (type == 0) {
-					final Label label = availableLabels.get(position - 1);
-					holder.text1.setText(label.title);
-					LabelColorUtil.apply(label, holder.text1);
-				} else {
-					holder.text1.setText(context.getString(R.string.create_label_titik3));
-				}
-			}
+            {
+                if (type == 0) {
+                    final Label label = availableLabels.get(position - 1);
+                    holder.text1.setText(label.title);
+                    LabelColorUtil.apply(label, holder.text1);
+                } else {
+                    holder.text1.setText(context.getString(R.string.create_label_titik3));
+                }
+            }
 
-			holder.itemView.setOnClickListener(v -> {
-				dismissDialog();
+            holder.itemView.setOnClickListener(v -> {
+                dismissDialog();
 
-				final int which = holder.getAdapterPosition();
-				if (which == 0) { // new label
-					LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), title -> {
-						final Label newLabel = S.getDb().insertLabel(title, null);
-						if (newLabel != null) {
-							labels.add(newLabel);
-							setLabelsText();
-						}
-					});
-				} else {
-					final Label label = availableLabels.get(which - 1);
-					labels.add(label);
-					setLabelsText();
-				}
-			});
-		}
+                final int which = holder.getAdapterPosition();
+                if (which == 0) { // new label
+                    LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), title -> {
+                        final Label newLabel = S.getDb().insertLabel(title, null);
+                        if (newLabel != null) {
+                            labels.add(newLabel);
+                            setLabelsText();
+                        }
+                    });
+                } else {
+                    final Label label = availableLabels.get(which - 1);
+                    labels.add(label);
+                    setLabelsText();
+                }
+            });
+        }
 
-		@Override
-		public int getItemViewType(final int position) {
-			if (position == 0) return 1;
-			return 0;
-		}
-	}
+        @Override
+        public int getItemViewType(final int position) {
+            if (position == 0) return 1;
+            return 0;
+        }
+    }
 }

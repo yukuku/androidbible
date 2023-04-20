@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Restaurar</string>
     <string name="ekspor_ke_sd_card">Respaldo</string>
     <string name="menuBantuan">Ayuda</string>
-    <string name="beri_saran_title">Sugerir</string>
-    <string name="menuDevotion">Devoción</string>
+	<string name="menuDevotion">Devoción</string>
     <string name="search">Buscar</string>
     <string name="activity_title_markers">Marcadores</string>
     <string name="menu_markers">Marcadores</string>
@@ -178,8 +177,7 @@
     <string name="rename_label">Renombrar etiqueta</string>
     <string name="delete_label">Eliminar etiqueta</string>
     <string name="please_wait_titik3">Por favor espere&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">¿También eliminar el archivo de datos\'%s\'?</string>
-    <string name="get_more_fonts">Descargar más fuentes&#8230;</string>
+	<string name="get_more_fonts">Descargar más fuentes&#8230;</string>
     <string name="intent_filter_import_from_backup">Importar desde respaldo</string>
     <string name="redownload">Re-descargar</string>
     <string name="read_faq_before_suggest">Por favor lea el FAQ anterior antes de enviar una sugerencia. ¿Continuar enviando sugerencia?</string>
@@ -515,25 +513,11 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">La Biblia de libre acceso a través de la Licencia Apache 2.0</string>
     <string name="about_translators">Traductores</string>
     <string name="about_user_guide">Guía de usuario</string>
-    <string name="about_beta_feedback">Retroalimentación de Versión Beta</string>
-    <string name="about_enable_beta">Probar la versión Beta</string>
-    <string name="about_enable_beta_confirmation">¡Inicia sesión con Google y selecciona el botón CONVERTIRSE EN BETA TESTER para probar la versión beta con nuevas características y mejoras!</string>
     <string name="about_version_name">versión %s</string>
     <string name="about_material_sources">Fuentes Materiales</string>
     <string name="about_credits">Créditos</string>
     <string name="about_official_website">Página web oficial</string>
     <string name="about_project_page">La Página del Proyecto</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Detectamos un archivo de respaldo de la antigua v3 Yuku Quick Bible que contiene marcadores, notas, resaltos y etiquetas.\n\n¿Desea importarlos para así poder accesarlos desde esta aplicación?</string>
-    <string name="marker_migrate_no_more">No preguntar de nuevo</string>
-    <string name="marker_migrate_later">Ahora no</string>
-    <string name="marker_migrate_title">Importar marcadores antiguos</string>
-    <string name="marker_migrate_file_chooser_title">Seleccionar la copia de reserva v3</string>
-    <string name="marker_migrate_no_more_confirmation">¿Está seguro que no necesita importar los datos antiguos?</string>
-    <string name="marker_migrate_error_opening_backup_file">No se pudo accesar a ese archivo de respaldo.</string>
-    <string name="marker_migrate_import_from_newest">Si, importar desde lo más reciente (recomendado)</string>
-    <string name="marker_migrate_import_from_other">Otros respardos</string>
-    <string name="marker_migrate_filename_dated">%1$s con fecha %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Diccionario</string>
@@ -548,9 +532,7 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
     <string name="menuCommentary">Comentario</string>
     <!-- Maps -->
     <string name="maps_could_not_open">No se pudo abrir la aplicación Bible Maps.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Carpeta Principal</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Descargas</string>
     <string name="notification_channel_devotion_downloader_name">Descargas de devoción</string>
     <string name="notification_channel_devotion_reminder_name">Recordatorios de devoción</string>

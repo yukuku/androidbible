@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Obnovit</string>
     <string name="ekspor_ke_sd_card">Zálohovat</string>
     <string name="menuBantuan">Nápověda</string>
-    <string name="beri_saran_title">Navrhnout</string>
-    <string name="menuDevotion">Zbožnost</string>
+	<string name="menuDevotion">Zbožnost</string>
     <string name="search">Hledat</string>
     <string name="activity_title_markers">Označení</string>
     <string name="menu_markers">Označení</string>
@@ -178,8 +177,7 @@
     <string name="rename_label">Přejmenování štítku</string>
     <string name="delete_label">Smazání štítku</string>
     <string name="please_wait_titik3">Prosím čekejte...</string>
-    <string name="juga_hapus_file_datanya_file">Odstranit také datový soubor \'%s\'?</string>
-    <string name="get_more_fonts">Stáhnout více fontů</string>
+	<string name="get_more_fonts">Stáhnout více fontů</string>
     <string name="intent_filter_import_from_backup">Import ze zálohy</string>
     <string name="redownload">Opětovné stažení</string>
     <string name="read_faq_before_suggest">Prosím, přečtěte si výše uvedené FAQ před odesláním vašeho dotazu . Pokračovat v odesílání dotazu?</string>
@@ -510,25 +508,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Aplikace Bible je 100% zdarma, licencovaná dle Apache License 2.0</string>
     <string name="about_translators">Překladatelé</string>
     <string name="about_user_guide">Uživatelská příručka</string>
-    <string name="about_beta_feedback">Zpětná vazba</string>
-    <string name="about_enable_beta">Vyzkoušet beta verzi</string>
-    <string name="about_enable_beta_confirmation">Přihlaste se pomocí svého účtu Google a klikněte na tlačítko CHCI SE STÁT TESTEREM, abyste mohli vyzkoušet beta verzi s novějšími funkcemi a vylepšeními!</string>
     <string name="about_version_name">verze %s</string>
     <string name="about_material_sources">Zdroje</string>
     <string name="about_credits">Kredits</string>
     <string name="about_official_website">Oficiální webové stránky</string>
     <string name="about_project_page">Stránka projektů</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Našli jsme zálohu ze staré verze Bible v3, která obsahuje oblíbené verše, poznámky, zvýraznění a tagy.\n\nChtece je naimportovat?</string>
-    <string name="marker_migrate_no_more">Neptejte se znovu</string>
-    <string name="marker_migrate_later">Nyní ne</string>
-    <string name="marker_migrate_title">Importovat stará označení</string>
-    <string name="marker_migrate_file_chooser_title">Vybrat v3 soubor zálohy</string>
-    <string name="marker_migrate_no_more_confirmation">Opravdu nechcete importovat stará data?</string>
-    <string name="marker_migrate_error_opening_backup_file">Zálohovací soubor nelze přečíst.</string>
-    <string name="marker_migrate_import_from_newest">Ano, importovat nejnovější (doporučeno)</string>
-    <string name="marker_migrate_import_from_other">Další zálohy</string>
-    <string name="marker_migrate_filename_dated">%1$s datován %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Slovník</string>
@@ -543,8 +527,6 @@
     <string name="menuCommentary">Komentáře</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Nelze otevřít aplikaci Bible Maps.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Nadřazená složka</string>
     <!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Stažené soubory</string>
     <string name="notification_channel_devotion_downloader_name">Oddanost stahování</string>

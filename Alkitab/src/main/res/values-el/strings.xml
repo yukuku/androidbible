@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Διόρθωση</string>
     <string name="ekspor_ke_sd_card">Δημιουργία αντιγράφου ασφαλείας</string>
     <string name="menuBantuan">Βοήθεια</string>
-    <string name="beri_saran_title">Πρόταση</string>
-    <string name="menuDevotion">Αφοσίωση</string>
+	<string name="menuDevotion">Αφοσίωση</string>
     <string name="search">Αναζήτηση</string>
     <string name="activity_title_markers">Μαρκαδόροι</string>
     <string name="menu_markers">Μαρκαδόροι</string>
@@ -178,8 +177,7 @@
     <string name="rename_label">Μετονομασία ετικέτας</string>
     <string name="delete_label">Διαγραφή ετικέτας</string>
     <string name="please_wait_titik3">Παρακαλώ περιμένετε&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Να διαγράψουμε και τον φάκελλο δεδομένων%s;</string>
-    <string name="get_more_fonts">Λήψη περισσότερων γραμματοσειρών&#8230;</string>
+	<string name="get_more_fonts">Λήψη περισσότερων γραμματοσειρών&#8230;</string>
     <string name="intent_filter_import_from_backup">Εισαγωγή από αντίγραφο ασφαλείας</string>
     <string name="redownload">Επανάληψη λήψης</string>
     <string name="read_faq_before_suggest">Παρακαλώ διαβάστε τις άνω FAQ (Συχνές ερωτήσεις) στέλνοντας μια πρόταση. Να στείλω στη συνέχεια μια πρόταση;</string>
@@ -506,25 +504,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% δωρεάν πρόγραμμα Βίβλου, με άδεια υπό την Άδεια Apache 2.0</string>
     <string name="about_translators">Μεταφραστές</string>
     <string name="about_user_guide">Οδηγός Χρήσης</string>
-    <string name="about_beta_feedback">Σχόλια επί της Εκδοχής Beta</string>
-    <string name="about_enable_beta">Δοκιμάστε την Εκδοχή Beta</string>
-    <string name="about_enable_beta_confirmation">Συνδεθείτε στο Google και πατήστε το κουμπί BECOME A TESTER για να δοκιμάσετε την εκδοχή Beta με νέα χαρακτηριστικά και αναβαθμίσεις!</string>
     <string name="about_version_name">έκδοση %s</string>
     <string name="about_material_sources">Πηγές Υλικού</string>
     <string name="about_credits">Πιστώσεις</string>
     <string name="about_official_website">Επίσημη Ιστοσελίδα</string>
     <string name="about_project_page">Σελίδα Προστασίας</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Βρήκαμε έναν φάκελλο με αντίγραφο ασφαλείας από την παλιά v3 Yuku Quick Bible που περιλαμβάνει σημειώσεις, επισημάνσεις και ετικέτες.\n\nΘέλετε να τους εισάγετε, ώστε να τους βρείτε από αυτήν την εφαρμογή;</string>
-    <string name="marker_migrate_no_more">Μην ρωτήσετε πάλι</string>
-    <string name="marker_migrate_later">Όχι τώρα</string>
-    <string name="marker_migrate_title">Εισαγωγή παλαιών σημειώσεων</string>
-    <string name="marker_migrate_file_chooser_title">Επιλογή φακέλλου υποστήριξης v3</string>
-    <string name="marker_migrate_no_more_confirmation">Είστε σίγουρος ότι δεν χρειάζεται να εισάγετε τα προηγούμενα δεδομένα;</string>
-    <string name="marker_migrate_error_opening_backup_file">Δεν μπόρεσε να έχει πρόσβαση στον φάκελλο υποστήριξης.</string>
-    <string name="marker_migrate_import_from_newest">Ναι, εισάγετε από τον νεότερο (συνιστάται)</string>
-    <string name="marker_migrate_import_from_other">Άλλη υποστήριξη</string>
-    <string name="marker_migrate_filename_dated">%1$s χρονολόγηση από %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Λεξικό</string>
@@ -539,9 +523,7 @@
     <string name="menuCommentary">Σχόλιο</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Δεν μπόρεσε να ανοίξει το πρόγραμμα Χαρτών της Βίβλου.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Μητρικός φάκελλος</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Κατέβασμα από τον υπολογιστή διάφορες φορές</string>
     <string name="notification_channel_devotion_downloader_name">Κατέβασμα φακέλλων με αγαπημένο περιεχόμενο</string>
     <string name="notification_channel_devotion_reminder_name">Υπενθυμίσεις αφοσίωσης</string>

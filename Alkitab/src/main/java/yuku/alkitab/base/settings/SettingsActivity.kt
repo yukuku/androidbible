@@ -113,7 +113,7 @@ class SettingsActivity : BaseActivity() {
                 pref.summary = label
             }
             val originalChangeListener = pref.onPreferenceChangeListener
-            pref.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference: Preference?, newValue: Any? ->
+            pref.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference: Preference, newValue: Any? ->
                 val changed = originalChangeListener?.onPreferenceChange(preference, newValue) ?: true
                 if (changed) {
                     val index = pref.findIndexOfValue(newValue as String?)

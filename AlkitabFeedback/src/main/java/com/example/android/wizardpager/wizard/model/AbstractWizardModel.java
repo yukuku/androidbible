@@ -31,8 +31,8 @@ import java.util.List;
 public abstract class AbstractWizardModel implements ModelCallbacks {
     protected Context mContext;
 
-    private List<ModelCallbacks> mListeners = new ArrayList<>();
-    private PageList mRootPageList;
+    private final List<ModelCallbacks> mListeners = new ArrayList<>();
+    private final PageList mRootPageList;
 
     public AbstractWizardModel(Context context) {
         mContext = context;

@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Simpan semula</string>
     <string name="ekspor_ke_sd_card">Sandaran</string>
     <string name="menuBantuan">Bantuan</string>
-    <string name="beri_saran_title">Cadangkan</string>
-    <string name="menuDevotion">Pengabdian</string>
+	<string name="menuDevotion">Pengabdian</string>
     <string name="search">Carian</string>
     <string name="activity_title_markers">Petanda</string>
     <string name="menu_markers">Petanda</string>
@@ -178,7 +177,6 @@
     <string name="rename_label">Namakan semula label</string>
     <string name="delete_label">Padam label</string>
     <string name="please_wait_titik3">Sila tunggu...</string>
-    <string name="juga_hapus_file_datanya_file">Juga memadam fail data \'%s\'?</string>
     <string name="get_more_fonts">Memuat turun lebih banyak fon...</string>
     <string name="intent_filter_import_from_backup">Import dari sandaran</string>
     <string name="redownload">Memuat turun sekali lagi</string>
@@ -506,25 +504,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Aplikasi Alkitab percuma 100%, dilesenkan oleh Apache License 2.0</string>
     <string name="about_translators">Penterjemah</string>
     <string name="about_user_guide">Panduan Pengguna</string>
-    <string name="about_beta_feedback">Maklum Balas Versi Beta</string>
-    <string name="about_enable_beta">Cuba Versi Beta</string>
-    <string name="about_enable_beta_confirmation">Log masuk ke Google dan tekan butang JADI SEORANG PENCUBA untuk mencuba versi Beta yang mengandungi penambahbaikan dan ciri-ciri yang lebih baharu!</string>
     <string name="about_version_name">versi %s</string>
     <string name="about_material_sources">Sumber Bahan</string>
     <string name="about_credits">Kredit</string>
     <string name="about_official_website">Tapak Web Rasmi</string>
     <string name="about_project_page">Laman Projek</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Kami telah mengesan sesuatu fail sandaran daripada v3 Yuku Alkitab Cepat yang lama serta mengandungi penandaan, nota, sorotan dan pelabelan.\n\nAdakah anda mahu mengimport segalanya supaya anda dapat mengakses fail sandaran tersebut melalui aplikasi ini?</string>
-    <string name="marker_migrate_no_more">Jangan tanya lagi</string>
-    <string name="marker_migrate_later">Bukan sekarang</string>
-    <string name="marker_migrate_title">Import penanda lama</string>
-    <string name="marker_migrate_file_chooser_title">Pilih fail sandaran v3</string>
-    <string name="marker_migrate_no_more_confirmation">Adakah anda pasti anda tidak memerlukan data lama untuk diimport?</string>
-    <string name="marker_migrate_error_opening_backup_file">Tidak dapat mencapai fail sandaran.</string>
-    <string name="marker_migrate_import_from_newest">Ya, import daripada yang terbaru (disarankan)</string>
-    <string name="marker_migrate_import_from_other">Sandaran lain</string>
-    <string name="marker_migrate_filename_dated">%1$s bertarikh %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Kamus</string>
@@ -539,9 +523,7 @@
     <string name="menuCommentary">Komen</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Tidak dapat membuka aplikasi Peta-Peta Alkitab.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Folder induk</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Muat turun</string>
     <string name="notification_channel_devotion_downloader_name">Muat turun Pengabdian</string>
     <string name="notification_channel_devotion_reminder_name">Peringatan Pengabdian</string>

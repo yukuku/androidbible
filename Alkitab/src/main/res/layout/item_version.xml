@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
@@ -73,7 +74,8 @@
 			android:layout_gravity="fill_vertical|end"
 			android:contentDescription="@string/desc_drag_to_reorder_versions"
 			android:scaleType="center"
-			android:src="@drawable/ic_drag_handle" />
+			android:src="@drawable/ic_baseline_drag_indicator_24"
+			app:tint="?android:textColorSecondary" />
 
 	</LinearLayout>
 

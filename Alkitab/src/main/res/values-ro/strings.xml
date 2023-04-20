@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Restabileşte</string>
     <string name="ekspor_ke_sd_card">Rezerve</string>
     <string name="menuBantuan">Ajutor</string>
-    <string name="beri_saran_title">Sugestie</string>
-    <string name="menuDevotion">Devoţional</string>
+	<string name="menuDevotion">Devoţional</string>
     <string name="search">Caută</string>
     <string name="activity_title_markers">Marcaje</string>
     <string name="menu_markers">Însemnări</string>
@@ -178,8 +177,7 @@
     <string name="rename_label">Redenumeşte eticheta</string>
     <string name="delete_label">Şterge eticheta</string>
     <string name="please_wait_titik3">Vă rugăm să aşteptaţi...</string>
-    <string name="juga_hapus_file_datanya_file">Ştergeţi fișierul de date \'%s\'?</string>
-    <string name="get_more_fonts">Descarca mai multe fonturi&#8230;</string>
+	<string name="get_more_fonts">Descarca mai multe fonturi&#8230;</string>
     <string name="intent_filter_import_from_backup">Importă din copia de rezervă</string>
     <string name="redownload">Descărcare nouă</string>
     <string name="read_faq_before_suggest">Vă rog să citiți FAQ înainte de a trimite o sugestie. Continuați cu trimiterea sugestiei?</string>
@@ -514,25 +512,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Aplicație de Biblie 100% gratuită, licențiată sub Licența Apache 2.0</string>
     <string name="about_translators">Traducători</string>
     <string name="about_user_guide">Ghidul utilizatorului</string>
-    <string name="about_beta_feedback">Feedback-ul versiunii Beta</string>
-    <string name="about_enable_beta">Încearcă versiunea Beta</string>
-    <string name="about_enable_beta_confirmation">Conectați-vă la Google și atingeți butonul DEVIN TESTER pentru a încerca versiunea Beta cu caracteristici noi și îmbunătățiri!</string>
     <string name="about_version_name">versiune %s</string>
     <string name="about_material_sources">Surse materiale</string>
     <string name="about_credits">Credite</string>
     <string name="about_official_website">Site oficial</string>
     <string name="about_project_page">Pagina proiect</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Am detectat un fișier de backup de la vechiul v3 Yuku Quick Bible care conține marcaje, note, evidențieri și etichete.\n\nDoriți să le importați, astfel încât să le puteți accesa din această aplicație?</string>
-    <string name="marker_migrate_no_more">Nu mai întreba</string>
-    <string name="marker_migrate_later">Nu acum</string>
-    <string name="marker_migrate_title">Importă marcajele vechi</string>
-    <string name="marker_migrate_file_chooser_title">Selectați fișierul de backup v3</string>
-    <string name="marker_migrate_no_more_confirmation">Sunteți sigur că nu este necesar importul datelor vechi?</string>
-    <string name="marker_migrate_error_opening_backup_file">Nu poate fi accesat fișierul de rezervă.</string>
-    <string name="marker_migrate_import_from_newest">Da, import din cel mai nou (recomandat)</string>
-    <string name="marker_migrate_import_from_other">Altă rezervă</string>
-    <string name="marker_migrate_filename_dated">%1$s datat %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Dicționar</string>
@@ -547,9 +531,7 @@
     <string name="menuCommentary">Comentariu</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Nu s-a putut deschide aplicația Hărți biblice.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Folder părinte</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Descărcări</string>
     <string name="notification_channel_devotion_downloader_name">Descărcări devoționale</string>
     <string name="notification_channel_devotion_reminder_name">Memento-uri devoționale</string>

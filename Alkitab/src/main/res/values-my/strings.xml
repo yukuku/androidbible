@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">မူလပုံစံအတိုင်း ပြန်လည်သိမ်းဆည်းရန်</string>
     <string name="ekspor_ke_sd_card">မူရင်းဖိုင်များကို ကူးယူသိုမှီးထားရှိရန်</string>
     <string name="menuBantuan">အကူအညီ</string>
-    <string name="beri_saran_title">အကြံပြုချက်ပေးရန်</string>
-    <string name="menuDevotion">ဝတ်ပြုခြင်း</string>
+	<string name="menuDevotion">ဝတ်ပြုခြင်း</string>
     <string name="search">ရှာဖွေရန်</string>
     <string name="activity_title_markers">အမှတ်အသားများ</string>
     <string name="menu_markers">အမှတ်အသားများ</string>
@@ -178,8 +177,7 @@
     <string name="rename_label">အမှတ်တံဆိပ် အမည်ကို ပြောင်းရန်</string>
     <string name="delete_label">အမှတ်တံဆိပ်ကို ဖျက်ပစ်ရန်</string>
     <string name="please_wait_titik3">ကျေးဇူးပြုပြီး ခဏစောင့်ပါ&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">ဒေတာဖိုင်ကိုလည်း ဖျက်ပစ်လိုက်ရမလား \'%s\'။</string>
-    <string name="get_more_fonts">နောက်ထပ် ဖောင့်စာလုံးပုံစံများကို ဒေါင်းလုဒ်ရယူရန်</string>
+	<string name="get_more_fonts">နောက်ထပ် ဖောင့်စာလုံးပုံစံများကို ဒေါင်းလုဒ်ရယူရန်</string>
     <string name="intent_filter_import_from_backup">မူရင်းဖိုင်များ ကူးယူသိုမှီးရာမှ ဖိုင်များကို ပြန်တင်သွင်းရန်</string>
     <string name="redownload">ပြန်လည် ဒေါင်းလုဒ်ဆွဲရန်</string>
     <string name="read_faq_before_suggest">အကြံပြုချက်မပို့မီ အထက်ပါ အမြဲမေးလေ့ရှိသည့်မေးခွန်းများကို ဖတ်ပါ။ အကြံပြုချက်ပေးပို့ခြင်းကို ဆက်လက်လုပ်ဆောက်ချင်ပါသလား။</string>
@@ -509,25 +507,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Apache License 2.0 အောက်တွင် မူပိုင်ခွင့်ရသည့် 100% အခမဲ့ ကျမ်းစာအက်ပလီကေးရှင်း</string>
     <string name="about_translators">ဘာသာပြန်ဆိုသူများ</string>
     <string name="about_user_guide">အသုံးပြုသူလမ်းညွှန်</string>
-    <string name="about_beta_feedback">ဘီတာ ဗားရှင်း တုံ့ပြန်ချက်</string>
-    <string name="about_enable_beta">ဘီတာဗားရှင်းကို သုံးကြည့်ပါ</string>
-    <string name="about_enable_beta_confirmation">ဂူဂဲလ်သို့ ဝင်ရောက်ပြီး အင်္ဂါရပ်အသစ်များ နှင့် အဆင့်မြှင့်မှုများဖြင့် Beta ဗားရှင်းကို စမ်းကြည့်ရန် \"စမ်းသပ်သူတစ်ဦး ဖြစ်ရန်\" ဆိုသည့် ခလုတ်ကိုနှိပ်ပါ။</string>
     <string name="about_version_name">ဗားရှင်း %s</string>
     <string name="about_material_sources">အချက်အလက်ကုန်ကြမ်း ရင်းမြစ်များ</string>
     <string name="about_credits">ဂုဏ်ပြုမှတ်တမ်းတင်လွှာ</string>
     <string name="about_official_website">တရားဝင် ဝက်ဘ်ဆိုက်</string>
     <string name="about_project_page">စီမံကိန်းစာမျက်နှာ</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">မှတ်သားချက်များ၊ မှတ်စုများ၊ အရောင်မှတ်ချက်များ နှင့် အမှတ်တံဆိပ်များ ပါ၀င်သည့် v3 Yuku Quick Bible အဟောင်းမှ အရန်ကူးယူသိုမှီးထားသည့်ဖိုင်ကို ကျွန်ုပ်တို့ ရှာဖွေတွေ့ရှိခဲ့သည်။\n\n၄င်းတို့ကို ထည့်သွင်းချင်ပါသလား၊ သို့ဖြစ်ပါ၍ ထည့်သွင်းမည်ဆိုလျှင် ဒီအက်ပလီကေးရှင်းမှ ၄င်းတို့ကို သင် ဝင်ရောက်ကြည့်ရှုနိုင်ပါမည်။</string>
-    <string name="marker_migrate_no_more">နောက်ထပ်မမေးပါနှင့်</string>
-    <string name="marker_migrate_later">ယခုမဟုတ်ပါ</string>
-    <string name="marker_migrate_title">အမှတ်အသား အဟောင်းများကို တင်သွင်းရန်</string>
-    <string name="marker_migrate_file_chooser_title">v3 ကူးယူသိမ်းဆည်းထားသည့်ဖိုင်ကို ရွေးချယ်ရန်</string>
-    <string name="marker_migrate_no_more_confirmation">ဒေတာအဟောင်းကို တင်သွင်းရန် မလိုအပ်ဘူးဆိုတာ သေချာပါသလား။</string>
-    <string name="marker_migrate_error_opening_backup_file">အဲ့ဒီ အရန်ကူးဖိုင်ကို မဝင်ရောက်နိုင်ပါ။</string>
-    <string name="marker_migrate_import_from_newest">ဟုတ်ပါသည်၊ နောက်ဆုံးပေါ် (အကြံပြုထားသည်)မှ တင်သွင်းပါ</string>
-    <string name="marker_migrate_import_from_other">အခြားသော အရန်ဖိုင်သိမ်းဆည်း သိုမှီခြင်း</string>
-    <string name="marker_migrate_filename_dated">%1$s ရက်စွဲတပ်ထားသည့် %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">အဘိဓာန်</string>
@@ -542,8 +526,6 @@
     <string name="menuCommentary">အနက်ဖွင့်ကျမ်း</string>
     <!-- Maps -->
     <string name="maps_could_not_open">သမ္မာကျမ်းစာမြေပုံ အက်ပ်ကို ဖွင့်လို့မရပါ။</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">အထက်ဖိုင်တွဲ</string>
     <!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">ဒေါင်းလုဒ်ဆွဲချထားသည့် ဖိုင်များ</string>
     <string name="notification_channel_devotion_downloader_name">ဒေါင်းလုဒ်ဆွဲချထားသည့် ဝတ်ပြုရေးဆိုင်ရာ ဖိုင်များ</string>

@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Visszaállítás</string>
     <string name="ekspor_ke_sd_card">Biztonsági mentés</string>
     <string name="menuBantuan">Segítség</string>
-    <string name="beri_saran_title">Javaslat</string>
-    <string name="menuDevotion">Áldozás</string>
+	<string name="menuDevotion">Áldozás</string>
     <string name="search">Keresés</string>
     <string name="activity_title_markers">Jelölők</string>
     <string name="menu_markers">Jelölők</string>
@@ -178,8 +177,7 @@
     <string name="rename_label">Címke átnevezése</string>
     <string name="delete_label">Címke törlése</string>
     <string name="please_wait_titik3">Kérem várjon&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Törölje az adatállományt is \'%s\'?</string>
-    <string name="get_more_fonts">Több betűtípus letöltése&#8230;</string>
+	<string name="get_more_fonts">Több betűtípus letöltése&#8230;</string>
     <string name="intent_filter_import_from_backup">Importálás a mentésből</string>
     <string name="redownload">Újra-letöltött</string>
     <string name="read_faq_before_suggest">Olvassa el a FAQ-t mielőtt egy javaslatot küldene. Biztos hogy beküldi a javaslatát?</string>
@@ -459,16 +457,9 @@
     <string name="dr_default_sound">Alapértelmezett hang</string>
     <!-- about -->
     <string name="about_translators">Fordítók</string>
-    <string name="about_enable_beta">Próbáld ki a Béta Verziót</string>
-    <string name="about_version_name">verzió %s</string>
+	<string name="about_version_name">verzió %s</string>
     <string name="about_credits">Kreditek</string>
     <string name="about_official_website">Hivatalos weboldal</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_no_more">Ne kérdezd újra</string>
-    <string name="marker_migrate_later">Ne most</string>
-    <string name="marker_migrate_error_opening_backup_file">Nem sikerült elérni ezt a biztonsági mentést.</string>
-    <string name="marker_migrate_import_from_newest">Ámen, importálja a legújabból (ajánlott)</string>
-    <string name="marker_migrate_import_from_other">Más mentés</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Szótár</string>
@@ -483,8 +474,6 @@
     <string name="menuCommentary">Kommentár</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Nem sikerült megnyitni a Bible Maps alkalmazást.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Szülőkönyvtár</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Letöltések</string>
 </resources>

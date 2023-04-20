@@ -19,95 +19,87 @@ import yuku.alkitab.reminder.util.DevotionReminder;
 import yuku.alkitab.tracking.Tracker;
 import yuku.alkitabfeedback.FeedbackSender;
 import yuku.alkitabintegration.display.Launcher;
-import yuku.stethoshim.StethoShim;
 
 public class App extends yuku.afw.App {
-	static final String TAG = App.class.getSimpleName();
+    private static boolean initted = false;
 
-	private static boolean initted = false;
+    enum GsonWrapper {
+        INSTANCE;
 
-	enum GsonWrapper {
-		INSTANCE;
+        final Gson gson = new Gson();
+    }
 
-		Gson gson = new Gson();
-	}
+    public static String downloadString(String url) throws IOException {
+        return downloadCall(url).execute().body().string();
+    }
 
-	public static String downloadString(String url) throws IOException {
-		return downloadCall(url).execute().body().string();
-	}
+    public static byte[] downloadBytes(String url) throws IOException {
+        return downloadCall(url).execute().body().bytes();
+    }
 
-	public static byte[] downloadBytes(String url) throws IOException {
-		return downloadCall(url).execute().body().bytes();
-	}
+    public static Call downloadCall(String url) {
+        return Connections.getOkHttp().newCall(new Request.Builder().url(url).build());
+    }
 
-	public static Call downloadCall(String url) {
-		return Connections.getOkHttp().newCall(new Request.Builder().url(url).build());
-	}
+    @Override
+    public void onCreate() {
+        super.onCreate();
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
+        staticInit();
+    }
 
-		staticInit();
+    /**
+     * {@link yuku.afw.App#context} must have been set via {@link #initWithAppContext(Context)}
+     * before calling this method.
+     */
+    public synchronized static void staticInit() {
+        if (initted) return;
+        initted = true;
 
-		{ // Stetho call through proxy
-			StethoShim.initializeWithDefaults(this);
-		}
-	}
+        if (context == null) {
+            throw new RuntimeException("yuku.afw.App.context must have been set via initWithAppContext(Context) before calling this method.");
+        }
 
-	/**
-	 * {@link yuku.afw.App#context} must have been set via {@link #initWithAppContext(Context)}
-	 * before calling this method.
-	 */
-	public synchronized static void staticInit() {
-		if (initted) return;
-		initted = true;
+        Tracker.init(context);
 
-		if (context == null) {
-			throw new RuntimeException("yuku.afw.App.context must have been set via initWithAppContext(Context) before calling this method.");
-		}
+        FeedbackSender.getInstance(context).trySend();
 
-		Tracker.init(context);
+        for (final int preferenceResId : new int[]{
+            R.xml.settings_display,
+            R.xml.settings_usage,
+            R.xml.settings_copy_share,
+            R.xml.secret_settings,
+            R.xml.sync_settings,
+        }) {
+            PreferenceManager.setDefaultValues(context, preferenceResId, false);
+        }
 
-		final FeedbackSender fs = FeedbackSender.getInstance(context);
-		fs.trySend();
+        { // FCM
+            Fcm.renewFcmRegistrationIdIfNeeded(Sync::notifyNewFcmRegistrationId);
+        }
 
-		for (final int preferenceResId : new int[]{
-			R.xml.settings_display,
-			R.xml.settings_usage,
-			R.xml.settings_copy_share,
-			R.xml.secret_settings,
-			R.xml.sync_settings,
-		}) {
-			PreferenceManager.setDefaultValues(context, preferenceResId, false);
-		}
+        DevotionReminder.scheduleAlarm();
 
-		{ // FCM
-			Fcm.renewFcmRegistrationIdIfNeeded(Sync::notifyNewFcmRegistrationId);
-		}
+        PRDownloader.initialize(context, new PRDownloaderConfig.Builder()
+            .setHttpClient(new PRDownloaderOkHttpClient(Connections.getOkHttp()))
+            .setUserAgent(Connections.getHttpUserAgent())
+            .build()
+        );
 
-		DevotionReminder.scheduleAlarm();
+        // make sure launcher do not open other variants of the app
+        Launcher.setAppPackageName(context.getPackageName());
+    }
 
-		PRDownloader.initialize(context, new PRDownloaderConfig.Builder()
-			.setHttpClient(new PRDownloaderOkHttpClient(Connections.getOkHttp()))
-			.setUserAgent(Connections.getHttpUserAgent())
-			.build()
-		);
+    public static LocalBroadcastManager getLbm() {
+        return LocalBroadcastManager.getInstance(context);
+    }
 
-		// make sure launcher do not open other variants of the app
-		Launcher.setAppPackageName(context.getPackageName());
-	}
+    public static Gson getDefaultGson() {
+        return GsonWrapper.INSTANCE.gson;
+    }
 
-	public static LocalBroadcastManager getLbm() {
-		return LocalBroadcastManager.getInstance(context);
-	}
-
-	public static Gson getDefaultGson() {
-		return GsonWrapper.INSTANCE.gson;
-	}
-
-	protected void attachBaseContext(Context base) {
-		super.attachBaseContext(base);
-		MultiDex.install(this);
-	}
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
 }

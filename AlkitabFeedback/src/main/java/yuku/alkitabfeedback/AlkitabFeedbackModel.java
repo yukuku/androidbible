@@ -17,28 +17,29 @@
 package yuku.alkitabfeedback;
 
 import android.content.Context;
-
 import com.example.android.wizardpager.wizard.model.AbstractWizardModel;
 import com.example.android.wizardpager.wizard.model.CustomerInfoPage;
 import com.example.android.wizardpager.wizard.model.PageList;
 import com.example.android.wizardpager.wizard.model.TextareaPage;
 
 public class AlkitabFeedbackModel extends AbstractWizardModel {
-	public AlkitabFeedbackModel(Context context) {
-		super(context);
-	}
+    public AlkitabFeedbackModel(Context context) {
+        super(context);
+    }
 
-	@Override protected PageList onNewRootPageList() {
-		return new PageList( 
-			new TextareaPage("message", this, getContext().getString(R.string.alkitabfeedback_label_message))
-			.setRequired(true),
-	
-			new CustomerInfoPage("contact", this, getContext().getString(R.string.alkitabfeedback_title_about_you))
-			.setRequired(true)
-		);
-	}
+    @Override
+    protected PageList onNewRootPageList() {
+        return new PageList(
+            new TextareaPage("message", this, getContext().getString(R.string.alkitabfeedback_label_message))
+                .setRequired(true),
 
-	@Override public Context getContext() {
-		return super.mContext;
-	}
+            new CustomerInfoPage("contact", this, getContext().getString(R.string.alkitabfeedback_title_about_you))
+                .setRequired(true)
+        );
+    }
+
+    @Override
+    public Context getContext() {
+        return super.mContext;
+    }
 }

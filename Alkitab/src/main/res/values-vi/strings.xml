@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Khôi phục</string>
     <string name="ekspor_ke_sd_card">Sao lưu</string>
     <string name="menuBantuan">Giúp đỡ</string>
-    <string name="beri_saran_title">Gợi ý</string>
-    <string name="menuDevotion">Sứ điệp bồi linh tĩnh nguyện</string>
+	<string name="menuDevotion">Sứ điệp bồi linh tĩnh nguyện</string>
     <string name="search">Tìm kiếm</string>
     <string name="activity_title_markers">Đánh dấu</string>
     <string name="menu_markers">Đánh dấu</string>
@@ -178,8 +177,7 @@
     <string name="rename_label">Đổi tên nhãn</string>
     <string name="delete_label">Xóa nhãn</string>
     <string name="please_wait_titik3">Xin chờ&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Xóa các tập tin dữ liệu \'%s\'?</string>
-    <string name="get_more_fonts">Tải thêm phông chữ&#8230;</string>
+	<string name="get_more_fonts">Tải thêm phông chữ&#8230;</string>
     <string name="intent_filter_import_from_backup">Nhập bản sao lưu</string>
     <string name="redownload">Tải lại</string>
     <string name="read_faq_before_suggest">Xin vui lòng đọc các câu hỏi thường gặp ở trên trước khi gửi một đề nghị. Tiếp tục với việc gửi đề nghị?</string>
@@ -514,25 +512,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% miễn phí phần mềm Kinh thánh, đăng ký bởi Apache 2.0</string>
     <string name="about_translators">Dịch giả</string>
     <string name="about_user_guide">Hướng dẫn sử dụng</string>
-    <string name="about_beta_feedback">Phiên bản Beta Phản hồi</string>
-    <string name="about_enable_beta">Hãy thử Beta</string>
-    <string name="about_enable_beta_confirmation">Đăng nhập vào Google và bấm vào BECOME A TESTER để thử phiên bản Beta với các tính năng mới và cải tiến!</string>
     <string name="about_version_name">phiên bản %s</string>
     <string name="about_material_sources">Nguồn nguyên liệu</string>
     <string name="about_credits">Ghi nhận</string>
     <string name="about_official_website">Trang web chính thức</string>
     <string name="about_project_page">Trang dự án</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Chúng tôi phát hiện một tập tin sao lưu từ v3 Yuku Kinh Thánh nhanh cũ có chứa dấu, ghi chú, nổi bật, và nhãn.\n\nBạn có muốn nhập chúng, để bạn có thể truy cập chúng từ ứng dụng này?</string>
-    <string name="marker_migrate_no_more">Đừng hỏi lại</string>
-    <string name="marker_migrate_later">Không phải bây giờ</string>
-    <string name="marker_migrate_title">Nhập đánh dấu cũ</string>
-    <string name="marker_migrate_file_chooser_title">Chọn v3 sao lưu</string>
-    <string name="marker_migrate_no_more_confirmation">Bạn có chắc là không cần nhập các dữ liệu cũ?</string>
-    <string name="marker_migrate_error_opening_backup_file">Không thể truy cập tập tin sao lưu.</string>
-    <string name="marker_migrate_import_from_newest">Có, nhập từ mới nhất (đề nghị)</string>
-    <string name="marker_migrate_import_from_other">Sao lưu khác</string>
-    <string name="marker_migrate_filename_dated">%1$s ngày %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Từ điển</string>
@@ -547,9 +531,7 @@
     <string name="menuCommentary">Bình luận</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Không thể mở ứng dụng Kinh Thánh.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Mục dành cho phụ huynh</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Các tài liệu được tải về</string>
     <string name="notification_channel_devotion_downloader_name">Các tài liệu bồi linh tĩnh tâm được tải về</string>
     <string name="notification_channel_devotion_reminder_name">Vài điều nhắc nhở về tài liệu bồi linh tĩnh tâm</string>

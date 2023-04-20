@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Przywróć</string>
     <string name="ekspor_ke_sd_card">Kopia</string>
     <string name="menuBantuan">Pomoc</string>
-    <string name="beri_saran_title">Sugestie</string>
-    <string name="menuDevotion">Rozważania</string>
+	<string name="menuDevotion">Rozważania</string>
     <string name="search">Szukaj</string>
     <string name="activity_title_markers">Znaczniki</string>
     <string name="menu_markers">Znaczniki</string>
@@ -178,8 +177,7 @@
     <string name="rename_label">Zmień nazwę etykiety</string>
     <string name="delete_label">Usuń etykietę</string>
     <string name="please_wait_titik3">Proszę czekać&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Czy usunąć również plik \'%s\'?</string>
-    <string name="get_more_fonts">Pobierz więcej czcionek&#8230;</string>
+	<string name="get_more_fonts">Pobierz więcej czcionek&#8230;</string>
     <string name="intent_filter_import_from_backup">Import z kopii</string>
     <string name="redownload">Pobierz ponownie</string>
     <string name="read_faq_before_suggest">Proszę, przeczytaj powyższe FAQ, nim wyślesz sugestię. Czy nadal chcesz wysłać sugestię?</string>
@@ -514,25 +512,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">W 100% darmowa aplikacja Biblijna na licencji Apache License 2.0</string>
     <string name="about_translators">Tłumacze</string>
     <string name="about_user_guide">Przewodnik użytkownika</string>
-    <string name="about_beta_feedback">Wiadomość zwrotna dla wersji beta</string>
-    <string name="about_enable_beta">Wypróbuj wersję Beta</string>
-    <string name="about_enable_beta_confirmation">Zaloguj się do konta Google i naciśnij przycisk BECOME A TESTER, aby wypróbować wersję Beta z nowymi funkcjami i udogodnieniami!</string>
     <string name="about_version_name">wersja %s</string>
     <string name="about_material_sources">Źródła materiałów</string>
     <string name="about_credits">Podziękowania</string>
     <string name="about_official_website">Oficjalna strona</string>
     <string name="about_project_page">Strona projektu</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Wykryliśmy plik kopii ze starej wersji Yuku QuickBible v3, która zawiera zakładki, notatki, podkreślenia i etykiety.\n\nCzy chcesz je zaimportować, aby mieć do nich dostęp z tej aplikacji?</string>
-    <string name="marker_migrate_no_more">Nie pytaj ponownie</string>
-    <string name="marker_migrate_later">Nie teraz</string>
-    <string name="marker_migrate_title">Zaimportuj stare znaczniki</string>
-    <string name="marker_migrate_file_chooser_title">Wybierz plik kopii v3</string>
-    <string name="marker_migrate_no_more_confirmation">Czy jesteś pewien, że nie potrzebujesz zaimportować starych danych?</string>
-    <string name="marker_migrate_error_opening_backup_file">Nie można dostać się do pliku kopii.</string>
-    <string name="marker_migrate_import_from_newest">Tak, zaimportuj z najnowszej (zalecane)</string>
-    <string name="marker_migrate_import_from_other">Inne kopie</string>
-    <string name="marker_migrate_filename_dated">%1$s z dnia %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Słownik</string>
@@ -547,9 +531,7 @@
     <string name="menuCommentary">Komentarz</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Nie można było otworzyć aplikacji Bible Maps.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Folder nadrzędny</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Pobrane</string>
     <string name="notification_channel_devotion_downloader_name">Pobrane rozważania</string>
     <string name="notification_channel_devotion_reminder_name">Przypomnienia rozważań</string>

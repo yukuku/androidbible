@@ -65,7 +65,7 @@ class XrefDialog : BaseDialog() {
     fun init(sourceVersion: Version, sourceVersionId: String, verseSelectedListener: (arif_source: Int, ari_target: Int) -> Unit) {
         this.sourceVersion = sourceVersion
         this.sourceVersionId = sourceVersionId
-        this.textSizeMult = S.getDb().getPerVersionSettings(sourceVersionId).fontSizeMultiplier
+        this.textSizeMult = S.db.getPerVersionSettings(sourceVersionId).fontSizeMultiplier
         this.verseSelectedListener = verseSelectedListener
         this.initted = true
     }
@@ -79,8 +79,7 @@ class XrefDialog : BaseDialog() {
             return
         }
 
-        // TODO appcompat 1.1.0: change to requireArguments()
-        val arguments = requireNotNull(arguments)
+        val arguments = requireArguments()
         this.arif_source = arguments.getInt(EXTRA_arif)
         this.xrefEntry = sourceVersion.getXrefEntry(arif_source) ?: run {
             dismiss()
@@ -120,10 +119,10 @@ class XrefDialog : BaseDialog() {
             if (xrefEntry != null) {
                 renderXrefText()
             } else {
-                MaterialDialog.Builder(inflater.context)
-                    .content(String.format(Locale.US, "Error: xref at arif 0x%08x couldn't be loaded", arif_source))
-                    .positiveText(R.string.ok)
-                    .show()
+                MaterialDialog(inflater.context).show {
+                    message(text = String.format(Locale.US, "Error: xref at arif 0x%08x couldn't be loaded", arif_source))
+                    positiveButton(R.string.ok)
+                }
             }
         }
     }

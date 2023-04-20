@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Herstel</string>
     <string name="ekspor_ke_sd_card">Rugsteun</string>
     <string name="menuBantuan">Help</string>
-    <string name="beri_saran_title">Voorstel</string>
-    <string name="menuDevotion">Toewyding</string>
+	<string name="menuDevotion">Toewyding</string>
     <string name="search">Soek</string>
     <string name="activity_title_markers">Merkers</string>
     <string name="menu_markers">Merkers</string>
@@ -178,8 +177,7 @@
     <string name="rename_label">Hernoem etiket</string>
     <string name="delete_label">Verwyder etiket</string>
     <string name="please_wait_titik3">Wag asseblief</string>
-    <string name="juga_hapus_file_datanya_file">Vee data leêr ook uit \'%s\'?</string>
-    <string name="get_more_fonts">Laai meer lettertipes af</string>
+	<string name="get_more_fonts">Laai meer lettertipes af</string>
     <string name="intent_filter_import_from_backup">Voer in vanaf rugsteun</string>
     <string name="redownload">Heraflaai</string>
     <string name="read_faq_before_suggest">Lees asb FAQ alvorens U \'n voorstel instuur. Gaan aan met voorstel?</string>
@@ -506,25 +504,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% gratis Bybel toep, gelisensieerd onder Apache License 2.0</string>
     <string name="about_translators">Vertalers</string>
     <string name="about_user_guide">Gebruikers Gids</string>
-    <string name="about_beta_feedback">Beta Weergawe Terugvoer</string>
-    <string name="about_enable_beta">Probeer Beta Weergawe</string>
-    <string name="about_enable_beta_confirmation">Teken aan by Google en klik op die \"BECOME A TESTER\" knoppie, om die Beta weergawe met die nuutste funksies en verbeteringe te toets!</string>
     <string name="about_version_name">weergawe %s</string>
     <string name="about_material_sources">Materiaal Bronne</string>
     <string name="about_credits">Krediete</string>
     <string name="about_official_website">Offisiële Webwerf</string>
     <string name="about_project_page">Projek Bladsy</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Ons bemerk \'n rugsteun lêer van die ou v3 Yuku Quick Bible wat boekmerke, notas, ens bevat.\n\nWil jy dit graag invoer dat jy dit kan gebruik in die nuwe weergawe?</string>
-    <string name="marker_migrate_no_more">Moet nie weer vra nie</string>
-    <string name="marker_migrate_later">Nie nou nie</string>
-    <string name="marker_migrate_title">Voer ou merkers in</string>
-    <string name="marker_migrate_file_chooser_title">Kies v3 rugsteun lêer</string>
-    <string name="marker_migrate_no_more_confirmation">Is jy seker jy wil nie die ou data invoer nie?</string>
-    <string name="marker_migrate_error_opening_backup_file">Kon nie die rugsteun lêer oopmaak nie.</string>
-    <string name="marker_migrate_import_from_newest">Ja, voer die nuutste in (aanbeveel)</string>
-    <string name="marker_migrate_import_from_other">Ander rugsteun</string>
-    <string name="marker_migrate_filename_dated">%1$s gedateer %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Woordeboek</string>
@@ -539,8 +523,6 @@
     <string name="menuCommentary">Kommentaar</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Kon nie die Bybel Kaarte program oopmaak nie.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Primêre lêer</string>
     <!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Afgelaai</string>
     <string name="notification_channel_devotion_downloader_name">Toewydings afgelaai</string>

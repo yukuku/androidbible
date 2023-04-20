@@ -24,10 +24,10 @@ package com.example.android.wizardpager.wizard.model;
 public class ReviewItem {
     public static final int DEFAULT_WEIGHT = 0;
 
-    private int mWeight;
+    private final int mWeight;
     private String mTitle;
-    private String mDisplayValue;
-    private String mPageKey;
+    private final String mDisplayValue;
+    private final String mPageKey;
 
     public ReviewItem(String title, String displayValue, String pageKey) {
         this(title, displayValue, pageKey, DEFAULT_WEIGHT);
@@ -44,16 +44,8 @@ public class ReviewItem {
         return mDisplayValue;
     }
 
-    public void setDisplayValue(String displayValue) {
-        mDisplayValue = displayValue;
-    }
-
     public String getPageKey() {
         return mPageKey;
-    }
-
-    public void setPageKey(String pageKey) {
-        mPageKey = pageKey;
     }
 
     public String getTitle() {
@@ -68,7 +60,4 @@ public class ReviewItem {
         return mWeight;
     }
 
-    public void setWeight(int weight) {
-        mWeight = weight;
-    }
 }

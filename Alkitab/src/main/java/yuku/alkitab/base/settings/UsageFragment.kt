@@ -13,11 +13,13 @@ class UsageFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.settings_usage)
 
-        val pref_volumeButtonNavigation = findPreference(getString(R.string.pref_volumeButtonNavigation_key)) as ListPreference
-        SettingsActivity.autoDisplayListPreference(pref_volumeButtonNavigation)
+        val pref_volumeButtonNavigation = findPreference<ListPreference>(getString(R.string.pref_volumeButtonNavigation_key))
+        if (pref_volumeButtonNavigation != null) {
+            SettingsActivity.autoDisplayListPreference(pref_volumeButtonNavigation)
+        }
 
-        val pref_autoDictionaryAnalyze = findPreference(getString(R.string.pref_autoDictionaryAnalyze_key)) as CheckBoxPreference
-        pref_autoDictionaryAnalyze.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
+        val pref_autoDictionaryAnalyze = findPreference<CheckBoxPreference>(getString(R.string.pref_autoDictionaryAnalyze_key))
+        pref_autoDictionaryAnalyze?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
             if (newValue as Boolean) {
                 if (!OtherAppIntegration.hasIntegratedDictionaryApp()) {
                     OtherAppIntegration.askToInstallDictionary(activity)
@@ -29,7 +31,10 @@ class UsageFragment : PreferenceFragmentCompat() {
 
         // only show dictionary auto-lookup when enabled in app_config
         if (!AppConfig.get().menuDictionary) {
-            preferenceScreen.removePreference(findPreference(getString(R.string.pref_autoDictionaryAnalyze_key)))
+            val preference = findPreference<Preference>(getString(R.string.pref_autoDictionaryAnalyze_key))
+            if (preference != null) {
+                preferenceScreen.removePreference(preference)
+            }
         }
     }
 }

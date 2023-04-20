@@ -37,16 +37,16 @@ public class StepPagerStrip extends View {
     private int mCurrentPage;
 
     private int mGravity = Gravity.LEFT | Gravity.TOP;
-    private float mTabWidth;
-    private float mTabHeight;
-    private float mTabSpacing;
+    private final float mTabWidth;
+    private final float mTabHeight;
+    private final float mTabSpacing;
 
-    private Paint mPrevTabPaint;
-    private Paint mSelectedTabPaint;
-    private Paint mSelectedLastTabPaint;
-    private Paint mNextTabPaint;
+    private final Paint mPrevTabPaint;
+    private final Paint mSelectedTabPaint;
+    private final Paint mSelectedLastTabPaint;
+    private final Paint mNextTabPaint;
 
-    private RectF mTempRectF = new RectF();
+    private final RectF mTempRectF = new RectF();
 
     //private Scroller mScroller;
 

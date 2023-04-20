@@ -99,10 +99,10 @@ class ExoplayerController(appContext: Context) : MediaController() {
                     else -> null
                 }
 
-                MaterialDialog.Builder(activity)
-                    .content(TextUtils.expandTemplate(activity.getString(R.string.song_player_error_description), "${error.type} $innerException"))
-                    .positiveText(R.string.ok)
-                    .show()
+                MaterialDialog(activity).show {
+                    message(text = TextUtils.expandTemplate(activity.getString(R.string.song_player_error_description), "${error.type} $innerException"))
+                    positiveButton(R.string.ok)
+                }
             }
             state = State.error
         }

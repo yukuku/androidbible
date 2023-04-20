@@ -18,27 +18,27 @@ package com.example.android.wizardpager.wizard.model;
 
 import androidx.fragment.app.Fragment;
 import com.example.android.wizardpager.wizard.ui.TextareaFragment;
-import yuku.alkitabfeedback.R;
-
 import java.util.ArrayList;
+import yuku.alkitabfeedback.R;
 
 /**
  * A page asking for a name and an email.
  */
 public class TextareaPage extends Page {
-	public static final String DISABLE_EDITING = "disable_editing";
+    public static final String DISABLE_EDITING = "disable_editing";
 
-	private final String key;
+    private final String key;
 
-	public TextareaPage(String key, ModelCallbacks callbacks, String title) {
+    public TextareaPage(String key, ModelCallbacks callbacks, String title) {
         super(callbacks, title);
-		this.key = key;
+        this.key = key;
     }
-	
-	@Override public String getKey() {
-		return key;
-	}
-    
+
+    @Override
+    public String getKey() {
+        return key;
+    }
+
     @Override
     public Fragment createFragment() {
         return TextareaFragment.create(getKey());
@@ -51,8 +51,8 @@ public class TextareaPage extends Page {
 
     @Override
     public boolean isCompleted() {
-	    final String data = mData.getString(Page.SIMPLE_DATA_KEY);
-	    if (data == null) return false;
-	    return data.length() >= 100;
+        final String data = mData.getString(Page.SIMPLE_DATA_KEY);
+        if (data == null) return false;
+        return data.length() >= 100;
     }
 }

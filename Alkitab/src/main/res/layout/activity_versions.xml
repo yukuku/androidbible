@@ -19,6 +19,6 @@
 		android:id="@+id/viewPager"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		tools:context="yuku.alkitab.base.ac.VersionsActivity" />
+		tools:context="yuku.alkitab.versionmanager.VersionsActivity" />
 
 </LinearLayout>

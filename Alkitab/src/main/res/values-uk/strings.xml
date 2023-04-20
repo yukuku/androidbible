@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">Відновити</string>
     <string name="ekspor_ke_sd_card">Резервна копія</string>
     <string name="menuBantuan">Допомога</string>
-    <string name="beri_saran_title">Запропонувати</string>
-    <string name="menuDevotion">Вивчення Біблії</string>
+	<string name="menuDevotion">Вивчення Біблії</string>
     <string name="search">Пошук</string>
     <string name="activity_title_markers">Позначки</string>
     <string name="menu_markers">Закладки</string>
@@ -178,8 +177,7 @@
     <string name="rename_label">Перейменувати позначку</string>
     <string name="delete_label">Видалити позначку</string>
     <string name="please_wait_titik3">Будь-ласка зачекайте...</string>
-    <string name="juga_hapus_file_datanya_file">Також видалити файл даних %s\'? </string>
-    <string name="get_more_fonts">Завантажити більше шрифтів...</string>
+	<string name="get_more_fonts">Завантажити більше шрифтів...</string>
     <string name="intent_filter_import_from_backup">Імпорт з резервної копії</string>
     <string name="redownload">Перезавантажити</string>
     <string name="read_faq_before_suggest">Будь ласка читайте вище FAQ перед відсиланням пропозиції або запитання. Продовжити надсилання пропозиції або запитання?</string>
@@ -509,25 +507,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% безкоштовний додаток для Біблії, ліцензований за ліцензією Apache 2.0</string>
     <string name="about_translators">Перекладачі</string>
     <string name="about_user_guide">Керівництво користувача</string>
-    <string name="about_beta_feedback">Відгуки про бета-версію</string>
-    <string name="about_enable_beta">Спробувати бета-версію</string>
-    <string name="about_enable_beta_confirmation">Увійдіть в свій Google-акаунт і натисніть кнопку \"Стати тестувальником\", щоб отримати доступ до бета-версії з новими функціями і вдосконаленнями!</string>
     <string name="about_version_name">Версія складання %s</string>
     <string name="about_material_sources">Джерела матеріалів</string>
     <string name="about_credits">Подяка</string>
     <string name="about_official_website">Офіційний вебсайт</string>
     <string name="about_project_page">Сторінка проекту</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">Було виявлено файл резервної копії зі старої версії 3 Yuku Quick Bible, яка містить закладки, примітки, підсвічування та мітки.\n\n Чи ви хочете імпортувати їх, щоб ви могли отримати доступ до них із цього додатку?</string>
-    <string name="marker_migrate_no_more">Не питати знову</string>
-    <string name="marker_migrate_later">Не тепер</string>
-    <string name="marker_migrate_title">Імпортувати старі позначки</string>
-    <string name="marker_migrate_file_chooser_title">Виберіть файл резервної копії v3</string>
-    <string name="marker_migrate_no_more_confirmation">Ви впевнені, що вам не потрібно імпортувати старі дані?</string>
-    <string name="marker_migrate_error_opening_backup_file">Не вдалося отримати доступ до цієї резервної копії.</string>
-    <string name="marker_migrate_import_from_newest">Так, імпортувати з самого останнього (рекомендується)</string>
-    <string name="marker_migrate_import_from_other">Інші резервні копії</string>
-    <string name="marker_migrate_filename_dated">%1$s датований %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">Словник</string>
@@ -542,9 +526,7 @@
     <string name="menuCommentary">Коментарі</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Не вдалося відкрити програму Bible Maps.</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">Батьківський каталог</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Завантаження</string>
     <string name="notification_channel_devotion_downloader_name">Завантаження роздумів</string>
     <string name="notification_channel_devotion_reminder_name">Нагадування про роздуми</string>

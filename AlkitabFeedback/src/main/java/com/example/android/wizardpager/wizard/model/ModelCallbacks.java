@@ -17,10 +17,11 @@
 package com.example.android.wizardpager.wizard.model;
 
 import android.content.Context;
+import com.example.android.wizardpager.AlkitabFeedbackActivity;
 
 /**
  * Callback interface connecting {@link Page}, {@link AbstractWizardModel}, and model container
- * objects (e.g. {@link com.example.android.wizardpager.MainActivity}.
+ * objects (e.g. {@link AlkitabFeedbackActivity}.
  */
 public interface ModelCallbacks {
     void onPageDataChanged(Page page);

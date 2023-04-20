@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">復元</string>
     <string name="ekspor_ke_sd_card">バックアップ</string>
     <string name="menuBantuan">ヘルプ</string>
-    <string name="beri_saran_title">提案する</string>
-    <string name="menuDevotion">祈り</string>
+	<string name="menuDevotion">祈り</string>
     <string name="search">検索</string>
     <string name="activity_title_markers">ブックマークなど</string>
     <string name="menu_markers">ブックマークなど</string>
@@ -178,8 +177,7 @@
     <string name="rename_label">ラベル名の変更</string>
     <string name="delete_label">ラベルの削除</string>
     <string name="please_wait_titik3">お待ちください...</string>
-    <string name="juga_hapus_file_datanya_file">聖書データファイル \'%s\' も削除しますか?</string>
-    <string name="get_more_fonts">他のフォントをダウンロード...</string>
+	<string name="get_more_fonts">他のフォントをダウンロード...</string>
     <string name="intent_filter_import_from_backup">バックアップからインポート</string>
     <string name="redownload">再度ダウンロード</string>
     <string name="read_faq_before_suggest">提案をお寄せになる前に、FAQをぜひ読んでください. このまま提案をお寄せになりますか?</string>
@@ -509,25 +507,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Apache License 2.0でライセンスされた100％無料の聖書アプリ</string>
     <string name="about_translators">翻訳者</string>
     <string name="about_user_guide">使用ガイド</string>
-    <string name="about_beta_feedback">ベータ版のフィードバック</string>
-    <string name="about_enable_beta">ベータ版を試す</string>
-    <string name="about_enable_beta_confirmation">Googleにサインインし、[テスターに参加] ボタンをタップして、新しい機能と強化されたベータ版をお試しください！</string>
     <string name="about_version_name">バージョン %s</string>
     <string name="about_material_sources">出典資料</string>
     <string name="about_credits">クレジット</string>
     <string name="about_official_website">公式ウェブサイト</string>
     <string name="about_project_page">プロジェクトページ</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">古いバージョン(Yuku Quick Bible v3)のバックアップファイルが見つかりました。栞、ノート、ラベルやマーカーなどの情報が保存されています。\n\nこのアプリにインポートしますか？</string>
-    <string name="marker_migrate_no_more">もう一度聞かないで</string>
-    <string name="marker_migrate_later">後で</string>
-    <string name="marker_migrate_title">栞をインポートする</string>
-    <string name="marker_migrate_file_chooser_title">ｖ３のバックアップファイルを選ぶ</string>
-    <string name="marker_migrate_no_more_confirmation">古いバージョンのデータをインポートしません。よろしいですね？</string>
-    <string name="marker_migrate_error_opening_backup_file">バックアップファイルをアクセス出来ません。</string>
-    <string name="marker_migrate_import_from_newest">一番新しいバックアップをインポート (推薦)</string>
-    <string name="marker_migrate_import_from_other">他のバックアップ</string>
-    <string name="marker_migrate_filename_dated">%1$s日付%2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">辞書</string>
@@ -542,9 +526,7 @@
     <string name="menuCommentary">解説</string>
     <!-- Maps -->
     <string name="maps_could_not_open">聖書マップのアプリを開くことができませんでした。</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">親フォルダ</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">ダウンロード</string>
     <string name="notification_channel_devotion_downloader_name">デボーションのダウンロード情報</string>
     <string name="notification_channel_devotion_reminder_name">デボーションのレマインダー</string>

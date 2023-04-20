@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.view.View;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceViewHolder;
 import yuku.ambilwarna.AmbilWarnaDialog;
 import yuku.ambilwarna.R;
 

@@ -25,7 +25,7 @@ class ProgressMarkListDialog : DialogFragment() {
 
     private val version = S.activeVersion()
     private val versionId = S.activeVersionId()
-    private val textSizeMult = S.getDb().getPerVersionSettings(versionId).fontSizeMultiplier
+    private val textSizeMult = S.db.getPerVersionSettings(versionId).fontSizeMultiplier
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
@@ -53,7 +53,7 @@ class ProgressMarkListDialog : DialogFragment() {
 
         fun reload() {
             progressMarks.clear()
-            progressMarks.addAll(S.getDb().listAllProgressMarks())
+            progressMarks.addAll(S.db.listAllProgressMarks())
             notifyDataSetChanged()
         }
 
@@ -106,7 +106,7 @@ class ProgressMarkListDialog : DialogFragment() {
                 if (adapterPosition == -1) return@setOnLongClickListener true
 
                 val progressMark = progressMarks[adapterPosition]
-                ProgressMarkRenameDialog.show(activity, progressMark, object : ProgressMarkRenameDialog.Listener {
+                ProgressMarkRenameDialog.show(requireActivity(), progressMark, object : ProgressMarkRenameDialog.Listener {
                     override fun onOked() {
                         reload()
                     }

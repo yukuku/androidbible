@@ -3,6 +3,7 @@ package yuku.alkitab.base.settings
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -14,7 +15,7 @@ import yuku.alkitab.debug.R
 
 class DisplayFragment : PreferenceFragmentCompat() {
     private val configurationPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
-        val handler = Handler()
+        val handler = Handler(Looper.getMainLooper())
 
         // do this after this method returns true
         handler.post {
@@ -30,21 +31,25 @@ class DisplayFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.settings_display)
 
-        val pref_language = findPreference(getString(R.string.pref_language_key)) as ListPreference
-        pref_language.onPreferenceChangeListener = configurationPreferenceChangeListener
-        SettingsActivity.autoDisplayListPreference(pref_language)
+        val pref_language = findPreference<ListPreference>(getString(R.string.pref_language_key))
+        if (pref_language != null) {
+            pref_language.onPreferenceChangeListener = configurationPreferenceChangeListener
+            SettingsActivity.autoDisplayListPreference(pref_language)
+        }
 
-        val pref_bottomToolbarOnText = findPreference(getString(R.string.pref_bottomToolbarOnText_key)) as CheckBoxPreference
-        pref_bottomToolbarOnText.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
+        val pref_bottomToolbarOnText = findPreference<CheckBoxPreference>(getString(R.string.pref_bottomToolbarOnText_key))
+        pref_bottomToolbarOnText?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
             // do this after this method returns true
-            Handler().post { App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_NEEDS_RESTART)) }
+            Handler(Looper.getMainLooper()).post { App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_NEEDS_RESTART)) }
             true
         }
 
         // show textPadding preference only when there is nonzero side padding on this configuration
         if (resources.getDimensionPixelOffset(R.dimen.text_side_padding) == 0) {
-            val preference = findPreference(getString(R.string.pref_textPadding_key))
-            preferenceScreen.removePreference(preference)
+            val preference = findPreference<Preference>(getString(R.string.pref_textPadding_key))
+            if (preference != null) {
+                preferenceScreen.removePreference(preference)
+            }
         }
     }
 }

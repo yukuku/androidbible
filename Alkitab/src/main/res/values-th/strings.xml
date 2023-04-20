@@ -18,8 +18,7 @@
     <string name="impor_dari_sd_card">กู้ข้อมูล</string>
     <string name="ekspor_ke_sd_card">จัดทำการสำรองข้อมูล</string>
     <string name="menuBantuan">การช่วยเหลือ</string>
-    <string name="beri_saran_title">เสนอแนะ</string>
-    <string name="menuDevotion">การอ่านประจำวัน</string>
+	<string name="menuDevotion">การอ่านประจำวัน</string>
     <string name="search">ค้นหา</string>
     <string name="activity_title_markers">เครื่องหมาย</string>
     <string name="menu_markers">เครื่องหมาย</string>
@@ -178,8 +177,7 @@
     <string name="rename_label">เปลี่ยนชื่อป้ายกำกับ</string>
     <string name="delete_label">ลบป้ายกำกับ</string>
     <string name="please_wait_titik3">กรุณารอสักครู่&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">ต้องการลบไฟล์ข้อมูล \'%s\' หรือไม่?</string>
-    <string name="get_more_fonts">ดาวน์โหลดฟอนท์เพิ่มเติม</string>
+	<string name="get_more_fonts">ดาวน์โหลดฟอนท์เพิ่มเติม</string>
     <string name="intent_filter_import_from_backup">นำเข้าจากตัวแบ็คอัพ</string>
     <string name="redownload">ดาวน์โหลดใหม่</string>
     <string name="read_faq_before_suggest">กรุณาอ่านคำถามที่พบบ่อยก่อนที่จะส่งความคิดเห็นค่ะ ต้องการดำเนินการส่งความคิดเห็นหรือไม่ค่ะ?</string>
@@ -509,25 +507,11 @@
     <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">แอปพระคัมภีร์ฟรี 100% อนุญาตภายใต้ Apache License 2.0</string>
     <string name="about_translators">นักแปล</string>
     <string name="about_user_guide">คู่มือการใช้</string>
-    <string name="about_beta_feedback">ข้อเสนอแนะรุ่นเบต้า</string>
-    <string name="about_enable_beta">ลองรุ่นเบต้า</string>
-    <string name="about_enable_beta_confirmation">เข้าสู่ระบบ Google แล้วกดปุ่ม BECOME A TESTER เพื่อลองรุ่นเบต้าพร้อมด้วยฟิเช่อร์ใหม่ๆ และการปรับปรุงอย่างล่าสุดได้ค่ะ</string>
     <string name="about_version_name">เวอร์ชั่น %s</string>
     <string name="about_material_sources">แหล่งข้อมูล</string>
     <string name="about_credits">เครดิต</string>
     <string name="about_official_website">เว็ปไซต์ทางการ</string>
     <string name="about_project_page">หน้าหลักโครงการ</string>
-    <!-- marker and label migration -->
-    <string name="marker_migrate_introduction">เราได้ตรวจพบไฟล์แบ็คอัพจาก v3 Yuku Quick Bible รุ่นเก่าที่ประกอบด้วยบุ๊คมาร์ค โน้ต การไฮไลท์ และป้ายกำกับค่ะ\n\nท่านต้องการนำเข้าสิ่งเหล่านี้เพื่อใช้ในแอปเวอร์ชั่นปัจจุบันหรือไม่ค่ะ?</string>
-    <string name="marker_migrate_no_more">ไม่ต้องถามอีก</string>
-    <string name="marker_migrate_later">ยังไม่ทำ</string>
-    <string name="marker_migrate_title">นำเข้ามาร์กเกอร์เก่า</string>
-    <string name="marker_migrate_file_chooser_title">เลือกไฟล์แบ็คอัพ v3</string>
-    <string name="marker_migrate_no_more_confirmation">ท่านแน่ใจว่าไม่ต้องการที่จะนำข้อมูลเก่าเข้าหรือไม่ค่ะ?</string>
-    <string name="marker_migrate_error_opening_backup_file">ไม่สามารถเปิดไฟล์แบ็คอัพได้ค่ะ</string>
-    <string name="marker_migrate_import_from_newest">ใช่ นำเข้าจากแบ็คอัพล่าสุด (เป็นที่แนะนำค่ะ)</string>
-    <string name="marker_migrate_import_from_other">แบ็คอัพอื่นๆ</string>
-    <string name="marker_migrate_filename_dated">%1$s ลงวันที่ %2$s</string>
     <!-- Data transfer -->
     <!-- Dictionary -->
     <string name="menuDictionary">พจนานุกรม</string>
@@ -542,9 +526,7 @@
     <string name="menuCommentary">อรรถกถา</string>
     <!-- Maps -->
     <string name="maps_could_not_open">ไม่สามารถเปิดแอป Bible Maps (แผนที่พระคำภิร์)</string>
-    <!-- File chooser -->
-    <string name="filechooser_parent_folder">โฟลเดอร์หลัก</string>
-    <!-- Notification channels -->
+	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">ดาวน์โหลด</string>
     <string name="notification_channel_devotion_downloader_name">รายการดาวน์โหลดบทความประจำวัน</string>
     <string name="notification_channel_devotion_reminder_name">การแจ้งเตือนของบทความประจำวัน</string>
