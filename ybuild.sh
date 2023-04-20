@@ -14,7 +14,7 @@ MAIN_PROJECT_NAME=Alkitab
 THIS_SCRIPT_FILE=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)/`basename "${BASH_SOURCE[0]}"`
 THIS_SCRIPT_DIR=`dirname $THIS_SCRIPT_FILE`
 
-set -e  # Exit the script as soon as one of the commands failed
+set -e  # Exit the script as soon as one of the commandsfailed
 
 if [ "$ALKITAB_PROPRIETARY_DIR" == "" ] ; then
 	echo 'ALKITAB_PROPRIETARY_DIR not defined'
@@ -58,7 +58,7 @@ get_attr() {
 write_last_commit_hash() {
 	FILE="$1"
 	echo 'Setting last commit hash: '$LAST_COMMIT_HASH' to '$FILE
-	sed --in-place='' "s/0000000/$LAST_COMMIT_HASH/g" "$FILE"
+	sed -I '' "s/0000000/$LAST_COMMIT_HASH/g" "$FILE"
 }
 
 # START BUILD-SPECIFIC
