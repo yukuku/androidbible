@@ -1,31 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<style name="Theme.Alkitab.Base" parent="Theme.AppCompat.NoActionBar">
+	<style name="Theme.Alkitab" parent="Theme.AppCompat.NoActionBar">
+		<item name="android:colorPrimary">@color/primary</item>
 		<item name="colorPrimary">@color/primary</item>
+		<item name="android:colorPrimaryDark">@color/primary_dark</item>
 		<item name="colorPrimaryDark">@color/primary_dark</item>
+		<item name="android:colorAccent">@color/accent</item>
 		<item name="colorAccent">@color/accent</item>
-		<item name="windowActionModeOverlay">true</item>
+		<item name="android:windowDrawsSystemBarBackgrounds">true</item>
+		<item name="android:statusBarColor">@android:color/transparent</item>
+		<item name="android:navigationBarColor">#000</item>
 		<item name="android:textColorLink">@color/accent</item>
 		<item name="android:windowBackground">@color/window</item>
 		<item name="actionModeStyle">@style/SmallerTitleActionModeStyle</item>
 		<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
 		<item name="toolbarStyle">@style/ToolbarStyle</item>
+		<item name="windowActionModeOverlay">true</item>
 	</style>
 
-	<style name="Theme.Alkitab.DialogWhenLarge.Base" parent="Theme.AppCompat.DialogWhenLarge">
-		<item name="windowActionBar">false</item>
-		<item name="windowNoTitle">true</item>
-		<item name="android:windowNoTitle">true</item>
+	<style name="Theme.Alkitab.DialogWhenLarge" parent="Theme.AppCompat.DialogWhenLarge">
+		<item name="android:colorPrimary">@color/primary</item>
 		<item name="colorPrimary">@color/primary</item>
+		<item name="android:colorPrimaryDark">@color/primary_dark</item>
 		<item name="colorPrimaryDark">@color/primary_dark</item>
+		<item name="android:colorAccent">@color/accent</item>
 		<item name="colorAccent">@color/accent</item>
+		<item name="android:windowDrawsSystemBarBackgrounds">true</item>
+		<item name="android:statusBarColor">@android:color/transparent</item>
+		<item name="android:navigationBarColor">#000</item>
+		<item name="android:windowNoTitle">true</item>
+		<item name="windowNoTitle">true</item>
 		<item name="android:windowBackground">@color/window</item>
-	</style>
-
-	<style name="StandardWidthIndeterminateProgress" parent="@android:style/Widget.Holo.ProgressBar.Small">
-		<item name="android:minWidth">48dp</item>
-		<item name="android:maxWidth">48dp</item>
+		<item name="windowActionBar">false</item>
 	</style>
 
 	<style name="SmallerTitleActionModeStyle" parent="Widget.AppCompat.ActionMode">
@@ -42,7 +49,9 @@
 		<item name="titleMarginStart">0dp</item>
 	</style>
 
-	<style name="Theme.Alkitab.Transparent.Base" parent="Theme.Alkitab">
+	<style name="Theme.Alkitab.Transparent">
+		<item name="android:windowTranslucentNavigation">true</item>
+		<item name="android:windowTranslucentStatus">true</item>
 		<item name="android:windowBackground">@android:color/transparent</item>
 		<item name="android:colorBackgroundCacheHint">@null</item>
 		<item name="android:windowIsTranslucent">true</item>
@@ -51,9 +60,12 @@
 		<item name="android:windowContentOverlay">@null</item>
 		<item name="android:windowFrame">@null</item>
 		<item name="android:windowActionBar">false</item>
+		<item name="windowActionBar">false</item>
 	</style>
 
-	<style name="Theme.PopupActivity.Base" parent="Theme.Alkitab">
+	<style name="Theme.PopupActivity" parent="Theme.Alkitab">
+		<item name="android:windowTranslucentNavigation">true</item>
+		<item name="android:windowTranslucentStatus">true</item>
 		<item name="android:windowBackground">@android:color/transparent</item>
 		<item name="android:colorBackgroundCacheHint">@null</item>
 		<item name="android:windowIsTranslucent">true</item>
@@ -61,7 +73,7 @@
 		<item name="android:windowNoTitle">true</item>
 		<item name="android:windowContentOverlay">@null</item>
 		<item name="android:windowFrame">@null</item>
-		<item name="windowActionBar">false</item>
 		<item name="android:windowActionBar">false</item>
+		<item name="windowActionBar">false</item>
 	</style>
 </resources>
