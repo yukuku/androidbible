@@ -72,10 +72,10 @@ class VersionFileImporter(val context: Context) {
             }
         }
 
-        return readCachedFile(uri, ext, baseName, cacheFile)
+        return readCachedFile(ext, baseName, cacheFile)
     }
 
-    private fun readCachedFile(uri: Uri, ext: String, baseName: String, cacheFile: File): Result {
+    private fun readCachedFile(ext: String, baseName: String, cacheFile: File): Result {
         return when (ext) {
             "yes" -> {
                 Tracker.trackEvent("versions_open_yes")
@@ -100,7 +100,11 @@ class VersionFileImporter(val context: Context) {
 
         // Copy the cached file to the persistent files dir
         val yesFile = AddonManager.getWritableVersionFile("$baseName.yes")
-        cacheFile.copyTo(yesFile, overwrite = true)
+        try {
+            cacheFile.copyTo(yesFile, overwrite = false)
+        } catch (e: FileAlreadyExistsException) {
+            throw IOException(context.getString(R.string.ed_file_file_sudah_ada_dalam_daftar_versi, "$baseName.yes"))
+        }
 
         return Result.YesFileIsAvailableLocally(yesFile)
     }

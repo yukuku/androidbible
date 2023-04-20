@@ -177,8 +177,7 @@
     <string name="rename_label">Hernoem etiket</string>
     <string name="delete_label">Verwyder etiket</string>
     <string name="please_wait_titik3">Wag asseblief</string>
-    <string name="juga_hapus_file_datanya_file">Vee data leêr ook uit \'%s\'?</string>
-    <string name="get_more_fonts">Laai meer lettertipes af</string>
+	<string name="get_more_fonts">Laai meer lettertipes af</string>
     <string name="intent_filter_import_from_backup">Voer in vanaf rugsteun</string>
     <string name="redownload">Heraflaai</string>
     <string name="read_faq_before_suggest">Lees asb FAQ alvorens U \'n voorstel instuur. Gaan aan met voorstel?</string>

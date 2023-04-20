@@ -177,8 +177,7 @@
     <string name="rename_label">Etiketi yeniden adlandır</string>
     <string name="delete_label">Etiketi sil</string>
     <string name="please_wait_titik3">Lütfen bekleyin&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">\'%s\' veri dosyası da silinsin mi?</string>
-    <string name="get_more_fonts">Daha fazla yazı tipi indir&#8230;</string>
+	<string name="get_more_fonts">Daha fazla yazı tipi indir&#8230;</string>
     <string name="intent_filter_import_from_backup">Yedeği içe aktar</string>
     <string name="redownload">Yeniden İndir</string>
     <string name="read_faq_before_suggest">Lütfen bir öneri göndermeden önce yukarıdan SSS bölümünü okuyun. Hala bir öneride bulunmak istiyor musunuz?</string>

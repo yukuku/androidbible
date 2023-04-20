@@ -177,8 +177,7 @@
     <string name="rename_label">Đổi tên nhãn</string>
     <string name="delete_label">Xóa nhãn</string>
     <string name="please_wait_titik3">Xin chờ&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Xóa các tập tin dữ liệu \'%s\'?</string>
-    <string name="get_more_fonts">Tải thêm phông chữ&#8230;</string>
+	<string name="get_more_fonts">Tải thêm phông chữ&#8230;</string>
     <string name="intent_filter_import_from_backup">Nhập bản sao lưu</string>
     <string name="redownload">Tải lại</string>
     <string name="read_faq_before_suggest">Xin vui lòng đọc các câu hỏi thường gặp ở trên trước khi gửi một đề nghị. Tiếp tục với việc gửi đề nghị?</string>

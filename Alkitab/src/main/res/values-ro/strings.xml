@@ -177,8 +177,7 @@
     <string name="rename_label">Redenumeşte eticheta</string>
     <string name="delete_label">Şterge eticheta</string>
     <string name="please_wait_titik3">Vă rugăm să aşteptaţi...</string>
-    <string name="juga_hapus_file_datanya_file">Ştergeţi fișierul de date \'%s\'?</string>
-    <string name="get_more_fonts">Descarca mai multe fonturi&#8230;</string>
+	<string name="get_more_fonts">Descarca mai multe fonturi&#8230;</string>
     <string name="intent_filter_import_from_backup">Importă din copia de rezervă</string>
     <string name="redownload">Descărcare nouă</string>
     <string name="read_faq_before_suggest">Vă rog să citiți FAQ înainte de a trimite o sugestie. Continuați cu trimiterea sugestiei?</string>

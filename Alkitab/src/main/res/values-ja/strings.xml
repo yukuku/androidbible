@@ -177,8 +177,7 @@
     <string name="rename_label">ラベル名の変更</string>
     <string name="delete_label">ラベルの削除</string>
     <string name="please_wait_titik3">お待ちください...</string>
-    <string name="juga_hapus_file_datanya_file">聖書データファイル \'%s\' も削除しますか?</string>
-    <string name="get_more_fonts">他のフォントをダウンロード...</string>
+	<string name="get_more_fonts">他のフォントをダウンロード...</string>
     <string name="intent_filter_import_from_backup">バックアップからインポート</string>
     <string name="redownload">再度ダウンロード</string>
     <string name="read_faq_before_suggest">提案をお寄せになる前に、FAQをぜひ読んでください. このまま提案をお寄せになりますか?</string>

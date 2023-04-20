@@ -177,8 +177,7 @@
     <string name="rename_label">Hernoem label</string>
     <string name="delete_label">Verwijder label</string>
     <string name="please_wait_titik3">Even geduld&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Verwijder ook het databestand \'%s\'?</string>
-    <string name="get_more_fonts">Download meer lettertypen&#8230;</string>
+	<string name="get_more_fonts">Download meer lettertypen&#8230;</string>
     <string name="intent_filter_import_from_backup">Importeer van reservekopie</string>
     <string name="redownload">Download opnieuw</string>
     <string name="read_faq_before_suggest">Lees alsjeblieft de FAQ voordat je een suggestie instuurt. Doorgaan met verzenden van een suggestie?</string>

@@ -177,8 +177,7 @@
     <string name="rename_label">အမှတ်တံဆိပ် အမည်ကို ပြောင်းရန်</string>
     <string name="delete_label">အမှတ်တံဆိပ်ကို ဖျက်ပစ်ရန်</string>
     <string name="please_wait_titik3">ကျေးဇူးပြုပြီး ခဏစောင့်ပါ&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">ဒေတာဖိုင်ကိုလည်း ဖျက်ပစ်လိုက်ရမလား \'%s\'။</string>
-    <string name="get_more_fonts">နောက်ထပ် ဖောင့်စာလုံးပုံစံများကို ဒေါင်းလုဒ်ရယူရန်</string>
+	<string name="get_more_fonts">နောက်ထပ် ဖောင့်စာလုံးပုံစံများကို ဒေါင်းလုဒ်ရယူရန်</string>
     <string name="intent_filter_import_from_backup">မူရင်းဖိုင်များ ကူးယူသိုမှီးရာမှ ဖိုင်များကို ပြန်တင်သွင်းရန်</string>
     <string name="redownload">ပြန်လည် ဒေါင်းလုဒ်ဆွဲရန်</string>
     <string name="read_faq_before_suggest">အကြံပြုချက်မပို့မီ အထက်ပါ အမြဲမေးလေ့ရှိသည့်မေးခွန်းများကို ဖတ်ပါ။ အကြံပြုချက်ပေးပို့ခြင်းကို ဆက်လက်လုပ်ဆောက်ချင်ပါသလား။</string>

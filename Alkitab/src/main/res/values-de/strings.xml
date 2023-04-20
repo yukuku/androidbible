@@ -177,8 +177,7 @@
     <string name="rename_label">Stichwort umbenennen</string>
     <string name="delete_label">Stichwort löschen</string>
     <string name="please_wait_titik3">Bitte warten&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Soll auch die Datendatei \'%s\' gelöscht werden?</string>
-    <string name="get_more_fonts">Weitere Schriftarten herunterladen&#8230;</string>
+	<string name="get_more_fonts">Weitere Schriftarten herunterladen&#8230;</string>
     <string name="intent_filter_import_from_backup">Aus Sicherung importieren</string>
     <string name="redownload">Erneut herunterladen</string>
     <string name="read_faq_before_suggest">Lesen Sie zuerst die häufig gestellten Fragen, bevor Sie einen Vorschlag senden. Mit dem Senden eines Vorschlag fortfahren?</string>

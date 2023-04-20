@@ -177,8 +177,7 @@
     <string name="rename_label">Μετονομασία ετικέτας</string>
     <string name="delete_label">Διαγραφή ετικέτας</string>
     <string name="please_wait_titik3">Παρακαλώ περιμένετε&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Να διαγράψουμε και τον φάκελλο δεδομένων%s;</string>
-    <string name="get_more_fonts">Λήψη περισσότερων γραμματοσειρών&#8230;</string>
+	<string name="get_more_fonts">Λήψη περισσότερων γραμματοσειρών&#8230;</string>
     <string name="intent_filter_import_from_backup">Εισαγωγή από αντίγραφο ασφαλείας</string>
     <string name="redownload">Επανάληψη λήψης</string>
     <string name="read_faq_before_suggest">Παρακαλώ διαβάστε τις άνω FAQ (Συχνές ερωτήσεις) στέλνοντας μια πρόταση. Να στείλω στη συνέχεια μια πρόταση;</string>

@@ -183,7 +183,6 @@
     <string name="rename_label">Ganti nama label</string>
     <string name="delete_label">Hapus label</string>
     <string name="please_wait_titik3">Harap tunggu&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Juga hapus file datanya \'%s\'?</string>
     <string name="get_more_fonts">Dapatkan huruf lainnya&#8230;</string>
     <string name="intent_filter_import_from_backup">Impor dari cadangan</string>
     <string name="redownload">Unduh ulang</string>

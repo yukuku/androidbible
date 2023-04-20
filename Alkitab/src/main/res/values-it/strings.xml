@@ -177,8 +177,7 @@
     <string name="rename_label">Rinomina etichetta</string>
     <string name="delete_label">Elimina etichetta</string>
     <string name="please_wait_titik3">Attendere prego&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Cancellare anche il file di dati \'%s\'?</string>
-    <string name="get_more_fonts">Scarica altri caratteri&#8230;</string>
+	<string name="get_more_fonts">Scarica altri caratteri&#8230;</string>
     <string name="intent_filter_import_from_backup">Importa da backup</string>
     <string name="redownload">Scaricare nuovamente</string>
     <string name="read_faq_before_suggest">Per favore, leggi le FAQ qui sopra prima di inviare un suggerimento. Continua con l\'invio di un suggerimento?</string>

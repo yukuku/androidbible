@@ -177,7 +177,6 @@
     <string name="rename_label">Renommer le libellé</string>
     <string name="delete_label">Effacer le libellé</string>
     <string name="please_wait_titik3">Patientez&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Supprimer aussi le fichier de données \'%s\' ?</string>
     <string name="get_more_fonts">Télécharger plus de fontes&#8230;</string>
     <string name="intent_filter_import_from_backup">Récupérer depuis une sauvegarde</string>
     <string name="redownload">Télécharger à nouveau</string>

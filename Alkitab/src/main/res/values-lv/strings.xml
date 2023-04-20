@@ -179,8 +179,7 @@
     <string name="rename_label">Pārsaukt iezīmi</string>
     <string name="delete_label">Dzēst iezīmi</string>
     <string name="please_wait_titik3">Lūdzu uzgaidiet&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Vai dzēst arī datu failu \'%s\'?</string>
-    <string name="get_more_fonts">Lejupielādēt vairāk fontus&#8230;</string>
+	<string name="get_more_fonts">Lejupielādēt vairāk fontus&#8230;</string>
     <string name="intent_filter_import_from_backup">Importēt no arhīva</string>
     <string name="redownload">Vēlreiz lejupielādēt</string>
     <string name="read_faq_before_suggest">Pirms sūtat ieteikumu, lūdzu, izlasiet augstāk redzamos FAQ (biežāk uzdotos jautājumus). Vai sūtīt ieteikumu?</string>

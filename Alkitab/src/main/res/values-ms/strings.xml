@@ -177,7 +177,6 @@
     <string name="rename_label">Namakan semula label</string>
     <string name="delete_label">Padam label</string>
     <string name="please_wait_titik3">Sila tunggu...</string>
-    <string name="juga_hapus_file_datanya_file">Juga memadam fail data \'%s\'?</string>
     <string name="get_more_fonts">Memuat turun lebih banyak fon...</string>
     <string name="intent_filter_import_from_backup">Import dari sandaran</string>
     <string name="redownload">Memuat turun sekali lagi</string>

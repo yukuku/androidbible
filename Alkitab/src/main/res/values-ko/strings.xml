@@ -177,8 +177,7 @@
     <string name="rename_label">태그명 수정</string>
     <string name="delete_label">태그 삭제</string>
     <string name="please_wait_titik3">잠시만 기다리십시오...</string>
-    <string name="juga_hapus_file_datanya_file">\'%s\' 데이터 파일도 삭제하시겠습니까?</string>
-    <string name="get_more_fonts">더 많은 폰트 다운로드...</string>
+	<string name="get_more_fonts">더 많은 폰트 다운로드...</string>
     <string name="intent_filter_import_from_backup">백업에서 가져오기</string>
     <string name="redownload">다시 다운받기</string>
     <string name="read_faq_before_suggest">제안하기에 앞서 FAQ(빈번한 질의)를 먼저 읽어보세요. 제안을 보내시겠습니까?</string>

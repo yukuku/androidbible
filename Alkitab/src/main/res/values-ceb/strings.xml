@@ -177,8 +177,7 @@
     <string name="rename_label">Ilisdan ang pangalan sa label</string>
     <string name="delete_label">Tang-galon ang label</string>
     <string name="please_wait_titik3">Palihug mag hulat&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Og deleton pud ang file \'%s\'?</string>
-    <string name="get_more_fonts">Pagdownload og daghan pang fonts&#8230;</string>
+	<string name="get_more_fonts">Pagdownload og daghan pang fonts&#8230;</string>
     <string name="intent_filter_import_from_backup">Pagbalhin gikan sa binuck up</string>
     <string name="redownload">Pagbalik og download</string>
     <string name="read_faq_before_suggest">Palihug og basa sa FAQ nga naa sa ibaibaw sa dili pa mag send og suhestiyon. Padayonon sa pagsend og suhestiyon?</string>

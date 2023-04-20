@@ -177,8 +177,7 @@
     <string name="rename_label">Omdøb etiket</string>
     <string name="delete_label">Slet etiket</string>
     <string name="please_wait_titik3">Vent venligst&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Slet også data filen \'%s\'?</string>
-    <string name="get_more_fonts">Nedtag flere skrifttyper&#8230;</string>
+	<string name="get_more_fonts">Nedtag flere skrifttyper&#8230;</string>
     <string name="intent_filter_import_from_backup">Importer fra sikkerhedskopi</string>
     <string name="redownload">Gennedtag</string>
     <string name="read_faq_before_suggest">Læs venligst ovenstående FAQ før du sender et forslag. Fortsæt med at sende et forslag?</string>

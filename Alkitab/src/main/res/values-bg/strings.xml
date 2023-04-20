@@ -177,7 +177,6 @@
     <string name="rename_label">Преименувай етикета</string>
     <string name="delete_label">Изтрий етикета</string>
     <string name="please_wait_titik3">Моля, почакайте&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Изтрийте също и файла с данни \'%s\'?</string>
     <string name="get_more_fonts">Заредете допълнителни шрифтове&#8230;</string>
     <string name="intent_filter_import_from_backup">Импортирай от резервното копие</string>
     <string name="redownload">Повторно зареждане</string>

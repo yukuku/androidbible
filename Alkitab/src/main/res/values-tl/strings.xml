@@ -177,8 +177,7 @@
     <string name="rename_label">Ibahin ang pangalan ng label</string>
     <string name="delete_label">Burahin ang label</string>
     <string name="please_wait_titik3">Pakiusap maghintay&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">At burahin din ang data ng file \'%s\'?</string>
-    <string name="get_more_fonts">Mag download ng maraming mga font&#8230;</string>
+	<string name="get_more_fonts">Mag download ng maraming mga font&#8230;</string>
     <string name="intent_filter_import_from_backup">Mag-angkat galing sa backup</string>
     <string name="redownload">I-download ulit</string>
     <string name="read_faq_before_suggest">Pakiusap basahin ang nasa taas FAQ bago ipasa ang mungkahi. Ipagpatuloy ang pagpasa ng mungkahi?</string>

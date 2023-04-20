@@ -177,8 +177,7 @@
     <string name="rename_label">เปลี่ยนชื่อป้ายกำกับ</string>
     <string name="delete_label">ลบป้ายกำกับ</string>
     <string name="please_wait_titik3">กรุณารอสักครู่&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">ต้องการลบไฟล์ข้อมูล \'%s\' หรือไม่?</string>
-    <string name="get_more_fonts">ดาวน์โหลดฟอนท์เพิ่มเติม</string>
+	<string name="get_more_fonts">ดาวน์โหลดฟอนท์เพิ่มเติม</string>
     <string name="intent_filter_import_from_backup">นำเข้าจากตัวแบ็คอัพ</string>
     <string name="redownload">ดาวน์โหลดใหม่</string>
     <string name="read_faq_before_suggest">กรุณาอ่านคำถามที่พบบ่อยก่อนที่จะส่งความคิดเห็นค่ะ ต้องการดำเนินการส่งความคิดเห็นหรือไม่ค่ะ?</string>

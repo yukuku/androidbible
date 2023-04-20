@@ -177,8 +177,7 @@
     <string name="rename_label">Címke átnevezése</string>
     <string name="delete_label">Címke törlése</string>
     <string name="please_wait_titik3">Kérem várjon&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">Törölje az adatállományt is \'%s\'?</string>
-    <string name="get_more_fonts">Több betűtípus letöltése&#8230;</string>
+	<string name="get_more_fonts">Több betűtípus letöltése&#8230;</string>
     <string name="intent_filter_import_from_backup">Importálás a mentésből</string>
     <string name="redownload">Újra-letöltött</string>
     <string name="read_faq_before_suggest">Olvassa el a FAQ-t mielőtt egy javaslatot küldene. Biztos hogy beküldi a javaslatát?</string>

@@ -177,8 +177,7 @@
     <string name="rename_label">Renombrar etiqueta</string>
     <string name="delete_label">Eliminar etiqueta</string>
     <string name="please_wait_titik3">Por favor espere&#8230;</string>
-    <string name="juga_hapus_file_datanya_file">¿También eliminar el archivo de datos\'%s\'?</string>
-    <string name="get_more_fonts">Descargar más fuentes&#8230;</string>
+	<string name="get_more_fonts">Descargar más fuentes&#8230;</string>
     <string name="intent_filter_import_from_backup">Importar desde respaldo</string>
     <string name="redownload">Re-descargar</string>
     <string name="read_faq_before_suggest">Por favor lea el FAQ anterior antes de enviar una sugerencia. ¿Continuar enviando sugerencia?</string>

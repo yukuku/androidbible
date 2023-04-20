@@ -177,8 +177,7 @@
     <string name="rename_label">Перейменувати позначку</string>
     <string name="delete_label">Видалити позначку</string>
     <string name="please_wait_titik3">Будь-ласка зачекайте...</string>
-    <string name="juga_hapus_file_datanya_file">Також видалити файл даних %s\'? </string>
-    <string name="get_more_fonts">Завантажити більше шрифтів...</string>
+	<string name="get_more_fonts">Завантажити більше шрифтів...</string>
     <string name="intent_filter_import_from_backup">Імпорт з резервної копії</string>
     <string name="redownload">Перезавантажити</string>
     <string name="read_faq_before_suggest">Будь ласка читайте вище FAQ перед відсиланням пропозиції або запитання. Продовжити надсилання пропозиції або запитання?</string>

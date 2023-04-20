@@ -42,7 +42,6 @@ import yuku.alkitab.base.model.MVersionDb
 import yuku.alkitab.base.model.MVersionInternal
 import yuku.alkitab.base.model.MVersionPreset
 import yuku.alkitab.base.sv.VersionConfigUpdaterService
-import yuku.alkitab.base.util.AddonManager
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Background
 import yuku.alkitab.base.util.DownloadMapper
@@ -152,7 +151,8 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
         Background.run { adapter.reload() } // do not broadcast, since the query only changes this fragment
     }
 
-    class Item(var mv: MVersion)
+    @JvmInline
+    value class Item(val mv: MVersion)
 
     fun itemCheckboxClick(item: Item, itemView: View) {
         when (val mv = item.mv) {
@@ -241,25 +241,9 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
             button_count++
             b.neutralButton(R.string.buang_dari_daftar) {
                 val filename = mv.filename
-                if (AddonManager.isInSharedStorage(filename)) {
-                    MaterialDialog(requireActivity()).show {
-                        message(text = getString(R.string.juga_hapus_file_datanya_file, filename))
-                        positiveButton(R.string.delete) {
-                            S.db.deleteVersion(mv)
-                            App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
-                            File(filename).delete()
-                        }
-                        negativeButton(R.string.no) {
-                            S.db.deleteVersion(mv)
-                            App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
-                        }
-                        neutralButton(R.string.cancel)
-                    }
-                } else { // just delete the file!
-                    S.db.deleteVersion(mv)
-                    App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
-                    File(filename).delete()
-                }
+                S.db.deleteVersion(mv)
+                App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
+                File(filename).delete()
             }
         }
 

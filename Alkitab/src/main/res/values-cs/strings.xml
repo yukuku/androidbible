@@ -177,8 +177,7 @@
     <string name="rename_label">Přejmenování štítku</string>
     <string name="delete_label">Smazání štítku</string>
     <string name="please_wait_titik3">Prosím čekejte...</string>
-    <string name="juga_hapus_file_datanya_file">Odstranit také datový soubor \'%s\'?</string>
-    <string name="get_more_fonts">Stáhnout více fontů</string>
+	<string name="get_more_fonts">Stáhnout více fontů</string>
     <string name="intent_filter_import_from_backup">Import ze zálohy</string>
     <string name="redownload">Opětovné stažení</string>
     <string name="read_faq_before_suggest">Prosím, přečtěte si výše uvedené FAQ před odesláním vašeho dotazu . Pokračovat v odesílání dotazu?</string>
