@@ -62,7 +62,7 @@ ext {
     firebaseBomVersion = '29.0.3'
 
     // Misc
-    okhttpVersion = '4.9.3'
+    okhttpVersion = '4.10.0'
     coilVersion = '1.1.0'
     kotlinxSerializationJsonVersion = '1.0.1'
 
