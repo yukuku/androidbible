@@ -51,7 +51,7 @@ ext {
 
     // Google
     exoplayerVersion = '2.11.1'
-    gsonVersion = '2.8.9'
+    gsonVersion = '2.10'
     fastscrollVersion = '1.1.7'
     materialVersion = '1.4.0'
 
