@@ -32,9 +32,7 @@ import yuku.alkitab.debug.R
 
 private const val TAG = "BaseActivity"
 
-abstract class BaseActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
-
-    private var willNeedStoragePermission: Boolean = false
+abstract class BaseActivity : AppCompatActivity() {
 
     private var lastKnownConfigurationSerialNumber = 0
 
@@ -78,15 +76,6 @@ abstract class BaseActivity : AppCompatActivity(), ActivityCompat.OnRequestPermi
         window.statusBarColor = statusBarColor
     }
 
-    /**
-     * Call this from subclasses before super.onCreate() to make
-     * the activity ask for storage permission and do not proceed
-     * if the permission is not granted.
-     */
-    protected fun willNeedStoragePermission() {
-        this.willNeedStoragePermission = true
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -98,98 +87,11 @@ abstract class BaseActivity : AppCompatActivity(), ActivityCompat.OnRequestPermi
         @Suppress("DEPRECATION")
         resources.updateConfiguration(context.resources.configuration, context.resources.displayMetrics)
 
-        if (willNeedStoragePermission) {
-            askStoragePermission()
-        }
-
         // to ensure that title is localized
         val activityInfo = packageManager.getActivityInfo(componentName, 0)
         if (activityInfo.labelRes != 0) {
             title = Localized.text(activityInfo.labelRes)
         }
-    }
-
-    private fun askStoragePermission() {
-        if (!(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                var oked = false
-                MaterialDialog(this).show {
-                    message(R.string.storage_permission_rationale)
-                    positiveButton(R.string.ok) {
-                        oked = true
-                        ActivityCompat.requestPermissions(this@BaseActivity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), RequestCodes.PermissionFromActivity.Storage)
-                    }
-                    onDismiss {
-                        if (!oked) {
-                            finish()
-                        }
-                    }
-                }
-            } else {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), RequestCodes.PermissionFromActivity.Storage)
-            }
-        } else {
-            onNeededPermissionsGranted(true)
-        }
-    }
-
-    /**
-     * Override this to do something after we confirm that all needed permissions are granted.
-     * This is only called if [.willNeedStoragePermission] was called.
-     *
-     * @param immediatelyGranted whether the permission is granted immediately without leaving the first onCreate().
-     * Use this to determine whether we need to do initialization (e.g. load dir contents)
-     * and to determine whether it is safe to init now.
-     */
-    protected open fun onNeededPermissionsGranted(immediatelyGranted: Boolean) {}
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        if (requestCode == RequestCodes.PermissionFromActivity.Storage) {
-            // all must be granted
-            val allGranted = grantResults.all { it == PackageManager.PERMISSION_GRANTED }
-
-            if (allGranted) {
-                onNeededPermissionsGranted(false)
-            } else {
-                if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) || !ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-
-                    // user selects do not ask again
-                    var oked = false
-                    MaterialDialog(this).show {
-                        message(text = "You need to have the Storage permission enabled to continue, because we need to store shared media such as Bible versions and fonts.")
-                        positiveButton(R.string.ok) {
-                            oked = true
-
-                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                                .setData(Uri.fromParts("package", packageName, null))
-
-                            startActivityForResult(intent, RequestCodes.FromActivity.PermissionSettings)
-                        }
-                        negativeButton(R.string.cancel)
-                        onDismiss {
-                            if (!oked) {
-                                finish()
-                            }
-                        }
-                    }
-                } else {
-                    finish()
-                }
-            }
-
-            return
-        }
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == RequestCodes.FromActivity.PermissionSettings) {
-            askStoragePermission()
-            return
-        }
-
-        super.onActivityResult(requestCode, resultCode, data)
     }
 
     @CallSuper

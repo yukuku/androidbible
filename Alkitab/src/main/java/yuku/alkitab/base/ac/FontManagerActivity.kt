@@ -58,7 +58,6 @@ class FontManagerActivity : BaseActivity(), DownloadService.DownloadListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.willNeedStoragePermission()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_font_manager)
 
@@ -72,13 +71,8 @@ class FontManagerActivity : BaseActivity(), DownloadService.DownloadListener {
         lsFont.adapter = adapter
 
         bindService(Intent(this, DownloadService::class.java), serviceConnection, BIND_AUTO_CREATE)
-    }
 
-    override fun onNeededPermissionsGranted(immediatelyGranted: Boolean) {
-        super.onNeededPermissionsGranted(immediatelyGranted)
-        if (!immediatelyGranted && dls != null) {
-            loadFontList()
-        }
+        loadFontList()
     }
 
     override fun onDestroy() {

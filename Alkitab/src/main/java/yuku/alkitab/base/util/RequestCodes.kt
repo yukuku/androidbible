@@ -10,10 +10,4 @@ object RequestCodes {
 
         const val PermissionSettings = 9970
     }
-    object FromFragment
-
-    object PermissionFromActivity {
-        const val Storage = 1
-    }
-    object PermissionFromFragment
 }
