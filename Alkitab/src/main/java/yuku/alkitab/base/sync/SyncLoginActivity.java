@@ -272,7 +272,7 @@ public class SyncLoginActivity extends BaseActivity {
     }
 
     void startThreadWithProgressDialog(final String message, final Runnable task) {
-        final MaterialDialog pd = MaterialDialogJavaHelper.showOkDialog(this, message).cancelable(false);
+        final MaterialDialog pd = SyncLoginActivityJavaHelper.showProgressDialog(this, message);
 
         Background.run(() -> {
             try {
