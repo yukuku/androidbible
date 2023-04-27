@@ -12,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -65,7 +66,7 @@ public class Sync_Pins {
 	}
 
 	private static List<Sync.Entity<Content>> entitiesFromShadow(@NonNull final SyncShadow ss) {
-		final BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(ss.data), Charset.forName("utf-8")));
+		final BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(ss.data), StandardCharsets.UTF_8));
 		final Sync.SyncShadowDataJson<Content> data = App.getDefaultGson().fromJson(reader, new TypeToken<Sync.SyncShadowDataJson<Content>>() {}.getType());
 		return data.entities;
 	}
@@ -74,7 +75,7 @@ public class Sync_Pins {
 		final Sync.SyncShadowDataJson<Content> data = new Sync.SyncShadowDataJson<>();
 		data.entities = entities;
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		final BufferedWriter w = new BufferedWriter(new OutputStreamWriter(baos, Charset.forName("utf-8")));
+		final BufferedWriter w = new BufferedWriter(new OutputStreamWriter(baos, StandardCharsets.UTF_8));
 		App.getDefaultGson().toJson(data, new TypeToken<Sync.SyncShadowDataJson<Content>>() {}.getType(), w);
 		SyncUtils.wontThrow(w::flush);
 		final SyncShadow res = new SyncShadow();

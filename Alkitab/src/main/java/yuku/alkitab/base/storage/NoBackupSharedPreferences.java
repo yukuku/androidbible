@@ -2,6 +2,7 @@ package yuku.alkitab.base.storage;
 
 import androidx.core.content.ContextCompat;
 import androidx.core.util.AtomicFile;
+import java.nio.charset.StandardCharsets;
 import yuku.alkitab.base.App;
 
 import java.io.File;
@@ -41,7 +42,7 @@ public class NoBackupSharedPreferences {
 			final AtomicFile atom = new AtomicFile(file);
 			try {
 				final FileInputStream fis = atom.openRead();
-				final Map savedMap = App.getDefaultGson().fromJson(new InputStreamReader(fis, Charset.forName("utf-8")), Map.class);
+				final Map savedMap = App.getDefaultGson().fromJson(new InputStreamReader(fis, StandardCharsets.UTF_8), Map.class);
 				map = savedMap == null ? new Map() : savedMap;
 				fis.close();
 			} catch (IOException e) {
@@ -56,7 +57,7 @@ public class NoBackupSharedPreferences {
 		final AtomicFile atom = new AtomicFile(file);
 		try {
 			final FileOutputStream fos = atom.startWrite();
-			final OutputStreamWriter w = new OutputStreamWriter(fos, Charset.forName("utf-8"));
+			final OutputStreamWriter w = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
 			App.getDefaultGson().toJson(map, w);
 			w.flush();
 			atom.finishWrite(fos);

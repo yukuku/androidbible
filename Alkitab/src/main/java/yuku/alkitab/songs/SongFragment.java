@@ -15,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import yuku.alkitab.base.fr.base.BaseFragment;
 import yuku.alkitab.debug.R;
@@ -120,7 +121,7 @@ public class SongFragment extends BaseFragment {
                     baos.write(buf, 0, read);
                 }
             }
-            String template = new String(baos.toByteArray(), "utf-8");
+            String template = new String(baos.toByteArray(), StandardCharsets.UTF_8);
 
             if (customVars != null) {
                 for (String key : customVars.keySet()) {

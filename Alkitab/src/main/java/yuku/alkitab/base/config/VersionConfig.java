@@ -2,6 +2,7 @@ package yuku.alkitab.base.config;
 
 import androidx.annotation.Keep;
 import androidx.core.util.AtomicFile;
+import java.nio.charset.StandardCharsets;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.model.MVersionPreset;
@@ -63,7 +64,7 @@ public class VersionConfig {
 		if (updatedFile.exists() && updatedFile.canRead() && updatedFile.length() > 0) {
 			try {
 				final AtomicFile file = new AtomicFile(updatedFile);
-				final String json = new String(file.readFully(), "utf-8");
+				final String json = new String(file.readFully(), StandardCharsets.UTF_8);
 				final VersionConfigJson obj = App.getDefaultGson().fromJson(json, VersionConfigJson.class);
 				return convertConfig(obj);
 			} catch (Exception e) {
@@ -75,7 +76,7 @@ public class VersionConfig {
 		}
 
 		try {
-			final InputStreamReader reader = new InputStreamReader(App.context.getAssets().open("version_config.json"), "utf-8");
+			final InputStreamReader reader = new InputStreamReader(App.context.getAssets().open("version_config.json"), StandardCharsets.UTF_8);
 			final VersionConfigJson obj = App.getDefaultGson().fromJson(reader, VersionConfigJson.class);
 			reader.close();
 
@@ -169,7 +170,7 @@ public class VersionConfig {
 		try {
 			final AtomicFile file = new AtomicFile(getUpdatedFile());
 			final FileOutputStream fos = file.startWrite();
-			fos.write(json.getBytes("utf-8"));
+			fos.write(json.getBytes(StandardCharsets.UTF_8));
 			file.finishWrite(fos);
 		} catch (IOException e) {
 			AppLog.d(TAG, "Failed to write to update file", e);

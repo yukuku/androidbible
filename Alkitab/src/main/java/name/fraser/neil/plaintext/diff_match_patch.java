@@ -22,6 +22,7 @@ package name.fraser.neil.plaintext;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -1432,13 +1433,8 @@ public class diff_match_patch {
     for (Diff aDiff : diffs) {
       switch (aDiff.operation) {
       case INSERT:
-        try {
-          text.append("+").append(URLEncoder.encode(aDiff.text, "UTF-8")
-                                            .replace('+', ' ')).append("\t");
-        } catch (UnsupportedEncodingException e) {
-          // Not likely on modern system.
-          throw new Error("This system does not support UTF-8.", e);
-        }
+        text.append("+").append(URLEncoder.encode(aDiff.text, StandardCharsets.UTF_8)
+                                          .replace('+', ' ')).append("\t");
         break;
       case DELETE:
         text.append("-").append(aDiff.text.length()).append("\t");
@@ -1483,10 +1479,7 @@ public class diff_match_patch {
         // decode would change all "+" to " "
         param = param.replace("+", "%2B");
         try {
-          param = URLDecoder.decode(param, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-          // Not likely on modern system.
-          throw new Error("This system does not support UTF-8.", e);
+          param = URLDecoder.decode(param, StandardCharsets.UTF_8);
         } catch (IllegalArgumentException e) {
           // Malformed URI sequence.
           throw new IllegalArgumentException(
@@ -2270,10 +2263,7 @@ public class diff_match_patch {
         line = text.getFirst().substring(1);
         line = line.replace("+", "%2B");  // decode would change all "+" to " "
         try {
-          line = URLDecoder.decode(line, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-          // Not likely on modern system.
-          throw new Error("This system does not support UTF-8.", e);
+          line = URLDecoder.decode(line, StandardCharsets.UTF_8);
         } catch (IllegalArgumentException e) {
           // Malformed URI sequence.
           throw new IllegalArgumentException(
@@ -2436,13 +2426,8 @@ public class diff_match_patch {
           text.append(' ');
           break;
         }
-        try {
-          text.append(URLEncoder.encode(aDiff.text, "UTF-8").replace('+', ' '))
-              .append("\n");
-        } catch (UnsupportedEncodingException e) {
-          // Not likely on modern system.
-          throw new Error("This system does not support UTF-8.", e);
-        }
+        text.append(URLEncoder.encode(aDiff.text, StandardCharsets.UTF_8).replace('+', ' '))
+            .append("\n");
       }
       return unescapeForEncodeUriCompatability(text.toString());
     }
