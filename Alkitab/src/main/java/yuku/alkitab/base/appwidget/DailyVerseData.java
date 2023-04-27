@@ -107,7 +107,7 @@ public abstract class DailyVerseData {
 		final long day = calendar.get(Calendar.DAY_OF_YEAR);
 		final long fifteensecs = BuildConfig.DEBUG ? (calendar.get(Calendar.HOUR_OF_DAY) * 240 + calendar.get(Calendar.MINUTE) * 4 + calendar.get(Calendar.SECOND) / 15) : 0;
 		final long randomDay = (((year - 1900) << 9) | day) + fifteensecs;
-		final long seed = (appWidgetId << 20) | (randomDay + click);
+		final long seed = ((long) appWidgetId << 20) | (randomDay + click);
 		final Random r = new Random(seed);
 		return r.nextInt(size);
 	}

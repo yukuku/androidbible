@@ -11,8 +11,6 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.view.MotionEventCompat;
 import java.util.ArrayList;
 import java.util.List;
-import yuku.alkitab.base.util.AppLog;
-import yuku.alkitab.debug.BuildConfig;
 
 public class VerseTextView extends AppCompatTextView {
 	static final String TAG = VerseTextView.class.getSimpleName();
@@ -94,17 +92,6 @@ public class VerseTextView extends AppCompatTextView {
 			}
 		}
 
-		if (BuildConfig.DEBUG) {
-			AppLog.d(TAG, "----------");
-			AppLog.d(TAG, "touchX=" + touchX);
-			AppLog.d(TAG, "touchY=" + touchY);
-
-			for (int i = 0; i < spanEntries_count; i++) {
-				final SpanEntry e = spanEntries.get(i);
-				AppLog.d(TAG, "SpanEntry " + i + " at " + e.rect.toString() + ": span " + e.span + " '" + buffer.subSequence(buffer.getSpanStart(e.span), buffer.getSpanEnd(e.span)) + "'");
-			}
-		}
-
 		if (spanEntries_count == 0) return false;
 
 		final float density = getResources().getDisplayMetrics().density;
@@ -158,11 +145,6 @@ public class VerseTextView extends AppCompatTextView {
 		for (int i = 0; i < spanEntries_count; i++) {
 			final SpanEntry spanEntry = spanEntries.get(i);
 			spanEntry.clear(); // don't keep any references to span!
-		}
-
-		if (BuildConfig.DEBUG) {
-			final double dist = Math.sqrt(bestDistanceSquared);
-			AppLog.d(TAG, "Best span is: " + bestSpan + " with distance " + dist + " (" + (dist / density) + "dp)");
 		}
 
 		if (bestSpan != null) {

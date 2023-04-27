@@ -218,9 +218,6 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
                 val file = File(mv.filename)
                 try {
                     val uri = FileProvider.getUriForFile(requireActivity(), App.context.packageName + ".file_provider", file)
-                    if (BuildConfig.DEBUG) {
-                        Toast.makeText(activity, "Uri: $uri", Toast.LENGTH_LONG).show()
-                    }
 
                     ShareCompat.IntentBuilder(requireActivity())
                         .setType("application/octet-stream")

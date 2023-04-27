@@ -1,10 +1,13 @@
 package yuku.alkitab.yes1;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.Arrays;
 import java.util.List;
 import yuku.alkitab.base.storage.OldVerseTextDecoder;
 import yuku.alkitab.base.storage.VerseTextDecoder;
 import yuku.alkitab.base.util.AppLog;
-import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
@@ -12,11 +15,6 @@ import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.util.Ari;
 import yuku.bintex.BintexReader;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.Arrays;
 
 public class Yes1Reader implements BibleReader {
 	private static final String TAG = Yes1Reader.class.getSimpleName();
@@ -318,8 +316,6 @@ public class Yes1Reader implements BibleReader {
 
 			int length = yesBook.chapter_offsets[pasal_1] - yesBook.chapter_offsets[pasal_1 - 1];
 
-			if (BuildConfig.DEBUG) AppLog.d(TAG, "muatTeks kitab=" + book.shortName + " pasal_1=" + pasal_1 + " offset=" + yesBook.offset + " offset pasal: " + yesBook.chapter_offsets[pasal_1 - 1]);
-
 			byte[] ba = new byte[length];
 			f.read(ba);
 
@@ -381,8 +377,6 @@ public class Yes1Reader implements BibleReader {
 	public int loadPericope(int bookId, int chapter_1, List<Integer> aris, List<PericopeBlock> pericopeBlocks) {
 		try {
 			init();
-
-			if (BuildConfig.DEBUG) AppLog.d(TAG, "loadPericope called for bookId=" + bookId + " chapter_1=" + chapter_1);
 
 			Yes1PericopeIndex pericopeIndex = loadPericopeIndex();
 			if (pericopeIndex == null) {

@@ -120,8 +120,7 @@ object S {
             val version = mv.version
             val versionId = mv.versionId
             activeMVersion = mv
-            val trace = if (BuildConfig.DEBUG) Throwable().fillInStackTrace() else null
-            AppLog.d(TAG, "@@setActiveVersion version=$version versionId=$versionId", trace)
+            AppLog.d(TAG, "@@setActiveVersion version=$version versionId=$versionId")
             activeVersion = version
             activeVersionId = versionId
         }

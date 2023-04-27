@@ -3,19 +3,15 @@ package yuku.afw.storage;
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import androidx.annotation.BoolRes;
 import androidx.annotation.IntegerRes;
 import androidx.annotation.StringRes;
-import android.util.Log;
-import yuku.afw.App;
-import yuku.afw.BuildConfig;
-
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import yuku.afw.App;
 
 public class Preferences {
 	private static final String TAG = Preferences.class.getSimpleName();
@@ -116,7 +112,6 @@ public class Preferences {
 		SharedPreferences pref = read();
 		getEditor(pref).putInt(key, val);
 		commitIfNotHeld();
-		if (BuildConfig.DEBUG) Log.d(TAG, key + " = (int) " + val);
 	}
 
 	public static void setFloat(Enum<?> key, float val) {
@@ -127,7 +122,6 @@ public class Preferences {
 		SharedPreferences pref = read();
 		getEditor(pref).putFloat(key, val);
 		commitIfNotHeld();
-		if (BuildConfig.DEBUG) Log.d(TAG, key + " = (float) " + val);
 	}
 
 	public static void setLong(Enum<?> key, long val) {
@@ -138,7 +132,6 @@ public class Preferences {
 		SharedPreferences pref = read();
 		getEditor(pref).putLong(key, val);
 		commitIfNotHeld();
-		if (BuildConfig.DEBUG) Log.d(TAG, key + " = (long) " + val);
 	}
 
 	public static void setString(Enum<?> key, String val) {
@@ -149,7 +142,6 @@ public class Preferences {
 		SharedPreferences pref = read();
 		getEditor(pref).putString(key, val);
 		commitIfNotHeld();
-		if (BuildConfig.DEBUG) Log.d(TAG, key + " = (string) " + val);
 	}
 
 	public static void setString(@StringRes final int keyStringResId, String val) {
@@ -166,7 +158,6 @@ public class Preferences {
 		SharedPreferences pref = read();
 		getEditor(pref).putBoolean(key, val);
 		commitIfNotHeld();
-		if (BuildConfig.DEBUG) Log.d(TAG, key + " = (bool) " + val);
 	}
 
 	public static boolean contains(final Enum<?> key) {
@@ -187,7 +178,6 @@ public class Preferences {
 		SharedPreferences pref = read();
 		getEditor(pref).remove(key);
 		commitIfNotHeld();
-		if (BuildConfig.DEBUG) Log.d(TAG, key + " removed");
 	}
 
 	public static int getInt(@StringRes final int keyStringResId, @IntegerRes final int defaultIntResId) {
@@ -278,10 +268,7 @@ public class Preferences {
 	private synchronized static SharedPreferences read() {
 		SharedPreferences res;
 		if (dirty || cache == null) {
-			long start = 0;
-			if (BuildConfig.DEBUG) start = SystemClock.uptimeMillis();
 			res = PreferenceManager.getDefaultSharedPreferences(App.context);
-			if (BuildConfig.DEBUG) Log.d(TAG, "Preferences was read from disk in " + (SystemClock.uptimeMillis() - start) + " ms");
 			dirty = false;
 
 			// re-register observers if the SharedPreferences object changes

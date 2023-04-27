@@ -18,7 +18,6 @@ import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
-import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabintegration.display.Launcher;
@@ -68,10 +67,6 @@ public class HelpActivity extends BaseActivity {
 
         webview = findViewById(R.id.webview);
         progress = findViewById(R.id.progress);
-
-        if (BuildConfig.DEBUG) {
-            WebView.setWebContentsDebuggingEnabled(true);
-        }
 
         final WebSettings webSettings = webview.getSettings();
         webSettings.setSavePassword(false);

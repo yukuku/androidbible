@@ -163,9 +163,6 @@ class XrefDialog : BaseDialog() {
     fun showVerses(linkPos: Int, encodedTarget: String) {
         displayedLinkPos = linkPos
         val ranges = TargetDecoder.decode(encodedTarget)
-        if (BuildConfig.DEBUG) {
-            AppLog.d(TAG, "linkPos $linkPos target=$encodedTarget ranges=$ranges")
-        }
 
         val displayedVerseTexts = mutableListOf<String>()
         val displayedVerseNumberTexts = mutableListOf<String>()

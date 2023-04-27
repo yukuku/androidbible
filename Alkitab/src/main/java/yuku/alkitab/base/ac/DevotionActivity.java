@@ -50,7 +50,6 @@ import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.LeftDrawer;
 import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
 import yuku.alkitab.base.widget.TwofingerLinearLayout;
-import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.tracking.Tracker;
 import yuku.alkitab.util.Ari;
@@ -265,7 +264,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
             startDate = yyyymmdd.get().format(ac.currentDate);
 
             removeMessages(1);
-            sendEmptyMessageDelayed(1, BuildConfig.DEBUG ? 10000 : 30000);
+            sendEmptyMessageDelayed(1, 30000);
         }
     }
 
