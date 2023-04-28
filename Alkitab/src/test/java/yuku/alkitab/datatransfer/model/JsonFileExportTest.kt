@@ -1,6 +1,5 @@
 package yuku.alkitab.datatransfer.model
 
-import kotlinx.serialization.decodeFromString
 import org.junit.Assert.assertNotNull
 import org.junit.Test
 import yuku.alkitab.datatransfer.process.Serializer
