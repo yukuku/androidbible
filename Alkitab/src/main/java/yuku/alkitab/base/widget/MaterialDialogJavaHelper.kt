@@ -2,6 +2,7 @@ package yuku.alkitab.base.widget
 
 import android.content.Context
 import com.afollestad.materialdialogs.MaterialDialog
+import yuku.alkitab.base.widget.MaterialDialogProgressHelper.progress
 import yuku.alkitab.debug.R
 
 /**
@@ -19,6 +20,14 @@ object MaterialDialogJavaHelper {
             if (negativeText != null) {
                 negativeButton(text = negativeText)
             }
+        }
+    }
+
+    @JvmStatic
+    fun showProgressDialog(context: Context, message: String): MaterialDialog {
+        return MaterialDialog(context).show {
+            message(text = message)
+            progress(true, 0)
         }
     }
 }

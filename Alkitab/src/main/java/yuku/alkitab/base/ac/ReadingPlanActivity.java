@@ -589,7 +589,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
         final AtomicBoolean cancelled = new AtomicBoolean(false);
 
-        final MaterialDialog pd = MaterialDialogJavaHelper.showOkDialog(this, getString(R.string.rp_download_reading_plan_progress));
+        final MaterialDialog pd = MaterialDialogJavaHelper.showProgressDialog(this, getString(R.string.rp_download_reading_plan_progress));
         pd.setOnDismissListener(dialog -> cancelled.set(true));
 
         Background.run(() -> {
