@@ -1,6 +1,5 @@
 package yuku.afw.storage;
 
-import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
@@ -224,7 +223,6 @@ public class Preferences {
 		}
 	}
 
-	@TargetApi(9)
 	private synchronized static void commitIfNotHeld() {
 		if (held > 0) {
 			// don't do anything now

@@ -2039,7 +2039,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         return super.onOptionsItemSelected(item)
     }
 
-    @TargetApi(19)
     fun setFullScreen(yes: Boolean) {
         if (fullScreen == yes) return // no change
 

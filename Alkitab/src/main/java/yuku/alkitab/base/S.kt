@@ -16,7 +16,6 @@ import yuku.alkitab.base.storage.SongDb
 import yuku.alkitab.base.storage.SongDbHelper
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.FontManager
-import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Version
 import yuku.alkitab.versionmanager.VersionsActivity
