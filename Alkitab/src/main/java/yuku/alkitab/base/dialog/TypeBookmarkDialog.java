@@ -177,10 +177,10 @@ public class TypeBookmarkDialog {
         // remove all first
         final int childCount = panelLabels.getChildCount();
         if (childCount > 1) {
-            panelLabels.removeViews(1, childCount - 2);
+            panelLabels.removeViews(0, childCount - 1);
         }
 
-        int pos = 1;
+        int pos = 0;
         for (Label label : labels) {
             panelLabels.addView(getLabelView(label, panelLabels), pos++);
         }

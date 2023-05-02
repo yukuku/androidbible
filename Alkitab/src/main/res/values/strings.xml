@@ -41,7 +41,7 @@
     <string name="pasal_sebelumangka">Chapter</string>
     <string name="jump_to_prompt"><b>JUMP TO</b> — Example: ^1</string>
     <string name="belum_ada_pembatas_buku">No bookmarks yet.\nSelect a verse to add a bookmark.</string>
-    <string name="judul_titikdua">TITLE</string>
+    <string name="judul_titikdua">Title</string>
     <string name="devotion_downloader_downloading_title">Downloading ^1</string>
     <string name="devotion_downloader_downloading_date">dated ^1</string>
     <string name="devotion_downloader_error_date">Error in date ^1: ^2</string>

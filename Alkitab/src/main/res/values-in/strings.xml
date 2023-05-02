@@ -41,7 +41,7 @@
     <string name="pasal_sebelumangka">Pasal</string>
     <string name="jump_to_prompt"><b>LONCAT KE</b> — Contoh: ^1</string>
     <string name="belum_ada_pembatas_buku">Belum ada pembatas buku.\nPilih satu ayat untuk menambah pembatas buku.</string>
-    <string name="judul_titikdua">JUDUL</string>
+    <string name="judul_titikdua">Judul</string>
     <string name="devotion_downloader_downloading_title">Mengunduh ^1</string>
     <string name="devotion_downloader_downloading_date">tanggal ^1</string>
     <string name="devotion_downloader_error_date">Kesalahan pada tanggal ^1: ^2</string>
