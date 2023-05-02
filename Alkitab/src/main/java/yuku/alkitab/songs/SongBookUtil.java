@@ -27,7 +27,6 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.storage.SongDb;
 import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.Foreground;
-import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.OptionalGzipInputStream;
@@ -219,7 +218,7 @@ public class SongBookUtil {
     public static void downloadSongBook(final Activity activity, final SongBookInfo songBookInfo, final int dataFormatVersion, final OnDownloadSongBookListener listener) {
         final AtomicBoolean cancelled = new AtomicBoolean();
 
-        final MaterialDialog pd = MaterialDialogJavaHelper.showOkDialog(
+        final MaterialDialog pd = SongBookUtilJavaHelper.showProgressDialog(
             activity,
             activity.getString(R.string.sn_downloading_ellipsis)
         );
