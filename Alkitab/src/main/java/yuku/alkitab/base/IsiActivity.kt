@@ -11,7 +11,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.graphics.Point
 import android.net.Uri
 import android.nfc.NdefMessage
@@ -2134,19 +2133,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         App.getLbm().sendBroadcast(Intent(ACTION_NIGHT_MODE_CHANGED))
     }
 
-    private fun setFollowSystemTheme(yes: Boolean, cNightMode: SwitchCompat) {
-        val previousValue = Preferences.getBoolean(Prefkey.follow_system_theme, true)
-        if (previousValue == yes) return
-
-        Preferences.setBoolean(Prefkey.follow_system_theme, yes)
-
-        if (yes) {
-            val systemTheme = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-            cNightMode.isChecked = systemTheme == Configuration.UI_MODE_NIGHT_YES
-            setNightMode(systemTheme == Configuration.UI_MODE_NIGHT_YES)
-        }
-    }
-
     private fun openVersionsDialog() {
         // If there is no db versions, immediately open manage version screen.
         if (S.db.listAllVersions().isEmpty()) {
@@ -2905,12 +2891,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     override fun cNightMode_checkedChange(isChecked: Boolean) {
         Tracker.trackEvent("left_drawer_night_mode_click")
         setNightMode(isChecked)
-    }
-
-    override fun cFollowSystemTheme_checkedChange(isChecked: Boolean, cNightMode: SwitchCompat) {
-        Tracker.trackEvent("left_drawer_follow_system_theme_click")
-        cNightMode.isEnabled = !isChecked
-        setFollowSystemTheme(isChecked, cNightMode)
     }
 
     override fun cSplitVersion_checkedChange(cSplitVersion: SwitchCompat, isChecked: Boolean) {

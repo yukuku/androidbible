@@ -367,7 +367,6 @@
     <string name="version_download_network_error">Erori de internet la descărcare ^1.</string>
     <string name="version_download_server_error">Eroare de server la descărcarea ^1.</string>
     <string name="menuNightMode">Mod nocturn</string>
-    <string name="menuFollowSystemTheme">Urmează tema sistemului</string>
     <string name="highlight_custom_color">Alte culori</string>
     <string name="menu_compare">Compară</string>
     <string name="song_player_error_description">O eroare a fost întâlnită în timpul redării acestui cântec: %1$d, %2$d.</string>

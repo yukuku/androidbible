@@ -364,7 +364,6 @@
     <string name="version_download_network_error">เกิดการผิดพลาดขณะดาวน์โหลด เหตุเชื่อมต่อเครือข่ายไม่สำเร็จ ^1.</string>
     <string name="version_download_server_error">เกิดการผิดพลาดขณะเรียกข้อมูลกลับคืนจากเซิร์ฟเวอร์ ^1.</string>
     <string name="menuNightMode">โหมดกลางคืน</string>
-    <string name="menuFollowSystemTheme">ติดตามธีมของระบบ</string>
     <string name="highlight_custom_color">สีอื่นๆ</string>
     <string name="menu_compare">เทียบ</string>
     <string name="song_player_error_description">เกิดการผิดพลาดระหว่างที่เปิดฟังเพลงนี้: %1$d, %2$d ค่ะ</string>

@@ -364,7 +364,6 @@
     <string name="version_download_network_error">Erro do network baixando ^1.</string>
     <string name="version_download_server_error">Erro do servidor baixando ^1.</string>
     <string name="menuNightMode">Modo de noite</string>
-    <string name="menuFollowSystemTheme">Seguir o tema do sistema</string>
     <string name="highlight_custom_color">Outras cores</string>
     <string name="menu_compare">Comparar</string>
     <string name="song_player_error_description">Um erro ocorre quando toca esta música: %1$d, %2$d.</string>

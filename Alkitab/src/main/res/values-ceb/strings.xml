@@ -362,7 +362,6 @@
     <string name="version_download_network_error">Kasamtangan nasayop ang network sa pag-download ^1.</string>
     <string name="version_download_server_error">Kasamtangan nasayop ang server sa pag-download ^1.</string>
     <string name="menuNightMode">Pang-gabie na mode</string>
-    <string name="menuFollowSystemTheme">Sunda ang tema sa sistema</string>
     <string name="highlight_custom_color">Ubang mga kolor</string>
     <string name="menu_compare">Itandi</string>
     <string name="song_player_error_description">Naai na sugatan na sayop samtang nag patukar ining kantaha: %1$d, %2$d.</string>

@@ -367,7 +367,6 @@
     <string name="version_download_network_error">Hệ thống bị trục trặc trong lúc tải về máy.</string>
     <string name="version_download_server_error">Máy chủ bị trục trặc trong lúc tải về máy.</string>
     <string name="menuNightMode">Chế độ ban đêm</string>
-    <string name="menuFollowSystemTheme">Theo chủ đề hệ thống</string>
     <string name="highlight_custom_color">Màu sắc khác</string>
     <string name="menu_compare">So sánh</string>
     <string name="song_player_error_description">Một lỗi xảy ra khi chơi bài hát này: %1$d, %2$d.</string>

@@ -367,7 +367,6 @@
     <string name="version_download_network_error">Netzwerkfehler beim Herunterladen von ^1.</string>
     <string name="version_download_server_error">Serverfehler beim Herunterladen von ^1.</string>
     <string name="menuNightMode">Nachtmodus</string>
-    <string name="menuFollowSystemTheme">Dem Systemthema folgen</string>
     <string name="highlight_custom_color">Weitere Farben</string>
     <string name="menu_compare">Vergleichen</string>
     <string name="song_player_error_description">Beim Abspielen dieses Liedes ist ein Fehler aufgetreten: %1$d, %2$d.</string>

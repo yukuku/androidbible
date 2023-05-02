@@ -393,7 +393,6 @@
     <string name="version_download_server_error">Server error when downloading ^1.</string>
 
     <string name="menuNightMode">Night mode</string>
-    <string name="menuFollowSystemTheme">Follow system theme</string>
     <string name="highlight_custom_color">Other colors</string>
     <string name="menu_compare">Compare</string>
     <string name="song_player_error_description">An error was encountered when playing this song: %1$d, %2$d.</string>

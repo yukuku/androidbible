@@ -363,7 +363,6 @@
     <string name="version_download_network_error">Network error habang dina-download ^1.</string>
     <string name="version_download_server_error">Server error habang dina-download ^1.</string>
     <string name="menuNightMode">Night mode</string>
-    <string name="menuFollowSystemTheme">Sundin ang tema ng system</string>
     <string name="highlight_custom_color">Ibang mga kulay</string>
     <string name="menu_compare">Kumpara</string>
     <string name="song_player_error_description">Isang error ang na-encounter habang pinapatugtog ang kantang ito: %1$d, %2$d.</string>

@@ -194,18 +194,6 @@
 			android:textSize="16sp" />
 
 		<androidx.appcompat.widget.SwitchCompat
-			android:id="@+id/cFollowSystemTheme"
-			android:layout_width="match_parent"
-			android:layout_height="48dp"
-			android:layout_marginEnd="16dp"
-			android:layout_marginStart="16dp"
-			android:fontFamily="sans-serif-regular"
-			android:gravity="start|center_vertical"
-			android:text="@string/menuFollowSystemTheme"
-			android:textColor="#fff"
-			android:textSize="16sp" />
-
-		<androidx.appcompat.widget.SwitchCompat
 			android:id="@+id/cSplitVersion"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"

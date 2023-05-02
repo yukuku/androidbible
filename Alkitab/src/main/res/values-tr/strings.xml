@@ -367,7 +367,6 @@
     <string name="version_download_network_error">İndirme yaparken ağ hatası ^1.</string>
     <string name="version_download_server_error">İndirme yaparken sunucu hatası ^1.</string>
     <string name="menuNightMode">Gece modu</string>
-    <string name="menuFollowSystemTheme">Sistem temasını takip et</string>
     <string name="highlight_custom_color">Diğer renkler</string>
     <string name="menu_compare">Karşılaştır</string>
     <string name="song_player_error_description">Bu şarkıyı çalarken bir hata oluştu: %1$d, %2$d.</string>

@@ -363,7 +363,6 @@
     <string name="version_download_network_error">Σφάλμα στο διαδίκτυο στο άνοιγμα ^1.</string>
     <string name="version_download_server_error">Σφάλμα διακομιστή κατά το άνοιγμα του ^1.</string>
     <string name="menuNightMode">Νυχτερινή λειτουργία</string>
-    <string name="menuFollowSystemTheme">Ακολουθήστε το θέμα του συστήματος</string>
     <string name="highlight_custom_color">Άλλα χρώματα</string>
     <string name="menu_compare">Σύγκριση</string>
     <string name="song_player_error_description">Εντοπίστηκε σφάλμα κατά το παίξιμο αυτού του ύμνου: %1$d, %2$d.</string>

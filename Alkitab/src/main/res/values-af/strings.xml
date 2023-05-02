@@ -363,7 +363,6 @@
     <string name="version_download_network_error">Netwerk fout tydens aflaai van ^1.</string>
     <string name="version_download_server_error">Bediener fout tydens aflaai van ^1.</string>
     <string name="menuNightMode">Nag modus</string>
-    <string name="menuFollowSystemTheme">Volg stelsel tema</string>
     <string name="highlight_custom_color">Ander Kleure</string>
     <string name="menu_compare">Vergelyk</string>
     <string name="song_player_error_description">\'n Fout het ontstaan met die speel van die lied:%1$d, %2$d.</string>

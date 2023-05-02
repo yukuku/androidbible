@@ -367,7 +367,6 @@
     <string name="version_download_network_error">Erreur de réseau lors du téléchargement de ^1.</string>
     <string name="version_download_server_error">Erreur de serveur lors du téléchargement de ^1.</string>
     <string name="menuNightMode">Mode nuit</string>
-    <string name="menuFollowSystemTheme">Suivre le thème du système</string>
     <string name="highlight_custom_color">Autres couleurs</string>
     <string name="menu_compare">Comparer</string>
     <string name="song_player_error_description">Erreur lors de l\'écoute de ce chant : %1$d, %2$d.</string>
