@@ -31,7 +31,8 @@ repositories {
 
 dependencies {
     implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
-    implementation "androidx.viewpager:viewpager:$androidxViewpagerVersion"
+    implementation "androidx.activity:activity-ktx:$androidxActivityVersion"
     implementation "androidx.fragment:fragment:$androidxFragmentVersion"
+    implementation "androidx.viewpager:viewpager:$androidxViewpagerVersion"
     implementation project(':Afw')
 }

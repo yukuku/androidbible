@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.widget.TextViewCompat;
 import androidx.fragment.app.Fragment;
@@ -99,13 +100,10 @@ public class AlkitabFeedbackActivity extends FragmentActivity implements
 
         mPager.setAdapter(mPagerAdapter);
         mStepPagerStrip = findViewById(R.id.strip);
-        mStepPagerStrip.setOnPageSelectedListener(new StepPagerStrip.OnPageSelectedListener() {
-            @Override
-            public void onPageStripSelected(int position) {
-                position = Math.min(mPagerAdapter.getCount() - 1, position);
-                if (mPager.getCurrentItem() != position) {
-                    mPager.setCurrentItem(position);
-                }
+        mStepPagerStrip.setOnPageSelectedListener(position -> {
+            position = Math.min(mPagerAdapter.getCount() - 1, position);
+            if (mPager.getCurrentItem() != position) {
+                mPager.setCurrentItem(position);
             }
         });
 
@@ -163,12 +161,7 @@ public class AlkitabFeedbackActivity extends FragmentActivity implements
 
         });
 
-        mPrevButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                mPager.setCurrentItem(mPager.getCurrentItem() - 1);
-            }
-        });
+        mPrevButton.setOnClickListener(v -> mPager.setCurrentItem(mPager.getCurrentItem() - 1));
 
         onPageTreeChanged();
         updateBottomBar();
@@ -211,7 +204,7 @@ public class AlkitabFeedbackActivity extends FragmentActivity implements
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBundle("model", mWizardModel.save());
     }
@@ -276,6 +269,7 @@ public class AlkitabFeedbackActivity extends FragmentActivity implements
             super(fm);
         }
 
+        @NonNull
         @Override
         public Fragment getItem(int i) {
             if (i >= mCurrentPageSequence.size()) {
@@ -286,7 +280,7 @@ public class AlkitabFeedbackActivity extends FragmentActivity implements
         }
 
         @Override
-        public int getItemPosition(Object object) {
+        public int getItemPosition(@NonNull Object object) {
             // TODO: be smarter about this
             if (object == mPrimaryItem) {
                 // Re-use the current fragment (its position never changes)
@@ -297,7 +291,7 @@ public class AlkitabFeedbackActivity extends FragmentActivity implements
         }
 
         @Override
-        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+        public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
             super.setPrimaryItem(container, position, object);
             mPrimaryItem = (Fragment) object;
         }

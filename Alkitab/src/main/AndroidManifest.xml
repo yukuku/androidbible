@@ -338,6 +338,11 @@
 			android:label="@string/ribka_title"
 			android:theme="@style/Ribka.Theme" />
 
+		<activity
+			android:name="com.example.android.wizardpager.AlkitabFeedbackActivity"
+			android:theme="@style/AlkitabFeedback.Theme" />
+		/>
+
 		<service android:name="yuku.alkitab.base.sv.DownloadService" />
 
 		<provider
