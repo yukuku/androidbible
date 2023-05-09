@@ -228,7 +228,7 @@ class VersionsActivity : BaseActivity() {
     private fun openUrlInputDialog(prefill: String?) {
         MaterialDialog(this)
             .title(R.string.version_download_add_from_url_prompt_yes_only)
-            .input(prefill = prefill) { _: MaterialDialog?, input: CharSequence ->
+            .input(prefill = prefill ?: "https://") { _: MaterialDialog?, input: CharSequence ->
                 val url = input.toString().trim()
                 if (url.isEmpty()) return@input
 
@@ -243,11 +243,11 @@ class VersionsActivity : BaseActivity() {
                 }
 
                 // guess destination filename
-                val last = uri.lastPathSegment ?: return@input
-                if (last.isEmpty() || !last.endsWith(".yes", ignoreCase = true)) {
+                val last = uri.lastPathSegment
+                if (last.isNullOrEmpty() || !last.endsWith(".yes", ignoreCase = true)) {
                     MaterialDialog(this@VersionsActivity).show {
                         message(R.string.version_download_not_yes)
-                        positiveButton(R.string.ok)
+                        positiveButton(R.string.ok) { openUrlInputDialog(url) }
                     }
                     return@input
                 }
