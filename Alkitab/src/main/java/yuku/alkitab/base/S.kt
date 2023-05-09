@@ -4,6 +4,8 @@ import android.app.Activity
 import android.graphics.Color
 import android.graphics.Typeface
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.WhichButton
+import com.afollestad.materialdialogs.actions.setActionButtonEnabled
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.config.AppConfig
@@ -273,7 +275,7 @@ object S {
         val selected = versions.indexOfFirst { it.versionId == selectedVersionId }
 
         val options = versions.map { it.longName }
-        MaterialDialog(activity)
+        val dialog = MaterialDialog(activity)
             .listItemsSingleChoice(items = options, initialSelection = selected, waitForPositiveButton = false) { dialog, index, _ ->
                 if (index >= 0) {
                     val mv = versions[index]
@@ -284,7 +286,8 @@ object S {
             .positiveButton(R.string.versi_lainnya) {
                 activity.startActivity(VersionsActivity.createIntent())
             }
-            .show()
+        dialog.setActionButtonEnabled(WhichButton.POSITIVE, true)
+        dialog.show()
     }
 
     fun openVersionsDialogWithNone(activity: Activity, selectedVersionId: String?, onVersionSelected: (MVersion?) -> Unit) {
@@ -299,7 +302,7 @@ object S {
 
         val options = listOf(activity.getString(R.string.split_version_none)) + versions.map { it.longName }
 
-        MaterialDialog(activity)
+        val dialog = MaterialDialog(activity)
             .listItemsSingleChoice(items = options, initialSelection = selected, waitForPositiveButton = false) { dialog, index, _ ->
                 if (index == 0) {
                     onVersionSelected(null)
@@ -312,6 +315,7 @@ object S {
             .positiveButton(R.string.versi_lainnya) {
                 activity.startActivity(VersionsActivity.createIntent())
             }
-            .show()
+        dialog.setActionButtonEnabled(WhichButton.POSITIVE, true)
+        dialog.show()
     }
 }
