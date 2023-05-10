@@ -25,7 +25,13 @@ object ProgressMarkRenameDialog : DialogFragment() {
 
         MaterialDialog(activity)
             .positiveButton(R.string.ok)
-            .input(hint = activity.getString(R.string.pm_progress_name), prefill = caption, maxLength = 32, inputType = InputType.TYPE_TEXT_FLAG_CAP_WORDS or InputType.TYPE_TEXT_FLAG_AUTO_CORRECT) { dialog, input ->
+            .input(
+                hint = activity.getString(R.string.pm_progress_name),
+                prefill = caption,
+                maxLength = 32,
+                inputType = InputType.TYPE_TEXT_FLAG_CAP_WORDS or InputType.TYPE_TEXT_FLAG_AUTO_CORRECT,
+                allowEmpty = true,
+            ) { _, input ->
                 val name: String = input.toString()
                 if (TextUtils.getTrimmedLength(name) == 0) {
                     progressMark.caption = null
