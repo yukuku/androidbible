@@ -324,6 +324,8 @@ class SearchActivity : BaseActivity() {
             SearchEngine.preloadRevIndex()
         }
         displaySearchInVersion()
+
+        searchView.requestFocus()
     }
 
     private fun ViewGroup.findAutoCompleteTextView(): AutoCompleteTextView? {
