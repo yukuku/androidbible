@@ -9,8 +9,6 @@ import okhttp3.Response
 import java.io.IOException
 import java.io.InputStream
 import java.util.Locale
-import java.util.concurrent.TimeUnit
-import kotlin.math.max
 
 class PRDownloaderOkHttpClient(private val okHttpClient: OkHttpClient) : HttpClient {
     var response: Response? = null
@@ -28,11 +26,7 @@ class PRDownloaderOkHttpClient(private val okHttpClient: OkHttpClient) : HttpCli
             .addHeader(Constants.USER_AGENT, request.userAgent)
             .build()
 
-        val call = okHttpClient.newCall(req)
-        val timeout = call.timeout()
-        timeout.timeout(max(request.readTimeout, request.connectTimeout).toLong(), TimeUnit.MILLISECONDS)
-
-        response = call.execute()
+        response = okHttpClient.newCall(req).execute()
     }
 
     override fun getResponseCode(): Int {
