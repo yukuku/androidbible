@@ -114,8 +114,7 @@
     <string name="ed_title_title">Titel</string>
     <string name="ed_stored_in_file">Gespeichert in</string>
     <string name="ed_default_filename_file">Standardname</string>
-    <string name="ed_download_url_url">Download-URL</string>
-    <string name="ed_version_details">Übersetzungsdetails</string>
+	<string name="ed_version_details">Übersetzungsdetails</string>
     <string name="ed_choose_pdb_or_yes_file">Eine .pdb- or .yes-Datei auswählen</string>
     <string name="ed_invalid_file_selected">Datei ungültig</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Die Datei %s ist bereits in der Liste vorhanden.</string>

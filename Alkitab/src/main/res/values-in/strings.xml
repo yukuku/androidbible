@@ -114,7 +114,6 @@
     <string name="ed_title_title">Judul</string>
     <string name="ed_stored_in_file">Lokasi file</string>
     <string name="ed_default_filename_file">Nama semula</string>
-    <string name="ed_download_url_url">URL unduh</string>
     <string name="ed_version_details">Rincian versi</string>
     <string name="ed_choose_pdb_or_yes_file">Pilih file .pdb atau .yes</string>
     <string name="ed_invalid_file_selected">File tidak dikenal yang dipilih.</string>

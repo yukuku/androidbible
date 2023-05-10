@@ -114,8 +114,7 @@
     <string name="ed_title_title">Заглавие</string>
     <string name="ed_stored_in_file">Разположение на файла</string>
     <string name="ed_default_filename_file">Пре-установено име</string>
-    <string name="ed_download_url_url">Интернет адрес на зареждането</string>
-    <string name="ed_version_details">Информация за версията</string>
+	<string name="ed_version_details">Информация за версията</string>
     <string name="ed_choose_pdb_or_yes_file">Изберете .pdb или .yes файл</string>
     <string name="ed_invalid_file_selected">Избран е недействителен файл.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Файлът %s вече се намира в списъка.</string>

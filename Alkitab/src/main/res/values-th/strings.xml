@@ -114,8 +114,7 @@
     <string name="ed_title_title">ชื่อ</string>
     <string name="ed_stored_in_file">ตำแหน่งไฟล์</string>
     <string name="ed_default_filename_file">ชื่อดีฟอลต์</string>
-    <string name="ed_download_url_url">ดาวน์โหลด URL</string>
-    <string name="ed_version_details">รายละเอียดเวอร์ชั่น</string>
+	<string name="ed_version_details">รายละเอียดเวอร์ชั่น</string>
     <string name="ed_choose_pdb_or_yes_file">เลือกไฟล์ .pdb หรือ .yes</string>
     <string name="ed_invalid_file_selected">ไฟล์ที่เลือกไม่สมบูรณ์</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">ไฟล์ %s อยู่ในรายการแล้ว</string>

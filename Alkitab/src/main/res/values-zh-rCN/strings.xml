@@ -114,8 +114,7 @@
     <string name="ed_title_title">标题</string>
     <string name="ed_stored_in_file">档桉位置</string>
     <string name="ed_default_filename_file">预设名称</string>
-    <string name="ed_download_url_url">下载网址</string>
-    <string name="ed_version_details">版本详细信息</string>
+	<string name="ed_version_details">版本详细信息</string>
     <string name="ed_choose_pdb_or_yes_file">选择一个.pdb或.yes档案</string>
     <string name="ed_invalid_file_selected">无效的文件被选择。</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">%s 文件已在名单上。</string>

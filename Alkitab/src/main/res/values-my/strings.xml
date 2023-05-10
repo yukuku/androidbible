@@ -114,8 +114,7 @@
     <string name="ed_title_title">ခေါင်းစဥ်</string>
     <string name="ed_stored_in_file">ဖိုင်တည်နေရာ</string>
     <string name="ed_default_filename_file">ကြိုတင်သတ်မှတ်ထားသည့် အမည်</string>
-    <string name="ed_download_url_url">URLကို ဒေါင်းလုဒ်ဆွဲရန်</string>
-    <string name="ed_version_details">ကျန်းစာဗားရှင်း အသေးစိတ်များ</string>
+	<string name="ed_version_details">ကျန်းစာဗားရှင်း အသေးစိတ်များ</string>
     <string name="ed_choose_pdb_or_yes_file">.pdb သို့မဟုတ် .yes ဖိုင်ကို ရွေးချယ်ပါ</string>
     <string name="ed_invalid_file_selected">မမှန်ကန်သောဖိုင်ကို ရွေးထားသည်။</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">%s ဖိုင်သည် စာရင်းတွင် ရှိပြီးဖြစ်သည်။ </string>

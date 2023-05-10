@@ -114,8 +114,7 @@
     <string name="ed_title_title">Titel</string>
     <string name="ed_stored_in_file">Lêer stoorplek</string>
     <string name="ed_default_filename_file">Vooropgestelde naam</string>
-    <string name="ed_download_url_url">Laai URL af</string>
-    <string name="ed_version_details">Weergawe details</string>
+	<string name="ed_version_details">Weergawe details</string>
     <string name="ed_choose_pdb_or_yes_file">Kies \'n .pdb of.yes lêer</string>
     <string name="ed_invalid_file_selected">Ongeldige lêer gekies.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Lêer%s is reeds in lys.</string>

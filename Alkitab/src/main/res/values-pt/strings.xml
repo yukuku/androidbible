@@ -114,8 +114,7 @@
     <string name="ed_title_title">Titulo</string>
     <string name="ed_stored_in_file">Posicao do ficheiro</string>
     <string name="ed_default_filename_file">Preinstalar nome</string>
-    <string name="ed_download_url_url">Carregar URL</string>
-    <string name="ed_version_details">Dados da versao</string>
+	<string name="ed_version_details">Dados da versao</string>
     <string name="ed_choose_pdb_or_yes_file">Escolher umo ficheiro.pdb. si</string>
     <string name="ed_invalid_file_selected">Ficheiro invalido selecionado.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">O ficheiro %s ja esta na lista.</string>

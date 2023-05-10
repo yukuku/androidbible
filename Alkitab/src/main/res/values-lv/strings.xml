@@ -116,8 +116,7 @@
     <string name="ed_title_title">Virsraksts</string>
     <string name="ed_stored_in_file">Faila atrašanās vieta</string>
     <string name="ed_default_filename_file">Sākotnējo iestatījumu nosaukums</string>
-    <string name="ed_download_url_url">Lejuplādēt saiti</string>
-    <string name="ed_version_details">Versijas apraksts</string>
+	<string name="ed_version_details">Versijas apraksts</string>
     <string name="ed_choose_pdb_or_yes_file">Izvēlies .pdb vai .yes failu</string>
     <string name="ed_invalid_file_selected">Ir izvēlēts nederīgs fails.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Fails %s jau eksistē sarakstā.</string>

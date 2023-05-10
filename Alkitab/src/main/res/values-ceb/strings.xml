@@ -114,8 +114,7 @@
     <string name="ed_title_title">Titulo</string>
     <string name="ed_stored_in_file">Ang nahimutangan sa dokumento</string>
     <string name="ed_default_filename_file">Preset nga ngalan</string>
-    <string name="ed_download_url_url">I download ang URL</string>
-    <string name="ed_version_details">Mga detalye sa bersyon</string>
+	<string name="ed_version_details">Mga detalye sa bersyon</string>
     <string name="ed_choose_pdb_or_yes_file">Pili sa .pdb o .yes na dokumento</string>
     <string name="ed_invalid_file_selected">Dili balido ang napiliang dukomento.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Ang dokumento %s kai naa na sa lista.</string>

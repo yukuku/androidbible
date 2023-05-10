@@ -114,8 +114,7 @@
     <string name="ed_title_title">Pamagat</string>
     <string name="ed_stored_in_file">Lokasyon ng File</string>
     <string name="ed_default_filename_file">Kasalukuyang pangalan</string>
-    <string name="ed_download_url_url">I-download ang URL</string>
-    <string name="ed_version_details">Mga Detalye ng Bersyon</string>
+	<string name="ed_version_details">Mga Detalye ng Bersyon</string>
     <string name="ed_choose_pdb_or_yes_file">Pili a.pdb or.yes file</string>
     <string name="ed_invalid_file_selected">Hindi wastong file ang napili.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">File %s ay nandoon na sa listahan.</string>

@@ -114,8 +114,7 @@
     <string name="ed_title_title">Cím</string>
     <string name="ed_stored_in_file">Fájl helye</string>
     <string name="ed_default_filename_file">Előre beállított név</string>
-    <string name="ed_download_url_url">URL letöltése</string>
-    <string name="ed_version_details">Verzió részletei</string>
+	<string name="ed_version_details">Verzió részletei</string>
     <string name="ed_choose_pdb_or_yes_file">Válassz ki egy .pdb vagy .yes fájlt</string>
     <string name="ed_invalid_file_selected">Érvénytelen fájl kiválasztása.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">A fájl %s már a listában van.</string>

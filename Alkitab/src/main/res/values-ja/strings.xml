@@ -114,8 +114,7 @@
     <string name="ed_title_title">タイトル</string>
     <string name="ed_stored_in_file">ファイルの場所</string>
     <string name="ed_default_filename_file">プリセット名</string>
-    <string name="ed_download_url_url">ダウンロードURL</string>
-    <string name="ed_version_details">バージョンの詳細</string>
+	<string name="ed_version_details">バージョンの詳細</string>
     <string name="ed_choose_pdb_or_yes_file">.pdbか.yesファイルを選択</string>
     <string name="ed_invalid_file_selected">無効なファイルが選択されました。</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">ファイル %s はリストにすでにあります。</string>

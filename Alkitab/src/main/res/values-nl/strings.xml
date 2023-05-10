@@ -114,8 +114,7 @@
     <string name="ed_title_title">Titel</string>
     <string name="ed_stored_in_file">Bestandslocatie</string>
     <string name="ed_default_filename_file">Voorkeuzenaam</string>
-    <string name="ed_download_url_url">Downloadlink</string>
-    <string name="ed_version_details">Versie details</string>
+	<string name="ed_version_details">Versie details</string>
     <string name="ed_choose_pdb_or_yes_file">Kies een .pdb of .yes bestand</string>
     <string name="ed_invalid_file_selected">Ongeldig bestand geselecteerd.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Bestand %s is al op de lijst.</string>

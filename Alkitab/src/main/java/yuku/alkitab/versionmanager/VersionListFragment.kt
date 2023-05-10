@@ -188,7 +188,6 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
 
         if (mv is MVersionPreset) {
             addDetail(getString(R.string.ed_default_filename_file), mv.preset_name)
-            addDetail(getString(R.string.ed_download_url_url), mv.download_url)
         }
 
         if (mv is MVersionDb) {

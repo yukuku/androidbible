@@ -114,8 +114,7 @@
     <string name="ed_title_title">Título</string>
     <string name="ed_stored_in_file">Local do arquivo</string>
     <string name="ed_default_filename_file">Nome padrão</string>
-    <string name="ed_download_url_url">URL do download</string>
-    <string name="ed_version_details">Detalhes da versão</string>
+	<string name="ed_version_details">Detalhes da versão</string>
     <string name="ed_choose_pdb_or_yes_file">Selecione um arquivo .pdb ou .yes</string>
     <string name="ed_invalid_file_selected">Arquivo selecionado inválido.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Arquivo %s já está na lista.</string>

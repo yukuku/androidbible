@@ -114,8 +114,7 @@
     <string name="ed_title_title">Tajuk</string>
     <string name="ed_stored_in_file">Lokasi fail</string>
     <string name="ed_default_filename_file">Nama pratetap</string>
-    <string name="ed_download_url_url">Muat turun URL</string>
-    <string name="ed_version_details">Maklumat versi</string>
+	<string name="ed_version_details">Maklumat versi</string>
     <string name="ed_choose_pdb_or_yes_file">Pilih fail .pdb atau .yes</string>
     <string name="ed_invalid_file_selected">Fail tidak sah dipilih.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Fail %s sudah ada dalam senarai.</string>

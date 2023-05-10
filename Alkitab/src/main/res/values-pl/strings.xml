@@ -114,8 +114,7 @@
     <string name="ed_title_title">Tytuł</string>
     <string name="ed_stored_in_file">Lokalizacja pliku</string>
     <string name="ed_default_filename_file">Nazwa dodatku</string>
-    <string name="ed_download_url_url">Adres pobierania</string>
-    <string name="ed_version_details">Informacje o przekładzie</string>
+	<string name="ed_version_details">Informacje o przekładzie</string>
     <string name="ed_choose_pdb_or_yes_file">Wybierz plik .pdb lub .yes</string>
     <string name="ed_invalid_file_selected">Wybrano niewłaściwy plik.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Plik %s znajduje się już na liście.</string>

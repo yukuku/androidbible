@@ -114,8 +114,7 @@
     <string name="ed_title_title">Název</string>
     <string name="ed_stored_in_file">Umístění</string>
     <string name="ed_default_filename_file">Současný název</string>
-    <string name="ed_download_url_url">Stáhnout url</string>
-    <string name="ed_version_details">Detaily překladu</string>
+	<string name="ed_version_details">Detaily překladu</string>
     <string name="ed_choose_pdb_or_yes_file">Vyberte si .pdb nebo .yes soubor</string>
     <string name="ed_invalid_file_selected">Vybrán neplatný soubor.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Soubor %s je již na seznamu.</string>

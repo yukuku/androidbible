@@ -114,8 +114,7 @@
     <string name="ed_title_title">Τίτλος</string>
     <string name="ed_stored_in_file">Τοποθεσία αρχείου</string>
     <string name="ed_default_filename_file">Βάλτε εκ των προτέρων το όνομα</string>
-    <string name="ed_download_url_url">URL Λήψης</string>
-    <string name="ed_version_details">Λεπτομέρειες έκδοσης</string>
+	<string name="ed_version_details">Λεπτομέρειες έκδοσης</string>
     <string name="ed_choose_pdb_or_yes_file">Επιλέξτε ένα αρχείο .pdb ή .yes</string>
     <string name="ed_invalid_file_selected">Επιλέχθηκε μη έγκυρο αρχείο.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Το αρχείο %s είναι ήδη στη λίστα.</string>

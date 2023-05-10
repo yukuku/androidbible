@@ -114,8 +114,7 @@
     <string name="ed_title_title">Заголовок</string>
     <string name="ed_stored_in_file">Розташування файлу</string>
     <string name="ed_default_filename_file">Попередня назва</string>
-    <string name="ed_download_url_url">Завантажити URL</string>
-    <string name="ed_version_details">Деталі версії</string>
+	<string name="ed_version_details">Деталі версії</string>
     <string name="ed_choose_pdb_or_yes_file">Виберіть .pdb або .yes файл</string>
     <string name="ed_invalid_file_selected">Вибрано непідтримуваний файл.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Файл %s вже знаходиться в списку.</string>
