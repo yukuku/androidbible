@@ -309,8 +309,8 @@ object S {
                 } else if (index > 0) {
                     val mv = versions[index - 1]
                     onVersionSelected(mv)
-                    dialog.dismiss()
                 }
+                dialog.dismiss()
             }
             .positiveButton(R.string.versi_lainnya) {
                 activity.startActivity(VersionsActivity.createIntent())
