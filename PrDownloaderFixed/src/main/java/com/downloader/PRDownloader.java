@@ -126,6 +126,10 @@ public class PRDownloader {
         return DownloadRequestQueue.getInstance().getStatus(downloadId);
     }
 
+    public static float getDownloadProgress(int downloadId) {
+        return DownloadRequestQueue.getInstance().getDownloadProgress(downloadId);
+    }
+
     /**
      * Method to clean up temporary resumed files which is older than the given day
      *
@@ -141,5 +145,4 @@ public class PRDownloader {
     public static void shutDown() {
         Core.shutDown();
     }
-
 }

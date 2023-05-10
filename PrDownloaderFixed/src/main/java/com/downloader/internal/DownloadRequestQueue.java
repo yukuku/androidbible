@@ -118,6 +118,32 @@ public class DownloadRequestQueue {
         return Status.UNKNOWN;
     }
 
+    /**
+     * Added by yuku. Returns how far we have downloaded the file, 1.f is completed.
+     * @return -1.f if the status is not RUNNING or if the total bytes is not known or the downloadId is not known.
+     */
+    public float getDownloadProgress(int downloadId) {
+        DownloadRequest request = currentRequestMap.get(downloadId);
+        if (request == null) {
+            return -1.f;
+        }
+        if (request.getStatus() != Status.RUNNING) {
+            return -1.f;
+        }
+
+        final long totalBytes = request.getTotalBytes();
+        if (totalBytes <= 0) {
+            return -1.f;
+        }
+
+        final long downloadedBytes = request.getDownloadedBytes();
+        if (downloadedBytes < 0) {
+            return -1.f;
+        }
+
+        return 1.f * downloadedBytes / totalBytes;
+    }
+
     public void addRequest(DownloadRequest request) {
         currentRequestMap.put(request.getDownloadId(), request);
         request.setStatus(Status.QUEUED);

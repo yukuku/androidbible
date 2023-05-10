@@ -56,14 +56,15 @@
 				android:layout_marginStart="8dp"
 				android:clickable="false" />
 
-			<ProgressBar
+			<com.google.android.material.progressindicator.CircularProgressIndicator
 				android:id="@+id/progress"
-				style="?indeterminateProgressStyle"
-				android:layout_width="48dp"
-				android:layout_height="48dp"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
 				android:layout_gravity="center_vertical"
+				android:layout_marginStart="8dp"
 				android:indeterminate="true"
-				android:padding="12dp" />
+				app:indicatorColor="@color/accent"
+				app:indicatorSize="24dp" />
 
 		</FrameLayout>
 

@@ -19,8 +19,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.AnyThread
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
@@ -300,6 +300,16 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
         }
     }
 
+    class VersionItemHolder(view: View) {
+        val panelRight: View = view.findViewById(R.id.panelRight)
+        val cActive: CheckBox = view.findViewById(R.id.cActive)
+        val progress: ProgressBar = view.findViewById(R.id.progress)
+        val bLongName: Button = view.findViewById(R.id.bLongName)
+        val header: View = view.findViewById(R.id.header)
+        val tLanguage: TextView = view.findViewById(R.id.tLanguage)
+        val drag_handle: View = view.findViewById(R.id.drag_handle)
+    }
+
     inner class VersionAdapter internal constructor() : EasyAdapter(), DragSortListView.DropListener {
         private val items = mutableListOf<Item>()
 
@@ -406,17 +416,20 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
         override fun getItem(position: Int) = items[position]
 
         override fun newView(position: Int, parent: ViewGroup): View {
-            return inflater.inflate(R.layout.item_version, parent, false)
+            val view = inflater.inflate(R.layout.item_version, parent, false)
+            view.tag = VersionItemHolder(view)
+            return view
         }
 
         override fun bindView(view: View, position: Int, parent: ViewGroup) {
-            val panelRight = view.findViewById<View>(R.id.panelRight)
-            val cActive = view.findViewById<CheckBox>(R.id.cActive)
-            val progress = view.findViewById<View>(R.id.progress)
-            val bLongName = view.findViewById<Button>(R.id.bLongName)
-            val header = view.findViewById<View>(R.id.header)
-            val tLanguage = view.findViewById<TextView>(R.id.tLanguage)
-            val drag_handle = view.findViewById<View>(R.id.drag_handle)
+            val holder = view.tag as VersionItemHolder
+            val panelRight = holder.panelRight
+            val cActive = holder.cActive
+            val progress = holder.progress
+            val bLongName = holder.bLongName
+            val header = holder.header
+            val tLanguage = holder.tLanguage
+            val drag_handle = holder.drag_handle
             val item = getItem(position)
             val mv = item.mv
             bLongName.setOnClickListener { itemNameClick(item) }
@@ -466,6 +479,36 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
             }
 
             if (downloading) {
+                // Can we show progress on the progress bar?
+                val downloadProgress = when {
+                    mv is MVersionPreset -> {
+                        val downloadKey = "version:preset_name:" + mv.preset_name
+                        DownloadMapper.instance.getDownloadProgress(downloadKey)
+                    }
+
+                    mv is MVersionDb && mv.preset_name != null -> { // probably downloading, in case of updating
+                        val downloadKey = "version:preset_name:" + mv.preset_name
+                        DownloadMapper.instance.getDownloadProgress(downloadKey)
+                    }
+
+                    else -> -1f
+                }
+
+                // we're possible switching from indeterminate to determinate (not allowed while visible), so hide first
+                progress.visibility = View.INVISIBLE
+
+                when (downloadProgress) {
+                    -1f -> {
+                        progress.isIndeterminate = true
+                        progress.progress = 0
+                    }
+
+                    else -> {
+                        progress.isIndeterminate = false
+                        progress.progress = 10 + (downloadProgress * 90f).toInt()
+                    }
+                }
+
                 cActive.visibility = View.INVISIBLE
                 progress.visibility = View.VISIBLE
             } else {
