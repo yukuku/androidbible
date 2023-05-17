@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/example-imagesharer.iml" filepath="$PROJECT_DIR$/example-imagesharer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/example-imagesharer.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/example-imagesharer.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/example-imagesharer.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/example-imagesharer.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/example-imagesharer.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/example-imagesharer.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/example-imagesharer.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/example-imagesharer.app.unitTest.iml" />
     </modules>
   </component>
 </project>
