@@ -26,7 +26,8 @@ public class YetToInternal {
 
 	public static void main(String[] args) throws Exception {
 		YetToInternal main = new YetToInternal();
-		JCommander jc = new JCommander(main, args);
+		JCommander jc = new JCommander(main);
+		jc.parse(args);
 
 		if (main.help) {
 			jc.setProgramName("java -jar YetToInternal.jar");
