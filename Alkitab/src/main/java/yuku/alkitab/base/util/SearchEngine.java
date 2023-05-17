@@ -1,8 +1,6 @@
 package yuku.alkitab.base.util;
 
 import android.graphics.Typeface;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -20,37 +18,6 @@ import yuku.alkitab.util.IntArrayList;
 
 public class SearchEngine {
     static final String TAG = SearchEngine.class.getSimpleName();
-
-    public static class Query implements Parcelable {
-        public String query_string;
-        public SparseBooleanArray bookIds;
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeString(query_string);
-            dest.writeSparseBooleanArray(bookIds);
-        }
-
-        public static final Parcelable.Creator<Query> CREATOR = new Parcelable.Creator<Query>() {
-            @Override
-            public Query createFromParcel(Parcel in) {
-                Query res = new Query();
-                res.query_string = in.readString();
-                res.bookIds = in.readSparseBooleanArray();
-                return res;
-            }
-
-            @Override
-            public Query[] newArray(int size) {
-                return new Query[size];
-            }
-        };
-    }
 
     /**
      * Contains processed tokens that is more efficient to be passed in to methods here such as
@@ -91,7 +58,7 @@ public class SearchEngine {
         }
     }
 
-    public static IntArrayList searchByGrep(final Version version, final Query query) {
+    public static IntArrayList searchByGrep(final Version version, final SearchEngineQuery query) {
         String[] tokens = QueryTokenizer.tokenize(query.query_string);
 
         // sort by word length, then alphabetically

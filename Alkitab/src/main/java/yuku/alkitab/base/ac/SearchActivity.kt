@@ -47,6 +47,7 @@ import yuku.alkitab.base.util.ClipboardUtil
 import yuku.alkitab.base.util.Debouncer
 import yuku.alkitab.base.util.FormattedVerseText
 import yuku.alkitab.base.util.Jumper
+import yuku.alkitab.base.util.SearchEngineQuery
 import yuku.alkitab.base.util.QueryTokenizer
 import yuku.alkitab.base.util.SearchEngine
 import yuku.alkitab.base.util.TextColorUtil
@@ -542,9 +543,9 @@ class SearchActivity : BaseActivity() {
     }
 
     @JvmInline
-    value class SearchRequest(val query: SearchEngine.Query)
+    value class SearchRequest(val query: SearchEngineQuery)
 
-    data class SearchResult(val query: SearchEngine.Query, val result: IntArrayList)
+    data class SearchResult(val query: SearchEngineQuery, val result: IntArrayList)
 
     /**
      * So we can delay a bit before updating suggestions.
@@ -654,14 +655,14 @@ class SearchActivity : BaseActivity() {
     private fun search(query_string: String) {
         if (query_string.isBlank()) return
 
-        val query = SearchEngine.Query()
+        val query = SearchEngineQuery()
         query.query_string = query_string
         query.bookIds = selectedBookIds
 
         progressbar.isVisible = true
         bSearch.isVisible = false
 
-        searchHistoryAdapter.setData(addSearchHistoryEntry(query.query_string))
+        searchHistoryAdapter.setData(addSearchHistoryEntry(query_string))
         searchView.findAutoCompleteTextView()?.dismissDropDown()
 
         searcher.submit(SearchRequest(query))

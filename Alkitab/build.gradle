@@ -1,7 +1,10 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'com.google.firebase.crashlytics'
-apply plugin: 'kotlinx-serialization'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id "kotlin-parcelize"
+    id 'com.google.firebase.crashlytics'
+    id 'kotlinx-serialization'
+}
 
 android {
     signingConfigs {
