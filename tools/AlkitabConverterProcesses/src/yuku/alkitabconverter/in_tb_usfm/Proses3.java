@@ -1,15 +1,13 @@
 package yuku.alkitabconverter.in_tb_usfm;
 
 import yuku.alkitabconverter.internal_common.InternalCommon;
-import yuku.alkitabconverter.internal_common.ReverseIndexer;
 import yuku.alkitabconverter.util.FootnoteDb;
-import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.XrefDb;
 import yuku.alkitabconverter.yet.YetFileInput;
 
 import java.io.File;
 
-// Process from yet file to internal and revindex
+// Process from yet file to internal
 public class Proses3 {
 	static String INPUT_YET = "../../../bahan-alkitab/in-tb/in-tb.yet";
 	static String OUTPUT_PREFIX = "tb";
@@ -26,14 +24,6 @@ public class Proses3 {
 
 	public void u() throws Exception {
 		final YetFileInput.YetFileInputResult yet = new YetFileInput().parse(INPUT_YET);
-
-		////////// CREATE REVERSE INDEX
-
-		{
-			File outDir = new File(OUTPUT_INTERNAL);
-			outDir.mkdir();
-			ReverseIndexer.createReverseIndex(outDir, OUTPUT_PREFIX, new TextDb(yet.recs));
-		}
 
 		////////// CONVERT TO INTERNAL
 

@@ -40,7 +40,6 @@ import yuku.alkitab.base.App
 import yuku.alkitab.base.S
 import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.model.MVersion
-import yuku.alkitab.base.model.MVersionInternal
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
@@ -48,6 +47,7 @@ import yuku.alkitab.base.util.ClipboardUtil
 import yuku.alkitab.base.util.Debouncer
 import yuku.alkitab.base.util.FormattedVerseText
 import yuku.alkitab.base.util.Jumper
+import yuku.alkitab.base.util.SearchEngineQuery
 import yuku.alkitab.base.util.QueryTokenizer
 import yuku.alkitab.base.util.SearchEngine
 import yuku.alkitab.base.util.TextColorUtil
@@ -320,9 +320,6 @@ class SearchActivity : BaseActivity() {
         }
         configureFilterDisplayOldNewTest()
 
-        if (usingRevIndex()) {
-            SearchEngine.preloadRevIndex()
-        }
         displaySearchInVersion()
 
         searchView.requestFocus()
@@ -546,9 +543,9 @@ class SearchActivity : BaseActivity() {
     }
 
     @JvmInline
-    value class SearchRequest(val query: SearchEngine.Query)
+    value class SearchRequest(val query: SearchEngineQuery)
 
-    data class SearchResult(val query: SearchEngine.Query, val result: IntArrayList)
+    data class SearchResult(val query: SearchEngineQuery, val result: IntArrayList)
 
     /**
      * So we can delay a bit before updating suggestions.
@@ -568,21 +565,14 @@ class SearchActivity : BaseActivity() {
             val query = request.query
             val totalMs = System.currentTimeMillis()
             val cpuMs = SystemClock.currentThreadTimeMillis()
-            val debugstats_revIndexUsed: Boolean
-            val result = if (usingRevIndex()) {
-                debugstats_revIndexUsed = true
-                SearchEngine.searchByRevIndex(searchInVersion, query)
-            } else {
-                debugstats_revIndexUsed = false
-                SearchEngine.searchByGrep(searchInVersion, query)
-            }
+            val result = SearchEngine.searchByGrep(searchInVersion, query)
             val debugstats_totalTimeMs = System.currentTimeMillis() - totalMs
             val debugstats_cpuTimeMs = SystemClock.currentThreadTimeMillis() - cpuMs
 
             AppLog.d(
                 TAG,
                 "Search results: ${result.size()}\n" +
-                    "Method: ${if (debugstats_revIndexUsed) "revindex" else "grep"}\n" +
+                    "Method: grep\n" +
                     "Total time: $debugstats_totalTimeMs ms\n" +
                     "CPU (thread) time: $debugstats_cpuTimeMs ms"
             )
@@ -665,14 +655,14 @@ class SearchActivity : BaseActivity() {
     private fun search(query_string: String) {
         if (query_string.isBlank()) return
 
-        val query = SearchEngine.Query()
+        val query = SearchEngineQuery()
         query.query_string = query_string
         query.bookIds = selectedBookIds
 
         progressbar.isVisible = true
         bSearch.isVisible = false
 
-        searchHistoryAdapter.setData(addSearchHistoryEntry(query.query_string))
+        searchHistoryAdapter.setData(addSearchHistoryEntry(query_string))
         searchView.findAutoCompleteTextView()?.dismissDropDown()
 
         searcher.submit(SearchRequest(query))
@@ -709,10 +699,6 @@ class SearchActivity : BaseActivity() {
         }
         saveSearchHistory(sh)
         return sh
-    }
-
-    private fun usingRevIndex(): Boolean {
-        return searchInVersionId == MVersionInternal.getVersionInternalId()
     }
 
     class ResultHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

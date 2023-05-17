@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="YetToInternal:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/YetToInternal_jar</output-path>
+    <root id="archive" name="YetToInternal.jar">
+      <element id="module-output" name="YetToInternal" />
+      <element id="module-output" name="common-jvm" />
+      <element id="module-output" name="fakeandroid" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/beust/jcommander/1.72/jcommander-1.72.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
