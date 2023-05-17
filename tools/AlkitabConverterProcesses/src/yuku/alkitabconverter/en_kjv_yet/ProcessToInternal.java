@@ -1,7 +1,6 @@
 package yuku.alkitabconverter.en_kjv_yet;
 
 import yuku.alkitabconverter.internal_common.InternalCommon;
-import yuku.alkitabconverter.internal_common.ReverseIndexer;
 import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.yet.YetFileInput;
 
@@ -16,14 +15,6 @@ public class ProcessToInternal {
 		////////// READ YET FILE
 
 		final YetFileInput.YetFileInputResult yet = new YetFileInput().parse(INPUT_YET);
-
-		////////// CREATE REVERSE INDEX
-
-		{
-			File outDir = new File(OUTPUT_INTERNAL);
-			outDir.mkdir();
-			ReverseIndexer.createReverseIndex(outDir, "kjv", new TextDb(yet.recs));
-		}
 
 		////////// PROSES KE INTERNAL
 

@@ -40,7 +40,6 @@ import yuku.alkitab.base.App
 import yuku.alkitab.base.S
 import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.model.MVersion
-import yuku.alkitab.base.model.MVersionInternal
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
@@ -320,9 +319,6 @@ class SearchActivity : BaseActivity() {
         }
         configureFilterDisplayOldNewTest()
 
-        if (usingRevIndex()) {
-            SearchEngine.preloadRevIndex()
-        }
         displaySearchInVersion()
 
         searchView.requestFocus()
@@ -568,21 +564,14 @@ class SearchActivity : BaseActivity() {
             val query = request.query
             val totalMs = System.currentTimeMillis()
             val cpuMs = SystemClock.currentThreadTimeMillis()
-            val debugstats_revIndexUsed: Boolean
-            val result = if (usingRevIndex()) {
-                debugstats_revIndexUsed = true
-                SearchEngine.searchByRevIndex(searchInVersion, query)
-            } else {
-                debugstats_revIndexUsed = false
-                SearchEngine.searchByGrep(searchInVersion, query)
-            }
+            val result = SearchEngine.searchByGrep(searchInVersion, query)
             val debugstats_totalTimeMs = System.currentTimeMillis() - totalMs
             val debugstats_cpuTimeMs = SystemClock.currentThreadTimeMillis() - cpuMs
 
             AppLog.d(
                 TAG,
                 "Search results: ${result.size()}\n" +
-                    "Method: ${if (debugstats_revIndexUsed) "revindex" else "grep"}\n" +
+                    "Method: grep\n" +
                     "Total time: $debugstats_totalTimeMs ms\n" +
                     "CPU (thread) time: $debugstats_cpuTimeMs ms"
             )
@@ -709,10 +698,6 @@ class SearchActivity : BaseActivity() {
         }
         saveSearchHistory(sh)
         return sh
-    }
-
-    private fun usingRevIndex(): Boolean {
-        return searchInVersionId == MVersionInternal.getVersionInternalId()
     }
 
     class ResultHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -3,7 +3,6 @@ package yuku.alkitabconverter.yet;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import yuku.alkitabconverter.internal_common.InternalCommon;
-import yuku.alkitabconverter.internal_common.ReverseIndexer;
 import yuku.alkitabconverter.util.FootnoteDb;
 import yuku.alkitabconverter.util.KjvUtils;
 import yuku.alkitabconverter.util.Rec;
@@ -109,11 +108,6 @@ public class YetToInternal {
 			if (!KjvUtils.isValidKjv(rec.book_1 - 1, rec.chapter_1, rec.verse_1)) {
 				System.err.println("warning: is not a valid verse in KJV versification: verse " + rec.book_1 + " " + rec.chapter_1 + " " + rec.verse_1);
 			}
-		}
-
-		{ ////////// CREATE REVERSE INDEX
-			final File outDir = new File(internaldir);
-			ReverseIndexer.createReverseIndex(outDir, prefix, new TextDb(result.recs));
 		}
 
 		{ ////////// CONVERT TO INTERNAL
