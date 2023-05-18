@@ -4,14 +4,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.net.Uri;
+import android.graphics.RadialGradient;
+import android.graphics.Shader;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ShareCompat;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 public class ShareVerseActivity extends AppCompatActivity {
 	public void onCreate(Bundle savedInstanceState) {
@@ -48,24 +45,18 @@ public class ShareVerseActivity extends AppCompatActivity {
 		Bitmap b = Bitmap.createBitmap(800, 800, Bitmap.Config.ARGB_8888);
 		Canvas c = new Canvas(b);
 		Paint p = new Paint();
-		p.setColor(0xff0000ff); // blue
+		p.setShader(new RadialGradient(600, 250, 400, 0xffccccff, 0xff9999ff, Shader.TileMode.CLAMP));
+		c.drawRect(0, 0, 800, 800, p);
 
+		p.setShader(null);
+		p.setColor(0xff333333);
+		p.setTextSize(24f);
 		c.drawText(reference, 40, 200, p);
 		c.drawText(verseTexts[0], 40, 240, p);
 
-		// save as image and share
-		try {
-			FileOutputStream f = new FileOutputStream("/sdcard/tmp.png");
-			b.compress(Bitmap.CompressFormat.PNG, 100, f);
-			f.close();
-
-			ShareCompat.IntentBuilder.from(this)
-				.setType("image/png")
-				.addStream(Uri.fromFile(new File("/sdcard/tmp.png")))
-				.startChooser();
-		} catch (IOException e) {
-			Log.e("Error", "error saving image", e); // do something
-		}
+		// for this demo, show on the imageView
+		ImageView imageView = findViewById(R.id.imageView);
+		imageView.setImageBitmap(b);
 	}
 
 }
