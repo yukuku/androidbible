@@ -14,6 +14,7 @@ import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.connection.PRDownloaderOkHttpClient;
 import yuku.alkitab.base.sync.Fcm;
 import yuku.alkitab.base.sync.Sync;
+import yuku.alkitab.base.util.ExtensionManager;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.tracking.Tracker;
 import yuku.alkitabfeedback.FeedbackSender;
@@ -82,6 +83,9 @@ public class App extends yuku.afw.App {
             .setUserAgent(Connections.getHttpUserAgent())
             .build()
         );
+
+        // Make sure extensions are up-to-date
+        ExtensionManager.registerReceivers(context);
 
         // make sure launcher do not open other variants of the app
         Launcher.setAppPackageName(context.getPackageName());

@@ -341,7 +341,6 @@
 		<activity
 			android:name="com.example.android.wizardpager.AlkitabFeedbackActivity"
 			android:theme="@style/AlkitabFeedback.Theme" />
-		/>
 
 		<service android:name="yuku.alkitab.base.sv.DownloadService" />
 
@@ -464,23 +463,6 @@
 			android:exported="true"
 			android:permission="android.permission.BIND_JOB_SERVICE" />
 
-		<meta-data
-			android:name="com.google.android.gms.version"
-			android:value="@integer/google_play_services_version" />
-
-		<!-- remove extensions cache when other apps are installed/updated/removed -->
-		<receiver
-			android:name="yuku.alkitab.base.util.ExtensionManager$InvalidateExtensionsReceiver"
-			android:exported="true">
-			<intent-filter>
-				<action android:name="android.intent.action.PACKAGE_ADDED" />
-				<action android:name="android.intent.action.PACKAGE_CHANGED" />
-				<action android:name="android.intent.action.PACKAGE_REPLACED" />
-				<action android:name="android.intent.action.PACKAGE_REMOVED" />
-
-				<data android:scheme="package" />
-			</intent-filter>
-		</receiver>
 	</application>
 
 	<queries>
@@ -489,6 +471,10 @@
 		<package android:name="org.sabda.tafsiran" />
 		<package android:name="yuku.esvsbasal" />
 		<package android:name="palki.maps" />
+
+		<intent>
+			<action android:name="yuku.alkitab.extensions.action.SHOW_VERSE_INFO" />
+		</intent>
 	</queries>
 
 </manifest>
