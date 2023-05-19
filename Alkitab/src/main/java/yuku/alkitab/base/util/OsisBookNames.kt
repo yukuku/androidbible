@@ -105,7 +105,7 @@ object OsisBookNames {
             for (i in names.indices) {
                 val name = names[i]
                 if (name != null) {
-                    put(name.toLowerCase(Locale.US), i)
+                    put(name.lowercase(Locale.US), i)
                 }
             }
         }
@@ -135,7 +135,7 @@ object OsisBookNames {
      */
     @JvmStatic
     fun osisBookNameToBookId(osisBookName: String): Int {
-        return bookNameToBookIdMap[osisBookName.toLowerCase(Locale.US)] ?: -1
+        return bookNameToBookIdMap[osisBookName.lowercase(Locale.US)] ?: -1
     }
 
     @JvmStatic

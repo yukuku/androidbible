@@ -560,7 +560,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         val currentBookName = currentBookName ?: return
         val currentSong = currentSong ?: return
 
-        val songBookInfo = SongBookUtil.getSongBookInfo(currentBookName) ?: throw RuntimeException("SongBookInfo named $currentBookName was not found")
+        val songBookInfo = SongBookUtil.getSongBookInfo(currentBookName)
 
         val currentSongCode = currentSong.code
         val dataFormatVersion = S.songDb.getDataFormatVersionForSongs(currentBookName)
