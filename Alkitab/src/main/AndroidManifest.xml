@@ -4,6 +4,9 @@
 	android:installLocation="auto">
 
 	<uses-permission android:name="android.permission.INTERNET" />
+
+	<!-- Keeping storage permissions for users who upgrade from an existing versions
+	and store their version files in the external storage -->
 	<uses-permission
 		android:name="android.permission.READ_EXTERNAL_STORAGE"
 		android:maxSdkVersion="32" />
@@ -11,6 +14,7 @@
 		android:name="android.permission.WRITE_EXTERNAL_STORAGE"
 		android:maxSdkVersion="32"
 		tools:ignore="ScopedStorage" />
+
 	<uses-permission android:name="android.permission.NFC" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -18,6 +22,11 @@
 	<uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
 	<uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
 	<uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+
+	<!-- Don't allow SDKs to add AD_ID -->
+	<uses-permission
+		android:name="com.google.android.gms.permission.AD_ID"
+		tools:node="remove" />
 
 	<uses-feature
 		android:name="android.hardware.touchscreen"
