@@ -75,77 +75,30 @@ public class SongBookUtil {
     /**
      * For migration
      */
-    @Nullable
+    @NonNull
     public static SongBookInfo getSongBookInfo(@NonNull SQLiteDatabase db, @NonNull final String bookName) {
         final SongBookInfo info = SongDb.getSongBookInfo(db, bookName);
+        if (info != null) return info;
 
-        return fallbackSongBookInfo(bookName, info);
+        return fallbackSongBookInfo(bookName);
     }
 
-    @Nullable
+    @NonNull
     public static SongBookInfo getSongBookInfo(@NonNull final String bookName) {
         final SongBookInfo info = S.getSongDb().getSongBookInfo(bookName);
+        if (info != null) return info;
 
-        return fallbackSongBookInfo(bookName, info);
+        return fallbackSongBookInfo(bookName);
     }
 
-    @Nullable
-    static SongBookInfo fallbackSongBookInfo(final @NonNull String bookName, final SongBookInfo info) {
-        if (info != null) {
-            return info;
-        }
-
-        final String title;
-        switch (bookName) {
-            case "BE":
-                title = "Buku Ende";
-                break;
-            case "KJ":
-                title = "Kidung Jemaat";
-                break;
-            case "KPKA":
-                title = "Kidung Pasamuan Kristen Anyar";
-                break;
-            case "KPKL":
-                title = "Kidung Pasamuan Kristen Lawas";
-                break;
-            case "KPPK":
-                title = "Kidung Puji-Pujian Kristen";
-                break;
-            case "KPRI":
-                title = "Kidung Persekutuan Reformed Injili";
-                break;
-            case "NKB":
-                title = "Nyanyikanlah Kidung Baru";
-                break;
-            case "NKI":
-                title = "Nyanyian Kemenangan Iman";
-                break;
-            case "NP":
-                title = "Nyanyian Pujian";
-                break;
-            case "NR":
-                title = "Nafiri Rohani";
-                break;
-            case "PKJ":
-                title = "Pelengkap Kidung Jemaat";
-                break;
-            case "PPK":
-                title = "Puji-pujian Kristen";
-                break;
-            default:
-                title = null;
-        }
-
-        if (title == null) {
-            return null;
-        } else {
-            final SongBookInfo fallback = new SongBookInfo();
-            fallback.name = bookName;
-            fallback.title = title;
-            fallback.copyright = null;
-            return fallback;
-        }
+    @NonNull
+    static SongBookInfo fallbackSongBookInfo(final @NonNull String bookName) {
+        // No longer hardcoded, we just use bookName itself as the title of the song book.
+        final SongBookInfo fallback = new SongBookInfo();
+        fallback.name = bookName;
+        fallback.title = bookName;
+        fallback.copyright = null;
+        return fallback;
     }
 
     public static PopupMenu getSongBookPopupMenu(Context context, boolean withAll, boolean withMore, View anchor) {
@@ -168,7 +121,7 @@ public class SongBookUtil {
             sb.append("\n");
             int sb_len = sb.length();
             if (!TextUtils.isEmpty(info.title)) {
-                sb.append(Html.fromHtml(info.title));
+                sb.append(Html.fromHtml(info.title, Html.FROM_HTML_MODE_LEGACY));
             }
             sb.setSpan(new RelativeSizeSpan(0.7f), sb_len, sb.length(), 0);
             sb.setSpan(new ForegroundColorSpan(0xffa0a0a0), sb_len, sb.length(), 0);
@@ -184,9 +137,9 @@ public class SongBookUtil {
         return res;
     }
 
+    @Nullable
     public static String getCopyright(final String bookName) {
         final SongBookInfo info = getSongBookInfo(bookName);
-        if (info == null) return null;
         return info.copyright;
     }
 
@@ -194,15 +147,9 @@ public class SongBookUtil {
         return item -> {
             final int itemId = item.getItemId();
             switch (itemId) {
-                case POPUP_ID_ALL:
-                    listener.onAllSelected();
-                    break;
-                case POPUP_ID_MORE:
-                    listener.onMoreSelected();
-                    break;
-                default:
-                    listener.onSongBookSelected(S.getSongDb().listSongBookInfos().get(itemId - 1).name);
-                    break;
+                case POPUP_ID_ALL -> listener.onAllSelected();
+                case POPUP_ID_MORE -> listener.onMoreSelected();
+                default -> listener.onSongBookSelected(S.getSongDb().listSongBookInfos().get(itemId - 1).name);
             }
             return true;
         };
@@ -224,7 +171,7 @@ public class SongBookUtil {
             activity.getString(R.string.sn_downloading_ellipsis)
         );
 
-		pd.setOnDismissListener(dialog -> cancelled.set(true));
+        pd.setOnDismissListener(dialog -> cancelled.set(true));
         pd.show();
 
         Background.run(() -> {
