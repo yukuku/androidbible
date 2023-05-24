@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import java.util.UUID
 import kotlin.concurrent.thread
 import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.util.InstallationUtil
@@ -55,17 +56,25 @@ class DataTransferActivity : BaseActivity() {
             return@registerForActivityResult
         }
 
-        val jsonString = try {
-            contentResolver.openInputStream(uri)?.use { input ->
-                input.bufferedReader().readText()
-            }
-        } catch (e: Exception) {
-            null
-        }
-        if (jsonString == null) {
+        val inputStream = contentResolver.openInputStream(uri)
+
+        if (inputStream == null) {
             log("Could not read contents from $uri")
         } else {
-            startImport(jsonString, false)
+            // Do not try to load to memory. Copy to cache file.
+            val cacheFile = File(this.cacheDir, "data-import-tmp-${UUID.randomUUID()}.json")
+
+            try {
+                inputStream.use { input ->
+                    cacheFile.outputStream().buffered().use { output ->
+                        input.copyTo(output)
+                    }
+                }
+
+                startImport(cacheFile, false)
+            } catch (e: Exception) {
+                logBold("Error occurred: ${e.stackTraceToString()}")
+            }
         }
     }
 
@@ -156,7 +165,7 @@ class DataTransferActivity : BaseActivity() {
         }
     }
 
-    private fun startImport(jsonString: String, actualRun: Boolean) {
+    private fun startImport(cacheFile: File, actualRun: Boolean) {
         val storage = ReadWriteStorageImpl()
         val log = LogInterface { line -> log(line) }
         val process = ImportProcess(storage, log)
@@ -171,24 +180,24 @@ class DataTransferActivity : BaseActivity() {
         thread {
             showInProgress {
                 try {
-                    process.import(jsonString, options)
+                    process.import(cacheFile, options)
                     runOnUiThread {
-                        successfulImport(jsonString, options)
+                        successfulImport(cacheFile, options)
                     }
                 } catch (e: Throwable) {
-                    logBold("Error occurred, all changes have been rolled back: $e")
+                    logBold("Error occurred, all changes have been rolled back: ${e.stackTraceToString()}")
                 }
             }
         }
     }
 
-    private fun successfulImport(jsonString: String, options: ImportProcess.Options) {
+    private fun successfulImport(cacheFile: File, options: ImportProcess.Options) {
         if (!options.actualRun) {
             logBold("The operations above are only simulation. Press [Start] to start the actual import or [Close] to cancel.")
             bStart.isEnabled = true
             bStart.setOnClickListener {
                 bStart.isEnabled = false
-                startImport(jsonString, true)
+                startImport(cacheFile, true)
             }
         } else {
             logBold("Done. Press [Close] to end the import operation.")

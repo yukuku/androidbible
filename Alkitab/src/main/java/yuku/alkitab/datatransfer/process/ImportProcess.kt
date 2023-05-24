@@ -1,7 +1,7 @@
 package yuku.alkitab.datatransfer.process
 
-import java.util.Date
-import kotlinx.serialization.decodeFromString
+import java.io.File
+import kotlinx.serialization.json.decodeFromStream
 import yuku.alkitab.base.util.History
 import yuku.alkitab.base.util.Sqlitil
 import yuku.alkitab.datatransfer.model.Gid
@@ -33,10 +33,12 @@ class ImportProcess(
         val actualRun: Boolean,
     )
 
-    fun import(json: String, options: Options) {
+    fun import(cacheFile: File, options: Options) {
         log.log("Decoding from JSON")
 
-        val root = Serializer.importJson.decodeFromString<Root>(json)
+        val root = cacheFile.inputStream().buffered().use { input ->
+            Serializer.importJson.decodeFromStream(Root.serializer(), input)
+        }
         log.log("JSON was read successfully")
 
         if (options.actualRun) {
@@ -137,6 +139,7 @@ class ImportProcess(
                     }
                     storage.replaceMarker(newMarker)
                 }
+
                 is LabelEntity -> {
                     val oldLabel = labelGids[entity.gid]
                     if (oldLabel == null) labelNewCount++ else labelEditCount++
@@ -149,6 +152,7 @@ class ImportProcess(
                     }
                     storage.replaceLabel(newLabel)
                 }
+
                 is MarkerLabelEntity -> {
                     // check validity of marker gid and label gid
                     val oldMarkerLabel = markerLabelGids[entity.gid]

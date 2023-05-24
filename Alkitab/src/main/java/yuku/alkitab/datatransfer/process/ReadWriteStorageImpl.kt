@@ -1,6 +1,5 @@
 package yuku.alkitab.datatransfer.process
 
-import java.util.Date
 import yuku.alkitab.base.S
 import yuku.alkitab.base.storage.InternalDbTxWrapper
 import yuku.alkitab.base.util.History
