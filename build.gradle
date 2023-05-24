@@ -64,7 +64,7 @@ ext {
     // Misc
     okhttpVersion = '4.10.0'
     coilVersion = '1.1.0'
-    kotlinxSerializationJsonVersion = '1.0.1'
+    kotlinxSerializationJsonVersion = '1.5.1'
 
     // UI
     materialDialogsVersion = '3.3.0'

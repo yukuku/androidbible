@@ -115,34 +115,35 @@ class DataTransferActivity : BaseActivity() {
         thread {
             showInProgress {
                 try {
-                    val result = process.export()
+                    val dir = File(this.cacheDir, "data_transfer")
+                    dir.mkdir()
+
+                    val date = SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'", Locale.US).apply {
+                        timeZone = TimeZone.getTimeZone("UTC")
+                    }.format(Date())
+
+                    val cacheFile = File(dir, "${getString(R.string.app_name)} data ${date}.export.json")
+
+                    process.export(cacheFile)
+
                     runOnUiThread {
-                        successfulExport(result)
+                        successfulExport(cacheFile)
                     }
                 } catch (e: Throwable) {
-                    logBold("Error occurred: $e")
+                    logBold("Error occurred: ${e.stackTraceToString()}")
                 }
             }
         }
     }
 
-    private fun successfulExport(result: String) {
+    private fun successfulExport(cacheFile: File) {
         logBold("Press [Send] to send your exported data to another app of your choice.")
         bSend.isEnabled = true
         bSend.setOnClickListener {
             bSend.isEnabled = false
 
             try {
-                val dir = File(this.cacheDir, "data_transfer")
-                dir.mkdir()
-
-                val date = SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'", Locale.US).apply {
-                    timeZone = TimeZone.getTimeZone("UTC")
-                }.format(Date())
-                val file = File(dir, "${getString(R.string.app_name)} data ${date}.export.json")
-                file.writeText(result)
-
-                val uri = FileProvider.getUriForFile(this, "$packageName.file_provider", file)
+                val uri = FileProvider.getUriForFile(this, "$packageName.file_provider", cacheFile)
 
                 ShareCompat.IntentBuilder(this)
                     .setType("application/octet-stream")

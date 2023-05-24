@@ -1,6 +1,7 @@
 package yuku.alkitab.datatransfer.process
 
-import kotlinx.serialization.encodeToString
+import java.io.File
+import kotlinx.serialization.json.encodeToStream
 import yuku.alkitab.base.sync.Sync
 import yuku.alkitab.base.sync.Sync_Pins
 import yuku.alkitab.base.util.Sqlitil
@@ -27,7 +28,7 @@ class ExportProcess(
     private val log: LogInterface,
     private val creator_id: String,
 ) {
-    fun export(): String {
+    fun export(cacheFile: File) {
         val snapshots = Snapshots(
             history(),
             mabel(),
@@ -36,10 +37,11 @@ class ExportProcess(
         )
 
         val root = Root(true, snapshots)
-        log.log("Encoding to JSON")
-        val res = Serializer.exportJson.encodeToString(root)
-        log.log("Exported successfully")
-        return res
+        log.log("Encoding to JSON, cache file: $cacheFile")
+        cacheFile.outputStream().buffered().use { output ->
+            Serializer.exportJson.encodeToStream(Root.serializer(), root, output)
+        }
+        log.log("Exported successfully, size: ${cacheFile.length()}")
     }
 
     private fun <T> logList(list: List<T>, suffix: String): List<T> {
