@@ -1317,10 +1317,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         AppLog.d(TAG, "@@onCreate end")
     }
 
-    private fun calculateTextSizeMult(versionId: String?): Float {
-        return if (versionId == null) 1f else S.db.getPerVersionSettings(versionId).fontSizeMultiplier
-    }
-
     private fun callAttentionForVerseToBothSplits(verse_1: Int) {
         lsSplit0.callAttentionForVerse(verse_1)
         lsSplit1.callAttentionForVerse(verse_1)
@@ -1733,6 +1729,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             lsSplit1.setViewScrollbarThumb(thumb)
         }
 
+        fun calculateTextSizeMult(versionId: String?): Float {
+            return if (versionId == null) 1f else S.db.getPerVersionSettings(versionId).fontSizeMultiplier
+        }
+
         // necessary
         val isVerseNumberShown = Preferences.getBoolean(R.string.pref_verseNumberIsShown_key, R.bool.pref_verseNumberIsShown_default)
         uiSplit0 = uiSplit0.copy(
@@ -2061,6 +2061,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         S.openVersionsDialog(this, activeSplit0.versionId) { mv ->
             trackVersionSelect(mv, false)
             loadVersion(mv)
+
+            // We may need to apply PerVersion settings.
+            applyPreferences()
         }
     }
 
@@ -2078,6 +2081,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     disableSplitVersion()
                 }
             }
+
+            // We may need to apply PerVersion settings.
+            applyPreferences()
         }
     }
 
