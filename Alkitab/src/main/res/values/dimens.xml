@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<dimen name="split_handle_thickness">24dp</dimen>
+	<dimen name="split_handle_thickness">20dp</dimen>
 	<dimen name="panel_text_appearance_width">240dp</dimen>
 	<dimen name="reading_plan_day_heading_side_padding">0dp</dimen>
 	<dimen name="left_drawer_width">280dp</dimen>
