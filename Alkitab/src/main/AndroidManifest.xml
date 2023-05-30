@@ -15,7 +15,6 @@
 		android:maxSdkVersion="32"
 		tools:ignore="ScopedStorage" />
 
-	<uses-permission android:name="android.permission.NFC" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
 	<!-- sync permissions -->
@@ -30,9 +29,6 @@
 
 	<uses-feature
 		android:name="android.hardware.touchscreen"
-		android:required="false" />
-	<uses-feature
-		android:name="android.hardware.nfc"
 		android:required="false" />
 
 	<application
@@ -53,13 +49,6 @@
 
 				<category android:name="android.intent.category.LAUNCHER" />
 				<category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-			</intent-filter>
-			<intent-filter>
-				<action android:name="android.nfc.action.NDEF_DISCOVERED" />
-
-				<category android:name="android.intent.category.DEFAULT" />
-
-				<data android:mimeType="application/vnd.yuku.alkitab.nfc.beam" />
 			</intent-filter>
 			<intent-filter>
 				<action android:name="yuku.alkitab.action.VIEW" />

@@ -1,8 +1,6 @@
 package yuku.alkitab.base
 
-import android.annotation.TargetApi
 import android.app.Activity
-import android.app.PendingIntent
 import android.content.ActivityNotFoundException
 import android.content.BroadcastReceiver
 import android.content.ComponentName
@@ -13,9 +11,6 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Point
 import android.net.Uri
-import android.nfc.NdefMessage
-import android.nfc.NdefRecord
-import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -60,8 +55,6 @@ import java.util.Locale
 import kotlin.math.roundToLong
 import me.toptas.fancyshowcase.FancyShowCaseView
 import me.toptas.fancyshowcase.listener.DismissListener
-import org.json.JSONException
-import org.json.JSONObject
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.ac.GotoActivity
 import yuku.alkitab.base.ac.MarkerListActivity
@@ -293,11 +286,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     private var fullScreen = false
 
     val history get() = History
-
-    /**
-     * Can be null for devices without NfcAdapter
-     */
-    private val nfcAdapter: NfcAdapter? by lazy { NfcAdapter.getDefaultAdapter(applicationContext) }
 
     var actionMode: ActionMode? = null
     private var dictionaryMode = false
@@ -1191,8 +1179,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             if (splitRoot.getChildAt(2) !== splitRoot.findViewById<View>(R.id.lsSplitView1)) throw RuntimeException("splitRoot does not have correct children")
         }
 
-        initNfcIfAvailable()
-
         backForwardListController = BackForwardListController(
             group = findViewById(R.id.panelBackForwardList),
             onBackButtonNeedUpdate = { button, ari ->
@@ -1354,13 +1340,12 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     /**
-     * @return non-null if the intent is handled by any of the intent handler (e.g. nfc or VIEW)
+     * @return non-null if the intent is handled by any of the intent handler (e.g. VIEW)
      */
     private fun extractIntent(intent: Intent): IntentResult? {
         dumpIntent(intent, "IsiActivity#onCreate")
 
-        return tryGetIntentResultFromBeam(intent)
-            ?: tryGetIntentResultFromView(intent)
+        return tryGetIntentResultFromView(intent)
     }
 
     /**
@@ -1397,18 +1382,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
     }
 
-    @Suppress("DEPRECATION")
-    private fun initNfcIfAvailable() {
-        nfcAdapter?.setNdefPushMessageCallback({
-            val obj = JSONObject()
-            obj.put("ari", Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, getVerse_1BasedOnScrolls()))
-
-            val payload = obj.toString().toByteArray()
-            val record = NdefRecord(NdefRecord.TNF_MIME_MEDIA, "application/vnd.yuku.alkitab.nfc.beam".toByteArray(), ByteArray(0), payload)
-            NdefMessage(arrayOf(record, NdefRecord.createApplicationRecord(packageName)))
-        }, this)
-    }
-
     private fun getCurrentAriForBackForwardList(): Int {
         val bookId = activeSplit0.book.bookId
         val chapter_1 = chapter_1
@@ -1433,61 +1406,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         if (split1verse_1 != 0) return split1verse_1
 
         return 1 // default value for verse_1
-    }
-
-    override fun onPause() {
-        super.onPause()
-        disableNfcForegroundDispatchIfAvailable()
-    }
-
-    private fun disableNfcForegroundDispatchIfAvailable() {
-        val _nfcAdapter = this.nfcAdapter
-
-        if (_nfcAdapter != null) {
-            try {
-                _nfcAdapter.disableForegroundDispatch(this)
-            } catch (e: IllegalStateException) {
-                AppLog.e(TAG, "sometimes this happens.", e)
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        enableNfcForegroundDispatchIfAvailable()
-    }
-
-    private fun enableNfcForegroundDispatchIfAvailable() {
-        nfcAdapter?.let { nfcAdapter ->
-            val pendingIntent = PendingIntent.getActivity(this, 0, Intent(this, IsiActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), PendingIntent.FLAG_IMMUTABLE)
-            val ndef = IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED)
-            ndef.addDataType("application/vnd.yuku.alkitab.nfc.beam")
-            nfcAdapter.enableForegroundDispatch(this, pendingIntent, arrayOf(ndef), null)
-        }
-    }
-
-    private fun tryGetIntentResultFromBeam(intent: Intent): IntentResult? {
-        val action = intent.action
-        if (action != NfcAdapter.ACTION_NDEF_DISCOVERED) return null
-
-        val rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
-        // only one message sent during the beam
-        if (rawMsgs == null || rawMsgs.isEmpty()) return null
-
-        val msg = rawMsgs[0] as NdefMessage
-        // record 0 contains the MIME type, record 1 is the AAR, if present
-        val records = msg.records
-        if (records.isEmpty()) return null
-
-        val json = String(records[0].payload)
-        return try {
-            val obj = JSONObject(json)
-            val ari = obj.optInt("ari", -1)
-            if (ari == -1) null else IntentResult(ari)
-        } catch (e: JSONException) {
-            AppLog.e(TAG, "Malformed json from nfc", e)
-            null
-        }
     }
 
     fun loadVersion(mv: MVersion) {
@@ -2796,7 +2714,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         }
                     }
                 } else {
-                    MaterialDialog(this@IsiActivity) .show {
+                    MaterialDialog(this@IsiActivity).show {
                         message(text = "Error: Unknown inline link type: $type")
                         positiveButton(R.string.ok)
                     }
