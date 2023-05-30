@@ -36,7 +36,6 @@ import yuku.alkitab.model.XrefEntry
 import yuku.alkitab.util.Ari
 import yuku.alkitab.util.IntArrayList
 
-private const val TAG = "XrefDialog"
 private const val EXTRA_arif = "arif"
 
 class XrefDialog : BaseDialog() {
