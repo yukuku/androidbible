@@ -16,6 +16,8 @@
 			android:id="@+id/toolbar"
 			android:layout_width="match_parent"
 			android:layout_height="?attr/actionBarSize"
+			android:elevation="4dp"
+			android:outlineProvider="bounds"
 			android:background="?attr/colorPrimary">
 
 			<TextView
@@ -98,6 +100,8 @@
 					android:layout_width="match_parent"
 					android:layout_height="@dimen/split_handle_thickness"
 					android:background="@null"
+					android:elevation="4dp"
+					android:outlineProvider="bounds"
 					android:visibility="gone" />
 
 				<yuku.alkitab.base.verses.EmptyableRecyclerView
@@ -123,7 +127,6 @@
 				android:elevation="8dp"
 				android:orientation="horizontal"
 				android:visibility="gone"
-				tools:targetApi="lollipop"
 				tools:visibility="visible">
 
 				<ImageButton
@@ -133,8 +136,7 @@
 					android:background="?selectableItemBackground"
 					android:contentDescription="@string/desc_bfl_back"
 					android:src="@drawable/ic_undo_white_16dp"
-					android:tooltipText="@string/desc_bfl_back"
-					tools:targetApi="o" />
+					android:tooltipText="@string/desc_bfl_back" />
 
 				<ImageView
 					android:layout_width="1dp"
@@ -149,8 +151,7 @@
 					android:background="?selectableItemBackground"
 					android:contentDescription="@string/desc_bfl_forward"
 					android:src="@drawable/ic_redo_white_16dp"
-					android:tooltipText="@string/desc_bfl_forward"
-					tools:targetApi="o" />
+					android:tooltipText="@string/desc_bfl_forward" />
 
 			</LinearLayout>
 
