@@ -10,14 +10,17 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.util.concurrent.atomic.AtomicInteger
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.S
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.util.TargetDecoder
 import yuku.alkitab.base.util.TextColorUtil
+import yuku.alkitab.base.util.safeQuery
 import yuku.alkitab.base.verses.VersesDataModel.ItemType
 import yuku.alkitab.base.widget.AriParallelClickData
 import yuku.alkitab.base.widget.DictionaryLinkInfo
@@ -33,8 +36,6 @@ import yuku.alkitab.debug.R
 import yuku.alkitab.model.SingleChapterVerses
 import yuku.alkitab.util.Ari
 import yuku.alkitab.util.IntArrayList
-import java.util.concurrent.atomic.AtomicInteger
-import yuku.alkitab.base.util.safeQuery
 
 private const val TAG = "VersesControllerImpl"
 
@@ -43,7 +44,7 @@ class VersesControllerImpl(
     override val name: String,
     versesDataModel: VersesDataModel = VersesDataModel.EMPTY,
     versesUiModel: VersesUiModel = VersesUiModel.EMPTY,
-    versesListeners: VersesListeners = VersesListeners.EMPTY
+    versesListeners: VersesListeners = VersesListeners.EMPTY,
 ) : VersesController {
 
     private val checkedPositions = mutableSetOf<Int>()
@@ -414,10 +415,10 @@ class VersesControllerImpl(
     }
 
     override fun setViewLayoutSize(width: Int, height: Int) {
-        val lp = rv.layoutParams
-        lp.width = width
-        lp.height = height
-        rv.layoutParams = lp
+        rv.updateLayoutParams {
+            this.width = width
+            this.height = height
+        }
     }
 
     override fun callAttentionForVerse(verse_1: Int) {
@@ -468,7 +469,7 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         attention: Attention,
         checked: Boolean,
         toggleChecked: (position: Int) -> Unit,
-        index: Int
+        index: Int,
     ) {
         val verse_1 = index + 1
         val ari = Ari.encodeWithBc(data.ari_bc_, verse_1)
@@ -582,12 +583,14 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
             when (ui.verseSelectionMode) {
                 VersesController.VerseSelectionMode.none -> {
                 }
+
                 VersesController.VerseSelectionMode.singleClick -> {
                     val adapterPosition = adapterPosition
                     if (adapterPosition != -1) {
                         listeners.selectedVersesListener.onVerseSingleClick(data.getVerse_1FromPosition(adapterPosition))
                     }
                 }
+
                 VersesController.VerseSelectionMode.multiple -> {
                     val adapterPosition = adapterPosition
                     if (adapterPosition != -1) {
@@ -700,7 +703,7 @@ class PericopeHolder(private val view: PericopeHeaderItem) : ItemHolder(view) {
 class VersesAdapter(
     private val attention: Attention,
     private val isChecked: VersesAdapter.(position: Int) -> Boolean,
-    private val toggleChecked: VersesAdapter.(position: Int) -> Unit
+    private val toggleChecked: VersesAdapter.(position: Int) -> Unit,
 ) : RecyclerView.Adapter<ItemHolder>() {
     init {
         setHasStableIds(true)
@@ -758,9 +761,11 @@ class VersesAdapter(
             ItemType.verseText.ordinal -> {
                 VerseTextHolder(inflater.inflate(R.layout.item_verse, parent, false) as VerseItem)
             }
+
             ItemType.pericope.ordinal -> {
                 PericopeHolder(inflater.inflate(R.layout.item_pericope_header, parent, false) as PericopeHeaderItem)
             }
+
             else -> throw RuntimeException("Unknown viewType $viewType")
         }
     }
@@ -771,6 +776,7 @@ class VersesAdapter(
                 val index = data.getVerse_0(position)
                 holder.bind(data, ui, listeners, attention, isChecked(position), { toggleChecked(it) }, index)
             }
+
             is PericopeHolder -> {
                 val index = data.getPericopeIndex(position)
                 holder.bind(data, ui, listeners, position, index)

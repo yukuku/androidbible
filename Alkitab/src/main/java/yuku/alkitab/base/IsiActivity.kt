@@ -43,6 +43,7 @@ import androidx.core.text.HtmlCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
 import androidx.core.util.PatternsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
@@ -2138,11 +2139,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             // no need to set height, because it has been set to match_parent, so it takes the remaining space.
             lsSplit1.setViewVisibility(View.VISIBLE)
 
-            run {
-                val lp = splitHandleButton.layoutParams
-                lp.width = ViewGroup.LayoutParams.MATCH_PARENT
-                lp.height = splitHandleThickness
-                splitHandleButton.layoutParams = lp
+            splitHandleButton.updateLayoutParams {
+                width = ViewGroup.LayoutParams.MATCH_PARENT
+                height = splitHandleThickness
             }
         } else {
             splitRoot.orientation = LinearLayout.HORIZONTAL
@@ -2158,11 +2157,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             // no need to set width, because it has been set to match_parent, so it takes the remaining space.
             lsSplit1.setViewVisibility(View.VISIBLE)
 
-            run {
-                val lp = splitHandleButton.layoutParams
-                lp.width = splitHandleThickness
-                lp.height = ViewGroup.LayoutParams.MATCH_PARENT
-                splitHandleButton.layoutParams = lp
+            splitHandleButton.updateLayoutParams {
+                width = splitHandleThickness
+                height = ViewGroup.LayoutParams.MATCH_PARENT
             }
         }
     }
