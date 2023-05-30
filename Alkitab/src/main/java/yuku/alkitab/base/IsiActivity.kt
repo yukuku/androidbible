@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.format.DateFormat
+import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
@@ -2715,6 +2716,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                             message(text = rendered)
                             positiveButton(R.string.ok)
                         }
+
+                        footnoteDialog.findViewById<TextView>(com.afollestad.materialdialogs.R.id.md_text_message)
+                            .movementMethod = LinkMovementMethod.getInstance()
                     } else {
                         MaterialDialog(this@IsiActivity).show {
                             message(text = String.format(Locale.US, "Error: footnote arif 0x%08x couldn't be loaded", arif))
