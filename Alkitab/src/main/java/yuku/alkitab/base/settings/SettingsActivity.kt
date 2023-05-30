@@ -126,12 +126,13 @@ class SettingsActivity : BaseActivity() {
         }
 
         @JvmStatic
-        fun getPaddingBasedOnPreferences(): Rect {
+        @JvmOverloads
+        fun getPaddingBasedOnPreferences(useSmallerHorizontal: Boolean = false): Rect {
             val r = App.context.resources
             return if (Preferences.getBoolean(R.string.pref_textPadding_key, R.bool.pref_textPadding_default)) {
                 val top = r.getDimensionPixelOffset(R.dimen.text_top_padding)
                 val bottom = r.getDimensionPixelOffset(R.dimen.text_bottom_padding)
-                val side = r.getDimensionPixelOffset(R.dimen.text_side_padding)
+                val side = r.getDimensionPixelOffset(R.dimen.text_side_padding) / if (useSmallerHorizontal) 2 else 1
                 Rect(side, top, side, bottom)
             } else {
                 val no = r.getDimensionPixelOffset(R.dimen.text_nopadding)

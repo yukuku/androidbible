@@ -43,13 +43,5 @@ class DisplayFragment : PreferenceFragmentCompat() {
             Handler(Looper.getMainLooper()).post { App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_NEEDS_RESTART)) }
             true
         }
-
-        // show textPadding preference only when there is nonzero side padding on this configuration
-        if (resources.getDimensionPixelOffset(R.dimen.text_side_padding) == 0) {
-            val preference = findPreference<Preference>(getString(R.string.pref_textPadding_key))
-            if (preference != null) {
-                preferenceScreen.removePreference(preference)
-            }
-        }
     }
 }

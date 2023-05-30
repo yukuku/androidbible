@@ -1745,8 +1745,13 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             isVerseNumberShown = isVerseNumberShown
         )
 
-        lsSplit0.setViewPadding(SettingsActivity.getPaddingBasedOnPreferences())
-        lsSplit1.setViewPadding(SettingsActivity.getPaddingBasedOnPreferences())
+        val useSmallerHorizontalPadding = when (activeSplit1) {
+            null -> false
+            else -> splitHandleButton.orientation == SplitHandleButton.Orientation.vertical
+        }
+
+        lsSplit0.setViewPadding(SettingsActivity.getPaddingBasedOnPreferences(useSmallerHorizontalPadding))
+        lsSplit1.setViewPadding(SettingsActivity.getPaddingBasedOnPreferences(useSmallerHorizontalPadding))
     }
 
     override fun onStop() {
