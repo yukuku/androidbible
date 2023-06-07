@@ -101,6 +101,7 @@ public class SongFilter {
 		if (song.tune != null && find(song.tune, m)) return true;
 
 		for (Lyric lyric : song.lyrics) {
+			if (lyric == null) continue;
 			for (Verse verse : lyric.verses) {
 				for (String line : verse.lines) {
 					if (find(line, m)) return true;
