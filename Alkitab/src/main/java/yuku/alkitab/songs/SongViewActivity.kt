@@ -17,7 +17,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.webkit.WebView
+import android.webkit.WebResourceRequest
 import android.webkit.WebViewClient
 import androidx.annotation.DrawableRes
 import androidx.annotation.Keep
@@ -110,9 +110,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         }
 
         override fun onTwofingerScale(scale: Float) {
-            var newTextZoom = (textZoom * scale).toInt()
-            if (newTextZoom < 50) newTextZoom = 50
-            if (newTextZoom > 200) newTextZoom = 200
+            var newTextZoom = (textZoom * scale).toInt().coerceIn(50, 200)
 
             val f = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG_SONG)
             if (f is SongFragment) {
@@ -963,48 +961,53 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         var code: String? = null
     }
 
-    override fun shouldOverrideUrlLoading(client: WebViewClient, view: WebView, url: String): Boolean {
-        val uri = Uri.parse(url)
-        val scheme = uri.scheme
-        if ("patchtext" == scheme) {
-            val song = currentSong
+    override fun shouldOverrideUrlLoading(client: WebViewClient, request: WebResourceRequest): Boolean {
+        val uri = request.url ?: return false
 
-            if (song != null) {
-                // do not proceed if the song is too old
-                val updateTime = S.songDb.getSongUpdateTime(currentBookName, song.code)
-                if (updateTime == 0 || Sqlitil.nowDateTime() - updateTime > 21 * 86400) {
-                    MaterialDialog(this).show {
-                        message(text = TextUtils.expandTemplate(getText(R.string.sn_update_book_because_too_old), SongBookUtil.escapeSongBookName(currentBookName)))
-                        positiveButton(R.string.sn_update_book_confirm_button) { updateSongBook() }
-                        negativeButton(R.string.cancel)
-                    }
-                } else {
-                    val extraInfo = PatchTextExtraInfoJson()
-                    extraInfo.type = "song"
-                    extraInfo.bookName = currentBookName
-                    extraInfo.code = song.code
+        when (uri.scheme) {
+            "patchtext" -> {
+                val song = currentSong
 
-                    val songHeader = song.code + " " + song.title + nonullbr(song.title_original) + nonullbr(song.tune) + nonullbr(song.keySignature) + nonullbr(song.timeSignature) + nonullbr(song.authors_lyric) + nonullbr(song.authors_music)
-                    val songHtml = SongFragment.songToHtml(song, true)
-                    val baseBody = HtmlCompat.fromHtml(songHeader + "\n\n" + songHtml, HtmlCompat.FROM_HTML_MODE_LEGACY)
-                    startActivity(PatchTextActivity.createIntent(baseBody, App.getDefaultGson().toJson(extraInfo), null))
-                }
-            }
-            return true
-        } else if (BIBLE_PROTOCOL == scheme) {
-            val ariRanges = TargetDecoder.decode("o:" + uri.schemeSpecificPart)
-            if (ariRanges != null) {
-                val versesDialog = VersesDialog.newInstance(ariRanges)
-                versesDialog.listener = object : VersesDialog.VersesDialogListener() {
-                    override fun onVerseSelected(ari: Int) {
-                        startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari))
+                if (song != null) {
+                    // do not proceed if the song is too old
+                    val updateTime = S.songDb.getSongUpdateTime(currentBookName, song.code)
+                    if (updateTime == 0 || Sqlitil.nowDateTime() - updateTime > 21 * 86400) {
+                        MaterialDialog(this).show {
+                            message(text = TextUtils.expandTemplate(getText(R.string.sn_update_book_because_too_old), SongBookUtil.escapeSongBookName(currentBookName)))
+                            positiveButton(R.string.sn_update_book_confirm_button) { updateSongBook() }
+                            negativeButton(R.string.cancel)
+                        }
+                    } else {
+                        val extraInfo = PatchTextExtraInfoJson()
+                        extraInfo.type = "song"
+                        extraInfo.bookName = currentBookName
+                        extraInfo.code = song.code
+
+                        val songHeader = song.code + " " + song.title + nonullbr(song.title_original) + nonullbr(song.tune) + nonullbr(song.keySignature) + nonullbr(song.timeSignature) + nonullbr(song.authors_lyric) + nonullbr(song.authors_music)
+                        val songHtml = SongFragment.songToHtml(song, true)
+                        val baseBody = HtmlCompat.fromHtml(songHeader + "\n\n" + songHtml, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                        startActivity(PatchTextActivity.createIntent(baseBody, App.getDefaultGson().toJson(extraInfo), null))
                     }
                 }
-                versesDialog.show(supportFragmentManager, "VersesDialog")
+                return true
             }
-            return true
+
+            BIBLE_PROTOCOL -> {
+                val ariRanges = TargetDecoder.decode("o:" + uri.schemeSpecificPart)
+                if (ariRanges != null) {
+                    val versesDialog = VersesDialog.newInstance(ariRanges)
+                    versesDialog.listener = object : VersesDialog.VersesDialogListener() {
+                        override fun onVerseSelected(ari: Int) {
+                            startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari))
+                        }
+                    }
+                    versesDialog.show(supportFragmentManager, "VersesDialog")
+                }
+                return true
+            }
+
+            else -> return false
         }
-        return false
     }
 
     private val keypadViewToNumConverter by lazy {
@@ -1137,7 +1140,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         }
 
         fun nonullbr(s: List<String>?): String {
-            return if (s == null || s.isEmpty()) "" else "<br/>$s"
+            return if (s.isNullOrEmpty()) "" else "<br/>$s"
         }
     }
 }

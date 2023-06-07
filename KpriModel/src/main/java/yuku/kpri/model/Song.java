@@ -6,6 +6,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Bad decision: The Parcelable-ness of this class is used to store a serialized form
+ * of the song in a database. We shouldn't have used Parcelable for persistence.
+ */
 public class Song implements Serializable, Parcelable {
     private static final long serialVersionUID = 3264548831320138544L;
 
