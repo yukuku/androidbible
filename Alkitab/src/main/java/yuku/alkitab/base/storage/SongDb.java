@@ -10,6 +10,7 @@ import android.util.Pair;
 import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import yuku.alkitab.base.util.AppLog;
 import static yuku.alkitab.base.util.Literals.Array;
 import static yuku.alkitab.base.util.Literals.ToStringArray;
 import yuku.alkitab.base.util.Sqlitil;
@@ -31,17 +32,19 @@ public class SongDb {
         song.writeToParcelCompat(dataFormatVersion, p, 0);
         byte[] buf = p.marshall();
         p.recycle();
+        AppLog.d("Dumper!", "song " + song.code);
+        DumperKt.dumpBytes(buf);
         return buf;
     }
 
-    private static Song unmarshallSong(byte[] buf, int dataFormatVersion) {
-        Parcel p = Parcel.obtain();
-        p.unmarshall(buf, 0, buf.length);
-        p.setDataPosition(0);
-        Song res = Song.createFromParcelCompat(dataFormatVersion, p);
-        p.recycle();
-        return res;
-    }
+private static Song unmarshallSong(byte[] buf, int dataFormatVersion) {
+    Parcel p = Parcel.obtain();
+    p.unmarshall(buf, 0, buf.length);
+    p.setDataPosition(0);
+    Song res = Song.createFromParcelCompat(dataFormatVersion, p);
+    p.recycle();
+    return res;
+}
 
     /**
      * Store to db songs in a book. Before the songs are stored, all songs of the specified book are deleted.
