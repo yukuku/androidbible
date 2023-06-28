@@ -31,7 +31,7 @@ public class InternalCommon {
 	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, TextDb teksDb, PericopeData pericopeData) {
 		createInternalFiles(outDir, prefix, bookNames, teksDb.toRecList(), pericopeData);
 	}
-	
+
 	/**
 	 * @param prefix e.g. "tb"
 	 */
@@ -43,21 +43,22 @@ public class InternalCommon {
 	 * @param prefix e.g. "tb"
 	 */
 	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, List<Rec> _recs, PericopeData pericopeData, XrefDb xrefDb, FootnoteDb footnoteDb) {
-		List<List<Rec>> books = new ArrayList<>();
-		
-		for (int i = 1; i <= 66; i++) {
-			books.add(new ArrayList<Rec>());
-		}
-		
-		for (Rec rec: _recs) {
-			final int book_1 = rec.book_1;
-			if (book_1 < 1 || book_1 > 66) {
-				throw new RuntimeException("book_1 not supported: " + book_1);
+		final List<List<Rec>> books = new ArrayList<>();
+
+		// Gather books
+		for (Rec rec : _recs) {
+			final int bookIndex = rec.book_1;
+			while (bookIndex >= books.size()) {
+				books.add(new ArrayList<>());
 			}
-			
-			books.get(book_1 - 1).add(rec);
 		}
-		
+
+		System.out.printf("Found %d books%n", books.size());
+
+		for (Rec rec : _recs) {
+			books.get(rec.book_1 - 1).add(rec);
+		}
+
 		try {
 			{
 				int book_count = 0;
@@ -77,18 +78,18 @@ public class InternalCommon {
 				for (int book_1 = 1; book_1 <= books.size(); book_1++) {
 					final List<Rec> recs = books.get(book_1 - 1);
 					if (recs == null || recs.size() == 0) continue;
-					
+
 					int chapter_count = 0;
-					for (Rec rec: recs) {
+					for (Rec rec : recs) {
 						if (rec.chapter_1 > chapter_count) {
 							chapter_count = rec.chapter_1;
 						}
 					}
-	
+
 					int[] verse_counts;
 					{ // verse_counts
 						verse_counts = new int[chapter_count];
-						for (Rec rec: recs) {
+						for (Rec rec : recs) {
 							verse_counts[rec.chapter_1 - 1]++;
 						}
 					}
@@ -99,11 +100,11 @@ public class InternalCommon {
 						File f = new File(outDir, String.format("%s_k%02d.txt", prefix, book_1));
 						CountingOutputStream counter = new CountingOutputStream(new FileOutputStream(f));
 						OutputStreamWriter out = new OutputStreamWriter(counter, "utf-8");
-						for (Rec rec: recs) {
+						for (Rec rec : recs) {
 							if (rec.text.contains("\n")) {
 								throw new RuntimeException("Now text can't contain \\n since it's used as a separator");
 							}
-							out.write(forOpenSource? (rec.text.replaceAll("[A-Z]", "X").replaceAll("[a-z]", "x")): rec.text);
+							out.write(forOpenSource ? (rec.text.replaceAll("[A-Z]", "X").replaceAll("[a-z]", "x")) : rec.text);
 							out.write('\n');
 							out.flush();
 							chapter_offsets[rec.chapter_1] = (int) counter.getCount();
@@ -129,22 +130,22 @@ public class InternalCommon {
 						for (int i = 0; i < chapter_count + 1; i++) {
 							bw.writeVarUint(chapter_offsets[i]);
 						}
-						
+
 					}
 					System.out.println("book: " + bookNames.get(book_1 - 1) + " ch_count=" + chapter_count + " v_counts=" + Arrays.toString(verse_counts) + " offsets=" + Arrays.toString(chapter_offsets));
 				}
-			
+
 				bw.close();
 			}
-			
+
 			// perikop
 			if (pericopeData != null) {
 				BintexWriter bw_blocks = new BintexWriter(new FileOutputStream(new File(outDir, String.format("%s_pericope_blocks_bt.bt", prefix))));
 				BintexWriter bw_index = new BintexWriter(new FileOutputStream(new File(outDir, String.format("%s_pericope_index_bt.bt", prefix))));
-				
+
 				bw_index.writeInt(pericopeData.entries.size());
-				
-				for (PericopeData.Entry pe: pericopeData.entries) {
+
+				for (PericopeData.Entry pe : pericopeData.entries) {
 					/* Blok {
 						uint8 versi = 3
 						autostring judul
@@ -152,20 +153,20 @@ public class InternalCommon {
 						autostring[nparalel] xparalel
 					   }
 					 */
-					
+
 					int pos = bw_blocks.getPos();
 					bw_blocks.writeUint8(3);
 					bw_blocks.writeAutoString(pe.block.title);
-					int parallel_count = pe.block.parallels == null? 0: pe.block.parallels.size();
+					int parallel_count = pe.block.parallels == null ? 0 : pe.block.parallels.size();
 					bw_blocks.writeUint8(parallel_count);
 					for (int i = 0; i < parallel_count; i++) {
 						bw_blocks.writeAutoString(pe.block.parallels.get(i));
 					}
-					
+
 					bw_index.writeInt(pe.ari);
 					bw_index.writeInt(pos);
 				}
-				
+
 				bw_index.close();
 				bw_blocks.close();
 			}
@@ -188,7 +189,7 @@ public class InternalCommon {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public static List<String> fileToBookNames(String filename) throws FileNotFoundException {
 		// parse file nama kitab
 		List<String> res = new ArrayList<>(); // indexnya sama dengan kitabPos

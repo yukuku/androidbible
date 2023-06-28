@@ -70,7 +70,7 @@ public class IntArrayList implements Parcelable {
         }
     }
 
-    public static final Parcelable.Creator<IntArrayList> CREATOR = new Parcelable.Creator<>() {
+    public static final Parcelable.Creator<IntArrayList> CREATOR = new Parcelable.Creator<IntArrayList>() {
         @Override
         public IntArrayList createFromParcel(Parcel in) {
             int len = in.readInt();
