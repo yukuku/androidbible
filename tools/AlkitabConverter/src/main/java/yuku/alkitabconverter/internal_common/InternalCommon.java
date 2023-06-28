@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,8 +23,7 @@ import java.util.Scanner;
 public class InternalCommon {
 	static final String TAG = InternalCommon.class.getSimpleName();
 
-	public final static Charset ascii = Charset.forName("ascii");
-	public final static Charset utf8 = Charset.forName("utf8");
+	public final static Charset utf8 = StandardCharsets.UTF_8;
 
 	/**
 	 * @param prefix e.g. "tb"
@@ -45,11 +45,16 @@ public class InternalCommon {
 	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, List<Rec> _recs, PericopeData pericopeData, XrefDb xrefDb, FootnoteDb footnoteDb) {
 		final List<List<Rec>> books = new ArrayList<>();
 
-		// Gather books
+		// Gather books, fix missing "@@"
 		for (Rec rec : _recs) {
 			final int bookIndex = rec.book_1;
 			while (bookIndex >= books.size()) {
 				books.add(new ArrayList<>());
+			}
+
+			// add @@ if needed
+			if (rec.text.contains("@") && !rec.text.startsWith("@@")) {
+				rec.text = "@@" + rec.text;
 			}
 		}
 
