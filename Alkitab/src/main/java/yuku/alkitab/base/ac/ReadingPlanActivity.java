@@ -546,7 +546,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
     private void openDownloadReadingPlanPage() {
         startActivityForResult(
             HelpActivity.createIntent(
-                BuildConfig.SERVER_HOST + "rp/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName()),
+                BuildConfig.SERVER_HOST + "rp/downloads?" + App.getAppIdentifierParamsEncoded(),
                 getString(R.string.rp_menuDownload)
             ),
             REQCODE_openList

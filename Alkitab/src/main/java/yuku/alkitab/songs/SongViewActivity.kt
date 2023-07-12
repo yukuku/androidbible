@@ -295,7 +295,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     private fun openDownloadSongBookPage() {
         startActivityForResult(
             HelpActivity.createIntentWithOverflowMenu(
-                BuildConfig.SERVER_HOST + "songs/downloads?app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName()),
+                BuildConfig.SERVER_HOST + "songs/downloads?" + App.getAppIdentifierParamsEncoded(),
                 getString(R.string.sn_download_song_books),
                 getString(R.string.sn_menu_private_song_book),
                 AlertDialogActivity.createInputIntent(

@@ -92,7 +92,7 @@ public class DevotionDownloader extends Thread {
 				}
 			} else {
 				final DevotionActivity.DevotionKind kind = article.getKind();
-				final String url = BuildConfig.SERVER_HOST + "devotion/get?name=" + kind.name + "&date=" + article.getDate() + "&app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName());
+				final String url = BuildConfig.SERVER_HOST + "devotion/get?name=" + kind.name + "&date=" + article.getDate() + "&" + App.getAppIdentifierParamsEncoded();
 
 				AppLog.d(TAG, "Downloader starts downloading name=" + kind.name + " date=" + article.getDate());
 				notifyDownloadStatus(

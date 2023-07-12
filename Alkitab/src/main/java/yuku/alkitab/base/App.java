@@ -1,6 +1,7 @@
 package yuku.alkitab.base;
 
 import android.content.Context;
+import android.net.Uri;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.multidex.MultiDex;
 import androidx.preference.PreferenceManager;
@@ -15,6 +16,7 @@ import yuku.alkitab.base.connection.PRDownloaderOkHttpClient;
 import yuku.alkitab.base.sync.Fcm;
 import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.util.ExtensionManager;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.tracking.Tracker;
 import yuku.alkitabfeedback.FeedbackSender;
@@ -102,5 +104,19 @@ public class App extends yuku.afw.App {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
+    }
+
+    public static String getAppIdentifierParamsEncoded() {
+        return "app_versionCode=" + App.getVersionCode()
+            + "&app_versionName=" + Uri.encode(App.getVersionName())
+            + "&app_packageName=" + Uri.encode(BuildConfig.APPLICATION_ID);
+    }
+
+    public static String getVersionName() {
+        return BuildConfig.VERSION_NAME;
+    }
+
+    public static int getVersionCode() {
+        return BuildConfig.VERSION_CODE;
     }
 }
