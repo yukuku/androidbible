@@ -779,6 +779,8 @@ class SearchActivity : BaseActivity() {
 
             holder.itemView.setOnClickListener {
                 val position = holder.bindingAdapterPosition
+                if (position < 0) return@setOnClickListener
+
                 if (actionMode != null) {
                     if (position in adapter.checkedPositions) {
                         adapter.checkedPositions -= position
