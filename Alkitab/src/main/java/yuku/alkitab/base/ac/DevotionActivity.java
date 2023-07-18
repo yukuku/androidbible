@@ -273,15 +273,17 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
     final BroadcastReceiver br = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, final Intent intent) {
-            final String action = intent.getAction();
-            if (DevotionDownloader.ACTION_DOWNLOADED.equals(action)) {
-                // is it for us?
-                final String name = intent.getStringExtra("name");
-                final String date = intent.getStringExtra("date");
+            if (!DevotionDownloader.ACTION_DOWNLOADED.equals(intent.getAction())) return;
 
-                if (yyyymmdd.get().format(currentDate).equals(date) && currentKind.name.equals(name)) {
-                    display();
-                }
+            // is it for us?
+            final String name = intent.getStringExtra("name");
+            final String date = intent.getStringExtra("date");
+
+            AppLog.d(TAG, "Got DOWNLOADED broadcast for name=" + name + " date=" + date);
+
+            if (yyyymmdd.get().format(currentDate).equals(date) && currentKind.name.equals(name)) {
+                AppLog.d(TAG, "It is for us, displaying now");
+                display();
             }
         }
     };

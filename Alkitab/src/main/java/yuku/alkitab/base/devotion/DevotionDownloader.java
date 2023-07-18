@@ -86,12 +86,12 @@ public class DevotionDownloader extends Thread {
                     // success!
                     article.fillIn(output);
 
+                    // let's now store it to db
+                    S.getDb().storeArticleToDevotions(article);
+
                     if (!output.startsWith("NG")) {
                         broadcastDownloaded(kind.name, article.getDate());
                     }
-
-                    // let's now store it to db
-                    S.getDb().storeArticleToDevotions(article);
                 } catch (IOException e) {
                     AppLog.d(TAG, "Downloader failed to download", e);
                 }
@@ -102,6 +102,10 @@ public class DevotionDownloader extends Thread {
     }
 
     void broadcastDownloaded(final String name, final String date) {
-        App.getLbm().sendBroadcast(new Intent(ACTION_DOWNLOADED).putExtra("name", name).putExtra("date", date));
+        final Intent intent = new Intent(ACTION_DOWNLOADED)
+            .putExtra("name", name)
+            .putExtra("date", date);
+
+        App.getLbm().sendBroadcast(intent);
     }
 }
