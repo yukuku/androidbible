@@ -9,6 +9,7 @@ import com.downloader.PRDownloader;
 import com.downloader.PRDownloaderConfig;
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import okhttp3.Call;
 import okhttp3.Request;
 import yuku.alkitab.base.connection.Connections;
@@ -23,7 +24,7 @@ import yuku.alkitabfeedback.FeedbackSender;
 import yuku.alkitabintegration.display.Launcher;
 
 public class App extends yuku.afw.App {
-    private static boolean initted = false;
+    private static final AtomicBoolean initted = new AtomicBoolean(false);
 
     enum GsonWrapper {
         INSTANCE;
@@ -55,8 +56,7 @@ public class App extends yuku.afw.App {
      * before calling this method.
      */
     public synchronized static void staticInit() {
-        if (initted) return;
-        initted = true;
+        if (initted.getAndSet(true)) return;
 
         if (context == null) {
             throw new RuntimeException("yuku.afw.App.context must have been set via initWithAppContext(Context) before calling this method.");
