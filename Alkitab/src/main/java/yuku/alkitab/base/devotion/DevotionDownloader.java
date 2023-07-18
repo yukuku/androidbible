@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.DevotionActivity;
+import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Foreground;
 import yuku.alkitab.base.widget.Localized;
@@ -101,7 +102,7 @@ public class DevotionDownloader extends Thread {
 				);
 
 				try {
-					final String output = App.downloadString(url);
+					final String output = Connections.downloadString(url);
 
 					// success!
 					article.fillIn(output);

@@ -8,10 +8,7 @@ import androidx.preference.PreferenceManager;
 import com.downloader.PRDownloader;
 import com.downloader.PRDownloaderConfig;
 import com.google.gson.Gson;
-import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import okhttp3.Call;
-import okhttp3.Request;
 import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.connection.PRDownloaderOkHttpClient;
 import yuku.alkitab.base.sync.Fcm;
@@ -30,18 +27,6 @@ public class App extends yuku.afw.App {
         INSTANCE;
 
         final Gson gson = new Gson();
-    }
-
-    public static String downloadString(String url) throws IOException {
-        return downloadCall(url).execute().body().string();
-    }
-
-    public static byte[] downloadBytes(String url) throws IOException {
-        return downloadCall(url).execute().body().bytes();
-    }
-
-    public static Call downloadCall(String url) {
-        return Connections.getOkHttp().newCall(new Request.Builder().url(url).build());
     }
 
     @Override

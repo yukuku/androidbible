@@ -23,6 +23,7 @@ import java.util.zip.ZipInputStream
 import yuku.afw.widget.EasyAdapter
 import yuku.alkitab.base.App
 import yuku.alkitab.base.ac.base.BaseActivity
+import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.sv.DownloadService
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Background
@@ -84,7 +85,7 @@ class FontManagerActivity : BaseActivity(), DownloadService.DownloadListener {
 
     fun loadFontList() = Background.run {
         try {
-            val lines = App.downloadString(URL_fontList).lines()
+            val lines = Connections.downloadString(URL_fontList).lines()
             val list = mutableListOf<FontItem>()
             if (lines.firstOrNull() == "OK") {
                 for (line in lines.drop(1)) {

@@ -16,7 +16,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import com.afollestad.materialdialogs.MaterialDialog;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -24,6 +23,7 @@ import okhttp3.Call;
 import okhttp3.Response;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.storage.SongDb;
 import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.Foreground;
@@ -176,15 +176,14 @@ public class SongBookUtil {
 
         Background.run(() -> {
             try {
-                final Call call = App.downloadCall(BuildConfig.SERVER_HOST + "addon/songs/get_songs?name=" + songBookInfo.name + "&dataFormatVersion=" + dataFormatVersion);
+                final Call call = Connections.downloadCall(BuildConfig.SERVER_HOST + "addon/songs/get_songs?name=" + songBookInfo.name + "&dataFormatVersion=" + dataFormatVersion);
 
                 final Response response = call.execute();
                 if (response.code() != 200) {
                     throw new NotOkException(response.code());
                 }
 
-                final InputStream ogis = new OptionalGzipInputStream(response.body().byteStream());
-                final ObjectInputStream ois = new ObjectInputStream(ogis);
+                final ObjectInputStream ois = new ObjectInputStream(new OptionalGzipInputStream(response.body().byteStream()));
                 @SuppressWarnings("unchecked") final List<Song> songs = (List<Song>) ois.readObject();
                 ois.close();
 

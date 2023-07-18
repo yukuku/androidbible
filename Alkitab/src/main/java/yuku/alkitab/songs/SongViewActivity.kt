@@ -41,6 +41,7 @@ import yuku.alkitab.base.ac.AlertDialogActivity
 import yuku.alkitab.base.ac.HelpActivity
 import yuku.alkitab.base.ac.PatchTextActivity
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity
+import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.dialog.VersesDialog
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AlphanumComparator
@@ -381,7 +382,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         Background.run {
             try {
                 val filename = getAudioFilename(currentBookName, currentSong.code)
-                val response = App.downloadString(BuildConfig.SERVER_HOST + "addon/audio/exists?filename=" + Uri.encode(filename))
+                val response = Connections.downloadString(BuildConfig.SERVER_HOST + "addon/audio/exists?filename=" + Uri.encode(filename))
                 if (response.startsWith("OK")) {
                     // make sure this is the correct one due to possible race condition
                     val currentCurrentBookName = this.currentBookName

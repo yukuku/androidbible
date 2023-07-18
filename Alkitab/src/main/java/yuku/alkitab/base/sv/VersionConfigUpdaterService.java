@@ -12,6 +12,7 @@ import java.util.Date;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.config.VersionConfig;
+import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;
@@ -89,7 +90,7 @@ public class VersionConfigUpdaterService extends IntentService {
 
 		try {
 			AppLog.d(TAG, "Downloading list modify time");
-			modifyTimeBody = App.downloadString(BuildConfig.SERVER_HOST + "versions/list_modify_time?packageName=" + Uri.encode(getPackageName()) + "&versionCode=" + Uri.encode(String.valueOf(App.getVersionCode())));
+			modifyTimeBody = Connections.downloadString(BuildConfig.SERVER_HOST + "versions/list_modify_time?packageName=" + Uri.encode(getPackageName()) + "&versionCode=" + Uri.encode(String.valueOf(App.getVersionCode())));
 		} catch (IOException e) {
 			AppLog.e(TAG, "failed to download modify time", e);
 
@@ -131,7 +132,7 @@ public class VersionConfigUpdaterService extends IntentService {
 		final String versionConfigBody;
 		try {
 			AppLog.d(TAG, "Downloading version list");
-			versionConfigBody = App.downloadString(modifyTimeObj.downloadUrl);
+			versionConfigBody = Connections.downloadString(modifyTimeObj.downloadUrl);
 		} catch (IOException e) {
 			AppLog.e(TAG, "failed to download version list", e);
 

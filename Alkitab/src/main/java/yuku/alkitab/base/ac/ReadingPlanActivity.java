@@ -44,6 +44,7 @@ import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
+import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AppLog;
@@ -594,7 +595,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
         Background.run(() -> {
             try {
-                final byte[] data = App.downloadBytes(BuildConfig.SERVER_HOST + "rp/get_rp?name=" + name);
+                final byte[] data = Connections.downloadBytes(BuildConfig.SERVER_HOST + "rp/get_rp?name=" + name);
                 if (cancelled.get()) return;
                 Foreground.run(() -> {
                     final long id = ReadingPlanManager.insertReadingPlanToDb(data, name);

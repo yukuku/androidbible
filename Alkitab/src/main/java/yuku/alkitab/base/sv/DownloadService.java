@@ -10,6 +10,7 @@ import android.util.Pair;
 import okhttp3.Call;
 import okhttp3.ResponseBody;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.R;
 
@@ -166,9 +167,8 @@ public class DownloadService extends Service {
 				FileOutputStream tempOut = new FileOutputStream(entry.tempFile);
 				
 				// download
-				final Call call = App.downloadCall(entry.url);
-				final ResponseBody body = call.execute().body();
-				try {
+				final Call call = Connections.downloadCall(entry.url);
+				try (ResponseBody body = call.execute().body()) {
 					changeState(State.downloading);
 					entry.progress = 0;
 					dispatchProgress(entry);
@@ -185,8 +185,6 @@ public class DownloadService extends Service {
 					}
 					tempOut.close();
 					is.close();
-				} finally {
-					body.close();
 				}
 
 				// move

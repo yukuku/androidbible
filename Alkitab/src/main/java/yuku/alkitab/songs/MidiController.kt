@@ -8,6 +8,7 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 import yuku.alkitab.base.App
+import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Background
 import yuku.alkitab.debug.R
@@ -27,6 +28,8 @@ class MidiController : MediaController() {
     }
 
     override fun playOrPause(playInLoop: Boolean) {
+        val url = url ?: return
+
         when (state) {
             State.reset -> {
             }
@@ -36,7 +39,7 @@ class MidiController : MediaController() {
                 Background.run {
                     try {
                         state = State.preparing
-                        val bytes = App.downloadBytes(url)
+                        val bytes = Connections.downloadBytes(url)
                         val cacheFile = File(App.context.cacheDir, "song_player_local_cache.mid")
                         cacheFile.writeBytes(bytes)
 
