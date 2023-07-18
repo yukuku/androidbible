@@ -2,6 +2,7 @@ package yuku.alkitab.base;
 
 import android.content.Context;
 import android.net.Uri;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.multidex.MultiDex;
 import androidx.preference.PreferenceManager;
@@ -76,6 +77,12 @@ public class App extends yuku.afw.App {
 
         // make sure launcher do not open other variants of the app
         Launcher.setAppPackageName(context.getPackageName());
+
+        // remove unused notification channels
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.deleteNotificationChannel("devotion_downloader");
+        notificationManager.deleteNotificationChannel("download_mapper");
+        notificationManager.deleteNotificationChannel("devotion_reminder");
     }
 
     public static LocalBroadcastManager getLbm() {
