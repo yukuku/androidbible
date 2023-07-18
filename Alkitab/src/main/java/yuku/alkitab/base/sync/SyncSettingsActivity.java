@@ -146,6 +146,8 @@ public class SyncSettingsActivity extends BaseActivity {
 
 						FirebaseCrashlytics.getInstance().setUserId("");
 
+						SyncUtils.removeAllSyncAccounts();
+
 						updateDisplay();
 						return Unit.INSTANCE;
 					},
