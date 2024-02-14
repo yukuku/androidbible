@@ -32,6 +32,7 @@ dependencies {
     implementation project(':BintexReader')
     implementation project(':BintexWriter')
     implementation project(':Snappy')
+    testImplementation 'junit:junit:4.12'
 }
 repositories {
     mavenCentral()
