@@ -1,13 +1,12 @@
 package yuku.alkitab.yes2.section;
 
 import android.util.Log;
+import java.io.IOException;
 import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.yes2.io.RandomInputStream;
 import yuku.alkitab.yes2.section.base.SectionContent;
+import yuku.alkitab.yes2.util.UnsignedBinarySearchKt;
 import yuku.bintex.BintexReader;
-
-import java.io.IOException;
-import java.util.Arrays;
 
 // The writer is in another class (not here to save code amount for Alkitab app)
 // Section format:
@@ -56,7 +55,7 @@ public class XrefsSection extends SectionContent {
 	}
 
 	public XrefEntry getXrefEntry(final int arif) {
-		final int pos = Arrays.binarySearch(index_arifs, arif);
+		final int pos = UnsignedBinarySearchKt.unsignedIntBinarySearch(index_arifs, arif);
 		if (pos < 0) {
 			return null;
 		}
