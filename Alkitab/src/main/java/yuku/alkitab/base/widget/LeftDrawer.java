@@ -6,7 +6,6 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Configuration;
 import android.graphics.Typeface;
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
@@ -57,7 +56,6 @@ public abstract class LeftDrawer extends NestedScrollView {
 	TextView bDevotion;
 	TextView bReadingPlan;
 	TextView bSongs;
-	View bDisplay;
 	View bSettings;
 	View bHelp;
 
@@ -65,36 +63,10 @@ public abstract class LeftDrawer extends NestedScrollView {
 	final Activity activity;
 	// for closing drawer
 	DrawerLayout drawerLayout;
-	SwitchCompat cNightMode;
-	SwitchCompat cFollowSystemTheme;
-	final Listener listener;
-	CompoundButton.OnCheckedChangeListener cNightMode_checkedChange = new CompoundButton.OnCheckedChangeListener() {
-		@Override
-		public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-			assert listener != null;
-			listener.cNightMode_checkedChange(isChecked);
-		}
-	};
-	CompoundButton.OnCheckedChangeListener cFollowSystemTheme_checkedChange = new CompoundButton.OnCheckedChangeListener() {
-		@Override
-		public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-			assert listener != null;
-			listener.cFollowSystemTheme_checkedChange(isChecked, cNightMode);
-		}
-	};
-
-	public interface Listener {
-		void bDisplay_click();
-
-		void cNightMode_checkedChange(boolean isChecked);
-
-		void cFollowSystemTheme_checkedChange(boolean isChecked, SwitchCompat cNightMode);
-	}
 
 	public LeftDrawer(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 		activity = isInEditMode() ? null : (Activity) context;
-		listener = (Listener) context;
 	}
 
 	@Override
@@ -110,9 +82,6 @@ public abstract class LeftDrawer extends NestedScrollView {
 		bDevotion = findViewById(R.id.bDevotion);
 		bReadingPlan = findViewById(R.id.bReadingPlan);
 		bSongs = findViewById(R.id.bSongs);
-		bDisplay = findViewById(R.id.bDisplay);
-		cNightMode = findViewById(R.id.cNightMode);
-		cFollowSystemTheme = findViewById(R.id.cFollowSystemTheme);
 		bSettings = findViewById(R.id.bSettings);
 		bHelp = findViewById(R.id.bHelp);
 
@@ -147,19 +116,6 @@ public abstract class LeftDrawer extends NestedScrollView {
 			closeDrawer();
 		});
 
-		bDisplay.setOnClickListener(v -> {
-			listener.bDisplay_click();
-			closeDrawer();
-		});
-
-		if (cNightMode != null) {
-			cNightMode.setOnCheckedChangeListener(cNightMode_checkedChange);
-		}
-
-		if (cFollowSystemTheme != null) {
-			cFollowSystemTheme.setOnCheckedChangeListener(cFollowSystemTheme_checkedChange);
-		}
-
 		bSettings.setOnClickListener(v -> {
 			bSettings_click();
 			closeDrawer();
@@ -169,16 +125,6 @@ public abstract class LeftDrawer extends NestedScrollView {
 			bHelp_click();
 			closeDrawer();
 		});
-	}
-
-	@Override
-	public void onAttachedToWindow() {
-		super.onAttachedToWindow();
-
-		if (cFollowSystemTheme != null) {
-			final boolean followSystemTheme = checkSystemTheme();
-			cFollowSystemTheme.setChecked(followSystemTheme);
-		}
 	}
 
 	void setDrawerItemSelected(@NonNull TextView drawerItem) {
@@ -271,17 +217,6 @@ public abstract class LeftDrawer extends NestedScrollView {
 		}
 	}
 
-	public boolean checkSystemTheme() {
-		final boolean followSystemTheme = Preferences.getBoolean(Prefkey.follow_system_theme, true);
-		if (followSystemTheme) {
-			final int systemTheme = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-			cNightMode.setChecked(!isInEditMode() && systemTheme == Configuration.UI_MODE_NIGHT_YES);
-		} else {
-			cNightMode.setChecked(!isInEditMode() && Preferences.getBoolean(Prefkey.is_night_mode, false));
-		}
-		return followSystemTheme;
-	}
-
 	/**
 	 * This clears all activity on this stack and starts {@link yuku.alkitab.base.IsiActivity}.
 	 */
@@ -293,10 +228,14 @@ public abstract class LeftDrawer extends NestedScrollView {
 	}
 
 	public static class Text extends LeftDrawer {
-		public interface Listener extends LeftDrawer.Listener {
+		public interface Listener {
 			void bMarkers_click();
 
+			void bDisplay_click();
+
 			void cFullScreen_checkedChange(boolean isChecked);
+
+			void cNightMode_checkedChange(boolean isChecked);
 
 			void cSplitVersion_checkedChange(final SwitchCompat cSplitVersion, boolean isChecked);
 
@@ -316,7 +255,9 @@ public abstract class LeftDrawer extends NestedScrollView {
 		}
 
 		View bMarkers;
+		View bDisplay;
 		SwitchCompat cFullScreen;
+		SwitchCompat cNightMode;
 		SwitchCompat cSplitVersion;
 
 		View bProgressMarkList;
@@ -362,6 +303,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 			bMarkers = findViewById(R.id.bMarkers);
 			bDisplay = findViewById(R.id.bDisplay);
 			cFullScreen = findViewById(R.id.cFullScreen);
+			cNightMode = findViewById(R.id.cNightMode);
 			cSplitVersion = findViewById(R.id.cSplitVersion);
 
 			bProgressMarkList = findViewById(R.id.bProgressMarkList);
@@ -374,6 +316,8 @@ public abstract class LeftDrawer extends NestedScrollView {
 			panelCurrentReadingHeader = findViewById(R.id.panelCurrentReadingHeader);
 			bCurrentReadingClose = findViewById(R.id.bCurrentReadingClose);
 			bCurrentReadingReference = findViewById(R.id.bCurrentReadingReference);
+
+			cNightMode.setChecked(!isInEditMode() && Preferences.getBoolean(Prefkey.is_night_mode, false));
 
 			bProgressMarkList.setOnClickListener(v -> listener.bProgressMarkList_click());
 
@@ -402,7 +346,14 @@ public abstract class LeftDrawer extends NestedScrollView {
 				closeDrawer();
 			});
 
+			bDisplay.setOnClickListener(v -> {
+				listener.bDisplay_click();
+				closeDrawer();
+			});
+
 			cFullScreen.setOnCheckedChangeListener(cFullScreen_checkedChange);
+
+			cNightMode.setOnCheckedChangeListener(cNightMode_checkedChange);
 
 			cSplitVersion.setOnCheckedChangeListener(cSplitVersion_checkedChange);
 
@@ -456,6 +407,13 @@ public abstract class LeftDrawer extends NestedScrollView {
 			}
 		};
 
+		CompoundButton.OnCheckedChangeListener cNightMode_checkedChange = new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+				listener.cNightMode_checkedChange(isChecked);
+			}
+		};
+
 		CompoundButton.OnCheckedChangeListener cSplitVersion_checkedChange = new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
@@ -479,7 +437,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 		DevotionKindAdapter adapter;
 
-		public interface Listener extends LeftDrawer.Listener {
+		public interface Listener {
 			void bPrev_click();
 
 			void bNext_click();
@@ -535,6 +493,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 			bNext = findViewById(R.id.bNext);
 			bReload = findViewById(R.id.bReload);
 
+
 			cbKind.setAdapter(adapter = new DevotionKindAdapter());
 			cbKind.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 				@Override
@@ -546,6 +505,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 				public void onNothingSelected(final AdapterView<?> parent) {
 				}
 			});
+
 
 			bPrev.setOnClickListener(v -> listener.bPrev_click());
 
@@ -618,7 +578,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 	}
 
 	public static class ReadingPlan extends LeftDrawer {
-		public interface Listener extends LeftDrawer.Listener {
+		public interface Listener {
 			void bRestart_click();
 		}
 
@@ -677,7 +637,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 	}
 
 	public static class Songs extends LeftDrawer {
-		public interface Listener extends LeftDrawer.Listener {
+		public interface Listener {
 			void songKeypadButton_click(View v);
 
 			void songBookSelected(String name);

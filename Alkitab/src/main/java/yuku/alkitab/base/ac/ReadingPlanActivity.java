@@ -24,7 +24,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
@@ -540,20 +539,9 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
         leftDrawer.closeDrawer();
     }
 
-    @NonNull
     @Override
     protected LeftDrawer getLeftDrawer() {
         return leftDrawer;
-    }
-
-    @Nullable
-    @Override
-    protected ViewGroup getOverlayContainer() { return null; }
-
-    @NonNull
-    @Override
-    public DrawerLayout getRoot() {
-        return drawerLayout;
     }
 
     private void openDownloadReadingPlanPage() {

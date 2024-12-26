@@ -1,49 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:id="@+id/overlayContainer"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+	android:layout_height="match_parent"
+	android:orientation="vertical">
 
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	<androidx.appcompat.widget.Toolbar
+		android:id="@+id/toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?attr/actionBarSize"
+		android:background="?attr/colorPrimary">
+
+		<ProgressBar
+			android:id="@+id/progress_circular"
+			style="?android:attr/progressBarStyleSmallTitle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical|end"
+			android:layout_margin="16dp" />
+
+	</androidx.appcompat.widget.Toolbar>
+
+	<yuku.alkitab.base.widget.TwofingerLinearLayout
+		android:id="@+id/root"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" />
+
+	<FrameLayout
+		android:id="@+id/no_song_data_container"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:orientation="vertical">
+		android:visibility="gone">
 
-		<androidx.appcompat.widget.Toolbar
-			android:id="@+id/toolbar"
-			android:layout_width="match_parent"
-			android:layout_height="?attr/actionBarSize"
-			android:background="?attr/colorPrimary">
+		<Button
+			android:id="@+id/bDownload"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:text="@string/sn_download_song_books" />
+	</FrameLayout>
 
-			<ProgressBar
-				android:id="@+id/progress_circular"
-				style="?android:attr/progressBarStyleSmallTitle"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center_vertical|end"
-				android:layout_margin="16dp" />
-
-		</androidx.appcompat.widget.Toolbar>
-
-		<yuku.alkitab.base.widget.TwofingerLinearLayout
-			android:id="@+id/root"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent" />
-
-		<FrameLayout
-			android:id="@+id/no_song_data_container"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:visibility="gone">
-
-			<Button
-				android:id="@+id/bDownload"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center"
-				android:text="@string/sn_download_song_books" />
-		</FrameLayout>
-
-	</LinearLayout>
-</FrameLayout>
+</LinearLayout>

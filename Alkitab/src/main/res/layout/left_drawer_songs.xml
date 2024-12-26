@@ -171,11 +171,6 @@
 			</LinearLayout>
 		</LinearLayout>
 
-		<include layout="@layout/left_drawer_display_button" />
-
-		<include
-			layout="@layout/left_drawer_night_mode_switches" />
-
 		<include
 			layout="@layout/left_drawer_footer"
 			android:layout_width="match_parent"

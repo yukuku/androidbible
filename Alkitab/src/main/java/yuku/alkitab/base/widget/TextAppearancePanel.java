@@ -43,7 +43,7 @@ public class TextAppearancePanel {
     }
 
     final Activity activity;
-    final ViewGroup parent;
+    final FrameLayout parent;
     final Listener listener;
     final View content;
     final int reqcodeGetFonts;
@@ -67,7 +67,7 @@ public class TextAppearancePanel {
     String splitVersionId;
     String splitVersionLongName;
 
-    public TextAppearancePanel(Activity activity, ViewGroup parent, Listener listener, int reqcodeGetFonts, int reqcodeCustomColors) {
+    public TextAppearancePanel(Activity activity, FrameLayout parent, Listener listener, int reqcodeGetFonts, int reqcodeCustomColors) {
         this.activity = activity;
         this.parent = parent;
         this.listener = listener;

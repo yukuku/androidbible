@@ -155,7 +155,19 @@
 
 		</LinearLayout>
 
-		<include layout="@layout/left_drawer_display_button" />
+		<Button
+			android:id="@+id/bDisplay"
+			style="?buttonBarButtonStyle"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:drawablePadding="16dp"
+			android:drawableStart="@drawable/ic_drawer_display"
+			android:fontFamily="sans-serif-regular"
+			android:gravity="start|center_vertical"
+			android:text="@string/menuDisplay"
+			android:textAllCaps="false"
+			android:textColor="#fff"
+			android:textSize="16sp" />
 
 		<androidx.appcompat.widget.SwitchCompat
 			android:id="@+id/cFullScreen"
@@ -169,8 +181,17 @@
 			android:textColor="#fff"
 			android:textSize="16sp" />
 
-		<include
-			layout="@layout/left_drawer_night_mode_switches" />
+		<androidx.appcompat.widget.SwitchCompat
+			android:id="@+id/cNightMode"
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:layout_marginEnd="16dp"
+			android:layout_marginStart="16dp"
+			android:fontFamily="sans-serif-regular"
+			android:gravity="start|center_vertical"
+			android:text="@string/menuNightMode"
+			android:textColor="#fff"
+			android:textSize="16sp" />
 
 		<androidx.appcompat.widget.SwitchCompat
 			android:id="@+id/cSplitVersion"

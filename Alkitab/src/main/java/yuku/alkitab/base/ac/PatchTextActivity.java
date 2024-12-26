@@ -1,7 +1,6 @@
 package yuku.alkitab.base.ac;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -15,11 +14,9 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.android.wizardpager.AlkitabFeedbackActivity;
 import java.util.LinkedList;
 import name.fraser.neil.plaintext.diff_match_patch;
-import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
 import yuku.alkitab.debug.R;
 
@@ -97,20 +94,6 @@ public class PatchTextActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        final boolean followSystemTheme = Preferences.getBoolean(Prefkey.follow_system_theme, true);
-        if (followSystemTheme) {
-            Preferences.setBoolean(Prefkey.is_night_mode, (newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES);
-            S.recalculateAppliedValuesBasedOnPreferences();
-            applyNightModeColors();
-            final S.CalculatedDimensions applied = S.applied();
-            tBody.setTextColor(applied.fontColor);
-            tBody.setBackgroundColor(applied.backgroundColor);
-        }
     }
 
     void menuSend_click() {

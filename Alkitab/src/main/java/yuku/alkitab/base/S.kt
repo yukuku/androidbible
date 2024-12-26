@@ -167,7 +167,6 @@ object S {
         return null // not known
     }
 
-    @JvmStatic
     fun recalculateAppliedValuesBasedOnPreferences() {
         CalculatedDimensionsHolder.applied = calculateDimensionsFromPreferences()
     }

@@ -71,10 +71,9 @@ private const val FRAGMENT_TAG_SONG = "song"
 
 class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUrlLoadingHandler, LeftDrawer.Songs.Listener, MediaStateListener {
     private lateinit var drawerLayout: DrawerLayout
-    override lateinit var leftDrawer: LeftDrawer.Songs
+    private lateinit var leftDrawer: LeftDrawer.Songs
 
-    override lateinit var overlayContainer: ViewGroup
-    override lateinit var root: TwofingerLinearLayout
+    private lateinit var root: TwofingerLinearLayout
     private lateinit var no_song_data_container: ViewGroup
     private lateinit var bDownload: View
     private lateinit var circular_progress: View
@@ -128,6 +127,8 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     }
 
     private val mediaState = MediaState()
+
+    override fun getLeftDrawer() = leftDrawer
 
     inner class MediaState {
         var enabled = false
@@ -267,7 +268,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             }
         })
 
-        overlayContainer = findViewById(R.id.overlayContainer)
         root = findViewById(R.id.root)
         no_song_data_container = findViewById(R.id.no_song_data_container)
         bDownload = findViewById(R.id.bDownload)
@@ -315,26 +315,10 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     override fun onStart() {
         super.onStart()
 
-        applyPreferences()
-
-        // show latest viewed song
-        val bookName = Preferences.getString(Prefkey.song_last_bookName, null)
-        val code = Preferences.getString(Prefkey.song_last_code, null)
-
-        if (bookName == null || code == null) {
-            displaySong(null, null, true)
-        } else {
-            displaySong(bookName, S.songDb.getSong(bookName, code), true)
-        }
-
-        window.decorView.keepScreenOn = Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), resources.getBoolean(R.bool.pref_keepScreenOn_default))
-    }
-
-    override fun applyPreferences() {
-        super.applyPreferences()
-
         val applied = S.applied()
 
+        // apply background color, and clear window background to prevent overdraw
+        window.setBackgroundDrawableResource(android.R.color.transparent)
         findViewById<View>(android.R.id.content).setBackgroundColor(applied.backgroundColor)
 
         templateCustomVars.clear()
@@ -357,10 +341,17 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         }
         templateCustomVars.putString("text_font", fontName)
 
-        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG_SONG)
-        if (fragment != null) {
-            (fragment as SongFragment).updateTheme(templateCustomVars)
+        // show latest viewed song
+        val bookName = Preferences.getString(Prefkey.song_last_bookName, null)
+        val code = Preferences.getString(Prefkey.song_last_code, null)
+
+        if (bookName == null || code == null) {
+            displaySong(null, null, true)
+        } else {
+            displaySong(bookName, S.songDb.getSong(bookName, code), true)
         }
+
+        window.decorView.keepScreenOn = Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), resources.getBoolean(R.bool.pref_keepScreenOn_default))
     }
 
     /**

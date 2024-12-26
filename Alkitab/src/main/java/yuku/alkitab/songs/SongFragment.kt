@@ -120,19 +120,6 @@ class SongFragment : BaseFragment() {
         return template.replace("{{$$name}}", value?.toString() ?: "")
     }
 
-    fun updateTheme(customVars: Bundle) {
-        val font = if (customVars.getString("text_font") == "DEFAULT") "sans-serif" else customVars.getString("text_font")
-        arguments = Bundle().apply {
-            webview.evaluateJavascript("""
-                document.body.style.backgroundColor = '${customVars.getString("background_color")}';
-                document.body.style.color = '${customVars.getString("text_color")}';
-                document.body.style.fontSize = '${customVars.getString("text_size")}';
-                Array.from(document.getElementsByClassName('line')).forEach(x => x.style.lineHeight = '${customVars.getString("line_spacing_mult")}');
-                document.body.style.fontFamily = '${font}';
-            """, null)
-        }
-    }
-
     var webViewTextZoom: Int
         get() {
             return if (view == null) 0 else webview.settings.textZoom
