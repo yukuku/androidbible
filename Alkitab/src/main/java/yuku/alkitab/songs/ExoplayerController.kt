@@ -3,15 +3,17 @@ package yuku.alkitab.songs
 import android.content.Context
 import android.net.Uri
 import android.text.TextUtils
+import androidx.annotation.OptIn
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.okhttp.OkHttpDataSource
+import androidx.media3.exoplayer.ExoPlaybackException
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.MediaSource
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.afollestad.materialdialogs.MaterialDialog
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.PlaybackException
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import java.io.IOException
 import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.util.AppLog
@@ -30,6 +32,7 @@ class ExoplayerController(appContext: Context) : MediaController() {
         mp.stop()
     }
 
+    @OptIn(UnstableApi::class)
     override fun playOrPause(playInLoop: Boolean) {
         when (state) {
             State.reset -> {
@@ -40,7 +43,8 @@ class ExoplayerController(appContext: Context) : MediaController() {
                     state = State.preparing
 
                     // Produces DataSource instances through which media data is loaded.
-                    val dataSourceFactory = OkHttpDataSourceFactory(Connections.okHttp, Connections.httpUserAgent)
+                    val dataSourceFactory = OkHttpDataSource.Factory(Connections.okHttp)
+                        .setUserAgent(Connections.httpUserAgent)
 
                     // This is the MediaSource representing the media to be played.
                     val mediaSource: MediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
@@ -95,6 +99,7 @@ class ExoplayerController(appContext: Context) : MediaController() {
             }
         }
 
+        @OptIn(UnstableApi::class)
         override fun onPlayerError(error: PlaybackException) {
             AppLog.e(TAG, "@@onPlayerError error=$error")
             val activity = activityRef?.get()
@@ -125,6 +130,7 @@ class ExoplayerController(appContext: Context) : MediaController() {
         }
     }
 
+    @OptIn(UnstableApi::class)
     private fun mediaPlayerPrepare(mediaSource: MediaSource, playInLoop: Boolean) {
         try {
             state = State.preparing
@@ -133,7 +139,8 @@ class ExoplayerController(appContext: Context) : MediaController() {
 
             // Prepare the player with the source.
             mp.repeatMode = if (playInLoop) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
-            mp.prepare(mediaSource)
+            mp.setMediaSource(mediaSource)
+            mp.prepare()
         } catch (e: IOException) {
             AppLog.e(TAG, "mp setDataSource", e)
             state = State.error

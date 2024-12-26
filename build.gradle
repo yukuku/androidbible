@@ -42,6 +42,7 @@ ext {
     androidxCoreVersion = '1.7.0'
     androidxCursoradapterVersion = '1.0.0'
     androidxFragmentVersion = '1.4.1'
+    androidxMedia3Version = '1.1.1'
     androidxMultidexVersion = '2.0.1'
     androidxPercentlayoutVersion = '1.0.0'
     androidxPreferenceVersion = '1.2.1'
@@ -50,7 +51,6 @@ ext {
     androidxViewpagerVersion = '1.0.0'
 
     // Google
-    exoplayerVersion = '2.19.1'
     gsonVersion = '2.11.0'
     fastscrollVersion = '1.1.7'
     materialVersion = '1.4.0'
