@@ -29,7 +29,7 @@ import java.util.List;
 public class Yes2Reader implements BibleReader {
 	private static final String TAG = Yes2Reader.class.getSimpleName();
 
-	private RandomAccessFileRandomInputStream file_;
+	private final RandomAccessFileRandomInputStream file_;
 	private SectionIndex sectionIndex_;
 
 	// cached in memory
@@ -48,7 +48,7 @@ public class Yes2Reader implements BibleReader {
 		private final RandomAccessFileRandomInputStream file_;
 		private final Yes2VerseTextDecoder decoder_;
 		private final long sectionContentOffset_;
-		private BintexReader br_;
+		private final BintexReader br_;
 		
 		private SnappyInputStream snappyInputStream;  // null means no compression
 		
@@ -108,8 +108,8 @@ public class Yes2Reader implements BibleReader {
 
 		{ // check header
 			byte[] buf = new byte[8];
-			file_.read(buf);
-			if (!Arrays.equals(buf, new byte[] { (byte) 0x98, 0x58, 0x0d, 0x0a, 0x00, 0x5d, (byte) 0xe0, 0x02 /* yes version 2 */})) {
+			final int read = file_.read(buf);
+			if (read != 8 || !Arrays.equals(buf, new byte[] { (byte) 0x98, 0x58, 0x0d, 0x0a, 0x00, 0x5d, (byte) 0xe0, 0x02 /* yes version 2 */})) {
 				throw new RuntimeException("YES2: Header is incorrect. Found: " + Arrays.toString(buf));
 			}
 		}
@@ -189,7 +189,7 @@ public class Yes2Reader implements BibleReader {
 			if (seekToSection(BooksInfoSection.SECTION_NAME)) {
 				BooksInfoSection section = new BooksInfoSection.Reader().read(file_);
 				List<Yes2Book> books = section.yes2Books;
-				return books.toArray(new Yes2Book[books.size()]);
+				return books.toArray(new Yes2Book[0]);
 			}
 			
 			Log.e(TAG, "no section named " + BooksInfoSection.SECTION_NAME);

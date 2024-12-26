@@ -406,7 +406,7 @@ public class Yes1Reader implements BibleReader {
 				int ari = pericopeIndex.getAri(current);
 
 				if (ari >= ariMax) {
-					// habis. Uda ga relevan
+					// No more relevant aris
 					break;
 				}
 
@@ -426,7 +426,7 @@ public class Yes1Reader implements BibleReader {
 	}
 
 	/**
-	 * Mungkin null kalo ga ada.
+	 * Could be null if there is no description
 	 */
 	@Override
 	public String getDescription() {
