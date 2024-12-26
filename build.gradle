@@ -30,43 +30,40 @@ ext {
     RIBKA_FUNCTIONS_HOST = 'https://us-central1-pulau-ribka.cloudfunctions.net/'
     RIBKA_FUNCTIONS_HOST_DEBUG = 'http://10.0.3.2:5001/pulau-ribka/us-central1/'
 
-    compileSdkVersion = 33
+    compileSdkVersion = 35
     minSdkVersion = 26
-    targetSdkVersion = 33
+    targetSdkVersion = 35
 
     // Android X
-    androidxActivityVersion = '1.4.0'
+    androidxActivityVersion = '1.9.3'
     androidxAnnotationVersion = '1.6.0'
-    androidxAppcompatVersion = '1.4.2'
-    androidxConstraintlayoutVersion = '2.1.4'
-    androidxCoreVersion = '1.7.0'
+    androidxAppcompatVersion = '1.7.0'
+    androidxConstraintlayoutVersion = '2.2.0'
+    androidxCoreVersion = '1.15.0'
     androidxCursoradapterVersion = '1.0.0'
-    androidxFragmentVersion = '1.4.1'
-    androidxMedia3Version = '1.1.1'
+    androidxFragmentVersion = '1.8.5'
+    androidxMedia3Version = '1.5.1'
     androidxMultidexVersion = '2.0.1'
     androidxPercentlayoutVersion = '1.0.0'
     androidxPreferenceVersion = '1.2.1'
     androidxRecyclerviewVersion = '1.3.2'
     androidxSwiperefreshlayoutVersion = '1.1.0'
-    androidxViewpagerVersion = '1.0.0'
+    androidxViewpagerVersion = '1.1.0'
 
     // Google
+    firebaseBomVersion = '29.0.3'
     gsonVersion = '2.11.0'
-    fastscrollVersion = '1.1.7'
-    materialVersion = '1.4.0'
+    materialVersion = '1.12.0'
 
     // Tests
     junitVersion = '4.13.2'
-    leakcanaryVersion = '2.8.1'
-
-    firebaseBomVersion = '29.0.3'
+    leakcanaryVersion = '2.10'
 
     // Misc
-    okhttpVersion = '4.12.0'
     coilVersion = '1.1.0'
-    kotlinxSerializationJsonVersion = '1.5.1'
-
-    // UI
-    materialDialogsVersion = '3.3.0'
     fancyShowcaseViewVersion = '1.4.0'
+    fastscrollVersion = '1.1.7'
+    kotlinxSerializationJsonVersion = '1.5.1'
+    materialDialogsVersion = '3.3.0'
+    okhttpVersion = '4.12.0'
 }
