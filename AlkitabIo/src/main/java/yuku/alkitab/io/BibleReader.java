@@ -6,6 +6,7 @@ import yuku.alkitab.model.FootnoteEntry;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.model.XrefEntry;
+import yuku.alkitab.util.IntArrayList;
 
 public interface BibleReader {
 	String getLocale();
@@ -23,7 +24,7 @@ public interface BibleReader {
 	 */
 	SingleChapterVerses loadVerseText(Book book, int chapter_1, boolean dontSplitVerses, boolean lowercased);
 
-	int loadPericope(int bookId, int chapter_1, List<Integer> aris, List<PericopeBlock> pericopeBlocks);
+	int loadPericope(int bookId, int chapter_1, IntArrayList aris, List<PericopeBlock> pericopeBlocks);
 
 	/**
 	 * @param arif 24bit ari at the MSB + which xref field at the 8bit LSB (starts from 1)

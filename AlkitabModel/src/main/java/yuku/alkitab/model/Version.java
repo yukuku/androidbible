@@ -62,7 +62,7 @@ public abstract class Version {
 	 * @param pericopeBlocks output parameter; will be filled with the content of the pericopes
 	 * @return the number of pericopes loaded. 0 if the version does not have pericopes or some errors happen.
 	 */
-	public abstract int loadPericope(int bookId, int chapter_1, List<Integer> aris, List<PericopeBlock> pericopeBlocks);
+	public abstract int loadPericope(int bookId, int chapter_1, IntArrayList aris, List<PericopeBlock> pericopeBlocks);
 
 	@Nullable
 	public abstract SingleChapterVerses loadChapterText(Book book, int chapter_1);

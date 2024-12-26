@@ -23,5 +23,5 @@ android {
 dependencies {
     implementation project(':AlkitabModel')
     implementation project(':BintexReader')
-    testImplementation 'junit:junit:4.12'
+    testImplementation "junit:junit:$junitVersion"
 }

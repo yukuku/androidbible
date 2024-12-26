@@ -1,5 +1,7 @@
 package yuku.alkitab.base.storage;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.config.AppConfig;
@@ -12,379 +14,390 @@ import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.util.Ari;
+import yuku.alkitab.util.IntArrayList;
 import yuku.alkitab.yes1.Yes1PericopeIndex;
 import yuku.alkitab.yes2.io.RandomInputStream;
 import yuku.alkitab.yes2.section.FootnotesSection;
 import yuku.alkitab.yes2.section.XrefsSection;
 import yuku.bintex.BintexReader;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 public class InternalReader implements BibleReader {
-	static final String TAG = InternalReader.class.getSimpleName();
+    static final String TAG = InternalReader.class.getSimpleName();
 
-	// # for asset cache
-	private static InputStream cache_inputStream = null;
-	private static String cache_file = null;
-	private static int cache_posInput = -1;
+    // # for asset cache
+    private static InputStream cache_inputStream = null;
+    private static String cache_file = null;
+    private static int cache_posInput = -1;
 
-	private final String versionPrefix;
-	private final String versionLocale;
-	private final String versionShortName;
-	private final String versionLongName;
-	private final VerseTextDecoder verseTextDecoder;
+    private final String versionPrefix;
+    private final String versionLocale;
+    private final String versionShortName;
+    private final String versionLongName;
+    private final VerseTextDecoder verseTextDecoder;
 
-	private Yes1PericopeIndex pericopeIndex_;
-	private XrefsSection xrefsSection_;
-	private boolean xrefsKnownNotAvailable;
-	private FootnotesSection footnotesSection_;
-	private boolean footnotesKnownNotAvailable;
+    private Yes1PericopeIndex pericopeIndex_;
+    private XrefsSection xrefsSection_;
+    private boolean xrefsKnownNotAvailable;
+    private FootnotesSection footnotesSection_;
+    private boolean footnotesKnownNotAvailable;
 
-	public InternalReader(String versionPrefix, String versionLocale, String versionShortName, String versionLongName, VerseTextDecoder verseTextDecoder) {
-		this.versionPrefix = versionPrefix;
-		this.versionLocale = versionLocale;
-		this.versionShortName = versionShortName;
-		this.versionLongName = versionLongName;
-		this.verseTextDecoder = verseTextDecoder;
-	}
+    public InternalReader(String versionPrefix, String versionLocale, String versionShortName, String versionLongName, VerseTextDecoder verseTextDecoder) {
+        this.versionPrefix = versionPrefix;
+        this.versionLocale = versionLocale;
+        this.versionShortName = versionShortName;
+        this.versionLongName = versionLongName;
+        this.verseTextDecoder = verseTextDecoder;
+    }
 
-	@Override
-	public String getLocale() {
-		return versionLocale;
-	}
+    @Override
+    public String getLocale() {
+        return versionLocale;
+    }
 
-	@Override public String getShortName() {
-		return versionShortName;
-	}
+    @Override
+    public String getShortName() {
+        return versionShortName;
+    }
 
-	@Override public String getLongName() {
-		return versionLongName;
-	}
-	
-	@Override public String getDescription() {
-		return null;
-	}
+    @Override
+    public String getLongName() {
+        return versionLongName;
+    }
 
-	@Override public Book[] loadBooks() {
-		BintexReader br = null;
-		try {
-			final InputStream is = App.context.getAssets().open("internal/" + versionPrefix + "_index_bt.bt");
-			br = new BintexReader(is);
+    @Override
+    public String getDescription() {
+        return null;
+    }
 
-			// uint8 version = 3
-			// uint8 book_count
-			final int version = br.readUint8();
-			if (version != 3) throw new RuntimeException("Internal index version not supported: " + version);
-			final int book_count = br.readUint8();
-			final Book[] res = new Book[book_count];
-			for (int i = 0; i < book_count; i++) {
-				res[i] = readBook(br);
-			}
-			return res;
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (br != null) br.close();
-		}
-	}
+    @Override
+    public Book[] loadBooks() {
+        BintexReader br = null;
+        try {
+            final InputStream is = App.context.getAssets().open("internal/" + versionPrefix + "_index_bt.bt");
+            br = new BintexReader(is);
 
-	private static InternalBook readBook(final BintexReader br) throws IOException {
-		// uint8 bookId;
-		// value<string> shortName
-		// value<string> abbreviation
-		// value<string> resName
-		// uint8 chapter_count
-		// uint8[chapter_count] verse_counts
-		// varuint[chapter_count+1] chapter_offsets
+            // uint8 version = 3
+            // uint8 book_count
+            final int version = br.readUint8();
+            if (version != 3) throw new RuntimeException("Internal index version not supported: " + version);
+            final int book_count = br.readUint8();
+            final Book[] res = new Book[book_count];
+            for (int i = 0; i < book_count; i++) {
+                res[i] = readBook(br);
+            }
+            return res;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (br != null) br.close();
+        }
+    }
 
-		final InternalBook res = new InternalBook();
+    private static InternalBook readBook(final BintexReader br) throws IOException {
+        // uint8 bookId;
+        // value<string> shortName
+        // value<string> abbreviation
+        // value<string> resName
+        // uint8 chapter_count
+        // uint8[chapter_count] verse_counts
+        // varuint[chapter_count+1] chapter_offsets
 
-		res.bookId = br.readUint8();
-		res.shortName = br.readValueString();
-		res.abbreviation = br.readValueString();
-		res.resName = br.readValueString();
-		res.chapter_count = br.readUint8();
+        final InternalBook res = new InternalBook();
 
-		res.verse_counts = new int[res.chapter_count];
-		for (int i = 0; i < res.chapter_count; i++) {
-			res.verse_counts[i] = br.readUint8();
-		}
+        res.bookId = br.readUint8();
+        res.shortName = br.readValueString();
+        res.abbreviation = br.readValueString();
+        res.resName = br.readValueString();
+        res.chapter_count = br.readUint8();
 
-		res.chapter_offsets = new int[res.chapter_count + 1];
-		for (int i = 0; i < res.chapter_count + 1; i++) {
-			res.chapter_offsets[i] = br.readVarUint();
-		}
+        res.verse_counts = new int[res.chapter_count];
+        for (int i = 0; i < res.chapter_count; i++) {
+            res.verse_counts[i] = br.readUint8();
+        }
 
-		return res;
-	}
+        res.chapter_offsets = new int[res.chapter_count + 1];
+        for (int i = 0; i < res.chapter_count + 1; i++) {
+            res.chapter_offsets[i] = br.readVarUint();
+        }
 
-	@Override public SingleChapterVerses loadVerseText(Book book, int chapter_1, boolean dontSplitVerses, boolean lowercased) {
-		InternalBook internalBook = (InternalBook) book;
+        return res;
+    }
 
-		if (chapter_1 < 1 || chapter_1 > book.chapter_count) {
-			return null;
-		}
-		
-		int offset = internalBook.chapter_offsets[chapter_1 - 1];
+    @Override
+    public SingleChapterVerses loadVerseText(Book book, int chapter_1, boolean dontSplitVerses, boolean lowercased) {
+        InternalBook internalBook = (InternalBook) book;
 
-		try {
-			InputStream in;
+        if (chapter_1 < 1 || chapter_1 > book.chapter_count) {
+            return null;
+        }
 
-			if (cache_inputStream == null) {
-				// case 1: haven't opened anything
-				in = App.context.getAssets().open("internal/" + internalBook.resName + ".txt");
-				cache_inputStream = in;
-				cache_file = internalBook.resName;
+        int offset = internalBook.chapter_offsets[chapter_1 - 1];
 
-				//noinspection ResultOfMethodCallIgnored
-				in.skip(offset);
-				cache_posInput = offset;
-			} else {
-				// case 2: we have ever opened. Check if the file is the same
-				if (internalBook.resName.equals(cache_file)) {
-					// case 2.1: yes the file was the same
-					if (offset >= cache_posInput) {
-						// we can go forward
-						in = cache_inputStream;
+        try {
+            InputStream in;
 
-						//noinspection ResultOfMethodCallIgnored
-						in.skip(offset - cache_posInput);
-						cache_posInput = offset;
-					} else {
-						// but can't go backward, so we close the stream and reopen it
-						cache_inputStream.close();
+            if (cache_inputStream == null) {
+                // case 1: haven't opened anything
+                in = App.context.getAssets().open("internal/" + internalBook.resName + ".txt");
+                cache_inputStream = in;
+                cache_file = internalBook.resName;
 
-						in = App.context.getAssets().open("internal/" + internalBook.resName + ".txt");
-						cache_inputStream = in;
+                //noinspection ResultOfMethodCallIgnored
+                in.skip(offset);
+                cache_posInput = offset;
+            } else {
+                // case 2: we have ever opened. Check if the file is the same
+                if (internalBook.resName.equals(cache_file)) {
+                    // case 2.1: yes the file was the same
+                    if (offset >= cache_posInput) {
+                        // we can go forward
+                        in = cache_inputStream;
 
-						//noinspection ResultOfMethodCallIgnored
-						in.skip(offset);
-						cache_posInput = offset;
-					}
-				} else {
-					// case 2.2: different file. So close current and open the new one
-					cache_inputStream.close();
+                        //noinspection ResultOfMethodCallIgnored
+                        in.skip(offset - cache_posInput);
+                        cache_posInput = offset;
+                    } else {
+                        // but can't go backward, so we close the stream and reopen it
+                        cache_inputStream.close();
 
-					in = App.context.getAssets().open("internal/" + internalBook.resName + ".txt");
-					cache_inputStream = in;
-					cache_file = internalBook.resName;
+                        in = App.context.getAssets().open("internal/" + internalBook.resName + ".txt");
+                        cache_inputStream = in;
 
-					//noinspection ResultOfMethodCallIgnored
-					in.skip(offset);
-					cache_posInput = offset;
-				}
-			}
+                        //noinspection ResultOfMethodCallIgnored
+                        in.skip(offset);
+                        cache_posInput = offset;
+                    }
+                } else {
+                    // case 2.2: different file. So close current and open the new one
+                    cache_inputStream.close();
 
-			final int length;
-			if (chapter_1 == internalBook.chapter_count) {
-				length = in.available();
-			} else {
-				length = internalBook.chapter_offsets[chapter_1] - offset;
-			}
+                    in = App.context.getAssets().open("internal/" + internalBook.resName + ".txt");
+                    cache_inputStream = in;
+                    cache_file = internalBook.resName;
 
-			byte[] ba = new byte[length];
-			in.read(ba);
-			cache_posInput += ba.length;
-			// do not close even though we finished reading. The asset file could be the same as before.
+                    //noinspection ResultOfMethodCallIgnored
+                    in.skip(offset);
+                    cache_posInput = offset;
+                }
+            }
 
-			if (dontSplitVerses) {
-				return new InternalSingleChapterVerses(new String[] { verseTextDecoder.makeIntoSingleString(ba, lowercased) });
-			} else {
-				return new InternalSingleChapterVerses(verseTextDecoder.separateIntoVerses(ba, lowercased));
-			}
-		} catch (IOException e) {
-			return new InternalSingleChapterVerses(new String[] { e.getMessage() });
-		}
-	}
+            final int length;
+            if (chapter_1 == internalBook.chapter_count) {
+                length = in.available();
+            } else {
+                length = internalBook.chapter_offsets[chapter_1] - offset;
+            }
 
-	private Yes1PericopeIndex loadPericopeIndex() {
-		if (pericopeIndex_ != null) {
-			return pericopeIndex_;
-		}
+            byte[] ba = new byte[length];
+            in.read(ba);
+            cache_posInput += ba.length;
+            // do not close even though we finished reading. The asset file could be the same as before.
 
-		final long startTime = System.currentTimeMillis();
+            if (dontSplitVerses) {
+                return new InternalSingleChapterVerses(new String[]{verseTextDecoder.makeIntoSingleString(ba, lowercased)});
+            } else {
+                return new InternalSingleChapterVerses(verseTextDecoder.separateIntoVerses(ba, lowercased));
+            }
+        } catch (IOException e) {
+            return new InternalSingleChapterVerses(new String[]{e.getMessage()});
+        }
+    }
 
-		final InputStream is;
-		try {
-			is = App.context.getAssets().open("internal/" + versionPrefix + "_pericope_index_bt.bt");
-		} catch (IOException e) {
-			return null;
-		}
+    private Yes1PericopeIndex loadPericopeIndex() {
+        if (pericopeIndex_ != null) {
+            return pericopeIndex_;
+        }
 
-		BintexReader in = new BintexReader(is);
-		try {
-			pericopeIndex_ = Yes1PericopeIndex.read(in);
-			return pericopeIndex_;
+        final long startTime = System.currentTimeMillis();
 
-		} catch (IOException e) {
-			AppLog.e(TAG, "Error reading pericope index", e);
-			return null;
-		} finally {
-			in.close();
-			AppLog.d(TAG, "Read pericope index needed: " + (System.currentTimeMillis() - startTime));
-		}
-	}
+        final InputStream is;
+        try {
+            is = App.context.getAssets().open("internal/" + versionPrefix + "_pericope_index_bt.bt");
+        } catch (IOException e) {
+            return null;
+        }
 
-	@Override public int loadPericope(int bookId, int chapter_1, List<Integer> aris, List<PericopeBlock> pericopeBlocks) {
-		Yes1PericopeIndex pericopeIndex = loadPericopeIndex();
+        BintexReader in = new BintexReader(is);
+        try {
+            pericopeIndex_ = Yes1PericopeIndex.read(in);
+            return pericopeIndex_;
 
-		if (pericopeIndex == null) {
-			return 0; // no pericopes!
-		}
+        } catch (IOException e) {
+            AppLog.e(TAG, "Error reading pericope index", e);
+            return null;
+        } finally {
+            in.close();
+            AppLog.d(TAG, "Read pericope index needed: " + (System.currentTimeMillis() - startTime));
+        }
+    }
 
-		int ariMin = Ari.encode(bookId, chapter_1, 0);
-		int ariMax = Ari.encode(bookId, chapter_1 + 1, 0);
-		int res = 0;
+    @Override
+    public int loadPericope(int bookId, int chapter_1, IntArrayList aris, List<PericopeBlock> pericopeBlocks) {
+        Yes1PericopeIndex pericopeIndex = loadPericopeIndex();
 
-		int first = pericopeIndex.findFirst(ariMin, ariMax);
+        if (pericopeIndex == null) {
+            return 0; // no pericopes!
+        }
 
-		if (first == -1) {
-			return 0;
-		}
+        int res = 0;
 
-		int current = first;
+        int first = pericopeIndex.findFirst(Ari.encode(bookId, chapter_1, 0));
 
-		BintexReader in = null;
-		try {
-			in = new BintexReader(App.context.getAssets().open("internal/" + versionPrefix + "_pericope_blocks_bt.bt"));
-			while (true) {
-				int ari = pericopeIndex.getAri(current);
+        if (first == -1) {
+            return 0;
+        }
 
-				if (ari >= ariMax) {
-					// That's all. No longer relevant.
-					break;
-				}
+        int current = first;
 
-				PericopeBlock pericopeBlock = pericopeIndex.getBlock(in, current);
-				current++;
+        BintexReader in = null;
+        try {
+            in = new BintexReader(App.context.getAssets().open("internal/" + versionPrefix + "_pericope_blocks_bt.bt"));
+            while (true) {
+                int ari = pericopeIndex.getAri(current);
 
-				aris.add(ari);
-				pericopeBlocks.add(pericopeBlock);
-				res++;
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (in != null) in.close();
-		}
+                if (Ari.toBook(ari) != bookId || Ari.toChapter(ari) != chapter_1) {
+                    // That's all. No longer relevant.
+                    break;
+                }
 
-		return res;
-	}
-	
-	@Override public XrefEntry getXrefEntry(int arif) {
-		if (xrefsKnownNotAvailable) return null;
+                PericopeBlock pericopeBlock = pericopeIndex.getBlock(in, current);
+                current++;
 
-		if (xrefsSection_ == null) {
-			final String assetName = "internal/" + AppConfig.get().internalPrefix + "_xrefs_bt.bt";
+                aris.add(ari);
+                pericopeBlocks.add(pericopeBlock);
+                res++;
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (in != null) in.close();
+        }
 
-			try {
-				App.context.getAssets().list(assetName);
-			} catch (IOException e) {
-				AppLog.d(TAG, "Can't load xrefs from internal, marking it as not available.");
-				xrefsKnownNotAvailable = true;
-				return null;
-			}
+        return res;
+    }
 
-			try {
-				xrefsSection_ = new XrefsSection.Reader().read(new AssetRandomInputStream(assetName));
-			} catch (IOException e) {
-				throw new RuntimeException("Error reading xrefs section from internal", e);
-			}
-		}
+    @Override
+    public XrefEntry getXrefEntry(int arif) {
+        if (xrefsKnownNotAvailable) return null;
 
-		return xrefsSection_.getXrefEntry(arif);
-	}
-	
-	@Override public FootnoteEntry getFootnoteEntry(int arif) {
-		if (footnotesKnownNotAvailable) return null;
+        if (xrefsSection_ == null) {
+            final String assetName = "internal/" + AppConfig.get().internalPrefix + "_xrefs_bt.bt";
 
-		if (footnotesSection_ == null) {
-			final String assetName = "internal/" + AppConfig.get().internalPrefix + "_footnotes_bt.bt";
+            try {
+                App.context.getAssets().list(assetName);
+            } catch (IOException e) {
+                AppLog.d(TAG, "Can't load xrefs from internal, marking it as not available.");
+                xrefsKnownNotAvailable = true;
+                return null;
+            }
 
-			try {
-				App.context.getAssets().list(assetName);
-			} catch (IOException e) {
-				AppLog.d(TAG, "Can't load footnotes from internal, marking it as not available.");
-				footnotesKnownNotAvailable = true;
-				return null;
-			}
+            try {
+                xrefsSection_ = new XrefsSection.Reader().read(new AssetRandomInputStream(assetName));
+            } catch (IOException e) {
+                throw new RuntimeException("Error reading xrefs section from internal", e);
+            }
+        }
 
-			try {
-				footnotesSection_ = new FootnotesSection.Reader().read(new AssetRandomInputStream(assetName));
-			} catch (Exception e) {
-				AppLog.e(TAG, "Error reading footnotes section from internal", e);
-				return null;
-			}
-		}
+        return xrefsSection_.getXrefEntry(arif);
+    }
 
-		return footnotesSection_.getFootnoteEntry(arif);
-	}
+    @Override
+    public FootnoteEntry getFootnoteEntry(int arif) {
+        if (footnotesKnownNotAvailable) return null;
+
+        if (footnotesSection_ == null) {
+            final String assetName = "internal/" + AppConfig.get().internalPrefix + "_footnotes_bt.bt";
+
+            try {
+                App.context.getAssets().list(assetName);
+            } catch (IOException e) {
+                AppLog.d(TAG, "Can't load footnotes from internal, marking it as not available.");
+                footnotesKnownNotAvailable = true;
+                return null;
+            }
+
+            try {
+                footnotesSection_ = new FootnotesSection.Reader().read(new AssetRandomInputStream(assetName));
+            } catch (Exception e) {
+                AppLog.e(TAG, "Error reading footnotes section from internal", e);
+                return null;
+            }
+        }
+
+        return footnotesSection_.getFootnoteEntry(arif);
+    }
 }
 
 class AssetRandomInputStream extends RandomInputStream {
-	final String assetName;
-	InputStream in;
-	int pos;
+    final String assetName;
+    InputStream in;
+    int pos;
 
-	public AssetRandomInputStream(final String assetName) {
-		this.assetName = assetName;
-		reopen();
-	}
+    public AssetRandomInputStream(final String assetName) {
+        this.assetName = assetName;
+        reopen();
+    }
 
-	private void reopen() {
-		try {
-			this.in = App.context.getAssets().open(assetName);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+    private void reopen() {
+        try {
+            this.in = App.context.getAssets().open(assetName);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-		this.pos = 0;
-	}
+        this.pos = 0;
+    }
 
-	@Override public int read() throws IOException {
-		final int res = in.read();
-		if (res >= 0) {
-			pos++;
-		}
-		return res;
-	}
+    @Override
+    public int read() throws IOException {
+        final int res = in.read();
+        if (res >= 0) {
+            pos++;
+        }
+        return res;
+    }
 
-	@Override public int read(byte[] buffer) throws IOException {
-		final int read = in.read(buffer);
-		pos += read;
-		return read;
-	}
+    @Override
+    public int read(byte[] buffer) throws IOException {
+        final int read = in.read(buffer);
+        pos += read;
+        return read;
+    }
 
-	@Override public int read(byte[] buffer, int offset, int length) throws IOException {
-		final int read = in.read(buffer, offset, length);
-		pos += read;
-		return read;
-	}
+    @Override
+    public int read(byte[] buffer, int offset, int length) throws IOException {
+        final int read = in.read(buffer, offset, length);
+        pos += read;
+        return read;
+    }
 
-	@Override public long skip(long n) throws IOException {
-		final long read = in.skip(n);
-		pos += (int) read;
-		return read;
-	}
+    @Override
+    public long skip(long n) throws IOException {
+        final long read = in.skip(n);
+        pos += (int) read;
+        return read;
+    }
 
-	@Override public void seek(long n) throws IOException {
-		if (n >= pos) {
-			//noinspection ResultOfMethodCallIgnored
-			skip(n - pos);
-		} else {
-			reopen();
-			//noinspection ResultOfMethodCallIgnored
-			skip(n);
-		}
-	}
+    @Override
+    public void seek(long n) throws IOException {
+        if (n >= pos) {
+            //noinspection ResultOfMethodCallIgnored
+            skip(n - pos);
+        } else {
+            reopen();
+            //noinspection ResultOfMethodCallIgnored
+            skip(n);
+        }
+    }
 
-	@Override public long getFilePointer() throws IOException {
-		return pos;
-	}
+    @Override
+    public long getFilePointer() throws IOException {
+        return pos;
+    }
 
-	@Override public void close() throws IOException {
-		// NOP, no need to close asset
-	}
+    @Override
+    public void close() throws IOException {
+        // NOP, no need to close asset
+    }
 }
 

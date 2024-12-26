@@ -6,7 +6,7 @@ package yuku.alkitab.util;
  *
  * ari is a 32bit integer.
  * LSB is bit 0, MSB is bit 31.
- * 
+ * <p>
  * bit 31..24 is not used, always 0x00
  * bit 23..16 is book number, 0 to 255. 0 is Genesis, 65 is Revelation, 66 and above is defined elsewhere
  * bit 15..8 is chapter number, starts from 1. 0 is undefined or refers to the whole book
@@ -55,7 +55,7 @@ public class Ari {
 
     /** Similar to Integer.parseInt() but supports 0x and won't throw any exception when failed */
     public static int parseInt(String s, int def) {
-        if (s == null || s.length() == 0) return def;
+        if (s == null || s.isEmpty()) return def;
 
         // need to trim?
         if (s.charAt(0) == ' ' || s.charAt(s.length() - 1) == ' ') {

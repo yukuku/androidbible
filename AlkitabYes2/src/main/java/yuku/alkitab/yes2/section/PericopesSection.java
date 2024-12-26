@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.PericopeIndex;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.util.IntArrayList;
 import yuku.alkitab.yes2.io.RandomInputStream;
 import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.alkitab.yes2.model.PericopeData;
@@ -194,8 +196,13 @@ public class PericopesSection extends SectionContent implements SectionContent.W
      * @param pericopeBlocks (result param) the pericope blocks found
      * @return number of pericopes loaded by this method
      */
-    public int getPericopesForAris(int ari_from, int ari_to, List<Integer> aris, List<PericopeBlock> pericopeBlocks) throws IOException {
-        int first = index_.findFirst(ari_from, ari_to);
+    public int getPericopesForChapter(
+        final int bookId,
+        final int chapter_1,
+        final IntArrayList aris,
+        final List<PericopeBlock> pericopeBlocks
+    ) throws IOException {
+        int first = index_.findFirst(Ari.encode(bookId, chapter_1, 0));
         if (first == -1) {
             return 0;
         }
@@ -205,7 +212,7 @@ public class PericopesSection extends SectionContent implements SectionContent.W
 
         while (true) {
             int ari = index_.getAri(cur);
-            if (ari >= ari_to) { // no more
+            if (Ari.toBook(ari) != bookId || Ari.toChapter(ari) != chapter_1) { // no longer for this chapter
                 break;
             }
 

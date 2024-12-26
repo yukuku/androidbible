@@ -10,10 +10,10 @@ public class PericopeIndex {
     public int[] offsets;
 
     /**
-     * Finds the lowest ari that is >= ariMin and < ariMax, or returns -1 if no such ari exists
+     * Finds the lowest ari that is >= ariMin up to (ariMin + 0xff), or returns -1 if no such ari exists
      */
-    public int findFirst(int ariMin, int ariMax) {
-        int x = Arrays.binarySearch(aris, ariMin);
+    public int findFirst(int ariMin) {
+        final int x = Arrays.binarySearch(aris, ariMin);
 
         // x == -1 (-0-1) if ariMin == 0
         /*
@@ -39,7 +39,8 @@ public class PericopeIndex {
         if (res >= aris.length) return -1;
 
         int ari = aris[res];
-        if (ari < ariMax) {
+        final int ariMax = ariMin + 0xff;
+        if (ari <= ariMax) {
             return res;
         }
 

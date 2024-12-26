@@ -14,6 +14,7 @@ import yuku.alkitab.model.FootnoteEntry;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.util.Ari;
+import yuku.alkitab.util.IntArrayList;
 import yuku.bintex.BintexReader;
 
 public class Yes1Reader implements BibleReader {
@@ -364,7 +365,7 @@ public class Yes1Reader implements BibleReader {
 	}
 
 	@Override
-	public int loadPericope(int bookId, int chapter_1, List<Integer> aris, List<PericopeBlock> pericopeBlocks) {
+	public int loadPericope(int bookId, int chapter_1, IntArrayList aris, List<PericopeBlock> pericopeBlocks) {
 		try {
 			init();
 
@@ -373,10 +374,7 @@ public class Yes1Reader implements BibleReader {
 				return 0; // ga ada perikop!
 			}
 
-			int ariMin = Ari.encode(bookId, chapter_1, 0);
-			int ariMax = Ari.encode(bookId, chapter_1 + 1, 0);
-
-			int first = pericopeIndex.findFirst(ariMin, ariMax);
+            int first = pericopeIndex.findFirst(Ari.encode(bookId, chapter_1, 0));
 			if (first == -1) {
 				return 0;
 			}
@@ -396,7 +394,7 @@ public class Yes1Reader implements BibleReader {
 
 				int ari = pericopeIndex.getAri(current);
 
-				if (ari >= ariMax) {
+				if (Ari.toBook(ari) != bookId || Ari.toChapter(ari) != chapter_1) {
 					// No more relevant aris
 					break;
 				}
