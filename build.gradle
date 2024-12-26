@@ -50,7 +50,7 @@ ext {
     androidxViewpagerVersion = '1.0.0'
 
     // Google
-    exoplayerVersion = '2.11.1'
+    exoplayerVersion = '2.19.1'
     gsonVersion = '2.11.0'
     fastscrollVersion = '1.1.7'
     materialVersion = '1.4.0'

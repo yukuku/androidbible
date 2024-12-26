@@ -5,15 +5,17 @@ import android.net.Uri
 import android.text.TextUtils
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.exoplayer2.ExoPlaybackException
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import java.io.IOException
 import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.debug.R
-import java.io.IOException
 
 private const val TAG = "ExoplayerController"
 
@@ -21,17 +23,18 @@ private const val TAG = "ExoplayerController"
  * We will use [MidiController] for MIDI files.
  */
 class ExoplayerController(appContext: Context) : MediaController() {
-    private var mp = SimpleExoPlayer.Builder(appContext).build()
+    private var mp = ExoPlayer.Builder(appContext).build()
 
     override fun reset() {
         super.reset()
-        mp.stop(true)
+        mp.stop()
     }
 
     override fun playOrPause(playInLoop: Boolean) {
         when (state) {
             State.reset -> {
             }
+
             State.reset_media_known_to_exist, State.complete, State.error -> {
                 try {
                     state = State.preparing
@@ -41,7 +44,7 @@ class ExoplayerController(appContext: Context) : MediaController() {
 
                     // This is the MediaSource representing the media to be played.
                     val mediaSource: MediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
-                        .createMediaSource(Uri.parse(url))
+                        .createMediaSource(MediaItem.fromUri(Uri.parse(url)))
 
                     mediaPlayerPrepare(mediaSource, playInLoop)
                 } catch (e: IOException) {
@@ -49,8 +52,10 @@ class ExoplayerController(appContext: Context) : MediaController() {
                     state = State.error
                 }
             }
+
             State.preparing -> {
             }
+
             State.playing -> // pause button pressed
                 if (playInLoop) { // looping play is selected, but we are already playing. So just set looping parameter.
                     mp.repeatMode = Player.REPEAT_MODE_ONE
@@ -58,6 +63,7 @@ class ExoplayerController(appContext: Context) : MediaController() {
                     mp.playWhenReady = false
                     state = State.paused
                 }
+
             State.paused -> {
                 // play button pressed when paused
                 mp.repeatMode = if (playInLoop) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
@@ -67,8 +73,8 @@ class ExoplayerController(appContext: Context) : MediaController() {
         }.let {}
     }
 
-    private val playerListener = object : Player.EventListener {
-        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+    private val playerListener = object : Player.Listener {
+        override fun onPlaybackStateChanged(playbackState: Int) {
             when (playbackState) {
                 Player.STATE_READY -> {
                     // only start playing if the current state is preparing, i.e., not error or reset.
@@ -78,29 +84,40 @@ class ExoplayerController(appContext: Context) : MediaController() {
                         state = State.playing
                     }
                 }
+
                 Player.STATE_ENDED -> {
                     AppLog.d(TAG, "@@onPlayerStateChanged STATE_ENDED repeatMode=" + mp.repeatMode)
                     state = State.complete
                 }
+
                 else -> {
                 }
             }
         }
 
-        override fun onPlayerError(error: ExoPlaybackException) {
+        override fun onPlayerError(error: PlaybackException) {
             AppLog.e(TAG, "@@onPlayerError error=$error")
             val activity = activityRef?.get()
             if (activity != null && !activity.isFinishing) {
+                val errorType = when (error) {
+                    is ExoPlaybackException -> error.type
+                    else -> null
+                }
+
                 // https://stackoverflow.com/a/42996915/11238
-                val innerException = when (error.type) {
-                    ExoPlaybackException.TYPE_SOURCE -> error.sourceException
-                    ExoPlaybackException.TYPE_RENDERER -> error.rendererException
-                    ExoPlaybackException.TYPE_UNEXPECTED -> error.unexpectedException
+                val innerException = when (error) {
+                    is ExoPlaybackException -> when (error.type) {
+                        ExoPlaybackException.TYPE_SOURCE -> error.sourceException
+                        ExoPlaybackException.TYPE_RENDERER -> error.rendererException
+                        ExoPlaybackException.TYPE_UNEXPECTED -> error.unexpectedException
+                        else -> null
+                    }
+
                     else -> null
                 }
 
                 MaterialDialog(activity).show {
-                    message(text = TextUtils.expandTemplate(activity.getString(R.string.song_player_error_description), "${error.type} $innerException"))
+                    message(text = TextUtils.expandTemplate(activity.getString(R.string.song_player_error_description), "$errorType $innerException"))
                     positiveButton(R.string.ok)
                 }
             }
