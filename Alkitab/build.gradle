@@ -112,8 +112,7 @@ dependencies {
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion"
 
     // Firebase
-    implementation platform('com.google.firebase:firebase-bom:29.0.3')
-    implementation "com.google.firebase:firebase-core"
+    implementation platform('com.google.firebase:firebase-bom:33.7.0')
     implementation "com.google.firebase:firebase-messaging"
     implementation "com.google.firebase:firebase-crashlytics"
 
@@ -127,7 +126,7 @@ dependencies {
     // UI
     implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
     implementation "com.afollestad.material-dialogs:input:$materialDialogsVersion"
-    implementation "me.toptas.fancyshowcase:fancyshowcaseview:$fancyShowcaseView"
+    implementation "com.github.faruktoptas:FancyShowCaseView:$fancyShowcaseViewVersion"
 }
 
 apply plugin: 'com.google.gms.google-services'

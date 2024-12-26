@@ -22,6 +22,7 @@ value class LocateResult constructor(private val raw: Long) {
     }
 }
 
+@Suppress("ArrayInDataClass")
 data class VersesDataModel(
     @JvmField
     val ari_bc_: Int,
@@ -30,7 +31,7 @@ data class VersesDataModel(
     @JvmField
     val pericopeBlockCount_: Int = 0,
     @JvmField
-    val pericopeAris_: List<Int> = emptyList(),
+    val pericopeAris_: IntArray = IntArray(0),
     @JvmField
     val pericopeBlocks_: List<PericopeBlock> = emptyList(),
     @JvmField
@@ -83,7 +84,7 @@ data class VersesDataModel(
         }
 
         if (res.size != pos_itemPointer) {
-            throw RuntimeException("Algorithm to insert pericopes error!! pos_itemPointer=$pos_itemPointer pos_verse=$pos_verse pos_block=$pos_block nverse=$nverse pericopeBlockCount_=$pericopeBlockCount_ pericopeAris_:$pericopeAris_ pericopeBlocks_:$pericopeBlocks_")
+            throw RuntimeException("Algorithm to insert pericopes error!! pos_itemPointer=$pos_itemPointer pos_verse=$pos_verse pos_block=$pos_block nverse=$nverse pericopeBlockCount_=$pericopeBlockCount_ pericopeAris_:${pericopeAris_.contentToString()} pericopeBlocks_:$pericopeBlocks_")
         }
 
         res
@@ -248,15 +249,6 @@ data class VersesDataModel(
             verses_.getVerse(verse_1 - 1)
         } else {
             null
-        }
-    }
-
-    fun isEnabled(position: Int): Boolean {
-        // guard against wild ListView.onInitializeAccessibilityNodeInfoForItem
-        return when {
-            position >= itemPointer_.size -> false
-            itemPointer_[position] >= 0 -> true
-            else -> false
         }
     }
 

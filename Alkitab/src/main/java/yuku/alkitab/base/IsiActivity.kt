@@ -91,6 +91,7 @@ import yuku.alkitab.base.util.ShareUrl
 import yuku.alkitab.base.util.Sqlitil
 import yuku.alkitab.base.util.TargetDecoder
 import yuku.alkitab.base.util.safeQuery
+import yuku.alkitab.base.util.toIntArray
 import yuku.alkitab.base.verses.VerseAttributeLoader
 import yuku.alkitab.base.verses.VersesController
 import yuku.alkitab.base.verses.VersesControllerImpl
@@ -2287,12 +2288,24 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     ): Boolean {
         val verses = version.loadChapterText(book, chapter_1) ?: return false
 
-        val pericope_aris = mutableListOf<Int>()
+        val pericope_aris = IntArrayList()
         val pericope_blocks = mutableListOf<PericopeBlock>()
         val nblock = version.loadPericope(book.bookId, chapter_1, pericope_aris, pericope_blocks)
 
         val retainSelectedVerses = !uncheckAllVerses && chapter_1 == current_chapter_1
-        setDataWithRetainSelectedVerses(cr, versesController, dataSetter, retainSelectedVerses, Ari.encode(book.bookId, chapter_1, 0), pericope_aris, pericope_blocks, nblock, verses, version, versionId)
+        setDataWithRetainSelectedVerses(
+            cr = cr,
+            versesController = versesController,
+            dataSetter = dataSetter,
+            retainSelectedVerses = retainSelectedVerses,
+            ariBc = Ari.encode(book.bookId, chapter_1, 0),
+            pericope_aris = pericope_aris.toIntArray(),
+            pericope_blocks = pericope_blocks,
+            nblock = nblock,
+            verses = verses,
+            version = version,
+            versionId = versionId,
+        )
 
         return true
     }
@@ -2304,7 +2317,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         dataSetter: (VersesDataModel) -> Unit,
         retainSelectedVerses: Boolean,
         ariBc: Int,
-        pericope_aris: List<Int>,
+        pericope_aris: IntArray,
         pericope_blocks: List<PericopeBlock>,
         nblock: Int,
         verses: SingleChapterVerses,
