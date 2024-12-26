@@ -19,7 +19,7 @@ import yuku.bintex.BintexReader;
 public class Yes1Reader implements BibleReader {
 	private static final String TAG = Yes1Reader.class.getSimpleName();
 
-	private RandomAccessFile f;
+	private final RandomAccessFile f;
 	private boolean initted = false;
 	private VerseTextDecoder verseTextDecoder;
 
@@ -143,13 +143,10 @@ public class Yes1Reader implements BibleReader {
 					case "nama":
 						nama = in.readShortString();
 						break;
-					case "shortName":
+					case "shortName", "shortTitle":
 						this.shortName = in.readShortString();
 						break;
-					case "shortTitle":
-						this.shortName = in.readShortString();
-						break;
-					case "judul":
+                    case "judul":
 						this.longName = in.readShortString();
 						break;
 					case "keterangan":
@@ -214,13 +211,10 @@ public class Yes1Reader implements BibleReader {
 						case "pos":
 							k.bookId = in.readInt();
 							break;
-						case "nama":
+						case "nama", "judul":
 							k.shortName = in.readShortString();
 							break;
-						case "judul":
-							k.shortName = in.readShortString();
-							break;
-						case "npasal":
+                        case "npasal":
 							k.chapter_count = in.readInt();
 							break;
 						case "nayat":
@@ -229,15 +223,11 @@ public class Yes1Reader implements BibleReader {
 								k.verse_counts[i] = in.readUint8();
 							}
 							break;
-						case "ayatLoncat":
+						case "ayatLoncat", "pdbBookNumber":
 							// ignored
 							in.readInt();
 							break;
-						case "pdbBookNumber":
-							// ignored
-							in.readInt();
-							break;
-						case "pasal_offset":
+                        case "pasal_offset":
 							k.chapter_offsets = new int[k.chapter_count + 1]; // harus ada +1nya kalo YesPembaca
 
 							for (int i = 0; i < k.chapter_offsets.length; i++) {
@@ -403,6 +393,7 @@ public class Yes1Reader implements BibleReader {
 
 			BintexReader in = new BintexReader(new RandomInputStream(f));
 			while (true) {
+
 				int ari = pericopeIndex.getAri(current);
 
 				if (ari >= ariMax) {
