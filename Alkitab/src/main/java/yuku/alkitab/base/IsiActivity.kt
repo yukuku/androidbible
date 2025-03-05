@@ -9,7 +9,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.graphics.Point
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.text.Spannable
@@ -22,6 +24,7 @@ import android.text.style.RelativeSizeSpan
 import android.text.style.URLSpan
 import android.view.Gravity
 import android.view.KeyEvent
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -30,9 +33,13 @@ import android.view.ViewTreeObserver
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.PopupMenu
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
@@ -40,6 +47,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.ShareCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
+import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
@@ -86,13 +94,16 @@ import yuku.alkitab.base.util.History
 import yuku.alkitab.base.util.InstallationUtil
 import yuku.alkitab.base.util.Jumper
 import yuku.alkitab.base.util.LidToAri
+import yuku.alkitab.base.util.NetworkUtil
 import yuku.alkitab.base.util.OtherAppIntegration
 import yuku.alkitab.base.util.RequestCodes
 import yuku.alkitab.base.util.ShareUrl
 import yuku.alkitab.base.util.Sqlitil
 import yuku.alkitab.base.util.TargetDecoder
+import yuku.alkitab.base.util.YTPlayerUtil
 import yuku.alkitab.base.util.safeQuery
 import yuku.alkitab.base.util.toIntArray
+import yuku.alkitab.base.verses.EmptyableRecyclerView
 import yuku.alkitab.base.verses.VerseAttributeLoader
 import yuku.alkitab.base.verses.VersesController
 import yuku.alkitab.base.verses.VersesControllerImpl
@@ -124,6 +135,8 @@ import yuku.alkitab.model.PericopeBlock
 import yuku.alkitab.model.SingleChapterVerses
 import yuku.alkitab.model.Version
 import yuku.alkitab.ribka.RibkaReportActivity
+import yuku.alkitab.songs.ExoplayerController
+import yuku.alkitab.songs.MediaController
 import yuku.alkitab.tracking.Analytics
 import yuku.alkitab.tracking.Tracker
 import yuku.alkitab.util.Ari
@@ -135,7 +148,7 @@ private const val TAG = "IsiActivity"
 private const val EXTRA_verseUrl = "verseUrl"
 private const val INSTANCE_STATE_ari = "ari"
 
-class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
+class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, ExoplayerController.ExoplayerCallback {
     var uncheckVersesWhenActionModeDestroyed = true
     var needsRestart = false // whether this activity needs to be restarted
 
@@ -242,6 +255,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
     }
 
+    private lateinit var exoplayerController: ExoplayerController
+
     private lateinit var drawerLayout: DrawerLayout
     lateinit var leftDrawer: LeftDrawer.Text
 
@@ -257,9 +272,26 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     private lateinit var bLeft: ImageButton
     private lateinit var bRight: ImageButton
     private lateinit var bVersion: TextView
+
+    private lateinit var imageContainer: LinearLayout
+
+    private lateinit var bAudio: ImageView
+    private lateinit var audioBar: View
+
+    private lateinit var bVideo: ImageView
+
+
+    private lateinit var buttonPlay: ImageView
+    private lateinit var buttonRewind: ImageView
+    private lateinit var buttonForward: ImageView
+    private lateinit var buttonSpeed: ImageView
+
+    private lateinit var bAI: ImageView
+
     lateinit var floater: Floater
     private lateinit var backForwardListController: BackForwardListController<ImageButton, ImageButton>
     private var fullscreenReferenceToast: Toast? = null
+    private var isAudioVisible = false
 
     private var dataSplit0 = VersesDataModel.EMPTY
         set(value) {
@@ -1120,6 +1152,40 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         bRight = findViewById(R.id.bRight)
         bVersion = findViewById(R.id.bVersion)
 
+        exoplayerController = ExoplayerController(this)
+        exoplayerController.setCallback(this)
+
+        imageContainer = findViewById(R.id.imageContainer)
+
+        val iconAI = ImageView(this).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                80, 80
+            ).apply {
+                gravity = Gravity.END
+                marginEnd = 16
+                topMargin = 16
+            }
+            setImageResource(R.drawable.ic_ai)
+            contentDescription = "AI"
+            visibility = View.GONE
+        }
+
+        imageContainer.addView(iconAI)
+
+
+
+        bAudio = findViewById(R.id.iconAudio)
+        audioBar = findViewById(R.id.audiobar)
+
+        bVideo = findViewById(R.id.iconVideo)
+
+        buttonPlay = findViewById(R.id.button_play)
+        buttonRewind = findViewById(R.id.button_rewind)
+        buttonForward = findViewById(R.id.button_forward)
+        buttonSpeed = findViewById(R.id.button_speed)
+
+        bAI = findViewById(R.id.iconAI)
+
         overlayContainer = findViewById(R.id.overlayContainer)
         root = findViewById(R.id.root)
         splitRoot = findViewById(R.id.splitRoot)
@@ -1131,7 +1197,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         // If layout is changed, updateToolbarLocation must be updated as well. This will be called in DEBUG to make sure
         // updateToolbarLocation is also updated when layout is updated.
         if (BuildConfig.DEBUG) {
-            if (root.childCount != 2 || root.getChildAt(0).id != R.id.toolbar || root.getChildAt(1).id != R.id.nontoolbar) {
+            val toolbar = root.findViewById<View>(R.id.toolbar)
+            val nontoolbar = root.findViewById<View>(R.id.nontoolbar)
+
+            if (toolbar == null || nontoolbar == null) {
                 throw RuntimeException("Layout changed and this is no longer compatible with updateToolbarLocation")
             }
         }
@@ -1150,6 +1219,115 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         bLeft.setOnClickListener { bLeft_click() }
         bRight.setOnClickListener { bRight_click() }
         bVersion.setOnClickListener { bVersion_click() }
+
+        bAudio.setOnClickListener {
+            if (!NetworkUtil.isInternetAvailable(this)) {
+                NetworkUtil.showNoInternetDialog(this)
+                return@setOnClickListener
+            }
+
+            toggleAudioBar()
+        }
+
+        bVideo.setOnClickListener {
+            if (!NetworkUtil.isInternetAvailable(this)) {
+                NetworkUtil.showNoInternetDialog(this)
+                return@setOnClickListener
+            }
+
+            AppLog.d(TAG, "Video button clicked")
+            val book = SharedData.book
+            val chapter = SharedData.chapter
+            YTPlayerUtil().showVideoIfExists(this, book.toString(), chapter)
+        }
+
+        bAI.setOnClickListener {
+            if (!NetworkUtil.isInternetAvailable(this)) {
+                NetworkUtil.showNoInternetDialog(this)
+                return@setOnClickListener
+            }
+
+            showDialogForAI()
+        }
+
+
+
+        buttonPlay.setOnClickListener {
+            if (!NetworkUtil.isInternetAvailable(this)) {
+                NetworkUtil.showNoInternetDialog(this)
+                return@setOnClickListener
+            }
+
+            if (exoplayerController.state == MediaController.State.playing){
+                exoplayerController.playOrPause(false)
+            } else {
+                if (exoplayerController.state == MediaController.State.reset ||
+                    exoplayerController.state == MediaController.State.reset_media_known_to_exist ||
+                    exoplayerController.state == MediaController.State.error) {
+                    val audioUrl = generateAudioUrl()
+
+                    exoplayerController.mediaKnownToExist(audioUrl)
+
+                    exoplayerController.setAudioUrl(audioUrl)
+                }
+
+                exoplayerController.playOrPause(false)
+            }
+        }
+
+        buttonRewind.setOnClickListener {
+            Tracker.trackEvent("audio_rewind_click")
+
+            exoplayerController.playOrPause(false)
+
+            if (chapter_1 == 1) {
+                // Jika sudah di pasal 1, coba pindah ke kitab sebelumnya
+                var tryBookId = activeSplit0.book.bookId - 1
+                while (tryBookId >= 0) {
+                    val newBook = activeSplit0.version.getBook(tryBookId)
+                    if (newBook != null) {
+                        activeSplit0 = activeSplit0.copy(book = newBook)
+                        display(newBook.chapter_count, 1)
+                        updateAudioForNewChapter()
+                        return@setOnClickListener
+                    }
+                    tryBookId--
+                }
+            } else {
+                // Pindah ke pasal sebelumnya
+                display(chapter_1 - 1, 1)
+                updateAudioForNewChapter()
+            }
+        }
+
+        buttonForward.setOnClickListener {
+            Tracker.trackEvent("audio_forward_click")
+
+            exoplayerController.playOrPause(false)
+
+            if (chapter_1 >= activeSplit0.book.chapter_count) {
+
+                val maxBookId = activeSplit0.version.maxBookIdPlusOne
+                var tryBookId = activeSplit0.book.bookId + 1
+                while (tryBookId < maxBookId) {
+                    val newBook = activeSplit0.version.getBook(tryBookId)
+                    if (newBook != null) {
+                        activeSplit0 = activeSplit0.copy(book = newBook)
+                        display(1, 1)
+                        updateAudioForNewChapter()
+                        return@setOnClickListener
+                    }
+                    tryBookId++
+                }
+            } else {
+                display(chapter_1 + 1, 1)
+                updateAudioForNewChapter()
+            }
+        }
+
+        buttonSpeed.setOnClickListener {
+            showSpeedMenu()
+        }
 
         floater.setListener(floater_listener)
 
@@ -1338,6 +1516,142 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         AppLog.d(TAG, "@@onCreate end")
     }
 
+    private fun showDialogForAI() {
+        val chapter = SharedData.chapter
+        val book = SharedData.book
+        val verse = SharedData.verse?.toString() ?: ""
+
+
+        val titleText = "$book $chapter".uppercase()
+
+        val options = arrayOf(
+            "Ringkasan",
+            "Pengantar dan Latar Belakang",
+            "Topik",
+            "Nama dan Tempat",
+            "Kata Kunci",
+            "Pertanyaan Refleksi dan Diskusi",
+            "Pelajaran dan Doa",
+            "5W1H (Who, What, When, Where, Why, How)",
+            "Hubungan dengan Ayat Lain (Cross-References)",
+            "Struktur dan Gaya Penulisan",
+            "Jenis Tulisan (Literary Genre)",
+            "Konteks Budaya dan Historis",
+            "Hubungan dengan Nubuatan dan Penggenapan",
+            "Tokoh dan Peran Mereka dalam Kisah",
+            "Perbedaan Terjemahan & Tafsiran",
+            "Aplikasi Sehari-hari",
+            "Studi Kata dalam Bahasa Asli",
+            "Sejarah dan Perkembangan Interpretasi"
+        )
+
+        val titleView = TextView(this).apply {
+            text = titleText
+            textSize = 24f
+            setPadding(16, 32, 16, 16)
+            gravity = Gravity.CENTER
+            setTypeface(null, Typeface.BOLD)
+        }
+
+        AlertDialog.Builder(this)
+            .setCustomTitle(titleView)
+            .setItems(options) { _, which ->
+                val selectedOption = options[which]
+                openAIWithSelectedOption(selectedOption)
+            }
+            .setNegativeButton("Batal", null)
+            .show()
+    }
+
+    // Fungsi untuk membuka URL dengan parameter yang dipilih
+    private fun openAIWithSelectedOption(selectedOption: String) {
+        val chapter = SharedData.chapter
+        val book = SharedData.book
+
+        val url = "https://gpt.sabda.org/wa/openai.php?d=$selectedOption&p=$book $chapter"
+
+        val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+        startActivity(intent)
+    }
+
+    private fun showSpeedMenu() {
+        val popupMenu = PopupMenu(this, buttonSpeed)
+        popupMenu.menu.apply {
+            add(0, 1, 0, "0.5x")
+            add(0, 2, 0, "0.9x")
+            add(0, 3, 0, "1.0x")
+            add(0, 4, 0, "1.1x")
+            add(0, 5, 0, "1.25x")
+            add(0, 6, 0, "1.5x")
+            add(0, 7, 0, "1.75x")
+            add(0, 8, 0, "2.0x")
+        }
+
+        val currentSpeed = exoplayerController.getPlaybackSpeed()
+        when (currentSpeed) {
+            0.5f -> popupMenu.menu.findItem(1)?.isChecked = true
+            0.9f -> popupMenu.menu.findItem(2)?.isChecked = true
+            1.0f -> popupMenu.menu.findItem(3)?.isChecked = true
+            1.1f -> popupMenu.menu.findItem(4)?.isChecked = true
+            1.25f -> popupMenu.menu.findItem(5)?.isChecked = true
+            1.5f -> popupMenu.menu.findItem(6)?.isChecked = true
+            1.75f -> popupMenu.menu.findItem(7)?.isChecked = true
+            2.0f -> popupMenu.menu.findItem(8)?.isChecked = true
+        }
+
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                1 -> exoplayerController.setPlaybackSpeed(0.5f)
+                2 -> exoplayerController.setPlaybackSpeed(0.9f)
+                3 -> exoplayerController.setPlaybackSpeed(1.0f)
+                4 -> exoplayerController.setPlaybackSpeed(1.1f)
+                5 -> exoplayerController.setPlaybackSpeed(1.25f)
+                6 -> exoplayerController.setPlaybackSpeed(1.5f)
+                7 -> exoplayerController.setPlaybackSpeed(1.75f)
+                8 -> exoplayerController.setPlaybackSpeed(2.0f)
+            }
+            true
+        }
+
+        popupMenu.show()
+    }
+
+    private fun toggleAudioBar() {
+        isAudioVisible = !isAudioVisible
+        audioBar.visibility = if (isAudioVisible) View.VISIBLE else View.GONE
+
+        val panelBackForwardList = findViewById<LinearLayout>(R.id.panelBackForwardList)
+
+        val params = panelBackForwardList.layoutParams as ViewGroup.MarginLayoutParams
+        params.bottomMargin = if (isAudioVisible) dpToPx(50) else dpToPx(0)
+        panelBackForwardList.layoutParams = params
+    }
+
+    private fun dpToPx(dp: Int): Int {
+        return (dp * Resources.getSystem().displayMetrics.density).toInt()
+    }
+
+    private fun generateAudioUrl(): String {
+        val bookCode = SharedData.bookcode?.plus(1) ?: 1
+        val bookName = SharedData.book ?: return ""
+        val chapter = SharedData.chapter ?: 1
+        val formattedChapter = String.format("%03d", chapter)
+
+        val abbr = BookAbbrManager.bookAbbrMap[bookName] ?: return ""
+
+        return "https://media.sabda.org/__tes/${bookCode}_${bookName.lowercase()}/32k/${bookCode}_${abbr}${formattedChapter}.mp3"
+    }
+
+    private fun updateAudioForNewChapter() {
+        val newAudioUrl = generateAudioUrl() // Buat URL audio baru berdasarkan pasal yang baru
+        exoplayerController.mediaKnownToExist(newAudioUrl)
+        exoplayerController.setAudioUrl(newAudioUrl)
+
+        exoplayerController.state = MediaController.State.reset_media_known_to_exist
+
+        AppLog.d("MainActivity", "Audio URL telah diperbarui: $newAudioUrl")
+    }
+
     private fun callAttentionForVerseToBothSplits(verse_1: Int) {
         lsSplit0.callAttentionForVerse(verse_1)
         lsSplit1.callAttentionForVerse(verse_1)
@@ -1349,6 +1663,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         App.getLbm().unregisterReceiver(reloadAttributeMapReceiver)
 
         App.getLbm().unregisterReceiver(needsRestartReceiver)
+
+        exoplayerController.reset()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -2336,6 +2652,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         val pericope_blocks = mutableListOf<PericopeBlock>()
         val nblock = version.loadPericope(book.bookId, chapter_1, pericope_aris, pericope_blocks)
 
+        SharedData.bookcode = book.bookId
+        SharedData.book = book.shortName
+        SharedData.chapter = chapter_1
+
         val retainSelectedVerses = !uncheckAllVerses && chapter_1 == current_chapter_1
         setDataWithRetainSelectedVerses(
             cr = cr,
@@ -2429,6 +2749,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     fun bLeft_click() {
         Tracker.trackEvent("nav_left_click")
+        exoplayerController.playOrPause(false)
         val currentBook = activeSplit0.book
         if (chapter_1 == 1) {
             // we are in the beginning of the book, so go to prev book
@@ -2439,6 +2760,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     activeSplit0 = activeSplit0.copy(book = newBook)
                     val newChapter_1 = newBook.chapter_count // to the last chapter
                     display(newChapter_1, 1)
+                    updateAudioForNewChapter()
                     break
                 }
                 tryBookId--
@@ -2447,11 +2769,13 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         } else {
             val newChapter = chapter_1 - 1
             display(newChapter, 1)
+            updateAudioForNewChapter()
         }
     }
 
     fun bRight_click() {
         Tracker.trackEvent("nav_right_click")
+        exoplayerController.playOrPause(false)
         val currentBook = activeSplit0.book
         if (chapter_1 >= currentBook.chapter_count) {
             val maxBookId = activeSplit0.version.maxBookIdPlusOne
@@ -2461,6 +2785,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 if (newBook != null) {
                     activeSplit0 = activeSplit0.copy(book = newBook)
                     display(1, 1)
+                    updateAudioForNewChapter()
                     break
                 }
                 tryBookId++
@@ -2469,6 +2794,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         } else {
             val newChapter = chapter_1 + 1
             display(newChapter, 1)
+            updateAudioForNewChapter()
         }
     }
 
@@ -2917,6 +3243,88 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 positiveButton(R.string.ok)
             }
         }
+    }
+
+    override fun onPlayerStateChanged(isPlaying: Boolean) {
+        buttonPlay.setImageResource(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play)
+    }
+
+    object SharedData {
+        var bookcode: Int? = null
+        var book: String? = null
+        var chapter: Int? = null
+        var verse: String? = null
+    }
+
+    object BookAbbrManager {
+        val bookAbbrMap: Map<String, String> = mapOf(
+            "Kejadian" to "kej",
+            "Keluaran" to "kel",
+            "Imamat" to "im",
+            "Bilangan" to "bil",
+            "Ulangan" to "ul",
+            "Yosua" to "yos",
+            "Hakim-hakim" to "hak",
+            "Rut" to "rut",
+            "1 Samuel" to "1sam",
+            "2 Samuel" to "2sam",
+            "1 Raja-raja" to "1raj",
+            "2 Raja-raja" to "2raj",
+            "1 Tawarikh" to "1taw",
+            "2 Tawarikh" to "2taw",
+            "Ezra" to "ezr",
+            "Nehemia" to "neh",
+            "Ester" to "est",
+            "Ayub" to "ayb",
+            "Mazmur" to "mzm",
+            "Amsal" to "ams",
+            "Pengkhotbah" to "pkh",
+            "Kidung Agung" to "kid",
+            "Yesaya" to "yes",
+            "Yeremia" to "yer",
+            "Ratapan" to "rat",
+            "Yehezkiel" to "yeh",
+            "Daniel" to "dan",
+            "Hosea" to "hos",
+            "Yoel" to "yol",
+            "Amos" to "am",
+            "Obaja" to "ob",
+            "Yunus" to "yun",
+            "Mikha" to "mik",
+            "Nahum" to "nah",
+            "Habakuk" to "hab",
+            "Zefanya" to "zef",
+            "Hagai" to "hag",
+            "Zakharia" to "zak",
+            "Maleakhi" to "mal",
+            "Matius" to "mat",
+            "Markus" to "mrk",
+            "Lukas" to "luk",
+            "Yohanes" to "yoh",
+            "Kisah Para Rasul" to "kis",
+            "Roma" to "rom",
+            "1 Korintus" to "1kor",
+            "2 Korintus" to "2kor",
+            "Galatia" to "gal",
+            "Efesus" to "ef",
+            "Filipi" to "flp",
+            "Kolose" to "kol",
+            "1 Tesalonika" to "1tes",
+            "2 Tesalonika" to "2tes",
+            "1 Timotius" to "1tim",
+            "2 Timotius" to "2tim",
+            "Titus" to "tit",
+            "Filemon" to "flm",
+            "Ibrani" to "ibr",
+            "Yakobus" to "yak",
+            "1 Petrus" to "1ptr",
+            "2 Petrus" to "2ptr",
+            "1 Yohanes" to "1yoh",
+            "2 Yohanes" to "2yoh",
+            "3 Yohanes" to "3yoh",
+            "Yudas" to "yud",
+            "Wahyu" to "why"
+        )
     }
 
     companion object {

@@ -26,6 +26,10 @@ android {
     }
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 dependencies {
     implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
     implementation "androidx.preference:preference:$androidxPreferenceVersion"

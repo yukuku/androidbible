@@ -26,6 +26,10 @@ android {
     }
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 dependencies {
     implementation project(':Afw')
     implementation project(':AlkitabIo')

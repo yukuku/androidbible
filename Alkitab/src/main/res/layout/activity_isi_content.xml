@@ -78,11 +78,76 @@
 			android:layout_height="0dp"
 			android:layout_weight="1">
 
+			<LinearLayout
+				android:id="@+id/imageContainer"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:baselineAligned="false"
+				android:orientation="horizontal"
+				android:gravity="center"
+				android:padding="8dp"
+				android:layout_marginBottom="8dp">
+
+				<RelativeLayout
+					android:id="@+id/media_layout"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="1">
+
+					<ImageView
+						android:id="@+id/iconAudio"
+						android:layout_width="20dp"
+						android:layout_height="20dp"
+						android:layout_margin="5dp"
+						android:src="@drawable/ic_audio"
+						android:contentDescription="audio"/>
+
+					<ImageView
+						android:id="@+id/iconVideo"
+						android:layout_width="20dp"
+						android:layout_height="20dp"
+						android:layout_margin="5dp"
+						android:src="@drawable/ic_video"
+						android:contentDescription="video"
+						android:layout_toEndOf="@id/iconAudio"/>
+
+				</RelativeLayout>
+
+				<RelativeLayout
+					android:id="@+id/interlinear_ai_layout"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="1">
+
+					<ImageView
+						android:id="@+id/iconInterlinear"
+						android:layout_width="20dp"
+						android:layout_height="20dp"
+						android:layout_margin="5dp"
+						android:src="@drawable/ic_interlinear"
+						android:contentDescription="interlinear"
+						android:visibility="gone"
+						android:layout_toStartOf="@id/iconAI"/>
+
+					<ImageView
+						android:id="@+id/iconAI"
+						android:layout_width="20dp"
+						android:layout_height="20dp"
+						android:layout_margin="5dp"
+						android:src="@drawable/ic_ai"
+						android:contentDescription="AI"
+						android:layout_alignParentEnd="true"/>
+
+				</RelativeLayout>
+
+			</LinearLayout>
+
 			<yuku.alkitab.base.widget.TwofingerLinearLayout
 				android:id="@+id/splitRoot"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:orientation="vertical"
+				android:layout_marginTop="40dp"
 				tools:ignore="NestedWeights">
 
 				<yuku.alkitab.base.verses.EmptyableRecyclerView
@@ -155,7 +220,17 @@
 
 			</LinearLayout>
 
+			<include
+				android:id="@+id/audiobar"
+				layout="@layout/activity_audio"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:visibility="gone"
+				android:layout_gravity="bottom"/>
+
 		</FrameLayout>
+
+
 
 	</LinearLayout>
 

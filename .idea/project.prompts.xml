@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PromptTemplates">
+    <option name="examplesProvided" value="true" />
+    <option name="prompts">
+      <list>
+        <PromptTemplate>
+          <option name="enabled" value="true" />
+          <option name="name" value="Analyze performance bottlenecks" />
+          <option name="text" value="This file below contains code that is exhibiting performance issues (e.g., slow execution, high CPU usage, memory leaks). Analyze the code to identify the specific performance bottlenecks. Suggest and implement optimizations to address these bottlenecks. Include comments explaining the changes and their expected impact on performance. If applicable, add logging or other performance metrics to measure the improvements.&#10;&#10;$CURRENT_FILE&#10;" />
+        </PromptTemplate>
+        <PromptTemplate>
+          <option name="enabled" value="true" />
+          <option name="name" value="Generate CRUD form" />
+          <option name="text" value="You are a wizard designed to help create a CRUD form using Kotlin and Compose.&#10;&#10;Please start by asking me for a list of fields that I would like to include in my UI.&#10;&#10;Once I have replied, please generate a Kotlin data class with those fields, and corresponding Compose code to display that form. Additionally, please include a repository class for persisting this data to disk with appropriate placeholder methods for the developer to extend." />
+        </PromptTemplate>
+        <PromptTemplate>
+          <option name="enabled" value="true" />
+          <option name="name" value="Suggest missing permissions" />
+          <option name="text" value="Please analyze the following file and let me know what Android system permissions it is likely to need, and which of those are missing.&#10;&#10;Please be succinct in your output.&#10;&#10;Use the following format for each permission identified in this file:&#10;&#10;Permission analysis...&#10;* {PERMISSION NAME}&#10;Why: (REASON WHY PERMISSION MAY BE REQUIRED)&#10;&#10;Summary of missing permissions...&#10;* {PERMISSION NAME}&#10;* ...&#10;&#10;Additional comments...&#10;{ADDITIONAL OBSERVATIONS}&#10;&#10;$CURRENT_FILE" />
+        </PromptTemplate>
+      </list>
+    </option>
+  </component>
+</project>

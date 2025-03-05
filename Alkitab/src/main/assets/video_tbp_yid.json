@@ -1,0 +1,552 @@
+[
+    {
+        "data": [
+            {
+                "id": "2",
+                "title": "Ringkasan: Kejadian 1-11",
+                "yid": "K_Gd265GYZ4",
+                "position": "Kejadian 1"
+            },
+            {
+                "id": "3",
+                "title": "Ringkasan: Kejadian 12-50",
+                "yid": "AMvbbGitx3Q",
+                "position": "Kejadian 12"
+            },
+            {
+                "id": "4",
+                "title": "Ringkasan: Keluaran 1-18",
+                "yid": "BlEk0x7Q8uY",
+                "position": "Keluaran 1"
+            },
+            {
+                "id": "5",
+                "title": "Ringkasan: Keluaran 19-40",
+                "yid": "3x-zHo7U_WE",
+                "position": "Keluaran 19"
+            },
+            {
+                "id": "6",
+                "title": "Ringkasan: Imamat",
+                "yid": "bguCNZvhUiQ",
+                "position": "Imamat 1"
+            },
+            {
+                "id": "7",
+                "title": "Ringkasan: Bilangan",
+                "yid": "GlZpY2VJqPk",
+                "position": "Bilangan 1"
+            },
+            {
+                "id": "8",
+                "title": "Ringkasan: Ulangan",
+                "yid": "kLwuBAFBNBg",
+                "position": "Ulangan 1"
+            },
+            {
+                "id": "9",
+                "title": "Ringkasan: Yosua",
+                "yid": "BraD9UPtWGw",
+                "position": "Yosua 1"
+            },
+            {
+                "id": "10",
+                "title": "Ringkasan: Hakim-hakim",
+                "yid": "0xoJlaPfOiM",
+                "position": "Hakim-hakim 1"
+            },
+            {
+                "id": "11",
+                "title": "Ringkasan: Rut",
+                "yid": "dHiRnlFu6yo",
+                "position": "Rut 1"
+            },
+            {
+                "id": "12",
+                "title": "Ringkasan: 1 Samuel",
+                "yid": "FkulFlha45c",
+                "position": "1 Samuel 1"
+            },
+            {
+                "id": "13",
+                "title": "Ringkasan: 2 Samuel",
+                "yid": "yxNy34ZS0xc",
+                "position": "2 Samuel 1"
+            },
+            {
+                "id": "14",
+                "title": "Ringkasan: 1-2 Raja-raja",
+                "yid": "f9CRYzJH7es",
+                "position": "1 Raja-raja 1, 2 Raja-raja 1"
+            },
+            {
+                "id": "15",
+                "title": "Ringkasan: 1-2 Tawarikh",
+                "yid": "_0Xuth1lw44",
+                "position": "1 Tawarikh 1, 2 Tawarikh 1"
+            },
+            {
+                "id": "16",
+                "title": "Ringkasan: Ezra-Nehemia",
+                "yid": "wWAZHTpSxYg",
+                "position": "Ezra 1, Nehemia 1"
+            },
+            {
+                "id": "17",
+                "title": "Ringkasan: Ester",
+                "yid": "7gbN2TbmCaM",
+                "position": "Ester 1"
+            },
+            {
+                "id": "18",
+                "title": "Ringkasan: Ayub",
+                "yid": "6PhUHYInJO4",
+                "position": "Ayub 1"
+            },
+            {
+                "id": "19",
+                "title": "Ringkasan: Mazmur",
+                "yid": "Gj2ZJSTXE1E",
+                "position": "Mazmur 1"
+            },
+            {
+                "id": "20",
+                "title": "Ringkasan: Amsal",
+                "yid": "He75ZssdAN0",
+                "position": "Amsal 1"
+            },
+            {
+                "id": "21",
+                "title": "Ringkasan: Pengkhotbah",
+                "yid": "bzT7jzh2F58",
+                "position": "Pengkhotbah 1"
+            },
+            {
+                "id": "22",
+                "title": "Ringkasan: Kidung Agung",
+                "yid": "VfhaM-OESHU",
+                "position": ""
+            },
+            {
+                "id": "23",
+                "title": "Ringkasan: Yesaya 1-39",
+                "yid": "rMvwI5evHwk",
+                "position": "Yesaya 1"
+            },
+            {
+                "id": "24",
+                "title": "Ringkasan: Yesaya 40-66",
+                "yid": "JKLwf7UQjCc",
+                "position": "Yesaya 40"
+            },
+            {
+                "id": "25",
+                "title": "Ringkasan: Yeremia",
+                "yid": "HJ6Fws_Kwzo",
+                "position": "Yeremia 1"
+            },
+            {
+                "id": "26",
+                "title": "Ringkasan: Ratapan",
+                "yid": "FIE-3rb5dbk",
+                "position": "Ratapan 1"
+            },
+            {
+                "id": "27",
+                "title": "Ringkasan: Yehezkiel 1-33",
+                "yid": "kq29NrX417Q",
+                "position": "Yehezkiel 1"
+            },
+            {
+                "id": "28",
+                "title": "Ringkasan: Yehezkiel 34-48",
+                "yid": "9zIynmJBMbs",
+                "position": "Yehezkiel 34"
+            },
+            {
+                "id": "29",
+                "title": "Ringkasan: Daniel",
+                "yid": "KskRV6MWc7c",
+                "position": "Daniel 1"
+            },
+            {
+                "id": "30",
+                "title": "Ringkasan: Hosea",
+                "yid": "jz_OxntlZHA",
+                "position": "Hosea 1"
+            },
+            {
+                "id": "31",
+                "title": "Ringkasan: Yoel",
+                "yid": "O_1iFajwdZQ",
+                "position": "Yoel 1"
+            },
+            {
+                "id": "32",
+                "title": "Ringkasan: Amos",
+                "yid": "DDzzwuKtutw",
+                "position": "Amos 1"
+            },
+            {
+                "id": "33",
+                "title": "Ringkasan: Obaja",
+                "yid": "kMf4WW1n5Pc",
+                "position": "Obaja 1"
+            },
+            {
+                "id": "34",
+                "title": "Ringkasan: Yunus",
+                "yid": "GFRXBZQGoPQ",
+                "position": "Yunus 1"
+            },
+            {
+                "id": "35",
+                "title": "Ringkasan: Mikha",
+                "yid": "-rfYJczXJcU",
+                "position": "Mikha 1"
+            },
+            {
+                "id": "36",
+                "title": "Ringkasan: Nahum",
+                "yid": "ffnM7hqVfrU",
+                "position": "Nahum 1"
+            },
+            {
+                "id": "37",
+                "title": "Ringkasan: Habakuk",
+                "yid": "HHztlgmXoDU",
+                "position": "Habakuk 1"
+            },
+            {
+                "id": "38",
+                "title": "Ringkasan: Zefanya",
+                "yid": "6c_zrjO6Vio",
+                "position": "Zefanya 1"
+            },
+            {
+                "id": "39",
+                "title": "Ringkasan: Hagai",
+                "yid": "kz62QTe4YAs",
+                "position": "Hagai 1"
+            },
+            {
+                "id": "40",
+                "title": "Ringkasan: Zakharia",
+                "yid": "CclWiAKZsKI",
+                "position": "Zakharia 1"
+            },
+            {
+                "id": "41",
+                "title": "Ringkasan: Maleakhi",
+                "yid": "lOzQkLn2joM",
+                "position": "Maleakhi 1"
+            },
+            {
+                "id": "42",
+                "title": "Ringkasan: Matius 1-13",
+                "yid": "r7wxWUcgf1s",
+                "position": "Matius 1"
+            },
+            {
+                "id": "43",
+                "title": "Ringkasan: Matius 14-28",
+                "yid": "EZzDp447uk4",
+                "position": "Matius 14"
+            },
+            {
+                "id": "44",
+                "title": "Ringkasan: Markus",
+                "yid": "UucekJFIQ58",
+                "position": "Markus 1"
+            },
+            {
+                "id": "45",
+                "title": "Ringkasan: Lukas 1-9",
+                "yid": "vHb9Uw3UzZA",
+                "position": "Lukas 1"
+            },
+            {
+                "id": "46",
+                "title": "Ringkasan: Lukas 10-24",
+                "yid": "qRR87q9U9x4",
+                "position": "Lukas 10"
+            },
+            {
+                "id": "47",
+                "title": "Ringkasan: Yohanes 1-12",
+                "yid": "La4OHUqv_D8",
+                "position": "Yohanes 1"
+            },
+            {
+                "id": "48",
+                "title": "Ringkasan: Yohanes 13-21",
+                "yid": "U73HFzHSkdI",
+                "position": "Yohanes 13"
+            },
+            {
+                "id": "49",
+                "title": "Ringkasan: Kisah Para Rasul 1-12",
+                "yid": "S73ZmLcr_o8",
+                "position": "Kisah Para Rasul 1"
+            },
+            {
+                "id": "50",
+                "title": "Ringkasan: Kisah Para Rasul 13-28",
+                "yid": "tAGdzk8N4H0",
+                "position": "Kisah Para Rasul 13"
+            },
+            {
+                "id": "51",
+                "title": "Ringkasan: Roma 1-4",
+                "yid": "MK2CuUevKU0",
+                "position": "Roma 1"
+            },
+            {
+                "id": "52",
+                "title": "Ringkasan: Roma 5-16",
+                "yid": "3N-aocQkRt4",
+                "position": "Roma 5"
+            },
+            {
+                "id": "53",
+                "title": "Ringkasan: 1 Korintus",
+                "yid": "y6NdqCPDC1U",
+                "position": "1 Korintus 1"
+            },
+            {
+                "id": "54",
+                "title": "Ringkasan: 2 Korintus",
+                "yid": "jqBZFSfYI9E",
+                "position": "2 Korintus 1"
+            },
+            {
+                "id": "55",
+                "title": "Ringkasan: Galatia",
+                "yid": "KW6RvlHuPSk",
+                "position": "Galatia 1"
+            },
+            {
+                "id": "56",
+                "title": "Ringkasan: Efesus",
+                "yid": "qtw8IA7949E",
+                "position": "Efesus 1"
+            },
+            {
+                "id": "57",
+                "title": "Ringkasan: Filipi",
+                "yid": "VH8kBNeiiD0",
+                "position": "Filipi 1"
+            },
+            {
+                "id": "58",
+                "title": "Ringkasan: Kolose",
+                "yid": "Wg-jSyeleQE",
+                "position": "Kolose 1"
+            },
+            {
+                "id": "59",
+                "title": "Ringkasan: 1 Tesalonika",
+                "yid": "vLYVfz-9x50",
+                "position": "1 Tesalonika 1"
+            },
+            {
+                "id": "60",
+                "title": "Baca Alkitab: 2 Tesalonika",
+                "yid": "Og_ogcyWFLY",
+                "position": "2 Tesalonika 1"
+            },
+            {
+                "id": "61",
+                "title": "Ringkasan: 1 Timotius",
+                "yid": "kBwKFuHfnPU",
+                "position": "1 Timotius 1"
+            },
+            {
+                "id": "62",
+                "title": "Ringkasan: 2 Timotius",
+                "yid": "MIf5uMPUVXQ",
+                "position": "2 Timotius 1"
+            },
+            {
+                "id": "63",
+                "title": "Ringkasan: Titus",
+                "yid": "sAcIQp5niYI",
+                "position": "Titus 1"
+            },
+            {
+                "id": "64",
+                "title": "Ringkasan: Filemon",
+                "yid": "J_zP6hz67zQ",
+                "position": "Filemon 1"
+            },
+            {
+                "id": "65",
+                "title": "Ringkasan: Ibrani",
+                "yid": "mBdg2ienJSM",
+                "position": "Ibrani 1"
+            },
+            {
+                "id": "66",
+                "title": "Ringkasan: Yakobus",
+                "yid": "x3KsWUO0NB8",
+                "position": "Yakobus 1"
+            },
+            {
+                "id": "67",
+                "title": "Ringkasan: 1 Petrus",
+                "yid": "1Ww263guCqo",
+                "position": "1 Petrus 1"
+            },
+            {
+                "id": "68",
+                "title": "Ringkasan: 2 Petrus",
+                "yid": "2mEabPcQhpc",
+                "position": "2 Petrus 1"
+            },
+            {
+                "id": "69",
+                "title": "Ringkasan: 1-3 Yohanes",
+                "yid": "UW7gulPRS9s",
+                "position": "1 Yohanes 1, 2 Yohanes 1, 3 Yohanes 1"
+            },
+            {
+                "id": "70",
+                "title": "Ringkasan: Yudas",
+                "yid": "IgAF9wjpBoE",
+                "position": "Yudas 1"
+            },
+            {
+                "id": "71",
+                "title": "Ringkasan: Wahyu 1-11",
+                "yid": "f7Sv1sxmtDY",
+                "position": "Wahyu 1"
+            },
+            {
+                "id": "72",
+                "title": "Ringkasan: Wahyu 12-22",
+                "yid": "3WoyaMsdUck",
+                "position": "Wahyu 12"
+            },
+            {
+                "id": "73",
+                "title": "Injil Markus",
+                "yid": "W4d66PubwT0",
+                "position": "Markus"
+            },
+            {
+                "id": "74",
+                "title": "Kelahiran Yesus: Lukas 1-2",
+                "yid": "fmeHRAhG240",
+                "position": "Lukas 1"
+            },
+            {
+                "id": "75",
+                "title": "Pembaptisan Yesus: Lukas 3-9",
+                "yid": "n5Z1XmEKBYw",
+                "position": "Lukas 3"
+            },
+            {
+                "id": "76",
+                "title": "Anak yang Hilang: Lukas 9-19",
+                "yid": "eWjW5XrJ_gs",
+                "position": "Lukas 9"
+            },
+            {
+                "id": "77",
+                "title": "Penyaliban Yesus: Lukas 19-23",
+                "yid": "U2GfARvJK90",
+                "position": "Lukas 19"
+            },
+            {
+                "id": "78",
+                "title": "Kebangkitan Yesus: Lukas 24",
+                "yid": "46k5-1VCdY0",
+                "position": "Lukas 24"
+            },
+            {
+                "id": "79",
+                "title": "Kisah Para Rasul 1-7",
+                "yid": "9DJ2aD7zzrw",
+                "position": "Kisah Para Rasul 1"
+            },
+            {
+                "id": "80",
+                "title": "Kisah Para Rasul 8-12",
+                "yid": "KH9KT20lusA",
+                "position": "Kisah Para Rasul 8"
+            },
+            {
+                "id": "81",
+                "title": "Kisah Para Rasul 13-20",
+                "yid": "QJ8947npC9Y",
+                "position": "Kisah Para Rasul 13"
+            },
+            {
+                "id": "82",
+                "title": "Kisah Para Rasul 21-28",
+                "yid": "BHdnptesbWM",
+                "position": "Kisah Para Rasul 21"
+            },
+            {
+                "id": "83",
+                "title": "Kitab Kejadian - Bagian 1",
+                "yid": "TWMhcg83AWg",
+                "position": "Kejadian 1"
+            },
+            {
+                "id": "84",
+                "title": "Kitab Kejadian - Bagian 2",
+                "yid": "lxgfSqE4u6g",
+                "position": "Kejadian 12"
+            },
+            {
+                "id": "85",
+                "title": "Kitab Keluaran - Bagian 1",
+                "yid": "uWnj3fGpDGc",
+                "position": "Keluaran 1"
+            },
+            {
+                "id": "86",
+                "title": "Kitab Keluaran - Bagian 2",
+                "yid": "AgmSIP_aBs8",
+                "position": "Keluaran 19"
+            },
+            {
+                "id": "87",
+                "title": "Kitab Imamat",
+                "yid": "yotabRqMvcI",
+                "position": "Imamat 1"
+            },
+            {
+                "id": "88",
+                "title": "Kitab Bilangan",
+                "yid": "CpINV3k7S_Q",
+                "position": "Bilangan 1"
+            },
+            {
+                "id": "89",
+                "title": "Kitab Ulangan",
+                "yid": "4z5aY7QPkcM",
+                "position": "Ulangan 1"
+            },
+            {
+                "id": "90",
+                "title": "Kitab Ayub",
+                "yid": "C3jcMCdVc50",
+                "position": "Ayub 1"
+            },
+            {
+                "id": "91",
+                "title": "Kitab Amsal",
+                "yid": "n7CqWxmyCPg",
+                "position": "Amsal 1"
+            },
+            {
+                "id": "92",
+                "title": "Kitab Pengkhotbah",
+                "yid": "3SJTvbMwkBY",
+                "position": "Pengkhotbah 1"
+            }
+        ]
+    }
+]

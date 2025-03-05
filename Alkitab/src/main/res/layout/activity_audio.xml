@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="#455A64"
+	android:layout_alignParentBottom="true">
+
+	<!--<ImageButton
+		android:id="@+id/btn_expand_collapse"
+		android:layout_width="30dp"
+		android:layout_height="40dp"
+		android:contentDescription="Collapse Expand"
+		android:src="@drawable/ic_arrow_up"
+		android:layout_alignParentEnd="true"
+		android:background="#455A64"/>-->
+
+	<RelativeLayout
+		android:id="@+id/audio_controls"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:padding="5dp">
+
+		<ImageView
+			android:id="@+id/button_repeat"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:contentDescription="repeat"
+			android:src="@drawable/ic_repeat"
+			android:layout_marginHorizontal="10dp"
+			android:layout_centerVertical="true"/>
+
+		<ImageView
+			android:id="@+id/button_rewind"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:contentDescription="pasal sebelumnya"
+			android:src="@drawable/ic_rewind"
+			android:layout_marginHorizontal="10dp"
+			android:layout_toStartOf="@id/button_play"
+			android:layout_centerVertical="true"/>
+
+		<ImageView
+			android:id="@+id/button_play"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:contentDescription="play"
+			android:src="@drawable/ic_play"
+			android:layout_centerInParent="true"/>
+
+		<ImageView
+			android:id="@+id/button_forward"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:contentDescription="pasal selanjutnya"
+			android:src="@drawable/ic_forward"
+			android:layout_marginHorizontal="10dp"
+			android:layout_toEndOf="@id/button_play"
+			android:layout_centerVertical="true"/>
+
+		<ImageView
+			android:id="@+id/button_speed"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@drawable/ic_speed"
+			android:contentDescription="speed configuration"
+			android:layout_alignParentEnd="true"
+			android:layout_marginHorizontal="10dp"
+			android:layout_centerVertical="true"/>
+
+	</RelativeLayout>
+
+</RelativeLayout>

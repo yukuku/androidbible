@@ -18,6 +18,9 @@ import java.io.IOException
 import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.debug.R
+import androidx.core.net.toUri
+import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.exoplayer.hls.HlsMediaSource
 
 private const val TAG = "ExoplayerController"
 
@@ -26,29 +29,38 @@ private const val TAG = "ExoplayerController"
  */
 class ExoplayerController(appContext: Context) : MediaController() {
     private var mp = ExoPlayer.Builder(appContext).build()
+    private var callback: ExoplayerCallback? = null
+    private var audioUrl: String? = null
 
     override fun reset() {
         super.reset()
         mp.stop()
     }
 
+    fun setCallback(callback: ExoplayerCallback) {
+        this.callback = callback
+    }
+
+    fun setAudioUrl(url: String) {
+        this.audioUrl = url
+    }
+
     @OptIn(UnstableApi::class)
     override fun playOrPause(playInLoop: Boolean) {
+        AppLog.d(TAG, "playOrPause called, playInLoop: $playInLoop, state: $state")
+
         when (state) {
-            State.reset -> {
-            }
+            State.reset -> { }
 
             State.reset_media_known_to_exist, State.complete, State.error -> {
                 try {
                     state = State.preparing
 
-                    // Produces DataSource instances through which media data is loaded.
-                    val dataSourceFactory = OkHttpDataSource.Factory(Connections.okHttp)
-                        .setUserAgent(Connections.httpUserAgent)
+                    val selectedUrl = audioUrl ?: url.toString()
+                    AppLog.d(TAG, "Selected URL: $selectedUrl")
 
-                    // This is the MediaSource representing the media to be played.
-                    val mediaSource: MediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
-                        .createMediaSource(MediaItem.fromUri(Uri.parse(url)))
+                    val mediaSource = createMediaSource(selectedUrl)
+                    AppLog.d(TAG, "Media source created")
 
                     mediaPlayerPrepare(mediaSource, playInLoop)
                 } catch (e: IOException) {
@@ -57,22 +69,25 @@ class ExoplayerController(appContext: Context) : MediaController() {
                 }
             }
 
-            State.preparing -> {
-            }
+            State.preparing -> { }
 
-            State.playing -> // pause button pressed
-                if (playInLoop) { // looping play is selected, but we are already playing. So just set looping parameter.
+            State.playing -> {
+                AppLog.d(TAG, "State: playing - Pausing playback")
+                if (playInLoop) {
                     mp.repeatMode = Player.REPEAT_MODE_ONE
                 } else {
                     mp.playWhenReady = false
                     state = State.paused
+                    callback?.onPlayerStateChanged(false)
                 }
+            }
 
             State.paused -> {
-                // play button pressed when paused
+                AppLog.d(TAG, "State: paused - Resuming playback")
                 mp.repeatMode = if (playInLoop) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
                 mp.playWhenReady = true
                 state = State.playing
+                callback?.onPlayerStateChanged(true)
             }
         }.let {}
     }
@@ -86,16 +101,17 @@ class ExoplayerController(appContext: Context) : MediaController() {
                     if (state == State.preparing) {
                         mp.playWhenReady = true
                         state = State.playing
+                        callback?.onPlayerStateChanged(true)
                     }
                 }
 
                 Player.STATE_ENDED -> {
                     AppLog.d(TAG, "@@onPlayerStateChanged STATE_ENDED repeatMode=" + mp.repeatMode)
                     state = State.complete
+                    callback?.onPlayerStateChanged(false)
                 }
 
-                else -> {
-                }
+                else -> { }
             }
         }
 
@@ -147,6 +163,21 @@ class ExoplayerController(appContext: Context) : MediaController() {
         }
     }
 
+    @OptIn(UnstableApi::class)
+    private fun createMediaSource(url: String): MediaSource {
+        val uri = url.toUri()
+        val dataSourceFactory = DefaultHttpDataSource.Factory()
+            .setUserAgent(Connections.httpUserAgent)
+
+        return if (url.endsWith(".m3u8")) {
+            HlsMediaSource.Factory(dataSourceFactory)
+                .createMediaSource(MediaItem.fromUri(uri))
+        } else {
+            ProgressiveMediaSource.Factory(dataSourceFactory)
+                .createMediaSource(MediaItem.fromUri(uri))
+        }
+    }
+
     /**
      * @return current position and duration in ms. Any of them can be -1 if unknown.
      */
@@ -170,5 +201,18 @@ class ExoplayerController(appContext: Context) : MediaController() {
         }
 
         else -> longArrayOf(-1, -1)
+    }
+
+    fun setPlaybackSpeed(speed: Float) {
+        val parameters = mp.playbackParameters.withSpeed(speed)
+        mp.playbackParameters = parameters
+    }
+
+    fun getPlaybackSpeed(): Float {
+        return mp.playbackParameters.speed
+    }
+
+    interface ExoplayerCallback {
+        fun onPlayerStateChanged(isPlaying: Boolean)
     }
 }

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="#ffffff"
+	android:padding="16dp">
+
+	<RelativeLayout
+		android:id="@+id/dropdown_layout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@drawable/border_bg"
+		android:layout_toStartOf="@id/closeButton">
+
+		<TextView
+			android:id="@+id/titleTextView"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Ringkasan: Kisah Para Rasul 1-12"
+			android:textSize="18sp"
+			android:textColor="#000000"
+			android:layout_marginBottom="10dp"
+			android:layout_alignParentStart="true"
+			android:layout_centerVertical="true"
+			android:layout_marginStart="10dp"/>
+
+		<ImageView
+			android:id="@+id/dropdownButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@drawable/ic_drop_down"
+			android:layout_alignParentEnd="true"
+			android:layout_centerVertical="true"/>
+
+	</RelativeLayout>
+
+		<ImageView
+			android:id="@+id/closeButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:contentDescription="close"
+			android:src="@drawable/ic_close"
+			android:layout_alignParentEnd="true"
+			android:layout_marginTop="8dp"/>
+
+		<com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+			android:id="@+id/youtubePlayerView"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/dropdown_layout"/>
+
+</RelativeLayout>
