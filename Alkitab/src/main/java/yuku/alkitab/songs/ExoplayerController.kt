@@ -1,16 +1,17 @@
 package yuku.alkitab.songs
 
 import android.content.Context
-import android.net.Uri
 import android.text.TextUtils
 import androidx.annotation.OptIn
+import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.okhttp.OkHttpDataSource
+import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlaybackException
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.afollestad.materialdialogs.MaterialDialog
@@ -18,9 +19,6 @@ import java.io.IOException
 import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.debug.R
-import androidx.core.net.toUri
-import androidx.media3.datasource.DefaultHttpDataSource
-import androidx.media3.exoplayer.hls.HlsMediaSource
 
 private const val TAG = "ExoplayerController"
 

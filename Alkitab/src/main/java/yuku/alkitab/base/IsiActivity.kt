@@ -24,7 +24,6 @@ import android.text.style.RelativeSizeSpan
 import android.text.style.URLSpan
 import android.view.Gravity
 import android.view.KeyEvent
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -36,7 +35,6 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupMenu
-import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -103,7 +101,6 @@ import yuku.alkitab.base.util.TargetDecoder
 import yuku.alkitab.base.util.YTPlayerUtil
 import yuku.alkitab.base.util.safeQuery
 import yuku.alkitab.base.util.toIntArray
-import yuku.alkitab.base.verses.EmptyableRecyclerView
 import yuku.alkitab.base.verses.VerseAttributeLoader
 import yuku.alkitab.base.verses.VersesController
 import yuku.alkitab.base.verses.VersesControllerImpl
@@ -1236,8 +1233,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
             }
 
             AppLog.d(TAG, "Video button clicked")
-            val book = SharedData.book
-            val chapter = SharedData.chapter
+            val book = activeSplit0.book.shortName
+            val chapter = chapter_1
+
             YTPlayerUtil().showVideoIfExists(this, book.toString(), chapter)
         }
 
@@ -1517,10 +1515,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
     }
 
     private fun showDialogForAI() {
-        val chapter = SharedData.chapter
-        val book = SharedData.book
-        val verse = SharedData.verse?.toString() ?: ""
-
+        val book = activeSplit0.book.shortName
+        val chapter = chapter_1
 
         val titleText = "$book $chapter".uppercase()
 
@@ -1565,8 +1561,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
 
     // Fungsi untuk membuka URL dengan parameter yang dipilih
     private fun openAIWithSelectedOption(selectedOption: String) {
-        val chapter = SharedData.chapter
-        val book = SharedData.book
+        val book = activeSplit0.book.shortName
+        val chapter = chapter_1
 
         val url = "https://gpt.sabda.org/wa/openai.php?d=$selectedOption&p=$book $chapter"
 
@@ -1632,9 +1628,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
     }
 
     private fun generateAudioUrl(): String {
-        val bookCode = SharedData.bookcode?.plus(1) ?: 1
-        val bookName = SharedData.book ?: return ""
-        val chapter = SharedData.chapter ?: 1
+        val bookCode = activeSplit0.book.bookId.plus(1)
+        val bookName = activeSplit0.book.shortName
+        val chapter = chapter_1
         val formattedChapter = String.format("%03d", chapter)
 
         val abbr = BookAbbrManager.bookAbbrMap[bookName] ?: return ""
@@ -2652,10 +2648,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
         val pericope_blocks = mutableListOf<PericopeBlock>()
         val nblock = version.loadPericope(book.bookId, chapter_1, pericope_aris, pericope_blocks)
 
-        SharedData.bookcode = book.bookId
-        SharedData.book = book.shortName
-        SharedData.chapter = chapter_1
-
         val retainSelectedVerses = !uncheckAllVerses && chapter_1 == current_chapter_1
         setDataWithRetainSelectedVerses(
             cr = cr,
@@ -3247,13 +3239,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
 
     override fun onPlayerStateChanged(isPlaying: Boolean) {
         buttonPlay.setImageResource(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play)
-    }
-
-    object SharedData {
-        var bookcode: Int? = null
-        var book: String? = null
-        var chapter: Int? = null
-        var verse: String? = null
     }
 
     object BookAbbrManager {

@@ -11,6 +11,21 @@
       <entry name="!?*.kt" />
       <entry name="!?*.clj" />
     </wildcardResourcePatterns>
-    <bytecodeTargetLevel target="17" />
+    <bytecodeTargetLevel target="17">
+      <module name="androidbible.Afw" target="21" />
+      <module name="androidbible.AlkitabFeedback" target="21" />
+      <module name="androidbible.AlkitabIntegration" target="21" />
+      <module name="androidbible.AlkitabIo" target="21" />
+      <module name="androidbible.ATree" target="21" />
+      <module name="androidbible.BiblePlus" target="21" />
+      <module name="androidbible.BintexReader" target="21" />
+      <module name="androidbible.BintexWriter" target="21" />
+      <module name="androidbible.DragSortListView" target="21" />
+      <module name="androidbible.FlowLayout" target="21" />
+      <module name="androidbible.ImportedDesktopVerseUtil" target="21" />
+      <module name="androidbible.KpriModel" target="21" />
+      <module name="androidbible.PrDownloaderFixed" target="21" />
+      <module name="androidbible.Snappy" target="21" />
+    </bytecodeTargetLevel>
   </component>
 </project>
