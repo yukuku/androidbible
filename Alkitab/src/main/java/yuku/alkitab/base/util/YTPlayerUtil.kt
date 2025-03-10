@@ -2,6 +2,7 @@ package yuku.alkitab.base.util
 
 import android.app.Dialog
 import android.content.Context
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
@@ -11,14 +12,12 @@ import android.widget.ListView
 import android.widget.PopupWindow
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-import java.io.IOException
 import yuku.alkitab.base.model.MVideo
 import yuku.alkitab.debug.R
 
@@ -26,6 +25,7 @@ class YTPlayerUtil {
     private var currentDialog: Dialog? = null
     private var currentYoutubePlayer: YouTubePlayer? = null
 
+    @RequiresApi(Build.VERSION_CODES.P)
     fun showYoutubePopup(context: Context, video: MVideo) {
 
         if (currentDialog?.isShowing == true) {
@@ -36,24 +36,25 @@ class YTPlayerUtil {
         currentDialog = createDialog(context, video).apply { show() }
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun createDialog(context: Context, video: MVideo): Dialog {
         return Dialog(context).apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(LayoutInflater.from(context).inflate(R.layout.dialog_youtube_player, null))
 
-            findViewById<TextView>(R.id.titleTextView)?.text = video.title
+            requireViewById<TextView>(R.id.titleTextView).text = video.title
 
-            val youTubePlayerView = findViewById<YouTubePlayerView>(R.id.youtubePlayerView)
+            val youTubePlayerView = requireViewById<YouTubePlayerView>(R.id.youtubePlayerView)
             initializeYouTubePlayer(youTubePlayerView, video.yid)
 
-            findViewById<ImageView>(R.id.closeButton)?.setOnClickListener { dismiss() }
+            requireViewById<ImageView>(R.id.closeButton).setOnClickListener { dismiss() }
 
-            val dropdownButton = findViewById<ImageView>(R.id.dropdownButton)
-            setupDropdownButton(context, dropdownButton, video)
+            val dropdownButton = requireViewById<ImageView>(R.id.dropdownButton)
+            setupDropdownButton(dropdownButton, video)
 
-            val dropdownLayout = findViewById<RelativeLayout>(R.id.dropdown_layout)
-            dropdownLayout?.setOnClickListener {
-                showVideoSelectionPopup(context, it, video)
+            val dropdownLayout = requireViewById<RelativeLayout>(R.id.dropdown_layout)
+            dropdownLayout.setOnClickListener {
+                showVideoSelectionDropdown(context, it, video)
             }
 
             setOnDismissListener {
@@ -63,8 +64,8 @@ class YTPlayerUtil {
         }
     }
 
-    private fun setupDropdownButton(context: Context, dropdownButton: ImageView?, video: MVideo) {
-        val relatedVideos = loadVideoListFromAssets(context).filter { it.position == video.position }
+    private fun setupDropdownButton(dropdownButton: ImageView?, video: MVideo) {
+        val relatedVideos = GeneratedVideos.videoList.filter { it.position == video.position }
         dropdownButton?.visibility = if (relatedVideos.size > 1) View.VISIBLE else View.GONE
     }
 
@@ -77,20 +78,9 @@ class YTPlayerUtil {
         })
     }
 
-    private fun loadVideoListFromAssets(context: Context): List<MVideo> {
-        return try {
-            val jsonString = context.assets.open("video_tbp_yid.json").bufferedReader().use { it.readText() }
-            val listType = object : TypeToken<List<Map<String, List<MVideo>>>>() {}.type
-            Gson().fromJson<List<Map<String, List<MVideo>>>>(jsonString, listType)
-                .flatMap { it["data"] ?: emptyList() }
-        } catch (e: IOException) {
-            e.printStackTrace()
-            emptyList()
-        }
-    }
-
+    @RequiresApi(Build.VERSION_CODES.P)
     fun showVideoIfExists(context: Context, book: String, chapter: Int?) {
-        val videoList = loadVideoListFromAssets(context)
+        val videoList = GeneratedVideos.videoList
             .filter { video ->
                 video.position.split(", ").any { it.startsWith(book) }
             }
@@ -119,8 +109,9 @@ class YTPlayerUtil {
         showYoutubePopup(context, selectedVideo)
     }
 
-    fun showVideoSelectionPopup(context: Context, anchorView: View, currentVideo: MVideo) {
-        val videoList = loadVideoListFromAssets(context)
+    @RequiresApi(Build.VERSION_CODES.P)
+    fun showVideoSelectionDropdown(context: Context, anchorView: View, currentVideo: MVideo) {
+        val videoList = GeneratedVideos.videoList
             .filter { video ->
                 video.position.split(", ").any { it.startsWith(currentVideo.position.split(" ")[0]) }
             }
@@ -154,7 +145,7 @@ class YTPlayerUtil {
         listView.setOnItemClickListener { _, _, position, _ ->
             val selectedVideo = videoList[position]
 
-            currentDialog?.findViewById<TextView>(R.id.titleTextView)?.text = selectedVideo.title
+            currentDialog?.requireViewById<TextView>(R.id.titleTextView)?.text = selectedVideo.title
 
             showYoutubePopup(context, selectedVideo)
             popupWindow.dismiss()
