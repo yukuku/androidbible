@@ -56,6 +56,7 @@ import yuku.alkitab.model.Version
 import yuku.alkitab.util.Ari
 import yuku.alkitab.util.IntArrayList
 import yuku.alkitabintegration.display.Launcher
+import androidx.core.util.size
 
 private const val EXTRA_openedBookId = "openedBookId"
 private const val REQCODE_bookFilter = 1
@@ -388,7 +389,7 @@ class SearchActivity : BaseActivity() {
         val oneOfThemOn = run {
             var c = 0
             var k = 0
-            for (i in 0 until selectedBookIds.size()) {
+            for (i in 0 until selectedBookIds.size) {
                 if (selectedBookIds.valueAt(i)) {
                     k = selectedBookIds.keyAt(i)
                     c++
@@ -426,7 +427,7 @@ class SearchActivity : BaseActivity() {
                 tFilterAdvanced.visibility = View.VISIBLE
                 var cnt = 0
                 var bookId = 0
-                for (i in 0 until selectedBookIds.size()) {
+                for (i in 0 until selectedBookIds.size) {
                     if (selectedBookIds.valueAt(i)) {
                         cnt++
                         bookId = selectedBookIds.keyAt(i)

@@ -512,4 +512,10 @@
     <!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Изтегляния</string>
     <string name="notification_channel_devotion_downloader_name">Изтегляне на посвещения</string>
+    <!-- Network -->
+	<string name="network_title">Проблеми с интернет връзката</string>
+    <string name="network_message">Моля, свържете устройството към интернет, за да стартирате тази функция.</string>
+	<string name="play_the_audio">възпроизвеждане на звука</string>
+	<string name="repeat">Повтаряне на тази глава</string>
+	<string name="next_chapters">Продължете към следващата глава</string>
 </resources>

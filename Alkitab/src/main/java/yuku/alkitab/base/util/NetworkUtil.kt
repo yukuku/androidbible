@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.appcompat.app.AlertDialog
+import yuku.alkitab.debug.R
 
 object NetworkUtil {
 
@@ -16,8 +17,8 @@ object NetworkUtil {
 
     fun showNoInternetDialog(context: Context) {
         AlertDialog.Builder(context)
-            .setTitle("Masalah Koneksi Internet")
-            .setMessage("Silakan sambungkan perangkat dengan internet untuk menjalankan fitur ini.")
+            .setTitle(R.string.network_title)
+            .setMessage(R.string.network_message)
             .setCancelable(false)
             .setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss()

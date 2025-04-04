@@ -512,4 +512,10 @@
     <!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">ဒေါင်းလုဒ်ဆွဲချထားသည့် ဖိုင်များ</string>
     <string name="notification_channel_devotion_downloader_name">ဒေါင်းလုဒ်ဆွဲချထားသည့် ဝတ်ပြုရေးဆိုင်ရာ ဖိုင်များ</string>
+    <!-- Network -->
+	<string name="network_title">အင်တာနက်ချိတ်ဆက်မှုပြဿနာ</string>
+    <string name="network_message">ဤလုပ်ဆောင်မှုကို အသုံးပြုရန် သင့်စက်ကို အင်တာနက်နှင့်ချိတ်ဆက်ပါ။</string>
+	<string name="play_the_audio">အသံဖွင့်ပါ</string>
+	<string name="repeat">ဤအခန်းကိုမင်္ဂလာပါ</string>
+	<string name="next_chapters">နောက်ထပ်အခန်းဆက်ဖတ်ပါ</string>
 </resources>

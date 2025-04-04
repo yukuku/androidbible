@@ -517,4 +517,10 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Descărcări</string>
     <string name="notification_channel_devotion_downloader_name">Descărcări devoționale</string>
+    <!-- Network -->
+	<string name="network_title">Probleme de conectare la internet</string>
+    <string name="network_message">Vă rugăm să conectați dispozitivul la internet pentru a rula această funcție.</string>
+	<string name="play_the_audio">redarea audio</string>
+	<string name="repeat">Repetați acest capitol</string>
+	<string name="next_chapters">Continuați la următorul capitol</string>
 </resources>

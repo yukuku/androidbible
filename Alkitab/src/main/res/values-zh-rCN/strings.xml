@@ -517,4 +517,10 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">下载</string>
     <string name="notification_channel_devotion_downloader_name">灵修下载</string>
+    <!-- Network -->
+    <string name="network_title">网络连接问题</string>
+    <string name="network_message">请将您的设备连接到互联网以使用此功能。</string>
+	<string name="play_the_audio">"播放音频 "</string>
+	<string name="repeat">重复本章</string>
+	<string name="next_chapters">继续阅读下一章</string>
 </resources>

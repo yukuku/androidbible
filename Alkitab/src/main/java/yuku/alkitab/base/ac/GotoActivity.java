@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -156,7 +157,7 @@ public class GotoActivity extends BaseActivity implements BaseGotoFragment.GotoF
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(INSTANCE_STATE_tab, viewPager.getCurrentItem());
     }
@@ -168,6 +169,7 @@ public class GotoActivity extends BaseActivity implements BaseGotoFragment.GotoF
             super(fm);
         }
 
+        @NonNull
         @Override
         public Fragment getItem(final int position) {
             final Fragment res;

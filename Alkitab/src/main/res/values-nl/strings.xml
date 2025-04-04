@@ -517,4 +517,10 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Downloads</string>
     <string name="notification_channel_devotion_downloader_name">Devotie downloads</string>
+    <!-- Network -->
+	<string name="network_title">Problemen met internetverbinding</string>
+    <string name="network_message">Sluit het apparaat aan op het internet om deze functie uit te voeren.</string>
+	<string name="play_the_audio">de audio afspelen</string>
+	<string name="repeat">Herhaal dit hoofdstuk</string>
+	<string name="next_chapters">Ga verder naar het volgende hoofdstuk</string>
 </resources>

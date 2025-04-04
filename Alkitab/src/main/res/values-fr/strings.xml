@@ -517,4 +517,10 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Téléchargement</string>
     <string name="notification_channel_devotion_downloader_name">Téléchargement dévotionnel</string>
+    <!-- Network -->
+	<string name="network_title">Problèmes de connexion à l\'internet</string>
+    <string name="network_message">Veuillez connecter l\'appareil à l\'internet pour utiliser cette fonction.</string>
+	<string name="play_the_audio">lire l\'audio</string>
+	<string name="repeat">Répéter ce chapitre</string>
+	<string name="next_chapters">Passez au chapitre suivant</string>
 </resources>

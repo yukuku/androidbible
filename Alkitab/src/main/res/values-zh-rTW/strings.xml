@@ -509,4 +509,11 @@
     <!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">下載</string>
     <string name="notification_channel_devotion_downloader_name">靈修下載</string>
+    <!-- Network -->
+    <string name="network_title">" 網路連線問題"</string>
+    <string name="network_message">請將您的裝置連接到網際網路以使用此功能。</string>
+	<string name="play_the_audio">播放音訊</string>
+
+    <string name="repeat">重复本章</string>
+	<string name="next_chapters">繼續閱讀下一章</string>
 </resources>

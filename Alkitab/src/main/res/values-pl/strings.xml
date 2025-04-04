@@ -517,4 +517,10 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Pobrane</string>
     <string name="notification_channel_devotion_downloader_name">Pobrane rozważania</string>
+    <!-- Network -->
+	<string name="network_title">"Problemy z połączeniem internetowym "</string>
+    <string name="network_message">Aby uruchomić tę funkcję, należy podłączyć urządzenie do Internetu.</string>
+	<string name="play_the_audio">odtwarzanie dźwięku</string>
+	<string name="repeat">Powtórz ten rozdział</string>
+	<string name="next_chapters">Przejdź do następnego rozdziału</string>
 </resources>

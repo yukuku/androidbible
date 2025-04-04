@@ -461,4 +461,10 @@
     <string name="maps_could_not_open">Nem sikerült megnyitni a Bible Maps alkalmazást.</string>
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Letöltések</string>
+    <!-- Network -->
+	<string name="network_title">Internetkapcsolati problémák</string>
+    <string name="network_message">Kérjük, csatlakoztassa a készüléket az internethez a funkció futtatásához.</string>
+	<string name="play_the_audio">lejátszani a hangot</string>
+	<string name="repeat">Ismételje meg ezt a fejezetet</string>
+	<string name="next_chapters">Folytassa a következő fejezettel</string>
 </resources>

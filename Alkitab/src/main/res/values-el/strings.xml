@@ -510,4 +510,10 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Κατέβασμα από τον υπολογιστή διάφορες φορές</string>
     <string name="notification_channel_devotion_downloader_name">Κατέβασμα φακέλλων με αγαπημένο περιεχόμενο</string>
+    <!-- Network -->
+	<string name="network_title">Πρόβλημα σύνδεσης στο διαδίκτυο</string>
+    <string name="network_message">" Παρακαλούμε συνδέστε τη συσκευή στο διαδίκτυο για να εκτελέσετε αυτή τη λειτουργία."</string>
+	<string name="play_the_audio">αναπαράγετε τον ήχο</string>
+	<string name="repeat">Επαναλάβετε αυτό το κεφάλαιο</string>
+	<string name="next_chapters">Συνεχίστε στο επόμενο κεφάλαιο</string>
 </resources>

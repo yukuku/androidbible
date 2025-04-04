@@ -510,4 +510,10 @@
     <!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Afgelaai</string>
     <string name="notification_channel_devotion_downloader_name">Toewydings afgelaai</string>
+    <!-- Network -->
+    <string name="network_title">Internetverbinding Probleem</string>
+    <string name="network_message">Koppel asseblief jou toestel aan die internet om hierdie funksie te gebruik.</string>
+	<string name="play_the_audio">Speel Klank</string>
+	<string name="repeat">Herhaal hierdie hoofstuk</string>
+	<string name="next_chapters">Gaan voort na die volgende hoofstuk</string>
 </resources>

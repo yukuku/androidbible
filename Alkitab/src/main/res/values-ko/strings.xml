@@ -512,4 +512,11 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">다운로드</string>
     <string name="notification_channel_devotion_downloader_name">묵상 다운로드</string>
+    <!-- Network -->
+	<string name="network_title">인터넷 연결 문제</string>
+    <string name="network_message">이 기능을 실행하려면 기기를 인터넷에 연결하세요.</string>
+	<string name="play_the_audio">오디오 재생</string>
+
+	<string name="repeat">이 장을 반복합니다.</string>
+	<string name="next_chapters">다음 장으로 계속하기</string>
 </resources>

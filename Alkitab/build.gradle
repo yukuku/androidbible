@@ -117,7 +117,7 @@ dependencies {
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion"
 
     // Firebase
-    implementation platform('com.google.firebase:firebase-bom:33.10.0')
+    implementation platform('com.google.firebase:firebase-bom:33.11.0')
     implementation "com.google.firebase:firebase-messaging"
     implementation "com.google.firebase:firebase-crashlytics"
 

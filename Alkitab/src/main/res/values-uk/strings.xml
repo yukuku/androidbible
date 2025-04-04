@@ -513,4 +513,10 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Завантаження</string>
     <string name="notification_channel_devotion_downloader_name">Завантаження роздумів</string>
+    <!-- Network -->
+	<string name="network_title">"Проблеми з підключенням до Інтернету "</string>
+    <string name="network_message">Підключіть пристрій до Інтернету, щоб запустити цю функцію.</string>
+	<string name="play_the_audio">відтворити аудіо</string>
+	<string name="repeat">Повторіть цей розділ</string>
+	<string name="next_chapters">Перейдіть до наступного розділу</string>
 </resources>

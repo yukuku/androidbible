@@ -1,13 +1,18 @@
 package yuku.alkitab.base.util
 
+import yuku.alkitab.base.model.MAudio
 import yuku.alkitab.base.model.MVideo
 
-object GeneratedVideos {
-    val videoList: List<MVideo> by lazy {
-        VIDEOS
-    }
+object MediaList {
 
-    private val VIDEOS = listOf(
+    val AUDIO = listOf(
+        MAudio("TB", "tb_alkitabsuara", "tb", "tb_otnt"),
+        MAudio("AYT", "ayt-ai-v2"),
+        MAudio("AVB", "avb"),
+        MAudio("KJV", "kjv")
+    )
+
+    val VIDEOS = listOf(
         MVideo("Ringkasan: Kejadian 1-11", "K_Gd265GYZ4", "Kejadian 1"),
         MVideo("Ringkasan: Kejadian 12-50", "AMvbbGitx3Q", "Kejadian 12"),
         MVideo("Ringkasan: Keluaran 1-18", "BlEk0x7Q8uY", "Keluaran 1"),
@@ -28,7 +33,7 @@ object GeneratedVideos {
         MVideo("Ringkasan: Mazmur", "Gj2ZJSTXE1E", "Mazmur 1"),
         MVideo("Ringkasan: Amsal", "He75ZssdAN0", "Amsal 1"),
         MVideo("Ringkasan: Pengkhotbah", "bzT7jzh2F58", "Pengkhotbah 1"),
-        MVideo("Ringkasan: Kidung Agung", "VfhaM-OESHU", ""),
+        MVideo("Ringkasan: Kidung Agung", "VfhaM-OESHU", "Kidung Agung 1"),
         MVideo("Ringkasan: Yesaya 1-39", "rMvwI5evHwk", "Yesaya 1"),
         MVideo("Ringkasan: Yesaya 40-66", "JKLwf7UQjCc", "Yesaya 40"),
         MVideo("Ringkasan: Yeremia", "HJ6Fws_Kwzo", "Yeremia 1"),
@@ -100,4 +105,6 @@ object GeneratedVideos {
         MVideo("Kitab Amsal", "n7CqWxmyCPg", "Amsal 1"),
         MVideo("Kitab Pengkhotbah", "3SJTvbMwkBY", "Pengkhotbah 1")
     )
+
+
 }

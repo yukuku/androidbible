@@ -74,57 +74,63 @@ public abstract class LeftDrawer extends NestedScrollView {
 		super.onFinishInflate();
 
 		setClickable(true);
-		for (int i = 0, len = getChildCount(); i < len; i++) {
+		disableDuplicateParentState();
+		initializeButtons();
+		highlightCurrentSection();
+		configureVisibility();
+		setButtonListeners();
+	}
+
+	private void disableDuplicateParentState() {
+		for (int i = 0; i < getChildCount(); i++) {
 			getChildAt(i).setDuplicateParentStateEnabled(false);
 		}
+	}
 
+	private void initializeButtons() {
 		bBible = findViewById(R.id.bBible);
 		bDevotion = findViewById(R.id.bDevotion);
 		bReadingPlan = findViewById(R.id.bReadingPlan);
 		bSongs = findViewById(R.id.bSongs);
 		bSettings = findViewById(R.id.bSettings);
 		bHelp = findViewById(R.id.bHelp);
+	}
 
+	private void highlightCurrentSection() {
 		if (this instanceof Text) setDrawerItemSelected(bBible);
-		if (this instanceof Devotion) setDrawerItemSelected(bDevotion);
-		if (this instanceof ReadingPlan) setDrawerItemSelected(bReadingPlan);
-		if (this instanceof Songs) setDrawerItemSelected(bSongs);
+		else if (this instanceof Devotion) setDrawerItemSelected(bDevotion);
+		else if (this instanceof ReadingPlan) setDrawerItemSelected(bReadingPlan);
+		else if (this instanceof Songs) setDrawerItemSelected(bSongs);
+	}
 
-		// hide and show according to app config
+	private void configureVisibility() {
 		if (!isInEditMode()) {
 			bSongs.setVisibility(AppConfig.get().menuSongs ? VISIBLE : GONE);
 			bDevotion.setVisibility(AppConfig.get().menuDevotion ? VISIBLE : GONE);
 		}
+	}
 
-		bBible.setOnClickListener(v -> {
-			bBible_click();
+	private void setButtonListeners() {
+		setButtonClickListener(bBible, this::bBible_click);
+		setButtonClickListener(bDevotion, this::bDevotion_click);
+		setButtonClickListener(bReadingPlan, this::bReadingPlan_click);
+		setButtonClickListener(bSongs, this::bSongs_click);
+		setButtonClickListener(bSettings, this::bSettings_click);
+		setButtonClickListener(bHelp, this::bHelp_click);
+	}
+
+	private void setButtonClickListener(View button, Runnable action) {
+		button.setOnClickListener(v -> {
+			hideAudioBarIfVisible();
+			action.run();
 			closeDrawer();
 		});
+	}
 
-		bDevotion.setOnClickListener(v -> {
-			bDevotion_click();
-			closeDrawer();
-		});
-
-		bReadingPlan.setOnClickListener(v -> {
-			bReadingPlan_click();
-			closeDrawer();
-		});
-
-		bSongs.setOnClickListener(v -> {
-			bSongs_click();
-			closeDrawer();
-		});
-
-		bSettings.setOnClickListener(v -> {
-			bSettings_click();
-			closeDrawer();
-		});
-
-		bHelp.setOnClickListener(v -> {
-			bHelp_click();
-			closeDrawer();
-		});
+	private void hideAudioBarIfVisible() {
+		if (activity instanceof IsiActivity) {
+			((IsiActivity) activity).hideAudioBarIfVisible();
+		}
 	}
 
 	void setDrawerItemSelected(@NonNull TextView drawerItem) {

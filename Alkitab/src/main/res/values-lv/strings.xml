@@ -512,4 +512,10 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Lejupielādes</string>
     <string name="notification_channel_devotion_downloader_name">Mācīšanās lejuplādes</string>
+    <!-- Network -->
+	<string name="network_title">Interneta savienojuma problēmas</string>
+    <string name="network_message">Lai varētu palaist šo funkciju, lūdzu, pievienojiet ierīci internetam.</string>
+	<string name="play_the_audio">atskaņot audio</string>
+	<string name="repeat">Atkārtojiet šo nodaļu</string>
+	<string name="next_chapters">Turpiniet uz nākamo nodaļu</string>
 </resources>

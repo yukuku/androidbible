@@ -510,4 +510,10 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Muat turun</string>
     <string name="notification_channel_devotion_downloader_name">Muat turun Pengabdian</string>
+    <!-- Network -->
+	<string name="network_title">Masalah Sambungan Internet</string>
+    <string name="network_message">Sila sambungkan peranti anda ke internet untuk menggunakan fungsi ini.</string>
+	<string name="play_the_audio">Mainkan audio</string>
+	<string name="repeat">Ulangi bab ini</string>
+	<string name="next_chapters">Teruskan ke bab seterusnya</string>
 </resources>

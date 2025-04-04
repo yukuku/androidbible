@@ -528,4 +528,12 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Unduhan</string>
     <string name="notification_channel_devotion_downloader_name">Unduhan renungan</string>
+
+    <!-- Network -->
+    <string name="network_title">Masalah Koneksi Internet</string>
+    <string name="network_message">Silakan sambungkan perangkat dengan internet untuk menjalankan fitur ini.</string>
+    <string name="play_the_audio">Putar audio</string>
+
+	<string name="repeat">Ulangi Pasal Ini</string>
+	<string name="next_chapters">Lanjutkan ke Pasal Selanjutnya</string>
 </resources>

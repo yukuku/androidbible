@@ -512,4 +512,10 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">ดาวน์โหลด</string>
     <string name="notification_channel_devotion_downloader_name">รายการดาวน์โหลดบทความประจำวัน</string>
+    <!-- Network -->
+	<string name="network_title">ปัญหาการเชื่อมต่ออินเทอร์เน็ต</string>
+    <string name="network_message">" โปรดเชื่อมต่ออุปกรณ์ของคุณกับอินเทอร์เน็ตเพื่อใช้ฟีเจอร์นี้"</string>
+	<string name="play_the_audio">เล่นเสียง</string>
+	<string name="repeat">ทำซ้ำบทนี้</string>
+	<string name="next_chapters">ดำเนินการต่อไปยังบทถัดไป</string>
 </resources>

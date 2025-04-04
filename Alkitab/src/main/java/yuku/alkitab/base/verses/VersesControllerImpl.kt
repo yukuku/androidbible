@@ -2,20 +2,24 @@ package yuku.alkitab.base.verses
 
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.text.SpannableStringBuilder
+import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.concurrent.atomic.AtomicInteger
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.S
+import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.util.TargetDecoder
@@ -72,7 +76,7 @@ class VersesControllerImpl(
                 }
                 notifyItemChanged(position)
 
-                if (checkedPositions.size > 0) {
+                if (checkedPositions.isNotEmpty()) {
                     listeners.selectedVersesListener.onSomeVersesSelected(getCheckedVerses_1())
                 } else {
                     listeners.selectedVersesListener.onNoVersesSelected()
@@ -470,6 +474,7 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         checked: Boolean,
         toggleChecked: (position: Int) -> Unit,
         index: Int,
+        highlightColor: Int,
     ) {
         val verse_1 = index + 1
         val ari = Ari.encodeWithBc(data.ari_bc_, verse_1)
@@ -507,6 +512,16 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
             lVerseNumber.setTextColor(selectedTextColor)
         }
 
+
+        view.background = if (highlightColor != 0)
+            if (Preferences.getBoolean(Prefkey.is_night_mode, true)) {
+                ContextCompat.getDrawable(view.context, R.drawable.border_bg_night)
+            } else {
+                ContextCompat.getDrawable(view.context, R.drawable.border_bg)
+            }
+        else
+            null
+
         val attributeView = view.attributeView
         attributeView.setScale(scaleForAttributeView(S.applied().fontSize2dp * ui.textSizeMult))
         attributeView.bookmarkCount = data.versesAttributes.bookmarkCountMap_[index]
@@ -518,25 +533,25 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         view.checked = checked
         view.collapsed = text.isEmpty() && !attributeView.isShowingSomething
         view.onPinDropped = { presetId ->
-            val adapterPosition = adapterPosition
-            if (adapterPosition != -1) {
+            val adapterPosition = bindingAdapterPosition
+            if (adapterPosition != RecyclerView.NO_POSITION) {
                 listeners.pinDropListener.onPinDropped(presetId, Ari.encodeWithBc(data.ari_bc_, data.getVerse_1FromPosition(adapterPosition)))
             }
         }
 
-        /*
+        /**
          * Dictionary mode is activated on either of these conditions:
          * 1. user manually activate dictionary mode after selecting verses
          * 2. automatic lookup is on and this verse is selected (checked)
          */
         if (ari in ui.dictionaryModeAris || checked && Preferences.getBoolean(view.context.getString(R.string.pref_autoDictionaryAnalyze_key), view.resources.getBoolean(R.bool.pref_autoDictionaryAnalyze_default))) {
             val renderedText = lText.text
-            val verseText = if (renderedText is SpannableStringBuilder) renderedText else SpannableStringBuilder(renderedText)
+            val verseText = renderedText as? SpannableStringBuilder ?: SpannableStringBuilder(renderedText)
 
             // we have to exclude the verse numbers from analyze text
             val analyzeString = verseText.toString().substring(startVerseTextPos)
 
-            val uri = Uri.parse("content://org.sabda.kamus.provider/analyze").buildUpon().appendQueryParameter("text", analyzeString).build()
+            val uri = "content://org.sabda.kamus.provider/analyze".toUri().buildUpon().appendQueryParameter("text", analyzeString).build()
 
             try {
                 view.context.contentResolver.safeQuery(uri, null, null, null, null)?.use { c ->
@@ -581,19 +596,18 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         // Click listener on the whole item view
         view.setOnClickListener {
             when (ui.verseSelectionMode) {
-                VersesController.VerseSelectionMode.none -> {
-                }
+                VersesController.VerseSelectionMode.none -> return@setOnClickListener
 
                 VersesController.VerseSelectionMode.singleClick -> {
-                    val adapterPosition = adapterPosition
-                    if (adapterPosition != -1) {
+                    val adapterPosition = bindingAdapterPosition
+                    if (adapterPosition != RecyclerView.NO_POSITION) {
                         listeners.selectedVersesListener.onVerseSingleClick(data.getVerse_1FromPosition(adapterPosition))
                     }
                 }
 
                 VersesController.VerseSelectionMode.multiple -> {
-                    val adapterPosition = adapterPosition
-                    if (adapterPosition != -1) {
+                    val adapterPosition = bindingAdapterPosition
+                    if (adapterPosition != RecyclerView.NO_POSITION) {
                         toggleChecked(adapterPosition)
                     }
                 }
@@ -727,6 +741,14 @@ class VersesAdapter(
             notifyDataSetChanged()
         }
 
+    private val highlightedVerses = mutableMapOf<Int, Int>()
+
+    fun updateHighlight(verseNumber: Int, color: Int) {
+        Log.d(TAG, "updateHighlight - verseNumber1: $verseNumber, color: $color")
+        highlightedVerses[verseNumber] = color
+        notifyDataSetChanged()
+    }
+
     override fun getItemCount(): Int {
         return data.itemCount
     }
@@ -774,7 +796,11 @@ class VersesAdapter(
         when (holder) {
             is VerseTextHolder -> {
                 val index = data.getVerse_0(position)
-                holder.bind(data, ui, listeners, attention, isChecked(position), { toggleChecked(it) }, index)
+                val highlightColor = highlightedVerses[index] ?: 0
+
+                Log.d(TAG, "onBindViewHolder - position: $position, verse: $index, highlightColor: $highlightColor")
+
+                holder.bind(data, ui, listeners, attention, isChecked(position), { toggleChecked(it) }, index, highlightColor)
             }
 
             is PericopeHolder -> {

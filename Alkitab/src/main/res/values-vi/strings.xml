@@ -517,4 +517,10 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Các tài liệu được tải về</string>
     <string name="notification_channel_devotion_downloader_name">Các tài liệu bồi linh tĩnh tâm được tải về</string>
+    <!-- Network -->
+	<string name="network_title">Sự cố kết nối Internet</string>
+    <string name="network_message">Vui lòng kết nối thiết bị của bạn với Internet để sử dụng tính năng này.</string>
+	<string name="play_the_audio">Phát âm thanh</string>
+	<string name="repeat">Lặp lại chương này</string>
+	<string name="next_chapters">Tiếp tục đến chương tiếp theo</string>
 </resources>

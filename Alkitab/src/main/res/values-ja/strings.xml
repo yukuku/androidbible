@@ -512,4 +512,11 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">ダウンロード</string>
     <string name="notification_channel_devotion_downloader_name">デボーションのダウンロード情報</string>
+    <!-- Network -->
+	<string name="network_title">インターネット接続の問題</string>
+    <string name="network_message">この機能を実行するには、デバイスをインターネットに接続してください。</string>
+	<string name="play_the_audio">オーディオを再生する</string>
+
+	<string name="repeat">この章を繰り返す</string>
+	<string name="next_chapters">次の章へ進む</string>
 </resources>

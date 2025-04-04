@@ -517,4 +517,10 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">İndirilenler</string>
     <string name="notification_channel_devotion_downloader_name">Bağlılık indirmeleri</string>
+    <!-- Network -->
+	<string name="network_title">İnternet Bağlantı Sorunları</string>
+    <string name="network_message">Bu özelliği çalıştırmak için lütfen cihazı internete bağlayın.</string>
+	<string name="play_the_audio">ses çalma</string>
+	<string name="repeat">Bu bölümü tekrarlayın</string>
+	<string name="next_chapters">Bir sonraki bölüme devam et</string>
 </resources>

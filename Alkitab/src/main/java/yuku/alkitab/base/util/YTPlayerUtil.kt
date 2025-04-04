@@ -21,6 +21,8 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 import yuku.alkitab.base.model.MVideo
 import yuku.alkitab.debug.R
 
+private const val TAG = "YTPlayerUtil"
+
 class YTPlayerUtil {
     private var currentDialog: Dialog? = null
     private var currentYoutubePlayer: YouTubePlayer? = null
@@ -41,32 +43,36 @@ class YTPlayerUtil {
         return Dialog(context).apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(LayoutInflater.from(context).inflate(R.layout.dialog_youtube_player, null))
+            setupDialogViews(this, context, video)
+            setOnDismissListener { clearCurrentDialog() }
+        }
+    }
 
-            requireViewById<TextView>(R.id.titleTextView).text = video.title
+    @RequiresApi(Build.VERSION_CODES.P)
+    private fun setupDialogViews(dialog: Dialog, context: Context, video: MVideo) {
+        dialog.requireViewById<TextView>(R.id.titleTextView).text = video.title
 
-            val youTubePlayerView = requireViewById<YouTubePlayerView>(R.id.youtubePlayerView)
-            initializeYouTubePlayer(youTubePlayerView, video.yid)
+        val youTubePlayerView = dialog.requireViewById<YouTubePlayerView>(R.id.youtubePlayerView)
+        initializeYouTubePlayer(youTubePlayerView, video.yid)
 
-            requireViewById<ImageView>(R.id.closeButton).setOnClickListener { dismiss() }
+        dialog.requireViewById<ImageView>(R.id.closeButton).setOnClickListener { dialog.dismiss() }
 
-            val dropdownButton = requireViewById<ImageView>(R.id.dropdownButton)
-            setupDropdownButton(dropdownButton, video)
+        val dropdownButton = dialog.requireViewById<ImageView>(R.id.dropdownButton)
+        setupDropdownButton(dropdownButton, video)
 
-            val dropdownLayout = requireViewById<RelativeLayout>(R.id.dropdown_layout)
-            dropdownLayout.setOnClickListener {
-                showVideoSelectionDropdown(context, it, video)
-            }
-
-            setOnDismissListener {
-                currentDialog = null
-                currentYoutubePlayer = null
-            }
+        dialog.requireViewById<RelativeLayout>(R.id.dropdown_layout).setOnClickListener {
+            showVideoSelectionDropdown(context, it, video)
         }
     }
 
     private fun setupDropdownButton(dropdownButton: ImageView?, video: MVideo) {
-        val relatedVideos = GeneratedVideos.videoList.filter { it.position == video.position }
+        val relatedVideos = MediaList.VIDEOS.filter { it.position == video.position }
         dropdownButton?.visibility = if (relatedVideos.size > 1) View.VISIBLE else View.GONE
+    }
+
+    private fun clearCurrentDialog() {
+        currentDialog = null
+        currentYoutubePlayer = null
     }
 
     fun initializeYouTubePlayer(youTubePlayerView: YouTubePlayerView, videoUrl: String) {
@@ -80,30 +86,15 @@ class YTPlayerUtil {
 
     @RequiresApi(Build.VERSION_CODES.P)
     fun showVideoIfExists(context: Context, book: String, chapter: Int?) {
-        val videoList = GeneratedVideos.videoList
-            .filter { video ->
-                video.position.split(", ").any { it.startsWith(book) }
-            }
+        val videoList = MediaList.VIDEOS.filter { it.position.startsWith(book) }
+
+        AppLog.d(TAG, "showVideoIfExists: book=$book, chapter=$chapter, videoList=$videoList")
 
         if (videoList.isEmpty()) return
 
-        val parsedVideos = videoList.map { video ->
-            val positions = video.position.split(", ")
-            positions.mapNotNull { pos ->
-                val match = Regex("(.+) (\\d+)").find(pos)
-                match?.let {
-                    val videoBook = it.groupValues[1]
-                    val videoChapter = it.groupValues[2].toIntOrNull()
-                    if (videoChapter != null) videoBook to videoChapter to video else null
-                }
-            }
-        }.flatten()
-
-        val exactMatch = parsedVideos.find { it.first.second == chapter }?.second
-        val fallbackMatch = parsedVideos
-            .filter { it.first.second <= (chapter ?: 0) }
-            .maxByOrNull { it.first.second }
-            ?.second
+        val exactMatch = videoList.find { it.chapter == chapter }
+        val fallbackMatch = videoList.filter { (it.chapter ?: 0) <= (chapter ?: 0) }
+            .maxByOrNull { it.chapter ?: 0 }
 
         val selectedVideo = exactMatch ?: fallbackMatch ?: return
         showYoutubePopup(context, selectedVideo)
@@ -111,7 +102,7 @@ class YTPlayerUtil {
 
     @RequiresApi(Build.VERSION_CODES.P)
     fun showVideoSelectionDropdown(context: Context, anchorView: View, currentVideo: MVideo) {
-        val videoList = GeneratedVideos.videoList
+        val videoList = MediaList.VIDEOS
             .filter { video ->
                 video.position.split(", ").any { it.startsWith(currentVideo.position.split(" ")[0]) }
             }

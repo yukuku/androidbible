@@ -8,7 +8,9 @@
 		android:layout_height="wrap_content"
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_alignParentStart="true"
-		android:layout_toStartOf="@+id/attributeView">
+		android:layout_toStartOf="@+id/attributeView"
+		android:paddingHorizontal="5dp"
+		android:paddingVertical="5dp">
 
 		<TextView
 			android:id="@+id/lVerseNumber"

@@ -510,4 +510,10 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Overførsler</string>
     <string name="notification_channel_devotion_downloader_name">Andagtsoverførsler</string>
+    <!-- Network -->
+	<string name="network_title">Problemer med internetforbindelsen</string>
+    <string name="network_message">Slut enheden til internettet for at køre denne funktion.</string>
+	<string name="play_the_audio">Afspil lyden</string>
+	<string name="repeat">Gentag dette kapitel</string>
+	<string name="next_chapters">Fortsæt til næste kapitel</string>
 </resources>

@@ -506,5 +506,11 @@
     <string name="menuCommentary">Komentaryo</string>
     <!-- Maps -->
     <string name="maps_could_not_open">Dili ma abli ang Bible Maps app.</string>
-    <!-- Notification channels -->
+    <!-- Network -->
+	<string name="network_title">Problema sa Koneksyon sa Internet</string>
+    <string name="network_message">Palihug ikonektar ang imong device sa internet aron magamit kini nga feature.</string>
+	<string name="play_the_audio">Patugtog sa Audio</string>
+	<string name="repeat">Usba kini nga kapitulo</string>
+	<string name="next_chapters">Padayon sa sunod nga kapitulo</string>
+	<!-- Notification channels -->
 </resources>

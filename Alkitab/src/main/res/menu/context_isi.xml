@@ -106,4 +106,10 @@
 		android:title="@string/ribka_menu_report"
 		app:showAsAction="never" />
 
+	<item
+		android:id="@+id/menuPlay"
+		android:icon="@drawable/ic_action_play"
+		android:title="@string/play_the_audio"/>
+
+
 </menu>

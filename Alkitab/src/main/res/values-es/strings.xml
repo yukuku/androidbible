@@ -518,4 +518,10 @@ Usted es completamente responsable al descargar y utilizar dichas versiones y yo
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Descargas</string>
     <string name="notification_channel_devotion_downloader_name">Descargas de devoción</string>
+    <!-- Network -->
+	<string name="network_title">Problemas de conexión a Internet</string>
+    <string name="network_message">Conecte el dispositivo a Internet para ejecutar esta función.</string>
+	<string name="play_the_audio">reproducir el audio</string>
+	<string name="repeat">Repita este capítulo</string>
+	<string name="next_chapters">Continúa con el siguiente capítulo</string>
 </resources>
