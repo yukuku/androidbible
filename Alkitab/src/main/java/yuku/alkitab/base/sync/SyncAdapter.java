@@ -116,7 +116,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		return new ArrayList<>(entities_map.values());
 	}
 
-	/*
+	/**
 	 * Specify the code you want to run in the sync adapter. The entire
 	 * sync adapter runs in a background thread, so you don't have to set
 	 * up your own background processing.

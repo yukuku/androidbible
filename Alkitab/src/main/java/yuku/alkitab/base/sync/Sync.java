@@ -254,12 +254,14 @@ public class Sync {
         // make sure sync is enabled.
         final boolean syncAutomatically = ContentResolver.getSyncAutomatically(account, authority);
         if (!syncAutomatically) {
-            ContentResolver.setSyncAutomatically(account, authority, true);
+            ContentResolver.setSyncAutomatically(account, authority, false);
         }
 
         // request sync.
         final Bundle extras = new Bundle();
         extras.putString(SyncAdapter.EXTRA_SYNC_SET_NAMES, App.getDefaultGson().toJson(extraSyncSetNames));
+        extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         ContentResolver.requestSync(account, authority, extras);
     }
 
@@ -532,7 +534,7 @@ public class Sync {
         // make sure sync is enabled.
         final boolean syncAutomatically = ContentResolver.getSyncAutomatically(account, authority);
         if (!syncAutomatically) {
-            ContentResolver.setSyncAutomatically(account, authority, true);
+            ContentResolver.setSyncAutomatically(account, authority, false);
         }
 
         // request sync.
