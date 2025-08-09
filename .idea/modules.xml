@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/androidbible.iml" filepath="$PROJECT_DIR$/.idea/androidbible.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ATree/androidbible.ATree.iml" filepath="$PROJECT_DIR$/.idea/modules/ATree/androidbible.ATree.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ATree/androidbible.ATree.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/ATree/androidbible.ATree.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ATree/androidbible.ATree.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ATree/androidbible.ATree.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ATree/androidbible.ATree.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/ATree/androidbible.ATree.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Afw/androidbible.Afw.iml" filepath="$PROJECT_DIR$/.idea/modules/Afw/androidbible.Afw.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Afw/androidbible.Afw.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/Afw/androidbible.Afw.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Afw/androidbible.Afw.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Afw/androidbible.Afw.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Afw/androidbible.Afw.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/Afw/androidbible.Afw.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Alkitab/androidbible.Alkitab.iml" filepath="$PROJECT_DIR$/.idea/modules/Alkitab/androidbible.Alkitab.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Alkitab/androidbible.Alkitab.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/Alkitab/androidbible.Alkitab.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Alkitab/androidbible.Alkitab.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Alkitab/androidbible.Alkitab.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Alkitab/androidbible.Alkitab.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/Alkitab/androidbible.Alkitab.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlkitabFeedback/androidbible.AlkitabFeedback.iml" filepath="$PROJECT_DIR$/.idea/modules/AlkitabFeedback/androidbible.AlkitabFeedback.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlkitabFeedback/androidbible.AlkitabFeedback.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/AlkitabFeedback/androidbible.AlkitabFeedback.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlkitabFeedback/androidbible.AlkitabFeedback.main.iml" filepath="$PROJECT_DIR$/.idea/modules/AlkitabFeedback/androidbible.AlkitabFeedback.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlkitabFeedback/androidbible.AlkitabFeedback.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/AlkitabFeedback/androidbible.AlkitabFeedback.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlkitabIntegration/androidbible.AlkitabIntegration.iml" filepath="$PROJECT_DIR$/.idea/modules/AlkitabIntegration/androidbible.AlkitabIntegration.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlkitabIntegration/androidbible.AlkitabIntegration.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/AlkitabIntegration/androidbible.AlkitabIntegration.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlkitabIntegration/androidbible.AlkitabIntegration.main.iml" filepath="$PROJECT_DIR$/.idea/modules/AlkitabIntegration/androidbible.AlkitabIntegration.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlkitabIntegration/androidbible.AlkitabIntegration.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/AlkitabIntegration/androidbible.AlkitabIntegration.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlkitabIo/androidbible.AlkitabIo.iml" filepath="$PROJECT_DIR$/.idea/modules/AlkitabIo/androidbible.AlkitabIo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlkitabIo/androidbible.AlkitabIo.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/AlkitabIo/androidbible.AlkitabIo.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlkitabIo/androidbible.AlkitabIo.main.iml" filepath="$PROJECT_DIR$/.idea/modules/AlkitabIo/androidbible.AlkitabIo.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlkitabIo/androidbible.AlkitabIo.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/AlkitabIo/androidbible.AlkitabIo.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlkitabModel/androidbible.AlkitabModel.iml" filepath="$PROJECT_DIR$/.idea/modules/AlkitabModel/androidbible.AlkitabModel.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlkitabModel/androidbible.AlkitabModel.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/AlkitabModel/androidbible.AlkitabModel.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlkitabModel/androidbible.AlkitabModel.main.iml" filepath="$PROJECT_DIR$/.idea/modules/AlkitabModel/androidbible.AlkitabModel.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlkitabModel/androidbible.AlkitabModel.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/AlkitabModel/androidbible.AlkitabModel.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlkitabYes2/androidbible.AlkitabYes2.iml" filepath="$PROJECT_DIR$/.idea/modules/AlkitabYes2/androidbible.AlkitabYes2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlkitabYes2/androidbible.AlkitabYes2.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/AlkitabYes2/androidbible.AlkitabYes2.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlkitabYes2/androidbible.AlkitabYes2.main.iml" filepath="$PROJECT_DIR$/.idea/modules/AlkitabYes2/androidbible.AlkitabYes2.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlkitabYes2/androidbible.AlkitabYes2.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/AlkitabYes2/androidbible.AlkitabYes2.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AmbilWarna/androidbible.AmbilWarna.iml" filepath="$PROJECT_DIR$/.idea/modules/AmbilWarna/androidbible.AmbilWarna.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AmbilWarna/androidbible.AmbilWarna.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/AmbilWarna/androidbible.AmbilWarna.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AmbilWarna/androidbible.AmbilWarna.main.iml" filepath="$PROJECT_DIR$/.idea/modules/AmbilWarna/androidbible.AmbilWarna.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AmbilWarna/androidbible.AmbilWarna.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/AmbilWarna/androidbible.AmbilWarna.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/BiblePlus/androidbible.BiblePlus.iml" filepath="$PROJECT_DIR$/.idea/modules/BiblePlus/androidbible.BiblePlus.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/BiblePlus/androidbible.BiblePlus.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/BiblePlus/androidbible.BiblePlus.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/BiblePlus/androidbible.BiblePlus.main.iml" filepath="$PROJECT_DIR$/.idea/modules/BiblePlus/androidbible.BiblePlus.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/BiblePlus/androidbible.BiblePlus.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/BiblePlus/androidbible.BiblePlus.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/BintexReader/androidbible.BintexReader.iml" filepath="$PROJECT_DIR$/.idea/modules/BintexReader/androidbible.BintexReader.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/BintexReader/androidbible.BintexReader.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/BintexReader/androidbible.BintexReader.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/BintexReader/androidbible.BintexReader.main.iml" filepath="$PROJECT_DIR$/.idea/modules/BintexReader/androidbible.BintexReader.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/BintexReader/androidbible.BintexReader.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/BintexReader/androidbible.BintexReader.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/BintexWriter/androidbible.BintexWriter.iml" filepath="$PROJECT_DIR$/.idea/modules/BintexWriter/androidbible.BintexWriter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/BintexWriter/androidbible.BintexWriter.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/BintexWriter/androidbible.BintexWriter.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/BintexWriter/androidbible.BintexWriter.main.iml" filepath="$PROJECT_DIR$/.idea/modules/BintexWriter/androidbible.BintexWriter.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/BintexWriter/androidbible.BintexWriter.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/BintexWriter/androidbible.BintexWriter.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DragSortListView/androidbible.DragSortListView.iml" filepath="$PROJECT_DIR$/.idea/modules/DragSortListView/androidbible.DragSortListView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DragSortListView/androidbible.DragSortListView.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/DragSortListView/androidbible.DragSortListView.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DragSortListView/androidbible.DragSortListView.main.iml" filepath="$PROJECT_DIR$/.idea/modules/DragSortListView/androidbible.DragSortListView.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DragSortListView/androidbible.DragSortListView.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/DragSortListView/androidbible.DragSortListView.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FlowLayout/androidbible.FlowLayout.iml" filepath="$PROJECT_DIR$/.idea/modules/FlowLayout/androidbible.FlowLayout.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FlowLayout/androidbible.FlowLayout.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/FlowLayout/androidbible.FlowLayout.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FlowLayout/androidbible.FlowLayout.main.iml" filepath="$PROJECT_DIR$/.idea/modules/FlowLayout/androidbible.FlowLayout.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FlowLayout/androidbible.FlowLayout.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/FlowLayout/androidbible.FlowLayout.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ImportedDesktopVerseUtil/androidbible.ImportedDesktopVerseUtil.iml" filepath="$PROJECT_DIR$/.idea/modules/ImportedDesktopVerseUtil/androidbible.ImportedDesktopVerseUtil.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ImportedDesktopVerseUtil/androidbible.ImportedDesktopVerseUtil.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/ImportedDesktopVerseUtil/androidbible.ImportedDesktopVerseUtil.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ImportedDesktopVerseUtil/androidbible.ImportedDesktopVerseUtil.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ImportedDesktopVerseUtil/androidbible.ImportedDesktopVerseUtil.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ImportedDesktopVerseUtil/androidbible.ImportedDesktopVerseUtil.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/ImportedDesktopVerseUtil/androidbible.ImportedDesktopVerseUtil.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/KpriModel/androidbible.KpriModel.iml" filepath="$PROJECT_DIR$/.idea/modules/KpriModel/androidbible.KpriModel.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/KpriModel/androidbible.KpriModel.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/KpriModel/androidbible.KpriModel.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/KpriModel/androidbible.KpriModel.main.iml" filepath="$PROJECT_DIR$/.idea/modules/KpriModel/androidbible.KpriModel.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/KpriModel/androidbible.KpriModel.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/KpriModel/androidbible.KpriModel.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/PrDownloaderFixed/androidbible.PrDownloaderFixed.iml" filepath="$PROJECT_DIR$/.idea/modules/PrDownloaderFixed/androidbible.PrDownloaderFixed.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/PrDownloaderFixed/androidbible.PrDownloaderFixed.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/PrDownloaderFixed/androidbible.PrDownloaderFixed.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/PrDownloaderFixed/androidbible.PrDownloaderFixed.main.iml" filepath="$PROJECT_DIR$/.idea/modules/PrDownloaderFixed/androidbible.PrDownloaderFixed.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/PrDownloaderFixed/androidbible.PrDownloaderFixed.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/PrDownloaderFixed/androidbible.PrDownloaderFixed.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Snappy/androidbible.Snappy.iml" filepath="$PROJECT_DIR$/.idea/modules/Snappy/androidbible.Snappy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Snappy/androidbible.Snappy.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/Snappy/androidbible.Snappy.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Snappy/androidbible.Snappy.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Snappy/androidbible.Snappy.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Snappy/androidbible.Snappy.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/Snappy/androidbible.Snappy.unitTest.iml" />
+    </modules>
+  </component>
+</project>
