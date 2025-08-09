@@ -259,7 +259,9 @@ public class Sync {
 
         // request sync.
         final Bundle extras = new Bundle();
-        extras.putString(SyncAdapter.EXTRA_SYNC_SET_NAMES, App.getDefaultGson().toJson(extraSyncSetNames));
+        extras.putString(SyncAdapter.EXTRA_SYNC_SET_NAMES, App.getDefaultGson().toJson(syncSetNames));
+        extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         ContentResolver.requestSync(account, authority, extras);
     }
 
