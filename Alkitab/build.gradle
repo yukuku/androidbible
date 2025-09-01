@@ -82,7 +82,6 @@ dependencies {
     implementation project(':Afw')
     implementation project(':FlowLayout')
     implementation project(':AmbilWarna')
-    implementation project(':ATree')
     implementation project(':ImportedDesktopVerseUtil')
     implementation project(':PrDownloaderFixed')
 
