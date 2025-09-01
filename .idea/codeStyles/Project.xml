@@ -16,8 +16,8 @@
       <option name="LAYOUT_STATIC_IMPORTS_SEPARATELY" value="false" />
       <option name="IMPORT_LAYOUT_TABLE">
         <value>
+          <package name="" withSubpackages="true" static="false" module="true" />
           <package name="" withSubpackages="true" static="false" />
-          <emptyLine />
           <emptyLine />
         </value>
       </option>

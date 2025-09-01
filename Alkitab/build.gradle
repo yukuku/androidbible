@@ -98,6 +98,7 @@ dependencies {
     implementation "androidx.preference:preference-ktx:$androidxPreferenceVersion"
     implementation "androidx.recyclerview:recyclerview:$androidxRecyclerviewVersion"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$androidxSwiperefreshlayoutVersion"
+    implementation "androidx.work:work-runtime-ktx:2.10.3"
 
     // Google
     implementation "androidx.media3:media3-exoplayer:$androidxMedia3Version"

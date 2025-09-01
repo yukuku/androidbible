@@ -11,7 +11,6 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import kotlin.Unit;
 import yuku.afw.storage.Preferences;
@@ -145,8 +144,6 @@ public class SyncSettingsActivity extends BaseActivity {
 
 						FirebaseCrashlytics.getInstance().setUserId("");
 
-						SyncUtils.removeAllSyncAccounts();
-
 						updateDisplay();
 						return Unit.INSTANCE;
 					},
@@ -174,7 +171,8 @@ public class SyncSettingsActivity extends BaseActivity {
 					SyncRecorder.log(SyncRecorder.EventKind.login_success_post, null, "accountName", result.accountName);
 
 					// force sync immediately after login
-					Sync.forceSyncNow();
+					SyncRecorder.log(SyncRecorder.EventKind.sync_forced, null);
+					SyncKotlin.syncNow();
 
 					updateDisplay();
 				} else if (resultCode == RESULT_CANCELED) {
@@ -199,7 +197,8 @@ public class SyncSettingsActivity extends BaseActivity {
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		final int itemId = item.getItemId();
 		if (itemId == R.id.menuSyncNow) {
-			Sync.forceSyncNow();
+			SyncRecorder.log(SyncRecorder.EventKind.sync_forced, null);
+			SyncKotlin.syncNow();
 			return true;
 		} else if (itemId == R.id.menuSyncLog) {
 			startActivity(SyncLogActivity.createIntent());

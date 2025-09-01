@@ -400,39 +400,6 @@
 			android:name="yuku.alkitab.base.sv.VersionConfigUpdaterService"
 			android:exported="false" />
 
-		<!-- sync components -->
-		<service
-			android:name="yuku.alkitab.base.sync.AuthenticatorService"
-			android:exported="true">
-			<intent-filter>
-				<action android:name="android.accounts.AccountAuthenticator" />
-			</intent-filter>
-			<meta-data
-				android:name="android.accounts.AccountAuthenticator"
-				android:resource="@xml/authenticator" />
-		</service>
-
-		<provider
-			android:name="yuku.alkitab.base.sync.StubProvider"
-			android:authorities="@string/sync_provider_authority"
-			android:exported="false"
-			android:syncable="true" />
-
-		<service
-			android:name="yuku.alkitab.base.sync.SyncService"
-			android:exported="true">
-			<!--
-			This service is not run in a separate process, because the singleton Preferences might not work well when accessed by multiple processes.
-			Moreover, local broadcast manager is in-process only (for example, the sync service asks the app UI to update something using LBM, it won't work.
-            -->
-			<intent-filter>
-				<action android:name="android.content.SyncAdapter" />
-			</intent-filter>
-			<meta-data
-				android:name="android.content.SyncAdapter"
-				android:resource="@xml/syncadapter" />
-		</service>
-
 		<!--
 			File provider, for sharing app files.
 			Authority MUST NOT be changed without changing sharing code.

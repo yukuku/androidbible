@@ -1,18 +1,18 @@
 package yuku.alkitab.base.sync;
 
-import android.accounts.Account;
-import android.content.AbstractThreadedSyncAdapter;
-import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SyncResult;
-import android.os.Bundle;
+import android.content.SyncStats;
 import android.util.Pair;
+import androidx.annotation.NonNull;
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -44,28 +44,20 @@ import yuku.alkitab.base.util.Sqlitil;
  * Handle the transfer of data between a server and an
  * app, using the Android sync adapter framework.
  */
-public class SyncAdapter extends AbstractThreadedSyncAdapter {
+public class SyncAdapter extends Worker {
 	static final String TAG = SyncAdapter.class.getSimpleName();
 	public static final String EXTRA_SYNC_SET_NAMES = "syncSetNames";
 	private static final int PARTIAL_SYNC_THRESHOLD = 100;
 
 	final static Stack<String> syncSetsRunning = new Stack<>(); // need guard when accessing this
+    
+	@NonNull
+    private final WorkerParameters workerParams;
 
-	/**
-	 * Set up the sync adapter
-	 */
-	public SyncAdapter(Context context, boolean autoInitialize) {
-		super(context, autoInitialize);
-	}
-
-	/**
-	 * Set up the sync adapter. This form of the constructor maintains compatibility with Android 3.0
-	 * and later platform versions, so do not delete.
-	 */
-	@SuppressWarnings("UnusedDeclaration")
-	public SyncAdapter(Context context, boolean autoInitialize, boolean allowParallelSyncs) {
-		super(context, autoInitialize, allowParallelSyncs);
-	}
+    public SyncAdapter(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+		super(context, workerParams);
+        this.workerParams = workerParams;
+    }
 
 	/**
 	 * Patches entities with operations, returning new set of entities.
@@ -116,19 +108,17 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		return new ArrayList<>(entities_map.values());
 	}
 
-	/*
-	 * Specify the code you want to run in the sync adapter. The entire
-	 * sync adapter runs in a background thread, so you don't have to set
-	 * up your own background processing.
-	 */
+	@NonNull
 	@Override
-	public void onPerformSync(final Account account, final Bundle extras, final String authority, final ContentProviderClient provider, final SyncResult syncResult) {
-		AppLog.d(TAG, "@@onPerformSync account:" + account + " extras:" + extras + " authority:" + authority);
+	public Result doWork() {
+		final String[] syncSetNames = workerParams.getInputData().getStringArray(EXTRA_SYNC_SET_NAMES);
 
-		final String[] syncSetNames = App.getDefaultGson().fromJson(extras.getString(EXTRA_SYNC_SET_NAMES), String[].class);
+		AppLog.d(TAG, "@@doWork syncSetNames:" + Arrays.toString(syncSetNames));
 		if (syncSetNames == null || syncSetNames.length == 0) {
-			return;
+			return Result.success();
 		}
+		
+		final SyncStats stats = new SyncStats();
 
 		for (final String syncSetName : syncSetNames) {
 			synchronized (syncSetsRunning) {
@@ -148,16 +138,16 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 				switch (syncSetName) {
 					case SyncShadow.SYNC_SET_MABEL:
-						syncMabel(syncResult);
+						syncMabel(stats);
 						break;
 					case SyncShadow.SYNC_SET_HISTORY:
-						syncHistory(syncResult);
+						syncHistory(stats);
 						break;
 					case SyncShadow.SYNC_SET_PINS:
-						syncPins(syncResult);
+						syncPins(stats);
 						break;
 					case SyncShadow.SYNC_SET_RP:
-						syncRp(syncResult);
+						syncRp(stats);
 						break;
 				}
 			} finally {
@@ -172,27 +162,41 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			}
 		}
 
-		AppLog.d(TAG, "Sync result: " + syncResult + " hasSoftError=" + syncResult.hasSoftError() + " hasHardError=" + syncResult.hasHardError() + " ioex=" + syncResult.stats.numIoExceptions);
+		final boolean hasError = hasError(stats);
+		AppLog.d(TAG, "Sync stats: " + stats + " hasError=" + hasError);
+		if (hasError) {
+			return Result.failure();
+		} else {
+			return Result.success();
+		}
 	}
 
-    public static Set<String> getRunningSyncs() {
+	private boolean hasError(SyncStats stats) {
+		return stats.numIoExceptions > 0
+		    || stats.numParseExceptions > 0
+			|| stats.numConflictDetectedExceptions > 0
+			|| stats.numAuthExceptions > 0;
+	}
+
+
+	public static Set<String> getRunningSyncs() {
         synchronized (syncSetsRunning) {
             return new LinkedHashSet<>(syncSetsRunning);
         }
     }
 
 	/** Based on operations in append_delta, fill in SyncStats */
-	static <C> void fillInStatsFromAppendDelta(final Sync.Delta<C> append_delta, final SyncResult sr) {
+	static <C> void fillInStatsFromAppendDelta(final Sync.Delta<C> append_delta, final SyncStats stats) {
 		for (final Sync.Operation<C> o : append_delta.operations) {
 			switch (o.opkind) {
 				case add:
-					sr.stats.numInserts++;
+					stats.numInserts++;
 					break;
 				case mod:
-					sr.stats.numUpdates++;
+					stats.numUpdates++;
 					break;
 				case del:
-					sr.stats.numDeletes++;
+					stats.numDeletes++;
 					break;
 			}
 		}
@@ -238,12 +242,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		return res;
 	}
 
-	void syncMabel(final SyncResult sr) {
+	void syncMabel(final SyncStats stats) {
 		final String syncSetName = SyncShadow.SYNC_SET_MABEL;
 
 		final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
 		if (simpleToken == null) {
-			sr.stats.numAuthExceptions++;
+			stats.numAuthExceptions++;
 			SyncRecorder.log(SyncRecorder.EventKind.error_no_simple_token, syncSetName);
 			return;
 		}
@@ -289,7 +293,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			if (!response.success) {
 				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_not_success, syncSetName, "message", response.message);
 				AppLog.d(TAG, "@@syncMabel server response is not success. Message: " + response.message);
-				sr.stats.numIoExceptions++;
+				stats.numIoExceptions++;
 				return;
 			}
 
@@ -299,7 +303,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			if (append_delta == null) {
 				AppLog.w(TAG, "@@syncMabel append delta is null. This should not happen.");
 				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_error_append_delta_null, syncSetName);
-				sr.stats.numIoExceptions++;
+				stats.numIoExceptions++;
 				return;
 			}
 
@@ -311,18 +315,18 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 			if (applyResult != Sync.ApplyAppendDeltaResult.ok) {
 				AppLog.w(TAG, "@@syncMabel append delta result is not ok, but " + applyResult);
-				sr.stats.numIoExceptions++;
+				stats.numIoExceptions++;
 				return;
 			}
 
-			fillInStatsFromAppendDelta(append_delta, sr);
+			fillInStatsFromAppendDelta(append_delta, stats);
 
 			if (isPartial) {
 				Sync.notifySyncNeeded(syncSetName);
 			}
 
 			// success! Tell our world.
-			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", sr.stats.numInserts, "update_count", sr.stats.numUpdates, "delete_count", sr.stats.numDeletes);
+			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", stats.numInserts, "update_count", stats.numUpdates, "delete_count", stats.numDeletes);
 
 			App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
 			App.getLbm().sendBroadcast(new Intent(MarkersActivity.ACTION_RELOAD));
@@ -334,21 +338,21 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		} catch (JsonSyntaxException e) {
 			AppLog.w(TAG, "@@syncMabel exception when parsing json from server", e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, syncSetName);
-			sr.stats.numParseExceptions++;
+			stats.numParseExceptions++;
 
 		} catch (JsonIOException | IOException e) {
 			AppLog.w(TAG, "@@syncMabel exception when executing http call", e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_io, syncSetName);
-			sr.stats.numIoExceptions++;
+			stats.numIoExceptions++;
 		}
 	}
 
-	void syncHistory(final SyncResult sr) {
+	void syncHistory(final SyncStats stats) {
 		final String syncSetName = SyncShadow.SYNC_SET_HISTORY;
 
 		final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
 		if (simpleToken == null) {
-			sr.stats.numAuthExceptions++;
+			stats.numAuthExceptions++;
 			SyncRecorder.log(SyncRecorder.EventKind.error_no_simple_token, syncSetName);
 			return;
 		}
@@ -390,7 +394,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			if (!response.success) {
 				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_not_success, syncSetName, "message", response.message);
 				AppLog.d(TAG, "@@syncHistory server response is not success. Message: " + response.message);
-				sr.stats.numIoExceptions++;
+				stats.numIoExceptions++;
 				return;
 			}
 
@@ -400,7 +404,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			if (append_delta == null) {
 				AppLog.w(TAG, "@@syncHistory append delta is null. This should not happen.");
 				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_error_append_delta_null, syncSetName);
-				sr.stats.numIoExceptions++;
+				stats.numIoExceptions++;
 				return;
 			}
 
@@ -412,14 +416,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 			if (applyResult != Sync.ApplyAppendDeltaResult.ok) {
 				AppLog.w(TAG, "@@syncHistory append delta result is not ok, but " + applyResult);
-				sr.stats.numIoExceptions++;
+				stats.numIoExceptions++;
 				return;
 			}
 
-			fillInStatsFromAppendDelta(append_delta, sr);
+			fillInStatsFromAppendDelta(append_delta, stats);
 
 			// success! Tell our world.
-			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", sr.stats.numInserts, "update_count", sr.stats.numUpdates, "delete_count", sr.stats.numDeletes);
+			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", stats.numInserts, "update_count", stats.numUpdates, "delete_count", stats.numDeletes);
 
 			AppLog.d(TAG, "Final revno: " + final_revno + " Apply result: " + applyResult + " Append delta: " + append_delta);
 			SyncRecorder.saveLastSuccessTime(syncSetName, Sqlitil.nowDateTime());
@@ -427,21 +431,21 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		} catch (JsonSyntaxException e) {
 			AppLog.w(TAG, "@@syncHistory exception when parsing json from server", e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, syncSetName);
-			sr.stats.numParseExceptions++;
+			stats.numParseExceptions++;
 
 		} catch (JsonIOException | IOException e) {
 			AppLog.w(TAG, "@@syncHistory exception when executing http call", e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_io, syncSetName);
-			sr.stats.numIoExceptions++;
+			stats.numIoExceptions++;
 		}
 	}
 
-	void syncPins(final SyncResult sr) {
+	void syncPins(final SyncStats stats) {
 		final String syncSetName = SyncShadow.SYNC_SET_PINS;
 
 		final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
 		if (simpleToken == null) {
-			sr.stats.numAuthExceptions++;
+			stats.numAuthExceptions++;
 			SyncRecorder.log(SyncRecorder.EventKind.error_no_simple_token, syncSetName);
 			return;
 		}
@@ -483,7 +487,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			if (!response.success) {
 				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_not_success, syncSetName, "message", response.message);
 				AppLog.d(TAG, "@@syncPins server response is not success. Message: " + response.message);
-				sr.stats.numIoExceptions++;
+				stats.numIoExceptions++;
 				return;
 			}
 
@@ -493,7 +497,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			if (append_delta == null) {
 				AppLog.w(TAG, "@@syncPins append delta is null. This should not happen.");
 				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_error_append_delta_null, syncSetName);
-				sr.stats.numIoExceptions++;
+				stats.numIoExceptions++;
 				return;
 			}
 
@@ -505,14 +509,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 			if (applyResult != Sync.ApplyAppendDeltaResult.ok) {
 				AppLog.w(TAG, "@@syncPins append delta result is not ok, but " + applyResult);
-				sr.stats.numIoExceptions++;
+				stats.numIoExceptions++;
 				return;
 			}
 
-			fillInStatsFromAppendDelta(append_delta, sr);
+			fillInStatsFromAppendDelta(append_delta, stats);
 
 			// success! Tell our world.
-			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", sr.stats.numInserts, "update_count", sr.stats.numUpdates, "delete_count", sr.stats.numDeletes);
+			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", stats.numInserts, "update_count", stats.numUpdates, "delete_count", stats.numDeletes);
 
 			App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
 
@@ -522,21 +526,21 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		} catch (JsonSyntaxException e) {
 			AppLog.w(TAG, "@@syncPins exception when parsing json from server", e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, syncSetName);
-			sr.stats.numParseExceptions++;
+			stats.numParseExceptions++;
 
 		} catch (JsonIOException | IOException e) {
 			AppLog.w(TAG, "@@syncPins exception when executing http call", e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_io, syncSetName);
-			sr.stats.numIoExceptions++;
+			stats.numIoExceptions++;
 		}
 	}
 
-	void syncRp(final SyncResult sr) {
+	void syncRp(final SyncStats stats) {
 		final String syncSetName = SyncShadow.SYNC_SET_RP;
 
 		final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
 		if (simpleToken == null) {
-			sr.stats.numAuthExceptions++;
+			stats.numAuthExceptions++;
 			SyncRecorder.log(SyncRecorder.EventKind.error_no_simple_token, syncSetName);
 			return;
 		}
@@ -578,7 +582,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			if (!response.success) {
 				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_not_success, syncSetName, "message", response.message);
 				AppLog.d(TAG, "@@syncRp server response is not success. Message: " + response.message);
-				sr.stats.numIoExceptions++;
+				stats.numIoExceptions++;
 				return;
 			}
 
@@ -588,7 +592,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			if (append_delta == null) {
 				AppLog.w(TAG, "@@syncRp append delta is null. This should not happen.");
 				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_error_append_delta_null, syncSetName);
-				sr.stats.numIoExceptions++;
+				stats.numIoExceptions++;
 				return;
 			}
 
@@ -600,14 +604,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 			if (applyResult != Sync.ApplyAppendDeltaResult.ok) {
 				AppLog.w(TAG, "@@syncRp append delta result is not ok, but " + applyResult);
-				sr.stats.numIoExceptions++;
+				stats.numIoExceptions++;
 				return;
 			}
 
-			fillInStatsFromAppendDelta(append_delta, sr);
+			fillInStatsFromAppendDelta(append_delta, stats);
 
 			// success! Tell our world.
-			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", sr.stats.numInserts, "update_count", sr.stats.numUpdates, "delete_count", sr.stats.numDeletes);
+			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", stats.numInserts, "update_count", stats.numUpdates, "delete_count", stats.numDeletes);
 
 			App.getLbm().sendBroadcast(new Intent(ReadingPlanActivity.ACTION_READING_PLAN_PROGRESS_CHANGED));
 
@@ -617,12 +621,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		} catch (JsonSyntaxException e) {
 			AppLog.w(TAG, "@@syncRp exception when parsing json from server", e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, syncSetName);
-			sr.stats.numParseExceptions++;
+			stats.numParseExceptions++;
 
 		} catch (JsonIOException | IOException e) {
 			AppLog.w(TAG, "@@syncRp exception when executing http call", e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_io, syncSetName);
-			sr.stats.numIoExceptions++;
+			stats.numIoExceptions++;
 		}
 	}
 }

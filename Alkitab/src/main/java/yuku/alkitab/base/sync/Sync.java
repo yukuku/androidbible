@@ -1,9 +1,6 @@
 package yuku.alkitab.base.sync;
 
 
-import android.accounts.Account;
-import android.content.ContentResolver;
-import android.os.Bundle;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.collection.ArrayMap;
@@ -11,7 +8,6 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -23,13 +19,11 @@ import okhttp3.RequestBody;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.connection.Connections;
-import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.InstallationUtil;
 import yuku.alkitab.debug.BuildConfig;
-import yuku.alkitab.debug.R;
 
 public class Sync {
     static final String TAG = Sync.class.getSimpleName();
@@ -191,9 +185,9 @@ public class Sync {
         final ArrayList<Entity<C>> a = new ArrayList<>(a_);
         final ArrayList<Entity<C>> b = new ArrayList<>(b_);
 
-        final Comparator<Entity<C>> cmp = (lhs, rhs) -> lhs.gid.compareTo(rhs.gid);
-        Collections.sort(a, cmp);
-        Collections.sort(b, cmp);
+        final Comparator<Entity<C>> cmp = Comparator.comparing(lhs -> lhs.gid);
+        a.sort(cmp);
+        b.sort(cmp);
 
         return a.equals(b);
     }
@@ -248,19 +242,8 @@ public class Sync {
             }
         }
 
-        final Account account = SyncUtils.getOrCreateSyncAccount();
-        final String authority = App.context.getString(R.string.sync_provider_authority);
-
-        // make sure sync is enabled.
-        final boolean syncAutomatically = ContentResolver.getSyncAutomatically(account, authority);
-        if (!syncAutomatically) {
-            ContentResolver.setSyncAutomatically(account, authority, true);
-        }
-
         // request sync.
-        final Bundle extras = new Bundle();
-        extras.putString(SyncAdapter.EXTRA_SYNC_SET_NAMES, App.getDefaultGson().toJson(extraSyncSetNames));
-        ContentResolver.requestSync(account, authority, extras);
+        SyncKotlin.syncNow(extraSyncSetNames.toArray(new String[0]));
     }
 
     /**
@@ -521,28 +504,5 @@ public class Sync {
 
     public static String prefkeyForSyncSetEnabled(final String syncSetName) {
         return "syncSet_" + syncSetName + "_enabled";
-    }
-
-    public static void forceSyncNow() {
-        final Account account = SyncUtils.getOrCreateSyncAccount();
-        final String authority = App.context.getString(R.string.sync_provider_authority);
-
-        SyncRecorder.log(SyncRecorder.EventKind.sync_forced, null);
-
-        // make sure sync is enabled.
-        final boolean syncAutomatically = ContentResolver.getSyncAutomatically(account, authority);
-        if (!syncAutomatically) {
-            ContentResolver.setSyncAutomatically(account, authority, true);
-        }
-
-        // request sync.
-        final List<String> syncSetNames = new ArrayList<>();
-        Collections.addAll(syncSetNames, SyncShadow.ALL_SYNC_SET_NAMES);
-
-        final Bundle extras = new Bundle();
-        extras.putString(SyncAdapter.EXTRA_SYNC_SET_NAMES, App.getDefaultGson().toJson(syncSetNames));
-        extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        ContentResolver.requestSync(account, authority, extras);
     }
 }
