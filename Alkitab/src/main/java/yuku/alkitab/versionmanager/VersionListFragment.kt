@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Typeface
+import android.net.Uri
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.style.DynamicDrawableSpan
@@ -278,7 +279,8 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
             "preset_name" to mv.preset_name,
             "modifyTime" to "${mv.modifyTime}",
         )
-        DownloadMapper.instance.enqueue(downloadKey, mv.download_url, mv.longName, attrs)
+        val downloadUrl = "${BuildConfig.SERVER_HOST}/versions/get_yes?preset_name=${Uri.encode(mv.preset_name)}"
+        DownloadMapper.instance.enqueue(downloadKey, downloadUrl, mv.longName, attrs)
         App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
     }
 

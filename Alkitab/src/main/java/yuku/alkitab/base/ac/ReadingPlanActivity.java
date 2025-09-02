@@ -547,7 +547,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
     private void openDownloadReadingPlanPage() {
         startActivityForResult(
             HelpActivity.createIntent(
-                BuildConfig.SERVER_HOST + "rp/downloads?" + App.getAppIdentifierParamsEncoded(),
+                BuildConfig.SERVER_HOST + "/rp/downloads?" + App.getAppIdentifierParamsEncoded(),
                 getString(R.string.rp_menuDownload)
             ),
             REQCODE_openList
@@ -595,7 +595,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
         Background.run(() -> {
             try {
-                final byte[] data = Connections.downloadBytes(BuildConfig.SERVER_HOST + "rp/get_rp?name=" + name);
+                final byte[] data = Connections.downloadBytes(BuildConfig.SERVER_HOST + "/rp/get_rp?name=" + name);
                 if (cancelled.get()) return;
                 Foreground.run(() -> {
                     final long id = ReadingPlanManager.insertReadingPlanToDb(data, name);

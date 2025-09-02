@@ -26,7 +26,7 @@ allprojects {
 }
 
 ext {
-    SERVER_HOST = 'https://alkitab-host.appspot.com/'
+    SERVER_HOST = 'https://api.alkitab.app'
     RIBKA_FUNCTIONS_HOST = 'https://us-central1-pulau-ribka.cloudfunctions.net/'
     RIBKA_FUNCTIONS_HOST_DEBUG = 'http://10.0.3.2:5001/pulau-ribka/us-central1/'
 

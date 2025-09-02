@@ -243,7 +243,7 @@ public class Sync {
         }
 
         // request sync.
-        SyncKotlin.syncNow(extraSyncSetNames.toArray(new String[0]));
+        SyncKotlin.syncNow(false, extraSyncSetNames.toArray(new String[0]));
     }
 
     /**
@@ -306,7 +306,7 @@ public class Sync {
         try {
             final Call call = Connections.getLongTimeoutOkHttpClient().newCall(
                 new Request.Builder()
-                    .url(getEffectiveServerPrefix() + "sync/api/register_gcm_client")
+                    .url(getEffectiveServerPrefix() + "/sync/api/register_gcm_client")
                     .post(requestBody)
                     .build()
             );
@@ -388,7 +388,7 @@ public class Sync {
         try {
             final Call call = Connections.getLongTimeoutOkHttpClient().newCall(
                 new Request.Builder()
-                    .url(getEffectiveServerPrefix() + "sync/api/create_own_user")
+                    .url(getEffectiveServerPrefix() + "/sync/api/create_own_user")
                     .post(requestBody)
                     .build()
             );
@@ -421,7 +421,7 @@ public class Sync {
         try {
             final Call call = Connections.getLongTimeoutOkHttpClient().newCall(
                 new Request.Builder()
-                    .url(getEffectiveServerPrefix() + "sync/api/login_own_user")
+                    .url(getEffectiveServerPrefix() + "/sync/api/login_own_user")
                     .post(requestBody)
                     .build()
             );
@@ -451,7 +451,7 @@ public class Sync {
         try {
             final Call call = Connections.getLongTimeoutOkHttpClient().newCall(
                 new Request.Builder()
-                    .url(getEffectiveServerPrefix() + "sync/api/forgot_password")
+                    .url(getEffectiveServerPrefix() + "/sync/api/forgot_password")
                     .post(requestBody)
                     .build()
             );
@@ -481,7 +481,7 @@ public class Sync {
         try {
             final Call call = Connections.getLongTimeoutOkHttpClient().newCall(
                 new Request.Builder()
-                    .url(getEffectiveServerPrefix() + "sync/api/change_password")
+                    .url(getEffectiveServerPrefix() + "/sync/api/change_password")
                     .post(requestBody)
                     .build()
             );

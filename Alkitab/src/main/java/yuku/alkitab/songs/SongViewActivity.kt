@@ -56,6 +56,8 @@ import yuku.alkitab.base.widget.MaterialDialogProgressHelper.progress
 import yuku.alkitab.base.widget.TwofingerLinearLayout
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
+import yuku.alkitab.songs.SongViewActivity.Companion.exoplayerController
+import yuku.alkitab.songs.SongViewActivity.Companion.midiController
 import yuku.alkitab.tracking.Analytics
 import yuku.alkitab.tracking.Tracker
 import yuku.alkitabintegration.display.Launcher
@@ -296,7 +298,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     private fun openDownloadSongBookPage() {
         startActivityForResult(
             HelpActivity.createIntentWithOverflowMenu(
-                BuildConfig.SERVER_HOST + "songs/downloads?" + App.getAppIdentifierParamsEncoded(),
+                "${BuildConfig.SERVER_HOST}/songs/downloads?${App.getAppIdentifierParamsEncoded()}",
                 getString(R.string.sn_download_song_books),
                 getString(R.string.sn_menu_private_song_book),
                 AlertDialogActivity.createInputIntent(
@@ -382,7 +384,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         Background.run {
             try {
                 val filename = getAudioFilename(currentBookName, currentSong.code)
-                val response = Connections.downloadString(BuildConfig.SERVER_HOST + "addon/audio/exists?filename=" + Uri.encode(filename))
+                val response = Connections.downloadString(BuildConfig.SERVER_HOST + "/addon/audio/exists?filename=" + Uri.encode(filename))
                 if (response.startsWith("OK")) {
                     // make sure this is the correct one due to possible race condition
                     val currentCurrentBookName = this.currentBookName
@@ -391,8 +393,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                         runOnUiThread {
                             val prevMediaController = activeMediaController
                             if (prevMediaController == null || prevMediaController.canHaveNewUrl()) {
-                                val baseUrl = BuildConfig.SERVER_HOST + "addon/audio/"
-                                val url = baseUrl + getAudioFilename(currentBookName, currentSong.code)
+                                val url = "${BuildConfig.SERVER_HOST}/addon/audio/${getAudioFilename(currentBookName, currentSong.code)}"
                                 if (response.contains("extension=mid")) {
                                     setActiveMediaController(midiController)
                                 } else {

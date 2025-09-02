@@ -7,7 +7,6 @@ import yuku.alkitab.model.Version;
  * Version that is defined in the version_config.json, but not activated by the user.
  */
 public class MVersionPreset extends MVersion {
-	public String download_url;
 	public String preset_name;
 	public int modifyTime;
 

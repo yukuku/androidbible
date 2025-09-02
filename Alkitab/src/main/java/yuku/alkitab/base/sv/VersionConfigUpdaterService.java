@@ -90,7 +90,7 @@ public class VersionConfigUpdaterService extends IntentService {
 
 		try {
 			AppLog.d(TAG, "Downloading list modify time");
-			modifyTimeBody = Connections.downloadString(BuildConfig.SERVER_HOST + "versions/list_modify_time?packageName=" + Uri.encode(getPackageName()) + "&versionCode=" + Uri.encode(String.valueOf(App.getVersionCode())));
+			modifyTimeBody = Connections.downloadString(BuildConfig.SERVER_HOST + "/versions/list_modify_time?packageName=" + Uri.encode(getPackageName()) + "&versionCode=" + Uri.encode(String.valueOf(App.getVersionCode())));
 		} catch (IOException e) {
 			AppLog.e(TAG, "failed to download modify time", e);
 

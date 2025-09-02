@@ -54,6 +54,10 @@ public class SyncRecorder {
 		sync_to_server_got_success_data(122, INFO),
 		apply_result(140, INFO),
 		all_succeeded(141, OK),
+		worker_result_failed(150, ERROR),
+		worker_result_succeeded(160, OK),
+		worker_result_succeeded_no_work_needed(161, OK),
+		worker_is_currently_running(170, INFO),
 		logout_pre(200, INFO),
 		logout_post(201, OK),
 		;

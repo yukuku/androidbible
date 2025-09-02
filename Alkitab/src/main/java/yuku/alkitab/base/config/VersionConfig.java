@@ -43,7 +43,6 @@ public class VersionConfig {
 	@Keep
 	static class VersionConfigJson {
 		public List<PresetJson> presets;
-		public String download_url_format;
 		public Map<String, String> locale_display;
 		public Map<String, String> group_order_display;
 	}
@@ -137,7 +136,6 @@ public class VersionConfig {
 			preset.preset_name = presetJson.preset_name;
 			preset.modifyTime = presetJson.modifyTime;
 			preset.group_order = presetJson.group_order;
-			preset.download_url = root.download_url_format.replace("$PRESET_NAME", presetJson.preset_name);
 			preset.ordering = ++presetOrdering;
 			presets.add(preset);
 		}

@@ -176,7 +176,7 @@ public class SongBookUtil {
 
         Background.run(() -> {
             try {
-                final Call call = Connections.downloadCall(BuildConfig.SERVER_HOST + "addon/songs/get_songs?name=" + songBookInfo.name + "&dataFormatVersion=" + dataFormatVersion);
+                final Call call = Connections.downloadCall(BuildConfig.SERVER_HOST + "/addon/songs/get_songs?name=" + songBookInfo.name + "&dataFormatVersion=" + dataFormatVersion);
 
                 final Response response = call.execute();
                 if (response.code() != 200) {

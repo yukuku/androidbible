@@ -130,7 +130,7 @@ class SecretSyncDebugActivity : BaseActivity() {
         val label1 = S.db.insertLabel(randomString("L1_", 1, 3, 8), encodeBackground(rand(0xffffff)))
         val label2 = S.db.insertLabel(randomString("L2_", 1, 3, 8), encodeBackground(rand(0xffffff)))
         for (i in 0..9) {
-            val marker = S.db.insertMarker(0x000101 + rand(30), Marker.Kind.values()[rand(3)], randomString("M" + i + "_", rand(2) + 1, 4, 7), rand(2) + 1, Date(), Date())
+            val marker = S.db.insertMarker(0x000101 + rand(30), Marker.Kind.entries[rand(3)], randomString("M" + i + "_", rand(2) + 1, 4, 7), rand(2) + 1, Date(), Date())
             val labelSet: MutableSet<Label> = HashSet()
             if (rand(10) < 5) {
                 labelSet.add(label1)
@@ -151,7 +151,7 @@ class SecretSyncDebugActivity : BaseActivity() {
         val label1 = S.db.insertLabel(randomString("LL1_", 1, 3, 8), encodeBackground(rand(0xffffff)))
         val label2 = S.db.insertLabel(randomString("LL2_", 1, 3, 8), encodeBackground(rand(0xffffff)))
         for (i in 0..999) {
-            val kind = Marker.Kind.values()[rand(3)]
+            val kind = Marker.Kind.entries[rand(3)]
             val now = Date()
             val marker = S.db.insertMarker(0x000101 + rand(30), kind, if (kind == Marker.Kind.highlight) Highlights.encode(rand(0xffffff)) else randomString("MM" + i + "_", if (rand(10) < 5) rand(81) else rand(400) + 4, 5, 15), rand(2) + 1, now, now)
             val labelSet: MutableSet<Label> = HashSet()
@@ -206,7 +206,7 @@ class SecretSyncDebugActivity : BaseActivity() {
                     val nmarker = rand(500)
                     toast("creating $nmarker markers")
                     for (i in 0 until nmarker) {
-                        val kind = Marker.Kind.values()[rand(3)]
+                        val kind = Marker.Kind.entries[rand(3)]
                         val now = Date()
                         val marker = S.db.insertMarker(0x000101 + rand(30), kind, if (kind == Marker.Kind.highlight) Highlights.encode(rand(0xffffff)) else randomString("monkey M $i ", rand(8) + 2, 3, 5), rand(2) + 1, now, now)
                         if (rand(10) < 1 && labels.size > 0) {
@@ -343,13 +343,13 @@ class SecretSyncDebugActivity : BaseActivity() {
 
         val call = Connections.longTimeoutOkHttpClient.newCall(
             Request.Builder()
-                .url(Sync.getEffectiveServerPrefix() + "sync/api/sync")
+                .url("${Sync.getEffectiveServerPrefix()}/sync/api/sync")
                 .post(requestBody)
                 .build()
         )
 
         if (cMakeDirtyMarker.isChecked) {
-            S.db.insertMarker(0x000101 + rand(30), Marker.Kind.values()[rand(3)], randomString("MMD0_", rand(2) + 1, 4, 7), rand(2) + 1, Date(), Date())
+            S.db.insertMarker(0x000101 + rand(30), Marker.Kind.entries[rand(3)], randomString("MMD0_", rand(2) + 1, 4, 7), rand(2) + 1, Date(), Date())
         }
 
         if (cMakeDirtyLabel.isChecked) {

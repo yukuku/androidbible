@@ -115,6 +115,7 @@ public class SyncAdapter extends Worker {
 
 		AppLog.d(TAG, "@@doWork syncSetNames:" + Arrays.toString(syncSetNames));
 		if (syncSetNames == null || syncSetNames.length == 0) {
+			SyncRecorder.log(SyncRecorder.EventKind.worker_result_succeeded_no_work_needed, null);
 			return Result.success();
 		}
 		
@@ -165,8 +166,10 @@ public class SyncAdapter extends Worker {
 		final boolean hasError = hasError(stats);
 		AppLog.d(TAG, "Sync stats: " + stats + " hasError=" + hasError);
 		if (hasError) {
+			SyncRecorder.log(SyncRecorder.EventKind.worker_result_failed, null);
 			return Result.failure();
 		} else {
+			SyncRecorder.log(SyncRecorder.EventKind.worker_result_succeeded, null);
 			return Result.success();
 		}
 	}
@@ -274,7 +277,7 @@ public class SyncAdapter extends Worker {
 
 		final Call call = Connections.getLongTimeoutOkHttpClient().newCall(
 			new Request.Builder()
-				.url(serverPrefix + "sync/api/sync")
+				.url(serverPrefix + "/sync/api/sync")
 				.post(requestBody)
 				.build()
 		);
@@ -375,7 +378,7 @@ public class SyncAdapter extends Worker {
 
 		final Call call = Connections.getLongTimeoutOkHttpClient().newCall(
 			new Request.Builder()
-				.url(serverPrefix + "sync/api/sync")
+				.url(serverPrefix + "/sync/api/sync")
 				.post(requestBody)
 				.build()
 		);
@@ -468,7 +471,7 @@ public class SyncAdapter extends Worker {
 
 		final Call call = Connections.getLongTimeoutOkHttpClient().newCall(
 			new Request.Builder()
-				.url(serverPrefix + "sync/api/sync")
+				.url(serverPrefix + "/sync/api/sync")
 				.post(requestBody)
 				.build()
 		);
@@ -563,7 +566,7 @@ public class SyncAdapter extends Worker {
 
 		final Call call = Connections.getLongTimeoutOkHttpClient().newCall(
 			new Request.Builder()
-				.url(serverPrefix + "sync/api/sync")
+				.url(serverPrefix + "/sync/api/sync")
 				.post(requestBody)
 				.build()
 		);

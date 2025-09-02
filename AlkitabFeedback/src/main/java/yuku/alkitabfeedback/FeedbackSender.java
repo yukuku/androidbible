@@ -155,8 +155,7 @@ public class FeedbackSender {
                     form.add("build_version_sdk[]", "" + e.build_version_sdk);
                 }
 
-
-                final Response resp = client.newCall(new Request.Builder().url(BuildConfig.SERVER_HOST + "laban/submit").post(form.build()).build()).execute();
+                final Response resp = client.newCall(new Request.Builder().url(BuildConfig.SERVER_HOST + "/laban/submit").post(form.build()).build()).execute();
                 final byte[] out = resp.body().bytes();
 
                 if (out.length >= 2 && out[0] == 'O' && out[1] == 'K') {

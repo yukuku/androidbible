@@ -1643,6 +1643,5 @@
 		"mej": "Meyah",
 		"mqj": "Mamasa",
 		"mqy": "Manggarai"
-	},
-	"download_url_format": "https://alkitab-host.appspot.com/versions/get_yes?preset_name=$PRESET_NAME"
+	}
 }

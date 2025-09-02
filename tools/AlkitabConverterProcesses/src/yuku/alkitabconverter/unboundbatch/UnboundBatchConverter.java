@@ -27,8 +27,6 @@ import java.util.Set;
 public class UnboundBatchConverter {
 	static String DATA_DIR = "/Users/yuku/j/operasi/unbound";
 	
-	List<String> appConfigEntries = new ArrayList<>();
-	
 	public static void main(String[] args) throws Exception {
 		new UnboundBatchConverter().convertAll();
 	}
@@ -52,12 +50,6 @@ public class UnboundBatchConverter {
 			for (File dir: dirs) {
 				processVersion(superdir, dir);
 			}
-		}
-		
-		Collections.sort(appConfigEntries);
-		
-		for (String s: appConfigEntries) {
-			System.out.println(s);
 		}
 	}
 
@@ -129,8 +121,6 @@ public class UnboundBatchConverter {
 		// CREATE YES FILE
 		Yes2Common.createYesFile(new File("/tmp", outputName + ".yes"), versionInfo, textDb, null, true);
 
-		appConfigEntries.add(String.format("<preset locale=%-6s shortName=%-9s longName=%s filename_preset=%s url=%s />", q(versionInfo.locale), q(versionInfo.shortName), q(versionInfo.longName), q(outputName + ".yes"), q("https://alkitab-host.appspot.com/addon/yes2/" + outputName + "--1.yes.gz")));
-		
 		System.out.println("Processing finished, total verses: " + textDb.size());
 	}
 

@@ -172,7 +172,7 @@ public class SyncSettingsActivity extends BaseActivity {
 
 					// force sync immediately after login
 					SyncRecorder.log(SyncRecorder.EventKind.sync_forced, null);
-					SyncKotlin.syncNow();
+					SyncKotlin.syncNow(true);
 
 					updateDisplay();
 				} else if (resultCode == RESULT_CANCELED) {
@@ -198,7 +198,7 @@ public class SyncSettingsActivity extends BaseActivity {
 		final int itemId = item.getItemId();
 		if (itemId == R.id.menuSyncNow) {
 			SyncRecorder.log(SyncRecorder.EventKind.sync_forced, null);
-			SyncKotlin.syncNow();
+			SyncKotlin.syncNow(true);
 			return true;
 		} else if (itemId == R.id.menuSyncLog) {
 			startActivity(SyncLogActivity.createIntent());

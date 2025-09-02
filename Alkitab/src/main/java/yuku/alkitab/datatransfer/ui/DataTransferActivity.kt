@@ -85,7 +85,7 @@ class DataTransferActivity : BaseActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        mode = Mode.values()[intent.getIntExtra("mode", 0)]
+        mode = Mode.entries[intent.getIntExtra("mode", 0)]
         scroll = findViewById(R.id.scroll)
         tLog = findViewById(R.id.tLog)
         progress = findViewById<ProgressBar>(R.id.progress).apply {

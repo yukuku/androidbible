@@ -33,9 +33,9 @@ import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 
 private const val TAG = "FontManagerActivity"
-private const val URL_fontList = BuildConfig.SERVER_HOST + "addon/fonts/v1/list-v2.txt"
-private const val URL_fontData = BuildConfig.SERVER_HOST + "addon/fonts/v1/data/%s.zip"
-private const val URL_fontPreview = BuildConfig.SERVER_HOST + "addon/fonts/v1/preview/%s-384x84.png"
+private const val URL_fontList = "${BuildConfig.SERVER_HOST}/addon/fonts/v1/list-v2.txt"
+private const val URL_fontData = "${BuildConfig.SERVER_HOST}/addon/fonts/v1/data/%s.zip"
+private const val URL_fontPreview = "${BuildConfig.SERVER_HOST}/addon/fonts/v1/preview/%s-384x84.png"
 
 class FontManagerActivity : BaseActivity(), DownloadService.DownloadListener {
     private lateinit var lsFont: ListView

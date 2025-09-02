@@ -53,7 +53,7 @@ object ShareUrl {
 
         val call = Connections.okHttp.newCall(
             Request.Builder()
-                .url(BuildConfig.SERVER_HOST + "v/create")
+                .url(BuildConfig.SERVER_HOST + "/v/create")
                 .post(form)
                 .build()
         )
