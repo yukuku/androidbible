@@ -7,13 +7,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Pair;
-import okhttp3.Call;
-import okhttp3.ResponseBody;
-import yuku.alkitab.base.App;
-import yuku.alkitab.base.connection.Connections;
-import yuku.alkitab.base.util.AppLog;
-import yuku.alkitab.debug.R;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -23,6 +16,12 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import okhttp3.Call;
+import okhttp3.ResponseBody;
+import yuku.alkitab.base.App;
+import yuku.alkitab.base.connection.Connections;
+import yuku.alkitab.base.util.AppLog;
+import yuku.alkitab.debug.R;
 
 public class DownloadService extends Service {
 	static final String TAG = DownloadService.class.getSimpleName();

@@ -8,7 +8,6 @@ import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.core.view.MotionEventCompat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class VerseTextView extends AppCompatTextView {
 	 *    If there is no such entry, make our handling return false to let the touch handled by this view's parent.
 	 */
 	@Override public boolean onTouchEvent(MotionEvent event) {
-		final int action = MotionEventCompat.getActionMasked(event);
+		final int action = event.getActionMasked();
 		if (action != MotionEvent.ACTION_UP && action != MotionEvent.ACTION_DOWN) return false;
 
 		final CharSequence text = this.getText();

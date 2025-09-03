@@ -1,16 +1,15 @@
 package yuku.alkitab.base.util;
 
 import androidx.annotation.NonNull;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.util.IntArrayList;
 import yuku.bintex.BintexReader;
 import yuku.bintex.ValueMap;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Date;
 
 public class ReadingPlanManager {
 	static final String TAG = ReadingPlanManager.class.getSimpleName();

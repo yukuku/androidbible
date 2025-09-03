@@ -3,9 +3,8 @@ package yuku.alkitab.base.util;
 import android.os.Environment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import yuku.alkitab.base.App;
-
 import java.io.File;
+import yuku.alkitab.base.App;
 
 public class AddonManager {
 	private static File getYesDir() {

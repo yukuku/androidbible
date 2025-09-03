@@ -2,18 +2,16 @@ package yuku.alkitab.base.storage;
 
 import androidx.core.content.ContextCompat;
 import androidx.core.util.AtomicFile;
-import java.nio.charset.StandardCharsets;
-import yuku.alkitab.base.App;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import yuku.alkitab.base.App;
 
 public class NoBackupSharedPreferences {
 	final static HashMap<String, NoBackupSharedPreferences> instances = new HashMap<>();

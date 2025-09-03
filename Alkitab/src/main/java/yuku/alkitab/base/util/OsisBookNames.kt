@@ -1,8 +1,7 @@
 package yuku.alkitab.base.util
 
-import yuku.alkitab.util.Ari
-import java.util.HashMap
 import java.util.Locale
+import yuku.alkitab.util.Ari
 
 object OsisBookNames {
     private val names = arrayOf(

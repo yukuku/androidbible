@@ -4,9 +4,9 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import yuku.alkitab.base.util.AppLog
 import java.lang.reflect.Field
 import java.lang.reflect.Method
+import yuku.alkitab.base.util.AppLog
 
 private const val TAG = "ScrollbarSetter"
 

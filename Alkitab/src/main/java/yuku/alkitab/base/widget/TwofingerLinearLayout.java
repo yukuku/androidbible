@@ -6,8 +6,6 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
-import yuku.alkitab.base.util.AppLog;
-import yuku.alkitab.debug.BuildConfig;
 
 public class TwofingerLinearLayout extends LinearLayout {
 	static final String TAG = TwofingerLinearLayout.class.getSimpleName();

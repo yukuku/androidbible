@@ -2,8 +2,8 @@ package yuku.alkitab.songs
 
 import android.app.Activity
 import androidx.annotation.CallSuper
-import yuku.alkitab.base.util.AppLog
 import java.lang.ref.WeakReference
+import yuku.alkitab.base.util.AppLog
 
 private const val TAG = "MediaController"
 

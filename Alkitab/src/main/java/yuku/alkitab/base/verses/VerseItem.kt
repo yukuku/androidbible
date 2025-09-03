@@ -8,10 +8,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.text.TextUtils
 import android.util.AttributeSet
-import android.util.TypedValue
 import android.view.DragEvent
-import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.view.accessibility.AccessibilityEvent
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -19,7 +16,6 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.S
-import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.widget.AttributeView
 import yuku.alkitab.base.widget.LeftDrawer.PROGRESS_MARK_DRAG_MIME_TYPE
 import yuku.alkitab.base.widget.VerseTextView

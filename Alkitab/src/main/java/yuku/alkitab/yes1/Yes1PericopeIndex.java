@@ -1,10 +1,9 @@
 package yuku.alkitab.yes1;
 
+import java.io.IOException;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.model.PericopeIndex;
 import yuku.bintex.BintexReader;
-
-import java.io.IOException;
 
 public class Yes1PericopeIndex extends PericopeIndex {
 	static final String TAG = Yes1PericopeIndex.class.getSimpleName();

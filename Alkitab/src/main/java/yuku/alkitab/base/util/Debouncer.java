@@ -2,7 +2,6 @@ package yuku.alkitab.base.util;
 
 import android.os.Handler;
 import android.os.Message;
-
 import java.lang.ref.WeakReference;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

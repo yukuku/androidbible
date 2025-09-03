@@ -1,9 +1,8 @@
 package yuku.alkitab.base.util;
 
-import yuku.alkitab.model.Book;
-
 import java.util.Arrays;
 import java.util.HashMap;
+import yuku.alkitab.model.Book;
 
 public class BookNameSorter {
 	static final String[] numberedBookStartsWiths = {null, "I ", "II ", "III ", "IV ", "V "};

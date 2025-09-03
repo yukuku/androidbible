@@ -1,11 +1,10 @@
 package yuku.alkitab.base.util;
 
 import android.widget.Toast;
-import yuku.alkitab.base.App;
-import yuku.alkitab.util.IntArrayList;
-
 import java.util.ArrayList;
 import java.util.List;
+import yuku.alkitab.base.App;
+import yuku.alkitab.util.IntArrayList;
 
 public class Levenshtein {
 	private static final int insertion = 100;

@@ -1,14 +1,13 @@
 package yuku.alkitab.songs;
 
-import yuku.alkitab.base.util.QueryTokenizer;
-import yuku.kpri.model.Lyric;
-import yuku.kpri.model.Song;
-import yuku.kpri.model.Verse;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import yuku.alkitab.base.util.QueryTokenizer;
+import yuku.kpri.model.Lyric;
+import yuku.kpri.model.Song;
+import yuku.kpri.model.Verse;
 
 
 public class SongFilter {

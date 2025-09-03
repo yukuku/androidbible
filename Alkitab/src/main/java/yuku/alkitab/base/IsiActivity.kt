@@ -1,6 +1,5 @@
 package yuku.alkitab.base
 
-import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.BroadcastReceiver
 import android.content.ComponentName
@@ -44,6 +43,8 @@ import androidx.core.text.HtmlCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
 import androidx.core.util.PatternsCompat
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
@@ -130,8 +131,6 @@ import yuku.alkitab.util.Ari
 import yuku.alkitab.util.IntArrayList
 import yuku.alkitab.versionmanager.VersionsActivity
 import yuku.devoxx.flowlayout.FlowLayout
-import androidx.core.view.isVisible
-import androidx.core.view.isGone
 
 private const val TAG = "IsiActivity"
 private const val EXTRA_verseUrl = "verseUrl"
@@ -395,7 +394,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             } else {
                 c.moveToNext()
                 val rendered = HtmlCompat.fromHtml(c.getString(c.getColumnIndexOrThrow("definition")), HtmlCompat.FROM_HTML_MODE_COMPACT)
-                val sb = if (rendered is SpannableStringBuilder) rendered else SpannableStringBuilder(rendered)
+                val sb = rendered as? SpannableStringBuilder ?: SpannableStringBuilder(rendered)
 
                 // remove links
                 for (span in sb.getSpans(0, sb.length, URLSpan::class.java)) {

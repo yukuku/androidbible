@@ -1,8 +1,8 @@
 package yuku.alkitab.base.devotion;
 
-import androidx.annotation.NonNull;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
+import androidx.annotation.NonNull;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.widget.CallbackSpan;
 

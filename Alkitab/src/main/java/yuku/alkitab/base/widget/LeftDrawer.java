@@ -7,12 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
-import androidx.annotation.NonNull;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.core.widget.NestedScrollView;
-import androidx.appcompat.widget.SwitchCompat;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
@@ -27,6 +21,14 @@ import android.widget.CompoundButton;
 import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.core.view.GravityCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.drawerlayout.widget.DrawerLayout;
+import java.util.ArrayList;
+import java.util.List;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
@@ -35,17 +37,14 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
-import yuku.alkitab.base.settings.SettingsActivity;
-import yuku.alkitab.songs.SongViewActivity;
 import yuku.alkitab.base.config.AppConfig;
+import yuku.alkitab.base.settings.SettingsActivity;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.CurrentReading;
-import yuku.alkitab.songs.SongBookUtil;
 import yuku.alkitab.debug.R;
+import yuku.alkitab.songs.SongBookUtil;
+import yuku.alkitab.songs.SongViewActivity;
 import yuku.alkitab.tracking.Tracker;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class LeftDrawer extends NestedScrollView {
 

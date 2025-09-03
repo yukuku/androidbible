@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.core.view.MotionEventCompat;
 import yuku.alkitab.debug.R;
 
 public class GotoButton extends AppCompatButton {
@@ -36,7 +35,7 @@ public class GotoButton extends AppCompatButton {
 
 	@Override
 	public boolean onTouchEvent(final MotionEvent event) {
-		final int action = MotionEventCompat.getActionMasked(event);
+		final int action = event.getActionMasked();
 
 		float x = event.getX();
 		float y = event.getY();

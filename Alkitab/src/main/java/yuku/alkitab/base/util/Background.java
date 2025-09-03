@@ -1,7 +1,6 @@
 package yuku.alkitab.base.util;
 
 import androidx.annotation.NonNull;
-
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 

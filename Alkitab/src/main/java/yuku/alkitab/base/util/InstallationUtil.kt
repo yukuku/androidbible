@@ -3,13 +3,13 @@ package yuku.alkitab.base.util
 import android.os.Build
 import androidx.annotation.Keep
 import androidx.core.os.ConfigurationCompat
+import java.util.UUID
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
 import yuku.alkitab.base.storage.NoBackupSharedPreferences
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
-import java.util.UUID
 
 object InstallationUtil {
     /**

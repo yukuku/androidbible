@@ -1,5 +1,6 @@
 package yuku.alkitab.base.util
 
+import java.util.Locale
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.S
 import yuku.alkitab.base.model.SyncShadow
@@ -7,7 +8,6 @@ import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.sync.Sync
 import yuku.alkitab.base.sync.Sync_History
 import yuku.alkitab.debug.BuildConfig
-import java.util.Locale
 
 private const val TAG = "HistorySyncUtil"
 

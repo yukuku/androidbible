@@ -1,6 +1,11 @@
 package yuku.alkitab.base.appwidget;
 
 import androidx.annotation.Nullable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Random;
 import yuku.afw.App;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
@@ -13,12 +18,6 @@ import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.util.IntArrayList;
 import yuku.bintex.BintexReader;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Random;
 
 /**
  * Handles list of predefined daily verse aris.

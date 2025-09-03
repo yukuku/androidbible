@@ -3,7 +3,6 @@ package yuku.alkitab.base.ac.base
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.MenuItem
@@ -13,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NavUtils
 import androidx.core.app.TaskStackBuilder
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toDrawable
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
@@ -59,9 +59,9 @@ abstract class BaseActivity : AppCompatActivity() {
             ResourcesCompat.getColor(resources, R.color.primary_dark, theme)
         }
 
-        supportActionBar?.setBackgroundDrawable(ColorDrawable(primaryColor))
+        supportActionBar?.setBackgroundDrawable(primaryColor.toDrawable())
 
-        findViewById<View>(R.id.panelBackForwardList)?.background = ColorDrawable(primaryColor)
+        findViewById<View>(R.id.panelBackForwardList)?.background = primaryColor.toDrawable()
 
         window.statusBarColor = statusBarColor
     }

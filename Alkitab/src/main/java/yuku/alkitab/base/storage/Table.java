@@ -1,8 +1,9 @@
 package yuku.alkitab.base.storage;
 
 import androidx.annotation.Keep;
-
-import static yuku.alkitab.base.storage.Table.Type.*;
+import static yuku.alkitab.base.storage.Table.Type.blob;
+import static yuku.alkitab.base.storage.Table.Type.integer;
+import static yuku.alkitab.base.storage.Table.Type.text;
 
 public class Table {
 	@Keep

@@ -12,13 +12,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.os.bundleOf
-import androidx.fragment.app.DialogFragment
 import com.afollestad.materialdialogs.MaterialDialog
 import java.util.Locale
 import kotlin.properties.Delegates.notNull
 import yuku.alkitab.base.S
+import yuku.alkitab.base.dialog.XrefDialog.Companion.newInstance
 import yuku.alkitab.base.dialog.base.BaseDialog
-import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances.applyTextAppearance
 import yuku.alkitab.base.util.TargetDecoder
 import yuku.alkitab.base.verses.VersesController
@@ -29,7 +28,6 @@ import yuku.alkitab.base.verses.VersesUiModel
 import yuku.alkitab.base.widget.FormattedTextRenderer
 import yuku.alkitab.base.widget.VerseInlineLinkSpan
 import yuku.alkitab.base.widget.VerseRenderer
-import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Version
 import yuku.alkitab.model.XrefEntry

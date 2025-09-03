@@ -1,9 +1,8 @@
 package yuku.alkitab.base.util;
 
+import java.util.regex.Pattern;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
-
-import java.util.regex.Pattern;
 
 public class TargetDecoder {
 	static final String TAG = TargetDecoder.class.getSimpleName();

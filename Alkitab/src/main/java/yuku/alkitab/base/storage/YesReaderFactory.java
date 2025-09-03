@@ -1,14 +1,13 @@
 package yuku.alkitab.base.storage;
 
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.Arrays;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.yes1.Yes1Reader;
 import yuku.alkitab.yes2.Yes2Reader;
 import yuku.alkitab.yes2.io.RandomAccessFileRandomInputStream;
-
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.Arrays;
 
 public class YesReaderFactory {
 	static final String TAG = YesReaderFactory.class.getSimpleName();

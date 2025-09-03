@@ -5,13 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import androidx.appcompat.app.ActionBar;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Set;
 import kotlin.Unit;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -22,10 +25,6 @@ import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
 import yuku.alkitab.debug.R;
-
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.Set;
 
 public class SyncSettingsActivity extends BaseActivity {
 	/** Action to broadcast when sync status needs to be refreshed */

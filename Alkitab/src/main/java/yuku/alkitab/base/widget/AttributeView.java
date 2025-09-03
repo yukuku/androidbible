@@ -9,7 +9,7 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import androidx.core.view.MotionEventCompat;
+import androidx.annotation.NonNull;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.verses.VersesController;
@@ -216,7 +216,7 @@ public class AttributeView extends View {
 	}
 
 	@Override
-	protected void onDraw(final Canvas canvas) {
+	protected void onDraw(@NonNull final Canvas canvas) {
 		int totalHeight = 0;
 
 		final int drawOffsetLeft = Math.round(0.5f * density * scale);
@@ -226,7 +226,7 @@ public class AttributeView extends View {
 			canvas.drawBitmap(b, drawOffsetLeft, totalHeight, null);
 			if (bookmark_count > 1) {
 				bookmarkCountPaint.setTextSize(COUNT_TEXT_SIZE_DP * density * scale);
-				canvas.drawText(String.valueOf(bookmark_count), drawOffsetLeft + b.getWidth() / 2, totalHeight + b.getHeight() * 3 / 4, bookmarkCountPaint);
+				canvas.drawText(String.valueOf(bookmark_count), drawOffsetLeft + b.getWidth() / 2f, totalHeight + b.getHeight() * 3 / 4f, bookmarkCountPaint);
 			}
 			totalHeight += b.getHeight();
 		}
@@ -235,7 +235,7 @@ public class AttributeView extends View {
 			canvas.drawBitmap(b, drawOffsetLeft, totalHeight, null);
 			if (note_count > 1) {
 				noteCountPaint.setTextSize(COUNT_TEXT_SIZE_DP * density * scale);
-				canvas.drawText(String.valueOf(note_count), drawOffsetLeft + b.getWidth() / 2, totalHeight + b.getHeight() * 7 / 10, noteCountPaint);
+				canvas.drawText(String.valueOf(note_count), drawOffsetLeft + b.getWidth() / 2f, totalHeight + b.getHeight() * 7f / 10, noteCountPaint);
 			}
 			totalHeight += b.getHeight();
 		}
@@ -258,7 +258,7 @@ public class AttributeView extends View {
 
 	@Override
 	public boolean onTouchEvent(final MotionEvent event) {
-		final int action = MotionEventCompat.getActionMasked(event);
+		final int action = event.getActionMasked();
         switch (action) {
             case MotionEvent.ACTION_UP -> {
                 int totalHeight = 0;
@@ -315,34 +315,24 @@ public class AttributeView extends View {
 	}
 
 	public static int getDefaultProgressMarkStringResource(int preset_id) {
-		switch (preset_id) {
-			case 0:
-				return R.string.pm_progress_1;
-			case 1:
-				return R.string.pm_progress_2;
-			case 2:
-				return R.string.pm_progress_3;
-			case 3:
-				return R.string.pm_progress_4;
-			case 4:
-				return R.string.pm_progress_5;
-		}
-		return 0;
-	}
+        return switch (preset_id) {
+            case 0 -> R.string.pm_progress_1;
+            case 1 -> R.string.pm_progress_2;
+            case 2 -> R.string.pm_progress_3;
+            case 3 -> R.string.pm_progress_4;
+            case 4 -> R.string.pm_progress_5;
+            default -> 0;
+        };
+    }
 
 	public static int getProgressMarkIconResource(int preset_id) {
-		switch (preset_id) {
-			case 0:
-				return R.drawable.ic_attr_progress_mark_1;
-			case 1:
-				return R.drawable.ic_attr_progress_mark_2;
-			case 2:
-				return R.drawable.ic_attr_progress_mark_3;
-			case 3:
-				return R.drawable.ic_attr_progress_mark_4;
-			case 4:
-				return R.drawable.ic_attr_progress_mark_5;
-		}
-		return 0;
-	}
+        return switch (preset_id) {
+            case 0 -> R.drawable.ic_attr_progress_mark_1;
+            case 1 -> R.drawable.ic_attr_progress_mark_2;
+            case 2 -> R.drawable.ic_attr_progress_mark_3;
+            case 3 -> R.drawable.ic_attr_progress_mark_4;
+            case 4 -> R.drawable.ic_attr_progress_mark_5;
+            default -> 0;
+        };
+    }
 }

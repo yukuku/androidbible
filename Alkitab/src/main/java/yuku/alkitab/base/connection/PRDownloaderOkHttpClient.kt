@@ -3,12 +3,12 @@ package yuku.alkitab.base.connection
 import com.downloader.Constants
 import com.downloader.httpclient.HttpClient
 import com.downloader.request.DownloadRequest
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
 import java.io.IOException
 import java.io.InputStream
 import java.util.Locale
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 
 class PRDownloaderOkHttpClient(private val okHttpClient: OkHttpClient) : HttpClient {
     var response: Response? = null

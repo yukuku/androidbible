@@ -1,14 +1,13 @@
 package yuku.alkitab.base.model;
 
+import java.io.File;
+import java.lang.ref.SoftReference;
+import java.util.concurrent.ConcurrentHashMap;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.storage.YesReaderFactory;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.model.Version;
-
-import java.io.File;
-import java.lang.ref.SoftReference;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Version that is defined in the database.

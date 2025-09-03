@@ -1,9 +1,8 @@
 package yuku.alkitab.yes1;
 
+import java.io.IOException;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.bintex.BintexReader;
-
-import java.io.IOException;
 
 public class Yes1PericopeBlock extends PericopeBlock {
 

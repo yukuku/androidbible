@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.os.bundleOf
-import androidx.fragment.app.DialogFragment
 import kotlin.properties.Delegates.notNull
 import yuku.alkitab.base.S
 import yuku.alkitab.base.dialog.VersesDialog.Companion.newCompareInstance

@@ -5,12 +5,11 @@ import android.net.Uri;
 import android.os.Environment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import yuku.alkitab.base.App;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import yuku.alkitab.base.App;
 
 public class FontManager {
 	static final String TAG = FontManager.class.getSimpleName();

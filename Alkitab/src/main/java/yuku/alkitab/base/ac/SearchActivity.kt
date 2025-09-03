@@ -47,9 +47,9 @@ import yuku.alkitab.base.util.ClipboardUtil
 import yuku.alkitab.base.util.Debouncer
 import yuku.alkitab.base.util.FormattedVerseText
 import yuku.alkitab.base.util.Jumper
-import yuku.alkitab.base.util.SearchEngineQuery
 import yuku.alkitab.base.util.QueryTokenizer
 import yuku.alkitab.base.util.SearchEngine
+import yuku.alkitab.base.util.SearchEngineQuery
 import yuku.alkitab.base.util.TextColorUtil
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Version
