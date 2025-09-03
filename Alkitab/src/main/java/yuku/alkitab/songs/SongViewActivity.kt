@@ -1,7 +1,6 @@
 package yuku.alkitab.songs
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -24,6 +23,7 @@ import androidx.annotation.Keep
 import androidx.annotation.StringRes
 import androidx.annotation.WorkerThread
 import androidx.core.app.ShareCompat
+import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
@@ -871,7 +871,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             REQCODE_songList -> {
-                if (resultCode == Activity.RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     val result = SongListActivity.obtainResult(data)
                     if (result != null) {
                         trackSongSelect(result.bookName, result.code)
@@ -884,14 +884,14 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             }
 
             REQCODE_downloadSongBook -> {
-                if (resultCode == Activity.RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     val uri = data?.data
                     if (uri != null) {
                         downloadByAlkitabUri(uri)
                     } else {
                         val input = data?.getStringExtra(AlertDialogActivity.EXTRA_INPUT)
                         if (!input.isNullOrEmpty()) {
-                            downloadByAlkitabUri(Uri.parse("alkitab:///addon/download?kind=songbook&type=ser&dataFormatVersion=3&name=_" + Uri.encode(input.uppercase(Locale.US))))
+                            downloadByAlkitabUri(("alkitab:///addon/download?kind=songbook&type=ser&dataFormatVersion=3&name=_${Uri.encode(input.uppercase(Locale.US))}").toUri())
                         }
                     }
                     return
@@ -916,13 +916,13 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         val dataFormatVersion: Int
         try {
             dataFormatVersion = Integer.parseInt("" + dataFormatVersion_s)
-        } catch (e: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             MaterialDialog(this).show {
                 message(text = "Invalid uri:\n\n$uri")
                 positiveButton(R.string.ok)
             }
             return
-        } catch (e: NullPointerException) {
+        } catch (_: NullPointerException) {
             MaterialDialog(this).show {
                 message(text = "Invalid uri:\n\n$uri")
                 positiveButton(R.string.ok)

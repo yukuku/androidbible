@@ -408,7 +408,7 @@ public class TextAppearancePanel {
             final int selectedPosition = getPositionByColors(currentColors);
 
             if (position != getPositionOfCustomColors()) {
-                final int colors[] = themes.get(position);
+                final int[] colors = themes.get(position);
                 final SpannableStringBuilder sb = new SpannableStringBuilder();
                 sb.append(String.valueOf(position + 1));
                 sb.setSpan(new ForegroundColorSpan(colors[2]), 0, sb.length(), 0);
@@ -428,7 +428,7 @@ public class TextAppearancePanel {
             holder.itemView.setOnClickListener(v -> {
                 dismissDialog();
 
-                final int which = holder.getAdapterPosition();
+                final int which = holder.getBindingAdapterPosition();
 
                 if (which == getPositionOfCustomColors()) {
                     activity.startActivityForResult(ColorSettingsActivity.createIntent(Preferences.getBoolean(Prefkey.is_night_mode, false)), reqcodeCustomColors);

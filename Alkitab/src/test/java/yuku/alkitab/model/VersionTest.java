@@ -83,11 +83,6 @@ public class VersionTest extends TestCase {
 			}
 
 			@Override
-			public SingleChapterVerses loadChapterTextLowercased(final Book book, final int chapter_1) {
-				return null;
-			}
-
-			@Override
 			public String loadChapterTextLowercasedWithoutSplit(final Book book, final int chapter_1) {
 				return null;
 			}
@@ -109,7 +104,7 @@ public class VersionTest extends TestCase {
 		assertEquals(result, version.referenceRange(ari_start, ari_end));
 	}
 
-	public void testReferenceRange1() throws Throwable {
+	public void testReferenceRange1() {
 		testReferenceRange0(0x000101, 0x000101, "Genesis 1:1");
 		testReferenceRange0(0x000101, 0x000103, "Genesis 1:1–3");
 		testReferenceRange0(0x000101, 0x000201, "Genesis 1:1–2:1");

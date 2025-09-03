@@ -31,12 +31,10 @@ public abstract class ArticleFromSabda extends DevotionArticle {
 	@Override
 	public boolean equals(Object o) {
 		if (o == null) return false;
-		if (!(o instanceof ArticleFromSabda)) return false;
+		if (!(o instanceof ArticleFromSabda x)) return false;
 		if (this == o) return true;
 
-		ArticleFromSabda x = (ArticleFromSabda) o;
-
-		return x.date.equals(date) && x.getKind().equals(getKind());
+        return x.date.equals(date) && x.getKind().equals(getKind());
 	}
 
 	@Override

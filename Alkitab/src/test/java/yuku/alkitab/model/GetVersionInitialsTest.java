@@ -71,12 +71,7 @@ public class GetVersionInitialsTest extends TestCase {
 				return null;
 			}
 
-			@Override
-			public SingleChapterVerses loadChapterTextLowercased(final Book book, final int chapter_1) {
-				return null;
-			}
-
-			@Override
+            @Override
 			public String loadChapterTextLowercasedWithoutSplit(final Book book, final int chapter_1) {
 				return null;
 			}
@@ -94,15 +89,15 @@ public class GetVersionInitialsTest extends TestCase {
 	}
 
 	public void test1() {
-		assertEquals(fakeVersion("King James Version").getInitials(), "KJV");
-		assertEquals(fakeVersion("king james version").getInitials(), "KJV");
-		assertEquals(fakeVersion("King-James - Version").getInitials(), "KJV");
-		assertEquals(fakeVersion("abc 2000").getInitials(), "A2");
-		assertEquals(fakeVersion("  abc 2000  ").getInitials(), "A2");
-		assertEquals(fakeVersion("-  abc 2000  -").getInitials(), "A2");
-		assertEquals(fakeVersion("-  abc 2000  -x").getInitials(), "A2X");
-		assertEquals(fakeVersion("SHORT").getInitials(), "SHORT");
-		assertEquals(fakeVersion("short").getInitials(), "SHORT");
-		assertEquals(fakeVersion("a b c").getInitials(), "A B C");
+		assertEquals("KJV", fakeVersion("King James Version").getInitials());
+		assertEquals("KJV", fakeVersion("king james version").getInitials());
+		assertEquals("KJV", fakeVersion("King-James - Version").getInitials());
+		assertEquals("A2", fakeVersion("abc 2000").getInitials());
+		assertEquals("A2", fakeVersion("  abc 2000  ").getInitials());
+		assertEquals("A2", fakeVersion("-  abc 2000  -").getInitials());
+		assertEquals("A2X", fakeVersion("-  abc 2000  -x").getInitials());
+		assertEquals("SHORT", fakeVersion("SHORT").getInitials());
+		assertEquals("SHORT", fakeVersion("short").getInitials());
+		assertEquals("A B C", fakeVersion("a b c").getInitials());
 	}
 }

@@ -10,7 +10,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Point
-import android.net.Uri
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -40,6 +39,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.ShareCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
+import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
@@ -130,6 +130,8 @@ import yuku.alkitab.util.Ari
 import yuku.alkitab.util.IntArrayList
 import yuku.alkitab.versionmanager.VersionsActivity
 import yuku.devoxx.flowlayout.FlowLayout
+import androidx.core.view.isVisible
+import androidx.core.view.isGone
 
 private const val TAG = "IsiActivity"
 private const val EXTRA_verseUrl = "verseUrl"
@@ -302,7 +304,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         try {
             packageManager.getApplicationInfo("yuku.esvsbasal", 0)
             true
-        } catch (e: PackageManager.NameNotFoundException) {
+        } catch (_: PackageManager.NameNotFoundException) {
             false
         }
     }
@@ -368,7 +370,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     private val dictionaryListener: (DictionaryLinkInfo) -> Unit = fun(data: DictionaryLinkInfo) {
         val cr = contentResolver
-        val uri = Uri.parse("content://org.sabda.kamus.provider/define").buildUpon()
+        val uri = "content://org.sabda.kamus.provider/define".toUri().buildUpon()
             .appendQueryParameter("key", data.key)
             .appendQueryParameter("mode", "snippet")
             .build()
@@ -378,7 +380,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 OtherAppIntegration.askToInstallDictionary(this)
                 return
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             MaterialDialog(this).show {
                 message(R.string.dict_no_results)
                 positiveButton(R.string.ok)
@@ -411,7 +413,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
                         try {
                             startActivity(intent)
-                        } catch (e: ActivityNotFoundException) {
+                        } catch (_: ActivityNotFoundException) {
                             OtherAppIntegration.askToInstallDictionary(this@IsiActivity)
                         }
                     }
@@ -881,7 +883,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         intent.putExtra("ari", ari)
                         startActivity(intent)
-                    } catch (e: PackageManager.NameNotFoundException) {
+                    } catch (_: PackageManager.NameNotFoundException) {
                         OtherAppIntegration.openMarket(this@IsiActivity, "org.sabda.pedia")
                     }
                     true
@@ -899,7 +901,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         intent.putExtra("ari", ari)
                         startActivity(intent)
-                    } catch (e: PackageManager.NameNotFoundException) {
+                    } catch (_: PackageManager.NameNotFoundException) {
                         OtherAppIntegration.openMarket(this@IsiActivity, "org.sabda.tafsiran")
                     }
                     true
@@ -928,7 +930,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                     if (ribkaEligibility != RibkaEligibility.None) {
                         val ari = Ari.encode(activeSplit0.book.bookId, this@IsiActivity.chapter_1, selected.get(0))
 
-                        val reference: CharSequence?
+                        val reference: String?
                         val verseText: String?
                         val versionDescription: String?
 
@@ -943,7 +945,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                         }
 
                         if (reference != null && verseText != null) {
-                            startActivity(RibkaReportActivity.createIntent(ari, reference.toString(), verseText, versionDescription))
+                            startActivity(RibkaReportActivity.createIntent(ari, reference, verseText, versionDescription))
                         }
                     }
                     true
@@ -993,7 +995,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
                     try {
                         startActivity(intent)
-                    } catch (e: ActivityNotFoundException) {
+                    } catch (_: ActivityNotFoundException) {
                         MaterialDialog(this@IsiActivity).show {
                             message(text = "Error ANFE starting extension\n\n${extension.activityInfo.packageName}/${extension.activityInfo.name}")
                             positiveButton(R.string.ok)
@@ -2130,7 +2132,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     private fun openSplitDisplay() {
-        if (splitHandleButton.visibility == View.VISIBLE) {
+        if (splitHandleButton.isVisible) {
             return // it's already split, no need to do anything
         }
 
@@ -2190,7 +2192,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     private fun closeSplitDisplay() {
-        if (splitHandleButton.visibility == View.GONE) {
+        if (splitHandleButton.isGone) {
             return // it's already not split, no need to do anything
         }
 
@@ -2209,7 +2211,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == RequestCodes.FromActivity.Goto && resultCode == Activity.RESULT_OK && data != null) {
+        if (requestCode == RequestCodes.FromActivity.Goto && resultCode == RESULT_OK && data != null) {
             val result = GotoActivity.obtainResult(data)
             if (result != null) {
                 val ari_cv: Int
@@ -2257,9 +2259,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             textAppearancePanel?.onActivityResult(requestCode)
         } else if (requestCode == RequestCodes.FromActivity.TextAppearanceCustomColors) {
             textAppearancePanel?.onActivityResult(requestCode)
-        } else if (requestCode == RequestCodes.FromActivity.EditNote1 && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == RequestCodes.FromActivity.EditNote1 && resultCode == RESULT_OK) {
             reloadBothAttributeMaps()
-        } else if (requestCode == RequestCodes.FromActivity.EditNote2 && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == RequestCodes.FromActivity.EditNote2 && resultCode == RESULT_OK) {
             lsSplit0.uncheckAllVerses(true)
             reloadBothAttributeMaps()
         }
@@ -2631,7 +2633,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 }
 
                 startActivity(intent)
-            } catch (e: ActivityNotFoundException) {
+            } catch (_: ActivityNotFoundException) {
                 MaterialDialog(this@IsiActivity).show {
                     message(R.string.maps_could_not_open)
                     positiveButton(R.string.ok)
@@ -2722,13 +2724,13 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                             val span = object : ClickableSpan() {
                                 override fun onClick(widget: View) {
                                     val uri = if (url.startsWith("http:") || url.startsWith("https:")) {
-                                        Uri.parse(url)
+                                        url.toUri()
                                     } else {
-                                        Uri.parse("http://$url")
+                                        "http://$url".toUri()
                                     }
                                     try {
                                         startActivity(Intent(Intent.ACTION_VIEW, uri))
-                                    } catch (ignored: Exception) {
+                                    } catch (_: Exception) {
                                     }
                                 }
                             }

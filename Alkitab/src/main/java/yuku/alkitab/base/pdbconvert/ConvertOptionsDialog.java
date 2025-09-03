@@ -158,7 +158,7 @@ public class ConvertOptionsDialog {
         lSample.setText(bookName + " 1:1  " + verse);
     }
 
-    private OnItemSelectedListener cbEncoding_itemSelected = new OnItemSelectedListener() {
+    private final OnItemSelectedListener cbEncoding_itemSelected = new OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             String encoding = encodingAdapter.getItem(position);

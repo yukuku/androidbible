@@ -9,7 +9,7 @@ import yuku.alkitab.util.Ari
 private const val TAG = "VersesDataModel"
 
 @JvmInline
-value class LocateResult constructor(private val raw: Long) {
+value class LocateResult(private val raw: Long) {
     constructor(verse_1: Int, distanceToNextVerse: Int) : this(
         verse_1.toLong() or (distanceToNextVerse.toLong() shl 32)
     )

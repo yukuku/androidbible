@@ -108,7 +108,7 @@ public class TypeBookmarkDialog {
         String caption = tCaption.getText().toString();
 
         // If there is no caption, show reference
-        if (caption.length() == 0 || caption.trim().length() == 0) {
+        if (caption.isEmpty() || caption.trim().isEmpty()) {
             caption = defaultCaption;
         }
 
@@ -244,7 +244,7 @@ public class TypeBookmarkDialog {
             holder.itemView.setOnClickListener(v -> {
                 dismissDialog();
 
-                final int which = holder.getAdapterPosition();
+                final int which = holder.getBindingAdapterPosition();
                 if (which == 0) { // new label
                     LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), title -> {
                         final Label newLabel = S.getDb().insertLabel(title, null);

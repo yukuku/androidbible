@@ -329,7 +329,7 @@ public class MarkersActivity extends BaseActivity {
 
         List<Label> labels;
 
-        private String[] presetCaptions = {
+        private final String[] presetCaptions = {
             getString(R.string.bmcat_all_bookmarks),
             getString(R.string.bmcat_notes),
             getString(R.string.bmcat_highlights),

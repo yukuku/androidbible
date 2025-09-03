@@ -2,7 +2,6 @@ package yuku.alkitab.base.verses
 
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +9,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.net.toUri
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -518,7 +518,7 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         view.checked = checked
         view.collapsed = text.isEmpty() && !attributeView.isShowingSomething
         view.onPinDropped = { presetId ->
-            val adapterPosition = adapterPosition
+            val adapterPosition = bindingAdapterPosition
             if (adapterPosition != -1) {
                 listeners.pinDropListener.onPinDropped(presetId, Ari.encodeWithBc(data.ari_bc_, data.getVerse_1FromPosition(adapterPosition)))
             }
@@ -531,12 +531,12 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
          */
         if (ari in ui.dictionaryModeAris || checked && Preferences.getBoolean(view.context.getString(R.string.pref_autoDictionaryAnalyze_key), view.resources.getBoolean(R.bool.pref_autoDictionaryAnalyze_default))) {
             val renderedText = lText.text
-            val verseText = if (renderedText is SpannableStringBuilder) renderedText else SpannableStringBuilder(renderedText)
+            val verseText = renderedText as? SpannableStringBuilder ?: SpannableStringBuilder(renderedText)
 
             // we have to exclude the verse numbers from analyze text
             val analyzeString = verseText.toString().substring(startVerseTextPos)
 
-            val uri = Uri.parse("content://org.sabda.kamus.provider/analyze").buildUpon().appendQueryParameter("text", analyzeString).build()
+            val uri = "content://org.sabda.kamus.provider/analyze".toUri().buildUpon().appendQueryParameter("text", analyzeString).build()
 
             try {
                 view.context.contentResolver.safeQuery(uri, null, null, null, null)?.use { c ->
@@ -585,14 +585,14 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
                 }
 
                 VersesController.VerseSelectionMode.singleClick -> {
-                    val adapterPosition = adapterPosition
+                    val adapterPosition = bindingAdapterPosition
                     if (adapterPosition != -1) {
                         listeners.selectedVersesListener.onVerseSingleClick(data.getVerse_1FromPosition(adapterPosition))
                     }
                 }
 
                 VersesController.VerseSelectionMode.multiple -> {
-                    val adapterPosition = adapterPosition
+                    val adapterPosition = bindingAdapterPosition
                     if (adapterPosition != -1) {
                         toggleChecked(adapterPosition)
                     }

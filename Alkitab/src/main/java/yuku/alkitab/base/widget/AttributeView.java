@@ -259,48 +259,51 @@ public class AttributeView extends View {
 	@Override
 	public boolean onTouchEvent(final MotionEvent event) {
 		final int action = MotionEventCompat.getActionMasked(event);
-		if (action == MotionEvent.ACTION_UP) {
-			int totalHeight = 0;
-			final float y = event.getY();
-			if (bookmark_count > 0) {
-				final Bitmap b = getScaledBookmarkBitmap();
-				totalHeight += b.getHeight();
-				if (totalHeight > y) {
-					attributeListener.onBookmarkAttributeClick(version, versionId, ari);
-					return true;
-				}
+        switch (action) {
+            case MotionEvent.ACTION_UP -> {
+                int totalHeight = 0;
+                final float y = event.getY();
+                if (bookmark_count > 0) {
+                    final Bitmap b = getScaledBookmarkBitmap();
+                    totalHeight += b.getHeight();
+                    if (totalHeight > y) {
+                        attributeListener.onBookmarkAttributeClick(version, versionId, ari);
+                        return true;
+                    }
+                }
+                if (note_count > 0) {
+                    final Bitmap b = getScaledNoteBitmap();
+                    totalHeight += b.getHeight();
+                    if (totalHeight > y) {
+                        attributeListener.onNoteAttributeClick(version, versionId, ari);
+                        return true;
+                    }
+                }
+                if (progress_mark_bits != 0) {
+                    for (int preset_id = 0; preset_id < PROGRESS_MARK_TOTAL_COUNT; preset_id++) {
+                        if (isProgressMarkSetFromAttribute(preset_id)) {
+                            final Bitmap b = getScaledProgressMarkBitmapByPresetId(preset_id);
+                            totalHeight += b.getHeight();
+                            if (totalHeight > y) {
+                                attributeListener.onProgressMarkAttributeClick(version, versionId, preset_id);
+                                return true;
+                            }
+                        }
+                    }
+                }
+                if (has_maps) {
+                    final Bitmap b = getScaledHasMapsBitmap();
+                    totalHeight += b.getHeight();
+                    if (totalHeight > y) {
+                        attributeListener.onHasMapsAttributeClick(version, versionId, ari);
+                        return true;
+                    }
+                }
+            }
+			case MotionEvent.ACTION_DOWN -> {
+				return true;
 			}
-			if (note_count > 0) {
-				final Bitmap b = getScaledNoteBitmap();
-				totalHeight += b.getHeight();
-				if (totalHeight > y) {
-					attributeListener.onNoteAttributeClick(version, versionId, ari);
-					return true;
-				}
-			}
-			if (progress_mark_bits != 0) {
-				for (int preset_id = 0; preset_id < PROGRESS_MARK_TOTAL_COUNT; preset_id++) {
-					if (isProgressMarkSetFromAttribute(preset_id)) {
-						final Bitmap b = getScaledProgressMarkBitmapByPresetId(preset_id);
-						totalHeight += b.getHeight();
-						if (totalHeight > y) {
-							attributeListener.onProgressMarkAttributeClick(version, versionId, preset_id);
-							return true;
-						}
-					}
-				}
-			}
-			if (has_maps) {
-				final Bitmap b = getScaledHasMapsBitmap();
-				totalHeight += b.getHeight();
-				if (totalHeight > y) {
-					attributeListener.onHasMapsAttributeClick(version, versionId, ari);
-					return true;
-				}
-			}
-		} else if (action == MotionEvent.ACTION_DOWN) {
-			return true;
-		}
+        }
 		return false;
 	}
 

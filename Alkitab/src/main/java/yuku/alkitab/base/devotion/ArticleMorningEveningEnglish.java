@@ -7,7 +7,7 @@ import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.widget.CallbackSpan;
 
 public class ArticleMorningEveningEnglish extends DevotionArticle {
-	private String date;
+	private final String date;
 	private String body;
 	private boolean readyToUse;
 

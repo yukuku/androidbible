@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 
 public class RandomInputStream extends InputStream {
-	private RandomAccessFile f;
+	private final RandomAccessFile f;
 
 	public RandomInputStream(RandomAccessFile f) {
 		this.f = f;

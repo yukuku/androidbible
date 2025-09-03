@@ -67,9 +67,6 @@ public abstract class Version {
 	@Nullable
 	public abstract SingleChapterVerses loadChapterText(Book book, int chapter_1);
 
-	@Nullable
-	public abstract SingleChapterVerses loadChapterTextLowercased(Book book, int chapter_1);
-
 	/**
 	 * Load a whole chapter as a single string with verses separated by '\n' from this version.
 	 * @return null if the chapter is not available.
@@ -108,7 +105,7 @@ public abstract class Version {
 		if (verse_1 == 0 || verseCount == 1) { // verseCount does not matter
 			return reference(bookId, chapter_1, verse_1);
 		} else {
-			return reference(bookId, chapter_1, verse_1) + "\u2013" /* endash */ + (verse_1 + verseCount - 1);
+			return reference(bookId, chapter_1, verse_1) + "–" /* endash */ + (verse_1 + verseCount - 1);
 		}
 	}
 
@@ -194,7 +191,7 @@ public abstract class Version {
 		}
 
 		// en-dash is only empty if both aris are exactly the same
-		en_dash = ari_start == ari_end ? "" : "\u2013";
+		en_dash = ari_start == ari_end ? "" : "–";
 
 		// How to show verse depending on whether the verse is 0:
 		// start, end, show start as, show end as (0 means verse is 0, 1 means verse is non-0)
@@ -251,7 +248,7 @@ public abstract class Version {
 			final char[] chars = new char[words.length];
 			int cnt = 0;
 			for (int i = 0; i < chars.length; i++) {
-				if (words[i].length() > 0) {
+				if (!words[i].isEmpty()) {
 					chars[cnt++] = Character.toUpperCase(words[i].charAt(0));
 				}
 			}

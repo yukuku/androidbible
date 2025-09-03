@@ -2,7 +2,6 @@ package yuku.alkitab.base.ac
 
 import android.content.Intent
 import android.graphics.drawable.GradientDrawable
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -15,6 +14,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
+import androidx.core.net.toUri
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItems
 import java.util.Locale
@@ -55,7 +55,7 @@ class AboutActivity : BaseActivity() {
         bHelp = findViewById(R.id.bHelp)
         bHelp.setOnClickListener {
             trackEvent("help_button_guide")
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://alkitab.app/guide?utm_source=app&utm_medium=button&utm_campaign=help")))
+            startActivity(Intent(Intent.ACTION_VIEW, "https://alkitab.app/guide?utm_source=app&utm_medium=button&utm_campaign=help".toUri()))
         }
 
         bMaterialSources = findViewById(R.id.bMaterialSources)

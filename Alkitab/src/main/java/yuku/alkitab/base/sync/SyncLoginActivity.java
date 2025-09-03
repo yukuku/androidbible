@@ -217,7 +217,7 @@ public class SyncLoginActivity extends BaseActivity {
                 } catch (Sync.NotOkException e) {
                     AppLog.d(TAG, "Forgot password failed", e);
 
-                    runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(this, "" + e.getMessage()));
+                    runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(this, e.getMessage()));
                 }
             });
         });
@@ -261,7 +261,7 @@ public class SyncLoginActivity extends BaseActivity {
                 } catch (Sync.NotOkException e) {
                     AppLog.d(TAG, "Change password failed", e);
 
-                    runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(this, "" + e.getMessage()));
+                    runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(this, e.getMessage()));
                 }
             }));
 

@@ -10,7 +10,7 @@ import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.R;
 
 public class ArticleMeidA extends DevotionArticle {
-	private String date;
+	private final String date;
 	private String bodyHtml;
 	private boolean readyToUse;
 

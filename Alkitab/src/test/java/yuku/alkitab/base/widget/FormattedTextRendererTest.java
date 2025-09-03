@@ -12,7 +12,7 @@ public class FormattedTextRendererTest extends TestCase {
     SpannableStringBuilder mockSb() {
         return new SpannableStringBuilder() {
             String chars = "";
-            List<Object[]> spans = new ArrayList<>();
+            final List<Object[]> spans = new ArrayList<>();
 
             @NonNull
             @Override

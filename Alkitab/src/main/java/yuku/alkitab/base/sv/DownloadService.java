@@ -38,7 +38,7 @@ public class DownloadService extends Service {
 	DownloadListener listener;
 	
 	static class ListenerHandler extends Handler {
-		private WeakReference<DownloadService> sv;
+		private final WeakReference<DownloadService> sv;
 
 		public ListenerHandler(DownloadService sv) {
 			this.sv = new WeakReference<>(sv);
@@ -68,7 +68,7 @@ public class DownloadService extends Service {
 		}
 	}
 
-	private Handler handler = new ListenerHandler(this);
+	private final Handler handler = new ListenerHandler(this);
 	
 	public interface DownloadListener {
 		void onStateChanged(DownloadEntry entry, State originalState);
@@ -80,8 +80,7 @@ public class DownloadService extends Service {
 		downloading,
 		finished,
 		failed,
-		;
-	}
+    }
 	
 	public static class DownloadEntry {
 		public String key;

@@ -46,14 +46,12 @@ public class VerseTextView extends AppCompatTextView {
 		if (action != MotionEvent.ACTION_UP && action != MotionEvent.ACTION_DOWN) return false;
 
 		final CharSequence text = this.getText();
-		if (!(text instanceof Spanned)) return false;
+		if (!(text instanceof Spanned buffer)) return false;
 
 		final Layout layout = this.getLayout();
 		if (layout == null) return false;
 
-		final Spanned buffer = (Spanned) text;
-
-		final int touchX = (int) (event.getX() + 0.5f) - this.getTotalPaddingLeft() + this.getScrollX();
+        final int touchX = (int) (event.getX() + 0.5f) - this.getTotalPaddingLeft() + this.getScrollX();
 		final int touchY = (int) (event.getY() + 0.5f) - this.getTotalPaddingTop() + this.getScrollY();
 
 		final List<SpanEntry> spanEntries = spanEntriesBuffer.get();

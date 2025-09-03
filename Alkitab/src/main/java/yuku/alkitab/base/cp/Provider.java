@@ -323,9 +323,8 @@ public class Provider extends ContentProvider {
 		if (s.equals("yes")) return true;
 		int n = Ari.parseInt(s, Integer.MIN_VALUE);
 		if (n == 0) return false;
-		if (n != Integer.MIN_VALUE) return true;
-		return false;
-	}
+        return n != Integer.MIN_VALUE;
+    }
 
 	@Override public String getType(@NonNull Uri uri) {
 		return null;

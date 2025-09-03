@@ -228,7 +228,7 @@ public class SongListActivity extends BaseActivity {
 		}
 	};
 
-	private AdapterView.OnItemClickListener lsSong_itemClick = new AdapterView.OnItemClickListener() {
+	private final AdapterView.OnItemClickListener lsSong_itemClick = new AdapterView.OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 			SongInfo songInfo = adapter.getItem(position);
@@ -247,7 +247,7 @@ public class SongListActivity extends BaseActivity {
 		}
 	};
 
-	private SearchView.OnQueryTextListener searchWidget_queryText = new SearchView.OnQueryTextListener() {
+	private final SearchView.OnQueryTextListener searchWidget_queryText = new SearchView.OnQueryTextListener() {
 		@Override
 		public boolean onQueryTextSubmit(final String query) {
 			startSearch();

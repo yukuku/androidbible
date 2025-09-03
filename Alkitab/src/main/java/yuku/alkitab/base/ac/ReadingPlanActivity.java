@@ -241,7 +241,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
         loadDayNumber();
 
         // if no reading plans have been downloaded, open download page immediately
-        if (downloadedReadingPlanInfos.size() == 0) {
+        if (downloadedReadingPlanInfos.isEmpty()) {
             openDownloadReadingPlanPage();
         }
 
@@ -286,7 +286,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
     @Override
     public boolean onPrepareOptionsMenu(final Menu menu) {
-        final boolean anyReadingPlan = downloadedReadingPlanInfos.size() != 0;
+        final boolean anyReadingPlan = !downloadedReadingPlanInfos.isEmpty();
         menu.findItem(R.id.menuDelete).setVisible(anyReadingPlan);
 
         if (!anyReadingPlan) {
@@ -316,7 +316,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
     void loadReadingPlan(long id) {
         downloadedReadingPlanInfos = S.getDb().listAllReadingPlanInfo();
 
-        if (downloadedReadingPlanInfos.size() == 0) {
+        if (downloadedReadingPlanInfos.isEmpty()) {
             return;
         }
 
@@ -406,7 +406,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 
     public void prepareDropDownNavigation() {
-        if (downloadedReadingPlanInfos.size() == 0) {
+        if (downloadedReadingPlanInfos.isEmpty()) {
             actionBar.setDisplayShowTitleEnabled(true);
             actionBar.setTitle(R.string.rp_activity_title);
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);

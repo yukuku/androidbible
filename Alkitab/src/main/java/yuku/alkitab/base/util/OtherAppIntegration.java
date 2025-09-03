@@ -36,10 +36,7 @@ public class OtherAppIntegration {
     public static boolean hasIntegratedDictionaryApp() {
         try {
             final PackageInfo info = App.context.getPackageManager().getPackageInfo("org.sabda.kamus", 0);
-            if (info.versionCode < 4) {
-                return false;
-            }
-            return true;
+            return info.versionCode >= 4;
         } catch (PackageManager.NameNotFoundException e) {
             return false;
         }

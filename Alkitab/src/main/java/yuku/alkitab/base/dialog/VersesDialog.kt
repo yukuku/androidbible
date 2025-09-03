@@ -60,7 +60,7 @@ class VersesDialog : BaseDialog() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(DialogFragment.STYLE_NO_TITLE, 0)
+        setStyle(STYLE_NO_TITLE, 0)
 
         // TODO appcompat 1.1.0: change to requireArguments()
         val arguments = requireNotNull(arguments)

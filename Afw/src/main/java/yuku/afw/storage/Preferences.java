@@ -13,13 +13,11 @@ import java.util.WeakHashMap;
 import yuku.afw.App;
 
 public class Preferences {
-	private static final String TAG = Preferences.class.getSimpleName();
-
-	private static SharedPreferences cache;
+    private static SharedPreferences cache;
 	private static boolean dirty = true;
 	private static SharedPreferences.Editor currentEditor;
 	private static int held = 0;
-	private static WeakHashMap<SharedPreferences.OnSharedPreferenceChangeListener, Void> observers = new WeakHashMap<>();
+	private static final WeakHashMap<SharedPreferences.OnSharedPreferenceChangeListener, Void> observers = new WeakHashMap<>();
 
 	public static void invalidate() {
 		dirty = true;
@@ -270,7 +268,7 @@ public class Preferences {
 			dirty = false;
 
 			// re-register observers if the SharedPreferences object changes
-			if (cache != null && res != cache && observers.size() > 0) {
+			if (cache != null && res != cache && !observers.isEmpty()) {
 				for (final SharedPreferences.OnSharedPreferenceChangeListener observer : observers.keySet()) {
 					cache.unregisterOnSharedPreferenceChangeListener(observer);
 					res.registerOnSharedPreferenceChangeListener(observer);

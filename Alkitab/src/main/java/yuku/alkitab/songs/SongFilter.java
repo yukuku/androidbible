@@ -81,10 +81,8 @@ public class SongFilter {
 
 		if (find(song.code, m)) return true;
 		if (find(song.title, m)) return true;
-		if (song.title_original != null && find(song.title_original, m)) return true;
-
-		return false;
-	}
+        return song.title_original != null && find(song.title_original, m);
+    }
 
 	private static boolean match(Song song, Pattern p) {
 		Matcher m = p.matcher("");

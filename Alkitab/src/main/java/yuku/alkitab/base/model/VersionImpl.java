@@ -298,16 +298,6 @@ public class VersionImpl extends Version {
     }
 
     @Override
-    @Nullable
-    public synchronized SingleChapterVerses loadChapterTextLowercased(Book book, int chapter_1) {
-        if (book == null) {
-            return null;
-        }
-
-        return bibleReader.loadVerseText(book, chapter_1, false, true);
-    }
-
-    @Override
     public synchronized String loadChapterTextLowercasedWithoutSplit(Book book, int chapter_1) {
         if (book == null) {
             return null;
