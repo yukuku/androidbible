@@ -18,7 +18,9 @@ android {
         abortOnError false
     }
 
-    ndkVersion "25.0.8775105"
+    // We have to specify the ndk version twice, in here and in the main app module
+    // https://issuetracker.google.com/issues/353554169
+    ndkVersion '28.2.13676358'
 
     externalNativeBuild {
         ndkBuild {

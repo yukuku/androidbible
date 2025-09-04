@@ -62,6 +62,10 @@ android {
         }
     }
     namespace 'yuku.alkitab.debug'
+
+    // We have to specify the ndk version twice, in here and in the Snappy library
+    // https://issuetracker.google.com/issues/353554169
+    ndkVersion '28.2.13676358'
 }
 
 kotlin {
