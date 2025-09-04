@@ -38,7 +38,7 @@ public class DevotionDownloader extends Thread {
 
     private synchronized DevotionArticle dequeue() {
         while (true) {
-            if (queue_.size() == 0) {
+            if (queue_.isEmpty()) {
                 return null;
             }
 

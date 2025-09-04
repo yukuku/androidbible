@@ -7,9 +7,6 @@ import android.content.IntentFilter;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
@@ -25,7 +22,6 @@ import androidx.core.app.ShareCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.snackbar.Snackbar;
-import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -199,7 +195,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
         public abstract String getShareUrl(SimpleDateFormat format, Date date);
 
         public int getPrefetchDays() {
-            return 31;
+            return 15;
         }
     }
 
@@ -217,56 +213,6 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
     // currently shown
     DevotionKind currentKind;
     Date currentDate;
-
-    static class LongReadChecker extends Handler {
-        DevotionKind startKind;
-        String startDate;
-
-        final WeakReference<DevotionActivity> ac;
-
-        public LongReadChecker(DevotionActivity activity) {
-            super(Looper.getMainLooper());
-            ac = new WeakReference<>(activity);
-        }
-
-        private boolean equals(Object a, Object b) {
-            //noinspection EqualsReplaceableByObjectsCall
-            return a == b || a != null && a.equals(b);
-        }
-
-        /**
-         * This will be called 30 seconds after startKind and startDate are set.
-         */
-        @Override
-        public void handleMessage(@NonNull final Message msg) {
-            final DevotionActivity ac = this.ac.get();
-            if (ac == null) return;
-            if (ac.isFinishing()) {
-                AppLog.d(TAG, "Activity is already closed");
-                return;
-            }
-
-            final String currentDate = getDateFormat().format(ac.currentDate);
-            if (equals(startKind, ac.currentKind) && equals(startDate, currentDate)) {
-                AppLog.d(TAG, "Long read detected: now=[" + ac.currentKind + " " + currentDate + "]");
-            } else {
-                AppLog.d(TAG, "Not long enough for long read: previous=[" + startKind + " " + startDate + "] now=[" + ac.currentKind + " " + currentDate + "]");
-            }
-        }
-
-        public void start() {
-            final DevotionActivity ac = this.ac.get();
-            if (ac == null) return;
-
-            startKind = ac.currentKind;
-            startDate = getDateFormat().format(ac.currentDate);
-
-            removeMessages(1);
-            sendEmptyMessageDelayed(1, 30000);
-        }
-    }
-
-    final LongReadChecker longReadChecker = new LongReadChecker(this);
 
     final BroadcastReceiver br = new BroadcastReceiver() {
         @Override
@@ -429,10 +375,6 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
             final LeftDrawer.Devotion.Handle handle = leftDrawer.getHandle();
             handle.setDevotionKind(currentKind);
             handle.setDevotionDate(dateDisplay);
-        }
-
-        if (renderSucceeded) {
-            longReadChecker.start();
         }
     }
 
