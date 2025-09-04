@@ -74,7 +74,7 @@ class ExoplayerController(appContext: Context) : MediaController() {
                 mp.playWhenReady = true
                 state = State.playing
             }
-        }.let {}
+        }
     }
 
     private val playerListener = object : Player.Listener {

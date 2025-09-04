@@ -75,7 +75,7 @@ class MidiController : MediaController() {
                 mp.start()
                 state = State.playing
             }
-        }.let {}
+        }
     }
 
     private fun mediaPlayerPrepare(localFilename: String, playInLoop: Boolean) {
