@@ -1,7 +1,6 @@
 package yuku.alkitab.songs
 
 import android.content.Context
-import android.net.Uri
 import android.text.TextUtils
 import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
@@ -11,8 +10,14 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.ExoPlaybackException
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.MediaSource
+import androidx.media3.exoplayer.Renderer
+import androidx.media3.exoplayer.RenderersFactory
+import androidx.media3.exoplayer.audio.MediaCodecAudioRenderer
+import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.extractor.Extractor
+import androidx.media3.extractor.ExtractorsFactory
+import androidx.media3.extractor.mp3.Mp3Extractor
 import com.afollestad.materialdialogs.MaterialDialog
 import java.io.IOException
 import yuku.alkitab.base.connection.Connections
@@ -24,15 +29,38 @@ private const val TAG = "ExoplayerController"
 /**
  * We will use [MidiController] for MIDI files.
  */
+@OptIn(UnstableApi::class)
 class ExoplayerController(appContext: Context) : MediaController() {
-    private var mp = ExoPlayer.Builder(appContext).build()
+    private val mp by lazy {
+        val audioOnlyRenderersFactory = RenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
+            arrayOf<Renderer>(
+                MediaCodecAudioRenderer(
+                    appContext,
+                    MediaCodecSelector.DEFAULT,
+                    eventHandler,
+                    audioRendererEventListener,
+                )
+            )
+        }
+        val mp3ExtractorFactory = ExtractorsFactory {
+            arrayOf<Extractor>(Mp3Extractor())
+        }
+
+        val okHttpDataSourceFactory = OkHttpDataSource.Factory(Connections.okHttp)
+            .setUserAgent(Connections.httpUserAgent)
+
+        ExoPlayer.Builder(
+            appContext,
+            audioOnlyRenderersFactory,
+            ProgressiveMediaSource.Factory(okHttpDataSourceFactory, mp3ExtractorFactory),
+        ).build()
+    }
 
     override fun reset() {
         super.reset()
         mp.stop()
     }
 
-    @OptIn(UnstableApi::class)
     override fun playOrPause(playInLoop: Boolean) {
         when (state) {
             State.reset -> {
@@ -42,15 +70,10 @@ class ExoplayerController(appContext: Context) : MediaController() {
                 try {
                     state = State.preparing
 
-                    // Produces DataSource instances through which media data is loaded.
-                    val dataSourceFactory = OkHttpDataSource.Factory(Connections.okHttp)
-                        .setUserAgent(Connections.httpUserAgent)
-
-                    // This is the MediaSource representing the media to be played.
-                    val mediaSource: MediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
-                        .createMediaSource(MediaItem.fromUri(Uri.parse(url)))
-
-                    mediaPlayerPrepare(mediaSource, playInLoop)
+                    val url = url
+                    if (url != null) {
+                        mediaPlayerPrepare(url, playInLoop)
+                    }
                 } catch (e: IOException) {
                     AppLog.e(TAG, "buffering to local cache", e)
                     state = State.error
@@ -99,7 +122,6 @@ class ExoplayerController(appContext: Context) : MediaController() {
             }
         }
 
-        @OptIn(UnstableApi::class)
         override fun onPlayerError(error: PlaybackException) {
             AppLog.e(TAG, "@@onPlayerError error=$error")
             val activity = activityRef?.get()
@@ -130,16 +152,14 @@ class ExoplayerController(appContext: Context) : MediaController() {
         }
     }
 
-    @OptIn(UnstableApi::class)
-    private fun mediaPlayerPrepare(mediaSource: MediaSource, playInLoop: Boolean) {
+    private fun mediaPlayerPrepare(url: String, playInLoop: Boolean) {
         try {
             state = State.preparing
 
             mp.addListener(playerListener)
 
-            // Prepare the player with the source.
             mp.repeatMode = if (playInLoop) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
-            mp.setMediaSource(mediaSource)
+            mp.setMediaItem(MediaItem.fromUri(url))
             mp.prepare()
         } catch (e: IOException) {
             AppLog.e(TAG, "mp setDataSource", e)

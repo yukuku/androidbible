@@ -42,7 +42,7 @@ ext {
     androidxCoreVersion = '1.7.0'
     androidxCursoradapterVersion = '1.0.0'
     androidxFragmentVersion = '1.4.1'
-    androidxMedia3Version = '1.1.1'
+    androidxMedia3Version = '1.8.0'
     androidxMultidexVersion = '2.0.1'
     androidxPercentlayoutVersion = '1.0.0'
     androidxPreferenceVersion = '1.2.1'
