@@ -30,9 +30,9 @@ ext {
     RIBKA_FUNCTIONS_HOST = 'https://us-central1-pulau-ribka.cloudfunctions.net/'
     RIBKA_FUNCTIONS_HOST_DEBUG = 'http://10.0.3.2:5001/pulau-ribka/us-central1/'
 
-    compileSdkVersion = 35
+    compileSdkVersion = 36
     minSdkVersion = 26
-    targetSdkVersion = 33
+    targetSdkVersion = 35
 
     // Android X
     androidxActivityVersion = '1.4.0'
