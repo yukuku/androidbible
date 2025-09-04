@@ -33,7 +33,6 @@ import yuku.alkitab.base.util.DownloadMapper
 import yuku.alkitab.base.util.Foreground
 import yuku.alkitab.base.widget.MaterialDialogProgressHelper.progress
 import yuku.alkitab.debug.R
-import yuku.alkitab.tracking.Tracker
 
 private const val TAG = "VersionsActivity"
 
@@ -310,13 +309,11 @@ class VersionsActivity : BaseActivity() {
         val callback = object : ConvertOptionsDialog.ConvertOptionsCallback {
             fun showResult(yesFile: File, exception: Throwable?, wronglyConvertedBookNames: List<String>?) {
                 if (exception != null) {
-                    Tracker.trackEvent("versions_convert_pdb_error")
                     showPdbReadErrorDialog(exception)
                     return
                 }
 
                 // success.
-                Tracker.trackEvent("versions_convert_pdb_success")
                 registerLocalYesFile(yesFile)
 
                 if (!wronglyConvertedBookNames.isNullOrEmpty()) {
@@ -382,7 +379,6 @@ class VersionsActivity : BaseActivity() {
             }
         }
 
-        Tracker.trackEvent("versions_convert_pdb_start")
         ConvertOptionsDialog(this, cacheFile.absolutePath, callback).show()
     }
 

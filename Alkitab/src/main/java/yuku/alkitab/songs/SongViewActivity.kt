@@ -58,8 +58,6 @@ import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 import yuku.alkitab.songs.SongViewActivity.Companion.exoplayerController
 import yuku.alkitab.songs.SongViewActivity.Companion.midiController
-import yuku.alkitab.tracking.Analytics
-import yuku.alkitab.tracking.Tracker
 import yuku.alkitabintegration.display.Launcher
 import yuku.kpri.model.Song
 import yuku.kpri.model.VerseKind
@@ -168,18 +166,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
             MediaController.State.playing -> {
                 // we start playing now
-                val currentBookName = currentBookName
-                val currentSong = currentSong
-
-                if (currentBookName != null && currentSong != null) {
-                    Tracker.trackEvent(
-                        "song_playing",
-                        Analytics.Param.ITEM_NAME, currentBookName + " " + currentSong.code,
-                        Analytics.Param.ITEM_CATEGORY, currentBookName,
-                        Analytics.Param.ITEM_VARIANT, currentSong.code
-                    )
-                }
-
                 mediaState.enabled = true
                 mediaState.icon = R.drawable.ic_action_pause
                 mediaState.label = R.string.menuPause
@@ -243,7 +229,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         val newCode = codes[newPos]
         val newSong = S.songDb.getSong(currentBookName, newCode) ?: return // should not happen
 
-        trackSongSelect(currentBookName, newCode)
         displaySong(currentBookName, newSong)
     }
 
@@ -874,7 +859,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                 if (resultCode == RESULT_OK) {
                     val result = SongListActivity.obtainResult(data)
                     if (result != null) {
-                        trackSongSelect(result.bookName, result.code)
                         displaySong(result.bookName, S.songDb.getSong(result.bookName, result.code))
                         // store this for next search
                         last_searchState = result.last_searchState
@@ -1075,7 +1059,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                 if (state_tempCode.isNotEmpty()) {
                     val song = S.songDb.getSong(currentBookName, state_tempCode)
                     if (song != null) {
-                        trackSongSelect(currentBookName, song.code)
                         displaySong(currentBookName, song)
                     } else {
                         handle.setCode(state_originalCode) // revert
@@ -1126,15 +1109,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
         fun getAudioFilename(bookName: String, code: String): String {
             return String.format(Locale.US, "songs/v2/%s_%s", bookName, code)
-        }
-
-        private fun trackSongSelect(bookName: String, code: String) {
-            Tracker.trackEvent(
-                "song_select",
-                Analytics.Param.ITEM_NAME, "$bookName $code",
-                Analytics.Param.ITEM_CATEGORY, bookName,
-                Analytics.Param.ITEM_VARIANT, code
-            )
         }
 
         fun nonullbr(s: String?): String {

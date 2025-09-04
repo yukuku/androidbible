@@ -22,13 +22,9 @@ import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.tracking.Analytics;
-import yuku.alkitab.tracking.Tracker;
 
 public class SyncLoginActivity extends BaseActivity {
     static final String TAG = SyncLoginActivity.class.getSimpleName();
-
-    public static final String SIGNUP_METHOD = "sync";
 
     public static class Result {
         public String accountName;
@@ -83,7 +79,7 @@ public class SyncLoginActivity extends BaseActivity {
             final String email = tEmail.getText().toString().trim().toLowerCase(Locale.US);
             tEmail.setText(email);
 
-            if (email.length() == 0) {
+            if (email.isEmpty()) {
                 tEmail.setError(getString(R.string.sync_login_form_error_required));
                 return;
             } else if (!PatternsCompat.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -114,24 +110,12 @@ public class SyncLoginActivity extends BaseActivity {
 
                         final Sync.LoginResponseJson response = Sync.register(form);
 
-                        Tracker.trackEvent(
-                            Analytics.Event.SIGN_UP,
-                            Analytics.Param.METHOD, SIGNUP_METHOD,
-                            Analytics.Param.SUCCESS, 1
-                        );
-
                         FirebaseCrashlytics.getInstance().setUserId(form.email);
 
                         gotSimpleToken(email, response.simpleToken, true);
                     } catch (Sync.NotOkException e) {
                         AppLog.d(TAG, "Register failed", e);
                         SyncRecorder.log(SyncRecorder.EventKind.register_failed, null, "email", email, "message", e.getMessage());
-
-                        Tracker.trackEvent(
-                            Analytics.Event.SIGN_UP,
-                            Analytics.Param.METHOD, SIGNUP_METHOD,
-                            Analytics.Param.SUCCESS, 0
-                        );
 
                         runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(this, getString(R.string.sync_register_failed_with_reason, e.getMessage())));
                     }
@@ -142,7 +126,7 @@ public class SyncLoginActivity extends BaseActivity {
         bLogin.setOnClickListener(v -> {
             final String email = tEmail.getText().toString().trim();
 
-            if (email.length() == 0) {
+            if (email.isEmpty()) {
                 tEmail.setError(getString(R.string.sync_login_form_error_required));
                 return;
             } else if (!PatternsCompat.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -168,24 +152,12 @@ public class SyncLoginActivity extends BaseActivity {
 
                     final Sync.LoginResponseJson response = Sync.login(email, password);
 
-                    Tracker.trackEvent(
-                        Analytics.Event.LOGIN,
-                        Analytics.Param.METHOD, SIGNUP_METHOD,
-                        Analytics.Param.SUCCESS, 1
-                    );
-
                     FirebaseCrashlytics.getInstance().setUserId(email);
 
                     gotSimpleToken(email, response.simpleToken, false);
                 } catch (Sync.NotOkException e) {
                     AppLog.d(TAG, "Login failed", e);
                     SyncRecorder.log(SyncRecorder.EventKind.login_failed, null, "email", email, "message", e.getMessage());
-
-                    Tracker.trackEvent(
-                        Analytics.Event.LOGIN,
-                        Analytics.Param.METHOD, SIGNUP_METHOD,
-                        Analytics.Param.SUCCESS, 0
-                    );
 
                     runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(
                         this,
@@ -200,7 +172,7 @@ public class SyncLoginActivity extends BaseActivity {
         bForgot.setOnClickListener(v -> {
             final String email = tEmail.getText().toString().trim();
 
-            if (email.length() == 0) {
+            if (email.isEmpty()) {
                 tEmail.setError(getString(R.string.sync_login_form_error_required));
                 return;
             } else {
@@ -225,7 +197,7 @@ public class SyncLoginActivity extends BaseActivity {
         bChangePassword.setOnClickListener(v -> {
             final String email = tEmail.getText().toString().trim();
 
-            if (email.length() == 0) {
+            if (email.isEmpty()) {
                 tEmail.setError(getString(R.string.sync_login_form_error_required));
                 return;
             } else {
@@ -233,7 +205,7 @@ public class SyncLoginActivity extends BaseActivity {
             }
 
             final String password = tPassword.getText().toString();
-            if (password.length() == 0) {
+            if (password.isEmpty()) {
                 tPassword.setError(getString(R.string.sync_login_form_error_required));
                 return;
             } else {
@@ -241,7 +213,7 @@ public class SyncLoginActivity extends BaseActivity {
             }
 
             final String passwordNew = tPasswordNew.getText().toString();
-            if (passwordNew.length() == 0) {
+            if (passwordNew.isEmpty()) {
                 tPasswordNew.setError(getString(R.string.sync_login_form_error_required));
                 return;
             } else {

@@ -73,7 +73,6 @@ import yuku.alkitab.base.dialog.VersesDialog
 import yuku.alkitab.base.dialog.XrefDialog
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.model.MVersionDb
-import yuku.alkitab.base.model.MVersionInternal
 import yuku.alkitab.base.settings.SettingsActivity
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
@@ -125,8 +124,6 @@ import yuku.alkitab.model.PericopeBlock
 import yuku.alkitab.model.SingleChapterVerses
 import yuku.alkitab.model.Version
 import yuku.alkitab.ribka.RibkaReportActivity
-import yuku.alkitab.tracking.Analytics
-import yuku.alkitab.tracking.Tracker
 import yuku.alkitab.util.Ari
 import yuku.alkitab.util.IntArrayList
 import yuku.alkitab.versionmanager.VersionsActivity
@@ -170,12 +167,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         var moreSwipeYAllowed = true // to prevent setting and unsetting fullscreen many times within one gesture
 
         override fun onOnefingerLeft() {
-            Tracker.trackEvent("text_onefinger_left")
             bRight_click()
         }
 
         override fun onOnefingerRight() {
-            Tracker.trackEvent("text_onefinger_right")
             bLeft_click()
         }
 
@@ -224,11 +219,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             if (!moreSwipeYAllowed) return
 
             if (dy < 0) {
-                Tracker.trackEvent("text_twofinger_up")
                 setFullScreen(true)
                 leftDrawer.handle.setFullScreen(true)
             } else {
-                Tracker.trackEvent("text_twofinger_down")
                 setFullScreen(false)
                 leftDrawer.handle.setFullScreen(false)
             }
@@ -423,7 +416,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     private val pinDropListener = object : VersesController.PinDropListener() {
         override fun onPinDropped(presetId: Int, ari: Int) {
-            Tracker.trackEvent("pin_drop")
 
             val progressMark = S.db.getProgressMarkByPresetId(presetId)
             if (progressMark != null) {
@@ -1150,7 +1142,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
         bLeft.setOnClickListener { bLeft_click() }
         bRight.setOnClickListener { bRight_click() }
-        bVersion.setOnClickListener { bVersion_click() }
+        bVersion.setOnClickListener { openVersionsDialog() }
 
         floater.setListener(floater_listener)
 
@@ -1830,8 +1822,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     private fun bGoto_click() {
-        Tracker.trackEvent("nav_goto_button_click")
-
         val r = {
             startActivityForResult(GotoActivity.createIntent(activeSplit0.book.bookId, this.chapter_1, getVerse_1BasedOnScrolls()), RequestCodes.FromActivity.Goto)
         }
@@ -1860,7 +1850,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     private fun bGoto_longClick() {
-        Tracker.trackEvent("nav_goto_button_long_click")
         if (history.size > 0) {
             MaterialDialog(this).show {
                 withAdapter(HistoryAdapter())
@@ -1974,7 +1963,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             }
 
             R.id.menuSearch -> {
-                Tracker.trackEvent("nav_search_click")
                 menuSearch_click()
                 return true
             }
@@ -2086,7 +2074,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
 
         S.openVersionsDialog(this, activeSplit0.versionId) { mv ->
-            trackVersionSelect(mv, false)
             loadVersion(mv)
 
             // We may need to apply PerVersion settings.
@@ -2099,7 +2086,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             if (mv == null) { // closing split version
                 disableSplitVersion()
             } else {
-                trackVersionSelect(mv, true)
                 val ok = loadSplitVersion(mv)
                 if (ok) {
                     openSplitDisplay()
@@ -2111,15 +2097,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
             // We may need to apply PerVersion settings.
             applyPreferences()
-        }
-    }
-
-    private fun trackVersionSelect(mv: MVersion?, isSplit: Boolean) {
-        if (mv is MVersionDb) {
-            val preset_name = mv.preset_name
-            Tracker.trackEvent("versions_dialog_select", "is_split", isSplit, Analytics.Param.ITEM_NAME, preset_name ?: "no_preset_name")
-        } else if (mv is MVersionInternal) {
-            Tracker.trackEvent("versions_dialog_select", "is_split", isSplit, Analytics.Param.ITEM_NAME, "internal")
         }
     }
 
@@ -2429,7 +2406,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     fun bLeft_click() {
-        Tracker.trackEvent("nav_left_click")
         val currentBook = activeSplit0.book
         if (chapter_1 == 1) {
             // we are in the beginning of the book, so go to prev book
@@ -2452,7 +2428,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     fun bRight_click() {
-        Tracker.trackEvent("nav_right_click")
         val currentBook = activeSplit0.book
         if (chapter_1 >= currentBook.chapter_count) {
             val maxBookId = activeSplit0.version.maxBookIdPlusOne
@@ -2471,11 +2446,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
             val newChapter = chapter_1 + 1
             display(newChapter, 1)
         }
-    }
-
-    private fun bVersion_click() {
-        Tracker.trackEvent("nav_version_click")
-        openVersionsDialog()
     }
 
     override fun onSearchRequested(): Boolean {
@@ -2841,22 +2811,18 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     override fun bDisplay_click() {
-        Tracker.trackEvent("left_drawer_display_click")
         setShowTextAppearancePanel(textAppearancePanel == null)
     }
 
     override fun cFullScreen_checkedChange(isChecked: Boolean) {
-        Tracker.trackEvent("left_drawer_full_screen_click")
         setFullScreen(isChecked)
     }
 
     override fun cNightMode_checkedChange(isChecked: Boolean) {
-        Tracker.trackEvent("left_drawer_night_mode_click")
         setNightMode(isChecked)
     }
 
     override fun cSplitVersion_checkedChange(cSplitVersion: SwitchCompat, isChecked: Boolean) {
-        Tracker.trackEvent("left_drawer_split_click")
         if (isChecked) {
             cSplitVersion.isChecked = false // do it later, at the version chooser dialog
             openSplitVersionsDialog()
@@ -2866,7 +2832,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     override fun bProgressMarkList_click() {
-        Tracker.trackEvent("left_drawer_progress_mark_list_click")
         if (S.db.countAllProgressMarks() > 0) {
             val dialog = ProgressMarkListDialog()
             dialog.progressMarkSelectedListener = { preset_id ->
@@ -2887,14 +2852,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     override fun bCurrentReadingClose_click() {
-        Tracker.trackEvent("left_drawer_current_reading_close_click")
-
         CurrentReading.clear()
     }
 
     override fun bCurrentReadingReference_click() {
-        Tracker.trackEvent("left_drawer_current_reading_verse_reference_click")
-
         val aris = CurrentReading.get() ?: return
 
         val ari_start = aris[0]
@@ -2909,10 +2870,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         val ari = progressMark.ari
 
         if (ari != 0) {
-            Tracker.trackEvent("left_drawer_progress_mark_pin_click_succeed")
             jumpToAri(ari)
         } else {
-            Tracker.trackEvent("left_drawer_progress_mark_pin_click_failed")
             MaterialDialog(this).show {
                 message(R.string.pm_activate_tutorial)
                 positiveButton(R.string.ok)

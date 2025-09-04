@@ -11,7 +11,6 @@ import yuku.alkitab.base.util.AddonManager
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.debug.R
 import yuku.alkitab.io.OptionalGzipInputStream
-import yuku.alkitab.tracking.Tracker
 
 private const val TAG = "VersionFileImporter"
 private const val MAX_FILE_SIZE = 100 * 1024 * 1024
@@ -78,12 +77,10 @@ class VersionFileImporter(val context: Context) {
     private fun readCachedFile(ext: String, baseName: String, cacheFile: File): Result {
         return when (ext) {
             "yes" -> {
-                Tracker.trackEvent("versions_open_yes")
                 openCachedYesFile(baseName, cacheFile)
             }
 
             "pdb" -> {
-                Tracker.trackEvent("versions_open_pdb")
                 openCachedPdbFile(baseName, cacheFile)
             }
 
@@ -102,7 +99,7 @@ class VersionFileImporter(val context: Context) {
         val yesFile = AddonManager.getWritableVersionFile("$baseName.yes")
         try {
             cacheFile.copyTo(yesFile, overwrite = false)
-        } catch (e: FileAlreadyExistsException) {
+        } catch (_: FileAlreadyExistsException) {
             throw IOException(context.getString(R.string.ed_file_file_sudah_ada_dalam_daftar_versi, "$baseName.yes"))
         }
 

@@ -1,5 +1,6 @@
 package yuku.alkitab.base.ac
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -22,7 +23,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 import yuku.alkitab.base.App
 import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.debug.R
-import yuku.alkitab.tracking.Tracker.trackEvent
 
 class AboutActivity : BaseActivity() {
     private lateinit var root: View
@@ -39,6 +39,7 @@ class AboutActivity : BaseActivity() {
     private val hsl = FloatArray(3)
     private val colors = IntArray(6)
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about)
@@ -54,19 +55,16 @@ class AboutActivity : BaseActivity() {
 
         bHelp = findViewById(R.id.bHelp)
         bHelp.setOnClickListener {
-            trackEvent("help_button_guide")
             startActivity(Intent(Intent.ACTION_VIEW, "https://alkitab.app/guide?utm_source=app&utm_medium=button&utm_campaign=help".toUri()))
         }
 
         bMaterialSources = findViewById(R.id.bMaterialSources)
         bMaterialSources.setOnClickListener {
-            trackEvent("help_button_material_sources")
             startActivity(HelpActivity.createIntent("help/material_sources.html", getString(R.string.about_material_sources)))
         }
 
         bCredits = findViewById(R.id.bCredits)
         bCredits.setOnClickListener {
-            trackEvent("help_button_credits")
             startActivity(HelpActivity.createIntent("help/credits.html", getString(R.string.about_credits)))
         }
 

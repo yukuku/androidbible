@@ -44,7 +44,6 @@ import yuku.alkitab.base.util.CurrentReading;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.songs.SongBookUtil;
 import yuku.alkitab.songs.SongViewActivity;
-import yuku.alkitab.tracking.Tracker;
 
 public abstract class LeftDrawer extends NestedScrollView {
 
@@ -135,7 +134,6 @@ public abstract class LeftDrawer extends NestedScrollView {
 	@Override
 	public boolean onDragEvent(final DragEvent event) {
 		if (event.getAction() == DragEvent.ACTION_DRAG_STARTED) {
-			Tracker.trackEvent("pin_drag_started");
 			// Just so that the progress pin is not dropped to the verses
 			return event.getClipDescription().hasMimeType(PROGRESS_MARK_DRAG_MIME_TYPE);
 		}
@@ -334,7 +332,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 					final DragShadowBuilder dragShadowBuilder = new DragShadowBuilder(b);
 					performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
 					closeDrawer();
-					v.startDrag(dragData, dragShadowBuilder, null, 0);
+					v.startDragAndDrop(dragData, dragShadowBuilder, null, 0);
 
 					return true;
 				});
@@ -401,21 +399,21 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 		CompoundButton.OnCheckedChangeListener cFullScreen_checkedChange = new CompoundButton.OnCheckedChangeListener() {
 			@Override
-			public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+			public void onCheckedChanged(@NonNull final CompoundButton buttonView, final boolean isChecked) {
 				listener.cFullScreen_checkedChange(isChecked);
 			}
 		};
 
 		CompoundButton.OnCheckedChangeListener cNightMode_checkedChange = new CompoundButton.OnCheckedChangeListener() {
 			@Override
-			public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+			public void onCheckedChanged(@NonNull final CompoundButton buttonView, final boolean isChecked) {
 				listener.cNightMode_checkedChange(isChecked);
 			}
 		};
 
 		CompoundButton.OnCheckedChangeListener cSplitVersion_checkedChange = new CompoundButton.OnCheckedChangeListener() {
 			@Override
-			public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+			public void onCheckedChanged(@NonNull final CompoundButton buttonView, final boolean isChecked) {
 				listener.cSplitVersion_checkedChange(cSplitVersion, isChecked);
 				closeDrawer();
 			}

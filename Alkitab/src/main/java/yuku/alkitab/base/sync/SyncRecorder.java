@@ -10,8 +10,6 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Sqlitil;
-import yuku.alkitab.tracking.Analytics;
-import yuku.alkitab.tracking.Tracker;
 
 /**
  * Class that helps record sync events and status.
@@ -102,7 +100,6 @@ public class SyncRecorder {
 		}
 
 		S.getDb().insertSyncLog(Sqlitil.nowDateTime(), kind, syncSetName, params);
-		Tracker.trackEvent("sync", Analytics.Param.ITEM_NAME, kind.name());
 	}
 
 	@Keep

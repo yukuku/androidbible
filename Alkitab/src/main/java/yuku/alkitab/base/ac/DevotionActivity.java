@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
@@ -28,6 +29,7 @@ import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -50,8 +52,6 @@ import yuku.alkitab.base.widget.LeftDrawer;
 import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
 import yuku.alkitab.base.widget.TwofingerLinearLayout;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.tracking.Analytics;
-import yuku.alkitab.tracking.Tracker;
 import yuku.alkitab.util.Ari;
 import yuku.alkitabintegration.display.Launcher;
 
@@ -60,9 +60,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
     public static final DevotionDownloader devotionDownloader = new DevotionDownloader();
 
-    static final ThreadLocal<SimpleDateFormat> yyyymmdd = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyyMMdd", Locale.US));
-
-    static final ThreadLocal<SimpleDateFormat> yyyy_mm_dd = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd", Locale.US));
+    private static final ThreadLocal<SimpleDateFormat> yyyymmdd = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyyMMdd", Locale.US));
 
     TwofingerLinearLayout.Listener root_listener = new TwofingerLinearLayout.OnefingerListener() {
         @Override
@@ -94,7 +92,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
     @Override
     public void bReload_click() {
-        willNeed(this.currentKind, yyyymmdd.get().format(currentDate), true);
+        willNeed(this.currentKind, getDateFormat().format(currentDate), true);
     }
 
     @Override
@@ -121,7 +119,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
             @Override
             public String getShareUrl(final SimpleDateFormat format, final Date date) {
-                return "https://www.sabda.org/publikasi/e-sh/print/?edisi=" + yyyymmdd.get().format(date);
+                return "https://www.sabda.org/publikasi/e-sh/print/?edisi=" + getDateFormat().format(date);
             }
         },
         MEID_A("meid-a", "Renungan Pagi", "Charles H. Spurgeon") {
@@ -132,7 +130,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
             @Override
             public String getShareUrl(final SimpleDateFormat format, final Date date) {
-                return "https://alkitab.app/renunganpagi/" + yyyymmdd.get().format(date).substring(4);
+                return "https://alkitab.app/renunganpagi/" + getDateFormat().format(date).substring(4);
             }
         },
         ROC("roc", "My Utmost (B. Indonesia)", "Oswald Chambers") {
@@ -154,7 +152,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
             @Override
             public String getShareUrl(final SimpleDateFormat format, final Date date) {
-                return "https://www.sabda.org/publikasi/e-rh/print/?edisi=" + yyyymmdd.get().format(date);
+                return "https://www.sabda.org/publikasi/e-rh/print/?edisi=" + getDateFormat().format(date);
             }
 
             @Override
@@ -170,7 +168,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
             @Override
             public String getShareUrl(final SimpleDateFormat format, final Date date) {
-                return "https://www.ccel.org/ccel/spurgeon/morneve.d" + yyyymmdd.get().format(date) + "am.html";
+                return "https://www.ccel.org/ccel/spurgeon/morneve.d" + getDateFormat().format(date) + "am.html";
             }
         },
         ;
@@ -227,6 +225,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
         final WeakReference<DevotionActivity> ac;
 
         public LongReadChecker(DevotionActivity activity) {
+            super(Looper.getMainLooper());
             ac = new WeakReference<>(activity);
         }
 
@@ -247,10 +246,9 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
                 return;
             }
 
-            final String currentDate = yyyymmdd.get().format(ac.currentDate);
+            final String currentDate = getDateFormat().format(ac.currentDate);
             if (equals(startKind, ac.currentKind) && equals(startDate, currentDate)) {
                 AppLog.d(TAG, "Long read detected: now=[" + ac.currentKind + " " + currentDate + "]");
-                Tracker.trackEvent("devotion_longread", Analytics.Param.ITEM_NAME, startKind.name, Analytics.Param.START_DATE, yyyy_mm_dd.get().format(ac.currentDate));
             } else {
                 AppLog.d(TAG, "Not long enough for long read: previous=[" + startKind + " " + startDate + "] now=[" + ac.currentKind + " " + currentDate + "]");
             }
@@ -261,7 +259,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
             if (ac == null) return;
 
             startKind = ac.currentKind;
-            startDate = yyyymmdd.get().format(ac.currentDate);
+            startDate = getDateFormat().format(ac.currentDate);
 
             removeMessages(1);
             sendEmptyMessageDelayed(1, 30000);
@@ -281,7 +279,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
             AppLog.d(TAG, "Got DOWNLOADED broadcast for name=" + name + " date=" + date);
 
-            if (yyyymmdd.get().format(currentDate).equals(date) && currentKind.name.equals(name)) {
+            if (getDateFormat().format(currentDate).equals(date) && currentKind.name.equals(name)) {
                 AppLog.d(TAG, "It is for us, displaying now");
                 display();
             }
@@ -373,7 +371,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
             return true;
         } else if (itemId == R.id.menuShare) {
-            final String shareUrl = currentKind.getShareUrl(yyyymmdd.get(), currentDate);
+            final String shareUrl = currentKind.getShareUrl(getDateFormat(), currentDate);
 
             new ShareCompat.IntentBuilder(DevotionActivity.this)
                 .setType("text/plain")
@@ -389,7 +387,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
     }
 
     void display() {
-        final String date = yyyymmdd.get().format(currentDate);
+        final String date = getDateFormat().format(currentDate);
         final DevotionArticle article = S.getDb().tryGetDevotion(currentKind.name, date);
         if (article == null || !article.getReadyToUse()) {
             willNeed(currentKind, date, true);
@@ -434,7 +432,6 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
         }
 
         if (renderSucceeded) {
-            Tracker.trackEvent("devotion_render", Analytics.Param.ITEM_NAME, currentKind.name, Analytics.Param.START_DATE, yyyy_mm_dd.get().format(currentDate));
             longReadChecker.start();
         }
     }
@@ -460,7 +457,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
             final PatchTextExtraInfoJson extraInfo = new PatchTextExtraInfoJson();
             extraInfo.type = "devotion";
             extraInfo.kind = currentKind.name;
-            extraInfo.date = yyyymmdd.get().format(currentDate);
+            extraInfo.date = getDateFormat().format(currentDate);
             startActivity(PatchTextActivity.createIntent(lContent.getText(), App.getDefaultGson().toJson(extraInfo), referenceUrl));
         } else {
             int ari;
@@ -519,7 +516,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
         }
 
         for (int i = 0; i < kind.getPrefetchDays(); i++) {
-            final String date = yyyymmdd.get().format(today);
+            final String date = getDateFormat().format(today);
             if (S.getDb().tryGetDevotion(kind.name, date) == null) {
                 AppLog.d(TAG, "Prefetcher need to get " + kind + " " + date);
                 willNeed(kind, date, false);
@@ -528,5 +525,9 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
             // go to the next day
             today.setTime(today.getTime() + 86400_000L);
         }
+    }
+
+    private static SimpleDateFormat getDateFormat() {
+        return Objects.requireNonNull(yyyymmdd.get());
     }
 }
