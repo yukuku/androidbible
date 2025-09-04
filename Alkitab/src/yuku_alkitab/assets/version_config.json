@@ -1,1647 +1,2155 @@
 {
-	"presets": [
-		{
-			"locale": "ace",
-			"preset_name": "ace-aceh",
-			"shortName": "ACEH",
-			"longName": "Aceh",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Aceh"
-		},
-		{
-			"locale": "alp",
-			"preset_name": "alp-alune5",
-			"shortName": "ALP",
-			"longName": "Janji Beluke",
-			"modifyTime": 1407283200,
-			"description": "Perjanjian Baru dalam bahasa Alune di Maluku, Indonesia (The New Testament in the Alune language of Maluku, Indonesia) © 2012 Sinode Gereja Protestant Maluku dan © 2012 Wycliffe, Inc. Version 5.0"
-		},
-		{
-			"locale": "ar",
-			"preset_name": "ar-vandyke",
-			"shortName": "AVD",
-			"longName": "Van Dyke",
-			"modifyTime": 1405296000,
-			"description": "Arabic: Smith & Van Dyke, 1865. From unbound.biola.edu."
-		},
-		{
-			"locale": "ban",
-			"preset_name": "ban-bali",
-			"shortName": "BALI",
-			"longName": "Bali",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Bali"
-		},
-		{
-			"locale": "ban",
-			"preset_name": "ban-bali90",
-			"shortName": "BALI90",
-			"longName": "Bali 1990",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Bali (Bahasa Sehari-hari) - Cakepan Suci"
-		},
-		{
-			"locale": "bbc",
-			"preset_name": "bbc-toba",
-			"shortName": "TOBA",
-			"longName": "Batak-Toba",
-			"modifyTime": 1442534400,
-			"group_order": 30,
-			"description": "Alkitab Batak Toba"
-		},
-		{
-			"locale": "bg",
-			"preset_name": "bg-veren",
-			"shortName": "VEREN",
-			"longName": "Библията (Veren's)",
-			"modifyTime": 1404691200,
-			"description": "Библията, Veren's Contemporary Bible, 1871"
-		},
-		{
-			"locale": "bkl",
-			"preset_name": "bkl-berik",
-			"shortName": "BERIK",
-			"longName": "Berik",
-			"modifyTime": 1460678400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Berik"
-		},
-		{
-			"locale": "blz",
-			"preset_name": "blz-balantak",
-			"shortName": "BLNTK",
-			"longName": "Balantak",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Balantak"
-		},
-		{
-			"locale": "br",
-			"preset_name": "br-brnt",
-			"shortName": "BRNT",
-			"longName": "Testamant nevez",
-			"modifyTime": 1404691200,
-			"description": "Testamant nevez, 1827"
-		},
-		{
-			"locale": "btd",
-			"preset_name": "btd-dairi",
-			"shortName": "DAIRI",
-			"longName": "Batak-Dairi",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Batak Dairi"
-		},
-		{
-			"locale": "bts",
-			"preset_name": "bts-simalungun",
-			"shortName": "SIMA",
-			"longName": "Batak-Simalungun",
-			"modifyTime": 1460678400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Batak Simalungun"
-		},
-		{
-			"locale": "btx",
-			"preset_name": "btx-karo",
-			"shortName": "KARO",
-			"longName": "Pustaka Si Badia",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Karo"
-		},
-		{
-			"locale": "bug",
-			"preset_name": "bug-bugis",
-			"shortName": "BUGIS",
-			"longName": "Bugis",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Bugis"
-		},
-		{
-			"locale": "chk",
-			"preset_name": "chk-paipel",
-			"shortName": "CHK",
-			"longName": "Paipel",
-			"modifyTime": 1431043200,
-			"description": "The Holy Bible in the Chuukese language of the Federated States of Micronesia. Copyright © 2011 Bible Society of Micronesia"
-		},
-		{
-			"locale": "chr",
-			"preset_name": "chr-cher",
-			"shortName": "CHER",
-			"longName": "Cherokee NT",
-			"modifyTime": 1404777600,
-			"description": "Cherokee New Testament, 1860"
-		},
-		{
-			"locale": "cop",
-			"preset_name": "cop-sahnt",
-			"shortName": "SAHNT",
-			"longName": "Sahidica NT",
-			"modifyTime": 1404777600,
-			"description": "Sahidica - A New Edition of the New Testament in Sahidic Coptic, 2006"
-		},
-		{
-			"locale": "cs",
-			"preset_name": "cs-kralicka",
-			"shortName": "CSBKR",
-			"longName": "Bible Kralická",
-			"modifyTime": 1432166400,
-			"description": "Czech Bible Kralická: Bible svata aneb vsecka svata pisma Stareho i Noveho Zakona podle posledniho vydani kralickeho z roku 1613. From unbound.biola.edu."
-		},
-		{
-			"locale": "de",
-			"preset_name": "de-elberfelder1871",
-			"shortName": "ELB71",
-			"longName": "Elberfelder 1871",
-			"modifyTime": 1405296000,
-			"description": "German Elberfelder 1871. From unbound.biola.edu."
-		},
-		{
-			"locale": "de",
-			"preset_name": "de-elberfelder1905",
-			"shortName": "ELB",
-			"longName": "Elberfelder 1905",
-			"modifyTime": 1405296000,
-			"description": "German Darby Unrevidierte Elberfelder 1905, Copyright by R. Bockhaus Verlage. From unbound.biola.edu."
-		},
-		{
-			"locale": "de",
-			"preset_name": "de-luther1545",
-			"shortName": "DL1545",
-			"longName": "Lutherbibel 1545",
-			"modifyTime": 1405296000,
-			"description": "German Lutherbibel 1545. Made available in electronic format by Michael Bolsinger at http://www.luther-bibel-1545.de. From unbound.biola.edu."
-		},
-		{
-			"locale": "de",
-			"preset_name": "de-luther1912",
-			"shortName": "DL1912",
-			"longName": "Lutherbibel 1912",
-			"modifyTime": 1452470400,
-			"description": "German Lutherbibel 1912. From unbound.biola.edu."
-		},
-		{
-			"locale": "de",
-			"preset_name": "de-schlachter1951",
-			"shortName": "SCH51",
-			"longName": "Schlachter 1951",
-			"modifyTime": 1405296000,
-			"description": "Die Heilige Schrift des Alten und Neuen Testaments nach dem Urtext Ubersetzt von F.E. SCHLACHTER Neue Uberarbeitung 1951 Genfer Bibelgesellschaft. From unbound.biola.edu."
-		},
-		{
-			"locale": "el",
-			"preset_name": "el-byzantine",
-			"shortName": "GB",
-			"longName": "Byzantine",
-			"modifyTime": 1405296000,
-			"description": "Greek Byzantine/Majority Text 2000. From unbound.biola.edu."
-		},
-		{
-			"locale": "el",
-			"preset_name": "el-byzantineparsed",
-			"shortName": "GBP",
-			"longName": "Byzantine Parsed",
-			"modifyTime": 1405296000,
-			"description": "Greek Byzantine/Majority Text 2000 parsed. From unbound.biola.edu."
-		},
-		{
-			"locale": "el",
-			"preset_name": "el-lxx",
-			"shortName": "LXX",
-			"longName": "Septuagint ",
-			"modifyTime": 1405296000,
-			"description": "Septuagint/LXX/Greek Old Testament. From unbound.biola.edu."
-		},
-		{
-			"locale": "el",
-			"preset_name": "el-neb",
-			"shortName": "NEB",
-			"longName": "Νέα Ελληνικά βιβλία",
-			"modifyTime": 1404691200,
-			"description": "Νέα Ελληνικά βιβλία, Bible in Modern Greek, 1901"
-		},
-		{
-			"locale": "el",
-			"preset_name": "el-tis",
-			"shortName": "TIS",
-			"longName": "Tischendorf",
-			"modifyTime": 1405296000,
-			"description": "Tischendorf 8th Ed. From unbound.biola.edu."
-		},
-		{
-			"locale": "el",
-			"preset_name": "el-tr1894",
-			"shortName": "TR1894",
-			"longName": "Textus Receptus",
-			"modifyTime": 1405296000,
-			"description": "Textus Receptus 1894. From unbound.biola.edu."
-		},
-		{
-			"locale": "el",
-			"preset_name": "el-tr1894parsed",
-			"shortName": "TR1894P",
-			"longName": "Textus Receptus Parsed",
-			"modifyTime": 1405296000,
-			"description": "Textus Receptus 1894 parsed. From unbound.biola.edu."
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-abu",
-			"shortName": "ABU",
-			"longName": "NT American Bible Union",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "New Testament, American Bible Union, 1865"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-acv",
-			"shortName": "ACV",
-			"longName": "A Conservative Version",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "A Conservative Version"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-asv",
-			"shortName": "ASV",
-			"longName": "American Standard",
-			"modifyTime": 1408492800,
-			"group_order": 10,
-			"description": "American Standard Version of 1901 is an Americanization of the English Revised Bible, which is an update of the KJV to less archaic spelling and greater accuracy of translation."
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-bb",
-			"shortName": "BB",
-			"longName": "Bishops' Bible",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "Bishops' Bible, 1572"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-bbe",
-			"shortName": "BBE",
-			"longName": "Bible in Basic English",
-			"modifyTime": 1405296000,
-			"group_order": 10,
-			"description": "Bible in Basic English (1941/1949) translated by Professor S. H. Hooke"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-cvb",
-			"shortName": "CVB",
-			"longName": "Coverdale Bible",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "Coverdale Bible, 1535"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-darby",
-			"shortName": "DARBY",
-			"longName": "Darby",
-			"modifyTime": 1405296000,
-			"group_order": 10,
-			"description": "Darby Translation 1890. From unbound.biola.edu."
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-dnt",
-			"shortName": "DNT",
-			"longName": "Diaglot NT",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "Diaglot New Testament, 1865"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-douayrheims",
-			"shortName": "DRA",
-			"longName": "Douay-Rheims",
-			"modifyTime": 1405296000,
-			"group_order": 10,
-			"description": "Douay-Rheims Translation 1582, 1609, 1610. From unbound.biola.edu."
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-ebr",
-			"shortName": "EBR",
-			"longName": "Emphasized Bible by J. B. Rotherham",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "Emphasized Bible by J. B. Rotherham"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-gb",
-			"shortName": "GB",
-			"longName": "Geneva Bible",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "Geneva Bible, 1587"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-gdby",
-			"shortName": "GDBY",
-			"longName": "The Godbey NT",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "The Godbey New Testament, 1902"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-jpot",
-			"shortName": "JPOT",
-			"longName": "Jewish Publication Society OT",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "Jewish Publication Society Old Testament"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-jub",
-			"shortName": "JUB",
-			"longName": "English Jubilee 2000 Bible",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "English Jubilee 2000 Bible"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-kjv",
-			"shortName": "KJV",
-			"longName": "King James",
-			"modifyTime": 1456704000,
-			"group_order": 10,
-			"description": "King James Version (1611 Authorized Version) with Red Letters"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-litv",
-			"shortName": "LITV",
-			"longName": "Green's Literal Translation",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "Green's Literal Translation (1993)"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-lont",
-			"shortName": "LONT",
-			"longName": "Living Oracles NT",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "Alexander Campbell's Living Oracles New Testament"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-lot",
-			"shortName": "LOT",
-			"longName": "Leeser OT",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "Leeser Old Testament"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-mnt",
-			"shortName": "MNT",
-			"longName": "Montgomery NT",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "Montgomery New Testament (1924) by Helen Barrett Montgomery"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-net",
-			"shortName": "NET",
-			"longName": "New English Translation",
-			"modifyTime": 1414108800,
-			"group_order": 10,
-			"description": "THE NET BIBLE®, New English Translation (NET) You may copy the NET Bible® and print it for others as long as you give it away, do not charge for it and comply with our guidelines for content control."
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-nheb",
-			"shortName": "NHEB",
-			"longName": "New Heart English",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "New Heart English Bible"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-noy",
-			"shortName": "Noy",
-			"longName": "Noyes' NT",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "Noyes' New Testament, 1869"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-ntm",
-			"shortName": "NTM",
-			"longName": "NT New Translation, Moffatt",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "The New Testament a New Translation, Moffatt, 1913"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-pesh",
-			"shortName": "PESH",
-			"longName": "Peschito Syriac NT",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "The Peschito Syriac New Testament: Translated into English by John Wesley Etheridge, 1849"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-rkjnt",
-			"shortName": "RKJNT",
-			"longName": "Revised King James NT",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "Revised King James New Testament, 2000"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-rnkjv",
-			"shortName": "RNKJV",
-			"longName": "Restored Names King James Version",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "Restored Names King James Version, 1934"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-rwv",
-			"shortName": "RWV",
-			"longName": "Revised Webster Version",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "Revised Webster Version, 1833"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-trcc",
-			"shortName": "TRCC",
-			"longName": "Tyndale (Rogers, Coverdale, Cranmer)",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "Tyndale-Rogers-Coverdale-Cranmer Bible, 1537"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-ukjv",
-			"shortName": "UKJV",
-			"longName": "Updated King James Version",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "Updated King James Version"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-web",
-			"shortName": "WEB",
-			"longName": "World English Bible",
-			"modifyTime": 1473984000,
-			"group_order": 10,
-			"description": "The World English Bible (WEB) is a Public Domain (no copyright) Modern English translation of the Holy Bible (2016 edition)."
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-webbe",
-			"shortName": "WEBBE",
-			"longName": "World English Bible (British)",
-			"modifyTime": 1404691200,
-			"hidden": true,
-			"group_order": 10,
-			"description": "World English Bible: British Edition, 1997"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-webm",
-			"shortName": "WEBM",
-			"longName": "World English Bible (Messianic)",
-			"modifyTime": 1404691200,
-			"hidden": true,
-			"group_order": 10,
-			"description": "World English Bible: Messianic Edition, 1997"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-wmnt",
-			"shortName": "WMNT",
-			"longName": "Weymouth NT",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "Weymouth New Testament"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-wtb",
-			"shortName": "WTB",
-			"longName": "William Tyndale Bible",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "William Tyndale Bible"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-wyc",
-			"shortName": "WYC",
-			"longName": "Wycliffe's NT",
-			"modifyTime": 1404691200,
-			"group_order": 10,
-			"description": "Wycliffe's New Testament, 1385"
-		},
-		{
-			"locale": "en",
-			"preset_name": "en-ylt",
-			"shortName": "YLT",
-			"longName": "Young's Literal Translation",
-			"modifyTime": 1405296000,
-			"group_order": 10,
-			"description": "Young's Literal Translation (1862)"
-		},
-		{
-			"locale": "eo",
-			"preset_name": "eo-esp",
-			"shortName": "ESP",
-			"longName": "La Sankta Biblio",
-			"modifyTime": 1404691200,
-			"description": "La Sankta Biblio, L.L. Zamenhof, 1915"
-		},
-		{
-			"locale": "eo",
-			"preset_name": "eo-esperanto",
-			"shortName": "EO",
-			"longName": "Esperanto",
-			"modifyTime": 1405296000,
-			"description": "Esperanto Brita kaj Alilanda Biblia Societo. From unbound.biola.edu."
-		},
-		{
-			"locale": "es",
-			"preset_name": "es-reinavalera1909",
-			"shortName": "RV",
-			"longName": "Reina-Valera 1909",
-			"modifyTime": 1431043200,
-			"description": "Reina-Valera (1909)"
-		},
-		{
-			"locale": "es",
-			"preset_name": "es-sagradas",
-			"shortName": "SEV",
-			"longName": "Sagradas Escrituras",
-			"modifyTime": 1405296000,
-			"description": "Spanish Sagradas Escrituras Translation, 1569. From unbound.biola.edu."
-		},
-		{
-			"locale": "et",
-			"preset_name": "et-eent",
-			"shortName": "EENT",
-			"longName": "Uus Testament",
-			"modifyTime": 1404691200,
-			"description": "Uus Testament, 1911"
-		},
-		{
-			"locale": "et",
-			"preset_name": "et-pr",
-			"shortName": "PR",
-			"longName": "Piibli Ramat (1739)",
-			"modifyTime": 1432684800,
-			"description": "Piibli Ramat (1739) http://www.eki.ee/piibel/"
-		},
-		{
-			"locale": "eu",
-			"preset_name": "eu-bhnt",
-			"shortName": "BHNT",
-			"longName": "Basque 1571",
-			"modifyTime": 1405296000,
-			"description": "Navarro-Labourdin Basque NT 1571. From unbound.biola.edu."
-		},
-		{
-			"locale": "fa",
-			"preset_name": "fa-fb",
-			"shortName": "FB4",
-			"longName": "کتاب مقدس (Farsi)",
-			"modifyTime": 1404691200,
-			"description": "Farsi Bible, 1896"
-		},
-		{
-			"locale": "fi",
-			"preset_name": "fi-1776",
-			"shortName": "FI1776",
-			"longName": "Finnish 1776",
-			"modifyTime": 1405296000,
-			"description": "Biblia, Se on: Koko Pyhä Raamattu, Suomeksi. Vuoden 1776 kirkkoraamattu. From unbound.biola.edu."
-		},
-		{
-			"locale": "fi",
-			"preset_name": "fi-1992",
-			"shortName": "FI1992",
-			"longName": "Pyhä Raamattu 1992",
-			"modifyTime": 1405296000,
-			"description": "Finnish: Suomen evankelis-luterilaisen kirkon kirkolliskokouksen vuonna 1992 käyttöön ottama suomennos. From unbound.biola.edu."
-		},
-		{
-			"locale": "fr",
-			"preset_name": "fr-cra",
-			"shortName": "CRA",
-			"longName": "La Bible Augustin Crampon",
-			"modifyTime": 1404691200,
-			"description": "La Bible Augustin Crampon, 1923"
-		},
-		{
-			"locale": "fr",
-			"preset_name": "fr-darby",
-			"shortName": "FRDBY",
-			"longName": "French Darby",
-			"modifyTime": 1405296000,
-			"description": "French Darby Translation 1872, 1885. From unbound.biola.edu."
-		},
-		{
-			"locale": "fr",
-			"preset_name": "fr-martin",
-			"shortName": "FMAR",
-			"longName": "Martin",
-			"modifyTime": 1405296000,
-			"description": "French Martin Translation 1744. From unbound.biola.edu."
-		},
-		{
-			"locale": "fr",
-			"preset_name": "fr-ostervald",
-			"shortName": "OST",
-			"longName": "Ostervald",
-			"modifyTime": 1405296000,
-			"description": "French Ostervald Translation 1724. From unbound.biola.edu."
-		},
-		{
-			"locale": "fr",
-			"preset_name": "fr-segond",
-			"shortName": "LSG",
-			"longName": "Louis Segond",
-			"modifyTime": 1405296000,
-			"description": "French Louis Segond 1910. From unbound.biola.edu."
-		},
-		{
-			"locale": "gbi",
-			"preset_name": "gbi-galela",
-			"shortName": "GALELA",
-			"longName": "Galela",
-			"modifyTime": 1460678400,
-			"group_order": 30,
-			"description": "Alkitab PB Bahasa Galela"
-		},
-		{
-			"locale": "gor",
-			"preset_name": "gor-gorontalo",
-			"shortName": "GOR",
-			"longName": "Gorontalo",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Gorontalo"
-		},
-		{
-			"locale": "gor",
-			"preset_name": "gor-gorontalo2006",
-			"shortName": "GOR06",
-			"longName": "Gorontalo 2006",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Gorontalo 2006 (Bahasa Sehari-hari)"
-		},
-		{
-			"locale": "hr",
-			"preset_name": "hr-croatian",
-			"shortName": "CRO",
-			"longName": "Croatian",
-			"modifyTime": 1405296000,
-			"description": "Croatian. From unbound.biola.edu."
-		},
-		{
-			"locale": "hr",
-			"preset_name": "hr-vk",
-			"shortName": "DKB",
-			"longName": "Daničic-Karadžić Biblija",
-			"modifyTime": 1513814400,
-			"description": "OT by Đuro Daničić, 1865; NT by Vuk Karadžić, 1847"
-		},
-		{
-			"locale": "ht",
-			"preset_name": "ht-hcb",
-			"shortName": "HCB",
-			"longName": "Bib La, Haitian Creole",
-			"modifyTime": 1404691200,
-			"description": "Bib La, Haitian Creole Bible, 1985"
-		},
-		{
-			"locale": "hu",
-			"preset_name": "hu-karoli",
-			"shortName": "KAR",
-			"longName": "Karoli",
-			"modifyTime": 1405296000,
-			"description": "Hungarian Vizsoly Biblia translated by Károli Gáspár (1590)"
-		},
-		{
-			"locale": "hvn",
-			"preset_name": "hvn-sabu",
-			"shortName": "SABU",
-			"longName": "Sabu",
-			"modifyTime": 1460678400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Sabu"
-		},
-		{
-			"locale": "in",
-			"preset_name": "in-bimk",
-			"shortName": "BIMK",
-			"longName": "Bahasa Indonesia Masa Kini",
-			"modifyTime": 1471478400,
-			"group_order": 20,
-			"description": "Bahasa Indonesia Masa Kini (1985) Lembaga Alkitab Indonesia"
-		},
-		{
-			"locale": "in",
-			"preset_name": "in-ende",
-			"shortName": "ENDE",
-			"longName": "Ende",
-			"modifyTime": 1456444800,
-			"group_order": 20,
-			"description": "Alkitab Ende 1970   (http://alkitab.mobi/)"
-		},
-		{
-			"locale": "in",
-			"preset_name": "in-fayh",
-			"shortName": "FAYH",
-			"longName": "Firman Allah Yang Hidup",
-			"modifyTime": 1456444800,
-			"group_order": 20,
-			"description": "Firman Allah Yang Hidup 1989  (http://alkitab.mobi/)"
-		},
-		{
-			"locale": "in",
-			"preset_name": "in-ilt",
-			"shortName": "ILT",
-			"longName": "Indonesian Literal Translation",
-			"modifyTime": 1473984000,
-			"group_order": 20,
-			"description": "Kitab Suci Indonesian Literal Translation (KS-ILT) by Yayasan Lentera Bangsa (www.yalensa.com)"
-		},
-		{
-			"locale": "in",
-			"preset_name": "in-ilt3",
-			"shortName": "ILT3",
-			"longName": "Indonesian Literal Translation 3",
-			"modifyTime": 1461369600,
-			"group_order": 20,
-			"description": "Kitab Suci Indonesian Literal Translation Edisi-3. Copyright Yayasan Lentera Bangsa. Lihat http://www.yalensa.org"
-		},
-		{
-			"locale": "in",
-			"preset_name": "in-imb",
-			"shortName": "IMB",
-			"longName": "Indonesian Modern Bible",
-			"modifyTime": 1513814400,
-			"group_order": 20,
-			"description": "Indonesian Modern Bible: Yayasan Anugerah Kebenaran Indonesia, 2015"
-		},
-		{
-			"locale": "in",
-			"preset_name": "in-sb2010",
-			"shortName": "SB2010",
-			"longName": "Shellabear 2010",
-			"modifyTime": 1456444800,
-			"group_order": 20,
-			"description": "Alkitab Shellabear (Kontekstual) 2010   (http://alkitab.mobi/)"
-		},
-		{
-			"locale": "in",
-			"preset_name": "in-tbd",
-			"shortName": "TBD",
-			"longName": "TB Deuterokanonika",
-			"modifyTime": 1442534400,
-			"group_order": 20,
-			"description": "Deuterokanonika (c) 1974 Lembaga Alkitab Indonesia"
-		},
-		{
-			"locale": "in",
-			"preset_name": "in-tl",
-			"shortName": "TL",
-			"longName": "Terjemahan Lama",
-			"modifyTime": 1456444800,
-			"group_order": 20,
-			"description": "Alkitab Terjemahan Lama (TL) - 1954"
-		},
-		{
-			"locale": "in",
-			"preset_name": "in-tsi",
-			"shortName": "TSI",
-			"longName": "Terjemahan Sederhana Indonesia",
-			"modifyTime": 1492041600,
-			"group_order": 20,
-			"description": "Terjemahan Sederhana Indonesia. Copyright Yayasan Alkitab BahasaKita (Albata). Lihat http://albata.info."
-		},
-		{
-			"locale": "in",
-			"preset_name": "in-vmd",
-			"shortName": "VMD",
-			"longName": "Versi Mudah Dibaca",
-			"modifyTime": 1452038400,
-			"group_order": 20,
-			"description": "Versi Mudah Dibaca"
-		},
-		{
-			"locale": "it",
-			"preset_name": "it-diodati",
-			"shortName": "IGD",
-			"longName": "Diodati Bibbia",
-			"modifyTime": 1405296000,
-			"description": "Italian Giovanni Diodati Bibbia, 1649. From unbound.biola.edu."
-		},
-		{
-			"locale": "it",
-			"preset_name": "it-riveduta",
-			"shortName": "ITRIV",
-			"longName": "Riveduta",
-			"modifyTime": 1405296000,
-			"description": "Italian Riveduta Bibbia, 1927. From unbound.biola.edu."
-		},
-		{
-			"locale": "iw",
-			"preset_name": "iw-aleppo",
-			"shortName": "ALP",
-			"longName": "Aleppo Codex",
-			"modifyTime": 1448236800,
-			"description": "Hebrew Aleppo Codex, taken from Mechon Mamre. From unbound.biola.edu."
-		},
-		{
-			"locale": "iw",
-			"preset_name": "iw-wlc",
-			"shortName": "WLC",
-			"longName": "Westminster Leningrad Codex",
-			"modifyTime": 1404691200,
-			"description": "Westminster Leningrad Codex"
-		},
-		{
-			"locale": "ja",
-			"preset_name": "ja-kougo",
-			"shortName": "KOUGO",
-			"longName": "口語訳",
-			"modifyTime": 1434672000,
-			"description": "口語訳新約聖書(1954年版) Colloquial Japanese (1954)"
-		},
-		{
-			"locale": "jv",
-			"preset_name": "jv-jawa",
-			"shortName": "JAWA81",
-			"longName": "Jawa 1981",
-			"modifyTime": 1473984000,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Jawa 1981, Kitab Sutji"
-		},
-		{
-			"locale": "jv",
-			"preset_name": "jv-jawa2006",
-			"shortName": "JAWA06",
-			"longName": "Jawa-2006",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Jawa 2006"
-		},
-		{
-			"locale": "jv",
-			"preset_name": "jv-jawa94",
-			"shortName": "JAWA94",
-			"longName": "Jawa-1994",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Jawa 1994"
-		},
-		{
-			"locale": "jv",
-			"preset_name": "jv-suriname",
-			"shortName": "JAWSUR",
-			"longName": "Jawa-Suriname",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Jawa Suriname"
-		},
-		{
-			"locale": "kgr",
-			"preset_name": "kgr-abun",
-			"shortName": "ABUN",
-			"longName": "Abun",
-			"modifyTime": 1460678400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Abun"
-		},
-		{
-			"locale": "kje",
-			"preset_name": "kje-kisar5",
-			"shortName": "KJE",
-			"longName": "Makromod Lalap Lirna Wawan",
-			"modifyTime": 1407283200,
-			"group_order": 30,
-			"description": "Perjanjian Baru dalam bahasa Kisar di Maluku, Indonesia (The New Testament in the Kisar language of Maluku, Indonesia) © 2008 Yayasan Sumber Sejahtera. Version 5.0"
-		},
-		{
-			"locale": "kpg",
-			"preset_name": "kpg-beebaadabu",
-			"shortName": "KPG",
-			"longName": "Beebaa Dabu",
-			"modifyTime": 1431043200,
-			"description": "The New Testament in the Kapingamarangi language of the Federated States of Micronesia, spoken on the Kapingamarangi and Ponape islands, Caroline Islands. Copyright © 1996, 2014 The Kapingamarangi Bible translation committee"
-		},
-		{
-			"locale": "kzf",
-			"preset_name": "kzf-kailidaa",
-			"shortName": "KLD",
-			"longName": "Kaili Da'a 1998",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Kaili Da'a"
-		},
-		{
-			"locale": "la",
-			"preset_name": "la-clementine",
-			"shortName": "CLEM",
-			"longName": "Clementine Vulgate",
-			"modifyTime": 1405296000,
-			"description": "Latin Clementine Vulgate edited by Colunga and Turrado (Madrid, 1946). From unbound.biola.edu."
-		},
-		{
-			"locale": "ljp",
-			"preset_name": "ljp-lampung",
-			"shortName": "LAM",
-			"longName": "Lampung",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Lampung"
-		},
-		{
-			"locale": "lv",
-			"preset_name": "lv-ljd",
-			"shortName": "LJD",
-			"longName": "Latviešu Jaunā Derība",
-			"modifyTime": 1405296000,
-			"description": "Latvian New Testament. From unbound.biola.edu."
-		},
-		{
-			"locale": "mad",
-			"preset_name": "mad-madura",
-			"shortName": "MAD",
-			"longName": "Madura",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Madura"
-		},
-		{
-			"locale": "mak",
-			"preset_name": "mak-makasar",
-			"shortName": "MAK",
-			"longName": "Makasar",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Makasar"
-		},
-		{
-			"locale": "mej",
-			"preset_name": "mej-meyah",
-			"shortName": "MEYAH",
-			"longName": "Meyah",
-			"modifyTime": 1460678400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Meyah"
-		},
-		{
-			"locale": "mg",
-			"preset_name": "mg-mg65",
-			"shortName": "MG65",
-			"longName": "Ny Baiboly Malagasy",
-			"modifyTime": 1404691200,
-			"description": "Ny Baiboly Malagasy, 1865"
-		},
-		{
-			"locale": "min",
-			"preset_name": "min-minangkabau",
-			"shortName": "MIN",
-			"longName": "Minangkabau",
-			"modifyTime": 1431043200,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Minangkabau"
-		},
-		{
-			"locale": "mog",
-			"preset_name": "mog-mongondow",
-			"shortName": "MONG",
-			"longName": "Mongondow",
-			"modifyTime": 1431043200,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Mongondow"
-		},
-		{
-			"locale": "mqj",
-			"preset_name": "mqj-mamasa",
-			"shortName": "MAMASA",
-			"longName": "Mamasa",
-			"modifyTime": 1460678400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Mamasa"
-		},
-		{
-			"locale": "mqy",
-			"preset_name": "mqy-manggarai",
-			"shortName": "MGR",
-			"longName": "Manggarai",
-			"modifyTime": 1460678400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Manggarai"
-		},
-		{
-			"locale": "ms",
-			"preset_name": "ms-bsm",
-			"shortName": "BM",
-			"longName": "Alkitab Berita Baik",
-			"modifyTime": 1407801600,
-			"description": "Alkitab Berita Baik  (Today's Malay Version)"
-		},
-		{
-			"locale": "mvp",
-			"preset_name": "mvp-duri",
-			"shortName": "DURI",
-			"longName": "Duri",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Duri"
-		},
-		{
-			"locale": "mwv",
-			"preset_name": "mwv-mentawai",
-			"shortName": "MTWI",
-			"longName": "Mentawai",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Mentawai"
-		},
-		{
-			"locale": "my",
-			"preset_name": "my-bjb",
-			"shortName": "BJB",
-			"longName": "Burmese (1840)",
-			"modifyTime": 1404691200,
-			"description": "Burmese Bible, 1840"
-		},
-		{
-			"locale": "my",
-			"preset_name": "my-burb",
-			"shortName": "BURB",
-			"longName": "Burmese (1825)",
-			"modifyTime": 1404691200,
-			"description": "Burmese (Myanmar) Bible, 1825"
-		},
-		{
-			"locale": "my",
-			"preset_name": "my-judson",
-			"shortName": "MYJ",
-			"longName": "Judson",
-			"modifyTime": 1405296000,
-			"description": "Burmese (Myanmar) Translation, Rev. Adoniram Judson, 1835. From unbound.biola.edu."
-		},
-		{
-			"locale": "nia",
-			"preset_name": "nia-nias",
-			"shortName": "NIAS",
-			"longName": "Nias",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Nias"
-		},
-		{
-			"locale": "nij",
-			"preset_name": "nij-ngaju",
-			"shortName": "NGAJU",
-			"longName": "Dayak-Ngaju",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Dayak Ngaju"
-		},
-		{
-			"locale": "nl",
-			"preset_name": "nl-statenvertaling",
-			"shortName": "SV",
-			"longName": "Statenvertaling",
-			"modifyTime": 1405296000,
-			"description": "Dutch Statenvertaling 1618-1619. From unbound.biola.edu."
-		},
-		{
-			"locale": "npy",
-			"preset_name": "npy-napu",
-			"shortName": "NAPU",
-			"longName": "Napu",
-			"modifyTime": 1431043200,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Napu"
-		},
-		{
-			"locale": "pl",
-			"preset_name": "pl-gdanska1632",
-			"shortName": "PBG",
-			"longName": "Biblia Gdańska 1632",
-			"modifyTime": 1405296000,
-			"description": "Biblia Gdańska (1632)"
-		},
-		{
-			"locale": "pl",
-			"preset_name": "pl-goetze",
-			"shortName": "GOE",
-			"longName": "Nowy Testament w przekładzie Bolesława Goetze",
-			"modifyTime": 1434326400,
-			"description": "Nowy Testament w przekładzie Bolesława Goetze, 1860. Tekst pochodzi z programu rBiblia."
-		},
-		{
-			"locale": "pl",
-			"preset_name": "pl-paulistow",
-			"shortName": "BP",
-			"longName": "Biblia Paulistów",
-			"modifyTime": 1513814400,
-			"description": "Tekst pochodzi z programu rBiblia."
-		},
-		{
-			"locale": "pl",
-			"preset_name": "pl-pl",
-			"shortName": "EIB",
-			"longName": "Biblia EIB (Przekład Literacki)",
-			"modifyTime": 1528156800,
-			"description": "Tekst pochodzi z programu rBiblia."
-		},
-		{
-			"locale": "pl",
-			"preset_name": "pl-ubg",
-			"shortName": "UBG",
-			"longName": "Uwspółcześniona Biblia Gdańska - Stary i Nowy Testament",
-			"modifyTime": 1497916800,
-			"description": "© 2017 Fundacja Wrota Nadziei. Wydawca wyraża zgodę na kopiowanie i rozpowszechnianie całości lub części publikacji, jednak bez czerpania z tego korzyści finansowych i bez wprowadzania jakichkolwiek zmian. Powielanie do celów komercyjnych wymaga pisemnej zgody Fundacji. Wersja 20170408. Wszelkie błędy w module, proszę zgłaszac do: Artur.Szymczak@nadzieja.pl"
-		},
-		{
-			"locale": "pon",
-			"preset_name": "pon-old",
-			"shortName": "PON",
-			"longName": "Pohnpeian (Old)",
-			"modifyTime": 1405296000,
-			"description": "Pohnpeian translation by Rev. Isamo Welles, at Calvary Baptist Church"
-		},
-		{
-			"locale": "pon",
-			"preset_name": "pon-pon2006",
-			"shortName": "PON",
-			"longName": "Pohnpeian Bible",
-			"modifyTime": 1431043200,
-			"description": "The Holy Bible in the Pohnpeian language of the Federated States of Micronesia. Copyright © 2006 Bible Society of the South Pacific"
-		},
-		{
-			"locale": "ptu",
-			"preset_name": "ptu-bambam",
-			"shortName": "BAMBAM",
-			"longName": "Bambam",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Bambam"
-		},
-		{
-			"locale": "ro",
-			"preset_name": "ro-cornilescu",
-			"shortName": "VDC",
-			"longName": "Cornilescu",
-			"modifyTime": 1436140800,
-			"description": "Biblia sau Sfânta Scriptură a Vechiului şi Noului Testament - Traducerea: Dumitru Cornilescu, 1921"
-		},
-		{
-			"locale": "ru",
-			"preset_name": "ru-jknt",
-			"shortName": "JKNT",
-			"longName": "Новый Завет Жуковского",
-			"modifyTime": 1404432000,
-			"description": "Новый Завет Жуковского, 1895"
-		},
-		{
-			"locale": "ru",
-			"preset_name": "ru-mndl",
-			"shortName": "MNDL",
-			"longName": "Тора и Псалтырь, Мандельштам",
-			"modifyTime": 1404432000,
-			"description": "Тора и Псалтырь, Мандельштам, 1862"
-		},
-		{
-			"locale": "ru",
-			"preset_name": "ru-synodal",
-			"shortName": "SYNO",
-			"longName": "Синодальный перевод",
-			"modifyTime": 1405296000,
-			"description": "Russian Synodal Translation, 1876. From unbound.biola.edu."
-		},
-		{
-			"locale": "sas",
-			"preset_name": "sas-sasak",
-			"shortName": "SAS",
-			"longName": "Sasak",
-			"modifyTime": 1431043200,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Sasak"
-		},
-		{
-			"locale": "sda",
-			"preset_name": "sda-toraja",
-			"shortName": "TOR",
-			"longName": "Toraja",
-			"modifyTime": 1436140800,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Toraja"
-		},
-		{
-			"locale": "sq",
-			"preset_name": "sq-kk",
-			"shortName": "ALBB",
-			"longName": "Albanian",
-			"modifyTime": 1448755200,
-			"description": "Albanian. From unbound.biola.edu."
-		},
-		{
-			"locale": "sr",
-			"preset_name": "sr-sdk-c",
-			"shortName": "SDK-C",
-			"longName": "Библија (Ћирилица), Караджич",
-			"modifyTime": 1404691200,
-			"description": "Библија (Ћирилица), Караджич, 1865"
-		},
-		{
-			"locale": "sr",
-			"preset_name": "sr-sdk-l",
-			"shortName": "SDK-L",
-			"longName": "Biblija (štampan latinicom), Karadžić",
-			"modifyTime": 1404691200,
-			"description": "Biblija (štampan latinicom), Karadžić, 1865"
-		},
-		{
-			"locale": "su",
-			"preset_name": "su-sunda",
-			"shortName": "SUNDA",
-			"longName": "Sunda 1991",
-			"modifyTime": 1431043200,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Sunda 1991, KITAB SUCI nyaeta Kitab Perjangjian Lawas sareng Perjangjian Anyar Nganggo Basa Sunda Sadidinten"
-		},
-		{
-			"locale": "su",
-			"preset_name": "su-sunda1997",
-			"shortName": "SUN97",
-			"longName": "Sunda 1997-formal",
-			"modifyTime": 1431043200,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Sunda 1997 Edisi Formal"
-		},
-		{
-			"locale": "sv",
-			"preset_name": "sv-1917",
-			"shortName": "SVEN",
-			"longName": "Svenska 1917",
-			"modifyTime": 1405296000,
-			"description": "Swedish Translation, 1917. From unbound.biola.edu."
-		},
-		{
-			"locale": "sv",
-			"preset_name": "sv-kxii",
-			"shortName": "KXII",
-			"longName": "Svenska Karl XII:s Bibel",
-			"modifyTime": 1404691200,
-			"description": "Svenska Karl XII:s Bibel, 1873"
-		},
-		{
-			"locale": "sw",
-			"preset_name": "sw-swnt",
-			"shortName": "SWNT",
-			"longName": "Agano Jipya Na Zaburi",
-			"modifyTime": 1404691200,
-			"description": "Agano Jipya Na Zaburi - Swahili New Testament, 1989"
-		},
-		{
-			"locale": "sxn",
-			"preset_name": "sxn-sangir",
-			"shortName": "SANGIR",
-			"longName": "Sangir",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Sangir"
-		},
-		{
-			"locale": "ta",
-			"preset_name": "ta-rtb",
-			"shortName": "RTB",
-			"longName": "Romanised Tamil Bible (Beta)",
-			"modifyTime": 1528156800,
-			"description": "OV Tamil Bible transcribed into Roman Script"
-		},
-		{
-			"locale": "tby",
-			"preset_name": "tby-tabaru",
-			"shortName": "TAB",
-			"longName": "Tabaru",
-			"modifyTime": 1431043200,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Tabaru"
-		},
-		{
-			"locale": "th",
-			"preset_name": "th-kjv",
-			"shortName": "TKJV",
-			"longName": "Thai KJV",
-			"modifyTime": 1529971200,
-			"description": "Thai King James Version. From unbound.biola.edu."
-		},
-		{
-			"locale": "tl",
-			"preset_name": "tl-angbiblia1905",
-			"shortName": "TLAB",
-			"longName": "Ang Biblia 1905",
-			"modifyTime": 1405296000,
-			"description": "Philippines Bible Society (1905), Typed from the Ang Biblia Tagalog, by Richard & Dolores Long"
-		},
-		{
-			"locale": "twu",
-			"preset_name": "twu-rote",
-			"shortName": "ROTE",
-			"longName": "Rote (Termanu)",
-			"modifyTime": 1401926400,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Rote (Termanu)"
-		},
-		{
-			"locale": "uk",
-			"preset_name": "uk-kulish",
-			"shortName": "UKK",
-			"longName": "Ukrainian NT P.Kulish",
-			"modifyTime": 1405296000,
-			"description": "Ukrainian: NT (P.Kulish, 1871). From unbound.biola.edu."
-		},
-		{
-			"locale": "uk",
-			"preset_name": "uk-mora",
-			"shortName": "MORA",
-			"longName": "Євангеліє українською",
-			"modifyTime": 1404432000,
-			"description": "Євангеліє українською мовою, Морачевський, 1861"
-		},
-		{
-			"locale": "ury",
-			"preset_name": "ury-orya",
-			"shortName": "ORYA",
-			"longName": "Orya",
-			"modifyTime": 1475280000,
-			"description": "Alap mo Ol Ëse, zëre mo zi niban de ol ziaha-en gu hup dena. Perjanjian Baru dalam bahasa Orya di Papua. The New Testament in the Orya language of Indonesia. Yayasan Sumber Sejahtera, Jakarta 2005."
-		},
-		{
-			"locale": "vi",
-			"preset_name": "vi-1934",
-			"shortName": "VI1934",
-			"longName": "Vietnamese 1934",
-			"modifyTime": 1405296000,
-			"description": "The 1934 Vietnamese Bible. Published without a copyright statement. The Bible Text is PUBLIC DOMAIN. Text supplied by Mr. Phien Nguyen of Hollywood, Florida. From unbound.biola.edu."
-		},
-		{
-			"locale": "yli",
-			"preset_name": "yli-yali",
-			"shortName": "YLI",
-			"longName": "Yali-Angguruk",
-			"modifyTime": 1431043200,
-			"group_order": 30,
-			"description": "Alkitab Bahasa Yali Angguruk"
-		},
-		{
-			"locale": "zh",
-			"preset_name": "zh-ckjvgs",
-			"shortName": "CKJVGS",
-			"longName": "Chinese KJV God Simplified",
-			"modifyTime": 1432512000,
-			"description": "中文英皇钦定本神版简体"
-		},
-		{
-			"locale": "zh",
-			"preset_name": "zh-ckjvgt",
-			"shortName": "CKJVGT",
-			"longName": "Chinese KJV God Traditional",
-			"modifyTime": 1432512000,
-			"description": "中文英皇欽定本神版繁體"
-		},
-		{
-			"locale": "zh",
-			"preset_name": "zh-ckjvsds",
-			"shortName": "CKJVSDS",
-			"longName": "Chinese KJV Shang-Di Simplified",
-			"modifyTime": 1432512000,
-			"description": "中文英皇钦定本上帝版简体"
-		},
-		{
-			"locale": "zh",
-			"preset_name": "zh-ckjvsdt",
-			"shortName": "CKJVSDT",
-			"longName": "Chinese KJV Shang-Di Traditional",
-			"modifyTime": 1432512000,
-			"description": "中文英皇欽定本上帝版繁體"
-		},
-		{
-			"locale": "zh",
-			"preset_name": "zh-cnvt",
-			"shortName": "CNVT",
-			"longName": "新譯本",
-			"modifyTime": 1473984000,
-			"description": "New Chinese Version (Traditional), 1993. From unbound.biola.edu."
-		},
-		{
-			"locale": "zh",
-			"preset_name": "zh-cuvmps",
-			"shortName": "CUVMPS",
-			"longName": "Chinese Union (Simplified)",
-			"modifyTime": 1405296000,
-			"description": "Chinese Union Version (Modern Punctuation) Simplified"
-		},
-		{
-			"locale": "zh",
-			"preset_name": "zh-cuvt",
-			"shortName": "CUVT",
-			"longName": "Chinese Union (Traditional)",
-			"modifyTime": 1418601600,
-			"description": "Chinese Union Version (Traditional), Public Domain."
-		},
-		{
-			"locale": "zh",
-			"preset_name": "zh-pinyin",
-			"shortName": "PINYIN",
-			"longName": "Pinyin",
-			"modifyTime": 1405296000,
-			"description": "Pinyin (Romanized Chinese). Text provided by www.wordproject.org"
-		},
-		{
-			"locale": "as",
-			"preset_name": "as-bcs",
-			"shortName": "ASM",
-			"longName": "Assamese",
-			"modifyTime": 1524096000,
-			"description": "[Assamese Holy Bible] অসমীয়া বাইবেল"
-		},
-		{
-			"locale": "bn",
-			"preset_name": "bn-bcs",
-			"shortName": "BEN",
-			"longName": "Bengali",
-			"modifyTime": 1524096000,
-			"description": "[Bengali Holy Bible] পবিত্র বাইবেল "
-		},
-		{
-			"locale": "gu",
-			"preset_name": "gu-bcs",
-			"shortName": "GUJ",
-			"longName": "Gujarati",
-			"modifyTime": 1524096000,
-			"description": "[Gujarati Holy Bible] પવિત્ર બાઇબલ "
-		},
-		{
-			"locale": "hi",
-			"preset_name": "hi-bcs",
-			"shortName": "HIN",
-			"longName": "Hindi",
-			"modifyTime": 1524096000,
-			"description": "[Hindi Holy Bible] पवित्र बाइबिल "
-		},
-		{
-			"locale": "kn",
-			"preset_name": "kn-bcs",
-			"shortName": "KAN",
-			"longName": "Kannada",
-			"modifyTime": 1524096000,
-			"description": "[Kannada Holy Bible] ಪವಿತ್ರ ಬೈಬಲ್ "
-		},
-		{
-			"locale": "ml",
-			"preset_name": "ml-bcs",
-			"shortName": "MAL",
-			"longName": "Malayalam",
-			"modifyTime": 1524096000,
-			"description": "[Malayalam Holy Bible] സത്യവേദപുസ്തകം "
-		},
-		{
-			"locale": "mr",
-			"preset_name": "mr-bcs",
-			"shortName": "MAR",
-			"longName": "Marathi",
-			"modifyTime": 1524096000,
-			"description": "[Marathi Holy Bible] मराठी बायबल "
-		},
-		{
-			"locale": "or",
-			"preset_name": "or-bcs",
-			"shortName": "ODY",
-			"longName": "Odiya",
-			"modifyTime": 1524096000,
-			"description": "[Oriya Bible] ବ୍ୟ ବାଇବଲ"
-		},
-		{
-			"locale": "pa",
-			"preset_name": "pa-bcs",
-			"shortName": "PAN",
-			"longName": "Punjabi",
-			"modifyTime": 1524096000,
-			"description": "[Punjabi Bible] ਬਾਇਬਲ "
-		},
-		{
-			"locale": "ta",
-			"preset_name": "ta-bcs",
-			"shortName": "TAM",
-			"longName": "Tamil",
-			"modifyTime": 1524096000,
-			"description": "[Tamil Holy Bible] வேதாகமம் "
-		},
-		{
-			"locale": "te",
-			"preset_name": "te-bcs",
-			"shortName": "TEL",
-			"longName": "Telugu",
-			"modifyTime": 1524096000,
-			"description": "[Telugu Holy Bible] పవిత్ర బైబిల్ "
-		},
-		{
-			"locale": "ur",
-			"preset_name": "ur-bcs",
-			"shortName": "URD",
-			"longName": "Urdu",
-			"modifyTime": 1524096000,
-			"description": " انجیل مقدس [Urdu Holy Bible]"
-		},
-		{
-			"locale": "el",
-			"preset_name": "el-byzrp2018",
-			"shortName": "RP2018",
-			"longName": "Byzantine Robinson-Pierpont 2018",
-			"modifyTime": 1528156800,
-			"description": "Byzantine Robinson-Pierpont 2018"
-		}
-	],
-	"group_order_display": {
-		"10": "English",
-		"20": "Indonesian",
-		"30": "Bahasa Suku"
-	},
-	"locale_display": {
-		"ace": "Aceh",
-		"alp": "Alune",
-		"blz": "Balantak",
-		"ban": "Bali",
-		"ptu": "Bambam",
-		"btd": "Batak-Dairi",
-		"btx": "Karo",
-		"bbc": "Batak-Toba",
-		"bts": "Batak-Simalungun",
-		"bug": "Bugis",
-		"nij": "Dayak-Ngaju",
-		"mvp": "Duri",
-		"gor": "Gorontalo",
-		"kje": "Kisar",
-		"kzf": "Kaili Da'a",
-		"ljp": "Lampung",
-		"mad": "Madura",
-		"mak": "Makassar",
-		"mwv": "Mentawai",
-		"min": "Minangkabau",
-		"mog": "Mongondow",
-		"npy": "Napu",
-		"nia": "Nias",
-		"twu": "Rote (Termanu)",
-		"sxn": "Sangir",
-		"sas": "Sasak",
-		"tby": "Tabaru",
-		"sda": "Toraja",
-		"yli": "Yali-Angguruk",
-		"ury": "Orya",
-		"chk": "Chuukese",
-		"kpg": "Kapingamarangi",
-		"pon": "Pohnpeian",
-		"bkl": "Berik",
-		"gbi": "Galela",
-		"hvn": "Sabu",
-		"kgr": "Abun",
-		"mej": "Meyah",
-		"mqj": "Mamasa",
-		"mqy": "Manggarai"
-	}
+  "presets": [
+    {
+      "locale": "ace",
+      "preset_name": "ace-aceh",
+      "shortName": "ACEH",
+      "longName": "Aceh",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Aceh"
+    },
+    {
+      "locale": "alp",
+      "preset_name": "alp-alune5",
+      "shortName": "ALP",
+      "longName": "Janji Beluke",
+      "modifyTime": 1407283200,
+      "description": "Perjanjian Baru dalam bahasa Alune di Maluku, Indonesia (The New Testament in the Alune language of Maluku, Indonesia) © 2012 Sinode Gereja Protestant Maluku dan © 2012 Wycliffe, Inc. Version 5.0"
+    },
+    {
+      "locale": "ar",
+      "preset_name": "ar-vandyke",
+      "shortName": "AVD",
+      "longName": "Van Dyke",
+      "modifyTime": 1405296000,
+      "description": "Arabic: Smith & Van Dyke, 1865. From unbound.biola.edu."
+    },
+    {
+      "locale": "ban",
+      "preset_name": "ban-bali",
+      "shortName": "BALI",
+      "longName": "Bali",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Bali"
+    },
+    {
+      "locale": "ban",
+      "preset_name": "ban-bali90",
+      "shortName": "BALI90",
+      "longName": "Bali 1990",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Bali (Bahasa Sehari-hari) - Cakepan Suci"
+    },
+    {
+      "locale": "bbc",
+      "preset_name": "bbc-toba",
+      "shortName": "TOBA",
+      "longName": "Batak-Toba",
+      "modifyTime": 1442534400,
+      "group_order": 30,
+      "description": "Alkitab Batak Toba"
+    },
+    {
+      "locale": "bg",
+      "preset_name": "bg-veren",
+      "shortName": "VEREN",
+      "longName": "Библията (Veren's)",
+      "modifyTime": 1404691200,
+      "description": "Библията, Veren's Contemporary Bible, 1871"
+    },
+    {
+      "locale": "bkl",
+      "preset_name": "bkl-berik",
+      "shortName": "BERIK",
+      "longName": "Berik",
+      "modifyTime": 1460678400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Berik"
+    },
+    {
+      "locale": "blz",
+      "preset_name": "blz-balantak",
+      "shortName": "BLNTK",
+      "longName": "Balantak",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Balantak"
+    },
+    {
+      "locale": "br",
+      "preset_name": "br-brnt",
+      "shortName": "BRNT",
+      "longName": "Testamant nevez",
+      "modifyTime": 1404691200,
+      "description": "Testamant nevez, 1827"
+    },
+    {
+      "locale": "btd",
+      "preset_name": "btd-dairi",
+      "shortName": "DAIRI",
+      "longName": "Batak-Dairi",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Batak Dairi"
+    },
+    {
+      "locale": "bts",
+      "preset_name": "bts-simalungun",
+      "shortName": "SIMA",
+      "longName": "Batak-Simalungun",
+      "modifyTime": 1460678400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Batak Simalungun"
+    },
+    {
+      "locale": "btx",
+      "preset_name": "btx-karo",
+      "shortName": "KARO",
+      "longName": "Pustaka Si Badia",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Karo"
+    },
+    {
+      "locale": "bug",
+      "preset_name": "bug-bugis",
+      "shortName": "BUGIS",
+      "longName": "Bugis",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Bugis"
+    },
+    {
+      "locale": "chk",
+      "preset_name": "chk-paipel",
+      "shortName": "CHK",
+      "longName": "Paipel",
+      "modifyTime": 1431043200,
+      "description": "The Holy Bible in the Chuukese language of the Federated States of Micronesia. Copyright © 2011 Bible Society of Micronesia"
+    },
+    {
+      "locale": "chr",
+      "preset_name": "chr-cher",
+      "shortName": "CHER",
+      "longName": "Cherokee NT",
+      "modifyTime": 1404777600,
+      "description": "Cherokee New Testament, 1860"
+    },
+    {
+      "locale": "cop",
+      "preset_name": "cop-sahnt",
+      "shortName": "SAHNT",
+      "longName": "Sahidica NT",
+      "modifyTime": 1404777600,
+      "description": "Sahidica - A New Edition of the New Testament in Sahidic Coptic, 2006"
+    },
+    {
+      "locale": "cs",
+      "preset_name": "cs-kralicka",
+      "shortName": "CSBKR",
+      "longName": "Bible Kralická",
+      "modifyTime": 1432166400,
+      "description": "Czech Bible Kralická: Bible svata aneb vsecka svata pisma Stareho i Noveho Zakona podle posledniho vydani kralickeho z roku 1613. From unbound.biola.edu."
+    },
+    {
+      "locale": "de",
+      "preset_name": "de-elberfelder1871",
+      "shortName": "ELB71",
+      "longName": "Elberfelder 1871",
+      "modifyTime": 1405296000,
+      "description": "German Elberfelder 1871. From unbound.biola.edu."
+    },
+    {
+      "locale": "de",
+      "preset_name": "de-elberfelder1905",
+      "shortName": "ELB",
+      "longName": "Elberfelder 1905",
+      "modifyTime": 1405296000,
+      "description": "German Darby Unrevidierte Elberfelder 1905, Copyright by R. Bockhaus Verlage. From unbound.biola.edu."
+    },
+    {
+      "locale": "de",
+      "preset_name": "de-luther1545",
+      "shortName": "DL1545",
+      "longName": "Lutherbibel 1545",
+      "modifyTime": 1405296000,
+      "description": "German Lutherbibel 1545. Made available in electronic format by Michael Bolsinger at http://www.luther-bibel-1545.de. From unbound.biola.edu."
+    },
+    {
+      "locale": "de",
+      "preset_name": "de-luther1912",
+      "shortName": "DL1912",
+      "longName": "Lutherbibel 1912",
+      "modifyTime": 1452470400,
+      "description": "German Lutherbibel 1912. From unbound.biola.edu."
+    },
+    {
+      "locale": "de",
+      "preset_name": "de-schlachter1951",
+      "shortName": "SCH51",
+      "longName": "Schlachter 1951",
+      "modifyTime": 1405296000,
+      "description": "Die Heilige Schrift des Alten und Neuen Testaments nach dem Urtext Ubersetzt von F.E. SCHLACHTER Neue Uberarbeitung 1951 Genfer Bibelgesellschaft. From unbound.biola.edu."
+    },
+    {
+      "locale": "el",
+      "preset_name": "el-byzantine",
+      "shortName": "GB",
+      "longName": "Byzantine",
+      "modifyTime": 1405296000,
+      "description": "Greek Byzantine/Majority Text 2000. From unbound.biola.edu."
+    },
+    {
+      "locale": "el",
+      "preset_name": "el-byzantineparsed",
+      "shortName": "GBP",
+      "longName": "Byzantine Parsed",
+      "modifyTime": 1405296000,
+      "description": "Greek Byzantine/Majority Text 2000 parsed. From unbound.biola.edu."
+    },
+    {
+      "locale": "el",
+      "preset_name": "el-lxx",
+      "shortName": "LXX",
+      "longName": "Septuagint ",
+      "modifyTime": 1405296000,
+      "description": "Septuagint/LXX/Greek Old Testament. From unbound.biola.edu."
+    },
+    {
+      "locale": "el",
+      "preset_name": "el-neb",
+      "shortName": "NEB",
+      "longName": "Νέα Ελληνικά βιβλία",
+      "modifyTime": 1404691200,
+      "description": "Νέα Ελληνικά βιβλία, Bible in Modern Greek, 1901"
+    },
+    {
+      "locale": "el",
+      "preset_name": "el-tis",
+      "shortName": "TIS",
+      "longName": "Tischendorf",
+      "modifyTime": 1405296000,
+      "description": "Tischendorf 8th Ed. From unbound.biola.edu."
+    },
+    {
+      "locale": "el",
+      "preset_name": "el-tr1894",
+      "shortName": "TR1894",
+      "longName": "Textus Receptus",
+      "modifyTime": 1405296000,
+      "description": "Textus Receptus 1894. From unbound.biola.edu."
+    },
+    {
+      "locale": "el",
+      "preset_name": "el-tr1894parsed",
+      "shortName": "TR1894P",
+      "longName": "Textus Receptus Parsed",
+      "modifyTime": 1405296000,
+      "description": "Textus Receptus 1894 parsed. From unbound.biola.edu."
+    },
+    {
+      "locale": "el",
+      "preset_name": "el-whubs4",
+      "shortName": "WH",
+      "longName": "WH-UBS4",
+      "modifyTime": 1405296000,
+      "description": "Westcott/Hort, UBS4 variants. From unbound.biola.edu."
+    },
+    {
+      "locale": "el",
+      "preset_name": "el-whubs4parsed",
+      "shortName": "WHP",
+      "longName": "WH-UBS4 Parsed",
+      "modifyTime": 1405296000,
+      "description": "Westcott/Hort, UBS4 variants parsed. From unbound.biola.edu."
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-abu",
+      "shortName": "ABU",
+      "longName": "NT American Bible Union",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "New Testament, American Bible Union, 1865"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-acv",
+      "shortName": "ACV",
+      "longName": "A Conservative Version",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "A Conservative Version"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-asv",
+      "shortName": "ASV",
+      "longName": "American Standard",
+      "modifyTime": 1408492800,
+      "group_order": 10,
+      "description": "American Standard Version of 1901 is an Americanization of the English Revised Bible, which is an update of the KJV to less archaic spelling and greater accuracy of translation."
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-bb",
+      "shortName": "BB",
+      "longName": "Bishops' Bible",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "Bishops' Bible, 1572"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-bbe",
+      "shortName": "BBE",
+      "longName": "Bible in Basic English",
+      "modifyTime": 1405296000,
+      "group_order": 10,
+      "description": "Bible in Basic English (1941/1949) translated by Professor S. H. Hooke"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-cvb",
+      "shortName": "CVB",
+      "longName": "Coverdale Bible",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "Coverdale Bible, 1535"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-darby",
+      "shortName": "DARBY",
+      "longName": "Darby",
+      "modifyTime": 1405296000,
+      "group_order": 10,
+      "description": "Darby Translation 1890. From unbound.biola.edu."
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-dnt",
+      "shortName": "DNT",
+      "longName": "Diaglot NT",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "Diaglot New Testament, 1865"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-douayrheims",
+      "shortName": "DRA",
+      "longName": "Douay-Rheims",
+      "modifyTime": 1405296000,
+      "group_order": 10,
+      "description": "Douay-Rheims Translation 1582, 1609, 1610. From unbound.biola.edu."
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-ebr",
+      "shortName": "EBR",
+      "longName": "The Emphasized Bible",
+      "modifyTime": 1600646400,
+      "group_order": 10,
+      "description": "The Emphasized Bible by J. B. Rotherham. Source: http://www.htdb.one/EMP/"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-gb",
+      "shortName": "GB",
+      "longName": "Geneva Bible",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "Geneva Bible, 1587"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-gdby",
+      "shortName": "GDBY",
+      "longName": "The Godbey NT",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "The Godbey New Testament, 1902"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-jpot",
+      "shortName": "JPOT",
+      "longName": "Jewish Publication Society OT",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "Jewish Publication Society Old Testament"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-jub",
+      "shortName": "JUB",
+      "longName": "English Jubilee 2000 Bible",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "English Jubilee 2000 Bible"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-kjv",
+      "shortName": "KJV",
+      "longName": "King James",
+      "modifyTime": 1456704000,
+      "group_order": 10,
+      "description": "King James Version (1611 Authorized Version) with Red Letters"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-litv",
+      "shortName": "LITV",
+      "longName": "Green's Literal Translation",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "Green's Literal Translation (1993)"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-lont",
+      "shortName": "LONT",
+      "longName": "Living Oracles NT",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "Alexander Campbell's Living Oracles New Testament"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-lot",
+      "shortName": "LOT",
+      "longName": "Leeser OT",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "Leeser Old Testament"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-mnt",
+      "shortName": "MNT",
+      "longName": "Montgomery NT",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "Montgomery New Testament (1924) by Helen Barrett Montgomery"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-net",
+      "shortName": "NET",
+      "longName": "New English Translation",
+      "modifyTime": 1414108800,
+      "group_order": 10,
+      "description": "THE NET BIBLE®, New English Translation (NET) You may copy the NET Bible® and print it for others as long as you give it away, do not charge for it and comply with our guidelines for content control."
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-nheb",
+      "shortName": "NHEB",
+      "longName": "New Heart English",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "New Heart English Bible"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-noy",
+      "shortName": "Noy",
+      "longName": "Noyes' NT",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "Noyes' New Testament, 1869"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-ntm",
+      "shortName": "NTM",
+      "longName": "NT New Translation, Moffatt",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "The New Testament a New Translation, Moffatt, 1913"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-pesh",
+      "shortName": "PESH",
+      "longName": "Peschito Syriac NT",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "The Peschito Syriac New Testament: Translated into English by John Wesley Etheridge, 1849"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-rkjnt",
+      "shortName": "RKJNT",
+      "longName": "Revised King James NT",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "Revised King James New Testament, 2000"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-rnkjv",
+      "shortName": "RNKJV",
+      "longName": "Restored Names King James Version",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "Restored Names King James Version, 1934"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-rwv",
+      "shortName": "RWV",
+      "longName": "Revised Webster Version",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "Revised Webster Version, 1833"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-trcc",
+      "shortName": "TRCC",
+      "longName": "Tyndale (Rogers, Coverdale, Cranmer)",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "Tyndale-Rogers-Coverdale-Cranmer Bible, 1537"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-ukjv",
+      "shortName": "UKJV",
+      "longName": "Updated King James Version",
+      "modifyTime": 1591228800,
+      "group_order": 10,
+      "description": "Updated King James Version (from http://www.oocities.org/updatedkjv/UpdatedKJVASC.zip)"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-web",
+      "shortName": "WEB",
+      "longName": "World English Bible",
+      "modifyTime": 1473984000,
+      "group_order": 10,
+      "description": "The World English Bible (WEB) is a Public Domain (no copyright) Modern English translation of the Holy Bible (2016 edition)."
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-webbe",
+      "shortName": "WEBBE",
+      "longName": "World English Bible (British)",
+      "modifyTime": 1404691200,
+      "hidden": true,
+      "group_order": 10,
+      "description": "World English Bible: British Edition, 1997"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-webm",
+      "shortName": "WEBM",
+      "longName": "World English Bible (Messianic)",
+      "modifyTime": 1404691200,
+      "hidden": true,
+      "group_order": 10,
+      "description": "World English Bible: Messianic Edition, 1997"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-wmnt",
+      "shortName": "WMNT",
+      "longName": "Weymouth NT",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "Weymouth New Testament"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-wtb",
+      "shortName": "WTB",
+      "longName": "William Tyndale Bible",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "William Tyndale Bible"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-wyc",
+      "shortName": "WYC",
+      "longName": "Wycliffe's NT",
+      "modifyTime": 1404691200,
+      "group_order": 10,
+      "description": "Wycliffe's New Testament, 1385"
+    },
+    {
+      "locale": "en",
+      "preset_name": "en-ylt",
+      "shortName": "YLT",
+      "longName": "Young's Literal Translation",
+      "modifyTime": 1405296000,
+      "group_order": 10,
+      "description": "Young's Literal Translation (1862)"
+    },
+    {
+      "locale": "eo",
+      "preset_name": "eo-esp",
+      "shortName": "ESP",
+      "longName": "La Sankta Biblio",
+      "modifyTime": 1404691200,
+      "description": "La Sankta Biblio, L.L. Zamenhof, 1915"
+    },
+    {
+      "locale": "eo",
+      "preset_name": "eo-esperanto",
+      "shortName": "EO",
+      "longName": "Esperanto",
+      "modifyTime": 1405296000,
+      "description": "Esperanto Brita kaj Alilanda Biblia Societo. From unbound.biola.edu."
+    },
+    {
+      "locale": "es",
+      "preset_name": "es-reinavalera1909",
+      "shortName": "RV",
+      "longName": "Reina-Valera 1909",
+      "modifyTime": 1431043200,
+      "description": "Reina-Valera (1909)"
+    },
+    {
+      "locale": "es",
+      "preset_name": "es-sagradas",
+      "shortName": "SEV",
+      "longName": "Sagradas Escrituras",
+      "modifyTime": 1405296000,
+      "description": "Spanish Sagradas Escrituras Translation, 1569. From unbound.biola.edu."
+    },
+    {
+      "locale": "et",
+      "preset_name": "et-eent",
+      "shortName": "EENT",
+      "longName": "Uus Testament",
+      "modifyTime": 1404691200,
+      "description": "Uus Testament, 1911"
+    },
+    {
+      "locale": "et",
+      "preset_name": "et-pr",
+      "shortName": "PR",
+      "longName": "Piibli Ramat (1739)",
+      "modifyTime": 1432684800,
+      "description": "Piibli Ramat (1739) http://www.eki.ee/piibel/"
+    },
+    {
+      "locale": "eu",
+      "preset_name": "eu-bhnt",
+      "shortName": "BHNT",
+      "longName": "Basque 1571",
+      "modifyTime": 1405296000,
+      "description": "Navarro-Labourdin Basque NT 1571. From unbound.biola.edu."
+    },
+    {
+      "locale": "fa",
+      "preset_name": "fa-fb",
+      "shortName": "FB4",
+      "longName": "کتاب مقدس (Farsi)",
+      "modifyTime": 1404691200,
+      "description": "Farsi Bible, 1896"
+    },
+    {
+      "locale": "fi",
+      "preset_name": "fi-1776",
+      "shortName": "FI1776",
+      "longName": "Finnish 1776",
+      "modifyTime": 1405296000,
+      "description": "Biblia, Se on: Koko Pyhä Raamattu, Suomeksi. Vuoden 1776 kirkkoraamattu. From unbound.biola.edu."
+    },
+    {
+      "locale": "fi",
+      "preset_name": "fi-1992",
+      "shortName": "FI1992",
+      "longName": "Pyhä Raamattu 1992",
+      "modifyTime": 1405296000,
+      "description": "Finnish: Suomen evankelis-luterilaisen kirkon kirkolliskokouksen vuonna 1992 käyttöön ottama suomennos. From unbound.biola.edu."
+    },
+    {
+      "locale": "fr",
+      "preset_name": "fr-cra",
+      "shortName": "CRA",
+      "longName": "La Bible Augustin Crampon",
+      "modifyTime": 1404691200,
+      "description": "La Bible Augustin Crampon, 1923"
+    },
+    {
+      "locale": "fr",
+      "preset_name": "fr-darby",
+      "shortName": "FRDBY",
+      "longName": "French Darby",
+      "modifyTime": 1405296000,
+      "description": "French Darby Translation 1872, 1885. From unbound.biola.edu."
+    },
+    {
+      "locale": "fr",
+      "preset_name": "fr-martin",
+      "shortName": "FMAR",
+      "longName": "Martin",
+      "modifyTime": 1405296000,
+      "description": "French Martin Translation 1744. From unbound.biola.edu."
+    },
+    {
+      "locale": "fr",
+      "preset_name": "fr-ostervald",
+      "shortName": "OST",
+      "longName": "Ostervald",
+      "modifyTime": 1405296000,
+      "description": "French Ostervald Translation 1724. From unbound.biola.edu."
+    },
+    {
+      "locale": "fr",
+      "preset_name": "fr-segond",
+      "shortName": "LSG",
+      "longName": "Louis Segond",
+      "modifyTime": 1405296000,
+      "description": "French Louis Segond 1910. From unbound.biola.edu."
+    },
+    {
+      "locale": "gbi",
+      "preset_name": "gbi-galela",
+      "shortName": "GALELA",
+      "longName": "Galela",
+      "modifyTime": 1460678400,
+      "group_order": 30,
+      "description": "Alkitab PB Bahasa Galela"
+    },
+    {
+      "locale": "gor",
+      "preset_name": "gor-gorontalo",
+      "shortName": "GOR",
+      "longName": "Gorontalo",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Gorontalo"
+    },
+    {
+      "locale": "gor",
+      "preset_name": "gor-gorontalo2006",
+      "shortName": "GOR06",
+      "longName": "Gorontalo 2006",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Gorontalo 2006 (Bahasa Sehari-hari)"
+    },
+    {
+      "locale": "hr",
+      "preset_name": "hr-croatian",
+      "shortName": "CRO",
+      "longName": "Croatian",
+      "modifyTime": 1405296000,
+      "description": "Croatian. From unbound.biola.edu."
+    },
+    {
+      "locale": "hr",
+      "preset_name": "hr-vk",
+      "shortName": "DKB",
+      "longName": "Daničic-Karadžić Biblija",
+      "modifyTime": 1513814400,
+      "description": "OT by Đuro Daničić, 1865; NT by Vuk Karadžić, 1847"
+    },
+    {
+      "locale": "ht",
+      "preset_name": "ht-hcb",
+      "shortName": "HCB",
+      "longName": "Bib La, Haitian Creole",
+      "modifyTime": 1404691200,
+      "description": "Bib La, Haitian Creole Bible, 1985"
+    },
+    {
+      "locale": "hu",
+      "preset_name": "hu-karoli",
+      "shortName": "KAR",
+      "longName": "Karoli",
+      "modifyTime": 1405296000,
+      "description": "Hungarian Vizsoly Biblia translated by Károli Gáspár (1590)"
+    },
+    {
+      "locale": "hvn",
+      "preset_name": "hvn-sabu",
+      "shortName": "SABU",
+      "longName": "Sabu",
+      "modifyTime": 1460678400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Sabu"
+    },
+    {
+      "locale": "in",
+      "preset_name": "in-bimk",
+      "shortName": "BIMK",
+      "longName": "Bahasa Indonesia Masa Kini",
+      "modifyTime": 1595376000,
+      "group_order": 20,
+      "description": "Bahasa Indonesia Masa Kini (BIMK) - 1985"
+    },
+    {
+      "locale": "in",
+      "preset_name": "in-ende",
+      "shortName": "ENDE",
+      "longName": "Ende",
+      "modifyTime": 1456444800,
+      "group_order": 20,
+      "description": "Alkitab Ende 1970   (http://alkitab.mobi/)"
+    },
+    {
+      "locale": "in",
+      "preset_name": "in-fayh",
+      "shortName": "FAYH",
+      "longName": "Firman Allah Yang Hidup",
+      "modifyTime": 1600646400,
+      "group_order": 20,
+      "description": "Firman Allah Yang Hidup 1989  (http://alkitab.mobi/)"
+    },
+    {
+      "locale": "in",
+      "preset_name": "in-ilt",
+      "shortName": "ILT",
+      "longName": "Indonesian Literal Translation",
+      "modifyTime": 1473984000,
+      "group_order": 20,
+      "description": "Kitab Suci Indonesian Literal Translation (KS-ILT) by Yayasan Lentera Bangsa (www.yalensa.com)"
+    },
+    {
+      "locale": "in",
+      "preset_name": "in-ilt3",
+      "shortName": "ILT3",
+      "longName": "Indonesian Literal Translation 3",
+      "modifyTime": 1571184000,
+      "group_order": 20,
+      "description": "Kitab Suci Indonesian Literal Translation Edisi-3. Copyright Yayasan Lentera Bangsa. Lihat http://www.yalensa.org"
+    },
+    {
+      "locale": "in",
+      "preset_name": "in-imb",
+      "shortName": "IMB",
+      "longName": "Indonesian Modern Bible",
+      "modifyTime": 1571184000,
+      "group_order": 20,
+      "description": "Indonesian Modern Bible: Yayasan Anugerah Kebenaran Indonesia, 2015"
+    },
+    {
+      "locale": "in",
+      "preset_name": "in-sb2010",
+      "shortName": "SB2010",
+      "longName": "Shellabear 2010",
+      "modifyTime": 1456444800,
+      "group_order": 20,
+      "description": "Alkitab Shellabear (Kontekstual) 2010   (http://alkitab.mobi/)"
+    },
+    {
+      "locale": "in",
+      "preset_name": "in-tbd",
+      "shortName": "TBD",
+      "longName": "TB Deuterokanonika",
+      "modifyTime": 1442534400,
+      "group_order": 20,
+      "description": "Deuterokanonika (c) 1974 Lembaga Alkitab Indonesia"
+    },
+    {
+      "locale": "in",
+      "preset_name": "in-tl",
+      "shortName": "TL",
+      "longName": "Terjemahan Lama",
+      "modifyTime": 1584662400,
+      "group_order": 20,
+      "description": "Alkitab Terjemahan Lama (TL) - 1954"
+    },
+    {
+      "locale": "in",
+      "preset_name": "in-vmd",
+      "shortName": "VMD",
+      "longName": "Versi Mudah Dibaca",
+      "modifyTime": 1700092800,
+      "group_order": 20,
+      "description": "Versi Mudah Dibaca"
+    },
+    {
+      "locale": "it",
+      "preset_name": "it-diodati",
+      "shortName": "IGD",
+      "longName": "Diodati Bibbia",
+      "modifyTime": 1405296000,
+      "description": "Italian Giovanni Diodati Bibbia, 1649. From unbound.biola.edu."
+    },
+    {
+      "locale": "it",
+      "preset_name": "it-riveduta",
+      "shortName": "ITRIV",
+      "longName": "Riveduta",
+      "modifyTime": 1405296000,
+      "description": "Italian Riveduta Bibbia, 1927. From unbound.biola.edu."
+    },
+    {
+      "locale": "iw",
+      "preset_name": "iw-aleppo",
+      "shortName": "ALP",
+      "longName": "Aleppo Codex",
+      "modifyTime": 1448236800,
+      "description": "Hebrew Aleppo Codex, taken from Mechon Mamre. From unbound.biola.edu."
+    },
+    {
+      "locale": "iw",
+      "preset_name": "iw-bhs",
+      "shortName": "BHS",
+      "longName": "Biblia Herbaica Stuttgartensia",
+      "modifyTime": 1404691200,
+      "description": "Biblia Herbaica Stuttgartensia"
+    },
+    {
+      "locale": "iw",
+      "preset_name": "iw-hnt",
+      "shortName": "HNT",
+      "longName": "ברית חדשה - NT",
+      "modifyTime": 1404691200,
+      "description": "ברית חדשה - New testament, 1977"
+    },
+    {
+      "locale": "iw",
+      "preset_name": "iw-mhb",
+      "shortName": "MHB",
+      "longName": "התנ״ך עברית המודרני + ברית החדשה",
+      "modifyTime": 1404691200,
+      "description": "התנ״ך עברית המודרני + ברית החדשה"
+    },
+    {
+      "locale": "iw",
+      "preset_name": "iw-modern",
+      "shortName": "HEB",
+      "longName": "Modern Hebrew",
+      "modifyTime": 1448236800,
+      "description": "Modern Hebrew. From unbound.biola.edu."
+    },
+    {
+      "locale": "iw",
+      "preset_name": "iw-wlc",
+      "shortName": "WLC",
+      "longName": "Westminster Leningrad Codex",
+      "modifyTime": 1404691200,
+      "description": "Westminster Leningrad Codex"
+    },
+    {
+      "locale": "ja",
+      "preset_name": "ja-kougo",
+      "shortName": "KOUGO",
+      "longName": "口語訳",
+      "modifyTime": 1434672000,
+      "description": "口語訳新約聖書(1954年版) Colloquial Japanese (1954)"
+    },
+    {
+      "locale": "jv",
+      "preset_name": "jv-jawa",
+      "shortName": "JAWA81",
+      "longName": "Jawa 1981",
+      "modifyTime": 1700092800,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Jawa 1981, Kitab Sutji"
+    },
+    {
+      "locale": "jv",
+      "preset_name": "jv-jawa2006",
+      "shortName": "JAWA06",
+      "longName": "Jawa-2006",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Jawa 2006"
+    },
+    {
+      "locale": "jv",
+      "preset_name": "jv-jawa94",
+      "shortName": "JAWA94",
+      "longName": "Jawa-1994",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Jawa 1994"
+    },
+    {
+      "locale": "jv",
+      "preset_name": "jv-suriname",
+      "shortName": "JAWSUR",
+      "longName": "Jawa-Suriname",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Jawa Suriname"
+    },
+    {
+      "locale": "kgr",
+      "preset_name": "kgr-abun",
+      "shortName": "ABUN",
+      "longName": "Abun",
+      "modifyTime": 1460678400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Abun"
+    },
+    {
+      "locale": "kje",
+      "preset_name": "kje-kisar5",
+      "shortName": "KJE",
+      "longName": "Makromod Lalap Lirna Wawan",
+      "modifyTime": 1407283200,
+      "group_order": 30,
+      "description": "Perjanjian Baru dalam bahasa Kisar di Maluku, Indonesia (The New Testament in the Kisar language of Maluku, Indonesia) © 2008 Yayasan Sumber Sejahtera. Version 5.0"
+    },
+    {
+      "locale": "ko",
+      "preset_name": "ko-aeb",
+      "shortName": "AEB",
+      "longName": "아가페 쉬운 성경",
+      "modifyTime": 1404691200,
+      "description": "아가페 쉬운 성경, Agape Easy Bible, 1994"
+    },
+    {
+      "locale": "ko",
+      "preset_name": "ko-ctb",
+      "shortName": "CTB",
+      "longName": "공동번역, Common Translation",
+      "modifyTime": 1404691200,
+      "description": "공동번역, Common Translation Bible, 1977"
+    },
+    {
+      "locale": "ko",
+      "preset_name": "ko-kcb",
+      "shortName": "KCB",
+      "longName": "성경, Catholic",
+      "modifyTime": 1404691200,
+      "description": "성경, Korean Catholic Bible, 2005"
+    },
+    {
+      "locale": "ko",
+      "preset_name": "ko-keb",
+      "shortName": "KEB",
+      "longName": "Korean Easy Bible",
+      "modifyTime": 1404691200,
+      "description": "Korean Easy Bible"
+    },
+    {
+      "locale": "ko",
+      "preset_name": "ko-kkjv",
+      "shortName": "KKJV",
+      "longName": "한글판 킹제임스",
+      "modifyTime": 1404691200,
+      "description": "한글판 킹제임스, Korean King James Version, 1994"
+    },
+    {
+      "locale": "ko",
+      "preset_name": "ko-klb",
+      "shortName": "KTV",
+      "longName": "현대어성경",
+      "modifyTime": 1449705600,
+      "description": "현대어성경 (Today's Version)"
+    },
+    {
+      "locale": "ko",
+      "preset_name": "ko-kmb",
+      "shortName": "KLB",
+      "longName": "현대인의 성경",
+      "modifyTime": 1449705600,
+      "description": "현대인의 성경 (Korean Living Bible)"
+    },
+    {
+      "locale": "ko",
+      "preset_name": "ko-kpb",
+      "shortName": "KNRSV",
+      "longName": "새번역",
+      "modifyTime": 1449705600,
+      "description": "Korean New Revised Standard Version"
+    },
+    {
+      "locale": "ko",
+      "preset_name": "ko-krb",
+      "shortName": "KRB",
+      "longName": "Korean Rentier Bible",
+      "modifyTime": 1404691200,
+      "description": "Korean Rentier Bible"
+    },
+    {
+      "locale": "ko",
+      "preset_name": "ko-krv",
+      "shortName": "KRV",
+      "longName": "Korean Revised Version",
+      "modifyTime": 1405296000,
+      "description": "Korean Revised Version (1961)"
+    },
+    {
+      "locale": "ko",
+      "preset_name": "ko-nrkv",
+      "shortName": "NRKV",
+      "longName": "개역개정 (Revised Korean 1998)",
+      "modifyTime": 1404691200,
+      "description": "개역개정, New Revised Korean Version, 1998"
+    },
+    {
+      "locale": "ko",
+      "preset_name": "ko-tkv",
+      "shortName": "TKV",
+      "longName": "현대어성경 (Today's Version)",
+      "modifyTime": 1404691200,
+      "description": "현대어성경, Today's Korean Version, 1991"
+    },
+    {
+      "locale": "ko",
+      "preset_name": "ko-woor",
+      "shortName": "WOOR",
+      "longName": "우리말사랑누리집",
+      "modifyTime": 1404691200,
+      "description": "우리말사랑누리집, Korean Bible (Woorimal)"
+    },
+    {
+      "locale": "kpg",
+      "preset_name": "kpg-beebaadabu",
+      "shortName": "KPG",
+      "longName": "Beebaa Dabu",
+      "modifyTime": 1431043200,
+      "description": "The New Testament in the Kapingamarangi language of the Federated States of Micronesia, spoken on the Kapingamarangi and Ponape islands, Caroline Islands. Copyright © 1996, 2014 The Kapingamarangi Bible translation committee"
+    },
+    {
+      "locale": "kzf",
+      "preset_name": "kzf-kailidaa",
+      "shortName": "KLD",
+      "longName": "Kaili Da'a 1998",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Kaili Da'a"
+    },
+    {
+      "locale": "la",
+      "preset_name": "la-clementine",
+      "shortName": "CLEM",
+      "longName": "Clementine Vulgate",
+      "modifyTime": 1405296000,
+      "description": "Latin Clementine Vulgate edited by Colunga and Turrado (Madrid, 1946). From unbound.biola.edu."
+    },
+    {
+      "locale": "ljp",
+      "preset_name": "ljp-lampung",
+      "shortName": "LAM",
+      "longName": "Lampung",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Lampung"
+    },
+    {
+      "locale": "lv",
+      "preset_name": "lv-ljd",
+      "shortName": "LJD",
+      "longName": "Latviešu Jaunā Derība",
+      "modifyTime": 1405296000,
+      "description": "Latvian New Testament. From unbound.biola.edu."
+    },
+    {
+      "locale": "mad",
+      "preset_name": "mad-madura",
+      "shortName": "MAD",
+      "longName": "Madura",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Madura"
+    },
+    {
+      "locale": "mak",
+      "preset_name": "mak-makasar",
+      "shortName": "MAK",
+      "longName": "Makasar",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Makasar"
+    },
+    {
+      "locale": "mej",
+      "preset_name": "mej-meyah",
+      "shortName": "MEYAH",
+      "longName": "Meyah",
+      "modifyTime": 1460678400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Meyah"
+    },
+    {
+      "locale": "mg",
+      "preset_name": "mg-mg65",
+      "shortName": "MG65",
+      "longName": "Ny Baiboly Malagasy",
+      "modifyTime": 1404691200,
+      "description": "Ny Baiboly Malagasy, 1865"
+    },
+    {
+      "locale": "mi",
+      "preset_name": "mi-maori",
+      "shortName": "MAOR",
+      "longName": "Maori",
+      "modifyTime": 1405296000,
+      "description": "Maori Translation. From unbound.biola.edu."
+    },
+    {
+      "locale": "min",
+      "preset_name": "min-minangkabau",
+      "shortName": "MIN",
+      "longName": "Minangkabau",
+      "modifyTime": 1431043200,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Minangkabau"
+    },
+    {
+      "locale": "mog",
+      "preset_name": "mog-mongondow",
+      "shortName": "MONG",
+      "longName": "Mongondow",
+      "modifyTime": 1431043200,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Mongondow"
+    },
+    {
+      "locale": "mqj",
+      "preset_name": "mqj-mamasa",
+      "shortName": "MAMASA",
+      "longName": "Mamasa",
+      "modifyTime": 1460678400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Mamasa"
+    },
+    {
+      "locale": "mqy",
+      "preset_name": "mqy-manggarai",
+      "shortName": "MGR",
+      "longName": "Manggarai",
+      "modifyTime": 1460678400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Manggarai"
+    },
+    {
+      "locale": "ms",
+      "preset_name": "ms-bsm",
+      "shortName": "BM",
+      "longName": "Alkitab Berita Baik",
+      "modifyTime": 1407801600,
+      "description": "Alkitab Berita Baik  (Today's Malay Version)"
+    },
+    {
+      "locale": "mvp",
+      "preset_name": "mvp-duri",
+      "shortName": "DURI",
+      "longName": "Duri",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Duri"
+    },
+    {
+      "locale": "mwv",
+      "preset_name": "mwv-mentawai",
+      "shortName": "MTWI",
+      "longName": "Mentawai",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Mentawai"
+    },
+    {
+      "locale": "my",
+      "preset_name": "my-bjb",
+      "shortName": "BJB",
+      "longName": "Burmese (1840)",
+      "modifyTime": 1404691200,
+      "description": "Burmese Bible, 1840"
+    },
+    {
+      "locale": "my",
+      "preset_name": "my-burb",
+      "shortName": "BURB",
+      "longName": "Burmese (1825)",
+      "modifyTime": 1404691200,
+      "description": "Burmese (Myanmar) Bible, 1825"
+    },
+    {
+      "locale": "my",
+      "preset_name": "my-judson",
+      "shortName": "MYJ",
+      "longName": "Judson",
+      "modifyTime": 1405296000,
+      "description": "Burmese (Myanmar) Translation, Rev. Adoniram Judson, 1835. From unbound.biola.edu."
+    },
+    {
+      "locale": "nia",
+      "preset_name": "nia-nias",
+      "shortName": "NIAS",
+      "longName": "Nias",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Nias"
+    },
+    {
+      "locale": "nij",
+      "preset_name": "nij-ngaju",
+      "shortName": "NGAJU",
+      "longName": "Dayak-Ngaju",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Dayak Ngaju"
+    },
+    {
+      "locale": "nl",
+      "preset_name": "nl-statenvertaling",
+      "shortName": "SV",
+      "longName": "Statenvertaling",
+      "modifyTime": 1405296000,
+      "description": "Dutch Statenvertaling 1618-1619. From unbound.biola.edu."
+    },
+    {
+      "locale": "npy",
+      "preset_name": "npy-napu",
+      "shortName": "NAPU",
+      "longName": "Napu",
+      "modifyTime": 1431043200,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Napu"
+    },
+    {
+      "locale": "pl",
+      "preset_name": "pl-gdanska1632",
+      "shortName": "PBG",
+      "longName": "Biblia Gdańska 1632",
+      "modifyTime": 1405296000,
+      "description": "Biblia Gdańska (1632)"
+    },
+    {
+      "locale": "pl",
+      "preset_name": "pl-goetze",
+      "shortName": "GOE",
+      "longName": "Nowy Testament w przekładzie Bolesława Goetze",
+      "modifyTime": 1434326400,
+      "description": "Nowy Testament w przekładzie Bolesława Goetze, 1860. Tekst pochodzi z programu rBiblia."
+    },
+    {
+      "locale": "pl",
+      "preset_name": "pl-paulistow",
+      "shortName": "BP",
+      "longName": "Biblia Paulistów",
+      "modifyTime": 1513814400,
+      "description": "Tekst pochodzi z programu rBiblia."
+    },
+    {
+      "locale": "pl",
+      "preset_name": "pl-pl",
+      "shortName": "EIB",
+      "longName": "Biblia EIB (Przekład Literacki)",
+      "modifyTime": 1528156800,
+      "description": "Tekst pochodzi z programu rBiblia."
+    },
+    {
+      "locale": "pl",
+      "preset_name": "pl-ubg",
+      "shortName": "UBG",
+      "longName": "Uwspółcześniona Biblia Gdańska - Stary i Nowy Testament",
+      "modifyTime": 1497916800,
+      "description": "© 2017 Fundacja Wrota Nadziei. Wydawca wyraża zgodę na kopiowanie i rozpowszechnianie całości lub części publikacji, jednak bez czerpania z tego korzyści finansowych i bez wprowadzania jakichkolwiek zmian. Powielanie do celów komercyjnych wymaga pisemnej zgody Fundacji. Wersja 20170408. Wszelkie błędy w module, proszę zgłaszac do: Artur.Szymczak@nadzieja.pl"
+    },
+    {
+      "locale": "pon",
+      "preset_name": "pon-old",
+      "shortName": "PON",
+      "longName": "Pohnpeian (Old)",
+      "modifyTime": 1405296000,
+      "description": "Pohnpeian translation by Rev. Isamo Welles, at Calvary Baptist Church"
+    },
+    {
+      "locale": "pon",
+      "preset_name": "pon-pon2006",
+      "shortName": "PON",
+      "longName": "Pohnpeian Bible",
+      "modifyTime": 1431043200,
+      "description": "The Holy Bible in the Pohnpeian language of the Federated States of Micronesia. Copyright © 2006 Bible Society of the South Pacific"
+    },
+    {
+      "locale": "pt",
+      "preset_name": "pt-aa",
+      "shortName": "AA",
+      "longName": "Almeida Atualizada",
+      "modifyTime": 1405296000,
+      "description": "João Ferreira de Almeida Atualizada. From unbound.biola.edu."
+    },
+    {
+      "locale": "pt",
+      "preset_name": "pt-acf",
+      "shortName": "ACF",
+      "longName": "Sinta-se Português Corrigida",
+      "modifyTime": 1445817600,
+      "description": "Sinta-se Português Corrigida"
+    },
+    {
+      "locale": "pt",
+      "preset_name": "pt-por",
+      "shortName": "POR",
+      "longName": "Portuguese",
+      "modifyTime": 1446163200,
+      "description": "Portuguese Version"
+    },
+    {
+      "locale": "ptu",
+      "preset_name": "ptu-bambam",
+      "shortName": "BAMBAM",
+      "longName": "Bambam",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Bambam"
+    },
+    {
+      "locale": "ro",
+      "preset_name": "ro-cornilescu",
+      "shortName": "VDC",
+      "longName": "Cornilescu",
+      "modifyTime": 1573862400,
+      "description": "Biblia sau Sfânta Scriptură a Vechiului şi Noului Testament - Traducerea: Dumitru Cornilescu, 1921"
+    },
+    {
+      "locale": "ro",
+      "preset_name": "ro-fidela",
+      "shortName": "BTF",
+      "longName": "Traducerea FIDELA",
+      "modifyTime": 1573862400,
+      "description": "FIDELA Bible Translation (2010)"
+    },
+    {
+      "locale": "ro",
+      "preset_name": "ro-gbv2001",
+      "shortName": "GBV2001",
+      "longName": "Gute Botschaft Verlag",
+      "modifyTime": 1573862400,
+      "description": "The Holy Bible GBV 2001 Copyright (c) 2001 by GBV. "
+    },
+    {
+      "locale": "rom",
+      "preset_name": "rom-gps",
+      "shortName": "GPS",
+      "longName": "E Lashi Viasta, Gypsy",
+      "modifyTime": 1573862400,
+      "description": "E Lashi Viasta, Gypsy Bible, 1984"
+    },
+    {
+      "locale": "ro",
+      "preset_name": "ro-ntr2006",
+      "shortName": "NTR06",
+      "longName": "Noua traducere în limba română 2006",
+      "modifyTime": 1573862400,
+      "description": "Noua traducere în limba română 2006. IOWA*International Bible Society"
+    },
+    {
+      "locale": "ro",
+      "preset_name": "ro-ortodoxa",
+      "shortName": "ORTDX",
+      "longName": "Biblia Ortodoxa",
+      "modifyTime": 1573862400,
+      "description": "Biblia Ortodoxă (Biblia Sinodală / Bible of the Holy Synod)"
+    },
+    {
+      "locale": "ro",
+      "preset_name": "ro-rccv",
+      "shortName": "RCCV",
+      "longName": "Corrected Cornilescu",
+      "modifyTime": 1414108800,
+      "description": "Romanian Corrected Cornilescu Version www.Biblia.PentruViata.ro"
+    },
+    {
+      "locale": "ro",
+      "preset_name": "ro-rccv-nocedilla",
+      "shortName": "RCCVNC",
+      "longName": "Corrected Cornilescu (no cedillas)",
+      "modifyTime": 1414108800,
+      "description": "Romanian Corrected Cornilescu Version www.Biblia.PentruViata.ro (without cedillas - fără sedile)"
+    },
+    {
+      "locale": "ru",
+      "preset_name": "ru-jknt",
+      "shortName": "JKNT",
+      "longName": "Новый Завет Жуковского",
+      "modifyTime": 1404432000,
+      "description": "Новый Завет Жуковского, 1895"
+    },
+    {
+      "locale": "ru",
+      "preset_name": "ru-mndl",
+      "shortName": "MNDL",
+      "longName": "Тора и Псалтырь, Мандельштам",
+      "modifyTime": 1404432000,
+      "description": "Тора и Псалтырь, Мандельштам, 1862"
+    },
+    {
+      "locale": "ru",
+      "preset_name": "ru-synodal",
+      "shortName": "SYNO",
+      "longName": "Синодальный перевод",
+      "modifyTime": 1405296000,
+      "description": "Russian Synodal Translation, 1876. From unbound.biola.edu."
+    },
+    {
+      "locale": "sas",
+      "preset_name": "sas-sasak",
+      "shortName": "SAS",
+      "longName": "Sasak",
+      "modifyTime": 1431043200,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Sasak"
+    },
+    {
+      "locale": "sda",
+      "preset_name": "sda-toraja",
+      "shortName": "TOR",
+      "longName": "Toraja",
+      "modifyTime": 1436140800,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Toraja"
+    },
+    {
+      "locale": "sk",
+      "preset_name": "sk-rsb",
+      "shortName": "RSB",
+      "longName": "Biblie, Roháček",
+      "modifyTime": 1404691200,
+      "description": "Biblie, Roháček Slovakian Bible, 1936"
+    },
+    {
+      "locale": "sq",
+      "preset_name": "sq-kk",
+      "shortName": "ALBB",
+      "longName": "Albanian",
+      "modifyTime": 1448755200,
+      "description": "Albanian. From unbound.biola.edu."
+    },
+    {
+      "locale": "sr",
+      "preset_name": "sr-sdk-c",
+      "shortName": "SDK-C",
+      "longName": "Библија (Ћирилица), Караджич",
+      "modifyTime": 1404691200,
+      "description": "Библија (Ћирилица), Караджич, 1865"
+    },
+    {
+      "locale": "sr",
+      "preset_name": "sr-sdk-l",
+      "shortName": "SDK-L",
+      "longName": "Biblija (štampan latinicom), Karadžić",
+      "modifyTime": 1404691200,
+      "description": "Biblija (štampan latinicom), Karadžić, 1865"
+    },
+    {
+      "locale": "su",
+      "preset_name": "su-sunda",
+      "shortName": "SUNDA",
+      "longName": "Sunda 1991",
+      "modifyTime": 1431043200,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Sunda 1991, KITAB SUCI nyaeta Kitab Perjangjian Lawas sareng Perjangjian Anyar Nganggo Basa Sunda Sadidinten"
+    },
+    {
+      "locale": "su",
+      "preset_name": "su-sunda1997",
+      "shortName": "SUN97",
+      "longName": "Sunda 1997-formal",
+      "modifyTime": 1431043200,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Sunda 1997 Edisi Formal"
+    },
+    {
+      "locale": "sv",
+      "preset_name": "sv-1917",
+      "shortName": "SVEN",
+      "longName": "Svenska 1917",
+      "modifyTime": 1405296000,
+      "description": "Swedish Translation, 1917. From unbound.biola.edu."
+    },
+    {
+      "locale": "sv",
+      "preset_name": "sv-kxii",
+      "shortName": "KXII",
+      "longName": "Svenska Karl XII:s Bibel",
+      "modifyTime": 1404691200,
+      "description": "Svenska Karl XII:s Bibel, 1873"
+    },
+    {
+      "locale": "sw",
+      "preset_name": "sw-swnt",
+      "shortName": "SWNT",
+      "longName": "Agano Jipya Na Zaburi",
+      "modifyTime": 1404691200,
+      "description": "Agano Jipya Na Zaburi - Swahili New Testament, 1989"
+    },
+    {
+      "locale": "sxn",
+      "preset_name": "sxn-sangir",
+      "shortName": "SANGIR",
+      "longName": "Sangir",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Sangir"
+    },
+    {
+      "locale": "ta",
+      "preset_name": "ta-rtb",
+      "shortName": "RTB",
+      "longName": "Romanised Tamil Bible (Beta)",
+      "modifyTime": 1556064000,
+      "description": "OV Tamil Bible transcribed into Roman Script"
+    },
+    {
+      "locale": "ta",
+      "preset_name": "ta-tamil",
+      "shortName": "TAM",
+      "longName": "பரிசுத்த வேதாகமம் (Tamil)",
+      "modifyTime": 1571443200,
+      "description": "Tamil Version of Holy Bible (பரிசுத்த வேதாகமம்)"
+    },
+    {
+      "locale": "tby",
+      "preset_name": "tby-tabaru",
+      "shortName": "TAB",
+      "longName": "Tabaru",
+      "modifyTime": 1431043200,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Tabaru"
+    },
+    {
+      "locale": "th",
+      "preset_name": "th-kjv",
+      "shortName": "TKJV",
+      "longName": "Thai KJV",
+      "modifyTime": 1529971200,
+      "description": "Thai King James Version. From unbound.biola.edu."
+    },
+    {
+      "locale": "tl",
+      "preset_name": "tl-angbiblia1905",
+      "shortName": "TLAB",
+      "longName": "Ang Biblia 1905",
+      "modifyTime": 1405296000,
+      "description": "Philippines Bible Society (1905), Typed from the Ang Biblia Tagalog, by Richard & Dolores Long"
+    },
+    {
+      "locale": "twu",
+      "preset_name": "twu-rote",
+      "shortName": "ROTE",
+      "longName": "Rote (Termanu)",
+      "modifyTime": 1401926400,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Rote (Termanu)"
+    },
+    {
+      "locale": "uk",
+      "preset_name": "uk-kulish",
+      "shortName": "UKK",
+      "longName": "Ukrainian NT P.Kulish",
+      "modifyTime": 1405296000,
+      "description": "Ukrainian: NT (P.Kulish, 1871). From unbound.biola.edu."
+    },
+    {
+      "locale": "uk",
+      "preset_name": "uk-mora",
+      "shortName": "MORA",
+      "longName": "Євангеліє українською",
+      "modifyTime": 1404432000,
+      "description": "Євангеліє українською мовою, Морачевський, 1861"
+    },
+    {
+      "locale": "uk",
+      "preset_name": "uk-ubio",
+      "shortName": "UBIO",
+      "longName": "Українська Біблія  Огієнко",
+      "modifyTime": 1404432000,
+      "description": "Українська Біблія в перекладі Івана Огієнко, 1930"
+    },
+    {
+      "locale": "ury",
+      "preset_name": "ury-orya",
+      "shortName": "ORYA",
+      "longName": "Orya",
+      "modifyTime": 1475280000,
+      "description": "Alap mo Ol Ëse, zëre mo zi niban de ol ziaha-en gu hup dena. Perjanjian Baru dalam bahasa Orya di Papua. The New Testament in the Orya language of Indonesia. Yayasan Sumber Sejahtera, Jakarta 2005."
+    },
+    {
+      "locale": "vi",
+      "preset_name": "vi-1934",
+      "shortName": "VI1934",
+      "longName": "Vietnamese 1934",
+      "modifyTime": 1405296000,
+      "description": "The 1934 Vietnamese Bible. Published without a copyright statement. The Bible Text is PUBLIC DOMAIN. Text supplied by Mr. Phien Nguyen of Hollywood, Florida. From unbound.biola.edu."
+    },
+    {
+      "locale": "yli",
+      "preset_name": "yli-yali",
+      "shortName": "YLI",
+      "longName": "Yali-Angguruk",
+      "modifyTime": 1431043200,
+      "group_order": 30,
+      "description": "Alkitab Bahasa Yali Angguruk"
+    },
+    {
+      "locale": "zh",
+      "preset_name": "zh-ckjvgs",
+      "shortName": "CKJVGS",
+      "longName": "Chinese KJV God Simplified",
+      "modifyTime": 1432512000,
+      "description": "中文英皇钦定本神版简体"
+    },
+    {
+      "locale": "zh",
+      "preset_name": "zh-ckjvgt",
+      "shortName": "CKJVGT",
+      "longName": "Chinese KJV God Traditional",
+      "modifyTime": 1432512000,
+      "description": "中文英皇欽定本神版繁體"
+    },
+    {
+      "locale": "zh",
+      "preset_name": "zh-ckjvsds",
+      "shortName": "CKJVSDS",
+      "longName": "Chinese KJV Shang-Di Simplified",
+      "modifyTime": 1432512000,
+      "description": "中文英皇钦定本上帝版简体"
+    },
+    {
+      "locale": "zh",
+      "preset_name": "zh-ckjvsdt",
+      "shortName": "CKJVSDT",
+      "longName": "Chinese KJV Shang-Di Traditional",
+      "modifyTime": 1432512000,
+      "description": "中文英皇欽定本上帝版繁體"
+    },
+    {
+      "locale": "zh",
+      "preset_name": "zh-cnvt",
+      "shortName": "CNVT",
+      "longName": "新譯本",
+      "modifyTime": 1473984000,
+      "description": "New Chinese Version (Traditional), 1993. From unbound.biola.edu."
+    },
+    {
+      "locale": "zh",
+      "preset_name": "zh-cuvmps",
+      "shortName": "CUVMPS",
+      "longName": "Chinese Union (Simplified)",
+      "modifyTime": 1405296000,
+      "description": "Chinese Union Version (Modern Punctuation) Simplified"
+    },
+    {
+      "locale": "zh",
+      "preset_name": "zh-cuvt",
+      "shortName": "CUVT",
+      "longName": "Chinese Union (Traditional)",
+      "modifyTime": 1536883200,
+      "description": "Chinese Union Version (Traditional), Public Domain."
+    },
+    {
+      "locale": "zh",
+      "preset_name": "zh-pinyin",
+      "shortName": "PINYIN",
+      "longName": "Pinyin",
+      "modifyTime": 1405296000,
+      "description": "Pinyin (Romanized Chinese). Text provided by www.wordproject.org"
+    },
+    {
+      "locale": "as",
+      "preset_name": "as-bcs",
+      "shortName": "ASM",
+      "longName": "Assamese",
+      "modifyTime": 1524096000,
+      "description": "[Assamese Holy Bible] অসমীয়া বাইবেল"
+    },
+    {
+      "locale": "bn",
+      "preset_name": "bn-bcs",
+      "shortName": "BEN",
+      "longName": "Bengali",
+      "modifyTime": 1524096000,
+      "description": "[Bengali Holy Bible] পবিত্র বাইবেল "
+    },
+    {
+      "locale": "gu",
+      "preset_name": "gu-bcs",
+      "shortName": "GUJ",
+      "longName": "Gujarati",
+      "modifyTime": 1524096000,
+      "description": "[Gujarati Holy Bible] પવિત્ર બાઇબલ "
+    },
+    {
+      "locale": "hi",
+      "preset_name": "hi-bcs",
+      "shortName": "HIN",
+      "longName": "Hindi",
+      "modifyTime": 1524096000,
+      "description": "[Hindi Holy Bible] पवित्र बाइबिल "
+    },
+    {
+      "locale": "kn",
+      "preset_name": "kn-bcs",
+      "shortName": "KAN",
+      "longName": "Kannada",
+      "modifyTime": 1524096000,
+      "description": "[Kannada Holy Bible] ಪವಿತ್ರ ಬೈಬಲ್ "
+    },
+    {
+      "locale": "ml",
+      "preset_name": "ml-bcs",
+      "shortName": "MAL",
+      "longName": "Malayalam",
+      "modifyTime": 1524096000,
+      "description": "[Malayalam Holy Bible] സത്യവേദപുസ്തകം "
+    },
+    {
+      "locale": "mr",
+      "preset_name": "mr-bcs",
+      "shortName": "MAR",
+      "longName": "Marathi",
+      "modifyTime": 1524096000,
+      "description": "[Marathi Holy Bible] मराठी बायबल "
+    },
+    {
+      "locale": "or",
+      "preset_name": "or-bcs",
+      "shortName": "ODY",
+      "longName": "Odiya",
+      "modifyTime": 1524096000,
+      "description": "[Oriya Bible] ବ୍ୟ ବାଇବଲ"
+    },
+    {
+      "locale": "pa",
+      "preset_name": "pa-bcs",
+      "shortName": "PAN",
+      "longName": "Punjabi",
+      "modifyTime": 1524096000,
+      "description": "[Punjabi Bible] ਬਾਇਬਲ "
+    },
+    {
+      "locale": "ta",
+      "preset_name": "ta-bcs",
+      "shortName": "TAM",
+      "longName": "Tamil",
+      "modifyTime": 1524096000,
+      "description": "[Tamil Holy Bible] வேதாகமம் "
+    },
+    {
+      "locale": "te",
+      "preset_name": "te-bcs",
+      "shortName": "TEL",
+      "longName": "Telugu",
+      "modifyTime": 1524096000,
+      "description": "[Telugu Holy Bible] పవిత్ర బైబిల్ "
+    },
+    {
+      "locale": "ur",
+      "preset_name": "ur-bcs",
+      "shortName": "URD",
+      "longName": "Urdu",
+      "modifyTime": 1524096000,
+      "description": " انجیل مقدس [Urdu Holy Bible]"
+    },
+    {
+      "locale": "el",
+      "preset_name": "el-byzrp2018",
+      "shortName": "RP2018",
+      "longName": "Byzantine Robinson-Pierpont 2018",
+      "modifyTime": 1528156800,
+      "description": "Byzantine Robinson-Pierpont 2018"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-assamese",
+      "shortName": "SAN",
+      "longName": "সত্যৱেদঃ। (Sanskrit in Assamese)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in Assamese Script (সত্যৱেদঃ।)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-bengali",
+      "shortName": "SAN",
+      "longName": "সত্যৱেদঃ। (Sanskrit in Bengali)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in Bengali Script (সত্যৱেদঃ।)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-burmese",
+      "shortName": "SAN",
+      "longName": "သတျဝေဒး। (Sanskrit in Burmese)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in Burmese Script (သတျဝေဒး।)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-cambodian",
+      "shortName": "SAN",
+      "longName": "សត្យវេទះ। (Sanskrit in Cambodian)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in Cambodian Script (សត្យវេទះ।)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-cologne",
+      "shortName": "SAN",
+      "longName": "satyavEdaH| (Sanskrit in Cologne)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in Cologne Script (satyavEdaH|)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-devanagari",
+      "shortName": "SAN",
+      "longName": "सत्यवेदः। (Sanskrit in Devanagari)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in Devanagari Script (सत्यवेदः।)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-gujarati",
+      "shortName": "SAN",
+      "longName": "સત્યવેદઃ। (Sanskrit in Gujarati)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in Gujarati Script (સત્યવેદઃ।)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-harvardkyoto",
+      "shortName": "SAN",
+      "longName": "satyavedaH। (Sanskrit in H-Kyoto)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in Harvard-Kyoto Script (satyavedaH।)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-iast",
+      "shortName": "SAN",
+      "longName": "satyavedaḥ। (Sanskrit in IAST)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in IAST Script (satyavedaḥ।)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-iso",
+      "shortName": "SAN",
+      "longName": "satyavēdaṁ| (Sanskrit in ISO)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in ISO Script (satyavēdaṁ|)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-itrans",
+      "shortName": "SAN",
+      "longName": "satyavedaH। (Sanskrit in ITRANS)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in ITRANS Script (satyavedaH।)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-kannada",
+      "shortName": "SAN",
+      "longName": "ಸತ್ಯವೇದಃ। (Sanskrit in Kannada)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in Kannada Script (ಸತ್ಯವೇದಃ।)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-malayalam",
+      "shortName": "SAN",
+      "longName": "സത്യവേദഃ। (Sanskrit in Malayalam)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in Malayalam Script (സത്യവേദഃ।)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-oriya",
+      "shortName": "SAN",
+      "longName": "ସତ୍ୟୱେଦଃ। (Sanskrit in Oriya)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in Oriya Script (ସତ୍ୟୱେଦଃ।)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-punjabi",
+      "shortName": "SAN",
+      "longName": "ਸਤ੍ਯਵੇਦਃ। (Sanskrit in Punjabi)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in Punjabi Script (ਸਤ੍ਯਵੇਦਃ।)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-sinhala",
+      "shortName": "SAN",
+      "longName": "සත්‍යවේදඃ। (Sanskrit in Sinhala)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in Sinhala Script (සත්‍යවේදඃ।)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-tamil",
+      "shortName": "SAN",
+      "longName": "ஸத்யவேத³​:| (Sanskrit in Tamil)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in Tamil Script (ஸத்யவேத³​:|)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-telugu",
+      "shortName": "SAN",
+      "longName": "సత్యవేదః। (Sanskrit in Telugu)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in Telugu Script (సత్యవేదః।)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-thai",
+      "shortName": "SAN",
+      "longName": "สตฺยเวท:। (Sanskrit in Thai)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in Thai Script (สตฺยเวท:।)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-tibetan",
+      "shortName": "SAN",
+      "longName": "སཏྱཝེདཿ। (Sanskrit in Tibetan)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in Tibetan Script (སཏྱཝེདཿ।)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-urdu",
+      "shortName": "SAN",
+      "longName": "سَتْیَویدَح। (Sanskrit in Urdu)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in Urdu Script (سَتْیَویدَح।)"
+    },
+    {
+      "locale": "sa",
+      "preset_name": "sa-velthuis",
+      "shortName": "SAN",
+      "longName": "satyaveda.h| (Sanskrit in Velthuis)",
+      "modifyTime": 1538352000,
+      "description": "Sanskrit Holy Bible in Velthuis Script (satyaveda.h|)"
+    },
+    {
+      "locale": "ms",
+      "preset_name": "ms-avb",
+      "shortName": "AVB",
+      "longName": "Alkitab Versi Borneo (AVB)",
+      "modifyTime": 1595376000,
+      "description": "Alkitab Versi Borneo (AVB) - Alkitab terjemahan terbaru dalam bahasa Malaysia. revisi #July 2020"
+    },
+    {
+      "locale": "cfm",
+      "preset_name": "cfm-chinkjv",
+      "shortName": "CHIN",
+      "longName": "Chin King James Version (Red Letter)",
+      "modifyTime": 1576454400,
+      "description": "Chin King James Version (with Red Letters)"
+    },
+    {
+      "locale": "ayz",
+      "preset_name": "ayz-watum",
+      "shortName": "MBNT",
+      "longName": "Maybrat - Watum ro Tuhan",
+      "modifyTime": 1579737600,
+      "group_order": 30,
+      "description": "Watum ro Tuhan.  Copyright 2019 Wycliffe Bible Translators, Inc. Scripture text used by permission."
+    },
+    {
+      "locale": "de",
+      "preset_name": "de-stu",
+      "shortName": "STU20",
+      "longName": "Studienübersetzung 2020 (NT): G.Kautz, Textus Receptus, NT von R.F. Edel, Eberf.1905 mit Strongslexikon (Kautz) und H.Menge (AT+NT)",
+      "modifyTime": 1618790400,
+      "description": "Studienbibel'20 mit Studienübersetzung 2020 von Gerhard Kautz (enthält ca. 6000 Anmerkungen aus ca. 80 externern Literaturquellen. Aufbereitung mit ca. 7 Millionen Hyperlinks für Quickbible von Ralf Schönfeld (pianoralf ät jesus.de) : mit ca. 125000 Querverweisen (TSK) Maschinelle Übersetzung Strong_Tex des TextusReceptus von Ralf Schönfeld unter Verwendung des Strongs Wörterbuchs von Gerhard Kautz und der Elberfelder 1905. Für das AT und Anzeige der Parallelstellen wird die ohne Copyright verfügbare 'Mengebibel' verweendet, die weitere 8000 Fußnoten hat. Zum weiteren Vergleich ist mit freundlicher Genehmung des Verlag-dr.-r.-f.-edel.de das 'NEUE Testament' von Pfarrer Dr. Edel enhalten."
+    },
+    {
+      "locale": "in",
+      "preset_name": "in-tsi3",
+      "shortName": "TSI3.4",
+      "longName": "Terjemahan Sederhana Indonesia edisi 3.3",
+      "modifyTime": 1720137600,
+      "group_order": 20,
+      "description": "Terjemahan Sederhana Indonesia edisi 3.4 https://albata.info"
+    },
+    {
+      "locale": "de",
+      "preset_name": "de-stu21",
+      "shortName": "STU21",
+      "longName": "Studienübersetzung 2021 (NT): G.Kautz, Nestle Aland (Westcott/Hort UBS4 Public Domain) und Textus Rececptus (Public Domain), NT von R.F. Edel, Eberf.1905 mit Strongslexikon (Kautz) und H.Menge(AT+NT) ) Version 17 ohne griechische Wörter",
+      "modifyTime": 1647907200,
+      "description": "Studienbibel'21 mit Studienübersetzung (StÜ) 2021 von Gerhard  Kautz (enthält ca. 6000 Anmerkungen aus ca. 80 externern Literaturquellen.  Aufbereitung mit ca. 7 Millionen Hyperlinks für Quickbible von Ralf Schönfeld (pianoralf ät jesus.de) : mit ca. 125000 Querverweisen (TSK) Maschinelle Übersetzung Strong_Gtx der Strongs und Morphologie - Codes des Nestle Aland und TextusReceptus von Ralf Schönfeld unter Verwendung des Strongs Wörterbuchs von Gerhard Kautz und der Elberfelder 1905. Für das AT und Anzeige der Parallelstellen wird die ohne Copyright verfügbare 'Mengebibel' verweendet, die weitere 8000 Fußnoten hat. Zum weiteren Vergleich ist mit freundlicher Genehmung des Verlag-dr.-r.-f.-edel.de das 'NEUE Testament' von Pfarrer Dr. Edel enhalten."
+    },
+    {
+      "locale": "de",
+      "preset_name": "de-stu21g",
+      "shortName": "STU21G",
+      "longName": "Studienübersetzung 2021 (NT): G.Kautz, Nestle Aland (Westcott/Hort UBS4 Public Domain) und Textus Rececptus (Public Domain), NT von R.F. Edel, Eberf.1905 mit Strongslexikon (Kautz) und H.Menge(AT+NT) ) Version 17G: mit den griechischen Wörtern des Nestle Aland (Westcott/Hort UBS4 PublicDomain) und Textus Rececptus (Public Domain)",
+      "modifyTime": 1647907200,
+      "description": "Studienbibel'21 mit Studienübersetzung (StÜ) 2021 von Gerhard  Kautz (enthält ca. 6000 Anmerkungen aus ca. 80 externern Literaturquellen.  Aufbereitung mit ca. 7 Millionen Hyperlinks für Quickbible von Ralf Schönfeld (pianoralf ät jesus.de) : mit ca. 125000 Querverweisen (TSK) Maschinelle Übersetzung Strong_Gtx der Strongs und Morphologie - Codes des Nestle Aland und TextusReceptus von Ralf Schönfeld unter Verwendung des Strongs Wörterbuchs von Gerhard Kautz und der Elberfelder 1905. Für das AT und Anzeige der Parallelstellen wird die ohne Copyright verfügbare 'Mengebibel' verweendet, die weitere 8000 Fußnoten hat. Zum weiteren Vergleich ist mit freundlicher Genehmung des Verlag-dr.-r.-f.-edel.de das 'NEUE Testament' von Pfarrer Dr. Edel enhalten."
+    },
+    {
+      "locale": "el",
+      "preset_name": "el-sblgnt",
+      "shortName": "SBLGNT",
+      "longName": "SBL Greek New Testament",
+      "modifyTime": 1684800000,
+      "description": "A new, critically edited edition of the Greek New Testament by The Society of Biblical Literature. https://github.com/LogosBible/SBLGNT/"
+    },
+    {
+      "locale": "in",
+      "preset_name": "in-amd",
+      "shortName": "AMD",
+      "longName": "Alkitab Mudah Dibaca",
+      "modifyTime": 1713830400,
+      "description": "Alkitab Mudah Dibaca (2014), Bible League International"
+    }
+  ],
+  "group_order_display": {
+    "10": "English",
+    "20": "Indonesian",
+    "30": "Bahasa Suku"
+  },
+  "locale_display": {
+    "ace": "Aceh",
+    "alp": "Alune",
+    "blz": "Balantak",
+    "ban": "Bali",
+    "ptu": "Bambam",
+    "btd": "Batak-Dairi",
+    "btx": "Karo",
+    "bbc": "Batak-Toba",
+    "bts": "Batak-Simalungun",
+    "bug": "Bugis",
+    "nij": "Dayak-Ngaju",
+    "mvp": "Duri",
+    "gor": "Gorontalo",
+    "kje": "Kisar",
+    "kzf": "Kaili Da'a",
+    "ljp": "Lampung",
+    "mad": "Madura",
+    "mak": "Makassar",
+    "mwv": "Mentawai",
+    "min": "Minangkabau",
+    "mog": "Mongondow",
+    "npy": "Napu",
+    "nia": "Nias",
+    "twu": "Rote (Termanu)",
+    "sxn": "Sangir",
+    "sas": "Sasak",
+    "tby": "Tabaru",
+    "sda": "Toraja",
+    "yli": "Yali-Angguruk",
+    "ury": "Orya",
+    "chk": "Chuukese",
+    "kpg": "Kapingamarangi",
+    "pon": "Pohnpeian",
+    "bkl": "Berik",
+    "gbi": "Galela",
+    "hvn": "Sabu",
+    "kgr": "Abun",
+    "mej": "Meyah",
+    "mqj": "Mamasa",
+    "mqy": "Manggarai",
+    "cfm": "Falam Chin",
+    "ayz": "Maybrat"
+  },
+  "download_url_format": "https://alkitab-host.appspot.com/versions/get_yes?preset_name=$PRESET_NAME"
 }
