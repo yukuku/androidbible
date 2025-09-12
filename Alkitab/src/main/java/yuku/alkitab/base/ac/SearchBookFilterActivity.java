@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -166,8 +167,9 @@ public class SearchBookFilterActivity extends BaseActivity {
 			return TYPE_BOOK;
 		}
 
+		@NonNull
 		@Override
-		public VH onCreateViewHolder(final ViewGroup parent, final int viewType) {
+		public VH onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
 			if (viewType == TYPE_CATEGORIES) {
 				return new VH(getLayoutInflater().inflate(R.layout.search_book_filter_categories, parent, false), viewType);
 			} else {

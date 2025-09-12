@@ -259,7 +259,6 @@
 		<activity
 			android:name="yuku.alkitab.songs.SongListActivity"
 			android:label="@string/sn_songs_activity_title"
-			android:theme="@style/Theme.Alkitab.DialogWhenLarge"
 			android:windowSoftInputMode="adjustResize|stateHidden" />
 		<activity
 			android:name="yuku.alkitab.songs.SongViewActivity"
@@ -303,8 +302,7 @@
 		</activity>
 		<activity
 			android:name="yuku.alkitab.base.ac.SearchBookFilterActivity"
-			android:label="@string/select_books_to_search"
-			android:theme="@style/Theme.Alkitab.DialogWhenLarge" />
+			android:label="@string/select_books_to_search" />
 		<activity
 			android:name="yuku.alkitab.base.ac.NoteActivity"
 			android:icon="@drawable/ic_attr_note"
