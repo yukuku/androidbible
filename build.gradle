@@ -35,35 +35,37 @@ ext {
     targetSdkVersion = 35
 
     // Android X
-    androidxActivityVersion = '1.4.0'
+    androidxActivityVersion = '1.11.0'
     androidxAnnotationVersion = '1.6.0'
-    androidxAppcompatVersion = '1.4.2'
-    androidxConstraintlayoutVersion = '2.1.4'
-    androidxCoreVersion = '1.7.0'
+    androidxAppcompatVersion = '1.7.1'
+    androidxConstraintlayoutVersion = '2.2.1'
+    androidxCoreVersion = '1.17.0'
     androidxCursoradapterVersion = '1.0.0'
-    androidxFragmentVersion = '1.4.1'
+    androidxFragmentVersion = '1.8.9'
+    androidxLocalbroadcastmanagerVersion = '1.1.0'
     androidxMedia3Version = '1.8.0'
     androidxMultidexVersion = '2.0.1'
     androidxPercentlayoutVersion = '1.0.0'
     androidxPreferenceVersion = '1.2.1'
-    androidxRecyclerviewVersion = '1.3.2'
+    androidxRecyclerviewVersion = '1.4.0'
     androidxSwiperefreshlayoutVersion = '1.1.0'
-    androidxViewpagerVersion = '1.0.0'
+    androidxViewpagerVersion = '1.1.0'
+    androidxWorkVersion = '2.10.4'
 
     // Google
-    gsonVersion = '2.11.0'
-    fastscrollVersion = '1.1.7'
-    materialVersion = '1.4.0'
+    gsonVersion = '2.12.1'
+    fastscrollVersion = '1.3.0'
+    materialVersion = '1.13.0'
 
     // Tests
     junitVersion = '4.13.2'
-    leakcanaryVersion = '2.8.1'
+    leakcanaryVersion = '2.14'
 
     firebaseBomVersion = '29.0.3'
 
     // Misc
-    okhttpVersion = '4.12.0'
-    coilVersion = '1.1.0'
+    okhttpVersion = '5.1.0'
+    coilVersion = '2.7.0'
     kotlinxSerializationJsonVersion = '1.5.1'
 
     // UI

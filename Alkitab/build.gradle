@@ -63,6 +63,10 @@ android {
     }
     namespace 'yuku.alkitab.debug'
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     // We have to specify the ndk version twice, in here and in the Snappy library
     // https://issuetracker.google.com/issues/353554169
     ndkVersion '28.2.13676358'
@@ -96,12 +100,13 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$androidxConstraintlayoutVersion"
     implementation "androidx.core:core-ktx:$androidxCoreVersion"
     implementation "androidx.fragment:fragment-ktx:$androidxFragmentVersion"
+    implementation "androidx.localbroadcastmanager:localbroadcastmanager:$androidxLocalbroadcastmanagerVersion"
     implementation "androidx.multidex:multidex:$androidxMultidexVersion"
     implementation "androidx.percentlayout:percentlayout:$androidxPercentlayoutVersion"
     implementation "androidx.preference:preference-ktx:$androidxPreferenceVersion"
     implementation "androidx.recyclerview:recyclerview:$androidxRecyclerviewVersion"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$androidxSwiperefreshlayoutVersion"
-    implementation "androidx.work:work-runtime-ktx:2.10.3"
+    implementation "androidx.work:work-runtime-ktx:$androidxWorkVersion"
 
     // Google
     implementation "androidx.media3:media3-exoplayer:$androidxMedia3Version"
@@ -115,7 +120,7 @@ dependencies {
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion"
 
     // Firebase
-    implementation platform('com.google.firebase:firebase-bom:33.7.0')
+    implementation platform('com.google.firebase:firebase-bom:34.2.0')
     implementation "com.google.firebase:firebase-messaging"
     implementation "com.google.firebase:firebase-crashlytics"
 
