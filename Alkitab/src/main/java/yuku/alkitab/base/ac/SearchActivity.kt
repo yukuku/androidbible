@@ -202,13 +202,13 @@ class SearchActivity : BaseActivity() {
                 val entry = entries[i]
                 val query_string = query_string
                 if (query_string.isNullOrEmpty() || entry.query_string.lowercase(Locale.getDefault()).startsWith(query_string.lowercase(Locale.getDefault()))) {
-                    mc.addRow(arrayOf(i.toLong(), entry.query_string))
+                    mc.addRow(arrayOf<Any>(i.toLong(), entry.query_string))
                 }
             }
 
             // add last item to clear search history only if there is something else
             if (mc.count > 0) {
-                mc.addRow(arrayOf(ID_CLEAR_HISTORY, ""))
+                mc.addRow(arrayOf<Any>(ID_CLEAR_HISTORY, ""))
             }
 
             // sometimes this is called from bg. So we need to make sure this is run on UI thread.

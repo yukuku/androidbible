@@ -1,7 +1,6 @@
 package yuku.alkitab.base.ac.base
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.TypedValue
@@ -107,25 +106,6 @@ abstract class BaseActivity : AppCompatActivity() {
                 .startActivities()
         } else {
             NavUtils.navigateUpTo(this, upIntent)
-        }
-    }
-
-    companion object {
-        @JvmStatic
-        fun dumpIntent(intent: Intent, via: String) {
-            AppLog.d(TAG, "Got intent via $via")
-            AppLog.d(TAG, "  action: ${intent.action}")
-            AppLog.d(TAG, "  data uri: ${intent.data}")
-            AppLog.d(TAG, "  component: ${intent.component}")
-            AppLog.d(TAG, "  flags: 0x${Integer.toHexString(intent.flags)}")
-            AppLog.d(TAG, "  mime: ${intent.type}")
-            val extras = intent.extras
-            AppLog.d(TAG, "  extras: ${extras?.size() ?: "null"}")
-            if (extras != null) {
-                for (key in extras.keySet()) {
-                    AppLog.d(TAG, "    $key = ${extras.get(key)}")
-                }
-            }
         }
     }
 }

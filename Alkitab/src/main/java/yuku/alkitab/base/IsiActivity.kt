@@ -1353,8 +1353,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
      * @return non-null if the intent is handled by any of the intent handler (e.g. VIEW)
      */
     private fun extractIntent(intent: Intent): IntentResult? {
-        dumpIntent(intent, "IsiActivity#onCreate")
-
         return tryGetIntentResultFromView(intent)
     }
 

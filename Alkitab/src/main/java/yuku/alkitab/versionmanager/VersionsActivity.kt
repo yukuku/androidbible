@@ -78,7 +78,6 @@ class VersionsActivity : BaseActivity() {
     }
 
     private fun processIntent(intent: Intent) {
-        dumpIntent(intent, "VersionsActivity#onCreate")
         checkAndProcessOpenFileIntent(intent)
     }
 

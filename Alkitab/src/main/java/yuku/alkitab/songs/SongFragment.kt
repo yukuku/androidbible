@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.os.BundleCompat
 import androidx.core.view.postDelayed
 import yuku.alkitab.base.fr.base.BaseFragment
 import yuku.alkitab.debug.R
@@ -20,7 +21,7 @@ class SongFragment : BaseFragment() {
     private lateinit var webview: WebView
 
     private val args by lazy { requireArguments() }
-    private val song: Song by lazy { args.getParcelable(ARG_song)!! }
+    private val song: Song by lazy { BundleCompat.getParcelable(args, ARG_song, Song::class.java)!! }
     private val customVars: Bundle by lazy { args.getBundle(ARG_customVars)!! }
 
     interface ShouldOverrideUrlLoadingHandler {
