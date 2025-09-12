@@ -15,8 +15,6 @@
 		android:maxSdkVersion="32"
 		tools:ignore="ScopedStorage" />
 
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
 	<uses-feature
 		android:name="android.hardware.touchscreen"
 		android:required="false" />
