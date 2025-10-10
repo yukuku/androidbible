@@ -3,8 +3,9 @@ package yuku.alkitab.base.verses
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.text.SpannableStringBuilder
+import android.text.TextPaint
+import android.text.style.ClickableSpan
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -58,6 +59,8 @@ class VersesControllerImpl(
 
     private val layoutManager: LinearLayoutManager
     private val adapter: VersesAdapter
+
+
 
     init {
         val layoutManager = LinearLayoutManager(rv.context)
@@ -462,7 +465,10 @@ class Attention(var start: Long = 0L, val verses_1: MutableSet<Int> = mutableSet
 
 sealed class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
+class VerseTextHolder(
+    private val view: VerseItem,
+    private val isImportedBible: Boolean
+) : ItemHolder(view) {
     /**
      * @param index the index of verse
      */
@@ -544,34 +550,80 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
          * 1. user manually activate dictionary mode after selecting verses
          * 2. automatic lookup is on and this verse is selected (checked)
          */
+
+        Log.d(TAG, "bind: $isImportedBible")
+
         if (ari in ui.dictionaryModeAris || checked && Preferences.getBoolean(view.context.getString(R.string.pref_autoDictionaryAnalyze_key), view.resources.getBoolean(R.bool.pref_autoDictionaryAnalyze_default))) {
             val renderedText = lText.text
+
+            Log.d(TAG, "bind - renderedText: $renderedText")
+
             val verseText = renderedText as? SpannableStringBuilder ?: SpannableStringBuilder(renderedText)
 
             // we have to exclude the verse numbers from analyze text
             val analyzeString = verseText.toString().substring(startVerseTextPos)
 
-            val uri = "content://org.sabda.kamus.provider/analyze".toUri().buildUpon().appendQueryParameter("text", analyzeString).build()
+            val regex = Regex("<(\\d+)>")
+            val matches = regex.findAll(analyzeString).toList()
 
-            try {
-                view.context.contentResolver.safeQuery(uri, null, null, null, null)?.use { c ->
-                    val col_offset = c.getColumnIndexOrThrow("offset")
-                    val col_len = c.getColumnIndexOrThrow("len")
-                    val col_key = c.getColumnIndexOrThrow("key")
+            Log.d(TAG, "bind: matches - $matches")
 
-                    while (c.moveToNext()) {
-                        val offset = c.getInt(col_offset)
-                        val len = c.getInt(col_len)
-                        val key = c.getString(col_key)
+            if (matches.isNotEmpty()) {
+                // Jika ada pola <...>, proses hanya tag tersebut
+                for (match in matches) {
 
-                        val word = analyzeString.substring(offset, offset + len)
-                        val span = DictionaryLinkSpan(DictionaryLinkInfo(word, key), listeners.dictionaryListener_)
-                        verseText.setSpan(span, startVerseTextPos + offset, startVerseTextPos + offset + len, 0)
+                    Log.d(TAG, "bind: match - ${match.value}")
+                    
+                    val fullTag = match.value  // e.g. "<08064>"
+                    val key = match.groupValues[1]  // e.g. "08064"
+
+                    val start = match.range.first
+                    val end = match.range.last + 1
+
+                    val span = object : ClickableSpan() {
+                        override fun onClick(widget: View) {
+                            listeners.dictionaryListener_.invoke(DictionaryLinkInfo(fullTag, key))
+                        }
+
+                        override fun updateDrawState(ds: TextPaint) {
+                            super.updateDrawState(ds)
+                            ds.isUnderlineText = false
+                            ds.color = ds.linkColor // bisa diganti ke warna khusus
+                        }
                     }
+                    verseText.setSpan(span, startVerseTextPos + start, startVerseTextPos + end, 0)
                 }
                 lText.text = verseText
-            } catch (e: Exception) {
-                AppLog.e(TAG, "Error when querying dictionary content provider", e)
+            } else {
+                // Jika tidak ada pola <...>, pakai proses dictionary analyzer normal
+                val uri = "content://org.sabda.kamus.provider/analyze".toUri()
+                    .buildUpon()
+                    .appendQueryParameter("text", analyzeString)
+                    .build()
+
+                try {
+                    view.context.contentResolver.safeQuery(uri, null, null, null, null)?.use { c ->
+                        val col_offset = c.getColumnIndexOrThrow("offset")
+                        val col_len = c.getColumnIndexOrThrow("len")
+                        val col_key = c.getColumnIndexOrThrow("key")
+
+                        while (c.moveToNext()) {
+                            val offset = c.getInt(col_offset)
+                            val len = c.getInt(col_len)
+                            val key = c.getString(col_key)
+
+                            val word = analyzeString.substring(offset, offset + len)
+                            val span = DictionaryLinkSpan(
+                                DictionaryLinkInfo(word, key),
+                                listeners.dictionaryListener_
+                            )
+                            verseText.setSpan(span, startVerseTextPos + offset, startVerseTextPos + offset + len, 0)
+                        }
+                    }
+                    lText.text = verseText
+                } catch (e: Exception) {
+                    AppLog.e(TAG, "Error when querying dictionary content provider", e)
+                }
             }
         }
 
@@ -723,6 +775,8 @@ class VersesAdapter(
         setHasStableIds(true)
     }
 
+    var isImportedBible: Boolean = false
+
     var data = VersesDataModel.EMPTY
         set(value) {
             field = value
@@ -781,7 +835,8 @@ class VersesAdapter(
 
         return when (viewType) {
             ItemType.verseText.ordinal -> {
-                VerseTextHolder(inflater.inflate(R.layout.item_verse, parent, false) as VerseItem)
+                VerseTextHolder(inflater.inflate(R.layout.item_verse, parent, false) as VerseItem,
+                    this@VersesAdapter.isImportedBible)
             }
 
             ItemType.pericope.ordinal -> {

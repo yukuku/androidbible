@@ -9,11 +9,11 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.12.0'
+        classpath 'com.android.tools.build:gradle:8.13.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
         classpath 'com.google.gms:google-services:4.4.3'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.5'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.6'
     }
 }
 
@@ -30,18 +30,18 @@ ext {
     RIBKA_FUNCTIONS_HOST = 'https://us-central1-pulau-ribka.cloudfunctions.net/'
     RIBKA_FUNCTIONS_HOST_DEBUG = 'http://10.0.3.2:5001/pulau-ribka/us-central1/'
 
-    compileSdkVersion = 35
+    compileSdkVersion = 36
     minSdkVersion = 26
-    targetSdkVersion = 35
+    targetSdkVersion = 36
 
     // Android X
-    androidxActivityVersion = '1.10.1'
+    androidxActivityVersion = '1.11.0'
     androidxAnnotationVersion = '1.6.0'
     androidxAppcompatVersion = '1.7.1'
     androidxConstraintlayoutVersion = '2.2.1'
-    androidxCoreVersion = '1.16.0'
+    androidxCoreVersion = '1.17.0'
     androidxCursoradapterVersion = '1.0.0'
-    androidxFragmentVersion = '1.8.8'
+    androidxFragmentVersion = '1.8.9'
     androidxMedia3Version = '1.8.0'
     androidxMultidexVersion = '2.0.1'
     androidxPercentlayoutVersion = '1.0.0'
@@ -52,8 +52,8 @@ ext {
 
     // Google
     firebaseBomVersion = '29.0.3'
-    gsonVersion = '2.13.1'
-    materialVersion = '1.12.0'
+    gsonVersion = '2.13.2'
+    materialVersion = '1.13.0'
 
     // Tests
     junitVersion = '4.13.2'
@@ -68,5 +68,5 @@ ext {
     okhttpVersion = '5.0.0'
 
     // Youtube-Player
-    youtubePlayerVersion = '12.1.2'
+    youtubePlayerVersion = '13.0.0'
 }

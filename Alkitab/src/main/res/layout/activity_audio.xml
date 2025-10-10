@@ -46,16 +46,31 @@
 			android:contentDescription="ayat sebelumnya"
 			android:src="@drawable/ic_rewind"
 			android:layout_marginHorizontal="10dp"
-			android:layout_toStartOf="@id/button_play"
+			android:layout_toStartOf="@id/audio_play_container"
 			android:layout_centerVertical="true"/>
 
-		<ImageView
-			android:id="@+id/button_play"
+		<FrameLayout
+			android:id="@+id/audio_play_container"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:contentDescription="play"
-			android:src="@drawable/ic_play"
-			android:layout_centerInParent="true"/>
+			android:layout_centerInParent="true">
+
+			<ImageView
+				android:id="@+id/button_play"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="play"
+				android:src="@drawable/ic_play"
+				android:layout_gravity="center" />
+
+			<ProgressBar
+				android:id="@+id/audio_progress_bar"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:indeterminate="true"
+				android:layout_gravity="center"
+				android:visibility="gone" />
+		</FrameLayout>
 
 		<ImageView
 			android:id="@+id/button_next_verse"
@@ -64,7 +79,7 @@
 			android:contentDescription="ayat selanjutnya"
 			android:src="@drawable/ic_forward"
 			android:layout_marginHorizontal="10dp"
-			android:layout_toEndOf="@id/button_play"
+			android:layout_toEndOf="@id/audio_play_container"
 			android:layout_centerVertical="true"/>
 
 		<ImageView

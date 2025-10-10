@@ -4,4 +4,6 @@
 	<dimen name="panel_text_appearance_width">240dp</dimen>
 	<dimen name="reading_plan_day_heading_side_padding">0dp</dimen>
 	<dimen name="left_drawer_width">280dp</dimen>
+	<dimen name="player_view_height">200dp</dimen>
+	<dimen name="controller_height">200dp</dimen>
 </resources>

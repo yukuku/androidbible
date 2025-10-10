@@ -22,6 +22,9 @@
 	<uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
 	<uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
 
+
+	<uses-permission android:name="org.sabda.panduan.PERMISSION_READ_PEDIA" />
+
 	<!-- Don't allow SDKs to add AD_ID -->
 	<uses-permission
 		android:name="com.google.android.gms.permission.AD_ID"
@@ -43,7 +46,8 @@
 
 		<activity
 			android:name="yuku.alkitab.base.IsiActivity"
-			android:exported="true">
+			android:exported="true"
+			android:configChanges="orientation|screenSize|keyboardHidden">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 

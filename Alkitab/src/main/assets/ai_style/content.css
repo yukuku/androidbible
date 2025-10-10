@@ -1,0 +1,207 @@
+body {
+	background: #f0f0f0;
+	margin: 16px;
+	font-size: 16px;
+	padding-bottom: 75px;
+}
+
+h1 {
+	font-size: 24px;
+	margin: 0;
+}
+
+a {
+	color: #1976D2;
+	text-decoration: none;
+}
+
+.section {
+	border-bottom: 2px solid #ddd;
+}
+
+.accordion {
+    display: inline-block;
+    width: 100%;
+    font-size: 15px;
+    color: #5caaf7;
+    padding: 5px;
+    font-weight: bold;
+    text-align: left;
+    transition: 0.4s;
+    margin: 2px 0 2px;
+    border-bottom: 2px solid #ddd;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+}
+
+.panel {
+    padding: 10px 15px;
+    display: none;
+    overflow: hidden;
+    border-radius: 3px;
+    font-size: 15px;
+}
+
+.panel a {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+.section_title {
+	font-size: 14px;
+	font-weight: bold;
+	color: #2196F3;
+	padding: 10px 0px;
+}
+
+.section_title:active, h1:active {
+	background-color: #ddd;
+}
+
+.section_body {
+	padding-bottom: 8px;
+}
+
+table, tbody, tr, td {
+	vertical-align: baseline;
+}
+
+table {
+	font-size: 14px;
+}
+
+td:nth-child(1) {
+	padding-top: 8px;
+	font-weight: bold;
+}
+
+td:nth-child(2) {
+	padding: 8px 0px;
+	border-bottom: 1px solid #ddd;
+	font-size: 16px;
+}
+
+p {
+	margin-top: 0px
+}
+
+ol {
+	padding: 16px;
+}
+
+li {
+	list-style: none;
+	padding: 4px 0px;
+}
+
+.no_number .no_number .no_number {
+	padding-left: 24px;
+}
+
+.latar_belakang > .section_body > ol {
+	padding: 0;
+	margin: 0px 0px 16px 0px;
+}
+
+.garis_besar ol {
+	padding: 0px;
+}
+
+.garis_besar > .section_body > ol {
+	margin: 8px 0px 0px 0px;
+}
+
+.garis_besar > .section_body > ol > li {
+	font-weight: bold;
+	list-style: none;
+}
+
+.tema_kunci > .section_body {
+	margin-top: 8px;
+}
+
+.survei > .section_body > ol {
+	padding: 0;
+	margin: 0px 0px 16px 0px;
+}
+
+.ciri_khas > .section_body > ol {
+	padding: 0;
+	margin: 0px 0px 16px 0px;
+}
+
+.nama > .section_body > ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.nama > .section_body > ul > li {
+	padding: 4px 8px;
+	background-color: #2196F3;
+	margin: 4px;
+	border-radius: 2px;
+	box-shadow:0px 3px 1px #ddd;
+	display: inline-block;
+}
+
+.nama > .section_body > ul > li:hover {
+	background-color: #FFC107;
+}
+
+.nama > .section_body > ul > li > a {
+	color: #fff;
+}
+
+note {
+	padding: 8px;
+	margin-top: 8px;
+	background: transparent;
+}
+
+#chat-container {
+	margin-top: 20px;
+	border-top: 1px solid #ddd;
+	padding-top: 10px;
+}
+
+#chat-messages {
+	max-height: 200px;
+	overflow-y: auto;
+	margin-bottom: 10px;
+	font-size: 14px;
+}
+
+#chatbox {
+	display: flex;
+	gap: 8px;
+}
+
+#chat-input {
+	flex: 1;
+	padding: 8px;
+	border-radius: 6px;
+	border: 1px solid #ccc;
+}
+
+#chat-send {
+	padding: 8px 12px;
+	border: none;
+	border-radius: 6px;
+	background: #4CAF50;
+	color: white;
+	cursor: pointer;
+	transition: background 0.3s;
+}
+
+#chat-send:hover {
+	background: #43a047;
+}
+
+#chat-limit {
+	font-size: 12px;
+	color: #999;
+	margin-top: 4px;
+}

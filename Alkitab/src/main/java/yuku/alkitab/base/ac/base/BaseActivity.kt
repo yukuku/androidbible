@@ -14,6 +14,7 @@ import androidx.core.app.NavUtils
 import androidx.core.app.TaskStackBuilder
 import androidx.core.content.res.ResourcesCompat
 import yuku.afw.storage.Preferences
+import yuku.alkitab.base.IsiActivity
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.widget.ConfigurationWrapper
@@ -60,10 +61,22 @@ abstract class BaseActivity : AppCompatActivity() {
         }
 
         supportActionBar?.setBackgroundDrawable(ColorDrawable(primaryColor))
-
         findViewById<View>(R.id.panelBackForwardList)?.background = ColorDrawable(primaryColor)
-
         window.statusBarColor = statusBarColor
+
+        if (this is IsiActivity) {
+            findViewById<View?>(R.id.iconAudio)?.let { icon ->
+                if (icon is androidx.appcompat.widget.AppCompatImageView) {
+                    icon.setImageResource(if (isNightMode) R.drawable.ic_audio_night else R.drawable.ic_audio)
+                }
+            }
+
+            findViewById<View?>(R.id.iconVideo)?.let { icon ->
+                if (icon is androidx.appcompat.widget.AppCompatImageView) {
+                    icon.setImageResource(if (isNightMode) R.drawable.ic_video_night else R.drawable.ic_video)
+                }
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

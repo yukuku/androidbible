@@ -1,9 +1,10 @@
 package yuku.alkitab.base.model
 
 data class MVideo(
-    val title: String,
-    val yid: String,
-    val position: String
+    val label: String,
+    val videoId: String,
+    val position: String,
+    val title: String
 ) {
     val book: String
     val chapter: Int?

@@ -1,0 +1,109 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="content.css" type="text/css" rel="stylesheet" />
+</head>
+
+<body>
+<script>
+    // -------------------------
+    // Section Toggle Utilities
+    // -------------------------
+    function show(section_name) {
+        var body = document.getElementById('section_body_' + section_name);
+        var toggle_image = document.getElementById('section_title_toggle_image_' + section_name);
+
+        body.style.display = '';
+        if (toggle_image) {
+            toggle_image.src = 'nav-less.png';
+            toggle_image.srcset = 'nav-less.png 1x, nav-less@2x.png 2x, nav-less@3x.png 3x';
+        }
+    }
+
+    function hide(section_name) {
+        var body = document.getElementById('section_body_' + section_name);
+        var toggle_image = document.getElementById('section_title_toggle_image_' + section_name);
+
+        body.style.display = 'none';
+        if (toggle_image) {
+            toggle_image.src = 'nav-more.png';
+            toggle_image.srcset = 'nav-more.png 1x, nav-more@2x.png 2x, nav-more@3x.png 3x';
+        }
+    }
+
+    function is_shown(section_name) {
+        var body = document.getElementById('section_body_' + section_name);
+        return body && body.style.display !== 'none';
+    }
+
+    function toggle(section_name) {
+        is_shown(section_name) ? hide(section_name) : show(section_name);
+    }
+
+    function toggle_all() {
+        // ambil semua section
+        var sections = document.querySelectorAll('.section');
+        var all_open = Array.from(sections).every(function (sec) {
+            return sec.querySelector('.panel')?.style.display !== 'none';
+        });
+
+        sections.forEach(function (sec) {
+            var panel = sec.querySelector('.panel');
+            var button = sec.querySelector('.accordion img:last-child');
+            if (panel) {
+                if (all_open) {
+                    panel.style.display = 'none';
+                    if (button) button.src = 'nav-more.png';
+                } else {
+                    panel.style.display = 'block';
+                    if (button) button.src = 'nav-less.png';
+                }
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleButtons = document.querySelectorAll('.accordion');
+
+        toggleButtons.forEach(function (button) {
+            const targetId = button.getAttribute('data-target');
+
+            const imgLeft = document.createElement('img');
+            imgLeft.src = 'alkitab-gpt-s-3.png';
+            imgLeft.width = 16;
+            imgLeft.height = 16;
+            imgLeft.style.marginRight = '8px';
+            button.insertBefore(imgLeft, button.firstChild);
+
+            const imgRight = document.createElement('img');
+            imgRight.src = 'nav-more.png';
+            imgRight.srcset = 'nav-more.png 1x, nav-more@2x.png 2x, nav-more@3x.png 3x';
+            imgRight.width = 16;
+            imgRight.height = 16;
+            imgRight.style.float = 'right';
+            button.appendChild(imgRight);
+
+            button.addEventListener('click', function() {
+                const panel = document.getElementById(targetId);
+                const isHidden = panel.style.display === 'none' || panel.style.display === '';
+                panel.style.display = isHidden ? 'block' : 'none';
+
+                if (isHidden) {
+                    imgRight.src = 'nav-less.png';
+                    imgRight.srcset = 'nav-less.png 1x, nav-less@2x.png 2x, nav-less@3x.png 3x';
+                } else {
+                    imgRight.src = 'nav-more.png';
+                    imgRight.srcset = 'nav-more.png 1x, nav-more@2x.png 2x, nav-more@3x.png 3x';
+                }
+            });
+        });
+    });
+</script>
+
+<h1 onclick="toggle_all()">{$title}</h1>
+
+<!-- placeholder: Kotlin akan ganti bagian ini -->
+{{$sections}}
+
+</body>
+</html>

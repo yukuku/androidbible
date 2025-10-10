@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<dimen name="panel_text_appearance_width">432dp</dimen>
+	<dimen name="player_view_height">300dp</dimen>
+	<dimen name="controller_height">300dp</dimen>
 </resources>

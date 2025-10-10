@@ -103,6 +103,7 @@ dependencies {
     implementation "androidx.preference:preference-ktx:$androidxPreferenceVersion"
     implementation "androidx.recyclerview:recyclerview:$androidxRecyclerviewVersion"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$androidxSwiperefreshlayoutVersion"
+    implementation "androidx.localbroadcastmanager:localbroadcastmanager:1.1.0"
 
     // Google
     implementation "androidx.media3:media3-exoplayer:$androidxMedia3Version"
@@ -111,13 +112,15 @@ dependencies {
     implementation "com.google.android.material:material:$materialVersion"
     implementation "com.google.code.gson:gson:$gsonVersion"
     implementation "me.zhanghai.android.fastscroll:library:$fastscrollVersion"
+    implementation 'androidx.media3:media3-ui:1.8.0'
+    implementation 'androidx.compose.ui:ui-text:1.9.2'
 
     // Tests
     testImplementation "junit:junit:$junitVersion"
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion"
 
     // Firebase
-    implementation platform('com.google.firebase:firebase-bom:34.0.0')
+    implementation platform('com.google.firebase:firebase-bom:34.3.0')
     implementation "com.google.firebase:firebase-messaging"
     implementation "com.google.firebase:firebase-crashlytics"
 

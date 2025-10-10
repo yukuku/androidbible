@@ -76,7 +76,7 @@ public class Fcm {
     }
 
     private static void registerInBackground() {
-        Background.run(() -> {
+        /*Background.run(() -> {
             FirebaseInstallations.getInstance().getToken(false).addOnCompleteListener(task -> {
                 if (!task.isSuccessful()) {
                     // If there is an error, don't just keep trying to register.
@@ -106,7 +106,7 @@ public class Fcm {
                 Preferences.setInt(Prefkey.fcm_last_app_version_code, App.getVersionCode());
                 writeFcmRegistrationId(registrationId);
             });
-        });
+        });*/
     }
 
     private static void writeFcmRegistrationId(final String registrationId) {
