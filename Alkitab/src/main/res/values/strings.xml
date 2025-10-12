@@ -570,4 +570,12 @@
 	<string name="notification_channel_download_mapper_name">Downloads</string>
 	<string name="notification_channel_devotion_downloader_name">Devotion downloads</string>
 
+	<!-- Network -->
+	<string name="network_title">Internet Connection Problems</string>
+	<string name="network_message">Please connect the device to the internet to enable this feature.</string>
+
+	<!-- Audio -->
+	<string name="repeat">Repeat This Chapter</string>
+	<string name="next_chapters">Continue to the next Chapter</string>
+
 </resources>

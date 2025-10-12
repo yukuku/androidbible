@@ -11,6 +11,8 @@
       <entry name="!?*.kt" />
       <entry name="!?*.clj" />
     </wildcardResourcePatterns>
-    <bytecodeTargetLevel target="17" />
+    <bytecodeTargetLevel target="17">
+      <module name="androidbible.ATree" target="22" />
+    </bytecodeTargetLevel>
   </component>
 </project>

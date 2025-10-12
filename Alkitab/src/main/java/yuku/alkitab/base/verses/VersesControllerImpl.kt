@@ -3,12 +3,14 @@ package yuku.alkitab.base.verses
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.text.SpannableStringBuilder
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import java.util.concurrent.atomic.AtomicInteger
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.S
+import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.util.TargetDecoder
@@ -470,6 +473,7 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         checked: Boolean,
         toggleChecked: (position: Int) -> Unit,
         index: Int,
+        highlightColor: Int,
     ) {
         val verse_1 = index + 1
         val ari = Ari.encodeWithBc(data.ari_bc_, verse_1)
@@ -506,6 +510,17 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
             lText.setTextColor(selectedTextColor)
             lVerseNumber.setTextColor(selectedTextColor)
         }
+
+        // audio highlight
+
+        view.background = if (highlightColor != 0)
+            if (Preferences.getBoolean(Prefkey.is_night_mode, true)) {
+                ContextCompat.getDrawable(view.context, R.drawable.border_bg_night)
+            } else {
+                ContextCompat.getDrawable(view.context, R.drawable.border_bg)
+            }
+        else
+            null
 
         val attributeView = view.attributeView
         attributeView.setScale(scaleForAttributeView(S.applied().fontSize2dp * ui.textSizeMult))
@@ -731,6 +746,17 @@ class VersesAdapter(
         return data.itemCount
     }
 
+    //audio highlight
+
+    private val highlightedVerses = mutableMapOf<Int, Int>()
+
+    fun updateHighlight(verseNumber: Int, color: Int) {
+        Log.d(TAG, "updateHighlight - verseNumber1: $verseNumber, color: $color")
+        highlightedVerses[verseNumber] = color
+        notifyDataSetChanged()
+    }
+
+
     /**
      * Id assignment for nice animation, keeping verses animated.
      * For verses, it is always verse_1 * 1000
@@ -774,7 +800,11 @@ class VersesAdapter(
         when (holder) {
             is VerseTextHolder -> {
                 val index = data.getVerse_0(position)
-                holder.bind(data, ui, listeners, attention, isChecked(position), { toggleChecked(it) }, index)
+                val highlightColor = highlightedVerses[index] ?: 0
+
+                Log.d(TAG, "onBindViewHolder - position: $position, verse: $index, highlightColor: $highlightColor")
+
+                holder.bind(data, ui, listeners, attention, isChecked(position), { toggleChecked(it) }, index, highlightColor)
             }
 
             is PericopeHolder -> {

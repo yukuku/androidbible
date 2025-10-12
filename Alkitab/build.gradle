@@ -101,7 +101,7 @@ dependencies {
     implementation "androidx.preference:preference-ktx:$androidxPreferenceVersion"
     implementation "androidx.recyclerview:recyclerview:$androidxRecyclerviewVersion"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$androidxSwiperefreshlayoutVersion"
-    implementation "androidx.work:work-runtime-ktx:2.10.3"
+    implementation "androidx.work:work-runtime-ktx:2.10.5"
 
     // Google
     implementation "androidx.media3:media3-exoplayer:$androidxMedia3Version"
@@ -115,7 +115,7 @@ dependencies {
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion"
 
     // Firebase
-    implementation platform('com.google.firebase:firebase-bom:33.7.0')
+    implementation platform('com.google.firebase:firebase-bom:34.4.0')
     implementation "com.google.firebase:firebase-messaging"
     implementation "com.google.firebase:firebase-crashlytics"
 
