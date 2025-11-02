@@ -17,11 +17,10 @@ data class MTiming(
             return MTiming(startTime, endTime, verseNumber)
         }
 
-        fun fromJsonArray(jsonText: String): List<Triple<Long, Long, Int>> {
+        fun fromJsonArray(jsonText: String): List<MTiming> {
             val timestampsArray = JSONObject(jsonText).getJSONArray("timestamps")
             return List(timestampsArray.length()) { i ->
-                val timing = fromJson(timestampsArray.getJSONObject(i))
-                Triple(timing.startTime, timing.endTime, timing.verseNumber)
+                fromJson(timestampsArray.getJSONObject(i))
             }
         }
     }

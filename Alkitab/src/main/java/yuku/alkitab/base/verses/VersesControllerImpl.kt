@@ -751,9 +751,18 @@ class VersesAdapter(
     private val highlightedVerses = mutableMapOf<Int, Int>()
 
     fun updateHighlight(verseNumber: Int, color: Int) {
-        Log.d(TAG, "updateHighlight - verseNumber1: $verseNumber, color: $color")
         highlightedVerses[verseNumber] = color
-        notifyDataSetChanged()
+
+        val position = data.getPositionIgnoringPericopeFromVerse(verseNumber + 1)
+
+        if (position != -1) {
+            notifyItemChanged(position)
+            AppLog.d(TAG, "updateHighlight → verse=$verseNumber, position=$position, color=$color")
+        } else {
+            // fallback: jika tidak ketemu posisi (misalnya karena layout baru belum siap)
+            notifyDataSetChanged()
+            AppLog.w(TAG, "updateHighlight → posisi ayat $verseNumber tidak ditemukan, fallback ke notifyDataSetChanged()")
+        }
     }
 
 

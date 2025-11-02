@@ -10,6 +10,7 @@ import android.os.Message
 import android.text.InputType
 import android.text.TextUtils
 import android.text.style.RelativeSizeSpan
+import androidx.lifecycle.lifecycleScope
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -241,6 +242,8 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
         setCustomProgressBarIndeterminateVisible(false)
 
+        exoplayerController = ExoplayerController(App.context, lifecycleScope)
+
         drawerLayout = findViewById(R.id.drawerLayout)
         leftDrawer = findViewById(R.id.left_drawer)
         leftDrawer.configure(this, drawerLayout)
@@ -382,7 +385,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                                 if (response.contains("extension=mid")) {
                                     setActiveMediaController(midiController)
                                 } else {
-                                    setActiveMediaController(exoplayerController)
+                                    exoplayerController?.let { setActiveMediaController(it) }
                                 }
                                 activeMediaController?.mediaKnownToExist(url)
                             } else {
@@ -613,8 +616,8 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         if (song.title_original != null) sb.append('(').append(song.title_original).append(')').append('\n')
         sb.append('\n')
 
-        if (song.authors_lyric != null && song.authors_lyric.size > 0) sb.append(TextUtils.join("; ", song.authors_lyric)).append('\n')
-        if (song.authors_music != null && song.authors_music.size > 0) sb.append(TextUtils.join("; ", song.authors_music)).append('\n')
+        if (song.authors_lyric != null && song.authors_lyric.isNotEmpty()) sb.append(TextUtils.join("; ", song.authors_lyric)).append('\n')
+        if (song.authors_music != null && song.authors_music.isNotEmpty()) sb.append(TextUtils.join("; ", song.authors_music)).append('\n')
         if (song.tune != null) sb.append(song.tune.uppercase()).append('\n')
         sb.append('\n')
 
@@ -1098,7 +1101,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         var activeMediaController: MediaController? = null
 
         val midiController = MidiController()
-        val exoplayerController = ExoplayerController(App.context)
+        var exoplayerController: ExoplayerController? = null
 
         var audioDisclaimerAcknowledged = false
 

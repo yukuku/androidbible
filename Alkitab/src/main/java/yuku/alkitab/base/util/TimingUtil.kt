@@ -18,14 +18,15 @@ class TimingUtil(
     private val exoplayerController: ExoplayerController,
     private val highlightListener: HighlightListener,
     var mode: Mode = Mode.SINGLE_AUDIO,
-    private val id: String
+    private val id: String,
+    private val scope: CoroutineScope
 ) {
     enum class Mode {
         SINGLE_AUDIO,
         DUAL_AUDIO
     }
 
-    var timingList: List<Triple<Long, Long, Int>> = emptyList()
+    var timingList: List<MTiming> = emptyList()
     var currentVerseIndex = -1
     var highlightedVerse: Int? = null
     private var isHighlightingActive = false
@@ -44,7 +45,7 @@ class TimingUtil(
         val url = "https://karaoke.sabda.org/api/timming.php?book=$bookName&chapter=$chapter&version=$modifiedVersion"
         AppLog.d(TAG, "[$id] loadTimingFile called - url: $url")
 
-        CoroutineScope(Dispatchers.IO).launch {
+        scope.launch(Dispatchers.IO) {
             try {
                 val jsonText = URL(url).readText()
                 AppLog.d(TAG, "[$id] Timing file berhasil diambil, mulai parsing...")
@@ -53,8 +54,8 @@ class TimingUtil(
                 timingList = MTiming.fromJsonArray(jsonText)
 
                 AppLog.d(TAG, "[$id] Timing file berhasil diparse. Total entries: ${timingList.size}")
-                timingList.forEachIndexed { index, triple ->
-                    AppLog.d(TAG, "[$id] Entry $index → Start: ${triple.first}, End: ${triple.second}, Verse: ${triple.third}")
+                timingList.forEachIndexed { index, it ->
+                    AppLog.d(TAG, "[$id] Entry $index → Start: ${it.startTime}, End: ${it.endTime}, Verse: ${it.verseNumber}")
                 }
 
                 withContext(Dispatchers.Main) { onSuccess?.invoke() }
@@ -84,7 +85,7 @@ class TimingUtil(
         isHighlightingActive = true
         Log.d(TAG, "[$id] Starting verse highlighting")
 
-        highlightJob = CoroutineScope(Dispatchers.Main).launch {
+        highlightJob = scope.launch(Dispatchers.IO) {
             while (isHighlightingActive) {
                 val currentPosition = exoplayerController.getProgress().getOrNull(0)
 
@@ -94,13 +95,16 @@ class TimingUtil(
                 }
 
                 val newVerseIndex = timingList.indexOfFirst {
-                    currentPosition in it.first..it.second
+                    currentPosition in it.startTime..it.endTime
                 }
 
                 if (newVerseIndex != -1 && newVerseIndex != currentVerseIndex) {
                     Log.d(TAG, "[$id] Ayat berubah: dari index $currentVerseIndex ke $newVerseIndex")
                     currentVerseIndex = newVerseIndex
-                    highlightVerse(timingList[newVerseIndex].third)
+
+                    withContext(Dispatchers.Main) {
+                        highlightVerse(timingList[newVerseIndex].verseNumber)
+                    }
                 } else if (newVerseIndex == -1) {
                     Log.v(TAG, "[$id] Posisi $currentPosition tidak cocok dengan ayat manapun.")
                 }
@@ -116,17 +120,18 @@ class TimingUtil(
      * For dual-audio mode: manually call this per ayat
      */
     fun highlightVerse(verseNumber: Int) {
-        val adjustedVerseNumber = verseNumber - 1
-        Log.d(TAG, "[$id] Permintaan highlight ayat: $verseNumber (adjusted=$adjustedVerseNumber)")
+        Log.d(TAG, "[$id] Permintaan highlight ayat: $verseNumber")
 
-        if (highlightedVerse != adjustedVerseNumber) {
-            Log.d(TAG, "[$id] Highlighting verse index=$adjustedVerseNumber (previous=${highlightedVerse ?: "none"})")
+        if (highlightedVerse != verseNumber) {
+            Log.d(TAG, "[$id] Highlighting verse=$verseNumber (previous=${highlightedVerse ?: "none"})")
+
             clearPreviousHighlight()
-            highlightedVerse = adjustedVerseNumber
-            highlightListener.applyHighlight(adjustedVerseNumber, -1)
-            highlightListener.scrollToHighlightedVerse(adjustedVerseNumber)
+            highlightedVerse = verseNumber
+
+            highlightListener.applyHighlight(verseNumber, -1)
+            highlightListener.scrollToHighlightedVerse(verseNumber)
         } else {
-            Log.d(TAG, "[$id] Ayat $adjustedVerseNumber sudah disorot — diabaikan")
+            Log.d(TAG, "[$id] Ayat $verseNumber sudah disorot — diabaikan")
         }
     }
 
@@ -144,6 +149,7 @@ class TimingUtil(
         clearPreviousHighlight()
         currentVerseIndex = -1
         playbackJob?.cancel()
+        highlightJob?.cancel()
     }
 
     fun clearTimingList() {

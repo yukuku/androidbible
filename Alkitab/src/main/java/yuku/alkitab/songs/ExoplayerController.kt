@@ -1,6 +1,7 @@
 package yuku.alkitab.songs
 
 import android.content.Context
+import android.os.Looper
 import android.text.TextUtils
 import android.util.Log
 import androidx.annotation.OptIn
@@ -29,12 +30,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import yuku.alkitab.base.connection.Connections
+import yuku.alkitab.base.model.MTiming
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.TimingUtil
 import yuku.alkitab.base.util.toIntArray
-import yuku.alkitab.base.verses.EmptyableRecyclerView
-import yuku.alkitab.base.verses.VersesAdapter
 import yuku.alkitab.debug.R
 import yuku.alkitab.util.IntArrayList
 
@@ -44,7 +45,10 @@ private const val TAG = "ExoplayerController"
  * We will use [MidiController] for MIDI files.
  */
 @OptIn(UnstableApi::class)
-class ExoplayerController(appContext: Context) : MediaController() {
+class ExoplayerController(
+    appContext: Context,
+    private val scope: CoroutineScope
+) : MediaController() {
     private lateinit var timingUtil: TimingUtil
     private var isAudioBarVisible = false
     private var audioUrl0: String? = null
@@ -138,7 +142,7 @@ class ExoplayerController(appContext: Context) : MediaController() {
                         callback?.onPlayerStateChanged(true)
                     }
 
-                    CoroutineScope(Dispatchers.Main).launch {
+                    scope.launch {
                         var lastPos = -1L
                         while (state == State.playing) {
                             delay(1000)
@@ -231,26 +235,26 @@ class ExoplayerController(appContext: Context) : MediaController() {
     /**
      * @return current position and duration in ms. Any of them can be -1 if unknown.
      */
-    override fun getProgress(): LongArray = when (state) {
-        State.playing, State.paused, State.complete -> {
-            val position = try {
-                mp.currentPosition
-            } catch (e: Exception) {
-                AppLog.e(TAG, "@@getProgress getCurrentPosition", e)
-                -1L
-            }
+    override fun getProgress(): LongArray {
+        return try {
+            var position = -1L
+            var duration = -1L
 
-            val duration = try {
-                mp.duration
-            } catch (e: Exception) {
-                AppLog.e(TAG, "@@getProgress getDuration", e)
-                -1L
+            if (Looper.myLooper() == Looper.getMainLooper()) {
+                position = mp.currentPosition
+                duration = mp.duration
+            } else {
+                runBlocking(Dispatchers.Main) {
+                    position = mp.currentPosition
+                    duration = mp.duration
+                }
             }
 
             longArrayOf(position, duration)
+        } catch (e: Exception) {
+            AppLog.e(TAG, "@@getProgress error", e)
+            longArrayOf(-1, -1)
         }
-
-        else -> longArrayOf(-1, -1)
     }
 
     // === NEW FEATURE: SINGLE & MULTI AUDIO HANDLING ===
@@ -304,11 +308,11 @@ class ExoplayerController(appContext: Context) : MediaController() {
     fun highlightVerses(selectedVerses: IntArrayList, color: Int) {
         AppLog.d(TAG, "highlightVerses called - selectedVerses: $selectedVerses color: $color")
         for (verse in selectedVerses.toIntArray()) {
-            updateVerseHighlightUI(verse, color)
+            callback?.onHighlightVerse(verse, color)
         }
     }
 
-    private fun updateVerseHighlightUI(verseNumber: Int, color: Int) {
+    /*private fun updateVerseHighlightUI(verseNumber: Int, color: Int) {
         AppLog.d(TAG, "Highlighting verse $verseNumber with color $color")
 
         activityRef?.get()?.let { activity ->
@@ -317,12 +321,12 @@ class ExoplayerController(appContext: Context) : MediaController() {
                     ?.updateHighlight(verseNumber, color)
             }
         }
-    }
+    }*/
 
     // == PLAY FROM SPESIFIC VERSE ==
 
-    fun playFromVerse(selectedVerse: Int, timingList: List<Triple<Long, Long, Int>>, withEnd: Boolean = false) {
-        val verseTiming = timingList.find { it.third == selectedVerse }
+    fun playFromVerse(selectedVerse: Int, timingList:List<MTiming>, withEnd: Boolean = false) {
+        val verseTiming = timingList.find { it.verseNumber == selectedVerse }
         if (verseTiming == null) {
             Log.e(TAG, "playFromVerse - Selected verse not found in timing list")
             return
@@ -335,7 +339,7 @@ class ExoplayerController(appContext: Context) : MediaController() {
 
         currentPlayJob?.cancel()
 
-        currentPlayJob = CoroutineScope(Dispatchers.Main).launch {
+        currentPlayJob = scope.launch {
             seekTo(startTime)
             playOrPause(true)
 
@@ -354,7 +358,7 @@ class ExoplayerController(appContext: Context) : MediaController() {
 
     fun playSegment(startTime: Long, endTime: Long, onComplete: () -> Unit) {
         currentPlayJob?.cancel()
-        currentPlayJob = CoroutineScope(Dispatchers.Main).launch {
+        currentPlayJob = scope.launch {
             try {
                 AppLog.d(TAG, "[$controllerId] playSegment start=$startTime end=$endTime state=$state isPlaying=${mp.isPlaying}")
 
@@ -396,6 +400,7 @@ class ExoplayerController(appContext: Context) : MediaController() {
     interface ExoplayerCallback {
         fun onPlayerStateChanged(isPlaying: Boolean)
         fun onAudioEnded()
+        fun onHighlightVerse(verseNumber: Int, color: Int)
     }
 
     // === END NEW FEATURE ===

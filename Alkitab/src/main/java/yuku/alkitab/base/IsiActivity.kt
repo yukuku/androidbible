@@ -8,8 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.content.res.Resources
-import android.graphics.Color
 import android.graphics.Point
 import android.os.Bundle
 import android.text.Spannable
@@ -33,8 +31,6 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.PopupMenu
-import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.view.ActionMode
@@ -53,6 +49,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.snackbar.Snackbar
@@ -60,14 +57,8 @@ import java.util.Calendar
 import java.util.Date
 import java.util.GregorianCalendar
 import java.util.Locale
-import kotlin.coroutines.cancellation.CancellationException
 import kotlin.math.roundToLong
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.properties.Delegates
 import me.toptas.fancyshowcase.FancyShowCaseView
 import me.toptas.fancyshowcase.listener.DismissListener
 import yuku.afw.storage.Preferences
@@ -90,8 +81,9 @@ import yuku.alkitab.base.settings.SettingsActivity
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
+import yuku.alkitab.base.util.AudioPlaybackManager
 import yuku.alkitab.base.util.BackForwardListController
-import yuku.alkitab.base.util.BookAbbrManager
+import yuku.alkitab.base.util.BibleMediaManager.buildAudioUrl
 import yuku.alkitab.base.util.ClipboardUtil
 import yuku.alkitab.base.util.CurrentReading
 import yuku.alkitab.base.util.ExtensionManager
@@ -100,7 +92,6 @@ import yuku.alkitab.base.util.History
 import yuku.alkitab.base.util.InstallationUtil
 import yuku.alkitab.base.util.Jumper
 import yuku.alkitab.base.util.LidToAri
-import yuku.alkitab.base.util.MediaList
 import yuku.alkitab.base.util.NetworkUtil
 import yuku.alkitab.base.util.OtherAppIntegration
 import yuku.alkitab.base.util.RequestCodes
@@ -110,7 +101,9 @@ import yuku.alkitab.base.util.TargetDecoder
 import yuku.alkitab.base.util.TimingUtil
 import yuku.alkitab.base.util.safeQuery
 import yuku.alkitab.base.util.toIntArray
+import yuku.alkitab.base.verses.EmptyableRecyclerView
 import yuku.alkitab.base.verses.VerseAttributeLoader
+import yuku.alkitab.base.verses.VersesAdapter
 import yuku.alkitab.base.verses.VersesController
 import yuku.alkitab.base.verses.VersesControllerImpl
 import yuku.alkitab.base.verses.VersesDataModel
@@ -148,7 +141,6 @@ import yuku.alkitab.util.Ari
 import yuku.alkitab.util.IntArrayList
 import yuku.alkitab.versionmanager.VersionsActivity
 import yuku.devoxx.flowlayout.FlowLayout
-import androidx.core.graphics.toColorInt
 
 private const val TAG = "IsiActivity"
 private const val EXTRA_verseUrl = "verseUrl"
@@ -277,12 +269,12 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
 
     //audio
 
+    private lateinit var audioPlaybackManager: AudioPlaybackManager
+
     private lateinit var exoplayerController0: ExoplayerController
     private lateinit var exoplayerController1: ExoplayerController
     private lateinit var timingUtil0: TimingUtil
     private lateinit var timingUtil1: TimingUtil
-    private var dualJob: Job? = null
-    private var currentSegmentIndex = 0
     private lateinit var bAudio: ImageView
     private lateinit var audioBar: View
     private lateinit var buttonPlay: ImageView
@@ -294,6 +286,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
     private lateinit var buttonRepeat: ImageView
     private var isAudioVisible = false
     private var isRepeatMode = true
+    private var isNight: Boolean by Delegates.observable(false) { _, old, new ->
+        if (old != new) {
+            updateAudioButtonIcon(new)
+        }
+    }
 
     lateinit var floater: Floater
     private lateinit var backForwardListController: BackForwardListController<ImageButton, ImageButton>
@@ -1171,21 +1168,50 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
         buttonSpeed = findViewById(R.id.button_speed)
         buttonRepeat = findViewById(R.id.button_repeat)
 
-        exoplayerController0 = ExoplayerController(this).apply {
+        exoplayerController0 = ExoplayerController(this, scope = lifecycleScope).apply {
             controllerId = 0
             setCallback(this@IsiActivity)
             setUI(this@IsiActivity, this@IsiActivity)
         }
-        timingUtil0 = TimingUtil(exoplayerController0, this, id = "controller0")
+        timingUtil0 = TimingUtil(exoplayerController0, this, id = "controller0", scope = lifecycleScope)
         exoplayerController0.initTimingUtil(timingUtil0)
 
-        exoplayerController1 = ExoplayerController(this).apply {
+        exoplayerController1 = ExoplayerController(this, scope = lifecycleScope).apply {
             controllerId = 1
             setCallback(this@IsiActivity)
             setUI(this@IsiActivity, this@IsiActivity)
         }
-        timingUtil1 = TimingUtil(exoplayerController1, this, id = "controller1")
+        timingUtil1 = TimingUtil(exoplayerController1, this, id = "controller1", scope = lifecycleScope)
         exoplayerController1.initTimingUtil(timingUtil1)
+
+        audioPlaybackManager = AudioPlaybackManager(
+            scope = lifecycleScope,
+            controller0 = exoplayerController0,
+            controller1 = exoplayerController1,
+            timing0 = timingUtil0,
+            timing1 = timingUtil1,
+            isSplitMode = { cSplitVersion.isChecked },
+            getBookName = { activeSplit0.book },
+            getVersion = { activeSplit0.version },
+            getChapterNumber = { chapter_1 },
+            displayChapter = { book, chapter ->
+                display(chapter, 1)
+            },
+            buildAudioForChapter = {
+                updateAudioForNewChapter()
+            },
+            onHighlight = { verse, color ->
+                onHighlightVerse(verse, color)
+            },
+            onScroll = { verse ->
+                scrollToHighlightedVerse(verse)
+            },
+            onPlayerStateChanged = { isPlaying ->
+                buttonPlay.setImageResource(
+                    if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
+                )
+            }
+        )
 
         overlayContainer = findViewById(R.id.overlayContainer)
         root = findViewById(R.id.root)
@@ -1211,7 +1237,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
             bGoto_click()
         }
         bGoto.setOnLongClickListener {
-            stopAudioForNavigation()
+            audioPlaybackManager.stopAllAudio()
             bGoto_longClick()
             true
         }
@@ -1223,33 +1249,25 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
 
         floater.setListener(floater_listener)
 
+        val panelBackForwardList = findViewById<LinearLayout>(R.id.panelBackForwardList)
+
         //audio feature
         bAudio.setOnClickListener {
             checkInternetAndRun {
                 if (!isAudioVisible) {
-                    toggleAudioBar()
+                    audioPlaybackManager.toggleAudioBar(audioBar, panelBackForwardList)
                     exoplayerController0.setAudioBarVisible(true)
                     isAudioVisible = true
                 } else {
-                    hideAudioBarIfVisible()
+                    audioPlaybackManager.hideAudioBar(audioBar, panelBackForwardList)
                 }
             }
         }
 
-        val isNight = cNightMode.isChecked
-
-        if (isNight) {
-            bAudio.setImageResource(R.drawable.ic_audio_night)
-        } else {
-            bAudio.setImageResource(R.drawable.ic_audio)
-        }
+        isNight = cNightMode.isChecked
 
         buttonPlay.setOnClickListener {
             val isSplit = cSplitVersion.isChecked
-            val bookName = activeSplit0.book.shortName
-            val chapter = chapter_1.toString()
-            val version0 = activeSplit0.version.shortName
-            val version1 = activeSplit1?.version?.shortName
 
             if (!NetworkUtil.isInternetAvailable(this)) {
                 NetworkUtil.showNoInternetDialog(this)
@@ -1261,21 +1279,21 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
                     AppLog.d(TAG, "Mode DUAL AUDIO dipilih")
                     timingUtil0.mode = TimingUtil.Mode.DUAL_AUDIO
                     timingUtil1.mode = TimingUtil.Mode.DUAL_AUDIO
-                    togglePlayPauseDual(bookName, chapter, version0, version1)
+                    audioPlaybackManager.togglePlayPauseDual()
                 } else {
                     AppLog.d(TAG, "Mode SINGLE AUDIO dipilih")
                     timingUtil0.mode = TimingUtil.Mode.SINGLE_AUDIO
-                    togglePlayPauseSingle(bookName, chapter, version0)
+                    audioPlaybackManager.togglePlayPauseSingle()
                 }
             }
         }
 
-        buttonPrevVerse.setOnClickListener { navigateVerse(false) }
-        buttonNextVerse.setOnClickListener { navigateVerse(true) }
-        buttonPrevChapter.setOnClickListener { navigateChapter(false) }
-        buttonNextChapter.setOnClickListener { navigateChapter(true) }
+        buttonPrevVerse.setOnClickListener { audioPlaybackManager.navigateVerse(false) }
+        buttonNextVerse.setOnClickListener { audioPlaybackManager.navigateVerse(true) }
+        buttonPrevChapter.setOnClickListener { audioPlaybackManager.navigateChapter(false) }
+        buttonNextChapter.setOnClickListener { audioPlaybackManager.navigateChapter(true) }
 
-        buttonSpeed.setOnClickListener { showSpeedMenu() }
+        buttonSpeed.setOnClickListener { audioPlaybackManager.showSpeedMenu(it) }
         buttonRepeat.setOnClickListener {
             isRepeatMode = !isRepeatMode
 
@@ -1342,7 +1360,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
         }
 
         backForwardListController = BackForwardListController(
-            group = findViewById(R.id.panelBackForwardList),
+            group = panelBackForwardList,
             onBackButtonNeedUpdate = { button, ari ->
                 if (ari == 0) {
                     button.isEnabled = false
@@ -1488,30 +1506,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
     }
 
     //audio function
-    private fun toggleAudioBar() {
-        isAudioVisible = !isAudioVisible
-        audioBar.visibility = if (isAudioVisible) View.VISIBLE else View.GONE
 
-        val panelBackForwardList = findViewById<LinearLayout>(R.id.panelBackForwardList)
-
-        val params = panelBackForwardList.layoutParams as ViewGroup.MarginLayoutParams
-        params.bottomMargin = if (isAudioVisible) dpToPx(75) else dpToPx(0)
-        panelBackForwardList.layoutParams = params
-    }
-
-    private fun dpToPx(dp: Int): Int {
-        return (dp * Resources.getSystem().displayMetrics.density).toInt()
-    }
-
-    fun hideAudioBarIfVisible() {
-        if (isAudioVisible) {
-            toggleAudioBar()
-            isAudioVisible = false
-            if (exoplayerController0.state == MediaController.State.playing) {
-                exoplayerController0.playOrPause(false)
-            }
-            timingUtil0.resetHighlight()
-        }
+    private fun updateAudioButtonIcon(isNight: Boolean) {
+        val iconRes = if (isNight) R.drawable.ic_audio_night else R.drawable.ic_audio
+        bAudio.setImageResource(iconRes)
     }
 
     private fun generateAudioUrl(): String {
@@ -1522,19 +1520,19 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
             val version0 = activeSplit0.version.shortName
             val version1 = activeSplit1?.version?.shortName
 
-            val url0 = buildAudioUrl(book, version0)
+            val url0 = buildAudioUrl(book, chapter_1, version0)
             AppLog.d(TAG, "Generated URL for version0 ($version0): $url0")
             if (url0.isNotEmpty()) urls.add(url0)
 
             if (!version1.isNullOrEmpty()) {
-                val url1 = buildAudioUrl(book, version1)
+                val url1 = buildAudioUrl(book, chapter_1, version1)
                 AppLog.d(TAG, "Generated URL for version1 ($version1): $url1")
                 if (url1.isNotEmpty()) urls.add(url1)
             }
         } else {
             val book0 = activeSplit0.book
             val version0 = activeSplit0.version.shortName
-            val url0 = buildAudioUrl(book0, version0)
+            val url0 = buildAudioUrl(book0, chapter_1, version0)
             AppLog.d(TAG, "Generated URL for single mode ($version0): $url0")
 
             if (url0.isNotEmpty()) urls.add(url0)
@@ -1543,34 +1541,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
         val joinedUrl = urls.joinToString(";")
         AppLog.d(TAG, "Final joined URL(s): $joinedUrl")
         return joinedUrl
-    }
-
-
-    private fun buildAudioUrl(book: Book, version: String): String {
-        val bookShortName = when (book.shortName) {
-            "Hakim-hakim" -> "Hakim"
-            "1 Raja-raja" -> "1Raja"
-            "2 Raja-raja" -> "2Raja"
-            "Kidung Agung" -> "Kidung"
-            "Kisah Para Rasul" -> "Kisah"
-            else -> book.shortName
-        }
-
-        val booksList = BookAbbrManager.bookAbbrMap.keys.toList()
-        val plorpb = if (booksList.indexOf(book.shortName) <= booksList.indexOf("Maleakhi")) "pl" else "pb"
-
-        val bookCode = if (plorpb == "pl") {
-            String.format(Locale.US, "%02d", book.bookId + 1)
-        } else {
-            val pbBooks = booksList.subList(booksList.indexOf("Matius"), booksList.size)
-            String.format(Locale.US, "%02d", pbBooks.indexOf(book.shortName) + 1)
-        }
-
-        val chapter = String.format(Locale.US, if (book.shortName == "Mazmur") "%03d" else "%02d", chapter_1)
-        val abbr = BookAbbrManager.bookAbbrMap[book.shortName] ?: return ""
-        val audioVersion = MediaList.AUDIO.find { it.version == version }?.audio1 ?: return ""
-
-        return "https://media.sabda.org/alkitab_audio/$audioVersion/$plorpb/mp3/cd/${bookCode}_${bookShortName.lowercase().replace(" ", "")}/${bookCode}_${abbr}${chapter}.mp3"
     }
 
     private fun updateAudioForNewChapter(bookId: Int? = null, chapter: Int? = null, verse: Int? = null) {
@@ -1586,8 +1556,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
             // --- Dual Audio ---
             val version1 = activeSplit1?.version?.shortName ?: version0
 
-            val url0 = buildAudioUrl(book, version0)
-            val url1 = buildAudioUrl(book, version1)
+            val url0 = buildAudioUrl(book, chapter_1,version0)
+            val url1 = buildAudioUrl(book, chapter_1, version1)
 
             AppLog.d(TAG, "Dual mode URLs → version0=$url0 | version1=$url1")
 
@@ -1625,7 +1595,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
 
         } else {
             // --- Single Audio ---
-            val url = buildAudioUrl(book, version0)
+            val url = buildAudioUrl(book, chapter_1,version0)
             AppLog.d(TAG, "Single mode URL → $url")
 
             timingUtil0.clearTimingList()
@@ -1646,411 +1616,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
         }
     }
 
-    private fun stopAudioForNavigation() {
-        dualJob?.cancel()
-        dualJob = null
-        exoplayerController0.stopSegment()
-        exoplayerController1.stopSegment()
-        exoplayerController0.playOrPause(false)
-        exoplayerController1.playOrPause(false)
-        timingUtil0.resetHighlight()
-        timingUtil1.resetHighlight()
-    }
-
-    private fun navigateVerse(isNext: Boolean) {
-        if (cSplitVersion.isChecked) {
-            navigateVerseDual(isNext)
-        } else {
-            navigateVerseSingle(isNext)
-        }
-    }
-
-    private fun navigateVerseSingle(isNext: Boolean) {
-        val currentIndex = timingUtil0.currentVerseIndex
-        AppLog.d(TAG, "navigateVerseSingle: currentIndex=$currentIndex, isNext=$isNext")
-
-        if (currentIndex != -1) {
-            val targetIndex = if (isNext) currentIndex + 1 else currentIndex - 1
-            AppLog.d(TAG, "navigateVerseSingle: targetIndex=$targetIndex")
-
-            when {
-                targetIndex in timingUtil0.timingList.indices -> {
-                    val targetVerse = timingUtil0.timingList[targetIndex]
-                    AppLog.d(TAG, "navigateVerseSingle → verse=${targetVerse.third}, start=${targetVerse.first}")
-
-                    timingUtil0.highlightVerse(targetVerse.third)
-                    exoplayerController0.seekTo(targetVerse.first)
-                    exoplayerController0.playFromVerse(targetVerse.third, timingUtil0.timingList)
-                }
-                isNext -> {
-                    AppLog.d(TAG, "navigateVerseSingle: sudah di akhir → next chapter")
-                    navigateChapterSingle(true, toFirstVerse = true)
-                }
-                else -> {
-                    AppLog.d(TAG, "navigateVerseSingle: sudah di awal → prev chapter")
-                    navigateChapterSingle(false, toLastVerse = true)
-                }
-            }
-        } else {
-            AppLog.d(TAG, "navigateVerseSingle: tidak ada currentVerseIndex aktif")
-        }
-    }
-
-    private fun navigateVerseDual(isNext: Boolean) {
-        val currentIndex = currentSegmentIndex
-        AppLog.d(TAG, "navigateVerseDual: currentSegmentIndex=$currentIndex, isNext=$isNext")
-
-        if (currentIndex == -1) {
-            AppLog.d(TAG, "navigateVerseDual: belum ada ayat aktif")
-            return
-        }
-
-        val targetIndex = if (isNext) currentIndex + 1 else currentIndex - 1
-        AppLog.d(TAG, "navigateVerseDual: targetIndex=$targetIndex")
-
-        when {
-            targetIndex in timingUtil0.timingList.indices &&
-                targetIndex in timingUtil1.timingList.indices -> {
-                val verse0 = timingUtil0.timingList[targetIndex]
-                val verse1 = timingUtil1.timingList[targetIndex]
-
-                AppLog.d(TAG, "navigateVerseDual → verse0=${verse0.third}, verse1=${verse1.third}")
-
-                timingUtil0.highlightVerse(verse0.third)
-                timingUtil1.highlightVerse(verse1.third)
-
-                playAlternating(
-                    exoplayerController0,
-                    exoplayerController1,
-                    timingUtil0.timingList,
-                    timingUtil1.timingList,
-                    targetIndex
-                )
-            }
-            isNext -> {
-                AppLog.d(TAG, "navigateVerseDual: sudah di akhir → next chapter")
-                navigateChapterDual(true, toFirstVerse = true)
-            }
-            else -> {
-                AppLog.d(TAG, "navigateVerseDual: sudah di awal → prev chapter")
-                navigateChapterDual(false, toLastVerse = true)
-            }
-        }
-    }
-
-    private fun navigateChapter(isNext: Boolean, toFirstVerse: Boolean = false, toLastVerse: Boolean = false) {
-        if (cSplitVersion.isChecked) {
-            navigateChapterDual(isNext, toFirstVerse, toLastVerse)
-            AppLog.d(TAG, "navigateChapterDual: terpanggil")
-        } else {
-            navigateChapterSingle(isNext, toFirstVerse, toLastVerse)
-            AppLog.d(TAG, "navigateChapterSingle: terpanggil")
-        }
-    }
-
-    private fun navigateChapterSingle(isNext: Boolean, toFirstVerse: Boolean = false, toLastVerse: Boolean = false) {
-        stopAudioForNavigation()
-        AppLog.d(TAG, "navigateChapterSingle: pause dulu state=${exoplayerController0.state}")
-
-        if (isNext) {
-            if (chapter_1 >= activeSplit0.book.chapter_count) {
-                val maxBookId = activeSplit0.version.maxBookIdPlusOne
-                var tryBookId = activeSplit0.book.bookId + 1
-                while (tryBookId < maxBookId) {
-                    val newBook = activeSplit0.version.getBook(tryBookId)
-                    if (newBook != null) {
-                        activeSplit0 = activeSplit0.copy(book = newBook)
-                        display(1, 1)
-                        updateAudioForNewChapter()
-                        timingUtil0.startHighlightingVerses()
-                        if (toFirstVerse) timingUtil0.highlightVerse(1)
-                        return
-                    }
-                    tryBookId++
-                }
-            } else {
-                display(chapter_1 + 1, 1)
-                updateAudioForNewChapter()
-                timingUtil0.startHighlightingVerses()
-                if (toFirstVerse) timingUtil0.highlightVerse(1)
-            }
-        } else {
-            if (chapter_1 == 1) {
-                var tryBookId = activeSplit0.book.bookId - 1
-                while (tryBookId >= 0) {
-                    val newBook = activeSplit0.version.getBook(tryBookId)
-                    if (newBook != null) {
-                        activeSplit0 = activeSplit0.copy(book = newBook)
-                        display(newBook.chapter_count, 1)
-                        updateAudioForNewChapter()
-                        timingUtil0.startHighlightingVerses()
-                        if (toLastVerse) {
-                            val lastVerse = timingUtil0.timingList.lastOrNull()?.third ?: 1
-                            timingUtil0.highlightVerse(lastVerse)
-                        }
-                        return
-                    }
-                    tryBookId--
-                }
-            } else {
-                display(chapter_1 - 1, 1)
-                updateAudioForNewChapter()
-                timingUtil0.startHighlightingVerses()
-                if (toLastVerse) {
-                    val lastVerse = timingUtil0.timingList.lastOrNull()?.third ?: 1
-                    timingUtil0.highlightVerse(lastVerse)
-                }
-            }
-        }
-    }
-
-    private fun navigateChapterDual(isNext: Boolean, toFirstVerse: Boolean = false, toLastVerse: Boolean = false) {
-        stopAudioForNavigation()
-
-        if (isNext) {
-            if (chapter_1 >= activeSplit0.book.chapter_count) {
-                val maxBookId = activeSplit0.version.maxBookIdPlusOne
-                var tryBookId = activeSplit0.book.bookId + 1
-                while (tryBookId < maxBookId) {
-                    val newBook = activeSplit0.version.getBook(tryBookId)
-                    if (newBook != null) {
-                        activeSplit0 = activeSplit0.copy(book = newBook)
-                        display(1, 1)
-                        updateAudioForNewChapter()
-                        if (toFirstVerse) {
-                            timingUtil0.highlightVerse(1)
-                            timingUtil1.highlightVerse(1)
-                        }
-                        return
-                    }
-                    tryBookId++
-                }
-            } else {
-                display(chapter_1 + 1, 1)
-                updateAudioForNewChapter()
-                if (toFirstVerse) {
-                    timingUtil0.highlightVerse(1)
-                    timingUtil1.highlightVerse(1)
-                }
-            }
-        } else {
-            if (chapter_1 == 1) {
-                var tryBookId = activeSplit0.book.bookId - 1
-                while (tryBookId >= 0) {
-                    val newBook = activeSplit0.version.getBook(tryBookId)
-                    if (newBook != null) {
-                        activeSplit0 = activeSplit0.copy(book = newBook)
-                        display(newBook.chapter_count, 1)
-                        updateAudioForNewChapter()
-                        if (toLastVerse) {
-                            val lastVerse = minOf(
-                                timingUtil0.timingList.lastOrNull()?.third ?: 1,
-                                timingUtil1.timingList.lastOrNull()?.third ?: 1
-                            )
-                            timingUtil0.highlightVerse(lastVerse)
-                            timingUtil1.highlightVerse(lastVerse)
-                        }
-                        return
-                    }
-                    tryBookId--
-                }
-            } else {
-                display(chapter_1 - 1, 1)
-                updateAudioForNewChapter()
-                if (toLastVerse) {
-                    val lastVerse = minOf(
-                        timingUtil0.timingList.lastOrNull()?.third ?: 1,
-                        timingUtil1.timingList.lastOrNull()?.third ?: 1
-                    )
-                    timingUtil0.highlightVerse(lastVerse)
-                    timingUtil1.highlightVerse(lastVerse)
-                }
-            }
-        }
-    }
-
-    fun playAlternating(
-        controller0: ExoplayerController,
-        controller1: ExoplayerController,
-        timingList0: List<Triple<Long, Long, Int>>,
-        timingList1: List<Triple<Long, Long, Int>>,
-        startIndex: Int = 0,
-    ) {
-        // cancel job lama kalau ada
-        dualJob?.cancel()
-        dualJob = CoroutineScope(Dispatchers.Main).launch {
-            try {
-                val size = minOf(timingList0.size, timingList1.size)
-                for (i in startIndex until size) { // ✅ mulai dari startIndex
-                    currentSegmentIndex = i
-
-                    val (start0, end0, _) = timingList0[i]
-                    val (start1, end1, _) = timingList1[i]
-
-                    // stop sebelum main segmen baru
-                    controller0.stopSegment()
-                    controller1.stopSegment()
-
-                    AppLog.d(TAG, "playAlternating: ▶️ controller0 segmen $i ($start0..$end0)")
-                    suspendCancellableCoroutine { cont ->
-                        controller0.playSegment(start0, end0) {
-                            if (cont.isActive) cont.resume(Unit) {}
-                        }
-                        cont.invokeOnCancellation {
-                            AppLog.d(TAG, "playAlternating: ❌ controller0 segmen $i dibatalkan")
-                            controller0.stopSegment()
-                        }
-                    }
-
-                    ensureActive()
-
-                    AppLog.d(TAG, "playAlternating: ▶️ controller1 segmen $i ($start1..$end1)")
-                    suspendCancellableCoroutine { cont ->
-                        controller1.playSegment(start1, end1) {
-                            if (cont.isActive) cont.resume(Unit) {}
-                        }
-                        cont.invokeOnCancellation {
-                            AppLog.d(TAG, "playAlternating: ❌ controller1 segmen $i dibatalkan")
-                            controller1.stopSegment()
-                        }
-                    }
-                }
-                AppLog.d(TAG, "playAlternating: ✅ selesai semua segmen")
-            } catch (e: CancellationException) {
-                AppLog.d(TAG, "playAlternating: job dibatalkan, keluar loop")
-                controller0.stopSegment()
-                controller1.stopSegment()
-            }
-        }
-    }
-
-    private fun showSpeedMenu() {
-        val popupMenu = PopupMenu(this, buttonSpeed)
-        val menu = popupMenu.menu
-
-        menu.add(0, 1, 0, "0.5")
-        menu.add(0, 2, 0, "0.8")
-        menu.add(0, 3, 0, "Normal")
-        menu.add(0, 4, 0, "1.1")
-        menu.add(0, 5, 0, "1.25")
-        menu.add(0, 6, 0, "1.5")
-        menu.add(0, 7, 0, "1.75")
-        menu.add(0, 8, 0, "2.0")
-
-        menu.setGroupCheckable(0, true, true)
-
-        when (exoplayerController0.getPlaybackSpeed()) {
-            0.5f -> menu.findItem(1)?.isChecked = true
-            0.8f -> menu.findItem(2)?.isChecked = true
-            1.0f -> menu.findItem(3)?.isChecked = true
-            1.1f -> menu.findItem(4)?.isChecked = true
-            1.25f -> menu.findItem(5)?.isChecked = true
-            1.5f -> menu.findItem(6)?.isChecked = true
-            1.75f -> menu.findItem(7)?.isChecked = true
-            2.0f -> menu.findItem(8)?.isChecked = true
-        }
-
-        popupMenu.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                1 -> exoplayerController0.setPlaybackSpeed(0.5f)
-                2 -> exoplayerController0.setPlaybackSpeed(0.8f)
-                3 -> exoplayerController0.setPlaybackSpeed(1.0f)
-                4 -> exoplayerController0.setPlaybackSpeed(1.1f)
-                5 -> exoplayerController0.setPlaybackSpeed(1.25f)
-                6 -> exoplayerController0.setPlaybackSpeed(1.5f)
-                7 -> exoplayerController0.setPlaybackSpeed(1.75f)
-                8 -> exoplayerController0.setPlaybackSpeed(2.0f)
-            }
-            true
-        }
-
-        popupMenu.show()
-    }
-
-    private fun togglePlayPauseSingle(bookName: String, chapter: String, version: String) {
-        if (timingUtil0.timingList.isNotEmpty()) {
-            if (exoplayerController0.state == MediaController.State.playing) {
-                // sedang main → pause
-                exoplayerController0.playOrPause(false)
-                timingUtil0.resetHighlight()
-            } else {
-                // sedang idle/paused → play
-                timingUtil0.startHighlightingVerses()
-                exoplayerController0.playOrPause(true)
-            }
-        } else {
-            // timing belum ada → load dulu baru play
-            timingUtil0.loadTimingFile(bookName, chapter, version,
-                onSuccess = {
-                    timingUtil0.startHighlightingVerses()
-                    exoplayerController0.playOrPause(true)
-                },
-                onError = { AppLog.e(TAG, "Gagal memuat timing: $it") }
-            )
-        }
-    }
-
-    private fun togglePlayPauseDual(bookName: String, chapter: String, version0: String, version1: String?) {
-        AppLog.d(TAG, "togglePlayPauseDual() called → v0=$version0, v1=$version1, chapter=$chapter")
-        if (timingUtil0.timingList.isNotEmpty() && !version1.isNullOrEmpty() && timingUtil1.timingList.isNotEmpty()) {
-
-            AppLog.d(TAG, "Timing list sudah siap (v0=${timingUtil0.timingList.size}, v1=${timingUtil1.timingList.size})")
-
-            if (exoplayerController0.state == MediaController.State.playing ||
-                exoplayerController1.state == MediaController.State.playing) {
-
-                AppLog.d(TAG, "togglePlayPauseDual: menghentikan kedua audio")
-
-                dualJob?.cancel()
-                dualJob = null
-
-                exoplayerController0.stopSegment()
-                exoplayerController1.stopSegment()
-
-                AppLog.d(TAG, "PAUSE → currentVerseIndex0=${timingUtil0.currentVerseIndex}, " +
-                    "verse0=${timingUtil0.timingList.getOrNull(timingUtil0.currentVerseIndex)?.third}")
-
-                AppLog.d(TAG, "PAUSE → currentVerseIndex1=${timingUtil1.currentVerseIndex}, " +
-                    "verse1=${timingUtil1.timingList.getOrNull(timingUtil1.currentVerseIndex)?.third}")
-
-                AppLog.d(TAG, "Dual audio paused, highlight direset")
-            } else {
-                // idle/paused → mulai alternating playback
-                AppLog.d(TAG, "State idle/paused → mulai alternating playback")
-                playAlternating(
-                    exoplayerController0,
-                    exoplayerController1,
-                    timingUtil0.timingList,
-                    timingUtil1.timingList,
-                    currentSegmentIndex
-                )
-            }
-        } else {
-            AppLog.d(TAG, "Timing list masih kosong → load timing dulu")
-            // load timing kalau masih kosong
-            timingUtil0.loadTimingFile(bookName, chapter, version0,
-                onSuccess = {
-                    AppLog.d(TAG, "Timing0 berhasil dimuat (${timingUtil0.timingList.size} item)")
-                    if (!version1.isNullOrEmpty()) {
-                        timingUtil1.loadTimingFile(bookName, chapter, version1,
-                            onSuccess = {
-                                AppLog.d(TAG, "Timing1 berhasil dimuat (${timingUtil1.timingList.size} item)")
-                                playAlternating(
-                                    exoplayerController0,
-                                    exoplayerController1,
-                                    timingUtil0.timingList,
-                                    timingUtil1.timingList
-                                )
-                            },
-                            onError = { AppLog.e(TAG, "Gagal memuat timing 1: $it") }
-                        )
-                    }
-                },
-                onError = { AppLog.e(TAG, "Gagal memuat timing 0: $it") }
-            )
-        }
-    }
-
     private fun ensureAudioReady(onReady: () -> Unit) {
         val urls = generateAudioUrl().split(";")
         val book = activeSplit0.book.shortName
@@ -2062,8 +1627,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
         AppLog.d(TAG, "Book: $book, Chapter: $chapter, Version0: $version0, Version1: $version1")
         AppLog.d(TAG, "Split Version Aktif: ${cSplitVersion.isChecked}")
         AppLog.d(TAG, "Generated URLs: $urls")
-
-        onReady()
 
         fun prepareController(controller: ExoplayerController, url: String, label: String) {
             AppLog.d(TAG, "prepareController() - $label - url: $url - state: ${controller.state}")
@@ -2095,24 +1658,50 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
         }
 
         // -- TIMING --
-        AppLog.d(TAG, "Memuat timing untuk controller0")
-        timingUtil0.loadTimingFile(book, chapter.toString(), version0,
+        var timing0Loaded = false
+        var timing1Loaded = !cSplitVersion.isChecked // true if not dual-mode
+
+        fun tryCallOnReady() {
+            if (timing0Loaded && timing1Loaded) {
+                AppLog.d(TAG, "✅ Semua timing files berhasil dimuat — onReady() dipanggil")
+                onReady()
+            }
+        }
+
+        // timing untuk controller0
+        timingUtil0.loadTimingFile(
+            book,
+            chapter.toString(),
+            version0,
             onSuccess = {
                 AppLog.d(TAG, "Timing controller0 berhasil dimuat")
+                timing0Loaded = true
+                tryCallOnReady()
             },
             onError = {
                 AppLog.e(TAG, "Timing file gagal dimuat (controller0): $it")
-            })
+                timing0Loaded = true // Tetap true agar tidak deadlock
+                tryCallOnReady()
+            }
+        )
 
+        // timing untuk controller1 (jika split aktif)
         if (cSplitVersion.isChecked) {
-            AppLog.d(TAG, "Memuat timing untuk controller1")
-            timingUtil1.loadTimingFile(book, chapter.toString(), version1.orEmpty(),
+            timingUtil1.loadTimingFile(
+                book,
+                chapter.toString(),
+                version1.orEmpty(),
                 onSuccess = {
                     AppLog.d(TAG, "Timing controller1 berhasil dimuat")
+                    timing1Loaded = true
+                    tryCallOnReady()
                 },
                 onError = {
                     AppLog.e(TAG, "Timing file gagal dimuat (controller1): $it")
-                })
+                    timing1Loaded = true
+                    tryCallOnReady()
+                }
+            )
         }
     }
 
@@ -2128,14 +1717,26 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
             display(chapter_1, 1)
         } else {
             AppLog.d(TAG, "Repeat mode OFF → Moving to next chapter")
-            navigateChapter(true, toFirstVerse = true)
+            audioPlaybackManager.navigateChapter(true, toFirstVerse = true)
         }
 
-        updateAudioForNewChapter()
         timingUtil0.startHighlightingVerses()
         timingUtil0.highlightVerse(1)
+        if (cSplitVersion.isChecked) {
+            timingUtil1.highlightVerse(1)
+        }
     }
 
+    override fun onHighlightVerse(verseNumber: Int, color: Int) {
+        val adjustedVerse = verseNumber - 1
+
+        listOf(R.id.lsSplitView0, R.id.lsSplitView1).forEach { viewId ->
+            (findViewById<EmptyableRecyclerView>(viewId)?.adapter as? VersesAdapter)
+                ?.updateHighlight(adjustedVerse, color)
+        }
+
+        AppLog.d(TAG, "onHighlightVerse → original=$verseNumber, adjusted=$adjustedVerse")
+    }
 
     override fun applyHighlight(verseNumber: Int, color: Int) {
         val selectedVerses = IntArrayList().apply { add(verseNumber) }
@@ -2647,7 +2248,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
 
     private fun bGoto_click() {
         val r = {
-            stopAudioForNavigation()
+            audioPlaybackManager.stopAllAudio()
             startActivityForResult(GotoActivity.createIntent(activeSplit0.book.bookId, this.chapter_1, getVerse_1BasedOnScrolls()), RequestCodes.FromActivity.Goto)
         }
 
@@ -3013,7 +2614,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == RequestCodes.FromActivity.Goto && resultCode == RESULT_OK && data != null) {
-            stopAudioForNavigation()
+            audioPlaybackManager.stopAllAudio()
             val result = GotoActivity.obtainResult(data)
             if (result != null) {
                 val ari_cv: Int
@@ -3234,7 +2835,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
     }
 
     fun bLeft_click() {
-        stopAudioForNavigation()
+        audioPlaybackManager.stopAllAudio()
         val currentBook = activeSplit0.book
         if (chapter_1 == 1) {
             // we are in the beginning of the book, so go to prev book
@@ -3259,7 +2860,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
     }
 
     fun bRight_click() {
-        stopAudioForNavigation()
+        audioPlaybackManager.stopAllAudio()
         val currentBook = activeSplit0.book
         if (chapter_1 >= currentBook.chapter_count) {
             val maxBookId = activeSplit0.version.maxBookIdPlusOne
@@ -3373,7 +2974,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
                         holder.lSnippet.visibility = View.GONE
 
                         val labels = S.db.listLabelsByMarker(marker)
-                        if (labels.size != 0) {
+                        if (labels.isNotEmpty()) {
                             holder.panelLabels.visibility = View.VISIBLE
                             holder.panelLabels.removeAllViews()
                             for (label in labels) {
