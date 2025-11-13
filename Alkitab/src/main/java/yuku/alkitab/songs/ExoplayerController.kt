@@ -60,7 +60,7 @@ class ExoplayerController(
     var controllerId: Int = 0
     private var currentPlayJob: Job? = null
 
-    private val mp by lazy {
+    val mp by lazy {
         val audioOnlyRenderersFactory = RenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
             arrayOf<Renderer>(
                 MediaCodecAudioRenderer(
@@ -341,7 +341,7 @@ class ExoplayerController(
 
         currentPlayJob = scope.launch {
             seekTo(startTime)
-            playOrPause(true)
+            playOrPause(false)
 
             if (withEnd) {
                 delay(duration)
@@ -374,7 +374,7 @@ class ExoplayerController(
                 }
 
                 seekTo(startTime)
-                playOrPause(true)
+                playOrPause(false)
                 delay(endTime - startTime)
                 playOrPause(false)
                 AppLog.d(TAG, "[$controllerId] ⏹️ playSegment selesai")

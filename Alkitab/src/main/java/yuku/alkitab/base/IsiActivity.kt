@@ -31,6 +31,7 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.view.ActionMode
@@ -40,6 +41,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.ShareCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
+import androidx.core.graphics.toColorInt
 import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.core.text.buildSpannedString
@@ -59,6 +61,8 @@ import java.util.GregorianCalendar
 import java.util.Locale
 import kotlin.math.roundToLong
 import kotlin.properties.Delegates
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import me.toptas.fancyshowcase.FancyShowCaseView
 import me.toptas.fancyshowcase.listener.DismissListener
 import yuku.afw.storage.Preferences
@@ -1194,7 +1198,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
             getBookName = { activeSplit0.book },
             getVersion = { activeSplit0.version },
             getChapterNumber = { chapter_1 },
-            displayChapter = { book, chapter ->
+            displayChapter = { _, chapter ->
                 display(chapter, 1)
             },
             buildAudioForChapter = {
@@ -1251,20 +1255,31 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
 
         val panelBackForwardList = findViewById<LinearLayout>(R.id.panelBackForwardList)
 
+        isNight = cNightMode.isChecked
+
+        audioBar.post {
+            val audioControls = audioBar.findViewById<RelativeLayout>(R.id.audio_controls)
+            val color = if (isNight) "#121212".toColorInt() else "#455A64".toColorInt()
+            audioControls?.setBackgroundColor(color)
+            Log.d("IsiActivity", "Initial audio_controls color = $color (isNight=$isNight)")
+        }
+
         //audio feature
         bAudio.setOnClickListener {
             checkInternetAndRun {
                 if (!isAudioVisible) {
                     audioPlaybackManager.toggleAudioBar(audioBar, panelBackForwardList)
                     exoplayerController0.setAudioBarVisible(true)
+                    val audioControls = audioBar.findViewById<RelativeLayout>(R.id.audio_controls)
+                    val color = if (cNightMode.isChecked) "#121212".toColorInt() else "#455A64".toColorInt()
+                    audioControls?.setBackgroundColor(color)
                     isAudioVisible = true
                 } else {
                     audioPlaybackManager.hideAudioBar(audioBar, panelBackForwardList)
+                    isAudioVisible = false
                 }
             }
         }
-
-        isNight = cNightMode.isChecked
 
         buttonPlay.setOnClickListener {
             val isSplit = cSplitVersion.isChecked
@@ -1687,21 +1702,28 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
 
         // timing untuk controller1 (jika split aktif)
         if (cSplitVersion.isChecked) {
-            timingUtil1.loadTimingFile(
-                book,
-                chapter.toString(),
-                version1.orEmpty(),
-                onSuccess = {
-                    AppLog.d(TAG, "Timing controller1 berhasil dimuat")
-                    timing1Loaded = true
-                    tryCallOnReady()
-                },
-                onError = {
-                    AppLog.e(TAG, "Timing file gagal dimuat (controller1): $it")
-                    timing1Loaded = true
-                    tryCallOnReady()
-                }
-            )
+            val v1 = version1
+            if (!v1.isNullOrEmpty()) {
+                timingUtil1.loadTimingFile(
+                    book,
+                    chapter.toString(),
+                    v1,
+                    onSuccess = {
+                        AppLog.d(TAG, "Timing controller1 berhasil dimuat")
+                        timing1Loaded = true
+                        tryCallOnReady()
+                    },
+                    onError = {
+                        AppLog.e(TAG, "Timing file gagal dimuat (controller1): $it")
+                        timing1Loaded = true
+                        tryCallOnReady()
+                    }
+                )
+            } else {
+                AppLog.w(TAG, "Split version is active but version1 is null or empty, not loading timing file for controller 1.")
+                timing1Loaded = true
+                tryCallOnReady()
+            }
         }
     }
 
@@ -1712,19 +1734,35 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
     override fun onAudioEnded() {
         AppLog.d(TAG, "onAudioEnded called. isRepeatMode=$isRepeatMode chapter=$chapter_1 book=${activeSplit0.book.shortName}")
 
+        audioPlaybackManager.stopAllAudio()
+
+        timingUtil0.resetHighlight()
+        timingUtil1.resetHighlight()
+        timingUtil0.currentVerseIndex = -1
+        timingUtil1.currentVerseIndex = -1
+
         if (isRepeatMode) {
             AppLog.d(TAG, "Repeat mode ON → Restarting current chapter")
             display(chapter_1, 1)
+            timingUtil0.highlightVerse(1)
+            if (cSplitVersion.isChecked) timingUtil1.highlightVerse(1)
         } else {
             AppLog.d(TAG, "Repeat mode OFF → Moving to next chapter")
+            // Pastikan mulai dari ayat pertama
             audioPlaybackManager.navigateChapter(true, toFirstVerse = true)
+            lifecycleScope.launch {
+                delay(800)
+                timingUtil0.highlightVerse(1)
+                if (cSplitVersion.isChecked) timingUtil1.highlightVerse(1)
+
+                exoplayerController0.playFromVerse(1, timingUtil0.timingList)
+                if (cSplitVersion.isChecked) {
+                    exoplayerController1.playFromVerse(1, timingUtil1.timingList)
+                }
+            }
         }
 
-        timingUtil0.startHighlightingVerses()
-        timingUtil0.highlightVerse(1)
-        if (cSplitVersion.isChecked) {
-            timingUtil1.highlightVerse(1)
-        }
+        AppLog.d(TAG, "onAudioEnded → moved to next or restarted chapter from verse 1")
     }
 
     override fun onHighlightVerse(verseNumber: Int, color: Int) {
@@ -1843,6 +1881,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
     }
 
     fun loadVersion(mv: MVersion) {
+        audioPlaybackManager.stopAllAudio()
+
         try {
             val version = mv.version ?: throw RuntimeException() // caught below
 
@@ -2276,6 +2316,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
     }
 
     private fun bGoto_longClick() {
+        audioPlaybackManager.stopAllAudio()
         if (history.size > 0) {
             MaterialDialog(this).show {
                 withAdapter(HistoryAdapter())
@@ -3255,6 +3296,13 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
 
     override fun cNightMode_checkedChange(isChecked: Boolean) {
         setNightMode(isChecked)
+
+        audioBar.post {
+            val color = if (isChecked) "#121212".toColorInt() else "#455A64".toColorInt()
+            val audioControls = audioBar.findViewById<RelativeLayout>(R.id.audio_controls)
+            audioControls?.setBackgroundColor(color)
+            Log.d("IsiActivity", "Changed audio_controls background to $color (isNight=$isChecked)")
+        }
     }
 
     override fun cSplitVersion_checkedChange(cSplitVersion: SwitchCompat, isChecked: Boolean) {
@@ -3299,7 +3347,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, Exoplaye
         leftDrawer.closeDrawer()
     }
 
-
+    fun getAudioPlaybackManager(): AudioPlaybackManager = audioPlaybackManager
 
     private fun gotoProgressMark(preset_id: Int) {
         val progressMark = S.db.getProgressMarkByPresetId(preset_id) ?: return

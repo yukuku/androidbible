@@ -8,6 +8,7 @@ object BibleMediaManager {
     private const val BASE_URL = "https://media.sabda.org/alkitab_audio"
     private const val SUBDIR_PL = "pl/mp3/cd"
     private const val SUBDIR_PB = "pb/mp3/cd"
+    private const val LAST_OLD_TESTAMENT_BOOK_ID = 38
     val bookAbbrMap: Map<String, String> = mapOf(
         "Kejadian" to "kej",
         "Keluaran" to "kel",
@@ -86,15 +87,25 @@ object BibleMediaManager {
         else -> name
     }
 
+    // == AUDIO VERSION ==
+
+    fun getSpecialAudioVersion(version: String): String{
+        return when (version.uppercase()){
+            "TB" -> "tbsuara"
+            // bisa ditambahkan sesuai kebutuhan
+            else -> version.lowercase()
+        }
+    }
+
     fun buildAudioUrl(book: Book, chapter: Int, version: String): String {
         val bookAbbr = bookAbbrMap[book.shortName] ?: return ""
         val audioVersion = MediaList.AUDIO.find { it.version == version }?.audio1 ?: return ""
 
-        val isPL = book.bookId <= 38 // 0–38 = PL, 39–65 = PB
+        val isPL = book.bookId <= LAST_OLD_TESTAMENT_BOOK_ID // 0–38 = PL, 39–65 = PB
         val subdir = if (isPL) SUBDIR_PL else SUBDIR_PB
         val bookCode = String.format(Locale.US, "%02d", if (isPL) book.bookId + 1 else book.bookId - 38)
         val shortNameClean = getCanonicalShortName(book.shortName)
-        val chapterFormatted = String.format(Locale.US, if (book.shortName == "Mazmur") "%03d" else "%02d", chapter)
+        val chapterFormatted = String.format(Locale.US, if (book.chapter_count >= 100) "%03d" else "%02d", chapter)
 
         return "$BASE_URL/$audioVersion/$subdir/${bookCode}_${shortNameClean.lowercase()}/${bookCode}_${bookAbbr}${chapterFormatted}.mp3"
     }

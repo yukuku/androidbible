@@ -125,6 +125,12 @@ public abstract class LeftDrawer extends NestedScrollView {
 		});
 	}
 
+    void stopAudio() {
+        if (getContext() instanceof IsiActivity) {
+            ((IsiActivity) getContext()).getAudioPlaybackManager().stopAllAudio();
+        }
+    }
+
 	void setDrawerItemSelected(@NonNull TextView drawerItem) {
 		final int selectedTextColor = ResourcesCompat.getColor(getResources(), R.color.accent, getContext().getTheme());
 		drawerItem.setTextColor(selectedTextColor);
@@ -153,10 +159,12 @@ public abstract class LeftDrawer extends NestedScrollView {
 	}
 
 	void bHelp_click() {
+        stopAudio();
 		activity.startActivity(AboutActivity.createIntent());
 	}
 
 	void bSettings_click() {
+        stopAudio();
 		activity.startActivity(SettingsActivity.createIntent());
 	}
 
@@ -167,6 +175,8 @@ public abstract class LeftDrawer extends NestedScrollView {
 	 * and then starts {@link yuku.alkitab.base.ac.ReadingPlanActivity}.
 	 */
 	void bReadingPlan_click() {
+        stopAudio();
+
 		if (getContext() instanceof IsiActivity) {
 			activity.startActivity(ReadingPlanActivity.createIntent());
 		} else {
@@ -185,6 +195,8 @@ public abstract class LeftDrawer extends NestedScrollView {
 	 * and then starts {@link SongViewActivity}.
 	 */
 	void bSongs_click() {
+        stopAudio();
+
 		if (getContext() instanceof IsiActivity) {
 			activity.startActivity(SongViewActivity.createIntent());
 		} else {
@@ -203,7 +215,9 @@ public abstract class LeftDrawer extends NestedScrollView {
 	 * and then starts {@link yuku.alkitab.base.ac.DevotionActivity}.
 	 */
 	void bDevotion_click() {
-		if (getContext() instanceof IsiActivity) {
+        stopAudio();
+
+        if (getContext() instanceof IsiActivity) {
 			activity.startActivity(DevotionActivity.createIntent());
 		} else {
 			final Intent baseIntent = IsiActivity.createIntent();
@@ -339,11 +353,13 @@ public abstract class LeftDrawer extends NestedScrollView {
 			}
 
 			bMarkers.setOnClickListener(v -> {
+                stopAudio();
 				listener.bMarkers_click();
 				closeDrawer();
 			});
 
 			bDisplay.setOnClickListener(v -> {
+                stopAudio();
 				listener.bDisplay_click();
 				closeDrawer();
 			});

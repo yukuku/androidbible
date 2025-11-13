@@ -37,14 +37,13 @@ class AudioPlaybackManager(
     private var dualJob: Job? = null
     private var currentSegmentIndex = -1
     private var isAudioVisible = false
-    private var isRepeatMode = false
 
     // === AUDIO BAR TOGGLE ===
     fun toggleAudioBar(audioBar: View, panelBackForwardList: LinearLayout) {
         isAudioVisible = !isAudioVisible
         audioBar.visibility = if (isAudioVisible) View.VISIBLE else View.GONE
         val params = panelBackForwardList.layoutParams as ViewGroup.MarginLayoutParams
-        params.bottomMargin = if (isAudioVisible) dpToPx(75) else 0
+        params.bottomMargin = if (isAudioVisible) dpToPx(AUDIO_BAR_MARGIN_DP) else 0
         panelBackForwardList.layoutParams = params
     }
 
@@ -63,14 +62,28 @@ class AudioPlaybackManager(
 
     // === STOP & RESET ===
     fun stopAllAudio() {
+        AppLog.d("AudioPlaybackManager", "🔇 stopAllAudio() called")
+
+        // Batalkan job paralel
         dualJob?.cancel()
         dualJob = null
-        controller0.stopSegment()
-        controller1.stopSegment()
-        controller0.playOrPause(false)
-        controller1.playOrPause(false)
-        timing0.resetHighlight()
-        timing1.resetHighlight()
+
+        // Hentikan semua playback di kedua controller
+        try {
+            controller0.stopSegment()
+            controller1.stopSegment()
+
+            controller0.mp.playWhenReady = false
+            controller1.mp.playWhenReady = false
+
+            controller0.reset()
+            controller1.reset()
+
+            timing0.resetHighlight()
+            timing1.resetHighlight()
+        } catch (e: Exception) {
+            AppLog.e("AudioPlaybackManager", "Error stopping audio: ${e.message}")
+        }
     }
 
     // === PLAYBACK: SINGLE MODE ===
@@ -169,6 +182,12 @@ class AudioPlaybackManager(
 
     // === NAVIGASI PASAL ===
     fun navigateChapter(isNext: Boolean, toFirstVerse: Boolean = false, toLastVerse: Boolean = false) {
+        stopAllAudio()
+
+        timing0.resetHighlight()
+        timing1.resetHighlight()
+        currentSegmentIndex = -1
+
         val target = getNextOrPreviousChapter(isNext) ?: return
         val (book, chapter) = target
 
@@ -297,27 +316,8 @@ class AudioPlaybackManager(
         popup.show()
     }
 
-    // === CALLBACK DARI EXOPLAYER ===
-    fun onAudioEnded() {
-        AppLog.d("AudioPlaybackManager", "onAudioEnded called. repeat=$isRepeatMode")
-
-        if (isRepeatMode) {
-            AppLog.d("AudioPlaybackManager", "Repeat ON → restart current chapter")
-            //onNavigatePrevChapter()
-        } else {
-            AppLog.d("AudioPlaybackManager", "Repeat OFF → next chapter")
-            //onNavigateNextChapter()
-        }
-
-        timing0.startHighlightingVerses()
-        timing0.highlightVerse(1)
-        if (isSplitMode()) timing1.highlightVerse(1)
-    }
-
-    // === REPEAT TOGGLE ===
-    fun toggleRepeat(): Boolean {
-        isRepeatMode = !isRepeatMode
-        return isRepeatMode
+    companion object{
+        const val AUDIO_BAR_MARGIN_DP = 75
     }
 
 }

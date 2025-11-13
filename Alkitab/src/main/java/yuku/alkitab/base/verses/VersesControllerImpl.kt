@@ -513,14 +513,14 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
 
         // audio highlight
 
-        view.background = if (highlightColor != 0)
-            if (Preferences.getBoolean(Prefkey.is_night_mode, true)) {
-                ContextCompat.getDrawable(view.context, R.drawable.border_bg_night)
-            } else {
-                ContextCompat.getDrawable(view.context, R.drawable.border_bg)
-            }
-        else
+        val isNight = Preferences.getBoolean(Prefkey.is_night_mode, false)
+
+        view.background = if (highlightColor != 0) {
+            val bgRes = if (isNight) R.drawable.border_bg_night else R.drawable.border_bg
+            ContextCompat.getDrawable(view.context, bgRes)
+        } else {
             null
+        }
 
         val attributeView = view.attributeView
         attributeView.setScale(scaleForAttributeView(S.applied().fontSize2dp * ui.textSizeMult))

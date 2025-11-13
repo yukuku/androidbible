@@ -3,7 +3,6 @@
 	android:id="@+id/audio_bg"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:background="#455A64"
 	android:layout_alignParentBottom="true">
 
 	<!--<ImageButton
@@ -19,6 +18,7 @@
 		android:id="@+id/audio_controls"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:background="#455A64"
 		android:padding="5dp">
 
 		<ImageView

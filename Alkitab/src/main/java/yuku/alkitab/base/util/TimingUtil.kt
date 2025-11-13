@@ -41,8 +41,8 @@ class TimingUtil(
         AppLog.d(TAG, "[$id] loadTimingFile called - bookName: $bookName, chapter: $chapter, version: $version")
 
         timingList = emptyList()
-        val modifiedVersion = if (version == "TB") "tbsuara" else version
-        val url = "https://karaoke.sabda.org/api/timming.php?book=$bookName&chapter=$chapter&version=$modifiedVersion"
+        val version = BibleMediaManager.getSpecialAudioVersion(version)
+        val url = "https://karaoke.sabda.org/api/timming.php?book=$bookName&chapter=$chapter&version=$version"
         AppLog.d(TAG, "[$id] loadTimingFile called - url: $url")
 
         scope.launch(Dispatchers.IO) {
