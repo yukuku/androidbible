@@ -1,9 +1,31 @@
+import groovy.json.JsonSlurper
+
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id "kotlin-parcelize"
     id 'com.google.firebase.crashlytics'
     id 'kotlinx-serialization'
+}
+
+def googleServicesFile = file('google-services.json')
+def googleServicesJson = googleServicesFile.exists() ? new JsonSlurper().parse(googleServicesFile) : null
+
+def resolveFirebaseApiKey = { String applicationId ->
+    if (googleServicesJson == null) return null
+
+    def client = googleServicesJson.client?.find {
+        it.client_info?.android_client_info?.package_name == applicationId
+    }
+    return client?.api_key?.find { it.current_key != null }?.current_key
+}
+
+def hasUsableFirebaseApiKey = { String applicationId ->
+    def apiKey = resolveFirebaseApiKey(applicationId)
+    if (apiKey == null) return false
+
+    def trimmed = apiKey.trim()
+    return !trimmed.isEmpty() && !(trimmed ==~ /0+/)
 }
 
 android {
@@ -31,8 +53,10 @@ android {
     buildTypes {
         debug {
             buildConfigField 'String', 'RIBKA_FUNCTIONS_HOST', "\"$RIBKA_FUNCTIONS_HOST_DEBUG\""
+            buildConfigField 'boolean', 'SKIP_FCM_REGISTRATION', 'true'
         }
         release {
+            buildConfigField 'boolean', 'SKIP_FCM_REGISTRATION', 'false'
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -66,6 +90,22 @@ android {
     // We have to specify the ndk version twice, in here and in the Snappy library
     // https://issuetracker.google.com/issues/353554169
     ndkVersion '28.2.13676358'
+}
+
+android.applicationVariants.all { variant ->
+    if (!variant.buildType.debuggable) {
+        def validateTask = tasks.register("validate${variant.name.capitalize()}FirebaseConfig") {
+            doLast {
+                if (!hasUsableFirebaseApiKey(variant.applicationId)) {
+                    throw new GradleException("Release build '${variant.name}' requires a non-empty Firebase API key in Alkitab/google-services.json for package '${variant.applicationId}'.")
+                }
+            }
+        }
+
+        tasks.named("pre${variant.name.capitalize()}Build").configure {
+            dependsOn validateTask
+        }
+    }
 }
 
 kotlin {
