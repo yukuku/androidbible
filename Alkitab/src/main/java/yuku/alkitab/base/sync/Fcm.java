@@ -1,8 +1,10 @@
 package yuku.alkitab.base.sync;
 
+import android.widget.Toast;
 import androidx.annotation.Nullable;
 import com.google.firebase.installations.FirebaseInstallations;
 import com.google.firebase.installations.InstallationTokenResult;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -10,11 +12,15 @@ import yuku.alkitab.base.storage.NoBackupSharedPreferences;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
+import yuku.alkitab.base.util.Foreground;
+import yuku.alkitab.debug.BuildConfig;
+import yuku.alkitab.debug.R;
 
 public class Fcm {
     static final String TAG = Fcm.class.getSimpleName();
 
     public static final String SENDER_ID = "866757332604";
+    private static final AtomicBoolean debugSkipToastShown = new AtomicBoolean(false);
 
     public interface Listener {
         /**
@@ -31,6 +37,13 @@ public class Fcm {
      */
     @Nullable
     public static String renewFcmRegistrationIdIfNeeded(@Nullable final Listener listener) {
+        if (BuildConfig.SKIP_FCM_REGISTRATION) {
+            AppLog.i(TAG, "Skipping FCM registration for debug build.");
+            clearStoredRegistrationId();
+            maybeShowDebugSkipToast();
+            return null;
+        }
+
         final String registrationId = getStoredRegistrationId();
 
         if (registrationId != null) {
@@ -73,6 +86,20 @@ public class Fcm {
     private static String readFcmRegistrationId() {
         final NoBackupSharedPreferences nbsp = NoBackupSharedPreferences.get();
         return nbsp.getString(Prefkey.fcm_registration_id.name());
+    }
+
+    private static void clearStoredRegistrationId() {
+        final NoBackupSharedPreferences nbsp = NoBackupSharedPreferences.get();
+        nbsp.setString(Prefkey.fcm_registration_id.name(), null);
+        Preferences.setInt(Prefkey.fcm_last_app_version_code, 0);
+    }
+
+    private static void maybeShowDebugSkipToast() {
+        if (!debugSkipToastShown.compareAndSet(false, true)) return;
+
+        Foreground.run(() ->
+            Toast.makeText(App.context, R.string.fcm_registration_skipped_debug, Toast.LENGTH_SHORT).show()
+        );
     }
 
     private static void registerInBackground() {

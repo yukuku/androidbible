@@ -33,10 +33,34 @@ Bible for Android is not only open-source, but also designed in a flexible manne
 
 See the <a href="https://alkitab.app/developer">Developer page</a> for more information.
 
+Building
+--------
+
+The main app module is `:Alkitab`. For local development, the supported open-source build is the `plain` flavor.
+
+Build a debug APK:
+
+    ./gradlew assemblePlainDebug
+
+Build a debug App Bundle:
+
+    ./gradlew bundlePlainDebug
+
+Run the unit tests used in CI:
+
+    ./gradlew testPlainDebugUnitTest testPlainReleaseUnitTest
+
+Notes
+-----
+
+- The repository already contains placeholder data in `Alkitab/src/main/assets/internal`, so the open-source `plainDebug` build works out of the box once the Android SDK and NDK are installed.
+- Release packaging uses `ybuild.sh`, which expects signing environment variables and `ALKITAB_PROPRIETARY_DIR` for proprietary overlay resources. That path is intended for project maintainers and is not required for the normal open-source debug build.
+- Product flavors currently include `plain`, `yuku_alkitab`, `yuku_quick_bible`, and `sabda_alkitab`.
+
 License
 --------
 
-    Copyright 2009-present The Alkitab Authors.
+    Copyright 2009-present The Alkitab App Authors.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -50,3 +74,6 @@ License
     See the License for the specific language governing permissions and
     limitations under the License.
 
+---
+
+This project is tested with BrowserStack.
