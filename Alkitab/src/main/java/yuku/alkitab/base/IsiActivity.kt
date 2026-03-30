@@ -2693,7 +2693,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                                     val uri = if (url.startsWith("http:") || url.startsWith("https:")) {
                                         url.toUri()
                                     } else {
-                                        "http://$url".toUri()
+                                        "https://$url".toUri()
                                     }
                                     try {
                                         startActivity(Intent(Intent.ACTION_VIEW, uri))
