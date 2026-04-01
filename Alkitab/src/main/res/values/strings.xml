@@ -578,6 +578,7 @@
 	<string name="audio_next_verse">Next verse</string>
 	<string name="audio_repeat">Repeat chapter</string>
 	<string name="audio_speed">Playback speed</string>
+	<string name="audio_speed_normal">1.0× (normal)</string>
 	<string name="audio_not_available_for_version">Audio is not available for this Bible version</string>
 
 </resources>

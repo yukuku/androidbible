@@ -444,7 +444,9 @@ class VersesControllerImpl(
             val pos = versesDataModel.getPositionIgnoringPericopeFromVerse(verse_1)
             if (pos != -1) {
                 adapter.notifyItemChanged(pos)
-                scrollToVerse(verse_1)
+                val first = layoutManager.findFirstVisibleItemPosition()
+                val last = layoutManager.findLastVisibleItemPosition()
+                if (pos < first || pos > last) scrollToVerse(verse_1)
             }
         }
     }

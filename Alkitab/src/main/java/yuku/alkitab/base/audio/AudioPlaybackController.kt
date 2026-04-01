@@ -17,6 +17,8 @@ import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.BibleAudioRepository
 import yuku.alkitab.debug.R
 
+private val SPEEDS = listOf(0.5f, 0.8f, 1.0f, 1.1f, 1.25f, 1.5f, 1.75f, 2.0f)
+
 private const val TAG = "AudioPlaybackController"
 private const val HIGHLIGHT_POLL_MS = 100L
 
@@ -145,6 +147,9 @@ class AudioPlaybackController(
     /**
      * Seek to the start of [verse_1] in the current timing data (if available).
      * Falls back to a no-op if timing has not yet been loaded.
+     *
+     * In dual mode the playback loop is restarted from the target verse so that
+     * the sequential verse-by-verse iteration stays in sync with the seek.
      */
     fun navigateVerse(isNext: Boolean) {
         val timing = timing0
@@ -158,6 +163,12 @@ class AudioPlaybackController(
         if (isDual) {
             val entry1 = timing1.find { it.verseNumber == targetVerse }
             if (entry1 != null) player1?.seekTo(entry1.startMs)
+            // Restart the dual-mode loop from the target verse so it stays in sync.
+            if (isPlaying) {
+                highlightedVerse0 = targetVerse
+                playbackJob?.cancel()
+                playbackJob = lifecycleScope.launch { runDualModePlayback(startVerse = targetVerse) }
+            }
         }
         AppLog.d(TAG, "navigateVerse target=$targetVerse")
     }
@@ -203,7 +214,7 @@ class AudioPlaybackController(
             if (isDual) player1?.pause() // player1 starts muted; dual mode drives it manually
 
             if (isDual) {
-                runDualModePlayback()
+                runDualModePlayback(startVerse = highlightedVerse0.coerceAtLeast(1))
             } else {
                 runSingleModeHighlighting()
             }
@@ -243,13 +254,16 @@ class AudioPlaybackController(
     /**
      * Dual mode: interleave playback verse-by-verse between player0 and player1.
      * For each verse: play it in player0 until the verse end time, then in player1.
+     *
+     * @param startVerse first verse to play; earlier verses are skipped (used after a seek)
      */
-    private suspend fun runDualModePlayback() {
+    private suspend fun runDualModePlayback(startVerse: Int = 1) {
         val allVerses = (timing0.map { it.verseNumber } + timing1.map { it.verseNumber })
             .distinct()
             .sorted()
 
         for (verse in allVerses) {
+            if (verse < startVerse) continue
             if (!isActive) break
 
             // Play verse in player0
@@ -308,14 +322,13 @@ class AudioPlaybackController(
     }
 
     private fun showSpeedMenu(anchor: View) {
-        val speeds = listOf(0.5f, 0.8f, 1.0f, 1.1f, 1.25f, 1.5f, 1.75f, 2.0f)
         val popup = PopupMenu(context, anchor)
-        speeds.forEachIndexed { index, s ->
-            val label = if (s == 1.0f) "1.0× (normal)" else "${s}×"
+        SPEEDS.forEachIndexed { index, s ->
+            val label = if (s == 1.0f) context.getString(R.string.audio_speed_normal) else "${s}×"
             popup.menu.add(0, index, index, label)
         }
         popup.setOnMenuItemClickListener { item: MenuItem ->
-            setSpeed(speeds[item.itemId])
+            setSpeed(SPEEDS[item.itemId])
             true
         }
         popup.show()

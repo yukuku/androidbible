@@ -245,7 +245,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     private lateinit var overlayContainer: FrameLayout
     lateinit var root: ViewGroup
     lateinit var toolbar: Toolbar
-    private lateinit var nontoolbar: View
+    private lateinit var nontoolbar: FrameLayout
     lateinit var lsSplit0: VersesController
     lateinit var lsSplit1: VersesController
     lateinit var splitRoot: TwofingerLinearLayout
@@ -2925,9 +2925,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
 
         val ctrl = audioController ?: run {
-            val nontoolbarFrame = nontoolbar as FrameLayout
-            val audioBar = layoutInflater.inflate(R.layout.activity_audio, nontoolbarFrame, false)
-            nontoolbarFrame.addView(audioBar)
+            val audioBar = layoutInflater.inflate(R.layout.activity_audio, nontoolbar, false)
+            nontoolbar.addView(audioBar)
 
             val controller = AudioPlaybackController(
                 context = this,
@@ -2956,7 +2955,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         val ctrl = audioController ?: return
         ctrl.audioBar.isVisible = false
         ctrl.release()
-        (nontoolbar as FrameLayout).removeView(ctrl.audioBar)
+        nontoolbar.removeView(ctrl.audioBar)
         audioController = null
         lsSplit0.setAudioHighlight(0)
         lsSplit1.setAudioHighlight(0)
@@ -2964,8 +2963,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     }
 
     private fun adjustBackForwardListForAudioBar(visible: Boolean) {
-        val extraDp = if (visible) 64 else 0
-        val extraPx = (extraDp * resources.displayMetrics.density).toInt()
+        val extraPx = if (visible) resources.getDimensionPixelSize(R.dimen.audio_bar_height) else 0
         val basePx = (8 * resources.displayMetrics.density).toInt()
         panelBackForwardList.updateLayoutParams<FrameLayout.LayoutParams> {
             bottomMargin = basePx + extraPx
