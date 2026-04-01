@@ -102,5 +102,11 @@ interface VersesController {
 
     fun callAttentionForVerse(verse_1: Int)
 
+    /**
+     * Highlight a verse to indicate the currently-playing audio position.
+     * Pass [verse_1] = 0 to clear any existing highlight.
+     */
+    fun setAudioHighlight(verse_1: Int)
+
     fun setEmptyMessage(message: CharSequence?, textColor: Int)
 }

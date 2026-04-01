@@ -52,6 +52,12 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
         ResourcesCompat.getDrawable(resources, R.drawable.item_verse_bg_draghovered, context.theme) as Drawable
     }
 
+    var audioHighlighted = false
+        set(value) {
+            field = value
+            invalidate()
+        }
+
     private val checkedPaintSolid by lazy(LazyThreadSafetyMode.NONE) {
         Paint().apply {
             style = Paint.Style.FILL
@@ -60,6 +66,12 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
     private val attentionPaint by lazy(LazyThreadSafetyMode.NONE) {
         Paint().apply {
             style = Paint.Style.FILL
+        }
+    }
+    private val audioHighlightPaint by lazy(LazyThreadSafetyMode.NONE) {
+        Paint().apply {
+            style = Paint.Style.FILL
+            color = 0x33_4FC3F7.toInt() // semi-transparent light-blue
         }
     }
 
@@ -127,6 +139,10 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
     override fun onDraw(canvas: Canvas) {
         val w = width
         val h = height
+
+        if (audioHighlighted) {
+            canvas.drawRect(0f, 0f, w.toFloat(), h.toFloat(), audioHighlightPaint)
+        }
 
         if (checked) {
             val solid = checkedPaintSolid

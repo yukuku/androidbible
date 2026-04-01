@@ -7,4 +7,10 @@
 		android:icon="@drawable/ic_menu_search"
 		app:showAsAction="always"
 		android:title="@string/search" />
+
+	<item
+		android:id="@+id/menuAudio"
+		android:icon="@drawable/ic_audio_play"
+		app:showAsAction="ifRoom"
+		android:title="@string/audio" />
 </menu>

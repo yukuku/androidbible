@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:layout_gravity="bottom|start"
+    android:elevation="8dp"
+    android:background="#455A64"
+    android:gravity="center_vertical">
+
+    <ImageButton
+        android:id="@+id/button_repeat"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:alpha="0.4"
+        android:background="?selectableItemBackground"
+        android:contentDescription="@string/audio_repeat"
+        android:src="@drawable/ic_audio_repeat"
+        android:tint="#FFFFFF" />
+
+    <ImageButton
+        android:id="@+id/button_prev_chapter"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@id/button_repeat"
+        android:layout_centerVertical="true"
+        android:background="?selectableItemBackground"
+        android:contentDescription="@string/desc_previous_chapter"
+        android:src="@drawable/ic_audio_prev"
+        android:tint="#FFFFFF" />
+
+    <ImageButton
+        android:id="@+id/button_prev_verse"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@id/button_prev_chapter"
+        android:layout_centerVertical="true"
+        android:background="?selectableItemBackground"
+        android:contentDescription="@string/audio_prev_verse"
+        android:src="@drawable/ic_audio_rewind"
+        android:tint="#FFFFFF" />
+
+    <FrameLayout
+        android:id="@+id/audio_play_container"
+        android:layout_width="56dp"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true">
+
+        <ImageButton
+            android:id="@+id/button_play"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?selectableItemBackground"
+            android:contentDescription="@string/audio_play_pause"
+            android:src="@drawable/ic_audio_play"
+            android:tint="#FFFFFF" />
+
+        <ProgressBar
+            android:id="@+id/audio_progress_bar"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateTint="#FFFFFF"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+    <ImageButton
+        android:id="@+id/button_next_verse"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:layout_toStartOf="@id/button_next_chapter"
+        android:layout_centerVertical="true"
+        android:background="?selectableItemBackground"
+        android:contentDescription="@string/audio_next_verse"
+        android:src="@drawable/ic_audio_forward"
+        android:tint="#FFFFFF" />
+
+    <ImageButton
+        android:id="@+id/button_next_chapter"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:layout_toStartOf="@id/button_speed"
+        android:layout_centerVertical="true"
+        android:background="?selectableItemBackground"
+        android:contentDescription="@string/desc_next_chapter"
+        android:src="@drawable/ic_audio_next"
+        android:tint="#FFFFFF" />
+
+    <ImageButton
+        android:id="@+id/button_speed"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:background="?selectableItemBackground"
+        android:contentDescription="@string/audio_speed"
+        android:src="@drawable/ic_audio_speed"
+        android:tint="#FFFFFF" />
+
+</RelativeLayout>

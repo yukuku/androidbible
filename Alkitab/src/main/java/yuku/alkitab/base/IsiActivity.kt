@@ -63,7 +63,10 @@ import yuku.alkitab.base.ac.MarkerListActivity
 import yuku.alkitab.base.ac.MarkersActivity
 import yuku.alkitab.base.ac.NoteActivity
 import yuku.alkitab.base.ac.SearchActivity
+import androidx.lifecycle.lifecycleScope
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity
+import yuku.alkitab.base.audio.AudioPlaybackController
+import yuku.alkitab.base.util.BibleAudioRepository
 import yuku.alkitab.base.config.AppConfig
 import yuku.alkitab.base.dialog.ProgressMarkListDialog
 import yuku.alkitab.base.dialog.ProgressMarkRenameDialog
@@ -254,6 +257,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     lateinit var floater: Floater
     private lateinit var backForwardListController: BackForwardListController<ImageButton, ImageButton>
     private var fullscreenReferenceToast: Toast? = null
+
+    // Audio playback
+    private var audioController: AudioPlaybackController? = null
+    private lateinit var panelBackForwardList: View
 
     private var dataSplit0 = VersesDataModel.EMPTY
         set(value) {
@@ -1107,6 +1114,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         }
 
         nontoolbar = findViewById(R.id.nontoolbar)
+        panelBackForwardList = findViewById(R.id.panelBackForwardList)
 
         bGoto = findViewById(R.id.bGoto)
         bLeft = findViewById(R.id.bLeft)
@@ -1338,6 +1346,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
     override fun onDestroy() {
         super.onDestroy()
+
+        audioController?.release()
+        audioController = null
 
         App.getLbm().unregisterReceiver(reloadAttributeMapReceiver)
 
@@ -1964,6 +1975,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 menuSearch_click()
                 return true
             }
+
+            R.id.menuAudio -> {
+                toggleAudioBar()
+                return true
+            }
         }
 
         return super.onOptionsItemSelected(item)
@@ -2290,6 +2306,17 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
 
         if (dictionaryMode) {
             finishDictionaryMode()
+        }
+
+        // Reload audio for the new chapter if the audio bar is active.
+        audioController?.let { ctrl ->
+            val spec0 = BibleAudioRepository.findAudio(activeSplit0.versionId)
+            if (spec0 != null) {
+                val spec1 = activeSplit1?.let { s1 ->
+                    BibleAudioRepository.findAudio(s1.versionId)
+                }
+                ctrl.loadChapter(activeSplit0.book.bookId, available_chapter_1, spec0, spec1)
+            }
         }
 
         return Ari.encode(0, available_chapter_1, available_verse_1)
@@ -2874,6 +2901,74 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 message(R.string.pm_activate_tutorial)
                 positiveButton(R.string.ok)
             }
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // Audio bar
+    // -----------------------------------------------------------------------
+
+    private fun toggleAudioBar() {
+        val ctrl = audioController
+        if (ctrl != null && ctrl.audioBar.isVisible) {
+            closeAudioBar()
+        } else {
+            openAudioBar()
+        }
+    }
+
+    private fun openAudioBar() {
+        val spec0 = BibleAudioRepository.findAudio(activeSplit0.versionId)
+        if (spec0 == null) {
+            Toast.makeText(this, R.string.audio_not_available_for_version, Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val ctrl = audioController ?: run {
+            val nontoolbarFrame = nontoolbar as FrameLayout
+            val audioBar = layoutInflater.inflate(R.layout.activity_audio, nontoolbarFrame, false)
+            nontoolbarFrame.addView(audioBar)
+
+            val controller = AudioPlaybackController(
+                context = this,
+                lifecycleScope = lifecycleScope,
+                audioBar = audioBar,
+                onVerseHighlight0 = { verse_1 -> lsSplit0.setAudioHighlight(verse_1) },
+                onVerseHighlight1 = { verse_1 -> lsSplit1.setAudioHighlight(verse_1) },
+                onChapterNavigationRequested = { isNext ->
+                    if (isNext) bRight_click() else bLeft_click()
+                },
+            )
+            audioController = controller
+            controller
+        }
+
+        ctrl.audioBar.isVisible = true
+        adjustBackForwardListForAudioBar(visible = true)
+
+        val spec1 = activeSplit1?.let { s1 ->
+            BibleAudioRepository.findAudio(s1.versionId)
+        }
+        ctrl.loadChapter(activeSplit0.book.bookId, chapter_1, spec0, spec1)
+    }
+
+    private fun closeAudioBar() {
+        val ctrl = audioController ?: return
+        ctrl.audioBar.isVisible = false
+        ctrl.release()
+        (nontoolbar as FrameLayout).removeView(ctrl.audioBar)
+        audioController = null
+        lsSplit0.setAudioHighlight(0)
+        lsSplit1.setAudioHighlight(0)
+        adjustBackForwardListForAudioBar(visible = false)
+    }
+
+    private fun adjustBackForwardListForAudioBar(visible: Boolean) {
+        val extraDp = if (visible) 64 else 0
+        val extraPx = (extraDp * resources.displayMetrics.density).toInt()
+        val basePx = (8 * resources.displayMetrics.density).toInt()
+        panelBackForwardList.updateLayoutParams<FrameLayout.LayoutParams> {
+            bottomMargin = basePx + extraPx
         }
     }
 

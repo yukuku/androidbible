@@ -431,6 +431,24 @@ class VersesControllerImpl(
         layoutManager.findViewByPosition(pos)?.invalidate()
     }
 
+    override fun setAudioHighlight(verse_1: Int) {
+        val old = adapter.audioHighlightedVerse_1
+        if (old == verse_1) return
+        adapter.audioHighlightedVerse_1 = verse_1
+
+        if (old != 0) {
+            val pos = versesDataModel.getPositionIgnoringPericopeFromVerse(old)
+            if (pos != -1) adapter.notifyItemChanged(pos)
+        }
+        if (verse_1 != 0) {
+            val pos = versesDataModel.getPositionIgnoringPericopeFromVerse(verse_1)
+            if (pos != -1) {
+                adapter.notifyItemChanged(pos)
+                scrollToVerse(verse_1)
+            }
+        }
+    }
+
     override fun setEmptyMessage(message: CharSequence?, textColor: Int) {
         rv.emptyMessage = message
         rv.emptyMessagePaint.color = textColor
@@ -470,6 +488,7 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         checked: Boolean,
         toggleChecked: (position: Int) -> Unit,
         index: Int,
+        audioHighlighted: Boolean = false,
     ) {
         val verse_1 = index + 1
         val ari = Ari.encodeWithBc(data.ari_bc_, verse_1)
@@ -570,6 +589,8 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
 // 					Log.d(TAG, "Span " + span.getClass().getSimpleName() + " " + start + ".." + end + ": " + sb.toString().substring(start, end));
 // 				}
 // 			}
+
+        view.audioHighlighted = audioHighlighted
 
         // Do we need to call attention?
         if (attention.hasAny() && verse_1 in attention.verses_1) {
@@ -709,6 +730,9 @@ class VersesAdapter(
         setHasStableIds(true)
     }
 
+    /** 1-based verse number currently highlighted for audio playback; 0 = none. */
+    var audioHighlightedVerse_1: Int = 0
+
     var data = VersesDataModel.EMPTY
         set(value) {
             field = value
@@ -774,7 +798,8 @@ class VersesAdapter(
         when (holder) {
             is VerseTextHolder -> {
                 val index = data.getVerse_0(position)
-                holder.bind(data, ui, listeners, attention, isChecked(position), { toggleChecked(it) }, index)
+                val audioHighlighted = audioHighlightedVerse_1 != 0 && (index + 1) == audioHighlightedVerse_1
+                holder.bind(data, ui, listeners, attention, isChecked(position), { toggleChecked(it) }, index, audioHighlighted)
             }
 
             is PericopeHolder -> {
