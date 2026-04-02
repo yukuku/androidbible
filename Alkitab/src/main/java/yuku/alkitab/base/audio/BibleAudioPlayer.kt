@@ -38,6 +38,29 @@ class BibleAudioPlayer(appContext: Context) {
 
     var listener: Listener? = null
 
+    private val playerListener = object : Player.Listener {
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            when (playbackState) {
+                Player.STATE_READY -> {
+                    AppLog.d(TAG, "STATE_READY")
+                    listener?.onReady()
+                }
+
+                Player.STATE_ENDED -> {
+                    AppLog.d(TAG, "STATE_ENDED")
+                    listener?.onEnded()
+                }
+
+                else -> {}
+            }
+        }
+
+        override fun onPlayerError(error: PlaybackException) {
+            AppLog.e(TAG, "onPlayerError: $error")
+            listener?.onError(error.message ?: error.javaClass.simpleName)
+        }
+    }
+
     private val player: ExoPlayer = run {
         val audioOnlyFactory = RenderersFactory { handler, _, audioListener, _, _ ->
             arrayOf<Renderer>(
@@ -93,26 +116,5 @@ class BibleAudioPlayer(appContext: Context) {
     @MainThread
     fun release() {
         player.release()
-    }
-
-    private val playerListener = object : Player.Listener {
-        override fun onPlaybackStateChanged(playbackState: Int) {
-            when (playbackState) {
-                Player.STATE_READY -> {
-                    AppLog.d(TAG, "STATE_READY")
-                    listener?.onReady()
-                }
-                Player.STATE_ENDED -> {
-                    AppLog.d(TAG, "STATE_ENDED")
-                    listener?.onEnded()
-                }
-                else -> {}
-            }
-        }
-
-        override fun onPlayerError(error: PlaybackException) {
-            AppLog.e(TAG, "onPlayerError: $error")
-            listener?.onError(error.message ?: error.javaClass.simpleName)
-        }
     }
 }

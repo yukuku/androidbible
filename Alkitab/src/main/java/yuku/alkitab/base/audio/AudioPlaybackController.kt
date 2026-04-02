@@ -8,6 +8,7 @@ import android.widget.PopupMenu
 import android.widget.ProgressBar
 import androidx.lifecycle.LifecycleCoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -16,6 +17,7 @@ import yuku.alkitab.base.model.MTiming
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.BibleAudioRepository
 import yuku.alkitab.debug.R
+import yuku.alkitab.model.Book
 
 private val SPEEDS = listOf(0.5f, 0.8f, 1.0f, 1.1f, 1.25f, 1.5f, 1.75f, 2.0f)
 
@@ -101,7 +103,7 @@ class AudioPlaybackController(
      * Timing data is fetched lazily when the user presses play.
      */
     fun loadChapter(
-        bookId: Int,
+        book: Book,
         chapter_1: Int,
         spec0: MAudio,
         spec1: MAudio? = null,
@@ -109,7 +111,7 @@ class AudioPlaybackController(
         stopPlayback()
         clearHighlights()
 
-        this.bookId = bookId
+        this.bookId = book.bookId
         this.chapter_1 = chapter_1
         this.audioSpec0 = spec0
         this.audioSpec1 = spec1
@@ -118,7 +120,7 @@ class AudioPlaybackController(
         this.timing1 = emptyList()
 
         // Pre-load audio players with the URL so buffering can start.
-        val url0 = BibleAudioRepository.buildUrl(bookId, chapter_1, spec0.audioFolder)
+        val url0 = BibleAudioRepository.buildUrl(book, chapter_1, spec0.audioFolder)
         if (url0 != null) {
             ensurePlayer0().load(url0)
         } else {
@@ -126,7 +128,7 @@ class AudioPlaybackController(
         }
 
         if (spec1 != null) {
-            val url1 = BibleAudioRepository.buildUrl(bookId, chapter_1, spec1.audioFolder)
+            val url1 = BibleAudioRepository.buildUrl(book, chapter_1, spec1.audioFolder)
             if (url1 != null) {
                 ensurePlayer1().load(url1)
             }
@@ -240,7 +242,7 @@ class AudioPlaybackController(
      * Single mode: poll player0's position and update verse highlight every [HIGHLIGHT_POLL_MS].
      */
     private suspend fun runSingleModeHighlighting() {
-        while (isActive) {
+        while (currentCoroutineContext().isActive) {
             val pos = player0?.currentPositionMs ?: break
             val verse = timing0.findVerseAt(pos)
             if (verse != null && verse != highlightedVerse0) {
@@ -264,7 +266,7 @@ class AudioPlaybackController(
 
         for (verse in allVerses) {
             if (verse < startVerse) continue
-            if (!isActive) break
+            if (!currentCoroutineContext().isActive) break
 
             // Play verse in player0
             val t0 = timing0.find { it.verseNumber == verse }
@@ -275,7 +277,7 @@ class AudioPlaybackController(
                 highlightedVerse0 = verse
                 onVerseHighlight0(verse)
 
-                while (isActive) {
+                while (currentCoroutineContext().isActive) {
                     val pos = player0?.currentPositionMs ?: break
                     if (pos >= t0.endMs) break
                     delay(HIGHLIGHT_POLL_MS)
@@ -283,7 +285,7 @@ class AudioPlaybackController(
                 player0?.pause()
             }
 
-            if (!isActive) break
+            if (!currentCoroutineContext().isActive) break
 
             // Play verse in player1
             val t1 = timing1.find { it.verseNumber == verse }
@@ -293,7 +295,7 @@ class AudioPlaybackController(
                 highlightedVerse1 = verse
                 onVerseHighlight1(verse)
 
-                while (isActive) {
+                while (currentCoroutineContext().isActive) {
                     val pos = player1?.currentPositionMs ?: break
                     if (pos >= t1.endMs) break
                     delay(HIGHLIGHT_POLL_MS)
@@ -303,7 +305,7 @@ class AudioPlaybackController(
         }
 
         // Chapter ended
-        if (isActive) {
+        if (currentCoroutineContext().isActive) {
             isPlaying = false
             updatePlayButton()
             if (repeat) {

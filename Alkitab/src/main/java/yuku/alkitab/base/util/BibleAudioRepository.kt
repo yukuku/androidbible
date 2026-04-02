@@ -5,6 +5,7 @@ import kotlinx.coroutines.withContext
 import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.model.MAudio
 import yuku.alkitab.base.model.MTiming
+import yuku.alkitab.model.Book
 
 private const val TAG = "BibleAudioRepository"
 
@@ -22,28 +23,31 @@ object BibleAudioRepository {
 
     /** Bible versions that have audio available on the SABDA media server. */
     val SUPPORTED: List<MAudio> = listOf(
-        MAudio(versionId = "TB", audioFolder = "tb_alkitabsuara", supportsDual = true),
-        MAudio(versionId = "AYT", audioFolder = "ayt-ai-v2"),
-        MAudio(versionId = "AVB", audioFolder = "avb"),
-        MAudio(versionId = "KJV", audioFolder = "kjv"),
+        MAudio(versionId = "preset/in-tb", timingVersionParam = "tbsuara", audioFolder = "tb_alkitabsuara", supportsDual = true),
+        MAudio(versionId = "preset/in-ayt", timingVersionParam = "ayt", audioFolder = "ayt-ai-v2"),
+        MAudio(versionId = "preset/in-avb", timingVersionParam = "avb", audioFolder = "avb"),
+        MAudio(versionId = "preset/en-kjv", timingVersionParam = "kjv", audioFolder = "kjv"),
     )
 
     /** Returns the [MAudio] for [versionId], or null if this version has no audio. */
-    fun findAudio(versionId: String): MAudio? = SUPPORTED.find { it.versionId == versionId }
+    fun findAudio(versionId: String): MAudio? {
+        return SUPPORTED.find { it.versionId == versionId }
+    }
 
     /**
      * Builds the MP3 URL for a chapter.
      *
-     * @param bookId  0-based book index (0 = Genesis … 65 = Revelation)
+     * @param book  book
      * @param chapter_1  1-based chapter number
      * @param audioFolder  the [MAudio.audioFolder] value for the target version
-     * @return the fully-formed URL, or null when [bookId] is out of range
+     * @return the fully-formed URL, or null when [book] is out of range
      */
-    fun buildUrl(bookId: Int, chapter_1: Int, audioFolder: String): String? {
+    fun buildUrl(book: Book, chapter_1: Int, audioFolder: String): String? {
+        val bookId = book.bookId
         val info = BOOK_INFO.getOrNull(bookId) ?: return null
         val bookCode = (bookId + 1).toString().padStart(2, '0')
         val subdir = if (bookId < 39) "pl/mp3/cd" else "pb/mp3/cd"
-        val chapter = chapter_1.toString().padStart(3, '0')
+        val chapter = chapter_1.toString().padStart(if (book.chapter_count >= 100) 3 else 2, '0')
         return "$AUDIO_BASE/$audioFolder/$subdir/${bookCode}_${info.folderName}/${bookCode}_${info.abbr}$chapter.mp3"
     }
 
@@ -62,7 +66,7 @@ object BibleAudioRepository {
                 ).execute()
                 response.use { r ->
                     if (!r.isSuccessful) return@withContext emptyList()
-                    val body = r.body?.string() ?: return@withContext emptyList()
+                    val body = r.body.string()
                     MTiming.parseList(body)
                 }
             } catch (e: Exception) {

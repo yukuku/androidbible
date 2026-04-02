@@ -2315,7 +2315,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 val spec1 = activeSplit1?.let { s1 ->
                     BibleAudioRepository.findAudio(s1.versionId)
                 }
-                ctrl.loadChapter(activeSplit0.book.bookId, available_chapter_1, spec0, spec1)
+                ctrl.loadChapter(activeSplit0.book, available_chapter_1, spec0, spec1)
             }
         }
 
@@ -2948,7 +2948,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
         val spec1 = activeSplit1?.let { s1 ->
             BibleAudioRepository.findAudio(s1.versionId)
         }
-        ctrl.loadChapter(activeSplit0.book.bookId, chapter_1, spec0, spec1)
+        ctrl.loadChapter(activeSplit0.book, chapter_1, spec0, spec1)
     }
 
     private fun closeAudioBar() {
