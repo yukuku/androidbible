@@ -40,7 +40,7 @@ This document provides a prioritized remediation plan for each tech debt item id
 **Module:** Afw  
 **BRICE:** B=3 R=4 I=5 C=5 E=4 → **4.2**
 
-**Current state:** `Preferences.java` uses a manual `hold()/unhold()` counter. If any code path throws between `hold()` and `unhold()`, preference writes buffer indefinitely.
+**Current state:** `Preferences.java` (lines 235-250) uses a manual `hold()/unhold()` counter with a `held` field (line 19). If any code path throws between `hold()` and `unhold()`, preference writes buffer indefinitely. Note: all 6 existing call sites already wrap in try/finally (`CurrentReading.java`, `DailyVerseData.java`, `SyncSettingsActivity.java`, `IsiActivity.kt`, `InternalDbHelper.java`, `SecretSyncDebugActivity.kt`), but the pattern is error-prone for future callers.
 
 **Steps:**
 1. Add a `Preferences.withTransaction(block: () -> Unit)` Kotlin extension that wraps `hold()/unhold()` in try/finally:
@@ -50,7 +50,7 @@ This document provides a prioritized remediation plan for each tech debt item id
        try { block() } finally { Preferences.unhold() }
    }
    ```
-2. Grep for all `hold()`/`unhold()` pairs and migrate to `withTransaction`
+2. Migrate all 6 existing `hold()`/`unhold()` pairs to `withTransaction`
 3. Add a safety timeout in `hold()` — if held for >10 seconds, auto-commit and log a warning
 
 **Difficulty:** Easy (2-3 hours).
@@ -59,10 +59,10 @@ This document provides a prioritized remediation plan for each tech debt item id
 
 ### REM-03: Replace LocalBroadcastManager
 **Addresses:** TD-03 (LocalBroadcastManager)  
-**Module:** Cross-cutting (15+ files)  
-**BRICE:** B=3 R=3 I=4 C=4 E=5 → **3.8** (rounded up due to deprecation urgency)
+**Module:** Cross-cutting (21 files)  
+**BRICE:** B=3 R=3 I=3 C=4 E=5 → **3.8** (rounded up due to deprecation urgency)
 
-**Current state:** `LocalBroadcastManager` is deprecated since AndroidX 1.1.0. Used in DevotionDownloader, DevotionActivity, MarkersActivity, ReadingPlanActivity, and ~12 other files via `App.getLbm()`.
+**Current state:** `LocalBroadcastManager` is deprecated since AndroidX 1.1.0. Used in 21 files via `App.getLbm()` (defined in `App.java:85-87`), including DevotionDownloader, DevotionActivity, MarkersActivity, ReadingPlanActivity, IsiActivity, MarkerListActivity, SyncAdapter, SyncSettingsActivity, VersionListFragment, VersionsActivity, DisplayFragment, DataTransferFragment, DownloadMapper, CurrentReading, LeftDrawer, LabeledSplitHandleButton, VersionDownloadCompleteReceiver, VersionConfigUpdaterService, DailyVerseAppWidgetConfigurationActivity, ProgressMarkRenameDialog, and SecretSyncDebugActivity.
 
 **Steps — by usage pattern:**
 
@@ -83,7 +83,7 @@ This document provides a prioritized remediation plan for each tech debt item id
 
 **Step 3d: Remove `App.getLbm()` and `LocalBroadcastManager` dependency**
 
-**Difficulty:** Medium (1-2 days total, can be done incrementally by event type).
+**Difficulty:** Medium-Hard (2-3 days total — 21 files affected, can be done incrementally by event type).
 
 ---
 
@@ -92,10 +92,10 @@ This document provides a prioritized remediation plan for each tech debt item id
 **Module:** Sync  
 **BRICE:** B=4 R=4 I=5 C=4 E=4 → **4.2**
 
-**Current state:** `Sync.sendFcmRegistrationId()` (lines 306-337) silently logs failures. Failed registration means the device never receives sync push notifications again.
+**Current state:** `Sync.sendFcmRegistrationId()` (lines 299-338 in `Sync.java`) logs failures at DEBUG level via `AppLog.d()` and `SyncRecorder.log()` but has no retry mechanism. `FcmMessagingService.kt` calls `Sync.notifyNewFcmRegistrationId(token)` from `onNewToken()` (line 28), which delegates to `sendFcmRegistrationId()` via `Background.run()`. If the HTTP call fails, the device stops receiving sync push notifications with no recovery path.
 
 **Steps:**
-1. In `Sync.sendFcmRegistrationId()`, on failure, store a `Prefkey.fcm_registration_pending` flag
+1. In `Sync.notifyNewFcmRegistrationId()` / `sendFcmRegistrationId()`, on failure, store a `Prefkey.fcm_registration_pending` flag (note: this key does not exist yet — add it to `Prefkey.kt`)
 2. On app launch (`App.staticInit()`), check flag and retry registration
 3. Add exponential backoff: retry after 1min, 5min, 30min, then once per app launch
 4. Log registration failures at WARN level instead of DEBUG
@@ -131,7 +131,7 @@ This document provides a prioritized remediation plan for each tech debt item id
 
 **Steps:**
 1. Create `ReaderGestureHandler.kt` implementing `TwofingerLinearLayout.Listener`
-2. Move lines 143-370 from `IsiActivity.kt` into `ReaderGestureHandler`
+2. Move the `splitRoot_listener` object (lines 163-237 in `IsiActivity.kt`) and the `bGoto_floaterDrag` / `floater_listener` callbacks (lines 140-161) into `ReaderGestureHandler` (~98 lines of gesture code total)
 3. Pass required callbacks as constructor parameters: `onChapterChange`, `onFontSizeChange`, `onFullscreenToggle`
 4. In `IsiActivity`, instantiate `ReaderGestureHandler` and delegate the listener interface
 
@@ -146,7 +146,7 @@ This document provides a prioritized remediation plan for each tech debt item id
 
 **Steps:**
 1. Create `VerseActionModeController.kt` implementing `ActionMode.Callback`
-2. Move lines 530-1014 from `IsiActivity.kt` into this new class
+2. Move the `actionMode_callback` object (lines 524-1023 in `IsiActivity.kt`, ~500 lines) into this new class — includes `onCreateActionMode`, `onPrepareActionMode`, `onActionItemClicked`, `appendSplitTextForCopyShare`, and `onDestroyActionMode`
 3. Define a `VerseActionModeCallback` interface for actions that need Activity context (navigate, share, etc.)
 4. Inject dependencies: `selectedVerses`, `activeVersion`, `ClipboardManager`
 5. Handle extension menu items via delegate pattern
@@ -161,7 +161,7 @@ This document provides a prioritized remediation plan for each tech debt item id
 **BRICE:** B=3 R=2 I=3 C=4 E=4 → **3.2**
 
 **Steps:**
-1. Create `SplitViewManager.kt` containing `openSplitDisplay()`, `closeSplitDisplay()`, `displaySplitFollowingMaster()`, `loadSplitVersion()`
+1. Create `SplitViewManager.kt` containing `openSplitDisplay()` (line 2108), `closeSplitDisplay()` (line 2168), `displaySplitFollowingMaster()` (line 2365), `loadSplitVersion()` (line 1458) — currently scattered across `IsiActivity.kt`
 2. Encapsulate `activeSplit1`, split layout views, and split-related preferences
 3. Define callbacks: `onSplitOpened`, `onSplitClosed`, `onSplitVersionChanged`
 4. `IsiActivity` holds a `SplitViewManager` instance and delegates split operations
@@ -198,10 +198,10 @@ This document provides a prioritized remediation plan for each tech debt item id
 **BRICE:** B=4 R=3 I=2 C=3 E=5 → **3.4**
 
 **Steps — incremental, table by table, starting with Markers:**
-1. Define Room entities: `MarkerEntity`, `LabelEntity`, `MarkerLabelEntity`
-2. Define `MarkerDao` with type-safe queries replacing the 15+ `rawQuery()` calls in `InternalDb.java:130-280`
-3. Create `AppDatabase : RoomDatabase()` with migration from existing SQLite schema
-4. Replace `InternalDb.insertOrUpdateMarker()`, `deleteMarkerById()`, `listMarkersForAriKind()`, etc. with DAO calls
+1. Add Room dependency (not yet present in any build.gradle). Define Room entities: `MarkerEntity`, `LabelEntity`, `MarkerLabelEntity`
+2. Define `MarkerDao` with type-safe queries replacing the 7 `rawQuery()` calls scattered across `InternalDb.java` (lines 201, 204, 264, 666, 1059, 1319, 1342). Marker-related queries are at lines 201, 204, and 264.
+3. Create `AppDatabase : RoomDatabase()` with migration from existing SQLite schema (table/column constants are in `Db.java` with nested static classes per table)
+4. Replace `InternalDb.insertOrUpdateMarker()` (line 151), `deleteMarkerById()` (line 171), `listMarkersForAriKind()` (line 135), etc. with DAO calls
 5. Keep `InternalDb` as a facade initially, delegating to Room internally
 6. Test: Write instrumented tests for `MarkerDao` using Room's in-memory database
 
@@ -218,7 +218,7 @@ This document provides a prioritized remediation plan for each tech debt item id
 1. Define `VersionEntity` Room entity
 2. Define `VersionDao` with queries: `listAllVersions()`, `insertOrUpdateVersion()`, `deleteVersion()`, `setVersionActive()`
 3. Add Room migration for the `Version` table
-4. Replace `InternalDb.listAllVersions()` (lines 785-820) with DAO call
+4. Replace `InternalDb.listAllVersions()` (line 531) with DAO call
 5. Update `S.getAvailableVersions()` to use the DAO
 
 **Difficulty:** Medium (1-2 days). Lower risk than Markers since the Version table is simpler.
@@ -231,10 +231,10 @@ This document provides a prioritized remediation plan for each tech debt item id
 **BRICE:** B=2 R=2 I=4 C=4 E=5 → **3.4**
 
 **Steps:**
-1. In `MarkersActivity.java`, replace `DragSortListView` with standard `RecyclerView`
+1. In `MarkersActivity.java` (primary usage: lines 25-26, 55, 78-85, 233-243, 267-323) and `VersionListFragment.kt` (line 33), replace `DragSortListView` with standard `RecyclerView`
 2. Attach `ItemTouchHelper` with `ItemTouchHelper.SimpleCallback` for drag-to-reorder
 3. Migrate adapter from `DragSortListView.DragSortController` callbacks to `ItemTouchHelper.Callback.onMove()`
-4. Delete the `DragSortListView` module from `settings.gradle`
+4. Delete the `DragSortListView` module from `settings.gradle` (line 12) and its dependency in `Alkitab/build.gradle`
 5. Remove module directory
 
 **Difficulty:** Easy-Medium (4-6 hours).
@@ -264,16 +264,17 @@ This document provides a prioritized remediation plan for each tech debt item id
 **BRICE:** B=2 R=3 I=3 C=4 E=5 → **3.4**
 
 **Steps:**
-1. Grep for `MaterialDialog` usage across the codebase
+1. `MaterialDialog` is used across **43 files** in the Alkitab module (imported from `com.afollestad.materialdialogs`). The project also has 6 helper/wrapper files (`MaterialDialogJavaHelper.kt`, `MaterialDialogAdapterHelper.kt`, `MaterialDialogProgressHelper.kt`, etc.) that centralize some usage patterns.
 2. Replace each dialog instance with `MaterialAlertDialogBuilder` (Material 3):
    - Simple alerts → `MaterialAlertDialogBuilder`
    - Input dialogs → custom layout with `TextInputEditText`
    - List/choice dialogs → `setSingleChoiceItems()` / `setMultiChoiceItems()`
    - Color picker dialogs → evaluate Material color picker or keep `AmbilWarna`
-3. Remove `material-dialogs` dependency from `build.gradle`
-4. Test each dialog replacement (manual — no UI tests exist)
+3. Start by replacing the helper wrapper files — this will cascade fixes to many callers
+4. Remove `material-dialogs` dependencies from `Alkitab/build.gradle` (lines 175-176: `core` and `input` artifacts)
+5. Test each dialog replacement (manual — no UI tests exist)
 
-**Difficulty:** Medium (1-2 days). Tedious but low risk per dialog.
+**Difficulty:** Medium-Hard (2-4 days). 43 files is a larger scope than initially estimated. The helper wrappers reduce some effort, but manual testing of each dialog is needed.
 
 ---
 
@@ -421,7 +422,7 @@ Use Android Studio's "Convert Java File to Kotlin" as a starting point, then man
 **BRICE:** B=1 R=1 I=4 C=4 E=5 → **3.0**
 
 **Steps:**
-1. Identify all usages of `AmbilWarnaDialog` (likely in `ColorSettingsActivity` and highlight color picker)
+1. `AmbilWarnaDialog` is used in 2 files: `MarkersActivity.java` (lines 43, 233-243 — label color picker) and `TypeHighlightDialog.java` (line 19 — highlight color selection). There is no `ColorSettingsActivity`.
 2. Replace with `MaterialColorPickerDialog` from a Material-compatible library or implement custom using Material 3 color palette
 3. Ensure selected colors are stored in the same format (hex int)
 4. Delete `AmbilWarna` module
@@ -438,12 +439,12 @@ Use Android Studio's "Convert Java File to Kotlin" as a starting point, then man
 **BRICE:** B=3 R=3 I=1 C=2 E=5 → **2.8**
 
 **Steps:**
-1. Define `SongJsonModel` using Kotlinx Serialization with explicit field names
-2. Add database migration that reads all songs via old `Parcelable` format, re-serializes as JSON, and writes back
-3. Update `SongDb` to read/write JSON instead of `Parcelable` blobs
+1. Define `SongJsonModel` using Kotlinx Serialization with explicit field names. Note: `KpriModel/Song.java` (line 13) implements both `Serializable` and `Parcelable`, and line 10-11 has a comment acknowledging this is a "Bad decision".
+2. Add database migration that reads all songs via old `Parcelable` format (currently stored as `Parcel.marshall()` byte arrays via `SongDb.marshallSong()` at line 29-35 and `unmarshallSong()` at line 37-44), re-serializes as JSON, and writes back
+3. Update `SongDb.java` to read/write JSON instead of `Parcelable` blobs — the "data" column (line 81) currently stores marshalled byte arrays
 4. Update server-side song book format to JSON (coordinate with backend team)
 5. Support both formats during transition (detect format by first byte)
-6. Remove `KpriModel.Song.writeToParcel()` / `createFromParcel()` after migration period
+6. Remove `KpriModel.Song.writeToParcel()` / `createFromParcel()` (lines 31-38, 75-85) after migration period
 
 **Difficulty:** Hard (3-5 days). Risk: data migration must handle all existing song books without data loss. Requires server-side changes.
 
@@ -455,8 +456,8 @@ Use Android Studio's "Convert Java File to Kotlin" as a starting point, then man
 **BRICE:** B=3 R=1 I=1 C=2 E=5 → **2.4**
 
 **Steps:**
-1. Add Compose dependencies and configure `buildFeatures { compose = true }`
-2. Start with simpler screens: `AboutActivity`, `HelpActivity`
+1. Add Compose dependencies and configure `buildFeatures { compose = true }` (no Compose dependencies exist yet)
+2. Start with simpler screens: `AboutActivity.kt` (Kotlin, View-based with custom animations), `HelpActivity.java` (Java, WebView-based — convert to Kotlin first)
 3. Create Compose equivalents and swap in the Activity
 4. Gradually migrate: `SettingsActivity` → Compose Preference screens
 5. Do NOT migrate `IsiActivity` verse rendering — too complex and performance-critical for initial Compose adoption

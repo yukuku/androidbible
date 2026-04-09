@@ -245,16 +245,20 @@ Newer files (activities, data classes) are Kotlin, creating a mixed codebase whe
 
 ## TD-13: Minimal Test Coverage
 
-Only ~10 test files exist across the entire project:
+14 test files exist across the project:
 - `FormattedTextRendererTest.java` — verse formatting codes
 - `QueryTokenizerTest.kt` — search tokenization
 - `TargetDecoderTest.java` — verse reference parsing
 - `JumperTest.java` — verse navigation
-- `RemoveSpecialCodesTest.kt` — formatting code stripping
+- `RemoveSpecialCodesTest.java` — formatting code stripping
 - `JsonFileExportTest.kt` — data transfer export
 - `VersionTest.java`, `GetVersionInitialsTest.java` — version model
 - `OptionalGzipInputStreamTest.java` — I/O utility
 - `UnsignedBinarySearchKtTest.kt` — binary search utility
+- `DesktopVerseFinderTest.java` — desktop verse finder (in tools/AlkitabConverter)
+- `DesktopVerseParserTest.java` — desktop verse parser (in tools/AlkitabConverter)
+- `LauncherTest.java` — integration launcher test (in AlkitabIntegration, androidTest)
+- `VerseProviderTest.java` — verse provider test (in AlkitabIntegration, androidTest)
 
 **Not tested:** Database operations, sync protocol, version loading, search engine, devotion downloading, song management, highlight encoding, content provider, widget logic.
 
