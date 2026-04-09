@@ -241,23 +241,6 @@ This document provides a prioritized remediation plan for each tech debt item id
 
 ---
 
-### REM-13: Add FTS5 Search Index
-**Addresses:** TD-05  
-**Module:** Search  
-**BRICE:** B=5 R=2 I=2 C=3 E=5 → **3.4**
-
-**Steps:**
-1. Create FTS5 virtual table in Room (or raw SQLite): `CREATE VIRTUAL TABLE verse_fts USING fts5(text, content=...)`
-2. Populate FTS table when a Bible version is loaded/downloaded — index all verse text with formatting codes stripped
-3. Replace `SearchEngine.searchByGrep()` with `SELECT * FROM verse_fts WHERE verse_fts MATCH ?`
-4. Handle multi-version search: either index per-version or re-index on version switch
-5. Handle token operators: quoted phrases map to FTS5 phrase queries, plus-prefix maps to NEAR queries
-6. Rebuild index when a version is deleted or updated
-
-**Difficulty:** Hard (3-5 days). Requires careful design of index lifecycle (when to build, invalidate, rebuild). The indexing step could be slow for large Bibles (background with progress).
-
----
-
 ### REM-14: Replace material-dialogs with Material 3
 **Addresses:** TD-12  
 **Module:** Cross-cutting UI  
@@ -589,7 +572,6 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 | REM-09 | Introduce ViewModel | **3.4** | 2 |
 | REM-10 | Room migration (Markers) | **3.4** | 2 |
 | REM-12 | Replace DragSortListView | **3.4** | 2 |
-| REM-13 | Add FTS5 search | **3.4** | 2 |
 | REM-14 | Replace material-dialogs | **3.4** | 2 |
 | REM-18 | Add test coverage | **3.4** | 2 |
 | REM-08 | Extract split view manager | **3.2** | 2 |
@@ -610,4 +592,4 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 **Sprint 4 (1 week):** REM-12, REM-14 — deprecated library replacements  
 **Sprint 5 (2 weeks):** REM-10, REM-11 — Room migration for core tables  
 **Sprint 6 (2 weeks):** REM-09, REM-18a-b — ViewModel + test coverage  
-**Ongoing:** REM-13, REM-15, REM-16, REM-17 — modernization work mixed into feature sprints
+**Ongoing:** REM-15, REM-16, REM-17 — modernization work mixed into feature sprints

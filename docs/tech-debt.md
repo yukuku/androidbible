@@ -99,25 +99,6 @@ ois.close();
 
 ---
 
-## TD-05: Search Engine Performance
-
-**File:** `Alkitab/src/main/java/yuku/alkitab/base/util/SearchEngine.java`
-
-### Sequential grep-based search (lines 61–110)
-For each search token, loads entire chapters into memory and performs `indexOf()` calls:
-```java
-final String oneChapter = version.loadChapterTextLowercasedWithoutSplit(book, chapter_1);
-```
-Worst case: 5 tokens × 66 books × ~30 chapters × `indexOf()` per verse = millions of string comparisons. No inverted index, no caching of previous search results.
-
-### O(n³) multiword search (lines 374–462)
-`indexOfWholeMultiword()` has three nested loops: outer word finder, inner remaining-word iterator, innermost tag-consumption loop with `substring()` and `indexOf("@>", pos)` calls. Performance degrades badly with many short search tokens on heavily formatted text.
-
-### No FTS (Full-Text Search)
-SQLite FTS5 would provide orders-of-magnitude faster search with minimal implementation effort, especially since the app already uses SQLite for everything else.
-
----
-
 ## TD-06: Threading & Concurrency Issues
 
 ### DevotionDownloader infinite loop (lines 64–101)
