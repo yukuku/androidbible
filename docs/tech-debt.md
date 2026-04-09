@@ -264,6 +264,41 @@ Newer files (activities, data classes) are Kotlin, creating a mixed codebase whe
 
 ---
 
+## TD-14: ybuild.sh — Custom Shell Script for Production Builds
+
+**File:** `ybuild.sh`
+
+The production release build process is handled by a 168-line bash script that performs operations outside of Gradle's build lifecycle. This means production builds cannot be reproduced with a single `./gradlew` invocation — `ybuild.sh` must be run instead.
+
+### What ybuild.sh does beyond Gradle:
+
+1. **RAM disk creation (lines 79-91):** Creates a macOS-specific 1GB RAM disk via `hdiutil`/`diskutil`, copies the entire project there via `rsync`, and builds from the copy. This is macOS-only and prevents building on Linux CI.
+
+2. **Proprietary asset injection (lines 120-129):** Deletes the placeholder `assets/internal/` directory (containing `ddd_*` dummy files) and copies real Bible text files from `$ALKITAB_PROPRIETARY_DIR/overlay/$BUILD_PACKAGE_NAME/text_raw`. This is the critical step — production flavors need real Bible text that isn't in the open-source repo.
+
+3. **Git commit hash stamping (lines 93-95, 146-148):** Reads the last commit hash via `git log` and uses `sed` to replace the `0000000` placeholder in `res/values/last_commit.xml`.
+
+4. **Custom APK renaming (lines 156-165):** Renames the output APK to include version code, version name, commit hash, and distribution identifier (e.g., `Alkitab-17000532-4.11.2-a580062-yuku-playstore.apk`).
+
+### What Gradle already handles:
+- **Signing** — `signingConfigs.release` (Alkitab/build.gradle:32-38) already reads `SIGN_KEYSTORE`, `SIGN_ALIAS`, `SIGN_PASSWORD` from env vars
+- **Product flavors** — `yuku_alkitab`, `yuku_quick_bible`, `sabda_alkitab` are defined (lines 72-87) with flavor-specific source sets already containing icons and configs
+
+### Required environment variables:
+| Variable | Purpose |
+|----------|---------|
+| `ALKITAB_PROPRIETARY_DIR` | Root of proprietary overlay files |
+| `SIGN_KEYSTORE` | Path to signing keystore |
+| `SIGN_ALIAS` | Key alias |
+| `SIGN_PASSWORD` | Keystore/key password |
+| `FLAVOR` | Product flavor name |
+| `BUILD_PACKAGE_NAME` | Overlay subdirectory name (e.g., `yuku`, `sabda`) |
+| `BUILD_DIST` | Distribution channel (e.g., `playstore`, `direct`) |
+
+**Impact:** Production builds are not reproducible via Gradle alone. The build process is macOS-only due to RAM disk. CI/CD must invoke a shell script rather than Gradle tasks. New developers must learn a custom build procedure.
+
+---
+
 ## Potential Bugs
 
 ### PB-01: Soft Reference Cache Thrashing
