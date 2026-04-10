@@ -194,10 +194,11 @@ public class SongBookUtil {
         protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
             String name = desc.getName();
             // Allow array types (they start with '[')
-            // Allow standard Java library classes (java.util collections, java.lang.String, etc.)
-            // Only block third-party/application classes not in our whitelist
+            // Allow java.util (collections) and java.lang (String, Enum, etc.) only —
+            // other java.* packages (java.net, java.io, etc.) are blocked to limit gadget surface
             if (!name.startsWith("[")
-                && !name.startsWith("java.")
+                && !name.startsWith("java.util.")
+                && !name.startsWith("java.lang.")
                 && !ALLOWED_CLASSES.contains(name)) {
                 throw new ClassNotFoundException("Unauthorized deserialization attempt: " + name);
             }
@@ -218,7 +219,11 @@ public class SongBookUtil {
             OptionalGzipInputStream gzipStream = new OptionalGzipInputStream(inputStream);
             SafeObjectInputStream ois = new SafeObjectInputStream(gzipStream)
         ) {
-            return (List<Song>) ois.readObject();
+            final Object result = ois.readObject();
+            if (!(result instanceof List)) {
+                throw new IOException("Expected List but got " + (result == null ? "null" : result.getClass().getName()));
+            }
+            return (List<Song>) result;
         }
     }
 
@@ -255,7 +260,7 @@ public class SongBookUtil {
                     final List<Song> songs = deserializeSongs(body.byteStream());
 
                     if (cancelled.get()) {
-                        listener.onFailedOrCancelled(songBookInfo, null);
+                        Foreground.run(() -> listener.onFailedOrCancelled(songBookInfo, null));
                         return;
                     }
 
