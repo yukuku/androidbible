@@ -245,11 +245,11 @@ public class Preferences {
 		}
 	}
 
-	public synchronized static void hold() {
+	private synchronized static void hold() {
 		held++;
 	}
 
-	public synchronized static void unhold() {
+	private synchronized static void unhold() {
 		if (held <= 0) {
 			throw new RuntimeException("unhold called too many times");
 		}
