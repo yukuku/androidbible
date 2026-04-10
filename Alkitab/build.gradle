@@ -97,7 +97,7 @@ android {
 }
 
 android.applicationVariants.all { variant ->
-    if (!variant.buildType.debuggable) {
+    if (!variant.buildType.debuggable && variant.flavorName != 'plain') {
         def validateTask = tasks.register("validate${variant.name.capitalize()}FirebaseConfig") {
             doLast {
                 if (!hasUsableFirebaseApiKey(variant.applicationId)) {
