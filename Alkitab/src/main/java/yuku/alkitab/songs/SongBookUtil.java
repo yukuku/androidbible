@@ -16,11 +16,18 @@ import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import com.afollestad.materialdialogs.MaterialDialog;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import okhttp3.Call;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.connection.Connections;
@@ -31,11 +38,15 @@ import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.OptionalGzipInputStream;
+import yuku.kpri.model.Lyric;
 import yuku.kpri.model.Song;
+import yuku.kpri.model.Verse;
+import yuku.kpri.model.VerseKind;
 
 public class SongBookUtil {
     private static final int POPUP_ID_ALL = -1;
     private static final int POPUP_ID_MORE = -2;
+    static final long MAX_RESPONSE_SIZE = 50 * 1024 * 1024L; // 50MB
 
     public interface OnSongBookSelectedListener {
         void onAllSelected();
@@ -163,6 +174,59 @@ public class SongBookUtil {
         }
     }
 
+    /**
+     * An ObjectInputStream that restricts deserialization to a whitelist of known safe classes.
+     * Prevents deserialization attacks by rejecting any class not in the allowed set.
+     */
+    static class SafeObjectInputStream extends ObjectInputStream {
+        private static final Set<String> ALLOWED_CLASSES = new HashSet<>(Arrays.asList(
+            Song.class.getName(),
+            Lyric.class.getName(),
+            Verse.class.getName(),
+            VerseKind.class.getName()
+        ));
+
+        SafeObjectInputStream(InputStream in) throws IOException {
+            super(in);
+        }
+
+        @Override
+        protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+            String name = desc.getName();
+            // Allow array types (they start with '[')
+            // Allow java.util (collections) and java.lang (String, Enum, etc.) only —
+            // other java.* packages (java.net, java.io, etc.) are blocked to limit gadget surface
+            if (!name.startsWith("[")
+                && !name.startsWith("java.util.")
+                && !name.startsWith("java.lang.")
+                && !ALLOWED_CLASSES.contains(name)) {
+                throw new ClassNotFoundException("Unauthorized deserialization attempt: " + name);
+            }
+            return super.resolveClass(desc);
+        }
+    }
+
+    /**
+     * Deserializes a list of Song objects from an InputStream.
+     * The stream may optionally be gzip-compressed.
+     * Restricts deserialization to known safe classes only.
+     *
+     * Package-visible for testing.
+     */
+    @SuppressWarnings("unchecked")
+    static List<Song> deserializeSongs(InputStream inputStream) throws IOException, ClassNotFoundException {
+        try (
+            OptionalGzipInputStream gzipStream = new OptionalGzipInputStream(inputStream);
+            SafeObjectInputStream ois = new SafeObjectInputStream(gzipStream)
+        ) {
+            final Object result = ois.readObject();
+            if (!(result instanceof List)) {
+                throw new IOException("Expected List but got " + (result == null ? "null" : result.getClass().getName()));
+            }
+            return (List<Song>) result;
+        }
+    }
+
     public static void downloadSongBook(final Activity activity, final SongBookInfo songBookInfo, final int dataFormatVersion, final OnDownloadSongBookListener listener) {
         final AtomicBoolean cancelled = new AtomicBoolean();
 
@@ -178,25 +242,34 @@ public class SongBookUtil {
             try {
                 final Call call = Connections.downloadCall(BuildConfig.SERVER_HOST + "/addon/songs/get_songs?name=" + songBookInfo.name + "&dataFormatVersion=" + dataFormatVersion);
 
-                final Response response = call.execute();
-                if (response.code() != 200) {
-                    throw new NotOkException(response.code());
+                try (Response response = call.execute()) {
+                    if (response.code() != 200) {
+                        throw new NotOkException(response.code());
+                    }
+
+                    final ResponseBody body = response.body();
+                    if (body == null) {
+                        throw new IOException("Response body is null");
+                    }
+
+                    final long contentLength = body.contentLength();
+                    if (contentLength > MAX_RESPONSE_SIZE) {
+                        throw new IOException("Response too large: " + contentLength + " bytes (max " + MAX_RESPONSE_SIZE + ")");
+                    }
+
+                    final List<Song> songs = deserializeSongs(body.byteStream());
+
+                    if (cancelled.get()) {
+                        Foreground.run(() -> listener.onFailedOrCancelled(songBookInfo, null));
+                        return;
+                    }
+
+                    // insert songs to db
+                    S.getSongDb().insertSongBookInfo(songBookInfo);
+                    S.getSongDb().storeSongs(songBookInfo.name, songs, dataFormatVersion);
+
+                    Foreground.run(() -> listener.onDownloadedAndInserted(songBookInfo));
                 }
-
-                final ObjectInputStream ois = new ObjectInputStream(new OptionalGzipInputStream(response.body().byteStream()));
-                @SuppressWarnings("unchecked") final List<Song> songs = (List<Song>) ois.readObject();
-                ois.close();
-
-                if (cancelled.get()) {
-                    listener.onFailedOrCancelled(songBookInfo, null);
-                    return;
-                }
-
-                // insert songs to db
-                S.getSongDb().insertSongBookInfo(songBookInfo);
-                S.getSongDb().storeSongs(songBookInfo.name, songs, dataFormatVersion);
-
-                Foreground.run(() -> listener.onDownloadedAndInserted(songBookInfo));
 
             } catch (IOException | ClassNotFoundException e) {
                 Foreground.run(() -> listener.onFailedOrCancelled(songBookInfo, e));
