@@ -309,11 +309,11 @@ class SecretSyncDebugActivity : BaseActivity() {
     }
 
     private var bLogout_click = View.OnClickListener {
-        Preferences.hold()
-        Preferences.remove(getString(R.string.pref_syncAccountName_key))
-        Preferences.remove(Prefkey.sync_simpleToken)
-        Preferences.remove(Prefkey.sync_token_obtained_time)
-        Preferences.unhold()
+        Preferences.withTransaction {
+            Preferences.remove(getString(R.string.pref_syncAccountName_key))
+            Preferences.remove(Prefkey.sync_simpleToken)
+            Preferences.remove(Prefkey.sync_token_obtained_time)
+        }
 
         for (syncSetName in SyncShadow.ALL_SYNC_SET_NAMES) {
             S.db.deleteSyncShadowBySyncSetName(syncSetName)

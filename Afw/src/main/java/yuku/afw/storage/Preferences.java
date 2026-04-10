@@ -232,11 +232,24 @@ public class Preferences {
 		}
 	}
 
-	public synchronized static void hold() {
+	/**
+	 * Batches all preference writes inside {@code block} into a single commit.
+	 * Guarantees {@link #unhold()} is called even if {@code block} throws.
+	 */
+	public static void withTransaction(Runnable block) {
+		hold();
+		try {
+			block.run();
+		} finally {
+			unhold();
+		}
+	}
+
+	private synchronized static void hold() {
 		held++;
 	}
 
-	public synchronized static void unhold() {
+	private synchronized static void unhold() {
 		if (held <= 0) {
 			throw new RuntimeException("unhold called too many times");
 		}
