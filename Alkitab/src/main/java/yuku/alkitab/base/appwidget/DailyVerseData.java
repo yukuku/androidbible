@@ -173,8 +173,7 @@ public abstract class DailyVerseData {
 	 * @param savedState null to delete saved state for the specified appWidgetId.
 	 */
 	public static void saveSavedState(final int appWidgetId, final SavedState savedState) {
-		Preferences.hold();
-		try {
+		Preferences.withTransaction(() -> {
 			if (savedState == null) {
 				Preferences.remove("app_widget_" + appWidgetId + "_option_dark_text");
 				Preferences.remove("app_widget_" + appWidgetId + "_option_hide_app_icon");
@@ -192,8 +191,6 @@ public abstract class DailyVerseData {
 				Preferences.setInt("app_widget_" + appWidgetId + "_click", savedState.click);
 				Preferences.setInt("app_widget_" + appWidgetId + "_option_backgroundAlpha", savedState.backgroundAlpha);
 			}
-		} finally {
-			Preferences.unhold();
-		}
+		});
 	}
 }

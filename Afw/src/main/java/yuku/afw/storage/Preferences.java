@@ -232,6 +232,19 @@ public class Preferences {
 		}
 	}
 
+	/**
+	 * Batches all preference writes inside {@code block} into a single commit.
+	 * Guarantees {@link #unhold()} is called even if {@code block} throws.
+	 */
+	public static void withTransaction(Runnable block) {
+		hold();
+		try {
+			block.run();
+		} finally {
+			unhold();
+		}
+	}
+
 	public synchronized static void hold() {
 		held++;
 	}

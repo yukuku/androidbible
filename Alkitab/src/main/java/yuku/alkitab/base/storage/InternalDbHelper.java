@@ -595,68 +595,68 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 
         db.beginTransaction();
         try {
-            Preferences.hold();
-            final ContentValues cv = new ContentValues();
-            int ordering = MVersionDb.DEFAULT_ORDERING_START;
+            Preferences.withTransaction(() -> {
+                final ContentValues cv = new ContentValues();
+                final int[] ordering = {MVersionDb.DEFAULT_ORDERING_START};
 
-            /*
-             * Automatically add v3 preset versions as {@link yuku.alkitab.base.storage.Db.Version} table rows,
-             * if there are files with the same preset_name as those defined in {@link yuku.alkitab.base.config.VersionConfig}.
-             * In version 3, preset versions are not stored in the database. In version 4, they are.
-             */
-            {
-                final VersionConfig vc = VersionConfig.get();
-                for (final MVersionPreset mv : vc.presets) {
-                    final File yesFile = AddonManager.getReadableVersionFile(mv.preset_name + ".yes");
-                    if (yesFile != null) {
+                /*
+                 * Automatically add v3 preset versions as {@link yuku.alkitab.base.storage.Db.Version} table rows,
+                 * if there are files with the same preset_name as those defined in {@link yuku.alkitab.base.config.VersionConfig}.
+                 * In version 3, preset versions are not stored in the database. In version 4, they are.
+                 */
+                {
+                    final VersionConfig vc = VersionConfig.get();
+                    for (final MVersionPreset mv : vc.presets) {
+                        final File yesFile = AddonManager.getReadableVersionFile(mv.preset_name + ".yes");
+                        if (yesFile != null) {
+                            cv.clear();
+                            cv.put(Db.Version.locale, mv.locale);
+                            cv.put(Db.Version.shortName, mv.shortName);
+                            cv.put(Db.Version.longName, mv.longName);
+                            cv.put(Db.Version.description, mv.description);
+                            cv.put(Db.Version.filename, yesFile.getAbsolutePath());
+                            cv.put(Db.Version.preset_name, mv.preset_name);
+                            cv.put(Db.Version.modifyTime, (int) (yesFile.lastModified() / 1000L));
+                            cv.put(Db.Version.active, Preferences.getBoolean("edisi/preset/" + mv.preset_name + ".yes/aktif", true) ? 1 : 0);
+                            cv.put(Db.Version.ordering, ++ordering[0]);
+                            db.insert(Db.TABLE_Version, null, cv);
+                        }
+                    }
+                }
+
+                { // Remove all preferences about active state of preset versions. We don't need them any more.
+                    for (String key : Preferences.getAllKeys()) {
+                        if (key.startsWith("edisi/preset/") && key.endsWith(".yes/aktif")) {
+                            Preferences.remove(key);
+                        }
+                    }
+                }
+
+                { // Edisi -> Version
+                    final Cursor c = db.query(TABLE_Edisi,
+                        new String[]{Edisi.shortName, Edisi.title, Edisi.description, Edisi.filename, Edisi.active},
+                        null, null, null, null, Edisi.ordering + " asc"
+                    );
+                    while (c.moveToNext()) {
                         cv.clear();
-                        cv.put(Db.Version.locale, mv.locale);
-                        cv.put(Db.Version.shortName, mv.shortName);
-                        cv.put(Db.Version.longName, mv.longName);
-                        cv.put(Db.Version.description, mv.description);
-                        cv.put(Db.Version.filename, yesFile.getAbsolutePath());
-                        cv.put(Db.Version.preset_name, mv.preset_name);
-                        cv.put(Db.Version.modifyTime, (int) (yesFile.lastModified() / 1000L));
-                        cv.put(Db.Version.active, Preferences.getBoolean("edisi/preset/" + mv.preset_name + ".yes/aktif", true) ? 1 : 0);
-                        cv.put(Db.Version.ordering, ++ordering);
+                        cv.put(Db.Version.locale, (String) null);
+                        cv.put(Db.Version.shortName, c.getString(0));
+                        cv.put(Db.Version.longName, c.getString(1));
+                        cv.put(Db.Version.description, c.getString(2));
+                        cv.put(Db.Version.filename, c.getString(3));
+                        cv.put(Db.Version.active, c.getInt(4));
+                        cv.put(Db.Version.ordering, ++ordering[0]);
                         db.insert(Db.TABLE_Version, null, cv);
                     }
-                }
-            }
 
-            { // Remove all preferences about active state of preset versions. We don't need them any more.
-                for (String key : Preferences.getAllKeys()) {
-                    if (key.startsWith("edisi/preset/") && key.endsWith(".yes/aktif")) {
-                        Preferences.remove(key);
-                    }
-                }
-            }
-
-            { // Edisi -> Version
-                final Cursor c = db.query(TABLE_Edisi,
-                    new String[]{Edisi.shortName, Edisi.title, Edisi.description, Edisi.filename, Edisi.active},
-                    null, null, null, null, Edisi.ordering + " asc"
-                );
-                while (c.moveToNext()) {
-                    cv.clear();
-                    cv.put(Db.Version.locale, (String) null);
-                    cv.put(Db.Version.shortName, c.getString(0));
-                    cv.put(Db.Version.longName, c.getString(1));
-                    cv.put(Db.Version.description, c.getString(2));
-                    cv.put(Db.Version.filename, c.getString(3));
-                    cv.put(Db.Version.active, c.getInt(4));
-                    cv.put(Db.Version.ordering, ++ordering);
-                    db.insert(Db.TABLE_Version, null, cv);
+                    c.close();
                 }
 
-                c.close();
-            }
-
-            db.execSQL("drop table " + TABLE_Edisi);
+                db.execSQL("drop table " + TABLE_Edisi);
+            });
 
             db.setTransactionSuccessful();
         } finally {
-            Preferences.unhold();
             db.endTransaction();
         }
     }

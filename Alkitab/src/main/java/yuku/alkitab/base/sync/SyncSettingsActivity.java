@@ -126,16 +126,15 @@ public class SyncSettingsActivity extends BaseActivity {
 					() -> {
 						SyncRecorder.log(SyncRecorder.EventKind.logout_pre, null, "accountName", syncAccountName);
 
-						Preferences.hold();
-						Preferences.remove(getString(R.string.pref_syncAccountName_key));
-						Preferences.remove(Prefkey.sync_simpleToken);
-						Preferences.remove(Prefkey.sync_token_obtained_time);
+						Preferences.withTransaction(() -> {
+							Preferences.remove(getString(R.string.pref_syncAccountName_key));
+							Preferences.remove(Prefkey.sync_simpleToken);
+							Preferences.remove(Prefkey.sync_token_obtained_time);
 
-						for (final String syncSetName : SyncShadow.ALL_SYNC_SET_NAMES) {
-							S.getDb().deleteSyncShadowBySyncSetName(syncSetName);
-						}
-
-						Preferences.unhold();
+							for (final String syncSetName : SyncShadow.ALL_SYNC_SET_NAMES) {
+								S.getDb().deleteSyncShadowBySyncSetName(syncSetName);
+							}
+						});
 
 						SyncRecorder.removeAllLastSuccessTimes();
 
@@ -161,11 +160,11 @@ public class SyncSettingsActivity extends BaseActivity {
 					// Success!
 					SyncRecorder.log(SyncRecorder.EventKind.login_success_pre, null, "accountName", result.accountName);
 
-					Preferences.hold();
-					Preferences.setString(R.string.pref_syncAccountName_key, result.accountName);
-					Preferences.setString(Prefkey.sync_simpleToken, result.simpleToken);
-					Preferences.setInt(Prefkey.sync_token_obtained_time, Sqlitil.nowDateTime());
-					Preferences.unhold();
+					Preferences.withTransaction(() -> {
+						Preferences.setString(R.string.pref_syncAccountName_key, result.accountName);
+						Preferences.setString(Prefkey.sync_simpleToken, result.simpleToken);
+						Preferences.setInt(Prefkey.sync_token_obtained_time, Sqlitil.nowDateTime());
+					});
 
 					SyncRecorder.log(SyncRecorder.EventKind.login_success_post, null, "accountName", result.accountName);
 

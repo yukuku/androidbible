@@ -1768,8 +1768,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
     override fun onStop() {
         super.onStop()
 
-        Preferences.hold()
-        try {
+        Preferences.withTransaction {
             Preferences.setInt(Prefkey.lastBookId, activeSplit0.book.bookId)
             Preferences.setInt(Prefkey.lastChapter, chapter_1)
             Preferences.setInt(Prefkey.lastVerse, getVerse_1BasedOnScrolls())
@@ -1781,8 +1780,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener {
                 Preferences.setString(Prefkey.lastSplitVersionId, activeSplit1.versionId)
                 Preferences.setString(Prefkey.lastSplitOrientation, splitHandleButton.orientation.name)
             }
-        } finally {
-            Preferences.unhold()
         }
 
         history.save()
