@@ -280,6 +280,45 @@ The production release build process is handled by a 168-line bash script that p
 
 ---
 
+## TD-15: S.kt — God Object Service Locator
+
+**File:** `Alkitab/src/main/java/yuku/alkitab/base/S.kt` (322 lines)
+
+A Kotlin `object` singleton that serves as the central service locator for the entire app, mixing three unrelated concerns:
+
+### 1. Database access
+- `S.db` — lazy `InternalDb` instance (markers, labels, bookmarks, reading plans, sync, devotions)
+- `S.songDb` — lazy `SongDb` instance (song books)
+
+### 2. Active Bible version state
+- `S.activeVersion()` / `S.activeMVersion()` / `S.activeVersionId()` — mutable state for the currently selected Bible version
+- `S.setActiveVersion(mv)` — `@Synchronized` setter, but getters are NOT synchronized (potential torn reads)
+- `S.getVersionFromVersionId()` — queries `InternalDb` to look up versions
+- `S.getAvailableVersions()` — combines internal + database versions
+- `S.getMVersionInternal()` — creates internal version from `AppConfig` + `Preferences`
+- `S.openVersionsDialog()` / `S.openVersionsDialogWithNone()` — UI dialogs (shouldn't be in a service locator)
+
+### 3. UI dimensions and styling
+- `S.applied()` — returns `CalculatedDimensions` (font size, colors, spacing, brightness)
+- `S.recalculateAppliedValuesBasedOnPreferences()` — recomputes from `Preferences` + `Resources`
+- `CalculatedDimensions` class (lines 31-95) — 18 mutable fields covering fonts, colors, indentation, and spacing
+
+### Coupling issues
+- **50 files** import `S`, with **161+ call sites**
+- Requires `App.context` to be set before any access (implicit initialization order dependency)
+- `ActiveVersionHolder.init` reads `Preferences` at object creation time — happens before any setup code
+- `CalculatedDimensions` is replaced atomically via `recalculateAppliedValuesBasedOnPreferences()`, but no observer mechanism notifies consumers of changes — callers must re-read `S.applied()` manually
+- `setActiveVersion()` is synchronized but `activeVersion()` / `activeMVersion()` are not — race condition risk
+
+### Impact on testing
+- `S` is an `object` singleton — cannot be mocked without bytecode manipulation
+- No interfaces to substitute test doubles
+- Any code using `S.db` requires a real SQLite database (`InternalDbHelper`)
+- Any code using `S.applied()` requires `Preferences`, `Resources`, and `FontManager`
+- All sync modules, activities, dialogs, and content providers are tightly coupled to `S`
+
+---
+
 ## Potential Bugs
 
 ### PB-01: Soft Reference Cache Thrashing

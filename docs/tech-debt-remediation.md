@@ -192,6 +192,76 @@ This document provides a prioritized remediation plan for each tech debt item id
 
 ---
 
+### REM-24: Refactor S.kt Service Locator
+**Addresses:** TD-15  
+**Module:** Cross-cutting (50 files)  
+**BRICE:** B=4 R=2 I=2 C=3 E=5 → **3.2**
+
+**Current state:** `S.kt` (322 lines) is a Kotlin `object` singleton mixing database access (`db`, `songDb`), active version state, and UI dimensions (`CalculatedDimensions`). Imported by 50 files with 161+ call sites. Untestable without a full Android environment.
+
+**Recommended approach: Incremental interface extraction, then manual DI**
+
+Hilt/Dagger adds significant complexity (annotation processing, code generation) for a codebase that doesn't yet use any DI. A lighter approach is to extract interfaces first, then provide them via a simple app-level container.
+
+**Steps:**
+
+**Step 24a: Extract interfaces (no DI yet, no callers change)**
+1. Create `StorageProvider` interface:
+   ```kotlin
+   interface StorageProvider {
+       val db: InternalDb
+       val songDb: SongDb
+   }
+   ```
+2. Create `VersionManager` interface:
+   ```kotlin
+   interface VersionManager {
+       fun activeVersion(): Version
+       fun activeMVersion(): MVersion
+       fun activeVersionId(): String
+       fun setActiveVersion(mv: MVersion)
+       fun getVersionFromVersionId(versionId: String?): MVersion?
+       fun getAvailableVersions(): List<MVersion>
+       fun getMVersionInternal(): MVersionInternal
+   }
+   ```
+3. Create `UiDimensionsProvider` interface:
+   ```kotlin
+   interface UiDimensionsProvider {
+       fun applied(): CalculatedDimensions
+       fun recalculate()
+   }
+   ```
+4. Make `S` implement all three interfaces, delegating to its existing internal holders. This is a no-op refactor — all existing `S.db` / `S.applied()` / `S.activeVersion()` calls keep working.
+
+**Step 24b: Move UI dialogs out of S**
+1. Move `openVersionsDialog()` and `openVersionsDialogWithNone()` (lines 271-320) into a standalone `VersionDialogHelper` object or extension function. These are UI operations that don't belong in a service locator.
+
+**Step 24c: Fix thread safety**
+1. Make `activeVersion()` / `activeMVersion()` / `activeVersionId()` getters `@Synchronized` to match the setter
+2. Or better: replace the three mutable fields with a single `AtomicReference<ActiveVersionState>` data class to ensure atomic reads
+
+**Step 24d: Introduce app-level service container**
+1. Create `AppServices` class initialized in `App.onCreate()`:
+   ```kotlin
+   class AppServices(
+       val storage: StorageProvider,
+       val versions: VersionManager,
+       val uiDimensions: UiDimensionsProvider,
+   )
+   ```
+2. Initialize in `App`: `val services = AppServices(S, S, S)` — initially delegates back to `S`
+3. New code uses `App.services.storage.db` instead of `S.db`
+4. Gradually migrate existing callers (50 files, can be done file-by-file)
+5. In tests, provide fake implementations of the interfaces
+
+**Step 24e: (Optional, later) Migrate to Hilt**
+If the project adopts Hilt for other reasons (e.g., ViewModel injection in REM-09), the interfaces from Step 24a become `@Provides` targets naturally.
+
+**Difficulty:** Medium-Hard (2-3 days for steps 24a-24c, then ongoing migration for 24d). Step 24a is the critical enabler — once interfaces exist, the rest is incremental.
+
+---
+
 ### REM-10: Migrate InternalDb to Room (Markers Table)
 **Addresses:** TD-02  
 **Module:** Storage — Markers subsystem  
@@ -574,6 +644,7 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 | REM-12 | Replace DragSortListView | **3.4** | 2 |
 | REM-14 | Replace material-dialogs | **3.4** | 2 |
 | REM-18 | Add test coverage | **3.4** | 2 |
+| REM-24 | Refactor S.kt service locator | **3.2** | 2 |
 | REM-08 | Extract split view manager | **3.2** | 2 |
 | REM-11 | Room migration (Version) | **3.2** | 2 |
 | REM-15 | Introduce coroutines | **3.2** | 3 |
