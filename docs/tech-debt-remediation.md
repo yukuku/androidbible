@@ -18,42 +18,36 @@ This document provides a prioritized remediation plan for each tech debt item id
 
 ## Phase 1: Quick Wins & Safety Fixes (BRICE ≥ 4.0)
 
-### REM-01: Fix SongBookUtil Resource Leak & Unsafe Deserialization
+### REM-01: Fix SongBookUtil Resource Leak & Unsafe Deserialization ✅ COMPLETED
 **Addresses:** TD-04, PB-06  
 **Module:** Songs  
 **BRICE:** B=4 R=5 I=4 C=5 E=5 → **4.6**
 
-**Current state:** `SongBookUtil.java:186-188` uses `ObjectInputStream.readObject()` from a network stream without try-with-resources, size validation, or type checking. Potential security vulnerability and resource leak.
+**Completed in:** `1b9b74d9` (2026-04-11)
 
-**Steps:**
-1. Wrap `ObjectInputStream` in try-with-resources in `SongBookUtil.java`
-2. Add response body size check before reading (reject >50MB)
-3. Add `ObjectInputFilter` (Java 9+/Android API 28+) to restrict deserialization to `java.util.ArrayList`, `yuku.kpri.model.Song`, and related classes only
-4. Long-term: Migrate song download format from Java serialization to JSON (Kotlinx Serialization), updating both server and client
+**What was done (steps 1-3):**
+1. ✅ Wrapped `Response` and streams in try-with-resources to prevent leaks
+2. ✅ Added response body size validation (rejects >50MB)
+3. ✅ Introduced `SafeObjectInputStream` with class whitelist (`java.util.*`, `java.lang.*`, and Song model classes only) to prevent deserialization attacks. Also added `instanceof` check before casting.
+4. ⬜ Long-term: Migrate song download format from Java serialization to JSON (Kotlinx Serialization) — not yet started, requires server change
 
-**Difficulty:** Step 1-3: Easy (1-2 hours). Step 4: Medium (1-2 days, requires server change).
+**Tests added:** 7 unit tests in `SongBookUtilTest.java` covering single/multiple songs, empty list, gzip, Unicode, multiple lyrics, and null fields.
 
 ---
 
-### REM-02: Fix Preferences hold()/unhold() Safety
+### REM-02: Fix Preferences hold()/unhold() Safety ✅ COMPLETED
 **Addresses:** TD-09, PB-07  
 **Module:** Afw  
 **BRICE:** B=3 R=4 I=5 C=5 E=4 → **4.2**
 
-**Current state:** `Preferences.java` (lines 235-250) uses a manual `hold()/unhold()` counter with a `held` field (line 19). If any code path throws between `hold()` and `unhold()`, preference writes buffer indefinitely. Note: all 6 existing call sites already wrap in try/finally (`CurrentReading.java`, `DailyVerseData.java`, `SyncSettingsActivity.java`, `IsiActivity.kt`, `InternalDbHelper.java`, `SecretSyncDebugActivity.kt`), but the pattern is error-prone for future callers.
+**Completed in:** `0b61084a`, `cffe49ad`, `80cd9f34` (2026-04-10/11)
 
-**Steps:**
-1. Add a `Preferences.withTransaction(block: () -> Unit)` Kotlin extension that wraps `hold()/unhold()` in try/finally:
-   ```kotlin
-   fun withTransaction(block: () -> Unit) {
-       Preferences.hold()
-       try { block() } finally { Preferences.unhold() }
-   }
-   ```
-2. Migrate all 6 existing `hold()`/`unhold()` pairs to `withTransaction`
-3. Add a safety timeout in `hold()` — if held for >10 seconds, auto-commit and log a warning
+**What was done:**
+1. ✅ Added `Preferences.withTransaction(Runnable)` method that wraps `hold()/unhold()` in try/finally
+2. ✅ Migrated all 6 existing `hold()`/`unhold()` call sites to `withTransaction` (`CurrentReading.java`, `DailyVerseData.java`, `SyncSettingsActivity.java`, `IsiActivity.kt`, `InternalDbHelper.java`, `SecretSyncDebugActivity.kt`)
+3. ✅ Made `hold()` and `unhold()` private — stronger than a safety timeout since external code can no longer call them directly, eliminating the misuse risk entirely
 
-**Difficulty:** Easy (2-3 hours).
+**Note:** Two call sites (`SyncSettingsActivity`, `SecretSyncDebugActivity`) were previously missing try/finally, meaning an exception would have buffered preference writes indefinitely. This bug is now fixed.
 
 ---
 
@@ -631,8 +625,8 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 
 | ID | Task | BRICE | Phase |
 |----|------|-------|-------|
-| REM-01 | Fix SongBookUtil deserialization safety | **4.6** | 1 |
-| REM-02 | Fix Preferences hold/unhold safety | **4.2** | 1 |
+| REM-01 | ~~Fix SongBookUtil deserialization safety~~ ✅ | **4.6** | 1 |
+| REM-02 | ~~Fix Preferences hold/unhold safety~~ ✅ | **4.2** | 1 |
 | REM-04 | Fix FCM token retry | **4.2** | 1 |
 | REM-05 | Fix DevotionDownloader threading | **4.0** | 1 |
 | REM-03 | Replace LocalBroadcastManager | **3.8** | 1 |
@@ -657,7 +651,7 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 
 ## Suggested Execution Order
 
-**Sprint 1 (1 week):** REM-01, REM-02, REM-04, REM-05 — all quick safety fixes  
+**Sprint 1 (1 week):** ~~REM-01~~✅, ~~REM-02~~✅, REM-04, REM-05 — quick safety fixes (REM-01/02 done)  
 **Sprint 2 (1 week):** REM-03 — LocalBroadcastManager removal (touches many files, best done in isolation)  
 **Sprint 3 (2 weeks):** REM-06, REM-07, REM-08 — IsiActivity decomposition  
 **Sprint 4 (1 week):** REM-12, REM-14 — deprecated library replacements  

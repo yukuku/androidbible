@@ -80,22 +80,18 @@ Static UI object reference can leak Activity context. Should create Toast inline
 
 ---
 
-## TD-04: Unsafe Deserialization in Songs
+## TD-04: ~~Unsafe Deserialization in Songs~~ PARTIALLY FIXED
 
-**File:** `Alkitab/src/main/java/yuku/alkitab/songs/SongBookUtil.java:186-188`
+**File:** `Alkitab/src/main/java/yuku/alkitab/songs/SongBookUtil.java`
 
-```java
-final ObjectInputStream ois = new ObjectInputStream(
-    new OptionalGzipInputStream(response.body().byteStream()));
-@SuppressWarnings("unchecked")
-final List<Song> songs = (List<Song>) ois.readObject();
-ois.close();
-```
+**Fixed in REM-01** (`1b9b74d9`, 2026-04-11):
+- ✅ **Security risk:** Now uses `SafeObjectInputStream` with a class whitelist — only `java.util.*`, `java.lang.*`, and Song model classes are allowed. Also adds `instanceof` check before casting.
+- ✅ **Resource leak:** Response and streams now wrapped in try-with-resources.
+- ✅ **No size limits:** Response body size validation added (rejects >50MB).
 
-- **Security risk:** `ObjectInputStream.readObject()` from a network stream can deserialize arbitrary classes. A compromised or MITM'd server could exploit this.
-- **Fragility:** Any change to `KpriModel.Song` fields (which uses `Parcelable` as its serialization format — acknowledged in the code as "Bad decision") breaks deserialization of all stored songs.
-- **Resource leak:** `ois.close()` not in try-with-resources — if `readObject()` throws, the stream leaks.
-- **No size limits:** No check on response size before loading entire stream into memory.
+**Remaining:**
+- **Fragility:** `KpriModel.Song` still uses `Parcelable` as its serialization/storage format (acknowledged as "Bad decision"). Migrating to JSON is tracked as REM-21.
+- **Long-term:** Migrate song download format from Java serialization to JSON (REM-01 step 4, not yet started).
 
 ---
 
@@ -161,14 +157,13 @@ Error handling is uniform — all failures produce `NotOkException` with no dist
 
 **File:** `Afw/src/main/java/yuku/afw/storage/Preferences.java`
 
+### ~~Manual hold/unhold transaction~~ FIXED
+**Fixed in REM-02** (`0b61084a`–`80cd9f34`, 2026-04-10/11):
+- ✅ `hold()`/`unhold()` are now **private** — external code uses `withTransaction(Runnable)` which guarantees `unhold()` via try/finally
+- ✅ All 6 call sites migrated; two previously unsafe call sites (`SyncSettingsActivity`, `SecretSyncDebugActivity`) were fixed
+
 ### Manual cache with dirty flag (lines 16–24)
-```java
-private static SharedPreferences cache;
-private static boolean dirty = true;
-private static int held = 0;
-```
 - `dirty` flag requires manual `invalidate()` calls from external code
-- `held` counter implements a manual transaction system where `hold()/unhold()` must be balanced — if `unhold()` is missed, changes are never persisted
 
 ### 100+ preference keys as enum (Prefkey.kt)
 Preference keys are a flat enum with no grouping or type safety. Each access requires an explicit type cast (`getString`, `getInt`, `getBoolean`). DataStore with typed proto schema would be safer.
@@ -336,8 +331,8 @@ The sync protocol uses last-write-wins without conflict notification. If two dev
 ### PB-05: Widget Verse Fallback
 Daily verse widget selects from a predefined list, but if the user's selected Bible version doesn't contain a particular book (e.g., some Protestant versions vs. Catholic with deuterocanonical books), it silently falls back to the internal version, potentially showing a verse in a different language.
 
-### PB-06: SongBookUtil Resource Leak
-`SongBookUtil.java:186-188` — `ObjectInputStream` is closed in a `close()` call after `readObject()`, but not in a try-with-resources or finally block. If `readObject()` throws, both the OIS and the underlying response body stream are leaked.
+### ~~PB-06: SongBookUtil Resource Leak~~ ✅ FIXED
+**Fixed in REM-01** (`1b9b74d9`, 2026-04-11). Response and all streams now wrapped in try-with-resources.
 
-### PB-07: Preferences hold() Without unhold()
-The `Preferences.hold()/unhold()` pattern is manually balanced. If any code path calls `hold()` but throws before `unhold()`, all subsequent preference writes are buffered indefinitely and never persisted to disk. No timeout or safety mechanism.
+### ~~PB-07: Preferences hold() Without unhold()~~ ✅ FIXED
+**Fixed in REM-02** (`0b61084a`–`80cd9f34`, 2026-04-10/11). `hold()`/`unhold()` are now private; all external code uses `withTransaction(Runnable)` with try/finally guarantee.
