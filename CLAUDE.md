@@ -30,7 +30,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Requirements**: JDK 17 (Zulu recommended), Android SDK with compile SDK 36, NDK 28.2.13676358.
 
-The `plain` flavor is the open-source development build. Production flavors (`yuku_alkitab`, `yuku_quick_bible`, `sabda_alkitab`) require the proprietary Bible text overlay under `$ALKITAB_PROPRIETARY_DIR/overlay/<applicationId>/text_raw/` plus signing-key env vars (`SIGN_KEYSTORE`, `SIGN_ALIAS`, `SIGN_PASSWORD`). With those set you can build a release APK with a plain `./gradlew assembleYuku_alkitabRelease` (or any other production flavor).
+The `plain` flavor is the open-source development build and works out of the box with the placeholder `Alkitab/google-services.json` checked into the repo (Firebase features won't function at runtime, but the app builds and runs). Production flavors (`yuku_alkitab`, `yuku_quick_bible`, `sabda_alkitab`) require:
+- `$ALKITAB_PROPRIETARY_DIR/overlay/<applicationId>/text_raw/` — proprietary Bible text
+- `$ALKITAB_PROPRIETARY_DIR/google-services.json` — real Firebase config (one file with client entries for all production applicationIds)
+- Signing-key env vars: `SIGN_KEYSTORE`, `SIGN_ALIAS`, `SIGN_PASSWORD`
+
+With those set, build with a plain `./gradlew assembleYuku_alkitabRelease` (or any other production flavor).
 
 ## Architecture
 
@@ -174,5 +179,5 @@ Detailed documentation for each major feature module:
 - `IsiActivity.kt` is ~2900 lines — the monolithic main activity handles Bible reading, split view, navigation, gestures, and action mode. Changes here require careful testing.
 - `KpriModel.Song` uses `Parcelable` serialization for database storage (acknowledged as a bad design decision in the code).
 - The `Snappy` module has native C++ code — NDK must be installed for builds.
-- `google-services.json` is gitignored — Firebase features (FCM, Crashlytics) won't work in the open-source build without providing your own.
+- A placeholder `Alkitab/google-services.json` is checked in so `plainDebug` works out of the box; Firebase features won't actually function with it. For production flavors, the real `google-services.json` is sourced from `$ALKITAB_PROPRIETARY_DIR/google-services.json` at build time and copied into the gitignored `Alkitab/src/<flavor>/google-services.json` (where the GMS plugin's source-set lookup finds it).
 - The internal Bible version data is split per flavor: the placeholder `ddd_*` files live under `Alkitab/src/plain/assets/internal/` (used by the `plain` open-source build only). Production flavors get their `tb_*`/`kjv_*` files copied from the proprietary overlay into `build/generated/proprietaryAssets/<flavor>/internal/` at build time.

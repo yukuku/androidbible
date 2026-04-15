@@ -45,24 +45,26 @@ abstract class CopyProprietaryAssetsTask extends DefaultTask {
     }
 }
 
-def googleServicesFile = file('google-services.json')
-def googleServicesJson = googleServicesFile.exists() ? new JsonSlurper().parse(googleServicesFile) : null
-
-def resolveFirebaseApiKey = { String applicationId ->
-    if (googleServicesJson == null) return null
-
-    def client = googleServicesJson.client?.find {
+// Validates that the given google-services.json file contains a non-placeholder
+// Firebase API key for `applicationId`. Returns null if usable, or a human-
+// readable reason string if not. Called at task execution time so it sees the
+// file produced by copyProprietaryGoogleServices<Flavor> (when applicable).
+def firebaseApiKeyProblem = { File jsonFile, String applicationId ->
+    if (jsonFile == null || !jsonFile.isFile()) {
+        return "google-services.json not found at ${jsonFile}"
+    }
+    def parsed = new JsonSlurper().parse(jsonFile)
+    def client = parsed.client?.find {
         it.client_info?.android_client_info?.package_name == applicationId
     }
-    return client?.api_key?.find { it.current_key != null }?.current_key
-}
-
-def hasUsableFirebaseApiKey = { String applicationId ->
-    def apiKey = resolveFirebaseApiKey(applicationId)
-    if (apiKey == null) return false
-
-    def trimmed = apiKey.trim()
-    return !trimmed.isEmpty() && !(trimmed ==~ /0+/)
+    if (client == null) {
+        return "no client entry for package '${applicationId}' in ${jsonFile}"
+    }
+    def apiKey = client.api_key?.find { it.current_key != null }?.current_key
+    if (apiKey == null || apiKey.trim().isEmpty() || apiKey.trim() ==~ /0+/) {
+        return "Firebase API key for '${applicationId}' is missing or a placeholder in ${jsonFile}"
+    }
+    return null
 }
 
 // Last git commit hash, baked into BuildConfig.LAST_COMMIT_HASH and the APK filename.
@@ -182,6 +184,34 @@ proprietaryFlavors.each { flavorName, overlaySubdir ->
     }
 }
 
+// Register one Copy task per production flavor that drops the proprietary
+// google-services.json into the flavor's source set, where the
+// com.google.gms.google-services plugin will pick it up via its standard
+// source-set lookup. The destination paths (Alkitab/src/<flavor>/google-services.json)
+// are gitignored so the worktree's tracked content never changes — they're
+// effectively build artifacts that just happen to live under src/.
+//
+// The plain flavor falls back to Alkitab/google-services.json (the placeholder
+// committed to the repo) since we never write to src/plain/google-services.json.
+proprietaryFlavors.keySet().each { flavorName ->
+    tasks.register("copyProprietaryGoogleServices${flavorName.capitalize()}", Copy) {
+        description = "Copies proprietary google-services.json into the ${flavorName} flavor's source set."
+        if (proprietaryDir != null) {
+            from(file("${proprietaryDir}/google-services.json"))
+        }
+        into file("src/${flavorName}")
+        doFirst {
+            if (proprietaryDir == null) {
+                throw new GradleException("ALKITAB_PROPRIETARY_DIR is not set; required to build the '${flavorName}' flavor.")
+            }
+            def src = file("${proprietaryDir}/google-services.json")
+            if (!src.isFile()) {
+                throw new GradleException("Proprietary google-services.json not found: ${src}")
+            }
+        }
+    }
+}
+
 // Wire each production flavor's generated proprietary assets into AGP. Using
 // addGeneratedSourceDirectory (rather than sourceSets.assets.srcDirs +=) lets
 // AGP automatically declare the dependency on the copy task for every consumer
@@ -204,12 +234,35 @@ android.applicationVariants.all { variant ->
         outputFileName = "Alkitab-${variant.versionCode}-${variant.versionName}-${gitCommitHash}-${variant.applicationId}-${buildDist}.apk"
     }
 
-    // Validate Firebase config for non-plain release builds (existing check).
+    // Wire the proprietary google-services.json copy task into the GMS plugin
+    // task that consumes it, for each production flavor variant.
+    if (proprietaryFlavors.containsKey(variant.flavorName)) {
+        def copyTaskName = "copyProprietaryGoogleServices${variant.flavorName.capitalize()}"
+        tasks.named("process${variant.name.capitalize()}GoogleServices").configure {
+            dependsOn copyTaskName
+        }
+    }
+
+    // Validate Firebase config for non-plain release builds. Reads from the
+    // flavor source set (populated by copyProprietaryGoogleServices<Flavor>),
+    // falling back to the root google-services.json the GMS plugin would
+    // otherwise use.
     if (!variant.buildType.debuggable && variant.flavorName != 'plain') {
+        def applicationId = variant.applicationId
+        def flavorName = variant.flavorName
         def validateTask = tasks.register("validate${variant.name.capitalize()}FirebaseConfig") {
+            if (proprietaryFlavors.containsKey(flavorName)) {
+                dependsOn "copyProprietaryGoogleServices${flavorName.capitalize()}"
+            }
             doLast {
-                if (!hasUsableFirebaseApiKey(variant.applicationId)) {
-                    throw new GradleException("Release build '${variant.name}' requires a non-empty Firebase API key in Alkitab/google-services.json for package '${variant.applicationId}'.")
+                def candidates = [
+                    file("src/${flavorName}/google-services.json"),
+                    file("google-services.json"),
+                ]
+                def jsonFile = candidates.find { it.isFile() }
+                def reason = firebaseApiKeyProblem(jsonFile, applicationId)
+                if (reason != null) {
+                    throw new GradleException("Release build '${variant.name}' has unusable Firebase config: ${reason}. For production flavors, set ALKITAB_PROPRIETARY_DIR to a directory containing a real google-services.json with a client entry for '${applicationId}'.")
                 }
             }
         }

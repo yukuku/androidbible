@@ -68,17 +68,29 @@ BUILD_DIST=market \
 ./gradlew assembleYuku_alkitabRelease
 ```
 
+Required `$ALKITAB_PROPRIETARY_DIR` layout:
+```
+$ALKITAB_PROPRIETARY_DIR/
+├── google-services.json                      # one file with client entries for every production applicationId
+└── overlay/
+    ├── yuku.alkitab/text_raw/                # real Bible text for yuku_alkitab
+    ├── yuku.alkitab.kjv/text_raw/            # real Bible text for yuku_quick_bible
+    └── org.sabda.alkitab/text_raw/           # real Bible text for sabda_alkitab (a symlink to yuku.alkitab is fine if both ship the same Bible)
+```
+
 Environment variables:
-- `ALKITAB_PROPRIETARY_DIR` — directory containing `overlay/<applicationId>/text_raw/` with the real Bible text. Required for `yuku_alkitab`, `yuku_quick_bible`, `sabda_alkitab`. Not used by `plain`.
+- `ALKITAB_PROPRIETARY_DIR` — directory matching the layout above. Required for `yuku_alkitab`, `yuku_quick_bible`, `sabda_alkitab`. Not used by `plain`.
 - `SIGN_KEYSTORE`, `SIGN_ALIAS`, `SIGN_PASSWORD` — required to sign release builds (any flavor). The signing config in `Alkitab/build.gradle` reads them at config time.
 - `BUILD_DIST` — distribution channel identifier embedded in the APK filename. Defaults to `dev` when unset.
 
 What the Gradle build does:
 1. `CopyProprietaryAssetsTask` (per production flavor) copies `$ALKITAB_PROPRIETARY_DIR/overlay/<applicationId>/text_raw/*` into `Alkitab/build/generated/proprietaryAssets/<flavor>/internal/`. Wired into AGP via `androidComponents { onVariants { ... addGeneratedSourceDirectory(...) } }` so every consumer (mergeAssets, lint vital, etc.) automatically depends on it. Fails fast if the env var is unset or the overlay is missing.
-2. The git commit hash is read at config time and exposed as `BuildConfig.LAST_COMMIT_HASH` (consumed by `AboutActivity` and `InstallationUtil`).
-3. The release APK is named `Alkitab-{versionCode}-{versionName}-{commitHash}-{applicationId}-{BUILD_DIST}.apk`.
+2. `copyProprietaryGoogleServices<Flavor>` (per production flavor) copies `$ALKITAB_PROPRIETARY_DIR/google-services.json` into `Alkitab/src/<flavor>/google-services.json`, where the GMS plugin's source-set lookup picks it up. Those destinations are matched by the existing `google-services.json` line in `.gitignore`, so they're never committed — they behave like build artifacts that just happen to live under `src/`. The plain flavor falls back to the committed placeholder at `Alkitab/google-services.json`.
+3. The git commit hash is read at config time and exposed as `BuildConfig.LAST_COMMIT_HASH` (consumed by `AboutActivity` and `InstallationUtil`).
+4. The release APK is named `Alkitab-{versionCode}-{versionName}-{commitHash}-{applicationId}-{BUILD_DIST}.apk`.
+5. For non-plain release builds, `validate<Variant>FirebaseConfig` reads the post-copy `Alkitab/src/<flavor>/google-services.json` and aborts the build if the API key is missing or a placeholder.
 
-The `plain` flavor keeps its placeholder `ddd_*` Bible files in `Alkitab/src/plain/assets/internal/` and needs none of the proprietary env vars.
+The `plain` flavor keeps its placeholder `ddd_*` Bible files in `Alkitab/src/plain/assets/internal/` and uses the placeholder `Alkitab/google-services.json`. It needs none of the proprietary env vars.
 
 ## ProGuard
 
@@ -96,7 +108,7 @@ Defined in root `build.gradle`:
 
 ## Firebase
 
-- `google-services.json` is gitignored — each build environment must provide its own
+- A placeholder `Alkitab/google-services.json` is committed so `plainDebug` works out of the box. The real `google-services.json` (covering all production applicationIds) lives at `$ALKITAB_PROPRIETARY_DIR/google-services.json` and is copied per-flavor into gitignored `Alkitab/src/<flavor>/google-services.json` at build time — see "Release Build" above.
 - FCM registration is skipped in debug builds
 - Firebase BOM 29.0.3 (Messaging + Crashlytics)
 - Debug builds use `RIBKA_FUNCTIONS_HOST_DEBUG` for FCM functions
