@@ -47,7 +47,7 @@ The primary Bible text file format. Each `.yes` file contains one complete Bible
 
 ## Internal Bible Format — Built-in Bible Version
 
-The internal (built-in) Bible version is stored in `Alkitab/src/main/assets/internal/` as a set of plain text and Bintex binary files. This is the fallback version that ships with the APK. In the open-source build, it contains dummy data (`ddd_*` files); production builds overlay real Bible text via `ybuild.sh` or Gradle.
+The internal (built-in) Bible version is stored in `assets/internal/` as a set of plain text and Bintex binary files. This is the fallback version that ships with the APK. In the open-source `plain` build, the dummy `ddd_*` files come from `Alkitab/src/plain/assets/internal/`; production flavors get real Bible text via `CopyProprietaryAssetsTask` (see [build-system.md](build-system.md)), which copies from `$ALKITAB_PROPRIETARY_DIR/overlay/<applicationId>/text_raw/` into a generated assets directory.
 
 ### Configuration
 

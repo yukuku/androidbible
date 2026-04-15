@@ -55,20 +55,30 @@ GitHub Actions workflow (`.github/workflows/android.yml`):
 - Ubuntu latest, JDK 17 (Zulu)
 - Runs: `testPlainDebugUnitTest`, `testPlainReleaseUnitTest`, `assemblePlainDebug`, `bundlePlainDebug`
 
-## Release Build (`ybuild.sh`)
+## Release Build
 
-Production release script for maintainers:
+Production release builds are pure Gradle:
 
-1. Creates 1GB RAM disk at `/Volumes/ART` for fast builds
-2. Requires environment variables:
-   - `ALKITAB_PROPRIETARY_DIR` — path to proprietary resources overlay
-   - `SIGN_KEYSTORE`, `SIGN_ALIAS`, `SIGN_PASSWORD` — signing config
-   - `FLAVOR` — which flavor to build
-   - `BUILD_PACKAGE_NAME` — final package name
-   - `BUILD_DIST` — distribution channel identifier
-3. Overlays proprietary resources from `ALKITAB_PROPRIETARY_DIR`
-4. Writes Git commit hash to `R.string.git_commit_hash`
-5. Outputs signed APK named `{package}-{versionCode}-{versionName}-{commitHash}.apk`
+```bash
+ALKITAB_PROPRIETARY_DIR=/path/to/proprietary \
+SIGN_KEYSTORE=/path/to/keystore \
+SIGN_ALIAS=mykey \
+SIGN_PASSWORD=secret \
+BUILD_DIST=market \
+./gradlew assembleYuku_alkitabRelease
+```
+
+Environment variables:
+- `ALKITAB_PROPRIETARY_DIR` — directory containing `overlay/<applicationId>/text_raw/` with the real Bible text. Required for `yuku_alkitab`, `yuku_quick_bible`, `sabda_alkitab`. Not used by `plain`.
+- `SIGN_KEYSTORE`, `SIGN_ALIAS`, `SIGN_PASSWORD` — required to sign release builds (any flavor). The signing config in `Alkitab/build.gradle` reads them at config time.
+- `BUILD_DIST` — distribution channel identifier embedded in the APK filename. Defaults to `dev` when unset.
+
+What the Gradle build does:
+1. `CopyProprietaryAssetsTask` (per production flavor) copies `$ALKITAB_PROPRIETARY_DIR/overlay/<applicationId>/text_raw/*` into `Alkitab/build/generated/proprietaryAssets/<flavor>/internal/`. Wired into AGP via `androidComponents { onVariants { ... addGeneratedSourceDirectory(...) } }` so every consumer (mergeAssets, lint vital, etc.) automatically depends on it. Fails fast if the env var is unset or the overlay is missing.
+2. The git commit hash is read at config time and exposed as `BuildConfig.LAST_COMMIT_HASH` (consumed by `AboutActivity` and `InstallationUtil`).
+3. The release APK is named `Alkitab-{versionCode}-{versionName}-{commitHash}-{applicationId}-{BUILD_DIST}.apk`.
+
+The `plain` flavor keeps its placeholder `ddd_*` Bible files in `Alkitab/src/plain/assets/internal/` and needs none of the proprietary env vars.
 
 ## ProGuard
 

@@ -1,4 +1,13 @@
 import groovy.json.JsonSlurper
+import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.TaskAction
+import javax.inject.Inject
 
 plugins {
     id 'com.android.application'
@@ -6,6 +15,34 @@ plugins {
     id "kotlin-parcelize"
     id 'com.google.firebase.crashlytics'
     id 'kotlinx-serialization'
+}
+
+/**
+ * Mirrors the contents of {@code text_raw/} from a proprietary overlay directory
+ * into {@code <outputDir>/internal/}, so that the result can be wired into a
+ * product flavor's assets via AGP's {@code addGeneratedSourceDirectory}. The
+ * Sync semantics ensure that removed files in the source disappear from the
+ * output, and the typed {@code DirectoryProperty} output lets every downstream
+ * AGP task (mergeAssets, lint vital, etc.) automatically depend on this task.
+ */
+abstract class CopyProprietaryAssetsTask extends DefaultTask {
+    @InputDirectory
+    @PathSensitive(PathSensitivity.RELATIVE)
+    abstract DirectoryProperty getSourceDir()
+
+    @OutputDirectory
+    abstract DirectoryProperty getOutputDir()
+
+    @Inject
+    abstract FileSystemOperations getFs()
+
+    @TaskAction
+    void copyAssets() {
+        fs.sync {
+            from sourceDir
+            into outputDir.dir("internal")
+        }
+    }
 }
 
 def googleServicesFile = file('google-services.json')
@@ -28,6 +65,30 @@ def hasUsableFirebaseApiKey = { String applicationId ->
     return !trimmed.isEmpty() && !(trimmed ==~ /0+/)
 }
 
+// Last git commit hash, baked into BuildConfig.LAST_COMMIT_HASH and the APK filename.
+// Falls back to "0000000" outside of a git checkout (e.g. some CI source archives).
+def gitCommitHash = "0000000"
+try {
+    gitCommitHash = providers.exec {
+        commandLine 'git', 'log', '-1', '--format=format:%h'
+    }.standardOutput.asText.get().trim()
+    if (gitCommitHash.isEmpty()) {
+        gitCommitHash = "0000000"
+    }
+} catch (Exception ignored) {
+    // not a git checkout, leave as "0000000"
+}
+
+// Map of production (non-plain) flavor name -> overlay subdirectory name under
+// $ALKITAB_PROPRIETARY_DIR/overlay/. The overlay subdirectory matches the
+// applicationId of the corresponding flavor.
+def proprietaryFlavors = [
+    yuku_alkitab    : 'yuku.alkitab',
+    yuku_quick_bible: 'yuku.alkitab.kjv',
+    sabda_alkitab   : 'org.sabda.alkitab',
+]
+def proprietaryDir = System.getenv("ALKITAB_PROPRIETARY_DIR")
+
 android {
     signingConfigs {
         release {
@@ -49,6 +110,7 @@ android {
         resourceConfigurations += ['af', 'bg', 'ceb', 'cs', 'da', 'de', 'el', 'es', 'fr', 'hu', 'in', 'it', 'ja', 'ko', 'lv', 'ms', 'my', 'nl', 'pl', 'pt-rBR', 'pt', 'ro', 'ru', 'th', 'tl', 'tr', 'uk', 'vi', 'zh-rCN', 'zh-rTW']
         buildConfigField 'String', 'SERVER_HOST', "\"$SERVER_HOST\""
         buildConfigField 'String', 'RIBKA_FUNCTIONS_HOST', "\"$RIBKA_FUNCTIONS_HOST\""
+        buildConfigField 'String', 'LAST_COMMIT_HASH', "\"${gitCommitHash}\""
     }
     buildTypes {
         debug {
@@ -85,6 +147,7 @@ android {
             applicationId 'org.sabda.alkitab'
         }
     }
+
     namespace 'yuku.alkitab.debug'
 
     buildFeatures {
@@ -96,7 +159,52 @@ android {
     ndkVersion '28.2.13676358'
 }
 
+// Register one CopyProprietaryAssetsTask per production flavor. The task
+// materialises proprietary internal/ Bible data into
+// build/generated/proprietaryAssets/<flavor>/internal/ and is wired into the
+// flavor's assets via androidComponents.onVariants below.
+proprietaryFlavors.each { flavorName, overlaySubdir ->
+    tasks.register("copyProprietaryAssets${flavorName.capitalize()}", CopyProprietaryAssetsTask) {
+        description = "Copies proprietary internal/ Bible assets for the ${flavorName} flavor."
+        outputDir.set(layout.buildDirectory.dir("generated/proprietaryAssets/${flavorName}"))
+        if (proprietaryDir != null) {
+            sourceDir.set(file("${proprietaryDir}/overlay/${overlaySubdir}/text_raw"))
+        }
+        doFirst {
+            if (proprietaryDir == null) {
+                throw new GradleException("ALKITAB_PROPRIETARY_DIR is not set; required to build the '${flavorName}' flavor.")
+            }
+            def src = file("${proprietaryDir}/overlay/${overlaySubdir}/text_raw")
+            if (!src.isDirectory()) {
+                throw new GradleException("Proprietary overlay directory not found: ${src}")
+            }
+        }
+    }
+}
+
+// Wire each production flavor's generated proprietary assets into AGP. Using
+// addGeneratedSourceDirectory (rather than sourceSets.assets.srcDirs +=) lets
+// AGP automatically declare the dependency on the copy task for every consumer
+// (mergeAssets, lint vital, etc.).
+androidComponents {
+    proprietaryFlavors.keySet().each { flavorName ->
+        onVariants(selector().withFlavor("playStoreApplicationId", flavorName)) { variant ->
+            def copyTask = tasks.named("copyProprietaryAssets${flavorName.capitalize()}", CopyProprietaryAssetsTask)
+            variant.sources.assets?.addGeneratedSourceDirectory(copyTask) { it.outputDir }
+        }
+    }
+}
+
 android.applicationVariants.all { variant ->
+    // Custom APK output filename, mirroring the legacy ybuild.sh naming:
+    //   Alkitab-<versionCode>-<versionName>-<gitHash>-<applicationId>-<BUILD_DIST>.apk
+    // BUILD_DIST defaults to "dev" so local builds get a recognisable name.
+    def buildDist = System.getenv("BUILD_DIST") ?: "dev"
+    variant.outputs.all { output ->
+        outputFileName = "Alkitab-${variant.versionCode}-${variant.versionName}-${gitCommitHash}-${variant.applicationId}-${buildDist}.apk"
+    }
+
+    // Validate Firebase config for non-plain release builds (existing check).
     if (!variant.buildType.debuggable && variant.flavorName != 'plain') {
         def validateTask = tasks.register("validate${variant.name.capitalize()}FirebaseConfig") {
             doLast {

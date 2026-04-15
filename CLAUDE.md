@@ -30,7 +30,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Requirements**: JDK 17 (Zulu recommended), Android SDK with compile SDK 36, NDK 28.2.13676358.
 
-The `plain` flavor is the open-source development build. Production flavors (`yuku_alkitab`, `yuku_quick_bible`, `sabda_alkitab`) require proprietary resources and signing keys via `ybuild.sh`.
+The `plain` flavor is the open-source development build. Production flavors (`yuku_alkitab`, `yuku_quick_bible`, `sabda_alkitab`) require the proprietary Bible text overlay under `$ALKITAB_PROPRIETARY_DIR/overlay/<applicationId>/text_raw/` plus signing-key env vars (`SIGN_KEYSTORE`, `SIGN_ALIAS`, `SIGN_PASSWORD`). With those set you can build a release APK with a plain `./gradlew assembleYuku_alkitabRelease` (or any other production flavor).
 
 ## Architecture
 
@@ -175,5 +175,4 @@ Detailed documentation for each major feature module:
 - `KpriModel.Song` uses `Parcelable` serialization for database storage (acknowledged as a bad design decision in the code).
 - The `Snappy` module has native C++ code — NDK must be installed for builds.
 - `google-services.json` is gitignored — Firebase features (FCM, Crashlytics) won't work in the open-source build without providing your own.
-- The internal Bible version data in `assets/internal/` is placeholder for the open-source build.
-- `ybuild.sh` creates a 1GB RAM disk and overlays proprietary resources — only for production release builds.
+- The internal Bible version data is split per flavor: the placeholder `ddd_*` files live under `Alkitab/src/plain/assets/internal/` (used by the `plain` open-source build only). Production flavors get their `tb_*`/`kjv_*` files copied from the proprietary overlay into `build/generated/proprietaryAssets/<flavor>/internal/` at build time.
