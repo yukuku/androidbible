@@ -56,7 +56,6 @@ The project is a multi-module Gradle build. The main app module is **`:Alkitab`*
 | `Afw` | Base Android framework (preferences wrapper, adapter base, app context) |
 | `Snappy` | JNI Snappy compression (native C++ via NDK) |
 | `AmbilWarna` | Color picker dialog |
-| `DragSortListView` | Drag-sortable list widget |
 | `FlowLayout` | Flow layout widget |
 | `PrDownloaderFixed` | Patched PRDownloader for HTTP file downloads |
 | `ImportedDesktopVerseUtil` | Desktop verse reference finder/parser |

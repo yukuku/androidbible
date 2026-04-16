@@ -29,7 +29,6 @@ Alkitab (main app)
 ├── AlkitabFeedback
 ├── BiblePlus (PDB format reader)
 ├── KpriModel (song data model)
-├── DragSortListView
 ├── FlowLayout
 ├── AmbilWarna (color picker)
 ├── Afw (base framework: Preferences, EasyAdapter, App context)

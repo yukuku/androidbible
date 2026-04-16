@@ -27,14 +27,14 @@ import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.afollestad.materialdialogs.MaterialDialog
-import com.mobeta.android.dslv.DragSortController
-import com.mobeta.android.dslv.DragSortListView
 import java.io.File
 import java.util.Locale
 import java.util.regex.Matcher
-import yuku.afw.widget.EasyAdapter
 import yuku.alkitab.base.App
 import yuku.alkitab.base.S
 import yuku.alkitab.base.config.VersionConfig
@@ -58,8 +58,9 @@ private const val ARG_INITIAL_QUERY_TEXT = "initial_query_text"
 
 class VersionListFragment : Fragment(), QueryTextReceiver {
     private lateinit var inflater: LayoutInflater
-    private lateinit var lsVersions: DragSortListView
+    private lateinit var lsVersions: RecyclerView
     private lateinit var adapter: VersionAdapter
+    private var itemTouchHelper: ItemTouchHelper? = null
     private var swiper: SwipeRefreshLayout? = null
 
     var downloadedOnly = false
@@ -100,12 +101,13 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
 
         val rootView = inflater.inflate(if (downloadedOnly) R.layout.fragment_versions_downloaded else R.layout.fragment_versions_all, container, false)
         lsVersions = rootView.findViewById(R.id.lsVersions)
+        lsVersions.layoutManager = LinearLayoutManager(requireContext())
         lsVersions.adapter = adapter
 
         if (downloadedOnly) {
-            val c = VersionOrderingController(lsVersions)
-            lsVersions.setFloatViewManager(c)
-            lsVersions.setOnTouchListener(c)
+            itemTouchHelper = ItemTouchHelper(VersionReorderCallback()).also {
+                it.attachToRecyclerView(lsVersions)
+            }
         }
 
         // Can be null, if the layout used is fragment_versions_downloaded.
@@ -301,7 +303,7 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
         }
     }
 
-    class VersionItemHolder(view: View) {
+    inner class VersionItemHolder(view: View) : RecyclerView.ViewHolder(view) {
         val panelRight: View = view.findViewById(R.id.panelRight)
         val cActive: CheckBox = view.findViewById(R.id.cActive)
         val progress: ProgressBar = view.findViewById(R.id.progress)
@@ -309,13 +311,34 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
         val header: View = view.findViewById(R.id.header)
         val tLanguage: TextView = view.findViewById(R.id.tLanguage)
         val drag_handle: View = view.findViewById(R.id.drag_handle)
+
+        init {
+            drag_handle.setOnTouchListener { _, event ->
+                if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+                    itemTouchHelper?.startDrag(this)
+                }
+                false
+            }
+        }
     }
 
-    inner class VersionAdapter internal constructor() : EasyAdapter(), DragSortListView.DropListener {
+    inner class VersionAdapter internal constructor() : RecyclerView.Adapter<VersionItemHolder>() {
         private val items = mutableListOf<Item>()
 
         init {
             reload()
+        }
+
+        fun getItem(position: Int): Item = items[position]
+
+        /** Returns a defensive copy of the current items list, used to snapshot drag-start state. */
+        fun snapshotItems(): List<Item> = items.toList()
+
+        /** Reorder within the local list during a drag. Persistence happens once on drop. */
+        fun moveItemLocally(from: Int, to: Int) {
+            val moved = items.removeAt(from)
+            items.add(to, moved)
+            notifyItemMoved(from, to)
         }
 
         /**
@@ -412,18 +435,14 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
             return true
         }
 
-        override fun getCount() = items.size
+        override fun getItemCount() = items.size
 
-        override fun getItem(position: Int) = items[position]
-
-        override fun newView(position: Int, parent: ViewGroup): View {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VersionItemHolder {
             val view = inflater.inflate(R.layout.item_version, parent, false)
-            view.tag = VersionItemHolder(view)
-            return view
+            return VersionItemHolder(view)
         }
 
-        override fun bindView(view: View, position: Int, parent: ViewGroup) {
-            val holder = view.tag as VersionItemHolder
+        override fun onBindViewHolder(holder: VersionItemHolder, position: Int) {
             val panelRight = holder.panelRight
             val cActive = holder.cActive
             val progress = holder.progress
@@ -434,7 +453,7 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
             val item = getItem(position)
             val mv = item.mv
             bLongName.setOnClickListener { itemNameClick(item) }
-            panelRight.setOnClickListener { itemCheckboxClick(item, view) }
+            panelRight.setOnClickListener { itemCheckboxClick(item, holder.itemView) }
             cActive.isChecked = mv.active
             bLongName.text = mv.longName
 
@@ -523,14 +542,6 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
                 drag_handle.visibility = View.GONE
             }
         }
-
-        override fun drop(from: Int, to: Int) {
-            if (from == to) return
-            val fromItem = getItem(from)
-            val toItem = getItem(to)
-            S.db.reorderVersions(fromItem.mv, toItem.mv)
-            App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
-        }
     }
 
     fun hasUpdateAvailable(mvDb: MVersionDb): Boolean {
@@ -541,26 +552,62 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
         return !(available == 0 || available <= mvDb.modifyTime)
     }
 
-    private inner class VersionOrderingController(private val lv: DragSortListView) :
-        DragSortController(lv, R.id.drag_handle, ON_DOWN, 0) {
+    private inner class VersionReorderCallback : ItemTouchHelper.Callback() {
+        /** Snapshot of adapter items captured at drag start, used to resolve the destination on drop. */
+        private var dragStartSnapshot: List<Item>? = null
+        private var dragStartPos: Int = RecyclerView.NO_POSITION
 
-        init {
-            isRemoveEnabled = false
+        override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+            return makeMovementFlags(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0)
         }
 
-        override fun startDragPosition(ev: MotionEvent): Int {
-            return super.dragHandleHitPosition(ev)
+        override fun isLongPressDragEnabled(): Boolean = false
+
+        override fun isItemViewSwipeEnabled(): Boolean = false
+
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder,
+        ): Boolean {
+            val from = viewHolder.bindingAdapterPosition
+            val to = target.bindingAdapterPosition
+            if (from == RecyclerView.NO_POSITION || to == RecyclerView.NO_POSITION) return false
+            adapter.moveItemLocally(from, to)
+            return true
         }
 
-        override fun onCreateFloatView(position: Int): View {
-            val res = adapter.getView(position, null, lv)
-            res.setBackgroundColor(0x22ffffff)
-            return res
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            // unused
         }
 
-        override fun onDestroyFloatView(floatView: View) {
-            // Do not call super and do not remove this override.
-            floatView.setBackgroundColor(0)
+        override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+            super.onSelectedChanged(viewHolder, actionState)
+            if (actionState == ItemTouchHelper.ACTION_STATE_DRAG && viewHolder != null) {
+                viewHolder.itemView.setBackgroundColor(0x22ffffff)
+                dragStartPos = viewHolder.bindingAdapterPosition
+                dragStartSnapshot = adapter.snapshotItems()
+            }
+        }
+
+        override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+            super.clearView(recyclerView, viewHolder)
+            viewHolder.itemView.setBackgroundColor(0)
+
+            val endPos = viewHolder.bindingAdapterPosition
+            val snapshot = dragStartSnapshot
+            val startPos = dragStartPos
+            dragStartSnapshot = null
+            dragStartPos = RecyclerView.NO_POSITION
+
+            if (snapshot == null || startPos == RecyclerView.NO_POSITION || endPos == RecyclerView.NO_POSITION) return
+            if (startPos == endPos) return
+            if (startPos !in snapshot.indices || endPos !in snapshot.indices) return
+
+            val fromItem = snapshot[startPos]
+            val toItem = snapshot[endPos]
+            S.db.reorderVersions(fromItem.mv, toItem.mv)
+            App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
         }
     }
 

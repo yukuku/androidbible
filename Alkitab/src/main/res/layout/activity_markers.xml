@@ -10,7 +10,7 @@
 		android:layout_height="?actionBarSize"
 		android:background="@color/primary" />
 
-	<com.mobeta.android.dslv.DragSortListView
+	<androidx.recyclerview.widget.RecyclerView
 		android:id="@android:id/list"
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
