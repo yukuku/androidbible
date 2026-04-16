@@ -28,6 +28,7 @@ interface VerseActionModeHost {
 
     // Secondary ("split 1") — null when the split view is closed.
     val activeSplit1Version: Version?
+    val activeSplit1VersionId: String?
     val activeSplit1MVersion: MVersion?
 
     /** Looks up the book with the given id in the split-1 version, or null. */

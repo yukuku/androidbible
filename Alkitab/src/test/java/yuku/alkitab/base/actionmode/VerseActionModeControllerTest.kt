@@ -29,10 +29,13 @@ import org.robolectric.annotation.Config
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.config.AppConfig
 import yuku.alkitab.base.util.ExtensionManager
+import yuku.alkitab.base.util.ShareUrl
 import yuku.alkitab.base.verses.VersesDataModel
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Book
 import yuku.alkitab.model.SingleChapterVerses
+import yuku.alkitab.model.Version
+import yuku.alkitab.util.Ari
 import yuku.alkitab.util.IntArrayList
 
 /**
@@ -86,6 +89,7 @@ class VerseActionModeControllerTest {
         every { host.activeSplit0VersionId } returns "internal"
         every { host.activeSplit0MVersion } returns mockk(relaxed = true)
         every { host.activeSplit1Version } returns null
+        every { host.activeSplit1VersionId } returns null
         every { host.activeSplit1MVersion } returns null
         every { host.activeSplit1BookById(any()) } returns null
         every { host.selectedVersesSplit0_1 } returns ints(1)
@@ -340,6 +344,182 @@ class VerseActionModeControllerTest {
 
         verify { actions.onActionModeDestroyed() }
         verify(exactly = 0) { actions.uncheckAllVersesSplit0() }
+    }
+
+    // ----- onActionItemClicked: ShareUrl.make metadata routing -----
+    //
+    // Regression-and-fix coverage for the bug where Copy/Share Split1 would build the text
+    // from split1 but pass split0-anchored metadata (version, preset_name, ari_bc) to
+    // ShareUrl.make, producing a share URL that pointed back at the wrong version.
+
+    @Test
+    fun `clicking Copy Split1 passes split1 version, preset_name, and ari_bc to ShareUrl make (not split0 as before)`() {
+        val split0Book = makeBook("Gen").apply { bookId = 0 }
+        val split1Book = makeBook("Kej").apply { bookId = 2 }
+        val split1Version = mockk<Version>(relaxed = true) { every { shortName } returns "TB" }
+
+        every { host.activeSplit0Book } returns split0Book
+        every { host.activeSplit0Version } returns mockk(relaxed = true) { every { shortName } returns "KJV" }
+        every { host.activeSplit0VersionId } returns "internal"
+        every { host.activeSplit1Version } returns split1Version
+        every { host.activeSplit1VersionId } returns "preset/tb"
+        every { host.activeSplit1BookById(0) } returns split1Book
+        every { host.selectedVersesSplit0_1 } returns ints(3)
+        every { host.selectedVersesSplit1_1 } returns ints(3)
+        every { host.dataSplit1 } returns makeData("", "", "", "Pada mulanya Allah menciptakan langit dan bumi.")
+
+        stubShareUrlMake()
+
+        val menu = inflateMenu()
+        controller.onCreateActionMode(mode, menu)
+        controller.onPrepareActionMode(mode, menu)
+        controller.onActionItemClicked(mode, menu.findItem(R.id.menuCopySplit1))
+
+        verify(exactly = 1) {
+            ShareUrl.make(
+                activity = any(),
+                immediatelyCancel = any(),
+                verseText = any(),
+                ari_bc = Ari.encode(2, 1, 0),
+                selectedVerses_1 = any(),
+                reference = any(),
+                version = split1Version,
+                preset_name = "tb",
+                callback = any(),
+            )
+        }
+    }
+
+    @Test
+    fun `clicking Share Split1 passes split1 version, preset_name, and ari_bc to ShareUrl make (not split0 as before)`() {
+        val split0Book = makeBook("Gen").apply { bookId = 0 }
+        val split1Book = makeBook("Kej").apply { bookId = 2 }
+        val split1Version = mockk<Version>(relaxed = true) { every { shortName } returns "TB" }
+
+        every { host.activeSplit0Book } returns split0Book
+        every { host.activeSplit0Version } returns mockk(relaxed = true) { every { shortName } returns "KJV" }
+        every { host.activeSplit0VersionId } returns "internal"
+        every { host.activeSplit1Version } returns split1Version
+        every { host.activeSplit1VersionId } returns "preset/tb"
+        every { host.activeSplit1BookById(0) } returns split1Book
+        every { host.selectedVersesSplit0_1 } returns ints(3)
+        every { host.selectedVersesSplit1_1 } returns ints(3)
+        every { host.dataSplit1 } returns makeData("", "", "", "Pada mulanya Allah menciptakan langit dan bumi.")
+
+        stubShareUrlMake()
+
+        val menu = inflateMenu()
+        controller.onCreateActionMode(mode, menu)
+        controller.onPrepareActionMode(mode, menu)
+        controller.onActionItemClicked(mode, menu.findItem(R.id.menuShareSplit1))
+
+        verify(exactly = 1) {
+            ShareUrl.make(
+                activity = any(),
+                immediatelyCancel = any(),
+                verseText = any(),
+                ari_bc = Ari.encode(2, 1, 0),
+                selectedVerses_1 = any(),
+                reference = any(),
+                version = split1Version,
+                preset_name = "tb",
+                callback = any(),
+            )
+        }
+    }
+
+    @Test
+    fun `clicking Share Split0 with a split view active still uses split0 metadata for ShareUrl make (regression guard so the easy case keeps working)`() {
+        val split0Book = makeBook("Gen").apply { bookId = 0 }
+        val split1Book = makeBook("Kej").apply { bookId = 2 }
+        val split0Version = mockk<Version>(relaxed = true) { every { shortName } returns "KJV" }
+        val split1Version = mockk<Version>(relaxed = true) { every { shortName } returns "TB" }
+
+        every { host.activeSplit0Book } returns split0Book
+        every { host.activeSplit0Version } returns split0Version
+        every { host.activeSplit0VersionId } returns "preset/kjv"
+        every { host.activeSplit1Version } returns split1Version
+        every { host.activeSplit1VersionId } returns "preset/tb"
+        every { host.activeSplit1BookById(0) } returns split1Book
+        every { host.selectedVersesSplit0_1 } returns ints(3)
+        every { host.selectedVersesSplit1_1 } returns ints(3)
+
+        stubShareUrlMake()
+
+        val menu = inflateMenu()
+        controller.onCreateActionMode(mode, menu)
+        controller.onPrepareActionMode(mode, menu)
+        controller.onActionItemClicked(mode, menu.findItem(R.id.menuShareSplit0))
+
+        verify(exactly = 1) {
+            ShareUrl.make(
+                activity = any(),
+                immediatelyCancel = any(),
+                verseText = any(),
+                ari_bc = Ari.encode(0, 1, 0),
+                selectedVerses_1 = any(),
+                reference = any(),
+                version = split0Version,
+                preset_name = "kjv",
+                callback = any(),
+            )
+        }
+    }
+
+    @Test
+    fun `clicking Share with no split active uses split0 metadata for ShareUrl make (regression guard for the non-split code path)`() {
+        val split0Book = makeBook("Gen").apply { bookId = 0 }
+        val split0Version = mockk<Version>(relaxed = true) { every { shortName } returns "KJV" }
+
+        every { host.activeSplit0Book } returns split0Book
+        every { host.activeSplit0Version } returns split0Version
+        every { host.activeSplit0VersionId } returns "internal"
+        every { host.activeSplit1Version } returns null
+        every { host.activeSplit1VersionId } returns null
+        every { host.selectedVersesSplit0_1 } returns ints(3)
+
+        stubShareUrlMake()
+
+        val menu = inflateMenu()
+        controller.onCreateActionMode(mode, menu)
+        controller.onPrepareActionMode(mode, menu)
+        controller.onActionItemClicked(mode, menu.findItem(R.id.menuShare))
+
+        // preset_name is null because versionId = "internal" is not a preset.
+        verify(exactly = 1) {
+            ShareUrl.make(
+                activity = any(),
+                immediatelyCancel = any(),
+                verseText = any(),
+                ari_bc = Ari.encode(0, 1, 0),
+                selectedVerses_1 = any(),
+                reference = any(),
+                version = split0Version,
+                preset_name = null,
+                callback = any(),
+            )
+        }
+    }
+
+    /**
+     * Stubs `ShareUrl.make` to a no-op so tests can verify the arguments without triggering the
+     * real network/dialog flow. `mockkObject` is undone by `unmockkAll()` in @After.
+     */
+    private fun stubShareUrlMake() {
+        mockkObject(ShareUrl)
+        every {
+            ShareUrl.make(
+                activity = any(),
+                immediatelyCancel = any(),
+                verseText = any(),
+                ari_bc = any(),
+                selectedVerses_1 = any(),
+                reference = any(),
+                version = any(),
+                preset_name = any(),
+                callback = any(),
+            )
+        } just Runs
     }
 
     // ----- helpers -----
