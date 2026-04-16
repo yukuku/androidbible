@@ -138,6 +138,14 @@ class Sync_PinsTest {
         val a = content(pin(0, 10), pin(1, 20), pin(2, 30))
         val b = content(pin(2, 30), pin(0, 10), pin(1, 20))
         assertEquals(a, b)
+        // hashCode must be order-insensitive too, to satisfy the Object contract
+        // (equal objects must have equal hash codes). If this is broken, these
+        // Contents misbehave inside HashMap / HashSet.
+        assertEquals(
+            "hashCode must be order-insensitive to match equals",
+            a.hashCode(),
+            b.hashCode(),
+        )
     }
 
     @Test
