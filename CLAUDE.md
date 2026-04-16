@@ -169,6 +169,21 @@ Detailed documentation for each major feature module:
 - `Ari` encoding is used universally for verse references — never store book/chapter/verse separately
 - Version IDs follow format `"internal"`, `"preset/[name]"`, or `"file/[path]"`
 
+## Unit Testing
+
+- **Prefer Kotlin backtick identifiers with descriptive sentences** for test function names — they render as readable prose in JUnit output. Use full sentences, not short names.
+  ```kotlin
+  // Good
+  @Test
+  fun `patchNoConflict treats add on an existing gid as an overwrite (same as mod)`() { ... }
+
+  // Avoid
+  @Test
+  fun patchNoConflict_addExistingGid_overwrites() { ... }
+  ```
+- **Use Robolectric if needed** for tests that exercise Android framework code (Context, Intents, Parcelable, DB helpers, etc.). Pure-logic tests should stay plain JUnit. If an Android method is blocking a pure-logic test with `"Method not mocked"`, first consider whether a tiny test-scope shadow (e.g. `src/test/java/android/util/Pair.java`) is enough before reaching for Robolectric.
+- When writing unit tests, assume the production code is correct. If you spot what looks like an obvious bug while writing tests, flag it rather than silently working around it.
+
 ## Important Caveats
 
 - `IsiActivity.kt` is ~2900 lines — the monolithic main activity handles Bible reading, split view, navigation, gestures, and action mode. Changes here require careful testing.

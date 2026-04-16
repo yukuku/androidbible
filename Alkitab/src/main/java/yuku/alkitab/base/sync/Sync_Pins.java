@@ -135,7 +135,7 @@ public class Sync_Pins {
 				Collections.sort(list1, listSorter);
 				Collections.sort(list2, listSorter);
 
-				if (!pins.equals(content.pins)) return false;
+				if (!list1.equals(list2)) return false;
 			}
 
 			return true;
@@ -143,7 +143,12 @@ public class Sync_Pins {
 
 		@Override
 		public int hashCode() {
-			return pins != null ? pins.hashCode() : 0;
+			// Must be order-insensitive to match equals(). Sort a copy before hashing
+			// so two Contents with the same pins in different order produce the same hash.
+			if (pins == null) return 0;
+			final List<Pin> sorted = new ArrayList<>(pins);
+			Collections.sort(sorted, listSorter);
+			return sorted.hashCode();
 		}
 
 		//endregion
