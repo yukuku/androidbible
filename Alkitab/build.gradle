@@ -3,6 +3,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -26,6 +27,11 @@ plugins {
  * AGP task (mergeAssets, lint vital, etc.) automatically depend on this task.
  */
 abstract class CopyProprietaryAssetsTask extends DefaultTask {
+    // Optional so Gradle's property validation doesn't preempt our friendly
+    // "ALKITAB_PROPRIETARY_DIR is not set" error in doFirst when the env var
+    // is missing. The doFirst check runs before copyAssets() executes, so we
+    // never reach copyAssets() with an unset sourceDir.
+    @Optional
     @InputDirectory
     @PathSensitive(PathSensitivity.RELATIVE)
     abstract DirectoryProperty getSourceDir()
@@ -89,7 +95,7 @@ def proprietaryFlavors = [
     yuku_quick_bible: 'yuku.alkitab.kjv',
     sabda_alkitab   : 'org.sabda.alkitab',
 ]
-def proprietaryDir = System.getenv("ALKITAB_PROPRIETARY_DIR")
+def proprietaryDir = providers.environmentVariable("ALKITAB_PROPRIETARY_DIR").orNull
 
 android {
     signingConfigs {
@@ -229,16 +235,19 @@ android.applicationVariants.all { variant ->
     // Custom APK output filename, mirroring the legacy ybuild.sh naming:
     //   Alkitab-<versionCode>-<versionName>-<gitHash>-<applicationId>-<BUILD_DIST>.apk
     // BUILD_DIST defaults to "dev" so local builds get a recognisable name.
-    def buildDist = System.getenv("BUILD_DIST") ?: "dev"
+    def buildDist = providers.environmentVariable("BUILD_DIST").getOrElse("dev")
     variant.outputs.all { output ->
         outputFileName = "Alkitab-${variant.versionCode}-${variant.versionName}-${gitCommitHash}-${variant.applicationId}-${buildDist}.apk"
     }
 
     // Wire the proprietary google-services.json copy task into the GMS plugin
-    // task that consumes it, for each production flavor variant.
+    // task that consumes it, for each production flavor variant. Using
+    // tasks.matching { }.configureEach { } rather than tasks.named() so the
+    // build doesn't break if the GMS plugin is ever removed or renames its task.
     if (proprietaryFlavors.containsKey(variant.flavorName)) {
         def copyTaskName = "copyProprietaryGoogleServices${variant.flavorName.capitalize()}"
-        tasks.named("process${variant.name.capitalize()}GoogleServices").configure {
+        def gmsTaskName = "process${variant.name.capitalize()}GoogleServices"
+        tasks.matching { it.name == gmsTaskName }.configureEach {
             dependsOn copyTaskName
         }
     }
