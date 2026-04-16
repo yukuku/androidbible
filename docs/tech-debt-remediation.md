@@ -431,10 +431,10 @@ Use Android Studio's "Convert Java File to Kotlin" as a starting point, then man
 3. Cover: marker CRUD, label ordering, highlight storage, attribute loading
 4. Difficulty: Medium (1-2 days)
 
-**Step 18d: SearchEngine tests**
-1. Create test Bible version with known text
-2. Test: single token, multi-token intersection, quoted phrases, whole-word matching
-3. Test performance: measure time for full-Bible search
+**Step 18d: SearchEngine tests** ✅ COMPLETED
+1. ✅ Unit tests added in `SearchEngineTest.kt` — covers `ReadyTokens` construction, `satisfiesTokens`, and end-to-end `searchByGrep` against a small in-memory fake `Version`. Exercises single token, multi-token (AND) intersection, whole-word matching, quoted phrases (multiword), book-id filtering, duplicate-token de-duplication, and cross-verse-boundary rejection.
+2. ✅ Runs under `RobolectricTestRunner` so `android.util.SparseBooleanArray` is a real implementation rather than the "not mocked" stub. `AppLog` is kept quiet via the existing test-scope shadows (`android.util.Log`, `FirebaseCrashlytics`) introduced for `HighlightsTest`.
+3. ⬜ Performance test for full-Bible search — not added (requires real Bible data or large synthetic version).
 4. Difficulty: Medium (4-6 hours)
 
 **Step 18e: YES2 reader/writer round-trip tests**
