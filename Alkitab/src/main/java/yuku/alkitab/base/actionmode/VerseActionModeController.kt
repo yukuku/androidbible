@@ -8,7 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.view.ActionMode
 import androidx.core.app.ShareCompat
-import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.S
@@ -524,10 +524,10 @@ class VerseActionModeController(
                 try {
                     host.activity.startActivity(intent)
                 } catch (_: ActivityNotFoundException) {
-                    MaterialDialog(host.activity).show {
-                        message(text = "Error ANFE starting extension\n\n${extension.activityInfo.packageName}/${extension.activityInfo.name}")
-                        positiveButton(R.string.ok)
-                    }
+                    MaterialAlertDialogBuilder(host.activity)
+                        .setMessage("Error ANFE starting extension\n\n${extension.activityInfo.packageName}/${extension.activityInfo.name}")
+                        .setPositiveButton(R.string.ok, null)
+                        .show()
                 }
 
                 true

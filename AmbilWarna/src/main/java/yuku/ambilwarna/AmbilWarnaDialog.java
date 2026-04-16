@@ -4,15 +4,15 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.ViewCompat;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.customview.DialogCustomViewExtKt;
 
 public class AmbilWarnaDialog {
     public interface OnAmbilWarnaListener {
@@ -21,7 +21,7 @@ public class AmbilWarnaDialog {
         void onOk(AmbilWarnaDialog dialog, int color);
     }
 
-    final MaterialDialog dialog;
+    final AlertDialog dialog;
     final boolean supportsAlpha;
     final OnAmbilWarnaListener listener;
     final View viewHue;
@@ -67,9 +67,8 @@ public class AmbilWarnaDialog {
         Color.colorToHSV(color, currentColorHsv);
         alpha = Color.alpha(color);
 
-        dialog = AmbilWarnaDialogJavaHelper.buildMaterialDialog(this, context, listener, this::getColor);
-
-        final View view = DialogCustomViewExtKt.getCustomView(dialog);
+        final View view = LayoutInflater.from(context).inflate(R.layout.ambilwarna_dialog, null, false);
+        dialog = AmbilWarnaDialogJavaHelper.buildMaterialDialog(this, view, context, listener, this::getColor);
         viewHue = view.findViewById(R.id.ambilwarna_viewHue);
         viewSatVal = view.findViewById(R.id.ambilwarna_viewSatBri);
         viewCursor = view.findViewById(R.id.ambilwarna_cursor);

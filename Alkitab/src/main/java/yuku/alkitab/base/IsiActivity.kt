@@ -46,7 +46,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import java.util.Calendar
 import java.util.Date
@@ -103,7 +103,6 @@ import yuku.alkitab.base.widget.GotoButton
 import yuku.alkitab.base.widget.LabeledSplitHandleButton
 import yuku.alkitab.base.widget.LeftDrawer
 import yuku.alkitab.base.widget.MaterialDialogAdapterHelper
-import yuku.alkitab.base.widget.MaterialDialogAdapterHelper.withAdapter
 import yuku.alkitab.base.widget.ParallelClickData
 import yuku.alkitab.base.widget.ReferenceParallelClickData
 import yuku.alkitab.base.widget.SplitHandleButton
@@ -388,17 +387,17 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                 return
             }
         } catch (_: Exception) {
-            MaterialDialog(this).show {
-                message(R.string.dict_no_results)
-                positiveButton(R.string.ok)
-            }
+            MaterialAlertDialogBuilder(this)
+                .setMessage(R.string.dict_no_results)
+                .setPositiveButton(R.string.ok, null)
+                .show()
             return
         }.use { c ->
             if (c.count == 0) {
-                MaterialDialog(this).show {
-                    message(R.string.dict_no_results)
-                    positiveButton(R.string.ok)
-                }
+                MaterialAlertDialogBuilder(this)
+                    .setMessage(R.string.dict_no_results)
+                    .setPositiveButton(R.string.ok, null)
+                    .show()
             } else {
                 c.moveToNext()
                 val rendered = HtmlCompat.fromHtml(c.getString(c.getColumnIndexOrThrow("definition")), HtmlCompat.FROM_HTML_MODE_COMPACT)
@@ -409,10 +408,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                     sb.removeSpan(span)
                 }
 
-                MaterialDialog(this).show {
-                    title(text = data.orig_text)
-                    message(text = sb)
-                    positiveButton(R.string.dict_open_full) {
+                MaterialAlertDialogBuilder(this)
+                    .setTitle(data.orig_text)
+                    .setMessage(sb)
+                    .setPositiveButton(R.string.dict_open_full) { _, _ ->
                         val intent = Intent("org.sabda.kamus.action.VIEW")
                             .putExtra("key", data.key)
                             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -424,7 +423,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                             OtherAppIntegration.askToInstallDictionary(this@IsiActivity)
                         }
                     }
-                }
+                    .show()
             }
         }
     }
@@ -958,10 +957,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         } catch (e: Throwable) { // so we don't crash on the beginning of the app
             AppLog.e(TAG, "Error opening main version", e)
 
-            MaterialDialog(this).show {
-                message(text = getString(R.string.version_error_opening, mv.longName))
-                positiveButton(R.string.ok)
-            }
+            MaterialAlertDialogBuilder(this)
+                .setMessage(getString(R.string.version_error_opening, mv.longName))
+                .setPositiveButton(R.string.ok, null)
+                .show()
         }
     }
 
@@ -984,10 +983,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         } catch (e: Throwable) { // so we don't crash on the beginning of the app
             AppLog.e(TAG, "Error opening split version", e)
 
-            MaterialDialog(this@IsiActivity).show {
-                message(text = getString(R.string.version_error_opening, mv.longName))
-                positiveButton(R.string.ok)
-            }
+            MaterialAlertDialogBuilder(this@IsiActivity)
+                .setMessage(getString(R.string.version_error_opening, mv.longName))
+                .setPositiveButton(R.string.ok, null)
+                .show()
 
             return false
         }
@@ -1080,10 +1079,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
         val jumper = Jumper(reference)
         if (!jumper.parseSucceeded) {
-            MaterialDialog(this).show {
-                message(text = getString(R.string.alamat_tidak_sah_alamat, reference))
-                positiveButton(R.string.ok)
-            }
+            MaterialAlertDialogBuilder(this)
+                .setMessage(getString(R.string.alamat_tidak_sah_alamat, reference))
+                .setPositiveButton(R.string.ok, null)
+                .show()
             return
         }
 
@@ -1279,9 +1278,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
     private fun bGoto_longClick() {
         if (history.size > 0) {
-            MaterialDialog(this).show {
-                withAdapter(HistoryAdapter())
-            }
+            MaterialDialogAdapterHelper.showDialogWithAdapter(this, HistoryAdapter())
             Preferences.setBoolean(Prefkey.history_button_understood, true)
         } else {
             Snackbar.make(root, R.string.recentverses_not_available, Snackbar.LENGTH_SHORT).show()
@@ -1894,10 +1891,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             if (markers.size == 1) {
                 openBookmarkDialog(markers[0]._id)
             } else {
-                MaterialDialog(this@IsiActivity).show {
-                    title(R.string.edit_bookmark)
-                    withAdapter(MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.bookmark))
-                }
+                MaterialDialogAdapterHelper.showDialogWithAdapter(
+                    this@IsiActivity,
+                    MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.bookmark),
+                    getString(R.string.edit_bookmark),
+                )
             }
         }
 
@@ -1910,10 +1908,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             if (markers.size == 1) {
                 openNoteDialog(markers[0]._id)
             } else {
-                MaterialDialog(this@IsiActivity).show {
-                    title(R.string.edit_note)
-                    withAdapter(MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.note))
-                }
+                MaterialDialogAdapterHelper.showDialogWithAdapter(
+                    this@IsiActivity,
+                    MultipleMarkerSelectAdapter(version, versionId, markers, Marker.Kind.note),
+                    getString(R.string.edit_note),
+                )
             }
         }
 
@@ -2031,10 +2030,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
                 startActivity(intent)
             } catch (_: ActivityNotFoundException) {
-                MaterialDialog(this@IsiActivity).show {
-                    message(R.string.maps_could_not_open)
-                    positiveButton(R.string.ok)
-                }
+                MaterialAlertDialogBuilder(this@IsiActivity)
+                    .setMessage(R.string.maps_could_not_open)
+                    .setPositiveButton(R.string.ok, null)
+                    .show()
             }
         }
     }
@@ -2076,7 +2075,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                         VerseRenderer.appendSuperscriptNumber(footnoteText, arif and 0xff)
                         footnoteText.append(" ")
 
-                        var footnoteDialog: MaterialDialog? = null
+                        var footnoteDialog: androidx.appcompat.app.AlertDialog? = null
 
                         val rendered = FormattedTextRenderer.render(
                             fe.content,
@@ -2104,10 +2103,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                                         }
 
                                         else -> {
-                                            MaterialDialog(this@IsiActivity).show {
-                                                message(text = String.format(Locale.US, "Error: footnote at arif 0x%08x contains unsupported tag %s", arif, tag))
-                                                positiveButton(R.string.ok)
-                                            }
+                                            MaterialAlertDialogBuilder(this@IsiActivity)
+                                                .setMessage(String.format(Locale.US, "Error: footnote at arif 0x%08x contains unsupported tag %s", arif, tag))
+                                                .setPositiveButton(R.string.ok, null)
+                                                .show()
                                         }
                                     }
                                 }
@@ -2141,25 +2140,25 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                             else -> null
                         }.orEmpty()
 
-                        footnoteDialog = MaterialDialog(this@IsiActivity).show {
-                            title(text = title)
-                            message(text = rendered)
-                            positiveButton(R.string.ok)
-                        }
+                        footnoteDialog = MaterialAlertDialogBuilder(this@IsiActivity)
+                            .setTitle(title)
+                            .setMessage(rendered)
+                            .setPositiveButton(R.string.ok, null)
+                            .show()
 
-                        footnoteDialog.findViewById<TextView>(com.afollestad.materialdialogs.R.id.md_text_message)
-                            .movementMethod = LinkMovementMethod.getInstance()
+                        footnoteDialog.findViewById<TextView>(android.R.id.message)
+                            ?.movementMethod = LinkMovementMethod.getInstance()
                     } else {
-                        MaterialDialog(this@IsiActivity).show {
-                            message(text = String.format(Locale.US, "Error: footnote arif 0x%08x couldn't be loaded", arif))
-                            positiveButton(R.string.ok)
-                        }
+                        MaterialAlertDialogBuilder(this@IsiActivity)
+                            .setMessage(String.format(Locale.US, "Error: footnote arif 0x%08x couldn't be loaded", arif))
+                            .setPositiveButton(R.string.ok, null)
+                            .show()
                     }
                 } else {
-                    MaterialDialog(this@IsiActivity).show {
-                        message(text = "Error: Unknown inline link type: $type")
-                        positiveButton(R.string.ok)
-                    }
+                    MaterialAlertDialogBuilder(this@IsiActivity)
+                        .setMessage("Error: Unknown inline link type: $type")
+                        .setPositiveButton(R.string.ok, null)
+                        .show()
                 }
             }
         }
@@ -2262,10 +2261,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             dialog.show(supportFragmentManager, "dialog_progress_mark_list")
             leftDrawer.closeDrawer()
         } else {
-            MaterialDialog(this).show {
-                message(R.string.pm_activate_tutorial)
-                positiveButton(R.string.ok)
-            }
+            MaterialAlertDialogBuilder(this)
+                .setMessage(R.string.pm_activate_tutorial)
+                .setPositiveButton(R.string.ok, null)
+                .show()
         }
     }
 
@@ -2294,10 +2293,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         if (ari != 0) {
             jumpToAri(ari)
         } else {
-            MaterialDialog(this).show {
-                message(R.string.pm_activate_tutorial)
-                positiveButton(R.string.ok)
-            }
+            MaterialAlertDialogBuilder(this)
+                .setMessage(R.string.pm_activate_tutorial)
+                .setPositiveButton(R.string.ok, null)
+                .show()
         }
     }
 

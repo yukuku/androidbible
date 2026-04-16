@@ -16,8 +16,7 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.net.toUri
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.list.listItems
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 import yuku.alkitab.base.App
@@ -118,14 +117,10 @@ class AboutActivity : BaseActivity() {
     }
 
     private fun showSecretDialog() {
-        MaterialDialog(this)
-            .listItems(items = listOf("Secret settings", "Crash me")) { _, index, _ ->
+        MaterialAlertDialogBuilder(this)
+            .setItems(arrayOf("Secret settings", "Crash me")) { _, index ->
                 when (index) {
-                    0 -> {
-                        startActivity(SecretSettingsActivity.createIntent())
-                        return@listItems
-                    }
-
+                    0 -> startActivity(SecretSettingsActivity.createIntent())
                     1 -> throw RuntimeException("Dummy exception from secret dialog.")
                 }
             }

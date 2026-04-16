@@ -11,7 +11,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
-import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.reflect.TypeToken
 import java.io.IOException
 import java.util.Date
@@ -41,7 +41,6 @@ import yuku.alkitab.base.util.Background
 import yuku.alkitab.base.util.Highlights
 import yuku.alkitab.base.util.InstallationUtil.getInstallationId
 import yuku.alkitab.base.util.LabelColorUtil.encodeBackground
-import yuku.alkitab.base.widget.MaterialDialogProgressHelper.progress
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Label
@@ -66,31 +65,26 @@ class SecretSyncDebugActivity : BaseActivity() {
         cMakeDirtyMarker_Label = findViewById(R.id.cMakeDirtyMarker_Label)
 
         findViewById<View>(R.id.bServerSave).setOnClickListener {
-            MaterialDialog(this).show {
-                message(text = "This will reset your synced shadow to revision 0.")
-                positiveButton(R.string.ok) {
+            MaterialAlertDialogBuilder(this)
+                .setMessage("This will reset your synced shadow to revision 0.")
+                .setPositiveButton(R.string.ok) { _, _ ->
                     Preferences.setString(Prefkey.sync_server_prefix, tServer.text.toString().trim())
-
-                    // do the same as logging out
                     bLogout_click.onClick(null)
                 }
-                negativeButton(R.string.cancel)
-            }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
         }
 
         findViewById<View>(R.id.bServerReset).setOnClickListener {
-            MaterialDialog(this).show {
-                message(text = "This will reset your synced shadow to revision 0.")
-                positiveButton(R.string.ok) {
+            MaterialAlertDialogBuilder(this)
+                .setMessage("This will reset your synced shadow to revision 0.")
+                .setPositiveButton(R.string.ok) { _, _ ->
                     Preferences.remove(Prefkey.sync_server_prefix)
-
-                    // do the same as logging out
                     bLogout_click.onClick(null)
-
                     tServer.setText("")
                 }
-                negativeButton(R.string.cancel)
-            }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
         }
 
         findViewById<View>(R.id.bMabelClientState).setOnClickListener(bMabelClientState_click)
@@ -116,10 +110,10 @@ class SecretSyncDebugActivity : BaseActivity() {
             sb.append("\u2022 ").append(operation).append('\n')
         }
 
-        MaterialDialog(this).show {
-            message(text = sb)
-            positiveButton(R.string.ok)
-        }
+        MaterialAlertDialogBuilder(this)
+            .setMessage(sb)
+            .setPositiveButton(R.string.ok, null)
+            .show()
     }
 
     fun rand(n: Int): Int {
@@ -141,10 +135,10 @@ class SecretSyncDebugActivity : BaseActivity() {
             S.db.updateLabels(marker, labelSet)
         }
 
-        MaterialDialog(this).show {
-            message(text = "10 markers, 2 labels generated.")
-            positiveButton(R.string.ok)
-        }
+        MaterialAlertDialogBuilder(this)
+            .setMessage("10 markers, 2 labels generated.")
+            .setPositiveButton(R.string.ok, null)
+            .show()
     }
 
     private var bGenerateDummies2_click = View.OnClickListener {
@@ -164,10 +158,10 @@ class SecretSyncDebugActivity : BaseActivity() {
             S.db.updateLabels(marker, labelSet)
         }
 
-        MaterialDialog(this).show {
-            message(text = "1000 markers, 2 labels generated.")
-            positiveButton(R.string.ok)
-        }
+        MaterialAlertDialogBuilder(this)
+            .setMessage("1000 markers, 2 labels generated.")
+            .setPositiveButton(R.string.ok, null)
+            .show()
     }
 
     var toastHandler = Handler()
@@ -281,9 +275,9 @@ class SecretSyncDebugActivity : BaseActivity() {
         monkey?.let {
             it.requestStop()
             monkey = null
-            MaterialDialog(this).show {
-                message(text = "monkey stopped")
-            }
+            MaterialAlertDialogBuilder(this)
+                .setMessage("monkey stopped")
+                .show()
             return@OnClickListener
         }
     }
@@ -323,10 +317,10 @@ class SecretSyncDebugActivity : BaseActivity() {
     private var bSync_click = View.OnClickListener {
         val simpleToken = Preferences.getString(Prefkey.sync_simpleToken)
         if (simpleToken == null) {
-            MaterialDialog(this).show {
-                message(text = "not logged in")
-                positiveButton(R.string.ok)
-            }
+            MaterialAlertDialogBuilder(this)
+                .setMessage("not logged in")
+                .setPositiveButton(R.string.ok, null)
+                .show()
             return@OnClickListener
         }
 
@@ -363,10 +357,10 @@ class SecretSyncDebugActivity : BaseActivity() {
                 val marker_label = Marker_Label.createNewMarker_Label(markers[0].gid, labels[0].gid)
                 S.db.insertOrUpdateMarker_Label(marker_label)
             } else {
-                MaterialDialog(this).show {
-                    message(text = "not enough markers and labels to create marker_label")
-                    positiveButton(R.string.ok)
-                }
+                MaterialAlertDialogBuilder(this)
+                    .setMessage("not enough markers and labels to create marker_label")
+                    .setPositiveButton(R.string.ok, null)
+                    .show()
                 return@OnClickListener
             }
         }
@@ -374,10 +368,10 @@ class SecretSyncDebugActivity : BaseActivity() {
         call.enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    MaterialDialog(this@SecretSyncDebugActivity).show {
-                        message(text = "Error: " + e.message)
-                        positiveButton(R.string.ok)
-                    }
+                    MaterialAlertDialogBuilder(this@SecretSyncDebugActivity)
+                        .setMessage("Error: " + e.message)
+                        .setPositiveButton(R.string.ok, null)
+                        .show()
                 }
             }
 
@@ -390,10 +384,10 @@ class SecretSyncDebugActivity : BaseActivity() {
                         val append_delta = debugSyncResponse.append_delta
                         val applyResult = S.db.applyMabelAppendDelta(final_revno, pair.shadowEntities, clientState, append_delta, entitiesBeforeSync, simpleToken)
 
-                        MaterialDialog(this@SecretSyncDebugActivity).show {
-                            message(text = "Final revno: $final_revno\nApply result: $applyResult\nAppend delta: $append_delta")
-                            positiveButton(R.string.ok)
-                        }
+                        MaterialAlertDialogBuilder(this@SecretSyncDebugActivity)
+                            .setMessage("Final revno: $final_revno\nApply result: $applyResult\nAppend delta: $append_delta")
+                            .setPositiveButton(R.string.ok, null)
+                            .show()
 
                         if (applyResult == ApplyAppendDeltaResult.ok) {
                             App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED))
@@ -401,10 +395,10 @@ class SecretSyncDebugActivity : BaseActivity() {
                             App.getLbm().sendBroadcast(Intent(MarkerListActivity.ACTION_RELOAD))
                         }
                     } else {
-                        MaterialDialog(this@SecretSyncDebugActivity).show {
-                            message(text = debugSyncResponse.message)
-                            positiveButton(R.string.ok)
-                        }
+                        MaterialAlertDialogBuilder(this@SecretSyncDebugActivity)
+                            .setMessage(debugSyncResponse.message)
+                            .setPositiveButton(R.string.ok, null)
+                            .show()
                     }
                 }
             }
@@ -415,10 +409,10 @@ class SecretSyncDebugActivity : BaseActivity() {
         val syncSetName = cbSyncSetName.selectedItem as String
         val entities = mutableListOf<Sync.Entity<*>>()
 
-        val pd = MaterialDialog(this).show {
-            progress(true, 0)
-            message(text = "getting entities…")
-        }
+        val pd = MaterialAlertDialogBuilder(this)
+            .setMessage("getting entities…")
+            .setCancelable(false)
+            .show()
 
         Background.run {
             when (syncSetName) {
@@ -439,10 +433,10 @@ class SecretSyncDebugActivity : BaseActivity() {
             pd.dismiss()
 
             runOnUiThread {
-                MaterialDialog(this).show {
-                    message(text = "entities.size=${entities.size} hash=${String.format(Locale.US, "0x%08x", hashCode)}")
-                    positiveButton(text = "OK")
-                }
+                MaterialAlertDialogBuilder(this)
+                    .setMessage("entities.size=${entities.size} hash=${String.format(Locale.US, "0x%08x", hashCode)}")
+                    .setPositiveButton("OK", null)
+                    .show()
             }
         }
     }

@@ -3,7 +3,7 @@ package yuku.alkitab.songs
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
-import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
@@ -104,10 +104,10 @@ class MidiController : MediaController() {
                 if (state != State.reset) { // Errors can happen if we call MediaPlayer#reset when MediaPlayer state is Preparing. In this case, do not show error message.
                     val activity = activityRef?.get()
                     if (activity != null && !activity.isFinishing) {
-                        MaterialDialog(activity).show {
-                            message(text = activity.getString(R.string.song_player_error_description, what, extra))
-                            positiveButton(R.string.ok)
-                        }
+                        MaterialAlertDialogBuilder(activity)
+                            .setMessage(activity.getString(R.string.song_player_error_description, what, extra))
+                            .setPositiveButton(R.string.ok, null)
+                            .show()
                     }
                 }
                 state = State.error

@@ -8,8 +8,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.customview.DialogCustomViewExtKt;
+import android.view.LayoutInflater;
+import androidx.appcompat.app.AlertDialog;
 import kotlin.Unit;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.util.Highlights;
@@ -19,7 +19,7 @@ import yuku.alkitab.util.IntArrayList;
 import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class TypeHighlightDialog {
-    final MaterialDialog dialog;
+    final AlertDialog dialog;
     final Listener listener;
 
     @Nullable
@@ -78,7 +78,8 @@ public class TypeHighlightDialog {
         this.listener = listener;
         this.verseText = verseText;
 
-        dialog = TypeHighlightDialogJavaHelper.showHighlightDialog(context, title, () -> {
+        dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_highlight, null, false);
+        dialog = TypeHighlightDialogJavaHelper.showHighlightDialog(context, dialogView, title, () -> {
             // only relevant when we edit partial highlight
             if (verseText == null || info == null) {
                 return Unit.INSTANCE;
@@ -99,8 +100,6 @@ public class TypeHighlightDialog {
             select(-1, null);
             return Unit.INSTANCE;
         });
-
-        dialogView = DialogCustomViewExtKt.getCustomView(dialog);
         dialogView.setBackgroundColor(S.applied().backgroundColor);
 
         for (int i = 0; i < ids.length; i++) {

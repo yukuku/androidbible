@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.util.PatternsCompat;
-import com.afollestad.materialdialogs.MaterialDialog;
+import androidx.appcompat.app.AlertDialog;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.util.Locale;
 import yuku.alkitab.base.App;
@@ -244,7 +244,7 @@ public class SyncLoginActivity extends BaseActivity {
     }
 
     void startThreadWithProgressDialog(final String message, final Runnable task) {
-        final MaterialDialog pd = SyncLoginActivityJavaHelper.showProgressDialog(this, message);
+        final AlertDialog pd = SyncLoginActivityJavaHelper.showProgressDialog(this, message);
 
         Background.run(() -> {
             try {

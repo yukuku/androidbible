@@ -350,8 +350,6 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationJsonVersion"
 
     // UI
-    implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
-    implementation "com.afollestad.material-dialogs:input:$materialDialogsVersion"
     implementation "com.github.faruktoptas:FancyShowCaseView:$fancyShowcaseViewVersion"
 }
 

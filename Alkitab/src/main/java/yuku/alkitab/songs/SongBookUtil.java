@@ -14,7 +14,7 @@ import android.widget.PopupMenu;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
-import com.afollestad.materialdialogs.MaterialDialog;
+import androidx.appcompat.app.AlertDialog;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -230,13 +230,12 @@ public class SongBookUtil {
     public static void downloadSongBook(final Activity activity, final SongBookInfo songBookInfo, final int dataFormatVersion, final OnDownloadSongBookListener listener) {
         final AtomicBoolean cancelled = new AtomicBoolean();
 
-        final MaterialDialog pd = MaterialDialogJavaHelper.showProgressDialog(
+        final AlertDialog pd = MaterialDialogJavaHelper.showProgressDialog(
             activity,
             activity.getString(R.string.sn_downloading_ellipsis)
         );
 
         pd.setOnDismissListener(dialog -> cancelled.set(true));
-        pd.show();
 
         Background.run(() -> {
             try {

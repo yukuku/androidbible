@@ -19,8 +19,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.list.DialogListExtKt;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -181,9 +179,9 @@ public class TextAppearancePanel {
         public void onClick(final View v) {
             final ColorThemeAdapter adapter = new ColorThemeAdapter();
 
-            final MaterialDialog dialog = TextAppearancePanelJavaHelper.showColorThemeDialog(activity, adapter);
+            TextAppearancePanelJavaHelper.showColorThemeDialog(activity, adapter);
 
-            final RecyclerView recyclerView = DialogListExtKt.getRecyclerView(dialog);
+            final RecyclerView recyclerView = adapter.getRecyclerView();
 
             { // scroll to the selected one
                 final int[] currentColors = ColorThemes.getCurrentColors(Preferences.getBoolean(Prefkey.is_night_mode, false));

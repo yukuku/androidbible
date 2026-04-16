@@ -8,8 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.customview.DialogCustomViewExtKt;
+import android.view.LayoutInflater;
+import androidx.appcompat.app.AlertDialog;
 import com.compactbyte.android.bible.PDBFileStream;
 import com.compactbyte.bibleplus.reader.BiblePlusPDB;
 import com.compactbyte.bibleplus.reader.BookInfo;
@@ -28,7 +28,7 @@ public class ConvertOptionsDialog {
     static final String TAG = ConvertOptionsDialog.class.getSimpleName();
 
     Context context;
-    MaterialDialog alert;
+    AlertDialog alert;
     ConvertOptionsCallback callback;
 
     Spinner cbEncoding;
@@ -93,12 +93,11 @@ public class ConvertOptionsDialog {
             return;
         }
 
-        this.alert = ConvertOptionsDialogJavaHelper.buildMaterialDialog(context, () -> {
+        final View dialogLayout = LayoutInflater.from(context).inflate(R.layout.dialog_pdbconvert_options, null, false);
+        this.alert = ConvertOptionsDialogJavaHelper.buildMaterialDialog(context, dialogLayout, () -> {
             bOk_click();
             return Unit.INSTANCE;
         });
-
-        final View dialogLayout = DialogCustomViewExtKt.getCustomView(this.alert);
 
         cbEncoding = dialogLayout.findViewById(R.id.cbEncoding);
         lSample = dialogLayout.findViewById(R.id.lSample);

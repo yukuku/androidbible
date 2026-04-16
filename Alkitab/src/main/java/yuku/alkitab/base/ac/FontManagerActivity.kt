@@ -12,7 +12,7 @@ import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
 import coil.load
-import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
@@ -251,9 +251,9 @@ class FontManagerActivity : BaseActivity(), DownloadService.DownloadListener {
         private val bDelete_click = View.OnClickListener { v ->
             val dls = dls ?: return@OnClickListener
             val item = v.getTag(R.id.TAG_fontItem) as FontItem
-            MaterialDialog(this@FontManagerActivity).show {
-                message(text = getString(R.string.fm_do_you_want_to_delete, item.name))
-                positiveButton(R.string.delete) {
+            MaterialAlertDialogBuilder(this@FontManagerActivity)
+                .setMessage(getString(R.string.fm_do_you_want_to_delete, item.name))
+                .setPositiveButton(R.string.delete) { _, _ ->
                     val fontDir = FontManager.getFontDir(item.name)
                     val listFiles = fontDir.listFiles()
                     if (listFiles != null) {
@@ -265,8 +265,8 @@ class FontManagerActivity : BaseActivity(), DownloadService.DownloadListener {
                     dls.removeEntry(getFontDownloadKey(item.name))
                     notifyDataSetChanged()
                 }
-                negativeButton(R.string.cancel)
-            }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
         }
     }
 
@@ -304,10 +304,10 @@ class FontManagerActivity : BaseActivity(), DownloadService.DownloadListener {
             File(downloadedZip).delete()
 
         } catch (e: Exception) {
-            MaterialDialog(this@FontManagerActivity).show {
-                message(text = getString(R.string.fm_error_when_extracting_font, fontName, "$e"))
-                positiveButton(R.string.ok)
-            }
+            MaterialAlertDialogBuilder(this@FontManagerActivity)
+                .setMessage(getString(R.string.fm_error_when_extracting_font, fontName, "$e"))
+                .setPositiveButton(R.string.ok, null)
+                .show()
         }
     }
 

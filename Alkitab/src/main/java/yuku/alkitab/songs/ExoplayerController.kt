@@ -18,7 +18,7 @@ import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.extractor.Extractor
 import androidx.media3.extractor.ExtractorsFactory
 import androidx.media3.extractor.mp3.Mp3Extractor
-import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.IOException
 import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.util.AppLog
@@ -143,10 +143,10 @@ class ExoplayerController(appContext: Context) : MediaController() {
                     else -> null
                 }
 
-                MaterialDialog(activity).show {
-                    message(text = TextUtils.expandTemplate(activity.getString(R.string.song_player_error_description), "$errorType $innerException"))
-                    positiveButton(R.string.ok)
-                }
+                MaterialAlertDialogBuilder(activity)
+                    .setMessage(TextUtils.expandTemplate(activity.getString(R.string.song_player_error_description), "$errorType $innerException"))
+                    .setPositiveButton(R.string.ok, null)
+                    .show()
             }
             state = State.error
         }

@@ -30,7 +30,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.view.isVisible
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import java.util.Locale
@@ -494,10 +494,10 @@ class SearchActivity : BaseActivity() {
         S.openVersionsDialog(this, searchInVersionId) { mv: MVersion ->
             val selectedVersion = mv.version
             if (selectedVersion == null) {
-                MaterialDialog(this@SearchActivity).show {
-                    message(text = getString(R.string.version_error_opening, mv.longName))
-                    positiveButton(R.string.ok)
-                }
+                MaterialAlertDialogBuilder(this@SearchActivity)
+                    .setMessage(getString(R.string.version_error_opening, mv.longName))
+                    .setPositiveButton(R.string.ok, null)
+                    .show()
                 return@openVersionsDialog
             }
 

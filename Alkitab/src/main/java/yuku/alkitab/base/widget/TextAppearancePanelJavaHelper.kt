@@ -1,14 +1,11 @@
 package yuku.alkitab.base.widget
 
 import android.content.Context
-import com.afollestad.materialdialogs.MaterialDialog
-import yuku.alkitab.base.widget.MaterialDialogAdapterHelper.withAdapter
+import yuku.alkitab.base.widget.MaterialDialogAdapterHelper
 
 object TextAppearancePanelJavaHelper {
     @JvmStatic
-    fun showColorThemeDialog(context: Context, adapter: MaterialDialogAdapterHelper.Adapter): MaterialDialog {
-        return MaterialDialog(context).show {
-            withAdapter(adapter)
-        }
+    fun showColorThemeDialog(context: Context, adapter: MaterialDialogAdapterHelper.Adapter) {
+        MaterialDialogAdapterHelper.showDialogWithAdapter(context, adapter)
     }
 }

@@ -31,7 +31,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
 import java.util.Locale
 import java.util.regex.Matcher
@@ -199,13 +199,16 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
 
         if (mv.description != null) details.append('\n').append(mv.description).append('\n')
 
-        val b = MaterialDialog(requireActivity())
+        val b = MaterialAlertDialogBuilder(requireActivity())
+            .setTitle(R.string.ed_version_details)
+            .setMessage(details)
+
         var button_count = 0
 
         // can we update?
         if (mv is MVersionDb && hasUpdateAvailable(mv)) {
             button_count++
-            b.positiveButton(R.string.ed_update_button) { startDownload(VersionConfig.get().getPreset(mv.preset_name)) }
+            b.setPositiveButton(R.string.ed_update_button) { _, _ -> startDownload(VersionConfig.get().getPreset(mv.preset_name)) }
             details.append("\n")
             val details_len = details.length
             details.append("  ")
@@ -216,7 +219,7 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
         // can we share?
         if (mv is MVersionDb && mv.hasDataFile()) {
             button_count++
-            b.negativeButton(R.string.version_menu_share) {
+            b.setNegativeButton(R.string.version_menu_share) { _, _ ->
                 val file = File(mv.filename)
                 try {
                     val uri = FileProvider.getUriForFile(requireActivity(), App.context.packageName + ".file_provider", file)
@@ -227,10 +230,10 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
                         .setChooserTitle(getString(R.string.version_share_title))
                         .startChooser()
                 } catch (e: Exception) {
-                    MaterialDialog(requireActivity()).show {
-                        message(text = "Can't share " + file.absolutePath + ": [" + e.javaClass + "] " + e.message)
-                        positiveButton(R.string.ok)
-                    }
+                    MaterialAlertDialogBuilder(requireActivity())
+                        .setMessage("Can't share " + file.absolutePath + ": [" + e.javaClass + "] " + e.message)
+                        .setPositiveButton(R.string.ok, null)
+                        .show()
                 }
             }
         }
@@ -238,7 +241,7 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
         // can we delete?
         if (mv is MVersionDb) {
             button_count++
-            b.neutralButton(R.string.buang_dari_daftar) {
+            b.setNeutralButton(R.string.buang_dari_daftar) { _, _ ->
                 val filename = mv.filename
                 S.db.deleteVersion(mv)
                 App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
@@ -249,15 +252,13 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
         // can we download?
         if (mv is MVersionPreset) {
             button_count++
-            b.positiveButton(R.string.ed_download_button) { startDownload(mv) }
+            b.setPositiveButton(R.string.ed_download_button) { _, _ -> startDownload(mv) }
         }
 
         // if we have no buttons at all, add a no-op OK
         if (button_count == 0) {
-            b.positiveButton(R.string.ok)
+            b.setPositiveButton(R.string.ok, null)
         }
-        b.title(R.string.ed_version_details)
-        b.message(text = details)
         b.show()
     }
 
@@ -291,14 +292,14 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
             cActive.isChecked -> mv.active = false
             mv.hasDataFile() -> mv.active = true
             else -> {
-                MaterialDialog(requireActivity()).show {
-                    message(R.string.the_file_for_this_version_is_no_longer_available_file, mv.filename)
-                    positiveButton(R.string.delete) {
+                MaterialAlertDialogBuilder(requireActivity())
+                    .setMessage(getString(R.string.the_file_for_this_version_is_no_longer_available_file, mv.filename))
+                    .setPositiveButton(R.string.delete) { _, _ ->
                         S.db.deleteVersion(mv)
                         App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
                     }
-                    negativeButton(R.string.no)
-                }
+                    .setNegativeButton(R.string.no, null)
+                    .show()
             }
         }
     }

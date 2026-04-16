@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<style name="Theme.Base.Alkitab" parent="Theme.AppCompat.NoActionBar">
+	<style name="Theme.Base.Alkitab" parent="Theme.MaterialComponents.NoActionBar.Bridge">
 		<item name="android:colorPrimary">@color/primary</item>
 		<item name="colorPrimary">@color/primary</item>
 		<item name="android:colorPrimaryDark">@color/primary_dark</item>
@@ -17,7 +17,6 @@
 		<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
 		<item name="toolbarStyle">@style/ToolbarStyle</item>
 		<item name="windowActionModeOverlay">true</item>
-		<item name="md_color_button_text">@color/accent</item>
 	</style>
 
 	<style name="SmallerTitleActionModeStyle" parent="Widget.AppCompat.ActionMode">

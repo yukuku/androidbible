@@ -2,8 +2,8 @@ package yuku.alkitab.base.util
 
 import android.app.Activity
 import androidx.annotation.Keep
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.callbacks.onDismiss
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.JsonParseException
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicBoolean
@@ -13,7 +13,6 @@ import okhttp3.Request
 import okhttp3.Response
 import yuku.alkitab.base.App
 import yuku.alkitab.base.connection.Connections
-import yuku.alkitab.base.widget.MaterialDialogProgressHelper.progress
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Version
@@ -61,23 +60,21 @@ object ShareUrl {
         // when set to true, do not call any callback
         val done = AtomicBoolean()
 
-        val dialog = MaterialDialog(activity).show {
-            message(text = "Getting share URL…")
-            progress(true, 0)
-            negativeButton(R.string.cancel) { dialog ->
-                if (done.getAndSet(true)) return@negativeButton
-                done.set(true)
+        val dialog: AlertDialog = MaterialAlertDialogBuilder(activity)
+            .setMessage("Getting share URL…")
+            .setNegativeButton(R.string.cancel) { d, _ ->
+                if (done.getAndSet(true)) return@setNegativeButton
                 callback.onUserCancel()
-                dialog.dismiss()
+                d.dismiss()
                 callback.onFinally()
             }
-            onDismiss { dialog ->
-                if (done.getAndSet(true)) return@onDismiss
-                callback.onUserCancel()
-                dialog.dismiss()
-                callback.onFinally()
-            }
+            .create()
+        dialog.setOnDismissListener {
+            if (done.getAndSet(true)) return@setOnDismissListener
+            callback.onUserCancel()
+            callback.onFinally()
         }
+        dialog.show()
 
         call.enqueue(object : okhttp3.Callback {
             override fun onFailure(call: Call, e: IOException) {
