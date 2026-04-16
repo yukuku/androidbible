@@ -85,7 +85,7 @@ public class Highlights {
 	}
 
 	public static int alphaMix(int colorRgb) {
-		return 0xa0000000 | colorRgb;
+		return 0xa0000000 | (colorRgb & 0x00ffffff);
 	}
 
 	public static int hashCode(final String verseText) {
