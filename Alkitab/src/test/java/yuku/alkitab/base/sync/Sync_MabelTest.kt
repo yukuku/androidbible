@@ -5,8 +5,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNotSame
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -26,7 +24,7 @@ class Sync_MabelTest {
     //region updateMarkerWithEntityContent
 
     @Test
-    fun updateMarker_nullMarker_createsNewMarker() {
+    fun `updateMarkerWithEntityContent creates a new Marker when passed a null existing marker`() {
         val content = Sync_Mabel.Content().apply {
             ari = 0x010203
             kind = Marker.Kind.note.code
@@ -49,7 +47,7 @@ class Sync_MabelTest {
     }
 
     @Test
-    fun updateMarker_existingMarker_overwritesFieldsPreservesId() {
+    fun `updateMarkerWithEntityContent overwrites fields on an existing Marker but preserves its local _id`() {
         val existing = Marker.createEmptyMarker().apply {
             _id = 42
             gid = "old-gid"
@@ -84,7 +82,7 @@ class Sync_MabelTest {
     }
 
     @Test
-    fun updateMarker_allThreeKinds_roundTripCorrectly() {
+    fun `updateMarkerWithEntityContent round-trips every Marker Kind (bookmark, note, highlight)`() {
         for (k in Marker.Kind.values()) {
             val content = Sync_Mabel.Content().apply {
                 ari = 1
@@ -104,7 +102,7 @@ class Sync_MabelTest {
     //region updateLabelWithEntityContent
 
     @Test
-    fun updateLabel_nullLabel_createsNewLabel() {
+    fun `updateLabelWithEntityContent creates a new Label when passed a null existing label`() {
         val content = Sync_Mabel.Content().apply {
             title = "Favorites"
             ordering = 3
@@ -121,7 +119,7 @@ class Sync_MabelTest {
     }
 
     @Test
-    fun updateLabel_existingLabel_preservesId() {
+    fun `updateLabelWithEntityContent overwrites fields on an existing Label but preserves its local _id`() {
         val existing = Label.createEmptyLabel().apply {
             _id = 7
             gid = "old"
@@ -151,7 +149,7 @@ class Sync_MabelTest {
     //region updateMarker_LabelWithEntityContent
 
     @Test
-    fun updateMarker_Label_nullExisting_createsNewAssociation() {
+    fun `updateMarker_LabelWithEntityContent creates a new association when passed a null existing row`() {
         val content = Sync_Mabel.Content().apply {
             marker_gid = "marker-gid-1"
             label_gid = "label-gid-1"
@@ -165,7 +163,7 @@ class Sync_MabelTest {
     }
 
     @Test
-    fun updateMarker_Label_existing_preservesId() {
+    fun `updateMarker_LabelWithEntityContent overwrites fields on an existing association but preserves its local _id`() {
         val existing = Marker_Label.createEmptyMarker_Label().apply {
             _id = 5
             gid = "old"
@@ -201,13 +199,13 @@ class Sync_MabelTest {
     }
 
     @Test
-    fun content_equals_reflexive() {
+    fun `Content equals is reflexive — a Content is always equal to itself`() {
         val c = fullMarkerContent()
         assertEquals(c, c)
     }
 
     @Test
-    fun content_equals_sameValues() {
+    fun `Content equals returns true when every field matches, and hashCode matches too`() {
         val a = fullMarkerContent()
         val b = fullMarkerContent()
         assertEquals(a, b)
@@ -215,41 +213,40 @@ class Sync_MabelTest {
     }
 
     @Test
-    fun content_equals_null_false() {
+    fun `Content equals returns false when compared to null`() {
         val c = fullMarkerContent()
         assertFalse(c.equals(null))
     }
 
     @Test
-    fun content_equals_differentType_false() {
+    fun `Content equals returns false when compared to an object of a different type`() {
         val c = fullMarkerContent()
         assertFalse(c.equals("not a content"))
     }
 
     @Test
-    fun content_equals_differentAri_false() {
+    fun `Content equals returns false when the ari differs`() {
         val a = fullMarkerContent()
         val b = fullMarkerContent().apply { ari = 999 }
         assertNotEquals(a, b)
     }
 
     @Test
-    fun content_equals_differentCaption_false() {
+    fun `Content equals returns false when the caption differs`() {
         val a = fullMarkerContent()
         val b = fullMarkerContent().apply { caption = "other" }
         assertNotEquals(a, b)
     }
 
     @Test
-    fun content_equals_differentModifyTime_false() {
-        // Important: sync uses Content equality to detect whether a mod op is needed.
+    fun `Content equals returns false when modifyTime differs (which is how sync detects that a mod op is needed)`() {
         val a = fullMarkerContent()
         val b = fullMarkerContent().apply { modifyTime = 999 }
         assertNotEquals(a, b)
     }
 
     @Test
-    fun content_equals_oneFieldNull_false() {
+    fun `Content equals returns false when one side has a null caption and the other has a value`() {
         val a = fullMarkerContent()
         val b = fullMarkerContent().apply { caption = null }
         assertNotEquals(a, b)
@@ -257,14 +254,14 @@ class Sync_MabelTest {
     }
 
     @Test
-    fun content_equals_bothFieldsNull_true() {
+    fun `Content equals returns true when both Contents have the same set of fields populated (other fields both null)`() {
         val a = Sync_Mabel.Content().apply { ari = 1; kind = 1 }
         val b = Sync_Mabel.Content().apply { ari = 1; kind = 1 }
         assertEquals(a, b)
     }
 
     @Test
-    fun content_equals_labelFields() {
+    fun `Content equals and hashCode work for label-shaped Content (title, ordering, backgroundColor)`() {
         val a = Sync_Mabel.Content().apply {
             title = "Favorites"
             ordering = 0
@@ -287,7 +284,7 @@ class Sync_MabelTest {
     }
 
     @Test
-    fun content_equals_markerLabelFields() {
+    fun `Content equals works for marker_label-shaped Content (marker_gid, label_gid)`() {
         val a = Sync_Mabel.Content().apply {
             marker_gid = "m1"
             label_gid = "l1"
@@ -306,12 +303,12 @@ class Sync_MabelTest {
     }
 
     @Test
-    fun content_emptyEquals() {
+    fun `two empty Contents are equal`() {
         assertEquals(Sync_Mabel.Content(), Sync_Mabel.Content())
     }
 
     @Test
-    fun content_hashCode_consistent() {
+    fun `Content hashCode is consistent across multiple invocations on the same instance`() {
         val a = fullMarkerContent()
         val h1 = a.hashCode()
         val h2 = a.hashCode()
@@ -323,7 +320,7 @@ class Sync_MabelTest {
     //region Content.toString
 
     @Test
-    fun content_toString_returnsNonEmpty() {
+    fun `Content toString returns a non-empty string wrapped in curly braces`() {
         val c = fullMarkerContent()
         val s = c.toString()
         assertNotNull(s)
@@ -331,7 +328,7 @@ class Sync_MabelTest {
     }
 
     @Test
-    fun content_toString_includesValuesThatArePresent() {
+    fun `Content toString includes the populated field values`() {
         val c = Sync_Mabel.Content().apply {
             ari = 0x010203
             caption = "hello"
@@ -343,7 +340,7 @@ class Sync_MabelTest {
     }
 
     @Test
-    fun content_toString_skipsNullFields() {
+    fun `Content toString omits fields that are null`() {
         val c = Sync_Mabel.Content().apply { ari = 1 }
         val s = c.toString()
         // should not contain "null"
@@ -351,7 +348,7 @@ class Sync_MabelTest {
     }
 
     @Test
-    fun content_toString_longCaptionTruncated() {
+    fun `Content toString truncates captions longer than 20 chars with an ellipsis`() {
         // The q() helper truncates strings longer than 20 chars with an ellipsis.
         val longCaption = "a".repeat(100)
         val c = Sync_Mabel.Content().apply { caption = longCaption }
@@ -362,7 +359,7 @@ class Sync_MabelTest {
     }
 
     @Test
-    fun content_toString_newlinesEscaped() {
+    fun `Content toString escapes newlines in captions so output stays on a single line`() {
         val c = Sync_Mabel.Content().apply { caption = "line1\nline2" }
         val s = c.toString()
         assertTrue("newlines should be escaped: $s", s.contains("\\n"))
@@ -373,7 +370,7 @@ class Sync_MabelTest {
     }
 
     @Test
-    fun content_toString_truncatesLongGids() {
+    fun `Content toString truncates long marker_gid and label_gid values to their first 10 chars`() {
         val longGid = "abcdefghijklmnopqrstuvwxyz"
         val c = Sync_Mabel.Content().apply {
             marker_gid = longGid
@@ -390,7 +387,7 @@ class Sync_MabelTest {
     //region End-to-end: applying server delta to local Marker objects
 
     @Test
-    fun applyServerAddOp_toLocalMarker_producesCorrectMarker() {
+    fun `applying a server add op to a local marker produces a correctly populated Marker`() {
         // Simulates: server sends an `add` op for a new marker; client creates the Marker.
         val content = Sync_Mabel.Content().apply {
             ari = 0x020406
@@ -409,7 +406,7 @@ class Sync_MabelTest {
     }
 
     @Test
-    fun applyServerModOp_toLocalMarker_preservesLocalId() {
+    fun `applying a server mod op to a local marker preserves the local _id so the DB row is updated not duplicated`() {
         // Simulates: server sends a `mod` op for an existing marker.
         val localMarker = Marker.createEmptyMarker().apply {
             _id = 123

@@ -44,13 +44,13 @@ class SyncDeltaTest {
     //region patchNoConflict
 
     @Test
-    fun patchNoConflict_emptyEntitiesEmptyOps_returnsEmpty() {
+    fun `patchNoConflict with empty entities and empty operations returns an empty list`() {
         val out = SyncAdapter.patchNoConflict(emptyList<Entity<Sync_Mabel.Content>>(), emptyList())
         assertEquals(0, out.size)
     }
 
     @Test
-    fun patchNoConflict_addOp_insertsNewEntity() {
+    fun `patchNoConflict applies an add op by inserting the new entity`() {
         val entities = listOf(marker("g1", 1))
         val ops = listOf(Operation(Opkind.add, Entity.KIND_MARKER, "g2", markerContent(ari = 2)))
 
@@ -64,7 +64,7 @@ class SyncDeltaTest {
     }
 
     @Test
-    fun patchNoConflict_modOp_overwritesExistingEntity() {
+    fun `patchNoConflict applies a mod op by overwriting the existing entity`() {
         val entities = listOf(marker("g1", 1, "old caption"))
         val newContent = markerContent(ari = 99, caption = "new caption")
         val ops = listOf(Operation(Opkind.mod, Entity.KIND_MARKER, "g1", newContent))
@@ -78,7 +78,7 @@ class SyncDeltaTest {
     }
 
     @Test
-    fun patchNoConflict_delOp_removesEntity() {
+    fun `patchNoConflict applies a del op by removing the entity with matching gid`() {
         val entities = listOf(marker("g1", 1), marker("g2", 2))
         val ops = listOf(delOp(Entity.KIND_MARKER, "g1"))
 
@@ -89,7 +89,7 @@ class SyncDeltaTest {
     }
 
     @Test
-    fun patchNoConflict_delMissingGid_isNoOp() {
+    fun `patchNoConflict tolerates a del op for a gid we no longer have and is a no-op`() {
         // Server asks us to delete something we no longer have. Should be tolerated.
         val entities = listOf(marker("g1", 1))
         val ops = listOf(delOp(Entity.KIND_MARKER, "missing"))
@@ -101,7 +101,7 @@ class SyncDeltaTest {
     }
 
     @Test
-    fun patchNoConflict_addExistingGid_overwrites() {
+    fun `patchNoConflict treats add on an existing gid as an overwrite (same as mod)`() {
         // When server sends `add` for something we already have (shouldn't normally happen,
         // but protocol tolerates it), add is treated identically to mod.
         val entities = listOf(marker("g1", 1, "existing"))
@@ -115,7 +115,7 @@ class SyncDeltaTest {
     }
 
     @Test
-    fun patchNoConflict_modNonExistentGid_insertsEntity() {
+    fun `patchNoConflict treats mod on a missing gid as an insert (same as add)`() {
         // Port of server behavior: add and mod are the same operation - overwrite.
         // So mod on a missing gid inserts it.
         val entities = emptyList<Entity<Sync_Mabel.Content>>()
@@ -129,7 +129,7 @@ class SyncDeltaTest {
     }
 
     @Test
-    fun patchNoConflict_sameGidDifferentKind_treatedSeparately() {
+    fun `patchNoConflict treats entities with the same gid but different kinds as separate entries`() {
         // Marker "g1" and Label "g1" are different entities (keyed by gid+kind).
         val entities = listOf(marker("g1", 1, "marker caption"))
         val ops = listOf(Operation(Opkind.add, Entity.KIND_LABEL, "g1", labelContent("my label")))
@@ -144,7 +144,7 @@ class SyncDeltaTest {
     }
 
     @Test
-    fun patchNoConflict_delForWrongKind_doesNotRemove() {
+    fun `patchNoConflict del op for wrong kind does not remove an entity with matching gid`() {
         // A del op with the same gid but wrong kind must not remove the other entity.
         val entities = listOf(marker("g1", 1))
         val ops = listOf(delOp(Entity.KIND_LABEL, "g1"))
@@ -156,7 +156,7 @@ class SyncDeltaTest {
     }
 
     @Test
-    fun patchNoConflict_multipleModsSameGid_lastWins() {
+    fun `patchNoConflict with multiple mods to the same gid applies them in order and last one wins`() {
         // Concurrent edits / replayed ops: multiple mods to same gid - last one wins.
         val entities = listOf(marker("g1", 1, "original"))
         val ops = listOf(
@@ -172,7 +172,7 @@ class SyncDeltaTest {
     }
 
     @Test
-    fun patchNoConflict_addThenDel_removesEntity() {
+    fun `patchNoConflict add followed by del leaves the entity removed`() {
         val entities = emptyList<Entity<Sync_Mabel.Content>>()
         val ops = listOf(
             Operation(Opkind.add, Entity.KIND_MARKER, "g1", markerContent(ari = 5)),
@@ -185,7 +185,7 @@ class SyncDeltaTest {
     }
 
     @Test
-    fun patchNoConflict_delThenAdd_restoresEntity() {
+    fun `patchNoConflict del followed by add restores the entity with the newly added content`() {
         val entities = listOf(marker("g1", 1, "original"))
         val ops = listOf(
             delOp(Entity.KIND_MARKER, "g1"),
@@ -200,7 +200,7 @@ class SyncDeltaTest {
     }
 
     @Test
-    fun patchNoConflict_mixedOperations() {
+    fun `patchNoConflict with a mix of add mod and del applies each op to the right entity`() {
         val entities = listOf(
             marker("g1", 1, "one"),
             marker("g2", 2, "two"),
@@ -224,7 +224,7 @@ class SyncDeltaTest {
     }
 
     @Test
-    fun patchNoConflict_doesNotMutateInputList() {
+    fun `patchNoConflict does not mutate the caller's entities list`() {
         // The algorithm should return a new list, not mutate the caller's.
         val entities = mutableListOf(marker("g1", 1))
         val originalSize = entities.size
@@ -240,19 +240,19 @@ class SyncDeltaTest {
     //region entitiesEqual
 
     @Test
-    fun entitiesEqual_bothEmpty_true() {
+    fun `entitiesEqual returns true when both lists are empty`() {
         assertTrue(Sync.entitiesEqual(emptyList<Entity<Sync_Mabel.Content>>(), emptyList()))
     }
 
     @Test
-    fun entitiesEqual_sameOrder_true() {
+    fun `entitiesEqual returns true when both lists contain the same entities in the same order`() {
         val a = listOf(marker("g1", 1), marker("g2", 2))
         val b = listOf(marker("g1", 1), marker("g2", 2))
         assertTrue(Sync.entitiesEqual(a, b))
     }
 
     @Test
-    fun entitiesEqual_differentOrder_true() {
+    fun `entitiesEqual returns true when both lists contain the same entities but in different order`() {
         // The whole point: order doesn't matter.
         val a = listOf(marker("g1", 1), marker("g2", 2), marker("g3", 3))
         val b = listOf(marker("g3", 3), marker("g1", 1), marker("g2", 2))
@@ -260,21 +260,21 @@ class SyncDeltaTest {
     }
 
     @Test
-    fun entitiesEqual_differentSizes_false() {
+    fun `entitiesEqual returns false when the lists have different sizes`() {
         val a = listOf(marker("g1", 1), marker("g2", 2))
         val b = listOf(marker("g1", 1))
         assertFalse(Sync.entitiesEqual(a, b))
     }
 
     @Test
-    fun entitiesEqual_differentContent_false() {
+    fun `entitiesEqual returns false when the entities differ in content`() {
         val a = listOf(marker("g1", 1, "original"))
         val b = listOf(marker("g1", 1, "different"))
         assertFalse(Sync.entitiesEqual(a, b))
     }
 
     @Test
-    fun entitiesEqual_differentGids_false() {
+    fun `entitiesEqual returns false when the entities differ by gid`() {
         val a = listOf(marker("g1", 1))
         val b = listOf(marker("g2", 1))
         assertFalse(Sync.entitiesEqual(a, b))
@@ -285,7 +285,7 @@ class SyncDeltaTest {
     //region SyncUtils
 
     @Test
-    fun findEntity_present_returnsMatch() {
+    fun `findEntity returns the matching entity when gid and kind both match`() {
         val list = listOf(marker("g1", 1), label("g2", "my label", 0), marker("g3", 3))
         val found = SyncUtils.findEntity(list, "g2", Entity.KIND_LABEL)
         assertNotNull(found)
@@ -293,46 +293,46 @@ class SyncDeltaTest {
     }
 
     @Test
-    fun findEntity_missingGid_returnsNull() {
+    fun `findEntity returns null when the gid is not present in the list`() {
         val list = listOf(marker("g1", 1))
         assertNull(SyncUtils.findEntity(list, "nope", Entity.KIND_MARKER))
     }
 
     @Test
-    fun findEntity_sameGidWrongKind_returnsNull() {
+    fun `findEntity returns null when the gid matches but the kind does not`() {
         // Same gid but different kind must NOT match. Gid+kind together form the key.
         val list = listOf(marker("g1", 1))
         assertNull(SyncUtils.findEntity(list, "g1", Entity.KIND_LABEL))
     }
 
     @Test
-    fun findEntity_emptyList_returnsNull() {
+    fun `findEntity returns null when the input list is empty`() {
         assertNull(SyncUtils.findEntity(emptyList<Entity<Sync_Mabel.Content>>(), "g1", Entity.KIND_MARKER))
     }
 
     @Test
-    fun isSameContent_sameGidKindContent_true() {
+    fun `isSameContent returns true when gid kind and content are all identical`() {
         val a = marker("g1", 5, "hi")
         val b = marker("g1", 5, "hi")
         assertTrue(SyncUtils.isSameContent(a, b))
     }
 
     @Test
-    fun isSameContent_differentContent_false() {
+    fun `isSameContent returns false when the content differs even if gid and kind match`() {
         val a = marker("g1", 5, "hi")
         val b = marker("g1", 5, "bye")
         assertFalse(SyncUtils.isSameContent(a, b))
     }
 
     @Test
-    fun isSameContent_differentGid_false() {
+    fun `isSameContent returns false when the gids differ`() {
         val a = marker("g1", 5, "hi")
         val b = marker("g2", 5, "hi")
         assertFalse(SyncUtils.isSameContent(a, b))
     }
 
     @Test
-    fun isSameContent_differentKind_false() {
+    fun `isSameContent returns false when the kinds differ`() {
         val m = marker("g1", 5, "hi")
         val l = label("g1", "hi", 0).also { it.content.ari = 5 }
         assertFalse(SyncUtils.isSameContent(m, l))
@@ -366,14 +366,14 @@ class SyncDeltaTest {
     }
 
     @Test
-    fun roundTrip_unchangedState_producesEmptyDelta() {
+    fun `round-trip with an unchanged state produces an empty delta`() {
         val state = listOf(marker("g1", 1), marker("g2", 2))
         val delta = computeDelta(state, state)
         assertEquals(0, delta.operations.size)
     }
 
     @Test
-    fun roundTrip_purelyAdditive() {
+    fun `round-trip for a purely additive change emits a single add op that rebuilds the current state`() {
         val shadow = listOf(marker("g1", 1))
         val current = listOf(marker("g1", 1), marker("g2", 2, "new"))
 
@@ -386,7 +386,7 @@ class SyncDeltaTest {
     }
 
     @Test
-    fun roundTrip_modificationOnly() {
+    fun `round-trip for a modification-only change emits a single mod op that rebuilds the current state`() {
         val shadow = listOf(marker("g1", 1, "old"))
         val current = listOf(marker("g1", 1, "new"))
 
@@ -399,7 +399,7 @@ class SyncDeltaTest {
     }
 
     @Test
-    fun roundTrip_deletionOnly() {
+    fun `round-trip for a deletion-only change emits a single del op that rebuilds the current state`() {
         val shadow = listOf(marker("g1", 1), marker("g2", 2))
         val current = listOf(marker("g1", 1))
 
@@ -413,7 +413,7 @@ class SyncDeltaTest {
     }
 
     @Test
-    fun roundTrip_mixedOperations_reconstructsCurrent() {
+    fun `round-trip for a mix of add mod and del operations reconstructs the current state exactly`() {
         // Realistic scenario: shadow is what server knows, current is what we have now.
         // The computed delta, applied to shadow, must reproduce current.
         val shadow = listOf(
@@ -440,7 +440,7 @@ class SyncDeltaTest {
     }
 
     @Test
-    fun roundTrip_conflict_serverAlsoDeletes_localStillConverges() {
+    fun `round-trip converges when server's append delta deletes an entity we already deleted locally`() {
         // Conflict: we deleted g2 locally AND server also sends a del for g2 in append_delta.
         // Applying the server's append_delta on top of our current state must be idempotent.
         val currentLocal = listOf(marker("g1", 1))

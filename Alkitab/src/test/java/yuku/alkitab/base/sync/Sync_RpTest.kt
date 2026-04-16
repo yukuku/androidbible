@@ -25,13 +25,13 @@ class Sync_RpTest {
     //region equals / hashCode
 
     @Test
-    fun equals_reflexive() {
+    fun `Content equals is reflexive — a Content is always equal to itself`() {
         val c = content(1_000_000L, setOf(1, 2, 3))
         assertEquals(c, c)
     }
 
     @Test
-    fun equals_sameValues_true() {
+    fun `Content equals returns true when startTime and done are both identical, and hashCode matches too`() {
         val a = content(1_000_000L, setOf(1, 2, 3))
         val b = content(1_000_000L, setOf(1, 2, 3))
         assertEquals(a, b)
@@ -39,7 +39,7 @@ class Sync_RpTest {
     }
 
     @Test
-    fun equals_sameDoneSetDifferentOrder_true() {
+    fun `Content equals ignores insertion order of the done set (Set equality is order-insensitive)`() {
         // Set equality is order-insensitive by contract, regardless of concrete impl.
         val a = content(0L, linkedSetOf(1, 2, 3))
         val b = content(0L, linkedSetOf(3, 2, 1))
@@ -47,7 +47,7 @@ class Sync_RpTest {
     }
 
     @Test
-    fun equals_differentStartTime_false() {
+    fun `Content equals returns false when startTime differs`() {
         assertNotEquals(
             content(1_000_000L, setOf(1)),
             content(2_000_000L, setOf(1)),
@@ -55,7 +55,7 @@ class Sync_RpTest {
     }
 
     @Test
-    fun equals_differentDone_false() {
+    fun `Content equals returns false when the done set contents differ`() {
         assertNotEquals(
             content(0L, setOf(1, 2)),
             content(0L, setOf(1, 3)),
@@ -63,7 +63,7 @@ class Sync_RpTest {
     }
 
     @Test
-    fun equals_oneStartTimeNull_false() {
+    fun `Content equals returns false when one side has a null startTime and the other has a value`() {
         assertNotEquals(
             content(null, setOf(1)),
             content(1_000_000L, setOf(1)),
@@ -75,7 +75,7 @@ class Sync_RpTest {
     }
 
     @Test
-    fun equals_oneDoneNull_false() {
+    fun `Content equals returns false when one side has a null done set and the other has a value`() {
         assertNotEquals(
             content(0L, null),
             content(0L, setOf(1)),
@@ -87,18 +87,18 @@ class Sync_RpTest {
     }
 
     @Test
-    fun equals_bothNullFields_true() {
+    fun `Content equals returns true when both startTime and done are null on both sides`() {
         assertEquals(content(null, null), content(null, null))
     }
 
     @Test
-    fun equals_emptyDoneSet_true() {
+    fun `Content equals returns true for a reading plan that has been started but has zero completions`() {
         // A reading plan started but with zero completions.
         assertEquals(content(5L, emptySet()), content(5L, emptySet()))
     }
 
     @Test
-    fun equals_emptyDoneVsNonEmpty_false() {
+    fun `Content equals distinguishes an empty done set from a done set with entries`() {
         assertNotEquals(
             content(5L, emptySet()),
             content(5L, setOf(1)),
@@ -106,25 +106,25 @@ class Sync_RpTest {
     }
 
     @Test
-    fun equals_null_false() {
+    fun `Content equals returns false when compared to null`() {
         val c = content(0L, emptySet())
         assertFalse(c.equals(null))
     }
 
     @Test
-    fun equals_differentType_false() {
+    fun `Content equals returns false when compared to an object of a different type`() {
         val c = content(0L, emptySet())
         assertFalse(c.equals("not a content"))
     }
 
     @Test
-    fun hashCode_consistent() {
+    fun `Content hashCode is consistent across multiple invocations on the same instance`() {
         val c = content(1_000_000L, setOf(1, 2, 3))
         assertEquals(c.hashCode(), c.hashCode())
     }
 
     @Test
-    fun hashCode_bothNullFields_zero() {
+    fun `Content hashCode returns 0 when both startTime and done are null`() {
         assertEquals(0, Sync_Rp.Content().hashCode())
     }
 
@@ -133,7 +133,7 @@ class Sync_RpTest {
     //region toString
 
     @Test
-    fun toString_containsValues() {
+    fun `Content toString includes startTime, done, and is wrapped in Content{}`() {
         val s = content(1234L, setOf(5, 6)).toString()
         assertTrue("toString should contain startTime: $s", s.contains("startTime=1234"))
         assertTrue("toString should contain done set: $s", s.contains("done="))
@@ -141,7 +141,7 @@ class Sync_RpTest {
     }
 
     @Test
-    fun toString_nullFields_showsNull() {
+    fun `Content toString shows 'null' for null startTime and done fields`() {
         val s = Sync_Rp.Content().toString()
         assertTrue(s.contains("startTime=null"))
         assertTrue(s.contains("done=null"))

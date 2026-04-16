@@ -25,13 +25,13 @@ class Sync_PinsTest {
     //region Pin.equals / hashCode
 
     @Test
-    fun pin_equals_reflexive() {
+    fun `Pin equals is reflexive — a Pin is always equal to itself`() {
         val p = pin(1, 100, "cap", 500)
         assertEquals(p, p)
     }
 
     @Test
-    fun pin_equals_sameValues() {
+    fun `Pin equals returns true when all four fields match, and hashCode matches too`() {
         val a = pin(1, 100, "cap", 500)
         val b = pin(1, 100, "cap", 500)
         assertEquals(a, b)
@@ -39,50 +39,50 @@ class Sync_PinsTest {
     }
 
     @Test
-    fun pin_equals_null_false() {
+    fun `Pin equals returns false when compared to null`() {
         val a = pin(1, 100, "cap", 500)
         assertFalse(a.equals(null))
     }
 
     @Test
-    fun pin_equals_differentType_false() {
+    fun `Pin equals returns false when compared to an object of a different type`() {
         val a = pin(1, 100, "cap", 500)
         assertFalse(a.equals("not a pin"))
     }
 
     @Test
-    fun pin_equals_differentPresetId_false() {
+    fun `Pin equals returns false when preset_id differs`() {
         assertNotEquals(pin(1, 100, "cap", 500), pin(2, 100, "cap", 500))
     }
 
     @Test
-    fun pin_equals_differentAri_false() {
+    fun `Pin equals returns false when ari differs`() {
         assertNotEquals(pin(1, 100, "cap", 500), pin(1, 200, "cap", 500))
     }
 
     @Test
-    fun pin_equals_differentCaption_false() {
+    fun `Pin equals returns false when caption differs`() {
         assertNotEquals(pin(1, 100, "a", 500), pin(1, 100, "b", 500))
     }
 
     @Test
-    fun pin_equals_differentModifyTime_false() {
+    fun `Pin equals returns false when modifyTime differs`() {
         assertNotEquals(pin(1, 100, "cap", 500), pin(1, 100, "cap", 999))
     }
 
     @Test
-    fun pin_equals_bothCaptionsNull_true() {
+    fun `Pin equals returns true when both Pins have null caption and all other fields match`() {
         assertEquals(pin(1, 100, null, 500), pin(1, 100, null, 500))
     }
 
     @Test
-    fun pin_equals_oneCaptionNull_false() {
+    fun `Pin equals returns false when one Pin has a null caption and the other has a value`() {
         assertNotEquals(pin(1, 100, null, 500), pin(1, 100, "cap", 500))
         assertNotEquals(pin(1, 100, "cap", 500), pin(1, 100, null, 500))
     }
 
     @Test
-    fun pin_toString_containsKeyFields() {
+    fun `Pin toString contains all four field values (preset_id, ari, caption, modifyTime)`() {
         val s = pin(3, 42, "hello", 12345).toString()
         assertTrue("preset_id present: $s", s.contains("preset_id=3"))
         assertTrue("ari present: $s", s.contains("ari=42"))
@@ -101,7 +101,7 @@ class Sync_PinsTest {
     }
 
     @Test
-    fun content_equals_bothNullPins_true() {
+    fun `Content equals returns true when both Contents have null pins, and their hashCodes also match`() {
         val a = Sync_Pins.Content()
         val b = Sync_Pins.Content()
         assertEquals(a, b)
@@ -109,7 +109,7 @@ class Sync_PinsTest {
     }
 
     @Test
-    fun content_equals_oneNullPins_false() {
+    fun `Content equals returns false when one side has null pins and the other has an empty list`() {
         val a = Sync_Pins.Content()
         val b = content()
         assertNotEquals(a, b)
@@ -117,12 +117,12 @@ class Sync_PinsTest {
     }
 
     @Test
-    fun content_equals_bothEmptyPins_true() {
+    fun `Content equals returns true when both Contents have empty pins lists`() {
         assertEquals(content(), content())
     }
 
     @Test
-    fun content_equals_samePinsSameOrder_true() {
+    fun `Content equals returns true when both Contents have the same pins in the same order, and their hashCodes match`() {
         val a = content(pin(0, 10), pin(1, 20), pin(2, 30))
         val b = content(pin(0, 10), pin(1, 20), pin(2, 30))
         assertEquals(a, b)
@@ -130,7 +130,7 @@ class Sync_PinsTest {
     }
 
     @Test
-    fun content_equals_samePinsDifferentOrder_true() {
+    fun `Content equals is order-insensitive, and hashCode must be order-insensitive too to satisfy the Object contract`() {
         // Content.equals is intentionally order-insensitive: it sorts both pin lists
         // by preset_id before comparing. This matters when a deserialized shadow
         // happens to list pins in a different order than getEntitiesFromCurrent() —
@@ -149,40 +149,40 @@ class Sync_PinsTest {
     }
 
     @Test
-    fun content_equals_differentPinCount_false() {
+    fun `Content equals returns false when the two pins lists have different sizes`() {
         val a = content(pin(0, 10), pin(1, 20))
         val b = content(pin(0, 10))
         assertNotEquals(a, b)
     }
 
     @Test
-    fun content_equals_differentPinContent_false() {
+    fun `Content equals returns false when two pins have the same preset_id but different ari`() {
         val a = content(pin(0, 10))
         val b = content(pin(0, 20))
         assertNotEquals(a, b)
     }
 
     @Test
-    fun content_equals_reflexive() {
+    fun `Content equals is reflexive — a Content is always equal to itself`() {
         val c = content(pin(0, 10), pin(1, 20))
         assertEquals(c, c)
     }
 
     @Test
-    fun content_equals_null_false() {
+    fun `Content equals returns false when compared to null`() {
         val c = content(pin(0, 10))
         assertFalse(c.equals(null))
     }
 
     @Test
-    fun content_equals_differentType_false() {
+    fun `Content equals returns false when compared to an object of a different type`() {
         val c = content(pin(0, 10))
         assertFalse(c.equals("not a content"))
     }
 
     @Test
-    fun content_hashCode_nullPins_returnsZero() {
-        // hashCode() explicitly: `pins != null ? pins.hashCode() : 0`
+    fun `Content hashCode returns 0 when pins is null`() {
+        // hashCode() explicitly: `pins != null ? ... : 0`
         assertEquals(0, Sync_Pins.Content().hashCode())
     }
 
@@ -191,7 +191,7 @@ class Sync_PinsTest {
     //region toString
 
     @Test
-    fun content_toString_returnsNonEmpty() {
+    fun `Content toString returns a string wrapped in Content{}`() {
         val c = content(pin(0, 10))
         val s = c.toString()
         assertTrue("toString should start with Content{: $s", s.startsWith("Content{"))
