@@ -478,12 +478,16 @@ Use Android Studio's "Convert Java File to Kotlin" as a starting point, then man
 
 ---
 
-### REM-23: Port ybuild.sh to Gradle
+### ~~REM-23: Port ybuild.sh to Gradle~~ ✅ COMPLETED (2026-04-16)
 **Addresses:** TD-14  
 **Module:** Build  
 **BRICE:** B=4 R=3 I=3 C=4 E=5 → **3.8**
 
-**Current state:** Production release builds require running `ybuild.sh`, a 168-line macOS-only bash script that creates a RAM disk, copies proprietary assets from an external directory, stamps the git commit hash, runs Gradle, and renames the output APK. This cannot be run on Linux CI and prevents building with a simple `./gradlew assembleYuku_alkitabRelease`.
+**Outcome:** `ybuild.sh` deleted. Production builds are now `./gradlew assemble<Flavor>Release`, working on any platform Gradle supports. The placeholder `ddd_*` Bible files moved from `Alkitab/src/main/assets/internal/` to `Alkitab/src/plain/assets/internal/` so production flavors don't inherit them. A typed `CopyProprietaryAssetsTask` per production flavor copies `$ALKITAB_PROPRIETARY_DIR/overlay/<applicationId>/text_raw/*` into `Alkitab/build/generated/proprietaryAssets/<flavor>/internal/`, wired into AGP via `androidComponents { onVariants { ... addGeneratedSourceDirectory(...) } }` so every consumer (mergeAssets, lint vital, etc.) automatically depends on it. The git commit hash is now `BuildConfig.LAST_COMMIT_HASH` (the `R.string.last_commit_hash` resource was removed). APKs are still named `Alkitab-{versionCode}-{versionName}-{commitHash}-{applicationId}-{BUILD_DIST}.apk` (with `BUILD_DIST` defaulting to `dev`). All four flavors (plain debug, yuku_alkitab, yuku_quick_bible, sabda_alkitab) verified building end-to-end.
+
+---
+
+**Original analysis:** Production release builds require running `ybuild.sh`, a 168-line macOS-only bash script that creates a RAM disk, copies proprietary assets from an external directory, stamps the git commit hash, runs Gradle, and renames the output APK. This cannot be run on Linux CI and prevents building with a simple `./gradlew assembleYuku_alkitabRelease`.
 
 Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradle:32-38`) and product flavors (lines 72-87). What's missing are 4 operations that can all be expressed as Gradle tasks.
 
@@ -630,7 +634,7 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 | REM-04 | Fix FCM token retry | **4.2** | 1 |
 | REM-05 | Fix DevotionDownloader threading | **4.0** | 1 |
 | REM-03 | Replace LocalBroadcastManager | **3.8** | 1 |
-| REM-23 | Port ybuild.sh to Gradle | **3.8** | 2 |
+| REM-23 | ~~Port ybuild.sh to Gradle~~ ✅ | **3.8** | 2 |
 | REM-06 | Extract IsiActivity gestures | **3.4** | 2 |
 | REM-07 | Extract IsiActivity action mode | **3.4** | 2 |
 | REM-09 | Introduce ViewModel | **3.4** | 2 |

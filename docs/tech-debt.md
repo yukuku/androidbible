@@ -240,38 +240,26 @@ Newer files (activities, data classes) are Kotlin, creating a mixed codebase whe
 
 ---
 
-## TD-14: ybuild.sh — Custom Shell Script for Production Builds
+## ~~TD-14: ybuild.sh — Custom Shell Script for Production Builds~~ ✅ FIXED
 
-**File:** `ybuild.sh`
+**Fixed in REM-23** (2026-04-16). `ybuild.sh` has been deleted; production builds are now pure Gradle.
 
-The production release build process is handled by a 168-line bash script that performs operations outside of Gradle's build lifecycle. This means production builds cannot be reproduced with a single `./gradlew` invocation — `ybuild.sh` must be run instead.
+- ✅ **Proprietary asset injection:** A typed `CopyProprietaryAssetsTask` per production flavor copies `$ALKITAB_PROPRIETARY_DIR/overlay/<applicationId>/text_raw/*` into `Alkitab/build/generated/proprietaryAssets/<flavor>/internal/`, wired into AGP via `androidComponents.onVariants { ... addGeneratedSourceDirectory(...) }` so all consumers (mergeAssets, lint vital, etc.) automatically depend on it. The placeholder `ddd_*` files have moved to `Alkitab/src/plain/assets/internal/` so production builds never inherit them.
+- ✅ **Git commit hash stamping:** Read at config time and exposed as `BuildConfig.LAST_COMMIT_HASH`. The `R.string.last_commit_hash` resource has been removed; `AboutActivity` and `InstallationUtil` now read the BuildConfig field directly.
+- ✅ **Custom APK naming:** Implemented in the existing `applicationVariants.all` block — output is `Alkitab-{versionCode}-{versionName}-{commitHash}-{applicationId}-{BUILD_DIST}.apk`, mirroring the legacy scheme. `BUILD_DIST` defaults to `dev`.
+- ✅ **RAM disk dependency:** Removed; not needed.
+- ✅ **Linux CI compatibility:** Production builds now run via `./gradlew assemble<Flavor>Release` with no shell-script wrapper, so they work on any platform Gradle supports.
 
-### What ybuild.sh does beyond Gradle:
+The new release build command:
 
-1. **RAM disk creation (lines 79-91):** Creates a macOS-specific 1GB RAM disk via `hdiutil`/`diskutil`, copies the entire project there via `rsync`, and builds from the copy. This is macOS-only and prevents building on Linux CI.
-
-2. **Proprietary asset injection (lines 120-129):** Deletes the placeholder `assets/internal/` directory (containing `ddd_*` dummy files) and copies real Bible text files from `$ALKITAB_PROPRIETARY_DIR/overlay/$BUILD_PACKAGE_NAME/text_raw`. This is the critical step — production flavors need real Bible text that isn't in the open-source repo.
-
-3. **Git commit hash stamping (lines 93-95, 146-148):** Reads the last commit hash via `git log` and uses `sed` to replace the `0000000` placeholder in `res/values/last_commit.xml`.
-
-4. **Custom APK renaming (lines 156-165):** Renames the output APK to include version code, version name, commit hash, and distribution identifier (e.g., `Alkitab-17000532-4.11.2-a580062-yuku-playstore.apk`).
-
-### What Gradle already handles:
-- **Signing** — `signingConfigs.release` (Alkitab/build.gradle:32-38) already reads `SIGN_KEYSTORE`, `SIGN_ALIAS`, `SIGN_PASSWORD` from env vars
-- **Product flavors** — `yuku_alkitab`, `yuku_quick_bible`, `sabda_alkitab` are defined (lines 72-87) with flavor-specific source sets already containing icons and configs
-
-### Required environment variables:
-| Variable | Purpose |
-|----------|---------|
-| `ALKITAB_PROPRIETARY_DIR` | Root of proprietary overlay files |
-| `SIGN_KEYSTORE` | Path to signing keystore |
-| `SIGN_ALIAS` | Key alias |
-| `SIGN_PASSWORD` | Keystore/key password |
-| `FLAVOR` | Product flavor name |
-| `BUILD_PACKAGE_NAME` | Overlay subdirectory name (e.g., `yuku`, `sabda`) |
-| `BUILD_DIST` | Distribution channel (e.g., `playstore`, `direct`) |
-
-**Impact:** Production builds are not reproducible via Gradle alone. The build process is macOS-only due to RAM disk. CI/CD must invoke a shell script rather than Gradle tasks. New developers must learn a custom build procedure.
+```bash
+ALKITAB_PROPRIETARY_DIR=/path/to/proprietary \
+SIGN_KEYSTORE=/path/to/keystore \
+SIGN_ALIAS=mykey \
+SIGN_PASSWORD=secret \
+BUILD_DIST=market \
+./gradlew assembleYuku_alkitabRelease
+```
 
 ---
 

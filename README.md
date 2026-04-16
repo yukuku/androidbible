@@ -53,8 +53,8 @@ Run the unit tests used in CI:
 Notes
 -----
 
-- The repository already contains placeholder data in `Alkitab/src/main/assets/internal`, so the open-source `plainDebug` build works out of the box once the Android SDK and NDK are installed.
-- Release packaging uses `ybuild.sh`, which expects signing environment variables and `ALKITAB_PROPRIETARY_DIR` for proprietary overlay resources. That path is intended for project maintainers and is not required for the normal open-source debug build.
+- The repository contains placeholder Bible data in `Alkitab/src/plain/assets/internal` and a placeholder `Alkitab/google-services.json`, so the open-source `plainDebug` build works out of the box once the Android SDK and NDK are installed (Firebase features won't actually function with the placeholder, but the build and the rest of the app do).
+- Release packaging is pure Gradle. Production flavors expect the signing env vars (`SIGN_KEYSTORE`, `SIGN_ALIAS`, `SIGN_PASSWORD`) and `ALKITAB_PROPRIETARY_DIR`, which must contain `overlay/<applicationId>/text_raw/` (Bible text) and `google-services.json` (real Firebase config covering every production applicationId). With those set, `./gradlew assembleYuku_alkitabRelease` (or any other production flavor) builds and signs the APK directly. Set `BUILD_DIST` to override the `dev` suffix in the output filename.
 - Product flavors currently include `plain`, `yuku_alkitab`, `yuku_quick_bible`, and `sabda_alkitab`.
 
 License

@@ -22,6 +22,7 @@ import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 import yuku.alkitab.base.App
 import yuku.alkitab.base.ac.base.BaseActivity
+import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 
 class AboutActivity : BaseActivity() {
@@ -84,7 +85,7 @@ class AboutActivity : BaseActivity() {
 
         tAboutTextDesc.movementMethod = LinkMovementMethod.getInstance()
         tVersion.text = getString(R.string.about_version_name, App.getVersionName())
-        tBuild.text = String.format(Locale.US, "%s %s", App.getVersionCode(), getString(R.string.last_commit_hash))
+        tBuild.text = String.format(Locale.US, "%s %s", App.getVersionCode(), BuildConfig.LAST_COMMIT_HASH)
         root.setOnTouchListener { _, event ->
             if (event.pointerCount == 4) {
                 startBackgroundAnimation()

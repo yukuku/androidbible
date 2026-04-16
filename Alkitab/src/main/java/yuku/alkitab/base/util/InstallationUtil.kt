@@ -9,7 +9,6 @@ import yuku.alkitab.base.App
 import yuku.alkitab.base.storage.NoBackupSharedPreferences
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.debug.BuildConfig
-import yuku.alkitab.debug.R
 
 object InstallationUtil {
     /**
@@ -74,7 +73,7 @@ object InstallationUtil {
             os_sdk_int = Build.VERSION.SDK_INT,
             os_release = Build.VERSION.RELEASE,
             locale = ConfigurationCompat.getLocales(context.resources.configuration)[0].toString(),
-            last_commit_hash = context.getString(R.string.last_commit_hash)
+            last_commit_hash = BuildConfig.LAST_COMMIT_HASH
         )
 
         return App.getDefaultGson().toJson(obj)
