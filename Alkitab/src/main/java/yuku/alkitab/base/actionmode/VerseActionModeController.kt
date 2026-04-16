@@ -203,15 +203,17 @@ class VerseActionModeController(
                 val textToCopy = t[0]
                 val textToSubmit = t[1]
 
+                val meta = pickShareUrlMetadata(useSplit1 = itemId == R.id.menuCopySplit1 && activeSplit1Version != null)
+
                 ShareUrl.make(
                     activity = host.activity,
                     immediatelyCancel = !Preferences.getBoolean(host.activity.getString(R.string.pref_copyWithShareUrl_key), host.activity.resources.getBoolean(R.bool.pref_copyWithShareUrl_default)),
                     verseText = textToSubmit,
-                    ari_bc = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, 0),
+                    ari_bc = Ari.encode(meta.bookId, host.chapter_1, 0),
                     selectedVerses_1 = selected,
                     reference = reference,
-                    version = host.activeSplit0Version,
-                    preset_name = MVersionDb.presetNameFromVersionId(host.activeSplit0VersionId),
+                    version = meta.version,
+                    preset_name = MVersionDb.presetNameFromVersionId(meta.versionId),
                     callback = object : ShareUrl.Callback {
                         override fun onSuccess(shareUrl: String) {
                             ClipboardUtil.copyToClipboard("$textToCopy\n\n$shareUrl")
@@ -263,15 +265,17 @@ class VerseActionModeController(
                     .setSubject(reference)
                     .intent
 
+                val meta = pickShareUrlMetadata(useSplit1 = itemId == R.id.menuShareSplit1 && activeSplit1Version != null)
+
                 ShareUrl.make(
                     activity = host.activity,
                     immediatelyCancel = !Preferences.getBoolean(host.activity.getString(R.string.pref_copyWithShareUrl_key), host.activity.resources.getBoolean(R.bool.pref_copyWithShareUrl_default)),
                     verseText = textToSubmit,
-                    ari_bc = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, 0),
+                    ari_bc = Ari.encode(meta.bookId, host.chapter_1, 0),
                     selectedVerses_1 = selected,
                     reference = reference,
-                    version = host.activeSplit0Version,
-                    preset_name = MVersionDb.presetNameFromVersionId(host.activeSplit0VersionId),
+                    version = meta.version,
+                    preset_name = MVersionDb.presetNameFromVersionId(meta.versionId),
                     callback = object : ShareUrl.Callback {
                         override fun onSuccess(shareUrl: String) {
                             intent.putExtra(Intent.EXTRA_TEXT, "$textToShare\n\n$shareUrl")
@@ -590,4 +594,34 @@ class VerseActionModeController(
         t[0] += "\n\n${a[0]}"
         t[1] += "\n\n${a[1]}"
     }
+
+    /**
+     * The share-URL metadata (version, versionId, book id) for the current copy/share click.
+     *
+     * Pass `useSplit1 = true` only for the "...Split1" menu variants — the clipboard/share
+     * text is built from split1, so the URL must also point at split1. For the "...BothSplits"
+     * variants we intentionally pass `useSplit1 = false`: both verse texts are included in the
+     * payload, but the URL is anchored to the primary (split0) version.
+     */
+    private fun pickShareUrlMetadata(useSplit1: Boolean): ShareUrlMetadata {
+        return if (useSplit1) {
+            ShareUrlMetadata(
+                bookId = host.activeSplit1BookById(host.activeSplit0Book.bookId)?.bookId ?: host.activeSplit0Book.bookId,
+                version = host.activeSplit1Version ?: host.activeSplit0Version,
+                versionId = host.activeSplit1VersionId ?: host.activeSplit0VersionId,
+            )
+        } else {
+            ShareUrlMetadata(
+                bookId = host.activeSplit0Book.bookId,
+                version = host.activeSplit0Version,
+                versionId = host.activeSplit0VersionId,
+            )
+        }
+    }
+
+    private data class ShareUrlMetadata(
+        val bookId: Int,
+        val version: Version,
+        val versionId: String,
+    )
 }

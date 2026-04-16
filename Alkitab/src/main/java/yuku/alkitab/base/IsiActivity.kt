@@ -142,6 +142,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     override val activeSplit0VersionId: String get() = activeSplit0.versionId
     override val activeSplit0MVersion: MVersion get() = activeSplit0.mv
     override val activeSplit1Version: Version? get() = activeSplit1?.version
+    override val activeSplit1VersionId: String? get() = activeSplit1?.versionId
     override val activeSplit1MVersion: MVersion? get() = activeSplit1?.mv
     override fun activeSplit1BookById(bookId: Int): Book? = activeSplit1?.version?.getBook(bookId)
     override val selectedVersesSplit0_1: IntArrayList get() = lsSplit0.getCheckedVerses_1()
