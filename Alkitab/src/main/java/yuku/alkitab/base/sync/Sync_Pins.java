@@ -135,7 +135,7 @@ public class Sync_Pins {
 				Collections.sort(list1, listSorter);
 				Collections.sort(list2, listSorter);
 
-				if (!pins.equals(content.pins)) return false;
+				if (!list1.equals(list2)) return false;
 			}
 
 			return true;
