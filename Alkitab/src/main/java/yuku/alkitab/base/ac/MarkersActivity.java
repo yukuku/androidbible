@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,6 +13,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -163,15 +165,33 @@ public class MarkersActivity extends BaseActivity {
         startActivityForResult(intent, REQCODE_markerList);
     }
 
-    private void showLabelPopupMenu(View anchor, int position) {
+    private void showLabelPopupMenu(FrameLayout itemRoot, int position, int touchX, int touchY) {
         if (position < PRESET_COUNT) return;
         final Label label = adapter.getItem(position);
         if (label == null) return;
 
-        final PopupMenu popup = new PopupMenu(this, anchor);
+        // PopupMenu anchors to a view's bounds, so it would open at the row's left edge by default.
+        // Insert a 1×1 px invisible anchor at the long-press point so the popup opens horizontally
+        // aligned with the user's finger instead.
+        final View anchorView = new View(this);
+        final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(1, 1);
+        lp.leftMargin = touchX;
+        lp.topMargin = touchY;
+        anchorView.setLayoutParams(lp);
+        itemRoot.addView(anchorView);
+
+        final PopupMenu popup = new PopupMenu(this, anchorView);
         popup.getMenuInflater().inflate(R.menu.context_markers, popup.getMenu());
         popup.setOnMenuItemClickListener(menuItem -> onLabelMenuItemSelected(menuItem, label));
-        popup.show();
+        // Highlight the row while the popup is visible so it's clear which item is being acted on.
+        itemRoot.setForeground(new ColorDrawable(0x22ffffff));
+        popup.setOnDismissListener(p -> {
+            itemRoot.setForeground(null);
+            itemRoot.removeView(anchorView);
+        });
+
+        // Defer until after the next layout pass so the anchor view has a real screen location.
+        anchorView.post(popup::show);
     }
 
     private boolean onLabelMenuItemSelected(MenuItem item, Label label) {
@@ -319,17 +339,32 @@ public class MarkersActivity extends BaseActivity {
     }
 
     class LabelViewHolder extends RecyclerView.ViewHolder {
+        final FrameLayout itemRoot;
         final ImageView imgFilterIcon;
         final TextView lFilterCaption;
         final TextView lFilterLabel;
         final View drag_handle;
+        /** Last ACTION_DOWN X coordinate in itemView-local px, used to position the long-press popup. */
+        int lastTouchX;
+        /** Last ACTION_DOWN Y coordinate in itemView-local px, used to position the long-press popup. */
+        int lastTouchY;
 
         LabelViewHolder(@NonNull View itemView) {
             super(itemView);
+            itemRoot = (FrameLayout) itemView;
             imgFilterIcon = itemView.findViewById(R.id.imgFilterIcon);
             lFilterCaption = itemView.findViewById(R.id.lFilterCaption);
             lFilterLabel = itemView.findViewById(R.id.lFilterLabel);
             drag_handle = itemView.findViewById(R.id.drag_handle);
+
+            // Track last touch-down so long-press can position its popup horizontally at the finger.
+            itemView.setOnTouchListener((v, event) -> {
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    lastTouchX = (int) event.getX();
+                    lastTouchY = (int) event.getY();
+                }
+                return false;
+            });
 
             itemView.setOnClickListener(v -> {
                 int pos = getBindingAdapterPosition();
@@ -341,7 +376,7 @@ public class MarkersActivity extends BaseActivity {
             itemView.setOnLongClickListener(v -> {
                 int pos = getBindingAdapterPosition();
                 if (pos != RecyclerView.NO_POSITION && pos >= PRESET_COUNT) {
-                    showLabelPopupMenu(v, pos);
+                    showLabelPopupMenu(itemRoot, pos, lastTouchX, lastTouchY);
                     return true;
                 }
                 return false;
