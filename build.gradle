@@ -60,6 +60,8 @@ ext {
     // Tests
     junitVersion = '4.13.2'
     leakcanaryVersion = '2.14'
+    mockkVersion = '1.13.13'
+    robolectricVersion = '4.13'
 
     firebaseBomVersion = '29.0.3'
 
