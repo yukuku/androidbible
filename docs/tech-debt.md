@@ -1,19 +1,19 @@
 # Tech Debt, Improvements & Critiques
 
-## TD-01: IsiActivity God Class (2897 lines)
+## TD-01: IsiActivity God Class (~2320 lines)
 
 **File:** `Alkitab/src/main/java/yuku/alkitab/base/IsiActivity.kt`
 
-The main Bible reader activity is a monolithic class containing 40+ inline lambda callbacks, 2900 lines of mixed concerns. Specific clusters that violate single-responsibility:
+The main Bible reader activity is a monolithic class containing many inline lambda callbacks, ~2320 lines of mixed concerns (down from 2897 after REM-07 extracted action mode). Specific clusters that violate single-responsibility:
 
 - **Gesture handling (lines 143–370):** `onFloaterDragStart/Move/Complete`, `onOnefingerLeft/Right`, `onTwofingerStart/Scale/DragX/DragY/End` — all inline lambdas that implement `TwofingerLinearLayout.Listener`. This is ~230 lines of touch gesture processing embedded in the Activity.
-- **Action mode (lines 530–1014):** `onCreateActionMode`, `onPrepareActionMode`, `onActionItemClicked`, `onDestroyActionMode` — ~480 lines of context menu handling for copy, share, bookmark, highlight, compare, dictionary, extensions.
+- **~~Action mode~~** ✅ **Extracted (REM-07):** The ~500-line `actionMode_callback` object has been moved to `VerseActionModeController.kt` behind two interfaces (`VerseActionModeHost`, `VerseActionModeActions`). Pure text-building logic is in `VerseTextFormatter` (no Android deps). `RibkaEligibility` is a top-level file. 26 unit tests added.
 - **Broadcast receivers (lines 451–519):** Two anonymous `BroadcastReceiver` instances registered inline, one for verse attribute changes and one for version changes.
 - **Verse selection listeners (lines 463–525):** Two `SelectedVersesListener` implementations (`lsSplit0_selectedVerses`, `lsSplit1_selectedVerses`) with partially duplicated logic.
 - **Split view management:** `openSplitDisplay()`, `closeSplitDisplay()`, `displaySplitFollowingMaster()`, `loadSplitVersion()` scattered across the file.
 - **Navigation history:** `BackForwardListController` usage, `jumpToAri()`, `jumpTo(reference)`, `History` tracking.
 
-**Impact:** Any change to one concern risks breaking unrelated functionality. Testing individual behaviors requires instantiating the entire Activity. New developers face a ~3000-line class with no clear entry point.
+**Impact:** Any change to one concern risks breaking unrelated functionality. Testing individual behaviors requires instantiating the entire Activity. New developers face a ~2320-line class with no clear entry point.
 
 ---
 
@@ -52,6 +52,9 @@ Three near-identical `execSQL()` calls to reorder labels with `+1`/`-1` arithmet
 
 ### TODO comment (line 234)
 `TODO this is only called together with putAttributes(), make it private` — indicates known coupling that hasn't been fixed.
+
+### ~~Verse-255 boundary bug (lines 238, 262)~~ ✅ FIXED
+**Fixed in REM-18c** (`ccf0a320`, 2026-04-16). `countMarkersForBookChapter` and `putAttributes` used exclusive upper bound (`ari < ariMax`) when `ariMax = ari_bookchapter | 0xff`, silently dropping any marker on verse 255. Changed to inclusive (`ari <= ariMax`) to match `getHighlightColorRgb`. No real data was affected (no Bible chapter has 255 verses), but the boundary is now correct and locked down by two regression tests.
 
 ---
 
@@ -220,7 +223,18 @@ Newer files (activities, data classes) are Kotlin, creating a mixed codebase whe
 
 ## TD-13: Minimal Test Coverage
 
-14 test files exist across the project:
+22 test files now exist across the project (Alkitab module unit tests unless noted):
+
+**Added in recent sprints:**
+- `HighlightsTest.kt` — highlight encode/decode, alphaMix, partial highlights (REM-18a)
+- `SyncDeltaTest.kt`, `Sync_MabelTest.kt`, `Sync_PinsTest.kt`, `Sync_RpTest.kt` — sync delta application and entity equality (REM-18b)
+- `InternalDbTest.kt` — marker CRUD, label ordering, highlight storage, attribute loading via Robolectric (REM-18c)
+- `SearchEngineTest.kt` — `ReadyTokens`, `satisfiesTokens`, and `searchByGrep` end-to-end via Robolectric (REM-18d)
+- `VerseTextFormatterTest.kt` — pure text-formatting logic extracted from action mode (REM-07)
+- `VerseActionModeControllerTest.kt` — menu visibility rules, click routing, split-1 share URL metadata (REM-07)
+- `SongBookUtilTest.java` — song deserialization safety (REM-01)
+
+**Pre-existing:**
 - `FormattedTextRendererTest.java` — verse formatting codes
 - `QueryTokenizerTest.kt` — search tokenization
 - `TargetDecoderTest.java` — verse reference parsing
@@ -228,14 +242,10 @@ Newer files (activities, data classes) are Kotlin, creating a mixed codebase whe
 - `RemoveSpecialCodesTest.java` — formatting code stripping
 - `JsonFileExportTest.kt` — data transfer export
 - `VersionTest.java`, `GetVersionInitialsTest.java` — version model
-- `OptionalGzipInputStreamTest.java` — I/O utility
-- `UnsignedBinarySearchKtTest.kt` — binary search utility
-- `DesktopVerseFinderTest.java` — desktop verse finder (in tools/AlkitabConverter)
-- `DesktopVerseParserTest.java` — desktop verse parser (in tools/AlkitabConverter)
-- `LauncherTest.java` — integration launcher test (in AlkitabIntegration, androidTest)
-- `VerseProviderTest.java` — verse provider test (in AlkitabIntegration, androidTest)
+- `DesktopVerseFinderTest.java`, `DesktopVerseParserTest.java` — desktop verse finder/parser (in tools/AlkitabConverter)
+- `LauncherTest.java`, `VerseProviderTest.java` — integration tests (in AlkitabIntegration, androidTest)
 
-**Not tested:** Database operations, sync protocol, version loading, search engine, devotion downloading, song management, highlight encoding, content provider, widget logic.
+**Still not tested:** Version loading (YES2 reader/writer round-trip), devotion downloading, song management, content provider, widget logic.
 
 ---
 
@@ -323,3 +333,12 @@ Daily verse widget selects from a predefined list, but if the user's selected Bi
 
 ### ~~PB-07: Preferences hold() Without unhold()~~ ✅ FIXED
 **Fixed in REM-02** (`0b61084a`–`80cd9f34`, 2026-04-10/11). `hold()`/`unhold()` are now private; all external code uses `withTransaction(Runnable)` with try/finally guarantee.
+
+### ~~PB-08: Copy/Share Split1 Uses Split0 Metadata in Share URL~~ ✅ FIXED
+**Fixed in** `716eb1ce` (2026-04-16). When split view was active and the user picked "Copy Split1" or "Share Split1", the clipboard/share text was correctly built from split1, but the share URL metadata (`version`, `preset_name`, `ari_bc`) came from split0 — so the generated URL pointed at the wrong version. The bug existed in `IsiActivity.actionMode_callback` and was preserved verbatim by the REM-07 refactor (intentionally, to keep it a pure refactor). Now `menuCopySplit1`/`menuShareSplit1` route metadata through split1; split0 and BothSplits remain correct. Four regression tests added.
+
+### ~~PB-09: Highlights.alphaMix() ARGB Leak~~ ✅ FIXED
+**Fixed in REM-18a** (`1ca73821`, 2026-04-16). `Highlights.alphaMix()` OR-ed `0xa0000000` without masking the high byte: any caller passing an ARGB value instead of an RGB one would bleed the original alpha into the result. Fixed by masking the input: `0xa0000000 | (colorRgb & 0x00ffffff)`.
+
+### ~~PB-10: Sync_Pins.Content.equals() Compared Unsorted Lists~~ ✅ FIXED
+**Fixed in REM-18b** (`b4bce934`, 2026-04-16). `Sync_Pins.Content.equals()` sorted copies of the pin lists but then compared the original unsorted lists, defeating the intended order-insensitive equality. In practice masked because `getEntitiesFromCurrent()` always builds pins in `preset_id` order, but a deserialized shadow with pins in a different order would incorrectly trigger a spurious "mod" sync op. Fixed to compare the sorted copies; `hashCode()` also fixed to be order-insensitive to satisfy the `equals`/`hashCode` contract.

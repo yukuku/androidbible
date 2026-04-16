@@ -133,17 +133,22 @@ This document provides a prioritized remediation plan for each tech debt item id
 
 ---
 
-### REM-07: Extract IsiActivity Action Mode
+### REM-07: Extract IsiActivity Action Mode ✅ COMPLETED
 **Addresses:** TD-01 (action mode cluster)  
 **Module:** Main reader  
 **BRICE:** B=4 R=3 I=3 C=3 E=4 → **3.4**
 
-**Steps:**
-1. Create `VerseActionModeController.kt` implementing `ActionMode.Callback`
-2. Move the `actionMode_callback` object (lines 524-1023 in `IsiActivity.kt`, ~500 lines) into this new class — includes `onCreateActionMode`, `onPrepareActionMode`, `onActionItemClicked`, `appendSplitTextForCopyShare`, and `onDestroyActionMode`
-3. Define a `VerseActionModeCallback` interface for actions that need Activity context (navigate, share, etc.)
-4. Inject dependencies: `selectedVerses`, `activeVersion`, `ClipboardManager`
-5. Handle extension menu items via delegate pattern
+**Completed in:** `89a1894e` (REM-07 refactor) + `716eb1ce` (follow-up split-1 fix, 2026-04-16)
+
+**What was done:**
+1. ✅ Created `VerseActionModeController.kt` (~593 lines) implementing `ActionMode.Callback`. Moved the entire ~500-line `actionMode_callback` object from `IsiActivity.kt` into this class.
+2. ✅ Defined two interfaces: `VerseActionModeHost` (queries activity state — selected verses, versions, book data, chapter) and `VerseActionModeActions` (callbacks back into the activity — navigate, show toasts, etc.)
+3. ✅ Extracted pure text-building logic into `VerseTextFormatter` (no Android dependencies, purely testable under plain JUnit)
+4. ✅ Moved `RibkaEligibility` to a standalone top-level file `RibkaEligibility.kt`
+5. ✅ Added `mockk` to the test classpath. Added 26 unit tests: 11 pure-JUnit tests for `VerseTextFormatterTest`, 15 Robolectric tests for `VerseActionModeControllerTest` (menu visibility rules, click routing)
+6. ✅ Follow-up PR `716eb1ce` fixed the split-1 share URL metadata bug (PB-08) that had been preserved verbatim in the REM-07 refactor. Four regression tests added for copy/share split-0/1 metadata routing.
+
+**Result:** `IsiActivity.kt` shrank from 2894 → 2320 lines (−574 lines). Action mode is now independently testable without instantiating the Activity.
 
 **Difficulty:** Medium (6-8 hours). Risk: action mode references many Activity-level fields and methods.
 
@@ -415,16 +420,17 @@ Use Android Studio's "Convert Java File to Kotlin" as a starting point, then man
 
 **Steps — prioritized by risk coverage:**
 
-**Step 18a: Highlight encoding tests**
-1. Write unit tests for `Highlights.java`: encode/decode, hash verification, partial highlights
-2. Test edge cases: empty highlights, Unicode text, version text changes
-3. Difficulty: Easy (2-3 hours)
+**Step 18a: Highlight encoding tests** ✅ COMPLETED
+**Completed in:** `513961b9` / `1ca73821` (2026-04-16)
+1. ✅ Added 31 unit tests in `HighlightsTest.kt`: encode/decode round-trip, hash verification, partial-highlight guard, alphaMix with ARGB input
+2. ✅ Fixed `Highlights.alphaMix()` ARGB leak: changed `0xa0000000 | colorRgb` to `0xa0000000 | (colorRgb & 0x00ffffff)` so the output alpha is always `0xA0` regardless of what the caller passes
+3. ✅ Added test-scope no-op shadows for `android.util.Log` and `com.google.firebase.crashlytics.FirebaseCrashlytics` — these unblock all future Alkitab module unit tests that touch `AppLog`
 
-**Step 18b: Sync protocol tests**
-1. Create mock server responses for `Sync_Mabel`, `Sync_Pins`, `Sync_Rp`
-2. Test delta application: add, mod, del operations
-3. Test conflict scenarios: concurrent edits, missing GIDs
-4. Difficulty: Medium (1 day)
+**Step 18b: Sync protocol tests** ✅ COMPLETED
+**Completed in:** `b4bce934` (2026-04-16)
+1. ✅ Added 101 unit tests across `SyncDeltaTest.kt`, `Sync_MabelTest.kt`, `Sync_PinsTest.kt`, `Sync_RpTest.kt` — covers `SyncAdapter.patchNoConflict` delta application (add/mod/del, missing GIDs, conflict, idempotency), `Sync.entitiesEqual`, `SyncUtils.findEntity/isSameContent`, `Sync_Mabel.updateMarker/Label/Marker_Label`, and `Content equals/hashCode/toString` for all three sync sets
+2. ✅ Fixed `Sync_Pins.Content.equals()`: was sorting copies but comparing the original unsorted lists — now compares sorted copies. Fixed `hashCode()` to match order-insensitive equals (violations would cause misbehavior inside `HashMap`/`HashSet`)
+3. ✅ Added test-scope stub for `android.util.Pair` so `patchNoConflict` runs without Robolectric
 
 **Step 18c: InternalDb tests (or Room DAO tests)** ✅ COMPLETED
 1. ✅ Added Robolectric (`4.14.1`) as a `testImplementation` dependency and enabled `testOptions.unitTests.includeAndroidResources` in `Alkitab/build.gradle` — Robolectric is required because `InternalDbHelper` extends Android's `SQLiteOpenHelper`
@@ -636,7 +642,7 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 | REM-03 | Replace LocalBroadcastManager | **3.8** | 1 |
 | REM-23 | ~~Port ybuild.sh to Gradle~~ ✅ | **3.8** | 2 |
 | REM-06 | Extract IsiActivity gestures | **3.4** | 2 |
-| REM-07 | Extract IsiActivity action mode | **3.4** | 2 |
+| REM-07 | ~~Extract IsiActivity action mode~~ ✅ | **3.4** | 2 |
 | REM-09 | Introduce ViewModel | **3.4** | 2 |
 | REM-10 | Room migration (Markers) | **3.4** | 2 |
 | REM-12 | ~~Replace DragSortListView~~ ✅ | **3.4** | 2 |
@@ -657,8 +663,8 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 
 **Sprint 1 (1 week):** ~~REM-01~~✅, ~~REM-02~~✅, REM-04, REM-05 — quick safety fixes (REM-01/02 done)  
 **Sprint 2 (1 week):** REM-03 — LocalBroadcastManager removal (touches many files, best done in isolation)  
-**Sprint 3 (2 weeks):** REM-06, REM-07, REM-08 — IsiActivity decomposition  
-**Sprint 4 (1 week):** REM-12, REM-14 — deprecated library replacements  
+**Sprint 3 (2 weeks):** ~~REM-07~~✅, REM-06, REM-08 — IsiActivity decomposition (REM-07 done)  
+**Sprint 4 (1 week):** ~~REM-12~~✅, REM-14 — deprecated library replacements (REM-12 done)  
 **Sprint 5 (2 weeks):** REM-10, REM-11 — Room migration for core tables  
-**Sprint 6 (2 weeks):** REM-09, REM-18a-b — ViewModel + test coverage  
+**Sprint 6 (2 weeks):** REM-09, ~~REM-18a-d~~✅ — ViewModel + test coverage (REM-18a/b/c/d done)  
 **Ongoing:** REM-15, REM-16, REM-17 — modernization work mixed into feature sprints
