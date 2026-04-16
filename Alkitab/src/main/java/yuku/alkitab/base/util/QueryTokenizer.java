@@ -108,9 +108,19 @@ public class QueryTokenizer {
 	static Pattern pattern_letters = Pattern.compile("[\\p{javaLetterOrDigit}'-]+");
 
 	/**
-	 * For tokens such as "abc.,- def123", which will be re-tokenized to "abc" "def123"
+	 * Splits a plussed multiword token (from quoted-phrase input) into its constituent words
+	 * using the {@link #pattern_letters} pattern. Apostrophe {@code '} and hyphen {@code -} are
+	 * treated as word characters so embedded ones (e.g. {@code don't}, {@code self-aware}) stay
+	 * intact; a standalone {@code -} surrounded by non-word characters becomes its own "word".
 	 *
-	 * @return null if the token is not a multiword token (i.e. not an array with 1 element!).
+	 * <p>Examples:
+	 * <ul>
+	 * <li>{@code "hello world"} → {@code ["hello", "world"]}
+	 * <li>{@code "don't self-aware"} → {@code ["don't", "self-aware"]}
+	 * <li>{@code "abc.,- def123"} → {@code ["abc", "-", "def123"]}
+	 * </ul>
+	 *
+	 * @return null if the input produces fewer than two words (i.e. it is not actually a multiword).
 	 */
 	@Nullable
 	static String[] tokenizeMultiwordToken(String token) {
