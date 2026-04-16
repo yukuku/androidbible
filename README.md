@@ -50,6 +50,35 @@ Run the unit tests used in CI:
 
     ./gradlew testPlainDebugUnitTest testPlainReleaseUnitTest
 
+Developer Documentation
+-----------------------
+
+For working with the codebase, see [CLAUDE.md](CLAUDE.md) (architecture overview, module structure, ARI encoding, code conventions, and build instructions) and the `docs/` folder:
+
+**Architecture & infrastructure**
+- [Architecture Deep Dive](docs/architecture.md) — singleton patterns, data flow, module dependencies
+- [Build System](docs/build-system.md) — flavors, signing, CI/CD, release process
+- [Storage & Database](docs/storage.md) — SQLite schema, preferences, file storage
+- [Backend Communication](docs/backend-communication.md) — API endpoints, download flows
+- [Text Rendering](docs/text-rendering.md) — verse formatting pipeline and codes
+- [Binary Formats](docs/binary-formats.md) — YES2, Bintex, RPB file format specs
+
+**Feature modules**
+- [Songs](docs/modules/songs.md) — song book browsing, search, audio playback
+- [Reading Plans](docs/modules/reading-plans.md) — RPB binary format, daily progress tracking
+- [Versions](docs/modules/versions.md) — Bible version management, download, YES2 format
+- [Markers](docs/modules/markers.md) — bookmarks, notes, highlights system
+- [Sync](docs/modules/sync.md) — cloud sync protocol and FCM push
+- [Devotions](docs/modules/devotions.md) — daily devotional articles
+- [Audio Playback](docs/modules/audio-playback.md) — ExoPlayer/MIDI controllers
+- [Search](docs/modules/search.md) — full-text verse search engine
+- [Daily Verse Widget](docs/modules/daily-verse-widget.md) — home screen widget
+- [Data Transfer](docs/modules/data-transfer.md) — JSON export/import of user data
+
+**Tech debt**
+- [Tech Debt & Known Issues](docs/tech-debt.md) — known problems with file/line references
+- [Tech Debt Remediation Plan](docs/tech-debt-remediation.md) — prioritized fixes with BRICE scores
+
 Notes
 -----
 
