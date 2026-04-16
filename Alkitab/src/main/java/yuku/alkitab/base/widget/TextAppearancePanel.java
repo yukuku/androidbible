@@ -179,7 +179,7 @@ public class TextAppearancePanel {
         public void onClick(final View v) {
             final ColorThemeAdapter adapter = new ColorThemeAdapter();
 
-            TextAppearancePanelJavaHelper.showColorThemeDialog(activity, adapter);
+            MaterialDialogAdapterHelper.showDialogWithAdapter(activity, adapter, (CharSequence) null);
 
             final RecyclerView recyclerView = adapter.getRecyclerView();
 

@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.ViewCompat;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class AmbilWarnaDialog {
     public interface OnAmbilWarnaListener {
@@ -68,7 +69,12 @@ public class AmbilWarnaDialog {
         alpha = Color.alpha(color);
 
         final View view = LayoutInflater.from(context).inflate(R.layout.ambilwarna_dialog, null, false);
-        dialog = AmbilWarnaDialogJavaHelper.buildMaterialDialog(this, view, context, listener, this::getColor);
+        dialog = new MaterialAlertDialogBuilder(context)
+            .setView(view)
+            .setPositiveButton(android.R.string.ok, (d, w) -> listener.onOk(this, getColor()))
+            .setNegativeButton(android.R.string.cancel, (d, w) -> listener.onCancel(this))
+            .create();
+        dialog.setOnDismissListener(d -> listener.onCancel(this));
         viewHue = view.findViewById(R.id.ambilwarna_viewHue);
         viewSatVal = view.findViewById(R.id.ambilwarna_viewSatBri);
         viewCursor = view.findViewById(R.id.ambilwarna_cursor);

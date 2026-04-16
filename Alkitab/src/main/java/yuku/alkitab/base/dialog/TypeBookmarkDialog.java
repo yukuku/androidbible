@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
@@ -84,7 +85,7 @@ public class TypeBookmarkDialog {
         tCaption = dialogView.findViewById(R.id.tCaption);
         final Button bAddLabel = dialogView.findViewById(R.id.bAddLabel);
 
-        bAddLabel.setOnClickListener(v -> TypeBookmarkDialogJavaHelper.showAddLabelDialog(context, new LabelAdapter()));
+        bAddLabel.setOnClickListener(v -> MaterialDialogAdapterHelper.showDialogWithAdapter(context, new LabelAdapter(), context.getString(R.string.add_label_title)));
 
         if (marker != null) {
             labels = new TreeSet<>();
@@ -95,13 +96,13 @@ public class TypeBookmarkDialog {
 
         tCaption.setText(marker != null ? marker.caption : reference);
 
-        this.dialog = TypeBookmarkDialogJavaHelper.showBookmarkDialog(context, marker, reference, dialogView, () -> {
-            bOk_click();
-            return Unit.INSTANCE;
-        }, marker1 -> {
-            bDelete_click(marker1);
-            return Unit.INSTANCE;
-        });
+        this.dialog = new MaterialAlertDialogBuilder(context)
+            .setView(dialogView)
+            .setTitle(reference)
+            .setIcon(R.drawable.ic_attr_bookmark)
+            .setPositiveButton(R.string.ok, (d, w) -> bOk_click())
+            .setNeutralButton(R.string.delete, (d, w) -> bDelete_click(marker))
+            .create();
     }
 
     void bOk_click() {

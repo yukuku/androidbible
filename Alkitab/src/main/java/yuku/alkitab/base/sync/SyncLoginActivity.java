@@ -1,8 +1,10 @@
 package yuku.alkitab.base.sync;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,9 +13,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.util.PatternsCompat;
-import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.util.Locale;
 import yuku.alkitab.base.App;
@@ -98,7 +101,7 @@ public class SyncLoginActivity extends BaseActivity {
 
             final String password = tPassword.getText().toString();
 
-            SyncLoginActivityJavaHelper.confirmPassword(this, password, () -> {
+            confirmPassword(this, password, () -> {
                 final Sync.RegisterForm form = new Sync.RegisterForm();
                 form.email = email;
                 form.password = password;
@@ -220,7 +223,7 @@ public class SyncLoginActivity extends BaseActivity {
                 tPasswordNew.setError(null);
             }
 
-            SyncLoginActivityJavaHelper.confirmPassword(this, passwordNew, () -> startThreadWithProgressDialog(getString(R.string.sync_progress_processing), () -> {
+            confirmPassword(this, passwordNew, () -> startThreadWithProgressDialog(getString(R.string.sync_progress_processing), () -> {
                 try {
                     AppLog.d(TAG, "Sending form to server for changing password...");
 
@@ -243,8 +246,30 @@ public class SyncLoginActivity extends BaseActivity {
         tPrivacy.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
+    static void confirmPassword(Context context, String correctPassword, Runnable whenCorrect) {
+        final View view = LayoutInflater.from(context).inflate(R.layout.dialog_sync_confirm_password, null, false);
+        new MaterialAlertDialogBuilder(context)
+            .setView(view)
+            .setPositiveButton(R.string.ok, (d, w) -> {
+                final EditText tPassword2 = view.findViewById(R.id.tPassword2);
+                final String password2 = tPassword2.getText().toString();
+                if (!password2.equals(correctPassword)) {
+                    new MaterialAlertDialogBuilder(context)
+                        .setMessage(R.string.sync_login_form_passwords_do_not_match)
+                        .setPositiveButton(R.string.ok, null)
+                        .show();
+                    return;
+                }
+                whenCorrect.run();
+            })
+            .show();
+    }
+
     void startThreadWithProgressDialog(final String message, final Runnable task) {
-        final AlertDialog pd = SyncLoginActivityJavaHelper.showProgressDialog(this, message);
+        final AlertDialog pd = new MaterialAlertDialogBuilder(this)
+            .setMessage(message)
+            .setCancelable(false)
+            .show();
 
         Background.run(() -> {
             try {

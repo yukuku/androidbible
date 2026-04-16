@@ -69,6 +69,8 @@ class SecretSyncDebugActivity : BaseActivity() {
                 .setMessage("This will reset your synced shadow to revision 0.")
                 .setPositiveButton(R.string.ok) { _, _ ->
                     Preferences.setString(Prefkey.sync_server_prefix, tServer.text.toString().trim())
+
+                    // do the same as logging out
                     bLogout_click.onClick(null)
                 }
                 .setNegativeButton(R.string.cancel, null)
@@ -80,7 +82,10 @@ class SecretSyncDebugActivity : BaseActivity() {
                 .setMessage("This will reset your synced shadow to revision 0.")
                 .setPositiveButton(R.string.ok) { _, _ ->
                     Preferences.remove(Prefkey.sync_server_prefix)
+
+                    // do the same as logging out
                     bLogout_click.onClick(null)
+
                     tServer.setText("")
                 }
                 .setNegativeButton(R.string.cancel, null)

@@ -45,6 +45,8 @@ object ProgressMarkRenameDialog : DialogFragment() {
                 progressMark.modifyTime = Date()
                 db.insertOrUpdateProgressMark(progressMark)
 
+                // Since updating database is the responsibility here,
+                // announcing it will also be here.
                 App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED))
                 listener.onOked()
             }
@@ -57,6 +59,8 @@ object ProgressMarkRenameDialog : DialogFragment() {
                         progressMark.modifyTime = Date()
                         db.insertOrUpdateProgressMark(progressMark)
 
+                        // Since updating database is the responsibility here,
+                        // announcing it will also be here.
                         App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED))
                         listener.onDeleted()
                     }

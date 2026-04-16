@@ -3,14 +3,14 @@ package yuku.alkitab.base.dialog;
 import android.content.Context;
 import android.text.InputFilter;
 import android.text.Selection;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
-import android.view.LayoutInflater;
 import androidx.appcompat.app.AlertDialog;
-import kotlin.Unit;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.debug.R;
@@ -79,27 +79,28 @@ public class TypeHighlightDialog {
         this.verseText = verseText;
 
         dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_highlight, null, false);
-        dialog = TypeHighlightDialogJavaHelper.showHighlightDialog(context, dialogView, title, () -> {
-            // only relevant when we edit partial highlight
-            if (verseText == null || info == null) {
-                return Unit.INSTANCE;
-            }
+        final MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context)
+            .setView(dialogView)
+            .setIcon(R.drawable.ic_attr_highlight)
+            .setPositiveButton(R.string.ok, (d, w) -> {
+                // only relevant when we edit partial highlight
+                if (verseText == null || info == null) {
+                    return;
+                }
 
-            final int[] offsets = getSelectionOffsets();
-            assert offsets != null;
+                final int[] offsets = getSelectionOffsets();
+                assert offsets != null;
 
-            // check for changes
-            if ((info.partial == null && (offsets[0] != 0 || offsets[1] != verseText.length()))
-                ||
-                (info.partial != null && (info.partial.startOffset != offsets[0] || info.partial.endOffset != offsets[1]))) {
-                select(defaultColorRgb, offsets);
-            }
-
-            return Unit.INSTANCE;
-        }, () -> {
-            select(-1, null);
-            return Unit.INSTANCE;
-        });
+                // check for changes
+                if ((info.partial == null && (offsets[0] != 0 || offsets[1] != verseText.length()))
+                    ||
+                    (info.partial != null && (info.partial.startOffset != offsets[0] || info.partial.endOffset != offsets[1]))) {
+                    select(defaultColorRgb, offsets);
+                }
+            })
+            .setNeutralButton(R.string.delete, (d, w) -> select(-1, null));
+        if (title != null) builder.setTitle(title);
+        dialog = builder.show();
         dialogView.setBackgroundColor(S.applied().backgroundColor);
 
         for (int i = 0; i < ids.length; i++) {

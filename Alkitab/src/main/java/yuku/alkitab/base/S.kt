@@ -267,7 +267,10 @@ object S {
 
     fun openVersionsDialog(activity: Activity, selectedVersionId: String, onVersionSelected: (MVersion) -> Unit) {
         val versions = getAvailableVersions()
+
+        // determine the currently selected one
         val selected = versions.indexOfFirst { it.versionId == selectedVersionId }
+
         val options = versions.map { it.longName }.toTypedArray()
         MaterialAlertDialogBuilder(activity)
             .setSingleChoiceItems(options, selected) { dialog, index ->
@@ -285,8 +288,14 @@ object S {
 
     fun openVersionsDialogWithNone(activity: Activity, selectedVersionId: String?, onVersionSelected: (MVersion?) -> Unit) {
         val versions = getAvailableVersions()
-        val selected = if (selectedVersionId == null) 0
-            else versions.indexOfFirst { it.versionId == selectedVersionId } + 1
+
+        // determine the currently selected one
+        val selected = if (selectedVersionId == null) {
+            0 // "none"
+        } else {
+            versions.indexOfFirst { it.versionId == selectedVersionId } + 1
+        }
+
         val options = (listOf(activity.getString(R.string.split_version_none)) + versions.map { it.longName }).toTypedArray()
         MaterialAlertDialogBuilder(activity)
             .setSingleChoiceItems(options, selected) { dialog, index ->
