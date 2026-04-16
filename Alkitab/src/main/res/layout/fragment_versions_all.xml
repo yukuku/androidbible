@@ -8,11 +8,10 @@
 	android:paddingBottom="0dp"
 	tools:context="yuku.alkitab.versionmanager.VersionListFragment">
 
-	<com.mobeta.android.dslv.DragSortListView
+	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/lsVersions"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:fastScrollEnabled="true"
 		android:paddingStart="@dimen/padding_medium"
 		android:paddingEnd="@dimen/padding_medium"
 		android:scrollbarStyle="outsideOverlay"

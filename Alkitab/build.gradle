@@ -299,7 +299,6 @@ dependencies {
     implementation project(':AlkitabModel')
     implementation project(':AlkitabYes2')
     implementation project(':BiblePlus')
-    implementation project(':DragSortListView')
     implementation project(':KpriModel')
     implementation project(':BintexReader')
     implementation project(':BintexWriter')

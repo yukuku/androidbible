@@ -213,7 +213,6 @@ Newer files (activities, data classes) are Kotlin, creating a mixed codebase whe
 | `material-dialogs` | 3.3.0 | Library archived/deprecated. No Material 3 support. |
 | `FancyShowCaseView` | 1.4.0 | Low maintenance activity. Evaluate alternatives. |
 | `PRDownloader` (patched) | custom | Forked as `PrDownloaderFixed`. Maintenance burden of carrying a patched fork. |
-| `DragSortListView` | bundled | Ancient library. `ItemTouchHelper` (built into RecyclerView) is the modern replacement. |
 | `AmbilWarna` | bundled | Bundled color picker. Material color picker components exist now. |
 | `LocalBroadcastManager` | latest | Officially deprecated by AndroidX team. |
 

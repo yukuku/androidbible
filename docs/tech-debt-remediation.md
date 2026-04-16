@@ -289,17 +289,18 @@ If the project adopts Hilt for other reasons (e.g., ViewModel injection in REM-0
 
 ---
 
-### REM-12: Replace DragSortListView with ItemTouchHelper
+### REM-12: Replace DragSortListView with ItemTouchHelper ✅ COMPLETED
 **Addresses:** TD-12  
 **Module:** Markers (label management)  
 **BRICE:** B=2 R=2 I=4 C=4 E=5 → **3.4**
 
-**Steps:**
-1. In `MarkersActivity.java` (primary usage: lines 25-26, 55, 78-85, 233-243, 267-323) and `VersionListFragment.kt` (line 33), replace `DragSortListView` with standard `RecyclerView`
-2. Attach `ItemTouchHelper` with `ItemTouchHelper.SimpleCallback` for drag-to-reorder
-3. Migrate adapter from `DragSortListView.DragSortController` callbacks to `ItemTouchHelper.Callback.onMove()`
-4. Delete the `DragSortListView` module from `settings.gradle` (line 12) and its dependency in `Alkitab/build.gradle`
-5. Remove module directory
+**Completed changes:**
+- `MarkersActivity.java` rewritten to use `RecyclerView` + custom `ItemTouchHelper.Callback` (drag-handle initiated via `startDrag`, divider guarded via `getMovementFlags` and `canDropOver`). Native context menu replaced with a `PopupMenu` shown on long-press.
+- `VersionListFragment.kt` converted to `RecyclerView.Adapter<VersionItemHolder>` with `ItemTouchHelper` installed only when `downloadedOnly == true`.
+- DB persistence still uses the existing pair-wise `reorderLabels` / `reorderVersions`. Instead of committing on every `onMove`, the adapter snapshots its item list at drag start and issues a single reorder call in `clearView` using `snapshot[startPos]` and `snapshot[endPos]`.
+- Translucent-white drag overlay (`0x22ffffff`) preserved via `onSelectedChanged` / `clearView`.
+- Three layouts (`activity_markers.xml`, `fragment_versions_all.xml`, `fragment_versions_downloaded.xml`) switched to `androidx.recyclerview.widget.RecyclerView`.
+- `DragSortListView` module removed from `settings.gradle`, `Alkitab/build.gradle`, and the filesystem.
 
 **Difficulty:** Easy-Medium (4-6 hours).
 
@@ -639,7 +640,7 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 | REM-07 | Extract IsiActivity action mode | **3.4** | 2 |
 | REM-09 | Introduce ViewModel | **3.4** | 2 |
 | REM-10 | Room migration (Markers) | **3.4** | 2 |
-| REM-12 | Replace DragSortListView | **3.4** | 2 |
+| REM-12 | ~~Replace DragSortListView~~ ✅ | **3.4** | 2 |
 | REM-14 | Replace material-dialogs | **3.4** | 2 |
 | REM-18 | Add test coverage | **3.4** | 2 |
 | REM-24 | Refactor S.kt service locator | **3.2** | 2 |
