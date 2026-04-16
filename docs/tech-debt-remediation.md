@@ -426,11 +426,10 @@ Use Android Studio's "Convert Java File to Kotlin" as a starting point, then man
 3. Test conflict scenarios: concurrent edits, missing GIDs
 4. Difficulty: Medium (1 day)
 
-**Step 18c: InternalDb tests (or Room DAO tests)**
-1. If Room migration done (REM-10): write DAO tests using in-memory database
-2. If not: use Robolectric with `InternalDbHelper` for instrumented tests
-3. Cover: marker CRUD, label ordering, highlight storage, attribute loading
-4. Difficulty: Medium (1-2 days)
+**Step 18c: InternalDb tests (or Room DAO tests)** ✅ COMPLETED
+1. ✅ Added Robolectric (`4.14.1`) as a `testImplementation` dependency and enabled `testOptions.unitTests.includeAndroidResources` in `Alkitab/build.gradle` — Robolectric is required because `InternalDbHelper` extends Android's `SQLiteOpenHelper`
+2. ✅ Added `InternalDbTest.kt` under `Alkitab/src/test/java/yuku/alkitab/base/storage/` using `RobolectricTestRunner` with `@Config(application = Application::class)` so `yuku.alkitab.base.App.onCreate` (Firebase / PRDownloader / FCM) doesn't run. Reuses the existing test-scope shadows of `android.util.Log` and `com.google.firebase.crashlytics.FirebaseCrashlytics` (added in REM-18a) so `AppLog`'s static initializer loads without bootstrapping Firebase. `yuku.afw.App.context` is set manually in `@Before`; because no `sync_simpleToken` preference is present, `Sync.notifySyncNeeded` early-returns and no background work fires
+3. ✅ Test names follow the Kotlin backtick-sentence convention from CLAUDE.md. Covers marker CRUD (`insertMarker`, `insertOrUpdateMarker`, `getMarkerById/Gid`, `listMarkersForAriKind`, `listAllMarkers`, `deleteMarkerById` with cascade to `Marker_Label`, `countMarkersForBookChapter`), label ordering (`insertLabel`, `getLabelMaxOrdering`, `reorderLabels` up/down, `sortLabelsAlphabetically`, `listLabelsByMarker` ordering), highlight storage (`updateOrInsertHighlights` insert/update/delete, `updateOrInsertPartialHighlight` including dedup of sync-duplicates, `getHighlightColorRgb` single/multi-verse), and attribute loading (`putAttributes` bookmarks, notes, multi-verse highlight spread, ordering by `modifyTime`, book-chapter filtering)
 
 **Step 18d: SearchEngine tests** ✅ COMPLETED
 1. ✅ Unit tests added in `SearchEngineTest.kt` — covers `ReadyTokens` construction, `satisfiesTokens`, and end-to-end `searchByGrep` against a small in-memory fake `Version`. Exercises single token, multi-token (AND) intersection, whole-word matching, quoted phrases (multiword), book-id filtering, duplicate-token de-duplication, and cross-verse-boundary rejection.

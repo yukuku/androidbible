@@ -238,7 +238,9 @@ public class InternalDb {
         final int ariMax = ari_bookchapter | 0x000000ff;
 
         if (stmt_countMarkersForBookChapter == null) {
-            stmt_countMarkersForBookChapter = helper.getReadableDatabase().compileStatement("select count(*) from " + Db.TABLE_Marker + " where " + Db.Marker.ari + ">=? and " + Db.Marker.ari + "<?");
+            // Inclusive upper bound so a marker on verse 255 (ari == ariMax) is counted.
+            // Matches the inclusive bound used by getHighlightColorRgb(int, IntArrayList).
+            stmt_countMarkersForBookChapter = helper.getReadableDatabase().compileStatement("select count(*) from " + Db.TABLE_Marker + " where " + Db.Marker.ari + ">=? and " + Db.Marker.ari + "<=?");
         }
 
         stmt_countMarkersForBookChapter.bindLong(1, ariMin);
@@ -260,8 +262,10 @@ public class InternalDb {
             String.valueOf(ariMax),
         };
 
-        // order by modifyTime, so in case a verse has more than one highlight, the latest one is shown
-        try (Cursor cursor = helper.getReadableDatabase().rawQuery("select * from " + Db.TABLE_Marker + " where " + Db.Marker.ari + ">=? and " + Db.Marker.ari + "<? order by " + Db.Marker.modifyTime, params)) {
+        // order by modifyTime, so in case a verse has more than one highlight, the latest one is shown.
+        // Inclusive upper bound so a marker on verse 255 (ari == ariMax) is included — matches
+        // getHighlightColorRgb(int, IntArrayList).
+        try (Cursor cursor = helper.getReadableDatabase().rawQuery("select * from " + Db.TABLE_Marker + " where " + Db.Marker.ari + ">=? and " + Db.Marker.ari + "<=? order by " + Db.Marker.modifyTime, params)) {
             final int col_kind = cursor.getColumnIndexOrThrow(Db.Marker.kind);
             final int col_ari = cursor.getColumnIndexOrThrow(Db.Marker.ari);
             final int col_caption = cursor.getColumnIndexOrThrow(Db.Marker.caption);
