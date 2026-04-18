@@ -46,12 +46,28 @@ Install paths used below (pick any, but keep them consistent):
 - JDK 17: `/home/user/tools/zulu17.64.17-ca-jdk17.0.18-linux_x64`
 - Android SDK: `/home/user/android-sdk`
 
+**Disk footprint:** expect ~6 GB across all of these combined — NDK r28c alone is ~2 GB unpacked, the rest of the SDK is ~1 GB, and `~/.gradle` grows to ~2 GB after the first build. Check free space before starting.
+
+**Environment.** Every step after the JDK install needs the same env vars. Write them once and source them each time:
+
+```bash
+cat > /home/user/tools/android-env.sh <<'EOF'
+export JAVA_HOME=/home/user/tools/zulu17.64.17-ca-jdk17.0.18-linux_x64
+export ANDROID_HOME=/home/user/android-sdk
+export PATH="$JAVA_HOME/bin:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
+unset JAVA_TOOL_OPTIONS  # strip the sandbox's -Dhttp.proxyHost that would poison Gradle downloads
+EOF
+```
+
+Then `source /home/user/tools/android-env.sh` at the start of any shell that runs `sdkmanager` or Gradle.
+
 1. **Install Zulu JDK 17** (the preinstalled JDK is 21, which the Android Gradle Plugin rejects for the `jvmToolchain(17)` used across modules):
 
    ```bash
    mkdir -p /home/user/tools && cd /home/user/tools
    curl -fsSL -o zulu17.tar.gz \
      https://cdn.azul.com/zulu/bin/zulu17.64.17-ca-jdk17.0.18-linux_x64.tar.gz
+   echo "819e3f09ea628901a21b2104ed8f5256e17ae91a4145b272b2eb2131f832af1d  zulu17.tar.gz" | sha256sum -c -
    tar xzf zulu17.tar.gz && rm zulu17.tar.gz
    ```
 
@@ -66,20 +82,17 @@ Install paths used below (pick any, but keep them consistent):
    done
    ```
 
-3. **Install the Android SDK command-line tools**, then use `sdkmanager` to fetch the exact packages Gradle expects (`compileSdk 36`, `build-tools 36.0.0`, `ndk 28.2.13676358` — the NDK is required because the `Snappy` module has JNI C++):
+3. **Install the Android SDK command-line tools**, then use `sdkmanager` to fetch the exact packages Gradle expects (`compileSdk 36`, `build-tools 36.0.0`, `ndk 28.2.13676358` — the NDK is required because the `Snappy` module has JNI C++; note that `sdkmanager` resolves that NDK coordinate to `android-ndk-r28c` on disk, which is expected):
 
    ```bash
    mkdir -p /home/user/android-sdk/cmdline-tools && cd /home/user/android-sdk/cmdline-tools
    curl -fsSL -o cmdline-tools.zip \
      https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip
+   echo "7ec965280a073311c339e571cd5de778b9975026cfcbe79f2b1cdcb1e15317ee  cmdline-tools.zip" | sha256sum -c -
    unzip -q cmdline-tools.zip && mv cmdline-tools latest && rm cmdline-tools.zip
 
-   export JAVA_HOME=/home/user/tools/zulu17.64.17-ca-jdk17.0.18-linux_x64
-   export ANDROID_HOME=/home/user/android-sdk
-   export PATH="$JAVA_HOME/bin:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
-   unset JAVA_TOOL_OPTIONS
-
-   yes | sdkmanager --licenses
+   source /home/user/tools/android-env.sh
+   yes | sdkmanager --licenses > /dev/null  # silent; prints thousands of "y\n" lines otherwise
    sdkmanager "platform-tools" "platforms;android-36" \
               "build-tools;36.0.0" "ndk;28.2.13676358"
    ```
@@ -90,14 +103,10 @@ Install paths used below (pick any, but keep them consistent):
    echo "sdk.dir=/home/user/android-sdk" > local.properties
    ```
 
-5. **Build.** Always export `JAVA_HOME`/`ANDROID_HOME` and `unset JAVA_TOOL_OPTIONS` first — a stray `-Dhttp.proxyHost` from the sandbox will otherwise poison Gradle's downloads:
+5. **Build.**
 
    ```bash
-   export JAVA_HOME=/home/user/tools/zulu17.64.17-ca-jdk17.0.18-linux_x64
-   export ANDROID_HOME=/home/user/android-sdk
-   export PATH="$JAVA_HOME/bin:$ANDROID_HOME/platform-tools:$PATH"
-   unset JAVA_TOOL_OPTIONS
-
+   source /home/user/tools/android-env.sh
    ./gradlew assemblePlainDebug
    ```
 
