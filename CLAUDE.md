@@ -37,6 +37,74 @@ The `plain` flavor is the open-source development build and works out of the box
 
 With those set, build with a plain `./gradlew assembleYuku_alkitabRelease` (or any other production flavor).
 
+### Building in the Claude Code sandbox (one-time setup)
+
+The Claude Code VM does not ship with a compatible JDK or the Android SDK. You must provision them yourself before running Gradle — do not rely on GitHub Actions for verification. Prefer `plainDebug` since it needs no proprietary overlay or signing secrets.
+
+Install paths used below (pick any, but keep them consistent):
+
+- JDK 17: `/home/user/tools/zulu17.64.17-ca-jdk17.0.18-linux_x64`
+- Android SDK: `/home/user/android-sdk`
+
+1. **Install Zulu JDK 17** (the preinstalled JDK is 21, which the Android Gradle Plugin rejects for the `jvmToolchain(17)` used across modules):
+
+   ```bash
+   mkdir -p /home/user/tools && cd /home/user/tools
+   curl -fsSL -o zulu17.tar.gz \
+     https://cdn.azul.com/zulu/bin/zulu17.64.17-ca-jdk17.0.18-linux_x64.tar.gz
+   tar xzf zulu17.tar.gz && rm zulu17.tar.gz
+   ```
+
+2. **Trust the sandbox egress CA in the JDK truststore.** Outbound HTTPS in the Claude Code sandbox goes through an Anthropic TLS-inspection proxy (`sandbox-egress-production TLS Inspection CA`). `curl` trusts it via `/etc/ssl/certs`, but the JDK keeps its own `cacerts`, so `sdkmanager` and Gradle will fail with `PKIX path building failed` until you import the system CAs:
+
+   ```bash
+   JAVA_HOME=/home/user/tools/zulu17.64.17-ca-jdk17.0.18-linux_x64
+   for crt in /usr/local/share/ca-certificates/*.crt; do
+     "$JAVA_HOME/bin/keytool" -importcert -noprompt -trustcacerts \
+       -keystore "$JAVA_HOME/lib/security/cacerts" -storepass changeit \
+       -alias "$(basename "$crt" .crt)" -file "$crt"
+   done
+   ```
+
+3. **Install the Android SDK command-line tools**, then use `sdkmanager` to fetch the exact packages Gradle expects (`compileSdk 36`, `build-tools 36.0.0`, `ndk 28.2.13676358` — the NDK is required because the `Snappy` module has JNI C++):
+
+   ```bash
+   mkdir -p /home/user/android-sdk/cmdline-tools && cd /home/user/android-sdk/cmdline-tools
+   curl -fsSL -o cmdline-tools.zip \
+     https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip
+   unzip -q cmdline-tools.zip && mv cmdline-tools latest && rm cmdline-tools.zip
+
+   export JAVA_HOME=/home/user/tools/zulu17.64.17-ca-jdk17.0.18-linux_x64
+   export ANDROID_HOME=/home/user/android-sdk
+   export PATH="$JAVA_HOME/bin:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+   unset JAVA_TOOL_OPTIONS
+
+   yes | sdkmanager --licenses
+   sdkmanager "platform-tools" "platforms;android-36" \
+              "build-tools;36.0.0" "ndk;28.2.13676358"
+   ```
+
+4. **Write `local.properties`** so Gradle skips its own SDK discovery:
+
+   ```bash
+   echo "sdk.dir=/home/user/android-sdk" > local.properties
+   ```
+
+5. **Build.** Always export `JAVA_HOME`/`ANDROID_HOME` and `unset JAVA_TOOL_OPTIONS` first — a stray `-Dhttp.proxyHost` from the sandbox will otherwise poison Gradle's downloads:
+
+   ```bash
+   export JAVA_HOME=/home/user/tools/zulu17.64.17-ca-jdk17.0.18-linux_x64
+   export ANDROID_HOME=/home/user/android-sdk
+   export PATH="$JAVA_HOME/bin:$ANDROID_HOME/platform-tools:$PATH"
+   unset JAVA_TOOL_OPTIONS
+
+   ./gradlew assemblePlainDebug
+   ```
+
+   Expect ~3 minutes cold (Gradle downloads the 9.0.0 distribution and dependencies into `~/.gradle`). The APK lands at `Alkitab/build/outputs/apk/plain/debug/Alkitab-<code>-<version>-<hash>-yuku.alkitab.debug-dev.apk`.
+
+Code changes should be verified with a local `./gradlew assemblePlainDebug` (and relevant `testPlainDebugUnitTest` invocations) before committing — do not treat the GitHub Actions run as the first build.
+
 ## Architecture
 
 ### Module Structure
