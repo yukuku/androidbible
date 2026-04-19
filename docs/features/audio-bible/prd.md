@@ -55,7 +55,7 @@ Users can already read any chapter in the app but cannot *listen* to it. SABDA r
 
 ### 4.1 Entry point
 
-A new "Audio" icon in the `IsiActivity` toolbar (`activity_isi.xml`, `app:showAsAction="ifRoom"`, overflow otherwise). Shown only when the active version has audio available (see §5.3). Tapping toggles the audio bar.
+A new "Audio" icon in the `IsiActivity` toolbar (`activity_isi.xml`, `app:showAsAction="always"` — same treatment as the existing Search action, never pushed to overflow). The icon is shown **only when the currently-visible version has audio available** per the catalog (see §5.3); when the user switches to a version without audio the icon is hidden outright (via `menuItem.isVisible = false`), rather than being present-but-disabled. In split view, the icon appears if **either** visible version has audio; if both do, the split-source picker from §4.5 decides which one plays. Tapping the icon toggles the audio bar.
 
 ### 4.2 Audio bar (bottom sheet)
 
@@ -86,7 +86,9 @@ A foreground service posts a MediaStyle notification with Play/Pause, Prev-chapt
 
 ### 4.5 Split view
 
-The split-view toggle (when two versions are open) adds a radio choice in the audio bar's overflow menu: **"Audio source: left / right."** Audio plays from one side only; highlight applies only to that side, with the other split showing no highlight. This replaces PR #127's sequential interleaving (which plays verse 1 on the left, then verse 1 on the right, then verse 2 on the left, etc.) — in user testing that behavior is confusing and unnatural. Users who want to compare versions can switch the source.
+The split-view toggle (when two versions are open) adds a radio choice in the audio bar's overflow menu: **"Audio source: top / bottom."** Audio plays from one side only; highlight applies only to that side, with the other split showing no highlight. Users who want to compare versions can switch the source.
+
+This deliberately replaces PR #127's sequential interleaving (which plays verse 1 from version A, then verse 1 from version B, then verse 2 from version A, etc.). The reasoning is design-first, not evidence-based: (a) no major Bible-audio product behaves this way — YouVersion, Olive Tree, Dwell, Bible.is all play one stream and let the user switch sources; (b) the two SABDA recordings have different tempo and reader cadence, so sequential interleaving produces jarring silences and overlaps; (c) the feature forces extra state (which verse each stream has reached independently) and doubles the failure surface (two network requests, two decoders) for a behavior most users would never opt into. If someone later produces evidence that interleaving is desired — e.g. for language learners pairing L1+L2 — we can revisit, but the default should be simpler.
 
 ### 4.6 Error and empty states
 

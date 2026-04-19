@@ -87,8 +87,8 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
     - Commands: `togglePlayPause()`, `seekTo(ms)`, `seekToVerse(verse_1)`, `nextVerse()`, `prevVerse()`, `nextChapter()`, `prevChapter()`, `setSpeed(f)`.
     - Scrubber preview: exposes `fun previewAtPosition(ms: Long): ScrubPreview` returning `{ snappedMs, verse_1 }` derived from the current chapter's timing, so the view can update the drag bubble without touching the player.
     - Navigates by firing an event flow; `IsiActivity` observes and calls its existing chapter-navigation methods.
-- [ ] Menu item: edit `res/menu/activity_isi.xml` to add `<item android:id="@+id/menuAudio" app:showAsAction="ifRoom" android:icon="@drawable/ic_audio" ... />`. Wire in `IsiActivity.buildMenu`/`onOptionsItemSelected` (see `IsiActivity.kt:1368-1399`).
-- [ ] Toolbar icon visibility — observe the catalog; set `menuItem.isVisible = repo.isAudioAvailable(currentVersionId)`. Refresh when the active version changes.
+- [ ] Menu item: edit `res/menu/activity_isi.xml` to add `<item android:id="@+id/menuAudio" app:showAsAction="always" android:icon="@drawable/ic_audio" android:title="@string/menu_audio" />` — matches the existing `menuSearch` entry's `always` treatment so it never spills into overflow. Wire in `IsiActivity.buildMenu`/`onOptionsItemSelected` (see `IsiActivity.kt:1368-1399`).
+- [ ] Toolbar icon visibility — observe the catalog. Set `menuItem.isVisible = repo.isAudioAvailable(visibleVersionId0) || repo.isAudioAvailable(visibleVersionId1)`. Refresh on active-version change and on split-view enter/exit. Hiding (not disabling) is intentional — a permanently-greyed icon is more confusing than no icon.
 - [ ] Verse highlight:
     - Add `var audioHighlighted: Boolean` on `VerseItem.kt` (PR #127's diff transfers directly). Uses `?attr/colorPrimaryContainer` at 20% alpha, not the hard-coded `#334FC3F7`.
     - Add `fun setAudioHighlight(verse_1: Int)` on `VersesController` / `VersesControllerImpl`. `verse_1 = 0` clears.
