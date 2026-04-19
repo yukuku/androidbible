@@ -30,7 +30,7 @@ Users can already read any chapter in the app but cannot *listen* to it. SABDA r
 
 **Nice to have (v2):**
 
-13. Pre-download a book or plan range for offline listening (uses the existing PRDownloader infrastructure).
+13. Pre-download a book or plan range for offline listening — one MP3 per chapter in app-internal storage under `files/audio/<versionId>/<bookId>/<chapter>.mp3`, using the existing `PRDownloader` infrastructure. Timing stays as JSON on disk (one small file per chapter); no binary packing — a whole Bible of timing is ~1 MB and the simplicity is worth more than the savings.
 14. Android Auto / Wear OS support (mostly free once we adopt MediaSession).
 15. Chromecast route.
 16. "Listen to today's reading plan" entry point from the reading-plan screen.
@@ -247,29 +247,17 @@ No new heavyweight dependencies.
 - No new user data collected beyond existing analytics. Playback events are **not** logged off-device in v1.
 - No microphone / no audio capture.
 
-## 7. Success metrics
+## 7. Rollout
 
-- **Activation**: % of monthly-active users who tap Play at least once / week.
-- **Completion**: % of started chapters listened to ≥ 80%.
-- **Lock-screen usage**: notification interaction rate (proxy for "did they use it backgrounded").
-- **Errors**: chapter-load failure rate by version (exposes backend/CDN issues early).
+1. Land the backend catalog/timing endpoints in `alkitab-host` and deploy them to production. Availability is all-or-nothing — no feature flag, no remote kill switch.
+2. Ship the client on a feature branch, merge to `develop` only when M1–M4 of the client plan are done and the manual test matrix passes.
+3. Release as part of the next normal version bump. If something breaks, fix-forward with a patch release, the same as any other feature.
 
-Metrics funnel through the existing analytics surface (Firebase); exact event names listed in §3 of the client implementation plan.
+## 8. Open questions
 
-## 8. Rollout
+None open for v1. v2 items (pre-download, Android Auto, Chromecast, reading-plan entry) are scoped in their own sections; see §2.
 
-1. Merge the backend catalog/timing endpoints behind a feature flag first (§2 of backend plan).
-2. Ship the client behind `BuildConfig.DEBUG` only for an internal build.
-3. Beta-flag via remote config (`audio_bible_enabled` in the catalog response itself — if absent, the client hides the Audio toolbar icon).
-4. Once green, remove the remote flag.
-
-## 9. Open questions
-
-- **Pre-download**: uses `PRDownloader`, but where do the files live — per-chapter MP3s in app storage, or a single large archive per book? Deferred to v2.
-- **ReadAloud voices** for versions SABDA doesn't cover: explicitly out of scope for v1, but the catalog shape (`chapterUrlTemplate` per version) doesn't preclude it.
-- **Offline timing format**: JSON is fine for now (~1 KB per chapter), but for a future pre-downloaded-book feature we may want to pack timings into a single YES2-like binary — revisit when v2 comes up.
-
-## 10. Why not just merge PR #127?
+## 9. Why not just merge PR #127?
 
 Short answer: PR #127 is the better starting point — its separation of player/controller/repository, coroutine usage, and typed models are right. But three things need to change before it's production-ready:
 
@@ -283,7 +271,7 @@ Short answer: PR #127 is the better starting point — its separation of player/
 
 PR #124 is not the better starting point — its reuse of `ExoplayerController` couples two unrelated features, its URL construction bypasses `Connections.okHttp` (defeating the user-agent interceptor and HTTP cache), and it uses display-name keys that break under locale changes. We intend to close #124 with a note thanking the author.
 
-## 11. References
+## 10. References
 
 - PR #127 implementation files: `Alkitab/src/main/java/yuku/alkitab/base/audio/*.kt`, [pull/127/head](https://github.com/yukuku/androidbible/pull/127/files).
 - PR #124 implementation files: `Alkitab/src/main/java/yuku/alkitab/base/util/{Audio,Bible,Timing,MediaList}*`, [pull/124/head](https://github.com/yukuku/androidbible/pull/124/files).

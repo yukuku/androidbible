@@ -237,10 +237,9 @@ Simple admin endpoint protected by the same mechanism that today protects the ex
 
 ## 8. Rollout
 
-1. Ship the four existing SABDA versions behind a feature flag (`audio.catalog.enabled=false`) so the catalog endpoint returns `404` until flipped. Client falls back to its bundled `audio_catalog.json`.
-2. Pre-warm the timing cache for the whole Bible (~1188 chapters × 4 versions = ~4750 fetches) by running a script — this takes a few minutes and guarantees the first user never hits a cold cache.
-3. Flip flag; watch dashboards.
-4. Announce in release notes.
+1. Implement the three read endpoints (catalog, timing, chapter) and `/audio/admin/reload`. Deploy to production — no flag, the endpoints are either live or they aren't.
+2. Pre-warm the timing cache for the whole Bible (~1188 chapters × 4 versions ≈ 4750 fetches) by running a one-off script against the deployed instance. Takes a few minutes and guarantees the first user never hits a cold cache.
+3. Verify the client (shipped with a bundled `assets/audio_catalog.json` mirroring the same four versions) continues to work if the backend is temporarily unreachable, so there is no hard coupling between app and backend releases.
 
 ## 9. Test plan
 

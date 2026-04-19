@@ -126,17 +126,17 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 - [ ] Scrubber drag-bubble: custom view above the `SeekBar` thumb. On `SeekBar.OnSeekBarChangeListener.onProgressChanged(fromUser=true)`, call `viewModel.previewAtPosition(progressMs)` and render `"${formatMmSs(preview.snappedMs)} · v.${preview.verse_1}"`. On `onStopTrackingTouch`, seek to `preview.snappedMs`. Hide the bubble when not dragging.
 - [ ] Snackbar error handling (§4.6 of PRD).
 - [ ] Split-view source dialog (§4.5 of PRD). On play-tap when split view is active and both visible versions have audio, show a `MaterialAlertDialogBuilder` with the two version short names and a Cancel. The ViewModel holds the chosen `split_0_or_1: Int?` in-memory only; reset to `null` whenever split view toggles, either visible version changes, or the audio bar is closed. Survive config change via `savedStateRegistry`.
-- [ ] Analytics events (`App.trackEvent` or whatever the existing wrapper is):
-    - `audio_play` (versionId, bookId, chapter)
-    - `audio_complete_chapter` (versionId, bookId, chapter, listenedRatio)
-    - `audio_error` (versionId, bookId, chapter, errorCode)
-    - `audio_catalog_fetch_error`
 
 **Exit criteria:** PRD §2 must-have + should-have items are all testable on a device.
 
 ### M6 — Pre-download (v2, deferred)
 
-Out of scope for the first merge. Design note only: the `chapterUrlTemplate` from the catalog is stable for a given version, so PRDownloader can materialise a book's worth of MP3s into `files/audio/<versionId>/<bookId>/` and the repository can prefer the file:// URL when present. Timing JSON is small (~1 KB/chapter) so the whole Bible's worth is ~1 MB and can be downloaded as a single blob.
+Out of scope for the first merge. Confirmed design for when we pick it up:
+
+- **Audio:** one MP3 per chapter, stored at `files/audio/<versionId>/<bookId>/<chapter>.mp3`, downloaded via the existing `PRDownloader`. `BibleAudioRepository.buildChapterUrl` prefers the local `file://` path when present and falls back to the HTTPS URL otherwise.
+- **Timing:** kept as per-chapter JSON, stored next to the MP3 (`files/audio/<versionId>/<bookId>/<chapter>.timing.json`). No binary packing; ~1 MB for a full Bible's worth is not worth engineering away.
+- **UI:** a per-book "Download for offline" action in the version-details dialog (alongside the existing version download). Progress and cancel UI mirror the existing version-download pattern in `VersionListFragment`.
+- **Storage management:** a "Downloaded audio" screen under Settings with per-version size and a Delete action; integrates with the existing space reporting in `files/`.
 
 ---
 
