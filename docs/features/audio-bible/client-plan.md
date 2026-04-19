@@ -125,8 +125,7 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 - [ ] Auto-advance: on `onEnded`, navigate to the next chapter (using the same cross-book logic from PR #124's `getNextOrPreviousChapter`, but centralised — it's useful outside audio too). No repeat toggle in v1.
 - [ ] Scrubber drag-bubble: custom view above the `SeekBar` thumb. On `SeekBar.OnSeekBarChangeListener.onProgressChanged(fromUser=true)`, call `viewModel.previewAtPosition(progressMs)` and render `"${formatMmSs(preview.snappedMs)} · v.${preview.verse_1}"`. On `onStopTrackingTouch`, seek to `preview.snappedMs`. Hide the bubble when not dragging.
 - [ ] Snackbar error handling (§4.6 of PRD).
-- [ ] "Mark progress after chapter" preference + checkbox in Settings' reading section.
-- [ ] Split-view source picker (§4.5 of PRD, §5.6 of PRD). Persist choice in a `savedStateRegistry` so config-change doesn't lose it.
+- [ ] Split-view source dialog (§4.5 of PRD). On play-tap when split view is active and both visible versions have audio, show a `MaterialAlertDialogBuilder` with the two version short names and a Cancel. The ViewModel holds the chosen `split_0_or_1: Int?` in-memory only; reset to `null` whenever split view toggles, either visible version changes, or the audio bar is closed. Survive config change via `savedStateRegistry`.
 - [ ] Analytics events (`App.trackEvent` or whatever the existing wrapper is):
     - `audio_play` (versionId, bookId, chapter)
     - `audio_complete_chapter` (versionId, bookId, chapter, listenedRatio)
@@ -169,8 +168,6 @@ Add to `Prefkey.kt`:
 ```kotlin
 audioCatalog_etag,
 audioPlaybackSpeed,
-audioMarkProgressOnEnd,
-audioSplitSource,
 ```
 
 ### 2.4 Proprietary assets

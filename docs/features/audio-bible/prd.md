@@ -27,7 +27,6 @@ Users can already read any chapter in the app but cannot *listen* to it. SABDA r
 8. Adjustable playback speed (0.5× – 2×), persisted across chapters and sessions.
 9. A scrub bar with elapsed / total time **and a live verse-preview while dragging** (see §4.2).
 10. Graceful offline message + retry.
-11. An opt-in "mark progress after listening" that advances the user's reading-progress pin.
 
 **Nice to have (v2):**
 
@@ -88,7 +87,12 @@ A foreground service posts a MediaStyle notification with Play/Pause, Prev-chapt
 
 ### 4.5 Split view
 
-The split-view toggle (when two versions are open) adds a radio choice in the audio bar's overflow menu: **"Audio source: top / bottom."** Audio plays from one side only; highlight applies only to that side, with the other split showing no highlight. Users who want to compare versions can switch the source.
+When two versions are open in split view, audio plays from exactly one side.
+
+- **Only one side has audio** → that side is the source automatically; no prompt.
+- **Both sides have audio** → the first time the user taps play in this split-view session, a dialog appears: **"Play audio from which version?"** with the two version short names as options (e.g. `TB (top)` / `KJV (bottom)`) and a `Cancel` button. The user's choice is remembered for the rest of the session and reused for subsequent chapters. Switching the source later is done by closing the bar and tapping play again — the dialog reappears. (Or, when we build out the overflow menu in v1.1, via a "Change audio source" item there.)
+
+Highlight applies only to the chosen side; the other split's rows show no audio highlight, even when the verse numbers coincide. Closing the audio bar, exiting split view, or changing one of the visible versions clears the remembered choice so the next play starts fresh.
 
 This deliberately replaces PR #127's sequential interleaving (which plays verse 1 from version A, then verse 1 from version B, then verse 2 from version A, etc.). The reasoning is design-first, not evidence-based: (a) no major Bible-audio product behaves this way — YouVersion, Olive Tree, Dwell, Bible.is all play one stream and let the user switch sources; (b) the two SABDA recordings have different tempo and reader cadence, so sequential interleaving produces jarring silences and overlaps; (c) the feature forces extra state (which verse each stream has reached independently) and doubles the failure surface (two network requests, two decoders) for a behavior most users would never opt into. If someone later produces evidence that interleaving is desired — e.g. for language learners pairing L1+L2 — we can revisit, but the default should be simpler.
 
@@ -98,10 +102,6 @@ This deliberately replaces PR #127's sequential interleaving (which plays verse 
 - **Network failure on chapter load:** snackbar "Cannot load audio. Retry?" with a Retry action. Audio bar stays open, play button disabled.
 - **Timing data missing:** audio plays, but verse-skip buttons and verse highlight are disabled (greyed). No error shown.
 - **Audio URL 404 (e.g. deuterocanonical chapter):** snackbar "Audio not available for this chapter," and the bar auto-closes after 3s.
-
-### 4.7 Integration with reading progress
-
-Preference "Mark reading progress at end of chapter" (default off). When on, finishing a chapter bumps the user's current reading progress pin (preset 0) to the end of that chapter. Uses the existing `S.db.updateOrInsertProgressMark` path.
 
 ## 5. Architecture
 
