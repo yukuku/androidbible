@@ -2,7 +2,7 @@
 
 A detailed assessment of the effort and risks involved in porting the Alkitab / Quick Bible Android app to native iOS as a near 1:1 port of its current feature set.
 
-> **TL;DR** — A true *line-by-line* 1:1 port is **not feasible** because 40–50% of the codebase consists of Android-framework-specific UI (Activities, Fragments, RecyclerView, custom Views, AppWidget, ContentProvider). A faithful *functional* 1:1 port that preserves behavior, data formats, database schema, sync protocol, and feature set **is feasible** with no technical show-stoppers. Estimated effort: **~1,200–1,400 engineer-hours** (roughly 6–7 months for a 2-person team, or 3–4 months for a 3–4 person team). The Android data layer, binary formats, sync protocol, and core models are highly portable; the UI must be rewritten in UIKit (or SwiftUI).
+> **TL;DR** — A true *line-by-line* 1:1 port is **not feasible** because 40–50% of the codebase consists of Android-framework-specific UI (Activities, Fragments, RecyclerView, custom Views, AppWidget, ContentProvider). A faithful *functional* 1:1 port that preserves behavior, data formats, database schema, sync protocol, and feature set **is feasible** with no technical show-stoppers. Estimated effort: **~1,200–1,400 engineer-hours** (roughly 6–7 months for a 2-person team, or 3–4 months for a 3–4 person team). The Android data layer, binary formats, sync protocol, and core models are highly portable; the UI has to be rewritten. Recommended UI stack is a **SwiftUI shell with a UIKit reader** — SwiftUI for the lists/forms/widget, UIKit for the verse rendering and split-view reader where attributed text, gesture composition, and scroll coupling push SwiftUI past its comfort zone. See §9 for the breakdown.
 
 ---
 
@@ -186,6 +186,23 @@ Effort: ~100 hours.
 
 This is where the port is largest and most judgment-heavy.
 
+### UIKit vs. SwiftUI — a hybrid is the right answer
+
+The rest of this section names specific UIKit APIs, but that is not a blanket "UIKit only" recommendation. The honest picture in 2026:
+
+- **The reader must be UIKit.** Four things on one screen push it out of SwiftUI's comfort zone:
+  1. **Rich verse text with tappable spans.** `VerseRenderer` produces a `SpannableStringBuilder` with per-span color, italic, paragraph indent levels (`@0`–`@4`), line breaks, and footnote / cross-reference spans that must be *independently tappable*. `NSAttributedString` + `UITextView` / a `UILabel` subclass maps 1:1. SwiftUI `AttributedString` is improving but still awkward for per-span tap targets and multi-level paragraph indentation inside a long scrollable list.
+  2. **Variable-height cells with selection state, highlights, and long-press action mode.** `UITableView` / `UICollectionView` with diffable data sources give explicit control over cell recycling, size caching, and scroll position. `LazyVStack` / `List` work for simple cells but degrade with the combined load of attributed-text layout, selection, highlights, and split-view scroll coupling.
+  3. **Gesture composition.** Pinch-to-zoom font, swipe chapter nav, long-press multi-select, simultaneous-gesture priority. `UIGestureRecognizer` is the direct analogue to Android's `GestureDetector`; SwiftUI gesture composition is still fiddly for this kind of priority resolution.
+  4. **Split-view scroll coupling.** The two panes have to follow each other. `UIScrollViewDelegate` on two `UIScrollView`s is precise; SwiftUI scroll observation is improving but less direct.
+- **Most other screens should be SwiftUI.** Markers list, labels, reading plans, devotions list, settings, about, onboarding, sign-in flows, version picker, bookmark editor — these are lists and forms. SwiftUI is faster to write, easier to maintain, and the iOS-native look is a bonus.
+- **The daily verse widget must be SwiftUI.** WidgetKit is SwiftUI-only; there is no choice.
+- **`WKWebView` screens** (devotion article, song lyric HTML template, help pages) are wrapped as `UIViewRepresentable` either way.
+
+Recommended shape: **a SwiftUI app shell with a UIKit reader.** The reader lives inside a `UIViewControllerRepresentable` (or a UIKit-rooted scene), and the rest of the navigation graph is SwiftUI. This matches what Apple itself ships in many first-party apps and keeps the complex bits on the battle-tested API without paying for it on settings screens.
+
+If the team is strongly SwiftUI-biased, the reader can be attempted in SwiftUI — but plan an escape hatch to drop back to UIKit for the verse list if `AttributedString` / `ScrollView` hit limits. If the team is strongly UIKit-biased, all-UIKit also works and is a safe default; you just write more boilerplate for the simple screens.
+
 ### The reader (`IsiActivity.kt`, ~2,321 lines)
 
 Responsibilities: verse list rendering, split view (two parallel versions), pinch-to-zoom font size, swipe chapter navigation, long-press action mode (copy / share / bookmark / highlight), navigation history, volume-key paging, menu integration, dialog coordination.
@@ -215,14 +232,17 @@ On Android this is applied via `SpannableStringBuilder` + `LeadingMarginSpan`, `
 
 ### Other UI modules
 
-- **Song module** — lyric rendering (HTML template via `WebView` on Android) → `WKWebView` on iOS; audio controllers → `AVPlayer` (MP3) and `AVMIDIPlayer` (MIDI).
-- **Search** — `UISearchController` + custom results table.
-- **Markers** — list/edit/filter UI; straightforward UIKit.
-- **Reading plans** — checklist UI; straightforward.
-- **Devotions** — `WKWebView` for articles.
-- **Settings** — iOS settings bundle or an in-app `UITableViewController` with grouped style (recommended; matches existing Android behavior which uses an embedded preferences UI, not the system settings app).
-- **Color picker** — iOS 14+ ships `UIColorPickerViewController`; use it instead of porting `AmbilWarna`.
-- **Flow layout** — `UICollectionViewCompositionalLayout` or `UIStackView` wrapping; no direct port needed.
+Unless noted, these are good candidates for **SwiftUI**:
+
+- **Song module** — lyric rendering (HTML template via `WebView` on Android) → `WKWebView` wrapped as `UIViewRepresentable`; audio controllers → `AVPlayer` (MP3) and `AVMIDIPlayer` (MIDI). Song browse/search list: SwiftUI `List`.
+- **Search** — SwiftUI `.searchable` + results list; drop to `UISearchController` only if result-row rendering needs attributed text with tappable spans.
+- **Markers** — list/edit/filter UI; SwiftUI `List` with swipe actions.
+- **Reading plans** — checklist UI; SwiftUI.
+- **Devotions** — list in SwiftUI; article view is `WKWebView` (`UIViewRepresentable`).
+- **Settings** — SwiftUI `Form` with `Section`s (matches existing Android behavior of an embedded preferences UI, not the system settings app).
+- **Color picker** — SwiftUI `ColorPicker` (iOS 14+) or UIKit's `UIColorPickerViewController`; either way, do not port `AmbilWarna`.
+- **Flow layout** — SwiftUI's `Layout` protocol (iOS 16+) or UIKit's `UICollectionViewCompositionalLayout`.
+- **Daily verse widget** — **SwiftUI required** (WidgetKit).
 
 ### Custom drawing
 
@@ -409,7 +429,7 @@ A disciplined team will scope the MVP smaller — reader + markers + sync is pro
 
 **Green light, with caveats.**
 
-There are no technical blockers. The core of the app — data formats, sync, database, business logic — is highly portable and will port cleanly. The bulk of the work is rewriting the UI against UIKit (or SwiftUI, if the team is willing to accept a divergent codebase from Android).
+There are no technical blockers. The core of the app — data formats, sync, database, business logic — is highly portable and will port cleanly. The bulk of the work is rewriting the UI; default to **SwiftUI for the app shell (navigation, lists, forms, settings, widget) and UIKit for the reader** (see §9). All-UIKit is a safe fallback if the team prefers it; all-SwiftUI is possible for teams willing to carry reader-side risk.
 
 Suggested phasing:
 
