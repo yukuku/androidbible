@@ -57,21 +57,23 @@ Users can already read any chapter in the app but cannot *listen* to it. SABDA r
 
 A new "Audio" icon in the `IsiActivity` toolbar (`activity_isi.xml`, `app:showAsAction="always"` — same treatment as the existing Search action, never pushed to overflow). The icon is shown **only when the currently-visible version has audio available** per the catalog (see §5.3); when the user switches to a version without audio the icon is hidden outright (via `menuItem.isVisible = false`), rather than being present-but-disabled. In split view, the icon appears if **either** visible version has audio; if both do, the split-source picker from §4.5 decides which one plays. Tapping the icon toggles the audio bar.
 
+**Preparing state.** The moment the user taps Audio, the work that runs before the first byte of audio plays — catalog lookup (cache), timing fetch if not already cached, ExoPlayer `prepare()` + initial buffer — can take a perceptible fraction of a second on mobile networks. During this window the toolbar icon morphs into an indeterminate spinner, mirroring the Kidung (Songs) play button's behavior: while `MediaController.State == preparing`, `SongViewActivity` hides the play menu item and swaps in an indeterminate `circular_progress` view (`SongViewActivity.kt:178, 443-449, 1088-1090`). We use the exact same pattern — `onPrepareOptionsMenu` hides `R.id.menuAudio` and shows a sibling progress view anchored in the toolbar — so the UX is consistent with the rest of the app. The spinner reverts to the Audio icon when the service reports `ready` (or `error`, in which case the snackbar in §4.6 fires). Tapping during the preparing window is a no-op; a second tap does **not** cancel (that would require tearing down the service mid-prepare and feels unpredictable).
+
 ### 4.2 Audio bar (bottom sheet)
 
 Anchored at the bottom of `IsiActivity`, above the reading-history panel. Height ≈ 72dp. Contents left-to-right:
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  ⏮chap   ⏮verse   ▶/⏸ (+progress ring)   verse⏭   chap⏭   1.0×   ╳ │
-├─────────────────────────────────────────────────────────────┤
-│  ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒░░░░░░░░   0:42 / 3:15                      │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│  ⏮ Jn 2   ⏮   ▶/⏸ (+progress ring)   ⏭   Jn 4 ⏭   1.0×   ╳       │
+├──────────────────────────────────────────────────────────────────┤
+│  ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒░░░░░░░░   0:42 / 3:15                           │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
 - **Play/pause** — center; shows a spinner while preparing.
-- **Prev / next verse** — seeks to the start of the neighboring verse using timing data.
-- **Prev / next chapter** — navigates chapters (cross-book at the boundaries).
+- **Prev / next verse** — plain icon-only buttons that seek to the start of the neighboring verse using timing data. No label on the button (the active verse is already conveyed by the highlighted row and the scrubber bubble; adding "v.7" to the button is redundant and the label would go blank/grey at chapter boundaries).
+- **Prev / next chapter** — the button shows the target chapter next to its icon (e.g. `⏮ Jn 2` and `Jn 4 ⏭`), using the same `book.shortName` + chapter format that appears in the main toolbar. At cross-book boundaries the next button reads `⏮ Mt 28` from Mark 1, making jumps predictable. At the Bible boundaries (Genesis 1 prev, Revelation 22 next) the button is disabled and the label hidden.
 - **Speed** — opens a popup: 0.5 / 0.8 / 1.0 / 1.25 / 1.5 / 1.75 / 2.0×. Persisted via Prefkey.
 - **Close (╳)** — closes the bar; stops audio and clears highlight.
 - **Scrubber** — drag-to-seek. While the user is dragging, the thumb shows a tooltip/bubble with **both** the proposed position `mm:ss` **and** the verse that would play on release (e.g. `1:23 · v.7`). The bubble updates live as the thumb moves so the user can aim at a verse they remember hearing, not just a time offset. On release, audio seeks to the start of that verse's `startMs` (snapping to verse boundary feels better than snapping to the raw scrubbed millisecond — and matches what the tooltip was showing). If timing data is missing, the bubble falls back to `mm:ss` only and seek is a plain time seek.

@@ -78,7 +78,7 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 
 **Goal:** the feature is wired into `IsiActivity` and looks like the mock in PRD §4.2.
 
-- [ ] `layout/audio_bar.xml` — the bar from PRD §4.2 (close → scrubber → controls). Include a `SeekBar` and `TextView` for time labels. Use Material 3 theming attributes so it respects dark mode (`?attr/colorSurface`, etc.) — PR #127's hard-coded `#455A64` and `#FFFFFF` do not.
+- [ ] `layout/audio_bar.xml` — the bar from PRD §4.2 (close → scrubber → controls). Include a `SeekBar` and `TextView` for time labels. Use Material 3 theming attributes so it respects dark mode (`?attr/colorSurface`, etc.) — PR #127's hard-coded `#455A64` and `#FFFFFF` do not. The prev-chapter and next-chapter controls are `LinearLayout` button-likes (icon + `TextView`) so the label (e.g. `Jn 4`) sits next to the icon; the label is driven by a `StateFlow<ChapterTarget?>` from the ViewModel and set to empty when the target is out of range (Bible boundary). Prev/next verse are plain icon buttons with no label.
 - [ ] `drawable/ic_audio*.xml` — carry over the SVG assets from PR #127 (they are generic Material icons).
 - [ ] `AudioBarView.kt` — a `LinearLayout` subclass that inflates `audio_bar.xml` and binds to a `AudioBarViewModel`.
 - [ ] `AudioBarViewModel.kt`:
@@ -89,6 +89,7 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
     - Navigates by firing an event flow; `IsiActivity` observes and calls its existing chapter-navigation methods.
 - [ ] Menu item: edit `res/menu/activity_isi.xml` to add `<item android:id="@+id/menuAudio" app:showAsAction="always" android:icon="@drawable/ic_audio" android:title="@string/menu_audio" />` — matches the existing `menuSearch` entry's `always` treatment so it never spills into overflow. Wire in `IsiActivity.buildMenu`/`onOptionsItemSelected` (see `IsiActivity.kt:1368-1399`).
 - [ ] Toolbar icon visibility — observe the catalog. Set `menuItem.isVisible = repo.isAudioAvailable(visibleVersionId0) || repo.isAudioAvailable(visibleVersionId1)`. Refresh on active-version change and on split-view enter/exit. Hiding (not disabling) is intentional — a permanently-greyed icon is more confusing than no icon.
+- [ ] Preparing-state spinner: clone the Kidung pattern (`SongViewActivity.kt:178, 443-449, 1088-1090`). Add a `circular_progress` view to the toolbar layout in `activity_isi.xml`, initially `GONE`. In `onPrepareOptionsMenu`, when `audioBinder.isPreparing`, set `menuAudio.isVisible = false` and `circular_progress.visibility = VISIBLE`; otherwise the inverse. Tapping during preparing is a no-op — the menu item is gone and the spinner is not clickable. Trigger `invalidateOptionsMenu()` from the state collector whenever `PlaybackState.preparing` flips.
 - [ ] Verse highlight:
     - Add `var audioHighlighted: Boolean` on `VerseItem.kt` (PR #127's diff transfers directly). Uses `?attr/colorPrimaryContainer` at 20% alpha, not the hard-coded `#334FC3F7`.
     - Add `fun setAudioHighlight(verse_1: Int)` on `VersesController` / `VersesControllerImpl`. `verse_1 = 0` clears.
