@@ -84,7 +84,8 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 - [ ] `AudioBarViewModel.kt`:
     - Collects the service's `StateFlow<PlaybackState>` (exposed through the binder).
     - Exposes `LiveData` or `StateFlow` for the view.
-    - Commands: `togglePlayPause()`, `seekTo(ms)`, `nextVerse()`, `prevVerse()`, `nextChapter()`, `prevChapter()`, `setSpeed(f)`, `setRepeat(b)`.
+    - Commands: `togglePlayPause()`, `seekTo(ms)`, `seekToVerse(verse_1)`, `nextVerse()`, `prevVerse()`, `nextChapter()`, `prevChapter()`, `setSpeed(f)`.
+    - Scrubber preview: exposes `fun previewAtPosition(ms: Long): ScrubPreview` returning `{ snappedMs, verse_1 }` derived from the current chapter's timing, so the view can update the drag bubble without touching the player.
     - Navigates by firing an event flow; `IsiActivity` observes and calls its existing chapter-navigation methods.
 - [ ] Menu item: edit `res/menu/activity_isi.xml` to add `<item android:id="@+id/menuAudio" app:showAsAction="ifRoom" android:icon="@drawable/ic_audio" ... />`. Wire in `IsiActivity.buildMenu`/`onOptionsItemSelected` (see `IsiActivity.kt:1368-1399`).
 - [ ] Toolbar icon visibility — observe the catalog; set `menuItem.isVisible = repo.isAudioAvailable(currentVersionId)`. Refresh when the active version changes.
@@ -120,8 +121,8 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 ### M5 — Polish (≈ 2 days)
 
 - [ ] Speed persistence: `Prefkey.audioPlaybackSpeed` (enum default `1.0f`). Read on service start, write on each change.
-- [ ] Repeat-chapter toggle: wired to `Player.REPEAT_MODE_ONE`.
-- [ ] Auto-advance: on `onEnded`, if repeat is off, navigate to the next chapter (using the same cross-book logic from PR #124's `getNextOrPreviousChapter`, but centralised — it's useful outside audio too).
+- [ ] Auto-advance: on `onEnded`, navigate to the next chapter (using the same cross-book logic from PR #124's `getNextOrPreviousChapter`, but centralised — it's useful outside audio too). No repeat toggle in v1.
+- [ ] Scrubber drag-bubble: custom view above the `SeekBar` thumb. On `SeekBar.OnSeekBarChangeListener.onProgressChanged(fromUser=true)`, call `viewModel.previewAtPosition(progressMs)` and render `"${formatMmSs(preview.snappedMs)} · v.${preview.verse_1}"`. On `onStopTrackingTouch`, seek to `preview.snappedMs`. Hide the bubble when not dragging.
 - [ ] Snackbar error handling (§4.6 of PRD).
 - [ ] "Mark progress after chapter" preference + checkbox in Settings' reading section.
 - [ ] Split-view source picker (§4.5 of PRD, §5.6 of PRD). Persist choice in a `savedStateRegistry` so config-change doesn't lose it.
@@ -167,7 +168,6 @@ Add to `Prefkey.kt`:
 ```kotlin
 audioCatalog_etag,
 audioPlaybackSpeed,
-audioRepeatChapter,
 audioMarkProgressOnEnd,
 audioSplitSource,
 ```

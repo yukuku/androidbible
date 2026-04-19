@@ -25,10 +25,9 @@ Users can already read any chapter in the app but cannot *listen* to it. SABDA r
 **Should have (v1.1):**
 
 8. Adjustable playback speed (0.5× – 2×), persisted across chapters and sessions.
-9. Repeat-chapter toggle.
-10. A scrub bar with elapsed / total time.
-11. Graceful offline message + retry.
-12. An opt-in "mark progress after listening" that advances the user's reading-progress pin.
+9. A scrub bar with elapsed / total time **and a live verse-preview while dragging** (see §4.2).
+10. Graceful offline message + retry.
+11. An opt-in "mark progress after listening" that advances the user's reading-progress pin.
 
 **Nice to have (v2):**
 
@@ -64,7 +63,7 @@ Anchored at the bottom of `IsiActivity`, above the reading-history panel. Height
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  ⟲   ⏮chap   ⏮verse   ▶/⏸ (+progress ring)   verse⏭   chap⏭   1.0×  ╳ │
+│  ⏮chap   ⏮verse   ▶/⏸ (+progress ring)   verse⏭   chap⏭   1.0×   ╳ │
 ├─────────────────────────────────────────────────────────────┤
 │  ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒░░░░░░░░   0:42 / 3:15                      │
 └─────────────────────────────────────────────────────────────┘
@@ -74,9 +73,8 @@ Anchored at the bottom of `IsiActivity`, above the reading-history panel. Height
 - **Prev / next verse** — seeks to the start of the neighboring verse using timing data.
 - **Prev / next chapter** — navigates chapters (cross-book at the boundaries).
 - **Speed** — opens a popup: 0.5 / 0.8 / 1.0 / 1.25 / 1.5 / 1.75 / 2.0×. Persisted via Prefkey.
-- **Repeat** — toggles chapter repeat; when off, auto-advance to the next chapter at end.
 - **Close (╳)** — closes the bar; stops audio and clears highlight.
-- **Scrubber** — drag-to-seek; its label shows the current verse (e.g. "Jn 3:16").
+- **Scrubber** — drag-to-seek. While the user is dragging, the thumb shows a tooltip/bubble with **both** the proposed position `mm:ss` **and** the verse that would play on release (e.g. `1:23 · v.7`). The bubble updates live as the thumb moves so the user can aim at a verse they remember hearing, not just a time offset. On release, audio seeks to the start of that verse's `startMs` (snapping to verse boundary feels better than snapping to the raw scrubbed millisecond — and matches what the tooltip was showing). If timing data is missing, the bubble falls back to `mm:ss` only and seek is a plain time seek.
 
 ### 4.3 Verse highlight
 
