@@ -130,7 +130,8 @@ class SyncApplier(private val db: InternalDb) {
                             return Sync.ApplyAppendDeltaResult.unknown_kind
                         }
                         // the whole logic to update all pins with the ones received from server (all pins in one entity)
-                        for (pin in o.content!!.pins!!) {
+                        val content = o.content ?: return Sync.ApplyAppendDeltaResult.unknown_kind
+                        for (pin in content.pins ?: emptyList()) {
                             val pm = db.getProgressMarkByPresetId(pin.preset_id) ?: ProgressMark().apply {
                                 preset_id = pin.preset_id
                             }
@@ -182,12 +183,12 @@ class SyncApplier(private val db: InternalDb) {
                 when (o.opkind) {
                     Sync.Opkind.del -> db.readingPlanDao.deleteAllProgressForGid(o.gid)
                     Sync.Opkind.add, Sync.Opkind.mod -> {
-                        val content = o.content!!
+                        val content = o.content ?: return Sync.ApplyAppendDeltaResult.unknown_kind
                         val readingCodes = db.readingPlanDao.getAllReadingCodesByProgressGid(o.gid)
                         val src = HashSet<Int>(readingCodes.size()).apply {
                             for (i in 0 until readingCodes.size()) add(readingCodes[i])
                         }
-                        val dst = HashSet<Int>(content.done!!)
+                        val dst = HashSet<Int>(content.done ?: emptyList())
 
                         // deletions
                         val toDel = HashSet(src).apply { removeAll(dst) }

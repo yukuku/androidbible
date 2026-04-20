@@ -2,7 +2,6 @@ package yuku.alkitab.base.storage
 
 import android.content.ContentValues
 import android.database.Cursor
-import android.database.sqlite.SQLiteStatement
 import yuku.alkitab.base.util.Sqlitil
 import yuku.alkitab.model.Marker
 import java.util.Date
@@ -94,27 +93,16 @@ class MarkerDao(private val helper: InternalDbHelper) {
         Db.TABLE_Marker, Db.Marker.gid + "=?", arrayOf(gid),
     )
 
-    /**
-     * Counts markers with `ari` in `[ariMin, ariMax]` (inclusive on both ends).
-     * Uses a cached [SQLiteStatement] because this is called per chapter render.
-     */
-    @Synchronized
-    fun countForAriRange(ariMin: Int, ariMax: Int): Int {
-        var stmt = cachedCountForAriRange
-        if (stmt == null) {
-            // Inclusive upper bound so a marker on verse 255 (ari == ariMax) is counted.
-            stmt = helper.readableDatabase.compileStatement(
-                "select count(*) from ${Db.TABLE_Marker}" +
-                    " where ${Db.Marker.ari}>=? and ${Db.Marker.ari}<=?",
-            )
-            cachedCountForAriRange = stmt
+    // Inclusive upper bound so a marker on verse 255 (ari == ariMax) is counted.
+    fun countForAriRange(ariMin: Int, ariMax: Int): Int =
+        helper.readableDatabase.compileStatement(
+            "select count(*) from ${Db.TABLE_Marker}" +
+                " where ${Db.Marker.ari}>=? and ${Db.Marker.ari}<=?",
+        ).use { stmt ->
+            stmt.bindLong(1, ariMin.toLong())
+            stmt.bindLong(2, ariMax.toLong())
+            stmt.simpleQueryForLong().toInt()
         }
-        stmt.bindLong(1, ariMin.toLong())
-        stmt.bindLong(2, ariMax.toLong())
-        return stmt.simpleQueryForLong().toInt()
-    }
-
-    private var cachedCountForAriRange: SQLiteStatement? = null
 
     companion object {
         @JvmStatic

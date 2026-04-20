@@ -75,7 +75,8 @@ class DevotionDao(private val helper: InternalDbHelper) {
             val body = c.getString(colBody)
             val readyToUse = c.getInt(colReadyToUse) > 0
 
-            return when (DevotionActivity.DevotionKind.getByName(name)) {
+            val kind = DevotionActivity.DevotionKind.getByName(name) ?: return null
+            return when (kind) {
                 DevotionActivity.DevotionKind.RH -> ArticleRenunganHarian(date, body, readyToUse)
                 DevotionActivity.DevotionKind.SH -> ArticleSantapanHarian(date, body, readyToUse)
                 DevotionActivity.DevotionKind.ME_EN -> ArticleMorningEveningEnglish(date, body, true)

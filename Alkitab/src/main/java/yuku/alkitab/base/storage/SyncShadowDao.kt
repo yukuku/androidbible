@@ -155,14 +155,13 @@ class SyncShadowDao(private val helper: InternalDbHelper) {
             null, null, null, null,
             Table.SyncLog.createTime.name + " desc", maxrows.toString(),
         ).use { c ->
-            val paramsType = object : TypeToken<Map<String, Any>>() {}.type
             while (c.moveToNext()) {
                 res += SyncLog().apply {
                     createTime = Sqlitil.toDate(c.getInt(0))
                     kind_code = c.getInt(1)
                     syncSetName = c.getString(2)
                     val paramsS = c.getString(3)
-                    params = if (paramsS == null) null else App.getDefaultGson().fromJson(paramsS, paramsType)
+                    params = if (paramsS == null) null else App.getDefaultGson().fromJson(paramsS, SYNC_LOG_PARAMS_TYPE)
                 }
             }
         }
@@ -172,6 +171,8 @@ class SyncShadowDao(private val helper: InternalDbHelper) {
     // endregion
 
     companion object {
+        private val SYNC_LOG_PARAMS_TYPE = object : TypeToken<Map<String, Any>>() {}.type
+
         fun toContentValues(ss: SyncShadow): ContentValues = ContentValues().apply {
             put(Table.SyncShadow.syncSetName.name, ss.syncSetName)
             put(Table.SyncShadow.revno.name, ss.revno)
