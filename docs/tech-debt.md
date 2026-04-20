@@ -69,17 +69,17 @@ Used in 15+ files for event communication:
 Should migrate to `LiveData`, `SharedFlow`, or `EventBus`.
 
 ### Handler(Looper.getMainLooper()) for thread switching
-- `VerseRenderer.java:310` — creates Handler in static context to show Toast
+- `VerseRenderer.kt` `reportInvalidSpecialTag` — creates Handler in object scope to show Toast
 - `Foreground.java:8` — lifecycle tracking
 - `DownloadService.java:42-70` — progress callbacks
 
 Should use `Dispatchers.Main` with coroutines or `lifecycleScope`.
 
-### Static Toast caching (VerseRenderer.java:307-318)
-```java
-static Toast invalidSpecialTagToast;
+### Static Toast caching (VerseRenderer.kt `invalidSpecialTagToast`)
+```kotlin
+private var invalidSpecialTagToast: Toast? = null
 ```
-Static UI object reference can leak Activity context. Should create Toast inline or use `Snackbar`.
+Object-scope UI reference can leak Activity context. Should create Toast inline or use `Snackbar`.
 
 ---
 
@@ -175,16 +175,13 @@ Preference keys are a flat enum with no grouping or type safety. Each access req
 
 ## TD-10: VerseRenderer Complexity
 
-**File:** `Alkitab/src/main/java/yuku/alkitab/base/widget/VerseRenderer.java`
+**File:** `Alkitab/src/main/java/yuku/alkitab/base/widget/VerseRenderer.kt`
 
 ### ~~200-line render method~~ ✅ RESOLVED (REM-25)
 The monolithic `render()` body has been decomposed into `renderVerseNumber()`, `processFormattingCodes()`, `applyHighlight()`, and `bindToTextViews()`, alongside the existing `applyParaStyle()` and `processSpecialTag()`. Behavior is locked down by 39 characterization tests in `VerseRendererTest.kt`.
 
-### Undocumented Unicode constants (line 23)
-```java
-static final char[] superscriptDigits = {'\u2070', '\u00b9', '\u00b2', ...};
-```
-No comments explaining the Unicode superscript digit range.
+### ~~Undocumented Unicode constants~~ ✅ RESOLVED (REM-26)
+The `superscriptDigits` array now has an inline comment naming the Unicode code points (U+2070, U+00B9, U+00B2, U+00B3, U+2074..U+2079) and explaining its use in `appendSuperscriptNumber`. The `XREF_MARK` constant is similarly documented as U+203B REFERENCE MARK.
 
 ---
 
@@ -193,7 +190,7 @@ No comments explaining the Unicode superscript digit range.
 Core files still in Java with no clear migration plan:
 - `InternalDb.java` (1771 lines)
 - `SearchEngine.java` (537 lines)
-- `VerseRenderer.java` (423 lines)
+- ~~`VerseRenderer.java`~~ ✅ ported to Kotlin (REM-26)
 - `Sync.java` (508 lines)
 - `SyncAdapter.java` (600+ lines)
 - `DevotionDownloader.java` (111 lines)
