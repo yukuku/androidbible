@@ -7,8 +7,7 @@ import android.os.Looper
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.list.listItems
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.util.Locale
 import yuku.alkitab.base.App
 import yuku.alkitab.base.S.activeVersion
@@ -23,13 +22,13 @@ class SecretSettingsActivity : BaseActivity() {
     class SecretSettingsFragment : PreferenceFragmentCompat() {
         private val secret_progress_mark_history_click = Preference.OnPreferenceClickListener {
             val progressMarks = db.listAllProgressMarks()
-            val labels = progressMarks.map { "${it.caption} (preset_id ${it.preset_id})" }
-            MaterialDialog(requireActivity())
-                .listItems(items = labels) { _, index, _ ->
+            val labels = progressMarks.map { "${it.caption} (preset_id ${it.preset_id})" }.toTypedArray()
+            MaterialAlertDialogBuilder(requireActivity())
+                .setItems(labels) { _, index ->
                     val pmhs = db.listProgressMarkHistoryByPresetId(progressMarks[index].preset_id)
-                    val items = pmhs.map { "'${it.progress_mark_caption}' ${toLocaleDateMedium(it.createTime)}: ${activeVersion().reference(it.ari)}" }
-                    MaterialDialog(requireActivity())
-                        .listItems(items = items)
+                    val items = pmhs.map { "'${it.progress_mark_caption}' ${toLocaleDateMedium(it.createTime)}: ${activeVersion().reference(it.ari)}" }.toTypedArray()
+                    MaterialAlertDialogBuilder(requireActivity())
+                        .setItems(items, null)
                         .show()
                 }
                 .show()
@@ -42,10 +41,10 @@ class SecretSettingsActivity : BaseActivity() {
                     Locale.US, "filename=%s preset_name=%s modifyTime=%s active=%s ordering=%s locale=%s shortName=%s longName=%s description=%s",
                     mv.filename, mv.preset_name, mv.modifyTime, mv.active, mv.ordering, mv.locale, mv.shortName, mv.longName, mv.description
                 )
-            }
+            }.toTypedArray()
 
-            MaterialDialog(requireActivity())
-                .listItems(items = items)
+            MaterialAlertDialogBuilder(requireActivity())
+                .setItems(items, null)
                 .show()
             true
         }

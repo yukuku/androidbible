@@ -29,7 +29,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import com.afollestad.materialdialogs.MaterialDialog;
+import androidx.appcompat.app.AlertDialog;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -590,7 +590,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
         final AtomicBoolean cancelled = new AtomicBoolean(false);
 
-        final MaterialDialog pd = MaterialDialogJavaHelper.showProgressDialog(this, getString(R.string.rp_download_reading_plan_progress));
+        final AlertDialog pd = MaterialDialogJavaHelper.showProgressDialog(this, getString(R.string.rp_download_reading_plan_progress));
         pd.setOnDismissListener(dialog -> cancelled.set(true));
 
         Background.run(() -> {

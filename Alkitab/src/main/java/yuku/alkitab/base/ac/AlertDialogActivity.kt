@@ -4,9 +4,10 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.callbacks.onDismiss
-import com.afollestad.materialdialogs.input.input
+import android.view.LayoutInflater
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import yuku.alkitab.base.App
 import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.debug.R
@@ -31,42 +32,45 @@ class AlertDialogActivity : BaseActivity() {
         val inputHint = intent.getStringExtra(EXTRA_INPUT_HINT)
         val launch = intent.getParcelableExtra<Intent>(EXTRA_LAUNCH)
 
-        val builder = MaterialDialog(this)
-        if (title != null) {
-            builder.title(text = title)
-        }
-        if (message != null) {
-            builder.message(text = message)
-        }
+        val builder = MaterialAlertDialogBuilder(this)
+        if (title != null) builder.setTitle(title)
+        if (message != null) builder.setMessage(message)
+
+        var etInput: TextInputEditText? = null
         if (inputHint != null) {
-            builder.input(inputType = inputType, hint = inputHint) { _, input ->
-                val returnIntent = Intent()
-                returnIntent.putExtra(EXTRA_INPUT, input.toString())
-                setResult(RESULT_OK, returnIntent)
-                finish()
-            }
+            val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_input, null, false)
+            val til = dialogView.findViewById<TextInputLayout>(R.id.tilInput)
+            etInput = dialogView.findViewById(R.id.etInput)
+            til.hint = inputHint
+            etInput.inputType = inputType
+            builder.setView(dialogView)
         }
-        builder.positiveButton(text = positive) {
-            if (inputHint == null) {
+
+        builder.setPositiveButton(positive) { _, _ ->
+            if (inputHint != null) {
+                val returnIntent = Intent()
+                returnIntent.putExtra(EXTRA_INPUT, etInput?.text.toString())
+                setResult(RESULT_OK, returnIntent)
+            } else {
                 val returnIntent = Intent()
                 setResult(RESULT_OK, returnIntent)
                 if (launch != null) {
                     try {
                         startActivity(launch)
                     } catch (e: ActivityNotFoundException) {
-                        MaterialDialog(this@AlertDialogActivity).show {
-                            message(text = "Actvity was not found for intent: $launch")
-                            positiveButton(R.string.ok)
-                        }
+                        MaterialAlertDialogBuilder(this@AlertDialogActivity)
+                            .setMessage("Activity was not found for intent: $launch")
+                            .setPositiveButton(R.string.ok, null)
+                            .show()
                     }
                 }
-                finish()
             }
+            finish()
         }
         if (negative != null) {
-            builder.negativeButton(text = negative) { finish() }
+            builder.setNegativeButton(negative) { _, _ -> finish() }
         }
-        builder.onDismiss { finish() }
+        builder.setOnDismissListener { finish() }
         builder.show()
     }
 

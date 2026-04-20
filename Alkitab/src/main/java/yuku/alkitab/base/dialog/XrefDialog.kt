@@ -12,7 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.os.bundleOf
-import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.util.Locale
 import kotlin.properties.Delegates.notNull
 import yuku.alkitab.base.S
@@ -116,10 +116,10 @@ class XrefDialog : BaseDialog() {
             if (xrefEntry != null) {
                 renderXrefText()
             } else {
-                MaterialDialog(inflater.context).show {
-                    message(text = String.format(Locale.US, "Error: xref at arif 0x%08x couldn't be loaded", arif_source))
-                    positiveButton(R.string.ok)
-                }
+                MaterialAlertDialogBuilder(inflater.context)
+                    .setMessage(String.format(Locale.US, "Error: xref at arif 0x%08x couldn't be loaded", arif_source))
+                    .setPositiveButton(R.string.ok, null)
+                    .show()
             }
         }
     }

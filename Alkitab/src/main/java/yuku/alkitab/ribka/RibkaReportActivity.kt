@@ -8,8 +8,7 @@ import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.TextView
 import androidx.core.util.PatternsCompat
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.callbacks.onDismiss
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import java.io.IOException
 import okhttp3.Call
@@ -22,7 +21,6 @@ import yuku.alkitab.base.App
 import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.util.FormattedVerseText
-import yuku.alkitab.base.widget.MaterialDialogProgressHelper.progress
 import yuku.alkitab.base.widget.VerseRendererJavaHelper
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
@@ -100,10 +98,10 @@ class RibkaReportActivity : BaseActivity() {
             oRibkaCategoryContent.isChecked -> "content"
             oRibkaCategoryOthers.isChecked -> "others"
             else -> {
-                MaterialDialog(this).show {
-                    message(R.string.ribka_category_error)
-                    positiveButton(R.string.ok)
-                }
+                MaterialAlertDialogBuilder(this)
+                    .setMessage(R.string.ribka_category_error)
+                    .setPositiveButton(R.string.ok, null)
+                    .show()
                 null
             }
         } ?: return
@@ -137,21 +135,20 @@ class RibkaReportActivity : BaseActivity() {
         form.add("reportRemarks", remarks)
         form.add("reportVersionDescription", versionDescription.orEmpty())
 
-        val pd = MaterialDialog(this).show {
-            message(R.string.ribka_sending_progress)
-            cancelable(false)
-            progress(true, 0)
-        }
+        val pd = MaterialAlertDialogBuilder(this)
+            .setMessage(R.string.ribka_sending_progress)
+            .setCancelable(false)
+            .show()
 
         Connections.okHttp.newCall(Request.Builder().url(BuildConfig.RIBKA_FUNCTIONS_HOST + "addIssue").post(form.build()).build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 pd.dismiss()
 
                 runOnUiThread {
-                    MaterialDialog(this@RibkaReportActivity).show {
-                        message(R.string.ribka_send_error)
-                        positiveButton(R.string.ok)
-                    }
+                    MaterialAlertDialogBuilder(this@RibkaReportActivity)
+                        .setMessage(R.string.ribka_send_error)
+                        .setPositiveButton(R.string.ok, null)
+                        .show()
                 }
             }
 
@@ -160,18 +157,19 @@ class RibkaReportActivity : BaseActivity() {
 
                 if (response.isSuccessful) {
                     runOnUiThread {
-                        MaterialDialog(this@RibkaReportActivity).show {
-                            message(R.string.ribka_send_success)
-                            positiveButton(R.string.ok)
-                            onDismiss { finish() }
-                        }
+                        val dialog = MaterialAlertDialogBuilder(this@RibkaReportActivity)
+                            .setMessage(R.string.ribka_send_success)
+                            .setPositiveButton(R.string.ok, null)
+                            .create()
+                        dialog.setOnDismissListener { finish() }
+                        dialog.show()
                     }
                 } else {
                     runOnUiThread {
-                        MaterialDialog(this@RibkaReportActivity).show {
-                            message(text = TextUtils.expandTemplate(getString(R.string.ribka_send_failure), "${response.code} ${response.body?.string()}"))
-                            positiveButton(R.string.ok)
-                        }
+                        MaterialAlertDialogBuilder(this@RibkaReportActivity)
+                            .setMessage(TextUtils.expandTemplate(getString(R.string.ribka_send_failure), "${response.code} ${response.body?.string()}"))
+                            .setPositiveButton(R.string.ok, null)
+                            .show()
                     }
                 }
             }

@@ -71,6 +71,5 @@ ext {
     kotlinxSerializationJsonVersion = '1.5.1'
 
     // UI
-    materialDialogsVersion = '3.3.0'
     fancyShowcaseViewVersion = '1.4.0'
 }

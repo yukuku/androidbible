@@ -5,21 +5,21 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.view.LayoutInflater;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.customview.DialogCustomViewExtKt;
+import androidx.appcompat.app.AlertDialog;
 import com.compactbyte.android.bible.PDBFileStream;
 import com.compactbyte.bibleplus.reader.BiblePlusPDB;
 import com.compactbyte.bibleplus.reader.BookInfo;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import kotlin.Unit;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.R;
@@ -28,7 +28,7 @@ public class ConvertOptionsDialog {
     static final String TAG = ConvertOptionsDialog.class.getSimpleName();
 
     Context context;
-    MaterialDialog alert;
+    AlertDialog alert;
     ConvertOptionsCallback callback;
 
     Spinner cbEncoding;
@@ -93,12 +93,13 @@ public class ConvertOptionsDialog {
             return;
         }
 
-        this.alert = ConvertOptionsDialogJavaHelper.buildMaterialDialog(context, () -> {
-            bOk_click();
-            return Unit.INSTANCE;
-        });
-
-        final View dialogLayout = DialogCustomViewExtKt.getCustomView(this.alert);
+        final View dialogLayout = LayoutInflater.from(context).inflate(R.layout.dialog_pdbconvert_options, null, false);
+        this.alert = new MaterialAlertDialogBuilder(context)
+            .setView(dialogLayout)
+            .setTitle(R.string.pdb_file_options)
+            .setPositiveButton(R.string.ok, (d, w) -> bOk_click())
+            .setNegativeButton(R.string.cancel, null)
+            .create();
 
         cbEncoding = dialogLayout.findViewById(R.id.cbEncoding);
         lSample = dialogLayout.findViewById(R.id.lSample);

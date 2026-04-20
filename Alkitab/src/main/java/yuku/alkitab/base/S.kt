@@ -3,10 +3,7 @@ package yuku.alkitab.base
 import android.app.Activity
 import android.graphics.Color
 import android.graphics.Typeface
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.WhichButton
-import com.afollestad.materialdialogs.actions.setActionButtonEnabled
-import com.afollestad.materialdialogs.list.listItemsSingleChoice
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.config.AppConfig
 import yuku.alkitab.base.model.MVersion
@@ -274,20 +271,19 @@ object S {
         // determine the currently selected one
         val selected = versions.indexOfFirst { it.versionId == selectedVersionId }
 
-        val options = versions.map { it.longName }
-        val dialog = MaterialDialog(activity)
-            .listItemsSingleChoice(items = options, initialSelection = selected, waitForPositiveButton = false) { dialog, index, _ ->
+        val options = versions.map { it.longName }.toTypedArray()
+        MaterialAlertDialogBuilder(activity)
+            .setSingleChoiceItems(options, selected) { dialog, index ->
                 if (index >= 0) {
                     val mv = versions[index]
                     onVersionSelected(mv)
                     dialog.dismiss()
                 }
             }
-            .positiveButton(R.string.versi_lainnya) {
+            .setPositiveButton(R.string.versi_lainnya) { _, _ ->
                 activity.startActivity(VersionsActivity.createIntent())
             }
-        dialog.setActionButtonEnabled(WhichButton.POSITIVE, true)
-        dialog.show()
+            .show()
     }
 
     fun openVersionsDialogWithNone(activity: Activity, selectedVersionId: String?, onVersionSelected: (MVersion?) -> Unit) {
@@ -300,22 +296,18 @@ object S {
             versions.indexOfFirst { it.versionId == selectedVersionId } + 1
         }
 
-        val options = listOf(activity.getString(R.string.split_version_none)) + versions.map { it.longName }
-
-        val dialog = MaterialDialog(activity)
-            .listItemsSingleChoice(items = options, initialSelection = selected, waitForPositiveButton = false) { dialog, index, _ ->
-                if (index == 0) {
-                    onVersionSelected(null)
-                } else if (index > 0) {
-                    val mv = versions[index - 1]
-                    onVersionSelected(mv)
+        val options = (listOf(activity.getString(R.string.split_version_none)) + versions.map { it.longName }).toTypedArray()
+        MaterialAlertDialogBuilder(activity)
+            .setSingleChoiceItems(options, selected) { dialog, index ->
+                when {
+                    index == 0 -> onVersionSelected(null)
+                    index > 0 -> onVersionSelected(versions[index - 1])
                 }
                 dialog.dismiss()
             }
-            .positiveButton(R.string.versi_lainnya) {
+            .setPositiveButton(R.string.versi_lainnya) { _, _ ->
                 activity.startActivity(VersionsActivity.createIntent())
             }
-        dialog.setActionButtonEnabled(WhichButton.POSITIVE, true)
-        dialog.show()
+            .show()
     }
 }

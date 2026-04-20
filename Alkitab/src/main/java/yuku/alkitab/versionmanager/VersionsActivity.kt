@@ -13,8 +13,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.input.input
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import java.io.File
 import java.io.IOException
@@ -31,7 +30,9 @@ import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Background
 import yuku.alkitab.base.util.DownloadMapper
 import yuku.alkitab.base.util.Foreground
-import yuku.alkitab.base.widget.MaterialDialogProgressHelper.progress
+import android.view.LayoutInflater
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import yuku.alkitab.debug.R
 
 private const val TAG = "VersionsActivity"
@@ -85,11 +86,11 @@ class VersionsActivity : BaseActivity() {
         if (intent.action != Intent.ACTION_VIEW) return
         val uri = intent.data
             ?: run {
-                MaterialDialog(this).show {
-                    title(R.string.ed_error_encountered)
-                    message(text = "Intent data is null.")
-                    positiveButton(R.string.ok)
-                }
+                MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.ed_error_encountered)
+                    .setMessage("Intent data is null.")
+                    .setPositiveButton(R.string.ok, null)
+                    .show()
                 return
             }
         importFromUri(uri)
@@ -212,11 +213,11 @@ class VersionsActivity : BaseActivity() {
 
             App.getLbm().sendBroadcast(Intent(VersionListFragment.ACTION_RELOAD))
         } catch (e: Exception) {
-            MaterialDialog(this).show {
-                title(R.string.ed_error_encountered)
-                message(text = "${e.javaClass.simpleName}: ${e.message}")
-                positiveButton(R.string.ok)
-            }
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.ed_error_encountered)
+                .setMessage("${e.javaClass.simpleName}: ${e.message}")
+                .setPositiveButton(R.string.ok, null)
+                .show()
         }
 
         // we are trying to open a file, so let's go to the DOWNLOADED tab, as it is more relevant.
@@ -224,37 +225,43 @@ class VersionsActivity : BaseActivity() {
     }
 
     private fun openUrlInputDialog(prefill: String?) {
-        MaterialDialog(this)
-            .title(R.string.version_download_add_from_url_prompt_yes_only)
-            .input(prefill = prefill ?: "https://") { _: MaterialDialog?, input: CharSequence ->
-                val url = input.toString().trim()
-                if (url.isEmpty()) return@input
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_input, null, false)
+        val til = dialogView.findViewById<TextInputLayout>(R.id.tilInput)
+        val et = dialogView.findViewById<TextInputEditText>(R.id.etInput)
+        til.hint = getString(R.string.version_download_add_from_url_prompt_yes_only)
+        et.setText(prefill ?: "https://")
+
+        MaterialAlertDialogBuilder(this)
+            .setView(dialogView)
+            .setPositiveButton(R.string.ok) { _, _ ->
+                val url = et.text.toString().trim()
+                if (url.isEmpty()) return@setPositiveButton
 
                 val uri = Uri.parse(url)
                 val scheme = uri.scheme
                 if ("http" != scheme && "https" != scheme) {
-                    MaterialDialog(this@VersionsActivity).show {
-                        message(R.string.version_download_invalid_url)
-                        positiveButton(R.string.ok) { openUrlInputDialog(url) }
-                    }
-                    return@input
+                    MaterialAlertDialogBuilder(this@VersionsActivity)
+                        .setMessage(R.string.version_download_invalid_url)
+                        .setPositiveButton(R.string.ok) { _, _ -> openUrlInputDialog(url) }
+                        .show()
+                    return@setPositiveButton
                 }
 
                 // guess destination filename
                 val last = uri.lastPathSegment
                 if (last.isNullOrEmpty() || !last.endsWith(".yes", ignoreCase = true)) {
-                    MaterialDialog(this@VersionsActivity).show {
-                        message(R.string.version_download_not_yes)
-                        positiveButton(R.string.ok) { openUrlInputDialog(url) }
-                    }
-                    return@input
+                    MaterialAlertDialogBuilder(this@VersionsActivity)
+                        .setMessage(R.string.version_download_not_yes)
+                        .setPositiveButton(R.string.ok) { _, _ -> openUrlInputDialog(url) }
+                        .show()
+                    return@setPositiveButton
                 }
 
                 val downloadKey = "version:url:$url"
                 val status = DownloadMapper.instance.getStatus(downloadKey)
                 if (status == DownloadManager.STATUS_PENDING || status == DownloadManager.STATUS_RUNNING) {
                     // it's downloading!
-                    return@input
+                    return@setPositiveButton
                 }
 
                 val attrs = mapOf(
@@ -265,7 +272,7 @@ class VersionsActivity : BaseActivity() {
 
                 Toast.makeText(this@VersionsActivity, R.string.mulai_mengunduh, Toast.LENGTH_SHORT).show()
             }
-            .positiveButton(R.string.ok)
+            .setNegativeButton(R.string.cancel, null)
             .show()
     }
 
@@ -283,11 +290,11 @@ class VersionsActivity : BaseActivity() {
                 }
             }
         } catch (e: Exception) {
-            MaterialDialog(this).show {
-                title(R.string.ed_error_encountered)
-                message(text = "${e.javaClass.simpleName}: ${e.message}")
-                positiveButton(R.string.ok)
-            }
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.ed_error_encountered)
+                .setMessage("${e.javaClass.simpleName}: ${e.message}")
+                .setPositiveButton(R.string.ok, null)
+                .show()
         }
     }
 
@@ -298,11 +305,11 @@ class VersionsActivity : BaseActivity() {
                 else -> "${getString(R.string.ed_details)}(${exception.javaClass.name}): ${exception.message}\n${exception.stackTraceToString()}"
             }
 
-            MaterialDialog(this@VersionsActivity).show {
-                title(R.string.ed_error_reading_pdb_file)
-                message(text = message)
-                positiveButton(R.string.ok)
-            }
+            MaterialAlertDialogBuilder(this@VersionsActivity)
+                .setTitle(R.string.ed_error_reading_pdb_file)
+                .setMessage(message)
+                .setPositiveButton(R.string.ok, null)
+                .show()
         }
 
         val callback = object : ConvertOptionsDialog.ConvertOptionsCallback {
@@ -323,10 +330,10 @@ class VersionsActivity : BaseActivity() {
                         }
                     }
 
-                    MaterialDialog(this@VersionsActivity).show {
-                        message(text = msg)
-                        positiveButton(R.string.ok)
-                    }
+                    MaterialAlertDialogBuilder(this@VersionsActivity)
+                        .setMessage(msg)
+                        .setPositiveButton(R.string.ok, null)
+                        .show()
                 }
 
                 // we are trying to open a file, so let's go to the DOWNLOADED tab, as it is more relevant.
@@ -339,17 +346,16 @@ class VersionsActivity : BaseActivity() {
 
             override fun onOkYes2(params: ConvertPdbToYes2.ConvertParams) {
                 val yesFile = AddonManager.getWritableVersionFile(yesName)
-                val pd = MaterialDialog(this@VersionsActivity).show {
-                    message(R.string.ed_reading_pdb_file)
-                    cancelable(false)
-                    progress(true, 0)
-                }
+                val pd = MaterialAlertDialogBuilder(this@VersionsActivity)
+                    .setMessage(R.string.ed_reading_pdb_file)
+                    .setCancelable(false)
+                    .show()
 
                 fun onProgressUpdate(at: Int?, message: String?) = Foreground.run {
                     if (at == null) {
-                        pd.message(R.string.ed_finished)
+                        pd.setMessage(getString(R.string.ed_finished))
                     } else {
-                        pd.message(text = "($at) $message...")
+                        pd.setMessage("($at) $message...")
                     }
                 }
 
