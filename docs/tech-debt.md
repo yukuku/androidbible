@@ -213,11 +213,11 @@ Newer files (activities, data classes) are Kotlin, creating a mixed codebase whe
 
 | Dependency | Version | Issue |
 |------------|---------|-------|
-| `material-dialogs` | 3.3.0 | Library archived/deprecated. No Material 3 support. |
+| ~~`material-dialogs`~~ | ~~3.3.0~~ | ✅ **Fixed in REM-14** (`ca9a913`). All call sites migrated to `MaterialAlertDialogBuilder` (Material 3); the `com.afollestad.materialdialogs` artifacts have been removed from `Alkitab/build.gradle`. `MaterialDialogJavaHelper` / `MaterialDialogAdapterHelper` are now thin wrappers around `MaterialAlertDialogBuilder`. |
 | `FancyShowCaseView` | 1.4.0 | Low maintenance activity. Evaluate alternatives. |
 | `PRDownloader` (patched) | custom | Forked as `PrDownloaderFixed`. Maintenance burden of carrying a patched fork. |
 | `AmbilWarna` | bundled | Bundled color picker. Material color picker components exist now. |
-| `LocalBroadcastManager` | latest | Officially deprecated by AndroidX team. |
+| `LocalBroadcastManager` | 1.1.0 | Officially deprecated by AndroidX team. Still declared in `Alkitab/build.gradle:318` and used in 15+ files (see TD-03). |
 
 ---
 
