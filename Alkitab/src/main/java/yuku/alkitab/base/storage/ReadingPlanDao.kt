@@ -89,27 +89,18 @@ class ReadingPlanDao(private val helper: InternalDbHelper) {
 
     // region ReadingPlanProgress
 
-    /** Replaces the single progress row identified by `(gid, readingCode)`. */
+    /**
+     * Upserts the single progress row identified by `(gid, readingCode)`.
+     * Relies on the unique index on `(reading_plan_progress_gid, reading_code)`
+     * — `INSERT OR REPLACE` deletes the existing row (if any) before insert.
+     */
     fun insertOrUpdateProgress(gid: String, readingCode: Int, checkTime: Long) {
-        val db = helper.writableDatabase
-        db.beginTransactionNonExclusive()
-        try {
-            db.delete(
-                Db.TABLE_ReadingPlanProgress,
-                Db.ReadingPlanProgress.reading_plan_progress_gid + "=? and " +
-                    Db.ReadingPlanProgress.reading_code + "=?",
-                arrayOf(gid, readingCode.toString()),
-            )
-            val cv = ContentValues().apply {
-                put(Db.ReadingPlanProgress.reading_plan_progress_gid, gid)
-                put(Db.ReadingPlanProgress.reading_code, readingCode)
-                put(Db.ReadingPlanProgress.checkTime, checkTime)
-            }
-            db.insert(Db.TABLE_ReadingPlanProgress, null, cv)
-            db.setTransactionSuccessful()
-        } finally {
-            db.endTransaction()
+        val cv = ContentValues().apply {
+            put(Db.ReadingPlanProgress.reading_plan_progress_gid, gid)
+            put(Db.ReadingPlanProgress.reading_code, readingCode)
+            put(Db.ReadingPlanProgress.checkTime, checkTime)
         }
+        helper.writableDatabase.replace(Db.TABLE_ReadingPlanProgress, null, cv)
     }
 
     /**
@@ -124,12 +115,12 @@ class ReadingPlanDao(private val helper: InternalDbHelper) {
                 Db.TABLE_ReadingPlanProgress,
                 Db.ReadingPlanProgress.reading_plan_progress_gid + "=?", arrayOf(gid),
             )
+            val cv = ContentValues().apply {
+                put(Db.ReadingPlanProgress.reading_plan_progress_gid, gid)
+                put(Db.ReadingPlanProgress.checkTime, checkTime)
+            }
             for (i in 0 until readingCodes.size()) {
-                val cv = ContentValues().apply {
-                    put(Db.ReadingPlanProgress.reading_plan_progress_gid, gid)
-                    put(Db.ReadingPlanProgress.reading_code, readingCodes[i])
-                    put(Db.ReadingPlanProgress.checkTime, checkTime)
-                }
+                cv.put(Db.ReadingPlanProgress.reading_code, readingCodes[i])
                 db.insert(Db.TABLE_ReadingPlanProgress, null, cv)
             }
             db.setTransactionSuccessful()
@@ -140,7 +131,8 @@ class ReadingPlanDao(private val helper: InternalDbHelper) {
 
     /**
      * Upserts each `(gid, readingCode)` pair in [readingCodes] with the same [checkTime].
-     * Existing rows for the same pair are deleted before insert.
+     * Uses `INSERT OR REPLACE` so the unique index on
+     * `(reading_plan_progress_gid, reading_code)` handles the replace.
      */
     fun insertOrUpdateMultipleProgresses(gid: String, readingCodes: IntArrayList, checkTime: Long) {
         val db = helper.writableDatabase
@@ -151,15 +143,8 @@ class ReadingPlanDao(private val helper: InternalDbHelper) {
                 put(Db.ReadingPlanProgress.checkTime, checkTime)
             }
             for (i in 0 until readingCodes.size()) {
-                val readingCode = readingCodes[i]
-                db.delete(
-                    Db.TABLE_ReadingPlanProgress,
-                    Db.ReadingPlanProgress.reading_plan_progress_gid + "=? and " +
-                        Db.ReadingPlanProgress.reading_code + "=?",
-                    arrayOf(gid, readingCode.toString()),
-                )
-                cv.put(Db.ReadingPlanProgress.reading_code, readingCode)
-                db.insert(Db.TABLE_ReadingPlanProgress, null, cv)
+                cv.put(Db.ReadingPlanProgress.reading_code, readingCodes[i])
+                db.replace(Db.TABLE_ReadingPlanProgress, null, cv)
             }
             db.setTransactionSuccessful()
         } finally {

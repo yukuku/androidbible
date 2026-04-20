@@ -103,6 +103,7 @@ public class InternalDb {
 
     public void deleteMarkerById(long _id) {
         final Marker marker = markerDao.getById(_id);
+        if (marker == null) return;
 
         final SQLiteDatabase db = helper.getWritableDatabase();
         db.beginTransactionNonExclusive();
@@ -232,17 +233,17 @@ public class InternalDb {
                         final Marker marker = MarkerDao.markerFromCursor(c);
                         marker.modifyTime = now;
                         marker.caption = Highlights.encode(colorRgb, hashCode, startOffset, endOffset);
-                        db.update(Db.TABLE_Marker, MarkerDao.markerToContentValues(marker), "_id=?", ToStringArray(marker._id));
+                        markerDao.upsert(marker);
                     }
 
                     // remove earlier ones if they exist (caused by sync)
                     while (c.moveToNext()) {
                         final long _id = c.getLong(c.getColumnIndexOrThrow("_id"));
-                        db.delete(Db.TABLE_Marker, "_id=?", ToStringArray(_id));
+                        markerDao.deleteById(_id);
                     }
                 } else { // insert
                     final Marker marker = Marker.createNewMarker(ari, Marker.Kind.highlight, Highlights.encode(colorRgb, hashCode, startOffset, endOffset), 1, now, now);
-                    db.insert(Db.TABLE_Marker, null, MarkerDao.markerToContentValues(marker));
+                    markerDao.upsert(marker);
                 }
             }
             db.setTransactionSuccessful();
@@ -273,17 +274,17 @@ public class InternalDb {
                             marker.modifyTime = new Date();
                             if (colorRgb != -1) {
                                 marker.caption = Highlights.encode(colorRgb);
-                                db.update(Db.TABLE_Marker, MarkerDao.markerToContentValues(marker), "_id=?", ToStringArray(marker._id));
+                                markerDao.upsert(marker);
                             } else {
                                 // delete entry
-                                db.delete(Db.TABLE_Marker, "_id=?", ToStringArray(marker._id));
+                                markerDao.deleteById(marker._id);
                             }
                         }
 
                         // remove earlier ones if they exist (caused by sync)
                         while (c.moveToNext()) {
                             final long _id = c.getLong(c.getColumnIndexOrThrow("_id"));
-                            db.delete(Db.TABLE_Marker, "_id=?", ToStringArray(_id));
+                            markerDao.deleteById(_id);
                         }
                     } else {
                         if (colorRgb == -1) {
@@ -291,7 +292,7 @@ public class InternalDb {
                         } else {
                             final Date now = new Date();
                             final Marker marker = Marker.createNewMarker(ari, Marker.Kind.highlight, Highlights.encode(colorRgb), 1, now, now);
-                            db.insert(Db.TABLE_Marker, null, MarkerDao.markerToContentValues(marker));
+                            markerDao.upsert(marker);
                         }
                     }
                 }
