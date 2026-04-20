@@ -40,21 +40,24 @@ object LabelEditorDialog {
             .setNegativeButton(R.string.cancel, null)
             .create()
 
+        fun isValid(text: CharSequence?): Boolean {
+            val trimmed = text?.toString()?.trim().orEmpty()
+            return trimmed.isNotEmpty() && trimmed.length <= MAX_LABEL_LENGTH &&
+                allLabels.none { it.title.trim() == trimmed }
+        }
+
         et.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
             override fun afterTextChanged(s: Editable?) {
-                val text = s?.toString() ?: ""
-                val trimmed = text.trim()
-                val enabled = trimmed.isNotEmpty() && trimmed.length <= MAX_LABEL_LENGTH &&
-                    allLabels.none { it.title.trim() == trimmed }
-                dialog.getButton(DialogInterface.BUTTON_POSITIVE)?.isEnabled = enabled
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE)?.isEnabled = isValid(s)
             }
         })
 
         dialog.show()
-        // Start disabled — user hasn't typed anything valid yet.
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE)?.isEnabled = false
+        // Derive initial button state from initialText — e.g. a caller pre-filling a valid,
+        // non-duplicate name should get an immediately-clickable OK.
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE)?.isEnabled = isValid(initialText)
     }
 
     fun interface OkListener {

@@ -1,7 +1,6 @@
 package yuku.alkitab.base.ac
 
 import android.content.ActivityNotFoundException
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
@@ -71,9 +70,8 @@ class AlertDialogActivity : BaseActivity() {
         if (negative != null) {
             builder.setNegativeButton(negative) { _, _ -> finish() }
         }
-        val dialog = builder.create()
-        dialog.setOnDismissListener { finish() }
-        dialog.show()
+        builder.setOnDismissListener { finish() }
+        builder.show()
     }
 
     companion object {
