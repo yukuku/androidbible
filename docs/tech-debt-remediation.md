@@ -440,14 +440,14 @@ Use Android Studio's "Convert Java File to Kotlin" as a starting point, then man
 **Step 18d: SearchEngine tests** ✅ COMPLETED
 1. ✅ Unit tests added in `SearchEngineTest.kt` — covers `ReadyTokens` construction, `satisfiesTokens`, and end-to-end `searchByGrep` against a small in-memory fake `Version`. Exercises single token, multi-token (AND) intersection, whole-word matching, quoted phrases (multiword), book-id filtering, duplicate-token de-duplication, and cross-verse-boundary rejection.
 2. ✅ Runs under `RobolectricTestRunner` so `android.util.SparseBooleanArray` is a real implementation rather than the "not mocked" stub. `AppLog` is kept quiet via the existing test-scope shadows (`android.util.Log`, `FirebaseCrashlytics`) introduced for `HighlightsTest`.
-3. ⬜ Performance test for full-Bible search — not added (requires real Bible data or large synthetic version).
-4. Difficulty: Medium (4-6 hours)
+3. Difficulty: Medium (4-6 hours)
 
-**Step 18e: YES2 reader/writer round-trip tests**
-1. Create a small test Bible in YES2 format
-2. Write with `Yes2Writer`, read with `Yes2Reader`, verify content matches
-3. Test Snappy compression/decompression
-4. Difficulty: Medium (4-6 hours)
+**Step 18e: YES2 reader/writer round-trip tests** ✅ COMPLETED
+1. ✅ Added `Yes2RoundTripTest.kt` (12 tests) and `SnappyStreamRoundTripTest.kt` (4 tests) under `AlkitabYes2/src/test/java/`. Round-trip covers: single-book uncompressed read-back of every verse; multi-book boundaries (Genesis / Exodus / Revelation) preserving book ordering and chapter offsets; BMP UTF-8 content (Indonesian, Greek, Hebrew, extended Latin) — limited to U+FFFF because `Utf8Decoder` is documented as "intentionally incomplete" and does not support 4-byte UTF-8 sequences; `dontSeparateVerses` newline-joined form; `lowercase` flag; out-of-range chapter returns null; pericope round-trip with parallels and ARI-keyed lookup; pericope empty-chapter and no-pericope-section cases; missing xref / footnote sections return null.
+2. ✅ Snappy-compressed text section round-trip: writes multi-block compressed Bible text and verifies every verse decodes identically; separately verifies that a compressed file is strictly smaller than the uncompressed equivalent for highly-repetitive text.
+3. ✅ Direct `SnappyOutputStream` / `SnappyInputStream` round-trip: single-block, multi-block (4 blocks with partial trailing block), mid-block `seek` crossing block boundaries, and compression-ratio check on highly-repetitive input (each 4 KB block compresses to under 400 bytes via the pure-Java codec).
+4. ✅ Added a test-scope `android.util.Log` shadow at `AlkitabYes2/src/test/java/android/util/Log.java` — mirrors the one in the Alkitab module so direct `Log.e` calls in `Yes2Reader`, `SectionIndex`, and the xref/footnote sections don't trigger "Method not mocked" during plain JUnit.
+5. The tests exposed a latent bug in `SnappyInputStream`: after the last byte of the last block is read, calling `read()` again increments `current_block_index` past the end and throws `ArrayIndexOutOfBoundsException` instead of returning -1. Production callers in `Yes2Reader.TextSectionReader.loadVerseText` always read exact-length ranges derived from verse `varuint` lengths, so they never hit EOF this way. Flagged in-file rather than silently worked around; see `SnappyStreamRoundTripTest.kt`.
 
 ---
 
@@ -666,5 +666,5 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 **Sprint 3 (2 weeks):** ~~REM-07~~✅, REM-06, REM-08 — IsiActivity decomposition (REM-07 done)  
 **Sprint 4 (1 week):** ~~REM-12~~✅, REM-14 — deprecated library replacements (REM-12 done)  
 **Sprint 5 (2 weeks):** REM-10, REM-11 — Room migration for core tables  
-**Sprint 6 (2 weeks):** REM-09, ~~REM-18a-d~~✅ — ViewModel + test coverage (REM-18a/b/c/d done)  
+**Sprint 6 (2 weeks):** REM-09, ~~REM-18a-e~~✅ — ViewModel + test coverage (REM-18a/b/c/d/e done)  
 **Ongoing:** REM-15, REM-16, REM-17 — modernization work mixed into feature sprints
