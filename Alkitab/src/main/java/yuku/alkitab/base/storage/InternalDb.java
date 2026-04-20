@@ -12,7 +12,6 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +55,9 @@ public class InternalDb {
     public final ProgressMarkDao progressMarkDao;
     public final PerVersionDao perVersionDao;
     public final DevotionDao devotionDao;
+    public final LabelDao labelDao;
+    public final Marker_LabelDao marker_LabelDao;
+    public final ReadingPlanDao readingPlanDao;
 
     public InternalDb(InternalDbHelper helper) {
         this.helper = helper;
@@ -63,6 +65,9 @@ public class InternalDb {
         this.progressMarkDao = new ProgressMarkDao(helper);
         this.perVersionDao = new PerVersionDao(helper);
         this.devotionDao = new DevotionDao(helper);
+        this.labelDao = new LabelDao(helper);
+        this.marker_LabelDao = new Marker_LabelDao(helper);
+        this.readingPlanDao = new ReadingPlanDao(helper);
     }
 
     /**
@@ -93,17 +98,6 @@ public class InternalDb {
         res.verseCount = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.verseCount));
         res.createTime = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.createTime)));
         res.modifyTime = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.modifyTime)));
-
-        return res;
-    }
-
-    private static Marker_Label marker_LabelFromCursor(Cursor cursor) {
-        final Marker_Label res = Marker_Label.createEmptyMarker_Label();
-
-        res._id = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
-        res.gid = cursor.getString(cursor.getColumnIndexOrThrow(Db.Marker_Label.gid));
-        res.marker_gid = cursor.getString(cursor.getColumnIndexOrThrow(Db.Marker_Label.marker_gid));
-        res.label_gid = cursor.getString(cursor.getColumnIndexOrThrow(Db.Marker_Label.label_gid));
 
         return res;
     }
@@ -500,98 +494,28 @@ public class InternalDb {
     }
 
     public List<Label> listAllLabels() {
-        List<Label> res = new ArrayList<>();
-        try (Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Label, null, null, null, null, null, Db.Label.ordering + " asc")) {
-            while (cursor.moveToNext()) {
-                res.add(labelFromCursor(cursor));
-            }
-        }
-        return res;
+        return labelDao.listAll();
     }
 
     public List<Marker_Label> listAllMarker_Labels() {
-        final List<Marker_Label> res = new ArrayList<>();
-        try (Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Marker_Label, null, null, null, null, null, null)) {
-            while (cursor.moveToNext()) {
-                res.add(marker_LabelFromCursor(cursor));
-            }
-        }
-        return res;
+        return marker_LabelDao.listAll();
     }
 
     public List<Marker_Label> listMarker_LabelsByMarker(final Marker marker) {
-        final List<Marker_Label> res = new ArrayList<>();
-        try (Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Marker_Label, null, Db.Marker_Label.marker_gid + "=?", ToStringArray(marker.gid), null, null, null)) {
-            while (cursor.moveToNext()) {
-                res.add(marker_LabelFromCursor(cursor));
-            }
-        }
-        return res;
+        return marker_LabelDao.listByMarker(marker);
     }
 
     @NonNull
     public List<Label> listLabelsByMarker(final Marker marker) {
-        final List<Label> res = new ArrayList<>();
-        try (Cursor cursor = helper.getReadableDatabase().rawQuery("select " + Db.TABLE_Label + ".* from " + Db.TABLE_Label + ", " + Db.TABLE_Marker_Label + " where " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.label_gid + " = " + Db.TABLE_Label + "." + Db.Label.gid + " and " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.marker_gid + "=? order by " + Db.TABLE_Label + "." + Db.Label.ordering + " asc", Array(marker.gid))) {
-            while (cursor.moveToNext()) {
-                res.add(labelFromCursor(cursor));
-            }
-        }
-        return res;
-    }
-
-    public static Label labelFromCursor(Cursor c) {
-        final Label res = Label.createEmptyLabel();
-
-        res._id = c.getLong(c.getColumnIndexOrThrow("_id"));
-        res.gid = c.getString(c.getColumnIndexOrThrow(Db.Label.gid));
-        res.title = c.getString(c.getColumnIndexOrThrow(Db.Label.title));
-        res.ordering = c.getInt(c.getColumnIndexOrThrow(Db.Label.ordering));
-        res.backgroundColor = c.getString(c.getColumnIndexOrThrow(Db.Label.backgroundColor));
-
-        return res;
-    }
-
-    /**
-     * _id is not stored
-     */
-    private static ContentValues labelToContentValues(Label label) {
-        final ContentValues res = new ContentValues();
-
-        res.put(Db.Label.gid, label.gid);
-        res.put(Db.Label.title, label.title);
-        res.put(Db.Label.ordering, label.ordering);
-        res.put(Db.Label.backgroundColor, label.backgroundColor);
-
-        return res;
-    }
-
-    /**
-     * _id is not stored
-     */
-    @NonNull
-    private static ContentValues marker_labelToContentValues(@NonNull Marker_Label marker_label) {
-        final ContentValues res = new ContentValues();
-
-        res.put(Db.Marker_Label.gid, marker_label.gid);
-        res.put(Db.Marker_Label.marker_gid, marker_label.marker_gid);
-        res.put(Db.Marker_Label.label_gid, marker_label.label_gid);
-
-        return res;
+        return labelDao.listByMarker(marker);
     }
 
     public int getLabelMaxOrdering() {
-        SQLiteDatabase db = helper.getReadableDatabase();
-        try (SQLiteStatement stmt = db.compileStatement("select max(" + Db.Label.ordering + ") from " + Db.TABLE_Label)) {
-            return (int) stmt.simpleQueryForLong();
-        }
+        return labelDao.getMaxOrdering();
     }
 
     public Label insertLabel(String title, String bgColor) {
-        final Label res = Label.createNewLabel(title, getLabelMaxOrdering() + 1, bgColor);
-        final SQLiteDatabase db = helper.getWritableDatabase();
-
-        res._id = db.insert(Db.TABLE_Label, null, labelToContentValues(res));
+        final Label res = labelDao.insertNew(title, bgColor);
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
         return res;
     }
@@ -601,7 +525,7 @@ public class InternalDb {
 
         db.beginTransactionNonExclusive();
         try {
-            final List<Marker_Label> oldMls = listMarker_LabelsByMarker(marker);
+            final List<Marker_Label> oldMls = marker_LabelDao.listByMarker(marker);
 
             // helper list
             final List<String> oldMlLabelGids = new ArrayList<>();
@@ -609,10 +533,8 @@ public class InternalDb {
                 oldMlLabelGids.add(oldMl.label_gid);
             }
 
-
             // calculate labels to be added
             final List<Label> addLabels = new ArrayList<>();
-
             for (final Label newLabel : newLabels) {
                 if (!oldMlLabelGids.contains(newLabel.gid)) {
                     addLabels.add(newLabel);
@@ -622,7 +544,6 @@ public class InternalDb {
             // calculate marker_labels to be removed
             final List<Marker_Label> removeMls = new ArrayList<>();
             {
-                // helper list
                 final List<String> newLabelGids = new ArrayList<>();
                 for (final Label newLabel : newLabels) {
                     newLabelGids.add(newLabel.gid);
@@ -644,15 +565,12 @@ public class InternalDb {
                 }
             }
 
-            // remove
             for (final Marker_Label removeMl : removeMls) {
-                db.delete(Db.TABLE_Marker_Label, "_id=?", ToStringArray(removeMl._id));
+                marker_LabelDao.deleteById(removeMl._id);
             }
 
-            // add
             for (final Label addLabel : addLabels) {
-                final Marker_Label marker_label = Marker_Label.createNewMarker_Label(marker.gid, addLabel.gid);
-                db.insert(Db.TABLE_Marker_Label, null, marker_labelToContentValues(marker_label));
+                marker_LabelDao.insert(Marker_Label.createNewMarker_Label(marker.gid, addLabel.gid));
             }
 
             db.setTransactionSuccessful();
@@ -663,42 +581,29 @@ public class InternalDb {
     }
 
     public Label getLabelById(long _id) {
-        SQLiteDatabase db = helper.getReadableDatabase();
-        try (Cursor cursor = db.query(Db.TABLE_Label, null, "_id=?", new String[]{String.valueOf(_id)}, null, null, null)) {
-            if (cursor.moveToNext()) {
-                return labelFromCursor(cursor);
-            } else {
-                return null;
-            }
-        }
+        return labelDao.getById(_id);
     }
 
     @Nullable
     public Label getLabelByGid(@NonNull final String gid) {
-        try (Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Label, null, Db.Label.gid + "=?", Array(gid), null, null, null)) {
-            if (!cursor.moveToNext()) return null;
-            return labelFromCursor(cursor);
-        }
+        return labelDao.getByGid(gid);
     }
 
     @Nullable
     public Marker_Label getMarker_LabelByGid(@NonNull final String gid) {
-        try (Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Marker_Label, null, Db.Marker_Label.gid + "=?", Array(gid), null, null, null)) {
-            if (!cursor.moveToNext()) return null;
-            return marker_LabelFromCursor(cursor);
-        }
+        return marker_LabelDao.getByGid(gid);
     }
 
     /**
      * This is so special: delete label and the associated marker_labels
      */
     public void deleteLabelAndMarker_LabelsByLabelId(long _id) {
-        final Label label = getLabelById(_id);
+        final Label label = labelDao.getById(_id);
         final SQLiteDatabase db = helper.getWritableDatabase();
         db.beginTransactionNonExclusive();
         try {
-            db.delete(Db.TABLE_Marker_Label, Db.Marker_Label.label_gid + "=?", new String[]{label.gid});
-            db.delete(Db.TABLE_Label, "_id=?", new String[]{String.valueOf(_id)});
+            marker_LabelDao.deleteByLabelGid(label.gid);
+            labelDao.deleteById(_id);
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
@@ -706,58 +611,36 @@ public class InternalDb {
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
     }
 
-    /**
-     * Insert a new label or update an existing label.
-     *
-     * @param label if the _id is 0, this label will be inserted. Otherwise, updated.
-     */
     public void insertOrUpdateLabel(@NonNull final Label label) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        if (label._id != 0) {
-            db.update(Db.TABLE_Label, labelToContentValues(label), "_id=?", Array(String.valueOf(label._id)));
-        } else {
-            label._id = db.insert(Db.TABLE_Label, null, labelToContentValues(label));
-        }
+        labelDao.upsert(label);
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
     }
 
-    /**
-     * Insert a new marker-label association or update an existing one.
-     *
-     * @param marker_label if the _id is 0, this marker_label will be inserted. Otherwise, updated.
-     */
     public void insertOrUpdateMarker_Label(@NonNull final Marker_Label marker_label) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        if (marker_label._id != 0) {
-            db.update(Db.TABLE_Marker_Label, marker_labelToContentValues(marker_label), "_id=?", ToStringArray(marker_label._id));
-        } else {
-            marker_label._id = db.insert(Db.TABLE_Marker_Label, null, marker_labelToContentValues(marker_label));
-        }
+        marker_LabelDao.upsert(marker_label);
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
     }
 
     public int countMarkersWithLabel(Label label) {
-        final SQLiteDatabase db = helper.getReadableDatabase();
-        return (int) DatabaseUtils.longForQuery(db, "select count(*) from " + Db.TABLE_Marker_Label + " where " + Db.Marker_Label.label_gid + "=?", new String[]{label.gid});
+        return marker_LabelDao.countByLabelGid(label.gid);
     }
 
     public void sortLabelsAlphabetically() {
         final SQLiteDatabase db = helper.getWritableDatabase();
         db.beginTransactionNonExclusive();
         try {
-            final List<Label> labels = listAllLabels();
+            final List<Label> labels = labelDao.listAll();
             labels.sort((lhs, rhs) -> {
                 if (lhs.title == null || rhs.title == null) {
                     return 0;
                 }
-
                 return lhs.title.compareToIgnoreCase(rhs.title);
             });
 
             for (int i = 0; i < labels.size(); i++) {
                 final Label label = labels.get(i);
                 label.ordering = i + 1;
-                db.update(Db.TABLE_Label, labelToContentValues(label), "_id=?", ToStringArray(label._id));
+                labelDao.upsert(label);
             }
 
             db.setTransactionSuccessful();
@@ -877,39 +760,14 @@ public class InternalDb {
     }
 
     public long insertReadingPlan(final ReadingPlan.ReadingPlanInfo info, byte[] data) {
-        final ContentValues cv = new ContentValues();
-        cv.put(Db.ReadingPlan.version, info.version);
-        cv.put(Db.ReadingPlan.name, info.name);
-        cv.put(Db.ReadingPlan.title, info.title);
-        cv.put(Db.ReadingPlan.description, info.description);
-        cv.put(Db.ReadingPlan.duration, info.duration);
-        cv.put(Db.ReadingPlan.startTime, info.startTime);
-        cv.put(Db.ReadingPlan.data, data);
-        final long res = helper.getWritableDatabase().insert(Db.TABLE_ReadingPlan, null, cv);
-
+        final long res = readingPlanDao.insert(info, data);
         // this adds the 'startTime' attribute to the sync entity (when any of the rp progress has been checked)
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
-
         return res;
     }
 
     public void insertOrUpdateReadingPlanProgress(final String gid, final int readingCode, final long checkTime) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        db.beginTransactionNonExclusive();
-        try {
-            db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=? and " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(gid, readingCode));
-
-            final ContentValues cv = new ContentValues();
-            cv.put(Db.ReadingPlanProgress.reading_plan_progress_gid, gid);
-            cv.put(Db.ReadingPlanProgress.reading_code, readingCode);
-            cv.put(Db.ReadingPlanProgress.checkTime, checkTime);
-            db.insert(Db.TABLE_ReadingPlanProgress, null, cv);
-
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
-
+        readingPlanDao.insertOrUpdateProgress(gid, readingCode, checkTime);
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
     }
 
@@ -919,65 +777,22 @@ public class InternalDb {
      * @param checkTime the time of checking the reading code, applied to all reading codes.
      */
     public void replaceReadingPlanProgress(final String gid, final IntArrayList readingCodes, final long checkTime) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        db.beginTransactionNonExclusive();
-        try {
-            db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=?", ToStringArray(gid));
-
-            for (int i = 0; i < readingCodes.size(); i++) {
-                final int readingCode = readingCodes.get(i);
-
-                final ContentValues cv = new ContentValues();
-                cv.put(Db.ReadingPlanProgress.reading_plan_progress_gid, gid);
-                cv.put(Db.ReadingPlanProgress.reading_code, readingCode);
-                cv.put(Db.ReadingPlanProgress.checkTime, checkTime);
-                db.insert(Db.TABLE_ReadingPlanProgress, null, cv);
-            }
-
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
-
+        readingPlanDao.replaceProgress(gid, readingCodes, checkTime);
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
     }
 
     public void insertOrUpdateMultipleReadingPlanProgresses(final String gid, final IntArrayList readingCodes, final long checkTime) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        db.beginTransactionNonExclusive();
-        try {
-            final ContentValues cv = new ContentValues();
-            cv.put(Db.ReadingPlanProgress.reading_plan_progress_gid, gid);
-            cv.put(Db.ReadingPlanProgress.checkTime, checkTime);
-
-            for (int i = 0, len = readingCodes.size(); i < len; i++) {
-                final int readingCode = readingCodes.get(i);
-
-                db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=? and " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(gid, readingCode));
-
-                // specific update
-                cv.put(Db.ReadingPlanProgress.reading_code, readingCode);
-
-                db.insert(Db.TABLE_ReadingPlanProgress, null, cv);
-            }
-
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
-
+        readingPlanDao.insertOrUpdateMultipleProgresses(gid, readingCodes, checkTime);
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
     }
 
     public void deleteReadingPlanProgress(final String gid, final int readingCode) {
-        helper.getWritableDatabase().delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=? and " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(gid, readingCode));
-
+        readingPlanDao.deleteProgress(gid, readingCode);
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
     }
 
     public void deleteAllReadingPlanProgressForGid(final String gid) {
-        helper.getWritableDatabase().delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=?", Array(gid));
-
+        readingPlanDao.deleteAllProgressForGid(gid);
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
     }
 
@@ -987,68 +802,20 @@ public class InternalDb {
      * please take care of it.
      */
     public Map<String /* gid */, Set<Integer> /* done reading codes */> getReadingPlanProgressSummaryForSync() {
-        final SQLiteDatabase db = helper.getReadableDatabase();
-        final Map<String, Set<Integer>> res = new HashMap<>();
-        try (Cursor c = db.query(Db.TABLE_ReadingPlanProgress, Array(Db.ReadingPlanProgress.reading_plan_progress_gid, Db.ReadingPlanProgress.reading_code), null, null, null, null, null)) {
-            while (c.moveToNext()) {
-                final String gid = c.getString(0);
-                final int readingCode = c.getInt(1);
-
-                final Set<Integer> set = res.computeIfAbsent(gid, k -> new HashSet<>());
-                set.add(readingCode);
-            }
-        }
-
-        return res;
+        return readingPlanDao.getProgressSummaryForSync();
     }
 
     @NonNull
     public List<ReadingPlan.ReadingPlanInfo> listAllReadingPlanInfo() {
-        final List<ReadingPlan.ReadingPlanInfo> infos = new ArrayList<>();
-        try (final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan,
-            new String[]{"_id", Db.ReadingPlan.version, Db.ReadingPlan.name, Db.ReadingPlan.title, Db.ReadingPlan.description, Db.ReadingPlan.duration, Db.ReadingPlan.startTime},
-            null, null, null, null, null
-        )) {
-            while (c.moveToNext()) {
-                ReadingPlan.ReadingPlanInfo info = new ReadingPlan.ReadingPlanInfo();
-                info.id = c.getLong(0);
-                info.version = c.getInt(1);
-                info.name = c.getString(2);
-                info.title = c.getString(3);
-                info.description = c.getString(4);
-                info.duration = c.getInt(5);
-                info.startTime = c.getLong(6);
-                infos.add(info);
-            }
-        }
-        return infos;
+        return readingPlanDao.listAllInfo();
     }
 
     public Pair<String, byte[]> getReadingPlanNameAndData(long _id) {
-        try (Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan, Array(Db.ReadingPlan.name, Db.ReadingPlan.data), "_id=?", ToStringArray(_id), null, null, null)) {
-            if (c.moveToNext()) {
-                return Pair.create(c.getString(0), c.getBlob(1));
-            }
-            return null;
-        }
+        return readingPlanDao.getNameAndData(_id);
     }
 
     public IntArrayList getAllReadingCodesByReadingPlanProgressGid(final String gid) {
-        IntArrayList res = new IntArrayList();
-        try (Cursor c = helper.getReadableDatabase().query(
-            Db.TABLE_ReadingPlanProgress,
-            Array(Db.ReadingPlanProgress.reading_code),
-            Db.ReadingPlanProgress.reading_plan_progress_gid + "=?",
-            Array(gid),
-            null,
-            null,
-            Db.ReadingPlanProgress.reading_code + " asc"
-        )) {
-            while (c.moveToNext()) {
-                res.add(c.getInt(0));
-            }
-        }
-        return res;
+        return readingPlanDao.getAllReadingCodesByProgressGid(gid);
     }
 
     /**
@@ -1056,28 +823,18 @@ public class InternalDb {
      * The progress will be kept, so it is not considered as deleted during sync.
      */
     public void deleteReadingPlanById(long id) {
-        helper.getWritableDatabase().delete(Db.TABLE_ReadingPlan, "_id=?", ToStringArray(id));
-
+        readingPlanDao.deleteById(id);
         // this removes the 'startTime' attribute from the sync entity
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
     }
 
     public void updateReadingPlanStartDate(long id, long startDate) {
-        final ContentValues cv = new ContentValues();
-        cv.put(Db.ReadingPlan.startTime, startDate);
-        helper.getWritableDatabase().update(Db.TABLE_ReadingPlan, cv, "_id=?", ToStringArray(id));
-
+        readingPlanDao.updateStartDate(id, startDate);
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_RP);
     }
 
     public List<String> listReadingPlanNames() {
-        final List<String> res = new ArrayList<>();
-        try (Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan, new String[]{Db.ReadingPlan.name}, null, null, null, null, null)) {
-            while (c.moveToNext()) {
-                res.add(c.getString(0));
-            }
-            return res;
-        }
+        return readingPlanDao.listNames();
     }
 
     @Nullable
@@ -1474,8 +1231,7 @@ public class InternalDb {
      * Deletes a label by gid.
      */
     public void deleteLabelByGid(final String gid) {
-        final boolean deleted = helper.getWritableDatabase().delete(Db.TABLE_Label, Db.Label.gid + "=?", Array(gid)) > 0;
-        if (deleted) {
+        if (labelDao.deleteByGid(gid) > 0) {
             Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
         }
     }
@@ -1486,7 +1242,7 @@ public class InternalDb {
      * @return true when deleted.
      */
     public boolean deleteMarker_LabelByGid(final String gid) {
-        final boolean deleted = helper.getWritableDatabase().delete(Db.TABLE_Marker_Label, Db.Marker_Label.gid + "=?", Array(gid)) > 0;
+        final boolean deleted = marker_LabelDao.deleteByGid(gid) > 0;
         if (deleted) {
             Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
         }
