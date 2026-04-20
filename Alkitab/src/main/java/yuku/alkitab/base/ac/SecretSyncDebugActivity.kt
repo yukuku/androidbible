@@ -387,7 +387,7 @@ class SecretSyncDebugActivity : BaseActivity() {
                     if (debugSyncResponse.success) {
                         val final_revno = debugSyncResponse.final_revno
                         val append_delta = debugSyncResponse.append_delta
-                        val applyResult = S.db.applyMabelAppendDelta(final_revno, pair.shadowEntities, clientState, append_delta, entitiesBeforeSync, simpleToken)
+                        val applyResult = S.db.syncApplier.applyMabelAppendDelta(final_revno, pair.shadowEntities, clientState, append_delta, entitiesBeforeSync, simpleToken)
 
                         MaterialAlertDialogBuilder(this@SecretSyncDebugActivity)
                             .setMessage("Final revno: $final_revno\nApply result: $applyResult\nAppend delta: $append_delta")
