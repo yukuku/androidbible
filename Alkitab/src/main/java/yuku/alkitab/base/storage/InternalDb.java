@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
-import android.provider.BaseColumns;
 import android.util.Pair;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,13 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.MarkerListActivity;
-import yuku.alkitab.base.devotion.ArticleMeidA;
-import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
-import yuku.alkitab.base.devotion.ArticleRenunganHarian;
-import yuku.alkitab.base.devotion.ArticleRoc;
-import yuku.alkitab.base.devotion.ArticleSantapanHarian;
 import yuku.alkitab.base.devotion.DevotionArticle;
 import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionDb;
@@ -60,10 +53,16 @@ public class InternalDb {
 
     final InternalDbHelper helper;
     public final VersionDao versionDao;
+    public final ProgressMarkDao progressMarkDao;
+    public final PerVersionDao perVersionDao;
+    public final DevotionDao devotionDao;
 
     public InternalDb(InternalDbHelper helper) {
         this.helper = helper;
         this.versionDao = new VersionDao(helper);
+        this.progressMarkDao = new ProgressMarkDao(helper);
+        this.perVersionDao = new PerVersionDao(helper);
+        this.devotionDao = new DevotionDao(helper);
     }
 
     /**
@@ -465,72 +464,18 @@ public class InternalDb {
     }
 
     public void storeArticleToDevotions(DevotionArticle article) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-
-        final ContentValues values = new ContentValues();
-        values.put(Table.Devotion.name.name(), article.getKind().name);
-        values.put(Table.Devotion.date.name(), article.getDate());
-        values.put(Table.Devotion.readyToUse.name(), article.getReadyToUse() ? 1 : 0);
-
-        if (article.getReadyToUse()) {
-            values.put(Table.Devotion.body.name(), article.getBody());
-        } else {
-            values.putNull(Table.Devotion.body.name());
-        }
-
-        values.put(Table.Devotion.touchTime.name(), Sqlitil.nowDateTime());
-        values.put(Table.Devotion.dataFormatVersion.name(), 1);
-
-        db.beginTransactionNonExclusive();
-        try {
-            // first delete the existing
-            db.delete(Table.Devotion.tableName(), Table.Devotion.name + "=? and " + Table.Devotion.date + "=?", new String[]{article.getKind().name, article.getDate()});
-            db.insert(Table.Devotion.tableName(), null, values);
-
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
+        devotionDao.storeArticle(article);
     }
 
     public int deleteDevotionsWithTouchTimeBefore(Date date) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        return db.delete(Table.Devotion.tableName(), Table.Devotion.touchTime + "<?", ToStringArray(Sqlitil.toInt(date)));
+        return devotionDao.deleteWithTouchTimeBefore(date);
     }
 
     /**
      * Try to get article from local db. Non ready-to-use article will be returned too.
      */
     public DevotionArticle tryGetDevotion(String name, String date) {
-        try (Cursor c = helper.getReadableDatabase().query(Table.Devotion.tableName(), null, Table.Devotion.name + "=? and " + Table.Devotion.date + "=? and " + Table.Devotion.dataFormatVersion + "=?", ToStringArray(name, date, 1), null, null, null)) {
-            final int col_body = c.getColumnIndexOrThrow(Table.Devotion.body.name());
-            final int col_readyToUse = c.getColumnIndexOrThrow(Table.Devotion.readyToUse.name());
-
-            if (!c.moveToNext()) {
-                return null;
-            }
-
-            final DevotionActivity.DevotionKind kind = DevotionActivity.DevotionKind.getByName(name);
-            switch (kind) {
-                case RH -> {
-                    return new ArticleRenunganHarian(date, c.getString(col_body), c.getInt(col_readyToUse) > 0);
-                }
-                case SH -> {
-                    return new ArticleSantapanHarian(date, c.getString(col_body), c.getInt(col_readyToUse) > 0);
-                }
-                case ME_EN -> {
-                    return new ArticleMorningEveningEnglish(date, c.getString(col_body), true);
-                }
-                case MEID_A -> {
-                    return new ArticleMeidA(date, c.getString(col_body), c.getInt(col_readyToUse) > 0);
-                }
-                case ROC -> {
-                    return new ArticleRoc(date, c.getString(col_body), c.getInt(col_readyToUse) > 0);
-                }
-            }
-        }
-
-        throw new RuntimeException("Should not be reachable");
+        return devotionDao.tryGet(name, date);
     }
 
     @NonNull
@@ -909,115 +854,26 @@ public class InternalDb {
         }
     }
 
-    /**
-     * Lists all progress marks that are not empty.
-     * (Empty ones will have an ari of 0. They will be excluded.)
-     */
     public List<ProgressMark> listAllProgressMarks() {
-        final List<ProgressMark> res = new ArrayList<>();
-        try (Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_ProgressMark, null, Db.ProgressMark.ari + " != 0", null, null, null, null)) {
-            while (cursor.moveToNext()) {
-                res.add(progressMarkFromCursor(cursor));
-            }
-        }
-
-        return res;
+        return progressMarkDao.listAll();
     }
 
-    /**
-     * Count the number of progress marks that are not empty.
-     * (Empty ones will have an ari of 0. They will be excluded.)
-     */
     public int countAllProgressMarks() {
-        return (int) DatabaseUtils.queryNumEntries(helper.getReadableDatabase(), Db.TABLE_ProgressMark, Db.ProgressMark.ari + " != 0");
+        return progressMarkDao.countAll();
     }
 
     @Nullable
     public ProgressMark getProgressMarkByPresetId(final int preset_id) {
-        try (Cursor cursor = helper.getReadableDatabase().query(
-            Db.TABLE_ProgressMark,
-            null,
-            Db.ProgressMark.preset_id + "=?",
-            new String[]{String.valueOf(preset_id)},
-            null, null, null
-        )) {
-            if (!cursor.moveToNext()) return null;
-
-            return progressMarkFromCursor(cursor);
-        }
+        return progressMarkDao.getByPresetId(preset_id);
     }
 
-    /**
-     * Insert a new progress mark (if preset_id is not found), or update an existing progress mark.
-     */
     public void insertOrUpdateProgressMark(@NonNull final ProgressMark progressMark) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-
-        final ContentValues cv = new ContentValues();
-        cv.put(Db.ProgressMarkHistory.progress_mark_preset_id, progressMark.preset_id);
-        cv.put(Db.ProgressMarkHistory.progress_mark_caption, progressMark.caption);
-        cv.put(Db.ProgressMarkHistory.ari, progressMark.ari);
-        cv.put(Db.ProgressMarkHistory.createTime, Sqlitil.toInt(progressMark.modifyTime));
-
-        db.beginTransactionNonExclusive();
-        try {
-            // the progress mark history first
-            db.insert(Db.TABLE_ProgressMarkHistory, null, cv);
-
-            final long count = DatabaseUtils.queryNumEntries(db, Db.TABLE_ProgressMark, Db.ProgressMark.preset_id + "=?", ToStringArray(progressMark.preset_id));
-            if (count > 0) {
-                db.update(Db.TABLE_ProgressMark, progressMarkToContentValues(progressMark), Db.ProgressMark.preset_id + "=?", ToStringArray(progressMark.preset_id));
-            } else {
-                db.insert(Db.TABLE_ProgressMark, null, progressMarkToContentValues(progressMark));
-            }
-
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
-
+        progressMarkDao.insertOrUpdate(progressMark);
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_PINS);
     }
 
     public List<ProgressMarkHistory> listProgressMarkHistoryByPresetId(final int preset_id) {
-        try (Cursor c = helper.getReadableDatabase().rawQuery("select * from " + Db.TABLE_ProgressMarkHistory + " where " + Db.ProgressMarkHistory.progress_mark_preset_id + "=? order by " + Db.ProgressMarkHistory.createTime + " asc", new String[]{String.valueOf(preset_id)})) {
-            final List<ProgressMarkHistory> res = new ArrayList<>();
-            while (c.moveToNext()) {
-                res.add(progressMarkHistoryFromCursor(c));
-            }
-            return res;
-        }
-    }
-
-    public static ProgressMark progressMarkFromCursor(Cursor c) {
-        ProgressMark res = new ProgressMark();
-        res._id = c.getLong(c.getColumnIndexOrThrow(BaseColumns._ID));
-        res.preset_id = c.getInt(c.getColumnIndexOrThrow(Db.ProgressMark.preset_id));
-        res.caption = c.getString(c.getColumnIndexOrThrow(Db.ProgressMark.caption));
-        res.ari = c.getInt(c.getColumnIndexOrThrow(Db.ProgressMark.ari));
-        res.modifyTime = Sqlitil.toDate(c.getInt(c.getColumnIndexOrThrow(Db.ProgressMark.modifyTime)));
-
-        return res;
-    }
-
-    public static ContentValues progressMarkToContentValues(ProgressMark progressMark) {
-        ContentValues cv = new ContentValues();
-        cv.put(Db.ProgressMark.preset_id, progressMark.preset_id);
-        cv.put(Db.ProgressMark.caption, progressMark.caption);
-        cv.put(Db.ProgressMark.ari, progressMark.ari);
-        cv.put(Db.ProgressMark.modifyTime, Sqlitil.toInt(progressMark.modifyTime));
-        return cv;
-    }
-
-    public static ProgressMarkHistory progressMarkHistoryFromCursor(Cursor c) {
-        final ProgressMarkHistory res = new ProgressMarkHistory();
-        res._id = c.getLong(c.getColumnIndexOrThrow(BaseColumns._ID));
-        res.progress_mark_preset_id = c.getInt(c.getColumnIndexOrThrow(Db.ProgressMarkHistory.progress_mark_preset_id));
-        res.progress_mark_caption = c.getString(c.getColumnIndexOrThrow(Db.ProgressMarkHistory.progress_mark_caption));
-        res.ari = c.getInt(c.getColumnIndexOrThrow(Db.ProgressMarkHistory.ari));
-        res.createTime = Sqlitil.toDate(c.getInt(c.getColumnIndexOrThrow(Db.ProgressMarkHistory.createTime)));
-
-        return res;
+        return progressMarkDao.listHistoryByPresetId(preset_id);
     }
 
     public long insertReadingPlan(final ReadingPlan.ReadingPlanInfo info, byte[] data) {
@@ -1676,20 +1532,10 @@ public class InternalDb {
 
     @NonNull
     public PerVersionSettings getPerVersionSettings(@NonNull final String versionId) {
-        try (Cursor c = helper.getReadableDatabase().query(Table.PerVersion.tableName(), ToStringArray(Table.PerVersion.settings), Table.PerVersion.versionId + "=?", Array(versionId), null, null, null)) {
-            if (c.moveToNext()) {
-                return App.getDefaultGson().fromJson(c.getString(0), PerVersionSettings.class);
-            } else {
-                return PerVersionSettings.createDefault();
-            }
-        }
+        return perVersionDao.getSettings(versionId);
     }
 
     public void storePerVersionSettings(@NonNull final String versionId, @NonNull PerVersionSettings settings) {
-        final ContentValues cv = new ContentValues();
-        cv.put(Table.PerVersion.versionId.name(), versionId);
-        cv.put(Table.PerVersion.settings.name(), App.getDefaultGson().toJson(settings));
-
-        helper.getWritableDatabase().replace(Table.PerVersion.tableName(), null, cv);
+        perVersionDao.storeSettings(versionId, settings);
     }
 }
