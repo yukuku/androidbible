@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,11 +24,8 @@ import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.model.SyncLog;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.sync.Sync;
-import yuku.alkitab.base.sync.SyncAdapter;
+import yuku.alkitab.base.sync.SyncApplier;
 import yuku.alkitab.base.sync.SyncRecorder;
-import yuku.alkitab.base.sync.Sync_Mabel;
-import yuku.alkitab.base.sync.Sync_Pins;
-import yuku.alkitab.base.sync.Sync_Rp;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Highlights;
 import static yuku.alkitab.base.util.Literals.Array;
@@ -47,7 +43,7 @@ import yuku.alkitab.util.IntArrayList;
 public class InternalDb {
     static final String TAG = InternalDb.class.getSimpleName();
 
-    final InternalDbHelper helper;
+    public final InternalDbHelper helper;
     public final VersionDao versionDao;
     public final ProgressMarkDao progressMarkDao;
     public final PerVersionDao perVersionDao;
@@ -57,6 +53,7 @@ public class InternalDb {
     public final ReadingPlanDao readingPlanDao;
     public final MarkerDao markerDao;
     public final SyncShadowDao syncShadowDao;
+    public final SyncApplier syncApplier;
 
     public InternalDb(InternalDbHelper helper) {
         this.helper = helper;
@@ -69,6 +66,7 @@ public class InternalDb {
         this.readingPlanDao = new ReadingPlanDao(helper);
         this.markerDao = new MarkerDao(helper);
         this.syncShadowDao = new SyncShadowDao(helper);
+        this.syncApplier = new SyncApplier(this);
     }
 
     public Marker getMarkerById(long _id) {
@@ -775,258 +773,6 @@ public class InternalDb {
 
     public void deleteSyncShadowBySyncSetName(final String syncSetName) {
         syncShadowDao.deleteBySyncSetName(syncSetName);
-    }
-
-    /**
-     * Makes the current database updated with patches (append delta) from server.
-     * Also updates the shadow (both data and the revno).
-     *
-     * @return {@link yuku.alkitab.base.sync.Sync.ApplyAppendDeltaResult#ok} if database and sync shadow are updated. Otherwise else.
-     */
-    @NonNull
-    public Sync.ApplyAppendDeltaResult applyMabelAppendDelta(final int final_revno, final List<Sync.Entity<Sync_Mabel.Content>> shadowEntities, final Sync.ClientState<Sync_Mabel.Content> clientState, @NonNull final Sync.Delta<Sync_Mabel.Content> append_delta, @NonNull final List<Sync.Entity<Sync_Mabel.Content>> entitiesBeforeSync, @NonNull final String simpleTokenBeforeSync) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        db.beginTransactionNonExclusive();
-        Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_MABEL, true);
-        try {
-            { // if the current entities are not the same as the ones had when contacting server, reject this append delta.
-                final List<Sync.Entity<Sync_Mabel.Content>> currentEntities = Sync_Mabel.getEntitiesFromCurrent();
-                if (!Sync.entitiesEqual(currentEntities, entitiesBeforeSync)) {
-                    return Sync.ApplyAppendDeltaResult.dirty_entities;
-                }
-            }
-
-            { // if the current simpleToken has changed (sync user logged off or changed), reject this append delta
-                final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
-                if (!simpleTokenBeforeSync.equals(simpleToken)) {
-                    return Sync.ApplyAppendDeltaResult.dirty_sync_account;
-                }
-            }
-
-            // apply changes, which is server append delta, to current entities
-            for (final Sync.Operation<Sync_Mabel.Content> o : append_delta.operations) {
-                switch (o.opkind) {
-                    case del:
-                        switch (o.kind) {
-                            case Sync.Entity.KIND_MARKER:
-                                deleteMarkerByGid(o.gid);
-                                break;
-                            case Sync.Entity.KIND_LABEL:
-                                deleteLabelByGid(o.gid);
-                                break;
-                            case Sync.Entity.KIND_MARKER_LABEL:
-                                deleteMarker_LabelByGid(o.gid);
-                                break;
-                            default:
-                                return Sync.ApplyAppendDeltaResult.unknown_kind;
-                        }
-                        break;
-                    case add:
-                    case mod:
-                        switch (o.kind) {
-                            case Sync.Entity.KIND_MARKER:
-                                final Marker marker = getMarkerByGid(o.gid);
-                                final Marker newMarker = Sync_Mabel.updateMarkerWithEntityContent(marker, o.gid, o.content);
-                                insertOrUpdateMarker(newMarker);
-                                break;
-                            case Sync.Entity.KIND_LABEL:
-                                final Label label = getLabelByGid(o.gid);
-                                final Label newLabel = Sync_Mabel.updateLabelWithEntityContent(label, o.gid, o.content);
-                                insertOrUpdateLabel(newLabel);
-                                break;
-                            case Sync.Entity.KIND_MARKER_LABEL:
-                                final Marker_Label marker_label = getMarker_LabelByGid(o.gid);
-                                final Marker_Label newMarker_label = Sync_Mabel.updateMarker_LabelWithEntityContent(marker_label, o.gid, o.content);
-                                insertOrUpdateMarker_Label(newMarker_label);
-                                break;
-                            default:
-                                return Sync.ApplyAppendDeltaResult.unknown_kind;
-                        }
-                        break;
-                }
-            }
-
-            // if we reach here, the current entities has been updated with the append delta.
-
-            // apply changes, which are client delta, and server append delta, to shadow entities
-            final List<Sync.Entity<Sync_Mabel.Content>> shadowEntitiesPatched1 = SyncAdapter.patchNoConflict(shadowEntities, clientState.delta.operations);
-            final List<Sync.Entity<Sync_Mabel.Content>> shadowEntitiesPatched2 = SyncAdapter.patchNoConflict(shadowEntitiesPatched1, append_delta.operations);
-
-            final SyncShadow ss = Sync_Mabel.shadowFromEntities(shadowEntitiesPatched2, final_revno);
-            insertOrUpdateSyncShadowBySyncSetName(ss);
-
-            db.setTransactionSuccessful();
-
-            return Sync.ApplyAppendDeltaResult.ok;
-        } finally {
-            Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_MABEL, false);
-            db.endTransaction();
-        }
-    }
-
-    /**
-     * Makes the current database updated with patches (append delta) from server.
-     * Also updates the shadow (both data and the revno).
-     *
-     * @return {@link yuku.alkitab.base.sync.Sync.ApplyAppendDeltaResult#ok} if database and sync shadow are updated. Otherwise else.
-     */
-    @NonNull
-    public Sync.ApplyAppendDeltaResult applyPinsAppendDelta(final int final_revno, @NonNull final Sync.Delta<Sync_Pins.Content> append_delta, @NonNull final List<Sync.Entity<Sync_Pins.Content>> entitiesBeforeSync, @NonNull final String simpleTokenBeforeSync) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        db.beginTransactionNonExclusive();
-        Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_PINS, true);
-        try {
-            { // if the current entities are not the same as the ones had when contacting server, reject this append delta.
-                final List<Sync.Entity<Sync_Pins.Content>> currentEntities = Sync_Pins.getEntitiesFromCurrent();
-                if (!Sync.entitiesEqual(currentEntities, entitiesBeforeSync)) {
-                    return Sync.ApplyAppendDeltaResult.dirty_entities;
-                }
-            }
-
-            { // if the current simpleToken has changed (sync user logged off or changed), reject this append delta
-                final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
-                if (!simpleTokenBeforeSync.equals(simpleToken)) {
-                    return Sync.ApplyAppendDeltaResult.dirty_sync_account;
-                }
-            }
-
-            for (final Sync.Operation<Sync_Pins.Content> o : append_delta.operations) {
-                switch (o.opkind) {
-                    case del:
-                    case add:
-                        return Sync.ApplyAppendDeltaResult.unsupported_operation;
-                    case mod:
-                        if (Sync.Entity.KIND_PINS.equals(o.kind)) {// the whole logic to update all pins with the ones received from server (all pins in one entity)
-                            final Sync_Pins.Content content = o.content;
-                            final List<Sync_Pins.Content.Pin> pins = content.pins;
-
-                            for (final Sync_Pins.Content.Pin pin : pins) {
-                                final int preset_id = pin.preset_id;
-
-                                ProgressMark pm = getProgressMarkByPresetId(preset_id);
-                                if (pm == null) {
-                                    pm = new ProgressMark();
-                                    pm.preset_id = pin.preset_id;
-                                }
-                                pm.ari = pin.ari;
-                                pm.caption = pin.caption;
-                                pm.modifyTime = Sqlitil.toDate(pin.modifyTime);
-                                insertOrUpdateProgressMark(pm);
-                            }
-                        } else {
-                            return Sync.ApplyAppendDeltaResult.unknown_kind;
-                        }
-                        break;
-                }
-            }
-
-            // if we reach here, the local database has been updated with the append delta.
-            final SyncShadow ss = Sync_Pins.shadowFromEntities(Sync_Pins.getEntitiesFromCurrent(), final_revno);
-            insertOrUpdateSyncShadowBySyncSetName(ss);
-
-            db.setTransactionSuccessful();
-
-            return Sync.ApplyAppendDeltaResult.ok;
-        } finally {
-            Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_PINS, false);
-            db.endTransaction();
-        }
-    }
-
-    /**
-     * Makes the current database updated with patches (append delta) from server.
-     * Also updates the shadow (both data and the revno).
-     *
-     * @return {@link yuku.alkitab.base.sync.Sync.ApplyAppendDeltaResult#ok} if database and sync shadow are updated. Otherwise else.
-     */
-    @NonNull
-    public Sync.ApplyAppendDeltaResult applyRpAppendDelta(final int final_revno, @NonNull final Sync.Delta<Sync_Rp.Content> append_delta, @NonNull final List<Sync.Entity<Sync_Rp.Content>> entitiesBeforeSync, @NonNull final String simpleTokenBeforeSync) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        db.beginTransactionNonExclusive();
-        Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_RP, true);
-        try {
-            { // if the current entities are not the same as the ones had when contacting server, reject this append delta.
-                final List<Sync.Entity<Sync_Rp.Content>> currentEntities = Sync_Rp.getEntitiesFromCurrent();
-                if (!Sync.entitiesEqual(currentEntities, entitiesBeforeSync)) {
-                    return Sync.ApplyAppendDeltaResult.dirty_entities;
-                }
-            }
-
-            { // if the current simpleToken has changed (sync user logged off or changed), reject this append delta
-                final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
-                if (!simpleTokenBeforeSync.equals(simpleToken)) {
-                    return Sync.ApplyAppendDeltaResult.dirty_sync_account;
-                }
-            }
-
-            for (final Sync.Operation<Sync_Rp.Content> o : append_delta.operations) {
-                if (!Sync.Entity.KIND_RP_PROGRESS.equals(o.kind)) {
-                    return Sync.ApplyAppendDeltaResult.unknown_kind;
-                }
-
-                switch (o.opkind) {
-                    case del -> db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=?", Array(o.gid));
-                    case add, mod -> {
-                        // the whole logic to update all pins with the ones received from server (all pins in one entity)
-                        final Sync_Rp.Content content = o.content;
-                        final IntArrayList readingCodes = getAllReadingCodesByReadingPlanProgressGid(o.gid);
-                        final Set<Integer> src = new HashSet<>(readingCodes.size()); // our source (the current 'done' list)
-                        for (int i = 0, len = readingCodes.size(); i < len; i++) {
-                            src.add(readingCodes.get(i));
-                        }
-                        final Set<Integer> dst = new HashSet<>(content.done); // our destination (want to be like this)
-
-                        { // deletions
-                            final Set<Integer> to_del = new HashSet<>(src);
-                            to_del.removeAll(dst);
-                            for (Integer value : to_del) {
-                                db.delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_progress_gid + "=? and " + Db.ReadingPlanProgress.reading_code + "=?", ToStringArray(o.gid, value));
-                            }
-                        }
-
-                        { // additions
-                            final Set<Integer> to_add = new HashSet<>(dst);
-                            to_add.removeAll(src);
-
-                            // unchanging properties
-                            final ContentValues cv = new ContentValues();
-                            cv.put(Db.ReadingPlanProgress.reading_plan_progress_gid, o.gid);
-                            cv.put(Db.ReadingPlanProgress.checkTime, System.currentTimeMillis());
-
-                            for (Integer value : to_add) {
-                                cv.put(Db.ReadingPlanProgress.reading_code, value);
-                                helper.getWritableDatabase().insert(Db.TABLE_ReadingPlanProgress, null, cv);
-                            }
-                        }
-
-                        // update startTime
-                        if (content.startTime != null) {
-                            for (final ReadingPlan.ReadingPlanInfo info : listAllReadingPlanInfo()) {
-                                if (ReadingPlan.gidFromName(info.name).equals(o.gid)) {
-                                    if (info.startTime != content.startTime) {
-                                        final ContentValues cv = new ContentValues();
-                                        cv.put(Db.ReadingPlan.startTime, content.startTime);
-                                        db.update(Db.TABLE_ReadingPlan, cv, "_id=?", ToStringArray(info.id));
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // if we reach here, the local database has been updated with the append delta.
-            final SyncShadow ss = Sync_Rp.shadowFromEntities(Sync_Rp.getEntitiesFromCurrent(), final_revno);
-            insertOrUpdateSyncShadowBySyncSetName(ss);
-
-            db.setTransactionSuccessful();
-
-            return Sync.ApplyAppendDeltaResult.ok;
-        } finally {
-            Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_RP, false);
-            db.endTransaction();
-        }
     }
 
     /**
