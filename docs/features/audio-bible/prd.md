@@ -169,7 +169,7 @@ data class AudioCatalog(
 data class AudioVersion(
     val versionId: String,            // matches MVersion.getVersionId(), e.g. "preset/in-tb"
     val displayLocaleHint: String?,   // for ordering when user has no active version
-    val chapterUrlTemplate: String,   // e.g. "/audio/chapter/in-tb/{book}/{chapter}"
+    val chapterUrlTemplate: String,   // e.g. "/audio/chapter?versionId=preset%2Fin-tb&bookId={bookId}&chapter_1={chapter_1}"
     val timingUrlTemplate: String?,   // nullable: some versions have audio but no timing
     val copyrightNotice: String?,
     val license: String?,             // e.g. "Public Domain", "SABDA"

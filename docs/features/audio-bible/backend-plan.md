@@ -21,11 +21,13 @@
 | Method | Path | Auth | Description |
 |---|---|---|---|
 | `GET` | `/audio/catalog` | none | List of versions with audio + URL templates |
-| `GET` | `/audio/timing/{versionId}/{bookId}/{chapter_1}` | none | Verse-timing JSON, normalized |
-| `GET` | `/audio/chapter/{versionId}/{bookId}/{chapter_1}` | none | 302 redirect to the chapter MP3 on the CDN |
+| `GET` | `/audio/timing?versionId={versionId}&bookId={bookId}&chapter_1={chapter_1}` | none | Verse-timing JSON, normalized |
+| `GET` | `/audio/chapter?versionId={versionId}&bookId={bookId}&chapter_1={chapter_1}` | none | 302 redirect to the chapter MP3 on the CDN |
 | `POST` | `/audio/admin/reload` | admin token | Invalidate in-memory catalog; for manual rollouts |
 
-All responses include `Cache-Control` headers (`public, max-age=<ttl>, stale-while-revalidate=<ttl*2>`) and ETag support. `appIdentifier` query params may be accepted for analytics but must not affect the response body in v1.
+`versionId` is the exact string the client's `MVersion.getVersionId()` returns (e.g. `preset/in-tb`). It is carried as a **query parameter** rather than a path segment so the `/` it contains doesn't need to be URL-encoded into a path component, which many routers (Nginx, Spring MVC's default mapping, Go's `http.ServeMux`) reject or pre-decode in surprising ways. Keeping `versionId` identical on client and backend means no translation layer on either side — the catalog entry's identifier, the `matchVersionId` the client looks up locally, and the query param sent to `/audio/timing`/`/audio/chapter` are all the same string.
+
+All responses include `Cache-Control` with `public, max-age=<ttl>` and ETag support. `appIdentifier` query params may be accepted for analytics but must not affect the response body in v1. We deliberately do **not** include `stale-while-revalidate` — the Android client uses OkHttp's standard `Cache`, which ignores that directive (`Connections.kt` configures a 50 MB disk cache with no SWR interceptor). Graceful-degradation when the backend is unreachable is handled at two other layers: (a) the client ships a bundled `assets/audio_catalog.json` for catalog fetches, and (b) the backend itself holds a hot timing cache (§4.3) so the sabda.org upstream being down does not translate to backend unavailability. If we later decide to serve stale responses on network failure, we'll add a dedicated client-side `Interceptor` rather than relying on header directives OkHttp ignores.
 
 ## 3. `GET /audio/catalog`
 
@@ -49,8 +51,8 @@ Accept: application/json
       "versionId": "preset/in-tb",
       "shortName": "TB",
       "displayLocaleHint": "in",
-      "chapterUrlTemplate": "/audio/chapter/preset%2Fin-tb/{bookId}/{chapter_1}",
-      "timingUrlTemplate": "/audio/timing/preset%2Fin-tb/{bookId}/{chapter_1}",
+      "chapterUrlTemplate": "/audio/chapter?versionId=preset%2Fin-tb&bookId={bookId}&chapter_1={chapter_1}",
+      "timingUrlTemplate": "/audio/timing?versionId=preset%2Fin-tb&bookId={bookId}&chapter_1={chapter_1}",
       "copyrightNotice": "© LAI, via SABDA",
       "license": "Non-commercial",
       "hasDeuterocanon": false
@@ -59,8 +61,8 @@ Accept: application/json
       "versionId": "preset/in-ayt",
       "shortName": "AYT",
       "displayLocaleHint": "in",
-      "chapterUrlTemplate": "/audio/chapter/preset%2Fin-ayt/{bookId}/{chapter_1}",
-      "timingUrlTemplate": "/audio/timing/preset%2Fin-ayt/{bookId}/{chapter_1}",
+      "chapterUrlTemplate": "/audio/chapter?versionId=preset%2Fin-ayt&bookId={bookId}&chapter_1={chapter_1}",
+      "timingUrlTemplate": "/audio/timing?versionId=preset%2Fin-ayt&bookId={bookId}&chapter_1={chapter_1}",
       "copyrightNotice": "© AYT, via SABDA",
       "license": "Non-commercial",
       "hasDeuterocanon": false
@@ -69,8 +71,8 @@ Accept: application/json
       "versionId": "preset/in-avb",
       "shortName": "AVB",
       "displayLocaleHint": "ms",
-      "chapterUrlTemplate": "/audio/chapter/preset%2Fin-avb/{bookId}/{chapter_1}",
-      "timingUrlTemplate": "/audio/timing/preset%2Fin-avb/{bookId}/{chapter_1}",
+      "chapterUrlTemplate": "/audio/chapter?versionId=preset%2Fin-avb&bookId={bookId}&chapter_1={chapter_1}",
+      "timingUrlTemplate": "/audio/timing?versionId=preset%2Fin-avb&bookId={bookId}&chapter_1={chapter_1}",
       "copyrightNotice": "© BSM, via SABDA",
       "license": "Non-commercial",
       "hasDeuterocanon": false
@@ -79,8 +81,8 @@ Accept: application/json
       "versionId": "preset/en-kjv",
       "shortName": "KJV",
       "displayLocaleHint": "en",
-      "chapterUrlTemplate": "/audio/chapter/preset%2Fen-kjv/{bookId}/{chapter_1}",
-      "timingUrlTemplate": "/audio/timing/preset%2Fen-kjv/{bookId}/{chapter_1}",
+      "chapterUrlTemplate": "/audio/chapter?versionId=preset%2Fen-kjv&bookId={bookId}&chapter_1={chapter_1}",
+      "timingUrlTemplate": "/audio/timing?versionId=preset%2Fen-kjv&bookId={bookId}&chapter_1={chapter_1}",
       "copyrightNotice": "Public Domain",
       "license": "PD",
       "hasDeuterocanon": false
@@ -89,11 +91,16 @@ Accept: application/json
 }
 ```
 
+Field roles:
+
+- `versionId` — the **exact** string the client's `MVersion.getVersionId()` returns for the version this audio entry covers. See `Alkitab/src/main/java/yuku/alkitab/base/model/MVersionPreset.java:18-20`: preset versions return `"preset/<preset_name>"`. The client uses this field to decide whether the toolbar icon should appear and which entry to use for the visible version.
+- `chapterUrlTemplate` / `timingUrlTemplate` — URL templates with `{bookId}` and `{chapter_1}` placeholders (client performs literal string replace). The `versionId` is **already embedded and URL-encoded** in the template, so the client never has to encode it itself. Keeping these as full paths instead of just a filename lets us move the CDN without client work.
+
 Headers:
 
 ```
 ETag: "abc123"
-Cache-Control: public, max-age=86400, stale-while-revalidate=172800
+Cache-Control: public, max-age=86400
 Content-Type: application/json
 ```
 
@@ -106,19 +113,18 @@ The catalog is a small hand-maintained config file (JSON or TOML) in the backend
 ### 3.4 Notes
 
 - `versionId` must exactly match the client's `MVersion.getVersionId()` format (`"preset/<preset_name>"`). See `Alkitab/src/main/java/yuku/alkitab/base/model/MVersionPreset.java:18-20`. Getting this wrong means the toolbar icon never shows up.
-- `chapterUrlTemplate` uses `{bookId}` and `{chapter_1}` placeholders (client simple substitution). Keeping them as full paths, not just the filename, lets us move the CDN later without client work.
 - `hasDeuterocanon` is advisory so the client can disable Next-chapter at the Protestant canon boundary for those who want it; v1 can ignore.
 
-## 4. `GET /audio/timing/{versionId}/{bookId}/{chapter_1}`
+## 4. `GET /audio/timing?versionId=…&bookId=…&chapter_1=…`
 
 ### 4.1 Request
 
 ```
-GET /audio/timing/preset%2Fin-tb/41/3
+GET /audio/timing?versionId=preset%2Fin-tb&bookId=41&chapter_1=3
 Accept: application/json
 ```
 
-`versionId` is URL-encoded because it contains `/`. `bookId` is the 0-based book ID used throughout the client (`AlkitabModel/Ari.java`). `chapter_1` is 1-based.
+`versionId` is URL-encoded (`preset/in-tb` → `preset%2Fin-tb`). `bookId` is the 0-based book ID used throughout the client (`AlkitabModel/Ari.java`). `chapter_1` is 1-based.
 
 ### 4.2 Response (schema v1)
 
@@ -138,6 +144,8 @@ Accept: application/json
 }
 ```
 
+`durationMs` is **informational** — it's what we measured upstream at normalization time. The client treats `ExoPlayer.duration` (after the MP3 has prepared) as the source of truth for the scrubber max, because the actual file length may differ from what sabda.org's timing API reports. Include `durationMs` when we have a confident measurement; omit the field (or set it to `0`) when we don't. The client must not fail if it's missing or mismatched.
+
 Validation:
 
 - `verses` is sorted by `startMs`.
@@ -148,7 +156,7 @@ Validation:
 Headers:
 
 ```
-Cache-Control: public, max-age=604800, stale-while-revalidate=2592000
+Cache-Control: public, max-age=604800
 ETag: "<sha1>"
 ```
 
@@ -159,9 +167,9 @@ Backend maintains a storage bucket (Firestore, GCS, or a Postgres table — whic
 1. Cache hit → serve from storage (microseconds).
 2. Cache miss → fetch from `karaoke.sabda.org/api/timming.php?book=<timingName>&chapter=<chapter_1>&version=<timingVersionParam>`, normalize, store, serve.
 3. Upstream failure on cache miss → `503` with `Retry-After: 30`. Never serve stale data we've never verified.
-4. Upstream failure on cache hit → serve the stored copy anyway (that's why `stale-while-revalidate` is long).
+4. Upstream failure on cache hit → serve the stored copy anyway — the long `max-age` keeps clients from re-fetching in the interim.
 
-The SABDA-specific translation tables (version ID → `timingVersionParam`, book ID → `timingName`) live here, not in the client. Shape:
+The SABDA-specific translation tables (versionId → `timingVersionParam`, book ID → `timingName`) live here, not in the client. Shape:
 
 ```
 AUDIO_ADAPTERS = {
@@ -192,7 +200,7 @@ The sabda.org karaoke API returns `{ timestamps: [{ time_start, duration, verse 
 - The SABDA site is occasionally slow (seconds); we want to serve from hot cache.
 - We can't add fields (e.g. `durationMs`) without an upstream PR.
 
-## 5. `GET /audio/chapter/{versionId}/{bookId}/{chapter_1}`
+## 5. `GET /audio/chapter?versionId=…&bookId=…&chapter_1=…`
 
 ### 5.1 Behavior
 
@@ -253,7 +261,7 @@ Simple admin endpoint protected by the same mechanism that today protects the ex
 
 - No auth on read endpoints (by design — devotion and version endpoints are the same shape).
 - Rate-limit per client IP: 100 req/min per endpoint is plenty (a phone will make one catalog + ~10 timing requests per session).
-- Deny any path-traversal in `{versionId}` (reject anything not in the catalog's key set).
+- Reject any `versionId` not in the catalog's key set (prevents arbitrary strings from reaching the sabda.org upstream).
 
 ## 11. Coordination with client
 

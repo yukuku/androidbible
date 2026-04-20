@@ -107,7 +107,7 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 - [ ] Verify MediaSession metadata: title = `${book.shortName} ${chapter_1}`, subtitle = `${version.shortName}`, artwork = app icon + chapter art if available (for v1, app icon only).
 - [ ] Pre-compute available actions on each state change: Play ↔ Pause, Prev-chapter, Next-chapter. (Verse-level actions are exposed only through the app UI to keep the notification small.)
 - [ ] Handle `ACTION_MEDIA_BUTTON` — MediaSession does it automatically, but verify with a Bluetooth headset.
-- [ ] Stop-on-swipe: `onTaskRemoved` → pause (don't kill the service unless the user explicitly closes). Configurable later.
+- [ ] Swipe-from-recents (`onTaskRemoved`): if audio is currently playing, keep the service alive and the notification up — matches Spotify / YouTube Music convention (swiping recents is a task switcher, not a stop button). If audio is paused, call `stopSelf()` to release the service. The user can always stop explicitly via the notification's Stop action or the in-app audio bar's Close button.
 - [ ] Audio focus: `AudioFocusRequest` with `AUDIOFOCUS_GAIN`; pause/duck/resume on loss. media3 handles this by default with `setHandleAudioBecomingNoisy(true)` — enable it.
 - [ ] Make sure the service correctly ends foreground state on stop (calls `stopForeground(STOP_FOREGROUND_REMOVE)`).
 - [ ] Manual test matrix:
