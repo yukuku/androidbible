@@ -7,6 +7,7 @@ foojayResolver = "1.0.0"
 compileSdk = "36"
 minSdk = "26"
 targetSdk = "35"
+ndk = "28.2.13676358"
 
 # AndroidX
 androidxActivity = "1.11.0"

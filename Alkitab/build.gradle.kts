@@ -173,7 +173,7 @@ android {
 
     // We have to specify the ndk version twice, in here and in the Snappy library
     // https://issuetracker.google.com/issues/353554169
-    ndkVersion = "28.2.13676358"
+    ndkVersion = libs.versions.ndk.get()
 }
 
 // Register one CopyProprietaryAssetsTask per production flavor. The task
