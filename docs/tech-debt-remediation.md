@@ -380,7 +380,7 @@ If the project adopts Hilt for other reasons (e.g., ViewModel injection in REM-0
 | 5 | `DevotionDownloader.java` | 111 | Low | Small, standalone thread (do with REM-05) |
 | 6 | `Provider.java` | ~200 | Medium | Content provider, external API contract |
 | 7 | `SongBookUtil.java` | 219 | Medium | Network + deserialization (do with REM-01) |
-| 8 | `VerseRenderer.java` | 423 | Medium | Complex rendering logic, no tests |
+| 8 | ~~`VerseRenderer.java`~~ | ~~423~~ | ~~Medium~~ | ✅ ported (REM-26) |
 | 9 | `SearchEngine.java` | 537 | Medium | Performance-critical, no tests |
 | 10 | `Sync.java` | 508 | High | Threading + network, many call sites |
 | 11 | `InternalDb.java` | 1771 | High | Core database, skip if doing Room migration (REM-10) |
@@ -481,6 +481,21 @@ Use Android Studio's "Convert Java File to Kotlin" as a starting point, then man
 4. Delete `AmbilWarna` module
 
 **Difficulty:** Easy (3-4 hours).
+
+---
+
+### ~~REM-26: Port VerseRenderer to Kotlin~~ ✅ COMPLETED (2026-04-20)
+**Addresses:** TD-10 (leftover Unicode-constants comment), TD-11 (one of the listed Java files)  
+**Module:** Main reader (verse rendering)  
+**BRICE:** B=3 R=2 I=4 C=5 E=5 → **3.8**
+
+**Outcome:** `VerseRenderer.java` is now `VerseRenderer.kt` — a Kotlin `object` with `@JvmStatic` on the public `render` and `appendSuperscriptNumber` entry points, idiomatic `when` over the marker switch, range-based char checks (`text_c[3] in '1'..'4'`), and proper nullable types on optional parameters. All four parameters that the deleted `VerseRendererJavaHelper` shimmed (`lText`, `lVerseNumber`, `isVerseNumberShown`, `verseNumberText`, `highlightInfo`, `checked`, `inlineLinkSpanFactory`, `ftr`) now have Kotlin default values directly on `render`, with `verseNumberText` defaulting to `Ari.toVerse(ari).toString()`. The four callers of `VerseRendererJavaHelper.render(...)` (`MarkerListActivity`, `VerseActionModeController`, `VersesControllerImpl`, `RibkaReportActivity`) now call `VerseRenderer.render(...)` directly.
+
+The previously-documented private helpers (`renderVerseNumber`, `processFormattingCodes`, `applyHighlight`, `bindToTextViews`, `applyParaStyle`, `simpleRender`, `processSpecialTag`, `reportInvalidSpecialTag`, `createLeadingMarginSpan`) are now genuinely `private` — Kotlin lets us tighten visibility from Java's package-private default. No public API changes; the only caller-visible adjustment is `FormattedTextResult.result` becoming a typed nullable `CharSequence?` (matching the actual Java semantics), which surfaced one previously-implicit `!!` in `MarkerListActivity`.
+
+The undocumented Unicode constants flagged in TD-10 (the `superscriptDigits` array and `XREF_MARK`) now have inline comments naming the code points and what they're used for.
+
+Behavior preservation enforced by the same 39 Robolectric characterization tests (`VerseRendererTest.kt`) plus 274 other Alkitab tests — all 313 pass on both `testPlainDebugUnitTest` and `testPlainReleaseUnitTest`. `VerseRendererJavaHelper.kt` deleted.
 
 ---
 

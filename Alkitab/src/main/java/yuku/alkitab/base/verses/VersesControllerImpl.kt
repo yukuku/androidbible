@@ -31,7 +31,7 @@ import yuku.alkitab.base.widget.ParallelSpan
 import yuku.alkitab.base.widget.PericopeHeaderItem
 import yuku.alkitab.base.widget.ReferenceParallelClickData
 import yuku.alkitab.base.widget.ScrollbarSetter.setVerticalThumb
-import yuku.alkitab.base.widget.VerseRendererJavaHelper
+import yuku.alkitab.base.widget.VerseRenderer
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.SingleChapterVerses
 import yuku.alkitab.util.Ari
@@ -480,7 +480,7 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         val lText = view.lText
         val lVerseNumber = view.lVerseNumber
 
-        val startVerseTextPos = VerseRendererJavaHelper.render(
+        val startVerseTextPos = VerseRenderer.render(
             lText = lText,
             lVerseNumber = lVerseNumber,
             isVerseNumberShown = ui.isVerseNumberShown,

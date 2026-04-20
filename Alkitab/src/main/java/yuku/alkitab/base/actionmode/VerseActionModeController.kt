@@ -29,7 +29,6 @@ import yuku.alkitab.base.util.ShareUrl
 import yuku.alkitab.base.util.VerseTextFormatter
 import yuku.alkitab.base.verses.VersesDataModel
 import yuku.alkitab.base.widget.VerseRenderer
-import yuku.alkitab.base.widget.VerseRendererJavaHelper
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Book
 import yuku.alkitab.model.Version
@@ -376,7 +375,7 @@ class VerseActionModeController(
                     val rawVerseText = host.activeSplit0Version.loadVerseText(ari) ?: ""
                     val info = S.db.getHighlightColorRgb(ari)
 
-                    VerseRendererJavaHelper.render(ari = ari, text = rawVerseText, ftr = ftr)
+                    VerseRenderer.render(ari = ari, text = rawVerseText, ftr = ftr)
                     TypeHighlightDialog(host.activity, ari, listener, colorRgb, info, reference, ftr.result)
                 } else {
                     TypeHighlightDialog(host.activity, ariBc, selected, listener, colorRgb, reference)

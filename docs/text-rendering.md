@@ -36,7 +36,7 @@ Verse text uses inline formatting codes prefixed with `@`:
 
 ## VerseRenderer
 
-`VerseRenderer.java` processes formatting codes and produces a `SpannableStringBuilder`:
+`VerseRenderer.kt` processes formatting codes and produces a `SpannableStringBuilder`:
 
 1. Detects `@@` prefix to determine if verse has formatting
 2. Iterates through characters, building spans for each formatting region
