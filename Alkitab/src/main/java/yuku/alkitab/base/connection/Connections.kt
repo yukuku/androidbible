@@ -70,10 +70,11 @@ object Connections {
     @JvmStatic
     @Throws(IOException::class)
     fun downloadString(url: String): String {
-        val response = downloadCall(url).execute()
-        if (!response.isSuccessful) throw IOException("response was not successful, code ${response.code}")
-        val body = response.body ?: throw IOException("body is null")
-        return body.string()
+        return downloadCall(url).execute().use { response ->
+            if (!response.isSuccessful) throw IOException("response was not successful, code ${response.code}")
+            val body = response.body ?: throw IOException("body is null")
+            body.string()
+        }
     }
 
     /**
@@ -82,10 +83,11 @@ object Connections {
     @JvmStatic
     @Throws(IOException::class)
     fun downloadBytes(url: String): ByteArray {
-        val response = downloadCall(url).execute()
-        if (!response.isSuccessful) throw IOException("response was not successful, code ${response.code}")
-        val body = response.body ?: throw IOException("body is null")
-        return body.bytes()
+        return downloadCall(url).execute().use { response ->
+            if (!response.isSuccessful) throw IOException("response was not successful, code ${response.code}")
+            val body = response.body ?: throw IOException("body is null")
+            body.bytes()
+        }
     }
 
     @JvmStatic

@@ -1,9 +1,10 @@
 package yuku.alkitab.base.devotion;
 
 import android.content.Intent;
-import android.os.SystemClock;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.DevotionActivity;
@@ -11,70 +12,44 @@ import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;
 
-public class DevotionDownloader extends Thread {
+public class DevotionDownloader {
     private static final String TAG = DevotionDownloader.class.getSimpleName();
 
     public static final String ACTION_DOWNLOADED = DevotionDownloader.class.getName() + ".action.DOWNLOADED";
 
-    private final LinkedList<DevotionArticle> queue_ = new LinkedList<>();
+    private final LinkedBlockingDeque<DevotionArticle> queue_ = new LinkedBlockingDeque<>();
+    private volatile boolean shutdown_ = false;
+    private final ExecutorService executor_ = Executors.newSingleThreadExecutor();
+
+    public DevotionDownloader() {
+        executor_.submit(this::downloadLoop);
+    }
 
     public synchronized boolean add(DevotionArticle article, boolean prioritize) {
+        if (shutdown_) return false;
         if (queue_.contains(article)) return false;
 
         if (prioritize) {
             queue_.addFirst(article);
         } else {
-            queue_.add(article);
+            queue_.addLast(article);
         }
-
-        if (!isAlive()) {
-            start();
-        }
-
-        resumeDownloading();
 
         return true;
     }
 
-    private synchronized DevotionArticle dequeue() {
-        while (true) {
-            if (queue_.isEmpty()) {
-                return null;
-            }
-
-            DevotionArticle article = queue_.getFirst();
-            queue_.removeFirst();
-
-            if (article.getReadyToUse()) {
-                continue;
-            }
-
-            return article;
-        }
+    public void shutdown() {
+        shutdown_ = true;
+        executor_.shutdownNow();
     }
 
-    void resumeDownloading() {
-        synchronized (queue_) {
-            queue_.notify();
-        }
-    }
+    private void downloadLoop() {
+        while (!shutdown_) {
+            try {
+                final DevotionArticle article = queue_.take();
 
-    @Override
-    public void run() {
-        //noinspection InfiniteLoopStatement
-        while (true) {
-            final DevotionArticle article = dequeue();
+                if (article.getReadyToUse()) continue;
 
-            if (article == null) {
-                try {
-                    synchronized (queue_) {
-                        queue_.wait();
-                    }
-                    AppLog.d(TAG, "Downloader is resumed");
-                } catch (InterruptedException e) {
-                    AppLog.d(TAG, "Queue is interrupted");
-                }
-            } else {
                 final DevotionActivity.DevotionKind kind = article.getKind();
                 final String url = BuildConfig.SERVER_HOST + "/devotion/get?name=" + kind.name + "&date=" + article.getDate() + "&" + App.getAppIdentifierParamsEncoded();
 
@@ -82,11 +57,7 @@ public class DevotionDownloader extends Thread {
 
                 try {
                     final String output = Connections.downloadString(url);
-
-                    // success!
                     article.fillIn(output);
-
-                    // let's now store it to db
                     S.getDb().storeArticleToDevotions(article);
 
                     if (!output.startsWith("NG")) {
@@ -95,13 +66,15 @@ public class DevotionDownloader extends Thread {
                 } catch (IOException e) {
                     AppLog.d(TAG, "Downloader failed to download", e);
                 }
+            } catch (InterruptedException e) {
+                AppLog.d(TAG, "Downloader interrupted");
+                Thread.currentThread().interrupt();
+                break;
             }
-
-            SystemClock.sleep(50);
         }
     }
 
-    void broadcastDownloaded(final String name, final String date) {
+    private void broadcastDownloaded(final String name, final String date) {
         final Intent intent = new Intent(ACTION_DOWNLOADED)
             .putExtra("name", name)
             .putExtra("date", date);
