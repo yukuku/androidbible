@@ -316,11 +316,11 @@ A Kotlin `object` singleton that serves as the central service locator for the e
 ### PB-01: Soft Reference Cache Thrashing
 `MVersionDb` caches `VersionImpl` with `SoftReference` in a `ConcurrentHashMap`. Under memory pressure, all cached versions are GC'd simultaneously, causing a burst of file I/O as they're reloaded. No monitoring, no LRU eviction strategy.
 
-### PB-02: Highlight Hash Invalidation
-`Highlights.java` stores a hash of the verse text alongside highlight data. If a Bible version is updated (new translation revision), the hash check fails silently and the highlight may be dropped or applied to wrong text. No user notification.
+### ~~PB-02: Highlight Hash Invalidation~~ ❎ DISMISSED
+`Highlights.java` stores a hash of the verse text alongside partial-highlight offsets. On hash mismatch (verse text changed), `VerseRenderer` falls back to a full-verse highlight rather than dropping or mis-applying the span (VerseRenderer.java:236-248, 394-409) — so the degradation is graceful: the user still sees the verse highlighted, just at verse granularity instead of character range. Since published translation revisions are rare, this is acceptable behavior and not worth the complexity of fuzzy re-anchoring.
 
-### PB-03: Concurrent Sync Data Loss
-The sync protocol uses last-write-wins without conflict notification. If two devices edit the same bookmark simultaneously and sync, one edit is silently discarded. The `SyncShadow` table detects the conflict but the resolution strategy doesn't inform the user.
+### PB-03: Concurrent Sync Data Loss for Highlights and Progress Pins
+The client-side patch logic (`SyncAdapter.patchNoConflict`, SyncAdapter.java:70-109) is last-write-wins for every Mabel entity and for progress pins — so concurrent edits to a highlight color or a progress-pin position on two devices silently discard one side. Note and bookmark caption text may be merged server-side before deltas are emitted, but the client unconditionally overwrites whatever arrives. The `SyncShadow` table is used to compute the local delta, not to detect or surface cross-device conflicts to the user.
 
 ### PB-04: FCM Token Refresh Failure
 `FcmMessagingService.onNewToken()` re-registers with the backend, but if the HTTP call fails (network down, server error), it's silently logged at debug level (Sync.java:306-337). The device stops receiving sync push notifications with no retry mechanism.
