@@ -98,21 +98,21 @@ This document provides a prioritized remediation plan for each tech debt item id
 
 ---
 
-### REM-05: Add try-with-resources to DevotionDownloader
+### REM-05: Refactor DevotionDownloader threading ✅ COMPLETED
 **Addresses:** TD-06 (DevotionDownloader)  
 **Module:** Devotions  
 **BRICE:** B=2 R=3 I=5 C=5 E=5 → **4.0**
 
-**Current state:** `DevotionDownloader.java` has an infinite loop with `@SuppressWarnings("InfiniteLoopStatement")`, hardcoded 50ms sleep, and no graceful shutdown.
+**Completed in:** `758793f5` (2026-04-20)
 
-**Steps:**
-1. Replace `extends Thread` with `ExecutorService` (single-thread executor)
-2. Replace `queue_.wait()/notify()` with `LinkedBlockingQueue.take()`
-3. Add `shutdown()` method that sets a volatile flag and interrupts the thread
-4. Remove hardcoded `SystemClock.sleep(50)` — the blocking queue provides natural backpressure
-5. Wrap HTTP response handling in try-with-resources
+**What was done:**
+1. ✅ Replaced `extends Thread` with a single-thread `ExecutorService` (`Executors.newSingleThreadExecutor()`)
+2. ✅ Replaced `queue_.wait()/notify()` with `LinkedBlockingDeque.take()` — blocking take provides natural backpressure
+3. ✅ Added `shutdown()` method that sets a `volatile boolean shutdown_` flag and calls `executor_.shutdownNow()`; the download loop checks the flag and propagates `InterruptedException` by re-interrupting and breaking out
+4. ✅ Hardcoded `SystemClock.sleep(50)` removed
+5. ✅ HTTP response handling now goes through `Connections.downloadString(url)`, which handles stream cleanup internally
 
-**Difficulty:** Easy (3-4 hours).
+**Remaining:** The broadcast at the end of `downloadLoop` still uses `App.getLbm()` (LocalBroadcastManager). That is tracked separately under REM-03.
 
 ---
 
@@ -196,7 +196,7 @@ This document provides a prioritized remediation plan for each tech debt item id
 **Module:** Cross-cutting (50 files)  
 **BRICE:** B=4 R=2 I=2 C=3 E=5 → **3.2**
 
-**Current state:** `S.kt` (322 lines) is a Kotlin `object` singleton mixing database access (`db`, `songDb`), active version state, and UI dimensions (`CalculatedDimensions`). Imported by 50 files with 161+ call sites. Untestable without a full Android environment.
+**Current state:** `S.kt` (313 lines) is a Kotlin `object` singleton mixing database access (`db`, `songDb`), active version state, and UI dimensions (`CalculatedDimensions`). Imported by 50 files with 161+ call sites. Untestable without a full Android environment.
 
 **Recommended approach: Incremental interface extraction, then manual DI**
 
@@ -670,7 +670,7 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 | REM-01 | ~~Fix SongBookUtil deserialization safety~~ ✅ | **4.6** | 1 |
 | REM-02 | ~~Fix Preferences hold/unhold safety~~ ✅ | **4.2** | 1 |
 | REM-04 | Fix FCM token retry | **4.2** | 1 |
-| REM-05 | Fix DevotionDownloader threading | **4.0** | 1 |
+| REM-05 | ~~Fix DevotionDownloader threading~~ ✅ | **4.0** | 1 |
 | REM-03 | Replace LocalBroadcastManager | **3.8** | 1 |
 | REM-23 | ~~Port ybuild.sh to Gradle~~ ✅ | **3.8** | 2 |
 | REM-06 | Extract IsiActivity gestures | **3.4** | 2 |
@@ -693,10 +693,10 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 
 ## Suggested Execution Order
 
-**Sprint 1 (1 week):** ~~REM-01~~✅, ~~REM-02~~✅, REM-04, REM-05 — quick safety fixes (REM-01/02 done)  
+**Sprint 1 (1 week):** ~~REM-01~~✅, ~~REM-02~~✅, REM-04, ~~REM-05~~✅ — quick safety fixes (REM-01/02/05 done)  
 **Sprint 2 (1 week):** REM-03 — LocalBroadcastManager removal (touches many files, best done in isolation)  
 **Sprint 3 (2 weeks):** ~~REM-07~~✅, REM-06, REM-08 — IsiActivity decomposition (REM-07 done)  
 **Sprint 4 (1 week):** ~~REM-12~~✅, REM-14 — deprecated library replacements (REM-12 done)  
 **Sprint 5 (2 weeks):** REM-10, REM-11 — Room migration for core tables  
 **Sprint 6 (2 weeks):** REM-09, ~~REM-18a-e~~✅ — ViewModel + test coverage (REM-18a/b/c/d/e done)  
-**Ongoing:** REM-15, REM-16, REM-17 — modernization work mixed into feature sprints
+**Ongoing:** REM-15, REM-16, ~~REM-17~~✅ — modernization work mixed into feature sprints (REM-17 done)

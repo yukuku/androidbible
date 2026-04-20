@@ -17,12 +17,14 @@ The main Bible reader activity is a monolithic class containing many inline lamb
 
 ---
 
-## TD-02: InternalDb — Raw SQL & Manual Statement Caching (1771 lines)
+## TD-02: InternalDb — Raw SQL & Manual Statement Caching (830 lines, was 1771)
 
 **File:** `Alkitab/src/main/java/yuku/alkitab/base/storage/InternalDb.java`
 
-### Raw SQL string concatenation (15+ instances)
-Lines 201–205, 264, 666, 1319+:
+**Status:** Significantly improved. Per-table DAOs (`MarkerDao`, `LabelDao`, `VersionDao`, `DevotionDao`, `ReadingPlanDao`, `ProgressMarkDao`, `PerVersionDao`, `Marker_LabelDao`, `SyncShadowDao`) and `SyncApplier` were extracted in `d805265e`, shrinking `InternalDb.java` from 1771 → 830 lines. Further null-safety cleanup landed in `70c97818`. The remaining issues below are the parts not covered by that refactor.
+
+### Raw SQL string concatenation (~10 instances remain)
+Examples at `InternalDb.java:134, 137, 180, 593–597, 632–646`:
 ```java
 c = db.rawQuery("select " + Db.TABLE_Marker + ".* from " + Db.TABLE_Marker +
   " where " + Db.TABLE_Marker + "." + Db.Marker.kind + "=? and " +
@@ -31,27 +33,21 @@ c = db.rawQuery("select " + Db.TABLE_Marker + ".* from " + Db.TABLE_Marker +
 ```
 These are unreadable, fragile, and impossible to verify at compile time.
 
-### Manual compiled statement caching (line 229)
-```java
-private SQLiteStatement stmt_countMarkersForBookChapter = null;
-if (stmt_countMarkersForBookChapter == null) {
-    stmt_countMarkersForBookChapter = helper.getReadableDatabase().compileStatement(...);
-}
-```
-Fragile lifecycle management — if the database is closed and reopened, cached statements become invalid.
+### ~~Manual compiled statement caching~~ ✅ FIXED
+The problematic `private SQLiteStatement stmt_countMarkersForBookChapter` field and null-check pattern have been removed. `MarkerDao.countForAriRange` now uses `compileStatement(...).use { }` so the statement is closed deterministically. `LabelDao.getMaxOrdering` uses the same pattern. No cross-request caching, no invalidation concerns.
 
-### 2MB CursorWindow workaround (lines 1319–1370)
-```java
-db.rawQuery("select substr(" + Table.SyncShadow.data.name() + ", " + (i + 1) +
-  ", " + chunkSize + ") from ...", ...);
+### 2MB CursorWindow workaround (SyncShadowDao.kt:26–62)
+Still present, but moved out of `InternalDb.java` into `SyncShadowDao.kt`:
+```kotlin
+"select substr(${Table.SyncShadow.data.name}, ${i + 1}, $chunkSize)" +
 ```
 Hard-coded chunk size `1_000_000` to work around the undocumented 2MB CursorWindow limit. This is fragile and breaks if the system limit changes.
 
-### Duplicated reordering SQL (lines 924–968)
-Three near-identical `execSQL()` calls to reorder labels with `+1`/`-1` arithmetic — should be a single parameterized method.
+### Duplicated reordering SQL (InternalDb.java:593–646)
+Two near-identical `execSQL()` pairs to reorder labels and versions with `+1`/`-1` arithmetic — should be a single parameterized method parameterized by table name.
 
-### TODO comment (line 234)
-`TODO this is only called together with putAttributes(), make it private` — indicates known coupling that hasn't been fixed.
+### ~~TODO comment (line 234)~~ ✅ GONE
+The `TODO this is only called together with putAttributes(), make it private` comment was removed during the DAO refactor.
 
 ### ~~Verse-255 boundary bug (lines 238, 262)~~ ✅ FIXED
 **Fixed in REM-18c** (`ccf0a320`, 2026-04-16). `countMarkersForBookChapter` and `putAttributes` used exclusive upper bound (`ari < ariMax`) when `ariMax = ari_bookchapter | 0xff`, silently dropping any marker on verse 255. Changed to inclusive (`ari <= ariMax`) to match `getHighlightColorRgb`. No real data was affected (no Bible chapter has 255 verses), but the boundary is now correct and locked down by two regression tests.
@@ -100,23 +96,8 @@ Object-scope UI reference can leak Activity context. Should create Toast inline 
 
 ## TD-06: Threading & Concurrency Issues
 
-### DevotionDownloader infinite loop (lines 64–101)
-```java
-@SuppressWarnings("InfiniteLoopStatement")
-while (true) {
-    final DevotionArticle article = dequeue();
-    if (article == null) {
-        synchronized (queue_) { queue_.wait(); }
-    } else {
-        // download
-        SystemClock.sleep(50); // hardcoded 50ms
-    }
-}
-```
-- No shutdown mechanism — thread runs until process death
-- Hardcoded 50ms sleep between downloads
-- `queue_.wait()` blocks forever if `resumeDownloading()` is never called
-- Should use `ExecutorService` or `WorkManager`
+### ~~DevotionDownloader infinite loop~~ ✅ FIXED (REM-05, `758793f5`)
+`DevotionDownloader` now uses `Executors.newSingleThreadExecutor()` with a `LinkedBlockingDeque.take()` loop, a `volatile boolean shutdown_` flag, and a `shutdown()` method calling `executor_.shutdownNow()`. The hardcoded `SystemClock.sleep(50)` is gone; `InterruptedException` is handled by re-interrupting and breaking. Consider migrating to `WorkManager` as a future enhancement, but the original issues (no shutdown, infinite loop, hardcoded sleep) are resolved.
 
 ### Sync lock complexity (Sync.java lines 195–267)
 Multiple `synchronized` blocks on different objects (`syncSetNameQueue`, `syncUpdatesOngoingCounters`) with manual `queue_.notify()`. Risk of deadlock or race conditions with nested synchronization.
@@ -267,7 +248,7 @@ BUILD_DIST=market \
 
 ## TD-15: S.kt — God Object Service Locator
 
-**File:** `Alkitab/src/main/java/yuku/alkitab/base/S.kt` (322 lines)
+**File:** `Alkitab/src/main/java/yuku/alkitab/base/S.kt` (313 lines)
 
 A Kotlin `object` singleton that serves as the central service locator for the entire app, mixing three unrelated concerns:
 
