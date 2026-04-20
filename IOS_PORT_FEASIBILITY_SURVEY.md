@@ -2,7 +2,7 @@
 
 A detailed assessment of the effort and risks involved in porting the Alkitab / Quick Bible Android app to native iOS as a near 1:1 port of its current feature set.
 
-> **TL;DR** — A true *line-by-line* 1:1 port is **not feasible** because 40–50% of the codebase consists of Android-framework-specific UI (Activities, Fragments, RecyclerView, custom Views, AppWidget, ContentProvider). A faithful *functional* 1:1 port that preserves behavior, data formats, database schema, sync protocol, and feature set **is feasible** with no technical show-stoppers. Estimated effort: **~1,200–1,400 engineer-hours** (roughly 6–7 months for a 2-person team, or 3–4 months for a 3–4 person team). The Android data layer, binary formats, sync protocol, and core models are highly portable; the UI has to be rewritten. Recommended UI stack is a **SwiftUI shell with a UIKit reader** — SwiftUI for the lists/forms/widget, UIKit for the verse rendering and split-view reader where attributed text, gesture composition, and scroll coupling push SwiftUI past its comfort zone. See §9 for the breakdown.
+> **TL;DR** — A true *line-by-line* 1:1 port is **not feasible** because 40–50% of the codebase consists of Android-framework-specific UI (Activities, Fragments, RecyclerView, custom Views, AppWidget, ContentProvider). A faithful *functional* 1:1 port that preserves behavior, data formats, database schema, sync protocol, and feature set **is feasible** with no technical show-stoppers. Estimated effort: **~1,850 engineer-hours** (roughly 6–7 months for a 2-person team, or 3–4 months for a 3–4 person team) — see §15 for the per-area breakdown. The Android data layer, binary formats, sync protocol, and core models are highly portable; the UI has to be rewritten. Recommended UI stack is a **SwiftUI shell with a UIKit reader** — SwiftUI for the lists/forms/widget, UIKit for the verse rendering and split-view reader where attributed text, gesture composition, and scroll coupling push SwiftUI past its comfort zone. See §9 for the breakdown.
 
 ---
 
@@ -159,7 +159,7 @@ Core Data is technically viable but would require re-modeling every entity, migr
 
 Special caveats:
 
-- **`KpriModel.Song`** stores a `Parcelable`-serialized blob in its DB row (CLAUDE.md calls out this design as a known bad decision). On iOS that blob is unreadable. Options: (a) re-serialize the blob as JSON during first launch on iOS, (b) ship iOS with fresh song DBs, (c) define a portable serialization format and migrate Android to match. Recommend (a) bridged via a one-shot migration that runs the Android parser if ported to KMP, or (c) as a cleanup worth doing anyway.
+- **`KpriModel.Song`** stores a `Parcelable`-serialized blob in its DB row (CLAUDE.md calls out this design as a known bad decision). On iOS that blob is unreadable — Android's `Parcel` format is a private, unstable runtime format, so a Swift reimplementation isn't viable. Options: (a) define a portable serialization format (JSON) and migrate Android to write it, which is REM-21 in the tech-debt plan; (b) ship iOS with fresh song DBs and let users re-download their song books. **Recommend (a)**, done on Android *before* the iOS port begins — it's a worthwhile cleanup independently of porting, and it's the only option that preserves existing song data cross-platform. This is also consistent with the §14 recommendation against KMP (no shared Kotlin parser to bridge through).
 
 Migration effort: ~200 hours including the `Parcelable` song remediation.
 
@@ -248,7 +248,7 @@ Unless noted, these are good candidates for **SwiftUI**:
 
 Android uses canvas drawing in `VerseItem` for the highlight/selection background and in `AttributeView` / `Floater` for small overlays. Total custom-drawing surface is modest (~500–700 LOC). Core Graphics in `draw(_:)` overrides on iOS covers all of it without new research.
 
-**Effort for the full UI layer: ~600–700 hours** (includes reader, songs, markers, devotions, settings, search, reading plans, widget config, onboarding).
+**Effort for the full UI layer: ~800 hours** (verse rendering 200 + main reader 250 + songs/markers/devotions/reading-plans/search UI 200 + custom drawing 150 — see §15).
 
 ---
 
