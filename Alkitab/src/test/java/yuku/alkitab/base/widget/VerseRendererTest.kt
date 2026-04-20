@@ -88,7 +88,7 @@ class VerseRendererTest {
     }
 
     private fun overrideAppliedDimensions(d: S.CalculatedDimensions) {
-        val holderClass = Class.forName("yuku.alkitab.base.S\$CalculatedDimensionsHolder")
+        val holderClass = Class.forName("${S::class.java.name}\$CalculatedDimensionsHolder")
         val instance = holderClass.getDeclaredField("INSTANCE").apply { isAccessible = true }.get(null)
         holderClass.getDeclaredField("applied").apply { isAccessible = true }.set(instance, d)
     }
