@@ -59,9 +59,11 @@ public class InternalDb {
     static final String TAG = InternalDb.class.getSimpleName();
 
     final InternalDbHelper helper;
+    public final VersionDao versionDao;
 
     public InternalDb(InternalDbHelper helper) {
         this.helper = helper;
+        this.versionDao = new VersionDao(helper);
     }
 
     /**
@@ -533,105 +535,23 @@ public class InternalDb {
 
     @NonNull
     public List<MVersionDb> listAllVersions() {
-        final List<MVersionDb> res = new ArrayList<>();
-        try (Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Version, null, null, null, null, null, Db.Version.ordering + " asc")) {
-            int col_locale = cursor.getColumnIndexOrThrow(Db.Version.locale);
-            int col_shortName = cursor.getColumnIndexOrThrow(Db.Version.shortName);
-            int col_longName = cursor.getColumnIndexOrThrow(Db.Version.longName);
-            int col_description = cursor.getColumnIndexOrThrow(Db.Version.description);
-            int col_filename = cursor.getColumnIndexOrThrow(Db.Version.filename);
-            int col_preset_name = cursor.getColumnIndexOrThrow(Db.Version.preset_name);
-            int col_modifyTime = cursor.getColumnIndexOrThrow(Db.Version.modifyTime);
-            int col_active = cursor.getColumnIndexOrThrow(Db.Version.active);
-            int col_ordering = cursor.getColumnIndexOrThrow(Db.Version.ordering);
-
-            while (cursor.moveToNext()) {
-                final MVersionDb mv = new MVersionDb();
-                mv.locale = cursor.getString(col_locale);
-                mv.shortName = cursor.getString(col_shortName);
-                mv.longName = cursor.getString(col_longName);
-                mv.description = cursor.getString(col_description);
-                mv.filename = cursor.getString(col_filename);
-                mv.preset_name = cursor.getString(col_preset_name);
-                mv.modifyTime = cursor.getInt(col_modifyTime);
-                mv.cache_active = cursor.getInt(col_active) != 0;
-                mv.ordering = cursor.getInt(col_ordering);
-                res.add(mv);
-            }
-        }
-        return res;
+        return versionDao.listAll();
     }
 
     public void setVersionActive(MVersionDb mv, boolean active) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        final ContentValues cv = new ContentValues();
-        cv.put(Db.Version.active, active ? 1 : 0);
-
-        if (mv.preset_name != null) {
-            db.update(Db.TABLE_Version, cv, Db.Version.preset_name + "=?", new String[]{mv.preset_name});
-        } else {
-            db.update(Db.TABLE_Version, cv, Db.Version.filename + "=?", new String[]{mv.filename});
-        }
+        versionDao.setActive(mv, active);
     }
 
     public int getVersionMaxOrdering() {
-        final SQLiteDatabase db = helper.getReadableDatabase();
-        return (int) DatabaseUtils.longForQuery(db, "select max(" + Db.Version.ordering + ") from " + Db.TABLE_Version, null);
+        return versionDao.getMaxOrdering();
     }
 
-    /**
-     * If the filename of the inserted mv already exists in the table,
-     * update is performed instead of an insert.
-     * In that case, the mv.ordering will be changed to the one in the table,
-     * and the passed-in mv.ordering will not be used.
-     */
     public void insertOrUpdateVersionWithActive(MVersionDb mv, boolean active) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        final ContentValues cv = new ContentValues();
-        cv.put(Db.Version.locale, mv.locale);
-        cv.put(Db.Version.shortName, mv.shortName);
-        cv.put(Db.Version.longName, mv.longName);
-        cv.put(Db.Version.description, mv.description);
-        cv.put(Db.Version.filename, mv.filename);
-        cv.put(Db.Version.preset_name, mv.preset_name);
-        cv.put(Db.Version.modifyTime, mv.modifyTime);
-        cv.put(Db.Version.active, active); // special
-        cv.put(Db.Version.ordering, mv.ordering);
-
-        db.beginTransactionNonExclusive();
-        try { // prevent insert for the same filename (absolute path), update instead
-            try (Cursor c = db.query(Db.TABLE_Version, Array("_id", Db.Version.ordering), Db.Version.filename + "=?", Array(mv.filename), null, null, null)) {
-                if (c.moveToNext()) {
-                    final long _id = c.getLong(0);
-                    final int ordering = c.getInt(1);
-
-                    mv.ordering = ordering;
-                    cv.put(Db.Version.ordering, ordering);
-
-                    db.update(Db.TABLE_Version, cv, "_id=?", ToStringArray(_id));
-                } else {
-                    db.insert(Db.TABLE_Version, null, cv);
-                }
-            }
-
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
+        versionDao.insertOrUpdateWithActive(mv, active);
     }
 
     public void deleteVersion(MVersionDb mv) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-
-        // delete preset by preset_name
-        if (mv.preset_name != null) {
-            final int deleted = db.delete(Db.TABLE_Version, Db.Version.preset_name + "=?", new String[]{mv.preset_name});
-            if (deleted > 0) {
-                return; // finished! if not, we fallback to filename
-            }
-        }
-
-        db.delete(Db.TABLE_Version, Db.Version.filename + "=?", new String[]{mv.filename});
+        versionDao.delete(mv);
     }
 
     public List<Label> listAllLabels() {
