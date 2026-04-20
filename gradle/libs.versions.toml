@@ -1,0 +1,109 @@
+[versions]
+agp = "8.13.0"
+kotlin = "2.2.0"
+googleServices = "4.4.3"
+firebaseCrashlyticsGradle = "3.0.6"
+foojayResolver = "1.0.0"
+compileSdk = "36"
+minSdk = "26"
+targetSdk = "35"
+ndk = "28.2.13676358"
+
+# AndroidX
+androidxActivity = "1.11.0"
+androidxAnnotation = "1.6.0"
+androidxAppcompat = "1.7.1"
+androidxConstraintlayout = "2.2.1"
+androidxCore = "1.17.0"
+androidxFragment = "1.8.9"
+androidxLocalbroadcastmanager = "1.1.0"
+androidxMedia3 = "1.8.0"
+androidxMultidex = "2.0.1"
+androidxPercentlayout = "1.0.0"
+androidxPreference = "1.2.1"
+androidxRecyclerview = "1.4.0"
+androidxSwiperefreshlayout = "1.1.0"
+androidxViewpager = "1.1.0"
+androidxWork = "2.10.4"
+androidxTestCore = "1.6.1"
+androidxTestExt = "1.3.0"
+androidxTestRules = "1.7.0"
+
+# Google / UI
+gson = "2.12.1"
+fastscroll = "1.3.0"
+material = "1.13.0"
+
+# Firebase
+firebaseBom = "34.2.0"
+
+# Tests
+junit = "4.13.2"
+leakcanary = "2.14"
+mockk = "1.13.13"
+robolectric = "4.13"
+
+# Misc
+okhttp = "5.1.0"
+coil = "2.7.0"
+kotlinxSerializationJson = "1.5.1"
+
+# UI
+fancyShowcaseView = "1.4.0"
+
+[libraries]
+# AndroidX
+androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "androidxActivity" }
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidxAnnotation" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppcompat" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "androidxConstraintlayout" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
+androidx-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "androidxFragment" }
+androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "androidxFragment" }
+androidx-localbroadcastmanager = { group = "androidx.localbroadcastmanager", name = "localbroadcastmanager", version.ref = "androidxLocalbroadcastmanager" }
+androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "androidxMedia3" }
+androidx-media3-datasource-okhttp = { group = "androidx.media3", name = "media3-datasource-okhttp", version.ref = "androidxMedia3" }
+androidx-multidex = { group = "androidx.multidex", name = "multidex", version.ref = "androidxMultidex" }
+androidx-percentlayout = { group = "androidx.percentlayout", name = "percentlayout", version.ref = "androidxPercentlayout" }
+androidx-preference = { group = "androidx.preference", name = "preference", version.ref = "androidxPreference" }
+androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "androidxPreference" }
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "androidxRecyclerview" }
+androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "androidxSwiperefreshlayout" }
+androidx-viewpager = { group = "androidx.viewpager", name = "viewpager", version.ref = "androidxViewpager" }
+androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidxWork" }
+androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExt" }
+androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
+
+# Google / UI
+google-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+fastscroll = { group = "me.zhanghai.android.fastscroll", name = "library", version.ref = "fastscroll" }
+
+# Firebase (messaging and crashlytics are version-less because they use the BOM)
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+
+# Tests
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+
+# Misc
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+coil = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+
+# UI
+fancyShowcaseView = { group = "com.github.faruktoptas", name = "FancyShowCaseView", version.ref = "fancyShowcaseView" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+firebase-crashlytics-gradle = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsGradle" }
