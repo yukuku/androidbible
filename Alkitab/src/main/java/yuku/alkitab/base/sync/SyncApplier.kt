@@ -130,7 +130,8 @@ class SyncApplier(private val db: InternalDb) {
                             return Sync.ApplyAppendDeltaResult.unknown_kind
                         }
                         // the whole logic to update all pins with the ones received from server (all pins in one entity)
-                        for (pin in o.content?.pins ?: emptyList()) {
+                        val content = o.content ?: continue
+                        for (pin in content.pins ?: emptyList()) {
                             val pm = db.getProgressMarkByPresetId(pin.preset_id) ?: ProgressMark().apply {
                                 preset_id = pin.preset_id
                             }
