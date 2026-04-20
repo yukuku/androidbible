@@ -1,7 +1,6 @@
 package yuku.alkitab.base.devotion;
 
 import android.content.Intent;
-import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -63,8 +62,8 @@ public class DevotionDownloader {
                     if (!output.startsWith("NG")) {
                         broadcastDownloaded(kind.name, article.getDate());
                     }
-                } catch (IOException e) {
-                    AppLog.d(TAG, "Downloader failed to download", e);
+                } catch (Exception e) {
+                    AppLog.d(TAG, "Downloader failed to process article", e);
                 }
             } catch (InterruptedException e) {
                 AppLog.d(TAG, "Downloader interrupted");
