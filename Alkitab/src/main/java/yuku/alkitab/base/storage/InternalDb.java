@@ -4,11 +4,9 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 import android.util.Pair;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -17,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.MarkerListActivity;
 import yuku.alkitab.base.devotion.DevotionArticle;
 import yuku.alkitab.base.model.MVersion;
@@ -58,6 +55,8 @@ public class InternalDb {
     public final LabelDao labelDao;
     public final Marker_LabelDao marker_LabelDao;
     public final ReadingPlanDao readingPlanDao;
+    public final MarkerDao markerDao;
+    public final SyncShadowDao syncShadowDao;
 
     public InternalDb(InternalDbHelper helper) {
         this.helper = helper;
@@ -68,74 +67,24 @@ public class InternalDb {
         this.labelDao = new LabelDao(helper);
         this.marker_LabelDao = new Marker_LabelDao(helper);
         this.readingPlanDao = new ReadingPlanDao(helper);
-    }
-
-    /**
-     * _id is not stored
-     */
-    private static ContentValues markerToContentValues(final Marker marker) {
-        final ContentValues res = new ContentValues();
-
-        res.put(Db.Marker.ari, marker.ari);
-        res.put(Db.Marker.gid, marker.gid);
-        res.put(Db.Marker.kind, marker.kind.code);
-        res.put(Db.Marker.caption, marker.caption);
-        res.put(Db.Marker.verseCount, marker.verseCount);
-        res.put(Db.Marker.createTime, Sqlitil.toInt(marker.createTime));
-        res.put(Db.Marker.modifyTime, Sqlitil.toInt(marker.modifyTime));
-
-        return res;
-    }
-
-    public static Marker markerFromCursor(Cursor cursor) {
-        final Marker res = Marker.createEmptyMarker();
-
-        res._id = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
-        res.gid = cursor.getString(cursor.getColumnIndexOrThrow(Db.Marker.gid));
-        res.ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.ari));
-        res.kind = Marker.Kind.fromCode(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.kind)));
-        res.caption = cursor.getString(cursor.getColumnIndexOrThrow(Db.Marker.caption));
-        res.verseCount = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.verseCount));
-        res.createTime = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.createTime)));
-        res.modifyTime = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.modifyTime)));
-
-        return res;
+        this.markerDao = new MarkerDao(helper);
+        this.syncShadowDao = new SyncShadowDao(helper);
     }
 
     public Marker getMarkerById(long _id) {
-        try (Cursor cursor = helper.getReadableDatabase().query(
-            Db.TABLE_Marker,
-            null,
-            "_id=?",
-            new String[]{String.valueOf(_id)},
-            null, null, null
-        )) {
-            if (!cursor.moveToNext()) return null;
-            return markerFromCursor(cursor);
-        }
+        return markerDao.getById(_id);
     }
 
     @Nullable
     public Marker getMarkerByGid(@NonNull final String gid) {
-
-        try (Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Marker, null, Db.Marker.gid + "=?", Array(gid), null, null, null)) {
-            if (!cursor.moveToNext()) return null;
-            return markerFromCursor(cursor);
-        }
+        return markerDao.getByGid(gid);
     }
 
     /**
      * Ordered by modified time, the newest is first.
      */
     public List<Marker> listMarkersForAriKind(final int ari, final Marker.Kind kind) {
-        final SQLiteDatabase db = helper.getReadableDatabase();
-        try (Cursor c = db.query(Db.TABLE_Marker, null, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?", ToStringArray(ari, kind.code), null, null, Db.Marker.modifyTime + " desc", null)) {
-            final List<Marker> res = new ArrayList<>();
-            while (c.moveToNext()) {
-                res.add(markerFromCursor(c));
-            }
-            return res;
-        }
+        return markerDao.listForAriKind(ari, kind);
     }
 
     /**
@@ -144,33 +93,24 @@ public class InternalDb {
      * @param marker if the _id is 0, this marker will be inserted. Otherwise, updated.
      */
     public void insertOrUpdateMarker(@NonNull final Marker marker) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        if (marker._id != 0) {
-            db.update(Db.TABLE_Marker, markerToContentValues(marker), "_id=?", Array(String.valueOf(marker._id)));
-        } else {
-            marker._id = db.insert(Db.TABLE_Marker, null, markerToContentValues(marker));
-        }
+        markerDao.upsert(marker);
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
     }
 
     public Marker insertMarker(int ari, Marker.Kind kind, String caption, int verseCount, Date createTime, Date modifyTime) {
-        final Marker res = Marker.createNewMarker(ari, kind, caption, verseCount, createTime, modifyTime);
-        final SQLiteDatabase db = helper.getWritableDatabase();
-
-        res._id = db.insert(Db.TABLE_Marker, null, markerToContentValues(res));
+        final Marker res = markerDao.insertNew(ari, kind, caption, verseCount, createTime, modifyTime);
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
-
         return res;
     }
 
     public void deleteMarkerById(long _id) {
-        final Marker marker = getMarkerById(_id);
+        final Marker marker = markerDao.getById(_id);
 
         final SQLiteDatabase db = helper.getWritableDatabase();
         db.beginTransactionNonExclusive();
         try {
-            db.delete(Db.TABLE_Marker_Label, Db.Marker_Label.marker_gid + "=?", new String[]{marker.gid});
-            db.delete(Db.TABLE_Marker, "_id=?", new String[]{String.valueOf(_id)});
+            marker_LabelDao.deleteByMarkerGid(marker.gid);
+            markerDao.deleteById(_id);
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
@@ -179,8 +119,7 @@ public class InternalDb {
     }
 
     public void deleteNonBookmarkMarkerById(long _id) {
-        SQLiteDatabase db = helper.getWritableDatabase();
-        db.delete(Db.TABLE_Marker, "_id=?", new String[]{String.valueOf(_id)});
+        markerDao.deleteById(_id);
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
     }
 
@@ -201,7 +140,7 @@ public class InternalDb {
 
         try {
             while (c.moveToNext()) {
-                res.add(markerFromCursor(c));
+                res.add(MarkerDao.markerFromCursor(c));
             }
         } finally {
             c.close();
@@ -211,19 +150,8 @@ public class InternalDb {
     }
 
     public List<Marker> listAllMarkers() {
-        final SQLiteDatabase db = helper.getReadableDatabase();
-        final List<Marker> res = new ArrayList<>();
-
-        try (Cursor c = db.query(Db.TABLE_Marker, null, null, null, null, null, null)) {
-            while (c.moveToNext()) {
-                res.add(markerFromCursor(c));
-            }
-        }
-
-        return res;
+        return markerDao.listAll();
     }
-
-    private SQLiteStatement stmt_countMarkersForBookChapter = null;
 
     /**
      * TODO this is only called together with {@link #putAttributes(int, int[], int[], Highlights.Info[])}, make it private.
@@ -231,17 +159,7 @@ public class InternalDb {
     public int countMarkersForBookChapter(int ari_bookchapter) {
         final int ariMin = ari_bookchapter & 0x00ffff00;
         final int ariMax = ari_bookchapter | 0x000000ff;
-
-        if (stmt_countMarkersForBookChapter == null) {
-            // Inclusive upper bound so a marker on verse 255 (ari == ariMax) is counted.
-            // Matches the inclusive bound used by getHighlightColorRgb(int, IntArrayList).
-            stmt_countMarkersForBookChapter = helper.getReadableDatabase().compileStatement("select count(*) from " + Db.TABLE_Marker + " where " + Db.Marker.ari + ">=? and " + Db.Marker.ari + "<=?");
-        }
-
-        stmt_countMarkersForBookChapter.bindLong(1, ariMin);
-        stmt_countMarkersForBookChapter.bindLong(2, ariMax);
-
-        return (int) stmt_countMarkersForBookChapter.simpleQueryForLong();
+        return markerDao.countForAriRange(ariMin, ariMax);
     }
 
 
@@ -313,10 +231,10 @@ public class InternalDb {
 
                 if (c.moveToNext()) { // check if marker exists
                     { // modify the latest one
-                        final Marker marker = markerFromCursor(c);
+                        final Marker marker = MarkerDao.markerFromCursor(c);
                         marker.modifyTime = now;
                         marker.caption = Highlights.encode(colorRgb, hashCode, startOffset, endOffset);
-                        db.update(Db.TABLE_Marker, markerToContentValues(marker), "_id=?", ToStringArray(marker._id));
+                        db.update(Db.TABLE_Marker, MarkerDao.markerToContentValues(marker), "_id=?", ToStringArray(marker._id));
                     }
 
                     // remove earlier ones if they exist (caused by sync)
@@ -326,7 +244,7 @@ public class InternalDb {
                     }
                 } else { // insert
                     final Marker marker = Marker.createNewMarker(ari, Marker.Kind.highlight, Highlights.encode(colorRgb, hashCode, startOffset, endOffset), 1, now, now);
-                    db.insert(Db.TABLE_Marker, null, markerToContentValues(marker));
+                    db.insert(Db.TABLE_Marker, null, MarkerDao.markerToContentValues(marker));
                 }
             }
             db.setTransactionSuccessful();
@@ -353,11 +271,11 @@ public class InternalDb {
                 try (Cursor c = db.query(Db.TABLE_Marker, null, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?", params, null, null, Db.Marker.modifyTime + " desc")) {
                     if (c.moveToNext()) { // check if marker exists
                         { // modify the latest one
-                            final Marker marker = markerFromCursor(c);
+                            final Marker marker = MarkerDao.markerFromCursor(c);
                             marker.modifyTime = new Date();
                             if (colorRgb != -1) {
                                 marker.caption = Highlights.encode(colorRgb);
-                                db.update(Db.TABLE_Marker, markerToContentValues(marker), "_id=?", ToStringArray(marker._id));
+                                db.update(Db.TABLE_Marker, MarkerDao.markerToContentValues(marker), "_id=?", ToStringArray(marker._id));
                             } else {
                                 // delete entry
                                 db.delete(Db.TABLE_Marker, "_id=?", ToStringArray(marker._id));
@@ -375,7 +293,7 @@ public class InternalDb {
                         } else {
                             final Date now = new Date();
                             final Marker marker = Marker.createNewMarker(ari, Marker.Kind.highlight, Highlights.encode(colorRgb), 1, now, now);
-                            db.insert(Db.TABLE_Marker, null, markerToContentValues(marker));
+                            db.insert(Db.TABLE_Marker, null, MarkerDao.markerToContentValues(marker));
                         }
                     }
                 }
@@ -839,101 +757,11 @@ public class InternalDb {
 
     @Nullable
     public SyncShadow getSyncShadowBySyncSetName(final String syncSetName) {
-        // Getting a sync shadow that has a size bigger than 2 MB will cause crash,
-        // because of system CursorWindow implementation that sets the max memory allocated
-        // to be 2 MB, as defined in system resource:
-        // <integer name="config_cursorWindowSize">2048</integer>
-        // So we will get the size first, and then allocate memory,
-        // and get the data in chunks.
-        final SQLiteDatabase db = helper.getReadableDatabase();
-        db.beginTransactionNonExclusive();
-        try {
-            final int data_len;
-            final long _id;
-            final int revno;
-
-            // get blob len
-            try (final Cursor c = db.rawQuery(
-                "select "
-                    + Table.SyncShadow.revno.name() + ", " // col 0
-                    + "length(" + Table.SyncShadow.data.name() + "), " // col 1
-                    + "_id " // col 2
-                    + " from " + Table.SyncShadow.tableName()
-                    + " where " + Table.SyncShadow.syncSetName + "=?",
-                Array(syncSetName)
-            )) {
-                if (c.moveToNext()) {
-                    revno = c.getInt(0);
-                    data_len = c.getInt(1);
-                    _id = c.getLong(2);
-                } else {
-                    return null;
-                }
-            }
-
-            final byte[] data = new byte[data_len];
-
-            { // fill in blob
-                final int chunkSize = 1000_000;
-                for (int i = 0; i < data_len; i += chunkSize) {
-                    try (final Cursor c = db.rawQuery(
-                        // sqlite substr func is 1-indexed
-                        "select "
-                            + "substr(" + Table.SyncShadow.data.name() + ", " + (i + 1) + ", " + chunkSize + ")" // col 0
-                            + " from " + Table.SyncShadow.tableName()
-                            + " where _id=?",
-                        ToStringArray(_id)
-                    )) {
-                        if (c.moveToNext()) {
-                            final byte[] chunk = c.getBlob(0);
-                            if (i + chunk.length != data_len) {
-                                // not the last one
-                                if (chunk.length != chunkSize) {
-                                    throw new RuntimeException("Not the requested size of chunk retrieved. data_len=" + data_len + " i=" + i + " chunk.len=" + chunk.length);
-                                }
-                                System.arraycopy(chunk, 0, data, i, chunkSize);
-                            } else {
-                                // the last one
-                                System.arraycopy(chunk, 0, data, i, chunk.length);
-                            }
-                        } else {
-                            throw new RuntimeException("Cursor moveToNext returns false, does not make sense, since previous query has indicated that this cursor has rows.");
-                        }
-                    }
-                }
-            }
-
-            db.setTransactionSuccessful();
-
-            final SyncShadow res = new SyncShadow();
-            res.syncSetName = syncSetName;
-            res.revno = revno;
-            res.data = data;
-            return res;
-        } finally {
-            db.endTransaction();
-        }
+        return syncShadowDao.getBySyncSetName(syncSetName);
     }
 
     public int getRevnoFromSyncShadowBySyncSetName(final String syncSetName) {
-        final SQLiteDatabase db = helper.getReadableDatabase();
-        try (Cursor c = db.query(Table.SyncShadow.tableName(), Array(
-            Table.SyncShadow.revno.name()
-        ), Table.SyncShadow.syncSetName + "=?", Array(syncSetName), null, null, null)) {
-            if (c.moveToNext()) {
-                return c.getInt(0);
-            }
-        }
-        return 0;
-    }
-
-    @NonNull
-    private static ContentValues syncShadowToContentValues(@NonNull final SyncShadow ss) {
-        final ContentValues res = new ContentValues();
-        res.put(Table.SyncShadow.syncSetName.name(), ss.syncSetName);
-        res.put(Table.SyncShadow.revno.name(), ss.revno);
-        res.put(Table.SyncShadow.data.name(), ss.data);
-        return res;
+        return syncShadowDao.getRevnoBySyncSetName(syncSetName);
     }
 
     /**
@@ -942,24 +770,11 @@ public class InternalDb {
      * @param ss if the {@link yuku.alkitab.base.model.SyncShadow#syncSetName} is already on the database, this method will replace it. Otherwise, this method will insert a new one.
      */
     public void insertOrUpdateSyncShadowBySyncSetName(@NonNull final SyncShadow ss) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        db.beginTransactionNonExclusive();
-        try {
-            final long count = DatabaseUtils.queryNumEntries(db, Table.SyncShadow.tableName(), Table.SyncShadow.syncSetName + "=?", Array(ss.syncSetName));
-            if (count > 0) {
-                db.update(Table.SyncShadow.tableName(), syncShadowToContentValues(ss), Table.SyncShadow.syncSetName + "=?", Array(ss.syncSetName));
-            } else {
-                db.insert(Table.SyncShadow.tableName(), null, syncShadowToContentValues(ss));
-            }
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
+        syncShadowDao.insertOrUpdateBySyncSetName(ss);
     }
 
     public void deleteSyncShadowBySyncSetName(final String syncSetName) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        db.delete(Table.SyncShadow.tableName(), Table.SyncShadow.syncSetName + "=?", Array(syncSetName));
+        syncShadowDao.deleteBySyncSetName(syncSetName);
     }
 
     /**
@@ -1220,7 +1035,7 @@ public class InternalDb {
      * @return true when deleted.
      */
     public boolean deleteMarkerByGid(final String gid) {
-        final boolean deleted = helper.getWritableDatabase().delete(Db.TABLE_Marker, Db.Marker.gid + "=?", Array(gid)) > 0;
+        final boolean deleted = markerDao.deleteByGid(gid) > 0;
         if (deleted) {
             Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
         }
@@ -1250,40 +1065,11 @@ public class InternalDb {
     }
 
     public void insertSyncLog(final int createTime, final SyncRecorder.EventKind kind, final String syncSetName, final String params) {
-        final ContentValues cv = new ContentValues(4);
-        cv.put(Table.SyncLog.createTime.name(), createTime);
-        cv.put(Table.SyncLog.kind.name(), kind.code);
-        cv.put(Table.SyncLog.syncSetName.name(), syncSetName);
-        cv.put(Table.SyncLog.params.name(), params);
-        helper.getWritableDatabase().insert(Table.SyncLog.tableName(), null, cv);
+        syncShadowDao.insertLog(createTime, kind, syncSetName, params);
     }
 
     public List<SyncLog> listLatestSyncLog(final int maxrows) {
-        try (Cursor c = helper.getReadableDatabase().query(Table.SyncLog.tableName(),
-            ToStringArray(
-                Table.SyncLog.createTime,
-                Table.SyncLog.kind,
-                Table.SyncLog.syncSetName,
-                Table.SyncLog.params
-            ),
-            null, null, null, null, Table.SyncLog.createTime + " desc", "" + maxrows)) {
-            final List<SyncLog> res = new ArrayList<>();
-            while (c.moveToNext()) {
-                final SyncLog row = new SyncLog();
-                row.createTime = Sqlitil.toDate(c.getInt(0));
-                row.kind_code = c.getInt(1);
-                row.syncSetName = c.getString(2);
-                final String params_s = c.getString(3);
-                if (params_s == null) {
-                    row.params = null;
-                } else {
-                    row.params = App.getDefaultGson().fromJson(params_s, new TypeToken<Map<String, Object>>() {
-                    }.getType());
-                }
-                res.add(row);
-            }
-            return res;
-        }
+        return syncShadowDao.listLatest(maxrows);
     }
 
     @NonNull
