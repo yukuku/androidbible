@@ -68,22 +68,16 @@ public class VerseRenderer {
      * @param ftr optional container for result that contains the verse text with span formattings, without the verse numbers
      * @return how many characters was used before the real start of verse text. This will be > 0 if the verse number is embedded inside lText.
      */
+    // Verse text formatting markers (the tokens that follow an '@' inside a "@@"-prefixed verse):
+    //   @@        start a verse containing paragraphs or formatting
+    //   @0..@4    start a paragraph with indent 0..4
+    //   @^        start-of-paragraph marker (first-line indent + hanging rest indent)
+    //   @6 / @5   start / end of red text (Jesus' words)
+    //   @9 / @7   start / end of italic
+    //   @8        put a blank line to the next verse
+    //   @< ... @> special tag (e.g. footnote, cross-reference); not visible for unsupported tags
+    //   @/        end of special tag (since 2013-10-04 all special tags must be closed)
     public static int render(@Nullable final TextView lText, @Nullable final TextView lVerseNumber, final boolean isVerseNumberShown, final int ari, @NonNull final String text, final String verseNumberText, @Nullable final Highlights.Info highlightInfo, final boolean checked, @Nullable final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, @Nullable final FormattedTextResult ftr) {
-        // @@ = start a verse containing paragraphs or formatting
-        // @0 = start with indent 0 [paragraph]
-        // @1 = start with indent 1 [paragraph]
-        // @2 = start with indent 2 [paragraph]
-        // @3 = start with indent 3 [paragraph]
-        // @4 = start with indent 4 [paragraph]
-        // @6 = start of red text [formatting]
-        // @5 = end of red text   [formatting]
-        // @9 = start of italic [formatting]
-        // @7 = end of italic   [formatting]
-        // @8 = put a blank line to the next verse [formatting]
-        // @^ = start-of-paragraph marker
-        // @< to @> = special tags (not visible for unsupported tags) [can be considered formatting]
-        // @/ = end of special tags (closing tag) (As of 2013-10-04, all special tags must be closed) [can be considered formatting]
-
         final int text_len = text.length();
 
         // Determine if this verse text is a simple verse or formatted verse.
@@ -104,46 +98,73 @@ public class VerseRenderer {
         }
         text.getChars(0, text_len, text_c, 0);
 
-        // '0'..'4', '^' indent 0..4 or new para
-        // -1 undefined
-        int paraType = -1;
-        // position of start of paragraph
-        int startPara = 0;
-        // position of start red marker
-        int startRed = -1;
-        // position of start italic marker
-        int startItalic = -1;
-        // whether we are inside a tag (between @< and @>)
-        boolean inSpecialTag = false;
-        // Reusable tag buffer
-        final StringBuilder tag = buf_tag_.get();
-
         final SpannableStringBuilder sb = new SpannableStringBuilder();
 
         // this has two uses
         // - to check whether a verse number has been written
         // - to check whether we need to put a new line when encountering a new para
-        final int startPosAfterVerseNumber;
-
-        int pos = 2; // we start after "@@"
-
-        // write verse number inline only when no @[1234^] is at the beginning of text
-        if (text_len >= 4 && text_c[pos] == '@' && (text_c[pos + 1] == '^' || (text_c[pos + 1] >= '1' && text_c[pos + 1] <= '4'))) {
-            // don't write verse number now
-            startPosAfterVerseNumber = 0;
-        } else {
-            if (isVerseNumberShown) {
-                sb.append(verseNumberText);
-                sb.setSpan(new VerseRenderer.VerseNumberSpan(!checked), 0, sb.length(), 0);
-                sb.append("  ");
-            }
-            startPosAfterVerseNumber = sb.length();
-        }
+        final int startPosAfterVerseNumber = renderVerseNumber(sb, text_c, text_len, isVerseNumberShown, verseNumberText, checked);
 
         // initialize lVerseNumber to have no padding first
         if (lVerseNumber != null) {
             lVerseNumber.setPadding(0, 0, 0, 0);
         }
+
+        processFormattingCodes(text, text_c, text_len, sb, startPosAfterVerseNumber, verseNumberText, checked, ari, inlineLinkSpanFactory);
+
+        applyHighlight(sb, highlightInfo, startPosAfterVerseNumber);
+
+        bindToTextViews(lText, lVerseNumber, sb, isVerseNumberShown, startPosAfterVerseNumber, verseNumberText);
+
+        if (ftr != null) {
+            ftr.result = sb;
+        }
+
+        return startPosAfterVerseNumber;
+    }
+
+    /**
+     * Writes the verse number prefix into {@code sb} when the formatted verse should embed it
+     * inline, and returns the position past that prefix (or 0 if no prefix was written).
+     *
+     * <p>The verse number is suppressed when the body opens with a paragraph marker that takes
+     * over layout — specifically {@code @^} or {@code @1} through {@code @4}. {@code @0} does
+     * NOT suppress, by design (those verses keep the inline number).
+     */
+    static int renderVerseNumber(final SpannableStringBuilder sb, final char[] text_c, final int text_len, final boolean isVerseNumberShown, final String verseNumberText, final boolean checked) {
+        // pos == 2 here (we start after "@@").
+        if (text_len >= 4 && text_c[2] == '@' && (text_c[3] == '^' || (text_c[3] >= '1' && text_c[3] <= '4'))) {
+            // delegated to lVerseNumber instead
+            return 0;
+        }
+        if (isVerseNumberShown) {
+            sb.append(verseNumberText);
+            sb.setSpan(new VerseRenderer.VerseNumberSpan(!checked), 0, sb.length(), 0);
+            sb.append("  ");
+        }
+        return sb.length();
+    }
+
+    /**
+     * Walks the formatted verse body starting after {@code "@@"} and applies all inline markers
+     * (paragraph styles, italic/red runs, line breaks, special tags) to {@code sb}. Calls
+     * {@link #applyParaStyle} once at the end to flush the trailing paragraph's margin span.
+     */
+    static void processFormattingCodes(final String text, final char[] text_c, final int text_len, final SpannableStringBuilder sb, final int startPosAfterVerseNumber, final String verseNumberText, final boolean checked, final int ari, @Nullable final VerseInlineLinkSpan.Factory inlineLinkSpanFactory) {
+        // '0'..'4', '^' indent 0..4 or new para; -1 undefined
+        int paraType = -1;
+        // Note: this is intentionally 0 (not sb.length()) so that for a verse with no
+        // paragraph markers the implicit case-(-1) paragraph's LeadingMarginSpan covers
+        // the whole sb — including the verse-number prefix that renderVerseNumber wrote.
+        // This also produces the documented two-paragraph behavior for "@@@0Body" where
+        // the first paragraph just covers the verse-number prefix.
+        int startPara = 0;
+        int startRed = -1;
+        int startItalic = -1;
+        boolean inSpecialTag = false; // between @< and @>
+        final StringBuilder tag = buf_tag_.get();
+
+        int pos = 2; // we start after "@@"
 
         while (true) {
             if (pos >= text_len) {
@@ -230,44 +251,48 @@ public class VerseRenderer {
             pos++;
         }
 
-        // apply unapplied
+        // flush the trailing paragraph
         applyParaStyle(sb, paraType, startPara, verseNumberText, startPosAfterVerseNumber > 0);
+    }
 
-        if (highlightInfo != null) {
-            final BackgroundColorSpan span = new BackgroundColorSpan(Highlights.alphaMix(highlightInfo.colorRgb));
-            if (highlightInfo.shouldRenderAsPartialForVerseText(sb.subSequence(startPosAfterVerseNumber, sb.length()))) {
-                final int start = startPosAfterVerseNumber + highlightInfo.partial.startOffset;
-                final int end = startPosAfterVerseNumber + highlightInfo.partial.endOffset;
-                if (end > start) {
-                    sb.setSpan(span, start, end, 0);
-                } else {
-                    sb.setSpan(span, end, start, 0);
-                }
+    /**
+     * Attaches a {@link BackgroundColorSpan} for the highlight. A partial highlight whose hash
+     * still matches the rendered body covers only its stored offsets; otherwise the whole verse
+     * body (after the verse-number prefix) is highlighted.
+     */
+    static void applyHighlight(final SpannableStringBuilder sb, @Nullable final Highlights.Info highlightInfo, final int startPosAfterVerseNumber) {
+        if (highlightInfo == null) return;
+
+        final BackgroundColorSpan span = new BackgroundColorSpan(Highlights.alphaMix(highlightInfo.colorRgb));
+        if (highlightInfo.shouldRenderAsPartialForVerseText(sb.subSequence(startPosAfterVerseNumber, sb.length()))) {
+            final int start = startPosAfterVerseNumber + highlightInfo.partial.startOffset;
+            final int end = startPosAfterVerseNumber + highlightInfo.partial.endOffset;
+            if (end > start) {
+                sb.setSpan(span, start, end, 0);
             } else {
-                sb.setSpan(span, startPosAfterVerseNumber, sb.length(), 0);
+                sb.setSpan(span, end, start, 0);
             }
+        } else {
+            sb.setSpan(span, startPosAfterVerseNumber, sb.length(), 0);
         }
+    }
 
+    /**
+     * Pushes the rendered {@code sb} into {@code lText} and updates {@code lVerseNumber} so the
+     * verse-number gutter is shown only when the number is not already embedded inline.
+     */
+    static void bindToTextViews(@Nullable final TextView lText, @Nullable final TextView lVerseNumber, final SpannableStringBuilder sb, final boolean isVerseNumberShown, final int startPosAfterVerseNumber, final String verseNumberText) {
         if (lText != null) {
             lText.setText(sb);
         }
-
-        // show verse on lVerseNumber if not shown in lText yet
         if (lVerseNumber != null) {
             lVerseNumber.setVisibility(isVerseNumberShown ? View.VISIBLE : View.GONE);
-
             if (startPosAfterVerseNumber > 0) {
                 lVerseNumber.setText("");
             } else {
                 lVerseNumber.setText(verseNumberText);
             }
         }
-
-        if (ftr != null) {
-            ftr.result = sb;
-        }
-
-        return startPosAfterVerseNumber;
     }
 
     static void processSpecialTag(final SpannableStringBuilder sb, final StringBuilder tag, @Nullable final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, final int ari) {
