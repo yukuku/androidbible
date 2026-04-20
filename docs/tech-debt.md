@@ -177,12 +177,8 @@ Preference keys are a flat enum with no grouping or type safety. Each access req
 
 **File:** `Alkitab/src/main/java/yuku/alkitab/base/widget/VerseRenderer.java`
 
-### 200-line render method (lines 71–271)
-The `render()` method handles verse number embedding, paragraph styles, red letter start/end, italic start/end, line breaks, cross-references, footnotes, and highlights in a single method with 7 levels of nesting. Should be decomposed into:
-- `renderVerseNumber()`
-- `applyParagraphStyle()`
-- `processFormattingCodes()`
-- `processSpecialTags()`
+### ~~200-line render method~~ ✅ RESOLVED (REM-25)
+The monolithic `render()` body has been decomposed into `renderVerseNumber()`, `processFormattingCodes()`, `applyHighlight()`, and `bindToTextViews()`, alongside the existing `applyParaStyle()` and `processSpecialTag()`. Behavior is locked down by 39 characterization tests in `VerseRendererTest.kt`.
 
 ### Undocumented Unicode constants (line 23)
 ```java
