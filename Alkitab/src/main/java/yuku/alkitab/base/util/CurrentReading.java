@@ -1,23 +1,20 @@
 package yuku.alkitab.base.util;
 
-import android.content.Intent;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.base.App;
+import yuku.alkitab.base.events.AppEvents;
 import yuku.alkitab.base.storage.Prefkey;
 
 /**
  * Manages current reading (selected from reading plan) with persistence.
  */
 public class CurrentReading {
-	public static final String ACTION_CURRENT_READING_CHANGED = CurrentReading.class.getName() + ".action.CURRENT_READING_CHANGED";
-
 	public static void set(final int ari_start, final int ari_end) {
 		Preferences.withTransaction(() -> {
 			Preferences.setInt(Prefkey.current_reading_ari_start, ari_start);
 			Preferences.setInt(Prefkey.current_reading_ari_end, ari_end);
 		});
 
-		App.getLbm().sendBroadcast(new Intent(ACTION_CURRENT_READING_CHANGED));
+		AppEvents.emitCurrentReadingChanged();
 	}
 
 	public static void clear() {
@@ -26,7 +23,7 @@ public class CurrentReading {
 			Preferences.remove(Prefkey.current_reading_ari_end);
 		});
 
-		App.getLbm().sendBroadcast(new Intent(ACTION_CURRENT_READING_CHANGED));
+		AppEvents.emitCurrentReadingChanged();
 	}
 
 	/**

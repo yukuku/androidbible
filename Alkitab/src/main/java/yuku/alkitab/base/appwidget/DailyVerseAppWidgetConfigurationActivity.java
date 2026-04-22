@@ -1,11 +1,9 @@
 package yuku.alkitab.base.appwidget;
 
 import android.appwidget.AppWidgetManager;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,9 +21,9 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.br.DailyVerseAppWidgetReceiver;
+import yuku.alkitab.base.events.AppEvents;
 import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.versionmanager.VersionListFragment;
 
 public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
     VersionAdapter adapter;
@@ -41,14 +39,6 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
     TextView tTransparent;
     private CheckBox cTransparentBackground;
 
-    final BroadcastReceiver br = new BroadcastReceiver() {
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            if (VersionListFragment.ACTION_RELOAD.equals(intent.getAction())) {
-                if (adapter != null) adapter.reload();
-            }
-        }
-    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -141,14 +131,9 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
         });
         sbTransparent_progressChanged(sbTransparent.getProgress());
 
-        App.getLbm().registerReceiver(br, new IntentFilter(VersionListFragment.ACTION_RELOAD));
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        App.getLbm().unregisterReceiver(br);
+        AppEvents.observe(this, AppEvents.versionListReload, () -> {
+            if (adapter != null) adapter.reload();
+        });
     }
 
     void sbTextSize_progressChanged(final int progress) {

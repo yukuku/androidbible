@@ -1,9 +1,6 @@
 package yuku.alkitab.base.sync;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +17,7 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.events.AppEvents;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Sqlitil;
@@ -27,9 +25,6 @@ import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
 import yuku.alkitab.debug.R;
 
 public class SyncSettingsActivity extends BaseActivity {
-	/** Action to broadcast when sync status needs to be refreshed */
-	public static final String ACTION_RELOAD = SyncSettingsActivity.class.getName() + ".action.RELOAD";
-
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,15 +43,6 @@ public class SyncSettingsActivity extends BaseActivity {
 
 		private Preference pref_syncAccountName;
 
-		final BroadcastReceiver br = new BroadcastReceiver() {
-			@Override
-			public void onReceive(final Context context, final Intent intent) {
-				if (ACTION_RELOAD.equals(intent.getAction())) {
-					updateDisplay();
-				}
-			}
-		};
-
 		static final ThreadLocal<DateFormat> lastSyncDateFormat = ThreadLocal.withInitial(() -> android.text.format.DateFormat.getDateFormat(App.context));
 
 		static final ThreadLocal<DateFormat> lastSyncTimeFormat = ThreadLocal.withInitial(() -> android.text.format.DateFormat.getTimeFormat(App.context));
@@ -74,14 +60,7 @@ public class SyncSettingsActivity extends BaseActivity {
 			pref_syncAccountName.setOnPreferenceClickListener(pref_syncAccountName_click);
 			updateDisplay();
 
-			App.getLbm().registerReceiver(br, new IntentFilter(ACTION_RELOAD));
-		}
-
-		@Override
-		public void onDestroy() {
-			super.onDestroy();
-
-			App.getLbm().unregisterReceiver(br);
+			AppEvents.observe(this, AppEvents.syncSettingsReload, this::updateDisplay);
 		}
 
 

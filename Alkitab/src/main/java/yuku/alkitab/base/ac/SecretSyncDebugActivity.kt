@@ -1,7 +1,6 @@
 package yuku.alkitab.base.ac
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.SystemClock
@@ -24,10 +23,10 @@ import okhttp3.Request
 import okhttp3.Response
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
-import yuku.alkitab.base.IsiActivity
 import yuku.alkitab.base.S
 import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.connection.Connections
+import yuku.alkitab.base.events.AppEvents
 import yuku.alkitab.base.model.SyncShadow
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.sync.Sync
@@ -395,9 +394,9 @@ class SecretSyncDebugActivity : BaseActivity() {
                             .show()
 
                         if (applyResult == ApplyAppendDeltaResult.ok) {
-                            App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED))
-                            App.getLbm().sendBroadcast(Intent(MarkersActivity.ACTION_RELOAD))
-                            App.getLbm().sendBroadcast(Intent(MarkerListActivity.ACTION_RELOAD))
+                            AppEvents.emitAttributeMapChanged()
+                            AppEvents.emitMarkersReload()
+                            AppEvents.emitMarkerListReload()
                         }
                     } else {
                         MaterialAlertDialogBuilder(this@SecretSyncDebugActivity)

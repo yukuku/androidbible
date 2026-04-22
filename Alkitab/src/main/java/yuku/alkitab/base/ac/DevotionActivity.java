@@ -1,9 +1,6 @@
 package yuku.alkitab.base.ac;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,6 +34,7 @@ import yuku.alkitab.base.devotion.ArticleRoc;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
 import yuku.alkitab.base.devotion.DevotionArticle;
 import yuku.alkitab.base.devotion.DevotionDownloader;
+import yuku.alkitab.base.events.AppEvents;
 import yuku.alkitab.base.settings.SettingsActivity;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AppLog;
@@ -214,24 +212,6 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
     DevotionKind currentKind;
     Date currentDate;
 
-    final BroadcastReceiver br = new BroadcastReceiver() {
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            if (!DevotionDownloader.ACTION_DOWNLOADED.equals(intent.getAction())) return;
-
-            // is it for us?
-            final String name = intent.getStringExtra("name");
-            final String date = intent.getStringExtra("date");
-
-            AppLog.d(TAG, "Got DOWNLOADED broadcast for name=" + name + " date=" + date);
-
-            if (getDateFormat().format(currentDate).equals(date) && currentKind.name.equals(name)) {
-                AppLog.d(TAG, "It is for us, displaying now");
-                display();
-            }
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -264,6 +244,14 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
         Background.run(() -> prefetch(currentKind));
 
         display();
+
+        AppEvents.observeWhileStartedWithValue(this, AppEvents.devotionDownloaded, event -> {
+            AppLog.d(TAG, "Got DOWNLOADED event for name=" + event.name + " date=" + event.date);
+            if (getDateFormat().format(currentDate).equals(event.date) && currentKind.name.equals(event.name)) {
+                AppLog.d(TAG, "It is for us, displaying now");
+                display();
+            }
+        });
     }
 
     @Override
@@ -287,15 +275,6 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
         lContent.setPadding(padding.left, padding.top, padding.right, padding.bottom);
 
         getWindow().getDecorView().setKeepScreenOn(Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default)));
-
-        App.getLbm().registerReceiver(br, new IntentFilter(DevotionDownloader.ACTION_DOWNLOADED));
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        App.getLbm().unregisterReceiver(br);
     }
 
     @Override

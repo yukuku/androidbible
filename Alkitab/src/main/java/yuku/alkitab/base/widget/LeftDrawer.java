@@ -1,11 +1,9 @@
 package yuku.alkitab.base.widget;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
@@ -38,6 +36,7 @@ import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
 import yuku.alkitab.base.config.AppConfig;
+import yuku.alkitab.base.events.AppEvents;
 import yuku.alkitab.base.settings.SettingsActivity;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.CurrentReading;
@@ -359,28 +358,12 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 			displayCurrentReading();
 
-			// The following is not in onAttachedFromWindow, because we need to listen to
-			// ACTION_ACTIVE_VERSION_CHANGED as early as possible, so we do not end up with
-			// a verse reference from a version that was not actually selected during app startup.
-			final IntentFilter filter = new IntentFilter();
-			filter.addAction(CurrentReading.ACTION_CURRENT_READING_CHANGED);
-			filter.addAction(IsiActivity.ACTION_ACTIVE_VERSION_CHANGED);
-			App.getLbm().registerReceiver(currentReadingChangeReceiver, filter);
+			// Not in onAttachedToWindow: we need to listen to activeVersionChanged as early
+			// as possible so we do not end up with a verse reference from a version that
+			// was not actually selected during app startup.
+			AppEvents.observeOnView(this, AppEvents.currentReadingChanged, this::displayCurrentReading);
+			AppEvents.observeOnView(this, AppEvents.activeVersionChanged, this::displayCurrentReading);
 		}
-
-		@Override
-		protected void onDetachedFromWindow() {
-			super.onDetachedFromWindow();
-
-			App.getLbm().unregisterReceiver(currentReadingChangeReceiver);
-		}
-
-		final BroadcastReceiver currentReadingChangeReceiver = new BroadcastReceiver() {
-			@Override
-			public void onReceive(final Context context, final Intent intent) {
-				displayCurrentReading();
-			}
-		};
 
 		void displayCurrentReading() {
 			if (isInEditMode()) return;

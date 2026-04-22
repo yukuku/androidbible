@@ -14,6 +14,7 @@ import java.util.Map;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.AlertDialogActivity;
+import yuku.alkitab.base.events.AppEvents;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.storage.YesReaderFactory;
 import yuku.alkitab.base.util.AddonManager;
@@ -24,7 +25,6 @@ import yuku.alkitab.base.util.Foreground;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.io.OptionalGzipInputStream;
-import yuku.alkitab.versionmanager.VersionListFragment;
 
 public class VersionDownloadCompleteReceiver {
 	private static final String TAG = VersionDownloadCompleteReceiver.class.getSimpleName();
@@ -109,7 +109,7 @@ public class VersionDownloadCompleteReceiver {
 					AlertDialogActivity.createOkIntent(null, context.getString(R.string.version_download_saving_io_error))
 						.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 				));
-				App.getLbm().sendBroadcast(new Intent(VersionListFragment.ACTION_RELOAD));
+				AppEvents.emitVersionListReload();
 				return;
 			} finally {
 				DownloadMapper.instance.remove(id);
@@ -124,7 +124,7 @@ public class VersionDownloadCompleteReceiver {
 					AlertDialogActivity.createOkIntent(null, context.getString(R.string.version_download_corrupted_file))
 						.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 				));
-				App.getLbm().sendBroadcast(new Intent(VersionListFragment.ACTION_RELOAD));
+				AppEvents.emitVersionListReload();
 				return;
 			}
 
@@ -152,7 +152,7 @@ public class VersionDownloadCompleteReceiver {
 				Toast.makeText(App.context, TextUtils.expandTemplate(context.getText(R.string.version_download_complete), mvDb.longName), Toast.LENGTH_LONG).show();
 			});
 
-			App.getLbm().sendBroadcast(new Intent(VersionListFragment.ACTION_RELOAD));
+			AppEvents.emitVersionListReload();
 		});
 	}
 }

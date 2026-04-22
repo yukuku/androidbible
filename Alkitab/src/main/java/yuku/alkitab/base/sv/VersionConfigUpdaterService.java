@@ -13,11 +13,11 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.connection.Connections;
+import yuku.alkitab.base.events.AppEvents;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.versionmanager.VersionListFragment;
 
 public class VersionConfigUpdaterService extends IntentService {
 	private static final String TAG = VersionConfigUpdaterService.class.getSimpleName();
@@ -61,10 +61,10 @@ public class VersionConfigUpdaterService extends IntentService {
 		if (intent != null) {
 			final boolean auto = intent.getBooleanExtra(EXTRA_auto, true);
 			try {
-				App.getLbm().sendBroadcast(new Intent(VersionListFragment.ACTION_UPDATE_REFRESHING_STATUS).putExtra(VersionListFragment.EXTRA_refreshing, true));
+				AppEvents.emitVersionListRefreshingStatus(true);
 				handleCheckUpdate(auto);
 			} finally {
-				App.getLbm().sendBroadcast(new Intent(VersionListFragment.ACTION_UPDATE_REFRESHING_STATUS).putExtra(VersionListFragment.EXTRA_refreshing, false));
+				AppEvents.emitVersionListRefreshingStatus(false);
 			}
 		}
 	}
@@ -164,6 +164,6 @@ public class VersionConfigUpdaterService extends IntentService {
 		}
 
 		Preferences.setInt(Prefkey.version_config_last_update_check, now);
-		App.getLbm().sendBroadcast(new Intent(VersionListFragment.ACTION_RELOAD));
+		AppEvents.emitVersionListReload();
 	}
 }

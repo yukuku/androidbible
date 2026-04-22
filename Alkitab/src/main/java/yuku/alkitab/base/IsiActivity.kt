@@ -1,11 +1,8 @@
 package yuku.alkitab.base
 
 import android.content.ActivityNotFoundException
-import android.content.BroadcastReceiver
 import android.content.ContentResolver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Point
 import android.os.Bundle
@@ -45,6 +42,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -53,6 +51,7 @@ import java.util.Date
 import java.util.GregorianCalendar
 import java.util.Locale
 import kotlin.math.roundToLong
+import kotlinx.coroutines.launch
 import me.toptas.fancyshowcase.FancyShowCaseView
 import me.toptas.fancyshowcase.listener.DismissListener
 import yuku.afw.storage.Preferences
@@ -71,6 +70,7 @@ import yuku.alkitab.base.dialog.ProgressMarkRenameDialog
 import yuku.alkitab.base.dialog.TypeBookmarkDialog
 import yuku.alkitab.base.dialog.VersesDialog
 import yuku.alkitab.base.dialog.XrefDialog
+import yuku.alkitab.base.events.AppEvents
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.model.MVersionDb
 import yuku.alkitab.base.settings.SettingsActivity
@@ -438,7 +438,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                 S.db.insertOrUpdateProgressMark(progressMark)
             }
 
-            App.getLbm().sendBroadcast(Intent(ACTION_ATTRIBUTE_MAP_CHANGED))
+            AppEvents.emitAttributeMapChanged()
         }
     }
 
@@ -461,17 +461,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
     }
 
-    private val reloadAttributeMapReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            reloadBothAttributeMaps()
-        }
-    }
-
-    private val needsRestartReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            needsRestart = true
-        }
-    }
 
     private val lsSplit0_selectedVerses = object : VersesController.SelectedVersesListener() {
         override fun onSomeVersesSelected(verses_1: IntArrayList) {
@@ -839,23 +828,14 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             }
         }
 
-        App.getLbm().registerReceiver(reloadAttributeMapReceiver, IntentFilter(ACTION_ATTRIBUTE_MAP_CHANGED))
-
-        App.getLbm().registerReceiver(needsRestartReceiver, IntentFilter(ACTION_NEEDS_RESTART))
+        lifecycleScope.launch { AppEvents.attributeMapChanged.collect { reloadBothAttributeMaps() } }
+        lifecycleScope.launch { AppEvents.needsRestart.collect { needsRestart = true } }
         AppLog.d(TAG, "@@onCreate end")
     }
 
     private fun callAttentionForVerseToBothSplits(verse_1: Int) {
         lsSplit0.callAttentionForVerse(verse_1)
         lsSplit1.callAttentionForVerse(verse_1)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        App.getLbm().unregisterReceiver(reloadAttributeMapReceiver)
-
-        App.getLbm().unregisterReceiver(needsRestartReceiver)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -953,7 +933,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
             display(chapter_1, getVerse_1BasedOnScrolls(), false)
 
-            App.getLbm().sendBroadcast(Intent(ACTION_ACTIVE_VERSION_CHANGED))
+            AppEvents.emitActiveVersionChanged()
         } catch (e: Throwable) { // so we don't crash on the beginning of the app
             AppLog.e(TAG, "Error opening main version", e)
 
@@ -1488,7 +1468,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
         textAppearancePanel?.displayValues()
 
-        App.getLbm().sendBroadcast(Intent(ACTION_NIGHT_MODE_CHANGED))
+        AppEvents.emitNightModeChanged()
     }
 
     private fun openVersionsDialog() {
@@ -2301,11 +2281,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     }
 
     companion object {
-        const val ACTION_ATTRIBUTE_MAP_CHANGED = "yuku.alkitab.action.ATTRIBUTE_MAP_CHANGED"
-        const val ACTION_ACTIVE_VERSION_CHANGED = "yuku.alkitab.base.IsiActivity.action.ACTIVE_VERSION_CHANGED"
-        const val ACTION_NIGHT_MODE_CHANGED = "yuku.alkitab.base.IsiActivity.action.NIGHT_MODE_CHANGED"
-        const val ACTION_NEEDS_RESTART = "yuku.alkitab.base.IsiActivity.action.NEEDS_RESTART"
-
         @JvmStatic
         fun createIntent(): Intent {
             return Intent(App.context, IsiActivity::class.java)

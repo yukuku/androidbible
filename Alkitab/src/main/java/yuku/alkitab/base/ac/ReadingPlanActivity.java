@@ -1,10 +1,7 @@
 package yuku.alkitab.base.ac;
 
 import android.app.DatePickerDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
@@ -45,6 +42,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.connection.Connections;
+import yuku.alkitab.base.events.AppEvents;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AppLog;
@@ -62,8 +60,6 @@ import yuku.alkitabintegration.display.Launcher;
 
 public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftDrawer.ReadingPlan.Listener {
     static final String TAG = ReadingPlanActivity.class.getSimpleName();
-
-    public static final String ACTION_READING_PLAN_PROGRESS_CHANGED = ReadingPlanActivity.class.getName() + ".action.READING_PLAN_PROGRESS_CHANGED";
 
     private static final int REQCODE_openList = 1;
 
@@ -245,22 +241,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
             openDownloadReadingPlanPage();
         }
 
-        App.getLbm().registerReceiver(reload, new IntentFilter(ACTION_READING_PLAN_PROGRESS_CHANGED));
+        AppEvents.observe(this, AppEvents.readingPlanProgressChanged, this::reload);
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        App.getLbm().unregisterReceiver(reload);
-    }
-
-    final BroadcastReceiver reload = new BroadcastReceiver() {
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            reload();
-        }
-    };
 
     @Override
     protected void onStart() {

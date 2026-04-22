@@ -51,33 +51,30 @@ This document provides a prioritized remediation plan for each tech debt item id
 
 ---
 
-### REM-03: Replace LocalBroadcastManager
+### ~~REM-03: Replace LocalBroadcastManager~~ ✅ COMPLETED (2026-04-22)
 **Addresses:** TD-03 (LocalBroadcastManager)  
-**Module:** Cross-cutting (21 files)  
-**BRICE:** B=3 R=3 I=3 C=4 E=5 → **3.8** (rounded up due to deprecation urgency)
+**Module:** Cross-cutting  
+**BRICE:** B=3 R=3 I=3 C=4 E=5 → **3.8**
 
-**Current state:** `LocalBroadcastManager` is deprecated since AndroidX 1.1.0. Used in 21 files via `App.getLbm()` (defined in `App.java:85-87`), including DevotionDownloader, DevotionActivity, MarkersActivity, ReadingPlanActivity, IsiActivity, MarkerListActivity, SyncAdapter, SyncSettingsActivity, VersionListFragment, VersionsActivity, DisplayFragment, DataTransferFragment, DownloadMapper, CurrentReading, LeftDrawer, LabeledSplitHandleButton, VersionDownloadCompleteReceiver, VersionConfigUpdaterService, DailyVerseAppWidgetConfigurationActivity, ProgressMarkRenameDialog, and SecretSyncDebugActivity.
+**Outcome:** All 24 files that used `App.getLbm()` now talk through a single Kotlin event-bus object at `yuku.alkitab.base.events.AppEvents`. Each former `ACTION_*` broadcast became a named `MutableSharedFlow` (most `<Unit>`, one `<Boolean>` for the version-list refreshing spinner, and one `<DevotionDownloadedEvent>` data-class-typed bus carrying the kind name + `yyyyMMdd` date). Buses are configured with `extraBufferCapacity = 16, onBufferOverflow = DROP_OLDEST` — `tryEmit` is guaranteed to succeed regardless of buffer pressure, and when bursts exceed the buffer the oldest queued "reload" signal is dropped rather than the newest (which is what a collector catching up actually needs). Preserves LBM's fire-and-forget, in-process, no-replay semantics.
 
-**Steps — by usage pattern:**
+**What was done:**
 
-**Step 3a: Devotion events (DevotionDownloader → DevotionActivity)**
-1. Create `DevotionEventBus` object with `MutableSharedFlow<DevotionEvent>`
-2. Replace `App.getLbm().sendBroadcast()` in `DevotionDownloader.java:109` with `DevotionEventBus.emit()`
-3. Replace `BroadcastReceiver` in `DevotionActivity` with `lifecycleScope.launch { DevotionEventBus.collect {} }`
-4. Delete devotion-related `IntentFilter` registrations
+1. **Senders** — every `App.getLbm().sendBroadcast(new Intent(ACTION_*))` replaced with a `@JvmStatic` emit helper on `AppEvents` (e.g. `AppEvents.emitAttributeMapChanged()`). Touched: `IsiActivity`, `SyncAdapter` (9 call sites), `MarkerListActivity` (4 call sites), `SecretSyncDebugActivity`, `VersionListFragment` (5 call sites), `VersionsActivity`, `VersionConfigUpdaterService`, `VersionDownloadCompleteReceiver`, `DownloadMapper`, `DevotionDownloader`, `ProgressMarkRenameDialog`, `DataTransferFragment`, `DisplayFragment`, `CurrentReading`.
 
-**Step 3b: Marker/attribute change events**
-1. Create `MarkerEventBus` with `MutableSharedFlow<MarkerEvent>`
-2. Replace attribute change broadcasts in `InternalDb` and marker-editing activities
-3. Update `IsiActivity` listeners (lines 451-519) to collect from `MarkerEventBus`
+2. **Receivers (Kotlin activities/fragments)** — replaced `BroadcastReceiver` + `registerReceiver`/`unregisterReceiver` with `lifecycleScope.launch { AppEvents.foo.collect { ... } }` in `IsiActivity`, `MarkerListActivity`, `VersionListFragment`. The associated `onDestroy` overrides (only doing `unregisterReceiver`) became no-ops and were deleted.
 
-**Step 3c: Version change events**
-1. Same pattern with `VersionEventBus`
-2. Update `IsiActivity` version-change broadcast receiver
+3. **Receivers (Java activities/fragments)** — added two Java-friendly helpers on `AppEvents`: `observe(LifecycleOwner, Flow<*>, Runnable)` collects until `DESTROYED`, and `observeWhileStarted` (+ typed `observeWhileStartedWithValue`) uses `repeatOnLifecycle(STARTED)` for onStart/onStop-scoped flows. Migrated `MarkersActivity`, `ReadingPlanActivity`, `SyncSettingsActivity.SyncSettingsFragment`, `DailyVerseAppWidgetConfigurationActivity` (lifecycle = DESTROYED) and `DevotionActivity` (lifecycle = STARTED, typed value consumer).
 
-**Step 3d: Remove `App.getLbm()` and `LocalBroadcastManager` dependency**
+4. **Receivers (Java custom views)** — `LabeledSplitHandleButton.init()` and `LeftDrawer.Text.onFinishInflate` call a third helper, `AppEvents.observeOnView(view, flow, runnable)`. The helper installs an `OnAttachStateChangeListener`: collection starts on attach (launching a fresh `MainScope` job each time) and is cancelled on detach, so a view that's inflated but never attached does not leak a live collector, and a re-attached view automatically resubscribes. Contract: call once per view instance — calling from `onAttachedToWindow` would accumulate a listener per attach cycle.
 
-**Difficulty:** Medium-Hard (2-3 days total — 21 files affected, can be done incrementally by event type).
+5. **Stale constants removed** — `IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED` / `ACTION_ACTIVE_VERSION_CHANGED` / `ACTION_NIGHT_MODE_CHANGED` / `ACTION_NEEDS_RESTART`, `MarkersActivity.ACTION_RELOAD`, `MarkerListActivity.ACTION_RELOAD`, `ReadingPlanActivity.ACTION_READING_PLAN_PROGRESS_CHANGED`, `SyncSettingsActivity.ACTION_RELOAD`, `CurrentReading.ACTION_CURRENT_READING_CHANGED`, `DevotionDownloader.ACTION_DOWNLOADED`, `VersionListFragment.ACTION_RELOAD` / `ACTION_UPDATE_REFRESHING_STATUS` / `EXTRA_refreshing`, plus the private `DevotionDownloader.broadcastDownloaded` helper.
+
+6. **Dependency removed** — `androidx-localbroadcastmanager` deleted from `gradle/libs.versions.toml` and `Alkitab/build.gradle.kts`. `App.getLbm()` helper and the `LocalBroadcastManager` import removed from `App.java`.
+
+Coroutines and `lifecycleScope` were already on the classpath transitively through `androidx.fragment:fragment-ktx:1.8.9` (pulling `kotlinx-coroutines-android:1.9.0` and `lifecycle-runtime-ktx:2.7.0`); no new dependency was needed.
+
+**Verified:** `./gradlew :Alkitab:assemblePlainDebug` plus `testPlainDebugUnitTest testPlainReleaseUnitTest` — all 313 unit tests pass.
 
 ---
 
@@ -671,7 +668,7 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 | REM-02 | ~~Fix Preferences hold/unhold safety~~ ✅ | **4.2** | 1 |
 | REM-04 | Fix FCM token retry | **4.2** | 1 |
 | REM-05 | ~~Fix DevotionDownloader threading~~ ✅ | **4.0** | 1 |
-| REM-03 | Replace LocalBroadcastManager | **3.8** | 1 |
+| REM-03 | ~~Replace LocalBroadcastManager~~ ✅ | **3.8** | 1 |
 | REM-23 | ~~Port ybuild.sh to Gradle~~ ✅ | **3.8** | 2 |
 | REM-06 | Extract IsiActivity gestures | **3.4** | 2 |
 | REM-07 | ~~Extract IsiActivity action mode~~ ✅ | **3.4** | 2 |
@@ -694,7 +691,7 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 ## Suggested Execution Order
 
 **Sprint 1 (1 week):** ~~REM-01~~✅, ~~REM-02~~✅, REM-04, ~~REM-05~~✅ — quick safety fixes (REM-01/02/05 done)  
-**Sprint 2 (1 week):** REM-03 — LocalBroadcastManager removal (touches many files, best done in isolation)  
+**Sprint 2 (1 week):** ~~REM-03~~✅ — LocalBroadcastManager removal (done)  
 **Sprint 3 (2 weeks):** ~~REM-07~~✅, REM-06, REM-08 — IsiActivity decomposition (REM-07 done)  
 **Sprint 4 (1 week):** ~~REM-12~~✅, REM-14 — deprecated library replacements (REM-12 done)  
 **Sprint 5 (2 weeks):** REM-10, REM-11 — Room migration for core tables  

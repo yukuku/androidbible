@@ -1,7 +1,6 @@
 package yuku.alkitab.base.dialog
 
 import android.app.Activity
-import android.content.Intent
 import android.text.InputType
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -10,9 +9,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import java.util.Date
-import yuku.alkitab.base.App
-import yuku.alkitab.base.IsiActivity
 import yuku.alkitab.base.S.db
+import yuku.alkitab.base.events.AppEvents
 import yuku.alkitab.base.widget.AttributeView
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.ProgressMark
@@ -47,7 +45,7 @@ object ProgressMarkRenameDialog : DialogFragment() {
 
                 // Since updating database is the responsibility here,
                 // announcing it will also be here.
-                App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED))
+                AppEvents.emitAttributeMapChanged()
                 listener.onOked()
             }
             .setNegativeButton(R.string.delete) { _, _ ->
@@ -61,7 +59,7 @@ object ProgressMarkRenameDialog : DialogFragment() {
 
                         // Since updating database is the responsibility here,
                         // announcing it will also be here.
-                        App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED))
+                        AppEvents.emitAttributeMapChanged()
                         listener.onDeleted()
                     }
                     .setNegativeButton(R.string.cancel, null)

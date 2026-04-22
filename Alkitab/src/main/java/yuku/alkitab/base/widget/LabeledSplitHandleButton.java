@@ -1,9 +1,6 @@
 package yuku.alkitab.base.widget;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -14,8 +11,7 @@ import android.view.MotionEvent;
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.base.App;
-import yuku.alkitab.base.IsiActivity;
+import yuku.alkitab.base.events.AppEvents;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.debug.R;
 
@@ -73,6 +69,11 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
         accentColorPaint.setAntiAlias(true);
 
         rotatelength = getResources().getDimensionPixelSize(R.dimen.split_handle_thickness);
+
+        AppEvents.observeOnView(this, AppEvents.nightModeChanged, () -> {
+            initializePrimaryColor();
+            invalidate();
+        });
     }
 
     public void setButtonPressListener(final ButtonPressListener buttonPressListener) {
@@ -259,26 +260,6 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
         }
         return splitHorizontalBitmap;
     }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        App.getLbm().registerReceiver(nightModeChangedListener, new IntentFilter(IsiActivity.ACTION_NIGHT_MODE_CHANGED));
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        App.getLbm().unregisterReceiver(nightModeChangedListener);
-    }
-
-    final BroadcastReceiver nightModeChangedListener = new BroadcastReceiver() {
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            initializePrimaryColor();
-            invalidate();
-        }
-    };
 
     void initializePrimaryColor() {
         if (Preferences.getBoolean(Prefkey.is_night_mode, false)) {

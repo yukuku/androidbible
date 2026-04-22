@@ -1,6 +1,5 @@
 package yuku.alkitab.base.devotion;
 
-import android.content.Intent;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -8,13 +7,12 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.connection.Connections;
+import yuku.alkitab.base.events.AppEvents;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.debug.BuildConfig;
 
 public class DevotionDownloader {
     private static final String TAG = DevotionDownloader.class.getSimpleName();
-
-    public static final String ACTION_DOWNLOADED = DevotionDownloader.class.getName() + ".action.DOWNLOADED";
 
     private final LinkedBlockingDeque<DevotionArticle> queue_ = new LinkedBlockingDeque<>();
     private volatile boolean shutdown_ = false;
@@ -60,7 +58,7 @@ public class DevotionDownloader {
                     S.getDb().storeArticleToDevotions(article);
 
                     if (!output.startsWith("NG")) {
-                        broadcastDownloaded(kind.name, article.getDate());
+                        AppEvents.emitDevotionDownloaded(kind.name, article.getDate());
                     }
                 } catch (Exception e) {
                     AppLog.d(TAG, "Downloader failed to process article", e);
@@ -73,11 +71,4 @@ public class DevotionDownloader {
         }
     }
 
-    private void broadcastDownloaded(final String name, final String date) {
-        final Intent intent = new Intent(ACTION_DOWNLOADED)
-            .putExtra("name", name)
-            .putExtra("date", date);
-
-        App.getLbm().sendBroadcast(intent);
-    }
 }

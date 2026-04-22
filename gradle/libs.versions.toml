@@ -16,7 +16,6 @@ androidxAppcompat = "1.7.1"
 androidxConstraintlayout = "2.2.1"
 androidxCore = "1.17.0"
 androidxFragment = "1.8.9"
-androidxLocalbroadcastmanager = "1.1.0"
 androidxMedia3 = "1.8.0"
 androidxMultidex = "2.0.1"
 androidxPercentlayout = "1.0.0"
@@ -60,7 +59,6 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
 androidx-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "androidxFragment" }
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "androidxFragment" }
-androidx-localbroadcastmanager = { group = "androidx.localbroadcastmanager", name = "localbroadcastmanager", version.ref = "androidxLocalbroadcastmanager" }
 androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "androidxMedia3" }
 androidx-media3-datasource-okhttp = { group = "androidx.media3", name = "media3-datasource-okhttp", version.ref = "androidxMedia3" }
 androidx-multidex = { group = "androidx.multidex", name = "multidex", version.ref = "androidxMultidex" }

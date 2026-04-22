@@ -1,10 +1,6 @@
 package yuku.alkitab.versionmanager
 
 import android.app.DownloadManager
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
@@ -27,6 +23,7 @@ import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -35,9 +32,11 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
 import java.util.Locale
 import java.util.regex.Matcher
+import kotlinx.coroutines.launch
 import yuku.alkitab.base.App
 import yuku.alkitab.base.S
 import yuku.alkitab.base.config.VersionConfig
+import yuku.alkitab.base.events.AppEvents
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.model.MVersionDb
 import yuku.alkitab.base.model.MVersionInternal
@@ -66,32 +65,20 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
     var downloadedOnly = false
     var query_text: String? = null
 
-    private val br = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val action = intent.action
-            if (ACTION_RELOAD == action) {
-                Background.run { adapter.reload() }
-            } else if (ACTION_UPDATE_REFRESHING_STATUS == action) {
-                val refreshing = intent.getBooleanExtra(EXTRA_refreshing, false)
-                swiper?.isRefreshing = refreshing
-            }
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        App.getLbm().registerReceiver(br, IntentFilter(ACTION_RELOAD))
-        App.getLbm().registerReceiver(br, IntentFilter(ACTION_UPDATE_REFRESHING_STATUS))
+        lifecycleScope.launch {
+            AppEvents.versionListReload.collect { Background.run { adapter.reload() } }
+        }
+        lifecycleScope.launch {
+            AppEvents.versionListRefreshingStatus.collect { refreshing ->
+                swiper?.isRefreshing = refreshing
+            }
+        }
 
         downloadedOnly = requireArguments().getBoolean(ARG_DOWNLOADED_ONLY)
         query_text = requireArguments().getString(ARG_INITIAL_QUERY_TEXT)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        App.getLbm().unregisterReceiver(br)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -162,7 +149,7 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
             is MVersionPreset -> clickOnPresetVersion(itemView.findViewById(R.id.cActive), mv)
             is MVersionDb -> clickOnDbVersion(itemView.findViewById(R.id.cActive), mv)
         }
-        App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
+        AppEvents.emitVersionListReload()
     }
 
     fun itemNameClick(item: Item) {
@@ -244,7 +231,7 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
             b.setNeutralButton(R.string.buang_dari_daftar) { _, _ ->
                 val filename = mv.filename
                 S.db.deleteVersion(mv)
-                App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
+                AppEvents.emitVersionListReload()
                 File(filename).delete()
             }
         }
@@ -284,7 +271,7 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
         )
         val downloadUrl = "${BuildConfig.SERVER_HOST}/versions/get_yes?preset_name=${Uri.encode(mv.preset_name)}"
         DownloadMapper.instance.enqueue(downloadKey, downloadUrl, mv.longName, attrs)
-        App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
+        AppEvents.emitVersionListReload()
     }
 
     private fun clickOnDbVersion(cActive: CheckBox, mv: MVersionDb) {
@@ -296,7 +283,7 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
                     .setMessage(getString(R.string.the_file_for_this_version_is_no_longer_available_file, mv.filename))
                     .setPositiveButton(R.string.delete) { _, _ ->
                         S.db.deleteVersion(mv)
-                        App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
+                        AppEvents.emitVersionListReload()
                     }
                     .setNegativeButton(R.string.no, null)
                     .show()
@@ -608,19 +595,11 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
             val fromItem = snapshot[startPos]
             val toItem = snapshot[endPos]
             S.db.reorderVersions(fromItem.mv, toItem.mv)
-            App.getLbm().sendBroadcast(Intent(ACTION_RELOAD))
+            AppEvents.emitVersionListReload()
         }
     }
 
     companion object {
-        @JvmField
-        val ACTION_RELOAD = VersionListFragment::class.java.name + ".action.RELOAD"
-
-        @JvmField
-        val ACTION_UPDATE_REFRESHING_STATUS = VersionListFragment::class.java.name + ".action.UPDATE_REFRESHING_STATUS"
-
-        const val EXTRA_refreshing = "refreshing"
-
         fun newInstance(downloadedOnly: Boolean, initial_query_text: String?): VersionListFragment {
             val res = VersionListFragment()
             val args = Bundle()

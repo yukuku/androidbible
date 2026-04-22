@@ -56,13 +56,8 @@ The `TODO this is only called together with putAttributes(), make it private` co
 
 ## TD-03: Deprecated API Usage
 
-### LocalBroadcastManager (deprecated in AndroidX 1.1.0)
-Used in 15+ files for event communication:
-- `DevotionDownloader.java:109` — `App.getLbm().sendBroadcast(intent)`
-- `DevotionActivity.java`, `MarkersActivity.java`, `ReadingPlanActivity.java` — receivers
-- Still listed as a dependency in `build.gradle`
-
-Should migrate to `LiveData`, `SharedFlow`, or `EventBus`.
+### ~~LocalBroadcastManager~~ ✅ removed in REM-03
+All `App.getLbm().sendBroadcast` / `registerReceiver` usages migrated to Kotlin `SharedFlow`-based buses in `yuku.alkitab.base.events.AppEvents`. The `androidx.localbroadcastmanager` dependency and `App.getLbm()` helper are gone.
 
 ### Handler(Looper.getMainLooper()) for thread switching
 - `VerseRenderer.kt` `reportInvalidSpecialTag` — creates Handler in object scope to show Toast
@@ -191,7 +186,7 @@ Newer files (activities, data classes) are Kotlin, creating a mixed codebase whe
 | `FancyShowCaseView` | 1.4.0 | Low maintenance activity. Evaluate alternatives. |
 | `PRDownloader` (patched) | custom | Forked as `PrDownloaderFixed`. Maintenance burden of carrying a patched fork. |
 | `AmbilWarna` | bundled | Bundled color picker. Material color picker components exist now. |
-| `LocalBroadcastManager` | 1.1.0 | Officially deprecated by AndroidX team. Still declared in `Alkitab/build.gradle:318` and used in 15+ files (see TD-03). |
+| ~~`LocalBroadcastManager`~~ | — | Removed in REM-03; replaced by `AppEvents` `SharedFlow` buses. |
 
 ---
 

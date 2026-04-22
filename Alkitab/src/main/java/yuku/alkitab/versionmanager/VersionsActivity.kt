@@ -20,6 +20,7 @@ import java.io.IOException
 import yuku.alkitab.base.App
 import yuku.alkitab.base.S
 import yuku.alkitab.base.ac.base.BaseActivity
+import yuku.alkitab.base.events.AppEvents
 import yuku.alkitab.base.model.MVersionDb
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes2
@@ -211,7 +212,7 @@ class VersionsActivity : BaseActivity() {
             S.db.insertOrUpdateVersionWithActive(mvDb, true)
             MVersionDb.clearVersionImplCache()
 
-            App.getLbm().sendBroadcast(Intent(VersionListFragment.ACTION_RELOAD))
+            AppEvents.emitVersionListReload()
         } catch (e: Exception) {
             MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.ed_error_encountered)
