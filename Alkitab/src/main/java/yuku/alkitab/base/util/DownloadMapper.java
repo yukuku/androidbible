@@ -16,8 +16,8 @@ import java.util.Map;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.AlertDialogActivity;
 import yuku.alkitab.base.br.VersionDownloadCompleteReceiver;
+import yuku.alkitab.base.events.AppEvents;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.versionmanager.VersionListFragment;
 
 public enum DownloadMapper {
     instance;
@@ -147,7 +147,7 @@ public enum DownloadMapper {
             final long now = System.currentTimeMillis();
             if (row.previouslyUpdatedProgressTime == 0 || now - row.previouslyUpdatedProgressTime > 250) {
                 row.previouslyUpdatedProgressTime = now;
-                App.getLbm().sendBroadcast(new Intent(VersionListFragment.ACTION_RELOAD));
+                AppEvents.emitVersionListReload();
             }
         });
 
@@ -180,7 +180,7 @@ public enum DownloadMapper {
 
                 remove(id);
 
-                App.getLbm().sendBroadcast(new Intent(VersionListFragment.ACTION_RELOAD));
+                AppEvents.emitVersionListReload();
             }
         });
 

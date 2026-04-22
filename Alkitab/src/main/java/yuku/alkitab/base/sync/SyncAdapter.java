@@ -1,7 +1,6 @@
 package yuku.alkitab.base.sync;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SyncStats;
 import android.util.Pair;
 import androidx.annotation.NonNull;
@@ -26,12 +25,9 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.ac.MarkerListActivity;
-import yuku.alkitab.base.ac.MarkersActivity;
-import yuku.alkitab.base.ac.ReadingPlanActivity;
 import yuku.alkitab.base.connection.Connections;
+import yuku.alkitab.base.events.AppEvents;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AppLog;
@@ -127,7 +123,7 @@ public class SyncAdapter extends Worker {
 			}
 
 			try {
-				App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
+				AppEvents.emitSyncSettingsReload();
 
 				SyncRecorder.log(SyncRecorder.EventKind.sync_adapter_on_perform, syncSetName);
 
@@ -159,7 +155,7 @@ public class SyncAdapter extends Worker {
 					}
 				}
 
-				App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
+				AppEvents.emitSyncSettingsReload();
 			}
 		}
 
@@ -331,13 +327,13 @@ public class SyncAdapter extends Worker {
 			// success! Tell our world.
 			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", stats.numInserts, "update_count", stats.numUpdates, "delete_count", stats.numDeletes);
 
-			App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
-			App.getLbm().sendBroadcast(new Intent(MarkersActivity.ACTION_RELOAD));
-			App.getLbm().sendBroadcast(new Intent(MarkerListActivity.ACTION_RELOAD));
+			AppEvents.emitAttributeMapChanged();
+			AppEvents.emitMarkersReload();
+			AppEvents.emitMarkerListReload();
 
 			AppLog.d(TAG, "Final revno: " + final_revno + " Apply result: " + applyResult + " Append delta: " + append_delta);
 			SyncRecorder.saveLastSuccessTime(syncSetName, Sqlitil.nowDateTime());
-			App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
+			AppEvents.emitSyncSettingsReload();
 		} catch (JsonSyntaxException e) {
 			AppLog.w(TAG, "@@syncMabel exception when parsing json from server", e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, syncSetName);
@@ -430,7 +426,7 @@ public class SyncAdapter extends Worker {
 
 			AppLog.d(TAG, "Final revno: " + final_revno + " Apply result: " + applyResult + " Append delta: " + append_delta);
 			SyncRecorder.saveLastSuccessTime(syncSetName, Sqlitil.nowDateTime());
-			App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
+			AppEvents.emitSyncSettingsReload();
 		} catch (JsonSyntaxException e) {
 			AppLog.w(TAG, "@@syncHistory exception when parsing json from server", e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, syncSetName);
@@ -521,11 +517,11 @@ public class SyncAdapter extends Worker {
 			// success! Tell our world.
 			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", stats.numInserts, "update_count", stats.numUpdates, "delete_count", stats.numDeletes);
 
-			App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
+			AppEvents.emitAttributeMapChanged();
 
 			AppLog.d(TAG, "Final revno: " + final_revno + " Apply result: " + applyResult + " Append delta: " + append_delta);
 			SyncRecorder.saveLastSuccessTime(syncSetName, Sqlitil.nowDateTime());
-			App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
+			AppEvents.emitSyncSettingsReload();
 		} catch (JsonSyntaxException e) {
 			AppLog.w(TAG, "@@syncPins exception when parsing json from server", e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, syncSetName);
@@ -616,11 +612,11 @@ public class SyncAdapter extends Worker {
 			// success! Tell our world.
 			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", stats.numInserts, "update_count", stats.numUpdates, "delete_count", stats.numDeletes);
 
-			App.getLbm().sendBroadcast(new Intent(ReadingPlanActivity.ACTION_READING_PLAN_PROGRESS_CHANGED));
+			AppEvents.emitReadingPlanProgressChanged();
 
 			AppLog.d(TAG, "Final revno: " + final_revno + " Apply result: " + applyResult + " Append delta: " + append_delta);
 			SyncRecorder.saveLastSuccessTime(syncSetName, Sqlitil.nowDateTime());
-			App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
+			AppEvents.emitSyncSettingsReload();
 		} catch (JsonSyntaxException e) {
 			AppLog.w(TAG, "@@syncRp exception when parsing json from server", e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, syncSetName);

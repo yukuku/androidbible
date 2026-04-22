@@ -1,10 +1,7 @@
 
 package yuku.alkitab.base.ac;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -32,6 +29,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.LabelEditorDialog;
+import yuku.alkitab.base.events.AppEvents;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.LabelColorUtil;
@@ -49,11 +47,6 @@ public class MarkersActivity extends BaseActivity {
 
     /** Number of fixed preset filters shown before user labels. */
     private static final int PRESET_COUNT = 4;
-
-    /**
-     * Action to broadcast when label list needs to be reloaded due to some background changes
-     */
-    public static final String ACTION_RELOAD = MarkersActivity.class.getName() + ".action.RELOAD";
 
     RecyclerView lv;
     View bGotoSync;
@@ -89,7 +82,7 @@ public class MarkersActivity extends BaseActivity {
         bGotoSync = findViewById(R.id.bGotoSync);
         bGotoSync.setOnClickListener(v -> startActivity(SyncSettingsActivity.createIntent()));
 
-        App.getLbm().registerReceiver(br, new IntentFilter(ACTION_RELOAD));
+        AppEvents.observe(this, AppEvents.markersReload, () -> adapter.reload());
     }
 
     @Override
@@ -128,22 +121,6 @@ public class MarkersActivity extends BaseActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        App.getLbm().unregisterReceiver(br);
-    }
-
-    BroadcastReceiver br = new BroadcastReceiver() {
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            if (ACTION_RELOAD.equals(intent.getAction())) {
-                adapter.reload();
-            }
-        }
-    };
 
     private void onItemClick(int position) {
         Intent intent;

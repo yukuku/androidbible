@@ -1,9 +1,7 @@
 package yuku.alkitab.base.ac
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
@@ -23,9 +21,11 @@ import androidx.annotation.IdRes
 import androidx.appcompat.view.ActionMode
 import androidx.core.graphics.ColorUtils
 import androidx.core.util.size
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import java.util.Locale
 import kotlin.properties.Delegates
+import kotlinx.coroutines.launch
 import yuku.afw.storage.Preferences
 import yuku.afw.widget.EasyAdapter
 import yuku.alkitab.base.App
@@ -34,6 +34,7 @@ import yuku.alkitab.base.S
 import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.dialog.TypeBookmarkDialog
 import yuku.alkitab.base.dialog.TypeHighlightDialog
+import yuku.alkitab.base.events.AppEvents
 import yuku.alkitab.base.storage.Db
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.Appearances
@@ -144,19 +145,8 @@ class MarkerListActivity : BaseActivity() {
         lv.onItemLongClickListener = lv_itemLongClick
         lv.emptyView = empty
 
-        App.getLbm().registerReceiver(br, IntentFilter(ACTION_RELOAD))
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        App.getLbm().unregisterReceiver(br)
-    }
-
-    private val br = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            if (ACTION_RELOAD == intent.action) {
-                loadAndFilter()
-            }
+        lifecycleScope.launch {
+            AppEvents.markerListReload.collect { loadAndFilter() }
         }
     }
 
@@ -292,7 +282,7 @@ class MarkerListActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQCODE_edit_note && resultCode == RESULT_OK) {
             loadAndFilter()
-            App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED))
+            AppEvents.emitAttributeMapChanged()
         }
 
         super.onActivityResult(requestCode, resultCode, data)
@@ -474,7 +464,7 @@ class MarkerListActivity : BaseActivity() {
                                         TypeBookmarkDialog.EditExisting(this@MarkerListActivity, marker._id).apply {
                                             setListener {
                                                 loadAndFilter()
-                                                App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED))
+                                                AppEvents.emitAttributeMapChanged()
                                             }
                                         }.show()
                                     }
@@ -502,7 +492,7 @@ class MarkerListActivity : BaseActivity() {
 
                                         TypeHighlightDialog(this@MarkerListActivity, ari, {
                                             loadAndFilter()
-                                            App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED))
+                                            AppEvents.emitAttributeMapChanged()
                                         }, info.colorRgb, info, reference, ftr.result)
                                     }
                                 }
@@ -517,7 +507,7 @@ class MarkerListActivity : BaseActivity() {
                                 S.db.deleteMarkerById(marker._id)
                                 mode.finish()
                                 loadAndFilter()
-                                App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED))
+                                AppEvents.emitAttributeMapChanged()
                             }
                         }
                     }
@@ -708,11 +698,6 @@ class MarkerListActivity : BaseActivity() {
 
     companion object {
         const val LABELID_noLabel = -1
-
-        /**
-         * Action to broadcast when marker list needs to be reloaded due to some background changes
-         */
-        const val ACTION_RELOAD = "yuku.alkitab.base.ac.MarkerListActivity.action.RELOAD"
 
         @JvmStatic
         fun createIntent(context: Context, filter_kind: Marker.Kind, filter_labelId: Long): Intent {

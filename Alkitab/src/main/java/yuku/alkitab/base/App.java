@@ -3,7 +3,6 @@ package yuku.alkitab.base;
 import android.content.Context;
 import android.net.Uri;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.multidex.MultiDex;
 import androidx.preference.PreferenceManager;
 import com.downloader.PRDownloader;
@@ -80,10 +79,6 @@ public class App extends yuku.afw.App {
         notificationManager.deleteNotificationChannel("devotion_downloader");
         notificationManager.deleteNotificationChannel("download_mapper");
         notificationManager.deleteNotificationChannel("devotion_reminder");
-    }
-
-    public static LocalBroadcastManager getLbm() {
-        return LocalBroadcastManager.getInstance(context);
     }
 
     public static Gson getDefaultGson() {

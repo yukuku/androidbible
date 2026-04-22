@@ -326,7 +326,6 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.fragment.ktx)
-    implementation(libs.androidx.localbroadcastmanager)
     implementation(libs.androidx.multidex)
     implementation(libs.androidx.percentlayout)
     implementation(libs.androidx.preference.ktx)

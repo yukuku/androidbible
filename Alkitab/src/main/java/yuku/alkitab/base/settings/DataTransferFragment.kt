@@ -1,19 +1,17 @@
 package yuku.alkitab.base.settings
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import yuku.alkitab.base.App
-import yuku.alkitab.base.IsiActivity
+import yuku.alkitab.base.events.AppEvents
 import yuku.alkitab.datatransfer.ui.DataTransferActivity
 import yuku.alkitab.debug.R
 
 class DataTransferFragment : PreferenceFragmentCompat() {
 
     private val startActivityRequest = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        App.getLbm().sendBroadcast(Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED))
+        AppEvents.emitAttributeMapChanged()
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
