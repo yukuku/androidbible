@@ -118,18 +118,22 @@ Coroutines and `lifecycleScope` were already on the classpath transitively throu
 
 ## Phase 2: Architecture Improvements (BRICE 3.0–3.9)
 
-### REM-06: Extract IsiActivity Gesture Handling
+### ~~REM-06: Extract IsiActivity Gesture Handling~~ ✅ COMPLETED
 **Addresses:** TD-01 (gesture cluster)  
 **Module:** Main reader  
 **BRICE:** B=4 R=3 I=3 C=3 E=4 → **3.4**
 
-**Steps:**
-1. Create `ReaderGestureHandler.kt` implementing `TwofingerLinearLayout.Listener`
-2. Move the `splitRoot_listener` object (lines 163-237 in `IsiActivity.kt`) and the `bGoto_floaterDrag` / `floater_listener` callbacks (lines 140-161) into `ReaderGestureHandler` (~98 lines of gesture code total)
-3. Pass required callbacks as constructor parameters: `onChapterChange`, `onFontSizeChange`, `onFullscreenToggle`
-4. In `IsiActivity`, instantiate `ReaderGestureHandler` and delegate the listener interface
+**Outcome:** All three gesture listeners (`splitRoot_listener` TwofingerLinearLayout, `bGoto_floaterDrag` GotoButton.FloaterDragListener, `floater_listener` Floater.Listener) moved out of `IsiActivity.kt` into a new `yuku.alkitab.base.gesture` package following the REM-07 host/actions convention.
 
-**Difficulty:** Medium (4-6 hours). Risk: gesture state depends on Activity fields (`chapter_1`, `unchunkedFontSizeDp`).
+**What was done:**
+1. Created `ReaderGestureHandler.kt`, `ReaderGestureHost.kt`, `ReaderGestureActions.kt`. The handler owns mutable gesture-local scratch (`startFontSize`, `startDx`, `chapterSwipeCellWidth`, `moreSwipeYAllowed`, `floaterLocationOnScreen`) so that state no longer leaks into Activity fields.
+2. Host surface exposes `activity`, `chapter_1`, `activeSplit0Book`, `activeSplit0Version`, `floater`, `textAppearancePanel`. Actions surface exposes `bLeft_click`, `bRight_click`, `applyPreferences`, `onGestureFullScreenToggle` (consolidates the paired `setFullScreen` + `leftDrawer.handle.setFullScreen` call), `jumpToAri`.
+3. `IsiActivity` now implements `ReaderGestureHost, ReaderGestureActions`; the three wire-up sites (`splitRoot.setListener`, `bGoto.setFloaterDragListener`, `floater.setListener`) now point at `gestureHandler.twofingerListener`/`.floaterDragListener`/`.floaterListener`.
+4. Added `override` modifiers to the existing `bLeft_click`, `bRight_click`, `applyPreferences`, `floater`, `textAppearancePanel` declarations. Added a 1-arg `override fun jumpToAri(ari: Int)` that delegates to the existing 4-arg defaulted method so the interface contract is satisfied without changing the 4-arg signature (which has many callers).
+
+**Result:** ~97 lines of gesture code moved out of `IsiActivity.kt`; handler + two interfaces total ~155 lines in the new package.
+
+**Verified:** `./gradlew :Alkitab:assemblePlainDebug :Alkitab:testPlainDebugUnitTest :Alkitab:testPlainReleaseUnitTest` — all tests pass.
 
 ---
 
@@ -664,7 +668,7 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 | REM-05 | ~~Fix DevotionDownloader threading~~ ✅ | **4.0** | 1 |
 | REM-03 | ~~Replace LocalBroadcastManager~~ ✅ | **3.8** | 1 |
 | REM-23 | ~~Port ybuild.sh to Gradle~~ ✅ | **3.8** | 2 |
-| REM-06 | Extract IsiActivity gestures | **3.4** | 2 |
+| REM-06 | ~~Extract IsiActivity gestures~~ ✅ | **3.4** | 2 |
 | REM-07 | ~~Extract IsiActivity action mode~~ ✅ | **3.4** | 2 |
 | REM-09 | Introduce ViewModel | **3.4** | 2 |
 | REM-10 | Room migration (Markers) | **3.4** | 2 |
@@ -686,7 +690,7 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 
 **Sprint 1 (1 week):** ~~REM-01~~✅, ~~REM-02~~✅, ~~REM-04~~✅, ~~REM-05~~✅ — quick safety fixes (all done)  
 **Sprint 2 (1 week):** ~~REM-03~~✅ — LocalBroadcastManager removal (done)  
-**Sprint 3 (2 weeks):** ~~REM-07~~✅, REM-06, REM-08 — IsiActivity decomposition (REM-07 done)  
+**Sprint 3 (2 weeks):** ~~REM-07~~✅, ~~REM-06~~✅, REM-08 — IsiActivity decomposition (REM-07/06 done)  
 **Sprint 4 (1 week):** ~~REM-12~~✅, ~~REM-14~~✅ — deprecated library replacements (done)  
 **Sprint 5 (2 weeks):** REM-10, REM-11 — Room migration for core tables  
 **Sprint 6 (2 weeks):** REM-09, ~~REM-18a-e~~✅ — ViewModel + test coverage (REM-18a/b/c/d/e done)  
