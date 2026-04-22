@@ -6,11 +6,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -18,12 +17,19 @@ import kotlinx.coroutines.launch
 /**
  * In-process event buses, replacing the LocalBroadcastManager-based signalling that the app
  * used to coordinate between activities, fragments, custom views, background threads, and the
- * sync worker. Each bus is a [MutableSharedFlow] with no replay and a small extra buffer so
- * [MutableSharedFlow.tryEmit] never drops events under normal load and can be called safely
- * from any thread without suspending (matching LBM's fire-and-forget semantics).
+ * sync worker. Each bus is a [MutableSharedFlow] with no replay and a small extra buffer.
+ *
+ * Overflow is [BufferOverflow.DROP_OLDEST]: if a burst of emissions fills the buffer before
+ * the collector catches up, the oldest queued signal is discarded rather than the newest.
+ * These are "reload" / "something changed" signals — the collector cares that *at least one*
+ * change is pending, never about the exact count — so keeping the freshest event is preferred
+ * and [MutableSharedFlow.tryEmit] is guaranteed to succeed from any thread without suspending.
  */
 object AppEvents {
-    private fun <T> bus(): MutableSharedFlow<T> = MutableSharedFlow(extraBufferCapacity = 16)
+    private fun <T> bus(): MutableSharedFlow<T> = MutableSharedFlow(
+        extraBufferCapacity = 16,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
 
     /** Verse attribute map (markers / highlights / notes / progress marks) changed. */
     @JvmField
@@ -142,27 +148,32 @@ object AppEvents {
     // ---- Observation helper for custom Views (Java-friendly) ---------------
 
     /**
-     * Collect [flow] on the main thread until [view] is detached from its window. [onEvent]
-     * receives each emitted value. Safe to call before the view is attached (the listener
-     * starts immediately; the job is cancelled on the first detach).
+     * Collect [flow] on the main thread for as long as [view] is attached to a window.
+     * Each attach starts a fresh collect job; each detach cancels it. Safe to call before
+     * the view is ever attached (no coroutine runs until the first attach) and safe across
+     * multiple attach/detach cycles (re-attach resubscribes).
      *
-     * This matches the legacy `registerReceiver` on LBM followed by `unregisterReceiver` in
-     * `onDetachedFromWindow`: a single observation window bounded by the view's detach.
+     * Should be called once per view instance (e.g. from the constructor or `onFinishInflate`);
+     * calling it from `onAttachedToWindow` would accumulate a listener per attach cycle.
      */
     @JvmStatic
-    fun observeOnView(view: View, flow: Flow<*>, onEvent: Runnable): Job {
-        val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-        val job = scope.launch {
-            flow.collect { onEvent.run() }
-        }
+    fun observeOnView(view: View, flow: Flow<*>, onEvent: Runnable) {
         val listener = object : View.OnAttachStateChangeListener {
-            override fun onViewAttachedToWindow(v: View) {}
+            private var job: Job? = null
+
+            override fun onViewAttachedToWindow(v: View) {
+                if (job?.isActive == true) return
+                job = MainScope().launch { flow.collect { onEvent.run() } }
+            }
+
             override fun onViewDetachedFromWindow(v: View) {
-                scope.cancel()
-                v.removeOnAttachStateChangeListener(this)
+                job?.cancel()
+                job = null
             }
         }
         view.addOnAttachStateChangeListener(listener)
-        return job
+        if (view.isAttachedToWindow) {
+            listener.onViewAttachedToWindow(view)
+        }
     }
 }

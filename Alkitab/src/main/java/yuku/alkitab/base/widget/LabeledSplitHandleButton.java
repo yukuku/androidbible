@@ -69,6 +69,11 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
         accentColorPaint.setAntiAlias(true);
 
         rotatelength = getResources().getDimensionPixelSize(R.dimen.split_handle_thickness);
+
+        AppEvents.observeOnView(this, AppEvents.nightModeChanged, () -> {
+            initializePrimaryColor();
+            invalidate();
+        });
     }
 
     public void setButtonPressListener(final ButtonPressListener buttonPressListener) {
@@ -254,15 +259,6 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
             splitHorizontalBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_split_horizontal);
         }
         return splitHorizontalBitmap;
-    }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        AppEvents.observeOnView(this, AppEvents.nightModeChanged, () -> {
-            initializePrimaryColor();
-            invalidate();
-        });
     }
 
     void initializePrimaryColor() {
