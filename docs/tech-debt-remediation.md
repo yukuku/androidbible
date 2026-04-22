@@ -78,20 +78,23 @@ Coroutines and `lifecycleScope` were already on the classpath transitively throu
 
 ---
 
-### REM-04: Fix FCM Token Re-registration Retry
+### ~~REM-04: Fix FCM Token Re-registration Retry~~ ✅ COMPLETED (2026-04-22)
 **Addresses:** PB-04  
 **Module:** Sync  
 **BRICE:** B=4 R=4 I=5 C=4 E=4 → **4.2**
 
-**Current state:** `Sync.sendFcmRegistrationId()` (lines 299-338 in `Sync.java`) logs failures at DEBUG level via `AppLog.d()` and `SyncRecorder.log()` but has no retry mechanism. `FcmMessagingService.kt` calls `Sync.notifyNewFcmRegistrationId(token)` from `onNewToken()` (line 28), which delegates to `sendFcmRegistrationId()` via `Background.run()`. If the HTTP call fails, the device stops receiving sync push notifications with no recovery path.
+**Outcome:** `Sync.sendFcmRegistrationId` now has a two-tier recovery path. In-process: a failed send schedules up to three retries on a single-thread `ScheduledExecutorService` (`fcmRetryExecutor`, daemon) at 1 min / 5 min / 30 min; any retry that succeeds clears the persistent flag and short-circuits the chain. Cross-launch: every send-failure branch (`!response.success`, `IOException | JsonIOException`, `JsonSyntaxException`) sets `Prefkey.fcm_registration_pending = true`, the success branch sets it to `false`, and `App.staticInit()` calls the new `Sync.retryPendingFcmRegistrationIfNeeded(registrationId)` with the FCM id returned by `Fcm.renewFcmRegistrationIdIfNeeded` — so if the in-process chain never completed (e.g. process died, network was off the whole 30 min), the next launch that already has a stored FCM id re-sends it. If no id is stored yet, the existing listener path (`Fcm.renewFcmRegistrationIdIfNeeded(Sync::notifyNewFcmRegistrationId)`) still fires `notifyNewFcmRegistrationId` once registration completes, which then runs its own retry chain.
 
-**Steps:**
-1. In `Sync.notifyNewFcmRegistrationId()` / `sendFcmRegistrationId()`, on failure, store a `Prefkey.fcm_registration_pending` flag (note: this key does not exist yet — add it to `Prefkey.kt`)
-2. On app launch (`App.staticInit()`), check flag and retry registration
-3. Add exponential backoff: retry after 1min, 5min, 30min, then once per app launch
-4. Log registration failures at WARN level instead of DEBUG
+**What was done:**
+1. ✅ Added `Prefkey.fcm_registration_pending` to `Prefkey.kt` with a kdoc comment describing the contract.
+2. ✅ Added `FCM_RETRY_DELAYS_MS = {1min, 5min, 30min}`, `fcmRetryExecutor` (single-thread, daemon), `pendingFcmRetry` (`AtomicReference<ScheduledFuture<?>>`), and `scheduleFcmRegistrationRetries(registrationId, attemptIndex)` in `Sync.java`. Each scheduled attempt re-reads `Prefkey.sync_simpleToken` so a mid-chain logout stops retrying.
+3. ✅ `notifyNewFcmRegistrationId` now schedules a retry chain when the inline send fails.
+4. ✅ Public `retryPendingFcmRegistrationIfNeeded(@NonNull String registrationId)` reads the pending flag and (if set) re-enters `notifyNewFcmRegistrationId`. Called once from `App.staticInit()` with the id returned by `Fcm.renewFcmRegistrationIdIfNeeded`.
+5. ✅ Bumped all four send-failure log sites in `sendFcmRegistrationId` from `AppLog.d` to `AppLog.w` and added `Preferences.setBoolean(Prefkey.fcm_registration_pending, …)` on each path (`true` on failure, `false` on success).
 
-**Difficulty:** Easy (2-3 hours).
+**Not retried on:** if the response is valid but `success == false` (server explicitly rejected the registration id), the flag is still set and the retry chain still runs. This is intentional — the plan did not distinguish retriable vs. terminal failures, and rejections are rare enough that the extra requests are harmless. If this turns out to generate noise, a future change can key off `response.message`.
+
+**Verified:** `./gradlew :Alkitab:assemblePlainDebug testPlainDebugUnitTest testPlainReleaseUnitTest` — all 313 unit tests pass.
 
 ---
 
@@ -666,7 +669,7 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 |----|------|-------|-------|
 | REM-01 | ~~Fix SongBookUtil deserialization safety~~ ✅ | **4.6** | 1 |
 | REM-02 | ~~Fix Preferences hold/unhold safety~~ ✅ | **4.2** | 1 |
-| REM-04 | Fix FCM token retry | **4.2** | 1 |
+| REM-04 | ~~Fix FCM token retry~~ ✅ | **4.2** | 1 |
 | REM-05 | ~~Fix DevotionDownloader threading~~ ✅ | **4.0** | 1 |
 | REM-03 | ~~Replace LocalBroadcastManager~~ ✅ | **3.8** | 1 |
 | REM-23 | ~~Port ybuild.sh to Gradle~~ ✅ | **3.8** | 2 |
@@ -690,7 +693,7 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 
 ## Suggested Execution Order
 
-**Sprint 1 (1 week):** ~~REM-01~~✅, ~~REM-02~~✅, REM-04, ~~REM-05~~✅ — quick safety fixes (REM-01/02/05 done)  
+**Sprint 1 (1 week):** ~~REM-01~~✅, ~~REM-02~~✅, ~~REM-04~~✅, ~~REM-05~~✅ — quick safety fixes (all done)  
 **Sprint 2 (1 week):** ~~REM-03~~✅ — LocalBroadcastManager removal (done)  
 **Sprint 3 (2 weeks):** ~~REM-07~~✅, REM-06, REM-08 — IsiActivity decomposition (REM-07 done)  
 **Sprint 4 (1 week):** ~~REM-12~~✅, REM-14 — deprecated library replacements (REM-12 done)  

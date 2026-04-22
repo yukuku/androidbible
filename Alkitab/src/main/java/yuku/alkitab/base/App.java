@@ -59,7 +59,10 @@ public class App extends yuku.afw.App {
         }
 
         { // FCM
-            Fcm.renewFcmRegistrationIdIfNeeded(Sync::notifyNewFcmRegistrationId);
+            final String fcmRegistrationId = Fcm.renewFcmRegistrationIdIfNeeded(Sync::notifyNewFcmRegistrationId);
+            if (fcmRegistrationId != null) {
+                Sync.retryPendingFcmRegistrationIfNeeded(fcmRegistrationId);
+            }
         }
 
         PRDownloader.initialize(context, new PRDownloaderConfig.Builder()
