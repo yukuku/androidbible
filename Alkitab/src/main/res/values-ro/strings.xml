@@ -226,7 +226,7 @@
     <string name="sn_deep_search_enabled">Texte, etc</string>
     <string name="sn_songs_activity_title">Cântece</string>
     <string name="sn_bookselector_all">Tot</string>
-    <string name="sn_bookselector_more">Descarcă altele...</string>
+    <string name="sn_bookselector_more">Descarcă altele&#8230;</string>
     <string name="sn_bookselector_all_desc">Caută toate cărţile care sunt instalate.</string>
     <string name="sn_downloading_ellipsis">Descărcare în curs&#8230;</string>
     <string name="sn_download_song_books">Descarcă cântece</string>
