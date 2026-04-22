@@ -92,6 +92,13 @@ enum class Prefkey {
     fcm_last_app_version_code,
 
     /**
+     * True when we have a stored FCM registration id that we failed to send to the sync server.
+     * Set by [yuku.alkitab.base.sync.Sync.sendFcmRegistrationId] on failure, cleared on success.
+     * Checked at app launch to retry the send.
+     */
+    fcm_registration_pending,
+
+    /**
      * This installation id is used to differentiate app installations,
      * so we do not send FCM messages to self.
      */

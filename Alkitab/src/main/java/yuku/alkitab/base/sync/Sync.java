@@ -11,7 +11,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.Request;
@@ -285,6 +290,20 @@ public class Sync {
         public boolean is_new_registration_id;
     }
 
+    private static final long[] FCM_RETRY_DELAYS_MS = {
+        TimeUnit.MINUTES.toMillis(1),
+        TimeUnit.MINUTES.toMillis(5),
+        TimeUnit.MINUTES.toMillis(30),
+    };
+
+    private static final ScheduledExecutorService fcmRetryExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
+        final Thread t = new Thread(r, "fcm-retry");
+        t.setDaemon(true);
+        return t;
+    });
+
+    private static final AtomicReference<ScheduledFuture<?>> pendingFcmRetry = new AtomicReference<>();
+
     public static void notifyNewFcmRegistrationId(@NonNull final String newRegistrationId) {
         // must send to server if we are logged in
         final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
@@ -293,7 +312,47 @@ public class Sync {
             return;
         }
 
-        Background.run(() -> sendFcmRegistrationId(simpleToken, newRegistrationId));
+        Background.run(() -> {
+            if (!sendFcmRegistrationId(simpleToken, newRegistrationId)) {
+                scheduleFcmRegistrationRetries(newRegistrationId, 0);
+            }
+        });
+    }
+
+    /**
+     * If a previous {@link #sendFcmRegistrationId} failed and left {@link Prefkey#fcm_registration_pending}
+     * set, resend the stored FCM registration id to the server. Intended to be called from
+     * {@code App.staticInit()} so each app launch gets one retry chain on top of the in-process
+     * {@link #FCM_RETRY_DELAYS_MS} attempts scheduled after the original failure.
+     *
+     * @param registrationId the currently stored FCM registration id (as returned by
+     *     {@link Fcm#renewFcmRegistrationIdIfNeeded}); must not be null
+     */
+    public static void retryPendingFcmRegistrationIfNeeded(@NonNull final String registrationId) {
+        if (!Preferences.getBoolean(Prefkey.fcm_registration_pending, false)) return;
+
+        AppLog.i(TAG, "Retrying pending FCM registration on app launch");
+        notifyNewFcmRegistrationId(registrationId);
+    }
+
+    private static void scheduleFcmRegistrationRetries(final String registrationId, final int attemptIndex) {
+        if (attemptIndex >= FCM_RETRY_DELAYS_MS.length) {
+            AppLog.w(TAG, "FCM registration retry chain exhausted; will try again on next app launch");
+            return;
+        }
+
+        final long delayMs = FCM_RETRY_DELAYS_MS[attemptIndex];
+        final ScheduledFuture<?> future = fcmRetryExecutor.schedule(() -> {
+            final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
+            if (simpleToken == null) return;
+
+            if (!sendFcmRegistrationId(simpleToken, registrationId)) {
+                scheduleFcmRegistrationRetries(registrationId, attemptIndex + 1);
+            }
+        }, delayMs, TimeUnit.MILLISECONDS);
+
+        final ScheduledFuture<?> previous = pendingFcmRetry.getAndSet(future);
+        if (previous != null) previous.cancel(false);
     }
 
     public static boolean sendFcmRegistrationId(final String simpleToken, final String registration_id) {
@@ -316,23 +375,27 @@ public class Sync {
 
             if (!response.success) {
                 SyncRecorder.log(SyncRecorder.EventKind.fcm_send_not_success, null, "message", response.message);
-                AppLog.d(TAG, "FCM registration id rejected by server: " + response.message);
+                AppLog.w(TAG, "FCM registration id rejected by server: " + response.message);
+                Preferences.setBoolean(Prefkey.fcm_registration_pending, true);
                 return false;
             }
 
             SyncRecorder.log(SyncRecorder.EventKind.fcm_send_success, null, "is_new_registration_id", response.is_new_registration_id);
             AppLog.d(TAG, "FCM registration id accepted by server: is_new_registration_id=" + response.is_new_registration_id);
+            Preferences.setBoolean(Prefkey.fcm_registration_pending, false);
 
             return true;
 
         } catch (IOException | JsonIOException e) {
             SyncRecorder.log(SyncRecorder.EventKind.fcm_send_error_io, null);
-            AppLog.d(TAG, "Failed to send FCM registration id to server", e);
+            AppLog.w(TAG, "Failed to send FCM registration id to server", e);
+            Preferences.setBoolean(Prefkey.fcm_registration_pending, true);
             return false;
 
         } catch (JsonSyntaxException e) {
             SyncRecorder.log(SyncRecorder.EventKind.fcm_send_error_json, null);
-            AppLog.d(TAG, "Server response is not valid JSON", e);
+            AppLog.w(TAG, "Server response is not valid JSON", e);
+            Preferences.setBoolean(Prefkey.fcm_registration_pending, true);
             return false;
         }
     }
