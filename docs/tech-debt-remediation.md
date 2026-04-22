@@ -311,23 +311,14 @@ If the project adopts Hilt for other reasons (e.g., ViewModel injection in REM-0
 
 ---
 
-### REM-14: Replace material-dialogs with Material 3
+### ~~REM-14: Replace material-dialogs with Material 3~~ ✅ COMPLETED
 **Addresses:** TD-12  
 **Module:** Cross-cutting UI  
 **BRICE:** B=2 R=3 I=3 C=4 E=5 → **3.4**
 
-**Steps:**
-1. `MaterialDialog` is used across **43 files** in the Alkitab module (imported from `com.afollestad.materialdialogs`). The project also has 6 helper/wrapper files (`MaterialDialogJavaHelper.kt`, `MaterialDialogAdapterHelper.kt`, `MaterialDialogProgressHelper.kt`, etc.) that centralize some usage patterns.
-2. Replace each dialog instance with `MaterialAlertDialogBuilder` (Material 3):
-   - Simple alerts → `MaterialAlertDialogBuilder`
-   - Input dialogs → custom layout with `TextInputEditText`
-   - List/choice dialogs → `setSingleChoiceItems()` / `setMultiChoiceItems()`
-   - Color picker dialogs → evaluate Material color picker or keep `AmbilWarna`
-3. Start by replacing the helper wrapper files — this will cascade fixes to many callers
-4. Remove `material-dialogs` dependencies from `Alkitab/build.gradle` (lines 175-176: `core` and `input` artifacts)
-5. Test each dialog replacement (manual — no UI tests exist)
+**Completed in:** `ca9a9138` (PR #140)
 
-**Difficulty:** Medium-Hard (2-4 days). 43 files is a larger scope than initially estimated. The helper wrappers reduce some effort, but manual testing of each dialog is needed.
+**Outcome:** All `com.afollestad.materialdialogs` usages replaced with `MaterialAlertDialogBuilder` (Material 3). The `material-dialogs` dependencies are gone from the build, and no remaining imports exist in the codebase.
 
 ---
 
@@ -678,7 +669,7 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 | REM-09 | Introduce ViewModel | **3.4** | 2 |
 | REM-10 | Room migration (Markers) | **3.4** | 2 |
 | REM-12 | ~~Replace DragSortListView~~ ✅ | **3.4** | 2 |
-| REM-14 | Replace material-dialogs | **3.4** | 2 |
+| REM-14 | ~~Replace material-dialogs~~ ✅ | **3.4** | 2 |
 | REM-18 | Add test coverage | **3.4** | 2 |
 | REM-24 | Refactor S.kt service locator | **3.2** | 2 |
 | REM-08 | Extract split view manager | **3.2** | 2 |
@@ -696,7 +687,7 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 **Sprint 1 (1 week):** ~~REM-01~~✅, ~~REM-02~~✅, ~~REM-04~~✅, ~~REM-05~~✅ — quick safety fixes (all done)  
 **Sprint 2 (1 week):** ~~REM-03~~✅ — LocalBroadcastManager removal (done)  
 **Sprint 3 (2 weeks):** ~~REM-07~~✅, REM-06, REM-08 — IsiActivity decomposition (REM-07 done)  
-**Sprint 4 (1 week):** ~~REM-12~~✅, REM-14 — deprecated library replacements (REM-12 done)  
+**Sprint 4 (1 week):** ~~REM-12~~✅, ~~REM-14~~✅ — deprecated library replacements (done)  
 **Sprint 5 (2 weeks):** REM-10, REM-11 — Room migration for core tables  
 **Sprint 6 (2 weeks):** REM-09, ~~REM-18a-e~~✅ — ViewModel + test coverage (REM-18a/b/c/d/e done)  
 **Ongoing:** REM-15, REM-16, ~~REM-17~~✅ — modernization work mixed into feature sprints (REM-17 done)
