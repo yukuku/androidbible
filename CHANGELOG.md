@@ -995,28 +995,25 @@ pure translation-only updates are generally omitted.
   live in one place, with search and label filtering.
 - Six new highlight colors.
 
-## 1.9.12 — 2011-08-16
-
-- Last 1.x release. Stability fixes for PDB-related crashes
-  introduced in 1.9.2.
-- **English Standard Version** (with italics) added as a download.
-- Note-bubble dialog auto-resizes to fit the screen.
-- "Go to" no longer crashes on obviously invalid references.
-
 ## 1.9.13 → 1.9.15 — 2011-08-17 → 2011-09-14
 
+- **Final 1.x releases** — maintenance updates that shipped after
+  2.0.0 was already out, for users who hadn't upgraded to 2.x yet.
 - Added **Chinese Union Version Traditional (CUVT)** and
   **Simplified (CUVS)** as downloadable presets.
 - Fixed a corrupted Psalms index in the Indonesian TB version
   (wrong verse offsets).
 - Hid on-screen overlay nav buttons on devices without a nav bar.
 
-## 1.9.8 — 2011-06-22
+## 1.9.12 — 2011-08-16
 
-- Minimum Android raised from 1.5 to 1.6.
-- **Tablet support** (targets Android 3.1): menus are no longer
-  inaccessible on tablets; title / action bar stays visible.
-- Tablet top toolbar with overflow for Suggest / Help / About.
+- Stability fixes for the PDB-related crashes introduced in 1.9.2.
+- **English Standard Version** (with italics) added as a download.
+- Note-bubble dialog auto-resizes to fit the screen.
+- "Go to" no longer crashes on obviously invalid references.
+- The dev blog announced this as "the last 1.x release before 2.x" —
+  in the end, 1.9.13 through 1.9.15 followed as maintenance on the
+  1.x branch.
 
 ## 1.9.2 → 1.9.11 — 2011-06-08 → 2011-07-09
 
@@ -1028,6 +1025,11 @@ pure translation-only updates are generally omitted.
   remove installed Bible versions.
 - **Apocrypha / Deuterocanonical books** supported when present in
   the PDB.
+- **Tablet support** lands in 1.9.8 (targets Android 3.1): menus are
+  no longer inaccessible on tablets, the title / action bar stays
+  visible, and there's a new tablet top toolbar with overflow for
+  Suggest / Help / About. Minimum Android was also raised from 1.5
+  to 1.6 in this wave.
 - Flexible book lists per version; bookmarks referencing a book not
   in the current version show `[?]` or the book number.
 - Pericope / section headings render in the right place in more
