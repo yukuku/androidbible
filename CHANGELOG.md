@@ -177,25 +177,25 @@ pure translation-only updates are generally omitted.
 
 ## 4.5.6 — 2019-04-24
 
-- **Right-to-left (RTL) layout support** for Arabic and Hebrew.
-- Analytics moved to Firebase; song-playing and devotion-reading events
-  are tracked.
 - Added Cebuano and Tagalog UI translations.
+- Ukrainian UI translation dropped.
 
 ## 4.5.5 — 2018-11-16
 
 - **Hide the app icon on the daily-verse widget** via a new
   preference.
 - **Song player** shows current playback position and total duration.
+- **Right-to-left (RTL) layout support** for Arabic and Hebrew.
+- Analytics moved from Google Analytics to Firebase; song-playing and
+  devotion-reading events are tracked.
 - Groundwork for AYT (Alkitab Yang Terbuka) as a downloadable Bible
   version arrives around this time.
-- Right-to-left rendering improvements.
 - **Minimum Android raised to 4.2** (API 17).
 
 ## 4.5.4 — 2018-11-05
 
-- **Ribka** integration support (Ribka devotion).
-- Shared devotions now include the date.
+- **Ribka** support: report typos or suggest corrections in the AYT
+  Bible text directly from the verse menu.
 
 ## 4.5.3 — 2018-09-26
 
@@ -976,8 +976,6 @@ pure translation-only updates are generally omitted.
   overwriting.
 - "Export / Import to SD card" renamed **Backup / Restore** for
   clarity.
-- **Tablet (xlarge) layouts**: bigger default font (22sp), enlarged
-  keypad and Go-to screen.
 - **Hardware acceleration** turned on for smoother scrolling.
 - Fixed an internal reader crash on KJV when a chapter had no
   pericopes.
@@ -997,13 +995,15 @@ pure translation-only updates are generally omitted.
 
 ## 1.9.13 → 1.9.15 — 2011-08-17 → 2011-09-14
 
-- **Final 1.x releases** — maintenance updates that shipped after
-  2.0.0 was already out, for users who hadn't upgraded to 2.x yet.
+- **Final 1.x maintenance releases** — shipped after 1.9.12 was
+  announced on the blog as the last 1.x release, but still before
+  2.0.0 landed on the Play Store (2011-10-01).
 - Added **Chinese Union Version Traditional (CUVT)** and
   **Simplified (CUVS)** as downloadable presets.
 - Fixed a corrupted Psalms index in the Indonesian TB version
   (wrong verse offsets).
-- Hid on-screen overlay nav buttons on devices without a nav bar.
+- Tablet default font bumped to 22sp and larger keypad / Go-to
+  activity layouts added for xlarge screens.
 
 ## 1.9.12 — 2011-08-16
 
