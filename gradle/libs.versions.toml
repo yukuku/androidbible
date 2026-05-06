@@ -50,6 +50,13 @@ kotlinxSerializationJson = "1.5.1"
 # UI
 fancyShowcaseView = "1.4.0"
 
+# Jetpack Compose — first Compose surface in this project, introduced for the
+# audio-bible bottom sheet (docs/features/audio-bible/). compose-ui 1.11.0
+# pairs with compose-material3 1.4.0 per the Compose BOM 2026.04.01. When
+# upgrading, look up the current BOM and bump both numbers together.
+androidxComposeUi = "1.11.0"
+androidxComposeMaterial3 = "1.4.0"
+
 [libraries]
 # AndroidX
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "androidxActivity" }
@@ -61,6 +68,7 @@ androidx-fragment = { group = "androidx.fragment", name = "fragment", version.re
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "androidxFragment" }
 androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "androidxMedia3" }
 androidx-media3-datasource-okhttp = { group = "androidx.media3", name = "media3-datasource-okhttp", version.ref = "androidxMedia3" }
+androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "androidxMedia3" }
 androidx-multidex = { group = "androidx.multidex", name = "multidex", version.ref = "androidxMultidex" }
 androidx-percentlayout = { group = "androidx.percentlayout", name = "percentlayout", version.ref = "androidxPercentlayout" }
 androidx-preference = { group = "androidx.preference", name = "preference", version.ref = "androidxPreference" }
@@ -97,11 +105,21 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 # UI
 fancyShowcaseView = { group = "com.github.faruktoptas", name = "FancyShowCaseView", version.ref = "fancyShowcaseView" }
 
+# Jetpack Compose
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "androidxComposeUi" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "androidxComposeUi" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "androidxComposeUi" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidxComposeMaterial3" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "androidxComposeUi" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "androidxComposeUi" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 firebase-crashlytics-gradle = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsGradle" }

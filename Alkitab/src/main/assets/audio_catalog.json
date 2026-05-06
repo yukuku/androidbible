@@ -1,0 +1,45 @@
+{
+  "generatedAt": 0,
+  "entries": [
+    {
+      "versionId": "preset/in-tb",
+      "shortName": "TB",
+      "displayLocaleHint": "in",
+      "chapterUrlTemplate": "/audio/chapter?versionId=preset%2Fin-tb&bookId={bookId}&chapter_1={chapter_1}",
+      "timingUrlTemplate": "/audio/timing?versionId=preset%2Fin-tb&bookId={bookId}&chapter_1={chapter_1}",
+      "copyrightNotice": "© LAI, via SABDA",
+      "license": "Non-commercial",
+      "hasDeuterocanon": false
+    },
+    {
+      "versionId": "preset/in-ayt",
+      "shortName": "AYT",
+      "displayLocaleHint": "in",
+      "chapterUrlTemplate": "/audio/chapter?versionId=preset%2Fin-ayt&bookId={bookId}&chapter_1={chapter_1}",
+      "timingUrlTemplate": "/audio/timing?versionId=preset%2Fin-ayt&bookId={bookId}&chapter_1={chapter_1}",
+      "copyrightNotice": "© AYT, via SABDA",
+      "license": "Non-commercial",
+      "hasDeuterocanon": false
+    },
+    {
+      "versionId": "preset/in-avb",
+      "shortName": "AVB",
+      "displayLocaleHint": "ms",
+      "chapterUrlTemplate": "/audio/chapter?versionId=preset%2Fin-avb&bookId={bookId}&chapter_1={chapter_1}",
+      "timingUrlTemplate": "/audio/timing?versionId=preset%2Fin-avb&bookId={bookId}&chapter_1={chapter_1}",
+      "copyrightNotice": "© BSM, via SABDA",
+      "license": "Non-commercial",
+      "hasDeuterocanon": false
+    },
+    {
+      "versionId": "preset/en-kjv",
+      "shortName": "KJV",
+      "displayLocaleHint": "en",
+      "chapterUrlTemplate": "/audio/chapter?versionId=preset%2Fen-kjv&bookId={bookId}&chapter_1={chapter_1}",
+      "timingUrlTemplate": "/audio/timing?versionId=preset%2Fen-kjv&bookId={bookId}&chapter_1={chapter_1}",
+      "copyrightNotice": "Public Domain",
+      "license": "PD",
+      "hasDeuterocanon": false
+    }
+  ]
+}
