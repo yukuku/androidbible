@@ -58,66 +58,29 @@ A new "Audio" icon in the `IsiActivity` toolbar (`activity_isi.xml`, `app:showAs
 
 **Preparing state.** The moment the user taps Audio, the work that runs before the first byte of audio plays — catalog lookup (cache), timing fetch if not already cached, ExoPlayer `prepare()` + initial buffer — can take a perceptible fraction of a second on mobile networks. During this window the toolbar icon morphs into an indeterminate spinner, mirroring the Kidung (Songs) play button's behavior: while `MediaController.State == preparing`, `SongViewActivity` hides the play menu item and swaps in an indeterminate `circular_progress` view (`SongViewActivity.kt:178, 443-449, 1088-1090`). We use the exact same pattern — `onPrepareOptionsMenu` hides `R.id.menuAudio` and shows a sibling progress view anchored in the toolbar — so the UX is consistent with the rest of the app. The spinner reverts to the Audio icon when the service reports `ready` (or `error`, in which case the snackbar in §4.6 fires). Tapping during the preparing window is a no-op; a second tap does **not** cancel (that would require tearing down the service mid-prepare and feels unpredictable).
 
-### 4.2 Audio bar — Compose `BottomSheetScaffold`
+### 4.2 Audio bar — fixed-height Compose surface
 
-Anchored at the bottom of `IsiActivity`, hosted in a `ComposeView`. Implemented in **Jetpack Compose 1.11.0** (the first piece of Compose in the codebase; we will progressively migrate `IsiActivity` to Compose, with the audio bar as the beachhead). The bar is a Material 3 `BottomSheetScaffold` with two states: a **peek** (collapsed) row and a **fully-expanded mini-player**. The user reaches the expanded form by swiping up on the peek row or by tapping its drag handle.
+Anchored at the bottom of `IsiActivity`, hosted in a `ComposeView`. Implemented in **Jetpack Compose 1.11.0** (the first piece of Compose in the codebase; we will progressively migrate `IsiActivity` to Compose, with the audio bar as the beachhead). The bar is a **fixed-height Material 3 surface** — no peek/expand mechanic, no drag handle, no swipe.
 
-#### 4.2.1 Peek (collapsed) state — height ≈ 96dp
+Height ≈ 96dp:
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│                          ── (drag handle) ──                      │
 │  ⏮ Jn 2   ⏮   ▶/⏸ (+progress ring)   ⏭   Jn 4 ⏭   1.0×   ╳       │
 │  ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒░░░░░░░░   0:42 / 3:15                           │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
-- **Drag handle** — Material 3 standard `BottomSheetDefaults.DragHandle` at the top, communicates "swipeable."
 - **Play/pause** — center; shows a determinate progress ring around the FAB-style button while preparing.
 - **Prev / next verse** — plain icon-only buttons that seek to the start of the neighboring verse using timing data. No label on the button (the active verse is already conveyed by the highlighted row and the scrubber bubble).
 - **Prev / next chapter** — the button shows the target chapter next to its icon (e.g. `⏮ Jn 2` and `Jn 4 ⏭`), using the same `book.shortName` + chapter format that appears in the main toolbar. At cross-book boundaries the next button reads `⏮ Mt 28` from Mark 1. At the Bible boundaries the label slot is `INVISIBLE` (not gone) so the layout doesn't reflow.
-- **Speed** — taps open the speed bottom sheet (§4.2.3).
-- **Close (╳)** — closes the bottom sheet entirely; stops audio and clears highlight.
+- **Speed** — taps open the speed bottom sheet (§4.2.2).
+- **Close (╳)** — hides the bar; stops audio and clears highlight.
 - **Scrubber** — Material 3 `Slider`. Drag-to-seek with a live preview label that shows `mm:ss · v.7` while dragging — both the proposed position and the verse that would play on release. On release, audio seeks to the start of that verse's `startMs` (snapping to verse boundary feels better than snapping to a raw millisecond, and matches what the tooltip is showing). If timing data is missing, the label falls back to `mm:ss` only and seek is plain.
 
-#### 4.2.2 Expanded (full) state — sheet height ≈ 60% of screen
+#### 4.2.2 Speed bottom sheet
 
-Reachable by swiping up on the peek row.
-
-```
-┌────────────────────────────────────────────────┐
-│                  ── (drag handle) ──            │
-│                                                │
-│              ┌─────────────────┐                │
-│              │   chapter art    │   ← square art (book/cover)
-│              │   (book cover    │
-│              │    or app icon)  │
-│              └─────────────────┘                │
-│                                                │
-│     John 3 · KJV                                │
-│                                                │
-│  ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒░░░░░░░░░   0:42 / 3:15        │
-│                                                │
-│   ⏮ Jn 2     ⏮     ▶/⏸     ⏭     Jn 4 ⏭         │
-│                  (large)                        │
-│                                                │
-│   1.0×    Verse 7 / 36                          │
-│                                                │
-│   ── Up next ──                                 │
-│   v.8  Whosoever drinketh of this water…        │
-│   v.9  Whosoever drinketh of the water that I…  │
-│   …                                             │
-└────────────────────────────────────────────────┘
-```
-
-- **Chapter art** — for v1, the app icon over a tinted background. v1.1 can ship per-book artwork.
-- **Bigger transport** — same controls as the peek row, larger touch targets, more breathing room.
-- **Verse counter** — `Verse 7 / 36` — gives the listener a sense of progress.
-- **"Up next" list** — a scrollable list of the upcoming verses' first 80 chars, inferred from the chapter's text + timing. Tap any row to seek to that verse. Skipped if timing data is missing.
-
-#### 4.2.3 Speed bottom sheet
-
-Tapping `1.0×` (peek or expanded) opens a small Compose `ModalBottomSheet` with a horizontal `FilterChip` row: `0.5×, 0.8×, 1.0×, 1.25×, 1.5×, 1.75×, 2.0×`. Single-selection. Persisted via `Prefkey.audioPlaybackSpeed`. The thumb-friendly bottom-sheet pattern matches what Spotify, YouTube Music, and Audible do for the same control.
+Tapping `1.0×` opens a small Compose `ModalBottomSheet` with a horizontal `FilterChip` row: `0.5×, 0.8×, 1.0×, 1.25×, 1.5×, 1.75×, 2.0×`. Single-selection. Persisted via `Prefkey.audioPlaybackSpeed`. The thumb-friendly bottom-sheet pattern matches what Spotify, YouTube Music, and Audible do for the same control.
 
 ### 4.3 Verse highlight
 
@@ -154,7 +117,7 @@ This deliberately replaces PR #127's sequential interleaving (which plays verse 
 - **Version has no audio:** toolbar icon is hidden.
 - **Network failure on chapter load:** snackbar "Cannot load audio. Retry?" with a Retry action. Audio bar stays open, play button disabled.
 - **Timing data missing:** audio plays, but verse-skip buttons and verse highlight are disabled (greyed). No error shown.
-- **Audio URL 404 (e.g. deuterocanonical chapter):** snackbar "Audio not available for this chapter," and the bar auto-closes after 3s.
+- **Audio URL 404 (e.g. an upstream gap in coverage):** snackbar "Audio not available for this chapter," and the bar auto-closes after 3s.
 
 ## 5. Architecture
 
@@ -221,11 +184,10 @@ data class AudioCatalog(
 
 data class AudioVersion(
     val versionId: String,            // matches MVersion.getVersionId(), e.g. "preset/in-tb"
+    val shortName: String,            // for display when needed (e.g. split-source picker)
     val displayLocaleHint: String?,   // for ordering when user has no active version
     val chapterUrlTemplate: String,   // e.g. "/audio/chapter?versionId=preset%2Fin-tb&bookId={bookId}&chapter_1={chapter_1}"
     val timingUrlTemplate: String?,   // nullable: some versions have audio but no timing
-    val copyrightNotice: String?,
-    val license: String?,             // e.g. "Public Domain", "SABDA"
 )
 
 data class VerseTiming(
@@ -291,9 +253,7 @@ audio/
 ├─ BibleAudioService.kt        ← media3 MediaSessionService
 ├─ HighlightTracker.kt
 ├─ ui/
-│  ├─ AudioBottomSheet.kt      ← Compose @Composable hosting BottomSheetScaffold
-│  ├─ AudioBarPeek.kt          ← Compose: peek state row
-│  ├─ AudioBarExpanded.kt      ← Compose: expanded mini-player
+│  ├─ AudioBar.kt              ← Compose @Composable: the fixed-height bar from §4.2
 │  ├─ SpeedBottomSheet.kt      ← Compose: ModalBottomSheet with FilterChip row
 │  ├─ AudioTheme.kt            ← Compose MaterialTheme bridged from app's ?attr/colorSurface*
 │  └─ AudioHighlightColor.kt   ← yellow / fallback contrast logic
@@ -309,7 +269,7 @@ Hosting in `IsiActivity`:
 ```xml
 <!-- res/layout/activity_isi.xml — at the bottom of the root container -->
 <androidx.compose.ui.platform.ComposeView
-    android:id="@+id/audio_bottom_sheet"
+    android:id="@+id/audio_bar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom" />
@@ -336,7 +296,7 @@ Compose adds ~2 MB to the APK. We accept this once, since the audio bar is the m
 
 ## 6. Privacy, security, licensing
 
-- Audio and timing data are served by `api.alkitab.app`, which may 302 to sabda.org or a CDN. The backend carries the licensing responsibility; the client displays the catalog's `copyrightNotice` and `license` strings in the audio bar's overflow menu ("About this audio").
+- Audio and timing data are served by `api.alkitab.app`, which may 302 to sabda.org or a CDN. The backend carries the licensing responsibility — there is no per-version attribution surface in the client UI for v1.
 - No new user data collected beyond existing analytics. Playback events are **not** logged off-device in v1.
 - No microphone / no audio capture.
 

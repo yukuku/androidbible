@@ -64,40 +64,28 @@ Accept: application/json
       "shortName": "TB",
       "displayLocaleHint": "in",
       "chapterUrlTemplate": "/audio/chapter?versionId=preset%2Fin-tb&bookId={bookId}&chapter_1={chapter_1}",
-      "timingUrlTemplate": "/audio/timing?versionId=preset%2Fin-tb&bookId={bookId}&chapter_1={chapter_1}",
-      "copyrightNotice": "© LAI, via SABDA",
-      "license": "Non-commercial",
-      "hasDeuterocanon": false
+      "timingUrlTemplate": "/audio/timing?versionId=preset%2Fin-tb&bookId={bookId}&chapter_1={chapter_1}"
     },
     {
       "versionId": "preset/in-ayt",
       "shortName": "AYT",
       "displayLocaleHint": "in",
       "chapterUrlTemplate": "/audio/chapter?versionId=preset%2Fin-ayt&bookId={bookId}&chapter_1={chapter_1}",
-      "timingUrlTemplate": "/audio/timing?versionId=preset%2Fin-ayt&bookId={bookId}&chapter_1={chapter_1}",
-      "copyrightNotice": "© AYT, via SABDA",
-      "license": "Non-commercial",
-      "hasDeuterocanon": false
+      "timingUrlTemplate": "/audio/timing?versionId=preset%2Fin-ayt&bookId={bookId}&chapter_1={chapter_1}"
     },
     {
       "versionId": "preset/in-avb",
       "shortName": "AVB",
       "displayLocaleHint": "ms",
       "chapterUrlTemplate": "/audio/chapter?versionId=preset%2Fin-avb&bookId={bookId}&chapter_1={chapter_1}",
-      "timingUrlTemplate": "/audio/timing?versionId=preset%2Fin-avb&bookId={bookId}&chapter_1={chapter_1}",
-      "copyrightNotice": "© BSM, via SABDA",
-      "license": "Non-commercial",
-      "hasDeuterocanon": false
+      "timingUrlTemplate": "/audio/timing?versionId=preset%2Fin-avb&bookId={bookId}&chapter_1={chapter_1}"
     },
     {
       "versionId": "preset/en-kjv",
       "shortName": "KJV",
       "displayLocaleHint": "en",
       "chapterUrlTemplate": "/audio/chapter?versionId=preset%2Fen-kjv&bookId={bookId}&chapter_1={chapter_1}",
-      "timingUrlTemplate": "/audio/timing?versionId=preset%2Fen-kjv&bookId={bookId}&chapter_1={chapter_1}",
-      "copyrightNotice": "Public Domain",
-      "license": "PD",
-      "hasDeuterocanon": false
+      "timingUrlTemplate": "/audio/timing?versionId=preset%2Fen-kjv&bookId={bookId}&chapter_1={chapter_1}"
     }
   ]
 }
@@ -125,10 +113,10 @@ The catalog is a Python module-level dict in `audio/flask_app.py`, in the same s
 ```python
 # audio/flask_app.py
 CATALOG = {
-    "preset/in-tb":  {"shortName": "TB",  "displayLocaleHint": "in", "copyrightNotice": "© LAI, via SABDA",  "license": "Non-commercial", "hasDeuterocanon": False},
-    "preset/in-ayt": {"shortName": "AYT", "displayLocaleHint": "in", "copyrightNotice": "© AYT, via SABDA", "license": "Non-commercial", "hasDeuterocanon": False},
-    "preset/in-avb": {"shortName": "AVB", "displayLocaleHint": "ms", "copyrightNotice": "© BSM, via SABDA", "license": "Non-commercial", "hasDeuterocanon": False},
-    "preset/en-kjv": {"shortName": "KJV", "displayLocaleHint": "en", "copyrightNotice": "Public Domain",     "license": "PD",              "hasDeuterocanon": False},
+    "preset/in-tb":  {"shortName": "TB",  "displayLocaleHint": "in"},
+    "preset/in-ayt": {"shortName": "AYT", "displayLocaleHint": "in"},
+    "preset/in-avb": {"shortName": "AVB", "displayLocaleHint": "ms"},
+    "preset/en-kjv": {"shortName": "KJV", "displayLocaleHint": "en"},
 }
 
 # At request time, the handler synthesises chapterUrlTemplate / timingUrlTemplate
@@ -140,7 +128,7 @@ The ETag is derived from a `sha1` of `json.dumps(CATALOG, sort_keys=True)`. It c
 ### 3.4 Notes
 
 - `versionId` must exactly match the client's `MVersion.getVersionId()` format (`"preset/<preset_name>"`). See `Alkitab/src/main/java/yuku/alkitab/base/model/MVersionPreset.java:18-20`. Getting this wrong means the toolbar icon never shows up.
-- `hasDeuterocanon` is advisory so the client can disable Next-chapter at the Protestant canon boundary for those who want it; v1 can ignore.
+- We assume **all books and all chapters have audio** when a version is in the catalog. If the upstream is missing a particular chapter, the client renders a "Audio not available for this chapter" snackbar (PRD §4.6) — there is no advance signal of coverage gaps in the catalog.
 
 ## 4. `GET /audio/timing?versionId=…&bookId=…&chapter_1=…`
 
@@ -351,6 +339,4 @@ Response:
 | Scheduled jobs / pre-warming? | `cron.yaml` is currently empty. We add `POST /audio/admin/prewarm` as a one-shot admin endpoint instead of a cron entry; it can be re-hit manually after each deploy. |
 | Admin auth? | `@require_staff` decorator from `web/auth.py` (Google OAuth2). Reused. |
 
-The only question left for the **product** owner, not the engineering owner:
-
-1. **Licensing attribution.** SABDA permits free distribution of audio, but should the in-app "About this audio" sheet display a longer attribution string than the per-version `copyrightNotice` field? If so, what text? (Default for v1: just the per-version line.)
+No open product questions for v1.

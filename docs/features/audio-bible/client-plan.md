@@ -91,40 +91,31 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 
 **Exit criteria:** A throwaway button in a debug-only screen starts the service, plays a chapter, updates a text view with the active verse. No UI polish yet.
 
-### M3 — UI surface (Compose, ≈ 4 days)
+### M3 — UI surface (Compose, ≈ 3 days)
 
-**Goal:** the feature is wired into `IsiActivity` and matches the mock in PRD §4.2 — peek bottom-sheet that swipes up into a full mini-player. Implemented entirely in Compose 1.11.0; this is the project's first Compose surface.
+**Goal:** the feature is wired into `IsiActivity` and matches the mock in PRD §4.2 — a fixed-height Material 3 audio bar at the bottom of the screen. Implemented entirely in Compose 1.11.0; this is the project's first Compose surface.
 
 #### 3.1 Compose host
 
-- [ ] Add a `<androidx.compose.ui.platform.ComposeView android:id="@+id/audio_bottom_sheet" />` to `activity_isi.xml` at the bottom of the root layout (`android:layout_gravity="bottom"`). The sheet handles its own peek/expand behavior; no XML siblings move.
+- [ ] Add a `<androidx.compose.ui.platform.ComposeView android:id="@+id/audio_bar" />` to `activity_isi.xml` at the bottom of the root layout (`android:layout_gravity="bottom"`).
 - [ ] `AudioBarController.kt` (in `audio/`) — Kotlin glue between the View-based `IsiActivity` and the Compose UI:
     - Owns a `MutableStateFlow<AudioBarUiState>`.
-    - `attach(activity: IsiActivity, composeView: ComposeView)` — `composeView.setContent { AudioBottomSheet(state, onCommand) }`.
+    - `attach(activity: IsiActivity, composeView: ComposeView)` — `composeView.setContent { AudioBar(state, onCommand) }`.
     - Exposes `fun show()` / `fun hide()` / `fun isAvailable: Boolean` for `IsiActivity` to call.
     - Forwards play/pause/seek/speed/chapter-nav commands to the `BibleAudioService` (M2) via the binder.
     - Forwards chapter-navigation events back to `IsiActivity.display(book, chapter_1, 0)`.
 
 #### 3.2 Composable surface
 
-- [ ] `audio/ui/AudioTheme.kt` — wraps Compose `MaterialTheme` and bridges the project's existing `?attr/colorSurface*` etc. into Compose `ColorScheme` so dark mode works without a separate Compose theme. Uses `MaterialTheme.colorScheme.surfaceContainerHigh` for the sheet background.
-- [ ] `audio/ui/AudioBottomSheet.kt` — top-level `@Composable`:
-    - `BottomSheetScaffold` from `androidx.compose.material3` with `sheetPeekHeight = 96.dp`, `sheetSwipeEnabled = true`, `sheetDragHandle = { BottomSheetDefaults.DragHandle() }`, `sheetContainerColor = colorScheme.surfaceContainerHigh`, `sheetTonalElevation = 6.dp`, `sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)`.
-    - `sheetContent = { AudioBarExpanded(...) }` (the full mini-player).
-    - The peek row (`AudioBarPeek`) is the part of `sheetContent` rendered above the fold within `sheetPeekHeight`.
-- [ ] `audio/ui/AudioBarPeek.kt` — peek row matching PRD §4.2.1:
-    - Row: prev-chapter (icon + label) | prev-verse | play/pause FAB | next-verse | next-chapter (icon + label) | speed | close.
-    - Slider below the row.
+- [ ] `audio/ui/AudioTheme.kt` — wraps Compose `MaterialTheme` and bridges the project's existing `?attr/colorSurface*` etc. into Compose `ColorScheme` so dark mode works without a separate Compose theme. Uses `MaterialTheme.colorScheme.surfaceContainerHigh` for the bar background.
+- [ ] `audio/ui/AudioBar.kt` — top-level `@Composable`. A fixed-height (≈96dp) `Surface` anchored to the bottom of the host `ComposeView`. Visibility (show/hide on close) is animated via `AnimatedVisibility(enter = slideInVertically(initialOffsetY = { it }), exit = slideOutVertically(targetOffsetY = { it }))` so the bar slides in/out instead of popping.
+    - Layout: top row of controls + Slider below.
+    - Top row, left-to-right: prev-chapter (icon + label) | prev-verse | play/pause FAB | next-verse | next-chapter (icon + label) | speed | close.
     - Slider uses Material 3 `Slider` with a custom `SliderState` and a label rendered above the thumb: `"${formatMmSs(snappedMs)} · v.${verse_1}"`. Snap-to-verse on `onValueChangeFinished`.
     - Play/pause button uses `AnimatedContent` to crossfade between `Icons.Filled.PlayArrow` and `Icons.Filled.Pause` — Compose's idiomatic equivalent of the AVD morph.
     - On preparing state: render a `CircularProgressIndicator` overlay around the play/pause button.
     - Chapter-nav button labels (`Jn 4`) drawn with `Modifier.alpha(if (target != null) 1f else 0f)` — invisible-not-gone, layout doesn't reflow at Bible boundaries.
     - Haptics: `LocalHapticFeedback.current.performHapticFeedback(HapticFeedbackType.LongPress)` on speed change, `HapticFeedbackType.TextHandleMove` on play/pause.
-- [ ] `audio/ui/AudioBarExpanded.kt` — expanded state matching PRD §4.2.2:
-    - Big chapter art (square, 240dp) — for v1, the app icon over a tinted background.
-    - Title row (`John 3 · KJV`) in `MaterialTheme.typography.headlineSmall`.
-    - Same scrubber, larger transport row, speed + verse counter chips.
-    - **"Up next" `LazyColumn`** of upcoming verses' first 80 chars; tap to seek.
 - [ ] `audio/ui/SpeedBottomSheet.kt` — `ModalBottomSheet` with a `FilterChip` row for `0.5×, 0.8×, 1.0×, 1.25×, 1.5×, 1.75×, 2.0×`. Single-selection. Persisted via `Prefkey.audioPlaybackSpeed`.
 - [ ] `audio/ui/AudioHighlightColor.kt` — pure-function logic:
     ```kotlin
@@ -158,10 +149,10 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 #### 3.5 Tests
 
 - [ ] `AudioHighlightColorTest` — pure-function unit tests covering yellow/black/white selection across light, sepia, and dark reading backgrounds. Assert ≥4.5 contrast.
-- [ ] Compose preview functions for `AudioBarPeek`, `AudioBarExpanded`, `SpeedBottomSheet` — for visual review in Android Studio. (Previews don't replace device testing but are cheap insurance.)
-- [ ] Instrumented test (`connectedCheck`): open chapter → tap audio → verify the bottom sheet appears in peek state → swipe up via Compose `performTouchInput` → assert the expanded state is rendered.
+- [ ] Compose preview functions for `AudioBar`, `SpeedBottomSheet` — for visual review in Android Studio. (Previews don't replace device testing but are cheap insurance.)
+- [ ] Instrumented test (`connectedCheck`): open chapter → tap audio → verify the audio bar slides in → tap close → verify it slides out and the service stops.
 
-**Exit criteria:** End-to-end demo of §1–§6 of the PRD's must-haves (screen-on usage); the bottom sheet swipes smoothly between peek and expanded; verse highlight uses yellow on light themes and the contrast-fallback color on dark themes.
+**Exit criteria:** End-to-end demo of §1–§6 of the PRD's must-haves (screen-on usage); the audio bar slides in/out smoothly; verse highlight uses yellow on light themes and the contrast-fallback color on dark themes.
 
 ### M4 — Lock-screen & background (≈ 2 days)
 
@@ -184,14 +175,14 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 
 ### M5 — Behavior polish & design review (≈ 2 days)
 
-The visual scaffolding (Compose `BottomSheetScaffold`, Material 3 theming, `AnimatedContent` icon crossfades, smooth verse-scroll, `LocalHapticFeedback`) is already baked into M3. M5 is the behavior polish:
+The visual scaffolding (Compose audio bar with `AnimatedVisibility` slide-in, Material 3 theming, `AnimatedContent` icon crossfades, smooth verse-scroll, `LocalHapticFeedback`) is already baked into M3. M5 is the behavior polish:
 
 - [ ] Speed persistence: `Prefkey.audioPlaybackSpeed` (enum default `1.0f`). Read on service start, write on each change.
 - [ ] Auto-advance: on `onEnded`, navigate to the next chapter. Centralise the cross-book logic in a new `BibleNavigationUtil.kt` (it's useful outside audio too). No repeat toggle in v1.
 - [ ] Snackbar error handling (§4.6 of PRD). Snackbars come from `IsiActivity` (host), not the Compose layer, since they need to overlay the toolbar.
 - [ ] Split-view source dialog (§4.5 of PRD). On play-tap when split view is active and both visible versions have audio, render a Compose `AlertDialog` with the two version short names and a Cancel. The state is held in `AudioBarController` via `MutableStateFlow`; reset to `null` whenever split view toggles, either visible version changes, or the audio bar is closed.
 - [ ] **Design review pass.** Walk the bottom sheet against this checklist before tagging M5 done:
-    - Peek-to-expanded swipe is smooth on a low-end device (Pixel 4a / API 30 emulator OK).
+    - Slide-in / slide-out animation is smooth on a low-end device (Pixel 4a / API 30 emulator OK).
     - Highlight overlay fades, doesn't strobe, at 1.0× speed.
     - Play/pause icon crossfades (no swap).
     - Toolbar icon crossfades into the spinner (no swap).

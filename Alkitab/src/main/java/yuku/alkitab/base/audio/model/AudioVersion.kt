@@ -18,7 +18,4 @@ data class AudioVersion(
     val displayLocaleHint: String? = null,
     val chapterUrlTemplate: String,
     val timingUrlTemplate: String? = null,
-    val copyrightNotice: String? = null,
-    val license: String? = null,
-    val hasDeuterocanon: Boolean = false,
 )
