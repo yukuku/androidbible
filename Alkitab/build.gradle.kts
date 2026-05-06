@@ -15,6 +15,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.firebase.crashlytics.gradle)
     alias(libs.plugins.google.services)
 }
@@ -123,6 +124,14 @@ android {
         buildConfigField("String", "SERVER_HOST", "\"$serverHost\"")
         buildConfigField("String", "RIBKA_FUNCTIONS_HOST", "\"$ribkaFunctionsHost\"")
         buildConfigField("String", "LAST_COMMIT_HASH", "\"$gitCommitHash\"")
+
+        // Audio catalog identifier for the internal Bible version. The
+        // bundled internal version reports `MVersion.getVersionId() == "internal"`,
+        // which never matches a `preset/*` catalog entry; this field tells
+        // AudioCatalogRepository what catalog row to use when the user is
+        // reading the internal version. Empty string means "internal has no
+        // audio for this flavor". Each productFlavor overrides this below.
+        buildConfigField("String", "INTERNAL_VERSION_AUDIO_ID", "\"\"")
     }
     buildTypes {
         debug {
@@ -144,18 +153,25 @@ android {
     flavorDimensions += "playStoreApplicationId"
 
     productFlavors {
-        // Use this for development
-        create("plain") {}
+        // Use this for development. The plain build's bundled `ddd_*` files are
+        // Indonesian-language placeholders, so for dev convenience we map the
+        // internal version to TB audio so the bottom sheet has something to play.
+        create("plain") {
+            buildConfigField("String", "INTERNAL_VERSION_AUDIO_ID", "\"preset/in-tb\"")
+        }
 
         // The following flavors are for release
         create("yuku_alkitab") {
             applicationId = "yuku.alkitab"
+            buildConfigField("String", "INTERNAL_VERSION_AUDIO_ID", "\"preset/in-tb\"")
         }
         create("yuku_quick_bible") {
             applicationId = "yuku.alkitab.kjv"
+            buildConfigField("String", "INTERNAL_VERSION_AUDIO_ID", "\"preset/en-kjv\"")
         }
         create("sabda_alkitab") {
             applicationId = "org.sabda.alkitab"
+            buildConfigField("String", "INTERNAL_VERSION_AUDIO_ID", "\"preset/in-tb\"")
         }
     }
 
@@ -163,6 +179,7 @@ android {
 
     buildFeatures {
         buildConfig = true
+        compose = true
     }
 
     testOptions {
@@ -336,9 +353,20 @@ dependencies {
     // Google
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.datasource.okhttp)
+    implementation(libs.androidx.media3.session)
     implementation(libs.google.material)
     implementation(libs.gson)
     implementation(libs.fastscroll)
+
+    // Jetpack Compose — first Compose surface in this project, introduced for the
+    // audio-bible bottom sheet (docs/features/audio-bible/).
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.activity.compose)
+    debugImplementation(libs.androidx.compose.ui.tooling)
 
     // Tests
     testImplementation(libs.junit)
