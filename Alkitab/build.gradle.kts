@@ -15,6 +15,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.firebase.crashlytics.gradle)
     alias(libs.plugins.google.services)
 }
@@ -163,6 +164,7 @@ android {
 
     buildFeatures {
         buildConfig = true
+        compose = true
     }
 
     testOptions {
@@ -318,6 +320,19 @@ dependencies {
     implementation(project(":AmbilWarna"))
     implementation(project(":ImportedDesktopVerseUtil"))
     implementation(project(":PrDownloaderFixed"))
+
+    // Compose
+    val composeBom = platform(libs.androidx.compose.bom)
+    implementation(composeBom)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    debugImplementation(libs.androidx.compose.ui.tooling)
 
     // AndroidX
     implementation(libs.androidx.activity.ktx)
