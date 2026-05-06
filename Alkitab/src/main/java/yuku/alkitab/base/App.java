@@ -2,6 +2,7 @@ package yuku.alkitab.base;
 
 import android.content.Context;
 import android.net.Uri;
+import androidx.core.app.NotificationChannelCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.multidex.MultiDex;
 import androidx.preference.PreferenceManager;
@@ -82,6 +83,20 @@ public class App extends yuku.afw.App {
         notificationManager.deleteNotificationChannel("devotion_downloader");
         notificationManager.deleteNotificationChannel("download_mapper");
         notificationManager.deleteNotificationChannel("devotion_reminder");
+
+        // Bible audio playback channel — created here so that media3's
+        // DefaultMediaNotificationProvider posts onto a low-importance,
+        // silent channel rather than the default high-importance one.
+        // Channel attributes (importance, sound, vibration) are immutable
+        // after first creation, so creating it ourselves up-front is the
+        // only way to control them.
+        notificationManager.createNotificationChannel(
+            new NotificationChannelCompat.Builder("audio_bible", NotificationManagerCompat.IMPORTANCE_LOW)
+                .setName(context.getString(R.string.audio_bible_notification_channel_name))
+                .setVibrationEnabled(false)
+                .setSound(null, null)
+                .build()
+        );
     }
 
     public static Gson getDefaultGson() {
