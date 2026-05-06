@@ -251,7 +251,12 @@ class BibleAudioService : MediaSessionService() {
             player.exoPlayer.prepare()
         }
 
-        timingJob = scope.launch(Dispatchers.IO) {
+        // Stay on Dispatchers.Main.immediate (the scope's default) so
+        // setTiming runs on the same thread as positionJob's update calls —
+        // HighlightTracker is not thread-safe by design. The repository
+        // already does its own withContext(Dispatchers.IO) for the network
+        // hop, so the blocking work is still off the main thread.
+        timingJob = scope.launch {
             val timing = BibleAudioRepository.fetchTiming(
                 request.versionId,
                 request.bookId,
