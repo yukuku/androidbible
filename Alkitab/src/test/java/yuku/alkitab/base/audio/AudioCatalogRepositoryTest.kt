@@ -2,7 +2,11 @@ package yuku.alkitab.base.audio
 
 import android.app.Application
 import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -136,6 +140,27 @@ class AudioCatalogRepositoryTest {
             "preset/en-kjv",
             AudioCatalogRepository.findEntry("preset/en-kjv")?.versionId,
         )
+    }
+
+    @Test
+    fun `concurrent first-callers of loadCatalog return the same instance and don't tear`() = runBlocking {
+        // 32 coroutines fan out from the same starting line. With the loadMutex
+        // in place, only one of them does the actual disk read; the rest take
+        // the cached reference. Either way, every caller must observe the same
+        // AudioCatalog object — *not* just a structurally-equal one — to prove
+        // the cache write is correctly published.
+        resetCachedField()
+        val catalogs = withContext(Dispatchers.Default) {
+            (1..32).map { async { AudioCatalogRepository.loadCatalog() } }.awaitAll()
+        }
+        val first = catalogs.first()
+        for ((i, c) in catalogs.withIndex()) {
+            assertTrue(
+                "caller #$i got a different AudioCatalog instance than caller #0",
+                c === first,
+            )
+        }
+        assertEquals(4, first.entries.size)
     }
 
     @Test

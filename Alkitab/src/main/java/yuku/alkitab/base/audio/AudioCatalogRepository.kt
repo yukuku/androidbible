@@ -2,11 +2,16 @@ package yuku.alkitab.base.audio
 
 import java.io.File
 import java.io.IOException
+import java.io.InputStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import okhttp3.Request
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
@@ -38,6 +43,7 @@ import yuku.alkitab.debug.BuildConfig
  * [loadCatalog] and [refresh] do their I/O on [Dispatchers.IO]; [findEntry] and
  * [isAudioAvailable] are pure-read operations against the in-memory cache.
  */
+@OptIn(ExperimentalSerializationApi::class)
 object AudioCatalogRepository {
 
     private const val TAG = "AudioCatalogRepo"
@@ -50,6 +56,16 @@ object AudioCatalogRepository {
         isLenient = true
     }
 
+    /**
+     * Serializes the cache-load critical section in [loadCatalog] so concurrent
+     * first-callers don't both read+parse the override/asset, and serializes the
+     * cached-write side of [refresh] so a reader never sees a torn `cached` ref.
+     * The actual override-file write in [refresh] does **not** sit under this
+     * lock — it goes via write-to-temp + atomic rename, which is itself
+     * crash-safe and lock-free against concurrent reads.
+     */
+    private val loadMutex = Mutex()
+
     @Volatile
     private var cached: AudioCatalog? = null
 
@@ -61,9 +77,14 @@ object AudioCatalogRepository {
      */
     suspend fun loadCatalog(): AudioCatalog {
         cached?.let { return it }
-        val loaded = withContext(Dispatchers.IO) { readFromDiskOrAsset() }
-        cached = loaded
-        return loaded
+        return loadMutex.withLock {
+            // Re-check inside the lock: another coroutine may have raced ahead
+            // while we were waiting and already populated `cached`.
+            cached?.let { return@withLock it }
+            val loaded = withContext(Dispatchers.IO) { readFromDiskOrAsset() }
+            cached = loaded
+            loaded
+        }
     }
 
     /** True iff [versionId] has an entry in the currently-loaded catalog. */
@@ -116,20 +137,7 @@ object AudioCatalogRepository {
         try {
             Connections.okHttp.newCall(request).execute().use { response ->
                 when (response.code) {
-                    200 -> {
-                        val body = response.body?.string()
-                            ?: return@use RefreshResult.Failed("empty body")
-                        // Validate by parsing before we overwrite the on-disk override.
-                        val parsed = parseOrNull(body)
-                            ?: return@use RefreshResult.Failed("body did not parse")
-                        writeOverride(body)
-                        val newEtag = response.header("ETag")
-                        if (newEtag != null) {
-                            Preferences.setString(Prefkey.audioCatalog_etag, newEtag)
-                        }
-                        cached = parsed
-                        RefreshResult.Updated(parsed.entries.size)
-                    }
+                    200 -> handleOk200(response)
                     304 -> RefreshResult.NotModified
                     else -> RefreshResult.Failed("HTTP ${response.code}")
                 }
@@ -137,6 +145,50 @@ object AudioCatalogRepository {
         } catch (e: IOException) {
             AppLog.w(TAG, "catalog refresh failed: ${e.message}")
             RefreshResult.Failed(e.message ?: "I/O error")
+        }
+    }
+
+    /**
+     * 200 handler:
+     *  1. Stream the response body into a unique temp file under filesDir
+     *     (avoids holding the full body in memory).
+     *  2. Parse-from-stream off the temp file. Bail and delete the temp on parse
+     *     failure — the existing override stays intact.
+     *  3. On parse success, atomically rename the temp over the override path.
+     *     Atomic rename is a single filesystem op on POSIX (which Android is),
+     *     so concurrent [loadCatalog] readers see either the old or the new
+     *     file but never a partial write.
+     *  4. Update the in-memory cache and ETag last.
+     */
+    private fun handleOk200(response: okhttp3.Response): RefreshResult {
+        val body = response.body ?: return RefreshResult.Failed("empty body")
+
+        val temp = File.createTempFile("audio_catalog_", ".tmp.json", App.context.filesDir)
+        try {
+            body.byteStream().use { input ->
+                temp.outputStream().use { output -> input.copyTo(output) }
+            }
+
+            val parsed = temp.inputStream().use(::parseStreamOrNull)
+                ?: return RefreshResult.Failed("body did not parse")
+
+            // Atomic publish. Some platforms reject rename if the target exists
+            // (Android doesn't, but we delete first to be portable to host JVM
+            // tests which run under Robolectric on the host filesystem).
+            val target = overrideFile()
+            target.delete()
+            if (!temp.renameTo(target)) {
+                return RefreshResult.Failed("could not commit override file")
+            }
+
+            response.header("ETag")?.let {
+                Preferences.setString(Prefkey.audioCatalog_etag, it)
+            }
+            cached = parsed
+            return RefreshResult.Updated(parsed.entries.size)
+        } finally {
+            // Best-effort cleanup if the rename never happened.
+            if (temp.exists()) temp.delete()
         }
     }
 
@@ -164,7 +216,7 @@ object AudioCatalogRepository {
         val overrideFile = overrideFile()
         if (overrideFile.isFile) {
             try {
-                val parsed = parseOrNull(overrideFile.readText(Charsets.UTF_8))
+                val parsed = overrideFile.inputStream().use(::parseStreamOrNull)
                 if (parsed != null) return parsed
                 AppLog.w(TAG, "override $OVERRIDE_FILENAME failed to parse; falling back to bundled asset")
             } catch (e: IOException) {
@@ -175,8 +227,7 @@ object AudioCatalogRepository {
         // 2. Bundled asset.
         try {
             App.context.assets.open(ASSET_FILENAME).use { input ->
-                val text = input.bufferedReader(Charsets.UTF_8).readText()
-                val parsed = parseOrNull(text)
+                val parsed = parseStreamOrNull(input)
                 if (parsed != null) return parsed
                 AppLog.e(TAG, "bundled $ASSET_FILENAME failed to parse — shipping a broken JSON?")
             }
@@ -188,9 +239,13 @@ object AudioCatalogRepository {
         return AudioCatalog()
     }
 
-    private fun parseOrNull(body: String): AudioCatalog? {
+    /**
+     * Streams the JSON straight off the input — never buffers the whole body
+     * into a `String` first. Returns null on parse failure (logged at warn).
+     */
+    private fun parseStreamOrNull(input: InputStream): AudioCatalog? {
         return try {
-            json.decodeFromString(AudioCatalog.serializer(), body)
+            json.decodeFromStream(AudioCatalog.serializer(), input)
         } catch (e: SerializationException) {
             AppLog.w(TAG, "catalog JSON did not parse: ${e.message}")
             null
@@ -199,13 +254,5 @@ object AudioCatalogRepository {
 
     private fun overrideFile(): File {
         return File(App.context.filesDir, OVERRIDE_FILENAME)
-    }
-
-    private fun writeOverride(body: String) {
-        try {
-            overrideFile().writeText(body, Charsets.UTF_8)
-        } catch (e: IOException) {
-            AppLog.w(TAG, "could not persist refreshed catalog: ${e.message}")
-        }
     }
 }
