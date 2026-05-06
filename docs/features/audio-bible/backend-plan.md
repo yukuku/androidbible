@@ -4,7 +4,19 @@
 **Client counterpart:** see [client-plan.md](client-plan.md) and [prd.md](prd.md).
 **Estimated effort:** ~1 sprint-week for one engineer (v1 endpoints + caching + monitoring).
 
-> ⚠️ I was not able to read `alkitab-host` from this environment (the GitHub MCP scope is restricted to `yukuku/androidbible`). This plan is therefore framed against the conventions visible from the client: a RESTful JSON API at `https://api.alkitab.app`, existing endpoints such as `/devotion/get`, `/sync/api/sync`, `/versions/get_yes`, `/addon/audio/exists`, and the Firebase-adjacent hosting described in `docs/backend-communication.md`. Before implementation, confirm the stack and adjust the handler language/framework sections accordingly.
+## 0. Stack (confirmed against `alkitab-host`)
+
+The backend is **Python 3.12 / Flask on Google App Engine Standard**, deployed as the `web-py3` service (see `alkitab-host/CLAUDE.md`, `alkitab-host/web/flask_app.py`, `alkitab-host/dispatch.yaml`).
+
+- **Routing.** `dispatch.yaml` sends `*/sync/*`, `*/cloud*`, `*/deferred_yuku/*`, `*/sync_cleanup/*` to the `sync-py3` service; everything else (including the new `/audio/*` paths) falls through to the `*/*` catch-all on `web-py3`. **No `dispatch.yaml` change needed.**
+- **Path namespace.** `/addon/audio/*` is already taken by **song** audio (`alkitab-host/addon/flask_app.py:161-187`, used by Kidung MP3/MID files keyed on song books like KJ/KPRI). New Bible audio endpoints **must not collide with that prefix** — use top-level `/audio/*`.
+- **Module shape.** Each feature is a Flask blueprint under its own top-level package (`addon/`, `versions/`, `devotion/`, `rp/`, `v/`, `announce/`). Blueprints are registered in `web/flask_app.py`. We will follow the same pattern: a new `audio/` package with `audio/__init__.py` and `audio/flask_app.py`.
+- **Storage.** The backend uses **Cloud Datastore via `google-cloud-ndb`** for persistent records (see `addon.AddonDownloadCounter`, `versions.AndroidBibleVersionDownloadCounter`, dozens of `Sync*` kinds). For per-instance hot caches, `web/cache.py` is a small TTL-bound LRU. **No Postgres, no Firestore, no GCS for app data** — the timing cache will be one new NDB kind plus the in-memory LRU.
+- **Admin auth.** Admin routes use the `@require_staff` decorator (Google OAuth2 staff login, `web/auth.py`), e.g. `addon.addon_admin_counter_stats`. **Not** a token. We follow the same convention for `/audio/admin/reload`.
+- **Upstream fetches.** Synchronous `requests` calls with a timeout, caching via `web.cache.set/get` (TTL-bound, per-instance). `addon.audio_file_exists` is the canonical example.
+- **Outbound CDN handoffs.** Existing addon endpoints redirect (`Flask.redirect`, 302) to either `https://boafiles.kejut.com/addon/...` or version-specific hosts. Bible audio will redirect to `https://media.sabda.org/...`.
+
+This plan is now grounded in the actual codebase. Implementation specifics below reference real files.
 
 ---
 
@@ -22,8 +34,8 @@
 |---|---|---|---|
 | `GET` | `/audio/catalog` | none | List of versions with audio + URL templates |
 | `GET` | `/audio/timing?versionId={versionId}&bookId={bookId}&chapter_1={chapter_1}` | none | Verse-timing JSON, normalized |
-| `GET` | `/audio/chapter?versionId={versionId}&bookId={bookId}&chapter_1={chapter_1}` | none | 302 redirect to the chapter MP3 on the CDN |
-| `POST` | `/audio/admin/reload` | admin token | Invalidate in-memory catalog; for manual rollouts |
+| `GET` | `/audio/chapter?versionId={versionId}&bookId={bookId}&chapter_1={chapter_1}` | none | 302 redirect to the chapter MP3 on the SABDA CDN |
+| `POST` | `/audio/admin/reload` | `@require_staff` | Invalidate in-memory catalog + timing LRU; for manual rollouts |
 
 `versionId` is the exact string the client's `MVersion.getVersionId()` returns (e.g. `preset/in-tb`). It is carried as a **query parameter** rather than a path segment so the `/` it contains doesn't need to be URL-encoded into a path component, which many routers (Nginx, Spring MVC's default mapping, Go's `http.ServeMux`) reject or pre-decode in surprising ways. Keeping `versionId` identical on client and backend means no translation layer on either side — the catalog entry's identifier, the `matchVersionId` the client looks up locally, and the query param sent to `/audio/timing`/`/audio/chapter` are all the same string.
 
@@ -108,7 +120,22 @@ Content-Type: application/json
 
 ### 3.3 Data source
 
-The catalog is a small hand-maintained config file (JSON or TOML) in the backend repo — effectively the same shape as `version_config.json` today, but narrower. No database; loaded once at boot, reloadable via `/audio/admin/reload`. Each deploy can change the list.
+The catalog is a Python module-level dict in `audio/flask_app.py`, in the same style as `BOOKS_WITH_MP3` in `addon/flask_app.py`. Hand-edited; one deploy = one update. No database, no JSON file on disk to keep in sync.
+
+```python
+# audio/flask_app.py
+CATALOG = {
+    "preset/in-tb":  {"shortName": "TB",  "displayLocaleHint": "in", "copyrightNotice": "© LAI, via SABDA",  "license": "Non-commercial", "hasDeuterocanon": False},
+    "preset/in-ayt": {"shortName": "AYT", "displayLocaleHint": "in", "copyrightNotice": "© AYT, via SABDA", "license": "Non-commercial", "hasDeuterocanon": False},
+    "preset/in-avb": {"shortName": "AVB", "displayLocaleHint": "ms", "copyrightNotice": "© BSM, via SABDA", "license": "Non-commercial", "hasDeuterocanon": False},
+    "preset/en-kjv": {"shortName": "KJV", "displayLocaleHint": "en", "copyrightNotice": "Public Domain",     "license": "PD",              "hasDeuterocanon": False},
+}
+
+# At request time, the handler synthesises chapterUrlTemplate / timingUrlTemplate
+# from the dict's keys plus the static path shape — see the JSON in §3.2.
+```
+
+The ETag is derived from a `sha1` of `json.dumps(CATALOG, sort_keys=True)`. It changes only when the dict changes (i.e. when a deploy ships a new entry). `/audio/admin/reload` is a no-op for the catalog itself today (the dict reloads when the App Engine instance restarts), but we keep the endpoint to bust the timing LRU and as a hook for any future dynamic catalog source.
 
 ### 3.4 Notes
 
@@ -162,35 +189,67 @@ ETag: "<sha1>"
 
 ### 4.3 Implementation
 
-Backend maintains a storage bucket (Firestore, GCS, or a Postgres table — whichever is already in alkitab-host) with the normalized timing for every (versionId, bookId, chapter_1) that a client has ever requested. On request:
+Two-tier cache: per-instance in-memory LRU (microsecond hits, evicted on instance restart) backed by a single new NDB kind for cross-instance persistence.
 
-1. Cache hit → serve from storage (microseconds).
-2. Cache miss → fetch from `karaoke.sabda.org/api/timming.php?book=<timingName>&chapter=<chapter_1>&version=<timingVersionParam>`, normalize, store, serve.
-3. Upstream failure on cache miss → `503` with `Retry-After: 30`. Never serve stale data we've never verified.
-4. Upstream failure on cache hit → serve the stored copy anyway — the long `max-age` keeps clients from re-fetching in the interim.
+**NDB model** (defined in `audio/flask_app.py`, alongside the existing counter-style models in `addon/` and `versions/`):
 
-The SABDA-specific translation tables (versionId → `timingVersionParam`, book ID → `timingName`) live here, not in the client. Shape:
-
+```python
+class BibleAudioTimingCache(ndb.Model):
+    # key name format: "<versionId>|<bookId>|<chapter_1>", e.g. "preset/in-tb|41|3"
+    payload   = ndb.JsonProperty(required=False)  # the normalized response body, or None for negative-cached entries
+    not_found = ndb.BooleanProperty(default=False)  # True if upstream returned 404 / known-missing chapter
+    fetched_at = ndb.IntegerProperty(required=True)  # epoch seconds, for TTL re-validation
 ```
+
+Why NDB and not GCS:
+- Total dataset is ~5000 chapters × ~5 KB = ~25 MB. Datastore handles this easily; entity size limit is 1 MB so a chapter's timing fits with room to spare.
+- Datastore reads are cheap (~$0.06 per 100k reads) and most chapters won't get more than a handful of cold-instance fetches per day.
+- Operationally the project already lives in NDB; introducing GCS would add another auth surface and another deploy step.
+
+Why not just `web/cache.py`:
+- That LRU is per-instance and per-warm-window. With F1 instance class auto-scaling 0-3, each scale-up serves a cold cache. NDB makes the cache survive scale events.
+
+**Request flow** (`GET /audio/timing`):
+
+1. **In-memory hit** (`web.cache.get(key)`) → serve.
+2. **NDB hit** with `not_found=False` and `fetched_at` within TTL → populate in-memory cache, serve.
+3. **NDB hit** with `not_found=True` and within negative TTL → serve `200` with `verses: []` (clients render audio without highlight). We do **not** propagate 404 here because the chapter exists in the Bible — it just lacks timing.
+4. **Cold miss** → `requests.get(karaoke.sabda.org/api/timming.php?book=<timingName>&chapter=<chapter_1>&version=<timingVersionParam>, timeout=15)`.
+   - Successful parse → normalize, store with `not_found=False`, populate LRU, serve.
+   - Upstream `404` → store with `not_found=True` (TTL ~7 days), serve `200` with empty `verses`.
+   - Upstream `5xx` / timeout / parse error → return `503 Retry-After: 30`. **Do not** poison the cache.
+5. **Stale NDB hit** (older than TTL) → kick off a refresh in the background (Cloud Tasks queue or an `ndb.tasklets.toplevel`-wrapped fire-and-forget) and serve the stored copy synchronously. Keeps p99 latency flat.
+
+**TTLs:**
+- Positive cache: 30 days (timing data is essentially immutable for a given recording).
+- Negative cache: **1 day** (short window so SABDA gap-fixes propagate quickly; the cost of the occasional re-fetch storm is negligible vs. user surprise).
+- In-memory LRU: 1 hour bound (matches the `audio_file_exists` precedent in `addon/flask_app.py:105`).
+
+**No pre-warm.** The cache fills lazily on the first user request per (version, book, chapter). The first hit on each chapter is slower (one upstream call to SABDA), but the upper bound is acceptable: ~200–500 ms added on a cold chapter. With a 30-day positive TTL, the second user — even days later — sees a hot hit.
+
+**Adapter tables** live in `audio/adapters.py` and are lifted verbatim from PR #127's `BibleAudioRepository.kt` (the values below are the actual constants from `Alkitab/src/main/java/yuku/alkitab/base/util/BibleAudioRepository.kt` in that PR — they are the result of real experimentation against sabda.org and we should not reinvent them):
+
+```python
+# audio/adapters.py
 AUDIO_ADAPTERS = {
-  "preset/in-tb": {
-    sabda_timing_version: "tbsuara",
-    sabda_audio_folder: "tb_alkitabsuara",
-  },
-  "preset/in-ayt": {
-    sabda_timing_version: "ayt",
-    sabda_audio_folder: "ayt-ai-v2",
-  },
-  ...
+    "preset/in-tb":  {"timing_version": "tbsuara", "audio_folder": "tb_alkitabsuara"},
+    "preset/in-ayt": {"timing_version": "ayt",     "audio_folder": "ayt-ai-v2"},
+    "preset/in-avb": {"timing_version": "avb",     "audio_folder": "avb"},
+    "preset/en-kjv": {"timing_version": "kjv",     "audio_folder": "kjv"},
 }
 
+# Indexed by 0-based bookId. timing_name is Indonesian even for KJV — that's
+# what karaoke.sabda.org/api/timming.php expects, regardless of audio version.
 BOOK_META = [
-  { bookId: 0, sabda_folder: "kejadian", sabda_abbr: "kej", sabda_timing_name: "Kejadian" },
-  ...
+    # ("folder",       "abbr", "timing_name")
+    ("kejadian",       "kej",  "Kejadian"),         # 0  Genesis
+    ("keluaran",       "kel",  "Keluaran"),         # 1  Exodus
+    # … all 66 books …
+    ("wahyu",          "wah",  "Wahyu"),            # 65 Revelation
 ]
 ```
 
-(Lift these tables verbatim from `BibleAudioRepository.kt` in PR #127 — they're the result of real experimentation against sabda.org.)
+The full table (~66 entries) is in PR #127's `BibleAudioRepository.kt` `BOOK_INFO` array. Copy it across into the Python module on backend implementation.
 
 ### 4.4 Why normalize instead of proxy passthrough?
 
@@ -234,7 +293,15 @@ url = "$base/$folder/$subdir/${prefix}_${shortDir}/${prefix}_${abbr}${chapterStr
 
 ## 6. `POST /audio/admin/reload`
 
-Simple admin endpoint protected by the same mechanism that today protects the existing `/versions/get_yes` etc. backoffice (reuse, don't invent). Body: empty. Response: `{ "reloadedAt": <ts>, "catalogEntries": <count> }`. Bumps the catalog's ETag so all clients refetch within a day.
+Protected by the project's standard `@require_staff` decorator (`alkitab-host/web/auth.py`) — the same mechanism that today guards `addon_admin_counter_stats`, `versions/admin/*`, etc.
+
+Body empty. Clears the per-instance `web.cache` LRU for `audio/timing/*` keys (catalog included). Does **not** touch the NDB cache — that survives across reloads, since the timing data is essentially immutable. To force a re-fetch of NDB-cached entries, an admin can delete rows directly via the Datastore console; we don't expose a programmatic flush in v1 because we never expect to need one.
+
+Response:
+
+```json
+{ "reloadedAt": 1713456000000, "evictedKeys": 184 }
+```
 
 ## 7. Monitoring
 
@@ -245,8 +312,8 @@ Simple admin endpoint protected by the same mechanism that today protects the ex
 
 ## 8. Rollout
 
-1. Implement the three read endpoints (catalog, timing, chapter) and `/audio/admin/reload`. Deploy to production — no flag, the endpoints are either live or they aren't.
-2. Pre-warm the timing cache for the whole Bible (~1188 chapters × 4 versions ≈ 4750 fetches) by running a one-off script against the deployed instance. Takes a few minutes and guarantees the first user never hits a cold cache.
+1. Land the new `audio/` package and register the blueprint in `web/flask_app.py`. Deploy via `cd deploy/web-py3 && bash deploy.sh`. No `dispatch.yaml` change is needed — the existing `*/*` catch-all routes `/audio/*` to `web-py3`.
+2. **No pre-warm.** Cache fills on demand. First user on a given chapter will incur ~200–500 ms of additional latency; subsequent users hit the NDB cache for 30 days.
 3. Verify the client (shipped with a bundled `assets/audio_catalog.json` mirroring the same four versions) continues to work if the backend is temporarily unreachable, so there is no hard coupling between app and backend releases.
 
 ## 9. Test plan
@@ -259,9 +326,10 @@ Simple admin endpoint protected by the same mechanism that today protects the ex
 
 ## 10. Security & abuse
 
-- No auth on read endpoints (by design — devotion and version endpoints are the same shape).
-- Rate-limit per client IP: 100 req/min per endpoint is plenty (a phone will make one catalog + ~10 timing requests per session).
-- Reject any `versionId` not in the catalog's key set (prevents arbitrary strings from reaching the sabda.org upstream).
+- No auth on read endpoints (by design — `/devotion/get`, `/versions/*`, `/addon/audio/exists`, etc. are all the same shape).
+- The existing endpoints have **no per-IP rate limiting** beyond App Engine's quotas. We will not add Flask-level rate limiting in v1 to stay consistent. A phone will issue one `/audio/catalog` per session plus ~10 `/audio/timing` and ~10 `/audio/chapter` per chapter played; load will be bounded by the install base. Revisit only if SABDA's CDN starts complaining.
+- Reject any `versionId` not in `CATALOG.keys()` with `404` (prevents arbitrary strings from reaching the sabda.org upstream).
+- Validate `bookId` is `0..65` and `chapter_1` is `1..150` at the handler boundary; reject otherwise with `400`.
 
 ## 11. Coordination with client
 
@@ -275,9 +343,14 @@ Simple admin endpoint protected by the same mechanism that today protects the ex
 - **Timing regeneration** when a version updates — add a `timingGeneration` field to force client refresh per version.
 - **HLS / DASH** for per-verse byte-range requests if pre-download or fine-grained scrubbing becomes a priority.
 
-## 13. Open questions (for the backend owner)
+## 13. Open questions (resolved)
 
-1. Which datastore does `alkitab-host` already use? (Timing cache should ride on an existing Postgres/Firestore/KV, not introduce a new one.)
-2. Is there already a scheduled job framework for pre-warming? (If not, a one-off script is fine.)
-3. What's the current admin-auth scheme for existing backoffice endpoints? Reuse it for `/audio/admin/reload`.
-4. Licensing: SABDA permits free distribution of audio, but do we need a formal attribution line beyond the `copyrightNotice` field in the catalog?
+| Question | Answer found in the codebase |
+|---|---|
+| Datastore? | `google-cloud-ndb` (Cloud Datastore) — same as `addon`, `versions`, `sync`. New kind: `BibleAudioTimingCache`. |
+| Scheduled jobs / pre-warming? | `cron.yaml` is currently empty. We add `POST /audio/admin/prewarm` as a one-shot admin endpoint instead of a cron entry; it can be re-hit manually after each deploy. |
+| Admin auth? | `@require_staff` decorator from `web/auth.py` (Google OAuth2). Reused. |
+
+The only question left for the **product** owner, not the engineering owner:
+
+1. **Licensing attribution.** SABDA permits free distribution of audio, but should the in-app "About this audio" sheet display a longer attribution string than the per-version `copyrightNotice` field? If so, what text? (Default for v1: just the per-version line.)
