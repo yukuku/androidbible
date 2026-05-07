@@ -11,6 +11,7 @@ import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.okhttp.OkHttpDataSource
+import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.Renderer
 import androidx.media3.exoplayer.RenderersFactory
@@ -114,6 +115,40 @@ class BibleAudioPlayer(appContext: Context) {
             .setContentType(C.AUDIO_CONTENT_TYPE_SPEECH)
             .build()
 
+        // ExoPlayer's default LoadControl keeps zero back buffer and only ~50 s
+        // of forward buffer, so prev-verse seeks (and any rewind past the
+        // currently-playing window) re-fetch and re-decode the MP3 from the
+        // network. Bible chapters are short (typical ≤ 30 min, ~30 MB at
+        // 128 kbps) and our nav UX taps prev/next verse aggressively, so it's
+        // worth keeping the entire chapter in the player's sample queue once
+        // it's been buffered.
+        //
+        // Numbers below are picked for a "play-and-scrub-around" workflow:
+        //  - back buffer ~30 min covers Psalms 119 (the longest chapter) and
+        //    keeps every previously-played verse instantly seekable.
+        //  - forward min/max bumped to 5 min / 30 min so a fresh load fetches
+        //    enough up-front that next-verse taps land in already-buffered
+        //    samples.
+        //  - retainBackBufferFromKeyframe = true: MP3 has a keyframe per
+        //    frame, so this is essentially "keep all PCM samples until the
+        //    back buffer wraps".
+        val loadControl = DefaultLoadControl.Builder()
+            .setBufferDurationsMs(
+                /* minBufferMs = */ 5 * 60_000,
+                /* maxBufferMs = */ 30 * 60_000,
+                /* bufferForPlaybackMs = */ DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
+                /* bufferForPlaybackAfterRebufferMs = */ DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS,
+            )
+            .setBackBuffer(
+                /* backBufferDurationMs = */ 30 * 60_000,
+                /* retainBackBufferFromKeyframe = */ true,
+            )
+            // -1 = pick a target byte budget per renderer based on the
+            // configured durations. We don't want an explicit byte cap to
+            // override the duration-based one we just set.
+            .setTargetBufferBytes(C.LENGTH_UNSET)
+            .build()
+
         ExoPlayer.Builder(
             appContext,
             audioOnlyRenderersFactory,
@@ -121,6 +156,7 @@ class BibleAudioPlayer(appContext: Context) {
         )
             .setAudioAttributes(audioAttributes, true)
             .setHandleAudioBecomingNoisy(true)
+            .setLoadControl(loadControl)
             .build()
             .also { it.addListener(playerListener) }
     }
