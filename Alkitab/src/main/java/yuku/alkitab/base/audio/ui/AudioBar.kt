@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
@@ -139,19 +141,32 @@ fun AudioBar(
                 fadeOut(animationSpec = tween(180)),
             modifier = modifier,
         ) {
+            // Pull the bottom system inset out of WindowInsets so the bar
+            // a) extends its background all the way under the gesture pill
+            // (Spotify-style edge-to-edge), and b) keeps actual controls
+            // above the inset so the slider's mm:ss labels aren't clipped.
+            // We deliberately don't fix the bar's height — Material 3 Slider
+            // has thumb-shadow overflow that eats more than the visible
+            // track, and a fixed-height container clips it.
+            val bottomInset = WindowInsets.safeDrawing
+                .asPaddingValues()
+                .calculateBottomPadding()
             Surface(
                 tonalElevation = 6.dp,
                 shadowElevation = 6.dp,
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(96.dp),
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                    verticalArrangement = Arrangement.SpaceEvenly,
+                        .padding(
+                            start = 8.dp,
+                            end = 8.dp,
+                            top = 4.dp,
+                            bottom = 4.dp + bottomInset,
+                        ),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
                 ) {
                     AudioBarTopRow(state = state, onCommand = onCommand)
                     AudioBarSliderRow(state = state, onCommand = onCommand)
