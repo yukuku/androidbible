@@ -573,5 +573,6 @@
 	<!-- Notification channels -->
 	<string name="notification_channel_download_mapper_name">Downloads</string>
 	<string name="notification_channel_devotion_downloader_name">Devotion downloads</string>
+	<string name="audio_bible_notification_channel_name">Bible audio</string>
 
 </resources>

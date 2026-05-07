@@ -58,28 +58,44 @@ A new "Audio" icon in the `IsiActivity` toolbar (`activity_isi.xml`, `app:showAs
 
 **Preparing state.** The moment the user taps Audio, the work that runs before the first byte of audio plays — catalog lookup (cache), timing fetch if not already cached, ExoPlayer `prepare()` + initial buffer — can take a perceptible fraction of a second on mobile networks. During this window the toolbar icon morphs into an indeterminate spinner, mirroring the Kidung (Songs) play button's behavior: while `MediaController.State == preparing`, `SongViewActivity` hides the play menu item and swaps in an indeterminate `circular_progress` view (`SongViewActivity.kt:178, 443-449, 1088-1090`). We use the exact same pattern — `onPrepareOptionsMenu` hides `R.id.menuAudio` and shows a sibling progress view anchored in the toolbar — so the UX is consistent with the rest of the app. The spinner reverts to the Audio icon when the service reports `ready` (or `error`, in which case the snackbar in §4.6 fires). Tapping during the preparing window is a no-op; a second tap does **not** cancel (that would require tearing down the service mid-prepare and feels unpredictable).
 
-### 4.2 Audio bar (bottom sheet)
+### 4.2 Audio bar — fixed-height Compose surface
 
-Anchored at the bottom of `IsiActivity`, above the reading-history panel. Height ≈ 72dp. Contents left-to-right:
+Anchored at the bottom of `IsiActivity`, hosted in a `ComposeView`. Implemented in **Jetpack Compose 1.11.0** (the first piece of Compose in the codebase; we will progressively migrate `IsiActivity` to Compose, with the audio bar as the beachhead). The bar is a **fixed-height Material 3 surface** — no peek/expand mechanic, no drag handle, no swipe.
+
+Height ≈ 96dp:
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │  ⏮ Jn 2   ⏮   ▶/⏸ (+progress ring)   ⏭   Jn 4 ⏭   1.0×   ╳       │
-├──────────────────────────────────────────────────────────────────┤
 │  ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒░░░░░░░░   0:42 / 3:15                           │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
-- **Play/pause** — center; shows a spinner while preparing.
-- **Prev / next verse** — plain icon-only buttons that seek to the start of the neighboring verse using timing data. No label on the button (the active verse is already conveyed by the highlighted row and the scrubber bubble; adding "v.7" to the button is redundant and the label would go blank/grey at chapter boundaries).
-- **Prev / next chapter** — the button shows the target chapter next to its icon (e.g. `⏮ Jn 2` and `Jn 4 ⏭`), using the same `book.shortName` + chapter format that appears in the main toolbar. At cross-book boundaries the next button reads `⏮ Mt 28` from Mark 1, making jumps predictable. At the Bible boundaries (Genesis 1 prev, Revelation 22 next) the button is disabled and the label hidden.
-- **Speed** — opens a popup: 0.5 / 0.8 / 1.0 / 1.25 / 1.5 / 1.75 / 2.0×. Persisted via Prefkey.
-- **Close (╳)** — closes the bar; stops audio and clears highlight.
-- **Scrubber** — drag-to-seek. While the user is dragging, the thumb shows a tooltip/bubble with **both** the proposed position `mm:ss` **and** the verse that would play on release (e.g. `1:23 · v.7`). The bubble updates live as the thumb moves so the user can aim at a verse they remember hearing, not just a time offset. On release, audio seeks to the start of that verse's `startMs` (snapping to verse boundary feels better than snapping to the raw scrubbed millisecond — and matches what the tooltip was showing). If timing data is missing, the bubble falls back to `mm:ss` only and seek is a plain time seek.
+- **Play/pause** — center; shows a determinate progress ring around the FAB-style button while preparing.
+- **Prev / next verse** — plain icon-only buttons that seek to the start of the neighboring verse using timing data. No label on the button (the active verse is already conveyed by the highlighted row and the scrubber bubble).
+- **Prev / next chapter** — the button shows the target chapter next to its icon (e.g. `⏮ Jn 2` and `Jn 4 ⏭`), using the same `book.shortName` + chapter format that appears in the main toolbar. At cross-book boundaries the next button reads `⏮ Mt 28` from Mark 1. At the Bible boundaries the label slot is `INVISIBLE` (not gone) so the layout doesn't reflow.
+- **Speed** — taps open the speed bottom sheet (§4.2.2).
+- **Close (╳)** — hides the bar; stops audio and clears highlight.
+- **Scrubber** — Material 3 `Slider`. Drag-to-seek with a live preview label that shows `mm:ss · v.7` while dragging — both the proposed position and the verse that would play on release. On release, audio seeks to the start of that verse's `startMs` (snapping to verse boundary feels better than snapping to a raw millisecond, and matches what the tooltip is showing). If timing data is missing, the label falls back to `mm:ss` only and seek is plain.
+
+#### 4.2.2 Speed bottom sheet
+
+Tapping `1.0×` opens a small Compose `ModalBottomSheet` with a horizontal `FilterChip` row: `0.5×, 0.8×, 1.0×, 1.25×, 1.5×, 1.75×, 2.0×`. Single-selection. Persisted via `Prefkey.audioPlaybackSpeed`. The thumb-friendly bottom-sheet pattern matches what Spotify, YouTube Music, and Audible do for the same control.
 
 ### 4.3 Verse highlight
 
-A semi-transparent blue rectangle overlay on the active verse, drawn in `VerseItem.onDraw` (same pattern used for selection/attention). The `VersesController` exposes `setAudioHighlight(verse_1)` (already prototyped in PR #127). Auto-scroll keeps the highlighted verse in the upper third of the viewport.
+A semi-transparent **yellow highlighter** overlay on the active verse, drawn in `VerseItem.onDraw` (same pattern used for selection/attention). The base color is the same hue family as a physical highlighter pen — concretely `#FFEB3B` (Material Yellow 500) at **20% alpha** by default.
+
+Because the user's reading background can be customised (light, sepia, dark, custom theme), 20%-alpha yellow is not always legible. The drawing layer must therefore **adapt at runtime**:
+
+- Compute the contrast ratio between the yellow overlay (composited onto the reading background) and the verse text color, using `androidx.core.graphics.ColorUtils.calculateContrast`.
+- If contrast ≥ 4.5 (WCAG AA), use the yellow overlay.
+- Otherwise (typically dark backgrounds), fall back to a neutral overlay at 20% alpha — `#000000` on light backgrounds, `#FFFFFF` on dark — choosing whichever produces the better text contrast.
+- The decision is made once per call to `setAudioHighlight`, cached on the `VerseItem` via a small `audioHighlightColor: Int` field, and refreshed when the reading theme changes.
+
+The fade-in / fade-out alpha animation (200ms in, 150ms out) prevents strobe at speed 1.0×. Auto-scroll uses a `LinearSmoothScroller` to keep the highlighted verse in the upper third of the viewport (PR #127's instant `scrollToVerse` jumps too aggressively).
+
+The `VersesController` exposes `setAudioHighlight(verse_1)`. `verse_1 = 0` clears.
 
 ### 4.4 Lock screen & notification
 
@@ -101,7 +117,7 @@ This deliberately replaces PR #127's sequential interleaving (which plays verse 
 - **Version has no audio:** toolbar icon is hidden.
 - **Network failure on chapter load:** snackbar "Cannot load audio. Retry?" with a Retry action. Audio bar stays open, play button disabled.
 - **Timing data missing:** audio plays, but verse-skip buttons and verse highlight are disabled (greyed). No error shown.
-- **Audio URL 404 (e.g. deuterocanonical chapter):** snackbar "Audio not available for this chapter," and the bar auto-closes after 3s.
+- **Audio URL 404 (e.g. an upstream gap in coverage):** snackbar "Audio not available for this chapter," and the bar auto-closes after 3s.
 
 ## 5. Architecture
 
@@ -168,11 +184,10 @@ data class AudioCatalog(
 
 data class AudioVersion(
     val versionId: String,            // matches MVersion.getVersionId(), e.g. "preset/in-tb"
+    val shortName: String,            // for display when needed (e.g. split-source picker)
     val displayLocaleHint: String?,   // for ordering when user has no active version
     val chapterUrlTemplate: String,   // e.g. "/audio/chapter?versionId=preset%2Fin-tb&bookId={bookId}&chapter_1={chapter_1}"
     val timingUrlTemplate: String?,   // nullable: some versions have audio but no timing
-    val copyrightNotice: String?,
-    val license: String?,             // e.g. "Public Domain", "SABDA"
 )
 
 data class VerseTiming(
@@ -193,6 +208,21 @@ data class ChapterTiming(
 
 `MAudio` from PR #124 (`audio1..audio5`) is rejected — the slot-numbered fields don't map onto anything meaningful. `MAudio` from PR #127 is close to this but pins the sabda folder name in the client; we keep the shape and push the folder-name responsibility to the backend.
 
+### 5.4.1 Internal-version mapping (per flavor)
+
+The bundled internal version reports `MVersion.getVersionId() == "internal"` (see [MVersionInternal.java](../../../Alkitab/src/main/java/yuku/alkitab/base/model/MVersionInternal.java)) — that string never matches a `preset/*` row in the catalog, so a user reading the internal version on, say, the `yuku_alkitab` build would see no audio icon at all.
+
+To bridge this, each product flavor declares **`BuildConfig.INTERNAL_VERSION_AUDIO_ID`** in [Alkitab/build.gradle.kts](../../../Alkitab/build.gradle.kts), naming the catalog row that the internal version should resolve to:
+
+| Flavor | Internal version content | `INTERNAL_VERSION_AUDIO_ID` |
+|---|---|---|
+| `plain` (open-source dev build) | placeholder Indonesian (`ddd_*`) | `preset/in-tb` (so dev builds can play audio) |
+| `yuku_alkitab` | TB | `preset/in-tb` |
+| `yuku_quick_bible` | KJV | `preset/en-kjv` |
+| `sabda_alkitab` | TB | `preset/in-tb` |
+
+`AudioCatalogRepository.findEntry(versionId)` performs the substitution before lookup: when `versionId == "internal"`, it looks up `BuildConfig.INTERNAL_VERSION_AUDIO_ID` instead. Empty value = the flavor has no audio for its internal version (toolbar icon stays hidden). Adding a new flavor that doesn't set the override gets the empty default.
+
 ### 5.5 Persistence
 
 - `AudioCatalog` cached at `files/audio_catalog.json` with ETag stored in `Prefkey`.
@@ -212,7 +242,7 @@ This replaces the "dual-audio interleaved" mode from both PRs. Reason: neither P
 
 ### 5.7 Module placement
 
-New Kotlin files live under `Alkitab/src/main/java/yuku/alkitab/base/audio/`:
+New Kotlin files live under `Alkitab/src/main/java/yuku/alkitab/base/audio/`. The UI layer is **Jetpack Compose** (the audio bar is the project's first Compose surface; future migration of `IsiActivity` will follow this beachhead).
 
 ```
 audio/
@@ -220,30 +250,53 @@ audio/
 ├─ AudioCatalogRepository.kt
 ├─ BibleAudioRepository.kt
 ├─ BibleAudioPlayer.kt
-├─ BibleAudioService.kt        ← MediaSessionService
-├─ AudioBarView.kt / .xml
-├─ AudioBarViewModel.kt
+├─ BibleAudioService.kt        ← media3 MediaSessionService
 ├─ HighlightTracker.kt
+├─ ui/
+│  ├─ AudioBar.kt              ← Compose @Composable: the fixed-height bar from §4.2
+│  ├─ SpeedBottomSheet.kt      ← Compose: ModalBottomSheet with FilterChip row
+│  ├─ AudioTheme.kt            ← Compose MaterialTheme bridged from app's ?attr/colorSurface*
+│  └─ AudioHighlightColor.kt   ← yellow / fallback contrast logic
+├─ AudioBarController.kt       ← Kotlin glue between IsiActivity (View) and Compose UI; holds StateFlow<UiState>
 └─ model/
    ├─ AudioVersion.kt
    ├─ VerseTiming.kt
    └─ ChapterTiming.kt
 ```
 
+Hosting in `IsiActivity`:
+
+```xml
+<!-- res/layout/activity_isi.xml — at the bottom of the root container -->
+<androidx.compose.ui.platform.ComposeView
+    android:id="@+id/audio_bar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom" />
+```
+
 Reuse: `Connections.okHttp` for HTTP, `BuildConfig.SERVER_HOST` for the base URL, existing `S`, `App`, `AppLog`. We deliberately do **not** reuse `yuku.alkitab.songs.ExoplayerController` (PR #124's approach) — the songs controller carries song-specific behavior (inline MaterialDialog error UI, loop-centric state machine, `MediaController.State` enum oriented at short clips) that pushes the bible-audio case into awkward shapes. We do borrow its pattern (OkHttp data source, MP3-only extractor factory) verbatim.
 
 ### 5.8 Library choices
 
-- **media3 ExoPlayer** — already a dependency (`androidx.media3:media3-exoplayer`, via `ExoplayerController.kt:8-17`). Keep.
-- **media3 session** — add `androidx.media3:media3-session` (`MediaSessionService`, notification provider).
+- **media3 ExoPlayer** — already a dependency (`androidx.media3:media3-exoplayer:1.8.0`, via `ExoplayerController.kt:8-17`). Keep.
+- **media3 session** — add `androidx.media3:media3-session:1.8.0` (`MediaSessionService`, notification provider).
+- **Jetpack Compose 1.11.0** — new dependency family (this feature is the project's first Compose surface):
+    - `androidx.compose.ui:ui:1.11.0`
+    - `androidx.compose.material3:material3` (paired version that ships with Compose 1.11)
+    - `androidx.compose.foundation:foundation:1.11.0`
+    - `androidx.compose.runtime:runtime:1.11.0`
+    - `androidx.compose.ui:ui-tooling-preview:1.11.0`
+    - `androidx.activity:activity-compose:1.11.0` (already-aligned with project's `androidx.activity:activity-ktx:1.11.0`)
+    - Kotlin Compose Compiler plugin (`org.jetbrains.kotlin.plugin.compose`, version-aligned with the project's Kotlin 2.2.0).
 - **Kotlin coroutines + Flow** — already a project convention.
 - **OkHttp** — already used.
 
-No new heavyweight dependencies.
+Compose adds ~2 MB to the APK. We accept this once, since the audio bar is the migration beachhead and future Compose work amortises the cost.
 
 ## 6. Privacy, security, licensing
 
-- Audio and timing data are served by `api.alkitab.app`, which may 302 to sabda.org or a CDN. The backend carries the licensing responsibility; the client displays the catalog's `copyrightNotice` and `license` strings in the audio bar's overflow menu ("About this audio").
+- Audio and timing data are served by `api.alkitab.app`, which may 302 to sabda.org or a CDN. The backend carries the licensing responsibility — there is no per-version attribution surface in the client UI for v1.
 - No new user data collected beyond existing analytics. Playback events are **not** logged off-device in v1.
 - No microphone / no audio capture.
 
@@ -273,7 +326,13 @@ PR #124 is not the better starting point — its reuse of `ExoplayerController` 
 
 ## 10. References
 
-- PR #127 implementation files: `Alkitab/src/main/java/yuku/alkitab/base/audio/*.kt`, [pull/127/head](https://github.com/yukuku/androidbible/pull/127/files).
+- PR #127 implementation files (split across packages — keep this in mind when porting):
+    - `Alkitab/src/main/java/yuku/alkitab/base/audio/{BibleAudioPlayer,AudioPlaybackController}.kt`
+    - `Alkitab/src/main/java/yuku/alkitab/base/util/BibleAudioRepository.kt` (will move to `base/audio/` and shrink — the SABDA tables go to the backend; see [backend-plan.md §4.3](backend-plan.md))
+    - `Alkitab/src/main/java/yuku/alkitab/base/model/{MAudio,MTiming}.kt`
+    - `Alkitab/src/main/java/yuku/alkitab/base/verses/{VerseItem,VersesController,VersesControllerImpl}.kt` (highlight diff)
+    - Resources: `res/drawable/ic_audio_*.xml`, `res/layout/activity_audio.xml`, `res/menu/activity_isi.xml`
+    - Full diff: [pull/127/head](https://github.com/yukuku/androidbible/pull/127/files)
 - PR #124 implementation files: `Alkitab/src/main/java/yuku/alkitab/base/util/{Audio,Bible,Timing,MediaList}*`, [pull/124/head](https://github.com/yukuku/androidbible/pull/124/files).
 - Existing song-audio design: `docs/modules/audio-playback.md`, `Alkitab/src/main/java/yuku/alkitab/songs/ExoplayerController.kt:33-194`.
 - Verses/highlighting surface: `Alkitab/src/main/java/yuku/alkitab/base/verses/VersesController.kt`, `VerseItem.kt`.

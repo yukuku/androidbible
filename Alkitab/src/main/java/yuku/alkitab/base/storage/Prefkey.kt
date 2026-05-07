@@ -125,4 +125,15 @@ enum class Prefkey {
 
     /** Option to ask for verse number in goto screen  */
     gotoAskForVerse,
+
+    /**
+     * Audio bible: ETag of the most recently fetched `/audio/catalog` response.
+     * Sent as `If-None-Match` on subsequent fetches for 304 short-circuit.
+     */
+    audioCatalog_etag,
+
+    /**
+     * Audio bible: playback speed (float, 0.5–2.0). Default 1.0.
+     */
+    audioPlaybackSpeed,
 }

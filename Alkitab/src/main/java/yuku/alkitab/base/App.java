@@ -2,6 +2,7 @@ package yuku.alkitab.base;
 
 import android.content.Context;
 import android.net.Uri;
+import androidx.core.app.NotificationChannelCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.multidex.MultiDex;
 import androidx.preference.PreferenceManager;
@@ -9,8 +10,10 @@ import com.downloader.PRDownloader;
 import com.downloader.PRDownloaderConfig;
 import com.google.gson.Gson;
 import java.util.concurrent.atomic.AtomicBoolean;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.connection.PRDownloaderOkHttpClient;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Fcm;
 import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.util.ExtensionManager;
@@ -58,7 +61,13 @@ public class App extends yuku.afw.App {
             PreferenceManager.setDefaultValues(context, preferenceResId, false);
         }
 
-        { // FCM
+        // FCM is only useful once the user has signed into sync — the registration id
+        // gets uploaded by Sync.notifyNewFcmRegistrationId, which itself early-exits
+        // when sync_simpleToken is null. Skipping this block on first launch (before
+        // any sync sign-in) keeps Firebase Messaging dormant and avoids prompting the
+        // user for POST_NOTIFICATIONS before they have any reason to grant it. New
+        // sign-ins are handled separately by SyncLoginActivity.gotSimpleToken.
+        if (Preferences.getString(Prefkey.sync_simpleToken) != null) {
             final String fcmRegistrationId = Fcm.renewFcmRegistrationIdIfNeeded(Sync::notifyNewFcmRegistrationId);
             if (fcmRegistrationId != null) {
                 Sync.retryPendingFcmRegistrationIfNeeded(fcmRegistrationId);
@@ -82,6 +91,20 @@ public class App extends yuku.afw.App {
         notificationManager.deleteNotificationChannel("devotion_downloader");
         notificationManager.deleteNotificationChannel("download_mapper");
         notificationManager.deleteNotificationChannel("devotion_reminder");
+
+        // Bible audio playback channel — created here so that media3's
+        // DefaultMediaNotificationProvider posts onto a low-importance,
+        // silent channel rather than the default high-importance one.
+        // Channel attributes (importance, sound, vibration) are immutable
+        // after first creation, so creating it ourselves up-front is the
+        // only way to control them.
+        notificationManager.createNotificationChannel(
+            new NotificationChannelCompat.Builder("audio_bible", NotificationManagerCompat.IMPORTANCE_LOW)
+                .setName(context.getString(R.string.audio_bible_notification_channel_name))
+                .setVibrationEnabled(false)
+                .setSound(null, null)
+                .build()
+        );
     }
 
     public static Gson getDefaultGson() {

@@ -5,6 +5,10 @@
 
 	<uses-permission android:name="android.permission.INTERNET" />
 
+	<!-- Foreground service for Bible audio playback (yuku.alkitab.base.audio.BibleAudioService) -->
+	<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+	<uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+
 	<!-- Keeping storage permissions for users who upgrade from an existing versions
 	and store their version files in the external storage -->
 	<uses-permission
@@ -28,6 +32,18 @@
 		android:networkSecurityConfig="@xml/network_security_config"
 		android:supportsRtl="true"
 		android:theme="@style/Theme.Alkitab">
+
+		<!--
+			Disable Firebase Messaging's auto-init at process startup. Without this,
+			firebase-messaging 23.1.0+ proactively requests POST_NOTIFICATIONS on
+			Android 13+ the first time the app launches, before the user has any
+			reason to grant it. We instead initialize FCM lazily once the user signs
+			into sync (see SyncLoginActivity), which is the only feature that uses
+			push messages.
+		-->
+		<meta-data
+			android:name="firebase_messaging_auto_init_enabled"
+			android:value="false" />
 
 		<activity
 			android:name="yuku.alkitab.base.IsiActivity"
@@ -385,6 +401,17 @@
 		<service
 			android:name="yuku.alkitab.base.sv.VersionConfigUpdaterService"
 			android:exported="false" />
+
+		<!-- Bible audio: media3 MediaSessionService. exported=true is required so
+			 the OS (notification, lock-screen, Bluetooth, Android Auto) can bind. -->
+		<service
+			android:name="yuku.alkitab.base.audio.BibleAudioService"
+			android:exported="true"
+			android:foregroundServiceType="mediaPlayback">
+			<intent-filter>
+				<action android:name="androidx.media3.session.MediaSessionService" />
+			</intent-filter>
+		</service>
 
 		<!--
 			File provider, for sharing app files.
