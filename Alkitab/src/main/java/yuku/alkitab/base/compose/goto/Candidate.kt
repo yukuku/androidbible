@@ -22,14 +22,12 @@ fun computeCandidates(query: String, books: Array<Book>): List<Candidate> {
 
     for (book in books) {
         val n = book.shortName.lowercase()
-        val title: String?
-        val score: Int
-        when {
-            n.startsWith(bookName) -> { title = book.shortName; score = 20 }
-            n.contains(bookName) -> { title = book.shortName; score = 10 }
-            else -> { title = null; score = 0 }
+        val (title, score) = when {
+            n.startsWith(bookName) -> book.shortName to 20
+            n.contains(bookName) -> book.shortName to 10
+            else -> null to 0
         }
-        if (score != 0 && title != null) {
+        if (title != null) {
             if (addCandidate(jumper, out, title, score, book) != null) {
                 addedBookIds.add(book.bookId)
             }

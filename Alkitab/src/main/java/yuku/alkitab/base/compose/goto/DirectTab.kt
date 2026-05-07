@@ -44,7 +44,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
@@ -95,12 +94,12 @@ fun DirectTab(
 
         val m = NOBOOK_PATTERN.matcher(ref)
         if (m.matches()) {
-            try {
-                val ch = (m.group(1) ?: return).toInt()
-                val v = m.group(2)?.toInt() ?: 0
+            val ch = m.group(1)?.toIntOrNull()
+            if (ch != null) {
+                val v = m.group(2)?.toIntOrNull() ?: 0
                 onGotoFinished(GotoTab.DIRECT, initialBookId, ch, v)
                 return
-            } catch (_: NumberFormatException) {}
+            }
         }
         val jumper = Jumper(ref)
         if (!jumper.parseSucceeded) {
@@ -164,19 +163,12 @@ fun DirectTab(
     }
 }
 
-    private fun CharSequence.toAnnotatedString(): AnnotatedString = buildAnnotatedString {
+private fun CharSequence.toAnnotatedString(): AnnotatedString = buildAnnotatedString {
     append(this@toAnnotatedString.toString())
     if (this@toAnnotatedString is Spanned) {
         for (span in getSpans(0, length, StyleSpan::class.java)) {
-            val start = getSpanStart(span)
-            val end = getSpanEnd(span)
-            when (span.style) {
-                Typeface.BOLD -> addStyle(SpanStyle(fontWeight = FontWeight.Bold), start, end)
-                Typeface.ITALIC -> addStyle(SpanStyle(fontStyle = FontStyle.Italic), start, end)
-                Typeface.BOLD_ITALIC -> addStyle(
-                    SpanStyle(fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic),
-                    start, end,
-                )
+            if (span.style == Typeface.BOLD) {
+                addStyle(SpanStyle(fontWeight = FontWeight.Bold), getSpanStart(span), getSpanEnd(span))
             }
         }
     }

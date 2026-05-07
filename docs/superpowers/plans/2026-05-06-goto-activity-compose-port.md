@@ -240,7 +240,7 @@ class GotoViewModel : ViewModel() {
         trySend(Preferences.getBoolean(Prefkey.gotoAskForVerse, PrefkeyKt.GOTO_ASK_FOR_VERSE_DEFAULT))
         awaitClose { Preferences.unregisterObserver(listener) }
     }.stateIn(
-        scope = androidx.lifecycle.viewModelScope,
+        scope = viewModelScope,
         started = SharingStarted.Eagerly,
         initialValue = Preferences.getBoolean(Prefkey.gotoAskForVerse, PrefkeyKt.GOTO_ASK_FOR_VERSE_DEFAULT),
     )
@@ -535,7 +535,7 @@ fun DialerTab(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(stringResourceCompat(R.string.pasal_sebelumangka))
+            Text(stringResource(R.string.pasal_sebelumangka))
             Spacer(Modifier.width(8.dp))
             DialerField(
                 text = chapterText,
@@ -544,7 +544,7 @@ fun DialerTab(
             )
             if (askForVerse) {
                 Spacer(Modifier.width(16.dp))
-                Text(stringResourceCompat(R.string.ayat_sebelumangka))
+                Text(stringResource(R.string.ayat_sebelumangka))
                 Spacer(Modifier.width(8.dp))
                 DialerField(
                     text = verseText,
@@ -586,7 +586,7 @@ fun DialerTab(
                             onGotoFinished(GotoTab.DIALER, selectedBook.bookId, ch, v)
                         },
                         modifier = Modifier.fillMaxWidth(),
-                    ) { Text(stringResourceCompat(R.string.ok)) }
+                    ) { Text(stringResource(R.string.ok)) }
                 }
             }
         }
@@ -617,10 +617,9 @@ private fun KeypadDigit(d: String, onDigit: (String) -> Unit) {
     }
 }
 
-@Composable
-private fun stringResourceCompat(@androidx.annotation.StringRes id: Int): String =
-    androidx.compose.ui.res.stringResource(id)
 ```
+
+> Note: this snippet uses `androidx.compose.ui.res.stringResource` directly — no helper wrapper is needed.
 
 - [ ] **Step 2: Verify it compiles**
 
@@ -718,16 +717,16 @@ fun DirectTab(
 
         val m = NOBOOK_PATTERN.matcher(ref)
         if (m.matches()) {
-            try {
-                val ch = (m.group(1) ?: return).toInt()
-                val v = m.group(2)?.toInt() ?: 0
+            val ch = m.group(1)?.toIntOrNull()
+            if (ch != null) {
+                val v = m.group(2)?.toIntOrNull() ?: 0
                 onGotoFinished(GotoTab.DIRECT, initialBookId, ch, v)
                 return
-            } catch (_: NumberFormatException) {}
+            }
         }
         val jumper = Jumper(ref)
         if (!jumper.parseSucceeded) {
-            errorText = "Invalid reference: $ref"
+            errorRef = ref  // displayed via stringResource(R.string.alamat_tidak_sah_alamat, ref)
             return
         }
         onGotoFinished(GotoTab.DIRECT, jumper.getBookId(books), jumper.chapter, jumper.verse)
