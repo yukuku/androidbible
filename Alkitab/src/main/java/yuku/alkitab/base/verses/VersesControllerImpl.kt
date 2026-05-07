@@ -435,6 +435,12 @@ class VersesControllerImpl(
     }
 
     override fun setAudioHighlight(verse_1: Int, color: Int) {
+        // Fast-path: this method is called every 100ms during playback
+        // (mirroring the service's position poll). Bailing out when nothing
+        // actually changed avoids a needless findViewByPosition + restart of
+        // the LinearSmoothScroller animation.
+        if (audioHighlight.verse_1 == verse_1 && audioHighlight.color == color) return
+
         // Always clear the old row first — even when the new verse_1 is 0 or
         // the same number — so an off-by-one (e.g. timing gap between verses)
         // doesn't leave an orphan overlay behind.

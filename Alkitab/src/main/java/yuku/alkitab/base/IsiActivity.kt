@@ -857,9 +857,13 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
         audioBinder.attach(audioBarHost, findViewById<ComposeView>(R.id.audio_bar))
         lifecycleScope.launch {
+            // Keep this loop tight: the controller emits at the service's poll
+            // rate (every 100 ms during playback). Menu refresh is driven by
+            // the `audioPreparingChanged` callback in audioBarHost — calling
+            // invalidateOptionsMenu() here would force the toolbar to rebuild
+            // every tick.
             audioBinder.uiState.collect { state ->
                 applyAudioHighlightTo(lsSplit0, state.verse_1)
-                invalidateOptionsMenu()
             }
         }
         lifecycleScope.launch {

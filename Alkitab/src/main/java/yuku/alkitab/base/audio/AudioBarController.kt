@@ -95,6 +95,14 @@ class AudioBarController(
     private var composeView: ComposeView? = null
 
     private var service: BibleAudioService? = null
+
+    /**
+     * Tracks whether [Context.bindService] returned successfully. We MUST keep
+     * this flag set until [detach] calls `unbindService`, even after
+     * [ServiceConnection.onServiceDisconnected] fires — Android's contract is
+     * that the connection still needs to be explicitly unbound, otherwise the
+     * `ServiceConnection` leaks.
+     */
     private var bound = false
     /** Tracks whether the user has *requested* the bar visible (via [toggle]). */
     private var requestedVisible = false
@@ -122,7 +130,9 @@ class AudioBarController(
             val localBinder = binder as? BibleAudioService.LocalBinder ?: return
             val svc = localBinder.service
             service = svc
-            bound = true
+            // Note: `bound` is set in [ensureBound] when bindService returns
+            // true, NOT here. onServiceConnected is fire-and-forget — if the
+            // service crashes before we get here, we still need to unbind.
             collectJob?.cancel()
             collectJob = scope.launch {
                 svc.playbackState.collect { state -> projectToUi(state) }
@@ -131,7 +141,10 @@ class AudioBarController(
 
         override fun onServiceDisconnected(name: ComponentName?) {
             service = null
-            bound = false
+            // Do NOT clear `bound` — the ServiceConnection is still registered
+            // with the OS until `unbindService` runs in [detach]. Android's
+            // contract is that disconnection means the service died; the
+            // binding itself is not released.
             collectJob?.cancel()
             collectJob = null
         }
@@ -222,6 +235,9 @@ class AudioBarController(
         scope.cancel()
         host = null
         composeView = null
+        // Drop the pending Host reference too — otherwise an in-flight load
+        // queued before the service connected leaks the activity.
+        pendingLoad = null
     }
 
     // -- internals --------------------------------------------------------------
@@ -233,7 +249,15 @@ class AudioBarController(
         val intent = Intent(context, BibleAudioService::class.java)
             .setAction(BibleAudioService.ACTION_LOCAL_BIND)
         try {
-            context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+            // bindService can return false if the service can't be found or
+            // the system refuses to deliver. Only flip `bound` on success so
+            // [detach] doesn't try to unbind a connection that was never
+            // registered.
+            if (context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)) {
+                bound = true
+            } else {
+                AppLog.w(TAG, "bindService returned false — service not bound")
+            }
         } catch (e: SecurityException) {
             // Should never happen — we own the service. Logged for paranoia.
             AppLog.e(TAG, "bindService denied: ${e.message}")
@@ -303,7 +327,12 @@ class AudioBarController(
     private fun projectToUi(state: PlaybackState) {
         val host = this.host
         val prevPreparing = _uiState.value.preparing
-        // Drain pendingLoad once the service is connected.
+        // Snapshot before we drain — if a load was queued before the service
+        // connected, the first incoming state is usually `IDLE`, which would
+        // briefly clear the spinner before our loadChapter call sets it back
+        // to preparing. Holding the spinner true until we've fired the
+        // queued load avoids that flicker.
+        val isPending = pendingLoad != null
         pendingLoad?.let { ph ->
             service?.loadChapter(buildRequest(ph))
             pendingLoad = null
@@ -312,11 +341,12 @@ class AudioBarController(
         val prevLabel = host?.audioNeighborChapter(-1)?.let { (b, c) -> "${b.shortName} $c" }
         val nextLabel = host?.audioNeighborChapter(+1)?.let { (b, c) -> "${b.shortName} $c" }
 
+        val effectivePreparing = state.preparing || isPending
         _uiState.update { current ->
             current.copy(
                 visible = requestedVisible,
                 isPlaying = state.isPlaying,
-                preparing = state.preparing,
+                preparing = effectivePreparing,
                 positionMs = state.positionMs,
                 durationMs = state.durationMs,
                 verse_1 = state.verse_1,
@@ -332,8 +362,8 @@ class AudioBarController(
             )
         }
 
-        if (prevPreparing != state.preparing) {
-            host?.audioPreparingChanged(state.preparing)
+        if (prevPreparing != effectivePreparing) {
+            host?.audioPreparingChanged(effectivePreparing)
         }
     }
 
