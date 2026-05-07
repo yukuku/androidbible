@@ -187,7 +187,7 @@ Newer files (activities, data classes) are Kotlin, creating a mixed codebase whe
 | `PRDownloader` (patched) | custom | Forked as `PrDownloaderFixed`. Maintenance burden of carrying a patched fork. |
 | `AmbilWarna` | bundled | Bundled color picker. Material color picker components exist now. |
 | ~~`LocalBroadcastManager`~~ | — | Removed in REM-03; replaced by `AppEvents` `SharedFlow` buses. |
-| `androidx.percentlayout` | 1.0.0 | Library is in maintenance mode (deprecated by Google in favor of `ConstraintLayout`). Last consumers were the goto fragment layouts; after the REM-22 Compose port (2026-05-06) no `src/` layout references it any more — the `implementation(libs.androidx.percentlayout)` line in `Alkitab/build.gradle.kts:345` can be deleted as a follow-up. |
+| ~~`androidx.percentlayout`~~ | ~~1.0.0~~ | ✅ **Fixed in REM-22 follow-up** (2026-05-07). The dep was orphaned by the GotoActivity Compose port (PR #160) once the last consumer (`fragment_goto_dialer.xml`) was deleted. Removed the `implementation(libs.androidx.percentlayout)` line from `Alkitab/build.gradle.kts` along with the version key and library entry in `gradle/libs.versions.toml`. Same cleanup also dropped the now-unused `KeypadButton` style and `keypad_text_color` color resource (former dialer-only assets). |
 
 ---
 

@@ -20,7 +20,6 @@ androidxFragment = "1.8.9"
 androidxLifecycle = "2.9.0"
 androidxMedia3 = "1.8.0"
 androidxMultidex = "2.0.1"
-androidxPercentlayout = "1.0.0"
 androidxPreference = "1.2.1"
 androidxRecyclerview = "1.4.0"
 androidxSwiperefreshlayout = "1.1.0"
@@ -70,7 +69,6 @@ androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplaye
 androidx-media3-datasource-okhttp = { group = "androidx.media3", name = "media3-datasource-okhttp", version.ref = "androidxMedia3" }
 androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "androidxMedia3" }
 androidx-multidex = { group = "androidx.multidex", name = "multidex", version.ref = "androidxMultidex" }
-androidx-percentlayout = { group = "androidx.percentlayout", name = "percentlayout", version.ref = "androidxPercentlayout" }
 androidx-preference = { group = "androidx.preference", name = "preference", version.ref = "androidxPreference" }
 androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "androidxPreference" }
 androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "androidxRecyclerview" }
