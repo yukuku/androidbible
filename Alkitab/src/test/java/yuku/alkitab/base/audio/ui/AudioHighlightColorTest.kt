@@ -15,10 +15,12 @@ import org.robolectric.annotation.Config
  * because the production code reaches into `android.graphics.Color` /
  * `androidx.core.graphics.ColorUtils`, which are Android-platform classes.
  *
- * The PRD §4.3 contract is: yellow at 20% alpha is the preferred default; if
- * compositing it on the reading background would drop contrast below WCAG AA
- * (4.5:1) against the verse text color, fall back to whichever of black/white
- * at 20% scores better.
+ * Contract (see [AudioHighlightColor]):
+ *  - Yellow at 20% alpha is preferred when (a) the composite is perceptibly
+ *    different from the reading background (LAB ΔE ≥ 5) AND (b) verse text
+ *    stays WCAG AA readable on the composite.
+ *  - Otherwise fall back to whichever of black/white at 20% has the larger
+ *    LAB ΔE against the reading background (the more visible neutral).
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34]) // Robolectric 4.13 max; project targetSdkVersion is 35.
@@ -48,42 +50,62 @@ class AudioHighlightColorTest {
     }
 
     @Test
-    fun `dark theme with mid-tone text falls back to a non-yellow overlay`() {
-        // A common Material dark surface (#1F1F1F) with a slightly-darker text
-        // color tightens the yellow-on-dark contrast enough to push us below
-        // WCAG AA — exercising the fallback path.
-        val bg = Color.rgb(0x1F, 0x1F, 0x1F)
-        val text = Color.rgb(0xCC, 0xCC, 0xCC)
-        val pick = AudioHighlightColor.pickHighlightColor(bg, text)
-
-        // Confirm the picked overlay is one of the three known overlays...
-        assertTrue("unexpected color $pick", pick in setOf(yellow20, black20, white20))
-        // ...and falls back to a neutral when the dark-on-dark composite
-        // squeezes the contrast.
-        if (pick == yellow20) {
-            // Document a hypothetical alternative — fail-loud if the future
-            // tightens our threshold but the test still passes by accident.
-            val composited = ColorUtils.compositeColors(yellow20, bg)
-            val contrast = ColorUtils.calculateContrast(text, composited)
-            assertTrue(
-                "yellow was picked but contrast=$contrast — should be ≥ 4.5 to be valid",
-                contrast >= 4.5,
+    fun `yellow paper background falls back to a neutral so the highlight is visible`() {
+        // The bug this regression-tests: a yellow-on-yellow highlight is
+        // invisible because the composite is essentially the same color as
+        // the surrounding bg. Even though the verse text remains readable,
+        // the user can't *find* the highlighted verse — see the screenshot
+        // attached to the bug report. With the LAB-distance gate, yellow is
+        // rejected on these paper themes.
+        val cases = listOf(
+            // Common bible-app "paper" / "manila" looks.
+            Color.rgb(0xFA, 0xF0, 0x9C),
+            Color.rgb(0xFB, 0xE6, 0x6F),
+            Color.rgb(0xF8, 0xE9, 0x7C),
+        )
+        val text = Color.rgb(0x33, 0x33, 0x33)
+        for (bg in cases) {
+            val pick = AudioHighlightColor.pickHighlightColor(bg, text)
+            assertNotEquals(
+                "yellow chosen on yellow paper bg=#${Integer.toHexString(bg)} — highlight invisible",
+                yellow20,
+                pick,
             )
-        } else {
-            assertNotEquals("expected fallback, not yellow", yellow20, pick)
+            assertTrue("expected a neutral overlay", pick == black20 || pick == white20)
         }
     }
 
     @Test
-    fun `picked overlay always meets WCAG AA contrast`() {
+    fun `dark theme returns a valid overlay (yellow or neutral, both acceptable)`() {
+        // On a near-black bg, yellow at 20% alpha composites to a clearly
+        // different yellow-tinted dark patch (high LAB ΔE) AND text contrast
+        // remains comfortably above WCAG AA, so yellow IS a valid pick.
+        // Whether a future tweak prefers a neutral instead is also fine; we
+        // just want to assert (a) the picked color is one of our three
+        // overlays and (b) WCAG AA for text holds.
+        val bg = Color.rgb(0x12, 0x12, 0x12)
+        val text = Color.rgb(0xE6, 0xE6, 0xE6)
+        val pick = AudioHighlightColor.pickHighlightColor(bg, text)
+        assertTrue("unexpected color $pick", pick in setOf(yellow20, black20, white20))
+        val composited = ColorUtils.compositeColors(pick, bg)
+        val contrast = ColorUtils.calculateContrast(text, composited)
+        assertTrue(
+            "text contrast on highlight=${"%.2f".format(contrast)} < 4.5",
+            contrast >= 4.5,
+        )
+    }
+
+    @Test
+    fun `picked overlay always meets WCAG AA contrast for verse text`() {
         val cases = listOf(
-            // (background, text)
+            // (background, text) — span light, sepia, dark, and yellow paper.
             Color.WHITE to Color.BLACK,
             Color.rgb(0xF4, 0xEC, 0xD8) to Color.rgb(0x44, 0x33, 0x22),
             Color.BLACK to Color.WHITE,
             Color.rgb(0x12, 0x12, 0x12) to Color.rgb(0xE6, 0xE6, 0xE6),
             Color.rgb(0x21, 0x21, 0x21) to Color.WHITE,
             Color.rgb(0x33, 0x2A, 0x1E) to Color.rgb(0xEC, 0xE3, 0xCD),
+            Color.rgb(0xFA, 0xF0, 0x9C) to Color.rgb(0x33, 0x33, 0x33),
         )
 
         for ((bg, text) in cases) {
@@ -98,14 +120,40 @@ class AudioHighlightColorTest {
     }
 
     @Test
-    fun `mid-gray bg with mid-gray text picks the higher-contrast neutral`() {
-        // Yellow on mid-gray composites to a yellow-tinted gray, which has
-        // poor contrast against mid-gray text. The fallback should pick
-        // whichever of black/white pulls further from the text color.
+    fun `picked overlay is always perceptibly different from the reading background`() {
+        // Visibility regression: ΔE ≥ ~2 on every supported theme, otherwise
+        // the highlight can't be located. We test against a slightly looser
+        // bound than the production threshold (5.0) because the fallback
+        // neutrals on near-medium grays can sit just above the gate.
+        val cases = listOf(
+            Color.WHITE to Color.BLACK,
+            Color.rgb(0xF4, 0xEC, 0xD8) to Color.rgb(0x44, 0x33, 0x22),
+            Color.BLACK to Color.WHITE,
+            Color.rgb(0x12, 0x12, 0x12) to Color.rgb(0xE6, 0xE6, 0xE6),
+            Color.rgb(0xFA, 0xF0, 0x9C) to Color.rgb(0x33, 0x33, 0x33),
+        )
+        for ((bg, text) in cases) {
+            val pick = AudioHighlightColor.pickHighlightColor(bg, text)
+            val composited = ColorUtils.compositeColors(pick, bg)
+            val labA = DoubleArray(3); val labB = DoubleArray(3)
+            ColorUtils.colorToLAB(composited, labA)
+            ColorUtils.colorToLAB(bg, labB)
+            val deltaE = ColorUtils.distanceEuclidean(labA, labB)
+            assertTrue(
+                "highlight indistinguishable from bg: ΔE=${"%.2f".format(deltaE)} for bg=#${Integer.toHexString(bg)} pick=#${Integer.toHexString(pick)}",
+                deltaE >= 2.0,
+            )
+        }
+    }
+
+    @Test
+    fun `mid-gray bg picks the higher-visibility neutral`() {
+        // Yellow on mid-gray composites to a yellow-tinted gray with poor
+        // visibility. The fallback should pick whichever of black/white
+        // pulls further from the bg in LAB space.
         val bg = Color.rgb(0x80, 0x80, 0x80)
         val text = Color.rgb(0x40, 0x40, 0x40)
         val pick = AudioHighlightColor.pickHighlightColor(bg, text)
-        // Either neutral is acceptable; assert it's NOT yellow.
         assertTrue("should fall back to black or white", pick == black20 || pick == white20)
     }
 }
