@@ -870,6 +870,13 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             // the `audioPreparingChanged` callback in audioBarHost — calling
             // invalidateOptionsMenu() here would force the toolbar to rebuild
             // every tick.
+            //
+            // Highlight is applied to the primary split (`lsSplit0`) only,
+            // matching PRD §4.5 ("Highlight applies only to the chosen side;
+            // the other split's rows show no audio highlight, even when the
+            // verse numbers coincide."). M5 will add the split-source picker
+            // dialog (PRD §4.5) and route the highlight to whichever side the
+            // user selects; for M3 we always pick the primary.
             audioBinder.uiState.collect { state ->
                 applyAudioHighlightTo(lsSplit0, state.verse_1)
             }
