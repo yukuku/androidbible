@@ -62,7 +62,7 @@
 		</activity>
 		<activity
 			android:name="yuku.alkitab.base.ac.GotoActivity"
-			android:windowSoftInputMode="adjustNothing" />
+			android:windowSoftInputMode="adjustResize" />
 		<activity
 			android:name="yuku.alkitab.base.settings.SettingsActivity"
 			android:label="@string/pengaturan_alkitab" />

@@ -23,6 +23,8 @@
     <string name="activity_title_markers">Markers</string>
     <string name="menu_markers">Markers</string>
     <string name="hapus_pembatas_buku">Delete bookmark</string>
+    <string name="menuBack">Back</string>
+    <string name="menuForward">Forward</string>
     <string name="menuShare">Share</string>
     <string name="menuShareSplit0">Share primary version</string>
     <string name="menuShareSplit1">Share secondary version</string>
@@ -203,6 +205,7 @@
     <string name="color_settings_night_title">Colors (Night mode)</string>
     <string name="menuDisplay">Display</string>
 	<string name="text_appearance_font">Font</string>
+    <string name="text_appearance_color_theme">Color theme</string>
     <string name="text_appearance_theme_custom">Custom…</string>
     <string name="text_appearance_text_size">Text size</string>
     <string name="text_appearance_text_size_for_version">Text size for ^1</string>

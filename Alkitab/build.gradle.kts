@@ -336,6 +336,20 @@ dependencies {
     implementation(project(":ImportedDesktopVerseUtil"))
     implementation(project(":PrDownloaderFixed"))
 
+    // Compose — single BOM-managed Compose surface (audio-bible bottom sheet + GotoActivity).
+    val composeBom = platform(libs.androidx.compose.bom)
+    implementation(composeBom)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+
     // AndroidX
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.annotation)
@@ -357,16 +371,6 @@ dependencies {
     implementation(libs.google.material)
     implementation(libs.gson)
     implementation(libs.fastscroll)
-
-    // Jetpack Compose — first Compose surface in this project, introduced for the
-    // audio-bible bottom sheet (docs/features/audio-bible/).
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.foundation)
-    implementation(libs.androidx.compose.runtime)
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.activity.compose)
-    debugImplementation(libs.androidx.compose.ui.tooling)
 
     // Tests
     testImplementation(libs.junit)
