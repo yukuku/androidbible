@@ -1,5 +1,6 @@
 package yuku.alkitab.base.verses
 
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
@@ -60,6 +61,52 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
     private val attentionPaint by lazy(LazyThreadSafetyMode.NONE) {
         Paint().apply {
             style = Paint.Style.FILL
+        }
+    }
+
+    private val audioHighlightPaint by lazy(LazyThreadSafetyMode.NONE) {
+        Paint().apply {
+            style = Paint.Style.FILL
+            isAntiAlias = true
+        }
+    }
+
+    /**
+     * Target argb color for the audio-highlight overlay. `0` means "no highlight".
+     * Setting a non-zero color fades the alpha in over [AUDIO_HIGHLIGHT_FADE_IN_MS];
+     * setting `0` fades it out over [AUDIO_HIGHLIGHT_FADE_OUT_MS]. The chosen color
+     * is computed by `AudioHighlightColor.pickHighlightColor` once per theme and
+     * cached on the VersesController.
+     */
+    var audioHighlightColor: Int = 0
+        set(value) {
+            if (field == value) return
+            field = value
+            startAudioHighlightAnim(value)
+        }
+
+    /** Current animated alpha (0.0..1.0) of the audio overlay. */
+    private var audioHighlightAlpha: Float = 0f
+        set(value) {
+            field = value
+            invalidate()
+        }
+
+    private var audioHighlightAnimator: ValueAnimator? = null
+
+    private fun startAudioHighlightAnim(targetColor: Int) {
+        audioHighlightAnimator?.cancel()
+        val from = audioHighlightAlpha
+        val to = if (targetColor == 0) 0f else 1f
+        if (from == to) {
+            audioHighlightAlpha = to
+            return
+        }
+        val duration = if (to > from) AUDIO_HIGHLIGHT_FADE_IN_MS else AUDIO_HIGHLIGHT_FADE_OUT_MS
+        audioHighlightAnimator = ValueAnimator.ofFloat(from, to).apply {
+            this.duration = duration.toLong()
+            addUpdateListener { audioHighlightAlpha = it.animatedValue as Float }
+            start()
         }
     }
 
@@ -127,6 +174,16 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
     override fun onDraw(canvas: Canvas) {
         val w = width
         val h = height
+
+        // Audio highlight overlay drawn first, BELOW the selection overlay,
+        // so a verse the user is selecting while audio plays still reads as
+        // "selected" rather than blending with the audio tint.
+        if (audioHighlightColor != 0 && audioHighlightAlpha > 0f) {
+            val baseAlpha = ((audioHighlightColor ushr 24) and 0xff) / 255f
+            val alpha = (baseAlpha * audioHighlightAlpha * 255f).toInt().coerceIn(0, 255)
+            audioHighlightPaint.color = ColorUtils.setAlphaComponent(audioHighlightColor, alpha)
+            canvas.drawRect(0f, 0f, w.toFloat(), h.toFloat(), audioHighlightPaint)
+        }
 
         if (checked) {
             val solid = checkedPaintSolid
@@ -254,5 +311,9 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
 
     companion object {
         private const val ATTENTION_DURATION = 2000f
+
+        /** Audio overlay fade-in/out (PRD §4.3) — slow enough to avoid strobe at speed 1.0×. */
+        private const val AUDIO_HIGHLIGHT_FADE_IN_MS = 200
+        private const val AUDIO_HIGHLIGHT_FADE_OUT_MS = 150
     }
 }

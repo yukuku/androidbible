@@ -1,0 +1,349 @@
+package yuku.alkitab.base.audio
+
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.os.IBinder
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import yuku.alkitab.base.audio.ui.AudioBar
+import yuku.alkitab.base.audio.ui.AudioBarCommand
+import yuku.alkitab.base.audio.ui.AudioBarUiState
+import yuku.alkitab.base.util.AppLog
+import yuku.alkitab.model.Book
+
+/**
+ * Glue layer between the View-based [yuku.alkitab.base.IsiActivity] and the
+ * Compose [AudioBar] surface, plus the Service-side [BibleAudioService].
+ *
+ * Responsibilities:
+ *  - Bind to the local [BibleAudioService] using [BibleAudioService.ACTION_LOCAL_BIND]
+ *    and collect its [BibleAudioService.playbackState] into a UI-shaped flow.
+ *  - Project [PlaybackState] + chapter-navigation context into [AudioBarUiState],
+ *    keeping the recomposition surface flat.
+ *  - Translate Compose [AudioBarCommand]s into service calls + activity navigation.
+ *
+ * Out of scope for M3 (handled in M4/M5):
+ *  - Lock-screen / foreground notification specifics — owned by the service.
+ *  - Auto-advance at end of chapter, snackbar errors, speed bottom sheet,
+ *    split-view source picker.
+ *
+ * Lifecycle: the activity calls [attach] in `onCreate` (after `setContentView`)
+ * and [detach] in `onDestroy`. Binding to the service is idempotent and uses
+ * [Context.BIND_AUTO_CREATE] only when the user actually starts audio — we
+ * don't want every IsiActivity instance to spin up a service for users who
+ * never tap the audio icon.
+ */
+class AudioBarController(
+    private val context: Context,
+) {
+    /**
+     * The activity-side surface the controller needs to read from to compute
+     * chapter labels and to navigate when the user taps prev/next chapter.
+     */
+    interface Host {
+        /** Currently displayed book in the primary split. */
+        fun audioCurrentBook(): Book
+
+        /** Currently displayed chapter (1-based). */
+        fun audioCurrentChapter1(): Int
+
+        /** Version id of the side that drives audio (in M3, always primary). */
+        fun audioCurrentVersionId(): String
+
+        /** Short name of the version driving audio (e.g. "TB"). */
+        fun audioCurrentVersionShortName(): String
+
+        /**
+         * The list of version ids currently visible in `IsiActivity` (primary,
+         * plus the split-view secondary if open). Drives toolbar-icon visibility.
+         */
+        fun audioVisibleVersionIds(): List<String>
+
+        /**
+         * Resolve the chapter that's [direction] away (`-1` previous, `+1`
+         * next). Returns `null` at Bible boundaries; the controller uses that
+         * to render the chapter-nav button label as `alpha = 0f` so the bar
+         * doesn't reflow.
+         */
+        fun audioNeighborChapter(direction: Int): Pair<Book, Int>?
+
+        /** Tell the activity to navigate to [book] / [chapter_1] (the existing `display` flow). */
+        fun audioDisplayChapter(book: Book, chapter_1: Int)
+
+        /** Notifies the activity that the spinner-vs-icon state may need to flip. */
+        fun audioPreparingChanged(preparing: Boolean)
+    }
+
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private var collectJob: Job? = null
+
+    private var host: Host? = null
+    private var composeView: ComposeView? = null
+
+    private var service: BibleAudioService? = null
+    private var bound = false
+    /** Tracks whether the user has *requested* the bar visible (via [toggle]). */
+    private var requestedVisible = false
+
+    private val _uiState = MutableStateFlow(AudioBarUiState.HIDDEN)
+    val uiState: StateFlow<AudioBarUiState> = _uiState.asStateFlow()
+
+    /**
+     * Whether the toolbar audio icon should be shown for the currently visible
+     * version(s). Reads the catalog synchronously (cached after the first call;
+     * see [AudioCatalogRepository]).
+     */
+    val isAvailable: Boolean
+        get() {
+            val ids = host?.audioVisibleVersionIds() ?: return false
+            return ids.any { AudioCatalogRepository.isAudioAvailable(it) }
+        }
+
+    /** True while the service is preparing a chapter — drives the toolbar spinner. */
+    val isPreparing: Boolean
+        get() = _uiState.value.preparing
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
+            val localBinder = binder as? BibleAudioService.LocalBinder ?: return
+            val svc = localBinder.service
+            service = svc
+            bound = true
+            collectJob?.cancel()
+            collectJob = scope.launch {
+                svc.playbackState.collect { state -> projectToUi(state) }
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            service = null
+            bound = false
+            collectJob?.cancel()
+            collectJob = null
+        }
+    }
+
+    /**
+     * Hooks the controller into the activity. Idempotent — calling twice
+     * replaces the host without re-binding the service.
+     *
+     * The compose host is `setContent`-ed eagerly so the bar can animate in
+     * the moment [requestedVisible] flips, even before the service has
+     * connected.
+     */
+    fun attach(host: Host, composeView: ComposeView) {
+        this.host = host
+        this.composeView = composeView
+        composeView.setContent {
+            val state by uiState.collectAsState()
+            AudioBar(state = state, onCommand = ::onCommand, modifier = Modifier)
+        }
+    }
+
+    /**
+     * Tell `IsiActivity` to refresh whatever it derives from `isAvailable` —
+     * specifically, the toolbar menu visibility. Called by the activity when
+     * the active version changes. Cheap; just nudges the view-state flow so
+     * recomposition picks up new chapter labels too.
+     */
+    fun onActiveVersionChanged() {
+        host?.let { recomputeChapterLabels(it) }
+    }
+
+    /**
+     * Toggles the bar. If hidden: bind the service (if not already bound),
+     * issue a [BibleAudioService.loadChapter] for the current book/chapter,
+     * and slide the bar in. If visible: stop audio and slide out.
+     */
+    fun toggle() {
+        if (requestedVisible) {
+            hide()
+        } else {
+            show()
+        }
+    }
+
+    fun show() {
+        val host = this.host ?: return
+        requestedVisible = true
+        ensureBound()
+        // Service may not be connected yet; in that case the loadChapter call
+        // below is queued via service.let, and we'll fire it when the binder
+        // arrives. Either way, mark the UI visible immediately.
+        _uiState.update { it.copy(visible = true, preparing = service == null) }
+        host.audioPreparingChanged(true)
+        service?.let { svc -> svc.loadChapter(buildRequest(host)) }
+            ?: run {
+                pendingLoad = host
+            }
+    }
+
+    fun hide() {
+        requestedVisible = false
+        service?.stop()
+        _uiState.update { AudioBarUiState.HIDDEN }
+        host?.audioPreparingChanged(false)
+        // We deliberately keep the binding alive until detach(); rebinding is
+        // cheap, but avoiding bind/unbind churn each time the user reopens the
+        // bar matches what Spotify-style audio UIs do.
+    }
+
+    /**
+     * Releases activity references. Called from `IsiActivity.onDestroy`.
+     * Does NOT call `service.stop()` — the service is independently owned and
+     * may continue playing when the activity is recreated (M4 lock-screen).
+     */
+    fun detach() {
+        if (bound) {
+            try {
+                context.unbindService(serviceConnection)
+            } catch (e: IllegalArgumentException) {
+                AppLog.w(TAG, "unbindService raced with onDestroy: ${e.message}")
+            }
+            bound = false
+        }
+        service = null
+        collectJob?.cancel()
+        collectJob = null
+        scope.cancel()
+        host = null
+        composeView = null
+    }
+
+    // -- internals --------------------------------------------------------------
+
+    private var pendingLoad: Host? = null
+
+    private fun ensureBound() {
+        if (bound) return
+        val intent = Intent(context, BibleAudioService::class.java)
+            .setAction(BibleAudioService.ACTION_LOCAL_BIND)
+        try {
+            context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+        } catch (e: SecurityException) {
+            // Should never happen — we own the service. Logged for paranoia.
+            AppLog.e(TAG, "bindService denied: ${e.message}")
+        }
+    }
+
+    private fun buildRequest(host: Host): BibleAudioService.AudioRequest {
+        val book = host.audioCurrentBook()
+        val chapter1 = host.audioCurrentChapter1()
+        val versionShort = host.audioCurrentVersionShortName()
+        return BibleAudioService.AudioRequest(
+            versionId = host.audioCurrentVersionId(),
+            bookId = book.bookId,
+            chapter_1 = chapter1,
+            displayTitle = "${book.shortName} $chapter1",
+            displaySubtitle = versionShort,
+        )
+    }
+
+    private fun onCommand(cmd: AudioBarCommand) {
+        val svc = service
+        val host = this.host ?: return
+        when (cmd) {
+            AudioBarCommand.PlayPause -> {
+                if (svc == null) return
+                if (_uiState.value.isPlaying) svc.pause() else svc.play()
+            }
+            AudioBarCommand.PrevVerse -> {
+                // M3: not yet implemented — needs timing data + verse-start
+                // lookup. M5 will wire this through the service's timing
+                // cache. For now the buttons are disabled when timing is
+                // unavailable (`timingAvailable = false`); when timing IS
+                // available we still no-op so the user can at least see the
+                // visual feedback without the service crashing.
+                AppLog.d(TAG, "PrevVerse — not implemented in M3")
+            }
+            AudioBarCommand.NextVerse -> {
+                AppLog.d(TAG, "NextVerse — not implemented in M3")
+            }
+            AudioBarCommand.PrevChapter -> navigateChapter(host, direction = -1)
+            AudioBarCommand.NextChapter -> navigateChapter(host, direction = 1)
+            AudioBarCommand.Close -> hide()
+            AudioBarCommand.Speed -> {
+                // M5: opens the speed bottom sheet. M3 surfaces the chip but
+                // ignores the tap.
+            }
+            is AudioBarCommand.SeekDrag -> {
+                // No service call yet — we update the UI thumb optimistically
+                // via the slider's local drag state in AudioBar.
+            }
+            is AudioBarCommand.SeekCommit -> svc?.seekTo(cmd.positionMs)
+        }
+    }
+
+    private fun navigateChapter(host: Host, direction: Int) {
+        val target = host.audioNeighborChapter(direction) ?: return
+        val (book, chapter1) = target
+        host.audioDisplayChapter(book, chapter1)
+        // After navigation the activity fields are updated; rebuild the audio
+        // request from the new context.
+        recomputeChapterLabels(host)
+        service?.loadChapter(buildRequest(host))
+        _uiState.update { it.copy(preparing = true) }
+        host.audioPreparingChanged(true)
+    }
+
+    private fun projectToUi(state: PlaybackState) {
+        val host = this.host
+        val prevPreparing = _uiState.value.preparing
+        // Drain pendingLoad once the service is connected.
+        pendingLoad?.let { ph ->
+            service?.loadChapter(buildRequest(ph))
+            pendingLoad = null
+        }
+
+        val prevLabel = host?.audioNeighborChapter(-1)?.let { (b, c) -> "${b.shortName} $c" }
+        val nextLabel = host?.audioNeighborChapter(+1)?.let { (b, c) -> "${b.shortName} $c" }
+
+        _uiState.update { current ->
+            current.copy(
+                visible = requestedVisible,
+                isPlaying = state.isPlaying,
+                preparing = state.preparing,
+                positionMs = state.positionMs,
+                durationMs = state.durationMs,
+                verse_1 = state.verse_1,
+                speed = state.speed,
+                prevChapterLabel = prevLabel,
+                nextChapterLabel = nextLabel,
+                error = state.error,
+                // M3 has no first-class signal for this; infer from "we got
+                // a non-zero verse hit" once the service has had a chance to
+                // process timing. Until then the prev/next-verse buttons stay
+                // disabled, which is the spec.
+                timingAvailable = state.verse_1 > 0 || current.timingAvailable,
+            )
+        }
+
+        if (prevPreparing != state.preparing) {
+            host?.audioPreparingChanged(state.preparing)
+        }
+    }
+
+    private fun recomputeChapterLabels(host: Host) {
+        val prev = host.audioNeighborChapter(-1)?.let { (b, c) -> "${b.shortName} $c" }
+        val next = host.audioNeighborChapter(+1)?.let { (b, c) -> "${b.shortName} $c" }
+        _uiState.update { it.copy(prevChapterLabel = prev, nextChapterLabel = next) }
+    }
+
+    companion object {
+        private const val TAG = "AudioBarController"
+    }
+}

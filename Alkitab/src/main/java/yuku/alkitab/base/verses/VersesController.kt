@@ -103,4 +103,19 @@ interface VersesController {
     fun callAttentionForVerse(verse_1: Int)
 
     fun setEmptyMessage(message: CharSequence?, textColor: Int)
+
+    /**
+     * Sets the audio-highlight overlay on the verse with the given 1-based
+     * number, clearing any previous highlight. Pass `0` to clear all
+     * highlights without setting a new one.
+     *
+     * The [color] argb is the pre-resolved overlay color (typically computed
+     * by `AudioHighlightColor.pickHighlightColor`) — it's the controller's
+     * job to recompute when the reading theme changes.
+     *
+     * Implementations also smooth-scroll the highlighted verse into the upper
+     * third of the viewport so the row remains visible during long passages
+     * without snapping the page each time the verse changes.
+     */
+    fun setAudioHighlight(verse_1: Int, color: Int)
 }

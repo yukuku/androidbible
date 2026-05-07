@@ -25,8 +25,10 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.compose.ui.platform.ComposeView
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
@@ -81,6 +83,9 @@ import yuku.alkitab.base.util.BackForwardListController
 import yuku.alkitab.base.util.CurrentReading
 import yuku.alkitab.base.util.History
 import yuku.alkitab.base.util.InstallationUtil
+import yuku.alkitab.base.audio.AudioBarController
+import yuku.alkitab.base.audio.AudioCatalogRepository
+import yuku.alkitab.base.audio.ui.AudioHighlightColor
 import yuku.alkitab.base.util.Jumper
 import yuku.alkitab.base.util.LidToAri
 import yuku.alkitab.base.util.OtherAppIntegration
@@ -131,6 +136,16 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     var needsRestart = false // whether this activity needs to be restarted
 
     private val actionModeController by lazy { VerseActionModeController(this, this) }
+
+    // -- Audio bar (M3) -- thin glue from the activity to the Compose audio bar.
+    // The controller binds to BibleAudioService, projects PlaybackState into a
+    // UI-shaped flow, and renders the bar inside `R.id.audio_bar`. The host
+    // implementation below feeds it the chapter context it needs to label
+    // prev/next-chapter buttons and to navigate when the user taps them.
+    private val audioBinder: AudioBarController by lazy { AudioBarController(applicationContext) }
+    private var audioToolbarSpinner: ProgressBar? = null
+    /** Cached overlay color, recomputed when the reading theme changes. */
+    private var audioHighlightColorCached: Int = 0
 
     // --- VerseActionModeHost overrides ---
     // Thin read-only accessors so the controller can reach the Activity's state
@@ -830,7 +845,91 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
         lifecycleScope.launch { AppEvents.attributeMapChanged.collect { reloadBothAttributeMaps() } }
         lifecycleScope.launch { AppEvents.needsRestart.collect { needsRestart = true } }
+
+        // Audio bar (M3): attach the Compose host and wire up the menu refresh.
+        // The catalog load is async, so we have to trigger a menu rebuild once
+        // it lands — otherwise the toolbar icon shows up only on the second
+        // resume of the activity.
+        audioToolbarSpinner = findViewById(R.id.progress_circular)
+        lifecycleScope.launch {
+            AudioCatalogRepository.loadCatalog()
+            invalidateOptionsMenu()
+        }
+        audioBinder.attach(audioBarHost, findViewById<ComposeView>(R.id.audio_bar))
+        lifecycleScope.launch {
+            audioBinder.uiState.collect { state ->
+                applyAudioHighlightTo(lsSplit0, state.verse_1)
+                invalidateOptionsMenu()
+            }
+        }
+        lifecycleScope.launch {
+            AppEvents.activeVersionChanged.collect {
+                audioBinder.onActiveVersionChanged()
+                invalidateOptionsMenu()
+            }
+        }
+
         AppLog.d(TAG, "@@onCreate end")
+    }
+
+    private fun applyAudioHighlightTo(controller: VersesController, verse_1: Int) {
+        if (verse_1 == 0) {
+            controller.setAudioHighlight(0, 0)
+            return
+        }
+        if (audioHighlightColorCached == 0) {
+            audioHighlightColorCached = AudioHighlightColor.pickHighlightColor(
+                readingBackground = S.applied().backgroundColor,
+                verseTextColor = S.applied().fontColor,
+            )
+        }
+        controller.setAudioHighlight(verse_1, audioHighlightColorCached)
+    }
+
+    /**
+     * The audio bar's view of `IsiActivity`. Reads the activity's current
+     * book/chapter/version and translates chapter-nav taps back into the
+     * existing `display(...)` flow.
+     */
+    private val audioBarHost = object : AudioBarController.Host {
+        override fun audioCurrentBook(): Book = activeSplit0.book
+        override fun audioCurrentChapter1(): Int = chapter_1
+        override fun audioCurrentVersionId(): String = activeSplit0.versionId
+        override fun audioCurrentVersionShortName(): String = activeSplit0.version.shortName
+        override fun audioVisibleVersionIds(): List<String> = listOfNotNull(
+            activeSplit0.versionId,
+            activeSplit1?.versionId,
+        )
+
+        override fun audioNeighborChapter(direction: Int): Pair<Book, Int>? {
+            val book = activeSplit0.book
+            val target = chapter_1 + direction
+            // Within current book: easy.
+            if (target in 1..book.chapter_count) return book to target
+            // Cross-book: walk the version's consecutive book list.
+            val books = activeSplit0.version.consecutiveBooks
+            val idx = books.indexOf(book)
+            if (idx == -1) return null
+            return when {
+                direction > 0 && idx < books.size - 1 -> books[idx + 1].let { it to 1 }
+                direction < 0 && idx > 0 -> books[idx - 1].let { it to it.chapter_count }
+                else -> null
+            }
+        }
+
+        override fun audioDisplayChapter(book: Book, chapter_1: Int) {
+            // Switch book if needed - display() only retargets chapter
+            // within the current book, so update activeSplit0 first. display()
+            // refreshes the goto-button text itself.
+            if (book.bookId != activeSplit0.book.bookId) {
+                activeSplit0 = activeSplit0.copy(book = book)
+            }
+            display(chapter_1, 1, true)
+        }
+
+        override fun audioPreparingChanged(preparing: Boolean) {
+            invalidateOptionsMenu()
+        }
     }
 
     private fun callAttentionForVerseToBothSplits(verse_1: Int) {
@@ -1208,6 +1307,16 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             needsRestart = false
             recreate()
         }
+        // Re-resolve the audio overlay color in case the user changed the
+        // reading theme via the textAppearancePanel while we were stopped.
+        audioHighlightColorCached = 0
+    }
+
+    override fun onDestroy() {
+        // Release the activity-side bindings; the service itself stays alive
+        // if audio is playing (M4 lock-screen behavior).
+        audioBinder.detach()
+        super.onDestroy()
     }
 
     override fun onBackPressed() {
@@ -1345,6 +1454,18 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     private fun buildMenu(menu: Menu) {
         menu.clear()
         menuInflater.inflate(R.menu.activity_isi, menu)
+
+        // Audio bar (M3): hide the icon when none of the visible versions
+        // have audio, and clone the Kidung pattern of swapping the icon for
+        // an indeterminate spinner while the service is preparing a chapter.
+        val menuAudio = menu.findItem(R.id.menuAudio)
+        if (menuAudio != null) {
+            val available = audioBinder.isAvailable
+            val preparing = audioBinder.isPreparing
+            menuAudio.isVisible = available && !preparing
+            audioToolbarSpinner?.visibility =
+                if (available && preparing) View.VISIBLE else View.GONE
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -1369,6 +1490,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
             R.id.menuSearch -> {
                 menuSearch_click()
+                return true
+            }
+
+            R.id.menuAudio -> {
+                audioBinder.toggle()
                 return true
             }
         }

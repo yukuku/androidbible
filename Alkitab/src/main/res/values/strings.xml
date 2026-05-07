@@ -572,4 +572,19 @@
 	<string name="notification_channel_devotion_downloader_name">Devotion downloads</string>
 	<string name="audio_bible_notification_channel_name">Bible audio</string>
 
+	<!-- Audio bar (M3) -->
+	<string name="menu_audio">Audio</string>
+	<string name="audio_bar_play">Play</string>
+	<string name="audio_bar_pause">Pause</string>
+	<string name="audio_bar_close">Close audio bar</string>
+	<string name="audio_bar_prev_chapter">Previous chapter</string>
+	<string name="audio_bar_next_chapter">Next chapter</string>
+	<string name="audio_bar_prev_verse">Previous verse</string>
+	<string name="audio_bar_next_verse">Next verse</string>
+	<string name="audio_bar_speed">Playback speed</string>
+	<string name="audio_bar_speed_format">%1$.2g×</string>
+	<string name="audio_bar_position_with_verse">%1$s · v.%2$d</string>
+	<string name="audio_bar_position_no_verse">%1$s</string>
+	<string name="audio_bar_error_no_audio">No audio for this version.</string>
+
 </resources>

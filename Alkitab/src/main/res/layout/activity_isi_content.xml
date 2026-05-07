@@ -20,6 +20,15 @@
 			android:outlineProvider="bounds"
 			android:background="?attr/colorPrimary">
 
+			<ProgressBar
+				android:id="@+id/progress_circular"
+				style="?android:attr/progressBarStyleSmallTitle"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical|end"
+				android:layout_marginEnd="76dp"
+				android:visibility="gone" />
+
 			<TextView
 				android:id="@+id/bVersion"
 				style="@style/FakeSpinner"
@@ -165,5 +174,11 @@
 		android:layout_height="match_parent"
 		android:padding="8dp"
 		android:visibility="gone" />
+
+	<androidx.compose.ui.platform.ComposeView
+		android:id="@+id/audio_bar"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="bottom" />
 
 </FrameLayout>
