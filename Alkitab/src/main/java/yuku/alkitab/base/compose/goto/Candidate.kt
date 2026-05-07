@@ -8,6 +8,7 @@ data class Candidate(
     val title: String,
     val score: Int,
     val bookOnly: Boolean,
+    val hasVerse: Boolean,
 )
 
 fun computeCandidates(query: String, books: Array<Book>): List<Candidate> {
@@ -60,16 +61,20 @@ private fun addCandidate(
 ): Candidate? {
     var title = titleIn
     var bookOnly = true
+    var hasVerse = false
     val chapter_1 = jumper.chapter
     if (chapter_1 != 0) {
         bookOnly = false
         title += " $chapter_1"
         val verse_1 = jumper.verse
-        if (verse_1 != 0) title += ":$verse_1"
+        if (verse_1 != 0) {
+            title += ":$verse_1"
+            hasVerse = true
+        }
         if (chapter_1 < 1 || chapter_1 > book.chapter_count) return null
         if (verse_1 != 0 && (verse_1 < 1 || verse_1 > book.verse_counts[chapter_1 - 1])) return null
     }
-    val c = Candidate(title = title, score = score, bookOnly = bookOnly)
+    val c = Candidate(title = title, score = score, bookOnly = bookOnly, hasVerse = hasVerse)
     sink.add(c)
     return c
 }

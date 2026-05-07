@@ -1,5 +1,6 @@
 package yuku.alkitab.base.ac
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -9,8 +10,13 @@ import yuku.afw.storage.Preferences
 import yuku.alkitab.base.compose.BibleAppTheme
 import yuku.alkitab.base.compose.goto.GotoScreen
 import yuku.alkitab.base.storage.Prefkey
+import yuku.alkitab.base.widget.ConfigurationWrapper
 
 class GotoActivity : ComponentActivity() {
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(ConfigurationWrapper.wrap(newBase))
+    }
 
     class Result {
         @JvmField var bookId: Int = -1
