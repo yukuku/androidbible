@@ -855,7 +855,18 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             AudioCatalogRepository.loadCatalog()
             invalidateOptionsMenu()
         }
-        audioBinder.attach(audioBarHost, findViewById<ComposeView>(R.id.audio_bar))
+        val audioBarView: ComposeView = findViewById(R.id.audio_bar)
+        audioBinder.attach(audioBarHost, audioBarView)
+        // Push the verse list up by the bar's height so the last verses are
+        // reachable instead of being hidden behind the bar. lsSplit0 / lsSplit1
+        // already set `clipToPadding="false"` so the verses still scroll
+        // through the padding region under the bar (matches the
+        // YouTube-Music-style "content fades out behind the player" feel).
+        audioBarView.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
+            if (bottom - top != oldBottom - oldTop) {
+                applyAudioBarBottomInset(bottom - top)
+            }
+        }
         lifecycleScope.launch {
             // Keep this loop tight: the controller emits at the service's poll
             // rate (every 100 ms during playback). Menu refresh is driven by
@@ -888,6 +899,18 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             )
         }
         controller.setAudioHighlight(verse_1, audioHighlightColorCached)
+    }
+
+    /**
+     * Reserve [pxBottom] pixels at the bottom of each verse RecyclerView so the
+     * last verses aren't hidden behind the audio bar. Called whenever the bar's
+     * Compose host re-lays-out (slide-in, slide-out, height change). Both
+     * splits get the inset uniformly so the secondary list is also scrollable
+     * to its last verse.
+     */
+    private fun applyAudioBarBottomInset(pxBottom: Int) {
+        lsSplit0.setAudioBarBottomInset(pxBottom)
+        lsSplit1.setAudioBarBottomInset(pxBottom)
     }
 
     /**

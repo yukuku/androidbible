@@ -53,6 +53,14 @@ import yuku.alkitab.base.connection.Connections
 class BibleAudioPlayer(appContext: Context) {
 
     interface Listener {
+        /**
+         * Player is loading data — either initial buffering after [prepare], or
+         * re-buffering after a [seekTo] target that wasn't already cached. The
+         * service uses this to flip the bar's `preparing` flag back to true so
+         * the spinner returns when the user seeks ahead and presses play.
+         */
+        fun onBuffering()
+
         /** Player has buffered enough to start playback. */
         fun onReady()
 
@@ -68,6 +76,7 @@ class BibleAudioPlayer(appContext: Context) {
     private val playerListener = object : Player.Listener {
         override fun onPlaybackStateChanged(playbackState: Int) {
             when (playbackState) {
+                Player.STATE_BUFFERING -> listener?.onBuffering()
                 Player.STATE_READY -> listener?.onReady()
                 Player.STATE_ENDED -> listener?.onEnded()
                 else -> Unit
@@ -133,8 +142,17 @@ class BibleAudioPlayer(appContext: Context) {
         exoPlayer.prepare()
     }
 
+    /**
+     * Starts (or resumes) playback. If the player has already finished the
+     * current chapter ([Player.STATE_ENDED]), this seeks back to the start
+     * so tapping play again replays the chapter from the beginning, matching
+     * how native media apps treat the play button at end-of-stream.
+     */
     @MainThread
     fun play() {
+        if (exoPlayer.playbackState == Player.STATE_ENDED) {
+            exoPlayer.seekTo(0L)
+        }
         exoPlayer.playWhenReady = true
     }
 

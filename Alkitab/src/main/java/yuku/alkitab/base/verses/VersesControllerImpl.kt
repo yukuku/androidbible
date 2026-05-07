@@ -488,6 +488,11 @@ class VersesControllerImpl(
         rv.emptyMessagePaint.color = textColor
     }
 
+    override fun setAudioBarBottomInset(pxBottom: Int) {
+        if (rv.paddingBottom == pxBottom) return
+        rv.setPadding(rv.paddingLeft, rv.paddingTop, rv.paddingRight, pxBottom)
+    }
+
     fun render() {
         adapter.data = versesDataModel
         adapter.ui = versesUiModel

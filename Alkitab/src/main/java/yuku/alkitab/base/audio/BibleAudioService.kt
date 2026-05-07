@@ -98,6 +98,16 @@ class BibleAudioService : MediaSessionService() {
     val playbackState: StateFlow<PlaybackState> = _playbackState.asStateFlow()
 
     private val playerListener = object : BibleAudioPlayer.Listener {
+        override fun onBuffering() {
+            // Re-buffering after a seek (or initial buffer) — re-arm the
+            // preparing flag so the bar's progress ring + the toolbar spinner
+            // come back. We deliberately reuse `preparing` rather than adding
+            // a separate `buffering` field: from the user's POV, both states
+            // are "we asked to play but no audio is coming out yet", which is
+            // what the spinner communicates.
+            _playbackState.update { it.copy(preparing = true) }
+        }
+
         override fun onReady() {
             startPositionPolling()
             _playbackState.update {
