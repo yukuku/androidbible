@@ -126,15 +126,19 @@ class BibleAudioPlayer(appContext: Context) {
         // Numbers below are picked for a "play-and-scrub-around" workflow:
         //  - back buffer ~30 min covers Psalms 119 (the longest chapter) and
         //    keeps every previously-played verse instantly seekable.
-        //  - forward min/max bumped to 5 min / 30 min so a fresh load fetches
-        //    enough up-front that next-verse taps land in already-buffered
-        //    samples.
+        //  - maxBufferMs = 30 min lets the player keep loading well past the
+        //    "comfort" zone so next-verse taps land in already-buffered
+        //    samples even if the user races ahead of the playhead.
+        //  - minBufferMs left at default (50 s) — eager-loading comfort
+        //    threshold, no need to be aggressive about cellular bandwidth.
+        //    Note that minBufferMs does NOT gate playback start; that's
+        //    bufferForPlaybackMs (2.5 s default), which we also leave alone.
         //  - retainBackBufferFromKeyframe = true: MP3 has a keyframe per
         //    frame, so this is essentially "keep all PCM samples until the
         //    back buffer wraps".
         val loadControl = DefaultLoadControl.Builder()
             .setBufferDurationsMs(
-                /* minBufferMs = */ 5 * 60_000,
+                /* minBufferMs = */ DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
                 /* maxBufferMs = */ 30 * 60_000,
                 /* bufferForPlaybackMs = */ DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
                 /* bufferForPlaybackAfterRebufferMs = */ DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS,
