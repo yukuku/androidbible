@@ -181,15 +181,20 @@ private fun AudioBarTopRow(
     state: AudioBarUiState,
     onCommand: (AudioBarCommand) -> Unit,
 ) {
+    // Icon-only top row — earlier iterations included chapter-name text
+    // labels next to the skip-prev/next buttons ("Yesaya 10", "Yesaya 12"),
+    // but on a phone screen they crowded out the speed indicator and forced
+    // the close button to wrap. The chapter label is also redundant: the
+    // toolbar already shows the user's current chapter, and skipping
+    // prev/next is a universally-understood control.
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ChapterNavButton(
-            label = state.prevChapterLabel,
+            available = state.prevChapterLabel != null,
             descriptionRes = R.string.audio_bar_prev_chapter,
             iconRes = R.drawable.ic_audio_skip_previous,
-            iconLeft = true,
             onClick = { onCommand(AudioBarCommand.PrevChapter) },
         )
 
@@ -218,10 +223,9 @@ private fun AudioBarTopRow(
         }
 
         ChapterNavButton(
-            label = state.nextChapterLabel,
+            available = state.nextChapterLabel != null,
             descriptionRes = R.string.audio_bar_next_chapter,
             iconRes = R.drawable.ic_audio_skip_next,
-            iconLeft = false,
             onClick = { onCommand(AudioBarCommand.NextChapter) },
         )
 
@@ -229,10 +233,14 @@ private fun AudioBarTopRow(
 
         // Speed chip — wired but inert in M3 (single 1.0× look). M5 swaps in
         // the speed bottom sheet on tap; for now the click forwards to the
-        // controller, which is a no-op.
+        // controller, which is a no-op. `softWrap = false` keeps locales that
+        // render the speed with a comma decimal (e.g. "1,0×" in Indonesian)
+        // from wrapping into a stacked "1," / "0×" when the row is tight.
         Text(
             text = stringResource(R.string.audio_bar_speed_format, state.speed),
             style = MaterialTheme.typography.labelLarge,
+            maxLines = 1,
+            softWrap = false,
             modifier = Modifier
                 .alpha(0.6f)
                 .padding(horizontal = 8.dp),
@@ -249,38 +257,22 @@ private fun AudioBarTopRow(
 
 @Composable
 private fun ChapterNavButton(
-    label: String?,
+    available: Boolean,
     descriptionRes: Int,
     iconRes: Int,
-    iconLeft: Boolean,
     onClick: () -> Unit,
 ) {
     // `alpha 0` (not GONE / not removed) so the layout doesn't reflow at
     // Bible boundaries when prev/next is unavailable.
-    val available = label != null
-    val labelText = label ?: ""
-
-    Row(
+    IconButton(
+        onClick = onClick,
+        enabled = available,
         modifier = Modifier.alpha(if (available) 1f else 0f),
-        verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (iconLeft) {
-            IconButton(onClick = onClick, enabled = available) {
-                Icon(
-                    painter = painterResource(iconRes),
-                    contentDescription = stringResource(descriptionRes),
-                )
-            }
-            Text(labelText, style = MaterialTheme.typography.labelMedium)
-        } else {
-            Text(labelText, style = MaterialTheme.typography.labelMedium)
-            IconButton(onClick = onClick, enabled = available) {
-                Icon(
-                    painter = painterResource(iconRes),
-                    contentDescription = stringResource(descriptionRes),
-                )
-            }
-        }
+        Icon(
+            painter = painterResource(iconRes),
+            contentDescription = stringResource(descriptionRes),
+        )
     }
 }
 
@@ -338,10 +330,6 @@ private fun AudioBarSliderRow(
     var dragValue by remember { mutableStateOf<Float?>(null) }
 
     val effectivePosition = dragValue?.roundToLong() ?: state.positionMs
-    // While dragging we don't yet know the snapped verse — show the live
-    // service-reported verse, which lags slightly behind the thumb but is
-    // still better than blanking out. This matches the PRD §4.2 description.
-    val effectiveVerse = state.verse_1
 
     Row(
         modifier = Modifier
@@ -379,15 +367,10 @@ private fun AudioBarSliderRow(
                 .padding(start = 8.dp)
                 .width(40.dp),
         )
-
-        if (state.timingAvailable && effectiveVerse > 0) {
-            Spacer(Modifier.width(8.dp))
-            Text(
-                text = "v.${effectiveVerse}",
-                style = MaterialTheme.typography.labelSmall.copy(fontSize = 12.sp),
-                color = MaterialTheme.colorScheme.primary,
-            )
-        }
+        // We used to render a "v.N" indicator after the duration label, but
+        // it was redundant with the verse highlight in the reader and just
+        // looked like a stray code to users. The highlight in the verse list
+        // is the authoritative current-verse cue.
     }
 }
 

@@ -106,6 +106,14 @@ class AudioBarController(
     private var bound = false
     /** Tracks whether the user has *requested* the bar visible (via [toggle]). */
     private var requestedVisible = false
+    /**
+     * Set while the user has the slider thumb under their finger. Drives a
+     * special-case in [projectToUi]: live playback continues to push a
+     * `verse_1` derived from the player's current position every 100 ms, but
+     * we don't want that to clobber the drag-preview verse_1 we just wrote
+     * from [AudioBarCommand.SeekDrag]. Cleared on [AudioBarCommand.SeekCommit].
+     */
+    private var dragging = false
 
     private val _uiState = MutableStateFlow(AudioBarUiState.HIDDEN)
     val uiState: StateFlow<AudioBarUiState> = _uiState.asStateFlow()
@@ -207,6 +215,7 @@ class AudioBarController(
 
     fun hide() {
         requestedVisible = false
+        dragging = false
         service?.stop()
         _uiState.update { AudioBarUiState.HIDDEN }
         host?.audioPreparingChanged(false)
@@ -285,18 +294,8 @@ class AudioBarController(
                 if (svc == null) return
                 if (_uiState.value.isPlaying) svc.pause() else svc.play()
             }
-            AudioBarCommand.PrevVerse -> {
-                // M3: not yet implemented — needs timing data + verse-start
-                // lookup. M5 will wire this through the service's timing
-                // cache. For now the buttons are disabled when timing is
-                // unavailable (`timingAvailable = false`); when timing IS
-                // available we still no-op so the user can at least see the
-                // visual feedback without the service crashing.
-                AppLog.d(TAG, "PrevVerse — not implemented in M3")
-            }
-            AudioBarCommand.NextVerse -> {
-                AppLog.d(TAG, "NextVerse — not implemented in M3")
-            }
+            AudioBarCommand.PrevVerse -> svc?.seekToPrevVerse()
+            AudioBarCommand.NextVerse -> svc?.seekToNextVerse()
             AudioBarCommand.PrevChapter -> navigateChapter(host, direction = -1)
             AudioBarCommand.NextChapter -> navigateChapter(host, direction = 1)
             AudioBarCommand.Close -> hide()
@@ -305,10 +304,22 @@ class AudioBarController(
                 // ignores the tap.
             }
             is AudioBarCommand.SeekDrag -> {
-                // No service call yet — we update the UI thumb optimistically
-                // via the slider's local drag state in AudioBar.
+                // The slider thumb's mm:ss is owned by AudioBar's local drag
+                // state, but we DO push a freshly-resolved verse_1 into the
+                // shared UI state so the verse highlight + smooth-scroll
+                // follow the dragging finger live. peekVerseAt is a pure read
+                // — no playback side effects. The `dragging` flag tells
+                // projectToUi to leave verse_1 alone while the finger is down,
+                // otherwise the 100 ms playback poll would overwrite our
+                // drag-preview verse twice a second.
+                dragging = true
+                val previewVerse = svc?.peekVerseAt(cmd.positionMs) ?: return
+                _uiState.update { it.copy(verse_1 = previewVerse) }
             }
-            is AudioBarCommand.SeekCommit -> svc?.seekTo(cmd.positionMs)
+            is AudioBarCommand.SeekCommit -> {
+                dragging = false
+                svc?.seekTo(cmd.positionMs)
+            }
         }
     }
 
@@ -349,7 +360,9 @@ class AudioBarController(
                 preparing = effectivePreparing,
                 positionMs = state.positionMs,
                 durationMs = state.durationMs,
-                verse_1 = state.verse_1,
+                // Keep our drag-preview verse_1 while the user is dragging;
+                // otherwise let the live playback verse drive the highlight.
+                verse_1 = if (dragging) current.verse_1 else state.verse_1,
                 speed = state.speed,
                 prevChapterLabel = prevLabel,
                 nextChapterLabel = nextLabel,

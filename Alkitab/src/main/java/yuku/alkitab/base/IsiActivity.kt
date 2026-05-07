@@ -25,7 +25,6 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.compose.ui.platform.ComposeView
@@ -143,7 +142,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     // implementation below feeds it the chapter context it needs to label
     // prev/next-chapter buttons and to navigate when the user taps them.
     private val audioBinder: AudioBarController by lazy { AudioBarController(applicationContext) }
-    private var audioToolbarSpinner: ProgressBar? = null
     /** Cached overlay color, recomputed when the reading theme changes. */
     private var audioHighlightColorCached: Int = 0
 
@@ -850,7 +848,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // The catalog load is async, so we have to trigger a menu rebuild once
         // it lands — otherwise the toolbar icon shows up only on the second
         // resume of the activity.
-        audioToolbarSpinner = findViewById(R.id.progress_circular)
         lifecycleScope.launch {
             AudioCatalogRepository.loadCatalog()
             invalidateOptionsMenu()
@@ -1483,15 +1480,19 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         menuInflater.inflate(R.menu.activity_isi, menu)
 
         // Audio bar (M3): hide the icon when none of the visible versions
-        // have audio, and clone the Kidung pattern of swapping the icon for
-        // an indeterminate spinner while the service is preparing a chapter.
+        // have audio, and swap in a spinner action view while the service is
+        // preparing a chapter so the indicator occupies the same toolbar slot
+        // as the icon (no reflow, no fixed-margin gap).
         val menuAudio = menu.findItem(R.id.menuAudio)
         if (menuAudio != null) {
             val available = audioBinder.isAvailable
             val preparing = audioBinder.isPreparing
-            menuAudio.isVisible = available && !preparing
-            audioToolbarSpinner?.visibility =
-                if (available && preparing) View.VISIBLE else View.GONE
+            menuAudio.isVisible = available
+            menuAudio.actionView = if (available && preparing) {
+                layoutInflater.inflate(R.layout.menu_progress_circular, null)
+            } else {
+                null
+            }
         }
     }
 

@@ -20,15 +20,6 @@
 			android:outlineProvider="bounds"
 			android:background="?attr/colorPrimary">
 
-			<ProgressBar
-				android:id="@+id/progress_circular"
-				style="?android:attr/progressBarStyleSmallTitle"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center_vertical|end"
-				android:layout_marginEnd="76dp"
-				android:visibility="gone" />
-
 			<TextView
 				android:id="@+id/bVersion"
 				style="@style/FakeSpinner"
