@@ -8,7 +8,9 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import yuku.alkitab.base.util.BookColorUtil
 
 @Composable
 fun BibleAppTheme(content: @Composable () -> Unit) {
@@ -20,4 +22,13 @@ fun BibleAppTheme(content: @Composable () -> Unit) {
         if (dark) darkColorScheme() else lightColorScheme()
     }
     MaterialTheme(colorScheme = colors, content = content)
+}
+
+/** Theme-aware book name color. Picks [BookColorUtil.getForegroundOnDark] or
+ *  [BookColorUtil.getForegroundOnLight] based on the current Compose theme. */
+@Composable
+fun bookForegroundColor(bookId: Int): Color = if (isSystemInDarkTheme()) {
+    Color(BookColorUtil.getForegroundOnDark(bookId))
+} else {
+    Color(BookColorUtil.getForegroundOnLight(bookId))
 }

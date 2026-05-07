@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,6 +24,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -46,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.S
-import yuku.alkitab.base.util.BookColorUtil
+import yuku.alkitab.base.compose.bookForegroundColor
 import yuku.alkitab.base.util.BookNameSorter
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Book
@@ -136,7 +138,7 @@ fun DialerTab(
             ) {
                 books.forEachIndexed { idx, book ->
                     DropdownMenuItem(
-                        text = { Text(book.shortName, color = Color(BookColorUtil.getForegroundOnDark(book.bookId))) },
+                        text = { Text(book.shortName, color = bookForegroundColor(book.bookId)) },
                         onClick = {
                             bookIndex = idx
                             bookMenuOpen = false
@@ -173,6 +175,10 @@ fun DialerTab(
                 )
             }
         }
+
+        Spacer(Modifier.size(16.dp))
+
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 32.dp))
 
         Spacer(Modifier.size(16.dp))
 
@@ -227,8 +233,8 @@ private fun DialerField(text: String, isActive: Boolean, onClick: () -> Unit) {
 @Composable
 private fun KeypadDigit(d: String, onDigit: (String) -> Unit) {
     Box(modifier = Modifier.fillMaxWidth().aspectRatio(1.6f).padding(2.dp), contentAlignment = Alignment.Center) {
-        TextButton(onClick = { onDigit(d) }, modifier = Modifier.fillMaxWidth()) {
-            Text(d, fontSize = 20.sp)
+        TextButton(onClick = { onDigit(d) }, modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
+            Text(d, fontSize = 28.sp, fontWeight = FontWeight.Normal)
         }
     }
 }

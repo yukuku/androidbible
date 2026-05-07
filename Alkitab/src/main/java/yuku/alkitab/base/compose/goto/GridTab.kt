@@ -35,7 +35,7 @@ import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.unit.dp
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.S
-import yuku.alkitab.base.util.BookColorUtil
+import yuku.alkitab.base.compose.bookForegroundColor
 import yuku.alkitab.base.util.BookNameSorter
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Book
@@ -70,7 +70,7 @@ fun GridTab(
                     AssistChip(
                         onClick = { viewModel.gridStage = GridStage.Books },
                         label = {
-                            Text(it.shortName, color = Color(BookColorUtil.getForegroundOnDark(it.bookId)))
+                            Text(it.shortName, color = bookForegroundColor(it.bookId))
                         },
                         trailingIcon = {
                             Icon(Icons.Default.Close, contentDescription = null, modifier = Modifier.size(AssistChipDefaults.IconSize))
@@ -137,7 +137,7 @@ private fun BooksGrid(books: Array<Book>, onBookClick: (Book) -> Unit) {
             val book = books[idx]
             GridCell(
                 text = BookNameSorter.getBookAbbr(book).toString(),
-                color = Color(BookColorUtil.getForegroundOnDark(book.bookId)),
+                color = bookForegroundColor(book.bookId),
                 onClick = { onBookClick(book) },
             )
         }

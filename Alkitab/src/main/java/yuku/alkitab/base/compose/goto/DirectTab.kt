@@ -60,7 +60,7 @@ fun DirectTab(
     initialBookId: Int,
     initialChapter_1: Int,
     initialVerse_1: Int,
-    autoFocus: Boolean,
+    isActive: Boolean,
     onGotoFinished: OnGotoFinished,
 ) {
     val context = LocalContext.current
@@ -75,8 +75,8 @@ fun DirectTab(
     val focusRequester = remember { FocusRequester() }
     val kbd = LocalSoftwareKeyboardController.current
 
-    LaunchedEffect(Unit) {
-        if (autoFocus) {
+    LaunchedEffect(isActive) {
+        if (isActive) {
             focusRequester.requestFocus()
             kbd?.show()
         }

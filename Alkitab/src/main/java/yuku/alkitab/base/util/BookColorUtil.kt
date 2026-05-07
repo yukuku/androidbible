@@ -15,6 +15,18 @@ object BookColorUtil {
     }
 
     @JvmStatic
+    fun getForegroundOnLight(bookId: Int): Int {
+        return when (bookId) {
+            in 0..38 -> // OT
+                0xff_c2185b.toInt() // Pink 700
+            in 39..65 -> // NT
+                0xff_1976d2.toInt() // Blue 700
+            else -> // others
+                0xff_424242.toInt() // Grey 800
+        }
+    }
+
+    @JvmStatic
     fun getBackground(bookId: Int): Int {
         return when (bookId) {
             in 0..38 -> // OT
