@@ -10,8 +10,10 @@ import com.downloader.PRDownloader;
 import com.downloader.PRDownloaderConfig;
 import com.google.gson.Gson;
 import java.util.concurrent.atomic.AtomicBoolean;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.connection.PRDownloaderOkHttpClient;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Fcm;
 import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.util.ExtensionManager;
@@ -59,7 +61,13 @@ public class App extends yuku.afw.App {
             PreferenceManager.setDefaultValues(context, preferenceResId, false);
         }
 
-        { // FCM
+        // FCM is only useful once the user has signed into sync — the registration id
+        // gets uploaded by Sync.notifyNewFcmRegistrationId, which itself early-exits
+        // when sync_simpleToken is null. Skipping this block on first launch (before
+        // any sync sign-in) keeps Firebase Messaging dormant and avoids prompting the
+        // user for POST_NOTIFICATIONS before they have any reason to grant it. New
+        // sign-ins are handled separately by SyncLoginActivity.gotSimpleToken.
+        if (Preferences.getString(Prefkey.sync_simpleToken) != null) {
             final String fcmRegistrationId = Fcm.renewFcmRegistrationIdIfNeeded(Sync::notifyNewFcmRegistrationId);
             if (fcmRegistrationId != null) {
                 Sync.retryPendingFcmRegistrationIfNeeded(fcmRegistrationId);
