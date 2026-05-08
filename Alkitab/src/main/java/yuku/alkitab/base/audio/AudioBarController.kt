@@ -125,6 +125,21 @@ class AudioBarController(
      */
     private var dragging = false
 
+    /**
+     * The last `(bookId, chapter_1)` pair the *service* reported. We only
+     * follow the activity to the service's chapter when this pair *changes*
+     * — meaning the change was driven by the service (lock-screen /
+     * Bluetooth skip / auto-advance), not by the user manually swiping in
+     * the activity. Without this latch, comparing against `host.audio*`
+     * would force the reader back to the playing chapter every position
+     * tick, breaking manual browsing during playback.
+     *
+     * `(-1, 0)` is the sentinel for "no chapter loaded yet" and matches
+     * [PlaybackState.IDLE].
+     */
+    private var lastServiceBookId = -1
+    private var lastServiceChapter1 = 0
+
     private val _uiState = MutableStateFlow(AudioBarUiState.HIDDEN)
     val uiState: StateFlow<AudioBarUiState> = _uiState.asStateFlow()
 
@@ -364,14 +379,17 @@ class AudioBarController(
             pendingLoad = null
         }
 
-        // Sync the activity to the chapter the service is now playing. This
-        // is what makes lock-screen / Bluetooth-headset prev/next-chapter
-        // navigation feel right: when the user comes back to the app, the
-        // reader is already on the chapter they were listening to. We compare
-        // against host's current state and only navigate on a real difference,
-        // so the in-app "tap prev-chapter on the audio bar" path (which is
-        // already activity-driven via the service) stays a no-op here.
-        if (host != null && state.bookId >= 0) {
+        // Sync the activity to the chapter the service is now playing — but
+        // only when the *service's* chapter has changed (lock-screen skip,
+        // Bluetooth, auto-advance), never when the user has manually swiped
+        // the reader to a different chapter while audio plays in the
+        // background. Comparing against `host.audio*` alone would tug the
+        // reader back to the playing chapter every position tick.
+        if (host != null && state.bookId >= 0 &&
+            (state.bookId != lastServiceBookId || state.chapter_1 != lastServiceChapter1)
+        ) {
+            lastServiceBookId = state.bookId
+            lastServiceChapter1 = state.chapter_1
             val hostBook = host.audioCurrentBook()
             if (hostBook.bookId != state.bookId || host.audioCurrentChapter1() != state.chapter_1) {
                 val targetBook = host.audioVersionBook(state.bookId)

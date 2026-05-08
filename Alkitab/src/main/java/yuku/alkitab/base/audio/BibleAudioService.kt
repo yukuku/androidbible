@@ -512,13 +512,19 @@ class BibleAudioService : MediaSessionService() {
                 ?: return null
             val size = ARTWORK_SIZE_PX
             val bitmap = createBitmap(size, size)
-            val canvas = Canvas(bitmap)
-            drawable.setBounds(0, 0, size, size)
-            drawable.draw(canvas)
-            ByteArrayOutputStream().use { baos ->
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
-                baos.toByteArray()
-            }.also { bitmap.recycle() }
+            try {
+                val canvas = Canvas(bitmap)
+                drawable.setBounds(0, 0, size, size)
+                drawable.draw(canvas)
+                ByteArrayOutputStream().use { baos ->
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
+                    baos.toByteArray()
+                }
+            } finally {
+                // Always recycle, even if compress() throws — long-running
+                // services accumulate native bitmap memory otherwise.
+                bitmap.recycle()
+            }
         } catch (e: Exception) {
             // Failing to decode artwork should NOT break audio — fall back to
             // a metadata-only notification (title + artist).
