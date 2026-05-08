@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.core.net.toUri
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import java.util.concurrent.atomic.AtomicInteger
 import yuku.afw.storage.Preferences
@@ -49,6 +50,17 @@ class VersesControllerImpl(
 
     private val checkedPositions = mutableSetOf<Int>()
     private val attention = Attention()
+    private val audioHighlight = AudioHighlight()
+
+    /**
+     * Base padding requested via [setViewPadding] (i.e. the padding the theme/
+     * preferences want, ignoring overlays). [setAudioBarBottomInset] can add
+     * extra bottom padding to keep the last verses visible above the audio
+     * bar; we keep the two values separate so neither setter clobbers the
+     * other when, e.g., the user changes font size while the bar is showing.
+     */
+    private val basePadding = Rect()
+    private var audioBarBottomInsetPx: Int = 0
 
     private val dataVersionNumber = AtomicInteger()
 
@@ -63,6 +75,7 @@ class VersesControllerImpl(
 
         val adapter = VersesAdapter(
             attention = attention,
+            audioHighlight = audioHighlight,
             isChecked = { position -> position in checkedPositions },
             toggleChecked = { position ->
                 if (position !in checkedPositions) {
@@ -407,7 +420,8 @@ class VersesControllerImpl(
     }
 
     override fun setViewPadding(padding: Rect) {
-        rv.setPadding(padding.left, padding.top, padding.right, padding.bottom)
+        basePadding.set(padding)
+        applyPadding()
     }
 
     override fun setViewScrollbarThumb(thumb: Drawable) {
@@ -431,9 +445,79 @@ class VersesControllerImpl(
         layoutManager.findViewByPosition(pos)?.invalidate()
     }
 
+    override fun setAudioHighlight(verse_1: Int, color: Int) {
+        // Fast-path: this method is called every 100ms during playback
+        // (mirroring the service's position poll). Bailing out when nothing
+        // actually changed avoids a needless findViewByPosition + restart of
+        // the LinearSmoothScroller animation.
+        if (audioHighlight.verse_1 == verse_1 && audioHighlight.color == color) return
+
+        // Always clear the old row first — even when the new verse_1 is 0 or
+        // the same number — so an off-by-one (e.g. timing gap between verses)
+        // doesn't leave an orphan overlay behind.
+        val previous = audioHighlight.verse_1
+        audioHighlight.verse_1 = verse_1
+        audioHighlight.color = color
+        if (previous != 0 && previous != verse_1) {
+            val prevPos = versesDataModel.getPositionIgnoringPericopeFromVerse(previous)
+            if (prevPos != -1) {
+                (layoutManager.findViewByPosition(prevPos) as? VerseItem)?.audioHighlightColor = 0
+            }
+        }
+        if (verse_1 == 0) return
+
+        val pos = versesDataModel.getPositionIgnoringPericopeFromVerse(verse_1)
+        if (pos == -1) return
+        (layoutManager.findViewByPosition(pos) as? VerseItem)?.audioHighlightColor = color
+
+        // Smooth-scroll the highlighted verse into the upper third of the
+        // viewport. SNAP_TO_START aligns the verse to the top edge; the
+        // overshoot via calculateDtToFit pushes it down so the highlighted
+        // row sits ~1/3 from the top — gives users context above and room
+        // for upcoming verses below.
+        val smoothScroller = object : LinearSmoothScroller(rv.context) {
+            override fun getVerticalSnapPreference(): Int = SNAP_TO_START
+
+            override fun calculateDtToFit(
+                viewStart: Int,
+                viewEnd: Int,
+                boxStart: Int,
+                boxEnd: Int,
+                snapPreference: Int,
+            ): Int {
+                val boxHeight = boxEnd - boxStart
+                val targetTop = boxStart + (boxHeight * 0.33f).toInt()
+                return targetTop - viewStart
+            }
+        }
+        smoothScroller.targetPosition = pos
+        layoutManager.startSmoothScroll(smoothScroller)
+    }
+
     override fun setEmptyMessage(message: CharSequence?, textColor: Int) {
         rv.emptyMessage = message
         rv.emptyMessagePaint.color = textColor
+    }
+
+    override fun setAudioBarBottomInset(pxBottom: Int) {
+        if (audioBarBottomInsetPx == pxBottom) return
+        audioBarBottomInsetPx = pxBottom
+        applyPadding()
+    }
+
+    /**
+     * Apply [basePadding] + [audioBarBottomInsetPx] to the underlying
+     * RecyclerView. Either setter can be invoked at any time (font-size
+     * change while the bar is visible, or vice versa); combining the two
+     * values here means neither stomps on the other.
+     */
+    private fun applyPadding() {
+        rv.setPadding(
+            basePadding.left,
+            basePadding.top,
+            basePadding.right,
+            basePadding.bottom + audioBarBottomInsetPx,
+        )
     }
 
     fun render() {
@@ -456,6 +540,20 @@ class Attention(var start: Long = 0L, val verses_1: MutableSet<Int> = mutableSet
     fun hasAny() = start != 0L && verses_1.isNotEmpty()
 }
 
+/**
+ * Sidecar holding the currently audio-highlighted verse_1 + overlay color.
+ * Lives alongside [Attention] so a recycled [VerseItem] can repaint correctly
+ * during a rebind even when the controller's direct findViewByPosition path
+ * never gets a chance to run (e.g. the user scrolls away from the playing
+ * verse and back).
+ *
+ * `verse_1 = 0` is the "no highlight" sentinel.
+ */
+class AudioHighlight {
+    var verse_1: Int = 0
+    var color: Int = 0
+}
+
 sealed class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
 class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
@@ -467,6 +565,7 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         ui: VersesUiModel,
         listeners: VersesListeners,
         attention: Attention,
+        audioHighlight: AudioHighlight,
         checked: Boolean,
         toggleChecked: (position: Int) -> Unit,
         index: Int,
@@ -577,6 +676,12 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         } else {
             view.callAttention(0L)
         }
+
+        // Restore audio highlight on rebind. Setting the same color as already
+        // on the view is a no-op (the setter early-returns when value == field),
+        // so this doesn't restart the fade animation when the same row scrolls
+        // off and back into view while still being the active verse.
+        view.audioHighlightColor = if (verse_1 == audioHighlight.verse_1) audioHighlight.color else 0
 
         // Click listener on the whole item view
         view.setOnClickListener {
@@ -702,6 +807,7 @@ class PericopeHolder(private val view: PericopeHeaderItem) : ItemHolder(view) {
 
 class VersesAdapter(
     private val attention: Attention,
+    private val audioHighlight: AudioHighlight,
     private val isChecked: VersesAdapter.(position: Int) -> Boolean,
     private val toggleChecked: VersesAdapter.(position: Int) -> Unit,
 ) : RecyclerView.Adapter<ItemHolder>() {
@@ -774,7 +880,7 @@ class VersesAdapter(
         when (holder) {
             is VerseTextHolder -> {
                 val index = data.getVerse_0(position)
-                holder.bind(data, ui, listeners, attention, isChecked(position), { toggleChecked(it) }, index)
+                holder.bind(data, ui, listeners, attention, audioHighlight, isChecked(position), { toggleChecked(it) }, index)
             }
 
             is PericopeHolder -> {

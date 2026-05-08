@@ -157,4 +157,122 @@ class HighlightTrackerTest {
         t.update(1000L)
         assertEquals(2, t.verse1.value)
     }
+
+    // -- peekVerseAt -----------------------------------------------------------
+
+    @Test
+    fun `peekVerseAt does not mutate the cached lastIndex or the verse1 flow`() {
+        val t = HighlightTracker()
+        t.setTiming(contiguous)
+        t.update(500L)
+        assertEquals(1, t.verse1.value)
+
+        // Peek deep into a different verse — should NOT touch the StateFlow.
+        assertEquals(3, t.peekVerseAt(2500L))
+        assertEquals(1, t.verse1.value)
+
+        // And the next steady-state forward walk should still hit the fast
+        // path (verse 1 -> verse 2 in one step), proving the cached lastIndex
+        // wasn't invalidated.
+        t.update(1100L)
+        assertEquals(2, t.verse1.value)
+    }
+
+    @Test
+    fun `peekVerseAt returns 0 for positions in gaps and outside the timing range`() {
+        val t = HighlightTracker()
+        t.setTiming(
+            listOf(
+                VerseTiming(verse_1 = 1, startMs = 0L, endMs = 1000L),
+                VerseTiming(verse_1 = 2, startMs = 1500L, endMs = 2500L),
+            )
+        )
+        assertEquals(0, t.peekVerseAt(-100L))
+        assertEquals(1, t.peekVerseAt(500L))
+        assertEquals(0, t.peekVerseAt(1200L)) // gap
+        assertEquals(2, t.peekVerseAt(2000L))
+        assertEquals(0, t.peekVerseAt(9999L))
+    }
+
+    @Test
+    fun `peekVerseAt on empty timing returns 0`() {
+        val t = HighlightTracker()
+        assertEquals(0, t.peekVerseAt(500L))
+    }
+
+    // -- getNextVerseStartMs ---------------------------------------------------
+
+    @Test
+    fun `getNextVerseStartMs returns the start of the verse strictly after the position`() {
+        val t = HighlightTracker()
+        t.setTiming(contiguous)
+        // Inside verse 1 -> next is verse 2's start.
+        assertEquals(1000L, t.getNextVerseStartMs(500L))
+        // At the start of verse 2 -> next is verse 3.
+        assertEquals(2000L, t.getNextVerseStartMs(1000L))
+        // Inside verse 3 -> no next.
+        assertEquals(null, t.getNextVerseStartMs(2500L))
+        // Past the last verse -> no next.
+        assertEquals(null, t.getNextVerseStartMs(9999L))
+    }
+
+    @Test
+    fun `getNextVerseStartMs from a gap targets the upcoming verse`() {
+        val t = HighlightTracker()
+        t.setTiming(
+            listOf(
+                VerseTiming(verse_1 = 1, startMs = 0L, endMs = 1000L),
+                VerseTiming(verse_1 = 2, startMs = 1500L, endMs = 2500L),
+            )
+        )
+        assertEquals(1500L, t.getNextVerseStartMs(1200L))
+    }
+
+    // -- getPrevVerseStartMs ---------------------------------------------------
+
+    @Test
+    fun `getPrevVerseStartMs restarts the current verse when deep into it`() {
+        val t = HighlightTracker()
+        // Use long verses so we can sit > 2 s past startMs and trigger the
+        // "restart current" branch of the threshold.
+        t.setTiming(
+            listOf(
+                VerseTiming(verse_1 = 1, startMs = 0L, endMs = 5_000L),
+                VerseTiming(verse_1 = 2, startMs = 5_000L, endMs = 10_000L),
+            )
+        )
+        // 3 s into verse 2 -> restart verse 2.
+        assertEquals(5_000L, t.getPrevVerseStartMs(8_000L))
+    }
+
+    @Test
+    fun `getPrevVerseStartMs jumps to the prior verse when near the start of the current one`() {
+        val t = HighlightTracker()
+        t.setTiming(contiguous)
+        // 100 ms into verse 2 -> jump to verse 1's start.
+        assertEquals(0L, t.getPrevVerseStartMs(1100L))
+        // Exactly at verse 2's start -> jump to verse 1.
+        assertEquals(0L, t.getPrevVerseStartMs(1000L))
+    }
+
+    @Test
+    fun `getPrevVerseStartMs returns null when there is no earlier verse`() {
+        val t = HighlightTracker()
+        t.setTiming(contiguous)
+        // At the very first verse, can't go further back.
+        assertEquals(null, t.getPrevVerseStartMs(100L))
+    }
+
+    @Test
+    fun `getPrevVerseStartMs from a gap targets the most recent finished verse`() {
+        val t = HighlightTracker()
+        t.setTiming(
+            listOf(
+                VerseTiming(verse_1 = 1, startMs = 0L, endMs = 1000L),
+                VerseTiming(verse_1 = 2, startMs = 1500L, endMs = 2500L),
+            )
+        )
+        // In the gap between 1 and 2 -> targets verse 1.
+        assertEquals(0L, t.getPrevVerseStartMs(1200L))
+    }
 }

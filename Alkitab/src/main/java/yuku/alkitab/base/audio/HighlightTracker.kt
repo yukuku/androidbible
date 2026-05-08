@@ -124,4 +124,76 @@ class HighlightTracker {
         lastIndex = -1
         return 0
     }
+
+    /**
+     * Pure (non-mutating) lookup: returns the `verse_1` whose window contains
+     * [positionMs], or `0` if none. Unlike [update], this does NOT touch the
+     * cached [lastIndex] or the [verse1] flow — used by the slider's drag
+     * preview where we want to compute "what verse would the thumb land on?"
+     * without disturbing playback's monotonic forward-walk fast path.
+     */
+    fun peekVerseAt(positionMs: Long): Int {
+        if (verses.isEmpty()) return 0
+        var lo = 0
+        var hi = verses.size - 1
+        while (lo <= hi) {
+            val mid = (lo + hi) ushr 1
+            val v = verses[mid]
+            when {
+                positionMs < v.startMs -> hi = mid - 1
+                positionMs >= v.endMs -> lo = mid + 1
+                else -> return v.verse_1
+            }
+        }
+        return 0
+    }
+
+    /**
+     * Returns the `startMs` of the verse that comes after [positionMs], or
+     * `null` if no later verse exists or no timing is loaded.
+     *
+     * "After" means strictly past the current verse window — if the user is
+     * inside verse N, the next-verse target is N+1's start. Tapping next
+     * during a gap between verses jumps to the upcoming verse.
+     */
+    fun getNextVerseStartMs(positionMs: Long): Long? {
+        if (verses.isEmpty()) return null
+        return verses.firstOrNull { it.startMs > positionMs }?.startMs
+    }
+
+    /**
+     * Returns a target position for the "previous verse" command, or `null`
+     * when no earlier verse exists.
+     *
+     * Mirrors the standard music-player convention: if the user is already
+     * deep into the current verse (`> [PREV_VERSE_RESTART_THRESHOLD_MS]`), the
+     * button restarts the current verse; otherwise it skips back to the
+     * previous verse's start. Tapping prev during a gap (no active verse)
+     * targets the most-recent finished verse.
+     */
+    fun getPrevVerseStartMs(positionMs: Long): Long? {
+        if (verses.isEmpty()) return null
+
+        // Are we inside a verse window?
+        val currentIdx = verses.indexOfFirst { positionMs >= it.startMs && positionMs < it.endMs }
+        if (currentIdx >= 0) {
+            val current = verses[currentIdx]
+            if (positionMs - current.startMs > PREV_VERSE_RESTART_THRESHOLD_MS) {
+                return current.startMs
+            }
+            return verses.getOrNull(currentIdx - 1)?.startMs
+        }
+
+        // In a gap — return the latest verse whose end is before us.
+        return verses.lastOrNull { it.endMs <= positionMs }?.startMs
+    }
+
+    companion object {
+        /**
+         * "Restart-current vs. go-to-previous" cutoff for the prev-verse
+         * button. Matches what music players use (≈2–3 s). Picked at 2 s so
+         * a quick double-tap reliably skips two verses back.
+         */
+        const val PREV_VERSE_RESTART_THRESHOLD_MS = 2_000L
+    }
 }

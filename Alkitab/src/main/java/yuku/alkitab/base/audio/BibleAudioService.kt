@@ -98,6 +98,16 @@ class BibleAudioService : MediaSessionService() {
     val playbackState: StateFlow<PlaybackState> = _playbackState.asStateFlow()
 
     private val playerListener = object : BibleAudioPlayer.Listener {
+        override fun onBuffering() {
+            // Re-buffering after a seek (or initial buffer) — re-arm the
+            // preparing flag so the bar's progress ring + the toolbar spinner
+            // come back. We deliberately reuse `preparing` rather than adding
+            // a separate `buffering` field: from the user's POV, both states
+            // are "we asked to play but no audio is coming out yet", which is
+            // what the spinner communicates.
+            _playbackState.update { it.copy(preparing = true) }
+        }
+
         override fun onReady() {
             startPositionPolling()
             _playbackState.update {
@@ -283,6 +293,33 @@ class BibleAudioService : MediaSessionService() {
         highlightTracker.update(positionMs)
         _playbackState.update { it.copy(positionMs = positionMs) }
     }
+
+    /**
+     * Skip to the start of the next verse based on timing data. No-op when
+     * timing isn't loaded, when we're already past the last verse, or when
+     * the player isn't in a seekable state.
+     */
+    fun seekToNextVerse() {
+        val target = highlightTracker.getNextVerseStartMs(player.currentPositionMs) ?: return
+        seekTo(target)
+    }
+
+    /**
+     * Skip to the previous verse using music-player semantics: a quick tap
+     * (within the first ~2 s of a verse) jumps to the prior verse; otherwise
+     * it restarts the current verse. See [HighlightTracker.getPrevVerseStartMs].
+     */
+    fun seekToPrevVerse() {
+        val target = highlightTracker.getPrevVerseStartMs(player.currentPositionMs) ?: return
+        seekTo(target)
+    }
+
+    /**
+     * Returns the `verse_1` that [positionMs] falls inside, or `0` if none.
+     * Pure read — used by the slider's live drag preview so the verse
+     * highlight in the reader can follow the thumb without committing a seek.
+     */
+    fun peekVerseAt(positionMs: Long): Int = highlightTracker.peekVerseAt(positionMs)
 
     fun setSpeed(speed: Float) {
         player.setSpeed(speed)

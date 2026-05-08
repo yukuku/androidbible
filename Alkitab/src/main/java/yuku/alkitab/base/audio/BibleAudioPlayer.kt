@@ -11,6 +11,7 @@ import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.okhttp.OkHttpDataSource
+import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.Renderer
 import androidx.media3.exoplayer.RenderersFactory
@@ -53,6 +54,14 @@ import yuku.alkitab.base.connection.Connections
 class BibleAudioPlayer(appContext: Context) {
 
     interface Listener {
+        /**
+         * Player is loading data — either initial buffering after [prepare], or
+         * re-buffering after a [seekTo] target that wasn't already cached. The
+         * service uses this to flip the bar's `preparing` flag back to true so
+         * the spinner returns when the user seeks ahead and presses play.
+         */
+        fun onBuffering()
+
         /** Player has buffered enough to start playback. */
         fun onReady()
 
@@ -68,6 +77,7 @@ class BibleAudioPlayer(appContext: Context) {
     private val playerListener = object : Player.Listener {
         override fun onPlaybackStateChanged(playbackState: Int) {
             when (playbackState) {
+                Player.STATE_BUFFERING -> listener?.onBuffering()
                 Player.STATE_READY -> listener?.onReady()
                 Player.STATE_ENDED -> listener?.onEnded()
                 else -> Unit
@@ -105,6 +115,44 @@ class BibleAudioPlayer(appContext: Context) {
             .setContentType(C.AUDIO_CONTENT_TYPE_SPEECH)
             .build()
 
+        // ExoPlayer's default LoadControl keeps zero back buffer and only ~50 s
+        // of forward buffer, so prev-verse seeks (and any rewind past the
+        // currently-playing window) re-fetch and re-decode the MP3 from the
+        // network. Bible chapters are short (typical ≤ 30 min, ~30 MB at
+        // 128 kbps) and our nav UX taps prev/next verse aggressively, so it's
+        // worth keeping the entire chapter in the player's sample queue once
+        // it's been buffered.
+        //
+        // Numbers below are picked for a "play-and-scrub-around" workflow:
+        //  - back buffer ~30 min covers Psalms 119 (the longest chapter) and
+        //    keeps every previously-played verse instantly seekable.
+        //  - maxBufferMs = 30 min lets the player keep loading well past the
+        //    "comfort" zone so next-verse taps land in already-buffered
+        //    samples even if the user races ahead of the playhead.
+        //  - minBufferMs left at default (50 s) — eager-loading comfort
+        //    threshold, no need to be aggressive about cellular bandwidth.
+        //    Note that minBufferMs does NOT gate playback start; that's
+        //    bufferForPlaybackMs (2.5 s default), which we also leave alone.
+        //  - retainBackBufferFromKeyframe = true: MP3 has a keyframe per
+        //    frame, so this is essentially "keep all PCM samples until the
+        //    back buffer wraps".
+        val loadControl = DefaultLoadControl.Builder()
+            .setBufferDurationsMs(
+                /* minBufferMs = */ DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
+                /* maxBufferMs = */ 30 * 60_000,
+                /* bufferForPlaybackMs = */ DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
+                /* bufferForPlaybackAfterRebufferMs = */ DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS,
+            )
+            .setBackBuffer(
+                /* backBufferDurationMs = */ 30 * 60_000,
+                /* retainBackBufferFromKeyframe = */ true,
+            )
+            // -1 = pick a target byte budget per renderer based on the
+            // configured durations. We don't want an explicit byte cap to
+            // override the duration-based one we just set.
+            .setTargetBufferBytes(C.LENGTH_UNSET)
+            .build()
+
         ExoPlayer.Builder(
             appContext,
             audioOnlyRenderersFactory,
@@ -112,6 +160,7 @@ class BibleAudioPlayer(appContext: Context) {
         )
             .setAudioAttributes(audioAttributes, true)
             .setHandleAudioBecomingNoisy(true)
+            .setLoadControl(loadControl)
             .build()
             .also { it.addListener(playerListener) }
     }
@@ -133,8 +182,17 @@ class BibleAudioPlayer(appContext: Context) {
         exoPlayer.prepare()
     }
 
+    /**
+     * Starts (or resumes) playback. If the player has already finished the
+     * current chapter ([Player.STATE_ENDED]), this seeks back to the start
+     * so tapping play again replays the chapter from the beginning, matching
+     * how native media apps treat the play button at end-of-stream.
+     */
     @MainThread
     fun play() {
+        if (exoPlayer.playbackState == Player.STATE_ENDED) {
+            exoPlayer.seekTo(0L)
+        }
         exoPlayer.playWhenReady = true
     }
 

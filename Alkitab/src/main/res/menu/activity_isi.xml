@@ -3,6 +3,12 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto">
 
 	<item
+		android:id="@+id/menuAudio"
+		android:icon="@drawable/ic_audio"
+		app:showAsAction="always"
+		android:title="@string/menu_audio" />
+
+	<item
 		android:id="@+id/menuSearch"
 		android:icon="@drawable/ic_menu_search"
 		app:showAsAction="always"
