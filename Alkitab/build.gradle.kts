@@ -8,6 +8,7 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
+import java.time.Instant
 import javax.inject.Inject
 
 plugins {
@@ -88,8 +89,8 @@ val gitCommitHash: String = try {
 
 // Version code: (2_000_000 + minutes since 2026-01-01 UTC) * 10
 val buildVersionCode: Int = run {
-    val epoch = java.time.Instant.parse("2026-01-01T00:00:00Z").epochSecond
-    val minutesSinceEpoch = (java.time.Instant.now().epochSecond - epoch) / 60
+    val epoch = Instant.parse("2026-01-01T00:00:00Z").epochSecond
+    val minutesSinceEpoch = (Instant.now().epochSecond - epoch) / 60
     ((2_000_000 + minutesSinceEpoch) * 10).toInt()
 }
 
