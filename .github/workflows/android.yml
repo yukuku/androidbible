@@ -6,14 +6,18 @@ on:
   pull_request:
     branches: [ "develop" ]
 
+permissions:
+  contents: read
+
 jobs:
-  build:
+  plain-debug:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
       - name: set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'zulu'
@@ -27,3 +31,107 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew assemblePlainDebug bundlePlainDebug
+
+  signed-release:
+    # GitHub does not expose repository secrets to PRs from forks (by design),
+    # so signed builds only run for: pushes to develop, and PRs from branches
+    # inside this same repo. Fork PRs skip this job cleanly.
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check out proprietary overlay
+        uses: actions/checkout@v4
+        with:
+          repository: yukuku/androidbible-proprietary
+          ref: master
+          ssh-key: ${{ secrets.PROPRIETARY_DEPLOY_KEY }}
+          path: proprietary
+          persist-credentials: false
+
+      - name: set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Decode signing keystore
+        env:
+          SIGN_KEYSTORE_BASE64: ${{ secrets.SIGN_KEYSTORE_BASE64 }}
+        run: |
+          printf '%s' "$SIGN_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+
+      # Build a short label used in artifact names. For PRs we use the PR
+      # number and the PR head's short SHA (not github.sha, which on
+      # pull_request events is the temporary merge commit). For pushes to
+      # develop we fall back to "<branch>-<shortsha>".
+      - name: Compute artifact tag
+        id: tag
+        run: |
+          if [ -n "${{ github.event.pull_request.number }}" ]; then
+            SHA="${{ github.event.pull_request.head.sha }}"
+            LABEL="pr${{ github.event.pull_request.number }}"
+          else
+            SHA="${GITHUB_SHA}"
+            LABEL="${GITHUB_REF_NAME}"
+          fi
+          echo "tag=${LABEL}-${SHA:0:7}" >> "$GITHUB_OUTPUT"
+
+      - name: Build signed release (all production flavors)
+        env:
+          ALKITAB_PROPRIETARY_DIR: ${{ github.workspace }}/proprietary
+          SIGN_KEYSTORE: ${{ runner.temp }}/release.jks
+          SIGN_ALIAS: ${{ secrets.SIGN_ALIAS }}
+          SIGN_PASSWORD: ${{ secrets.SIGN_PASSWORD }}
+          BUILD_DIST: ci
+        run: |
+          ./gradlew \
+            assembleYuku_alkitabRelease bundleYuku_alkitabRelease \
+            assembleYuku_quick_bibleRelease bundleYuku_quick_bibleRelease \
+            assembleSabda_alkitabRelease bundleSabda_alkitabRelease
+
+      # Upload one artifact per flavor so each is downloadable separately
+      # from the run page. GitHub always wraps an artifact in a zip, but with
+      # one APK + one AAB + one mapping per artifact the zip stays small.
+      - name: Upload yuku_alkitab outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuku_alkitab-${{ steps.tag.outputs.tag }}
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            Alkitab/build/outputs/apk/yuku_alkitab/release/*.apk
+            Alkitab/build/outputs/bundle/yuku_alkitabRelease/*.aab
+            Alkitab/build/outputs/mapping/yuku_alkitabRelease/mapping.txt
+
+      - name: Upload yuku_quick_bible outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuku_quick_bible-${{ steps.tag.outputs.tag }}
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            Alkitab/build/outputs/apk/yuku_quick_bible/release/*.apk
+            Alkitab/build/outputs/bundle/yuku_quick_bibleRelease/*.aab
+            Alkitab/build/outputs/mapping/yuku_quick_bibleRelease/mapping.txt
+
+      - name: Upload sabda_alkitab outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: sabda_alkitab-${{ steps.tag.outputs.tag }}
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            Alkitab/build/outputs/apk/sabda_alkitab/release/*.apk
+            Alkitab/build/outputs/bundle/sabda_alkitabRelease/*.aab
+            Alkitab/build/outputs/mapping/sabda_alkitabRelease/mapping.txt
+
+      - name: Wipe keystore from runner
+        if: always()
+        run: rm -f "$RUNNER_TEMP/release.jks"
