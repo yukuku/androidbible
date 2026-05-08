@@ -86,6 +86,13 @@ val gitCommitHash: String = try {
     "0000000"
 }
 
+// Version code: (2_000_000 + minutes since 2026-01-01 UTC) * 10
+val buildVersionCode: Int = run {
+    val epoch = java.time.Instant.parse("2026-01-01T00:00:00Z").epochSecond
+    val minutesSinceEpoch = (java.time.Instant.now().epochSecond - epoch) / 60
+    ((2_000_000 + minutesSinceEpoch) * 10).toInt()
+}
+
 // Map of production (non-plain) flavor name -> overlay subdirectory name under
 // $ALKITAB_PROPRIETARY_DIR/overlay/. The overlay subdirectory matches the
 // applicationId of the corresponding flavor.
@@ -116,7 +123,7 @@ android {
         applicationId = "yuku.alkitab.debug"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 17000600
+        versionCode = buildVersionCode
         versionName = "5.0.0-b0"
         multiDexEnabled = true
         // Keep this synced with integrate_translations.sh! Also update pref_language.xml and ConfigurationWrapper!
