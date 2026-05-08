@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import androidx.compose.runtime.collectAsState
+import androidx.core.content.ContextCompat
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -80,6 +81,15 @@ class AudioBarController(
          * doesn't reflow.
          */
         fun audioNeighborChapter(direction: Int): Pair<Book, Int>?
+
+        /**
+         * Resolve a [Book] by id within the version currently driving audio.
+         * Returns `null` if the version doesn't have that book, in which case
+         * the controller silently skips the activity-side navigation.
+         * Used when the service drives a chapter change (lock-screen prev/
+         * next, Bluetooth) and the activity needs to follow.
+         */
+        fun audioVersionBook(bookId: Int): Book?
 
         /** Tell the activity to navigate to [book] / [chapter_1] (the existing `display` flow). */
         fun audioDisplayChapter(book: Book, chapter_1: Int)
@@ -255,14 +265,26 @@ class AudioBarController(
 
     private fun ensureBound() {
         if (bound) return
-        val intent = Intent(context, BibleAudioService::class.java)
+        // media3's MediaSessionService transitions to foreground (posting the
+        // lock-screen notification, allowing background playback) only via
+        // `onStartCommand`. A pure `bindService` keeps the service alive while
+        // the activity holds it but never promotes it — meaning audio would
+        // stop the moment the screen locks. Calling `startForegroundService`
+        // alongside `bindService` is the standard hybrid-pattern fix; the
+        // service must `startForeground` within 5 seconds, which media3's
+        // notification manager handles automatically the first time the
+        // player updates (immediately for our case since `loadChapter` is
+        // called right after this returns).
+        val startIntent = Intent(context, BibleAudioService::class.java)
+        ContextCompat.startForegroundService(context, startIntent)
+        val bindIntent = Intent(context, BibleAudioService::class.java)
             .setAction(BibleAudioService.ACTION_LOCAL_BIND)
         try {
             // bindService can return false if the service can't be found or
             // the system refuses to deliver. Only flip `bound` on success so
             // [detach] doesn't try to unbind a connection that was never
             // registered.
-            if (context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)) {
+            if (context.bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE)) {
                 bound = true
             } else {
                 AppLog.w(TAG, "bindService returned false — service not bound")
@@ -296,8 +318,13 @@ class AudioBarController(
             }
             AudioBarCommand.PrevVerse -> svc?.seekToPrevVerse()
             AudioBarCommand.NextVerse -> svc?.seekToNextVerse()
-            AudioBarCommand.PrevChapter -> navigateChapter(host, direction = -1)
-            AudioBarCommand.NextChapter -> navigateChapter(host, direction = 1)
+            // Both in-app and lock-screen chapter skips fan in to the same
+            // service entry point. The service is the single source of truth
+            // for "what chapter is loaded"; AudioBarController.projectToUi
+            // observes the resulting state change and pushes IsiActivity to
+            // navigate so the on-screen chapter follows the audio.
+            AudioBarCommand.PrevChapter -> svc?.skipChapter(-1)
+            AudioBarCommand.NextChapter -> svc?.skipChapter(1)
             AudioBarCommand.Close -> hide()
             AudioBarCommand.Speed -> {
                 // M5: opens the speed bottom sheet. M3 surfaces the chip but
@@ -323,18 +350,6 @@ class AudioBarController(
         }
     }
 
-    private fun navigateChapter(host: Host, direction: Int) {
-        val target = host.audioNeighborChapter(direction) ?: return
-        val (book, chapter1) = target
-        host.audioDisplayChapter(book, chapter1)
-        // After navigation the activity fields are updated; rebuild the audio
-        // request from the new context.
-        recomputeChapterLabels(host)
-        service?.loadChapter(buildRequest(host))
-        _uiState.update { it.copy(preparing = true) }
-        host.audioPreparingChanged(true)
-    }
-
     private fun projectToUi(state: PlaybackState) {
         val host = this.host
         val prevPreparing = _uiState.value.preparing
@@ -347,6 +362,23 @@ class AudioBarController(
         pendingLoad?.let { ph ->
             service?.loadChapter(buildRequest(ph))
             pendingLoad = null
+        }
+
+        // Sync the activity to the chapter the service is now playing. This
+        // is what makes lock-screen / Bluetooth-headset prev/next-chapter
+        // navigation feel right: when the user comes back to the app, the
+        // reader is already on the chapter they were listening to. We compare
+        // against host's current state and only navigate on a real difference,
+        // so the in-app "tap prev-chapter on the audio bar" path (which is
+        // already activity-driven via the service) stays a no-op here.
+        if (host != null && state.bookId >= 0) {
+            val hostBook = host.audioCurrentBook()
+            if (hostBook.bookId != state.bookId || host.audioCurrentChapter1() != state.chapter_1) {
+                val targetBook = host.audioVersionBook(state.bookId)
+                if (targetBook != null) {
+                    host.audioDisplayChapter(targetBook, state.chapter_1)
+                }
+            }
         }
 
         val prevLabel = host?.audioNeighborChapter(-1)?.let { (b, c) -> "${b.shortName} $c" }

@@ -2,9 +2,16 @@ package yuku.alkitab.base.audio
 
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.pm.ServiceInfo
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Binder
 import android.os.IBinder
 import androidx.annotation.OptIn
+import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.createBitmap
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
@@ -12,6 +19,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
+import java.io.ByteArrayOutputStream
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -25,6 +33,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import yuku.alkitab.base.IsiActivity
+import yuku.alkitab.base.S
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.debug.R
 
@@ -41,10 +50,15 @@ import yuku.alkitab.debug.R
  *    [loadChapter] / [play] / [pause] / [seekTo] / [setSpeed] / [stop]
  *    directly. Used by the M3 `AudioBarController`.
  *
- * Foreground transitions (notification post / removal) are handled by media3
- * automatically based on `Player.isPlaying`. The notification's MediaStyle,
- * channel, and metadata come from [DefaultMediaNotificationProvider]; the
- * channel id we set here matches the one created in `App.staticInit()`.
+ * Foreground transitions: media3's [MediaSessionService.onStartCommand] only
+ * promotes to foreground when handed a media-action intent; our hybrid
+ * local-binder pattern starts the service with a plain `Intent` from
+ * [yuku.alkitab.base.audio.AudioBarController.ensureBound], so we override
+ * [onStartCommand] to post a placeholder notification (satisfying the
+ * 5-second `startForeground` deadline) and then explicitly invoke
+ * [onUpdateNotification] to let media3's [DefaultMediaNotificationProvider]
+ * replace the placeholder with the real MediaStyle. The channel id matches
+ * the one created in `App.staticInit()`.
  *
  * Audio focus, becoming-noisy, lock-screen / Bluetooth media-button handling
  * all come for free with `MediaSession` + the audio attributes set on the
@@ -67,6 +81,15 @@ class BibleAudioService : MediaSessionService() {
         const val NOTIFICATION_CHANNEL_ID = "audio_bible"
 
         private const val POSITION_POLL_INTERVAL_MS = 100L
+        private const val ARTWORK_SIZE_PX = 256
+
+        /**
+         * Notification id matching media3's
+         * [androidx.media3.session.DefaultMediaNotificationProvider.DEFAULT_NOTIFICATION_ID]
+         * (1001) so media3's later `startForeground` *replaces* our
+         * placeholder rather than stacking a second notification.
+         */
+        private const val PLACEHOLDER_NOTIFICATION_ID = 1001
         private const val TAG = "BibleAudioService"
     }
 
@@ -93,6 +116,21 @@ class BibleAudioService : MediaSessionService() {
     private lateinit var player: BibleAudioPlayer
     private var mediaSession: MediaSession? = null
     private val highlightTracker = HighlightTracker()
+
+    /**
+     * The most recent [AudioRequest] passed to [loadChapter]. Used by
+     * [skipChapter] (lock-screen / Bluetooth-driven prev/next) to compute the
+     * neighbor chapter without needing the activity to be alive.
+     */
+    private var currentRequest: AudioRequest? = null
+
+    /**
+     * Lazily-decoded app-icon bytes used as the lock-screen / notification
+     * artwork. Decoded from the per-flavor `R.mipmap.ic_launcher` (which can be
+     * an adaptive XML on API 26+, hence going through [ResourcesCompat] +
+     * [Drawable.draw] instead of [android.graphics.BitmapFactory.decodeResource]).
+     */
+    private val appIconArtworkBytes: ByteArray? by lazy { decodeAppIconArtwork() }
 
     private val _playbackState = MutableStateFlow(PlaybackState.IDLE)
     val playbackState: StateFlow<PlaybackState> = _playbackState.asStateFlow()
@@ -157,9 +195,21 @@ class BibleAudioService : MediaSessionService() {
             PendingIntent.FLAG_IMMUTABLE,
         )
 
-        mediaSession = MediaSession.Builder(this, player.exoPlayer)
+        // Wrap the inner ExoPlayer so the system's transport controls (lock-
+        // screen, Bluetooth, Android Auto) skip *chapters* instead of media
+        // items. See [BibleChapterNavigatingPlayer] for the rationale; the
+        // short version is "we only ever have one MediaItem queued, so the
+        // standard skipNext/skipPrevious would otherwise be no-ops."
+        val mediaSessionPlayer = BibleChapterNavigatingPlayer(
+            inner = player.exoPlayer,
+            onSeekToNextChapter = { skipChapter(1) },
+            onSeekToPrevChapter = { skipChapter(-1) },
+        )
+
+        mediaSession = MediaSession.Builder(this, mediaSessionPlayer)
             .setSessionActivity(sessionActivity)
             .build()
+            .also { addSession(it) }
 
         // Use our pre-created low-importance channel so the notification doesn't
         // make sound or vibrate.
@@ -169,6 +219,14 @@ class BibleAudioService : MediaSessionService() {
                 .setChannelName(R.string.audio_bible_notification_channel_name)
                 .build()
         )
+
+        // Always post a notification, even while the player is idle (i.e.
+        // between `onCreate` and the first `loadChapter`). The activity calls
+        // `startForegroundService` on us in [AudioBarController.ensureBound]
+        // and the system requires `startForeground` within ~5 seconds; if we
+        // wait for the player to leave IDLE we risk a
+        // `ForegroundServiceDidNotStartInTimeException` on slow networks.
+        setShowNotificationForIdlePlayer(SHOW_NOTIFICATION_FOR_IDLE_PLAYER_ALWAYS)
 
         // Mirror highlight changes into the playback state.
         scope.launch {
@@ -183,6 +241,51 @@ class BibleAudioService : MediaSessionService() {
             return localBinder
         }
         return super.onBind(intent)
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // Post a placeholder notification *immediately* so we satisfy the
+        // 5-second startForeground deadline that begins when
+        // [AudioBarController.ensureBound] calls `startForegroundService`. The
+        // base [MediaSessionService.onStartCommand] only posts a notification
+        // when the incoming intent is a known media action (`ACTION_PLAY`,
+        // `ACTION_MEDIA_BUTTON`, etc.) — our hybrid local-binder pattern
+        // starts the service with a plain `Intent`, so we have to bridge the
+        // gap ourselves.
+        promoteToForegroundWithPlaceholder()
+        val result = super.onStartCommand(intent, flags, startId)
+        // Then ask media3's notification manager to replace the placeholder
+        // with the real MediaStyle (title, artist, artwork, skip buttons).
+        // Without this nudge, the manager's MediaController-driven update
+        // path can lag behind the user-visible "I just tapped play" moment
+        // because it depends on the controller asynchronously connecting.
+        mediaSession?.let { session -> onUpdateNotification(session, /* startInForegroundRequired = */ true) }
+        return result
+    }
+
+    /**
+     * Posts a minimal "Loading audio…" notification on the audio_bible channel
+     * and calls `startForeground`, satisfying the 5-second startForeground
+     * deadline. Subsequent calls update the same notification id, which
+     * media3's `MediaNotificationManager` then takes over with the full
+     * MediaStyle controls (title/artist/artwork/skip buttons) — the
+     * placeholder is visible for at most a few hundred ms in normal use.
+     */
+    private fun promoteToForegroundWithPlaceholder() {
+        val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_audio)
+            .setContentTitle(getString(R.string.audio_bible_notification_loading_title))
+            .setOngoing(true)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setCategory(NotificationCompat.CATEGORY_TRANSPORT)
+            .setShowWhen(false)
+            .build()
+        ServiceCompat.startForeground(
+            this,
+            PLACEHOLDER_NOTIFICATION_ID,
+            notification,
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK,
+        )
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {
@@ -221,12 +324,15 @@ class BibleAudioService : MediaSessionService() {
     fun loadChapter(request: AudioRequest) {
         loadJob?.cancel()
         timingJob?.cancel()
+        currentRequest = request
         // New chapter — reset highlight from any previous chapter and clear errors.
         highlightTracker.setTiming(emptyList())
         _playbackState.update {
             it.copy(
                 preparing = true,
                 isPlaying = false,
+                bookId = request.bookId,
+                chapter_1 = request.chapter_1,
                 verse_1 = 0,
                 positionMs = 0L,
                 durationMs = 0L,
@@ -247,14 +353,19 @@ class BibleAudioService : MediaSessionService() {
                 return@launch
             }
 
+            val metadataBuilder = MediaMetadata.Builder()
+                .setTitle(request.displayTitle)
+                .setArtist(request.displaySubtitle)
+            // The artwork is the same on every chapter for v1 (see PRD §4.4).
+            // We attach the bytes inline rather than a Uri because the default
+            // BitmapLoader only resolves http/file/content schemes, not the
+            // android.resource://… we'd otherwise need for the launcher icon.
+            appIconArtworkBytes?.let { bytes ->
+                metadataBuilder.setArtworkData(bytes, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
+            }
             val mediaItem = MediaItem.Builder()
                 .setUri(url)
-                .setMediaMetadata(
-                    MediaMetadata.Builder()
-                        .setTitle(request.displayTitle)
-                        .setArtist(request.displaySubtitle)
-                        .build()
-                )
+                .setMediaMetadata(metadataBuilder.build())
                 .build()
             player.exoPlayer.setMediaItem(mediaItem)
             player.exoPlayer.playWhenReady = true
@@ -335,9 +446,85 @@ class BibleAudioService : MediaSessionService() {
         loadJob?.cancel()
         timingJob?.cancel()
         positionJob?.cancel()
+        currentRequest = null
         player.pause()
         _playbackState.value = PlaybackState.IDLE
         stopSelf()
+    }
+
+    /**
+     * Loads the chapter immediately before ([direction] = -1) or after
+     * ([direction] = 1) the currently-loaded one. No-op when nothing has been
+     * loaded, when [direction] is invalid, or at the Bible boundary.
+     *
+     * Used both by:
+     *  - the in-app audio bar's prev/next-chapter buttons (via
+     *    [yuku.alkitab.base.audio.AudioBarController]), and
+     *  - the system transport controls (lock-screen / Bluetooth headset),
+     *    routed through [BibleChapterNavigatingPlayer].
+     *
+     * The activity does not need to be alive for this to work — the
+     * [yuku.alkitab.model.Version] is resolved through [S]. When the activity
+     * *is* alive, `AudioBarController` observes the resulting state change and
+     * navigates `IsiActivity` to keep both surfaces in sync.
+     */
+    fun skipChapter(direction: Int) {
+        val current = currentRequest ?: return
+        val resolvedVersion = S.getVersionFromVersionId(current.versionId)?.version
+        val version = resolvedVersion ?: S.activeVersion()
+        val (book, chapter1) = BibleNeighborResolver.neighbor(
+            version,
+            current.bookId,
+            current.chapter_1,
+            direction,
+        ) ?: return
+
+        // Reuse the most recent displaySubtitle when we have no resolved
+        // Version to query — keeps notification metadata stable rather than
+        // flipping to a different version's short name across chapter skips.
+        val versionShortName = resolvedVersion?.shortName ?: current.displaySubtitle
+        loadChapter(
+            AudioRequest(
+                versionId = current.versionId,
+                bookId = book.bookId,
+                chapter_1 = chapter1,
+                displayTitle = "${book.shortName} $chapter1",
+                displaySubtitle = versionShortName,
+            )
+        )
+    }
+
+    /**
+     * Decodes the launcher icon to PNG bytes for use as MediaSession artwork.
+     * Goes through [ResourcesCompat.getDrawable] + draw-into-bitmap so that
+     * adaptive-icon XML (`mipmap-anydpi-v26/ic_launcher.xml`, used by every
+     * production flavor) is handled correctly — `BitmapFactory.decodeResource`
+     * returns null for those.
+     *
+     * Sized at 256×256 px: bigger than the typical lock-screen large-icon
+     * slot (192 dp ≈ 384 px on xxhdpi, but the system downscales fine) and
+     * still small enough that the encoded PNG comes in under ~50 KB, which
+     * keeps the [MediaMetadata] cheap to ship across IPC.
+     */
+    private fun decodeAppIconArtwork(): ByteArray? {
+        return try {
+            val drawable = ResourcesCompat.getDrawable(resources, R.mipmap.ic_launcher, theme)
+                ?: return null
+            val size = ARTWORK_SIZE_PX
+            val bitmap = createBitmap(size, size)
+            val canvas = Canvas(bitmap)
+            drawable.setBounds(0, 0, size, size)
+            drawable.draw(canvas)
+            ByteArrayOutputStream().use { baos ->
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
+                baos.toByteArray()
+            }.also { bitmap.recycle() }
+        } catch (e: Exception) {
+            // Failing to decode artwork should NOT break audio — fall back to
+            // a metadata-only notification (title + artist).
+            AppLog.w(TAG, "Failed to decode launcher icon artwork: ${e.message}")
+            null
+        }
     }
 
     private fun startPositionPolling() {
