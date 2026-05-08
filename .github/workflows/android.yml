@@ -67,6 +67,22 @@ jobs:
         run: |
           printf '%s' "$SIGN_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
 
+      # Build a short label used in artifact names. For PRs we use the PR
+      # number and the PR head's short SHA (not github.sha, which on
+      # pull_request events is the temporary merge commit). For pushes to
+      # develop we fall back to "<branch>-<shortsha>".
+      - name: Compute artifact tag
+        id: tag
+        run: |
+          if [ -n "${{ github.event.pull_request.number }}" ]; then
+            SHA="${{ github.event.pull_request.head.sha }}"
+            LABEL="pr${{ github.event.pull_request.number }}"
+          else
+            SHA="${GITHUB_SHA}"
+            LABEL="${GITHUB_REF_NAME}"
+          fi
+          echo "tag=${LABEL}-${SHA:0:7}" >> "$GITHUB_OUTPUT"
+
       - name: Build signed release (all production flavors)
         env:
           ALKITAB_PROPRIETARY_DIR: ${{ github.workspace }}/proprietary
@@ -80,16 +96,41 @@ jobs:
             assembleYuku_quick_bibleRelease bundleYuku_quick_bibleRelease \
             assembleSabda_alkitabRelease bundleSabda_alkitabRelease
 
-      - name: Upload APKs, bundles, and R8 mapping
+      # Upload one artifact per flavor so each is downloadable separately
+      # from the run page. GitHub always wraps an artifact in a zip, but with
+      # one APK + one AAB + one mapping per artifact the zip stays small.
+      - name: Upload yuku_alkitab outputs
         uses: actions/upload-artifact@v4
         with:
-          name: signed-release-${{ github.sha }}
+          name: yuku_alkitab-${{ steps.tag.outputs.tag }}
           if-no-files-found: error
           retention-days: 14
           path: |
-            Alkitab/build/outputs/apk/*/release/*.apk
-            Alkitab/build/outputs/bundle/*Release/*.aab
-            Alkitab/build/outputs/mapping/*Release/mapping.txt
+            Alkitab/build/outputs/apk/yuku_alkitab/release/*.apk
+            Alkitab/build/outputs/bundle/yuku_alkitabRelease/*.aab
+            Alkitab/build/outputs/mapping/yuku_alkitabRelease/mapping.txt
+
+      - name: Upload yuku_quick_bible outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuku_quick_bible-${{ steps.tag.outputs.tag }}
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            Alkitab/build/outputs/apk/yuku_quick_bible/release/*.apk
+            Alkitab/build/outputs/bundle/yuku_quick_bibleRelease/*.aab
+            Alkitab/build/outputs/mapping/yuku_quick_bibleRelease/mapping.txt
+
+      - name: Upload sabda_alkitab outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: sabda_alkitab-${{ steps.tag.outputs.tag }}
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            Alkitab/build/outputs/apk/sabda_alkitab/release/*.apk
+            Alkitab/build/outputs/bundle/sabda_alkitabRelease/*.aab
+            Alkitab/build/outputs/mapping/sabda_alkitabRelease/mapping.txt
 
       - name: Wipe keystore from runner
         if: always()
