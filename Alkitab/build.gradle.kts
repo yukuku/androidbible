@@ -116,8 +116,8 @@ android {
         applicationId = "yuku.alkitab.debug"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 17000532
-        versionName = "4.11.2"
+        versionCode = 17000600
+        versionName = "5.0.0-b0"
         multiDexEnabled = true
         // Keep this synced with integrate_translations.sh! Also update pref_language.xml and ConfigurationWrapper!
         resourceConfigurations += listOf("af", "bg", "ceb", "cs", "da", "de", "el", "es", "fr", "hu", "in", "it", "ja", "ko", "lv", "ms", "my", "nl", "pl", "pt-rBR", "pt", "ro", "ru", "th", "tl", "tr", "uk", "vi", "zh-rCN", "zh-rTW")
