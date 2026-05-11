@@ -161,7 +161,13 @@ class AudioBarController(
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
             val localBinder = binder as? BibleAudioService.LocalBinder ?: return
-            val svc = localBinder.service
+            // LocalBinder holds the service via WeakReference (to avoid a
+            // service leak via the Binder framework's JNI globals); the
+            // strong reference we hold in `service` keeps it alive for the
+            // lifetime of this binding, so a null here would mean the
+            // service was destroyed before we got our connection — bail out
+            // and let the next show() rebind.
+            val svc = localBinder.service ?: return
             service = svc
             // Note: `bound` is set in [ensureBound] when bindService returns
             // true, NOT here. onServiceConnected is fire-and-forget — if the
@@ -187,17 +193,33 @@ class AudioBarController(
      * Hooks the controller into the activity. Idempotent — calling twice
      * replaces the host without re-binding the service.
      *
-     * The compose host is `setContent`-ed eagerly so the bar can animate in
-     * the moment [requestedVisible] flips, even before the service has
-     * connected.
+     * The compose content is installed lazily on first [show] (not in `attach`)
+     * and disposed in [hide], so the AudioBar's Compose runtime / Recomposer /
+     * snapshot machinery is only active while the bar is actually visible —
+     * otherwise the verses-list scroll stays measurably warmer.
      */
     fun attach(host: Host, composeView: ComposeView) {
         this.host = host
         this.composeView = composeView
-        composeView.setContent {
+    }
+
+    private var composeContentInstalled = false
+
+    private fun ensureComposeContent() {
+        val cv = composeView ?: return
+        if (composeContentInstalled) return
+        cv.setContent {
             val state by uiState.collectAsState()
             AudioBar(state = state, onCommand = ::onCommand, modifier = Modifier)
         }
+        composeContentInstalled = true
+    }
+
+    private fun teardownComposeContent() {
+        val cv = composeView ?: return
+        if (!composeContentInstalled) return
+        cv.disposeComposition()
+        composeContentInstalled = false
     }
 
     /**
@@ -227,6 +249,8 @@ class AudioBarController(
         val host = this.host ?: return
         requestedVisible = true
         ensureBound()
+        // Install the Compose content now (no-op if already installed).
+        ensureComposeContent()
         // Service may not be connected yet; in that case the loadChapter call
         // below is queued via service.let, and we'll fire it when the binder
         // arrives. Either way, mark the UI visible immediately.
@@ -244,9 +268,23 @@ class AudioBarController(
         service?.stop()
         _uiState.update { AudioBarUiState.HIDDEN }
         host?.audioPreparingChanged(false)
-        // We deliberately keep the binding alive until detach(); rebinding is
-        // cheap, but avoiding bind/unbind churn each time the user reopens the
-        // bar matches what Spotify-style audio UIs do.
+        teardownComposeContent()
+        // Unbind so [BibleAudioService] can destroy, releasing ExoPlayer /
+        // MediaSession / foreground notification. Keeping the binding alive
+        // between shows ("avoid bind/unbind churn") left enough audio-stack
+        // overhead resident to make verses-list scroll measurably laggier
+        // after the bar was dismissed.
+        if (bound) {
+            try {
+                context.unbindService(serviceConnection)
+            } catch (e: IllegalArgumentException) {
+                AppLog.w(TAG, "unbindService on hide: ${e.message}")
+            }
+            bound = false
+            service = null
+            collectJob?.cancel()
+            collectJob = null
+        }
     }
 
     /**

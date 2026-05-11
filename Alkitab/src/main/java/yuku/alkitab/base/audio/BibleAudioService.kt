@@ -102,11 +102,29 @@ class BibleAudioService : MediaSessionService() {
         val displaySubtitle: String,
     )
 
-    inner class LocalBinder : Binder() {
-        val service: BibleAudioService get() = this@BibleAudioService
+    /**
+     * Local IPC binder for in-process clients (the M3 audio bar). Must NOT
+     * be an `inner class` — the Binder framework can hold a JNI global
+     * reference to a returned Binder for an indeterminate amount of time
+     * after `unbindService`, and an inner class's implicit `this$0` field
+     * would keep the entire service (ExoPlayer, MediaSession, foreground
+     * notification context, etc.) alive too. Using a static class plus a
+     * [WeakReference] lets the service get garbage-collected as soon as
+     * `onDestroy` releases its strong references, even while the system
+     * still has the binder pinned.
+     *
+     * `service` returns null after the service has been destroyed — clients
+     * (see `AudioBarController.serviceConnection`) cache the strong service
+     * reference at `onServiceConnected` time and clear it on unbind, so the
+     * window where `binder.service` is consulted is always inside a
+     * still-bound lifetime.
+     */
+    class LocalBinder internal constructor(service: BibleAudioService) : Binder() {
+        private val ref = java.lang.ref.WeakReference(service)
+        val service: BibleAudioService? get() = ref.get()
     }
 
-    private val localBinder = LocalBinder()
+    private val localBinder = LocalBinder(this)
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var positionJob: Job? = null
