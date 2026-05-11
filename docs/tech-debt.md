@@ -193,13 +193,14 @@ Newer files (activities, data classes) are Kotlin, creating a mixed codebase whe
 
 ## TD-13: Minimal Test Coverage
 
-22 test files now exist across the project (Alkitab module unit tests unless noted):
+23 test files now exist across the project (Alkitab module unit tests unless noted):
 
 **Added in recent sprints:**
 - `HighlightsTest.kt` — highlight encode/decode, alphaMix, partial highlights (REM-18a)
 - `SyncDeltaTest.kt`, `Sync_MabelTest.kt`, `Sync_PinsTest.kt`, `Sync_RpTest.kt` — sync delta application and entity equality (REM-18b)
 - `InternalDbTest.kt` — marker CRUD, label ordering, highlight storage, attribute loading via Robolectric (REM-18c)
 - `SearchEngineTest.kt` — `ReadyTokens`, `satisfiesTokens`, and `searchByGrep` end-to-end via Robolectric (REM-18d)
+- `ProviderTest.kt` — content provider single/range ARI & LID queries, version listing, MIME type contract, URI mismatch handling via Robolectric (REM-18f)
 - `VerseTextFormatterTest.kt` — pure text-formatting logic extracted from action mode (REM-07)
 - `VerseActionModeControllerTest.kt` — menu visibility rules, click routing, split-1 share URL metadata (REM-07)
 - `SongBookUtilTest.java` — song deserialization safety (REM-01)
@@ -215,7 +216,7 @@ Newer files (activities, data classes) are Kotlin, creating a mixed codebase whe
 - `DesktopVerseFinderTest.java`, `DesktopVerseParserTest.java` — desktop verse finder/parser (in tools/AlkitabConverter)
 - `LauncherTest.java`, `VerseProviderTest.java` — integration tests (in AlkitabIntegration, androidTest)
 
-**Still not tested:** Version loading (YES2 reader/writer round-trip), devotion downloading, song management, content provider, widget logic.
+**Still not tested:** Version loading (YES2 reader/writer round-trip), devotion downloading, song management, widget logic.
 
 ---
 
