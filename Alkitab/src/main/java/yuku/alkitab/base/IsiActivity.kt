@@ -17,6 +17,7 @@ import android.text.style.URLSpan
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.Menu
+import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -855,6 +856,25 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
         val audioBarView: ComposeView = findViewById(R.id.audio_bar)
         audioBinder.attach(audioBarHost, audioBarView)
+        // When the verse-nav toolbar is anchored to the bottom of the screen
+        // (Settings → Display → "Navigasi ayat di bawah"), the audio bar —
+        // which is overlaid via FrameLayout `gravity=bottom` on the outer
+        // overlayContainer — would otherwise sit on top of the toolbar's
+        // slot and hide its goto / version / search buttons. Push the bar
+        // up by exactly one actionBarSize so the two surfaces stack
+        // instead of overlapping. Toggling the setting forces an activity
+        // restart (see DisplayFragment), so a one-shot computation here is
+        // enough; we deliberately don't react to fullscreen toggles, which
+        // hide the action bar but never resize the slot.
+        if (Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default)) {
+            val tv = TypedValue()
+            if (theme.resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+                val actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, resources.displayMetrics)
+                val params = audioBarView.layoutParams as FrameLayout.LayoutParams
+                params.bottomMargin = actionBarHeight
+                audioBarView.layoutParams = params
+            }
+        }
         // Push the verse list up by the bar's height so the last verses are
         // reachable instead of being hidden behind the bar. lsSplit0 / lsSplit1
         // already set `clipToPadding="false"` so the verses still scroll
