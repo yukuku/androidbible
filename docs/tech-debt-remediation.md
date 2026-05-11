@@ -440,6 +440,12 @@ Use Android Studio's "Convert Java File to Kotlin" as a starting point, then man
 4. ✅ Added a test-scope `android.util.Log` shadow at `AlkitabYes2/src/test/java/android/util/Log.java` — mirrors the one in the Alkitab module so direct `Log.e` calls in `Yes2Reader`, `SectionIndex`, and the xref/footnote sections don't trigger "Method not mocked" during plain JUnit.
 5. The tests exposed a latent bug in `SnappyInputStream`: after the last byte of the last block is read, calling `read()` again increments `current_block_index` past the end and throws `ArrayIndexOutOfBoundsException` instead of returning -1. Production callers in `Yes2Reader.TextSectionReader.loadVerseText` always read exact-length ranges derived from verse `varuint` lengths, so they never hit EOF this way. Flagged in-file rather than silently worked around; see `SnappyStreamRoundTripTest.kt`.
 
+**Step 18f: Content provider tests** ✅ COMPLETED
+**Completed in:** `5e2ab27e` (2026-05-11)
+1. ✅ Added `ProviderTest.kt` (14 tests) under `Alkitab/src/test/java/yuku/alkitab/base/cp/` exercising every URI path the read-only [`Provider`](../Alkitab/src/main/java/yuku/alkitab/base/cp/Provider.java) supports: single-verse by ARI (with `_id`, `ari`, book short name, and verse-text assertions), single-verse by LID (resolved via `LidToAri`), range by ARI within a single chapter, range by ARI crossing a chapter boundary, range by ARI crossing a book boundary, range by LID, whole-chapter shorthand (`bbcc00-bbcc00` → all verses in that chapter), and the `bible/versions` listing query (asserts the internal version row using `AppConfig.get()` for `shortName` / `longName` / `description`).
+2. ✅ Pinned the contract edges: `formatting=0` (default) strips inline formatting codes via `FormattedVerseText.removeSpecialCodes`, `formatting=1` returns the raw verse text including codes, out-of-range `bookId` (single or range) returns an empty `MatrixCursor` rather than null, an unknown URI path returns null, and `getType` returns null for every URI (production behaviour — `Provider.getType` is hardcoded to null).
+3. ✅ Same Robolectric setup as steps 18c/d: `@Config(application = Application::class)` to skip `App.onCreate`; existing test-scope shadows of `android.util.Log` and `FirebaseCrashlytics` keep `AppLog` quiet; `yuku.afw.App.context` is wired in `@Before`. The fake `MVersion` returns an anonymous `Version` subclass with two books, three chapters, and one verse carrying real `@@` / `@9` / `@7` formatting codes; `S.setActiveVersion(fakeMv)` overwrites the active version after `ActiveVersionHolder`'s init naturally falls back to the placeholder DDD `MVersionInternal` (constructor-only, no asset I/O). The provider is constructed as an anonymous subclass that no-ops `onCreate` to skip `App.staticInit` (FCM / PRDownloader / FeedbackSender) while still running `attachInfo` to set up the static `UriMatcher`.
+
 ---
 
 ### REM-19: Replace PRDownloaderFixed with WorkManager Downloads
@@ -693,5 +699,5 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 **Sprint 3 (2 weeks):** ~~REM-07~~✅, REM-06, REM-08 — IsiActivity decomposition (REM-07 done)  
 **Sprint 4 (1 week):** ~~REM-12~~✅, ~~REM-14~~✅ — deprecated library replacements (done)  
 **Sprint 5 (2 weeks):** REM-10, REM-11 — Room migration for core tables  
-**Sprint 6 (2 weeks):** REM-09, ~~REM-18a-e~~✅ — ViewModel + test coverage (REM-18a/b/c/d/e done)  
+**Sprint 6 (2 weeks):** REM-09, ~~REM-18a-f~~✅ — ViewModel + test coverage (REM-18a/b/c/d/e/f done)  
 **Ongoing:** REM-15, REM-16, ~~REM-17~~✅ — modernization work mixed into feature sprints (REM-17 done)
