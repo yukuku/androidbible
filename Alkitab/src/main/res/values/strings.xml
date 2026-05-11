@@ -590,8 +590,4 @@
 	<string name="audio_bar_position_no_verse">%1$s</string>
 	<string name="audio_bar_error_no_audio">No audio for this version.</string>
 
-	<!-- Placeholder notification text shown for ~1 second before media3's
-	     MediaStyle notification replaces it. Visible only on slow networks. -->
-	<string name="audio_bible_notification_loading_title">Loading audio…</string>
-
 </resources>

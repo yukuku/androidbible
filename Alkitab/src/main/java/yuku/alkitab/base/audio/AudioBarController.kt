@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import androidx.compose.runtime.collectAsState
-import androidx.core.content.ContextCompat
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -318,18 +317,19 @@ class AudioBarController(
 
     private fun ensureBound() {
         if (bound) return
-        // media3's MediaSessionService transitions to foreground (posting the
-        // lock-screen notification, allowing background playback) only via
-        // `onStartCommand`. A pure `bindService` keeps the service alive while
-        // the activity holds it but never promotes it — meaning audio would
-        // stop the moment the screen locks. Calling `startForegroundService`
-        // alongside `bindService` is the standard hybrid-pattern fix; the
-        // service must `startForeground` within 5 seconds, which media3's
-        // notification manager handles automatically the first time the
-        // player updates (immediately for our case since `loadChapter` is
-        // called right after this returns).
+        // We need the service to outlive the activity (rotation, backgrounding,
+        // lock screen) — a pure `bindService` would die the moment we unbind.
+        // `startService` keeps the service alive without starting the 5-second
+        // `startForeground` deadline, and media3's `MediaNotificationManager`
+        // promotes us to foreground itself the moment the player enters a
+        // user-engaged state (BUFFERING/READY): it calls
+        // `ContextCompat.startForegroundService(...)` + `Service.startForeground`
+        // back-to-back inside the same main-thread frame, so the system's
+        // foreground-service rules are satisfied without us posting anything.
+        // The `mediaPlayback` foreground-service-type exemption covers the
+        // background-start restriction on Android 12+.
         val startIntent = Intent(context, BibleAudioService::class.java)
-        ContextCompat.startForegroundService(context, startIntent)
+        context.startService(startIntent)
         val bindIntent = Intent(context, BibleAudioService::class.java)
             .setAction(BibleAudioService.ACTION_LOCAL_BIND)
         try {
