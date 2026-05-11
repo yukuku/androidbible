@@ -9,8 +9,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.compose.colorpicker.ColorPickerDialog;
 import yuku.alkitab.base.util.Highlights;
@@ -19,7 +18,7 @@ import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 
 public class TypeHighlightDialog {
-    final AlertDialog dialog;
+    final BottomSheetDialog dialog;
     final Listener listener;
 
     @Nullable
@@ -79,29 +78,11 @@ public class TypeHighlightDialog {
         this.verseText = verseText;
 
         dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_highlight, null, false);
-        final MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context)
-            .setView(dialogView)
-            .setIcon(R.drawable.ic_attr_highlight)
-            .setPositiveButton(R.string.ok, (d, w) -> {
-                // only relevant when we edit partial highlight
-                if (verseText == null || info == null) {
-                    return;
-                }
+        dialog = new BottomSheetDialog(context);
+        dialog.setContentView(dialogView);
 
-                final int[] offsets = getSelectionOffsets();
-                assert offsets != null;
-
-                // check for changes
-                if ((info.partial == null && (offsets[0] != 0 || offsets[1] != verseText.length()))
-                    ||
-                    (info.partial != null && (info.partial.startOffset != offsets[0] || info.partial.endOffset != offsets[1]))) {
-                    select(defaultColorRgb, offsets);
-                }
-            })
-            .setNeutralButton(R.string.delete, (d, w) -> select(-1, null));
-        if (title != null) builder.setTitle(title);
-        dialog = builder.show();
-        dialogView.setBackgroundColor(S.applied().backgroundColor);
+        final TextView lTitle = dialogView.findViewById(R.id.lTitle);
+        if (title != null) lTitle.setText(title);
 
         for (int i = 0; i < ids.length; i++) {
             CheckBox cb = dialogView.findViewById(ids[i]);
@@ -119,6 +100,30 @@ public class TypeHighlightDialog {
             ColorPickerDialog.show(context, defaultColorRgb == -1 ? 0xff000000 : defaultColorRgb, color -> {
                 select(0x00ffffff & color, offsets);
             });
+        });
+
+        dialogView.findViewById(R.id.bDelete).setOnClickListener(v -> select(-1, null));
+
+        dialogView.findViewById(R.id.bCancel).setOnClickListener(v -> dialog.dismiss());
+
+        dialogView.findViewById(R.id.bOk).setOnClickListener(v -> {
+            // only relevant when we edit partial highlight
+            if (verseText == null || info == null) {
+                dialog.dismiss();
+                return;
+            }
+
+            final int[] offsets = getSelectionOffsets();
+            assert offsets != null;
+
+            // check for changes
+            if ((info.partial == null && (offsets[0] != 0 || offsets[1] != verseText.length()))
+                ||
+                (info.partial != null && (info.partial.startOffset != offsets[0] || info.partial.endOffset != offsets[1]))) {
+                select(defaultColorRgb, offsets);
+            } else {
+                dialog.dismiss();
+            }
         });
 
         tVerseText = dialogView.findViewById(R.id.tVerseText);
@@ -145,6 +150,8 @@ public class TypeHighlightDialog {
             filters[originalFilters.length] = (source, start, end, dest, dstart, dend) -> dest.subSequence(dstart, dend);
             tVerseText.setFilters(filters);
         }
+
+        dialog.show();
     }
 
     private int[] getSelectionOffsets() {

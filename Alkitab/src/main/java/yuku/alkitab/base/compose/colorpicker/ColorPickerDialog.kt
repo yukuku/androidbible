@@ -1,21 +1,36 @@
 package yuku.alkitab.base.compose.colorpicker
 
 import android.content.Context
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import yuku.alkitab.base.compose.BibleAppTheme
 import yuku.alkitab.debug.R
 
 /**
  * Java-friendly wrapper around [IosColorPicker]. Shows the picker inside a
- * Material alert dialog and reports the chosen RGB color via [Listener].
+ * Material bottom sheet and reports the chosen RGB color via [Listener].
  */
 object ColorPickerDialog {
     /** Java functional interface — called on OK with the chosen RGB color (alpha = 0xff). */
@@ -30,28 +45,47 @@ object ColorPickerDialog {
      */
     @JvmStatic
     fun show(context: Context, initialColor: Int, listener: Listener) {
+        val sheet = BottomSheetDialog(context)
         val composeView = ComposeView(context)
-        // The Compose runtime needs a lifecycle owner; ComposeView attaches itself
-        // automatically when added to a View tree that has one (AppCompatActivity does).
-        var currentColor = initialColor or 0xff000000.toInt()
         composeView.setContent {
             BibleAppTheme {
-                var selected by remember { mutableStateOf(currentColor) }
-                IosColorPicker(
-                    initialColor = initialColor,
-                    onColorChanged = {
-                        selected = it
-                        currentColor = it
-                    },
-                    modifier = Modifier.padding(16.dp),
-                )
+                var currentColor by remember { mutableStateOf(initialColor or 0xff000000.toInt()) }
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 12.dp)
+                        .navigationBarsPadding(),
+                ) {
+                    IosColorPicker(
+                        initialColor = initialColor,
+                        onColorChanged = { currentColor = it },
+                    )
+                    Spacer(Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
+                    ) {
+                        TextButton(onClick = { sheet.dismiss() }) {
+                            Text(stringResource(R.string.cancel))
+                        }
+                        Spacer(Modifier.width(8.dp))
+                        Button(onClick = {
+                            listener.onColorPicked(currentColor)
+                            sheet.dismiss()
+                        }) {
+                            Text(stringResource(R.string.ok))
+                        }
+                    }
+                    Spacer(Modifier.height(8.dp))
+                }
             }
         }
-
-        MaterialAlertDialogBuilder(context)
-            .setView(composeView)
-            .setPositiveButton(R.string.ok) { _, _ -> listener.onColorPicked(currentColor) }
-            .setNegativeButton(R.string.cancel, null)
-            .show()
+        sheet.setContentView(composeView)
+        // Skip the half-expanded peek state — the picker is dense enough that the user
+        // should always see the full content + OK/Cancel buttons immediately.
+        sheet.behavior.skipCollapsed = true
+        sheet.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        sheet.show()
     }
 }
