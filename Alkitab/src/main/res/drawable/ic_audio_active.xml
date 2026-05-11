@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+	Variant of [ic_audio] used by the toolbar audio menu while the audio bar
+	is open. Adds an accent-colored dot to the upper-end corner of the speaker
+	so the user can tell at a glance that an audio session is active without
+	relying on the icon's own color (which is themed alongside the rest of the
+	toolbar icons). Same 24dp footprint as the base icon — no toolbar reflow
+	when swapping in/out.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:drawable="@drawable/ic_audio" />
+	<item
+		android:width="8dp"
+		android:height="8dp"
+		android:gravity="top|end"
+		android:end="0dp"
+		android:top="0dp">
+		<shape android:shape="oval">
+			<solid android:color="@color/accent" />
+		</shape>
+	</item>
+</layer-list>

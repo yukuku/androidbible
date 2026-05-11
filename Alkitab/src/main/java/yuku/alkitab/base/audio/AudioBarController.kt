@@ -93,8 +93,15 @@ class AudioBarController(
         /** Tell the activity to navigate to [book] / [chapter_1] (the existing `display` flow). */
         fun audioDisplayChapter(book: Book, chapter_1: Int)
 
-        /** Notifies the activity that the spinner-vs-icon state may need to flip. */
-        fun audioPreparingChanged(preparing: Boolean)
+        /**
+         * Fired when the user opens or closes the audio bar — i.e. when an
+         * audio session begins or ends. Used by the activity to swap the
+         * toolbar audio icon between its inactive and active variants. NOT
+         * called for transient state changes (preparing, buffering, seeking)
+         * — those flicker too fast to drive a toolbar refresh and are already
+         * surfaced by the bar's own play-button spinner.
+         */
+        fun audioBarVisibilityChanged(visible: Boolean)
     }
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -153,9 +160,9 @@ class AudioBarController(
             return ids.any { AudioCatalogRepository.isAudioAvailable(it) }
         }
 
-    /** True while the service is preparing a chapter — drives the toolbar spinner. */
-    val isPreparing: Boolean
-        get() = _uiState.value.preparing
+    /** True while the audio bar is on screen — drives the toolbar audio-icon variant. */
+    val isBarVisible: Boolean
+        get() = _uiState.value.visible
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
@@ -254,7 +261,7 @@ class AudioBarController(
         // below is queued via service.let, and we'll fire it when the binder
         // arrives. Either way, mark the UI visible immediately.
         _uiState.update { it.copy(visible = true, preparing = service == null) }
-        host.audioPreparingChanged(true)
+        host.audioBarVisibilityChanged(true)
         service?.let { svc -> svc.loadChapter(buildRequest(host)) }
             ?: run {
                 pendingLoad = host
@@ -266,7 +273,7 @@ class AudioBarController(
         dragging = false
         service?.stop()
         _uiState.update { AudioBarUiState.HIDDEN }
-        host?.audioPreparingChanged(false)
+        host?.audioBarVisibilityChanged(false)
         teardownComposeContent()
         // Unbind so [BibleAudioService] can destroy, releasing ExoPlayer /
         // MediaSession / foreground notification. Keeping the binding alive
@@ -405,7 +412,6 @@ class AudioBarController(
 
     private fun projectToUi(state: PlaybackState) {
         val host = this.host
-        val prevPreparing = _uiState.value.preparing
         // Snapshot before we drain — if a load was queued before the service
         // connected, the first incoming state is usually `IDLE`, which would
         // briefly clear the spinner before our loadChapter call sets it back
@@ -461,10 +467,6 @@ class AudioBarController(
                 // disabled, which is the spec.
                 timingAvailable = state.verse_1 > 0 || current.timingAvailable,
             )
-        }
-
-        if (prevPreparing != effectivePreparing) {
-            host?.audioPreparingChanged(effectivePreparing)
         }
     }
 
