@@ -479,6 +479,8 @@ Use Android Studio's "Convert Java File to Kotlin" as a starting point, then man
 
 **Verification:** `./gradlew assemblePlainDebug` and `./gradlew testPlainDebugUnitTest testPlainReleaseUnitTest` both pass.
 
+**Commit:** `29bfd31e` — REM-20: replace AmbilWarnaDialog call sites with iOS-style Compose picker.
+
 ---
 
 ### ~~REM-26: Port VerseRenderer to Kotlin~~ ✅ COMPLETED (2026-04-20)
