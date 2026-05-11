@@ -172,33 +172,37 @@ private fun GridTab(
     selectedColor: Int,
     onColorPicked: (Int) -> Unit,
 ) {
+    // No gaps between cells; selection is shown by a thin inset that reveals the
+    // surrounding container color (white for most cells, grey for the white cell at
+    // position 0 so it remains visible). Mirrors the Flutter ios_color_picker grid.
     Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(3.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp)),
     ) {
         for (row in 0 until GRID_ROWS) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(3.dp),
-            ) {
+            Row(modifier = Modifier.fillMaxWidth()) {
                 for (col in 0 until GRID_COLS) {
-                    val c = GRID_COLORS[row * GRID_COLS + col]
+                    val index = row * GRID_COLS + col
+                    val c = GRID_COLORS[index]
                     val isSelected = (c and 0xffffff) == (selectedColor and 0xffffff)
+                    val ringBg = if (index == 0) Color(0xff999999.toInt()) else Color.White
                     Box(
                         modifier = Modifier
                             .weight(1f)
                             .aspectRatio(1f)
-                            .clip(RoundedCornerShape(4.dp))
-                            .background(Color(0xff000000.toInt() or c))
-                            .border(
-                                width = if (isSelected) 2.5.dp else 0.5.dp,
-                                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
-                                shape = RoundedCornerShape(4.dp),
-                            )
+                            .background(ringBg)
                             .pointerInput(c) {
                                 detectTapGestures { onColorPicked(c or 0xff000000.toInt()) }
                             },
-                    )
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .padding(if (isSelected) 3.dp else 0.dp)
+                                .background(Color(0xff000000.toInt() or c)),
+                        )
+                    }
                 }
             }
         }
