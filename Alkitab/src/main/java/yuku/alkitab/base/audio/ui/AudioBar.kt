@@ -126,12 +126,18 @@ sealed interface AudioBarCommand {
  * combine a vertical slide with a fade so the bar's elevation shadow doesn't
  * appear instantly above the chapter list.
  */
+private var audioBarRecomposeCount = 0
+
 @Composable
 fun AudioBar(
     state: AudioBarUiState,
     onCommand: (AudioBarCommand) -> Unit,
     modifier: Modifier,
 ) {
+    audioBarRecomposeCount++
+    if (audioBarRecomposeCount % 10 == 0) {
+        println("YUKU0 ab.compose x10 visible=${state.visible} verse=${state.verse_1} preparing=${state.preparing} pos=${state.positionMs} total=$audioBarRecomposeCount")
+    }
     AudioTheme {
         AnimatedVisibility(
             visible = state.visible,

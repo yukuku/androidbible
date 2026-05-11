@@ -192,6 +192,7 @@ class AudioBarController(
      * connected.
      */
     fun attach(host: Host, composeView: ComposeView) {
+        println("YUKU0 abc.life attach")
         this.host = host
         this.composeView = composeView
         composeView.setContent {
@@ -224,6 +225,7 @@ class AudioBarController(
     }
 
     fun show() {
+        println("YUKU0 abc.life show")
         val host = this.host ?: return
         requestedVisible = true
         ensureBound()
@@ -239,6 +241,7 @@ class AudioBarController(
     }
 
     fun hide() {
+        println("YUKU0 abc.life hide")
         requestedVisible = false
         dragging = false
         service?.stop()
@@ -255,6 +258,7 @@ class AudioBarController(
      * may continue playing when the activity is recreated (M4 lock-screen).
      */
     fun detach() {
+        println("YUKU0 abc.life detach")
         if (bound) {
             try {
                 context.unbindService(serviceConnection)
@@ -365,7 +369,12 @@ class AudioBarController(
         }
     }
 
+    private var projectToUiCount = 0
     private fun projectToUi(state: PlaybackState) {
+        projectToUiCount++
+        if (projectToUiCount % 10 == 0) {
+            println("YUKU0 abc.proj x10 verse=${state.verse_1} bookId=${state.bookId} chapter=${state.chapter_1} pos=${state.positionMs} isPlaying=${state.isPlaying} preparing=${state.preparing} total=$projectToUiCount")
+        }
         val host = this.host
         val prevPreparing = _uiState.value.preparing
         // Snapshot before we drain — if a load was queued before the service

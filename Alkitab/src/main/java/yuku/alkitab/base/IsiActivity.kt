@@ -861,8 +861,13 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // through the padding region under the bar (matches the
         // YouTube-Music-style "content fades out behind the player" feel).
         audioBarView.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
-            if (bottom - top != oldBottom - oldTop) {
-                applyAudioBarBottomInset(bottom - top)
+            val newH = bottom - top
+            val oldH = oldBottom - oldTop
+            if (newH != oldH) {
+                println("YUKU0 ia.layoutChg CHANGE oldH=$oldH newH=$newH")
+                applyAudioBarBottomInset(newH)
+            } else {
+                println("YUKU0 ia.layoutChg NO-OP h=$newH")
             }
         }
         lifecycleScope.launch {
@@ -879,6 +884,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             // dialog (PRD §4.5) and route the highlight to whichever side the
             // user selects; for M3 we always pick the primary.
             audioBinder.uiState.collect { state ->
+                println("YUKU0 ia.uiState collected verse_1=${state.verse_1} visible=${state.visible} preparing=${state.preparing} isPlaying=${state.isPlaying}")
                 applyAudioHighlightTo(lsSplit0, state.verse_1)
             }
         }
@@ -894,6 +900,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
     private fun applyAudioHighlightTo(controller: VersesController, verse_1: Int) {
         if (verse_1 == 0) {
+            println("YUKU0 ia.applyHL verse_1=0 -> setAudioHighlight(0,0)")
             controller.setAudioHighlight(0, 0)
             return
         }
@@ -902,9 +909,12 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                 readingBackground = S.applied().backgroundColor,
                 verseTextColor = S.applied().fontColor,
             )
+            println("YUKU0 ia.applyHL color cache miss, computed=$audioHighlightColorCached")
         }
+        println("YUKU0 ia.applyHL verse_1=$verse_1 color=$audioHighlightColorCached")
         controller.setAudioHighlight(verse_1, audioHighlightColorCached)
     }
+
 
     /**
      * Reserve [pxBottom] pixels at the bottom of each verse RecyclerView so the
@@ -914,6 +924,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
      * to its last verse.
      */
     private fun applyAudioBarBottomInset(pxBottom: Int) {
+        println("YUKU0 ia.applyInset px=$pxBottom")
         lsSplit0.setAudioBarBottomInset(pxBottom)
         lsSplit1.setAudioBarBottomInset(pxBottom)
     }

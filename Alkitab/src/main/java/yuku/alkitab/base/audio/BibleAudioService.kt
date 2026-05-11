@@ -388,12 +388,14 @@ class BibleAudioService : MediaSessionService() {
     }
 
     fun play() {
+        println("YUKU0 svc.state play")
         player.play()
         _playbackState.update { it.copy(isPlaying = true) }
         startPositionPolling()
     }
 
     fun pause() {
+        println("YUKU0 svc.state pause")
         player.pause()
         positionJob?.cancel()
         _playbackState.update { it.copy(isPlaying = false) }
@@ -443,6 +445,7 @@ class BibleAudioService : MediaSessionService() {
      * reached READY.
      */
     fun stop() {
+        println("YUKU0 svc.state stop")
         loadJob?.cancel()
         timingJob?.cancel()
         positionJob?.cancel()
@@ -533,7 +536,9 @@ class BibleAudioService : MediaSessionService() {
         }
     }
 
+    private var pollTickCount = 0
     private fun startPositionPolling() {
+        println("YUKU0 svc.poll START")
         positionJob?.cancel()
         positionJob = scope.launch {
             while (isActive) {
@@ -545,6 +550,10 @@ class BibleAudioService : MediaSessionService() {
                         positionMs = pos,
                         durationMs = player.durationMs,
                     )
+                }
+                pollTickCount++
+                if (pollTickCount % 10 == 0) {
+                    println("YUKU0 svc.poll tick x10 pos=$pos isPlaying=${player.isPlaying} total=$pollTickCount")
                 }
                 delay(POSITION_POLL_INTERVAL_MS)
             }

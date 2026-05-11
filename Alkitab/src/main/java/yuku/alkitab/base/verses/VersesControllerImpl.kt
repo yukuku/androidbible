@@ -450,7 +450,11 @@ class VersesControllerImpl(
         // (mirroring the service's position poll). Bailing out when nothing
         // actually changed avoids a needless findViewByPosition + restart of
         // the LinearSmoothScroller animation.
-        if (audioHighlight.verse_1 == verse_1 && audioHighlight.color == color) return
+        if (audioHighlight.verse_1 == verse_1 && audioHighlight.color == color) {
+            println("YUKU0 vc.setHL NO-OP verse=$verse_1 color=$color")
+            return
+        }
+        println("YUKU0 vc.setHL CHANGE prevVerse=${audioHighlight.verse_1} prevColor=${audioHighlight.color} newVerse=$verse_1 newColor=$color")
 
         // Always clear the old row first — even when the new verse_1 is 0 or
         // the same number — so an off-by-one (e.g. timing gap between verses)
@@ -461,13 +465,18 @@ class VersesControllerImpl(
         if (previous != 0 && previous != verse_1) {
             val prevPos = versesDataModel.getPositionIgnoringPericopeFromVerse(previous)
             if (prevPos != -1) {
+                println("YUKU0 vc.setHL clearing prev verse=$previous pos=$prevPos")
                 (layoutManager.findViewByPosition(prevPos) as? VerseItem)?.audioHighlightColor = 0
             }
         }
-        if (verse_1 == 0) return
+        if (verse_1 == 0) {
+            println("YUKU0 vc.setHL verse_1=0 done (no smooth-scroll)")
+            return
+        }
 
         val pos = versesDataModel.getPositionIgnoringPericopeFromVerse(verse_1)
         if (pos == -1) return
+        println("YUKU0 vc.setHL applying new color verse=$verse_1 pos=$pos")
         (layoutManager.findViewByPosition(pos) as? VerseItem)?.audioHighlightColor = color
 
         // Smooth-scroll the highlighted verse into the upper third of the
@@ -475,6 +484,7 @@ class VersesControllerImpl(
         // overshoot via calculateDtToFit pushes it down so the highlighted
         // row sits ~1/3 from the top — gives users context above and room
         // for upcoming verses below.
+        println("YUKU0 vc.setHL startSmoothScroll target=$pos")
         val smoothScroller = object : LinearSmoothScroller(rv.context) {
             override fun getVerticalSnapPreference(): Int = SNAP_TO_START
 
@@ -500,7 +510,11 @@ class VersesControllerImpl(
     }
 
     override fun setAudioBarBottomInset(pxBottom: Int) {
-        if (audioBarBottomInsetPx == pxBottom) return
+        if (audioBarBottomInsetPx == pxBottom) {
+            println("YUKU0 vc.setInset NO-OP px=$pxBottom")
+            return
+        }
+        println("YUKU0 vc.setInset CHANGE prev=$audioBarBottomInsetPx new=$pxBottom")
         audioBarBottomInsetPx = pxBottom
         applyPadding()
     }
@@ -512,6 +526,7 @@ class VersesControllerImpl(
      * values here means neither stomps on the other.
      */
     private fun applyPadding() {
+        println("YUKU0 vc.pad applyPadding base=$basePadding inset=$audioBarBottomInsetPx")
         rv.setPadding(
             basePadding.left,
             basePadding.top,
@@ -555,6 +570,9 @@ class AudioHighlight {
 }
 
 sealed class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+/** YUKU0 perf-debug counter: increments every time `VerseTextHolder.bind` runs the audio-highlight assignment. */
+private var bindAudioHighlightLogCount = 0
 
 class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
     /**
@@ -681,6 +699,10 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         // on the view is a no-op (the setter early-returns when value == field),
         // so this doesn't restart the fade animation when the same row scrolls
         // off and back into view while still being the active verse.
+        bindAudioHighlightLogCount++
+        if (bindAudioHighlightLogCount % 30 == 0) {
+            println("YUKU0 vh.bind audioHL x30 verse_1=$verse_1 hlVerse=${audioHighlight.verse_1} hlColor=${audioHighlight.color} viewHash=${System.identityHashCode(view)} total=$bindAudioHighlightLogCount")
+        }
         view.audioHighlightColor = if (verse_1 == audioHighlight.verse_1) audioHighlight.color else 0
 
         // Click listener on the whole item view

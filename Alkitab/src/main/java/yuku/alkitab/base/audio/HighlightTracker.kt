@@ -53,6 +53,7 @@ class HighlightTracker {
     fun update(positionMs: Long) {
         val resolved = resolveVerse(positionMs)
         if (resolved != _verse1.value) {
+            println("YUKU0 ht.upd verse changed prev=${_verse1.value} new=$resolved pos=$positionMs")
             _verse1.value = resolved
         }
     }

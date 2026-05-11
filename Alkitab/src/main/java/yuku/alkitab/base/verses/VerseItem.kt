@@ -80,7 +80,11 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
      */
     var audioHighlightColor: Int = 0
         set(value) {
-            if (field == value) return
+            if (field == value) {
+                println("YUKU0 vi.color setter NO-OP this=${System.identityHashCode(this)} value=$value")
+                return
+            }
+            println("YUKU0 vi.color setter CHANGE this=${System.identityHashCode(this)} from=$field to=$value")
             field = value
             startAudioHighlightAnim(value)
         }
@@ -89,20 +93,28 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
     private var audioHighlightAlpha: Float = 0f
         set(value) {
             field = value
+            audioAlphaSetCount++
+            if (audioAlphaSetCount % 30 == 0) {
+                println("YUKU0 vi.alpha setter x30 this=${System.identityHashCode(this)} value=$value total=$audioAlphaSetCount")
+            }
             invalidate()
         }
+    private var audioAlphaSetCount = 0
 
     private var audioHighlightAnimator: ValueAnimator? = null
 
     private fun startAudioHighlightAnim(targetColor: Int) {
+        println("YUKU0 vi.anim start this=${System.identityHashCode(this)} target=$targetColor curAlpha=$audioHighlightAlpha")
         audioHighlightAnimator?.cancel()
         val from = audioHighlightAlpha
         val to = if (targetColor == 0) 0f else 1f
         if (from == to) {
+            println("YUKU0 vi.anim noop (from==to=$to)")
             audioHighlightAlpha = to
             return
         }
         val duration = if (to > from) AUDIO_HIGHLIGHT_FADE_IN_MS else AUDIO_HIGHLIGHT_FADE_OUT_MS
+        println("YUKU0 vi.anim ofFloat from=$from to=$to dur=$duration")
         audioHighlightAnimator = ValueAnimator.ofFloat(from, to).apply {
             this.duration = duration.toLong()
             addUpdateListener { audioHighlightAlpha = it.animatedValue as Float }
@@ -179,6 +191,10 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
         // so a verse the user is selecting while audio plays still reads as
         // "selected" rather than blending with the audio tint.
         if (audioHighlightColor != 0 && audioHighlightAlpha > 0f) {
+            audioDrawCount++
+            if (audioDrawCount % 30 == 0) {
+                println("YUKU0 vi.draw x30 this=${System.identityHashCode(this)} color=$audioHighlightColor alpha=$audioHighlightAlpha total=$audioDrawCount")
+            }
             val baseAlpha = ((audioHighlightColor ushr 24) and 0xff) / 255f
             val alpha = (baseAlpha * audioHighlightAlpha * 255f).toInt().coerceIn(0, 255)
             audioHighlightPaint.color = ColorUtils.setAlphaComponent(audioHighlightColor, alpha)
@@ -308,6 +324,8 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
 
         return res
     }
+
+    private var audioDrawCount = 0
 
     companion object {
         private const val ATTENTION_DURATION = 2000f
