@@ -33,7 +33,8 @@
 			android:id="@+id/lTitle"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:textAppearance="?attr/textAppearanceTitleMedium" />
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textStyle="bold" />
 	</LinearLayout>
 
 	<TextView
@@ -160,7 +161,7 @@
 
 	<com.google.android.material.button.MaterialButton
 		android:id="@+id/bOtherColors"
-		style="@style/Widget.Material3.Button.OutlinedButton"
+		style="@style/Widget.MaterialComponents.Button.OutlinedButton"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"
@@ -176,7 +177,7 @@
 
 		<com.google.android.material.button.MaterialButton
 			android:id="@+id/bDelete"
-			style="@style/Widget.Material3.Button.TextButton"
+			style="@style/Widget.MaterialComponents.Button.TextButton"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="@string/delete" />
@@ -188,14 +189,14 @@
 
 		<com.google.android.material.button.MaterialButton
 			android:id="@+id/bCancel"
-			style="@style/Widget.Material3.Button.TextButton"
+			style="@style/Widget.MaterialComponents.Button.TextButton"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="@string/cancel" />
 
 		<com.google.android.material.button.MaterialButton
 			android:id="@+id/bOk"
-			style="@style/Widget.Material3.Button.TonalButton"
+			style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginStart="8dp"

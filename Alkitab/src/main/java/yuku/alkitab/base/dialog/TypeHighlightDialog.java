@@ -1,8 +1,10 @@
 package yuku.alkitab.base.dialog;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.text.InputFilter;
 import android.text.Selection;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -83,6 +85,11 @@ public class TypeHighlightDialog {
 
         final TextView lTitle = dialogView.findViewById(R.id.lTitle);
         if (title != null) lTitle.setText(title);
+        // Match the verse text color so the title is visible regardless of theme
+        // resolution inside the BottomSheetDialog's overlay context.
+        lTitle.setTextColor(S.applied().fontColor);
+        lTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+        lTitle.setTypeface(lTitle.getTypeface(), Typeface.BOLD);
 
         for (int i = 0; i < ids.length; i++) {
             CheckBox cb = dialogView.findViewById(ids[i]);
