@@ -28,6 +28,7 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.compose.colorpicker.ColorPickerDialog;
 import yuku.alkitab.base.dialog.LabelEditorDialog;
 import yuku.alkitab.base.events.AppEvents;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
@@ -38,7 +39,6 @@ import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
-import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class MarkersActivity extends BaseActivity {
     static final String TAG = MarkersActivity.class.getSimpleName();
@@ -204,20 +204,11 @@ public class MarkersActivity extends BaseActivity {
             return true;
         } else if (itemId == R.id.menuChangeLabelColor) {
             int colorRgb = LabelColorUtil.decodeBackground(label.backgroundColor);
-            new AmbilWarnaDialog(MarkersActivity.this, 0xff000000 | colorRgb, new AmbilWarnaDialog.OnAmbilWarnaListener() {
-                @Override
-                public void onOk(AmbilWarnaDialog dialog, int color) {
-                    label.backgroundColor = LabelColorUtil.encodeBackground(0x00ffffff & color);
-
-                    S.getDb().insertOrUpdateLabel(label);
-                    adapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onCancel(AmbilWarnaDialog dialog) {
-                    // nop
-                }
-            }).show();
+            ColorPickerDialog.show(MarkersActivity.this, 0xff000000 | colorRgb, color -> {
+                label.backgroundColor = LabelColorUtil.encodeBackground(0x00ffffff & color);
+                S.getDb().insertOrUpdateLabel(label);
+                adapter.notifyDataSetChanged();
+            });
 
             return true;
         }

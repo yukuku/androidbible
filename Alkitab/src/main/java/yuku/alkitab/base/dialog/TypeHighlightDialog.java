@@ -12,11 +12,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.compose.colorpicker.ColorPickerDialog;
 import yuku.alkitab.base.util.Highlights;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
-import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class TypeHighlightDialog {
     final AlertDialog dialog;
@@ -116,16 +116,9 @@ public class TypeHighlightDialog {
             // save the selection first
             final int[] offsets = getSelectionOffsets();
 
-            new AmbilWarnaDialog(context, defaultColorRgb == -1 ? 0xff000000 : defaultColorRgb, new AmbilWarnaDialog.OnAmbilWarnaListener() {
-                @Override
-                public void onCancel(final AmbilWarnaDialog dialog) {
-                }
-
-                @Override
-                public void onOk(final AmbilWarnaDialog dialog, final int color) {
-                    select(0x00ffffff & color, offsets);
-                }
-            }).show();
+            ColorPickerDialog.show(context, defaultColorRgb == -1 ? 0xff000000 : defaultColorRgb, color -> {
+                select(0x00ffffff & color, offsets);
+            });
         });
 
         tVerseText = dialogView.findViewById(R.id.tVerseText);
