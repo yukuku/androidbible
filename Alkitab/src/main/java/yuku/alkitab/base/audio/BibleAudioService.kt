@@ -55,10 +55,14 @@ import yuku.alkitab.debug.R
  * local-binder pattern starts the service with a plain `Intent` from
  * [yuku.alkitab.base.audio.AudioBarController.ensureBound], so we override
  * [onStartCommand] to post a placeholder notification (satisfying the
- * 5-second `startForeground` deadline) and then explicitly invoke
- * [onUpdateNotification] to let media3's [DefaultMediaNotificationProvider]
- * replace the placeholder with the real MediaStyle. The channel id matches
- * the one created in `App.staticInit()`.
+ * 5-second `startForeground` deadline) on the very first start. After that,
+ * media3's `MediaNotificationManager` posts its own MediaStyle notification
+ * — and **also** calls `ContextCompat.startForegroundService(...)` on every
+ * foreground notification update, which re-enters [onStartCommand]; we
+ * detect that case by looking at the player's current media item and skip
+ * the placeholder, otherwise the real chapter title would flap with
+ * "Loading audio…" through the entire prepare window. The channel id
+ * matches the one created in `App.staticInit()`.
  *
  * Audio focus, becoming-noisy, lock-screen / Bluetooth media-button handling
  * all come for free with `MediaSession` + the audio attributes set on the
@@ -262,23 +266,33 @@ class BibleAudioService : MediaSessionService() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // Post a placeholder notification *immediately* so we satisfy the
-        // 5-second startForeground deadline that begins when
-        // [AudioBarController.ensureBound] calls `startForegroundService`. The
-        // base [MediaSessionService.onStartCommand] only posts a notification
-        // when the incoming intent is a known media action (`ACTION_PLAY`,
-        // `ACTION_MEDIA_BUTTON`, etc.) — our hybrid local-binder pattern
-        // starts the service with a plain `Intent`, so we have to bridge the
-        // gap ourselves.
-        promoteToForegroundWithPlaceholder()
-        val result = super.onStartCommand(intent, flags, startId)
-        // Then ask media3's notification manager to replace the placeholder
-        // with the real MediaStyle (title, artist, artwork, skip buttons).
-        // Without this nudge, the manager's MediaController-driven update
-        // path can lag behind the user-visible "I just tapped play" moment
-        // because it depends on the controller asynchronously connecting.
-        mediaSession?.let { session -> onUpdateNotification(session, /* startInForegroundRequired = */ true) }
-        return result
+        // Post the placeholder only when the player has no media item yet —
+        // i.e. on the *first* start, before [loadChapter] has set one.
+        //
+        // media3's `MediaNotificationManager.startForeground` calls
+        // `ContextCompat.startForegroundService(...)` on every foreground
+        // notification update (state transition to BUFFERING/READY, artwork
+        // loaded callback, every `onEvents` refresh) before it issues the
+        // real `Service.startForeground` with the chapter title. Each of
+        // those re-enters this method. If we re-posted the placeholder here
+        // we'd clobber the real "Kejadian 1"-style notification a few ms
+        // after media3 just wrote it — causing the title to flap between
+        // the chapter name and "Loading audio…" through the whole prepare
+        // window.
+        //
+        // We also deliberately don't forward to `onUpdateNotification` here.
+        // When the timeline is still empty (first start, no MediaItem set
+        // yet) that call routes to `MediaNotificationManager.removeNotification`
+        // → `stopForeground(removeNotifications=true)`, which would drop the
+        // placeholder *and* demote us out of foreground a moment after
+        // [ServiceCompat.startForeground] put us there. Once `loadChapter`
+        // sets a MediaItem and the player transitions to BUFFERING, media3's
+        // own `MediaControllerListener.onEvents` triggers the notification
+        // update at the right moment.
+        if (mediaSession?.player?.currentMediaItem == null) {
+            promoteToForegroundWithPlaceholder()
+        }
+        return super.onStartCommand(intent, flags, startId)
     }
 
     /**
