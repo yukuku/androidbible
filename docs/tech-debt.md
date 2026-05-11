@@ -1,19 +1,19 @@
 # Tech Debt, Improvements & Critiques
 
-## TD-01: IsiActivity God Class (~2320 lines)
+## TD-01: IsiActivity God Class (~2371 lines)
 
 **File:** `Alkitab/src/main/java/yuku/alkitab/base/IsiActivity.kt`
 
-The main Bible reader activity is a monolithic class containing many inline lambda callbacks, ~2320 lines of mixed concerns (down from 2897 after REM-07 extracted action mode). Specific clusters that violate single-responsibility:
+The main Bible reader activity is a monolithic class containing many inline lambda callbacks, ~2371 lines of mixed concerns (down from 2897 after REM-07 extracted action mode, then back up slightly to 2452 with the audio-bible M1–M4 additions, now down to 2371 after REM-06 extracted gesture handling). Specific clusters that violate single-responsibility:
 
-- **Gesture handling (lines 143–370):** `onFloaterDragStart/Move/Complete`, `onOnefingerLeft/Right`, `onTwofingerStart/Scale/DragX/DragY/End` — all inline lambdas that implement `TwofingerLinearLayout.Listener`. This is ~230 lines of touch gesture processing embedded in the Activity.
+- **~~Gesture handling~~** ✅ **Extracted (REM-06):** The three gesture lambdas — `splitRoot_listener` (`TwofingerLinearLayout.Listener` for pinch zoom + one/two-finger swipes), `bGoto_floaterDrag` (`GotoButton.FloaterDragListener`), and `floater_listener` (`Floater.Listener`) — have been moved to `ReaderGestureHandler.kt` behind two interfaces (`ReaderGestureHost`, `ReaderGestureActions`). The activity now wires a single `gestureHandler` lazy field into all three setListener call sites. Gesture-local state (`startFontSize`, `startDx`, `moreSwipeYAllowed`, `chapterSwipeCellWidth`, `floaterLocationOnScreen`) lives on the handler instead of in inline objects.
 - **~~Action mode~~** ✅ **Extracted (REM-07):** The ~500-line `actionMode_callback` object has been moved to `VerseActionModeController.kt` behind two interfaces (`VerseActionModeHost`, `VerseActionModeActions`). Pure text-building logic is in `VerseTextFormatter` (no Android deps). `RibkaEligibility` is a top-level file. 26 unit tests added.
 - **Broadcast receivers (lines 451–519):** Two anonymous `BroadcastReceiver` instances registered inline, one for verse attribute changes and one for version changes.
 - **Verse selection listeners (lines 463–525):** Two `SelectedVersesListener` implementations (`lsSplit0_selectedVerses`, `lsSplit1_selectedVerses`) with partially duplicated logic.
 - **Split view management:** `openSplitDisplay()`, `closeSplitDisplay()`, `displaySplitFollowingMaster()`, `loadSplitVersion()` scattered across the file.
 - **Navigation history:** `BackForwardListController` usage, `jumpToAri()`, `jumpTo(reference)`, `History` tracking.
 
-**Impact:** Any change to one concern risks breaking unrelated functionality. Testing individual behaviors requires instantiating the entire Activity. New developers face a ~2320-line class with no clear entry point.
+**Impact:** Any change to one concern risks breaking unrelated functionality. Testing individual behaviors requires instantiating the entire Activity. New developers face a ~2371-line class with no clear entry point.
 
 ---
 

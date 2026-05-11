@@ -109,6 +109,9 @@ import yuku.alkitab.base.widget.LabeledSplitHandleButton
 import yuku.alkitab.base.widget.LeftDrawer
 import yuku.alkitab.base.widget.MaterialDialogAdapterHelper
 import yuku.alkitab.base.widget.ParallelClickData
+import yuku.alkitab.base.widget.ReaderGestureActions
+import yuku.alkitab.base.widget.ReaderGestureHandler
+import yuku.alkitab.base.widget.ReaderGestureHost
 import yuku.alkitab.base.widget.ReferenceParallelClickData
 import yuku.alkitab.base.widget.SplitHandleButton
 import yuku.alkitab.base.widget.TextAppearancePanel
@@ -131,7 +134,7 @@ private const val TAG = "IsiActivity"
 private const val EXTRA_verseUrl = "verseUrl"
 private const val INSTANCE_STATE_ari = "ari"
 
-class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseActionModeHost, VerseActionModeActions {
+class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseActionModeHost, VerseActionModeActions, ReaderGestureHost, ReaderGestureActions {
     override var uncheckVersesWhenActionModeDestroyed = true
     var needsRestart = false // whether this activity needs to be restarted
 
@@ -165,104 +168,22 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     override fun uncheckAllVersesSplit0() { lsSplit0.uncheckAllVerses(true) }
     override fun onActionModeDestroyed() { actionMode = null }
 
-    private val bGoto_floaterDrag = object : GotoButton.FloaterDragListener {
-        val floaterLocationOnScreen = intArrayOf(0, 0)
-
-        override fun onFloaterDragStart(screenX: Float, screenY: Float) {
-            floater.show(activeSplit0.book.bookId, chapter_1)
-            floater.onDragStart(activeSplit0.version.consecutiveBooks)
-        }
-
-        override fun onFloaterDragMove(screenX: Float, screenY: Float) {
-            floater.getLocationOnScreen(floaterLocationOnScreen)
-            floater.onDragMove(screenX - floaterLocationOnScreen[0], screenY - floaterLocationOnScreen[1])
-        }
-
-        override fun onFloaterDragComplete(screenX: Float, screenY: Float) {
-            floater.hide()
-            floater.onDragComplete(screenX - floaterLocationOnScreen[0], screenY - floaterLocationOnScreen[1])
-        }
+    // --- ReaderGestureActions overrides (state is read via ReaderGestureHost below) ---
+    override fun onFloaterAriSelected(ari: Int) = jumpToAri(ari)
+    override fun goToPreviousChapter() = bLeft_click()
+    override fun goToNextChapter() = bRight_click()
+    override fun setFullScreenWithDrawerHandle(yes: Boolean) {
+        setFullScreen(yes)
+        leftDrawer.handle.setFullScreen(yes)
     }
 
-    private val floater_listener = Floater.Listener { ari ->
-        jumpToAri(ari)
-    }
+    // --- ReaderGestureHost overrides ---
+    // `floater` and `textAppearancePanel` are existing fields, marked with `override`
+    // at their declarations below. The two resource-derived values are computed here.
+    override val gestureDisplayDensity: Float get() = resources.displayMetrics.density
+    override val defaultUkuranHuruf2: Float get() = resources.getInteger(R.integer.pref_ukuranHuruf2_default).toFloat()
 
-    private val splitRoot_listener = object : TwofingerLinearLayout.Listener {
-        var startFontSize = 0f
-        var startDx = Float.MIN_VALUE
-        var chapterSwipeCellWidth = 0f // initted later
-        var moreSwipeYAllowed = true // to prevent setting and unsetting fullscreen many times within one gesture
-
-        override fun onOnefingerLeft() {
-            bRight_click()
-        }
-
-        override fun onOnefingerRight() {
-            bLeft_click()
-        }
-
-        override fun onTwofingerStart() {
-            chapterSwipeCellWidth = 24f * resources.displayMetrics.density
-            startFontSize = Preferences.getFloat(Prefkey.ukuranHuruf2, resources.getInteger(R.integer.pref_ukuranHuruf2_default).toFloat())
-        }
-
-        override fun onTwofingerScale(scale: Float) {
-            var nowFontSize = startFontSize * scale
-
-            if (nowFontSize < 2f) nowFontSize = 2f
-            if (nowFontSize > 42f) nowFontSize = 42f
-
-            Preferences.setFloat(Prefkey.ukuranHuruf2, nowFontSize)
-
-            applyPreferences()
-
-            textAppearancePanel?.displayValues()
-        }
-
-        override fun onTwofingerDragX(dx: Float) {
-            if (startDx == Float.MIN_VALUE) { // just started
-                startDx = dx
-
-                if (dx < 0) {
-                    bRight_click()
-                } else {
-                    bLeft_click()
-                }
-            } else { // more
-                // more to the left
-                while (dx < startDx - chapterSwipeCellWidth) {
-                    startDx -= chapterSwipeCellWidth
-                    bRight_click()
-                }
-
-                while (dx > startDx + chapterSwipeCellWidth) {
-                    startDx += chapterSwipeCellWidth
-                    bLeft_click()
-                }
-            }
-        }
-
-        override fun onTwofingerDragY(dy: Float) {
-            if (!moreSwipeYAllowed) return
-
-            if (dy < 0) {
-                setFullScreen(true)
-                leftDrawer.handle.setFullScreen(true)
-            } else {
-                setFullScreen(false)
-                leftDrawer.handle.setFullScreen(false)
-            }
-
-            moreSwipeYAllowed = false
-        }
-
-        override fun onTwofingerEnd(mode: TwofingerLinearLayout.Mode?) {
-            startFontSize = 0f
-            startDx = Float.MIN_VALUE
-            moreSwipeYAllowed = true
-        }
-    }
+    private val gestureHandler by lazy { ReaderGestureHandler(this, this) }
 
     private lateinit var drawerLayout: DrawerLayout
     lateinit var leftDrawer: LeftDrawer.Text
@@ -279,7 +200,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     private lateinit var bLeft: ImageButton
     private lateinit var bRight: ImageButton
     private lateinit var bVersion: TextView
-    lateinit var floater: Floater
+    override lateinit var floater: Floater
     private lateinit var backForwardListController: BackForwardListController<ImageButton, ImageButton>
     private var fullscreenReferenceToast: Toast? = null
 
@@ -314,7 +235,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
     var actionMode: ActionMode? = null
     private var dictionaryMode = false
-    var textAppearancePanel: TextAppearancePanel? = null
+    override var textAppearancePanel: TextAppearancePanel? = null
 
     /**
      * The following "esvsbasal" thing is a personal thing by yuku that doesn't matter to anyone else.
@@ -648,20 +569,20 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
         updateToolbarLocation()
 
-        splitRoot.setListener(splitRoot_listener)
+        splitRoot.setListener(gestureHandler)
 
         bGoto.setOnClickListener { bGoto_click() }
         bGoto.setOnLongClickListener {
             bGoto_longClick()
             true
         }
-        bGoto.setFloaterDragListener(bGoto_floaterDrag)
+        bGoto.setFloaterDragListener(gestureHandler)
 
         bLeft.setOnClickListener { bLeft_click() }
         bRight.setOnClickListener { bRight_click() }
         bVersion.setOnClickListener { openVersionsDialog() }
 
-        floater.setListener(floater_listener)
+        floater.setListener(gestureHandler)
 
         // listeners
         lsSplit0 = VersesControllerImpl(
@@ -1258,7 +1179,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
     }
 
-    fun applyPreferences() {
+    override fun applyPreferences() {
         // make sure S applied variables are set first
         S.recalculateAppliedValuesBasedOnPreferences()
 
