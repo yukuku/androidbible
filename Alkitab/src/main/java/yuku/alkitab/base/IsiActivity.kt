@@ -84,6 +84,7 @@ import yuku.alkitab.base.util.History
 import yuku.alkitab.base.util.InstallationUtil
 import yuku.alkitab.base.audio.AudioBarController
 import yuku.alkitab.base.audio.AudioCatalogRepository
+import yuku.alkitab.base.audio.BibleNeighborResolver
 import yuku.alkitab.base.audio.ui.AudioHighlightColor
 import yuku.alkitab.base.util.Jumper
 import yuku.alkitab.base.util.LidToAri
@@ -933,20 +934,15 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         )
 
         override fun audioNeighborChapter(direction: Int): Pair<Book, Int>? {
-            val book = activeSplit0.book
-            val target = chapter_1 + direction
-            // Within current book: easy.
-            if (target in 1..book.chapter_count) return book to target
-            // Cross-book: walk the version's consecutive book list.
-            val books = activeSplit0.version.consecutiveBooks
-            val idx = books.indexOf(book)
-            if (idx == -1) return null
-            return when {
-                direction > 0 && idx < books.size - 1 -> books[idx + 1].let { it to 1 }
-                direction < 0 && idx > 0 -> books[idx - 1].let { it to it.chapter_count }
-                else -> null
-            }
+            return BibleNeighborResolver.neighbor(
+                activeSplit0.version,
+                activeSplit0.book.bookId,
+                chapter_1,
+                direction,
+            )
         }
+
+        override fun audioVersionBook(bookId: Int): Book? = activeSplit0.version.getBook(bookId)
 
         override fun audioDisplayChapter(book: Book, chapter_1: Int) {
             // Switch book if needed - display() only retargets chapter
