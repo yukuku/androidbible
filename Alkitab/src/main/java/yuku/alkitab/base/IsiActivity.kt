@@ -17,6 +17,7 @@ import android.text.style.URLSpan
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.Menu
+import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -855,6 +856,25 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
         val audioBarView: ComposeView = findViewById(R.id.audio_bar)
         audioBinder.attach(audioBarHost, audioBarView)
+        // When the verse-nav toolbar is anchored to the bottom of the screen
+        // (Settings → Display → "Navigasi ayat di bawah"), the audio bar —
+        // which is overlaid via FrameLayout `gravity=bottom` on the outer
+        // overlayContainer — would otherwise sit on top of the toolbar's
+        // slot and hide its goto / version / search buttons. Push the bar
+        // up by exactly one actionBarSize so the two surfaces stack
+        // instead of overlapping. Toggling the setting forces an activity
+        // restart (see DisplayFragment), so a one-shot computation here is
+        // enough; we deliberately don't react to fullscreen toggles, which
+        // hide the action bar but never resize the slot.
+        if (Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default)) {
+            val tv = TypedValue()
+            if (theme.resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+                val actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, resources.displayMetrics)
+                val params = audioBarView.layoutParams as FrameLayout.LayoutParams
+                params.bottomMargin = actionBarHeight
+                audioBarView.layoutParams = params
+            }
+        }
         // Push the verse list up by the bar's height so the last verses are
         // reachable instead of being hidden behind the bar. lsSplit0 / lsSplit1
         // already set `clipToPadding="false"` so the verses still scroll
@@ -868,9 +888,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         lifecycleScope.launch {
             // Keep this loop tight: the controller emits at the service's poll
             // rate (every 100 ms during playback). Menu refresh is driven by
-            // the `audioPreparingChanged` callback in audioBarHost — calling
-            // invalidateOptionsMenu() here would force the toolbar to rebuild
-            // every tick.
+            // the `audioBarVisibilityChanged` callback in audioBarHost —
+            // calling invalidateOptionsMenu() here would force the toolbar
+            // to rebuild every tick.
             //
             // Highlight is applied to the primary split (`lsSplit0`) only,
             // matching PRD §4.5 ("Highlight applies only to the chosen side;
@@ -954,7 +974,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             display(chapter_1, 1, true)
         }
 
-        override fun audioPreparingChanged(preparing: Boolean) {
+        override fun audioBarVisibilityChanged(visible: Boolean) {
             invalidateOptionsMenu()
         }
     }
@@ -1483,19 +1503,17 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         menuInflater.inflate(R.menu.activity_isi, menu)
 
         // Audio bar (M3): hide the icon when none of the visible versions
-        // have audio, and swap in a spinner action view while the service is
-        // preparing a chapter so the indicator occupies the same toolbar slot
-        // as the icon (no reflow, no fixed-margin gap).
+        // have audio, and swap to the active variant (small accent dot in the
+        // upper-end corner) while the bar is open so the user can tell at a
+        // glance that an audio session is engaged. Both drawables are 24dp
+        // — same toolbar slot, no reflow on the swap.
         val menuAudio = menu.findItem(R.id.menuAudio)
         if (menuAudio != null) {
-            val available = audioBinder.isAvailable
-            val preparing = audioBinder.isPreparing
-            menuAudio.isVisible = available
-            menuAudio.actionView = if (available && preparing) {
-                layoutInflater.inflate(R.layout.menu_progress_circular, null)
-            } else {
-                null
-            }
+            menuAudio.isVisible = audioBinder.isAvailable
+            menuAudio.setIcon(
+                if (audioBinder.isBarVisible) R.drawable.ic_audio_active
+                else R.drawable.ic_audio
+            )
         }
     }
 

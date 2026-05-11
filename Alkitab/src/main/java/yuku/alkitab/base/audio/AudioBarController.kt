@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import androidx.compose.runtime.collectAsState
-import androidx.core.content.ContextCompat
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -94,8 +93,15 @@ class AudioBarController(
         /** Tell the activity to navigate to [book] / [chapter_1] (the existing `display` flow). */
         fun audioDisplayChapter(book: Book, chapter_1: Int)
 
-        /** Notifies the activity that the spinner-vs-icon state may need to flip. */
-        fun audioPreparingChanged(preparing: Boolean)
+        /**
+         * Fired when the user opens or closes the audio bar — i.e. when an
+         * audio session begins or ends. Used by the activity to swap the
+         * toolbar audio icon between its inactive and active variants. NOT
+         * called for transient state changes (preparing, buffering, seeking)
+         * — those flicker too fast to drive a toolbar refresh and are already
+         * surfaced by the bar's own play-button spinner.
+         */
+        fun audioBarVisibilityChanged(visible: Boolean)
     }
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -154,9 +160,9 @@ class AudioBarController(
             return ids.any { AudioCatalogRepository.isAudioAvailable(it) }
         }
 
-    /** True while the service is preparing a chapter — drives the toolbar spinner. */
-    val isPreparing: Boolean
-        get() = _uiState.value.preparing
+    /** True while the audio bar is on screen — drives the toolbar audio-icon variant. */
+    val isBarVisible: Boolean
+        get() = _uiState.value.visible
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
@@ -255,7 +261,7 @@ class AudioBarController(
         // below is queued via service.let, and we'll fire it when the binder
         // arrives. Either way, mark the UI visible immediately.
         _uiState.update { it.copy(visible = true, preparing = service == null) }
-        host.audioPreparingChanged(true)
+        host.audioBarVisibilityChanged(true)
         service?.let { svc -> svc.loadChapter(buildRequest(host)) }
             ?: run {
                 pendingLoad = host
@@ -267,7 +273,7 @@ class AudioBarController(
         dragging = false
         service?.stop()
         _uiState.update { AudioBarUiState.HIDDEN }
-        host?.audioPreparingChanged(false)
+        host?.audioBarVisibilityChanged(false)
         teardownComposeContent()
         // Unbind so [BibleAudioService] can destroy, releasing ExoPlayer /
         // MediaSession / foreground notification. Keeping the binding alive
@@ -318,18 +324,19 @@ class AudioBarController(
 
     private fun ensureBound() {
         if (bound) return
-        // media3's MediaSessionService transitions to foreground (posting the
-        // lock-screen notification, allowing background playback) only via
-        // `onStartCommand`. A pure `bindService` keeps the service alive while
-        // the activity holds it but never promotes it — meaning audio would
-        // stop the moment the screen locks. Calling `startForegroundService`
-        // alongside `bindService` is the standard hybrid-pattern fix; the
-        // service must `startForeground` within 5 seconds, which media3's
-        // notification manager handles automatically the first time the
-        // player updates (immediately for our case since `loadChapter` is
-        // called right after this returns).
+        // We need the service to outlive the activity (rotation, backgrounding,
+        // lock screen) — a pure `bindService` would die the moment we unbind.
+        // `startService` keeps the service alive without starting the 5-second
+        // `startForeground` deadline, and media3's `MediaNotificationManager`
+        // promotes us to foreground itself the moment the player enters a
+        // user-engaged state (BUFFERING/READY): it calls
+        // `ContextCompat.startForegroundService(...)` + `Service.startForeground`
+        // back-to-back inside the same main-thread frame, so the system's
+        // foreground-service rules are satisfied without us posting anything.
+        // The `mediaPlayback` foreground-service-type exemption covers the
+        // background-start restriction on Android 12+.
         val startIntent = Intent(context, BibleAudioService::class.java)
-        ContextCompat.startForegroundService(context, startIntent)
+        context.startService(startIntent)
         val bindIntent = Intent(context, BibleAudioService::class.java)
             .setAction(BibleAudioService.ACTION_LOCAL_BIND)
         try {
@@ -405,7 +412,6 @@ class AudioBarController(
 
     private fun projectToUi(state: PlaybackState) {
         val host = this.host
-        val prevPreparing = _uiState.value.preparing
         // Snapshot before we drain — if a load was queued before the service
         // connected, the first incoming state is usually `IDLE`, which would
         // briefly clear the spinner before our loadChapter call sets it back
@@ -461,10 +467,6 @@ class AudioBarController(
                 // disabled, which is the spec.
                 timingAvailable = state.verse_1 > 0 || current.timingAvailable,
             )
-        }
-
-        if (prevPreparing != effectivePreparing) {
-            host?.audioPreparingChanged(effectivePreparing)
         }
     }
 

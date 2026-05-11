@@ -2,14 +2,11 @@ package yuku.alkitab.base.audio
 
 import android.app.PendingIntent
 import android.content.Intent
-import android.content.pm.ServiceInfo
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Binder
 import android.os.IBinder
 import androidx.annotation.OptIn
-import androidx.core.app.NotificationCompat
-import androidx.core.app.ServiceCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.createBitmap
 import androidx.media3.common.MediaItem
@@ -50,15 +47,19 @@ import yuku.alkitab.debug.R
  *    [loadChapter] / [play] / [pause] / [seekTo] / [setSpeed] / [stop]
  *    directly. Used by the M3 `AudioBarController`.
  *
- * Foreground transitions: media3's [MediaSessionService.onStartCommand] only
- * promotes to foreground when handed a media-action intent; our hybrid
- * local-binder pattern starts the service with a plain `Intent` from
- * [yuku.alkitab.base.audio.AudioBarController.ensureBound], so we override
- * [onStartCommand] to post a placeholder notification (satisfying the
- * 5-second `startForeground` deadline) and then explicitly invoke
- * [onUpdateNotification] to let media3's [DefaultMediaNotificationProvider]
- * replace the placeholder with the real MediaStyle. The channel id matches
- * the one created in `App.staticInit()`.
+ * Foreground transitions are handled entirely by media3. The activity calls
+ * `Context.startService(...)` (not `startForegroundService`) from
+ * [yuku.alkitab.base.audio.AudioBarController.ensureBound] — that keeps the
+ * service alive across activity teardown without arming the 5-second
+ * `startForeground` deadline. media3's `MediaNotificationManager` then
+ * promotes us to foreground itself the moment the player enters a
+ * user-engaged state (BUFFERING/READY): it calls
+ * `ContextCompat.startForegroundService(...)` and `Service.startForeground`
+ * back-to-back inside the same main-thread frame, with the real MediaStyle
+ * notification (chapter title, version, artwork, transport controls). The
+ * `mediaPlayback` foreground-service-type exemption covers the
+ * background-start restriction on Android 12+. The channel id matches the
+ * one created in `App.staticInit()`.
  *
  * Audio focus, becoming-noisy, lock-screen / Bluetooth media-button handling
  * all come for free with `MediaSession` + the audio attributes set on the
@@ -83,13 +84,6 @@ class BibleAudioService : MediaSessionService() {
         private const val POSITION_POLL_INTERVAL_MS = 100L
         private const val ARTWORK_SIZE_PX = 256
 
-        /**
-         * Notification id matching media3's
-         * [androidx.media3.session.DefaultMediaNotificationProvider.DEFAULT_NOTIFICATION_ID]
-         * (1001) so media3's later `startForeground` *replaces* our
-         * placeholder rather than stacking a second notification.
-         */
-        private const val PLACEHOLDER_NOTIFICATION_ID = 1001
         private const val TAG = "BibleAudioService"
     }
 
@@ -238,14 +232,6 @@ class BibleAudioService : MediaSessionService() {
                 .build()
         )
 
-        // Always post a notification, even while the player is idle (i.e.
-        // between `onCreate` and the first `loadChapter`). The activity calls
-        // `startForegroundService` on us in [AudioBarController.ensureBound]
-        // and the system requires `startForeground` within ~5 seconds; if we
-        // wait for the player to leave IDLE we risk a
-        // `ForegroundServiceDidNotStartInTimeException` on slow networks.
-        setShowNotificationForIdlePlayer(SHOW_NOTIFICATION_FOR_IDLE_PLAYER_ALWAYS)
-
         // Mirror highlight changes into the playback state.
         scope.launch {
             highlightTracker.verse1.collect { v ->
@@ -259,51 +245,6 @@ class BibleAudioService : MediaSessionService() {
             return localBinder
         }
         return super.onBind(intent)
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // Post a placeholder notification *immediately* so we satisfy the
-        // 5-second startForeground deadline that begins when
-        // [AudioBarController.ensureBound] calls `startForegroundService`. The
-        // base [MediaSessionService.onStartCommand] only posts a notification
-        // when the incoming intent is a known media action (`ACTION_PLAY`,
-        // `ACTION_MEDIA_BUTTON`, etc.) — our hybrid local-binder pattern
-        // starts the service with a plain `Intent`, so we have to bridge the
-        // gap ourselves.
-        promoteToForegroundWithPlaceholder()
-        val result = super.onStartCommand(intent, flags, startId)
-        // Then ask media3's notification manager to replace the placeholder
-        // with the real MediaStyle (title, artist, artwork, skip buttons).
-        // Without this nudge, the manager's MediaController-driven update
-        // path can lag behind the user-visible "I just tapped play" moment
-        // because it depends on the controller asynchronously connecting.
-        mediaSession?.let { session -> onUpdateNotification(session, /* startInForegroundRequired = */ true) }
-        return result
-    }
-
-    /**
-     * Posts a minimal "Loading audio…" notification on the audio_bible channel
-     * and calls `startForeground`, satisfying the 5-second startForeground
-     * deadline. Subsequent calls update the same notification id, which
-     * media3's `MediaNotificationManager` then takes over with the full
-     * MediaStyle controls (title/artist/artwork/skip buttons) — the
-     * placeholder is visible for at most a few hundred ms in normal use.
-     */
-    private fun promoteToForegroundWithPlaceholder() {
-        val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_audio)
-            .setContentTitle(getString(R.string.audio_bible_notification_loading_title))
-            .setOngoing(true)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-            .setCategory(NotificationCompat.CATEGORY_TRANSPORT)
-            .setShowWhen(false)
-            .build()
-        ServiceCompat.startForeground(
-            this,
-            PLACEHOLDER_NOTIFICATION_ID,
-            notification,
-            ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK,
-        )
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {
