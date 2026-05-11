@@ -90,7 +90,7 @@ fun IosColorPicker(
                 Tab(
                     selected = selectedTab == idx,
                     onClick = { selectedTab = idx },
-                    text = { Text(title) },
+                    text = { Text(title, maxLines = 1, softWrap = false) },
                 )
             }
         }
