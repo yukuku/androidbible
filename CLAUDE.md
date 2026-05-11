@@ -265,6 +265,10 @@ Detailed documentation for each major feature module:
 - **Use Robolectric if needed** for tests that exercise Android framework code (Context, Intents, Parcelable, DB helpers, etc.). Pure-logic tests should stay plain JUnit. If an Android method is blocking a pure-logic test with `"Method not mocked"`, first consider whether a tiny test-scope shadow (e.g. `src/test/java/android/util/Pair.java`) is enough before reaching for Robolectric.
 - When writing unit tests, assume the production code is correct. If you spot what looks like an obvious bug while writing tests, flag it rather than silently working around it.
 
+## Documentation Conventions
+
+- **Do not include SHAs or commit hashes** in long-lived docs (`docs/tech-debt.md`, `docs/tech-debt-remediation.md`, this `CLAUDE.md`, etc.). They rot on rebase/squash-merge and are fragile to maintain. When recording that a step is done, describe what shipped (file paths, test counts, scope) and use an absolute date — never a SHA. (Older entries in these docs may still reference SHAs; leave them alone unless explicitly asked to clean up.)
+
 ## Important Caveats
 
 - `IsiActivity.kt` is ~2900 lines — the monolithic main activity handles Bible reading, split view, navigation, gestures, and action mode. Changes here require careful testing.
