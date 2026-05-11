@@ -185,13 +185,21 @@ private fun GridTab(
                 for (col in 0 until GRID_COLS) {
                     val index = row * GRID_COLS + col
                     val c = GRID_COLORS[index]
+                    val swatch = Color(0xff000000.toInt() or c)
                     val isSelected = (c and 0xffffff) == (selectedColor and 0xffffff)
-                    val ringBg = if (index == 0) Color(0xff999999.toInt()) else Color.White
+                    // When not selected, paint the cell's backdrop with the swatch color
+                    // itself so any sub-pixel gaps from weight()-based layout rounding
+                    // blend in instead of showing thin white seams between cells.
+                    val backdrop = when {
+                        !isSelected -> swatch
+                        index == 0 -> Color(0xff999999.toInt())
+                        else -> Color.White
+                    }
                     Box(
                         modifier = Modifier
                             .weight(1f)
                             .aspectRatio(1f)
-                            .background(ringBg)
+                            .background(backdrop)
                             .pointerInput(c) {
                                 detectTapGestures { onColorPicked(c or 0xff000000.toInt()) }
                             },
@@ -200,7 +208,7 @@ private fun GridTab(
                             modifier = Modifier
                                 .matchParentSize()
                                 .padding(if (isSelected) 3.dp else 0.dp)
-                                .background(Color(0xff000000.toInt() or c)),
+                                .background(swatch),
                         )
                     }
                 }
