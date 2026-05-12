@@ -293,11 +293,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             if (_activeSplit0 != null) {
                 return _activeSplit0
             }
-            val version = S.activeVersion()
+            val version = App.services.versions.activeVersion()
             val new = ActiveSplit0(
-                mv = S.activeMVersion(),
+                mv = App.services.versions.activeMVersion(),
                 version = version,
-                versionId = S.activeVersionId(),
+                versionId = App.services.versions.activeVersionId(),
                 book = version.firstBook
             )
             this._activeSplit0 = new
@@ -379,11 +379,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     private val pinDropListener = object : VersesController.PinDropListener() {
         override fun onPinDropped(presetId: Int, ari: Int) {
 
-            val progressMark = S.db.getProgressMarkByPresetId(presetId)
+            val progressMark = App.services.storage.db.getProgressMarkByPresetId(presetId)
             if (progressMark != null) {
                 progressMark.ari = ari
                 progressMark.modifyTime = Date()
-                S.db.insertOrUpdateProgressMark(progressMark)
+                App.services.storage.db.insertOrUpdateProgressMark(progressMark)
             }
 
             AppEvents.emitAttributeMapChanged()
@@ -638,11 +638,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                     activeSplit0 = activeSplit0.copy(book = activeBook2)
                 } else {
                     // version failed to load, so books also failed to load. Fallback to internal!
-                    val mv = S.getMVersionInternal()
-                    S.setActiveVersion(mv)
+                    val mv = App.services.versions.getMVersionInternal()
+                    App.services.versions.setActiveVersion(mv)
 
-                    val version = S.activeVersion()
-                    val versionId = S.activeVersionId()
+                    val version = App.services.versions.activeVersion()
+                    val versionId = App.services.versions.activeVersionId()
                     val book = version.firstBook // this is assumed to be never null
                     activeSplit0 = ActiveSplit0(
                         mv = mv,
@@ -746,8 +746,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
         if (audioHighlightColorCached == 0) {
             audioHighlightColorCached = AudioHighlightColor.pickHighlightColor(
-                readingBackground = S.applied().backgroundColor,
-                verseTextColor = S.applied().fontColor,
+                readingBackground = App.services.uiDimensions.applied().backgroundColor,
+                verseTextColor = App.services.uiDimensions.applied().fontColor,
             )
         }
         controller.setAudioHighlight(verse_1, audioHighlightColorCached)
@@ -914,14 +914,14 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             val bookId = activeSplit0.book.bookId
 
             // Set globally
-            S.setActiveVersion(mv)
+            App.services.versions.setActiveVersion(mv)
 
             // If a book is not found, get any book
             val book = version.getBook(bookId) ?: version.firstBook
             activeSplit0 = ActiveSplit0(
                 mv = mv,
                 version = version,
-                versionId = S.activeVersionId(),
+                versionId = App.services.versions.activeVersionId(),
                 book = book
             )
 
@@ -1096,11 +1096,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
     override fun applyPreferences() {
         // make sure S applied variables are set first
-        S.recalculate()
+        App.services.uiDimensions.recalculate()
 
         // apply background color, and clear window background to prevent overdraw
         window.setBackgroundDrawableResource(android.R.color.transparent)
-        val backgroundColor = S.applied().backgroundColor
+        val backgroundColor = App.services.uiDimensions.applied().backgroundColor
         root.setBackgroundColor(backgroundColor)
 
         // scrollbar must be visible!
@@ -1116,7 +1116,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
 
         fun calculateTextSizeMult(versionId: String?): Float {
-            return if (versionId == null) 1f else S.db.getPerVersionSettings(versionId).fontSizeMultiplier
+            return if (versionId == null) 1f else App.services.storage.db.getPerVersionSettings(versionId).fontSizeMultiplier
         }
 
         // necessary
@@ -1645,7 +1645,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // # fill adapter with new data. make sure all checked states are reset
         versesController.uncheckAllVerses(true)
 
-        val versesAttributes = VerseAttributeLoader.load(S.db, cr, ariBc, verses)
+        val versesAttributes = VerseAttributeLoader.load(App.services.storage.db, cr, ariBc, verses)
 
         val newData = VersesDataModel(ariBc, verses, nblock, pericope_aris, pericope_blocks, version, versionId, versesAttributes)
         dataSetter(newData)
@@ -1733,7 +1733,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
 
         override fun onBookmarkAttributeClick(version: Version, versionId: String, ari: Int) {
-            val markers = S.db.listMarkersForAriKind(ari, Marker.Kind.bookmark)
+            val markers = App.services.storage.db.listMarkersForAriKind(ari, Marker.Kind.bookmark)
             if (markers.size == 1) {
                 openBookmarkDialog(markers[0]._id)
             } else {
@@ -1750,7 +1750,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
 
         override fun onNoteAttributeClick(version: Version, versionId: String, ari: Int) {
-            val markers = S.db.listMarkersForAriKind(ari, Marker.Kind.note)
+            val markers = App.services.storage.db.listMarkersForAriKind(ari, Marker.Kind.note)
             if (markers.size == 1) {
                 openNoteDialog(markers[0]._id)
             } else {
@@ -1776,7 +1776,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             val kind: Marker.Kind,
         ) : MaterialDialogAdapterHelper.Adapter() {
 
-            val textSizeMult = S.db.getPerVersionSettings(versionId).fontSizeMultiplier
+            val textSizeMult = App.services.storage.db.getPerVersionSettings(versionId).fontSizeMultiplier
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
                 return MarkerHolder(layoutInflater.inflate(R.layout.item_marker, parent, false))
@@ -1811,7 +1811,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
                         holder.lSnippet.visibility = View.GONE
 
-                        val labels = S.db.listLabelsByMarker(marker)
+                        val labels = App.services.storage.db.listLabelsByMarker(marker)
                         if (labels.size != 0) {
                             holder.panelLabels.visibility = View.VISIBLE
                             holder.panelLabels.removeAllViews()
@@ -1828,7 +1828,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                         Appearances.applyTextAppearance(holder.lSnippet, textSizeMult)
                     }
 
-                    holder.itemView.setBackgroundColor(S.applied().backgroundColor)
+                    holder.itemView.setBackgroundColor(App.services.uiDimensions.applied().backgroundColor)
                 }
 
                 holder.itemView.setOnClickListener {
@@ -1850,7 +1850,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
 
         override fun onProgressMarkAttributeClick(version: Version, versionId: String, preset_id: Int) {
-            S.db.getProgressMarkByPresetId(preset_id)?.let { progressMark ->
+            App.services.storage.db.getProgressMarkByPresetId(preset_id)?.let { progressMark ->
                 ProgressMarkRenameDialog.show(this@IsiActivity, progressMark, object : ProgressMarkRenameDialog.Listener {
                     override fun onOked() {
                         lsSplit0.uncheckAllVerses(true)
@@ -2042,7 +2042,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         data: VersesDataModel,
     ): VersesDataModel {
         val versesAttributes = VerseAttributeLoader.load(
-            S.db,
+            App.services.storage.db,
             contentResolver,
             data.ari_bc_,
             data.verses_
@@ -2099,7 +2099,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     }
 
     override fun bProgressMarkList_click() {
-        if (S.db.countAllProgressMarks() > 0) {
+        if (App.services.storage.db.countAllProgressMarks() > 0) {
             val dialog = ProgressMarkListDialog()
             dialog.progressMarkSelectedListener = { preset_id ->
                 gotoProgressMark(preset_id)
@@ -2132,7 +2132,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     }
 
     private fun gotoProgressMark(preset_id: Int) {
-        val progressMark = S.db.getProgressMarkByPresetId(preset_id) ?: return
+        val progressMark = App.services.storage.db.getProgressMarkByPresetId(preset_id) ?: return
 
         val ari = progressMark.ari
 
