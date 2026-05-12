@@ -87,6 +87,7 @@ import yuku.alkitab.base.util.Jumper
 import yuku.alkitab.base.util.LidToAri
 import yuku.alkitab.base.util.OtherAppIntegration
 import yuku.alkitab.base.util.RequestCodes
+import yuku.alkitab.base.util.VersionDialogHelper
 import yuku.alkitab.base.util.Sqlitil
 import yuku.alkitab.base.util.TargetDecoder
 import yuku.alkitab.base.util.safeQuery
@@ -1095,7 +1096,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
     override fun applyPreferences() {
         // make sure S applied variables are set first
-        S.recalculateAppliedValuesBasedOnPreferences()
+        S.recalculate()
 
         // apply background color, and clear window background to prevent overdraw
         window.setBackgroundDrawableResource(android.R.color.transparent)
@@ -1462,7 +1463,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             return
         }
 
-        S.openVersionsDialog(this, activeSplit0.versionId) { mv ->
+        VersionDialogHelper.openVersionsDialog(this, App.services.versions, activeSplit0.versionId) { mv ->
             loadVersion(mv)
 
             // We may need to apply PerVersion settings.

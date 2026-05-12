@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.connection.PRDownloaderOkHttpClient;
+import yuku.alkitab.base.services.AppServices;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Fcm;
 import yuku.alkitab.base.sync.Sync;
@@ -24,6 +25,14 @@ import yuku.alkitabintegration.display.Launcher;
 
 public class App extends yuku.afw.App {
     private static final AtomicBoolean initted = new AtomicBoolean(false);
+
+    /**
+     * App-level service container. Wraps the interfaces implemented by {@link S} so
+     * new code can depend on narrow interfaces (and tests can swap fakes in) without
+     * reaching into the {@link S} service locator directly. Existing {@code S.foo}
+     * call sites are being migrated incrementally — see REM-24.
+     */
+    public static AppServices services;
 
     enum GsonWrapper {
         INSTANCE;
@@ -48,6 +57,11 @@ public class App extends yuku.afw.App {
         if (context == null) {
             throw new RuntimeException("yuku.afw.App.context must have been set via initWithAppContext(Context) before calling this method.");
         }
+
+        // Wire up the service container before anything else — S exposes adapter
+        // properties that satisfy each service interface; tests can override this
+        // field with fakes.
+        services = new AppServices(S.storage, S.versions, S.uiDimensions);
 
         FeedbackSender.getInstance(context).trySend();
 

@@ -1,13 +1,14 @@
 package yuku.alkitab.base
 
-import android.app.Activity
 import android.graphics.Color
 import android.graphics.Typeface
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.config.AppConfig
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.model.MVersionInternal
+import yuku.alkitab.base.services.StorageProvider
+import yuku.alkitab.base.services.UiDimensionsProvider
+import yuku.alkitab.base.services.VersionManager
 import yuku.alkitab.base.storage.InternalDb
 import yuku.alkitab.base.storage.InternalDbHelper
 import yuku.alkitab.base.storage.Prefkey
@@ -17,7 +18,6 @@ import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.FontManager
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Version
-import yuku.alkitab.versionmanager.VersionsActivity
 
 object S {
     const val TAG = "S"
@@ -92,7 +92,8 @@ object S {
     }
 
     private object CalculatedDimensionsHolder {
-        var applied = calculateDimensionsFromPreferences()
+        @Volatile
+        var applied: CalculatedDimensions = calculateDimensionsFromPreferences()
     }
 
     @JvmStatic
@@ -100,46 +101,54 @@ object S {
         return CalculatedDimensionsHolder.applied
     }
 
-    // The process-global active Bible version.
-    private object ActiveVersionHolder {
-        var activeMVersion: MVersion? = null
-        var activeVersion: Version? = null
-        var activeVersionId: String? = null
+    /** Re-derive [applied] from current preferences. Call after preference changes. */
+    fun recalculate() {
+        CalculatedDimensionsHolder.applied = calculateDimensionsFromPreferences()
+    }
 
-        init {
+    /**
+     * Snapshot of the currently active Bible version. Held behind a single
+     * [Volatile] reference so readers always see a consistent (mVersion, version,
+     * versionId) triple — previously the three fields could be observed mid-update.
+     */
+    private data class ActiveVersionState(
+        val mVersion: MVersion,
+        // [MVersion.getVersion] is @Nullable. Stored as-is so a caller that passes an
+        // MVersion with no data file fails on the subsequent [activeVersion] read
+        // (matching pre-refactor behaviour) rather than on the set.
+        val version: Version?,
+        val versionId: String,
+    )
+
+    private object ActiveVersionHolder {
+        @Volatile
+        var state: ActiveVersionState = run {
             // Load the version we want before everything, so we do not load it multiple times.
             val lastVersionId = Preferences.getString(Prefkey.lastVersionId)
             val actual = getVersionFromVersionId(lastVersionId) ?: getMVersionInternal()
-            setActiveVersion(actual)
-        }
-
-        @Synchronized
-        fun setActiveVersion(mv: MVersion) {
-            val version = mv.version
-            val versionId = mv.versionId
-            activeMVersion = mv
-            AppLog.d(TAG, "@@setActiveVersion version=$version versionId=$versionId")
-            activeVersion = version
-            activeVersionId = versionId
+            ActiveVersionState(actual, actual.version, actual.versionId)
         }
     }
 
     fun activeMVersion(): MVersion {
-        return ActiveVersionHolder.activeMVersion!!
+        return ActiveVersionHolder.state.mVersion
     }
 
     @JvmStatic
     fun activeVersion(): Version {
-        return ActiveVersionHolder.activeVersion!!
+        return ActiveVersionHolder.state.version!!
     }
 
     fun activeVersionId(): String {
-        return ActiveVersionHolder.activeVersionId!!
+        return ActiveVersionHolder.state.versionId
     }
 
     @Synchronized
     fun setActiveVersion(mv: MVersion) {
-        ActiveVersionHolder.setActiveVersion(mv)
+        val version = mv.version
+        val versionId = mv.versionId
+        AppLog.d(TAG, "@@setActiveVersion version=$version versionId=$versionId")
+        ActiveVersionHolder.state = ActiveVersionState(mv, version, versionId)
     }
 
     /**
@@ -162,10 +171,6 @@ object S {
             }
         }
         return null // not known
-    }
-
-    fun recalculateAppliedValuesBasedOnPreferences() {
-        CalculatedDimensionsHolder.applied = calculateDimensionsFromPreferences()
     }
 
     fun calculateDimensionsFromPreferences(): CalculatedDimensions {
@@ -265,49 +270,37 @@ object S {
         return res
     }
 
-    fun openVersionsDialog(activity: Activity, selectedVersionId: String, onVersionSelected: (MVersion) -> Unit) {
-        val versions = getAvailableVersions()
-
-        // determine the currently selected one
-        val selected = versions.indexOfFirst { it.versionId == selectedVersionId }
-
-        val options = versions.map { it.longName }.toTypedArray()
-        MaterialAlertDialogBuilder(activity)
-            .setSingleChoiceItems(options, selected) { dialog, index ->
-                if (index >= 0) {
-                    val mv = versions[index]
-                    onVersionSelected(mv)
-                    dialog.dismiss()
-                }
-            }
-            .setPositiveButton(R.string.versi_lainnya) { _, _ ->
-                activity.startActivity(VersionsActivity.createIntent())
-            }
-            .show()
+    /**
+     * Adapter exposing [S]'s database access through the [StorageProvider] interface.
+     * New code that only needs database access should depend on this (typically via
+     * [yuku.alkitab.base.App.services]) instead of reaching into [S] directly.
+     */
+    @JvmField
+    val storage: StorageProvider = object : StorageProvider {
+        override val db get() = S.db
+        override val songDb get() = S.songDb
     }
 
-    fun openVersionsDialogWithNone(activity: Activity, selectedVersionId: String?, onVersionSelected: (MVersion?) -> Unit) {
-        val versions = getAvailableVersions()
+    /**
+     * Adapter exposing [S]'s active-version state through the [VersionManager] interface.
+     */
+    @JvmField
+    val versions: VersionManager = object : VersionManager {
+        override fun activeVersion() = S.activeVersion()
+        override fun activeMVersion() = S.activeMVersion()
+        override fun activeVersionId() = S.activeVersionId()
+        override fun setActiveVersion(mv: MVersion) = S.setActiveVersion(mv)
+        override fun getVersionFromVersionId(versionId: String?) = S.getVersionFromVersionId(versionId)
+        override fun getAvailableVersions() = S.getAvailableVersions()
+        override fun getMVersionInternal() = S.getMVersionInternal()
+    }
 
-        // determine the currently selected one
-        val selected = if (selectedVersionId == null) {
-            0 // "none"
-        } else {
-            versions.indexOfFirst { it.versionId == selectedVersionId } + 1
-        }
-
-        val options = (listOf(activity.getString(R.string.split_version_none)) + versions.map { it.longName }).toTypedArray()
-        MaterialAlertDialogBuilder(activity)
-            .setSingleChoiceItems(options, selected) { dialog, index ->
-                when {
-                    index == 0 -> onVersionSelected(null)
-                    index > 0 -> onVersionSelected(versions[index - 1])
-                }
-                dialog.dismiss()
-            }
-            .setPositiveButton(R.string.versi_lainnya) { _, _ ->
-                activity.startActivity(VersionsActivity.createIntent())
-            }
-            .show()
+    /**
+     * Adapter exposing [S]'s cached UI dimensions through the [UiDimensionsProvider] interface.
+     */
+    @JvmField
+    val uiDimensions: UiDimensionsProvider = object : UiDimensionsProvider {
+        override fun applied() = S.applied()
+        override fun recalculate() = S.recalculate()
     }
 }

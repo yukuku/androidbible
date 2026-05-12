@@ -10,10 +10,12 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import yuku.afw.storage.Preferences
+import yuku.alkitab.base.App
 import yuku.alkitab.base.S
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
+import yuku.alkitab.base.util.VersionDialogHelper
 import yuku.alkitab.base.verses.VersesDataModel
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Version
@@ -194,7 +196,7 @@ class SplitViewManager(
      * "end" label tap.
      */
     fun openSplitVersionsDialog() {
-        S.openVersionsDialogWithNone(host.activity, activeSplit1?.versionId) { mv: MVersion? ->
+        VersionDialogHelper.openVersionsDialogWithNone(host.activity, App.services.versions, activeSplit1?.versionId) { mv: MVersion? ->
             if (mv == null) { // closing split version
                 disableSplitVersion()
             } else {

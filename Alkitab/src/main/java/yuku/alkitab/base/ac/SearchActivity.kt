@@ -50,6 +50,7 @@ import yuku.alkitab.base.util.Jumper
 import yuku.alkitab.base.util.QueryTokenizer
 import yuku.alkitab.base.util.SearchEngine
 import yuku.alkitab.base.util.SearchEngineQuery
+import yuku.alkitab.base.util.VersionDialogHelper
 import yuku.alkitab.base.util.TextColorUtil
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Version
@@ -491,7 +492,7 @@ class SearchActivity : BaseActivity() {
     }
 
     private val bVersion_click = View.OnClickListener {
-        S.openVersionsDialog(this, searchInVersionId) { mv: MVersion ->
+        VersionDialogHelper.openVersionsDialog(this, App.services.versions, searchInVersionId) { mv: MVersion ->
             val selectedVersion = mv.version
             if (selectedVersion == null) {
                 MaterialAlertDialogBuilder(this@SearchActivity)

@@ -216,10 +216,21 @@ Coroutines and `lifecycleScope` were already on the classpath transitively throu
 
 ---
 
-### REM-24: Refactor S.kt Service Locator
+### REM-24: Refactor S.kt Service Locator — Steps 24a–24d landed 2026-05-12
 **Addresses:** TD-15  
 **Module:** Cross-cutting (50 files)  
 **BRICE:** B=4 R=2 I=2 C=3 E=5 → **3.2**
+
+**Status:** Steps 24a (interface extraction), 24b (UI dialog removal), 24c (thread-safety fix) and 24d's bootstrap (AppServices container initialized in `App.staticInit()`) shipped on 2026-05-12. The bulk of 24d — migrating the ~50 existing `S.xxx` call sites to depend on `App.services.*` — remains as ongoing incremental work and is not blocking. 24e (Hilt) is still optional/deferred.
+
+**What shipped on 2026-05-12:**
+- New `yuku.alkitab.base.services` package with `StorageProvider`, `VersionManager`, `UiDimensionsProvider`, and `AppServices` (see `Alkitab/src/main/java/yuku/alkitab/base/services/`).
+- `S` exposes three adapter properties (`S.storage`, `S.versions`, `S.uiDimensions`) that implement the new interfaces. `@JvmStatic` is retained on the original `S.db`, `S.applied()`, `S.activeVersion()` etc. so existing Java call sites keep compiling — these are the migration target for the rest of 24d.
+- `openVersionsDialog` / `openVersionsDialogWithNone` moved off `S` into `yuku.alkitab.base.util.VersionDialogHelper`. Callers in `IsiActivity.kt` and `SearchActivity.kt` were updated.
+- `recalculateAppliedValuesBasedOnPreferences()` renamed to `recalculate()` to match the interface (single call site in `IsiActivity.kt`).
+- Active-version state collapsed from three mutable nullable fields to a single `@Volatile var state: ActiveVersionState` data-class reference so all readers see a consistent `(mVersion, version, versionId)` triple.
+- `App.staticInit()` now constructs `App.services = new AppServices(S.storage, S.versions, S.uiDimensions)` before any other init step.
+- `AppServicesTest` (4 cases) demonstrates the new interfaces are fake-implementable in pure JUnit — no Robolectric or Android context required.
 
 **Current state:** `S.kt` (313 lines) is a Kotlin `object` singleton mixing database access (`db`, `songDb`), active version state, and UI dimensions (`CalculatedDimensions`). Imported by 50 files with 161+ call sites. Untestable without a full Android environment.
 
@@ -713,7 +724,7 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 | REM-12 | ~~Replace DragSortListView~~ ✅ | **3.4** | 2 |
 | REM-14 | ~~Replace material-dialogs~~ ✅ | **3.4** | 2 |
 | REM-18 | Add test coverage | **3.4** | 2 |
-| REM-24 | Refactor S.kt service locator | **3.2** | 2 |
+| REM-24 | Refactor S.kt service locator (steps 24a–24d shipped; caller migration ongoing) | **3.2** | 2 |
 | REM-08 | ~~Extract split view manager~~ ✅ | **3.2** | 2 |
 | REM-11 | Room migration (Version) | **3.2** | 2 |
 | REM-15 | Introduce coroutines | **3.2** | 3 |
