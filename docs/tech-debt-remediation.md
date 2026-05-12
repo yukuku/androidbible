@@ -375,7 +375,7 @@ If the project adopts Hilt for other reasons (e.g., ViewModel injection in REM-0
 
 | Priority | File | Lines | Risk | Notes |
 |----------|------|-------|------|-------|
-| 1 | `Highlights.java` | ~200 | Low | Standalone utility, good test coverage target |
+| 1 | ~~`Highlights.java`~~ | ~~~200~~ | ~~Low~~ | ✅ ported to `Highlights.kt` (2026-05-12). `object` with `@JvmStatic` methods and `@JvmField` properties to preserve Java call sites; 5 Kotlin callers got `!!` on `Info.partial` (now properly nullable). All 31 `HighlightsTest` cases + full unit-test suite pass. |
 | 2 | `TargetDecoder.java` | ~150 | Low | Has tests, pure logic |
 | 3 | `Jumper.java` | ~200 | Low | Has tests, pure logic |
 | 4 | `QueryTokenizer.java` | ~100 | Low | Has tests |

@@ -134,7 +134,7 @@ class TypeHighlightDialog {
                     // what's stored; otherwise it's a no-op.
                     if (info != null && verseText != null && defaultColorRgb != -1 && range != null) {
                         val changed = (info.partial == null && (range.first != 0 || range.second != verseText.length)) ||
-                            (info.partial != null && (info.partial.startOffset != range.first || info.partial.endOffset != range.second))
+                            (info.partial != null && (info.partial!!.startOffset != range.first || info.partial!!.endOffset != range.second))
                         if (changed) {
                             applySelection(ariBookChapter, selectedVerses, defaultColorRgb, range, verseText)
                             listener.onOk(defaultColorRgb)
@@ -209,7 +209,7 @@ private fun HighlightSheetContent(
 
     val initialSelection = remember(verseText, info) {
         if (showVerseText && info != null && info.shouldRenderAsPartialForVerseText(verseText)) {
-            TextRange(info.partial.startOffset, info.partial.endOffset)
+            TextRange(info.partial!!.startOffset, info.partial!!.endOffset)
         } else if (showVerseText) {
             TextRange(0, verseTextString.length)
         } else {
