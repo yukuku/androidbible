@@ -285,8 +285,11 @@ class VersesControllerImpl(
     }
 
     private fun scrollToPositionWithProp(position: Int, prop: Float) {
+        val vn = dataVersionNumber.get()
         rv.post(fun() {
-            // this may happen async from above, so check first if pos is still valid
+            // this may happen async from above, so check data version first,
+            // then verify the position is still in bounds
+            if (vn != dataVersionNumber.get()) return
             if (position >= versesDataModel.itemCount) return
 
             // negate padding offset, unless this is the first item
