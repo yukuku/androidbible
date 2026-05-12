@@ -14,7 +14,6 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import yuku.alkitab.base.App
-import yuku.alkitab.base.S
 import yuku.alkitab.base.util.Highlights
 import yuku.alkitab.util.Ari
 
@@ -38,7 +37,7 @@ object VerseRenderer {
             tp.baselineShift += (tp.ascent() * 0.3f + 0.5f).toInt()
             tp.textSize = tp.textSize * 0.7f
             if (applyColor) {
-                tp.color = S.applied().verseNumberColor
+                tp.color = App.services.uiDimensions.applied().verseNumberColor
             }
         }
     }
@@ -207,7 +206,7 @@ object VerseRenderer {
                 '6' -> startRed = sb.length
                 '5' -> if (startRed != -1) {
                     if (!checked) {
-                        sb.setSpan(ForegroundColorSpan(S.applied().fontRedColor), startRed, sb.length, 0)
+                        sb.setSpan(ForegroundColorSpan(App.services.uiDimensions.applied().fontRedColor), startRed, sb.length, 0)
                     }
                     startRed = -1
                 }
@@ -327,7 +326,7 @@ object VerseRenderer {
         if (startPara == len) return
 
         val indentSpacingExtraUnits = if (verseNumberText.length < 3) 0 else verseNumberText.length - 2
-        val applied = S.applied()
+        val applied = App.services.uiDimensions.applied()
 
         when (paraType) {
             -1, '0'.code -> {
@@ -361,9 +360,9 @@ object VerseRenderer {
         // verse text
         sb.append(text)
         if (isVerseNumberShown) {
-            sb.setSpan(createLeadingMarginSpan(0, S.applied().indentParagraphRest), 0, sb.length, 0)
+            sb.setSpan(createLeadingMarginSpan(0, App.services.uiDimensions.applied().indentParagraphRest), 0, sb.length, 0)
         } else {
-            sb.setSpan(createLeadingMarginSpan(S.applied().indentParagraphRest), 0, sb.length, 0)
+            sb.setSpan(createLeadingMarginSpan(App.services.uiDimensions.applied().indentParagraphRest), 0, sb.length, 0)
         }
 
         if (highlightInfo != null) {

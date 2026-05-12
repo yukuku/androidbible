@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import kotlin.Unit;
-import yuku.alkitab.base.S;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.util.LabelColorUtil;
 import yuku.alkitab.base.widget.MaterialDialogAdapterHelper;
 import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
@@ -57,14 +57,14 @@ public class TypeBookmarkDialog {
      * @param context Activity context to create dialogs
      */
     public static TypeBookmarkDialog EditExisting(Context context, long _id) {
-        return new TypeBookmarkDialog(context, S.getDb().getMarkerById(_id), null);
+        return new TypeBookmarkDialog(context, App.services.storage.getDb().getMarkerById(_id), null);
     }
 
     /**
      * Open the bookmark edit dialog for a new bookmark by ari.
      */
     public static TypeBookmarkDialog NewBookmark(Context context, int ari, final int verseCount) {
-        final TypeBookmarkDialog res = new TypeBookmarkDialog(context, null, S.activeVersion().referenceWithVerseCount(ari, verseCount));
+        final TypeBookmarkDialog res = new TypeBookmarkDialog(context, null, App.services.versions.activeVersion().referenceWithVerseCount(ari, verseCount));
         res.ariForNewBookmark = ari;
         res.verseCountForNewBookmark = verseCount;
         return res;
@@ -75,7 +75,7 @@ public class TypeBookmarkDialog {
         this.marker = marker;
 
         if (reference == null) {
-            reference = S.activeVersion().referenceWithVerseCount(marker.ari, marker.verseCount);
+            reference = App.services.versions.activeVersion().referenceWithVerseCount(marker.ari, marker.verseCount);
         }
         defaultCaption = reference;
 
@@ -89,7 +89,7 @@ public class TypeBookmarkDialog {
 
         if (marker != null) {
             labels = new TreeSet<>();
-            final List<Label> ll = S.getDb().listLabelsByMarker(marker);
+            final List<Label> ll = App.services.storage.getDb().listLabelsByMarker(marker);
             labels.addAll(ll);
         }
         setLabelsText();
@@ -117,12 +117,12 @@ public class TypeBookmarkDialog {
         if (marker != null) { // update existing
             marker.caption = caption;
             marker.modifyTime = now;
-            S.getDb().insertOrUpdateMarker(marker);
+            App.services.storage.getDb().insertOrUpdateMarker(marker);
         } else { // add new
-            marker = S.getDb().insertMarker(ariForNewBookmark, Marker.Kind.bookmark, caption, verseCountForNewBookmark, now, now);
+            marker = App.services.storage.getDb().insertMarker(ariForNewBookmark, Marker.Kind.bookmark, caption, verseCountForNewBookmark, now, now);
         }
 
-        S.getDb().updateLabels(marker, labels);
+        App.services.storage.getDb().updateLabels(marker, labels);
 
         if (listener != null) listener.onModifiedOrDeleted();
     }
@@ -165,7 +165,7 @@ public class TypeBookmarkDialog {
             context.getString(R.string.bookmark_delete_confirmation),
             context.getString(R.string.delete),
             () -> {
-                S.getDb().deleteMarkerById(marker._id);
+                App.services.storage.getDb().deleteMarkerById(marker._id);
 
                 if (listener != null) listener.onModifiedOrDeleted();
                 return Unit.INSTANCE;
@@ -213,7 +213,7 @@ public class TypeBookmarkDialog {
     }
 
     class LabelAdapter extends MaterialDialogAdapterHelper.Adapter {
-        private final List<Label> availableLabels = S.getDb().listAllLabels();
+        private final List<Label> availableLabels = App.services.storage.getDb().listAllLabels();
 
         @Override
         public int getItemCount() {
@@ -248,7 +248,7 @@ public class TypeBookmarkDialog {
                 final int which = holder.getBindingAdapterPosition();
                 if (which == 0) { // new label
                     LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), title -> {
-                        final Label newLabel = S.getDb().insertLabel(title, null);
+                        final Label newLabel = App.services.storage.getDb().insertLabel(title, null);
                         if (newLabel != null) {
                             labels.add(newLabel);
                             setLabelsText();

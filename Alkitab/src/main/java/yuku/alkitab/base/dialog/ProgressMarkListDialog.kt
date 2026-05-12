@@ -10,7 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
-import yuku.alkitab.base.S
+import yuku.alkitab.base.App
 import yuku.alkitab.base.util.Appearances.applyMarkerDateTextAppearance
 import yuku.alkitab.base.util.Appearances.applyMarkerSnippetContentAndAppearance
 import yuku.alkitab.base.util.Appearances.applyMarkerTitleTextAppearance
@@ -23,9 +23,9 @@ import yuku.alkitab.model.ProgressMark
 class ProgressMarkListDialog : DialogFragment() {
     var progressMarkSelectedListener: (preset_id: Int) -> Unit = {}
 
-    private val version = S.activeVersion()
-    private val versionId = S.activeVersionId()
-    private val textSizeMult = S.db.getPerVersionSettings(versionId).fontSizeMultiplier
+    private val version = App.services.versions.activeVersion()
+    private val versionId = App.services.versions.activeVersionId()
+    private val textSizeMult = App.services.storage.db.getPerVersionSettings(versionId).fontSizeMultiplier
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
@@ -33,7 +33,7 @@ class ProgressMarkListDialog : DialogFragment() {
             val lsProgressMark = findViewById<RecyclerView>(R.id.lsProgressMark)
             val adapter = ProgressMarkAdapter()
             lsProgressMark.adapter = adapter
-            lsProgressMark.setBackgroundColor(S.applied().backgroundColor)
+            lsProgressMark.setBackgroundColor(App.services.uiDimensions.applied().backgroundColor)
         }
     }
 
@@ -53,7 +53,7 @@ class ProgressMarkListDialog : DialogFragment() {
 
         fun reload() {
             progressMarks.clear()
-            progressMarks.addAll(S.db.listAllProgressMarks())
+            progressMarks.addAll(App.services.storage.db.listAllProgressMarks())
             notifyDataSetChanged()
         }
 

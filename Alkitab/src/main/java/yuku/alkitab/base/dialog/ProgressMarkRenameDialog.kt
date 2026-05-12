@@ -9,7 +9,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import java.util.Date
-import yuku.alkitab.base.S.db
+import yuku.alkitab.base.App
 import yuku.alkitab.base.events.AppEvents
 import yuku.alkitab.base.widget.AttributeView
 import yuku.alkitab.debug.R
@@ -41,7 +41,7 @@ object ProgressMarkRenameDialog : DialogFragment() {
                     progressMark.caption = name
                 }
                 progressMark.modifyTime = Date()
-                db.insertOrUpdateProgressMark(progressMark)
+                App.services.storage.db.insertOrUpdateProgressMark(progressMark)
 
                 // Since updating database is the responsibility here,
                 // announcing it will also be here.
@@ -55,7 +55,7 @@ object ProgressMarkRenameDialog : DialogFragment() {
                         progressMark.ari = 0
                         progressMark.caption = null
                         progressMark.modifyTime = Date()
-                        db.insertOrUpdateProgressMark(progressMark)
+                        App.services.storage.db.insertOrUpdateProgressMark(progressMark)
 
                         // Since updating database is the responsibility here,
                         // announcing it will also be here.

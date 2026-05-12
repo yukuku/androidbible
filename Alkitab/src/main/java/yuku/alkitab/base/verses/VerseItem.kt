@@ -16,7 +16,7 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import yuku.afw.storage.Preferences
-import yuku.alkitab.base.S
+import yuku.alkitab.base.App
 import yuku.alkitab.base.widget.AttributeView
 import yuku.alkitab.base.widget.LeftDrawer.PROGRESS_MARK_DRAG_MIME_TYPE
 import yuku.alkitab.base.widget.VerseTextView
@@ -294,7 +294,7 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
         val progress_mark_bits = attributeView.progressMarkBits
         for (preset_id in 0 until AttributeView.PROGRESS_MARK_TOTAL_COUNT) {
             if (progress_mark_bits and (1 shl AttributeView.PROGRESS_MARK_BITS_START + preset_id) != 0) {
-                S.db.getProgressMarkByPresetId(preset_id)?.let { progressMark ->
+                App.services.storage.db.getProgressMarkByPresetId(preset_id)?.let { progressMark ->
                     val caption = if (TextUtils.isEmpty(progressMark.caption)) {
                         context.getString(AttributeView.getDefaultProgressMarkStringResource(preset_id))
                     } else {

@@ -46,7 +46,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.gestures.detectTapGestures
-import yuku.alkitab.base.S
+import yuku.alkitab.base.App
 import yuku.alkitab.base.compose.ComposeBottomSheetHost
 import yuku.alkitab.base.compose.colorpicker.ColorPickerDialog
 import yuku.alkitab.base.util.Highlights
@@ -165,7 +165,7 @@ class TypeHighlightDialog {
         if (partial) {
             val start = minOf(range!!.first, range.second)
             val end = maxOf(range.first, range.second)
-            S.db.updateOrInsertPartialHighlight(
+            App.services.storage.db.updateOrInsertPartialHighlight(
                 Ari.encodeWithBc(ariBookChapter, selectedVerses.get(0)),
                 colorRgb,
                 verseText,
@@ -173,7 +173,7 @@ class TypeHighlightDialog {
                 end,
             )
         } else {
-            S.db.updateOrInsertHighlights(ariBookChapter, selectedVerses, colorRgb)
+            App.services.storage.db.updateOrInsertHighlights(ariBookChapter, selectedVerses, colorRgb)
         }
     }
 
@@ -304,7 +304,7 @@ private fun VerseTextSelectable(
         onValueChange = onValueChange,
         readOnly = true,
         textStyle = LocalTextStyle.current.copy(
-            color = Color(S.applied().fontColor),
+            color = Color(App.services.uiDimensions.applied().fontColor),
             fontSize = 16.sp,
         ),
         modifier = Modifier.fillMaxWidth(),

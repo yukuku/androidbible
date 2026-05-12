@@ -31,7 +31,6 @@ import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
@@ -376,7 +375,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 				panelCurrentReadingHeader.setVisibility(VISIBLE);
 				bCurrentReadingReference.setVisibility(VISIBLE);
 
-				bCurrentReadingReference.setText(S.activeVersion().referenceRange(aris[0], aris[1]));
+				bCurrentReadingReference.setText(App.services.versions.activeVersion().referenceRange(aris[0], aris[1]));
 			}
 		}
 
