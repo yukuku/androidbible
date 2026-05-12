@@ -31,8 +31,15 @@ public class App extends yuku.afw.App {
      * new code can depend on narrow interfaces (and tests can swap fakes in) without
      * reaching into the {@link S} service locator directly. Existing {@code S.foo}
      * call sites are being migrated incrementally — see REM-24.
+     *
+     * <p>Initialized eagerly at class-load so call sites can read it before
+     * {@link #staticInit()} has run. The adapter properties on {@link S} are
+     * cheap object literals that only touch context/preferences when their
+     * methods are invoked, so this is safe even from tests that haven't booted
+     * the full {@link App} (e.g. by overriding the Application class in
+     * Robolectric and calling {@code yuku.afw.App.initWithAppContext} directly).
      */
-    public static AppServices services;
+    public static AppServices services = new AppServices(S.storage, S.versions, S.uiDimensions);
 
     enum GsonWrapper {
         INSTANCE;
@@ -57,11 +64,6 @@ public class App extends yuku.afw.App {
         if (context == null) {
             throw new RuntimeException("yuku.afw.App.context must have been set via initWithAppContext(Context) before calling this method.");
         }
-
-        // Wire up the service container before anything else — S exposes adapter
-        // properties that satisfy each service interface; tests can override this
-        // field with fakes.
-        services = new AppServices(S.storage, S.versions, S.uiDimensions);
 
         FeedbackSender.getInstance(context).trySend();
 

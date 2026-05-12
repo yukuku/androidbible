@@ -11,7 +11,7 @@ package yuku.alkitab.base.services
  * In tests, callers can construct an [AppServices] with fake/in-memory implementations.
  */
 class AppServices(
-    val storage: StorageProvider,
-    val versions: VersionManager,
-    val uiDimensions: UiDimensionsProvider,
+    @JvmField val storage: StorageProvider,
+    @JvmField val versions: VersionManager,
+    @JvmField val uiDimensions: UiDimensionsProvider,
 )
