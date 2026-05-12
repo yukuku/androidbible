@@ -476,7 +476,7 @@ Use Android Studio's "Convert Java File to Kotlin" as a starting point, then man
 
 ---
 
-### REM-20: Replace AmbilWarna with Material Color Picker — ⚠️ PARTIALLY COMPLETED (2026-05-11)
+### ~~REM-20: Replace AmbilWarna with Material Color Picker~~ ✅ COMPLETED (2026-05-12)
 **Addresses:** TD-12  
 **Module:** UI — Color settings  
 **BRICE:** B=1 R=1 I=4 C=4 E=5 → **3.0**
@@ -489,13 +489,13 @@ Use Android Studio's "Convert Java File to Kotlin" as a starting point, then man
 
 **Difficulty:** Easy (3-4 hours).
 
-**Outcome (partial):** The two `AmbilWarnaDialog` call sites identified in the original task have been migrated to a new iOS-style Compose color picker, inspired by Apple's UIColorPickerViewController and the Flutter `ios_color_picker` package. The picker lives in [Alkitab/src/main/java/yuku/alkitab/base/compose/colorpicker/IosColorPicker.kt](../Alkitab/src/main/java/yuku/alkitab/base/compose/colorpicker/IosColorPicker.kt) and exposes three tabs: a **Grid** (50-color preset palette: 10 greys × 1 row + 10 hues × 4 brightness rows), a **Spectrum** tab (saturation × value 2D box driven by tap & drag, with a hue slider underneath), and a **Sliders** tab (R/G/B channel sliders plus a 6-digit hex input field). The Java call sites use a thin wrapper [ColorPickerDialog.kt](../Alkitab/src/main/java/yuku/alkitab/base/compose/colorpicker/ColorPickerDialog.kt) that hosts the Compose view inside a `MaterialAlertDialogBuilder`. Color storage is unchanged — the picker returns the same `0xff000000 | rgb` int the legacy code expected, and `LabelColorUtil.encodeBackground` still masks to 24-bit RGB before persisting. The picker uses the existing `BibleAppTheme` so it inherits dynamic colors on Android 12+. Java callers reach the picker via a `fun interface Listener` (single-method, lambda-compatible).
+**Outcome:** Done in two PRs.
 
-**Not done in this change:** The `AmbilWarna` module itself was **not** deleted. The original task plan called out 2 dialog call sites and stated that's all there was, but the module is also used as the `AmbilWarnaPreference` widget in 3 PreferenceScreen XMLs ([color_settings.xml](../Alkitab/src/main/res/xml/color_settings.xml), [color_settings_night.xml](../Alkitab/src/main/res/xml/color_settings_night.xml), [settings_display.xml](../Alkitab/src/main/res/xml/settings_display.xml)) — 9 entries total — loaded at runtime by `ColorSettingsActivity` and `DisplayFragment`. Deleting the module would break inflation of those preference screens. Migrating those 9 preference widgets requires writing a `Preference` subclass that hosts the new Compose picker; that work is out of scope for this remediation and should be filed as a follow-up (e.g. REM-20b).
+The first PR (2026-05-11) replaced the two `AmbilWarnaDialog` call sites — `MarkersActivity` and `TypeHighlightDialog` — with a new iOS-style Compose color picker, inspired by Apple's UIColorPickerViewController and the Flutter `ios_color_picker` package. The picker lives in [Alkitab/src/main/java/yuku/alkitab/base/compose/colorpicker/IosColorPicker.kt](../Alkitab/src/main/java/yuku/alkitab/base/compose/colorpicker/IosColorPicker.kt) and exposes three tabs: a **Grid** (50-color preset palette: 10 greys × 1 row + 10 hues × 4 brightness rows), a **Spectrum** tab (saturation × value 2D box driven by tap & drag, with a hue slider underneath), and a **Sliders** tab (R/G/B channel sliders plus a 6-digit hex input field). The Java call sites reach the picker through a thin `ColorPickerDialog` wrapper ([ColorPickerDialog.kt](../Alkitab/src/main/java/yuku/alkitab/base/compose/colorpicker/ColorPickerDialog.kt)) that hosts the Compose view inside a `ModalBottomSheet` via `ComposeBottomSheetHost`. Color storage is unchanged — the picker returns the same `0xff000000 | rgb` int the legacy code expected, and `LabelColorUtil.encodeBackground` still masks to 24-bit RGB before persisting. The picker uses the existing `BibleAppTheme` so it inherits dynamic colors on Android 12+. Java callers reach the picker via a `fun interface Listener` (single-method, lambda-compatible).
 
-**Verification:** `./gradlew assemblePlainDebug` and `./gradlew testPlainDebugUnitTest testPlainReleaseUnitTest` both pass.
+The follow-up PR (2026-05-12) finished the migration by replacing the 9 `<yuku.ambilwarna.widget.AmbilWarnaPreference …/>` entries across `color_settings.xml`, `color_settings_night.xml`, and `settings_display.xml` with a new [ColorPreference](../Alkitab/src/main/java/yuku/alkitab/base/widget/ColorPreference.kt) (`androidx.preference.Preference` subclass). It draws a 24dp rounded color swatch as its widget area and opens the same Compose bottom-sheet picker on click — persisting through the existing `persistInt` path, so all `Preferences.getInt(R.string.pref_textColor_key, …)` call sites elsewhere in the codebase keep reading the same ARGB int format. With the last consumer gone, the `AmbilWarna` Gradle module was deleted in full: `include(":AmbilWarna")` removed from `settings.gradle.kts`, `implementation(project(":AmbilWarna"))` removed from `Alkitab/build.gradle.kts`, and the entire `AmbilWarna/` directory deleted.
 
-**Commit:** `29bfd31e` — REM-20: replace AmbilWarnaDialog call sites with iOS-style Compose picker.
+**Verification:** `./gradlew assemblePlainDebug` and `./gradlew testPlainDebugUnitTest testPlainReleaseUnitTest` both pass after each PR.
 
 ---
 
@@ -705,7 +705,7 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 | REM-15 | Introduce coroutines | **3.2** | 3 |
 | REM-16 | Java→Kotlin conversion | **3.0** | 3 |
 | REM-17 | ~~Kotlin DSL build migration~~ ✅ | **3.0** | 3 |
-| REM-20 | Replace AmbilWarna | **3.0** | 3 |
+| REM-20 | ~~Replace AmbilWarna~~ ✅ | **3.0** | 3 |
 | REM-19 | Replace PRDownloader | **2.8** | 3 |
 | REM-21 | Song storage migration | **2.8** | 4 |
 | REM-22 | Jetpack Compose adoption (kicked off) | **2.6** | 4 |

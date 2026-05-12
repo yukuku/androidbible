@@ -340,7 +340,6 @@ dependencies {
     implementation(project(":BintexWriter"))
     implementation(project(":Afw"))
     implementation(project(":FlowLayout"))
-    implementation(project(":AmbilWarna"))
     implementation(project(":ImportedDesktopVerseUtil"))
     implementation(project(":PrDownloaderFixed"))
 
