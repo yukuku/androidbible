@@ -8,7 +8,6 @@ import java.util.GregorianCalendar;
 import java.util.Random;
 import yuku.afw.App;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.model.VersionImpl;
@@ -143,7 +142,7 @@ public abstract class DailyVerseData {
 		}
 
 		// try database versions
-		for (final MVersionDb mvDb : S.getDb().listAllVersions()) {
+		for (final MVersionDb mvDb : yuku.alkitab.base.App.services.storage.getDb().listAllVersions()) {
 			if (mvDb.getVersionId().equals(versionId)) {
 				if (mvDb.hasDataFile()) {
 					return mvDb.getVersion();

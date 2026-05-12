@@ -8,7 +8,7 @@ import android.text.style.UnderlineSpan
 import android.util.TypedValue
 import android.widget.TextView
 import androidx.core.text.underline
-import yuku.alkitab.base.S
+import yuku.alkitab.base.App
 
 object Appearances {
     @JvmStatic
@@ -24,7 +24,7 @@ object Appearances {
 
     @JvmStatic
     fun applyTextAppearance(t: TextView, fontSizeMultiplier: Float) {
-        val applied = S.applied()
+        val applied = App.services.uiDimensions.applied()
 
         t.setTypeface(applied.fontFace, applied.fontBold)
         t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp * fontSizeMultiplier)
@@ -36,7 +36,7 @@ object Appearances {
 
     @JvmStatic
     fun applyPericopeTitleAppearance(t: TextView, fontSizeMultiplier: Float) {
-        val applied = S.applied()
+        val applied = App.services.uiDimensions.applied()
 
         t.setTypeface(applied.fontFace, Typeface.BOLD)
         t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp * fontSizeMultiplier)
@@ -46,7 +46,7 @@ object Appearances {
 
     @JvmStatic
     fun applyPericopeParallelTextAppearance(t: TextView, fontSizeMultiplier: Float) {
-        val applied = S.applied()
+        val applied = App.services.uiDimensions.applied()
 
         t.typeface = applied.fontFace
         t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp * 0.8235294f * fontSizeMultiplier)
@@ -61,12 +61,12 @@ object Appearances {
         applyMarkerTitleTextAppearance(t, textSizeMult)
         sb.setSpan(UnderlineSpan(), 0, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         t.text = sb
-        t.setLineSpacing(0f, S.applied().lineSpacingMult)
+        t.setLineSpacing(0f, App.services.uiDimensions.applied().lineSpacingMult)
     }
 
     @JvmStatic
     fun applyMarkerTitleTextAppearance(t: TextView, textSizeMult: Float) {
-        val applied = S.applied()
+        val applied = App.services.uiDimensions.applied()
 
         t.setTypeface(applied.fontFace, applied.fontBold)
         t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp * 1.2f * textSizeMult)
@@ -75,7 +75,7 @@ object Appearances {
 
     @JvmStatic
     fun applyMarkerDateTextAppearance(t: TextView, textSizeMult: Float) {
-        val applied = S.applied()
+        val applied = App.services.uiDimensions.applied()
 
         t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp * 0.8f * textSizeMult)
         t.setTextColor(applied.fontColor)
@@ -83,7 +83,7 @@ object Appearances {
 
     @JvmStatic
     fun applyVerseNumberAppearance(t: TextView, textSizeMult: Float) {
-        val applied = S.applied()
+        val applied = App.services.uiDimensions.applied()
 
         t.setTypeface(applied.fontFace, applied.fontBold)
         t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp * 0.7f * textSizeMult)

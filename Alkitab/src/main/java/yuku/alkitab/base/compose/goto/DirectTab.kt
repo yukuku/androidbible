@@ -49,7 +49,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import yuku.alkitab.base.S
+import yuku.alkitab.base.App
 import yuku.alkitab.base.util.Jumper
 import yuku.alkitab.debug.R
 import java.util.regex.Pattern
@@ -65,7 +65,7 @@ fun DirectTab(
     onGotoFinished: OnGotoFinished,
 ) {
     val context = LocalContext.current
-    val books = remember { S.activeVersion().consecutiveBooks }
+    val books = remember { App.services.versions.activeVersion().consecutiveBooks }
     var query by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(""))
     }
@@ -89,7 +89,7 @@ fun DirectTab(
     }
 
     val sample = remember(initialBookId, initialChapter_1, initialVerse_1) {
-        S.activeVersion().reference(initialBookId, initialChapter_1, initialVerse_1)
+        App.services.versions.activeVersion().reference(initialBookId, initialChapter_1, initialVerse_1)
     }
     val prompt = TextUtils.expandTemplate(context.getText(R.string.jump_to_prompt), sample)
         .toAnnotatedString()

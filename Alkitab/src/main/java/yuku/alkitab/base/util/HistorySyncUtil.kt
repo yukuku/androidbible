@@ -2,7 +2,7 @@ package yuku.alkitab.base.util
 
 import java.util.Locale
 import yuku.afw.storage.Preferences
-import yuku.alkitab.base.S
+import yuku.alkitab.base.App
 import yuku.alkitab.base.model.SyncShadow
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.sync.Sync
@@ -57,7 +57,7 @@ object HistorySyncUtil {
 
             // if we reach here, the local database has been updated with the append delta.
             val ss = Sync_History.shadowFromEntities(Sync_History.getEntitiesFromCurrent(), final_revno)
-            S.db.insertOrUpdateSyncShadowBySyncSetName(ss)
+            App.services.storage.db.insertOrUpdateSyncShadowBySyncSetName(ss)
             history.save()
 
             // when debugging, print

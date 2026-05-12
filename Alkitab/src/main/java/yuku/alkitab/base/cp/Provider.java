@@ -11,7 +11,7 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 import java.util.Arrays;
 import java.util.Locale;
-import yuku.alkitab.base.S;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.util.AppLog;
@@ -177,9 +177,9 @@ public class Provider extends ContentProvider {
 		AppLog.d(TAG, "getting ari 0x" + Integer.toHexString(ari));
 		
 		if (ari != Integer.MIN_VALUE && ari != 0) {
-			Book book = S.activeVersion().getBook(Ari.toBook(ari));
+			Book book = App.services.versions.activeVersion().getBook(Ari.toBook(ari));
 			if (book != null) {
-				String text = S.activeVersion().loadVerseText(ari);
+				String text = App.services.versions.activeVersion().loadVerseText(ari);
 				if (text != null) {
 					if (!formatting) {
 						text = FormattedVerseText.removeSpecialCodes(text);
@@ -222,9 +222,9 @@ public class Provider extends ContentProvider {
 				// case: single verse
 				//noinspection UnnecessaryLocalVariable
 				int ari = ari_start;
-				Book book = S.activeVersion().getBook(Ari.toBook(ari));
+				Book book = App.services.versions.activeVersion().getBook(Ari.toBook(ari));
 				if (book != null) {
-					String text = S.activeVersion().loadVerseText(ari);
+					String text = App.services.versions.activeVersion().loadVerseText(ari);
 					if (!formatting) {
 						text = FormattedVerseText.removeSpecialCodes(text);
 					}
@@ -236,14 +236,14 @@ public class Provider extends ContentProvider {
 				
 				if (ari_start_bc == ari_end_bc) {
 					// case: multiple verses in the same chapter
-					Book book = S.activeVersion().getBook(Ari.toBook(ari_start));
+					Book book = App.services.versions.activeVersion().getBook(Ari.toBook(ari_start));
 					if (book != null) {
 						c += resultForOneChapter(res, book, c, ari_start_bc, Ari.toVerse(ari_start), Ari.toVerse(ari_end), formatting);
 					}
 				} else {
 					// case: multiple verses in different chapters
 					for (int ari_bc = ari_start_bc; ari_bc <= ari_end_bc; ari_bc += 0x0100) {
-						Book book = S.activeVersion().getBook(Ari.toBook(ari_bc));
+						Book book = App.services.versions.activeVersion().getBook(Ari.toBook(ari_bc));
 						int chapter_1 = Ari.toChapter(ari_bc);
 						if (book == null || chapter_1 <= 0 || chapter_1 > book.chapter_count) {
 							continue;
@@ -268,7 +268,7 @@ public class Provider extends ContentProvider {
 	 * @return number of verses put into the cursor
 	 */
 	private int resultForOneChapter(MatrixCursor cursor, Book book, int last_c, int ari_bc, int v_1_start, int v_1_end, boolean formatting) {
-		final SingleChapterVerses verses = S.activeVersion().loadChapterText(book, Ari.toChapter(ari_bc));
+		final SingleChapterVerses verses = App.services.versions.activeVersion().loadChapterText(book, Ari.toChapter(ari_bc));
 		if (verses == null) {
 			return 0;
 		}
@@ -302,7 +302,7 @@ public class Provider extends ContentProvider {
 		}
 
 		{ // database versions
-			for (MVersionDb mvDb: S.getDb().listAllVersions()) {
+			for (MVersionDb mvDb: App.services.storage.getDb().listAllVersions()) {
 				res.addRow(new Object[]{++_id, "yes", mvDb.hasDataFile() ? 1 : 0, mvDb.shortName != null ? mvDb.shortName : mvDb.longName, mvDb.longName, mvDb.description});
 			}
 		}

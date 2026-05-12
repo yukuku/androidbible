@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import yuku.alkitab.base.IsiActivity
-import yuku.alkitab.base.S
+import yuku.alkitab.base.App
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.debug.R
 
@@ -424,14 +424,14 @@ class BibleAudioService : MediaSessionService() {
      *    routed through [BibleChapterNavigatingPlayer].
      *
      * The activity does not need to be alive for this to work — the
-     * [yuku.alkitab.model.Version] is resolved through [S]. When the activity
+     * [yuku.alkitab.model.Version] is resolved through [App.services]. When the activity
      * *is* alive, `AudioBarController` observes the resulting state change and
      * navigates `IsiActivity` to keep both surfaces in sync.
      */
     fun skipChapter(direction: Int) {
         val current = currentRequest ?: return
-        val resolvedVersion = S.getVersionFromVersionId(current.versionId)?.version
-        val version = resolvedVersion ?: S.activeVersion()
+        val resolvedVersion = App.services.versions.getVersionFromVersionId(current.versionId)?.version
+        val version = resolvedVersion ?: App.services.versions.activeVersion()
         val (book, chapter1) = BibleNeighborResolver.neighbor(
             version,
             current.bookId,
