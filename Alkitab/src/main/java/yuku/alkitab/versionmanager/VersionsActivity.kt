@@ -18,7 +18,6 @@ import com.google.android.material.tabs.TabLayout
 import java.io.File
 import java.io.IOException
 import yuku.alkitab.base.App
-import yuku.alkitab.base.S
 import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.events.AppEvents
 import yuku.alkitab.base.model.MVersionDb
@@ -196,7 +195,7 @@ class VersionsActivity : BaseActivity() {
             val reader = YesReaderFactory.createYesReader(localYesFile.absolutePath)
                 ?: throw IOException("Local file $localYesFile is not a valid YES file.")
 
-            var maxOrdering = S.db.versionMaxOrdering
+            var maxOrdering = App.services.storage.db.versionMaxOrdering
             if (maxOrdering == 0) maxOrdering = MVersionDb.DEFAULT_ORDERING_START
 
             val mvDb = MVersionDb().apply {
@@ -209,7 +208,7 @@ class VersionsActivity : BaseActivity() {
                 preset_name = null
             }
 
-            S.db.insertOrUpdateVersionWithActive(mvDb, true)
+            App.services.storage.db.insertOrUpdateVersionWithActive(mvDb, true)
             MVersionDb.clearVersionImplCache()
 
             AppEvents.emitVersionListReload()
