@@ -14,8 +14,8 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.CheckBox
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.AnyThread
@@ -295,7 +295,10 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
         val panelRight: View = view.findViewById(R.id.panelRight)
         val cActive: CheckBox = view.findViewById(R.id.cActive)
         val progress: ProgressBar = view.findViewById(R.id.progress)
-        val bLongName: Button = view.findViewById(R.id.bLongName)
+        val panelName: View = view.findViewById(R.id.panelName)
+        val tShortName: TextView = view.findViewById(R.id.tShortName)
+        val tLongName: TextView = view.findViewById(R.id.tLongName)
+        val iUpdate: ImageView = view.findViewById(R.id.iUpdate)
         val header: View = view.findViewById(R.id.header)
         val tLanguage: TextView = view.findViewById(R.id.tLanguage)
         val drag_handle: View = view.findViewById(R.id.drag_handle)
@@ -434,16 +437,28 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
             val panelRight = holder.panelRight
             val cActive = holder.cActive
             val progress = holder.progress
-            val bLongName = holder.bLongName
+            val panelName = holder.panelName
+            val tShortName = holder.tShortName
+            val tLongName = holder.tLongName
+            val iUpdate = holder.iUpdate
             val header = holder.header
             val tLanguage = holder.tLanguage
             val drag_handle = holder.drag_handle
             val item = getItem(position)
             val mv = item.mv
-            bLongName.setOnClickListener { itemNameClick(item) }
+            panelName.setOnClickListener { itemNameClick(item) }
             panelRight.setOnClickListener { itemCheckboxClick(item, holder.itemView) }
             cActive.isChecked = mv.active
-            bLongName.text = mv.longName
+
+            val shortName = mv.shortName
+            if (!shortName.isNullOrBlank()) {
+                tShortName.text = shortName
+                tLongName.text = mv.longName
+                tLongName.visibility = View.VISIBLE
+            } else {
+                tShortName.text = mv.longName
+                tLongName.visibility = View.GONE
+            }
 
             when (mv) {
                 is MVersionInternal -> cActive.isEnabled = false
@@ -464,12 +479,7 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
                 header.visibility = View.GONE
             }
 
-            // Update icon
-            if (mv is MVersionDb && hasUpdateAvailable(mv)) {
-                bLongName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_version_update, 0, 0, 0)
-            } else {
-                bLongName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
-            }
+            iUpdate.visibility = if (mv is MVersionDb && hasUpdateAvailable(mv)) View.VISIBLE else View.GONE
 
             // downloading or not?
             val downloading = if (mv is MVersionInternal) {

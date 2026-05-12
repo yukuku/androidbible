@@ -27,19 +27,60 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:gravity="center_vertical"
-		android:minHeight="48dp"
 		android:orientation="horizontal">
 
-		<Button
-			android:id="@+id/bLongName"
+		<LinearLayout
+			android:id="@+id/panelName"
 			android:layout_width="0dp"
-			android:layout_height="match_parent"
+			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:background="?selectableItemBackground"
-			android:drawablePadding="8dp"
+			android:clickable="true"
+			android:focusable="true"
 			android:gravity="center_vertical"
-			android:textAppearance="?android:textAppearanceMedium"
-			tools:text="Long version name" />
+			android:minHeight="56dp"
+			android:orientation="horizontal"
+			android:paddingStart="4dp"
+			android:paddingTop="8dp"
+			android:paddingEnd="4dp"
+			android:paddingBottom="8dp">
+
+			<ImageView
+				android:id="@+id/iUpdate"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="8dp"
+				android:src="@drawable/ic_version_update"
+				android:visibility="gone"
+				tools:ignore="ContentDescription"
+				tools:visibility="visible" />
+
+			<LinearLayout
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:orientation="vertical">
+
+				<TextView
+					android:id="@+id/tShortName"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:textAppearance="?android:textAppearanceMedium"
+					android:textStyle="bold"
+					tools:text="ESV" />
+
+				<TextView
+					android:id="@+id/tLongName"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="2dp"
+					android:textColor="#898989"
+					android:textSize="13sp"
+					tools:text="English Standard Version" />
+
+			</LinearLayout>
+
+		</LinearLayout>
 
 		<FrameLayout
 			android:id="@+id/panelRight"

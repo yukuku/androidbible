@@ -1,6 +1,11 @@
 package yuku.alkitab.base.util
 
 import android.app.Activity
+import android.graphics.Typeface
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.StyleSpan
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import yuku.alkitab.base.S
 import yuku.alkitab.base.model.MVersion
@@ -21,7 +26,7 @@ object VersionDialogHelper {
         // determine the currently selected one
         val selected = versions.indexOfFirst { it.versionId == selectedVersionId }
 
-        val options = versions.map { it.longName }.toTypedArray()
+        val options: Array<CharSequence> = versions.map { formatVersionLabel(it) }.toTypedArray()
         MaterialAlertDialogBuilder(activity)
             .setSingleChoiceItems(options, selected) { dialog, index ->
                 if (index >= 0) {
@@ -46,7 +51,7 @@ object VersionDialogHelper {
             versions.indexOfFirst { it.versionId == selectedVersionId } + 1
         }
 
-        val options = (listOf(activity.getString(R.string.split_version_none)) + versions.map { it.longName }).toTypedArray()
+        val options: Array<CharSequence> = (listOf<CharSequence>(activity.getString(R.string.split_version_none)) + versions.map { formatVersionLabel(it) }).toTypedArray()
         MaterialAlertDialogBuilder(activity)
             .setSingleChoiceItems(options, selected) { dialog, index ->
                 when {
@@ -59,5 +64,26 @@ object VersionDialogHelper {
                 activity.startActivity(VersionsActivity.createIntent())
             }
             .show()
+    }
+
+    /**
+     * Builds a two-line label for a version row: shortName (bold) above
+     * longName (smaller, muted). Falls back to longName alone when the
+     * version has no shortName.
+     */
+    private fun formatVersionLabel(mv: MVersion): CharSequence {
+        val shortName = mv.shortName
+        if (shortName.isNullOrBlank()) return mv.longName
+
+        val sb = SpannableStringBuilder()
+        val shortStart = sb.length
+        sb.append(shortName)
+        sb.setSpan(StyleSpan(Typeface.BOLD), shortStart, sb.length, 0)
+        sb.append("\n")
+        val longStart = sb.length
+        sb.append(mv.longName)
+        sb.setSpan(RelativeSizeSpan(0.92f), longStart, sb.length, 0)
+        sb.setSpan(ForegroundColorSpan(0xff898989.toInt()), longStart, sb.length, 0)
+        return sb
     }
 }
