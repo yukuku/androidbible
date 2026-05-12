@@ -377,7 +377,7 @@ If the project adopts Hilt for other reasons (e.g., ViewModel injection in REM-0
 |----------|------|-------|------|-------|
 | 1 | `Highlights.java` | ~200 | Low | Standalone utility, good test coverage target |
 | 2 | `TargetDecoder.java` | ~150 | Low | Has tests, pure logic |
-| 3 | `Jumper.java` | ~200 | Low | Has tests, pure logic |
+| 3 | ~~`Jumper.java`~~ | ~~~200~~ | ~~Low~~ | ✅ ported to `Jumper.kt` on 2026-05-12; behavior preserved, JumperTest + full unit suite pass |
 | 4 | `QueryTokenizer.java` | ~100 | Low | Has tests |
 | 5 | `DevotionDownloader.java` | 111 | Low | Small, standalone thread (do with REM-05) |
 | 6 | `Provider.java` | ~200 | Medium | Content provider, external API contract |
