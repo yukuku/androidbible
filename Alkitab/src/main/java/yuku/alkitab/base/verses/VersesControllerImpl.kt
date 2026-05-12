@@ -131,7 +131,11 @@ class VersesControllerImpl(
                     if (verse_1 > 0) {
                         versesListeners.verseScrollListener.onVerseScroll(false, verse_1, prop)
                     } else {
-                        versesListeners.verseScrollListener.onVerseScroll(true, 0, 0f)
+                        // first visible item is a pericope; pass the following verse for best-effort sync
+                        val nextVerse_1 = versesDataModel.getVerse_1FromPosition(position)
+                        if (nextVerse_1 > 0) {
+                            versesListeners.verseScrollListener.onVerseScroll(true, nextVerse_1, prop)
+                        }
                     }
 
                     if (position == 0 && firstChild.top == view.paddingTop) {
