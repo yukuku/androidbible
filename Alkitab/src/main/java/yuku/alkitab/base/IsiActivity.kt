@@ -1593,7 +1593,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             return
         }
 
-        VersionDialogHelper.openVersionsDialog(this, activeSplit0.versionId) { mv ->
+        VersionDialogHelper.openVersionsDialog(this, App.services.versions, activeSplit0.versionId) { mv ->
             loadVersion(mv)
 
             // We may need to apply PerVersion settings.
@@ -1602,7 +1602,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     }
 
     private fun openSplitVersionsDialog() {
-        VersionDialogHelper.openVersionsDialogWithNone(this, activeSplit1?.versionId) { mv: MVersion? ->
+        VersionDialogHelper.openVersionsDialogWithNone(this, App.services.versions, activeSplit1?.versionId) { mv: MVersion? ->
             if (mv == null) { // closing split version
                 disableSplitVersion()
             } else {

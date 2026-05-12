@@ -4,17 +4,19 @@ import android.app.Activity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import yuku.alkitab.base.S
 import yuku.alkitab.base.model.MVersion
+import yuku.alkitab.base.services.VersionManager
 import yuku.alkitab.debug.R
 import yuku.alkitab.versionmanager.VersionsActivity
 
 /**
  * UI helpers for letting the user pick a Bible version. Previously lived on
  * [S]; moved here as part of REM-24 so the service locator is purely
- * non-UI state.
+ * non-UI state. The [VersionManager] is injected so callers can substitute
+ * a fake in tests instead of relying on [S].
  */
 object VersionDialogHelper {
-    fun openVersionsDialog(activity: Activity, selectedVersionId: String, onVersionSelected: (MVersion) -> Unit) {
-        val versions = S.getAvailableVersions()
+    fun openVersionsDialog(activity: Activity, versionManager: VersionManager, selectedVersionId: String, onVersionSelected: (MVersion) -> Unit) {
+        val versions = versionManager.getAvailableVersions()
 
         // determine the currently selected one
         val selected = versions.indexOfFirst { it.versionId == selectedVersionId }
@@ -34,8 +36,8 @@ object VersionDialogHelper {
             .show()
     }
 
-    fun openVersionsDialogWithNone(activity: Activity, selectedVersionId: String?, onVersionSelected: (MVersion?) -> Unit) {
-        val versions = S.getAvailableVersions()
+    fun openVersionsDialogWithNone(activity: Activity, versionManager: VersionManager, selectedVersionId: String?, onVersionSelected: (MVersion?) -> Unit) {
+        val versions = versionManager.getAvailableVersions()
 
         // determine the currently selected one
         val selected = if (selectedVersionId == null) {

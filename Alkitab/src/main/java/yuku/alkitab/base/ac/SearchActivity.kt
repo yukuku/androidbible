@@ -492,7 +492,7 @@ class SearchActivity : BaseActivity() {
     }
 
     private val bVersion_click = View.OnClickListener {
-        VersionDialogHelper.openVersionsDialog(this, searchInVersionId) { mv: MVersion ->
+        VersionDialogHelper.openVersionsDialog(this, App.services.versions, searchInVersionId) { mv: MVersion ->
             val selectedVersion = mv.version
             if (selectedVersion == null) {
                 MaterialAlertDialogBuilder(this@SearchActivity)
