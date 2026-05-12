@@ -30,7 +30,6 @@ Alkitab (main app)
 ├── BiblePlus (PDB format reader)
 ├── KpriModel (song data model)
 ├── FlowLayout
-├── AmbilWarna (color picker)
 ├── Afw (base framework: Preferences, EasyAdapter, App context)
 ├── ImportedDesktopVerseUtil (verse reference parser)
 └── PrDownloaderFixed (HTTP file downloader)
