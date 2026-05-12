@@ -258,7 +258,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
     protected void onStart() {
         super.onStart();
 
-        final S.CalculatedDimensions applied = S.applied();
+        final S.CalculatedDimensions applied = App.services.uiDimensions.applied();
 
         { // apply background color, and clear window background to prevent overdraw
             getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -313,7 +313,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
     void display() {
         final String date = getDateFormat().format(currentDate);
-        final DevotionArticle article = S.getDb().tryGetDevotion(currentKind.name, date);
+        final DevotionArticle article = App.services.storage.getDb().tryGetDevotion(currentKind.name, date);
         if (article == null || !article.getReadyToUse()) {
             willNeed(currentKind, date, true);
         }
@@ -431,14 +431,14 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
         final Date today = new Date();
 
         // delete those older than 180 days!
-        final int deleted = S.getDb().deleteDevotionsWithTouchTimeBefore(new Date(today.getTime() - 180 * 86400_000L));
+        final int deleted = App.services.storage.getDb().deleteDevotionsWithTouchTimeBefore(new Date(today.getTime() - 180 * 86400_000L));
         if (deleted > 0) {
             AppLog.d(TAG, "old devotions deleted: " + deleted);
         }
 
         for (int i = 0; i < kind.getPrefetchDays(); i++) {
             final String date = getDateFormat().format(today);
-            if (S.getDb().tryGetDevotion(kind.name, date) == null) {
+            if (App.services.storage.getDb().tryGetDevotion(kind.name, date) == null) {
                 AppLog.d(TAG, "Prefetcher need to get " + kind + " " + date);
                 willNeed(kind, date, false);
             }

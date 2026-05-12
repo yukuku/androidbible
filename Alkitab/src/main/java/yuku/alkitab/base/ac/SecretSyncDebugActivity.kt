@@ -23,7 +23,6 @@ import okhttp3.Request
 import okhttp3.Response
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
-import yuku.alkitab.base.S
 import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.events.AppEvents
@@ -125,10 +124,10 @@ class SecretSyncDebugActivity : BaseActivity() {
     }
 
     private var bGenerateDummies_click = View.OnClickListener {
-        val label1 = S.db.insertLabel(randomString("L1_", 1, 3, 8), encodeBackground(rand(0xffffff)))
-        val label2 = S.db.insertLabel(randomString("L2_", 1, 3, 8), encodeBackground(rand(0xffffff)))
+        val label1 = App.services.storage.db.insertLabel(randomString("L1_", 1, 3, 8), encodeBackground(rand(0xffffff)))
+        val label2 = App.services.storage.db.insertLabel(randomString("L2_", 1, 3, 8), encodeBackground(rand(0xffffff)))
         for (i in 0..9) {
-            val marker = S.db.insertMarker(0x000101 + rand(30), Marker.Kind.entries[rand(3)], randomString("M" + i + "_", rand(2) + 1, 4, 7), rand(2) + 1, Date(), Date())
+            val marker = App.services.storage.db.insertMarker(0x000101 + rand(30), Marker.Kind.entries[rand(3)], randomString("M" + i + "_", rand(2) + 1, 4, 7), rand(2) + 1, Date(), Date())
             val labelSet: MutableSet<Label> = HashSet()
             if (rand(10) < 5) {
                 labelSet.add(label1)
@@ -136,7 +135,7 @@ class SecretSyncDebugActivity : BaseActivity() {
             if (rand(10) < 3) {
                 labelSet.add(label2)
             }
-            S.db.updateLabels(marker, labelSet)
+            App.services.storage.db.updateLabels(marker, labelSet)
         }
 
         MaterialAlertDialogBuilder(this)
@@ -146,12 +145,12 @@ class SecretSyncDebugActivity : BaseActivity() {
     }
 
     private var bGenerateDummies2_click = View.OnClickListener {
-        val label1 = S.db.insertLabel(randomString("LL1_", 1, 3, 8), encodeBackground(rand(0xffffff)))
-        val label2 = S.db.insertLabel(randomString("LL2_", 1, 3, 8), encodeBackground(rand(0xffffff)))
+        val label1 = App.services.storage.db.insertLabel(randomString("LL1_", 1, 3, 8), encodeBackground(rand(0xffffff)))
+        val label2 = App.services.storage.db.insertLabel(randomString("LL2_", 1, 3, 8), encodeBackground(rand(0xffffff)))
         for (i in 0..999) {
             val kind = Marker.Kind.entries[rand(3)]
             val now = Date()
-            val marker = S.db.insertMarker(0x000101 + rand(30), kind, if (kind == Marker.Kind.highlight) Highlights.encode(rand(0xffffff)) else randomString("MM" + i + "_", if (rand(10) < 5) rand(81) else rand(400) + 4, 5, 15), rand(2) + 1, now, now)
+            val marker = App.services.storage.db.insertMarker(0x000101 + rand(30), kind, if (kind == Marker.Kind.highlight) Highlights.encode(rand(0xffffff)) else randomString("MM" + i + "_", if (rand(10) < 5) rand(81) else rand(400) + 4, 5, 15), rand(2) + 1, now, now)
             val labelSet: MutableSet<Label> = HashSet()
             if (rand(10) < 1) {
                 labelSet.add(label1)
@@ -159,7 +158,7 @@ class SecretSyncDebugActivity : BaseActivity() {
             if (rand(10) < 4) {
                 labelSet.add(label2)
             }
-            S.db.updateLabels(marker, labelSet)
+            App.services.storage.db.updateLabels(marker, labelSet)
         }
 
         MaterialAlertDialogBuilder(this)
@@ -190,7 +189,7 @@ class SecretSyncDebugActivity : BaseActivity() {
                     val nlabel = rand(5)
                     toast("creating $nlabel labels")
                     for (i in 0 until nlabel) {
-                        S.db.insertLabel(randomString("monkey L $i ", 1, 3, 8), encodeBackground(rand(0xffffff)))
+                        App.services.storage.db.insertLabel(randomString("monkey L $i ", 1, 3, 8), encodeBackground(rand(0xffffff)))
                     }
                 }
 
@@ -198,7 +197,7 @@ class SecretSyncDebugActivity : BaseActivity() {
                 toast("waiting for 10 secs")
                 SystemClock.sleep(10000)
 
-                val labels = S.db.listAllLabels()
+                val labels = App.services.storage.db.listAllLabels()
 
                 run {
                     val nmarker = rand(500)
@@ -206,11 +205,11 @@ class SecretSyncDebugActivity : BaseActivity() {
                     for (i in 0 until nmarker) {
                         val kind = Marker.Kind.entries[rand(3)]
                         val now = Date()
-                        val marker = S.db.insertMarker(0x000101 + rand(30), kind, if (kind == Marker.Kind.highlight) Highlights.encode(rand(0xffffff)) else randomString("monkey M $i ", rand(8) + 2, 3, 5), rand(2) + 1, now, now)
+                        val marker = App.services.storage.db.insertMarker(0x000101 + rand(30), kind, if (kind == Marker.Kind.highlight) Highlights.encode(rand(0xffffff)) else randomString("monkey M $i ", rand(8) + 2, 3, 5), rand(2) + 1, now, now)
                         if (rand(10) < 1 && labels.size > 0) {
                             val labelSet: MutableSet<Label> = HashSet()
                             labelSet.add(labels[rand(labels.size)])
-                            S.db.updateLabels(marker, labelSet)
+                            App.services.storage.db.updateLabels(marker, labelSet)
                         }
                     }
                 }
@@ -219,18 +218,18 @@ class SecretSyncDebugActivity : BaseActivity() {
                 toast("waiting for 10 secs")
                 SystemClock.sleep(10000)
 
-                val markers = S.db.listAllMarkers()
+                val markers = App.services.storage.db.listAllMarkers()
                 if (markers.size > 10) {
                     val nmarker = rand(markers.size / 10)
                     toast("deleting up to 10% of markers: $nmarker markers")
                     for (i in 0 until nmarker) {
                         val marker = markers[rand(markers.size)]
                         markers.remove(marker)
-                        val mls = S.db.listMarker_LabelsByMarker(marker)
+                        val mls = App.services.storage.db.listMarker_LabelsByMarker(marker)
                         for (ml in mls) {
-                            S.db.deleteMarker_LabelByGid(ml.gid)
+                            App.services.storage.db.deleteMarker_LabelByGid(ml.gid)
                         }
-                        S.db.deleteMarkerByGid(marker.gid)
+                        App.services.storage.db.deleteMarkerByGid(marker.gid)
                     }
                 }
 
@@ -244,7 +243,7 @@ class SecretSyncDebugActivity : BaseActivity() {
                     for (i in 0 until nlabel) {
                         val label = labels[rand(labels.size)]
                         labels.remove(label)
-                        S.db.deleteLabelAndMarker_LabelsByLabelId(label._id)
+                        App.services.storage.db.deleteLabelAndMarker_LabelsByLabelId(label._id)
                     }
                 }
 
@@ -258,7 +257,7 @@ class SecretSyncDebugActivity : BaseActivity() {
                     for (i in 0 until nmarker) {
                         val marker = markers[rand(markers.size)]
                         marker.caption = randomString("monkey edit M $i ", rand(8) + 2, 3, 5)
-                        S.db.insertOrUpdateMarker(marker)
+                        App.services.storage.db.insertOrUpdateMarker(marker)
                     }
                 }
 
@@ -314,7 +313,7 @@ class SecretSyncDebugActivity : BaseActivity() {
         }
 
         for (syncSetName in SyncShadow.ALL_SYNC_SET_NAMES) {
-            S.db.deleteSyncShadowBySyncSetName(syncSetName)
+            App.services.storage.db.deleteSyncShadowBySyncSetName(syncSetName)
         }
     }
 
@@ -347,19 +346,19 @@ class SecretSyncDebugActivity : BaseActivity() {
         )
 
         if (cMakeDirtyMarker.isChecked) {
-            S.db.insertMarker(0x000101 + rand(30), Marker.Kind.entries[rand(3)], randomString("MMD0_", rand(2) + 1, 4, 7), rand(2) + 1, Date(), Date())
+            App.services.storage.db.insertMarker(0x000101 + rand(30), Marker.Kind.entries[rand(3)], randomString("MMD0_", rand(2) + 1, 4, 7), rand(2) + 1, Date(), Date())
         }
 
         if (cMakeDirtyLabel.isChecked) {
-            S.db.insertLabel(randomString("LMD_", 1, 3, 8), encodeBackground(rand(0xffffff)))
+            App.services.storage.db.insertLabel(randomString("LMD_", 1, 3, 8), encodeBackground(rand(0xffffff)))
         }
 
         if (cMakeDirtyMarker_Label.isChecked) {
-            val labels = S.db.listAllLabels()
-            val markers = S.db.listAllMarkers()
+            val labels = App.services.storage.db.listAllLabels()
+            val markers = App.services.storage.db.listAllMarkers()
             if (labels.size > 0 && markers.size > 0) {
                 val marker_label = Marker_Label.createNewMarker_Label(markers[0].gid, labels[0].gid)
-                S.db.insertOrUpdateMarker_Label(marker_label)
+                App.services.storage.db.insertOrUpdateMarker_Label(marker_label)
             } else {
                 MaterialAlertDialogBuilder(this)
                     .setMessage("not enough markers and labels to create marker_label")
@@ -386,7 +385,7 @@ class SecretSyncDebugActivity : BaseActivity() {
                     if (debugSyncResponse.success) {
                         val final_revno = debugSyncResponse.final_revno
                         val append_delta = debugSyncResponse.append_delta
-                        val applyResult = S.db.syncApplier.applyMabelAppendDelta(final_revno, pair.shadowEntities, clientState, append_delta, entitiesBeforeSync, simpleToken)
+                        val applyResult = App.services.storage.db.syncApplier.applyMabelAppendDelta(final_revno, pair.shadowEntities, clientState, append_delta, entitiesBeforeSync, simpleToken)
 
                         MaterialAlertDialogBuilder(this@SecretSyncDebugActivity)
                             .setMessage("Final revno: $final_revno\nApply result: $applyResult\nAppend delta: $append_delta")

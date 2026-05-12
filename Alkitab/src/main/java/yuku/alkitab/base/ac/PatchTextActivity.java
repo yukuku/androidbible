@@ -52,7 +52,7 @@ public class PatchTextActivity extends BaseActivity {
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setDisplayShowTitleEnabled(false);
 
-        final S.CalculatedDimensions applied = S.applied();
+        final S.CalculatedDimensions applied = App.services.uiDimensions.applied();
 
         tBody = findViewById(R.id.tBody);
         tBody.setTextColor(applied.fontColor);

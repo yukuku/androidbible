@@ -37,7 +37,6 @@ import java.util.Locale
 import me.zhanghai.android.fastscroll.FastScrollerBuilder
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
-import yuku.alkitab.base.S
 import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.storage.Prefkey
@@ -86,9 +85,9 @@ class SearchActivity : BaseActivity() {
     private var filterUserAction = 0 // when it's not user action, set to nonzero
     private val adapter = SearchAdapter(IntArrayList(), emptyList())
 
-    private var searchInVersion: Version = S.activeVersion()
-    private var searchInVersionId: String = S.activeVersionId()
-    private var textSizeMult = S.db.getPerVersionSettings(searchInVersionId).fontSizeMultiplier
+    private var searchInVersion: Version = App.services.versions.activeVersion()
+    private var searchInVersionId: String = App.services.versions.activeVersionId()
+    private var textSizeMult = App.services.storage.db.getPerVersionSettings(searchInVersionId).fontSizeMultiplier
 
     private lateinit var searchHistoryAdapter: SearchHistoryAdapter
     private var actionMode: ActionMode? = null
@@ -294,7 +293,7 @@ class SearchActivity : BaseActivity() {
             tSearchTips.text = sb
         }
 
-        val applied = S.applied()
+        val applied = App.services.uiDimensions.applied()
         tSearchTips.setBackgroundColor(applied.backgroundColor)
         lsSearchResults.setBackgroundColor(applied.backgroundColor)
         Appearances.applyTextAppearance(tSearchTips, textSizeMult)
@@ -307,7 +306,7 @@ class SearchActivity : BaseActivity() {
 
         run {
             openedBookId = intent.getIntExtra(EXTRA_openedBookId, -1)
-            val book = S.activeVersion().getBook(openedBookId)
+            val book = App.services.versions.activeVersion().getBook(openedBookId)
             if (book == null) { // active version has changed somehow when this activity fainted. so, invalidate openedBookId
                 openedBookId = -1
                 cFilterSingleBook.isEnabled = false
@@ -504,7 +503,7 @@ class SearchActivity : BaseActivity() {
 
             searchInVersion = selectedVersion
             searchInVersionId = mv.versionId
-            textSizeMult = S.db.getPerVersionSettings(searchInVersionId).fontSizeMultiplier
+            textSizeMult = App.services.storage.db.getPerVersionSettings(searchInVersionId).fontSizeMultiplier
 
             Appearances.applyTextAppearance(tSearchTips, textSizeMult)
             displaySearchInVersion()
