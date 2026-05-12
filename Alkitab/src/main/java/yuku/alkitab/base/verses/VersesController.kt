@@ -81,6 +81,20 @@ interface VersesController {
     fun scrollToVerse(verse_1: Int, prop: Float)
 
     /**
+     * Scrolls to the pericope header above [verse_1] (if any), positioning it
+     * so that [prop] of its height has been scrolled past the top edge.
+     *
+     * If this version has no pericope above [verse_1], the verse itself is
+     * snapped to the top (the source's within-pericope [prop] is intentionally
+     * dropped in that case — applying it to a verse would scroll past content
+     * the source was still showing as a header).
+     *
+     * Used by the split view to mirror the source pane when its top visible
+     * item is a pericope header.
+     */
+    fun scrollToPericope(verse_1: Int, prop: Float)
+
+    /**
      * Returns 0 if the scroll position can't be determined (e.g. the view has 0 height).
      * Old name: getVerseBasedOnScroll
      */
