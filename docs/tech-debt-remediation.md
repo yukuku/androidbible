@@ -165,18 +165,32 @@ Coroutines and `lifecycleScope` were already on the classpath transitively throu
 
 ---
 
-### REM-08: Extract IsiActivity Split View Manager
+### REM-08: Extract IsiActivity Split View Manager ✅ COMPLETED
 **Addresses:** TD-01 (split view cluster)  
 **Module:** Main reader  
 **BRICE:** B=3 R=2 I=3 C=4 E=4 → **3.2**
 
-**Steps:**
-1. Create `SplitViewManager.kt` containing `openSplitDisplay()` (line 2108), `closeSplitDisplay()` (line 2168), `displaySplitFollowingMaster()` (line 2365), `loadSplitVersion()` (line 1458) — currently scattered across `IsiActivity.kt`
-2. Encapsulate `activeSplit1`, split layout views, and split-related preferences
-3. Define callbacks: `onSplitOpened`, `onSplitClosed`, `onSplitVersionChanged`
-4. `IsiActivity` holds a `SplitViewManager` instance and delegates split operations
+**What was done:**
+1. ✅ Created `Alkitab/src/main/java/yuku/alkitab/base/widget/SplitViewManager.kt` (~367 lines) that owns `activeSplit1` and the split-pane UI: `openSplitDisplay()`, `closeSplitDisplay()`, `configureSplitSizes()`, `displaySplitFollowingMaster()`, `loadSplitVersion()`, `disableSplitVersion()`, `openSplitVersionsDialog()`, `configureTextAppearancePanelForSplitVersion()`, plus `restoreFromPreferences(verse_1)` / `saveToPreferences()` for the `lastSplitVersionId` / `lastSplitOrientation` / `lastSplitProp` round-trip.
+2. ✅ Moved three listener objects out of `IsiActivity.kt`: the `splitRoot_globalLayout` (`OnGlobalLayoutListener` that re-invokes `configureSplitSizes` on bounds change), `splitHandleButton_listener` (drag-prop math + `lastSplitProp` persistence), and `splitHandleButton_labelPressed` (rotate / start / end label-button dispatch).
+3. ✅ Defined two interfaces following the REM-06 / REM-07 pattern: `SplitViewHost.kt` (read-only state — `splitRoot`, `splitHandleButton`, `lsSplit0`, `lsSplit1`, `bVersion`, `leftDrawer`, `textAppearancePanel`, `actionMode`, `chapter_1`, `activeSplit0Book`, `activeSplit0Version`, plus `getVerse_1BasedOnScrolls()`) and `SplitViewActions.kt` (write-side triggers — `applyPreferences`, `openPrimaryVersionsDialog`, `loadChapterIntoSplit1`, `setSplit1DataModel`).
+4. ✅ `IsiActivity` now implements both interfaces, holds a `splitViewManager by lazy { SplitViewManager(this, this) }`, and `onCreate` calls `splitViewManager.installListeners()` (replaces the inline `addOnGlobalLayoutListener` + two handle-button listener setups) and `splitViewManager.restoreFromPreferences(...)` (replaces the 17-line `Preferences.getString(Prefkey.lastSplitVersionId)` restore block). `display(...)` delegates to `splitViewManager.displaySplitFollowingMaster(...)`; `onStop` to `splitViewManager.saveToPreferences()`; `cSplitVersion_checkedChange` to the manager's open/disable methods.
+5. ✅ Moved `ActiveSplit1` from a nested data class inside `IsiActivity` to a top-level data class in `yuku.alkitab.base.widget`. `IsiActivity.activeSplit1` is now a read-only `val` getter that delegates to `splitViewManager.activeSplit1` — every existing call site (audio bar host, action mode host overrides, `applyPreferences` padding logic, `consumeKey` split scrolling, `VerseInlineLinkSpan` xref/footnote routing, Ribka eligibility, etc.) keeps reading `activeSplit1?.version` unchanged.
+6. ✅ Behavior preserved verbatim: split-pane open/close transitions (including `bVersion` show/hide, `leftDrawer.handle.setSplitVersion(...)` toggling, and `actionMode.invalidate()` re-prepare), the split handle drag with proportion clamp and `lastSplitProp` persistence, the rotate-orientation label button, master → split chapter following including the "split version can't display this book" empty-message path, the uncheck-suppression guard around split chapter loads (via the new `loadChapterIntoSplit1` action), text-appearance-panel split version label, and the `lastSplitVersionId` / `lastSplitOrientation` save/restore round-trip across app restarts.
 
-**Difficulty:** Medium (4-6 hours).
+**Result:** `IsiActivity.kt` shrank from 2411 → 2160 lines (−251 lines). Split view is now a self-contained component testable in isolation; `activeSplit1` is read-only from `IsiActivity`'s perspective (all writes happen inside the manager).
+
+**Files touched:**
+- `Alkitab/src/main/java/yuku/alkitab/base/widget/SplitViewManager.kt` (new, 367 lines)
+- `Alkitab/src/main/java/yuku/alkitab/base/widget/SplitViewHost.kt` (new, 43 lines)
+- `Alkitab/src/main/java/yuku/alkitab/base/widget/SplitViewActions.kt` (new, 28 lines)
+- `Alkitab/src/main/java/yuku/alkitab/base/IsiActivity.kt` (modified: −251 lines, class signature gains two interfaces, four import lines added, six lateinit vars + `actionMode` + `getVerse_1BasedOnScrolls()` widened to `override`)
+
+**Verification:**
+- `./gradlew assemblePlainDebug` → BUILD SUCCESSFUL in 14s (cold) / 5s (warm)
+- `./gradlew testPlainDebugUnitTest testPlainReleaseUnitTest` → BUILD SUCCESSFUL, 420 tests pass per variant
+
+**Difficulty:** Medium (came in around the lower end of the 4-6 hour estimate). The fan-out of `activeSplit1` references was the main risk; addressed by keeping a read-through getter on the activity so no call site outside the moved methods had to change.
 
 ---
 
@@ -196,7 +210,7 @@ Coroutines and `lifecycleScope` were already on the classpath transitively throu
 3. `IsiActivity` observes StateFlows and updates UI
 4. Navigation history moves to ViewModel (survives rotation)
 
-**Prerequisite:** ~~REM-06~~✅, ~~REM-07~~✅, REM-08 should be done first to reduce IsiActivity size before extracting ViewModel.
+**Prerequisite:** ~~REM-06~~✅, ~~REM-07~~✅, ~~REM-08~~✅ should be done first to reduce IsiActivity size before extracting ViewModel.
 
 **Difficulty:** Hard (2-3 days). Risk: extensive refactoring of the largest file in the codebase.
 
@@ -386,9 +400,9 @@ If the project adopts Hilt for other reasons (e.g., ViewModel injection in REM-0
 
 | Priority | File | Lines | Risk | Notes |
 |----------|------|-------|------|-------|
-| 1 | `Highlights.java` | ~200 | Low | Standalone utility, good test coverage target |
+| 1 | ~~`Highlights.java`~~ | ~~~200~~ | ~~Low~~ | ✅ ported to `Highlights.kt` (2026-05-12). `object` with `@JvmStatic` methods and `@JvmField` properties to preserve Java call sites; 5 Kotlin callers got `!!` on `Info.partial` (now properly nullable). All 31 `HighlightsTest` cases + full unit-test suite pass. |
 | 2 | `TargetDecoder.java` | ~150 | Low | Has tests, pure logic |
-| 3 | `Jumper.java` | ~200 | Low | Has tests, pure logic |
+| 3 | ~~`Jumper.java`~~ | ~~~200~~ | ~~Low~~ | ✅ ported to `Jumper.kt` on 2026-05-12; behavior preserved, JumperTest + full unit suite pass |
 | 4 | `QueryTokenizer.java` | ~100 | Low | Has tests |
 | 5 | `DevotionDownloader.java` | 111 | Low | Small, standalone thread (do with REM-05) |
 | 6 | `Provider.java` | ~200 | Medium | Content provider, external API contract |
@@ -711,7 +725,7 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 | REM-14 | ~~Replace material-dialogs~~ ✅ | **3.4** | 2 |
 | REM-18 | Add test coverage | **3.4** | 2 |
 | REM-24 | Refactor S.kt service locator (steps 24a–24d shipped; caller migration ongoing) | **3.2** | 2 |
-| REM-08 | Extract split view manager | **3.2** | 2 |
+| REM-08 | ~~Extract split view manager~~ ✅ | **3.2** | 2 |
 | REM-11 | Room migration (Version) | **3.2** | 2 |
 | REM-15 | Introduce coroutines | **3.2** | 3 |
 | REM-16 | Java→Kotlin conversion | **3.0** | 3 |
@@ -725,7 +739,7 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 
 **Sprint 1 (1 week):** ~~REM-01~~✅, ~~REM-02~~✅, ~~REM-04~~✅, ~~REM-05~~✅ — quick safety fixes (all done)  
 **Sprint 2 (1 week):** ~~REM-03~~✅ — LocalBroadcastManager removal (done)  
-**Sprint 3 (2 weeks):** ~~REM-07~~✅, ~~REM-06~~✅, REM-08 — IsiActivity decomposition (REM-06, REM-07 done)  
+**Sprint 3 (2 weeks):** ~~REM-07~~✅, ~~REM-06~~✅, ~~REM-08~~✅ — IsiActivity decomposition (REM-06, REM-07, REM-08 done)  
 **Sprint 4 (1 week):** ~~REM-12~~✅, ~~REM-14~~✅ — deprecated library replacements (done)  
 **Sprint 5 (2 weeks):** REM-10, REM-11 — Room migration for core tables  
 **Sprint 6 (2 weeks):** REM-09, ~~REM-18a-f~~✅ — ViewModel + test coverage (REM-18a/b/c/d/e/f done)  
