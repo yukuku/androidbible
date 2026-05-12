@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.IntOffset
@@ -50,7 +51,10 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.ColorUtils
+import java.util.Locale
+import yuku.alkitab.debug.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 /**
  * iOS-style color picker inspired by UIColorPickerViewController. Three tabs:
  *  - Grid: structured 12-column × 8-row HSL palette (greys in column 0, hues across)
@@ -95,7 +99,12 @@ fun IosColorPicker(
         Spacer(Modifier.height(12.dp))
 
         PrimaryTabRow(selectedTabIndex = selectedTab) {
-            listOf("Grid", "Spectrum", "Sliders").forEachIndexed { idx, title ->
+            val titles = listOf(
+                stringResource(R.string.color_picker_tab_grid),
+                stringResource(R.string.color_picker_tab_spectrum),
+                stringResource(R.string.color_picker_tab_sliders),
+            )
+            titles.forEachIndexed { idx, title ->
                 Tab(
                     selected = selectedTab == idx,
                     onClick = { selectedTab = idx },
@@ -116,7 +125,7 @@ fun IosColorPicker(
 
 @Composable
 private fun ColorPreviewBar(color: Int) {
-    val hex = String.format("#%06X", 0xFFFFFF and color)
+    val hex = String.format(Locale.US, "#%06X", 0xFFFFFF and color)
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -320,7 +329,7 @@ private fun SlidersTab(
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         ChannelSlider(
-            label = "RED",
+            label = stringResource(R.string.color_picker_channel_red),
             value = r,
             trackLeft = Color(0xff000000.toInt() or (0 shl 16) or (g shl 8) or b),
             trackRight = Color(0xff000000.toInt() or (255 shl 16) or (g shl 8) or b),
@@ -329,7 +338,7 @@ private fun SlidersTab(
             },
         )
         ChannelSlider(
-            label = "GREEN",
+            label = stringResource(R.string.color_picker_channel_green),
             value = g,
             trackLeft = Color(0xff000000.toInt() or (r shl 16) or (0 shl 8) or b),
             trackRight = Color(0xff000000.toInt() or (r shl 16) or (255 shl 8) or b),
@@ -338,7 +347,7 @@ private fun SlidersTab(
             },
         )
         ChannelSlider(
-            label = "BLUE",
+            label = stringResource(R.string.color_picker_channel_blue),
             value = b,
             trackLeft = Color(0xff000000.toInt() or (r shl 16) or (g shl 8) or 0),
             trackRight = Color(0xff000000.toInt() or (r shl 16) or (g shl 8) or 255),
@@ -422,14 +431,16 @@ private fun ValueBox(text: String) {
 
 @Composable
 private fun HexInputRow(rgb: Int, onRgbChange: (Int) -> Unit) {
-    var hexInput by remember(rgb) { mutableStateOf(String.format("%06X", 0xffffff and rgb)) }
+    var hexInput by remember(rgb) {
+        mutableStateOf(String.format(Locale.US, "%06X", 0xffffff and rgb))
+    }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "sRGB Hex Color #",
+            text = stringResource(R.string.color_picker_hex_label),
             fontSize = 13.sp,
             color = MaterialTheme.colorScheme.primary,
         )

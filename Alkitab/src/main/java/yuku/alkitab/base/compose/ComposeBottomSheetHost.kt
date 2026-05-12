@@ -38,7 +38,14 @@ object ComposeBottomSheetHost {
                 if (visible) {
                     ModalBottomSheet(
                         sheetState = sheetState,
-                        onDismissRequest = { visible = false },
+                        // Animate the hide before tearing down so back-press and
+                        // tap-outside don't visually snap the sheet away.
+                        onDismissRequest = {
+                            scope.launch {
+                                sheetState.hide()
+                                visible = false
+                            }
+                        },
                     ) {
                         content {
                             scope.launch {
