@@ -16,12 +16,9 @@ import androidx.compose.ui.platform.ComposeView
 import kotlinx.coroutines.launch
 
 /**
- * Bridges Java/View activities to Compose's [ModalBottomSheet]. Mounts a temporary
- * [ComposeView] under `android.R.id.content`, shows the sheet, and tears the host
- * view down once the sheet's hide animation completes.
- *
- * The lambda is given a `dismiss` callback so the caller can trigger the same exit
- * animation programmatically (e.g. when the user taps an action button).
+ * Hosts a Compose [ModalBottomSheet] inside any activity by attaching a temporary
+ * [ComposeView] under `android.R.id.content`. The `dismiss` lambda passed to [content]
+ * runs the same hide animation that back-press and tap-outside trigger.
  */
 object ComposeBottomSheetHost {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -38,9 +35,9 @@ object ComposeBottomSheetHost {
                 if (visible) {
                     ModalBottomSheet(
                         sheetState = sheetState,
-                        // Animate the hide before tearing down so back-press and
-                        // tap-outside don't visually snap the sheet away.
                         onDismissRequest = {
+                            // Run the hide animation before tearing down so back-press
+                            // and tap-outside don't snap the sheet away.
                             scope.launch {
                                 sheetState.hide()
                                 visible = false
@@ -58,8 +55,8 @@ object ComposeBottomSheetHost {
 
                 LaunchedEffect(visible) {
                     if (!visible) {
-                        // Wait one frame so ModalBottomSheet finishes its exit animation
-                        // before the host view detaches and disposes the Composition.
+                        // Defer the detach by a frame so the exit animation completes
+                        // before the Composition is disposed.
                         root.post { root.removeView(composeView) }
                     }
                 }

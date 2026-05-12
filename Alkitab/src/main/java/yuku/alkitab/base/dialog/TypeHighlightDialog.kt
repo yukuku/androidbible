@@ -56,10 +56,8 @@ import yuku.alkitab.util.IntArrayList
 
 /**
  * Highlight-color picker shown as a Compose [androidx.compose.material3.ModalBottomSheet].
- *
- * Two entry points mirror the original Java constructors:
- *  - single verse (with optional partial-highlight offsets)
- *  - multiple verses (full-verse highlight only)
+ * Two entry points: single verse (with optional partial-highlight offsets) and multiple
+ * verses (full-verse highlight only).
  */
 class TypeHighlightDialog {
     fun interface Listener {
@@ -132,8 +130,8 @@ class TypeHighlightDialog {
                     dismiss()
                 },
                 onConfirmPartialEdit = { range ->
-                    // OK only commits if this is a partial-highlight edit (single verse, existing
-                    // color, current range differs from what's stored). Otherwise it's a no-op.
+                    // OK commits only when the partial-highlight range changed against
+                    // what's stored; otherwise it's a no-op.
                     if (info != null && verseText != null && defaultColorRgb != -1 && range != null) {
                         val changed = (info.partial == null && (range.first != 0 || range.second != verseText.length)) ||
                             (info.partial != null && (info.partial.startOffset != range.first || info.partial.endOffset != range.second))
@@ -209,8 +207,6 @@ private fun HighlightSheetContent(
     val showVerseText = selectedVerseCount == 1 && verseText != null
     val verseTextString = verseText?.toString().orEmpty()
 
-    // For partial-highlight editing: we let the user select a sub-range of the verse text.
-    // BasicTextField with readOnly=true preserves text but allows selection via TextFieldValue.
     val initialSelection = remember(verseText, info) {
         if (showVerseText && info != null && info.shouldRenderAsPartialForVerseText(verseText)) {
             TextRange(info.partial.startOffset, info.partial.endOffset)
@@ -237,7 +233,6 @@ private fun HighlightSheetContent(
             .padding(horizontal = 16.dp)
             .navigationBarsPadding(),
     ) {
-        // Title row (icon + verse reference)
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = Icons.Filled.Star,
@@ -256,7 +251,6 @@ private fun HighlightSheetContent(
 
         Spacer(Modifier.height(12.dp))
 
-        // Verse text (only for single verse with text provided)
         if (showVerseText) {
             VerseTextSelectable(
                 value = textFieldValue,
@@ -265,7 +259,6 @@ private fun HighlightSheetContent(
             Spacer(Modifier.height(12.dp))
         }
 
-        // 12 preset color swatches, 2 rows × 6
         PresetColorGrid(
             selectedColorRgb = defaultColorRgb,
             onColorPicked = { rgb -> onPickColor(rgb, currentRange()) },
@@ -282,7 +275,6 @@ private fun HighlightSheetContent(
 
         Spacer(Modifier.height(16.dp))
 
-        // Action row: Hapus on the left, Batal + OK on the right
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             TextButton(onClick = onDelete) {
                 Text(stringResource(R.string.delete))
@@ -300,13 +292,12 @@ private fun HighlightSheetContent(
     }
 }
 
+/** Read-only verse text. Drag-select within it picks the partial-highlight range. */
 @Composable
 private fun VerseTextSelectable(
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
 ) {
-    // Read-only text that still allows the user to drag-select a sub-range. Used by the
-    // partial-highlight flow to pick the [start, end) offsets within the verse.
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
@@ -325,10 +316,9 @@ private fun PresetColorGrid(
     onColorPicked: (Int) -> Unit,
 ) {
     val rgbs = TypeHighlightDialog.PRESET_RGBS
-    // 2 rows × 6 columns — same arrangement as the legacy XML (c01..c06, then c12..c07).
     val rowsLayout = listOf(
-        listOf(0, 1, 2, 3, 4, 5),     // c01..c06
-        listOf(11, 10, 9, 8, 7, 6),   // c12..c07
+        listOf(0, 1, 2, 3, 4, 5),
+        listOf(11, 10, 9, 8, 7, 6),
     )
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -365,8 +355,7 @@ private fun ColorSwatch(
         modifier = modifier
             .height(44.dp)
             .clip(RoundedCornerShape(6.dp))
-            // Match the legacy 0xa0 alpha so the swatches read as the same hue family used
-            // throughout the verse-renderer highlight overlay.
+            // 0xa0 alpha matches the highlight overlay rendered on verses.
             .background(Color(0xa0000000.toInt() or rgb))
             .border(
                 width = if (selected) 3.dp else 0.5.dp,

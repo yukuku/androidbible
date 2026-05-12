@@ -54,15 +54,11 @@ import androidx.core.graphics.ColorUtils
 import java.util.Locale
 import yuku.alkitab.debug.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 /**
- * iOS-style color picker inspired by UIColorPickerViewController. Three tabs:
- *  - Grid: structured 12-column × 8-row HSL palette (greys in column 0, hues across)
- *  - Spectrum: single 2D plane where X=hue, Y=lightness (S held at 1)
- *  - Sliders: RED/GREEN/BLUE with reactive gradient tracks + hex input
- *
- * Alpha is not exposed — callers strip the alpha channel.
+ * iOS-style color picker. Three tabs: Grid (12×10 preset palette), Spectrum (2D
+ * hue×lightness plane), Sliders (RGB channels + hex input). Alpha is not exposed.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IosColorPicker(
     initialColor: Int,
@@ -147,32 +143,18 @@ private fun ColorPreviewBar(color: Int) {
 private const val GRID_COLS = 12
 private const val GRID_ROWS = 10
 
-/**
- * Hand-curated 12×10 = 120-color iOS palette. Values copied verbatim from the Flutter
- * `ios_color_picker` package (`lib/custom_picker/shared.dart`) so the visual match is
- * exact. Row 0 is a white→black grey ramp; rows 1–9 are 12 hue columns at increasing
- * lightness.
- */
+/** 12×10 iOS-style palette. Row 0 is a white→black grey ramp; rows 1–9 are 12 hue
+ *  columns stepping from dark to light. */
 private val GRID_COLORS: IntArray = intArrayOf(
-    // Row 0: greys
     0xFEFFFE, 0xEBEBEB, 0xD6D6D6, 0xC2C2C2, 0xADADAD, 0x999999, 0x858585, 0x707070, 0x5C5C5C, 0x474747, 0x333333, 0x000000,
-    // Row 1: darkest
     0x00374A, 0x011D57, 0x11053B, 0x2E063D, 0x3C071B, 0x5C0701, 0x5A1C00, 0x583300, 0x563D00, 0x666100, 0x4F5504, 0x263E0F,
-    // Row 2
     0x004D65, 0x012F7B, 0x1A0A52, 0x450D59, 0x551029, 0x831100, 0x7B2900, 0x7A4A00, 0x785800, 0x8D8602, 0x6F760A, 0x38571A,
-    // Row 3
     0x016E8F, 0x0042A9, 0x2C0977, 0x61187C, 0x791A3D, 0xB51A00, 0xAD3E00, 0xA96800, 0xA67B01, 0xC4BC00, 0x9BA50E, 0x4E7A27,
-    // Row 4
     0x008CB4, 0x0056D6, 0x371A94, 0x7A219E, 0x99244F, 0xE22400, 0xDA5100, 0xD38301, 0xD19D01, 0xF5EC00, 0xC3D117, 0x669D34,
-    // Row 5: mid (most saturated)
     0x00A1D8, 0x0061FD, 0x4D22B2, 0x982ABC, 0xB92D5D, 0xFF4015, 0xFF6A00, 0xFFAB01, 0xFCC700, 0xFEFB41, 0xD9EC37, 0x76BB40,
-    // Row 6
     0x01C7FC, 0x3A87FD, 0x5E30EB, 0xBE38F3, 0xE63B7A, 0xFE6250, 0xFE8648, 0xFEB43F, 0xFECB3E, 0xFFF76B, 0xE4EF65, 0x96D35F,
-    // Row 7
     0x52D6FC, 0x74A7FF, 0x864FFD, 0xD357FE, 0xEE719E, 0xFF8C82, 0xFEA57D, 0xFEC777, 0xFED977, 0xFFF994, 0xEAF28F, 0xB1DD8B,
-    // Row 8
     0x93E3FC, 0xA7C6FF, 0xB18CFE, 0xE292FE, 0xF4A4C0, 0xFFB5AF, 0xFFC5AB, 0xFED9A8, 0xFDE4A8, 0xFFFBB9, 0xF1F7B7, 0xCDE8B5,
-    // Row 9: lightest
     0xCBF0FF, 0xD2E2FE, 0xD8C9FE, 0xEFCAFE, 0xF9D3E0, 0xFFDAD8, 0xFFE2D6, 0xFEECD4, 0xFEF1D5, 0xFDFBDD, 0xF6FADB, 0xDEEED4,
 )
 
@@ -181,9 +163,6 @@ private fun GridTab(
     selectedColor: Int,
     onColorPicked: (Int) -> Unit,
 ) {
-    // No gaps between cells; selection is shown by a thin inset that reveals the
-    // surrounding container color (white for most cells, grey for the white cell at
-    // position 0 so it remains visible). Mirrors the Flutter ios_color_picker grid.
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -196,9 +175,9 @@ private fun GridTab(
                     val c = GRID_COLORS[index]
                     val swatch = Color(0xff000000.toInt() or c)
                     val isSelected = (c and 0xffffff) == (selectedColor and 0xffffff)
-                    // When not selected, paint the cell's backdrop with the swatch color
-                    // itself so any sub-pixel gaps from weight()-based layout rounding
-                    // blend in instead of showing thin white seams between cells.
+                    // When selected, an inset reveals this backdrop as a ring around the
+                    // swatch. When not selected, the backdrop matches the swatch so
+                    // sub-pixel gaps from weight()-based layout rounding aren't visible.
                     val backdrop = when {
                         !isSelected -> swatch
                         index == 0 -> Color(0xff999999.toInt())
@@ -243,7 +222,6 @@ private fun SpectrumTab(
         )
     }
 
-    // Indicator position derived from current color's HSL.
     val hsl = remember(currentRgb) {
         val out = floatArrayOf(0f, 0f, 0f)
         ColorUtils.colorToHSL(currentRgb or 0xff000000.toInt(), out)
@@ -274,8 +252,6 @@ private fun SpectrumTab(
             }
     ) {
         if (boxSize.width > 0 && boxSize.height > 0) {
-            // Indicator stroke color: white on dark backgrounds, black on light ones —
-            // matches the Flutter `ios_color_picker` HSLWithSaturationColorPainter logic.
             val strokeColor = if (useWhiteForeground(currentRgb)) Color.White else Color.Black
             Box(
                 modifier = Modifier
@@ -293,8 +269,7 @@ private fun SpectrumTab(
     }
 }
 
-/** Perceptual luminance threshold — picks a foreground color (white or black) that
- *  contrasts with [rgb]. Ported from Flutter `ios_color_picker` utils. */
+/** Picks white or black foreground based on perceptual luminance of [rgb]. */
 private fun useWhiteForeground(rgb: Int): Boolean {
     val r = (rgb shr 16) and 0xff
     val g = (rgb shr 8) and 0xff
