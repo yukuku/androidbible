@@ -1,6 +1,6 @@
 package yuku.alkitab.datatransfer.process
 
-import yuku.alkitab.base.S
+import yuku.alkitab.base.App
 import yuku.alkitab.base.model.ReadingPlan
 import yuku.alkitab.base.util.History
 import yuku.alkitab.datatransfer.model.Gid
@@ -16,33 +16,33 @@ open class ReadonlyStorageImpl : ReadonlyStorageInterface {
     }
 
     override fun markers(): List<Marker> {
-        return S.db.listAllMarkers()
+        return App.services.storage.db.listAllMarkers()
     }
 
     override fun labels(): List<Label> {
-        return S.db.listAllLabels()
+        return App.services.storage.db.listAllLabels()
     }
 
     override fun markerLabels(): List<Marker_Label> {
-        return S.db.listAllMarker_Labels()
+        return App.services.storage.db.listAllMarker_Labels()
     }
 
     override fun pins(): List<ProgressMark> {
-        return S.db.listAllProgressMarks()
+        return App.services.storage.db.listAllProgressMarks()
     }
 
     override fun rpps(): List<Rpp> {
         val res = mutableListOf<Rpp>()
 
         // lookup map for startTime
-        val startTimes = S.db.listAllReadingPlanInfo().associate { info ->
+        val startTimes = App.services.storage.db.listAllReadingPlanInfo().associate { info ->
             ReadingPlan.gidFromName(info.name) to info.startTime
         }
 
         // The only source of data is from ReadingPlanProgress table,
         // but since reading plans with no done is not listed in ReadingPlanProgress,
         // we need to consult ReadingPlan table to know what they are.
-        val map: Map<String, Set<Int>> = S.db.readingPlanProgressSummaryForSync
+        val map: Map<String, Set<Int>> = App.services.storage.db.readingPlanProgressSummaryForSync
         for ((gid, set) in map) {
             val startTime = startTimes[gid] ?: continue
 

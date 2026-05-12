@@ -18,7 +18,6 @@ import androidx.appcompat.widget.Toolbar;
 import java.util.List;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.br.DailyVerseAppWidgetReceiver;
 import yuku.alkitab.base.events.AppEvents;
@@ -188,7 +187,7 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
         List<MVersion> versions;
 
         void reload() {
-            versions = S.getAvailableVersions();
+            versions = App.services.versions.getAvailableVersions();
             notifyDataSetChanged();
         }
 

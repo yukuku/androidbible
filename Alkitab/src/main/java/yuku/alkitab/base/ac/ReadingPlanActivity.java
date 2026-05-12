@@ -39,7 +39,6 @@ import kotlin.Unit;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.events.AppEvents;
@@ -192,7 +191,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
                     final long startTime = newDate.getTimeInMillis();
                     readingPlan.info.startTime = startTime;
-                    S.getDb().updateReadingPlanStartDate(readingPlan.info.id, startTime);
+                    App.services.storage.getDb().updateReadingPlanStartDate(readingPlan.info.id, startTime);
                     changeDay(0);
                     loadDayNumber();
                     updateButtonStatus();
@@ -210,7 +209,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
                         int firstUnreadDay = findFirstUnreadDay();
                         Calendar calendar = GregorianCalendar.getInstance();
                         calendar.add(Calendar.DATE, -firstUnreadDay);
-                        S.getDb().updateReadingPlanStartDate(readingPlan.info.id, calendar.getTime().getTime());
+                        App.services.storage.getDb().updateReadingPlanStartDate(readingPlan.info.id, calendar.getTime().getTime());
                         loadReadingPlan(readingPlan.info.id);
                         loadDayNumber();
                         readingPlanAdapter.load();
@@ -296,20 +295,20 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
     }
 
     void loadReadingPlan(long id) {
-        downloadedReadingPlanInfos = S.getDb().listAllReadingPlanInfo();
+        downloadedReadingPlanInfos = App.services.storage.getDb().listAllReadingPlanInfo();
 
         if (downloadedReadingPlanInfos.isEmpty()) {
             return;
         }
 
-        Pair<String, byte[]> nameAndData = S.getDb().getReadingPlanNameAndData(id);
+        Pair<String, byte[]> nameAndData = App.services.storage.getDb().getReadingPlanNameAndData(id);
 
         long startTime = 0;
         if (id == 0 || nameAndData == null) {
             id = downloadedReadingPlanInfos.get(0).id;
             startTime = downloadedReadingPlanInfos.get(0).startTime;
 
-            nameAndData = S.getDb().getReadingPlanNameAndData(id);
+            nameAndData = App.services.storage.getDb().getReadingPlanNameAndData(id);
         } else {
             for (ReadingPlan.ReadingPlanInfo info : downloadedReadingPlanInfos) {
                 if (id == info.id) {
@@ -340,7 +339,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
         if (readingPlan == null) {
             return;
         }
-        readReadingCodes = S.getDb().getAllReadingCodesByReadingPlanProgressGid(ReadingPlan.gidFromName(readingPlan.info.name));
+        readReadingCodes = App.services.storage.getDb().getAllReadingCodesByReadingPlanProgressGid(ReadingPlan.gidFromName(readingPlan.info.name));
     }
 
     public void goToIsiActivity(final int dayNumber, final int sequence) {
@@ -462,7 +461,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
             getString(R.string.rp_deletePlan, readingPlan.info.title),
             getString(R.string.delete),
             () -> {
-                S.getDb().deleteReadingPlanById(readingPlan.info.id);
+                App.services.storage.getDb().deleteReadingPlanById(readingPlan.info.id);
                 readingPlan = null;
                 Preferences.remove(Prefkey.active_reading_plan_id);
                 loadReadingPlan(0);
@@ -505,8 +504,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
             getString(R.string.rp_restart_desc),
             getString(R.string.ok),
             () -> {
-                S.getDb().deleteAllReadingPlanProgressForGid(ReadingPlan.gidFromName(readingPlan.info.name));
-                S.getDb().updateReadingPlanStartDate(readingPlan.info.id, System.currentTimeMillis());
+                App.services.storage.getDb().deleteAllReadingPlanProgressForGid(ReadingPlan.gidFromName(readingPlan.info.name));
+                App.services.storage.getDb().updateReadingPlanStartDate(readingPlan.info.id, System.currentTimeMillis());
                 loadReadingPlan(readingPlan.info.id);
                 loadDayNumber();
                 readingPlanAdapter.load();
@@ -564,7 +563,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
     }
 
     void downloadReadingPlanFromServer(final String name) {
-        if (S.getDb().listReadingPlanNames().contains(name)) {
+        if (App.services.storage.getDb().listReadingPlanNames().contains(name)) {
             MaterialDialogJavaHelper.showOkDialog(this, getString(R.string.rp_download_already_have));
 
             return;
@@ -699,7 +698,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
                 final boolean[] readMarks = new boolean[todayReadings.length / 2];
                 ReadingPlanManager.writeReadMarksByDay(readReadingCodes, readMarks, dayNumber);
 
-                bReference.setText(S.activeVersion().referenceRange(todayReadings[position * 2], todayReadings[position * 2 + 1]));
+                bReference.setText(App.services.versions.activeVersion().referenceRange(todayReadings[position * 2], todayReadings[position * 2 + 1]));
 
                 bReference.setOnClickListener(v -> {
                     final int todayReadingsSize = readingPlan.dailyVerses[dayNumber].length / 2;
@@ -797,7 +796,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
                     checkBox.setOnCheckedChangeListener(null);
                     checkBox.setChecked(readMarks[sequence]);
-                    checkBox.setText(S.activeVersion().referenceRange(ariRanges[sequence * 2], ariRanges[sequence * 2 + 1]));
+                    checkBox.setText(App.services.versions.activeVersion().referenceRange(ariRanges[sequence * 2], ariRanges[sequence * 2 + 1]));
                     checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                         ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.name, day, sequence, isChecked);
                         loadReadingPlanProgress();

@@ -15,7 +15,7 @@ import androidx.core.os.bundleOf
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.util.Locale
 import kotlin.properties.Delegates.notNull
-import yuku.alkitab.base.S
+import yuku.alkitab.base.App
 import yuku.alkitab.base.dialog.XrefDialog.Companion.newInstance
 import yuku.alkitab.base.dialog.base.BaseDialog
 import yuku.alkitab.base.util.Appearances.applyTextAppearance
@@ -62,7 +62,7 @@ class XrefDialog : BaseDialog() {
     fun init(sourceVersion: Version, sourceVersionId: String, verseSelectedListener: (arif_source: Int, ari_target: Int) -> Unit) {
         this.sourceVersion = sourceVersion
         this.sourceVersionId = sourceVersionId
-        this.textSizeMult = S.db.getPerVersionSettings(sourceVersionId).fontSizeMultiplier
+        this.textSizeMult = App.services.storage.db.getPerVersionSettings(sourceVersionId).fontSizeMultiplier
         this.verseSelectedListener = verseSelectedListener
         this.initted = true
     }
@@ -89,7 +89,7 @@ class XrefDialog : BaseDialog() {
 
         return inflater.inflate(R.layout.dialog_xref, container, false).apply {
             tXrefText = findViewById(R.id.tXrefText)
-            setBackgroundColor(S.applied().backgroundColor)
+            setBackgroundColor(App.services.uiDimensions.applied().backgroundColor)
 
             versesController = VersesControllerImpl(
                 findViewById(R.id.lsView),

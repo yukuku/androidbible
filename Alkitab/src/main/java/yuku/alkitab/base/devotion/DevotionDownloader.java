@@ -4,7 +4,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.events.AppEvents;
@@ -55,7 +54,7 @@ public class DevotionDownloader {
                 try {
                     final String output = Connections.downloadString(url);
                     article.fillIn(output);
-                    S.getDb().storeArticleToDevotions(article);
+                    App.services.storage.getDb().storeArticleToDevotions(article);
 
                     if (!output.startsWith("NG")) {
                         AppEvents.emitDevotionDownloaded(kind.name, article.getDate());

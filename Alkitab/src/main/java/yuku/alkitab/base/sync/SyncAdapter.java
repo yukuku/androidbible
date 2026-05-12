@@ -25,7 +25,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.events.AppEvents;
 import yuku.alkitab.base.model.SyncShadow;
@@ -308,7 +307,7 @@ public class SyncAdapter extends Worker {
 
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_got_success_data, syncSetName, "final_revno", final_revno, "append_delta_operations_size", append_delta.operations.size());
 
-			final Sync.ApplyAppendDeltaResult applyResult = S.getDb().syncApplier.applyMabelAppendDelta(final_revno, shadowEntities, clientState, append_delta, entitiesBeforeSync, simpleToken);
+			final Sync.ApplyAppendDeltaResult applyResult = App.services.storage.getDb().syncApplier.applyMabelAppendDelta(final_revno, shadowEntities, clientState, append_delta, entitiesBeforeSync, simpleToken);
 
 			SyncRecorder.log(SyncRecorder.EventKind.apply_result, syncSetName, "apply_result", applyResult.name());
 
@@ -502,7 +501,7 @@ public class SyncAdapter extends Worker {
 
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_got_success_data, syncSetName, "final_revno", final_revno, "append_delta_operations_size", append_delta.operations.size());
 
-			final Sync.ApplyAppendDeltaResult applyResult = S.getDb().syncApplier.applyPinsAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
+			final Sync.ApplyAppendDeltaResult applyResult = App.services.storage.getDb().syncApplier.applyPinsAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
 
 			SyncRecorder.log(SyncRecorder.EventKind.apply_result, syncSetName, "apply_result", applyResult.name());
 
@@ -597,7 +596,7 @@ public class SyncAdapter extends Worker {
 
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_got_success_data, syncSetName, "final_revno", final_revno, "append_delta_operations_size", append_delta.operations.size());
 
-			final Sync.ApplyAppendDeltaResult applyResult = S.getDb().syncApplier.applyRpAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
+			final Sync.ApplyAppendDeltaResult applyResult = App.services.storage.getDb().syncApplier.applyRpAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
 
 			SyncRecorder.log(SyncRecorder.EventKind.apply_result, syncSetName, "apply_result", applyResult.name());
 

@@ -5,7 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
-import yuku.alkitab.base.S;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.util.IntArrayList;
 import yuku.bintex.BintexReader;
@@ -32,7 +32,7 @@ public class ReadingPlanManager {
 
 			info.startTime = new Date().getTime();
 
-			return S.getDb().insertReadingPlan(info, data);
+			return App.services.storage.getDb().insertReadingPlan(info, data);
 		} catch (IOException e) {
 			AppLog.e(TAG, "Error reading reading plan, should not happen", e);
 			return 0;
@@ -45,9 +45,9 @@ public class ReadingPlanManager {
 		final String gid = ReadingPlan.gidFromName(readingPlanName);
 
 		if (checked) {
-			S.getDb().insertOrUpdateReadingPlanProgress(gid, readingCode, System.currentTimeMillis());
+			App.services.storage.getDb().insertOrUpdateReadingPlanProgress(gid, readingCode, System.currentTimeMillis());
 		} else {
-			S.getDb().deleteReadingPlanProgress(gid, readingCode);
+			App.services.storage.getDb().deleteReadingPlanProgress(gid, readingCode);
 		}
 	}
 
@@ -66,7 +66,7 @@ public class ReadingPlanManager {
 			}
 		}
 
-		S.getDb().insertOrUpdateMultipleReadingPlanProgresses(gid, readingCodes, System.currentTimeMillis());
+		App.services.storage.getDb().insertOrUpdateMultipleReadingPlanProgresses(gid, readingCodes, System.currentTimeMillis());
 	}
 
 	@NonNull public static ReadingPlan readVersion1(InputStream inputStream, String name) {

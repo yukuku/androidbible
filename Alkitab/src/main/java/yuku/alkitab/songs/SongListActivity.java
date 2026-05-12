@@ -23,7 +23,6 @@ import androidx.appcompat.widget.Toolbar;
 import java.util.ArrayList;
 import java.util.List;
 import yuku.afw.App;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.debug.R;
 
@@ -342,10 +341,10 @@ public class SongListActivity extends BaseActivity {
 		public List<SongInfo> loadInBackground() {
 			List<SongInfo> res;
 			if (!deepSearch) {
-				List<SongInfo> songInfos = S.getSongDb().listSongInfosByBookName(getSelectedBookName());
+				List<SongInfo> songInfos = yuku.alkitab.base.App.services.storage.getSongDb().listSongInfosByBookName(getSelectedBookName());
 				res = SongFilter.filterSongInfosByString(songInfos, filter_string);
 			} else {
-				res = S.getSongDb().listSongInfosByBookNameAndDeepFilter(getSelectedBookName(), filter_string);
+				res = yuku.alkitab.base.App.services.storage.getSongDb().listSongInfosByBookNameAndDeepFilter(getSelectedBookName(), filter_string);
 			}
 			return res;
 		}

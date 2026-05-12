@@ -15,7 +15,6 @@ import java.util.Set;
 import kotlin.Unit;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.events.AppEvents;
 import yuku.alkitab.base.model.SyncShadow;
@@ -82,7 +81,7 @@ public class SyncSettingsActivity extends BaseActivity {
 							pref.setSummary(getString(R.string.sync_sync_set_pref_summary_never));
 						} else {
 							final Date date = Sqlitil.toDate(time);
-							pref.setSummary(getString(R.string.sync_sync_set_pref_summary_last_synced, lastSyncDateFormat.get().format(date), lastSyncTimeFormat.get().format(date), 	S.getDb().getRevnoFromSyncShadowBySyncSetName(syncSetName)));
+							pref.setSummary(getString(R.string.sync_sync_set_pref_summary_last_synced, lastSyncDateFormat.get().format(date), lastSyncTimeFormat.get().format(date), 	App.services.storage.getDb().getRevnoFromSyncShadowBySyncSetName(syncSetName)));
 						}
 					}
 				} else {
@@ -111,7 +110,7 @@ public class SyncSettingsActivity extends BaseActivity {
 							Preferences.remove(Prefkey.sync_token_obtained_time);
 
 							for (final String syncSetName : SyncShadow.ALL_SYNC_SET_NAMES) {
-								S.getDb().deleteSyncShadowBySyncSetName(syncSetName);
+								App.services.storage.getDb().deleteSyncShadowBySyncSetName(syncSetName);
 							}
 						});
 

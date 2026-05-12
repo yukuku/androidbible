@@ -3,7 +3,7 @@ package yuku.alkitab.base.model;
 import java.io.File;
 import java.lang.ref.SoftReference;
 import java.util.concurrent.ConcurrentHashMap;
-import yuku.alkitab.base.S;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.storage.YesReaderFactory;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.io.BibleReader;
@@ -94,7 +94,7 @@ public class MVersionDb extends MVersion {
 
 	public void setActive(boolean active) {
 		this.cache_active = active;
-		S.getDb().setVersionActive(this, active);
+		App.services.storage.getDb().setVersionActive(this, active);
 	}
 
 	@Override

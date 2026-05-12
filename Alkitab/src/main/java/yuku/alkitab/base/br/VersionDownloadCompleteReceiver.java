@@ -12,7 +12,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.AlertDialogActivity;
 import yuku.alkitab.base.events.AppEvents;
 import yuku.alkitab.base.model.MVersionDb;
@@ -130,7 +129,7 @@ public class VersionDownloadCompleteReceiver {
 
 			// success!
 
-			int maxOrdering = S.getDb().getVersionMaxOrdering();
+			int maxOrdering = App.services.storage.getDb().getVersionMaxOrdering();
 			if (maxOrdering == 0) maxOrdering = MVersionDb.DEFAULT_ORDERING_START;
 
 			final MVersionDb mvDb = new MVersionDb();
@@ -145,7 +144,7 @@ public class VersionDownloadCompleteReceiver {
 			mvDb.modifyTime = modifyTime;
 			mvDb.ordering = maxOrdering + 1;
 
-			S.getDb().insertOrUpdateVersionWithActive(mvDb, true);
+			App.services.storage.getDb().insertOrUpdateVersionWithActive(mvDb, true);
 			MVersionDb.clearVersionImplCache();
 
 			Foreground.run(() -> {

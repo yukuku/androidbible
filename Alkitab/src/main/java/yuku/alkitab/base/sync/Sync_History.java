@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.util.History;
 
@@ -25,7 +24,7 @@ public class Sync_History {
 	 * @return base revno, delta of shadow -> current.
 	 */
 	public static Pair<Sync.ClientState<Content>, List<Sync.Entity<Content>>> getClientStateAndCurrentEntities() {
-		final SyncShadow ss = S.getDb().getSyncShadowBySyncSetName(SyncShadow.SYNC_SET_HISTORY);
+		final SyncShadow ss = App.services.storage.getDb().getSyncShadowBySyncSetName(SyncShadow.SYNC_SET_HISTORY);
 
 		final List<Sync.Entity<Content>> srcs = ss == null? Collections.emptyList(): entitiesFromShadow(ss);
 		final List<Sync.Entity<Content>> dsts = getEntitiesFromCurrent();

@@ -26,7 +26,6 @@ import java.util.Locale;
 import yuku.afw.App;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.ColorSettingsActivity;
 import yuku.alkitab.base.ac.FontManagerActivity;
 import yuku.alkitab.base.model.PerVersionSettings;
@@ -123,7 +122,7 @@ public class TextAppearancePanel {
 
             lTextSizeLabel.setText(TextUtils.expandTemplate(activity.getText(R.string.text_appearance_text_size_for_version), splitVersionLongName));
 
-            final PerVersionSettings settings = S.getDb().getPerVersionSettings(splitVersionId);
+            final PerVersionSettings settings = yuku.alkitab.base.App.services.storage.getDb().getPerVersionSettings(splitVersionId);
             sbTextSizePerVersion.setProgress(Math.round((settings.fontSizeMultiplier - 0.5f) * 20.f));
             displayTextSizePerVersionText(settings.fontSizeMultiplier);
         }
@@ -231,9 +230,9 @@ public class TextAppearancePanel {
             if (splitVersionId == null) return;
 
             float textSizeMult = progress * 0.05f + 0.5f;
-            final PerVersionSettings settings = S.getDb().getPerVersionSettings(splitVersionId);
+            final PerVersionSettings settings = yuku.alkitab.base.App.services.storage.getDb().getPerVersionSettings(splitVersionId);
             settings.fontSizeMultiplier = textSizeMult;
-            S.getDb().storePerVersionSettings(splitVersionId, settings);
+            yuku.alkitab.base.App.services.storage.getDb().storePerVersionSettings(splitVersionId, settings);
 
             displayTextSizePerVersionText(textSizeMult);
             listener.onValueChanged();

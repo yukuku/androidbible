@@ -216,12 +216,17 @@ Coroutines and `lifecycleScope` were already on the classpath transitively throu
 
 ---
 
-### REM-24: Refactor S.kt Service Locator — Steps 24a–24d landed 2026-05-12
+### REM-24: Refactor S.kt Service Locator — Steps 24a–24d complete 2026-05-12
 **Addresses:** TD-15  
 **Module:** Cross-cutting (50 files)  
 **BRICE:** B=4 R=2 I=2 C=3 E=5 → **3.2**
 
-**Status:** Steps 24a (interface extraction), 24b (UI dialog removal), 24c (thread-safety fix) and 24d's bootstrap (AppServices container initialized in `App.staticInit()`) shipped on 2026-05-12. The bulk of 24d — migrating the ~50 existing `S.xxx` call sites to depend on `App.services.*` — remains as ongoing incremental work and is not blocking. 24e (Hilt) is still optional/deferred.
+**Status:** Steps 24a (interface extraction), 24b (UI dialog removal), 24c (thread-safety fix), and 24d (AppServices container + caller migration) all complete as of 2026-05-12. ~216 direct `S.xxx` references across 44 files migrated to `App.services.*`. The `S` adapter properties (`S.storage`, `S.versions`, `S.uiDimensions`) and the legacy `@JvmStatic` accessors are retained so any new caller written against `S.foo` keeps compiling; new code should prefer `App.services`. 24e (Hilt) is still optional/deferred.
+
+**24d caller-migration follow-up shipped 2026-05-12:**
+- `App.services` is now initialized eagerly at the static field declaration in `App.java` rather than only inside `staticInit()`. This keeps `App.services.*` non-null for callers that exercise migrated code in tests that deliberately bypass `App.onCreate()` / `App.staticInit()` (e.g. `ProviderTest`, `VerseRendererTest`'s setup). The adapter objects on `S` only touch context/preferences when their methods are invoked, so eager init is safe before `App.context` is set.
+- `AppServices`'s `storage` / `versions` / `uiDimensions` fields are annotated `@JvmField` so Java callers can write `App.services.versions.activeVersion()` (matching Kotlin syntax) instead of `App.services.getVersions().activeVersion()`.
+- One deliberately un-migrated call site remains: the `S.db.listAllVersions().isEmpty()` check inside `IsiActivity.openVersionsDialog`. The rest of that method already uses `App.services.versions`; the single `S.db` line is left for the next person touching that method to migrate, to keep diffs cohesive.
 
 **What shipped on 2026-05-12:**
 - New `yuku.alkitab.base.services` package with `StorageProvider`, `VersionManager`, `UiDimensionsProvider`, and `AppServices` (see `Alkitab/src/main/java/yuku/alkitab/base/services/`).
@@ -724,7 +729,7 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 | REM-12 | ~~Replace DragSortListView~~ ✅ | **3.4** | 2 |
 | REM-14 | ~~Replace material-dialogs~~ ✅ | **3.4** | 2 |
 | REM-18 | Add test coverage | **3.4** | 2 |
-| REM-24 | Refactor S.kt service locator (steps 24a–24d shipped; caller migration ongoing) | **3.2** | 2 |
+| REM-24 | ~~Refactor S.kt service locator (steps 24a–24d complete)~~ ✅ | **3.2** | 2 |
 | REM-08 | ~~Extract split view manager~~ ✅ | **3.2** | 2 |
 | REM-11 | Room migration (Version) | **3.2** | 2 |
 | REM-15 | Introduce coroutines | **3.2** | 3 |

@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import java.util.concurrent.atomic.AtomicInteger
 import yuku.afw.storage.Preferences
-import yuku.alkitab.base.S
+import yuku.alkitab.base.App
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.util.TargetDecoder
@@ -607,7 +607,7 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
         }
 
         val attributeView = view.attributeView
-        attributeView.setScale(scaleForAttributeView(S.applied().fontSize2dp * ui.textSizeMult))
+        attributeView.setScale(scaleForAttributeView(App.services.uiDimensions.applied().fontSize2dp * ui.textSizeMult))
         attributeView.bookmarkCount = data.versesAttributes.bookmarkCountMap_[index]
         attributeView.noteCount = data.versesAttributes.noteCountMap_[index]
         attributeView.progressMarkBits = data.versesAttributes.progressMarkBitsMap_[index]
@@ -731,10 +731,10 @@ class PericopeHolder(private val view: PericopeHeaderItem) : ItemHolder(view) {
         val paddingTop = if (position == 0 || data.getItemViewType(position - 1) == ItemType.pericope) {
             0
         } else {
-            S.applied().pericopeSpacingTop
+            App.services.uiDimensions.applied().pericopeSpacingTop
         }
 
-        this.itemView.setPadding(0, paddingTop, 0, S.applied().pericopeSpacingBottom)
+        this.itemView.setPadding(0, paddingTop, 0, App.services.uiDimensions.applied().pericopeSpacingBottom)
 
         Appearances.applyPericopeTitleAppearance(lCaption, ui.textSizeMult)
 

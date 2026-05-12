@@ -11,7 +11,6 @@ import androidx.core.view.updateLayoutParams
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
-import yuku.alkitab.base.S
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
@@ -165,8 +164,8 @@ class SplitViewManager(
             SplitHandleButton.Orientation.vertical
         }
 
-        val splitMv = S.getVersionFromVersionId(lastSplitVersionId)
-        val splitMvActual = splitMv ?: S.getMVersionInternal()
+        val splitMv = App.services.versions.getVersionFromVersionId(lastSplitVersionId)
+        val splitMvActual = splitMv ?: App.services.versions.getMVersionInternal()
 
         if (loadSplitVersion(splitMvActual)) {
             openSplitDisplay()
@@ -238,11 +237,11 @@ class SplitViewManager(
                     host.activeSplit0Book.reference(host.chapter_1),
                     activeSplit1.version.shortName,
                 ),
-                S.applied().fontColor,
+                App.services.uiDimensions.applied().fontColor,
             )
             actions.setSplit1DataModel(VersesDataModel.EMPTY)
         } else {
-            host.lsSplit1.setEmptyMessage(null, S.applied().fontColor)
+            host.lsSplit1.setEmptyMessage(null, App.services.uiDimensions.applied().fontColor)
             actions.loadChapterIntoSplit1(activeSplit1.version, activeSplit1.versionId, splitBook, host.chapter_1)
             host.lsSplit1.scrollToVerse(verse_1)
         }

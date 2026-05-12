@@ -10,7 +10,7 @@ import android.view.LayoutInflater
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import yuku.alkitab.base.S.db
+import yuku.alkitab.base.App
 import yuku.alkitab.debug.R
 
 private const val MAX_LABEL_LENGTH = 48
@@ -18,7 +18,7 @@ private const val MAX_LABEL_LENGTH = 48
 object LabelEditorDialog {
     @JvmStatic
     fun show(context: Context, initialText: String, title: String, okListener: OkListener) {
-        val allLabels = db.listAllLabels()
+        val allLabels = App.services.storage.db.listAllLabels()
 
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_input, null, false)
         val til = dialogView.findViewById<TextInputLayout>(R.id.tilInput)

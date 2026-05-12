@@ -34,7 +34,6 @@ import java.util.Locale
 import java.util.regex.Matcher
 import kotlinx.coroutines.launch
 import yuku.alkitab.base.App
-import yuku.alkitab.base.S
 import yuku.alkitab.base.config.VersionConfig
 import yuku.alkitab.base.events.AppEvents
 import yuku.alkitab.base.model.MVersion
@@ -230,7 +229,7 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
             button_count++
             b.setNeutralButton(R.string.buang_dari_daftar) { _, _ ->
                 val filename = mv.filename
-                S.db.deleteVersion(mv)
+                App.services.storage.db.deleteVersion(mv)
                 AppEvents.emitVersionListReload()
                 File(filename).delete()
             }
@@ -282,7 +281,7 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
                 MaterialAlertDialogBuilder(requireActivity())
                     .setMessage(getString(R.string.the_file_for_this_version_is_no_longer_available_file, mv.filename))
                     .setPositiveButton(R.string.delete) { _, _ ->
-                        S.db.deleteVersion(mv)
+                        App.services.storage.db.deleteVersion(mv)
                         AppEvents.emitVersionListReload()
                     }
                     .setNegativeButton(R.string.no, null)
@@ -343,12 +342,12 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
         fun reload() {
             val items = mutableListOf<Item>()
             // internal
-            items.add(Item(S.getMVersionInternal()))
+            items.add(Item(App.services.versions.getMVersionInternal()))
 
             val presetsInDb = mutableMapOf<String, MVersionDb>()
 
             // db
-            for (mv in S.db.listAllVersions()) {
+            for (mv in App.services.storage.db.listAllVersions()) {
                 items.add(Item(mv))
                 if (mv.preset_name != null) {
                     presetsInDb[mv.preset_name] = mv
@@ -594,7 +593,7 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
 
             val fromItem = snapshot[startPos]
             val toItem = snapshot[endPos]
-            S.db.reorderVersions(fromItem.mv, toItem.mv)
+            App.services.storage.db.reorderVersions(fromItem.mv, toItem.mv)
             AppEvents.emitVersionListReload()
         }
     }

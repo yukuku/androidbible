@@ -34,7 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.unit.dp
 import yuku.afw.storage.Preferences
-import yuku.alkitab.base.S
+import yuku.alkitab.base.App
 import yuku.alkitab.base.compose.bookForegroundColor
 import yuku.alkitab.base.util.BookNameSorter
 import yuku.alkitab.debug.R
@@ -47,7 +47,7 @@ fun GridTab(
     onGotoFinished: OnGotoFinished,
 ) {
     val books: Array<Book> = remember {
-        val raw = S.activeVersion().consecutiveBooks
+        val raw = App.services.versions.activeVersion().consecutiveBooks
         if (Preferences.getBoolean(R.string.pref_alphabeticBookSort_key, R.bool.pref_alphabeticBookSort_default)) {
             BookNameSorter.sortAlphabetically(raw)
         } else raw.copyOf()

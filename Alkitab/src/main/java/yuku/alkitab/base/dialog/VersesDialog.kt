@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import kotlin.properties.Delegates.notNull
-import yuku.alkitab.base.S
+import yuku.alkitab.base.App
 import yuku.alkitab.base.dialog.VersesDialog.Companion.newCompareInstance
 import yuku.alkitab.base.dialog.VersesDialog.Companion.newInstance
 import yuku.alkitab.base.dialog.base.BaseDialog
@@ -69,12 +69,12 @@ class VersesDialog : BaseDialog() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val sourceVersion = S.activeVersion()
-        val sourceVersionId = S.activeVersionId()
-        val textSizeMult = S.db.getPerVersionSettings(sourceVersionId).fontSizeMultiplier
+        val sourceVersion = App.services.versions.activeVersion()
+        val sourceVersionId = App.services.versions.activeVersionId()
+        val textSizeMult = App.services.storage.db.getPerVersionSettings(sourceVersionId).fontSizeMultiplier
 
         val res = inflater.inflate(R.layout.dialog_verses, container, false)
-        res.setBackgroundColor(S.applied().backgroundColor)
+        res.setBackgroundColor(App.services.uiDimensions.applied().backgroundColor)
         val tReference = res.findViewById<TextView>(R.id.tReference)
 
         val versesController = VersesControllerImpl(
@@ -135,7 +135,7 @@ class VersesDialog : BaseDialog() {
                 versionId_ = sourceVersionId
             )
         } else { // read each version and display it. First version must be the sourceVersion.
-            val mversions = S.getAvailableVersions().toMutableList()
+            val mversions = App.services.versions.getAvailableVersions().toMutableList()
             // sort such that sourceVersion is first
             mversions.sortBy { if (it.versionId == sourceVersionId) -1 else 0 }
 

@@ -26,7 +26,6 @@ import java.util.Locale;
 import kotlin.Unit;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.compose.colorpicker.ColorPickerDialog;
 import yuku.alkitab.base.dialog.LabelEditorDialog;
@@ -114,7 +113,7 @@ public class MarkersActivity extends BaseActivity {
     public boolean onOptionsItemSelected(final MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.menuLabelSort) {
-            S.getDb().sortLabelsAlphabetically();
+            App.services.storage.getDb().sortLabelsAlphabetically();
             adapter.reload();
             return true;
         }
@@ -176,16 +175,16 @@ public class MarkersActivity extends BaseActivity {
         if (itemId == R.id.menuRenameLabel) {
             LabelEditorDialog.show(this, label.title, getString(R.string.rename_label_title), title -> {
                 label.title = title;
-                S.getDb().insertOrUpdateLabel(label);
+                App.services.storage.getDb().insertOrUpdateLabel(label);
                 adapter.notifyDataSetChanged();
             });
             return true;
         } else if (itemId == R.id.menuDeleteLabel) {
-            final int marker_count = S.getDb().countMarkersWithLabel(label);
+            final int marker_count = App.services.storage.getDb().countMarkersWithLabel(label);
 
             if (marker_count == 0) {
                 // no markers, just delete straight away
-                S.getDb().deleteLabelAndMarker_LabelsByLabelId(label._id);
+                App.services.storage.getDb().deleteLabelAndMarker_LabelsByLabelId(label._id);
                 adapter.reload();
             } else {
                 MaterialDialogJavaHelper.showOkDialog(
@@ -193,7 +192,7 @@ public class MarkersActivity extends BaseActivity {
                     getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, "" + marker_count),
                     getString(R.string.delete),
                     () -> {
-                        S.getDb().deleteLabelAndMarker_LabelsByLabelId(label._id);
+                        App.services.storage.getDb().deleteLabelAndMarker_LabelsByLabelId(label._id);
                         adapter.reload();
                         return Unit.INSTANCE;
                     },
@@ -206,7 +205,7 @@ public class MarkersActivity extends BaseActivity {
             int colorRgb = LabelColorUtil.decodeBackground(label.backgroundColor);
             ColorPickerDialog.show(MarkersActivity.this, 0xff000000 | colorRgb, color -> {
                 label.backgroundColor = LabelColorUtil.encodeBackground(0x00ffffff & color);
-                S.getDb().insertOrUpdateLabel(label);
+                App.services.storage.getDb().insertOrUpdateLabel(label);
                 adapter.notifyDataSetChanged();
             });
 
@@ -301,7 +300,7 @@ public class MarkersActivity extends BaseActivity {
 
             final Label fromLabel = snapshot.get(fromIdx);
             final Label toLabel = snapshot.get(toIdx);
-            S.getDb().reorderLabels(fromLabel, toLabel);
+            App.services.storage.getDb().reorderLabels(fromLabel, toLabel);
             adapter.reload();
         }
     }
@@ -442,7 +441,7 @@ public class MarkersActivity extends BaseActivity {
         }
 
         void reload() {
-            labels = S.getDb().listAllLabels();
+            labels = App.services.storage.getDb().listAllLabels();
 
             if (BuildConfig.DEBUG) {
                 AppLog.d(TAG, "_id  title                ordering backgroundColor");

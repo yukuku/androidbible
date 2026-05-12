@@ -85,7 +85,7 @@ public class NoteActivity extends BaseActivity {
 
 		final long _id = getIntent().getLongExtra(EXTRA_marker_id, 0L);
 		if (_id != 0L) {
-			marker = S.getDb().getMarkerById(_id);
+			marker = App.services.storage.getDb().getMarkerById(_id);
 		}
 
 		String reference = getIntent().getStringExtra(EXTRA_reference);
@@ -93,7 +93,7 @@ public class NoteActivity extends BaseActivity {
 		verseCountForNewNote = getIntent().getIntExtra(EXTRA_verseCountForNewNote, 0);
 
 		if (reference == null) {
-			reference = S.activeVersion().referenceWithVerseCount(marker.ari, marker.verseCount);
+			reference = App.services.versions.activeVersion().referenceWithVerseCount(marker.ari, marker.verseCount);
 		}
 
 		setTitle(reference);
@@ -123,7 +123,7 @@ public class NoteActivity extends BaseActivity {
 	@Override protected void onStart() {
 		super.onStart();
 
-		final S.CalculatedDimensions applied = S.applied();
+		final S.CalculatedDimensions applied = App.services.uiDimensions.applied();
 
 		{ // apply background color, by overriding window background
 			getWindow().setBackgroundDrawable(new ColorDrawable(applied.backgroundColor));
@@ -262,7 +262,7 @@ public class NoteActivity extends BaseActivity {
 					() -> {
 						if (marker != null) {
 							// really delete from db
-							S.getDb().deleteNonBookmarkMarkerById(marker._id);
+							App.services.storage.getDb().deleteNonBookmarkMarkerById(marker._id);
 						} else {
 							// do nothing, because it's indeed not in the db, only in editor buffer
 						}
@@ -295,16 +295,16 @@ public class NoteActivity extends BaseActivity {
 					// when there is no change, do nothing
 				} else {
 					if (caption.length() == 0) { // delete instead of update
-						S.getDb().deleteNonBookmarkMarkerById(marker._id);
+						App.services.storage.getDb().deleteNonBookmarkMarkerById(marker._id);
 					} else {
 						marker.caption = caption;
 						marker.modifyTime = now;
-						S.getDb().insertOrUpdateMarker(marker);
+						App.services.storage.getDb().insertOrUpdateMarker(marker);
 					}
 				}
 			} else { // marker == null; not existing, so only insert when there is some text
 				if (caption.length() > 0) {
-					marker = S.getDb().insertMarker(ariForNewNote, Marker.Kind.note, caption, verseCountForNewNote, now, now);
+					marker = App.services.storage.getDb().insertMarker(ariForNewNote, Marker.Kind.note, caption, verseCountForNewNote, now, now);
 				}
 			}
 

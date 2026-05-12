@@ -11,7 +11,7 @@ import androidx.core.app.ShareCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import yuku.afw.storage.Preferences
-import yuku.alkitab.base.S
+import yuku.alkitab.base.App
 import yuku.alkitab.base.ac.NoteActivity
 import yuku.alkitab.base.config.AppConfig
 import yuku.alkitab.base.dialog.TypeBookmarkDialog
@@ -361,7 +361,7 @@ class VerseActionModeController(
 
             R.id.menuAddHighlight -> {
                 val ariBc = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, 0)
-                val colorRgb = S.db.getHighlightColorRgb(ariBc, selected)
+                val colorRgb = App.services.storage.db.getHighlightColorRgb(ariBc, selected)
 
                 val listener = TypeHighlightDialog.Listener {
                     actions.uncheckAllVersesSplit0()
@@ -373,7 +373,7 @@ class VerseActionModeController(
                     val ftr = VerseRenderer.FormattedTextResult()
                     val ari = Ari.encodeWithBc(ariBc, selected.get(0))
                     val rawVerseText = host.activeSplit0Version.loadVerseText(ari) ?: ""
-                    val info = S.db.getHighlightColorRgb(ari)
+                    val info = App.services.storage.db.getHighlightColorRgb(ari)
 
                     VerseRenderer.render(ari = ari, text = rawVerseText, ftr = ftr)
                     TypeHighlightDialog(host.activity, ari, listener, colorRgb, info, reference, ftr.result)

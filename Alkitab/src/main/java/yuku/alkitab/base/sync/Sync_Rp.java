@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.model.SyncShadow;
 
@@ -32,7 +31,7 @@ public class Sync_Rp {
 	 * @return base revno, delta of shadow -> current.
 	 */
 	public static Pair<Sync.ClientState<Content>, List<Sync.Entity<Content>>> getClientStateAndCurrentEntities() {
-		final SyncShadow ss = S.getDb().getSyncShadowBySyncSetName(SyncShadow.SYNC_SET_RP);
+		final SyncShadow ss = App.services.storage.getDb().getSyncShadowBySyncSetName(SyncShadow.SYNC_SET_RP);
 
 		final List<Sync.Entity<Content>> srcs = ss == null? Collections.emptyList(): entitiesFromShadow(ss);
 		final List<Sync.Entity<Content>> dsts = getEntitiesFromCurrent();
@@ -87,7 +86,7 @@ public class Sync_Rp {
 		final List<Sync.Entity<Content>> res = new ArrayList<>();
 
 		// lookup map for startTime
-		final List<ReadingPlan.ReadingPlanInfo> infos = S.getDb().listAllReadingPlanInfo();
+		final List<ReadingPlan.ReadingPlanInfo> infos = App.services.storage.getDb().listAllReadingPlanInfo();
 		final Map<String /* gid */, Long> /* long startTime */ startTimes = new HashMap<>(infos.size());
 		for (final ReadingPlan.ReadingPlanInfo info : infos) {
 			startTimes.put(ReadingPlan.gidFromName(info.name), info.startTime);
@@ -96,7 +95,7 @@ public class Sync_Rp {
 		// The only source of data is from ReadingPlanProgress table,
 		// but since reading plans with no done is not listed in ReadingPlanProgress,
 		// we need to consult ReadingPlan table to know what they are.
-		final Map<String /* gid */, Set<Integer> /* done reading codes */> map = S.getDb().getReadingPlanProgressSummaryForSync();
+		final Map<String /* gid */, Set<Integer> /* done reading codes */> map = App.services.storage.getDb().getReadingPlanProgressSummaryForSync();
 		for (final Map.Entry<String, Set<Integer>> e : map.entrySet()) {
 			final String gid = e.getKey();
 

@@ -29,7 +29,6 @@ import okhttp3.Call;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.storage.SongDb;
 import yuku.alkitab.base.util.Background;
@@ -96,7 +95,7 @@ public class SongBookUtil {
 
     @NonNull
     public static SongBookInfo getSongBookInfo(@NonNull final String bookName) {
-        final SongBookInfo info = S.getSongDb().getSongBookInfo(bookName);
+        final SongBookInfo info = App.services.storage.getSongDb().getSongBookInfo(bookName);
         if (info != null) return info;
 
         return fallbackSongBookInfo(bookName);
@@ -125,7 +124,7 @@ public class SongBookUtil {
             menu.add(0, POPUP_ID_ALL, 0, sb);
         }
 
-        final List<SongBookInfo> infos = S.getSongDb().listSongBookInfos();
+        final List<SongBookInfo> infos = App.services.storage.getSongDb().listSongBookInfos();
         for (int i = 0; i < infos.size(); i++) {
             final SongBookInfo info = infos.get(i);
             final SpannableStringBuilder sb = new SpannableStringBuilder(escapeSongBookName(info.name));
@@ -160,7 +159,7 @@ public class SongBookUtil {
             switch (itemId) {
                 case POPUP_ID_ALL -> listener.onAllSelected();
                 case POPUP_ID_MORE -> listener.onMoreSelected();
-                default -> listener.onSongBookSelected(S.getSongDb().listSongBookInfos().get(itemId - 1).name);
+                default -> listener.onSongBookSelected(App.services.storage.getSongDb().listSongBookInfos().get(itemId - 1).name);
             }
             return true;
         };
@@ -264,8 +263,8 @@ public class SongBookUtil {
                     }
 
                     // insert songs to db
-                    S.getSongDb().insertSongBookInfo(songBookInfo);
-                    S.getSongDb().storeSongs(songBookInfo.name, songs, dataFormatVersion);
+                    App.services.storage.getSongDb().insertSongBookInfo(songBookInfo);
+                    App.services.storage.getSongDb().storeSongs(songBookInfo.name, songs, dataFormatVersion);
 
                     Foreground.run(() -> listener.onDownloadedAndInserted(songBookInfo));
                 }

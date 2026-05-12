@@ -1,7 +1,7 @@
 package yuku.alkitab.base.dialog
 
 import android.content.Context
-import yuku.alkitab.base.S
+import yuku.alkitab.base.App
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.SingleChapterVerses
@@ -60,6 +60,6 @@ class VersesDialogCompareVerses(
 
     override fun getTextSizeMult(verse_0: Int): Float {
         val mversion = mversions[verse_0]
-        return S.db.getPerVersionSettings(mversion.versionId).fontSizeMultiplier
+        return App.services.storage.db.getPerVersionSettings(mversion.versionId).fontSizeMultiplier
     }
 }
