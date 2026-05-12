@@ -34,7 +34,7 @@ import yuku.alkitabintegration.provider.VerseProvider
  *
  * Setup notes:
  *  - `@Config(application = Application::class)` avoids running
- *    `yuku.alkitab.base.App.onCreate` (Firebase / PRDownloader / FCM). The
+ *    `yuku.alkitab.base.App.onCreate` (Firebase / FCM). The
  *    [Provider.onCreate] override is also stubbed out in [stubbedProvider]
  *    because it would otherwise call `App.staticInit` directly.
  *  - The first access to `S` triggers `ActiveVersionHolder`'s static init,
@@ -482,7 +482,7 @@ class ProviderTest {
         /**
          * Returns a Provider subclass whose `onCreate` is a no-op. The
          * production `onCreate` calls `yuku.alkitab.base.App.staticInit`, which
-         * bootstraps FCM, PRDownloader, FeedbackSender, and preference
+         * bootstraps FCM, FeedbackSender, and preference
          * defaults — none of which we need here, and most of which would not
          * work under plain Robolectric anyway. `attachInfo` (super) still calls
          * this overridden `onCreate`, and `Provider.attachInfo` (subclass)

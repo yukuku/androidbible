@@ -341,7 +341,6 @@ dependencies {
     implementation(project(":Afw"))
     implementation(project(":FlowLayout"))
     implementation(project(":ImportedDesktopVerseUtil"))
-    implementation(project(":PrDownloaderFixed"))
 
     // Compose — single BOM-managed Compose surface (audio-bible bottom sheet + GotoActivity).
     val composeBom = platform(libs.androidx.compose.bom)
