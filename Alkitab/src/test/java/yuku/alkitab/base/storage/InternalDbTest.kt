@@ -476,9 +476,9 @@ class InternalDbTest {
         assertNotNull(info)
         assertEquals(0x445566, info!!.colorRgb)
         assertNotNull(info.partial)
-        assertEquals(7, info.partial.startOffset)
-        assertEquals(20, info.partial.endOffset)
-        assertEquals(Highlights.hashCode(verseText), info.partial.hashCode)
+        assertEquals(7, info.partial!!.startOffset)
+        assertEquals(20, info.partial!!.endOffset)
+        assertEquals(Highlights.hashCode(verseText), info.partial!!.hashCode)
     }
 
     @Test

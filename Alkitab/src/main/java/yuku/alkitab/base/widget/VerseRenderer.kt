@@ -239,8 +239,8 @@ object VerseRenderer {
 
         val span = BackgroundColorSpan(Highlights.alphaMix(highlightInfo.colorRgb))
         if (highlightInfo.shouldRenderAsPartialForVerseText(sb.subSequence(startPosAfterVerseNumber, sb.length))) {
-            val start = startPosAfterVerseNumber + highlightInfo.partial.startOffset
-            val end = startPosAfterVerseNumber + highlightInfo.partial.endOffset
+            val start = startPosAfterVerseNumber + highlightInfo.partial!!.startOffset
+            val end = startPosAfterVerseNumber + highlightInfo.partial!!.endOffset
             if (end > start) {
                 sb.setSpan(span, start, end, 0)
             } else {
@@ -369,8 +369,8 @@ object VerseRenderer {
         if (highlightInfo != null) {
             val span = BackgroundColorSpan(Highlights.alphaMix(highlightInfo.colorRgb))
             if (highlightInfo.shouldRenderAsPartialForVerseText(text)) {
-                val start = startPosAfterVerseNumber + highlightInfo.partial.startOffset
-                val end = startPosAfterVerseNumber + highlightInfo.partial.endOffset
+                val start = startPosAfterVerseNumber + highlightInfo.partial!!.startOffset
+                val end = startPosAfterVerseNumber + highlightInfo.partial!!.endOffset
                 if (end > start) {
                     sb.setSpan(span, start, end, 0)
                 } else {

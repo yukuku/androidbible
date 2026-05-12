@@ -65,9 +65,9 @@ class HighlightsTest {
         assertNotNull(info)
         assertEquals(color, info!!.colorRgb)
         assertNotNull(info.partial)
-        assertEquals(hash, info.partial.hashCode)
-        assertEquals(start, info.partial.startOffset)
-        assertEquals(end, info.partial.endOffset)
+        assertEquals(hash, info.partial!!.hashCode)
+        assertEquals(start, info.partial!!.startOffset)
+        assertEquals(end, info.partial!!.endOffset)
     }
 
     @Test
@@ -78,9 +78,9 @@ class HighlightsTest {
         assertNotNull(info)
         assertEquals(0x112233, info!!.colorRgb)
         assertNotNull(info.partial)
-        assertEquals(0, info.partial.hashCode)
-        assertEquals(0, info.partial.startOffset)
-        assertEquals(0, info.partial.endOffset)
+        assertEquals(0, info.partial!!.hashCode)
+        assertEquals(0, info.partial!!.startOffset)
+        assertEquals(0, info.partial!!.endOffset)
     }
 
     @Test
@@ -90,7 +90,7 @@ class HighlightsTest {
 
         assertNotNull(info)
         assertNotNull(info!!.partial)
-        assertEquals(Int.MIN_VALUE, info.partial.hashCode)
+        assertEquals(Int.MIN_VALUE, info.partial!!.hashCode)
     }
 
     // endregion

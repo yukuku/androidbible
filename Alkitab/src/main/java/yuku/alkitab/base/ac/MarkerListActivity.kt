@@ -493,7 +493,7 @@ class MarkerListActivity : BaseActivity() {
                                         TypeHighlightDialog(this@MarkerListActivity, ari, {
                                             loadAndFilter()
                                             AppEvents.emitAttributeMapChanged()
-                                        }, info.colorRgb, info, reference, ftr.result)
+                                        }, info!!.colorRgb, info, reference, ftr.result)
                                     }
                                 }
                             }
@@ -658,7 +658,7 @@ class MarkerListActivity : BaseActivity() {
                     if (info != null) {
                         val span = BackgroundColorSpan(Highlights.alphaMix(info.colorRgb))
                         if (info.shouldRenderAsPartialForVerseText(verseText)) {
-                            snippet.setSpan(span, info.partial.startOffset, info.partial.endOffset, 0)
+                            snippet.setSpan(span, info.partial!!.startOffset, info.partial!!.endOffset, 0)
                         } else {
                             snippet.setSpan(span, 0, snippet.length, 0)
                         }
