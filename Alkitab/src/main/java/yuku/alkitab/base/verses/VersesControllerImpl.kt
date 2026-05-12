@@ -131,7 +131,11 @@ class VersesControllerImpl(
                     if (verse_1 > 0) {
                         versesListeners.verseScrollListener.onVerseScroll(false, verse_1, prop)
                     } else {
-                        versesListeners.verseScrollListener.onVerseScroll(true, 0, 0f)
+                        // first visible item is a pericope; pass the following verse for best-effort sync
+                        val nextVerse_1 = versesDataModel.getVerse_1FromPosition(position)
+                        if (nextVerse_1 > 0) {
+                            versesListeners.verseScrollListener.onVerseScroll(true, nextVerse_1, prop)
+                        }
                     }
 
                     if (position == 0 && firstChild.top == view.paddingTop) {
@@ -263,26 +267,44 @@ class VersesControllerImpl(
             return
         }
 
+        scrollToPositionWithProp(position, prop)
+    }
+
+    override fun scrollToPericope(verse_1: Int, prop: Float) {
+        val pericopePos = versesDataModel.getPositionOfPericopeBeginningFromVerse(verse_1)
+        if (pericopePos == -1) {
+            AppLog.d(TAG, "could not find verse_1 for pericope: $verse_1")
+            return
+        }
+        val versePos = versesDataModel.getPositionIgnoringPericopeFromVerse(verse_1)
+        // If this version has no pericope above the verse, applying the source's
+        // within-pericope prop to the verse would scroll past it. Snap to the
+        // verse start instead.
+        val effectiveProp = if (pericopePos == versePos) 0f else prop
+        scrollToPositionWithProp(pericopePos, effectiveProp)
+    }
+
+    private fun scrollToPositionWithProp(position: Int, prop: Float) {
+        val vn = dataVersionNumber.get()
         rv.post(fun() {
-            // this may happen async from above, so check first if pos is still valid
+            // this may happen async from above, so check data version first,
+            // then verify the position is still in bounds
+            if (vn != dataVersionNumber.get()) return
             if (position >= versesDataModel.itemCount) return
 
-            // negate padding offset, unless this is the first verse
+            // negate padding offset, unless this is the first item
             val paddingNegator = if (position == 0) 0 else -rv.paddingTop
 
             val firstPos = layoutManager.findFirstVisibleItemPosition()
             val lastPos = layoutManager.findLastVisibleItemPosition()
-            if (position in firstPos..lastPos) {
+            val height = if (position in firstPos..lastPos) {
                 // we have the child on screen, no need to measure
-                val child = layoutManager.findViewByPosition(position) ?: return
-                rv.stopScroll()
-                layoutManager.scrollToPositionWithOffset(position, -(prop * child.height).toInt() + paddingNegator)
-                return
+                layoutManager.findViewByPosition(position)?.height ?: return
+            } else {
+                getMeasuredItemHeight(position)
             }
-
-            val measuredHeight = getMeasuredItemHeight(position)
             rv.stopScroll()
-            layoutManager.scrollToPositionWithOffset(position, -(prop * measuredHeight).toInt() + paddingNegator)
+            layoutManager.scrollToPositionWithOffset(position, -(prop * height).toInt() + paddingNegator)
         })
     }
 

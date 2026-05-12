@@ -428,7 +428,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
     private val lsSplit0_verseScroll = object : VersesController.VerseScrollListener() {
         override fun onVerseScroll(isPericope: Boolean, verse_1: Int, prop: Float) {
-            if (!isPericope && activeSplit1 != null) {
+            if (activeSplit1 == null) return
+            if (isPericope) {
+                lsSplit1.scrollToPericope(verse_1, prop)
+            } else {
                 lsSplit1.scrollToVerse(verse_1, prop)
             }
         }
@@ -442,7 +445,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
     private val lsSplit1_verseScroll = object : VersesController.VerseScrollListener() {
         override fun onVerseScroll(isPericope: Boolean, verse_1: Int, prop: Float) {
-            if (!isPericope) {
+            if (isPericope) {
+                lsSplit0.scrollToPericope(verse_1, prop)
+            } else {
                 lsSplit0.scrollToVerse(verse_1, prop)
             }
         }
