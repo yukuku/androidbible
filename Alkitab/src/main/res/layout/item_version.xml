@@ -50,9 +50,9 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginEnd="8dp"
+				android:contentDescription="@string/ed_details_update_available"
 				android:src="@drawable/ic_version_update"
 				android:visibility="gone"
-				tools:ignore="ContentDescription"
 				tools:visibility="visible" />
 
 			<LinearLayout
@@ -74,7 +74,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_marginTop="2dp"
-					android:textColor="#898989"
+					android:textColor="?android:attr/textColorSecondary"
 					android:textSize="13sp"
 					tools:text="English Standard Version" />
 
