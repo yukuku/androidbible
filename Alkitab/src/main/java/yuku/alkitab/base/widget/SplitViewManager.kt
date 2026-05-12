@@ -270,7 +270,7 @@ class SplitViewManager(
 
             activeSplit1 = ActiveSplit1(mv, version, mv.versionId)
 
-            host.splitHandleButton.setLabel2("${version.initials} ▼")
+            host.splitHandleButton.setLabel2("${version.initials} \u25bc")
 
             configureTextAppearancePanelForSplitVersion()
 
