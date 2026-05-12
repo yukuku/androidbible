@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.model.Label;
@@ -24,7 +23,7 @@ import yuku.alkitab.model.Marker_Label;
 
 public class Sync_Mabel {
 	public static Sync.GetClientStateResult<Content> getClientStateAndCurrentEntities() {
-		final SyncShadow ss = S.getDb().getSyncShadowBySyncSetName(SyncShadow.SYNC_SET_MABEL);
+		final SyncShadow ss = App.services.storage.getDb().getSyncShadowBySyncSetName(SyncShadow.SYNC_SET_MABEL);
 
 		final List<Sync.Entity<Content>> srcs = ss == null? Collections.emptyList(): entitiesFromShadow(ss);
 		final List<Sync.Entity<Content>> dsts = getEntitiesFromCurrent();
@@ -79,7 +78,7 @@ public class Sync_Mabel {
 		final List<Sync.Entity<Content>> res = new ArrayList<>();
 
 		{ // markers
-			for (final Marker marker : S.getDb().listAllMarkers()) {
+			for (final Marker marker : App.services.storage.getDb().listAllMarkers()) {
 				final Content content = new Content();
 				content.ari = marker.ari;
 				content.caption = marker.caption;
@@ -94,7 +93,7 @@ public class Sync_Mabel {
 		}
 
 		{ // labels
-			for (final Label label : S.getDb().listAllLabels()) {
+			for (final Label label : App.services.storage.getDb().listAllLabels()) {
 				final Content content = new Content();
 				content.title = label.title;
 				content.backgroundColor = label.backgroundColor;
@@ -106,7 +105,7 @@ public class Sync_Mabel {
 		}
 
 		{ // marker_labels
-			for (final Marker_Label marker_label : S.getDb().listAllMarker_Labels()) {
+			for (final Marker_Label marker_label : App.services.storage.getDb().listAllMarker_Labels()) {
 				final Content content = new Content();
 				content.marker_gid = marker_label.marker_gid;
 				content.label_gid = marker_label.label_gid;

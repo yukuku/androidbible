@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.AttributeView;
@@ -33,7 +32,7 @@ public class Sync_Pins {
 	 * @return base revno, delta of shadow -> current.
 	 */
 	public static Pair<Sync.ClientState<Content>, List<Sync.Entity<Content>>> getClientStateAndCurrentEntities() {
-		final SyncShadow ss = S.getDb().getSyncShadowBySyncSetName(SyncShadow.SYNC_SET_PINS);
+		final SyncShadow ss = App.services.storage.getDb().getSyncShadowBySyncSetName(SyncShadow.SYNC_SET_PINS);
 
 		final List<Sync.Entity<Content>> srcs = ss == null? Collections.emptyList(): entitiesFromShadow(ss);
 		final List<Sync.Entity<Content>> dsts = getEntitiesFromCurrent();
@@ -91,7 +90,7 @@ public class Sync_Pins {
 		final List<Content.Pin> pins = content.pins = new ArrayList<>();
 
 		for (int preset_id = 0; preset_id < AttributeView.PROGRESS_MARK_TOTAL_COUNT; preset_id++) {
-			final ProgressMark pm = S.getDb().getProgressMarkByPresetId(preset_id);
+			final ProgressMark pm = App.services.storage.getDb().getProgressMarkByPresetId(preset_id);
 			if (pm == null) continue;
 
 			final Content.Pin pin = new Content.Pin();

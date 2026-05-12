@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 import java.util.HashMap;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Sqlitil;
 
@@ -99,7 +98,7 @@ public class SyncRecorder {
 			}
 		}
 
-		S.getDb().insertSyncLog(Sqlitil.nowDateTime(), kind, syncSetName, params);
+		App.services.storage.getDb().insertSyncLog(Sqlitil.nowDateTime(), kind, syncSetName, params);
 	}
 
 	@Keep

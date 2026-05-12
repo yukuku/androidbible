@@ -20,7 +20,6 @@ import java.util.Locale;
 import java.util.Map;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.SyncLog;
 import yuku.alkitab.debug.R;
@@ -61,7 +60,7 @@ public class SyncLogActivity extends BaseActivity {
 		final float density = getResources().getDisplayMetrics().density;
 
 		void load() {
-			logs = S.getDb().listLatestSyncLog(500);
+			logs = App.services.storage.getDb().listLatestSyncLog(500);
 			notifyDataSetChanged();
 		}
 
