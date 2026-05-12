@@ -81,21 +81,9 @@ data class AudioBarUiState(
     val nextChapterLabel: String?,
     val error: String?,
     val timingAvailable: Boolean,
-    /**
-     * VersionId of the source the controller has committed to play. `null`
-     * before the user has picked (or auto-pick has fired) and after `hide()`.
-     * Consumed by `IsiActivity` to route the audio verse highlight to the
-     * pane(s) whose version matches — and only those panes, so the other
-     * split stays "audio-quiet" even when the verse number coincides.
-     */
+    /** Version driving audio, or null. Used to scope the verse highlight to matching panes. */
     val playingVersionId: String?,
-    /**
-     * When non-null, a "pick the audio source" dialog is shown over the bar.
-     * Set by [yuku.alkitab.base.audio.AudioBarController.show] when split view
-     * is active and both visible versions have audio coverage; the user
-     * cannot start playback until they pick one (or cancel, which hides the
-     * bar entirely). `null` once the user picks a source.
-     */
+    /** When non-null, the source-picker dialog is shown over the bar. */
     val pickerOptions: List<AudioSourceOption>?,
 ) {
     companion object {
@@ -117,10 +105,7 @@ data class AudioBarUiState(
     }
 }
 
-/**
- * One row in the source-picker dialog. [versionId] keys back into the
- * catalog; [shortName] is the user-visible label (e.g. "TB", "KJV").
- */
+/** One row in the source-picker dialog. */
 data class AudioSourceOption(val versionId: String, val shortName: String)
 
 /**
@@ -143,9 +128,7 @@ sealed interface AudioBarCommand {
     data object Speed : AudioBarCommand
     data class SeekDrag(val positionMs: Long) : AudioBarCommand
     data class SeekCommit(val positionMs: Long) : AudioBarCommand
-    /** User picked a source from the split-view picker dialog. */
     data class PickSource(val versionId: String) : AudioBarCommand
-    /** User dismissed the picker dialog without choosing. */
     data object CancelPicker : AudioBarCommand
 }
 
@@ -163,10 +146,6 @@ fun AudioBar(
     modifier: Modifier,
 ) {
     AudioTheme {
-        // The picker is shown over whatever else is on screen (M3 PRD §4.5):
-        // bar is "visible" the moment the user taps the audio menu icon, but
-        // playback is gated on a source choice when split view is active and
-        // both visible versions have audio.
         state.pickerOptions?.let { options ->
             SourcePickerDialog(options = options, onCommand = onCommand)
         }
@@ -411,12 +390,7 @@ private fun AudioBarSliderRow(
     }
 }
 
-/**
- * "Which version should we play?" dialog shown when the user opens the audio
- * bar with split view active and both visible versions have audio coverage.
- * Single-tap selection (no confirm button) keeps the friction low. Cancel /
- * outside-dismiss aborts the session — the bar then slides back out.
- */
+/** Shown when split view is active and both visible versions have audio. */
 @Composable
 private fun SourcePickerDialog(
     options: List<AudioSourceOption>,
@@ -443,7 +417,8 @@ private fun SourcePickerDialog(
                 }
             }
         },
-        confirmButton = {
+        confirmButton = {},
+        dismissButton = {
             TextButton(onClick = { onCommand(AudioBarCommand.CancelPicker) }) {
                 Text(stringResource(android.R.string.cancel))
             }

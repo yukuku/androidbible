@@ -9,9 +9,8 @@ package yuku.alkitab.base.audio
  *  - [preparing]   — true between `loadChapter` and the player firing READY.
  *                    Drives the toolbar-icon spinner and the bar's progress ring.
  *  - [versionId]   — versionId of the source currently loaded, or `""` when
- *                    nothing is loaded. Identifies which `IsiActivity` pane
- *                    (split0 / split1) is the audio source, so the verse
- *                    highlight only lights up on the matching pane(s).
+ *                    nothing is loaded. Scopes the verse highlight to panes
+ *                    whose version matches.
  *  - [bookId]      — bookId of the chapter currently loaded into the service,
  *                    or `-1` when nothing is loaded. Lets [AudioBarController]
  *                    detect service-initiated chapter changes (e.g. lock-screen

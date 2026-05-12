@@ -808,18 +808,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             }
         }
         lifecycleScope.launch {
-            // Keep this loop tight: the controller emits at the service's poll
-            // rate (every 100 ms during playback). Menu refresh is driven by
-            // the `audioBarVisibilityChanged` callback in audioBarHost —
-            // calling invalidateOptionsMenu() here would force the toolbar
-            // to rebuild every tick.
-            //
-            // Highlight routing (PRD §4.5): the verse highlight lights up on
-            // each pane whose version matches the one driving audio — both
-            // panes when the user has split view on with the same version on
-            // each side, just one pane in the typical mixed-version case,
-            // none when neither pane matches (e.g. the user changed active
-            // version mid-playback without dismissing the bar).
+            // 100 ms tick rate while playing — avoid invalidateOptionsMenu() here;
+            // menu refreshes flow through `audioBarVisibilityChanged` instead.
             audioBinder.uiState.collect { state ->
                 val playing = state.playingVersionId
                 val split0Match = playing != null && playing == activeSplit0.versionId
@@ -877,34 +867,34 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             activeSplit1?.versionId,
         )
 
-        override fun audioAvailableSources(): List<AudioSourceOption> {
-            val sources = mutableListOf<AudioSourceOption>()
+        override fun audioAvailableSources(): List<AudioSourceOption> = buildList {
             if (AudioCatalogRepository.isAudioAvailable(activeSplit0.versionId)) {
-                sources += AudioSourceOption(activeSplit0.versionId, activeSplit0.version.shortName)
+                add(AudioSourceOption(activeSplit0.versionId, activeSplit0.version.shortName))
             }
-            val s1 = activeSplit1
-            if (s1 != null && AudioCatalogRepository.isAudioAvailable(s1.versionId)) {
-                sources += AudioSourceOption(s1.versionId, s1.version.shortName)
+            activeSplit1?.let { s1 ->
+                if (AudioCatalogRepository.isAudioAvailable(s1.versionId)) {
+                    add(AudioSourceOption(s1.versionId, s1.version.shortName))
+                }
             }
-            return sources
         }
 
         override fun audioBookInVersion(versionId: String, bookId: Int): Book? {
-            return when (versionId) {
-                activeSplit0.versionId -> activeSplit0.version.getBook(bookId)
-                activeSplit1?.versionId -> activeSplit1?.version?.getBook(bookId)
+            val s1 = activeSplit1
+            return when {
+                versionId == activeSplit0.versionId -> activeSplit0.version.getBook(bookId)
+                s1 != null && versionId == s1.versionId -> s1.version.getBook(bookId)
                 else -> null
             }
         }
 
         override fun audioNeighborChapter(versionId: String, direction: Int): Pair<Book, Int>? {
-            val version = when (versionId) {
-                activeSplit0.versionId -> activeSplit0.version
-                activeSplit1?.versionId -> activeSplit1?.version ?: return null
+            val s1 = activeSplit1
+            val version = when {
+                versionId == activeSplit0.versionId -> activeSplit0.version
+                s1 != null && versionId == s1.versionId -> s1.version
                 else -> return null
             }
-            // The reader's chapter follows split0 even when audio runs on
-            // split1, so resolve the neighbor against the reader's bookId.
+            // chapter_1 belongs to split0's reader pane; resolve neighbor against that book id even when audio runs on split1.
             return BibleNeighborResolver.neighbor(
                 version,
                 activeSplit0.book.bookId,
@@ -1823,11 +1813,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             finishDictionaryMode()
         }
 
-        // Audio bar (M3) — if a session is active, swap the player over to
-        // the new chapter so the audio follows the reader. The controller
-        // no-ops when the chosen audio version was the one that drove this
-        // very `display()` call (service-initiated chapter change, lock
-        // screen / Bluetooth / auto-advance), preventing a loadChapter loop.
         audioBinder.onChapterChanged()
 
         return Ari.encode(0, available_chapter_1, available_verse_1)

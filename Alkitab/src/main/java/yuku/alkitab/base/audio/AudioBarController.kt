@@ -68,32 +68,13 @@ class AudioBarController(
          */
         fun audioVisibleVersionIds(): List<String>
 
-        /**
-         * Picker options for the source dialog: one entry per *visible* version
-         * that has audio coverage, ordered split0 → split1. Returns one entry
-         * when only one side has audio (no dialog needed, the controller picks
-         * it automatically), two entries when both sides do (dialog shown), or
-         * empty when nothing on screen has audio (the menu icon should already
-         * have been hidden — bail).
-         */
+        /** Visible versions that have audio coverage, ordered split0 → split1. */
         fun audioAvailableSources(): List<AudioSourceOption>
 
-        /**
-         * Resolve a book in [versionId]. Returns `null` if either the version
-         * is not currently visible or that version doesn't include the book —
-         * used both by the chapter-skip path (lock screen) and by the
-         * activity-follows-service projection. Goes via the visible splits so
-         * we never accidentally load a `Version` the user isn't reading.
-         */
+        /** Resolves a book in [versionId]; null if the version isn't visible or doesn't include the book. */
         fun audioBookInVersion(versionId: String, bookId: Int): Book?
 
-        /**
-         * Resolve the chapter that's [direction] away (`-1` previous, `+1`
-         * next) for the version with [versionId]. Returns `null` at Bible
-         * boundaries or when the version isn't currently visible; the
-         * controller uses that to render the chapter-nav button label as
-         * `alpha = 0f` so the bar doesn't reflow.
-         */
+        /** Neighbor chapter in [versionId]; null at Bible boundaries or when [versionId] isn't visible. */
         fun audioNeighborChapter(versionId: String, direction: Int): Pair<Book, Int>?
 
         /** Tell the activity to navigate to [book] / [chapter_1] (the existing `display` flow). */
@@ -152,11 +133,7 @@ class AudioBarController(
     private var lastServiceBookId = -1
     private var lastServiceChapter1 = 0
 
-    /**
-     * The audio source the user picked for this session. Set by
-     * [AudioBarCommand.PickSource] when split view is active, or auto-set in
-     * [show] when only one visible version has audio. Cleared on [hide].
-     */
+    /** The audio source picked for the current session. Cleared on [hide]. */
     private var selectedSource: AudioSourceOption? = null
 
     private val _uiState = MutableStateFlow(AudioBarUiState.HIDDEN)
@@ -242,14 +219,9 @@ class AudioBarController(
     }
 
     /**
-     * Tell `IsiActivity` to refresh whatever it derives from `isAvailable` —
-     * specifically, the toolbar menu visibility. Called by the activity when
-     * the active version changes. Cheap; just nudges the view-state flow so
-     * recomposition picks up new chapter labels too.
-     *
-     * Also stops audio if the version that was driving playback is no longer
-     * visible — otherwise the user would hear an invisible source and the
-     * verse highlight would have nowhere to land.
+     * Called when the active version changes (split toggled, version swapped).
+     * Stops audio if the source we picked is no longer on screen, otherwise
+     * just refreshes the chapter labels.
      */
     fun onActiveVersionChanged() {
         val host = this.host ?: return
@@ -262,12 +234,8 @@ class AudioBarController(
     }
 
     /**
-     * Called by `IsiActivity` after the reader navigates to a new chapter
-     * (swipe, goto, history-back, etc.). When the bar is visible and the
-     * selected audio version contains the new book, swap the service over to
-     * the new chapter so the audio follows the reader. When the new book
-     * doesn't exist in the chosen audio version, dismiss the bar — playing
-     * audio for a chapter the user can't see would be confusing.
+     * Called from `IsiActivity.display()` so the audio follows the reader.
+     * Closes the bar if the new book is not in the selected version.
      */
     fun onChapterChanged() {
         if (!requestedVisible) return
@@ -277,23 +245,18 @@ class AudioBarController(
         val chapter1 = host.audioCurrentChapter1()
         val sourceBook = host.audioBookInVersion(source.versionId, readerBook.bookId)
         if (sourceBook == null) {
-            // Selected audio version doesn't include the new book — bail.
             hide()
             return
         }
         val availableChapter = chapter1.coerceIn(1, sourceBook.chapter_count)
 
-        // No-op if the service is already on that (book, chapter). Compare
-        // against the latch so we also short-circuit when the reader follows
-        // a service-initiated chapter change (lock screen / Bluetooth).
         if (sourceBook.bookId == lastServiceBookId && availableChapter == lastServiceChapter1) {
             recomputeChapterLabels(host)
             return
         }
 
-        // Bump the latch *before* calling loadChapter so projectToUi treats
-        // the resulting state as activity-driven and skips the reverse
-        // host.audioDisplayChapter call.
+        // Bump the latch before loadChapter so projectToUi treats the resulting
+        // state as activity-driven and skips the reverse host.audioDisplayChapter call.
         lastServiceBookId = sourceBook.bookId
         lastServiceChapter1 = availableChapter
 
@@ -304,13 +267,7 @@ class AudioBarController(
             displayTitle = "${sourceBook.shortName} $availableChapter",
             displaySubtitle = source.shortName,
         )
-        service?.loadChapter(request)
-            ?: run {
-                // Service not bound yet (rare — chapter change before the
-                // first show() resolves the binder). Queue via pendingLoad
-                // so it fires when the binder arrives.
-                pendingLoad = host
-            }
+        service?.loadChapter(request) ?: run { pendingLoad = host }
         recomputeChapterLabels(host)
     }
 
@@ -330,62 +287,39 @@ class AudioBarController(
     fun show() {
         val host = this.host ?: return
         requestedVisible = true
-        // Install the Compose content now (no-op if already installed). The
-        // picker dialog (if shown) lives inside the same composition.
         ensureComposeContent()
 
         val sources = host.audioAvailableSources()
         when (sources.size) {
             0 -> {
-                // Menu icon should have been hidden — getting here means
-                // visibility was stale. No-op rather than throwing.
+                // Should be unreachable — menu icon is hidden when no source has audio.
                 AppLog.w(TAG, "show() called with no audio sources visible")
                 requestedVisible = false
-                return
             }
             1 -> {
-                // Exactly one visible version has audio (single split, or only
-                // one of two splits has audio). Auto-pick — no dialog.
                 selectedSource = sources[0]
                 startSession(host)
             }
             else -> {
-                // Split view + both sides have audio. Show the picker; user
-                // taps one to commit, or cancels to dismiss the bar.
+                // Split view + both sides have audio: show the picker dialog
+                // instead of starting immediately.
                 _uiState.update {
-                    AudioBarUiState.HIDDEN.copy(
-                        visible = false,
-                        pickerOptions = sources,
-                    )
+                    AudioBarUiState.HIDDEN.copy(visible = false, pickerOptions = sources)
                 }
                 host.audioBarVisibilityChanged(true)
             }
         }
     }
 
-    /**
-     * Common path after a source has been chosen (either auto-picked in
-     * [show] or selected from the picker dialog). Binds the service and
-     * issues the first [BibleAudioService.loadChapter].
-     */
+    /** Binds the service and fires the first loadChapter once [selectedSource] is set. */
     private fun startSession(host: Host) {
         ensureBound()
-        // Service may not be connected yet; in that case the loadChapter call
-        // below is queued via service.let, and we'll fire it when the binder
-        // arrives. Either way, mark the UI visible immediately.
         _uiState.update {
-            it.copy(
-                visible = true,
-                preparing = service == null,
-                pickerOptions = null,
-            )
+            it.copy(visible = true, preparing = service == null, pickerOptions = null)
         }
         host.audioBarVisibilityChanged(true)
         val request = buildRequest(host) ?: return
-        service?.loadChapter(request)
-            ?: run {
-                pendingLoad = host
-            }
+        service?.loadChapter(request) ?: run { pendingLoad = host }
     }
 
     fun hide() {
@@ -478,15 +412,7 @@ class AudioBarController(
         }
     }
 
-    /**
-     * Builds an [BibleAudioService.AudioRequest] for the activity's current
-     * chapter resolved against the [selectedSource] version. Returns `null`
-     * (and stops the session) when the selected version doesn't include the
-     * book the user is reading — e.g. an apocryphal/deuterocanonical book
-     * that doesn't exist in the chosen audio version. The caller is expected
-     * to bail rather than load a different version's audio behind the user's
-     * back.
-     */
+    /** Returns null when the selected version doesn't include the reader's current book. */
     private fun buildRequest(host: Host): BibleAudioService.AudioRequest? {
         val source = selectedSource ?: return null
         val readerBook = host.audioCurrentBook()
@@ -565,12 +491,9 @@ class AudioBarController(
             pendingLoad = null
         }
 
-        // Sync the activity to the chapter the service is now playing — but
-        // only when the *service's* chapter has changed (lock-screen skip,
-        // Bluetooth, auto-advance). For activity-driven changes (the user
-        // swiped the reader, see [onChapterChanged]), the latch is bumped
-        // *before* the service emits, so this block stays a no-op for that
-        // path and we don't double-navigate.
+        // Sync the activity to the chapter the service is now playing. Only fires
+        // for service-driven changes (lock screen / Bluetooth / auto-advance);
+        // activity-driven changes from onChapterChanged bump the latch first.
         if (host != null && state.bookId >= 0 &&
             (state.bookId != lastServiceBookId || state.chapter_1 != lastServiceChapter1)
         ) {
@@ -578,13 +501,7 @@ class AudioBarController(
             lastServiceChapter1 = state.chapter_1
             val hostBook = host.audioCurrentBook()
             if (hostBook.bookId != state.bookId || host.audioCurrentChapter1() != state.chapter_1) {
-                // Resolve the new book against whichever visible version
-                // currently includes it — `display(...)` ultimately retargets
-                // split0, but `Book.bookId` is consistent across versions
-                // (it's an Ari book index), so any visible version that
-                // contains the book yields the right Book object.
-                val visible = host.audioVisibleVersionIds()
-                val targetBook = visible
+                val targetBook = host.audioVisibleVersionIds()
                     .firstNotNullOfOrNull { host.audioBookInVersion(it, state.bookId) }
                 if (targetBook != null) {
                     host.audioDisplayChapter(targetBook, state.chapter_1)
