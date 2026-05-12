@@ -25,7 +25,7 @@ object QueryTokenizer {
 
         val matcher = oneToken.matcher(query.lowercase(Locale.getDefault()))
         while (matcher.find()) {
-            rawTokens.add(matcher.group(1)!! + matcher.group(2)!!)
+            rawTokens.add((matcher.group(1) ?: "") + matcher.group(2)!!)
         }
 
         val processed = mutableListOf<String>()

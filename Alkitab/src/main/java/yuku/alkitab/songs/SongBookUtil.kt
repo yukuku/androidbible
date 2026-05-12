@@ -163,7 +163,7 @@ object SongBookUtil {
             when (val itemId = item.itemId) {
                 POPUP_ID_ALL -> listener.onAllSelected()
                 POPUP_ID_MORE -> listener.onMoreSelected()
-                else -> listener.onSongBookSelected(App.services.storage.songDb.listSongBookInfos()[itemId - 1].name!!)
+                else -> listener.onSongBookSelected(App.services.storage.songDb.listSongBookInfos()[itemId - 1].name ?: "")
             }
             true
         }

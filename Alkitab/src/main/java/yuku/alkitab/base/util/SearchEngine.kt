@@ -19,30 +19,18 @@ object SearchEngine {
      * Contains processed tokens that is more efficient to be passed in to methods here such as
      * [hilite] and [satisfiesTokens].
      */
-    class ReadyTokens(tokens: Array<String>) {
-        val token_count: Int = tokens.size
-        val hasPlusses: BooleanArray = BooleanArray(token_count)
+    class ReadyTokens(inputTokens: Array<String>) {
+        val tokenCount: Int = inputTokens.size
+        val hasPlusses: BooleanArray = BooleanArray(tokenCount) { i ->
+            QueryTokenizer.isPlussedToken(inputTokens[i])
+        }
         /** Already without plusses */
-        val tokens: Array<String?> = arrayOfNulls(token_count)
-        val multiwords_tokens: Array<Array<String>?> = arrayOfNulls(token_count)
-
-        init {
-            for (i in 0 until token_count) {
-                val token = tokens[i]
-                if (QueryTokenizer.isPlussedToken(token)) {
-                    hasPlusses[i] = true
-
-                    val tokenWithoutPlus = QueryTokenizer.tokenWithoutPlus(token)
-                    this.tokens[i] = tokenWithoutPlus
-
-                    val multiword = QueryTokenizer.tokenizeMultiwordToken(tokenWithoutPlus)
-                    if (multiword != null) {
-                        multiwords_tokens[i] = multiword
-                    }
-                } else {
-                    this.tokens[i] = token
-                }
-            }
+        val tokens: Array<String> = Array(tokenCount) { i ->
+            val token = inputTokens[i]
+            if (hasPlusses[i]) QueryTokenizer.tokenWithoutPlus(token) else token
+        }
+        val multiwordsTokens: Array<Array<String>?> = Array(tokenCount) { i ->
+            if (hasPlusses[i]) QueryTokenizer.tokenizeMultiwordToken(tokens[i]) else null
         }
     }
 
@@ -269,19 +257,19 @@ object SearchEngine {
      */
     @JvmStatic
     fun satisfiesTokens(s: String, rt: ReadyTokens): Boolean {
-        for (i in 0 until rt.token_count) {
+        for (i in 0 until rt.tokenCount) {
             val hasPlus = rt.hasPlusses[i]
 
             val posToken: Int
             if (hasPlus) {
-                val multiwordTokens = rt.multiwords_tokens[i]
+                val multiwordTokens = rt.multiwordsTokens[i]
                 posToken = if (multiwordTokens != null) {
                     indexOfWholeMultiword(s, multiwordTokens, 0, false, null)
                 } else {
-                    indexOfWholeWord(s, rt.tokens[i]!!, 0)
+                    indexOfWholeWord(s, rt.tokens[i], 0)
                 }
             } else {
-                posToken = s.indexOf(rt.tokens[i]!!)
+                posToken = s.indexOf(rt.tokens[i])
             }
 
             if (posToken == -1) return false
@@ -415,7 +403,7 @@ object SearchEngine {
 
         if (rt == null) return res
 
-        val tokenCount = rt.token_count
+        val tokenCount = rt.tokenCount
 
         // from source text, produce a plain text lowercased
         val newString = CharArray(s.length) { i ->
@@ -430,22 +418,23 @@ object SearchEngine {
 
         val hasPlusses = rt.hasPlusses
         val tokens = rt.tokens
-        val multiwordsTokens = rt.multiwords_tokens
+        val multiwordsTokens = rt.multiwordsTokens
 
         val consumedLengthPtr = intArrayOf(0)
         while (true) {
             for (i in 0 until tokenCount) {
                 if (hasPlusses[i]) {
-                    if (multiwordsTokens[i] != null) {
-                        attempts[i] = indexOfWholeMultiword(plainText, multiwordsTokens[i]!!, pos, false, consumedLengthPtr)
+                    val mwt = multiwordsTokens[i]
+                    if (mwt != null) {
+                        attempts[i] = indexOfWholeMultiword(plainText, mwt, pos, false, consumedLengthPtr)
                         consumedLengths[i] = consumedLengthPtr[0]
                     } else {
-                        attempts[i] = indexOfWholeWord(plainText, tokens[i]!!, pos)
-                        consumedLengths[i] = tokens[i]!!.length
+                        attempts[i] = indexOfWholeWord(plainText, tokens[i], pos)
+                        consumedLengths[i] = tokens[i].length
                     }
                 } else {
-                    attempts[i] = plainText.indexOf(tokens[i]!!, pos)
-                    consumedLengths[i] = tokens[i]!!.length
+                    attempts[i] = plainText.indexOf(tokens[i], pos)
+                    consumedLengths[i] = tokens[i].length
                 }
             }
 
