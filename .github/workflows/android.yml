@@ -188,6 +188,13 @@ jobs:
           # array) and "release missing tagName" to an empty string, so the
           # `-n` check below correctly takes the first-run branch.
           last_tag=$(gh release list --limit 1 --json tagName --jq '.[0].tagName // ""' || true)
+          # Fetch tags now (not just at checkout time) so we can resolve a tag
+          # that another CI run may have created after our checkout step ran.
+          # Without this, two PRs merged back-to-back race: the second run's
+          # `gh release list` sees the tag the first run just published, but
+          # the local clone never fetched it, and `git log <tag>..HEAD` fails
+          # with "unknown revision".
+          git fetch --tags --no-recurse-submodules
           {
             echo "## Changes"
             echo
