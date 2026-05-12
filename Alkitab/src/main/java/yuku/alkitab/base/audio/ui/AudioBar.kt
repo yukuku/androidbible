@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
@@ -29,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -79,6 +81,22 @@ data class AudioBarUiState(
     val nextChapterLabel: String?,
     val error: String?,
     val timingAvailable: Boolean,
+    /**
+     * VersionId of the source the controller has committed to play. `null`
+     * before the user has picked (or auto-pick has fired) and after `hide()`.
+     * Consumed by `IsiActivity` to route the audio verse highlight to the
+     * pane(s) whose version matches — and only those panes, so the other
+     * split stays "audio-quiet" even when the verse number coincides.
+     */
+    val playingVersionId: String?,
+    /**
+     * When non-null, a "pick the audio source" dialog is shown over the bar.
+     * Set by [yuku.alkitab.base.audio.AudioBarController.show] when split view
+     * is active and both visible versions have audio coverage; the user
+     * cannot start playback until they pick one (or cancel, which hides the
+     * bar entirely). `null` once the user picks a source.
+     */
+    val pickerOptions: List<AudioSourceOption>?,
 ) {
     companion object {
         val HIDDEN = AudioBarUiState(
@@ -93,9 +111,17 @@ data class AudioBarUiState(
             nextChapterLabel = null,
             error = null,
             timingAvailable = false,
+            playingVersionId = null,
+            pickerOptions = null,
         )
     }
 }
+
+/**
+ * One row in the source-picker dialog. [versionId] keys back into the
+ * catalog; [shortName] is the user-visible label (e.g. "TB", "KJV").
+ */
+data class AudioSourceOption(val versionId: String, val shortName: String)
 
 /**
  * Commands raised by the bar's UI. The controller maps these onto
@@ -117,6 +143,10 @@ sealed interface AudioBarCommand {
     data object Speed : AudioBarCommand
     data class SeekDrag(val positionMs: Long) : AudioBarCommand
     data class SeekCommit(val positionMs: Long) : AudioBarCommand
+    /** User picked a source from the split-view picker dialog. */
+    data class PickSource(val versionId: String) : AudioBarCommand
+    /** User dismissed the picker dialog without choosing. */
+    data object CancelPicker : AudioBarCommand
 }
 
 /**
@@ -133,6 +163,13 @@ fun AudioBar(
     modifier: Modifier,
 ) {
     AudioTheme {
+        // The picker is shown over whatever else is on screen (M3 PRD §4.5):
+        // bar is "visible" the moment the user taps the audio menu icon, but
+        // playback is gated on a source choice when split view is active and
+        // both visible versions have audio.
+        state.pickerOptions?.let { options ->
+            SourcePickerDialog(options = options, onCommand = onCommand)
+        }
         AnimatedVisibility(
             visible = state.visible,
             enter = slideInVertically(initialOffsetY = { it }, animationSpec = tween(220)) +
@@ -374,6 +411,46 @@ private fun AudioBarSliderRow(
     }
 }
 
+/**
+ * "Which version should we play?" dialog shown when the user opens the audio
+ * bar with split view active and both visible versions have audio coverage.
+ * Single-tap selection (no confirm button) keeps the friction low. Cancel /
+ * outside-dismiss aborts the session — the bar then slides back out.
+ */
+@Composable
+private fun SourcePickerDialog(
+    options: List<AudioSourceOption>,
+    onCommand: (AudioBarCommand) -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = { onCommand(AudioBarCommand.CancelPicker) },
+        title = { Text(stringResource(R.string.audio_bar_pick_source_title)) },
+        text = {
+            Column {
+                options.forEach { option ->
+                    TextButton(
+                        onClick = { onCommand(AudioBarCommand.PickSource(option.versionId)) },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(
+                            text = option.shortName,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onCommand(AudioBarCommand.CancelPicker) }) {
+                Text(stringResource(android.R.string.cancel))
+            }
+        },
+    )
+}
+
 private fun formatMmSs(ms: Long): String {
     val totalSec = (ms / 1000L).coerceAtLeast(0L)
     val mm = totalSec / 60L
@@ -399,6 +476,8 @@ private fun AudioBarPreviewPlaying() {
             nextChapterLabel = "Jn 4",
             error = null,
             timingAvailable = true,
+            playingVersionId = "preset/in-tb",
+            pickerOptions = null,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -421,6 +500,8 @@ private fun AudioBarPreviewPreparing() {
             nextChapterLabel = "Jn 4",
             error = null,
             timingAvailable = false,
+            playingVersionId = "preset/in-tb",
+            pickerOptions = null,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -443,6 +524,35 @@ private fun AudioBarPreviewDarkBoundary() {
             nextChapterLabel = "Mt 1",
             error = null,
             timingAvailable = false, // some chapters have audio but no timing
+            playingVersionId = "preset/in-tb",
+            pickerOptions = null,
+        ),
+        onCommand = {},
+        modifier = Modifier,
+    )
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, widthDp = 400)
+@Composable
+private fun AudioBarPreviewWithPicker() {
+    AudioBar(
+        state = AudioBarUiState(
+            visible = true,
+            isPlaying = false,
+            preparing = false,
+            positionMs = 0L,
+            durationMs = 0L,
+            verse_1 = 0,
+            speed = 1.0f,
+            prevChapterLabel = "Jn 2",
+            nextChapterLabel = "Jn 4",
+            error = null,
+            timingAvailable = false,
+            playingVersionId = null,
+            pickerOptions = listOf(
+                AudioSourceOption(versionId = "preset/in-tb", shortName = "TB"),
+                AudioSourceOption(versionId = "preset/en-kjv", shortName = "KJV"),
+            ),
         ),
         onCommand = {},
         modifier = Modifier,

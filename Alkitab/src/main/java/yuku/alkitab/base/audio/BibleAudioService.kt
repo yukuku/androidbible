@@ -290,6 +290,7 @@ class BibleAudioService : MediaSessionService() {
             it.copy(
                 preparing = true,
                 isPlaying = false,
+                versionId = request.versionId,
                 bookId = request.bookId,
                 chapter_1 = request.chapter_1,
                 verse_1 = 0,

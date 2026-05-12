@@ -589,5 +589,6 @@
 	<string name="audio_bar_position_with_verse">%1$s · v.%2$d</string>
 	<string name="audio_bar_position_no_verse">%1$s</string>
 	<string name="audio_bar_error_no_audio">No audio for this version.</string>
+	<string name="audio_bar_pick_source_title">Play audio from</string>
 
 </resources>

@@ -87,6 +87,7 @@ import yuku.alkitab.base.audio.AudioBarController
 import yuku.alkitab.base.audio.AudioCatalogRepository
 import yuku.alkitab.base.audio.BibleNeighborResolver
 import yuku.alkitab.base.audio.ui.AudioHighlightColor
+import yuku.alkitab.base.audio.ui.AudioSourceOption
 import yuku.alkitab.base.util.Jumper
 import yuku.alkitab.base.util.LidToAri
 import yuku.alkitab.base.util.OtherAppIntegration
@@ -813,14 +814,18 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             // calling invalidateOptionsMenu() here would force the toolbar
             // to rebuild every tick.
             //
-            // Highlight is applied to the primary split (`lsSplit0`) only,
-            // matching PRD §4.5 ("Highlight applies only to the chosen side;
-            // the other split's rows show no audio highlight, even when the
-            // verse numbers coincide."). M5 will add the split-source picker
-            // dialog (PRD §4.5) and route the highlight to whichever side the
-            // user selects; for M3 we always pick the primary.
+            // Highlight routing (PRD §4.5): the verse highlight lights up on
+            // each pane whose version matches the one driving audio — both
+            // panes when the user has split view on with the same version on
+            // each side, just one pane in the typical mixed-version case,
+            // none when neither pane matches (e.g. the user changed active
+            // version mid-playback without dismissing the bar).
             audioBinder.uiState.collect { state ->
-                applyAudioHighlightTo(lsSplit0, state.verse_1)
+                val playing = state.playingVersionId
+                val split0Match = playing != null && playing == activeSplit0.versionId
+                val split1Match = playing != null && playing == activeSplit1?.versionId
+                applyAudioHighlightTo(lsSplit0, if (split0Match) state.verse_1 else 0)
+                applyAudioHighlightTo(lsSplit1, if (split1Match) state.verse_1 else 0)
             }
         }
         lifecycleScope.launch {
@@ -867,23 +872,46 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     private val audioBarHost = object : AudioBarController.Host {
         override fun audioCurrentBook(): Book = activeSplit0.book
         override fun audioCurrentChapter1(): Int = chapter_1
-        override fun audioCurrentVersionId(): String = activeSplit0.versionId
-        override fun audioCurrentVersionShortName(): String = activeSplit0.version.shortName
         override fun audioVisibleVersionIds(): List<String> = listOfNotNull(
             activeSplit0.versionId,
             activeSplit1?.versionId,
         )
 
-        override fun audioNeighborChapter(direction: Int): Pair<Book, Int>? {
+        override fun audioAvailableSources(): List<AudioSourceOption> {
+            val sources = mutableListOf<AudioSourceOption>()
+            if (AudioCatalogRepository.isAudioAvailable(activeSplit0.versionId)) {
+                sources += AudioSourceOption(activeSplit0.versionId, activeSplit0.version.shortName)
+            }
+            val s1 = activeSplit1
+            if (s1 != null && AudioCatalogRepository.isAudioAvailable(s1.versionId)) {
+                sources += AudioSourceOption(s1.versionId, s1.version.shortName)
+            }
+            return sources
+        }
+
+        override fun audioBookInVersion(versionId: String, bookId: Int): Book? {
+            return when (versionId) {
+                activeSplit0.versionId -> activeSplit0.version.getBook(bookId)
+                activeSplit1?.versionId -> activeSplit1?.version?.getBook(bookId)
+                else -> null
+            }
+        }
+
+        override fun audioNeighborChapter(versionId: String, direction: Int): Pair<Book, Int>? {
+            val version = when (versionId) {
+                activeSplit0.versionId -> activeSplit0.version
+                activeSplit1?.versionId -> activeSplit1?.version ?: return null
+                else -> return null
+            }
+            // The reader's chapter follows split0 even when audio runs on
+            // split1, so resolve the neighbor against the reader's bookId.
             return BibleNeighborResolver.neighbor(
-                activeSplit0.version,
+                version,
                 activeSplit0.book.bookId,
                 chapter_1,
                 direction,
             )
         }
-
-        override fun audioVersionBook(bookId: Int): Book? = activeSplit0.version.getBook(bookId)
 
         override fun audioDisplayChapter(book: Book, chapter_1: Int) {
             // Switch book if needed - display() only retargets chapter
@@ -1794,6 +1822,13 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         if (dictionaryMode) {
             finishDictionaryMode()
         }
+
+        // Audio bar (M3) — if a session is active, swap the player over to
+        // the new chapter so the audio follows the reader. The controller
+        // no-ops when the chosen audio version was the one that drove this
+        // very `display()` call (service-initiated chapter change, lock
+        // screen / Bluetooth / auto-advance), preventing a loadChapter loop.
+        audioBinder.onChapterChanged()
 
         return Ari.encode(0, available_chapter_1, available_verse_1)
     }
