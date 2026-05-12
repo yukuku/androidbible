@@ -38,9 +38,17 @@ jobs:
     # inside this same repo. Fork PRs skip this job cleanly.
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    # `contents: write` is required by the "Create GitHub Pre-Release" step
+    # below (gh release create). Overrides the workflow-level read-only default.
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Need full history so `git log <last-release-tag>..HEAD` in the
+          # release step can walk back to the previous release.
+          fetch-depth: 0
 
       - name: Check out proprietary overlay
         uses: actions/checkout@v4
@@ -131,6 +139,74 @@ jobs:
             Alkitab/build/outputs/apk/sabda_alkitab/release/*.apk
             Alkitab/build/outputs/bundle/sabda_alkitabRelease/*.aab
             Alkitab/build/outputs/mapping/sabda_alkitabRelease/mapping.txt
+
+      - name: Create GitHub Pre-Release
+        # Only on direct pushes to develop. PRs (even from same-repo branches)
+        # should not publish releases.
+        if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          # All three flavors share versionCode/versionName; read from one
+          # output-metadata.json that AGP emits next to each APK.
+          meta_yuku=Alkitab/build/outputs/apk/yuku_alkitab/release/output-metadata.json
+          meta_sabda=Alkitab/build/outputs/apk/sabda_alkitab/release/output-metadata.json
+          meta_qb=Alkitab/build/outputs/apk/yuku_quick_bible/release/output-metadata.json
+
+          versionCode=$(jq -r '.elements[0].versionCode' "$meta_yuku")
+          versionName=$(jq -r '.elements[0].versionName' "$meta_yuku")
+          today=$(date -u +%Y-%m-%d)
+
+          title="${versionName} (${versionCode}) ${today}"
+          tag="v${versionCode}"
+
+          src_yuku="$(dirname "$meta_yuku")/$(jq -r '.elements[0].outputFile' "$meta_yuku")"
+          src_sabda="$(dirname "$meta_sabda")/$(jq -r '.elements[0].outputFile' "$meta_sabda")"
+          src_qb="$(dirname "$meta_qb")/$(jq -r '.elements[0].outputFile' "$meta_qb")"
+
+          # Stage release-only copies with the short, human-friendly filenames
+          # the user wants attached to the GH Release. Gradle's own output names
+          # (which embed applicationId + build dist) are left alone so CI
+          # artifact uploads keep working.
+          # Match gradle's `gitCommitHash` exactly (`git log -1 --format=%h`).
+          short_hash=$(git log -1 --format=%h)
+          stage=release-staging
+          mkdir -p "$stage"
+          yuku_apk="$stage/Alkitab-${versionCode}-${versionName}-${short_hash}.apk"
+          sabda_apk="$stage/SabdaAlkitab-${versionCode}-${versionName}-${short_hash}.apk"
+          qb_apk="$stage/QuickBible-${versionCode}-${versionName}-${short_hash}.apk"
+          cp "$src_yuku" "$yuku_apk"
+          cp "$src_sabda" "$sabda_apk"
+          cp "$src_qb" "$qb_apk"
+
+          # Commits since the last GH release. If there is no prior release
+          # (first run), fall back to the last 50 commits to keep the body
+          # bounded.
+          # `.[0].tagName // ""` collapses both "no releases yet" (empty
+          # array) and "release missing tagName" to an empty string, so the
+          # `-n` check below correctly takes the first-run branch.
+          last_tag=$(gh release list --limit 1 --json tagName --jq '.[0].tagName // ""' || true)
+          {
+            echo "## Changes"
+            echo
+            if [ -n "$last_tag" ]; then
+              git log "${last_tag}..HEAD" --pretty=format:"- %s (%h)"
+            else
+              git log HEAD --max-count=50 --pretty=format:"- %s (%h)"
+            fi
+            echo
+          } > changelog.md
+
+          gh release create "$tag" \
+            --target "$GITHUB_SHA" \
+            --title "$title" \
+            --notes-file changelog.md \
+            --prerelease \
+            "$yuku_apk" \
+            "$sabda_apk" \
+            "$qb_apk"
 
       - name: Wipe keystore from runner
         if: always()
