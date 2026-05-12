@@ -183,12 +183,16 @@ class DownloadMapper private constructor() {
         val message = outputData.getString(VersionDownloadWorker.KEY_ERROR_MESSAGE) ?: errorType
         AppLog.e(TAG, "@@onError: downloadKey=${row.key} type=$errorType message=$message")
 
-        val isConnectionError = errorType == VersionDownloadWorker.ERROR_CONNECTION ||
-            errorType == VersionDownloadWorker.ERROR_CANCELLED
-        val msg = if (isConnectionError) {
-            TextUtils.expandTemplate(App.context.getString(R.string.version_download_network_error), row.title)
-        } else {
-            TextUtils.expandTemplate(App.context.getString(R.string.version_download_server_error), row.title)
+        val msg: CharSequence = when (errorType) {
+            VersionDownloadWorker.ERROR_CONNECTION,
+            VersionDownloadWorker.ERROR_CANCELLED ->
+                TextUtils.expandTemplate(App.context.getString(R.string.version_download_network_error), row.title)
+
+            VersionDownloadWorker.ERROR_STORAGE ->
+                App.context.getString(R.string.version_download_saving_io_error)
+
+            else ->
+                TextUtils.expandTemplate(App.context.getString(R.string.version_download_server_error), row.title)
         }
 
         App.context.startActivity(

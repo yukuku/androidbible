@@ -49,75 +49,90 @@ class VersionDownloadWorker(
         destFile.parentFile?.mkdirs()
         val existingBytes = if (destFile.exists()) destFile.length() else 0L
 
-        try {
-            val requestBuilder = Request.Builder()
-                .url(url)
-                .addHeader("Accept-Encoding", "identity")
-            if (existingBytes > 0L) {
-                requestBuilder.addHeader("Range", "bytes=$existingBytes-")
+        val requestBuilder = Request.Builder()
+            .url(url)
+            .addHeader("Accept-Encoding", "identity")
+        if (existingBytes > 0L) {
+            requestBuilder.addHeader("Range", "bytes=$existingBytes-")
+        }
+
+        val response = try {
+            Connections.okHttp.newCall(requestBuilder.build()).execute()
+        } catch (e: IOException) {
+            return@withContext Result.failure(failureData(ERROR_CONNECTION, e.message ?: e.javaClass.simpleName))
+        } catch (e: Exception) {
+            return@withContext Result.failure(failureData(ERROR_UNKNOWN, e.message ?: e.javaClass.simpleName))
+        }
+
+        response.use {
+            if (!response.isSuccessful) {
+                val errorType = if (response.code in 500..599) ERROR_SERVER else ERROR_CONNECTION
+                return@withContext Result.failure(failureData(errorType, "HTTP ${response.code}"))
+            }
+            val body = response.body
+                ?: return@withContext Result.failure(failureData(ERROR_CONNECTION, "response body is null"))
+
+            val appending = response.code == 206 && existingBytes > 0L
+            val startOffset = if (appending) existingBytes else 0L
+            if (!appending && destFile.exists()) {
+                destFile.delete()
             }
 
-            Connections.okHttp.newCall(requestBuilder.build()).execute().use { response ->
-                if (!response.isSuccessful) {
-                    val errorType = if (response.code in 500..599) ERROR_SERVER else ERROR_CONNECTION
-                    return@withContext Result.failure(failureData(errorType, "HTTP ${response.code}"))
-                }
-                val body = response.body ?: throw IOException("response body is null")
+            val responseBodyLength = body.contentLength()
+            val totalBytes = when {
+                responseBodyLength < 0L -> -1L
+                appending -> startOffset + responseBodyLength
+                else -> responseBodyLength
+            }
 
-                val appending = response.code == 206 && existingBytes > 0L
-                val startOffset = if (appending) existingBytes else 0L
-                if (!appending && destFile.exists()) {
-                    destFile.delete()
-                }
+            val raf = try {
+                RandomAccessFile(destFile, "rw").apply { seek(startOffset) }
+            } catch (e: IOException) {
+                return@withContext Result.failure(failureData(ERROR_STORAGE, e.message ?: e.javaClass.simpleName))
+            }
 
-                val responseBodyLength = body.contentLength()
-                val totalBytes = when {
-                    responseBodyLength < 0L -> -1L
-                    appending -> startOffset + responseBodyLength
-                    else -> responseBodyLength
-                }
+            raf.use {
+                body.byteStream().use { input ->
+                    val buf = ByteArray(BUFFER_SIZE)
+                    var currentBytes = startOffset
+                    var lastProgressTime = 0L
 
-                RandomAccessFile(destFile, "rw").use { raf ->
-                    raf.seek(startOffset)
+                    setProgress(workDataOf(
+                        KEY_CURRENT_BYTES to currentBytes,
+                        KEY_TOTAL_BYTES to totalBytes,
+                    ))
 
-                    body.byteStream().use { input ->
-                        val buf = ByteArray(BUFFER_SIZE)
-                        var currentBytes = startOffset
-                        var lastProgressTime = 0L
-
-                        setProgress(workDataOf(
-                            KEY_CURRENT_BYTES to currentBytes,
-                            KEY_TOTAL_BYTES to totalBytes,
-                        ))
-
-                        while (true) {
-                            if (isStopped) {
-                                return@withContext Result.failure(failureData(ERROR_CANCELLED, "cancelled"))
-                            }
-                            val read = input.read(buf)
-                            if (read < 0) break
+                    while (true) {
+                        if (isStopped) {
+                            return@withContext Result.failure(failureData(ERROR_CANCELLED, "cancelled"))
+                        }
+                        val read = try {
+                            input.read(buf)
+                        } catch (e: IOException) {
+                            return@withContext Result.failure(failureData(ERROR_CONNECTION, e.message ?: e.javaClass.simpleName))
+                        }
+                        if (read < 0) break
+                        try {
                             raf.write(buf, 0, read)
-                            currentBytes += read
+                        } catch (e: IOException) {
+                            return@withContext Result.failure(failureData(ERROR_STORAGE, e.message ?: e.javaClass.simpleName))
+                        }
+                        currentBytes += read
 
-                            val now = System.currentTimeMillis()
-                            if (now - lastProgressTime > PROGRESS_THROTTLE_MS) {
-                                lastProgressTime = now
-                                setProgress(workDataOf(
-                                    KEY_CURRENT_BYTES to currentBytes,
-                                    KEY_TOTAL_BYTES to totalBytes,
-                                ))
-                            }
+                        val now = System.currentTimeMillis()
+                        if (now - lastProgressTime > PROGRESS_THROTTLE_MS) {
+                            lastProgressTime = now
+                            setProgress(workDataOf(
+                                KEY_CURRENT_BYTES to currentBytes,
+                                KEY_TOTAL_BYTES to totalBytes,
+                            ))
                         }
                     }
                 }
             }
-
-            Result.success(workDataOf(KEY_DEST_PATH to destPath))
-        } catch (e: IOException) {
-            Result.failure(failureData(ERROR_CONNECTION, e.message ?: e.javaClass.simpleName))
-        } catch (e: Exception) {
-            Result.failure(failureData(ERROR_UNKNOWN, e.message ?: e.javaClass.simpleName))
         }
+
+        Result.success(workDataOf(KEY_DEST_PATH to destPath))
     }
 
     private fun failureData(errorType: String, message: String): Data = workDataOf(
@@ -135,6 +150,7 @@ class VersionDownloadWorker(
 
         const val ERROR_CONNECTION = "connection"
         const val ERROR_SERVER = "server"
+        const val ERROR_STORAGE = "storage"
         const val ERROR_CANCELLED = "cancelled"
         const val ERROR_UNKNOWN = "unknown"
 
