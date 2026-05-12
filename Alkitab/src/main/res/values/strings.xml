@@ -396,6 +396,13 @@
 
     <string name="menuNightMode">Night mode</string>
     <string name="highlight_custom_color">Other colors</string>
+    <string name="color_picker_tab_grid">Grid</string>
+    <string name="color_picker_tab_spectrum">Spectrum</string>
+    <string name="color_picker_tab_sliders">Sliders</string>
+    <string name="color_picker_channel_red">RED</string>
+    <string name="color_picker_channel_green">GREEN</string>
+    <string name="color_picker_channel_blue">BLUE</string>
+    <string name="color_picker_hex_label">sRGB Hex Color #</string>
     <string name="menu_compare">Compare</string>
     <string name="song_player_error_description">An error was encountered when playing this song: %1$d, %2$d.</string>
     <string name="song_player_error_message">An error was encountered when playing this song: ^1.</string>
