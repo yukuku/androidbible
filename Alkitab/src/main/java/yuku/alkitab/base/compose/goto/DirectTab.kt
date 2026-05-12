@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -74,12 +75,17 @@ fun DirectTab(
     var errorRef by remember { mutableStateOf<String?>(null) }
     val focusRequester = remember { FocusRequester() }
     val kbd = LocalSoftwareKeyboardController.current
+    val candidatesListState = rememberLazyListState()
 
     LaunchedEffect(isActive) {
         if (isActive) {
             focusRequester.requestFocus()
             kbd?.show()
         }
+    }
+
+    LaunchedEffect(candidates) {
+        candidatesListState.scrollToItem(0)
     }
 
     val sample = remember(initialBookId, initialChapter_1, initialVerse_1) {
@@ -132,7 +138,7 @@ fun DirectTab(
 
         if (candidates.isNotEmpty()) {
             HorizontalDivider()
-            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+            LazyColumn(modifier = Modifier.fillMaxWidth(), state = candidatesListState) {
                 items(candidates, key = { it.title }) { c ->
                     ListItem(
                         headlineContent = { Text(c.title) },
