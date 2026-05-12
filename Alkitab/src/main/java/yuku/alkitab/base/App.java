@@ -6,13 +6,9 @@ import androidx.core.app.NotificationChannelCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.multidex.MultiDex;
 import androidx.preference.PreferenceManager;
-import com.downloader.PRDownloader;
-import com.downloader.PRDownloaderConfig;
 import com.google.gson.Gson;
 import java.util.concurrent.atomic.AtomicBoolean;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.base.connection.Connections;
-import yuku.alkitab.base.connection.PRDownloaderOkHttpClient;
 import yuku.alkitab.base.services.AppServices;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Fcm;
@@ -89,12 +85,6 @@ public class App extends yuku.afw.App {
                 Sync.retryPendingFcmRegistrationIfNeeded(fcmRegistrationId);
             }
         }
-
-        PRDownloader.initialize(context, new PRDownloaderConfig.Builder()
-            .setHttpClient(new PRDownloaderOkHttpClient(Connections.getOkHttp()))
-            .setUserAgent(Connections.getHttpUserAgent())
-            .build()
-        );
 
         // Make sure extensions are up-to-date
         ExtensionManager.registerReceivers(context);
