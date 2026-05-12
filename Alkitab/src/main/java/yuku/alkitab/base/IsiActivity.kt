@@ -4,7 +4,6 @@ import android.content.ActivityNotFoundException
 import android.content.ContentResolver
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Point
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -21,11 +20,9 @@ import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageButton
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.compose.ui.platform.ComposeView
@@ -40,9 +37,7 @@ import androidx.core.text.HtmlCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
 import androidx.core.util.PatternsCompat
-import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
@@ -102,6 +97,7 @@ import yuku.alkitab.base.verses.VersesControllerImpl
 import yuku.alkitab.base.verses.VersesDataModel
 import yuku.alkitab.base.verses.VersesListeners
 import yuku.alkitab.base.verses.VersesUiModel
+import yuku.alkitab.base.widget.ActiveSplit1
 import yuku.alkitab.base.widget.AriParallelClickData
 import yuku.alkitab.base.widget.DictionaryLinkInfo
 import yuku.alkitab.base.widget.Floater
@@ -116,6 +112,9 @@ import yuku.alkitab.base.widget.ReaderGestureHandler
 import yuku.alkitab.base.widget.ReaderGestureHost
 import yuku.alkitab.base.widget.ReferenceParallelClickData
 import yuku.alkitab.base.widget.SplitHandleButton
+import yuku.alkitab.base.widget.SplitViewActions
+import yuku.alkitab.base.widget.SplitViewHost
+import yuku.alkitab.base.widget.SplitViewManager
 import yuku.alkitab.base.widget.TextAppearancePanel
 import yuku.alkitab.base.widget.TwofingerLinearLayout
 import yuku.alkitab.base.widget.VerseInlineLinkSpan
@@ -136,7 +135,7 @@ private const val TAG = "IsiActivity"
 private const val EXTRA_verseUrl = "verseUrl"
 private const val INSTANCE_STATE_ari = "ari"
 
-class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseActionModeHost, VerseActionModeActions, ReaderGestureHost, ReaderGestureActions {
+class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseActionModeHost, VerseActionModeActions, ReaderGestureHost, ReaderGestureActions, SplitViewHost, SplitViewActions {
     override var uncheckVersesWhenActionModeDestroyed = true
     var needsRestart = false // whether this activity needs to be restarted
 
@@ -187,21 +186,41 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
     private val gestureHandler by lazy { ReaderGestureHandler(this, this) }
 
+    // --- SplitViewActions overrides (state is read via SplitViewHost; the
+    // remaining SplitViewHost properties — `splitRoot`, `splitHandleButton`,
+    // `lsSplit0`, `lsSplit1`, `bVersion`, `leftDrawer` — are marked `override`
+    // at their declarations below).
+    override fun openPrimaryVersionsDialog() = openVersionsDialog()
+    override fun loadChapterIntoSplit1(version: Version, versionId: String, book: Book, chapter_1: Int): Boolean {
+        uncheckVersesWhenActionModeDestroyed = false
+        return try {
+            loadChapterToVersesController(contentResolver, lsSplit1, { dataSplit1 = it }, version, versionId, book, chapter_1, chapter_1, true)
+        } finally {
+            uncheckVersesWhenActionModeDestroyed = true
+        }
+    }
+
+    override fun setSplit1DataModel(model: VersesDataModel) {
+        dataSplit1 = model
+    }
+
+    private val splitViewManager by lazy { SplitViewManager(this, this) }
+
     private lateinit var drawerLayout: DrawerLayout
-    lateinit var leftDrawer: LeftDrawer.Text
+    override lateinit var leftDrawer: LeftDrawer.Text
 
     private lateinit var overlayContainer: FrameLayout
     override lateinit var root: ViewGroup
     lateinit var toolbar: Toolbar
     private lateinit var nontoolbar: View
-    lateinit var lsSplit0: VersesController
-    lateinit var lsSplit1: VersesController
-    lateinit var splitRoot: TwofingerLinearLayout
-    lateinit var splitHandleButton: LabeledSplitHandleButton
+    override lateinit var lsSplit0: VersesController
+    override lateinit var lsSplit1: VersesController
+    override lateinit var splitRoot: TwofingerLinearLayout
+    override lateinit var splitHandleButton: LabeledSplitHandleButton
     private lateinit var bGoto: GotoButton
     private lateinit var bLeft: ImageButton
     private lateinit var bRight: ImageButton
-    private lateinit var bVersion: TextView
+    override lateinit var bVersion: TextView
     override lateinit var floater: Floater
     private lateinit var backForwardListController: BackForwardListController<ImageButton, ImageButton>
     private var fullscreenReferenceToast: Toast? = null
@@ -235,7 +254,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
     val history get() = History
 
-    var actionMode: ActionMode? = null
+    override var actionMode: ActionMode? = null
     private var dictionaryMode = false
     override var textAppearancePanel: TextAppearancePanel? = null
 
@@ -288,19 +307,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
 
     /**
-     * Container class to make sure that the fields are changed simultaneously.
+     * The secondary version. Read-only here; ownership lives on [splitViewManager]
+     * (see REM-08). Set to null when the secondary version is not opened.
      */
-    data class ActiveSplit1(
-        val mv: MVersion,
-        val version: Version,
-        val versionId: String,
-    )
-
-    /**
-     * The secondary version. Set to null if the secondary version is not opened,
-     * and to non-null if the secondary version is opened.
-     */
-    var activeSplit1: ActiveSplit1? = null
+    val activeSplit1: ActiveSplit1? get() = splitViewManager.activeSplit1
 
     private val parallelListener: (data: ParallelClickData) -> Unit = { data ->
         if (data is ReferenceParallelClickData) {
@@ -379,26 +389,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
     }
 
-    private val splitRoot_globalLayout = object : ViewTreeObserver.OnGlobalLayoutListener {
-        val lastSize = Point()
-
-        override fun onGlobalLayout() {
-            if (lastSize.x == splitRoot.width && lastSize.y == splitRoot.height) {
-                return // no need to layout now
-            }
-
-            if (activeSplit1 == null) {
-                return // we are not splitting
-            }
-
-            configureSplitSizes()
-
-            lastSize.x = splitRoot.width
-            lastSize.y = splitRoot.height
-        }
-    }
-
-
     private val lsSplit0_selectedVerses = object : VersesController.SelectedVersesListener() {
         override fun onSomeVersesSelected(verses_1: IntArrayList) {
             if (activeSplit1 != null) {
@@ -462,66 +452,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     }
 
 
-    private val splitHandleButton_listener = object : SplitHandleButton.SplitHandleButtonListener {
-        var first = 0
-        var handle = 0
-        var root = 0
-        var prop = 0f // proportion from top or left
-
-        override fun onHandleDragStart() {
-            splitRoot.setOnefingerEnabled(false)
-
-            if (splitHandleButton.orientation == SplitHandleButton.Orientation.vertical) {
-                first = splitHandleButton.top
-                handle = splitHandleButton.height
-                root = splitRoot.height
-            } else {
-                first = splitHandleButton.left
-                handle = splitHandleButton.width
-                root = splitRoot.width
-            }
-
-            prop = Float.MIN_VALUE // guard against glitches
-        }
-
-        override fun onHandleDragMoveX(dxSinceLast: Float, dxSinceStart: Float) {
-            val newW = (first + dxSinceStart).toInt()
-            val maxW = root - handle
-            val width = if (newW < 0) 0 else if (newW > maxW) maxW else newW
-            lsSplit0.setViewLayoutSize(width, ViewGroup.LayoutParams.MATCH_PARENT)
-            prop = width.toFloat() / maxW
-        }
-
-        override fun onHandleDragMoveY(dySinceLast: Float, dySinceStart: Float) {
-            val newH = (first + dySinceStart).toInt()
-            val maxH = root - handle
-            val height = if (newH < 0) 0 else if (newH > maxH) maxH else newH
-            lsSplit0.setViewLayoutSize(ViewGroup.LayoutParams.MATCH_PARENT, height)
-            prop = height.toFloat() / maxH
-        }
-
-        override fun onHandleDragStop() {
-            splitRoot.setOnefingerEnabled(true)
-
-            if (prop != Float.MIN_VALUE) {
-                Preferences.setFloat(Prefkey.lastSplitProp, prop)
-            }
-        }
-    }
-
-    private val splitHandleButton_labelPressed = LabeledSplitHandleButton.ButtonPressListener { which ->
-        when (which) {
-            LabeledSplitHandleButton.Button.rotate -> {
-                closeSplitDisplay()
-                openSplitDisplay()
-            }
-
-            LabeledSplitHandleButton.Button.start -> openVersionsDialog()
-            LabeledSplitHandleButton.Button.end -> openSplitVersionsDialog()
-            else -> throw IllegalStateException("should not happen")
-        }
-    }
-
     data class IntentResult(
         val ari: Int,
         val selectVerse: Boolean = false,
@@ -556,7 +486,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         overlayContainer = findViewById(R.id.overlayContainer)
         root = findViewById(R.id.root)
         splitRoot = findViewById(R.id.splitRoot)
-        splitRoot.viewTreeObserver.addOnGlobalLayoutListener(splitRoot_globalLayout)
 
         splitHandleButton = findViewById(R.id.splitHandleButton)
         floater = findViewById(R.id.floater)
@@ -621,8 +550,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         )
 
         // for splitting
-        splitHandleButton.setListener(splitHandleButton_listener)
-        splitHandleButton.setButtonPressListener(splitHandleButton_labelPressed)
+        splitViewManager.installListeners()
 
         if (BuildConfig.DEBUG) {
             // Runtime assertions: splitRoot must have 3 children;
@@ -737,26 +665,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
         backForwardListController.newEntry(openingAri)
 
-        run {
-            // load last split version. This must be after load book, chapter, and verse.
-            val lastSplitVersionId = Preferences.getString(Prefkey.lastSplitVersionId, null)
-            if (lastSplitVersionId != null) {
-                val splitOrientation = Preferences.getString(Prefkey.lastSplitOrientation)
-                if (SplitHandleButton.Orientation.horizontal.name == splitOrientation) {
-                    splitHandleButton.orientation = SplitHandleButton.Orientation.horizontal
-                } else {
-                    splitHandleButton.orientation = SplitHandleButton.Orientation.vertical
-                }
-
-                val splitMv = S.getVersionFromVersionId(lastSplitVersionId)
-                val splitMvActual = splitMv ?: S.getMVersionInternal()
-
-                if (loadSplitVersion(splitMvActual)) {
-                    openSplitDisplay()
-                    displaySplitFollowingMaster(Ari.toVerse(openingAri))
-                }
-            }
-        }
+        // load last split version. This must be after load book, chapter, and verse.
+        splitViewManager.restoreFromPreferences(Ari.toVerse(openingAri))
 
         if (selectVerse) {
             for (i in 0 until selectVerseCount) {
@@ -985,7 +895,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     /**
      * Try to get the verse_1 based on split0, when failed, try to get it from the split1.
      */
-    private fun getVerse_1BasedOnScrolls(): Int {
+    override fun getVerse_1BasedOnScrolls(): Int {
         val split0verse_1 = lsSplit0.getVerse_1BasedOnScroll()
         if (split0verse_1 != 0) return split0verse_1
 
@@ -1032,40 +942,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     private fun displayActiveVersion() {
         bVersion.text = activeSplit0.version.initials
         splitHandleButton.setLabel1("\u25b2 ${activeSplit0.version.initials}")
-    }
-
-    private fun loadSplitVersion(mv: MVersion): Boolean {
-        try {
-            val version = mv.version ?: throw RuntimeException() // caught below
-
-            activeSplit1 = ActiveSplit1(mv, version, mv.versionId)
-
-            splitHandleButton.setLabel2("${version.initials} \u25bc")
-
-            configureTextAppearancePanelForSplitVersion()
-
-            return true
-        } catch (e: Throwable) { // so we don't crash on the beginning of the app
-            AppLog.e(TAG, "Error opening split version", e)
-
-            MaterialAlertDialogBuilder(this@IsiActivity)
-                .setMessage(getString(R.string.version_error_opening, mv.longName))
-                .setPositiveButton(R.string.ok, null)
-                .show()
-
-            return false
-        }
-    }
-
-    private fun configureTextAppearancePanelForSplitVersion() {
-        textAppearancePanel?.let { textAppearancePanel ->
-            val activeSplit1 = activeSplit1
-            if (activeSplit1 == null) {
-                textAppearancePanel.clearSplitVersion()
-            } else {
-                textAppearancePanel.setSplitVersion(activeSplit1.versionId, activeSplit1.version.longName)
-            }
-        }
     }
 
     private fun consumeKey(keyCode: Int): Boolean {
@@ -1270,13 +1146,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             Preferences.setInt(Prefkey.lastChapter, chapter_1)
             Preferences.setInt(Prefkey.lastVerse, getVerse_1BasedOnScrolls())
             Preferences.setString(Prefkey.lastVersionId, activeSplit0.versionId)
-            val activeSplit1 = activeSplit1
-            if (activeSplit1 == null) {
-                Preferences.remove(Prefkey.lastSplitVersionId)
-            } else {
-                Preferences.setString(Prefkey.lastSplitVersionId, activeSplit1.versionId)
-                Preferences.setString(Prefkey.lastSplitOrientation, splitHandleButton.orientation.name)
-            }
+            splitViewManager.saveToPreferences()
         }
 
         history.save()
@@ -1566,7 +1436,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                 RequestCodes.FromActivity.TextAppearanceGetFonts,
                 RequestCodes.FromActivity.TextAppearanceCustomColors
             )
-            configureTextAppearancePanelForSplitVersion()
+            splitViewManager.configureTextAppearancePanelForSplitVersion()
             textAppearancePanel?.show()
         }
     }
@@ -1598,107 +1468,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             // We may need to apply PerVersion settings.
             applyPreferences()
         }
-    }
-
-    private fun openSplitVersionsDialog() {
-        S.openVersionsDialogWithNone(this, activeSplit1?.versionId) { mv: MVersion? ->
-            if (mv == null) { // closing split version
-                disableSplitVersion()
-            } else {
-                val ok = loadSplitVersion(mv)
-                if (ok) {
-                    openSplitDisplay()
-                    displaySplitFollowingMaster(getVerse_1BasedOnScrolls())
-                } else {
-                    disableSplitVersion()
-                }
-            }
-
-            // We may need to apply PerVersion settings.
-            applyPreferences()
-        }
-    }
-
-    private fun disableSplitVersion() {
-        activeSplit1 = null
-        closeSplitDisplay()
-
-        configureTextAppearancePanelForSplitVersion()
-    }
-
-    private fun openSplitDisplay() {
-        if (splitHandleButton.isVisible) {
-            return // it's already split, no need to do anything
-        }
-
-        configureSplitSizes()
-
-        bVersion.visibility = View.GONE
-        actionMode?.invalidate()
-        leftDrawer.handle.setSplitVersion(true)
-    }
-
-    fun configureSplitSizes() {
-        splitHandleButton.visibility = View.VISIBLE
-
-        var prop = Preferences.getFloat(Prefkey.lastSplitProp, Float.MIN_VALUE)
-        if (prop == Float.MIN_VALUE || prop < 0f || prop > 1f) {
-            prop = 0.5f // guard against invalid values
-        }
-
-        val splitHandleThickness = resources.getDimensionPixelSize(R.dimen.split_handle_thickness)
-        if (splitHandleButton.orientation == SplitHandleButton.Orientation.vertical) {
-            splitRoot.orientation = LinearLayout.VERTICAL
-
-            val totalHeight = splitRoot.height
-            val masterHeight = ((totalHeight - splitHandleThickness) * prop).toInt()
-
-            run {
-                // divide the screen space
-                lsSplit0.setViewLayoutSize(ViewGroup.LayoutParams.MATCH_PARENT, masterHeight)
-            }
-
-            // no need to set height, because it has been set to match_parent, so it takes the remaining space.
-            lsSplit1.setViewVisibility(View.VISIBLE)
-
-            splitHandleButton.updateLayoutParams {
-                width = ViewGroup.LayoutParams.MATCH_PARENT
-                height = splitHandleThickness
-            }
-        } else {
-            splitRoot.orientation = LinearLayout.HORIZONTAL
-
-            val totalWidth = splitRoot.width
-            val masterWidth = ((totalWidth - splitHandleThickness) * prop).toInt()
-
-            run {
-                // divide the screen space
-                lsSplit0.setViewLayoutSize(masterWidth, ViewGroup.LayoutParams.MATCH_PARENT)
-            }
-
-            // no need to set width, because it has been set to match_parent, so it takes the remaining space.
-            lsSplit1.setViewVisibility(View.VISIBLE)
-
-            splitHandleButton.updateLayoutParams {
-                width = splitHandleThickness
-                height = ViewGroup.LayoutParams.MATCH_PARENT
-            }
-        }
-    }
-
-    private fun closeSplitDisplay() {
-        if (splitHandleButton.isGone) {
-            return // it's already not split, no need to do anything
-        }
-
-        splitHandleButton.visibility = View.GONE
-        lsSplit1.setViewVisibility(View.GONE)
-
-        run { lsSplit0.setViewLayoutSize(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT) }
-
-        bVersion.visibility = View.VISIBLE
-        actionMode?.invalidate()
-        leftDrawer.handle.setSplitVersion(false)
     }
 
     private fun menuSearch_click() {
@@ -1793,7 +1562,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             lsSplit0.scrollToVerse(available_verse_1)
         }
 
-        displaySplitFollowingMaster(available_verse_1)
+        splitViewManager.displaySplitFollowingMaster(available_verse_1)
 
         // set goto button text
         val reference = activeSplit0.book.reference(available_chapter_1)
@@ -1882,26 +1651,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
         if (selectedVerses_1 != null) {
             versesController.checkVerses(selectedVerses_1, true)
-        }
-    }
-
-    private fun displaySplitFollowingMaster(verse_1: Int) {
-        val activeSplit1 = activeSplit1
-        if (activeSplit1 != null) { // split1
-            val splitBook = activeSplit1.version.getBook(activeSplit0.book.bookId)
-            if (splitBook == null) {
-                lsSplit1.setEmptyMessage(getString(R.string.split_version_cant_display_verse, activeSplit0.book.reference(this.chapter_1), activeSplit1.version.shortName), S.applied().fontColor)
-                dataSplit1 = VersesDataModel.EMPTY
-            } else {
-                lsSplit1.setEmptyMessage(null, S.applied().fontColor)
-                this.uncheckVersesWhenActionModeDestroyed = false
-                try {
-                    loadChapterToVersesController(contentResolver, lsSplit1, { dataSplit1 = it }, activeSplit1.version, activeSplit1.versionId, splitBook, this.chapter_1, this.chapter_1, true)
-                } finally {
-                    this.uncheckVersesWhenActionModeDestroyed = true
-                }
-                lsSplit1.scrollToVerse(verse_1)
-            }
         }
     }
 
@@ -2342,9 +2091,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     override fun cSplitVersion_checkedChange(cSplitVersion: SwitchCompat, isChecked: Boolean) {
         if (isChecked) {
             cSplitVersion.isChecked = false // do it later, at the version chooser dialog
-            openSplitVersionsDialog()
+            splitViewManager.openSplitVersionsDialog()
         } else {
-            disableSplitVersion()
+            splitViewManager.disableSplitVersion()
         }
     }
 
