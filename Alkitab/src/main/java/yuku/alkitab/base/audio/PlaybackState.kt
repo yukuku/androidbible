@@ -8,6 +8,9 @@ package yuku.alkitab.base.audio
  *                    "play was requested but still buffering"; that's [preparing]).
  *  - [preparing]   — true between `loadChapter` and the player firing READY.
  *                    Drives the toolbar-icon spinner and the bar's progress ring.
+ *  - [versionId]   — versionId of the source currently loaded, or `""` when
+ *                    nothing is loaded. Scopes the verse highlight to panes
+ *                    whose version matches.
  *  - [bookId]      — bookId of the chapter currently loaded into the service,
  *                    or `-1` when nothing is loaded. Lets [AudioBarController]
  *                    detect service-initiated chapter changes (e.g. lock-screen
@@ -27,6 +30,7 @@ package yuku.alkitab.base.audio
 data class PlaybackState(
     val isPlaying: Boolean,
     val preparing: Boolean,
+    val versionId: String,
     val bookId: Int,
     val chapter_1: Int,
     val verse_1: Int,
@@ -39,6 +43,7 @@ data class PlaybackState(
         val IDLE = PlaybackState(
             isPlaying = false,
             preparing = false,
+            versionId = "",
             bookId = -1,
             chapter_1 = 0,
             verse_1 = 0,

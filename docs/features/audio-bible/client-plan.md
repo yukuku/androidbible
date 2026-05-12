@@ -12,11 +12,11 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 
 ## 0. Prerequisites
 
-- [ ] Read the PRD in `prd.md` and the backend plan in `backend-plan.md`.
-- [ ] **Do not cherry-pick from PR #127 or PR #124.** Both PRs will be closed unmerged once this work lands. They are useful as inspiration only — the SABDA timing-API tables in PR #127 have moved to the backend, the activity-scoped player from both PRs is replaced by a `MediaSessionService`, and the entire UI surface is rewritten in Compose. Re-write the player wrapper (`BibleAudioPlayer`), the repository (`BibleAudioRepository`), the highlight tracker, and the verse-overlay code from scratch with the conventions called out in this plan.
-- [ ] Confirm `androidx.media3:media3-session` is not yet in the build; add it in M1.
-- [ ] Confirm Jetpack Compose is not yet in the build (it isn't — this feature is the project's first Compose surface); add the dependency family + Kotlin Compose Compiler plugin in M1.
-- [ ] Access to the backend staging environment (base URL is `BuildConfig.SERVER_HOST`).
+- [x] Read the PRD in `prd.md` and the backend plan in `backend-plan.md`.
+- [x] **Do not cherry-pick from PR #127 or PR #124.** Both PRs will be closed unmerged once this work lands. They are useful as inspiration only — the SABDA timing-API tables in PR #127 have moved to the backend, the activity-scoped player from both PRs is replaced by a `MediaSessionService`, and the entire UI surface is rewritten in Compose. Re-write the player wrapper (`BibleAudioPlayer`), the repository (`BibleAudioRepository`), the highlight tracker, and the verse-overlay code from scratch with the conventions called out in this plan.
+- [x] Confirm `androidx.media3:media3-session` is not yet in the build; add it in M1.
+- [x] Confirm Jetpack Compose is not yet in the build (it isn't — this feature is the project's first Compose surface); add the dependency family + Kotlin Compose Compiler plugin in M1.
+- [x] Access to the backend staging environment (base URL is `BuildConfig.SERVER_HOST`).
 
 ---
 
@@ -26,8 +26,8 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 
 **Goal:** app builds with the new dependency family wired in (media3-session, Compose 1.11.0, Compose Compiler plugin); catalog loads from backend with a bundled fallback.
 
-- [ ] Add `androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "androidxMedia3" }` to `gradle/libs.versions.toml` and `implementation(libs.androidx.media3.session)` in `Alkitab/build.gradle.kts`.
-- [ ] Add Compose 1.11.0 to the project as **the first Compose surface in the codebase**:
+- [x] Add `androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "androidxMedia3" }` to `gradle/libs.versions.toml` and `implementation(libs.androidx.media3.session)` in `Alkitab/build.gradle.kts`.
+- [x] Add Compose 1.11.0 to the project as **the first Compose surface in the codebase**:
     - In `gradle/libs.versions.toml`:
         ```toml
         androidxComposeUi = "1.11.0"
@@ -39,10 +39,10 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
         - Add `buildFeatures { compose = true }` to the `android {}` block.
         - Add the `implementation(libs.androidx.compose.ui)` etc. dependencies.
     - Add `id("org.jetbrains.kotlin.plugin.compose") apply false` to the root `build.gradle.kts` plugin list (root project alias).
-- [ ] Verify `./gradlew assemblePlainDebug` succeeds with the new deps in place. If `compose-material3:1.5.0` is not yet published, bump to the most recent stable that pairs with `compose-ui:1.11.0`.
-- [ ] Create package `yuku.alkitab.base.audio` and skeleton files per PRD §5.7.
-- [ ] Model classes: `AudioVersion.kt`, `ChapterTiming.kt`, `VerseTiming.kt`, `AudioCatalog.kt`.
-- [ ] `AudioCatalogRepository`:
+- [x] Verify `./gradlew assemblePlainDebug` succeeds with the new deps in place. If `compose-material3:1.5.0` is not yet published, bump to the most recent stable that pairs with `compose-ui:1.11.0`.
+- [x] Create package `yuku.alkitab.base.audio` and skeleton files per PRD §5.7.
+- [x] Model classes: `AudioVersion.kt`, `ChapterTiming.kt`, `VerseTiming.kt`, `AudioCatalog.kt`.
+- [x] `AudioCatalogRepository`:
     - Uses `Connections.okHttp` and `BuildConfig.SERVER_HOST` (defined at `Alkitab/build.gradle.kts:123`; resolves to `https://alkitab.app` for production flavors).
     - `GET ${SERVER_HOST}/audio/catalog?${App.getAppIdentifierParamsEncoded()}` with conditional `If-None-Match` when we have an ETag. Mirror the `appIdentifier`/`packageName`/`versionCode` query-param style used by `VersionConfigUpdaterService` (`Alkitab/src/main/java/yuku/alkitab/base/sv/VersionConfigUpdaterService.java:93`) and `DevotionDownloader` (`DevotionDownloader.java:51`).
     - 200 → parse JSON, persist to `files/audio_catalog.json`, store ETag in `Prefkey.audioCatalog_etag`.
@@ -50,10 +50,10 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
     - Non-2xx → fall back to bundled `Alkitab/src/main/assets/audio_catalog.json` (checked in with the four known SABDA versions; same shape as the live `/audio/catalog` response). The feature works end-to-end on the bundled fallback alone, so client and backend can ship independently.
     - `suspend fun loadCatalog(): AudioCatalog` returns the cached+merged view.
     - `fun isAudioAvailable(versionId: String): Boolean` for the toolbar icon visibility.
-- [ ] Add a Prefkey entry `audioCatalog_etag` (and `audioPlaybackSpeed` for M5) in `Prefkey.kt`.
-- [ ] Per-flavor `BuildConfig.INTERNAL_VERSION_AUDIO_ID` in `Alkitab/build.gradle.kts` (see PRD §5.4.1). Default `""` in `defaultConfig`; override `"preset/in-tb"` for `plain`/`yuku_alkitab`/`sabda_alkitab` and `"preset/en-kjv"` for `yuku_quick_bible`. Wire the substitution into `AudioCatalogRepository.findEntry` so `MVersion.getVersionId() == "internal"` resolves to the correct catalog row.
-- [ ] Background refresh: piggyback on the existing `VersionConfigUpdaterService` (see `docs/backend-communication.md:39-41`) — add a parallel catalog fetch so we don't spawn a new worker.
-- [ ] Unit tests (`Alkitab/src/test/java/.../audio/AudioCatalogRepositoryTest.kt`): parsing, ETag handling, cache fallback.
+- [x] Add a Prefkey entry `audioCatalog_etag` (and `audioPlaybackSpeed` for M5) in `Prefkey.kt`.
+- [x] Per-flavor `BuildConfig.INTERNAL_VERSION_AUDIO_ID` in `Alkitab/build.gradle.kts` (see PRD §5.4.1). Default `""` in `defaultConfig`; override `"preset/in-tb"` for `plain`/`yuku_alkitab`/`sabda_alkitab` and `"preset/en-kjv"` for `yuku_quick_bible`. Wire the substitution into `AudioCatalogRepository.findEntry` so `MVersion.getVersionId() == "internal"` resolves to the correct catalog row.
+- [x] Background refresh: piggyback on the existing `VersionConfigUpdaterService` (see `docs/backend-communication.md:39-41`) — add a parallel catalog fetch so we don't spawn a new worker.
+- [x] Unit tests (`Alkitab/src/test/java/.../audio/AudioCatalogRepositoryTest.kt`): parsing, ETag handling, cache fallback.
 
 **Exit criteria:** `./gradlew testPlainDebugUnitTest` green; the repository returns a populated catalog on device against staging.
 
@@ -61,20 +61,20 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 
 **Goal:** single-stream audio plays end-to-end for the active chapter; verses highlight and scroll.
 
-- [ ] `BibleAudioPlayer.kt` — write from scratch. Single-responsibility wrapper around media3 ExoPlayer with a `Listener` (`onReady`, `onEnded`, `onError`). Main-thread-only API. Use the OkHttp `DataSource.Factory` pattern from `yuku.alkitab.songs.ExoplayerController.kt:8-17` (same project convention, same dependency).
-- [ ] `BibleAudioRepository.kt` — written from scratch, lives at `yuku.alkitab.base.audio.BibleAudioRepository`. Surface:
+- [x] `BibleAudioPlayer.kt` — write from scratch. Single-responsibility wrapper around media3 ExoPlayer with a `Listener` (`onReady`, `onEnded`, `onError`). Main-thread-only API. Use the OkHttp `DataSource.Factory` pattern from `yuku.alkitab.songs.ExoplayerController.kt:8-17` (same project convention, same dependency).
+- [x] `BibleAudioRepository.kt` — written from scratch, lives at `yuku.alkitab.base.audio.BibleAudioRepository`. Surface:
     - `suspend fun buildChapterUrl(versionId, bookId, chapter_1): String?` — expands the catalog's `chapterUrlTemplate` against `${SERVER_HOST}` (the backend issues a 302 to the real CDN).
     - `suspend fun fetchTiming(versionId, bookId, chapter_1): ChapterTiming?` — `GET ${SERVER_HOST}/audio/timing?...` via `Connections.okHttp`; parses the v1 JSON schema (see backend plan §4); returns `null` on network/parse failure, an empty `verses` list when the backend signals "no timing for this chapter". OkHttp's 50MB disk cache supplies implicit per-URL caching via the `Cache-Control` headers set by the backend.
     - **No SABDA URLs** in the client. All book-code / filename / SABDA-folder construction lives on the backend (`audio/adapters.py`). Verify with `grep -r "sabda" Alkitab/src/main` after the PR is up: zero hits expected.
-- [ ] `HighlightTracker.kt` — a small class that owns a `StateFlow<Int>` of currently-active `verse_1`. Input: `positionMs` + timing list. Internal: a last-index hint so we don't re-binary-search every tick. 100ms poll interval (same as PR #127).
-- [ ] `BibleAudioService.kt` — `androidx.media3.session.MediaSessionService`:
+- [x] `HighlightTracker.kt` — a small class that owns a `StateFlow<Int>` of currently-active `verse_1`. Input: `positionMs` + timing list. Internal: a last-index hint so we don't re-binary-search every tick. 100ms poll interval (same as PR #127).
+- [x] `BibleAudioService.kt` — `androidx.media3.session.MediaSessionService`:
     - Owns a `BibleAudioPlayer`.
     - Wraps it with `MediaSession` so the OS gets transport metadata.
     - Exposes a `BibleAudioController` binder that the UI uses via coroutines.
     - State exposed as `StateFlow<PlaybackState>` where `PlaybackState` contains `isPlaying`, `preparing`, `verse_1`, `positionMs`, `durationMs`, `speed`, `error`.
     - Posts a `MediaStyle` notification on foreground transition (channel `audio_bible`).
     - Handles audio focus: pause on transient-loss, duck on can-duck, resume on regain.
-- [ ] Register the service in `AndroidManifest.xml`:
+- [x] Register the service in `AndroidManifest.xml`:
     ```xml
     <service
         android:name=".audio.BibleAudioService"
@@ -86,8 +86,8 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
     </service>
     ```
     Also add `FOREGROUND_SERVICE` and `FOREGROUND_SERVICE_MEDIA_PLAYBACK` permissions.
-- [ ] Notification channel setup in `App.staticInit()` (mirror the existing channel creation for sync/devotion notifications).
-- [ ] Unit tests: `HighlightTrackerTest`, `BibleAudioRepositoryTest` (mock OkHttp), `ChapterTimingParsingTest`.
+- [x] Notification channel setup in `App.staticInit()` (mirror the existing channel creation for sync/devotion notifications).
+- [x] Unit tests: `HighlightTrackerTest`, `BibleAudioRepositoryTest` (mock OkHttp), `ChapterTimingParsingTest`.
 
 **Exit criteria:** A throwaway button in a debug-only screen starts the service, plays a chapter, updates a text view with the active verse. No UI polish yet.
 
@@ -97,8 +97,8 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 
 #### 3.1 Compose host
 
-- [ ] Add a `<androidx.compose.ui.platform.ComposeView android:id="@+id/audio_bar" />` to `activity_isi.xml` at the bottom of the root layout (`android:layout_gravity="bottom"`).
-- [ ] `AudioBarController.kt` (in `audio/`) — Kotlin glue between the View-based `IsiActivity` and the Compose UI:
+- [x] Add a `<androidx.compose.ui.platform.ComposeView android:id="@+id/audio_bar" />` to `activity_isi.xml` at the bottom of the root layout (`android:layout_gravity="bottom"`).
+- [x] `AudioBarController.kt` (in `audio/`) — Kotlin glue between the View-based `IsiActivity` and the Compose UI:
     - Owns a `MutableStateFlow<AudioBarUiState>`.
     - `attach(activity: IsiActivity, composeView: ComposeView)` — `composeView.setContent { AudioBar(state, onCommand) }`.
     - Exposes `fun show()` / `fun hide()` / `fun isAvailable: Boolean` for `IsiActivity` to call.
@@ -107,8 +107,8 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 
 #### 3.2 Composable surface
 
-- [ ] `audio/ui/AudioTheme.kt` — wraps Compose `MaterialTheme` and bridges the project's existing `?attr/colorSurface*` etc. into Compose `ColorScheme` so dark mode works without a separate Compose theme. Uses `MaterialTheme.colorScheme.surfaceContainerHigh` for the bar background.
-- [ ] `audio/ui/AudioBar.kt` — top-level `@Composable`. A fixed-height (≈96dp) `Surface` anchored to the bottom of the host `ComposeView`. Visibility (show/hide on close) is animated via `AnimatedVisibility(enter = slideInVertically(initialOffsetY = { it }), exit = slideOutVertically(targetOffsetY = { it }))` so the bar slides in/out instead of popping.
+- [x] `audio/ui/AudioTheme.kt` — wraps Compose `MaterialTheme` and bridges the project's existing `?attr/colorSurface*` etc. into Compose `ColorScheme` so dark mode works without a separate Compose theme. Uses `MaterialTheme.colorScheme.surfaceContainerHigh` for the bar background.
+- [x] `audio/ui/AudioBar.kt` — top-level `@Composable`. A fixed-height (≈96dp) `Surface` anchored to the bottom of the host `ComposeView`. Visibility (show/hide on close) is animated via `AnimatedVisibility(enter = slideInVertically(initialOffsetY = { it }), exit = slideOutVertically(targetOffsetY = { it }))` so the bar slides in/out instead of popping.
     - Layout: top row of controls + Slider below.
     - Top row, left-to-right: prev-chapter (icon + label) | prev-verse | play/pause FAB | next-verse | next-chapter (icon + label) | speed | close.
     - Slider uses Material 3 `Slider` with a custom `SliderState` and a label rendered above the thumb: `"${formatMmSs(snappedMs)} · v.${verse_1}"`. Snap-to-verse on `onValueChangeFinished`.
@@ -116,8 +116,8 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
     - On preparing state: render a `CircularProgressIndicator` overlay around the play/pause button.
     - Chapter-nav button labels (`Jn 4`) drawn with `Modifier.alpha(if (target != null) 1f else 0f)` — invisible-not-gone, layout doesn't reflow at Bible boundaries.
     - Haptics: `LocalHapticFeedback.current.performHapticFeedback(HapticFeedbackType.LongPress)` on speed change, `HapticFeedbackType.TextHandleMove` on play/pause.
-- [ ] `audio/ui/SpeedBottomSheet.kt` — `ModalBottomSheet` with a `FilterChip` row for `0.5×, 0.8×, 1.0×, 1.25×, 1.5×, 1.75×, 2.0×`. Single-selection. Persisted via `Prefkey.audioPlaybackSpeed`.
-- [ ] `audio/ui/AudioHighlightColor.kt` — pure-function logic:
+- [ ] `audio/ui/SpeedBottomSheet.kt` — `ModalBottomSheet` with a `FilterChip` row for `0.5×, 0.8×, 1.0×, 1.25×, 1.5×, 1.75×, 2.0×`. Single-selection. Persisted via `Prefkey.audioPlaybackSpeed`. *(Speed chip rendered in `AudioBar.kt` but inert — full bottom sheet deferred to M5.)*
+- [x] `audio/ui/AudioHighlightColor.kt` — pure-function logic:
     ```kotlin
     fun pickHighlightColor(readingBackground: Int, verseTextColor: Int): Int {
         val yellow = Color.argb(0x33, 0xFF, 0xEB, 0x3B)  // 20% alpha, Material Yellow 500
@@ -136,20 +136,20 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 
 #### 3.3 Verse highlight (still XML / View-based, since `VerseItem` is)
 
-- [ ] `VerseItem.kt`: add `var audioHighlightColor: Int = 0` (0 = no highlight). The `onDraw` overlay paints a rounded rect of that color, alpha-animated in (200ms) and out (150ms) via a `ValueAnimator`. `0` clears.
-- [ ] `VersesController.kt` / `VersesControllerImpl.kt`: add `fun setAudioHighlight(verse_1: Int, color: Int)`. The color is computed once via `pickHighlightColor(...)` using `VersesView.background` and `?attr/textColor*` and cached on the controller until the theme changes.
-- [ ] On each `PlaybackState.verse_1` change, the controller calls `setAudioHighlight` on the active split's `VersesController` **and** smooth-scrolls the highlighted verse into the upper-third of the viewport using a `LinearSmoothScroller` with `getVerticalSnapPreference() = SNAP_TO_START` and `calculateDtToFit` returning `viewportHeight * 0.33`.
+- [x] `VerseItem.kt`: add `var audioHighlightColor: Int = 0` (0 = no highlight). The `onDraw` overlay paints a rounded rect of that color, alpha-animated in (200ms) and out (150ms) via a `ValueAnimator`. `0` clears.
+- [x] `VersesController.kt` / `VersesControllerImpl.kt`: add `fun setAudioHighlight(verse_1: Int, color: Int)`. The color is computed once via `pickHighlightColor(...)` using `VersesView.background` and `?attr/textColor*` and cached on the controller until the theme changes.
+- [x] On each `PlaybackState.verse_1` change, the controller calls `setAudioHighlight` on the active split's `VersesController` **and** smooth-scrolls the highlighted verse into the upper-third of the viewport using a `LinearSmoothScroller` with `getVerticalSnapPreference() = SNAP_TO_START` and `calculateDtToFit` returning `viewportHeight * 0.33`.
 
 #### 3.4 Toolbar icon
 
-- [ ] Menu item in `res/menu/activity_isi.xml`: `<item android:id="@+id/menuAudio" app:showAsAction="always" android:icon="@drawable/ic_audio" android:title="@string/menu_audio" />`. Matches `menuSearch`'s `always` treatment — never spills into overflow. Wire into `IsiActivity.buildMenu` / `onOptionsItemSelected` (see `IsiActivity.kt:1368-1399`).
-- [ ] Visibility — observe the catalog. Set `menuItem.isVisible = repo.isAudioAvailable(visibleVersionId0) || repo.isAudioAvailable(visibleVersionId1)`. Refresh on active-version change and on split-view enter/exit. Hiding (not disabling) is intentional — a permanently-greyed icon is more confusing than no icon.
-- [ ] Preparing-state spinner: clone the Kidung pattern (`SongViewActivity.kt:178, 443-449, 1088-1090`). Add a `circular_progress` view to the toolbar layout in `activity_isi.xml`, initially `GONE`. In `onPrepareOptionsMenu`, when `audioBarController.isPreparing`, set `menuAudio.isVisible = false` and `circular_progress.visibility = VISIBLE`; otherwise the inverse. Trigger `invalidateOptionsMenu()` from the state collector whenever `preparing` flips.
+- [x] Menu item in `res/menu/activity_isi.xml`: `<item android:id="@+id/menuAudio" app:showAsAction="always" android:icon="@drawable/ic_audio" android:title="@string/menu_audio" />`. Matches `menuSearch`'s `always` treatment — never spills into overflow. Wire into `IsiActivity.buildMenu` / `onOptionsItemSelected` (see `IsiActivity.kt:1368-1399`).
+- [x] Visibility — observe the catalog. Set `menuItem.isVisible = repo.isAudioAvailable(visibleVersionId0) || repo.isAudioAvailable(visibleVersionId1)`. Refresh on active-version change and on split-view enter/exit. Hiding (not disabling) is intentional — a permanently-greyed icon is more confusing than no icon.
+- [ ] Preparing-state spinner: clone the Kidung pattern (`SongViewActivity.kt:178, 443-449, 1088-1090`). Add a `circular_progress` view to the toolbar layout in `activity_isi.xml`, initially `GONE`. In `onPrepareOptionsMenu`, when `audioBarController.isPreparing`, set `menuAudio.isVisible = false` and `circular_progress.visibility = VISIBLE`; otherwise the inverse. Trigger `invalidateOptionsMenu()` from the state collector whenever `preparing` flips. *(Currently the spinner is only shown inside the audio bar's play button; the toolbar swap is deferred.)*
 
 #### 3.5 Tests
 
-- [ ] `AudioHighlightColorTest` — pure-function unit tests covering yellow/black/white selection across light, sepia, and dark reading backgrounds. Assert ≥4.5 contrast.
-- [ ] Compose preview functions for `AudioBar`, `SpeedBottomSheet` — for visual review in Android Studio. (Previews don't replace device testing but are cheap insurance.)
+- [x] `AudioHighlightColorTest` — pure-function unit tests covering yellow/black/white selection across light, sepia, and dark reading backgrounds. Assert ≥4.5 contrast.
+- [x] Compose preview functions for `AudioBar`, `SpeedBottomSheet` — for visual review in Android Studio. (Previews don't replace device testing but are cheap insurance.)
 - [ ] Instrumented test (`connectedCheck`): open chapter → tap audio → verify the audio bar slides in → tap close → verify it slides out and the service stops.
 
 **Exit criteria:** End-to-end demo of §1–§6 of the PRD's must-haves (screen-on usage); the audio bar slides in/out smoothly; verse highlight uses yellow on light themes and the contrast-fallback color on dark themes.
@@ -158,12 +158,12 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 
 **Goal:** closing the app or locking the screen does not stop playback.
 
-- [ ] Verify MediaSession metadata: title = `${book.shortName} ${chapter_1}`, subtitle = `${version.shortName}`, artwork = app icon + chapter art if available (for v1, app icon only).
-- [ ] Pre-compute available actions on each state change: Play ↔ Pause, Prev-chapter, Next-chapter. (Verse-level actions are exposed only through the app UI to keep the notification small.)
-- [ ] Handle `ACTION_MEDIA_BUTTON` — MediaSession does it automatically, but verify with a Bluetooth headset.
-- [ ] Swipe-from-recents (`onTaskRemoved`): if audio is currently playing, keep the service alive and the notification up — matches Spotify / YouTube Music convention (swiping recents is a task switcher, not a stop button). If audio is paused, call `stopSelf()` to release the service. The user can always stop explicitly via the notification's Stop action or the in-app audio bar's Close button.
-- [ ] Audio focus: `AudioFocusRequest` with `AUDIOFOCUS_GAIN`; pause/duck/resume on loss. media3 handles this by default with `setHandleAudioBecomingNoisy(true)` — enable it.
-- [ ] Make sure the service correctly ends foreground state on stop (calls `stopForeground(STOP_FOREGROUND_REMOVE)`).
+- [x] Verify MediaSession metadata: title = `${book.shortName} ${chapter_1}`, subtitle = `${version.shortName}`, artwork = app icon + chapter art if available (for v1, app icon only).
+- [x] Pre-compute available actions on each state change: Play ↔ Pause, Prev-chapter, Next-chapter. (Verse-level actions are exposed only through the app UI to keep the notification small.)
+- [x] Handle `ACTION_MEDIA_BUTTON` — MediaSession does it automatically, but verify with a Bluetooth headset.
+- [x] Swipe-from-recents (`onTaskRemoved`): if audio is currently playing, keep the service alive and the notification up — matches Spotify / YouTube Music convention (swiping recents is a task switcher, not a stop button). If audio is paused, call `stopSelf()` to release the service. The user can always stop explicitly via the notification's Stop action or the in-app audio bar's Close button.
+- [x] Audio focus: `AudioFocusRequest` with `AUDIOFOCUS_GAIN`; pause/duck/resume on loss. media3 handles this by default with `setHandleAudioBecomingNoisy(true)` — enable it.
+- [x] Make sure the service correctly ends foreground state on stop (calls `stopForeground(STOP_FOREGROUND_REMOVE)`).
 - [ ] Manual test matrix:
     - [ ] Lock screen → play/pause works.
     - [ ] Incoming call → ducks/pauses and resumes.
@@ -180,7 +180,7 @@ The visual scaffolding (Compose audio bar with `AnimatedVisibility` slide-in, Ma
 - [ ] Speed persistence: `Prefkey.audioPlaybackSpeed` (enum default `1.0f`). Read on service start, write on each change.
 - [ ] Auto-advance: on `onEnded`, navigate to the next chapter. Centralise the cross-book logic in a new `BibleNavigationUtil.kt` (it's useful outside audio too). No repeat toggle in v1.
 - [ ] Snackbar error handling (§4.6 of PRD). Snackbars come from `IsiActivity` (host), not the Compose layer, since they need to overlay the toolbar.
-- [ ] Split-view source dialog (§4.5 of PRD). On play-tap when split view is active and both visible versions have audio, render a Compose `AlertDialog` with the two version short names and a Cancel. The state is held in `AudioBarController` via `MutableStateFlow`; reset to `null` whenever split view toggles, either visible version changes, or the audio bar is closed.
+- [x] Split-view source dialog (§4.5 of PRD). On play-tap when split view is active and both visible versions have audio, render a Compose `AlertDialog` with the two version short names and a Cancel. The state is held in `AudioBarController` via `MutableStateFlow`; reset to `null` whenever split view toggles, either visible version changes, or the audio bar is closed.
 - [ ] **Design review pass.** Walk the bottom sheet against this checklist before tagging M5 done:
     - Slide-in / slide-out animation is smooth on a low-end device (Pixel 4a / API 30 emulator OK).
     - Highlight overlay fades, doesn't strobe, at 1.0× speed.
