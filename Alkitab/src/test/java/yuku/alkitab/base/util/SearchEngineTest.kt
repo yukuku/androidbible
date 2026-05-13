@@ -46,56 +46,56 @@ class SearchEngineTest {
     @Test
     fun `an empty token list produces a ReadyTokens with zero count and empty arrays`() {
         val rt = SearchEngine.ReadyTokens(emptyArray())
-        assertEquals(0, rt.token_count)
+        assertEquals(0, rt.tokenCount)
         assertEquals(0, rt.tokens.size)
         assertEquals(0, rt.hasPlusses.size)
-        assertEquals(0, rt.multiwords_tokens.size)
+        assertEquals(0, rt.multiwordsTokens.size)
     }
 
     @Test
     fun `a single non-plussed token is stored verbatim with no multiword split`() {
         val rt = SearchEngine.ReadyTokens(arrayOf("word"))
-        assertEquals(1, rt.token_count)
+        assertEquals(1, rt.tokenCount)
         assertEquals("word", rt.tokens[0])
         assertFalse(rt.hasPlusses[0])
-        assertNull(rt.multiwords_tokens[0])
+        assertNull(rt.multiwordsTokens[0])
     }
 
     @Test
     fun `a plussed single-word token has its plus stripped and no multiword split`() {
         val rt = SearchEngine.ReadyTokens(arrayOf("+hello"))
-        assertEquals(1, rt.token_count)
+        assertEquals(1, rt.tokenCount)
         assertTrue(rt.hasPlusses[0])
         assertEquals("hello", rt.tokens[0])
-        assertNull(rt.multiwords_tokens[0])
+        assertNull(rt.multiwordsTokens[0])
     }
 
     @Test
     fun `a plussed multiword token is split into its constituent words`() {
         val rt = SearchEngine.ReadyTokens(arrayOf("+hello world"))
-        assertEquals(1, rt.token_count)
+        assertEquals(1, rt.tokenCount)
         assertTrue(rt.hasPlusses[0])
         assertEquals("hello world", rt.tokens[0])
-        assertNotNull(rt.multiwords_tokens[0])
-        assertArrayEquals(arrayOf("hello", "world"), rt.multiwords_tokens[0])
+        assertNotNull(rt.multiwordsTokens[0])
+        assertArrayEquals(arrayOf("hello", "world"), rt.multiwordsTokens[0])
     }
 
     @Test
     fun `a mixture of plussed and non-plussed tokens are each classified independently`() {
         val rt = SearchEngine.ReadyTokens(arrayOf("foo", "+bar", "+baz qux"))
-        assertEquals(3, rt.token_count)
+        assertEquals(3, rt.tokenCount)
 
         assertFalse(rt.hasPlusses[0])
         assertEquals("foo", rt.tokens[0])
-        assertNull(rt.multiwords_tokens[0])
+        assertNull(rt.multiwordsTokens[0])
 
         assertTrue(rt.hasPlusses[1])
         assertEquals("bar", rt.tokens[1])
-        assertNull(rt.multiwords_tokens[1])
+        assertNull(rt.multiwordsTokens[1])
 
         assertTrue(rt.hasPlusses[2])
         assertEquals("baz qux", rt.tokens[2])
-        assertArrayEquals(arrayOf("baz", "qux"), rt.multiwords_tokens[2])
+        assertArrayEquals(arrayOf("baz", "qux"), rt.multiwordsTokens[2])
     }
 
     @Test
@@ -104,17 +104,17 @@ class SearchEngineTest {
         // dash (-) are treated as letters per the [\p{javaLetterOrDigit}'-]+ pattern,
         // so a standalone '-' surrounded by punctuation/space becomes its own word.
         val rt = SearchEngine.ReadyTokens(arrayOf("+abc.,- def123"))
-        assertEquals(1, rt.token_count)
+        assertEquals(1, rt.tokenCount)
         assertTrue(rt.hasPlusses[0])
-        assertArrayEquals(arrayOf("abc", "-", "def123"), rt.multiwords_tokens[0])
+        assertArrayEquals(arrayOf("abc", "-", "def123"), rt.multiwordsTokens[0])
     }
 
     @Test
     fun `apostrophes and hyphens embedded inside words are kept as part of the word`() {
         val rt = SearchEngine.ReadyTokens(arrayOf("+don't self-aware"))
-        assertEquals(1, rt.token_count)
+        assertEquals(1, rt.tokenCount)
         assertTrue(rt.hasPlusses[0])
-        assertArrayEquals(arrayOf("don't", "self-aware"), rt.multiwords_tokens[0])
+        assertArrayEquals(arrayOf("don't", "self-aware"), rt.multiwordsTokens[0])
     }
 
     // =========================================================================
@@ -357,10 +357,10 @@ class SearchEngineTest {
         assertArrayEquals(arrayOf("+hello world"), tokenized)
 
         val rt = SearchEngine.ReadyTokens(tokenized)
-        assertEquals(1, rt.token_count)
+        assertEquals(1, rt.tokenCount)
         assertTrue(rt.hasPlusses[0])
         assertEquals("hello world", rt.tokens[0])
-        assertArrayEquals(arrayOf("hello", "world"), rt.multiwords_tokens[0])
+        assertArrayEquals(arrayOf("hello", "world"), rt.multiwordsTokens[0])
     }
 
     @Test
@@ -369,10 +369,10 @@ class SearchEngineTest {
         assertArrayEquals(arrayOf("hello"), tokenized)
 
         val rt = SearchEngine.ReadyTokens(tokenized)
-        assertEquals(1, rt.token_count)
+        assertEquals(1, rt.tokenCount)
         assertFalse(rt.hasPlusses[0])
         assertEquals("hello", rt.tokens[0])
-        assertNull(rt.multiwords_tokens[0])
+        assertNull(rt.multiwordsTokens[0])
     }
 
     @Test
@@ -381,14 +381,14 @@ class SearchEngineTest {
         assertArrayEquals(arrayOf("+a b", "c"), tokenized)
 
         val rt = SearchEngine.ReadyTokens(tokenized)
-        assertEquals(2, rt.token_count)
+        assertEquals(2, rt.tokenCount)
 
         assertTrue(rt.hasPlusses[0])
-        assertArrayEquals(arrayOf("a", "b"), rt.multiwords_tokens[0])
+        assertArrayEquals(arrayOf("a", "b"), rt.multiwordsTokens[0])
 
         assertFalse(rt.hasPlusses[1])
         assertEquals("c", rt.tokens[1])
-        assertNull(rt.multiwords_tokens[1])
+        assertNull(rt.multiwordsTokens[1])
     }
 
     // =========================================================================

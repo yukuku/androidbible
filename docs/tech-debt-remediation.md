@@ -406,14 +406,14 @@ If the project adopts Hilt for other reasons (e.g., ViewModel injection in REM-0
 | Priority | File | Lines | Risk | Notes |
 |----------|------|-------|------|-------|
 | 1 | ~~`Highlights.java`~~ | ~~~200~~ | ~~Low~~ | ✅ ported to `Highlights.kt` (2026-05-12). `object` with `@JvmStatic` methods and `@JvmField` properties to preserve Java call sites; 5 Kotlin callers got `!!` on `Info.partial` (now properly nullable). All 31 `HighlightsTest` cases + full unit-test suite pass. |
-| 2 | `TargetDecoder.java` | ~150 | Low | Has tests, pure logic |
+| 2 | ~~`TargetDecoder.java`~~ | ~~~150~~ | ~~Low~~ | ✅ ported to `TargetDecoder.kt` (2026-05-13). `object` with `@JvmStatic decode()`; returns non-nullable `IntArrayList` (empty on error) to preserve call sites. |
 | 3 | ~~`Jumper.java`~~ | ~~~200~~ | ~~Low~~ | ✅ ported to `Jumper.kt` on 2026-05-12; behavior preserved, JumperTest + full unit suite pass |
-| 4 | `QueryTokenizer.java` | ~100 | Low | Has tests |
-| 5 | `DevotionDownloader.java` | 111 | Low | Small, standalone thread (do with REM-05) |
-| 6 | `Provider.java` | ~200 | Medium | Content provider, external API contract |
-| 7 | `SongBookUtil.java` | 219 | Medium | Network + deserialization (do with REM-01) |
+| 4 | ~~`QueryTokenizer.java`~~ | ~~~100~~ | ~~Low~~ | ✅ ported to `QueryTokenizer.kt` (2026-05-13). `object` with `@JvmStatic` on all public methods; `tokenize()` accepts `String?` for backwards-compatible null handling. |
+| 5 | ~~`DevotionDownloader.java`~~ | ~~111~~ | ~~Low~~ | ✅ ported to `DevotionDownloader.kt` (2026-05-13). Regular Kotlin class with `@Synchronized`/`@Volatile` annotations, `::downloadLoop` method reference. |
+| 6 | ~~`Provider.java`~~ | ~~~200~~ | ~~Medium~~ | ✅ ported to `Provider.kt` (2026-05-13). `open class` (needed for test anonymous subclass); `companion object` for constants and static `uriMatcher`; `when` replaces `switch`. |
+| 7 | ~~`SongBookUtil.java`~~ | ~~219~~ | ~~Medium~~ | ✅ ported to `SongBookUtil.kt` (2026-05-13). `object` with nested interfaces/classes; `@JvmStatic` on all public methods; `@JvmField` on `SongBookInfo` fields. |
 | 8 | ~~`VerseRenderer.java`~~ | ~~423~~ | ~~Medium~~ | ✅ ported (REM-26) |
-| 9 | `SearchEngine.java` | 537 | Medium | Performance-critical, no tests |
+| 9 | ~~`SearchEngine.java`~~ | ~~537~~ | ~~Medium~~ | ✅ ported to `SearchEngine.kt` (2026-05-13). `object` with nested `ReadyTokens` class; `@JvmStatic` on public methods; `searchByGrep()` returns non-nullable `IntArrayList`; `sortWith` replaces `Arrays.sort`. |
 | 10 | `Sync.java` | 508 | High | Threading + network, many call sites |
 | 11 | `InternalDb.java` | 1771 | High | Core database, skip if doing Room migration (REM-10) |
 
