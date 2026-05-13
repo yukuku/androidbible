@@ -150,7 +150,16 @@ android {
         arg("room.incremental", "true")
     }
     sourceSets {
-        getByName("androidTest").assets.srcDirs("$projectDir/schemas")
+        // Room schema JSONs are exposed as assets so MigrationTestHelper can
+        // load them at test time. AGP doesn't propagate test-only asset
+        // srcDirs into the unit-test `apk_for_local_test` archive that
+        // Robolectric reads, so the schemas have to live in the main source
+        // set even though they're only used by tests. Cost: ~3 KB per schema
+        // version shipped in the production APK — acceptable given the
+        // alternative (an instrumented-test setup that needs an emulator in
+        // CI).
+        // See Alkitab/src/test/java/.../room/AppDatabaseMigrationTest.kt.
+        getByName("main").assets.srcDir("$projectDir/schemas")
     }
     buildTypes {
         debug {
