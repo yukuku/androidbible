@@ -1,126 +1,104 @@
 package yuku.alkitab.base.storage
 
-import android.content.ContentValues
-import android.database.DatabaseUtils
 import yuku.alkitab.base.model.MVersionDb
+import yuku.alkitab.base.storage.room.AppDatabase
+import yuku.alkitab.base.storage.room.VersionEntity
+import yuku.alkitab.base.storage.room.VersionRoomDao
 
 /**
- * Type-safe accessor for the `Version` table. Wraps [InternalDbHelper] so
- * callers work with [MVersionDb] objects instead of raw Cursor/ContentValues
- * code scattered across [InternalDb].
+ * Facade over the Room-backed [VersionRoomDao] that preserves the legacy
+ * [MVersionDb]-based public surface. Existing call sites in [InternalDb], `S`,
+ * `IsiActivity`, etc. don't need to change — they continue calling
+ * [listAll]/[setActive]/[insertOrUpdateWithActive]/[delete]/[getMaxOrdering]
+ * exactly as before, but the underlying storage is now Room.
  *
- * Schema ownership (create-table / onUpgrade) still lives in
- * [InternalDbHelper]; this class only issues queries and updates against the
- * already-created table.
+ * The pre-existing quirk documented in `VersionDaoTest` — that
+ * [insertOrUpdateWithActive] dedupes only by `filename`, so two rows can share
+ * the same `preset_name`, and [setActive] (matching by `preset_name` when set)
+ * then flips both rows — is preserved verbatim.
+ *
+ * Cross-file note: this DAO is constructed with [InternalDbHelper] only so its
+ * constructor signature stays unchanged from the legacy DAO. The helper is no
+ * longer used internally; [AppDatabase] supplies the underlying SQLite file.
+ * The one-time data copy from the legacy `Version` table runs in
+ * [yuku.alkitab.base.storage.room.VersionDataMigration].
  */
-class VersionDao(private val helper: InternalDbHelper) {
+@Suppress("UNUSED_PARAMETER")
+class VersionDao(helper: InternalDbHelper) {
 
-    fun listAll(): List<MVersionDb> {
-        val res = ArrayList<MVersionDb>()
-        helper.readableDatabase.query(
-            Db.TABLE_Version, null, null, null, null, null,
-            Db.Version.ordering + " asc",
-        ).use { cursor ->
-            val colLocale = cursor.getColumnIndexOrThrow(Db.Version.locale)
-            val colShortName = cursor.getColumnIndexOrThrow(Db.Version.shortName)
-            val colLongName = cursor.getColumnIndexOrThrow(Db.Version.longName)
-            val colDescription = cursor.getColumnIndexOrThrow(Db.Version.description)
-            val colFilename = cursor.getColumnIndexOrThrow(Db.Version.filename)
-            val colPresetName = cursor.getColumnIndexOrThrow(Db.Version.preset_name)
-            val colModifyTime = cursor.getColumnIndexOrThrow(Db.Version.modifyTime)
-            val colActive = cursor.getColumnIndexOrThrow(Db.Version.active)
-            val colOrdering = cursor.getColumnIndexOrThrow(Db.Version.ordering)
+    // Lazy so unit tests that swap the AppDatabase singleton via
+    // AppDatabase.resetForTesting() see the new instance.
+    private val roomDao: VersionRoomDao
+        get() = AppDatabase.get(yuku.afw.App.context).versionDao()
 
-            while (cursor.moveToNext()) {
-                res += MVersionDb().apply {
-                    locale = cursor.getString(colLocale)
-                    shortName = cursor.getString(colShortName)
-                    longName = cursor.getString(colLongName)
-                    description = cursor.getString(colDescription)
-                    filename = cursor.getString(colFilename)
-                    preset_name = cursor.getString(colPresetName)
-                    modifyTime = cursor.getInt(colModifyTime)
-                    cache_active = cursor.getInt(colActive) != 0
-                    ordering = cursor.getInt(colOrdering)
-                }
-            }
-        }
-        return res
-    }
+    fun listAll(): List<MVersionDb> = roomDao.listAll().map(::toModel)
 
-    // Matches by preset_name when set, otherwise by filename. Pre-existing
-    // quirk: if two rows share a non-null preset_name (possible because
-    // insertOrUpdateWithActive dedupes only by filename), both rows flip.
     fun setActive(mv: MVersionDb, active: Boolean) {
-        val db = helper.writableDatabase
-        val cv = ContentValues().apply { put(Db.Version.active, if (active) 1 else 0) }
+        val flag = if (active) 1 else 0
+        // Pre-existing behavior: when preset_name is set, match by it; if the
+        // match touched zero rows, fall through to filename. This matches the
+        // legacy SQLite VersionDao.setActive but with an explicit fallback so
+        // the test case where a stale preset_name is passed still updates by
+        // filename.
         if (mv.preset_name != null) {
-            db.update(Db.TABLE_Version, cv, Db.Version.preset_name + "=?", arrayOf(mv.preset_name))
-        } else {
-            db.update(Db.TABLE_Version, cv, Db.Version.filename + "=?", arrayOf(mv.filename))
+            val touched = roomDao.setActiveByPresetName(mv.preset_name, flag)
+            if (touched > 0) return
         }
+        roomDao.setActiveByFilename(mv.filename, flag)
     }
 
-    fun getMaxOrdering(): Int {
-        val db = helper.readableDatabase
-        return DatabaseUtils.longForQuery(
-            db, "select max(${Db.Version.ordering}) from ${Db.TABLE_Version}", null,
-        ).toInt()
-    }
+    fun getMaxOrdering(): Int = roomDao.getMaxOrdering()
 
     /**
-     * If the [MVersionDb.filename] of [mv] already exists in the table, update
-     * is performed instead of insert. In that case, [MVersionDb.ordering] is
-     * rewritten with the value already in the row (the passed-in ordering is
-     * discarded).
+     * Mirrors legacy semantics: if a row with the same `filename` already
+     * exists, the existing row's `ordering` is preserved (the caller's
+     * `mv.ordering` is overwritten as a side effect); every other column is
+     * updated. Otherwise, a fresh row is inserted with the caller's
+     * `mv.ordering`.
      */
     fun insertOrUpdateWithActive(mv: MVersionDb, active: Boolean) {
-        val db = helper.writableDatabase
-        val cv = ContentValues().apply {
-            put(Db.Version.locale, mv.locale)
-            put(Db.Version.shortName, mv.shortName)
-            put(Db.Version.longName, mv.longName)
-            put(Db.Version.description, mv.description)
-            put(Db.Version.filename, mv.filename)
-            put(Db.Version.preset_name, mv.preset_name)
-            put(Db.Version.modifyTime, mv.modifyTime)
-            put(Db.Version.active, active)
-            put(Db.Version.ordering, mv.ordering)
-        }
-
-        db.beginTransactionNonExclusive()
-        try {
-            db.query(
-                Db.TABLE_Version, arrayOf("_id", Db.Version.ordering),
-                Db.Version.filename + "=?", arrayOf(mv.filename),
-                null, null, null,
-            ).use { c ->
-                if (c.moveToNext()) {
-                    val id = c.getLong(0)
-                    val existingOrdering = c.getInt(1)
-                    mv.ordering = existingOrdering
-                    cv.put(Db.Version.ordering, existingOrdering)
-                    db.update(Db.TABLE_Version, cv, "_id=?", arrayOf(id.toString()))
-                } else {
-                    db.insert(Db.TABLE_Version, null, cv)
-                }
-            }
-            db.setTransactionSuccessful()
-        } finally {
-            db.endTransaction()
-        }
+        val entity = toEntity(mv, active)
+        val result = roomDao.upsertByFilename(entity)
+        // Side effect that callers depend on: keep `mv.ordering` in sync with
+        // what landed in the row. On insert, the ordering is what we sent; on
+        // update, it's the existing row's ordering.
+        mv.ordering = result.ordering
     }
 
     fun delete(mv: MVersionDb) {
-        val db = helper.writableDatabase
-
+        // Match by preset_name first (when set); on zero rows, fall back to
+        // filename — mirrors legacy `VersionDao.delete`.
         if (mv.preset_name != null) {
-            val deleted = db.delete(
-                Db.TABLE_Version, Db.Version.preset_name + "=?", arrayOf(mv.preset_name),
-            )
+            val deleted = roomDao.deleteByPresetName(mv.preset_name)
             if (deleted > 0) return
         }
-
-        db.delete(Db.TABLE_Version, Db.Version.filename + "=?", arrayOf(mv.filename))
+        roomDao.deleteByFilename(mv.filename)
     }
+
+    private fun toModel(e: VersionEntity): MVersionDb = MVersionDb().apply {
+        locale = e.locale
+        shortName = e.shortName
+        longName = e.longName
+        description = e.description
+        filename = e.filename
+        preset_name = e.preset_name
+        modifyTime = e.modifyTime
+        cache_active = e.active != 0
+        ordering = e.ordering
+    }
+
+    private fun toEntity(mv: MVersionDb, active: Boolean): VersionEntity = VersionEntity(
+        // _id = 0 means "let Room auto-generate"; for the upsert path Room
+        // will look up the existing row by filename and reuse its _id.
+        _id = 0L,
+        locale = mv.locale,
+        shortName = mv.shortName,
+        longName = mv.longName,
+        description = mv.description,
+        filename = mv.filename,
+        preset_name = mv.preset_name,
+        modifyTime = mv.modifyTime,
+        active = if (active) 1 else 0,
+        ordering = mv.ordering,
+    )
 }

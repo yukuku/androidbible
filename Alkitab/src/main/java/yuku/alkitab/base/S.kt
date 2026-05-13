@@ -223,7 +223,15 @@ object S {
 
     @JvmStatic
     val db: InternalDb by lazy {
-        InternalDb(InternalDbHelper(App.context))
+        val helper = InternalDbHelper(App.context)
+        // One-time copy of the legacy `Version` table into Room's `version`
+        // table (see REM-11 design doc). Idempotent — a no-op after the first
+        // launch with this code, and safe to retry if it fails partway.
+        yuku.alkitab.base.storage.room.VersionDataMigration.copyFromLegacyDbIfNeeded(
+            yuku.alkitab.base.storage.room.AppDatabase.get(App.context),
+            helper,
+        )
+        InternalDb(helper)
     }
 
     @JvmStatic

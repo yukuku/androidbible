@@ -1,6 +1,7 @@
 [versions]
 agp = "8.13.0"
 kotlin = "2.2.0"
+ksp = "2.2.0-2.0.2"
 googleServices = "4.4.3"
 firebaseCrashlyticsGradle = "3.0.6"
 foojayResolver = "1.0.0"
@@ -8,6 +9,7 @@ compileSdk = "36"
 minSdk = "26"
 targetSdk = "35"
 ndk = "28.2.13676358"
+room = "2.7.0"
 
 # AndroidX
 androidxActivity = "1.11.0"
@@ -79,6 +81,13 @@ androidx-test-core = { group = "androidx.test", name = "core", version.ref = "an
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExt" }
 androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
 
+# Room — persistence ORM for newly migrated tables (REM-11 onwards).
+# See docs/superpowers/specs/2026-05-13-rem-11-room-version-table-design.md.
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
+
 # Compose — single source of truth via BOM (audio-bible bottom sheet + GotoActivity).
 # Bump composeBom above to update everything in lockstep.
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
@@ -119,6 +128,7 @@ fancyShowcaseView = { group = "com.github.faruktoptas", name = "FancyShowCaseVie
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
