@@ -1,12 +1,9 @@
 package yuku.alkitab.base.storage;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.sqlite.db.SimpleSQLiteQuery;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -14,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.MarkerListActivity;
 import yuku.alkitab.base.devotion.DevotionArticle;
 import yuku.alkitab.base.model.MVersion;
@@ -23,14 +21,13 @@ import yuku.alkitab.base.model.PerVersionSettings;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.model.SyncLog;
 import yuku.alkitab.base.model.SyncShadow;
+import yuku.alkitab.base.storage.room.AppDatabase;
+import yuku.alkitab.base.storage.room.MarkerEntity;
 import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.sync.SyncApplier;
 import yuku.alkitab.base.sync.SyncRecorder;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Highlights;
-import static yuku.alkitab.base.util.Literals.Array;
-import static yuku.alkitab.base.util.Literals.ToStringArray;
-import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
@@ -105,15 +102,10 @@ public class InternalDb {
         final Marker marker = markerDao.getById(_id);
         if (marker == null) return;
 
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        db.beginTransactionNonExclusive();
-        try {
+        AppDatabase.get(App.context).runInTransaction(() -> {
             marker_LabelDao.deleteByMarkerGid(marker.gid);
             markerDao.deleteById(_id);
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
+        });
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
     }
 
@@ -123,28 +115,42 @@ public class InternalDb {
     }
 
     public List<Marker> listMarkers(Marker.Kind kind, long label_id, String sortColumn, boolean sortAscending) {
-        final SQLiteDatabase db = helper.getReadableDatabase();
-        final String sortClause = sortColumn + (Db.Marker.caption.equals(sortColumn) ? " collate NOCASE " : "") + (sortAscending ? " asc" : " desc");
+        // Whitelist sortColumn to defend against injection — even though
+        // the caller is the marker-list menu, never trust an interpolated
+        // identifier. Falls back to modifyTime if an unexpected value
+        // sneaks in (matches what the legacy raw SQL would have done if
+        // the column didn't exist: it would have thrown; we prefer a sane
+        // default).
+        final String safeSort;
+        if (Db.Marker.createTime.equals(sortColumn)) safeSort = "createTime";
+        else if (Db.Marker.modifyTime.equals(sortColumn)) safeSort = "modifyTime";
+        else if (Db.Marker.ari.equals(sortColumn)) safeSort = "ari";
+        else if (Db.Marker.caption.equals(sortColumn)) safeSort = "caption";
+        else safeSort = "modifyTime";
 
-        final List<Marker> res = new ArrayList<>();
-        final Cursor c;
+        final String sortClause = safeSort + (Db.Marker.caption.equals(safeSort) ? " collate NOCASE " : "") + (sortAscending ? " asc" : " desc");
+
+        final String sql;
+        final Object[] args;
         if (label_id == 0) { // no restrictions
-            c = db.query(Db.TABLE_Marker, null, Db.Marker.kind + "=?", new String[]{String.valueOf(kind.code)}, null, null, sortClause);
+            sql = "select marker.* from marker where marker.kind = ? order by marker." + sortClause;
+            args = new Object[]{kind.code};
         } else if (label_id == MarkerListActivity.LABELID_noLabel) { // only without label
-            c = db.rawQuery("select " + Db.TABLE_Marker + ".* from " + Db.TABLE_Marker + " where " + Db.TABLE_Marker + "." + Db.Marker.kind + "=? and " + Db.TABLE_Marker + "." + Db.Marker.gid + " not in (select distinct " + Db.Marker_Label.marker_gid + " from " + Db.TABLE_Marker_Label + ") order by " + Db.TABLE_Marker + "." + sortClause, new String[]{String.valueOf(kind.code)});
+            sql = "select marker.* from marker where marker.kind = ? and marker.gid not in (select distinct marker_gid from marker_label) order by marker." + sortClause;
+            args = new Object[]{kind.code};
         } else { // filter by label_id
             final Label label = getLabelById(label_id);
-            c = db.rawQuery("select " + Db.TABLE_Marker + ".* from " + Db.TABLE_Marker + ", " + Db.TABLE_Marker_Label + " where " + Db.Marker.kind + "=? and " + Db.TABLE_Marker + "." + Db.Marker.gid + " = " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.marker_gid + " and " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.label_gid + "=? order by " + Db.TABLE_Marker + "." + sortClause, new String[]{String.valueOf(kind.code), label.gid});
+            sql = "select marker.* from marker, marker_label where marker.kind = ? and marker.gid = marker_label.marker_gid and marker_label.label_gid = ? order by marker." + sortClause;
+            args = new Object[]{kind.code, label.gid};
         }
 
-        try {
-            while (c.moveToNext()) {
-                res.add(MarkerDao.markerFromCursor(c));
-            }
-        } finally {
-            c.close();
-        }
+        final List<MarkerEntity> entities = AppDatabase.get(App.context).markerDao()
+            .listMarkersRaw(new SimpleSQLiteQuery(sql, args));
 
+        final List<Marker> res = new ArrayList<>(entities.size());
+        for (final MarkerEntity entity : entities) {
+            res.add(MarkerDao.toModel(entity));
+        }
         return res;
     }
 
@@ -169,47 +175,37 @@ public class InternalDb {
         final int ariMin = ari_bookchapter & 0x00ffff00;
         final int ariMax = ari_bookchapter | 0x000000ff;
 
-        final String[] params = {
-            String.valueOf(ariMin),
-            String.valueOf(ariMax),
-        };
-
         // order by modifyTime, so in case a verse has more than one highlight, the latest one is shown.
         // Inclusive upper bound so a marker on verse 255 (ari == ariMax) is included — matches
         // getHighlightColorRgb(int, IntArrayList).
-        try (Cursor cursor = helper.getReadableDatabase().rawQuery("select * from " + Db.TABLE_Marker + " where " + Db.Marker.ari + ">=? and " + Db.Marker.ari + "<=? order by " + Db.Marker.modifyTime, params)) {
-            final int col_kind = cursor.getColumnIndexOrThrow(Db.Marker.kind);
-            final int col_ari = cursor.getColumnIndexOrThrow(Db.Marker.ari);
-            final int col_caption = cursor.getColumnIndexOrThrow(Db.Marker.caption);
-            final int col_verseCount = cursor.getColumnIndexOrThrow(Db.Marker.verseCount);
+        final List<MarkerEntity> entities = AppDatabase.get(App.context).markerDao()
+            .listInAriRangeOrderedByModifyTimeAsc(ariMin, ariMax);
 
-            while (cursor.moveToNext()) {
-                final int ari = cursor.getInt(col_ari);
-                final int kind = cursor.getInt(col_kind);
+        for (final MarkerEntity entity : entities) {
+            final int ari = entity.getAri();
+            final int kind = entity.getKind();
 
-                int mapOffset = Ari.toVerse(ari) - 1;
-                if (mapOffset >= bookmarkCountMap.length) {
-                    AppLog.e(TAG, "mapOffset too many " + mapOffset + " happens on ari 0x" + Integer.toHexString(ari));
-                    continue;
-                }
+            int mapOffset = Ari.toVerse(ari) - 1;
+            if (mapOffset >= bookmarkCountMap.length) {
+                AppLog.e(TAG, "mapOffset too many " + mapOffset + " happens on ari 0x" + Integer.toHexString(ari));
+                continue;
+            }
 
-                if (kind == Marker.Kind.bookmark.code) {
-                    bookmarkCountMap[mapOffset] += 1;
-                } else if (kind == Marker.Kind.note.code) {
-                    noteCountMap[mapOffset] += 1;
-                } else if (kind == Marker.Kind.highlight.code) {
-                    // traverse as far as verseCount
-                    final int verseCount = cursor.getInt(col_verseCount);
+            if (kind == Marker.Kind.bookmark.code) {
+                bookmarkCountMap[mapOffset] += 1;
+            } else if (kind == Marker.Kind.note.code) {
+                noteCountMap[mapOffset] += 1;
+            } else if (kind == Marker.Kind.highlight.code) {
+                // traverse as far as verseCount
+                final int verseCount = entity.getVerseCount();
 
-                    for (int i = 0; i < verseCount; i++) {
-                        int mapOffset2 = mapOffset + i;
-                        if (mapOffset2 >= highlightColorMap.length) break; // do not go past number of verses in this chapter
+                for (int i = 0; i < verseCount; i++) {
+                    int mapOffset2 = mapOffset + i;
+                    if (mapOffset2 >= highlightColorMap.length) break; // do not go past number of verses in this chapter
 
-                        final String caption = cursor.getString(col_caption);
-                        final Highlights.Info info = Highlights.decode(caption);
+                    final Highlights.Info info = Highlights.decode(entity.getCaption());
 
-                        highlightColorMap[mapOffset2] = info;
-                    }
+                    highlightColorMap[mapOffset2] = info;
                 }
             }
         }
@@ -219,88 +215,72 @@ public class InternalDb {
      * @param colorRgb may NOT be -1. Use {@link #updateOrInsertHighlights(int, IntArrayList, int)} to delete highlight.
      */
     public void updateOrInsertPartialHighlight(final int ari, final int colorRgb, final CharSequence verseText, final int startOffset, final int endOffset) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-
-        db.beginTransactionNonExclusive();
-        try {
+        AppDatabase.get(App.context).runInTransaction(() -> {
             // order by modifyTime desc so we modify the latest one and remove earlier ones if they exist.
-            try (Cursor c = db.query(Db.TABLE_Marker, null, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?", ToStringArray(ari, Marker.Kind.highlight.code), null, null, Db.Marker.modifyTime + " desc")) {
-                final int hashCode = Highlights.hashCode(verseText.toString());
-                final Date now = new Date();
+            final List<MarkerEntity> existing = AppDatabase.get(App.context).markerDao()
+                .listForAriKindOrderedByModifyTimeDesc(ari, Marker.Kind.highlight.code);
+            final int hashCode = Highlights.hashCode(verseText.toString());
+            final Date now = new Date();
 
-                if (c.moveToNext()) { // check if marker exists
-                    { // modify the latest one
-                        final Marker marker = MarkerDao.markerFromCursor(c);
-                        marker.modifyTime = now;
-                        marker.caption = Highlights.encode(colorRgb, hashCode, startOffset, endOffset);
-                        markerDao.upsert(marker);
-                    }
-
-                    // remove earlier ones if they exist (caused by sync)
-                    while (c.moveToNext()) {
-                        final long _id = c.getLong(c.getColumnIndexOrThrow("_id"));
-                        markerDao.deleteById(_id);
-                    }
-                } else { // insert
-                    final Marker marker = Marker.createNewMarker(ari, Marker.Kind.highlight, Highlights.encode(colorRgb, hashCode, startOffset, endOffset), 1, now, now);
+            if (!existing.isEmpty()) { // check if marker exists
+                { // modify the latest one
+                    final Marker marker = MarkerDao.toModel(existing.get(0));
+                    marker.modifyTime = now;
+                    marker.caption = Highlights.encode(colorRgb, hashCode, startOffset, endOffset);
                     markerDao.upsert(marker);
                 }
+
+                // remove earlier ones if they exist (caused by sync)
+                for (int i = 1; i < existing.size(); i++) {
+                    markerDao.deleteById(existing.get(i).get_id());
+                }
+            } else { // insert
+                final Marker marker = Marker.createNewMarker(ari, Marker.Kind.highlight, Highlights.encode(colorRgb, hashCode, startOffset, endOffset), 1, now, now);
+                markerDao.upsert(marker);
             }
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
+        });
 
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
     }
 
     public void updateOrInsertHighlights(int ari_bookchapter, IntArrayList selectedVerses_1, int colorRgb) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-
-        db.beginTransactionNonExclusive();
-        try {
-            final String[] params = ToStringArray(null /* for the ari */, Marker.Kind.highlight.code);
-
+        AppDatabase.get(App.context).runInTransaction(() -> {
             // every requested verses
             for (int i = 0; i < selectedVerses_1.size(); i++) {
                 final int ari = Ari.encodeWithBc(ari_bookchapter, selectedVerses_1.get(i));
-                params[0] = String.valueOf(ari);
 
                 // order by modifyTime desc so we modify the latest one and remove earlier ones if they exist.
-                try (Cursor c = db.query(Db.TABLE_Marker, null, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?", params, null, null, Db.Marker.modifyTime + " desc")) {
-                    if (c.moveToNext()) { // check if marker exists
-                        { // modify the latest one
-                            final Marker marker = MarkerDao.markerFromCursor(c);
-                            marker.modifyTime = new Date();
-                            if (colorRgb != -1) {
-                                marker.caption = Highlights.encode(colorRgb);
-                                markerDao.upsert(marker);
-                            } else {
-                                // delete entry
-                                markerDao.deleteById(marker._id);
-                            }
-                        }
+                final List<MarkerEntity> existing = AppDatabase.get(App.context).markerDao()
+                    .listForAriKindOrderedByModifyTimeDesc(ari, Marker.Kind.highlight.code);
 
-                        // remove earlier ones if they exist (caused by sync)
-                        while (c.moveToNext()) {
-                            final long _id = c.getLong(c.getColumnIndexOrThrow("_id"));
-                            markerDao.deleteById(_id);
-                        }
-                    } else {
-                        if (colorRgb == -1) {
-                            // no need to do, from no color to no color
-                        } else {
-                            final Date now = new Date();
-                            final Marker marker = Marker.createNewMarker(ari, Marker.Kind.highlight, Highlights.encode(colorRgb), 1, now, now);
+                if (!existing.isEmpty()) { // check if marker exists
+                    { // modify the latest one
+                        final Marker marker = MarkerDao.toModel(existing.get(0));
+                        marker.modifyTime = new Date();
+                        if (colorRgb != -1) {
+                            marker.caption = Highlights.encode(colorRgb);
                             markerDao.upsert(marker);
+                        } else {
+                            // delete entry
+                            markerDao.deleteById(marker._id);
                         }
+                    }
+
+                    // remove earlier ones if they exist (caused by sync)
+                    for (int j = 1; j < existing.size(); j++) {
+                        markerDao.deleteById(existing.get(j).get_id());
+                    }
+                } else {
+                    if (colorRgb == -1) {
+                        // no need to do, from no color to no color
+                    } else {
+                        final Date now = new Date();
+                        final Marker marker = Marker.createNewMarker(ari, Marker.Kind.highlight, Highlights.encode(colorRgb), 1, now, now);
+                        markerDao.upsert(marker);
                     }
                 }
             }
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
+        });
 
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
     }
@@ -318,60 +298,41 @@ public class InternalDb {
 
         Arrays.fill(colors, -1);
 
-        // check if exists
+        // check if exists — exclusive lower bound on ari matches the legacy SQL
+        final List<MarkerEntity> entities = AppDatabase.get(App.context).markerDao()
+            .listForAriRangeExclusiveMinAndKind(ariMin, ariMax, Marker.Kind.highlight.code);
 
-        try (Cursor c = helper.getReadableDatabase().query(
-            Db.TABLE_Marker, null, Db.Marker.ari + ">? and " + Db.Marker.ari + "<=? and " + Db.Marker.kind + "=?",
-            new String[]{String.valueOf(ariMin), String.valueOf(ariMax), String.valueOf(Marker.Kind.highlight.code)},
-            null, null, null
-        )) {
-            final int col_ari = c.getColumnIndexOrThrow(Db.Marker.ari);
-            final int col_caption = c.getColumnIndexOrThrow(Db.Marker.caption);
-
-            // put to array first
-            while (c.moveToNext()) {
-                int ari = c.getInt(col_ari);
-                int index = ari & 0xff;
-                final Highlights.Info info = Highlights.decode(c.getString(col_caption));
-                colors[index] = info.colorRgb;
-            }
-
-            // determine default color. If all has color x, then it's x. If one of them is not x, then it's -1.
-            for (int i = 0; i < selectedVerses_1.size(); i++) {
-                int verse_1 = selectedVerses_1.get(i);
-                int color = colors[verse_1];
-                if (res == -2) {
-                    res = color;
-                } else if (color != res) {
-                    return -1;
-                }
-            }
-
-            if (res == -2) return -1;
-            return res;
+        // put to array first
+        for (final MarkerEntity entity : entities) {
+            int ari = entity.getAri();
+            int index = ari & 0xff;
+            final Highlights.Info info = Highlights.decode(entity.getCaption());
+            colors[index] = info.colorRgb;
         }
+
+        // determine default color. If all has color x, then it's x. If one of them is not x, then it's -1.
+        for (int i = 0; i < selectedVerses_1.size(); i++) {
+            int verse_1 = selectedVerses_1.get(i);
+            int color = colors[verse_1];
+            if (res == -2) {
+                res = color;
+            } else if (color != res) {
+                return -1;
+            }
+        }
+
+        if (res == -2) return -1;
+        return res;
     }
 
     /**
      * Get the highlight info for a single verse
      */
     public Highlights.Info getHighlightColorRgb(final int ari) {
-        try (Cursor c = helper.getReadableDatabase().query(
-            Db.TABLE_Marker, null, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?",
-            ToStringArray(ari, Marker.Kind.highlight.code),
-            null,
-            null,
-            Db.Marker.modifyTime + " desc"
-        )) {
-            final int col_caption = c.getColumnIndexOrThrow(Db.Marker.caption);
-
-            // put to array first
-            if (c.moveToNext()) {
-                return Highlights.decode(c.getString(col_caption));
-            } else {
-                return null;
-            }
-        }
+        final List<MarkerEntity> entities = AppDatabase.get(App.context).markerDao()
+            .listForAriKindOrderedByModifyTimeDesc(ari, Marker.Kind.highlight.code);
+        if (entities.isEmpty()) return null;
+        return Highlights.decode(entities.get(0).getCaption());
     }
 
     public void storeArticleToDevotions(DevotionArticle article) {
@@ -438,10 +399,7 @@ public class InternalDb {
     }
 
     public void updateLabels(final Marker marker, final Set<Label> newLabels) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-
-        db.beginTransactionNonExclusive();
-        try {
+        AppDatabase.get(App.context).runInTransaction(() -> {
             final List<Marker_Label> oldMls = marker_LabelDao.listByMarker(marker);
 
             // helper list
@@ -489,11 +447,7 @@ public class InternalDb {
             for (final Label addLabel : addLabels) {
                 marker_LabelDao.insert(Marker_Label.createNewMarker_Label(marker.gid, addLabel.gid));
             }
-
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
+        });
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
     }
 
@@ -516,15 +470,10 @@ public class InternalDb {
      */
     public void deleteLabelAndMarker_LabelsByLabelId(long _id) {
         final Label label = labelDao.getById(_id);
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        db.beginTransactionNonExclusive();
-        try {
+        AppDatabase.get(App.context).runInTransaction(() -> {
             marker_LabelDao.deleteByLabelGid(label.gid);
             labelDao.deleteById(_id);
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
+        });
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
     }
 
@@ -543,9 +492,7 @@ public class InternalDb {
     }
 
     public void sortLabelsAlphabetically() {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        db.beginTransactionNonExclusive();
-        try {
+        AppDatabase.get(App.context).runInTransaction(() -> {
             final List<Label> labels = labelDao.listAll();
             labels.sort((lhs, rhs) -> {
                 if (lhs.title == null || rhs.title == null) {
@@ -559,11 +506,7 @@ public class InternalDb {
                 label.ordering = i + 1;
                 labelDao.upsert(label);
             }
-
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
+        });
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
     }
 
@@ -586,21 +529,9 @@ public class InternalDb {
             AppLog.d(TAG, "@@reorderLabels from _id=" + from._id + " ordering=" + from.ordering + " to _id=" + to._id + " ordering=" + to.ordering);
         }
 
-        SQLiteDatabase db = helper.getWritableDatabase();
-        db.beginTransactionNonExclusive();
-        try {
-            if (from.ordering > to.ordering) { // move up
-                db.execSQL("update " + Db.TABLE_Label + " set " + Db.Label.ordering + "=(" + Db.Label.ordering + "+1) where ?<=" + Db.Label.ordering + " and " + Db.Label.ordering + "<?", new Object[]{to.ordering, from.ordering});
-                db.execSQL("update " + Db.TABLE_Label + " set " + Db.Label.ordering + "=? where _id=?", new Object[]{to.ordering, from._id});
-            } else if (from.ordering < to.ordering) { // move down
-                db.execSQL("update " + Db.TABLE_Label + " set " + Db.Label.ordering + "=(" + Db.Label.ordering + "-1) where ?<" + Db.Label.ordering + " and " + Db.Label.ordering + "<=?", new Object[]{from.ordering, to.ordering});
-                db.execSQL("update " + Db.TABLE_Label + " set " + Db.Label.ordering + "=? where _id=?", new Object[]{to.ordering, from._id});
-            }
-
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
+        // Single-transaction shift + final ordering update lives in the Room DAO
+        // (see LabelRoomDao.reorderById). No-op when from.ordering == to.ordering.
+        AppDatabase.get(App.context).labelDao().reorderById(from._id, from.ordering, to.ordering);
         Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
     }
 

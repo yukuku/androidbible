@@ -1,122 +1,92 @@
 package yuku.alkitab.base.storage
 
-import android.content.ContentValues
-import android.database.Cursor
+import yuku.alkitab.base.storage.room.AppDatabase
+import yuku.alkitab.base.storage.room.LabelEntity
+import yuku.alkitab.base.storage.room.LabelRoomDao
 import yuku.alkitab.model.Label
 import yuku.alkitab.model.Marker
 
 /**
- * Type-safe accessor for the `Label` table. Cross-table reads against
- * `Marker_Label` (for [listByMarker]) live here since the result type is
- * `Label`; pure `Marker_Label` operations live in [Marker_LabelDao].
+ * Facade over the Room-backed [LabelRoomDao] that preserves the legacy
+ * `Label`-based public surface. Existing call sites in [InternalDb] don't
+ * need to change.
  *
- * Sync-notify side effects remain in [InternalDb]'s delegators so the DAO
- * stays pure persistence. Multi-step flows that must run in a single
- * transaction (`updateLabels`, `deleteLabelAndMarker_LabelsByLabelId`,
- * `sortLabelsAlphabetically`, `reorderLabels`) also remain in [InternalDb]
- * and call DAO primitives.
+ * Cross-file note: this DAO is constructed with [InternalDbHelper] only so
+ * its constructor signature stays unchanged. The helper is no longer used
+ * internally; [AppDatabase] supplies the underlying SQLite file. The
+ * one-time data copy runs in
+ * [yuku.alkitab.base.storage.room.MarkerDataMigration].
+ *
+ * `listByMarker` cross-joins `label` with `marker_label` — implemented on
+ * the Room DAO ([LabelRoomDao.listByMarkerGid]) since both tables now live
+ * in the same Room database.
  */
-class LabelDao(private val helper: InternalDbHelper) {
+@Suppress("UNUSED_PARAMETER")
+class LabelDao(helper: InternalDbHelper) {
 
-    fun listAll(): List<Label> {
-        val res = ArrayList<Label>()
-        helper.readableDatabase.query(
-            Db.TABLE_Label, null, null, null, null, null,
-            Db.Label.ordering + " asc",
-        ).use { cursor ->
-            while (cursor.moveToNext()) res += labelFromCursor(cursor)
-        }
-        return res
-    }
+    private val roomDao: LabelRoomDao
+        get() = AppDatabase.get(yuku.afw.App.context).labelDao()
 
-    fun getMaxOrdering(): Int {
-        val db = helper.readableDatabase
-        db.compileStatement("select max(${Db.Label.ordering}) from ${Db.TABLE_Label}").use { stmt ->
-            return stmt.simpleQueryForLong().toInt()
-        }
-    }
+    fun listAll(): List<Label> = roomDao.listAll().map(::toModel)
+
+    fun getMaxOrdering(): Int = roomDao.getMaxOrdering()
 
     /**
      * Allocates the next ordering and inserts a fresh [Label]. Returns the
-     * created row with its assigned `_id`. Does not send sync notifications —
-     * the caller is responsible.
+     * created row with its assigned `_id`. Does not send sync notifications
+     * — the caller is responsible.
      */
     fun insertNew(title: String, bgColor: String?): Label {
         val res = Label.createNewLabel(title, getMaxOrdering() + 1, bgColor)
-        res._id = helper.writableDatabase.insert(Db.TABLE_Label, null, labelToContentValues(res))
+        res._id = roomDao.insert(toEntity(res))
         return res
     }
 
-    fun getById(_id: Long): Label? {
-        helper.readableDatabase.query(
-            Db.TABLE_Label, null, "_id=?", arrayOf(_id.toString()),
-            null, null, null,
-        ).use { cursor ->
-            return if (cursor.moveToNext()) labelFromCursor(cursor) else null
-        }
-    }
+    fun getById(_id: Long): Label? = roomDao.findById(_id)?.let(::toModel)
 
-    fun getByGid(gid: String): Label? {
-        helper.readableDatabase.query(
-            Db.TABLE_Label, null, Db.Label.gid + "=?", arrayOf(gid),
-            null, null, null,
-        ).use { cursor ->
-            return if (cursor.moveToNext()) labelFromCursor(cursor) else null
-        }
-    }
-
-    /** Inserts when `label._id == 0`, otherwise updates by _id. Mutates `label._id` on insert. */
-    fun upsert(label: Label) {
-        val db = helper.writableDatabase
-        if (label._id != 0L) {
-            db.update(Db.TABLE_Label, labelToContentValues(label), "_id=?", arrayOf(label._id.toString()))
-        } else {
-            label._id = db.insert(Db.TABLE_Label, null, labelToContentValues(label))
-        }
-    }
-
-    fun deleteByGid(gid: String): Int = helper.writableDatabase.delete(
-        Db.TABLE_Label, Db.Label.gid + "=?", arrayOf(gid),
-    )
-
-    fun deleteById(_id: Long): Int = helper.writableDatabase.delete(
-        Db.TABLE_Label, "_id=?", arrayOf(_id.toString()),
-    )
+    fun getByGid(gid: String): Label? = roomDao.findByGid(gid)?.let(::toModel)
 
     /**
-     * Labels attached to [marker], ordered by `Label.ordering asc`. Cross-joins
-     * `Label` against `Marker_Label`.
+     * Inserts when `label._id == 0`, otherwise updates by `_id`. Mutates
+     * `label._id` on insert.
      */
-    fun listByMarker(marker: Marker): List<Label> {
-        val res = ArrayList<Label>()
-        helper.readableDatabase.rawQuery(
-            "select ${Db.TABLE_Label}.* from ${Db.TABLE_Label}, ${Db.TABLE_Marker_Label}" +
-                " where ${Db.TABLE_Marker_Label}.${Db.Marker_Label.label_gid}" +
-                " = ${Db.TABLE_Label}.${Db.Label.gid}" +
-                " and ${Db.TABLE_Marker_Label}.${Db.Marker_Label.marker_gid}=?" +
-                " order by ${Db.TABLE_Label}.${Db.Label.ordering} asc",
-            arrayOf(marker.gid),
-        ).use { cursor ->
-            while (cursor.moveToNext()) res += labelFromCursor(cursor)
+    fun upsert(label: Label) {
+        val entity = toEntity(label)
+        if (label._id != 0L) {
+            roomDao.update(entity)
+        } else {
+            label._id = roomDao.insert(entity)
         }
-        return res
     }
 
+    fun deleteByGid(gid: String): Int = roomDao.deleteByGid(gid)
+
+    fun deleteById(_id: Long): Int = roomDao.deleteById(_id)
+
+    /**
+     * Labels attached to [marker], ordered by `Label.ordering asc`. The
+     * cross-join against `marker_label` happens in the Room query.
+     */
+    fun listByMarker(marker: Marker): List<Label> =
+        roomDao.listByMarkerGid(marker.gid).map(::toModel)
+
     companion object {
-        fun labelFromCursor(c: Cursor): Label = Label.createEmptyLabel().apply {
-            _id = c.getLong(c.getColumnIndexOrThrow("_id"))
-            gid = c.getString(c.getColumnIndexOrThrow(Db.Label.gid))
-            title = c.getString(c.getColumnIndexOrThrow(Db.Label.title))
-            ordering = c.getInt(c.getColumnIndexOrThrow(Db.Label.ordering))
-            backgroundColor = c.getString(c.getColumnIndexOrThrow(Db.Label.backgroundColor))
+        @JvmStatic
+        fun toModel(e: LabelEntity): Label = Label.createEmptyLabel().apply {
+            _id = e._id
+            gid = e.gid
+            title = e.title
+            ordering = e.ordering
+            backgroundColor = e.backgroundColor
         }
 
-        /** `_id` is not stored in the [ContentValues]. */
-        fun labelToContentValues(label: Label): ContentValues = ContentValues().apply {
-            put(Db.Label.gid, label.gid)
-            put(Db.Label.title, label.title)
-            put(Db.Label.ordering, label.ordering)
-            put(Db.Label.backgroundColor, label.backgroundColor)
-        }
+        @JvmStatic
+        fun toEntity(label: Label): LabelEntity = LabelEntity(
+            _id = label._id,
+            gid = label.gid,
+            title = label.title,
+            ordering = label.ordering,
+            backgroundColor = label.backgroundColor,
+        )
     }
 }

@@ -9,6 +9,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -97,13 +98,15 @@ class AppDatabaseMigrationTest {
         }
 
         // Now open the DB the normal way — Room validates the schema against
-        // [VersionEntity]'s annotations. Mismatches throw at this point.
+        // the entity annotations and applies the registered migration on the
+        // way from v1 to the current version. Mismatches throw at this point.
         val room = Room.databaseBuilder(
             InstrumentationRegistry.getInstrumentation().targetContext,
             AppDatabase::class.java,
             TEST_DB,
         )
             .allowMainThreadQueries()
+            .addMigrations(AppDatabase.MIGRATION_1_2)
             .build()
         AppDatabase.setForTesting(room)
 
@@ -119,15 +122,108 @@ class AppDatabaseMigrationTest {
     }
 
     /**
-     * Placeholder demonstrating the shape of a v1→v2 migration test. Marked
-     * `@org.junit.Ignore` because there is no version 2 yet. Delete this and
-     * write a real `migrates1To2` test when bumping `@Database(version = 2)`.
+     * REM-10: v1 → v2 adds the `marker`, `label`, and `marker_label` tables
+     * to [AppDatabase]. The migration must:
+     *
+     * - Preserve every row already in the v1 `version` table.
+     * - Create the three new tables with the schema Room's entity
+     *   definitions emit (verified by [MigrationTestHelper.runMigrationsAndValidate]
+     *   when `validateDroppedTables = true`).
+     * - Leave the new tables empty (data copy is a separate concern handled
+     *   by [MarkerDataMigration]).
      */
-    @org.junit.Ignore("scaffold — see KDoc on the class for how to fill this in when @Database version bumps")
     @Test
-    fun migratesFromV1ToV2_exampleScaffold() {
-        // helper.createDatabase(TEST_DB, 1).use { db -> /* seed v1 rows */ }
-        // helper.runMigrationsAndValidate(TEST_DB, 2, true, MIGRATION_1_2).use { db -> /* assert v2 shape */ }
+    fun migrates1To2() {
+        // Seed a v1 row so we can verify the migration doesn't drop it.
+        helper.createDatabase(TEST_DB, 1).use { db ->
+            val cv = ContentValues().apply {
+                put("filename", "/data/a.yes")
+                put("preset_name", "kjv")
+                put("locale", "en")
+                put("shortName", "KJV")
+                put("longName", "King James")
+                put("description", "desc")
+                put("modifyTime", 1_700_000_000)
+                put("active", 1)
+                put("ordering", 101)
+            }
+            db.insert("version", android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE, cv)
+        }
+
+        // Run the migration; `validateDroppedTables = true` asks Room to
+        // verify the migrated schema matches what its entity definitions
+        // expect — including the three new tables and all their indexes.
+        helper.runMigrationsAndValidate(TEST_DB, 2, true, AppDatabase.MIGRATION_1_2).use { db ->
+            // v1 row survived
+            db.query("SELECT longName, ordering FROM version WHERE filename = '/data/a.yes'").use { c ->
+                assertTrue(c.moveToFirst())
+                assertEquals("King James", c.getString(0))
+                assertEquals(101, c.getInt(1))
+            }
+            // The three new tables exist
+            db.query("SELECT name FROM sqlite_master WHERE type='table' AND name IN ('marker', 'label', 'marker_label') ORDER BY name").use { c ->
+                val tables = mutableListOf<String>()
+                while (c.moveToNext()) tables += c.getString(0)
+                assertEquals(listOf("label", "marker", "marker_label"), tables)
+            }
+            // … and are empty
+            db.query("SELECT COUNT(*) FROM marker").use { c ->
+                assertTrue(c.moveToFirst())
+                assertEquals(0, c.getInt(0))
+            }
+            db.query("SELECT COUNT(*) FROM label").use { c ->
+                assertTrue(c.moveToFirst())
+                assertEquals(0, c.getInt(0))
+            }
+            db.query("SELECT COUNT(*) FROM marker_label").use { c ->
+                assertTrue(c.moveToFirst())
+                assertEquals(0, c.getInt(0))
+            }
+        }
+    }
+
+    /**
+     * The post-migration schema must round-trip a row through every new
+     * entity. Catches drift between the [AppDatabase.MIGRATION_1_2] SQL and
+     * the entity declarations (e.g. forgetting an index, getting a column
+     * type wrong).
+     */
+    @Test
+    fun `after migrating from v1 to v2 Room opens cleanly and round-trips a marker through the new DAOs`() {
+        helper.createDatabase(TEST_DB, 1).close()
+
+        // Open via Room — this triggers schema validation. If the migrated
+        // schema doesn't match what Room's entities expect, the open throws.
+        val room = Room.databaseBuilder(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            AppDatabase::class.java,
+            TEST_DB,
+        )
+            .allowMainThreadQueries()
+            .addMigrations(AppDatabase.MIGRATION_1_2)
+            .build()
+        AppDatabase.setForTesting(room)
+
+        try {
+            val id = room.markerDao().insert(
+                yuku.alkitab.base.storage.room.MarkerEntity(
+                    _id = 0L,
+                    gid = "g1",
+                    ari = 100,
+                    kind = 1,
+                    caption = "c",
+                    verseCount = 1,
+                    createTime = 0,
+                    modifyTime = 0,
+                ),
+            )
+            assertTrue(id > 0)
+            val loaded = room.markerDao().findByGid("g1")
+            assertNotNull(loaded)
+            assertEquals(100, loaded!!.ari)
+        } finally {
+            room.close()
+        }
     }
 
     private companion object {
