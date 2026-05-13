@@ -67,9 +67,10 @@ class InternalDbHelperMigrationTest {
     }
 
     private fun deleteDbFiles() {
-        listOf(dbFile, File(dbFile.path + "-shm"), File(dbFile.path + "-wal")).forEach {
-            if (it.exists()) it.delete()
-        }
+        // Platform helper that cleans the main file plus every SQLite sidecar
+        // (`-journal`, `-shm`, `-wal`, `-mj*`). Safe when the file doesn't
+        // exist yet.
+        SQLiteDatabase.deleteDatabase(dbFile)
     }
 
     /**
