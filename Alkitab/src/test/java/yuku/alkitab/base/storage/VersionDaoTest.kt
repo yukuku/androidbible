@@ -1,6 +1,7 @@
 package yuku.alkitab.base.storage
 
 import android.app.Application
+import androidx.room.Room
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -12,32 +13,41 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import yuku.alkitab.base.model.MVersionDb
+import yuku.alkitab.base.storage.room.AppDatabase
 
 /**
- * Robolectric tests for [VersionDao]. Mirrors the setup in [InternalDbTest] —
- * Robolectric is required because [InternalDbHelper] extends
- * [android.database.sqlite.SQLiteOpenHelper].
+ * Robolectric tests for [VersionDao]. Originally exercised the SQLite-backed
+ * implementation against [InternalDbHelper]; after REM-11 the facade routes
+ * through Room, so this test now installs an in-memory [AppDatabase] in
+ * [setUp].
  *
- * The `Version` table's schema is owned by [InternalDbHelper.createTableVersion],
- * so these tests also implicitly exercise that schema stays in sync with what
- * the DAO expects to read/write.
+ * The behavioral contract is unchanged — these tests are the parity gate for
+ * the Room migration.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class, sdk = [34])
 class VersionDaoTest {
     private lateinit var helper: InternalDbHelper
+    private lateinit var roomDb: AppDatabase
     private lateinit var dao: VersionDao
 
     @Before
     fun setUp() {
         val app = RuntimeEnvironment.getApplication()
         yuku.afw.App.context = app
+        // InternalDbHelper is still needed by the legacy VersionDao
+        // constructor signature, but the facade ignores it now.
         helper = InternalDbHelper(app)
+        roomDb = Room.inMemoryDatabaseBuilder(app, AppDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
+        AppDatabase.setForTesting(roomDb)
         dao = VersionDao(helper)
     }
 
     @After
     fun tearDown() {
+        AppDatabase.setForTesting(null)
         helper.close()
     }
 

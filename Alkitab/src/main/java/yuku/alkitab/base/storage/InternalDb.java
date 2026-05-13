@@ -623,34 +623,30 @@ public class InternalDb {
             AppLog.d(TAG, "@@reorderVersions from id=" + from.getVersionId() + " ordering=" + from.ordering + " to id=" + to.getVersionId() + " ordering=" + to.ordering);
         }
 
-        SQLiteDatabase db = helper.getWritableDatabase();
-        db.beginTransactionNonExclusive();
-        try {
-            {
-                final int internal_ordering = Preferences.getInt(Prefkey.internal_version_ordering, MVersionInternal.DEFAULT_ORDERING);
-                if (from.ordering > to.ordering) { // move up
-                    db.execSQL("update " + Db.TABLE_Version + " set " + Db.Version.ordering + "=(" + Db.Version.ordering + "+1) where ?<=" + Db.Version.ordering + " and " + Db.Version.ordering + "<?", new Object[]{to.ordering, from.ordering});
-                    if (to.ordering <= internal_ordering && internal_ordering < from.ordering) {
-                        Preferences.setInt(Prefkey.internal_version_ordering, internal_ordering + 1);
-                    }
-                } else if (from.ordering < to.ordering) { // move down
-                    db.execSQL("update " + Db.TABLE_Version + " set " + Db.Version.ordering + "=(" + Db.Version.ordering + "-1) where ?<" + Db.Version.ordering + " and " + Db.Version.ordering + "<=?", new Object[]{from.ordering, to.ordering});
-                    if (from.ordering < internal_ordering && internal_ordering <= to.ordering) {
-                        Preferences.setInt(Prefkey.internal_version_ordering, internal_ordering - 1);
-                    }
-                }
+        // Bookkeeping for the internal-version ordering preference (a single
+        // int held in Preferences, not stored in the DB). The internal version
+        // sits in the same ordered list as DB versions, so when we shift DB
+        // rows around the internal version's ordering may also need to slide.
+        final int internal_ordering = Preferences.getInt(Prefkey.internal_version_ordering, MVersionInternal.DEFAULT_ORDERING);
+        if (from.ordering > to.ordering) { // move up
+            if (to.ordering <= internal_ordering && internal_ordering < from.ordering) {
+                Preferences.setInt(Prefkey.internal_version_ordering, internal_ordering + 1);
             }
-
-            // both move up and move down arrives at this final step
-            if (from instanceof MVersionDb) {
-                db.execSQL("update " + Db.TABLE_Version + " set " + Db.Version.ordering + "=? where " + Db.Version.filename + "=?", new Object[]{to.ordering, ((MVersionDb) from).filename});
-            } else if (from instanceof MVersionInternal) {
-                Preferences.setInt(Prefkey.internal_version_ordering, to.ordering);
+        } else if (from.ordering < to.ordering) { // move down
+            if (from.ordering < internal_ordering && internal_ordering <= to.ordering) {
+                Preferences.setInt(Prefkey.internal_version_ordering, internal_ordering - 1);
             }
+        }
 
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
+        if (from instanceof MVersionDb) {
+            // Single-transaction shift + final ordering update lives in the
+            // Room DAO (see VersionRoomDao.reorderByFilename).
+            yuku.alkitab.base.storage.room.AppDatabase
+                .get(yuku.afw.App.context)
+                .versionDao()
+                .reorderByFilename(((MVersionDb) from).filename, from.ordering, to.ordering);
+        } else if (from instanceof MVersionInternal) {
+            Preferences.setInt(Prefkey.internal_version_ordering, to.ordering);
         }
     }
 

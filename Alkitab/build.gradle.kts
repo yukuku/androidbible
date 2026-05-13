@@ -17,6 +17,7 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.firebase.crashlytics.gradle)
     alias(libs.plugins.google.services)
 }
@@ -140,6 +141,16 @@ android {
         // reading the internal version. Empty string means "internal has no
         // audio for this flavor". Each productFlavor overrides this below.
         buildConfigField("String", "INTERNAL_VERSION_AUDIO_ID", "\"\"")
+    }
+
+    // Room schema export — JSON snapshots of each @Database version land here.
+    // Checked into git so reviewers can see schema diffs. See REM-11 design doc.
+    ksp {
+        arg("room.schemaLocation", "$projectDir/schemas")
+        arg("room.incremental", "true")
+    }
+    sourceSets {
+        getByName("androidTest").assets.srcDirs("$projectDir/schemas")
     }
     buildTypes {
         debug {
@@ -368,6 +379,12 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.androidx.work.runtime.ktx)
+
+    // Room — see docs/superpowers/specs/2026-05-13-rem-11-room-version-table-design.md
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    testImplementation(libs.androidx.room.testing)
 
     // Google
     implementation(libs.androidx.media3.exoplayer)
