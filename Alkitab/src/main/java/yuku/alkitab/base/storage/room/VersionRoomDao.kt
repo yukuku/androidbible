@@ -21,6 +21,9 @@ interface VersionRoomDao {
     @Query("SELECT * FROM version ORDER BY ordering ASC")
     fun listAll(): List<VersionEntity>
 
+    @Query("SELECT COUNT(*) FROM version")
+    fun count(): Int
+
     @Query("SELECT IFNULL(MAX(ordering), 0) FROM version")
     fun getMaxOrdering(): Int
 
@@ -34,6 +37,14 @@ interface VersionRoomDao {
      */
     @Insert
     fun insert(entity: VersionEntity): Long
+
+    /**
+     * Bulk insert — runs atomically in a single transaction (Room's `@Insert`
+     * default). Used by [VersionDataMigration] so a partial migration can't
+     * leave the table in a half-populated state.
+     */
+    @Insert
+    fun insertAll(entities: List<VersionEntity>)
 
     @Update
     fun update(entity: VersionEntity): Int

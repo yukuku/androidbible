@@ -21,7 +21,7 @@ object VersionDataMigration {
 
     fun copyFromLegacyDbIfNeeded(roomDb: AppDatabase, legacyHelper: InternalDbHelper) {
         val dao = roomDb.versionDao()
-        if (dao.listAll().isNotEmpty()) {
+        if (dao.count() > 0) {
             // Already migrated (or app freshly installed and a previous version
             // wrote to Room directly). Either way: nothing to do.
             return
@@ -33,9 +33,11 @@ object VersionDataMigration {
             return
         }
 
-        for (row in rows) {
-            dao.insert(row)
-        }
+        // Bulk insert — Room's `@Insert` runs inside a single transaction, so
+        // a crash mid-migration leaves zero rows in Room and the next launch
+        // retries cleanly. Per-row inserts would leave a partial state and
+        // make `count() > 0` lie about completeness.
+        dao.insertAll(rows)
         AppLog.d(TAG, "Copied ${rows.size} version row(s) from legacy Version table to Room")
     }
 
