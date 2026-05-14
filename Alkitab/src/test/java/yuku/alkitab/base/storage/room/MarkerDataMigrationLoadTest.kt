@@ -2,6 +2,7 @@ package yuku.alkitab.base.storage.room
 
 import android.app.Application
 import android.content.ContentValues
+import android.preference.PreferenceManager
 import androidx.room.Room
 import java.util.Locale
 import org.junit.After
@@ -13,6 +14,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import yuku.afw.storage.Preferences
 import yuku.alkitab.base.storage.Db
 import yuku.alkitab.base.storage.InternalDbHelper
 
@@ -45,6 +47,14 @@ class MarkerDataMigrationLoadTest {
     fun setUp() {
         val app = RuntimeEnvironment.getApplication()
         yuku.afw.App.context = app
+        // Both migrations gate on a one-shot SharedPreferences flag
+        // (`*_data_migration_v1_done`). Robolectric reuses SharedPreferences
+        // state across test methods in the same JVM, so a prior test
+        // (e.g. MarkerDataMigrationTest) leaves the flag set — the migration
+        // would early-return and Room would stay empty. Clear prefs and the
+        // Preferences static cache so this test starts from a clean slate.
+        PreferenceManager.getDefaultSharedPreferences(app).edit().clear().commit()
+        Preferences.invalidate()
         legacy = InternalDbHelper(app)
         room = Room.inMemoryDatabaseBuilder(app, AppDatabase::class.java)
             .allowMainThreadQueries()
