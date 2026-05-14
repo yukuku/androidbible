@@ -237,6 +237,9 @@ object S {
         // One-time copy of the legacy `Devotion` table into Room. Same
         // idempotency / retry properties as the marker/version copies.
         yuku.alkitab.base.storage.room.DevotionDataMigration.copyFromLegacyDbIfNeeded(roomDb, helper)
+        // One-time copy of the legacy `PerVersion` table into Room (REM-28).
+        // Same idempotency / retry properties.
+        yuku.alkitab.base.storage.room.PerVersionDataMigration.copyFromLegacyDbIfNeeded(roomDb, helper)
         InternalDb(helper)
     }
 

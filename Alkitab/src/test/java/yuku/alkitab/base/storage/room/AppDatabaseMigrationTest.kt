@@ -106,7 +106,7 @@ class AppDatabaseMigrationTest {
             TEST_DB,
         )
             .allowMainThreadQueries()
-            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3)
+            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3, AppDatabase.MIGRATION_3_4)
             .build()
         AppDatabase.setForTesting(room)
 
@@ -285,7 +285,7 @@ class AppDatabaseMigrationTest {
             TEST_DB,
         )
             .allowMainThreadQueries()
-            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3)
+            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3, AppDatabase.MIGRATION_3_4)
             .build()
         AppDatabase.setForTesting(room)
 
@@ -312,6 +312,70 @@ class AppDatabaseMigrationTest {
     }
 
     /**
+     * v3 → v4 adds the `per_version` table. The migration must:
+     *
+     * - Preserve every row already in the v3 tables (`version`, `marker`,
+     *   `label`, `marker_label`, `devotion`).
+     * - Create the `per_version` table with the schema Room's entity
+     *   definitions emit (verified by [MigrationTestHelper.runMigrationsAndValidate]
+     *   when `validateDroppedTables = true`).
+     * - Leave the new table empty (data copy is a separate concern handled
+     *   by [PerVersionDataMigration]).
+     */
+    @Test
+    fun migrates3To4() {
+        // Seed a v3 row in the `devotion` table so we can verify the
+        // migration doesn't drop pre-existing data. Walk v1 → v2 → v3 first
+        // so the v3 tables exist.
+        helper.createDatabase(TEST_DB, 1).close()
+        helper.runMigrationsAndValidate(TEST_DB, 2, true, AppDatabase.MIGRATION_1_2).close()
+        helper.runMigrationsAndValidate(TEST_DB, 3, true, AppDatabase.MIGRATION_2_3).use { db ->
+            val cv = ContentValues().apply {
+                put("name", "RH")
+                put("date", "2026-05-14")
+                put("body", "body")
+                put("readyToUse", 1)
+                put("touchTime", 1_700_000_000)
+                put("dataFormatVersion", 1)
+            }
+            db.insert("devotion", android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE, cv)
+        }
+
+        // Run v3 → v4.
+        helper.runMigrationsAndValidate(TEST_DB, 4, true, AppDatabase.MIGRATION_3_4).use { db ->
+            // v3 row survived
+            db.query("SELECT body FROM devotion WHERE name = 'RH' AND date = '2026-05-14'").use { c ->
+                assertTrue(c.moveToFirst())
+                assertEquals("body", c.getString(0))
+            }
+            // The new table exists
+            db.query("SELECT name FROM sqlite_master WHERE type='table' AND name = 'per_version'").use { c ->
+                assertTrue(c.moveToFirst())
+                assertEquals("per_version", c.getString(0))
+            }
+            // … and is empty
+            db.query("SELECT COUNT(*) FROM per_version").use { c ->
+                assertTrue(c.moveToFirst())
+                assertEquals(0, c.getInt(0))
+            }
+            // The unique index on `versionId` was created
+            db.query(
+                "SELECT sql FROM sqlite_master WHERE type='index' AND name='index_per_version_versionId'",
+            ).use { c ->
+                assertTrue(
+                    "index_per_version_versionId not found in sqlite_master",
+                    c.moveToFirst(),
+                )
+                val sql = c.getString(0)
+                assertTrue(
+                    "Expected UNIQUE in index SQL: $sql",
+                    sql.uppercase().contains("UNIQUE"),
+                )
+            }
+        }
+    }
+
+    /**
      * Companion to the v1→v2 marker round-trip test: verify that after
      * v1 → v3 (i.e. both migrations applied in sequence) Room can open the
      * DB and round-trip a row through the new [DevotionEntity] DAO. Catches
@@ -327,7 +391,7 @@ class AppDatabaseMigrationTest {
             TEST_DB,
         )
             .allowMainThreadQueries()
-            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3)
+            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3, AppDatabase.MIGRATION_3_4)
             .build()
         AppDatabase.setForTesting(room)
 
@@ -348,6 +412,44 @@ class AppDatabaseMigrationTest {
                 .findByNameDateAndDataFormatVersion("RH", "2026-05-14", 1)
             assertNotNull(loaded)
             assertEquals("body", loaded!!.body)
+        } finally {
+            room.close()
+        }
+    }
+
+    /**
+     * Companion to the v1→v3 devotion round-trip test: verify that after
+     * v1 → v4 (i.e. all three migrations applied in sequence) Room can open
+     * the DB and round-trip a row through the new [PerVersionEntity] DAO.
+     * Catches drift between [AppDatabase.MIGRATION_3_4] and the entity
+     * declaration.
+     */
+    @Test
+    fun `after migrating from v1 to v4 Room opens cleanly and round-trips a per_version row through the new DAO`() {
+        helper.createDatabase(TEST_DB, 1).close()
+
+        val room = Room.databaseBuilder(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            AppDatabase::class.java,
+            TEST_DB,
+        )
+            .allowMainThreadQueries()
+            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3, AppDatabase.MIGRATION_3_4)
+            .build()
+        AppDatabase.setForTesting(room)
+
+        try {
+            val id = room.perVersionDao().insert(
+                PerVersionEntity(
+                    _id = 0L,
+                    versionId = "preset/kjv",
+                    settings = """{"fontSizeMultiplier":1.5}""",
+                ),
+            )
+            assertTrue(id > 0)
+            val loaded = room.perVersionDao().findByVersionId("preset/kjv")
+            assertNotNull(loaded)
+            assertEquals("""{"fontSizeMultiplier":1.5}""", loaded!!.settings)
         } finally {
             room.close()
         }

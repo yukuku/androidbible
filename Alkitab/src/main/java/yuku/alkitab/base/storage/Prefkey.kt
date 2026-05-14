@@ -165,4 +165,13 @@ enum class Prefkey {
      * flag-based gate is cheap and keeps the pattern uniform across tables.
      */
     devotion_data_migration_v1_done,
+
+    /**
+     * One-shot completion flag for the `PerVersion` copy from the legacy
+     * `AlkitabDb` table into Room. Same rationale as
+     * [marker_data_migration_v1_done] — see GitHub issue #195. PerVersion
+     * rows are user-mutable (settings can be reset / cleared), so a
+     * count-based gate would resurrect cleared rows on the next launch.
+     */
+    per_version_data_migration_v1_done,
 }
