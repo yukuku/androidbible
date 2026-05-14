@@ -17,10 +17,13 @@ import androidx.room.PrimaryKey
  * constraint, mirroring the legacy `SQLiteDatabase.replace` behaviour.
  *
  * Column types — `versionId` is non-nullable here even though the legacy
- * schema permitted NULL; [PerVersionDataMigration] coalesces legacy NULLs
- * to the empty string. `settings` stays nullable to faithfully round-trip
- * whatever legacy rows contain (the facade always writes a JSON blob, but
- * older imported rows could in theory carry NULL).
+ * schema permitted NULL; [PerVersionDataMigration] drops any legacy rows
+ * with a NULL `versionId` (they are unreachable by the facade's keyed
+ * lookups, and coalescing them would either collide with a real `""`
+ * row or violate the UNIQUE index if multiple such rows exist).
+ * `settings` stays nullable to faithfully round-trip whatever legacy
+ * rows contain (the facade always writes a JSON blob, but older imported
+ * rows could in theory carry NULL).
  *
  * Index mirrors the legacy `index_PerVersion_01` unique index.
  */

@@ -92,19 +92,43 @@ class PerVersionDataMigrationTest {
     }
 
     @Test
-    fun `copy coalesces a null legacy versionId to the empty string`() {
+    fun `copy drops legacy rows with a null versionId`() {
         // The legacy schema permits NULL versionId; Room enforces non-null on
-        // that column. PerVersionDataMigration coalesces NULL to "" rather
-        // than dropping the row silently — these rows are unreachable by the
-        // facade's keyed lookups anyway, but a placeholder preserves them
-        // for any future audit.
+        // that column. PerVersionDataMigration skips these rows because they
+        // are unreachable by the facade's keyed lookups, and coalescing to a
+        // placeholder like "" would either collide with a real row keyed by
+        // the empty string or — with multiple such rows — violate the UNIQUE
+        // index on versionId and roll back the whole migration transaction.
         insertLegacyPerVersion(null, """{"fontSizeMultiplier":1.0}""")
+        insertLegacyPerVersion("preset/kjv", """{"fontSizeMultiplier":1.5}""")
 
         PerVersionDataMigration.copyFromLegacyDbIfNeeded(room, legacy)
 
         val rows = room.perVersionDao().listAll()
         assertEquals(1, rows.size)
-        assertEquals("", rows.single().versionId)
+        assertEquals("preset/kjv", rows.single().versionId)
+    }
+
+    @Test
+    fun `copy survives multiple legacy rows with a null versionId without crashing the migration`() {
+        // Regression guard: if the migration coalesced NULLs to "" the second
+        // such insert would violate the UNIQUE index on versionId, roll back
+        // the whole transaction, and (because this runs during S.db lazy
+        // initialization on app startup) crash-loop the launch. Skip-on-NULL
+        // must keep the migration green even with several NULL-keyed rows.
+        insertLegacyPerVersion(null, "settings-a")
+        insertLegacyPerVersion(null, "settings-b")
+        insertLegacyPerVersion(null, "settings-c")
+        insertLegacyPerVersion("preset/kjv", "kjv-settings")
+
+        PerVersionDataMigration.copyFromLegacyDbIfNeeded(room, legacy)
+
+        // Only the non-null-keyed row makes it across; flag is set so the
+        // next launch is a no-op.
+        val rows = room.perVersionDao().listAll()
+        assertEquals(1, rows.size)
+        assertEquals("preset/kjv", rows.single().versionId)
+        assertTrue(Preferences.getBoolean(Prefkey.per_version_data_migration_v1_done, false))
     }
 
     @Test

@@ -86,12 +86,17 @@ object PerVersionDataMigration {
             val colSettings = c.getColumnIndexOrThrow(Table.PerVersion.settings.name)
             roomDb.runInTransaction {
                 while (c.moveToNext()) {
-                    // Coalesce a legacy NULL versionId to "" — Room enforces
-                    // non-null on this column. A NULL row in the legacy table
-                    // would be unreachable by the facade's keyed lookups
-                    // anyway, so collapsing it to a placeholder is safer
-                    // than dropping it silently.
-                    val versionId = c.getString(colVersionId) ?: ""
+                    // Skip rows with a NULL versionId. The legacy schema
+                    // permitted NULL but the facade's lookups are all keyed
+                    // on a non-null versionId, so these rows are unreachable
+                    // by callers. Coalescing them to a placeholder like ""
+                    // would either collide with a real row that uses the
+                    // empty string as a key, or — more dangerously — collide
+                    // with itself if the legacy table contains multiple
+                    // NULL-versionId rows, violating Room's UNIQUE index on
+                    // versionId and rolling back the whole transaction
+                    // (i.e. a startup crash loop). Dropping them is safer.
+                    val versionId = c.getString(colVersionId) ?: continue
                     dao.insert(
                         PerVersionEntity(
                             // Don't carry over `_id` — Room assigns a fresh one. Nothing
