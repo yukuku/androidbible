@@ -136,4 +136,23 @@ enum class Prefkey {
      * Audio bible: playback speed (float, 0.5–2.0). Default 1.0.
      */
     audioPlaybackSpeed,
+
+    /**
+     * One-shot completion flag for the REM-10 `Marker` / `Label` / `Marker_Label`
+     * copy from the legacy `AlkitabDb` tables into Room. Set to true exactly
+     * once after the migration has either successfully copied all legacy rows
+     * or determined there is nothing to copy. Used in place of a count-based
+     * "are the Room tables empty?" check, which would resurrect deleted user
+     * data: if the user (or sync) deletes every marker/label after migration,
+     * the Room tables drop back to zero rows and a count check would re-copy
+     * the legacy rows on next launch. See GitHub issue #195.
+     */
+    marker_data_migration_v1_done,
+
+    /**
+     * One-shot completion flag for the REM-11 `Version` copy from the legacy
+     * `AlkitabDb` table into Room. Same rationale as
+     * [marker_data_migration_v1_done] — see GitHub issue #195.
+     */
+    version_data_migration_v1_done,
 }

@@ -2,9 +2,11 @@ package yuku.alkitab.base.storage.room
 
 import android.app.Application
 import android.content.ContentValues
+import android.preference.PreferenceManager
 import androidx.room.Room
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -13,8 +15,10 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import yuku.afw.storage.Preferences
 import yuku.alkitab.base.storage.Db
 import yuku.alkitab.base.storage.InternalDbHelper
+import yuku.alkitab.base.storage.Prefkey
 
 /**
  * Verifies the one-time copy from the legacy `Marker` / `Label` /
@@ -31,6 +35,11 @@ class MarkerDataMigrationTest {
     fun setUp() {
         val app = RuntimeEnvironment.getApplication()
         yuku.afw.App.context = app
+        // Idempotency is anchored on a SharedPreferences flag. Clear it (and
+        // the [Preferences] static cache that may hold a previous test's
+        // SharedPreferences instance) so every test starts with a clean slate.
+        PreferenceManager.getDefaultSharedPreferences(app).edit().clear().commit()
+        Preferences.invalidate()
         legacy = InternalDbHelper(app)
         room = Room.inMemoryDatabaseBuilder(app, AppDatabase::class.java)
             .allowMainThreadQueries()
@@ -238,5 +247,96 @@ class MarkerDataMigrationTest {
         // contract is that _id is positive (fresh) rather than the legacy
         // _id literal we never asserted.
         assertTrue("expected positive Room _id, got ${row!!._id}", row._id > 0)
+    }
+
+    @Test
+    fun `does not resurrect deleted user data after the user clears every marker (issue #195)`() {
+        // Setup: legacy tables have data, mirroring a real upgrade from the
+        // pre-Room schema. The legacy rows are intentionally preserved as a
+        // rollback safety net even after migration.
+        insertLegacyMarker(gid = "m1", ari = 100)
+        insertLegacyLabel(gid = "L1", title = "L", ordering = 1)
+        insertLegacyMarkerLabel("ml1", "m1", "L1")
+
+        // First launch on the Room build: migration copies everything across.
+        MarkerDataMigration.copyFromLegacyDbIfNeeded(room, legacy)
+        assertEquals(1, room.markerDao().listAll().size)
+        assertEquals(1, room.labelDao().listAll().size)
+        assertEquals(1, room.markerLabelDao().listAll().size)
+
+        // User (or a sync "delete all" delta) clears every marker, label and
+        // marker_label from Room. The legacy tables in AlkitabDb are
+        // deliberately not touched by any write path.
+        room.markerDao().deleteByGid("m1")
+        room.labelDao().deleteByGid("L1")
+        room.markerLabelDao().deleteByGid("ml1")
+        assertTrue(room.markerDao().listAll().isEmpty())
+        assertTrue(room.labelDao().listAll().isEmpty())
+        assertTrue(room.markerLabelDao().listAll().isEmpty())
+
+        // Next launch: migration runs again. With the old count-based gate,
+        // all three Room tables being empty caused the legacy rows to be
+        // re-copied — and sync would then push the resurrected markers up to
+        // the server, undoing the user's deletions on every device. With the
+        // flag-based gate the migration must be a strict no-op.
+        MarkerDataMigration.copyFromLegacyDbIfNeeded(room, legacy)
+
+        assertTrue("legacy markers were resurrected", room.markerDao().listAll().isEmpty())
+        assertTrue("legacy labels were resurrected", room.labelDao().listAll().isEmpty())
+        assertTrue(
+            "legacy marker_labels were resurrected",
+            room.markerLabelDao().listAll().isEmpty(),
+        )
+    }
+
+    @Test
+    fun `successful copy sets the persistent done flag`() {
+        insertLegacyMarker(gid = "m1", ari = 100)
+
+        assertFalse(Preferences.getBoolean(Prefkey.marker_data_migration_v1_done, false))
+        MarkerDataMigration.copyFromLegacyDbIfNeeded(room, legacy)
+        assertTrue(Preferences.getBoolean(Prefkey.marker_data_migration_v1_done, false))
+    }
+
+    @Test
+    fun `fresh install with no legacy data also sets the done flag`() {
+        // No legacy rows inserted. The migration has nothing to copy but must
+        // still mark itself done so subsequent launches don't keep querying
+        // the legacy DB.
+        assertFalse(Preferences.getBoolean(Prefkey.marker_data_migration_v1_done, false))
+        MarkerDataMigration.copyFromLegacyDbIfNeeded(room, legacy)
+        assertTrue(Preferences.getBoolean(Prefkey.marker_data_migration_v1_done, false))
+    }
+
+    @Test
+    fun `upgrade path - flag unset but Room already has rows sets the flag without re-copying`() {
+        // Simulates a user who already migrated under the previous count-based
+        // code (PR #191) and is launching for the first time after this fix.
+        // Room is populated; legacy still has its preserved rows. The fix
+        // must NOT re-insert the legacy rows.
+        room.markerDao().insert(
+            MarkerEntity(
+                _id = 0L,
+                gid = "already-migrated",
+                ari = 999,
+                kind = 1,
+                caption = "already-migrated",
+                verseCount = 1,
+                createTime = 0,
+                modifyTime = 0,
+            ),
+        )
+        insertLegacyMarker(gid = "legacy-m1", ari = 100)
+        insertLegacyLabel(gid = "legacy-L1", title = "L", ordering = 1)
+
+        MarkerDataMigration.copyFromLegacyDbIfNeeded(room, legacy)
+
+        // Existing Room state preserved; no legacy rows pulled in; flag set
+        // so future launches skip outright.
+        val rows = room.markerDao().listAll()
+        assertEquals(1, rows.size)
+        assertEquals("already-migrated", rows.single().gid)
+        assertTrue(room.labelDao().listAll().isEmpty())
+        assertTrue(Preferences.getBoolean(Prefkey.marker_data_migration_v1_done, false))
     }
 }

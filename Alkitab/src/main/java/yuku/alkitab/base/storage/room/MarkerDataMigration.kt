@@ -1,7 +1,9 @@
 package yuku.alkitab.base.storage.room
 
+import yuku.afw.storage.Preferences
 import yuku.alkitab.base.storage.Db
 import yuku.alkitab.base.storage.InternalDbHelper
+import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
 
 /**
@@ -10,12 +12,21 @@ import yuku.alkitab.base.util.AppLog
  * `marker` / `label` / `marker_label` tables in `AlkitabRoomDb` (managed
  * by [AppDatabase]).
  *
- * Idempotent: a no-op when *any* of the three Room tables already has rows.
- * The single combined check is intentional — the three tables migrate
- * together atomically inside a single Room transaction, so partial state
- * cannot exist; if even one of them is non-empty, the migration has already
- * run. If the copy fails mid-flight (e.g. process kill, OOM), Room rolls
- * back the whole transaction and the next launch retries cleanly.
+ * Idempotency is anchored on the persistent
+ * [Prefkey.marker_data_migration_v1_done] flag rather than on a "are the
+ * Room tables empty?" check. A count-based check resurrects deleted user
+ * data: after a successful migration, if the user (or a sync delete-all
+ * delta) clears every marker, label and marker_label, the Room tables drop
+ * back to zero rows; on the next launch the migration would re-copy the
+ * legacy rows and sync would push them back up to the server. See GitHub
+ * issue #195.
+ *
+ * Crash safety:
+ *  - If the Room insert transaction fails mid-flight, Room rolls back the
+ *    whole transaction and the flag is never set; the next launch retries.
+ *  - If the process is killed after the transaction commits but before the
+ *    flag is set, the next launch sees Room rows already present and takes
+ *    the upgrade-path branch below (sets the flag, does not re-copy).
  *
  * The legacy tables are intentionally left intact so a future release can
  * audit/rollback. See REM-10 in `docs/tech-debt-remediation.md`.
@@ -24,14 +35,20 @@ object MarkerDataMigration {
     private const val TAG = "MarkerDataMigration"
 
     fun copyFromLegacyDbIfNeeded(roomDb: AppDatabase, legacyHelper: InternalDbHelper) {
+        if (Preferences.getBoolean(Prefkey.marker_data_migration_v1_done, false)) {
+            return
+        }
+
         val markerDao = roomDb.markerDao()
         val labelDao = roomDb.labelDao()
         val mlDao = roomDb.markerLabelDao()
 
-        // Combined idempotency check: if ANY of the three Room tables has
-        // rows, we've already migrated (or the user has organically added
-        // data after a previous migration). Don't double-copy.
+        // Upgrade path for users who already migrated under the old
+        // count-based code (PR #191) and have not yet seen this version.
+        // Any non-empty Room table means the copy already happened; just set
+        // the flag and bail so we don't double-insert legacy rows.
         if (markerDao.count() > 0 || labelDao.count() > 0 || mlDao.count() > 0) {
+            Preferences.setBoolean(Prefkey.marker_data_migration_v1_done, true)
             return
         }
 
@@ -40,7 +57,10 @@ object MarkerDataMigration {
         val markerLabels = readLegacyMarkerLabels(legacyHelper)
 
         if (markers.isEmpty() && labels.isEmpty() && markerLabels.isEmpty()) {
-            // No legacy data either (fresh install). Nothing to copy.
+            // No legacy data either (fresh install). There will never be
+            // anything to copy now — mark done so future launches skip the
+            // legacy-read entirely.
+            Preferences.setBoolean(Prefkey.marker_data_migration_v1_done, true)
             return
         }
 
@@ -57,6 +77,9 @@ object MarkerDataMigration {
             if (labels.isNotEmpty()) labelDao.insertAll(labels)
             if (markerLabels.isNotEmpty()) mlDao.insertAll(markerLabels)
         }
+        // Set the flag only after a successful commit. A crash between here
+        // and the next launch is handled by the upgrade-path branch above.
+        Preferences.setBoolean(Prefkey.marker_data_migration_v1_done, true)
 
         AppLog.d(
             TAG,
