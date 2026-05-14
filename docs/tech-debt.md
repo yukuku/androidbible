@@ -1,27 +1,33 @@
 # Tech Debt, Improvements & Critiques
 
-## TD-01: IsiActivity God Class (~2371 lines)
+## TD-01: IsiActivity God Class (~2170 lines)
 
 **File:** `Alkitab/src/main/java/yuku/alkitab/base/IsiActivity.kt`
 
-The main Bible reader activity is a monolithic class containing many inline lambda callbacks, ~2371 lines of mixed concerns (down from 2897 after REM-07 extracted action mode, then back up slightly to 2452 with the audio-bible M1–M4 additions, now down to 2371 after REM-06 extracted gesture handling). Specific clusters that violate single-responsibility:
+The main Bible reader activity, down from 2897 lines after a series of extractions: REM-07 (action mode → `VerseActionModeController`), REM-06 (gestures → `ReaderGestureHandler`), and REM-08 (split view → `SplitViewManager`). The remaining ~2170 lines still contain mixed concerns. Specific clusters that violate single-responsibility:
 
 - **~~Gesture handling~~** ✅ **Extracted (REM-06):** The three gesture lambdas — `splitRoot_listener` (`TwofingerLinearLayout.Listener` for pinch zoom + one/two-finger swipes), `bGoto_floaterDrag` (`GotoButton.FloaterDragListener`), and `floater_listener` (`Floater.Listener`) — have been moved to `ReaderGestureHandler.kt` behind two interfaces (`ReaderGestureHost`, `ReaderGestureActions`). The activity now wires a single `gestureHandler` lazy field into all three setListener call sites. Gesture-local state (`startFontSize`, `startDx`, `moreSwipeYAllowed`, `chapterSwipeCellWidth`, `floaterLocationOnScreen`) lives on the handler instead of in inline objects.
 - **~~Action mode~~** ✅ **Extracted (REM-07):** The ~500-line `actionMode_callback` object has been moved to `VerseActionModeController.kt` behind two interfaces (`VerseActionModeHost`, `VerseActionModeActions`). Pure text-building logic is in `VerseTextFormatter` (no Android deps). `RibkaEligibility` is a top-level file. 26 unit tests added.
-- **Broadcast receivers (lines 451–519):** Two anonymous `BroadcastReceiver` instances registered inline, one for verse attribute changes and one for version changes.
-- **Verse selection listeners (lines 463–525):** Two `SelectedVersesListener` implementations (`lsSplit0_selectedVerses`, `lsSplit1_selectedVerses`) with partially duplicated logic.
-- **Split view management:** `openSplitDisplay()`, `closeSplitDisplay()`, `displaySplitFollowingMaster()`, `loadSplitVersion()` scattered across the file.
+- **~~Broadcast receivers~~** ✅ **Replaced (REM-03):** The two inline `BroadcastReceiver` registrations for verse-attribute and version changes are gone — `IsiActivity` now collects from the `AppEvents` `SharedFlow` buses via `lifecycleScope.launch { ... }`. `LocalBroadcastManager` is removed from the dependencies entirely.
+- **Verse selection listeners:** Two `SelectedVersesListener` implementations (`lsSplit0_selectedVerses`, `lsSplit1_selectedVerses`) with partially duplicated logic — still inline.
+- **~~Split view management~~** ✅ **Extracted (REM-08):** `openSplitDisplay()`, `closeSplitDisplay()`, `displaySplitFollowingMaster()`, `loadSplitVersion()`, and the three split-handle / global-layout listeners have moved to `SplitViewManager.kt` behind `SplitViewHost` / `SplitViewActions`. `IsiActivity.activeSplit1` is now a read-only getter that delegates to the manager.
 - **Navigation history:** `BackForwardListController` usage, `jumpToAri()`, `jumpTo(reference)`, `History` tracking.
 
-**Impact:** Any change to one concern risks breaking unrelated functionality. Testing individual behaviors requires instantiating the entire Activity. New developers face a ~2371-line class with no clear entry point.
+**Impact:** Any change to one concern risks breaking unrelated functionality. Testing individual behaviors requires instantiating the entire Activity. New developers face a ~2170-line class with no clear entry point.
 
 ---
 
-## TD-02: InternalDb — Raw SQL & Manual Statement Caching (830 lines, was 1771)
+## TD-02: InternalDb — Raw SQL & Manual Statement Caching (~757 lines, was 1771)
 
 **File:** `Alkitab/src/main/java/yuku/alkitab/base/storage/InternalDb.java`
 
-**Status:** Significantly improved. Per-table DAOs (`MarkerDao`, `LabelDao`, `VersionDao`, `DevotionDao`, `ReadingPlanDao`, `ProgressMarkDao`, `PerVersionDao`, `Marker_LabelDao`, `SyncShadowDao`) and `SyncApplier` were extracted in `d805265e`, shrinking `InternalDb.java` from 1771 → 830 lines. Further null-safety cleanup landed in `70c97818`. The remaining issues below are the parts not covered by that refactor.
+**Status:** Significantly improved.
+
+1. Per-table DAOs (`MarkerDao`, `LabelDao`, `VersionDao`, `DevotionDao`, `ReadingPlanDao`, `ProgressMarkDao`, `PerVersionDao`, `Marker_LabelDao`, `SyncShadowDao`) and `SyncApplier` were extracted in `d805265e`, shrinking `InternalDb.java` from 1771 → 830 lines. Further null-safety cleanup landed in `70c97818`.
+2. ✅ **REM-11 (Version table → Room, 2026-05-13)** — the `Version` table moved into a new separate-file Room database (`AlkitabRoomDb`). `VersionDao` is now a facade that routes through Room. Legacy `Version` table left in place as a rollback safety net.
+3. ✅ **REM-10 (Marker / Label / Marker_Label → Room, 2026-05-14)** — the three legacy hand-rolled SQLite tables for the marker subsystem also moved into Room (same `AlkitabRoomDb`, bumped to `@Database(version = 2)` via `MIGRATION_1_2`). `MarkerDao` / `LabelDao` / `Marker_LabelDao` are facades that delegate to the Room DAOs.
+
+The remaining issues below are the parts not covered by those refactors (the not-yet-migrated tables — `ReadingPlan`, `Devotion`, `SyncShadow`, `SyncLog`, `PerVersion`, `ProgressMark` — still go through raw SQL).
 
 ### Raw SQL string concatenation (~10 instances remain)
 Examples at `InternalDb.java:134, 137, 180, 593–597, 632–646`:
@@ -163,15 +169,19 @@ The `superscriptDigits` array now has an inline comment naming the Unicode code 
 
 ## TD-11: Mixed Java/Kotlin
 
-Core files still in Java with no clear migration plan:
-- `InternalDb.java` (1771 lines)
-- `SearchEngine.java` (537 lines)
+Core files still in Java:
+- `InternalDb.java` (~757 lines; partially superseded for the marker / version tables by Room facade DAOs — see TD-02)
+- ~~`SearchEngine.java`~~ ✅ ported to `SearchEngine.kt` (REM-16, 2026-05-13)
 - ~~`VerseRenderer.java`~~ ✅ ported to Kotlin (REM-26)
-- `Sync.java` (508 lines)
-- `SyncAdapter.java` (600+ lines)
-- `DevotionDownloader.java` (111 lines)
-- `Provider.java` (content provider)
-- `Highlights.java`, `Jumper.java`, `TargetDecoder.java`
+- `Sync.java` (~571 lines)
+- `SyncAdapter.java` (~630 lines)
+- ~~`DevotionDownloader.java`~~ ✅ ported to `DevotionDownloader.kt` (REM-16, 2026-05-13)
+- ~~`Provider.java`~~ ✅ ported to `Provider.kt` (REM-16, 2026-05-13)
+- ~~`Highlights.java`~~ ✅ ported to `Highlights.kt` (REM-16, 2026-05-12)
+- ~~`Jumper.java`~~ ✅ ported to `Jumper.kt` (REM-16, 2026-05-12)
+- ~~`TargetDecoder.java`~~ ✅ ported to `TargetDecoder.kt` (REM-16, 2026-05-13)
+- ~~`QueryTokenizer.java`~~ ✅ ported to `QueryTokenizer.kt` (REM-16, 2026-05-13)
+- ~~`SongBookUtil.java`~~ ✅ ported to `SongBookUtil.kt` (REM-16, 2026-05-13)
 - All devotion article parsers
 
 Newer files (activities, data classes) are Kotlin, creating a mixed codebase where Java code can't use Kotlin features (extension functions, coroutines, sealed classes, null safety).
@@ -245,9 +255,11 @@ BUILD_DIST=market \
 
 ## TD-15: S.kt — God Object Service Locator
 
-**File:** `Alkitab/src/main/java/yuku/alkitab/base/S.kt` (313 lines)
+**File:** `Alkitab/src/main/java/yuku/alkitab/base/S.kt` (~317 lines)
 
-A Kotlin `object` singleton that serves as the central service locator for the entire app, mixing three unrelated concerns:
+**Status:** Substantially improved by REM-24 (steps 24a–24d complete as of 2026-05-12). Three interfaces — `StorageProvider`, `VersionManager`, `UiDimensionsProvider` — have been extracted under `yuku.alkitab.base.services`, bundled into an `AppServices` container, and exposed via `App.services`. ~216 direct `S.xxx` references across 44 files have been migrated to `App.services.*`. The legacy `S.foo` accessors and the `S.storage` / `S.versions` / `S.uiDimensions` adapter properties are retained so existing callers compile; new code should depend on `App.services`. Active-version state was collapsed into a single `@Volatile var state: ActiveVersionState` data-class reference so all readers see a consistent `(mVersion, version, versionId)` triple (24c). `openVersionsDialog` / `openVersionsDialogWithNone` moved off `S` into `VersionDialogHelper` (24b).
+
+A Kotlin `object` singleton that historically served as the central service locator for the entire app, mixing three unrelated concerns:
 
 ### 1. Database access
 - `S.db` — lazy `InternalDb` instance (markers, labels, bookmarks, reading plans, sync, devotions)

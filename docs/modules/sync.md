@@ -47,11 +47,15 @@ The sync uses a shadow table (`SyncShadow`) to track the last-synced state. When
 2. If the entity changed locally → server wins (last-write-wins for most fields)
 3. Partial sync threshold: 100 operations per batch
 
+The client-side patch is last-write-wins for every Mabel entity and for progress pins: concurrent edits to the same highlight color or pin position on two devices silently discard one side. Notes and bookmark captions are merged server-side before deltas are emitted.
+
 ## FCM Integration
 
 When a sync completes on one device, the server sends an FCM message to other registered devices. `FcmMessagingService` receives the push and triggers a sync via `SyncAdapter`.
 
 FCM configuration differs between debug (uses `RIBKA_FUNCTIONS_HOST_DEBUG` at `10.0.3.2:5001`) and release builds.
+
+Registration retry: a failed FCM token send sets `Prefkey.fcm_registration_pending = true`. In-process, `Sync.sendFcmRegistrationId` retries up to three times on a daemon `ScheduledExecutorService` (`fcmRetryExecutor`) at 1 min / 5 min / 30 min, clearing the flag on success. Cross-launch, `App.staticInit()` calls `Sync.retryPendingFcmRegistrationIfNeeded(registrationId)` to re-enter the send when the flag is still set after a process death.
 
 ## Authentication
 
