@@ -179,6 +179,24 @@ class AppDatabaseMigrationTest {
                 assertTrue(c.moveToFirst())
                 assertEquals(0, c.getInt(0))
             }
+            // REM-10 follow-up: the (kind, caption) index must be created with
+            // COLLATE NOCASE so caption-sorted bookmark queries can do an
+            // indexed walk instead of an in-memory sort. Room's @Index can't
+            // express per-column collation, so the migration writes raw SQL.
+            db.query(
+                "SELECT sql FROM sqlite_master WHERE type='index' AND name=?",
+                arrayOf(AppDatabase.MARKER_KIND_CAPTION_INDEX_NAME),
+            ).use { c ->
+                assertTrue(
+                    "${AppDatabase.MARKER_KIND_CAPTION_INDEX_NAME} not found in sqlite_master",
+                    c.moveToFirst(),
+                )
+                val sql = c.getString(0)
+                assertTrue(
+                    "Expected COLLATE NOCASE in index SQL: $sql",
+                    sql.uppercase().contains("NOCASE"),
+                )
+            }
         }
     }
 

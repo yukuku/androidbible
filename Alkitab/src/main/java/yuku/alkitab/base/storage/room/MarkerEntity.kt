@@ -21,14 +21,12 @@ import androidx.room.PrimaryKey
  * [java.util.Date] for callers.
  *
  * Indexes mirror the legacy `Marker` table's six indexes
- * (`createIndexMarker` in `InternalDbHelper`) so query plans don't regress,
- * with one exception: the legacy `index_Marker_05 (kind, caption COLLATE
- * NOCASE)` cannot be expressed via `@Index` annotations because Room does
- * not support per-column collation. It is intentionally omitted — the only
- * caller that benefits is the caption-sort branch of
- * `InternalDb.listMarkers`, which falls back to SQLite's in-memory sort
- * (temp B-tree) after the (kind, …) filter narrows the result set.
- * Negligible at realistic marker volumes (hundreds, max).
+ * (`createIndexMarker` in `InternalDbHelper`) so query plans don't regress.
+ * The legacy `index_Marker_05 (kind, caption COLLATE NOCASE)` cannot be
+ * expressed via `@Index` because Room does not support per-column collation.
+ * `MIGRATION_1_2` creates this index with `COLLATE NOCASE`; fresh installs
+ * end up without `COLLATE NOCASE` because Room generates the entity SQL
+ * itself. See [AppDatabase] KDoc.
  *
  * Column types — `ari`/`kind`/`verseCount`/`createTime`/`modifyTime` are
  * non-nullable here even though the legacy schema allowed NULLs;
@@ -43,6 +41,11 @@ import androidx.room.PrimaryKey
         Index(value = ["kind", "modifyTime"], name = "index_marker_kind_modifyTime"),
         Index(value = ["kind", "createTime"], name = "index_marker_kind_createTime"),
         Index(value = ["gid"], name = "index_marker_gid"),
+        // MIGRATION_1_2 creates this index with COLLATE NOCASE; fresh installs
+        // get it without (Room's @Index can't express per-column collation).
+        // SQLite's PRAGMA index_info doesn't expose per-column collation, so
+        // Room's TableInfo comparison sees the same column list either way.
+        Index(value = ["kind", "caption"], name = AppDatabase.MARKER_KIND_CAPTION_INDEX_NAME),
     ],
 )
 data class MarkerEntity(

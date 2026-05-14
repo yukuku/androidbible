@@ -23,6 +23,14 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  *   their indexes. See [MIGRATION_1_2]. Legacy `Marker` / `Label` /
  *   `Marker_Label` tables in `AlkitabDb` are left in place as a rollback
  *   safety net; a follow-up release will drop them.
+ *
+ * REM-10 follow-up note: [MIGRATION_1_2] creates the
+ * `index_marker_kind_caption` index with `COLLATE NOCASE` (matching the
+ * legacy `index_Marker_05`). Fresh installs of v2 go through Room's
+ * entity-driven schema, which can't express per-column collation via
+ * `@Index`, so they end up with the same index without `COLLATE NOCASE`.
+ * Both shapes share the same PRAGMA column list, so Room's schema validator
+ * accepts either.
  */
 @Database(
     entities = [
@@ -42,6 +50,17 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object {
         const val DB_NAME = "AlkitabRoomDb"
+
+        /**
+         * Name of the `(kind, caption)` index on the `marker` table. Single
+         * source of truth shared between the `@Index` annotation on
+         * [MarkerEntity] and the `MIGRATION_1_2` SQL.
+         *
+         * The migration SQL adds `COLLATE NOCASE`; the `@Index`-generated SQL
+         * for fresh installs cannot. PRAGMA hides per-column collation, so
+         * Room's schema validator accepts both shapes.
+         */
+        const val MARKER_KIND_CAPTION_INDEX_NAME = "index_marker_kind_caption"
 
         /**
          * v1 → v2: create the `marker`, `label`, `marker_label` tables and
@@ -73,6 +92,13 @@ abstract class AppDatabase : RoomDatabase() {
                 db.execSQL("CREATE INDEX IF NOT EXISTS `index_marker_kind_modifyTime` ON `marker` (`kind`, `modifyTime`)")
                 db.execSQL("CREATE INDEX IF NOT EXISTS `index_marker_kind_createTime` ON `marker` (`kind`, `createTime`)")
                 db.execSQL("CREATE INDEX IF NOT EXISTS `index_marker_gid` ON `marker` (`gid`)")
+                // The (kind, caption COLLATE NOCASE) index — see the class
+                // KDoc for why this migration creates it with COLLATE while
+                // the @Index annotation on MarkerEntity can't.
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `" + MARKER_KIND_CAPTION_INDEX_NAME + "` " +
+                        "ON `marker` (`kind`, `caption` COLLATE NOCASE)",
+                )
 
                 db.execSQL(
                     "CREATE TABLE IF NOT EXISTS `label` (" +
