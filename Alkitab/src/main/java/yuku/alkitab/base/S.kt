@@ -224,13 +224,16 @@ object S {
     @JvmStatic
     val db: InternalDb by lazy {
         val helper = InternalDbHelper(App.context)
+        val roomDb = yuku.alkitab.base.storage.room.AppDatabase.get(App.context)
         // One-time copy of the legacy `Version` table into Room's `version`
         // table (see REM-11 design doc). Idempotent — a no-op after the first
         // launch with this code, and safe to retry if it fails partway.
-        yuku.alkitab.base.storage.room.VersionDataMigration.copyFromLegacyDbIfNeeded(
-            yuku.alkitab.base.storage.room.AppDatabase.get(App.context),
-            helper,
-        )
+        yuku.alkitab.base.storage.room.VersionDataMigration.copyFromLegacyDbIfNeeded(roomDb, helper)
+        // One-time copy of the legacy `Marker` / `Label` / `Marker_Label`
+        // tables into Room (REM-10). Same idempotency / retry properties as
+        // the version copy; all three tables move atomically inside a single
+        // Room transaction.
+        yuku.alkitab.base.storage.room.MarkerDataMigration.copyFromLegacyDbIfNeeded(roomDb, helper)
         InternalDb(helper)
     }
 

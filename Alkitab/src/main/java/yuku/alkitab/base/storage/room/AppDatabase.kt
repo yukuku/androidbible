@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 /**
  * Room database for tables migrated as part of the REM-11+ tech-debt plan.
@@ -14,17 +16,87 @@ import androidx.room.RoomDatabase
  * Version policy: this database starts at `version = 1`. Future tables added
  * to Room bump the version and add a `Migration` (Room-style, not the legacy
  * `versionCode`-driven `InternalDbHelper.onUpgrade`).
+ *
+ * History:
+ * - v1 (REM-11) — introduced the `version` table.
+ * - v2 (REM-10) — added the `marker`, `label`, `marker_label` tables and
+ *   their indexes. See [MIGRATION_1_2]. Legacy `Marker` / `Label` /
+ *   `Marker_Label` tables in `AlkitabDb` are left in place as a rollback
+ *   safety net; a follow-up release will drop them.
  */
 @Database(
-    entities = [VersionEntity::class],
-    version = 1,
+    entities = [
+        VersionEntity::class,
+        MarkerEntity::class,
+        LabelEntity::class,
+        MarkerLabelEntity::class,
+    ],
+    version = 2,
     exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun versionDao(): VersionRoomDao
+    abstract fun markerDao(): MarkerRoomDao
+    abstract fun labelDao(): LabelRoomDao
+    abstract fun markerLabelDao(): MarkerLabelRoomDao
 
     companion object {
         const val DB_NAME = "AlkitabRoomDb"
+
+        /**
+         * v1 → v2: create the `marker`, `label`, `marker_label` tables and
+         * their indexes. SQL mirrors what Room emits for the v2 entities
+         * (compare against `Alkitab/schemas/.../2.json`) — keep them in
+         * sync if these entities change.
+         *
+         * A v1 device upgrading runs this migration once; a fresh install
+         * skips straight to v2 via Room's `onCreate` (Room uses the entity
+         * definitions, not this migration, for fresh schemas — that's why
+         * the SQL here must match what Room would emit).
+         */
+        @JvmField
+        val MIGRATION_1_2: Migration = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `marker` (" +
+                        "`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`gid` TEXT, " +
+                        "`ari` INTEGER NOT NULL, " +
+                        "`kind` INTEGER NOT NULL, " +
+                        "`caption` TEXT, " +
+                        "`verseCount` INTEGER NOT NULL, " +
+                        "`createTime` INTEGER NOT NULL, " +
+                        "`modifyTime` INTEGER NOT NULL)",
+                )
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_marker_ari` ON `marker` (`ari`)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_marker_kind_ari` ON `marker` (`kind`, `ari`)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_marker_kind_modifyTime` ON `marker` (`kind`, `modifyTime`)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_marker_kind_createTime` ON `marker` (`kind`, `createTime`)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_marker_gid` ON `marker` (`gid`)")
+
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `label` (" +
+                        "`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`gid` TEXT, " +
+                        "`title` TEXT, " +
+                        "`ordering` INTEGER NOT NULL, " +
+                        "`backgroundColor` TEXT)",
+                )
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_label_ordering` ON `label` (`ordering`)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_label_gid` ON `label` (`gid`)")
+
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `marker_label` (" +
+                        "`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`gid` TEXT, " +
+                        "`marker_gid` TEXT, " +
+                        "`label_gid` TEXT)",
+                )
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_marker_label_marker_gid` ON `marker_label` (`marker_gid`)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_marker_label_label_gid` ON `marker_label` (`label_gid`)")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_marker_label_gid` ON `marker_label` (`gid`)")
+            }
+        }
 
         @Volatile
         private var instance: AppDatabase? = null
@@ -43,6 +115,7 @@ abstract class AppDatabase : RoomDatabase() {
                 // methods) are synchronous. Coroutine-based callers can be
                 // introduced later — see REM-15 in tech-debt-remediation.md.
                 .allowMainThreadQueries()
+                .addMigrations(MIGRATION_1_2)
                 .build()
 
         /**

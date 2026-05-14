@@ -1,132 +1,108 @@
 package yuku.alkitab.base.storage
 
-import android.content.ContentValues
-import android.database.Cursor
+import yuku.alkitab.base.storage.room.AppDatabase
+import yuku.alkitab.base.storage.room.MarkerEntity
+import yuku.alkitab.base.storage.room.MarkerRoomDao
 import yuku.alkitab.base.util.Sqlitil
 import yuku.alkitab.model.Marker
 import java.util.Date
 
 /**
- * Type-safe accessor for primitive reads/writes on the `Marker` table.
+ * Facade over the Room-backed [MarkerRoomDao] that preserves the legacy
+ * `Marker`-based public surface. Existing call sites in [InternalDb] and
+ * `MarkerDao.markerFromCursor` consumers don't need to change — they
+ * continue calling [getById]/[upsert]/[insertNew]/etc. exactly as before,
+ * but the underlying storage is now Room.
  *
- * Scope: CRUD primitives plus [markerFromCursor]/[markerToContentValues]
- * helpers used across [InternalDb].
+ * Cross-file note: this DAO is constructed with [InternalDbHelper] only so
+ * its constructor signature stays unchanged from the legacy DAO. The helper
+ * is no longer used internally; [AppDatabase] supplies the underlying
+ * SQLite file. The one-time data copy from the legacy `Marker` table runs
+ * in [yuku.alkitab.base.storage.room.MarkerDataMigration].
  *
- * Not in scope: orchestration methods that join `Marker` with `Marker_Label`
- * ([InternalDb.deleteMarkerById], [InternalDb.listMarkers]), cursor-streaming
- * reads with side effects ([InternalDb.putAttributes]), and the
- * highlight-upsert transactions ([InternalDb.updateOrInsertPartialHighlight],
- * [InternalDb.updateOrInsertHighlights]). Those compose the DAO primitives
- * inside their own transactions. Sync-notify side effects remain on the
- * delegators.
+ * Static `markerFromCursor` / `markerToContentValues` helpers from the
+ * pre-REM-10 version are intentionally removed — every InternalDb caller
+ * that used them now reads `MarkerEntity` from Room and translates via the
+ * private `toModel` / `toEntity` helpers below. If a future caller needs
+ * direct `Cursor` access for some reason, prefer adding a Room `@Query`
+ * over reintroducing cursor plumbing.
  */
-class MarkerDao(private val helper: InternalDbHelper) {
+@Suppress("UNUSED_PARAMETER")
+class MarkerDao(helper: InternalDbHelper) {
 
-    fun getById(_id: Long): Marker? {
-        helper.readableDatabase.query(
-            Db.TABLE_Marker, null, "_id=?", arrayOf(_id.toString()),
-            null, null, null,
-        ).use { cursor ->
-            return if (cursor.moveToNext()) markerFromCursor(cursor) else null
-        }
-    }
+    // Lazy so unit tests that swap the AppDatabase singleton via
+    // AppDatabase.setForTesting() see the new instance.
+    private val roomDao: MarkerRoomDao
+        get() = AppDatabase.get(yuku.afw.App.context).markerDao()
 
-    fun getByGid(gid: String): Marker? {
-        helper.readableDatabase.query(
-            Db.TABLE_Marker, null, Db.Marker.gid + "=?", arrayOf(gid),
-            null, null, null,
-        ).use { cursor ->
-            return if (cursor.moveToNext()) markerFromCursor(cursor) else null
-        }
-    }
+    fun getById(_id: Long): Marker? = roomDao.findById(_id)?.let(::toModel)
 
-    fun listForAriKind(ari: Int, kind: Marker.Kind): List<Marker> {
-        val res = ArrayList<Marker>()
-        helper.readableDatabase.query(
-            Db.TABLE_Marker, null,
-            Db.Marker.ari + "=? and " + Db.Marker.kind + "=?",
-            arrayOf(ari.toString(), kind.code.toString()),
-            null, null, Db.Marker.modifyTime + " desc", null,
-        ).use { c ->
-            while (c.moveToNext()) res += markerFromCursor(c)
-        }
-        return res
-    }
+    fun getByGid(gid: String): Marker? = roomDao.findByGid(gid)?.let(::toModel)
 
-    fun listAll(): List<Marker> {
-        val res = ArrayList<Marker>()
-        helper.readableDatabase.query(
-            Db.TABLE_Marker, null, null, null, null, null, null,
-        ).use { c ->
-            while (c.moveToNext()) res += markerFromCursor(c)
-        }
-        return res
-    }
+    fun listForAriKind(ari: Int, kind: Marker.Kind): List<Marker> =
+        roomDao.listForAriKindOrderedByModifyTimeDesc(ari, kind.code).map(::toModel)
 
-    /** Inserts when `marker._id == 0`, otherwise updates by `_id`. Mutates `marker._id` on insert. */
+    fun listAll(): List<Marker> = roomDao.listAll().map(::toModel)
+
+    /**
+     * Inserts when `marker._id == 0`, otherwise updates by `_id`. Mutates
+     * `marker._id` on insert — preserves the legacy side effect that
+     * callers (e.g. `InternalDb.updateOrInsertPartialHighlight`) rely on.
+     */
     fun upsert(marker: Marker) {
-        val db = helper.writableDatabase
+        val entity = toEntity(marker)
         if (marker._id != 0L) {
-            db.update(Db.TABLE_Marker, markerToContentValues(marker), "_id=?", arrayOf(marker._id.toString()))
+            roomDao.update(entity)
         } else {
-            marker._id = db.insert(Db.TABLE_Marker, null, markerToContentValues(marker))
+            val newId = roomDao.insert(entity)
+            marker._id = newId
         }
     }
 
     /**
-     * Creates a fresh [Marker] (with a new gid), inserts it, and returns it with its assigned _id.
+     * Creates a fresh [Marker] (with a new gid), inserts it, and returns it
+     * with its assigned `_id`. Mirrors legacy `MarkerDao.insertNew`.
      */
     fun insertNew(
         ari: Int, kind: Marker.Kind, caption: String, verseCount: Int,
         createTime: Date, modifyTime: Date,
     ): Marker {
         val marker = Marker.createNewMarker(ari, kind, caption, verseCount, createTime, modifyTime)
-        marker._id = helper.writableDatabase.insert(Db.TABLE_Marker, null, markerToContentValues(marker))
+        marker._id = roomDao.insert(toEntity(marker))
         return marker
     }
 
-    fun deleteById(_id: Long): Int = helper.writableDatabase.delete(
-        Db.TABLE_Marker, "_id=?", arrayOf(_id.toString()),
-    )
+    fun deleteById(_id: Long): Int = roomDao.deleteById(_id)
 
-    fun deleteByGid(gid: String): Int = helper.writableDatabase.delete(
-        Db.TABLE_Marker, Db.Marker.gid + "=?", arrayOf(gid),
-    )
+    fun deleteByGid(gid: String): Int = roomDao.deleteByGid(gid)
 
     // Inclusive upper bound so a marker on verse 255 (ari == ariMax) is counted.
     fun countForAriRange(ariMin: Int, ariMax: Int): Int =
-        helper.readableDatabase.compileStatement(
-            "select count(*) from ${Db.TABLE_Marker}" +
-                " where ${Db.Marker.ari}>=? and ${Db.Marker.ari}<=?",
-        ).use { stmt ->
-            stmt.bindLong(1, ariMin.toLong())
-            stmt.bindLong(2, ariMax.toLong())
-            stmt.simpleQueryForLong().toInt()
-        }
+        roomDao.countInAriRangeInclusive(ariMin, ariMax)
 
     companion object {
         @JvmStatic
-        fun markerFromCursor(cursor: Cursor): Marker = Marker.createEmptyMarker().apply {
-            _id = cursor.getLong(cursor.getColumnIndexOrThrow("_id"))
-            gid = cursor.getString(cursor.getColumnIndexOrThrow(Db.Marker.gid))
-            ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.ari))
-            kind = Marker.Kind.fromCode(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.kind)))
-            caption = cursor.getString(cursor.getColumnIndexOrThrow(Db.Marker.caption))
-            verseCount = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.verseCount))
-            createTime = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.createTime)))
-            modifyTime = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.modifyTime)))
+        fun toModel(e: MarkerEntity): Marker = Marker.createEmptyMarker().apply {
+            _id = e._id
+            gid = e.gid
+            ari = e.ari
+            kind = Marker.Kind.fromCode(e.kind)
+            caption = e.caption
+            verseCount = e.verseCount
+            createTime = Sqlitil.toDate(e.createTime)
+            modifyTime = Sqlitil.toDate(e.modifyTime)
         }
 
-        /** `_id` is not stored in the [ContentValues]. */
         @JvmStatic
-        fun markerToContentValues(marker: Marker): ContentValues = ContentValues().apply {
-            put(Db.Marker.ari, marker.ari)
-            put(Db.Marker.gid, marker.gid)
-            put(Db.Marker.kind, marker.kind.code)
-            put(Db.Marker.caption, marker.caption)
-            put(Db.Marker.verseCount, marker.verseCount)
-            put(Db.Marker.createTime, Sqlitil.toInt(marker.createTime))
-            put(Db.Marker.modifyTime, Sqlitil.toInt(marker.modifyTime))
-        }
+        fun toEntity(marker: Marker): MarkerEntity = MarkerEntity(
+            _id = marker._id,
+            gid = marker.gid,
+            ari = marker.ari,
+            kind = marker.kind.code,
+            caption = marker.caption,
+            verseCount = marker.verseCount,
+            createTime = Sqlitil.toInt(marker.createTime),
+            modifyTime = Sqlitil.toInt(marker.modifyTime),
+        )
     }
 }
