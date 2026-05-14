@@ -133,14 +133,15 @@ The project is a multi-module Gradle build. The main app module is **`:Alkitab`*
 | `Afw` | Base Android framework (preferences wrapper, adapter base, app context) |
 | `Snappy` | JNI Snappy compression (native C++ via NDK) |
 | `FlowLayout` | Flow layout widget |
-| `PrDownloaderFixed` | Patched PRDownloader for HTTP file downloads |
 | `ImportedDesktopVerseUtil` | Desktop verse reference finder/parser |
+
+Bible-version downloads run inside `VersionDownloadWorker` (a `CoroutineWorker`) using the shared OkHttp client; the previous `PrDownloaderFixed` module was deleted in REM-19.
 
 ### Key Singletons and Entry Points
 
-- **`App.java`** — Application class, extends `yuku.afw.App`. Initializes Firebase, PRDownloader, preference defaults, extension receivers.
-- **`S.kt`** — Central service locator. Holds lazy references to `InternalDb`, `SongDb`, active Bible version, calculated UI dimensions. All global state access goes through `S`.
-- **`IsiActivity.kt`** (~2900 lines) — Main Bible reader activity. Manages verse display, split view, navigation history, action mode (copy/share/bookmark), gestures (pinch zoom, swipe), and volume button navigation.
+- **`App.java`** — Application class, extends `yuku.afw.App`. Initializes Firebase, FCM registration, preference defaults, extension receivers. Holds the eagerly-initialized `App.services` (`AppServices` container) introduced by REM-24.
+- **`S.kt`** — Legacy service locator (~317 lines). Holds lazy references to `InternalDb`, `SongDb`, active Bible version state, and calculated UI dimensions. New code should depend on the narrower `StorageProvider` / `VersionManager` / `UiDimensionsProvider` interfaces via `App.services.*`; existing `S.foo` call sites are being migrated incrementally (REM-24).
+- **`IsiActivity.kt`** (~2170 lines, at `yuku/alkitab/base/IsiActivity.kt`) — Main Bible reader activity. Verse display, navigation history, and volume-button navigation still live here; gesture handling, the action-mode callback, and split-view management have been extracted into `ReaderGestureHandler` (REM-06), `VerseActionModeController` (REM-07), and `SplitViewManager` (REM-08) respectively.
 
 ### Data Flow: Bible Text Rendering
 
@@ -166,16 +167,21 @@ Used everywhere: database storage, intent extras, sync protocol, content provide
 
 ### Database Schema
 
-`InternalDb` (SQLite) has these core tables:
-- **Marker** — bookmarks, notes, highlights (distinguished by `kind` column). Each row has a `gid` (globally unique ID) for sync.
-- **Label** — bookmark categories with custom background colors.
-- **Marker_Label** — many-to-many junction between markers and labels.
-- **Version** — metadata for downloaded Bible versions (filename, locale, active flag, ordering).
-- **ProgressMark** — 5 reading progress pins with ARI positions.
-- **ReadingPlan** / **ReadingPlanProgress** — reading plan data and daily completion tracking.
-- **Devotion** — cached devotional articles.
-- **SyncShadow** / **SyncLog** — sync state tracking.
-- **PerVersion** — per-version settings.
+The app uses two SQLite files:
+
+- **`AlkitabRoomDb`** — Room database (`yuku.alkitab.base.storage.room.AppDatabase`, currently at `@Database(version = 3)`). Holds the tables migrated as part of the REM-10/REM-11/REM-27 plan:
+  - **version** (REM-11) — metadata for downloaded Bible versions (filename, locale, active flag, ordering).
+  - **marker** (REM-10) — bookmarks, notes, highlights (distinguished by `kind` column). Each row has a `gid` (globally unique ID) for sync.
+  - **label** (REM-10) — bookmark categories with custom background colors.
+  - **marker_label** (REM-10) — many-to-many junction between markers and labels.
+  - **devotion** (REM-27) — cached devotional articles keyed by `(name, date, dataFormatVersion)`.
+- **`AlkitabDb`** — legacy hand-rolled `SQLiteOpenHelper` (`InternalDbHelper`). Still owns the not-yet-migrated tables:
+  - **ProgressMark** — 5 reading progress pins with ARI positions.
+  - **ReadingPlan** / **ReadingPlanProgress** — reading plan data and daily completion tracking.
+  - **SyncShadow** / **SyncLog** — sync state tracking.
+  - **PerVersion** — per-version settings.
+
+The legacy `Marker` / `Label` / `Marker_Label` / `Version` / `Devotion` tables are still created in `AlkitabDb` as a rollback safety net; a one-time copy in `MarkerDataMigration` / `VersionDataMigration` / `DevotionDataMigration` (wired from `S.db`'s lazy initializer) moves their rows into Room on first launch with the migrated code. `InternalDb` plus the per-table facades (`MarkerDao`, `LabelDao`, `Marker_LabelDao`, `VersionDao`, `DevotionDao`, etc.) preserve the public surface so callers don't change; the facades route through Room for the migrated tables and through raw SQL for the rest.
 
 ### Verse Text Formatting Codes
 
@@ -270,7 +276,7 @@ Detailed documentation for each major feature module:
 
 ## Important Caveats
 
-- `IsiActivity.kt` is ~2900 lines — the monolithic main activity handles Bible reading, split view, navigation, gestures, and action mode. Changes here require careful testing.
+- `IsiActivity.kt` is ~2170 lines — still large, but no longer monolithic: gesture handling, the action-mode callback, and split-view management were extracted (REM-06/07/08) into `ReaderGestureHandler`, `VerseActionModeController`, and `SplitViewManager` under `widget/`. Bible reading, navigation history, and volume-button handling are still inline; changes here require careful testing.
 - `KpriModel.Song` uses `Parcelable` serialization for database storage (acknowledged as a bad design decision in the code).
 - The `Snappy` module has native C++ code — NDK must be installed for builds.
 - A placeholder `Alkitab/google-services.json` is checked in so `plainDebug` works out of the box; Firebase features won't actually function with it. For production flavors, the real `google-services.json` is sourced from `$ALKITAB_PROPRIETARY_DIR/google-services.json` at build time and copied into the gitignored `Alkitab/src/<flavor>/google-services.json` (where the GMS plugin's source-set lookup finds it).

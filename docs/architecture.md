@@ -2,16 +2,18 @@
 
 ## Singleton & Service Locator Pattern
 
-The app does not use dependency injection. Instead, it relies on singletons accessed through `S.kt`:
+The app does not use a DI framework. State is reached through two layers:
 
 ```
-S.db         → InternalDb (lazy)     — main database
-S.songDb     → SongDb (lazy)         — songs database
-S.activeVersion()                     — currently selected Bible version
-S.applied()  → CalculatedDimensions  — computed UI metrics from preferences
+App.services.storage.db       → InternalDb (lazy)     — main database (markers, labels, etc.)
+App.services.storage.songDb   → SongDb (lazy)         — songs database
+App.services.versions.activeVersion()                 — currently selected Bible version
+App.services.uiDimensions.applied() → CalculatedDimensions
 ```
 
-`App.staticInit()` must be called before any `S` access. This is done in `App.onCreate()` and also defensively in the `ContentProvider.onCreate()`.
+`App.services` is an `AppServices` container holding three interfaces — `StorageProvider`, `VersionManager`, `UiDimensionsProvider` — introduced by REM-24. In production all three are implemented by adapter properties on `S` (`S.storage`, `S.versions`, `S.uiDimensions`). The original `S.db` / `S.applied()` / `S.activeVersion()` accessors still work for legacy callers, and `App.services` is initialized eagerly at the class-load of `App.java` so it is non-null even from tests that bypass `App.onCreate()` / `App.staticInit()`.
+
+`App.staticInit()` must be called before features that depend on Firebase, FCM, extensions, or feedback senders. It is invoked from `App.onCreate()` and defensively from `ContentProvider.onCreate()`.
 
 ## Module Dependency Graph
 
@@ -31,22 +33,24 @@ Alkitab (main app)
 ├── KpriModel (song data model)
 ├── FlowLayout
 ├── Afw (base framework: Preferences, EasyAdapter, App context)
-├── ImportedDesktopVerseUtil (verse reference parser)
-└── PrDownloaderFixed (HTTP file downloader)
+└── ImportedDesktopVerseUtil (verse reference parser)
 ```
+
+HTTP file downloads (Bible versions) run inside `VersionDownloadWorker` (`CoroutineWorker`) using OkHttp; the previous `PrDownloaderFixed` module was deleted in REM-19, and the `AmbilWarna` color-picker module was deleted in REM-20.
 
 ## Activity Architecture
 
-The app uses traditional Activity/Fragment architecture (no Navigation Component, no Jetpack Compose):
+The app uses traditional Activity/Fragment architecture for the reader, with some screens (notably `GotoActivity` and the new color picker) ported to Jetpack Compose (REM-20, REM-22):
 
-- **IsiActivity** — main reader (monolithic, ~2900 lines). Handles:
+- **IsiActivity** — main reader (~2170 lines, down from ~2900). After REM-06/07/08 it still owns:
   - Bible text display via `VersesControllerImpl` (RecyclerView)
-  - Split-screen parallel version comparison
   - Navigation history (`BackForwardListController`)
-  - Action mode for verse selection (copy, share, bookmark, etc.)
-  - Two-finger gestures (pinch zoom, chapter swipe)
-  - Volume button navigation
+  - Volume-button navigation
   - Extension integration
+  Extracted siblings (under `yuku.alkitab.base.widget`):
+  - `ReaderGestureHandler` — two-finger pinch zoom, chapter swipe, goto-button floater drag
+  - `VerseActionModeController` — copy/share/bookmark action mode
+  - `SplitViewManager` — split-screen parallel version comparison
 
 - **GotoActivity** — verse navigation (book/chapter/verse picker)
 - **SearchActivity** — full-text search with results
@@ -60,10 +64,10 @@ The app uses traditional Activity/Fragment architecture (no Navigation Component
 
 ## Split View System
 
-`IsiActivity` supports displaying two Bible versions simultaneously:
-- `activeSplit0` (primary, always present) — `ActiveSplit0(mv, version)` data class
-- `activeSplit1` (secondary, optional) — `ActiveSplit1(mv, version)` data class
-- Layout toggles between horizontal and vertical via `splitHandleButton`
+Split-pane display of two Bible versions is owned by `SplitViewManager` (`Alkitab/src/main/java/yuku/alkitab/base/widget/SplitViewManager.kt`), wired into `IsiActivity` via the `SplitViewHost` and `SplitViewActions` interfaces:
+- `activeSplit0` (primary, always present) — `ActiveSplit0(mv, version)` data class still on `IsiActivity`
+- `activeSplit1` (secondary, optional) — `ActiveSplit1` data class lives in `yuku.alkitab.base.widget`; the manager owns the mutable state and `IsiActivity.activeSplit1` is a read-only getter that delegates
+- Layout toggles between horizontal and vertical via `splitHandleButton`; the manager persists `lastSplitOrientation` / `lastSplitProp` / `lastSplitVersionId` across launches
 - Verse scroll position and selection are synchronized between splits
 - Each split has its own `VersesControllerImpl` instance (`lsSplit0`, `lsSplit1`)
 
@@ -100,10 +104,10 @@ MVersion.getVersion()
 ## Threading Model
 
 - UI thread for all display and user interaction
-- Background threads for:
-  - Sync operations (via WorkManager)
-  - Devotion downloads (`DevotionDownloader` — dedicated thread with queue)
-  - Song book downloads
-  - File imports
-  - Widget updates
-- No RxJava or coroutines for async — uses traditional threads, `AsyncTask` remnants, and WorkManager
+- Background work:
+  - Sync operations run as a `WorkManager` worker (`SyncAdapter`)
+  - Bible-version downloads run as a `CoroutineWorker` (`VersionDownloadWorker`) using OkHttp + Range-based resume; observed via `WorkManager.getWorkInfoByIdFlow` in `DownloadMapper` (REM-19)
+  - `DevotionDownloader` uses a single-thread `ExecutorService` with a `LinkedBlockingDeque` queue and a clean shutdown path (REM-05)
+  - Song-book downloads use raw OkHttp via `Connections.downloadCall(...)`
+  - File imports and widget updates
+- Coroutines are used in the migrated paths above (workers, gesture-flow collectors, the `AppEvents` `SharedFlow` buses introduced by REM-03) but the codebase still has `Thread` / `Handler` remnants — see `docs/tech-debt.md`

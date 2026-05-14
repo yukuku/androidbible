@@ -2,55 +2,72 @@
 
 ## SQLite Databases
 
-### InternalDb (Main Database)
+The app stores data in two separate SQLite files:
 
-Managed by `InternalDbHelper` with version-based schema migrations (current version 50+).
+- **`AlkitabRoomDb`** — Room database (`AppDatabase` at `@Database(version = 2)`). Owns the tables migrated as part of REM-10/REM-11.
+- **`AlkitabDb`** — legacy hand-rolled `SQLiteOpenHelper` (`InternalDbHelper`). Owns the tables not yet migrated to Room.
 
-#### Core Tables
+`InternalDb` plus per-table facade DAOs (`MarkerDao`, `LabelDao`, `Marker_LabelDao`, `VersionDao`, etc.) preserve the legacy public surface — callers don't need to know which file backs which table.
 
-**Marker** — bookmarks, notes, highlights
+### AlkitabRoomDb (Room)
+
+`yuku.alkitab.base.storage.room.AppDatabase`. Schema JSONs are exported under `Alkitab/schemas/`. Migration history:
+
+- v1 (REM-11) — introduced the `version` table
+- v2 (REM-10) — added `marker`, `label`, `marker_label` tables and their indexes via `MIGRATION_1_2`
+
+The legacy `Marker` / `Label` / `Marker_Label` / `Version` tables are still created in `AlkitabDb` as a rollback safety net; a one-time idempotent copy (`MarkerDataMigration` and `VersionDataMigration`, wired from `S.db`'s lazy initializer) moves their rows into Room on first launch with the migrated code.
+
+#### Room Tables
+
+**marker** — bookmarks, notes, highlights
 ```sql
-_id          INTEGER PRIMARY KEY
-gid          TEXT UNIQUE       -- globally unique ID for sync
-ari          INTEGER           -- verse reference (ARI encoding)
-kind         INTEGER           -- 0=bookmark, 1=note, 2=highlight
+_id          INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL
+gid          TEXT              -- globally unique ID for sync
+ari          INTEGER NOT NULL  -- verse reference (ARI encoding)
+kind         INTEGER NOT NULL  -- 0=bookmark, 1=note, 2=highlight
 caption      TEXT              -- title/content/highlight JSON
-verseCount   INTEGER           -- number of verses covered
-createTime   TEXT              -- ISO timestamp
-modifyTime   TEXT              -- ISO timestamp
--- Indices on: ari, (kind, ari), (kind, modifyTime), gid
+verseCount   INTEGER NOT NULL
+createTime   INTEGER NOT NULL  -- epoch seconds
+modifyTime   INTEGER NOT NULL  -- epoch seconds
+-- Indices: ari, (kind, ari), (kind, modifyTime), (kind, createTime), gid
 ```
 
-**Label** — bookmark categories
+**label** — bookmark categories
 ```sql
-_id              INTEGER PRIMARY KEY
-gid              TEXT UNIQUE
+_id              INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL
+gid              TEXT
 title            TEXT
-ordering         INTEGER
-backgroundColor  TEXT         -- hex color string
+ordering         INTEGER NOT NULL
+backgroundColor  TEXT
 ```
 
-**Marker_Label** — junction table
+**marker_label** — junction table
 ```sql
-_id        INTEGER PRIMARY KEY
-gid        TEXT UNIQUE
+_id        INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL
+gid        TEXT
 marker_gid TEXT
 label_gid  TEXT
+-- Unique index on gid; indices on marker_gid and label_gid
 ```
 
-**Version** — downloaded Bible versions
+**version** — downloaded Bible versions
 ```sql
-_id          INTEGER PRIMARY KEY
+_id          INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL
 locale       TEXT
 shortName    TEXT
 longName     TEXT
 description  TEXT
 filename     TEXT
 preset_name  TEXT
-modifyTime   INTEGER
-active       INTEGER          -- 0 or 1
-ordering     INTEGER
+modifyTime   INTEGER NOT NULL
+active       INTEGER NOT NULL  -- 0 or 1
+ordering     INTEGER NOT NULL
 ```
+
+### AlkitabDb (legacy SQLiteOpenHelper)
+
+Managed by `InternalDbHelper` with version-based schema migrations keyed off the app `versionCode`. Owns the not-yet-migrated tables below.
 
 **ProgressMark** — 5 reading progress pins
 ```sql
@@ -153,12 +170,12 @@ The app previously supported reading `.yes` files from external storage (`READ_E
 
 ## Database Access Patterns
 
-All database access goes through `InternalDb` (accessed via `S.db`). Common patterns:
+All database access goes through `InternalDb` (accessed via `App.services.storage.db`, or the legacy `S.db`). Common patterns:
 
-- **Markers**: `insertOrUpdateMarker()`, `deleteMarkerById()`, `listMarkersForAriKind()`
-- **Highlights**: `updateOrInsertHighlights()` — manages per-verse highlight data
-- **Attributes**: `putAttributes()` — loads bookmark/note/highlight counts for verse display
-- **Versions**: `listAllVersions()` — retrieves all versions sorted by ordering
-- **Devotions**: `storeArticleToDevotions()` — caches downloaded articles
+- **Markers**: `insertOrUpdateMarker()`, `deleteMarkerById()`, `listMarkersForAriKind()` — route through `MarkerDao` → Room
+- **Highlights**: `updateOrInsertHighlights()` — manages per-verse highlight data; routes through Room
+- **Attributes**: `putAttributes()` — loads bookmark/note/highlight counts for verse display; routes through Room
+- **Versions**: `listAllVersions()` — retrieves all versions sorted by ordering; routes through `VersionDao` → Room
+- **Devotions**: `storeArticleToDevotions()` — caches downloaded articles; still routes through `InternalDb`'s raw-SQL path (legacy `AlkitabDb`)
 
-Database operations are generally synchronous on the calling thread. No Room, no DAO layer — direct SQLite via `SQLiteOpenHelper` and `Cursor` operations.
+Database operations are generally synchronous on the calling thread; the Room database explicitly enables `allowMainThreadQueries()` so the migration is a drop-in replacement for the existing synchronous facade. Migrating individual operations to coroutines/`Flow` is tracked under REM-15 in `docs/tech-debt-remediation.md`.

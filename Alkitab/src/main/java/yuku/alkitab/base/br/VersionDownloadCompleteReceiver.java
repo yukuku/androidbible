@@ -111,7 +111,10 @@ public class VersionDownloadCompleteReceiver {
 				AppEvents.emitVersionListReload();
 				return;
 			} finally {
-				DownloadMapper.instance.remove(id);
+				// `consumeAndRemove` (not `remove`) so the temp file is deleted:
+				// the worker always starts from byte 0 so the leftover bytes
+				// would never be reused, they'd just leak cache space.
+				DownloadMapper.instance.consumeAndRemove(id);
 			}
 
 			final BibleReader reader = YesReaderFactory.createYesReader(destFile.getAbsolutePath());
