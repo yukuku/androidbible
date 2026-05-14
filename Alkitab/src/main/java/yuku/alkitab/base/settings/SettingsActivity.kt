@@ -34,6 +34,7 @@ class SettingsActivity : BaseActivity() {
         Header(R.string.pref_penggunaan, UsageFragment::class.java, null),
         Header(R.string.pref_copy_share, CopyShareFragment::class.java, null),
         Header(R.string.pref_data_transfer, DataTransferFragment::class.java, null),
+        Header(R.string.pref_experimental, ExperimentalFragment::class.java, null),
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
