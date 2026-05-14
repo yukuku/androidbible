@@ -243,6 +243,9 @@ object S {
         // One-time copy of the legacy `ProgressMark` and `ProgressMarkHistory`
         // tables into Room (REM-29). Same idempotency / retry properties.
         yuku.alkitab.base.storage.room.ProgressMarkDataMigration.copyFromLegacyDbIfNeeded(roomDb, helper)
+        // One-time copy of the legacy `ReadingPlan` and `ReadingPlanProgress`
+        // tables into Room (REM-30). Same idempotency / retry properties.
+        yuku.alkitab.base.storage.room.ReadingPlanDataMigration.copyFromLegacyDbIfNeeded(roomDb, helper)
         InternalDb(helper)
     }
 

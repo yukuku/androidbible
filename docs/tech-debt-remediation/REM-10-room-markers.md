@@ -26,7 +26,7 @@
 
 **Verification.** `./gradlew :Alkitab:testPlainDebugUnitTest :Alkitab:testPlainReleaseUnitTest` — 494 tests, all green. `./gradlew :Alkitab:assemblePlainDebug` produces a working APK. On-device smoke (Pixel emulator API 35, pre-existing dataset of 1456 markers / 18 labels / 152 marker_label associations from a v1 Room install): installing the new APK ran `MarkerDataMigration` once on first launch (logged `Copied 1456 marker(s), 18 label(s), 152 marker_label row(s) from legacy tables to Room`), counts match the legacy table exactly, second launch is idempotent (no row growth), spot-check confirms `gid` / `ari` / `caption` round-trip verbatim.
 
-**Difficulty:** Hard. Took ~1 day with the REM-11 pattern already established. Subsequent tables can follow the same pattern — `Devotion` shipped as [REM-27](REM-27-room-devotion.md), `PerVersion` as [REM-28](REM-28-room-per-version.md), `ProgressMark` / `ProgressMarkHistory` as [REM-29](REM-29-room-progress-mark.md); `ReadingPlan`, `SyncShadow`, `SyncLog` remain.
+**Difficulty:** Hard. Took ~1 day with the REM-11 pattern already established. Subsequent tables can follow the same pattern — `Devotion` shipped as [REM-27](REM-27-room-devotion.md), `PerVersion` as [REM-28](REM-28-room-per-version.md), `ProgressMark` / `ProgressMarkHistory` as [REM-29](REM-29-room-progress-mark.md), `ReadingPlan` / `ReadingPlanProgress` as [REM-30](REM-30-room-reading-plan.md); `SyncShadow`, `SyncLog` remain.
 
 ---
 

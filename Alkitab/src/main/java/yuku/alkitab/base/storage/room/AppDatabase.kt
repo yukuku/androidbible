@@ -33,6 +33,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  *   their indexes. See [MIGRATION_4_5]. Same rollback-safety convention:
  *   the legacy `ProgressMark` / `ProgressMarkHistory` tables in `AlkitabDb`
  *   are left intact.
+ * - v6 — added the `reading_plan` and `reading_plan_progress` tables and
+ *   the unique `(reading_plan_progress_gid, reading_code)` index on the
+ *   progress table. See [MIGRATION_5_6]. Same rollback-safety convention:
+ *   the legacy `ReadingPlan` / `ReadingPlanProgress` tables in `AlkitabDb`
+ *   are left intact.
  *
  * REM-10 follow-up note: [MIGRATION_1_2] creates the
  * `index_marker_kind_caption` index with `COLLATE NOCASE` (matching the
@@ -52,8 +57,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         PerVersionEntity::class,
         ProgressMarkEntity::class,
         ProgressMarkHistoryEntity::class,
+        ReadingPlanEntity::class,
+        ReadingPlanProgressEntity::class,
     ],
-    version = 5,
+    version = 6,
     exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -64,6 +71,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun devotionDao(): DevotionRoomDao
     abstract fun perVersionDao(): PerVersionRoomDao
     abstract fun progressMarkDao(): ProgressMarkRoomDao
+    abstract fun readingPlanDao(): ReadingPlanRoomDao
 
     companion object {
         const val DB_NAME = "AlkitabRoomDb"
@@ -245,6 +253,48 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * v5 → v6: create the `reading_plan` and `reading_plan_progress`
+         * tables and the unique index on the progress table. SQL mirrors
+         * what Room emits for the v6 entities (compare against
+         * `Alkitab/schemas/.../6.json`) — keep them in sync if
+         * [ReadingPlanEntity] / [ReadingPlanProgressEntity] change.
+         *
+         * A v5 device upgrading runs this migration once; a fresh install
+         * skips straight to v6 via Room's `onCreate` (Room uses the entity
+         * definitions, not this migration, for fresh schemas — that's why
+         * the SQL here must match what Room would emit).
+         */
+        @JvmField
+        val MIGRATION_5_6: Migration = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `reading_plan` (" +
+                        "`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`version` INTEGER, " +
+                        "`name` TEXT, " +
+                        "`title` TEXT, " +
+                        "`description` TEXT, " +
+                        "`duration` INTEGER, " +
+                        "`startTime` INTEGER, " +
+                        "`data` BLOB)",
+                )
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `reading_plan_progress` (" +
+                        "`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`reading_plan_progress_gid` TEXT NOT NULL, " +
+                        "`reading_code` INTEGER NOT NULL, " +
+                        "`checkTime` INTEGER)",
+                )
+                db.execSQL(
+                    "CREATE UNIQUE INDEX IF NOT EXISTS " +
+                        "`index_reading_plan_progress_gid_reading_code` " +
+                        "ON `reading_plan_progress` " +
+                        "(`reading_plan_progress_gid`, `reading_code`)",
+                )
+            }
+        }
+
         @Volatile
         private var instance: AppDatabase? = null
 
@@ -262,7 +312,13 @@ abstract class AppDatabase : RoomDatabase() {
                 // methods) are synchronous. Coroutine-based callers can be
                 // introduced later — see REM-15 in tech-debt-remediation.md.
                 .allowMainThreadQueries()
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                .addMigrations(
+                    MIGRATION_1_2,
+                    MIGRATION_2_3,
+                    MIGRATION_3_4,
+                    MIGRATION_4_5,
+                    MIGRATION_5_6,
+                )
                 .build()
 
         /**

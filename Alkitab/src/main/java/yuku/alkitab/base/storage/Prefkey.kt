@@ -184,4 +184,14 @@ enum class Prefkey {
      * resurrect cleared rows on the next launch.
      */
     progress_mark_data_migration_v1_done,
+
+    /**
+     * One-shot completion flag for the REM-30 `ReadingPlan` /
+     * `ReadingPlanProgress` copy from the legacy `AlkitabDb` tables into
+     * Room. Same rationale as [marker_data_migration_v1_done] — see GitHub
+     * issue #195. Reading-plan progress is user-mutable (a day can be
+     * un-checked, an entire plan can be deleted), so a count-based gate
+     * would resurrect cleared rows on the next launch.
+     */
+    reading_plan_data_migration_v1_done,
 }
