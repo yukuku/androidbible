@@ -19,12 +19,20 @@ import yuku.alkitab.base.util.AppLog
  * would be re-copied from the legacy table on the next launch. See GitHub
  * issue #195.
  *
+ * Memory profile: rows are streamed from the legacy cursor straight into
+ * Room inside a single `runInTransaction` block. A devotion `body` can be
+ * a multi-kilobyte HTML payload and the legacy cache may accumulate years
+ * of articles, so buffering every row into an `ArrayList` before insert
+ * (the REM-10/REM-11 pattern, where individual rows are small) would risk
+ * an [OutOfMemoryError] on low-end devices. Streaming keeps the footprint
+ * bound by one row at a time.
+ *
  * Crash safety:
- *  - If the Room insert fails mid-flight, Room rolls back and the flag is
- *    never set; the next launch retries.
- *  - If the process is killed after the insert commits but before the flag
- *    is set, the next launch sees Room rows already present and takes the
- *    upgrade-path branch (sets the flag, does not re-copy).
+ *  - If any insert fails mid-flight, Room rolls back the whole transaction
+ *    and the flag is never set; the next launch retries.
+ *  - If the process is killed after the transaction commits but before the
+ *    flag is set, the next launch sees Room rows already present and takes
+ *    the upgrade-path branch (sets the flag, does not re-copy).
  *
  * The legacy table is intentionally left intact so a future release can
  * audit/rollback.
@@ -48,26 +56,31 @@ object DevotionDataMigration {
             return
         }
 
-        val rows = readLegacyRows(legacyHelper)
-        if (rows.isEmpty()) {
-            // No legacy data either (fresh install). Mark done so future
-            // launches skip the legacy-read entirely.
-            Preferences.setBoolean(Prefkey.devotion_data_migration_v1_done, true)
-            return
-        }
-
-        // Bulk insert — Room's `@Insert` runs inside a single transaction, so
-        // a crash mid-migration leaves zero rows in Room and the next launch
-        // retries cleanly.
-        dao.insertAll(rows)
+        val copied = streamCopyInsideTransaction(roomDb, dao, legacyHelper)
         // Set the flag only after a successful commit. A crash between here
         // and the next launch is handled by the upgrade-path branch above.
         Preferences.setBoolean(Prefkey.devotion_data_migration_v1_done, true)
-        AppLog.d(TAG, "Copied ${rows.size} devotion row(s) from legacy Devotion table to Room")
+        if (copied > 0) {
+            AppLog.d(TAG, "Copied $copied devotion row(s) from legacy Devotion table to Room")
+        }
     }
 
-    private fun readLegacyRows(legacyHelper: InternalDbHelper): List<DevotionEntity> {
-        val res = ArrayList<DevotionEntity>()
+    /**
+     * Reads rows from the legacy cursor and inserts them into Room one at a
+     * time inside a single Room transaction. Returns the number of rows
+     * copied (0 on a fresh install where the legacy table is empty).
+     *
+     * Why not the REM-10 `dao.insertAll(list)` pattern? `Devotion.body` can
+     * be a multi-kilobyte HTML payload; loading every cached year's worth
+     * into a single `ArrayList` before insertion blows up memory on low-end
+     * devices. Streaming through the cursor keeps memory bound by one row.
+     */
+    private fun streamCopyInsideTransaction(
+        roomDb: AppDatabase,
+        dao: DevotionRoomDao,
+        legacyHelper: InternalDbHelper,
+    ): Int {
+        var copied = 0
         legacyHelper.readableDatabase.query(
             Table.Devotion.tableName(), null, null, null, null, null, "_id ASC",
         ).use { c ->
@@ -77,21 +90,26 @@ object DevotionDataMigration {
             val colReadyToUse = c.getColumnIndexOrThrow(Table.Devotion.readyToUse.name)
             val colTouchTime = c.getColumnIndexOrThrow(Table.Devotion.touchTime.name)
             val colDataFormatVersion = c.getColumnIndexOrThrow(Table.Devotion.dataFormatVersion.name)
-            while (c.moveToNext()) {
-                res += DevotionEntity(
-                    // Don't carry over `_id` — Room assigns a fresh one. Nothing
-                    // outside the table referenced the legacy `_id`; the
-                    // identity key used by callers is `(name, date, dataFormatVersion)`.
-                    _id = 0L,
-                    name = c.getString(colName),
-                    date = c.getString(colDate),
-                    body = c.getString(colBody),
-                    readyToUse = c.getInt(colReadyToUse),
-                    touchTime = c.getInt(colTouchTime),
-                    dataFormatVersion = c.getInt(colDataFormatVersion),
-                )
+            roomDb.runInTransaction {
+                while (c.moveToNext()) {
+                    dao.insert(
+                        DevotionEntity(
+                            // Don't carry over `_id` — Room assigns a fresh one. Nothing
+                            // outside the table referenced the legacy `_id`; the
+                            // identity key used by callers is `(name, date, dataFormatVersion)`.
+                            _id = 0L,
+                            name = c.getString(colName),
+                            date = c.getString(colDate),
+                            body = c.getString(colBody),
+                            readyToUse = c.getInt(colReadyToUse),
+                            touchTime = c.getInt(colTouchTime),
+                            dataFormatVersion = c.getInt(colDataFormatVersion),
+                        ),
+                    )
+                    copied++
+                }
             }
         }
-        return res
+        return copied
     }
 }
