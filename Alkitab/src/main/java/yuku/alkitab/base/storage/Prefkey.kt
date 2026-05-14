@@ -174,4 +174,14 @@ enum class Prefkey {
      * count-based gate would resurrect cleared rows on the next launch.
      */
     per_version_data_migration_v1_done,
+
+    /**
+     * One-shot completion flag for the REM-29 `ProgressMark` /
+     * `ProgressMarkHistory` copy from the legacy `AlkitabDb` tables into
+     * Room. Same rationale as [marker_data_migration_v1_done] — see GitHub
+     * issue #195. The progress-mark table is user-mutable (pins can be
+     * overwritten with the empty placeholder), so a count-based gate would
+     * resurrect cleared rows on the next launch.
+     */
+    progress_mark_data_migration_v1_done,
 }

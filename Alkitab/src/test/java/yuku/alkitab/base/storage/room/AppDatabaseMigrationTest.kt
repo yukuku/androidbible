@@ -106,7 +106,12 @@ class AppDatabaseMigrationTest {
             TEST_DB,
         )
             .allowMainThreadQueries()
-            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3, AppDatabase.MIGRATION_3_4)
+            .addMigrations(
+                AppDatabase.MIGRATION_1_2,
+                AppDatabase.MIGRATION_2_3,
+                AppDatabase.MIGRATION_3_4,
+                AppDatabase.MIGRATION_4_5,
+            )
             .build()
         AppDatabase.setForTesting(room)
 
@@ -285,7 +290,12 @@ class AppDatabaseMigrationTest {
             TEST_DB,
         )
             .allowMainThreadQueries()
-            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3, AppDatabase.MIGRATION_3_4)
+            .addMigrations(
+                AppDatabase.MIGRATION_1_2,
+                AppDatabase.MIGRATION_2_3,
+                AppDatabase.MIGRATION_3_4,
+                AppDatabase.MIGRATION_4_5,
+            )
             .build()
         AppDatabase.setForTesting(room)
 
@@ -391,7 +401,12 @@ class AppDatabaseMigrationTest {
             TEST_DB,
         )
             .allowMainThreadQueries()
-            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3, AppDatabase.MIGRATION_3_4)
+            .addMigrations(
+                AppDatabase.MIGRATION_1_2,
+                AppDatabase.MIGRATION_2_3,
+                AppDatabase.MIGRATION_3_4,
+                AppDatabase.MIGRATION_4_5,
+            )
             .build()
         AppDatabase.setForTesting(room)
 
@@ -418,6 +433,83 @@ class AppDatabaseMigrationTest {
     }
 
     /**
+     * v4 → v5 adds the `progress_mark` and `progress_mark_history` tables.
+     * The migration must:
+     *
+     * - Preserve every row already in the v4 tables (`version`, `marker`,
+     *   `label`, `marker_label`, `devotion`, `per_version`).
+     * - Create the two new tables with the schema Room's entity definitions
+     *   emit (verified by [MigrationTestHelper.runMigrationsAndValidate]
+     *   when `validateDroppedTables = true`).
+     * - Leave the new tables empty (data copy is a separate concern handled
+     *   by [ProgressMarkDataMigration]).
+     */
+    @Test
+    fun migrates4To5() {
+        // Seed a v4 row in the `per_version` table so we can verify the
+        // migration doesn't drop pre-existing data. Walk v1 → v2 → v3 → v4
+        // first so the v4 tables exist.
+        helper.createDatabase(TEST_DB, 1).close()
+        helper.runMigrationsAndValidate(TEST_DB, 2, true, AppDatabase.MIGRATION_1_2).close()
+        helper.runMigrationsAndValidate(TEST_DB, 3, true, AppDatabase.MIGRATION_2_3).close()
+        helper.runMigrationsAndValidate(TEST_DB, 4, true, AppDatabase.MIGRATION_3_4).use { db ->
+            val cv = ContentValues().apply {
+                put("versionId", "preset/kjv")
+                put("settings", """{"fontSizeMultiplier":1.5}""")
+            }
+            db.insert("per_version", android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE, cv)
+        }
+
+        // Run v4 → v5.
+        helper.runMigrationsAndValidate(TEST_DB, 5, true, AppDatabase.MIGRATION_4_5).use { db ->
+            // v4 row survived
+            db.query("SELECT settings FROM per_version WHERE versionId = 'preset/kjv'").use { c ->
+                assertTrue(c.moveToFirst())
+                assertEquals("""{"fontSizeMultiplier":1.5}""", c.getString(0))
+            }
+            // The two new tables exist
+            db.query(
+                "SELECT name FROM sqlite_master WHERE type='table' " +
+                    "AND name IN ('progress_mark', 'progress_mark_history') ORDER BY name",
+            ).use { c ->
+                val tables = mutableListOf<String>()
+                while (c.moveToNext()) tables += c.getString(0)
+                assertEquals(listOf("progress_mark", "progress_mark_history"), tables)
+            }
+            // … and are empty
+            db.query("SELECT COUNT(*) FROM progress_mark").use { c ->
+                assertTrue(c.moveToFirst())
+                assertEquals(0, c.getInt(0))
+            }
+            db.query("SELECT COUNT(*) FROM progress_mark_history").use { c ->
+                assertTrue(c.moveToFirst())
+                assertEquals(0, c.getInt(0))
+            }
+            // Indexes on both tables exist
+            db.query(
+                "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='progress_mark'",
+            ).use { c ->
+                val indexes = mutableListOf<String>()
+                while (c.moveToNext()) indexes += c.getString(0)
+                assertTrue(
+                    "expected index_progress_mark_preset_id among $indexes",
+                    indexes.contains("index_progress_mark_preset_id"),
+                )
+            }
+            db.query(
+                "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='progress_mark_history'",
+            ).use { c ->
+                val indexes = mutableListOf<String>()
+                while (c.moveToNext()) indexes += c.getString(0)
+                assertTrue(
+                    "expected index_progress_mark_history_preset_id_createTime among $indexes",
+                    indexes.contains("index_progress_mark_history_preset_id_createTime"),
+                )
+            }
+        }
+    }
+
+    /**
      * Companion to the v1→v3 devotion round-trip test: verify that after
      * v1 → v4 (i.e. all three migrations applied in sequence) Room can open
      * the DB and round-trip a row through the new [PerVersionEntity] DAO.
@@ -434,7 +526,12 @@ class AppDatabaseMigrationTest {
             TEST_DB,
         )
             .allowMainThreadQueries()
-            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3, AppDatabase.MIGRATION_3_4)
+            .addMigrations(
+                AppDatabase.MIGRATION_1_2,
+                AppDatabase.MIGRATION_2_3,
+                AppDatabase.MIGRATION_3_4,
+                AppDatabase.MIGRATION_4_5,
+            )
             .build()
         AppDatabase.setForTesting(room)
 
@@ -450,6 +547,64 @@ class AppDatabaseMigrationTest {
             val loaded = room.perVersionDao().findByVersionId("preset/kjv")
             assertNotNull(loaded)
             assertEquals("""{"fontSizeMultiplier":1.5}""", loaded!!.settings)
+        } finally {
+            room.close()
+        }
+    }
+
+    /**
+     * Companion to the v1→v4 per_version round-trip test: verify that after
+     * v1 → v5 (i.e. all four migrations applied in sequence) Room can open
+     * the DB and round-trip a row through the new [ProgressMarkEntity] DAO.
+     * Catches drift between [AppDatabase.MIGRATION_4_5] and the entity
+     * declarations.
+     */
+    @Test
+    fun `after migrating from v1 to v5 Room opens cleanly and round-trips a progress_mark row through the new DAO`() {
+        helper.createDatabase(TEST_DB, 1).close()
+
+        val room = Room.databaseBuilder(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            AppDatabase::class.java,
+            TEST_DB,
+        )
+            .allowMainThreadQueries()
+            .addMigrations(
+                AppDatabase.MIGRATION_1_2,
+                AppDatabase.MIGRATION_2_3,
+                AppDatabase.MIGRATION_3_4,
+                AppDatabase.MIGRATION_4_5,
+            )
+            .build()
+        AppDatabase.setForTesting(room)
+
+        try {
+            val markId = room.progressMarkDao().insert(
+                ProgressMarkEntity(
+                    _id = 0L,
+                    preset_id = 2,
+                    caption = "John 3:16",
+                    ari = 12345,
+                    modifyTime = 1_700_000_000,
+                ),
+            )
+            assertTrue(markId > 0)
+            val loaded = room.progressMarkDao().findByPresetId(2)
+            assertNotNull(loaded)
+            assertEquals(12345, loaded!!.ari)
+            assertEquals("John 3:16", loaded.caption)
+
+            val historyId = room.progressMarkDao().insertHistory(
+                ProgressMarkHistoryEntity(
+                    _id = 0L,
+                    progress_mark_preset_id = 2,
+                    progress_mark_caption = "John 3:16",
+                    ari = 12345,
+                    createTime = 1_700_000_000,
+                ),
+            )
+            assertTrue(historyId > 0)
+            assertEquals(1, room.progressMarkDao().listHistoryByPresetId(2).size)
         } finally {
             room.close()
         }

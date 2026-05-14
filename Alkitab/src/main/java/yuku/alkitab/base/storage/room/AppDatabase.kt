@@ -29,6 +29,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  * - v4 — added the `per_version` table and its unique index on `versionId`.
  *   See [MIGRATION_3_4]. Same rollback-safety convention: the legacy
  *   `PerVersion` table in `AlkitabDb` is left intact.
+ * - v5 — added the `progress_mark` and `progress_mark_history` tables and
+ *   their indexes. See [MIGRATION_4_5]. Same rollback-safety convention:
+ *   the legacy `ProgressMark` / `ProgressMarkHistory` tables in `AlkitabDb`
+ *   are left intact.
  *
  * REM-10 follow-up note: [MIGRATION_1_2] creates the
  * `index_marker_kind_caption` index with `COLLATE NOCASE` (matching the
@@ -46,8 +50,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         MarkerLabelEntity::class,
         DevotionEntity::class,
         PerVersionEntity::class,
+        ProgressMarkEntity::class,
+        ProgressMarkHistoryEntity::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -57,6 +63,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun markerLabelDao(): MarkerLabelRoomDao
     abstract fun devotionDao(): DevotionRoomDao
     abstract fun perVersionDao(): PerVersionRoomDao
+    abstract fun progressMarkDao(): ProgressMarkRoomDao
 
     companion object {
         const val DB_NAME = "AlkitabRoomDb"
@@ -196,6 +203,48 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * v4 → v5: create the `progress_mark` and `progress_mark_history`
+         * tables and their indexes. SQL mirrors what Room emits for the v5
+         * entities (compare against `Alkitab/schemas/.../5.json`) — keep
+         * them in sync if [ProgressMarkEntity] / [ProgressMarkHistoryEntity]
+         * change.
+         *
+         * A v4 device upgrading runs this migration once; a fresh install
+         * skips straight to v5 via Room's `onCreate` (Room uses the entity
+         * definitions, not this migration, for fresh schemas — that's why
+         * the SQL here must match what Room would emit).
+         */
+        @JvmField
+        val MIGRATION_4_5: Migration = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `progress_mark` (" +
+                        "`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`preset_id` INTEGER NOT NULL, " +
+                        "`caption` TEXT, " +
+                        "`ari` INTEGER NOT NULL, " +
+                        "`modifyTime` INTEGER)",
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_progress_mark_preset_id` " +
+                        "ON `progress_mark` (`preset_id`)",
+                )
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `progress_mark_history` (" +
+                        "`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`progress_mark_preset_id` INTEGER NOT NULL, " +
+                        "`progress_mark_caption` TEXT, " +
+                        "`ari` INTEGER NOT NULL, " +
+                        "`createTime` INTEGER)",
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_progress_mark_history_preset_id_createTime` " +
+                        "ON `progress_mark_history` (`progress_mark_preset_id`, `createTime`)",
+                )
+            }
+        }
+
         @Volatile
         private var instance: AppDatabase? = null
 
@@ -213,7 +262,7 @@ abstract class AppDatabase : RoomDatabase() {
                 // methods) are synchronous. Coroutine-based callers can be
                 // introduced later — see REM-15 in tech-debt-remediation.md.
                 .allowMainThreadQueries()
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                 .build()
 
         /**
