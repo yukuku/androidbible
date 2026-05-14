@@ -60,13 +60,21 @@ class VerseItemSideBySideSnapshotTest {
     private val VERSE_NUMBER_COLOR = 0xff445566.toInt()
     private val FONT_SIZE_DP = 17f
     private val LINE_SPACING_MULT = 1.15f
-    private val INDENT_FIRST = 12
-    private val INDENT_REST = 24
-    private val INDENT_1 = 16
-    private val INDENT_2 = 32
-    private val INDENT_3 = 48
-    private val INDENT_4 = 64
-    private val INDENT_EXTRA = 4
+    // Mirror the production values from `res/values/dimens_indent.xml`. With
+    // a 1×-density (mdpi) test display, 1dp == 1px, so we can use the dp
+    // numbers directly as the pixel offsets the CalculatedDimensions struct
+    // expects. The key relationship is `FIRST > REST` for the `@^` marker:
+    // first line is pushed in to make room for the verse-number gutter, and
+    // continuation lines flow back to the left — NOT a typographic hanging
+    // indent. Earlier test values had these inverted, which made both
+    // renderers agree on a layout that real production never produces.
+    private val INDENT_FIRST = 38
+    private val INDENT_REST = 5
+    private val INDENT_1 = 22
+    private val INDENT_2 = 38
+    private val INDENT_3 = 54
+    private val INDENT_4 = 70
+    private val INDENT_EXTRA = 6
 
     /** Width in pixels for the snapshot viewport (~360dp at mdpi). */
     private val VIEWPORT_WIDTH_PX = 360
@@ -237,6 +245,10 @@ class VerseItemSideBySideSnapshotTest {
         Case("10-formatted-default", "@@A simple formatted verse with no paragraph marker."),
         Case("11-paragraph-zero", "@@@0First line of paragraph zero, which keeps the verse number inline."),
         Case("12-paragraph-first-indent", "@@@^This paragraph uses caret indent for first-line hanging style. The rest of the paragraph should wrap to a different indent."),
+        // Reference case from the maintainer (see PR #202 review): verse
+        // number sits in the gutter, first line indented to clear it,
+        // continuation lines flow flush-left at indentParagraphRest.
+        Case("12b-caret-long-wrap", "@@@^1:1:6 para start with looooooooooooong text laba laba bala bala laba laba bala bala laba laba", verseNumber = 6),
         Case("13-paragraph-one", "@@@1Indent level 1 paragraph that wraps several lines to demonstrate consistent rest-indent."),
         Case("14-paragraph-two", "@@@2Indent level 2 paragraph that wraps several lines."),
         Case("15-paragraph-three", "@@@3Indent level 3 paragraph wraps to show indent3 rest spacing."),
