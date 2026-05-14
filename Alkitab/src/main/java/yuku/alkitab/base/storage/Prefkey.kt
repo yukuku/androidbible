@@ -155,4 +155,14 @@ enum class Prefkey {
      * [marker_data_migration_v1_done] — see GitHub issue #195.
      */
     version_data_migration_v1_done,
+
+    /**
+     * One-shot completion flag for the `Devotion` copy from the legacy
+     * `AlkitabDb` table into Room. Same rationale as
+     * [marker_data_migration_v1_done] — see GitHub issue #195. The Devotion
+     * table is a transient cache (entries expire on `touchTime`), so
+     * resurrecting deleted rows is less damaging than for markers, but the
+     * flag-based gate is cheap and keeps the pattern uniform across tables.
+     */
+    devotion_data_migration_v1_done,
 }

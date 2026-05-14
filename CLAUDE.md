@@ -169,19 +169,19 @@ Used everywhere: database storage, intent extras, sync protocol, content provide
 
 The app uses two SQLite files:
 
-- **`AlkitabRoomDb`** — Room database (`yuku.alkitab.base.storage.room.AppDatabase`, currently at `@Database(version = 2)`). Holds the tables migrated as part of the REM-10/REM-11 plan:
+- **`AlkitabRoomDb`** — Room database (`yuku.alkitab.base.storage.room.AppDatabase`, currently at `@Database(version = 3)`). Holds the tables migrated as part of the REM-10/REM-11/REM-27 plan:
   - **version** (REM-11) — metadata for downloaded Bible versions (filename, locale, active flag, ordering).
   - **marker** (REM-10) — bookmarks, notes, highlights (distinguished by `kind` column). Each row has a `gid` (globally unique ID) for sync.
   - **label** (REM-10) — bookmark categories with custom background colors.
   - **marker_label** (REM-10) — many-to-many junction between markers and labels.
+  - **devotion** (REM-27) — cached devotional articles keyed by `(name, date, dataFormatVersion)`.
 - **`AlkitabDb`** — legacy hand-rolled `SQLiteOpenHelper` (`InternalDbHelper`). Still owns the not-yet-migrated tables:
   - **ProgressMark** — 5 reading progress pins with ARI positions.
   - **ReadingPlan** / **ReadingPlanProgress** — reading plan data and daily completion tracking.
-  - **Devotion** — cached devotional articles.
   - **SyncShadow** / **SyncLog** — sync state tracking.
   - **PerVersion** — per-version settings.
 
-The legacy `Marker` / `Label` / `Marker_Label` / `Version` tables are still created in `AlkitabDb` as a rollback safety net; a one-time copy in `MarkerDataMigration` / `VersionDataMigration` (wired from `S.db`'s lazy initializer) moves their rows into Room on first launch with the migrated code. `InternalDb` plus the per-table facades (`MarkerDao`, `LabelDao`, `Marker_LabelDao`, `VersionDao`, etc.) preserve the public surface so callers don't change; the facades route through Room for the migrated tables and through raw SQL for the rest.
+The legacy `Marker` / `Label` / `Marker_Label` / `Version` / `Devotion` tables are still created in `AlkitabDb` as a rollback safety net; a one-time copy in `MarkerDataMigration` / `VersionDataMigration` / `DevotionDataMigration` (wired from `S.db`'s lazy initializer) moves their rows into Room on first launch with the migrated code. `InternalDb` plus the per-table facades (`MarkerDao`, `LabelDao`, `Marker_LabelDao`, `VersionDao`, `DevotionDao`, etc.) preserve the public surface so callers don't change; the facades route through Room for the migrated tables and through raw SQL for the rest.
 
 ### Verse Text Formatting Codes
 
