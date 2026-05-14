@@ -23,7 +23,7 @@
 
 **Verification.** `./gradlew :Alkitab:testPlainDebugUnitTest :Alkitab:testPlainReleaseUnitTest` — all green. `./gradlew :Alkitab:assemblePlainDebug` produces a working APK.
 
-**Difficulty:** Easy. Took ~half a day with the REM-10 / REM-11 pattern already established. `PerVersion` followed as [REM-28](REM-28-room-per-version.md); remaining tables (`ReadingPlan`, `SyncShadow`, `SyncLog`, `ProgressMark`) can follow the same pattern.
+**Difficulty:** Easy. Took ~half a day with the REM-10 / REM-11 pattern already established. `PerVersion` followed as [REM-28](REM-28-room-per-version.md), `ProgressMark` / `ProgressMarkHistory` as [REM-29](REM-29-room-progress-mark.md); remaining tables (`ReadingPlan`, `SyncShadow`, `SyncLog`) can follow the same pattern.
 
 ---
 
