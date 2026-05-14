@@ -7,8 +7,11 @@ android {
 
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()
-        targetSdk = libs.versions.targetSdk.get().toInt()
         buildConfigField("String", "SERVER_HOST", "\"https://api.alkitab.app\"")
+    }
+
+    testOptions {
+        targetSdk = libs.versions.targetSdk.get().toInt()
     }
 
     buildTypes {
@@ -25,6 +28,12 @@ android {
     namespace = "yuku.alkitabfeedback"
     lint {
         abortOnError = false
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 

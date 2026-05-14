@@ -7,6 +7,9 @@ android {
 
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()
+    }
+
+    testOptions {
         targetSdk = libs.versions.targetSdk.get().toInt()
     }
 
@@ -19,5 +22,11 @@ android {
     namespace = "com.compactbyte.android.bible"
     lint {
         abortOnError = false
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }

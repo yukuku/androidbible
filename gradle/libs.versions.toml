@@ -1,7 +1,7 @@
 [versions]
-agp = "8.13.0"
-kotlin = "2.2.0"
-ksp = "2.2.0-2.0.2"
+agp = "9.2.1"
+kotlin = "2.3.21"
+ksp = "2.3.8"
 googleServices = "4.4.3"
 firebaseCrashlyticsGradle = "3.0.6"
 foojayResolver = "1.0.0"

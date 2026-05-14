@@ -7,6 +7,9 @@ android {
 
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()
+    }
+
+    testOptions {
         targetSdk = libs.versions.targetSdk.get().toInt()
     }
 
@@ -19,6 +22,12 @@ android {
     namespace = "yuku.alkitabconverter.util"
     lint {
         abortOnError = false
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 

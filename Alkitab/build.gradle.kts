@@ -1,4 +1,3 @@
-import com.android.build.gradle.api.ApkVariantOutput
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
@@ -15,7 +14,6 @@ import javax.inject.Inject
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
@@ -130,8 +128,6 @@ android {
         versionCode = buildVersionCode
         versionName = "5.0.0-b0"
         multiDexEnabled = true
-        // Keep this synced with integrate_translations.sh! Also update pref_language.xml and ConfigurationWrapper!
-        resourceConfigurations += listOf("af", "bg", "ceb", "cs", "da", "de", "el", "es", "fr", "hu", "in", "it", "ja", "ko", "lv", "ms", "my", "nl", "pl", "pt-rBR", "pt", "ro", "ru", "th", "tl", "tr", "uk", "vi", "zh-rCN", "zh-rTW")
         buildConfigField("String", "SERVER_HOST", "\"$serverHost\"")
         buildConfigField("String", "RIBKA_FUNCTIONS_HOST", "\"$ribkaFunctionsHost\"")
         buildConfigField("String", "LAST_COMMIT_HASH", "\"$gitCommitHash\"")
@@ -143,6 +139,11 @@ android {
         // reading the internal version. Empty string means "internal has no
         // audio for this flavor". Each productFlavor overrides this below.
         buildConfigField("String", "INTERNAL_VERSION_AUDIO_ID", "\"\"")
+    }
+
+    androidResources {
+        // Keep this synced with integrate_translations.sh! Also update pref_language.xml and ConfigurationWrapper!
+        localeFilters += listOf("af", "bg", "ceb", "cs", "da", "de", "el", "es", "fr", "hu", "in", "it", "ja", "ko", "lv", "ms", "my", "nl", "pl", "pt-rBR", "pt", "ro", "ru", "th", "tl", "tr", "uk", "vi", "zh-rCN", "zh-rTW")
     }
 
     // Room schema export — JSON snapshots of each @Database version land here.
@@ -161,7 +162,7 @@ android {
         // alternative (an instrumented-test setup that needs an emulator in
         // CI).
         // See Alkitab/src/test/java/.../room/AppDatabaseMigrationTest.kt.
-        getByName("main").assets.srcDir("$projectDir/schemas")
+        getByName("main").assets.directories.add("$projectDir/schemas")
     }
     buildTypes {
         debug {
@@ -318,59 +319,78 @@ androidComponents {
     }
 }
 
-android.applicationVariants.all {
-    val variant = this
-    // Custom APK output filename, mirroring the legacy ybuild.sh naming:
-    //   Alkitab-<versionCode>-<versionName>-<gitHash>-<applicationId>-<BUILD_DIST>.apk
-    // BUILD_DIST defaults to "dev" so local builds get a recognisable name.
-    val buildDist = providers.environmentVariable("BUILD_DIST").getOrElse("dev")
-    outputs.all {
-        (this as? ApkVariantOutput)?.outputFileName =
-            "Alkitab-${variant.versionCode}-${variant.versionName}-$gitCommitHash-${variant.applicationId}-$buildDist.apk"
+androidComponents {
+    // AGP 9 disables host (unit) tests for release variants by default; CI still
+    // runs testPlainReleaseUnitTest, so re-enable them for every variant.
+    beforeVariants(selector().all()) { variant ->
+        variant.hostTests[com.android.build.api.variant.HostTestBuilder.UNIT_TEST_TYPE]?.enable = true
     }
 
-    // Wire the proprietary google-services.json copy task into the GMS plugin
-    // task that consumes it, for each production flavor variant. Using
-    // tasks.matching { }.configureEach { } rather than tasks.named() so the
-    // build doesn't break if the GMS plugin is ever removed or renames its task.
-    if (proprietaryFlavors.containsKey(variant.flavorName)) {
-        val copyTaskName = "copyProprietaryGoogleServices${variant.flavorName.replaceFirstChar { it.uppercaseChar() }}"
-        val gmsTaskName = "process${variant.name.replaceFirstChar { it.uppercaseChar() }}GoogleServices"
-        tasks.matching { it.name == gmsTaskName }.configureEach {
-            dependsOn(copyTaskName)
+    onVariants(selector().all()) { variant ->
+        // Custom APK output filename, mirroring the legacy ybuild.sh naming:
+        //   Alkitab-<versionCode>-<versionName>-<gitHash>-<applicationId>-<BUILD_DIST>.apk
+        // BUILD_DIST defaults to "dev" so local builds get a recognisable name.
+        val buildDist = providers.environmentVariable("BUILD_DIST").getOrElse("dev")
+        val appIdProvider = variant.applicationId
+        variant.outputs.forEach { output ->
+            output.outputFileName.set(
+                appIdProvider.flatMap { appId ->
+                    output.versionCode.flatMap { vc ->
+                        output.versionName.map { vn ->
+                            "Alkitab-$vc-$vn-$gitCommitHash-$appId-$buildDist.apk"
+                        }
+                    }
+                }
+            )
         }
-    }
 
-    // Validate Firebase config for non-plain release builds. Reads from the
-    // flavor source set (populated by copyProprietaryGoogleServices<Flavor>),
-    // falling back to the root google-services.json the GMS plugin would
-    // otherwise use.
-    if (!variant.buildType.isDebuggable && variant.flavorName != "plain") {
-        val applicationId = variant.applicationId
         val flavorName = variant.flavorName
-        val validateTask = tasks.register("validate${variant.name.replaceFirstChar { it.uppercaseChar() }}FirebaseConfig") {
-            if (proprietaryFlavors.containsKey(flavorName)) {
-                dependsOn("copyProprietaryGoogleServices${flavorName.replaceFirstChar { it.uppercaseChar() }}")
+        val variantName = variant.name
+
+        // Wire the proprietary google-services.json copy task into the GMS plugin
+        // task that consumes it, for each production flavor variant. Using
+        // tasks.matching { }.configureEach { } rather than tasks.named() so the
+        // build doesn't break if the GMS plugin is ever removed or renames its task.
+        if (flavorName != null && proprietaryFlavors.containsKey(flavorName)) {
+            val copyTaskName = "copyProprietaryGoogleServices${flavorName.replaceFirstChar { it.uppercaseChar() }}"
+            val gmsTaskName = "process${variantName.replaceFirstChar { it.uppercaseChar() }}GoogleServices"
+            tasks.matching { it.name == gmsTaskName }.configureEach {
+                dependsOn(copyTaskName)
             }
-            doLast {
-                val candidates = listOf(
-                    file("src/$flavorName/google-services.json"),
-                    file("google-services.json"),
-                )
-                val jsonFile = candidates.find { it.isFile }
-                val reason = firebaseApiKeyProblem(jsonFile, applicationId)
-                if (reason != null) {
-                    throw GradleException(
-                        "Release build '${variant.name}' has unusable Firebase config: $reason. " +
-                            "For production flavors, set ALKITAB_PROPRIETARY_DIR to a directory containing " +
-                            "a real google-services.json with a client entry for '$applicationId'."
+        }
+
+        // Validate Firebase config for non-plain release builds. Reads from the
+        // flavor source set (populated by copyProprietaryGoogleServices<Flavor>),
+        // falling back to the root google-services.json the GMS plugin would
+        // otherwise use.
+        if (variant.buildType == "release" && flavorName != null && flavorName != "plain") {
+            val applicationIdProvider = variant.applicationId
+            val validateTask = tasks.register("validate${variantName.replaceFirstChar { it.uppercaseChar() }}FirebaseConfig") {
+                if (proprietaryFlavors.containsKey(flavorName)) {
+                    dependsOn("copyProprietaryGoogleServices${flavorName.replaceFirstChar { it.uppercaseChar() }}")
+                }
+                doLast {
+                    val applicationId = applicationIdProvider.get()
+                    val candidates = listOf(
+                        file("src/$flavorName/google-services.json"),
+                        file("google-services.json"),
                     )
+                    val jsonFile = candidates.find { it.isFile }
+                    val reason = firebaseApiKeyProblem(jsonFile, applicationId)
+                    if (reason != null) {
+                        throw GradleException(
+                            "Release build '$variantName' has unusable Firebase config: $reason. " +
+                                "For production flavors, set ALKITAB_PROPRIETARY_DIR to a directory containing " +
+                                "a real google-services.json with a client entry for '$applicationId'."
+                        )
+                    }
                 }
             }
-        }
 
-        tasks.named("pre${variant.name.replaceFirstChar { it.uppercaseChar() }}Build").configure {
-            dependsOn(validateTask)
+            val preBuildTaskName = "pre${variantName.replaceFirstChar { it.uppercaseChar() }}Build"
+            tasks.matching { it.name == preBuildTaskName }.configureEach {
+                dependsOn(validateTask)
+            }
         }
     }
 }
