@@ -17,41 +17,23 @@ import yuku.alkitab.base.storage.Db
 import yuku.alkitab.base.storage.InternalDbHelper
 
 /**
- * Load test for the REM-10 / REM-11 migrations. Simulates a 2025-era app
- * upgrading to the current build: the legacy `AlkitabDb` already has the
- * `Version` / `Marker` / `Label` / `Marker_Label` tables populated, and the
- * new `AlkitabRoomDb` does not exist yet. On first launch Room creates the
- * fresh database at the latest schema version, then
- * [VersionDataMigration] and [MarkerDataMigration] each do a one-time copy.
+ * Regression-guard load test for REM-10 / REM-11. Seeds the legacy SQLite
+ * tables with 100 versions, 100 labels, 50,000 markers (each carrying a
+ * 2 KB caption) and 60,000 marker_label associations, runs the one-time
+ * migrations, and asserts every row round-trips bit-for-bit.
  *
- * The harness reuses exactly the same code path the real upgrade hits — there
- * is no Android-version-specific behaviour in either migration, so an
- * in-Robolectric run is a faithful proxy for what a v1 device sees.
+ * Every field on every entity is a pure function of the row's integer
+ * index `i` (or `j` for associations); seed and verify both call the same
+ * `*Pattern(i)` helpers, so a regression in the migration is the only
+ * thing that can make them disagree.
  *
- * Dataset:
- *  - 100 versions
- *  - 100 labels
- *  - 50,000 markers, each with a 2,048-byte caption (≈100 MB of caption
- *    bytes — exercises the read-everything-into-an-ArrayList shape of
- *    [MarkerDataMigration.readLegacyMarkers] under memory pressure)
- *  - 60,000 marker_label associations
- *
- * Verifiable pattern: every field on every entity is a pure function of the
- * row's integer index `i` (or `j` for associations). The seed and the
- * verifier both call the same `*Pattern(i)` helpers, so a regression in the
- * migration is the only thing that can make verification disagree with the
- * seed.
- *
- * Association layout: for `j` in `0..49,999` the j-th association links
- * marker `j` to label `j % 100`, so every marker has at least one label and
- * every label has 500 markers from this first pass. For `j` in
- * `50,000..59,999` the j-th association links marker `j - 50,000` to label
- * `(j + 31) % 100`. Because `gcd(31, 100) = 1` and `31 mod 100 != 0`, the
- * offset always lands on a *different* label than the first-pass label for
- * that marker — so markers 0..9,999 each end up with exactly two distinct
- * labels and markers 10,000..49,999 each end up with one. The test asserts
- * this invariant on marker 0 (two labels) and marker 30,000 (one label) to
- * prove the join survives the migration.
+ * Marker_label layout: for `j in 0..49,999` the j-th association links
+ * marker `j` to label `j % 100`; for `j in 50,000..59,999` it links marker
+ * `j - 50,000` to label `(j + 31) % 100`. `gcd(31, 100) = 1` and `31 mod 100
+ * != 0`, so the offset is guaranteed to land on a different label than the
+ * first-pass label for the same marker — markers 0..9,999 end up with
+ * exactly two distinct labels each, markers 10,000..49,999 with one. The
+ * test asserts this on a handful of representative markers.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class, sdk = [34])
@@ -77,7 +59,6 @@ class MarkerDataMigrationLoadTest {
 
     @Test
     fun `migrating 100 versions + 50000 markers + 100 labels + 60000 marker_labels round-trips every field`() {
-        // -- 1. Seed the legacy DB to simulate a 2025-era install --------
         val seedStart = System.currentTimeMillis()
         seedVersions()
         seedLabels()
@@ -88,26 +69,23 @@ class MarkerDataMigrationLoadTest {
             "$N_VERSIONS versions, $N_LABELS labels, $N_MARKERS markers " +
             "(${CAPTION_BYTES} bytes each), $N_MARKER_LABELS marker_labels")
 
-        // -- 2. Run the migrations (this is what first-launch does) ------
         val migrateStart = System.currentTimeMillis()
         VersionDataMigration.copyFromLegacyDbIfNeeded(room, legacy)
         MarkerDataMigration.copyFromLegacyDbIfNeeded(room, legacy)
         val migrateMs = System.currentTimeMillis() - migrateStart
         log("ran VersionDataMigration + MarkerDataMigration in ${migrateMs}ms")
 
-        // -- 3. Counts match exactly -------------------------------------
         assertEquals("version count", N_VERSIONS, room.versionDao().count())
         assertEquals("label count", N_LABELS, room.labelDao().count())
         assertEquals("marker count", N_MARKERS, room.markerDao().count())
         assertEquals("marker_label count", N_MARKER_LABELS, room.markerLabelDao().count())
 
-        // -- 4. Sampled deep field-by-field round-trip -------------------
         verifyVersionsByPattern()
         verifyLabelsByPattern()
         verifyMarkersByPattern()
         verifyMarkerLabelsByPattern()
 
-        // -- 5. Idempotency: re-running the migration is a no-op --------
+        // Re-running the migrations must be a no-op (idempotency).
         VersionDataMigration.copyFromLegacyDbIfNeeded(room, legacy)
         MarkerDataMigration.copyFromLegacyDbIfNeeded(room, legacy)
         assertEquals("version count after re-run", N_VERSIONS, room.versionDao().count())
@@ -122,12 +100,8 @@ class MarkerDataMigrationLoadTest {
         log("verification passed; total wall time ${System.currentTimeMillis() - seedStart}ms")
     }
 
-    // ---- Seed helpers --------------------------------------------------
-    //
-    // All four seed helpers wrap their inserts in a single legacy SQLite
-    // transaction. SQLite's default per-statement journal flush would make
-    // 50,000 individual inserts take O(minutes); batching them keeps the
-    // seed phase to a few seconds.
+    // Each seed helper wraps its inserts in one SQLite transaction —
+    // without that, 50,000 individual inserts take O(minutes).
 
     private fun seedVersions() {
         val db = legacy.writableDatabase
@@ -212,12 +186,10 @@ class MarkerDataMigrationLoadTest {
         }
     }
 
-    // ---- Verify helpers ------------------------------------------------
-
     private fun verifyVersionsByPattern() {
-        // versionDao().listAll() returns rows ordered by `ordering ASC`,
-        // and versionOrdering(i) = ORDERING_BASE + i is strictly increasing
-        // in i, so position-in-list maps directly to seed index.
+        // listAll() returns rows ordered by `ordering ASC`, and
+        // versionOrdering(i) is strictly increasing in i, so list position
+        // maps directly to seed index.
         val all = room.versionDao().listAll()
         assertEquals(N_VERSIONS, all.size)
         for (i in versionSampleIndices()) {
@@ -254,8 +226,8 @@ class MarkerDataMigrationLoadTest {
             row!!
             assertEquals("marker $i ari", markerAri(i), row.ari)
             assertEquals("marker $i kind", markerKind(i), row.kind)
-            // Caption length-then-content lets a length mismatch fail fast
-            // instead of dumping the full 2KB diff on assertion failure.
+            // Length-then-content so a length mismatch doesn't dump the
+            // full 2 KB diff into the JUnit failure output.
             assertEquals(
                 "marker $i caption length",
                 CAPTION_BYTES,
@@ -278,10 +250,6 @@ class MarkerDataMigrationLoadTest {
             assertEquals("ml $j label_gid", mlLabelGid(j), row.label_gid)
         }
 
-        // The "first 10,000 markers have 2 labels, the rest have 1" invariant
-        // is what makes the marker_label sampling above non-trivial: if Room
-        // miscounted or deduped silently, these joins would return the wrong
-        // size.
         assertEquals(
             "marker 0 should appear in exactly 2 marker_label rows",
             2,
@@ -308,19 +276,13 @@ class MarkerDataMigrationLoadTest {
             room.markerLabelDao().listByMarkerGid(markerGid(49_999)).size,
         )
 
-        // Two-label markers must have two *distinct* labels (the +31 offset
-        // is the whole point of the dataset layout).
+        // The +31 offset must produce distinct labels (see class KDoc).
         val twoLabels = room.markerLabelDao()
             .listByMarkerGid(markerGid(0))
             .map { it.label_gid }
             .toSet()
         assertEquals("marker 0's two label_gids must be distinct", 2, twoLabels.size)
     }
-
-    // ---- Sample-index sets --------------------------------------------
-    //
-    // First/last/middle plus a handful of "random-looking" indices to
-    // catch off-by-one and stride bugs without iterating the full 50K.
 
     private fun versionSampleIndices() =
         listOf(0, 1, N_VERSIONS / 2, N_VERSIONS - 1, 7, 42, 73, 99)
@@ -341,17 +303,13 @@ class MarkerDataMigrationLoadTest {
 
     private fun mlSampleIndices() = listOf(
         0, 1, 2,
-        N_MARKERS - 1,         // last "one label per marker" association
-        N_MARKERS,             // first "second label" association
+        N_MARKERS - 1,
+        N_MARKERS, // first second-label association
         N_MARKERS + 5_000,
         N_MARKER_LABELS - 1,
         N_MARKER_LABELS / 2,
     )
 
-    // ---- Pattern functions (single source of truth: seed AND verify
-    //      derive every field from these, so they cannot disagree) -----
-
-    // Version pattern ---------------------------------------------------
     private fun versionFilename(i: Int) = fmt("/data/version-%03d.yes", i)
     private fun versionPresetName(i: Int): String? =
         if (i % 7 == 0) null else fmt("preset-%03d", i)
@@ -366,26 +324,24 @@ class MarkerDataMigrationLoadTest {
     private fun versionActive(i: Int) = i % 2
     private fun versionOrdering(i: Int) = ORDERING_BASE + i
 
-    // Label pattern -----------------------------------------------------
     private fun labelGid(i: Int) = fmt("L%05d", i)
     private fun labelTitle(i: Int) = fmt("Label %d", i)
     private fun labelOrdering(i: Int) = i + 1
     private fun labelBgColor(i: Int): String? =
         if (i % 4 == 0) null else fmt("#%06x", i * 0x10101 and 0xffffff)
 
-    // Marker pattern ----------------------------------------------------
     private fun markerGid(i: Int) = fmt("M%08d", i)
     private fun markerAri(i: Int): Int {
-        // Spread across books 0..65, chapters 1..100, verses 1..50 — every
-        // ARI is a distinct, deterministic int. Values don't need to point
-        // at real Bible verses for the migration test.
+        // Books 0..65, chapters 1..100, verses 1..50 — a distinct,
+        // deterministic int per i, not constrained to point at a real
+        // verse.
         val book = i % 66
         val chapter = 1 + (i / 66) % 100
         val verse = 1 + (i / 6_600) % 50
         return (book shl 16) or (chapter shl 8) or verse
     }
 
-    private fun markerKind(i: Int) = 1 + (i % 3) // 1 = bookmark, 2 = note, 3 = highlight
+    private fun markerKind(i: Int) = 1 + (i % 3) // 1=bookmark, 2=note, 3=highlight
     private fun markerCaption(i: Int): String {
         val header = fmt("M%08d|", i)
         val footer = fmt("|END%08d", i)
@@ -398,19 +354,9 @@ class MarkerDataMigrationLoadTest {
     private fun markerCreateTime(i: Int) = 1_700_000_000 + i
     private fun markerModifyTime(i: Int) = 1_700_000_000 + i * 2
 
-    // Marker_Label pattern ---------------------------------------------
     private fun mlGid(j: Int) = fmt("ML%08d", j)
     private fun mlMarkerGid(j: Int) = markerGid(j % N_MARKERS)
     private fun mlLabelGid(j: Int): String {
-        // First pass: j in 0..N_MARKERS-1 → label = j % N_LABELS. Every
-        // marker is associated with its index-mod-100 label.
-        //
-        // Second pass: j in N_MARKERS..N_MARKER_LABELS-1 → label =
-        // (j + 31) % N_LABELS. The +31 offset is coprime to 100 and
-        // non-zero mod 100, so the second-pass label is guaranteed
-        // distinct from the first-pass label for the same marker. This
-        // gives markers 0..9,999 two distinct labels each, exercising the
-        // many-to-many junction.
         val labelIdx = if (j < N_MARKERS) j % N_LABELS else (j + 31) % N_LABELS
         return labelGid(labelIdx)
     }
@@ -427,17 +373,11 @@ class MarkerDataMigrationLoadTest {
         const val N_LABELS = 100
         const val N_MARKERS = 50_000
         const val N_MARKER_LABELS = 60_000
-
-        // Each marker caption is exactly this many UTF-16 code units. With
-        // the legacy SQLite schema's `caption text` column the bytes-on-disk
-        // value depends on encoding, but the round-trip we care about is
-        // String → ContentValues → SQLite → cursor.getString() →
-        // MarkerEntity.caption being exactly the same String we put in.
         const val CAPTION_BYTES = 2_048
 
-        // Versions are ordered by `ordering ASC` after migration; keeping
-        // the base high makes the test resilient to a future change that
-        // pre-inserts a few rows (e.g. presets) ahead of the seeded set.
+        // Versions are ordered by `ordering ASC` after migration; the
+        // high base keeps the test resilient to a future change that
+        // pre-inserts rows ahead of the seeded set.
         const val ORDERING_BASE = 100
     }
 }

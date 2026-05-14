@@ -213,20 +213,12 @@ android {
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
-            // The REM-10/REM-11 migration load test in MarkerDataMigrationLoadTest
-            // holds 50,000 × 2 KB marker captions live during the bulk Room insert
-            // (≈100 MB just for caption strings, plus per-entity overhead).
-            // Default 512 MB unit-test heap OOMs; 2 GB leaves comfortable headroom.
+            // MarkerDataMigrationLoadTest holds 50,000 × 2 KB marker captions
+            // live during the bulk Room insert (~100 MB of captions plus
+            // per-entity overhead). The default 512 MB unit-test heap OOMs.
             //
-            // CI memory math (ubuntu-latest, 7 GB free-tier runner):
-            //   Gradle daemon -Xmx4G + one 2 GB test fork = ~6 GB peak,
-            //   below the 7 GB cap. The two unit-test tasks
-            //   (testPlainDebugUnitTest + testPlainReleaseUnitTest) run
-            //   sequentially because they are on the same project and project
-            //   parallelism is not enabled, so they never both hold 2 GB.
-            // maxParallelForks is pinned to 1 (Gradle's default) explicitly so
-            // a later change can't silently spawn a second 2 GB JVM inside one
-            // test task and tip CI over the host memory limit.
+            // maxParallelForks is pinned to 1 (Gradle's default) so a future
+            // change can't silently spawn a second 2 GB JVM in one test task.
             all {
                 it.maxHeapSize = "2g"
                 it.maxParallelForks = 1
