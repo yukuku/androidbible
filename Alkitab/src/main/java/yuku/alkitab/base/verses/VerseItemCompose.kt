@@ -490,10 +490,16 @@ private fun Modifier.audioHighlightOverlay(audioHighlightColor: Int): Modifier {
 @Composable
 private fun Modifier.attentionOverlay(attentionStart: Long, onDone: () -> Unit): Modifier {
     if (attentionStart == 0L) return this
+    // `attentionStart` is wall-clock (set via System.currentTimeMillis() in
+    // VersesControllerImpl, mirroring legacy VerseItem.callAttention). The
+    // frame timestamp from withFrameMillis is monotonic uptimeMillis, so the
+    // two can't be subtracted — we use withFrameMillis only for pacing (one
+    // sample per frame) and read wall-clock inside the lambda to stay in the
+    // same time base as `attentionStart`.
     val now = remember(attentionStart) { mutableLongStateOf(System.currentTimeMillis()) }
     LaunchedEffect(attentionStart) {
         while (true) {
-            withFrameMillis { now.longValue = it }
+            withFrameMillis { now.longValue = System.currentTimeMillis() }
             if (now.longValue - attentionStart >= ATTENTION_DURATION_MS) {
                 onDone()
                 break
