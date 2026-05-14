@@ -55,7 +55,7 @@ When a sync completes on one device, the server sends an FCM message to other re
 
 FCM configuration differs between debug (uses `RIBKA_FUNCTIONS_HOST_DEBUG` at `10.0.3.2:5001`) and release builds.
 
-Registration retry (REM-04): a failed FCM token send sets `Prefkey.fcm_registration_pending = true`. In-process, `Sync.sendFcmRegistrationId` retries up to three times on a daemon `ScheduledExecutorService` (`fcmRetryExecutor`) at 1 min / 5 min / 30 min, clearing the flag on success. Cross-launch, `App.staticInit()` calls `Sync.retryPendingFcmRegistrationIfNeeded(registrationId)` to re-enter the send when the flag is still set after a process death.
+Registration retry: a failed FCM token send sets `Prefkey.fcm_registration_pending = true`. In-process, `Sync.sendFcmRegistrationId` retries up to three times on a daemon `ScheduledExecutorService` (`fcmRetryExecutor`) at 1 min / 5 min / 30 min, clearing the flag on success. Cross-launch, `App.staticInit()` calls `Sync.retryPendingFcmRegistrationIfNeeded(registrationId)` to re-enter the send when the flag is still set after a process death.
 
 ## Authentication
 

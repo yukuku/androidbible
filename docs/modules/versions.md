@@ -7,13 +7,13 @@ The app supports 100+ downloadable Bible versions across many languages. Version
 ## Key Files
 
 - `Alkitab/src/main/java/yuku/alkitab/versionmanager/VersionsActivity.kt` — Version management UI
-- `Alkitab/src/main/java/yuku/alkitab/versionmanager/VersionListFragment.kt` — Lists downloadable and installed versions (`RecyclerView` + `ItemTouchHelper` for downloaded reorder — REM-12)
+- `Alkitab/src/main/java/yuku/alkitab/versionmanager/VersionListFragment.kt` — Lists downloadable and installed versions; `RecyclerView` + `ItemTouchHelper` for the downloaded-tab reorder
 - `Alkitab/src/main/java/yuku/alkitab/versionmanager/VersionFileImporter.kt` — Imports .yes, .pdb, .yes.gz, .pdb.gz files
 - `Alkitab/src/main/java/yuku/alkitab/base/config/VersionConfig.java` — JSON catalog of available versions
 - `Alkitab/src/main/java/yuku/alkitab/base/storage/YesReaderFactory.java` — Factory for loading YES1/YES2 readers
-- `Alkitab/src/main/java/yuku/alkitab/base/util/VersionDownloadWorker.kt` — `CoroutineWorker` (OkHttp + Range-based resume) used to download `.yes` files (REM-19)
+- `Alkitab/src/main/java/yuku/alkitab/base/util/VersionDownloadWorker.kt` — `CoroutineWorker` (OkHttp + Range-based resume) used to download `.yes` files
 - `Alkitab/src/main/java/yuku/alkitab/base/util/DownloadMapper.kt` — In-process tracker that observes `WorkManager.getWorkInfoByIdFlow` and mirrors state into `DownloadManager.STATUS_*` constants for the list UI
-- `Alkitab/src/main/java/yuku/alkitab/base/storage/VersionDao.kt` — Facade DAO routing through Room (REM-11)
+- `Alkitab/src/main/java/yuku/alkitab/base/storage/VersionDao.kt` — Facade DAO routing through Room
 - `Alkitab/src/main/java/yuku/alkitab/base/storage/room/VersionEntity.kt` / `VersionRoomDao.kt` — Room entity/DAO
 
 ## MVersion Hierarchy

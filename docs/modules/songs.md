@@ -9,7 +9,7 @@ The songs module provides hymn/worship song browsing, searching, and audio playb
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongListActivity.java` — Main song list with search and filtering
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongViewActivity.kt` — Individual song viewer
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongFragment.kt` — WebView-based song rendering with JavaScript
-- `Alkitab/src/main/java/yuku/alkitab/songs/SongBookUtil.kt` — Song book download, installation, metadata (ported to Kotlin in REM-16)
+- `Alkitab/src/main/java/yuku/alkitab/songs/SongBookUtil.kt` — Song book download, installation, metadata
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongFilter.java` — Search/filter with regex and tokenized queries
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongInfo.kt` — Lightweight song record (bookName, code, title, title_original)
 - `KpriModel/` — Song data model (`Song`, `Verse`, `Lyric`, `VerseKind`)
@@ -24,7 +24,7 @@ The songs module provides hymn/worship song browsing, searching, and audio playb
 
 Songs are stored in `SongDb` (separate SQLite database from the main `InternalDb`). Song books are downloaded as serialized `List<Song>` objects via `ObjectInputStream`, optionally gzip-compressed. Data format version is currently 3.
 
-Deserialization was hardened in REM-01: `SongBookUtil` now uses a `SafeObjectInputStream` with a class whitelist (`java.util.*`, `java.lang.*`, Song model classes only), an `instanceof` check before casting, a 50MB response size limit, and try-with-resources for streams.
+`SongBookUtil` uses a `SafeObjectInputStream` with a class whitelist (`java.util.*`, `java.lang.*`, Song model classes only) and an `instanceof` check before casting to guard against deserialization gadgets; the response body is capped at 50MB; and the `Response` plus all derived streams are wrapped in try-with-resources.
 
 ## Search
 

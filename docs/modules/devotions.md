@@ -7,7 +7,7 @@ Provides daily devotional reading content from multiple sources (primarily Indon
 ## Key Files
 
 - `Alkitab/src/main/java/yuku/alkitab/base/ac/DevotionActivity.java` — Devotion reader UI
-- `Alkitab/src/main/java/yuku/alkitab/base/devotion/DevotionDownloader.kt` — Background downloader (ported to Kotlin in REM-16; single-thread `ExecutorService` + `LinkedBlockingDeque` queue with clean shutdown, REM-05)
+- `Alkitab/src/main/java/yuku/alkitab/base/devotion/DevotionDownloader.kt` — Background downloader (single-thread `ExecutorService` + `LinkedBlockingDeque` queue with clean shutdown)
 - `Alkitab/src/main/java/yuku/alkitab/base/devotion/DevotionArticle.java` — Abstract base class
 - Article implementations: `ArticleMorningEveningEnglish`, `ArticleFromSabda`, `ArticleMeidA`, `ArticleRoc`, `ArticleRenunganHarian`, `ArticleSantapanHarian`
 
@@ -19,7 +19,7 @@ Provides daily devotional reading content from multiple sources (primarily Indon
 - `shutdown()` sets a `volatile` flag and calls `executor.shutdownNow()`; the loop handles `InterruptedException` by re-interrupting and breaking
 - Articles cached in the `Devotion` database table
 - `touchTime` tracks access for cache management
-- On completion the downloader emits an `AppEvents` `SharedFlow` event (replaced the `LocalBroadcastManager` broadcast in REM-03)
+- On completion the downloader emits an `AppEvents` `SharedFlow` event
 
 ## Article Parsing
 
