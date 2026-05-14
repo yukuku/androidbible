@@ -111,7 +111,13 @@ public class VersionDownloadCompleteReceiver {
 				AppEvents.emitVersionListReload();
 				return;
 			} finally {
-				DownloadMapper.instance.remove(id);
+				// `consumeAndRemove` (not `remove`) so the temp file is deleted:
+				// the temp path is derived deterministically from the download key,
+				// so leaving it behind would make the next download for the same
+				// preset (typically an *update*) try to resume from a stale offset
+				// — corrupting the result or failing with a generic "Cannot connect
+				// to server" 416.
+				DownloadMapper.instance.consumeAndRemove(id);
 			}
 
 			final BibleReader reader = YesReaderFactory.createYesReader(destFile.getAbsolutePath());

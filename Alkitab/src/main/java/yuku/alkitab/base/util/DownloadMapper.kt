@@ -3,6 +3,7 @@ package yuku.alkitab.base.util
 import android.app.DownloadManager
 import android.content.Intent
 import android.text.TextUtils
+import androidx.annotation.VisibleForTesting
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkInfo
@@ -226,6 +227,63 @@ class DownloadMapper private constructor() {
             row.observerJob?.cancel()
             WorkManager.getInstance(App.context).cancelWorkById(row.workId)
         }
+    }
+
+    /**
+     * Called by [VersionDownloadCompleteReceiver] once it has finished consuming
+     * the downloaded temp file. Deletes the temp file and removes the in-memory
+     * row.
+     *
+     * Why this exists: the temp file path is derived deterministically from the
+     * download key, so leaving the file behind would make the next download with
+     * the same key (typically a version *update*) see `existingBytes > 0` in
+     * [VersionDownloadWorker] and try to resume from a stale offset against a
+     * different file. The server then either replies 206 (corrupting the result
+     * with a frankenstein of the old prefix and the new suffix) or 416 if the
+     * new file is smaller, which surfaces to the user as a "Cannot connect to
+     * server" generic error.
+     *
+     * Does not call `cancelWorkById`: the caller has already observed terminal
+     * `SUCCEEDED` state, so the cancellation would be a no-op anyway.
+     */
+    fun consumeAndRemove(id: Int) {
+        val row: Row? = synchronized(this) {
+            val r = currentById[id]
+            if (r != null) {
+                currentByKey.remove(r.key)
+                currentById.remove(r.id)
+            }
+            r
+        }
+        if (row != null) {
+            row.observerJob?.cancel()
+            @Suppress("ResultOfMethodCallIgnored")
+            File(row.destPath).delete()
+        }
+    }
+
+    /**
+     * Test seam: inject a row directly without going through [enqueue] (which
+     * would require WorkManager initialization and an actual HTTP fetch). Tests
+     * use this to exercise the post-download lifecycle ([consumeAndRemove],
+     * [remove]) against a controlled temp-file path.
+     */
+    @VisibleForTesting
+    internal fun seedRowForTest(downloadKey: String, destPath: String): Int {
+        val id = nextId.getAndIncrement()
+        val row = Row(
+            id = id,
+            key = downloadKey,
+            title = "test",
+            destPath = destPath,
+            workId = UUID.randomUUID(),
+            attrs = emptyMap(),
+        )
+        synchronized(this) {
+            currentByKey[downloadKey] = row
+            currentById[id] = row
+        }
+        return id
     }
 
     private fun downloadTempDirPath(): String {
