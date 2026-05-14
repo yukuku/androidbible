@@ -234,14 +234,10 @@ class DownloadMapper private constructor() {
      * the downloaded temp file. Deletes the temp file and removes the in-memory
      * row.
      *
-     * Why this exists: the temp file path is derived deterministically from the
-     * download key, so leaving the file behind would make the next download with
-     * the same key (typically a version *update*) see `existingBytes > 0` in
-     * [VersionDownloadWorker] and try to resume from a stale offset against a
-     * different file. The server then either replies 206 (corrupting the result
-     * with a frankenstein of the old prefix and the new suffix) or 416 if the
-     * new file is smaller, which surfaces to the user as a "Cannot connect to
-     * server" generic error.
+     * Why delete the temp file: [VersionDownloadWorker] always starts from byte
+     * 0 (no Range-based resume), so the file is not trusted across attempts —
+     * keeping it around just leaks cache space. The next download with the same
+     * key will recreate it from scratch.
      *
      * Does not call `cancelWorkById`: the caller has already observed terminal
      * `SUCCEEDED` state, so the cancellation would be a no-op anyway.

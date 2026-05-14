@@ -112,11 +112,8 @@ public class VersionDownloadCompleteReceiver {
 				return;
 			} finally {
 				// `consumeAndRemove` (not `remove`) so the temp file is deleted:
-				// the temp path is derived deterministically from the download key,
-				// so leaving it behind would make the next download for the same
-				// preset (typically an *update*) try to resume from a stale offset
-				// — corrupting the result or failing with a generic "Cannot connect
-				// to server" 416.
+				// the worker always starts from byte 0 so the leftover bytes
+				// would never be reused, they'd just leak cache space.
 				DownloadMapper.instance.consumeAndRemove(id);
 			}
 

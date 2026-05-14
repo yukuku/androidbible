@@ -19,22 +19,16 @@ import yuku.afw.App
 
 /**
  * Lifecycle tests for [DownloadMapper], focused on the post-download cleanup
- * contract that prevents stale temp-file resume across separate downloads of
- * the same Bible version (e.g. user downloading an *update* to a preset they
- * already have).
+ * contract.
  *
  * Background: [VersionDownloadWorker] writes to a temp file whose name is
- * derived deterministically from the `downloadKey`. The worker supports
- * Range-based resume, so if the temp file already exists when a fresh
- * download starts it will send `Range: bytes=N-`. That resume mechanism is
- * only valid between retries of the *same* download — for two unrelated
- * downloads of the same preset (e.g. initial download → server update later)
- * it produces a 416 from the server (visible as a "Cannot connect to server"
- * generic error) or a corrupted file (if the new file is larger than the
- * stale temp).
+ * derived deterministically from the `downloadKey`. The worker always
+ * starts from byte 0 (no Range-based resume), so leftover bytes in cache
+ * are never trusted — but cleaning them up after the receiver consumes
+ * them keeps the cache from accumulating dead files.
  *
- * [DownloadMapper.consumeAndRemove] is the receiver-side hook that deletes
- * the temp file once the download has been finalized, severing that loop.
+ * [DownloadMapper.consumeAndRemove] is the receiver-side hook that does
+ * that cleanup once the download has been finalized.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class, sdk = [34])
@@ -81,24 +75,25 @@ class DownloadMapperTest {
         mapper.consumeAndRemove(id)
 
         assertFalse(
-            "consumeAndRemove must delete the temp file so the next download with the same key doesn't resume from stale bytes",
+            "consumeAndRemove must delete the temp file so the cache doesn't accumulate stale download leftovers",
             tempFile.exists(),
         )
         assertNull("row must be removed from the in-memory map after consumption", mapper.getDownloadedFilePath(id))
     }
 
     @Test
-    fun `remove preserves the temp file so failed downloads can be resumed`() {
+    fun `remove drops the row without touching the temp file`() {
         val mapper = DownloadMapper.instance
         val key = "version:preset_name:test-remove-${System.nanoTime()}"
 
         val id = mapper.seedRowForTest(key, tempFile.absolutePath)
         mapper.remove(id)
 
-        // `remove` is the cancel/failure path: keeping the partial temp file
-        // alive is intentional — the next attempt will resume via Range.
+        // `remove` is the cancel/failure path. It doesn't delete the temp
+        // file: cleanup is the next worker's job (the worker always starts
+        // from byte 0 and discards any pre-existing destFile).
         assertTrue(
-            "remove must NOT delete the temp file (preserves Range-resume on retry of a failed download)",
+            "remove must not touch the temp file",
             tempFile.exists(),
         )
         assertNull("row must be removed from the in-memory map", mapper.getDownloadedFilePath(id))
