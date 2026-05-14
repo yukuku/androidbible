@@ -7,12 +7,14 @@
 ## Key Files
 
 - `Alkitab/src/main/java/yuku/alkitab/base/ac/MarkerListActivity.kt` — Filtered list of markers with search and sorting
-- `Alkitab/src/main/java/yuku/alkitab/base/ac/MarkersActivity.java` — Label management (create, rename, delete, reorder via drag-sort)
+- `Alkitab/src/main/java/yuku/alkitab/base/ac/MarkersActivity.java` — Label management (create, rename, delete, reorder via `ItemTouchHelper` drag — REM-12)
 - `Alkitab/src/main/java/yuku/alkitab/base/ac/NoteActivity.java` — Note editor with verse link detection
-- `Alkitab/src/main/java/yuku/alkitab/base/util/Highlights.java` — JSON-based highlight encoding
+- `Alkitab/src/main/java/yuku/alkitab/base/util/Highlights.kt` — JSON-based highlight encoding (ported to Kotlin in REM-16)
 - `Alkitab/src/main/java/yuku/alkitab/base/widget/AttributeView.java` — Icon drawing for bookmark/note/highlight indicators
 - `Alkitab/src/main/java/yuku/alkitab/base/verses/VersesAttributes.kt` — Per-verse attribute maps
 - `Alkitab/src/main/java/yuku/alkitab/base/verses/VerseAttributeLoader.kt` — Loads attributes from DB and content providers
+- `Alkitab/src/main/java/yuku/alkitab/base/storage/MarkerDao.kt` / `LabelDao.kt` / `Marker_LabelDao.kt` — Facade DAOs that route through Room (REM-10)
+- `Alkitab/src/main/java/yuku/alkitab/base/storage/room/MarkerEntity.kt` / `LabelEntity.kt` / `MarkerLabelEntity.kt` (+ matching `*RoomDao.kt`) — Room entities/DAOs
 
 ## Marker Model
 
@@ -29,9 +31,11 @@ Marker {
 }
 ```
 
+Storage: the `marker`, `label`, and `marker_label` tables now live in the Room database (`AlkitabRoomDb`, `@Database(version = 2)`), migrated from the legacy `AlkitabDb` in REM-10. The `MarkerDao` / `LabelDao` / `Marker_LabelDao` facades preserve the legacy public surface, mapping Room entities to the `Marker` / `Label` / `Marker_Label` model classes. A one-time idempotent `MarkerDataMigration` copy runs from `S.db`'s lazy initializer the first time the migrated code launches.
+
 ## Labels
 
-Labels are user-created categories for organizing bookmarks. Each label has a `title`, `ordering`, and `backgroundColor`. The `Marker_Label` junction table creates many-to-many relationships. Labels also have GIDs for sync.
+Labels are user-created categories for organizing bookmarks. Each label has a `title`, `ordering`, and `backgroundColor`. The `marker_label` junction table creates many-to-many relationships. Labels also have GIDs for sync.
 
 ## Highlights
 
@@ -40,7 +44,9 @@ Highlights use a JSON encoding in the `caption` field supporting:
 - Partial highlights (character range within a verse)
 - Hash-based verification to detect when verse text has changed
 
-The `Highlights` utility class handles encoding/decoding and color management.
+The `Highlights` utility (`Highlights.kt`, ported to Kotlin in REM-16) handles encoding/decoding and color management. `Highlights.alphaMix()` was fixed in REM-18a to mask the input to 24-bit RGB before OR-ing the fixed alpha, eliminating an ARGB-leak when callers passed already-alpha-tinted colors.
+
+Color selection in `TypeHighlightDialog` and the label color editor uses the iOS-style Compose color picker introduced in REM-20 (`yuku.alkitab.base.compose.colorpicker.IosColorPicker` / `ColorPickerDialog`). The old `AmbilWarna` module was deleted.
 
 ## Attribute Display
 

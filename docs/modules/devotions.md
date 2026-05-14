@@ -7,17 +7,19 @@ Provides daily devotional reading content from multiple sources (primarily Indon
 ## Key Files
 
 - `Alkitab/src/main/java/yuku/alkitab/base/ac/DevotionActivity.java` — Devotion reader UI
-- `Alkitab/src/main/java/yuku/alkitab/base/devotion/DevotionDownloader.java` — Background thread downloader with prioritizable queue
+- `Alkitab/src/main/java/yuku/alkitab/base/devotion/DevotionDownloader.kt` — Background downloader (ported to Kotlin in REM-16; single-thread `ExecutorService` + `LinkedBlockingDeque` queue with clean shutdown, REM-05)
 - `Alkitab/src/main/java/yuku/alkitab/base/devotion/DevotionArticle.java` — Abstract base class
 - Article implementations: `ArticleMorningEveningEnglish`, `ArticleFromSabda`, `ArticleMeidA`, `ArticleRoc`, `ArticleRenunganHarian`, `ArticleSantapanHarian`
 
 ## Download System
 
-`DevotionDownloader` runs on a background thread with a queue:
-- **Endpoint**: `GET /devotion/get?name={kind}&date={yyyymmdd}`
-- Queue supports both LIFO and FIFO prioritization
+`DevotionDownloader` runs work on a single-thread `ExecutorService`, fed by a `LinkedBlockingDeque` (so a `take()` provides natural backpressure):
+- **Endpoint**: `GET /devotion/get?name={kind}&date={yyyymmdd}` via `Connections.downloadString(url)`
+- Queue supports both LIFO (front) and FIFO (back) insertion for prioritization
+- `shutdown()` sets a `volatile` flag and calls `executor.shutdownNow()`; the loop handles `InterruptedException` by re-interrupting and breaking
 - Articles cached in the `Devotion` database table
 - `touchTime` tracks access for cache management
+- On completion the downloader emits an `AppEvents` `SharedFlow` event (replaced the `LocalBroadcastManager` broadcast in REM-03)
 
 ## Article Parsing
 

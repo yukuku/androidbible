@@ -332,17 +332,20 @@ If the project adopts Hilt for other reasons (e.g., ViewModel injection in REM-0
 
 ---
 
-### REM-11: Migrate InternalDb to Room (Version Table)
+### ~~REM-11: Migrate InternalDb to Room (Version Table)~~ ✅ COMPLETED (2026-05-13)
 **Addresses:** TD-02  
 **Module:** Storage — Versions subsystem  
 **BRICE:** B=3 R=2 I=3 C=3 E=5 → **3.2**
 
-**Steps:**
-1. Define `VersionEntity` Room entity
-2. Define `VersionDao` with queries: `listAllVersions()`, `insertOrUpdateVersion()`, `deleteVersion()`, `setVersionActive()`
-3. Add Room migration for the `Version` table
-4. Replace `InternalDb.listAllVersions()` (line 531) with DAO call
-5. Update `S.getAvailableVersions()` to use the DAO
+**Outcome.** The legacy hand-rolled `Version` table is now backed by Room in a new, separate-file database (`AlkitabRoomDb`) at `yuku.alkitab.base.storage.room.AppDatabase` (`@Database(version = 1)` at landing; later bumped to v2 by REM-10). A separate file avoids the `user_version` collision with `InternalDbHelper`'s versionCode-driven schema — see `docs/superpowers/specs/2026-05-13-rem-11-room-version-table-design.md`.
+
+**Shipped:**
+- **Entities and DAO:** `VersionEntity.kt` mirrors the legacy columns; `VersionRoomDao.kt` exposes `listAllOrderedByOrdering()`, `getById()`, `insertOrUpdate()`, `deleteByPresetName()`, and the active-flag / ordering helpers.
+- **Data migration:** `VersionDataMigration.kt` — idempotent one-time copy from the legacy `Version` table into Room, wired into `S.db`'s lazy initializer.
+- **Facade preservation:** `VersionDao.kt` (under `storage/`) now delegates to Room, mapping `VersionEntity` ↔ `MVersionDb`. `InternalDb.listAllVersions()` and related methods continue to work unchanged.
+- **Legacy table left in place** as a rollback safety net; a future release can drop it once the Room path has baked.
+
+**Verification.** Migration test scaffolding via `MigrationTestHelper` (added separately) plus `VersionRoomDaoTest.kt` and `VersionDataMigrationTest.kt`. Schema JSON checked in at `Alkitab/schemas/yuku.alkitab.base.storage.room.AppDatabase/1.json`.
 
 **Difficulty:** Medium (1-2 days). Lower risk than Markers since the Version table is simpler.
 
@@ -737,13 +740,13 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 | REM-06 | ~~Extract IsiActivity gestures~~ ✅ | **3.4** | 2 |
 | REM-07 | ~~Extract IsiActivity action mode~~ ✅ | **3.4** | 2 |
 | REM-09 | Introduce ViewModel | **3.4** | 2 |
-| REM-10 | Room migration (Markers) | **3.4** | 2 |
+| REM-10 | ~~Room migration (Markers)~~ ✅ | **3.4** | 2 |
 | REM-12 | ~~Replace DragSortListView~~ ✅ | **3.4** | 2 |
 | REM-14 | ~~Replace material-dialogs~~ ✅ | **3.4** | 2 |
 | REM-18 | ~~Add test coverage~~ ✅ | **3.4** | 2 |
 | REM-24 | ~~Refactor S.kt service locator (steps 24a–24d complete)~~ ✅ | **3.2** | 2 |
 | REM-08 | ~~Extract split view manager~~ ✅ | **3.2** | 2 |
-| REM-11 | Room migration (Version) | **3.2** | 2 |
+| REM-11 | ~~Room migration (Version)~~ ✅ | **3.2** | 2 |
 | REM-15 | Introduce coroutines | **3.2** | 3 |
 | REM-16 | Java→Kotlin conversion | **3.0** | 3 |
 | REM-17 | ~~Kotlin DSL build migration~~ ✅ | **3.0** | 3 |
@@ -758,6 +761,6 @@ Gradle already handles signing (`signingConfigs.release` at `Alkitab/build.gradl
 **Sprint 2 (1 week):** ~~REM-03~~✅ — LocalBroadcastManager removal (done)  
 **Sprint 3 (2 weeks):** ~~REM-07~~✅, ~~REM-06~~✅, ~~REM-08~~✅ — IsiActivity decomposition (REM-06, REM-07, REM-08 done)  
 **Sprint 4 (1 week):** ~~REM-12~~✅, ~~REM-14~~✅ — deprecated library replacements (done)  
-**Sprint 5 (2 weeks):** REM-10, REM-11 — Room migration for core tables  
+**Sprint 5 (2 weeks):** ~~REM-10~~✅, ~~REM-11~~✅ — Room migration for core tables (both done; remaining tables — `ReadingPlan`, `Devotion`, `SyncShadow`, `SyncLog`, `PerVersion`, `ProgressMark` — can follow the same pattern)  
 **Sprint 6 (2 weeks):** REM-09, ~~REM-18a-f~~✅ — ViewModel + test coverage (REM-18a/b/c/d/e/f done)  
 **Ongoing:** REM-15, REM-16, ~~REM-17~~✅ — modernization work mixed into feature sprints (REM-17 done)

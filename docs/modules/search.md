@@ -7,8 +7,8 @@ Full-text search across Bible verses with token-based intersection, book/testame
 ## Key Files
 
 - `Alkitab/src/main/java/yuku/alkitab/base/ac/SearchActivity.kt` — Search UI with history autocomplete
-- `Alkitab/src/main/java/yuku/alkitab/base/util/SearchEngine.java` — Core search engine (grep-based, token intersection)
-- `Alkitab/src/main/java/yuku/alkitab/base/util/QueryTokenizer.java` — Tokenizes queries with quote and plus-sign support
+- `Alkitab/src/main/java/yuku/alkitab/base/util/SearchEngine.kt` — Core search engine (grep-based, token intersection; ported to Kotlin in REM-16)
+- `Alkitab/src/main/java/yuku/alkitab/base/util/QueryTokenizer.kt` — Tokenizes queries with quote and plus-sign support (ported to Kotlin in REM-16)
 - `Alkitab/src/main/java/yuku/alkitab/base/util/SearchEngineQuery.kt` — Data class holding query string and optional book filter (`bookIds: SparseBooleanArray?`)
 
 ## Query Tokenization
