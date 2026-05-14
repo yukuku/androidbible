@@ -47,7 +47,7 @@ import androidx.room.PrimaryKey
         // ensure the actual SQLite index is (kind, caption COLLATE NOCASE).
         // SQLite's PRAGMA index_info does not expose per-column collation,
         // so Room's TableInfo comparison sees identical column lists for both.
-        Index(value = ["kind", "caption"], name = "index_marker_kind_caption_nocase"),
+        Index(value = ["kind", "caption"], name = AppDatabase.MARKER_KIND_CAPTION_NOCASE_INDEX_NAME),
     ],
 )
 data class MarkerEntity(

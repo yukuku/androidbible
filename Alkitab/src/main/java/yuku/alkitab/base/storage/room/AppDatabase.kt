@@ -102,6 +102,8 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        const val MARKER_KIND_CAPTION_NOCASE_INDEX_NAME = "index_marker_kind_caption_nocase"
+
         /**
          * SQL that creates the `(kind, caption COLLATE NOCASE)` index.
          * Room's `@Index` can't express per-column collation, so this index
@@ -109,7 +111,7 @@ abstract class AppDatabase : RoomDatabase() {
          * and [noCaseCaptionIndexCallback] (for fresh installs).
          */
         const val MARKER_KIND_CAPTION_NOCASE_INDEX_SQL =
-            "CREATE INDEX IF NOT EXISTS `index_marker_kind_caption_nocase` " +
+            "CREATE INDEX IF NOT EXISTS `" + MARKER_KIND_CAPTION_NOCASE_INDEX_NAME + "` " +
                 "ON `marker` (`kind`, `caption` COLLATE NOCASE)"
 
         /**
@@ -131,7 +133,7 @@ abstract class AppDatabase : RoomDatabase() {
                 // Room's @Index creates (kind, caption) without COLLATE NOCASE
                 // because @Index can't express per-column collation. Drop and
                 // recreate with COLLATE NOCASE to match MIGRATION_2_3.
-                db.execSQL("DROP INDEX IF EXISTS `index_marker_kind_caption_nocase`")
+                db.execSQL("DROP INDEX IF EXISTS `$MARKER_KIND_CAPTION_NOCASE_INDEX_NAME`")
                 db.execSQL(MARKER_KIND_CAPTION_NOCASE_INDEX_SQL)
             }
         }

@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.ContentValues
 import androidx.room.Room
 import androidx.room.testing.MigrationTestHelper
+import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.After
@@ -240,28 +241,49 @@ class AppDatabaseMigrationTest {
     }
 
     /**
-     * A fresh v3 install bypasses all migrations. Room's `@Index` creates
-     * `(kind, caption)` without `COLLATE NOCASE`; `Callback.onCreate` must
-     * drop that index and recreate it with `COLLATE NOCASE`.
-     * We simulate the full onCreate sequence here.
+     * A fresh v3 install bypasses all migrations and goes through
+     * `RoomDatabase.Callback.onCreate`. Opens a real Room DB from scratch to
+     * verify the callback is correctly wired and actually creates the NOCASE index.
      */
     @Test
-    fun `fresh v3 install marker table has the kind_caption_nocase index`() {
-        helper.createDatabase(TEST_DB, 3).use { db ->
-            // Room's fresh-install path (from @Index) creates (kind, caption)
-            // without COLLATE NOCASE. The Callback.onCreate logic is:
-            db.execSQL("DROP INDEX IF EXISTS `index_marker_kind_caption_nocase`")
-            db.execSQL(AppDatabase.MARKER_KIND_CAPTION_NOCASE_INDEX_SQL)
-            assertNocaseIndexExists(db)
+    fun `fresh v3 install Room opens cleanly and marker table has the kind_caption_nocase index`() {
+        val room = Room.databaseBuilder(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            AppDatabase::class.java,
+            TEST_DB,
+        )
+            .allowMainThreadQueries()
+            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3)
+            .build()
+        AppDatabase.setForTesting(room)
+
+        try {
+            room.markerDao().count() // force DB open → triggers Callback.onCreate
+
+            val sql = room.query(
+                SimpleSQLiteQuery(
+                    "SELECT sql FROM sqlite_master WHERE type='index' AND name=?",
+                    arrayOf(AppDatabase.MARKER_KIND_CAPTION_NOCASE_INDEX_NAME),
+                ),
+            ).use { c ->
+                assertTrue("index not found in sqlite_master", c.moveToFirst())
+                c.getString(0)
+            }
+            assertTrue("Expected COLLATE NOCASE in index SQL: $sql", sql.uppercase().contains("NOCASE"))
+        } finally {
+            room.close()
         }
     }
 
     private fun assertNocaseIndexExists(db: androidx.sqlite.db.SupportSQLiteDatabase) {
         val sql = db.query(
-            "SELECT sql FROM sqlite_master" +
-                " WHERE type='index' AND name='index_marker_kind_caption_nocase'",
+            "SELECT sql FROM sqlite_master WHERE type='index' AND name=?",
+            arrayOf(AppDatabase.MARKER_KIND_CAPTION_NOCASE_INDEX_NAME),
         ).use { c ->
-            assertTrue("index_marker_kind_caption_nocase not found in sqlite_master", c.moveToFirst())
+            assertTrue(
+                "${AppDatabase.MARKER_KIND_CAPTION_NOCASE_INDEX_NAME} not found in sqlite_master",
+                c.moveToFirst(),
+            )
             c.getString(0)
         }
         assertTrue(
