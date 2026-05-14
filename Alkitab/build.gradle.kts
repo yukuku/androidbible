@@ -213,6 +213,11 @@ android {
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
+            // The REM-10/REM-11 migration load test in MarkerDataMigrationLoadTest
+            // holds 50,000 × 2 KB marker captions live during the bulk Room insert
+            // (≈100 MB just for caption strings, plus per-entity overhead).
+            // Default 512 MB unit-test heap OOMs; 2 GB leaves comfortable headroom.
+            all { it.maxHeapSize = "2g" }
         }
     }
 
