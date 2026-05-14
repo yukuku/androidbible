@@ -2,10 +2,12 @@ package yuku.alkitab.base.util
 
 import android.app.DownloadManager
 import android.content.Intent
+import android.os.Build
 import android.text.TextUtils
 import androidx.annotation.VisibleForTesting
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
+import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.workDataOf
@@ -97,13 +99,25 @@ class DownloadMapper private constructor() {
         val name = downloadTempBasename(downloadKey)
         val destPath = File(dir, name).absolutePath
 
-        val request = OneTimeWorkRequest.Builder(VersionDownloadWorker::class.java)
+        val requestBuilder = OneTimeWorkRequest.Builder(VersionDownloadWorker::class.java)
             .setInputData(workDataOf(
                 VersionDownloadWorker.KEY_URL to url,
                 VersionDownloadWorker.KEY_DEST_PATH to destPath,
             ))
             .addTag(WORK_TAG)
-            .build()
+        // Run as an expedited job on Android 12+ — the user is actively waiting
+        // on a progress bar, so we want the OS to schedule us promptly even if
+        // the app is backgrounded. On Android <12 expedited would require a
+        // foreground service + notification, which isn't worth the complexity
+        // for this app, so we leave it as a regular OneTimeWorkRequest there.
+        //
+        // RUN_AS_NON_EXPEDITED_WORK_REQUEST: if the app exhausts its expedited
+        // quota (e.g. user mass-downloads many versions), fall back to a
+        // regular work request rather than dropping the download outright.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            requestBuilder.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+        }
+        val request = requestBuilder.build()
 
         val workManager = WorkManager.getInstance(App.context)
         workManager.enqueue(request)
