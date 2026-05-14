@@ -37,4 +37,7 @@
 
 	<string name="pref_data_transfer_export_key" translatable="false">data_transfer_export</string>
 	<string name="pref_data_transfer_import_key" translatable="false">data_transfer_import</string>
+
+	<string name="pref_useComposeVerseItem_key" translatable="false">useComposeVerseItem</string>
+	<bool name="pref_useComposeVerseItem_default">false</bool>
 </resources>

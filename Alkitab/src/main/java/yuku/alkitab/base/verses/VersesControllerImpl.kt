@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import java.util.concurrent.atomic.AtomicInteger
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
+import yuku.alkitab.base.settings.ExperimentalFlags
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.util.TargetDecoder
@@ -32,7 +33,9 @@ import yuku.alkitab.base.widget.ParallelSpan
 import yuku.alkitab.base.widget.PericopeHeaderItem
 import yuku.alkitab.base.widget.ReferenceParallelClickData
 import yuku.alkitab.base.widget.ScrollbarSetter.setVerticalThumb
+import yuku.alkitab.base.widget.VerseInlineLinkSpan
 import yuku.alkitab.base.widget.VerseRenderer
+import yuku.alkitab.base.widget.VerseRendererCompose
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.SingleChapterVerses
 import yuku.alkitab.util.Ari
@@ -483,14 +486,14 @@ class VersesControllerImpl(
         if (previous != 0 && previous != verse_1) {
             val prevPos = versesDataModel.getPositionIgnoringPericopeFromVerse(previous)
             if (prevPos != -1) {
-                (layoutManager.findViewByPosition(prevPos) as? VerseItem)?.audioHighlightColor = 0
+                setAudioHighlightOnRow(layoutManager.findViewByPosition(prevPos), 0)
             }
         }
         if (verse_1 == 0) return
 
         val pos = versesDataModel.getPositionIgnoringPericopeFromVerse(verse_1)
         if (pos == -1) return
-        (layoutManager.findViewByPosition(pos) as? VerseItem)?.audioHighlightColor = color
+        setAudioHighlightOnRow(layoutManager.findViewByPosition(pos), color)
 
         // Smooth-scroll the highlighted verse into the upper third of the
         // viewport. SNAP_TO_START aligns the verse to the top edge; the
@@ -546,6 +549,20 @@ class VersesControllerImpl(
         adapter.data = versesDataModel
         adapter.ui = versesUiModel
         adapter.listeners = versesListeners
+    }
+
+    /**
+     * Apply an audio-highlight color to whichever flavor of verse row is sitting
+     * at [view]. The legacy [VerseItem] and the experimental
+     * [VerseItemComposeView] both expose the same `audioHighlightColor` property
+     * surface, so callers (notably the 100ms polling [setAudioHighlight]) stay
+     * unaware of which view type is active.
+     */
+    private fun setAudioHighlightOnRow(view: View?, color: Int) {
+        when (view) {
+            is VerseItem -> view.audioHighlightColor = color
+            is VerseItemComposeView -> view.audioHighlightColor = color
+        }
     }
 }
 
@@ -737,6 +754,153 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
     }
 }
 
+/**
+ * Experimental Compose-backed mirror of [VerseTextHolder] (REM bug-hunt; gated
+ * by [yuku.alkitab.base.settings.ExperimentalFlags.useComposeVerseItem]).
+ *
+ * Builds the same UI state the legacy holder builds, but routes verse-text
+ * formatting through [VerseRendererCompose] (which emits an `AnnotatedString`
+ * directly) and hands everything off to [VerseItemComposeView]. Attribute icons
+ * are reused from the legacy [yuku.alkitab.base.widget.AttributeView] inside the
+ * Compose view so the suspected text-rendering bug stays the only variable.
+ */
+class VerseTextComposeHolder(private val view: VerseItemComposeView) : ItemHolder(view) {
+    fun bind(
+        data: VersesDataModel,
+        ui: VersesUiModel,
+        listeners: VersesListeners,
+        attention: Attention,
+        audioHighlight: AudioHighlight,
+        checked: Boolean,
+        toggleChecked: (position: Int) -> Unit,
+        index: Int,
+    ) {
+        val verse_1 = index + 1
+        val ari = Ari.encodeWithBc(data.ari_bc_, verse_1)
+        val text = data.verses_.getVerse(index)
+        val verseNumberText = data.verses_.getVerseNumberText(index)
+        val highlightInfo = data.versesAttributes.highlightInfoMap_[index]
+
+        val renderResult = VerseRendererCompose.render(
+            isVerseNumberShown = ui.isVerseNumberShown,
+            ari = ari,
+            text = text,
+            verseNumberText = verseNumberText,
+            highlightInfo = highlightInfo,
+            checked = checked,
+        )
+
+        val textSizeMult = if (data.verses_ is SingleChapterVerses.WithTextSizeMult) {
+            data.verses_.getTextSizeMult(index)
+        } else {
+            ui.textSizeMult
+        }
+
+        val applied = App.services.uiDimensions.applied()
+        val fontSizeDp = applied.fontSize2dp * textSizeMult
+        val verseNumberFontSizeDp = applied.fontSize2dp * 0.7f * textSizeMult
+        val attributeScale = scaleForAttributeView(applied.fontSize2dp * ui.textSizeMult)
+
+        // Pre-resolve progress-mark captions at bind time so the
+        // accessibility path (getContentDescription) doesn't run a DB query
+        // on every TalkBack read. Mirrors the values the legacy
+        // VerseItem.getContentDescription resolves inline.
+        val progressMarkBits = data.versesAttributes.progressMarkBitsMap_[index]
+        val progressMarkCaptions: List<String?> = (0 until yuku.alkitab.base.widget.AttributeView.PROGRESS_MARK_TOTAL_COUNT).map { presetId ->
+            if (progressMarkBits and (1 shl (yuku.alkitab.base.widget.AttributeView.PROGRESS_MARK_BITS_START + presetId)) == 0) {
+                null
+            } else {
+                App.services.storage.db.getProgressMarkByPresetId(presetId)?.let { progressMark ->
+                    if (progressMark.caption.isNullOrEmpty()) {
+                        view.context.getString(yuku.alkitab.base.widget.AttributeView.getDefaultProgressMarkStringResource(presetId))
+                    } else {
+                        progressMark.caption
+                    }
+                }
+            }
+        }
+
+        val state = VerseItemComposeState(
+            render = renderResult,
+            fontSizeDp = fontSizeDp,
+            verseNumberFontSizeDp = verseNumberFontSizeDp,
+            fontColor = applied.fontColor,
+            verseNumberColor = applied.verseNumberColor,
+            lineSpacingMult = applied.lineSpacingMult,
+            typeface = applied.fontFace,
+            fontBold = applied.fontBold,
+            attribute = AttributeState(
+                bookmarkCount = data.versesAttributes.bookmarkCountMap_[index],
+                noteCount = data.versesAttributes.noteCountMap_[index],
+                progressMarkBits = progressMarkBits,
+                hasMaps = data.versesAttributes.hasMapsMap_[index],
+                scale = attributeScale,
+                version = data.version_,
+                versionId = data.versionId_,
+                ari = ari,
+                attributeListener = listeners.attributeListener,
+                progressMarkCaptions = progressMarkCaptions,
+            ),
+            onClick = {
+                when (ui.verseSelectionMode) {
+                    VersesController.VerseSelectionMode.none -> Unit
+                    VersesController.VerseSelectionMode.singleClick -> {
+                        val adapterPosition = bindingAdapterPosition
+                        if (adapterPosition != -1) {
+                            listeners.selectedVersesListener.onVerseSingleClick(data.getVerse_1FromPosition(adapterPosition))
+                        }
+                    }
+                    VersesController.VerseSelectionMode.multiple -> {
+                        val adapterPosition = bindingAdapterPosition
+                        if (adapterPosition != -1) {
+                            toggleChecked(adapterPosition)
+                        }
+                    }
+                }
+            },
+            onInlineLinkClick = { type, arif ->
+                // Reuse the same factory as the legacy path so footnote / xref
+                // dialogs etc. open with identical semantics.
+                listeners.inlineLinkSpanFactory_.create(type, arif).onClick(view)
+            },
+            onPinDropped = { presetId ->
+                val adapterPosition = bindingAdapterPosition
+                if (adapterPosition != -1) {
+                    listeners.pinDropListener.onPinDropped(presetId, Ari.encodeWithBc(data.ari_bc_, data.getVerse_1FromPosition(adapterPosition)))
+                }
+            },
+        )
+
+        val attr = state.attribute
+        val attributeShowingSomething = attr.bookmarkCount > 0 ||
+            attr.noteCount > 0 ||
+            (attr.progressMarkBits and yuku.alkitab.base.widget.AttributeView.PROGRESS_MARK_BIT_MASK) != 0 ||
+            attr.hasMaps
+
+        view.bind(state)
+        view.checked = checked
+        view.collapsed = text.isEmpty() && !attributeShowingSomething
+
+        // Attention: same logic as VerseTextHolder.
+        if (attention.hasAny() && verse_1 in attention.verses_1) {
+            view.callAttention(attention.start)
+        } else {
+            view.callAttention(0L)
+        }
+
+        // Audio highlight: same poke-on-rebind as VerseTextHolder.
+        view.audioHighlightColor = if (verse_1 == audioHighlight.verse_1) audioHighlight.color else 0
+    }
+
+    private fun scaleForAttributeView(fontSizeDp: Float) = when {
+        fontSizeDp >= 13 && fontSizeDp < 24 -> 1f
+        fontSizeDp < 8 -> 0.5f
+        fontSizeDp < 18 -> 0.75f
+        fontSizeDp >= 36 -> 2f
+        else -> 1.5f
+    }
+}
+
 class PericopeHolder(private val view: PericopeHeaderItem) : ItemHolder(view) {
     /**
      * @param index the index of verse
@@ -880,7 +1044,17 @@ class VersesAdapter(
         }
     }
 
-    override fun getItemViewType(position: Int) = data.getItemViewType(position).ordinal
+    override fun getItemViewType(position: Int): Int {
+        val baseType = data.getItemViewType(position)
+        // Experimental: when the flag is on, swap the verseText viewType for a
+        // distinct one so RecyclerView pools the Compose-backed rows separately.
+        // Picked > Int.MAX_VALUE / 2 to avoid colliding with any future
+        // [ItemType] ordinal.
+        return when (baseType) {
+            ItemType.verseText -> if (ExperimentalFlags.useComposeVerseItem()) VIEW_TYPE_VERSE_TEXT_COMPOSE else baseType.ordinal
+            else -> baseType.ordinal
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -888,6 +1062,10 @@ class VersesAdapter(
         return when (viewType) {
             ItemType.verseText.ordinal -> {
                 VerseTextHolder(inflater.inflate(R.layout.item_verse, parent, false) as VerseItem)
+            }
+
+            VIEW_TYPE_VERSE_TEXT_COMPOSE -> {
+                VerseTextComposeHolder(VerseItemComposeView(parent.context))
             }
 
             ItemType.pericope.ordinal -> {
@@ -905,10 +1083,20 @@ class VersesAdapter(
                 holder.bind(data, ui, listeners, attention, audioHighlight, isChecked(position), { toggleChecked(it) }, index)
             }
 
+            is VerseTextComposeHolder -> {
+                val index = data.getVerse_0(position)
+                holder.bind(data, ui, listeners, attention, audioHighlight, isChecked(position), { toggleChecked(it) }, index)
+            }
+
             is PericopeHolder -> {
                 val index = data.getPericopeIndex(position)
                 holder.bind(data, ui, listeners, position, index)
             }
         }
+    }
+
+    companion object {
+        /** Distinct viewType for the experimental Compose verse rows. */
+        const val VIEW_TYPE_VERSE_TEXT_COMPOSE = 1_000_001
     }
 }

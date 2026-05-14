@@ -29,4 +29,9 @@
     <string name="pref_forceFontScale_title">UI text size</string>
     <string name="pref_data_transfer_export_title">Export data</string>
     <string name="pref_data_transfer_import_title">Import data</string>
+
+    <string name="pref_experimental">Experimental features</string>
+    <string name="pref_experimental_warning">These options may be unstable. Toggle off if you see issues.</string>
+    <string name="pref_useComposeVerseItem_title">Use Compose for verse items</string>
+    <string name="pref_useComposeVerseItem_summary">Render each verse with the new Jetpack Compose implementation instead of the legacy custom view. Open a chapter to see the change.</string>
 </resources>
