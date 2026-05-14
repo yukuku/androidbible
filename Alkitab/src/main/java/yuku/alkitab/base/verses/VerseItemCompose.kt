@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
@@ -50,7 +51,6 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import yuku.afw.storage.Preferences
@@ -309,7 +309,7 @@ private fun VerseItemComposeContent(
                 // `max(textRegionHeight, attrHeight + extra)`, which matches
                 // legacy's `max(textHeight - extra, attrHeight) + extra` in
                 // both branches.
-                AttributeColumnAndroidView(
+                AttributeColumn(
                     attribute = state.attribute,
                     modifier = Modifier.padding(bottom = with(LocalDensity.current) { lineMetrics.rowExtraPaddingPx.toDp() }),
                 )
@@ -437,34 +437,180 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
     }
 }
 
-/**
- * Reuses the legacy [AttributeView] so the icon column is byte-identical to the
- * non-Compose path. Embedding via AndroidView is intentional: the suspected
- * rendering bug is in the text layer, not the icons, so we deliberately keep
- * surfaces where parity bugs can be introduced as small as possible.
- */
+private const val ATTRIBUTE_COUNT_TEXT_SIZE_DP = 12f
+
+private data class AttributeItem(
+    val bitmap: android.graphics.Bitmap,
+    val count: Int,
+    val countWithShadow: Boolean,
+    val countYRatio: Float,
+    val hasDrawOffset: Boolean,
+    val onClick: () -> Unit,
+)
+
 @Composable
-private fun AttributeColumnAndroidView(attribute: AttributeState, modifier: Modifier = Modifier) {
-    AndroidView(
-        modifier = modifier,
-        factory = { ctx ->
-            AttributeView(ctx).apply {
-                isClickable = true
+private fun AttributeColumn(attribute: AttributeState, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val density = LocalDensity.current
+    val pxDensity = density.density
+
+    val items = remember(
+        attribute.bookmarkCount,
+        attribute.noteCount,
+        attribute.progressMarkBits,
+        attribute.hasMaps,
+        attribute.scale,
+        attribute.version,
+        attribute.versionId,
+        attribute.ari,
+        attribute.attributeListener,
+        context.resources,
+    ) {
+        buildAttributeItems(attribute, context)
+    }
+    if (items.isEmpty()) return
+
+    val widthPx = items.maxOf { it.bitmap.width }
+    val heightPx = items.sumOf { it.bitmap.height }
+    val widthDp = with(density) { widthPx.toDp() }
+    val heightDp = with(density) { heightPx.toDp() }
+
+    val countTextSizePx = ATTRIBUTE_COUNT_TEXT_SIZE_DP * pxDensity * attribute.scale
+    val drawOffsetLeftPx = Math.round(0.5f * pxDensity * attribute.scale)
+
+    val countPaint = remember(countTextSizePx) {
+        android.graphics.Paint().apply {
+            typeface = android.graphics.Typeface.DEFAULT_BOLD
+            color = 0xff000000.toInt()
+            isAntiAlias = true
+            textAlign = android.graphics.Paint.Align.CENTER
+            textSize = countTextSizePx
+        }
+    }
+    val countPaintWithShadow = remember(countTextSizePx, pxDensity) {
+        android.graphics.Paint(countPaint).apply {
+            setShadowLayer(pxDensity * 4f, 0f, 0f, 0xffffffff.toInt())
+        }
+    }
+
+    androidx.compose.foundation.Canvas(
+        modifier = modifier
+            .size(widthDp, heightDp)
+            .pointerInput(items) {
+                detectTapGestures { offset ->
+                    var y = 0
+                    for (item in items) {
+                        val itemBottom = y + item.bitmap.height
+                        if (offset.y < itemBottom) {
+                            item.onClick()
+                            return@detectTapGestures
+                        }
+                        y = itemBottom
+                    }
+                }
+            },
+    ) {
+        var y = 0
+        for (item in items) {
+            val xOffset = if (item.hasDrawOffset) drawOffsetLeftPx else 0
+            drawIntoCanvas { canvas ->
+                val native = canvas.nativeCanvas
+                native.drawBitmap(item.bitmap, xOffset.toFloat(), y.toFloat(), null)
+                if (item.count > 1) {
+                    val paint = if (item.countWithShadow) countPaintWithShadow else countPaint
+                    native.drawText(
+                        item.count.toString(),
+                        xOffset + item.bitmap.width / 2f,
+                        y + item.bitmap.height * item.countYRatio,
+                        paint,
+                    )
+                }
             }
-        },
-        update = { view ->
-            view.setScale(attribute.scale)
-            view.bookmarkCount = attribute.bookmarkCount
-            view.noteCount = attribute.noteCount
-            view.progressMarkBits = attribute.progressMarkBits
-            view.hasMaps = attribute.hasMaps
-            view.setAttributeListener(
-                attribute.attributeListener,
-                attribute.version,
-                attribute.versionId,
-                attribute.ari,
-            )
-        },
+            y += item.bitmap.height
+        }
+    }
+}
+
+private fun buildAttributeItems(attribute: AttributeState, context: android.content.Context): List<AttributeItem> {
+    val list = mutableListOf<AttributeItem>()
+
+    if (attribute.bookmarkCount > 0) {
+        list += AttributeItem(
+            bitmap = scaledAttributeBitmap(context, R.drawable.ic_attr_bookmark, attribute.scale),
+            count = attribute.bookmarkCount,
+            countWithShadow = false,
+            countYRatio = 3f / 4f,
+            hasDrawOffset = true,
+            onClick = {
+                val v = attribute.version ?: return@AttributeItem
+                attribute.attributeListener.onBookmarkAttributeClick(v, attribute.versionId ?: "", attribute.ari)
+            },
+        )
+    }
+    if (attribute.noteCount > 0) {
+        list += AttributeItem(
+            bitmap = scaledAttributeBitmap(context, R.drawable.ic_attr_note, attribute.scale),
+            count = attribute.noteCount,
+            countWithShadow = true,
+            countYRatio = 7f / 10f,
+            hasDrawOffset = true,
+            onClick = {
+                val v = attribute.version ?: return@AttributeItem
+                attribute.attributeListener.onNoteAttributeClick(v, attribute.versionId ?: "", attribute.ari)
+            },
+        )
+    }
+    if (attribute.progressMarkBits != 0) {
+        for (presetId in 0 until AttributeView.PROGRESS_MARK_TOTAL_COUNT) {
+            if (attribute.progressMarkBits and (1 shl (AttributeView.PROGRESS_MARK_BITS_START + presetId)) != 0) {
+                list += AttributeItem(
+                    bitmap = scaledAttributeBitmap(
+                        context,
+                        AttributeView.getProgressMarkIconResource(presetId),
+                        attribute.scale,
+                    ),
+                    count = 0,
+                    countWithShadow = false,
+                    countYRatio = 0f,
+                    hasDrawOffset = false,
+                    onClick = {
+                        val v = attribute.version ?: return@AttributeItem
+                        attribute.attributeListener.onProgressMarkAttributeClick(v, attribute.versionId ?: "", presetId)
+                    },
+                )
+            }
+        }
+    }
+    if (attribute.hasMaps) {
+        list += AttributeItem(
+            bitmap = scaledAttributeBitmap(context, R.drawable.ic_attr_has_maps, attribute.scale),
+            count = 0,
+            countWithShadow = false,
+            countYRatio = 0f,
+            hasDrawOffset = true,
+            onClick = {
+                val v = attribute.version ?: return@AttributeItem
+                attribute.attributeListener.onHasMapsAttributeClick(v, attribute.versionId ?: "", attribute.ari)
+            },
+        )
+    }
+
+    return list
+}
+
+private fun scaledAttributeBitmap(
+    context: android.content.Context,
+    @androidx.annotation.DrawableRes resId: Int,
+    scale: Float,
+): android.graphics.Bitmap {
+    val original = android.graphics.BitmapFactory.decodeResource(context.resources, resId)
+    if (scale == 1f) return android.graphics.Bitmap.createBitmap(original)
+    val filter = !(scale == 2f || scale == 3f || scale == 4f)
+    return android.graphics.Bitmap.createScaledBitmap(
+        original,
+        Math.round(original.width * scale),
+        Math.round(original.height * scale),
+        filter,
     )
 }
 
