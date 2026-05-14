@@ -15,10 +15,16 @@ import yuku.alkitab.base.connection.Connections
 
 /**
  * Downloads a Bible version (.yes file, possibly gzip-compressed at the
- * application layer) to a temp file under [Context.getCacheDir]. Supports
- * HTTP Range-based resume: if the destination file already has bytes, sends
- * `Range: bytes=N-` and appends the response body to it. Falls back to a
- * full restart if the server answers 200 instead of 206 Partial Content.
+ * application layer) to a temp file under [Context.getCacheDir]. Always
+ * starts from byte 0 — any stale bytes already at the destination path
+ * are discarded before the request goes out.
+ *
+ * Note: we deliberately do *not* support HTTP Range-based resume. The temp
+ * file path is derived from the download key (preset name), not from the
+ * server's file contents, so a leftover partial could be from a different
+ * version (e.g. the user's app was updated, or the server's source file
+ * changed). Resuming would risk producing a Frankenstein of bytes from two
+ * different files. A failed download just retries from byte 0.
  *
  * Progress is reported via [setProgress] as the pair (current, total) of
  * raw on-disk bytes. If the response has no Content-Length (e.g. chunked
@@ -26,8 +32,7 @@ import yuku.alkitab.base.connection.Connections
  * progress bar. The worker requests `Accept-Encoding: identity` so the
  * byte counts on the wire match the bytes on disk — without this, OkHttp
  * would transparently decode any `Content-Encoding: gzip` response and
- * strip Content-Length, breaking both progress reporting and Range-based
- * resume (the server's byte offsets and our on-disk offsets would diverge).
+ * strip Content-Length, breaking progress reporting.
  *
  * The worker only performs the byte transfer; post-processing (gunzip,
  * validate via YesReaderFactory, register in DB) is handled by
@@ -47,17 +52,19 @@ class VersionDownloadWorker(
 
         val destFile = File(destPath)
         destFile.parentFile?.mkdirs()
-        val existingBytes = if (destFile.exists()) destFile.length() else 0L
-
-        val requestBuilder = Request.Builder()
-            .url(url)
-            .addHeader("Accept-Encoding", "identity")
-        if (existingBytes > 0L) {
-            requestBuilder.addHeader("Range", "bytes=$existingBytes-")
+        // Discard any stale bytes from a previous attempt: see the class
+        // KDoc — we don't trust them to belong to the current server file.
+        if (destFile.exists()) {
+            destFile.delete()
         }
 
         val response = try {
-            Connections.okHttp.newCall(requestBuilder.build()).execute()
+            Connections.okHttp.newCall(
+                Request.Builder()
+                    .url(url)
+                    .addHeader("Accept-Encoding", "identity")
+                    .build()
+            ).execute()
         } catch (e: IOException) {
             return@withContext Result.failure(failureData(ERROR_CONNECTION, e.message ?: e.javaClass.simpleName))
         } catch (e: Exception) {
@@ -72,21 +79,10 @@ class VersionDownloadWorker(
             val body = response.body
                 ?: return@withContext Result.failure(failureData(ERROR_CONNECTION, "response body is null"))
 
-            val appending = response.code == 206 && existingBytes > 0L
-            val startOffset = if (appending) existingBytes else 0L
-            if (!appending && destFile.exists()) {
-                destFile.delete()
-            }
-
-            val responseBodyLength = body.contentLength()
-            val totalBytes = when {
-                responseBodyLength < 0L -> -1L
-                appending -> startOffset + responseBodyLength
-                else -> responseBodyLength
-            }
+            val totalBytes = body.contentLength()  // -1 if unknown (chunked)
 
             val raf = try {
-                RandomAccessFile(destFile, "rw").apply { seek(startOffset) }
+                RandomAccessFile(destFile, "rw")
             } catch (e: IOException) {
                 return@withContext Result.failure(failureData(ERROR_STORAGE, e.message ?: e.javaClass.simpleName))
             }
@@ -94,7 +90,7 @@ class VersionDownloadWorker(
             raf.use {
                 body.byteStream().use { input ->
                     val buf = ByteArray(BUFFER_SIZE)
-                    var currentBytes = startOffset
+                    var currentBytes = 0L
                     var lastProgressTime = 0L
 
                     setProgress(workDataOf(
