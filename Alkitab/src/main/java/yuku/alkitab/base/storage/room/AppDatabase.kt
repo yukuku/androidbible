@@ -26,6 +26,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  * - v3 — added the `devotion` table and its two indexes. See
  *   [MIGRATION_2_3]. Same rollback-safety convention: the legacy `Devotion`
  *   table in `AlkitabDb` is left intact.
+ * - v4 — added the `per_version` table and its unique index on `versionId`.
+ *   See [MIGRATION_3_4]. Same rollback-safety convention: the legacy
+ *   `PerVersion` table in `AlkitabDb` is left intact.
  *
  * REM-10 follow-up note: [MIGRATION_1_2] creates the
  * `index_marker_kind_caption` index with `COLLATE NOCASE` (matching the
@@ -42,8 +45,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         LabelEntity::class,
         MarkerLabelEntity::class,
         DevotionEntity::class,
+        PerVersionEntity::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -52,6 +56,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun labelDao(): LabelRoomDao
     abstract fun markerLabelDao(): MarkerLabelRoomDao
     abstract fun devotionDao(): DevotionRoomDao
+    abstract fun perVersionDao(): PerVersionRoomDao
 
     companion object {
         const val DB_NAME = "AlkitabRoomDb"
@@ -164,6 +169,33 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * v3 → v4: create the `per_version` table and its unique
+         * `versionId` index. SQL mirrors what Room emits for the v4 entity
+         * (compare against `Alkitab/schemas/.../4.json`) — keep them in
+         * sync if [PerVersionEntity] changes.
+         *
+         * A v3 device upgrading runs this migration once; a fresh install
+         * skips straight to v4 via Room's `onCreate` (Room uses the entity
+         * definitions, not this migration, for fresh schemas — that's why
+         * the SQL here must match what Room would emit).
+         */
+        @JvmField
+        val MIGRATION_3_4: Migration = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `per_version` (" +
+                        "`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`versionId` TEXT NOT NULL, " +
+                        "`settings` TEXT)",
+                )
+                db.execSQL(
+                    "CREATE UNIQUE INDEX IF NOT EXISTS `index_per_version_versionId` " +
+                        "ON `per_version` (`versionId`)",
+                )
+            }
+        }
+
         @Volatile
         private var instance: AppDatabase? = null
 
@@ -181,7 +213,7 @@ abstract class AppDatabase : RoomDatabase() {
                 // methods) are synchronous. Coroutine-based callers can be
                 // introduced later — see REM-15 in tech-debt-remediation.md.
                 .allowMainThreadQueries()
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                 .build()
 
         /**
