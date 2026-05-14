@@ -111,6 +111,7 @@ class AppDatabaseMigrationTest {
                 AppDatabase.MIGRATION_2_3,
                 AppDatabase.MIGRATION_3_4,
                 AppDatabase.MIGRATION_4_5,
+                AppDatabase.MIGRATION_5_6,
             )
             .build()
         AppDatabase.setForTesting(room)
@@ -295,6 +296,7 @@ class AppDatabaseMigrationTest {
                 AppDatabase.MIGRATION_2_3,
                 AppDatabase.MIGRATION_3_4,
                 AppDatabase.MIGRATION_4_5,
+                AppDatabase.MIGRATION_5_6,
             )
             .build()
         AppDatabase.setForTesting(room)
@@ -406,6 +408,7 @@ class AppDatabaseMigrationTest {
                 AppDatabase.MIGRATION_2_3,
                 AppDatabase.MIGRATION_3_4,
                 AppDatabase.MIGRATION_4_5,
+                AppDatabase.MIGRATION_5_6,
             )
             .build()
         AppDatabase.setForTesting(room)
@@ -531,6 +534,7 @@ class AppDatabaseMigrationTest {
                 AppDatabase.MIGRATION_2_3,
                 AppDatabase.MIGRATION_3_4,
                 AppDatabase.MIGRATION_4_5,
+                AppDatabase.MIGRATION_5_6,
             )
             .build()
         AppDatabase.setForTesting(room)
@@ -574,6 +578,7 @@ class AppDatabaseMigrationTest {
                 AppDatabase.MIGRATION_2_3,
                 AppDatabase.MIGRATION_3_4,
                 AppDatabase.MIGRATION_4_5,
+                AppDatabase.MIGRATION_5_6,
             )
             .build()
         AppDatabase.setForTesting(room)
@@ -605,6 +610,143 @@ class AppDatabaseMigrationTest {
             )
             assertTrue(historyId > 0)
             assertEquals(1, room.progressMarkDao().listHistoryByPresetId(2).size)
+        } finally {
+            room.close()
+        }
+    }
+
+    /**
+     * v5 → v6 adds the `reading_plan` and `reading_plan_progress` tables.
+     * The migration must:
+     *
+     * - Preserve every row already in the v5 tables (`version`, `marker`,
+     *   `label`, `marker_label`, `devotion`, `per_version`, `progress_mark`,
+     *   `progress_mark_history`).
+     * - Create the two new tables with the schema Room's entity definitions
+     *   emit (verified by [MigrationTestHelper.runMigrationsAndValidate]
+     *   when `validateDroppedTables = true`).
+     * - Leave the new tables empty (data copy is a separate concern handled
+     *   by [ReadingPlanDataMigration]).
+     */
+    @Test
+    fun migrates5To6() {
+        // Seed a v5 row in the `progress_mark` table so we can verify the
+        // migration doesn't drop pre-existing data. Walk v1 → v2 → v3 → v4
+        // → v5 first so the v5 tables exist.
+        helper.createDatabase(TEST_DB, 1).close()
+        helper.runMigrationsAndValidate(TEST_DB, 2, true, AppDatabase.MIGRATION_1_2).close()
+        helper.runMigrationsAndValidate(TEST_DB, 3, true, AppDatabase.MIGRATION_2_3).close()
+        helper.runMigrationsAndValidate(TEST_DB, 4, true, AppDatabase.MIGRATION_3_4).close()
+        helper.runMigrationsAndValidate(TEST_DB, 5, true, AppDatabase.MIGRATION_4_5).use { db ->
+            val cv = ContentValues().apply {
+                put("preset_id", 2)
+                put("caption", "John 3:16")
+                put("ari", 12345)
+                put("modifyTime", 1_700_000_000)
+            }
+            db.insert("progress_mark", android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE, cv)
+        }
+
+        // Run v5 → v6.
+        helper.runMigrationsAndValidate(TEST_DB, 6, true, AppDatabase.MIGRATION_5_6).use { db ->
+            // v5 row survived
+            db.query("SELECT caption FROM progress_mark WHERE preset_id = 2").use { c ->
+                assertTrue(c.moveToFirst())
+                assertEquals("John 3:16", c.getString(0))
+            }
+            // The two new tables exist
+            db.query(
+                "SELECT name FROM sqlite_master WHERE type='table' " +
+                    "AND name IN ('reading_plan', 'reading_plan_progress') ORDER BY name",
+            ).use { c ->
+                val tables = mutableListOf<String>()
+                while (c.moveToNext()) tables += c.getString(0)
+                assertEquals(listOf("reading_plan", "reading_plan_progress"), tables)
+            }
+            // … and are empty
+            db.query("SELECT COUNT(*) FROM reading_plan").use { c ->
+                assertTrue(c.moveToFirst())
+                assertEquals(0, c.getInt(0))
+            }
+            db.query("SELECT COUNT(*) FROM reading_plan_progress").use { c ->
+                assertTrue(c.moveToFirst())
+                assertEquals(0, c.getInt(0))
+            }
+            // The unique index on (reading_plan_progress_gid, reading_code)
+            // was created. The facade's `INSERT OR REPLACE`-style upsert
+            // relies on this uniqueness for its dedup semantics.
+            db.query(
+                "SELECT sql FROM sqlite_master WHERE type='index' " +
+                    "AND name='index_reading_plan_progress_gid_reading_code'",
+            ).use { c ->
+                assertTrue(
+                    "index_reading_plan_progress_gid_reading_code not found in sqlite_master",
+                    c.moveToFirst(),
+                )
+                val sql = c.getString(0)
+                assertTrue(
+                    "Expected UNIQUE in index SQL: $sql",
+                    sql.uppercase().contains("UNIQUE"),
+                )
+            }
+        }
+    }
+
+    /**
+     * Companion to the v1→v5 progress-mark round-trip test: verify that
+     * after v1 → v6 (i.e. all five migrations applied in sequence) Room can
+     * open the DB and round-trip rows through the new [ReadingPlanEntity]
+     * and [ReadingPlanProgressEntity] DAOs. Catches drift between
+     * [AppDatabase.MIGRATION_5_6] and the entity declarations.
+     */
+    @Test
+    fun `after migrating from v1 to v6 Room opens cleanly and round-trips a reading_plan row through the new DAO`() {
+        helper.createDatabase(TEST_DB, 1).close()
+
+        val room = Room.databaseBuilder(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            AppDatabase::class.java,
+            TEST_DB,
+        )
+            .allowMainThreadQueries()
+            .addMigrations(
+                AppDatabase.MIGRATION_1_2,
+                AppDatabase.MIGRATION_2_3,
+                AppDatabase.MIGRATION_3_4,
+                AppDatabase.MIGRATION_4_5,
+                AppDatabase.MIGRATION_5_6,
+            )
+            .build()
+        AppDatabase.setForTesting(room)
+
+        try {
+            val planId = room.readingPlanDao().insert(
+                ReadingPlanEntity(
+                    _id = 0L,
+                    version = 1,
+                    name = "rp-a",
+                    title = "Plan A",
+                    description = "desc",
+                    duration = 365,
+                    startTime = 1_700_000_000_000L,
+                    data = byteArrayOf(0x10, 0x20, 0x30),
+                ),
+            )
+            assertTrue(planId > 0)
+            val meta = room.readingPlanDao().listAllMeta().single()
+            assertEquals("rp-a", meta.name)
+            assertEquals(365, meta.duration)
+
+            val progressId = room.readingPlanDao().insertOrReplaceProgress(
+                ReadingPlanProgressEntity(
+                    _id = 0L,
+                    reading_plan_progress_gid = "g2:rp_progress:rp-a",
+                    reading_code = 7,
+                    checkTime = 1_700_000_500L,
+                ),
+            )
+            assertTrue(progressId > 0)
+            assertEquals(listOf(7), room.readingPlanDao().listReadingCodesForGid("g2:rp_progress:rp-a"))
         } finally {
             room.close()
         }

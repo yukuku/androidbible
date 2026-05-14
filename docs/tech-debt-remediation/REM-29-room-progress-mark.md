@@ -25,7 +25,7 @@ Two tables, one DAO: the legacy facade's `insertOrUpdate` writes a history row t
 
 **Verification.** `./gradlew :Alkitab:assemblePlainDebug :Alkitab:testPlainDebugUnitTest :Alkitab:testPlainReleaseUnitTest` — all green.
 
-**Difficulty:** Easy. Took ~half a day with the REM-10 / REM-11 / REM-27 / REM-28 pattern already established. The new wrinkle vs. REM-28 was handling two coupled tables that the legacy facade writes atomically — `@Transaction` covers that cleanly. Remaining tables (`ReadingPlan`, `SyncShadow`, `SyncLog`) can follow the same pattern.
+**Difficulty:** Easy. Took ~half a day with the REM-10 / REM-11 / REM-27 / REM-28 pattern already established. The new wrinkle vs. REM-28 was handling two coupled tables that the legacy facade writes atomically — `@Transaction` covers that cleanly. `ReadingPlan` / `ReadingPlanProgress` followed as [REM-30](REM-30-room-reading-plan.md); remaining tables (`SyncShadow`, `SyncLog`) can follow the same pattern.
 
 ---
 
