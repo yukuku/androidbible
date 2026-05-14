@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "9e8aface6afca1c9dcea32ae33d500f6",
+    "identityHash": "ac4834422a512ac12032c4da6f31c064",
     "entities": [
       {
         "tableName": "version",
@@ -205,6 +205,16 @@
             ],
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_marker_gid` ON `${TABLE_NAME}` (`gid`)"
+          },
+          {
+            "name": "index_marker_kind_caption",
+            "unique": false,
+            "columnNames": [
+              "kind",
+              "caption"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_marker_kind_caption` ON `${TABLE_NAME}` (`kind`, `caption`)"
           }
         ]
       },
@@ -332,7 +342,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9e8aface6afca1c9dcea32ae33d500f6')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ac4834422a512ac12032c4da6f31c064')"
     ]
   }
 }

@@ -23,10 +23,10 @@ import androidx.room.PrimaryKey
  * Indexes mirror the legacy `Marker` table's six indexes
  * (`createIndexMarker` in `InternalDbHelper`) so query plans don't regress.
  * The legacy `index_Marker_05 (kind, caption COLLATE NOCASE)` cannot be
- * expressed via `@Index` because Room does not support per-column collation,
- * so it is created out-of-band by `AppDatabase.MARKER_KIND_CAPTION_NOCASE_INDEX_SQL`
- * — applied in `MIGRATION_2_3` for existing users and in the
- * `noCaseCaptionIndexCallback` for fresh installs.
+ * expressed via `@Index` because Room does not support per-column collation.
+ * `MIGRATION_1_2` creates this index with `COLLATE NOCASE`; fresh installs
+ * end up without `COLLATE NOCASE` because Room generates the entity SQL
+ * itself. See [AppDatabase] KDoc.
  *
  * Column types — `ari`/`kind`/`verseCount`/`createTime`/`modifyTime` are
  * non-nullable here even though the legacy schema allowed NULLs;
@@ -41,13 +41,11 @@ import androidx.room.PrimaryKey
         Index(value = ["kind", "modifyTime"], name = "index_marker_kind_modifyTime"),
         Index(value = ["kind", "createTime"], name = "index_marker_kind_createTime"),
         Index(value = ["gid"], name = "index_marker_gid"),
-        // Room's @Index can't express per-column COLLATE. The annotation
-        // declares (kind, caption) so Room's schema validator accepts the
-        // index; AppDatabase.MIGRATION_2_3 and noCaseCaptionIndexCallback
-        // ensure the actual SQLite index is (kind, caption COLLATE NOCASE).
-        // SQLite's PRAGMA index_info does not expose per-column collation,
-        // so Room's TableInfo comparison sees identical column lists for both.
-        Index(value = ["kind", "caption"], name = AppDatabase.MARKER_KIND_CAPTION_NOCASE_INDEX_NAME),
+        // MIGRATION_1_2 creates this index with COLLATE NOCASE; fresh installs
+        // get it without (Room's @Index can't express per-column collation).
+        // SQLite's PRAGMA index_info doesn't expose per-column collation, so
+        // Room's TableInfo comparison sees the same column list either way.
+        Index(value = ["kind", "caption"], name = AppDatabase.MARKER_KIND_CAPTION_INDEX_NAME),
     ],
 )
 data class MarkerEntity(
