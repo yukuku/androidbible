@@ -2,9 +2,11 @@ package yuku.alkitab.base.storage.room
 
 import android.app.Application
 import android.content.ContentValues
+import android.preference.PreferenceManager
 import androidx.room.Room
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -13,8 +15,10 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import yuku.afw.storage.Preferences
 import yuku.alkitab.base.storage.Db
 import yuku.alkitab.base.storage.InternalDbHelper
+import yuku.alkitab.base.storage.Prefkey
 
 /**
  * Verifies the one-time copy from the legacy `Version` table into Room's
@@ -31,6 +35,11 @@ class VersionDataMigrationTest {
     fun setUp() {
         val app = RuntimeEnvironment.getApplication()
         yuku.afw.App.context = app
+        // Idempotency is anchored on a SharedPreferences flag. Clear it (and
+        // the [Preferences] static cache that may hold a previous test's
+        // SharedPreferences instance) so every test starts with a clean slate.
+        PreferenceManager.getDefaultSharedPreferences(app).edit().clear().commit()
+        Preferences.invalidate()
         legacy = InternalDbHelper(app)
         room = Room.inMemoryDatabaseBuilder(app, AppDatabase::class.java)
             .allowMainThreadQueries()
@@ -149,5 +158,77 @@ class VersionDataMigrationTest {
         val rows = room.versionDao().listAll()
         assertEquals(1, rows.size)
         assertEquals("/existing.yes", rows.single().filename)
+    }
+
+    @Test
+    fun `does not resurrect deleted user data after the user clears every version (issue #195)`() {
+        // Setup: a legacy install with one downloaded version row that the
+        // migration is supposed to bring across exactly once.
+        insertLegacyRow("/a.yes", 101)
+
+        // First launch: migration copies the legacy row.
+        VersionDataMigration.copyFromLegacyDbIfNeeded(room, legacy)
+        assertEquals(1, room.versionDao().listAll().size)
+
+        // User deletes the downloaded version through the UI (or it's
+        // removed via "Manage versions"). Room is now empty; legacy table
+        // still has the original row.
+        room.versionDao().deleteByFilename("/a.yes")
+        assertTrue(room.versionDao().listAll().isEmpty())
+
+        // Next launch: the old `dao.count() > 0` gate would re-copy the
+        // legacy row. The flag-based gate must keep Room empty.
+        VersionDataMigration.copyFromLegacyDbIfNeeded(room, legacy)
+
+        assertTrue("legacy version rows were resurrected", room.versionDao().listAll().isEmpty())
+    }
+
+    @Test
+    fun `successful copy sets the persistent done flag`() {
+        insertLegacyRow("/a.yes", 101)
+
+        assertFalse(Preferences.getBoolean(Prefkey.version_data_migration_v1_done, false))
+        VersionDataMigration.copyFromLegacyDbIfNeeded(room, legacy)
+        assertTrue(Preferences.getBoolean(Prefkey.version_data_migration_v1_done, false))
+    }
+
+    @Test
+    fun `fresh install with no legacy data also sets the done flag`() {
+        // No legacy rows inserted. The migration has nothing to copy but
+        // must still mark itself done so subsequent launches don't keep
+        // querying the legacy DB.
+        assertFalse(Preferences.getBoolean(Prefkey.version_data_migration_v1_done, false))
+        VersionDataMigration.copyFromLegacyDbIfNeeded(room, legacy)
+        assertTrue(Preferences.getBoolean(Prefkey.version_data_migration_v1_done, false))
+    }
+
+    @Test
+    fun `upgrade path - flag unset but Room already has rows sets the flag without re-copying`() {
+        // Simulates a user who already migrated under the previous count-
+        // based code (PR #188) and is launching for the first time after
+        // this fix. Room is populated; legacy still has its preserved row.
+        // The fix must NOT re-insert the legacy row.
+        room.versionDao().insert(
+            VersionEntity(
+                _id = 0L,
+                locale = "en",
+                shortName = "SN",
+                longName = "Existing",
+                description = "desc",
+                filename = "/existing.yes",
+                preset_name = null,
+                modifyTime = 0,
+                active = 1,
+                ordering = 500,
+            ),
+        )
+        insertLegacyRow("/a.yes", 101)
+
+        VersionDataMigration.copyFromLegacyDbIfNeeded(room, legacy)
+
+        val rows = room.versionDao().listAll()
+        assertEquals(1, rows.size)
+        assertEquals("/existing.yes", rows.single().filename)
+        assertTrue(Preferences.getBoolean(Prefkey.version_data_migration_v1_done, false))
     }
 }
