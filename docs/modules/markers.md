@@ -31,7 +31,7 @@ Marker {
 }
 ```
 
-Storage: the `marker`, `label`, and `marker_label` tables live in the Room database (`AlkitabRoomDb`, `@Database(version = 2)`). The `MarkerDao` / `LabelDao` / `Marker_LabelDao` facades preserve a stable public surface for callers, mapping Room entities to the `Marker` / `Label` / `Marker_Label` model classes. A one-time idempotent `MarkerDataMigration` copy from the legacy `AlkitabDb` tables runs from `S.db`'s lazy initializer; the legacy tables are still created by `InternalDbHelper.onCreate` as a rollback safety net.
+Storage: the `marker`, `label`, and `marker_label` tables live in the Room database `AlkitabRoomDb` (`AppDatabase` at `@Database(version = 2)`). The `MarkerDao` / `LabelDao` / `Marker_LabelDao` facades expose a `Marker` / `Label` / `Marker_Label` model surface for callers and map to/from Room entities internally.
 
 ## Labels
 
@@ -44,7 +44,7 @@ Highlights use a JSON encoding in the `caption` field supporting:
 - Partial highlights (character range within a verse)
 - Hash-based verification to detect when verse text has changed
 
-The `Highlights` utility (`Highlights.kt`) handles encoding/decoding and color management. `Highlights.alphaMix()` masks the input to 24-bit RGB before OR-ing the fixed alpha, so callers may pass either RGB or pre-tinted ARGB ints without bleeding the original alpha into the result.
+The `Highlights` utility handles encoding/decoding and color management. `Highlights.alphaMix()` masks the input to 24-bit RGB before OR-ing the fixed alpha, so callers may pass either RGB or pre-tinted ARGB ints and the output alpha is always `0xA0`.
 
 Color selection in `TypeHighlightDialog` and the label color editor uses the iOS-style Compose color picker at `yuku.alkitab.base.compose.colorpicker.IosColorPicker` / `ColorPickerDialog`, hosted inside a `ModalBottomSheet`.
 

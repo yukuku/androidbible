@@ -47,7 +47,7 @@ The sync uses a shadow table (`SyncShadow`) to track the last-synced state. When
 2. If the entity changed locally → server wins (last-write-wins for most fields)
 3. Partial sync threshold: 100 operations per batch
 
-Known limitation tracked in `docs/tech-debt.md` (PB-03): the client-side patch is last-write-wins for every Mabel entity and for progress pins, so concurrent edits to the same highlight color or pin position on two devices silently discard one side. Notes and bookmark captions are merged server-side before deltas are emitted.
+The client-side patch is last-write-wins for every Mabel entity and for progress pins: concurrent edits to the same highlight color or pin position on two devices silently discard one side. Notes and bookmark captions are merged server-side before deltas are emitted.
 
 ## FCM Integration
 

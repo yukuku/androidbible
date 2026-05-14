@@ -25,7 +25,7 @@ MVersion (abstract)
 └── MVersionPreset — Metadata for versions available to download (not yet installed)
 ```
 
-`App.services.versions.getAvailableVersions()` (or the legacy `S.getAvailableVersions()`) merges internal + DB versions, filtering for active ones. Version instances (`VersionImpl`) are cached in a `ConcurrentHashMap` with `SoftReference` for memory-efficient GC.
+`App.services.versions.getAvailableVersions()` merges internal + DB versions, filtering for active ones. Version instances (`VersionImpl`) are cached in a `ConcurrentHashMap` with `SoftReference` for memory-efficient GC.
 
 ## Version IDs
 
