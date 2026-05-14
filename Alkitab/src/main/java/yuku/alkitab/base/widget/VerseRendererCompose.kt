@@ -18,26 +18,22 @@ import yuku.alkitab.base.util.Highlights
 import yuku.alkitab.util.Ari
 
 /**
- * Compose-native counterpart to [VerseRenderer]. Walks the same formatting-code
- * grammar (`@@`, `@0`..`@4`, `@^`, `@5`/`@6`, `@7`/`@9`, `@8`, `@<..@>`, `@/`)
- * and produces an [AnnotatedString] + the byte offsets of every inline link
- * (footnote `@<f..@>` / xref `@<x..@>`). The structure of this file
- * intentionally mirrors `VerseRenderer.kt` line-for-line so a side-by-side diff
- * stays readable.
+ * Walks the verse formatting grammar (`@@`, `@0`..`@4`, `@^`, `@5`/`@6`,
+ * `@7`/`@9`, `@8`, `@<..@>`, `@/`) and produces an [AnnotatedString] plus the
+ * offsets of every inline link (footnote `@<f..@>` / xref `@<x..@>`).
  *
- * Pixel parity notes (vs. the legacy TextView path):
- * - All sizes are emitted in `sp` because [VerseItemComposeView] swaps in a
- *   [androidx.compose.ui.unit.Density] with `fontScale = 1f`. With that override
- *   `sp == dp` visually, matching `TypedValue.COMPLEX_UNIT_DIP`.
- * - `LeadingMarginSpan.Standard(first, rest)` is translated to
- *   `ParagraphStyle(textIndent = TextIndent(first, rest))`.
- * - `VerseNumberSpan` (0.7x size + baseline raised by 0.3 of ascent) maps to
+ * Span translation:
+ * - Leading margins become `ParagraphStyle(textIndent = TextIndent(first, rest))`.
+ * - The verse-number span (0.7× size, baseline raised by 0.3 of ascent) becomes
  *   `SpanStyle(fontSize = 0.7.em, baselineShift = BaselineShift(0.3f))`.
  *
- * The verse-number gutter prefix (when the format starts with `@@@^` or
- * `@@@1`..`@@@4`) is NOT prepended to the AnnotatedString — instead it is
- * returned in [Result.gutterVerseNumber] so the host composable can position it
- * the same way the legacy `lVerseNumber` TextView sits inside the FrameLayout.
+ * All sizes are emitted in `sp`. The host composable swaps in a density with
+ * `fontScale = 1f`, so sp values render at dp dimensions.
+ *
+ * When the formatted body opens with `@@@^` or `@@@1`..`@@@4`, the verse
+ * number is NOT prepended to the AnnotatedString — instead it's returned in
+ * [Result.gutterVerseNumber] so the host can position it inside the leading
+ * margin reserved by the paragraph's TextIndent.
  */
 object VerseRendererCompose {
     private val superscriptDigits = charArrayOf(
@@ -115,9 +111,9 @@ object VerseRendererCompose {
     }
 
     /**
-     * Verse number goes to the gutter when the formatted body opens with `@^` or `@1`..`@4`
-     * (those paragraph markers take over layout themselves). `@0` keeps the number inline.
-     * Mirrors [VerseRenderer.renderVerseNumber].
+     * Verse number goes to the gutter when the formatted body opens with `@^`
+     * or `@1`..`@4` (those paragraph markers take over the layout themselves).
+     * `@0` keeps the number inline.
      */
     private fun isGutterMode(text_c: CharArray, text_len: Int): Boolean =
         text_len >= 4 && text_c[2] == '@' && (text_c[3] == '^' || text_c[3] in '1'..'4')
@@ -132,7 +128,6 @@ object VerseRendererCompose {
         if (gutterMode) return 0
         if (!isVerseNumberShown) return 0
 
-        val spanStart = sb.length
         val color = if (checked) Color.Unspecified else Color(App.services.uiDimensions.applied().verseNumberColor)
         sb.pushStyle(
             SpanStyle(
@@ -144,7 +139,7 @@ object VerseRendererCompose {
         sb.append(verseNumberText)
         sb.pop()
         sb.append("  ")
-        return sb.length.also { _ -> /* mirror VerseRenderer's `return sb.length` */ require(spanStart >= 0) }
+        return sb.length
     }
 
     private fun processFormattingCodes(
@@ -193,27 +188,18 @@ object VerseRendererCompose {
 
             when (val marker = text_c[pos]) {
                 '0', '1', '2', '3', '4', '^' -> {
-                    // Compose's ParagraphStyle differs from Android's
-                    // LeadingMarginSpan in one critical way: applying a
-                    // ParagraphStyle to a sub-range introduces an *implicit*
-                    // paragraph break at its boundary. LeadingMarginSpan does
-                    // not. To preserve legacy semantics we only emit a
-                    // ParagraphStyle when we're crossing a real paragraph
-                    // boundary (a `\n` is appended). When the transition
-                    // happens before any verse text has been written —
-                    // e.g. `@@@0Text...` where '0' is hit immediately after
-                    // the verse-number prefix — we just adopt the new
-                    // paraType and let it cover the whole paragraph
-                    // (prefix + body) at the final flush.
+                    // `AnnotatedString.Builder.addStyle(ParagraphStyle, start, end)`
+                    // creates an implicit paragraph break at the style
+                    // boundary, so only emit a ParagraphStyle when we're
+                    // crossing a real paragraph boundary (i.e. some verse
+                    // text has already been written past the verse-number
+                    // prefix). For a transition like `@@@0Text...` where '0'
+                    // arrives immediately after the prefix, we just switch
+                    // paraType and let it cover prefix + body in the final
+                    // flush. Note: no explicit `\n` is appended — Compose
+                    // inserts the break automatically; an extra `\n` would
+                    // render as a blank line.
                     if (sb.length > startPosAfterVerseNumber) {
-                        // Close out the previous paragraph. We deliberately
-                        // do NOT append a '\n' here: Compose's
-                        // AnnotatedString.Builder.addStyle(ParagraphStyle)
-                        // creates an *implicit* paragraph break at the style
-                        // boundary, so an explicit '\n' would inject a blank
-                        // line. (Legacy code appends '\n' because
-                        // android.text.Spanned needs explicit separators —
-                        // Compose does not.)
                         applyParaStyle(sb, paraType, startPara, verseNumberText, startPosAfterVerseNumber > 0)
                         startPara = sb.length
                     }

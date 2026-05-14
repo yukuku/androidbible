@@ -62,20 +62,18 @@ import yuku.alkitab.debug.R
 import yuku.alkitab.model.Version
 
 /**
- * Pure data: everything VerseItemComposeView needs to render that does NOT
- * change in-place. Held in a `mutableStateOf` so [VerseItemComposeView.bind]
- * triggers recomposition.
+ * Inputs to a single verse row that don't change between recompositions.
+ * Held in `mutableStateOf` so [VerseItemComposeView.bind] triggers a
+ * recomposition with the new values.
  *
- * Live-mutable view properties — `checked`, `collapsed`, `audioHighlightColor`,
- * `attentionStart`, `dragHover` — live directly on [VerseItemComposeView] so
- * callers (e.g. [VersesControllerImpl.setAudioHighlight]) can poke them the
- * same way they poke the legacy [VerseItem].
+ * Properties that DO change in place — `checked`, `collapsed`,
+ * `audioHighlightColor`, `attentionStart`, `dragHover` — live directly on the
+ * view so callers can poke them without rebuilding the whole state.
  */
 data class VerseItemComposeState(
     val render: VerseRendererCompose.Result,
-    /** Text size in DIP (matches [yuku.alkitab.base.util.Appearances.applyTextAppearance]). */
     val fontSizeDp: Float,
-    /** Verse-number gutter text size in DIP (0.7 × main size, matches Appearances.applyVerseNumberAppearance). */
+    /** Verse-number gutter text size in DIP (0.7 × main size). */
     val verseNumberFontSizeDp: Float,
     val fontColor: Int,
     val verseNumberColor: Int,
@@ -99,11 +97,11 @@ data class AttributeState(
     val ari: Int,
     val attributeListener: VersesController.AttributeListener,
     /**
-     * Captions for set progress-mark bits, resolved once at bind time so
-     * [VerseItemComposeView.getContentDescription] — which TalkBack can hit
-     * repeatedly per row — doesn't run a DB query on every accessibility
-     * pass. Length always equals [AttributeView.PROGRESS_MARK_TOTAL_COUNT];
-     * entry is `null` when the matching bit is unset (or no row exists).
+     * Captions for set progress-mark bits, resolved once at bind time so the
+     * accessibility path — which TalkBack can hit repeatedly per row — doesn't
+     * run a DB query on every read. Length equals
+     * [AttributeView.PROGRESS_MARK_TOTAL_COUNT]; entry is `null` when the
+     * matching bit is unset (or no row exists).
      */
     val progressMarkCaptions: List<String?>,
 )
@@ -113,18 +111,11 @@ private const val AUDIO_HIGHLIGHT_FADE_IN_MS = 200
 private const val AUDIO_HIGHLIGHT_FADE_OUT_MS = 150
 
 /**
- * Compose port of [VerseItem]. Public surface mirrors the legacy class so the
- * RecyclerView holder can use either interchangeably:
- *
- *   - [bind] swaps in fresh state, triggering a single recomposition.
- *   - The `var` properties below mirror those on the legacy [VerseItem] so
- *     [VersesControllerImpl.setAudioHighlight] / `.callAttention` etc. work
- *     without any controller-side branching.
- *   - [onDragEvent] handles progress-mark drag-drop at the View level (same as
- *     legacy), so we don't have to translate the platform DragEvent into a
- *     Compose drag-target.
- *   - [getContentDescription] reproduces the legacy TalkBack content
- *     description verbatim.
+ * Compose-backed verse row. Exposes a small mutable surface
+ * (`checked`, `collapsed`, `audioHighlightColor`, `callAttention()`) so the
+ * RecyclerView controller can update the row state without rebinding, and
+ * handles drag-drop at the View level (it's simpler than translating
+ * `DragEvent` into a Compose drag target).
  */
 class VerseItemComposeView @JvmOverloads constructor(
     context: Context,
@@ -144,13 +135,13 @@ class VerseItemComposeView @JvmOverloads constructor(
         set(value) { collapsedState.value = value }
 
     private val audioHighlightColorState = mutableIntStateOf(0)
-    /** Mirrors [VerseItem.audioHighlightColor]: setting clears/triggers the overlay fade. */
+    /** Setting a non-zero color triggers the overlay fade in. */
     var audioHighlightColor: Int
         get() = audioHighlightColorState.intValue
         set(value) { audioHighlightColorState.intValue = value }
 
     private val attentionStartState = mutableLongStateOf(0L)
-    /** Mirrors [VerseItem.callAttention]: 0 = no attention flash, otherwise wall-clock start. */
+    /** `startTime` is wall-clock millis; pass `0` to clear the flash. */
     fun callAttention(startTime: Long) {
         attentionStartState.longValue = startTime
     }
@@ -191,9 +182,8 @@ class VerseItemComposeView @JvmOverloads constructor(
             true
         }
         DragEvent.ACTION_DROP -> {
-            // Defensively parse the drop payload — `Integer.parseInt` throws
-            // on null / malformed text. Legacy `VerseItem` crashes in that
-            // case; for the Compose port we'd rather refuse the drop.
+            // Refuse the drop if the payload is missing or non-numeric instead
+            // of throwing NumberFormatException out of `Integer.parseInt`.
             val presetId = event.clipData?.getItemAt(0)?.text?.toString()?.toIntOrNull()
             if (presetId == null) {
                 false
@@ -206,8 +196,8 @@ class VerseItemComposeView @JvmOverloads constructor(
     }
 
     /**
-     * Force TalkBack to read the verse via [getContentDescription] instead of
-     * descending into the (now Compose) child hierarchy.
+     * Make TalkBack read [getContentDescription] instead of descending into
+     * the Compose subtree (which would announce nothing useful).
      */
     override fun dispatchPopulateAccessibilityEvent(event: AccessibilityEvent): Boolean {
         event.text.add(contentDescription)
@@ -264,21 +254,18 @@ private fun VerseItemComposeContent(
     dragHover: Boolean,
     onAttentionDone: () -> Unit,
 ) {
-    // Legacy TextView paths use TypedValue.COMPLEX_UNIT_DIP, which ignores the
-    // system font scale. Strip fontScale from the density so sp == dp inside
-    // this row — required for pixel parity with the legacy view.
+    // Strip fontScale from the density so sp values render at dp dimensions
+    // — verse text uses dp sizing (not sp), so system font-scale must not
+    // multiply on top.
     val baseDensity = LocalDensity.current
     val unscaledDensity = remember(baseDensity.density) {
         Density(density = baseDensity.density, fontScale = 1f)
     }
 
     CompositionLocalProvider(LocalDensity provides unscaledDensity) {
-        // Computed once and shared with [VerseTextRegion] below; see the
-        // commentary inside [VerseTextRegion] for the parity rationale.
         val lineMetrics = rememberLineMetrics(state)
 
         val sizeModifier = if (collapsed) {
-            // VerseItem.onMeasure forces measured height to 0 when collapsed.
             Modifier.fillMaxWidth().height(0.dp)
         } else {
             Modifier.fillMaxWidth().wrapContentHeight()
@@ -301,14 +288,9 @@ private fun VerseItemComposeContent(
                     lineMetrics = lineMetrics,
                     modifier = Modifier.weight(1f),
                 )
-                // Legacy [VerseItem.onMeasure] adds `extra` to the outer
-                // measured height regardless of whether text or attribute
-                // dominates. We can't replicate that as outer padding without
-                // overshooting text-dominant rows, so instead we extend the
-                // attribute column by `extra`. The Row's height becomes
-                // `max(textRegionHeight, attrHeight + extra)`, which matches
-                // legacy's `max(textHeight - extra, attrHeight) + extra` in
-                // both branches.
+                // Extending the attribute column by `rowExtraPaddingPx` makes
+                // the Row's height `max(textHeight, attrHeight + extra)` —
+                // the right shape whether text or attributes dominate the row.
                 AttributeColumn(
                     attribute = state.attribute,
                     modifier = Modifier.padding(bottom = with(LocalDensity.current) { lineMetrics.rowExtraPaddingPx.toDp() }),
@@ -349,10 +331,11 @@ private fun rememberLineMetrics(state: VerseItemComposeState): LineMetrics {
 }
 
 /**
- * Mirrors the FrameLayout in `item_verse.xml`: the verse text fills the width,
- * and (when the renderer puts the number in the gutter) a small overlay
- * positions the verse number at top-start, sitting in the leading margin
- * reserved by the paragraph's TextIndent.
+ * The verse text region. Two children share the same coordinate space: the
+ * wrapped verse text fills the available width, and (when the renderer puts
+ * the verse number in the gutter) a small overlay places the number at
+ * top-start, sitting inside the leading margin reserved by the paragraph's
+ * TextIndent.
  */
 @Composable
 private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, lineMetrics: LineMetrics, modifier: Modifier = Modifier) {
@@ -371,16 +354,12 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
         state.typeface,
         state.fontBold,
     ) {
-        // Map Android's built-in Typeface singletons to Compose's built-in
-        // FontFamily counterparts. Compose's stock FontFamilies have italic
-        // and bold variants pre-registered, so `FontStyle.Italic` /
-        // `FontWeight.Bold` resolve to the correct glyphs (or synthesise
-        // cleanly when no italic glyph exists). Wrapping a raw Typeface via
-        // `FontFamily(Typeface)` registers it as a single regular variant,
-        // which means italic on `Typeface.DEFAULT` etc. silently renders
-        // upright. Custom (user-loaded) Typefaces still go through the
-        // single-variant wrapper — they typically don't have italic glyphs
-        // anyway, and Compose will fall back to a synthesised slant.
+        // Map Android's built-in Typeface singletons to Compose's stock
+        // FontFamilies. The stock families have italic and bold variants
+        // registered, so FontStyle.Italic / FontWeight.Bold resolve to the
+        // correct glyphs (or synthesise cleanly). A raw FontFamily(Typeface)
+        // wrapper only carries the regular variant and silently renders
+        // italic upright.
         val tf = state.typeface
         val fontFamily: FontFamily = when (tf) {
             null, android.graphics.Typeface.DEFAULT -> FontFamily.Default
@@ -395,9 +374,6 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
             lineHeight = lineMetrics.lineHeightSp.sp,
             lineHeightStyle = LineHeightStyle(
                 alignment = LineHeightStyle.Alignment.Proportional,
-                // Trim.None keeps the full line-height box on every line
-                // (matching legacy `setLineSpacing(0, mult)` measurement post
-                // the Lollipop bug-fix in VerseItem.onMeasure).
                 trim = LineHeightStyle.Trim.None,
             ),
             fontWeight = if (state.fontBold == android.graphics.Typeface.BOLD) FontWeight.Bold else FontWeight.Normal,
@@ -614,7 +590,7 @@ private fun scaledAttributeBitmap(
     )
 }
 
-// ---- Overlays / decorations (kept in this file because they directly mirror VerseItem.onDraw) ----
+// ---- Overlays / decorations ----
 
 private fun Modifier.checkedOverlay(checked: Boolean): Modifier = if (!checked) this else this.drawBehind {
     val colorRgb = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
@@ -624,9 +600,8 @@ private fun Modifier.checkedOverlay(checked: Boolean): Modifier = if (!checked) 
 
 @Composable
 private fun Modifier.audioHighlightOverlay(audioHighlightColor: Int): Modifier {
-    // The legacy onDraw is gated by `audioHighlightColor != 0 && audioHighlightAlpha > 0f`,
-    // so the fade-out branch never actually paints anything; we faithfully reproduce
-    // that "fade-in only" behavior here.
+    // Fade-in only — clearing the color removes the overlay immediately
+    // instead of fading it back to transparent.
     if (audioHighlightColor == 0) return this
     val alpha by animateFloatAsState(
         targetValue = 1f,
@@ -645,12 +620,10 @@ private fun Modifier.audioHighlightOverlay(audioHighlightColor: Int): Modifier {
 @Composable
 private fun Modifier.attentionOverlay(attentionStart: Long, onDone: () -> Unit): Modifier {
     if (attentionStart == 0L) return this
-    // `attentionStart` is wall-clock (set via System.currentTimeMillis() in
-    // VersesControllerImpl, mirroring legacy VerseItem.callAttention). The
-    // frame timestamp from withFrameMillis is monotonic uptimeMillis, so the
-    // two can't be subtracted — we use withFrameMillis only for pacing (one
-    // sample per frame) and read wall-clock inside the lambda to stay in the
-    // same time base as `attentionStart`.
+    // `attentionStart` is wall-clock millis. `withFrameMillis` provides
+    // monotonic uptime, which can't be subtracted from wall-clock — so we
+    // use it purely for frame pacing and read `System.currentTimeMillis()`
+    // inside the lambda for the actual elapsed-time measurement.
     val now = remember(attentionStart) { mutableLongStateOf(System.currentTimeMillis()) }
     LaunchedEffect(attentionStart) {
         while (true) {
@@ -687,10 +660,10 @@ private fun Modifier.dragHoverOverlay(dragHover: Boolean): Modifier {
 }
 
 /**
- * Re-implements [yuku.alkitab.base.widget.VerseTextView]'s 24dp-radius hit-testing
- * in Compose: each tap walks every inline-link range, computes the link's bounding
- * rect via the [TextLayoutResult], and picks the nearest link whose squared
- * distance falls within (24dp)².
+ * Tap detector with a 24dp "easy-hit" radius: each tap walks every inline-link
+ * range, computes the link's bounding rect via the [TextLayoutResult], and
+ * picks the nearest link whose squared distance from the tap is within (24dp)².
+ * Lets users hit small footnote/xref markers without pixel-precise aim.
  */
 private fun Modifier.inlineLinkTapDetector(
     layoutResultProvider: () -> TextLayoutResult?,
@@ -726,9 +699,9 @@ private fun Modifier.inlineLinkTapDetector(
 }
 
 /**
- * Produces 1–3 bounding rectangles for a substring, matching the legacy
- * VerseTextView algorithm: single line → one rect; multi-line → tail of the
- * first line + head of the last line + the middle block (when the line gap > 1).
+ * Produces 1–3 bounding rectangles for a substring: single line → one rect;
+ * multi-line → tail of the first line + head of the last line + the middle
+ * block (when the line gap is > 1).
  */
 private fun boundingRectsFor(layout: TextLayoutResult, start: Int, end: Int): List<Rect> {
     val lineStart = layout.getLineForOffset(start)
