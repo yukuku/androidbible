@@ -1,0 +1,348 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "ffee429f12e750c3a4ed9b8b6009c6d2",
+    "entities": [
+      {
+        "tableName": "version",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `locale` TEXT, `shortName` TEXT, `longName` TEXT, `description` TEXT, `filename` TEXT, `preset_name` TEXT, `modifyTime` INTEGER NOT NULL, `active` INTEGER NOT NULL, `ordering` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "_id",
+            "columnName": "_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "locale",
+            "columnName": "locale",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "shortName",
+            "columnName": "shortName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "longName",
+            "columnName": "longName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "filename",
+            "columnName": "filename",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "preset_name",
+            "columnName": "preset_name",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "modifyTime",
+            "columnName": "modifyTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "active",
+            "columnName": "active",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ordering",
+            "columnName": "ordering",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_version_ordering",
+            "unique": false,
+            "columnNames": [
+              "ordering"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_version_ordering` ON `${TABLE_NAME}` (`ordering`)"
+          },
+          {
+            "name": "index_version_active_longName",
+            "unique": false,
+            "columnNames": [
+              "active",
+              "longName"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_version_active_longName` ON `${TABLE_NAME}` (`active`, `longName`)"
+          },
+          {
+            "name": "index_version_preset_name",
+            "unique": false,
+            "columnNames": [
+              "preset_name"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_version_preset_name` ON `${TABLE_NAME}` (`preset_name`)"
+          }
+        ]
+      },
+      {
+        "tableName": "marker",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `gid` TEXT, `ari` INTEGER NOT NULL, `kind` INTEGER NOT NULL, `caption` TEXT, `verseCount` INTEGER NOT NULL, `createTime` INTEGER NOT NULL, `modifyTime` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "_id",
+            "columnName": "_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gid",
+            "columnName": "gid",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "ari",
+            "columnName": "ari",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kind",
+            "columnName": "kind",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "caption",
+            "columnName": "caption",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "verseCount",
+            "columnName": "verseCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createTime",
+            "columnName": "createTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modifyTime",
+            "columnName": "modifyTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_marker_ari",
+            "unique": false,
+            "columnNames": [
+              "ari"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_marker_ari` ON `${TABLE_NAME}` (`ari`)"
+          },
+          {
+            "name": "index_marker_kind_ari",
+            "unique": false,
+            "columnNames": [
+              "kind",
+              "ari"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_marker_kind_ari` ON `${TABLE_NAME}` (`kind`, `ari`)"
+          },
+          {
+            "name": "index_marker_kind_modifyTime",
+            "unique": false,
+            "columnNames": [
+              "kind",
+              "modifyTime"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_marker_kind_modifyTime` ON `${TABLE_NAME}` (`kind`, `modifyTime`)"
+          },
+          {
+            "name": "index_marker_kind_createTime",
+            "unique": false,
+            "columnNames": [
+              "kind",
+              "createTime"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_marker_kind_createTime` ON `${TABLE_NAME}` (`kind`, `createTime`)"
+          },
+          {
+            "name": "index_marker_gid",
+            "unique": false,
+            "columnNames": [
+              "gid"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_marker_gid` ON `${TABLE_NAME}` (`gid`)"
+          },
+          {
+            "name": "index_marker_kind_caption_nocase",
+            "unique": false,
+            "columnNames": [
+              "kind",
+              "caption"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_marker_kind_caption_nocase` ON `${TABLE_NAME}` (`kind`, `caption`)"
+          }
+        ]
+      },
+      {
+        "tableName": "label",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `gid` TEXT, `title` TEXT, `ordering` INTEGER NOT NULL, `backgroundColor` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "_id",
+            "columnName": "_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gid",
+            "columnName": "gid",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "ordering",
+            "columnName": "ordering",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "backgroundColor",
+            "columnName": "backgroundColor",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_label_ordering",
+            "unique": false,
+            "columnNames": [
+              "ordering"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_label_ordering` ON `${TABLE_NAME}` (`ordering`)"
+          },
+          {
+            "name": "index_label_gid",
+            "unique": false,
+            "columnNames": [
+              "gid"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_label_gid` ON `${TABLE_NAME}` (`gid`)"
+          }
+        ]
+      },
+      {
+        "tableName": "marker_label",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `gid` TEXT, `marker_gid` TEXT, `label_gid` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "_id",
+            "columnName": "_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gid",
+            "columnName": "gid",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "marker_gid",
+            "columnName": "marker_gid",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "label_gid",
+            "columnName": "label_gid",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_marker_label_marker_gid",
+            "unique": false,
+            "columnNames": [
+              "marker_gid"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_marker_label_marker_gid` ON `${TABLE_NAME}` (`marker_gid`)"
+          },
+          {
+            "name": "index_marker_label_label_gid",
+            "unique": false,
+            "columnNames": [
+              "label_gid"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_marker_label_label_gid` ON `${TABLE_NAME}` (`label_gid`)"
+          },
+          {
+            "name": "index_marker_label_gid",
+            "unique": true,
+            "columnNames": [
+              "gid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_marker_label_gid` ON `${TABLE_NAME}` (`gid`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ffee429f12e750c3a4ed9b8b6009c6d2')"
+    ]
+  }
+}

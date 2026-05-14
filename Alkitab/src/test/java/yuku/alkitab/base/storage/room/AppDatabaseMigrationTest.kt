@@ -106,7 +106,7 @@ class AppDatabaseMigrationTest {
             TEST_DB,
         )
             .allowMainThreadQueries()
-            .addMigrations(AppDatabase.MIGRATION_1_2)
+            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3)
             .build()
         AppDatabase.setForTesting(room)
 
@@ -200,7 +200,7 @@ class AppDatabaseMigrationTest {
             TEST_DB,
         )
             .allowMainThreadQueries()
-            .addMigrations(AppDatabase.MIGRATION_1_2)
+            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3)
             .build()
         AppDatabase.setForTesting(room)
 
@@ -224,6 +224,50 @@ class AppDatabaseMigrationTest {
         } finally {
             room.close()
         }
+    }
+
+    /**
+     * REM-10 follow-up: v2 → v3 adds `index_marker_kind_caption_nocase`
+     * out-of-band (Room's `@Index` can't express per-column COLLATE).
+     * The index must exist after the migration runs.
+     */
+    @Test
+    fun `migrates2To3 marker table gets the kind_caption_nocase index`() {
+        helper.createDatabase(TEST_DB, 2).use { db ->
+            AppDatabase.MIGRATION_2_3.migrate(db)
+            assertNocaseIndexExists(db)
+        }
+    }
+
+    /**
+     * A fresh v3 install bypasses all migrations. Room's `@Index` creates
+     * `(kind, caption)` without `COLLATE NOCASE`; `Callback.onCreate` must
+     * drop that index and recreate it with `COLLATE NOCASE`.
+     * We simulate the full onCreate sequence here.
+     */
+    @Test
+    fun `fresh v3 install marker table has the kind_caption_nocase index`() {
+        helper.createDatabase(TEST_DB, 3).use { db ->
+            // Room's fresh-install path (from @Index) creates (kind, caption)
+            // without COLLATE NOCASE. The Callback.onCreate logic is:
+            db.execSQL("DROP INDEX IF EXISTS `index_marker_kind_caption_nocase`")
+            db.execSQL(AppDatabase.MARKER_KIND_CAPTION_NOCASE_INDEX_SQL)
+            assertNocaseIndexExists(db)
+        }
+    }
+
+    private fun assertNocaseIndexExists(db: androidx.sqlite.db.SupportSQLiteDatabase) {
+        val sql = db.query(
+            "SELECT sql FROM sqlite_master" +
+                " WHERE type='index' AND name='index_marker_kind_caption_nocase'",
+        ).use { c ->
+            assertTrue("index_marker_kind_caption_nocase not found in sqlite_master", c.moveToFirst())
+            c.getString(0)
+        }
+        assertTrue(
+            "Expected COLLATE NOCASE in index SQL: $sql",
+            sql.uppercase().contains("NOCASE"),
+        )
     }
 
     private companion object {

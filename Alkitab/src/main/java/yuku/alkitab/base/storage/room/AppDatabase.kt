@@ -23,6 +23,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  *   their indexes. See [MIGRATION_1_2]. Legacy `Marker` / `Label` /
  *   `Marker_Label` tables in `AlkitabDb` are left in place as a rollback
  *   safety net; a follow-up release will drop them.
+ * - v3 (REM-10 follow-up) — restores the `(kind, caption COLLATE NOCASE)`
+ *   index dropped in v2 because Room's `@Index` cannot express per-column
+ *   collation. Added out-of-band via [MIGRATION_2_3] (for upgrades) and
+ *   [noCaseCaptionIndexCallback] (for fresh installs). See [MARKER_KIND_CAPTION_NOCASE_INDEX_SQL].
  */
 @Database(
     entities = [
@@ -31,7 +35,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         LabelEntity::class,
         MarkerLabelEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -98,6 +102,40 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * SQL that creates the `(kind, caption COLLATE NOCASE)` index.
+         * Room's `@Index` can't express per-column collation, so this index
+         * is applied out-of-band in both [MIGRATION_2_3] (for existing users)
+         * and [noCaseCaptionIndexCallback] (for fresh installs).
+         */
+        const val MARKER_KIND_CAPTION_NOCASE_INDEX_SQL =
+            "CREATE INDEX IF NOT EXISTS `index_marker_kind_caption_nocase` " +
+                "ON `marker` (`kind`, `caption` COLLATE NOCASE)"
+
+        /**
+         * v2 → v3: restores `index_marker_kind_caption_nocase` on the
+         * `marker` table. No entity schema changes — the index is added
+         * out-of-band because Room's `@Index` cannot express per-column
+         * collation. The same SQL is applied on fresh installs via
+         * [noCaseCaptionIndexCallback].
+         */
+        @JvmField
+        val MIGRATION_2_3: Migration = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(MARKER_KIND_CAPTION_NOCASE_INDEX_SQL)
+            }
+        }
+
+        private val noCaseCaptionIndexCallback = object : RoomDatabase.Callback() {
+            override fun onCreate(db: SupportSQLiteDatabase) {
+                // Room's @Index creates (kind, caption) without COLLATE NOCASE
+                // because @Index can't express per-column collation. Drop and
+                // recreate with COLLATE NOCASE to match MIGRATION_2_3.
+                db.execSQL("DROP INDEX IF EXISTS `index_marker_kind_caption_nocase`")
+                db.execSQL(MARKER_KIND_CAPTION_NOCASE_INDEX_SQL)
+            }
+        }
+
         @Volatile
         private var instance: AppDatabase? = null
 
@@ -115,7 +153,8 @@ abstract class AppDatabase : RoomDatabase() {
                 // methods) are synchronous. Coroutine-based callers can be
                 // introduced later — see REM-15 in tech-debt-remediation.md.
                 .allowMainThreadQueries()
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                .addCallback(noCaseCaptionIndexCallback)
                 .build()
 
         /**
