@@ -98,7 +98,7 @@ class AppDatabaseMigrationTest {
         }
 
         // Now open the DB the normal way — Room validates the schema against
-        // the entity annotations and applies the registered migration on the
+        // the entity annotations and applies the registered migrations on the
         // way from v1 to the current version. Mismatches throw at this point.
         val room = Room.databaseBuilder(
             InstrumentationRegistry.getInstrumentation().targetContext,
@@ -106,7 +106,7 @@ class AppDatabaseMigrationTest {
             TEST_DB,
         )
             .allowMainThreadQueries()
-            .addMigrations(AppDatabase.MIGRATION_1_2)
+            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3)
             .build()
         AppDatabase.setForTesting(room)
 
@@ -201,6 +201,73 @@ class AppDatabaseMigrationTest {
     }
 
     /**
+     * v2 → v3 adds the `devotion` table. The migration must:
+     *
+     * - Preserve every row already in the v2 tables (`version`, `marker`,
+     *   `label`, `marker_label`).
+     * - Create the `devotion` table with the schema Room's entity definitions
+     *   emit (verified by [MigrationTestHelper.runMigrationsAndValidate] when
+     *   `validateDroppedTables = true`).
+     * - Leave the new table empty (data copy is a separate concern handled
+     *   by [DevotionDataMigration]).
+     */
+    @Test
+    fun migrates2To3() {
+        // Seed a v2 row in the `version` table so we can verify the migration
+        // doesn't drop pre-existing data. Apply v1 → v2 first so the v2
+        // tables exist.
+        helper.createDatabase(TEST_DB, 1).close()
+        helper.runMigrationsAndValidate(TEST_DB, 2, true, AppDatabase.MIGRATION_1_2).use { db ->
+            val cv = ContentValues().apply {
+                put("filename", "/data/a.yes")
+                put("preset_name", "kjv")
+                put("locale", "en")
+                put("shortName", "KJV")
+                put("longName", "King James")
+                put("description", "desc")
+                put("modifyTime", 1_700_000_000)
+                put("active", 1)
+                put("ordering", 101)
+            }
+            db.insert("version", android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE, cv)
+        }
+
+        // Run v2 → v3.
+        helper.runMigrationsAndValidate(TEST_DB, 3, true, AppDatabase.MIGRATION_2_3).use { db ->
+            // v2 row survived
+            db.query("SELECT longName FROM version WHERE filename = '/data/a.yes'").use { c ->
+                assertTrue(c.moveToFirst())
+                assertEquals("King James", c.getString(0))
+            }
+            // The new table exists
+            db.query("SELECT name FROM sqlite_master WHERE type='table' AND name = 'devotion'").use { c ->
+                assertTrue(c.moveToFirst())
+                assertEquals("devotion", c.getString(0))
+            }
+            // … and is empty
+            db.query("SELECT COUNT(*) FROM devotion").use { c ->
+                assertTrue(c.moveToFirst())
+                assertEquals(0, c.getInt(0))
+            }
+            // Both indexes were created
+            db.query(
+                "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='devotion' ORDER BY name",
+            ).use { c ->
+                val indexes = mutableListOf<String>()
+                while (c.moveToNext()) indexes += c.getString(0)
+                assertTrue(
+                    "expected index_devotion_name_date_dataFormatVersion among $indexes",
+                    indexes.contains("index_devotion_name_date_dataFormatVersion"),
+                )
+                assertTrue(
+                    "expected index_devotion_touchTime among $indexes",
+                    indexes.contains("index_devotion_touchTime"),
+                )
+            }
+        }
+    }
+
+    /**
      * The post-migration schema must round-trip a row through every new
      * entity. Catches drift between the [AppDatabase.MIGRATION_1_2] SQL and
      * the entity declarations (e.g. forgetting an index, getting a column
@@ -218,7 +285,7 @@ class AppDatabaseMigrationTest {
             TEST_DB,
         )
             .allowMainThreadQueries()
-            .addMigrations(AppDatabase.MIGRATION_1_2)
+            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3)
             .build()
         AppDatabase.setForTesting(room)
 
@@ -239,6 +306,48 @@ class AppDatabaseMigrationTest {
             val loaded = room.markerDao().findByGid("g1")
             assertNotNull(loaded)
             assertEquals(100, loaded!!.ari)
+        } finally {
+            room.close()
+        }
+    }
+
+    /**
+     * Companion to the v1→v2 marker round-trip test: verify that after
+     * v1 → v3 (i.e. both migrations applied in sequence) Room can open the
+     * DB and round-trip a row through the new [DevotionEntity] DAO. Catches
+     * drift between [AppDatabase.MIGRATION_2_3] and the entity declaration.
+     */
+    @Test
+    fun `after migrating from v1 to v3 Room opens cleanly and round-trips a devotion through the new DAO`() {
+        helper.createDatabase(TEST_DB, 1).close()
+
+        val room = Room.databaseBuilder(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            AppDatabase::class.java,
+            TEST_DB,
+        )
+            .allowMainThreadQueries()
+            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3)
+            .build()
+        AppDatabase.setForTesting(room)
+
+        try {
+            val id = room.devotionDao().insert(
+                DevotionEntity(
+                    _id = 0L,
+                    name = "RH",
+                    date = "2026-05-14",
+                    body = "body",
+                    readyToUse = 1,
+                    touchTime = 1_700_000_000,
+                    dataFormatVersion = 1,
+                ),
+            )
+            assertTrue(id > 0)
+            val loaded = room.devotionDao()
+                .findByNameDateAndDataFormatVersion("RH", "2026-05-14", 1)
+            assertNotNull(loaded)
+            assertEquals("body", loaded!!.body)
         } finally {
             room.close()
         }

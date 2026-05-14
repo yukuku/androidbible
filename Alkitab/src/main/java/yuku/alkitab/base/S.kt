@@ -234,6 +234,9 @@ object S {
         // the version copy; all three tables move atomically inside a single
         // Room transaction.
         yuku.alkitab.base.storage.room.MarkerDataMigration.copyFromLegacyDbIfNeeded(roomDb, helper)
+        // One-time copy of the legacy `Devotion` table into Room. Same
+        // idempotency / retry properties as the marker/version copies.
+        yuku.alkitab.base.storage.room.DevotionDataMigration.copyFromLegacyDbIfNeeded(roomDb, helper)
         InternalDb(helper)
     }
 
