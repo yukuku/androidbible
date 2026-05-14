@@ -7,6 +7,9 @@ android {
 
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()
+    }
+
+    testOptions {
         targetSdk = libs.versions.targetSdk.get().toInt()
     }
 
@@ -30,4 +33,10 @@ android {
         }
     }
     namespace = "yuku.snappy.codec"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
