@@ -801,6 +801,25 @@ class VerseTextComposeHolder(private val view: VerseItemComposeView) : ItemHolde
         val verseNumberFontSizeDp = applied.fontSize2dp * 0.7f * textSizeMult
         val attributeScale = scaleForAttributeView(applied.fontSize2dp * ui.textSizeMult)
 
+        // Pre-resolve progress-mark captions at bind time so the
+        // accessibility path (getContentDescription) doesn't run a DB query
+        // on every TalkBack read. Mirrors the values the legacy
+        // VerseItem.getContentDescription resolves inline.
+        val progressMarkBits = data.versesAttributes.progressMarkBitsMap_[index]
+        val progressMarkCaptions: List<String?> = (0 until yuku.alkitab.base.widget.AttributeView.PROGRESS_MARK_TOTAL_COUNT).map { presetId ->
+            if (progressMarkBits and (1 shl (yuku.alkitab.base.widget.AttributeView.PROGRESS_MARK_BITS_START + presetId)) == 0) {
+                null
+            } else {
+                App.services.storage.db.getProgressMarkByPresetId(presetId)?.let { progressMark ->
+                    if (progressMark.caption.isNullOrEmpty()) {
+                        view.context.getString(yuku.alkitab.base.widget.AttributeView.getDefaultProgressMarkStringResource(presetId))
+                    } else {
+                        progressMark.caption
+                    }
+                }
+            }
+        }
+
         val state = VerseItemComposeState(
             render = renderResult,
             fontSizeDp = fontSizeDp,
@@ -813,13 +832,14 @@ class VerseTextComposeHolder(private val view: VerseItemComposeView) : ItemHolde
             attribute = AttributeState(
                 bookmarkCount = data.versesAttributes.bookmarkCountMap_[index],
                 noteCount = data.versesAttributes.noteCountMap_[index],
-                progressMarkBits = data.versesAttributes.progressMarkBitsMap_[index],
+                progressMarkBits = progressMarkBits,
                 hasMaps = data.versesAttributes.hasMapsMap_[index],
                 scale = attributeScale,
                 version = data.version_,
                 versionId = data.versionId_,
                 ari = ari,
                 attributeListener = listeners.attributeListener,
+                progressMarkCaptions = progressMarkCaptions,
             ),
             onClick = {
                 when (ui.verseSelectionMode) {

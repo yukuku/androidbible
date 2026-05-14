@@ -415,6 +415,11 @@ class VerseItemSideBySideSnapshotTest {
                 versionId = null,
                 ari = ari,
                 attributeListener = object : VersesController.AttributeListener() {},
+                // No DB available in this unit test; captions stay null. The
+                // accessibility path is exercised by separate tests; the
+                // snapshot test only cares about the visual output, which
+                // doesn't consult this list.
+                progressMarkCaptions = List(AttributeView.PROGRESS_MARK_TOTAL_COUNT) { null },
             ),
             onClick = {},
             onInlineLinkClick = { _, _ -> },

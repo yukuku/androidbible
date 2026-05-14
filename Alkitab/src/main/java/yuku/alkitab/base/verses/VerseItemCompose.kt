@@ -3,7 +3,6 @@ package yuku.alkitab.base.verses
 import android.annotation.SuppressLint
 import android.content.ClipDescription
 import android.content.Context
-import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.DragEvent
 import android.view.accessibility.AccessibilityEvent
@@ -55,7 +54,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import yuku.afw.storage.Preferences
-import yuku.alkitab.base.App
 import yuku.alkitab.base.widget.AttributeView
 import yuku.alkitab.base.widget.LeftDrawer.PROGRESS_MARK_DRAG_MIME_TYPE
 import yuku.alkitab.base.widget.VerseInlineLinkSpan
@@ -100,6 +98,14 @@ data class AttributeState(
     val versionId: String?,
     val ari: Int,
     val attributeListener: VersesController.AttributeListener,
+    /**
+     * Captions for set progress-mark bits, resolved once at bind time so
+     * [VerseItemComposeView.getContentDescription] — which TalkBack can hit
+     * repeatedly per row — doesn't run a DB query on every accessibility
+     * pass. Length always equals [AttributeView.PROGRESS_MARK_TOTAL_COUNT];
+     * entry is `null` when the matching bit is unset (or no row exists).
+     */
+    val progressMarkCaptions: List<String?>,
 )
 
 private const val ATTENTION_DURATION_MS = 2000f
@@ -185,10 +191,16 @@ class VerseItemComposeView @JvmOverloads constructor(
             true
         }
         DragEvent.ACTION_DROP -> {
-            val item = event.clipData.getItemAt(0)
-            val presetId = Integer.parseInt(item.text.toString())
-            onPinDroppedHandler(presetId)
-            true
+            // Defensively parse the drop payload — `Integer.parseInt` throws
+            // on null / malformed text. Legacy `VerseItem` crashes in that
+            // case; for the Compose port we'd rather refuse the drop.
+            val presetId = event.clipData?.getItemAt(0)?.text?.toString()?.toIntOrNull()
+            if (presetId == null) {
+                false
+            } else {
+                onPinDroppedHandler(presetId)
+                true
+            }
         }
         else -> false
     }
@@ -230,12 +242,9 @@ class VerseItemComposeView @JvmOverloads constructor(
         val progressMarkBits = s.attribute.progressMarkBits
         for (presetId in 0 until AttributeView.PROGRESS_MARK_TOTAL_COUNT) {
             if (progressMarkBits and (1 shl AttributeView.PROGRESS_MARK_BITS_START + presetId) != 0) {
-                App.services.storage.db.getProgressMarkByPresetId(presetId)?.let { progressMark ->
-                    val caption = if (TextUtils.isEmpty(progressMark.caption)) {
-                        context.getString(AttributeView.getDefaultProgressMarkStringResource(presetId))
-                    } else {
-                        progressMark.caption
-                    }
+                // Captions are resolved at bind time (see VerseTextComposeHolder)
+                // so this path stays free of DB I/O.
+                s.attribute.progressMarkCaptions.getOrNull(presetId)?.let { caption ->
                     res.append(' ').append(context.getString(R.string.desc_verse_attribute_progress_mark, caption))
                 }
             }
