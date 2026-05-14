@@ -1,0 +1,90 @@
+            <!doctype html>
+            <html><head><meta charset="utf-8"/><title>VerseItem vs VerseItemCompose</title>
+            <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 24px; }
+            table { border-collapse: collapse; }
+            td, th { vertical-align: top; padding: 8px 12px; border-bottom: 1px solid #ddd; }
+            th { text-align: left; background: #f4f4f4; position: sticky; top: 0; }
+            td.label { width: 320px; }
+            td.label .name { font-weight: 600; }
+            td.label pre { margin: 4px 0 0; white-space: pre-wrap; word-break: break-word; color: #444; font-size: 12px; }
+            img { display: block; max-width: 480px; image-rendering: pixelated; border: 1px solid #eee; }
+            </style></head>
+            <body>
+            <h1>VerseItem vs VerseItemCompose snapshots</h1>
+            <p>41 cases. Compare the two columns row-by-row; differences indicate either parity bugs in the Compose port or rendering bugs in the legacy view.</p>
+            <table>
+              <thead><tr><th>Case</th><th>Legacy VerseItem</th><th>VerseItemCompose</th></tr></thead>
+              <tbody>
+            <tr><td class="label"><div class="name">01-simple</div><pre>text=&quot;In the beginning God created the heavens and the earth.&quot;</pre></td><td><img src="01-simple-legacy.png"/></td><td><img src="01-simple-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">02-simple-no-number</div><pre>text=&quot;And the earth was without form, and void.&quot;
+verseNumberShown=false</pre></td><td><img src="02-simple-no-number-legacy.png"/></td><td><img src="02-simple-no-number-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">03-simple-long-number</div><pre>text=&quot;And it came to pass.&quot;
+verse=119</pre></td><td><img src="03-simple-long-number-legacy.png"/></td><td><img src="03-simple-long-number-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">04-checked</div><pre>text=&quot;Selected verse content here.&quot;
+checked</pre></td><td><img src="04-checked-legacy.png"/></td><td><img src="04-checked-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">10-formatted-default</div><pre>text=&quot;@@A simple formatted verse with no paragraph marker.&quot;</pre></td><td><img src="10-formatted-default-legacy.png"/></td><td><img src="10-formatted-default-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">11-paragraph-zero</div><pre>text=&quot;@@@0First line of paragraph zero, which keeps the verse number inline.&quot;</pre></td><td><img src="11-paragraph-zero-legacy.png"/></td><td><img src="11-paragraph-zero-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">12-paragraph-first-indent</div><pre>text=&quot;@@@^This paragraph uses caret indent for first-line hanging style. The rest of the paragraph should wrap to a different indent.&quot;</pre></td><td><img src="12-paragraph-first-indent-legacy.png"/></td><td><img src="12-paragraph-first-indent-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">12b-caret-long-wrap</div><pre>text=&quot;@@@^1:1:6 para start with looooooooooooong text laba laba bala bala laba laba bala bala laba laba&quot;
+verse=6</pre></td><td><img src="12b-caret-long-wrap-legacy.png"/></td><td><img src="12b-caret-long-wrap-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">13-paragraph-one</div><pre>text=&quot;@@@1Indent level 1 paragraph that wraps several lines to demonstrate consistent rest-indent.&quot;</pre></td><td><img src="13-paragraph-one-legacy.png"/></td><td><img src="13-paragraph-one-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">14-paragraph-two</div><pre>text=&quot;@@@2Indent level 2 paragraph that wraps several lines.&quot;</pre></td><td><img src="14-paragraph-two-legacy.png"/></td><td><img src="14-paragraph-two-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">15-paragraph-three</div><pre>text=&quot;@@@3Indent level 3 paragraph wraps to show indent3 rest spacing.&quot;</pre></td><td><img src="15-paragraph-three-legacy.png"/></td><td><img src="15-paragraph-three-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">16-paragraph-four</div><pre>text=&quot;@@@4Indent level 4 paragraph wraps to demonstrate the deepest preset indent.&quot;</pre></td><td><img src="16-paragraph-four-legacy.png"/></td><td><img src="16-paragraph-four-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">20-italic</div><pre>text=&quot;@@he said, @9thus says the LORD@7 unto you all.&quot;</pre></td><td><img src="20-italic-legacy.png"/></td><td><img src="20-italic-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">21-red-words</div><pre>text=&quot;@@@6Truly I say unto you, until heaven and earth pass away.@5&quot;</pre></td><td><img src="21-red-words-legacy.png"/></td><td><img src="21-red-words-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">22-mixed-italic-red</div><pre>text=&quot;@@@9narrator:@7 @6and Jesus answered@5 with a parable.&quot;</pre></td><td><img src="22-mixed-italic-red-legacy.png"/></td><td><img src="22-mixed-italic-red-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">23-explicit-linebreak</div><pre>text=&quot;@@First line.@8Second line after explicit break.&quot;</pre></td><td><img src="23-explicit-linebreak-legacy.png"/></td><td><img src="23-explicit-linebreak-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">24-multi-paragraph</div><pre>text=&quot;@@@^A first paragraph with caret indent that wraps to multiple lines for testing.@1A second paragraph at indent level 1.&quot;</pre></td><td><img src="24-multi-paragraph-legacy.png"/></td><td><img src="24-multi-paragraph-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">25-caret-mid-verse</div><pre>text=&quot;@@First sentence of the verse.@^A new paragraph starting mid-verse with caret indent.&quot;</pre></td><td><img src="25-caret-mid-verse-legacy.png"/></td><td><img src="25-caret-mid-verse-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">26-linebreak-then-caret</div><pre>text=&quot;@@First sentence.@8@^Next block after a line break and caret indent.&quot;</pre></td><td><img src="26-linebreak-then-caret-legacy.png"/></td><td><img src="26-linebreak-then-caret-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">27-multi-indent-cycle</div><pre>text=&quot;@@@^Caret intro line.@1At indent level one.@2At indent level two.@3At indent level three.@4At indent level four.@0Back to indent zero.&quot;</pre></td><td><img src="27-multi-indent-cycle-legacy.png"/></td><td><img src="27-multi-indent-cycle-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">30-footnote</div><pre>text=&quot;@@The word came@&lt;f1@&gt;@/ unto the prophet.&quot;</pre></td><td><img src="30-footnote-legacy.png"/></td><td><img src="30-footnote-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">31-xref</div><pre>text=&quot;@@As it is written@&lt;x1@&gt;@/ in the law.&quot;</pre></td><td><img src="31-xref-legacy.png"/></td><td><img src="31-xref-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">32-footnote-and-xref</div><pre>text=&quot;@@A verse@&lt;f2@&gt;@/ with a cross-reference@&lt;x3@&gt;@/ inline.&quot;</pre></td><td><img src="32-footnote-and-xref-legacy.png"/></td><td><img src="32-footnote-and-xref-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">33-multi-digit-footnote</div><pre>text=&quot;@@Verse with footnote@&lt;f42@&gt;@/ tag.&quot;</pre></td><td><img src="33-multi-digit-footnote-legacy.png"/></td><td><img src="33-multi-digit-footnote-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">40-full-highlight</div><pre>text=&quot;@@The whole verse highlighted in yellow.&quot;
+highlight=#fff4d03f</pre></td><td><img src="40-full-highlight-legacy.png"/></td><td><img src="40-full-highlight-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">41-partial-highlight</div><pre>text=&quot;The middle words are highlighted only.&quot;
+highlight=#ff85c1e9
+partial=[4..14]</pre></td><td><img src="41-partial-highlight-legacy.png"/></td><td><img src="41-partial-highlight-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">50-small-text</div><pre>text=&quot;Render at smaller text size.&quot;
+textSizeMult=0.7</pre></td><td><img src="50-small-text-legacy.png"/></td><td><img src="50-small-text-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">51-large-text</div><pre>text=&quot;Render at larger text size.&quot;
+textSizeMult=1.5</pre></td><td><img src="51-large-text-legacy.png"/></td><td><img src="51-large-text-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">52-very-large-text</div><pre>text=&quot;Render at extra-large text size to push wrapping.&quot;
+textSizeMult=2.0</pre></td><td><img src="52-very-large-text-legacy.png"/></td><td><img src="52-very-large-text-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">60-bookmark</div><pre>text=&quot;Verse with one bookmark.&quot;
+bookmarks=1</pre></td><td><img src="60-bookmark-legacy.png"/></td><td><img src="60-bookmark-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">61-multi-bookmarks</div><pre>text=&quot;Verse with several bookmarks stacked.&quot;
+bookmarks=4</pre></td><td><img src="61-multi-bookmarks-legacy.png"/></td><td><img src="61-multi-bookmarks-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">62-note</div><pre>text=&quot;Verse with one note.&quot;
+notes=1</pre></td><td><img src="62-note-legacy.png"/></td><td><img src="62-note-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">63-note-and-bookmark</div><pre>text=&quot;Verse with both bookmark and note.&quot;
+bookmarks=1
+notes=1</pre></td><td><img src="63-note-and-bookmark-legacy.png"/></td><td><img src="63-note-and-bookmark-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">64-progress-mark</div><pre>text=&quot;Verse pinned with the first progress mark.&quot;
+pm=0x100</pre></td><td><img src="64-progress-mark-legacy.png"/></td><td><img src="64-progress-mark-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">65-all-progress-marks</div><pre>text=&quot;Verse pinned with every progress mark.&quot;
+pm=0x1f00</pre></td><td><img src="65-all-progress-marks-legacy.png"/></td><td><img src="65-all-progress-marks-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">66-has-maps</div><pre>text=&quot;Verse that has accompanying map data.&quot;
+hasMaps</pre></td><td><img src="66-has-maps-legacy.png"/></td><td><img src="66-has-maps-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">67-everything</div><pre>text=&quot;Verse with every attribute set at once.&quot;
+highlight=#ffaed581
+bookmarks=2
+notes=1
+pm=0x200
+hasMaps</pre></td><td><img src="67-everything-legacy.png"/></td><td><img src="67-everything-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">70-serif-simple</div><pre>text=&quot;Verse rendered with a Serif typeface.&quot;
+typeface=Serif</pre></td><td><img src="70-serif-simple-legacy.png"/></td><td><img src="70-serif-simple-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">71-serif-italic</div><pre>text=&quot;@@he said, @9thus says the LORD@7 with serif italics.&quot;
+typeface=Serif</pre></td><td><img src="71-serif-italic-legacy.png"/></td><td><img src="71-serif-italic-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">72-monospace-simple</div><pre>text=&quot;Verse rendered with a Monospace typeface.&quot;
+typeface=Monospace</pre></td><td><img src="72-monospace-simple-legacy.png"/></td><td><img src="72-monospace-simple-compose.png"/></td></tr>
+<tr><td class="label"><div class="name">73-monospace-formatted</div><pre>text=&quot;@@@^A monospace verse with @6red words@5 and @9italic@7 mid-line.&quot;
+typeface=Monospace</pre></td><td><img src="73-monospace-formatted-legacy.png"/></td><td><img src="73-monospace-formatted-compose.png"/></td></tr>
+
+              </tbody>
+            </table>
+            </body></html>
