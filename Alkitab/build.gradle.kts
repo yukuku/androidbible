@@ -8,6 +8,8 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import java.time.Instant
 import javax.inject.Inject
 
@@ -213,6 +215,35 @@ android {
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
+            // MarkerDataMigrationLoadTest holds 50,000 × 2 KB marker captions
+            // live during the bulk Room insert (~100 MB of captions plus
+            // per-entity overhead). The default 512 MB unit-test heap OOMs.
+            //
+            // maxParallelForks is pinned to 1 (Gradle's default) so a future
+            // change can't silently spawn a second 2 GB JVM in one test task.
+            all {
+                it.maxHeapSize = "2g"
+                it.maxParallelForks = 1
+                // Diagnostic: surface every test's stdout / stderr and full
+                // exception detail in the Gradle log so CI failures are
+                // debuggable from the workflow output alone (the HTML test
+                // report and per-test XML aren't accessible without repo
+                // admin rights).
+                it.testLogging {
+                    events(
+                        TestLogEvent.FAILED,
+                        TestLogEvent.SKIPPED,
+                        TestLogEvent.PASSED,
+                        TestLogEvent.STANDARD_OUT,
+                        TestLogEvent.STANDARD_ERROR,
+                    )
+                    exceptionFormat = TestExceptionFormat.FULL
+                    showCauses = true
+                    showExceptions = true
+                    showStackTraces = true
+                    showStandardStreams = true
+                }
+            }
         }
     }
 
