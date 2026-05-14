@@ -333,11 +333,10 @@ androidComponents {
         val buildDist = providers.environmentVariable("BUILD_DIST").getOrElse("dev")
         val appIdProvider = variant.applicationId
         variant.outputs.forEach { output ->
-            val apkOutput = output as? com.android.build.api.variant.VariantOutput ?: return@forEach
-            apkOutput.outputFileName.set(
+            output.outputFileName.set(
                 appIdProvider.flatMap { appId ->
-                    apkOutput.versionCode.flatMap { vc ->
-                        apkOutput.versionName.map { vn ->
+                    output.versionCode.flatMap { vc ->
+                        output.versionName.map { vn ->
                             "Alkitab-$vc-$vn-$gitCommitHash-$appId-$buildDist.apk"
                         }
                     }
