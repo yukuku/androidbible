@@ -31,20 +31,22 @@ sealed class GridStage {
 
 class GotoViewModel : ViewModel() {
 
-    val askForVerse: StateFlow<Boolean> = callbackFlow {
-        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key == Prefkey.gotoAskForVerse.name) {
-                trySend(Preferences.getBoolean(Prefkey.gotoAskForVerse, GOTO_ASK_FOR_VERSE_DEFAULT))
+    val askForVerse: StateFlow<Boolean> by lazy {
+        callbackFlow {
+            val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+                if (key == Prefkey.gotoAskForVerse.name) {
+                    trySend(Preferences.getBoolean(Prefkey.gotoAskForVerse, GOTO_ASK_FOR_VERSE_DEFAULT))
+                }
             }
-        }
-        Preferences.registerObserver(listener)
-        trySend(Preferences.getBoolean(Prefkey.gotoAskForVerse, GOTO_ASK_FOR_VERSE_DEFAULT))
-        awaitClose { Preferences.unregisterObserver(listener) }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.Eagerly,
-        initialValue = Preferences.getBoolean(Prefkey.gotoAskForVerse, GOTO_ASK_FOR_VERSE_DEFAULT),
-    )
+            Preferences.registerObserver(listener)
+            trySend(Preferences.getBoolean(Prefkey.gotoAskForVerse, GOTO_ASK_FOR_VERSE_DEFAULT))
+            awaitClose { Preferences.unregisterObserver(listener) }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = Preferences.getBoolean(Prefkey.gotoAskForVerse, GOTO_ASK_FOR_VERSE_DEFAULT),
+        )
+    }
 
     var gridStage: GridStage by mutableStateOf(GridStage.Books)
 }

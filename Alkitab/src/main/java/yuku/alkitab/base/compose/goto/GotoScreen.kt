@@ -102,18 +102,20 @@ fun GotoScreen(
                             }
                         }
                     }
-                    IconButton(onClick = { menuOpen = true }) {
-                        Icon(Icons.Default.MoreVert, contentDescription = "More")
-                    }
-                    DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.menuAskForVerse)) },
-                            leadingIcon = { Checkbox(checked = askForVerse, onCheckedChange = null) },
-                            onClick = {
-                                Preferences.setBoolean(Prefkey.gotoAskForVerse, !askForVerse)
-                                menuOpen = false
-                            },
-                        )
+                    Box {
+                        IconButton(onClick = { menuOpen = true }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "More")
+                        }
+                        DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.menuAskForVerse)) },
+                                leadingIcon = { Checkbox(checked = askForVerse, onCheckedChange = null) },
+                                onClick = {
+                                    Preferences.setBoolean(Prefkey.gotoAskForVerse, !askForVerse)
+                                    menuOpen = false
+                                },
+                            )
+                        }
                     }
                 }
             }

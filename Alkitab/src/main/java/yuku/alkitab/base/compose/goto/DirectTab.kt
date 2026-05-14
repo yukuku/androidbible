@@ -20,7 +20,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -39,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -48,11 +48,13 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import java.util.regex.Pattern
 import yuku.alkitab.base.App
 import yuku.alkitab.base.util.Jumper
 import yuku.alkitab.debug.R
-import java.util.regex.Pattern
+import yuku.alkitab.model.Book
 
 private val NOBOOK_PATTERN: Pattern = Pattern.compile("(\\d+)(?:[ :.]+(\\d+))?")
 
@@ -65,7 +67,10 @@ fun DirectTab(
     onGotoFinished: OnGotoFinished,
 ) {
     val context = LocalContext.current
-    val books = remember { App.services.versions.activeVersion().consecutiveBooks }
+    val inInspection = LocalInspectionMode.current
+    val books = remember(inInspection) {
+        if (inInspection) previewDirectBooks() else App.services.versions.activeVersion().consecutiveBooks
+    }
     var query by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(""))
     }
@@ -88,8 +93,12 @@ fun DirectTab(
         candidatesListState.scrollToItem(0)
     }
 
-    val sample = remember(initialBookId, initialChapter_1, initialVerse_1) {
-        App.services.versions.activeVersion().reference(initialBookId, initialChapter_1, initialVerse_1)
+    val sample = remember(initialBookId, initialChapter_1, initialVerse_1, inInspection) {
+        if (inInspection) {
+            "Gen $initialChapter_1:$initialVerse_1"
+        } else {
+            App.services.versions.activeVersion().reference(initialBookId, initialChapter_1, initialVerse_1)
+        }
     }
     val prompt = TextUtils.expandTemplate(context.getText(R.string.jump_to_prompt), sample)
         .toAnnotatedString()
@@ -137,7 +146,6 @@ fun DirectTab(
         )
 
         if (candidates.isNotEmpty()) {
-            HorizontalDivider()
             LazyColumn(modifier = Modifier.fillMaxWidth(), state = candidatesListState) {
                 items(candidates, key = { it.title }) { c ->
                     ListItem(
@@ -178,4 +186,33 @@ private fun CharSequence.toAnnotatedString(): AnnotatedString = buildAnnotatedSt
             }
         }
     }
+}
+
+private fun previewDirectBooks(): Array<Book> = arrayOf(
+    Book().apply {
+        bookId = 0
+        shortName = "Gen"
+        chapter_count = 50
+        verse_counts = IntArray(50) { 30 }
+        abbreviation = "Gen"
+    },
+    Book().apply {
+        bookId = 42
+        shortName = "John"
+        chapter_count = 21
+        verse_counts = IntArray(21) { 30 }
+        abbreviation = "Jn"
+    },
+)
+
+@Preview(showBackground = true, widthDp = 400, heightDp = 700)
+@Composable
+private fun DirectTabPreview() {
+    DirectTab(
+        initialBookId = 0,
+        initialChapter_1 = 1,
+        initialVerse_1 = 1,
+        isActive = false,
+        onGotoFinished = { _, _, _, _ -> },
+    )
 }

@@ -3,25 +3,24 @@ package yuku.alkitab.base.compose.goto
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Backspace
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -33,7 +32,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -41,9 +42,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import yuku.afw.storage.Preferences
@@ -64,11 +69,16 @@ fun DialerTab(
     askForVerse: Boolean,
     onGotoFinished: OnGotoFinished,
 ) {
-    val books: Array<Book> = remember {
-        val raw = App.services.versions.activeVersion().consecutiveBooks
-        if (Preferences.getBoolean(R.string.pref_alphabeticBookSort_key, R.bool.pref_alphabeticBookSort_default)) {
-            BookNameSorter.sortAlphabetically(raw)
-        } else raw.copyOf()
+    val inInspection = LocalInspectionMode.current
+    val books: Array<Book> = remember(inInspection) {
+        if (inInspection) {
+            previewBooks()
+        } else {
+            val raw = App.services.versions.activeVersion().consecutiveBooks
+            if (Preferences.getBoolean(R.string.pref_alphabeticBookSort_key, R.bool.pref_alphabeticBookSort_default)) {
+                BookNameSorter.sortAlphabetically(raw)
+            } else raw.copyOf()
+        }
     }
 
     var bookIndex by rememberSaveable {
@@ -118,8 +128,20 @@ fun DialerTab(
         }
     }
 
-    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+    ) {
         var bookMenuOpen by remember { mutableStateOf(false) }
+        val menuScrollState = rememberScrollState()
+        var selectedItemY by remember { mutableIntStateOf(0) }
+        LaunchedEffect(bookMenuOpen, selectedItemY) {
+            if (bookMenuOpen && selectedItemY > 0) {
+                menuScrollState.scrollTo(selectedItemY)
+            }
+        }
         ExposedDropdownMenuBox(
             expanded = bookMenuOpen,
             onExpandedChange = { bookMenuOpen = !bookMenuOpen },
@@ -130,21 +152,38 @@ fun DialerTab(
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = bookMenuOpen) },
-                modifier = Modifier.menuAnchor().fillMaxWidth(),
+                modifier = Modifier
+                    .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                    .fillMaxWidth(),
             )
-            DropdownMenu(
+            ExposedDropdownMenu(
                 expanded = bookMenuOpen,
                 onDismissRequest = { bookMenuOpen = false },
+                scrollState = menuScrollState,
             ) {
                 books.forEachIndexed { idx, book ->
+                    val isSelected = idx == bookIndex
                     DropdownMenuItem(
-                        text = { Text(book.shortName, color = bookForegroundColor(book.bookId)) },
+                        text = {
+                            Text(
+                                book.shortName,
+                                color = bookForegroundColor(book.bookId),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                            )
+                        },
+                        trailingIcon = if (isSelected) {
+                            { Icon(Icons.Default.Check, contentDescription = null) }
+                        } else null,
                         onClick = {
                             bookIndex = idx
                             bookMenuOpen = false
                             chapterFirstTime = true
                             verseFirstTime = true
                         },
+                        modifier = if (isSelected) {
+                            Modifier.onGloballyPositioned { selectedItemY = it.positionInParent().y.toInt() }
+                        } else Modifier,
                     )
                 }
             }
@@ -183,24 +222,30 @@ fun DialerTab(
         Spacer(Modifier.size(16.dp))
 
         val onDigit: (String) -> Unit = { d -> press(d) }
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            contentPadding = PaddingValues(horizontal = 24.dp),
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            items(listOf("1", "2", "3", "4", "5", "6", "7", "8", "9")) { d ->
-                KeypadDigit(d, onDigit)
+        Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                KeypadDigit("1", onDigit, Modifier.weight(1f))
+                KeypadDigit("2", onDigit, Modifier.weight(1f))
+                KeypadDigit("3", onDigit, Modifier.weight(1f))
             }
-            item {
-                Box(modifier = Modifier.fillMaxWidth().aspectRatio(1.6f), contentAlignment = Alignment.Center) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                KeypadDigit("4", onDigit, Modifier.weight(1f))
+                KeypadDigit("5", onDigit, Modifier.weight(1f))
+                KeypadDigit("6", onDigit, Modifier.weight(1f))
+            }
+            Row(modifier = Modifier.fillMaxWidth()) {
+                KeypadDigit("7", onDigit, Modifier.weight(1f))
+                KeypadDigit("8", onDigit, Modifier.weight(1f))
+                KeypadDigit("9", onDigit, Modifier.weight(1f))
+            }
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Box(modifier = Modifier.weight(1f).height(56.dp), contentAlignment = Alignment.Center) {
                     IconButton(onClick = { press("backspace") }) {
                         Icon(Icons.AutoMirrored.Filled.Backspace, contentDescription = "Backspace")
                     }
                 }
-            }
-            item { KeypadDigit("0", onDigit) }
-            item {
-                Box(modifier = Modifier.fillMaxWidth().aspectRatio(1.6f).padding(4.dp), contentAlignment = Alignment.Center) {
+                KeypadDigit("0", onDigit, Modifier.weight(1f))
+                Box(modifier = Modifier.weight(1f).height(56.dp), contentAlignment = Alignment.Center) {
                     Button(
                         onClick = {
                             val ch = chapterText.toIntOrNull() ?: 0
@@ -231,10 +276,58 @@ private fun DialerField(text: String, isActive: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-private fun KeypadDigit(d: String, onDigit: (String) -> Unit) {
-    Box(modifier = Modifier.fillMaxWidth().aspectRatio(1.6f).padding(2.dp), contentAlignment = Alignment.Center) {
+private fun KeypadDigit(d: String, onDigit: (String) -> Unit, modifier: Modifier) {
+    Box(modifier = modifier.height(56.dp).padding(2.dp), contentAlignment = Alignment.Center) {
         TextButton(onClick = { onDigit(d) }, modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
             Text(d, fontSize = 28.sp, fontWeight = FontWeight.Normal)
         }
     }
+}
+
+private fun previewBooks(): Array<Book> = arrayOf(
+    Book().apply {
+        bookId = 0
+        shortName = "Gen"
+        chapter_count = 50
+        verse_counts = IntArray(50) { 30 }
+        abbreviation = "Gen"
+    },
+    Book().apply {
+        bookId = 1
+        shortName = "Exo"
+        chapter_count = 40
+        verse_counts = IntArray(40) { 30 }
+        abbreviation = "Exo"
+    },
+    Book().apply {
+        bookId = 2
+        shortName = "Lev"
+        chapter_count = 27
+        verse_counts = IntArray(27) { 30 }
+        abbreviation = "Lev"
+    },
+)
+
+@Preview(showBackground = true, widthDp = 400, heightDp = 700)
+@Composable
+private fun DialerTabPreview() {
+    DialerTab(
+        initialBookId = 0,
+        initialChapter_1 = 1,
+        initialVerse_1 = 1,
+        askForVerse = true,
+        onGotoFinished = { _, _, _, _ -> },
+    )
+}
+
+@Preview(showBackground = true, widthDp = 400, heightDp = 700)
+@Composable
+private fun DialerTabPreviewNoVerse() {
+    DialerTab(
+        initialBookId = 0,
+        initialChapter_1 = 3,
+        initialVerse_1 = 0,
+        askForVerse = false,
+        onGotoFinished = { _, _, _, _ -> },
+    )
 }
