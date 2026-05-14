@@ -247,19 +247,10 @@ class DownloadMapper private constructor() {
      * `SUCCEEDED` state, so the cancellation would be a no-op anyway.
      */
     fun consumeAndRemove(id: Int) {
-        val row: Row? = synchronized(this) {
-            val r = currentById[id]
-            if (r != null) {
-                currentByKey.remove(r.key)
-                currentById.remove(r.id)
-            }
-            r
-        }
-        if (row != null) {
-            row.observerJob?.cancel()
-            @Suppress("ResultOfMethodCallIgnored")
-            File(row.destPath).delete()
-        }
+        val row = synchronized(this) { currentById[id] } ?: return
+        silentlyDrop(row)
+        @Suppress("ResultOfMethodCallIgnored")
+        File(row.destPath).delete()
     }
 
     /**
