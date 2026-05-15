@@ -204,4 +204,15 @@ enum class Prefkey {
      * would resurrect cleared rows on the next launch.
      */
     sync_shadow_data_migration_v1_done,
+
+    /**
+     * One-shot completion flag for the REM-32 `SongInfo` / `SongBookInfo`
+     * copy from the legacy `SongDb` SQLite file (managed by
+     * `SongDbHelper`) into Room's `AlkitabSongRoomDb`. Same rationale as
+     * [marker_data_migration_v1_done] — see GitHub issue #195. The user
+     * can delete song books from the songs screen (`SongDb.deleteSongBook`),
+     * so a count-based gate would resurrect deleted song books on the
+     * next launch.
+     */
+    song_db_data_migration_v1_done,
 }
