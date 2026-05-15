@@ -167,7 +167,7 @@ Used everywhere: database storage, intent extras, sync protocol, content provide
 
 ### Database Schema
 
-The app uses two SQLite files:
+The app uses four SQLite files — two Room-backed (the active sources of truth) and two legacy `SQLiteOpenHelper`-managed (rollback safety nets only after the REM-10/REM-11/REM-27/REM-28/REM-29/REM-30/REM-31/REM-32 sweep):
 
 - **`AlkitabRoomDb`** — Room database (`yuku.alkitab.base.storage.room.AppDatabase`, currently at `@Database(version = 7)`). Holds every InternalDb table after the REM-10/REM-11/REM-27/REM-28/REM-29/REM-30/REM-31 plan:
   - **version** (REM-11) — metadata for downloaded Bible versions (filename, locale, active flag, ordering).
@@ -179,9 +179,13 @@ The app uses two SQLite files:
   - **progress_mark** / **progress_mark_history** (REM-29) — 5 reading progress pins (addressed by `preset_id`) plus the append-only history of every pin update.
   - **reading_plan** / **reading_plan_progress** (REM-30) — downloaded reading plans (metadata + RPB binary blob) and per-day completion rows keyed by `(reading_plan_progress_gid, reading_code)`.
   - **sync_shadow** / **sync_log** (REM-31) — sync state tracking (last-synced entity snapshot per sync set) plus an append-only audit log of every sync event. `sync_shadow.data` BLOBs routinely exceed the 2 MB CursorWindow, so `SyncShadowDao.getBySyncSetName` reads them in 1 MB chunks via raw `substr()` against `roomDb.openHelper.readableDatabase` (Room can't express chunked cursors natively).
+- **`AlkitabSongRoomDb`** — Room database (`yuku.alkitab.base.storage.room.SongRoomDatabase`, at `@Database(version = 1)`). Holds the Songs subsystem tables migrated as part of REM-32. Lives in its own SQLite file because the Songs module is genuinely self-contained — it shares no rows, FKs, or transactions with the Bible-reading tables.
+  - **song_info** (REM-32) — one row per song, with `(bookName, code)` and `(bookName, ordering)` indexes. The `data` BLOB stores a Parcelable-marshalled `yuku.kpri.model.Song` snapshot.
+  - **song_book_info** (REM-32) — one row per installed song book, indexed by `name`.
 - **`AlkitabDb`** — legacy hand-rolled `SQLiteOpenHelper` (`InternalDbHelper`). After REM-31, every table here is a rollback safety net only — no production code writes to it.
+- **`SongDb`** — legacy hand-rolled `SQLiteOpenHelper` (`SongDbHelper`). After REM-32, every table here is a rollback safety net only, plus the source of legacy rows for `SongDbDataMigration` on first launch with the migrated code.
 
-The legacy `Marker` / `Label` / `Marker_Label` / `Version` / `Devotion` / `PerVersion` / `ProgressMark` / `ProgressMarkHistory` / `ReadingPlan` / `ReadingPlanProgress` / `SyncShadow` / `SyncLog` tables are still created in `AlkitabDb` as a rollback safety net; a one-time copy in `MarkerDataMigration` / `VersionDataMigration` / `DevotionDataMigration` / `PerVersionDataMigration` / `ProgressMarkDataMigration` / `ReadingPlanDataMigration` / `SyncShadowDataMigration` (wired from `S.db`'s lazy initializer) moves their rows into Room on first launch with the migrated code. `InternalDb` plus the per-table facades (`MarkerDao`, `LabelDao`, `Marker_LabelDao`, `VersionDao`, `DevotionDao`, `PerVersionDao`, `ProgressMarkDao`, `ReadingPlanDao`, `SyncShadowDao`) preserve the public surface so callers don't change; all of them now route through Room.
+The legacy `Marker` / `Label` / `Marker_Label` / `Version` / `Devotion` / `PerVersion` / `ProgressMark` / `ProgressMarkHistory` / `ReadingPlan` / `ReadingPlanProgress` / `SyncShadow` / `SyncLog` tables are still created in `AlkitabDb`, and the legacy `SongInfo` / `SongBookInfo` tables are still created in `SongDb`, all as rollback safety nets. One-time `*DataMigration` objects — `MarkerDataMigration`, `VersionDataMigration`, `DevotionDataMigration`, `PerVersionDataMigration`, `ProgressMarkDataMigration`, `ReadingPlanDataMigration`, `SyncShadowDataMigration` (wired from `S.db`'s lazy initializer), and `SongDbDataMigration` (wired from `S.songDb`'s lazy initializer) — move their rows into Room on first launch with the migrated code. `InternalDb` plus the per-table facades (`MarkerDao`, `LabelDao`, `Marker_LabelDao`, `VersionDao`, `DevotionDao`, `PerVersionDao`, `ProgressMarkDao`, `ReadingPlanDao`, `SyncShadowDao`) and the `SongDb` facade preserve the public surface so callers don't change; every facade routes through Room.
 
 ### Verse Text Formatting Codes
 
@@ -277,7 +281,7 @@ Detailed documentation for each major feature module:
 ## Important Caveats
 
 - `IsiActivity.kt` is ~2170 lines — still large, but no longer monolithic: gesture handling, the action-mode callback, and split-view management were extracted (REM-06/07/08) into `ReaderGestureHandler`, `VerseActionModeController`, and `SplitViewManager` under `widget/`. Bible reading, navigation history, and volume-button handling are still inline; changes here require careful testing.
-- `KpriModel.Song` uses `Parcelable` serialization for database storage (acknowledged as a bad design decision in the code).
+- `KpriModel.Song` uses `Parcelable` serialization for database storage (acknowledged as a bad design decision in the code). REM-32 migrated the storage *engine* to Room but preserves the Parcelable payload byte-for-byte; REM-21 (Phase 4) will swap the payload to JSON without touching the storage layer.
 - The `Snappy` module has native C++ code — NDK must be installed for builds.
 - A placeholder `Alkitab/google-services.json` is checked in so `plainDebug` works out of the box; Firebase features won't actually function with it. For production flavors, the real `google-services.json` is sourced from `$ALKITAB_PROPRIETARY_DIR/google-services.json` at build time and copied into the gitignored `Alkitab/src/<flavor>/google-services.json` (where the GMS plugin's source-set lookup finds it).
 - The internal Bible version data is split per flavor: the placeholder `ddd_*` files live under `Alkitab/src/plain/assets/internal/` (used by the `plain` open-source build only). Production flavors get their `tb_*`/`kjv_*` files copied from the proprietary overlay into `build/generated/proprietaryAssets/<flavor>/internal/` at build time.

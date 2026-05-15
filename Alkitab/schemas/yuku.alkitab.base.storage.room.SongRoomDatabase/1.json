@@ -1,0 +1,140 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "895ea397babef719432609e098b82093",
+    "entities": [
+      {
+        "tableName": "song_info",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `bookName` TEXT, `code` TEXT, `title` TEXT, `title_original` TEXT, `ordering` INTEGER NOT NULL, `dataFormatVersion` INTEGER NOT NULL, `data` BLOB, `updateTime` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "_id",
+            "columnName": "_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bookName",
+            "columnName": "bookName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "code",
+            "columnName": "code",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "title_original",
+            "columnName": "title_original",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "ordering",
+            "columnName": "ordering",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dataFormatVersion",
+            "columnName": "dataFormatVersion",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "data",
+            "columnName": "data",
+            "affinity": "BLOB"
+          },
+          {
+            "fieldPath": "updateTime",
+            "columnName": "updateTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_song_info_bookName_code",
+            "unique": false,
+            "columnNames": [
+              "bookName",
+              "code"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_song_info_bookName_code` ON `${TABLE_NAME}` (`bookName`, `code`)"
+          },
+          {
+            "name": "index_song_info_bookName_ordering",
+            "unique": false,
+            "columnNames": [
+              "bookName",
+              "ordering"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_song_info_bookName_ordering` ON `${TABLE_NAME}` (`bookName`, `ordering`)"
+          }
+        ]
+      },
+      {
+        "tableName": "song_book_info",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `title` TEXT, `copyright` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "_id",
+            "columnName": "_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "copyright",
+            "columnName": "copyright",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_song_book_info_name",
+            "unique": false,
+            "columnNames": [
+              "name"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_song_book_info_name` ON `${TABLE_NAME}` (`name`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '895ea397babef719432609e098b82093')"
+    ]
+  }
+}

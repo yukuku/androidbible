@@ -254,7 +254,14 @@ object S {
 
     @JvmStatic
     val songDb: SongDb by lazy {
-        SongDb(SongDbHelper())
+        val helper = SongDbHelper()
+        val roomDb = yuku.alkitab.base.storage.room.SongRoomDatabase.get(App.context)
+        // One-time copy of the legacy `SongInfo` / `SongBookInfo` tables
+        // from the `SongDb` SQLite file into Room (REM-32). Idempotent —
+        // a no-op after the first launch with this code, and safe to retry
+        // if it fails partway.
+        yuku.alkitab.base.storage.room.SongDbDataMigration.copyFromLegacyDbIfNeeded(roomDb, helper)
+        SongDb(helper)
     }
 
     /**
