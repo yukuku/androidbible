@@ -169,7 +169,7 @@ Used everywhere: database storage, intent extras, sync protocol, content provide
 
 The app uses two SQLite files:
 
-- **`AlkitabRoomDb`** — Room database (`yuku.alkitab.base.storage.room.AppDatabase`, currently at `@Database(version = 6)`). Holds the tables migrated as part of the REM-10/REM-11/REM-27/REM-28/REM-29/REM-30 plan:
+- **`AlkitabRoomDb`** — Room database (`yuku.alkitab.base.storage.room.AppDatabase`, currently at `@Database(version = 7)`). Holds every InternalDb table after the REM-10/REM-11/REM-27/REM-28/REM-29/REM-30/REM-31 plan:
   - **version** (REM-11) — metadata for downloaded Bible versions (filename, locale, active flag, ordering).
   - **marker** (REM-10) — bookmarks, notes, highlights (distinguished by `kind` column). Each row has a `gid` (globally unique ID) for sync.
   - **label** (REM-10) — bookmark categories with custom background colors.
@@ -178,10 +178,10 @@ The app uses two SQLite files:
   - **per_version** (REM-28) — per-version settings keyed uniquely by `versionId`.
   - **progress_mark** / **progress_mark_history** (REM-29) — 5 reading progress pins (addressed by `preset_id`) plus the append-only history of every pin update.
   - **reading_plan** / **reading_plan_progress** (REM-30) — downloaded reading plans (metadata + RPB binary blob) and per-day completion rows keyed by `(reading_plan_progress_gid, reading_code)`.
-- **`AlkitabDb`** — legacy hand-rolled `SQLiteOpenHelper` (`InternalDbHelper`). Still owns the not-yet-migrated tables:
-  - **SyncShadow** / **SyncLog** — sync state tracking.
+  - **sync_shadow** / **sync_log** (REM-31) — sync state tracking (last-synced entity snapshot per sync set) plus an append-only audit log of every sync event. `sync_shadow.data` BLOBs routinely exceed the 2 MB CursorWindow, so `SyncShadowDao.getBySyncSetName` reads them in 1 MB chunks via raw `substr()` against `roomDb.openHelper.readableDatabase` (Room can't express chunked cursors natively).
+- **`AlkitabDb`** — legacy hand-rolled `SQLiteOpenHelper` (`InternalDbHelper`). After REM-31, every table here is a rollback safety net only — no production code writes to it.
 
-The legacy `Marker` / `Label` / `Marker_Label` / `Version` / `Devotion` / `PerVersion` / `ProgressMark` / `ProgressMarkHistory` / `ReadingPlan` / `ReadingPlanProgress` tables are still created in `AlkitabDb` as a rollback safety net; a one-time copy in `MarkerDataMigration` / `VersionDataMigration` / `DevotionDataMigration` / `PerVersionDataMigration` / `ProgressMarkDataMigration` / `ReadingPlanDataMigration` (wired from `S.db`'s lazy initializer) moves their rows into Room on first launch with the migrated code. `InternalDb` plus the per-table facades (`MarkerDao`, `LabelDao`, `Marker_LabelDao`, `VersionDao`, `DevotionDao`, `PerVersionDao`, `ProgressMarkDao`, `ReadingPlanDao`, etc.) preserve the public surface so callers don't change; the facades route through Room for the migrated tables and through raw SQL for the rest.
+The legacy `Marker` / `Label` / `Marker_Label` / `Version` / `Devotion` / `PerVersion` / `ProgressMark` / `ProgressMarkHistory` / `ReadingPlan` / `ReadingPlanProgress` / `SyncShadow` / `SyncLog` tables are still created in `AlkitabDb` as a rollback safety net; a one-time copy in `MarkerDataMigration` / `VersionDataMigration` / `DevotionDataMigration` / `PerVersionDataMigration` / `ProgressMarkDataMigration` / `ReadingPlanDataMigration` / `SyncShadowDataMigration` (wired from `S.db`'s lazy initializer) moves their rows into Room on first launch with the migrated code. `InternalDb` plus the per-table facades (`MarkerDao`, `LabelDao`, `Marker_LabelDao`, `VersionDao`, `DevotionDao`, `PerVersionDao`, `ProgressMarkDao`, `ReadingPlanDao`, `SyncShadowDao`) preserve the public surface so callers don't change; all of them now route through Room.
 
 ### Verse Text Formatting Codes
 

@@ -194,4 +194,14 @@ enum class Prefkey {
      * would resurrect cleared rows on the next launch.
      */
     reading_plan_data_migration_v1_done,
+
+    /**
+     * One-shot completion flag for the REM-31 `SyncShadow` / `SyncLog`
+     * copy from the legacy `AlkitabDb` tables into Room. Same rationale as
+     * [marker_data_migration_v1_done] — see GitHub issue #195. A sync
+     * shadow can be cleared by the user from the sync-settings screen and
+     * a sync log entry can be wiped by the same path; a count-based gate
+     * would resurrect cleared rows on the next launch.
+     */
+    sync_shadow_data_migration_v1_done,
 }
