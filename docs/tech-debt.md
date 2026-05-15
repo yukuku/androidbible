@@ -21,13 +21,12 @@ The main Bible reader activity, down from 2897 lines after a series of extractio
 
 **File:** `Alkitab/src/main/java/yuku/alkitab/base/storage/InternalDb.java`
 
-**Status:** Significantly improved.
+**Status:** Mostly resolved — every InternalDb table has been migrated to Room.
 
 1. Per-table DAOs (`MarkerDao`, `LabelDao`, `VersionDao`, `DevotionDao`, `ReadingPlanDao`, `ProgressMarkDao`, `PerVersionDao`, `Marker_LabelDao`, `SyncShadowDao`) and `SyncApplier` were extracted in `d805265e`, shrinking `InternalDb.java` from 1771 → 830 lines. Further null-safety cleanup landed in `70c97818`.
-2. ✅ **REM-11 (Version table → Room, 2026-05-13)** — the `Version` table moved into a new separate-file Room database (`AlkitabRoomDb`). `VersionDao` is now a facade that routes through Room. Legacy `Version` table left in place as a rollback safety net.
-3. ✅ **REM-10 (Marker / Label / Marker_Label → Room, 2026-05-14)** — the three legacy hand-rolled SQLite tables for the marker subsystem also moved into Room (same `AlkitabRoomDb`, bumped to `@Database(version = 2)` via `MIGRATION_1_2`). `MarkerDao` / `LabelDao` / `Marker_LabelDao` are facades that delegate to the Room DAOs.
+2. ✅ **REM-11 / REM-10 / REM-27 / REM-28 / REM-29 / REM-30 / REM-31** — every legacy hand-rolled SQLite table (`Version`, `Marker` / `Label` / `Marker_Label`, `Devotion`, `PerVersion`, `ProgressMark` / `ProgressMarkHistory`, `ReadingPlan` / `ReadingPlanProgress`, `SyncShadow` / `SyncLog`) now lives in Room's `AlkitabRoomDb` (currently `@Database(version = 7)`). The per-table facades (`MarkerDao`, `LabelDao`, …, `SyncShadowDao`) all delegate to generated Room DAOs. Legacy tables remain in `AlkitabDb` purely as a rollback safety net.
 
-The remaining issues below are the parts not covered by those refactors (the not-yet-migrated tables — `ReadingPlan`, `Devotion`, `SyncShadow`, `SyncLog`, `PerVersion`, `ProgressMark` — still go through raw SQL).
+The remaining issues below are now scoped to the SyncShadow chunked-blob workaround and a couple of `execSQL` patches in `InternalDb.java` that span entities that don't fit cleanly into a single Room DAO.
 
 ### Raw SQL string concatenation (~10 instances remain)
 Examples at `InternalDb.java:134, 137, 180, 593–597, 632–646`:
@@ -42,10 +41,10 @@ These are unreadable, fragile, and impossible to verify at compile time.
 ### ~~Manual compiled statement caching~~ ✅ FIXED
 The problematic `private SQLiteStatement stmt_countMarkersForBookChapter` field and null-check pattern have been removed. `MarkerDao.countForAriRange` now uses `compileStatement(...).use { }` so the statement is closed deterministically. `LabelDao.getMaxOrdering` uses the same pattern. No cross-request caching, no invalidation concerns.
 
-### 2MB CursorWindow workaround (SyncShadowDao.kt:26–62)
-Still present, but moved out of `InternalDb.java` into `SyncShadowDao.kt`:
+### 2MB CursorWindow workaround (SyncShadowDao.kt, post-REM-31)
+Still present, now inside the Room-backed facade `SyncShadowDao.getBySyncSetName` rather than `InternalDb.java`. The facade runs raw `substr()` queries against `roomDb.openHelper.readableDatabase` because Room can't express chunked cursors natively:
 ```kotlin
-"select substr(${Table.SyncShadow.data.name}, ${i + 1}, $chunkSize)" +
+"SELECT substr(data, ${i + 1}, $chunkSize) FROM sync_shadow WHERE _id = ?"
 ```
 Hard-coded chunk size `1_000_000` to work around the undocumented 2MB CursorWindow limit. This is fragile and breaks if the system limit changes.
 

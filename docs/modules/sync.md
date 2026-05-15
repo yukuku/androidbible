@@ -42,7 +42,7 @@ Operations: `add`, `mod`, `del`
 
 ## Conflict Resolution
 
-The sync uses a shadow table (`SyncShadow`) to track the last-synced state. When applying server deltas:
+The sync uses a shadow table (`sync_shadow` in Room's `AlkitabRoomDb` since REM-31) to track the last-synced state. When applying server deltas:
 1. If the entity hasn't changed locally since last sync → apply server version
 2. If the entity changed locally → server wins (last-write-wins for most fields)
 3. Partial sync threshold: 100 operations per batch
@@ -63,5 +63,7 @@ Simple token-based auth stored in `Prefkey.sync_simpleToken`. Login flow is hand
 
 ## Database Tables
 
-- **SyncShadow** — stores the last-synced state of each entity for conflict detection
-- **SyncLog** — audit log of sync operations for debugging (viewable in `SyncLogActivity`)
+Both live in Room's `AlkitabRoomDb` (REM-31). The legacy `SyncShadow` / `SyncLog` tables in `AlkitabDb` are kept around purely as a rollback safety net and are no longer written to.
+
+- **`sync_shadow`** — stores the last-synced state of each entity for conflict detection. A row's `data` BLOB can exceed the Android 2 MB CursorWindow limit, so `SyncShadowDao.getBySyncSetName` reads it in 1 MB chunks via SQLite's `substr()`.
+- **`sync_log`** — audit log of sync operations for debugging (viewable in `SyncLogActivity`).

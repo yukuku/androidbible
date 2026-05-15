@@ -36,6 +36,7 @@ This document is an index over the prioritized remediation plan for each tech de
 - [REM-28: Migrate InternalDb to Room (PerVersion Table)](tech-debt-remediation/REM-28-room-per-version.md) ✅ **3.2**
 - [REM-29: Migrate InternalDb to Room (ProgressMark Tables)](tech-debt-remediation/REM-29-room-progress-mark.md) ✅ **3.2**
 - [REM-30: Migrate InternalDb to Room (ReadingPlan Tables)](tech-debt-remediation/REM-30-room-reading-plan.md) ✅ **3.2**
+- [REM-31: Migrate InternalDb to Room (SyncShadow + SyncLog Tables)](tech-debt-remediation/REM-31-room-sync-shadow.md) ✅ **3.2**
 - [REM-12: Replace DragSortListView with ItemTouchHelper](tech-debt-remediation/REM-12-itemtouchhelper.md) ✅ **3.4**
 - [REM-14: Replace material-dialogs with Material 3](tech-debt-remediation/REM-14-material-dialogs.md) ✅ **3.4**
 - [REM-18: Add Test Coverage for Core Modules](tech-debt-remediation/REM-18-test-coverage.md) ✅ **3.4**
@@ -85,6 +86,7 @@ This document is an index over the prioritized remediation plan for each tech de
 | [REM-28](tech-debt-remediation/REM-28-room-per-version.md) | ~~Room migration (PerVersion)~~ ✅ | **3.2** | 2 |
 | [REM-29](tech-debt-remediation/REM-29-room-progress-mark.md) | ~~Room migration (ProgressMark)~~ ✅ | **3.2** | 2 |
 | [REM-30](tech-debt-remediation/REM-30-room-reading-plan.md) | ~~Room migration (ReadingPlan)~~ ✅ | **3.2** | 2 |
+| [REM-31](tech-debt-remediation/REM-31-room-sync-shadow.md) | ~~Room migration (SyncShadow + SyncLog)~~ ✅ | **3.2** | 2 |
 | [REM-15](tech-debt-remediation/REM-15-coroutines.md) | Introduce coroutines | **3.2** | 3 |
 | [REM-16](tech-debt-remediation/REM-16-java-to-kotlin.md) | Java→Kotlin conversion (9/11 done) | **3.0** | 3 |
 | [REM-17](tech-debt-remediation/REM-17-kotlin-dsl-build.md) | ~~Kotlin DSL build migration~~ ✅ | **3.0** | 3 |
@@ -99,6 +101,6 @@ This document is an index over the prioritized remediation plan for each tech de
 **Sprint 2 (1 week):** ~~REM-03~~✅ — LocalBroadcastManager removal (done)
 **Sprint 3 (2 weeks):** ~~REM-07~~✅, ~~REM-06~~✅, ~~REM-08~~✅ — IsiActivity decomposition (all done)
 **Sprint 4 (1 week):** ~~REM-12~~✅, ~~REM-14~~✅ — deprecated library replacements (done)
-**Sprint 5 (2 weeks):** ~~REM-10~~✅, ~~REM-11~~✅, ~~REM-27~~✅, ~~REM-28~~✅, ~~REM-29~~✅, ~~REM-30~~✅ — Room migration for core tables (Marker / Version / Devotion / PerVersion / ProgressMark / ReadingPlan done; remaining tables — `SyncShadow`, `SyncLog` — can follow the same pattern)
+**Sprint 5 (2 weeks):** ~~REM-10~~✅, ~~REM-11~~✅, ~~REM-27~~✅, ~~REM-28~~✅, ~~REM-29~~✅, ~~REM-30~~✅, ~~REM-31~~✅ — Room migration for every InternalDb table (Marker / Version / Devotion / PerVersion / ProgressMark / ReadingPlan / SyncShadow / SyncLog all done; legacy `InternalDbHelper` is now only a rollback safety net)
 **Sprint 6 (2 weeks):** REM-09, ~~REM-18a-f~~✅ — ViewModel + test coverage (REM-18a/b/c/d/e/f done)
 **Ongoing:** REM-15, REM-16, ~~REM-17~~✅ — modernization work mixed into feature sprints (REM-17 done)

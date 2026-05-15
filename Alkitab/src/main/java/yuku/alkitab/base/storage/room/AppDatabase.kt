@@ -38,6 +38,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  *   progress table. See [MIGRATION_5_6]. Same rollback-safety convention:
  *   the legacy `ReadingPlan` / `ReadingPlanProgress` tables in `AlkitabDb`
  *   are left intact.
+ * - v7 (REM-31) — added the `sync_shadow` and `sync_log` tables and their
+ *   non-unique indexes (`syncSetName` on `sync_shadow`, `createTime` on
+ *   `sync_log`). See [MIGRATION_6_7]. Same rollback-safety convention: the
+ *   legacy `SyncShadow` / `SyncLog` tables in `AlkitabDb` are left intact.
  *
  * REM-10 follow-up note: [MIGRATION_1_2] creates the
  * `index_marker_kind_caption` index with `COLLATE NOCASE` (matching the
@@ -59,8 +63,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         ProgressMarkHistoryEntity::class,
         ReadingPlanEntity::class,
         ReadingPlanProgressEntity::class,
+        SyncShadowEntity::class,
+        SyncLogEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -72,6 +78,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun perVersionDao(): PerVersionRoomDao
     abstract fun progressMarkDao(): ProgressMarkRoomDao
     abstract fun readingPlanDao(): ReadingPlanRoomDao
+    abstract fun syncShadowDao(): SyncShadowRoomDao
 
     companion object {
         const val DB_NAME = "AlkitabRoomDb"
@@ -295,6 +302,46 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * v6 → v7: create the `sync_shadow` and `sync_log` tables and their
+         * non-unique indexes. SQL mirrors what Room emits for the v7
+         * entities (compare against `Alkitab/schemas/.../7.json`) — keep
+         * them in sync if [SyncShadowEntity] / [SyncLogEntity] change.
+         *
+         * A v6 device upgrading runs this migration once; a fresh install
+         * skips straight to v7 via Room's `onCreate` (Room uses the entity
+         * definitions, not this migration, for fresh schemas — that's why
+         * the SQL here must match what Room would emit).
+         */
+        @JvmField
+        val MIGRATION_6_7: Migration = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `sync_shadow` (" +
+                        "`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`syncSetName` TEXT NOT NULL, " +
+                        "`revno` INTEGER NOT NULL, " +
+                        "`data` BLOB)",
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_sync_shadow_syncSetName` " +
+                        "ON `sync_shadow` (`syncSetName`)",
+                )
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `sync_log` (" +
+                        "`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`createTime` INTEGER NOT NULL, " +
+                        "`kind` INTEGER NOT NULL, " +
+                        "`syncSetName` TEXT, " +
+                        "`params` TEXT)",
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_sync_log_createTime` " +
+                        "ON `sync_log` (`createTime`)",
+                )
+            }
+        }
+
         @Volatile
         private var instance: AppDatabase? = null
 
@@ -318,6 +365,7 @@ abstract class AppDatabase : RoomDatabase() {
                     MIGRATION_3_4,
                     MIGRATION_4_5,
                     MIGRATION_5_6,
+                    MIGRATION_6_7,
                 )
                 .build()
 

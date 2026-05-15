@@ -112,6 +112,7 @@ class AppDatabaseMigrationTest {
                 AppDatabase.MIGRATION_3_4,
                 AppDatabase.MIGRATION_4_5,
                 AppDatabase.MIGRATION_5_6,
+                AppDatabase.MIGRATION_6_7,
             )
             .build()
         AppDatabase.setForTesting(room)
@@ -297,6 +298,7 @@ class AppDatabaseMigrationTest {
                 AppDatabase.MIGRATION_3_4,
                 AppDatabase.MIGRATION_4_5,
                 AppDatabase.MIGRATION_5_6,
+                AppDatabase.MIGRATION_6_7,
             )
             .build()
         AppDatabase.setForTesting(room)
@@ -409,6 +411,7 @@ class AppDatabaseMigrationTest {
                 AppDatabase.MIGRATION_3_4,
                 AppDatabase.MIGRATION_4_5,
                 AppDatabase.MIGRATION_5_6,
+                AppDatabase.MIGRATION_6_7,
             )
             .build()
         AppDatabase.setForTesting(room)
@@ -535,6 +538,7 @@ class AppDatabaseMigrationTest {
                 AppDatabase.MIGRATION_3_4,
                 AppDatabase.MIGRATION_4_5,
                 AppDatabase.MIGRATION_5_6,
+                AppDatabase.MIGRATION_6_7,
             )
             .build()
         AppDatabase.setForTesting(room)
@@ -579,6 +583,7 @@ class AppDatabaseMigrationTest {
                 AppDatabase.MIGRATION_3_4,
                 AppDatabase.MIGRATION_4_5,
                 AppDatabase.MIGRATION_5_6,
+                AppDatabase.MIGRATION_6_7,
             )
             .build()
         AppDatabase.setForTesting(room)
@@ -715,6 +720,7 @@ class AppDatabaseMigrationTest {
                 AppDatabase.MIGRATION_3_4,
                 AppDatabase.MIGRATION_4_5,
                 AppDatabase.MIGRATION_5_6,
+                AppDatabase.MIGRATION_6_7,
             )
             .build()
         AppDatabase.setForTesting(room)
@@ -747,6 +753,145 @@ class AppDatabaseMigrationTest {
             )
             assertTrue(progressId > 0)
             assertEquals(listOf(7), room.readingPlanDao().listReadingCodesForGid("g2:rp_progress:rp-a"))
+        } finally {
+            room.close()
+        }
+    }
+
+    /**
+     * v6 → v7 adds the `sync_shadow` and `sync_log` tables. The migration
+     * must:
+     *
+     * - Preserve every row already in the v6 tables (`version`, `marker`,
+     *   `label`, `marker_label`, `devotion`, `per_version`, `progress_mark`,
+     *   `progress_mark_history`, `reading_plan`, `reading_plan_progress`).
+     * - Create the two new tables with the schema Room's entity definitions
+     *   emit (verified by [MigrationTestHelper.runMigrationsAndValidate]
+     *   when `validateDroppedTables = true`).
+     * - Leave the new tables empty (data copy is a separate concern handled
+     *   by [SyncShadowDataMigration]).
+     */
+    @Test
+    fun migrates6To7() {
+        // Seed a v6 row in the `reading_plan` table so we can verify the
+        // migration doesn't drop pre-existing data. Walk v1 → v2 → v3 → v4
+        // → v5 → v6 first so the v6 tables exist.
+        helper.createDatabase(TEST_DB, 1).close()
+        helper.runMigrationsAndValidate(TEST_DB, 2, true, AppDatabase.MIGRATION_1_2).close()
+        helper.runMigrationsAndValidate(TEST_DB, 3, true, AppDatabase.MIGRATION_2_3).close()
+        helper.runMigrationsAndValidate(TEST_DB, 4, true, AppDatabase.MIGRATION_3_4).close()
+        helper.runMigrationsAndValidate(TEST_DB, 5, true, AppDatabase.MIGRATION_4_5).close()
+        helper.runMigrationsAndValidate(TEST_DB, 6, true, AppDatabase.MIGRATION_5_6).use { db ->
+            val cv = ContentValues().apply {
+                put("name", "rp-a")
+                put("title", "Plan A")
+            }
+            db.insert("reading_plan", android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE, cv)
+        }
+
+        // Run v6 → v7.
+        helper.runMigrationsAndValidate(TEST_DB, 7, true, AppDatabase.MIGRATION_6_7).use { db ->
+            // v6 row survived
+            db.query("SELECT title FROM reading_plan WHERE name = 'rp-a'").use { c ->
+                assertTrue(c.moveToFirst())
+                assertEquals("Plan A", c.getString(0))
+            }
+            // The two new tables exist
+            db.query(
+                "SELECT name FROM sqlite_master WHERE type='table' " +
+                    "AND name IN ('sync_shadow', 'sync_log') ORDER BY name",
+            ).use { c ->
+                val tables = mutableListOf<String>()
+                while (c.moveToNext()) tables += c.getString(0)
+                assertEquals(listOf("sync_log", "sync_shadow"), tables)
+            }
+            // … and are empty
+            db.query("SELECT COUNT(*) FROM sync_shadow").use { c ->
+                assertTrue(c.moveToFirst())
+                assertEquals(0, c.getInt(0))
+            }
+            db.query("SELECT COUNT(*) FROM sync_log").use { c ->
+                assertTrue(c.moveToFirst())
+                assertEquals(0, c.getInt(0))
+            }
+            // Indexes on both tables exist (non-unique, mirroring the
+            // legacy `index_SyncShadow_01` and `index_SyncLog_01`).
+            db.query(
+                "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='sync_shadow'",
+            ).use { c ->
+                val indexes = mutableListOf<String>()
+                while (c.moveToNext()) indexes += c.getString(0)
+                assertTrue(
+                    "expected index_sync_shadow_syncSetName among $indexes",
+                    indexes.contains("index_sync_shadow_syncSetName"),
+                )
+            }
+            db.query(
+                "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='sync_log'",
+            ).use { c ->
+                val indexes = mutableListOf<String>()
+                while (c.moveToNext()) indexes += c.getString(0)
+                assertTrue(
+                    "expected index_sync_log_createTime among $indexes",
+                    indexes.contains("index_sync_log_createTime"),
+                )
+            }
+        }
+    }
+
+    /**
+     * Companion to the v1→v6 reading-plan round-trip test: verify that
+     * after v1 → v7 (i.e. all six migrations applied in sequence) Room can
+     * open the DB and round-trip rows through the new [SyncShadowEntity]
+     * and [SyncLogEntity] DAOs. Catches drift between
+     * [AppDatabase.MIGRATION_6_7] and the entity declarations.
+     */
+    @Test
+    fun `after migrating from v1 to v7 Room opens cleanly and round-trips sync_shadow + sync_log rows through the new DAO`() {
+        helper.createDatabase(TEST_DB, 1).close()
+
+        val room = Room.databaseBuilder(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            AppDatabase::class.java,
+            TEST_DB,
+        )
+            .allowMainThreadQueries()
+            .addMigrations(
+                AppDatabase.MIGRATION_1_2,
+                AppDatabase.MIGRATION_2_3,
+                AppDatabase.MIGRATION_3_4,
+                AppDatabase.MIGRATION_4_5,
+                AppDatabase.MIGRATION_5_6,
+                AppDatabase.MIGRATION_6_7,
+            )
+            .build()
+        AppDatabase.setForTesting(room)
+
+        try {
+            val shadowId = room.syncShadowDao().insertShadow(
+                SyncShadowEntity(
+                    _id = 0L,
+                    syncSetName = "mabel",
+                    revno = 7,
+                    data = byteArrayOf(0x10, 0x20, 0x30),
+                ),
+            )
+            assertTrue(shadowId > 0)
+            val loadedShadow = room.syncShadowDao().findShadowBySyncSetName("mabel")
+            assertNotNull(loadedShadow)
+            assertEquals(7, loadedShadow!!.revno)
+
+            val logId = room.syncShadowDao().insertLog(
+                SyncLogEntity(
+                    _id = 0L,
+                    createTime = 1_700_000_000,
+                    kind = 141,
+                    syncSetName = "mabel",
+                    params = """{"k":"v"}""",
+                ),
+            )
+            assertTrue(logId > 0)
+            assertEquals(1, room.syncShadowDao().listLatestLogs(maxrows = 10).size)
         } finally {
             room.close()
         }
