@@ -2,12 +2,14 @@
 
 ## SQLite Databases
 
-The app stores data in two separate SQLite files:
+The app stores data in three separate SQLite files. Two are Room-backed (the active sources of truth), and two are legacy `SQLiteOpenHelper`-managed files kept around as rollback safety nets after REM-10 / REM-11 / REM-27 / REM-28 / REM-29 / REM-30 / REM-31 / REM-32:
 
-- **`AlkitabRoomDb`** — Room database (`AppDatabase` at `@Database(version = 7)`). Owns every InternalDb table after the REM-10/REM-11/REM-27/REM-28/REM-29/REM-30/REM-31 migration sweep.
-- **`AlkitabDb`** — legacy hand-rolled `SQLiteOpenHelper` (`InternalDbHelper`). After REM-31 every table here is a rollback safety net only — no production code writes to it.
+- **`AlkitabRoomDb`** — Room database (`AppDatabase` at `@Database(version = 7)`). Owns every InternalDb table — markers, labels, versions, devotions, per-version settings, progress marks, reading plans, sync shadows, and sync logs.
+- **`AlkitabSongRoomDb`** — Room database (`SongRoomDatabase` at `@Database(version = 1)`). Owns the `song_info` and `song_book_info` tables. Lives in a separate file from `AlkitabRoomDb` because the Songs subsystem is module-isolated (see [Songs](modules/songs.md)) — it shares no rows, foreign keys, or transactions with the Bible-reading tables.
+- **`AlkitabDb`** — legacy hand-rolled `SQLiteOpenHelper` (`InternalDbHelper`). Every table here is a rollback safety net only after REM-31 — no production code writes to it.
+- **`SongDb`** — legacy hand-rolled `SQLiteOpenHelper` (`SongDbHelper`). Same status after REM-32 — rollback safety net only, plus the source of legacy rows for `SongDbDataMigration` on first launch with the migrated code.
 
-`InternalDb` plus per-table facade DAOs (`MarkerDao`, `LabelDao`, `Marker_LabelDao`, `VersionDao`, …, `SyncShadowDao`) preserve the legacy public surface — callers don't need to know that Room backs every table now.
+`InternalDb` plus per-table facade DAOs (`MarkerDao`, `LabelDao`, `Marker_LabelDao`, `VersionDao`, …, `SyncShadowDao`) preserve the legacy public surface — callers don't need to know that Room backs every table now. The same is true for the `SongDb` facade against `SongRoomDatabase`.
 
 ### AlkitabRoomDb (Room)
 
@@ -138,9 +140,36 @@ versionId TEXT PRIMARY KEY
 settings  TEXT              -- JSON settings blob
 ```
 
-### SongDb (Songs Database)
+### AlkitabSongRoomDb (Room) — Songs Database
 
-Separate database for song book storage. Each song book's songs are stored as serialized Java objects (via `ObjectInputStream` from `Parcelable`-based `Song` class).
+`yuku.alkitab.base.storage.room.SongRoomDatabase` at `@Database(version = 1)`. Separate from `AlkitabRoomDb` so the Songs subsystem stays module-isolated. Schema JSON is exported under `Alkitab/schemas/yuku.alkitab.base.storage.room.SongRoomDatabase/`.
+
+**song_info** — every song in every installed song book
+```sql
+_id                INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL
+bookName           TEXT
+code               TEXT
+title              TEXT
+title_original     TEXT
+ordering           INTEGER NOT NULL  -- caller-supplied display order
+dataFormatVersion  INTEGER NOT NULL  -- currently 3
+data               BLOB              -- Parcelable-marshalled yuku.kpri.model.Song
+updateTime         INTEGER NOT NULL  -- Sqlitil.nowDateTime()
+-- Indices: (bookName, code) non-unique, (bookName, ordering) non-unique
+```
+
+The `data` BLOB stores the song's lyrics, verses, refrains, scripture references, etc. as a Parcelable-marshalled `Song`. This was acknowledged as a bad design choice in the code; REM-21 (Phase 4) will swap the payload to JSON without touching the storage layer.
+
+**song_book_info** — installed song book metadata
+```sql
+_id        INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL
+name       TEXT  -- the lookup key, e.g. "NKB" / "PKJ" / "KJ"
+title      TEXT
+copyright  TEXT
+-- Index: name (non-unique, matching legacy `SongBookInfo_001_index`)
+```
+
+The legacy `SongDb` SQLite file (managed by `SongDbHelper`) is left intact as a rollback safety net; `SongDbDataMigration` performs a one-time idempotent copy of both tables into Room on first launch with the migrated code, gated by `Prefkey.song_db_data_migration_v1_done` (same flag-based gate every other Room migration uses to avoid the #195 resurrect-on-clear footgun).
 
 ## SharedPreferences
 

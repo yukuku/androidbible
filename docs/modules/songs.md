@@ -22,7 +22,9 @@ The songs module provides hymn/worship song browsing, searching, and audio playb
 
 ## Storage
 
-Songs are stored in `SongDb` (separate SQLite database from the main `InternalDb`). Song books are downloaded as serialized `List<Song>` objects via `ObjectInputStream`, optionally gzip-compressed. Data format version is currently 3.
+Songs are stored in `SongRoomDatabase` (separate Room database from the main `AppDatabase` — see [Storage & Database](../storage.md) for the rationale). Two tables: `song_info` (one row per song, with the Parcelable-marshalled `Song` BLOB in the `data` column) and `song_book_info` (one row per installed song book). The `SongDb.java` facade preserves the legacy public surface, routing through `SongRoomDao`. Song books are downloaded as serialized `List<Song>` objects via `ObjectInputStream`, optionally gzip-compressed. Data format version is currently 3.
+
+The legacy `SongDb` SQLite file (managed by `SongDbHelper`) is kept around as a rollback safety net; a one-time `SongDbDataMigration` copies its rows into Room on first launch with the migrated code. See [REM-32](../tech-debt-remediation/REM-32-room-song-db.md) for the full migration writeup.
 
 `SongBookUtil` uses a `SafeObjectInputStream` with a class whitelist (`java.util.*`, `java.lang.*`, Song model classes only) and an `instanceof` check before casting to guard against deserialization gadgets; the response body is capped at 50MB; and the `Response` plus all derived streams are wrapped in try-with-resources.
 
