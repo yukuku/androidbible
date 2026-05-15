@@ -1,5 +1,6 @@
 package yuku.alkitab.base.storage.room
 
+import android.database.Cursor
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -78,6 +79,53 @@ abstract class SongRoomDao {
         "SELECT * FROM song_info ORDER BY bookName ASC, ordering ASC",
     )
     abstract fun listAllSongInfos(): List<SongInfoEntity>
+
+    /**
+     * Projection-only listing for the metadata-only call site in
+     * [yuku.alkitab.base.storage.SongDb.listSongInfosByBookName]. Skips
+     * the `data` BLOB column — songs are typically a few kB each, so a
+     * `SELECT *` over a full song book would balloon to several MB of
+     * heap for no reason. The legacy facade used the same column-list
+     * trick (cf. the pre-Room `listSongInfosByBookName`).
+     */
+    @Query(
+        "SELECT bookName, code, title, title_original FROM song_info " +
+            "WHERE bookName = :bookName ORDER BY ordering ASC",
+    )
+    abstract fun listSongInfoMetasByBookName(bookName: String): List<SongInfoMetaRow>
+
+    /**
+     * Returns a [Cursor] over `(bookName, code, title, title_original, data, dataFormatVersion)`
+     * for streaming the deep-filter scan in
+     * [yuku.alkitab.base.storage.SongDb.listSongInfosByBookNameAndDeepFilter].
+     *
+     * Room's default `List` return type materialises every row (including
+     * the `data` BLOB) into the heap before returning — for the
+     * filter-everything case (`bookName == null`) that materialises the
+     * full song catalogue in memory, which can OOM on a device with many
+     * installed song books. Returning a `Cursor` matches the legacy
+     * implementation's streaming behaviour: caller walks one row at a
+     * time, deserialises and tests, drops the BLOB. Memory is bounded by
+     * the CursorWindow size (~2 MB) plus one song.
+     *
+     * Caller is responsible for `Cursor.close()` (use try-with-resources).
+     */
+    @Query(
+        "SELECT bookName, code, title, title_original, data, dataFormatVersion " +
+            "FROM song_info WHERE bookName = :bookName ORDER BY ordering ASC",
+    )
+    abstract fun queryDeepFilterRowsByBookName(bookName: String): Cursor
+
+    /**
+     * Cursor variant of [queryDeepFilterRowsByBookName] for the
+     * filter-everything path. See that method's KDoc for the streaming
+     * rationale.
+     */
+    @Query(
+        "SELECT bookName, code, title, title_original, data, dataFormatVersion " +
+            "FROM song_info ORDER BY bookName ASC, ordering ASC",
+    )
+    abstract fun queryAllDeepFilterRows(): Cursor
 
     @Query(
         "SELECT dataFormatVersion FROM song_info WHERE bookName = :bookName LIMIT 1",
@@ -173,3 +221,16 @@ abstract class SongRoomDao {
 
     // endregion
 }
+
+/**
+ * Projection used by [SongRoomDao.listSongInfoMetasByBookName]. Mirrors
+ * the four columns the legacy facade's `listSongInfosByBookName` query
+ * projected — deliberately omits the `data` BLOB so the listing path
+ * doesn't pull megabytes of song bodies into the heap.
+ */
+data class SongInfoMetaRow(
+    val bookName: String?,
+    val code: String?,
+    val title: String?,
+    val title_original: String?,
+)

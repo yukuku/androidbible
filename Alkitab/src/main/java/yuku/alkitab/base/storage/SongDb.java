@@ -12,6 +12,7 @@ import static yuku.alkitab.base.util.Literals.Array;
 import yuku.afw.App;
 import yuku.alkitab.base.storage.room.SongBookInfoEntity;
 import yuku.alkitab.base.storage.room.SongInfoEntity;
+import yuku.alkitab.base.storage.room.SongInfoMetaRow;
 import yuku.alkitab.base.storage.room.SongRoomDao;
 import yuku.alkitab.base.storage.room.SongRoomDatabase;
 import yuku.alkitab.base.util.Sqlitil;
@@ -56,20 +57,31 @@ public class SongDb {
     @SuppressWarnings("unused") // kept for ABI parity with the pre-Room constructor
     private final SongDbHelper helper;
 
-    private SongRoomDao cachedRoomDao;
+    // `volatile` + double-checked locking so concurrent callers either
+    // see the fully-published `SongRoomDao` reference or do one extra
+    // resolution under the lock. The underlying `SongRoomDatabase.get`
+    // is itself thread-safe and returns the same singleton, so a benign
+    // double init is functionally harmless — but without `volatile` the
+    // JMM could publish a partially-initialised reference, and explicit
+    // DCL keeps the contract obvious at the call site.
+    private volatile SongRoomDao cachedRoomDao;
 
     public SongDb(SongDbHelper helper) {
         this.helper = helper;
     }
 
     private SongRoomDao roomDao() {
-        // Resolve the Room DAO once per facade instance. Mirrors the
-        // `by lazy` caching in `SyncShadowDao` so the hot path is a
-        // single field read after the first resolution.
-        if (cachedRoomDao == null) {
-            cachedRoomDao = SongRoomDatabase.get(App.context).songRoomDao();
+        SongRoomDao result = cachedRoomDao;
+        if (result == null) {
+            synchronized (this) {
+                result = cachedRoomDao;
+                if (result == null) {
+                    result = SongRoomDatabase.get(App.context).songRoomDao();
+                    cachedRoomDao = result;
+                }
+            }
         }
-        return cachedRoomDao;
+        return result;
     }
 
     private static byte[] marshallSong(Song song, int dataFormatVersion) {
@@ -145,9 +157,13 @@ public class SongDb {
     }
 
     public List<SongInfo> listSongInfosByBookName(String bookName) {
-        final List<SongInfoEntity> rows = roomDao().listSongInfosByBookName(bookName);
+        // Metadata-only listing: deliberately avoid SELECT * so we don't
+        // pull the multi-kB `data` BLOB into the heap for every row. The
+        // legacy facade used the same column-list trick (cf. the pre-Room
+        // `listSongInfosByBookName` query projection).
+        final List<SongInfoMetaRow> rows = roomDao().listSongInfoMetasByBookName(bookName);
         final List<SongInfo> res = new ArrayList<>(rows.size());
-        for (SongInfoEntity row : rows) {
+        for (SongInfoMetaRow row : rows) {
             res.add(new SongInfo(row.getBookName(), row.getCode(), row.getTitle(), row.getTitle_original()));
         }
         return res;
@@ -155,17 +171,39 @@ public class SongDb {
 
     public List<SongInfo> listSongInfosByBookNameAndDeepFilter(String bookName, String filter_string) {
         final CompiledFilter cf = SongFilter.compileFilter(filter_string);
-        final List<SongInfoEntity> rows = (bookName == null)
-            ? roomDao().listAllSongInfos()
-            : roomDao().listSongInfosByBookName(bookName);
+        // Stream rows via a Cursor instead of materialising every row
+        // (with its `data` BLOB) into a Room-returned List. For
+        // `bookName == null` that List would hold the entire song
+        // catalogue in memory; on a device with several large song books
+        // installed that's an OOM risk. The Cursor walks one row at a
+        // time, deserialises + tests + drops, bounding memory by the
+        // CursorWindow + one song. Matches the legacy facade's streaming
+        // behaviour.
         final List<SongInfo> res = new ArrayList<>();
-        for (SongInfoEntity row : rows) {
-            if (row.getData() == null) {
-                continue;
-            }
-            final Song song = unmarshallSong(row.getData(), row.getDataFormatVersion());
-            if (SongFilter.match(song, cf)) {
-                res.add(new SongInfo(row.getBookName(), row.getCode(), row.getTitle(), row.getTitle_original()));
+        try (Cursor c = (bookName == null)
+            ? roomDao().queryAllDeepFilterRows()
+            : roomDao().queryDeepFilterRowsByBookName(bookName)) {
+            final int colBookName = c.getColumnIndexOrThrow("bookName");
+            final int colCode = c.getColumnIndexOrThrow("code");
+            final int colTitle = c.getColumnIndexOrThrow("title");
+            final int colTitleOriginal = c.getColumnIndexOrThrow("title_original");
+            final int colData = c.getColumnIndexOrThrow("data");
+            final int colDataFormatVersion = c.getColumnIndexOrThrow("dataFormatVersion");
+            while (c.moveToNext()) {
+                if (c.isNull(colData)) {
+                    continue;
+                }
+                final byte[] data = c.getBlob(colData);
+                final int dataFormatVersion = c.getInt(colDataFormatVersion);
+                final Song song = unmarshallSong(data, dataFormatVersion);
+                if (SongFilter.match(song, cf)) {
+                    res.add(new SongInfo(
+                        c.isNull(colBookName) ? null : c.getString(colBookName),
+                        c.isNull(colCode) ? null : c.getString(colCode),
+                        c.isNull(colTitle) ? null : c.getString(colTitle),
+                        c.isNull(colTitleOriginal) ? null : c.getString(colTitleOriginal)
+                    ));
+                }
             }
         }
         return res;
