@@ -37,8 +37,16 @@ import yuku.alkitab.base.util.Sqlitil
 @Suppress("UNUSED_PARAMETER")
 class SyncShadowDao(helper: InternalDbHelper) {
 
-    private val roomDao: SyncShadowRoomDao
-        get() = AppDatabase.get(yuku.afw.App.context).syncShadowDao()
+    // Resolve the Room DAO once per facade instance. `SyncShadowDao` is
+    // held as a long-lived field on `InternalDb` (constructed inside
+    // `S.db`'s lazy init), so resolving the Room singleton on every
+    // property access would re-enter `AppDatabase.get()`'s
+    // volatile-read-then-synchronized path on every call from
+    // `SyncRecorder.log` and friends. Caching it via `by lazy` keeps the
+    // hot path to a single field read after the first resolution.
+    private val roomDao: SyncShadowRoomDao by lazy {
+        AppDatabase.get(yuku.afw.App.context).syncShadowDao()
+    }
 
     // region SyncShadow
 
