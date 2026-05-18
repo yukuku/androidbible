@@ -16,7 +16,6 @@ import android.text.style.URLSpan
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.Menu
-import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -499,7 +498,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // If layout is changed, updateToolbarLocation must be updated as well. This will be called in DEBUG to make sure
         // updateToolbarLocation is also updated when layout is updated.
         if (BuildConfig.DEBUG) {
-            if (root.childCount != 2 || root.getChildAt(0).id != R.id.toolbar || root.getChildAt(1).id != R.id.nontoolbar) {
+            if (root.childCount != 3 ||
+                root.getChildAt(0).id != R.id.toolbar ||
+                root.getChildAt(1).id != R.id.nontoolbar ||
+                root.getChildAt(2).id != R.id.audio_bar
+            ) {
                 throw RuntimeException("Layout changed and this is no longer compatible with updateToolbarLocation")
             }
         }
@@ -694,35 +697,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
         val audioBarView: ComposeView = findViewById(R.id.audio_bar)
         audioBinder.attach(audioBarHost, audioBarView)
-        // When the verse-nav toolbar is anchored to the bottom of the screen
-        // (Settings → Display → "Navigasi ayat di bawah"), the audio bar —
-        // which is overlaid via FrameLayout `gravity=bottom` on the outer
-        // overlayContainer — would otherwise sit on top of the toolbar's
-        // slot and hide its goto / version / search buttons. Push the bar
-        // up by exactly one actionBarSize so the two surfaces stack
-        // instead of overlapping. Toggling the setting forces an activity
-        // restart (see DisplayFragment), so a one-shot computation here is
-        // enough; we deliberately don't react to fullscreen toggles, which
-        // hide the action bar but never resize the slot.
-        if (Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default)) {
-            val tv = TypedValue()
-            if (theme.resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
-                val actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, resources.displayMetrics)
-                val params = audioBarView.layoutParams as FrameLayout.LayoutParams
-                params.bottomMargin = actionBarHeight
-                audioBarView.layoutParams = params
-            }
-        }
-        // Push the verse list up by the bar's height so the last verses are
-        // reachable instead of being hidden behind the bar. lsSplit0 / lsSplit1
-        // already set `clipToPadding="false"` so the verses still scroll
-        // through the padding region under the bar (matches the
-        // YouTube-Music-style "content fades out behind the player" feel).
-        audioBarView.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
-            if (bottom - top != oldBottom - oldTop) {
-                applyAudioBarBottomInset(bottom - top)
-            }
-        }
         lifecycleScope.launch {
             // 100 ms tick rate while playing — avoid invalidateOptionsMenu() here;
             // menu refreshes flow through `audioBarVisibilityChanged` instead.
@@ -756,18 +730,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             )
         }
         controller.setAudioHighlight(verse_1, audioHighlightColorCached)
-    }
-
-    /**
-     * Reserve [pxBottom] pixels at the bottom of each verse RecyclerView so the
-     * last verses aren't hidden behind the audio bar. Called whenever the bar's
-     * Compose host re-lays-out (slide-in, slide-out, height change). Both
-     * splits get the inset uniformly so the secondary list is also scrollable
-     * to its last verse.
-     */
-    private fun applyAudioBarBottomInset(pxBottom: Int) {
-        lsSplit0.setAudioBarBottomInset(pxBottom)
-        lsSplit1.setAudioBarBottomInset(pxBottom)
     }
 
     /**
@@ -1392,19 +1354,25 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // - not fullscreen, toolbar at bottom
         // - not fullscreen, toolbar at top
 
-        // root contains exactly 2 children: toolbar and nontoolbar.
-        // Need to move toolbar and nontoolbar in order to accomplish this.
+        // root contains 3 children: toolbar, nontoolbar, and the audio bar.
+        // The audio bar always sits directly below the content (above the
+        // bottom-anchored verse-nav toolbar when that mode is enabled), so
+        // the order varies with the toolbar-location preference.
 
         if (!fullScreen) {
+            val audioBar = root.findViewById<View>(R.id.audio_bar)
             root.removeView(toolbar)
             root.removeView(nontoolbar)
+            root.removeView(audioBar)
 
             if (Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default)) {
                 root.addView(nontoolbar)
+                root.addView(audioBar)
                 root.addView(toolbar)
             } else {
                 root.addView(toolbar)
                 root.addView(nontoolbar)
+                root.addView(audioBar)
             }
         }
     }

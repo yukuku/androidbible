@@ -55,15 +55,7 @@ class VersesControllerImpl(
     private val attention = Attention()
     private val audioHighlight = AudioHighlight()
 
-    /**
-     * Base padding requested via [setViewPadding] (i.e. the padding the theme/
-     * preferences want, ignoring overlays). [setAudioBarBottomInset] can add
-     * extra bottom padding to keep the last verses visible above the audio
-     * bar; we keep the two values separate so neither setter clobbers the
-     * other when, e.g., the user changes font size while the bar is showing.
-     */
     private val basePadding = Rect()
-    private var audioBarBottomInsetPx: Int = 0
 
     private val dataVersionNumber = AtomicInteger()
 
@@ -446,7 +438,7 @@ class VersesControllerImpl(
 
     override fun setViewPadding(padding: Rect) {
         basePadding.set(padding)
-        applyPadding()
+        rv.setPadding(basePadding.left, basePadding.top, basePadding.right, basePadding.bottom)
     }
 
     override fun setViewScrollbarThumb(thumb: Drawable) {
@@ -522,27 +514,6 @@ class VersesControllerImpl(
     override fun setEmptyMessage(message: CharSequence?, textColor: Int) {
         rv.emptyMessage = message
         rv.emptyMessagePaint.color = textColor
-    }
-
-    override fun setAudioBarBottomInset(pxBottom: Int) {
-        if (audioBarBottomInsetPx == pxBottom) return
-        audioBarBottomInsetPx = pxBottom
-        applyPadding()
-    }
-
-    /**
-     * Apply [basePadding] + [audioBarBottomInsetPx] to the underlying
-     * RecyclerView. Either setter can be invoked at any time (font-size
-     * change while the bar is visible, or vice versa); combining the two
-     * values here means neither stomps on the other.
-     */
-    private fun applyPadding() {
-        rv.setPadding(
-            basePadding.left,
-            basePadding.top,
-            basePadding.right,
-            basePadding.bottom + audioBarBottomInsetPx,
-        )
     }
 
     fun render() {
