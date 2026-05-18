@@ -140,6 +140,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     var needsRestart = false // whether this activity needs to be restarted
 
     private val actionModeController by lazy { VerseActionModeController(this, this) }
+    private val composeVerseActions by lazy { yuku.alkitab.base.compose.verseactions.ComposeVerseActionsController(actionModeController) }
 
     // -- Audio bar (M3) -- thin glue from the activity to the Compose audio bar.
     // The controller binds to BibleAudioService, projects PlaybackState into a
@@ -396,11 +397,14 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                 lsSplit1.checkVerses(verses_1, false)
             }
 
-            if (actionMode == null) {
-                actionMode = startSupportActionMode(actionModeController)
+            if (yuku.alkitab.base.settings.ExperimentalFlags.useComposeVerseActions()) {
+                composeVerseActions.show()
+            } else {
+                if (actionMode == null) {
+                    actionMode = startSupportActionMode(actionModeController)
+                }
+                actionMode?.invalidate()
             }
-
-            actionMode?.invalidate()
         }
 
         override fun onNoVersesSelected() {
@@ -409,8 +413,12 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                 lsSplit1.uncheckAllVerses(false)
             }
 
-            actionMode?.finish()
-            actionMode = null
+            if (yuku.alkitab.base.settings.ExperimentalFlags.useComposeVerseActions()) {
+                composeVerseActions.hide()
+            } else {
+                actionMode?.finish()
+                actionMode = null
+            }
         }
     }
 
@@ -1148,6 +1156,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // Release the activity-side bindings; the service itself stays alive
         // if audio is playing (M4 lock-screen behavior).
         audioBinder.detach()
+        composeVerseActions.detach()
         super.onDestroy()
     }
 

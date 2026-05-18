@@ -48,16 +48,21 @@ private const val EXTRA_verseUrl = "verseUrl"
  * reads state through [host] and invokes operations through [actions]. Framework
  * calls that genuinely require an Activity (dialogs, fragment transactions,
  * `startActivity`) go through `host.activity`.
+ *
+ * The action handler bodies live as `internal fun handle…(onComplete)` methods so
+ * the experimental Compose bottom-sheet UI in
+ * `yuku.alkitab.base.compose.verseactions` can reuse them without going through a
+ * synthesized [ActionMode] / [Menu] pair.
  */
 class VerseActionModeController(
-    private val host: VerseActionModeHost,
-    private val actions: VerseActionModeActions,
+    internal val host: VerseActionModeHost,
+    internal val actions: VerseActionModeActions,
 ) : ActionMode.Callback {
 
     private val MENU_GROUP_EXTENSIONS = Menu.FIRST + 1
     private val MENU_EXTENSIONS_FIRST_ID = 0x1000
 
-    private val extensions = mutableListOf<ExtensionManager.Info>()
+    internal val extensions = mutableListOf<ExtensionManager.Info>()
 
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
         host.activity.menuInflater.inflate(R.menu.context_isi, menu)
@@ -92,21 +97,7 @@ class VerseActionModeController(
             return true
         }
 
-        var contiguous = true
-        if (!single) {
-            var next = selected.get(0) + 1
-            var i = 1
-            val len = selected.size()
-            while (i < len) {
-                val cur = selected.get(i)
-                if (next != cur) {
-                    contiguous = false
-                    break
-                }
-                next = cur + 1
-                i++
-            }
-        }
+        val contiguous = isContiguous(selected)
 
         menuAddBookmark.isVisible = contiguous
         menuAddNote.isVisible = contiguous
@@ -157,14 +148,13 @@ class VerseActionModeController(
         menuCommentary.isVisible = c.menuCommentary
 
         // do not show dictionary item if not needed because of auto-lookup from
-        menuDictionary.isVisible = c.menuDictionary && !Preferences.getBoolean(host.activity.getString(R.string.pref_autoDictionaryAnalyze_key), host.activity.resources.getBoolean(R.bool.pref_autoDictionaryAnalyze_default))
+        menuDictionary.isVisible = c.menuDictionary && !isAutoDictionaryOn()
 
         val menuRibkaReport = menu.findItem(R.id.menuRibkaReport)
         menuRibkaReport.isVisible = single && actions.checkRibkaEligibility() != RibkaEligibility.None
 
         // extensions
-        extensions.clear()
-        extensions.addAll(ExtensionManager.getExtensions())
+        refreshExtensions()
 
         menu.removeGroup(MENU_GROUP_EXTENSIONS)
 
@@ -179,359 +169,33 @@ class VerseActionModeController(
 
     override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
         val selected = host.selectedVersesSplit0_1
-
         if (selected.size() == 0) return true
 
+        val finish: () -> Unit = { mode.finish() }
+        val stay: () -> Unit = { /* selection persists across this action */ }
+
         return when (val itemId = item.itemId) {
-            R.id.menuCopy, R.id.menuCopySplit0, R.id.menuCopySplit1, R.id.menuCopyBothSplits -> {
-                // copy, can be multiple verses
-                val reference = VerseTextFormatter.referenceFromSelectedVerses(selected, host.activeSplit0Book, host.chapter_1)
-                val activeSplit1Version = host.activeSplit1Version
-                val t = if (itemId == R.id.menuCopy || itemId == R.id.menuCopySplit0 || itemId == R.id.menuCopyBothSplits || activeSplit1Version == null) {
-                    buildCopyShareText(selected, reference, isSplitVersion = false)
-                } else { // menuCopySplit1, do not use split0 reference
-                    val book = host.activeSplit1BookById(host.activeSplit0Book.bookId) ?: host.activeSplit0Book
-                    buildCopyShareText(selected, VerseTextFormatter.referenceFromSelectedVerses(selected, book, host.chapter_1), isSplitVersion = true)
-                }
-
-                if (itemId == R.id.menuCopyBothSplits && activeSplit1Version != null) {
-                    val book = host.activeSplit1BookById(host.activeSplit0Book.bookId) ?: host.activeSplit0Book
-                    appendSplitTextForCopyShare(book, host.selectedVersesSplit1_1, t)
-                }
-
-                val textToCopy = t[0]
-                val textToSubmit = t[1]
-
-                val meta = pickShareUrlMetadata(useSplit1 = itemId == R.id.menuCopySplit1 && activeSplit1Version != null)
-
-                ShareUrl.make(
-                    activity = host.activity,
-                    immediatelyCancel = !Preferences.getBoolean(host.activity.getString(R.string.pref_copyWithShareUrl_key), host.activity.resources.getBoolean(R.bool.pref_copyWithShareUrl_default)),
-                    verseText = textToSubmit,
-                    ari_bc = Ari.encode(meta.bookId, host.chapter_1, 0),
-                    selectedVerses_1 = selected,
-                    reference = reference,
-                    version = meta.version,
-                    preset_name = MVersionDb.presetNameFromVersionId(meta.versionId),
-                    callback = object : ShareUrl.Callback {
-                        override fun onSuccess(shareUrl: String) {
-                            ClipboardUtil.copyToClipboard("$textToCopy\n\n$shareUrl")
-                        }
-
-                        override fun onUserCancel() {
-                            ClipboardUtil.copyToClipboard(textToCopy)
-                        }
-
-                        override fun onError(e: Exception) {
-                            AppLog.e(TAG, "Error in ShareUrl, copying without shareUrl", e)
-                            ClipboardUtil.copyToClipboard(textToCopy)
-                        }
-
-                        override fun onFinally() {
-                            actions.uncheckAllVersesSplit0()
-
-                            Snackbar.make(host.root, host.activity.getString(R.string.alamat_sudah_disalin, reference), Snackbar.LENGTH_SHORT).show()
-                            mode.finish()
-                        }
-                    }
-                )
-
-                true
-            }
-
-            R.id.menuShare, R.id.menuShareSplit0, R.id.menuShareSplit1, R.id.menuShareBothSplits -> {
-                // share, can be multiple verses
-                val reference = VerseTextFormatter.referenceFromSelectedVerses(selected, host.activeSplit0Book, host.chapter_1)
-                val activeSplit1Version = host.activeSplit1Version
-
-                val t = if (itemId == R.id.menuShare || itemId == R.id.menuShareSplit0 || itemId == R.id.menuShareBothSplits || activeSplit1Version == null) {
-                    buildCopyShareText(selected, reference, isSplitVersion = false)
-                } else { // menuShareSplit1, do not use split0 reference
-                    val book = host.activeSplit1BookById(host.activeSplit0Book.bookId) ?: host.activeSplit0Book
-                    buildCopyShareText(selected, VerseTextFormatter.referenceFromSelectedVerses(selected, book, host.chapter_1), isSplitVersion = true)
-                }
-
-                if (itemId == R.id.menuShareBothSplits && activeSplit1Version != null) {
-                    val book = host.activeSplit1BookById(host.activeSplit0Book.bookId) ?: host.activeSplit0Book
-                    appendSplitTextForCopyShare(book, host.selectedVersesSplit1_1, t)
-                }
-
-                val textToShare = t[0]
-                val textToSubmit = t[1]
-
-                val intent = ShareCompat.IntentBuilder(host.activity)
-                    .setType("text/plain")
-                    .setSubject(reference)
-                    .intent
-
-                val meta = pickShareUrlMetadata(useSplit1 = itemId == R.id.menuShareSplit1 && activeSplit1Version != null)
-
-                ShareUrl.make(
-                    activity = host.activity,
-                    immediatelyCancel = !Preferences.getBoolean(host.activity.getString(R.string.pref_copyWithShareUrl_key), host.activity.resources.getBoolean(R.bool.pref_copyWithShareUrl_default)),
-                    verseText = textToSubmit,
-                    ari_bc = Ari.encode(meta.bookId, host.chapter_1, 0),
-                    selectedVerses_1 = selected,
-                    reference = reference,
-                    version = meta.version,
-                    preset_name = MVersionDb.presetNameFromVersionId(meta.versionId),
-                    callback = object : ShareUrl.Callback {
-                        override fun onSuccess(shareUrl: String) {
-                            intent.putExtra(Intent.EXTRA_TEXT, "$textToShare\n\n$shareUrl")
-                            intent.putExtra(EXTRA_verseUrl, shareUrl)
-                        }
-
-                        override fun onUserCancel() {
-                            intent.putExtra(Intent.EXTRA_TEXT, textToShare)
-                        }
-
-                        override fun onError(e: Exception) {
-                            AppLog.e(TAG, "Error in ShareUrl, sharing without shareUrl", e)
-                            intent.putExtra(Intent.EXTRA_TEXT, textToShare)
-                        }
-
-                        override fun onFinally() {
-                            host.activity.startActivity(Intent.createChooser(intent, host.activity.getString(R.string.bagikan_alamat, reference)))
-
-                            actions.uncheckAllVersesSplit0()
-                            mode.finish()
-                        }
-                    }
-                )
-                true
-            }
-
-            R.id.menuCompare -> {
-                val ari = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, selected.get(0))
-                val dialog = VersesDialog.newCompareInstance(ari)
-                dialog.listener = object : VersesDialog.VersesDialogListener() {
-                    override fun onComparedVerseSelected(ari: Int, mversion: MVersion) {
-                        actions.loadVersion(mversion)
-                        dialog.dismiss()
-                    }
-                }
-
-                // Allow state loss to prevent
-                // https://console.firebase.google.com/u/0/project/alkitab-host-hrd/crashlytics/app/android:yuku.alkitab/issues/b80d5209ee90ebd9c5eb30f87f19c85f
-                val ft = host.activity.supportFragmentManager.beginTransaction()
-                ft.add(dialog, "compare_dialog")
-                ft.commitAllowingStateLoss()
-
-                true
-            }
-
-            R.id.menuAddBookmark -> {
-
-                // contract: this menu only appears when contiguous verses are selected
-                if (selected.get(selected.size() - 1) - selected.get(0) != selected.size() - 1) {
-                    throw RuntimeException("Non contiguous verses when adding bookmark: $selected")
-                }
-
-                val ari = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, selected.get(0))
-                val verseCount = selected.size()
-
-                // always create a new bookmark
-                val dialog = TypeBookmarkDialog.NewBookmark(host.activity, ari, verseCount)
-                dialog.setListener {
-                    actions.uncheckAllVersesSplit0()
-                    actions.reloadBothAttributeMaps()
-                }
-                dialog.show()
-
-                mode.finish()
-                true
-            }
-
-            R.id.menuAddNote -> {
-
-                // contract: this menu only appears when contiguous verses are selected
-                if (selected.get(selected.size() - 1) - selected.get(0) != selected.size() - 1) {
-                    throw RuntimeException("Non contiguous verses when adding note: $selected")
-                }
-
-                val ari = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, selected.get(0))
-                val verseCount = selected.size()
-
-                // always create a new note
-                host.activity.startActivityForResult(NoteActivity.createNewNoteIntent(host.activeSplit0Version.referenceWithVerseCount(ari, verseCount), ari, verseCount), RequestCodes.FromActivity.EditNote2)
-                mode.finish()
-
-                true
-            }
-
-            R.id.menuAddHighlight -> {
-                val ariBc = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, 0)
-                val colorRgb = App.services.storage.db.getHighlightColorRgb(ariBc, selected)
-
-                val listener = TypeHighlightDialog.Listener {
-                    actions.uncheckAllVersesSplit0()
-                    actions.reloadBothAttributeMaps()
-                }
-
-                val reference = VerseTextFormatter.referenceFromSelectedVerses(selected, host.activeSplit0Book, host.chapter_1)
-                if (selected.size() == 1) {
-                    val ftr = VerseRenderer.FormattedTextResult()
-                    val ari = Ari.encodeWithBc(ariBc, selected.get(0))
-                    val rawVerseText = host.activeSplit0Version.loadVerseText(ari) ?: ""
-                    val info = App.services.storage.db.getHighlightColorRgb(ari)
-
-                    VerseRenderer.render(ari = ari, text = rawVerseText, ftr = ftr)
-                    TypeHighlightDialog(host.activity, ari, listener, colorRgb, info, reference, ftr.result)
-                } else {
-                    TypeHighlightDialog(host.activity, ariBc, selected, listener, colorRgb, reference)
-                }
-                mode.finish()
-                true
-            }
-
-            R.id.menuEsvsb -> {
-
-                val ari = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, selected.get(0))
-
-                try {
-                    val intent = Intent("yuku.esvsbasal.action.GOTO")
-                    intent.putExtra("ari", ari)
-                    host.activity.startActivity(intent)
-                } catch (e: Exception) {
-                    AppLog.e(TAG, "ESVSB starting", e)
-                }
-                true
-            }
-
-            R.id.menuGuide -> {
-
-                val ari = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, 0)
-
-                try {
-                    host.activity.packageManager.getPackageInfo("org.sabda.pedia", 0)
-
-                    val intent = Intent("org.sabda.pedia.action.VIEW")
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    intent.putExtra("ari", ari)
-                    host.activity.startActivity(intent)
-                } catch (_: PackageManager.NameNotFoundException) {
-                    OtherAppIntegration.openMarket(host.activity, "org.sabda.pedia")
-                }
-                true
-            }
-
-            R.id.menuCommentary -> {
-
-                val ari = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, selected.get(0))
-
-                try {
-                    host.activity.packageManager.getPackageInfo("org.sabda.tafsiran", 0)
-
-                    val intent = Intent("org.sabda.tafsiran.action.VIEW")
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    intent.putExtra("ari", ari)
-                    host.activity.startActivity(intent)
-                } catch (_: PackageManager.NameNotFoundException) {
-                    OtherAppIntegration.openMarket(host.activity, "org.sabda.tafsiran")
-                }
-                true
-            }
-
-            R.id.menuDictionary -> {
-
-                val ariBc = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, 0)
-                val aris = HashSet<Int>()
-                var i = 0
-                val len = selected.size()
-                while (i < len) {
-                    val verse_1 = selected.get(i)
-                    val ari = Ari.encodeWithBc(ariBc, verse_1)
-                    aris.add(ari)
-                    i++
-                }
-
-                actions.startDictionaryMode(aris)
-                true
-            }
-
-            R.id.menuRibkaReport -> {
-
-                val ribkaEligibility = actions.checkRibkaEligibility()
-                if (ribkaEligibility != RibkaEligibility.None) {
-                    val ari = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, selected.get(0))
-
-                    val reference: String?
-                    val verseText: String?
-                    val versionDescription: String?
-
-                    if (ribkaEligibility == RibkaEligibility.Main) {
-                        reference = host.activeSplit0Version.reference(ari)
-                        verseText = host.activeSplit0Version.loadVerseText(ari)
-                        versionDescription = host.activeSplit0MVersion.description
-                    } else {
-                        reference = host.activeSplit1Version?.reference(ari)
-                        verseText = host.activeSplit1Version?.loadVerseText(ari)
-                        versionDescription = host.activeSplit1MVersion?.description
-                    }
-
-                    if (reference != null && verseText != null) {
-                        host.activity.startActivity(RibkaReportActivity.createIntent(ari, reference, verseText, versionDescription))
-                    }
-                }
-                true
-            }
-
+            R.id.menuCopy -> { handleCopy(CopyShareVariant.SinglePrimary, finish); true }
+            R.id.menuCopySplit0 -> { handleCopy(CopyShareVariant.SplitPrimary, finish); true }
+            R.id.menuCopySplit1 -> { handleCopy(CopyShareVariant.SplitSecondary, finish); true }
+            R.id.menuCopyBothSplits -> { handleCopy(CopyShareVariant.SplitBoth, finish); true }
+            R.id.menuShare -> { handleShare(CopyShareVariant.SinglePrimary, finish); true }
+            R.id.menuShareSplit0 -> { handleShare(CopyShareVariant.SplitPrimary, finish); true }
+            R.id.menuShareSplit1 -> { handleShare(CopyShareVariant.SplitSecondary, finish); true }
+            R.id.menuShareBothSplits -> { handleShare(CopyShareVariant.SplitBoth, finish); true }
+            R.id.menuCompare -> { handleCompare(stay); true }
+            R.id.menuAddBookmark -> { handleAddBookmark(finish); true }
+            R.id.menuAddNote -> { handleAddNote(finish); true }
+            R.id.menuAddHighlight -> { handleAddHighlight(finish); true }
+            R.id.menuEsvsb -> { handleEsvsb(stay); true }
+            R.id.menuGuide -> { handleGuide(stay); true }
+            R.id.menuCommentary -> { handleCommentary(stay); true }
+            R.id.menuDictionary -> { handleDictionary(stay); true }
+            R.id.menuRibkaReport -> { handleRibkaReport(stay); true }
             in MENU_EXTENSIONS_FIRST_ID until MENU_EXTENSIONS_FIRST_ID + extensions.size -> {
-                val extension = extensions[itemId - MENU_EXTENSIONS_FIRST_ID]
-
-                val intent = Intent(ExtensionManager.ACTION_SHOW_VERSE_INFO)
-                intent.component = ComponentName(extension.activityInfo.packageName, extension.activityInfo.name)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
-                // prepare extra "aris"
-                val aris = IntArray(selected.size())
-                val ariBc = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, 0)
-                run {
-                    var i = 0
-                    val len = selected.size()
-                    while (i < len) {
-                        val verse_1 = selected.get(i)
-                        val ari = Ari.encodeWithBc(ariBc, verse_1)
-                        aris[i] = ari
-                        i++
-                    }
-                }
-                intent.putExtra("aris", aris)
-
-                if (extension.includeVerseText) {
-                    // prepare extra "verseTexts"
-                    val verseTexts = arrayOfNulls<String>(selected.size())
-                    var i = 0
-                    val len = selected.size()
-                    while (i < len) {
-                        val verse_1 = selected.get(i)
-
-                        val verseText = host.dataSplit0.getVerseText(verse_1)
-                        if (extension.includeVerseTextFormatting) {
-                            verseTexts[i] = verseText
-                        } else {
-                            verseTexts[i] = FormattedVerseText.removeSpecialCodes(verseText)
-                        }
-                        i++
-                    }
-                    intent.putExtra("verseTexts", verseTexts)
-                }
-
-                try {
-                    host.activity.startActivity(intent)
-                } catch (_: ActivityNotFoundException) {
-                    MaterialAlertDialogBuilder(host.activity)
-                        .setMessage("Error ANFE starting extension\n\n${extension.activityInfo.packageName}/${extension.activityInfo.name}")
-                        .setPositiveButton(R.string.ok, null)
-                        .show()
-                }
-
+                handleExtension(extensions[itemId - MENU_EXTENSIONS_FIRST_ID], stay)
                 true
             }
-
             else -> false
         }
     }
@@ -544,6 +208,379 @@ class VerseActionModeController(
         if (host.uncheckVersesWhenActionModeDestroyed) {
             actions.uncheckAllVersesSplit0()
         }
+    }
+
+    // ─── extracted handlers (shared with the experimental Compose sheet) ──────────────
+
+    internal fun refreshExtensions() {
+        extensions.clear()
+        extensions.addAll(ExtensionManager.getExtensions())
+    }
+
+    internal fun isAutoDictionaryOn(): Boolean = Preferences.getBoolean(
+        host.activity.getString(R.string.pref_autoDictionaryAnalyze_key),
+        host.activity.resources.getBoolean(R.bool.pref_autoDictionaryAnalyze_default),
+    )
+
+    internal fun handleCopy(variant: CopyShareVariant, onComplete: () -> Unit) {
+        val selected = host.selectedVersesSplit0_1
+        if (selected.size() == 0) return
+
+        val reference = VerseTextFormatter.referenceFromSelectedVerses(selected, host.activeSplit0Book, host.chapter_1)
+        val activeSplit1Version = host.activeSplit1Version
+        val t = if (variant != CopyShareVariant.SplitSecondary || activeSplit1Version == null) {
+            buildCopyShareText(selected, reference, isSplitVersion = false)
+        } else {
+            val book = host.activeSplit1BookById(host.activeSplit0Book.bookId) ?: host.activeSplit0Book
+            buildCopyShareText(selected, VerseTextFormatter.referenceFromSelectedVerses(selected, book, host.chapter_1), isSplitVersion = true)
+        }
+
+        if (variant == CopyShareVariant.SplitBoth && activeSplit1Version != null) {
+            val book = host.activeSplit1BookById(host.activeSplit0Book.bookId) ?: host.activeSplit0Book
+            appendSplitTextForCopyShare(book, host.selectedVersesSplit1_1, t)
+        }
+
+        val textToCopy = t[0]
+        val textToSubmit = t[1]
+
+        val meta = pickShareUrlMetadata(useSplit1 = variant == CopyShareVariant.SplitSecondary && activeSplit1Version != null)
+
+        ShareUrl.make(
+            activity = host.activity,
+            immediatelyCancel = !Preferences.getBoolean(host.activity.getString(R.string.pref_copyWithShareUrl_key), host.activity.resources.getBoolean(R.bool.pref_copyWithShareUrl_default)),
+            verseText = textToSubmit,
+            ari_bc = Ari.encode(meta.bookId, host.chapter_1, 0),
+            selectedVerses_1 = selected,
+            reference = reference,
+            version = meta.version,
+            preset_name = MVersionDb.presetNameFromVersionId(meta.versionId),
+            callback = object : ShareUrl.Callback {
+                override fun onSuccess(shareUrl: String) {
+                    ClipboardUtil.copyToClipboard("$textToCopy\n\n$shareUrl")
+                }
+
+                override fun onUserCancel() {
+                    ClipboardUtil.copyToClipboard(textToCopy)
+                }
+
+                override fun onError(e: Exception) {
+                    AppLog.e(TAG, "Error in ShareUrl, copying without shareUrl", e)
+                    ClipboardUtil.copyToClipboard(textToCopy)
+                }
+
+                override fun onFinally() {
+                    actions.uncheckAllVersesSplit0()
+
+                    Snackbar.make(host.root, host.activity.getString(R.string.alamat_sudah_disalin, reference), Snackbar.LENGTH_SHORT).show()
+                    onComplete()
+                }
+            }
+        )
+    }
+
+    internal fun handleShare(variant: CopyShareVariant, onComplete: () -> Unit) {
+        val selected = host.selectedVersesSplit0_1
+        if (selected.size() == 0) return
+
+        val reference = VerseTextFormatter.referenceFromSelectedVerses(selected, host.activeSplit0Book, host.chapter_1)
+        val activeSplit1Version = host.activeSplit1Version
+
+        val t = if (variant != CopyShareVariant.SplitSecondary || activeSplit1Version == null) {
+            buildCopyShareText(selected, reference, isSplitVersion = false)
+        } else {
+            val book = host.activeSplit1BookById(host.activeSplit0Book.bookId) ?: host.activeSplit0Book
+            buildCopyShareText(selected, VerseTextFormatter.referenceFromSelectedVerses(selected, book, host.chapter_1), isSplitVersion = true)
+        }
+
+        if (variant == CopyShareVariant.SplitBoth && activeSplit1Version != null) {
+            val book = host.activeSplit1BookById(host.activeSplit0Book.bookId) ?: host.activeSplit0Book
+            appendSplitTextForCopyShare(book, host.selectedVersesSplit1_1, t)
+        }
+
+        val textToShare = t[0]
+        val textToSubmit = t[1]
+
+        val intent = ShareCompat.IntentBuilder(host.activity)
+            .setType("text/plain")
+            .setSubject(reference)
+            .intent
+
+        val meta = pickShareUrlMetadata(useSplit1 = variant == CopyShareVariant.SplitSecondary && activeSplit1Version != null)
+
+        ShareUrl.make(
+            activity = host.activity,
+            immediatelyCancel = !Preferences.getBoolean(host.activity.getString(R.string.pref_copyWithShareUrl_key), host.activity.resources.getBoolean(R.bool.pref_copyWithShareUrl_default)),
+            verseText = textToSubmit,
+            ari_bc = Ari.encode(meta.bookId, host.chapter_1, 0),
+            selectedVerses_1 = selected,
+            reference = reference,
+            version = meta.version,
+            preset_name = MVersionDb.presetNameFromVersionId(meta.versionId),
+            callback = object : ShareUrl.Callback {
+                override fun onSuccess(shareUrl: String) {
+                    intent.putExtra(Intent.EXTRA_TEXT, "$textToShare\n\n$shareUrl")
+                    intent.putExtra(EXTRA_verseUrl, shareUrl)
+                }
+
+                override fun onUserCancel() {
+                    intent.putExtra(Intent.EXTRA_TEXT, textToShare)
+                }
+
+                override fun onError(e: Exception) {
+                    AppLog.e(TAG, "Error in ShareUrl, sharing without shareUrl", e)
+                    intent.putExtra(Intent.EXTRA_TEXT, textToShare)
+                }
+
+                override fun onFinally() {
+                    host.activity.startActivity(Intent.createChooser(intent, host.activity.getString(R.string.bagikan_alamat, reference)))
+
+                    actions.uncheckAllVersesSplit0()
+                    onComplete()
+                }
+            }
+        )
+    }
+
+    internal fun handleCompare(onComplete: () -> Unit) {
+        val selected = host.selectedVersesSplit0_1
+        if (selected.size() == 0) return
+
+        val ari = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, selected.get(0))
+        val dialog = VersesDialog.newCompareInstance(ari)
+        dialog.listener = object : VersesDialog.VersesDialogListener() {
+            override fun onComparedVerseSelected(ari: Int, mversion: MVersion) {
+                actions.loadVersion(mversion)
+                dialog.dismiss()
+            }
+        }
+
+        // Allow state loss to prevent
+        // https://console.firebase.google.com/u/0/project/alkitab-host-hrd/crashlytics/app/android:yuku.alkitab/issues/b80d5209ee90ebd9c5eb30f87f19c85f
+        val ft = host.activity.supportFragmentManager.beginTransaction()
+        ft.add(dialog, "compare_dialog")
+        ft.commitAllowingStateLoss()
+
+        onComplete()
+    }
+
+    internal fun handleAddBookmark(onComplete: () -> Unit) {
+        val selected = host.selectedVersesSplit0_1
+        if (selected.size() == 0) return
+
+        // contract: this menu only appears when contiguous verses are selected
+        if (selected.get(selected.size() - 1) - selected.get(0) != selected.size() - 1) {
+            throw RuntimeException("Non contiguous verses when adding bookmark: $selected")
+        }
+
+        val ari = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, selected.get(0))
+        val verseCount = selected.size()
+
+        // always create a new bookmark
+        val dialog = TypeBookmarkDialog.NewBookmark(host.activity, ari, verseCount)
+        dialog.setListener {
+            actions.uncheckAllVersesSplit0()
+            actions.reloadBothAttributeMaps()
+        }
+        dialog.show()
+
+        onComplete()
+    }
+
+    internal fun handleAddNote(onComplete: () -> Unit) {
+        val selected = host.selectedVersesSplit0_1
+        if (selected.size() == 0) return
+
+        // contract: this menu only appears when contiguous verses are selected
+        if (selected.get(selected.size() - 1) - selected.get(0) != selected.size() - 1) {
+            throw RuntimeException("Non contiguous verses when adding note: $selected")
+        }
+
+        val ari = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, selected.get(0))
+        val verseCount = selected.size()
+
+        host.activity.startActivityForResult(NoteActivity.createNewNoteIntent(host.activeSplit0Version.referenceWithVerseCount(ari, verseCount), ari, verseCount), RequestCodes.FromActivity.EditNote2)
+        onComplete()
+    }
+
+    internal fun handleAddHighlight(onComplete: () -> Unit) {
+        val selected = host.selectedVersesSplit0_1
+        if (selected.size() == 0) return
+
+        val ariBc = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, 0)
+        val colorRgb = App.services.storage.db.getHighlightColorRgb(ariBc, selected)
+
+        val listener = TypeHighlightDialog.Listener {
+            actions.uncheckAllVersesSplit0()
+            actions.reloadBothAttributeMaps()
+        }
+
+        val reference = VerseTextFormatter.referenceFromSelectedVerses(selected, host.activeSplit0Book, host.chapter_1)
+        if (selected.size() == 1) {
+            val ftr = VerseRenderer.FormattedTextResult()
+            val ari = Ari.encodeWithBc(ariBc, selected.get(0))
+            val rawVerseText = host.activeSplit0Version.loadVerseText(ari) ?: ""
+            val info = App.services.storage.db.getHighlightColorRgb(ari)
+
+            VerseRenderer.render(ari = ari, text = rawVerseText, ftr = ftr)
+            TypeHighlightDialog(host.activity, ari, listener, colorRgb, info, reference, ftr.result)
+        } else {
+            TypeHighlightDialog(host.activity, ariBc, selected, listener, colorRgb, reference)
+        }
+        onComplete()
+    }
+
+    internal fun handleEsvsb(onComplete: () -> Unit) {
+        val selected = host.selectedVersesSplit0_1
+        if (selected.size() == 0) return
+
+        val ari = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, selected.get(0))
+
+        try {
+            val intent = Intent("yuku.esvsbasal.action.GOTO")
+            intent.putExtra("ari", ari)
+            host.activity.startActivity(intent)
+        } catch (e: Exception) {
+            AppLog.e(TAG, "ESVSB starting", e)
+        }
+        onComplete()
+    }
+
+    internal fun handleGuide(onComplete: () -> Unit) {
+        val ari = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, 0)
+
+        try {
+            host.activity.packageManager.getPackageInfo("org.sabda.pedia", 0)
+
+            val intent = Intent("org.sabda.pedia.action.VIEW")
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.putExtra("ari", ari)
+            host.activity.startActivity(intent)
+        } catch (_: PackageManager.NameNotFoundException) {
+            OtherAppIntegration.openMarket(host.activity, "org.sabda.pedia")
+        }
+        onComplete()
+    }
+
+    internal fun handleCommentary(onComplete: () -> Unit) {
+        val selected = host.selectedVersesSplit0_1
+        if (selected.size() == 0) return
+
+        val ari = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, selected.get(0))
+
+        try {
+            host.activity.packageManager.getPackageInfo("org.sabda.tafsiran", 0)
+
+            val intent = Intent("org.sabda.tafsiran.action.VIEW")
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.putExtra("ari", ari)
+            host.activity.startActivity(intent)
+        } catch (_: PackageManager.NameNotFoundException) {
+            OtherAppIntegration.openMarket(host.activity, "org.sabda.tafsiran")
+        }
+        onComplete()
+    }
+
+    internal fun handleDictionary(onComplete: () -> Unit) {
+        val selected = host.selectedVersesSplit0_1
+        if (selected.size() == 0) return
+
+        val ariBc = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, 0)
+        val aris = HashSet<Int>()
+        var i = 0
+        val len = selected.size()
+        while (i < len) {
+            val verse_1 = selected.get(i)
+            val ari = Ari.encodeWithBc(ariBc, verse_1)
+            aris.add(ari)
+            i++
+        }
+
+        actions.startDictionaryMode(aris)
+        onComplete()
+    }
+
+    internal fun handleRibkaReport(onComplete: () -> Unit) {
+        val selected = host.selectedVersesSplit0_1
+        if (selected.size() == 0) return
+
+        val ribkaEligibility = actions.checkRibkaEligibility()
+        if (ribkaEligibility != RibkaEligibility.None) {
+            val ari = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, selected.get(0))
+
+            val reference: String?
+            val verseText: String?
+            val versionDescription: String?
+
+            if (ribkaEligibility == RibkaEligibility.Main) {
+                reference = host.activeSplit0Version.reference(ari)
+                verseText = host.activeSplit0Version.loadVerseText(ari)
+                versionDescription = host.activeSplit0MVersion.description
+            } else {
+                reference = host.activeSplit1Version?.reference(ari)
+                verseText = host.activeSplit1Version?.loadVerseText(ari)
+                versionDescription = host.activeSplit1MVersion?.description
+            }
+
+            if (reference != null && verseText != null) {
+                host.activity.startActivity(RibkaReportActivity.createIntent(ari, reference, verseText, versionDescription))
+            }
+        }
+        onComplete()
+    }
+
+    internal fun handleExtension(extension: ExtensionManager.Info, onComplete: () -> Unit) {
+        val selected = host.selectedVersesSplit0_1
+        if (selected.size() == 0) return
+
+        val intent = Intent(ExtensionManager.ACTION_SHOW_VERSE_INFO)
+        intent.component = ComponentName(extension.activityInfo.packageName, extension.activityInfo.name)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+        val aris = IntArray(selected.size())
+        val ariBc = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, 0)
+        run {
+            var i = 0
+            val len = selected.size()
+            while (i < len) {
+                val verse_1 = selected.get(i)
+                val ari = Ari.encodeWithBc(ariBc, verse_1)
+                aris[i] = ari
+                i++
+            }
+        }
+        intent.putExtra("aris", aris)
+
+        if (extension.includeVerseText) {
+            val verseTexts = arrayOfNulls<String>(selected.size())
+            var i = 0
+            val len = selected.size()
+            while (i < len) {
+                val verse_1 = selected.get(i)
+
+                val verseText = host.dataSplit0.getVerseText(verse_1)
+                if (extension.includeVerseTextFormatting) {
+                    verseTexts[i] = verseText
+                } else {
+                    verseTexts[i] = FormattedVerseText.removeSpecialCodes(verseText)
+                }
+                i++
+            }
+            intent.putExtra("verseTexts", verseTexts)
+        }
+
+        try {
+            host.activity.startActivity(intent)
+        } catch (_: ActivityNotFoundException) {
+            MaterialAlertDialogBuilder(host.activity)
+                .setMessage("Error ANFE starting extension\n\n${extension.activityInfo.packageName}/${extension.activityInfo.name}")
+                .setPositiveButton(R.string.ok, null)
+                .show()
+        }
+
+        onComplete()
     }
 
     /**
@@ -623,4 +660,28 @@ class VerseActionModeController(
         val version: Version,
         val versionId: String,
     )
+
+    companion object {
+        internal fun isContiguous(selected: IntArrayList): Boolean {
+            if (selected.size() <= 1) return true
+            var next = selected.get(0) + 1
+            var i = 1
+            val len = selected.size()
+            while (i < len) {
+                val cur = selected.get(i)
+                if (next != cur) return false
+                next = cur + 1
+                i++
+            }
+            return true
+        }
+    }
+}
+
+/** Identifies which copy/share menu variant the user clicked. */
+enum class CopyShareVariant {
+    SinglePrimary,
+    SplitPrimary,
+    SplitSecondary,
+    SplitBoth,
 }

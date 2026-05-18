@@ -33,4 +33,8 @@
     <string name="pref_useComposeVerseItem_summary">Tampilkan tiap ayat dengan implementasi Jetpack Compose yang baru, bukan tampilan lama. Buka sebuah pasal untuk melihat perubahannya.</string>
     <string name="pref_useComposeGoto_title">Navigasi (Compose)</string>
     <string name="pref_useComposeGoto_summary">Tampilkan layar Navigasi versi Jetpack Compose yang baru, bukan implementasi lama dengan tab.</string>
+    <string name="pref_useComposeVerseActions_title">Panel pilihan ayat (Compose)</string>
+    <string name="pref_useComposeVerseActions_summary">Ganti bar aksi di atas dengan bottom sheet Material 3 yang lebih mudah dijangkau ibu jari ketika memilih ayat.</string>
+
+    <string name="verse_actions_sheet_hint_contiguous_only">Pilih ayat berurutan untuk membuat pembatas atau catatan.</string>
 </resources>
