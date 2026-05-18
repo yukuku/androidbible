@@ -40,4 +40,7 @@
 
 	<string name="pref_useComposeVerseItem_key" translatable="false">useComposeVerseItem</string>
 	<bool name="pref_useComposeVerseItem_default">false</bool>
+
+	<string name="pref_useComposeGoto_key" translatable="false">useComposeGoto</string>
+	<bool name="pref_useComposeGoto_default">false</bool>
 </resources>

@@ -34,4 +34,6 @@
     <string name="pref_experimental_warning">These options may be unstable. Toggle off if you see issues.</string>
     <string name="pref_useComposeVerseItem_title">Use Compose for verse items</string>
     <string name="pref_useComposeVerseItem_summary">Render each verse with the new Jetpack Compose implementation instead of the legacy custom view. Open a chapter to see the change.</string>
+    <string name="pref_useComposeGoto_title">Use Compose for the Navigation screen</string>
+    <string name="pref_useComposeGoto_summary">Show the new Jetpack Compose Navigation screen instead of the legacy tab-based implementation.</string>
 </resources>
