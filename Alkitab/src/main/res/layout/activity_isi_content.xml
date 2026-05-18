@@ -171,12 +171,13 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content" />
 
-		<androidx.compose.ui.platform.ComposeView
-			android:id="@+id/verse_actions_sheet"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content" />
-
 	</LinearLayout>
+
+	<androidx.compose.ui.platform.ComposeView
+		android:id="@+id/verse_actions_sheet"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="bottom" />
 
 	<yuku.alkitab.base.widget.Floater
 		android:id="@+id/floater"

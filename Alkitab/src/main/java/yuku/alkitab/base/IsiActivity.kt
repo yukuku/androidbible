@@ -532,11 +532,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // If layout is changed, updateToolbarLocation must be updated as well. This will be called in DEBUG to make sure
         // updateToolbarLocation is also updated when layout is updated.
         if (BuildConfig.DEBUG) {
-            if (root.childCount != 4 ||
+            if (root.childCount != 3 ||
                 root.getChildAt(0).id != R.id.toolbar ||
                 root.getChildAt(1).id != R.id.nontoolbar ||
-                root.getChildAt(2).id != R.id.audio_bar ||
-                root.getChildAt(3).id != R.id.verse_actions_sheet
+                root.getChildAt(2).id != R.id.audio_bar
             ) {
                 throw RuntimeException("Layout changed and this is no longer compatible with updateToolbarLocation")
             }
@@ -1404,29 +1403,25 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // - not fullscreen, toolbar at bottom
         // - not fullscreen, toolbar at top
 
-        // root contains 4 children: toolbar, nontoolbar, the audio bar, and
-        // the verse-actions sheet. The audio bar sits directly below the
-        // content; the verse-actions sheet sits below the audio bar (so it's
-        // always the bottom-most chrome). Order varies with toolbar-location.
+        // root contains 3 children: toolbar, nontoolbar, and the audio bar.
+        // The audio bar always sits directly below the content (above the
+        // bottom-anchored verse-nav toolbar when that mode is enabled), so
+        // the order varies with the toolbar-location preference.
 
         if (!fullScreen) {
             val audioBar = root.requireViewById<View>(R.id.audio_bar)
-            val verseActionsSheet = root.requireViewById<View>(R.id.verse_actions_sheet)
             root.removeView(toolbar)
             root.removeView(nontoolbar)
             root.removeView(audioBar)
-            root.removeView(verseActionsSheet)
 
             if (Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default)) {
                 root.addView(nontoolbar)
                 root.addView(audioBar)
-                root.addView(verseActionsSheet)
                 root.addView(toolbar)
             } else {
                 root.addView(toolbar)
                 root.addView(nontoolbar)
                 root.addView(audioBar)
-                root.addView(verseActionsSheet)
             }
         }
     }

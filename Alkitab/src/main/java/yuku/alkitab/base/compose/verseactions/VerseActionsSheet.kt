@@ -3,7 +3,6 @@ package yuku.alkitab.base.compose.verseactions
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,9 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.CompareArrows
@@ -40,6 +37,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -53,18 +51,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
@@ -76,31 +70,29 @@ import yuku.alkitab.debug.R
  * Bottom-anchored verse-actions sheet rendered when the experimental
  * `pref_useComposeVerseActions` flag is on.
  *
+ * Hosted by the `verse_actions_sheet` [ComposeView][androidx.compose.ui.platform.ComposeView]
+ * placed inside `overlayContainer` (the activity's root FrameLayout) with
+ * `layout_gravity=bottom`. The sheet sits on top of the reader — it never
+ * resizes `nontoolbar` — so the verse list keeps its full height.
+ *
  * Two-state design:
- *  - **Collapsed dock** (default when verses get selected): a slim ~140dp
- *    panel showing the drag handle, the reference + count, a close button,
- *    and the primary action buttons. Reader content shrinks by exactly this
- *    much, so on every screen orientation (including landscape with the
- *    side-by-side horizontal split) the reader keeps most of its real
- *    estate.
- *  - **Expanded sheet**: drag the dock upward to reveal the secondary
- *    chip row (Bandingkan, Panduan, Tafsiran, Kamus, Koreksi AYT,
- *    extensions) and the contiguous-selection hint. The reader shrinks
- *    further only while expanded.
+ *  - **Compact dock**: a slim panel with a drag handle, a single-line
+ *    count + close button row, and a row of icon-only action buttons.
+ *  - **Expanded sheet**: drag upward to reveal the secondary chip row
+ *    (Bandingkan, Panduan, Tafsiran, Kamus, Koreksi AYT, extensions) and
+ *    the contiguous-only hint.
  *
  * Gestures:
- *  - Drag the dock upward past the midpoint between dock height and full
- *    height → snap open to the full sheet.
- *  - Drag the full sheet downward past that midpoint → snap back to the
- *    dock.
- *  - Drag the dock downward past ~40% of its height → animate the whole
- *    thing off-screen and unchecks the selection via
- *    [VerseActionsSheetCallbacks.onClose].
+ *  - Drag dock upward past midpoint → snap open.
+ *  - Drag expanded downward past midpoint → snap to dock.
+ *  - Drag dock downward past `DISMISS_FRACTION` → off-screen + clears
+ *    selection through [VerseActionsSheetCallbacks.onClose].
  *
- * The composable owns no selection state; [VerseActionsSheetState] is
- * recomputed by [ComposeVerseActionsController] on every selection change.
+ * Custom [Layout] measures the Surface unbounded (`Constraints.Infinity`)
+ * so the natural full-content height is known regardless of the
+ * currently-clipped visible region.
  */
-private val DOCK_HEIGHT = 140.dp
+private val DOCK_HEIGHT = 120.dp
 private const val DRAG_SETTLE_ANIMATION_MS = 220
 private const val SHOW_HIDE_ANIMATION_MS = 220
 private const val DISMISS_FRACTION = 0.4f
@@ -119,8 +111,6 @@ fun VerseActionsSheet(
     val height = remember { Animatable(0f) }
     var fullPx by remember { mutableFloatStateOf(0f) }
 
-    // Drive open/close on the `visible` flag. Once shown, the user controls
-    // expansion by dragging; we only animate to 0 when hidden externally.
     LaunchedEffect(visible) {
         if (visible) {
             if (height.value < dockPx) height.animateTo(dockPx, tween(SHOW_HIDE_ANIMATION_MS))
@@ -129,13 +119,9 @@ fun VerseActionsSheet(
         }
     }
 
-    // When the visible selection becomes empty, the controller pushes
-    // `visible = false`; nothing left to render once the collapse animation
-    // finishes.
     if (!visible && height.value == 0f && state == null) return
 
     val s = state
-
     val visibleHeightPx = height.value
 
     Layout(
@@ -182,8 +168,8 @@ fun VerseActionsSheet(
                             .windowInsetsPadding(WindowInsets.navigationBars),
                     ) {
                         DragHandle()
-                        Header(state = s, onClose = callbacks::onClose)
-                        PrimaryActionRow(state = s, callbacks = callbacks)
+                        HeaderRow(state = s, onClose = callbacks::onClose)
+                        ActionIconRow(state = s, callbacks = callbacks)
                         SecondaryChipRow(state = s, callbacks = callbacks)
                         if (!s.isContiguous && s.verseCount > 1) {
                             ContiguousHint()
@@ -194,9 +180,6 @@ fun VerseActionsSheet(
             }
         },
     ) { measurables, constraints ->
-        // Measure the Surface unbounded so we learn its full natural height
-        // (otherwise the parent's `visible` height would clip the measurement
-        // and we'd never be able to grow past the dock).
         val unbounded = constraints.copy(maxHeight = Constraints.Infinity)
         val placeable = measurables.firstOrNull()?.measure(unbounded)
         val natural = placeable?.height ?: 0
@@ -224,7 +207,7 @@ private fun DragHandle() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 10.dp, bottom = 4.dp),
+            .padding(top = 8.dp, bottom = 2.dp),
         contentAlignment = Alignment.Center,
     ) {
         Box(
@@ -237,34 +220,25 @@ private fun DragHandle() {
 }
 
 @Composable
-private fun Header(state: VerseActionsSheetState, onClose: () -> Unit) {
+private fun HeaderRow(state: VerseActionsSheetState, onClose: () -> Unit) {
+    val countText = if (state.isSingle) {
+        stringResource(R.string.verse_select_one_verse_selected)
+    } else {
+        stringResource(R.string.verse_select_multiple_verse_selected, state.verseCount.toString())
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 12.dp, top = 2.dp, bottom = 2.dp),
+            .padding(start = 20.dp, end = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = state.reference,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            val countText = if (state.isSingle) {
-                stringResource(R.string.verse_select_one_verse_selected)
-            } else {
-                stringResource(R.string.verse_select_multiple_verse_selected, state.verseCount.toString())
-            }
-            Text(
-                text = countText,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        FilledTonalIconButton(onClick = onClose) {
+        Text(
+            text = countText,
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.weight(1f),
+        )
+        IconButton(onClick = onClose) {
             Icon(
                 imageVector = Icons.Outlined.Close,
                 contentDescription = stringResource(R.string.desc_close),
@@ -274,22 +248,20 @@ private fun Header(state: VerseActionsSheetState, onClose: () -> Unit) {
 }
 
 @Composable
-private fun PrimaryActionRow(
+private fun ActionIconRow(
     state: VerseActionsSheetState,
     callbacks: VerseActionsSheetCallbacks,
 ) {
-    val configuration = LocalConfiguration.current
-    val horizontalPad = if (configuration.screenWidthDp < 360) 4.dp else 12.dp
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = horizontalPad, vertical = 2.dp),
+            .padding(horizontal = 12.dp, vertical = 2.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.Top,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        SplitableActionButton(
+        SplitableActionIcon(
             icon = Icons.Outlined.ContentCopy,
-            label = stringResource(R.string.salin_ayat),
+            contentDescription = stringResource(R.string.salin_ayat),
             isSplit = state.isSplit,
             splitVariantLabels = listOf(
                 R.string.copy_split0,
@@ -298,9 +270,9 @@ private fun PrimaryActionRow(
             ),
             onInvoke = callbacks::onCopy,
         )
-        SplitableActionButton(
+        SplitableActionIcon(
             icon = Icons.Outlined.Share,
-            label = stringResource(R.string.menuShare),
+            contentDescription = stringResource(R.string.menuShare),
             isSplit = state.isSplit,
             splitVariantLabels = listOf(
                 R.string.menuShareSplit0,
@@ -309,21 +281,21 @@ private fun PrimaryActionRow(
             ),
             onInvoke = callbacks::onShare,
         )
-        PrimaryActionButton(
+        ActionIcon(
             icon = Icons.Outlined.BorderColor,
-            label = stringResource(R.string.highlight_stabilo),
+            contentDescription = stringResource(R.string.highlight_stabilo),
             enabled = true,
             onClick = callbacks::onAddHighlight,
         )
-        PrimaryActionButton(
+        ActionIcon(
             icon = Icons.Outlined.Bookmark,
-            label = stringResource(R.string.tambah_pembatas_buku),
+            contentDescription = stringResource(R.string.tambah_pembatas_buku),
             enabled = state.isContiguous,
             onClick = callbacks::onAddBookmark,
         )
-        PrimaryActionButton(
+        ActionIcon(
             icon = Icons.Outlined.EditNote,
-            label = stringResource(R.string.tulis_catatan),
+            contentDescription = stringResource(R.string.tulis_catatan),
             enabled = state.isContiguous,
             onClick = callbacks::onAddNote,
         )
@@ -343,7 +315,7 @@ private fun SecondaryChipRow(
     FlowRow(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp),
+            .padding(horizontal = 16.dp, vertical = 6.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
@@ -420,68 +392,41 @@ private fun ContiguousHint() {
 }
 
 @Composable
-private fun PrimaryActionButton(
+private fun ActionIcon(
     icon: ImageVector,
-    label: String,
+    contentDescription: String,
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    val container = MaterialTheme.colorScheme.secondaryContainer
-    val onContainer = MaterialTheme.colorScheme.onSecondaryContainer
-    Column(
-        modifier = Modifier
-            .width(72.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .clickable(enabled = enabled, onClick = onClick)
-            .padding(vertical = 4.dp)
-            .alpha(if (enabled) 1f else 0.38f),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+    FilledTonalIconButton(
+        onClick = onClick,
+        enabled = enabled,
     ) {
-        Box(
-            modifier = Modifier
-                .size(44.dp)
-                .background(container, CircleShape),
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = onContainer,
-            )
-        }
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center,
-        )
+        Icon(imageVector = icon, contentDescription = contentDescription)
     }
 }
 
 /**
- * Copy / Share — single tap acts directly when there's only one version active;
- * when split is on, opens a Material 3 dropdown asking which version(s) to use.
+ * Copy / Share — single tap acts directly when only one version is active;
+ * with split on, opens a Material 3 dropdown asking which version(s).
  *
  * [splitVariantLabels] is `[primary, secondary, both]` and must use Copy- vs
  * Share-specific phrasing because the existing strings include the verb
  * ("Salin versi utama" vs "Bagikan versi utama").
  */
 @Composable
-private fun SplitableActionButton(
+private fun SplitableActionIcon(
     icon: ImageVector,
-    label: String,
+    contentDescription: String,
     isSplit: Boolean,
     splitVariantLabels: List<Int>,
     onInvoke: (CopyShareVariant) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
     Box {
-        PrimaryActionButton(
+        ActionIcon(
             icon = icon,
-            label = label,
+            contentDescription = contentDescription,
             enabled = true,
             onClick = {
                 if (isSplit) expanded = true
