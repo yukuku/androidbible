@@ -10,5 +10,11 @@
 			android:summary="@string/pref_useComposeVerseItem_summary"
 			android:title="@string/pref_useComposeVerseItem_title" />
 
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="@string/pref_useComposeGoto_key"
+			android:summary="@string/pref_useComposeGoto_summary"
+			android:title="@string/pref_useComposeGoto_title" />
+
 	</PreferenceCategory>
 </PreferenceScreen>
