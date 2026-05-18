@@ -145,12 +145,25 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             controller = actionModeController,
             composeView = findViewById(R.id.verse_actions_sheet),
             onSheetAppeared = { firstSelectedVerse_1 ->
-                // The reader shrinks when the sheet expands; if the just-selected
-                // verse was near the bottom, position it ~20% from the top of
-                // the now-smaller viewport so the user can keep tapping nearby
-                // verses to extend the selection.
-                val target = if (activeSplit1 != null) lsSplit1 else lsSplit0
-                target.scrollToVerse(firstSelectedVerse_1, 0.2f)
+                // The reader shrinks when the dock appears; if the just-selected
+                // verse was near the bottom of the now-shorter viewport, scroll
+                // it ~20% from the top so the user can keep tapping adjacent
+                // verses to extend the selection. In a horizontal split the
+                // two panes stack side-by-side and both lose bottom space, so
+                // scroll both — in a vertical split only the lower pane (split1)
+                // does, and with no split only split0 is on screen.
+                when {
+                    activeSplit1 == null -> {
+                        lsSplit0.scrollToVerse(firstSelectedVerse_1, 0.2f)
+                    }
+                    splitRoot.orientation == android.widget.LinearLayout.HORIZONTAL -> {
+                        lsSplit0.scrollToVerse(firstSelectedVerse_1, 0.2f)
+                        lsSplit1.scrollToVerse(firstSelectedVerse_1, 0.2f)
+                    }
+                    else -> {
+                        lsSplit1.scrollToVerse(firstSelectedVerse_1, 0.2f)
+                    }
+                }
             },
         )
     }

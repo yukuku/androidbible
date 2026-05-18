@@ -1,12 +1,7 @@
 package yuku.alkitab.base.compose.verseactions
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
@@ -20,7 +15,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -61,15 +55,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
@@ -80,18 +76,35 @@ import yuku.alkitab.debug.R
  * Bottom-anchored verse-actions sheet rendered when the experimental
  * `pref_useComposeVerseActions` flag is on.
  *
- * Non-modal by design: it leaves the chapter content above untouched so the user
- * can extend the selection (tap more verses) without dismissing the sheet, and
- * sits near the thumb regardless of the user's top/bottom toolbar preference.
+ * Two-state design:
+ *  - **Collapsed dock** (default when verses get selected): a slim ~140dp
+ *    panel showing the drag handle, the reference + count, a close button,
+ *    and the primary action buttons. Reader content shrinks by exactly this
+ *    much, so on every screen orientation (including landscape with the
+ *    side-by-side horizontal split) the reader keeps most of its real
+ *    estate.
+ *  - **Expanded sheet**: drag the dock upward to reveal the secondary
+ *    chip row (Bandingkan, Panduan, Tafsiran, Kamus, Koreksi AYT,
+ *    extensions) and the contiguous-selection hint. The reader shrinks
+ *    further only while expanded.
  *
- * Drag the sheet downward to dismiss — past `DISMISS_THRESHOLD_FRACTION` of the
- * sheet height it animates fully off-screen and unchecks the selection through
- * [VerseActionsSheetCallbacks.onClose]; below the threshold it springs back.
+ * Gestures:
+ *  - Drag the dock upward past the midpoint between dock height and full
+ *    height → snap open to the full sheet.
+ *  - Drag the full sheet downward past that midpoint → snap back to the
+ *    dock.
+ *  - Drag the dock downward past ~40% of its height → animate the whole
+ *    thing off-screen and unchecks the selection via
+ *    [VerseActionsSheetCallbacks.onClose].
  *
- * Visibility is driven externally — pass `visible = true/false` to slide in/out.
- * The composable owns no selection state; [VerseActionsSheetState] is recomputed
- * by [ComposeVerseActionsController] on every selection change.
+ * The composable owns no selection state; [VerseActionsSheetState] is
+ * recomputed by [ComposeVerseActionsController] on every selection change.
  */
+private val DOCK_HEIGHT = 140.dp
+private const val DRAG_SETTLE_ANIMATION_MS = 220
+private const val SHOW_HIDE_ANIMATION_MS = 220
+private const val DISMISS_FRACTION = 0.4f
+
 @Composable
 fun VerseActionsSheet(
     visible: Boolean,
@@ -99,88 +112,110 @@ fun VerseActionsSheet(
     callbacks: VerseActionsSheetCallbacks,
     modifier: Modifier = Modifier,
 ) {
-    AnimatedVisibility(
-        visible = visible && state != null,
-        enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
-        exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
-        modifier = modifier,
-    ) {
-        val s = state ?: return@AnimatedVisibility
-        SheetContent(state = s, callbacks = callbacks)
-    }
-}
-
-private const val DISMISS_THRESHOLD_FRACTION = 0.35f
-private const val DRAG_SETTLE_ANIMATION_MS = 200
-
-@Composable
-private fun SheetContent(
-    state: VerseActionsSheetState,
-    callbacks: VerseActionsSheetCallbacks,
-) {
+    val density = LocalDensity.current
+    val dockPx = with(density) { DOCK_HEIGHT.toPx() }
     val scope = rememberCoroutineScope()
-    val dragOffsetY = remember { Animatable(0f) }
-    var sheetHeightPx by remember { mutableFloatStateOf(0f) }
 
-    Surface(
-        modifier = Modifier
+    val height = remember { Animatable(0f) }
+    var fullPx by remember { mutableFloatStateOf(0f) }
+
+    // Drive open/close on the `visible` flag. Once shown, the user controls
+    // expansion by dragging; we only animate to 0 when hidden externally.
+    LaunchedEffect(visible) {
+        if (visible) {
+            if (height.value < dockPx) height.animateTo(dockPx, tween(SHOW_HIDE_ANIMATION_MS))
+        } else {
+            if (height.value > 0f) height.animateTo(0f, tween(SHOW_HIDE_ANIMATION_MS))
+        }
+    }
+
+    // When the visible selection becomes empty, the controller pushes
+    // `visible = false`; nothing left to render once the collapse animation
+    // finishes.
+    if (!visible && height.value == 0f && state == null) return
+
+    val s = state
+
+    val visibleHeightPx = height.value
+
+    Layout(
+        modifier = modifier
             .fillMaxWidth()
-            .offset { IntOffset(0, dragOffsetY.value.roundToInt()) }
-            .onSizeChanged { sheetHeightPx = it.height.toFloat() }
+            .clipToBounds()
             .pointerInput(Unit) {
                 detectVerticalDragGestures(
-                    onVerticalDrag = { change, dragAmount ->
+                    onVerticalDrag = { change, delta ->
                         change.consume()
                         scope.launch {
-                            val next = (dragOffsetY.value + dragAmount).coerceIn(
-                                minimumValue = 0f,
-                                maximumValue = if (sheetHeightPx > 0f) sheetHeightPx else Float.MAX_VALUE,
-                            )
-                            dragOffsetY.snapTo(next)
+                            val cap = if (fullPx > 0f) fullPx else dockPx
+                            val next = (height.value - delta).coerceIn(0f, cap)
+                            height.snapTo(next)
                         }
                     },
                     onDragEnd = {
                         scope.launch {
-                            val dismissPx = sheetHeightPx * DISMISS_THRESHOLD_FRACTION
-                            if (sheetHeightPx > 0f && dragOffsetY.value >= dismissPx) {
-                                dragOffsetY.animateTo(sheetHeightPx, tween(DRAG_SETTLE_ANIMATION_MS))
-                                callbacks.onClose()
-                            } else {
-                                dragOffsetY.animateTo(0f, tween(DRAG_SETTLE_ANIMATION_MS))
-                            }
+                            val target = nearestAnchor(height.value, dockPx, fullPx)
+                            height.animateTo(target, tween(DRAG_SETTLE_ANIMATION_MS))
+                            if (target == 0f) callbacks.onClose()
                         }
                     },
                     onDragCancel = {
-                        scope.launch { dragOffsetY.animateTo(0f, tween(DRAG_SETTLE_ANIMATION_MS)) }
+                        scope.launch {
+                            val target = nearestAnchor(height.value, dockPx, fullPx)
+                            height.animateTo(target, tween(DRAG_SETTLE_ANIMATION_MS))
+                        }
                     },
                 )
             },
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-        tonalElevation = 6.dp,
-        shadowElevation = 24.dp,
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .windowInsetsPadding(WindowInsets.navigationBars),
-        ) {
-            DragHandle()
-            Header(state = state, onClose = callbacks::onClose)
-            PrimaryActionRow(state = state, callbacks = callbacks)
-            SecondaryChipRow(state = state, callbacks = callbacks)
-            if (!state.isContiguous && state.verseCount > 1) {
-                ContiguousHint()
+        content = {
+            if (s != null) {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+                    tonalElevation = 6.dp,
+                    shadowElevation = 24.dp,
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .windowInsetsPadding(WindowInsets.navigationBars),
+                    ) {
+                        DragHandle()
+                        Header(state = s, onClose = callbacks::onClose)
+                        PrimaryActionRow(state = s, callbacks = callbacks)
+                        SecondaryChipRow(state = s, callbacks = callbacks)
+                        if (!s.isContiguous && s.verseCount > 1) {
+                            ContiguousHint()
+                        }
+                        Spacer(Modifier.height(8.dp))
+                    }
+                }
             }
-            Spacer(Modifier.height(8.dp))
+        },
+    ) { measurables, constraints ->
+        // Measure the Surface unbounded so we learn its full natural height
+        // (otherwise the parent's `visible` height would clip the measurement
+        // and we'd never be able to grow past the dock).
+        val unbounded = constraints.copy(maxHeight = Constraints.Infinity)
+        val placeable = measurables.firstOrNull()?.measure(unbounded)
+        val natural = placeable?.height ?: 0
+        if (natural > 0 && natural.toFloat() != fullPx) fullPx = natural.toFloat()
+        val visible = visibleHeightPx.roundToInt().coerceIn(0, natural)
+        layout(constraints.maxWidth, visible) {
+            placeable?.placeRelative(0, 0)
         }
     }
+}
 
-    // Defensive: when the sheet remounts (selection appeared again after a
-    // drag-out dismissal) Animatable is reconstructed fresh by `remember`, but
-    // make the contract obvious here.
-    LaunchedEffect(state.reference, state.verseCount) {
-        if (dragOffsetY.value != 0f) dragOffsetY.snapTo(0f)
+private fun nearestAnchor(current: Float, dock: Float, full: Float): Float {
+    if (dock <= 0f) return 0f
+    val dismissBound = dock * DISMISS_FRACTION
+    return when {
+        current <= dismissBound -> 0f
+        full <= dock -> dock
+        current < (dock + full) * 0.5f -> dock
+        else -> full
     }
 }
 
@@ -196,7 +231,7 @@ private fun DragHandle() {
             modifier = Modifier
                 .size(width = 36.dp, height = 4.dp)
                 .clip(RoundedCornerShape(2.dp))
-                .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f)),
+                .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)),
         )
     }
 }
@@ -206,7 +241,7 @@ private fun Header(state: VerseActionsSheetState, onClose: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 12.dp, top = 4.dp, bottom = 4.dp),
+            .padding(start = 20.dp, end = 12.dp, top = 2.dp, bottom = 2.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
@@ -225,7 +260,7 @@ private fun Header(state: VerseActionsSheetState, onClose: () -> Unit) {
             }
             Text(
                 text = countText,
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
@@ -248,7 +283,7 @@ private fun PrimaryActionRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = horizontalPad, vertical = 6.dp),
+            .padding(horizontal = horizontalPad, vertical = 2.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.Top,
     ) {
@@ -398,14 +433,14 @@ private fun PrimaryActionButton(
             .width(72.dp)
             .clip(RoundedCornerShape(16.dp))
             .clickable(enabled = enabled, onClick = onClick)
-            .padding(vertical = 6.dp)
+            .padding(vertical = 4.dp)
             .alpha(if (enabled) 1f else 0.38f),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(6.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Box(
             modifier = Modifier
-                .size(48.dp)
+                .size(44.dp)
                 .background(container, CircleShape),
             contentAlignment = Alignment.Center,
         ) {
