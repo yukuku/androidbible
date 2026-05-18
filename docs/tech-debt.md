@@ -1,6 +1,6 @@
 # Tech Debt, Improvements & Critiques
 
-## TD-01: IsiActivity God Class (~2371 lines)
+## TD-01: IsiActivity Mega Class (~2371 lines)
 
 **File:** `Alkitab/src/main/java/yuku/alkitab/base/IsiActivity.kt`
 
@@ -243,7 +243,7 @@ BUILD_DIST=market \
 
 ---
 
-## TD-15: S.kt — God Object Service Locator
+## TD-15: S.kt — Monolithic Service Locator
 
 **File:** `Alkitab/src/main/java/yuku/alkitab/base/S.kt` (313 lines)
 
