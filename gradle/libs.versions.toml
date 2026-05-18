@@ -81,8 +81,8 @@ androidx-test-core = { group = "androidx.test", name = "core", version.ref = "an
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExt" }
 androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
 
-# Room — persistence ORM for newly migrated tables (REM-11 onwards).
-# See docs/superpowers/specs/2026-05-13-rem-11-room-version-table-design.md.
+# Room — persistence ORM backing the Songs subsystem (REM-32).
+# See docs/superpowers/specs/2026-05-15-rem-32-room-song-db-design.md.
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }

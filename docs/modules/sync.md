@@ -42,12 +42,10 @@ Operations: `add`, `mod`, `del`
 
 ## Conflict Resolution
 
-The sync uses a shadow table (`sync_shadow` in Room's `AlkitabRoomDb` since REM-31) to track the last-synced state. When applying server deltas:
+The sync uses a shadow table (`SyncShadow`) to track the last-synced state. When applying server deltas:
 1. If the entity hasn't changed locally since last sync → apply server version
 2. If the entity changed locally → server wins (last-write-wins for most fields)
 3. Partial sync threshold: 100 operations per batch
-
-The client-side patch is last-write-wins for every Mabel entity and for progress pins: concurrent edits to the same highlight color or pin position on two devices silently discard one side. Notes and bookmark captions are merged server-side before deltas are emitted.
 
 ## FCM Integration
 
@@ -55,15 +53,11 @@ When a sync completes on one device, the server sends an FCM message to other re
 
 FCM configuration differs between debug (uses `RIBKA_FUNCTIONS_HOST_DEBUG` at `10.0.3.2:5001`) and release builds.
 
-Registration retry: a failed FCM token send sets `Prefkey.fcm_registration_pending = true`. In-process, `Sync.sendFcmRegistrationId` retries up to three times on a daemon `ScheduledExecutorService` (`fcmRetryExecutor`) at 1 min / 5 min / 30 min, clearing the flag on success. Cross-launch, `App.staticInit()` calls `Sync.retryPendingFcmRegistrationIfNeeded(registrationId)` to re-enter the send when the flag is still set after a process death.
-
 ## Authentication
 
 Simple token-based auth stored in `Prefkey.sync_simpleToken`. Login flow is handled by `SyncLoginActivity`.
 
 ## Database Tables
 
-Both live in Room's `AlkitabRoomDb` (REM-31). The legacy `SyncShadow` / `SyncLog` tables in `AlkitabDb` are kept around purely as a rollback safety net and are no longer written to.
-
-- **`sync_shadow`** — stores the last-synced state of each entity for conflict detection. A row's `data` BLOB can exceed the Android 2 MB CursorWindow limit, so `SyncShadowDao.getBySyncSetName` reads it in 1 MB chunks via SQLite's `substr()`.
-- **`sync_log`** — audit log of sync operations for debugging (viewable in `SyncLogActivity`).
+- **SyncShadow** — stores the last-synced state of each entity for conflict detection
+- **SyncLog** — audit log of sync operations for debugging (viewable in `SyncLogActivity`)

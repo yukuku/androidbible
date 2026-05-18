@@ -1,7 +1,6 @@
 package yuku.alkitab.base.storage
 
 import android.app.Application
-import androidx.room.Room
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -14,7 +13,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
-import yuku.alkitab.base.storage.room.AppDatabase
 import yuku.alkitab.base.util.Highlights
 import yuku.alkitab.model.Marker
 import yuku.alkitab.model.Marker_Label
@@ -49,7 +47,6 @@ import java.util.Date
 @Config(application = Application::class, sdk = [34])
 class InternalDbTest {
     private lateinit var helper: InternalDbHelper
-    private lateinit var roomDb: AppDatabase
     private lateinit var db: InternalDb
 
     @Before
@@ -58,23 +55,11 @@ class InternalDbTest {
         yuku.afw.App.context = app
 
         helper = InternalDbHelper(app)
-        // Marker / Label / Marker_Label rows now live in Room (REM-10). The
-        // facade DAOs ([MarkerDao] / [LabelDao] / [Marker_LabelDao]) resolve
-        // through [AppDatabase.get], so we install a fresh in-memory Room DB
-        // here and tear it down in [tearDown]. The legacy SQLite helper is
-        // still constructed because the facade constructors accept it (for
-        // backwards-compat signature) and because the other DAOs
-        // (Devotion / ProgressMark / ReadingPlan / etc.) still read it.
-        roomDb = Room.inMemoryDatabaseBuilder(app, AppDatabase::class.java)
-            .allowMainThreadQueries()
-            .build()
-        AppDatabase.setForTesting(roomDb)
         db = InternalDb(helper)
     }
 
     @After
     fun tearDown() {
-        AppDatabase.setForTesting(null)
         helper.close()
     }
 
@@ -667,79 +652,6 @@ class InternalDbTest {
         assertNotNull(loaded)
         assertEquals("marker-gid", loaded!!.marker_gid)
         assertEquals("label-gid", loaded.label_gid)
-    }
-
-    // endregion
-
-    // region listMarkers (REM-10 — exercises the @RawQuery escape hatch)
-    //
-    // Three branches: no restriction (label_id == 0), no-label
-    // (label_id == LABELID_noLabel), and filter-by-label (label_id > 0). Each
-    // composes its own SQL string; each must mirror the legacy behavior.
-
-    @Test
-    fun `listMarkers with label_id zero returns every marker of the kind sorted by the requested column`() {
-        val now = Date(1_700_000_000_000L)
-        val later = Date(1_700_000_100_000L)
-        val a = db.insertMarker(Ari.encode(0, 1, 1), Marker.Kind.bookmark, "a", 1, now, now)
-        val b = db.insertMarker(Ari.encode(0, 1, 2), Marker.Kind.bookmark, "b", 1, later, later)
-        // Different kind — must not appear.
-        db.insertMarker(Ari.encode(0, 1, 3), Marker.Kind.note, "n", 1, now, now)
-
-        // sort by ari asc
-        val byAri = db.listMarkers(Marker.Kind.bookmark, 0L, Db.Marker.ari, true)
-        assertEquals(listOf(a._id, b._id), byAri.map { it._id })
-
-        // sort by modifyTime desc (the default in the UI)
-        val byModify = db.listMarkers(Marker.Kind.bookmark, 0L, Db.Marker.modifyTime, false)
-        assertEquals(listOf(b._id, a._id), byModify.map { it._id })
-    }
-
-    @Test
-    fun `listMarkers with LABELID_noLabel excludes markers that have any label association`() {
-        val now = Date(1_700_000_000_000L)
-        val labelled = db.insertMarker(Ari.encode(0, 1, 1), Marker.Kind.bookmark, "labelled", 1, now, now)
-        val unlabelled = db.insertMarker(Ari.encode(0, 1, 2), Marker.Kind.bookmark, "free", 1, now, now)
-        val label = db.insertLabel("L", null)
-        db.updateLabels(labelled, setOf(label))
-
-        val results = db.listMarkers(
-            Marker.Kind.bookmark,
-            yuku.alkitab.base.ac.MarkerListActivity.LABELID_noLabel.toLong(),
-            Db.Marker.ari,
-            true,
-        )
-        assertEquals(listOf(unlabelled._id), results.map { it._id })
-    }
-
-    @Test
-    fun `listMarkers with a positive label_id filters to markers tagged with that label`() {
-        val now = Date(1_700_000_000_000L)
-        val m1 = db.insertMarker(Ari.encode(0, 1, 1), Marker.Kind.bookmark, "m1", 1, now, now)
-        val m2 = db.insertMarker(Ari.encode(0, 1, 2), Marker.Kind.bookmark, "m2", 1, now, now)
-        val m3 = db.insertMarker(Ari.encode(0, 1, 3), Marker.Kind.bookmark, "m3", 1, now, now)
-        val la = db.insertLabel("A", null)
-        val lb = db.insertLabel("B", null)
-        db.updateLabels(m1, setOf(la))
-        db.updateLabels(m2, setOf(la, lb))
-        db.updateLabels(m3, setOf(lb))
-
-        val tagsA = db.listMarkers(Marker.Kind.bookmark, la._id, Db.Marker.ari, true)
-        assertEquals(setOf(m1._id, m2._id), tagsA.map { it._id }.toSet())
-
-        val tagsB = db.listMarkers(Marker.Kind.bookmark, lb._id, Db.Marker.ari, true)
-        assertEquals(setOf(m2._id, m3._id), tagsB.map { it._id }.toSet())
-    }
-
-    @Test
-    fun `listMarkers sort by caption is case-insensitive`() {
-        val now = Date(1_700_000_000_000L)
-        val a = db.insertMarker(Ari.encode(0, 1, 1), Marker.Kind.bookmark, "apple", 1, now, now)
-        val b = db.insertMarker(Ari.encode(0, 1, 2), Marker.Kind.bookmark, "Banana", 1, now, now)
-        val c = db.insertMarker(Ari.encode(0, 1, 3), Marker.Kind.bookmark, "Cherry", 1, now, now)
-
-        val sorted = db.listMarkers(Marker.Kind.bookmark, 0L, Db.Marker.caption, true)
-        assertEquals(listOf(a._id, b._id, c._id), sorted.map { it._id })
     }
 
     // endregion

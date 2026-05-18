@@ -1,52 +1,23 @@
 package yuku.alkitab.base.storage
 
-import androidx.sqlite.db.SimpleSQLiteQuery
+import android.content.ContentValues
+import android.database.DatabaseUtils
 import com.google.gson.reflect.TypeToken
 import yuku.alkitab.base.App
 import yuku.alkitab.base.model.SyncLog
 import yuku.alkitab.base.model.SyncShadow
-import yuku.alkitab.base.storage.room.AppDatabase
-import yuku.alkitab.base.storage.room.SyncLogEntity
-import yuku.alkitab.base.storage.room.SyncShadowRoomDao
 import yuku.alkitab.base.sync.SyncRecorder
 import yuku.alkitab.base.util.Sqlitil
 
 /**
- * Facade over the Room-backed [SyncShadowRoomDao] that preserves the
- * legacy `SyncShadow` / `SyncLog` public surface. Existing call sites in
- * [InternalDb] don't need to change.
+ * Type-safe accessor for the `SyncShadow` and `SyncLog` tables. Both belong
+ * to the sync subsystem and are commonly written together during sync
+ * application.
  *
- * Two tables, one facade: both belong to the sync subsystem and are
- * commonly written together during sync application (a successful sync
- * push writes a new shadow and appends an `apply_result` log row).
- *
- * Cross-file note: this DAO is constructed with [InternalDbHelper] only so
- * its constructor signature stays unchanged. The helper is no longer used
- * internally; [AppDatabase] supplies the underlying SQLite file. The
- * one-time data copy runs in
- * [yuku.alkitab.base.storage.room.SyncShadowDataMigration].
- *
- * Chunked blob read: a sync shadow row's `data` column can exceed the
- * Android CursorWindow's 2 MB limit (full Mabel snapshots routinely cross
- * that mark). Room can't express chunked `substr()` cursors natively, so
- * [getBySyncSetName] drops down to `SupportSQLiteDatabase` raw queries
- * with SQLite's `substr()` to walk the blob in 1 MB chunks under a single
- * transaction — same approach as before, just running against Room's
- * underlying SQLite handle.
+ * Note: [getBySyncSetName] chunks its blob read because a shadow row can
+ * exceed the Android CursorWindow's 2 MB limit.
  */
-@Suppress("UNUSED_PARAMETER")
-class SyncShadowDao(helper: InternalDbHelper) {
-
-    // Resolve the Room DAO once per facade instance. `SyncShadowDao` is
-    // held as a long-lived field on `InternalDb` (constructed inside
-    // `S.db`'s lazy init), so resolving the Room singleton on every
-    // property access would re-enter `AppDatabase.get()`'s
-    // volatile-read-then-synchronized path on every call from
-    // `SyncRecorder.log` and friends. Caching it via `by lazy` keeps the
-    // hot path to a single field read after the first resolution.
-    private val roomDao: SyncShadowRoomDao by lazy {
-        AppDatabase.get(yuku.afw.App.context).syncShadowDao()
-    }
+class SyncShadowDao(private val helper: InternalDbHelper) {
 
     // region SyncShadow
 
@@ -54,34 +25,51 @@ class SyncShadowDao(helper: InternalDbHelper) {
      * Reads a sync shadow row, streaming the `data` blob in 1 MB chunks to
      * avoid the system CursorWindow 2 MB cap.
      *
-     * Runs inside a transaction so the summary probe and chunk reads
-     * observe a consistent view of the row.
+     * Runs inside a transaction so the length probe and chunk reads observe a
+     * consistent view of the row.
      */
     fun getBySyncSetName(syncSetName: String): SyncShadow? {
-        val roomDb = AppDatabase.get(yuku.afw.App.context)
-        val support = roomDb.openHelper.readableDatabase
-        support.beginTransactionNonExclusive()
+        val db = helper.readableDatabase
+        db.beginTransactionNonExclusive()
         try {
-            val summary = roomDao.findShadowSummaryBySyncSetName(syncSetName) ?: return null
+            val dataLen: Int
+            val id: Long
+            val revno: Int
 
-            val data = ByteArray(summary.dataLen)
+            db.rawQuery(
+                "select ${Table.SyncShadow.revno.name}," +
+                    " length(${Table.SyncShadow.data.name})," +
+                    " _id" +
+                    " from ${Table.SyncShadow.tableName()}" +
+                    " where ${Table.SyncShadow.syncSetName.name}=?",
+                arrayOf(syncSetName),
+            ).use { c ->
+                if (c.moveToNext()) {
+                    revno = c.getInt(0)
+                    dataLen = c.getInt(1)
+                    id = c.getLong(2)
+                } else {
+                    return null
+                }
+            }
+
+            val data = ByteArray(dataLen)
             val chunkSize = 1_000_000
             var i = 0
-            while (i < summary.dataLen) {
-                support.query(
-                    SimpleSQLiteQuery(
-                        // sqlite substr is 1-indexed
-                        "SELECT substr(data, ${i + 1}, $chunkSize) FROM sync_shadow WHERE _id = ?",
-                        arrayOf<Any>(summary._id),
-                    ),
+            while (i < dataLen) {
+                db.rawQuery(
+                    // sqlite substr func is 1-indexed
+                    "select substr(${Table.SyncShadow.data.name}, ${i + 1}, $chunkSize)" +
+                        " from ${Table.SyncShadow.tableName()} where _id=?",
+                    arrayOf(id.toString()),
                 ).use { c ->
                     check(c.moveToNext()) {
-                        "Cursor moveToNext returns false on a row that summary query found. _id=${summary._id}"
+                        "Cursor moveToNext returns false, does not make sense, since previous query has indicated that this cursor has rows."
                     }
                     val chunk = c.getBlob(0)
-                    if (i + chunk.size != summary.dataLen) {
+                    if (i + chunk.size != dataLen) {
                         check(chunk.size == chunkSize) {
-                            "Not the requested size of chunk retrieved. dataLen=${summary.dataLen} i=$i chunk.len=${chunk.size}"
+                            "Not the requested size of chunk retrieved. dataLen=$dataLen i=$i chunk.len=${chunk.size}"
                         }
                         System.arraycopy(chunk, 0, data, i, chunkSize)
                     } else {
@@ -91,54 +79,90 @@ class SyncShadowDao(helper: InternalDbHelper) {
                 i += chunkSize
             }
 
-            support.setTransactionSuccessful()
+            db.setTransactionSuccessful()
+
             return SyncShadow().apply {
                 this.syncSetName = syncSetName
-                this.revno = summary.revno
+                this.revno = revno
                 this.data = data
             }
         } finally {
-            support.endTransaction()
+            db.endTransaction()
         }
     }
 
-    fun getRevnoBySyncSetName(syncSetName: String): Int =
-        roomDao.findRevnoBySyncSetName(syncSetName) ?: 0
+    fun getRevnoBySyncSetName(syncSetName: String): Int {
+        helper.readableDatabase.query(
+            Table.SyncShadow.tableName(),
+            arrayOf(Table.SyncShadow.revno.name),
+            Table.SyncShadow.syncSetName.name + "=?", arrayOf(syncSetName),
+            null, null, null,
+        ).use { c ->
+            return if (c.moveToNext()) c.getInt(0) else 0
+        }
+    }
 
     /** Upsert keyed by `syncSetName`. */
     fun insertOrUpdateBySyncSetName(ss: SyncShadow) {
-        roomDao.insertOrUpdateShadow(ss.syncSetName, ss.revno, ss.data)
+        val db = helper.writableDatabase
+        db.beginTransactionNonExclusive()
+        try {
+            val count = DatabaseUtils.queryNumEntries(
+                db, Table.SyncShadow.tableName(),
+                Table.SyncShadow.syncSetName.name + "=?", arrayOf(ss.syncSetName),
+            )
+            if (count > 0) {
+                db.update(
+                    Table.SyncShadow.tableName(), toContentValues(ss),
+                    Table.SyncShadow.syncSetName.name + "=?", arrayOf(ss.syncSetName),
+                )
+            } else {
+                db.insert(Table.SyncShadow.tableName(), null, toContentValues(ss))
+            }
+            db.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
+        }
     }
 
-    fun deleteBySyncSetName(syncSetName: String): Int =
-        roomDao.deleteShadowBySyncSetName(syncSetName)
+    fun deleteBySyncSetName(syncSetName: String): Int = helper.writableDatabase.delete(
+        Table.SyncShadow.tableName(),
+        Table.SyncShadow.syncSetName.name + "=?", arrayOf(syncSetName),
+    )
 
     // endregion
 
     // region SyncLog
 
     fun insertLog(createTime: Int, kind: SyncRecorder.EventKind, syncSetName: String?, params: String?) {
-        roomDao.insertLog(
-            SyncLogEntity(
-                _id = 0L,
-                createTime = createTime,
-                kind = kind.code,
-                syncSetName = syncSetName,
-                params = params,
-            ),
-        )
+        val cv = ContentValues(4).apply {
+            put(Table.SyncLog.createTime.name, createTime)
+            put(Table.SyncLog.kind.name, kind.code)
+            put(Table.SyncLog.syncSetName.name, syncSetName)
+            put(Table.SyncLog.params.name, params)
+        }
+        helper.writableDatabase.insert(Table.SyncLog.tableName(), null, cv)
     }
 
     fun listLatest(maxrows: Int): List<SyncLog> {
-        val rows = roomDao.listLatestLogs(maxrows)
-        val res = ArrayList<SyncLog>(rows.size)
-        for (e in rows) {
-            res += SyncLog().apply {
-                createTime = Sqlitil.toDate(e.createTime)
-                kind_code = e.kind
-                syncSetName = e.syncSetName
-                val paramsS = e.params
-                params = if (paramsS == null) null else App.getDefaultGson().fromJson(paramsS, SYNC_LOG_PARAMS_TYPE)
+        val res = ArrayList<SyncLog>()
+        helper.readableDatabase.query(
+            Table.SyncLog.tableName(),
+            arrayOf(
+                Table.SyncLog.createTime.name, Table.SyncLog.kind.name,
+                Table.SyncLog.syncSetName.name, Table.SyncLog.params.name,
+            ),
+            null, null, null, null,
+            Table.SyncLog.createTime.name + " desc", maxrows.toString(),
+        ).use { c ->
+            while (c.moveToNext()) {
+                res += SyncLog().apply {
+                    createTime = Sqlitil.toDate(c.getInt(0))
+                    kind_code = c.getInt(1)
+                    syncSetName = c.getString(2)
+                    val paramsS = c.getString(3)
+                    params = if (paramsS == null) null else App.getDefaultGson().fromJson(paramsS, SYNC_LOG_PARAMS_TYPE)
+                }
             }
         }
         return res
@@ -146,7 +170,13 @@ class SyncShadowDao(helper: InternalDbHelper) {
 
     // endregion
 
-    private companion object {
+    companion object {
         private val SYNC_LOG_PARAMS_TYPE = object : TypeToken<Map<String, Any>>() {}.type
+
+        fun toContentValues(ss: SyncShadow): ContentValues = ContentValues().apply {
+            put(Table.SyncShadow.syncSetName.name, ss.syncSetName)
+            put(Table.SyncShadow.revno.name, ss.revno)
+            put(Table.SyncShadow.data.name, ss.data)
+        }
     }
 }

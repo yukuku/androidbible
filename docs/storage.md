@@ -2,34 +2,21 @@
 
 ## SQLite Databases
 
-The app stores data in three separate SQLite files. Two are Room-backed (the active sources of truth), and two are legacy `SQLiteOpenHelper`-managed files kept around as rollback safety nets after REM-10 / REM-11 / REM-27 / REM-28 / REM-29 / REM-30 / REM-31 / REM-32:
+The app stores data in three separate SQLite files. The two legacy `SQLiteOpenHelper`-managed files (`AlkitabDb`, `SongDb`) remain the active sources of truth for everything Bible-related; the Songs subsystem moved to Room (`AlkitabSongRoomDb`) under REM-32.
 
-- **`AlkitabRoomDb`** — Room database (`AppDatabase` at `@Database(version = 7)`). Owns every InternalDb table — markers, labels, versions, devotions, per-version settings, progress marks, reading plans, sync shadows, and sync logs.
-- **`AlkitabSongRoomDb`** — Room database (`SongRoomDatabase` at `@Database(version = 1)`). Owns the `song_info` and `song_book_info` tables. Lives in a separate file from `AlkitabRoomDb` because the Songs subsystem is module-isolated (see [Songs](modules/songs.md)) — it shares no rows, foreign keys, or transactions with the Bible-reading tables.
-- **`AlkitabDb`** — legacy hand-rolled `SQLiteOpenHelper` (`InternalDbHelper`). Every table here is a rollback safety net only after REM-31 — no production code writes to it.
-- **`SongDb`** — legacy hand-rolled `SQLiteOpenHelper` (`SongDbHelper`). Same status after REM-32 — rollback safety net only, plus the source of legacy rows for `SongDbDataMigration` on first launch with the migrated code.
+- **`AlkitabDb`** — hand-rolled `SQLiteOpenHelper` (`InternalDbHelper`). Sets `user_version` to the build-time `App.getVersionCode()` and migrates through `onUpgrade` based on that. Holds every Bible-related table (markers, labels, versions, devotions, per-version settings, progress marks, reading plans, sync shadows, sync logs).
+- **`SongDb`** — hand-rolled `SQLiteOpenHelper` (`SongDbHelper`). After REM-32, every table here is a rollback safety net only, plus the source of legacy rows for `SongDbDataMigration` on first launch with the migrated code.
+- **`AlkitabSongRoomDb`** — Room database (`SongRoomDatabase` at `@Database(version = 1)`). Owns the `song_info` and `song_book_info` tables. Lives in a separate file from `AlkitabDb` because the Songs subsystem is module-isolated (see [Songs](modules/songs.md)) — it shares no rows, foreign keys, or transactions with the Bible-reading tables.
 
-`InternalDb` plus per-table facade DAOs (`MarkerDao`, `LabelDao`, `Marker_LabelDao`, `VersionDao`, …, `SyncShadowDao`) preserve the legacy public surface — callers don't need to know that Room backs every table now. The same is true for the `SongDb` facade against `SongRoomDatabase`.
+`InternalDb` plus per-table facade DAOs (`MarkerDao`, `LabelDao`, `Marker_LabelDao`, `VersionDao`, `DevotionDao`, `PerVersionDao`, `ProgressMarkDao`, `ReadingPlanDao`, `SyncShadowDao`) talk directly to `AlkitabDb` via raw SQL. Room was previously rolled in here (REM-10 / REM-11 / REM-27 / REM-28 / REM-29 / REM-30 / REM-31) but reverted before reaching production; see `docs/tech-debt-remediation.md` for the rationale. The `SongDb` facade routes through `SongRoomDatabase`.
 
-### AlkitabRoomDb (Room)
+### AlkitabDb (legacy SQLite)
 
-`yuku.alkitab.base.storage.room.AppDatabase`. Schema JSONs are exported under `Alkitab/schemas/`. Migration history:
+Schema is created in `InternalDbHelper.onCreate` and migrated in `InternalDbHelper.onUpgrade`. Tables:
 
-- v1 (REM-11) — introduced the `version` table
-- v2 (REM-10) — added `marker`, `label`, `marker_label` tables and their indexes via `MIGRATION_1_2`
-- v3 (REM-27) — added the `devotion` table via `MIGRATION_2_3`
-- v4 (REM-28) — added the `per_version` table via `MIGRATION_3_4`
-- v5 (REM-29) — added `progress_mark` + `progress_mark_history` via `MIGRATION_4_5`
-- v6 (REM-30) — added `reading_plan` + `reading_plan_progress` via `MIGRATION_5_6`
-- v7 (REM-31) — added `sync_shadow` + `sync_log` via `MIGRATION_6_7`
-
-The legacy tables in `AlkitabDb` are still created by `InternalDbHelper` as a rollback safety net; a one-time idempotent copy (one `*DataMigration` object per table set, wired from `S.db`'s lazy initializer) moves their rows into Room on first launch with the migrated code. After every flag is set, the legacy DB is only read for migration probes.
-
-#### Room Tables
-
-**marker** — bookmarks, notes, highlights
+**Marker** — bookmarks, notes, highlights
 ```sql
-_id          INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL
+_id          INTEGER PRIMARY KEY AUTOINCREMENT
 gid          TEXT              -- globally unique ID for sync
 ari          INTEGER NOT NULL  -- verse reference (ARI encoding)
 kind         INTEGER NOT NULL  -- 0=bookmark, 1=note, 2=highlight
@@ -37,46 +24,42 @@ caption      TEXT              -- title/content/highlight JSON
 verseCount   INTEGER NOT NULL
 createTime   INTEGER NOT NULL  -- epoch seconds
 modifyTime   INTEGER NOT NULL  -- epoch seconds
--- Indices: ari, (kind, ari), (kind, modifyTime), (kind, createTime), gid
+-- Indices: ari, (kind, ari), (kind, modifyTime), (kind, createTime), gid,
+--          (kind, caption COLLATE NOCASE)
 ```
 
-**label** — bookmark categories
+**Label** — bookmark categories (Indonesian column names from the legacy schema)
 ```sql
-_id              INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL
-gid              TEXT
-title            TEXT
-ordering         INTEGER NOT NULL
-backgroundColor  TEXT
+_id          INTEGER PRIMARY KEY AUTOINCREMENT
+gid          TEXT
+judul        TEXT              -- title
+urutan       INTEGER           -- ordering
+warnaLatar   TEXT              -- backgroundColor
 ```
 
-**marker_label** — junction table
+**Marker_Label** — junction table
 ```sql
-_id        INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL
+_id        INTEGER PRIMARY KEY AUTOINCREMENT
 gid        TEXT
 marker_gid TEXT
 label_gid  TEXT
--- Unique index on gid; indices on marker_gid and label_gid
 ```
 
-**version** — downloaded Bible versions
+**Version** — downloaded Bible versions
 ```sql
-_id          INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL
+_id          INTEGER PRIMARY KEY AUTOINCREMENT
 locale       TEXT
 shortName    TEXT
 longName     TEXT
 description  TEXT
 filename     TEXT
 preset_name  TEXT
-modifyTime   INTEGER NOT NULL
-active       INTEGER NOT NULL  -- 0 or 1
-ordering     INTEGER NOT NULL
+modifyTime   INTEGER
+active       INTEGER           -- 0 or 1
+ordering     INTEGER
 ```
 
-### Tables now in `AlkitabRoomDb` (rollback shadow still in `AlkitabDb`)
-
-The columns below describe both the legacy `AlkitabDb` schema (managed by `InternalDbHelper`, kept around as a rollback safety net) and the Room-backed `AlkitabRoomDb` equivalent (managed by `AppDatabase`, the active source of truth). Production code reads and writes the Room tables; the legacy tables remain frozen at the schema below.
-
-**ProgressMark** (Room: `progress_mark`) — 5 reading progress pins
+**ProgressMark** — 5 reading progress pins
 ```sql
 preset_id    INTEGER PRIMARY KEY  -- 0-4
 caption      TEXT
@@ -84,9 +67,18 @@ ari          INTEGER
 modifyTime   TEXT
 ```
 
+**ProgressMarkHistory** — append-only history of every pin update
+```sql
+_id                       INTEGER PRIMARY KEY AUTOINCREMENT
+progress_mark_preset_id   INTEGER
+progress_mark_caption     TEXT
+ari                       INTEGER
+createTime                INTEGER
+```
+
 **ReadingPlan** — reading plan data
 ```sql
-_id          INTEGER PRIMARY KEY
+_id          INTEGER PRIMARY KEY AUTOINCREMENT
 version      INTEGER
 name         TEXT
 title        TEXT
@@ -98,51 +90,55 @@ data         BLOB             -- RPB binary data
 
 **ReadingPlanProgress** — completion tracking
 ```sql
-_id              INTEGER PRIMARY KEY
-reading_plan_id  INTEGER REFERENCES ReadingPlan
-reading_code     INTEGER          -- (day << 8) | sequence
-checkTime        INTEGER
+_id                           INTEGER PRIMARY KEY AUTOINCREMENT
+reading_plan_progress_gid     TEXT NOT NULL
+reading_code                  INTEGER NOT NULL  -- (day << 8) | sequence
+checkTime                     INTEGER
+-- Unique index: (reading_plan_progress_gid, reading_code)
 ```
 
 **Devotion** — cached devotional articles
 ```sql
-name              TEXT
-date              TEXT             -- yyyymmdd
-readyToUse        INTEGER
-body              TEXT
-touchTime         INTEGER
-dataFormatVersion INTEGER
+_id                INTEGER PRIMARY KEY AUTOINCREMENT
+name               TEXT
+date               TEXT             -- yyyymmdd
+readyToUse         INTEGER
+body               TEXT
+touchTime          INTEGER
+dataFormatVersion  INTEGER
 ```
 
-**SyncShadow** (Room: `sync_shadow`) — last-synced entity state
+**SyncShadow** — last-synced entity state
 ```sql
-_id        INTEGER PRIMARY KEY
-syncSetName TEXT NOT NULL
-revno      INTEGER NOT NULL
-data       BLOB
--- Index: syncSetName (non-unique, mirroring legacy `index_SyncShadow_01`)
+_id          INTEGER PRIMARY KEY AUTOINCREMENT
+syncSetName  TEXT NOT NULL
+revno        INTEGER NOT NULL
+data         BLOB
+-- Index: syncSetName (non-unique)
 ```
-A SyncShadow row's `data` column can exceed the Android CursorWindow 2 MB cap (full Mabel snapshots routinely cross that mark); `SyncShadowDao.getBySyncSetName` reads the blob in 1 MB chunks via SQLite's `substr()`. Room can't express chunked cursors natively, so that single path drops down to raw SQL against `roomDb.openHelper.readableDatabase`.
+A SyncShadow row's `data` column can exceed the Android CursorWindow 2 MB cap (full Mabel snapshots routinely cross that mark); `SyncShadowDao.getBySyncSetName` reads the blob in 1 MB chunks via SQLite's `substr()`.
 
-**SyncLog** (Room: `sync_log`) — sync audit log
+**SyncLog** — sync audit log
 ```sql
-_id        INTEGER PRIMARY KEY
-createTime INTEGER NOT NULL
-kind       INTEGER NOT NULL  -- SyncRecorder.EventKind.code
-syncSetName TEXT
-params     TEXT              -- JSON of the kvpairs passed to SyncRecorder.log
--- Index: createTime (non-unique, mirroring legacy `index_SyncLog_01`)
+_id          INTEGER PRIMARY KEY AUTOINCREMENT
+createTime   INTEGER NOT NULL
+kind         INTEGER NOT NULL   -- SyncRecorder.EventKind.code
+syncSetName  TEXT
+params       TEXT               -- JSON of the kvpairs passed to SyncRecorder.log
+-- Index: createTime (non-unique)
 ```
 
-**PerVersion** (Room: `per_version`) — per-version settings
+**PerVersion** — per-version settings
 ```sql
-versionId TEXT PRIMARY KEY
-settings  TEXT              -- JSON settings blob
+_id        INTEGER PRIMARY KEY AUTOINCREMENT
+versionId  TEXT NOT NULL
+settings   TEXT                 -- JSON settings blob
+-- Unique index: versionId
 ```
 
 ### AlkitabSongRoomDb (Room) — Songs Database
 
-`yuku.alkitab.base.storage.room.SongRoomDatabase` at `@Database(version = 1)`. Separate from `AlkitabRoomDb` so the Songs subsystem stays module-isolated. Schema JSON is exported under `Alkitab/schemas/yuku.alkitab.base.storage.room.SongRoomDatabase/`.
+`yuku.alkitab.base.storage.room.SongRoomDatabase` at `@Database(version = 1)`. Lives in its own SQLite file so the Songs subsystem stays module-isolated. Schema JSON is exported under `Alkitab/schemas/yuku.alkitab.base.storage.room.SongRoomDatabase/`.
 
 **song_info** — every song in every installed song book
 ```sql
@@ -169,7 +165,7 @@ copyright  TEXT
 -- Index: name (non-unique, matching legacy `SongBookInfo_001_index`)
 ```
 
-The legacy `SongDb` SQLite file (managed by `SongDbHelper`) is left intact as a rollback safety net; `SongDbDataMigration` performs a one-time idempotent copy of both tables into Room on first launch with the migrated code, gated by `Prefkey.song_db_data_migration_v1_done` (same flag-based gate every other Room migration uses to avoid the #195 resurrect-on-clear footgun).
+The legacy `SongDb` SQLite file (managed by `SongDbHelper`) is left intact as a rollback safety net; `SongDbDataMigration` performs a one-time idempotent copy of both tables into Room on first launch with the migrated code, gated by `Prefkey.song_db_data_migration_v1_done` (flag-based gate to avoid the #195 resurrect-on-clear footgun).
 
 ## SharedPreferences
 
@@ -209,10 +205,11 @@ The app previously supported reading `.yes` files from external storage (`READ_E
 
 All database access goes through `InternalDb` (accessed via `App.services.storage.db`, or the legacy `S.db`). Common patterns:
 
-- **Markers**: `insertOrUpdateMarker()`, `deleteMarkerById()`, `listMarkersForAriKind()` — route through `MarkerDao` → Room
-- **Highlights**: `updateOrInsertHighlights()` — manages per-verse highlight data; routes through Room
-- **Attributes**: `putAttributes()` — loads bookmark/note/highlight counts for verse display; routes through Room
-- **Versions**: `listAllVersions()` — retrieves all versions sorted by ordering; routes through `VersionDao` → Room
-- **Devotions**: `storeArticleToDevotions()` — caches downloaded articles; still routes through `InternalDb`'s raw-SQL path (legacy `AlkitabDb`)
+- **Markers**: `insertOrUpdateMarker()`, `deleteMarkerById()`, `listMarkersForAriKind()` — route through `MarkerDao` → raw SQL on `AlkitabDb`
+- **Highlights**: `updateOrInsertHighlights()` — manages per-verse highlight data
+- **Attributes**: `putAttributes()` — loads bookmark/note/highlight counts for verse display
+- **Versions**: `listAllVersions()` — retrieves all versions sorted by ordering, via `VersionDao` → raw SQL on `AlkitabDb`
+- **Devotions**: `storeArticleToDevotions()` — caches downloaded articles
+- **Songs**: `SongDb.storeSongs()` / `SongDb.getSong()` — route through `SongRoomDao` → Room
 
-Database operations are generally synchronous on the calling thread; the Room database explicitly enables `allowMainThreadQueries()` so the migration is a drop-in replacement for the existing synchronous facade. Migrating individual operations to coroutines/`Flow` is tracked under REM-15 in `docs/tech-debt-remediation.md`.
+Database operations are generally synchronous on the calling thread. The Songs Room database enables `allowMainThreadQueries()` to keep the existing synchronous facade contract.

@@ -1,32 +1,27 @@
 # Tech Debt, Improvements & Critiques
 
-## TD-01: IsiActivity God Class (~2170 lines)
+## TD-01: IsiActivity God Class (~2371 lines)
 
 **File:** `Alkitab/src/main/java/yuku/alkitab/base/IsiActivity.kt`
 
-The main Bible reader activity, down from 2897 lines after a series of extractions: REM-07 (action mode → `VerseActionModeController`), REM-06 (gestures → `ReaderGestureHandler`), and REM-08 (split view → `SplitViewManager`). The remaining ~2170 lines still contain mixed concerns. Specific clusters that violate single-responsibility:
+The main Bible reader activity is a monolithic class containing many inline lambda callbacks, ~2371 lines of mixed concerns (down from 2897 after REM-07 extracted action mode, then back up slightly to 2452 with the audio-bible M1–M4 additions, now down to 2371 after REM-06 extracted gesture handling). Specific clusters that violate single-responsibility:
 
 - **~~Gesture handling~~** ✅ **Extracted (REM-06):** The three gesture lambdas — `splitRoot_listener` (`TwofingerLinearLayout.Listener` for pinch zoom + one/two-finger swipes), `bGoto_floaterDrag` (`GotoButton.FloaterDragListener`), and `floater_listener` (`Floater.Listener`) — have been moved to `ReaderGestureHandler.kt` behind two interfaces (`ReaderGestureHost`, `ReaderGestureActions`). The activity now wires a single `gestureHandler` lazy field into all three setListener call sites. Gesture-local state (`startFontSize`, `startDx`, `moreSwipeYAllowed`, `chapterSwipeCellWidth`, `floaterLocationOnScreen`) lives on the handler instead of in inline objects.
 - **~~Action mode~~** ✅ **Extracted (REM-07):** The ~500-line `actionMode_callback` object has been moved to `VerseActionModeController.kt` behind two interfaces (`VerseActionModeHost`, `VerseActionModeActions`). Pure text-building logic is in `VerseTextFormatter` (no Android deps). `RibkaEligibility` is a top-level file. 26 unit tests added.
-- **~~Broadcast receivers~~** ✅ **Replaced (REM-03):** The two inline `BroadcastReceiver` registrations for verse-attribute and version changes are gone — `IsiActivity` now collects from the `AppEvents` `SharedFlow` buses via `lifecycleScope.launch { ... }`. `LocalBroadcastManager` is removed from the dependencies entirely.
-- **Verse selection listeners:** Two `SelectedVersesListener` implementations (`lsSplit0_selectedVerses`, `lsSplit1_selectedVerses`) with partially duplicated logic — still inline.
-- **~~Split view management~~** ✅ **Extracted (REM-08):** `openSplitDisplay()`, `closeSplitDisplay()`, `displaySplitFollowingMaster()`, `loadSplitVersion()`, and the three split-handle / global-layout listeners have moved to `SplitViewManager.kt` behind `SplitViewHost` / `SplitViewActions`. `IsiActivity.activeSplit1` is now a read-only getter that delegates to the manager.
+- **Broadcast receivers (lines 451–519):** Two anonymous `BroadcastReceiver` instances registered inline, one for verse attribute changes and one for version changes.
+- **Verse selection listeners (lines 463–525):** Two `SelectedVersesListener` implementations (`lsSplit0_selectedVerses`, `lsSplit1_selectedVerses`) with partially duplicated logic.
+- **Split view management:** `openSplitDisplay()`, `closeSplitDisplay()`, `displaySplitFollowingMaster()`, `loadSplitVersion()` scattered across the file.
 - **Navigation history:** `BackForwardListController` usage, `jumpToAri()`, `jumpTo(reference)`, `History` tracking.
 
-**Impact:** Any change to one concern risks breaking unrelated functionality. Testing individual behaviors requires instantiating the entire Activity. New developers face a ~2170-line class with no clear entry point.
+**Impact:** Any change to one concern risks breaking unrelated functionality. Testing individual behaviors requires instantiating the entire Activity. New developers face a ~2371-line class with no clear entry point.
 
 ---
 
-## TD-02: InternalDb — Raw SQL & Manual Statement Caching (~757 lines, was 1771)
+## TD-02: InternalDb — Raw SQL & Manual Statement Caching (830 lines, was 1771)
 
 **File:** `Alkitab/src/main/java/yuku/alkitab/base/storage/InternalDb.java`
 
-**Status:** Mostly resolved — every InternalDb table has been migrated to Room.
-
-1. Per-table DAOs (`MarkerDao`, `LabelDao`, `VersionDao`, `DevotionDao`, `ReadingPlanDao`, `ProgressMarkDao`, `PerVersionDao`, `Marker_LabelDao`, `SyncShadowDao`) and `SyncApplier` were extracted in `d805265e`, shrinking `InternalDb.java` from 1771 → 830 lines. Further null-safety cleanup landed in `70c97818`.
-2. ✅ **REM-11 / REM-10 / REM-27 / REM-28 / REM-29 / REM-30 / REM-31** — every legacy hand-rolled SQLite table (`Version`, `Marker` / `Label` / `Marker_Label`, `Devotion`, `PerVersion`, `ProgressMark` / `ProgressMarkHistory`, `ReadingPlan` / `ReadingPlanProgress`, `SyncShadow` / `SyncLog`) now lives in Room's `AlkitabRoomDb` (currently `@Database(version = 7)`). The per-table facades (`MarkerDao`, `LabelDao`, …, `SyncShadowDao`) all delegate to generated Room DAOs. Legacy tables remain in `AlkitabDb` purely as a rollback safety net.
-
-The remaining issues below are now scoped to the SyncShadow chunked-blob workaround and a couple of `execSQL` patches in `InternalDb.java` that span entities that don't fit cleanly into a single Room DAO.
+**Status:** Significantly improved. Per-table DAOs (`MarkerDao`, `LabelDao`, `VersionDao`, `DevotionDao`, `ReadingPlanDao`, `ProgressMarkDao`, `PerVersionDao`, `Marker_LabelDao`, `SyncShadowDao`) and `SyncApplier` were extracted in `d805265e`, shrinking `InternalDb.java` from 1771 → 830 lines. Further null-safety cleanup landed in `70c97818`. The remaining issues below are the parts not covered by that refactor.
 
 ### Raw SQL string concatenation (~10 instances remain)
 Examples at `InternalDb.java:134, 137, 180, 593–597, 632–646`:
@@ -41,10 +36,10 @@ These are unreadable, fragile, and impossible to verify at compile time.
 ### ~~Manual compiled statement caching~~ ✅ FIXED
 The problematic `private SQLiteStatement stmt_countMarkersForBookChapter` field and null-check pattern have been removed. `MarkerDao.countForAriRange` now uses `compileStatement(...).use { }` so the statement is closed deterministically. `LabelDao.getMaxOrdering` uses the same pattern. No cross-request caching, no invalidation concerns.
 
-### 2MB CursorWindow workaround (SyncShadowDao.kt, post-REM-31)
-Still present, now inside the Room-backed facade `SyncShadowDao.getBySyncSetName` rather than `InternalDb.java`. The facade runs raw `substr()` queries against `roomDb.openHelper.readableDatabase` because Room can't express chunked cursors natively:
+### 2MB CursorWindow workaround (SyncShadowDao.kt:26–62)
+Still present, but moved out of `InternalDb.java` into `SyncShadowDao.kt`:
 ```kotlin
-"SELECT substr(data, ${i + 1}, $chunkSize) FROM sync_shadow WHERE _id = ?"
+"select substr(${Table.SyncShadow.data.name}, ${i + 1}, $chunkSize)" +
 ```
 Hard-coded chunk size `1_000_000` to work around the undocumented 2MB CursorWindow limit. This is fragile and breaks if the system limit changes.
 
@@ -168,19 +163,15 @@ The `superscriptDigits` array now has an inline comment naming the Unicode code 
 
 ## TD-11: Mixed Java/Kotlin
 
-Core files still in Java:
-- `InternalDb.java` (~757 lines; partially superseded for the marker / version tables by Room facade DAOs — see TD-02)
-- ~~`SearchEngine.java`~~ ✅ ported to `SearchEngine.kt` (REM-16, 2026-05-13)
+Core files still in Java with no clear migration plan:
+- `InternalDb.java` (1771 lines)
+- `SearchEngine.java` (537 lines)
 - ~~`VerseRenderer.java`~~ ✅ ported to Kotlin (REM-26)
-- `Sync.java` (~571 lines)
-- `SyncAdapter.java` (~630 lines)
-- ~~`DevotionDownloader.java`~~ ✅ ported to `DevotionDownloader.kt` (REM-16, 2026-05-13)
-- ~~`Provider.java`~~ ✅ ported to `Provider.kt` (REM-16, 2026-05-13)
-- ~~`Highlights.java`~~ ✅ ported to `Highlights.kt` (REM-16, 2026-05-12)
-- ~~`Jumper.java`~~ ✅ ported to `Jumper.kt` (REM-16, 2026-05-12)
-- ~~`TargetDecoder.java`~~ ✅ ported to `TargetDecoder.kt` (REM-16, 2026-05-13)
-- ~~`QueryTokenizer.java`~~ ✅ ported to `QueryTokenizer.kt` (REM-16, 2026-05-13)
-- ~~`SongBookUtil.java`~~ ✅ ported to `SongBookUtil.kt` (REM-16, 2026-05-13)
+- `Sync.java` (508 lines)
+- `SyncAdapter.java` (600+ lines)
+- `DevotionDownloader.java` (111 lines)
+- `Provider.java` (content provider)
+- `Highlights.java`, `Jumper.java`, `TargetDecoder.java`
 - All devotion article parsers
 
 Newer files (activities, data classes) are Kotlin, creating a mixed codebase where Java code can't use Kotlin features (extension functions, coroutines, sealed classes, null safety).
@@ -254,11 +245,9 @@ BUILD_DIST=market \
 
 ## TD-15: S.kt — God Object Service Locator
 
-**File:** `Alkitab/src/main/java/yuku/alkitab/base/S.kt` (~317 lines)
+**File:** `Alkitab/src/main/java/yuku/alkitab/base/S.kt` (313 lines)
 
-**Status:** Substantially improved by REM-24 (steps 24a–24d complete as of 2026-05-12). Three interfaces — `StorageProvider`, `VersionManager`, `UiDimensionsProvider` — have been extracted under `yuku.alkitab.base.services`, bundled into an `AppServices` container, and exposed via `App.services`. ~216 direct `S.xxx` references across 44 files have been migrated to `App.services.*`. The legacy `S.foo` accessors and the `S.storage` / `S.versions` / `S.uiDimensions` adapter properties are retained so existing callers compile; new code should depend on `App.services`. Active-version state was collapsed into a single `@Volatile var state: ActiveVersionState` data-class reference so all readers see a consistent `(mVersion, version, versionId)` triple (24c). `openVersionsDialog` / `openVersionsDialogWithNone` moved off `S` into `VersionDialogHelper` (24b).
-
-A Kotlin `object` singleton that historically served as the central service locator for the entire app, mixing three unrelated concerns:
+A Kotlin `object` singleton that serves as the central service locator for the entire app, mixing three unrelated concerns:
 
 ### 1. Database access
 - `S.db` — lazy `InternalDb` instance (markers, labels, bookmarks, reading plans, sync, devotions)

@@ -7,8 +7,6 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.api.tasks.testing.logging.TestLogEvent
 import java.time.Instant
 import javax.inject.Inject
 
@@ -147,7 +145,7 @@ android {
     }
 
     // Room schema export — JSON snapshots of each @Database version land here.
-    // Checked into git so reviewers can see schema diffs. See REM-11 design doc.
+    // Checked into git so reviewers can see schema diffs. See REM-32 design doc.
     ksp {
         arg("room.schemaLocation", "$projectDir/schemas")
         arg("room.incremental", "true")
@@ -161,7 +159,7 @@ android {
         // version shipped in the production APK — acceptable given the
         // alternative (an instrumented-test setup that needs an emulator in
         // CI).
-        // See Alkitab/src/test/java/.../room/AppDatabaseMigrationTest.kt.
+        // See Alkitab/src/test/java/.../room/SongRoomDatabaseMigrationTest.kt.
         getByName("main").assets.directories.add("$projectDir/schemas")
     }
     buildTypes {
@@ -216,35 +214,6 @@ android {
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
-            // MarkerDataMigrationLoadTest holds 50,000 × 2 KB marker captions
-            // live during the bulk Room insert (~100 MB of captions plus
-            // per-entity overhead). The default 512 MB unit-test heap OOMs.
-            //
-            // maxParallelForks is pinned to 1 (Gradle's default) so a future
-            // change can't silently spawn a second 2 GB JVM in one test task.
-            all {
-                it.maxHeapSize = "2g"
-                it.maxParallelForks = 1
-                // Diagnostic: surface every test's stdout / stderr and full
-                // exception detail in the Gradle log so CI failures are
-                // debuggable from the workflow output alone (the HTML test
-                // report and per-test XML aren't accessible without repo
-                // admin rights).
-                it.testLogging {
-                    events(
-                        TestLogEvent.FAILED,
-                        TestLogEvent.SKIPPED,
-                        TestLogEvent.PASSED,
-                        TestLogEvent.STANDARD_OUT,
-                        TestLogEvent.STANDARD_ERROR,
-                    )
-                    exceptionFormat = TestExceptionFormat.FULL
-                    showCauses = true
-                    showExceptions = true
-                    showStackTraces = true
-                    showStandardStreams = true
-                }
-            }
         }
     }
 
@@ -440,7 +409,8 @@ dependencies {
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.androidx.work.runtime.ktx)
 
-    // Room — see docs/superpowers/specs/2026-05-13-rem-11-room-version-table-design.md
+    // Room — backing for the Songs subsystem.
+    // See docs/superpowers/specs/2026-05-15-rem-32-room-song-db-design.md.
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)

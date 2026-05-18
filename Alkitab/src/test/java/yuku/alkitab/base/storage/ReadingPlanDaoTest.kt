@@ -1,7 +1,6 @@
 package yuku.alkitab.base.storage
 
 import android.app.Application
-import androidx.room.Room
 import org.junit.After
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
@@ -14,42 +13,24 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import yuku.alkitab.base.model.ReadingPlan
-import yuku.alkitab.base.storage.room.AppDatabase
 import yuku.alkitab.util.IntArrayList
 
-/**
- * Robolectric tests for [ReadingPlanDao]. Originally exercised the
- * SQLite-backed implementation against [InternalDbHelper]; after the
- * ReadingPlan → Room migration the facade routes through Room, so this
- * test now installs an in-memory [AppDatabase] in [setUp].
- *
- * The behavioural contract is unchanged — these tests are the parity gate
- * for the Room migration.
- */
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class, sdk = [34])
 class ReadingPlanDaoTest {
     private lateinit var helper: InternalDbHelper
-    private lateinit var roomDb: AppDatabase
     private lateinit var dao: ReadingPlanDao
 
     @Before
     fun setUp() {
         val app = RuntimeEnvironment.getApplication()
         yuku.afw.App.context = app
-        // InternalDbHelper is still needed by the legacy ReadingPlanDao
-        // constructor signature, but the facade ignores it now.
         helper = InternalDbHelper(app)
-        roomDb = Room.inMemoryDatabaseBuilder(app, AppDatabase::class.java)
-            .allowMainThreadQueries()
-            .build()
-        AppDatabase.setForTesting(roomDb)
         dao = ReadingPlanDao(helper)
     }
 
     @After
     fun tearDown() {
-        AppDatabase.setForTesting(null)
         helper.close()
     }
 

@@ -167,25 +167,24 @@ Used everywhere: database storage, intent extras, sync protocol, content provide
 
 ### Database Schema
 
-The app uses four SQLite files — two Room-backed (the active sources of truth) and two legacy `SQLiteOpenHelper`-managed (rollback safety nets only after the REM-10/REM-11/REM-27/REM-28/REM-29/REM-30/REM-31/REM-32 sweep):
+The app uses three SQLite files — `AlkitabDb` and `SongDb` (hand-rolled `SQLiteOpenHelper`s, still the active sources of truth for everything Bible-related), plus `AlkitabSongRoomDb` (Room-backed, the active source of truth for the Songs subsystem after REM-32).
 
-- **`AlkitabRoomDb`** — Room database (`yuku.alkitab.base.storage.room.AppDatabase`, currently at `@Database(version = 7)`). Holds every InternalDb table after the REM-10/REM-11/REM-27/REM-28/REM-29/REM-30/REM-31 plan:
-  - **version** (REM-11) — metadata for downloaded Bible versions (filename, locale, active flag, ordering).
-  - **marker** (REM-10) — bookmarks, notes, highlights (distinguished by `kind` column). Each row has a `gid` (globally unique ID) for sync.
-  - **label** (REM-10) — bookmark categories with custom background colors.
-  - **marker_label** (REM-10) — many-to-many junction between markers and labels.
-  - **devotion** (REM-27) — cached devotional articles keyed by `(name, date, dataFormatVersion)`.
-  - **per_version** (REM-28) — per-version settings keyed uniquely by `versionId`.
-  - **progress_mark** / **progress_mark_history** (REM-29) — 5 reading progress pins (addressed by `preset_id`) plus the append-only history of every pin update.
-  - **reading_plan** / **reading_plan_progress** (REM-30) — downloaded reading plans (metadata + RPB binary blob) and per-day completion rows keyed by `(reading_plan_progress_gid, reading_code)`.
-  - **sync_shadow** / **sync_log** (REM-31) — sync state tracking (last-synced entity snapshot per sync set) plus an append-only audit log of every sync event. `sync_shadow.data` BLOBs routinely exceed the 2 MB CursorWindow, so `SyncShadowDao.getBySyncSetName` reads them in 1 MB chunks via raw `substr()` against `roomDb.openHelper.readableDatabase` (Room can't express chunked cursors natively).
+- **`AlkitabDb`** — hand-rolled `SQLiteOpenHelper` (`InternalDbHelper`). Sets `user_version` to the build-time `App.getVersionCode()` and migrates through `onUpgrade` based on that. Tables:
+  - **Marker** — bookmarks, notes, highlights (distinguished by `kind` column). Each row has a `gid` (globally unique ID) for sync.
+  - **Label** — bookmark categories with custom background colors. Columns are Indonesian (`judul`, `urutan`, `warnaLatar`).
+  - **Marker_Label** — many-to-many junction between markers and labels.
+  - **Version** — metadata for downloaded Bible versions (filename, locale, active flag, ordering).
+  - **Devotion** — cached devotional articles keyed by `(name, date, dataFormatVersion)`.
+  - **PerVersion** — per-version settings keyed by `versionId`.
+  - **ProgressMark** / **ProgressMarkHistory** — 5 reading progress pins (addressed by `preset_id`) plus the append-only history of every pin update.
+  - **ReadingPlan** / **ReadingPlanProgress** — downloaded reading plans (metadata + RPB binary blob) and per-day completion rows.
+  - **SyncShadow** / **SyncLog** — sync state tracking (last-synced entity snapshot per sync set) plus an append-only audit log of every sync event.
+- **`SongDb`** — hand-rolled `SQLiteOpenHelper` (`SongDbHelper`). After REM-32, every table here is a rollback safety net only, plus the source of legacy rows for `SongDbDataMigration` on first launch with the migrated code.
 - **`AlkitabSongRoomDb`** — Room database (`yuku.alkitab.base.storage.room.SongRoomDatabase`, at `@Database(version = 1)`). Holds the Songs subsystem tables migrated as part of REM-32. Lives in its own SQLite file because the Songs module is genuinely self-contained — it shares no rows, FKs, or transactions with the Bible-reading tables.
-  - **song_info** (REM-32) — one row per song, with `(bookName, code)` and `(bookName, ordering)` indexes. The `data` BLOB stores a Parcelable-marshalled `yuku.kpri.model.Song` snapshot.
+  - **song_info** (REM-32) — one row per song, with `(bookName, code)` and `(bookName, ordering)` indexes. The `data` BLOB stores a Parcelable-marshalled `yuku.kpri.model.Song` snapshot (REM-21 will swap this to JSON without touching the storage layer).
   - **song_book_info** (REM-32) — one row per installed song book, indexed by `name`.
-- **`AlkitabDb`** — legacy hand-rolled `SQLiteOpenHelper` (`InternalDbHelper`). After REM-31, every table here is a rollback safety net only — no production code writes to it.
-- **`SongDb`** — legacy hand-rolled `SQLiteOpenHelper` (`SongDbHelper`). After REM-32, every table here is a rollback safety net only, plus the source of legacy rows for `SongDbDataMigration` on first launch with the migrated code.
 
-The legacy `Marker` / `Label` / `Marker_Label` / `Version` / `Devotion` / `PerVersion` / `ProgressMark` / `ProgressMarkHistory` / `ReadingPlan` / `ReadingPlanProgress` / `SyncShadow` / `SyncLog` tables are still created in `AlkitabDb`, and the legacy `SongInfo` / `SongBookInfo` tables are still created in `SongDb`, all as rollback safety nets. One-time `*DataMigration` objects — `MarkerDataMigration`, `VersionDataMigration`, `DevotionDataMigration`, `PerVersionDataMigration`, `ProgressMarkDataMigration`, `ReadingPlanDataMigration`, `SyncShadowDataMigration` (wired from `S.db`'s lazy initializer), and `SongDbDataMigration` (wired from `S.songDb`'s lazy initializer) — move their rows into Room on first launch with the migrated code. `InternalDb` plus the per-table facades (`MarkerDao`, `LabelDao`, `Marker_LabelDao`, `VersionDao`, `DevotionDao`, `PerVersionDao`, `ProgressMarkDao`, `ReadingPlanDao`, `SyncShadowDao`) and the `SongDb` facade preserve the public surface so callers don't change; every facade routes through Room.
+The legacy `SongInfo` / `SongBookInfo` tables are still created in `SongDb` as a rollback safety net. `SongDbDataMigration` (wired from `S.songDb`'s lazy initializer) copies them into Room on first launch with the migrated code; the `SongDb` facade preserves the public surface so callers don't change. `InternalDb` plus its per-table facades (`MarkerDao`, `LabelDao`, `Marker_LabelDao`, `VersionDao`, `DevotionDao`, `PerVersionDao`, `ProgressMarkDao`, `ReadingPlanDao`, `SyncShadowDao`) talk directly to `AlkitabDb` via raw SQL — Room was previously rolled in here (REM-10/11/27-31) but reverted before reaching production; see `docs/tech-debt-remediation.md` for the rationale.
 
 ### Verse Text Formatting Codes
 
