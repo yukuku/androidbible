@@ -133,14 +133,10 @@ class VersesControllerImpl(
                 if (verseOrPericope > 0) {
                     versesListeners.verseScrollListener.onVerseScroll(false, verseOrPericope, prop)
                 } else {
-                    // Treat the entire contiguous pericope-header block above
-                    // the next verse as a single anchor unit so panes with
-                    // different pericope counts/heights still progress
-                    // smoothly across the block. Walk the block boundaries
-                    // from the current position via the cheap O(1)
-                    // getItemViewType lookups rather than the data model's
-                    // O(N) verse-search helpers, since this runs on every
-                    // scroll frame.
+                    // Contiguous pericope headers above a verse are reported
+                    // as a single anchor unit so panes whose versions have
+                    // different pericope counts/heights stay aligned across
+                    // the whole block instead of bumping at each header.
                     var blockStartPos = position
                     while (blockStartPos > 0 &&
                         versesDataModel.getItemViewType(blockStartPos - 1) == ItemType.pericope
@@ -166,12 +162,6 @@ class VersesControllerImpl(
                             combinedHeight += layoutManager.findViewByPosition(p)?.height ?: getMeasuredItemHeight(p)
                         }
 
-                        // `prop * anchorHeight` works for both the >=0 and <0
-                        // remaining branches above; the older
-                        // `anchorHeight - remaining` form was only correct in
-                        // the >=0 branch and produced > anchorHeight in the
-                        // other branch (when the previous item's bottom is
-                        // already off-screen).
                         val scrolledOfAnchorPx = prop * anchorHeight
                         val combinedScrolledPx = heightsBefore + scrolledOfAnchorPx
                         val propCombined = if (combinedHeight > 0) combinedScrolledPx / combinedHeight else 0f
@@ -317,9 +307,9 @@ class VersesControllerImpl(
         }
         val versePos = versesDataModel.getPositionIgnoringPericopeFromVerse(verse_1)
         if (blockStartPos == versePos) {
-            // No pericope above the verse on this pane → treat the block as
-            // zero-height; snap the verse to view top while the source pane
-            // scrolls through its own block.
+            // No pericope above the verse on this pane — treat as a
+            // zero-height block: pin the verse top while the sender's
+            // pericope scrolls.
             scrollToPositionWithProp(versePos, 0f)
             return
         }
