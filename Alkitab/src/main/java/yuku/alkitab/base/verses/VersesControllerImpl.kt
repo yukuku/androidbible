@@ -33,7 +33,6 @@ import yuku.alkitab.base.widget.ParallelSpan
 import yuku.alkitab.base.widget.PericopeHeaderItem
 import yuku.alkitab.base.widget.ReferenceParallelClickData
 import yuku.alkitab.base.widget.ScrollbarSetter.setVerticalThumb
-import yuku.alkitab.base.widget.VerseInlineLinkSpan
 import yuku.alkitab.base.widget.VerseRenderer
 import yuku.alkitab.base.widget.VerseRendererCompose
 import yuku.alkitab.debug.R
@@ -103,40 +102,76 @@ class VersesControllerImpl(
             override fun onScrolled(view: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(view, dx, dy)
 
-                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+                if (scrollState == RecyclerView.SCROLL_STATE_IDLE) return
+
+                val firstVisibleItemPosition = layoutManager.getChildAt(0)
+                    ?.let { layoutManager.getPosition(it) }
+                    ?: layoutManager.findFirstVisibleItemPosition()
+                if (firstVisibleItemPosition == RecyclerView.NO_POSITION) return
                 val firstChild = layoutManager.findViewByPosition(firstVisibleItemPosition) ?: return
 
                 var prop = 0f
                 var position = -1
+                var anchorHeight = 0
 
                 val remaining = firstChild.bottom // padding top is ignored
                 if (remaining >= 0) { // bottom of first child is lower than top padding
                     position = firstVisibleItemPosition
-                    prop = 1f - remaining.toFloat() / firstChild.height
-                } else { // we should have a second child
+                    anchorHeight = firstChild.height
+                    prop = if (anchorHeight > 0) 1f - remaining.toFloat() / anchorHeight else 0f
+                } else {
                     layoutManager.findViewByPosition(firstVisibleItemPosition + 1)?.let { secondChild ->
                         position = firstVisibleItemPosition + 1
-                        prop = (-remaining).toFloat() / secondChild.height
+                        anchorHeight = secondChild.height
+                        prop = if (anchorHeight > 0) (-remaining).toFloat() / anchorHeight else 0f
                     }
                 }
 
-                val verse_1 = versesDataModel.getVerseOrPericopeFromPosition(position)
+                if (position < 0) return
 
-                if (scrollState != RecyclerView.SCROLL_STATE_IDLE) {
-                    if (verse_1 > 0) {
-                        versesListeners.verseScrollListener.onVerseScroll(false, verse_1, prop)
-                    } else {
-                        // first visible item is a pericope; pass the following verse for best-effort sync
-                        val nextVerse_1 = versesDataModel.getVerse_1FromPosition(position)
-                        if (nextVerse_1 > 0) {
-                            versesListeners.verseScrollListener.onVerseScroll(true, nextVerse_1, prop)
+                val verseOrPericope = versesDataModel.getVerseOrPericopeFromPosition(position)
+                if (verseOrPericope > 0) {
+                    versesListeners.verseScrollListener.onVerseScroll(false, verseOrPericope, prop)
+                } else {
+                    // Contiguous pericope headers above a verse are reported
+                    // as a single anchor unit so panes whose versions have
+                    // different pericope counts/heights stay aligned across
+                    // the whole block instead of bumping at each header.
+                    var blockStartPos = position
+                    while (blockStartPos > 0 &&
+                        versesDataModel.getItemViewType(blockStartPos - 1) == ItemType.pericope
+                    ) {
+                        blockStartPos--
+                    }
+                    val itemCount = versesDataModel.itemCount
+                    var versePos = position + 1
+                    while (versePos < itemCount &&
+                        versesDataModel.getItemViewType(versePos) == ItemType.pericope
+                    ) {
+                        versePos++
+                    }
+                    if (versePos >= itemCount) return
+                    val nextVerse_1 = versesDataModel.getVerse_1FromPosition(versePos)
+                    if (nextVerse_1 > 0) {
+                        var heightsBefore = 0
+                        for (p in blockStartPos until position) {
+                            heightsBefore += layoutManager.findViewByPosition(p)?.height ?: getMeasuredItemHeight(p)
                         }
-                    }
+                        var combinedHeight = heightsBefore + anchorHeight
+                        for (p in position + 1 until versePos) {
+                            combinedHeight += layoutManager.findViewByPosition(p)?.height ?: getMeasuredItemHeight(p)
+                        }
 
-                    if (position == 0 && firstChild.top == view.paddingTop) {
-                        // we are really at the top
-                        versesListeners.verseScrollListener.onScrollToTop()
+                        val scrolledOfAnchorPx = prop * anchorHeight
+                        val combinedScrolledPx = heightsBefore + scrolledOfAnchorPx
+                        val propCombined = if (combinedHeight > 0) combinedScrolledPx / combinedHeight else 0f
+
+                        versesListeners.verseScrollListener.onVerseScroll(true, nextVerse_1, propCombined)
                     }
+                }
+
+                if (firstVisibleItemPosition == 0 && firstChild.top == view.paddingTop) {
+                    versesListeners.verseScrollListener.onScrollToTop()
                 }
             }
         }
@@ -256,7 +291,6 @@ class VersesControllerImpl(
 
     override fun scrollToVerse(verse_1: Int, prop: Float) {
         val position = versesDataModel.getPositionIgnoringPericopeFromVerse(verse_1)
-
         if (position == -1) {
             AppLog.d(TAG, "could not find verse_1: $verse_1")
             return
@@ -266,40 +300,55 @@ class VersesControllerImpl(
     }
 
     override fun scrollToPericope(verse_1: Int, prop: Float) {
-        val pericopePos = versesDataModel.getPositionOfPericopeBeginningFromVerse(verse_1)
-        if (pericopePos == -1) {
-            AppLog.d(TAG, "could not find verse_1 for pericope: $verse_1")
+        val blockStartPos = versesDataModel.getPositionOfPericopeBeginningFromVerse(verse_1)
+        if (blockStartPos == -1) {
+            AppLog.d(TAG, "could not find pericope above verse_1: $verse_1")
             return
         }
         val versePos = versesDataModel.getPositionIgnoringPericopeFromVerse(verse_1)
-        // If this version has no pericope above the verse, applying the source's
-        // within-pericope prop to the verse would scroll past it. Snap to the
-        // verse start instead.
-        val effectiveProp = if (pericopePos == versePos) 0f else prop
-        scrollToPositionWithProp(pericopePos, effectiveProp)
+        if (blockStartPos == versePos) {
+            // No pericope above the verse on this pane — treat as a
+            // zero-height block: pin the verse top while the sender's
+            // pericope scrolls.
+            scrollToPositionWithProp(versePos, 0f)
+            return
+        }
+
+        val vn = dataVersionNumber.get()
+        rv.post(fun() {
+            if (vn != dataVersionNumber.get()) return
+            if (versePos >= versesDataModel.itemCount) return
+
+            var combinedHeight = 0
+            for (p in blockStartPos until versePos) {
+                combinedHeight += layoutManager.findViewByPosition(p)?.height ?: getMeasuredItemHeight(p)
+            }
+
+            rv.stopScroll()
+            val paddingNegator = if (blockStartPos == 0) 0 else -rv.paddingTop
+            val offset = -(prop * combinedHeight).toInt() + paddingNegator
+            layoutManager.scrollToPositionWithOffset(blockStartPos, offset)
+        })
     }
 
     private fun scrollToPositionWithProp(position: Int, prop: Float) {
         val vn = dataVersionNumber.get()
         rv.post(fun() {
-            // this may happen async from above, so check data version first,
-            // then verify the position is still in bounds
             if (vn != dataVersionNumber.get()) return
             if (position >= versesDataModel.itemCount) return
-
-            // negate padding offset, unless this is the first item
-            val paddingNegator = if (position == 0) 0 else -rv.paddingTop
 
             val firstPos = layoutManager.findFirstVisibleItemPosition()
             val lastPos = layoutManager.findLastVisibleItemPosition()
             val height = if (position in firstPos..lastPos) {
-                // we have the child on screen, no need to measure
                 layoutManager.findViewByPosition(position)?.height ?: return
             } else {
                 getMeasuredItemHeight(position)
             }
+
             rv.stopScroll()
-            layoutManager.scrollToPositionWithOffset(position, -(prop * height).toInt() + paddingNegator)
+            val paddingNegator = -rv.paddingTop
+            val offset = -(prop * height).toInt() + paddingNegator
+            layoutManager.scrollToPositionWithOffset(position, offset)
         })
     }
 

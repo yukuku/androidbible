@@ -31,6 +31,25 @@ interface VersesController {
     }
 
     abstract class VerseScrollListener {
+        /**
+         * Emitted while the user scrolls. [isPericope] indicates whether
+         * the sender's anchor was a pericope header (above [verse_1]) or
+         * [verse_1] itself.
+         *
+         * [prop] is in `[0, 1]` and represents the fraction of the sender's
+         * anchor extent already scrolled past `paddingTop`:
+         *  - When [isPericope] is `false`: fraction of the verse's height.
+         *  - When [isPericope] is `true`: fraction of the COMBINED height
+         *    of the contiguous pericope-header block above [verse_1] (one
+         *    or more headers treated as a single anchor unit, so verse
+         *    panes with differing pericope counts/heights stay aligned).
+         *
+         * The receiver multiplies [prop] by its OWN matching item or block
+         * height, so heights may differ freely between panes. A pane that
+         * lacks a pericope block above [verse_1] treats it as zero-height
+         * and simply pins the verse top to `paddingTop` while the sender
+         * scrolls through its block.
+         */
         open fun onVerseScroll(isPericope: Boolean, verse_1: Int, prop: Float) {}
 
         open fun onScrollToTop() {}
@@ -75,22 +94,21 @@ interface VersesController {
      */
     fun scrollToVerse(verse_1: Int)
     /**
-     * This is different from the other [scrollToVerse] in that if the requested
-     * verse has a pericope header, this will scroll to the verse, ignoring the pericope header.
+     * Scrolls so that this pane's [verse_1] has had `prop * (this pane's
+     * verse height)` pixels scrolled past the view's `paddingTop`. Used by
+     * the split view when the source pane's first visible item is the verse
+     * itself.
      */
     fun scrollToVerse(verse_1: Int, prop: Float)
 
     /**
-     * Scrolls to the pericope header above [verse_1] (if any), positioning it
-     * so that [prop] of its height has been scrolled past the top edge.
-     *
-     * If this version has no pericope above [verse_1], the verse itself is
-     * snapped to the top (the source's within-pericope [prop] is intentionally
-     * dropped in that case — applying it to a verse would scroll past content
-     * the source was still showing as a header).
-     *
-     * Used by the split view to mirror the source pane when its top visible
-     * item is a pericope header.
+     * Scrolls to the contiguous block of pericope headers above [verse_1]
+     * (one or more, treated as a single anchor unit), positioning it so
+     * that [prop] of THIS pane's combined block height has been scrolled
+     * past `paddingTop`. If this pane has no pericope above [verse_1] the
+     * verse itself is snapped to `paddingTop` (equivalent to a zero-height
+     * block), so the receiver waits at the verse top while the source
+     * scrolls through its own block.
      */
     fun scrollToPericope(verse_1: Int, prop: Float)
 
