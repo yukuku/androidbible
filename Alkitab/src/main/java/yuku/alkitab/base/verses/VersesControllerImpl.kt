@@ -133,15 +133,30 @@ class VersesControllerImpl(
                 if (verseOrPericope > 0) {
                     versesListeners.verseScrollListener.onVerseScroll(false, verseOrPericope, prop)
                 } else {
-                    val nextVerse_1 = versesDataModel.getVerse_1FromPosition(position)
+                    // Treat the entire contiguous pericope-header block above
+                    // the next verse as a single anchor unit so panes with
+                    // different pericope counts/heights still progress
+                    // smoothly across the block. Walk the block boundaries
+                    // from the current position via the cheap O(1)
+                    // getItemViewType lookups rather than the data model's
+                    // O(N) verse-search helpers, since this runs on every
+                    // scroll frame.
+                    var blockStartPos = position
+                    while (blockStartPos > 0 &&
+                        versesDataModel.getItemViewType(blockStartPos - 1) == ItemType.pericope
+                    ) {
+                        blockStartPos--
+                    }
+                    val itemCount = versesDataModel.itemCount
+                    var versePos = position + 1
+                    while (versePos < itemCount &&
+                        versesDataModel.getItemViewType(versePos) == ItemType.pericope
+                    ) {
+                        versePos++
+                    }
+                    if (versePos >= itemCount) return
+                    val nextVerse_1 = versesDataModel.getVerse_1FromPosition(versePos)
                     if (nextVerse_1 > 0) {
-                        // Treat the entire contiguous pericope-header block
-                        // above nextVerse_1 as a single anchor unit so panes
-                        // with different pericope counts/heights still
-                        // progress smoothly across the block.
-                        val blockStartPos = versesDataModel.getPositionOfPericopeBeginningFromVerse(nextVerse_1)
-                        val versePos = versesDataModel.getPositionIgnoringPericopeFromVerse(nextVerse_1)
-
                         var heightsBefore = 0
                         for (p in blockStartPos until position) {
                             heightsBefore += layoutManager.findViewByPosition(p)?.height ?: getMeasuredItemHeight(p)
@@ -151,9 +166,15 @@ class VersesControllerImpl(
                             combinedHeight += layoutManager.findViewByPosition(p)?.height ?: getMeasuredItemHeight(p)
                         }
 
-                        val scrolledOfAnchor = anchorHeight - remaining
-                        val combinedScrolled = heightsBefore + scrolledOfAnchor
-                        val propCombined = if (combinedHeight > 0) combinedScrolled.toFloat() / combinedHeight else 0f
+                        // `prop * anchorHeight` works for both the >=0 and <0
+                        // remaining branches above; the older
+                        // `anchorHeight - remaining` form was only correct in
+                        // the >=0 branch and produced > anchorHeight in the
+                        // other branch (when the previous item's bottom is
+                        // already off-screen).
+                        val scrolledOfAnchorPx = prop * anchorHeight
+                        val combinedScrolledPx = heightsBefore + scrolledOfAnchorPx
+                        val propCombined = if (combinedHeight > 0) combinedScrolledPx / combinedHeight else 0f
 
                         versesListeners.verseScrollListener.onVerseScroll(true, nextVerse_1, propCombined)
                     }
