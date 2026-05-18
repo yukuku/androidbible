@@ -132,16 +132,4 @@ interface VersesController {
      * without snapping the page each time the verse changes.
      */
     fun setAudioHighlight(verse_1: Int, color: Int)
-
-    /**
-     * Reserves [pxBottom] extra pixels at the bottom of the underlying
-     * verse list view so the last verses are reachable while the audio bar
-     * overlays the screen. Combined with `clipToPadding="false"` on the
-     * RecyclerView, the padding region remains scrollable so verses pass
-     * under the bar (YouTube-Music-style mini-player feel) instead of being
-     * cut off behind it.
-     *
-     * Pass `0` to clear the inset when the bar slides out.
-     */
-    fun setAudioBarBottomInset(pxBottom: Int)
 }
