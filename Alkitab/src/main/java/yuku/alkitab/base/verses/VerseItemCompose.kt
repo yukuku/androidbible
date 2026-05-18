@@ -7,7 +7,7 @@ import android.util.AttributeSet
 import android.view.DragEvent
 import android.view.accessibility.AccessibilityEvent
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -107,8 +107,9 @@ data class AttributeState(
 )
 
 private const val ATTENTION_DURATION_MS = 2000f
-private const val AUDIO_HIGHLIGHT_FADE_IN_MS = 200
-private const val AUDIO_HIGHLIGHT_FADE_OUT_MS = 150
+private const val AUDIO_HIGHLIGHT_FLASH_ALPHA = 0.60f
+private const val AUDIO_HIGHLIGHT_STEADY_ALPHA = 0.20f
+private const val AUDIO_HIGHLIGHT_FLASH_MS = 500
 
 /**
  * Compose-backed verse row. Exposes a small mutable surface
@@ -600,17 +601,22 @@ private fun Modifier.checkedOverlay(checked: Boolean): Modifier = if (!checked) 
 
 @Composable
 private fun Modifier.audioHighlightOverlay(audioHighlightColor: Int): Modifier {
-    // Fade-in only — clearing the color removes the overlay immediately
-    // instead of fading it back to transparent.
+    // Snap to 60% the moment a verse is highlighted, then decay to 20% over
+    // 0.3 s so verse changes (driven by playback or scrubbing) read as a clear
+    // pulse rather than a constant glow. The color's alpha channel is ignored
+    // — the animation drives opacity end-to-end. Clearing the color removes the
+    // overlay immediately (matches the controller's prev-row clear pattern).
     if (audioHighlightColor == 0) return this
-    val alpha by animateFloatAsState(
-        targetValue = 1f,
-        animationSpec = tween(durationMillis = AUDIO_HIGHLIGHT_FADE_IN_MS, easing = LinearEasing),
-        label = "audioHighlightFadeIn",
-    )
+    val alpha = remember { Animatable(AUDIO_HIGHLIGHT_FLASH_ALPHA) }
+    LaunchedEffect(audioHighlightColor) {
+        alpha.snapTo(AUDIO_HIGHLIGHT_FLASH_ALPHA)
+        alpha.animateTo(
+            AUDIO_HIGHLIGHT_STEADY_ALPHA,
+            tween(durationMillis = AUDIO_HIGHLIGHT_FLASH_MS, easing = LinearEasing),
+        )
+    }
     return drawBehind {
-        val baseAlpha = ((audioHighlightColor ushr 24) and 0xff) / 255f
-        val a = (baseAlpha * alpha).coerceIn(0f, 1f)
+        val a = alpha.value
         if (a <= 0f) return@drawBehind
         val tinted = ColorUtils.setAlphaComponent(audioHighlightColor, (a * 255f).toInt().coerceIn(0, 255))
         drawRect(color = Color(tinted))

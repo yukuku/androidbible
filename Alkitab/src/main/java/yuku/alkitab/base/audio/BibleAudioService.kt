@@ -29,8 +29,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import yuku.afw.storage.Preferences
 import yuku.alkitab.base.IsiActivity
 import yuku.alkitab.base.App
+import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.debug.R
 
@@ -83,6 +85,9 @@ class BibleAudioService : MediaSessionService() {
 
         private const val POSITION_POLL_INTERVAL_MS = 100L
         private const val ARTWORK_SIZE_PX = 256
+
+        /** Default playback speed when nothing is persisted yet. */
+        private const val DEFAULT_PLAYBACK_SPEED = 1.0f
 
         private const val TAG = "BibleAudioService"
     }
@@ -147,6 +152,9 @@ class BibleAudioService : MediaSessionService() {
     private val _playbackState = MutableStateFlow(PlaybackState.IDLE)
     val playbackState: StateFlow<PlaybackState> = _playbackState.asStateFlow()
 
+    /** Persisted playback speed, loaded once at service start and updated on every [setSpeed] call. */
+    private var persistedSpeed: Float = DEFAULT_PLAYBACK_SPEED
+
     private val playerListener = object : BibleAudioPlayer.Listener {
         override fun onBuffering() {
             // Re-buffering after a seek (or initial buffer) — re-arm the
@@ -172,11 +180,18 @@ class BibleAudioService : MediaSessionService() {
         }
 
         override fun onEnded() {
-            // M2: stop polling and report stopped. Auto-advance to the next
-            // chapter is M5 polish and lives outside the service.
             positionJob?.cancel()
             _playbackState.update {
                 it.copy(isPlaying = false, positionMs = player.durationMs)
+            }
+            // Auto-advance: at end-of-chapter, transparently load the next
+            // chapter and keep playing. Cross-book traversal goes through
+            // [BibleNeighborResolver]; at the Bible boundary [skipChapter] is
+            // a no-op and we simply stay parked at the end of Revelation 22.
+            // The next loadChapter resets the position to 0 and resumes
+            // playback (playWhenReady = true).
+            if (currentRequest != null) {
+                skipChapter(1)
             }
         }
 
@@ -197,6 +212,14 @@ class BibleAudioService : MediaSessionService() {
         super.onCreate()
         player = BibleAudioPlayer(applicationContext)
         player.setListener(playerListener)
+
+        // Restore the previously-chosen playback speed (or stay at 1.0× the
+        // first time). Applied to the player immediately so the first chapter
+        // load already plays at the right speed instead of reverting to 1.0×
+        // until the user opens the speed sheet again.
+        persistedSpeed = Preferences.getFloat(Prefkey.audioPlaybackSpeed, DEFAULT_PLAYBACK_SPEED)
+        player.setSpeed(persistedSpeed)
+        _playbackState.update { it.copy(speed = persistedSpeed) }
 
         // Tapping the notification opens the reader.
         val sessionActivity = PendingIntent.getActivity(
@@ -394,6 +417,8 @@ class BibleAudioService : MediaSessionService() {
 
     fun setSpeed(speed: Float) {
         player.setSpeed(speed)
+        persistedSpeed = speed
+        Preferences.setFloat(Prefkey.audioPlaybackSpeed, speed)
         _playbackState.update { it.copy(speed = speed) }
     }
 

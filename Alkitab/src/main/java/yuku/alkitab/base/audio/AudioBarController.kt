@@ -154,6 +154,10 @@ class AudioBarController(
     val isBarVisible: Boolean
         get() = _uiState.value.visible
 
+    /** True while the player is buffering — drives the toolbar's preparing-state spinner swap. */
+    val isPreparing: Boolean
+        get() = _uiState.value.preparing
+
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
             val localBinder = binder as? BibleAudioService.LocalBinder ?: return
@@ -455,8 +459,14 @@ class AudioBarController(
             AudioBarCommand.NextChapter -> svc?.skipChapter(1)
             AudioBarCommand.Close -> hide()
             AudioBarCommand.Speed -> {
-                // M5: opens the speed bottom sheet. M3 surfaces the chip but
-                // ignores the tap.
+                _uiState.update { it.copy(showSpeedSheet = true) }
+            }
+            AudioBarCommand.DismissSpeedSheet -> {
+                _uiState.update { it.copy(showSpeedSheet = false) }
+            }
+            is AudioBarCommand.SetSpeed -> {
+                svc?.setSpeed(cmd.speed)
+                _uiState.update { it.copy(speed = cmd.speed, showSpeedSheet = false) }
             }
             is AudioBarCommand.SeekDrag -> {
                 // The slider thumb's mm:ss is owned by AudioBar's local drag

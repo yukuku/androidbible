@@ -485,13 +485,23 @@ class VersesControllerImpl(
 
         val pos = versesDataModel.getPositionIgnoringPericopeFromVerse(verse_1)
         if (pos == -1) return
-        setAudioHighlightOnRow(layoutManager.findViewByPosition(pos), color)
+        val rowView = layoutManager.findViewByPosition(pos)
+        setAudioHighlightOnRow(rowView, color)
 
-        // Smooth-scroll the highlighted verse into the upper third of the
-        // viewport. SNAP_TO_START aligns the verse to the top edge; the
-        // overshoot via calculateDtToFit pushes it down so the highlighted
-        // row sits ~1/3 from the top — gives users context above and room
-        // for upcoming verses below.
+        // Skip the smooth scroll when the highlighted row is already fully
+        // visible inside the viewport — yanking the page when the verse is
+        // sitting right in front of the user is more distracting than helpful.
+        if (rowView != null) {
+            val rowTop = layoutManager.getDecoratedTop(rowView)
+            val rowBottom = layoutManager.getDecoratedBottom(rowView)
+            val viewportTop = rv.paddingTop
+            val viewportBottom = rv.height - rv.paddingBottom
+            if (rowTop >= viewportTop && rowBottom <= viewportBottom) return
+        }
+
+        // Smooth-scroll the highlighted verse so its top sits at the upper 10%
+        // of the viewport — keeps a thin slice of the previous verse visible
+        // for context while leaving room for upcoming verses below.
         val smoothScroller = object : LinearSmoothScroller(rv.context) {
             override fun getVerticalSnapPreference(): Int = SNAP_TO_START
 
@@ -503,7 +513,7 @@ class VersesControllerImpl(
                 snapPreference: Int,
             ): Int {
                 val boxHeight = boxEnd - boxStart
-                val targetTop = boxStart + (boxHeight * 0.33f).toInt()
+                val targetTop = boxStart + (boxHeight * 0.10f).toInt()
                 return targetTop - viewStart
             }
         }

@@ -73,10 +73,11 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
 
     /**
      * Target argb color for the audio-highlight overlay. `0` means "no highlight".
-     * Setting a non-zero color fades the alpha in over [AUDIO_HIGHLIGHT_FADE_IN_MS];
-     * setting `0` fades it out over [AUDIO_HIGHLIGHT_FADE_OUT_MS]. The chosen color
-     * is computed by `AudioHighlightColor.pickHighlightColor` once per theme and
-     * cached on the VersesController.
+     * Setting a non-zero color snaps the overlay to [AUDIO_HIGHLIGHT_FLASH_ALPHA]
+     * and decays to [AUDIO_HIGHLIGHT_STEADY_ALPHA] over [AUDIO_HIGHLIGHT_FLASH_MS]
+     * so verse changes (driven by playback or scrubbing) are clearly perceptible.
+     * Setting `0` fades the overlay out over [AUDIO_HIGHLIGHT_FADE_OUT_MS]. The
+     * color's alpha channel is ignored — the animation drives opacity end-to-end.
      */
     var audioHighlightColor: Int = 0
         set(value) {
@@ -85,7 +86,7 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
             startAudioHighlightAnim(value)
         }
 
-    /** Current animated alpha (0.0..1.0) of the audio overlay. */
+    /** Current displayed alpha (0.0..1.0) of the audio overlay. */
     private var audioHighlightAlpha: Float = 0f
         set(value) {
             field = value
@@ -96,17 +97,20 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
 
     private fun startAudioHighlightAnim(targetColor: Int) {
         audioHighlightAnimator?.cancel()
-        val from = audioHighlightAlpha
-        val to = if (targetColor == 0) 0f else 1f
-        if (from == to) {
-            audioHighlightAlpha = to
-            return
-        }
-        val duration = if (to > from) AUDIO_HIGHLIGHT_FADE_IN_MS else AUDIO_HIGHLIGHT_FADE_OUT_MS
-        audioHighlightAnimator = ValueAnimator.ofFloat(from, to).apply {
-            this.duration = duration.toLong()
-            addUpdateListener { audioHighlightAlpha = it.animatedValue as Float }
-            start()
+        if (targetColor == 0) {
+            val from = audioHighlightAlpha
+            if (from == 0f) return
+            audioHighlightAnimator = ValueAnimator.ofFloat(from, 0f).apply {
+                duration = AUDIO_HIGHLIGHT_FADE_OUT_MS.toLong()
+                addUpdateListener { audioHighlightAlpha = it.animatedValue as Float }
+                start()
+            }
+        } else {
+            audioHighlightAnimator = ValueAnimator.ofFloat(AUDIO_HIGHLIGHT_FLASH_ALPHA, AUDIO_HIGHLIGHT_STEADY_ALPHA).apply {
+                duration = AUDIO_HIGHLIGHT_FLASH_MS.toLong()
+                addUpdateListener { audioHighlightAlpha = it.animatedValue as Float }
+                start()
+            }
         }
     }
 
@@ -179,8 +183,7 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
         // so a verse the user is selecting while audio plays still reads as
         // "selected" rather than blending with the audio tint.
         if (audioHighlightColor != 0 && audioHighlightAlpha > 0f) {
-            val baseAlpha = ((audioHighlightColor ushr 24) and 0xff) / 255f
-            val alpha = (baseAlpha * audioHighlightAlpha * 255f).toInt().coerceIn(0, 255)
+            val alpha = (audioHighlightAlpha * 255f).toInt().coerceIn(0, 255)
             audioHighlightPaint.color = ColorUtils.setAlphaComponent(audioHighlightColor, alpha)
             canvas.drawRect(0f, 0f, w.toFloat(), h.toFloat(), audioHighlightPaint)
         }
@@ -312,8 +315,13 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
     companion object {
         private const val ATTENTION_DURATION = 2000f
 
-        /** Audio overlay fade-in/out (PRD §4.3) — slow enough to avoid strobe at speed 1.0×. */
-        private const val AUDIO_HIGHLIGHT_FADE_IN_MS = 200
-        private const val AUDIO_HIGHLIGHT_FADE_OUT_MS = 150
+        /** Peak alpha applied the instant a new verse is highlighted (60%). */
+        const val AUDIO_HIGHLIGHT_FLASH_ALPHA = 0.60f
+        /** Steady-state alpha after the flash decay (20%). */
+        const val AUDIO_HIGHLIGHT_STEADY_ALPHA = 0.20f
+        /** Flash → steady decay duration; long enough to be clearly perceived without strobing. */
+        const val AUDIO_HIGHLIGHT_FLASH_MS = 500
+        /** Clear-highlight fade-out. */
+        const val AUDIO_HIGHLIGHT_FADE_OUT_MS = 150
     }
 }
