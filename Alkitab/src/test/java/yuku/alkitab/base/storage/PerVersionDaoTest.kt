@@ -1,7 +1,6 @@
 package yuku.alkitab.base.storage
 
 import android.app.Application
-import androidx.room.Room
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -11,41 +10,23 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import yuku.alkitab.base.model.PerVersionSettings
-import yuku.alkitab.base.storage.room.AppDatabase
 
-/**
- * Robolectric tests for [PerVersionDao]. Originally exercised the
- * SQLite-backed implementation against [InternalDbHelper]; after the
- * PerVersion → Room migration the facade routes through Room, so this test
- * now installs an in-memory [AppDatabase] in [setUp].
- *
- * The behavioural contract is unchanged — these tests are the parity gate
- * for the Room migration.
- */
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class, sdk = [34])
 class PerVersionDaoTest {
     private lateinit var helper: InternalDbHelper
-    private lateinit var roomDb: AppDatabase
     private lateinit var dao: PerVersionDao
 
     @Before
     fun setUp() {
         val app = RuntimeEnvironment.getApplication()
         yuku.afw.App.context = app
-        // InternalDbHelper is still needed by the legacy PerVersionDao
-        // constructor signature, but the facade ignores it now.
         helper = InternalDbHelper(app)
-        roomDb = Room.inMemoryDatabaseBuilder(app, AppDatabase::class.java)
-            .allowMainThreadQueries()
-            .build()
-        AppDatabase.setForTesting(roomDb)
         dao = PerVersionDao(helper)
     }
 
     @After
     fun tearDown() {
-        AppDatabase.setForTesting(null)
         helper.close()
     }
 

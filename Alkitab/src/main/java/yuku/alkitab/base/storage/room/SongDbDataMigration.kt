@@ -23,7 +23,7 @@ import yuku.alkitab.base.util.AppLog
  * Room inside a single `runInTransaction` block. Songs are small (the
  * `data` BLOB is a Parcelable-marshalled `Song`, typically a few kB), so
  * row-by-row streaming bounds memory by the largest single row rather
- * than the full table — same pattern as [SyncShadowDataMigration].
+ * than the full table.
  *
  * Crash safety:
  *  - If any insert fails mid-flight, Room rolls back the whole transaction
@@ -77,7 +77,7 @@ object SongDbDataMigration {
      * `song_book_info`) are dropped with `?: continue` rather than
      * coalesced. The legacy facade always writes those columns with
      * concrete values; the skip is defence in depth for any historical row
-     * that somehow ended up NULL — same pattern as [SyncShadowDataMigration].
+     * that somehow ended up NULL.
      */
     private fun streamCopyInsideTransaction(
         roomDb: SongRoomDatabase,

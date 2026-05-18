@@ -138,81 +138,14 @@ enum class Prefkey {
     audioPlaybackSpeed,
 
     /**
-     * One-shot completion flag for the REM-10 `Marker` / `Label` / `Marker_Label`
-     * copy from the legacy `AlkitabDb` tables into Room. Set to true exactly
-     * once after the migration has either successfully copied all legacy rows
-     * or determined there is nothing to copy. Used in place of a count-based
-     * "are the Room tables empty?" check, which would resurrect deleted user
-     * data: if the user (or sync) deletes every marker/label after migration,
-     * the Room tables drop back to zero rows and a count check would re-copy
-     * the legacy rows on next launch. See GitHub issue #195.
-     */
-    marker_data_migration_v1_done,
-
-    /**
-     * One-shot completion flag for the REM-11 `Version` copy from the legacy
-     * `AlkitabDb` table into Room. Same rationale as
-     * [marker_data_migration_v1_done] — see GitHub issue #195.
-     */
-    version_data_migration_v1_done,
-
-    /**
-     * One-shot completion flag for the `Devotion` copy from the legacy
-     * `AlkitabDb` table into Room. Same rationale as
-     * [marker_data_migration_v1_done] — see GitHub issue #195. The Devotion
-     * table is a transient cache (entries expire on `touchTime`), so
-     * resurrecting deleted rows is less damaging than for markers, but the
-     * flag-based gate is cheap and keeps the pattern uniform across tables.
-     */
-    devotion_data_migration_v1_done,
-
-    /**
-     * One-shot completion flag for the `PerVersion` copy from the legacy
-     * `AlkitabDb` table into Room. Same rationale as
-     * [marker_data_migration_v1_done] — see GitHub issue #195. PerVersion
-     * rows are user-mutable (settings can be reset / cleared), so a
-     * count-based gate would resurrect cleared rows on the next launch.
-     */
-    per_version_data_migration_v1_done,
-
-    /**
-     * One-shot completion flag for the REM-29 `ProgressMark` /
-     * `ProgressMarkHistory` copy from the legacy `AlkitabDb` tables into
-     * Room. Same rationale as [marker_data_migration_v1_done] — see GitHub
-     * issue #195. The progress-mark table is user-mutable (pins can be
-     * overwritten with the empty placeholder), so a count-based gate would
-     * resurrect cleared rows on the next launch.
-     */
-    progress_mark_data_migration_v1_done,
-
-    /**
-     * One-shot completion flag for the REM-30 `ReadingPlan` /
-     * `ReadingPlanProgress` copy from the legacy `AlkitabDb` tables into
-     * Room. Same rationale as [marker_data_migration_v1_done] — see GitHub
-     * issue #195. Reading-plan progress is user-mutable (a day can be
-     * un-checked, an entire plan can be deleted), so a count-based gate
-     * would resurrect cleared rows on the next launch.
-     */
-    reading_plan_data_migration_v1_done,
-
-    /**
-     * One-shot completion flag for the REM-31 `SyncShadow` / `SyncLog`
-     * copy from the legacy `AlkitabDb` tables into Room. Same rationale as
-     * [marker_data_migration_v1_done] — see GitHub issue #195. A sync
-     * shadow can be cleared by the user from the sync-settings screen and
-     * a sync log entry can be wiped by the same path; a count-based gate
-     * would resurrect cleared rows on the next launch.
-     */
-    sync_shadow_data_migration_v1_done,
-
-    /**
      * One-shot completion flag for the REM-32 `SongInfo` / `SongBookInfo`
      * copy from the legacy `SongDb` SQLite file (managed by
-     * `SongDbHelper`) into Room's `AlkitabSongRoomDb`. Same rationale as
-     * [marker_data_migration_v1_done] — see GitHub issue #195. The user
-     * can delete song books from the songs screen (`SongDb.deleteSongBook`),
-     * so a count-based gate would resurrect deleted song books on the
-     * next launch.
+     * `SongDbHelper`) into Room's `AlkitabSongRoomDb`. Set to true exactly
+     * once after the migration has either successfully copied all legacy rows
+     * or determined there is nothing to copy. Used in place of a count-based
+     * "are the Room tables empty?" check: the user can delete song books from
+     * the songs screen (`SongDb.deleteSongBook`), so a count-based gate would
+     * resurrect deleted song books on the next launch.
      */
     song_db_data_migration_v1_done,
 }

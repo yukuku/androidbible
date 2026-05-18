@@ -37,8 +37,7 @@ import org.robolectric.annotation.Config
  * Schemas are emitted by KSP to `Alkitab/schemas/` (configured in
  * `build.gradle.kts`'s `ksp { arg("room.schemaLocation", ...) }`) and
  * mounted into both the `androidTest` and `test` asset paths so this
- * scaffold works under Robolectric — same setup as
- * [AppDatabaseMigrationTest].
+ * scaffold works under Robolectric.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class, sdk = [34])

@@ -223,33 +223,7 @@ object S {
 
     @JvmStatic
     val db: InternalDb by lazy {
-        val helper = InternalDbHelper(App.context)
-        val roomDb = yuku.alkitab.base.storage.room.AppDatabase.get(App.context)
-        // One-time copy of the legacy `Version` table into Room's `version`
-        // table (see REM-11 design doc). Idempotent — a no-op after the first
-        // launch with this code, and safe to retry if it fails partway.
-        yuku.alkitab.base.storage.room.VersionDataMigration.copyFromLegacyDbIfNeeded(roomDb, helper)
-        // One-time copy of the legacy `Marker` / `Label` / `Marker_Label`
-        // tables into Room (REM-10). Same idempotency / retry properties as
-        // the version copy; all three tables move atomically inside a single
-        // Room transaction.
-        yuku.alkitab.base.storage.room.MarkerDataMigration.copyFromLegacyDbIfNeeded(roomDb, helper)
-        // One-time copy of the legacy `Devotion` table into Room. Same
-        // idempotency / retry properties as the marker/version copies.
-        yuku.alkitab.base.storage.room.DevotionDataMigration.copyFromLegacyDbIfNeeded(roomDb, helper)
-        // One-time copy of the legacy `PerVersion` table into Room (REM-28).
-        // Same idempotency / retry properties.
-        yuku.alkitab.base.storage.room.PerVersionDataMigration.copyFromLegacyDbIfNeeded(roomDb, helper)
-        // One-time copy of the legacy `ProgressMark` and `ProgressMarkHistory`
-        // tables into Room (REM-29). Same idempotency / retry properties.
-        yuku.alkitab.base.storage.room.ProgressMarkDataMigration.copyFromLegacyDbIfNeeded(roomDb, helper)
-        // One-time copy of the legacy `ReadingPlan` and `ReadingPlanProgress`
-        // tables into Room (REM-30). Same idempotency / retry properties.
-        yuku.alkitab.base.storage.room.ReadingPlanDataMigration.copyFromLegacyDbIfNeeded(roomDb, helper)
-        // One-time copy of the legacy `SyncShadow` and `SyncLog` tables
-        // into Room (REM-31). Same idempotency / retry properties.
-        yuku.alkitab.base.storage.room.SyncShadowDataMigration.copyFromLegacyDbIfNeeded(roomDb, helper)
-        InternalDb(helper)
+        InternalDb(InternalDbHelper(App.context))
     }
 
     @JvmStatic

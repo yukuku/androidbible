@@ -1,128 +1,198 @@
 package yuku.alkitab.base.storage
 
+import android.content.ContentValues
 import android.util.Pair
 import yuku.alkitab.base.model.ReadingPlan
-import yuku.alkitab.base.storage.room.AppDatabase
-import yuku.alkitab.base.storage.room.ReadingPlanEntity
-import yuku.alkitab.base.storage.room.ReadingPlanProgressEntity
-import yuku.alkitab.base.storage.room.ReadingPlanRoomDao
 import yuku.alkitab.util.IntArrayList
 
 /**
- * Facade over the Room-backed [ReadingPlanRoomDao] that preserves the
- * legacy `ReadingPlan` / `ReadingPlanProgress` public surface. Existing
- * call sites in [InternalDb] don't need to change.
- *
- * Two tables, one DAO: the legacy facade exposes operations that span both
- * tables (e.g. [replaceProgress], which deletes every existing progress row
- * for a gid before re-inserting the new set). [ReadingPlanRoomDao] mirrors
- * that atomicity with `@Transaction`-annotated bulk operations so a partial
- * failure rolls back; the matching legacy code used
- * `SQLiteDatabase.beginTransactionNonExclusive`.
- *
- * Cross-file note: this DAO is constructed with [InternalDbHelper] only so
- * its constructor signature stays unchanged. The helper is no longer used
- * internally; [AppDatabase] supplies the underlying SQLite file. The
- * one-time data copy runs in
- * [yuku.alkitab.base.storage.room.ReadingPlanDataMigration].
+ * Type-safe accessor for the `ReadingPlan` and `ReadingPlanProgress` tables.
+ * Both tables belong to the same feature module and are commonly written
+ * together, so they share a DAO.
  *
  * Sync-notify side effects remain in [InternalDb]'s delegators.
  */
-@Suppress("UNUSED_PARAMETER")
-class ReadingPlanDao(helper: InternalDbHelper) {
-
-    private val roomDao: ReadingPlanRoomDao
-        get() = AppDatabase.get(yuku.afw.App.context).readingPlanDao()
+class ReadingPlanDao(private val helper: InternalDbHelper) {
 
     // region ReadingPlan
 
-    fun insert(info: ReadingPlan.ReadingPlanInfo, data: ByteArray): Long =
-        roomDao.insert(
-            ReadingPlanEntity(
-                _id = 0L,
-                version = info.version,
-                name = info.name,
-                title = info.title,
-                description = info.description,
-                duration = info.duration,
-                startTime = info.startTime,
-                data = data,
-            ),
-        )
+    fun insert(info: ReadingPlan.ReadingPlanInfo, data: ByteArray): Long {
+        val cv = ContentValues().apply {
+            put(Db.ReadingPlan.version, info.version)
+            put(Db.ReadingPlan.name, info.name)
+            put(Db.ReadingPlan.title, info.title)
+            put(Db.ReadingPlan.description, info.description)
+            put(Db.ReadingPlan.duration, info.duration)
+            put(Db.ReadingPlan.startTime, info.startTime)
+            put(Db.ReadingPlan.data, data)
+        }
+        return helper.writableDatabase.insert(Db.TABLE_ReadingPlan, null, cv)
+    }
 
-    fun listAllInfo(): List<ReadingPlan.ReadingPlanInfo> =
-        roomDao.listAllMeta().map { row ->
-            ReadingPlan.ReadingPlanInfo().apply {
-                id = row._id
-                // Legacy cursor read used `c.getInt(...)` / `c.getLong(...)`
-                // which surfaces 0 / 0L for a NULL column; preserve that
-                // behaviour so callers do not see a sudden NPE.
-                version = row.version ?: 0
-                name = row.name
-                title = row.title
-                description = row.description
-                duration = row.duration ?: 0
-                startTime = row.startTime ?: 0L
+    fun listAllInfo(): List<ReadingPlan.ReadingPlanInfo> {
+        val infos = ArrayList<ReadingPlan.ReadingPlanInfo>()
+        helper.readableDatabase.query(
+            Db.TABLE_ReadingPlan,
+            arrayOf(
+                "_id", Db.ReadingPlan.version, Db.ReadingPlan.name, Db.ReadingPlan.title,
+                Db.ReadingPlan.description, Db.ReadingPlan.duration, Db.ReadingPlan.startTime,
+            ),
+            null, null, null, null, null,
+        ).use { c ->
+            while (c.moveToNext()) {
+                infos += ReadingPlan.ReadingPlanInfo().apply {
+                    id = c.getLong(0)
+                    version = c.getInt(1)
+                    name = c.getString(2)
+                    title = c.getString(3)
+                    description = c.getString(4)
+                    duration = c.getInt(5)
+                    startTime = c.getLong(6)
+                }
             }
         }
+        return infos
+    }
 
     fun getNameAndData(_id: Long): Pair<String, ByteArray>? {
-        val row = roomDao.findNameAndDataById(_id) ?: return null
-        return Pair.create(row.name, row.data)
+        helper.readableDatabase.query(
+            Db.TABLE_ReadingPlan,
+            arrayOf(Db.ReadingPlan.name, Db.ReadingPlan.data),
+            "_id=?", arrayOf(_id.toString()),
+            null, null, null,
+        ).use { c ->
+            return if (c.moveToNext()) Pair.create(c.getString(0), c.getBlob(1)) else null
+        }
     }
 
     fun deleteById(id: Long) {
-        roomDao.deleteById(id)
+        helper.writableDatabase.delete(Db.TABLE_ReadingPlan, "_id=?", arrayOf(id.toString()))
     }
 
     fun updateStartDate(id: Long, startDate: Long) {
-        roomDao.updateStartTime(id, startDate)
+        val cv = ContentValues().apply { put(Db.ReadingPlan.startTime, startDate) }
+        helper.writableDatabase.update(Db.TABLE_ReadingPlan, cv, "_id=?", arrayOf(id.toString()))
     }
 
-    fun listNames(): List<String> = roomDao.listNames()
+    fun listNames(): List<String> {
+        val res = ArrayList<String>()
+        helper.readableDatabase.query(
+            Db.TABLE_ReadingPlan, arrayOf(Db.ReadingPlan.name),
+            null, null, null, null, null,
+        ).use { c ->
+            while (c.moveToNext()) res += c.getString(0)
+        }
+        return res
+    }
 
     // endregion
 
     // region ReadingPlanProgress
 
+    /**
+     * Upserts the single progress row identified by `(gid, readingCode)`.
+     * Relies on the unique index on `(reading_plan_progress_gid, reading_code)`
+     * — `INSERT OR REPLACE` deletes the existing row (if any) before insert.
+     */
     fun insertOrUpdateProgress(gid: String, readingCode: Int, checkTime: Long) {
-        roomDao.insertOrReplaceProgress(
-            ReadingPlanProgressEntity(
-                _id = 0L,
-                reading_plan_progress_gid = gid,
-                reading_code = readingCode,
-                checkTime = checkTime,
-            ),
-        )
+        val cv = ContentValues().apply {
+            put(Db.ReadingPlanProgress.reading_plan_progress_gid, gid)
+            put(Db.ReadingPlanProgress.reading_code, readingCode)
+            put(Db.ReadingPlanProgress.checkTime, checkTime)
+        }
+        helper.writableDatabase.replace(Db.TABLE_ReadingPlanProgress, null, cv)
     }
 
+    /**
+     * Deletes all progress rows for [gid], then inserts the new ones from
+     * [readingCodes] with the same [checkTime].
+     */
     fun replaceProgress(gid: String, readingCodes: IntArrayList, checkTime: Long) {
-        roomDao.replaceProgress(gid, readingCodes, checkTime)
+        val db = helper.writableDatabase
+        db.beginTransactionNonExclusive()
+        try {
+            db.delete(
+                Db.TABLE_ReadingPlanProgress,
+                Db.ReadingPlanProgress.reading_plan_progress_gid + "=?", arrayOf(gid),
+            )
+            val cv = ContentValues().apply {
+                put(Db.ReadingPlanProgress.reading_plan_progress_gid, gid)
+                put(Db.ReadingPlanProgress.checkTime, checkTime)
+            }
+            for (i in 0 until readingCodes.size()) {
+                cv.put(Db.ReadingPlanProgress.reading_code, readingCodes[i])
+                db.insert(Db.TABLE_ReadingPlanProgress, null, cv)
+            }
+            db.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
+        }
     }
 
+    /**
+     * Upserts each `(gid, readingCode)` pair in [readingCodes] with the same [checkTime].
+     * Uses `INSERT OR REPLACE` so the unique index on
+     * `(reading_plan_progress_gid, reading_code)` handles the replace.
+     */
     fun insertOrUpdateMultipleProgresses(gid: String, readingCodes: IntArrayList, checkTime: Long) {
-        roomDao.insertOrUpdateMultipleProgresses(gid, readingCodes, checkTime)
+        val db = helper.writableDatabase
+        db.beginTransactionNonExclusive()
+        try {
+            val cv = ContentValues().apply {
+                put(Db.ReadingPlanProgress.reading_plan_progress_gid, gid)
+                put(Db.ReadingPlanProgress.checkTime, checkTime)
+            }
+            for (i in 0 until readingCodes.size()) {
+                cv.put(Db.ReadingPlanProgress.reading_code, readingCodes[i])
+                db.replace(Db.TABLE_ReadingPlanProgress, null, cv)
+            }
+            db.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
+        }
     }
 
     fun deleteProgress(gid: String, readingCode: Int) {
-        roomDao.deleteProgress(gid, readingCode)
+        helper.writableDatabase.delete(
+            Db.TABLE_ReadingPlanProgress,
+            Db.ReadingPlanProgress.reading_plan_progress_gid + "=? and " +
+                Db.ReadingPlanProgress.reading_code + "=?",
+            arrayOf(gid, readingCode.toString()),
+        )
     }
 
-    fun deleteAllProgressForGid(gid: String): Int = roomDao.deleteAllProgressForGid(gid)
+    fun deleteAllProgressForGid(gid: String): Int = helper.writableDatabase.delete(
+        Db.TABLE_ReadingPlanProgress,
+        Db.ReadingPlanProgress.reading_plan_progress_gid + "=?", arrayOf(gid),
+    )
 
     /** Map of `gid -> set of done reading codes`. Plans with no progress are absent. */
     fun getProgressSummaryForSync(): Map<String, Set<Int>> {
         val res = HashMap<String, HashSet<Int>>()
-        for (row in roomDao.listAllProgressGidAndReadingCode()) {
-            res.getOrPut(row.reading_plan_progress_gid) { HashSet() }.add(row.reading_code)
+        helper.readableDatabase.query(
+            Db.TABLE_ReadingPlanProgress,
+            arrayOf(Db.ReadingPlanProgress.reading_plan_progress_gid, Db.ReadingPlanProgress.reading_code),
+            null, null, null, null, null,
+        ).use { c ->
+            while (c.moveToNext()) {
+                val gid = c.getString(0)
+                val readingCode = c.getInt(1)
+                res.getOrPut(gid) { HashSet() }.add(readingCode)
+            }
         }
         return res
     }
 
     fun getAllReadingCodesByProgressGid(gid: String): IntArrayList {
         val res = IntArrayList()
-        for (code in roomDao.listReadingCodesForGid(gid)) {
-            res.add(code)
+        helper.readableDatabase.query(
+            Db.TABLE_ReadingPlanProgress,
+            arrayOf(Db.ReadingPlanProgress.reading_code),
+            Db.ReadingPlanProgress.reading_plan_progress_gid + "=?", arrayOf(gid),
+            null, null,
+            Db.ReadingPlanProgress.reading_code + " asc",
+        ).use { c ->
+            while (c.moveToNext()) res.add(c.getInt(0))
         }
         return res
     }

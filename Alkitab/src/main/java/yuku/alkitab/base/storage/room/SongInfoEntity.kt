@@ -20,8 +20,7 @@ import androidx.room.PrimaryKey
  * on every code path, but [SongDbDataMigration] still has to ingest
  * whatever legacy rows exist on disk. The migration drops legacy rows
  * missing a non-null Room column (`bookName`, `code`) with `?: continue`
- * rather than coalescing — same defence-in-depth pattern as
- * [SyncShadowDataMigration].
+ * rather than coalescing — defence in depth.
  *
  * The binary [data] column holds the Parcelable-marshalled
  * [yuku.kpri.model.Song] snapshot. REM-32 round-trips these bytes

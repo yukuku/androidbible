@@ -10,14 +10,11 @@ import androidx.room.RoomDatabase
  * `song_book_info` tables migrated from the legacy `SongDb` SQLite file
  * (managed by `SongDbHelper`) as part of REM-32.
  *
- * Lives in a separate SQLite file (`AlkitabSongRoomDb`) from both the
- * legacy `SongDb` file and the Bible-reading `AlkitabRoomDb` ([AppDatabase]).
- * The split matches the existing module isolation between the Songs
- * subsystem and the Bible-reading subsystem (see `docs/modules/songs.md`)
- * — the two domains share no rows, no foreign keys, and no transactions,
- * so coupling them inside a single `RoomDatabase` would only conflate
- * audit trails and force migration-test re-runs across unrelated
- * subsystems.
+ * Lives in a separate SQLite file (`AlkitabSongRoomDb`) from the legacy
+ * `SongDb` file. The split matches the existing module isolation between
+ * the Songs subsystem and the Bible-reading subsystem (see
+ * `docs/modules/songs.md`) — the two domains share no rows, no foreign
+ * keys, and no transactions.
  *
  * Version policy: this database starts at `version = 1`. A future change
  * that alters the row format of the `data` BLOB (REM-21, Parcelable →
