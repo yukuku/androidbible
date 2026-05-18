@@ -1360,7 +1360,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // the order varies with the toolbar-location preference.
 
         if (!fullScreen) {
-            val audioBar = root.findViewById<View>(R.id.audio_bar)
+            val audioBar = root.requireViewById<View>(R.id.audio_bar)
             root.removeView(toolbar)
             root.removeView(nontoolbar)
             root.removeView(audioBar)
