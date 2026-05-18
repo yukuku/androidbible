@@ -108,7 +108,7 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 #### 3.2 Composable surface
 
 - [x] `audio/ui/AudioTheme.kt` — wraps Compose `MaterialTheme` and bridges the project's existing `?attr/colorSurface*` etc. into Compose `ColorScheme` so dark mode works without a separate Compose theme. Uses `MaterialTheme.colorScheme.surfaceContainerHigh` for the bar background.
-- [x] `audio/ui/AudioBar.kt` — top-level `@Composable`. A fixed-height (≈96dp) `Surface` anchored to the bottom of the host `ComposeView`. Visibility (show/hide on close) is animated via `AnimatedVisibility(enter = slideInVertically(initialOffsetY = { it }), exit = slideOutVertically(targetOffsetY = { it }))` so the bar slides in/out instead of popping.
+- [x] `audio/ui/AudioBar.kt` — top-level `@Composable`. A fixed-height (≈96dp) `Surface` anchored to the bottom of the host `ComposeView`. Show/hide is synchronous (no slide-in/out animation — the controller adds/removes the Compose content on session start/end, so the activity already commits the layout reflow in one frame).
     - Layout: top row of controls + Slider below.
     - Top row, left-to-right: prev-chapter (icon + label) | prev-verse | play/pause FAB | next-verse | next-chapter (icon + label) | speed | close.
     - Slider uses Material 3 `Slider` with a custom `SliderState` and a label rendered above the thumb: `"${formatMmSs(snappedMs)} · v.${verse_1}"`. Snap-to-verse on `onValueChangeFinished`.
@@ -116,7 +116,7 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
     - On preparing state: render a `CircularProgressIndicator` overlay around the play/pause button.
     - Chapter-nav button labels (`Jn 4`) drawn with `Modifier.alpha(if (target != null) 1f else 0f)` — invisible-not-gone, layout doesn't reflow at Bible boundaries.
     - Haptics: `LocalHapticFeedback.current.performHapticFeedback(HapticFeedbackType.LongPress)` on speed change, `HapticFeedbackType.TextHandleMove` on play/pause.
-- [ ] `audio/ui/SpeedBottomSheet.kt` — `ModalBottomSheet` with a `FilterChip` row for `0.5×, 0.8×, 1.0×, 1.25×, 1.5×, 1.75×, 2.0×`. Single-selection. Persisted via `Prefkey.audioPlaybackSpeed`. *(Speed chip rendered in `AudioBar.kt` but inert — full bottom sheet deferred to M5.)*
+- [x] `audio/ui/SpeedBottomSheet.kt` — `ModalBottomSheet` with a `FilterChip` row for `0.5×, 0.8×, 1.0×, 1.25×, 1.5×, 1.75×, 2.0×`. Single-selection. Persisted via `Prefkey.audioPlaybackSpeed` (M5).
 - [x] `audio/ui/AudioHighlightColor.kt` — pure-function logic:
     ```kotlin
     fun pickHighlightColor(readingBackground: Int, verseTextColor: Int): Int {
@@ -136,7 +136,7 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 
 #### 3.3 Verse highlight (still XML / View-based, since `VerseItem` is)
 
-- [x] `VerseItem.kt`: add `var audioHighlightColor: Int = 0` (0 = no highlight). The `onDraw` overlay paints a rounded rect of that color, alpha-animated in (200ms) and out (150ms) via a `ValueAnimator`. `0` clears.
+- [x] `VerseItem.kt`: add `var audioHighlightColor: Int = 0` (0 = no highlight). On a non-zero color, the `onDraw` overlay snaps to 60% opacity and decays to 20% over 300ms via a `ValueAnimator` so verse changes (playback or scrubbing) read as a clear pulse rather than a constant glow. Setting `0` fades the overlay out over 150ms. The color's alpha channel is ignored — the animation drives opacity end-to-end.
 - [x] `VersesController.kt` / `VersesControllerImpl.kt`: add `fun setAudioHighlight(verse_1: Int, color: Int)`. The color is computed once via `pickHighlightColor(...)` using `VersesView.background` and `?attr/textColor*` and cached on the controller until the theme changes.
 - [x] On each `PlaybackState.verse_1` change, the controller calls `setAudioHighlight` on the active split's `VersesController` **and** smooth-scrolls the highlighted verse into the upper-third of the viewport using a `LinearSmoothScroller` with `getVerticalSnapPreference() = SNAP_TO_START` and `calculateDtToFit` returning `viewportHeight * 0.33`.
 
@@ -144,15 +144,14 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 
 - [x] Menu item in `res/menu/activity_isi.xml`: `<item android:id="@+id/menuAudio" app:showAsAction="always" android:icon="@drawable/ic_audio" android:title="@string/menu_audio" />`. Matches `menuSearch`'s `always` treatment — never spills into overflow. Wire into `IsiActivity.buildMenu` / `onOptionsItemSelected` (see `IsiActivity.kt:1368-1399`).
 - [x] Visibility — observe the catalog. Set `menuItem.isVisible = repo.isAudioAvailable(visibleVersionId0) || repo.isAudioAvailable(visibleVersionId1)`. Refresh on active-version change and on split-view enter/exit. Hiding (not disabling) is intentional — a permanently-greyed icon is more confusing than no icon.
-- [ ] Preparing-state spinner: clone the Kidung pattern (`SongViewActivity.kt:178, 443-449, 1088-1090`). Add a `circular_progress` view to the toolbar layout in `activity_isi.xml`, initially `GONE`. In `onPrepareOptionsMenu`, when `audioBarController.isPreparing`, set `menuAudio.isVisible = false` and `circular_progress.visibility = VISIBLE`; otherwise the inverse. Trigger `invalidateOptionsMenu()` from the state collector whenever `preparing` flips. *(Currently the spinner is only shown inside the audio bar's play button; the toolbar swap is deferred.)*
+- [x] Preparing-state spinner: cloned the Kidung pattern. Added `R.id.audio_progress_circular` (`ProgressBar`, `style="?android:attr/progressBarStyleSmallTitle"`) to the toolbar in `activity_isi_content.xml`, initially `GONE`. `buildMenu` hides `menuAudio` and shows the spinner when `audioBinder.isPreparing`, otherwise the inverse. The audio-bar state collector calls `invalidateOptionsMenu()` only when `preparing` actually flips, so the 100 ms position-poll doesn't churn the menu.
 
 #### 3.5 Tests
 
 - [x] `AudioHighlightColorTest` — pure-function unit tests covering yellow/black/white selection across light, sepia, and dark reading backgrounds. Assert ≥4.5 contrast.
 - [x] Compose preview functions for `AudioBar`, `SpeedBottomSheet` — for visual review in Android Studio. (Previews don't replace device testing but are cheap insurance.)
-- [ ] Instrumented test (`connectedCheck`): open chapter → tap audio → verify the audio bar slides in → tap close → verify it slides out and the service stops.
 
-**Exit criteria:** End-to-end demo of §1–§6 of the PRD's must-haves (screen-on usage); the audio bar slides in/out smoothly; verse highlight uses yellow on light themes and the contrast-fallback color on dark themes.
+**Exit criteria:** End-to-end demo of §1–§6 of the PRD's must-haves (screen-on usage); the audio bar appears/disappears cleanly; verse highlight uses yellow on light themes and the contrast-fallback color on dark themes.
 
 ### M4 — Lock-screen & background (≈ 2 days)
 
@@ -175,15 +174,14 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 
 ### M5 — Behavior polish & design review (≈ 2 days)
 
-The visual scaffolding (Compose audio bar with `AnimatedVisibility` slide-in, Material 3 theming, `AnimatedContent` icon crossfades, smooth verse-scroll, `LocalHapticFeedback`) is already baked into M3. M5 is the behavior polish:
+The visual scaffolding (Compose audio bar, Material 3 theming, `AnimatedContent` icon crossfades, smooth verse-scroll, `LocalHapticFeedback`) is already baked into M3. M5 is the behavior polish:
 
-- [ ] Speed persistence: `Prefkey.audioPlaybackSpeed` (enum default `1.0f`). Read on service start, write on each change.
-- [ ] Auto-advance: on `onEnded`, navigate to the next chapter. Centralise the cross-book logic in a new `BibleNavigationUtil.kt` (it's useful outside audio too). No repeat toggle in v1.
+- [x] Speed persistence: `Prefkey.audioPlaybackSpeed` (default `1.0f`). Read on service `onCreate`, applied to the player immediately, written through `BibleAudioService.setSpeed`.
+- [x] Auto-advance: `BibleAudioService.onEnded` calls `skipChapter(1)`, which uses [`BibleNeighborResolver`](../../../Alkitab/src/main/java/yuku/alkitab/base/audio/BibleNeighborResolver.kt) for cross-book navigation. No-op at the Bible boundary. No repeat toggle in v1.
 - [ ] Snackbar error handling (§4.6 of PRD). Snackbars come from `IsiActivity` (host), not the Compose layer, since they need to overlay the toolbar.
 - [x] Split-view source dialog (§4.5 of PRD). On play-tap when split view is active and both visible versions have audio, render a Compose `AlertDialog` with the two version short names and a Cancel. The state is held in `AudioBarController` via `MutableStateFlow`; reset to `null` whenever split view toggles, either visible version changes, or the audio bar is closed.
 - [ ] **Design review pass.** Walk the bottom sheet against this checklist before tagging M5 done:
-    - Slide-in / slide-out animation is smooth on a low-end device (Pixel 4a / API 30 emulator OK).
-    - Highlight overlay fades, doesn't strobe, at 1.0× speed.
+    - Highlight overlay flashes to 60% on each verse change and settles to 20% in ≈0.3 s; doesn't strobe at 1.0× speed.
     - Play/pause icon crossfades (no swap).
     - Toolbar icon crossfades into the spinner (no swap).
     - Auto-scroll feels like "the page is following me," not jumping.

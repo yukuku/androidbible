@@ -698,14 +698,22 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         val audioBarView: ComposeView = findViewById(R.id.audio_bar)
         audioBinder.attach(audioBarHost, audioBarView)
         lifecycleScope.launch {
-            // 100 ms tick rate while playing — avoid invalidateOptionsMenu() here;
-            // menu refreshes flow through `audioBarVisibilityChanged` instead.
+            // 100 ms tick rate while playing — avoid invalidateOptionsMenu() on
+            // every emission. Most menu refreshes flow through
+            // `audioBarVisibilityChanged`; the only periodic refresh we need is
+            // when `preparing` flips, so the toolbar can swap the audio icon
+            // for the spinner.
+            var lastPreparing = false
             audioBinder.uiState.collect { state ->
                 val playing = state.playingVersionId
                 val split0Match = playing != null && playing == activeSplit0.versionId
                 val split1Match = playing != null && playing == activeSplit1?.versionId
                 applyAudioHighlightTo(lsSplit0, if (split0Match) state.verse_1 else 0)
                 applyAudioHighlightTo(lsSplit1, if (split1Match) state.verse_1 else 0)
+                if (state.preparing != lastPreparing) {
+                    lastPreparing = state.preparing
+                    invalidateOptionsMenu()
+                }
             }
         }
         lifecycleScope.launch {
@@ -1283,15 +1291,21 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // have audio, and swap to the active variant (small accent dot in the
         // upper-end corner) while the bar is open so the user can tell at a
         // glance that an audio session is engaged. Both drawables are 24dp
-        // — same toolbar slot, no reflow on the swap.
+        // — same toolbar slot, no reflow on the swap. While the player is
+        // preparing, hide the icon entirely and reveal the toolbar spinner
+        // (Kidung pattern) so the user has a single source of "I tapped, it's
+        // working on it" feedback in the activity chrome.
         val menuAudio = menu.findItem(R.id.menuAudio)
+        val preparing = audioBinder.isPreparing
         if (menuAudio != null) {
-            menuAudio.isVisible = audioBinder.isAvailable
+            menuAudio.isVisible = audioBinder.isAvailable && !preparing
             menuAudio.setIcon(
                 if (audioBinder.isBarVisible) R.drawable.ic_audio_active
                 else R.drawable.ic_audio
             )
         }
+        toolbar.findViewById<View?>(R.id.audio_progress_circular)?.visibility =
+            if (preparing) View.VISIBLE else View.GONE
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

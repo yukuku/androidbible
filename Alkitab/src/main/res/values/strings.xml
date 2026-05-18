@@ -592,10 +592,11 @@
 	<string name="audio_bar_prev_verse">Previous verse</string>
 	<string name="audio_bar_next_verse">Next verse</string>
 	<string name="audio_bar_speed">Playback speed</string>
-	<string name="audio_bar_speed_format">%1$.2g×</string>
+	<string name="audio_bar_speed_format">%1$s×</string>
 	<string name="audio_bar_position_with_verse">%1$s · v.%2$d</string>
 	<string name="audio_bar_position_no_verse">%1$s</string>
 	<string name="audio_bar_error_no_audio">No audio for this version.</string>
 	<string name="audio_bar_pick_source_title">Play audio from</string>
+	<string name="audio_bar_speed_sheet_title">Playback speed</string>
 
 </resources>

@@ -1,12 +1,9 @@
 package yuku.alkitab.base.audio.ui
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -85,6 +82,8 @@ data class AudioBarUiState(
     val playingVersionId: String?,
     /** When non-null, the source-picker dialog is shown over the bar. */
     val pickerOptions: List<AudioSourceOption>?,
+    /** When true, the playback-speed bottom sheet is shown over the bar. */
+    val showSpeedSheet: Boolean,
 ) {
     companion object {
         val HIDDEN = AudioBarUiState(
@@ -101,6 +100,7 @@ data class AudioBarUiState(
             timingAvailable = false,
             playingVersionId = null,
             pickerOptions = null,
+            showSpeedSheet = false,
         )
     }
 }
@@ -126,6 +126,8 @@ sealed interface AudioBarCommand {
     data object NextChapter : AudioBarCommand
     data object Close : AudioBarCommand
     data object Speed : AudioBarCommand
+    data class SetSpeed(val speed: Float) : AudioBarCommand
+    data object DismissSpeedSheet : AudioBarCommand
     data class SeekDrag(val positionMs: Long) : AudioBarCommand
     data class SeekCommit(val positionMs: Long) : AudioBarCommand
     data class PickSource(val versionId: String) : AudioBarCommand
@@ -134,10 +136,10 @@ sealed interface AudioBarCommand {
 
 /**
  * Top-level audio bar surface. Anchored at the bottom of `IsiActivity`'s
- * [androidx.compose.ui.platform.ComposeView] host. Visibility is animated so
- * the bar slides in/out instead of popping; the `enter`/`exit` transitions
- * combine a vertical slide with a fade so the bar's elevation shadow doesn't
- * appear instantly above the chapter list.
+ * [androidx.compose.ui.platform.ComposeView] host. Shown/hidden synchronously —
+ * the controller adds/removes the Compose content on session start/end, so
+ * an enter/exit transition would just delay the layout reflow that the
+ * activity already commits when the host view appears.
  */
 @Composable
 fun AudioBar(
@@ -149,44 +151,43 @@ fun AudioBar(
         state.pickerOptions?.let { options ->
             SourcePickerDialog(options = options, onCommand = onCommand)
         }
-        AnimatedVisibility(
-            visible = state.visible,
-            enter = slideInVertically(initialOffsetY = { it }, animationSpec = tween(220)) +
-                fadeIn(animationSpec = tween(220)),
-            exit = slideOutVertically(targetOffsetY = { it }, animationSpec = tween(180)) +
-                fadeOut(animationSpec = tween(180)),
-            modifier = modifier,
+        if (state.showSpeedSheet) {
+            SpeedBottomSheet(
+                currentSpeed = state.speed,
+                onSelect = { onCommand(AudioBarCommand.SetSpeed(it)) },
+                onDismiss = { onCommand(AudioBarCommand.DismissSpeedSheet) },
+            )
+        }
+        if (!state.visible) return@AudioTheme
+        // Pull the bottom system inset out of WindowInsets so the bar
+        // a) extends its background all the way under the gesture pill
+        // (Spotify-style edge-to-edge), and b) keeps actual controls
+        // above the inset so the slider's mm:ss labels aren't clipped.
+        // We deliberately don't fix the bar's height — Material 3 Slider
+        // has thumb-shadow overflow that eats more than the visible
+        // track, and a fixed-height container clips it.
+        val bottomInset = WindowInsets.safeDrawing
+            .asPaddingValues()
+            .calculateBottomPadding()
+        Surface(
+            tonalElevation = 6.dp,
+            shadowElevation = 6.dp,
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            modifier = modifier.fillMaxWidth(),
         ) {
-            // Pull the bottom system inset out of WindowInsets so the bar
-            // a) extends its background all the way under the gesture pill
-            // (Spotify-style edge-to-edge), and b) keeps actual controls
-            // above the inset so the slider's mm:ss labels aren't clipped.
-            // We deliberately don't fix the bar's height — Material 3 Slider
-            // has thumb-shadow overflow that eats more than the visible
-            // track, and a fixed-height container clips it.
-            val bottomInset = WindowInsets.safeDrawing
-                .asPaddingValues()
-                .calculateBottomPadding()
-            Surface(
-                tonalElevation = 6.dp,
-                shadowElevation = 6.dp,
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                modifier = Modifier.fillMaxWidth(),
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 8.dp,
+                        end = 8.dp,
+                        top = 4.dp,
+                        bottom = 4.dp + bottomInset,
+                    ),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            start = 8.dp,
-                            end = 8.dp,
-                            top = 4.dp,
-                            bottom = 4.dp + bottomInset,
-                        ),
-                    verticalArrangement = Arrangement.spacedBy(2.dp),
-                ) {
-                    AudioBarTopRow(state = state, onCommand = onCommand)
-                    AudioBarSliderRow(state = state, onCommand = onCommand)
-                }
+                AudioBarTopRow(state = state, onCommand = onCommand)
+                AudioBarSliderRow(state = state, onCommand = onCommand)
             }
         }
     }
@@ -247,20 +248,22 @@ private fun AudioBarTopRow(
 
         Spacer(Modifier.weight(1f))
 
-        // Speed chip — wired but inert in M3 (single 1.0× look). M5 swaps in
-        // the speed bottom sheet on tap; for now the click forwards to the
-        // controller, which is a no-op. `softWrap = false` keeps locales that
-        // render the speed with a comma decimal (e.g. "1,0×" in Indonesian)
-        // from wrapping into a stacked "1," / "0×" when the row is tight.
-        Text(
-            text = stringResource(R.string.audio_bar_speed_format, state.speed),
-            style = MaterialTheme.typography.labelLarge,
-            maxLines = 1,
-            softWrap = false,
-            modifier = Modifier
-                .alpha(0.6f)
-                .padding(horizontal = 8.dp),
-        )
+        // Speed chip — tapping opens the [SpeedBottomSheet]. `softWrap = false`
+        // keeps locales that render with a comma decimal (e.g. "1,0×" in
+        // Indonesian) from wrapping into a stacked "1," / "0×" when the row
+        // is tight.
+        val locale = appLocale()
+        TextButton(
+            onClick = { onCommand(AudioBarCommand.Speed) },
+            modifier = Modifier.padding(horizontal = 4.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.audio_bar_speed_format, formatSpeedNumber(state.speed, locale)),
+                style = MaterialTheme.typography.labelLarge,
+                maxLines = 1,
+                softWrap = false,
+            )
+        }
 
         IconButton(onClick = { onCommand(AudioBarCommand.Close) }) {
             Icon(
@@ -453,6 +456,7 @@ private fun AudioBarPreviewPlaying() {
             timingAvailable = true,
             playingVersionId = "preset/in-tb",
             pickerOptions = null,
+            showSpeedSheet = false,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -477,6 +481,7 @@ private fun AudioBarPreviewPreparing() {
             timingAvailable = false,
             playingVersionId = "preset/in-tb",
             pickerOptions = null,
+            showSpeedSheet = false,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -501,6 +506,7 @@ private fun AudioBarPreviewDarkBoundary() {
             timingAvailable = false, // some chapters have audio but no timing
             playingVersionId = "preset/in-tb",
             pickerOptions = null,
+            showSpeedSheet = false,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -528,6 +534,7 @@ private fun AudioBarPreviewWithPicker() {
                 AudioSourceOption(versionId = "preset/in-tb", shortName = "TB"),
                 AudioSourceOption(versionId = "preset/en-kjv", shortName = "KJV"),
             ),
+            showSpeedSheet = false,
         ),
         onCommand = {},
         modifier = Modifier,

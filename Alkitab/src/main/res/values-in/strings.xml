@@ -529,4 +529,19 @@
 	<!-- Notification channels -->
     <string name="notification_channel_download_mapper_name">Unduhan</string>
     <string name="notification_channel_devotion_downloader_name">Unduhan renungan</string>
+
+    <!-- Audio bar -->
+    <string name="audio_bible_notification_channel_name">Audio Alkitab</string>
+    <string name="menu_audio">Audio</string>
+    <string name="audio_bar_play">Putar</string>
+    <string name="audio_bar_pause">Jeda</string>
+    <string name="audio_bar_close">Tutup bilah audio</string>
+    <string name="audio_bar_prev_chapter">Pasal sebelumnya</string>
+    <string name="audio_bar_next_chapter">Pasal berikutnya</string>
+    <string name="audio_bar_prev_verse">Ayat sebelumnya</string>
+    <string name="audio_bar_next_verse">Ayat berikutnya</string>
+    <string name="audio_bar_speed">Kecepatan putar</string>
+    <string name="audio_bar_error_no_audio">Tidak ada audio untuk versi ini.</string>
+    <string name="audio_bar_pick_source_title">Putar audio dari</string>
+    <string name="audio_bar_speed_sheet_title">Kecepatan putar</string>
 </resources>
