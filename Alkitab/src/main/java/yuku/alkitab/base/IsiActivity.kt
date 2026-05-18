@@ -140,7 +140,20 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     var needsRestart = false // whether this activity needs to be restarted
 
     private val actionModeController by lazy { VerseActionModeController(this, this) }
-    private val composeVerseActions by lazy { yuku.alkitab.base.compose.verseactions.ComposeVerseActionsController(actionModeController) }
+    private val composeVerseActions by lazy {
+        yuku.alkitab.base.compose.verseactions.ComposeVerseActionsController(
+            controller = actionModeController,
+            composeView = findViewById(R.id.verse_actions_sheet),
+            onSheetAppeared = { firstSelectedVerse_1 ->
+                // The reader shrinks when the sheet expands; if the just-selected
+                // verse was near the bottom, position it ~20% from the top of
+                // the now-smaller viewport so the user can keep tapping nearby
+                // verses to extend the selection.
+                val target = if (activeSplit1 != null) lsSplit1 else lsSplit0
+                target.scrollToVerse(firstSelectedVerse_1, 0.2f)
+            },
+        )
+    }
 
     // -- Audio bar (M3) -- thin glue from the activity to the Compose audio bar.
     // The controller binds to BibleAudioService, projects PlaybackState into a
@@ -506,10 +519,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // If layout is changed, updateToolbarLocation must be updated as well. This will be called in DEBUG to make sure
         // updateToolbarLocation is also updated when layout is updated.
         if (BuildConfig.DEBUG) {
-            if (root.childCount != 3 ||
+            if (root.childCount != 4 ||
                 root.getChildAt(0).id != R.id.toolbar ||
                 root.getChildAt(1).id != R.id.nontoolbar ||
-                root.getChildAt(2).id != R.id.audio_bar
+                root.getChildAt(2).id != R.id.audio_bar ||
+                root.getChildAt(3).id != R.id.verse_actions_sheet
             ) {
                 throw RuntimeException("Layout changed and this is no longer compatible with updateToolbarLocation")
             }
@@ -1377,25 +1391,29 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // - not fullscreen, toolbar at bottom
         // - not fullscreen, toolbar at top
 
-        // root contains 3 children: toolbar, nontoolbar, and the audio bar.
-        // The audio bar always sits directly below the content (above the
-        // bottom-anchored verse-nav toolbar when that mode is enabled), so
-        // the order varies with the toolbar-location preference.
+        // root contains 4 children: toolbar, nontoolbar, the audio bar, and
+        // the verse-actions sheet. The audio bar sits directly below the
+        // content; the verse-actions sheet sits below the audio bar (so it's
+        // always the bottom-most chrome). Order varies with toolbar-location.
 
         if (!fullScreen) {
             val audioBar = root.requireViewById<View>(R.id.audio_bar)
+            val verseActionsSheet = root.requireViewById<View>(R.id.verse_actions_sheet)
             root.removeView(toolbar)
             root.removeView(nontoolbar)
             root.removeView(audioBar)
+            root.removeView(verseActionsSheet)
 
             if (Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default)) {
                 root.addView(nontoolbar)
                 root.addView(audioBar)
+                root.addView(verseActionsSheet)
                 root.addView(toolbar)
             } else {
                 root.addView(toolbar)
                 root.addView(nontoolbar)
                 root.addView(audioBar)
+                root.addView(verseActionsSheet)
             }
         }
     }

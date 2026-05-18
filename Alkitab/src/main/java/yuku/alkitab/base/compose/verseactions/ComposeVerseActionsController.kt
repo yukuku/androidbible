@@ -1,8 +1,5 @@
 package yuku.alkitab.base.compose.verseactions
 
-import android.view.Gravity
-import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,24 +10,40 @@ import yuku.alkitab.base.actionmode.VerseActionModeController
 import yuku.alkitab.base.compose.BibleAppTheme
 import yuku.alkitab.base.config.AppConfig
 import yuku.alkitab.base.util.VerseTextFormatter
-import yuku.alkitab.debug.R
 
 /**
  * Compose-backed replacement for the legacy [androidx.appcompat.view.ActionMode]
  * verse-selection toolbar, gated by `pref_useComposeVerseActions`.
  *
- * The controller owns a [ComposeView] attached to the activity's
- * `R.id.overlayContainer` and renders a [VerseActionsSheet] at the bottom of the
- * screen. All actual side effects (copy, share, dialogs, intents) are delegated
- * back to [VerseActionModeController]'s extracted `handle…` methods so the two
- * code paths stay in lockstep.
+ * The sheet is hosted by the [ComposeView] declared at
+ * `R.id.verse_actions_sheet` in `activity_isi_content.xml`, *inside* the root
+ * vertical `LinearLayout`. Because the chapter's `nontoolbar` sibling uses
+ * `layout_weight=1`, the sheet — once its [AnimatedVisibility][androidx.compose.animation.AnimatedVisibility]
+ * expands to non-zero height — pushes the reader content up instead of
+ * overlaying it. The previously-visible selected verse therefore stays on
+ * screen, and the user can keep tapping adjacent verses to extend the
+ * selection without the sheet covering them.
+ *
+ * To handle the case where the selected verse was at the very bottom of the
+ * reader's pre-shrink area (so the layout reflow would scroll it off-screen),
+ * the activity supplies [onSheetAppeared] — called once per hidden→visible
+ * transition with the first-selected verse number — to scroll the bottom
+ * pane so that verse sits ~20% from the top of the (now shrunk) viewport.
+ * Subsequent selection updates while the sheet is already open don't trigger
+ * a scroll: the user's reading position is left alone.
+ *
+ * All side effects (copy, share, dialogs, intents) are delegated to
+ * [VerseActionModeController]'s extracted `handle…` methods so the two code
+ * paths stay in lockstep.
  */
 class ComposeVerseActionsController(
     private val controller: VerseActionModeController,
+    private val composeView: ComposeView,
+    private val onSheetAppeared: (firstSelectedVerse_1: Int) -> Unit,
 ) {
-    private var composeView: ComposeView? = null
     private var visibleState by mutableStateOf(false)
     private var sheetState by mutableStateOf<VerseActionsSheetState?>(null)
+    private var bound = false
 
     private val host get() = controller.host
     private val actions get() = controller.actions
@@ -43,14 +56,23 @@ class ComposeVerseActionsController(
      * to call repeatedly — `mutableStateOf` deduplicates equal values.
      */
     fun show() {
-        attachIfNeeded()
+        bindIfNeeded()
         controller.refreshExtensions()
         val next = computeState() ?: run {
             visibleState = false
             return
         }
+        val wasVisible = visibleState
         sheetState = next
         visibleState = true
+
+        if (!wasVisible) {
+            val selected = host.selectedVersesSplit0_1
+            if (selected.size() > 0) {
+                val first = selected.get(0)
+                composeView.post { onSheetAppeared(first) }
+            }
+        }
     }
 
     /** Slide the sheet out. Verse selection itself is the caller's responsibility. */
@@ -60,33 +82,22 @@ class ComposeVerseActionsController(
 
     /** Tears down the ComposeView. Call from `onDestroy`. */
     fun detach() {
-        composeView?.let { cv ->
-            (cv.parent as? ViewGroup)?.removeView(cv)
-        }
-        composeView = null
+        if (bound) composeView.disposeComposition()
+        bound = false
     }
 
-    private fun attachIfNeeded() {
-        if (composeView != null) return
-        val parent = host.activity.findViewById<ViewGroup>(R.id.overlayContainer) ?: return
-        val cv = ComposeView(host.activity).apply {
-            setContent {
-                BibleAppTheme {
-                    VerseActionsSheet(
-                        visible = visibleState,
-                        state = sheetState,
-                        callbacks = callbacks,
-                    )
-                }
+    private fun bindIfNeeded() {
+        if (bound) return
+        composeView.setContent {
+            BibleAppTheme {
+                VerseActionsSheet(
+                    visible = visibleState,
+                    state = sheetState,
+                    callbacks = callbacks,
+                )
             }
         }
-        val lp = FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT,
-            FrameLayout.LayoutParams.WRAP_CONTENT,
-            Gravity.BOTTOM,
-        )
-        parent.addView(cv, lp)
-        composeView = cv
+        bound = true
     }
 
     private fun computeState(): VerseActionsSheetState? {
@@ -168,5 +179,4 @@ class ComposeVerseActionsController(
             controller.handleExtension(ext, stay)
         }
     }
-
 }
