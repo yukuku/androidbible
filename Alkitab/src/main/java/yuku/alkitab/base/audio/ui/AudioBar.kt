@@ -204,50 +204,9 @@ private fun AudioBarTopRow(
     // the close button to wrap. The chapter label is also redundant: the
     // toolbar already shows the user's current chapter, and skipping
     // prev/next is a universally-understood control.
-    Row(
+    Box(
         modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
     ) {
-        ChapterNavButton(
-            available = state.prevChapterLabel != null,
-            descriptionRes = R.string.audio_bar_prev_chapter,
-            iconRes = R.drawable.ic_audio_skip_previous,
-            onClick = { onCommand(AudioBarCommand.PrevChapter) },
-        )
-
-        IconButton(
-            onClick = { onCommand(AudioBarCommand.PrevVerse) },
-            enabled = state.timingAvailable,
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_audio_keyboard_arrow_left),
-                contentDescription = stringResource(R.string.audio_bar_prev_verse),
-            )
-        }
-
-        Spacer(Modifier.width(4.dp))
-        PlayPauseButton(state = state, onCommand = onCommand)
-        Spacer(Modifier.width(4.dp))
-
-        IconButton(
-            onClick = { onCommand(AudioBarCommand.NextVerse) },
-            enabled = state.timingAvailable,
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_audio_keyboard_arrow_right),
-                contentDescription = stringResource(R.string.audio_bar_next_verse),
-            )
-        }
-
-        ChapterNavButton(
-            available = state.nextChapterLabel != null,
-            descriptionRes = R.string.audio_bar_next_chapter,
-            iconRes = R.drawable.ic_audio_skip_next,
-            onClick = { onCommand(AudioBarCommand.NextChapter) },
-        )
-
-        Spacer(Modifier.weight(1f))
-
         // Speed chip — tapping opens the [SpeedBottomSheet]. `softWrap = false`
         // keeps locales that render with a comma decimal (e.g. "1,0×" in
         // Indonesian) from wrapping into a stacked "1," / "0×" when the row
@@ -255,7 +214,9 @@ private fun AudioBarTopRow(
         val locale = appLocale()
         TextButton(
             onClick = { onCommand(AudioBarCommand.Speed) },
-            modifier = Modifier.padding(horizontal = 4.dp),
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(horizontal = 4.dp),
         ) {
             Text(
                 text = stringResource(R.string.audio_bar_speed_format, formatSpeedNumber(state.speed, locale)),
@@ -265,7 +226,53 @@ private fun AudioBarTopRow(
             )
         }
 
-        IconButton(onClick = { onCommand(AudioBarCommand.Close) }) {
+        Row(
+            modifier = Modifier.align(Alignment.Center),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            ChapterNavButton(
+                available = state.prevChapterLabel != null,
+                descriptionRes = R.string.audio_bar_prev_chapter,
+                iconRes = R.drawable.ic_audio_skip_previous,
+                onClick = { onCommand(AudioBarCommand.PrevChapter) },
+            )
+
+            IconButton(
+                onClick = { onCommand(AudioBarCommand.PrevVerse) },
+                enabled = state.timingAvailable,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_audio_keyboard_arrow_left),
+                    contentDescription = stringResource(R.string.audio_bar_prev_verse),
+                )
+            }
+
+            Spacer(Modifier.width(4.dp))
+            PlayPauseButton(state = state, onCommand = onCommand)
+            Spacer(Modifier.width(4.dp))
+
+            IconButton(
+                onClick = { onCommand(AudioBarCommand.NextVerse) },
+                enabled = state.timingAvailable,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_audio_keyboard_arrow_right),
+                    contentDescription = stringResource(R.string.audio_bar_next_verse),
+                )
+            }
+
+            ChapterNavButton(
+                available = state.nextChapterLabel != null,
+                descriptionRes = R.string.audio_bar_next_chapter,
+                iconRes = R.drawable.ic_audio_skip_next,
+                onClick = { onCommand(AudioBarCommand.NextChapter) },
+            )
+        }
+
+        IconButton(
+            onClick = { onCommand(AudioBarCommand.Close) },
+            modifier = Modifier.align(Alignment.CenterEnd),
+        ) {
             Icon(
                 painter = painterResource(R.drawable.ic_audio_close),
                 contentDescription = stringResource(R.string.audio_bar_close),
