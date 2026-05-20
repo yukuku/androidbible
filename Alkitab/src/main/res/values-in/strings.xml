@@ -544,4 +544,5 @@
     <string name="audio_bar_error_no_audio">Tidak ada audio untuk versi ini.</string>
     <string name="audio_bar_pick_source_title">Putar audio dari</string>
     <string name="audio_bar_speed_sheet_title">Kecepatan putar</string>
+    <string name="audio_play_from_verse">Putar audio dari ayat ini</string>
 </resources>

@@ -58,6 +58,12 @@
 		app:showAsAction="always" />
 
 	<item
+		android:id="@+id/menuPlayAudioFromVerse"
+		android:icon="@drawable/ic_audio"
+		android:title="@string/audio_play_from_verse"
+		app:showAsAction="never" />
+
+	<item
 		android:id="@+id/menuAddSomething"
 		android:icon="@drawable/ic_menu_add_light"
 		android:title="@string/menuAddSomething"

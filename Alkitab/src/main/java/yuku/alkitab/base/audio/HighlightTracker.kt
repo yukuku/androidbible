@@ -149,6 +149,13 @@ class HighlightTracker {
     }
 
     /**
+     * Returns the `startMs` of the verse numbered [verse_1], or `null` when no
+     * timing is loaded or the chapter has no timing for that verse. Used to seek
+     * playback to a verse the user picked in the reader.
+     */
+    fun getVerseStartMs(verse_1: Int): Long? = verses.firstOrNull { it.verse_1 == verse_1 }?.startMs
+
+    /**
      * Returns the `startMs` of the verse that comes after [positionMs], or
      * `null` if no later verse exists or no timing is loaded.
      *
