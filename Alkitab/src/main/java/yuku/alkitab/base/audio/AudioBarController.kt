@@ -501,6 +501,15 @@ class AudioBarController(
             pendingLoad = null
         }
 
+        // A coordinator-driven external stop (a hymn took over audio) resets the
+        // service to IDLE. Tear the bar down so it doesn't linger in a dead,
+        // un-resumable state. `isPending` guards the startup race where the
+        // freshly-created service replays IDLE before our queued loadChapter runs.
+        if (!isPending && requestedVisible && state == PlaybackState.IDLE) {
+            hide()
+            return
+        }
+
         // Sync the activity to the chapter the service is now playing. Only fires
         // for service-driven changes (lock screen / Bluetooth / auto-advance);
         // activity-driven changes from onChapterChanged bump the latch first.

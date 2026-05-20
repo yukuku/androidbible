@@ -68,7 +68,7 @@ import yuku.alkitab.debug.R
  * [BibleAudioPlayer]'s ExoPlayer.
  */
 @OptIn(UnstableApi::class)
-class BibleAudioService : MediaSessionService() {
+class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session {
 
     companion object {
         /** Action on the binding [Intent] that asks for the in-app [LocalBinder]. */
@@ -292,7 +292,12 @@ class BibleAudioService : MediaSessionService() {
         mediaSession?.release()
         mediaSession = null
         player.release()
+        AudioPlaybackCoordinator.release(this)
         super.onDestroy()
+    }
+
+    override fun stopPlayback() {
+        stop()
     }
 
     // -- public API surfaced via [LocalBinder] -------------------------------
@@ -304,6 +309,7 @@ class BibleAudioService : MediaSessionService() {
      * flips to false. Timing data is fetched in parallel with audio buffering.
      */
     fun loadChapter(request: AudioRequest) {
+        AudioPlaybackCoordinator.acquire(this)
         loadJob?.cancel()
         timingJob?.cancel()
         currentRequest = request
@@ -371,6 +377,7 @@ class BibleAudioService : MediaSessionService() {
     }
 
     fun play() {
+        AudioPlaybackCoordinator.acquire(this)
         player.play()
         _playbackState.update { it.copy(isPlaying = true) }
         startPositionPolling()
@@ -435,6 +442,7 @@ class BibleAudioService : MediaSessionService() {
         player.pause()
         _playbackState.value = PlaybackState.IDLE
         stopSelf()
+        AudioPlaybackCoordinator.release(this)
     }
 
     /**
