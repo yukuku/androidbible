@@ -145,6 +145,14 @@ class AudioBarController(
     /** The audio source picked for the current session. Cleared on [hide]. */
     private var selectedSource: AudioSourceOption? = null
 
+    /**
+     * 1-based verse the next [buildRequest] should seek to, or `0` for the
+     * chapter start. Set by [showFromVerse] and consumed (reset to `0`) the
+     * moment [buildRequest] reads it, so neighbor/auto-advance loads always
+     * start at the beginning.
+     */
+    private var startVerse1 = 0
+
     private val _uiState = MutableStateFlow(AudioBarUiState.HIDDEN)
     val uiState: StateFlow<AudioBarUiState> = _uiState.asStateFlow()
 
@@ -296,6 +304,7 @@ class AudioBarController(
             chapter_1 = availableChapter,
             displayTitle = "${sourceBook.shortName} $availableChapter",
             displaySubtitle = source.shortName,
+            startVerse_1 = 0,
         )
         service?.loadChapter(request) ?: run { pendingLoad = host }
         recomputeChapterLabels(host)
@@ -312,6 +321,26 @@ class AudioBarController(
         } else {
             show()
         }
+    }
+
+    /**
+     * Opens the bar and starts playback seeked to [verse_1] (1-based). If the
+     * bar is already showing the same chapter, just seeks rather than reloading
+     * the MP3. Falls back to a normal start-at-0 load when the selected version
+     * has no timing for that verse (handled service-side).
+     */
+    fun showFromVerse(verse_1: Int) {
+        val host = this.host ?: return
+        val svc = service
+        if (requestedVisible && svc != null &&
+            host.audioCurrentBook().bookId == lastServiceBookId &&
+            host.audioCurrentChapter1() == lastServiceChapter1
+        ) {
+            svc.seekToVerse(verse_1)
+            return
+        }
+        startVerse1 = verse_1
+        show()
     }
 
     fun show() {
@@ -357,6 +386,7 @@ class AudioBarController(
         reshowPending = false
         dragging = false
         selectedSource = null
+        startVerse1 = 0
         lastServiceBookId = -1
         lastServiceChapter1 = 0
         service?.stop()
@@ -452,12 +482,15 @@ class AudioBarController(
         val sourceBook = host.audioBookInVersion(source.versionId, readerBook.bookId)
             ?: return null
         val availableChapter = chapter1.coerceIn(1, sourceBook.chapter_count)
+        val sv = startVerse1
+        startVerse1 = 0
         return BibleAudioService.AudioRequest(
             versionId = source.versionId,
             bookId = sourceBook.bookId,
             chapter_1 = availableChapter,
             displayTitle = "${sourceBook.shortName} $availableChapter",
             displaySubtitle = source.shortName,
+            startVerse_1 = sv,
         )
     }
 

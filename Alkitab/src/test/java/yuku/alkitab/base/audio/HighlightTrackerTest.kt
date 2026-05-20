@@ -200,6 +200,43 @@ class HighlightTrackerTest {
         assertEquals(0, t.peekVerseAt(500L))
     }
 
+    // -- getVerseStartMs -------------------------------------------------------
+
+    @Test
+    fun `getVerseStartMs returns the startMs of the matching verse`() {
+        val t = HighlightTracker()
+        t.setTiming(contiguous)
+        assertEquals(0L, t.getVerseStartMs(1))
+        assertEquals(1000L, t.getVerseStartMs(2))
+        assertEquals(2000L, t.getVerseStartMs(3))
+    }
+
+    @Test
+    fun `getVerseStartMs returns null when the verse has no timing entry`() {
+        val t = HighlightTracker()
+        t.setTiming(contiguous)
+        assertEquals(null, t.getVerseStartMs(14))
+        assertEquals(null, t.getVerseStartMs(0))
+    }
+
+    @Test
+    fun `getVerseStartMs returns null when no timing is loaded`() {
+        val t = HighlightTracker()
+        assertEquals(null, t.getVerseStartMs(1))
+    }
+
+    @Test
+    fun `getVerseStartMs honors a non-contiguous verse start offset`() {
+        val t = HighlightTracker()
+        t.setTiming(
+            listOf(
+                VerseTiming(verse_1 = 13, startMs = 0L, endMs = 1000L),
+                VerseTiming(verse_1 = 14, startMs = 1500L, endMs = 2500L),
+            )
+        )
+        assertEquals(1500L, t.getVerseStartMs(14))
+    }
+
     // -- getNextVerseStartMs ---------------------------------------------------
 
     @Test

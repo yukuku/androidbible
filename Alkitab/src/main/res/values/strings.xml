@@ -598,5 +598,6 @@
 	<string name="audio_bar_error_no_audio">No audio for this version.</string>
 	<string name="audio_bar_pick_source_title">Play audio from</string>
 	<string name="audio_bar_speed_sheet_title">Playback speed</string>
+	<string name="audio_play_from_verse">Play audio from this verse</string>
 
 </resources>
