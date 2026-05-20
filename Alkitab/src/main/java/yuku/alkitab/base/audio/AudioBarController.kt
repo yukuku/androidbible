@@ -110,6 +110,15 @@ class AudioBarController(
     /** Tracks whether the user has *requested* the bar visible (via [toggle]). */
     private var requestedVisible = false
     /**
+     * Set by [reshowIfSessionActive] while we are binding to an
+     * already-running service purely to restore the bar after activity
+     * recreation / return-from-background. The first projected
+     * [PlaybackState] that reports [PlaybackState.isActive] flips the bar back
+     * on, then clears this flag. Cleared without showing if the session has
+     * ended by the time we connect (no flicker).
+     */
+    private var reshowPending = false
+    /**
      * Set while the user has the slider thumb under their finger. Drives a
      * special-case in [projectToUi]: live playback continues to push a
      * `verse_1` derived from the player's current position every 100 ms, but
@@ -201,6 +210,23 @@ class AudioBarController(
     fun attach(host: Host, composeView: ComposeView) {
         this.host = host
         this.composeView = composeView
+    }
+
+    /**
+     * Restores the audio bar when the activity becomes visible again (rotation,
+     * process/activity recreation, or return-from-background) while the service
+     * is still mid-session. Call from `IsiActivity.onStart` — it covers both a
+     * fresh activity (after [attach]) and a returning one on the same instance.
+     *
+     * Binds only when [BibleAudioService.hasActiveSession] is already true, so
+     * we never spin the service up for users who haven't started audio. The
+     * actual reshow happens in [projectToUi] once the first [PlaybackState]
+     * arrives, avoiding a show-then-hide flicker if the session just ended.
+     */
+    fun reshowIfSessionActive() {
+        if (!shouldBindForReshow(requestedVisible, BibleAudioService.hasActiveSession)) return
+        reshowPending = true
+        ensureBound()
     }
 
     private var composeContentInstalled = false
@@ -328,6 +354,7 @@ class AudioBarController(
 
     fun hide() {
         requestedVisible = false
+        reshowPending = false
         dragging = false
         selectedSource = null
         lastServiceBookId = -1
@@ -360,6 +387,7 @@ class AudioBarController(
      * may continue playing when the activity is recreated (M4 lock-screen).
      */
     fun detach() {
+        reshowPending = false
         if (bound) {
             try {
                 context.unbindService(serviceConnection)
@@ -490,6 +518,26 @@ class AudioBarController(
 
     private fun projectToUi(state: PlaybackState) {
         val host = this.host
+
+        // Auto-reshow after activity recreation / return-from-background: the
+        // service is still mid-session but the bar was reset to hidden. Flip it
+        // back on once the first active state lands, reconstructing the session
+        // source from the service's loaded versionId. Done before the
+        // _uiState.update below so `visible` picks it up in the same emission.
+        if (shouldReshowNow(reshowPending, state)) {
+            reshowPending = false
+            requestedVisible = true
+            ensureComposeContent()
+            host?.audioAvailableSources()
+                ?.firstOrNull { it.versionId == state.versionId }
+                ?.let { selectedSource = it }
+            host?.audioBarVisibilityChanged(true)
+        } else if (reshowPending && !state.isActive) {
+            // Session ended before we connected — drop the pending reshow so we
+            // don't show the bar against an idle service.
+            reshowPending = false
+        }
+
         // Snapshot before we drain — if a load was queued before the service
         // connected, the first incoming state is usually `IDLE`, which would
         // briefly clear the spinner before our loadChapter call sets it back
@@ -564,5 +612,20 @@ class AudioBarController(
 
     companion object {
         private const val TAG = "AudioBarController"
+
+        /**
+         * Whether [reshowIfSessionActive] should bind to the service: only when
+         * the bar isn't already managed by this controller ([requestedVisible])
+         * and the service reports an active session. Pure for unit testing.
+         */
+        internal fun shouldBindForReshow(requestedVisible: Boolean, hasActiveSession: Boolean): Boolean =
+            !requestedVisible && hasActiveSession
+
+        /**
+         * Whether a pending reshow should fire for [state]: only once the first
+         * active state arrives. Pure for unit testing.
+         */
+        internal fun shouldReshowNow(reshowPending: Boolean, state: PlaybackState): Boolean =
+            reshowPending && state.isActive
     }
 }

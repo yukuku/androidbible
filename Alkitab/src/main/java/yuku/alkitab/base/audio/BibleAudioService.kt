@@ -90,6 +90,18 @@ class BibleAudioService : MediaSessionService() {
         private const val DEFAULT_PLAYBACK_SPEED = 1.0f
 
         private const val TAG = "BibleAudioService"
+
+        /**
+         * Process-wide flag (the service is local and single-instance) that lets
+         * [AudioBarController] decide whether to re-show the audio bar after the
+         * activity is recreated or returns from the background — *without*
+         * binding (which would spin the service up via `BIND_AUTO_CREATE` for
+         * users who never started audio). Set true while a chapter is loaded,
+         * cleared on stop / destroy.
+         */
+        @Volatile
+        var hasActiveSession: Boolean = false
+            private set
     }
 
     /** Parameters for [loadChapter]. The display fields drive the lock-screen metadata. */
@@ -285,6 +297,7 @@ class BibleAudioService : MediaSessionService() {
     }
 
     override fun onDestroy() {
+        hasActiveSession = false
         positionJob?.cancel()
         loadJob?.cancel()
         timingJob?.cancel()
@@ -307,6 +320,7 @@ class BibleAudioService : MediaSessionService() {
         loadJob?.cancel()
         timingJob?.cancel()
         currentRequest = request
+        hasActiveSession = true
         // New chapter — reset highlight from any previous chapter and clear errors.
         highlightTracker.setTiming(emptyList())
         _playbackState.update {
@@ -432,6 +446,7 @@ class BibleAudioService : MediaSessionService() {
         timingJob?.cancel()
         positionJob?.cancel()
         currentRequest = null
+        hasActiveSession = false
         player.pause()
         _playbackState.value = PlaybackState.IDLE
         stopSelf()
