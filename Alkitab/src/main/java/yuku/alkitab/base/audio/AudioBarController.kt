@@ -524,18 +524,21 @@ class AudioBarController(
         // back on once the first active state lands, reconstructing the session
         // source from the service's loaded versionId. Done before the
         // _uiState.update below so `visible` picks it up in the same emission.
-        if (shouldReshowNow(reshowPending, state)) {
+        if (reshowPending) {
+            val reshow = shouldReshowNow(reshowPending, state)
+            // One-shot: consume the flag on the first state after binding,
+            // whether or not we actually reshow. If the session ended before we
+            // connected (!state.isActive) we just drop it — no show-then-hide
+            // flicker against an idle service.
             reshowPending = false
-            requestedVisible = true
-            ensureComposeContent()
-            host?.audioAvailableSources()
-                ?.firstOrNull { it.versionId == state.versionId }
-                ?.let { selectedSource = it }
-            host?.audioBarVisibilityChanged(true)
-        } else if (reshowPending && !state.isActive) {
-            // Session ended before we connected — drop the pending reshow so we
-            // don't show the bar against an idle service.
-            reshowPending = false
+            if (reshow) {
+                requestedVisible = true
+                ensureComposeContent()
+                host?.audioAvailableSources()
+                    ?.firstOrNull { it.versionId == state.versionId }
+                    ?.let { selectedSource = it }
+                host?.audioBarVisibilityChanged(true)
+            }
         }
 
         // Snapshot before we drain — if a load was queued before the service
