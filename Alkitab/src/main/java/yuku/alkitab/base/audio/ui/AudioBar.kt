@@ -32,7 +32,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -177,11 +177,18 @@ fun AudioBar(
             color = MaterialTheme.colorScheme.surfaceContainerHigh,
             modifier = modifier.fillMaxWidth(),
         ) {
+            // Hoisted above the orientation branch so an in-progress seek
+            // drag carries across a portrait↔landscape rotation (and process
+            // death via rememberSaveable) instead of resetting to the playback
+            // position.
+            var dragValue by rememberSaveable { mutableStateOf<Float?>(null) }
             val landscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
             if (landscape) {
                 AudioBarLandscapeRow(
                     state = state,
                     onCommand = onCommand,
+                    dragValue = dragValue,
+                    onDragValueChange = { dragValue = it },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
@@ -204,7 +211,12 @@ fun AudioBar(
                     verticalArrangement = Arrangement.spacedBy(2.dp),
                 ) {
                     AudioBarTopRow(state = state, onCommand = onCommand)
-                    AudioBarSliderRow(state = state, onCommand = onCommand)
+                    AudioBarSliderRow(
+                        state = state,
+                        onCommand = onCommand,
+                        dragValue = dragValue,
+                        onDragValueChange = { dragValue = it },
+                    )
                 }
             }
         }
@@ -394,9 +406,9 @@ private fun PlayPauseButton(
 private fun AudioBarSliderRow(
     state: AudioBarUiState,
     onCommand: (AudioBarCommand) -> Unit,
+    dragValue: Float?,
+    onDragValueChange: (Float?) -> Unit,
 ) {
-    var dragValue by remember { mutableStateOf<Float?>(null) }
-
     val effectivePosition = dragValue?.roundToLong() ?: state.positionMs
 
     Row(
@@ -415,7 +427,7 @@ private fun AudioBarSliderRow(
             state = state,
             onCommand = onCommand,
             dragValue = dragValue,
-            onDragValueChange = { dragValue = it },
+            onDragValueChange = onDragValueChange,
             modifier = Modifier.weight(1f),
         )
 
@@ -472,10 +484,10 @@ private fun AudioBarSlider(
 private fun AudioBarLandscapeRow(
     state: AudioBarUiState,
     onCommand: (AudioBarCommand) -> Unit,
+    dragValue: Float?,
+    onDragValueChange: (Float?) -> Unit,
     modifier: Modifier,
 ) {
-    var dragValue by remember { mutableStateOf<Float?>(null) }
-
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -484,7 +496,7 @@ private fun AudioBarLandscapeRow(
             state = state,
             onCommand = onCommand,
             dragValue = dragValue,
-            onDragValueChange = { dragValue = it },
+            onDragValueChange = onDragValueChange,
             modifier = Modifier.weight(2f),
         )
 
