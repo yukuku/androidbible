@@ -234,10 +234,36 @@ private fun AudioBarTopRow(
     // the close button to wrap. The chapter label is also redundant: the
     // toolbar already shows the user's current chapter, and skipping
     // prev/next is a universally-understood control.
+    // Three-slot row: equal-weight side slots make the transport cluster
+    // geometrically centered regardless of the speed/close widths, while the
+    // Row layout (unlike a Box overlay) keeps the side controls from
+    // overlapping the cluster on narrow screens — the weighted slots shrink
+    // and the cluster keeps its intrinsic width.
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        // Speed chip — tapping opens the [SpeedBottomSheet]. `softWrap = false`
+        // keeps locales that render with a comma decimal (e.g. "1,0×" in
+        // Indonesian) from wrapping into a stacked "1," / "0×" when the row
+        // is tight.
+        val locale = appLocale()
+        Box(modifier = Modifier.weight(1f)) {
+            TextButton(
+                onClick = { onCommand(AudioBarCommand.Speed) },
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .padding(horizontal = 4.dp),
+            ) {
+                Text(
+                    text = stringResource(R.string.audio_bar_speed_format, formatSpeedNumber(state.speed, locale)),
+                    style = MaterialTheme.typography.labelLarge,
+                    maxLines = 1,
+                    softWrap = false,
+                )
+            }
+        }
+
         ChapterNavButton(
             available = state.prevChapterLabel != null,
             descriptionRes = R.string.audio_bar_prev_chapter,
@@ -260,11 +286,17 @@ private fun AudioBarTopRow(
             onClick = { onCommand(AudioBarCommand.NextChapter) },
         )
 
-        Spacer(Modifier.weight(1f))
-
-        SpeedButton(state = state, onCommand = onCommand)
-
-        CloseButton(onCommand = onCommand)
+        Box(modifier = Modifier.weight(1f)) {
+            IconButton(
+                onClick = { onCommand(AudioBarCommand.Close) },
+                modifier = Modifier.align(Alignment.CenterEnd),
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_audio_close),
+                    contentDescription = stringResource(R.string.audio_bar_close),
+                )
+            }
+        }
     }
 }
 

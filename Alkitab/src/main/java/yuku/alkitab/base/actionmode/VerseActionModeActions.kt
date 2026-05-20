@@ -23,6 +23,12 @@ interface VerseActionModeActions {
     /** Returns whether the current version(s) are eligible for Ribka reporting. */
     fun checkRibkaEligibility(): RibkaEligibility
 
+    /** Whether the "play audio from this verse" item should be offered. */
+    fun isAudioAvailableForVerseAction(): Boolean
+
+    /** Opens the audio bar and starts playback at the given 1-based verse. */
+    fun playAudioFromVerse(verse_1: Int)
+
     /** Called from `onDestroyActionMode` so the Activity can clear its `actionMode` field. */
     fun onActionModeDestroyed()
 }
