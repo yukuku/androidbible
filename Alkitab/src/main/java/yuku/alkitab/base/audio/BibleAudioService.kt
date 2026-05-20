@@ -99,6 +99,12 @@ class BibleAudioService : MediaSessionService() {
         val chapter_1: Int,
         val displayTitle: String,
         val displaySubtitle: String,
+        /**
+         * 1-based verse to start playback at, or `0` to start at the beginning of
+         * the chapter. Honored only once timing is loaded; falls back to position
+         * 0 when the chapter has no timing or no entry for this verse.
+         */
+        val startVerse_1: Int,
     )
 
     /**
@@ -142,6 +148,17 @@ class BibleAudioService : MediaSessionService() {
     private var currentRequest: AudioRequest? = null
 
     /**
+     * Deferred initial-seek state for [AudioRequest.startVerse_1]. The seek can
+     * only run once BOTH the player is READY ([playerReadyForSeek]) and timing
+     * has resolved ([timingLoaded]) — the two arrive asynchronously and in
+     * either order. [tryInitialSeek] is called from both completion points and
+     * fires (or gives up, falling back to position 0) when both are ready.
+     */
+    private var pendingStartVerse1 = 0
+    private var playerReadyForSeek = false
+    private var timingLoaded = false
+
+    /**
      * Lazily-decoded app-icon bytes used as the lock-screen / notification
      * artwork. Decoded from the per-flavor `R.mipmap.ic_launcher` (which can be
      * an adaptive XML on API 26+, hence going through [ResourcesCompat] +
@@ -168,6 +185,8 @@ class BibleAudioService : MediaSessionService() {
 
         override fun onReady() {
             startPositionPolling()
+            playerReadyForSeek = true
+            tryInitialSeek()
             _playbackState.update {
                 it.copy(
                     preparing = false,
@@ -307,6 +326,9 @@ class BibleAudioService : MediaSessionService() {
         loadJob?.cancel()
         timingJob?.cancel()
         currentRequest = request
+        pendingStartVerse1 = request.startVerse_1
+        playerReadyForSeek = false
+        timingLoaded = false
         // New chapter — reset highlight from any previous chapter and clear errors.
         highlightTracker.setTiming(emptyList())
         _playbackState.update {
@@ -367,7 +389,38 @@ class BibleAudioService : MediaSessionService() {
                 request.chapter_1,
             )
             highlightTracker.setTiming(timing?.verses ?: emptyList())
+            timingLoaded = true
+            tryInitialSeek()
         }
+    }
+
+    /**
+     * Performs the deferred start-verse seek requested via
+     * [AudioRequest.startVerse_1]. No-op until the player is READY and timing
+     * has resolved. Once both are ready: seeks to the verse's start if timing
+     * has an entry for it, otherwise clears the pending seek (graceful fallback
+     * to position 0). Clearing on every resolved-timing outcome stops a stale
+     * verse from seeking a later chapter that happens to lack timing.
+     */
+    private fun tryInitialSeek() {
+        if (pendingStartVerse1 <= 0 || !playerReadyForSeek) return
+        val startMs = highlightTracker.getVerseStartMs(pendingStartVerse1)
+        if (startMs != null) {
+            pendingStartVerse1 = 0
+            seekTo(startMs)
+        } else if (timingLoaded) {
+            pendingStartVerse1 = 0
+        }
+    }
+
+    /**
+     * Seeks playback to the start of verse [verse_1] using the loaded timing.
+     * No-op when timing isn't loaded or has no entry for that verse. Used when
+     * the user picks a verse while this chapter is already playing.
+     */
+    fun seekToVerse(verse_1: Int) {
+        val target = highlightTracker.getVerseStartMs(verse_1) ?: return
+        seekTo(target)
     }
 
     fun play() {
@@ -475,6 +528,7 @@ class BibleAudioService : MediaSessionService() {
                 chapter_1 = chapter1,
                 displayTitle = "${book.shortName} $chapter1",
                 displaySubtitle = versionShortName,
+                startVerse_1 = 0,
             )
         )
     }

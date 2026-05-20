@@ -162,6 +162,9 @@ class VerseActionModeController(
         val menuRibkaReport = menu.findItem(R.id.menuRibkaReport)
         menuRibkaReport.isVisible = single && actions.checkRibkaEligibility() != RibkaEligibility.None
 
+        val menuPlayAudioFromVerse = menu.findItem(R.id.menuPlayAudioFromVerse)
+        menuPlayAudioFromVerse.isVisible = single && actions.isAudioAvailableForVerseAction()
+
         // extensions
         extensions.clear()
         extensions.addAll(ExtensionManager.getExtensions())
@@ -298,6 +301,12 @@ class VerseActionModeController(
                         }
                     }
                 )
+                true
+            }
+
+            R.id.menuPlayAudioFromVerse -> {
+                actions.playAudioFromVerse(selected.get(0))
+                mode.finish()
                 true
             }
 
