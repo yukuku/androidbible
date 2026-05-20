@@ -413,6 +413,16 @@
 			</intent-filter>
 		</service>
 
+		<!-- Kidung (hymn) audio: media3 MediaSessionService for MP3 + MIDI. -->
+		<service
+			android:name="yuku.alkitab.songs.SongAudioService"
+			android:exported="true"
+			android:foregroundServiceType="mediaPlayback">
+			<intent-filter>
+				<action android:name="androidx.media3.session.MediaSessionService" />
+			</intent-filter>
+		</service>
+
 		<!--
 			File provider, for sharing app files.
 			Authority MUST NOT be changed without changing sharing code.

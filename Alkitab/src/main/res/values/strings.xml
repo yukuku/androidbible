@@ -581,6 +581,7 @@
 	<string name="notification_channel_download_mapper_name">Downloads</string>
 	<string name="notification_channel_devotion_downloader_name">Devotion downloads</string>
 	<string name="audio_bible_notification_channel_name">Bible audio</string>
+	<string name="audio_song_notification_channel_name">Song audio</string>
 
 	<!-- Audio bar (M3) -->
 	<string name="menu_audio">Audio</string>
