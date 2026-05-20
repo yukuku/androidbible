@@ -1,5 +1,6 @@
 package yuku.alkitab.base.audio.ui
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -31,12 +32,13 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -175,19 +177,47 @@ fun AudioBar(
             color = MaterialTheme.colorScheme.surfaceContainerHigh,
             modifier = modifier.fillMaxWidth(),
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = 8.dp,
-                        end = 8.dp,
-                        top = 4.dp,
-                        bottom = 4.dp + bottomInset,
-                    ),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-            ) {
-                AudioBarTopRow(state = state, onCommand = onCommand)
-                AudioBarSliderRow(state = state, onCommand = onCommand)
+            // Hoisted above the orientation branch so an in-progress seek
+            // drag carries across a portrait↔landscape rotation (and process
+            // death via rememberSaveable) instead of resetting to the playback
+            // position.
+            var dragValue by rememberSaveable { mutableStateOf<Float?>(null) }
+            val landscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+            if (landscape) {
+                AudioBarLandscapeRow(
+                    state = state,
+                    onCommand = onCommand,
+                    dragValue = dragValue,
+                    onDragValueChange = { dragValue = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 8.dp,
+                            end = 8.dp,
+                            top = 4.dp,
+                            bottom = 4.dp + bottomInset,
+                        ),
+                )
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 8.dp,
+                            end = 8.dp,
+                            top = 4.dp,
+                            bottom = 4.dp + bottomInset,
+                        ),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
+                    AudioBarTopRow(state = state, onCommand = onCommand)
+                    AudioBarSliderRow(
+                        state = state,
+                        onCommand = onCommand,
+                        dragValue = dragValue,
+                        onDragValueChange = { dragValue = it },
+                    )
+                }
             }
         }
     }
@@ -241,29 +271,13 @@ private fun AudioBarTopRow(
             onClick = { onCommand(AudioBarCommand.PrevChapter) },
         )
 
-        IconButton(
-            onClick = { onCommand(AudioBarCommand.PrevVerse) },
-            enabled = state.timingAvailable,
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_audio_keyboard_arrow_left),
-                contentDescription = stringResource(R.string.audio_bar_prev_verse),
-            )
-        }
+        PrevVerseButton(state = state, onCommand = onCommand)
 
         Spacer(Modifier.width(4.dp))
         PlayPauseButton(state = state, onCommand = onCommand)
         Spacer(Modifier.width(4.dp))
 
-        IconButton(
-            onClick = { onCommand(AudioBarCommand.NextVerse) },
-            enabled = state.timingAvailable,
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_audio_keyboard_arrow_right),
-                contentDescription = stringResource(R.string.audio_bar_next_verse),
-            )
-        }
+        NextVerseButton(state = state, onCommand = onCommand)
 
         ChapterNavButton(
             available = state.nextChapterLabel != null,
@@ -283,6 +297,73 @@ private fun AudioBarTopRow(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun PrevVerseButton(
+    state: AudioBarUiState,
+    onCommand: (AudioBarCommand) -> Unit,
+) {
+    IconButton(
+        onClick = { onCommand(AudioBarCommand.PrevVerse) },
+        enabled = state.timingAvailable,
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_audio_keyboard_arrow_left),
+            contentDescription = stringResource(R.string.audio_bar_prev_verse),
+        )
+    }
+}
+
+@Composable
+private fun NextVerseButton(
+    state: AudioBarUiState,
+    onCommand: (AudioBarCommand) -> Unit,
+) {
+    IconButton(
+        onClick = { onCommand(AudioBarCommand.NextVerse) },
+        enabled = state.timingAvailable,
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_audio_keyboard_arrow_right),
+            contentDescription = stringResource(R.string.audio_bar_next_verse),
+        )
+    }
+}
+
+// Speed chip — tapping opens the [SpeedBottomSheet]. `softWrap = false`
+// keeps locales that render with a comma decimal (e.g. "1,0×" in
+// Indonesian) from wrapping into a stacked "1," / "0×" when the row
+// is tight.
+@Composable
+private fun SpeedButton(
+    state: AudioBarUiState,
+    onCommand: (AudioBarCommand) -> Unit,
+) {
+    val locale = appLocale()
+    TextButton(
+        onClick = { onCommand(AudioBarCommand.Speed) },
+        modifier = Modifier.padding(horizontal = 4.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.audio_bar_speed_format, formatSpeedNumber(state.speed, locale)),
+            style = MaterialTheme.typography.labelLarge,
+            maxLines = 1,
+            softWrap = false,
+        )
+    }
+}
+
+@Composable
+private fun CloseButton(
+    onCommand: (AudioBarCommand) -> Unit,
+) {
+    IconButton(onClick = { onCommand(AudioBarCommand.Close) }) {
+        Icon(
+            painter = painterResource(R.drawable.ic_audio_close),
+            contentDescription = stringResource(R.string.audio_bar_close),
+        )
     }
 }
 
@@ -357,9 +438,9 @@ private fun PlayPauseButton(
 private fun AudioBarSliderRow(
     state: AudioBarUiState,
     onCommand: (AudioBarCommand) -> Unit,
+    dragValue: Float?,
+    onDragValueChange: (Float?) -> Unit,
 ) {
-    var dragValue by remember { mutableStateOf<Float?>(null) }
-
     val effectivePosition = dragValue?.roundToLong() ?: state.positionMs
 
     Row(
@@ -374,19 +455,11 @@ private fun AudioBarSliderRow(
             modifier = Modifier.width(40.dp),
         )
 
-        Slider(
-            value = effectivePosition.toFloat(),
-            valueRange = 0f..maxOf(state.durationMs.toFloat(), 1f),
-            onValueChange = { v ->
-                dragValue = v
-                onCommand(AudioBarCommand.SeekDrag(v.roundToLong()))
-            },
-            onValueChangeFinished = {
-                val v = dragValue ?: return@Slider
-                onCommand(AudioBarCommand.SeekCommit(v.roundToLong()))
-                dragValue = null
-            },
-            enabled = state.durationMs > 0L && state.error == null,
+        AudioBarSlider(
+            state = state,
+            onCommand = onCommand,
+            dragValue = dragValue,
+            onDragValueChange = onDragValueChange,
             modifier = Modifier.weight(1f),
         )
 
@@ -402,6 +475,90 @@ private fun AudioBarSliderRow(
         // it was redundant with the verse highlight in the reader and just
         // looked like a stray code to users. The highlight in the verse list
         // is the authoritative current-verse cue.
+    }
+}
+
+@Composable
+private fun AudioBarSlider(
+    state: AudioBarUiState,
+    onCommand: (AudioBarCommand) -> Unit,
+    dragValue: Float?,
+    onDragValueChange: (Float?) -> Unit,
+    modifier: Modifier,
+) {
+    val effectivePosition = dragValue?.roundToLong() ?: state.positionMs
+    Slider(
+        value = effectivePosition.toFloat(),
+        valueRange = 0f..maxOf(state.durationMs.toFloat(), 1f),
+        onValueChange = { v ->
+            onDragValueChange(v)
+            onCommand(AudioBarCommand.SeekDrag(v.roundToLong()))
+        },
+        onValueChangeFinished = {
+            val v = dragValue ?: return@Slider
+            onCommand(AudioBarCommand.SeekCommit(v.roundToLong()))
+            onDragValueChange(null)
+        },
+        enabled = state.durationMs > 0L && state.error == null,
+        modifier = modifier,
+    )
+}
+
+/**
+ * Landscape variant — collapses the bar into a single row to reclaim the
+ * vertical space the two-row portrait layout costs (worse with split view).
+ * Order: slider · spacer · transport cluster · speed · close. The mm:ss
+ * position/duration labels are dropped here — the slider conveys progress and
+ * keeping the labels would push the control cluster into wrapping on a single
+ * row.
+ */
+@Composable
+private fun AudioBarLandscapeRow(
+    state: AudioBarUiState,
+    onCommand: (AudioBarCommand) -> Unit,
+    dragValue: Float?,
+    onDragValueChange: (Float?) -> Unit,
+    modifier: Modifier,
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        AudioBarSlider(
+            state = state,
+            onCommand = onCommand,
+            dragValue = dragValue,
+            onDragValueChange = onDragValueChange,
+            modifier = Modifier.weight(2f),
+        )
+
+        Spacer(Modifier.weight(1f))
+
+        ChapterNavButton(
+            available = state.prevChapterLabel != null,
+            descriptionRes = R.string.audio_bar_prev_chapter,
+            iconRes = R.drawable.ic_audio_skip_previous,
+            onClick = { onCommand(AudioBarCommand.PrevChapter) },
+        )
+
+        PrevVerseButton(state = state, onCommand = onCommand)
+
+        Spacer(Modifier.width(4.dp))
+        PlayPauseButton(state = state, onCommand = onCommand)
+        Spacer(Modifier.width(4.dp))
+
+        NextVerseButton(state = state, onCommand = onCommand)
+
+        ChapterNavButton(
+            available = state.nextChapterLabel != null,
+            descriptionRes = R.string.audio_bar_next_chapter,
+            iconRes = R.drawable.ic_audio_skip_next,
+            onClick = { onCommand(AudioBarCommand.NextChapter) },
+        )
+
+        SpeedButton(state = state, onCommand = onCommand)
+
+        CloseButton(onCommand = onCommand)
     }
 }
 
