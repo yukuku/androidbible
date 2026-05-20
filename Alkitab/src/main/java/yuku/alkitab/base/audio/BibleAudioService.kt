@@ -415,12 +415,14 @@ class BibleAudioService : MediaSessionService() {
 
     /**
      * Seeks playback to the start of verse [verse_1] using the loaded timing.
-     * No-op when timing isn't loaded or has no entry for that verse. Used when
-     * the user picks a verse while this chapter is already playing.
+     * Routes through the same deferred-seek gate as [AudioRequest.startVerse_1]
+     * so a pick made while the chapter is still preparing (player not READY or
+     * timing not yet fetched) lands once both are ready, instead of being lost.
+     * Used when the user picks a verse while this chapter is already playing.
      */
     fun seekToVerse(verse_1: Int) {
-        val target = highlightTracker.getVerseStartMs(verse_1) ?: return
-        seekTo(target)
+        pendingStartVerse1 = verse_1
+        tryInitialSeek()
     }
 
     fun play() {
