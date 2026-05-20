@@ -39,6 +39,16 @@ data class PlaybackState(
     val speed: Float,
     val error: String?,
 ) {
+    /**
+     * True while a chapter is loaded into the service (playing, paused, or
+     * buffering) — i.e. not [IDLE]/stopped. Drives the auto-reshow decision in
+     * [AudioBarController] when the activity is recreated or returns from the
+     * background. Mirrors the `bookId >= 0` invariant that `loadChapter` sets
+     * and `stop()` clears.
+     */
+    val isActive: Boolean
+        get() = bookId >= 0
+
     companion object {
         val IDLE = PlaybackState(
             isPlaying = false,

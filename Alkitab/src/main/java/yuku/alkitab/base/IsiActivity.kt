@@ -1144,6 +1144,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // Re-resolve the audio overlay color in case the user changed the
         // reading theme via the textAppearancePanel while we were stopped.
         audioHighlightColorCached = 0
+
+        // Restore the audio bar + toolbar indicator if the service kept playing
+        // across recreation (rotation) or while we were backgrounded. Covers
+        // both a freshly recreated activity and a return on the same instance.
+        audioBinder.reshowIfSessionActive()
     }
 
     override fun onDestroy() {
