@@ -71,6 +71,7 @@ androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "l
 androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "androidxMedia3" }
 androidx-media3-datasource-okhttp = { group = "androidx.media3", name = "media3-datasource-okhttp", version.ref = "androidxMedia3" }
 androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "androidxMedia3" }
+androidx-media3-exoplayer-midi = { group = "androidx.media3", name = "media3-exoplayer-midi", version.ref = "androidxMedia3" }
 androidx-multidex = { group = "androidx.multidex", name = "multidex", version.ref = "androidxMultidex" }
 androidx-percentlayout = { group = "androidx.percentlayout", name = "percentlayout", version.ref = "androidxPercentlayout" }
 androidx-preference = { group = "androidx.preference", name = "preference", version.ref = "androidxPreference" }

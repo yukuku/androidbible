@@ -111,6 +111,13 @@ public class App extends yuku.afw.App {
                 .setSound(null, null)
                 .build()
         );
+        notificationManager.createNotificationChannel(
+            new NotificationChannelCompat.Builder("audio_song", NotificationManagerCompat.IMPORTANCE_LOW)
+                .setName(context.getString(R.string.audio_song_notification_channel_name))
+                .setVibrationEnabled(false)
+                .setSound(null, null)
+                .build()
+        );
     }
 
     public static Gson getDefaultGson() {

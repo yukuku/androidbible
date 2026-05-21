@@ -532,6 +532,7 @@
 
     <!-- Audio bar -->
     <string name="audio_bible_notification_channel_name">Audio Alkitab</string>
+    <string name="audio_song_notification_channel_name">Audio kidung</string>
     <string name="menu_audio">Audio</string>
     <string name="audio_bar_play">Putar</string>
     <string name="audio_bar_pause">Jeda</string>

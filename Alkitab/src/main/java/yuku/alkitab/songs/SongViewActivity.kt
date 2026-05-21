@@ -53,8 +53,7 @@ import yuku.alkitab.base.widget.LeftDrawer
 import yuku.alkitab.base.widget.TwofingerLinearLayout
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
-import yuku.alkitab.songs.SongViewActivity.Companion.exoplayerController
-import yuku.alkitab.songs.SongViewActivity.Companion.midiController
+import yuku.alkitab.songs.SongViewActivity.Companion.songAudioController
 import yuku.alkitabintegration.display.Launcher
 import yuku.kpri.model.Song
 import yuku.kpri.model.VerseKind
@@ -181,9 +180,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     }
 
     fun obtainSongProgress() {
-        val activeMediaController = activeMediaController ?: return
-
-        val (position, duration) = activeMediaController.getProgress()
+        val (position, duration) = songAudioController.getProgress()
         if (position == -1L) {
             mediaState.progress = null
             return
@@ -353,10 +350,8 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     override fun onResume() {
         super.onResume()
 
-        activeMediaController?.let { activeMediaController ->
-            activeMediaController.setUI(this, this)
-            activeMediaController.updateMediaState()
-        }
+        songAudioController.setUI(this, this)
+        songAudioController.updateMediaState()
     }
 
     private fun checkAudioExistance() {
@@ -373,17 +368,18 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                     val currentCurrentSong = this.currentSong
                     if (currentCurrentBookName == currentBookName && currentCurrentSong?.code == currentSong.code) {
                         runOnUiThread {
-                            val prevMediaController = activeMediaController
-                            if (prevMediaController == null || prevMediaController.canHaveNewUrl()) {
+                            if (songAudioController.canHaveNewUrl()) {
+                                // The service's ExoPlayer auto-detects MP3 vs MIDI,
+                                // so no extension branching is needed here.
                                 val url = "${BuildConfig.SERVER_HOST}/addon/audio/${getAudioFilename(currentBookName, currentSong.code)}"
-                                if (response.contains("extension=mid")) {
-                                    setActiveMediaController(midiController)
-                                } else {
-                                    setActiveMediaController(exoplayerController)
-                                }
-                                activeMediaController?.mediaKnownToExist(url)
+                                songAudioController.setUI(this, this)
+                                songAudioController.setDisplayInfo(
+                                    "${SongBookUtil.escapeSongBookName(currentBookName)} ${currentSong.code}",
+                                    currentSong.title,
+                                )
+                                songAudioController.mediaKnownToExist(url)
                             } else {
-                                AppLog.d(TAG, "activeMediaController can't have new URL at this moment.")
+                                AppLog.d(TAG, "songAudioController can't have new URL at this moment.")
                             }
                         }
                     }
@@ -394,17 +390,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                 AppLog.e(TAG, "@@checkAudioExistance", e)
             }
         }
-    }
-
-    private fun setActiveMediaController(controller: MediaController) {
-        // reset the "other" media controller
-        val prevMediaController = activeMediaController
-        if (prevMediaController != null && prevMediaController !== controller) {
-            prevMediaController.reset()
-        }
-        activeMediaController = controller
-        controller.setUI(this, this)
-        controller.updateMediaState()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -419,8 +404,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                         .setMessage(R.string.sn_play_in_loop)
                         .setNegativeButton(R.string.cancel, null)
                         .setPositiveButton(R.string.ok) { _, _ ->
-                            val activeMediaController = activeMediaController ?: return@setPositiveButton
-                            activeMediaController.playOrPause(true)
+                            songAudioController.playOrPause(true)
                         }
                         .show()
                     true
@@ -497,7 +481,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                     val currentBookName = currentBookName
                     val currentSong = currentSong
                     if (currentBookName != null && currentSong != null) {
-                        activeMediaController?.playOrPause(false)
+                        songAudioController.playOrPause(false)
                     }
                 }
                 if (audioDisclaimerAcknowledged) {
@@ -783,7 +767,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         no_song_data_container.visibility = if (song != null) GONE else VISIBLE
 
         if (!onCreate) {
-            activeMediaController?.reset()
+            songAudioController.reset()
         }
 
         if (song == null) return
@@ -1088,14 +1072,11 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
     companion object {
         /**
-         * (This has to be static to prevent double media player.)
-         * The "active" media player, either [midiController] or [exoplayerController].
-         * When no song has been examined, this is null.
+         * Single hymn-audio controller, backed by the background [SongAudioService]
+         * (MP3 + MIDI). Static so it survives activity recreation while audio plays
+         * in the background.
          */
-        var activeMediaController: MediaController? = null
-
-        val midiController = MidiController()
-        val exoplayerController = ExoplayerController(App.context)
+        val songAudioController = SongAudioController(App.context)
 
         var audioDisclaimerAcknowledged = false
 
