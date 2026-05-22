@@ -1,16 +1,12 @@
 package yuku.alkitab.base.widget
 
-import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color as AndroidColor
 import android.graphics.Typeface
-import android.os.Looper
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.test.core.app.ApplicationProvider
@@ -22,7 +18,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.Shadows
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import yuku.afw.App as AfwApp
@@ -165,22 +160,18 @@ class GotoButtonSideBySideSnapshotTest {
     // ---- Rendering helpers ----------------------------------------------------------------------
 
     private fun renderOld(case: Case): Bitmap {
-        val activity = buildActivity()
-        val button = AppCompatButton(activity).apply {
+        val button = AppCompatButton(buildActivity()).apply {
             applyCommonStyle()
             text = case.text.replace(' ', ' ')
         }
-        attachAndDoFirstLayout(activity, button)
         return measureAndDraw(button, case.widthPx)
     }
 
     private fun renderNew(case: Case): Bitmap {
-        val activity = buildActivity()
-        val button = GotoButton(activity).apply {
+        val button = GotoButton(buildActivity()).apply {
             applyCommonStyle()
             text = case.text
         }
-        attachAndDoFirstLayout(activity, button)
         return measureAndDraw(button, case.widthPx)
     }
 
@@ -203,31 +194,15 @@ class GotoButtonSideBySideSnapshotTest {
         return activity
     }
 
-    private fun attachAndDoFirstLayout(activity: Activity, view: View) {
-        val frame = FrameLayout(activity).apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-            )
-            addView(
-                view,
-                ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                ),
-            )
-            setBackgroundColor(AndroidColor.WHITE)
-        }
-        activity.setContentView(frame)
-        idleLoopers()
-    }
-
     private fun measureAndDraw(view: View, widthPx: Int): Bitmap {
+        // Measure/layout the detached button at exactly widthPx and draw straight
+        // away. GotoButton wraps inside onMeasure via setText(), which schedules a
+        // requestLayout; idling the looper here would flush that traversal and
+        // re-measure the button at a different width, discarding the wrap.
         val widthSpec = View.MeasureSpec.makeMeasureSpec(widthPx, View.MeasureSpec.EXACTLY)
         val heightSpec = View.MeasureSpec.makeMeasureSpec(BUTTON_HEIGHT_PX, View.MeasureSpec.EXACTLY)
         view.measure(widthSpec, heightSpec)
-        view.layout(0, 0, view.measuredWidth, view.measuredHeight)
-        idleLoopers()
+        view.layout(0, 0, widthPx, BUTTON_HEIGHT_PX)
 
         // Pin the bitmap to the requested width/height so every old/new pair is
         // the same size and the button's edges (and any overflow clip) are visible.
@@ -236,10 +211,6 @@ class GotoButtonSideBySideSnapshotTest {
         canvas.drawColor(AndroidColor.WHITE)
         view.draw(canvas)
         return bitmap
-    }
-
-    private fun idleLoopers() {
-        Shadows.shadowOf(Looper.getMainLooper()).idle()
     }
 
     private fun escapeHtml(s: String): String =
