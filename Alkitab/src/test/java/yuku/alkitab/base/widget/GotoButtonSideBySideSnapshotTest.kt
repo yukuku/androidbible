@@ -149,7 +149,7 @@ class GotoButtonSideBySideSnapshotTest {
             "Kidung Agung 8",
             "Pengkhotbah 12",
         )
-        val widths = listOf(70, 90, 120, 160, 200, 280)
+        val widths = listOf(120, 160, 200, 240, 320)
         val cases = mutableListOf<Case>()
         var i = 1
         for (ref in references) {
@@ -188,6 +188,7 @@ class GotoButtonSideBySideSnapshotTest {
         maxLines = 2
         ellipsize = android.text.TextUtils.TruncateAt.END
         gravity = Gravity.CENTER
+        isAllCaps = false
         includeFontPadding = false
         setPadding(0, 0, 0, 0)
         setTextColor(TEXT_COLOR)
@@ -228,9 +229,9 @@ class GotoButtonSideBySideSnapshotTest {
         view.layout(0, 0, view.measuredWidth, view.measuredHeight)
         idleLoopers()
 
-        val w = view.measuredWidth.coerceAtLeast(1)
-        val h = view.measuredHeight.coerceAtLeast(1)
-        val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+        // Pin the bitmap to the requested width/height so every old/new pair is
+        // the same size and the button's edges (and any overflow clip) are visible.
+        val bitmap = Bitmap.createBitmap(widthPx, BUTTON_HEIGHT_PX, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         canvas.drawColor(AndroidColor.WHITE)
         view.draw(canvas)
