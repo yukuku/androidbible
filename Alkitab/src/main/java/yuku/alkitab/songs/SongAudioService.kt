@@ -50,6 +50,7 @@ class SongAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session
     companion object {
         const val ACTION_LOCAL_BIND = "yuku.alkitab.songs.ACTION_LOCAL_BIND"
         const val NOTIFICATION_CHANNEL_ID = "audio_song"
+        private const val MEDIA_SESSION_ID = "song_audio"
         private const val TAG = "SongAudioService"
     }
 
@@ -116,6 +117,7 @@ class SongAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session
         )
 
         mediaSession = MediaSession.Builder(this, player)
+            .setId(MEDIA_SESSION_ID)
             .setSessionActivity(sessionActivity)
             .build()
             .also { addSession(it) }
