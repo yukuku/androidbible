@@ -149,7 +149,7 @@ class GotoButtonSideBySideSnapshotTest {
             "Kidung Agung 8",
             "Pengkhotbah 12",
         )
-        val widths = listOf(120, 160, 200, 240, 320)
+        val widths = listOf(40, 60, 80, 100, 120, 160)
         val cases = mutableListOf<Case>()
         var i = 1
         for (ref in references) {
