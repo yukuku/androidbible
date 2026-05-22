@@ -83,6 +83,8 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
          */
         const val NOTIFICATION_CHANNEL_ID = "audio_bible"
 
+        private const val MEDIA_SESSION_ID = "bible_audio"
+
         private const val POSITION_POLL_INTERVAL_MS = 100L
         private const val ARTWORK_SIZE_PX = 256
 
@@ -273,7 +275,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         )
 
         mediaSession = MediaSession.Builder(this, mediaSessionPlayer)
-            .setId("bible_audio")
+            .setId(MEDIA_SESSION_ID)
             .setSessionActivity(sessionActivity)
             .build()
             .also { addSession(it) }
