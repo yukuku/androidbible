@@ -17,7 +17,7 @@ public class GotoButton extends AppCompatButton {
 	}
 
 	public interface WidthMeasurer {
-		float measure(String s);
+		float measure(CharSequence s, int start, int end);
 	}
 
 	int[] screenLocation = {0, 0};
@@ -68,7 +68,7 @@ public class GotoButton extends AppCompatButton {
 			lastWrapWidth = availWidth;
 			lastWrapSource = rawText;
 
-			final String display = balanceWrap(rawText.toString(), availWidth, getPaint()::measureText);
+			final String display = balanceWrap(rawText, availWidth, getPaint()::measureText);
 			applyingWrap = true;
 			super.setText(display, BufferType.NORMAL);
 			applyingWrap = false;
@@ -76,23 +76,25 @@ public class GotoButton extends AppCompatButton {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 	}
 
-	public static String balanceWrap(final String text, final float availWidth, final WidthMeasurer measurer) {
-		if (text.isEmpty() || measurer.measure(text) <= availWidth) {
-			return text;
+	public static String balanceWrap(final CharSequence text, final float availWidth, final WidthMeasurer measurer) {
+		final int n = text.length();
+		if (n == 0 || measurer.measure(text, 0, n) <= availWidth) {
+			return text.toString();
 		}
 
-		final int n = text.length();
 		int bestSplit = -1;
 		float bestMax = Float.MAX_VALUE;
 		boolean foundFit = false;
 
 		for (int i = 1; i < n; i++) {
-			final String l1 = rtrim(text.substring(0, i));
-			final String l2 = ltrim(text.substring(i));
-			if (l1.isEmpty() || l2.isEmpty()) continue;
+			int end1 = i;
+			while (end1 > 0 && text.charAt(end1 - 1) == ' ') end1--;
+			int start2 = i;
+			while (start2 < n && text.charAt(start2) == ' ') start2++;
+			if (end1 == 0 || start2 == n) continue;
 
-			final float w1 = measurer.measure(l1);
-			final float w2 = measurer.measure(l2);
+			final float w1 = measurer.measure(text, 0, end1);
+			final float w2 = measurer.measure(text, start2, n);
 			final float mx = Math.max(w1, w2);
 			final boolean fits = w1 <= availWidth && w2 <= availWidth;
 
@@ -107,21 +109,14 @@ public class GotoButton extends AppCompatButton {
 		}
 
 		if (bestSplit < 0) {
-			return text;
+			return text.toString();
 		}
-		return rtrim(text.substring(0, bestSplit)) + "\n" + ltrim(text.substring(bestSplit));
-	}
 
-	private static String rtrim(final String s) {
-		int end = s.length();
-		while (end > 0 && s.charAt(end - 1) == ' ') end--;
-		return s.substring(0, end);
-	}
-
-	private static String ltrim(final String s) {
-		int start = 0;
-		while (start < s.length() && s.charAt(start) == ' ') start++;
-		return s.substring(start);
+		int end1 = bestSplit;
+		while (end1 > 0 && text.charAt(end1 - 1) == ' ') end1--;
+		int start2 = bestSplit;
+		while (start2 < n && text.charAt(start2) == ' ') start2++;
+		return text.subSequence(0, end1).toString() + "\n" + text.subSequence(start2, n).toString();
 	}
 
 	@Override

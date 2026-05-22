@@ -5,7 +5,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class GotoButtonBalanceWrapTest {
-	private val byLength = GotoButton.WidthMeasurer { it.length.toFloat() }
+	private val byLength = GotoButton.WidthMeasurer { _, start, end -> (end - start).toFloat() }
 
 	@Test
 	fun `text that fits the available width is returned unchanged on a single line`() {
