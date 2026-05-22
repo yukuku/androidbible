@@ -1561,7 +1561,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
         // set goto button text
         val reference = activeSplit0.book.reference(available_chapter_1)
-        bGoto.text = reference.replace(' ', '\u00a0')
+        bGoto.text = reference
 
         if (fullScreen) {
             fullscreenReferenceToast?.cancel()
