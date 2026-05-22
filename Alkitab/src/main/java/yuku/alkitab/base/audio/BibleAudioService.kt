@@ -273,6 +273,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         )
 
         mediaSession = MediaSession.Builder(this, mediaSessionPlayer)
+            .setId("bible_audio")
             .setSessionActivity(sessionActivity)
             .build()
             .also { addSession(it) }

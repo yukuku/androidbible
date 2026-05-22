@@ -116,6 +116,7 @@ class SongAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session
         )
 
         mediaSession = MediaSession.Builder(this, player)
+            .setId("song_audio")
             .setSessionActivity(sessionActivity)
             .build()
             .also { addSession(it) }
