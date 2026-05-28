@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<!--
+  song-editor.html — Live 3-pane editor for a single Alkitab/Bible-for-Android song.
+  REM-21 design artifact. Not production code.
+
+  App default day-theme values mirrored here:
+    background #f0f0f0, text #212121, font-size 18px, verse-number color #828282,
+    line-spacing 1.15, system sans font, body padding 16px 8px.
+
+  Supports:
+    LEFT  — editable textarea (legacy txt OR new @doc txt format)
+    MIDDLE — read-only pretty-printed canonical JSON model
+    RIGHT  — live app-styled song render (phone-width frame)
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Song Editor — Alkitab portable-songs (REM-21)</title>
+<style>
+/* ===== shell layout ===== */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0; padding: 0;
+  height: 100%;
+  font-family: -apple-system, "Roboto", "Segoe UI", system-ui, sans-serif;
+  font-size: 14px;
+  background: #e8e8e8;
+  color: #212121;
+}
+
+#shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* toolbar */
+#toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: #1976d2;
+  color: #fff;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+#toolbar h1 { margin: 0; font-size: 14px; font-weight: 600; flex-shrink: 0; }
+#toolbar label { font-size: 12px; opacity: 0.85; }
+#sample-select {
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+}
+#sample-select option { color: #212121; background: #fff; }
+
+/* error banner */
+#error-banner {
+  display: none;
+  background: #d32f2f;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 10px;
+  flex-shrink: 0;
+}
+#error-banner.visible { display: block; }
+
+/* three-pane area */
+#panes {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  gap: 0;
+}
+
+.pane {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  border-right: 2px solid #ccc;
+}
+.pane:last-child { border-right: none; }
+
+.pane-header {
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+  color: #555;
+  flex-shrink: 0;
+}
+
+.pane-body {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+}
+
+/* left pane textarea */
+#txt-input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  padding: 10px;
+  font-family: "SFMono-Regular", "Consolas", "Liberation Mono", "Menlo", monospace;
+  font-size: 12.5px;
+  line-height: 1.5;
+  background: #fafafa;
+  color: #212121;
+}
+
+/* middle pane JSON */
+#json-output {
+  margin: 0;
+  padding: 10px;
+  font-family: "SFMono-Regular", "Consolas", "Liberation Mono", "Menlo", monospace;
+  font-size: 11.5px;
+  line-height: 1.5;
+  white-space: pre;
+  background: #fafafa;
+  color: #1a237e;
+  min-height: 100%;
+}
+
+/* right pane — phone frame */
+#preview-wrap {
+  padding: 16px 8px;
+  background: #e8e8e8;
+}
+
+/* ===== app song renderer styles (mirrors song.css + day theme) ===== */
+#song-render {
+  max-width: 420px;
+  margin: 0 auto;
+  background: #f0f0f0;
+  color: #212121;
+  font-size: 18px;
+  font-family: -apple-system, "Roboto", "Segoe UI", system-ui, sans-serif;
+  box-shadow: 0 0 0 1px #ddd, 0 8px 28px rgba(0,0,0,.18);
+  border-radius: 14px;
+  padding: 16px 8px;
+  line-height: 1.15;
+}
+
+#song-render .code {
+  font-family: sans-serif; font-weight: bold; font-size: 125%;
+  float: left; margin-right: 0.5em;
+}
+#song-render .p { /* generic paragraph */ }
+#song-render .role-title          { font-family: sans-serif; font-weight: bold; font-size: 125%; text-align: center; }
+#song-render .role-title_original { font-family: sans-serif; font-size: 87.5%; text-align: center; }
+#song-render .role-tune           { font-family: sans-serif; text-transform: uppercase; float: right; font-size: 87.5%; }
+#song-render .role-musical        { font-family: sans-serif; font-size: 87.5%; }
+#song-render .role-authors_lyric  { font-family: sans-serif; font-size: 87.5%; }
+#song-render .role-authors_music  { font-family: sans-serif; font-size: 87.5%; }
+#song-render .role-note           { font-family: sans-serif; font-size: 87.5%; opacity: 0.7; }
+#song-render .role-copyright      { font-size: 75%; text-transform: uppercase; font-weight: bold; opacity: 0.54; }
+#song-render .role-scripture a    { color: #03a9f4; }
+
+#song-render .row { display: flex; justify-content: space-between; align-items: baseline; }
+#song-render .lyric { padding-left: 0.4em; }
+#song-render .lyric_caption { font-weight: bold; font-size: 87.5%; padding-top: 1em; }
+
+#song-render .verse {
+  margin: 0.3em; margin-top: 0.8em; padding-bottom: 0.8em;
+  border-bottom: 1px dashed #ccc;
+}
+#song-render .verse_ordering { float: left; font-size: 120%; font-weight: 300; color: #828282; }
+#song-render .verse.refrain .verse_ordering { display: none; }
+#song-render .verse.refrain { font-style: italic; padding-left: 1em; }
+#song-render .verse.refrain .verse_body::before {
+  font-family: sans-serif; content: 'Ref.:'; font-size: 75%; margin-right: .35em;
+}
+
+#song-render .line {
+  margin: 0; padding: 0;
+  padding-left: 3em; text-indent: -2em;
+  line-height: 1.15;
+}
+
+#song-render .break { clear: both; }
+#song-render .align-start  { text-align: start; }
+#song-render .align-center { text-align: center; }
+#song-render .align-end    { text-align: end; }
+
+/* youtube link */
+#song-render .role-youtube a { color: #03a9f4; }
+
+/* responsive: stack vertically at narrow widths */
+@media (max-width: 900px) {
+  #panes { flex-direction: column; }
+  .pane { border-right: none; border-bottom: 2px solid #ccc; }
+  .pane:last-child { border-bottom: none; }
+  #txt-input { min-height: 200px; }
+}
+</style>
+</head>
+<body>
+<div id="shell">
+  <div id="toolbar">
+    <h1>Song Editor — Alkitab (REM-21)</h1>
+    <label for="sample-select">Load sample:</label>
+    <select id="sample-select">
+      <option value="kri25legacy">KRI 25 — legacy</option>
+      <option value="kri25doc">KRI 25 — @doc</option>
+      <option value="demo">Refrain + scripture demo</option>
+    </select>
+  </div>
+  <div id="error-banner"></div>
+  <div id="panes">
+    <div class="pane">
+      <div class="pane-header">TXT source</div>
+      <div class="pane-body">
+        <textarea id="txt-input" spellcheck="false"></textarea>
+      </div>
+    </div>
+    <div class="pane">
+      <div class="pane-header">Canonical JSON</div>
+      <div class="pane-body">
+        <pre id="json-output"></pre>
+      </div>
+    </div>
+    <div class="pane">
+      <div class="pane-header">App preview</div>
+      <div class="pane-body" id="preview-wrap">
+        <div id="song-render"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ============================================================
+// SAMPLES
+// ============================================================
+
+const SAMPLE_KRI25_LEGACY = `\
+code 25
+title Malam Kudus
+1=Bes
+6/8
+tune STILLE NACHT
+title_original Silent Night
+authors_lyric Joseph Mohr
+authors_music Franz X. Gruber
+
+*1
+Malam Kudus, sunyi senyap,
+<u>Sia</u>pa yang b'lum lelap;
+ayah bunda yang tinggallah t'rus,
+jaga Anak yang Maha Kudus;
+Anak tidur tenang,
+Anak tidur tenang.
+
+*2
+Malam Kudus, sunyi senyap,
+Kabar <u>baik</u> menggegap;
+Bala surga menyanyikannya,
+<u>kaum</u> gembala menyaksikannya,
+"Lahir Raja Syalom.
+Lahir Raja Syalom."
+
+*3
+Malam Kudus, sunyi senyap,
+Karu<u>nia</u> dan berkat;
+Tercermin bagi kami terus
+di wajah-Mu, ya Anak Kudus,
+Cinta kasih kekal,
+Cinta kasih kekal.
+
+*1
+Silent night, holy night,
+all is calm, all is bright.
+Round yon virgin mother and Child;
+Holy Infant, so tender and mild,
+Sleep in heavenly peace,
+Sleep in heavenly peace.
+
+*2
+Silent night, holy night,
+Shepherds quake at the sight;
+Glories stream from heaven afar,
+Heavenly hosts sing Alleluia!
+Christ the Savior is born.
+Christ the Savior is born!
+`;
+
+const SAMPLE_KRI25_DOC = `\
+code 25
+@doc
+@title Malam Kudus
+@title_original Silent Night
+@tune STILLE NACHT
+@row
+@authors_lyric Joseph Mohr
+@authors_music Franz X. Gruber
+@/row
+@musical 1=Bes 6/8
+
+*1
+Malam Kudus, sunyi senyap,
+<u>Sia</u>pa yang b'lum lelap;
+ayah bunda yang tinggallah t'rus,
+jaga Anak yang Maha Kudus;
+Anak tidur tenang,
+Anak tidur tenang.
+
+*2
+Malam Kudus, sunyi senyap,
+Kabar <u>baik</u> menggegap;
+Bala surga menyanyikannya,
+<u>kaum</u> gembala menyaksikannya,
+"Lahir Raja Syalom.
+Lahir Raja Syalom."
+
+*3
+Malam Kudus, sunyi senyap,
+Karu<u>nia</u> dan berkat;
+Tercermin bagi kami terus
+di wajah-Mu, ya Anak Kudus,
+Cinta kasih kekal,
+Cinta kasih kekal.
+
+*versi English
+
+*1
+Silent night, holy night,
+all is calm, all is bright.
+Round yon virgin mother and Child;
+Holy Infant, so tender and mild,
+Sleep in heavenly peace,
+Sleep in heavenly peace.
+
+*2
+Silent night, holy night,
+Shepherds quake at the sight;
+Glories stream from heaven afar,
+Heavenly hosts sing Alleluia!
+Christ the Savior is born.
+Christ the Savior is born!
+`;
+
+const SAMPLE_DEMO = `\
+code demo
+@doc
+@title Come to the River
+@title_original Demo Song
+@tune DEMO TUNE
+@row
+@authors_lyric A. Writer
+@authors_music B. Composer
+@/row
+@scripture John.7.37; Rev.22.17
+@musical 1=C 4/4
+
+*reff
+@size=1.3 Come to the <u>river</u>,
+drink and be <b>satisfied</b>!
+Come, all who <i>thirst</i>,
+<u>come</u> to the <b>Lord</b>.
+
+*1
+The water flows freely,
+grace without end.
+Come to the fountain,
+let healing begin.
+
+*2
+No one is worthy,
+yet all are called near.
+The Lord of the river
+says: do not fear!
+
+@size=0.75 @copyright © 2024 Demo Song Publishers
+`;
+
+// ============================================================
+// INLINE MARKUP PARSER  (<u>, <b>, <i> -> Spans)
+// ============================================================
+
+/**
+ * Parse a text line containing optional <u>/<b>/<i> markup into
+ * a Line: plain string if no markup, Span[] otherwise.
+ */
+function parseInlineMarkup(text) {
+  // Quick check: if no tag-like sequences, return plain string.
+  if (!/<[ubi]>/.test(text) && !/<\/[ubi]>/.test(text)) {
+    return text;
+  }
+
+  // Tokenize into runs: either a tag or literal text.
+  // We only recognise <u>, </u>, <b>, </b>, <i>, </i> as markup;
+  // everything else is literal (including stray HTML).
+  const spans = [];
+  let pos = 0;
+  // Stack of currently open styles
+  const openStyles = [];
+  // Accumulate current literal run
+  let cur = '';
+
+  const pushSpan = () => {
+    if (cur !== '') {
+      spans.push({ text: cur, style: openStyles.length ? [...openStyles] : undefined });
+      cur = '';
+    }
+  };
+
+  const tagRe = /<(\/?)([ubi])>/gi;
+  let m;
+  tagRe.lastIndex = 0;
+  while ((m = tagRe.exec(text)) !== null) {
+    // Append literal text before this match
+    cur += text.slice(pos, m.index);
+    pos = m.index + m[0].length;
+
+    const closing = m[1] === '/';
+    const tag = m[2].toLowerCase();
+
+    pushSpan();
+    if (closing) {
+      const idx = openStyles.lastIndexOf(tag);
+      if (idx !== -1) openStyles.splice(idx, 1);
+    } else {
+      if (!openStyles.includes(tag)) openStyles.push(tag);
+    }
+  }
+  // Remainder
+  cur += text.slice(pos);
+  pushSpan();
+
+  if (spans.length === 0) return text;
+
+  // If every span has no style, collapse to plain string
+  const hasAnyStyle = spans.some(s => s.style && s.style.length > 0);
+  if (!hasAnyStyle) return spans.map(s => s.text).join('');
+
+  // Clean up: remove `style` key when empty, merge adjacent spans with same style
+  const result = [];
+  for (const sp of spans) {
+    if (sp.text === '') continue;
+    const styleKey = sp.style ? sp.style.slice().sort().join(',') : '';
+    if (result.length > 0) {
+      const prev = result[result.length - 1];
+      const prevKey = prev.style ? prev.style.slice().sort().join(',') : '';
+      if (prevKey === styleKey) { prev.text += sp.text; continue; }
+    }
+    const out = { text: sp.text };
+    if (sp.style && sp.style.length > 0) out.style = [...sp.style];
+    result.push(out);
+  }
+
+  // If result is a single span with no style, return plain string
+  if (result.length === 1 && !result[0].style) return result[0].text;
+  return result;
+}
+
+// ============================================================
+// LINE-LEVEL TAG PARSER  (verse lines: leading @size= / @align=)
+// ============================================================
+
+/**
+ * Parse leading @size=<float> / @align=<start|center|end> tags off a lyric
+ * line. Returns a plain Line (string | Span[]) when there are no such tags,
+ * otherwise { size?, align?, content: <Line> }.
+ * Role tags (e.g. @title) are not meaningful on a lyric line and are left
+ * as literal text.
+ */
+function parseVerseLine(text) {
+  let rest = text;
+  let size, align;
+  const tagRe = /^@(size|align)=(\S+)\s*/;
+  let m;
+  while ((m = tagRe.exec(rest)) !== null) {
+    if (m[1] === 'size') { const f = parseFloat(m[2]); if (!isNaN(f)) size = f; }
+    else if (m[1] === 'align' && ['start', 'center', 'end'].includes(m[2])) align = m[2];
+    rest = rest.slice(m[0].length);
+  }
+  const content = parseInlineMarkup(rest);
+  if (size === undefined && align === undefined) return content;
+  const out = { content };
+  if (size !== undefined) out.size = size;
+  if (align !== undefined) out.align = align;
+  return out;
+}
+
+// ============================================================
+// LEGACY PARSER  (replicates InputTxt.java exactly)
+// ============================================================
+
+/**
+ * Parse the FIRST song from a legacy txt source.
+ * Returns { song, warnings } where song is the internal representation:
+ *   { code, title, title_original, tune, authors_lyric[], authors_music[],
+ *     scriptureReferences, keySignature, timeSignature, lyrics[] }
+ * lyrics[] = [ { caption, verses[] } ]
+ * verses[] = [ { kind: 'normal'|'refrain'|'text', ordering, lines[] } ]
+ *
+ * warnings: string[] of non-fatal issues.
+ */
+function parseLegacy(src) {
+  const warnings = [];
+  const lines = src.split('\n');
+
+  const song = {
+    code: null,
+    title: null,
+    title_original: null,
+    tune: null,
+    authors_lyric: null,
+    authors_music: null,
+    scriptureReferences: null,
+    keySignature: null,
+    timeSignature: null,
+    lyrics: [],
+  };
+
+  let modeLirik = false;
+  let nobaitTerakhir = 0;
+  let lyric = null;
+  let verse = null;
+
+  for (let bariske = 0; bariske < lines.length; bariske++) {
+    const baris = lines[bariske].trim();
+
+    if (baris.length === 0) continue;
+    if (baris.startsWith('//')) continue;
+
+    if (!modeLirik) {
+      const spaceIdx = baris.indexOf(' ');
+      const tokenPertama = spaceIdx === -1 ? baris : baris.slice(0, spaceIdx);
+      const tokenKedua = spaceIdx === -1 ? '' : baris.slice(spaceIdx + 1);
+
+      if (tokenPertama === 'no' || tokenPertama === 'code') {
+        song.code = tokenKedua.trim();
+      } else if (tokenPertama === 'judul' || tokenPertama === 'title') {
+        song.title = tokenKedua.trim();
+      } else if (tokenPertama === 'judul_asli' || tokenPertama === 'title_original') {
+        song.title_original = tokenKedua.trim();
+      } else if (tokenPertama === 'tune') {
+        song.tune = tokenKedua.trim();
+      } else if (tokenPertama === 'lirik' || tokenPertama === 'authors_lyric') {
+        song.authors_lyric = tokenKedua.trim().split(/;\s*/);
+      } else if (tokenPertama === 'musik' || tokenPertama === 'authors_music') {
+        song.authors_music = tokenKedua.trim().split(/;\s*/);
+      } else if (tokenPertama === 'ayat' || tokenPertama === 'scriptureReferences') {
+        song.scriptureReferences = tokenKedua.trim();
+      } else if (tokenPertama === 'tempo') {
+        // discard
+      } else {
+        // bare unrecognized header line — pattern-match
+        const barisTrim = baris.trim();
+        if (/^[1-7]=[ABCDEFG](is|s|es|b)?(, [1-7]=[ABCDEFG](is|s|es|b)?)*$/.test(barisTrim)) {
+          song.keySignature = barisTrim;
+        } else if (/^([0-9]+\/[0-9]+,\s*)*[0-9]+\/[0-9]+$/.test(barisTrim)) {
+          song.timeSignature = barisTrim;
+        } else if (baris.startsWith('*')) {
+          modeLirik = true;
+          // fall through to lyric-mode handling below (no else)
+        } else {
+          warnings.push(`Line ${bariske + 1}: unrecognized header line: ${baris}`);
+          // continue without failing
+        }
+      }
+    }
+
+    // NOTE: no else — lyric mode entered mid-line in the original parser
+    if (modeLirik) {
+      if (baris.startsWith('==')) {
+        // End of this song — stop
+        break;
+      }
+
+      const barisTrim = baris.trim();
+
+      if (barisTrim.startsWith('*version') || barisTrim.startsWith('*versi')) {
+        // Explicit new lyric group
+        let caption;
+        if (barisTrim.startsWith('*version')) {
+          caption = barisTrim.slice(8).trim();
+        } else {
+          caption = barisTrim.slice(6).trim();
+        }
+        if (caption.length === 0) caption = null;
+
+        lyric = { caption, verses: [] };
+        song.lyrics.push(lyric);
+        nobaitTerakhir = 0;
+      } else if (barisTrim.startsWith('*reff') || barisTrim.startsWith('*ref')) {
+        if (lyric === null) {
+          lyric = { caption: null, verses: [] };
+          song.lyrics.push(lyric);
+        }
+        let ordering;
+        if (barisTrim === '*reff' || barisTrim === '*ref') {
+          ordering = 1;
+        } else if (barisTrim.startsWith('*reff')) {
+          ordering = parseInt(barisTrim.slice(5), 10) || 1;
+        } else {
+          ordering = parseInt(barisTrim.slice(4), 10) || 1;
+        }
+        verse = { kind: 'refrain', ordering, lines: [] };
+        lyric.verses.push(verse);
+      } else if (barisTrim.startsWith('*text')) {
+        if (lyric === null) {
+          lyric = { caption: null, verses: [] };
+          song.lyrics.push(lyric);
+        }
+        const ordering = barisTrim.length === 5 ? 1 : (parseInt(barisTrim.slice(5), 10) || 1);
+        verse = { kind: 'text', ordering, lines: [] };
+        lyric.verses.push(verse);
+      } else if (barisTrim.startsWith('*')) {
+        if (lyric === null) {
+          lyric = { caption: null, verses: [] };
+          song.lyrics.push(lyric);
+        }
+        const no = parseInt(barisTrim.slice(1), 10);
+        if (isNaN(no)) {
+          warnings.push(`Line ${bariske + 1}: unrecognized lyric marker: ${barisTrim}`);
+        } else {
+          // Auto-group rule: if no <= last NORMAL ordering, start new lyric group
+          if (no <= nobaitTerakhir) {
+            lyric = { caption: null, verses: [] };
+            song.lyrics.push(lyric);
+          }
+          verse = { kind: 'normal', ordering: no, lines: [] };
+          lyric.verses.push(verse);
+          nobaitTerakhir = no;
+        }
+      } else {
+        // Normal lyric line
+        if (verse !== null) {
+          verse.lines.push(baris);
+        }
+        // else: lyric line with no open verse — ignore (shouldn't happen in well-formed input)
+      }
+    }
+  }
+
+  return { song, warnings };
+}
+
+// ============================================================
+// LEGACY INTERNAL SONG -> CANONICAL JSON MODEL
+// ============================================================
+
+function legacyToModel(song) {
+  const blocks = [];
+
+  // 1. title
+  if (song.title) {
+    blocks.push({ type: 'p', role: 'title', content: parseInlineMarkup(song.title) });
+  }
+  // 2. title_original
+  if (song.title_original) {
+    blocks.push({ type: 'p', role: 'title_original', content: parseInlineMarkup(song.title_original) });
+  }
+  // 3. tune
+  if (song.tune) {
+    blocks.push({ type: 'p', role: 'tune', content: parseInlineMarkup(song.tune) });
+  }
+  // 4. authors row (after tune, matching the app song.html template order:
+  //    code, title, title_original, tune, authors_*, scriptureReferences, key/time, lyrics)
+  const authorItems = [];
+  if (song.authors_lyric && song.authors_lyric.length > 0) {
+    authorItems.push({ type: 'p', role: 'authors_lyric', content: song.authors_lyric.join('; ') });
+  }
+  if (song.authors_music && song.authors_music.length > 0) {
+    authorItems.push({ type: 'p', role: 'authors_music', content: song.authors_music.join('; ') });
+  }
+  if (authorItems.length === 1) {
+    blocks.push(authorItems[0]);
+  } else if (authorItems.length === 2) {
+    blocks.push({ type: 'row', items: authorItems });
+  }
+  // 5. scriptureReferences -> scripture block
+  if (song.scriptureReferences) {
+    blocks.push({ type: 'scripture', osis: song.scriptureReferences });
+  }
+  // 6. key / time signature -> musical
+  const musicalParts = [song.keySignature, song.timeSignature].filter(Boolean);
+  if (musicalParts.length > 0) {
+    blocks.push({ type: 'p', role: 'musical', content: musicalParts.join(' ') });
+  }
+  // 7. lyric groups
+  for (const lyric of song.lyrics) {
+    const lyricBlock = { type: 'lyric', verses: [] };
+    if (lyric.caption != null) lyricBlock.caption = parseInlineMarkup(lyric.caption);
+    for (const v of lyric.verses) {
+      const verse = {
+        kind: v.kind,
+        lines: v.lines.map(l => parseInlineMarkup(l)),
+      };
+      lyricBlock.verses.push(verse);
+    }
+    if (lyricBlock.verses.length > 0) blocks.push(lyricBlock);
+  }
+
+  return buildModel(song.code || '', blocks);
+}
+
+// ============================================================
+// @DOC PARSER -> CANONICAL JSON MODEL
+// ============================================================
+
+/**
+ * Parse a @doc format source (first song only).
+ * Returns { model, warnings }.
+ */
+function parseDoc(src) {
+  const warnings = [];
+  const rawLines = src.split('\n');
+
+  let code = null;
+  let docSeen = false;
+  let headerDone = false;
+  let i = 0;
+
+  // Read header: first non-blank, non-comment line must be `code`/`no`
+  for (; i < rawLines.length; i++) {
+    const line = rawLines[i].trim();
+    if (line.length === 0 || line.startsWith('//')) continue;
+    if (line.startsWith('===')) break;
+    const sp = line.indexOf(' ');
+    const kw = sp === -1 ? line : line.slice(0, sp);
+    const val = sp === -1 ? '' : line.slice(sp + 1).trim();
+    if (kw === 'code' || kw === 'no') {
+      code = val;
+    } else if (line === '@doc') {
+      docSeen = true;
+      i++;
+      headerDone = true;
+      break;
+    }
+    // any other header line before @doc: skip (the @doc line itself triggers body mode)
+    if (docSeen) break;
+  }
+
+  // Find @doc if not yet found
+  if (!headerDone) {
+    for (; i < rawLines.length; i++) {
+      const line = rawLines[i].trim();
+      if (line === '@doc') { i++; break; }
+    }
+  }
+
+  // --- body parsing ---
+  const blocks = [];
+
+  // Lyric state
+  let lyricOpen = null;      // current lyric block being built
+  let verseOpen = null;      // current verse being built (with .lines)
+  let nobaitTerakhir = 0;
+
+  function flushVerse() {
+    if (verseOpen !== null && lyricOpen !== null) {
+      // Remove trailing empty lines
+      while (verseOpen.lines.length > 0 && verseOpen.lines[verseOpen.lines.length - 1] === '') {
+        verseOpen.lines.pop();
+      }
+      lyricOpen.verses.push(verseOpen);
+      verseOpen = null;
+    } else if (verseOpen !== null) {
+      verseOpen = null;
+    }
+  }
+
+  function flushLyric() {
+    flushVerse();
+    if (lyricOpen !== null && lyricOpen.verses.length > 0) {
+      blocks.push(lyricOpen);
+    }
+    lyricOpen = null;
+  }
+
+  function ensureLyricOpen(caption) {
+    if (lyricOpen === null) {
+      lyricOpen = { type: 'lyric', verses: [] };
+      if (caption != null) lyricOpen.caption = caption;
+    }
+  }
+
+  function handleLyricMarker(line) {
+    const barisTrim = line.trim();
+
+    if (barisTrim.startsWith('*version') || barisTrim.startsWith('*versi')) {
+      // Explicit new lyric group
+      flushLyric();
+      let caption;
+      if (barisTrim.startsWith('*version')) {
+        caption = barisTrim.slice(8).trim();
+      } else {
+        caption = barisTrim.slice(6).trim();
+      }
+      if (caption.length === 0) caption = null;
+      lyricOpen = { type: 'lyric', verses: [] };
+      if (caption != null) lyricOpen.caption = parseInlineMarkup(caption);
+      nobaitTerakhir = 0;
+    } else if (barisTrim.startsWith('*reff') || barisTrim.startsWith('*ref')) {
+      flushVerse();
+      ensureLyricOpen(null);
+      verseOpen = { kind: 'refrain', lines: [] };
+    } else if (barisTrim.startsWith('*text')) {
+      flushVerse();
+      ensureLyricOpen(null);
+      verseOpen = { kind: 'text', lines: [] };
+    } else if (barisTrim.startsWith('*')) {
+      const no = parseInt(barisTrim.slice(1), 10);
+      if (isNaN(no)) {
+        warnings.push(`Unrecognized lyric marker: ${barisTrim}`);
+        return false;
+      }
+      flushVerse();
+      if (no <= nobaitTerakhir) {
+        // Auto-group: start new lyric group
+        flushLyric();
+        lyricOpen = { type: 'lyric', verses: [] };
+      }
+      ensureLyricOpen(null);
+      verseOpen = { kind: 'normal', lines: [] };
+      nobaitTerakhir = no;
+    }
+    return true;
+  }
+
+  // Row collecting mode
+  let inRow = false;
+  const rowItems = [];
+
+  for (; i < rawLines.length; i++) {
+    const rawLine = rawLines[i];
+    const line = rawLine.trim();
+
+    if (line === '' ) {
+      // Blank line: end current verse context (return to paragraph mode)
+      flushVerse();
+      // But do NOT flush the lyric group — it stays open for next verse
+      continue;
+    }
+    if (line.startsWith('//')) continue;
+    if (line.startsWith('===')) break;
+
+    // Escape: backslash-prefixed line -> literal paragraph text (strip the \)
+    if (line.startsWith('\\')) {
+      flushLyric();
+      nobaitTerakhir = 0;
+      const content = parseInlineMarkup(line.slice(1));
+      if (inRow) {
+        rowItems.push({ type: 'p', content });
+      } else {
+        blocks.push({ type: 'p', content });
+      }
+      continue;
+    }
+
+    // @row ... @/row
+    if (line === '@row') {
+      flushLyric();
+      nobaitTerakhir = 0;
+      inRow = true;
+      rowItems.length = 0;
+      continue;
+    }
+    if (line === '@/row') {
+      if (inRow && rowItems.length > 0) {
+        blocks.push({ type: 'row', items: [...rowItems] });
+      }
+      inRow = false;
+      rowItems.length = 0;
+      continue;
+    }
+
+    // Lyric markers
+    if (line.startsWith('*')) {
+      handleLyricMarker(line);
+      continue;
+    }
+
+    // If we're in an open verse, this is a lyric line (supports leading
+    // @size= / @align= line-level tags).
+    if (verseOpen !== null) {
+      verseOpen.lines.push(parseVerseLine(rawLine.trim()));
+      continue;
+    }
+
+    // @-tagged paragraph or @scripture / @youtube
+    if (line.startsWith('@')) {
+      flushLyric();
+      nobaitTerakhir = 0;
+
+      // @scripture <osis>
+      if (line.startsWith('@scripture ')) {
+        const osis = line.slice(11).trim();
+        const block = { type: 'scripture', osis };
+        if (inRow) rowItems.push(block); else blocks.push(block);
+        continue;
+      }
+      // @youtube <videoId>
+      if (line.startsWith('@youtube ')) {
+        const videoId = line.slice(9).trim();
+        const block = { type: 'youtube', videoId };
+        if (inRow) rowItems.push(block); else blocks.push(block);
+        continue;
+      }
+
+      // Tagged paragraph: parse leading @-tags then text
+      let rest = line;
+      const block = { type: 'p' };
+
+      // Consume leading @-tags
+      const tagRe = /^@([a-zA-Z_][a-zA-Z0-9_]*)(?:=([^\s]+))?\s*/;
+      while (rest.startsWith('@')) {
+        const m = tagRe.exec(rest);
+        if (!m) break;
+        const tagName = m[1];
+        const tagVal = m[2]; // may be undefined
+        rest = rest.slice(m[0].length);
+
+        if (tagName === 'size' && tagVal !== undefined) {
+          const f = parseFloat(tagVal);
+          if (!isNaN(f)) block.size = f;
+        } else if (tagName === 'align' && tagVal !== undefined) {
+          if (['start','center','end'].includes(tagVal)) block.align = tagVal;
+        } else if (tagVal === undefined) {
+          // It's a role tag (e.g. @title, @musical, @authors_lyric)
+          block.role = tagName;
+        }
+        // Unknown tag with value: ignore
+      }
+
+      block.content = parseInlineMarkup(rest);
+      if (inRow) rowItems.push(block); else blocks.push(block);
+      continue;
+    }
+
+    // Plain paragraph (no leading @ or *)
+    flushLyric();
+    nobaitTerakhir = 0;
+    const content = parseInlineMarkup(line);
+    const block = { type: 'p', content };
+    if (inRow) rowItems.push(block); else blocks.push(block);
+  }
+
+  // Flush any open lyric at EOF
+  flushLyric();
+  if (inRow && rowItems.length > 0) {
+    blocks.push({ type: 'row', items: [...rowItems] });
+  }
+
+  return { model: buildModel(code || '', blocks), warnings };
+}
+
+// ============================================================
+// BUILD CANONICAL MODEL (derive meta)
+// ============================================================
+
+function buildModel(code, blocks) {
+  // Derive meta from blocks
+  const titleBlock = blocks.find(b => b.type === 'p' && b.role === 'title');
+  const titleOrigBlock = blocks.find(b => b.type === 'p' && b.role === 'title_original');
+
+  function lineToString(line) {
+    if (typeof line === 'string') return line;
+    return line.map(s => s.text).join('');
+  }
+
+  const meta = {};
+  if (titleBlock) meta.title = lineToString(titleBlock.content);
+  if (titleOrigBlock) meta.title_original = lineToString(titleOrigBlock.content);
+
+  return { v: 1, code, meta, blocks };
+}
+
+// ============================================================
+// TOP-LEVEL PARSE DISPATCHER
+// ============================================================
+
+/**
+ * Detect format and parse. Returns { model, warnings }.
+ */
+function parseSong(src) {
+  // Split on === to get first song only
+  const firstSong = src.split(/^===/m)[0];
+
+  // Detect @doc: look for a line that is exactly "@doc" after code/no line
+  const lines = firstSong.split('\n');
+  let seenCode = false;
+  let isDoc = false;
+  for (const line of lines) {
+    const t = line.trim();
+    if (t.length === 0 || t.startsWith('//')) continue;
+    if (!seenCode) {
+      const sp = t.indexOf(' ');
+      const kw = sp === -1 ? t : t.slice(0, sp);
+      if (kw === 'code' || kw === 'no') { seenCode = true; continue; }
+    }
+    if (t === '@doc') { isDoc = true; break; }
+    break; // first non-blank non-comment line after code is not @doc
+  }
+
+  if (isDoc) {
+    return parseDoc(firstSong);
+  } else {
+    const { song, warnings } = parseLegacy(firstSong);
+    return { model: legacyToModel(song), warnings };
+  }
+}
+
+// ============================================================
+// RENDERER (document model -> app-styled HTML)
+// ============================================================
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function renderLine(line) {
+  if (typeof line === 'string') return esc(line);
+  return line.map(sp => {
+    let t = esc(sp.text);
+    (sp.style || []).forEach(st => {
+      if (st === 'u') t = '<u>' + t + '</u>';
+      else if (st === 'b') t = '<b>' + t + '</b>';
+      else if (st === 'i') t = '<i>' + t + '</i>';
+    });
+    return t;
+  }).join('');
+}
+
+function styleAttr(b) {
+  const css = [];
+  if (typeof b.size === 'number' && b.size !== 1) css.push('font-size:' + (b.size * 100) + '%');
+  return css.length ? ' style="' + css.join(';') + '"' : '';
+}
+
+function alignClass(b) {
+  return b.align ? ' align-' + b.align : '';
+}
+
+function renderP(b) {
+  const roleClass = b.role ? ' role-' + b.role : '';
+  return '<div class="p' + roleClass + alignClass(b) + '"' + styleAttr(b) + '>' + renderLine(b.content) + '</div>';
+}
+
+// A verse line is either a Line (string|Span[]) or { size?, align?, content }.
+function renderVerseLine(ln) {
+  if (ln && typeof ln === 'object' && !Array.isArray(ln) && 'content' in ln) {
+    let cls = 'line';
+    let style = '';
+    if (ln.align) cls += ' align-' + ln.align;
+    if (typeof ln.size === 'number' && ln.size !== 1) style = ' style="font-size:' + (ln.size * 100) + '%"';
+    return '<p class="' + cls + '"' + style + '>' + renderLine(ln.content) + '</p>';
+  }
+  return '<p class="line">' + renderLine(ln) + '</p>';
+}
+
+function renderLyric(b) {
+  let html = '<div class="lyric"' + styleAttr(b) + '>';
+  if (b.caption != null) {
+    html += '<div class="lyric_caption">' + renderLine(b.caption) + '</div>';
+  }
+  let n = 0;
+  for (const v of b.verses) {
+    const isRefrain = v.kind === 'refrain';
+    html += '<div class="verse' + (isRefrain ? ' refrain' : '') + '">';
+    if (v.kind === 'normal') {
+      n++;
+      const label = v.marker != null ? esc(v.marker) : n;
+      html += '<div class="verse_ordering">' + label + '</div>';
+    }
+    html += '<div class="verse_body">';
+    for (const ln of v.lines) {
+      html += renderVerseLine(ln);
+    }
+    html += '</div><div class="break"></div></div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderScripture(b) {
+  return '<div class="p role-scripture"' + styleAttr(b) + '>' + esc(b.osis) + '</div>';
+}
+
+function renderYoutube(b) {
+  return '<div class="p role-youtube"' + styleAttr(b) + '>'
+    + '<a href="https://youtu.be/' + encodeURIComponent(b.videoId) + '">▶ ' + esc(b.videoId) + '</a></div>';
+}
+
+function renderRow(b) {
+  let html = '<div class="row"' + styleAttr(b) + '>';
+  for (const it of b.items) html += renderBlock(it);
+  html += '</div><div class="break"></div>';
+  return html;
+}
+
+function renderBlock(b) {
+  switch (b.type) {
+    case 'p':         return renderP(b);
+    case 'lyric':     return renderLyric(b);
+    case 'scripture': return renderScripture(b);
+    case 'youtube':   return renderYoutube(b);
+    case 'row':       return renderRow(b);
+    default:          return '';
+  }
+}
+
+function renderSong(song) {
+  let html = '';
+  if (song.code) html += '<div class="code">' + esc(song.code) + '</div>';
+
+  const lyricCount = song.blocks.filter(b => b.type === 'lyric').length;
+  let lyricIndex = 0;
+
+  for (const b of song.blocks) {
+    if (b.type === 'lyric') {
+      lyricIndex++;
+      // Fallback caption "Versi N" when >1 group and no explicit caption
+      if (b.caption == null && lyricCount > 1) {
+        html += '<div class="lyric_caption">Versi ' + lyricIndex + '</div>';
+      }
+    }
+    html += renderBlock(b);
+    // clear floats between top-level blocks, mirroring the <div class='break'>
+    // separators the app's song.html template places after tune / authors / key+time
+    html += '<div class="break"></div>';
+  }
+  return html;
+}
+
+// ============================================================
+// WIRING — debounced update
+// ============================================================
+
+let debounceTimer = null;
+
+function update() {
+  const src = document.getElementById('txt-input').value;
+  const errorBanner = document.getElementById('error-banner');
+  const jsonOut = document.getElementById('json-output');
+  const songRender = document.getElementById('song-render');
+
+  let model, warnings;
+  try {
+    ({ model, warnings } = parseSong(src));
+  } catch (e) {
+    errorBanner.textContent = 'Parse error: ' + e.message;
+    errorBanner.classList.add('visible');
+    return;
+  }
+
+  if (warnings.length > 0) {
+    errorBanner.textContent = warnings.join(' | ');
+    errorBanner.classList.add('visible');
+  } else {
+    errorBanner.classList.remove('visible');
+    errorBanner.textContent = '';
+  }
+
+  jsonOut.textContent = JSON.stringify(model, null, 2);
+  songRender.innerHTML = renderSong(model);
+}
+
+function scheduleUpdate() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(update, 150);
+}
+
+document.getElementById('txt-input').addEventListener('input', scheduleUpdate);
+
+// Sample loading
+const SAMPLES = {
+  kri25legacy: SAMPLE_KRI25_LEGACY,
+  kri25doc:    SAMPLE_KRI25_DOC,
+  demo:        SAMPLE_DEMO,
+};
+
+document.getElementById('sample-select').addEventListener('change', function () {
+  const txt = SAMPLES[this.value];
+  if (txt) {
+    document.getElementById('txt-input').value = txt;
+    update();
+  }
+});
+
+// Bootstrap with KRI 25 legacy sample
+document.getElementById('txt-input').value = SAMPLE_KRI25_LEGACY;
+update();
+</script>
+</body>
+</html>
