@@ -206,23 +206,23 @@ html, body {
 }
 
 /* ===== syntax docs (collapsed) ===== */
-#syntax-docs { background: #fafafa; border-top: 2px solid #ccc; padding: 0 16px 28px; font-size: 13px; line-height: 1.5; }
-#syntax-docs > summary { cursor: pointer; padding: 12px 0; font-weight: 600; font-size: 14px; color: #1976d2; list-style: none; }
-#syntax-docs > summary::-webkit-details-marker { display: none; }
-#syntax-docs > summary::before { content: "\25B8  "; }
-#syntax-docs[open] > summary::before { content: "\25BE  "; }
-#syntax-docs .docs-body { max-width: 880px; }
-#syntax-docs h3 { margin: 20px 0 6px; font-size: 14px; border-bottom: 1px solid #ddd; padding-bottom: 3px; }
-#syntax-docs h4 { margin: 14px 0 4px; font-size: 13px; }
-#syntax-docs p { margin: 6px 0; }
-#syntax-docs code { background: #eceff1; padding: 1px 4px; border-radius: 3px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; }
-#syntax-docs pre { background: #263238; color: #eceff1; padding: 10px 12px; border-radius: 6px; overflow: auto; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 1.4; }
-#syntax-docs pre code { background: none; padding: 0; color: inherit; }
-#syntax-docs table { border-collapse: collapse; margin: 6px 0; width: 100%; }
-#syntax-docs th, #syntax-docs td { border: 1px solid #ddd; padding: 3px 8px; text-align: left; vertical-align: top; font-size: 12px; }
-#syntax-docs th { background: #eceff1; }
-#syntax-docs ul { margin: 4px 0; padding-left: 20px; }
-#syntax-docs li { margin: 2px 0; }
+.syntax-docs { background: #fafafa; border-top: 2px solid #ccc; padding: 0 16px 28px; font-size: 13px; line-height: 1.5; }
+.syntax-docs > summary { cursor: pointer; padding: 12px 0; font-weight: 600; font-size: 14px; color: #1976d2; list-style: none; }
+.syntax-docs > summary::-webkit-details-marker { display: none; }
+.syntax-docs > summary::before { content: "\25B8  "; }
+.syntax-docs[open] > summary::before { content: "\25BE  "; }
+.syntax-docs .docs-body { max-width: 880px; }
+.syntax-docs h3 { margin: 20px 0 6px; font-size: 14px; border-bottom: 1px solid #ddd; padding-bottom: 3px; }
+.syntax-docs h4 { margin: 14px 0 4px; font-size: 13px; }
+.syntax-docs p { margin: 6px 0; }
+.syntax-docs code { background: #eceff1; padding: 1px 4px; border-radius: 3px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; }
+.syntax-docs pre { background: #263238; color: #eceff1; padding: 10px 12px; border-radius: 6px; overflow: auto; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 1.4; }
+.syntax-docs pre code { background: none; padding: 0; color: inherit; }
+.syntax-docs table { border-collapse: collapse; margin: 6px 0; width: 100%; }
+.syntax-docs th, .syntax-docs td { border: 1px solid #ddd; padding: 3px 8px; text-align: left; vertical-align: top; font-size: 12px; }
+.syntax-docs th { background: #eceff1; }
+.syntax-docs ul { margin: 4px 0; padding-left: 20px; }
+.syntax-docs li { margin: 2px 0; }
 </style>
 </head>
 <body>
@@ -259,8 +259,8 @@ html, body {
   </div>
 </div>
 
-<details id="syntax-docs">
-<summary>txt syntax reference — legacy &amp; <code>@doc</code> formats</summary>
+<details class="syntax-docs">
+<summary>txt syntax reference (English) — legacy &amp; <code>@doc</code> formats</summary>
 <div class="docs-body">
 
 <p>The editor parses a <strong>single song</strong>. A line starting with <code>===</code> ends the song (anything after is ignored). Every line is trimmed before parsing. Format detection is per song: if a line that is exactly <code>@doc</code> follows the <code>code</code>/<code>no</code> header, the song is parsed as the new <strong>document format</strong>; otherwise the <strong>legacy format</strong> is used.</p>
@@ -340,6 +340,109 @@ Maka jiwaku pun memuji-Mu,</code></pre>
 </ul>
 
 <h4><code>@doc</code> example</h4>
+<pre><code>code 25
+@doc
+@title Malam Kudus
+@title_original Silent Night
+@tune STILLE NACHT
+@row
+@authors_lyric Joseph Mohr
+@authors_music Franz X. Gruber
+@/row
+@scripture Luke.2.7
+@musical 1=Bes 6/8
+
+*1
+Malam Kudus, sunyi senyap,
+@size=1.3 &lt;u&gt;Sia&lt;/u&gt;pa yang b'lum lelap;
+
+*reff
+Maka jiwaku pun memuji-Mu,</code></pre>
+
+</div>
+</details>
+
+<details class="syntax-docs">
+<summary>Referensi sintaks txt (Bahasa Indonesia) — format legacy &amp; <code>@doc</code></summary>
+<div class="docs-body">
+
+<p>Editor mem-parse <strong>satu lagu saja</strong>. Baris yang diawali <code>===</code> mengakhiri lagu (sisanya diabaikan). Setiap baris di-<em>trim</em> sebelum diproses. Deteksi format per lagu: jika ada baris yang persis <code>@doc</code> setelah header <code>code</code>/<code>no</code>, lagu diproses sebagai <strong>format dokumen</strong> baru; jika tidak, dipakai <strong>format lama (legacy)</strong>.</p>
+
+<h3>Gaya inline (kedua format)</h3>
+<p>Di dalam baris teks/lirik, <code>&lt;u&gt;…&lt;/u&gt;</code>, <code>&lt;b&gt;…&lt;/b&gt;</code>, <code>&lt;i&gt;…&lt;/i&gt;</code> menandai garis bawah / tebal / miring dan menjadi span bergaya. Markup lain disimpan sebagai teks literal (di-<em>escape</em> saat render). Hanya <code>u</code>/<code>b</code>/<code>i</code> yang dikenali.</p>
+
+<h3>Format lama (legacy)</h3>
+<p>Berbasis baris. Lagu diawali baris-baris header, lalu baris lirik begitu muncul penanda <code>*</code>.</p>
+
+<h4>Kata kunci header</h4>
+<p>Bentuk: <code>kata_kunci nilai</code> (dipisah pada spasi pertama). Kata kunci bahasa Indonesia dan Inggris dapat dipakai bergantian.</p>
+<table>
+<tr><th>Indonesia</th><th>Inggris</th><th>Memetakan ke</th><th>Catatan</th></tr>
+<tr><td><code>no</code></td><td><code>code</code></td><td>code</td><td>nomor lagu / kunci pencarian</td></tr>
+<tr><td><code>judul</code></td><td><code>title</code></td><td>title</td><td></td></tr>
+<tr><td><code>judul_asli</code></td><td><code>title_original</code></td><td>title_original</td><td>judul bahasa asli</td></tr>
+<tr><td><code>tune</code></td><td><code>tune</code></td><td>tune</td><td></td></tr>
+<tr><td><code>lirik</code></td><td><code>authors_lyric</code></td><td>authors_lyric</td><td>dipisah dengan <code>;</code> menjadi list</td></tr>
+<tr><td><code>musik</code></td><td><code>authors_music</code></td><td>authors_music</td><td>dipisah dengan <code>;</code> menjadi list</td></tr>
+<tr><td><code>ayat</code></td><td><code>scriptureReferences</code></td><td>scripture</td><td>OSIS, mis. <code>Rev.5.13</code></td></tr>
+<tr><td><code>tempo</code></td><td>—</td><td>(dibuang)</td><td>dikenali tetapi dibuang</td></tr>
+</table>
+
+<h4>Baris header polos (tanpa kata kunci)</h4>
+<ul>
+<li><strong>Nada dasar</strong> — cocok dengan <code>[1-7]=[ABCDEFG](is|s|es|b)?</code>, mis. <code>1=Bes</code>, <code>1=Ab</code> (alternatif dipisah koma diperbolehkan).</li>
+<li><strong>Tanda birama</strong> — cocok dengan <code>n/n</code>, mis. <code>4/4</code>, <code>6/8</code>.</li>
+</ul>
+
+<h4>Penanda lirik (baris diawali <code>*</code>)</h4>
+<table>
+<tr><th>Penanda</th><th>Efek</th></tr>
+<tr><td><code>*N</code> (mis. <code>*1</code>)</td><td>bait normal, nomor <code>N</code>. Jika <code>N ≤</code> nomor normal sebelumnya, <strong>grup lirik baru</strong> dimulai (begini cara bait Indonesia→Inggris yang dinomori ulang terpisah).</td></tr>
+<tr><td><code>*reff</code> / <code>*ref</code> (opsional <code>*reff2</code>)</td><td>bait refrain</td></tr>
+<tr><td><code>*text</code> (opsional <code>*text2</code>)</td><td>bait ucapan / instruksi (tanpa nomor)</td></tr>
+<tr><td><code>*versi &lt;caption&gt;</code> / <code>*version &lt;caption&gt;</code></td><td>mulai grup lirik baru dengan caption tersebut</td></tr>
+</table>
+<p>Baris setelah penanda adalah baris-baris bait. <strong>Baris kosong TIDAK mengakhiri bait</strong> (bait berlanjut sampai penanda berikutnya atau <code>===</code>). <code>//</code> mengawali baris komentar (diabaikan).</p>
+
+<h4>Contoh format lama</h4>
+<pre><code>code 25
+title Malam Kudus
+1=Bes
+6/8
+tune STILLE NACHT
+title_original Silent Night
+authors_lyric Joseph Mohr
+authors_music Franz X. Gruber
+
+*1
+Malam Kudus, sunyi senyap,
+&lt;u&gt;Sia&lt;/u&gt;pa yang b'lum lelap;
+
+*reff
+Maka jiwaku pun memuji-Mu,</code></pre>
+
+<h3>Format dokumen (<code>@doc</code>)</h3>
+<p>Diaktifkan per lagu: baris <code>code &lt;KODE&gt;</code> (atau <code>no</code>), lalu baris yang persis <code>@doc</code>. Di bawah <code>@doc</code>, setiap baris memetakan ke satu blok <strong>sesuai urutan penulisan</strong>.</p>
+
+<h4>Aturan baris</h4>
+<ul>
+<li><strong>Default</strong> — baris tanpa awalan <code>@</code> atau <code>*</code> → blok <code>p</code> (paragraf), tanpa role.</li>
+<li><strong>Paragraf bertag</strong> — satu atau beberapa <code>@</code>-tag di depan, lalu teks. Tag dapat digabung, mis. <code>@size=2.0 Teks besar</code> atau <code>@size=0.5 @musical Do=C</code>.
+  <ul>
+  <li>Tag role → <code>p.role</code>: <code>@title</code>, <code>@title_original</code>, <code>@tune</code>, <code>@musical</code>, <code>@authors_lyric</code>, <code>@authors_music</code>, <code>@note</code>, <code>@copyright</code>, <code>@body</code>, … (role membawa format default; <code>title</code> = tebal + rata tengah, dst).</li>
+  <li>Tag format: <code>@size=&lt;float&gt;</code> (1 = normal) dan <code>@align=&lt;start|center|end&gt;</code>.</li>
+  </ul>
+</li>
+<li><code>@scripture &lt;osis&gt;</code> → blok <code>scripture</code> (OSIS, mis. <code>John.3.16; Rom.5.8</code>; dilokalkan saat render sesuai versi Alkitab aktif).</li>
+<li><code>@youtube &lt;videoId&gt;</code> → blok <code>youtube</code>.</li>
+<li><code>@row</code> … <code>@/row</code> → blok <code>row</code>; setiap baris di antara penanda menjadi item <code>p</code> (tag role/size/align-nya sendiri berlaku). Item tersebar start → end, mis. pengarang lirik di kiri / pengarang musik di kanan.</li>
+<li><strong>Penanda lirik</strong> <code>*N</code>, <code>*ref</code>[N]/<code>*reff</code>[N], <code>*text</code>[N], <code>*versi</code>/<code>*version &lt;caption&gt;</code> — semantik + auto-grup sama seperti legacy. Baris bait mendukung <code>@size=</code> / <code>@align=</code> di depan (format per baris).</li>
+<li><strong>Baris kosong mengakhiri bait</strong> saat ini (kembali ke mode paragraf); penanda <code>*</code> berikutnya membuka kembali mode lirik.</li>
+<li><strong>Escape</strong> — baris diawali <code>\</code> akan menghapus backslash dan diperlakukan sebagai teks paragraf literal, sehingga dapat diawali <code>*</code>, <code>@</code>, <code>//</code>, atau <code>==</code>.</li>
+<li><code>@directive</code> tak dikenal → diberi peringatan dan dilewati (tidak fatal).</li>
+</ul>
+
+<h4>Contoh <code>@doc</code></h4>
 <pre><code>code 25
 @doc
 @title Malam Kudus
