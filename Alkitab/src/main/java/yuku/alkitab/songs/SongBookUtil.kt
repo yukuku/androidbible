@@ -23,6 +23,9 @@ import yuku.alkitab.base.widget.MaterialDialogJavaHelper
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 import yuku.alkitab.io.OptionalGzipInputStream
+import yuku.alkitab.songs.document.LegacySongConverter
+import yuku.alkitab.songs.document.SongBookDocument
+import yuku.alkitab.songs.document.SongDocumentJson
 import yuku.kpri.model.Lyric
 import yuku.kpri.model.Song
 import yuku.kpri.model.Verse
@@ -91,7 +94,7 @@ object SongBookUtil {
     }
 
     @JvmStatic
-    fun isSupportedDataFormatVersion(dataFormatVersion: Int) = dataFormatVersion == 3
+    fun isSupportedDataFormatVersion(dataFormatVersion: Int) = dataFormatVersion == 3 || dataFormatVersion == 5
 
     /**
      * For migration
@@ -172,21 +175,41 @@ object SongBookUtil {
     /**
      * Deserializes a list of Song objects from an InputStream.
      * The stream may optionally be gzip-compressed.
-     * Restricts deserialization to known safe classes only.
+     * Supports both legacy Java serialization (dataFormatVersion 3) and
+     * JSON SongBookDocument wrapper (dataFormatVersion 5+).
      *
      * Package-visible for testing.
      */
     @Suppress("UNCHECKED_CAST")
     @JvmStatic
-    fun deserializeSongs(inputStream: InputStream): List<Song> {
+    @JvmOverloads
+    fun deserializeSongs(inputStream: InputStream, dataFormatVersion: Int = 3): List<Song> {
         OptionalGzipInputStream(inputStream).use { gzipStream ->
-            SafeObjectInputStream(gzipStream).use { ois ->
-                val result = ois.readObject()
-                if (result !is List<*>) {
-                    throw IOException("Expected List but got ${result?.javaClass?.name ?: "null"}")
+            if (dataFormatVersion >= 5) {
+                val jsonString = gzipStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
+                val songBookDoc = SongDocumentJson.decodeFromStringSongBook(jsonString)
+                return songBookDoc.songs.map { LegacySongConverter.convertToLegacy(it) }
+            } else {
+                SafeObjectInputStream(gzipStream).use { ois ->
+                    val result = ois.readObject()
+                    if (result !is List<*>) {
+                        throw IOException("Expected List but got ${result?.javaClass?.name ?: "null"}")
+                    }
+                    return result as List<Song>
                 }
-                return result as List<Song>
             }
+        }
+    }
+
+    /**
+     * Deserializes a JSON SongBookDocument from an InputStream.
+     * The stream may optionally be gzip-compressed.
+     */
+    @JvmStatic
+    fun deserializeSongBook(inputStream: InputStream): SongBookDocument {
+        OptionalGzipInputStream(inputStream).use { gzipStream ->
+            val jsonString = gzipStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
+            return SongDocumentJson.decodeFromStringSongBook(jsonString)
         }
     }
 
@@ -215,7 +238,7 @@ object SongBookUtil {
                         throw IOException("Response too large: $contentLength bytes (max $MAX_RESPONSE_SIZE)")
                     }
 
-                    val songs = deserializeSongs(body.byteStream())
+                    val songs = deserializeSongs(body.byteStream(), dataFormatVersion)
 
                     if (cancelled.get()) {
                         Foreground.run { listener.onFailedOrCancelled(songBookInfo, null) }

@@ -137,6 +137,16 @@ abstract class SongRoomDao {
     )
     abstract fun findUpdateTimeByBookNameAndCode(bookName: String, code: String): Int?
 
+    @Query(
+        "UPDATE song_info SET dataFormatVersion = :dataFormatVersion, data = :data WHERE bookName = :bookName AND code = :code",
+    )
+    abstract fun updateSongData(
+        bookName: String,
+        code: String,
+        dataFormatVersion: Int,
+        data: ByteArray,
+    ): Int
+
     @Query("SELECT COUNT(*) FROM song_info")
     abstract fun countAllSongInfos(): Int
 

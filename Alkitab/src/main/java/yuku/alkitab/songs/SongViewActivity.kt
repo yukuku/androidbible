@@ -54,9 +54,11 @@ import yuku.alkitab.base.widget.TwofingerLinearLayout
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 import yuku.alkitab.songs.SongViewActivity.Companion.songAudioController
+import yuku.alkitab.songs.document.LegacySongConverter
+import yuku.alkitab.songs.document.SongDocument
+import yuku.alkitab.songs.renderer.SongDocumentRenderer
 import yuku.alkitabintegration.display.Launcher
 import yuku.kpri.model.Song
-import yuku.kpri.model.VerseKind
 
 private const val TAG = "SongViewActivity"
 
@@ -221,7 +223,12 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         }
 
         val newCode = codes[newPos]
-        val newSong = App.services.storage.songDb.getSong(currentBookName, newCode) ?: return // should not happen
+        val newDocument = App.services.storage.songDb.getSongDocument(currentBookName, newCode)
+        val newSong = if (newDocument != null) {
+            LegacySongConverter.convertToLegacy(newDocument)
+        } else {
+            App.services.storage.songDb.getSong(currentBookName, newCode)
+        } ?: return // should not happen
 
         displaySong(currentBookName, newSong)
     }
@@ -329,7 +336,13 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         if (bookName == null || code == null) {
             displaySong(null, null, true)
         } else {
-            displaySong(bookName, App.services.storage.songDb.getSong(bookName, code), true)
+            val document = App.services.storage.songDb.getSongDocument(bookName, code)
+            val song = if (document != null) {
+                LegacySongConverter.convertToLegacy(document)
+            } else {
+                App.services.storage.songDb.getSong(bookName, code)
+            }
+            displaySong(bookName, song, true)
         }
 
         window.decorView.keepScreenOn = Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), resources.getBoolean(R.bool.pref_keepScreenOn_default))
@@ -537,7 +550,12 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             }
 
             override fun onDownloadedAndInserted(songBookInfo: SongBookUtil.SongBookInfo) {
-                val song = App.services.storage.songDb.getSong(songBookInfo.name, currentSongCode)
+                val document = App.services.storage.songDb.getSongDocument(songBookInfo.name, currentSongCode)
+                val song = if (document != null) {
+                    LegacySongConverter.convertToLegacy(document)
+                } else {
+                    App.services.storage.songDb.getSong(songBookInfo.name, currentSongCode)
+                }
                 cache_codes.remove(songBookInfo.name)
                 displaySong(songBookInfo.name, song)
             }
@@ -586,63 +604,8 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     }
 
     private fun convertSongToText(song: Song): StringBuilder {
-        // build text to copy
-        val sb = StringBuilder()
-        sb.append(SongBookUtil.escapeSongBookName(currentBookName)).append(' ')
-        sb.append(song.code).append(". ")
-        sb.append(song.title).append('\n')
-        if (song.title_original != null) sb.append('(').append(song.title_original).append(')').append('\n')
-        sb.append('\n')
-
-        if (song.authors_lyric != null && song.authors_lyric.size > 0) sb.append(TextUtils.join("; ", song.authors_lyric)).append('\n')
-        if (song.authors_music != null && song.authors_music.size > 0) sb.append(TextUtils.join("; ", song.authors_music)).append('\n')
-        if (song.tune != null) sb.append(song.tune.uppercase()).append('\n')
-        sb.append('\n')
-
-        if (song.scriptureReferences != null) sb.append(renderScriptureReferences(null, song.scriptureReferences)).append('\n')
-
-        if (song.keySignature != null) sb.append(song.keySignature).append('\n')
-        if (song.timeSignature != null) sb.append(song.timeSignature).append('\n')
-        sb.append('\n')
-
-        for (i in song.lyrics.indices) {
-            val lyric = song.lyrics[i]
-
-            if (song.lyrics.size > 1 || lyric.caption != null) { // otherwise, only lyric and has no name
-                if (lyric.caption != null) {
-                    sb.append(lyric.caption).append('\n')
-                } else {
-                    sb.append(getString(R.string.sn_lyric_version_version, (i + 1).toString())).append('\n')
-                }
-            }
-
-            var verse_normal_no = 0
-            for (verse in lyric.verses) {
-                if (verse.kind == VerseKind.NORMAL) {
-                    verse_normal_no++
-                }
-
-                var skipPad = false
-                if (verse.kind == VerseKind.REFRAIN) {
-                    sb.append(getString(R.string.sn_lyric_refrain_marker)).append('\n')
-                } else {
-                    sb.append(String.format(Locale.US, "%2d: ", verse_normal_no))
-                    skipPad = true
-                }
-
-                for (line in verse.lines) {
-                    if (!skipPad) {
-                        sb.append("    ")
-                    } else {
-                        skipPad = false
-                    }
-                    sb.append(line).append("\n")
-                }
-                sb.append('\n')
-            }
-            sb.append('\n')
-        }
-        return sb
+        val document = LegacySongConverter.convert(song)
+        return SongDocumentRenderer.renderToText(document, currentBookName)
     }
 
     /**
@@ -840,7 +803,13 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                 if (resultCode == RESULT_OK) {
                     val result = SongListActivity.obtainResult(data)
                     if (result != null) {
-                        displaySong(result.bookName, App.services.storage.songDb.getSong(result.bookName, result.code))
+                        val document = App.services.storage.songDb.getSongDocument(result.bookName, result.code)
+                        val song = if (document != null) {
+                            LegacySongConverter.convertToLegacy(document)
+                        } else {
+                            App.services.storage.songDb.getSong(result.bookName, result.code)
+                        }
+                        displaySong(result.bookName, song)
                         // store this for next search
                         last_searchState = result.last_searchState
                     }
@@ -1038,7 +1007,12 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
             21 -> { // OK
                 if (state_tempCode.isNotEmpty()) {
-                    val song = App.services.storage.songDb.getSong(currentBookName, state_tempCode)
+                    val document = App.services.storage.songDb.getSongDocument(currentBookName, state_tempCode)
+                    val song = if (document != null) {
+                        LegacySongConverter.convertToLegacy(document)
+                    } else {
+                        App.services.storage.songDb.getSong(currentBookName, state_tempCode)
+                    }
                     if (song != null) {
                         displaySong(currentBookName, song)
                     } else {

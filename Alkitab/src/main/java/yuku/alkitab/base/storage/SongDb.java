@@ -20,7 +20,12 @@ import yuku.alkitab.songs.SongBookUtil;
 import yuku.alkitab.songs.SongFilter;
 import yuku.alkitab.songs.SongFilter.CompiledFilter;
 import yuku.alkitab.songs.SongInfo;
+import yuku.alkitab.songs.document.LegacySongConverter;
+import yuku.alkitab.songs.document.SongDocument;
+import yuku.alkitab.songs.document.SongDocumentJson;
+import yuku.alkitab.songs.parcel.CustomParcelDecoder;
 import yuku.kpri.model.Song;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Facade over the Room-backed {@link SongRoomDao} that preserves the
@@ -70,6 +75,67 @@ public class SongDb {
         this.helper = helper;
     }
 
+    private static final int DATA_FORMAT_VERSION_JSON = 5;
+
+    private static byte[] marshallSong(Song song, int dataFormatVersion) {
+        if (dataFormatVersion >= DATA_FORMAT_VERSION_JSON) {
+            SongDocument doc = LegacySongConverter.INSTANCE.convert(song);
+            return SongDocumentJson.INSTANCE.encodeToByteArray(doc);
+        }
+        Parcel p = Parcel.obtain();
+        song.writeToParcelCompat(dataFormatVersion, p, 0);
+        byte[] buf = p.marshall();
+        p.recycle();
+        return buf;
+    }
+
+    private static Song unmarshallSongLegacy(byte[] buf, int dataFormatVersion) {
+        Parcel p = Parcel.obtain();
+        p.unmarshall(buf, 0, buf.length);
+        p.setDataPosition(0);
+        Song res = Song.createFromParcelCompat(dataFormatVersion, p);
+        p.recycle();
+        return res;
+    }
+
+    private SongDocument readAndMigrateDocument(String bookName, String code, byte[] data, int dataFormatVersion) {
+        if (dataFormatVersion >= DATA_FORMAT_VERSION_JSON) {
+            return SongDocumentJson.INSTANCE.decodeFromString(new String(data, StandardCharsets.UTF_8));
+        }
+
+        Song legacySong;
+        try {
+            legacySong = CustomParcelDecoder.INSTANCE.decodeSong(data, dataFormatVersion);
+        } catch (Exception e) {
+            legacySong = unmarshallSongLegacy(data, dataFormatVersion);
+        }
+
+        SongDocument doc = LegacySongConverter.INSTANCE.convert(legacySong);
+        byte[] jsonBytes = SongDocumentJson.INSTANCE.encodeToByteArray(doc);
+        roomDao().updateSongData(bookName, code, DATA_FORMAT_VERSION_JSON, jsonBytes);
+        return doc;
+    }
+
+    private Song unmarshallSong(String bookName, String code, byte[] buf, int dataFormatVersion) {
+        if (dataFormatVersion >= DATA_FORMAT_VERSION_JSON) {
+            SongDocument doc = SongDocumentJson.INSTANCE.decodeFromString(new String(buf, StandardCharsets.UTF_8));
+            return LegacySongConverter.INSTANCE.convertToLegacy(doc);
+        }
+
+        Song legacySong;
+        try {
+            legacySong = CustomParcelDecoder.INSTANCE.decodeSong(buf, dataFormatVersion);
+        } catch (Exception e) {
+            legacySong = unmarshallSongLegacy(buf, dataFormatVersion);
+        }
+
+        SongDocument doc = LegacySongConverter.INSTANCE.convert(legacySong);
+        byte[] jsonBytes = SongDocumentJson.INSTANCE.encodeToByteArray(doc);
+        roomDao().updateSongData(bookName, code, DATA_FORMAT_VERSION_JSON, jsonBytes);
+
+        return legacySong;
+    }
+
     private SongRoomDao roomDao() {
         SongRoomDao result = cachedRoomDao;
         if (result == null) {
@@ -82,23 +148,6 @@ public class SongDb {
             }
         }
         return result;
-    }
-
-    private static byte[] marshallSong(Song song, int dataFormatVersion) {
-        Parcel p = Parcel.obtain();
-        song.writeToParcelCompat(dataFormatVersion, p, 0);
-        byte[] buf = p.marshall();
-        p.recycle();
-        return buf;
-    }
-
-    private static Song unmarshallSong(byte[] buf, int dataFormatVersion) {
-        Parcel p = Parcel.obtain();
-        p.unmarshall(buf, 0, buf.length);
-        p.setDataPosition(0);
-        Song res = Song.createFromParcelCompat(dataFormatVersion, p);
-        p.recycle();
-        return res;
     }
 
     /**
@@ -124,12 +173,20 @@ public class SongDb {
         roomDao().replaceSongsForBookNameAndDataFormatVersion(bookName, dataFormatVersion, entities);
     }
 
+    public SongDocument getSongDocument(String bookName, String code) {
+        final SongInfoEntity row = roomDao().findSongInfoByBookNameAndCode(bookName, code);
+        if (row == null || row.getData() == null) {
+            return null;
+        }
+        return readAndMigrateDocument(bookName, code, row.getData(), row.getDataFormatVersion());
+    }
+
     public Song getSong(String bookName, String code) {
         final SongInfoEntity row = roomDao().findSongInfoByBookNameAndCode(bookName, code);
         if (row == null || row.getData() == null) {
             return null;
         }
-        return unmarshallSong(row.getData(), row.getDataFormatVersion());
+        return unmarshallSong(bookName, code, row.getData(), row.getDataFormatVersion());
     }
 
     public boolean songExists(String bookName, String code) {
@@ -141,7 +198,7 @@ public class SongDb {
         if (row == null || row.getData() == null) {
             return null;
         }
-        return unmarshallSong(row.getData(), row.getDataFormatVersion());
+        return unmarshallSong(bookName, row.getCode(), row.getData(), row.getDataFormatVersion());
     }
 
     /**
@@ -153,7 +210,7 @@ public class SongDb {
         if (row == null || row.getData() == null || row.getBookName() == null) {
             return null;
         }
-        return Pair.create(row.getBookName(), unmarshallSong(row.getData(), row.getDataFormatVersion()));
+        return Pair.create(row.getBookName(), unmarshallSong(row.getBookName(), row.getCode(), row.getData(), row.getDataFormatVersion()));
     }
 
     public List<SongInfo> listSongInfosByBookName(String bookName) {
@@ -193,13 +250,15 @@ public class SongDb {
                 if (c.isNull(colData)) {
                     continue;
                 }
+                final String rowBookName = c.isNull(colBookName) ? null : c.getString(colBookName);
+                final String rowCode = c.isNull(colCode) ? null : c.getString(colCode);
                 final byte[] data = c.getBlob(colData);
                 final int dataFormatVersion = c.getInt(colDataFormatVersion);
-                final Song song = unmarshallSong(data, dataFormatVersion);
+                final Song song = unmarshallSong(rowBookName, rowCode, data, dataFormatVersion);
                 if (SongFilter.match(song, cf)) {
                     res.add(new SongInfo(
-                        c.isNull(colBookName) ? null : c.getString(colBookName),
-                        c.isNull(colCode) ? null : c.getString(colCode),
+                        rowBookName,
+                        rowCode,
                         c.isNull(colTitle) ? null : c.getString(colTitle),
                         c.isNull(colTitleOriginal) ? null : c.getString(colTitleOriginal)
                     ));
