@@ -95,6 +95,18 @@ abstract class SongRoomDao {
     abstract fun listSongInfoMetasByBookName(bookName: String): List<SongInfoMetaRow>
 
     /**
+     * All-books variant of [listSongInfoMetasByBookName] for the
+     * "All song books" selection (`bookName == null` at the facade).
+     * Ordering matches the legacy facade's all-books query:
+     * `bookName asc, ordering asc`.
+     */
+    @Query(
+        "SELECT bookName, code, title, title_original FROM song_info " +
+            "ORDER BY bookName ASC, ordering ASC",
+    )
+    abstract fun listAllSongInfoMetas(): List<SongInfoMetaRow>
+
+    /**
      * Returns a [Cursor] over `(bookName, code, title, title_original, data, dataFormatVersion)`
      * for streaming the deep-filter scan in
      * [yuku.alkitab.base.storage.SongDb.listSongInfosByBookNameAndDeepFilter].

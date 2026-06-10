@@ -156,12 +156,16 @@ public class SongDb {
         return Pair.create(row.getBookName(), unmarshallSong(row.getData(), row.getDataFormatVersion()));
     }
 
-    public List<SongInfo> listSongInfosByBookName(String bookName) {
+    public List<SongInfo> listSongInfosByBookName(@Nullable String bookName) {
         // Metadata-only listing: deliberately avoid SELECT * so we don't
         // pull the multi-kB `data` BLOB into the heap for every row. The
         // legacy facade used the same column-list trick (cf. the pre-Room
         // `listSongInfosByBookName` query projection).
-        final List<SongInfoMetaRow> rows = roomDao().listSongInfoMetasByBookName(bookName);
+        // Null bookName means "All song books" (the song list's book
+        // selector), same contract as the legacy facade's querySongs.
+        final List<SongInfoMetaRow> rows = (bookName == null)
+            ? roomDao().listAllSongInfoMetas()
+            : roomDao().listSongInfoMetasByBookName(bookName);
         final List<SongInfo> res = new ArrayList<>(rows.size());
         for (SongInfoMetaRow row : rows) {
             res.add(new SongInfo(row.getBookName(), row.getCode(), row.getTitle(), row.getTitle_original()));

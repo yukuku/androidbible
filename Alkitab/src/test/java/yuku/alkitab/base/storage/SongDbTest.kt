@@ -217,6 +217,15 @@ class SongDbTest {
     }
 
     @Test
+    fun `listSongInfosByBookName with null bookName lists every book in display order`() {
+        dao.storeSongs("PKJ", listOf(song("P1", title = "Papa")), 3)
+        dao.storeSongs("NKB", listOf(song("A", title = "Alpha"), song("B", title = "Bravo")), 3)
+        val rows = dao.listSongInfosByBookName(null)
+        assertEquals(listOf("A", "B", "P1"), rows.map { it.code })
+        assertEquals(listOf("NKB", "NKB", "PKJ"), rows.map { it.bookName })
+    }
+
+    @Test
     fun `listSongInfosByBookNameAndDeepFilter applies title-substring matching`() {
         dao.storeSongs(
             "NKB",
