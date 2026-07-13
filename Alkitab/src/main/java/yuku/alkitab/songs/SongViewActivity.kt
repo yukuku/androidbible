@@ -283,7 +283,11 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     private fun openDownloadSongBookPage() {
         startActivityForResult(
             HelpActivity.createIntentWithOverflowMenu(
-                "${BuildConfig.SERVER_HOST}/songs/downloads?${App.getAppIdentifierParamsEncoded()}",
+                // dataFormatVersion tells the page which payload version to link to (it should emit
+                // alkitab://...&dataFormatVersion=5 download links pointing at the gzipped JSON
+                // song-book wrapper) — same query param name SongBookUtil.downloadSongBook itself
+                // sends to get_songs.
+                "${BuildConfig.SERVER_HOST}/songs/downloads?dataFormatVersion=${SongDocumentJson.DATA_FORMAT_VERSION}&${App.getAppIdentifierParamsEncoded()}",
                 getString(R.string.sn_download_song_books),
                 getString(R.string.sn_menu_private_song_book),
                 AlertDialogActivity.createInputIntent(

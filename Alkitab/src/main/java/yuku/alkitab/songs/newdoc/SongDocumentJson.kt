@@ -22,9 +22,17 @@ object SongDocumentJson {
     }
 
     /**
-     * `meta` is derived, never trusted from input (design §3.1/§8.3): it is
-     * always recomputed from `blocks` so a decode-from-legacy and a parse of
-     * hand-authored `@doc` JSON converge on the same value.
+     * Computes `meta` from `blocks` (design §3.1/§8.3): the text of the first
+     * `title`/`title_original`-role blocks. This is **not** invoked
+     * automatically by [encode]/[decode] — `blocks` is the flowing document
+     * content, not something re-parsed on every load. It's the job of
+     * whichever code *authors* a [SongDocument] to call this once and store
+     * the result: [LegacySongConverter] calls it when synthesizing a
+     * document from a decoded legacy `Song` (there's no other producer for
+     * that artifact); an external authoring tool (e.g. `kidung-data`'s
+     * `OutputJson`) is expected to do the same and emit a trustworthy
+     * `meta` in the JSON it produces. From then on `meta` travels with the
+     * document and [encode]/[decode] pass it through as-is.
      */
     @JvmStatic
     fun deriveMeta(blocks: List<Block>): Meta {
@@ -43,13 +51,11 @@ object SongDocumentJson {
         return Meta(title = title, title_original = titleOriginal)
     }
 
-    private fun withDerivedMeta(doc: SongDocument): SongDocument = doc.copy(meta = deriveMeta(doc.blocks))
+    @JvmStatic
+    fun encode(doc: SongDocument): String = json.encodeToString(SongDocument.serializer(), doc)
 
     @JvmStatic
-    fun encode(doc: SongDocument): String = json.encodeToString(SongDocument.serializer(), withDerivedMeta(doc))
-
-    @JvmStatic
-    fun decode(text: String): SongDocument = withDerivedMeta(json.decodeFromString(SongDocument.serializer(), text))
+    fun decode(text: String): SongDocument = json.decodeFromString(SongDocument.serializer(), text)
 
     @Serializable
     data class SongBookMeta(
@@ -71,14 +77,8 @@ object SongDocumentJson {
     )
 
     @JvmStatic
-    fun encodeSongBook(wrapper: SongBookWrapper): String {
-        val normalized = wrapper.copy(songs = wrapper.songs.map(::withDerivedMeta))
-        return json.encodeToString(SongBookWrapper.serializer(), normalized)
-    }
+    fun encodeSongBook(wrapper: SongBookWrapper): String = json.encodeToString(SongBookWrapper.serializer(), wrapper)
 
     @JvmStatic
-    fun decodeSongBook(text: String): SongBookWrapper {
-        val raw = json.decodeFromString(SongBookWrapper.serializer(), text)
-        return raw.copy(songs = raw.songs.map(::withDerivedMeta))
-    }
+    fun decodeSongBook(text: String): SongBookWrapper = json.decodeFromString(SongBookWrapper.serializer(), text)
 }

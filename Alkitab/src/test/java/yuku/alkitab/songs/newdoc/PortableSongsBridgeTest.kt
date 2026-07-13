@@ -258,7 +258,7 @@ class PortableSongsBridgeTest {
     }
 
     @Test
-    fun `6-2 decode-convert-encode-decode round-trip is lossless and meta is re-derived`() {
+    fun `6-2 decode-convert-encode-decode round-trip is lossless, including the meta LegacySongConverter computed at conversion time`() {
         for (song in songs()) {
             val bytes = AospParcelWriter(ParcelLayout.LEGACY).write(song, 3)
             val decodedSong = LegacyParcelDecoder.decode(bytes, 3)
@@ -267,6 +267,19 @@ class PortableSongsBridgeTest {
             val doc2 = SongDocumentJson.decode(json)
             assertEquals(doc, doc2)
         }
+    }
+
+    @Test
+    fun `6-2 decode trusts meta from the JSON as-is instead of recomputing it from blocks`() {
+        // meta deliberately disagrees with the "title" block below it. authoring tools (kidung-data's
+        // OutputJson, or the app's own LegacySongConverter) are the trusted producers of meta; decode
+        // must not silently "fix" a mismatch by re-deriving it from blocks.
+        val json = """
+            {"v":1,"code":"X1","meta":{"title":"Trusted Title","title_original":null},
+             "blocks":[{"type":"p","role":"title","content":"Different Block Text"}]}
+        """.trimIndent()
+        val doc = SongDocumentJson.decode(json)
+        assertEquals("Trusted Title", doc.meta.title)
     }
 
     @Test
