@@ -12,7 +12,6 @@ import kotlinx.serialization.json.JsonObject
  */
 @Serializable
 data class SongDocument(
-    val v: Int = 1,
     val code: String,
     val meta: Meta = Meta(),
     val blocks: List<Block> = emptyList(),

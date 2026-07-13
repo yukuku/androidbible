@@ -71,8 +71,7 @@ public class SongBookUtilTest {
         for (Song s : songs) {
             docs.add(yuku.alkitab.songs.newdoc.LegacySongConverter.convert(s));
         }
-        SongDocumentJson.SongBookMeta meta = new SongDocumentJson.SongBookMeta("TST", "Test Book", "© Test");
-        SongDocumentJson.SongBookWrapper wrapper = new SongDocumentJson.SongBookWrapper(1, meta, docs);
+        SongDocumentJson.SongBookWrapper wrapper = new SongDocumentJson.SongBookWrapper(SongDocumentJson.DATA_FORMAT_VERSION, docs);
         String json = SongDocumentJson.encodeSongBook(wrapper);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

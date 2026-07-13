@@ -57,22 +57,17 @@ object SongDocumentJson {
     @JvmStatic
     fun decode(text: String): SongDocument = json.decodeFromString(SongDocument.serializer(), text)
 
-    @Serializable
-    data class SongBookMeta(
-        val name: String,
-        val title: String? = null,
-        val copyright: String? = null,
-    )
-
     /**
-     * Song-book download wrapper (design §3.7): `{ v, book, songs }`,
+     * Song-book download wrapper (design §3.7): `{ dataFormatVersion, songs }`,
      * gzipped over the wire, replacing the gzipped Java-serialized
-     * `List<Song>`.
+     * `List<Song>`. Book metadata (name/title/copyright) is *not* carried
+     * here — it travels via the download request/redirect (the caller
+     * already has it before it asks for the payload; see
+     * `SongBookUtil.downloadSongBook`).
      */
     @Serializable
     data class SongBookWrapper(
-        val v: Int = 1,
-        val book: SongBookMeta,
+        val dataFormatVersion: Int,
         val songs: List<SongDocument> = emptyList(),
     )
 

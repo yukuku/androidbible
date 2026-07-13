@@ -520,8 +520,7 @@ class PortableSongsBridgeTest {
     @Test
     fun `6-7 SongBookUtil deserializeSongs parses a gzipped JSON song-book wrapper`() {
         val wrapper = SongDocumentJson.SongBookWrapper(
-            v = 1,
-            book = SongDocumentJson.SongBookMeta(name = "KRI", title = "Kidung Rohani Indonesia", copyright = "© KRI"),
+            dataFormatVersion = SongDocumentJson.DATA_FORMAT_VERSION,
             songs = songs().map(LegacySongConverter::convert),
         )
         val json = SongDocumentJson.encodeSongBook(wrapper)

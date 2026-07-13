@@ -102,7 +102,7 @@ class SongDbTest {
                 ),
             ),
         )
-        return SongDocument(v = 1, code = code, meta = SongDocumentJson.deriveMeta(blocks), blocks = blocks)
+        return SongDocument(code = code, meta = SongDocumentJson.deriveMeta(blocks), blocks = blocks)
     }
 
     private fun bookInfo(name: String = "NKB", title: String? = "Buku", copyright: String? = "©") =

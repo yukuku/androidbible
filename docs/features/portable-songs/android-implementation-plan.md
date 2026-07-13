@@ -62,7 +62,6 @@ The two source-of-truth subtleties, because they drive both the model and the cu
 ```kotlin
 @Serializable
 data class SongDocument(
-    val v: Int,
     val code: String,
     val meta: Meta,
     val blocks: List<Block>,
@@ -202,7 +201,7 @@ Load the canonical JSON for "KRI 25 — @doc" as a checked-in test resource (str
 
 ### 6.7 Download-wrapper parse
 
-Build a gzipped JSON song-book wrapper (design §3.7: `{v, book, songs}`) as a test resource; feed it to the new `SongBookUtil.deserializeSongs` and assert the `SongDocument`s and `SongBookInfo` come through. Assert the removed Java-deserialization path is gone (no `ObjectInputStream`), and that `isSupportedDataFormatVersion(5)` is true / `(3)`/`(4)` handled per the redirect contract.
+Build a gzipped JSON song-book wrapper (design §3.7: `{dataFormatVersion, songs}` — no `book`; book metadata travels via the download request, not the payload) and feed it to the new `SongBookUtil.deserializeSongs`, asserting the `SongDocument`s come through. Assert the removed Java-deserialization path is gone (a gzipped, still-Java-serialized payload built the old way fails to parse), and that `isSupportedDataFormatVersion(5)` is true / `(3)`/`(4)` are false.
 
 ---
 

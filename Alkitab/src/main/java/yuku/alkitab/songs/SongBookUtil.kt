@@ -139,9 +139,9 @@ object SongBookUtil {
     }
 
     /**
-     * Deserializes the song-book download wrapper (design §3.7: `{ v, book, songs }`) from an
-     * InputStream and returns its songs. The stream may optionally be gzip-compressed. This is a
-     * plain JSON parse — no Java deserialization gadget surface (REM-21 removed the old
+     * Deserializes the song-book download wrapper (design §3.7: `{ dataFormatVersion, songs }`)
+     * from an InputStream and returns its songs. The stream may optionally be gzip-compressed.
+     * This is a plain JSON parse — no Java deserialization gadget surface (REM-21 removed the old
      * `ObjectInputStream` path entirely).
      *
      * Package-visible for testing.

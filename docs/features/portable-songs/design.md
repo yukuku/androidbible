@@ -48,7 +48,6 @@ One canonical JSON is used everywhere this design touches (on-disk storage, down
 
 ```jsonc
 {
-  "v": 1,                       // schema version
   "code": "25",                 // identity / lookup key (required)
   "meta": {                     // generator-derived, denormalized for index/search
     "title": "Malam Kudus",
@@ -59,7 +58,8 @@ One canonical JSON is used everywhere this design touches (on-disk storage, down
 ```
 
 - `code` — **required**, the per-book lookup key (replaces the indexed `song_info.code` column).
-- `meta` — **derived, never hand-authored**. `meta.title` is the text of the first block with role `title`; `meta.title_original` is the first block with role `title_original` (omitted if none). It exists so the song list, search prefilter, notifications, and DB indexes never have to parse the document. Single source of truth is `blocks`.
+- `meta` — **derived, never hand-authored**. `meta.title` is the text of the first block with role `title`; `meta.title_original` is the first block with role `title_original` (omitted if none). It exists so the song list, search prefilter, notifications, and DB indexes never have to parse the document. Single source of truth is `blocks`. Derivation happens once, at the point something *authors* the document (the generator emitting this JSON, or the app's on-device legacy→JSON converter) — a reader never re-derives `meta` from `blocks`, it trusts whatever `meta` the document carries.
+- No per-song schema-version field (`v`, etc.) — a single song's document doesn't need one. Payload-level versioning lives one level up, on the container that carries it: the on-device `song_info.dataFormatVersion` column, and the download wrapper's `dataFormatVersion` (§3.7).
 
 ### 3.2 Blocks
 
@@ -134,15 +134,21 @@ A `VerseLine` (an entry of `Verse.lines`) is **either** a `Line` **or** an objec
 
 ### 3.7 Song-book download wrapper
 
+A song book is downloaded as **one gzipped JSON document**: a `dataFormatVersion` marker plus the list of songs. This replaces the gzipped Java-serialized `List<Song>`.
+
 ```jsonc
 {
-  "v": 1,
-  "book": { "name": "KRI", "title": "...", "copyright": "..." },
-  "songs": [ /* Song[] */ ]
+  "dataFormatVersion": 5,
+  "songs": [ /* Song[] (§3.1) */ ]
 }
 ```
 
-This (gzipped) replaces the gzipped Java-serialized `List<Song>`.
+- `dataFormatVersion` — **required**, always `5` for this JSON payload shape. Same meaning, and same field name, as the `dataFormatVersion` the app already sends as a request query parameter to `get_songs` and stores per-row in `song_info.dataFormatVersion` (§6) — it's the version of *this specific payload's* format, not a per-song thing. A client that only understands `dataFormatVersion` values it doesn't recognize should refuse the payload rather than guess.
+- `songs` — the song-book's songs, each a full song object (§3.1). Order is the book's display order.
+- **No `book` property.** Book identity/metadata (`name`, `title`, `copyright`) is not repeated inside the payload — the client already has it before requesting the download (it's what selected *which* book to download in the first place: a `SongBookInfo` parsed from the `alkitab://…&name=…&title=…&copyright=…` download link, or looked up from the already-installed book being refreshed). Duplicating it inside the gzipped body would just be another place for it to drift from what the client displays.
+- The whole wrapper is what gets gzip-compressed for transport (`Content-Encoding`-style, via `OptionalGzipInputStream` on the read side) — not each song individually.
+
+On-device this is consumed by `SongBookUtil.deserializeSongs`, which gunzips, JSON-decodes into `SongDocumentJson.SongBookWrapper`, and returns `.songs` for `SongDb.storeSongs` to persist (each song JSON-encoded individually per row, §6 — the wrapper itself is not stored, only unwrapped).
 
 ### 3.8 Worked example — KRI 25 ("Malam Kudus / Silent Night")
 
@@ -150,7 +156,6 @@ Canonical block order mirrors the app `song.html` template (see §9): title, tit
 
 ```jsonc
 {
-  "v": 1,
   "code": "25",
   "meta": { "title": "Malam Kudus", "title_original": "Silent Night" },
   "blocks": [

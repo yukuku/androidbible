@@ -36,7 +36,6 @@ object LegacySongConverter {
         song.lyrics?.filterNotNull()?.forEach { lyric -> blocks.add(convertLyric(lyric)) }
 
         return SongDocument(
-            v = 1,
             code = song.code ?: "",
             meta = SongDocumentJson.deriveMeta(blocks),
             blocks = blocks,
