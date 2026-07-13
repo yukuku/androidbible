@@ -72,6 +72,7 @@ A block is discriminated by `type`. **Every** block may carry an optional `size`
 | `lyric`     | `{ type:"lyric", role?, size?, caption?: Line, verses: Verse[] }` | A lyric group (stanza set). |
 | `scripture` | `{ type:"scripture", role?, size?, osis: string }` | Scripture reference(s) as an OSIS string, e.g. `"John.3.16; Rom.5.8"`. |
 | `youtube`   | `{ type:"youtube", role?, size?, videoId: string }` | An embedded YouTube reference (single required `videoId`). |
+| `gap`       | `{ type:"gap", size? }` | A blank vertical-space element (default height `1em`, scaled by `size`). No `content`/`role`/`align`. |
 
 Notes:
 
@@ -317,6 +318,7 @@ A song enters document mode with a `code <CODE>` line (required; `no` also accep
   - formatting tags: `@size=<float>` → `p.size`; `@align=<start|center|end>` → `p.align`.
 - `@scripture <osis>` → a `scripture` block.
 - `@youtube <videoId>` → a `youtube` block.
+- `@gap` → a `gap` block. Combines with `@size=<float>` like other tags, e.g. `@size=2 @gap` for a double-height blank line.
 - `@row` … `@/row` → a `row` block; each line between the markers is parsed as a `p` item (role/size/align tags apply per item), giving e.g. lyricist-left / composer-right.
 - **Lyric markers** `*N` / `*ref`[N] / `*reff`[N] / `*text`[N] / `*versi`/`*version <caption>` behave as in legacy, including auto-grouping (a normal verse number ≤ the last one starts a new `lyric` group). Subsequent non-marker lines are appended to the current verse.
   - **Verse lines** support leading **`@size=` / `@align=`** line-level tags, producing the `{ size?, align?, content }` verse-line form (role tags are not meaningful on a lyric line and stay literal).

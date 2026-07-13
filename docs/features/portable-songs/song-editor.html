@@ -234,6 +234,7 @@ html, body {
       <option value="kri25legacy">KRI 25 — legacy</option>
       <option value="kri25doc">KRI 25 — @doc</option>
       <option value="demo">Refrain + scripture demo</option>
+      <option value="kitchensink">Kitchen sink — all @doc features</option>
     </select>
   </div>
   <div id="error-banner"></div>
@@ -332,6 +333,7 @@ Maka jiwaku pun memuji-Mu,</code></pre>
 </li>
 <li><code>@scripture &lt;osis&gt;</code> → a <code>scripture</code> block (OSIS, e.g. <code>John.3.16; Rom.5.8</code>; localized at render against the active Bible version).</li>
 <li><code>@youtube &lt;videoId&gt;</code> → a <code>youtube</code> block.</li>
+<li><code>@gap</code> → a <code>gap</code> block (blank vertical space, default 1em). Combines with <code>@size=&lt;float&gt;</code> like other tags, e.g. <code>@size=2 @gap</code> for a double-height gap.</li>
 <li><code>@row</code> … <code>@/row</code> → a <code>row</code> block; each line between the markers becomes a <code>p</code> item (its own role/size/align tags apply). Items spread start → end, e.g. lyricist-left / composer-right.</li>
 <li><strong>Lyric markers</strong> <code>*N</code>, <code>*ref</code>[N]/<code>*reff</code>[N], <code>*text</code>[N], <code>*versi</code>/<code>*version &lt;caption&gt;</code> — same semantics + auto-grouping as legacy. Verse lines support leading <code>@size=</code> / <code>@align=</code> (per-line formatting).</li>
 <li><strong>Blank line ends the current verse</strong> (returns to paragraph mode); a following <code>*</code> marker reopens lyric mode.</li>
@@ -435,6 +437,7 @@ Maka jiwaku pun memuji-Mu,</code></pre>
 </li>
 <li><code>@scripture &lt;osis&gt;</code> → blok <code>scripture</code> (OSIS, mis. <code>John.3.16; Rom.5.8</code>; dilokalkan saat render sesuai versi Alkitab aktif).</li>
 <li><code>@youtube &lt;videoId&gt;</code> → blok <code>youtube</code>.</li>
+<li><code>@gap</code> → blok <code>gap</code> (spasi vertikal kosong, default 1em). Dapat digabung dengan <code>@size=&lt;float&gt;</code> seperti tag lain, mis. <code>@size=2 @gap</code> untuk jarak dua kali lipat.</li>
 <li><code>@row</code> … <code>@/row</code> → blok <code>row</code>; setiap baris di antara penanda menjadi item <code>p</code> (tag role/size/align-nya sendiri berlaku). Item tersebar start → end, mis. pengarang lirik di kiri / pengarang musik di kanan.</li>
 <li><strong>Penanda lirik</strong> <code>*N</code>, <code>*ref</code>[N]/<code>*reff</code>[N], <code>*text</code>[N], <code>*versi</code>/<code>*version &lt;caption&gt;</code> — semantik + auto-grup sama seperti legacy. Baris bait mendukung <code>@size=</code> / <code>@align=</code> di depan (format per baris).</li>
 <li><strong>Baris kosong mengakhiri bait</strong> saat ini (kembali ke mode paragraf); penanda <code>*</code> berikutnya membuka kembali mode lirik.</li>
@@ -609,7 +612,79 @@ yet all are called near.
 The Lord of the river
 says: do not fear!
 
+@size=2 @gap
 @size=0.75 @copyright © 2024 Demo Song Publishers
+`;
+
+const SAMPLE_KITCHEN_SINK = `\
+code kitchensink
+@doc
+@title Wanderer's Song
+@title_original Canción del Caminante
+@tune RIVER WIND
+@row
+@authors_lyric A. Fictitious
+@authors_music B. Placeholder
+@/row
+@scripture Ps.19.1-4
+@youtube dQw4w9WgXcQ
+@musical 1=D 3/4
+
+@body This is a plain @doc paragraph with the explicit "body" role — same default look as an untagged line.
+Untagged line: no leading @ or *, still becomes a plain p block.
+@align=center A centered line, no role.
+@size=1.4 @align=center <b>Big centered heading</b>, combining size + align.
+All <u><b><i>three</i></b></u> inline styles combined in one run.
+@size=0.7 @note <i>A quieter spoken note, seven-tenths size.</i>
+
+@gap
+@note Default 1em gap above; a 1.5x gap below this note; a 2x gap follows after.
+@size=1.5 @gap
+@size=2 @gap
+
+*1
+Over the <u>hill</u> and through the <b>vale</b>,
+we wander on a <i>winding</i> trail;
+@size=1.2 the stars <u>above</u> us softly gleam,
+@align=end guiding every traveler's dream.
+
+*2
+Rivers bend and mountains rise,
+<u>shadows</u> stretch as daylight dies;
+@align=center round the fire we gather near,
+telling tales the whole night hear.
+
+*reff
+Walk with <b>me</b>, walk with <b>we</b>,
+under skies so wild and free;
+@size=1.3 sing along, <u>let voices</u> soar,
+this is what we're wandering for.
+
+*text
+(spoken, half-whispered)
+Rest here a while, the road can wait.
+
+*versi Second Verse Set
+
+*1
+Embers fade to morning light,
+@align=end another day, another sight;
+paths unknown will call our name,
+none of this feels quite the same.
+
+*1
+Second embers glow again,
+no caption marks this group right then;
+auto-split by a repeated number,
+"Versi 3" labels it, no wonder.
+
+@note The four lines below demonstrate the backslash escape for lines that would otherwise be parsed as markers or comments.
+\\*This line begins with a literal asterisk (escaped).
+\\@This line begins with a literal at-sign (escaped).
+\\//This line begins with a literal double-slash (escaped).
+\\==This line begins with a literal double-equals (escaped).
+
+@size=0.75 @copyright © 2024 Fictitious Folk Publishers — demo only
 `;
 
 // ============================================================
@@ -1165,6 +1240,14 @@ function parseDoc(src) {
         // Unknown tag with value: ignore
       }
 
+      // @gap is a marker role with no content -> a dedicated gap block
+      if (block.role === 'gap') {
+        const gapBlock = { type: 'gap' };
+        if (block.size !== undefined) gapBlock.size = block.size;
+        if (inRow) rowItems.push(gapBlock); else blocks.push(gapBlock);
+        continue;
+      }
+
       block.content = parseInlineMarkup(rest);
       if (inRow) rowItems.push(block); else blocks.push(block);
       continue;
@@ -1327,6 +1410,11 @@ function renderYoutube(b) {
     + '<a href="https://youtu.be/' + encodeURIComponent(b.videoId) + '">▶ ' + esc(b.videoId) + '</a></div>';
 }
 
+function renderGap(b) {
+  const h = (typeof b.size === 'number') ? b.size : 1;
+  return '<div class="gap" style="height:' + h + 'em"></div>';
+}
+
 function renderRow(b) {
   let html = '<div class="row"' + styleAttr(b) + '>';
   for (const it of b.items) html += renderBlock(it);
@@ -1340,6 +1428,7 @@ function renderBlock(b) {
     case 'lyric':     return renderLyric(b);
     case 'scripture': return renderScripture(b);
     case 'youtube':   return renderYoutube(b);
+    case 'gap':       return renderGap(b);
     case 'row':       return renderRow(b);
     default:          return '';
   }
@@ -1413,6 +1502,7 @@ const SAMPLES = {
   kri25legacy: SAMPLE_KRI25_LEGACY,
   kri25doc:    SAMPLE_KRI25_DOC,
   demo:        SAMPLE_DEMO,
+  kitchensink: SAMPLE_KITCHEN_SINK,
 };
 
 document.getElementById('sample-select').addEventListener('change', function () {
