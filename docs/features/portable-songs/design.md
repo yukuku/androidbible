@@ -323,7 +323,6 @@ A song enters document mode with a `code <CODE>` line (required; `no` also accep
 - **Lyric markers** `*N` / `*ref`[N] / `*reff`[N] / `*text`[N] / `*versi`/`*version <caption>` behave as in legacy, including auto-grouping (a normal verse number ≤ the last one starts a new `lyric` group). Subsequent non-marker lines are appended to the current verse.
   - **Verse lines** support leading **`@size=` / `@align=`** line-level tags, producing the `{ size?, align?, content }` verse-line form (role tags are not meaningful on a lyric line and stay literal).
 - A **blank line ends the current verse** (returns to paragraph mode). A following `*` marker reopens lyric mode.
-- **Escaping**: a line beginning with `\` has the backslash stripped and the rest treated as literal paragraph text — so authors can write lines that literally begin with `*`, `@`, `//`, or `==` (a limitation the legacy format has no answer for).
 - **Forward-compatible**: an unknown `@directive` is warned and skipped, not fatal.
 
 Inline `<u>` / `<b>` / `<i>` in any content line → spans.

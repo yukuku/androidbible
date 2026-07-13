@@ -337,7 +337,6 @@ Maka jiwaku pun memuji-Mu,</code></pre>
 <li><code>@row</code> … <code>@/row</code> → a <code>row</code> block; each line between the markers becomes a <code>p</code> item (its own role/size/align tags apply). Items spread start → end, e.g. lyricist-left / composer-right.</li>
 <li><strong>Lyric markers</strong> <code>*N</code>, <code>*ref</code>[N]/<code>*reff</code>[N], <code>*text</code>[N], <code>*versi</code>/<code>*version &lt;caption&gt;</code> — same semantics + auto-grouping as legacy. Verse lines support leading <code>@size=</code> / <code>@align=</code> (per-line formatting).</li>
 <li><strong>Blank line ends the current verse</strong> (returns to paragraph mode); a following <code>*</code> marker reopens lyric mode.</li>
-<li><strong>Escape</strong> — a line starting with <code>\</code> drops the backslash and is treated as literal paragraph text, so it can begin with <code>*</code>, <code>@</code>, <code>//</code>, or <code>==</code>.</li>
 <li>Unknown <code>@directive</code> → warned and skipped (not fatal).</li>
 </ul>
 
@@ -441,7 +440,6 @@ Maka jiwaku pun memuji-Mu,</code></pre>
 <li><code>@row</code> … <code>@/row</code> → blok <code>row</code>; setiap baris di antara penanda menjadi item <code>p</code> (tag role/size/align-nya sendiri berlaku). Item tersebar start → end, mis. pengarang lirik di kiri / pengarang musik di kanan.</li>
 <li><strong>Penanda lirik</strong> <code>*N</code>, <code>*ref</code>[N]/<code>*reff</code>[N], <code>*text</code>[N], <code>*versi</code>/<code>*version &lt;caption&gt;</code> — semantik + auto-grup sama seperti legacy. Baris bait mendukung <code>@size=</code> / <code>@align=</code> di depan (format per baris).</li>
 <li><strong>Baris kosong mengakhiri bait</strong> saat ini (kembali ke mode paragraf); penanda <code>*</code> berikutnya membuka kembali mode lirik.</li>
-<li><strong>Escape</strong> — baris diawali <code>\</code> akan menghapus backslash dan diperlakukan sebagai teks paragraf literal, sehingga dapat diawali <code>*</code>, <code>@</code>, <code>//</code>, atau <code>==</code>.</li>
 <li><code>@directive</code> tak dikenal → diberi peringatan dan dilewati (tidak fatal).</li>
 </ul>
 
@@ -677,12 +675,6 @@ Second embers glow again,
 no caption marks this group right then;
 auto-split by a repeated number,
 "Versi 3" labels it, no wonder.
-
-@note The four lines below demonstrate the backslash escape for lines that would otherwise be parsed as markers or comments.
-\\*This line begins with a literal asterisk (escaped).
-\\@This line begins with a literal at-sign (escaped).
-\\//This line begins with a literal double-slash (escaped).
-\\==This line begins with a literal double-equals (escaped).
 
 @size=0.75 @copyright © 2024 Fictitious Folk Publishers — demo only
 `;
@@ -1151,19 +1143,6 @@ function parseDoc(src) {
     }
     if (line.startsWith('//')) continue;
     if (line.startsWith('===')) break;
-
-    // Escape: backslash-prefixed line -> literal paragraph text (strip the \)
-    if (line.startsWith('\\')) {
-      flushLyric();
-      nobaitTerakhir = 0;
-      const content = parseInlineMarkup(line.slice(1));
-      if (inRow) {
-        rowItems.push({ type: 'p', content });
-      } else {
-        blocks.push({ type: 'p', content });
-      }
-      continue;
-    }
 
     // @row ... @/row
     if (line === '@row') {
