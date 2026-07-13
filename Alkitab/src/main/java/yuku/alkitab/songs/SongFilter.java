@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import yuku.alkitab.base.util.QueryTokenizer;
+import yuku.alkitab.songs.newdoc.SongDocument;
+import yuku.alkitab.songs.newdoc.SongDocumentSearch;
 import yuku.kpri.model.Lyric;
 import yuku.kpri.model.Song;
 import yuku.kpri.model.Verse;
@@ -104,6 +106,31 @@ public class SongFilter {
 					if (find(line, m)) return true;
 				}
 			}
+		}
+		return false;
+	}
+
+	/**
+	 * Mirrors {@link #match(Song, CompiledFilter)} semantics for the new
+	 * document model (portable-songs android-implementation-plan.md §6.5):
+	 * scans {@code code}, {@code meta.title}, {@code meta.title_original},
+	 * and the fields {@link SongDocumentSearch#searchableTexts} extracts.
+	 */
+	public static boolean match(SongDocument doc, CompiledFilter cf) {
+		Pattern[] ps = cf.ps;
+		if (ps == null) return true; // empty filter? consider it passes
+
+		int matches = 0;
+		for (final Pattern p : ps) {
+			if (match(doc, p)) matches++;
+		}
+		return matches == ps.length;
+	}
+
+	private static boolean match(SongDocument doc, Pattern p) {
+		Matcher m = p.matcher("");
+		for (String text : SongDocumentSearch.searchableTexts(doc)) {
+			if (find(text, m)) return true;
 		}
 		return false;
 	}

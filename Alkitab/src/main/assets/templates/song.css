@@ -93,7 +93,7 @@
 	clear: both;
 }
 
-.timeSignature, .keySignature {
+.musical {
 	font-family: sans-serif;
 	font-size: 87.5%;
 	display: inline;

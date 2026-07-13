@@ -54,9 +54,15 @@ import yuku.alkitab.base.widget.TwofingerLinearLayout
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 import yuku.alkitab.songs.SongViewActivity.Companion.songAudioController
+import yuku.alkitab.songs.newdoc.PBlock
+import yuku.alkitab.songs.newdoc.RowBlock
+import yuku.alkitab.songs.newdoc.ScriptureBlock
+import yuku.alkitab.songs.newdoc.SongDocument
+import yuku.alkitab.songs.newdoc.SongDocumentJson
+import yuku.alkitab.songs.newdoc.SongDocumentRenderer
+import yuku.alkitab.songs.newdoc.SongDocumentText
+import yuku.alkitab.songs.newdoc.plainText
 import yuku.alkitabintegration.display.Launcher
-import yuku.kpri.model.Song
-import yuku.kpri.model.VerseKind
 
 private const val TAG = "SongViewActivity"
 
@@ -76,7 +82,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
     private val templateCustomVars = Bundle()
     private var currentBookName: String? = null
-    private var currentSong: Song? = null
+    private var currentSong: SongDocument? = null
 
     // for initially populating the search song activity
     private var last_searchState: SongListActivity.SearchState? = null
@@ -375,7 +381,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                                 songAudioController.setUI(this, this)
                                 songAudioController.setDisplayInfo(
                                     "${SongBookUtil.escapeSongBookName(currentBookName)} ${currentSong.code}",
-                                    currentSong.title,
+                                    currentSong.meta.title ?: "",
                                 )
                                 songAudioController.mediaKnownToExist(url)
                             } else {
@@ -463,7 +469,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                 currentSong?.let { currentSong ->
                     ShareCompat.IntentBuilder(this@SongViewActivity)
                         .setType("text/plain")
-                        .setSubject("${SongBookUtil.escapeSongBookName(currentBookName)} ${currentSong.code} ${currentSong.title}")
+                        .setSubject("${SongBookUtil.escapeSongBookName(currentBookName)} ${currentSong.code} ${currentSong.meta.title}")
                         .setText(convertSongToText(currentSong).toString())
                         .setChooserTitle(getString(R.string.sn_share_title))
                         .startChooser()
@@ -585,64 +591,17 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         }
     }
 
-    private fun convertSongToText(song: Song): StringBuilder {
-        // build text to copy
-        val sb = StringBuilder()
-        sb.append(SongBookUtil.escapeSongBookName(currentBookName)).append(' ')
-        sb.append(song.code).append(". ")
-        sb.append(song.title).append('\n')
-        if (song.title_original != null) sb.append('(').append(song.title_original).append(')').append('\n')
-        sb.append('\n')
+    private fun scriptureReferencesOsis(doc: SongDocument): String? =
+        doc.blocks.filterIsInstance<ScriptureBlock>().firstOrNull()?.osis
 
-        if (song.authors_lyric != null && song.authors_lyric.size > 0) sb.append(TextUtils.join("; ", song.authors_lyric)).append('\n')
-        if (song.authors_music != null && song.authors_music.size > 0) sb.append(TextUtils.join("; ", song.authors_music)).append('\n')
-        if (song.tune != null) sb.append(song.tune.uppercase()).append('\n')
-        sb.append('\n')
-
-        if (song.scriptureReferences != null) sb.append(renderScriptureReferences(null, song.scriptureReferences)).append('\n')
-
-        if (song.keySignature != null) sb.append(song.keySignature).append('\n')
-        if (song.timeSignature != null) sb.append(song.timeSignature).append('\n')
-        sb.append('\n')
-
-        for (i in song.lyrics.indices) {
-            val lyric = song.lyrics[i]
-
-            if (song.lyrics.size > 1 || lyric.caption != null) { // otherwise, only lyric and has no name
-                if (lyric.caption != null) {
-                    sb.append(lyric.caption).append('\n')
-                } else {
-                    sb.append(getString(R.string.sn_lyric_version_version, (i + 1).toString())).append('\n')
-                }
-            }
-
-            var verse_normal_no = 0
-            for (verse in lyric.verses) {
-                if (verse.kind == VerseKind.NORMAL) {
-                    verse_normal_no++
-                }
-
-                var skipPad = false
-                if (verse.kind == VerseKind.REFRAIN) {
-                    sb.append(getString(R.string.sn_lyric_refrain_marker)).append('\n')
-                } else {
-                    sb.append(String.format(Locale.US, "%2d: ", verse_normal_no))
-                    skipPad = true
-                }
-
-                for (line in verse.lines) {
-                    if (!skipPad) {
-                        sb.append("    ")
-                    } else {
-                        skipPad = false
-                    }
-                    sb.append(line).append("\n")
-                }
-                sb.append('\n')
-            }
-            sb.append('\n')
-        }
-        return sb
+    private fun convertSongToText(doc: SongDocument): StringBuilder {
+        return SongDocumentText.render(
+            doc = doc,
+            bookNameDisplay = SongBookUtil.escapeSongBookName(currentBookName),
+            scriptureReferencesText = scriptureReferencesOsis(doc)?.let { renderScriptureReferences(null, it) },
+            versionCaption = { n -> getString(R.string.sn_lyric_version_version, n.toString()) },
+            refrainMarker = getString(R.string.sn_lyric_refrain_marker),
+        )
     }
 
     /**
@@ -762,39 +721,39 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     }
 
     @JvmOverloads
-    fun displaySong(bookName: String?, song: Song?, onCreate: Boolean = false) {
-        root.visibility = if (song != null) VISIBLE else GONE
-        no_song_data_container.visibility = if (song != null) GONE else VISIBLE
+    fun displaySong(bookName: String?, doc: SongDocument?, onCreate: Boolean = false) {
+        root.visibility = if (doc != null) VISIBLE else GONE
+        no_song_data_container.visibility = if (doc != null) GONE else VISIBLE
 
         if (!onCreate) {
             songAudioController.reset()
         }
 
-        if (song == null) return
+        if (doc == null) return
 
         val handle = leftDrawer.handle
         handle.setBookName(SongBookUtil.escapeSongBookName(bookName))
-        handle.setCode(song.code)
+        handle.setCode(doc.code)
 
         // construct rendition of scripture references
-        val scripture_references = renderScriptureReferences(BIBLE_PROTOCOL, song.scriptureReferences)
+        val scripture_references = renderScriptureReferences(BIBLE_PROTOCOL, scriptureReferencesOsis(doc))
         templateCustomVars.putString("scripture_references", scripture_references)
         val copyright = SongBookUtil.getCopyright(bookName)
         templateCustomVars.putString("copyright", copyright ?: "")
         templateCustomVars.putString("patch_text_open_link", getString(R.string.patch_text_open_link))
 
         val ft = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.root, SongFragment.create(song, templateCustomVars), FRAGMENT_TAG_SONG)
+        ft.replace(R.id.root, SongFragment.create(doc, templateCustomVars), FRAGMENT_TAG_SONG)
         ft.commitAllowingStateLoss()
 
         currentBookName = bookName
-        currentSong = song
+        currentSong = doc
 
         updateActivityTitle()
 
         // save latest viewed song
         Preferences.setString(Prefkey.song_last_bookName, bookName)
-        Preferences.setString(Prefkey.song_last_code, song.code)
+        Preferences.setString(Prefkey.song_last_code, doc.code)
 
         checkAudioExistance()
     }
@@ -856,7 +815,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                     } else {
                         val input = data?.getStringExtra(AlertDialogActivity.EXTRA_INPUT)
                         if (!input.isNullOrEmpty()) {
-                            downloadByAlkitabUri(("alkitab:///addon/download?kind=songbook&type=ser&dataFormatVersion=3&name=_${Uri.encode(input.uppercase(Locale.US))}").toUri())
+                            downloadByAlkitabUri(("alkitab:///addon/download?kind=songbook&type=ser&dataFormatVersion=${SongDocumentJson.DATA_FORMAT_VERSION}&name=_${Uri.encode(input.uppercase(Locale.US))}").toUri())
                         }
                     }
                     return
@@ -933,11 +892,11 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
         when (uri.scheme) {
             "patchtext" -> {
-                val song = currentSong
+                val doc = currentSong
 
-                if (song != null) {
+                if (doc != null) {
                     // do not proceed if the song is too old
-                    val updateTime = App.services.storage.songDb.getSongUpdateTime(currentBookName, song.code)
+                    val updateTime = App.services.storage.songDb.getSongUpdateTime(currentBookName, doc.code)
                     if (updateTime == 0 || Sqlitil.nowDateTime() - updateTime > 21 * 86400) {
                         MaterialAlertDialogBuilder(this)
                             .setMessage(TextUtils.expandTemplate(getText(R.string.sn_update_book_because_too_old), SongBookUtil.escapeSongBookName(currentBookName)))
@@ -948,10 +907,17 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                         val extraInfo = PatchTextExtraInfoJson()
                         extraInfo.type = "song"
                         extraInfo.bookName = currentBookName
-                        extraInfo.code = song.code
+                        extraInfo.code = doc.code
 
-                        val songHeader = song.code + " " + song.title + nonullbr(song.title_original) + nonullbr(song.tune) + nonullbr(song.keySignature) + nonullbr(song.timeSignature) + nonullbr(song.authors_lyric) + nonullbr(song.authors_music)
-                        val songHtml = SongFragment.songToHtml(song, true)
+                        val pBlocks = doc.blocks.filterIsInstance<PBlock>()
+                        val rowItems = doc.blocks.filterIsInstance<RowBlock>().firstOrNull()?.items.orEmpty()
+                        val tune = pBlocks.firstOrNull { it.role == "tune" }?.content?.plainText()
+                        val musical = pBlocks.firstOrNull { it.role == "musical" }?.content?.plainText()
+                        val authorsLyric = rowItems.firstOrNull { it.role == "authors_lyric" }?.content?.plainText()
+                        val authorsMusic = rowItems.firstOrNull { it.role == "authors_music" }?.content?.plainText()
+
+                        val songHeader = doc.code + " " + doc.meta.title + nonullbr(doc.meta.title_original) + nonullbr(tune) + nonullbr(musical) + nonullbr(authorsLyric) + nonullbr(authorsMusic)
+                        val songHtml = SongDocumentRenderer.render(doc, true)
                         val baseBody = HtmlCompat.fromHtml(songHeader + "\n\n" + songHtml, HtmlCompat.FROM_HTML_MODE_LEGACY)
                         startActivity(PatchTextActivity.createIntent(baseBody, App.getDefaultGson().toJson(extraInfo), null))
                     }
@@ -1091,10 +1057,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
         fun nonullbr(s: String?): String {
             return if (s == null) "" else "<br/>$s"
-        }
-
-        fun nonullbr(s: List<String>?): String {
-            return if (s.isNullOrEmpty()) "" else "<br/>$s"
         }
     }
 }

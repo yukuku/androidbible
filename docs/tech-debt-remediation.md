@@ -31,7 +31,7 @@ This document is an index over the prioritized remediation plan for each tech de
 - [REM-08: Extract IsiActivity Split View Manager](tech-debt-remediation/REM-08-isiactivity-split-view.md) ✅ **3.2**
 - [REM-09: Introduce ViewModel for IsiActivity](tech-debt-remediation/REM-09-isiactivity-viewmodel.md) — **3.4**
 - REM-10 / REM-11 / REM-27 / REM-28 / REM-29 / REM-30 / REM-31 — Room migration for the eight InternalDb table groups. **Reverted before public release.** All eight were merged to `develop` between 2026-05-13 and 2026-05-15, then rolled back as a single PR on 2026-05-18: the risk/value tradeoff was wrong given (a) the app's published Bible data is irreplaceable user-synced state, (b) the dynamic build-time `user_version` in `AlkitabDb` is fundamentally incompatible with Room's static `@Database(version = N)` contract (forcing a separate-file architecture with per-table row copy), and (c) the schema-drift bug surface introduced by Room replicating each legacy `createTable*` quirk (e.g. lost `COLLATE NOCASE` index in [#197](https://github.com/yukuku/androidbible/pull/197), idempotency resurrection in [#195](https://github.com/yukuku/androidbible/issues/195)) is global rather than per-table. The Room dependency is kept in the build for REM-32 (Songs). See PR description for the full rationale.
-- [REM-32: Migrate SongDb to Room](tech-debt-remediation/REM-32-room-song-db.md) ✅ **3.2** — kept. Songs is module-isolated (own SQLite file, no FKs/transactions with Bible data) and song books are re-downloadable, so the migration risk is bounded. REM-21 (Phase 4) will compose on top by swapping the Parcelable `data` BLOB to JSON.
+- [REM-32: Migrate SongDb to Room](tech-debt-remediation/REM-32-room-song-db.md) ✅ **3.2** — kept. Songs is module-isolated (own SQLite file, no FKs/transactions with Bible data) and song books are re-downloadable, so the migration risk is bounded. REM-21 (Phase 4) composed on top by swapping the Parcelable `data` BLOB to JSON.
 - [REM-12: Replace DragSortListView with ItemTouchHelper](tech-debt-remediation/REM-12-itemtouchhelper.md) ✅ **3.4**
 - [REM-14: Replace material-dialogs with Material 3](tech-debt-remediation/REM-14-material-dialogs.md) ✅ **3.4**
 - [REM-18: Add Test Coverage for Core Modules](tech-debt-remediation/REM-18-test-coverage.md) ✅ **3.4**
@@ -50,7 +50,7 @@ This document is an index over the prioritized remediation plan for each tech de
 
 ## Phase 4: Long-term / Major Refactors (BRICE < 2.5)
 
-- [REM-21: Migrate Song Storage from Parcelable to JSON](tech-debt-remediation/REM-21-song-json-storage.md) — **2.8**
+- [REM-21: Migrate Song Storage from Parcelable to JSON](tech-debt-remediation/REM-21-song-json-storage.md) ✅ **2.8** — app-side done; backend redirect branching and `kidung-data` authoring are out of scope (separate repos).
 - [REM-22: Introduce Jetpack Compose for New Screens](tech-debt-remediation/REM-22-jetpack-compose.md) — **2.6** (kicked off)
 
 ---
@@ -88,7 +88,7 @@ This document is an index over the prioritized remediation plan for each tech de
 | [REM-17](tech-debt-remediation/REM-17-kotlin-dsl-build.md) | ~~Kotlin DSL build migration~~ ✅ | **3.0** | 3 |
 | [REM-20](tech-debt-remediation/REM-20-ambilwarna-replacement.md) | ~~Replace AmbilWarna~~ ✅ | **3.0** | 3 |
 | [REM-19](tech-debt-remediation/REM-19-prdownloader-replacement.md) | ~~Replace PRDownloader~~ ✅ | **2.8** | 3 |
-| [REM-21](tech-debt-remediation/REM-21-song-json-storage.md) | Song storage migration | **2.8** | 4 |
+| [REM-21](tech-debt-remediation/REM-21-song-json-storage.md) | ~~Song storage migration~~ ✅ (app-side) | **2.8** | 4 |
 | [REM-22](tech-debt-remediation/REM-22-jetpack-compose.md) | Jetpack Compose adoption (kicked off) | **2.6** | 4 |
 
 ## Suggested Execution Order

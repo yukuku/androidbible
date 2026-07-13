@@ -3,7 +3,6 @@ package yuku.alkitab.base.storage
 import android.app.Application
 import androidx.room.Room
 import org.junit.After
-import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -15,12 +14,21 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import yuku.alkitab.base.storage.room.SongInfoEntity
 import yuku.alkitab.base.storage.room.SongRoomDatabase
 import yuku.alkitab.songs.SongBookUtil
-import yuku.kpri.model.Lyric
+import yuku.alkitab.songs.newdoc.Block
+import yuku.alkitab.songs.newdoc.Line
+import yuku.alkitab.songs.newdoc.LyricBlock
+import yuku.alkitab.songs.newdoc.PBlock
+import yuku.alkitab.songs.newdoc.RowBlock
+import yuku.alkitab.songs.newdoc.ScriptureBlock
+import yuku.alkitab.songs.newdoc.SongDocument
+import yuku.alkitab.songs.newdoc.SongDocumentJson
+import yuku.alkitab.songs.newdoc.Verse
+import yuku.alkitab.songs.newdoc.VerseKind
+import yuku.alkitab.songs.newdoc.VerseLine
 import yuku.kpri.model.Song
-import yuku.kpri.model.Verse
-import yuku.kpri.model.VerseKind
 
 /**
  * Robolectric tests for the [SongDb] facade. The facade routes through
@@ -28,10 +36,12 @@ import yuku.kpri.model.VerseKind
  * the test installs an in-memory [SongRoomDatabase] in [setUp] via
  * [SongRoomDatabase.setForTesting].
  *
- * The most important assertion in this file is the Parcelable round-trip
- * through `storeSongs` + `getSong`. REM-32 is a strict storage-engine swap
- * that must round-trip the `data` BLOB byte-for-byte; a regression there
- * would break user data immediately on first launch with the new build.
+ * REM-21 (portable songs) made the payload UTF-8 JSON
+ * ([yuku.alkitab.songs.newdoc.SongDocumentJson]); [SongDocument] is a data
+ * class hierarchy, so most assertions here are plain `assertEquals` on the
+ * whole document. The one Parcelable-specific test left is
+ * `getSong lazily converts a legacy Parcelable row`, which exercises the
+ * on-read conversion path described in android-implementation-plan.md §5/§6.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class, sdk = [34])
@@ -58,46 +68,41 @@ class SongDbTest {
         helper.close()
     }
 
-    private fun verse(ordering: Int, kind: VerseKind, vararg lines: String): Verse {
-        return Verse().apply {
-            this.ordering = ordering
-            this.kind = kind
-            this.lines = lines.toMutableList()
-        }
-    }
-
-    private fun lyric(caption: String?, vararg verses: Verse): Lyric {
-        return Lyric().apply {
-            this.caption = caption
-            this.verses = verses.toMutableList()
-        }
-    }
-
-    private fun song(
+    private fun songDoc(
         code: String,
         title: String = "Title $code",
         title_original: String? = "Original $code",
-    ): Song {
-        return Song().apply {
-            this.code = code
-            this.title = title
-            this.title_original = title_original
-            this.authors_lyric = mutableListOf("Author A", "Author B")
-            this.authors_music = mutableListOf("Composer C")
-            this.tune = "tune-$code"
-            this.keySignature = "C"
-            this.timeSignature = "4/4"
-            this.lyrics = mutableListOf(
-                lyric(
-                    caption = "Indonesian",
-                    verses = arrayOf(
-                        verse(1, VerseKind.NORMAL, "Line 1", "Line 2"),
-                        verse(2, VerseKind.REFRAIN, "Chorus"),
-                    ),
-                ),
-            )
-            this.scriptureReferences = "John 3:16"
+    ): SongDocument {
+        val blocks = mutableListOf<Block>(
+            PBlock(role = "title", content = Line.Plain(title)),
+        )
+        if (title_original != null) {
+            blocks.add(PBlock(role = "title_original", content = Line.Plain(title_original)))
         }
+        blocks.add(PBlock(role = "tune", content = Line.Plain("tune-$code")))
+        blocks.add(
+            RowBlock(
+                items = listOf(
+                    PBlock(role = "authors_lyric", content = Line.Plain("Author A; Author B")),
+                    PBlock(role = "authors_music", content = Line.Plain("Composer C")),
+                ),
+            ),
+        )
+        blocks.add(ScriptureBlock(osis = "John.3.16"))
+        blocks.add(PBlock(role = "musical", content = Line.Plain("C 4/4")))
+        blocks.add(
+            LyricBlock(
+                caption = Line.Plain("Indonesian"),
+                verses = listOf(
+                    Verse(
+                        kind = VerseKind.NORMAL,
+                        lines = listOf(VerseLine.Simple(Line.Plain("Line 1")), VerseLine.Simple(Line.Plain("Line 2"))),
+                    ),
+                    Verse(kind = VerseKind.REFRAIN, lines = listOf(VerseLine.Simple(Line.Plain("Chorus")))),
+                ),
+            ),
+        )
+        return SongDocument(v = 1, code = code, meta = SongDocumentJson.deriveMeta(blocks), blocks = blocks)
     }
 
     private fun bookInfo(name: String = "NKB", title: String? = "Buku", copyright: String? = "©") =
@@ -107,39 +112,17 @@ class SongDbTest {
             this.copyright = copyright
         }
 
-    private fun assertSongsEqual(expected: Song, actual: Song?) {
-        assertNotNull(actual)
-        actual!!
-        assertEquals(expected.code, actual.code)
-        assertEquals(expected.title, actual.title)
-        assertEquals(expected.title_original, actual.title_original)
-        assertEquals(expected.authors_lyric, actual.authors_lyric)
-        assertEquals(expected.authors_music, actual.authors_music)
-        assertEquals(expected.tune, actual.tune)
-        assertEquals(expected.keySignature, actual.keySignature)
-        assertEquals(expected.timeSignature, actual.timeSignature)
-        assertEquals(expected.scriptureReferences, actual.scriptureReferences)
-        assertEquals(expected.lyrics.size, actual.lyrics.size)
-        for (i in expected.lyrics.indices) {
-            val a = expected.lyrics[i]
-            val b = actual.lyrics[i]
-            assertEquals(a.caption, b.caption)
-            assertEquals(a.verses.size, b.verses.size)
-            for (j in a.verses.indices) {
-                assertEquals(a.verses[j].ordering, b.verses[j].ordering)
-                assertEquals(a.verses[j].kind, b.verses[j].kind)
-                assertEquals(a.verses[j].lines, b.verses[j].lines)
-            }
-        }
+    private fun store(bookName: String, vararg docs: SongDocument) {
+        dao.storeSongs(bookName, docs.toList(), SongDocumentJson.DATA_FORMAT_VERSION)
     }
 
     @Test
-    fun `storeSongs and getSong round-trip a full Song through the Parcelable BLOB byte-for-byte`() {
-        val s = song("001", title = "Hymn 1")
-        dao.storeSongs("NKB", listOf(s), 3)
+    fun `storeSongs and getSong round-trip a full SongDocument byte-for-byte through the JSON BLOB`() {
+        val s = songDoc("001", title = "Hymn 1")
+        store("NKB", s)
 
         val loaded = dao.getSong("NKB", "001")
-        assertSongsEqual(s, loaded)
+        assertEquals(s, loaded)
     }
 
     @Test
@@ -150,15 +133,15 @@ class SongDbTest {
     @Test
     fun `songExists reports presence and absence correctly`() {
         assertFalse(dao.songExists("NKB", "001"))
-        dao.storeSongs("NKB", listOf(song("001")), 3)
+        store("NKB", songDoc("001"))
         assertTrue(dao.songExists("NKB", "001"))
         assertFalse(dao.songExists("NKB", "002"))
     }
 
     @Test
     fun `storeSongs replaces every existing song for the (bookName, dataFormatVersion) tuple`() {
-        dao.storeSongs("NKB", listOf(song("001"), song("002")), 3)
-        dao.storeSongs("NKB", listOf(song("003")), 3)
+        dao.storeSongs("NKB", listOf(songDoc("001"), songDoc("002")), SongDocumentJson.DATA_FORMAT_VERSION)
+        dao.storeSongs("NKB", listOf(songDoc("003")), SongDocumentJson.DATA_FORMAT_VERSION)
 
         assertNull(dao.getSong("NKB", "001"))
         assertNull(dao.getSong("NKB", "002"))
@@ -167,18 +150,14 @@ class SongDbTest {
 
     @Test
     fun `storeSongs preserves caller-supplied display ordering`() {
-        dao.storeSongs(
-            "NKB",
-            listOf(song("A"), song("B"), song("C")),
-            3,
-        )
+        dao.storeSongs("NKB", listOf(songDoc("A"), songDoc("B"), songDoc("C")), SongDocumentJson.DATA_FORMAT_VERSION)
         val codes = dao.listSongInfosByBookName("NKB").map { it.code }
         assertEquals(listOf("A", "B", "C"), codes)
     }
 
     @Test
     fun `getFirstSongFromBook returns the song with ordering = 1`() {
-        dao.storeSongs("NKB", listOf(song("A"), song("B")), 3)
+        dao.storeSongs("NKB", listOf(songDoc("A"), songDoc("B")), SongDocumentJson.DATA_FORMAT_VERSION)
         val first = dao.getFirstSongFromBook("NKB")
         assertNotNull(first)
         assertEquals("A", first!!.code)
@@ -190,9 +169,9 @@ class SongDbTest {
     }
 
     @Test
-    fun `getAnySong returns a pair of (bookName, song) sorted by bookName then ordering`() {
-        dao.storeSongs("PKJ", listOf(song("P1")), 3)
-        dao.storeSongs("NKB", listOf(song("N1")), 3)
+    fun `getAnySong returns a pair of (bookName, doc) sorted by bookName then ordering`() {
+        dao.storeSongs("PKJ", listOf(songDoc("P1")), SongDocumentJson.DATA_FORMAT_VERSION)
+        dao.storeSongs("NKB", listOf(songDoc("N1")), SongDocumentJson.DATA_FORMAT_VERSION)
         val pair = dao.getAnySong()
         assertNotNull(pair)
         assertEquals("NKB", pair!!.first)
@@ -208,8 +187,8 @@ class SongDbTest {
     fun `listSongInfosByBookName returns lightweight SongInfo records in display order`() {
         dao.storeSongs(
             "NKB",
-            listOf(song("A", title = "Alpha"), song("B", title = "Bravo")),
-            3,
+            listOf(songDoc("A", title = "Alpha"), songDoc("B", title = "Bravo")),
+            SongDocumentJson.DATA_FORMAT_VERSION,
         )
         val rows = dao.listSongInfosByBookName("NKB")
         assertEquals(listOf("A", "B"), rows.map { it.code })
@@ -218,8 +197,12 @@ class SongDbTest {
 
     @Test
     fun `listSongInfosByBookName with null bookName lists every book in display order`() {
-        dao.storeSongs("PKJ", listOf(song("P1", title = "Papa")), 3)
-        dao.storeSongs("NKB", listOf(song("A", title = "Alpha"), song("B", title = "Bravo")), 3)
+        dao.storeSongs("PKJ", listOf(songDoc("P1", title = "Papa")), SongDocumentJson.DATA_FORMAT_VERSION)
+        dao.storeSongs(
+            "NKB",
+            listOf(songDoc("A", title = "Alpha"), songDoc("B", title = "Bravo")),
+            SongDocumentJson.DATA_FORMAT_VERSION,
+        )
         val rows = dao.listSongInfosByBookName(null)
         assertEquals(listOf("A", "B", "P1"), rows.map { it.code })
         assertEquals(listOf("NKB", "NKB", "PKJ"), rows.map { it.bookName })
@@ -230,11 +213,11 @@ class SongDbTest {
         dao.storeSongs(
             "NKB",
             listOf(
-                song("A", title = "Hosanna in the highest"),
-                song("B", title = "Amazing grace"),
-                song("C", title = "Holy holy holy"),
+                songDoc("A", title = "Hosanna in the highest"),
+                songDoc("B", title = "Amazing grace"),
+                songDoc("C", title = "Holy holy holy"),
             ),
-            3,
+            SongDocumentJson.DATA_FORMAT_VERSION,
         )
         val rows = dao.listSongInfosByBookNameAndDeepFilter("NKB", "holy")
         // "Holy holy holy" matches; the others do not.
@@ -243,8 +226,8 @@ class SongDbTest {
 
     @Test
     fun `listSongInfosByBookNameAndDeepFilter with null bookName scans every book`() {
-        dao.storeSongs("NKB", listOf(song("A", title = "Hosanna")), 3)
-        dao.storeSongs("PKJ", listOf(song("P", title = "Hosanna")), 3)
+        dao.storeSongs("NKB", listOf(songDoc("A", title = "Hosanna")), SongDocumentJson.DATA_FORMAT_VERSION)
+        dao.storeSongs("PKJ", listOf(songDoc("P", title = "Hosanna")), SongDocumentJson.DATA_FORMAT_VERSION)
         val rows = dao.listSongInfosByBookNameAndDeepFilter(null, "hosanna")
         assertEquals(2, rows.size)
     }
@@ -253,8 +236,8 @@ class SongDbTest {
     fun `deleteSongBook removes book metadata, every song, and vacuums without losing other books`() {
         dao.insertSongBookInfo(bookInfo(name = "NKB", title = "Buku NKB"))
         dao.insertSongBookInfo(bookInfo(name = "PKJ", title = "Buku PKJ"))
-        dao.storeSongs("NKB", listOf(song("001"), song("002")), 3)
-        dao.storeSongs("PKJ", listOf(song("P01")), 3)
+        dao.storeSongs("NKB", listOf(songDoc("001"), songDoc("002")), SongDocumentJson.DATA_FORMAT_VERSION)
+        dao.storeSongs("PKJ", listOf(songDoc("P01")), SongDocumentJson.DATA_FORMAT_VERSION)
 
         val deleted = dao.deleteSongBook("NKB")
         assertEquals(2, deleted)
@@ -308,41 +291,61 @@ class SongDbTest {
     }
 
     @Test
-    fun `getDataFormatVersionForSongs returns 0 for empty book and the value when present`() {
+    fun `getDataFormatVersionForSongs returns 0 for empty book and the JSON version when present`() {
         assertEquals(0, dao.getDataFormatVersionForSongs("NKB"))
-        dao.storeSongs("NKB", listOf(song("001")), 3)
-        assertEquals(3, dao.getDataFormatVersionForSongs("NKB"))
+        store("NKB", songDoc("001"))
+        assertEquals(SongDocumentJson.DATA_FORMAT_VERSION, dao.getDataFormatVersionForSongs("NKB"))
     }
 
     @Test
     fun `getSongUpdateTime returns 0 for missing and a positive value for present`() {
         assertEquals(0, dao.getSongUpdateTime("NKB", "missing"))
-        dao.storeSongs("NKB", listOf(song("001")), 3)
+        store("NKB", songDoc("001"))
         assertTrue(dao.getSongUpdateTime("NKB", "001") > 0)
     }
 
     @Test
-    fun `BLOB column survives raw byte-array round-trips through storeSongs and getSong`() {
-        // Direct invariant check on the BLOB layer: marshall the song the
-        // same way storeSongs does, run it through the facade, then
-        // marshall the loaded value back the same way and compare the byte
-        // arrays. This is the strongest signal that REM-32 has not altered
-        // the Parcelable byte layout.
-        val s = song("042")
-        dao.storeSongs("NKB", listOf(s), 3)
-        val loaded = dao.getSong("NKB", "042")
-        assertNotNull(loaded)
+    fun `the stored BLOB is UTF-8 JSON matching SongDocumentJson encode`() {
+        val s = songDoc("042")
+        store("NKB", s)
 
-        val p1 = android.os.Parcel.obtain()
-        s.writeToParcelCompat(3, p1, 0)
-        val bytesOriginal = p1.marshall()
-        p1.recycle()
+        val row = SongRoomDatabase.get(RuntimeEnvironment.getApplication()).songRoomDao().findSongInfoByBookNameAndCode("NKB", "042")
+        assertNotNull(row)
+        assertEquals(SongDocumentJson.DATA_FORMAT_VERSION, row!!.dataFormatVersion)
+        val text = String(row.data!!, Charsets.UTF_8)
+        assertEquals(SongDocumentJson.decode(text), SongDocumentJson.decode(SongDocumentJson.encode(s)))
+    }
 
-        val p2 = android.os.Parcel.obtain()
-        loaded!!.writeToParcelCompat(3, p2, 0)
-        val bytesLoaded = p2.marshall()
-        p2.recycle()
+    @Test
+    fun `getSong lazily converts a legacy Parcelable row to JSON and bumps dataFormatVersion to 5, idempotently`() {
+        val legacySong = Song().apply {
+            code = "L1"
+            title = "Legacy Song"
+            title_original = null
+            authors_lyric = mutableListOf()
+            authors_music = mutableListOf()
+            tune = null
+            keySignature = null
+            timeSignature = null
+            lyrics = mutableListOf()
+            scriptureReferences = null
+        }
+        val p = android.os.Parcel.obtain()
+        legacySong.writeToParcelCompat(3, p, 0)
+        val bytes = p.marshall()
+        p.recycle()
 
-        assertArrayEquals(bytesOriginal, bytesLoaded)
+        val roomDao = SongRoomDatabase.get(RuntimeEnvironment.getApplication()).songRoomDao()
+        roomDao.insertSongInfo(SongInfoEntity(0L, "NKB", "L1", "Legacy Song", null, 1, 3, bytes, yuku.alkitab.base.util.Sqlitil.nowDateTime()))
+
+        val doc = dao.getSong("NKB", "L1")
+        assertNotNull(doc)
+        assertEquals("L1", doc!!.code)
+        assertEquals("Legacy Song", doc.meta.title)
+        assertEquals(SongDocumentJson.DATA_FORMAT_VERSION, dao.getDataFormatVersionForSongs("NKB"))
+
+        // idempotent: a second read returns the same document (now via the JSON path).
+        val doc2 = dao.getSong("NKB", "L1")
+        assertEquals(doc, doc2)
     }
 }

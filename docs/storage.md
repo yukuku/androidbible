@@ -148,13 +148,14 @@ code               TEXT
 title              TEXT
 title_original     TEXT
 ordering           INTEGER NOT NULL  -- caller-supplied display order
-dataFormatVersion  INTEGER NOT NULL  -- currently 3
-data               BLOB              -- Parcelable-marshalled yuku.kpri.model.Song
+dataFormatVersion  INTEGER NOT NULL  -- 5 = JSON (SongDocumentJson.DATA_FORMAT_VERSION); older = legacy Parcelable
+data               BLOB              -- UTF-8 JSON-encoded SongDocument (dataFormatVersion 5), or a legacy
+                                      -- Parcelable-marshalled yuku.kpri.model.Song (any other value)
 updateTime         INTEGER NOT NULL  -- Sqlitil.nowDateTime()
 -- Indices: (bookName, code) non-unique, (bookName, ordering) non-unique
 ```
 
-The `data` BLOB stores the song's lyrics, verses, refrains, scripture references, etc. as a Parcelable-marshalled `Song`. This was acknowledged as a bad design choice in the code; REM-21 (Phase 4) will swap the payload to JSON without touching the storage layer.
+The `data` BLOB stores the song's lyrics, verses, refrains, scripture references, etc. `SongDb.readDocument` dispatches on `dataFormatVersion`: JSON rows (`5`) parse directly into a `SongDocument`; legacy rows are decoded by the pure-JVM `LegacyParcelDecoder`, converted via `LegacySongConverter`, and written back as JSON (bumping `dataFormatVersion` to `5`) the first time they're read — a lazy, at-most-once, on-read migration with no bulk pass. This replaced the Parcelable-only storage that REM-21 flagged as a bad design choice (the marshalled `Parcel` byte layout changed in Android 13, so a device that stored songs pre-13 and upgraded could fail to read its own BLOBs with the platform `Parcel` alone). See `docs/features/portable-songs/design.md` and `docs/modules/songs.md`.
 
 **song_book_info** — installed song book metadata
 ```sql

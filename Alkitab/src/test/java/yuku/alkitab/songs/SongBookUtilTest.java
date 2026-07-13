@@ -2,23 +2,38 @@ package yuku.alkitab.songs;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 import org.junit.Test;
+import yuku.alkitab.songs.newdoc.Block;
+import yuku.alkitab.songs.newdoc.LyricBlock;
+import yuku.alkitab.songs.newdoc.PBlock;
+import yuku.alkitab.songs.newdoc.RowBlock;
+import yuku.alkitab.songs.newdoc.ScriptureBlock;
+import yuku.alkitab.songs.newdoc.SongDocument;
+import yuku.alkitab.songs.newdoc.SongDocumentJson;
 import yuku.kpri.model.Lyric;
 import yuku.kpri.model.Song;
 import yuku.kpri.model.Verse;
 import yuku.kpri.model.VerseKind;
 
+/**
+ * REM-21 replaced the gzipped Java-serialized {@code List<Song>} download wire format with a
+ * gzipped JSON song-book wrapper (design §3.7). These tests build that wrapper via
+ * {@link SongDocumentJson} (through {@link LegacySongConverter} fixtures for realism) and assert
+ * {@link SongBookUtil#deserializeSongs} parses it back into {@link SongDocument}s.
+ */
 public class SongBookUtilTest {
 
     private static Verse createVerse(int ordering, VerseKind kind, String... lines) {
@@ -47,24 +62,48 @@ public class SongBookUtilTest {
         s.keySignature = "C";
         s.timeSignature = "4/4";
         s.lyrics = lyrics;
-        s.scriptureReferences = "John 3:16";
+        s.scriptureReferences = "John.3.16";
         return s;
     }
 
-    private static byte[] serializeSongs(List<Song> songs) throws IOException {
+    private static byte[] gzipSongBookJson(List<Song> songs) throws IOException {
+        List<SongDocument> docs = new ArrayList<>(songs.size());
+        for (Song s : songs) {
+            docs.add(yuku.alkitab.songs.newdoc.LegacySongConverter.convert(s));
+        }
+        SongDocumentJson.SongBookMeta meta = new SongDocumentJson.SongBookMeta("TST", "Test Book", "© Test");
+        SongDocumentJson.SongBookWrapper wrapper = new SongDocumentJson.SongBookWrapper(1, meta, docs);
+        String json = SongDocumentJson.encodeSongBook(wrapper);
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
-            oos.writeObject(songs);
+        try (GZIPOutputStream gzos = new GZIPOutputStream(baos)) {
+            gzos.write(json.getBytes(StandardCharsets.UTF_8));
         }
         return baos.toByteArray();
     }
 
-    private static byte[] gzipCompress(byte[] data) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (GZIPOutputStream gzos = new GZIPOutputStream(baos)) {
-            gzos.write(data);
+    private static PBlock firstPBlockWithRole(SongDocument doc, String role) {
+        for (Block b : doc.getBlocks()) {
+            if (b instanceof PBlock && role.equals(((PBlock) b).getRole())) {
+                return (PBlock) b;
+            }
         }
-        return baos.toByteArray();
+        return null;
+    }
+
+    private static PBlock firstRowItemWithRole(SongDocument doc, String role) {
+        for (Block b : doc.getBlocks()) {
+            if (b instanceof RowBlock) {
+                for (PBlock item : ((RowBlock) b).getItems()) {
+                    if (role.equals(item.getRole())) return item;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static String plain(yuku.alkitab.songs.newdoc.Line line) {
+        return yuku.alkitab.songs.newdoc.SongDocumentKt.plainText(line);
     }
 
     @Test
@@ -75,37 +114,37 @@ public class SongBookUtilTest {
 
         Song song = createSong("AG001", "Amazing Grace", "Amazing Grace (Original)", Collections.singletonList(lyric));
 
-        byte[] serialized = serializeSongs(Collections.singletonList(song));
-        List<Song> result = SongBookUtil.deserializeSongs(new ByteArrayInputStream(serialized));
+        byte[] gzipped = gzipSongBookJson(Collections.singletonList(song));
+        List<SongDocument> result = SongBookUtil.deserializeSongs(new ByteArrayInputStream(gzipped));
 
         assertNotNull(result);
         assertEquals(1, result.size());
 
-        Song decoded = result.get(0);
-        assertEquals("AG001", decoded.code);
-        assertEquals("Amazing Grace", decoded.title);
-        assertEquals("Amazing Grace (Original)", decoded.title_original);
-        assertEquals(Arrays.asList("Author A", "Author B"), decoded.authors_lyric);
-        assertEquals(Collections.singletonList("Composer X"), decoded.authors_music);
-        assertEquals("TUNE_NAME", decoded.tune);
-        assertEquals("C", decoded.keySignature);
-        assertEquals("4/4", decoded.timeSignature);
-        assertEquals("John 3:16", decoded.scriptureReferences);
+        SongDocument decoded = result.get(0);
+        assertEquals("AG001", decoded.getCode());
+        assertEquals("Amazing Grace", decoded.getMeta().getTitle());
+        assertEquals("Amazing Grace (Original)", decoded.getMeta().getTitle_original());
+        assertEquals("Author A; Author B", plain(firstRowItemWithRole(decoded, "authors_lyric").getContent()));
+        assertEquals("Composer X", plain(firstRowItemWithRole(decoded, "authors_music").getContent()));
+        assertEquals("TUNE_NAME", plain(firstPBlockWithRole(decoded, "tune").getContent()));
+        assertEquals("C 4/4", plain(firstPBlockWithRole(decoded, "musical").getContent()));
 
-        assertEquals(1, decoded.lyrics.size());
-        Lyric decodedLyric = decoded.lyrics.get(0);
-        assertEquals("Verse 1", decodedLyric.caption);
-        assertEquals(2, decodedLyric.verses.size());
+        ScriptureBlock scripture = null;
+        for (Block b : decoded.getBlocks()) {
+            if (b instanceof ScriptureBlock) scripture = (ScriptureBlock) b;
+        }
+        assertNotNull(scripture);
+        assertEquals("John.3.16", scripture.getOsis());
 
-        Verse decodedV1 = decodedLyric.verses.get(0);
-        assertEquals(1, decodedV1.ordering);
-        assertEquals(VerseKind.NORMAL, decodedV1.kind);
-        assertEquals(Arrays.asList("Amazing grace, how sweet the sound", "That saved a wretch like me"), decodedV1.lines);
-
-        Verse decodedRefrain = decodedLyric.verses.get(1);
-        assertEquals(2, decodedRefrain.ordering);
-        assertEquals(VerseKind.REFRAIN, decodedRefrain.kind);
-        assertEquals(Collections.singletonList("Praise the Lord, praise the Lord"), decodedRefrain.lines);
+        LyricBlock lyricBlock = null;
+        for (Block b : decoded.getBlocks()) {
+            if (b instanceof LyricBlock) lyricBlock = (LyricBlock) b;
+        }
+        assertNotNull(lyricBlock);
+        assertEquals("Verse 1", plain(lyricBlock.getCaption()));
+        assertEquals(2, lyricBlock.getVerses().size());
+        assertEquals(yuku.alkitab.songs.newdoc.VerseKind.NORMAL, lyricBlock.getVerses().get(0).getKind());
+        assertEquals(yuku.alkitab.songs.newdoc.VerseKind.REFRAIN, lyricBlock.getVerses().get(1).getKind());
     }
 
     @Test
@@ -117,61 +156,47 @@ public class SongBookUtilTest {
             songs.add(createSong("S" + i, "Song " + i, null, Collections.singletonList(l)));
         }
 
-        byte[] serialized = serializeSongs(songs);
-        List<Song> result = SongBookUtil.deserializeSongs(new ByteArrayInputStream(serialized));
+        byte[] gzipped = gzipSongBookJson(songs);
+        List<SongDocument> result = SongBookUtil.deserializeSongs(new ByteArrayInputStream(gzipped));
 
         assertEquals(5, result.size());
         for (int i = 0; i < 5; i++) {
-            assertEquals("S" + (i + 1), result.get(i).code);
-            assertEquals("Song " + (i + 1), result.get(i).title);
+            assertEquals("S" + (i + 1), result.get(i).getCode());
+            assertEquals("Song " + (i + 1), result.get(i).getMeta().getTitle());
         }
     }
 
     @Test
     public void deserializeEmptyList() throws Exception {
-        byte[] serialized = serializeSongs(new ArrayList<>());
-        List<Song> result = SongBookUtil.deserializeSongs(new ByteArrayInputStream(serialized));
+        byte[] gzipped = gzipSongBookJson(new ArrayList<>());
+        List<SongDocument> result = SongBookUtil.deserializeSongs(new ByteArrayInputStream(gzipped));
 
         assertNotNull(result);
         assertEquals(0, result.size());
     }
 
     @Test
-    public void deserializeGzipCompressed() throws Exception {
-        Verse v = createVerse(1, VerseKind.NORMAL, "Compressed verse line");
-        Lyric l = createLyric("Verse 1", v);
-        Song song = createSong("GZ001", "Gzipped Song", null, Collections.singletonList(l));
-
-        byte[] serialized = serializeSongs(Collections.singletonList(song));
-        byte[] gzipped = gzipCompress(serialized);
-
-        List<Song> result = SongBookUtil.deserializeSongs(new ByteArrayInputStream(gzipped));
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals("GZ001", result.get(0).code);
-        assertEquals("Gzipped Song", result.get(0).title);
-        assertEquals(1, result.get(0).lyrics.size());
-        assertEquals("Compressed verse line", result.get(0).lyrics.get(0).verses.get(0).lines.get(0));
-    }
-
-    @Test
     public void deserializeSongWithUnicode() throws Exception {
-        Verse v = createVerse(1, VerseKind.NORMAL, "Ku bersyukur pada-Mu", "\u00c0 toi la gloire", "\u4e3b\u7684\u6069\u5178");
+        Verse v = createVerse(1, VerseKind.NORMAL, "Ku bersyukur pada-Mu", "À toi la gloire", "主的恩典");
         Lyric l = createLyric("Bait 1", v);
-        Song song = createSong("UNI01", "Nyanyian Pujian \u2014 \u8d5e\u7f8e\u8bd7", null, Collections.singletonList(l));
-        song.authors_lyric = Collections.singletonList("P\u00e9ngarang");
-        song.authors_music = Collections.singletonList("\u4f5c\u66f2\u5bb6");
+        Song song = createSong("UNI01", "Nyanyian Pujian — 赞美诗", null, Collections.singletonList(l));
+        song.authors_lyric = Collections.singletonList("Péngarang");
+        song.authors_music = Collections.singletonList("作曲家");
 
-        byte[] serialized = serializeSongs(Collections.singletonList(song));
-        List<Song> result = SongBookUtil.deserializeSongs(new ByteArrayInputStream(serialized));
+        byte[] gzipped = gzipSongBookJson(Collections.singletonList(song));
+        List<SongDocument> result = SongBookUtil.deserializeSongs(new ByteArrayInputStream(gzipped));
 
         assertEquals(1, result.size());
-        Song decoded = result.get(0);
-        assertEquals("Nyanyian Pujian \u2014 \u8d5e\u7f8e\u8bd7", decoded.title);
-        assertEquals(Collections.singletonList("P\u00e9ngarang"), decoded.authors_lyric);
-        assertEquals(3, decoded.lyrics.get(0).verses.get(0).lines.size());
-        assertEquals("\u4e3b\u7684\u6069\u5178", decoded.lyrics.get(0).verses.get(0).lines.get(2));
+        SongDocument decoded = result.get(0);
+        assertEquals("Nyanyian Pujian — 赞美诗", decoded.getMeta().getTitle());
+        assertEquals("Péngarang", plain(firstRowItemWithRole(decoded, "authors_lyric").getContent()));
+
+        LyricBlock lyricBlock = null;
+        for (Block b : decoded.getBlocks()) {
+            if (b instanceof LyricBlock) lyricBlock = (LyricBlock) b;
+        }
+        assertNotNull(lyricBlock);
+        assertEquals(3, lyricBlock.getVerses().get(0).getLines().size());
     }
 
     @Test
@@ -186,16 +211,20 @@ public class SongBookUtilTest {
 
         Song song = createSong("ML01", "Multi-Lyric Song", null, Arrays.asList(l1, l2, l3));
 
-        byte[] serialized = serializeSongs(Collections.singletonList(song));
-        List<Song> result = SongBookUtil.deserializeSongs(new ByteArrayInputStream(serialized));
+        byte[] gzipped = gzipSongBookJson(Collections.singletonList(song));
+        List<SongDocument> result = SongBookUtil.deserializeSongs(new ByteArrayInputStream(gzipped));
 
         assertEquals(1, result.size());
-        Song decoded = result.get(0);
-        assertEquals(3, decoded.lyrics.size());
-        assertEquals("Verse 1", decoded.lyrics.get(0).caption);
-        assertEquals("Verse 2", decoded.lyrics.get(1).caption);
-        assertEquals("Text", decoded.lyrics.get(2).caption);
-        assertEquals(VerseKind.TEXT, decoded.lyrics.get(2).verses.get(0).kind);
+        SongDocument decoded = result.get(0);
+        List<LyricBlock> lyricBlocks = new ArrayList<>();
+        for (Block b : decoded.getBlocks()) {
+            if (b instanceof LyricBlock) lyricBlocks.add((LyricBlock) b);
+        }
+        assertEquals(3, lyricBlocks.size());
+        assertEquals("Verse 1", plain(lyricBlocks.get(0).getCaption()));
+        assertEquals("Verse 2", plain(lyricBlocks.get(1).getCaption()));
+        assertEquals("Text", plain(lyricBlocks.get(2).getCaption()));
+        assertEquals(yuku.alkitab.songs.newdoc.VerseKind.TEXT, lyricBlocks.get(2).getVerses().get(0).getKind());
     }
 
     @Test
@@ -212,15 +241,34 @@ public class SongBookUtilTest {
         song.lyrics = null;
         song.scriptureReferences = null;
 
-        byte[] serialized = serializeSongs(Collections.singletonList(song));
-        List<Song> result = SongBookUtil.deserializeSongs(new ByteArrayInputStream(serialized));
+        byte[] gzipped = gzipSongBookJson(Collections.singletonList(song));
+        List<SongDocument> result = SongBookUtil.deserializeSongs(new ByteArrayInputStream(gzipped));
 
         assertEquals(1, result.size());
-        Song decoded = result.get(0);
-        assertEquals("N001", decoded.code);
-        assertNull(decoded.title);
-        assertNull(decoded.authors_lyric);
-        assertNull(decoded.lyrics);
-        assertNull(decoded.scriptureReferences);
+        SongDocument decoded = result.get(0);
+        assertEquals("N001", decoded.getCode());
+        assertEquals(0, decoded.getBlocks().size());
+    }
+
+    @Test
+    public void isSupportedDataFormatVersionAcceptsOnlyTheJsonVersion() {
+        assertEquals(false, SongBookUtil.isSupportedDataFormatVersion(3));
+        assertEquals(false, SongBookUtil.isSupportedDataFormatVersion(4));
+        assertTrue(SongBookUtil.isSupportedDataFormatVersion(5));
+    }
+
+    @Test
+    public void deserializeRejectsTheOldJavaSerializedFormat() throws Exception {
+        Song song = createSong("OLD1", "Old Format", null, Collections.singletonList(createLyric(null, createVerse(1, VerseKind.NORMAL, "line"))));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+            oos.writeObject(Collections.singletonList(song));
+        }
+        ByteArrayOutputStream gz = new ByteArrayOutputStream();
+        try (GZIPOutputStream gzos = new GZIPOutputStream(gz)) {
+            gzos.write(baos.toByteArray());
+        }
+
+        assertThrows(Exception.class, () -> SongBookUtil.deserializeSongs(new ByteArrayInputStream(gz.toByteArray())));
     }
 }
