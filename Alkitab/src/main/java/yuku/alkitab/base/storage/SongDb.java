@@ -17,6 +17,7 @@ import yuku.alkitab.base.storage.room.SongInfoMetaRow;
 import yuku.alkitab.base.storage.room.SongRoomDao;
 import yuku.alkitab.base.storage.room.SongRoomDatabase;
 import yuku.alkitab.base.util.AppLog;
+import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.songs.SongBookUtil;
 import yuku.alkitab.songs.SongFilter;
@@ -135,7 +136,12 @@ public class SongDb {
         }
 
         final SongDocument doc = LegacySongConverter.convert(legacySong);
-        roomDao().writeBackJsonSongData(id, writeDocument(doc));
+        // Write-back is idempotent (a row already at dataFormatVersion 5 is just re-written the same
+        // way) and this helper runs on the caller's thread — including the main thread for single-song
+        // reads (SongViewActivity.onStart) and, in a tight loop, the deep-filter scan. Fire the UPDATE
+        // on a background thread so a book full of legacy songs can't stall the UI or a search.
+        final byte[] jsonBytes = writeDocument(doc);
+        Background.run(() -> roomDao().writeBackJsonSongData(id, jsonBytes));
         return doc;
     }
 

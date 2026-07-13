@@ -342,10 +342,22 @@ class SongDbTest {
         assertNotNull(doc)
         assertEquals("L1", doc!!.code)
         assertEquals("Legacy Song", doc.meta.title)
-        assertEquals(SongDocumentJson.DATA_FORMAT_VERSION, dao.getDataFormatVersionForSongs("NKB"))
+
+        // The write-back runs on a background thread (Background.run) so the row doesn't flip to
+        // dataFormatVersion 5 synchronously with the read that triggered it; poll for it instead of
+        // asserting immediately.
+        awaitDataFormatVersion("NKB", SongDocumentJson.DATA_FORMAT_VERSION)
 
         // idempotent: a second read returns the same document (now via the JSON path).
         val doc2 = dao.getSong("NKB", "L1")
         assertEquals(doc, doc2)
+    }
+
+    private fun awaitDataFormatVersion(bookName: String, expected: Int, timeoutMs: Long = 2000) {
+        val deadline = System.currentTimeMillis() + timeoutMs
+        while (dao.getDataFormatVersionForSongs(bookName) != expected && System.currentTimeMillis() < deadline) {
+            Thread.sleep(10)
+        }
+        assertEquals(expected, dao.getDataFormatVersionForSongs(bookName))
     }
 }

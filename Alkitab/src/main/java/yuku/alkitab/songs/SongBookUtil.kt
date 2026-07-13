@@ -149,7 +149,9 @@ object SongBookUtil {
     @JvmStatic
     fun deserializeSongs(inputStream: InputStream): List<SongDocument> {
         OptionalGzipInputStream(inputStream).use { gzipStream ->
-            val text = gzipStream.readBytes().toString(Charsets.UTF_8)
+            // Avoid a redundant intermediate ByteArray the size of the whole uncompressed payload:
+            // read straight through a Reader instead of readBytes().toString(UTF_8).
+            val text = gzipStream.reader(Charsets.UTF_8).use { it.readText() }
             return SongDocumentJson.decodeSongBook(text).songs
         }
     }

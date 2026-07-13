@@ -23,6 +23,7 @@ object LegacyParcelDecoder {
     private const val VAL_PARCELABLE = 4
     private const val CLASS_NAME_LYRIC = "yuku.kpri.model.Lyric"
     private const val CLASS_NAME_VERSE = "yuku.kpri.model.Verse"
+    private val VERSE_KIND_VALUES = VerseKind.values() // a song book can have thousands of verses; avoid re-allocating this array per verse
 
     private enum class Format { LEGACY, ANDROID13 }
 
@@ -152,7 +153,7 @@ object LegacyParcelDecoder {
         val verse = Verse()
         verse.ordering = r.readInt() // consumed but discarded (design §3.3): never used for display
         val kindValue = r.readInt()
-        verse.kind = VerseKind.values().getOrNull(kindValue) ?: throw IllegalStateException("Unknown VerseKind value: $kindValue")
+        verse.kind = VERSE_KIND_VALUES.getOrNull(kindValue) ?: throw IllegalStateException("Unknown VerseKind value: $kindValue")
         verse.lines = r.readStringList()
         return verse
     }

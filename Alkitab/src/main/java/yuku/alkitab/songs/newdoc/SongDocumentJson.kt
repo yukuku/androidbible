@@ -28,8 +28,18 @@ object SongDocumentJson {
      */
     @JvmStatic
     fun deriveMeta(blocks: List<Block>): Meta {
-        val title = blocks.filterIsInstance<PBlock>().firstOrNull { it.role == "title" }?.content?.plainText()
-        val titleOriginal = blocks.filterIsInstance<PBlock>().firstOrNull { it.role == "title_original" }?.content?.plainText()
+        var title: String? = null
+        var titleOriginal: String? = null
+        for (block in blocks) {
+            if (block is PBlock) {
+                if (title == null && block.role == "title") {
+                    title = block.content.plainText()
+                } else if (titleOriginal == null && block.role == "title_original") {
+                    titleOriginal = block.content.plainText()
+                }
+            }
+            if (title != null && titleOriginal != null) break
+        }
         return Meta(title = title, title_original = titleOriginal)
     }
 

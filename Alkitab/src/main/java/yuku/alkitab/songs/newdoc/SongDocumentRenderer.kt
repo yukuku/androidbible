@@ -68,12 +68,17 @@ object SongDocumentRenderer {
         return sb.toString()
     }
 
+    // design §3.4: align is only ever start/center/end. Same rationale as ALLOWED_STYLES below —
+    // this value lands inside a single-quoted style='' attribute, so an unvalidated string could
+    // break out of it.
+    private val ALLOWED_ALIGNS = setOf("start", "center", "end")
+
     private fun renderVerseLineHtml(vl: VerseLine): String = when (vl) {
         is VerseLine.Simple -> renderLineHtml(vl.line)
         is VerseLine.Wrapped -> {
             val style = buildString {
-                vl.size?.let { append("font-size:").append(it).append("em;") }
-                vl.align?.let { append("text-align:").append(it).append(";") }
+                vl.size?.takeIf { it.isFinite() }?.let { append("font-size:").append(it).append("em;") }
+                vl.align?.takeIf { it in ALLOWED_ALIGNS }?.let { append("text-align:").append(it).append(";") }
             }
             val inner = renderLineHtml(vl.content)
             if (style.isEmpty()) inner else "<span style='$style'>$inner</span>"
@@ -86,10 +91,17 @@ object SongDocumentRenderer {
         is Line.Styled -> line.spans.joinToString("") { span -> wrapStyle(escapeHtml(span.text), span.style) }
     }
 
+    // design §3.4: Span.style is only ever u/b/i. The WebView has JavaScript enabled, so a
+    // maliciously crafted song book must not be able to smuggle an arbitrary tag (or attribute) in
+    // through this field — anything outside the closed set is dropped rather than rendered.
+    private val ALLOWED_STYLES = setOf("u", "b", "i")
+
     private fun wrapStyle(text: String, styles: List<String>): String {
         var result = text
         for (style in styles.asReversed()) {
-            result = "<$style>$result</$style>"
+            if (style in ALLOWED_STYLES) {
+                result = "<$style>$result</$style>"
+            }
         }
         return result
     }
