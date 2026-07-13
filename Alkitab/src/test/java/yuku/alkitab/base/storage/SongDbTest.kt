@@ -36,12 +36,11 @@ import yuku.kpri.model.Song
  * the test installs an in-memory [SongRoomDatabase] in [setUp] via
  * [SongRoomDatabase.setForTesting].
  *
- * REM-21 (portable songs) made the payload UTF-8 JSON
- * ([yuku.alkitab.songs.newdoc.SongDocumentJson]); [SongDocument] is a data
- * class hierarchy, so most assertions here are plain `assertEquals` on the
- * whole document. The one Parcelable-specific test left is
- * `getSong lazily converts a legacy Parcelable row`, which exercises the
- * on-read conversion path described in android-implementation-plan.md §5/§6.
+ * The payload is UTF-8 JSON ([yuku.alkitab.songs.newdoc.SongDocumentJson]);
+ * [SongDocument] is a data class hierarchy, so most assertions here are
+ * plain `assertEquals` on the whole document. The one Parcelable-specific
+ * test left is `getSong lazily converts a legacy Parcelable row`, which
+ * exercises the on-read conversion path.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class, sdk = [34])

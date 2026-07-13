@@ -7,8 +7,8 @@ import yuku.kpri.model.VerseKind as LegacyVerseKind
 
 /**
  * Maps a legacy [LegacySong] to a canonical [SongDocument], in the block
- * order that reproduces the current app layout (design §5 / §9): title,
- * title_original, tune, authors `row`, scripture, musical, lyric groups.
+ * order that reproduces the current app layout: title, title_original,
+ * tune, authors `row`, scripture, musical, lyric groups.
  */
 object LegacySongConverter {
     @JvmStatic
@@ -58,7 +58,7 @@ object LegacySongConverter {
                 LegacyVerseKind.TEXT -> VerseKind.TEXT
                 null -> VerseKind.NORMAL
             },
-            marker = null, // legacy verses have no explicit marker; numbering is positional (design §3.3)
+            marker = null, // legacy verses have no explicit marker; numbering is positional
             lines = verse.lines.orEmpty().filterNotNull().map { VerseLine.Simple(parseInlineLine(it)) },
         )
     }
@@ -68,8 +68,7 @@ object LegacySongConverter {
     /**
      * Parses legacy inline `<u>/<b>/<i>` markup (the only tags the legacy
      * HTML renderer understood) into [Span]s, and un-escapes the HTML
-     * entities legacy line content used for literal `&`/`<`/`>` (design
-     * §5 step 7: "other raw text escaped").
+     * entities legacy line content used for literal `&`/`<`/`>`.
      */
     fun parseInlineLine(raw: String): Line {
         val spans = mutableListOf<Span>()

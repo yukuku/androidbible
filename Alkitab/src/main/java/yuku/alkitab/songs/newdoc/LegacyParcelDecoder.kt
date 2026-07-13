@@ -7,16 +7,15 @@ import yuku.kpri.model.VerseKind
 
 /**
  * Version-agnostic decoder for the marshalled `song_info.data` byte buffer,
- * without `android.os.Parcel` (design doc §4). Required because the
- * Android 13 `Parcel` wire format changed — a device that stored a song
- * pre-13 and upgraded can fail to `Parcel.unmarshall()` its own BLOB. This
- * decoder replicates the wire bytes directly and auto-detects which layout
- * it is reading.
+ * without `android.os.Parcel`. Required because the Android 13 `Parcel`
+ * wire format changed — a device that stored a song pre-13 and upgraded
+ * can fail to `Parcel.unmarshall()` its own BLOB. This decoder replicates
+ * the wire bytes directly and auto-detects which layout it is reading.
  *
  * Supports exactly what songs use: [readInt], [Reader.readString]
  * (`writeString16`), string lists, and a typed list reader understanding
  * only `VAL_NULL` (-1) and `VAL_PARCELABLE` (4). Anything else is a hard
- * error — see design §4.2.
+ * error.
  */
 object LegacyParcelDecoder {
     private const val VAL_NULL = -1
@@ -123,8 +122,7 @@ object LegacyParcelDecoder {
     }
 
     /** Mirrors `Parcel.readList` into a pre-created list: `-1` yields an empty (not null) list;
-     * individual elements may themselves be `VAL_NULL` (songs.songToHtml already tolerates a null
-     * [Lyric] element in [Song.lyrics]). */
+     * individual elements may themselves be `VAL_NULL` — [Song.lyrics] can contain a null [Lyric]. */
     private fun <T> readParcelableList(r: Reader, readElement: () -> T): MutableList<T?> {
         val count = r.readInt()
         val res = ArrayList<T?>(if (count > 0) count else 0)
@@ -151,7 +149,7 @@ object LegacyParcelDecoder {
         val className = r.readParcelableClassNameAndLockFormat()
         if (className != CLASS_NAME_VERSE) throw IllegalStateException("Expected $CLASS_NAME_VERSE, got $className")
         val verse = Verse()
-        verse.ordering = r.readInt() // consumed but discarded (design §3.3): never used for display
+        verse.ordering = r.readInt() // consumed but discarded: never used for display
         val kindValue = r.readInt()
         verse.kind = VERSE_KIND_VALUES.getOrNull(kindValue) ?: throw IllegalStateException("Unknown VerseKind value: $kindValue")
         verse.lines = r.readStringList()

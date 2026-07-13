@@ -29,7 +29,7 @@ import kotlinx.serialization.json.put
  * encode/decode calls, because [Line] / [VerseLine] / [Block] are shaped by
  * *JSON value kind* (string vs array vs object), not by a fixed field
  * layout. This is the standard kotlinx.serialization pattern for
- * "one of several JSON shapes" unions; see design §3.4 / §3.2.
+ * "one of several JSON shapes" unions.
  */
 
 private fun jsonEncoderOf(encoder: Encoder): JsonEncoder =

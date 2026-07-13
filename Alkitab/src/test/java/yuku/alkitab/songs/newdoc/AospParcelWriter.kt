@@ -8,11 +8,10 @@ import yuku.kpri.model.Verse
 /**
  * Test-only re-implementation of the AOSP `Parcel` wire format for exactly
  * what `Song.writeToParcelCompat` / `Lyric.writeToParcel` /
- * `Verse.writeToParcel` write (design §4.1/§4.4), in both the pre-13 and
- * Android-13+ layouts. This is the golden-fixture writer
- * [LegacyParcelDecoder] is tested against — Robolectric's `Parcel` shadow
- * does not use the native Android binary layout, so it cannot validate the
- * decoder (see android-implementation-plan.md §6.1 caveat).
+ * `Verse.writeToParcel` write, in both the pre-13 and Android-13+ layouts.
+ * This is the golden-fixture writer [LegacyParcelDecoder] is tested
+ * against — Robolectric's `Parcel` shadow does not use the native Android
+ * binary layout, so it cannot validate the decoder.
  */
 enum class ParcelLayout { LEGACY, ANDROID13 }
 
@@ -59,7 +58,7 @@ class AospParcelWriter(private val layout: ParcelLayout) {
         writeIntRaw(4) // VAL_PARCELABLE
         if (layout == ParcelLayout.ANDROID13) {
             // Real Android13 prefixes the byte-length of the serialized value; the decoder never
-            // validates it (design §4.3), so any placeholder distinguishable from 21 works.
+            // validates it, so any placeholder distinguishable from 21 works.
             writeIntRaw(0)
         }
         writeStringRaw(className)

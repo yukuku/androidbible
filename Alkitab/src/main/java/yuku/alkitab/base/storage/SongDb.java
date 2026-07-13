@@ -54,14 +54,12 @@ import yuku.kpri.model.Song;
  * underlying {@code SupportSQLiteDatabase} after the DAO transaction has
  * committed.
  *
- * <p>REM-21 (Parcelable → JSON, portable-songs android-implementation-plan.md
- * §5/§6) layers on top of this storage-engine swap: {@link #writeDocument}
- * always writes UTF-8 JSON at {@link SongDocumentJson#DATA_FORMAT_VERSION};
- * {@link #readDocument} dispatches JSON-vs-legacy-Parcelable by the row's
- * {@code dataFormatVersion} and lazily rewrites legacy rows as JSON the
- * first time they're read (at most once per row). The BLOB column itself
- * (opaque {@code byte[]}) is unchanged by either REM-32 or REM-21 — only
- * what's inside it changed.
+ * <p>{@link #writeDocument} always writes UTF-8 JSON at
+ * {@link SongDocumentJson#DATA_FORMAT_VERSION}; {@link #readDocument}
+ * dispatches JSON-vs-legacy-Parcelable by the row's {@code dataFormatVersion}
+ * and lazily rewrites legacy rows as JSON the first time they're read (at
+ * most once per row). The BLOB column itself (opaque {@code byte[]}) hasn't
+ * changed — only what's inside it has.
  */
 public class SongDb {
     @SuppressWarnings("unused") // kept for ABI parity with the pre-Room constructor
@@ -102,9 +100,9 @@ public class SongDb {
     }
 
     /**
-     * design §4.5 fallback: if the pure-JVM {@link LegacyParcelDecoder} throws (an
-     * unrecognised wire shape), fall back to the platform {@code Parcel.unmarshall()} path, which
-     * still works as long as the OS hasn't changed since the row was written.
+     * Fallback if the pure-JVM {@link LegacyParcelDecoder} throws (an unrecognised wire shape):
+     * fall back to the platform {@code Parcel.unmarshall()} path, which still works as long as the
+     * OS hasn't changed since the row was written.
      */
     private static Song unmarshallLegacySongViaPlatformParcel(byte[] buf, int dataFormatVersion) {
         Parcel p = Parcel.obtain();
@@ -116,11 +114,11 @@ public class SongDb {
     }
 
     /**
-     * Single song-read helper (android-implementation-plan.md §5): dispatches JSON vs. legacy
-     * Parcelable by {@code dataFormatVersion}. Legacy rows are decoded via {@link LegacyParcelDecoder}
-     * (falling back to the platform {@link Parcel} if that throws), converted to a
-     * {@link SongDocument} via {@link LegacySongConverter}, and the JSON is written back to the row
-     * so the conversion happens at most once per row.
+     * Single song-read helper: dispatches JSON vs. legacy Parcelable by {@code dataFormatVersion}.
+     * Legacy rows are decoded via {@link LegacyParcelDecoder} (falling back to the platform
+     * {@link Parcel} if that throws), converted to a {@link SongDocument} via
+     * {@link LegacySongConverter}, and the JSON is written back to the row so the conversion
+     * happens at most once per row.
      */
     private SongDocument readDocument(long id, String bookName, String code, byte[] data, int dataFormatVersion) {
         if (dataFormatVersion == SongDocumentJson.DATA_FORMAT_VERSION) {

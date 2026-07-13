@@ -111,10 +111,9 @@ public class SongFilter {
 	}
 
 	/**
-	 * Mirrors {@link #match(Song, CompiledFilter)} semantics for the new
-	 * document model (portable-songs android-implementation-plan.md §6.5):
-	 * scans {@code code}, {@code meta.title}, {@code meta.title_original},
-	 * and the fields {@link SongDocumentSearch#searchableTexts} extracts.
+	 * Mirrors {@link #match(Song, CompiledFilter)} semantics for the new document model: scans
+	 * {@code code}, {@code meta.title}, {@code meta.title_original}, and the fields
+	 * {@link SongDocumentSearch#searchableTexts} extracts.
 	 */
 	public static boolean match(SongDocument doc, CompiledFilter cf) {
 		Pattern[] ps = cf.ps;

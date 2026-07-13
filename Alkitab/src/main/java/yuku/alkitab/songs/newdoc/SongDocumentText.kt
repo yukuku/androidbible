@@ -3,18 +3,14 @@ package yuku.alkitab.songs.newdoc
 import java.util.Locale
 
 /**
- * Walks a [SongDocument] and produces the same plain-text shape as the
- * legacy `SongViewActivity.convertSongToText`, for copy/share (design §9 /
- * android-implementation-plan.md §2). Localizable strings (the book name,
- * the "Versi N" caption fallback, and the refrain marker) are supplied by
- * the caller since this class has no Android `Context`.
+ * Walks a [SongDocument] and produces plain text for copy/share.
+ * Localizable strings (the book name, the "Versi N" caption fallback, and
+ * the refrain marker) are supplied by the caller since this class has no
+ * Android `Context`.
  *
- * One intentional behavior change from the legacy renderer: a `text`-kind
- * verse renders with no number prefix at all (design §3.3 — "text ...
- * no number, plain"), where the legacy `convertSongToText` fell through
- * to its numeric branch and printed the last `NORMAL` verse's number
- * again. The HTML renderer (`songToHtml`) already had the corrected
- * behavior; this brings the plain-text renderer in line with it.
+ * Note: a `text`-kind verse renders with no number prefix at all (it's
+ * spoken/instruction text, not a numbered stanza) — don't "fix" this to
+ * print a verse number for it.
  */
 object SongDocumentText {
     @JvmStatic
@@ -70,7 +66,7 @@ object SongDocumentText {
                         sb.append(String.format(Locale.US, "%2d: ", verseNormalNo))
                         skipPad = true
                     }
-                    VerseKind.TEXT -> {} // no number/marker prefix (design §3.3)
+                    VerseKind.TEXT -> {} // no number/marker prefix
                 }
 
                 for (line in verse.lines) {

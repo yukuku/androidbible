@@ -29,10 +29,9 @@ import yuku.kpri.model.Verse;
 import yuku.kpri.model.VerseKind;
 
 /**
- * REM-21 replaced the gzipped Java-serialized {@code List<Song>} download wire format with a
- * gzipped JSON song-book wrapper (design §3.7). These tests build that wrapper via
- * {@link SongDocumentJson} (through {@link LegacySongConverter} fixtures for realism) and assert
- * {@link SongBookUtil#deserializeSongs} parses it back into {@link SongDocument}s.
+ * The song-book download wire format is a gzipped JSON wrapper. These tests build that wrapper
+ * via {@link SongDocumentJson} (through {@link LegacySongConverter} fixtures for realism) and
+ * assert {@link SongBookUtil#deserializeSongs} parses it back into {@link SongDocument}s.
  */
 public class SongBookUtilTest {
 

@@ -5,8 +5,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
 
 /**
- * Canonical portable-song document model (design doc §3). A song is an
- * ordered list of layout [blocks], not a fixed set of fields. See
+ * Canonical portable-song document model. A song is an ordered list of
+ * layout [blocks], not a fixed set of fields. See
  * `docs/features/portable-songs/design.md` for the full JSON schema this
  * mirrors.
  */
@@ -44,9 +44,9 @@ data class Span(
 )
 
 /**
- * `Line = string | Span[]` (design §3.4). A line with no inline styling is
- * a plain JSON string; a line with styled runs is a `Span[]`. See
- * [LineSerializer] for the JSON-shape branching.
+ * `Line = string | Span[]`. A line with no inline styling is a plain JSON
+ * string; a line with styled runs is a `Span[]`. See [LineSerializer] for
+ * the JSON-shape branching.
  */
 @Serializable(with = LineSerializer::class)
 sealed interface Line {
@@ -59,7 +59,7 @@ sealed interface Line {
 }
 
 /**
- * `VerseLine = Line | { size?, align?, content: Line }` (design §3.4).
+ * `VerseLine = Line | { size?, align?, content: Line }`.
  */
 @Serializable(with = VerseLineSerializer::class)
 sealed interface VerseLine {
@@ -68,9 +68,9 @@ sealed interface VerseLine {
 }
 
 /**
- * A block is discriminated by `type` (design §3.2). Every block carries an
- * optional [size]. Unknown types decode into [UnknownBlock] instead of
- * failing, keeping the format forward-compatible.
+ * A block is discriminated by `type`. Every block carries an optional
+ * [size]. Unknown types decode into [UnknownBlock] instead of failing,
+ * keeping the format forward-compatible.
  */
 @Serializable(with = BlockSerializer::class)
 sealed interface Block {
@@ -119,8 +119,8 @@ data class GapBlock(
 ) : Block
 
 /**
- * Forward-compatibility sink (design §3.2): an unknown `type` renders as a
- * plain paragraph and round-trips its original JSON object unchanged.
+ * Forward-compatibility sink: an unknown `type` renders as a plain
+ * paragraph and round-trips its original JSON object unchanged.
  */
 data class UnknownBlock(
     val type: String,

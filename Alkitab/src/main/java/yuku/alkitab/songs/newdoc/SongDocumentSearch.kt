@@ -2,14 +2,13 @@ package yuku.alkitab.songs.newdoc
 
 /**
  * Text extraction for [yuku.alkitab.songs.SongFilter]'s
- * `match(SongDocument, CompiledFilter)` overload (design §6.5 of the
- * android-implementation-plan.md). Deliberately mirrors the *fields* the
- * legacy `SongFilter.match(Song, CompiledFilter)` scans: `code`, `title`,
- * `title_original`, `authors_lyric`, `authors_music`, `tune`, and every
- * lyric verse line. It does **not** scan `caption`, `musical`, or
- * `scripture` blocks, because the legacy matcher never scanned
- * `keySignature`/`timeSignature`/`scriptureReferences`/lyric captions
- * either.
+ * `match(SongDocument, CompiledFilter)` overload. Deliberately mirrors the
+ * *fields* the legacy `SongFilter.match(Song, CompiledFilter)` scans:
+ * `code`, `title`, `title_original`, `authors_lyric`, `authors_music`,
+ * `tune`, and every lyric verse line. It does **not** scan `caption`,
+ * `musical`, or `scripture` blocks, because the legacy matcher never
+ * scanned `keySignature`/`timeSignature`/`scriptureReferences`/lyric
+ * captions either.
  */
 object SongDocumentSearch {
     @JvmStatic

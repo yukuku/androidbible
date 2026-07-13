@@ -1,12 +1,11 @@
 package yuku.alkitab.songs.newdoc
 
 /**
- * Walks the [LyricBlock]s of a [SongDocument] and produces the same
- * `lyric` / `verse` / `verse_content` / `line` HTML shape as the legacy
- * `SongFragment.songToHtml`, so it drops into the existing
- * `templates/song.html` unchanged (design §9). Other block types (title,
- * tune, authors, scripture, musical) are rendered by the caller into the
- * template's own `{{div:...}}` placeholders — see [SongFragment].
+ * Walks the [LyricBlock]s of a [SongDocument] and produces the `lyric` /
+ * `verse` / `verse_content` / `line` HTML shape `templates/song.html`
+ * expects. Other block types (title, tune, authors, scripture, musical)
+ * are rendered by the caller into the template's own `{{div:...}}`
+ * placeholders — see [SongFragment].
  */
 object SongDocumentRenderer {
     @JvmStatic
@@ -68,9 +67,8 @@ object SongDocumentRenderer {
         return sb.toString()
     }
 
-    // design §3.4: align is only ever start/center/end. Same rationale as ALLOWED_STYLES below —
-    // this value lands inside a single-quoted style='' attribute, so an unvalidated string could
-    // break out of it.
+    // align is only ever start/center/end. Same rationale as ALLOWED_STYLES below — this value
+    // lands inside a single-quoted style='' attribute, so an unvalidated string could break out of it.
     private val ALLOWED_ALIGNS = setOf("start", "center", "end")
 
     private fun renderVerseLineHtml(vl: VerseLine): String = when (vl) {
@@ -91,9 +89,9 @@ object SongDocumentRenderer {
         is Line.Styled -> line.spans.joinToString("") { span -> wrapStyle(escapeHtml(span.text), span.style) }
     }
 
-    // design §3.4: Span.style is only ever u/b/i. The WebView has JavaScript enabled, so a
-    // maliciously crafted song book must not be able to smuggle an arbitrary tag (or attribute) in
-    // through this field — anything outside the closed set is dropped rather than rendered.
+    // Span.style is only ever u/b/i. The WebView has JavaScript enabled, so a maliciously crafted
+    // song book must not be able to smuggle an arbitrary tag (or attribute) in through this field —
+    // anything outside the closed set is dropped rather than rendered.
     private val ALLOWED_STYLES = setOf("u", "b", "i")
 
     private fun wrapStyle(text: String, styles: List<String>): String {

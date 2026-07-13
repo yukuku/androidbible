@@ -140,10 +140,9 @@ abstract class SongRoomDao {
     abstract fun queryAllDeepFilterRows(): Cursor
 
     /**
-     * Lazy on-read conversion write-back (portable-songs
-     * android-implementation-plan.md §5): rewrites a legacy Parcelable row
-     * as JSON at [yuku.alkitab.songs.newdoc.SongDocumentJson.DATA_FORMAT_VERSION]
-     * once [yuku.alkitab.base.storage.SongDb] has decoded and converted it.
+     * Rewrites a legacy Parcelable row as JSON at
+     * [yuku.alkitab.songs.newdoc.SongDocumentJson.DATA_FORMAT_VERSION] once
+     * [yuku.alkitab.base.storage.SongDb] has decoded and converted it.
      * Idempotent — a row already at that version is simply re-written the
      * same way if called again.
      */

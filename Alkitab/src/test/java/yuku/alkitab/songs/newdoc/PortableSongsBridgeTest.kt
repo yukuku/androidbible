@@ -23,18 +23,16 @@ import yuku.kpri.model.Verse
 import yuku.kpri.model.VerseKind
 
 /**
- * The centerpiece test of the portable-songs migration
- * (android-implementation-plan.md §6): drives a shared corpus of
- * representative legacy [Song] fixtures through both the pre-migration
- * client algorithms (kept here only as reference implementations —
- * production replaced them per §2/§7 of the plan) and the new
- * [SongDocument] path, and asserts equivalence.
+ * Drives a shared corpus of representative legacy [Song] fixtures through
+ * both the pre-migration client algorithms (kept here only as reference
+ * implementations for comparison — production no longer has them) and the
+ * new [SongDocument] path, and asserts equivalence.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class, sdk = [34])
 class PortableSongsBridgeTest {
 
-    // region 6.0 shared fixture corpus
+    // region shared fixture corpus
 
     private fun verse(ordering: Int, kind: VerseKind, vararg lines: String): Verse =
         Verse().apply {
@@ -49,8 +47,8 @@ class PortableSongsBridgeTest {
             this.verses = verses.toMutableList()
         }
 
-    /** design §3.8 worked example: multi-group lyrics, inline `<u>`, title_original, tune, two
-     * authors, musical key/time, scripture. */
+    /** Multi-group lyrics, inline `<u>`, title_original, tune, two authors, musical key/time,
+     * scripture. */
     private fun kri25(): Song = Song().apply {
         code = "25"
         title = "Malam Kudus"
@@ -187,7 +185,7 @@ class PortableSongsBridgeTest {
 
     // endregion
 
-    // region 6.1 current-code control (Robolectric)
+    // region current-code control (Robolectric)
 
     private fun assertSongFieldsEqual(expected: Song, actual: Song?) {
         assertNotNull(actual)
@@ -216,7 +214,7 @@ class PortableSongsBridgeTest {
     }
 
     @Test
-    fun `6-1 the legacy Parcel round-trip through Song writeToParcelCompat and Parcel unmarshall still holds`() {
+    fun `the legacy Parcel round-trip through Song writeToParcelCompat and Parcel unmarshall still holds`() {
         for (song in songs()) {
             val p = Parcel.obtain()
             song.writeToParcelCompat(3, p, 0)
@@ -234,7 +232,7 @@ class PortableSongsBridgeTest {
     }
 
     @Test
-    fun `6-1 the legacy Java-serialized download round-trip still holds`() {
+    fun `the legacy Java-serialized download round-trip still holds`() {
         for (song in songs()) {
             val baos = ByteArrayOutputStream()
             ObjectOutputStream(baos).use { it.writeObject(listOf(song)) }
@@ -246,10 +244,10 @@ class PortableSongsBridgeTest {
 
     // endregion
 
-    // region 6.2 decode -> convert -> JSON round-trip (no data loss)
+    // region decode -> convert -> JSON round-trip (no data loss)
 
     @Test
-    fun `6-2 LegacyParcelDecoder reconstructs the legacy model from faithful legacy-layout bytes`() {
+    fun `LegacyParcelDecoder reconstructs the legacy model from faithful legacy-layout bytes`() {
         for (song in songs()) {
             val bytes = AospParcelWriter(ParcelLayout.LEGACY).write(song, 3)
             val decoded = LegacyParcelDecoder.decode(bytes, 3)
@@ -258,7 +256,7 @@ class PortableSongsBridgeTest {
     }
 
     @Test
-    fun `6-2 decode-convert-encode-decode round-trip is lossless, including the meta LegacySongConverter computed at conversion time`() {
+    fun `decode-convert-encode-decode round-trip is lossless, including the meta LegacySongConverter computed at conversion time`() {
         for (song in songs()) {
             val bytes = AospParcelWriter(ParcelLayout.LEGACY).write(song, 3)
             val decodedSong = LegacyParcelDecoder.decode(bytes, 3)
@@ -270,7 +268,7 @@ class PortableSongsBridgeTest {
     }
 
     @Test
-    fun `6-2 decode trusts meta from the JSON as-is instead of recomputing it from blocks`() {
+    fun `decode trusts meta from the JSON as-is instead of recomputing it from blocks`() {
         // meta deliberately disagrees with the "title" block below it. authoring tools (kidung-data's
         // OutputJson, or the app's own LegacySongConverter) are the trusted producers of meta; decode
         // must not silently "fix" a mismatch by re-deriving it from blocks.
@@ -283,7 +281,7 @@ class PortableSongsBridgeTest {
     }
 
     @Test
-    fun `6-2 the converter emits blocks in design order- title, title_original, tune, authors row, scripture, musical, lyric groups`() {
+    fun `the converter emits blocks in the app's layout order- title, title_original, tune, authors row, scripture, musical, lyric groups`() {
         val doc = LegacySongConverter.convert(kri25())
         val typeNames = doc.blocks.map { it::class.simpleName }
         assertEquals(
@@ -298,7 +296,7 @@ class PortableSongsBridgeTest {
     }
 
     @Test
-    fun `6-2 the converter drops Verse ordering and maps VerseKind by name`() {
+    fun `the converter drops Verse ordering and maps VerseKind by name`() {
         val doc = LegacySongConverter.convert(mixedKinds())
         val firstLyric = doc.blocks.filterIsInstance<LyricBlock>()[0]
         val expectedKinds: List<yuku.alkitab.songs.newdoc.VerseKind> = listOf(
@@ -312,7 +310,7 @@ class PortableSongsBridgeTest {
     }
 
     @Test
-    fun `6-2 the converter parses inline u b i tags into spans and unescapes entities`() {
+    fun `the converter parses inline u b i tags into spans and unescapes entities`() {
         val doc = LegacySongConverter.convert(inlineStyledAndEscaped())
         val lines = doc.blocks.filterIsInstance<LyricBlock>()[0].verses[0].lines
 
@@ -337,7 +335,7 @@ class PortableSongsBridgeTest {
 
     // endregion
 
-    // region 6.3 render equivalence (old vs new)
+    // region render equivalence (old vs new)
 
     private fun stripTagsAndUnescape(html: String): String {
         val noTags = html.replace(Regex("<[^>]*>"), "")
@@ -362,7 +360,7 @@ class PortableSongsBridgeTest {
         Regex("<p class='line'>(.*?)</p>").findAll(html).map { stripTagsAndUnescape(it.groupValues[1]) }.toList()
 
     @Test
-    fun `6-3 render equivalence- same verse numbering, refrain markers, captions, and lines as the legacy renderer`() {
+    fun `render equivalence- same verse numbering, refrain markers, captions, and lines as the legacy renderer`() {
         for (song in songs()) {
             val legacyHtml = legacySongToHtml(song, false)
             val newHtml = SongDocumentRenderer.render(LegacySongConverter.convert(song), false)
@@ -375,7 +373,7 @@ class PortableSongsBridgeTest {
     }
 
     @Test
-    fun `6-3 SongDocumentText reproduces the header and lyric body shape of the legacy plain-text export`() {
+    fun `SongDocumentText reproduces the header and lyric body shape of the legacy plain-text export`() {
         for (song in songs()) {
             val doc = LegacySongConverter.convert(song)
             val text = SongDocumentText.render(
@@ -401,10 +399,10 @@ class PortableSongsBridgeTest {
 
     // endregion
 
-    // region 6.4 Android-13 vs pre-13 golden parcels
+    // region Android-13 vs pre-13 golden parcels
 
     @Test
-    fun `6-4 legacy and Android13 layouts genuinely differ but the decoder produces identical models from both`() {
+    fun `legacy and Android13 layouts genuinely differ but the decoder produces identical models from both`() {
         for (song in songs()) {
             val legacyBytes = AospParcelWriter(ParcelLayout.LEGACY).write(song, 3)
             val a13Bytes = AospParcelWriter(ParcelLayout.ANDROID13).write(song, 3)
@@ -418,7 +416,7 @@ class PortableSongsBridgeTest {
     }
 
     @Test
-    fun `6-4 an unsupported writeValue tag throws IllegalStateException`() {
+    fun `an unsupported writeValue tag throws IllegalStateException`() {
         // Song.lyrics count = 1, then a bogus tag (2) instead of VAL_NULL(-1) or VAL_PARCELABLE(4).
         val out = ByteArrayOutputStream()
         fun writeIntRaw(v: Int) {
@@ -449,7 +447,7 @@ class PortableSongsBridgeTest {
     }
 
     @Test
-    fun `6-4 an unexpected class name at a Parcelable element throws IllegalStateException`() {
+    fun `an unexpected class name at a Parcelable element throws IllegalStateException`() {
         // Legacy layout, but the first list element claims to be a Verse instead of a Lyric.
         val out = ByteArrayOutputStream()
         fun writeIntRaw(v: Int) {
@@ -482,10 +480,10 @@ class PortableSongsBridgeTest {
 
     // endregion
 
-    // region 6.5 search equivalence
+    // region search equivalence
 
     @Test
-    fun `6-5 SongFilter match on SongDocument agrees with SongFilter match on the legacy Song`() {
+    fun `SongFilter match on SongDocument agrees with SongFilter match on the legacy Song`() {
         val queries = listOf("25", "kudus", "silent", "gruber", "senyap", "nomatchxyz", "mixed", "instruction")
         for (song in songs()) {
             val doc = LegacySongConverter.convert(song)
@@ -502,10 +500,10 @@ class PortableSongsBridgeTest {
 
     // endregion
 
-    // region 6.6 legacy vs @doc convergence
+    // region legacy vs @doc convergence
 
     @Test
-    fun `6-6 converted-legacy KRI 25 is structurally identical to hand-authored canonical doc JSON`() {
+    fun `converted-legacy KRI 25 is structurally identical to hand-authored canonical doc JSON`() {
         val fromDoc = javaClass.getResourceAsStream("/songs/kri25-doc.json")!!.use {
             SongDocumentJson.decode(it.reader().readText())
         }
@@ -515,10 +513,10 @@ class PortableSongsBridgeTest {
 
     // endregion
 
-    // region 6.7 download-wrapper parse
+    // region download-wrapper parse
 
     @Test
-    fun `6-7 SongBookUtil deserializeSongs parses a gzipped JSON song-book wrapper`() {
+    fun `SongBookUtil deserializeSongs parses a gzipped JSON song-book wrapper`() {
         val wrapper = SongDocumentJson.SongBookWrapper(
             dataFormatVersion = SongDocumentJson.DATA_FORMAT_VERSION,
             songs = songs().map(LegacySongConverter::convert),
@@ -533,14 +531,14 @@ class PortableSongsBridgeTest {
     }
 
     @Test
-    fun `6-7 isSupportedDataFormatVersion accepts only the JSON version`() {
+    fun `isSupportedDataFormatVersion accepts only the JSON version`() {
         assertFalse(SongBookUtil.isSupportedDataFormatVersion(3))
         assertFalse(SongBookUtil.isSupportedDataFormatVersion(4))
         assertTrue(SongBookUtil.isSupportedDataFormatVersion(5))
     }
 
     @Test
-    fun `6-7 the old Java-serialization download path is gone- a legacy-format payload fails to parse as JSON`() {
+    fun `the old Java-serialization download path is gone- a legacy-format payload fails to parse as JSON`() {
         val baos = ByteArrayOutputStream()
         ObjectOutputStream(baos).use { it.writeObject(listOf(kri25())) }
         val gzipped = ByteArrayOutputStream().also { out -> GZIPOutputStream(out).use { it.write(baos.toByteArray()) } }.toByteArray()

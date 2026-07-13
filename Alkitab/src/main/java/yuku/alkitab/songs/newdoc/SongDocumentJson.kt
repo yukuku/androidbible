@@ -5,9 +5,9 @@ import kotlinx.serialization.json.Json
 
 /**
  * The configured [Json] instance for the canonical portable-song document
- * (design doc §3), plus the on-device `dataFormatVersion` marker for this
- * payload (android-implementation-plan.md §3) and the song-book download
- * wrapper (design §3.7).
+ * (`docs/features/portable-songs/design.md`), plus the on-device
+ * `dataFormatVersion` marker for this payload and the song-book download
+ * wrapper.
  */
 object SongDocumentJson {
     /**
@@ -22,17 +22,16 @@ object SongDocumentJson {
     }
 
     /**
-     * Computes `meta` from `blocks` (design §3.1/§8.3): the text of the first
-     * `title`/`title_original`-role blocks. This is **not** invoked
-     * automatically by [encode]/[decode] — `blocks` is the flowing document
-     * content, not something re-parsed on every load. It's the job of
-     * whichever code *authors* a [SongDocument] to call this once and store
-     * the result: [LegacySongConverter] calls it when synthesizing a
-     * document from a decoded legacy `Song` (there's no other producer for
-     * that artifact); an external authoring tool (e.g. `kidung-data`'s
-     * `OutputJson`) is expected to do the same and emit a trustworthy
-     * `meta` in the JSON it produces. From then on `meta` travels with the
-     * document and [encode]/[decode] pass it through as-is.
+     * Computes `meta` from `blocks`: the text of the first `title`/
+     * `title_original`-role blocks. This is **not** invoked automatically by
+     * [encode]/[decode] — `blocks` is the flowing document content, not
+     * something re-parsed on every load. It's the job of whichever code
+     * *authors* a [SongDocument] to call this once and store the result:
+     * [LegacySongConverter] calls it when synthesizing a document from a
+     * decoded legacy `Song`; an external authoring tool (e.g. `kidung-data`'s
+     * `OutputJson`) is expected to do the same and emit a trustworthy `meta`
+     * in the JSON it produces. From then on `meta` travels with the document
+     * and [encode]/[decode] pass it through as-is.
      */
     @JvmStatic
     fun deriveMeta(blocks: List<Block>): Meta {
@@ -58,11 +57,10 @@ object SongDocumentJson {
     fun decode(text: String): SongDocument = json.decodeFromString(SongDocument.serializer(), text)
 
     /**
-     * Song-book download wrapper (design §3.7): `{ dataFormatVersion, songs }`,
-     * gzipped over the wire, replacing the gzipped Java-serialized
-     * `List<Song>`. Book metadata (name/title/copyright) is *not* carried
-     * here — it travels via the download request/redirect (the caller
-     * already has it before it asks for the payload; see
+     * Song-book download wrapper: `{ dataFormatVersion, songs }`, gzipped
+     * over the wire. Book metadata (name/title/copyright) is *not* carried
+     * here — it travels via the download request/redirect, since the caller
+     * already has it before it asks for the payload (see
      * `SongBookUtil.downloadSongBook`).
      */
     @Serializable
