@@ -46,7 +46,6 @@ import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Background
 import yuku.alkitab.base.util.ClipboardUtil
 import yuku.alkitab.base.util.FontManager
-import yuku.alkitab.base.util.OsisBookNames
 import yuku.alkitab.base.util.Sqlitil
 import yuku.alkitab.base.util.TargetDecoder
 import yuku.alkitab.base.widget.LeftDrawer
@@ -54,19 +53,17 @@ import yuku.alkitab.base.widget.TwofingerLinearLayout
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 import yuku.alkitab.songs.SongViewActivity.Companion.songAudioController
-import yuku.alkitab.songs.newdoc.PBlock
-import yuku.alkitab.songs.newdoc.RowBlock
 import yuku.alkitab.songs.newdoc.ScriptureBlock
 import yuku.alkitab.songs.newdoc.SongDocument
 import yuku.alkitab.songs.newdoc.SongDocumentJson
 import yuku.alkitab.songs.newdoc.SongDocumentRenderer
 import yuku.alkitab.songs.newdoc.SongDocumentText
-import yuku.alkitab.songs.newdoc.plainText
 import yuku.alkitabintegration.display.Launcher
 
 private const val TAG = "SongViewActivity"
 
-private const val BIBLE_PROTOCOL = "bible"
+// package-visible (not private): reused by SongFragment when rendering an in-document ScriptureBlock
+const val BIBLE_PROTOCOL = "bible"
 private const val REQCODE_songList = 1
 private const val REQCODE_downloadSongBook = 3
 private const val FRAGMENT_TAG_SONG = "song"
@@ -602,126 +599,10 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         return SongDocumentText.render(
             doc = doc,
             bookNameDisplay = SongBookUtil.escapeSongBookName(currentBookName),
-            scriptureReferencesText = scriptureReferencesOsis(doc)?.let { renderScriptureReferences(null, it) },
+            scriptureReferencesText = scriptureReferencesOsis(doc)?.let { ScriptureReferenceRenderer.render(null, it) },
             versionCaption = { n -> getString(R.string.sn_lyric_version_version, n.toString()) },
             refrainMarker = getString(R.string.sn_lyric_refrain_marker),
         )
-    }
-
-    /**
-     * Convert scripture ref lines like
-     * B1.C1.V1-B2.C2.V2; B3.C3.V3 to:
-     * <a href="protocol:B1.C1.V1-B2.C2.V2">Book 1 c1:v1-v2</a>; <a href="protocol:B3.C3.V3>Book 3 c3:v3</a>
-     *
-     * @param protocol null to output text
-     * @param line scripture ref in osis
-     */
-    private fun renderScriptureReferences(protocol: String?, line: String?): String {
-        if (line.isNullOrBlank()) return ""
-
-        val sb = StringBuilder()
-
-        val ranges = line.split("\\s*;\\s*".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        for (range in ranges) {
-            val osisIds = if (range.indexOf('-') >= 0) {
-                range.split("\\s*-\\s*".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            } else {
-                arrayOf(range)
-            }
-
-            if (osisIds.size == 1) {
-                if (sb.isNotEmpty()) {
-                    sb.append("; ")
-                }
-
-                val osisId = osisIds[0]
-                val readable = osisIdToReadable(line, osisId, null, null)
-                if (readable != null) {
-                    appendScriptureReferenceLink(sb, protocol, osisId, readable)
-                }
-            } else if (osisIds.size == 2) {
-                if (sb.isNotEmpty()) {
-                    sb.append("; ")
-                }
-
-                val bcv = intArrayOf(-1, 0, 0)
-
-                val osisId0 = osisIds[0]
-                val readable0 = osisIdToReadable(line, osisId0, null, bcv)
-                val osisId1 = osisIds[1]
-                val readable1 = osisIdToReadable(line, osisId1, bcv, null)
-                if (readable0 != null && readable1 != null) {
-                    appendScriptureReferenceLink(sb, protocol, "$osisId0-$osisId1", "$readable0-$readable1")
-                }
-            }
-        }
-
-        return sb.toString()
-    }
-
-    private fun appendScriptureReferenceLink(sb: StringBuilder, protocol: String?, osisId: String, readable: String) {
-        if (protocol != null) {
-            sb.append("<a href='")
-            sb.append(protocol)
-            sb.append(':')
-            sb.append(osisId)
-            sb.append("'>")
-        }
-        sb.append(readable)
-        if (protocol != null) {
-            sb.append("</a>")
-        }
-    }
-
-    /**
-     * @param compareWithRangeStart if this is the second part of a range, set this to non-null, with [0] is bookId and [1] chapter_1.
-     * @param outBcv if not null and length is >= 3, will be filled with parsed bcv
-     */
-    private fun osisIdToReadable(line: String, osisId: String, compareWithRangeStart: IntArray?, outBcv: IntArray?): String? {
-        var res: String? = null
-
-        val parts = osisId.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        if (parts.size != 2 && parts.size != 3) {
-            AppLog.w(TAG, "osisId invalid: $osisId in $line")
-        } else {
-            val bookName = parts[0]
-            val chapter_1 = Integer.parseInt(parts[1])
-            val verse_1 = if (parts.size < 3) 0 else Integer.parseInt(parts[2])
-
-            val bookId = OsisBookNames.osisBookNameToBookId(bookName)
-
-            if (outBcv != null && outBcv.size >= 3) {
-                outBcv[0] = bookId
-                outBcv[1] = chapter_1
-                outBcv[2] = verse_1
-            }
-
-            if (bookId < 0) {
-                AppLog.w(TAG, "osisBookName invalid: $bookName in $line")
-            } else {
-                val book = App.services.versions.activeVersion().getBook(bookId)
-
-                if (book != null) {
-                    var full = true
-                    if (compareWithRangeStart != null) {
-                        if (compareWithRangeStart[0] == bookId) {
-                            if (compareWithRangeStart[1] == chapter_1) {
-                                res = verse_1.toString()
-                                full = false
-                            } else {
-                                res = "$chapter_1:$verse_1"
-                                full = false
-                            }
-                        }
-                    }
-
-                    if (full) {
-                        res = if (verse_1 == 0) book.reference(chapter_1) else book.reference(chapter_1, verse_1)
-                    }
-                }
-            }
-        }
-        return res
     }
 
     @JvmOverloads
@@ -739,9 +620,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         handle.setBookName(SongBookUtil.escapeSongBookName(bookName))
         handle.setCode(doc.code)
 
-        // construct rendition of scripture references
-        val scripture_references = renderScriptureReferences(BIBLE_PROTOCOL, scriptureReferencesOsis(doc))
-        templateCustomVars.putString("scripture_references", scripture_references)
         val copyright = SongBookUtil.getCopyright(bookName)
         templateCustomVars.putString("copyright", copyright ?: "")
         templateCustomVars.putString("patch_text_open_link", getString(R.string.patch_text_open_link))
@@ -913,16 +791,9 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                         extraInfo.bookName = currentBookName
                         extraInfo.code = doc.code
 
-                        val pBlocks = doc.blocks.filterIsInstance<PBlock>()
-                        val rowItems = doc.blocks.filterIsInstance<RowBlock>().firstOrNull()?.items.orEmpty()
-                        val tune = pBlocks.firstOrNull { it.role == "tune" }?.content?.plainText()
-                        val musical = pBlocks.firstOrNull { it.role == "musical" }?.content?.plainText()
-                        val authorsLyric = rowItems.firstOrNull { it.role == "authors_lyric" }?.content?.plainText()
-                        val authorsMusic = rowItems.firstOrNull { it.role == "authors_music" }?.content?.plainText()
-
-                        val songHeader = doc.code + " " + doc.meta.title + nonullbr(doc.meta.title_original) + nonullbr(tune) + nonullbr(musical) + nonullbr(authorsLyric) + nonullbr(authorsMusic)
-                        val songHtml = SongDocumentRenderer.render(doc, true)
-                        val baseBody = HtmlCompat.fromHtml(songHeader + "\n\n" + songHtml, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                        val codeLine = "<div>${doc.code}</div>"
+                        val songHtml = SongDocumentRenderer.renderDocument(doc, renderScripture = { osis -> ScriptureReferenceRenderer.render(null, osis) }, forPatchText = true)
+                        val baseBody = HtmlCompat.fromHtml(codeLine + songHtml, HtmlCompat.FROM_HTML_MODE_LEGACY)
                         startActivity(PatchTextActivity.createIntent(baseBody, App.getDefaultGson().toJson(extraInfo), null))
                     }
                 }
@@ -1057,10 +928,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
         fun getAudioFilename(bookName: String, code: String): String {
             return String.format(Locale.US, "songs/v2/%s_%s", bookName, code)
-        }
-
-        fun nonullbr(s: String?): String {
-            return if (s == null) "" else "<br/>$s"
         }
     }
 }

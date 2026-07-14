@@ -167,7 +167,7 @@ Assert the converter honored design §5 block order (title, title_original, tune
 
 ### 6.3 Render equivalence (old vs new)
 
-For each fixture: `songToHtml(fixture)` (legacy, §6.1) vs `SongDocumentRenderer.render(convert(fixture))`. Normalize whitespace/attribute order and assert the **lyric-body semantics** match: same verse numbering (positional; `NORMAL` numbered, `REFRAIN`/`TEXT` unnumbered), same "Versi N" caption fallback when >1 group and no caption, same lines in order, same inline styling. (Chrome/exact-markup differences are normalized out; the assertion is on structure, not byte-identical HTML.)
+For each fixture: `songToHtml(fixture)` (legacy, §6.1) vs `SongDocumentRenderer.renderLyrics(convert(fixture))`. Normalize whitespace/attribute order and assert the **lyric-body semantics** match: same verse numbering (positional; `NORMAL` numbered, `REFRAIN`/`TEXT` unnumbered), same "Versi N" caption fallback when >1 group and no caption, same lines in order, same inline styling. (Chrome/exact-markup differences are normalized out; the assertion is on structure, not byte-identical HTML.)
 
 Also assert `SongDocumentText.render(doc)` reproduces `convertSongToText(fixture)` for copy/share.
 

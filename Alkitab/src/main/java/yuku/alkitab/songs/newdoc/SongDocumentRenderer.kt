@@ -1,70 +1,137 @@
 package yuku.alkitab.songs.newdoc
 
 /**
- * Walks the [LyricBlock]s of a [SongDocument] and produces the `lyric` /
- * `verse` / `verse_content` / `line` HTML shape `templates/song.html`
- * expects. Other block types (title, tune, authors, scripture, musical)
- * are rendered by the caller into the template's own `{{div:...}}`
- * placeholders — see [SongFragment].
+ * Renders a [SongDocument] to the HTML shape `templates/song.html` expects,
+ * by walking [SongDocument.blocks] in document order and dispatching per
+ * block type. [renderLyrics] renders only the [LyricBlock]s, for callers
+ * (the patch-text bridge test) that need just the verse HTML.
  */
 object SongDocumentRenderer {
+    // role is an open vocabulary (design §3.5): anything outside this set falls back to "body"
+    // instead of being used verbatim as a CSS class name, since role text could otherwise carry
+    // attacker-controlled content into a class='...' attribute.
+    private val KNOWN_ROLES = setOf(
+        "title", "title_original", "tune", "musical",
+        "authors_lyric", "authors_music", "note", "copyright",
+    )
+
+    private val YOUTUBE_ID_REGEX = Regex("^[A-Za-z0-9_-]{1,32}$")
+
     @JvmStatic
     @JvmOverloads
-    fun render(doc: SongDocument, forPatchText: Boolean = false): String {
-        val lyricBlocks = doc.blocks.filterIsInstance<LyricBlock>()
+    fun renderDocument(doc: SongDocument, renderScripture: (String) -> String = { "" }, forPatchText: Boolean = false): String {
         val sb = StringBuilder()
+        val lyricBlocks = doc.blocks.filterIsInstance<LyricBlock>()
+        var lyricBlockIndex = 0
 
-        for ((i, lyricBlock) in lyricBlocks.withIndex()) {
-            sb.append("<div class='lyric'>")
-            if (lyricBlocks.size > 1 || lyricBlock.caption != null) {
-                if (lyricBlock.caption != null) {
-                    sb.append("<div class='lyric_caption'>").append(renderLineHtml(lyricBlock.caption)).append("</div>")
-                } else {
-                    sb.append("<div class='lyric_caption'>Versi ").append(i + 1).append("</div>")
+        for (block in doc.blocks) {
+            when (block) {
+                is PBlock -> {
+                    renderPBlock(block, sb)
+                    if (!forPatchText) sb.append("<div class='break'></div>")
                 }
+
+                is RowBlock -> {
+                    for (item in block.items) renderPBlock(item, sb)
+                    if (!forPatchText) sb.append("<div class='break'></div>")
+                }
+
+                is LyricBlock -> {
+                    renderLyricBlock(block, lyricBlockIndex, lyricBlocks.size, sb, forPatchText)
+                    lyricBlockIndex++
+                }
+
+                is ScriptureBlock -> sb.append("<div class='scriptureReferences'>").append(renderScripture(block.osis)).append("</div>")
+                is YoutubeBlock -> renderYoutubeBlock(block, sb)
+                is GapBlock -> sb.append("<div style='height:").append(block.size ?: 1f).append("em'></div>")
+                is UnknownBlock -> {} // forward-compat sink: unrecognized block types are silently skipped
             }
-
-            var verseNumberNormal = 0
-            var verseNumberReff = 0
-            for (verse in lyricBlock.verses) {
-                sb.append("<div class='verse").append(if (verse.kind == VerseKind.REFRAIN) " refrain" else "").append("'>")
-
-                when (verse.kind) {
-                    VerseKind.REFRAIN -> verseNumberReff++
-                    VerseKind.NORMAL -> verseNumberNormal++
-                    VerseKind.TEXT -> {}
-                }
-
-                if (forPatchText) {
-                    when (verse.kind) {
-                        VerseKind.REFRAIN -> sb.append("reff ").append(verseNumberReff)
-                        VerseKind.NORMAL -> sb.append(verseNumberNormal)
-                        VerseKind.TEXT -> {}
-                    }
-                } else {
-                    when (verse.kind) {
-                        VerseKind.REFRAIN -> sb.append("<div class='verse_ordering'>").append(verseNumberReff).append("</div>")
-                        VerseKind.NORMAL -> sb.append("<div class='verse_ordering'>").append(verseNumberNormal).append("</div>")
-                        VerseKind.TEXT -> {}
-                    }
-                }
-
-                sb.append("<div class='verse_content'>")
-                for (line in verse.lines) {
-                    val html = renderVerseLineHtml(line)
-                    if (forPatchText) {
-                        sb.append(html).append("<br/>")
-                    } else {
-                        sb.append("<p class='line'>").append(html).append("</p>")
-                    }
-                }
-                sb.append("</div>")
-                sb.append("</div>")
-            }
-            sb.append("</div>")
         }
 
         return sb.toString()
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun renderLyrics(doc: SongDocument, forPatchText: Boolean = false): String {
+        val lyricBlocks = doc.blocks.filterIsInstance<LyricBlock>()
+        val sb = StringBuilder()
+        for ((i, lyricBlock) in lyricBlocks.withIndex()) {
+            renderLyricBlock(lyricBlock, i, lyricBlocks.size, sb, forPatchText)
+        }
+        return sb.toString()
+    }
+
+    private fun renderPBlock(block: PBlock, sb: StringBuilder) {
+        val cls = block.role?.takeIf { it in KNOWN_ROLES } ?: "body"
+        val style = buildString {
+            block.size?.takeIf { it.isFinite() }?.let { append("font-size:").append(it).append("em;") }
+            block.align?.takeIf { it in ALLOWED_ALIGNS }?.let { append("text-align:").append(it).append(";") }
+        }
+        sb.append("<div class='").append(cls).append("'")
+        if (style.isNotEmpty()) sb.append(" style='").append(style).append("'")
+        sb.append(">").append(renderLineHtml(block.content)).append("</div>")
+    }
+
+    private fun renderYoutubeBlock(block: YoutubeBlock, sb: StringBuilder) {
+        val videoId = block.videoId
+        if (!YOUTUBE_ID_REGEX.matches(videoId)) return // not a plausible id; skip rather than build an unsafe URL
+
+        sb.append("<div class='youtube'><a href='https://www.youtube.com/watch?v=")
+            .append(videoId)
+            .append("'>")
+            .append(escapeHtml(videoId))
+            .append("</a></div>")
+    }
+
+    private fun renderLyricBlock(lyricBlock: LyricBlock, index: Int, totalCount: Int, sb: StringBuilder, forPatchText: Boolean) {
+        sb.append("<div class='lyric'>")
+        if (totalCount > 1 || lyricBlock.caption != null) {
+            if (lyricBlock.caption != null) {
+                sb.append("<div class='lyric_caption'>").append(renderLineHtml(lyricBlock.caption)).append("</div>")
+            } else {
+                sb.append("<div class='lyric_caption'>Versi ").append(index + 1).append("</div>")
+            }
+        }
+
+        var verseNumberNormal = 0
+        var verseNumberReff = 0
+        for (verse in lyricBlock.verses) {
+            sb.append("<div class='verse").append(if (verse.kind == VerseKind.REFRAIN) " refrain" else "").append("'>")
+
+            when (verse.kind) {
+                VerseKind.REFRAIN -> verseNumberReff++
+                VerseKind.NORMAL -> verseNumberNormal++
+                VerseKind.TEXT -> {}
+            }
+
+            if (forPatchText) {
+                when (verse.kind) {
+                    VerseKind.REFRAIN -> sb.append("reff ").append(verseNumberReff)
+                    VerseKind.NORMAL -> sb.append(verseNumberNormal)
+                    VerseKind.TEXT -> {}
+                }
+            } else {
+                when (verse.kind) {
+                    VerseKind.REFRAIN -> sb.append("<div class='verse_ordering'>").append(verseNumberReff).append("</div>")
+                    VerseKind.NORMAL -> sb.append("<div class='verse_ordering'>").append(verseNumberNormal).append("</div>")
+                    VerseKind.TEXT -> {}
+                }
+            }
+
+            sb.append("<div class='verse_content'>")
+            for (line in verse.lines) {
+                val html = renderVerseLineHtml(line)
+                if (forPatchText) {
+                    sb.append(html).append("<br/>")
+                } else {
+                    sb.append("<p class='line'>").append(html).append("</p>")
+                }
+            }
+            sb.append("</div>")
+            sb.append("</div>")
+        }
+        sb.append("</div>")
     }
 
     // align is only ever start/center/end. Same rationale as ALLOWED_STYLES below — this value

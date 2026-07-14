@@ -363,7 +363,7 @@ class PortableSongsBridgeTest {
     fun `render equivalence- same verse numbering, refrain markers, captions, and lines as the legacy renderer`() {
         for (song in songs()) {
             val legacyHtml = legacySongToHtml(song, false)
-            val newHtml = SongDocumentRenderer.render(LegacySongConverter.convert(song), false)
+            val newHtml = SongDocumentRenderer.renderLyrics(LegacySongConverter.convert(song), false)
 
             assertEquals(verseOrderings(legacyHtml), verseOrderings(newHtml))
             assertEquals(refrainCount(legacyHtml), refrainCount(newHtml))

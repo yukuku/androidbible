@@ -12,12 +12,9 @@ import android.webkit.WebViewClient
 import androidx.core.view.postDelayed
 import yuku.alkitab.base.fr.base.BaseFragment
 import yuku.alkitab.debug.R
-import yuku.alkitab.songs.newdoc.PBlock
-import yuku.alkitab.songs.newdoc.RowBlock
 import yuku.alkitab.songs.newdoc.SongDocument
 import yuku.alkitab.songs.newdoc.SongDocumentJson
 import yuku.alkitab.songs.newdoc.SongDocumentRenderer
-import yuku.alkitab.songs.newdoc.plainText
 
 class SongFragment : BaseFragment() {
     private lateinit var webview: WebView
@@ -88,17 +85,8 @@ class SongFragment : BaseFragment() {
                 template = templateVarReplace(template, key, customVars[key])
             }
 
-            val pBlocks = doc.blocks.filterIsInstance<PBlock>()
-            val rowItems = doc.blocks.filterIsInstance<RowBlock>().firstOrNull()?.items.orEmpty()
-
             template = templateDivReplace(template, "code", doc.code)
-            template = templateDivReplace(template, "title", doc.meta.title)
-            template = templateDivReplace(template, "title_original", doc.meta.title_original)
-            template = templateDivReplace(template, "tune", pBlocks.roleText("tune"))
-            template = templateDivReplace(template, "authors_lyric", rowItems.roleText("authors_lyric"))
-            template = templateDivReplace(template, "authors_music", rowItems.roleText("authors_music"))
-            template = templateDivReplace(template, "musical", pBlocks.roleText("musical"))
-            template = templateDivReplace(template, "lyrics", SongDocumentRenderer.render(doc, false))
+            template = templateVarReplace(template, "song_content", SongDocumentRenderer.renderDocument(doc, renderScripture = { osis -> ScriptureReferenceRenderer.render(BIBLE_PROTOCOL, osis) }))
             webview.loadDataWithBaseURL("file:///android_asset/templates/song.html", template, "text/html", "utf-8", null)
         } catch (e: Exception) {
             val errorMessage = buildString {
@@ -112,8 +100,6 @@ class SongFragment : BaseFragment() {
             webview.loadDataWithBaseURL(null, errorMessage, "text/html", "utf-8", null)
         }
     }
-
-    private fun List<PBlock>.roleText(role: String): String? = firstOrNull { it.role == role }?.content?.plainText()
 
     private fun templateDivReplace(template: String, name: String, value: String?): String {
         return template.replace("{{div:$name}}", if (value == null) "" else "<div class='$name'>$value</div>")
