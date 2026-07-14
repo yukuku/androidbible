@@ -20,6 +20,7 @@ import yuku.alkitab.songs.SongBookUtil
 import yuku.alkitab.songs.newdoc.Block
 import yuku.alkitab.songs.newdoc.Line
 import yuku.alkitab.songs.newdoc.LyricBlock
+import yuku.alkitab.songs.newdoc.Meta
 import yuku.alkitab.songs.newdoc.PBlock
 import yuku.alkitab.songs.newdoc.RowBlock
 import yuku.alkitab.songs.newdoc.ScriptureBlock
@@ -101,7 +102,7 @@ class SongDbTest {
                 ),
             ),
         )
-        return SongDocument(code = code, meta = SongDocumentJson.deriveMeta(blocks), blocks = blocks)
+        return SongDocument(code = code, meta = Meta(title = title, title_original = title_original), blocks = blocks)
     }
 
     private fun bookInfo(name: String = "NKB", title: String? = "Buku", copyright: String? = "©") =

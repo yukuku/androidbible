@@ -18,8 +18,7 @@ object SongDocumentRenderer {
     private val YOUTUBE_ID_REGEX = Regex("^[A-Za-z0-9_-]{1,32}$")
 
     @JvmStatic
-    @JvmOverloads
-    fun renderDocument(doc: SongDocument, renderScripture: (String) -> String = { "" }, forPatchText: Boolean = false): String {
+    fun renderDocument(doc: SongDocument, renderScripture: (String) -> String, forPatchText: Boolean): String {
         val sb = StringBuilder()
         val lyricBlocks = doc.blocks.filterIsInstance<LyricBlock>()
         var lyricBlockIndex = 0
@@ -52,8 +51,7 @@ object SongDocumentRenderer {
     }
 
     @JvmStatic
-    @JvmOverloads
-    fun renderLyrics(doc: SongDocument, forPatchText: Boolean = false): String {
+    fun renderLyrics(doc: SongDocument, forPatchText: Boolean): String {
         val lyricBlocks = doc.blocks.filterIsInstance<LyricBlock>()
         val sb = StringBuilder()
         for ((i, lyricBlock) in lyricBlocks.withIndex()) {
@@ -172,6 +170,15 @@ object SongDocumentRenderer {
     }
 
     private fun escapeHtml(s: String): String {
-        return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        val sb = StringBuilder(s.length)
+        for (c in s) {
+            when (c) {
+                '&' -> sb.append("&amp;")
+                '<' -> sb.append("&lt;")
+                '>' -> sb.append("&gt;")
+                else -> sb.append(c)
+            }
+        }
+        return sb.toString()
     }
 }

@@ -21,35 +21,6 @@ object SongDocumentJson {
         encodeDefaults = false
     }
 
-    /**
-     * Computes `meta` from `blocks`: the text of the first `title`/
-     * `title_original`-role blocks. This is **not** invoked automatically by
-     * [encode]/[decode] — `blocks` is the flowing document content, not
-     * something re-parsed on every load. It's the job of whichever code
-     * *authors* a [SongDocument] to call this once and store the result:
-     * [LegacySongConverter] calls it when synthesizing a document from a
-     * decoded legacy `Song`; an external authoring tool (e.g. `kidung-data`'s
-     * `OutputJson`) is expected to do the same and emit a trustworthy `meta`
-     * in the JSON it produces. From then on `meta` travels with the document
-     * and [encode]/[decode] pass it through as-is.
-     */
-    @JvmStatic
-    fun deriveMeta(blocks: List<Block>): Meta {
-        var title: String? = null
-        var titleOriginal: String? = null
-        for (block in blocks) {
-            if (block is PBlock) {
-                if (title == null && block.role == "title") {
-                    title = block.content.plainText()
-                } else if (titleOriginal == null && block.role == "title_original") {
-                    titleOriginal = block.content.plainText()
-                }
-            }
-            if (title != null && titleOriginal != null) break
-        }
-        return Meta(title = title, title_original = titleOriginal)
-    }
-
     @JvmStatic
     fun encode(doc: SongDocument): String = json.encodeToString(SongDocument.serializer(), doc)
 

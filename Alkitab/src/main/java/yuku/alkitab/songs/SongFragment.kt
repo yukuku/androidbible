@@ -86,7 +86,8 @@ class SongFragment : BaseFragment() {
             }
 
             template = templateDivReplace(template, "code", doc.code)
-            template = templateVarReplace(template, "song_content", SongDocumentRenderer.renderDocument(doc, renderScripture = { osis -> ScriptureReferenceRenderer.render(BIBLE_PROTOCOL, osis) }))
+            val songContent = SongDocumentRenderer.renderDocument(doc, { osis -> ScriptureReferenceRenderer.render(BIBLE_PROTOCOL, osis) }, false)
+            template = templateVarReplace(template, "song_content", songContent)
             webview.loadDataWithBaseURL("file:///android_asset/templates/song.html", template, "text/html", "utf-8", null)
         } catch (e: Exception) {
             val errorMessage = buildString {

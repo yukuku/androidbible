@@ -37,7 +37,7 @@ object LegacySongConverter {
 
         return SongDocument(
             code = song.code ?: "",
-            meta = SongDocumentJson.deriveMeta(blocks),
+            meta = Meta(title = song.title, title_original = song.title_original),
             blocks = blocks,
         )
     }
@@ -67,8 +67,7 @@ object LegacySongConverter {
 
     /**
      * Parses legacy inline `<u>/<b>/<i>` markup (the only tags the legacy
-     * HTML renderer understood) into [Span]s, and un-escapes the HTML
-     * entities legacy line content used for literal `&`/`<`/`>`.
+     * HTML renderer understood) into [Span]s.
      */
     fun parseInlineLine(raw: String): Line {
         val spans = mutableListOf<Span>()
@@ -76,28 +75,19 @@ object LegacySongConverter {
         for (m in TAG_REGEX.findAll(raw)) {
             if (m.range.first > lastEnd) {
                 val plain = raw.substring(lastEnd, m.range.first)
-                if (plain.isNotEmpty()) spans.add(Span(text = unescapeEntities(plain)))
+                if (plain.isNotEmpty()) spans.add(Span(text = plain))
             }
-            spans.add(Span(text = unescapeEntities(m.groupValues[2]), style = listOf(m.groupValues[1])))
+            spans.add(Span(text = m.groupValues[2], style = listOf(m.groupValues[1])))
             lastEnd = m.range.last + 1
         }
         if (lastEnd < raw.length) {
             val plain = raw.substring(lastEnd)
-            if (plain.isNotEmpty()) spans.add(Span(text = unescapeEntities(plain)))
+            if (plain.isNotEmpty()) spans.add(Span(text = plain))
         }
         return when {
-            spans.isEmpty() -> Line.Plain(unescapeEntities(raw))
+            spans.isEmpty() -> Line.Plain(raw)
             spans.size == 1 && spans[0].style.isEmpty() -> Line.Plain(spans[0].text)
             else -> Line.Styled(spans)
         }
-    }
-
-    private fun unescapeEntities(s: String): String {
-        return s.replace("&lt;", "<")
-            .replace("&gt;", ">")
-            .replace("&quot;", "\"")
-            .replace("&#39;", "'")
-            .replace("&apos;", "'")
-            .replace("&amp;", "&") // must be last, so it doesn't re-unescape "&amp;lt;" etc.
     }
 }

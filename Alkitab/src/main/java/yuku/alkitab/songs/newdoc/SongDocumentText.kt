@@ -20,8 +20,8 @@ object SongDocumentText {
         scriptureReferencesText: String?,
         versionCaption: (Int) -> String,
         refrainMarker: String,
-    ): StringBuilder {
-        val sb = StringBuilder()
+    ): String = buildString {
+        val sb = this
 
         if (bookNameDisplay != null) sb.append(bookNameDisplay).append(' ')
         sb.append(doc.code).append(". ")
@@ -77,7 +77,5 @@ object SongDocumentText {
             }
             sb.append('\n')
         }
-
-        return sb
     }
 }

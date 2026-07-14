@@ -102,8 +102,8 @@ class PortableSongsBridgeTest {
         )
     }
 
-    /** lines with `<u>/<b>/<i>` and raw `&`/`<` needing escaping. */
-    private fun inlineStyledAndEscaped(): Song = Song().apply {
+    /** lines with `<u>/<b>/<i>` and a literal `&` needing escaping at render time. */
+    private fun inlineStyled(): Song = Song().apply {
         code = "I1"
         title = "Inline & Styles"
         title_original = "Orig <title>"
@@ -119,15 +119,14 @@ class PortableSongsBridgeTest {
                 verse(
                     1,
                     VerseKind.NORMAL,
-                    "Plain &amp; simple line",
+                    "Plain & simple line",
                     "<u>Underlined</u> and <b>bold</b> and <i>italic</i>",
-                    "Raw &lt;tag&gt; shown literally",
                 ),
             ),
         )
     }
 
-    private fun songs(): List<Song> = listOf(kri25(), nullsAndEmpties(), mixedKinds(), inlineStyledAndEscaped())
+    private fun songs(): List<Song> = listOf(kri25(), nullsAndEmpties(), mixedKinds(), inlineStyled())
 
     // endregion
 
@@ -310,8 +309,8 @@ class PortableSongsBridgeTest {
     }
 
     @Test
-    fun `the converter parses inline u b i tags into spans and unescapes entities`() {
-        val doc = LegacySongConverter.convert(inlineStyledAndEscaped())
+    fun `the converter parses inline u b i tags into spans`() {
+        val doc = LegacySongConverter.convert(inlineStyled())
         val lines = doc.blocks.filterIsInstance<LyricBlock>()[0].verses[0].lines
 
         val plain = (lines[0] as VerseLine.Simple).line
@@ -328,9 +327,6 @@ class PortableSongsBridgeTest {
             ),
             styled.spans,
         )
-
-        val escaped = (lines[2] as VerseLine.Simple).line
-        assertEquals(Line.Plain("Raw <tag> shown literally"), escaped)
     }
 
     // endregion
@@ -382,7 +378,7 @@ class PortableSongsBridgeTest {
                 scriptureReferencesText = null,
                 versionCaption = { n -> "Versi $n" },
                 refrainMarker = "Ref.:",
-            ).toString()
+            )
 
             assertTrue(text.contains(song.code))
             song.title?.let { assertTrue(text.contains(it)) }

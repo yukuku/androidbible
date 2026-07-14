@@ -471,7 +471,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                     ShareCompat.IntentBuilder(this@SongViewActivity)
                         .setType("text/plain")
                         .setSubject("${SongBookUtil.escapeSongBookName(currentBookName)} ${currentSong.code} ${currentSong.meta.title}")
-                        .setText(convertSongToText(currentSong).toString())
+                        .setText(convertSongToText(currentSong))
                         .setChooserTitle(getString(R.string.sn_share_title))
                         .startChooser()
                 }
@@ -595,7 +595,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     private fun scriptureReferencesOsis(doc: SongDocument): String? =
         doc.blocks.filterIsInstance<ScriptureBlock>().firstOrNull()?.osis
 
-    private fun convertSongToText(doc: SongDocument): StringBuilder {
+    private fun convertSongToText(doc: SongDocument): String {
         return SongDocumentText.render(
             doc = doc,
             bookNameDisplay = SongBookUtil.escapeSongBookName(currentBookName),
