@@ -82,7 +82,7 @@ data class Verse(val kind: VerseKind, val marker: String?, val lines: List<Verse
 
 `meta` is **derived, never hand-authored** (design §3.1). It exists only so listing / search prefilter / DB never parse the document body. Derivation happens once, at the point something *authors* a `SongDocument` — `LegacySongConverter` builds it directly from the legacy `Song.title`/`Song.title_original` fields it's already converting from; an external tool (`kidung-data`'s `OutputJson`) is the trusted producer for downloaded/hand-authored JSON. `blocks` is flowing document content, not something the app re-parses on every load: `SongDocumentJson.encode`/`decode` pass `meta` through as-is, they do **not** recompute it. (Convergence between a converted-legacy document and hand-authored `@doc` JSON — §6.6 — is a property of both producers deriving `meta` the same way, not of the app re-deriving on read.)
 
-`dataFormatVersion` for the JSON payload is bumped to **5** (design §6/§7). `SongBookUtil.isSupportedDataFormatVersion` accepts 5; the alkitab-uri download path (`SongViewActivity`, currently hard-codes `dataFormatVersion=3&type=ser`) requests 5 for new installs.
+`dataFormatVersion` for the JSON payload is bumped to **5** (design §6/§7). `SongBookUtil.isSupportedDataFormatVersion` accepts 5; the alkitab-uri download path (`SongViewActivity`) requests `dataFormatVersion=5&type=json` for new installs.
 
 ---
 

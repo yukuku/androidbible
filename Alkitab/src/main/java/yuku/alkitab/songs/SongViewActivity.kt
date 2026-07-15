@@ -697,7 +697,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                     } else {
                         val input = data?.getStringExtra(AlertDialogActivity.EXTRA_INPUT)
                         if (!input.isNullOrEmpty()) {
-                            downloadByAlkitabUri(("alkitab:///addon/download?kind=songbook&type=ser&dataFormatVersion=${SongDocumentJson.DATA_FORMAT_VERSION}&name=_${Uri.encode(input.uppercase(Locale.US))}").toUri())
+                            downloadByAlkitabUri(("alkitab:///addon/download?kind=songbook&type=json&dataFormatVersion=${SongDocumentJson.DATA_FORMAT_VERSION}&name=_${Uri.encode(input.uppercase(Locale.US))}").toUri())
                         }
                     }
                     return
@@ -710,7 +710,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     }
 
     private fun downloadByAlkitabUri(uri: Uri) {
-        if ("alkitab" != uri.scheme || "/addon/download" != uri.path || "songbook" != uri.getQueryParameter("kind") || "ser" != uri.getQueryParameter("type") || uri.getQueryParameter("name") == null) {
+        if ("alkitab" != uri.scheme || "/addon/download" != uri.path || "songbook" != uri.getQueryParameter("kind") || "json" != uri.getQueryParameter("type") || uri.getQueryParameter("name") == null) {
             MaterialAlertDialogBuilder(this)
                 .setMessage("Invalid uri:\n\n$uri")
                 .setPositiveButton(R.string.ok, null)
