@@ -1267,7 +1267,7 @@ function buildModel(code, blocks) {
   if (titleBlock) meta.title = lineToString(titleBlock.content);
   if (titleOrigBlock) meta.title_original = lineToString(titleOrigBlock.content);
 
-  return { v: 1, code, meta, blocks };
+  return { code, meta, blocks };
 }
 
 // ============================================================

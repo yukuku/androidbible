@@ -272,7 +272,7 @@ class PortableSongsBridgeTest {
         // OutputJson, or the app's own LegacySongConverter) are the trusted producers of meta; decode
         // must not silently "fix" a mismatch by re-deriving it from blocks.
         val json = """
-            {"v":1,"code":"X1","meta":{"title":"Trusted Title","title_original":null},
+            {"code":"X1","meta":{"title":"Trusted Title","title_original":null},
              "blocks":[{"type":"p","role":"title","content":"Different Block Text"}]}
         """.trimIndent()
         val doc = SongDocumentJson.decode(json)
