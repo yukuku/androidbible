@@ -12,12 +12,25 @@
 	font-weight: bold;
 	font-size: 125%;
 	text-align: center;
+	margin-bottom: 8px;
 }
 
 .title_original {
 	font-family: sans-serif;
 	font-size: 87.5%;
 	text-align: center;
+	margin-bottom: 8px;
+}
+
+.body {
+}
+
+.note {
+	font-style: italic;
+}
+
+.youtube {
+	margin: 0.5em 0;
 }
 
 .song {
@@ -93,7 +106,7 @@
 	clear: both;
 }
 
-.timeSignature, .keySignature {
+.musical {
 	font-family: sans-serif;
 	font-size: 87.5%;
 	display: inline;

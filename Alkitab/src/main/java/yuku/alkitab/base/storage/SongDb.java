@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.util.Pair;
 import androidx.annotation.Nullable;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import static yuku.alkitab.base.util.Literals.Array;
@@ -15,11 +16,17 @@ import yuku.alkitab.base.storage.room.SongInfoEntity;
 import yuku.alkitab.base.storage.room.SongInfoMetaRow;
 import yuku.alkitab.base.storage.room.SongRoomDao;
 import yuku.alkitab.base.storage.room.SongRoomDatabase;
+import yuku.alkitab.base.util.AppLog;
+import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.songs.SongBookUtil;
 import yuku.alkitab.songs.SongFilter;
 import yuku.alkitab.songs.SongFilter.CompiledFilter;
 import yuku.alkitab.songs.SongInfo;
+import yuku.alkitab.songs.newdoc.LegacyParcelDecoder;
+import yuku.alkitab.songs.newdoc.LegacySongConverter;
+import yuku.alkitab.songs.newdoc.SongDocument;
+import yuku.alkitab.songs.newdoc.SongDocumentJson;
 import yuku.kpri.model.Song;
 
 /**
@@ -47,11 +54,12 @@ import yuku.kpri.model.Song;
  * underlying {@code SupportSQLiteDatabase} after the DAO transaction has
  * committed.
  *
- * <p>{@code marshallSong} / {@code unmarshallSong} are unchanged from the
- * pre-Room implementation: they operate on opaque {@code byte[]} payloads
- * and the BLOB column stores those bytes the same way under Room as under
- * the legacy SQLite. REM-21 (Parcelable → JSON) is a future change to the
- * payload format that composes on top of this storage-engine swap.
+ * <p>{@link #writeDocument} always writes UTF-8 JSON at
+ * {@link SongDocumentJson#DATA_FORMAT_VERSION}; {@link #readDocument}
+ * dispatches JSON-vs-legacy-Parcelable by the row's {@code dataFormatVersion}
+ * and lazily rewrites legacy rows as JSON the first time they're read (at
+ * most once per row). The BLOB column itself (opaque {@code byte[]}) hasn't
+ * changed — only what's inside it has.
  */
 public class SongDb {
     @SuppressWarnings("unused") // kept for ABI parity with the pre-Room constructor
@@ -84,15 +92,19 @@ public class SongDb {
         return result;
     }
 
-    private static byte[] marshallSong(Song song, int dataFormatVersion) {
-        Parcel p = Parcel.obtain();
-        song.writeToParcelCompat(dataFormatVersion, p, 0);
-        byte[] buf = p.marshall();
-        p.recycle();
-        return buf;
+    /**
+     * @see SongDocumentJson#DATA_FORMAT_VERSION
+     */
+    private static byte[] writeDocument(SongDocument doc) {
+        return SongDocumentJson.encode(doc).getBytes(StandardCharsets.UTF_8);
     }
 
-    private static Song unmarshallSong(byte[] buf, int dataFormatVersion) {
+    /**
+     * Fallback if the pure-JVM {@link LegacyParcelDecoder} throws (an unrecognised wire shape):
+     * fall back to the platform {@code Parcel.unmarshall()} path, which still works as long as the
+     * OS hasn't changed since the row was written.
+     */
+    private static Song unmarshallLegacySongViaPlatformParcel(byte[] buf, int dataFormatVersion) {
         Parcel p = Parcel.obtain();
         p.unmarshall(buf, 0, buf.length);
         p.setDataPosition(0);
@@ -102,58 +114,88 @@ public class SongDb {
     }
 
     /**
+     * Single song-read helper: dispatches JSON vs. legacy Parcelable by {@code dataFormatVersion}.
+     * Legacy rows are decoded via {@link LegacyParcelDecoder} (falling back to the platform
+     * {@link Parcel} if that throws), converted to a {@link SongDocument} via
+     * {@link LegacySongConverter}, and the JSON is written back to the row so the conversion
+     * happens at most once per row.
+     */
+    private SongDocument readDocument(long id, String bookName, String code, byte[] data, int dataFormatVersion) {
+        if (dataFormatVersion == SongDocumentJson.DATA_FORMAT_VERSION) {
+            return SongDocumentJson.decode(new String(data, StandardCharsets.UTF_8));
+        }
+
+        Song legacySong;
+        try {
+            legacySong = LegacyParcelDecoder.decode(data, dataFormatVersion);
+        } catch (Exception e) {
+            AppLog.e("SongDb", "LegacyParcelDecoder failed for book=" + bookName + " code=" + code + "; falling back to Parcel.unmarshall", e);
+            legacySong = unmarshallLegacySongViaPlatformParcel(data, dataFormatVersion);
+        }
+
+        final SongDocument doc = LegacySongConverter.convert(legacySong);
+        // Write-back is idempotent (a row already at dataFormatVersion 5 is just re-written the same
+        // way) and this helper runs on the caller's thread — including the main thread for single-song
+        // reads (SongViewActivity.onStart) and, in a tight loop, the deep-filter scan. Fire the UPDATE
+        // on a background thread so a book full of legacy songs can't stall the UI or a search.
+        final byte[] jsonBytes = writeDocument(doc);
+        Background.run(() -> roomDao().writeBackJsonSongData(id, jsonBytes));
+        return doc;
+    }
+
+    /**
      * Store to db songs in a book. Before the songs are stored, all songs of the specified book are deleted.
      */
-    public void storeSongs(String bookName, List<Song> songs, int dataFormatVersion) {
+    public void storeSongs(String bookName, List<SongDocument> docs, int dataFormatVersion) {
         final int updateTime = Sqlitil.nowDateTime();
-        final List<SongInfoEntity> entities = new ArrayList<>(songs.size());
+        final List<SongInfoEntity> entities = new ArrayList<>(docs.size());
         int ordering = 1;
-        for (Song song : songs) {
+        for (SongDocument doc : docs) {
             entities.add(new SongInfoEntity(
                 0L,
                 bookName,
-                song.code,
-                song.title,
-                song.title_original,
+                doc.getCode(),
+                doc.getMeta().getTitle(),
+                doc.getMeta().getTitle_original(),
                 ordering++,
                 dataFormatVersion,
-                marshallSong(song, dataFormatVersion),
+                writeDocument(doc),
                 updateTime
             ));
         }
         roomDao().replaceSongsForBookNameAndDataFormatVersion(bookName, dataFormatVersion, entities);
     }
 
-    public Song getSong(String bookName, String code) {
+    public SongDocument getSong(String bookName, String code) {
         final SongInfoEntity row = roomDao().findSongInfoByBookNameAndCode(bookName, code);
         if (row == null || row.getData() == null) {
             return null;
         }
-        return unmarshallSong(row.getData(), row.getDataFormatVersion());
+        return readDocument(row.get_id(), row.getBookName(), row.getCode(), row.getData(), row.getDataFormatVersion());
     }
 
     public boolean songExists(String bookName, String code) {
         return roomDao().countSongInfosByBookNameAndCode(bookName, code) > 0;
     }
 
-    public Song getFirstSongFromBook(String bookName) {
+    public SongDocument getFirstSongFromBook(String bookName) {
         final SongInfoEntity row = roomDao().findFirstSongInfoByBookName(bookName);
         if (row == null || row.getData() == null) {
             return null;
         }
-        return unmarshallSong(row.getData(), row.getDataFormatVersion());
+        return readDocument(row.get_id(), row.getBookName(), row.getCode(), row.getData(), row.getDataFormatVersion());
     }
 
     /**
      * @return null if there is no song at all
      */
     @Nullable
-    public Pair<String /* bookName */, Song> getAnySong() {
+    public Pair<String /* bookName */, SongDocument> getAnySong() {
         final SongInfoEntity row = roomDao().findAnySongInfo();
         if (row == null || row.getData() == null || row.getBookName() == null) {
             return null;
         }
-        return Pair.create(row.getBookName(), unmarshallSong(row.getData(), row.getDataFormatVersion()));
+        return Pair.create(row.getBookName(), readDocument(row.get_id(), row.getBookName(), row.getCode(), row.getData(), row.getDataFormatVersion()));
     }
 
     public List<SongInfo> listSongInfosByBookName(@Nullable String bookName) {
@@ -187,6 +229,7 @@ public class SongDb {
         try (Cursor c = (bookName == null)
             ? roomDao().queryAllDeepFilterRows()
             : roomDao().queryDeepFilterRowsByBookName(bookName)) {
+            final int colId = c.getColumnIndexOrThrow("_id");
             final int colBookName = c.getColumnIndexOrThrow("bookName");
             final int colCode = c.getColumnIndexOrThrow("code");
             final int colTitle = c.getColumnIndexOrThrow("title");
@@ -197,13 +240,18 @@ public class SongDb {
                 if (c.isNull(colData)) {
                     continue;
                 }
+                final long id = c.getLong(colId);
+                final String rowBookName = c.isNull(colBookName) ? null : c.getString(colBookName);
+                final String rowCode = c.isNull(colCode) ? null : c.getString(colCode);
                 final byte[] data = c.getBlob(colData);
                 final int dataFormatVersion = c.getInt(colDataFormatVersion);
-                final Song song = unmarshallSong(data, dataFormatVersion);
-                if (SongFilter.match(song, cf)) {
+                // Read out of the row before writing back, so the write-back UPDATE (issued at most
+                // once per legacy row, inside readDocument) doesn't fight this streaming Cursor.
+                final SongDocument doc = readDocument(id, rowBookName, rowCode, data, dataFormatVersion);
+                if (SongFilter.match(doc, cf)) {
                     res.add(new SongInfo(
-                        c.isNull(colBookName) ? null : c.getString(colBookName),
-                        c.isNull(colCode) ? null : c.getString(colCode),
+                        rowBookName,
+                        rowCode,
                         c.isNull(colTitle) ? null : c.getString(colTitle),
                         c.isNull(colTitleOriginal) ? null : c.getString(colTitleOriginal)
                     ));

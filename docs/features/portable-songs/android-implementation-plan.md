@@ -62,7 +62,6 @@ The two source-of-truth subtleties, because they drive both the model and the cu
 ```kotlin
 @Serializable
 data class SongDocument(
-    val v: Int,
     val code: String,
     val meta: Meta,
     val blocks: List<Block>,
@@ -81,9 +80,9 @@ sealed interface Block { val size: Float? }
 data class Verse(val kind: VerseKind, val marker: String?, val lines: List<VerseLine>)
 ```
 
-`meta` is **derived, never hand-authored** (design §3.1): `SongDocumentJson.encode` computes it from the first `title` / `title_original` role blocks. It exists only so listing / search prefilter / DB never parse the document body. This means the **JSON round-trip must recompute `meta`, not trust the input** — a decode-then-encode of a legacy song and a parse of hand-authored JSON must land on the same `meta`.
+`meta` is **derived, never hand-authored** (design §3.1). It exists only so listing / search prefilter / DB never parse the document body. Derivation happens once, at the point something *authors* a `SongDocument` — `LegacySongConverter` builds it directly from the legacy `Song.title`/`Song.title_original` fields it's already converting from; an external tool (`kidung-data`'s `OutputJson`) is the trusted producer for downloaded/hand-authored JSON. `blocks` is flowing document content, not something the app re-parses on every load: `SongDocumentJson.encode`/`decode` pass `meta` through as-is, they do **not** recompute it. (Convergence between a converted-legacy document and hand-authored `@doc` JSON — §6.6 — is a property of both producers deriving `meta` the same way, not of the app re-deriving on read.)
 
-`dataFormatVersion` for the JSON payload is bumped to **5** (design §6/§7). `SongBookUtil.isSupportedDataFormatVersion` accepts 5; the alkitab-uri download path (`SongViewActivity`, currently hard-codes `dataFormatVersion=3&type=ser`) requests 5 for new installs.
+`dataFormatVersion` for the JSON payload is bumped to **5** (design §6/§7). `SongBookUtil.isSupportedDataFormatVersion` accepts 5; the alkitab-uri download path (`SongViewActivity`) requests `dataFormatVersion=5&type=json` for new installs.
 
 ---
 
@@ -161,14 +160,14 @@ assertSongFieldsEqual(fixture, song)                 // decoder reconstructs the
 doc   = LegacySongConverter.convert(song)
 json  = SongDocumentJson.encode(doc)
 doc2  = SongDocumentJson.decode(json)
-assertDocumentsEqual(doc, doc2)                      // JSON round-trip is lossless & meta re-derived
+assertDocumentsEqual(doc, doc2)                      // JSON round-trip is lossless, incl. the meta LegacySongConverter computed
 ```
 
 Assert the converter honored design §5 block order (title, title_original, tune, authors `row`, scripture, musical, lyric groups), dropped `Verse.ordering`, mapped `VerseKind`, and parsed inline `<u>/<b>/<i>` into `Span`s with other text escaped.
 
 ### 6.3 Render equivalence (old vs new)
 
-For each fixture: `songToHtml(fixture)` (legacy, §6.1) vs `SongDocumentRenderer.render(convert(fixture))`. Normalize whitespace/attribute order and assert the **lyric-body semantics** match: same verse numbering (positional; `NORMAL` numbered, `REFRAIN`/`TEXT` unnumbered), same "Versi N" caption fallback when >1 group and no caption, same lines in order, same inline styling. (Chrome/exact-markup differences are normalized out; the assertion is on structure, not byte-identical HTML.)
+For each fixture: `songToHtml(fixture)` (legacy, §6.1) vs `SongDocumentRenderer.renderLyrics(convert(fixture))`. Normalize whitespace/attribute order and assert the **lyric-body semantics** match: same verse numbering (positional; `NORMAL` numbered, `REFRAIN`/`TEXT` unnumbered), same "Versi N" caption fallback when >1 group and no caption, same lines in order, same inline styling. (Chrome/exact-markup differences are normalized out; the assertion is on structure, not byte-identical HTML.)
 
 Also assert `SongDocumentText.render(doc)` reproduces `convertSongToText(fixture)` for copy/share.
 
@@ -202,7 +201,7 @@ Load the canonical JSON for "KRI 25 — @doc" as a checked-in test resource (str
 
 ### 6.7 Download-wrapper parse
 
-Build a gzipped JSON song-book wrapper (design §3.7: `{v, book, songs}`) as a test resource; feed it to the new `SongBookUtil.deserializeSongs` and assert the `SongDocument`s and `SongBookInfo` come through. Assert the removed Java-deserialization path is gone (no `ObjectInputStream`), and that `isSupportedDataFormatVersion(5)` is true / `(3)`/`(4)` handled per the redirect contract.
+Build a gzipped JSON song-book wrapper (design §3.7: `{dataFormatVersion, songs}` — no `book`; book metadata travels via the download request, not the payload) and feed it to the new `SongBookUtil.deserializeSongs`, asserting the `SongDocument`s come through. Assert the removed Java-deserialization path is gone (a gzipped, still-Java-serialized payload built the old way fails to parse), and that `isSupportedDataFormatVersion(5)` is true / `(3)`/`(4)` are false.
 
 ---
 
@@ -241,6 +240,6 @@ Follow with a device smoke test: install a JSON song book, open a song, copy/sha
 
 - **Robolectric `Parcel` is not the device wire format** (§6.1 caveat). The decoder's real-world correctness rests on `AospParcelWriter` faithfulness + the pre-ship device-capture validation (design §4.4/§12). Treat the device-capture step as a hard release gate.
 - **`writeString16` UTF-16 + NUL + padding** and the **Android-13 length-prefix placement** are the two assumptions most likely to bite; the golden fixtures and the negative-tag tests bound them, real captures confirm them.
-- **Lazy write-back during a search scan** issues an `UPDATE` per legacy row touched. Acceptable (at-most-once per row, then permanently JSON), but confirm it doesn't fight the streaming `Cursor` — write-back should happen after the row is read out, not mid-iteration on the same cursor.
-- **`meta` derivation must be the single source of truth** (§3): never trust incoming `meta`; recompute on encode so decode-from-legacy and parse-from-`@doc` converge (§6.6).
+- **Lazy write-back during a search scan** issues an `UPDATE` per legacy row touched. Read the row out of the `Cursor` first, then fire the `UPDATE` on a background thread (`Background.run`) rather than synchronously on the scan thread — at-most-once per row, then permanently JSON, and doesn't block a main-thread single-song read or stall the search loop.
+- **`meta` is computed once, by whichever code authors a `SongDocument`, and trusted thereafter** (§3): `LegacySongConverter` builds it directly from `Song.title`/`Song.title_original` when synthesizing a document from legacy data; `SongDocumentJson.encode`/`decode` pass `meta` through unchanged. Convergence between a converted-legacy document and hand-authored `@doc` JSON (§6.6) depends on both producers deriving `meta` the same way — not on the app re-deriving it on every read.
 - **Backend / `kidung-data` are out of scope here** but must ship compatibly: old installs keep requesting the `.ser` payload (design §7). Don't remove the version-3 request path until telemetry says no old clients remain.

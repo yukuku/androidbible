@@ -74,18 +74,17 @@ Object-scope UI reference can leak Activity context. Should create Toast inline 
 
 ---
 
-## TD-04: ~~Unsafe Deserialization in Songs~~ PARTIALLY FIXED
+## TD-04: ~~Unsafe Deserialization in Songs~~ FIXED
 
-**File:** `Alkitab/src/main/java/yuku/alkitab/songs/SongBookUtil.java`
+**File:** `Alkitab/src/main/java/yuku/alkitab/songs/SongBookUtil.kt`
 
 **Fixed in REM-01** (`1b9b74d9`, 2026-04-11):
 - ✅ **Security risk:** Now uses `SafeObjectInputStream` with a class whitelist — only `java.util.*`, `java.lang.*`, and Song model classes are allowed. Also adds `instanceof` check before casting.
 - ✅ **Resource leak:** Response and streams now wrapped in try-with-resources.
 - ✅ **No size limits:** Response body size validation added (rejects >50MB).
 
-**Remaining:**
-- **Fragility:** `KpriModel.Song` still uses `Parcelable` as its serialization/storage format (acknowledged as "Bad decision"). Migrating to JSON is tracked as REM-21.
-- **Long-term:** Migrate song download format from Java serialization to JSON (REM-01 step 4, not yet started).
+**Fixed in REM-21** (portable songs, 2026-07-13):
+- ✅ **Fragility / long-term:** `SongBookUtil.deserializeSongs` now parses a gzipped JSON song-book wrapper instead of Java-serializing a `List<Song>`; `SafeObjectInputStream`/`ObjectInputStream` were deleted outright, removing the Java-deserialization gadget surface entirely rather than just allow-listing it. On-device storage (`song_info.data`) moved the same way: it's UTF-8 JSON (`yuku.alkitab.songs.newdoc.SongDocument`) at `dataFormatVersion = 5`, with a pure-JVM `LegacyParcelDecoder` lazily converting pre-existing Parcelable rows on first read (see `docs/modules/songs.md`, `docs/features/portable-songs/design.md`). `KpriModel.Song`/`Lyric`/`Verse`/`VerseKind` remain only as that decoder's target type.
 
 ---
 

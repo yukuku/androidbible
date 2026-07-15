@@ -36,24 +36,12 @@
 	<body onload="body_load()" style="padding: 16px 8px">
 		<div class='song'>
 			{{div:code}}
-			{{div:title}}
-			{{div:title_original}}
-			<div style='padding-bottom: 8px'></div>
-			{{div:tune}}
-			<div class='break'></div>
-			{{div:authors_lyric}}
-			{{div:authors_music}}
-			<div class='break'></div>
-			<div class='scriptureReferences'>{{$scripture_references}}</div>
-			{{div:keySignature}}
-			{{div:timeSignature}}
-			<div class='break'></div>
-			
+
 			<div class='verse' id="test_tobehidden">
 				<p class='line' id="test_line">Test1#fg</p>
 			</div>
-			
-			{{div:lyrics}}
+
+			{{$song_content}}
 
             <div>
                 <span class="copyright">{{$copyright}}</span>

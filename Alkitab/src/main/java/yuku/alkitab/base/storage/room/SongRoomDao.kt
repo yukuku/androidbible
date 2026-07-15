@@ -123,7 +123,7 @@ abstract class SongRoomDao {
      * Caller is responsible for `Cursor.close()` (use try-with-resources).
      */
     @Query(
-        "SELECT bookName, code, title, title_original, data, dataFormatVersion " +
+        "SELECT _id, bookName, code, title, title_original, data, dataFormatVersion " +
             "FROM song_info WHERE bookName = :bookName ORDER BY ordering ASC",
     )
     abstract fun queryDeepFilterRowsByBookName(bookName: String): Cursor
@@ -134,10 +134,20 @@ abstract class SongRoomDao {
      * rationale.
      */
     @Query(
-        "SELECT bookName, code, title, title_original, data, dataFormatVersion " +
+        "SELECT _id, bookName, code, title, title_original, data, dataFormatVersion " +
             "FROM song_info ORDER BY bookName ASC, ordering ASC",
     )
     abstract fun queryAllDeepFilterRows(): Cursor
+
+    /**
+     * Rewrites a legacy Parcelable row as JSON at
+     * [yuku.alkitab.songs.newdoc.SongDocumentJson.DATA_FORMAT_VERSION] once
+     * [yuku.alkitab.base.storage.SongDb] has decoded and converted it.
+     * Idempotent — a row already at that version is simply re-written the
+     * same way if called again.
+     */
+    @Query("UPDATE song_info SET data = :data, dataFormatVersion = 5 WHERE _id = :id")
+    abstract fun writeBackJsonSongData(id: Long, data: ByteArray): Int
 
     @Query(
         "SELECT dataFormatVersion FROM song_info WHERE bookName = :bookName LIMIT 1",

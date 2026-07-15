@@ -23,14 +23,10 @@ import yuku.alkitab.base.widget.MaterialDialogJavaHelper
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 import yuku.alkitab.io.OptionalGzipInputStream
-import yuku.kpri.model.Lyric
-import yuku.kpri.model.Song
-import yuku.kpri.model.Verse
-import yuku.kpri.model.VerseKind
+import yuku.alkitab.songs.newdoc.SongDocument
+import yuku.alkitab.songs.newdoc.SongDocumentJson
 import java.io.IOException
 import java.io.InputStream
-import java.io.ObjectInputStream
-import java.io.ObjectStreamClass
 import java.util.concurrent.atomic.AtomicBoolean
 
 object SongBookUtil {
@@ -63,35 +59,8 @@ object SongBookUtil {
 
     class NotOkException(val code: Int) : IOException()
 
-    /**
-     * An ObjectInputStream that restricts deserialization to a whitelist of known safe classes.
-     * Prevents deserialization attacks by rejecting any class not in the allowed set.
-     */
-    internal class SafeObjectInputStream(input: InputStream) : ObjectInputStream(input) {
-        override fun resolveClass(desc: ObjectStreamClass): Class<*> {
-            val name = desc.name
-            if (!name.startsWith("[")
-                && !name.startsWith("java.util.")
-                && !name.startsWith("java.lang.")
-                && name !in ALLOWED_CLASSES
-            ) {
-                throw ClassNotFoundException("Unauthorized deserialization attempt: $name")
-            }
-            return super.resolveClass(desc)
-        }
-
-        companion object {
-            private val ALLOWED_CLASSES = setOf(
-                Song::class.java.name,
-                Lyric::class.java.name,
-                Verse::class.java.name,
-                VerseKind::class.java.name,
-            )
-        }
-    }
-
     @JvmStatic
-    fun isSupportedDataFormatVersion(dataFormatVersion: Int) = dataFormatVersion == 3
+    fun isSupportedDataFormatVersion(dataFormatVersion: Int) = dataFormatVersion == SongDocumentJson.DATA_FORMAT_VERSION
 
     /**
      * For migration
@@ -170,23 +139,19 @@ object SongBookUtil {
     }
 
     /**
-     * Deserializes a list of Song objects from an InputStream.
-     * The stream may optionally be gzip-compressed.
-     * Restricts deserialization to known safe classes only.
+     * Deserializes the song-book download wrapper (`{ dataFormatVersion, songs }`) from an
+     * InputStream and returns its songs. The stream may optionally be gzip-compressed. This is a
+     * plain JSON parse — no Java deserialization gadget surface.
      *
      * Package-visible for testing.
      */
-    @Suppress("UNCHECKED_CAST")
     @JvmStatic
-    fun deserializeSongs(inputStream: InputStream): List<Song> {
+    fun deserializeSongs(inputStream: InputStream): List<SongDocument> {
         OptionalGzipInputStream(inputStream).use { gzipStream ->
-            SafeObjectInputStream(gzipStream).use { ois ->
-                val result = ois.readObject()
-                if (result !is List<*>) {
-                    throw IOException("Expected List but got ${result?.javaClass?.name ?: "null"}")
-                }
-                return result as List<Song>
-            }
+            // Avoid a redundant intermediate ByteArray the size of the whole uncompressed payload:
+            // read straight through a Reader instead of readBytes().toString(UTF_8).
+            val text = gzipStream.reader(Charsets.UTF_8).use { it.readText() }
+            return SongDocumentJson.decodeSongBook(text).songs
         }
     }
 

@@ -1,0 +1,27 @@
+{
+  "code": "25",
+  "meta": { "title": "Malam Kudus", "title_original": "Silent Night" },
+  "blocks": [
+    { "type": "p", "role": "title", "content": "Malam Kudus" },
+    { "type": "p", "role": "title_original", "content": "Silent Night" },
+    { "type": "p", "role": "tune", "content": "STILLE NACHT" },
+    { "type": "row", "items": [
+      { "type": "p", "role": "authors_lyric", "content": "Joseph Mohr" },
+      { "type": "p", "role": "authors_music", "content": "Franz X. Gruber" }
+    ] },
+    { "type": "scripture", "osis": "Luke.2.1-Luke.2.20" },
+    { "type": "p", "role": "musical", "content": "1=Bes 6/8" },
+    { "type": "lyric", "verses": [
+      { "kind": "normal", "lines": [
+        "Malam Kudus, sunyi senyap,",
+        [ {"text":"Sia","style":["u"]}, {"text":"pa yang b'lum lelap;"} ]
+      ] }
+    ] },
+    { "type": "lyric", "verses": [
+      { "kind": "normal", "lines": [
+        "Silent night, holy night,",
+        "All is calm, all is bright"
+      ] }
+    ] }
+  ]
+}
