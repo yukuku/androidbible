@@ -16,7 +16,7 @@ This document is an index over the prioritized remediation plan for each tech de
 
 ---
 
-## Phase 1: Quick Wins & Safety Fixes (BRICE ≥ 4.0)
+## Phase 1: Quick Wins & Safety Fixes (BRICE ≥ 4.0, plus urgent user-data safety fixes from audits)
 
 - [REM-01: Fix SongBookUtil Resource Leak & Unsafe Deserialization](tech-debt-remediation/REM-01-songbookutil-deserialization.md) ✅ **4.6**
 - [REM-02: Fix Preferences hold()/unhold() Safety](tech-debt-remediation/REM-02-preferences-hold-unhold.md) ✅ **4.2**
@@ -48,6 +48,7 @@ This document is an index over the prioritized remediation plan for each tech de
 - [REM-38: Reader Lifecycle Fixes](tech-debt-remediation/REM-38-reader-lifecycle.md) — **3.4** (PB-32, PB-35, PB-36, PB-37; 2026-07 audit)
 - [REM-39: Text Decoding Correctness](tech-debt-remediation/REM-39-text-decoding.md) — **3.4** (PB-23, PB-24; 2026-07 audit)
 - [REM-41: Defensive Data Guards](tech-debt-remediation/REM-41-defensive-guards.md) — **3.4** (PB-14, PB-15, PB-27..PB-30; 2026-07 audit)
+- [REM-40: Version Download Robustness](tech-debt-remediation/REM-40-download-robustness.md) — **3.4** (PB-25, PB-26; 2026-07 audit)
 
 ## Phase 3: Modernization (BRICE 2.5–3.0)
 
@@ -58,7 +59,6 @@ This document is an index over the prioritized remediation plan for each tech de
 - [REM-20: Replace AmbilWarna with Material Color Picker](tech-debt-remediation/REM-20-ambilwarna-replacement.md) ✅ **3.0**
 - [REM-25: Decompose VerseRenderer.render()](tech-debt-remediation/REM-25-verserenderer-decompose.md) ✅ **3.4**
 - [REM-26: Port VerseRenderer to Kotlin](tech-debt-remediation/REM-26-verserenderer-kotlin.md) ✅ **3.8**
-- [REM-40: Version Download Robustness](tech-debt-remediation/REM-40-download-robustness.md) — **3.4** (PB-25, PB-26; 2026-07 audit)
 
 ## Phase 4: Long-term / Major Refactors (BRICE < 2.5)
 
@@ -92,7 +92,7 @@ This document is an index over the prioritized remediation plan for each tech de
 | [REM-34](tech-debt-remediation/REM-34-sync-delivery.md) | Fix sync delivery + shared-state races (2026-07 audit) | **3.4** | 1 |
 | [REM-38](tech-debt-remediation/REM-38-reader-lifecycle.md) | Reader lifecycle fixes (2026-07 audit) | **3.4** | 2 |
 | [REM-39](tech-debt-remediation/REM-39-text-decoding.md) | Text decoding correctness (2026-07 audit) | **3.4** | 2 |
-| [REM-40](tech-debt-remediation/REM-40-download-robustness.md) | Version download robustness (2026-07 audit) | **3.4** | 3 |
+| [REM-40](tech-debt-remediation/REM-40-download-robustness.md) | Version download robustness (2026-07 audit) | **3.4** | 2 |
 | [REM-41](tech-debt-remediation/REM-41-defensive-guards.md) | Defensive data guards (2026-07 audit) | **3.4** | 2 |
 | [REM-25](tech-debt-remediation/REM-25-verserenderer-decompose.md) | ~~Decompose VerseRenderer.render~~ ✅ | **3.4** | 3 |
 | [REM-24](tech-debt-remediation/REM-24-s-service-locator.md) | ~~Refactor S.kt service locator (steps 24a–24d complete)~~ ✅ | **3.2** | 2 |

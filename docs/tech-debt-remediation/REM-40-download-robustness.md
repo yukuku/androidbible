@@ -3,7 +3,7 @@
 **Addresses:** PB-25, PB-26
 **Module:** Versions (`VersionDownloadCompleteReceiver`, `DownloadMapper`, `VersionDownloadWorker`)
 **BRICE:** B=3 R=2 I=4 C=4 E=4 → **3.4**
-**Phase:** 3 — Modernization (2026-07 audit)
+**Phase:** 2 — Architecture Improvements (2026-07 audit)
 
 **Status:** Not started.
 

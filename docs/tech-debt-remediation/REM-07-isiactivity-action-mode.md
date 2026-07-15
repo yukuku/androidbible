@@ -8,14 +8,14 @@
 **Completed in:** `89a1894e` (REM-07 refactor) + `716eb1ce` (follow-up split-1 fix, 2026-04-16)
 
 **What was done:**
-1. ✅ Created `VerseActionModeController.kt` (~593 lines) implementing `ActionMode.Callback`. Moved the entire ~500-line `actionMode_callback` object from `IsiActivity.kt` into this class.
+1. ✅ Created `VerseActionModeController.kt` implementing `ActionMode.Callback`. Moved the entire `actionMode_callback` object from `IsiActivity.kt` into this class.
 2. ✅ Defined two interfaces: `VerseActionModeHost` (queries activity state — selected verses, versions, book data, chapter) and `VerseActionModeActions` (callbacks back into the activity — navigate, show toasts, etc.)
 3. ✅ Extracted pure text-building logic into `VerseTextFormatter` (no Android dependencies, purely testable under plain JUnit)
 4. ✅ Moved `RibkaEligibility` to a standalone top-level file `RibkaEligibility.kt`
 5. ✅ Added `mockk` to the test classpath. Added 26 unit tests: 11 pure-JUnit tests for `VerseTextFormatterTest`, 15 Robolectric tests for `VerseActionModeControllerTest` (menu visibility rules, click routing)
 6. ✅ Follow-up PR `716eb1ce` fixed the split-1 share URL metadata bug (PB-08) that had been preserved verbatim in the REM-07 refactor. Four regression tests added for copy/share split-0/1 metadata routing.
 
-**Result:** `IsiActivity.kt` shrank from 2894 → 2320 lines (−574 lines). Action mode is now independently testable without instantiating the Activity.
+**Result:** `IsiActivity.kt` shrank substantially. Action mode is now independently testable without instantiating the Activity.
 
 **Difficulty:** Medium (6-8 hours). Risk: action mode references many Activity-level fields and methods.
 

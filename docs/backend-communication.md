@@ -2,7 +2,7 @@
 
 ## HTTP Client
 
-All network requests use OkHttp3 (v5.1.0) configured in `Connections.kt`:
+All network requests use OkHttp3 configured in `Connections.kt`:
 - Custom user agent string
 - 50MB disk cache
 - Long-timeout variant for large downloads

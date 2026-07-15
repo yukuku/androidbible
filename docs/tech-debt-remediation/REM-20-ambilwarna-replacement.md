@@ -6,7 +6,7 @@
 **Phase:** 3 — Modernization
 
 **Steps:**
-1. `AmbilWarnaDialog` is used in 2 files: `MarkersActivity.java` (lines 43, 233-243 — label color picker) and `TypeHighlightDialog.java` (line 19 — highlight color selection). There is no `ColorSettingsActivity`.
+1. `AmbilWarnaDialog` is used in 2 files: `MarkersActivity.java` (label color picker) and `TypeHighlightDialog.java` (highlight color selection). There is no `ColorSettingsActivity`.
 2. Replace with `MaterialColorPickerDialog` from a Material-compatible library or implement custom using Material 3 color palette
 3. Ensure selected colors are stored in the same format (hex int)
 4. Delete `AmbilWarna` module

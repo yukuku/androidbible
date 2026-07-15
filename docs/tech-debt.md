@@ -1,15 +1,15 @@
 # Tech Debt, Improvements & Critiques
 
-Status last verified against the code on 2026-07-15. Line numbers rot quickly in this file — prefer symbol names when updating it, and re-verify counts before relying on them.
+Status last verified against the code on 2026-07-15. Refer to code by symbol name, not line number, and don't record library version numbers — both rot quickly (see Documentation Conventions in CLAUDE.md).
 
-## TD-01: IsiActivity Mega Class (~2155 lines)
+## TD-01: IsiActivity Mega Class
 
 **File:** `Alkitab/src/main/java/yuku/alkitab/base/IsiActivity.kt`
 
-The main Bible reader activity is still the largest class in the codebase (~2155 lines, down from 2897 before the REM-06/07/08 extractions), but it is no longer monolithic. Extracted so far:
+The main Bible reader activity is still the largest class in the codebase (though much smaller since the REM-06/07/08 extractions), but it is no longer monolithic. Extracted so far:
 
 - **~~Gesture handling~~** ✅ **Extracted (REM-06):** pinch zoom, one/two-finger swipes, and floater drag live in `ReaderGestureHandler.kt` (under `widget/`) behind the `ReaderGestureHost` / `ReaderGestureActions` interfaces. Gesture-local state lives on the handler.
-- **~~Action mode~~** ✅ **Extracted (REM-07):** the ~500-line `actionMode_callback` object moved to `VerseActionModeController.kt` (under `actionmode/`) behind `VerseActionModeHost` / `VerseActionModeActions`. Pure text-building logic is in `VerseTextFormatter` (no Android deps). `RibkaEligibility` is a top-level declaration in the `actionmode` package. Covered by `VerseActionModeControllerTest` + `VerseTextFormatterTest`.
+- **~~Action mode~~** ✅ **Extracted (REM-07):** the large `actionMode_callback` object moved to `VerseActionModeController.kt` (under `actionmode/`) behind `VerseActionModeHost` / `VerseActionModeActions`. Pure text-building logic is in `VerseTextFormatter` (no Android deps). `RibkaEligibility` is a top-level declaration in the `actionmode` package. Covered by `VerseActionModeControllerTest` + `VerseTextFormatterTest`.
 - **~~Split view management~~** ✅ **Extracted (REM-08):** `openSplitDisplay()`, `closeSplitDisplay()`, `displaySplitFollowingMaster()`, and `loadSplitVersion()` live in `SplitViewManager.kt` (under `widget/`); the activity delegates to `splitViewManager`.
 - **~~Broadcast receivers~~** ✅ **Gone (REM-03):** the two inline `BroadcastReceiver`s were replaced by `AppEvents` `SharedFlow` collectors launched from `lifecycleScope` in `onCreate`.
 
@@ -23,11 +23,11 @@ Still inline in the activity:
 
 ---
 
-## TD-02: InternalDb — Raw SQL & Manual Statement Caching (830 lines, was 1771)
+## TD-02: InternalDb — Raw SQL & Manual Statement Caching
 
 **File:** `Alkitab/src/main/java/yuku/alkitab/base/storage/InternalDb.java`
 
-**Status:** Significantly improved. Per-table DAOs (`MarkerDao`, `LabelDao`, `VersionDao`, `DevotionDao`, `ReadingPlanDao`, `ProgressMarkDao`, `PerVersionDao`, `Marker_LabelDao`, `SyncShadowDao`) and `SyncApplier` were extracted, shrinking `InternalDb.java` from 1771 → 830 lines. The remaining issues below are the parts not covered by that refactor.
+**Status:** Significantly improved. Per-table DAOs (`MarkerDao`, `LabelDao`, `VersionDao`, `DevotionDao`, `ReadingPlanDao`, `ProgressMarkDao`, `PerVersionDao`, `Marker_LabelDao`, `SyncShadowDao`) and `SyncApplier` were extracted, cutting `InternalDb.java` to roughly half its former size. The remaining issues below are the parts not covered by that refactor.
 
 ### Raw SQL string concatenation (~10 instances remain)
 Examples in `listMarkersForLabel`, `getLabelById`, and the reordering helpers:
@@ -152,7 +152,7 @@ Preference keys are a flat enum with no grouping or type safety. Each access req
 
 **File:** `Alkitab/src/main/java/yuku/alkitab/base/widget/VerseRenderer.kt`
 
-### ~~200-line render method~~ ✅ RESOLVED (REM-25)
+### ~~Monolithic render() method~~ ✅ RESOLVED (REM-25)
 The monolithic `render()` body has been decomposed into `renderVerseNumber()`, `processFormattingCodes()`, `applyHighlight()`, and `bindToTextViews()`, alongside the existing `applyParaStyle()` and `processSpecialTag()`. Behavior is locked down by 39 characterization tests in `VerseRendererTest.kt`.
 
 ### ~~Undocumented Unicode constants~~ ✅ RESOLVED (REM-26)
@@ -165,9 +165,9 @@ The `superscriptDigits` array now has an inline comment naming the Unicode code 
 `Alkitab/src/main` is currently ~107 Java files vs ~182 Kotlin files. Of the core files originally flagged here, most have been ported (REM-16): `SearchEngine`, `DevotionDownloader`, `Provider`, `Highlights`, `Jumper`, `TargetDecoder`, `QueryTokenizer`, `SongBookUtil`, and `VerseRenderer` are all Kotlin now.
 
 Still Java, with no clear migration plan:
-- `InternalDb.java` (830 lines) — plus `InternalDbHelper` and several activities
-- `Sync.java` (571 lines)
-- `SyncAdapter.java` (630 lines)
+- `InternalDb.java` — plus `InternalDbHelper` and several activities
+- `Sync.java`
+- `SyncAdapter.java`
 - All devotion article parsers (`DevotionArticle.java`, `ArticleFromSabda`, `ArticleMeidA`, `ArticleMorningEveningEnglish`, `ArticleRenunganHarian`, `ArticleRoc`, `ArticleSantapanHarian`)
 
 The mixed codebase means the remaining Java code can't use Kotlin features (extension functions, coroutines, sealed classes, null safety).
@@ -176,14 +176,14 @@ The mixed codebase means the remaining Java code can't use Kotlin features (exte
 
 ## TD-12: Deprecated / Unmaintained Dependencies
 
-| Dependency | Version | Issue |
-|------------|---------|-------|
-| ~~`material-dialogs`~~ | ~~3.3.0~~ | ✅ **Fixed in REM-14.** All call sites migrated to `MaterialAlertDialogBuilder` (Material 3); the `com.afollestad.materialdialogs` artifacts have been removed. `MaterialDialogJavaHelper` / `MaterialDialogAdapterHelper` are now thin wrappers around `MaterialAlertDialogBuilder`. |
-| `FancyShowCaseView` | 1.4.0 | Low maintenance activity. Evaluate alternatives. |
-| ~~`PRDownloader` (patched)~~ | ~~custom~~ | ✅ **Fixed in REM-19** (2026-05-13). Bible-version downloads were migrated to `VersionDownloadWorker : CoroutineWorker` (OkHttp + Range-based resume), observed by `DownloadMapper` via `WorkManager.getWorkInfoByIdFlow(uuid)`. The `:PrDownloaderFixed` module was deleted entirely. |
-| ~~`AmbilWarna`~~ | ~~bundled~~ | ✅ **Fixed in REM-20** (2026-05-12). Color-picker call sites migrated to a Compose `ModalBottomSheet`-hosted picker (`IosColorPicker` + `ColorPickerDialog`) and a new `ColorPreference` subclass. The `AmbilWarna` Gradle module was deleted entirely. |
-| ~~`LocalBroadcastManager`~~ | — | Removed in REM-03; replaced by `AppEvents` `SharedFlow` buses. |
-| ~~`androidx.percentlayout`~~ | ~~1.0.0~~ | ✅ **Fixed in REM-22 follow-up** (2026-05-07). Orphaned by the GotoActivity Compose port; dependency, version-catalog entry, and dialer-only resources removed. |
+| Dependency | Issue |
+|------------|-------|
+| ~~`material-dialogs`~~ | ✅ **Fixed in REM-14.** All call sites migrated to `MaterialAlertDialogBuilder` (Material 3); the `com.afollestad.materialdialogs` artifacts have been removed. `MaterialDialogJavaHelper` / `MaterialDialogAdapterHelper` are now thin wrappers around `MaterialAlertDialogBuilder`. |
+| `FancyShowCaseView` | Low maintenance activity. Evaluate alternatives. |
+| ~~`PRDownloader` (patched)~~ | ✅ **Fixed in REM-19** (2026-05-13). Bible-version downloads were migrated to `VersionDownloadWorker : CoroutineWorker` (OkHttp + Range-based resume), observed by `DownloadMapper` via `WorkManager.getWorkInfoByIdFlow(uuid)`. The `:PrDownloaderFixed` module was deleted entirely. |
+| ~~`AmbilWarna`~~ | ✅ **Fixed in REM-20** (2026-05-12). Color-picker call sites migrated to a Compose `ModalBottomSheet`-hosted picker (`IosColorPicker` + `ColorPickerDialog`) and a new `ColorPreference` subclass. The `AmbilWarna` Gradle module was deleted entirely. |
+| ~~`LocalBroadcastManager`~~ | Removed in REM-03; replaced by `AppEvents` `SharedFlow` buses. |
+| ~~`androidx.percentlayout`~~ | ✅ **Fixed in REM-22 follow-up** (2026-05-07). Orphaned by the GotoActivity Compose port; dependency, version-catalog entry, and dialer-only resources removed. |
 
 ---
 
@@ -225,7 +225,7 @@ See `docs/build-system.md` for the current release-build command and environment
 
 ## TD-15: S.kt — Service Locator (Being Retired via REM-24)
 
-**File:** `Alkitab/src/main/java/yuku/alkitab/base/S.kt` (~313 lines)
+**File:** `Alkitab/src/main/java/yuku/alkitab/base/S.kt`
 
 A Kotlin `object` singleton that was the central service locator for the entire app. REM-24 (steps 24a–24d, completed 2026-05-12) extracted interfaces and migrated most callers:
 

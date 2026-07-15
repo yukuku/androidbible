@@ -2,11 +2,10 @@
 
 ## Gradle Configuration
 
-- **AGP**: 9.2.1 (see `gradle/libs.versions.toml` for the current version catalog)
-- **Kotlin**: 2.3.21
+- **AGP / Kotlin / library versions**: pinned in the version catalog, `gradle/libs.versions.toml`
 - **Compile SDK**: 36, **Min SDK**: 26, **Target SDK**: 35
 - **JVM Toolchain**: 17 (all modules)
-- **NDK**: 28.2.13676358 (required for Snappy native code)
+- **NDK**: required for Snappy native code; exact version pinned in the build config
 - **Build files**: Kotlin DSL (`build.gradle.kts`, `settings.gradle.kts`) with a version catalog in `gradle/libs.versions.toml`
 
 ## Product Flavors
@@ -110,7 +109,7 @@ Defined in `Alkitab/build.gradle.kts` (inlined there; previously held in the roo
 
 - A placeholder `Alkitab/google-services.json` is committed so `plainDebug` works out of the box. The real `google-services.json` (covering all production applicationIds) lives at `$ALKITAB_PROPRIETARY_DIR/google-services.json` and is copied per-flavor into gitignored `Alkitab/src/<flavor>/google-services.json` at build time — see "Release Build" above.
 - FCM registration is skipped in debug builds
-- Firebase BOM 34.2.0 (Messaging + Crashlytics)
+- Firebase BOM (Messaging + Crashlytics); version pinned in `gradle/libs.versions.toml`
 - Debug builds use `RIBKA_FUNCTIONS_HOST_DEBUG` for FCM functions
 
 ## Supported Locales

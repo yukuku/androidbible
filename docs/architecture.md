@@ -42,7 +42,7 @@ HTTP file downloads (Bible versions) run inside `VersionDownloadWorker` (`Corout
 
 The app uses traditional Activity/Fragment architecture for the reader, with some surfaces on Jetpack Compose (REM-20, REM-22): the color picker, the Bible-audio bar, and a Compose port of the Goto screen that is currently gated behind an experimental flag (`ExperimentalFlags.useComposeGoto()`) with the legacy View-based screens as the default:
 
-- **IsiActivity** — main reader (~2155 lines, down from ~2900). After REM-06/07/08 it still owns:
+- **IsiActivity** — main reader (still the largest class in the app). After REM-06/07/08 it still owns:
   - Bible text display via `VersesControllerImpl` (RecyclerView)
   - Navigation history (`BackForwardListController`)
   - Volume-button navigation
