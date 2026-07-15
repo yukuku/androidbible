@@ -2,12 +2,12 @@
 
 ## Gradle Configuration
 
-- **AGP**: 8.13.0
-- **Kotlin**: 2.2.0
+- **AGP**: 9.2.1 (see `gradle/libs.versions.toml` for the current version catalog)
+- **Kotlin**: 2.3.21
 - **Compile SDK**: 36, **Min SDK**: 26, **Target SDK**: 35
 - **JVM Toolchain**: 17 (all modules)
 - **NDK**: 28.2.13676358 (required for Snappy native code)
-- **Build files**: Groovy DSL (`build.gradle`, not `.kts`)
+- **Build files**: Kotlin DSL (`build.gradle.kts`, `settings.gradle.kts`) with a version catalog in `gradle/libs.versions.toml`
 
 ## Product Flavors
 
@@ -80,7 +80,7 @@ $ALKITAB_PROPRIETARY_DIR/
 
 Environment variables:
 - `ALKITAB_PROPRIETARY_DIR` — directory matching the layout above. Required for `yuku_alkitab`, `yuku_quick_bible`, `sabda_alkitab`. Not used by `plain`.
-- `SIGN_KEYSTORE`, `SIGN_ALIAS`, `SIGN_PASSWORD` — required to sign release builds (any flavor). The signing config in `Alkitab/build.gradle` reads them at config time.
+- `SIGN_KEYSTORE`, `SIGN_ALIAS`, `SIGN_PASSWORD` — required to sign release builds (any flavor). The signing config in `Alkitab/build.gradle.kts` reads them at config time.
 - `BUILD_DIST` — distribution channel identifier embedded in the APK filename. Defaults to `dev` when unset.
 
 What the Gradle build does:
@@ -101,7 +101,7 @@ Release builds use ProGuard with:
 
 ## Server Configuration (Build Config)
 
-Defined in root `build.gradle`:
+Defined in `Alkitab/build.gradle.kts` (inlined there; previously held in the root build script's `ext` block):
 - `SERVER_HOST`: `https://api.alkitab.app`
 - `RIBKA_FUNCTIONS_HOST`: `https://us-central1-pulau-ribka.cloudfunctions.net/` (release)
 - `RIBKA_FUNCTIONS_HOST_DEBUG`: `http://10.0.3.2:5001/pulau-ribka/us-central1/` (debug, emulator localhost)
@@ -110,9 +110,9 @@ Defined in root `build.gradle`:
 
 - A placeholder `Alkitab/google-services.json` is committed so `plainDebug` works out of the box. The real `google-services.json` (covering all production applicationIds) lives at `$ALKITAB_PROPRIETARY_DIR/google-services.json` and is copied per-flavor into gitignored `Alkitab/src/<flavor>/google-services.json` at build time — see "Release Build" above.
 - FCM registration is skipped in debug builds
-- Firebase BOM 29.0.3 (Messaging + Crashlytics)
+- Firebase BOM 34.2.0 (Messaging + Crashlytics)
 - Debug builds use `RIBKA_FUNCTIONS_HOST_DEBUG` for FCM functions
 
 ## Supported Locales
 
-37 locales configured in `resConfigs`: af, am, bg, cs, de, el, en, es, et, fa, fi, fr, hu, in, it, iw, ja, jv, ko, lt, lv, mk, ms, my, nl, no, pl, pt, ro, ru, sk, sv, th, uk, vi, zh-CN, zh-TW.
+30 locales configured via `androidResources.localeFilters` in `Alkitab/build.gradle.kts`: af, bg, ceb, cs, da, de, el, es, fr, hu, in, it, ja, ko, lv, ms, my, nl, pl, pt-rBR, pt, ro, ru, th, tl, tr, uk, vi, zh-rCN, zh-rTW.

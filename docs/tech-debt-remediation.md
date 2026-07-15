@@ -24,19 +24,30 @@ This document is an index over the prioritized remediation plan for each tech de
 - [REM-04: Fix FCM Token Re-registration Retry](tech-debt-remediation/REM-04-fcm-token-retry.md) ✅ **4.2**
 - [REM-05: Refactor DevotionDownloader threading](tech-debt-remediation/REM-05-devotion-downloader-threading.md) ✅ **4.0**
 
+### From the 2026-07 audit (see "Potential Bugs — 2026-07 audit" in [tech-debt.md](tech-debt.md))
+
+- [REM-33: Make Data-Transfer Import Safe](tech-debt-remediation/REM-33-import-safety.md) — **3.8** (PB-11 dry-run destroys history, PB-12 open-transaction leak, PB-13 round-trip gaps)
+- [REM-35: Fix "Update Song Book" dataFormatVersion Handling](tech-debt-remediation/REM-35-songbook-update-dfv.md) — **3.8** (PB-21 duplicates + crash-on-read)
+- [REM-36: Fix YES2 ASCII Search Decoder](tech-debt-remediation/REM-36-yes2-ascii-decoder.md) — **3.8** (PB-22 one-character fix, search broken for ASCII versions)
+- [REM-34: Fix Sync Request Delivery and Shared-State Races](tech-debt-remediation/REM-34-sync-delivery.md) — **3.4** (PB-16..PB-20)
+
 ## Phase 2: Architecture Improvements (BRICE 3.0–3.9)
 
 - [REM-06: Extract IsiActivity Gesture Handling](tech-debt-remediation/REM-06-isiactivity-gestures.md) ✅ **3.4**
 - [REM-07: Extract IsiActivity Action Mode](tech-debt-remediation/REM-07-isiactivity-action-mode.md) ✅ **3.4**
 - [REM-08: Extract IsiActivity Split View Manager](tech-debt-remediation/REM-08-isiactivity-split-view.md) ✅ **3.2**
 - [REM-09: Introduce ViewModel for IsiActivity](tech-debt-remediation/REM-09-isiactivity-viewmodel.md) — **3.4**
-- REM-10 / REM-11 / REM-27 / REM-28 / REM-29 / REM-30 / REM-31 — Room migration for the eight InternalDb table groups. **Reverted before public release.** All eight were merged to `develop` between 2026-05-13 and 2026-05-15, then rolled back as a single PR on 2026-05-18: the risk/value tradeoff was wrong given (a) the app's published Bible data is irreplaceable user-synced state, (b) the dynamic build-time `user_version` in `AlkitabDb` is fundamentally incompatible with Room's static `@Database(version = N)` contract (forcing a separate-file architecture with per-table row copy), and (c) the schema-drift bug surface introduced by Room replicating each legacy `createTable*` quirk (e.g. lost `COLLATE NOCASE` index in [#197](https://github.com/yukuku/androidbible/pull/197), idempotency resurrection in [#195](https://github.com/yukuku/androidbible/issues/195)) is global rather than per-table. The Room dependency is kept in the build for REM-32 (Songs). See PR description for the full rationale.
+- [REM-10 / REM-11 / REM-27 / REM-28 / REM-29 / REM-30 / REM-31](tech-debt-remediation/REM-11-room-version.md) — Room migration for the eight InternalDb table groups. **Reverted before public release.** All eight were merged to `develop` between 2026-05-13 and 2026-05-15, then rolled back as a single PR on 2026-05-18: the risk/value tradeoff was wrong given (a) the app's published Bible data is irreplaceable user-synced state, (b) the dynamic build-time `user_version` in `AlkitabDb` is fundamentally incompatible with Room's static `@Database(version = N)` contract (forcing a separate-file architecture with per-table row copy), and (c) the schema-drift bug surface introduced by Room replicating each legacy `createTable*` quirk (e.g. lost `COLLATE NOCASE` index in [#197](https://github.com/yukuku/androidbible/pull/197), idempotency resurrection in [#195](https://github.com/yukuku/androidbible/issues/195)) is global rather than per-table. The Room dependency is kept in the build for REM-32 (Songs). See PR description for the full rationale.
 - [REM-32: Migrate SongDb to Room](tech-debt-remediation/REM-32-room-song-db.md) ✅ **3.2** — kept. Songs is module-isolated (own SQLite file, no FKs/transactions with Bible data) and song books are re-downloadable, so the migration risk is bounded. REM-21 (Phase 4) composed on top by swapping the Parcelable `data` BLOB to JSON.
 - [REM-12: Replace DragSortListView with ItemTouchHelper](tech-debt-remediation/REM-12-itemtouchhelper.md) ✅ **3.4**
 - [REM-14: Replace material-dialogs with Material 3](tech-debt-remediation/REM-14-material-dialogs.md) ✅ **3.4**
 - [REM-18: Add Test Coverage for Core Modules](tech-debt-remediation/REM-18-test-coverage.md) ✅ **3.4**
 - [REM-23: Port ybuild.sh to Gradle](tech-debt-remediation/REM-23-ybuild-gradle.md) ✅ **3.8**
 - [REM-24: Refactor S.kt Service Locator](tech-debt-remediation/REM-24-s-service-locator.md) ✅ (24a–24d done) **3.2**
+- [REM-37: Bible Audio — MediaSession State & Split-View Wiring](tech-debt-remediation/REM-37-bible-audio-state.md) — **3.8** (PB-31, PB-33, PB-34; 2026-07 audit)
+- [REM-38: Reader Lifecycle Fixes](tech-debt-remediation/REM-38-reader-lifecycle.md) — **3.4** (PB-32, PB-35, PB-36, PB-37; 2026-07 audit)
+- [REM-39: Text Decoding Correctness](tech-debt-remediation/REM-39-text-decoding.md) — **3.4** (PB-23, PB-24; 2026-07 audit)
+- [REM-41: Defensive Data Guards](tech-debt-remediation/REM-41-defensive-guards.md) — **3.4** (PB-14, PB-15, PB-27..PB-30; 2026-07 audit)
 
 ## Phase 3: Modernization (BRICE 2.5–3.0)
 
@@ -47,11 +58,12 @@ This document is an index over the prioritized remediation plan for each tech de
 - [REM-20: Replace AmbilWarna with Material Color Picker](tech-debt-remediation/REM-20-ambilwarna-replacement.md) ✅ **3.0**
 - [REM-25: Decompose VerseRenderer.render()](tech-debt-remediation/REM-25-verserenderer-decompose.md) ✅ **3.4**
 - [REM-26: Port VerseRenderer to Kotlin](tech-debt-remediation/REM-26-verserenderer-kotlin.md) ✅ **3.8**
+- [REM-40: Version Download Robustness](tech-debt-remediation/REM-40-download-robustness.md) — **3.4** (PB-25, PB-26; 2026-07 audit)
 
 ## Phase 4: Long-term / Major Refactors (BRICE < 2.5)
 
 - [REM-21: Migrate Song Storage from Parcelable to JSON](tech-debt-remediation/REM-21-song-json-storage.md) ✅ **2.8** — app-side done; backend redirect branching and `kidung-data` authoring are out of scope (separate repos).
-- [REM-22: Introduce Jetpack Compose for New Screens](tech-debt-remediation/REM-22-jetpack-compose.md) — **2.6** (kicked off)
+- [REM-22: Introduce Jetpack Compose for New Screens](tech-debt-remediation/REM-22-jetpack-compose.md) — **2.6** (kicked off; the Goto Compose port is currently gated behind an experimental flag with the legacy screen as default)
 
 ---
 
@@ -66,6 +78,10 @@ This document is an index over the prioritized remediation plan for each tech de
 | [REM-03](tech-debt-remediation/REM-03-localbroadcastmanager.md) | ~~Replace LocalBroadcastManager~~ ✅ | **3.8** | 1 |
 | [REM-23](tech-debt-remediation/REM-23-ybuild-gradle.md) | ~~Port ybuild.sh to Gradle~~ ✅ | **3.8** | 2 |
 | [REM-26](tech-debt-remediation/REM-26-verserenderer-kotlin.md) | ~~Port VerseRenderer to Kotlin~~ ✅ | **3.8** | 3 |
+| [REM-33](tech-debt-remediation/REM-33-import-safety.md) | Make data-transfer import safe (2026-07 audit) | **3.8** | 1 |
+| [REM-35](tech-debt-remediation/REM-35-songbook-update-dfv.md) | Fix song book update dataFormatVersion (2026-07 audit) | **3.8** | 1 |
+| [REM-36](tech-debt-remediation/REM-36-yes2-ascii-decoder.md) | Fix YES2 ASCII search decoder (2026-07 audit) | **3.8** | 1 |
+| [REM-37](tech-debt-remediation/REM-37-bible-audio-state.md) | Bible audio MediaSession state + split wiring (2026-07 audit) | **3.8** | 2 |
 | [REM-06](tech-debt-remediation/REM-06-isiactivity-gestures.md) | ~~Extract IsiActivity gestures~~ ✅ | **3.4** | 2 |
 | [REM-07](tech-debt-remediation/REM-07-isiactivity-action-mode.md) | ~~Extract IsiActivity action mode~~ ✅ | **3.4** | 2 |
 | [REM-09](tech-debt-remediation/REM-09-isiactivity-viewmodel.md) | Introduce ViewModel | **3.4** | 2 |
@@ -73,6 +89,11 @@ This document is an index over the prioritized remediation plan for each tech de
 | [REM-12](tech-debt-remediation/REM-12-itemtouchhelper.md) | ~~Replace DragSortListView~~ ✅ | **3.4** | 2 |
 | [REM-14](tech-debt-remediation/REM-14-material-dialogs.md) | ~~Replace material-dialogs~~ ✅ | **3.4** | 2 |
 | [REM-18](tech-debt-remediation/REM-18-test-coverage.md) | ~~Add test coverage~~ ✅ | **3.4** | 2 |
+| [REM-34](tech-debt-remediation/REM-34-sync-delivery.md) | Fix sync delivery + shared-state races (2026-07 audit) | **3.4** | 1 |
+| [REM-38](tech-debt-remediation/REM-38-reader-lifecycle.md) | Reader lifecycle fixes (2026-07 audit) | **3.4** | 2 |
+| [REM-39](tech-debt-remediation/REM-39-text-decoding.md) | Text decoding correctness (2026-07 audit) | **3.4** | 2 |
+| [REM-40](tech-debt-remediation/REM-40-download-robustness.md) | Version download robustness (2026-07 audit) | **3.4** | 3 |
+| [REM-41](tech-debt-remediation/REM-41-defensive-guards.md) | Defensive data guards (2026-07 audit) | **3.4** | 2 |
 | [REM-25](tech-debt-remediation/REM-25-verserenderer-decompose.md) | ~~Decompose VerseRenderer.render~~ ✅ | **3.4** | 3 |
 | [REM-24](tech-debt-remediation/REM-24-s-service-locator.md) | ~~Refactor S.kt service locator (steps 24a–24d complete)~~ ✅ | **3.2** | 2 |
 | [REM-08](tech-debt-remediation/REM-08-isiactivity-split-view.md) | ~~Extract split view manager~~ ✅ | **3.2** | 2 |
@@ -100,3 +121,9 @@ This document is an index over the prioritized remediation plan for each tech de
 **Sprint 5 (2 weeks):** ~~REM-32~~✅ — Room migration for SongDb (`AlkitabSongRoomDb`). REM-10 / REM-11 / REM-27 / REM-28 / REM-29 / REM-30 / REM-31 were also merged in this sprint but reverted before public release on 2026-05-18; see the entries above for the rationale. `InternalDbHelper` remains the active source of truth for every Bible-related table; `SongDbHelper` is now a rollback safety net only.
 **Sprint 6 (2 weeks):** REM-09, ~~REM-18a-f~~✅ — ViewModel + test coverage (REM-18a/b/c/d/e/f done)
 **Ongoing:** REM-15, REM-16, ~~REM-17~~✅ — modernization work mixed into feature sprints (REM-17 done)
+
+### 2026-07 audit follow-up (suggested)
+
+**Sprint 7 (1 week) — user-data safety first:** REM-36 (1-line search fix), REM-35 (song book update), REM-33 (import safety), plus the REM-41 widget one-liner (PB-30)
+**Sprint 8 (1 week):** REM-34 (sync delivery/races), rest of REM-41 (defensive guards)
+**Sprint 9 (1 week):** REM-37 (Bible audio state), REM-38 (reader lifecycle), REM-39 (text decoding), REM-40 (download robustness)

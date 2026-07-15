@@ -47,7 +47,9 @@ Verse text uses inline formatting codes prefixed with `@`:
 
 ## FormattedTextRenderer
 
-`FormattedTextRenderer.kt` is used for mock testing of the rendering pipeline. It simulates span application without Android framework dependencies.
+`FormattedTextRenderer.kt` is a lightweight production renderer — "a much simpler version of `VerseRenderer`" per its own doc comment — used where only a subset of the formatting codes matters (italics `@9…@7`, line break `@8`, `@<tag@>…@/` inline elements). It builds a `SpannableStringBuilder` directly, without the verse-number/paragraph machinery of the full pipeline.
+
+A Compose port of verse rendering also exists (`VerseRendererCompose.kt`) alongside the View-based `VerseRenderer.kt`.
 
 ## Plain Text Conversion
 

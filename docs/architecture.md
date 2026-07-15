@@ -40,9 +40,9 @@ HTTP file downloads (Bible versions) run inside `VersionDownloadWorker` (`Corout
 
 ## Activity Architecture
 
-The app uses traditional Activity/Fragment architecture for the reader, with some screens (notably `GotoActivity` and the new color picker) ported to Jetpack Compose (REM-20, REM-22):
+The app uses traditional Activity/Fragment architecture for the reader, with some surfaces on Jetpack Compose (REM-20, REM-22): the color picker, the Bible-audio bar, and a Compose port of the Goto screen that is currently gated behind an experimental flag (`ExperimentalFlags.useComposeGoto()`) with the legacy View-based screens as the default:
 
-- **IsiActivity** — main reader (~2170 lines, down from ~2900). After REM-06/07/08 it still owns:
+- **IsiActivity** — main reader (~2155 lines, down from ~2900). After REM-06/07/08 it still owns:
   - Bible text display via `VersesControllerImpl` (RecyclerView)
   - Navigation history (`BackForwardListController`)
   - Volume-button navigation
@@ -110,4 +110,5 @@ MVersion.getVersion()
   - `DevotionDownloader` uses a single-thread `ExecutorService` with a `LinkedBlockingDeque` queue and a clean shutdown path (REM-05)
   - Song-book downloads use raw OkHttp via `Connections.downloadCall(...)`
   - File imports and widget updates
-- Coroutines are used in the migrated paths above (workers, gesture-flow collectors, the `AppEvents` `SharedFlow` buses introduced by REM-03) but the codebase still has `Thread` / `Handler` remnants — see `docs/tech-debt.md`
+- Audio playback runs in two foreground `MediaSessionService`s (`BibleAudioService` for Bible chapter audio, `SongAudioService` for hymns), arbitrated to at most one active session by `AudioPlaybackCoordinator` — see `docs/modules/audio-playback.md`
+- Coroutines are used in the migrated paths above (workers, the audio subsystem, gesture-flow collectors, the `AppEvents` `SharedFlow` buses introduced by REM-03) but the codebase still has `Thread` / `Handler` remnants — see `docs/tech-debt.md`

@@ -23,7 +23,7 @@ The canonical in-memory/storage model is `yuku.alkitab.songs.newdoc.SongDocument
 
 ## Storage
 
-Songs are stored in `SongRoomDatabase` (separate Room database from the main `AppDatabase` — see [Storage & Database](../storage.md) for the rationale). Two tables: `song_info` (one row per song, with the JSON-encoded `SongDocument` in the `data` column, UTF-8 bytes) and `song_book_info` (one row per installed song book). The `SongDb.java` facade preserves the legacy public surface (now typed on `SongDocument`), routing through `SongRoomDao`.
+Songs are stored in `SongRoomDatabase` (its own Room database in its own SQLite file — see [Storage & Database](../storage.md) for the rationale). Two tables: `song_info` (one row per song, with the JSON-encoded `SongDocument` in the `data` column, UTF-8 bytes) and `song_book_info` (one row per installed song book). The `SongDb.java` facade preserves the legacy public surface (now typed on `SongDocument`), routing through `SongRoomDao`.
 
 `dataFormatVersion` on a `song_info` row marks the payload shape: `5` (`SongDocumentJson.DATA_FORMAT_VERSION`) is JSON; anything else is a legacy Android `Parcel.marshall()` byte buffer written before REM-21. `SongDb.readDocument` dispatches on that column: JSON rows parse directly; legacy rows are decoded by the pure-JVM `LegacyParcelDecoder` (falling back to the platform `Parcel.unmarshall()` if that throws), converted via `LegacySongConverter`, and the result is written back to the row (bumping `dataFormatVersion` to `5`) so each legacy row is converted **at most once**, lazily, on first read — there is no bulk migration pass. This exists because the marshalled `Parcel` byte layout changed in Android 13 (a length prefix was inserted after the `VAL_PARCELABLE` tag); a device that downloaded songs pre-13 and later upgraded could otherwise fail to read its own stored BLOBs.
 
@@ -41,11 +41,7 @@ The legacy `SongDb` SQLite file (managed by `SongDbHelper`) is kept around as a 
 
 ## Audio Playback
 
-Songs can have audio attachments played via two controller implementations:
-- `ExoplayerController.kt` — ExoPlayer (media3) for MP3 with OkHttp streaming
-- `MidiController.kt` — Android MediaPlayer for MIDI with local caching
-
-Both extend `MediaController.kt` with a shared state machine (reset → preparing → playing/paused → complete/error). See [Audio Playback](audio-playback.md) for details.
+Songs can have MP3 or MIDI audio attachments, both played through a single media3 `ExoPlayer` inside the foreground `SongAudioService` (MIDI via the experimental `media3-exoplayer-midi` decoder). `SongViewActivity` drives it through `SongAudioController`, which extends `MediaController.kt` with the shared state machine (reset → preparing → playing/paused → complete/error). Playback continues in the background with a media notification, and starting song audio stops Bible audio (and vice versa) via `AudioPlaybackCoordinator`. See [Audio Playback](audio-playback.md) for details.
 
 ## Song Book Management
 

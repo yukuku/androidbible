@@ -2,36 +2,47 @@
 
 ## Overview
 
-Audio playback is used exclusively within the Songs module for playing song accompaniments. Supports MP3 (via ExoPlayer) and MIDI (via Android MediaPlayer).
+The app has two audio subsystems that are mutually exclusive at runtime:
 
-## Key Files
+- **Bible chapter audio** (`Alkitab/src/main/java/yuku/alkitab/base/audio/`) — streams per-chapter MP3s with verse-level highlight/auto-scroll in the reader.
+- **Song (kidung/hymn) audio** (`Alkitab/src/main/java/yuku/alkitab/songs/`) — plays MP3 or MIDI accompaniments from the song viewer.
 
-- `Alkitab/src/main/java/yuku/alkitab/songs/MediaController.kt` — Abstract base with shared state machine
-- `Alkitab/src/main/java/yuku/alkitab/songs/ExoplayerController.kt` — ExoPlayer-based MP3 playback
-- `Alkitab/src/main/java/yuku/alkitab/songs/MidiController.kt` — MediaPlayer-based MIDI playback
-- `Alkitab/src/main/java/yuku/alkitab/songs/MediaStateListener.kt` — Listener interface for UI updates
+Both ride AndroidX media3 `ExoPlayer` inside a foreground `MediaSessionService`, so both get background playback and a lock-screen media notification. `AudioPlaybackCoordinator` (a process-wide singleton) guarantees at most one logical audio session is active: each service `acquire()`s on play, and acquiring stops the previously active session in code (OS audio-focus arbitration alone proved unreliable).
+
+## Bible Audio — Key Files
+
+- `audio/BibleAudioService.kt` — Foreground `MediaSessionService` owning the player
+- `audio/BibleAudioPlayer.kt` — Wrapper around media3 `ExoPlayer`; fetches over the shared OkHttp client
+- `audio/BibleChapterNavigatingPlayer.kt` — `ForwardingPlayer` that re-purposes skip-next/previous transport commands as chapter navigation
+- `audio/BibleNeighborResolver.kt` — Resolves previous/next chapter targets across book boundaries
+- `audio/BibleAudioRepository.kt` — Turns `(versionId, bookId, chapter_1)` into a chapter MP3 URL + verse timing, via catalog URL templates
+- `audio/AudioCatalogRepository.kt` — Source of truth for the audio catalog (which versions have audio + URL templates); backend-served with a bundled fallback
+- `audio/HighlightTracker.kt` — Maps playback position to the active 1-based verse number as a `StateFlow`, driving verse highlight and auto-scroll
+- `audio/AudioBarController.kt` — Glue between the View-based `IsiActivity` and the Compose audio bar
+- `audio/ui/AudioBar.kt`, `ui/SpeedBottomSheet.kt`, `ui/AudioHighlightColor.kt`, `ui/AudioTheme.kt` — Compose UI (playback bar, speed picker, highlight color)
+
+## Song Audio — Key Files
+
+- `songs/SongAudioService.kt` — Foreground `MediaSessionService` for hymn audio. A single `ExoPlayer` decodes both MP3 (over OkHttp) and MIDI (via the experimental `media3-exoplayer-midi` JSyn synth), so one code path covers both formats
+- `songs/SongAudioController.kt` — Activity-facing `MediaController` that drives playback through the background service. Replaces the former activity-scoped `ExoplayerController` and `MidiController`; format selection happens inside the service
+- `songs/MediaController.kt` — Abstract base with the shared state machine
+- `songs/MediaStateListener.kt` — Listener interface for UI updates
+- `songs/SongPlaybackState.kt` — Service-side playback state, mapped onto the `MediaController.State` machine
 
 ## State Machine
 
-Both controllers share the same state machine:
+Song audio keeps the legacy controller state machine (now fed from `SongPlaybackState`):
 ```
 reset → preparing → playing ⇄ paused → complete
                   ↘ error
 ```
 
-## ExoPlayer Controller
-
-- Uses AndroidX media3 ExoPlayer
-- OkHttp integration for HTTP streaming
-- Supports loop playback
-- `getProgress()` returns `[position, duration]` in milliseconds
-
-## MIDI Controller
-
-- Uses Android's built-in `MediaPlayer`
-- Downloads MIDI files to local cache before playback (background thread)
-- Same state machine and progress reporting as ExoPlayer
-
 ## Integration
 
-`SongFragment.kt` instantiates the appropriate controller based on the audio type and provides play/pause/stop UI controls. The `MediaStateListener` callbacks update the fragment's UI to reflect playback state.
+- Bible audio: `IsiActivity` shows the Compose `AudioBar` via `AudioBarController`; `HighlightTracker`'s flow drives the verse highlight while audio plays.
+- Song audio: `SongViewActivity`'s toolbar drives `SongAudioController`, whose service keeps playing (with notification) after the activity is backgrounded.
+- Starting either kind of audio stops the other via `AudioPlaybackCoordinator`.
+
+## Tests
+
+`AudioPlaybackCoordinatorTest`, `BibleAudioRepositoryTest`, `AudioCatalogRepositoryTest`, `BibleNeighborResolverTest`, `HighlightTrackerTest`, `AudioBarControllerReshowTest`, `AudioHighlightColorTest` (unit tests under `Alkitab/src/test`).

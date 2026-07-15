@@ -20,8 +20,10 @@
 | 7 | ~~`SongBookUtil.java`~~ | ~~219~~ | ~~Medium~~ | ✅ ported to `SongBookUtil.kt` (2026-05-13). `object` with nested interfaces/classes; `@JvmStatic` on all public methods; `@JvmField` on `SongBookInfo` fields. |
 | 8 | ~~`VerseRenderer.java`~~ | ~~423~~ | ~~Medium~~ | ✅ ported ([REM-26](REM-26-verserenderer-kotlin.md)) |
 | 9 | ~~`SearchEngine.java`~~ | ~~537~~ | ~~Medium~~ | ✅ ported to `SearchEngine.kt` (2026-05-13). `object` with nested `ReadyTokens` class; `@JvmStatic` on public methods; `searchByGrep()` returns non-nullable `IntArrayList`; `sortWith` replaces `Arrays.sort`. |
-| 10 | `Sync.java` | 508 | High | Threading + network, many call sites |
-| 11 | `InternalDb.java` | 1771 | High | Core database, skip if doing Room migration ([REM-10](REM-10-room-markers.md)) |
+| 10 | `Sync.java` | 571 | High | Threading + network, many call sites |
+| 11 | `InternalDb.java` | 830 | High | Core database (already shrunk from 1771 by the DAO extraction; the Room migration that would have superseded this was reverted — see [REM-11](REM-11-room-version.md)) |
+
+Not on the original list but still Java: `SyncAdapter.java` (630 lines) and the devotion article parsers (`DevotionArticle.java` + the six `Article*.java` implementations).
 
 Use Android Studio's "Convert Java File to Kotlin" as a starting point, then manually clean up:
 - Replace `@Nullable`/`@NonNull` with Kotlin nullability
