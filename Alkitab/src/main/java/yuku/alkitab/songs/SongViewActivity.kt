@@ -52,7 +52,6 @@ import yuku.alkitab.base.widget.LeftDrawer
 import yuku.alkitab.base.widget.TwofingerLinearLayout
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
-import yuku.alkitab.songs.SongViewActivity.Companion.songAudioController
 import yuku.alkitab.songs.newdoc.ScriptureBlock
 import yuku.alkitab.songs.newdoc.SongDocument
 import yuku.alkitab.songs.newdoc.SongDocumentJson
@@ -64,6 +63,7 @@ private const val TAG = "SongViewActivity"
 
 // package-visible (not private): reused by SongFragment when rendering an in-document ScriptureBlock
 const val BIBLE_PROTOCOL = "bible"
+private const val YOUTUBE_PROTOCOL = "youtube"
 private const val REQCODE_songList = 1
 private const val REQCODE_downloadSongBook = 3
 private const val FRAGMENT_TAG_SONG = "song"
@@ -802,15 +802,20 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
             BIBLE_PROTOCOL -> {
                 val ariRanges = TargetDecoder.decode("o:" + uri.schemeSpecificPart)
-                if (ariRanges != null) {
-                    val versesDialog = VersesDialog.newInstance(ariRanges)
-                    versesDialog.listener = object : VersesDialog.VersesDialogListener() {
-                        override fun onVerseSelected(ari: Int) {
-                            startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari))
-                        }
+                val versesDialog = VersesDialog.newInstance(ariRanges)
+                versesDialog.listener = object : VersesDialog.VersesDialogListener() {
+                    override fun onVerseSelected(ari: Int) {
+                        startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari))
                     }
-                    versesDialog.show(supportFragmentManager, "VersesDialog")
                 }
+                versesDialog.show(supportFragmentManager, "VersesDialog")
+                return true
+            }
+
+            YOUTUBE_PROTOCOL -> {
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = "https://www.youtube.com/watch?v=${uri.schemeSpecificPart}".toUri()
+                startActivity(intent)
                 return true
             }
 

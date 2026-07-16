@@ -1,5 +1,8 @@
 package yuku.alkitab.songs.newdoc
 
+import yuku.alkitab.songs.newdoc.SongDocumentRenderer.renderLyrics
+
+
 /**
  * Renders a [SongDocument] to the HTML shape `templates/song.html` expects,
  * by walking [SongDocument.blocks] in document order and dispatching per
@@ -15,7 +18,7 @@ object SongDocumentRenderer {
         "authors_lyric", "authors_music", "note", "copyright",
     )
 
-    private val YOUTUBE_ID_REGEX = Regex("^[A-Za-z0-9_-]{1,32}$")
+    private val YOUTUBE_ID_REGEX = Regex("^[A-Za-z0-9_-]{11}$")
 
     @JvmStatic
     fun renderDocument(doc: SongDocument, renderScripture: (String) -> String, forPatchText: Boolean): String {
@@ -31,15 +34,7 @@ object SongDocumentRenderer {
                 }
 
                 is RowBlock -> {
-                    for (item in block.items) {
-                        when (item) {
-                            is PBlock -> renderPBlock(item, sb)
-                            is YoutubeBlock -> renderYoutubeBlock(item, sb)
-                            is ScriptureBlock -> sb.append("<div class='scriptureReferences'>").append(renderScripture(item.osis)).append("</div>")
-                            is GapBlock -> sb.append("<div style='height:").append(item.size ?: 1f).append("em'></div>")
-                            else -> {}
-                        }
-                    }
+                    renderRowBlock(block, sb, renderScripture)
                     if (!forPatchText) sb.append("<div class='break'></div>")
                 }
 
@@ -56,6 +51,28 @@ object SongDocumentRenderer {
         }
 
         return sb.toString()
+    }
+
+    private fun renderRowBlock(block: RowBlock, sb: StringBuilder, renderScripture: (String) -> String) {
+        val cls = "row"
+        val style = buildString {
+            block.size?.takeIf { it.isFinite() }?.let { append("font-size:").append(it).append("em;") }
+        }
+        sb.append("<div class='").append(cls).append("'")
+        if (style.isNotEmpty()) sb.append(" style='").append(style).append("'")
+        sb.append(">")
+
+        for (item in block.items) {
+            when (item) {
+                is PBlock -> renderPBlock(item, sb)
+                is YoutubeBlock -> renderYoutubeBlock(item, sb)
+                is ScriptureBlock -> sb.append("<div class='scriptureReferences'>").append(renderScripture(item.osis)).append("</div>")
+                is GapBlock -> sb.append("<div style='height:").append(item.size ?: 1f).append("em'></div>")
+                else -> {}
+            }
+        }
+
+        sb.append("</div>")
     }
 
     @JvmStatic
@@ -81,13 +98,11 @@ object SongDocumentRenderer {
 
     private fun renderYoutubeBlock(block: YoutubeBlock, sb: StringBuilder) {
         val videoId = block.videoId
-        if (!YOUTUBE_ID_REGEX.matches(videoId)) return // not a plausible id; skip rather than build an unsafe URL
+        if (!YOUTUBE_ID_REGEX.matches(videoId)) return // not a valid id; skip rather than build an unsafe URL
 
-        sb.append("<div class='youtube'><a href='https://www.youtube.com/watch?v=")
+        sb.append("<div class='youtube'><a href='youtube:")
             .append(videoId)
-            .append("'>")
-            .append(escapeHtml(videoId))
-            .append("</a></div>")
+            .append("'>YouTube</a></div>")
     }
 
     private fun renderLyricBlock(lyricBlock: LyricBlock, index: Int, totalCount: Int, sb: StringBuilder, forPatchText: Boolean) {

@@ -25,6 +25,12 @@
 .body {
 }
 
+.row {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+}
+
 .note {
 	font-style: italic;
 }
