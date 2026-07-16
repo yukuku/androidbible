@@ -24,7 +24,7 @@ object SongDocumentSearch {
     private fun collect(block: Block, out: MutableList<String>) {
         when (block) {
             is PBlock -> if (block.role == "tune") out.add(block.content.plainText())
-            is RowBlock -> for (item in block.items) {
+            is RowBlock -> for (item in block.items.filterIsInstance<PBlock>()) {
                 if (item.role == "authors_lyric" || item.role == "authors_music") out.add(item.content.plainText())
             }
             is LyricBlock -> for (verse in block.verses) {

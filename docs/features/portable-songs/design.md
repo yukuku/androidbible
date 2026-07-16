@@ -68,7 +68,7 @@ A block is discriminated by `type`. **Every** block may carry an optional `size`
 | `type`      | Shape | Purpose |
 |-------------|-------|---------|
 | `p`         | `{ type:"p", role?, size?, align?, content: Line }` | A single line of text. `role` selects default formatting; `align` is line-level. |
-| `row`       | `{ type:"row", size?, items: PBlock[] }` | Horizontal container; items are spread start → end (first = start/left, last = end/right). Used for "lyricist left / composer right". |
+| `row`       | `{ type:"row", size?, items: Block[] }` | Horizontal container; items are spread start → end (first = start/left, last = end/right). Items are usually `p`, but may be `youtube` / `gap` / `scripture`. Used for "lyricist left / composer right", or musical notation beside a video link. |
 | `lyric`     | `{ type:"lyric", role?, size?, caption?: Line, verses: Verse[] }` | A lyric group (stanza set). |
 | `scripture` | `{ type:"scripture", role?, size?, osis: string }` | Scripture reference(s) as an OSIS string, e.g. `"John.3.16; Rom.5.8"`. |
 | `youtube`   | `{ type:"youtube", role?, size?, videoId: string }` | An embedded YouTube reference (single required `videoId`). |
@@ -324,7 +324,7 @@ A song enters document mode with a `code <CODE>` line (required; `no` also accep
 - `@scripture <osis>` → a `scripture` block.
 - `@youtube <videoId>` → a `youtube` block.
 - `@gap` → a `gap` block. Combines with `@size=<float>` like other tags, e.g. `@size=2 @gap` for a double-height blank line.
-- `@row` … `@/row` → a `row` block; each line between the markers is parsed as a `p` item (role/size/align tags apply per item), giving e.g. lyricist-left / composer-right.
+- `@row` … `@/row` → a `row` block; each line between the markers becomes a block item — usually a `p` (role/size/align tags apply per item), but `@youtube` / `@gap` / `@scripture` inside a row produce their own block types. Gives e.g. lyricist-left / composer-right, or musical notation beside a video link.
 - **Lyric markers** `*N` / `*ref`[N] / `*reff`[N] / `*text`[N] / `*versi`/`*version <caption>` behave as in legacy, including auto-grouping (a normal verse number ≤ the last one starts a new `lyric` group). Subsequent non-marker lines are appended to the current verse.
   - **Verse lines** support leading **`@size=` / `@align=`** line-level tags, producing the `{ size?, align?, content }` verse-line form (role tags are not meaningful on a lyric line and stay literal).
 - A **blank line ends the current verse** (returns to paragraph mode). A following `*` marker reopens lyric mode.

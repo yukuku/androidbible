@@ -88,7 +88,7 @@ data class PBlock(
 @Serializable(with = RowBlockSerializer::class)
 data class RowBlock(
     override val size: Float? = null,
-    val items: List<PBlock> = emptyList(),
+    val items: List<Block> = emptyList(),
 ) : Block
 
 @Serializable(with = LyricBlockSerializer::class)

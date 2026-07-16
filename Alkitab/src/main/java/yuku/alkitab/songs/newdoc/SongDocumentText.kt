@@ -30,7 +30,7 @@ object SongDocumentText {
         doc.meta.title_original?.let { sb.append('(').append(it).append(')').append('\n') }
         sb.append('\n')
 
-        val rowItems = doc.blocks.filterIsInstance<RowBlock>().firstOrNull()?.items.orEmpty()
+        val rowItems = doc.blocks.filterIsInstance<RowBlock>().firstOrNull()?.items.orEmpty().filterIsInstance<PBlock>()
         rowItems.firstOrNull { it.role == "authors_lyric" }?.let { sb.append(it.content.plainText()).append('\n') }
         rowItems.firstOrNull { it.role == "authors_music" }?.let { sb.append(it.content.plainText()).append('\n') }
         doc.blocks.filterIsInstance<PBlock>().firstOrNull { it.role == "tune" }?.let {
