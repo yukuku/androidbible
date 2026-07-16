@@ -169,7 +169,7 @@ object RowBlockSerializer : KSerializer<RowBlock> {
         val obj = d.decodeJsonElement().jsonObject
         return RowBlock(
             size = obj["size"]?.jsonPrimitive?.floatOrNull,
-            items = (obj["items"]?.jsonArray ?: JsonArray(emptyList())).map { d.json.decodeFromJsonElement(BlockSerializer, it) },
+            items = obj["items"]?.jsonArray?.map { d.json.decodeFromJsonElement(BlockSerializer, it) } ?: emptyList(),
         )
     }
 }
