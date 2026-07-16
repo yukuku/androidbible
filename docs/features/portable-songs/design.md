@@ -301,7 +301,7 @@ This keeps the storage-engine swap (Room) and the payload swap independent, as t
 
 - **App.** `SongBookUtil.deserializeSongs` (Java `ObjectInputStream` guarded by `SafeObjectInputStream`) is replaced by a JSON parser (Moshi / kotlinx). This removes the Java-deserialization gadget surface entirely — a security win. `OptionalGzipInputStream` stays (the payload is still gzipped). The supported `dataFormatVersion` check (`SongBookUtil.isSupportedDataFormatVersion`) is updated to accept the new JSON version.
 - **Backend** (`alkitab-host`). `get_songs` keeps issuing a 302 redirect, but branches on the requested `dataFormatVersion`: new clients → `…/songs/v1/data/<book>-5.json.gz`; old clients → the existing `<book>-4.ser.gz`. Old installs keep working; the web (pickle/HTML) path is untouched.
-- **`kidung-data`.** A new `OutputJson` (alongside the existing `OutputSer`) emits `<book>-5.json.gz` (the §3.7 wrapper) plus a JSON `song_book_infos`. Static artifacts are published to `boafiles.kejut.com` as today.
+- **`kidung-data`.** A new `OutputJson` (alongside the existing `OutputSer`) emits `<book>-5.json.gz` (the §3.7 wrapper). The book index `song_book_infos.txt` stays as-is (the backend parses it server-side via `parse_infos_content`). Static artifacts are published to `boafiles.kejut.com` as today.
 
 ---
 
@@ -401,7 +401,7 @@ The reference renderer is in [`song-editor.html`](./song-editor.html). On device
 **Authoring (`kidung-data`)**
 
 - `InputTxt` extended with `@doc` document mode (legacy path unchanged).
-- New `OutputJson` emitting `<book>-5.json.gz` + JSON `song_book_infos`.
+- New `OutputJson` emitting `<book>-5.json.gz` (book index `song_book_infos.txt` unchanged).
 
 ---
 
