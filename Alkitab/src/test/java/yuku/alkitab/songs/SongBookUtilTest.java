@@ -23,6 +23,7 @@ import yuku.alkitab.songs.newdoc.RowBlock;
 import yuku.alkitab.songs.newdoc.ScriptureBlock;
 import yuku.alkitab.songs.newdoc.SongDocument;
 import yuku.alkitab.songs.newdoc.SongDocumentJson;
+import yuku.alkitab.songs.newdoc.YoutubeBlock;
 import yuku.kpri.model.Lyric;
 import yuku.kpri.model.Song;
 import yuku.kpri.model.Verse;
@@ -92,8 +93,8 @@ public class SongBookUtilTest {
     private static PBlock firstRowItemWithRole(SongDocument doc, String role) {
         for (Block b : doc.getBlocks()) {
             if (b instanceof RowBlock) {
-                for (PBlock item : ((RowBlock) b).getItems()) {
-                    if (role.equals(item.getRole())) return item;
+                for (Block item : ((RowBlock) b).getItems()) {
+                    if (item instanceof PBlock && role.equals(((PBlock) item).getRole())) return (PBlock) item;
                 }
             }
         }
@@ -253,6 +254,32 @@ public class SongBookUtilTest {
         assertEquals(false, SongBookUtil.isSupportedDataFormatVersion(3));
         assertEquals(false, SongBookUtil.isSupportedDataFormatVersion(4));
         assertTrue(SongBookUtil.isSupportedDataFormatVersion(5));
+    }
+
+    @Test
+    public void deserializeRowContainingYoutubeBlock() throws Exception {
+        String json = "{\"dataFormatVersion\":5,\"songs\":[{\"code\":\"KK1\",\"meta\":{\"title\":\"T\"},"
+            + "\"blocks\":[{\"type\":\"row\",\"items\":["
+            + "{\"type\":\"p\",\"role\":\"musical\",\"content\":\"do=d 4/4\"},"
+            + "{\"type\":\"youtube\",\"videoId\":\"syUb69jiBnA\"}"
+            + "]}]}]}";
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (GZIPOutputStream gzos = new GZIPOutputStream(baos)) {
+            gzos.write(json.getBytes(StandardCharsets.UTF_8));
+        }
+
+        List<SongDocument> result = SongBookUtil.deserializeSongs(new ByteArrayInputStream(baos.toByteArray()));
+        assertEquals(1, result.size());
+
+        RowBlock row = null;
+        for (Block b : result.get(0).getBlocks()) {
+            if (b instanceof RowBlock) row = (RowBlock) b;
+        }
+        assertNotNull(row);
+        assertEquals(2, row.getItems().size());
+        assertTrue(row.getItems().get(0) instanceof PBlock);
+        assertTrue(row.getItems().get(1) instanceof YoutubeBlock);
+        assertEquals("syUb69jiBnA", ((YoutubeBlock) row.getItems().get(1)).getVideoId());
     }
 
     @Test

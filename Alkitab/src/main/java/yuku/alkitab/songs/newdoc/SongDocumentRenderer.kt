@@ -31,7 +31,15 @@ object SongDocumentRenderer {
                 }
 
                 is RowBlock -> {
-                    for (item in block.items) renderPBlock(item, sb)
+                    for (item in block.items) {
+                        when (item) {
+                            is PBlock -> renderPBlock(item, sb)
+                            is YoutubeBlock -> renderYoutubeBlock(item, sb)
+                            is ScriptureBlock -> sb.append("<div class='scriptureReferences'>").append(renderScripture(item.osis)).append("</div>")
+                            is GapBlock -> sb.append("<div style='height:").append(item.size ?: 1f).append("em'></div>")
+                            else -> {}
+                        }
+                    }
                     if (!forPatchText) sb.append("<div class='break'></div>")
                 }
 
