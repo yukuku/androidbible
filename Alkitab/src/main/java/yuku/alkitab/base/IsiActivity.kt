@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.ContentResolver
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
@@ -511,8 +512,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         splitHandleButton = findViewById(R.id.splitHandleButton)
         floater = findViewById(R.id.floater)
 
-        setupSafeAreaInsets()
-
         // If layout is changed, updateToolbarLocation must be updated as well. This will be called in DEBUG to make sure
         // updateToolbarLocation is also updated when layout is updated.
         if (BuildConfig.DEBUG) {
@@ -578,6 +577,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
         // for splitting
         splitViewManager.installListeners()
+
+        setupSafeAreaInsets()
 
         if (BuildConfig.DEBUG) {
             // Runtime assertions: splitRoot must have 3 children;
@@ -1465,14 +1466,14 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             }
         }
 
-        val floaterBasePadding = floater.paddingLeft
+        val floaterBasePadding = Rect(floater.paddingLeft, floater.paddingTop, floater.paddingRight, floater.paddingBottom)
         ViewCompat.setOnApplyWindowInsetsListener(floater) { v, windowInsets ->
             val insets = windowInsets.getInsets(safeAreaTypes)
             v.setPadding(
-                floaterBasePadding + insets.left,
-                floaterBasePadding + insets.top,
-                floaterBasePadding + insets.right,
-                floaterBasePadding + insets.bottom
+                floaterBasePadding.left + insets.left,
+                floaterBasePadding.top + insets.top,
+                floaterBasePadding.right + insets.right,
+                floaterBasePadding.bottom + insets.bottom
             )
             windowInsets
         }
