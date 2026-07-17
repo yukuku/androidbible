@@ -1443,6 +1443,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             val stackedSplit = splitHandleButton.isVisible && splitRoot.orientation == LinearLayout.VERTICAL
             lsSplit0.setViewBottomInset(if (stackedSplit) 0 else bottomInset)
             lsSplit1.setViewBottomInset(bottomInset)
+            splitHandleButton.setBottomInset(bottomInset)
 
             panelBackForwardList.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 bottomMargin = panelBackForwardListBaseBottomMargin + bottomInset
