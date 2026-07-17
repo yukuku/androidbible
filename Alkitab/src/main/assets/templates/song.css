@@ -83,14 +83,19 @@
 
 .authors_lyric {
 	font-family: sans-serif;
-	float: left;
 	font-size: 87.5%;
 }
 
 .authors_music {
 	font-family: sans-serif;
-	float: right;
 	font-size: 87.5%;
+}
+
+/* Inside an authors row, the composer sits at the end even when the
+   lyricist is absent (the classic legacy layout). A bare authors_music
+   paragraph outside a row stays start-aligned. */
+.row .authors_music {
+	margin-left: auto;
 }
 
 .scriptureReferences {
