@@ -274,7 +274,7 @@ The decoder yields the legacy field values; a converter maps them to canonical b
 1. `title` → `p` role `title`
 2. `title_original` → `p` role `title_original` (if present)
 3. `tune` → `p` role `tune` (if present)
-4. authors → a `row` with `p` role `authors_lyric` (lyricist, joined `"; "`) as the first item and `p` role `authors_music` (composer) as the last item; include only those present
+4. authors → a `row` with `p` role `authors_lyric` (lyricist, joined `"; "`) as the first item and `p` role `authors_music` (composer) as the last item; include only those present. A solo composer (no lyricist) carries `align: "end"` — the row's space-between layout only places it at the end when the lyricist item is also present
 5. `scriptureReferences` → `scripture` block (if present)
 6. `keySignature` + `timeSignature` → `p` role `musical`, content = `[keySignature, timeSignature].filter(present).join(" ")` (if either present)
 7. each legacy `Lyric` → a `lyric` block: `caption` preserved; each `Verse` becomes `{ kind, lines }` with `VerseKind` mapped and inline `<u>/<b>/<i>` parsed into spans (other raw text escaped); `Verse.ordering` dropped.
@@ -324,7 +324,7 @@ A song enters document mode with a `code <CODE>` line (required; `no` also accep
 - `@scripture <osis>` → a `scripture` block.
 - `@youtube <videoId>` → a `youtube` block.
 - `@gap` → a `gap` block. Combines with `@size=<float>` like other tags, e.g. `@size=2 @gap` for a double-height blank line.
-- `@row` … `@/row` → a `row` block; each line between the markers becomes a block item — usually a `p` (role/size/align tags apply per item), but `@youtube` / `@gap` / `@scripture` inside a row produce their own block types. Gives e.g. lyricist-left / composer-right, or musical notation beside a video link.
+- `@row` … `@/row` → a `row` block; each line between the markers becomes a block item — usually a `p` (role/size/align tags apply per item), but `@youtube` / `@gap` / `@scripture` inside a row produce their own block types. Gives e.g. lyricist-left / composer-right, or musical notation beside a video link. On a row item, `align` positions the item within the row (a shrink-to-fit flex item, where text alignment cannot move anything) — e.g. `@align=end` keeps a lone composer at the end.
 - **Lyric markers** `*N` / `*ref`[N] / `*reff`[N] / `*text`[N] / `*versi`/`*version <caption>` behave as in legacy, including auto-grouping (a normal verse number ≤ the last one starts a new `lyric` group). Subsequent non-marker lines are appended to the current verse.
   - **Verse lines** support leading **`@size=` / `@align=`** line-level tags, producing the `{ size?, align?, content }` verse-line form (role tags are not meaningful on a lyric line and stay literal).
 - A **blank line ends the current verse** (returns to paragraph mode). A following `*` marker reopens lyric mode.
