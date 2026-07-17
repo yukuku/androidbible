@@ -126,7 +126,16 @@ class PortableSongsBridgeTest {
         )
     }
 
-    private fun songs(): List<Song> = listOf(kri25(), nullsAndEmpties(), mixedKinds(), inlineStyled())
+    /** composer only, no lyricist — the converter keeps it at the row end via an explicit align. */
+    private fun soloComposer(): Song = Song().apply {
+        code = "S1"
+        title = "Solo Composer"
+        authors_lyric = mutableListOf()
+        authors_music = mutableListOf("Composer Only")
+        lyrics = mutableListOf(lyric(null, verse(1, VerseKind.NORMAL, "One plain line.")))
+    }
+
+    private fun songs(): List<Song> = listOf(kri25(), nullsAndEmpties(), mixedKinds(), inlineStyled(), soloComposer())
 
     // endregion
 
@@ -292,6 +301,42 @@ class PortableSongsBridgeTest {
         assertEquals("tune", (doc.blocks[2] as PBlock).role)
         assertEquals("musical", (doc.blocks[5] as PBlock).role)
         assertEquals("1=Bes 6/8", (doc.blocks[5] as PBlock).content.plainText())
+    }
+
+    @Test
+    fun `the converter marks a solo composer with align end, but stamps no align when both authors are present`() {
+        // solo composer: the row's space-between layout cannot place a lone item at the
+        // end, so the intent must be carried by the document itself
+        val doc = LegacySongConverter.convert(soloComposer())
+        val row = doc.blocks.filterIsInstance<RowBlock>().single()
+        val composer = row.items.filterIsInstance<PBlock>().single()
+        assertEquals("authors_music", composer.role)
+        assertEquals("end", composer.align)
+
+        // both authors: space-between already spreads them start/end
+        val doc2 = LegacySongConverter.convert(kri25())
+        val row2 = doc2.blocks.filterIsInstance<RowBlock>().single()
+        assertEquals(listOf("authors_lyric", "authors_music"), row2.items.filterIsInstance<PBlock>().map { it.role })
+        assertEquals(listOf(null, null), row2.items.filterIsInstance<PBlock>().map { it.align })
+    }
+
+    @Test
+    fun `the renderer positions an aligned row item with auto margins, and an aligned standalone paragraph with text-align`() {
+        // in a row: text-align cannot move a shrink-to-fit flex item, so align
+        // becomes main-axis positioning of the item itself
+        val doc = LegacySongConverter.convert(soloComposer())
+        val html = SongDocumentRenderer.renderDocument(doc, { it }, forPatchText = false)
+        assertTrue(html.contains("<div class='authors_music' style='margin-inline-start:auto;'>Composer Only</div>"))
+        assertFalse(html.contains("text-align"))
+
+        // standalone: align keeps its text-align meaning
+        val standalone = SongDocument(
+            code = "S2",
+            meta = Meta(title = "T", title_original = null),
+            blocks = listOf(PBlock(role = "authors_music", align = "end", content = Line.Plain("Composer Only"))),
+        )
+        val html2 = SongDocumentRenderer.renderDocument(standalone, { it }, forPatchText = false)
+        assertTrue(html2.contains("<div class='authors_music' style='text-align:end;'>Composer Only</div>"))
     }
 
     @Test

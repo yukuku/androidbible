@@ -24,7 +24,9 @@ object LegacySongConverter {
         if (authorsLyric != null || authorsMusic != null) {
             val items = mutableListOf<PBlock>()
             authorsLyric?.let { items.add(PBlock(role = "authors_lyric", content = parseInlineLine(it))) }
-            authorsMusic?.let { items.add(PBlock(role = "authors_music", content = parseInlineLine(it))) }
+            // A solo composer carries explicit end alignment: the row's space-between
+            // layout only places it at the end when the lyricist item is also present.
+            authorsMusic?.let { items.add(PBlock(role = "authors_music", align = if (authorsLyric == null) "end" else null, content = parseInlineLine(it))) }
             blocks.add(RowBlock(items = items))
         }
 

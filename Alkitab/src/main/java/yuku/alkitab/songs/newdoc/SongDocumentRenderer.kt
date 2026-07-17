@@ -64,7 +64,7 @@ object SongDocumentRenderer {
 
         for (item in block.items) {
             when (item) {
-                is PBlock -> renderPBlock(item, sb)
+                is PBlock -> renderPBlock(item, sb, inRow = true)
                 is YoutubeBlock -> renderYoutubeBlock(item, sb)
                 is ScriptureBlock -> sb.append("<div class='scriptureReferences'>").append(renderScripture(item.osis)).append("</div>")
                 is GapBlock -> sb.append("<div style='height:").append(item.size ?: 1f).append("em'></div>")
@@ -85,11 +85,23 @@ object SongDocumentRenderer {
         return sb.toString()
     }
 
-    private fun renderPBlock(block: PBlock, sb: StringBuilder) {
+    private fun renderPBlock(block: PBlock, sb: StringBuilder, inRow: Boolean = false) {
         val cls = block.role?.takeIf { it in KNOWN_ROLES } ?: "body"
         val style = buildString {
             block.size?.takeIf { it.isFinite() }?.let { append("font-size:").append(it).append("em;") }
-            block.align?.takeIf { it in ALLOWED_ALIGNS }?.let { append("text-align:").append(it).append(";") }
+            block.align?.takeIf { it in ALLOWED_ALIGNS }?.let { align ->
+                if (inRow) {
+                    // A row item is a shrink-to-fit flex item, so text-align cannot move
+                    // it; align positions the item itself along the row's main axis.
+                    when (align) {
+                        "end" -> append("margin-inline-start:auto;")
+                        "center" -> append("margin-inline-start:auto;margin-inline-end:auto;")
+                        else -> {} // start: flex default
+                    }
+                } else {
+                    append("text-align:").append(align).append(";")
+                }
+            }
         }
         sb.append("<div class='").append(cls).append("'")
         if (style.isNotEmpty()) sb.append(" style='").append(style).append("'")
