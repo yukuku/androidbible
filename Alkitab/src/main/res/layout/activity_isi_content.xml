@@ -132,7 +132,7 @@
 				android:layout_gravity="end|bottom"
 				android:layout_marginEnd="16dp"
 				android:layout_marginBottom="8dp"
-				android:background="@color/primary"
+				android:background="@drawable/back_forward_list_background"
 				android:elevation="8dp"
 				android:orientation="horizontal"
 				android:visibility="gone"

@@ -2,6 +2,7 @@ package yuku.alkitab.base.ac.base
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.PaintDrawable
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.MenuItem
@@ -60,7 +61,12 @@ abstract class BaseActivity : AppCompatActivity() {
 
         supportActionBar?.setBackgroundDrawable(primaryColor.toDrawable())
 
-        findViewById<View>(R.id.panelBackForwardList)?.background = primaryColor.toDrawable()
+        findViewById<View>(R.id.panelBackForwardList)?.apply {
+            background = PaintDrawable(primaryColor).apply {
+                setCornerRadius(resources.getDimension(R.dimen.back_forward_list_corner_radius))
+            }
+            clipToOutline = true
+        }
 
         window.statusBarColor = statusBarColor
     }

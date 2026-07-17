@@ -4,4 +4,6 @@
 	<dimen name="panel_text_appearance_width">240dp</dimen>
 	<dimen name="reading_plan_day_heading_side_padding">0dp</dimen>
 	<dimen name="left_drawer_width">280dp</dimen>
+	<!-- Half of the 40dp back/forward button height, so the panel ends are fully rounded -->
+	<dimen name="back_forward_list_corner_radius">20dp</dimen>
 </resources>
