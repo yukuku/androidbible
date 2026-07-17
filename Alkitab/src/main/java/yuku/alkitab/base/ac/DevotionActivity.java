@@ -220,9 +220,11 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
         drawerLayout = findViewById(R.id.drawerLayout);
         leftDrawer = findViewById(R.id.left_drawer);
         leftDrawer.configure(this, drawerLayout);
+        applySafeAreaPadding(leftDrawer);
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setupEdgeToEdgeDisplay(toolbar);
 
         final ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;

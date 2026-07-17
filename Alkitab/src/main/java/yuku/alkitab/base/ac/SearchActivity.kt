@@ -25,6 +25,7 @@ import android.widget.TextView
 import androidx.annotation.Keep
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.isVisible
@@ -232,7 +233,9 @@ class SearchActivity : BaseActivity() {
         tFilterAdvanced = findViewById(R.id.tFilterAdvanced)
         bEditFilter = findViewById(R.id.bEditFilter)
 
-        setSupportActionBar(findViewById(R.id.toolbar))
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        setupEdgeToEdgeDisplay(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         bVersion = findViewById(R.id.bVersion)

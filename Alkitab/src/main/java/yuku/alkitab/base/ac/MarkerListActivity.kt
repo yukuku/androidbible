@@ -19,6 +19,7 @@ import android.widget.SearchView
 import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.appcompat.view.ActionMode
+import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.ColorUtils
 import androidx.core.util.size
 import androidx.lifecycle.lifecycleScope
@@ -94,7 +95,9 @@ class MarkerListActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_marker_list)
 
-        setSupportActionBar(findViewById(R.id.toolbar))
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        setupEdgeToEdgeDisplay(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         root = findViewById(R.id.root)

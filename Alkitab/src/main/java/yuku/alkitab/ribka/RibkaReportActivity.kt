@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
 import androidx.core.util.PatternsCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
@@ -48,7 +49,9 @@ class RibkaReportActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.ribka_activity_report)
 
-        setSupportActionBar(findViewById(R.id.toolbar))
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        setupEdgeToEdgeDisplay(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         tRibkaVerseText = findViewById(R.id.tRibkaVerseText)

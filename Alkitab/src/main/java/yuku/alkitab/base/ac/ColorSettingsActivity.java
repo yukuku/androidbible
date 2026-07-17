@@ -27,6 +27,7 @@ public class ColorSettingsActivity extends BaseActivity {
 
 		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
+		setupEdgeToEdgeDisplay(toolbar);
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;
 		ab.setDisplayHomeAsUpEnabled(true);

@@ -56,6 +56,7 @@ class VersionsActivity : BaseActivity() {
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
+        setupEdgeToEdgeDisplay(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // Create the adapter that will return a fragment for each of the three
