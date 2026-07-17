@@ -18,6 +18,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,6 +76,18 @@ public class TextAppearancePanel {
         this.content = activity.getLayoutInflater().inflate(R.layout.panel_text_appearance, parent, false);
 
         this.content.setOnTouchListener((v, event) -> true); // prevent click-through
+
+        // The activity draws edge-to-edge, so this bottom-anchored panel has to
+        // keep itself clear of the navigation bar and display cutout.
+        ViewCompat.setOnApplyWindowInsetsListener(content, (v, windowInsets) -> {
+            final Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            final ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            lp.leftMargin = insets.left;
+            lp.rightMargin = insets.right;
+            lp.bottomMargin = insets.bottom;
+            v.setLayoutParams(lp);
+            return windowInsets;
+        });
 
         cbTypeface = content.findViewById(R.id.cbTypeface);
         cBold = content.findViewById(R.id.cBold);
@@ -138,6 +153,7 @@ public class TextAppearancePanel {
     public void show() {
         if (shown) return;
         parent.addView(content);
+        ViewCompat.requestApplyInsets(content);
         shown = true;
     }
 

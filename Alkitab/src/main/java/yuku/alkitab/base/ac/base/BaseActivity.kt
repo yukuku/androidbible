@@ -62,6 +62,10 @@ abstract class BaseActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.panelBackForwardList)?.background = primaryColor.toDrawable()
 
+        applyStatusBarColor(statusBarColor)
+    }
+
+    protected open fun applyStatusBarColor(statusBarColor: Int) {
         window.statusBarColor = statusBarColor
     }
 
