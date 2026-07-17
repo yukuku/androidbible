@@ -49,6 +49,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.Typeface as ComposeTypeface
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.res.ResourcesCompat
@@ -304,6 +305,13 @@ private fun VerseItemComposeContent(
 private data class LineMetrics(
     val lineHeightSp: Float,
     val rowExtraPaddingPx: Int,
+    /**
+     * Extra space the body text's first line gains above its glyphs from
+     * `lineHeight` + `LineHeightStyle(Proportional, Trim.None)`. The gutter
+     * verse number is padded down by this much so its glyph top lines up with
+     * the first text line's glyph top.
+     */
+    val gutterTopPaddingPx: Int,
 )
 
 @Composable
@@ -323,10 +331,18 @@ private fun rememberLineMetrics(state: VerseItemComposeState): LineMetrics {
         val naturalLineHeightPx = fm.descent - fm.ascent + fm.leading
         val targetLineHeightPx = naturalLineHeightPx * state.lineSpacingMult
         val rowExtraPaddingPx = (naturalLineHeightPx * (state.lineSpacingMult - 1f) + 0.5f).toInt()
+        // LineHeightStyle Proportional distributes (lineHeight − glyphHeight)
+        // around the line in the ascent:descent ratio; Trim.None keeps the
+        // top share on the first line too. This is the ascent-side share.
+        val glyphHeightPx = fm.descent - fm.ascent
+        val gutterTopPaddingPx = if (glyphHeightPx <= 0f) 0 else {
+            ((targetLineHeightPx - glyphHeightPx) * (-fm.ascent) / glyphHeightPx + 0.5f).toInt().coerceAtLeast(0)
+        }
         LineMetrics(
             // density.fontScale == 1f upstream → px ↔ sp == /density.
             lineHeightSp = targetLineHeightPx / density.density,
             rowExtraPaddingPx = rowExtraPaddingPx,
+            gutterTopPaddingPx = gutterTopPaddingPx,
         )
     }
 }
@@ -407,8 +423,17 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
                     color = if (checked) textColor else Color(state.verseNumberColor),
                     fontSize = state.verseNumberFontSizeDp.sp,
                     fontWeight = FontWeight.Bold,
+                    // Drop the body text's full-size lineHeight: inheriting it
+                    // would sit the 0.7× number proportionally inside a
+                    // full-size line box, landing it on the body's first-line
+                    // baseline. Natural metrics + the small top padding keep
+                    // it top-aligned with the first line, like the legacy
+                    // VerseItem's gutter TextView.
+                    lineHeight = TextUnit.Unspecified,
                 ),
-                modifier = Modifier.align(Alignment.TopStart),
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(top = with(LocalDensity.current) { lineMetrics.gutterTopPaddingPx.toDp() }),
             )
         }
     }
