@@ -4,11 +4,14 @@ import android.content.ActivityNotFoundException
 import android.content.ContentResolver
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.format.DateFormat
 import android.text.method.LinkMovementMethod
+import android.util.TypedValue
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
@@ -22,8 +25,11 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.ui.platform.ComposeView
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SwitchCompat
@@ -36,7 +42,12 @@ import androidx.core.text.HtmlCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
 import androidx.core.util.PatternsCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
@@ -468,6 +479,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     override fun onCreate(savedInstanceState: Bundle?) {
         AppLog.d(TAG, "@@onCreate start")
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        if (Build.VERSION.SDK_INT >= 28) {
+            window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+        }
         setContentView(R.layout.activity_isi)
         AppLog.d(TAG, "@@onCreate setCV")
 
@@ -562,6 +577,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
         // for splitting
         splitViewManager.installListeners()
+
+        setupSafeAreaInsets()
 
         if (BuildConfig.DEBUG) {
             // Runtime assertions: splitRoot must have 3 children;
@@ -1114,6 +1131,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
         lsSplit0.setViewPadding(SettingsActivity.getPaddingBasedOnPreferences(useSmallerHorizontalPadding))
         lsSplit1.setViewPadding(SettingsActivity.getPaddingBasedOnPreferences(useSmallerHorizontalPadding))
+
+        updateSystemBarAppearance()
     }
 
     override fun onStop() {
@@ -1352,21 +1371,134 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     fun setFullScreen(yes: Boolean) {
         if (fullScreen == yes) return // no change
 
-        val decorView = window.decorView
-
-        if (yes) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-            supportActionBar?.hide()
-            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE
-        } else {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-            supportActionBar?.show()
-            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
-        }
-
         fullScreen = yes
 
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        if (yes) {
+            supportActionBar?.hide()
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+        } else {
+            supportActionBar?.show()
+            controller.show(WindowInsetsCompat.Type.systemBars())
+        }
+
         updateToolbarLocation()
+        updateSystemBarAppearance()
+    }
+
+    private fun isBottomToolbarOnText() = Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default)
+
+    /**
+     * The window draws edge-to-edge on all API levels (Android 15 enforces it
+     * anyway), so the reading background extends behind the system bars and
+     * into the display-cutout area, while these listeners pad the actual
+     * content (toolbar, verses, back/forward panel, floater, left drawer)
+     * back into the safe area. In fullscreen the system bars are hidden and
+     * report zero insets, leaving only the display cutout to pad around.
+     */
+    private fun setupSafeAreaInsets() {
+        val safeAreaTypes = WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+
+        // A ComposeView consumes insets by default, which would stop the
+        // dispatch from ever reaching sibling views listed after it (the
+        // bottom-docked toolbar, the floater, the left drawer).
+        root.requireViewById<ComposeView>(R.id.audio_bar).consumeWindowInsets = false
+
+        val tv = TypedValue()
+        theme.resolveAttribute(androidx.appcompat.R.attr.actionBarSize, tv, true)
+        val actionBarSize = TypedValue.complexToDimensionPixelSize(tv.data, resources.displayMetrics)
+
+        // The toolbar keeps its primary-color background across the bar it is
+        // docked against by growing by the inset instead of just shifting.
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar) { v, windowInsets ->
+            val insets = windowInsets.getInsets(safeAreaTypes)
+            if (isBottomToolbarOnText()) {
+                v.setPadding(insets.left, 0, insets.right, insets.bottom)
+                v.updateLayoutParams { height = actionBarSize + insets.bottom }
+            } else {
+                v.setPadding(insets.left, insets.top, insets.right, 0)
+                v.updateLayoutParams { height = actionBarSize + insets.top }
+            }
+            windowInsets
+        }
+
+        // Pads the verse area on the edges where no other bar of ours already
+        // covers the inset: the toolbar covers one vertical edge when visible,
+        // and the audio bar applies its own bottom inset whenever it is
+        // showing. The bottom inset is not applied to `nontoolbar` itself but
+        // handed to the verse lists as extra scroll-past padding
+        // (clipToPadding=false), so the text draws edge-to-edge behind the
+        // navigation bar while the scrolled-to-end verses stay above it. In a
+        // stacked split only the bottom pane touches the window bottom.
+        val panelBackForwardList = nontoolbar.findViewById<View>(R.id.panelBackForwardList)
+        val panelBackForwardListBaseBottomMargin = (panelBackForwardList.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+        ViewCompat.setOnApplyWindowInsetsListener(nontoolbar) { v, windowInsets ->
+            val insets = windowInsets.getInsets(safeAreaTypes)
+            val top = if (!fullScreen && !isBottomToolbarOnText()) 0 else insets.top
+            v.setPadding(insets.left, top, insets.right, 0)
+
+            val bottomEdgeCovered = (!fullScreen && isBottomToolbarOnText()) || root.requireViewById<View>(R.id.audio_bar).height > 0
+            val bottomInset = if (bottomEdgeCovered) 0 else insets.bottom
+            val stackedSplit = splitHandleButton.isVisible && splitRoot.orientation == LinearLayout.VERTICAL
+            lsSplit0.setViewBottomInset(if (stackedSplit) 0 else bottomInset)
+            lsSplit1.setViewBottomInset(bottomInset)
+
+            panelBackForwardList.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = panelBackForwardListBaseBottomMargin + bottomInset
+            }
+            windowInsets
+        }
+
+        root.requireViewById<View>(R.id.audio_bar).addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
+            if (bottom - top != oldBottom - oldTop) {
+                ViewCompat.requestApplyInsets(nontoolbar)
+            }
+        }
+
+        // Split open/close/rotate resizes the panes; which list touches the
+        // window bottom may have changed, so redistribute the bottom inset.
+        for (id in intArrayOf(R.id.lsSplitView0, R.id.lsSplitView1)) {
+            findViewById<View>(id).addOnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+                if (right - left != oldRight - oldLeft || bottom - top != oldBottom - oldTop) {
+                    ViewCompat.requestApplyInsets(nontoolbar)
+                }
+            }
+        }
+
+        val floaterBasePadding = Rect(floater.paddingLeft, floater.paddingTop, floater.paddingRight, floater.paddingBottom)
+        ViewCompat.setOnApplyWindowInsetsListener(floater) { v, windowInsets ->
+            val insets = windowInsets.getInsets(safeAreaTypes)
+            v.setPadding(
+                floaterBasePadding.left + insets.left,
+                floaterBasePadding.top + insets.top,
+                floaterBasePadding.right + insets.right,
+                floaterBasePadding.bottom + insets.bottom
+            )
+            windowInsets
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(leftDrawer) { v, windowInsets ->
+            val insets = windowInsets.getInsets(safeAreaTypes)
+            v.setPadding(insets.left, insets.top, insets.right, insets.bottom)
+            windowInsets
+        }
+    }
+
+    override fun applyStatusBarColor(statusBarColor: Int) {
+        // Edge-to-edge: the toolbar extends behind the status bar instead of
+        // the decor painting an opaque bar over it.
+    }
+
+    private fun updateSystemBarAppearance() {
+        val lightBackground = ColorUtils.calculateLuminance(App.services.uiDimensions.applied().backgroundColor) > 0.5
+        val bottomToolbar = isBottomToolbarOnText()
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        // The toolbar background is dark in both day and night mode, so bar
+        // icons over it are always light; over the verse background they
+        // follow its luminance.
+        controller.isAppearanceLightStatusBars = if (!fullScreen && !bottomToolbar) false else lightBackground
+        controller.isAppearanceLightNavigationBars = if (!fullScreen && bottomToolbar) false else lightBackground
     }
 
     private fun updateToolbarLocation() {
@@ -1386,7 +1518,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             root.removeView(nontoolbar)
             root.removeView(audioBar)
 
-            if (Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default)) {
+            if (isBottomToolbarOnText()) {
                 root.addView(nontoolbar)
                 root.addView(audioBar)
                 root.addView(toolbar)
@@ -1396,15 +1528,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                 root.addView(audioBar)
             }
         }
-    }
 
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-
-        if (hasFocus && fullScreen) {
-            val decorView = window.decorView
-            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE
-        }
+        ViewCompat.requestApplyInsets(drawerLayout)
     }
 
     private fun setShowTextAppearancePanel(yes: Boolean) {

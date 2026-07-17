@@ -68,6 +68,10 @@ abstract class BaseActivity : AppCompatActivity() {
             clipToOutline = true
         }
 
+        applyStatusBarColor(statusBarColor)
+    }
+
+    protected open fun applyStatusBarColor(statusBarColor: Int) {
         window.statusBarColor = statusBarColor
     }
 

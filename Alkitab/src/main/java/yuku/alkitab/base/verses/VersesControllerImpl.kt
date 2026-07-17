@@ -55,6 +55,7 @@ class VersesControllerImpl(
     private val audioHighlight = AudioHighlight()
 
     private val basePadding = Rect()
+    private var bottomInset = 0
 
     private val dataVersionNumber = AtomicInteger()
 
@@ -487,7 +488,17 @@ class VersesControllerImpl(
 
     override fun setViewPadding(padding: Rect) {
         basePadding.set(padding)
-        rv.setPadding(basePadding.left, basePadding.top, basePadding.right, basePadding.bottom)
+        applyPadding()
+    }
+
+    override fun setViewBottomInset(bottomInset: Int) {
+        if (this.bottomInset == bottomInset) return
+        this.bottomInset = bottomInset
+        applyPadding()
+    }
+
+    private fun applyPadding() {
+        rv.setPadding(basePadding.left, basePadding.top, basePadding.right, basePadding.bottom + bottomInset)
     }
 
     override fun setViewScrollbarThumb(thumb: Drawable) {
