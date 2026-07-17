@@ -24,6 +24,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -1421,26 +1422,46 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             windowInsets
         }
 
-        // Pads the verse area (and the back/forward panel inside it) on the
-        // edges where no other bar of ours already covers the inset: the
-        // toolbar covers one vertical edge when visible, and the audio bar
-        // applies its own bottom inset whenever it is showing.
+        // Pads the verse area on the edges where no other bar of ours already
+        // covers the inset: the toolbar covers one vertical edge when visible,
+        // and the audio bar applies its own bottom inset whenever it is
+        // showing. The bottom inset is not applied to `nontoolbar` itself but
+        // handed to the verse lists as extra scroll-past padding
+        // (clipToPadding=false), so the text draws edge-to-edge behind the
+        // navigation bar while the scrolled-to-end verses stay above it. In a
+        // stacked split only the bottom pane touches the window bottom.
+        val panelBackForwardList = nontoolbar.findViewById<View>(R.id.panelBackForwardList)
+        val panelBackForwardListBaseBottomMargin = (panelBackForwardList.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
         ViewCompat.setOnApplyWindowInsetsListener(nontoolbar) { v, windowInsets ->
             val insets = windowInsets.getInsets(safeAreaTypes)
-            val toolbarShown = !fullScreen
-            val top = if (toolbarShown && !isBottomToolbarOnText()) 0 else insets.top
-            val bottom = when {
-                toolbarShown && isBottomToolbarOnText() -> 0
-                root.requireViewById<View>(R.id.audio_bar).height > 0 -> 0
-                else -> insets.bottom
+            val top = if (!fullScreen && !isBottomToolbarOnText()) 0 else insets.top
+            v.setPadding(insets.left, top, insets.right, 0)
+
+            val bottomEdgeCovered = (!fullScreen && isBottomToolbarOnText()) || root.requireViewById<View>(R.id.audio_bar).height > 0
+            val bottomInset = if (bottomEdgeCovered) 0 else insets.bottom
+            val stackedSplit = splitHandleButton.isVisible && splitRoot.orientation == LinearLayout.VERTICAL
+            lsSplit0.setViewBottomInset(if (stackedSplit) 0 else bottomInset)
+            lsSplit1.setViewBottomInset(bottomInset)
+
+            panelBackForwardList.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = panelBackForwardListBaseBottomMargin + bottomInset
             }
-            v.setPadding(insets.left, top, insets.right, bottom)
             windowInsets
         }
 
         root.requireViewById<View>(R.id.audio_bar).addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
             if (bottom - top != oldBottom - oldTop) {
                 ViewCompat.requestApplyInsets(nontoolbar)
+            }
+        }
+
+        // Split open/close/rotate resizes the panes; which list touches the
+        // window bottom may have changed, so redistribute the bottom inset.
+        for (id in intArrayOf(R.id.lsSplitView0, R.id.lsSplitView1)) {
+            findViewById<View>(id).addOnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+                if (right - left != oldRight - oldLeft || bottom - top != oldBottom - oldTop) {
+                    ViewCompat.requestApplyInsets(nontoolbar)
+                }
             }
         }
 
