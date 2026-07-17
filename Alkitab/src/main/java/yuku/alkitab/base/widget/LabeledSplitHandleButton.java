@@ -31,6 +31,8 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
     boolean label2down = false;
     boolean rotatedown = false;
     float density;
+    int topInset = 0;
+    int bottomInset = 0;
 
     ButtonPressListener buttonPressListener;
     int primaryColor;
@@ -90,6 +92,19 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
         invalidate();
     }
 
+    /**
+     * When the handle is a vertical bar (side-by-side split), the bar itself
+     * extends edge-to-edge behind the status/navigation bars and cutout;
+     * this shifts the two labels (and their touch targets) back into the
+     * safe area.
+     */
+    public void setVerticalInsets(int topInset, int bottomInset) {
+        if (this.topInset == topInset && this.bottomInset == bottomInset) return;
+        this.topInset = topInset;
+        this.bottomInset = bottomInset;
+        invalidate();
+    }
+
     @Override
     public boolean onTouchEvent(final MotionEvent event) {
         // check if touch is at label1, label2, rotate button, or neither
@@ -104,23 +119,31 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
             // length is the width or the height
             final int length;
 
+            // shifts of the labels away from the bar's ends
+            final int startInset;
+            final int endInset;
+
             if (orientation == Orientation.vertical) {
                 pos = event.getX();
                 length = getWidth();
+                startInset = 0;
+                endInset = 0;
             } else {
                 pos = event.getY();
                 length = getHeight();
+                startInset = topInset;
+                endInset = bottomInset;
             }
 
             if (action == MotionEvent.ACTION_DOWN) {
-                label1down = pos < maxLabel1sz;
-                label2down = pos > length - maxLabel2sz;
+                label1down = pos < maxLabel1sz + startInset;
+                label2down = pos > length - maxLabel2sz - endInset;
                 rotatedown = pos >= (length - rotatelength) * 0.5f && pos <= (length + rotatelength) * 0.5f;
             }
 
             if (action == MotionEvent.ACTION_UP && buttonPressListener != null) {
-                label1pressed = label1down && pos < maxLabel1sz;
-                label2pressed = label2down && pos > length - maxLabel2sz;
+                label1pressed = label1down && pos < maxLabel1sz + startInset;
+                label2pressed = label2down && pos > length - maxLabel2sz - endInset;
                 rotatepressed = rotatedown && pos >= (length - rotatelength) * 0.5f && pos <= (length + rotatelength) * 0.5f;
 
                 if (rotatepressed) {
@@ -184,11 +207,10 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 
                 if (label1down) {
                     if (orientation == Orientation.vertical) canvas.clipRect(0, 0, label1length, thickness);
-                    else canvas.clipRect(0, 0, thickness, label1length);
+                    else canvas.clipRect(0, 0, thickness, label1length + topInset);
                 } else if (label2down) {
-                    final float fr1 = length - label2length;
-                    if (orientation == Orientation.vertical) canvas.clipRect(fr1, 0, length, thickness);
-                    else canvas.clipRect(0, fr1, thickness, length);
+                    if (orientation == Orientation.vertical) canvas.clipRect(length - label2length, 0, length, thickness);
+                    else canvas.clipRect(0, length - label2length - bottomInset, thickness, length);
                 }
 
                 canvas.drawColor(accentColor);
@@ -209,7 +231,7 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
                 canvas.rotate(-90);
 
                 labelPaint.setTextAlign(Paint.Align.RIGHT);
-                canvas.drawText(label1, -pad, base, labelPaint);
+                canvas.drawText(label1, -pad - topInset, base, labelPaint);
 
                 canvas.restore();
             } else {
@@ -226,7 +248,7 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
                 canvas.rotate(-90);
 
                 labelPaint.setTextAlign(Paint.Align.LEFT);
-                canvas.drawText(label2, -length + pad, base, labelPaint);
+                canvas.drawText(label2, -length + pad + bottomInset, base, labelPaint);
 
                 canvas.restore();
             } else {
