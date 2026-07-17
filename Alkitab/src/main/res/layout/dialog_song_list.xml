@@ -6,31 +6,31 @@
 	android:layout_height="match_parent"
 	android:orientation="vertical">
 
-	<androidx.appcompat.widget.Toolbar
-		android:id="@+id/toolbar"
-		android:layout_width="match_parent"
-		android:layout_height="?attr/actionBarSize"
-		android:background="?attr/colorPrimary">
-
-		<ProgressBar
-			android:id="@+id/progress_circular"
-			style="?android:attr/progressBarStyleSmallTitle"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center_vertical|end"
-			android:layout_margin="16dp" />
-
-	</androidx.appcompat.widget.Toolbar>
+	<com.google.android.material.bottomsheet.BottomSheetDragHandleView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal" />
 
 	<LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
+		android:layout_height="wrap_content"
+		android:gravity="center_vertical"
+		android:orientation="horizontal">
 
 		<androidx.appcompat.widget.SearchView
 			android:id="@+id/searchView"
-			android:layout_width="match_parent"
+			android:layout_width="0dp"
 			android:layout_height="wrap_content"
+			android:layout_weight="1"
 			app:iconifiedByDefault="false" />
+
+		<ProgressBar
+			android:id="@+id/progress_circular"
+			style="?android:attr/progressBarStyleSmall"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginEnd="16dp" />
 
 	</LinearLayout>
 
@@ -63,7 +63,7 @@
 	<ListView
 		android:id="@+id/lsSong"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="match_parent"
 		android:fastScrollEnabled="true" />
 
 </LinearLayout>

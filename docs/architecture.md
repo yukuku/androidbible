@@ -58,7 +58,7 @@ The app uses traditional Activity/Fragment architecture for the reader, with som
 - **MarkerListActivity** — bookmark/note/highlight browser
 - **DevotionActivity** — daily devotional reader
 - **ReadingPlanActivity** — reading plan progress tracker
-- **SongListActivity / SongViewActivity** — song browser and viewer
+- **SongViewActivity** — song viewer, hosting **SongListBottomSheet** for song search/browse
 - **SettingsActivity** — app preferences
 - **DataTransferActivity** — export/import
 
