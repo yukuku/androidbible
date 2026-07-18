@@ -67,7 +67,7 @@ private const val YOUTUBE_PROTOCOL = "youtube"
 private const val REQCODE_downloadSongBook = 3
 private const val FRAGMENT_TAG_SONG = "song"
 
-class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUrlLoadingHandler, LeftDrawer.Songs.Listener, MediaStateListener, SongListBottomSheet.Listener {
+class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUrlLoadingHandler, LeftDrawer.Songs.Listener, MediaStateListener {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var leftDrawer: LeftDrawer.Songs
 
@@ -475,8 +475,8 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             }
 
             R.id.menuSearch -> {
-                if (supportFragmentManager.findFragmentByTag(SongListBottomSheet.FRAGMENT_TAG) == null) {
-                    SongListBottomSheet().show(supportFragmentManager, SongListBottomSheet.FRAGMENT_TAG)
+                SongSearchSheet.show(this) { songInfo ->
+                    displaySong(songInfo.bookName, App.services.storage.songDb.getSong(songInfo.bookName, songInfo.code))
                 }
                 return true
             }
@@ -671,10 +671,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
         state_originalCode = originalCode
         state_tempCode = ""
-    }
-
-    override fun onSongInfoSelected(songInfo: SongInfo) {
-        displaySong(songInfo.bookName, App.services.storage.songDb.getSong(songInfo.bookName, songInfo.code))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -6,7 +6,7 @@ The songs module provides hymn/worship song browsing, searching, and audio playb
 
 ## Key Files
 
-- `Alkitab/src/main/java/yuku/alkitab/songs/SongListBottomSheet.kt` — Song search/browse bottom sheet (hosted by `SongViewActivity`), with an activity-scoped ViewModel holding the search state
+- `Alkitab/src/main/java/yuku/alkitab/songs/SongSearchSheet.kt` — Song search/browse as a Compose `ModalBottomSheet` (hosted by `SongViewActivity` via `ComposeBottomSheetHost`), with an activity-scoped ViewModel holding the search state
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongViewActivity.kt` — Individual song viewer
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongFragment.kt` — WebView-based song rendering with JavaScript
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongBookUtil.kt` — Song book download, installation, metadata
@@ -33,7 +33,7 @@ The legacy `SongDb` SQLite file (managed by `SongDbHelper`) is kept around as a 
 
 ## Search
 
-Song search UI is a `BottomSheetDialogFragment` (`SongListBottomSheet`) shown over `SongViewActivity` (it was a standalone `SongListActivity` until 2026-07-17). Selecting a result dismisses the sheet and displays the song in the host activity; reopening the sheet restores the previous query, book filter, deep-search flag, results, and scroll position from `SongListViewModel` (scoped to the activity), so back-navigation from a song no longer skips past the search results.
+Song search UI is a Compose Material 3 `ModalBottomSheet` (`SongSearchSheet`, shown via `ComposeBottomSheetHost` + `BibleAppTheme`, so light/dark and dynamic color are supported by default) hosted over `SongViewActivity` (it was a standalone `SongListActivity` until 2026-07-17). Selecting a result dismisses the sheet and displays the song in the host activity; reopening the sheet restores the previous query, book filter, deep-search flag, results, and scroll position from `SongSearchViewModel` (scoped to the activity), so back-navigation from a song no longer skips past the search results. Searches run in a `viewModelScope` coroutine on `Dispatchers.IO`; editing the query cancels the in-flight search and starts a new one.
 
 `SongFilter` implements a sophisticated search with:
 - Query tokenization (multi-term, quoted phrases via `QueryTokenizer`)

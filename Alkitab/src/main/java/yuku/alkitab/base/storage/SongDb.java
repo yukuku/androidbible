@@ -32,7 +32,7 @@ import yuku.kpri.model.Song;
 /**
  * Facade over the Room-backed {@link SongRoomDao} that preserves the
  * legacy {@code SongInfo} / {@code SongBookInfo} public surface. Existing
- * call sites in {@code SongListBottomSheet}, {@code SongViewActivity}, and
+ * call sites in {@code SongSearchSheet}, {@code SongViewActivity}, and
  * {@code SongBookUtil} don't need to change.
  *
  * <p>Two tables, one facade: both belong to the Songs subsystem and are
