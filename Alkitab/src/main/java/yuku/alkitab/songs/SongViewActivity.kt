@@ -64,7 +64,6 @@ private const val TAG = "SongViewActivity"
 // package-visible (not private): reused by SongFragment when rendering an in-document ScriptureBlock
 const val BIBLE_PROTOCOL = "bible"
 private const val YOUTUBE_PROTOCOL = "youtube"
-private const val REQCODE_songList = 1
 private const val REQCODE_downloadSongBook = 3
 private const val FRAGMENT_TAG_SONG = "song"
 
@@ -80,9 +79,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     private val templateCustomVars = Bundle()
     private var currentBookName: String? = null
     private var currentSong: SongDocument? = null
-
-    // for initially populating the search song activity
-    private var last_searchState: SongListActivity.SearchState? = null
 
     // state for the keypad
     private var state_originalCode: String? = null
@@ -479,7 +475,9 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             }
 
             R.id.menuSearch -> {
-                startActivityForResult(SongListActivity.createIntent(last_searchState), REQCODE_songList)
+                SongSearchSheet.show(this) { songInfo ->
+                    displaySong(songInfo.bookName, App.services.storage.songDb.getSong(songInfo.bookName, songInfo.code))
+                }
                 return true
             }
 
@@ -677,18 +675,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            REQCODE_songList -> {
-                if (resultCode == RESULT_OK) {
-                    val result = SongListActivity.obtainResult(data)
-                    if (result != null) {
-                        displaySong(result.bookName, App.services.storage.songDb.getSong(result.bookName, result.code))
-                        // store this for next search
-                        last_searchState = result.last_searchState
-                    }
-                }
-                return
-            }
-
             REQCODE_downloadSongBook -> {
                 if (resultCode == RESULT_OK) {
                     val uri = data?.data
