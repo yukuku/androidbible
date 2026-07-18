@@ -1437,12 +1437,21 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         val panelBackForwardListBaseBottomMargin = (panelBackForwardList.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
         ViewCompat.setOnApplyWindowInsetsListener(nontoolbar) { v, windowInsets ->
             val insets = windowInsets.getInsets(safeAreaTypes)
+            // On gesture navigation some devices under-report the bottom
+            // systemBars inset: the gesture "pill" sits below the reported
+            // navigation-bar inset, so a label lifted only by `insets.bottom`
+            // still overlaps it. The mandatory system-gesture inset reliably
+            // covers the home-gesture area, so fold it into the bottom edge.
+            // Only the bottom is taken — the left/right back-gesture zones are
+            // ignored so verse text stays edge-to-edge horizontally.
+            val gestureBottom = windowInsets.getInsets(WindowInsetsCompat.Type.mandatorySystemGestures()).bottom
+            val safeBottom = maxOf(insets.bottom, gestureBottom)
             v.setPadding(insets.left, 0, insets.right, 0)
 
             val topEdgeCovered = !fullScreen && !isBottomToolbarOnText()
             val topInset = if (topEdgeCovered) 0 else insets.top
             val bottomEdgeCovered = (!fullScreen && isBottomToolbarOnText()) || root.requireViewById<View>(R.id.audio_bar).height > 0
-            val bottomInset = if (bottomEdgeCovered) 0 else insets.bottom
+            val bottomInset = if (bottomEdgeCovered) 0 else safeBottom
             val stackedSplit = splitHandleButton.isVisible && splitRoot.orientation == LinearLayout.VERTICAL
             lsSplit0.setViewVerticalInsets(topInset, if (stackedSplit) 0 else bottomInset)
             lsSplit1.setViewVerticalInsets(if (stackedSplit) 0 else topInset, bottomInset)
