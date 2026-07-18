@@ -44,8 +44,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -251,6 +256,23 @@ private fun SongSearchSheetContent(
     }
 }
 
+/**
+ * Compose counterpart of [SongBookUtil.escapeSongBookName]: private song books
+ * (name prefixed with `_`) are shown without the underscore, in [R.color.escape].
+ */
+@Composable
+private fun songBookNameAnnotated(name: String?): AnnotatedString {
+    return if (name != null && name.startsWith("_")) {
+        buildAnnotatedString {
+            withStyle(SpanStyle(color = colorResource(R.color.escape))) {
+                append(name.substring(1))
+            }
+        }
+    } else {
+        AnnotatedString(name.orEmpty())
+    }
+}
+
 @Composable
 private fun SongBookFilterChip(
     selectedBookName: String?,
@@ -270,13 +292,11 @@ private fun SongBookFilterChip(
             selected = selectedBookName != null,
             onClick = { menuOpen = true },
             label = {
-                Text(
-                    if (selectedBookName == null) {
-                        stringResource(R.string.sn_bookselector_all)
-                    } else {
-                        SongBookUtil.escapeSongBookName(selectedBookName).toString()
-                    }
-                )
+                if (selectedBookName == null) {
+                    Text(stringResource(R.string.sn_bookselector_all))
+                } else {
+                    Text(songBookNameAnnotated(selectedBookName))
+                }
             },
             trailingIcon = { Icon(Icons.Filled.ArrowDropDown, contentDescription = null) },
         )
@@ -302,7 +322,7 @@ private fun SongBookFilterChip(
                 DropdownMenuItem(
                     text = {
                         Column {
-                            Text(SongBookUtil.escapeSongBookName(book.name).toString())
+                            Text(songBookNameAnnotated(book.name))
                             val title = book.title
                             if (!title.isNullOrEmpty()) {
                                 Text(
@@ -349,7 +369,7 @@ private fun SongResultItem(
         }
         Spacer(Modifier.height(2.dp))
         Text(
-            text = SongBookUtil.escapeSongBookName(songInfo.bookName).toString(),
+            text = songBookNameAnnotated(songInfo.bookName),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.primary,
         )
