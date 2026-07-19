@@ -14,15 +14,39 @@ private const val TAG = "ScriptureReferenceRenderer"
  */
 object ScriptureReferenceRenderer {
     /**
+     * One resolved scripture reference: the human-[readable] text and the
+     * [osisId] (or `osisId0-osisId1` range) it links to. Emitted only for
+     * references that resolved against the active version — unresolvable
+     * ranges are dropped, exactly as [render] drops them from its output.
+     */
+    data class Part(val readable: String, val osisId: String)
+
+    /**
      * @param protocol null to output plain text (no links); non-null to wrap each reference in an
      * `<a href='protocol:osisId'>` link.
      * @param line scripture ref(s) in OSIS
      */
     @JvmStatic
     fun render(protocol: String?, line: String?): String {
-        if (line.isNullOrBlank()) return ""
-
         val sb = StringBuilder()
+        for (part in renderParts(line)) {
+            if (sb.isNotEmpty()) sb.append("; ")
+            appendScriptureReferenceLink(sb, protocol, part.osisId, part.readable)
+        }
+        return sb.toString()
+    }
+
+    /**
+     * Framework-free counterpart of [render]: resolves each `;`-separated
+     * reference in [line] to a [Part]. Shared by the WebView HTML path (via
+     * [render]) and the Compose renderer, which builds its own clickable
+     * spans from these parts. Preserves [render]'s drop-on-failure semantics.
+     */
+    @JvmStatic
+    fun renderParts(line: String?): List<Part> {
+        if (line.isNullOrBlank()) return emptyList()
+
+        val parts = mutableListOf<Part>()
 
         val ranges = line.split("\\s*;\\s*".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         for (range in ranges) {
@@ -33,20 +57,12 @@ object ScriptureReferenceRenderer {
             }
 
             if (osisIds.size == 1) {
-                if (sb.isNotEmpty()) {
-                    sb.append("; ")
-                }
-
                 val osisId = osisIds[0]
                 val readable = osisIdToReadable(line, osisId, null, null)
                 if (readable != null) {
-                    appendScriptureReferenceLink(sb, protocol, osisId, readable)
+                    parts.add(Part(readable, osisId))
                 }
             } else if (osisIds.size == 2) {
-                if (sb.isNotEmpty()) {
-                    sb.append("; ")
-                }
-
                 val bcv = intArrayOf(-1, 0, 0)
 
                 val osisId0 = osisIds[0]
@@ -54,12 +70,12 @@ object ScriptureReferenceRenderer {
                 val osisId1 = osisIds[1]
                 val readable1 = osisIdToReadable(line, osisId1, bcv, null)
                 if (readable0 != null && readable1 != null) {
-                    appendScriptureReferenceLink(sb, protocol, "$osisId0-$osisId1", "$readable0-$readable1")
+                    parts.add(Part("$readable0-$readable1", "$osisId0-$osisId1"))
                 }
             }
         }
 
-        return sb.toString()
+        return parts
     }
 
     private fun appendScriptureReferenceLink(sb: StringBuilder, protocol: String?, osisId: String, readable: String) {

@@ -8,7 +8,8 @@ The songs module provides hymn/worship song browsing, searching, and audio playb
 
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongSearchSheet.kt` — Song search/browse as a Compose `ModalBottomSheet` (hosted by `SongViewActivity` via `ComposeBottomSheetHost`), with an activity-scoped ViewModel holding the search state
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongViewActivity.kt` — Individual song viewer
-- `Alkitab/src/main/java/yuku/alkitab/songs/SongFragment.kt` — WebView-based song rendering with JavaScript
+- `Alkitab/src/main/java/yuku/alkitab/songs/SongFragment.kt` — WebView-based song rendering with JavaScript (the default renderer)
+- `Alkitab/src/main/java/yuku/alkitab/songs/SongComposeFragment.kt` + `SongComposeContent.kt` — native Jetpack Compose song renderer, an experimental drop-in replacement for `SongFragment` (see "Rendering" below)
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongBookUtil.kt` — Song book download, installation, metadata
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongFilter.java` — Search/filter with regex and tokenized queries
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongInfo.kt` — Lightweight song record (bookName, code, title, title_original)
@@ -40,6 +41,17 @@ Song search UI is a Compose Material 3 `ModalBottomSheet` (`SongSearchSheet`, sh
 - Word-boundary and substring matching
 - Regex pattern generation for highlighting
 - Searches across title, title_original, and full lyric text
+
+## Rendering
+
+There are two interchangeable renderers, both fed the same `SongDocument` by `SongViewActivity.displaySong`:
+
+- **WebView (default)** — `SongFragment` renders `SongDocumentRenderer.renderDocument` into `templates/song.html` + `song.css` and loads it in a `WebView`. Interactive links (`bible:`, `youtube:`, `patchtext:`) are dispatched through `shouldOverrideUrlLoading`.
+- **Compose (experimental, off by default)** — `SongComposeFragment` hosts `SongDocumentComposable` (`SongComposeContent.kt`), which walks `SongDocument.blocks` and maps each block/role to native Compose widgets — no HTML or CSS. It reproduces the WebView feature set exactly: verse numbering, refrain styling, version captions, roles (title/tune/musical/authors/…), inline `u`/`b`/`i` spans, per-line size/alignment, clickable scripture references (via `ScriptureReferenceRenderer.renderParts`) and YouTube links, copyright, and the "send corrections" patch-text link. Colors, base font size, line spacing, and typeface come from the same `App.services.uiDimensions.applied()` dimensions the WebView path uses; two-finger pinch zoom is applied as a percentage.
+
+Both fragments implement `SongTextZoomable` so `SongViewActivity`'s `TwofingerLinearLayout` pinch-to-zoom drives either one, and both route scripture/YouTube/patch-text taps to the shared `openScriptureReference` / `openYoutube` / `openPatchText` methods on the activity (via `SongFragment.ShouldOverrideUrlLoadingHandler` and `SongComposeFragment.Host` respectively).
+
+The renderer is chosen by the `ExperimentalFlags.useComposeSong()` flag, exposed under **Settings → Experimental features → "Song lyrics (Compose)"** (`pref_useComposeSong_key`, default off) — the same pattern as the experimental Compose verse-item and navigation flags. Open a song after toggling to see the change.
 
 ## Audio Playback
 

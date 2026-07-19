@@ -9,4 +9,7 @@ object ExperimentalFlags {
 
     fun useComposeGoto(): Boolean =
         Preferences.getBoolean(R.string.pref_useComposeGoto_key, R.bool.pref_useComposeGoto_default)
+
+    fun useComposeSong(): Boolean =
+        Preferences.getBoolean(R.string.pref_useComposeSong_key, R.bool.pref_useComposeSong_default)
 }
