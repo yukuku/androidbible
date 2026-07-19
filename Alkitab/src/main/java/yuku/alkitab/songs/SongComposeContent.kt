@@ -1,7 +1,6 @@
 package yuku.alkitab.songs
 
 import android.graphics.Typeface
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -47,6 +47,7 @@ import yuku.alkitab.songs.newdoc.Line
 import yuku.alkitab.songs.newdoc.LyricBlock
 import yuku.alkitab.songs.newdoc.PBlock
 import yuku.alkitab.songs.newdoc.RowBlock
+import yuku.alkitab.songs.newdoc.plainText
 import yuku.alkitab.songs.newdoc.ScriptureBlock
 import yuku.alkitab.songs.newdoc.SongDocument
 import yuku.alkitab.songs.newdoc.UnknownBlock
@@ -119,46 +120,72 @@ fun SongDocumentComposable(
     onPatchTextClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Match the WebView path: verse text is sized in dp, so strip the system
-    // font-scale (the WebView sets textZoom=100 for the same reason) — the
-    // pinch zoom is the only multiplier, already folded into baseSizeSp.
+    // Verse text is sized in dp, so strip the system font-scale — the pinch
+    // zoom is the only multiplier, already folded into baseSizeSp.
     val baseDensity = LocalDensity.current
     val unscaledDensity = remember(baseDensity.density) {
         Density(density = baseDensity.density, fontScale = 1f)
     }
 
     CompositionLocalProvider(LocalDensity provides unscaledDensity) {
-        Box(
-            modifier = modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                // body padding: 16px vertical, 8px horizontal (song.html <body>)
-                .padding(horizontal = 8.dp, vertical = 16.dp),
-        ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                val lyricBlocks = doc.blocks.filterIsInstance<LyricBlock>()
-                var lyricIndex = 0
-                for (block in doc.blocks) {
-                    when (block) {
-                        is LyricBlock -> {
-                            LyricBlockView(block, lyricIndex, lyricBlocks.size, style)
-                            lyricIndex++
-                        }
-                        else -> BlockView(block, style, onScriptureClick, onYoutubeClick)
+        // SelectionContainer makes the whole song selectable so users can
+        // long-press to select and copy any part of the lyrics. Scripture,
+        // YouTube, and patch-text links inside stay tappable.
+        SelectionContainer {
+            Box(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    // body padding: 16px vertical, 8px horizontal (song.html <body>)
+                    .padding(horizontal = 8.dp, vertical = 16.dp),
+            ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    // The song code sits in the left gutter; when the first block is the
+                    // title, they share a row (code left, title centered beside it).
+                    val titleBlock = (doc.blocks.firstOrNull() as? PBlock)?.takeIf { it.role == "title" }
+                    val bodyBlocks = if (titleBlock != null) doc.blocks.drop(1) else doc.blocks
+
+                    if (doc.code.isNotEmpty() || titleBlock != null) {
+                        SongHeader(doc.code, titleBlock, style)
                     }
+
+                    val lyricBlocks = bodyBlocks.filterIsInstance<LyricBlock>()
+                    var lyricIndex = 0
+                    for (block in bodyBlocks) {
+                        when (block) {
+                            is LyricBlock -> {
+                                LyricBlockView(block, lyricIndex, lyricBlocks.size, style)
+                                lyricIndex++
+                            }
+                            else -> BlockView(block, style, onScriptureClick, onYoutubeClick)
+                        }
+                    }
+
+                    FooterView(copyright, patchTextLinkLabel, style, onPatchTextClick)
                 }
-
-                FooterView(copyright, patchTextLinkLabel, style, onPatchTextClick)
             }
+        }
+    }
+}
 
-            // .code floats to the top-left corner (song.css). An overlay at the
-            // box's top-start reproduces that without pulling it into flow.
-            if (doc.code.isNotEmpty()) {
-                BasicText(
-                    text = AnnotatedString(doc.code),
-                    style = roleTextStyle(style, sizeMult = 1.25f, sansSerif = true).copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier.align(Alignment.TopStart),
-                )
+/**
+ * Top-of-song header: the bold song [code] in the left gutter and, when the
+ * first block is the title, the centered title in a weighted column beside it.
+ */
+@Composable
+private fun SongHeader(code: String, titleBlock: PBlock?, style: SongComposeStyle) {
+    Row(modifier = Modifier.fillMaxWidth()) {
+        if (code.isNotEmpty()) {
+            // .code { font-size: 125%; font-weight: bold; margin-right: 0.5em; }
+            BasicText(
+                text = AnnotatedString(code),
+                style = roleTextStyle(style, sizeMult = 1.25f, sansSerif = true).copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(end = 0.5f.em.toDp(style)),
+            )
+        }
+        if (titleBlock != null) {
+            Box(modifier = Modifier.weight(1f)) {
+                PBlockView(titleBlock, style)
             }
         }
     }
@@ -178,13 +205,13 @@ private fun BlockView(
         is ScriptureBlock -> ScriptureView(block.osis, style, onScriptureClick)
         is YoutubeBlock -> YoutubeView(block, style, onYoutubeClick)
         is GapBlock -> Spacer(Modifier.height((block.size ?: 1f).em.toDp(style)))
-        is UnknownBlock -> {} // forward-compat sink, mirrors SongDocumentRenderer
+        is UnknownBlock -> {} // forward-compat sink: unrecognized block types are skipped
         is LyricBlock -> {} // handled by the caller with its running index
     }
 }
 
 @Composable
-private fun PBlockView(block: PBlock, style: SongComposeStyle, inRow: Boolean = false) {
+private fun PBlockView(block: PBlock, style: SongComposeStyle, inRow: Boolean = false, rowAlign: TextAlign? = null) {
     val role = block.role
     val sansSerif = role in SANS_SERIF_ROLES
     val sizeMult = block.size?.takeIf { it.isFinite() } ?: roleSizeMult(role)
@@ -198,7 +225,9 @@ private fun PBlockView(block: PBlock, style: SongComposeStyle, inRow: Boolean = 
         role == "title" || role == "title_original" -> TextAlign.Center
         // .tune { float: right; } → right-aligned on its own line
         role == "tune" -> TextAlign.End
-        inRow -> null // row layout positions the item; text-align can't move a shrink-wrapped flex item
+        // In a row the item fills its proportional column; rowAlign positions
+        // the text within that column (start for the left column, end for the right).
+        inRow -> rowAlign
         align == "center" -> TextAlign.Center
         align == "end" -> TextAlign.End
         else -> null
@@ -214,8 +243,7 @@ private fun PBlockView(block: PBlock, style: SongComposeStyle, inRow: Boolean = 
         textAlign = textAlign ?: TextAlign.Unspecified,
     )
 
-    val mod = if (inRow) Modifier else Modifier.fillMaxWidth()
-    BasicText(text = content, style = textStyle, modifier = mod)
+    BasicText(text = content, style = textStyle, modifier = Modifier.fillMaxWidth())
 }
 
 @Composable
@@ -225,23 +253,35 @@ private fun RowBlockView(
     onScriptureClick: (String) -> Unit,
     onYoutubeClick: (String) -> Unit,
 ) {
+    val items = block.items
+    // Each column gets a share of the row width proportional to its text length,
+    // so a longer column gets more room and every column wraps within its share.
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Bottom,
+        verticalAlignment = Alignment.Top,
     ) {
-        // A lone item carrying align=end (e.g. a solo composer) is pushed to the
-        // end by a leading flex spacer, mirroring the renderer's margin-inline-start:auto.
-        val soloEnd = block.items.singleOrNull().let { it is PBlock && it.align == "end" }
-        if (soloEnd) Spacer(Modifier.weight(1f))
-
-        for (item in block.items) {
-            when (item) {
-                is PBlock -> PBlockView(item, style, inRow = true)
-                is ScriptureBlock -> ScriptureView(item.osis, style, onScriptureClick)
-                is YoutubeBlock -> YoutubeView(item, style, onYoutubeClick)
-                is GapBlock -> Spacer(Modifier.width((item.size ?: 1f).em.toDp(style)))
-                else -> {}
+        items.forEachIndexed { index, item ->
+            val weight = rowItemTextLength(item).coerceAtLeast(1).toFloat()
+            // First column hugs the start, last column hugs the end, middle columns
+            // center. A single item honors its own align (e.g. a solo composer set to end).
+            val rowAlign = when {
+                items.size == 1 -> when ((item as? PBlock)?.align) {
+                    "end" -> TextAlign.End
+                    "center" -> TextAlign.Center
+                    else -> TextAlign.Start
+                }
+                index == 0 -> TextAlign.Start
+                index == items.lastIndex -> TextAlign.End
+                else -> TextAlign.Center
+            }
+            Box(modifier = Modifier.weight(weight)) {
+                when (item) {
+                    is PBlock -> PBlockView(item, style, inRow = true, rowAlign = rowAlign)
+                    is ScriptureBlock -> ScriptureView(item.osis, style, onScriptureClick)
+                    is YoutubeBlock -> YoutubeView(item, style, onYoutubeClick)
+                    is GapBlock -> Spacer(Modifier.width((item.size ?: 1f).em.toDp(style)))
+                    else -> {}
+                }
             }
         }
     }
@@ -275,7 +315,7 @@ private fun ScriptureView(osis: String, style: SongComposeStyle, onScriptureClic
 
 @Composable
 private fun YoutubeView(block: YoutubeBlock, style: SongComposeStyle, onYoutubeClick: (String) -> Unit) {
-    // mirror SongDocumentRenderer: only an 11-char id yields a link
+    // only a valid 11-char id yields a link
     if (!YOUTUBE_ID_REGEX.matches(block.videoId)) return
 
     val annotated = buildAnnotatedString {
@@ -489,6 +529,14 @@ private val SANS_SERIF_ROLES = setOf(
 )
 
 private val YOUTUBE_ID_REGEX = Regex("^[A-Za-z0-9_-]{11}$")
+
+/** Approximate visible text length of a row item, used to weight its column. */
+private fun rowItemTextLength(item: Block): Int = when (item) {
+    is PBlock -> item.content.plainText().length
+    is ScriptureBlock -> item.osis.length
+    is YoutubeBlock -> "YouTube".length
+    else -> 1
+}
 
 /** Per-role font-size multiplier from song.css (relative to the body size). */
 private fun roleSizeMult(role: String?): Float = when (role) {
