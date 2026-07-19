@@ -33,4 +33,6 @@
     <string name="pref_useComposeVerseItem_summary">Tampilkan tiap ayat dengan implementasi Jetpack Compose yang baru, bukan tampilan lama. Buka sebuah pasal untuk melihat perubahannya.</string>
     <string name="pref_useComposeGoto_title">Navigasi (Compose)</string>
     <string name="pref_useComposeGoto_summary">Tampilkan layar Navigasi versi Jetpack Compose yang baru, bukan implementasi lama dengan tab.</string>
+    <string name="pref_useComposeSong_title">Lirik lagu (Compose)</string>
+    <string name="pref_useComposeSong_summary">Tampilkan lirik lagu secara native dengan Jetpack Compose, bukan WebView lama (HTML/CSS). Buka sebuah lagu untuk melihat perubahannya.</string>
 </resources>
