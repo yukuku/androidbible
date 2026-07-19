@@ -138,4 +138,49 @@ public class SongFilter {
 		m.reset(s);
 		return m.find();
 	}
+
+	/**
+	 * All [start, end) ranges in {@code text} that any filter token matches, so the search UI can
+	 * highlight the matched substrings the same way the verse search highlights hits. Ranges may
+	 * overlap when tokens overlap; callers that render spans (e.g. Compose AnnotatedString) handle
+	 * that fine. Returns an empty list for an empty filter.
+	 */
+	public static List<int[]> matchRanges(CharSequence text, CompiledFilter cf) {
+		List<int[]> res = new ArrayList<>();
+		if (text == null || cf.ps == null) return res;
+		for (final Pattern p : cf.ps) {
+			Matcher m = p.matcher(text);
+			while (m.find()) {
+				if (m.end() > m.start()) res.add(new int[] { m.start(), m.end() });
+			}
+		}
+		return res;
+	}
+
+	/**
+	 * Up to {@code maxLines} lyric lines of {@code doc} that contain any filter token, joined by
+	 * {@code '\n'}, to preview where a deep-search hit occurred. Returns null when the filter is
+	 * empty or no lyric line matches (e.g. the hit was only in the title/authors, already shown).
+	 */
+	public static String findLyricSnippet(SongDocument doc, CompiledFilter cf, int maxLines) {
+		if (cf.ps == null) return null;
+
+		List<String> picked = new ArrayList<>();
+		for (String line : SongDocumentSearch.lyricLines(doc)) {
+			boolean lineMatches = false;
+			for (final Pattern p : cf.ps) {
+				if (p.matcher(line).find()) {
+					lineMatches = true;
+					break;
+				}
+			}
+			if (lineMatches) {
+				picked.add(line);
+				if (picked.size() >= maxLines) break;
+			}
+		}
+
+		if (picked.isEmpty()) return null;
+		return String.join("\n", picked);
+	}
 }

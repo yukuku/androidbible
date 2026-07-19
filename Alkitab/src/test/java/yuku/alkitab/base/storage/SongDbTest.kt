@@ -233,6 +233,26 @@ class SongDbTest {
     }
 
     @Test
+    fun `deep filter attaches up to two matching lyric lines as the result snippet`() {
+        // songDoc's lyric lines are "Line 1", "Line 2", "Chorus" (in that order).
+        dao.storeSongs("NKB", listOf(songDoc("A")), SongDocumentJson.DATA_FORMAT_VERSION)
+
+        val rows = dao.listSongInfosByBookNameAndDeepFilter("NKB", "line")
+        assertEquals(1, rows.size)
+        // Both "Line 1" and "Line 2" match; capped at two, joined by a newline, in document order.
+        assertEquals("Line 1\nLine 2", rows[0].snippet)
+    }
+
+    @Test
+    fun `deep filter leaves the snippet null when only the title matches, not a lyric line`() {
+        dao.storeSongs("NKB", listOf(songDoc("A", title = "Hosanna in the highest")), SongDocumentJson.DATA_FORMAT_VERSION)
+
+        val rows = dao.listSongInfosByBookNameAndDeepFilter("NKB", "hosanna")
+        assertEquals(1, rows.size)
+        assertNull(rows[0].snippet)
+    }
+
+    @Test
     fun `deleteSongBook removes book metadata, every song, and vacuums without losing other books`() {
         dao.insertSongBookInfo(bookInfo(name = "NKB", title = "Buku NKB"))
         dao.insertSongBookInfo(bookInfo(name = "PKJ", title = "Buku PKJ"))
