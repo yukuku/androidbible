@@ -253,7 +253,9 @@ public class SongDb {
                         rowBookName,
                         rowCode,
                         c.isNull(colTitle) ? null : c.getString(colTitle),
-                        c.isNull(colTitleOriginal) ? null : c.getString(colTitleOriginal)
+                        c.isNull(colTitleOriginal) ? null : c.getString(colTitleOriginal),
+                        // preview up to 2 matching lyric lines under the result (deep search only)
+                        SongFilter.findLyricSnippet(doc, cf, 2)
                     ));
                 }
             }
