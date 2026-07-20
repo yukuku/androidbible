@@ -1,6 +1,6 @@
 # REM-36: Fix YES2 ASCII Search Decoder + Round-Trip Coverage
 
-**Addresses:** PB-22 (and the TD-13 gap: no YES2 ASCII decoder test)
+**Source:** 2026-07 code audit
 **Module:** AlkitabYes2 (`Yes2VerseTextDecoder.java`)
 **BRICE:** B=3 R=3 I=5 C=5 E=3 → **3.8**
 **Phase:** 1 — Quick Wins & Safety Fixes (2026-07 audit)

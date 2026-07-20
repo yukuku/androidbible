@@ -1,6 +1,6 @@
 # REM-02: Fix Preferences hold()/unhold() Safety ✅ COMPLETED
 
-**Addresses:** TD-09, PB-07
+**Addresses:** TD-09
 **Module:** Afw
 **BRICE:** B=3 R=4 I=5 C=5 E=4 → **4.2**
 **Phase:** 1 — Quick Wins & Safety Fixes

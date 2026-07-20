@@ -1,6 +1,6 @@
 # REM-35: Fix "Update Song Book" dataFormatVersion Handling
 
-**Addresses:** PB-21
+**Source:** 2026-07 code audit
 **Module:** Songs (`SongViewActivity.updateSongBook`, `SongDb.storeSongs`, `SongRoomDao`)
 **BRICE:** B=4 R=4 I=4 C=4 E=3 → **3.8**
 **Phase:** 1 — Quick Wins & Safety Fixes (2026-07 audit)

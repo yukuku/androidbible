@@ -31,7 +31,7 @@ Both ride AndroidX media3 `ExoPlayer` inside a foreground `MediaSessionService`,
 
 ## State Machine
 
-Song audio keeps the legacy controller state machine (now fed from `SongPlaybackState`):
+Song audio uses the `MediaController` state machine, fed from `SongPlaybackState`:
 ```
 reset → preparing → playing ⇄ paused → complete
                   ↘ error

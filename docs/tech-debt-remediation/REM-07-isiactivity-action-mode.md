@@ -13,7 +13,7 @@
 3. ✅ Extracted pure text-building logic into `VerseTextFormatter` (no Android dependencies, purely testable under plain JUnit)
 4. ✅ Moved `RibkaEligibility` to a standalone top-level file `RibkaEligibility.kt`
 5. ✅ Added `mockk` to the test classpath. Added 26 unit tests: 11 pure-JUnit tests for `VerseTextFormatterTest`, 15 Robolectric tests for `VerseActionModeControllerTest` (menu visibility rules, click routing)
-6. ✅ Follow-up PR `716eb1ce` fixed the split-1 share URL metadata bug (PB-08) that had been preserved verbatim in the REM-07 refactor. Four regression tests added for copy/share split-0/1 metadata routing.
+6. ✅ A follow-up fixed a split-1 share URL metadata bug (split-1 copy/share used split-0 version metadata in the generated URL) that the extraction had preserved verbatim. Four regression tests added for copy/share split-0/1 metadata routing.
 
 **Result:** `IsiActivity.kt` shrank substantially. Action mode is now independently testable without instantiating the Activity.
 

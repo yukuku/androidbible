@@ -100,7 +100,7 @@ Release builds use ProGuard with:
 
 ## Server Configuration (Build Config)
 
-Defined in `Alkitab/build.gradle.kts` (inlined there; previously held in the root build script's `ext` block):
+Defined in `Alkitab/build.gradle.kts`:
 - `SERVER_HOST`: `https://api.alkitab.app`
 - `RIBKA_FUNCTIONS_HOST`: `https://us-central1-pulau-ribka.cloudfunctions.net/` (release)
 - `RIBKA_FUNCTIONS_HOST_DEBUG`: `http://10.0.3.2:5001/pulau-ribka/us-central1/` (debug, emulator localhost)
