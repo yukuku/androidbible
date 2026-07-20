@@ -14,9 +14,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
@@ -29,16 +29,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,10 +63,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.Typeface
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import java.util.Locale
+import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
 import yuku.afw.App
 import yuku.afw.storage.Preferences
@@ -73,8 +77,6 @@ import yuku.alkitab.base.compose.BibleAppTheme
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.FontManager
 import yuku.alkitab.debug.R
-import java.util.Locale
-import kotlin.math.roundToInt
 
 /**
  * The "Aa" text-appearance panel ("tampilan"), rendered as a **non-modal**
@@ -372,7 +374,7 @@ class TextAppearancePanel(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = stringResource(R.string.text_appearance_font).uppercase(Locale.getDefault()),
+                text = stringResource(R.string.text_appearance_font),
                 modifier = Modifier.weight(1f),
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Bold,
@@ -389,7 +391,7 @@ class TextAppearancePanel(
     @Composable
     private fun SectionLabel(text: String) {
         Text(
-            text = text.uppercase(Locale.getDefault()),
+            text = text,
             modifier = Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp),
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
@@ -424,6 +426,7 @@ class TextAppearancePanel(
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun FontRow() {
         val escapeColor = colorResource(R.color.escape)
@@ -439,22 +442,23 @@ class TextAppearancePanel(
                 .padding(start = 16.dp, end = 16.dp, top = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(modifier = Modifier.weight(1f)) {
-                TextButton(
-                    onClick = { expanded = true },
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(
-                        text = currentDisplay,
-                        modifier = Modifier.weight(1f),
-                        fontFamily = currentFamily,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Start,
-                    )
-                    Text("▾")
-                }
-                DropdownMenu(
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = it },
+                modifier = Modifier.weight(1f),
+            ) {
+                OutlinedTextField(
+                    value = currentDisplay,
+                    onValueChange = {},
+                    readOnly = true,
+                    singleLine = true,
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(fontFamily = currentFamily),
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(MenuAnchorType.PrimaryNotEditable),
+                )
+                ExposedDropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
                 ) {
@@ -471,6 +475,7 @@ class TextAppearancePanel(
                                 expanded = false
                                 onFontSelected(option.prefName)
                             },
+                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                         )
                     }
                 }

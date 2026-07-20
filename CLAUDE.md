@@ -252,7 +252,7 @@ Detailed documentation for each major feature module:
 - Mixed Java/Kotlin codebase (Kotlin preferred for new code, many files still Java)
 - JVM toolchain 17 across all modules
 - No obfuscation in ProGuard (`-dontobfuscate`), only shrinking
-- EditorConfig disables `import-ordering` and `no-wildcard-imports` for Kotlin
+- EditorConfig enforces a single alphabetical import layout (`ij_kotlin_imports_layout=*`, no `java.*`/`kotlin.*`/static exceptions) and disables `no-wildcard-imports` for Kotlin
 - Preference keys are defined as enum entries in `Prefkey.kt`
 - GIDs (globally unique IDs) are used alongside database `_id` for sync-capable entities
 - `Ari` encoding is used universally for verse references — never store book/chapter/verse separately
