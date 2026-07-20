@@ -88,10 +88,9 @@ import yuku.alkitab.debug.R
  * overlay [FrameLayout], so it floats above the verses without a scrim — the user
  * can keep scrolling and interacting with the text while adjusting the display.
  *
- * The public API (constructor + [show]/[hide]/[displayValues]/[onActivityResult]/
- * [setSplitVersion]/[clearSplitVersion]) is kept identical to the previous
- * View-based panel so `IsiActivity`, [ReaderGestureHost], [SplitViewHost] and
- * [SplitViewManager] can drive it unchanged.
+ * `IsiActivity`, [ReaderGestureHost], [SplitViewHost] and [SplitViewManager] drive
+ * it through [show]/[hide]/[displayValues]/[onActivityResult]/[setSplitVersion]/
+ * [clearSplitVersion].
  */
 class TextAppearancePanel(
     private val activity: Activity,
@@ -214,7 +213,7 @@ class TextAppearancePanel(
     }
 
     private fun onTextSizeChanged(value: Float) {
-        val snapped = (value * 2f).roundToInt() / 2f // 0.5 steps, matching the old seek bar
+        val snapped = (value * 2f).roundToInt() / 2f // 0.5 steps
         Preferences.setFloat(Prefkey.ukuranHuruf2, snapped)
         uiTextSize = snapped
         listener.onValueChanged()
@@ -517,8 +516,7 @@ class TextAppearancePanel(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                // All four theme colors previewed as swatches: text, background,
-                // verse number, red text (same order as the old MultiColorView).
+                // All four theme colors as swatches: text, background, verse number, red text.
                 uiColors.take(4).forEach { c ->
                     Surface(
                         modifier = Modifier
@@ -696,9 +694,8 @@ class TextAppearancePanel(
     }
 
     /**
-     * Reading of the four theme colors (text, background, verse number, red text)
-     * from the day/night preference set, and writing them back. Ported verbatim
-     * from the previous View-based panel.
+     * Reads the four theme colors (text, background, verse number, red text) from
+     * the day/night preference set, and writes them back.
      */
     private object ColorThemes {
         fun themeStringToColors(themeString: String): IntArray = intArrayOf(
