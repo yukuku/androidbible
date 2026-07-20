@@ -19,13 +19,16 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Checkbox
@@ -54,6 +57,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
@@ -84,10 +88,9 @@ import yuku.alkitab.debug.R
  * overlay [FrameLayout], so it floats above the verses without a scrim — the user
  * can keep scrolling and interacting with the text while adjusting the display.
  *
- * The public API (constructor + [show]/[hide]/[displayValues]/[onActivityResult]/
- * [setSplitVersion]/[clearSplitVersion]) is kept identical to the previous
- * View-based panel so `IsiActivity`, [ReaderGestureHost], [SplitViewHost] and
- * [SplitViewManager] can drive it unchanged.
+ * `IsiActivity`, [ReaderGestureHost], [SplitViewHost] and [SplitViewManager] drive
+ * it through [show]/[hide]/[displayValues]/[onActivityResult]/[setSplitVersion]/
+ * [clearSplitVersion].
  */
 class TextAppearancePanel(
     private val activity: Activity,
@@ -210,7 +213,7 @@ class TextAppearancePanel(
     }
 
     private fun onTextSizeChanged(value: Float) {
-        val snapped = (value * 2f).roundToInt() / 2f // 0.5 steps, matching the old seek bar
+        val snapped = (value * 2f).roundToInt() / 2f // 0.5 steps
         Preferences.setFloat(Prefkey.ukuranHuruf2, snapped)
         uiTextSize = snapped
         listener.onValueChanged()
@@ -503,7 +506,7 @@ class TextAppearancePanel(
                 .height(44.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .pointerInput(Unit) { detectTapGestures { showDialog = true } },
-            color = Color(uiColors.getOrElse(1) { 0 }),
+            color = MaterialTheme.colorScheme.surfaceContainerHighest,
             shape = RoundedCornerShape(8.dp),
         ) {
             Row(
@@ -513,8 +516,8 @@ class TextAppearancePanel(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                // text color, verse number color, red text color previewed as swatches
-                intArrayOf(uiColors.getOrElse(0) { 0 }, uiColors.getOrElse(2) { 0 }, uiColors.getOrElse(3) { 0 }).forEach { c ->
+                // All four theme colors as swatches: text, background, verse number, red text.
+                uiColors.take(4).forEach { c ->
                     Surface(
                         modifier = Modifier
                             .weight(1f)
@@ -553,13 +556,22 @@ class TextAppearancePanel(
         val themes = remember(themeValues) { themeValues.map { ColorThemes.themeStringToColors(it) } }
         val selectedIndex = themes.indexOfFirst { it.contentEquals(uiColors) }
 
+        // The theme list is long (17 presets + Custom), so it must scroll and
+        // stay clear of the screen edges.
+        val maxDialogHeight = (LocalConfiguration.current.screenHeightDp * 0.85f).dp
+
         Dialog(onDismissRequest = onDismiss) {
             Surface(
                 shape = RoundedCornerShape(28.dp),
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
                 tonalElevation = 6.dp,
             ) {
-                Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                Column(
+                    modifier = Modifier
+                        .heightIn(max = maxDialogHeight)
+                        .verticalScroll(rememberScrollState())
+                        .padding(vertical = 8.dp),
+                ) {
                     themes.forEachIndexed { index, colors ->
                         ThemeChoiceRow(
                             label = themeLabels.getOrElse(index) { "" },
@@ -682,9 +694,8 @@ class TextAppearancePanel(
     }
 
     /**
-     * Reading of the four theme colors (text, background, verse number, red text)
-     * from the day/night preference set, and writing them back. Ported verbatim
-     * from the previous View-based panel.
+     * Reads the four theme colors (text, background, verse number, red text) from
+     * the day/night preference set, and writes them back.
      */
     private object ColorThemes {
         fun themeStringToColors(themeString: String): IntArray = intArrayOf(
