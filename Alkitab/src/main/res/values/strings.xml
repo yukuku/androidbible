@@ -161,6 +161,7 @@
     <string name="menuDisplay">Display</string>
 	<string name="text_appearance_font">Font</string>
     <string name="text_appearance_theme_custom">Custom…</string>
+    <string name="text_appearance_color_theme">Color theme</string>
     <string name="text_appearance_text_size">Text size</string>
     <string name="text_appearance_text_size_for_version">Text size for ^1</string>
     <string name="text_appearance_line_spacing">Line spacing</string>

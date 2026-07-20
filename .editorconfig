@@ -1,2 +1,3 @@
 [*.{kt,kts}]
-disabled_rules=import-ordering,no-wildcard-imports
+disabled_rules=no-wildcard-imports
+ij_kotlin_imports_layout=*
