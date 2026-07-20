@@ -535,7 +535,19 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         val songBookInfo = SongBookUtil.getSongBookInfo(currentBookName)
 
         val currentSongCode = currentSong.code
-        val dataFormatVersion = App.services.storage.songDb.getDataFormatVersionForSongs(currentBookName)
+
+        // Always re-download and store at the current format. The stored payload is always JSON at
+        // this version, and the book may be mixed-version after REM-21's lazy per-row conversion, so
+        // requesting whatever version happened to be on a row would leave stale rows behind and could
+        // stamp a JSON payload with a legacy version (REM-35). Guard mirrors the alkitab:// path.
+        val dataFormatVersion = SongDocumentJson.DATA_FORMAT_VERSION
+        if (!SongBookUtil.isSupportedDataFormatVersion(dataFormatVersion)) {
+            MaterialAlertDialogBuilder(this)
+                .setMessage("Unsupported data format version: $dataFormatVersion")
+                .setPositiveButton(R.string.ok, null)
+                .show()
+            return
+        }
 
         SongBookUtil.downloadSongBook(this@SongViewActivity, songBookInfo, dataFormatVersion, object : SongBookUtil.OnDownloadSongBookListener {
             override fun onFailedOrCancelled(songBookInfo: SongBookUtil.SongBookInfo, e: Exception?) {
