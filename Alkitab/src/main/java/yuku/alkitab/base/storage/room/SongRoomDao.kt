@@ -23,12 +23,14 @@ import androidx.room.Transaction
  * failure — exact match for the legacy
  * `SQLiteDatabase.beginTransactionNonExclusive` pattern.
  *
- * `storeSongs` is similarly preserved as
- * [replaceSongsForBookNameAndDataFormatVersion]: a `@Transaction` method
- * that deletes every row matching `(bookName, dataFormatVersion)` and
- * re-inserts the supplied list. Each inserted row uses the supplied
- * pre-computed `ordering` index so the legacy "ordering of the songs for
- * display" semantics are exactly preserved.
+ * `storeSongs` is backed by [replaceSongsForBookName]: a `@Transaction`
+ * method that deletes every row for the book and re-inserts the supplied
+ * list. Each inserted row uses the supplied pre-computed `ordering` index
+ * so the legacy "ordering of the songs for display" semantics are exactly
+ * preserved. A song-book download replaces the whole book, so the delete is
+ * keyed by `bookName` alone — never by `(bookName, dataFormatVersion)`,
+ * which would leak rows of a different version and duplicate songs after a
+ * mixed-version book (REM-35).
  */
 @Dao
 abstract class SongRoomDao {
@@ -37,14 +39,6 @@ abstract class SongRoomDao {
 
     @Insert
     abstract fun insertSongInfo(entity: SongInfoEntity): Long
-
-    @Query(
-        "DELETE FROM song_info WHERE bookName = :bookName AND dataFormatVersion = :dataFormatVersion",
-    )
-    abstract fun deleteSongInfosByBookNameAndDataFormatVersion(
-        bookName: String,
-        dataFormatVersion: Int,
-    ): Int
 
     @Query("DELETE FROM song_info WHERE bookName = :bookName")
     abstract fun deleteSongInfosByBookName(bookName: String): Int
@@ -150,11 +144,6 @@ abstract class SongRoomDao {
     abstract fun writeBackJsonSongData(id: Long, data: ByteArray): Int
 
     @Query(
-        "SELECT dataFormatVersion FROM song_info WHERE bookName = :bookName LIMIT 1",
-    )
-    abstract fun findDataFormatVersionForBookName(bookName: String): Int?
-
-    @Query(
         "SELECT updateTime FROM song_info WHERE bookName = :bookName AND code = :code LIMIT 1",
     )
     abstract fun findUpdateTimeByBookNameAndCode(bookName: String, code: String): Int?
@@ -163,24 +152,28 @@ abstract class SongRoomDao {
     abstract fun countAllSongInfos(): Int
 
     /**
-     * Replace every `song_info` row for the given `(bookName, dataFormatVersion)`
-     * with the supplied entities. Mirrors the legacy facade's
-     * `storeSongs(bookName, songs, dataFormatVersion)` semantics — the
-     * count of pre-existing rows is unchanged from the caller's
-     * perspective, and the new rows get the caller-assigned `ordering`
+     * Replace every `song_info` row for the given `bookName` with the
+     * supplied entities. Backs the facade's `storeSongs(bookName, songs)`:
+     * a song-book download replaces the whole book, so the delete is keyed
+     * by `bookName` alone. The new rows get the caller-assigned `ordering`
      * indexes.
+     *
+     * Deleting by `bookName` alone (rather than `(bookName, dataFormatVersion)`)
+     * is what makes updating a mixed-version book safe — after REM-21's lazy
+     * per-row conversion a book can hold rows at several `dataFormatVersion`s,
+     * and a version-scoped delete would leave the non-matching rows behind,
+     * duplicating songs (REM-35).
      *
      * Wrapped in `@Transaction` so the delete and the inserts observe a
      * consistent snapshot and roll back together on failure — exact match
      * for the legacy `SQLiteDatabase.beginTransactionNonExclusive` pattern.
      */
     @Transaction
-    open fun replaceSongsForBookNameAndDataFormatVersion(
+    open fun replaceSongsForBookName(
         bookName: String,
-        dataFormatVersion: Int,
         entities: List<SongInfoEntity>,
     ) {
-        deleteSongInfosByBookNameAndDataFormatVersion(bookName, dataFormatVersion)
+        deleteSongInfosByBookName(bookName)
         for (entity in entities) {
             insertSongInfo(entity)
         }

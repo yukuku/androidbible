@@ -16,6 +16,7 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import yuku.alkitab.base.storage.room.SongInfoEntity
 import yuku.alkitab.base.storage.room.SongRoomDatabase
+import yuku.alkitab.base.util.Sqlitil
 import yuku.alkitab.songs.SongBookUtil
 import yuku.alkitab.songs.newdoc.Block
 import yuku.alkitab.songs.newdoc.Line
@@ -113,7 +114,7 @@ class SongDbTest {
         }
 
     private fun store(bookName: String, vararg docs: SongDocument) {
-        dao.storeSongs(bookName, docs.toList(), SongDocumentJson.DATA_FORMAT_VERSION)
+        dao.storeSongs(bookName, docs.toList())
     }
 
     @Test
@@ -139,9 +140,9 @@ class SongDbTest {
     }
 
     @Test
-    fun `storeSongs replaces every existing song for the (bookName, dataFormatVersion) tuple`() {
-        dao.storeSongs("NKB", listOf(songDoc("001"), songDoc("002")), SongDocumentJson.DATA_FORMAT_VERSION)
-        dao.storeSongs("NKB", listOf(songDoc("003")), SongDocumentJson.DATA_FORMAT_VERSION)
+    fun `storeSongs replaces every existing song for the book`() {
+        store("NKB", songDoc("001"), songDoc("002"))
+        store("NKB", songDoc("003"))
 
         assertNull(dao.getSong("NKB", "001"))
         assertNull(dao.getSong("NKB", "002"))
@@ -149,15 +150,47 @@ class SongDbTest {
     }
 
     @Test
+    fun `updating a mixed-dataFormatVersion book replaces the whole book with version-5 JSON rows and no duplicates`() {
+        val roomDao = SongRoomDatabase.get(RuntimeEnvironment.getApplication()).songRoomDao()
+        // Reproduce a pre-REM-21 book left mixed-version by lazy per-row conversion: an unviewed
+        // legacy Parcelable row (dataFormatVersion 3) alongside a viewed JSON row (version 5), both
+        // in the same book. A version-scoped delete would only wipe one of them.
+        roomDao.insertSongInfo(
+            SongInfoEntity(0L, "NKB", "001", "Old 1", null, 1, 3, byteArrayOf(1, 2, 3), Sqlitil.nowDateTime()),
+        )
+        roomDao.insertSongInfo(
+            SongInfoEntity(
+                0L, "NKB", "002", "Old 2", null, 2,
+                SongDocumentJson.DATA_FORMAT_VERSION,
+                SongDocumentJson.encode(songDoc("002")).toByteArray(Charsets.UTF_8),
+                Sqlitil.nowDateTime(),
+            ),
+        )
+
+        // The "update song book" re-download stores the fresh payload.
+        store("NKB", songDoc("001"), songDoc("002"), songDoc("003"))
+
+        // No duplicates: each code appears exactly once, in display order.
+        val rows = roomDao.listSongInfosByBookName("NKB")
+        assertEquals(listOf("001", "002", "003"), rows.map { it.code })
+        // Every row is stamped at the JSON version...
+        assertTrue(rows.all { it.dataFormatVersion == SongDocumentJson.DATA_FORMAT_VERSION })
+        // ...and every row is readable via the facade (readDocument).
+        for (code in listOf("001", "002", "003")) {
+            assertNotNull(dao.getSong("NKB", code))
+        }
+    }
+
+    @Test
     fun `storeSongs preserves caller-supplied display ordering`() {
-        dao.storeSongs("NKB", listOf(songDoc("A"), songDoc("B"), songDoc("C")), SongDocumentJson.DATA_FORMAT_VERSION)
+        store("NKB", songDoc("A"), songDoc("B"), songDoc("C"))
         val codes = dao.listSongInfosByBookName("NKB").map { it.code }
         assertEquals(listOf("A", "B", "C"), codes)
     }
 
     @Test
     fun `getFirstSongFromBook returns the song with ordering = 1`() {
-        dao.storeSongs("NKB", listOf(songDoc("A"), songDoc("B")), SongDocumentJson.DATA_FORMAT_VERSION)
+        store("NKB", songDoc("A"), songDoc("B"))
         val first = dao.getFirstSongFromBook("NKB")
         assertNotNull(first)
         assertEquals("A", first!!.code)
@@ -170,8 +203,8 @@ class SongDbTest {
 
     @Test
     fun `getAnySong returns a pair of (bookName, doc) sorted by bookName then ordering`() {
-        dao.storeSongs("PKJ", listOf(songDoc("P1")), SongDocumentJson.DATA_FORMAT_VERSION)
-        dao.storeSongs("NKB", listOf(songDoc("N1")), SongDocumentJson.DATA_FORMAT_VERSION)
+        store("PKJ", songDoc("P1"))
+        store("NKB", songDoc("N1"))
         val pair = dao.getAnySong()
         assertNotNull(pair)
         assertEquals("NKB", pair!!.first)
@@ -185,11 +218,7 @@ class SongDbTest {
 
     @Test
     fun `listSongInfosByBookName returns lightweight SongInfo records in display order`() {
-        dao.storeSongs(
-            "NKB",
-            listOf(songDoc("A", title = "Alpha"), songDoc("B", title = "Bravo")),
-            SongDocumentJson.DATA_FORMAT_VERSION,
-        )
+        store("NKB", songDoc("A", title = "Alpha"), songDoc("B", title = "Bravo"))
         val rows = dao.listSongInfosByBookName("NKB")
         assertEquals(listOf("A", "B"), rows.map { it.code })
         assertEquals(listOf("Alpha", "Bravo"), rows.map { it.title })
@@ -197,12 +226,8 @@ class SongDbTest {
 
     @Test
     fun `listSongInfosByBookName with null bookName lists every book in display order`() {
-        dao.storeSongs("PKJ", listOf(songDoc("P1", title = "Papa")), SongDocumentJson.DATA_FORMAT_VERSION)
-        dao.storeSongs(
-            "NKB",
-            listOf(songDoc("A", title = "Alpha"), songDoc("B", title = "Bravo")),
-            SongDocumentJson.DATA_FORMAT_VERSION,
-        )
+        store("PKJ", songDoc("P1", title = "Papa"))
+        store("NKB", songDoc("A", title = "Alpha"), songDoc("B", title = "Bravo"))
         val rows = dao.listSongInfosByBookName(null)
         assertEquals(listOf("A", "B", "P1"), rows.map { it.code })
         assertEquals(listOf("NKB", "NKB", "PKJ"), rows.map { it.bookName })
@@ -210,14 +235,11 @@ class SongDbTest {
 
     @Test
     fun `listSongInfosByBookNameAndDeepFilter applies title-substring matching`() {
-        dao.storeSongs(
+        store(
             "NKB",
-            listOf(
-                songDoc("A", title = "Hosanna in the highest"),
-                songDoc("B", title = "Amazing grace"),
-                songDoc("C", title = "Holy holy holy"),
-            ),
-            SongDocumentJson.DATA_FORMAT_VERSION,
+            songDoc("A", title = "Hosanna in the highest"),
+            songDoc("B", title = "Amazing grace"),
+            songDoc("C", title = "Holy holy holy"),
         )
         val rows = dao.listSongInfosByBookNameAndDeepFilter("NKB", "holy")
         // "Holy holy holy" matches; the others do not.
@@ -226,8 +248,8 @@ class SongDbTest {
 
     @Test
     fun `listSongInfosByBookNameAndDeepFilter with null bookName scans every book`() {
-        dao.storeSongs("NKB", listOf(songDoc("A", title = "Hosanna")), SongDocumentJson.DATA_FORMAT_VERSION)
-        dao.storeSongs("PKJ", listOf(songDoc("P", title = "Hosanna")), SongDocumentJson.DATA_FORMAT_VERSION)
+        store("NKB", songDoc("A", title = "Hosanna"))
+        store("PKJ", songDoc("P", title = "Hosanna"))
         val rows = dao.listSongInfosByBookNameAndDeepFilter(null, "hosanna")
         assertEquals(2, rows.size)
     }
@@ -235,7 +257,7 @@ class SongDbTest {
     @Test
     fun `deep filter attaches up to two matching lyric lines as the result snippet`() {
         // songDoc's lyric lines are "Line 1", "Line 2", "Chorus" (in that order).
-        dao.storeSongs("NKB", listOf(songDoc("A")), SongDocumentJson.DATA_FORMAT_VERSION)
+        store("NKB", songDoc("A"))
 
         val rows = dao.listSongInfosByBookNameAndDeepFilter("NKB", "line")
         assertEquals(1, rows.size)
@@ -245,7 +267,7 @@ class SongDbTest {
 
     @Test
     fun `deep filter leaves the snippet null when only the title matches, not a lyric line`() {
-        dao.storeSongs("NKB", listOf(songDoc("A", title = "Hosanna in the highest")), SongDocumentJson.DATA_FORMAT_VERSION)
+        store("NKB", songDoc("A", title = "Hosanna in the highest"))
 
         val rows = dao.listSongInfosByBookNameAndDeepFilter("NKB", "hosanna")
         assertEquals(1, rows.size)
@@ -256,8 +278,8 @@ class SongDbTest {
     fun `deleteSongBook removes book metadata, every song, and vacuums without losing other books`() {
         dao.insertSongBookInfo(bookInfo(name = "NKB", title = "Buku NKB"))
         dao.insertSongBookInfo(bookInfo(name = "PKJ", title = "Buku PKJ"))
-        dao.storeSongs("NKB", listOf(songDoc("001"), songDoc("002")), SongDocumentJson.DATA_FORMAT_VERSION)
-        dao.storeSongs("PKJ", listOf(songDoc("P01")), SongDocumentJson.DATA_FORMAT_VERSION)
+        store("NKB", songDoc("001"), songDoc("002"))
+        store("PKJ", songDoc("P01"))
 
         val deleted = dao.deleteSongBook("NKB")
         assertEquals(2, deleted)
@@ -311,13 +333,6 @@ class SongDbTest {
     }
 
     @Test
-    fun `getDataFormatVersionForSongs returns 0 for empty book and the JSON version when present`() {
-        assertEquals(0, dao.getDataFormatVersionForSongs("NKB"))
-        store("NKB", songDoc("001"))
-        assertEquals(SongDocumentJson.DATA_FORMAT_VERSION, dao.getDataFormatVersionForSongs("NKB"))
-    }
-
-    @Test
     fun `getSongUpdateTime returns 0 for missing and a positive value for present`() {
         assertEquals(0, dao.getSongUpdateTime("NKB", "missing"))
         store("NKB", songDoc("001"))
@@ -356,7 +371,7 @@ class SongDbTest {
         p.recycle()
 
         val roomDao = SongRoomDatabase.get(RuntimeEnvironment.getApplication()).songRoomDao()
-        roomDao.insertSongInfo(SongInfoEntity(0L, "NKB", "L1", "Legacy Song", null, 1, 3, bytes, yuku.alkitab.base.util.Sqlitil.nowDateTime()))
+        roomDao.insertSongInfo(SongInfoEntity(0L, "NKB", "L1", "Legacy Song", null, 1, 3, bytes, Sqlitil.nowDateTime()))
 
         val doc = dao.getSong("NKB", "L1")
         assertNotNull(doc)
@@ -366,18 +381,20 @@ class SongDbTest {
         // The write-back runs on a background thread (Background.run) so the row doesn't flip to
         // dataFormatVersion 5 synchronously with the read that triggered it; poll for it instead of
         // asserting immediately.
-        awaitDataFormatVersion("NKB", SongDocumentJson.DATA_FORMAT_VERSION)
+        awaitDataFormatVersion(bookName = "NKB", code = "L1", expected = SongDocumentJson.DATA_FORMAT_VERSION)
 
         // idempotent: a second read returns the same document (now via the JSON path).
         val doc2 = dao.getSong("NKB", "L1")
         assertEquals(doc, doc2)
     }
 
-    private fun awaitDataFormatVersion(bookName: String, expected: Int, timeoutMs: Long = 2000) {
+    private fun awaitDataFormatVersion(bookName: String, code: String, expected: Int, timeoutMs: Long = 2000) {
+        val roomDao = SongRoomDatabase.get(RuntimeEnvironment.getApplication()).songRoomDao()
+        fun current() = roomDao.findSongInfoByBookNameAndCode(bookName, code)?.dataFormatVersion
         val deadline = System.currentTimeMillis() + timeoutMs
-        while (dao.getDataFormatVersionForSongs(bookName) != expected && System.currentTimeMillis() < deadline) {
+        while (current() != expected && System.currentTimeMillis() < deadline) {
             Thread.sleep(10)
         }
-        assertEquals(expected, dao.getDataFormatVersionForSongs(bookName))
+        assertEquals(expected, current())
     }
 }
