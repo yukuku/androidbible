@@ -19,13 +19,16 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Checkbox
@@ -54,6 +57,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
@@ -503,7 +507,7 @@ class TextAppearancePanel(
                 .height(44.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .pointerInput(Unit) { detectTapGestures { showDialog = true } },
-            color = Color(uiColors.getOrElse(1) { 0 }),
+            color = MaterialTheme.colorScheme.surfaceContainerHighest,
             shape = RoundedCornerShape(8.dp),
         ) {
             Row(
@@ -513,8 +517,9 @@ class TextAppearancePanel(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                // text color, verse number color, red text color previewed as swatches
-                intArrayOf(uiColors.getOrElse(0) { 0 }, uiColors.getOrElse(2) { 0 }, uiColors.getOrElse(3) { 0 }).forEach { c ->
+                // All four theme colors previewed as swatches: text, background,
+                // verse number, red text (same order as the old MultiColorView).
+                uiColors.take(4).forEach { c ->
                     Surface(
                         modifier = Modifier
                             .weight(1f)
@@ -553,13 +558,22 @@ class TextAppearancePanel(
         val themes = remember(themeValues) { themeValues.map { ColorThemes.themeStringToColors(it) } }
         val selectedIndex = themes.indexOfFirst { it.contentEquals(uiColors) }
 
+        // The theme list is long (17 presets + Custom), so it must scroll and
+        // stay clear of the screen edges.
+        val maxDialogHeight = (LocalConfiguration.current.screenHeightDp * 0.85f).dp
+
         Dialog(onDismissRequest = onDismiss) {
             Surface(
                 shape = RoundedCornerShape(28.dp),
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
                 tonalElevation = 6.dp,
             ) {
-                Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                Column(
+                    modifier = Modifier
+                        .heightIn(max = maxDialogHeight)
+                        .verticalScroll(rememberScrollState())
+                        .padding(vertical = 8.dp),
+                ) {
                     themes.forEachIndexed { index, colors ->
                         ThemeChoiceRow(
                             label = themeLabels.getOrElse(index) { "" },
