@@ -10,7 +10,7 @@ A home screen app widget displaying daily Bible verses in a stack/card view. Con
 - `Alkitab/src/main/java/yuku/alkitab/base/appwidget/DailyVerseFactory.java` — RemoteViewsFactory implementation
 - `Alkitab/src/main/java/yuku/alkitab/base/appwidget/DailyVerseData.java` — Widget settings and verse selection
 - `Alkitab/src/main/java/yuku/alkitab/base/appwidget/DailyVerseAppWidgetConfigurationActivity.java` — Widget setup UI
-- `Alkitab/src/main/java/yuku/alkitab/base/br/DailyVerseAppWidgetReceiver.java` — Broadcast receiver for widget updates
+- `Alkitab/src/main/java/yuku/alkitab/base/br/DailyVerseAppWidgetReceiver.kt` — Broadcast receiver for widget updates
 
 ## Verse Selection Algorithm
 

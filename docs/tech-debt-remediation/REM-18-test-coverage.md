@@ -5,7 +5,7 @@
 **BRICE:** B=4 R=3 I=2 C=3 E=5 → **3.4**
 **Phase:** 2 — Architecture Improvements
 
-**Outcome:** All six sub-steps shipped — see per-step entries below. Cumulatively this added ~170 unit tests across `HighlightsTest`, the four `Sync*Test` files, `InternalDbTest`, `SearchEngineTest`, `Yes2RoundTripTest` + `SnappyStreamRoundTripTest`, and `ProviderTest`, plus latent-bug fixes in `Highlights.alphaMix`, `Sync_Pins.Content.equals/hashCode`, and a flagged `SnappyInputStream` EOF edge. Robolectric (`4.14.1`) is now a `testImplementation` dependency on `Alkitab`, and test-scope shadows for `android.util.Log` / `FirebaseCrashlytics` / `android.util.Pair` unblock further pure-JUnit work on Android-touching code.
+**Outcome:** All six sub-steps shipped — see per-step entries below. Cumulatively this added ~170 unit tests across `HighlightsTest`, the four `Sync*Test` files, `InternalDbTest`, `SearchEngineTest`, `Yes2RoundTripTest` + `SnappyStreamRoundTripTest`, and `ProviderTest`, plus latent-bug fixes in `Highlights.alphaMix`, `Sync_Pins.Content.equals/hashCode`, and a flagged `SnappyInputStream` EOF edge. Robolectric is now a `testImplementation` dependency on `Alkitab`, and test-scope shadows for `android.util.Log` / `FirebaseCrashlytics` / `android.util.Pair` unblock further pure-JUnit work on Android-touching code.
 
 **Steps — prioritized by risk coverage:**
 
@@ -22,7 +22,7 @@
 3. ✅ Added test-scope stub for `android.util.Pair` so `patchNoConflict` runs without Robolectric
 
 **Step 18c: InternalDb tests (or Room DAO tests)** ✅ COMPLETED
-1. ✅ Added Robolectric (`4.14.1`) as a `testImplementation` dependency and enabled `testOptions.unitTests.includeAndroidResources` in `Alkitab/build.gradle` — Robolectric is required because `InternalDbHelper` extends Android's `SQLiteOpenHelper`
+1. ✅ Added Robolectric as a `testImplementation` dependency and enabled `testOptions.unitTests.includeAndroidResources` in `Alkitab/build.gradle` — Robolectric is required because `InternalDbHelper` extends Android's `SQLiteOpenHelper`
 2. ✅ Added `InternalDbTest.kt` under `Alkitab/src/test/java/yuku/alkitab/base/storage/` using `RobolectricTestRunner` with `@Config(application = Application::class)` so `yuku.alkitab.base.App.onCreate` (Firebase / PRDownloader / FCM) doesn't run. Reuses the existing test-scope shadows of `android.util.Log` and `com.google.firebase.crashlytics.FirebaseCrashlytics` (added in REM-18a) so `AppLog`'s static initializer loads without bootstrapping Firebase. `yuku.afw.App.context` is set manually in `@Before`; because no `sync_simpleToken` preference is present, `Sync.notifySyncNeeded` early-returns and no background work fires
 3. ✅ Test names follow the Kotlin backtick-sentence convention from CLAUDE.md. Covers marker CRUD (`insertMarker`, `insertOrUpdateMarker`, `getMarkerById/Gid`, `listMarkersForAriKind`, `listAllMarkers`, `deleteMarkerById` with cascade to `Marker_Label`, `countMarkersForBookChapter`), label ordering (`insertLabel`, `getLabelMaxOrdering`, `reorderLabels` up/down, `sortLabelsAlphabetically`, `listLabelsByMarker` ordering), highlight storage (`updateOrInsertHighlights` insert/update/delete, `updateOrInsertPartialHighlight` including dedup of sync-duplicates, `getHighlightColorRgb` single/multi-verse), and attribute loading (`putAttributes` bookmarks, notes, multi-verse highlight spread, ordering by `modifyTime`, book-chapter filtering)
 

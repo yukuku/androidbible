@@ -21,7 +21,7 @@
 
 6. **Dependency removed** — `androidx-localbroadcastmanager` deleted from `gradle/libs.versions.toml` and `Alkitab/build.gradle.kts`. `App.getLbm()` helper and the `LocalBroadcastManager` import removed from `App.java`.
 
-Coroutines and `lifecycleScope` were already on the classpath transitively through `androidx.fragment:fragment-ktx:1.8.9` (pulling `kotlinx-coroutines-android:1.9.0` and `lifecycle-runtime-ktx:2.7.0`); no new dependency was needed.
+Coroutines and `lifecycleScope` were already on the classpath transitively through `androidx.fragment:fragment-ktx` (pulling `kotlinx-coroutines-android` and `lifecycle-runtime-ktx`); no new dependency was needed.
 
 **Verified:** `./gradlew :Alkitab:assemblePlainDebug` plus `testPlainDebugUnitTest testPlainReleaseUnitTest` — all 313 unit tests pass.
 

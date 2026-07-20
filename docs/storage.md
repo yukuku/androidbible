@@ -200,7 +200,7 @@ Accessed via `Afw.Preferences` wrapper with caching and batch commits. Keys defi
 
 ### External Storage (Legacy)
 
-The app previously supported reading `.yes` files from external storage (`READ_EXTERNAL_STORAGE` / `WRITE_EXTERNAL_STORAGE`). These permissions are capped at max SDK 32, reflecting the move to scoped storage.
+The `READ_EXTERNAL_STORAGE` / `WRITE_EXTERNAL_STORAGE` permissions (for reading `.yes` files from external storage) are declared with `maxSdkVersion="32"`; on newer Android the app relies on scoped storage.
 
 ## Database Access Patterns
 
