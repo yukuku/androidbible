@@ -249,6 +249,7 @@ Detailed documentation for each major feature module:
 
 ## Code Conventions
 
+- **IMPORTANT — Never write change-narrating comments.** Code comments must describe the code as it is *now*, not the history of how it got there. Do not reference past revisions, removed approaches, or the act of editing: no "previously", "used to", "formerly", "earlier iterations", "an earlier version", "we changed/renamed/moved this from…", "now uses…", "no longer…", and the like. Git history is the record of *change*; the code and its comments describe the *present*. When explaining why the current design was chosen over an alternative is genuinely useful, state it as present-tense rationale about the alternative ("the cluster is centered with Spacers because a weighted slot would clip the label"), not as a story about what the code used to do. This applies to all comments, KDoc/Javadoc, and commit-adjacent code — keep the narrative of change out of the source.
 - Mixed Java/Kotlin codebase (Kotlin preferred for new code, many files still Java)
 - JVM toolchain 17 across all modules
 - No obfuscation in ProGuard (`-dontobfuscate`), only shrinking

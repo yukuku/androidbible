@@ -228,41 +228,29 @@ private fun AudioBarTopRow(
     state: AudioBarUiState,
     onCommand: (AudioBarCommand) -> Unit,
 ) {
-    // Icon-only top row — earlier iterations included chapter-name text
-    // labels next to the skip-prev/next buttons ("Yesaya 10", "Yesaya 12"),
-    // but on a phone screen they crowded out the speed indicator and forced
-    // the close button to wrap. The chapter label is also redundant: the
-    // toolbar already shows the user's current chapter, and skipping
-    // prev/next is a universally-understood control.
-    // Three-slot row: equal-weight side slots make the transport cluster
-    // geometrically centered regardless of the speed/close widths, while the
-    // Row layout (unlike a Box overlay) keeps the side controls from
-    // overlapping the cluster on narrow screens — the weighted slots shrink
-    // and the cluster keeps its intrinsic width.
+    // Icon-only top row: a speed chip on the left, the transport cluster
+    // (chapter/verse skip + play/pause) centered, and a close button on the
+    // right. Chapter-name text labels are intentionally omitted — the toolbar
+    // already shows the current chapter, and on a phone they crowd out the
+    // speed indicator and force the close button to wrap.
+    //
+    // The speed chip and close button take their intrinsic width, and the
+    // cluster is centered between two weighted Spacers that collapse to zero
+    // when the row is tight. Wrapping the speed chip in a `weight(1f)` slot
+    // instead would clip it: a Row measures the non-weighted cluster first
+    // and splits the remaining width equally between weighted slots, and
+    // because the speed label ("0,5×") is wider than the close icon, an equal
+    // split can force the TextButton narrower than its text — which, with
+    // `maxLines = 1, softWrap = false` and no ellipsis, drops the trailing
+    // "×" (worse under large font scales, where the text grows but the icon
+    // buttons don't).
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        // Speed chip — tapping opens the [SpeedBottomSheet]. `softWrap = false`
-        // keeps locales that render with a comma decimal (e.g. "1,0×" in
-        // Indonesian) from wrapping into a stacked "1," / "0×" when the row
-        // is tight.
-        val locale = appLocale()
-        Box(modifier = Modifier.weight(1f)) {
-            TextButton(
-                onClick = { onCommand(AudioBarCommand.Speed) },
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .padding(horizontal = 4.dp),
-            ) {
-                Text(
-                    text = stringResource(R.string.audio_bar_speed_format, formatSpeedNumber(state.speed, locale)),
-                    style = MaterialTheme.typography.labelLarge,
-                    maxLines = 1,
-                    softWrap = false,
-                )
-            }
-        }
+        SpeedButton(state = state, onCommand = onCommand)
+
+        Spacer(Modifier.weight(1f))
 
         ChapterNavButton(
             available = state.prevChapterLabel != null,
@@ -286,17 +274,9 @@ private fun AudioBarTopRow(
             onClick = { onCommand(AudioBarCommand.NextChapter) },
         )
 
-        Box(modifier = Modifier.weight(1f)) {
-            IconButton(
-                onClick = { onCommand(AudioBarCommand.Close) },
-                modifier = Modifier.align(Alignment.CenterEnd),
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_audio_close),
-                    contentDescription = stringResource(R.string.audio_bar_close),
-                )
-            }
-        }
+        Spacer(Modifier.weight(1f))
+
+        CloseButton(onCommand = onCommand)
     }
 }
 
