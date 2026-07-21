@@ -21,6 +21,25 @@ object SongDocumentSearch {
         return texts
     }
 
+    /**
+     * Just the lyric verse lines, in document order — the song "body" used to build the
+     * matching-line snippet shown under a deep-search result. Unlike [searchableTexts] this
+     * excludes code/title/authors/tune, since those are already surfaced (and highlighted)
+     * as the result's title and book name.
+     */
+    @JvmStatic
+    fun lyricLines(doc: SongDocument): List<String> {
+        val lines = mutableListOf<String>()
+        for (block in doc.blocks) {
+            if (block is LyricBlock) {
+                for (verse in block.verses) {
+                    for (line in verse.lines) lines.add(line.plainText())
+                }
+            }
+        }
+        return lines
+    }
+
     private fun collect(block: Block, out: MutableList<String>) {
         when (block) {
             is PBlock -> if (block.role == "tune") out.add(block.content.plainText())

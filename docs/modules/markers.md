@@ -13,8 +13,7 @@
 - `Alkitab/src/main/java/yuku/alkitab/base/widget/AttributeView.java` — Icon drawing for bookmark/note/highlight indicators
 - `Alkitab/src/main/java/yuku/alkitab/base/verses/VersesAttributes.kt` — Per-verse attribute maps
 - `Alkitab/src/main/java/yuku/alkitab/base/verses/VerseAttributeLoader.kt` — Loads attributes from DB and content providers
-- `Alkitab/src/main/java/yuku/alkitab/base/storage/MarkerDao.kt` / `LabelDao.kt` / `Marker_LabelDao.kt` — Facade DAOs that route through Room
-- `Alkitab/src/main/java/yuku/alkitab/base/storage/room/MarkerEntity.kt` / `LabelEntity.kt` / `MarkerLabelEntity.kt` (+ matching `*RoomDao.kt`) — Room entities/DAOs
+- `Alkitab/src/main/java/yuku/alkitab/base/storage/MarkerDao.kt` / `LabelDao.kt` / `Marker_LabelDao.kt` — Per-table DAOs issuing raw SQL against the legacy `AlkitabDb` (`InternalDbHelper`)
 
 ## Marker Model
 
@@ -31,7 +30,7 @@ Marker {
 }
 ```
 
-Storage: the `marker`, `label`, and `marker_label` tables live in the Room database `AlkitabRoomDb` (`AppDatabase` at `@Database(version = 2)`). The `MarkerDao` / `LabelDao` / `Marker_LabelDao` facades expose a `Marker` / `Label` / `Marker_Label` model surface for callers and map to/from Room entities internally.
+Storage: the `Marker`, `Label`, and `Marker_Label` tables live in the legacy `AlkitabDb` SQLite file managed by `InternalDbHelper`. The `MarkerDao` / `LabelDao` / `Marker_LabelDao` classes expose a `Marker` / `Label` / `Marker_Label` model surface for callers and issue raw SQL internally. (A Room migration for these tables was merged and then reverted before public release — see `docs/tech-debt-remediation.md`.)
 
 ## Labels
 

@@ -193,6 +193,10 @@ html, body {
 #song-render .align-start  { text-align: start; }
 #song-render .align-center { text-align: center; }
 #song-render .align-end    { text-align: end; }
+/* A row item is a shrink-to-fit flex item, so text-align cannot move it;
+   there align positions the item itself along the row's main axis. */
+#song-render .row > .align-center { margin-inline: auto; }
+#song-render .row > .align-end    { margin-inline-start: auto; }
 
 /* youtube link */
 #song-render .role-youtube a { color: #03a9f4; }
@@ -334,7 +338,7 @@ Maka jiwaku pun memuji-Mu,</code></pre>
 <li><code>@scripture &lt;osis&gt;</code> → a <code>scripture</code> block (OSIS, e.g. <code>John.3.16; Rom.5.8</code>; localized at render against the active Bible version).</li>
 <li><code>@youtube &lt;videoId&gt;</code> → a <code>youtube</code> block.</li>
 <li><code>@gap</code> → a <code>gap</code> block (blank vertical space, default 1em). Combines with <code>@size=&lt;float&gt;</code> like other tags, e.g. <code>@size=2 @gap</code> for a double-height gap.</li>
-<li><code>@row</code> … <code>@/row</code> → a <code>row</code> block; each line between the markers becomes a <code>p</code> item (its own role/size/align tags apply). Items spread start → end, e.g. lyricist-left / composer-right.</li>
+<li><code>@row</code> … <code>@/row</code> → a <code>row</code> block; each line between the markers becomes a <code>p</code> item (its own role/size/align tags apply). Items spread start → end, e.g. lyricist-left / composer-right. On a row item, <code>@align=</code> positions the item within the row — e.g. <code>@align=end</code> keeps a lone composer at the end.</li>
 <li><strong>Lyric markers</strong> <code>*N</code>, <code>*ref</code>[N]/<code>*reff</code>[N], <code>*text</code>[N], <code>*versi</code>/<code>*version &lt;caption&gt;</code> — same semantics + auto-grouping as legacy. Verse lines support leading <code>@size=</code> / <code>@align=</code> (per-line formatting).</li>
 <li><strong>Blank line ends the current verse</strong> (returns to paragraph mode); a following <code>*</code> marker reopens lyric mode.</li>
 <li>Unknown <code>@directive</code> → warned and skipped (not fatal).</li>
@@ -437,7 +441,7 @@ Maka jiwaku pun memuji-Mu,</code></pre>
 <li><code>@scripture &lt;osis&gt;</code> → blok <code>scripture</code> (OSIS, mis. <code>John.3.16; Rom.5.8</code>; dilokalkan saat render sesuai versi Alkitab aktif).</li>
 <li><code>@youtube &lt;videoId&gt;</code> → blok <code>youtube</code>.</li>
 <li><code>@gap</code> → blok <code>gap</code> (spasi vertikal kosong, default 1em). Dapat digabung dengan <code>@size=&lt;float&gt;</code> seperti tag lain, mis. <code>@size=2 @gap</code> untuk jarak dua kali lipat.</li>
-<li><code>@row</code> … <code>@/row</code> → blok <code>row</code>; setiap baris di antara penanda menjadi item <code>p</code> (tag role/size/align-nya sendiri berlaku). Item tersebar start → end, mis. pengarang lirik di kiri / pengarang musik di kanan.</li>
+<li><code>@row</code> … <code>@/row</code> → blok <code>row</code>; setiap baris di antara penanda menjadi item <code>p</code> (tag role/size/align-nya sendiri berlaku). Item tersebar start → end, mis. pengarang lirik di kiri / pengarang musik di kanan. Pada item row, <code>@align=</code> mengatur posisi item di dalam row — mis. <code>@align=end</code> menjaga pengarang musik tunggal tetap di ujung.</li>
 <li><strong>Penanda lirik</strong> <code>*N</code>, <code>*ref</code>[N]/<code>*reff</code>[N], <code>*text</code>[N], <code>*versi</code>/<code>*version &lt;caption&gt;</code> — semantik + auto-grup sama seperti legacy. Baris bait mendukung <code>@size=</code> / <code>@align=</code> di depan (format per baris).</li>
 <li><strong>Baris kosong mengakhiri bait</strong> saat ini (kembali ke mode paragraf); penanda <code>*</code> berikutnya membuka kembali mode lirik.</li>
 <li><code>@directive</code> tak dikenal → diberi peringatan dan dilewati (tidak fatal).</li>
@@ -970,11 +974,13 @@ function legacyToModel(song) {
     authorItems.push({ type: 'p', role: 'authors_lyric', content: song.authors_lyric.join('; ') });
   }
   if (song.authors_music && song.authors_music.length > 0) {
-    authorItems.push({ type: 'p', role: 'authors_music', content: song.authors_music.join('; ') });
+    // A solo composer carries explicit end alignment: the row's space-between
+    // layout only places it at the end when the lyricist item is also present.
+    const item = { type: 'p', role: 'authors_music', content: song.authors_music.join('; ') };
+    if (authorItems.length === 0) item.align = 'end';
+    authorItems.push(item);
   }
-  if (authorItems.length === 1) {
-    blocks.push(authorItems[0]);
-  } else if (authorItems.length === 2) {
+  if (authorItems.length > 0) {
     blocks.push({ type: 'row', items: authorItems });
   }
   // 5. scriptureReferences -> scripture block

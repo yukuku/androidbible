@@ -6,9 +6,10 @@ The songs module provides hymn/worship song browsing, searching, and audio playb
 
 ## Key Files
 
-- `Alkitab/src/main/java/yuku/alkitab/songs/SongListActivity.java` — Main song list with search and filtering
+- `Alkitab/src/main/java/yuku/alkitab/songs/SongSearchSheet.kt` — Song search/browse as a Compose `ModalBottomSheet` (hosted by `SongViewActivity` via `ComposeBottomSheetHost`), with an activity-scoped ViewModel holding the search state
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongViewActivity.kt` — Individual song viewer
-- `Alkitab/src/main/java/yuku/alkitab/songs/SongFragment.kt` — WebView-based song rendering with JavaScript
+- `Alkitab/src/main/java/yuku/alkitab/songs/SongFragment.kt` — WebView-based song rendering with JavaScript (the default renderer)
+- `Alkitab/src/main/java/yuku/alkitab/songs/SongComposeFragment.kt` + `SongComposeContent.kt` — native Jetpack Compose song renderer, an experimental drop-in replacement for `SongFragment` (see "Rendering" below)
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongBookUtil.kt` — Song book download, installation, metadata
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongFilter.java` — Search/filter with regex and tokenized queries
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongInfo.kt` — Lightweight song record (bookName, code, title, title_original)
@@ -23,7 +24,7 @@ The canonical in-memory/storage model is `yuku.alkitab.songs.newdoc.SongDocument
 
 ## Storage
 
-Songs are stored in `SongRoomDatabase` (separate Room database from the main `AppDatabase` — see [Storage & Database](../storage.md) for the rationale). Two tables: `song_info` (one row per song, with the JSON-encoded `SongDocument` in the `data` column, UTF-8 bytes) and `song_book_info` (one row per installed song book). The `SongDb.java` facade preserves the legacy public surface (now typed on `SongDocument`), routing through `SongRoomDao`.
+Songs are stored in `SongRoomDatabase` (its own Room database in its own SQLite file — see [Storage & Database](../storage.md) for the rationale). Two tables: `song_info` (one row per song, with the JSON-encoded `SongDocument` in the `data` column, UTF-8 bytes) and `song_book_info` (one row per installed song book). The `SongDb.java` facade preserves the legacy public surface (now typed on `SongDocument`), routing through `SongRoomDao`.
 
 `dataFormatVersion` on a `song_info` row marks the payload shape: `5` (`SongDocumentJson.DATA_FORMAT_VERSION`) is JSON; anything else is a legacy Android `Parcel.marshall()` byte buffer written before REM-21. `SongDb.readDocument` dispatches on that column: JSON rows parse directly; legacy rows are decoded by the pure-JVM `LegacyParcelDecoder` (falling back to the platform `Parcel.unmarshall()` if that throws), converted via `LegacySongConverter`, and the result is written back to the row (bumping `dataFormatVersion` to `5`) so each legacy row is converted **at most once**, lazily, on first read — there is no bulk migration pass. This exists because the marshalled `Parcel` byte layout changed in Android 13 (a length prefix was inserted after the `VAL_PARCELABLE` tag); a device that downloaded songs pre-13 and later upgraded could otherwise fail to read its own stored BLOBs.
 
@@ -33,19 +34,28 @@ The legacy `SongDb` SQLite file (managed by `SongDbHelper`) is kept around as a 
 
 ## Search
 
+Song search UI is a Compose Material 3 `ModalBottomSheet` (`SongSearchSheet`, shown via `ComposeBottomSheetHost` + `BibleAppTheme`, so light/dark and dynamic color are supported by default) hosted over `SongViewActivity` (it was a standalone `SongListActivity` until 2026-07-17). Selecting a result dismisses the sheet and displays the song in the host activity; reopening the sheet restores the previous query, book filter, deep-search flag, results, and scroll position from `SongSearchViewModel` (scoped to the activity), so back-navigation from a song no longer skips past the search results. Searches run in a `viewModelScope` coroutine on `Dispatchers.IO`; editing the query cancels the in-flight search and starts a new one.
+
 `SongFilter` implements a sophisticated search with:
 - Query tokenization (multi-term, quoted phrases via `QueryTokenizer`)
 - Word-boundary and substring matching
 - Regex pattern generation for highlighting
 - Searches across title, title_original, and full lyric text
 
+## Rendering
+
+There are two interchangeable renderers, both fed the same `SongDocument` by `SongViewActivity.displaySong`:
+
+- **WebView (default)** — `SongFragment` renders `SongDocumentRenderer.renderDocument` into `templates/song.html` + `song.css` and loads it in a `WebView`. Interactive links (`bible:`, `youtube:`, `patchtext:`) are dispatched through `shouldOverrideUrlLoading`.
+- **Compose (experimental, off by default)** — `SongComposeFragment` hosts `SongDocumentComposable` (`SongComposeContent.kt`), which walks `SongDocument.blocks` and maps each block/role to native Compose widgets — no HTML or CSS. It reproduces the WebView feature set exactly: verse numbering, refrain styling, version captions, roles (title/tune/musical/authors/…), inline `u`/`b`/`i` spans, per-line size/alignment, clickable scripture references (via `ScriptureReferenceRenderer.renderParts`) and YouTube links, copyright, and the "send corrections" patch-text link. Colors, base font size, line spacing, and typeface come from the same `App.services.uiDimensions.applied()` dimensions the WebView path uses; two-finger pinch zoom is applied as a percentage.
+
+Both fragments implement `SongTextZoomable` so `SongViewActivity`'s `TwofingerLinearLayout` pinch-to-zoom drives either one, and both route scripture/YouTube/patch-text taps to the shared `openScriptureReference` / `openYoutube` / `openPatchText` methods on the activity (via `SongFragment.ShouldOverrideUrlLoadingHandler` and `SongComposeFragment.Host` respectively).
+
+The renderer is chosen by the `ExperimentalFlags.useComposeSong()` flag, exposed under **Settings → Experimental features → "Song lyrics (Compose)"** (`pref_useComposeSong_key`, default off) — the same pattern as the experimental Compose verse-item and navigation flags. Open a song after toggling to see the change.
+
 ## Audio Playback
 
-Songs can have audio attachments played via two controller implementations:
-- `ExoplayerController.kt` — ExoPlayer (media3) for MP3 with OkHttp streaming
-- `MidiController.kt` — Android MediaPlayer for MIDI with local caching
-
-Both extend `MediaController.kt` with a shared state machine (reset → preparing → playing/paused → complete/error). See [Audio Playback](audio-playback.md) for details.
+Songs can have MP3 or MIDI audio attachments, both played through a single media3 `ExoPlayer` inside the foreground `SongAudioService` (MIDI via the experimental `media3-exoplayer-midi` decoder). `SongViewActivity` drives it through `SongAudioController`, which extends `MediaController.kt` with the shared state machine (reset → preparing → playing/paused → complete/error). Playback continues in the background with a media notification, and starting song audio stops Bible audio (and vice versa) via `AudioPlaybackCoordinator`. See [Audio Playback](audio-playback.md) for details.
 
 ## Song Book Management
 

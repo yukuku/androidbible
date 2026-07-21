@@ -186,7 +186,7 @@ object SongBookUtil {
                         Foreground.run { listener.onFailedOrCancelled(songBookInfo, null) }
                     } else {
                         App.services.storage.songDb.insertSongBookInfo(songBookInfo)
-                        App.services.storage.songDb.storeSongs(songBookInfo.name, songs, dataFormatVersion)
+                        App.services.storage.songDb.storeSongs(songBookInfo.name, songs)
                         Foreground.run { listener.onDownloadedAndInserted(songBookInfo) }
                     }
                 }

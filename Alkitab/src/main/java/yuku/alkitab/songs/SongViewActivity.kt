@@ -41,6 +41,7 @@ import yuku.alkitab.base.ac.PatchTextActivity
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity
 import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.dialog.VersesDialog
+import yuku.alkitab.base.settings.ExperimentalFlags
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AlphanumComparator
 import yuku.alkitab.base.util.AppLog
@@ -65,11 +66,10 @@ private const val TAG = "SongViewActivity"
 // package-visible (not private): reused by SongFragment when rendering an in-document ScriptureBlock
 const val BIBLE_PROTOCOL = "bible"
 private const val YOUTUBE_PROTOCOL = "youtube"
-private const val REQCODE_songList = 1
 private const val REQCODE_downloadSongBook = 3
 private const val FRAGMENT_TAG_SONG = "song"
 
-class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUrlLoadingHandler, LeftDrawer.Songs.Listener, MediaStateListener {
+class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUrlLoadingHandler, SongComposeFragment.Host, LeftDrawer.Songs.Listener, MediaStateListener {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var leftDrawer: LeftDrawer.Songs
 
@@ -81,9 +81,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     private val templateCustomVars = Bundle()
     private var currentBookName: String? = null
     private var currentSong: SongDocument? = null
-
-    // for initially populating the search song activity
-    private var last_searchState: SongListActivity.SearchState? = null
 
     // state for the keypad
     private var state_originalCode: String? = null
@@ -105,8 +102,8 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
         override fun onTwofingerStart() {
             val f = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG_SONG)
-            if (f is SongFragment) {
-                textZoom = f.webViewTextZoom
+            if (f is SongTextZoomable) {
+                textZoom = f.songTextZoomPercent
             }
         }
 
@@ -114,8 +111,8 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             val newTextZoom = (textZoom * scale).toInt().coerceIn(50, 200)
 
             val f = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG_SONG)
-            if (f is SongFragment) {
-                f.webViewTextZoom = newTextZoom
+            if (f is SongTextZoomable) {
+                f.songTextZoomPercent = newTextZoom
             }
         }
 
@@ -483,7 +480,9 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             }
 
             R.id.menuSearch -> {
-                startActivityForResult(SongListActivity.createIntent(last_searchState), REQCODE_songList)
+                SongSearchSheet.show(this) { songInfo ->
+                    displaySong(songInfo.bookName, App.services.storage.songDb.getSong(songInfo.bookName, songInfo.code))
+                }
                 return true
             }
 
@@ -540,7 +539,19 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         val songBookInfo = SongBookUtil.getSongBookInfo(currentBookName)
 
         val currentSongCode = currentSong.code
-        val dataFormatVersion = App.services.storage.songDb.getDataFormatVersionForSongs(currentBookName)
+
+        // Always re-download and store at the current format. The stored payload is always JSON at
+        // this version, and the book may be mixed-version after REM-21's lazy per-row conversion, so
+        // requesting whatever version happened to be on a row would leave stale rows behind and could
+        // stamp a JSON payload with a legacy version (REM-35). Guard mirrors the alkitab:// path.
+        val dataFormatVersion = SongDocumentJson.DATA_FORMAT_VERSION
+        if (!SongBookUtil.isSupportedDataFormatVersion(dataFormatVersion)) {
+            MaterialAlertDialogBuilder(this)
+                .setMessage("Unsupported data format version: $dataFormatVersion")
+                .setPositiveButton(R.string.ok, null)
+                .show()
+            return
+        }
 
         SongBookUtil.downloadSongBook(this@SongViewActivity, songBookInfo, dataFormatVersion, object : SongBookUtil.OnDownloadSongBookListener {
             override fun onFailedOrCancelled(songBookInfo: SongBookUtil.SongBookInfo, e: Exception?) {
@@ -625,11 +636,18 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         handle.setCode(doc.code)
 
         val copyright = SongBookUtil.getCopyright(bookName)
+        val patchTextLinkLabel = getString(R.string.patch_text_open_link)
         templateCustomVars.putString("copyright", copyright ?: "")
-        templateCustomVars.putString("patch_text_open_link", getString(R.string.patch_text_open_link))
+        templateCustomVars.putString("patch_text_open_link", patchTextLinkLabel)
+
+        val fragment = if (ExperimentalFlags.useComposeSong()) {
+            SongComposeFragment.create(doc, copyright, patchTextLinkLabel)
+        } else {
+            SongFragment.create(doc, templateCustomVars)
+        }
 
         val ft = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.root, SongFragment.create(doc, templateCustomVars), FRAGMENT_TAG_SONG)
+        ft.replace(R.id.root, fragment, FRAGMENT_TAG_SONG)
         ft.commitAllowingStateLoss()
 
         currentBookName = bookName
@@ -681,18 +699,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            REQCODE_songList -> {
-                if (resultCode == RESULT_OK) {
-                    val result = SongListActivity.obtainResult(data)
-                    if (result != null) {
-                        displaySong(result.bookName, App.services.storage.songDb.getSong(result.bookName, result.code))
-                        // store this for next search
-                        last_searchState = result.last_searchState
-                    }
-                }
-                return
-            }
-
             REQCODE_downloadSongBook -> {
                 if (resultCode == RESULT_OK) {
                     val uri = data?.data
@@ -776,54 +782,75 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     override fun shouldOverrideUrlLoading(client: WebViewClient, request: WebResourceRequest): Boolean {
         val uri = request.url ?: return false
 
-        when (uri.scheme) {
+        return when (uri.scheme) {
             "patchtext" -> {
-                val doc = currentSong
-
-                if (doc != null) {
-                    // do not proceed if the song is too old
-                    val updateTime = App.services.storage.songDb.getSongUpdateTime(currentBookName, doc.code)
-                    if (updateTime == 0 || Sqlitil.nowDateTime() - updateTime > 21 * 86400) {
-                        MaterialAlertDialogBuilder(this)
-                            .setMessage(TextUtils.expandTemplate(getText(R.string.sn_update_book_because_too_old), SongBookUtil.escapeSongBookName(currentBookName)))
-                            .setPositiveButton(R.string.sn_update_book_confirm_button) { _, _ -> updateSongBook() }
-                            .setNegativeButton(R.string.cancel, null)
-                            .show()
-                    } else {
-                        val extraInfo = PatchTextExtraInfoJson()
-                        extraInfo.type = "song"
-                        extraInfo.bookName = currentBookName
-                        extraInfo.code = doc.code
-
-                        val codeLine = "<div>${doc.code}</div>"
-                        val songHtml = SongDocumentRenderer.renderDocument(doc, renderScripture = { osis -> ScriptureReferenceRenderer.render(null, osis) }, forPatchText = true)
-                        val baseBody = HtmlCompat.fromHtml(codeLine + songHtml, HtmlCompat.FROM_HTML_MODE_LEGACY)
-                        startActivity(PatchTextActivity.createIntent(baseBody, App.getDefaultGson().toJson(extraInfo), null))
-                    }
-                }
-                return true
+                openPatchText()
+                true
             }
 
             BIBLE_PROTOCOL -> {
-                val ariRanges = TargetDecoder.decode("o:" + uri.schemeSpecificPart)
-                val versesDialog = VersesDialog.newInstance(ariRanges)
-                versesDialog.listener = object : VersesDialog.VersesDialogListener() {
-                    override fun onVerseSelected(ari: Int) {
-                        startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari))
-                    }
-                }
-                versesDialog.show(supportFragmentManager, "VersesDialog")
-                return true
+                openScriptureReference(uri.schemeSpecificPart)
+                true
             }
 
             YOUTUBE_PROTOCOL -> {
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.data = "https://www.youtube.com/watch?v=${uri.schemeSpecificPart}".toUri()
-                startActivity(intent)
-                return true
+                openYoutube(uri.schemeSpecificPart)
+                true
             }
 
-            else -> return false
+            else -> false
+        }
+    }
+
+    // The three open* methods below back both the WebView URL scheme handler
+    // (above) and the Compose song fragment's click callbacks (Host, below),
+    // so both rendering paths open scripture refs, YouTube, and the patch-text
+    // editor identically.
+
+    override fun onSongScriptureClick(osis: String) = openScriptureReference(osis)
+
+    override fun onSongYoutubeClick(videoId: String) = openYoutube(videoId)
+
+    override fun onSongPatchTextClick() = openPatchText()
+
+    private fun openScriptureReference(osis: String) {
+        val ariRanges = TargetDecoder.decode("o:$osis")
+        val versesDialog = VersesDialog.newInstance(ariRanges)
+        versesDialog.listener = object : VersesDialog.VersesDialogListener() {
+            override fun onVerseSelected(ari: Int) {
+                startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari))
+            }
+        }
+        versesDialog.show(supportFragmentManager, "VersesDialog")
+    }
+
+    private fun openYoutube(videoId: String) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = "https://www.youtube.com/watch?v=$videoId".toUri()
+        startActivity(intent)
+    }
+
+    private fun openPatchText() {
+        val doc = currentSong ?: return
+
+        // do not proceed if the song is too old
+        val updateTime = App.services.storage.songDb.getSongUpdateTime(currentBookName, doc.code)
+        if (updateTime == 0 || Sqlitil.nowDateTime() - updateTime > 21 * 86400) {
+            MaterialAlertDialogBuilder(this)
+                .setMessage(TextUtils.expandTemplate(getText(R.string.sn_update_book_because_too_old), SongBookUtil.escapeSongBookName(currentBookName)))
+                .setPositiveButton(R.string.sn_update_book_confirm_button) { _, _ -> updateSongBook() }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
+        } else {
+            val extraInfo = PatchTextExtraInfoJson()
+            extraInfo.type = "song"
+            extraInfo.bookName = currentBookName
+            extraInfo.code = doc.code
+
+            val codeLine = "<div>${doc.code}</div>"
+            val songHtml = SongDocumentRenderer.renderDocument(doc, renderScripture = { osis -> ScriptureReferenceRenderer.render(null, osis) }, forPatchText = true)
+            val baseBody = HtmlCompat.fromHtml(codeLine + songHtml, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            startActivity(PatchTextActivity.createIntent(baseBody, App.getDefaultGson().toJson(extraInfo), null))
         }
     }
 

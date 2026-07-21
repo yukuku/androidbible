@@ -1,6 +1,6 @@
 # ~~REM-04: Fix FCM Token Re-registration Retry~~ ✅ COMPLETED (2026-04-22)
 
-**Addresses:** PB-04
+**Addresses:** FCM token registration reliability (sync)
 **Module:** Sync
 **BRICE:** B=4 R=4 I=5 C=4 E=4 → **4.2**
 **Phase:** 1 — Quick Wins & Safety Fixes

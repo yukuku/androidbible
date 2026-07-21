@@ -16,7 +16,7 @@ import yuku.alkitab.songs.newdoc.SongDocument
 import yuku.alkitab.songs.newdoc.SongDocumentJson
 import yuku.alkitab.songs.newdoc.SongDocumentRenderer
 
-class SongFragment : BaseFragment() {
+class SongFragment : BaseFragment(), SongTextZoomable {
     private lateinit var webview: WebView
 
     private val args by lazy { requireArguments() }
@@ -110,7 +110,7 @@ class SongFragment : BaseFragment() {
         return template.replace("{{$$name}}", value?.toString() ?: "")
     }
 
-    var webViewTextZoom: Int
+    override var songTextZoomPercent: Int
         get() {
             return if (view == null) 0 else webview.settings.textZoom
         }

@@ -13,7 +13,7 @@
 
 Production release builds required running `ybuild.sh`, a 168-line macOS-only bash script that created a RAM disk, copied proprietary assets from an external directory, stamped the git commit hash, ran Gradle, and renamed the output APK. This could not run on Linux CI and prevented building with a simple `./gradlew assembleYuku_alkitabRelease`.
 
-Gradle already handled signing (`signingConfigs.release` at `Alkitab/build.gradle:32-38`) and product flavors (lines 72-87). What was missing were 4 operations that could all be expressed as Gradle tasks.
+Gradle already handled signing (`signingConfigs.release`) and product flavors. What was missing were 4 operations that could all be expressed as Gradle tasks.
 
 **Step 23a: Proprietary asset injection via Gradle**
 1. Add an `ALKITAB_PROPRIETARY_DIR` environment variable check in `Alkitab/build.gradle` — only required for non-`plain` flavors
@@ -64,7 +64,7 @@ Gradle already handled signing (`signingConfigs.release` at `Alkitab/build.gradl
    Then update code that reads `R.string.last_commit_hash` to read `BuildConfig.LAST_COMMIT_HASH`. Grep for `last_commit_hash` to find all readers.
 
 **Step 23c: Custom APK naming via Gradle**
-1. Use the existing `applicationVariants.all` block (line 99 of `Alkitab/build.gradle`) to set the output filename:
+1. Use the existing `applicationVariants.all` block in the Alkitab build script to set the output filename:
    ```groovy
    android.applicationVariants.all { variant ->
        variant.outputs.all { output ->

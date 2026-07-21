@@ -165,13 +165,6 @@ class SongRoomDaoTest {
     }
 
     @Test
-    fun `findDataFormatVersionForBookName returns null for empty book and the dataFormatVersion for present`() {
-        assertNull(dao.findDataFormatVersionForBookName("NKB"))
-        dao.insertSongInfo(songInfo(dataFormatVersion = 3))
-        assertEquals(3, dao.findDataFormatVersionForBookName("NKB"))
-    }
-
-    @Test
     fun `findUpdateTimeByBookNameAndCode returns null for missing and the updateTime for present`() {
         assertNull(dao.findUpdateTimeByBookNameAndCode("NKB", "missing"))
         dao.insertSongInfo(songInfo(code = "001", updateTime = 1_700_001_234))
@@ -179,32 +172,35 @@ class SongRoomDaoTest {
     }
 
     @Test
-    fun `replaceSongsForBookNameAndDataFormatVersion removes existing rows for the (bookName, dfv) tuple and inserts the new list`() {
+    fun `replaceSongsForBookName removes every existing row for the book regardless of dataFormatVersion and inserts the new list`() {
+        // A mixed-version book (REM-35): rows at several dataFormatVersions for the same book.
         dao.insertSongInfo(songInfo(code = "old1", dataFormatVersion = 3, ordering = 1))
-        dao.insertSongInfo(songInfo(code = "old2", dataFormatVersion = 3, ordering = 2))
-        dao.insertSongInfo(songInfo(code = "keep", dataFormatVersion = 2, ordering = 1))
+        dao.insertSongInfo(songInfo(code = "old2", dataFormatVersion = 5, ordering = 2))
+        // An unrelated book must survive untouched.
+        dao.insertSongInfo(songInfo(bookName = "PKJ", code = "keep", dataFormatVersion = 5, ordering = 1))
 
-        dao.replaceSongsForBookNameAndDataFormatVersion(
+        dao.replaceSongsForBookName(
             bookName = "NKB",
-            dataFormatVersion = 3,
             entities = listOf(
-                songInfo(code = "new1", dataFormatVersion = 3, ordering = 1),
-                songInfo(code = "new2", dataFormatVersion = 3, ordering = 2),
+                songInfo(code = "new1", dataFormatVersion = 5, ordering = 1),
+                songInfo(code = "new2", dataFormatVersion = 5, ordering = 2),
             ),
         )
 
-        val codes = dao.listSongInfosByBookName("NKB").map { it.code }.toSet()
+        val nkbCodes = dao.listSongInfosByBookName("NKB").map { it.code }.toSet()
         assertEquals(
-            "old rows at the matching dfv should be gone, the dfv=2 row should survive, and the two new rows should be present",
-            setOf("new1", "new2", "keep"),
-            codes,
+            "every old NKB row should be gone regardless of its dataFormatVersion, replaced by the new list",
+            setOf("new1", "new2"),
+            nkbCodes,
         )
+        val pkjCodes = dao.listSongInfosByBookName("PKJ").map { it.code }.toSet()
+        assertEquals("the unrelated book is untouched", setOf("keep"), pkjCodes)
     }
 
     @Test
-    fun `replaceSongsForBookNameAndDataFormatVersion is a clean wipe when passed an empty list`() {
+    fun `replaceSongsForBookName is a clean wipe when passed an empty list`() {
         dao.insertSongInfo(songInfo(code = "old1", dataFormatVersion = 3))
-        dao.replaceSongsForBookNameAndDataFormatVersion("NKB", 3, emptyList())
+        dao.replaceSongsForBookName("NKB", emptyList())
         assertTrue(dao.listSongInfosByBookName("NKB").isEmpty())
     }
 

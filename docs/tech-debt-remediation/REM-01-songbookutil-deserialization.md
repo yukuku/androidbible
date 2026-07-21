@@ -1,6 +1,6 @@
 # REM-01: Fix SongBookUtil Resource Leak & Unsafe Deserialization ✅ COMPLETED
 
-**Addresses:** TD-04, PB-06
+**Addresses:** TD-04
 **Module:** Songs
 **BRICE:** B=4 R=5 I=4 C=5 E=5 → **4.6**
 **Phase:** 1 — Quick Wins & Safety Fixes

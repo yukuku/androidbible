@@ -32,14 +32,14 @@ import yuku.kpri.model.Song;
 /**
  * Facade over the Room-backed {@link SongRoomDao} that preserves the
  * legacy {@code SongInfo} / {@code SongBookInfo} public surface. Existing
- * call sites in {@code SongListActivity}, {@code SongViewActivity}, and
+ * call sites in {@code SongSearchSheet}, {@code SongViewActivity}, and
  * {@code SongBookUtil} don't need to change.
  *
  * <p>Two tables, one facade: both belong to the Songs subsystem and are
  * commonly written together during song-book installation
  * ({@code SongBookUtil.handleDownloadResult} calls
  * {@link #insertSongBookInfo(SongBookUtil.SongBookInfo)} then
- * {@link #storeSongs(String, List, int)}).
+ * {@link #storeSongs(String, List)}).
  *
  * <p>Cross-file note: this DAO is constructed with {@link SongDbHelper}
  * only so its constructor signature stays unchanged. The helper is no
@@ -144,9 +144,13 @@ public class SongDb {
     }
 
     /**
-     * Store to db songs in a book. Before the songs are stored, all songs of the specified book are deleted.
+     * Store to db songs in a book. Before the songs are stored, all songs of the specified book
+     * (at any {@code dataFormatVersion}) are deleted, so updating a mixed-version book leaves no
+     * stale rows behind. The payload is always written as JSON, so every row is stamped at
+     * {@link SongDocumentJson#DATA_FORMAT_VERSION} regardless of the version originally requested
+     * from the server (REM-35).
      */
-    public void storeSongs(String bookName, List<SongDocument> docs, int dataFormatVersion) {
+    public void storeSongs(String bookName, List<SongDocument> docs) {
         final int updateTime = Sqlitil.nowDateTime();
         final List<SongInfoEntity> entities = new ArrayList<>(docs.size());
         int ordering = 1;
@@ -158,12 +162,12 @@ public class SongDb {
                 doc.getMeta().getTitle(),
                 doc.getMeta().getTitle_original(),
                 ordering++,
-                dataFormatVersion,
+                SongDocumentJson.DATA_FORMAT_VERSION,
                 writeDocument(doc),
                 updateTime
             ));
         }
-        roomDao().replaceSongsForBookNameAndDataFormatVersion(bookName, dataFormatVersion, entities);
+        roomDao().replaceSongsForBookName(bookName, entities);
     }
 
     public SongDocument getSong(String bookName, String code) {
@@ -253,7 +257,9 @@ public class SongDb {
                         rowBookName,
                         rowCode,
                         c.isNull(colTitle) ? null : c.getString(colTitle),
-                        c.isNull(colTitleOriginal) ? null : c.getString(colTitleOriginal)
+                        c.isNull(colTitleOriginal) ? null : c.getString(colTitleOriginal),
+                        // preview up to 2 matching lyric lines under the result (deep search only)
+                        SongFilter.findLyricSnippet(doc, cf, 2)
                     ));
                 }
             }
@@ -311,11 +317,6 @@ public class SongDb {
      */
     public void insertSongBookInfo(final SongBookUtil.SongBookInfo info) {
         roomDao().insertOrReplaceSongBookInfo(info.name, info.title, info.copyright);
-    }
-
-    public int getDataFormatVersionForSongs(final String bookName) {
-        final Integer res = roomDao().findDataFormatVersionForBookName(bookName);
-        return res == null ? 0 : res;
     }
 
     public int getSongUpdateTime(final String bookName, final String code) {

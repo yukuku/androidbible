@@ -21,7 +21,7 @@
 - `App.staticInit()` now constructs `App.services = new AppServices(S.storage, S.versions, S.uiDimensions)` before any other init step.
 - `AppServicesTest` (4 cases) demonstrates the new interfaces are fake-implementable in pure JUnit — no Robolectric or Android context required.
 
-**Current state:** `S.kt` (313 lines) is a Kotlin `object` singleton mixing database access (`db`, `songDb`), active version state, and UI dimensions (`CalculatedDimensions`). Imported by 50 files with 161+ call sites. Untestable without a full Android environment.
+**Current state (pre-refactor, kept for context):** `S.kt` is a Kotlin `object` singleton mixing database access (`db`, `songDb`), active version state, and UI dimensions (`CalculatedDimensions`). Imported by 50 files with 161+ call sites. Untestable without a full Android environment.
 
 **Recommended approach: Incremental interface extraction, then manual DI**
 
@@ -59,7 +59,7 @@ Hilt/Dagger adds significant complexity (annotation processing, code generation)
 4. Make `S` implement all three interfaces, delegating to its existing internal holders. This is a no-op refactor — all existing `S.db` / `S.applied()` / `S.activeVersion()` calls keep working.
 
 **Step 24b: Move UI dialogs out of S**
-1. Move `openVersionsDialog()` and `openVersionsDialogWithNone()` (lines 271-320) into a standalone `VersionDialogHelper` object or extension function. These are UI operations that don't belong in a service locator.
+1. Move `openVersionsDialog()` and `openVersionsDialogWithNone()` into a standalone `VersionDialogHelper` object or extension function. These are UI operations that don't belong in a service locator.
 
 **Step 24c: Fix thread safety**
 1. Make `activeVersion()` / `activeMVersion()` / `activeVersionId()` getters `@Synchronized` to match the setter
