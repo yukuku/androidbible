@@ -13,6 +13,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.net.toUri
@@ -44,7 +45,9 @@ class AboutActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about)
 
-        setSupportActionBar(findViewById(R.id.toolbar))
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        setupEdgeToEdgeDisplay(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         root = findViewById(R.id.root)

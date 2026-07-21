@@ -56,6 +56,7 @@ class SecretSyncDebugActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_secret_sync_debug)
+        setupEdgeToEdgeDisplayWithoutToolbar(findViewById(R.id.root))
         tServer = findViewById(R.id.tServer)
         tUserEmail = findViewById(R.id.tUserEmail)
         cMakeDirtyMarker = findViewById(R.id.cMakeDirtyMarker)

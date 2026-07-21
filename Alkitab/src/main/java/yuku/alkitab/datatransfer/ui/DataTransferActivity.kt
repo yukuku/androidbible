@@ -13,6 +13,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.AnyThread
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import androidx.core.text.bold
@@ -82,7 +83,9 @@ class DataTransferActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_data_transfer)
 
-        setSupportActionBar(findViewById(R.id.toolbar))
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        setupEdgeToEdgeDisplay(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         mode = Mode.entries[intent.getIntExtra("mode", 0)]

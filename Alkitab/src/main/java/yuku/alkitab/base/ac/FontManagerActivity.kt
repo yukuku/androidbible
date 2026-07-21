@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.BufferedInputStream
@@ -62,7 +63,9 @@ class FontManagerActivity : BaseActivity(), DownloadService.DownloadListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_font_manager)
 
-        setSupportActionBar(findViewById(R.id.toolbar))
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        setupEdgeToEdgeDisplay(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         lsFont = findViewById(R.id.lsFont)

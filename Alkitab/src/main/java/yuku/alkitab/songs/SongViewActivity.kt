@@ -22,6 +22,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.Keep
 import androidx.annotation.StringRes
 import androidx.annotation.WorkerThread
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ShareCompat
 import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
@@ -238,8 +239,11 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         drawerLayout = findViewById(R.id.drawerLayout)
         leftDrawer = findViewById(R.id.left_drawer)
         leftDrawer.configure(this, drawerLayout)
+        applySafeAreaPadding(leftDrawer)
 
-        setSupportActionBar(findViewById(R.id.toolbar))
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        setupEdgeToEdgeDisplay(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
 

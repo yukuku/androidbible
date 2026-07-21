@@ -104,9 +104,11 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
         drawerLayout = findViewById(R.id.drawerLayout);
         leftDrawer = findViewById(R.id.left_drawer);
         leftDrawer.configure(this, drawerLayout);
+        applySafeAreaPadding(leftDrawer);
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setupEdgeToEdgeDisplay(toolbar);
 
         actionBar = getSupportActionBar();
         assert actionBar != null;
