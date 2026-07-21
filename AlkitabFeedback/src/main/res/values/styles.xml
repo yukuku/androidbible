@@ -19,11 +19,9 @@
     <!-- Empty parent idiom -->
     <style name="NoParent" />
 
-    <style name="AlkitabFeedback.Theme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AlkitabFeedback.Theme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorAccent">@color/alkitabfeedback_accent</item>
     </style>
-
-    <style name="AlkitabFeedback.Theme" parent="AlkitabFeedback.Theme.Base" />
 
     <style name="alkitabfeedback_TextAppearanceFinish" parent="android:TextAppearance.Holo.Medium">
         <item name="android:textColor">#fff</item>
