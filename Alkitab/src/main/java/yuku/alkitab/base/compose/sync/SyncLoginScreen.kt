@@ -5,14 +5,13 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -23,15 +22,21 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -39,6 +44,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -53,20 +59,31 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.util.PatternsCompat
 import java.util.Locale
+import kotlinx.coroutines.launch
 import yuku.alkitab.base.compose.BibleAppTheme
 import yuku.alkitab.debug.R
 
 /**
- * Callbacks the [SyncLoginScreen] delegates back to the hosting activity. The
- * activity keeps ownership of the network calls, progress dialogs and the
- * activity result, so the composable stays a pure, self-contained form.
+ * Reports the outcome of a network action back to the composable so it can drop its loading state
+ * and surface a message inline (via a Snackbar) instead of a dialog. Invoked on the UI thread.
+ * [message] is the error text on failure, or a success message to show (or `null` when the activity
+ * simply finishes, e.g. after a successful sign-in).
+ */
+fun interface SyncActionResultCallback {
+    fun onResult(success: Boolean, message: String?)
+}
+
+/**
+ * Callbacks the [SyncLoginScreen] delegates back to the hosting activity. The activity keeps
+ * ownership of the network calls and the activity result; the composable owns all UI, including
+ * validation, the loading indicator and result messages — so the flow needs no dialogs.
  */
 interface SyncLoginCallbacks {
     fun onUp()
-    fun onRegister(email: String, password: String)
-    fun onLogin(email: String, password: String)
-    fun onForgotPassword(email: String)
-    fun onChangePassword(email: String, oldPassword: String, newPassword: String)
+    fun login(email: String, password: String, callback: SyncActionResultCallback)
+    fun register(email: String, password: String, callback: SyncActionResultCallback)
+    fun forgotPassword(email: String, callback: SyncActionResultCallback)
+    fun changePassword(email: String, oldPassword: String, newPassword: String, callback: SyncActionResultCallback)
     fun onOpenSyncLog()
 }
 
@@ -78,10 +95,12 @@ object SyncLoginComposeHost {
             BibleAppTheme {
                 SyncLoginScreen(
                     onUp = callbacks::onUp,
-                    onRegister = callbacks::onRegister,
-                    onLogin = callbacks::onLogin,
-                    onForgotPassword = callbacks::onForgotPassword,
-                    onChangePassword = callbacks::onChangePassword,
+                    onLogin = { email, password, onResult -> callbacks.login(email, password) { s, m -> onResult(s, m) } },
+                    onRegister = { email, password, onResult -> callbacks.register(email, password) { s, m -> onResult(s, m) } },
+                    onForgotPassword = { email, onResult -> callbacks.forgotPassword(email) { s, m -> onResult(s, m) } },
+                    onChangePassword = { email, oldPassword, newPassword, onResult ->
+                        callbacks.changePassword(email, oldPassword, newPassword) { s, m -> onResult(s, m) }
+                    },
                     onOpenSyncLog = callbacks::onOpenSyncLog,
                 )
             }
@@ -89,16 +108,23 @@ object SyncLoginComposeHost {
     }
 }
 
+/** The distinct things a user can do on this screen. Only one is active at a time, so each flow
+ *  shows only its own fields and a single primary button. */
+private enum class SyncLoginMode { SIGN_IN, CREATE_ACCOUNT, RESET, CHANGE_PASSWORD }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SyncLoginScreen(
     onUp: () -> Unit,
-    onRegister: (email: String, password: String) -> Unit,
-    onLogin: (email: String, password: String) -> Unit,
-    onForgotPassword: (email: String) -> Unit,
-    onChangePassword: (email: String, oldPassword: String, newPassword: String) -> Unit,
+    onLogin: (email: String, password: String, onResult: (Boolean, String?) -> Unit) -> Unit,
+    onRegister: (email: String, password: String, onResult: (Boolean, String?) -> Unit) -> Unit,
+    onForgotPassword: (email: String, onResult: (Boolean, String?) -> Unit) -> Unit,
+    onChangePassword: (email: String, oldPassword: String, newPassword: String, onResult: (Boolean, String?) -> Unit) -> Unit,
     onOpenSyncLog: () -> Unit,
 ) {
+    var modeName by rememberSaveable { mutableStateOf(SyncLoginMode.SIGN_IN.name) }
+    val mode = SyncLoginMode.valueOf(modeName)
+
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var newPassword by rememberSaveable { mutableStateOf("") }
@@ -109,12 +135,32 @@ fun SyncLoginScreen(
     var newPasswordError by rememberSaveable { mutableStateOf<String?>(null) }
     var confirmError by rememberSaveable { mutableStateOf<String?>(null) }
 
-    var changePasswordMode by rememberSaveable { mutableStateOf(false) }
+    var submitting by remember { mutableStateOf(false) }
     var menuOpen by remember { mutableStateOf(false) }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     val requiredMsg = stringResource(R.string.sync_login_form_error_required)
     val emailPatternMsg = stringResource(R.string.sync_login_form_error_email_pattern)
     val mismatchMsg = stringResource(R.string.sync_login_form_confirm_password_mismatch)
+
+    fun clearErrors() {
+        emailError = null
+        passwordError = null
+        newPasswordError = null
+        confirmError = null
+    }
+
+    fun switchMode(target: SyncLoginMode) {
+        if (submitting) return
+        modeName = target.name
+        clearErrors()
+    }
+
+    fun showMessage(message: String) {
+        scope.launch { snackbarHostState.showSnackbar(message) }
+    }
 
     // Normalizes and validates the email, updating [email] and [emailError] in place.
     fun validateEmail(lowercase: Boolean): Boolean {
@@ -138,74 +184,87 @@ fun SyncLoginScreen(
         }
     }
 
-    fun onRegisterClick() {
-        // don't allow uppercase when registering, but we still allow it for login (because some
-        // user accounts were already created using uppercase)
-        var ok = validateEmail(lowercase = true)
-        if (password.isEmpty()) {
-            passwordError = requiredMsg
-            ok = false
-        } else {
-            passwordError = null
-        }
-        if (confirmPassword != password) {
-            confirmError = mismatchMsg
-            ok = false
-        } else {
-            confirmError = null
-        }
-        if (ok) onRegister(email, password)
+    fun handleResult(success: Boolean, message: String?) {
+        submitting = false
+        // On a successful sign-in/create the activity finishes and there is nothing to show.
+        if (message != null) showMessage(message)
     }
 
-    fun onLoginClick() {
-        var ok = validateEmail(lowercase = false)
-        if (password.isEmpty()) {
-            passwordError = requiredMsg
-            ok = false
-        } else {
-            passwordError = null
+    fun submit() {
+        clearErrors()
+        when (mode) {
+            SyncLoginMode.SIGN_IN -> {
+                var ok = validateEmail(lowercase = false)
+                if (password.isEmpty()) {
+                    passwordError = requiredMsg
+                    ok = false
+                }
+                if (!ok) return
+                submitting = true
+                onLogin(email, password) { s, m -> handleResult(s, m) }
+            }
+
+            SyncLoginMode.CREATE_ACCOUNT -> {
+                // don't allow uppercase when registering, but we still allow it for login (because
+                // some user accounts were already created using uppercase)
+                var ok = validateEmail(lowercase = true)
+                if (password.isEmpty()) {
+                    passwordError = requiredMsg
+                    ok = false
+                }
+                if (confirmPassword != password) {
+                    confirmError = mismatchMsg
+                    ok = false
+                }
+                if (!ok) return
+                submitting = true
+                onRegister(email, password) { s, m -> handleResult(s, m) }
+            }
+
+            SyncLoginMode.RESET -> {
+                if (!validateEmail(lowercase = false)) return
+                submitting = true
+                onForgotPassword(email) { s, m -> handleResult(s, m) }
+            }
+
+            SyncLoginMode.CHANGE_PASSWORD -> {
+                var ok = validateEmail(lowercase = false)
+                if (password.isEmpty()) {
+                    passwordError = requiredMsg
+                    ok = false
+                }
+                if (newPassword.isEmpty()) {
+                    newPasswordError = requiredMsg
+                    ok = false
+                }
+                if (confirmPassword != newPassword) {
+                    confirmError = mismatchMsg
+                    ok = false
+                }
+                if (!ok) return
+                submitting = true
+                onChangePassword(email, password, newPassword) { s, m -> handleResult(s, m) }
+            }
         }
-        if (ok) onLogin(email, password)
     }
 
-    fun onForgotClick() {
-        val e = email.trim()
-        email = e
-        if (e.isEmpty()) {
-            emailError = requiredMsg
-            return
-        }
-        emailError = null
-        onForgotPassword(e)
+    val titleRes = when (mode) {
+        SyncLoginMode.SIGN_IN -> R.string.sync_login_mode_sign_in
+        SyncLoginMode.CREATE_ACCOUNT -> R.string.sync_login_mode_create_account
+        SyncLoginMode.RESET -> R.string.sync_login_reset_password_title
+        SyncLoginMode.CHANGE_PASSWORD -> R.string.sync_login_change_password_button
     }
-
-    fun onChangePasswordClick() {
-        var ok = validateEmail(lowercase = false)
-        if (password.isEmpty()) {
-            passwordError = requiredMsg
-            ok = false
-        } else {
-            passwordError = null
-        }
-        if (newPassword.isEmpty()) {
-            newPasswordError = requiredMsg
-            ok = false
-        } else {
-            newPasswordError = null
-        }
-        if (confirmPassword != newPassword) {
-            confirmError = mismatchMsg
-            ok = false
-        } else {
-            confirmError = null
-        }
-        if (ok) onChangePassword(email, password, newPassword)
+    val actionRes = when (mode) {
+        SyncLoginMode.SIGN_IN -> R.string.sync_login_mode_sign_in
+        SyncLoginMode.CREATE_ACCOUNT -> R.string.sync_login_mode_create_account
+        SyncLoginMode.RESET -> R.string.sync_login_action_send_reset_email
+        SyncLoginMode.CHANGE_PASSWORD -> R.string.sync_login_change_password_button
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.sync_login_activity_title)) },
+                title = { Text(stringResource(titleRes)) },
                 navigationIcon = {
                     IconButton(onClick = onUp) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Up")
@@ -217,15 +276,6 @@ fun SyncLoginScreen(
                     }
                     DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                         DropdownMenuItem(
-                            text = { Text(stringResource(R.string.sync_login_change_password_menu_item)) },
-                            onClick = {
-                                changePasswordMode = true
-                                confirmPassword = ""
-                                confirmError = null
-                                menuOpen = false
-                            },
-                        )
-                        DropdownMenuItem(
                             text = { Text(stringResource(R.string.sync_menu_item_sync_log)) },
                             onClick = {
                                 menuOpen = false
@@ -236,6 +286,7 @@ fun SyncLoginScreen(
                 },
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { padding ->
         Column(
             modifier = Modifier
@@ -259,6 +310,32 @@ fun SyncLoginScreen(
                     .align(Alignment.CenterHorizontally),
             )
 
+            // The primary-flow picker. Change-password is a secondary flow reached from the bottom
+            // link, so it isn't one of the segments.
+            if (mode != SyncLoginMode.CHANGE_PASSWORD) {
+                val segments = listOf(
+                    SyncLoginMode.SIGN_IN to R.string.sync_login_mode_sign_in,
+                    SyncLoginMode.CREATE_ACCOUNT to R.string.sync_login_mode_create_account,
+                    SyncLoginMode.RESET to R.string.sync_login_mode_reset,
+                )
+                SingleChoiceSegmentedButtonRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                ) {
+                    segments.forEachIndexed { index, (segMode, labelRes) ->
+                        SegmentedButton(
+                            selected = mode == segMode,
+                            onClick = { switchMode(segMode) },
+                            enabled = !submitting,
+                            shape = SegmentedButtonDefaults.itemShape(index, segments.size),
+                        ) {
+                            Text(stringResource(labelRes))
+                        }
+                    }
+                }
+            }
+
             OutlinedTextField(
                 value = email,
                 onValueChange = {
@@ -267,6 +344,7 @@ fun SyncLoginScreen(
                 },
                 label = { Text(stringResource(R.string.sync_login_form_email_hint)) },
                 singleLine = true,
+                enabled = !submitting,
                 isError = emailError != null,
                 supportingText = emailError?.let { { Text(it) } },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -275,20 +353,39 @@ fun SyncLoginScreen(
                     .padding(top = 12.dp),
             )
 
-            PasswordField(
-                value = password,
-                onValueChange = {
-                    password = it
-                    passwordError = null
-                },
-                labelResId = R.string.sync_login_form_password_hint,
-                error = passwordError,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-            )
+            if (mode != SyncLoginMode.RESET) {
+                PasswordField(
+                    value = password,
+                    onValueChange = {
+                        password = it
+                        passwordError = null
+                    },
+                    labelResId = if (mode == SyncLoginMode.CHANGE_PASSWORD) {
+                        R.string.sync_login_current_password_hint
+                    } else {
+                        R.string.sync_login_form_password_hint
+                    },
+                    error = passwordError,
+                    enabled = !submitting,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                )
+            }
 
-            if (changePasswordMode) {
+            if (mode == SyncLoginMode.SIGN_IN) {
+                TextButton(
+                    onClick = { switchMode(SyncLoginMode.RESET) },
+                    enabled = !submitting,
+                    modifier = Modifier
+                        .padding(top = 4.dp)
+                        .align(Alignment.End),
+                ) {
+                    Text(stringResource(R.string.sync_login_forgot_password_link))
+                }
+            }
+
+            if (mode == SyncLoginMode.CHANGE_PASSWORD) {
                 PasswordField(
                     value = newPassword,
                     onValueChange = {
@@ -297,65 +394,84 @@ fun SyncLoginScreen(
                     },
                     labelResId = R.string.sync_login_form_new_password_hint,
                     error = newPasswordError,
+                    enabled = !submitting,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp),
                 )
-            } else {
-                TextButton(
-                    onClick = { onForgotClick() },
+            }
+
+            if (mode == SyncLoginMode.CREATE_ACCOUNT || mode == SyncLoginMode.CHANGE_PASSWORD) {
+                PasswordField(
+                    value = confirmPassword,
+                    onValueChange = {
+                        confirmPassword = it
+                        confirmError = null
+                    },
+                    labelResId = R.string.sync_login_dialog_confirm_password_hint,
+                    error = confirmError,
+                    enabled = !submitting,
                     modifier = Modifier
-                        .padding(top = 4.dp)
-                        .align(Alignment.End),
-                ) {
-                    Text(stringResource(R.string.sync_login_form_forgot_button))
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                )
+            }
+
+            if (mode == SyncLoginMode.RESET) {
+                Text(
+                    text = stringResource(R.string.sync_login_reset_password_help),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 12.dp),
+                )
+            }
+
+            if (mode != SyncLoginMode.CHANGE_PASSWORD) {
+                LinkText(
+                    textResId = R.string.sync_login_form_privacy_text,
+                    modifier = Modifier.padding(top = 12.dp),
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = { submit() },
+                enabled = !submitting,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                if (submitting) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        strokeWidth = 2.dp,
+                        color = LocalContentColor.current,
+                    )
+                } else {
+                    Text(stringResource(actionRes))
                 }
             }
 
-            PasswordField(
-                value = confirmPassword,
-                onValueChange = {
-                    confirmPassword = it
-                    confirmError = null
-                },
-                labelResId = R.string.sync_login_dialog_confirm_password_hint,
-                error = confirmError,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-            )
-
-            LinkText(
-                textResId = R.string.sync_login_form_privacy_text,
-                modifier = Modifier.padding(top = 12.dp),
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            if (changePasswordMode) {
-                Button(
-                    onClick = { onChangePasswordClick() },
-                    modifier = Modifier.fillMaxWidth(),
+            if (mode == SyncLoginMode.SIGN_IN) {
+                TextButton(
+                    onClick = { switchMode(SyncLoginMode.CHANGE_PASSWORD) },
+                    enabled = !submitting,
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .align(Alignment.CenterHorizontally),
                 ) {
                     Text(stringResource(R.string.sync_login_change_password_button))
                 }
-            } else {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+            }
+
+            if (mode == SyncLoginMode.CHANGE_PASSWORD) {
+                TextButton(
+                    onClick = { switchMode(SyncLoginMode.SIGN_IN) },
+                    enabled = !submitting,
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .align(Alignment.CenterHorizontally),
                 ) {
-                    OutlinedButton(
-                        onClick = { onRegisterClick() },
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        Text(stringResource(R.string.sync_login_form_register_button))
-                    }
-                    Button(
-                        onClick = { onLoginClick() },
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        Text(stringResource(R.string.sync_login_form_login_button))
-                    }
+                    Text(stringResource(R.string.sync_login_back_to_sign_in))
                 }
             }
         }
@@ -369,6 +485,7 @@ private fun PasswordField(
     onValueChange: (String) -> Unit,
     labelResId: Int,
     error: String?,
+    enabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
     var visible by rememberSaveable { mutableStateOf(false) }
@@ -377,6 +494,7 @@ private fun PasswordField(
         onValueChange = onValueChange,
         label = { Text(stringResource(labelResId)) },
         singleLine = true,
+        enabled = enabled,
         isError = error != null,
         supportingText = error?.let { { Text(it) } },
         visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),

@@ -21,6 +21,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.util.Locale;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.compose.sync.SyncActionResultCallback;
 import yuku.alkitab.base.compose.sync.SyncLoginCallbacks;
 import yuku.alkitab.base.compose.sync.SyncLoginComposeHost;
 import yuku.alkitab.base.settings.ExperimentalFlags;
@@ -208,8 +209,9 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
             .show();
     }
 
-    //region Compose UI callbacks (SyncLoginCallbacks). The Compose form does its own validation and
-    // inline password confirmation, so these just kick off the same network operations as the legacy UI.
+    //region Compose UI callbacks (SyncLoginCallbacks). The Compose form does its own validation,
+    // loading indicator and inline messages, so these run the network operations and report the
+    // outcome back through the callback instead of showing progress/result dialogs.
 
     @Override
     public void onUp() {
@@ -217,28 +219,105 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
     }
 
     @Override
-    public void onRegister(@NonNull final String email, @NonNull final String password) {
-        doRegister(email, password);
+    public void login(@NonNull final String email, @NonNull final String password, @NonNull final SyncActionResultCallback callback) {
+        Background.run(() -> {
+            try {
+                AppLog.d(TAG, "Sending form to server for login...");
+                SyncRecorder.log(SyncRecorder.EventKind.login_attempt, null, "serverPrefix", Sync.getEffectiveServerPrefix(), "email", email);
+
+                final Sync.LoginResponseJson response = Sync.login(email, password);
+
+                FirebaseCrashlytics.getInstance().setUserId(email);
+
+                completeAuth(email, response.simpleToken, false, callback);
+            } catch (Sync.NotOkException e) {
+                AppLog.d(TAG, "Login failed", e);
+                SyncRecorder.log(SyncRecorder.EventKind.login_failed, null, "email", email, "message", e.getMessage());
+
+                runOnUiThread(() -> callback.onResult(false, getString(R.string.sync_login_failed_with_reason, e.getMessage())));
+            }
+        });
     }
 
     @Override
-    public void onLogin(@NonNull final String email, @NonNull final String password) {
-        doLogin(email, password);
+    public void register(@NonNull final String email, @NonNull final String password, @NonNull final SyncActionResultCallback callback) {
+        final Sync.RegisterForm form = new Sync.RegisterForm();
+        form.email = email;
+        form.password = password;
+
+        Background.run(() -> {
+            try {
+                AppLog.d(TAG, "Sending form to server for creating new account...");
+                SyncRecorder.log(SyncRecorder.EventKind.register_attempt, null, "serverPrefix", Sync.getEffectiveServerPrefix(), "email", email);
+
+                final Sync.LoginResponseJson response = Sync.register(form);
+
+                FirebaseCrashlytics.getInstance().setUserId(form.email);
+
+                completeAuth(email, response.simpleToken, true, callback);
+            } catch (Sync.NotOkException e) {
+                AppLog.d(TAG, "Register failed", e);
+                SyncRecorder.log(SyncRecorder.EventKind.register_failed, null, "email", email, "message", e.getMessage());
+
+                runOnUiThread(() -> callback.onResult(false, getString(R.string.sync_register_failed_with_reason, e.getMessage())));
+            }
+        });
     }
 
     @Override
-    public void onForgotPassword(@NonNull final String email) {
-        doForgotPassword(email);
+    public void forgotPassword(@NonNull final String email, @NonNull final SyncActionResultCallback callback) {
+        Background.run(() -> {
+            try {
+                AppLog.d(TAG, "Sending form to server for forgot password...");
+
+                Sync.forgotPassword(email);
+
+                runOnUiThread(() -> callback.onResult(true, getString(R.string.sync_login_form_forgot_password_success)));
+            } catch (Sync.NotOkException e) {
+                AppLog.d(TAG, "Forgot password failed", e);
+
+                runOnUiThread(() -> callback.onResult(false, e.getMessage()));
+            }
+        });
     }
 
     @Override
-    public void onChangePassword(@NonNull final String email, @NonNull final String oldPassword, @NonNull final String newPassword) {
-        doChangePassword(email, oldPassword, newPassword);
+    public void changePassword(@NonNull final String email, @NonNull final String oldPassword, @NonNull final String newPassword, @NonNull final SyncActionResultCallback callback) {
+        Background.run(() -> {
+            try {
+                AppLog.d(TAG, "Sending form to server for changing password...");
+
+                Sync.changePassword(email, oldPassword, newPassword);
+
+                runOnUiThread(() -> callback.onResult(true, getString(R.string.sync_login_form_change_password_success)));
+            } catch (Sync.NotOkException e) {
+                AppLog.d(TAG, "Change password failed", e);
+
+                runOnUiThread(() -> callback.onResult(false, e.getMessage()));
+            }
+        });
     }
 
     @Override
     public void onOpenSyncLog() {
         startActivity(SyncLogActivity.createIntent());
+    }
+
+    /**
+     * Compose success path for login/register. Call from a background thread. Sends the FCM
+     * registration id (if possessed), then either reports failure or reports success and finishes.
+     */
+    void completeAuth(final String accountName, final String simpleToken, final boolean isRegister, final SyncActionResultCallback callback) {
+        final String fcmError = sendFcmIfPossible(accountName, simpleToken, isRegister);
+        if (fcmError != null) {
+            runOnUiThread(() -> callback.onResult(false, fcmError));
+            return;
+        }
+
+        runOnUiThread(() -> {
+            callback.onResult(true, null);
+            finishWithToken(accountName, simpleToken);
+        });
     }
 
     //endregion
@@ -368,9 +447,24 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
 
     /**
      * We created account or logged in successfully. Call this method from a background thread!
-     * Close this activity and report success.
+     * Close this activity and report success. (Legacy XML path — shows a dialog on FCM failure.)
      */
     void gotSimpleToken(final String accountName, final String simpleToken, final boolean isRegister) {
+        final String fcmError = sendFcmIfPossible(accountName, simpleToken, isRegister);
+        if (fcmError != null) {
+            runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(this, fcmError));
+            return;
+        }
+
+        runOnUiThread(() -> finishWithToken(accountName, simpleToken));
+    }
+
+    /**
+     * Sends the FCM registration id to the backend, if we already possess it. Call from a background
+     * thread. Returns {@code null} on success (sent, or deferred because we don't have it yet), or a
+     * user-facing error message if sending failed.
+     */
+    String sendFcmIfPossible(final String accountName, final String simpleToken, final boolean isRegister) {
         // send FCM registration id, if we already have it.
         final String registration_id = Fcm.renewFcmRegistrationIdIfNeeded(Sync::notifyNewFcmRegistrationId);
         if (registration_id != null) {
@@ -378,26 +472,26 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
             if (!ok) {
                 SyncRecorder.log(SyncRecorder.EventKind.login_fcm_sending_failed, null, "accountName", accountName);
 
-                runOnUiThread(() -> {
-                    if (isRegister) {
-                        MaterialDialogJavaHelper.showOkDialog(this, getString(R.string.sync_registered_but_no_gcm));
-                    } else {
-                        MaterialDialogJavaHelper.showOkDialog(this, getString(R.string.sync_login_failed_with_reason, "Could not send FCM registration id. Please try again."));
-                    }
-                });
-                return;
+                if (isRegister) {
+                    return getString(R.string.sync_registered_but_no_gcm);
+                } else {
+                    return getString(R.string.sync_login_failed_with_reason, "Could not send FCM registration id. Please try again.");
+                }
             }
         } else {
             // if not, ignore. Later eventually we will have it.
             SyncRecorder.log(SyncRecorder.EventKind.login_fcm_not_possessed_yet, null, "accountName", accountName);
         }
 
-        runOnUiThread(() -> {
-            final Intent data = new Intent();
-            data.putExtra("accountName", accountName);
-            data.putExtra("simpleToken", simpleToken);
-            setResult(RESULT_OK, data);
-            finish();
-        });
+        return null;
+    }
+
+    /** Reports the successful login/register result to the caller and closes this activity. UI thread. */
+    void finishWithToken(final String accountName, final String simpleToken) {
+        final Intent data = new Intent();
+        data.putExtra("accountName", accountName);
+        data.putExtra("simpleToken", simpleToken);
+        setResult(RESULT_OK, data);
+        finish();
     }
 }
