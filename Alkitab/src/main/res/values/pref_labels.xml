@@ -38,4 +38,6 @@
     <string name="pref_useComposeGoto_summary">Show the new Jetpack Compose Navigation screen instead of the legacy tab-based implementation.</string>
     <string name="pref_useComposeSong_title">Song lyrics (Compose)</string>
     <string name="pref_useComposeSong_summary">Render song lyrics natively with Jetpack Compose instead of the legacy WebView (HTML/CSS). Open a song to see the change.</string>
+    <string name="pref_useComposeSyncLogin_title">Sync login (Compose)</string>
+    <string name="pref_useComposeSyncLogin_summary">Show the new Jetpack Compose sync login screen, with a show/hide password toggle and an inline confirm-password field, instead of the legacy screen.</string>
 </resources>

@@ -46,4 +46,7 @@
 
 	<string name="pref_useComposeSong_key" translatable="false">useComposeSong</string>
 	<bool name="pref_useComposeSong_default">false</bool>
+
+	<string name="pref_useComposeSyncLogin_key" translatable="false">useComposeSyncLogin</string>
+	<bool name="pref_useComposeSyncLogin_default">false</bool>
 </resources>

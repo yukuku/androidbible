@@ -21,12 +21,15 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.util.Locale;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.compose.sync.SyncLoginCallbacks;
+import yuku.alkitab.base.compose.sync.SyncLoginComposeHost;
+import yuku.alkitab.base.settings.ExperimentalFlags;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
 import yuku.alkitab.debug.R;
 
-public class SyncLoginActivity extends BaseActivity {
+public class SyncLoginActivity extends BaseActivity implements SyncLoginCallbacks {
     static final String TAG = SyncLoginActivity.class.getSimpleName();
 
     public static class Result {
@@ -46,6 +49,8 @@ public class SyncLoginActivity extends BaseActivity {
         return res;
     }
 
+    boolean useCompose;
+
     TextView tIntro;
     EditText tEmail;
     EditText tPassword;
@@ -59,6 +64,13 @@ public class SyncLoginActivity extends BaseActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        useCompose = ExperimentalFlags.INSTANCE.useComposeSyncLogin();
+        if (useCompose) {
+            SyncLoginComposeHost.setContent(this, this);
+            return;
+        }
+
         setContentView(R.layout.activity_sync_login);
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
@@ -101,29 +113,7 @@ public class SyncLoginActivity extends BaseActivity {
 
             final String password = tPassword.getText().toString();
 
-            confirmPassword(this, password, () -> {
-                final Sync.RegisterForm form = new Sync.RegisterForm();
-                form.email = email;
-                form.password = password;
-
-                startThreadWithProgressDialog(getString(R.string.sync_progress_register), () -> {
-                    try {
-                        AppLog.d(TAG, "Sending form to server for creating new account...");
-                        SyncRecorder.log(SyncRecorder.EventKind.register_attempt, null, "serverPrefix", Sync.getEffectiveServerPrefix(), "email", email);
-
-                        final Sync.LoginResponseJson response = Sync.register(form);
-
-                        FirebaseCrashlytics.getInstance().setUserId(form.email);
-
-                        gotSimpleToken(email, response.simpleToken, true);
-                    } catch (Sync.NotOkException e) {
-                        AppLog.d(TAG, "Register failed", e);
-                        SyncRecorder.log(SyncRecorder.EventKind.register_failed, null, "email", email, "message", e.getMessage());
-
-                        runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(this, getString(R.string.sync_register_failed_with_reason, e.getMessage())));
-                    }
-                });
-            });
+            confirmPassword(this, password, () -> doRegister(email, password));
         });
 
         bLogin.setOnClickListener(v -> {
@@ -148,26 +138,7 @@ public class SyncLoginActivity extends BaseActivity {
 
             final String password = tPassword.getText().toString();
 
-            startThreadWithProgressDialog(getString(R.string.sync_progress_login), () -> {
-                try {
-                    AppLog.d(TAG, "Sending form to server for login...");
-                    SyncRecorder.log(SyncRecorder.EventKind.login_attempt, null, "serverPrefix", Sync.getEffectiveServerPrefix(), "email", email);
-
-                    final Sync.LoginResponseJson response = Sync.login(email, password);
-
-                    FirebaseCrashlytics.getInstance().setUserId(email);
-
-                    gotSimpleToken(email, response.simpleToken, false);
-                } catch (Sync.NotOkException e) {
-                    AppLog.d(TAG, "Login failed", e);
-                    SyncRecorder.log(SyncRecorder.EventKind.login_failed, null, "email", email, "message", e.getMessage());
-
-                    runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(
-                        this,
-                        getString(R.string.sync_login_failed_with_reason, e.getMessage())
-                    ));
-                }
-            });
+            doLogin(email, password);
         });
 
         tPassword.setOnFocusChangeListener((v, hasFocus) -> bForgot.setVisibility(tPassword.length() > 0 || hasFocus ? View.GONE : View.VISIBLE));
@@ -182,19 +153,7 @@ public class SyncLoginActivity extends BaseActivity {
                 tEmail.setError(null);
             }
 
-            startThreadWithProgressDialog(getString(R.string.sync_progress_processing), () -> {
-                try {
-                    AppLog.d(TAG, "Sending form to server for forgot password...");
-
-                    Sync.forgotPassword(email);
-
-                    runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(this, getString(R.string.sync_login_form_forgot_password_success)));
-                } catch (Sync.NotOkException e) {
-                    AppLog.d(TAG, "Forgot password failed", e);
-
-                    runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(this, e.getMessage()));
-                }
-            });
+            doForgotPassword(email);
         });
 
         bChangePassword.setOnClickListener(v -> {
@@ -223,23 +182,7 @@ public class SyncLoginActivity extends BaseActivity {
                 tPasswordNew.setError(null);
             }
 
-            confirmPassword(this, passwordNew, () -> startThreadWithProgressDialog(getString(R.string.sync_progress_processing), () -> {
-                try {
-                    AppLog.d(TAG, "Sending form to server for changing password...");
-
-                    Sync.changePassword(email, password, passwordNew);
-
-                    runOnUiThread(() ->
-                        MaterialDialogJavaHelper.showOkDialog(this, getString(R.string.sync_login_form_change_password_success))
-                            .setOnDismissListener(dialog -> finish())
-                    );
-                } catch (Sync.NotOkException e) {
-                    AppLog.d(TAG, "Change password failed", e);
-
-                    runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(this, e.getMessage()));
-                }
-            }));
-
+            confirmPassword(this, passwordNew, () -> doChangePassword(email, password, passwordNew));
         });
 
         tIntro.setMovementMethod(LinkMovementMethod.getInstance());
@@ -265,6 +208,123 @@ public class SyncLoginActivity extends BaseActivity {
             .show();
     }
 
+    //region Compose UI callbacks (SyncLoginCallbacks). The Compose form does its own validation and
+    // inline password confirmation, so these just kick off the same network operations as the legacy UI.
+
+    @Override
+    public void onUp() {
+        finish();
+    }
+
+    @Override
+    public void onRegister(@NonNull final String email, @NonNull final String password) {
+        doRegister(email, password);
+    }
+
+    @Override
+    public void onLogin(@NonNull final String email, @NonNull final String password) {
+        doLogin(email, password);
+    }
+
+    @Override
+    public void onForgotPassword(@NonNull final String email) {
+        doForgotPassword(email);
+    }
+
+    @Override
+    public void onChangePassword(@NonNull final String email, @NonNull final String oldPassword, @NonNull final String newPassword) {
+        doChangePassword(email, oldPassword, newPassword);
+    }
+
+    @Override
+    public void onOpenSyncLog() {
+        startActivity(SyncLogActivity.createIntent());
+    }
+
+    //endregion
+
+    void doRegister(final String email, final String password) {
+        final Sync.RegisterForm form = new Sync.RegisterForm();
+        form.email = email;
+        form.password = password;
+
+        startThreadWithProgressDialog(getString(R.string.sync_progress_register), () -> {
+            try {
+                AppLog.d(TAG, "Sending form to server for creating new account...");
+                SyncRecorder.log(SyncRecorder.EventKind.register_attempt, null, "serverPrefix", Sync.getEffectiveServerPrefix(), "email", email);
+
+                final Sync.LoginResponseJson response = Sync.register(form);
+
+                FirebaseCrashlytics.getInstance().setUserId(form.email);
+
+                gotSimpleToken(email, response.simpleToken, true);
+            } catch (Sync.NotOkException e) {
+                AppLog.d(TAG, "Register failed", e);
+                SyncRecorder.log(SyncRecorder.EventKind.register_failed, null, "email", email, "message", e.getMessage());
+
+                runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(this, getString(R.string.sync_register_failed_with_reason, e.getMessage())));
+            }
+        });
+    }
+
+    void doLogin(final String email, final String password) {
+        startThreadWithProgressDialog(getString(R.string.sync_progress_login), () -> {
+            try {
+                AppLog.d(TAG, "Sending form to server for login...");
+                SyncRecorder.log(SyncRecorder.EventKind.login_attempt, null, "serverPrefix", Sync.getEffectiveServerPrefix(), "email", email);
+
+                final Sync.LoginResponseJson response = Sync.login(email, password);
+
+                FirebaseCrashlytics.getInstance().setUserId(email);
+
+                gotSimpleToken(email, response.simpleToken, false);
+            } catch (Sync.NotOkException e) {
+                AppLog.d(TAG, "Login failed", e);
+                SyncRecorder.log(SyncRecorder.EventKind.login_failed, null, "email", email, "message", e.getMessage());
+
+                runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(
+                    this,
+                    getString(R.string.sync_login_failed_with_reason, e.getMessage())
+                ));
+            }
+        });
+    }
+
+    void doForgotPassword(final String email) {
+        startThreadWithProgressDialog(getString(R.string.sync_progress_processing), () -> {
+            try {
+                AppLog.d(TAG, "Sending form to server for forgot password...");
+
+                Sync.forgotPassword(email);
+
+                runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(this, getString(R.string.sync_login_form_forgot_password_success)));
+            } catch (Sync.NotOkException e) {
+                AppLog.d(TAG, "Forgot password failed", e);
+
+                runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(this, e.getMessage()));
+            }
+        });
+    }
+
+    void doChangePassword(final String email, final String password, final String passwordNew) {
+        startThreadWithProgressDialog(getString(R.string.sync_progress_processing), () -> {
+            try {
+                AppLog.d(TAG, "Sending form to server for changing password...");
+
+                Sync.changePassword(email, password, passwordNew);
+
+                runOnUiThread(() ->
+                    MaterialDialogJavaHelper.showOkDialog(this, getString(R.string.sync_login_form_change_password_success))
+                        .setOnDismissListener(dialog -> finish())
+                );
+            } catch (Sync.NotOkException e) {
+                AppLog.d(TAG, "Change password failed", e);
+
+                runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(this, e.getMessage()));
+            }
+        });
+    }
+
     void startThreadWithProgressDialog(final String message, final Runnable task) {
         final AlertDialog pd = new MaterialAlertDialogBuilder(this)
             .setMessage(message)
@@ -282,6 +342,8 @@ public class SyncLoginActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(@NonNull final Menu menu) {
+        if (useCompose) return super.onCreateOptionsMenu(menu);
+
         getMenuInflater().inflate(R.menu.activity_sync_login, menu);
         return true;
     }
