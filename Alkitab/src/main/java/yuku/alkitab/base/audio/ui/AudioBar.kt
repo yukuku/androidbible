@@ -228,26 +228,22 @@ private fun AudioBarTopRow(
     state: AudioBarUiState,
     onCommand: (AudioBarCommand) -> Unit,
 ) {
-    // Icon-only top row — earlier iterations included chapter-name text
-    // labels next to the skip-prev/next buttons ("Yesaya 10", "Yesaya 12"),
-    // but on a phone screen they crowded out the speed indicator and forced
-    // the close button to wrap. The chapter label is also redundant: the
-    // toolbar already shows the user's current chapter, and skipping
-    // prev/next is a universally-understood control.
+    // Icon-only top row: a speed chip on the left, the transport cluster
+    // (chapter/verse skip + play/pause) centered, and a close button on the
+    // right. Chapter-name text labels are intentionally omitted — the toolbar
+    // already shows the current chapter, and on a phone they crowd out the
+    // speed indicator and force the close button to wrap.
     //
-    // Centering the transport cluster: the speed chip and close button take
-    // their intrinsic width and the cluster is centered between two weighted
-    // Spacers. An earlier version instead wrapped speed/close in equal
-    // `weight(1f)` Boxes — but a Row measures the non-weighted cluster first
-    // and splits the *remaining* width equally between the two weighted
-    // slots. Because the speed label ("0,5×") is wider than the close icon,
-    // that equal split starved the speed slot: its width was forced onto the
-    // TextButton and, with `maxLines = 1, softWrap = false` and no ellipsis,
-    // the trailing "×" was clipped (worse under large font scales, where the
-    // text grows but the icon buttons don't). Weighted Spacers keep the
-    // cluster centered when there's slack and simply collapse to zero when
-    // it's tight, so the speed label is never measured narrower than its
-    // content.
+    // The speed chip and close button take their intrinsic width, and the
+    // cluster is centered between two weighted Spacers that collapse to zero
+    // when the row is tight. Wrapping the speed chip in a `weight(1f)` slot
+    // instead would clip it: a Row measures the non-weighted cluster first
+    // and splits the remaining width equally between weighted slots, and
+    // because the speed label ("0,5×") is wider than the close icon, an equal
+    // split can force the TextButton narrower than its text — which, with
+    // `maxLines = 1, softWrap = false` and no ellipsis, drops the trailing
+    // "×" (worse under large font scales, where the text grows but the icon
+    // buttons don't).
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
