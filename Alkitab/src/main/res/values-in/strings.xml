@@ -381,6 +381,17 @@
     <string name="sync_login_dialog_confirm_password_hint">Ketik ulang password</string>
     <string name="sync_login_form_forgot_password_success">Periksa email untuk arahan selanjutnya.</string>
     <string name="sync_login_form_change_password_success">Password sudah diganti.</string>
+    <string name="sync_login_form_confirm_password_mismatch">Password tidak sama.</string>
+    <string name="sync_login_form_show_password">Tampilkan password</string>
+    <string name="sync_login_form_hide_password">Sembunyikan password</string>
+    <string name="sync_login_mode_sign_in">Login</string>
+    <string name="sync_login_mode_create_account">Buat akun</string>
+    <string name="sync_login_reset_password_title">Atur ulang password</string>
+    <string name="sync_login_action_send_reset_email">Kirim email atur ulang</string>
+    <string name="sync_login_forgot_password_link">Lupa password?</string>
+    <string name="sync_login_reset_password_help">Masukkan email akun Anda dan kami akan mengirim tautan untuk mengatur ulang password Anda.</string>
+    <string name="sync_login_current_password_hint">Password saat ini</string>
+    <string name="sync_login_back_to_sign_in">Kembali ke login</string>
     <string name="pref_textPadding_title">Beri jarak sekitar teks</string>
     <string name="pref_textPadding_summary">Lebih sedikit teks per barisnya agar mudah dibaca</string>
     <string name="pref_bottomToolbarOnText_title">Navigasi ayat di bawah</string>

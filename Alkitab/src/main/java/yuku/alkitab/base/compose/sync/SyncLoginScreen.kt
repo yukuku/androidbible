@@ -4,7 +4,6 @@ import android.text.method.LinkMovementMethod
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +17,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CloudSync
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -50,11 +50,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.util.PatternsCompat
@@ -295,11 +295,15 @@ fun SyncLoginScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         ) {
-            Image(
-                painter = painterResource(R.drawable.sync_intro),
+            // A theme-tinted vector, so it stays visible in both light and dark. (The legacy XML
+            // screen keeps its own raster illustration, which was drawn for a dark background.)
+            Icon(
+                imageVector = Icons.Filled.CloudSync,
                 contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
-                    .padding(horizontal = 24.dp)
+                    .padding(top = 8.dp)
+                    .size(72.dp)
                     .align(Alignment.CenterHorizontally),
             )
 
@@ -310,13 +314,12 @@ fun SyncLoginScreen(
                     .align(Alignment.CenterHorizontally),
             )
 
-            // The primary-flow picker. Change-password is a secondary flow reached from the bottom
-            // link, so it isn't one of the segments.
-            if (mode != SyncLoginMode.CHANGE_PASSWORD) {
+            // The primary-flow picker has just the two account flows. Reset is reached from the
+            // "Forgot password?" link, and Change password from the link at the bottom.
+            if (mode == SyncLoginMode.SIGN_IN || mode == SyncLoginMode.CREATE_ACCOUNT) {
                 val segments = listOf(
                     SyncLoginMode.SIGN_IN to R.string.sync_login_mode_sign_in,
                     SyncLoginMode.CREATE_ACCOUNT to R.string.sync_login_mode_create_account,
-                    SyncLoginMode.RESET to R.string.sync_login_mode_reset,
                 )
                 SingleChoiceSegmentedButtonRow(
                     modifier = Modifier
@@ -329,8 +332,14 @@ fun SyncLoginScreen(
                             onClick = { switchMode(segMode) },
                             enabled = !submitting,
                             shape = SegmentedButtonDefaults.itemShape(index, segments.size),
+                            // Drop the check icon: on narrow (~320dp) screens it steals the width the
+                            // label needs, forcing an ellipsis. Without it the label can wrap instead.
+                            icon = {},
                         ) {
-                            Text(stringResource(labelRes))
+                            Text(
+                                text = stringResource(labelRes),
+                                textAlign = TextAlign.Center,
+                            )
                         }
                     }
                 }
@@ -463,7 +472,7 @@ fun SyncLoginScreen(
                 }
             }
 
-            if (mode == SyncLoginMode.CHANGE_PASSWORD) {
+            if (mode == SyncLoginMode.RESET || mode == SyncLoginMode.CHANGE_PASSWORD) {
                 TextButton(
                     onClick = { switchMode(SyncLoginMode.SIGN_IN) },
                     enabled = !submitting,
