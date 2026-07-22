@@ -422,7 +422,6 @@
 	<string name="sync_login_dialog_confirm_password_hint">Confirm password</string>
 	<string name="sync_login_mode_sign_in">Sign in</string>
 	<string name="sync_login_mode_create_account">Create account</string>
-	<string name="sync_login_mode_reset">Reset</string>
 	<string name="sync_login_reset_password_title">Reset password</string>
 	<string name="sync_login_action_send_reset_email">Send reset email</string>
 	<string name="sync_login_forgot_password_link">Forgot password?</string>
