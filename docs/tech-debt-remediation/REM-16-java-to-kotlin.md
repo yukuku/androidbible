@@ -21,7 +21,7 @@
 | 8 | ~~`VerseRenderer.java`~~ | ~~Medium~~ | ✅ ported ([REM-26](REM-26-verserenderer-kotlin.md)) |
 | 9 | ~~`SearchEngine.java`~~ | ~~Medium~~ | ✅ ported to `SearchEngine.kt` (2026-05-13). `object` with nested `ReadyTokens` class; `@JvmStatic` on public methods; `searchByGrep()` returns non-nullable `IntArrayList`; `sortWith` replaces `Arrays.sort`. |
 | 10 | `Sync.java` | High | Threading + network, many call sites |
-| 11 | `InternalDb.java` | High | Core database (already roughly halved by the DAO extraction; the Room migration that would have superseded this was reverted — see [REM-11](REM-11-room-version.md)) |
+| 11 | `InternalDb.java` | High | Core database (already roughly halved by the DAO extraction) |
 
 Not on the original list but still Java: `SyncAdapter.java` and the devotion article parsers (`DevotionArticle.java` + the six `Article*.java` implementations).
 

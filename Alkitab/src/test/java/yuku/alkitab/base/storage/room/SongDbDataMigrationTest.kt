@@ -227,7 +227,7 @@ class SongDbDataMigrationTest {
     }
 
     @Test
-    fun `does not resurrect rows after the user deletes a song book (issue #195)`() {
+    fun `does not resurrect rows after the user deletes a song book`() {
         // Setup: legacy SongDb has a song book and its songs, mirroring a
         // real upgrade. The legacy tables are intentionally preserved as a
         // rollback safety net even after migration.

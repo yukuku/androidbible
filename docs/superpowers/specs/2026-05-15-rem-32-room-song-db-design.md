@@ -2,13 +2,13 @@
 
 **Status:** Design
 **Date:** 2026-05-15
-**BRICE:** B=3 R=3 I=2 C=3 E=5 → **3.2** (matches REM-31)
+**BRICE:** B=3 R=3 I=2 C=3 E=5 → **3.2**
 **Phase:** 2 — Architecture Improvements
 **Addresses:** TD-02 follow-through — the last hand-rolled `SQLiteOpenHelper` (`SongDbHelper`) in the app.
 
 ## Outcome
 
-`SongDb` (a separate SQLite file `SongDb` managed by `SongDbHelper extends SQLiteOpenHelper`) becomes Room-backed. After this change the app no longer owns a single hand-rolled `SQLiteOpenHelper` for production data (`InternalDbHelper` was already reduced to rollback-shadow status by REM-31; `SongDbHelper` follows the same path).
+`SongDb` (a separate SQLite file `SongDb` managed by `SongDbHelper extends SQLiteOpenHelper`) becomes Room-backed. After this change the Songs subsystem no longer relies on a hand-rolled `SQLiteOpenHelper` for its production data; `SongDbHelper` is reduced to rollback-shadow status.
 
 The public surface of the `SongDb` facade (`Alkitab/src/main/java/yuku/alkitab/base/storage/SongDb.java`) is preserved. Every call site in `SongListActivity`, `SongViewActivity`, `SongBookUtil`, and `SongFragment` keeps using `App.services.storage.songDb.…` with no signature changes.
 
@@ -44,13 +44,13 @@ S.kt
   └── songDb lazy: build helper + roomDb, run migration once, then construct SongDb
 ```
 
-The same five files-per-table-set pattern as REM-31 (`SyncShadowEntity`, `SyncLogEntity`, `SyncShadowRoomDao`, `SyncShadowDataMigration`, plus the rewritten facade), one level deeper of repetition. No surprises.
+Five files for the table set — two entities, the Room DAO, the data migration, plus the rewritten facade. No surprises.
 
 ### Database location and KSP schemas
 
 `SongRoomDatabase.kt` lives next to `AppDatabase.kt` in `Alkitab/src/main/java/yuku/alkitab/base/storage/room/`. KSP's `room.schemaLocation` arg already points at `Alkitab/schemas/`; the framework writes each `@Database` class's JSON to a subdir keyed by FQCN, so `Alkitab/schemas/yuku.alkitab.base.storage.room.SongRoomDatabase/1.json` lands automatically with no `build.gradle.kts` change.
 
-The on-disk SQLite filename for the new Room DB is `AlkitabSongRoomDb` (mirroring the `AlkitabRoomDb` filename pattern, distinct from the legacy `SongDb` filename so the two coexist during the rollback window).
+The on-disk SQLite filename for the new Room DB is `AlkitabSongRoomDb`, distinct from the legacy `SongDb` filename so the two coexist during the rollback window.
 
 ### Schema mapping
 
@@ -100,7 +100,7 @@ Memory profile: row-by-row streaming. The `data` BLOB column is bounded — song
 
 ### Facade rewrite
 
-`SongDb.java` stays at the same path (`Alkitab/src/main/java/yuku/alkitab/base/storage/SongDb.java`) with the same constructor `public SongDb(SongDbHelper helper)` so `S.kt`'s lazy initializer doesn't need to change beyond inserting the one-time migration call. The helper parameter is retained for ABI parity but the helper is no longer used by any facade method (same trick REM-31 used in `SyncShadowDao`). Every public method (`storeSongs`, `getSong`, `songExists`, `getFirstSongFromBook`, `getAnySong`, `listSongInfosByBookName`, `listSongInfosByBookNameAndDeepFilter`, `deleteSongBook`, `getSongBookInfo`, `listSongBookInfos`, `countSongBookInfos`, `insertSongBookInfo`, `getDataFormatVersionForSongs`, `getSongUpdateTime`) routes through the cached Room DAO (resolved once via `by lazy` from `SongRoomDatabase.get(App.context).songRoomDao()` — same per-instance caching pattern as `SyncShadowDao`).
+`SongDb.java` stays at the same path (`Alkitab/src/main/java/yuku/alkitab/base/storage/SongDb.java`) with the same constructor `public SongDb(SongDbHelper helper)` so `S.kt`'s lazy initializer doesn't need to change beyond inserting the one-time migration call. The helper parameter is retained for ABI parity but the helper is no longer used by any facade method. Every public method (`storeSongs`, `getSong`, `songExists`, `getFirstSongFromBook`, `getAnySong`, `listSongInfosByBookName`, `listSongInfosByBookNameAndDeepFilter`, `deleteSongBook`, `getSongBookInfo`, `listSongBookInfos`, `countSongBookInfos`, `insertSongBookInfo`, `getDataFormatVersionForSongs`, `getSongUpdateTime`) routes through the cached Room DAO (resolved once via `by lazy` from `SongRoomDatabase.get(App.context).songRoomDao()`).
 
 `marshallSong` / `unmarshallSong` are unchanged: they operate on `byte[]` payloads, and the BLOB column stores those bytes the same way under Room as under SQLite.
 
@@ -129,7 +129,7 @@ One extra block of init code. The lazy init runs on first `App.services.storage.
 
 ## Testing
 
-Mirror the REM-31 test layout:
+Test layout:
 
 - `Alkitab/src/test/java/yuku/alkitab/base/storage/room/SongRoomDaoTest.kt` — Robolectric. Tests every SongInfo primitive (insert, find-by-bookName-and-code, songExists, getFirstByBookName, getAnySong, listByBookName, listAllByBookName-null-arg, countSongBookInfos, deleteByBookName, getDataFormatVersionForBookName, getUpdateTimeByBookNameAndCode) and every SongBookInfo primitive (insertReplace, findByName, listAll, deleteByName, countAll). Verifies the `(bookName, ordering)` index is queried via `ORDER BY ordering` returning ordering-asc rows. Round-trips `data: ByteArray?` for null + empty + populated values.
 - `Alkitab/src/test/java/yuku/alkitab/base/storage/room/SongDbDataMigrationTest.kt` — Robolectric. Cases mirroring `SyncShadowDataMigrationTest`:
@@ -154,7 +154,7 @@ Mirror the REM-31 test layout:
 | ---- | ---------- |
 | Parcelable BLOB round-trip subtly differs through Room. | Facade parity test (`SongDbTest.kt`) round-trips a real `Song` through `storeSongs` + `getSong`. If the BLOB shape ever changes byte-for-byte, this test fails before users see broken songs. |
 | `VACUUM` removed accidentally. | Facade preserves the explicit `roomDb.openHelper.writableDatabase.execSQL("vacuum")` outside Room's transaction, after `deleteSongBook`. Test asserts post-delete rows are still readable (a corrupted vacuum would surface as a missing row or SQLite open failure). |
-| First-launch migration race with `App.services.storage.songDb`. | The `S.kt` lazy initializer is single-threaded by Kotlin's `LazyThreadSafetyMode.SYNCHRONIZED` default; only one thread runs the migration. Same pattern as REM-31 with `S.db`. |
+| First-launch migration race with `App.services.storage.songDb`. | The `S.kt` lazy initializer is single-threaded by Kotlin's `LazyThreadSafetyMode.SYNCHRONIZED` default; only one thread runs the migration. |
 | Existing schema export config does not write the new DB's JSON. | KSP writes per-FQCN subdirs automatically (verified — `Alkitab/schemas/yuku.alkitab.base.storage.room.AppDatabase/*.json` shows the layout). No `build.gradle.kts` change needed. The CI build will fail loudly if the schema JSON is missing or out of sync. |
 | `SongDbHelper.onUpgrade` for pre-4.1-beta2 installs still runs. | Untouched. If a user on a very old build upgrades through this release, `SongDbHelper` will first run its `addColumnSongInfo` + `insertSongBookInfosFromSongInfos` upgrade against the legacy SQLite file, then the new `SongDbDataMigration` will copy the post-upgrade state into Room. The two run in sequence inside the same `songDb` lazy init. |
 
@@ -183,7 +183,7 @@ Mirror the REM-31 test layout:
 - `CLAUDE.md` — extend the SQLite-databases section to mention `AlkitabSongRoomDb` and demote `SongDbHelper` to rollback-shadow
 
 **Untouched:**
-- `Alkitab/src/main/java/yuku/alkitab/base/storage/SongDbHelper.java` — preserved as the rollback safety net, identical to REM-31's treatment of `InternalDbHelper` for the migrated tables.
+- `Alkitab/src/main/java/yuku/alkitab/base/storage/SongDbHelper.java` — preserved as the rollback safety net for the migrated tables.
 - `Alkitab/src/main/java/yuku/alkitab/base/storage/Table.java` — `SongInfo` and `SongBookInfo` enums are still referenced by the data-migration code reading the legacy DB; leave them alone.
 - Every Songs-module activity / utility — all call sites are facade-only.
 
