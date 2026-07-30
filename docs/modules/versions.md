@@ -13,7 +13,7 @@ The app supports 100+ downloadable Bible versions across many languages. Version
 - `Alkitab/src/main/java/yuku/alkitab/base/storage/YesReaderFactory.java` — Factory for loading YES1/YES2 readers
 - `Alkitab/src/main/java/yuku/alkitab/base/util/VersionDownloadWorker.kt` — `CoroutineWorker` (OkHttp + Range-based resume) used to download `.yes` files
 - `Alkitab/src/main/java/yuku/alkitab/base/util/DownloadMapper.kt` — In-process tracker that observes `WorkManager.getWorkInfoByIdFlow` and mirrors state into `DownloadManager.STATUS_*` constants for the list UI
-- `Alkitab/src/main/java/yuku/alkitab/base/storage/VersionDao.kt` — Per-table DAO issuing raw SQL against the legacy `Version` table in `AlkitabDb` (`InternalDbHelper`); the Room migration for this table was reverted before public release
+- `Alkitab/src/main/java/yuku/alkitab/base/storage/VersionDao.kt` — Per-table DAO issuing raw SQL against the legacy `Version` table in `AlkitabDb` (`InternalDbHelper`)
 
 ## MVersion Hierarchy
 

@@ -8,7 +8,7 @@ The app stores data in three separate SQLite files. The two legacy `SQLiteOpenHe
 - **`SongDb`** — hand-rolled `SQLiteOpenHelper` (`SongDbHelper`). After REM-32, every table here is a rollback safety net only, plus the source of legacy rows for `SongDbDataMigration` on first launch with the migrated code.
 - **`AlkitabSongRoomDb`** — Room database (`SongRoomDatabase` at `@Database(version = 1)`). Owns the `song_info` and `song_book_info` tables. Lives in a separate file from `AlkitabDb` because the Songs subsystem is module-isolated (see [Songs](modules/songs.md)) — it shares no rows, foreign keys, or transactions with the Bible-reading tables.
 
-`InternalDb` plus per-table facade DAOs (`MarkerDao`, `LabelDao`, `Marker_LabelDao`, `VersionDao`, `DevotionDao`, `PerVersionDao`, `ProgressMarkDao`, `ReadingPlanDao`, `SyncShadowDao`) talk directly to `AlkitabDb` via raw SQL. Room was previously rolled in here (REM-10 / REM-11 / REM-27 / REM-28 / REM-29 / REM-30 / REM-31) but reverted before reaching production; see `docs/tech-debt-remediation.md` for the rationale. The `SongDb` facade routes through `SongRoomDatabase`.
+`InternalDb` plus per-table facade DAOs (`MarkerDao`, `LabelDao`, `Marker_LabelDao`, `VersionDao`, `DevotionDao`, `PerVersionDao`, `ProgressMarkDao`, `ReadingPlanDao`, `SyncShadowDao`) talk directly to `AlkitabDb` via raw SQL. The `SongDb` facade routes through `SongRoomDatabase`.
 
 ### AlkitabDb (legacy SQLite)
 

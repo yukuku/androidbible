@@ -30,7 +30,7 @@ Marker {
 }
 ```
 
-Storage: the `Marker`, `Label`, and `Marker_Label` tables live in the legacy `AlkitabDb` SQLite file managed by `InternalDbHelper`. The `MarkerDao` / `LabelDao` / `Marker_LabelDao` classes expose a `Marker` / `Label` / `Marker_Label` model surface for callers and issue raw SQL internally. (A Room migration for these tables was merged and then reverted before public release — see `docs/tech-debt-remediation.md`.)
+Storage: the `Marker`, `Label`, and `Marker_Label` tables live in the legacy `AlkitabDb` SQLite file managed by `InternalDbHelper`. The `MarkerDao` / `LabelDao` / `Marker_LabelDao` classes expose a `Marker` / `Label` / `Marker_Label` model surface for callers and issue raw SQL internally.
 
 ## Labels
 

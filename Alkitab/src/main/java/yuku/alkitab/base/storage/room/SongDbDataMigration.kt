@@ -17,7 +17,6 @@ import yuku.alkitab.base.util.AppLog
  * `dao.count() > 0` check. The count check would resurrect deleted user
  * data: a user who deletes a song book from the songs screen would
  * otherwise see it re-copied from the legacy table on the next launch.
- * See GitHub issue #195.
  *
  * Memory profile: rows are streamed from each legacy cursor straight into
  * Room inside a single `runInTransaction` block. Songs are small (the
@@ -45,10 +44,10 @@ object SongDbDataMigration {
 
         val dao = roomDb.songRoomDao()
 
-        // Upgrade path: if a future build ever ships the count-based gate
-        // accidentally (mirroring the pre-#198 mistakes for marker/version),
-        // a non-empty Room table means the copy already happened. Set the
-        // flag and bail.
+        // Upgrade path: the flag is unset but Room already holds rows, so the
+        // copy has already happened (an install that migrated before the flag
+        // existed, or a process kill between the commit and the flag write).
+        // Set the flag and bail rather than copying a second time.
         if (dao.countAllSongInfos() > 0 || dao.countAllSongBookInfos() > 0) {
             Preferences.setBoolean(Prefkey.song_db_data_migration_v1_done, true)
             return

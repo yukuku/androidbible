@@ -37,7 +37,6 @@ This document is an index over the prioritized remediation plan for each tech de
 - [REM-07: Extract IsiActivity Action Mode](tech-debt-remediation/REM-07-isiactivity-action-mode.md) ✅ **3.4**
 - [REM-08: Extract IsiActivity Split View Manager](tech-debt-remediation/REM-08-isiactivity-split-view.md) ✅ **3.2**
 - [REM-09: Introduce ViewModel for IsiActivity](tech-debt-remediation/REM-09-isiactivity-viewmodel.md) — **3.4**
-- [REM-10 / REM-11 / REM-27 / REM-28 / REM-29 / REM-30 / REM-31](tech-debt-remediation/REM-11-room-version.md) — Room migration for the eight InternalDb table groups. **Reverted before public release.** All eight were merged to `develop` between 2026-05-13 and 2026-05-15, then rolled back as a single PR on 2026-05-18: the risk/value tradeoff was wrong given (a) the app's published Bible data is irreplaceable user-synced state, (b) the dynamic build-time `user_version` in `AlkitabDb` is fundamentally incompatible with Room's static `@Database(version = N)` contract (forcing a separate-file architecture with per-table row copy), and (c) the schema-drift bug surface introduced by Room replicating each legacy `createTable*` quirk (e.g. lost `COLLATE NOCASE` index in [#197](https://github.com/yukuku/androidbible/pull/197), idempotency resurrection in [#195](https://github.com/yukuku/androidbible/issues/195)) is global rather than per-table. The Room dependency is kept in the build for REM-32 (Songs). See PR description for the full rationale.
 - [REM-32: Migrate SongDb to Room](tech-debt-remediation/REM-32-room-song-db.md) ✅ **3.2** — kept. Songs is module-isolated (own SQLite file, no FKs/transactions with Bible data) and song books are re-downloadable, so the migration risk is bounded. REM-21 (Phase 4) composed on top by swapping the Parcelable `data` BLOB to JSON.
 - [REM-12: Replace DragSortListView with ItemTouchHelper](tech-debt-remediation/REM-12-itemtouchhelper.md) ✅ **3.4**
 - [REM-14: Replace material-dialogs with Material 3](tech-debt-remediation/REM-14-material-dialogs.md) ✅ **3.4**
@@ -88,7 +87,6 @@ This document is an index over the prioritized remediation plan for each tech de
 | [REM-06](tech-debt-remediation/REM-06-isiactivity-gestures.md) | ~~Extract IsiActivity gestures~~ ✅ | **3.4** | 2 |
 | [REM-07](tech-debt-remediation/REM-07-isiactivity-action-mode.md) | ~~Extract IsiActivity action mode~~ ✅ | **3.4** | 2 |
 | [REM-09](tech-debt-remediation/REM-09-isiactivity-viewmodel.md) | Introduce ViewModel | **3.4** | 2 |
-| REM-10 | ~~Room migration (Markers)~~ — reverted 2026-05-18 | **3.4** | 2 |
 | [REM-12](tech-debt-remediation/REM-12-itemtouchhelper.md) | ~~Replace DragSortListView~~ ✅ | **3.4** | 2 |
 | [REM-14](tech-debt-remediation/REM-14-material-dialogs.md) | ~~Replace material-dialogs~~ ✅ | **3.4** | 2 |
 | [REM-18](tech-debt-remediation/REM-18-test-coverage.md) | ~~Add test coverage~~ ✅ | **3.4** | 2 |
@@ -100,12 +98,6 @@ This document is an index over the prioritized remediation plan for each tech de
 | [REM-25](tech-debt-remediation/REM-25-verserenderer-decompose.md) | ~~Decompose VerseRenderer.render~~ ✅ | **3.4** | 3 |
 | [REM-24](tech-debt-remediation/REM-24-s-service-locator.md) | ~~Refactor S.kt service locator (steps 24a–24d complete)~~ ✅ | **3.2** | 2 |
 | [REM-08](tech-debt-remediation/REM-08-isiactivity-split-view.md) | ~~Extract split view manager~~ ✅ | **3.2** | 2 |
-| REM-11 | ~~Room migration (Version)~~ — reverted 2026-05-18 | **3.2** | 2 |
-| REM-27 | ~~Room migration (Devotion)~~ — reverted 2026-05-18 | **3.2** | 2 |
-| REM-28 | ~~Room migration (PerVersion)~~ — reverted 2026-05-18 | **3.2** | 2 |
-| REM-29 | ~~Room migration (ProgressMark)~~ — reverted 2026-05-18 | **3.2** | 2 |
-| REM-30 | ~~Room migration (ReadingPlan)~~ — reverted 2026-05-18 | **3.2** | 2 |
-| REM-31 | ~~Room migration (SyncShadow + SyncLog)~~ — reverted 2026-05-18 | **3.2** | 2 |
 | [REM-32](tech-debt-remediation/REM-32-room-song-db.md) | ~~Room migration (SongDb)~~ ✅ | **3.2** | 2 |
 | [REM-15](tech-debt-remediation/REM-15-coroutines.md) | Introduce coroutines | **3.2** | 3 |
 | [REM-16](tech-debt-remediation/REM-16-java-to-kotlin.md) | Java→Kotlin conversion (9/11 done) | **3.0** | 3 |
@@ -124,7 +116,7 @@ This document is an index over the prioritized remediation plan for each tech de
 **Sprint 2 (1 week):** ~~REM-03~~✅ — LocalBroadcastManager removal (done)
 **Sprint 3 (2 weeks):** ~~REM-07~~✅, ~~REM-06~~✅, ~~REM-08~~✅ — IsiActivity decomposition (all done)
 **Sprint 4 (1 week):** ~~REM-12~~✅, ~~REM-14~~✅ — deprecated library replacements (done)
-**Sprint 5 (2 weeks):** ~~REM-32~~✅ — Room migration for SongDb (`AlkitabSongRoomDb`). REM-10 / REM-11 / REM-27 / REM-28 / REM-29 / REM-30 / REM-31 were also merged in this sprint but reverted before public release on 2026-05-18; see the entries above for the rationale. `InternalDbHelper` remains the active source of truth for every Bible-related table; `SongDbHelper` is now a rollback safety net only.
+**Sprint 5 (2 weeks):** ~~REM-32~~✅ — Room migration for SongDb (`AlkitabSongRoomDb`). `InternalDbHelper` is the active source of truth for every Bible-related table; `SongDbHelper` is a rollback safety net only.
 **Sprint 6 (2 weeks):** REM-09, ~~REM-18a-f~~✅ — ViewModel + test coverage (REM-18a/b/c/d/e/f done)
 **Ongoing:** REM-15, REM-16, ~~REM-17~~✅ — modernization work mixed into feature sprints (REM-17 done)
 
