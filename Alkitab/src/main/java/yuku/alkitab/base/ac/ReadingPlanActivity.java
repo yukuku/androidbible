@@ -108,7 +108,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setupEdgeToEdgeDisplay(toolbar);
+        setupEdgeToEdgeDisplayWithoutBottomInset(toolbar);
 
         actionBar = getSupportActionBar();
         assert actionBar != null;
@@ -120,6 +120,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
         lsReadingPlan = findViewById(R.id.lsTodayReadings);
         lsReadingPlan.setAdapter(readingPlanAdapter = new ReadingPlanAdapter());
+        applyScrollPastBottomInset(lsReadingPlan);
 
         bToday = findViewById(R.id.bToday);
         bToday.setOnClickListener(new View.OnClickListener() {

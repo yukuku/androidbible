@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.CallSuper
@@ -119,6 +120,32 @@ abstract class BaseActivity : AppCompatActivity() {
      * [applySafeAreaPadding] separately.
      */
     protected fun setupEdgeToEdgeDisplay(toolbar: Toolbar) {
+        setupEdgeToEdgeToolbar(toolbar)
+        setupContainerInsets(toolbar.parent as View, includeTop = false, includeBottom = true)
+    }
+
+    /**
+     * [setupEdgeToEdgeDisplay] for an activity whose content scrolls behind
+     * the navigation bar: the container keeps its bottom edge at the window
+     * bottom and the content itself adds the bottom inset as scroll-past
+     * padding. The keyboard inset is left out as well, so this suits content
+     * without text input.
+     */
+    protected fun setupEdgeToEdgeDisplayWithoutBottomInset(toolbar: Toolbar) {
+        setupEdgeToEdgeToolbar(toolbar)
+        setupContainerInsets(toolbar.parent as View, includeTop = false, includeBottom = false)
+    }
+
+    /**
+     * [setupEdgeToEdgeDisplay] for an activity whose layout has no toolbar:
+     * the whole container is padded into the safe area, including the top.
+     */
+    protected fun setupEdgeToEdgeDisplayWithoutToolbar(container: View) {
+        enableEdgeToEdgeInternal(hasToolbar = false)
+        setupContainerInsets(container, includeTop = true, includeBottom = true)
+    }
+
+    private fun setupEdgeToEdgeToolbar(toolbar: Toolbar) {
         enableEdgeToEdgeInternal(hasToolbar = true)
 
         val tv = TypedValue()
@@ -131,17 +158,21 @@ abstract class BaseActivity : AppCompatActivity() {
             v.updateLayoutParams { height = actionBarSize + insets.top }
             windowInsets
         }
-
-        setupContainerInsets(toolbar.parent as View, includeTop = false)
     }
 
     /**
-     * [setupEdgeToEdgeDisplay] for an activity whose layout has no toolbar:
-     * the whole container is padded into the safe area, including the top.
+     * Lets a scrolling view's content draw through the bottom system bar
+     * while keeping its last item scrollable clear of that bar, the way the
+     * verse list behaves. Pairs with [setupEdgeToEdgeDisplayWithoutBottomInset].
      */
-    protected fun setupEdgeToEdgeDisplayWithoutToolbar(container: View) {
-        enableEdgeToEdgeInternal(hasToolbar = false)
-        setupContainerInsets(container, includeTop = true)
+    protected fun applyScrollPastBottomInset(view: ViewGroup) {
+        val basePaddingBottom = view.paddingBottom
+        view.clipToPadding = false
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, windowInsets ->
+            val insets = windowInsets.getInsets(SAFE_AREA_TYPES)
+            v.updatePadding(bottom = basePaddingBottom + insets.bottom)
+            windowInsets
+        }
     }
 
     /**
@@ -165,7 +196,7 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupContainerInsets(container: View, includeTop: Boolean) {
+    private fun setupContainerInsets(container: View, includeTop: Boolean, includeBottom: Boolean) {
         val basePadding = Rect(container.paddingLeft, container.paddingTop, container.paddingRight, container.paddingBottom)
         ViewCompat.setOnApplyWindowInsetsListener(container) { v, windowInsets ->
             val insets = windowInsets.getInsets(SAFE_AREA_TYPES or WindowInsetsCompat.Type.ime())
@@ -173,7 +204,7 @@ abstract class BaseActivity : AppCompatActivity() {
                 basePadding.left + insets.left,
                 basePadding.top + if (includeTop) insets.top else 0,
                 basePadding.right + insets.right,
-                basePadding.bottom + insets.bottom,
+                basePadding.bottom + if (includeBottom) insets.bottom else 0,
             )
             windowInsets
         }

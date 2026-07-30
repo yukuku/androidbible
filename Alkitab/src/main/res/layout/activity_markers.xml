@@ -16,7 +16,10 @@
 		android:layout_height="0dp"
 		android:layout_weight="1" />
 
-	<RelativeLayout
+	<!-- A FrameLayout, not a RelativeLayout: gravity honors the bottom padding
+	     that keeps the button out of the navigation bar the panel extends
+	     behind, while centerVertical would ignore it. -->
+	<FrameLayout
 		android:id="@+id/panelGotoSync"
 		android:layout_width="match_parent"
 		android:layout_height="52dp"
@@ -27,12 +30,11 @@
 			style="?buttonBarButtonStyle"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_alignParentEnd="true"
-			android:layout_centerVertical="true"
+			android:layout_gravity="center_vertical|end"
 			android:background="?selectableItemBackgroundBorderless"
 			android:padding="16dp"
 			android:text="@string/bl_sync_suggest"
 			android:textColor="#fff" />
-	</RelativeLayout>
+	</FrameLayout>
 
 </LinearLayout>
